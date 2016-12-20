@@ -1,7 +1,7 @@
 ---
 applications:
-- name: java-microservice-template
-  host: nimble-java-microservice-template
+- name: frontend-service
+  host: nimble-frontend-service
   memory: 512M
   instances: 1
   buildpack: java_buildpack
