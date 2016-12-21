@@ -1,6 +1,6 @@
 package eu.nimble.core.frontendservice;
 
-import eu.nimble.core.frontendservice.user.UserIdentityClient;
+import eu.nimble.core.frontendservice.client.identity.UserIdentityClient;
 import feign.FeignException;
 import org.cloudfoundry.identity.uaa.scim.ScimUser;
 import org.slf4j.Logger;
@@ -44,7 +44,7 @@ public class Application {
     @RequestMapping(value = "/user", method = GET, produces = "application/json")
     public ScimUser getUser(@RequestParam("user_name") String userName, HttpServletResponse response) throws Exception {
 
-        logger.info("Fetching user with username '{}'", userName);
+        logger.info("Fetching client with username '{}'", userName);
 
         try {
             return userIdentityClient.getUser(userName);

@@ -1,5 +1,6 @@
 package eu.nimble.core.frontendservice.controller;
 
+import eu.nimble.core.frontendservice.controller.registration.UserRegistrationController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -10,7 +11,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Controller
 public class HomeController {
-    private static final Logger logger = LoggerFactory.getLogger(RegistrationController.class);
+    private static final Logger logger = LoggerFactory.getLogger(UserRegistrationController.class);
 
     @RequestMapping(value = {"/", "/index.html"}, method = GET)
     public String registration(Model model) {
