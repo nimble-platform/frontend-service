@@ -1,2 +1,2 @@
-# frontend-service
+# Frontend Services
 Frontend Services for the Nimble Platform.
