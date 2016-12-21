@@ -27,10 +27,10 @@ public class RegistrationController {
 
     public static class UserRegistrationData {
 
-        private String firstName;
-        private String familyName;
-        private String email;
-        private String password;
+        public String firstName;
+        public String familyName;
+        public String email;
+        public String password;
 
         public String getFirstName() {
             return firstName;

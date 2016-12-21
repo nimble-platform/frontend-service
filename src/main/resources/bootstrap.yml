@@ -3,13 +3,27 @@ server:
 spring:
   application:
     name: fontend-service
+  thymeleaf:
+    mode: LEGACYHTML5
   cloud:
     config:
       uri: ${vcap.services.config-service.credentials.url:${CONFIG_SERVER_URI:http://localhost:8888}}
       failFast: true
+
+# Logstash configuration
+logstash:
+  uri: ${vcap.services.logstash-service.credentials.url:${LOGSTASH_URI:localhost:5000}}
+
+---
+spring:
+  profiles: development
+  # Thymeleaf settings
+  thymeleaf:
+    cache: false
+
 # Disable Hystrix in Feign
 feign:
   hystrix:
     enabled: false
-logstash:
-  uri: ${vcap.services.logstash-service.credentials.url:${LOGSTASH_URI:localhost:5000}}
+
+debug: true
