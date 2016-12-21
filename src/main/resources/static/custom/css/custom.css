@@ -718,12 +718,8 @@ a:hover, a:focus {
     background: #34495E;
 }
 
-.navbar-right {
-    margin-right: 0;
-}
-
 .top_nav .navbar-right {
-    margin: 0;
+    margin-right: 50px;
     width: 70%;
     float: right;
 }
