@@ -24,7 +24,7 @@ public class CompanyRegistrationController {
     @RequestMapping(value = "/register_company.do", method = POST)
     public String companyRegistrationSubmit(@ModelAttribute CompanyRegistrationData companyRegistrationData) {
         logger.info("Registering company");
-        return "redirect:/";
+        return "redirect:/user_details";
     }
 
     public static class CompanyRegistrationData {

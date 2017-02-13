@@ -3,149 +3,86 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <div th:include="fragments/head :: main"></div>
+    <div th:include="fragments/javascript :: main"></div>
 </head>
 
-<body class="nav-md">
-<div class="container body">
-    <div class="m21qain_container">
+<body>
 
-        <div th:include="fragments/left_nav :: main"></div>
-
-        <div th:include="fragments/top_nav :: main"></div>
-
-
-        <!-- page content -->
-        <div class="right_col" role="main">
-            <div class="">
-
-                <div th:include="fragments/message :: message"></div>
-
-                <div class="row">
-                    <div class="col-md-12 col-sm-12 col-xs-12">
-                        <div class="x_panel">
-                            <div class="x_title">
-                                <h2>Company Registration
-                                    <small>Please register as a new company on the platform.</small>
-                                </h2>
-                                <ul class="nav navbar-right panel_toolbox">
-                                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-                                    </li>
-                                    <li class="dropdown">
-                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-                                           aria-expanded="false"><i class="fa fa-wrench"></i></a>
-                                        <ul class="dropdown-menu" role="menu">
-                                            <li><a href="#">Settings 1</a>
-                                            </li>
-                                            <li><a href="#">Settings 2</a>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                    <li><a class="close-link"><i class="fa fa-close"></i></a>
-                                    </li>
-                                </ul>
-                                <div class="clearfix"></div>
-                            </div>
-                            <div class="x_content">
-
-                                <form class="form-horizontal form-label-left" novalidate action="#" method="post"
-                                      th:action="@{/register_company.do}" th:object="${companyRegistrationData}">
-
-                                    </p>
-                                    <span class="section">Company Info</span>
-
-                                    <!-- COMPANY NAME-->
-                                    <div class="item form-group">
-                                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="company-name">Company
-                                            Name<span class="required">*</span>
-                                        </label>
-                                        <div class="col-md-6 col-sm-6 col-xs-12">
-                                            <input id="company-name" class="form-control col-md-7 col-xs-12"
-                                                   data-validate-length-range="6" placeholder="Awesome Ldt."
-                                                   required="required" type="text"
-                                                   th:field="*{legalname}">
-                                        </div>
-                                    </div>
-
-                                    <!-- COMPANY ADDRESS-->
-                                    <div class="item form-group">
-                                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="company-address">Address<span
-                                                class="required">*</span>
-                                        </label>
-                                        <div class="col-md-6 col-sm-6 col-xs-12">
-                                            <input id="company-address" class="form-control col-md-7 col-xs-12"
-                                                   data-validate-length-range="6"
-                                                   placeholder="Greenstreet 4, 432434 New York"
-                                                   required="required" type="text"
-                                                   th:field="*{address}">
-                                        </div>
-                                    </div>
-
-                                    <!-- COMPANY VAT-->
-                                    <div class="item form-group">
-                                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="company-vat">Address<span
-                                                class="required">*</span>
-                                        </label>
-                                        <div class="col-md-6 col-sm-6 col-xs-12">
-                                            <input id="company-vat" class="form-control col-md-7 col-xs-12"
-                                                   data-validate-length-range="6" placeholder="293847239482734982374"
-                                                   required="required" type="text"
-                                                   th:field="*{vat}">
-                                        </div>
-                                    </div>
-
-                                    <div class="ln_solid"></div>
-                                    <div class="form-group">
-                                        <div class="col-md-6 col-md-offset-3">
-                                            <a href="/" class="btn btn-primary">Cancel</a>
-                                            <button id="send" type="submit" class="btn btn-success">Submit</button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- /page content -->
-
-        <div th:include="fragments/footer :: main"></div>
-
-    </div>
+<div class="page-header">
+    <h1>Sign up on NIMBLE</h1>
 </div>
 
-<div th:include="fragments/javascript :: main"></div>
+<form class="form-horizontal" th:action="@{/register_company.do}" method="post">
+    <fieldset>
 
-<!-- validator -->
-<script>
-    // initialize the validator function
-    validator.message.date = 'not a real date';
+        <legend>Basic Company Details</legend>
 
-    // validate a field on "blur" event, a 'select' on 'change' event & a '.reuired' classed multifield on 'keyup':
-    $('form')
-        .on('blur', 'input[required], input.optional, select.required', validator.checkField)
-        .on('change', 'select.required', validator.checkField)
-        .on('keypress', 'input[required][pattern]', validator.keypress);
+        <!-- Company Name-->
+        <div class="form-group">
+            <label class="col-md-4 control-label" for="company-name">Company name</label>
+            <div class="col-md-4">
+                <input id="company-name" name="company-name" type="text" placeholder="" class="form-control input-md" >
+            </div>
+        </div>
 
-    $('.multi.required').on('keyup blur', 'input', function () {
-        validator.checkField.apply($(this).siblings().last()[0]);
-    });
+        <!-- Company e-mail-->
+        <div class="form-group">
+            <label class="col-md-4 control-label" for="company-email">Company email</label>
+            <div class="col-md-4">
+                <input id="company-email" name="company-email" type="email" placeholder="" class="form-control input-md" >
+            </div>
+        </div>
 
-    $('form').submit(function (e) {
-        e.preventDefault();
-        var submit = true;
+        <!-- Company address-->
+        <div class="form-group">
+            <label class="col-md-4 control-label" for="company-address">Address</label>
+            <div class="col-md-4">
+                <input id="company-address" name="company-address" type="text" placeholder="" class="form-control input-md" >
+            </div>
+        </div>
 
-        // evaluate the form using generic validating
-        if (!validator.checkAll($(this))) {
-            submit = false;
-        }
+        <!-- City -->
+        <div class="form-group">
+            <label class="col-md-4 control-label" for="city">Address</label>
+            <div class="col-md-4">
+                <input id="city" name="city" type="text" placeholder="" class="form-control input-md" >
+            </div>
+        </div>
 
-        if (submit)
-            this.submit();
+        <!-- Country -->
+        <div class="form-group">
+            <label class="col-md-4 control-label" for="country">Country</label>
+            <div class="col-md-4">
+                <input id="country" name="country" type="text" placeholder="" class="form-control input-md" >
+            </div>
+        </div>
 
-        return false;
-    });
-</script>
-<!-- /validator -->
+        <!-- Website -->
+        <div class="form-group">
+            <label class="col-md-4 control-label" for="website">Website</label>
+            <div class="col-md-4">
+                <input id="website" name="website" type="text" placeholder="" class="form-control input-md" >
+            </div>
+        </div>
+
+        <!-- Phone -->
+        <div class="form-group">
+            <label class="col-md-4 control-label" for="phone">Phone</label>
+            <div class="col-md-4">
+                <input id="phone" name="phone" type="text" placeholder="" class="form-control input-md" >
+            </div>
+        </div>
+
+        <!-- Button -->
+        <div class="form-group">
+            <label class="col-md-4 control-label" for="submit"></label>
+            <div class="col-md-4">
+                <button id="submit" name="submit" class="btn btn-primary pull-right">Save and Proceed</button>
+            </div>
+        </div>
+
+    </fieldset>
+</form>
+
 </body>
 </html>
