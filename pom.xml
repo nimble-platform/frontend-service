@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>eu.nimble.core.frontend</groupId>
+	<artifactId>frontend-service</artifactId>
+	<version>1.0</version>
+	<name>Frontend Services for the NIMBLE platform</name>
+	<packaging>war</packaging>
+	
+	<properties>
+        <ui.context>/</ui.context>
+        <ui.port>9092</ui.port>
+		<project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
+		<finalName>frontend-service</finalName>
+	</properties>
+
+	<build>
+	
+		<finalName>${finalName}</finalName>
+		
+		<pluginManagement>
+			<plugins>
+				<plugin>
+                    <groupId>org.apache.tomcat.maven</groupId>
+                    <artifactId>tomcat7-maven-plugin</artifactId>
+                    <version>2.2</version>
+                    <configuration>
+                        <contextFile>src/main/webapp/META-INF/context.xml</contextFile>
+                        <path>${ui.context}</path>
+                        <port>${ui.port}</port>
+                        <skipErrorOnShutdown>true</skipErrorOnShutdown>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+	
+		<plugins>
+		
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<version>2.8.2</version>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+			
+			<plugin>
+				<groupId>com.github.eirslett</groupId>
+				<artifactId>frontend-maven-plugin</artifactId>
+				<version>1.4</version>
+				<executions>
+					<execution>
+						<id>install</id>
+						<phase>install</phase>
+						<goals>
+							<goal>install-node-and-npm</goal>
+						</goals>
+						<configuration>
+							<nodeVersion>v6.10.1</nodeVersion>
+							<npmVersion>3.10.10</npmVersion>
+						</configuration>
+					</execution>
+					<execution>
+						<id>npm install</id>
+						<phase>install</phase>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+						<configuration>
+							<arguments>install</arguments>
+						</configuration>
+					</execution>
+					<execution>
+						<id>npm run build</id>
+						<phase>install</phase>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+						<configuration>
+							<arguments>run build</arguments>
+						</configuration>
+					</execution>
+					<execution>
+						<id>npm start</id>
+						<phase>deploy</phase>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+						<configuration>
+							<arguments>start</arguments>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<plugin>
+                <groupId>org.apache.tomcat.maven</groupId>
+                <artifactId>tomcat7-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>tomcat-run</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>shutdown</goal>
+                            <goal>run-war-only</goal>
+                        </goals>
+                        <configuration>
+                            <fork>true</fork>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>shutdown</id>
+                        <phase>post-integration-test</phase>
+                        <goals><goal>shutdown</goal></goals>
+                    </execution>
+                </executions>
+            </plugin>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.4.2</version>
+				<executions>
+					<execution>
+						<id>copy-node-modules</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+						<overwrite>true</overwrite>
+						<outputDirectory>${project.build.directory}/${finalName}/node_modules</outputDirectory>
+						<resources>
+							<resource>
+								<directory>${project.basedir}/node_modules</directory>
+							</resource>
+						</resources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-sources</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+						<overwrite>true</overwrite>
+						<outputDirectory>${project.build.directory}/${finalName}/</outputDirectory>
+						<resources>
+							<resource>
+								<directory>${project.basedir}/src</directory>
+							</resource>
+						</resources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-war</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+						<overwrite>true</overwrite>
+						<outputDirectory>${project.build.directory}</outputDirectory>
+						<resources>
+							<resource>
+								<directory>${project.basedir}/src/main/docker/</directory>
+							</resource>
+						</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		
+		</plugins>
+		
+	</build>
+	
+</project>

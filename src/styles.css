@@ -1,0 +1,40 @@
+body {
+	margin: 0.6rem 0;
+	background-color: #fefefe;
+}
+
+button {
+	cursor :pointer;
+}
+
+.nimble-bg {
+	background-color: #a21c26;
+}
+
+.space-before {
+	margin-top: 1rem;
+}
+
+.space-after {
+	margin-bottom: 1rem;
+}
+
+.space-left {
+	margin-left: 0.5rem;
+}
+
+.space-right {
+	margin-right: 0.5rem;
+}
+
+.input-group-addon {
+	min-width: 12rem;
+}
+
+.ng-valid[required], .ng-valid.required  {
+	border-right: 5px solid #42A948;
+}
+
+.ng-invalid:not(form)  {
+	border-right: 5px solid #a94442;
+}

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file source-language="en" datatype="plaintext" original="ng2.template">
+    <body>
+      <trans-unit id="6765b4c916060f6bc42d9bb69e80377dbcb5e4e9" datatype="html">
+        <source>Login</source>
+        <target/>
+      </trans-unit>
+      <trans-unit id="7d6573fb998f3a1cf1356623b85850d9d10edaa9" datatype="html">
+        <source>Registration</source>
+        <target/>
+      </trans-unit>
+      <trans-unit id="6d3b88a3ae6ff3d987f86395605397ec736dee9c" datatype="html">
+        <source>E-Mail</source>
+        <target/>
+      </trans-unit>
+	  <trans-unit id="7613c15dd32dc965fd9ce316fb45e5a79908d27f" datatype="html">
+        <source>e.g. user@domain.com</source>
+        <target/>
+      </trans-unit>
+      <trans-unit id="c32ef07f8803a223a83ed17024b38e8d82292407" datatype="html">
+        <source>Password</source>
+        <target/>
+      </trans-unit>
+	   <trans-unit id="483b002417836f3b4d7d7f1a4884a9d44427a486" datatype="html">
+        <source>Six or more characters</source>
+        <target/>
+      </trans-unit>
+      <trans-unit id="c83b838d845690bcb897f775f53b5316535306dc" datatype="html">
+        <source>First Name</source>
+        <target/>
+      </trans-unit>
+      <trans-unit id="166b2cc65003221ff5f3ec05d5baca41e6821396" datatype="html">
+        <source>Last Name</source>
+        <target/>
+      </trans-unit>
+      <trans-unit id="8a1b6d6b2314b41996549c94638159222b016a92" datatype="html">
+        <source>Date Of Birth</source>
+        <target/>
+      </trans-unit>
+      <trans-unit id="b8659cb82f97d09b5ff66f881fbb50461c3f1272" datatype="html">
+        <source>Place Of Birth</source>
+        <target/>
+      </trans-unit>
+      <trans-unit id="20d9489fdbfc121f7c504271b36691515d02f632" datatype="html">
+        <source>Job Title</source>
+        <target/>
+      </trans-unit>
+      <trans-unit id="152efc55806bd235768c802dacefc06fb8ce2c07" datatype="html">
+        <source>Legal Domain</source>
+        <target/>
+      </trans-unit>
+      <trans-unit id="db654f91d847f34e71ffb99268ff3a1807913421" datatype="html">
+        <source>Phone Number</source>
+        <target/>
+      </trans-unit>
+      <trans-unit id="69055fe6f31b8476100665df2d6748923c50b422" datatype="html">
+        <source>Company Name</source>
+        <target/>
+      </trans-unit>
+      <trans-unit id="5cacc7b395797c6ad3de36d2619130f1e682aa50" datatype="html">
+        <source>Company Address</source>
+        <target/>
+      </trans-unit>
+      <trans-unit id="8a4d27b1192258da44af4c7ddf6b4ccd34ed8fba" datatype="html">
+        <source>Company Country</source>
+        <target/>
+      </trans-unit>
+      <trans-unit id="71c77bb8cecdf11ec3eead24dd1ba506573fa9cd" datatype="html">
+        <source>Submit</source>
+        <target/>
+      </trans-unit>
+      <trans-unit id="06c663bf1474713f57551123a46b34318543b67d" datatype="html">
+        <source>Reset</source>
+        <target/>
+      </trans-unit>
+	  <trans-unit id="963e5cb7f593cffb1fb47ee35bc63fede9a29fd3" datatype="html">
+        <source>
+			Registration successful
+		</source>
+        <target/>
+      </trans-unit>
+      <trans-unit id="096d22e6ced2fb84ce581220f28c2d03530485eb" datatype="html">
+        <source>
+			Invalid login data
+		</source>
+        <target/>
+      </trans-unit>
+      <trans-unit id="03d6eb4e11a6ee2e78970f3ac0a21ea4987e7d09" datatype="html">
+        <source>
+			Login successful
+		</source>
+        <target/>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
