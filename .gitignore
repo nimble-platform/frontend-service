@@ -5,6 +5,9 @@
 ### Node ###
 node/
 node_modules/
+src/app/*.js
+src/app/*.js.map
+src/app/*.metadata.json
 
 ### Maven ###
 target/
