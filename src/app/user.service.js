@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var core_1 = require('@angular/core');
 var http_1 = require('@angular/http');
 require('rxjs/add/operator/toPromise');
+var myGlobals = require('./globals');
 var UserService = (function () {
     function UserService(http) {
         this.http = http;
