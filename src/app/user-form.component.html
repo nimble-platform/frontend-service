@@ -52,7 +52,7 @@
 	<!-- ToDo: Hackathon only END -->
 	
 	<button type="submit" class="btn btn-success" [disabled]="!userForm.form.valid" i18n>Submit</button>
-	<button type="button" class="btn btn-default space-left" (click)="userForm.reset();reset()" [hidden]="userForm.form.pristine" i18n>Reset</button>
+	<button type="button" class="btn btn-secondary space-left" (click)="userForm.reset();reset()" [hidden]="userForm.form.pristine" i18n>Reset</button>
 	
 	<div [hidden]="error_detc || callback || !submitted">
 		<img class="space-before" src="assets/form_loader.gif"/>
