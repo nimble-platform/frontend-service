@@ -8,6 +8,12 @@ The complete frontend is developed with [Angular](https://angular.io) in TypeScr
 ### With Node.js (aka. full development)
 For development purposes it is advisable to set up [Node.js](https://nodejs.org/en/download/) on your machine since it delivers all possibly required functionality and provides way faster build cycles.
 
+e.g. i18n
+```shell
+npm run i18n
+```
+Afterwards, copy src/messages.xlf to src/locale/messages.[LANGUAGE_TAG].xlf (e.g. messages.de.xlf) and add translations inside the target tags.
+
 In order to install all the dependencies execute
 ```shell
 npm install

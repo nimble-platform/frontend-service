@@ -13,6 +13,7 @@ export class AppComponent implements OnInit {
 
 	public isLoggedIn = false;
 	public isCollapsed = true;
+	public fullName = "";
 	
 	constructor(
 		private cookieService: CookieService,
@@ -20,10 +21,20 @@ export class AppComponent implements OnInit {
 	) {	}
 	
 	ngOnInit() {
-		/*
-		if (this.cookieService.get("user_id"))
-			this.router.navigate(["/registration"]); // ToDo: Change to home path
-		*/
+		this.checkLogin("");
+	}
+	
+	public checkLogin(path:any) {
+		if (this.cookieService.get("user_id")) {
+			this.isLoggedIn = true;
+			this.fullName = this.cookieService.get("user_fullname");
+		}
+		else {
+			this.isLoggedIn = false;
+			this.fullName = "";
+		}
+		if (path != "")
+			this.router.navigate([path]);
 	}
 	
 }

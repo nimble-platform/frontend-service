@@ -4,11 +4,23 @@
     <body>
       <trans-unit id="6765b4c916060f6bc42d9bb69e80377dbcb5e4e9" datatype="html">
         <source>Login</source>
-        <target>Anmeldung</target>
+        <target>Anmelden</target>
       </trans-unit>
       <trans-unit id="7d6573fb998f3a1cf1356623b85850d9d10edaa9" datatype="html">
         <source>Registration</source>
-        <target>Registrierung</target>
+        <target>Registrieren</target>
+      </trans-unit>
+	  <trans-unit id="f65253954b66e929a8b4d5ecaf61f9129f8cec64" datatype="html">
+        <source>Dashboard</source>
+        <target>Übersicht</target>
+      </trans-unit>
+	  <trans-unit id="bb694b49d408265c91c62799c2b3a7e3151c824d" datatype="html">
+        <source>Logout</source>
+        <target>Abmelden</target>
+      </trans-unit>
+	  <trans-unit id="25f853c0b1fa019eceb9d086ddcd0a2c0ab329c2" datatype="html">
+        <source>Welcome to the NIMBLE platform,</source>
+        <target>Willkommen auf der NIMBLE Plattform,</target>
       </trans-unit>
       <trans-unit id="6d3b88a3ae6ff3d987f86395605397ec736dee9c" datatype="html">
         <source>E-Mail</source>
@@ -22,7 +34,7 @@
         <source>Password</source>
         <target>Passwort</target>
       </trans-unit>
-	   <trans-unit id="483b002417836f3b4d7d7f1a4884a9d44427a486" datatype="html">
+	  <trans-unit id="483b002417836f3b4d7d7f1a4884a9d44427a486" datatype="html">
         <source>Six or more characters</source>
         <target>Sechs oder mehr Zeichen</target>
       </trans-unit>
@@ -82,21 +94,17 @@
 			Registrierung erfolgreich
 		</target>
       </trans-unit>
-      <trans-unit id="096d22e6ced2fb84ce581220f28c2d03530485eb" datatype="html">
-        <source>
-			Invalid login data
-		</source>
-        <target>
-			Ungültige Anmeldedaten
-		</target>
+	  <trans-unit id="6fa4461d7ca6e4f820b8c39afc08465df79e03c1" datatype="html">
+        <source>Registration successful</source>
+        <target>Registrierung erfolgreich</target>
       </trans-unit>
-      <trans-unit id="03d6eb4e11a6ee2e78970f3ac0a21ea4987e7d09" datatype="html">
-        <source>
-			Login successful
-		</source>
-        <target>
-			Anmeldung erfolgreich
-		</target>
+      <trans-unit id="53664822ede64e27c0573c7f47a1fdcae1774961" datatype="html">
+        <source>Invalid login data</source>
+        <target>Ungültige Anmeldedaten</target>
+      </trans-unit>
+      <trans-unit id="33e552773f62cdf0c61e881a8cce8368e2940de8" datatype="html">
+        <source>Login successful</source>
+        <target>Anmeldung erfolgreich</target>
       </trans-unit>
     </body>
   </file>

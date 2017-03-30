@@ -1,9 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { AppComponent } from './app.component';
 import { Credentials } from './credentials';
 import { CredentialsService } from './credentials.service';
 import * as myGlobals from './globals';
 import { CookieService } from 'ng2-cookies';
-import { Router } from '@angular/router';
 declare var jsSHA: any;
 
 @Component({
@@ -12,7 +12,7 @@ declare var jsSHA: any;
 	templateUrl: './credentials-form.component.html'
 })
 
-export class CredentialsFormComponent {
+export class CredentialsFormComponent implements OnInit {
 
 	submitted = false;
 	callback = false;
@@ -25,8 +25,14 @@ export class CredentialsFormComponent {
 
 	constructor(
 		private credentialsService: CredentialsService,
-		private cookieService: CookieService
+		private cookieService: CookieService,
+		private appComponent: AppComponent
 	) {	}
+	
+	ngOnInit() {
+		if (this.cookieService.get("user_id"))
+			this.appComponent.checkLogin("/dashboard");
+	}
 
 	post(credentials: Credentials): void {
 		this.credentialsService.post(credentials)
@@ -36,14 +42,17 @@ export class CredentialsFormComponent {
 			this.cookieService.set("user_fullname",res.firstname+" "+res.lastname);
 			this.callback = true;
 			this.error_detc = false;
+			this.appComponent.checkLogin("/dashboard");
 		})
 		.catch(error => {
+			this.cookieService.delete("user_id");
+			this.cookieService.delete("user_fullname");
+			this.appComponent.checkLogin("");
 			this.error_detc = true;
 		});
 	}
 	
 	reset() {
-		this.cookieService.delete("username");
 		this.submitted = false;
 		this.callback = false;
 		this.error_detc = false;
