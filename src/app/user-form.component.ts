@@ -17,11 +17,10 @@ export class UserFormComponent {
 	/* ToDo: Hackathon only BEGIN */
 	model = new User('','','','','','','','','','','','');
 	objToSubmit = new User('','','','','','','','','','','','');
-	response = new User('','','','','','','','','','','','');
 	//model = new User('','','','','','','','','');
 	//objToSubmit = new User('','','','','','','','','');
-	//response = new User('','','','','','','','','');
 	/* ToDo: Hackathon only END */
+	response: any;
 	shaObj: any;
 
 	constructor(
@@ -31,8 +30,8 @@ export class UserFormComponent {
 	
 	post(user: User): void {
 		this.userService.post(user)
-		.then(user => {
-			this.response = user;
+		.then(res => {
+			this.response = res;
 			this.callback = true;
 		});
 	}
@@ -43,10 +42,8 @@ export class UserFormComponent {
 		/* ToDo: Hackathon only BEGIN */
 		this.model = new User('','','','','','','','','','','','');
 		this.objToSubmit = new User('','','','','','','','','','','','');
-		this.response = new User('','','','','','','','','','','','');
 		//model = new User('','','','','','','','','');
 		//objToSubmit = new User('','','','','','','','','');
-		//response = new User('','','','','','','','','');
 		/* ToDo: Hackathon only END */
 	}
   
@@ -55,7 +52,7 @@ export class UserFormComponent {
 		this.shaObj = new jsSHA("SHA-256", "TEXT");
 		this.shaObj.update(this.model.password);
         this.objToSubmit.password = this.shaObj.getHash("HEX");
-		//this.objToSubmit.dateOfBirth = new Date(this.model.dateOfBirth).toISOString();
+		this.objToSubmit.dateOfBirth = new Date(this.model.dateOfBirth).toISOString();
 		this.submitted = true;
 		this.post(this.objToSubmit);
 	}

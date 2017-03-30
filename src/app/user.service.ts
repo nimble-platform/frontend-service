@@ -11,7 +11,7 @@ export class UserService {
 	private url = myGlobals.endpoint;
 	constructor(private http: Http) { }
 	
-	post(user: User): Promise<User> {
+	post(user: User): Promise<any> {
 		const url = `${this.url}/identity/registerCompany`;
 		return this.http
 		.post(url, JSON.stringify(user), {headers: this.headers})

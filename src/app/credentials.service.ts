@@ -11,7 +11,7 @@ export class CredentialsService {
 	private url = myGlobals.endpoint;
 	constructor(private http: Http) { }
 	
-	post(credentials: Credentials): Promise<Credentials> {
+	post(credentials: Credentials): Promise<any> {
 		const url = `${this.url}/identity/login`;
 		return this.http
 		.post(url, JSON.stringify(credentials), {headers: this.headers})
