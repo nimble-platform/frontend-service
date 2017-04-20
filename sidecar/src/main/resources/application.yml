@@ -1,0 +1,4 @@
+sidecar:
+  port: ${SIDECAR_PORT:3000}
+  health-uri: ${SIDECAR_HEALTH_URI:http://localhost:${sidecar.port}/health.json}
+  home-page-uri: http://localhost:${sidecar.port}/
