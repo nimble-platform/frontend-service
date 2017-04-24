@@ -14,6 +14,7 @@ export class AppComponent implements OnInit {
 	public isLoggedIn = false;
 	public isCollapsed = true;
 	public fullName = "";
+	public eMail = "";
 	
 	constructor(
 		private cookieService: CookieService,
@@ -28,10 +29,12 @@ export class AppComponent implements OnInit {
 		if (this.cookieService.get("user_id")) {
 			this.isLoggedIn = true;
 			this.fullName = this.cookieService.get("user_fullname");
+			this.eMail = this.cookieService.get("user_email");
 		}
 		else {
 			this.isLoggedIn = false;
 			this.fullName = "";
+			this.eMail = "";
 		}
 		if (path != "")
 			this.router.navigate([path]);

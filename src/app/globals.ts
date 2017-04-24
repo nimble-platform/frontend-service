@@ -1,4 +1,4 @@
 'use strict';
 
-export const debug=true;
-export const endpoint="http://localhost:8080"; // ToDo: Adjust
+export const debug=false;
+export const endpoint="http://192.168.99.100:8080"; // ToDo: Adjust

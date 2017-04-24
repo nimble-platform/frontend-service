@@ -18,6 +18,7 @@ export class LogoutComponent implements OnInit {
 	ngOnInit() {
 		this.cookieService.delete("user_id");
 		this.cookieService.delete("user_fullname");
+		this.cookieService.delete("user_email");
 		this.appComponent.checkLogin("/login");
 	}
 
