@@ -13,6 +13,10 @@ import { UserFormComponent } from './user-form.component';
 import { UserService } from './user.service';
 import { CredentialsFormComponent } from './credentials-form.component';
 import { CredentialsService } from './credentials.service';
+import {CategorySearchComponent} from "./catalogue/category/category-search.component";
+import {CategoryService} from "./catalogue/category/category.service";
+import {ProductPublishComponent} from "./catalogue/product-publish.component";
+import {AdditionalItemPropertyComponent} from "./catalogue/additional-item-property.component";
 
 @NgModule({
 	imports: [
@@ -29,11 +33,15 @@ import { CredentialsService } from './credentials.service';
 		RegistrationComponent,
 		DashboardComponent,
 		UserFormComponent,
-		CredentialsFormComponent
+		CredentialsFormComponent,
+		CategorySearchComponent,
+		ProductPublishComponent,
+		AdditionalItemPropertyComponent
 	],
 	providers: [
 		UserService,
-		CredentialsService
+		CredentialsService,
+		CategoryService
 	],
 	bootstrap: [
 		AppComponent

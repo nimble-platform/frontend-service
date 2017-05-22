@@ -1,0 +1,80 @@
+<div *ngIf="goodsItem">
+    <h4>Upload single product</h4>
+    <!-- Form header -->
+    <div>
+        <label class="col-sm-3" i18n>Property Name</label>
+        <label class="col-sm-3" i18n>Property Value</label>
+    </div>
+    <form class="space-before">
+        <!-- eClass properties -->
+        <additional-item-property *ngFor="let property of goodsItem.item.additionalItemProperties"
+                                  [additionalItemProperty]="property">
+        </additional-item-property>
+        <hr>
+
+        <!-- new property -->
+        <div class="form-group">
+            <!--<form class="form-inline row justify-content-between" #customPropertyForm="ngForm">-->
+            <form #customPropertyForm="ngForm" class="row">
+                <input name="propertyName"
+                       class="form-control col-3"
+                       [(ngModel)]="newProperty.name"
+                       placeholder="Property Name"
+                       required/>
+                <input *ngIf="propertyValueType.options.selectedIndex == 0"
+                       name="propertyValue"
+                       class="form-control col-4 ml-2"
+                       [(ngModel)]="newProperty.value"
+                       placeholder="Property Value"
+                       required/>
+
+                <div *ngIf="propertyValueType.options.selectedIndex == 1" (click)="image.click()"
+                     class="col-4"
+                     style="display: inline-block;">
+                    <input #image type="file" (change)="imageChange($event)" multiple accept="image/*"
+                           style="display: none">
+                    <img src="./assets/catalogue/add_button.png"/>
+                    Add image
+                </div>
+
+                <div *ngIf="propertyValueType.options.selectedIndex == 2" (click)="file.click()"
+                     class="col-4"
+                     style="display: inline-block;">
+                    <input #file type="file" (change)="fileChange($event)" multiple accept="image/*"
+                           style="display: none">
+                    <img src="./assets/catalogue/add_button.png"/>
+                    Add image
+                </div>
+
+                <div class="pull-3">
+                    <div class="row justify-content-end ml-2">
+                        <div>
+                            Value Type:
+
+                            <select #propertyValueType class="custom-select">
+                                <option selected>Text / Number</option>
+                                <option>Image</option>
+                                <option>File</option>
+                            </select>
+                        </div>
+
+                        <button [disabled]="!customPropertyForm.form.valid"
+                                class="ml-1"
+                                (click)="addCustomProperty()">
+                            Add Property
+                        </button>
+                    </div>
+                </div>
+            </form>
+            <!-- selected images or files -->
+            <div *ngIf="newProperty != null && newProperty.embeddedDocumentBinaryObjects != null"
+                 style="display: inline-block">
+                <img *ngFor="let image of newProperty.embeddedDocumentBinaryObjects"
+                     src="{{image.value}}"
+                     height="100"
+                     width="100"
+                />
+            </div>
+        </div>
+    </form>
+</div>
