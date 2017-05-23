@@ -5,9 +5,15 @@
 ### Node ###
 node/
 node_modules/
+src/*.js.map
+src/app/*.css.map
 src/app/*.js
 src/app/*.js.map
 src/app/*.metadata.json
+src/app/**/*.css.map
+src/app/**/*.js
+src/app/**/*.js.map
+src/app/**/*.metadata.json
 
 ### Maven ###
 target/
