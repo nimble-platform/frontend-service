@@ -4,8 +4,6 @@
 
 import {Headers, Http} from "@angular/http";
 import {Component, ElementRef, OnInit, ViewChild} from "@angular/core";
-import {Category} from "./model/category/category";
-import {Property} from "./model/category/property";
 import {GoodsItem} from "./model/publish/goods-item";
 import {CategoryService} from "./category/category.service";
 import {AdditionalItemProperty} from "./model/publish/additional-item-property";
@@ -18,12 +16,14 @@ import {BinaryObject} from "./model/publish/binary-object";
 })
 
 export class ProductPublishComponent implements OnInit {
-    private headers = new Headers({'Accept': 'application/json'});
+    @ViewChild('propertyValueType') propertyValueType: ElementRef;
+
     // TODO remove the hardcoded URL
     //private url = myGlobals.endpoint;
-    private url = `http://localhost:8095/catalogue/category`;
+    private headers = new Headers({'Content-Type': 'application/json'});
+    private url = `http://localhost:8095/catalogue/product`;
+    singleItemUpload: boolean = true;
     goodsItem: GoodsItem;
-    @ViewChild('propertyValueType') propertyValueType:ElementRef;
     newProperty: AdditionalItemProperty = new AdditionalItemProperty(this.generateUUID(), "", "", new Array<BinaryObject>(), "", "", null, null);
 
     constructor(private http: Http,
@@ -54,12 +54,21 @@ export class ProductPublishComponent implements OnInit {
         this.goodsItem = new GoodsItem("", item);
     }
 
-    imageChange(event: any) {
+    private onTabClick (event: any) {
+        event.preventDefault();
+        if(event.target.id == "singleUpload") {
+            this.singleItemUpload = true;
+        } else {
+            this.singleItemUpload = false;
+        }
+    }
+
+    private imageChange(event: any) {
         let fileList: FileList = event.target.files;
         if (fileList.length > 0) {
             let binaryObjects = this.newProperty.embeddedDocumentBinaryObjects;
 
-            for(let i=0; i<fileList.length; i++) {
+            for (let i = 0; i < fileList.length; i++) {
                 let file: File = fileList[i];
                 let reader = new FileReader();
 
@@ -72,7 +81,7 @@ export class ProductPublishComponent implements OnInit {
         }
     }
 
-    fileChange(event: any) {
+    private fileChange(event: any) {
         let fileList: FileList = event.target.files;
         if (fileList.length > 0) {
             let file: File = fileList[0];
@@ -83,6 +92,10 @@ export class ProductPublishComponent implements OnInit {
             };
             reader.readAsDataURL(file);
         }
+    }
+
+    private publishProduct():void {
+
     }
 
     private addCustomProperty(): void {
