@@ -9,6 +9,8 @@ import {CategoryService} from "./category/category.service";
 import {AdditionalItemProperty} from "./model/publish/additional-item-property";
 import {Item} from "./model/publish/item";
 import {BinaryObject} from "./model/publish/binary-object";
+import {CatalogueService} from "./catalogue.service";
+import {Category} from "./model/category/category";
 
 @Component({
     selector: 'product-publish',
@@ -18,26 +20,28 @@ import {BinaryObject} from "./model/publish/binary-object";
 export class ProductPublishComponent implements OnInit {
     @ViewChild('propertyValueType') propertyValueType: ElementRef;
 
-    // TODO remove the hardcoded URL
-    //private url = myGlobals.endpoint;
     private headers = new Headers({'Content-Type': 'application/json'});
+    //private url = myGlobals.endpoint;
+    // TODO remove the hardcoded URL
     private url = `http://localhost:8095/catalogue/product`;
+    selectedCategory:Category;
     singleItemUpload: boolean = true;
     goodsItem: GoodsItem;
     newProperty: AdditionalItemProperty = new AdditionalItemProperty(this.generateUUID(), "", "", new Array<BinaryObject>(), "", "", null, null);
 
     constructor(private http: Http,
-                private categoryService: CategoryService) {
+                private categoryService: CategoryService,
+                private catalogueService: CatalogueService) {
     }
 
     ngOnInit() {
         // initiate the goods item with the selected property
-        let selectedCategory = this.categoryService.getSelectedCategory();
+        this.selectedCategory = this.categoryService.getSelectedCategory();
 
         // create additional item properties
         let additionalItemProperties = new Array<AdditionalItemProperty>();
-        for (let i = 0; i < selectedCategory.properties.length; i++) {
-            let property = selectedCategory.properties[i];
+        for (let i = 0; i < this.selectedCategory.properties.length; i++) {
+            let property = this.selectedCategory.properties[i];
             let unit = "";
             if (property.unit != null) {
                 unit = property.unit.shortName;
@@ -54,9 +58,9 @@ export class ProductPublishComponent implements OnInit {
         this.goodsItem = new GoodsItem("", item);
     }
 
-    private onTabClick (event: any) {
+    private onTabClick(event: any) {
         event.preventDefault();
-        if(event.target.id == "singleUpload") {
+        if (event.target.id == "singleUpload") {
             this.singleItemUpload = true;
         } else {
             this.singleItemUpload = false;
@@ -94,8 +98,8 @@ export class ProductPublishComponent implements OnInit {
         }
     }
 
-    private publishProduct():void {
-
+    private publishProduct(): void {
+        this.catalogueService.publishProduct(this.goodsItem);
     }
 
     private addCustomProperty(): void {

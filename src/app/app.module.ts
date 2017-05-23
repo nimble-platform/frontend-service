@@ -17,6 +17,7 @@ import { CategorySearchComponent } from "./catalogue/category/category-search.co
 import { CategoryService } from "./catalogue/category/category.service";
 import { ProductPublishComponent } from "./catalogue/product-publish.component";
 import { AdditionalItemPropertyComponent } from "./catalogue/additional-item-property.component";
+import {CatalogueService} from "./catalogue/catalogue.service";
 
 @NgModule({
 	imports: [
@@ -41,7 +42,8 @@ import { AdditionalItemPropertyComponent } from "./catalogue/additional-item-pro
 	providers: [
 		UserService,
 		CredentialsService,
-		CategoryService
+		CategoryService,
+		CatalogueService
 	],
 	bootstrap: [
 		AppComponent

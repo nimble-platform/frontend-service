@@ -3,18 +3,29 @@
  */
 import {Injectable} from '@angular/core';
 import {Http, Headers} from '@angular/http';
+import * as myGlobals from '../globals';
+import {GoodsItem} from "./model/publish/goods-item";
 
 @Injectable()
 export class CatalogueService {
-    private headers = new Headers({'Accept': 'application/json'});
-    // TODO remove the hardcoded URL
-    //private url = myGlobals.endpoint;
-    private url = `http://localhost:8095/catalogue/category`;
+    private headers = new Headers({'Content-Type': 'application/json'});
+    private url = myGlobals.endpoint;
 
     constructor(private http: Http) {
     }
 
-    publishProduct(keyword: string): void {
+    publishProduct(goodsItem: GoodsItem): Promise<any> {
+        //const url = `${this.url}/catalogue/product`;
+        // TODO remove the hardcoded URL
+        const url = `http://localhost:8095/catalogue/product`;
+        return this.http
+            .post(url, JSON.stringify(goodsItem), {headers: this.headers})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+    }
 
+    private handleError(error: any): Promise<any> {
+        return Promise.reject(error.message || error);
     }
 }
