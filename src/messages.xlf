@@ -14,16 +14,16 @@
         <source>Dashboard</source>
         <target/>
       </trans-unit>
+      <trans-unit id="223aae0477f79f0bc4436c1c57619415f04cbbb3" datatype="html">
+        <source>Publish</source>
+        <target/>
+      </trans-unit>
       <trans-unit id="bb694b49d408265c91c62799c2b3a7e3151c824d" datatype="html">
         <source>Logout</source>
         <target/>
       </trans-unit>
       <trans-unit id="25f853c0b1fa019eceb9d086ddcd0a2c0ab329c2" datatype="html">
         <source>Welcome to the NIMBLE platform,</source>
-        <target/>
-      </trans-unit>
-      <trans-unit id="223aae0477f79f0bc4436c1c57619415f04cbbb3" datatype="html">
-        <source>Publish</source>
         <target/>
       </trans-unit>
       <trans-unit id="80e6a18f9329abccbc0c0fbfccd80192660c03e4" datatype="html">
@@ -38,20 +38,20 @@
         <source>Publish products without selecting a category</source>
         <target/>
       </trans-unit>
-      <trans-unit id="10b80b0acf4e810a2a4e5b8a0ff1cb4dc42c7233" datatype="html">
-        <source>Upload single product</source>
+      <trans-unit id="b2eb16e6a2316a3af64f74a4ca06ca5d3577d188" datatype="html">
+        <source>Property Name</source>
         <target/>
       </trans-unit>
-      <trans-unit id="96ebb9f7ef578870fcf2c301eb213c8b90500890" datatype="html">
-        <source>Property name</source>
-        <target/>
-      </trans-unit>
-      <trans-unit id="efa70ac988574c00daff5ba1f5fad1251bc03dd2" datatype="html">
-        <source>Property value</source>
+      <trans-unit id="baf5544fafa09e7fc3aebc5990b245677008ff35" datatype="html">
+        <source>Property Value</source>
         <target/>
       </trans-unit>
       <trans-unit id="808038f912fdc7f0e03f82d4afd3bf9178527fc8" datatype="html">
         <source>Add image</source>
+        <target/>
+      </trans-unit>
+      <trans-unit id="2c09fcdb07b78ca4d76599f2ddd491437d61d017" datatype="html">
+        <source>Add file</source>
         <target/>
       </trans-unit>
       <trans-unit id="d3cb4e717870f86d5e3f305ed46cbfd689c877f1" datatype="html">
