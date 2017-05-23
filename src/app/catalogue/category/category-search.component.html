@@ -1,7 +1,6 @@
 <h3 i18n>Choose product (or service) category</h3>
 <input #searchBox/>
-<button type="button" (click)="getCategories(searchBox.value)" class="btn btn-success" i18n>Search Product Category
-</button>
+<button type="button" (click)="getCategories(searchBox.value)" class="btn btn-success" i18n>Search product category</button>
 
 <ul>
     <li *ngFor="let category of categories"
@@ -9,4 +8,4 @@
         {{category.preferredName}}
     </li>
 </ul>
-<button (click)="selectCategory(null)" i18n>Publish products without a selecting a category</button>
+<button (click)="selectCategory(null)" i18n>Publish products without selecting a category</button>
