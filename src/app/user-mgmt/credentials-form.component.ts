@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { AppComponent } from './app.component';
-import { Credentials } from './credentials';
+import { AppComponent } from '../app.component';
+import { Credentials } from './model/credentials';
 import { CredentialsService } from './credentials.service';
-import * as myGlobals from './globals';
+import * as myGlobals from '../globals';
 import { CookieService } from 'ng2-cookies';
 declare var jsSHA: any;
 

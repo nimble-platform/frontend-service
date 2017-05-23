@@ -60,7 +60,7 @@
                     <input #image type="file" (change)="imageChange($event)" multiple accept="image/*"
                            style="display: none">
                     <img src="./assets/catalogue/add_button.png"/>
-                    Add image
+                    <span i18n>Add image</span>
                 </div>
 
                 <div *ngIf="propertyValueType.options.selectedIndex == 2" (click)="file.click()"
@@ -69,25 +69,25 @@
                     <input #file type="file" (change)="fileChange($event)" multiple accept="image/*"
                            style="display: none">
                     <img src="./assets/catalogue/add_button.png"/>
-                    Add file
+                    <span i18n>Add file</span>
                 </div>
 
                 <div class="col">
                     <div class="row justify-content-end ml-2">
                         <div>
-                            Value Type:
+                            <span i18n>Value type:</span>
 
                             <select #propertyValueType class="custom-select">
-                                <option selected>Text / Number</option>
-                                <option>Image</option>
-                                <option>File</option>
+                                <option selected i18n>Text / Number</option>
+                                <option i18n>Image</option>
+                                <option i18n>File</option>
                             </select>
                         </div>
 
                         <button [disabled]="!customPropertyForm.form.valid"
                                 class="btn btn-success ml-1"
                                 (click)="addCustomProperty()">
-                            Add Property
+                            <span i18n>Add property</span>
                         </button>
                     </div>
                 </div>

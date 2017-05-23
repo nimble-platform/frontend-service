@@ -22,6 +22,58 @@
         <source>Welcome to the NIMBLE platform,</source>
         <target>Willkommen auf der NIMBLE Plattform,</target>
       </trans-unit>
+	  <trans-unit id="223aae0477f79f0bc4436c1c57619415f04cbbb3" datatype="html">
+        <source>Publish</source>
+        <target>Veröffentlichen</target>
+      </trans-unit>
+      <trans-unit id="80e6a18f9329abccbc0c0fbfccd80192660c03e4" datatype="html">
+        <source>Choose product (or service) category</source>
+        <target>Produkt- oder Servicekategorie auswählen</target>
+      </trans-unit>
+      <trans-unit id="a7463334b8e49e2210d8f4dc189c40419537bf1a" datatype="html">
+        <source>Search product category</source>
+        <target>Produktkategorie suchen</target>
+      </trans-unit>
+      <trans-unit id="4d1bc53da63843a08c3c71e88fc543df1e7aaec2" datatype="html">
+        <source>Publish products without selecting a category</source>
+        <target>Produkte ohne Kategorieauswahl veröffentlichen</target>
+      </trans-unit>
+      <trans-unit id="10b80b0acf4e810a2a4e5b8a0ff1cb4dc42c7233" datatype="html">
+        <source>Upload single product</source>
+        <target>Einzelnes Produkt hochladen</target>
+      </trans-unit>
+      <trans-unit id="96ebb9f7ef578870fcf2c301eb213c8b90500890" datatype="html">
+        <source>Property name</source>
+        <target>Name der Eigenschaft</target>
+      </trans-unit>
+      <trans-unit id="efa70ac988574c00daff5ba1f5fad1251bc03dd2" datatype="html">
+        <source>Property value</source>
+        <target>Wert der Eigenschaft</target>
+      </trans-unit>
+      <trans-unit id="808038f912fdc7f0e03f82d4afd3bf9178527fc8" datatype="html">
+        <source>Add image</source>
+        <target>Bild hinzufügen</target>
+      </trans-unit>
+      <trans-unit id="d3cb4e717870f86d5e3f305ed46cbfd689c877f1" datatype="html">
+        <source>Value type:</source>
+        <target>Typ des Wertes:</target>
+      </trans-unit>
+      <trans-unit id="471719c00d1267105c7a2de31d2937b3e71b693b" datatype="html">
+        <source>Text / Number</source>
+        <target>Text / Zahl</target>
+      </trans-unit>
+      <trans-unit id="a5f9ba9bb9faa8284bcadb1cdbc6aaf969e9c4bb" datatype="html">
+        <source>Image</source>
+        <target>Bild</target>
+      </trans-unit>
+      <trans-unit id="48139a8f408fb79f24e82673e89e23c2ac314f23" datatype="html">
+        <source>File</source>
+        <target>Datei</target>
+      </trans-unit>
+      <trans-unit id="ccd94c9d494a8fb7cb742c8d04f6f303ef50d22a" datatype="html">
+        <source>Add property</source>
+        <target>Eigenschaft hinzufügen</target>
+      </trans-unit>
       <trans-unit id="6d3b88a3ae6ff3d987f86395605397ec736dee9c" datatype="html">
         <source>E-Mail</source>
         <target>E-Mail</target>
@@ -85,14 +137,6 @@
       <trans-unit id="06c663bf1474713f57551123a46b34318543b67d" datatype="html">
         <source>Reset</source>
         <target>Zurücksetzen</target>
-      </trans-unit>
-	  <trans-unit id="963e5cb7f593cffb1fb47ee35bc63fede9a29fd3" datatype="html">
-        <source>
-			Registration successful
-		</source>
-        <target>
-			Registrierung erfolgreich
-		</target>
       </trans-unit>
 	  <trans-unit id="6fa4461d7ca6e4f820b8c39afc08465df79e03c1" datatype="html">
         <source>Registration successful</source>

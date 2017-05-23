@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AppComponent } from './app.component';
+import { AppComponent } from '../app.component';
 import { CookieService } from 'ng2-cookies';
 
 @Component({

@@ -5,18 +5,18 @@ import { HttpModule } from '@angular/http';
 import { AppRoutingModule } from './app-routing.module';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AppComponent } from './app.component';
-import { LoginComponent } from './login.component';
-import { LogoutComponent } from './logout.component';
-import { RegistrationComponent } from './registration.component';
-import { DashboardComponent } from './dashboard.component';
-import { UserFormComponent } from './user-form.component';
-import { UserService } from './user.service';
-import { CredentialsFormComponent } from './credentials-form.component';
-import { CredentialsService } from './credentials.service';
-import {CategorySearchComponent} from "./catalogue/category/category-search.component";
-import {CategoryService} from "./catalogue/category/category.service";
-import {ProductPublishComponent} from "./catalogue/product-publish.component";
-import {AdditionalItemPropertyComponent} from "./catalogue/additional-item-property.component";
+import { LoginComponent } from './user-mgmt/login.component';
+import { LogoutComponent } from './user-mgmt/logout.component';
+import { RegistrationComponent } from './user-mgmt/registration.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
+import { UserFormComponent } from './user-mgmt/user-form.component';
+import { UserService } from './user-mgmt/user.service';
+import { CredentialsFormComponent } from './user-mgmt/credentials-form.component';
+import { CredentialsService } from './user-mgmt/credentials.service';
+import { CategorySearchComponent } from "./catalogue/category/category-search.component";
+import { CategoryService } from "./catalogue/category/category.service";
+import { ProductPublishComponent } from "./catalogue/product-publish.component";
+import { AdditionalItemPropertyComponent } from "./catalogue/additional-item-property.component";
 
 @NgModule({
 	imports: [

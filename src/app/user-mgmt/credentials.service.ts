@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Headers, Http } from '@angular/http';
 import 'rxjs/add/operator/toPromise';
-import { Credentials } from './credentials';
-import * as myGlobals from './globals';
+import { Credentials } from './model/credentials';
+import * as myGlobals from '../globals';
 
 @Injectable()
 export class CredentialsService {

@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Headers, Http } from '@angular/http';
 import 'rxjs/add/operator/toPromise';
-import { User } from './user';
-import * as myGlobals from './globals';
+import { User } from './model/user';
+import * as myGlobals from '../globals';
 
 @Injectable()
 export class UserService {
