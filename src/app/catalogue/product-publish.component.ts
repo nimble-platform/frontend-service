@@ -24,7 +24,7 @@ export class ProductPublishComponent implements OnInit {
     //private url = myGlobals.endpoint;
     // TODO remove the hardcoded URL
     private url = `http://localhost:8095/catalogue/product`;
-    selectedCategory:Category;
+    selectedCategory: Category;
     singleItemUpload: boolean = true;
     goodsItem: GoodsItem;
     newProperty: AdditionalItemProperty = new AdditionalItemProperty(this.generateUUID(), "", "", new Array<BinaryObject>(), "", "", null, null);
@@ -40,22 +40,23 @@ export class ProductPublishComponent implements OnInit {
 
         // create additional item properties
         let additionalItemProperties = new Array<AdditionalItemProperty>();
-        for (let i = 0; i < this.selectedCategory.properties.length; i++) {
-            let property = this.selectedCategory.properties[i];
-            let unit = "";
-            if (property.unit != null) {
-                unit = property.unit.shortName;
-            }
-            let valueQualifier = property.dataType;
-            let aip = new AdditionalItemProperty(property.id, property.preferredName, "", new Array<BinaryObject>(), unit, valueQualifier, null, null);
-            additionalItemProperties.push(aip);
-        }
-
         // create item
         let item = new Item("", additionalItemProperties, null);
-
         // create goods item
         this.goodsItem = new GoodsItem("", item);
+
+        if (this.selectedCategory != null) {
+            for (let i = 0; i < this.selectedCategory.properties.length; i++) {
+                let property = this.selectedCategory.properties[i];
+                let unit = "";
+                if (property.unit != null) {
+                    unit = property.unit.shortName;
+                }
+                let valueQualifier = property.dataType;
+                let aip = new AdditionalItemProperty(property.id, property.preferredName, "", new Array<BinaryObject>(), unit, valueQualifier, null, null);
+                additionalItemProperties.push(aip);
+            }
+        }
     }
 
     private onTabClick(event: any) {

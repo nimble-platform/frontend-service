@@ -34,6 +34,9 @@ export class CategorySearchComponent {
     }
 
     private selectCategory(category: Category): void {
+        if(category == null) {
+            this.router.navigate(['publish']);
+        }
         this.categoryService.getCategory(category.id)
             .then(category => {
                 this.categoryService.setSelectedCategory(category);
