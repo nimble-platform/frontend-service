@@ -4,6 +4,7 @@
         <a href id="singleUpload"
            [ngClass]="{'nav-link': true, active: singleItemUpload}"
            (click)="onTabClick($event)"
+		   i18n
         >Upload Single Product</a>
     </li>
 
@@ -11,6 +12,7 @@
         <a href id="bulkUpload"
            [ngClass]="{'nav-link': true, active: !singleItemUpload}"
            (click)="onTabClick($event)"
+		   i18n
         >Upload Multiple Products</a>
     </li>
 </ul>
@@ -21,13 +23,13 @@
     <!-- Form column title -->
     <div class="row justify-content-between align-items-start">
         <div>
-            <h6 style="display: inline-block;">Selected category:</h6>
+            <h6 style="display: inline-block;" i18n>Selected category:</h6>
             <button class="btn btn-info ml-3">{{selectedCategory != null ? selectedCategory.preferredName: 'None'}}</button>
         </div>
         <button class="btn btn-success"
                 (click)="publishProduct()"
                 [disabled]="goodsItem.item.additionalItemProperties.length == 0">
-            Publish Product
+            <span i18n>Publish Product</span>
         </button>
     </div>
     <hr>
@@ -49,7 +51,7 @@
 
         <!-- new property -->
         <div class="form-group">
-            <h6>Add new property</h6>
+            <h6 i18n>Add new property</h6>
             <form #customPropertyForm="ngForm" class="row">
                 <input name="propertyName"
                        class="form-control col-3"

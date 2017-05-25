@@ -38,6 +38,22 @@
         <source>Publish products without selecting a category</source>
         <target>Produkte ohne Kategorieauswahl veröffentlichen</target>
       </trans-unit>
+	  <trans-unit id="48e808aef4c0c3b8b2a99727d255a34ce20d854d" datatype="html">
+        <source>Upload Single Product</source>
+        <target>Einzelnes Produkt hochladen</target>
+      </trans-unit>
+      <trans-unit id="06f6aebec229b690602aaa9915b0ea0b591a05cf" datatype="html">
+        <source>Upload Multiple Products</source>
+        <target>Mehrere Produkte hochladen</target>
+      </trans-unit>
+      <trans-unit id="1ac60ec338aa3efff8c17de2e128eb00cdc601fe" datatype="html">
+        <source>Selected category:</source>
+        <target>Ausgewählte Kategorie:</target>
+      </trans-unit>
+      <trans-unit id="e653a757f7e5c68f9fd2e5566a633149590589a9" datatype="html">
+        <source>Publish Product</source>
+        <target>Produkt veröffentlichen</target>
+      </trans-unit>
       <trans-unit id="b2eb16e6a2316a3af64f74a4ca06ca5d3577d188" datatype="html">
         <source>Property Name</source>
         <target>Name der Eigenschaft</target>
@@ -45,6 +61,10 @@
       <trans-unit id="baf5544fafa09e7fc3aebc5990b245677008ff35" datatype="html">
         <source>Property Value</source>
         <target>Wert der Eigenschaft</target>
+      </trans-unit>
+	  <trans-unit id="5e5b7fbd35818ca167149f91cbfc322b79dddd01" datatype="html">
+        <source>Add new property</source>
+        <target>Neue Eigenschaft hinzufügen</target>
       </trans-unit>
       <trans-unit id="808038f912fdc7f0e03f82d4afd3bf9178527fc8" datatype="html">
         <source>Add image</source>
