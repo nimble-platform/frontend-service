@@ -27,7 +27,7 @@ export class ProductPublishComponent implements OnInit {
     selectedCategory: Category;
     singleItemUpload: boolean = true;
     goodsItem: GoodsItem;
-    newProperty: AdditionalItemProperty = new AdditionalItemProperty(this.generateUUID(), "", "", new Array<BinaryObject>(), "", "", null, null);
+    newProperty: AdditionalItemProperty = new AdditionalItemProperty(this.generateUUID(), "", "", new Array<BinaryObject>(), "", "Text", null, null);
 
     constructor(private http: Http,
                 private categoryService: CategoryService,
@@ -68,6 +68,22 @@ export class ProductPublishComponent implements OnInit {
         }
     }
 
+    private publishProduct(): void {
+        this.catalogueService.publishProduct(this.goodsItem);
+    }
+
+
+    private onValueTypeChange(event: any) {
+        if(event.target.value == "Text") {
+            this.newProperty.valueQualifier = "Text";
+        } else if(event.target.value == "Number") {
+            this.newProperty.valueQualifier = "Number";
+        } else if(event.target.value == "Image" ||event.target.valueQualifier == "File") {
+            this.newProperty.valueQualifier = "Binary";
+        }
+        console.log(event.target.selectedIndex);
+    }
+
     private imageChange(event: any) {
         let fileList: FileList = event.target.files;
         if (fileList.length > 0) {
@@ -78,7 +94,7 @@ export class ProductPublishComponent implements OnInit {
                 let reader = new FileReader();
 
                 reader.onload = function (e: any) {
-                    let binaryObject = new BinaryObject("", reader.result, "", "");
+                    let binaryObject = new BinaryObject(file.name, reader.result, file.type, "");
                     binaryObjects.push(binaryObject);
                 };
                 reader.readAsDataURL(file);
@@ -97,10 +113,6 @@ export class ProductPublishComponent implements OnInit {
             };
             reader.readAsDataURL(file);
         }
-    }
-
-    private publishProduct(): void {
-        this.catalogueService.publishProduct(this.goodsItem);
     }
 
     private addCustomProperty(): void {
