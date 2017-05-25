@@ -1,9 +1,9 @@
 <div *ngIf="stringValue" class="input-group form-group">
-    <label for="{{additionalItemProperty.id}}" class="col-sm-3 control-label">{{additionalItemProperty.name}}</label>
+    <label for="{{additionalItemProperty.id}}" class="col-3 control-label">{{additionalItemProperty.name}}</label>
     <input type="text" class="form-control" id="{{additionalItemProperty.id}}" [value]="additionalItemProperty.value">
 </div>
 <div *ngIf="binaryValue" class="input-group form-group">
-    <label for="{{additionalItemProperty.id}}" class="col-sm-3 control-label">{{additionalItemProperty.name}}</label>
+    <label for="{{additionalItemProperty.id}}" class="col-3 control-label">{{additionalItemProperty.name}}</label>
     <div style="display: inline-block">
     <img *ngFor="let image of additionalItemProperty.embeddedDocumentBinaryObjects"
          src="{{image.value}}"

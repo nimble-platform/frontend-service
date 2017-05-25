@@ -43,7 +43,7 @@ export class ProductPublishComponent implements OnInit {
         // create item
         let item = new Item("", additionalItemProperties, null);
         // create goods item
-        this.goodsItem = new GoodsItem("", item);
+        this.goodsItem = new GoodsItem(this.generateUUID(), item);
 
         if (this.selectedCategory != null) {
             for (let i = 0; i < this.selectedCategory.properties.length; i++) {

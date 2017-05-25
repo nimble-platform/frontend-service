@@ -30,7 +30,12 @@
             Publish Product
         </button>
     </div>
-    <div *ngIf="goodsItem.item.additionalItemProperties != null && goodsItem.item.additionalItemProperties.length > 0" class="row mt-3">
+    <hr>
+    <h4><u>Product Details</u></h4>
+    <div *ngIf="goodsItem.item.additionalItemProperties.length == 0">
+        Product has no properties
+    </div>
+    <div *ngIf="goodsItem.item.additionalItemProperties.length > 0" class="row mt-3">
         <h5 class="col-3"><label i18n>Property Name</label></h5>
         <h5 class="col-3"><label i18n>Property Value</label></h5>
     </div>
@@ -40,7 +45,7 @@
         <additional-item-property *ngFor="let property of goodsItem.item.additionalItemProperties"
                                   [additionalItemProperty]="property">
         </additional-item-property>
-        <hr>
+        <hr class="mt-5">
 
         <!-- new property -->
         <div class="form-group">
