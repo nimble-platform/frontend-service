@@ -4,13 +4,13 @@
 import {Injectable} from '@angular/core';
 import {Http, Headers} from '@angular/http';
 import {Category} from "../model/category/category";
+import * as myGlobals from '../../globals';
 
 @Injectable()
 export class CategoryService {
     private headers = new Headers({'Accept': 'application/json'});
-    // TODO remove the hardcoded URL
-    //private url = myGlobals.endpoint;
-    private url = `http://localhost:8095/catalogue/category`;
+    // TODO change the catalogue_endpoint with the common endpoint
+    private baseUrl = myGlobals.catalogue_endpoint + `/catalogue/category`;
     private categories: Category[] = null;
     private selectedCategory: Category= null;
 
@@ -18,7 +18,7 @@ export class CategoryService {
     }
 
     getCategories(keyword: string): Promise<Category[]> {
-        const url = `${this.url}?categoryName=${keyword}`;
+        const url = `${this.baseUrl}?categoryName=${keyword}`;
         return this.http
             .get(url, {headers: this.headers})
             .toPromise()
@@ -30,7 +30,7 @@ export class CategoryService {
     }
 
     getCategory(id: string): Promise<Category> {
-        const url = `${this.url}/` + encodeURIComponent(id);
+        const url = `${this.baseUrl}/` + encodeURIComponent(id);
         return this.http
             .get(url, {headers: this.headers})
             .toPromise()

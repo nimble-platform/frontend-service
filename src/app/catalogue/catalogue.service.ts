@@ -13,7 +13,7 @@ import {Party} from "./model/publish/party";
 @Injectable()
 export class CatalogueService {
     private headers = new Headers({'Content-Type': 'application/json', 'Accept': 'application/json'});
-    private url = myGlobals.endpoint;
+    private baseUrl = myGlobals.catalogue_endpoint;
     private catalogue: Catalogue;
 
     constructor(private http: Http) {
@@ -24,7 +24,7 @@ export class CatalogueService {
             //const url = `${this.url}/catalogue/product`;
             // TODO remove the hardcoded URL and get the party id properly
             let partyId = 'pid';
-            const url = `http://localhost:8095/catalogue/${partyId}/default`;
+            const url = this.baseUrl + `/catalogue/${partyId}/default`;
             return this.http
                 .get(url, {headers: this.headers})
                 .toPromise()
@@ -49,7 +49,7 @@ export class CatalogueService {
         //const url = `${this.url}/catalogue/product`;
         // TODO remove the hardcoded URL and get the party id properly
         let partyId = 'pid';
-        const url = `http://localhost:8095/catalogue?partyId=${partyId}`;
+        const url = this.baseUrl + `/catalogue?partyId=${partyId}`;
         return this.http
             .post(url, JSON.stringify(catalogue), {headers: this.headers})
             .toPromise()
@@ -62,7 +62,7 @@ export class CatalogueService {
     publishProduct(goodsItem: GoodsItem): Promise<any> {
         //const url = `${this.url}/catalogue/product`;
         // TODO remove the hardcoded URL
-        const url = `http://localhost:8095/catalogue/product`;
+        const url = this.baseUrl + `/catalogue/product`;
         return this.http
             .post(url, JSON.stringify(goodsItem), {headers: this.headers})
             .toPromise()

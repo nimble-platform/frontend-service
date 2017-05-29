@@ -2,11 +2,10 @@
  * Created by suat on 12-May-17.
  */
 
-import {Headers, Http} from "@angular/http";
+import {Http} from "@angular/http";
 import {Component} from "@angular/core";
 import {Router} from '@angular/router';
 import {Category} from "../model/category/category";
-import * as myGlobals from '../../globals';
 import {CategoryService} from "./category.service";
 
 @Component({
@@ -15,10 +14,6 @@ import {CategoryService} from "./category.service";
 })
 
 export class CategorySearchComponent {
-    private headers = new Headers({'Accept': 'application/json'});
-    // TODO remove the hardcoded URL
-    //private url = myGlobals.endpoint;
-    private url = `http://localhost:8095/catalogue/category`;
     categories: Category[];
 
     constructor(private http: Http,
@@ -34,7 +29,7 @@ export class CategorySearchComponent {
     }
 
     private selectCategory(category: Category): void {
-        if(category == null) {
+        if (category == null) {
             this.router.navigate(['publish']);
             return;
         }

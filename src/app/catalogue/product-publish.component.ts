@@ -2,7 +2,7 @@
  * Created by suat on 17-May-17.
  */
 
-import {Headers, Http} from "@angular/http";
+import {Http} from "@angular/http";
 import {Component, ElementRef, OnInit, ViewChild} from "@angular/core";
 import {GoodsItem} from "./model/publish/goods-item";
 import {CategoryService} from "./category/category.service";
@@ -22,17 +22,12 @@ import {CatalogueLine} from "./model/publish/catalogue-line";
 export class ProductPublishComponent implements OnInit {
     @ViewChild('propertyValueType') propertyValueType: ElementRef;
 
-    private headers = new Headers({'Content-Type': 'application/json'});
-    //private url = myGlobals.endpoint;
-    // TODO remove the hardcoded URL
-    private url = `http://localhost:8095/catalogue/product`;
     selectedCategory: Category;
     singleItemUpload: boolean = true;
     goodsItem: GoodsItem;
     newProperty: AdditionalItemProperty = new AdditionalItemProperty("", [''], new Array<BinaryObject>(), "", "Text", null, null);
 
-    constructor(private http: Http,
-                private categoryService: CategoryService,
+    constructor(private categoryService: CategoryService,
                 private catalogueService: CatalogueService) {
     }
 
