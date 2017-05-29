@@ -14,6 +14,10 @@
         <source>Dashboard</source>
         <target>Übersicht</target>
       </trans-unit>
+	  <trans-unit id="7e892ba15f2c6c17e83510e273b3e10fc32ea016" datatype="html">
+        <source>Search</source>
+        <target>Suche</target>
+      </trans-unit>
 	  <trans-unit id="223aae0477f79f0bc4436c1c57619415f04cbbb3" datatype="html">
         <source>Publish</source>
         <target>Veröffentlichen</target>
@@ -78,9 +82,13 @@
         <source>Value type:</source>
         <target>Typ des Wertes:</target>
       </trans-unit>
-      <trans-unit id="471719c00d1267105c7a2de31d2937b3e71b693b" datatype="html">
-        <source>Text / Number</source>
-        <target>Text / Zahl</target>
+      <trans-unit id="8ba143716c2da6e4120c0c1a804f0bdd9a7e5f5b" datatype="html">
+        <source>Text</source>
+        <target>Text</target>
+      </trans-unit>
+      <trans-unit id="fbcb0d75afbe6aec04269381598a737f4bd19db7" datatype="html">
+        <source>Number</source>
+        <target>Zahl</target>
       </trans-unit>
       <trans-unit id="a5f9ba9bb9faa8284bcadb1cdbc6aaf969e9c4bb" datatype="html">
         <source>Image</source>
@@ -169,6 +177,22 @@
       <trans-unit id="33e552773f62cdf0c61e881a8cce8368e2940de8" datatype="html">
         <source>Login successful</source>
         <target>Anmeldung erfolgreich</target>
+      </trans-unit>
+	  <trans-unit id="a4f38c1011dce644d3c25ac4ef5f8862c445d298" datatype="html">
+        <source>Search term</source>
+        <target>Suchbegriff</target>
+      </trans-unit>
+	  <trans-unit id="90f4817715d17ba563365fb94cf852213aa5a633" datatype="html">
+        <source>Showing results</source>
+        <target>Zeige Ergebnisse</target>
+      </trans-unit>
+      <trans-unit id="169eed2bc3e08e1bea977bcc5d799379f6b8a758" datatype="html">
+        <source>of</source>
+        <target>von</target>
+      </trans-unit>
+	  <trans-unit id="07190520c4e8884bfa6feff14b9af54f9bd3d444" datatype="html">
+        <source>No search results</source>
+        <target>Keine Suchergebnisse</target>
       </trans-unit>
     </body>
   </file>

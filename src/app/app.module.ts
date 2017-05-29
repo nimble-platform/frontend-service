@@ -13,11 +13,14 @@ import { UserFormComponent } from './user-mgmt/user-form.component';
 import { UserService } from './user-mgmt/user.service';
 import { CredentialsFormComponent } from './user-mgmt/credentials-form.component';
 import { CredentialsService } from './user-mgmt/credentials.service';
-import { CategorySearchComponent } from "./catalogue/category/category-search.component";
-import { CategoryService } from "./catalogue/category/category.service";
-import { ProductPublishComponent } from "./catalogue/product-publish.component";
-import { AdditionalItemPropertyComponent } from "./catalogue/additional-item-property.component";
-import {CatalogueService} from "./catalogue/catalogue.service";
+import { CategorySearchComponent } from './catalogue/category/category-search.component';
+import { CategoryService } from './catalogue/category/category.service';
+import { ProductPublishComponent } from './catalogue/product-publish.component';
+import { AdditionalItemPropertyComponent } from './catalogue/additional-item-property.component';
+import { CatalogueService } from './catalogue/catalogue.service';
+import { SimpleSearchComponent } from './simple-search/simple-search.component';
+import { SimpleSearchFormComponent } from './simple-search/simple-search-form.component';
+import { SimpleSearchService } from './simple-search/simple-search.service';
 
 @NgModule({
 	imports: [
@@ -37,13 +40,16 @@ import {CatalogueService} from "./catalogue/catalogue.service";
 		CredentialsFormComponent,
 		CategorySearchComponent,
 		ProductPublishComponent,
-		AdditionalItemPropertyComponent
+		AdditionalItemPropertyComponent,
+		SimpleSearchComponent,
+		SimpleSearchFormComponent
 	],
 	providers: [
 		UserService,
 		CredentialsService,
 		CategoryService,
-		CatalogueService
+		CatalogueService,
+		SimpleSearchService
 	],
 	bootstrap: [
 		AppComponent

@@ -5,7 +5,8 @@ import { LogoutComponent } from './user-mgmt/logout.component';
 import { RegistrationComponent } from './user-mgmt/registration.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { CategorySearchComponent } from './catalogue/category/category-search.component';
-import { ProductPublishComponent } from "./catalogue/product-publish.component";
+import { ProductPublishComponent } from './catalogue/product-publish.component';
+import { SimpleSearchComponent } from './simple-search/simple-search.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -14,7 +15,8 @@ const routes: Routes = [
   { path: 'registration', component: RegistrationComponent },
   { path: 'dashboard', component: DashboardComponent },
   { path: 'categorysearch', component: CategorySearchComponent },
-  { path: 'publish', component: ProductPublishComponent }
+  { path: 'publish', component: ProductPublishComponent },
+  { path: 'simple-search', component: SimpleSearchComponent }
 ];
 
 @NgModule({

@@ -46,3 +46,37 @@ button {
 .ng-invalid:not(form)  {
 	border-right: 5px solid #a94442;
 }
+
+.inline-icon {
+	max-height: 1rem;
+}
+
+.clickable {
+	cursor: pointer;
+	text-decoration: underline;
+}
+
+.navbar-inverse .navbar-nav .nav-link {
+	color: white !important;
+	opacity: 0.5 !important;
+}
+
+.navbar-inverse .navbar-nav .active > .nav-link, .navbar-inverse .navbar-nav .nav-link.active, .navbar-inverse .navbar-nav .nav-link.open, .navbar-inverse .navbar-nav .open > .nav-link {
+	opacity: 1 !important;
+}
+
+ngb-pagination nav .pagination {
+	margin-bottom: 0 !important;
+	-moz-box-pack: end;
+    justify-content: flex-end;
+}
+
+ngb-pagination nav .pagination .page-item .page-link {
+	color: #a21c26;
+}
+
+ngb-pagination nav .pagination .page-item.active .page-link {
+	background-color: #a21c26;
+	border-color: #a21c26;
+	color: #fff;
+}
