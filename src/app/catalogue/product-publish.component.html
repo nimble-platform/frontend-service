@@ -28,23 +28,23 @@
         </div>
         <button class="btn btn-success"
                 (click)="publishProduct()"
-                [disabled]="goodsItem.item.additionalItemProperties.length == 0">
+                [disabled]="goodsItem.item.additionalItemProperty.length == 0">
             <span i18n>Publish Product</span>
         </button>
     </div>
     <hr>
     <h4><u>Product Details</u></h4>
-    <div *ngIf="goodsItem.item.additionalItemProperties.length == 0">
+    <div *ngIf="goodsItem.item.additionalItemProperty.length == 0">
         Product has no properties
     </div>
-    <div *ngIf="goodsItem.item.additionalItemProperties.length > 0" class="row mt-3">
+    <div *ngIf="goodsItem.item.additionalItemProperty.length > 0" class="row mt-3">
         <h5 class="col-3"><label i18n>Property Name</label></h5>
         <h5 class="col-3"><label i18n>Property Value</label></h5>
     </div>
 
     <form class="space-before">
         <!-- eClass properties -->
-        <additional-item-property *ngFor="let property of goodsItem.item.additionalItemProperties"
+        <additional-item-property *ngFor="let property of goodsItem.item.additionalItemProperty"
                                   [additionalItemProperty]="property">
         </additional-item-property>
         <hr class="mt-5">
@@ -61,7 +61,7 @@
                 <input *ngIf="propertyValueType.options.selectedIndex == 0 || propertyValueType.options.selectedIndex == 1"
                        name="propertyValue"
                        class="form-control col ml-2"
-                       [(ngModel)]="newProperty.value"
+                       [(ngModel)]="newProperty.value[0]"
                        placeholder="Property Value"
                        required/>
 
@@ -105,11 +105,11 @@
                 </div>
             </form>
             <!-- selected images or files -->
-            <div *ngIf="newProperty != null && newProperty.embeddedDocumentBinaryObjects != null"
+            <div *ngIf="newProperty != null && newProperty.embeddedDocumentBinaryObject != null"
                  class="offset-3 mt-3">
-                <img *ngFor="let image of newProperty.embeddedDocumentBinaryObjects"
+                <img *ngFor="let image of newProperty.embeddedDocumentBinaryObject"
                      class="mr-2"
-                     src="{{image.value}}"
+                     src="data:{{image.mimeCode}};base64,{{image.value}}"
                      height="100"
                      width="100"
                 />

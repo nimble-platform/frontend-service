@@ -8,7 +8,7 @@ import {Party} from "./party";
 export class Item {
     constructor(
         public name: string,
-        public additionalItemProperties: AdditionalItemProperty[],
+        public additionalItemProperty: AdditionalItemProperty[],
         public manufacturerParty: Party
     ) {  }
 }
