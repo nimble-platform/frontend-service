@@ -8,20 +8,24 @@
 	<div class="navbar-collapse" [ngbCollapse]="isCollapsed" id="navbarNavAltMarkup">
 		<ul *ngIf="!isLoggedIn" class="nav navbar-nav mr-auto">
 			<li class="nav-item" routerLinkActive="active">
-				<a class="nav-link" routerLink="/login" i18n>Login</a>
+				<a class="nav-link" routerLink="/login">
+					<img src="assets/login_white.png" class="inline-icon"/> <span i18n>Login</span>
+				</a>
 			</li>
 			<li class="nav-item" routerLinkActive="active">
-				<a class="nav-link" routerLink="/registration" i18n>Registration</a>
+				<a class="nav-link" routerLink="/registration">
+					<img src="assets/register_white.png" class="inline-icon"/> <span i18n>Registration</span>
+				</a>
 			</li>
 		</ul>
 		<ul *ngIf="isLoggedIn" class="nav navbar-nav mr-auto">
 			<li class="nav-item" routerLinkActive="active">
-				<a class="nav-link" routerLink="/dashboard" i18n>
+				<a class="nav-link" routerLink="/dashboard">
 					<img src="assets/list_white.png" class="inline-icon"/> <span i18n>Dashboard</span>
 				</a>
 			</li>
 			<li class="nav-item" routerLinkActive="active">
-				<a class="nav-link" routerLink="/categorysearch" i18n>
+				<a class="nav-link" routerLink="/categorysearch">
 					<img src="assets/upload_white.png" class="inline-icon"/> <span i18n>Publish</span>
 				</a>
 			</li>
@@ -37,7 +41,9 @@
 					<img src="assets/avatar_white.png" class="inline-icon"/> {{fullName}}
 				</a>
 				<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
-					<a class="dropdown-item" routerLink="/logout" i18n>Logout</a>
+					<a class="dropdown-item" routerLink="/logout">
+						<img src="assets/logout_black.png" class="inline-icon"/> <span i18n>Logout</span>
+					</a>
 				</div>
 			</li>
 		</ul>

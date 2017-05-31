@@ -7,6 +7,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { CategorySearchComponent } from './catalogue/category/category-search.component';
 import { ProductPublishComponent } from './catalogue/product-publish.component';
 import { SimpleSearchComponent } from './simple-search/simple-search.component';
+import { SimpleSearchDetailsComponent } from './simple-search/simple-search-details.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -16,7 +17,8 @@ const routes: Routes = [
   { path: 'dashboard', component: DashboardComponent },
   { path: 'categorysearch', component: CategorySearchComponent },
   { path: 'publish', component: ProductPublishComponent },
-  { path: 'simple-search', component: SimpleSearchComponent }
+  { path: 'simple-search', component: SimpleSearchComponent },
+  { path: 'simple-search-details/:id', component: SimpleSearchDetailsComponent },
 ];
 
 @NgModule({

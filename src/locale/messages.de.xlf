@@ -14,21 +14,33 @@
         <source>Dashboard</source>
         <target>Übersicht</target>
       </trans-unit>
-	  <trans-unit id="7e892ba15f2c6c17e83510e273b3e10fc32ea016" datatype="html">
-        <source>Search</source>
-        <target>Suche</target>
-      </trans-unit>
 	  <trans-unit id="223aae0477f79f0bc4436c1c57619415f04cbbb3" datatype="html">
         <source>Publish</source>
         <target>Veröffentlichen</target>
+      </trans-unit>
+	  <trans-unit id="7e892ba15f2c6c17e83510e273b3e10fc32ea016" datatype="html">
+        <source>Search</source>
+        <target>Suche</target>
       </trans-unit>
 	  <trans-unit id="bb694b49d408265c91c62799c2b3a7e3151c824d" datatype="html">
         <source>Logout</source>
         <target>Abmelden</target>
       </trans-unit>
-	  <trans-unit id="25f853c0b1fa019eceb9d086ddcd0a2c0ab329c2" datatype="html">
-        <source>Welcome to the NIMBLE platform,</source>
-        <target>Willkommen auf der NIMBLE Plattform,</target>
+	  <trans-unit id="9236c32653c2449278b7ae44e3552e6d64497f86" datatype="html">
+        <source>Welcome to the</source>
+        <target>Willkommen auf der</target>
+      </trans-unit>
+      <trans-unit id="d026a408203a6e38f1f52c46e2e7d813cfc344b1" datatype="html">
+        <source>platform,</source>
+        <target>Plattform,</target>
+      </trans-unit>
+      <trans-unit id="a7cee30e3df57f6b3b38712261c670aff46643e9" datatype="html">
+        <source>Buyer</source>
+        <target>Käufer</target>
+      </trans-unit>
+      <trans-unit id="328c759c9dd77f41866119252dca13c72c980344" datatype="html">
+        <source>Seller</source>
+        <target>Verkäufer</target>
       </trans-unit>
       <trans-unit id="80e6a18f9329abccbc0c0fbfccd80192660c03e4" datatype="html">
         <source>Choose product (or service) category</source>
@@ -101,6 +113,26 @@
       <trans-unit id="ccd94c9d494a8fb7cb742c8d04f6f303ef50d22a" datatype="html">
         <source>Add property</source>
         <target>Eigenschaft hinzufügen</target>
+      </trans-unit>
+	  <trans-unit id="dfc2fb58e2a04ed944a4bd80f0a2087775134068" datatype="html">
+        <source>Amount</source>
+        <target>Menge</target>
+      </trans-unit>
+      <trans-unit id="ccac601bf473fa28c9ac46794f1cd40542f74347" datatype="html">
+        <source>Message</source>
+        <target>Nachricht</target>
+      </trans-unit>
+      <trans-unit id="5704ec2049d007c5f5fb495a5d8b607e68d58081" datatype="html">
+        <source>Order</source>
+        <target>Bestellen</target>
+      </trans-unit>
+      <trans-unit id="f6949a4d9337a0da0cec7679827dadbdf49bc62f" datatype="html">
+        <source>An error occured - please try again later</source>
+        <target>Ein Fehler ist aufgetreten - bitte versuchen Sie es später noch einmal</target>
+      </trans-unit>
+      <trans-unit id="e587762dff7438af869760072a568e9776ee5118" datatype="html">
+        <source>Order successful - track to progress on your <x id="START_LINK" ctype="x-a"/>dashboard<x id="CLOSE_LINK" ctype="x-a"/></source>
+        <target>Bestellung erfolgreich - verfolgen Sie den Fortschritt in Ihrer <x id="START_LINK" ctype="x-a"/>Übersicht<x id="CLOSE_LINK" ctype="x-a"/></target>
       </trans-unit>
       <trans-unit id="6d3b88a3ae6ff3d987f86395605397ec736dee9c" datatype="html">
         <source>E-Mail</source>

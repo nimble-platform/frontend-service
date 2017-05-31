@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Search } from './model/search';
 import { SimpleSearchService } from './simple-search.service';
+import * as myGlobals from '../globals';
 
 @Component({
 	selector: 'simple-search-form',
@@ -9,6 +10,12 @@ import { SimpleSearchService } from './simple-search.service';
 })
 
 export class SimpleSearchFormComponent {
+
+	product_name = myGlobals.product_name;
+	product_vendor = myGlobals.product_vendor;
+	product_img = myGlobals.product_img;
+	product_nonfilter_full = myGlobals.product_nonfilter_full;
+	product_nonfilter_regex = myGlobals.product_nonfilter_regex;
 
 	submitted = false;
 	callback = false;
@@ -37,7 +44,7 @@ export class SimpleSearchFormComponent {
 				var index = 0;
 				for (let facet in res.facet_counts.facet_fields) {
 					if (JSON.stringify(res.facet_counts.facet_fields[facet]) != "{}") {
-						if (facet.indexOf("lmf.") == -1 && facet.indexOf("_d") == -1 && facet.indexOf("_s") == -1 && facet != "thumb") {
+						if (this.simpleSearchService.checkField(facet)) {
 							this.facetObj.push({
 								"name":facet,
 								"options":[]

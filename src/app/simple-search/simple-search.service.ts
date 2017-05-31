@@ -7,8 +7,14 @@ import * as myGlobals from '../globals';
 export class SimpleSearchService {
 
 	private headers = new Headers({'Content-Type': 'application/json'});
-	//private url = myGlobals.endpoint;
-	private url = "http://134.168.33.237:8080/marmotta/solr/fredo/select";
+	private url = myGlobals.marmotta_endpoint;
+	
+	product_name = myGlobals.product_name;
+	product_vendor = myGlobals.product_vendor;
+	product_img = myGlobals.product_img;
+	product_nonfilter_full = myGlobals.product_nonfilter_full;
+	product_nonfilter_regex = myGlobals.product_nonfilter_regex;
+	
 	constructor(private http: Http) { }
 
 	getFields(): Promise<any> {
@@ -35,6 +41,30 @@ export class SimpleSearchService {
 		.toPromise()
 		.then(res => res.json())
 		.catch(this.handleError);
+	}
+	
+	getSingle(id: string): Promise<any> {
+		const url = `${this.url}?q=*&rows=1&wt=json&fq=id:${id}`;
+		return this.http
+		.get(url, {headers: this.headers})
+		.toPromise()
+		.then(res => res.json())
+		.catch(this.handleError);
+	}
+	
+	checkField(field:string): boolean {
+		var valid = true;
+		if (field == this.product_name || field == this.product_img || field == this.product_vendor)
+			valid = false;
+		for (let filter of this.product_nonfilter_full) {
+			if (field == filter)
+				valid = false;
+		}
+		for (let filter of this.product_nonfilter_regex) {
+			if (field.search(filter) != -1)
+				valid = false;
+		}
+		return valid;
 	}
 	
 	private handleError(error: any): Promise<any> {

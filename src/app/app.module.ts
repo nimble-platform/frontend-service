@@ -19,8 +19,10 @@ import { ProductPublishComponent } from './catalogue/product-publish.component';
 import { AdditionalItemPropertyComponent } from './catalogue/additional-item-property.component';
 import { CatalogueService } from './catalogue/catalogue.service';
 import { SimpleSearchComponent } from './simple-search/simple-search.component';
+import { SimpleSearchDetailsComponent } from './simple-search/simple-search-details.component';
 import { SimpleSearchFormComponent } from './simple-search/simple-search-form.component';
 import { SimpleSearchService } from './simple-search/simple-search.service';
+import { BPEService } from './bpe/bpe.service';
 
 @NgModule({
 	imports: [
@@ -42,6 +44,7 @@ import { SimpleSearchService } from './simple-search/simple-search.service';
 		ProductPublishComponent,
 		AdditionalItemPropertyComponent,
 		SimpleSearchComponent,
+		SimpleSearchDetailsComponent,
 		SimpleSearchFormComponent
 	],
 	providers: [
@@ -49,7 +52,8 @@ import { SimpleSearchService } from './simple-search/simple-search.service';
 		CredentialsService,
 		CategoryService,
 		CatalogueService,
-		SimpleSearchService
+		SimpleSearchService,
+		BPEService
 	],
 	bootstrap: [
 		AppComponent

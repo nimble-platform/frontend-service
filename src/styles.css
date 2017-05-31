@@ -4,7 +4,11 @@ body {
 }
 
 button {
-	cursor :pointer;
+	cursor: pointer;
+}
+
+textarea {
+	min-height: 2.375rem;
 }
 
 #loading-icon {
@@ -49,11 +53,46 @@ button {
 
 .inline-icon {
 	max-height: 1rem;
+	margin-top: -0.2rem;
+	margin-right: 0.2rem;
+}
+
+.img-max {
+	max-width: 100%;
+	max-height: 30rem;
+}
+
+.img-sm {
+	max-height: 2rem;
+	max-width: 100%;
+	margin-top: -0.2rem;
+}
+
+.bordered {
+	border: 1px solid rgba(0, 0, 0, 0.15) !important;
+	border-radius: 0.25rem !important;
+	padding: 0.5rem !important;
 }
 
 .clickable {
 	cursor: pointer;
 	text-decoration: underline;
+}
+
+.pointer {
+	cursor: pointer;
+}
+
+.align-left {
+	text-align: left;
+}
+
+.align-right {
+	text-align: right;
+}
+
+.align-center {
+	text-align: center;
 }
 
 .navbar-inverse .navbar-nav .nav-link {

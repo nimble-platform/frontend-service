@@ -54,15 +54,15 @@
 				<div class="col-8">
 		
 					<div *ngFor="let result of response">
-						<div class="card">
+						<div class="card pointer" [routerLink]="['/simple-search-details', result.id]">
 							<div class="card-block">
 								<div class="row">
 									<div class="col-2">
-										<img src="{{result.thumb}}" class="thumb" onerror="this.src='assets/empty_img.png';"/>
+										<img src="{{result[product_img]}}" class="thumb" onerror="this.src='assets/empty_img.png';"/>
 									</div>
 									<div class="col-10">
-										<b>{{ result.name }}</b><br/>
-										<i>{{ result.manufacturer }}</i>
+										<b>{{ result[product_name] }}</b><br/>
+										<i>{{ result[product_vendor] }}</i>
 									</div>
 								</div>
 							</div>
@@ -72,7 +72,7 @@
 				</div>
 				
 			</div>
-			
+
 		</div>
 		<div [hidden]="size>0">
 			<span i18n>No search results</span>

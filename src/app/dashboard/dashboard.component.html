@@ -1,7 +1,18 @@
-<h3 i18n>Dashboard</h3>
-
-<div class="space-before">
-	<span i18n>Welcome to the NIMBLE platform,</span> {{fullName}}!
+<div class="row">
+	<div class="col-12">
+		<h3 i18n>Dashboard</h3>
+		<div class="space-before">
+			<span i18n>Welcome to the</span> <img class="img-sm" src="assets/nimble_logo.png"/> <span i18n>platform,</span> {{fullName}}!
+		</div>
+	</div>
 </div>
-
-<img class="space-before" src="assets/nimble_logo.png" style="max-width:100%;"/>
+<div class="row space-before">
+	<div class="col-6">
+		<h4 i18n>Buyer</h4>
+		{{ buyer|json }}
+	</div>
+	<div class="col-6">
+		<h4 i18n>Seller</h4>
+		{{ seller|json }}
+	</div>
+</div>
