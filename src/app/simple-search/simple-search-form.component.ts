@@ -28,6 +28,7 @@ export class SimpleSearchFormComponent {
 	objToSubmit = new Search('');
 	facetObj: any;
 	facetQuery: any;
+	temp: any;
 	response: any;
 
 	constructor(
@@ -41,6 +42,7 @@ export class SimpleSearchFormComponent {
 			this.simpleSearchService.get(search.q,res._body.split(","),this.facetQuery,this.page)
 			.then(res => {
 				this.facetObj = [];
+				this.temp = [];
 				var index = 0;
 				for (let facet in res.facet_counts.facet_fields) {
 					if (JSON.stringify(res.facet_counts.facet_fields[facet]) != "{}") {
@@ -59,7 +61,19 @@ export class SimpleSearchFormComponent {
 						}
 					}
 				}
-				this.response = res.response.docs;
+				this.temp = res.response.docs;
+				for (let doc in this.temp) {
+					if (this.isJson(this.temp[doc][this.product_img])) {
+						var json = JSON.parse(this.temp[doc][this.product_img]);
+						var img = "";
+						if (json.length > 1)
+							img = "data:"+JSON.parse(this.temp[doc][this.product_img][0])[0].mimeCode+";base64,"+JSON.parse(this.temp[doc][this.product_img][0])[0].value;
+						else
+							img = "data:"+this.temp[doc][this.product_img].mimeCode+";base64,"+this.temp[doc][this.product_img].value;
+						this.temp[doc][this.product_img] = img;
+					}
+				}
+				this.response = JSON.parse(JSON.stringify(this.temp));
 				this.size = res.response.numFound;
 				this.start = this.page*10-10+1;
 				this.end = this.start+res.response.docs.length-1;
@@ -91,6 +105,15 @@ export class SimpleSearchFormComponent {
 		else
 			this.facetQuery.splice(this.facetQuery.indexOf(fq), 1);
 		this.get(this.objToSubmit);
+	}
+	
+	isJson(str: string): boolean {
+		try {
+			JSON.parse(str);
+		} catch (e) {
+			return false;
+		}
+		return true;
 	}
 
 }

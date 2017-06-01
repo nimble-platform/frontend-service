@@ -14,6 +14,7 @@ export class SimpleSearchService {
 	product_img = myGlobals.product_img;
 	product_nonfilter_full = myGlobals.product_nonfilter_full;
 	product_nonfilter_regex = myGlobals.product_nonfilter_regex;
+	product_configurable = myGlobals.product_configurable;
 	
 	constructor(private http: Http) { }
 
@@ -61,6 +62,10 @@ export class SimpleSearchService {
 				valid = false;
 		}
 		for (let filter of this.product_nonfilter_regex) {
+			if (field.search(filter) != -1)
+				valid = false;
+		}
+		for (let filter of this.product_configurable) {
 			if (field.search(filter) != -1)
 				valid = false;
 		}
