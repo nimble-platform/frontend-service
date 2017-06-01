@@ -6,6 +6,10 @@ export class BinaryObject {
     constructor(
         public value: string,
         public mimeCode: string,
-        public uri: string
+        public fileName: string,
+        public uri: string,
+
+        // for demo
+        public objectMetadata:string,
     ) {  }
 }

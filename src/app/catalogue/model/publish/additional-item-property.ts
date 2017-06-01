@@ -10,6 +10,7 @@ export class AdditionalItemProperty {
         public name: string,
         public value: string[],
         public embeddedDocumentBinaryObject:BinaryObject[],
+        public demoSpecificMultipleContent:string,
         public unit: string,
         public valueQualifier: string,
         public itemPropertyGroup: ItemPropertyGroup,

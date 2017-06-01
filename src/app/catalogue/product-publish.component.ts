@@ -13,10 +13,12 @@ import {CatalogueService} from "./catalogue.service";
 import {Category} from "./model/category/category";
 import {Identifier} from "./model/publish/identifier";
 import {CatalogueLine} from "./model/publish/catalogue-line";
+import {Catalogue} from "./model/publish/catalogue";
+import {CookieService} from "ng2-cookies";
 
 @Component({
     selector: 'product-publish',
-    templateUrl: './product-publish.component.html',
+    templateUrl: './product-publish.component.html'
 })
 
 export class ProductPublishComponent implements OnInit {
@@ -25,10 +27,11 @@ export class ProductPublishComponent implements OnInit {
     selectedCategory: Category;
     singleItemUpload: boolean = true;
     goodsItem: GoodsItem;
-    newProperty: AdditionalItemProperty = new AdditionalItemProperty("", [''], new Array<BinaryObject>(), "", "Text", null, null);
+    newProperty: AdditionalItemProperty = new AdditionalItemProperty("", [''], new Array<BinaryObject>(), "", "", "STRING", null, null);
 
     constructor(private categoryService: CategoryService,
-                private catalogueService: CatalogueService) {
+                private catalogueService: CatalogueService,
+                private cookieService: CookieService) {
     }
 
     ngOnInit() {
@@ -38,7 +41,7 @@ export class ProductPublishComponent implements OnInit {
         // create additional item properties
         let additionalItemProperties = new Array<AdditionalItemProperty>();
         // create item
-        let item = new Item("", additionalItemProperties, null);
+        let item = new Item("", "", additionalItemProperties, null, [], "");
         // identifier
         let giId = new Identifier(this.generateUUID(), "", "");
         // create goods item
@@ -52,7 +55,7 @@ export class ProductPublishComponent implements OnInit {
                     unit = property.unit.shortName;
                 }
                 let valueQualifier = property.dataType;
-                let aip = new AdditionalItemProperty(property.preferredName, [''], new Array<BinaryObject>(), unit, valueQualifier, null, null);
+                let aip = new AdditionalItemProperty(property.preferredName, [''], new Array<BinaryObject>(), "", unit, valueQualifier, null, null);
                 additionalItemProperties.push(aip);
             }
         }
@@ -68,23 +71,41 @@ export class ProductPublishComponent implements OnInit {
     }
 
     private publishProduct(): void {
-        this.catalogueService.getCatalogue().then(catalogue => {
+        let userId = this.cookieService.get("user_id");
+        this.catalogueService.getCatalogue(userId).then(catalogue => {
                 let line: CatalogueLine = new CatalogueLine(null, this.goodsItem);
                 catalogue.catalogueLine.push(line);
+                this.mergeMultipleValuesIntoSingleField(catalogue);
+                /*if (catalogue.uuid == null) {
+                    this.catalogueService.postCatalogue(catalogue);
+                } else {
+                    this.catalogueService.putCatalogue(catalogue);
+                }*/
                 this.catalogueService.postCatalogue(catalogue);
-                //this.catalogueService.publishProduct(this.goodsItem);
             }
         );
+    }
+
+    private mergeMultipleValuesIntoSingleField(catalogue: Catalogue): void {
+        for (let i: number = 0; i < catalogue.catalogueLine.length; i++) {
+            let props = catalogue.catalogueLine[i].goodsItem.item.additionalItemProperty;
+
+            for (let j: number = 0; j < props.length; j++) {
+                props[j].demoSpecificMultipleContent = JSON.stringify(props[j].embeddedDocumentBinaryObject);
+            }
+        }
+        //demo specific
+        catalogue.catalogueLine[0].goodsItem.item.itemConfigurationImages = JSON.stringify(catalogue.catalogueLine[0].goodsItem.item.itemConfigurationImageArray);
     }
 
 
     private onValueTypeChange(event: any) {
         if (event.target.value == "Text") {
-            this.newProperty.valueQualifier = "Text";
+            this.newProperty.valueQualifier = "STRING";
         } else if (event.target.value == "Number") {
-            this.newProperty.valueQualifier = "Number";
+            this.newProperty.valueQualifier = "REAL_MEASURE";
         } else if (event.target.value == "Image" || event.target.valueQualifier == "File") {
-            this.newProperty.valueQualifier = "Binary";
+            this.newProperty.valueQualifier = "BINARY";
         }
         console.log(event.target.selectedIndex);
     }
@@ -100,11 +121,28 @@ export class ProductPublishComponent implements OnInit {
 
                 reader.onload = function (e: any) {
                     let base64String = reader.result.split(',').pop();
-                    let binaryObject = new BinaryObject(base64String, file.type, "");
+                    let binaryObject = new BinaryObject(base64String, file.type, file.name, "", "");
                     binaryObjects.push(binaryObject);
                 };
                 reader.readAsDataURL(file);
             }
+        }
+    }
+
+    //TODO update the method below so that the parameters are passed dynamically
+    private overallProductImageImage(event: any, wallTilesValue:string, floorTilesValue:string) {
+        let fileList: FileList = event.target.files;
+        if (fileList.length > 0) {
+            let itemConfigurationImageArray = this.goodsItem.item.itemConfigurationImageArray;
+            let file: File = fileList[0];
+            let reader = new FileReader();
+
+            reader.onload = function (e: any) {
+                let base64String = reader.result.split(',').pop();
+                let binaryObject = new BinaryObject(base64String, file.type, file.name, "", "{wall: " + wallTilesValue + ", floor: " + floorTilesValue + "}");
+                itemConfigurationImageArray.push(binaryObject);
+            };
+            reader.readAsDataURL(file);
         }
     }
 
@@ -125,7 +163,7 @@ export class ProductPublishComponent implements OnInit {
         this.goodsItem.item.additionalItemProperty.push(this.newProperty);
 
         // reset the custom property view
-        this.newProperty = new AdditionalItemProperty(null, [''], new Array<BinaryObject>(), "", "", null, null);
+        this.newProperty = new AdditionalItemProperty(null, [''], new Array<BinaryObject>(), "", "", "STRING", null, null);
         this.propertyValueType.nativeElement.selectedIndex = 0;
     }
 

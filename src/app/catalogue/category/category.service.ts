@@ -9,7 +9,6 @@ import * as myGlobals from '../../globals';
 @Injectable()
 export class CategoryService {
     private headers = new Headers({'Accept': 'application/json'});
-    // TODO change the catalogue_endpoint with the common endpoint
     private baseUrl = myGlobals.catalogue_endpoint + `/catalogue/category`;
     private categories: Category[] = null;
     private selectedCategory: Category= null;

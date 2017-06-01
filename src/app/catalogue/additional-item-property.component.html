@@ -7,6 +7,7 @@
     <label class="col-3 control-label">{{additionalItemProperty.name}}</label>
     <div style="display: inline-block">
         <img *ngFor="let image of additionalItemProperty.embeddedDocumentBinaryObject"
+             class="pr-2"
              src="data:{{image.mimeCode}};base64,{{image.value}}"
              height="100"
              width="100"/>

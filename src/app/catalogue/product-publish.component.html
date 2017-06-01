@@ -4,7 +4,7 @@
         <a href id="singleUpload"
            [ngClass]="{'nav-link': true, active: singleItemUpload}"
            (click)="onTabClick($event)"
-		   i18n
+           i18n
         >Upload Single Product</a>
     </li>
 
@@ -12,7 +12,7 @@
         <a href id="bulkUpload"
            [ngClass]="{'nav-link': true, active: !singleItemUpload}"
            (click)="onTabClick($event)"
-		   i18n
+           i18n
         >Upload Multiple Products</a>
     </li>
 </ul>
@@ -24,32 +24,39 @@
     <div class="row justify-content-between align-items-start">
         <div>
             <h6 style="display: inline-block;" i18n>Selected category:</h6>
-            <button class="btn btn-info ml-3">{{selectedCategory != null ? selectedCategory.preferredName: 'None'}}</button>
+            <button class="btn btn-info ml-3">{{selectedCategory != null ? selectedCategory.preferredName: 'None'}}
+            </button>
         </div>
         <button class="btn btn-success"
-                (click)="publishProduct()"
-                [disabled]="goodsItem.item.additionalItemProperty.length == 0">
+                (click)="publishProduct()">
             <span i18n>Publish Product</span>
         </button>
     </div>
     <hr>
     <h4><u>Product Details</u></h4>
-    <div *ngIf="goodsItem.item.additionalItemProperty.length == 0">
-        Product has no properties
-    </div>
-    <div *ngIf="goodsItem.item.additionalItemProperty.length > 0" class="row mt-3">
+    <div class="row mt-3">
         <h5 class="col-3"><label i18n>Property Name</label></h5>
         <h5 class="col-3"><label i18n>Property Value</label></h5>
     </div>
 
     <form class="space-before">
+        <!-- ubl properties -->
+        <div class="input-group form-group">
+            <label class="col-3 control-label">Name</label>
+            <input type="text" class="form-control" name="productName" [(ngModel)]="goodsItem.item.name">
+        </div>
+        <div class="input-group form-group">
+            <label class="col-3 control-label">Description</label>
+            <input type="text" class="form-control" name="productDescription" [(ngModel)]="goodsItem.item.description">
+        </div>
+
         <!-- eClass properties -->
         <additional-item-property *ngFor="let property of goodsItem.item.additionalItemProperty"
                                   [additionalItemProperty]="property">
         </additional-item-property>
-        <hr class="mt-5">
 
         <!-- new property -->
+        <hr class="mt-5">
         <div class="form-group">
             <h6 i18n>Add new property</h6>
             <form #customPropertyForm="ngForm" class="row">
@@ -104,15 +111,91 @@
                     </div>
                 </div>
             </form>
+
             <!-- selected images or files -->
             <div *ngIf="newProperty != null && newProperty.embeddedDocumentBinaryObject != null"
                  class="offset-3 mt-3">
-                <img *ngFor="let image of newProperty.embeddedDocumentBinaryObject"
-                     class="mr-2"
-                     src="data:{{image.mimeCode}};base64,{{image.value}}"
-                     height="100"
-                     width="100"
-                />
+                <ul class="list-group">
+                    <li *ngFor="let image of newProperty.embeddedDocumentBinaryObject"
+                        class="list-group-item pb-2 border-0">
+
+                        <div>
+                            <img class="mr-2"
+                                 src="data:{{image.mimeCode}};base64,{{image.value}}"
+                                 height="100"
+                                 width="100"
+                            />
+                            <div style="display: inline-block;">
+                                <label>Value Details:</label>
+                                <input type="text" class="form-control" aria-describedby="componentName"
+                                       [value]="image.objectMetadata"/>
+                            </div>
+                        </div>
+
+                        <!--<img *ngIf="image.overallItemImage != null"
+                             class="mr-2"
+                             src="data:{{image.overallItemImage.mimeCode}};base64,{{image.overallItemImage.value}}"
+                             height="100"
+                             width="100"
+                        />
+
+                        <div *ngIf="image.overallItemImage ==null" (click)="overallProductImage.click()">
+                            <input #overallProductImage type="file" (change)="overallProductImageImage($event, image)"
+                                   accept="image/*"
+                                   style="display: none">
+                            <img src="./assets/catalogue/add_button.png"/>
+                            <span>Add overall product image for this configuration</span>
+                        </div>-->
+                    </li>
+                </ul>
+            </div>
+            <!-- selected images or files -->
+        </div>
+        <!-- new property -->
+
+        <!-- product configuration images -->
+        <div *ngIf="goodsItem.item.additionalItemProperty != null && goodsItem.item.additionalItemProperty.length == 2">
+            <hr class="mt-5">
+            <div>
+                <h6>Add product images for different combinations of product features</h6>
+                <div class="row pb-3">
+                    <!-- TODO produce the cols below dynamically-->
+                    <div class="col-2">
+                        <label>Wall tile</label>
+                        <div>
+                            <select class="custom-select" #wallTileValues>
+                                <option selected>White</option>
+                                <option>Black</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-2">
+                        <label>Floor tile</label>
+                        <div>
+                            <select class="custom-select" #floorTileValues>
+                                <option selected>White</option>
+                                <option>Black</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div (click)="overallProductImage.click()">
+                        <input #overallProductImage type="file" (change)="overallProductImageImage($event, wallTileValues.value, floorTileValues.value)"
+                               accept="image/*"
+                               style="display: none">
+                        <img src="./assets/catalogue/add_button.png"/>
+                        <span>Add image</span>
+                    </div>
+                </div>
+                <div *ngIf="goodsItem.item.itemConfigurationImageArray.length > 0"
+                     class="input-group form-group">
+                    <div style="display: inline-block">
+                        <img *ngFor="let image of goodsItem.item.itemConfigurationImageArray"
+                             class="pr-2"
+                             src="data:{{image.mimeCode}};base64,{{image.value}}"
+                             height="100"
+                             width="100"/>
+                    </div>
+                </div>
             </div>
         </div>
     </form>
@@ -120,5 +203,19 @@
 
 <!-- Bulk product publishing -->
 <div *ngIf="!singleItemUpload">
-    Hi
+    <div class="row justify-content-center">
+        <div class="col p-5">
+            <ol class="list-group">
+                <div class="d-flex justify-content-start p-2">
+                    <li>Download the product category template</li>
+                    <button class="btn btn-success ml-auto">Download template</button>
+                </div>
+                <div class="d-flex justify-content-start p-2">
+                    <li>Upload the template after filling it with your products' information
+                    </li>
+                    <button class="btn btn-success ml-auto">Upload template</button>
+                </div>
+            </ol>
+        </div>
+    </div>
 </div>
