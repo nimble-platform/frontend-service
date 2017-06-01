@@ -3,6 +3,7 @@ import { ActivatedRoute, Params } from '@angular/router';
 import { Search } from './model/search';
 import { SimpleSearchService } from './simple-search.service';
 import { BPEService } from '../bpe/bpe.service';
+import { OrderObject } from '../bpe/model/order-object';
 import { Order } from '../bpe/model/order';
 import { CookieService } from 'ng2-cookies';
 import * as myGlobals from '../globals';
@@ -25,8 +26,9 @@ export class SimpleSearchDetailsComponent implements OnInit {
 	submitted2 = false;
 	callback2 = false;
 	error_detc2 = false;
-	model = new Order('','','',{amount:'',message:'',product_id:'',product_name:''});
-	objToSubmit = new Order('','','',{amount:'',message:'',product_id:'',product_name:''});
+	model = new Order('','','','');
+	orderToSubmit = new Order('','','','');
+	orderObjToSubmit = new OrderObject('','','','','');
 	response: any;
 	details: any;
 	
@@ -68,13 +70,14 @@ export class SimpleSearchDetailsComponent implements OnInit {
     }
 	
 	order(obj: Order) {
-		this.objToSubmit = JSON.parse(JSON.stringify(obj));
-		this.objToSubmit.order.product_id = this.response[0].id.toString();
-		this.objToSubmit.order.product_name = this.response[0][this.product_name].toString();
-		this.objToSubmit.seller = this.response[0][this.product_vendor].toString();
-		this.objToSubmit.buyer = this.cookieService.get("company_id");
-		this.objToSubmit.connection = "|"+this.response[0][this.product_vendor].toString()+"|"+this.cookieService.get("company_id")+"|";
-		this.bpeService.placeOrder(this.objToSubmit)
+		this.orderToSubmit = JSON.parse(JSON.stringify(obj));
+		this.orderToSubmit.product_id = this.response[0].id.toString();
+		this.orderToSubmit.product_name = this.response[0][this.product_name].toString();
+		this.orderObjToSubmit.order = JSON.stringify(this.orderToSubmit);
+		this.orderObjToSubmit.seller = this.response[0][this.product_vendor].toString();
+		this.orderObjToSubmit.buyer = this.cookieService.get("company_id");
+		this.orderObjToSubmit.connection = "|"+this.response[0][this.product_vendor].toString()+"|"+this.cookieService.get("company_id")+"|";
+		this.bpeService.placeOrder(this.orderObjToSubmit)
 		.then(res => {
 			this.callback2 = true;
 			this.error_detc2 = false;

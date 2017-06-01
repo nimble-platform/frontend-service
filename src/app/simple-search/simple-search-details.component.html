@@ -15,11 +15,11 @@
 				<form (ngSubmit)="onSubmit()" class="space-before" #orderForm="ngForm" novalidate>
 					<div class="input-group form-group">
 						<label for="amount" class="input-group-addon" i18n>Amount</label>
-						<input type="text" class="form-control" id="amount" required [(ngModel)]="model.order.amount" name="amount" #amount="ngModel" pattern="\d*">
+						<input type="text" class="form-control" id="amount" required [(ngModel)]="model.amount" name="amount" #amount="ngModel" pattern="\d*">
 					</div>
 					<div class="input-group form-group">
 						<label for="message" class="input-group-addon" i18n>Message</label>
-						<input type="text" class="form-control" id="message" [(ngModel)]="model.order.message" name="message" #message="ngModel" pattern=".{1,}">
+						<input type="text" class="form-control" id="message" [(ngModel)]="model.message" name="message" #message="ngModel" pattern=".{1,}">
 					</div>
 					<button type="submit" class="btn btn-success" [disabled]="!orderForm.form.valid" i18n>Order</button>
 				</form>

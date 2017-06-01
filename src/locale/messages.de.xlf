@@ -34,13 +34,85 @@
         <source>platform,</source>
         <target>Plattform,</target>
       </trans-unit>
+      <trans-unit id="12cbfc1584df29b3f0c65220c4d13e79120490a1" datatype="html">
+        <source>Sales</source>
+        <target>Verkäufe</target>
+      </trans-unit>
+	  <trans-unit id="2f933b826a570836cab04f683970a2d22068458c" datatype="html">
+        <source>Date</source>
+        <target>Datum</target>
+      </trans-unit>
+      <trans-unit id="d3cbff754f1c148f3fec696edd246993aea35b01" datatype="html">
+        <source>Product</source>
+        <target>Produkt</target>
+      </trans-unit>
+      <trans-unit id="dfc2fb58e2a04ed944a4bd80f0a2087775134068" datatype="html">
+        <source>Amount</source>
+		<target>Menge</target>
+      </trans-unit>
       <trans-unit id="a7cee30e3df57f6b3b38712261c670aff46643e9" datatype="html">
         <source>Buyer</source>
         <target>Käufer</target>
       </trans-unit>
+      <trans-unit id="ccac601bf473fa28c9ac46794f1cd40542f74347" datatype="html">
+        <source>Message</source>
+        <target>Nachricht</target>
+      </trans-unit>
+      <trans-unit id="81b97b8ea996ad1e4f9fca8415021850214884b1" datatype="html">
+        <source>Status</source>
+        <target>Status</target>
+      </trans-unit>
+	  <trans-unit id="24813b8a3e45f0b57136c18d003027262cfe2d1f" datatype="html">
+        <source>Options</source>
+        <target>Optionen</target>
+      </trans-unit>
+      <trans-unit id="643d97562e69424462b2faf3f0124000e9cc79f3" datatype="html">
+        <source>Action required</source>
+        <target>Aktion erforderlich</target>
+      </trans-unit>
+	  <trans-unit id="48f6d7edad116a39618612c19d20ed2089b54acb" datatype="html">
+        <source>Approved</source>
+        <target>Angenommen</target>
+      </trans-unit>
+      <trans-unit id="2310400448b90e879fb988300d6839eb9316edf8" datatype="html">
+        <source>Declined</source>
+        <target>Abgelehnt</target>
+      </trans-unit>
+      <trans-unit id="73a83c0db2dbf61230eba62e1d22a6da3d190c4c" datatype="html">
+        <source>Approve</source>
+        <target>Annehmen</target>
+      </trans-unit>
+      <trans-unit id="ce3bb7411069c96e2065502c115323680e7f1ce0" datatype="html">
+        <source>Decline</source>
+        <target>Ablehnen</target>
+      </trans-unit>
+      <trans-unit id="10de27ff02fd6bdf94b32ca462d0d43ea7ce6eb5" datatype="html">
+        <source>Negotiate</source>
+        <target>Verhandeln</target>
+      </trans-unit>
+	  <trans-unit id="daace82faf38ed52faa97ad380012b17d9bd6aa6" datatype="html">
+        <source>Remove from history</source>
+        <target>Aus der Historie entfernen</target>
+      </trans-unit>
+      <trans-unit id="d6111969b4b0929debd4fd0d910733a6fccd37b2" datatype="html">
+        <source>No data</source>
+        <target>Keine Daten</target>
+      </trans-unit>
+	  <trans-unit id="a0539c7b74e50e2b172d4209154905dcca2b7888" datatype="html">
+        <source>Purchases</source>
+        <target>Käufe</target>
+      </trans-unit>
       <trans-unit id="328c759c9dd77f41866119252dca13c72c980344" datatype="html">
         <source>Seller</source>
         <target>Verkäufer</target>
+      </trans-unit>
+      <trans-unit id="8ddf7d586e5a7c177b267fb1c0ef9e253b7ab496" datatype="html">
+        <source>Waiting for response</source>
+        <target>Warte auf Antwort</target>
+      </trans-unit>
+	  <trans-unit id="d7b35c384aecd25a516200d6921836374613dfe7" datatype="html">
+        <source>Cancel</source>
+        <target>Abbrechen</target>
       </trans-unit>
       <trans-unit id="80e6a18f9329abccbc0c0fbfccd80192660c03e4" datatype="html">
         <source>Choose product (or service) category</source>
@@ -113,14 +185,6 @@
       <trans-unit id="ccd94c9d494a8fb7cb742c8d04f6f303ef50d22a" datatype="html">
         <source>Add property</source>
         <target>Eigenschaft hinzufügen</target>
-      </trans-unit>
-	  <trans-unit id="dfc2fb58e2a04ed944a4bd80f0a2087775134068" datatype="html">
-        <source>Amount</source>
-        <target>Menge</target>
-      </trans-unit>
-      <trans-unit id="ccac601bf473fa28c9ac46794f1cd40542f74347" datatype="html">
-        <source>Message</source>
-        <target>Nachricht</target>
       </trans-unit>
       <trans-unit id="5704ec2049d007c5f5fb495a5d8b607e68d58081" datatype="html">
         <source>Order</source>

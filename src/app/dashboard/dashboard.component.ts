@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AppComponent } from '../app.component';
 import { CookieService } from 'ng2-cookies';
 import { BPEService } from '../bpe/bpe.service';
+import { OrderResponse } from '../bpe/model/order-response';
 
 @Component({
 	selector: 'nimble-dashboard',
@@ -12,9 +13,10 @@ import { BPEService } from '../bpe/bpe.service';
 export class DashboardComponent implements OnInit {
 
 	fullName = "";
-	tasks: any;
-	buyer: any;
-	seller: any;
+	buyer_history_temp: any;
+	buyer_history: any;
+	seller_history_temp: any;
+	seller_history: any;
 
 	constructor(
 		private cookieService: CookieService,
@@ -26,62 +28,172 @@ export class DashboardComponent implements OnInit {
 		if (this.cookieService.get("user_fullname"))
 			this.fullName = this.cookieService.get("user_fullname");
 		if (this.cookieService.get("user_id") && this.cookieService.get("company_id")) {
-			this.tasks = [];
-			this.buyer = [];
-			this.seller = [];
-			this.bpeService.getOrders(this.cookieService.get("company_id"))
-			.then(res => {
-				for (let task of res) {
-					this.tasks.push({
-						"task_id":task.id,
-						"process_id":task.processInstanceId
-					});
-					this.bpeService.getProcessDetails(task.processInstanceId)
-					.then(res => {
-						var vBuyer = "", vSeller = "", vOrder = "", vTask_id = "", vProcess_id = "";
-						for (let field of res) {
-							vProcess_id = field.processInstanceId;
-							if (field.name == "buyer")
-								vBuyer = field.value;
-							else if (field.name == "seller")
-								vSeller = field.value;
-							else if (field.name == "order")
-								vOrder = field.value;
-							for (let t of this.tasks) {
-								if (t.process_id == vProcess_id)
-									vTask_id = t.task_id;
-							}
-						}
-						if (vBuyer == this.cookieService.get("company_id")) {
-							this.buyer.push({
-								"task_id":vTask_id,
-								"process_id":vProcess_id,
-								"buyer":vBuyer,
-								"seller":vSeller,
-								"order":vOrder
-							});
-						}
-						else {
-							this.seller.push({
-								"task_id":vTask_id,
-								"process_id":vProcess_id,
-								"buyer":vBuyer,
-								"seller":vSeller,
-								"order":vOrder
-							});
-						}
-					})
-					.catch(error => {
-						
-					});
-				}
-			})
-			.catch(error => {
-				
-			});
+			this.buyer_history_temp = [];
+			this.buyer_history = [];
+			this.seller_history_temp = [];
+			this.seller_history = [];
+			this.loadOrders();			
 		}
 		else
 			this.appComponent.checkLogin("/login");
+	}
+	
+	loadOrders() {
+		this.bpeService.getBuyerHistory(this.cookieService.get("company_id"))
+		.then(res => {
+			this.buyer_history_temp = [];
+			this.buyer_history = [];
+			for (let task of res) {
+				this.buyer_history_temp.push({
+					"task_id":task.id,
+					"process_id":task.processInstanceId,
+					"start_time":new Date(task.startTime).toLocaleDateString()+"\n"+new Date(task.startTime).toLocaleTimeString()
+				});
+				this.bpeService.getProcessDetailsHistory(task.processInstanceId)
+				.then(res => {
+					var vBuyer = "", vSeller = "", vOrder = "", vOrderResponse = "", vTask_id = "", vProcess_id = "", vStart_time = "";
+					for (let field of res) {
+						vProcess_id = field.processInstanceId;
+						if (field.name == "buyer")
+							vBuyer = field.value;
+						else if (field.name == "seller")
+							vSeller = field.value;
+						else if (field.name == "order")
+							vOrder = field.value;
+						else if (field.name == "orderResponse")
+							vOrderResponse = field.value;
+						for (let t of this.buyer_history_temp) {
+							if (t.process_id == vProcess_id) {
+								vTask_id = t.task_id;
+								vStart_time = t.start_time;
+							}
+						}
+					}
+					if (this.isJson(vOrder))
+						vOrder = JSON.parse(vOrder);
+					if (this.isJson(vOrderResponse))
+						vOrderResponse = JSON.parse(vOrderResponse);
+					this.buyer_history.push({
+						"task_id":vTask_id,
+						"process_id":vProcess_id,
+						"start_time":vStart_time,
+						"buyer":vBuyer,
+						"seller":vSeller,
+						"order":vOrder,
+						"orderResponse":vOrderResponse
+					});
+					this.buyer_history.sort(function(a:any,b:any){
+						var a_comp = a.start_time;
+						var b_comp = b.start_time;
+						return b_comp.localeCompare(a_comp);
+					});
+				})
+				.catch(error => {
+					
+				});
+			}
+		})
+		.catch(error => {
+			
+		});
+		this.bpeService.getSellerHistory(this.cookieService.get("company_id"))
+		.then(res => {
+			this.seller_history_temp = [];
+			this.seller_history = [];
+			for (let task of res) {
+				this.seller_history_temp.push({
+					"task_id":task.id,
+					"process_id":task.processInstanceId,
+					"start_time":new Date(task.startTime).toLocaleDateString()+"\n"+new Date(task.startTime).toLocaleTimeString()
+				});
+				this.bpeService.getProcessDetailsHistory(task.processInstanceId)
+				.then(res => {
+					var vBuyer = "", vSeller = "", vOrder = "", vOrderResponse = "", vTask_id = "", vProcess_id = "", vStart_time = "";
+					for (let field of res) {
+						vProcess_id = field.processInstanceId;
+						if (field.name == "buyer")
+							vBuyer = field.value;
+						else if (field.name == "seller")
+							vSeller = field.value;
+						else if (field.name == "order")
+							vOrder = field.value;
+						else if (field.name == "orderResponse")
+							vOrderResponse = field.value;
+						for (let t of this.seller_history_temp) {
+							if (t.process_id == vProcess_id) {
+								vTask_id = t.task_id;
+								vStart_time = t.start_time;
+							}
+						}
+					}
+					if (this.isJson(vOrder))
+						vOrder = JSON.parse(vOrder);
+					if (this.isJson(vOrderResponse))
+						vOrderResponse = JSON.parse(vOrderResponse);
+					this.seller_history.push({
+						"task_id":vTask_id,
+						"process_id":vProcess_id,
+						"start_time":vStart_time,
+						"buyer":vBuyer,
+						"seller":vSeller,
+						"order":vOrder,
+						"orderResponse":vOrderResponse
+					});
+					this.seller_history.sort(function(a:any,b:any){
+						var a_comp = a.start_time;
+						var b_comp = b.start_time;
+						return b_comp.localeCompare(a_comp);
+					});
+				})
+				.catch(error => {
+					
+				});
+			}
+		})
+		.catch(error => {
+			
+		});
+	}
+	
+	respondToOrder(task: string, response: string) {
+		var orderResponse = new OrderResponse('','');
+		orderResponse.response = response;
+		this.bpeService.respondToOrder(task,orderResponse)
+		.then(res => {
+			this.loadOrders();
+		})
+		.catch(error => {
+			this.loadOrders();
+		});
+	}
+	
+	removeOrder(process:string) {
+		this.bpeService.removeOrder(process)
+		.then(res => {
+			this.loadOrders();
+		})
+		.catch(error => {
+			this.loadOrders();
+		});
+	}
+	
+	cancelOrder(process:string) {
+		this.bpeService.cancelOrder(process)
+		.then(res => {
+			this.removeOrder(process);
+		})
+		.catch(error => {
+			this.removeOrder(process);
+		});
+	}
+	
+	isJson(str: string): boolean {
+		try {
+			JSON.parse(str);
+		} catch (e) {
+			return false;
+		}
+		return true;
 	}
 
 }
