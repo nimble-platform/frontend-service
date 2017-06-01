@@ -131,21 +131,6 @@
                                        [value]="image.objectMetadata"/>
                             </div>
                         </div>
-
-                        <!--<img *ngIf="image.overallItemImage != null"
-                             class="mr-2"
-                             src="data:{{image.overallItemImage.mimeCode}};base64,{{image.overallItemImage.value}}"
-                             height="100"
-                             width="100"
-                        />
-
-                        <div *ngIf="image.overallItemImage ==null" (click)="overallProductImage.click()">
-                            <input #overallProductImage type="file" (change)="overallProductImageImage($event, image)"
-                                   accept="image/*"
-                                   style="display: none">
-                            <img src="./assets/catalogue/add_button.png"/>
-                            <span>Add overall product image for this configuration</span>
-                        </div>-->
                     </li>
                 </ul>
             </div>
@@ -154,7 +139,7 @@
         <!-- new property -->
 
         <!-- product configuration images -->
-        <div *ngIf="goodsItem.item.additionalItemProperty != null && goodsItem.item.additionalItemProperty.length == 2">
+        <div *ngIf="goodsItem.item.additionalItemProperty != null && goodsItem.item.additionalItemProperty.length >= 2">
             <hr class="mt-5">
             <div>
                 <h6>Add product images for different combinations of product features</h6>

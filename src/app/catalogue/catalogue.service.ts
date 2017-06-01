@@ -82,6 +82,8 @@ export class CatalogueService {
     }
 
     private detachHjidsFromParty(party:Party): void {
+        let id:Identifier = new Identifier(party.hjid, null, null);
+        party.id = id;
         party.hjid = null;
         party.partyName[0].hjid = null;
         party.person = null;

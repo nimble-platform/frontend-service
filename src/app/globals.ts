@@ -18,9 +18,9 @@ export const catalogue_endpoint="http://localhost:8095";
 //export const product_default = {};
 
 // "Bathroom" demo
-export const marmotta_endpoint="http://134.168.33.237:8080/marmotta/solr/Catalogue3/select";
+export const marmotta_endpoint="http://134.168.33.237:8080/marmotta/solr/Catalogue4/select";
 export const product_name = "item_name";
-export const product_vendor = "";
+export const product_vendor = "item_vendor_id";
 export const product_img = "item_complete_images";
 export const product_nonfilter_full = ["id","_version_","img_array"];
 export const product_nonfilter_regex = ["lmf."];

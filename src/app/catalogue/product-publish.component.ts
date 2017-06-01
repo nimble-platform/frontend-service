@@ -73,14 +73,15 @@ export class ProductPublishComponent implements OnInit {
     private publishProduct(): void {
         let userId = this.cookieService.get("user_id");
         this.catalogueService.getCatalogue(userId).then(catalogue => {
+                this.goodsItem.item.manufacturerParty = catalogue.providerParty;
                 let line: CatalogueLine = new CatalogueLine(null, this.goodsItem);
                 catalogue.catalogueLine.push(line);
                 this.mergeMultipleValuesIntoSingleField(catalogue);
                 /*if (catalogue.uuid == null) {
-                    this.catalogueService.postCatalogue(catalogue);
-                } else {
-                    this.catalogueService.putCatalogue(catalogue);
-                }*/
+                 this.catalogueService.postCatalogue(catalogue);
+                 } else {
+                 this.catalogueService.putCatalogue(catalogue);
+                 }*/
                 this.catalogueService.postCatalogue(catalogue);
             }
         );
@@ -130,7 +131,7 @@ export class ProductPublishComponent implements OnInit {
     }
 
     //TODO update the method below so that the parameters are passed dynamically
-    private overallProductImageImage(event: any, wallTilesValue:string, floorTilesValue:string) {
+    private overallProductImageImage(event: any, wallTilesValue: string, floorTilesValue: string) {
         let fileList: FileList = event.target.files;
         if (fileList.length > 0) {
             let itemConfigurationImageArray = this.goodsItem.item.itemConfigurationImageArray;
