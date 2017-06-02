@@ -7,8 +7,7 @@ import {Person} from "./person";
 export class Party {
     constructor(
         public id:Identifier,
-        public hjid: string,
-        public partyName: PartyName,
+        public partyName: PartyName[],
         public person:Person
-,    ) {  }
+    ) {  }
 }

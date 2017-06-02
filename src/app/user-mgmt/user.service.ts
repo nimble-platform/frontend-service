@@ -4,6 +4,8 @@ import 'rxjs/add/operator/toPromise';
 import { User } from './model/user';
 import * as myGlobals from '../globals';
 import {Party} from "../catalogue/model/publish/party";
+import {Identifier} from "../catalogue/model/publish/identifier";
+import {PartyName} from "../catalogue/model/publish/party-name";
 
 @Injectable()
 export class UserService {
@@ -13,7 +15,7 @@ export class UserService {
 	private userParty: Party;
 
 	constructor(private http: Http) { }
-	
+
 	post(user: User): Promise<any> {
 		const url = `${this.url}/identity/registerCompany`;
 		return this.http
@@ -32,12 +34,17 @@ export class UserService {
 		return this.http
 			.get(url, {headers: this.headers})
 			.toPromise()
-			.then(res => (res.json() as Party[])[0])
+			.then(res => {
+                // TODO make identity service using the latest version of the data model
+                let id:Identifier = new Identifier(res.json()[0].partyIdentification[0].id.value, null, null);
+                let names:PartyName[] = [new PartyName(res.json()[0].partyName[0].name)];
+				return new Party(id, names, null);
+            })
 			.catch(this.handleError);
 	}
-	
+
 	private handleError(error: any): Promise<any> {
 		return Promise.reject(error.message || error);
 	}
-	
+
 }

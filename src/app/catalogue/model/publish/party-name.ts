@@ -4,6 +4,6 @@
 
 export class PartyName {
     constructor(
-        public name: string[],
+        public name: string,
     ) {  }
 }
