@@ -18,6 +18,7 @@ import { CategoryService } from "./catalogue/category/category.service";
 import { ProductPublishComponent } from "./catalogue/product-publish.component";
 import { AdditionalItemPropertyComponent } from "./catalogue/additional-item-property.component";
 import {CatalogueService} from "./catalogue/catalogue.service";
+import { HelloWorldComponent } from './search/search/complexsearch'; 
 
 @NgModule({
 	imports: [
@@ -37,6 +38,7 @@ import {CatalogueService} from "./catalogue/catalogue.service";
 		CredentialsFormComponent,
 		CategorySearchComponent,
 		ProductPublishComponent,
+		HelloWorldComponent,
 		AdditionalItemPropertyComponent
 	],
 	providers: [

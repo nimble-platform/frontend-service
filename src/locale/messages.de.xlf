@@ -22,6 +22,10 @@
         <source>Logout</source>
         <target>Abmelden</target>
       </trans-unit>
+	   <trans-unit id="bb694b49d408265c91c62799c2b3a7e3151c824a" datatype="html">
+        <source>Search</source>
+        <target>Suche</target>
+      </trans-unit>
 	  <trans-unit id="25f853c0b1fa019eceb9d086ddcd0a2c0ab329c2" datatype="html">
         <source>Welcome to the NIMBLE platform,</source>
         <target>Willkommen auf der NIMBLE Plattform,</target>

@@ -18,6 +18,10 @@
         <source>Publish</source>
         <target/>
       </trans-unit>
+	   <trans-unit id="bb694b49d408265c91c62799c2b3a7e3151c824a" datatype="html">
+        <source>Search</source>
+		  <target/>
+      </trans-unit>
       <trans-unit id="bb694b49d408265c91c62799c2b3a7e3151c824d" datatype="html">
         <source>Logout</source>
         <target/>
