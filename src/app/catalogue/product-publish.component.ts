@@ -24,10 +24,16 @@ import {CookieService} from "ng2-cookies";
 export class ProductPublishComponent implements OnInit {
     @ViewChild('propertyValueType') propertyValueType: ElementRef;
 
+    // data objects
     selectedCategory: Category;
-    singleItemUpload: boolean = true;
     goodsItem: GoodsItem;
     newProperty: AdditionalItemProperty = new AdditionalItemProperty("", [''], new Array<BinaryObject>(), "", "", "STRING", null, null);
+
+    // state objects
+    singleItemUpload: boolean = true;
+    private submitted = false;
+    private callback = false;
+    private error_detc = false;
 
     constructor(private categoryService: CategoryService,
                 private catalogueService: CatalogueService,
@@ -35,30 +41,34 @@ export class ProductPublishComponent implements OnInit {
     }
 
     ngOnInit() {
-        // initiate the goods item with the selected property
-        this.selectedCategory = this.categoryService.getSelectedCategory();
+        let userId = this.cookieService.get("user_id");
+        this.catalogueService.getCatalogue(userId).then(catalogue => {
 
-        // create additional item properties
-        let additionalItemProperties = new Array<AdditionalItemProperty>();
-        // create item
-        let item = new Item("", "", additionalItemProperties, null, [], "");
-        // identifier
-        let giId = new Identifier(this.generateUUID(), "", "");
-        // create goods item
-        this.goodsItem = new GoodsItem(giId, item);
+            // initiate the goods item with the selected property
+            this.selectedCategory = this.categoryService.getSelectedCategory();
 
-        if (this.selectedCategory != null) {
-            for (let i = 0; i < this.selectedCategory.properties.length; i++) {
-                let property = this.selectedCategory.properties[i];
-                let unit = "";
-                if (property.unit != null) {
-                    unit = property.unit.shortName;
+            // create additional item properties
+            let additionalItemProperties = new Array<AdditionalItemProperty>();
+            // create item
+            let item = new Item("", "", additionalItemProperties, catalogue.providerParty, [], "");
+            // identifier
+            let giId = new Identifier(this.generateUUID(), "", "");
+            // create goods item
+            this.goodsItem = new GoodsItem(giId, item);
+
+            if (this.selectedCategory != null) {
+                for (let i = 0; i < this.selectedCategory.properties.length; i++) {
+                    let property = this.selectedCategory.properties[i];
+                    let unit = "";
+                    if (property.unit != null) {
+                        unit = property.unit.shortName;
+                    }
+                    let valueQualifier = property.dataType;
+                    let aip = new AdditionalItemProperty(property.preferredName, [''], new Array<BinaryObject>(), "", unit, valueQualifier, null, null);
+                    additionalItemProperties.push(aip);
                 }
-                let valueQualifier = property.dataType;
-                let aip = new AdditionalItemProperty(property.preferredName, [''], new Array<BinaryObject>(), "", unit, valueQualifier, null, null);
-                additionalItemProperties.push(aip);
             }
-        }
+        });
     }
 
     private onTabClick(event: any) {
@@ -71,9 +81,12 @@ export class ProductPublishComponent implements OnInit {
     }
 
     private publishProduct(): void {
+        this.error_detc = false;
+        this.callback = false;
+        this.submitted = true;
+
         let userId = this.cookieService.get("user_id");
         this.catalogueService.getCatalogue(userId).then(catalogue => {
-                this.goodsItem.item.manufacturerParty = catalogue.providerParty;
                 let line: CatalogueLine = new CatalogueLine(null, this.goodsItem);
                 catalogue.catalogueLine.push(line);
                 this.mergeMultipleValuesIntoSingleField(catalogue);
@@ -82,7 +95,13 @@ export class ProductPublishComponent implements OnInit {
                  } else {
                  this.catalogueService.putCatalogue(catalogue);
                  }*/
-                this.catalogueService.postCatalogue(catalogue);
+                this.catalogueService.postCatalogue(catalogue).then(() => {
+                    this.callback = true;
+                    this.error_detc = false;
+                    this.ngOnInit();
+                }).catch(error => {
+                    this.error_detc = true;
+                });
             }
         );
     }

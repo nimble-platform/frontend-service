@@ -20,12 +20,35 @@
 <!-- Single product publishing -->
 <div *ngIf="goodsItem && singleItemUpload" class="mt-3">
 
-    <!-- Form column title -->
-    <div class="row justify-content-between align-items-start">
-        <div>
+    <!-- Top row: selected category, feedback alerts, etc. -->
+    <div class="d-flex justify-content-end">
+        <div class="mr-auto">
             <h6 style="display: inline-block;" i18n>Selected category:</h6>
             <button class="btn btn-info ml-3">{{selectedCategory != null ? selectedCategory.preferredName: 'None'}}
             </button>
+        </div>
+        <div [hidden]="error_detc || callback || !submitted" class="pr-3">
+            <img src="assets/form_loader.gif"/>
+        </div>
+        <div [hidden]="!(callback && !error_detc)"
+             #successAlert (click)="successAlert.hidden=true;"
+             [style]="!(callback && !error_detc) ? '' : 'display: flex'">
+            <div class="alert-success mb-0 mr-3 d-flex" role="alert">
+                <div class="d-flex p-2" style="align-items: center">
+                    <span i18n>Product published!</span>
+                    <span class="ml-3" style="cursor:pointer"><strong>&times;</strong></span>
+                </div>
+            </div>
+        </div>
+        <div [hidden]="!(callback && error_detc)"
+             #errorAlert (click)="errorAlert.hidden=true"
+             [style]="hidden ? '' : 'display: flex'">
+            <div class="alert-danger mb-0 mr-3 d-flex" role="alert">
+                <div class="d-flex p-2" style="align-items: center">
+                    <span i18n>Fail to publish product!</span>
+                    <span class="ml-3" style="cursor:pointer"><strong>&times;</strong></span>
+                </div>
+            </div>
         </div>
         <button class="btn btn-success"
                 (click)="publishProduct()">
@@ -33,6 +56,7 @@
         </button>
     </div>
     <hr>
+    <!-- Form header row -->
     <h4><u>Product Details</u></h4>
     <div class="row mt-3">
         <h5 class="col-3"><label i18n>Property Name</label></h5>
@@ -59,7 +83,7 @@
         <hr class="mt-5">
         <div class="form-group">
             <h6 i18n>Add new property</h6>
-            <form #customPropertyForm="ngForm" class="row">
+            <form #customPropertyForm="ngForm" class="d-flex">
                 <input name="propertyName"
                        class="form-control col-3"
                        [(ngModel)]="newProperty.name"
@@ -164,7 +188,8 @@
                         </div>
                     </div>
                     <div (click)="overallProductImage.click()">
-                        <input #overallProductImage type="file" (change)="overallProductImageImage($event, wallTileValues.value, floorTileValues.value)"
+                        <input #overallProductImage type="file"
+                               (change)="overallProductImageImage($event, wallTileValues.value, floorTileValues.value)"
                                accept="image/*"
                                style="display: none">
                         <img src="./assets/catalogue/add_button.png"/>
