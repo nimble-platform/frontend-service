@@ -90,20 +90,27 @@ export class ProductPublishComponent implements OnInit {
                 let line: CatalogueLine = new CatalogueLine(null, this.goodsItem);
                 catalogue.catalogueLine.push(line);
                 this.mergeMultipleValuesIntoSingleField(catalogue);
-                /*if (catalogue.uuid == null) {
-                 this.catalogueService.postCatalogue(catalogue);
-                 } else {
-                 this.catalogueService.putCatalogue(catalogue);
-                 }*/
-                this.catalogueService.postCatalogue(catalogue).then(() => {
-                    this.callback = true;
-                    this.error_detc = false;
-                    this.ngOnInit();
-                }).catch(error => {
-                    this.error_detc = true;
-                });
+                if (catalogue.uuid == null) {
+                    this.catalogueService.postCatalogue(catalogue)
+                        .then(() => this.onSuccessfulPublish())
+                        .catch(() => this.onFailedPublish());
+                } else {
+                    this.catalogueService.putCatalogue(catalogue)
+                        .then(() => this.onSuccessfulPublish())
+                        .catch(() => this.onFailedPublish())
+                }
             }
         );
+    }
+
+    private onSuccessfulPublish():void {
+        this.callback = true;
+        this.error_detc = false;
+        this.ngOnInit();
+    }
+
+    private onFailedPublish():void {
+        this.error_detc = true;
     }
 
     private mergeMultipleValuesIntoSingleField(catalogue: Catalogue): void {

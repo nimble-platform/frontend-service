@@ -38,7 +38,8 @@ export class UserService {
                 // TODO make identity service using the latest version of the data model
                 let id:Identifier = new Identifier(res.json()[0].partyIdentification[0].id.value, null, null);
                 let names:PartyName[] = [new PartyName(res.json()[0].partyName[0].name)];
-				return new Party(id, names, null);
+				this.userParty = new Party(id, names, null);
+				return Promise.resolve(this.userParty);
             })
 			.catch(this.handleError);
 	}
