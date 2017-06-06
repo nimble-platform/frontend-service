@@ -12,7 +12,8 @@ import * as myGlobals from '../globals';
 export class SimpleSearchFormComponent {
 
 	product_name = myGlobals.product_name;
-	product_vendor = myGlobals.product_vendor;
+	product_vendor_id = myGlobals.product_vendor_id;
+	product_vendor_name = myGlobals.product_vendor_name;
 	product_img = myGlobals.product_img;
 	product_nonfilter_full = myGlobals.product_nonfilter_full;
 	product_nonfilter_regex = myGlobals.product_nonfilter_regex;

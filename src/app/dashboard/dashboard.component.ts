@@ -44,20 +44,26 @@ export class DashboardComponent implements OnInit {
 			this.buyer_history_temp = [];
 			this.buyer_history = [];
 			for (let task of res) {
+				var time_offset = -(new Date().getTimezoneOffset() / 60);
+				var time_locale = new Date(new Date().setTime(new Date(task.startTime).getTime() + (time_offset*60*60*1000))).toLocaleTimeString();
 				this.buyer_history_temp.push({
 					"task_id":task.id,
 					"process_id":task.processInstanceId,
-					"start_time":new Date(task.startTime).toLocaleDateString()+"\n"+new Date(task.startTime).toLocaleTimeString()
+					"start_time":new Date(task.startTime).toLocaleDateString()+"\n"+time_locale
 				});
 				this.bpeService.getProcessDetailsHistory(task.processInstanceId)
 				.then(res => {
-					var vBuyer = "", vSeller = "", vOrder = "", vOrderResponse = "", vTask_id = "", vProcess_id = "", vStart_time = "";
+					var vBuyer = "", vBuyerName = "", vSeller = "", vSellerName = "", vOrder = "", vOrderResponse = "", vTask_id = "", vProcess_id = "", vStart_time = "";
 					for (let field of res) {
 						vProcess_id = field.processInstanceId;
 						if (field.name == "buyer")
 							vBuyer = field.value;
+						else if (field.name == "buyerName")
+							vBuyerName = field.value;
 						else if (field.name == "seller")
 							vSeller = field.value;
+						else if (field.name == "sellerName")
+							vSellerName = field.value;
 						else if (field.name == "order")
 							vOrder = field.value;
 						else if (field.name == "orderResponse")
@@ -78,7 +84,9 @@ export class DashboardComponent implements OnInit {
 						"process_id":vProcess_id,
 						"start_time":vStart_time,
 						"buyer":vBuyer,
+						"buyerName":vBuyerName,
 						"seller":vSeller,
+						"sellerName":vSellerName,
 						"order":vOrder,
 						"orderResponse":vOrderResponse
 					});
@@ -108,13 +116,17 @@ export class DashboardComponent implements OnInit {
 				});
 				this.bpeService.getProcessDetailsHistory(task.processInstanceId)
 				.then(res => {
-					var vBuyer = "", vSeller = "", vOrder = "", vOrderResponse = "", vTask_id = "", vProcess_id = "", vStart_time = "";
+					var vBuyer = "", vBuyerName = "", vSeller = "", vSellerName = "", vOrder = "", vOrderResponse = "", vTask_id = "", vProcess_id = "", vStart_time = "";
 					for (let field of res) {
 						vProcess_id = field.processInstanceId;
 						if (field.name == "buyer")
 							vBuyer = field.value;
+						else if (field.name == "buyerName")
+							vBuyerName = field.value;
 						else if (field.name == "seller")
 							vSeller = field.value;
+						else if (field.name == "sellerName")
+							vSellerName = field.value;
 						else if (field.name == "order")
 							vOrder = field.value;
 						else if (field.name == "orderResponse")
@@ -135,7 +147,9 @@ export class DashboardComponent implements OnInit {
 						"process_id":vProcess_id,
 						"start_time":vStart_time,
 						"buyer":vBuyer,
+						"buyerName":vBuyerName,
 						"seller":vSeller,
+						"sellerName":vSellerName,
 						"order":vOrder,
 						"orderResponse":vOrderResponse
 					});

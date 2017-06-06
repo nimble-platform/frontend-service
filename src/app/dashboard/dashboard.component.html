@@ -17,7 +17,7 @@
 					<td>{{ seller.start_time }}</td>
 					<td>{{ seller.order.product_name }}</td>
 					<td>{{ seller.order.amount }}</td>
-					<td>{{ seller.buyer }}</td>
+					<td>{{ seller.buyerName }}</td>
 					<td>{{ seller.order.message }}</td>
 					<td *ngIf="seller.orderResponse==''">
 						<span class="text-danger" i18n>Action required</span>
@@ -55,7 +55,7 @@
 					<td>{{ buyer.start_time }}</td>
 					<td>{{ buyer.order.product_name }}</td>
 					<td>{{ buyer.order.amount }}</td>
-					<td>{{ buyer.seller }}</td>
+					<td>{{ buyer.sellerName }}</td>
 					<td>{{ buyer.order.message }}</td>
 					<td *ngIf="buyer.orderResponse==''">
 						<span class="text-warning" i18n>Waiting for response</span>

@@ -10,7 +10,8 @@ export class SimpleSearchService {
 	private url = myGlobals.marmotta_endpoint;
 	
 	product_name = myGlobals.product_name;
-	product_vendor = myGlobals.product_vendor;
+	product_vendor_id = myGlobals.product_vendor_id;
+	product_vendor_name = myGlobals.product_vendor_name;
 	product_img = myGlobals.product_img;
 	product_nonfilter_full = myGlobals.product_nonfilter_full;
 	product_nonfilter_regex = myGlobals.product_nonfilter_regex;
@@ -29,7 +30,7 @@ export class SimpleSearchService {
 	
 	get(query: string, facets: [string], facetQueries: [string], page: number): Promise<any> {
 		var start = page*10-10;
-		const url = `${this.url}?q=${query}&start=${start}&facet=true&sort=score%20desc&rows=10&facet.sort=count&facet.limit=10&facet.mincount=2&json.nl=map&wt=json`;
+		const url = `${this.url}?q=${query}&start=${start}&facet=true&sort=score%20desc&rows=10&facet.sort=count&facet.limit=10&facet.mincount=1&json.nl=map&wt=json`;
 		var full_url = url + "";
 		for (let facet of facets) {
 			full_url += "&facet.field="+facet;
@@ -55,7 +56,7 @@ export class SimpleSearchService {
 	
 	checkField(field:string): boolean {
 		var valid = true;
-		if (field == this.product_name || field == this.product_img || field == this.product_vendor)
+		if (field == this.product_name || field == this.product_img || field == this.product_vendor_id)
 			valid = false;
 		for (let filter of this.product_nonfilter_full) {
 			if (field == filter)

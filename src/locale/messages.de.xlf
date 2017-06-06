@@ -138,6 +138,14 @@
         <source>Selected category:</source>
         <target>Ausgewählte Kategorie:</target>
       </trans-unit>
+	  <trans-unit id="28d2ef00e6b67d8c4a4b3643f9aadcf717e3cc6a" datatype="html">
+        <source>Product published!</source>
+        <target>Produkt veröffentlicht!</target>
+      </trans-unit>
+      <trans-unit id="c913b48de7e7c19149f6a133f673daf9b47fb640" datatype="html">
+        <source>Fail to publish product!</source>
+        <target>Produktveröffentlichung fehlgeschlagen!</target>
+      </trans-unit>
       <trans-unit id="e653a757f7e5c68f9fd2e5566a633149590589a9" datatype="html">
         <source>Publish Product</source>
         <target>Produkt veröffentlichen</target>

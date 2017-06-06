@@ -16,7 +16,8 @@ import * as myGlobals from '../globals';
 export class SimpleSearchDetailsComponent implements OnInit {
 
 	product_name = myGlobals.product_name;
-	product_vendor = myGlobals.product_vendor;
+	product_vendor_id = myGlobals.product_vendor_id;
+	product_vendor_name = myGlobals.product_vendor_name;
 	product_img = myGlobals.product_img;
 	product_nonfilter_full = myGlobals.product_nonfilter_full;
 	product_nonfilter_regex = myGlobals.product_nonfilter_regex;
@@ -30,7 +31,7 @@ export class SimpleSearchDetailsComponent implements OnInit {
 	error_detc2 = false;
 	model = new Order('','','','');
 	orderToSubmit = new Order('','','','');
-	orderObjToSubmit = new OrderObject('','','','','');
+	orderObjToSubmit = new OrderObject('','','','','','','');
 	temp: any;
 	response: any;
 	details: any;
@@ -106,15 +107,20 @@ export class SimpleSearchDetailsComponent implements OnInit {
 		this.orderToSubmit.product_id = this.response[0].id.toString();
 		this.orderToSubmit.product_name = this.response[0][this.product_name].toString();
 		this.orderObjToSubmit.order = JSON.stringify(this.orderToSubmit);
-		if (this.product_vendor == "")
+		if (this.product_vendor_id == "")
 			this.orderObjToSubmit.seller = "";
 		else
-			this.orderObjToSubmit.seller = this.response[0][this.product_vendor].toString();
+			this.orderObjToSubmit.seller = this.response[0][this.product_vendor_id].toString();
+		if (this.product_vendor_name == "")
+			this.orderObjToSubmit.sellerName = "";
+		else
+			this.orderObjToSubmit.sellerName = this.response[0][this.product_vendor_name].toString();
 		this.orderObjToSubmit.buyer = this.cookieService.get("company_id");
-		if (this.product_vendor == "")
+		this.orderObjToSubmit.buyerName = this.cookieService.get("user_fullname");
+		if (this.product_vendor_id == "")
 			this.orderObjToSubmit.connection = "||"+this.cookieService.get("company_id")+"|";
 		else
-			this.orderObjToSubmit.connection = "|"+this.response[0][this.product_vendor].toString()+"|"+this.cookieService.get("company_id")+"|";
+			this.orderObjToSubmit.connection = "|"+this.response[0][this.product_vendor_id].toString()+"|"+this.cookieService.get("company_id")+"|";
 		this.bpeService.placeOrder(this.orderObjToSubmit)
 		.then(res => {
 			this.callback2 = true;
