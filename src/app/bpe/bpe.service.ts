@@ -9,12 +9,12 @@ import * as myGlobals from '../globals';
 export class BPEService {
 
 	private headers = new Headers({'Content-Type': 'application/json'});
-	private url = myGlobals.endpoint;
+	private url = myGlobals.bpe_endpoint;
 	
 	constructor(private http: Http) { }
 
 	placeOrder(orderObject: OrderObject): Promise<any> {
-		const url = `${this.url}/business-process/rest/engine/default/process-definition/key/Order/start`;
+		const url = `${this.url}/rest/engine/default/process-definition/key/Order/start`;
 		var jsonToSend = {
 			"variables": {},
 			"businessKey" : ""
@@ -33,7 +33,7 @@ export class BPEService {
 	}
 	
 	respondToOrder(task: string, orderResponse: OrderResponse): Promise<any> {
-		const url = `${this.url}/business-process/rest/engine/default/task/${task}/complete`;
+		const url = `${this.url}/rest/engine/default/task/${task}/complete`;
 		var jsonToSend = {
 			"variables": {
 				"orderResponse": {
@@ -51,7 +51,7 @@ export class BPEService {
 	}
 	
 	removeOrder(process: string): Promise<any> {
-		const url = `${this.url}/business-process/rest/engine/default/history/process-instance/${process}`;
+		const url = `${this.url}/rest/engine/default/history/process-instance/${process}`;
 		return this.http
 		.delete(url, {headers: this.headers})
 		.toPromise()
@@ -60,7 +60,7 @@ export class BPEService {
 	}
 	
 	cancelOrder(process: string): Promise<any> {
-		const url = `${this.url}/business-process/rest/engine/default/process-instance/${process}`;
+		const url = `${this.url}/rest/engine/default/process-instance/${process}`;
 		return this.http
 		.delete(url, {headers: this.headers})
 		.toPromise()
@@ -69,7 +69,7 @@ export class BPEService {
 	}
 	
 	getOrders(id: string): Promise<any> {
-		const url = `${this.url}/business-process/rest/engine/default/task?sortBy=created&sortOrder=desc&processVariables=connection_like_%|${id}|%`;
+		const url = `${this.url}/rest/engine/default/task?sortBy=created&sortOrder=desc&processVariables=connection_like_%|${id}|%`;
 		return this.http
 		.get(url, {headers: this.headers})
 		.toPromise()
@@ -78,7 +78,7 @@ export class BPEService {
 	}
 	
 	getProcessDetails(id: string): Promise<any> {
-		const url = `${this.url}/business-process/rest/engine/default/variable-instance?processInstanceIdIn=${id}`;
+		const url = `${this.url}/rest/engine/default/variable-instance?processInstanceIdIn=${id}`;
 		return this.http
 		.get(url, {headers: this.headers})
 		.toPromise()
@@ -87,7 +87,7 @@ export class BPEService {
 	}
 	
 	getBuyerHistory(id: string): Promise<any> {
-		const url = `${this.url}/business-process/rest/engine/default/history/task?processVariables=buyer_eq_${id}&sortBy=startTime&sortOrder=desc&maxResults=10`;
+		const url = `${this.url}/rest/engine/default/history/task?processVariables=buyer_eq_${id}&sortBy=startTime&sortOrder=desc&maxResults=10`;
 		return this.http
 		.get(url, {headers: this.headers})
 		.toPromise()
@@ -96,7 +96,7 @@ export class BPEService {
 	}
 	
 	getSellerHistory(id: string): Promise<any> {
-		const url = `${this.url}/business-process/rest/engine/default/history/task?processVariables=seller_eq_${id}&sortBy=startTime&sortOrder=desc&maxResults=10`;
+		const url = `${this.url}/rest/engine/default/history/task?processVariables=seller_eq_${id}&sortBy=startTime&sortOrder=desc&maxResults=10`;
 		return this.http
 		.get(url, {headers: this.headers})
 		.toPromise()
@@ -105,7 +105,7 @@ export class BPEService {
 	}
 	
 	getProcessDetailsHistory(id: string): Promise<any> {
-		const url = `${this.url}/business-process/rest/engine/default/history/variable-instance?processInstanceIdIn=${id}`;
+		const url = `${this.url}/rest/engine/default/history/variable-instance?processInstanceIdIn=${id}`;
 		return this.http
 		.get(url, {headers: this.headers})
 		.toPromise()

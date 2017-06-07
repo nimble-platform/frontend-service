@@ -11,13 +11,13 @@ import {PartyName} from "../catalogue/model/publish/party-name";
 export class UserService {
 
 	private headers = new Headers({'Content-Type': 'application/json'});
-	private url = myGlobals.endpoint;
+	private url = myGlobals.user_mgmt_endpoint;
 	private userParty: Party;
 
 	constructor(private http: Http) { }
 
 	post(user: User): Promise<any> {
-		const url = `${this.url}/identity/registerCompany`;
+		const url = `${this.url}/registerCompany`;
 		return this.http
 		.post(url, JSON.stringify(user), {headers: this.headers})
 		.toPromise()
@@ -29,19 +29,18 @@ export class UserService {
 		if(this.userParty != null) {
 			return Promise.resolve(this.userParty);
 		}
-
-		const url = `${this.url}/identity/party_by_person/${userId}`;
+		const url = `${this.url}/party_by_person/${userId}`;
 		return this.http
-			.get(url, {headers: this.headers})
-			.toPromise()
-			.then(res => {
-                // TODO make identity service using the latest version of the data model
-                let id:Identifier = new Identifier(res.json()[0].partyIdentification[0].id.value, null, null);
-                let names:PartyName[] = [new PartyName(res.json()[0].partyName[0].name)];
-				this.userParty = new Party(id, names, null);
-				return Promise.resolve(this.userParty);
-            })
-			.catch(this.handleError);
+		.get(url, {headers: this.headers})
+		.toPromise()
+		.then(res => {
+			// ToDo: make identity service using the latest version of the data model
+			let id:Identifier = new Identifier(res.json()[0].partyIdentification[0].id.value, null, null);
+			let names:PartyName[] = [new PartyName(res.json()[0].partyName[0].name)];
+			this.userParty = new Party(id, names, null);
+			return Promise.resolve(this.userParty);
+		})
+		.catch(this.handleError);
 	}
 
 	private handleError(error: any): Promise<any> {

@@ -7,7 +7,7 @@ import * as myGlobals from '../globals';
 export class SimpleSearchService {
 
 	private headers = new Headers({'Content-Type': 'application/json'});
-	private url = myGlobals.marmotta_endpoint;
+	private url = myGlobals.simple_search_endpoint;
 	
 	product_name = myGlobals.product_name;
 	product_vendor_id = myGlobals.product_vendor_id;
