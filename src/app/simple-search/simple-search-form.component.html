@@ -38,10 +38,10 @@
 							</div>
 							<div class="card-block">
 								<div *ngFor="let facetInner of facet.options">
-									<div *ngIf="facetQuery.indexOf(facet.name+':'+facetInner.name)==-1">
+									<div *ngIf="!checkFacet(facet.name,facetInner.name)">
 										<span class="clickable" (click)="setFacet(facet.name,facetInner.name)">{{ facetInner.name }} ({{ facetInner.count }})</span>
 									</div>
-									<div *ngIf="facetQuery.indexOf(facet.name+':'+facetInner.name)!=-1">
+									<div *ngIf="checkFacet(facet.name,facetInner.name)">
 										<span class="clickable" (click)="setFacet(facet.name,facetInner.name)"><b>{{ facetInner.name }} ({{ facetInner.count }})</b></span>
 									</div>
 								</div>

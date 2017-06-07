@@ -99,13 +99,21 @@ export class SimpleSearchFormComponent {
 		this.get(this.objToSubmit);
 	}
 	
-	setFacet(outer:string ,inner:string) {
-		var fq = outer+":"+inner;
+	setFacet(outer:string, inner:string) {
+		var fq = outer+":\""+inner+"\"";
 		if (this.facetQuery.indexOf(fq) == -1)
 			this.facetQuery.push(fq);
 		else
 			this.facetQuery.splice(this.facetQuery.indexOf(fq), 1);
 		this.get(this.objToSubmit);
+	}
+	
+	checkFacet(outer:string, inner:string): boolean {
+		var match = false;
+		var fq = outer+":\""+inner+"\"";
+		if (this.facetQuery.indexOf(fq) != -1)
+			match = true;
+		return match;
 	}
 	
 	isJson(str: string): boolean {
