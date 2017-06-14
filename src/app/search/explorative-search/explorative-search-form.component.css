@@ -1,0 +1,33 @@
+.kwArea {
+    border: 1px solid black;
+    background-color: peachpuff;
+    align-content: left;
+}
+
+.searchQueries {
+    display: inline-block;
+    color: blue;
+    font-size: large;
+    padding-right: 10px;
+}
+
+.searchQueries:hover {
+    cursor: pointer;
+    color: red;
+    font-weight: bold;
+}
+.queryOutputs {
+    padding: 10px 20px 20px 10px;
+    border: dashed 1px grey;
+    text-align: center;
+}
+
+#kwBtn {
+    display:inline;
+    padding: 10px 10px;
+}
+.displayArea {
+    width: 100%;
+    height: 450px;
+    background-color: lightgray;
+}

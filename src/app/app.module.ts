@@ -20,38 +20,42 @@ import { AdditionalItemPropertyComponent } from './catalogue/additional-item-pro
 import {CatalogueService} from './catalogue/catalogue.service';
 import { ExplorativeSearchComponent } from './search/explorative-search/explorative-search.component';
 import { ExplorativeSearchService } from './search/explorative-search/explorative-search.service';
+import { ExplorativeSearchFormComponent } from './search/explorative-search/explorative-search-form.component';
+import { ExplorativeSearchDetailsComponent } from './search/explorative-search/explorative-search-details.component';
 
 @NgModule({
-	imports: [
-		BrowserModule,
-		FormsModule,
-		HttpModule,
-		AppRoutingModule,
-		NgbModule.forRoot()
-	],
-	declarations: [
-		AppComponent,
-		LoginComponent,
-		LogoutComponent,
-		RegistrationComponent,
-		DashboardComponent,
-		UserFormComponent,
-		CredentialsFormComponent,
-		CategorySearchComponent,
-		ProductPublishComponent,
-		ExplorativeSearchComponent,
-		AdditionalItemPropertyComponent
-	],
-	providers: [
-		UserService,
-		CredentialsService,
-		CategoryService,
-		CatalogueService,
-		ExplorativeSearchService
-	],
-	bootstrap: [
-		AppComponent
-	]
+    imports: [
+            BrowserModule,
+        FormsModule,
+        HttpModule,
+        AppRoutingModule,
+        NgbModule.forRoot()
+        ],
+        declarations: [
+        AppComponent,
+        LoginComponent,
+        LogoutComponent,
+        RegistrationComponent,
+        DashboardComponent,
+        UserFormComponent,
+        CredentialsFormComponent,
+        CategorySearchComponent,
+        ProductPublishComponent,
+        ExplorativeSearchComponent,
+        ExplorativeSearchFormComponent,
+        ExplorativeSearchDetailsComponent,
+        AdditionalItemPropertyComponent
+        ],
+        providers: [
+        UserService,
+        CredentialsService,
+        CategoryService,
+        CatalogueService,
+        ExplorativeSearchService
+        ],
+        bootstrap: [
+        AppComponent
+        ]
 })
 
 export class AppModule { }
