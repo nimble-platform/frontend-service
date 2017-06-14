@@ -13,12 +13,13 @@ import { UserFormComponent } from './user-mgmt/user-form.component';
 import { UserService } from './user-mgmt/user.service';
 import { CredentialsFormComponent } from './user-mgmt/credentials-form.component';
 import { CredentialsService } from './user-mgmt/credentials.service';
-import { CategorySearchComponent } from "./catalogue/category/category-search.component";
-import { CategoryService } from "./catalogue/category/category.service";
-import { ProductPublishComponent } from "./catalogue/product-publish.component";
-import { AdditionalItemPropertyComponent } from "./catalogue/additional-item-property.component";
-import {CatalogueService} from "./catalogue/catalogue.service";
-import { HelloWorldComponent } from './search/search/complexsearch'; 
+import { CategorySearchComponent } from './catalogue/category/category-search.component';
+import { CategoryService } from './catalogue/category/category.service';
+import { ProductPublishComponent } from './catalogue/product-publish.component';
+import { AdditionalItemPropertyComponent } from './catalogue/additional-item-property.component';
+import {CatalogueService} from './catalogue/catalogue.service';
+import { ExplorativeSearchComponent } from './search/explorative-search/explorative-search.component';
+import { ExplorativeSearchService } from './search/explorative-search/explorative-search.service';
 
 @NgModule({
 	imports: [
@@ -38,14 +39,15 @@ import { HelloWorldComponent } from './search/search/complexsearch';
 		CredentialsFormComponent,
 		CategorySearchComponent,
 		ProductPublishComponent,
-		HelloWorldComponent,
+		ExplorativeSearchComponent,
 		AdditionalItemPropertyComponent
 	],
 	providers: [
 		UserService,
 		CredentialsService,
 		CategoryService,
-		CatalogueService
+		CatalogueService,
+		ExplorativeSearchService
 	],
 	bootstrap: [
 		AppComponent

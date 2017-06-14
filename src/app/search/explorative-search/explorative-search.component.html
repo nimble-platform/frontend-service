@@ -1,0 +1,57 @@
+<!-- Search Bar -->
+<div class="row">
+    <div class="col-12">
+        <div class="input-group form-group">
+            <label class="input-group-addon">Search</label>
+            <input type="text" class="form-control" #searchVal (keyup.enter)="Search(searchVal.value)"  placeholder="Company/Business/Product"/>
+            <span><button (click)="Search(searchVal.value)" class="btn btn-success" type="button">Search</button></span>
+        </div> <!--input-group-->
+    </div> <!-- col-12 -->
+</div> <!--row-->
+<div class="align-center">
+    <h5><b> Search History </b></h5>
+</div>
+
+<!-- Search Keywords go here -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 kwArea">
+            <ul>
+                <!-- list of all the search keywords by user -->
+                <li class="searchQueries" *ngFor="let keyword of Output">
+                    <span>
+                        <input #kwCheck type="checkbox" (change)="cbInput= kwCheck.checked"/> {{keyword.kw}}
+                        <span><button class="btn btn-xs btn-danger"
+                            (click)="deleteKW(keyword.kw); $event.stopPropagation()" 
+                            [disabled]=!kwCheck.checked
+                            [hidden]="!kwCheck.checked">&times;</button></span>
+                    </span>
+                </li>
+            </ul>
+        </div>
+        <div class="col-md-2">
+            <button class="btn btn-warning">Home</button>
+        </div>
+    </div>
+</div>
+<br/>
+<br/>
+
+<!-- Display of Content from server -->
+<div class="container displayArea">
+<div class="col-12">
+    <div id="kwBtn" *ngFor="let keyword of Output">
+                <button class="btn btn-default">{{keyword.kw}}</button>
+    </div><br/><br/>
+    <ul>
+        <li *ngFor="let eachOutput of Output">
+            <div class="queryOutputs">{{eachOutput.resp.conceptOverview.PostalAddress[0]}}</div>
+            <div class="queryOutputs">{{eachOutput.resp.conceptOverview.PostalAddress[1]}}</div>
+        </li>
+    </ul>
+    
+</div>
+</div>
+
+<div #myDiagramDiv style="width: 100%;height:200px;">
+    </div>
