@@ -8,6 +8,8 @@
         </div> <!--input-group-->
     </div> <!-- col-12 -->
 </div> <!--row-->
+
+<!-- Entered Keywords to Displayed -->
 <div class="align-center">
     <h5><b> Search History </b></h5>
 </div>
@@ -29,8 +31,11 @@
                 </li>
             </ul>
         </div>
+        <!-- This button is according to Specification
+            If not logged in route directly to Login Page
+            if logged in route to dashboard -->
         <div class="col-md-2">
-            <button class="btn btn-warning">Home</button>
+            <a class="btn btn-warning" routerLink="/dashboard">Home</a>
         </div>
     </div>
 </div>
@@ -41,17 +46,20 @@
 <div class="container displayArea">
 <div class="col-12">
     <div id="kwBtn" *ngFor="let keyword of Output">
+                <!-- Each displayed keyword will be shown as a button in the display area -->
                 <button class="btn btn-default">{{keyword.kw}}</button>
     </div><br/><br/>
     <ul>
         <li *ngFor="let eachOutput of Output">
+            <!-- Testing of the JSON data here from the backend Server -->
+            <!-- This will be removed later -->
             <div class="queryOutputs">{{eachOutput.resp.conceptOverview.PostalAddress[0]}}</div>
             <div class="queryOutputs">{{eachOutput.resp.conceptOverview.PostalAddress[1]}}</div>
         </li>
     </ul>
-    
 </div>
 </div>
 
+<!-- The Graph Display Component -->
 <!-- Data Visualization here-->
 <explore-search-details></explore-search-details>

@@ -1,5 +1,12 @@
+/**
+ * This is the Service File for the Explorative Search Component.
+ * We Inject a simple HTTP GET Service which will perform a GET on
+ * the User's keyword input to the backend server.
+ * And return the response in JSON for further parsing.
+ */
+
 import { Injectable } from '@angular/core';
-import { Http, Headers } from '@angular/http';
+import { Http } from '@angular/http';
 
 import 'rxjs/add/operator/toPromise';
 import * as myGlobals from '../../globals';
@@ -8,15 +15,12 @@ import * as myGlobals from '../../globals';
 
 export class ExplorativeSearchService {
     private url = myGlobals.endpoint;
-    private headers = new Headers();
 
-    constructor(private http: Http) {
-        this.headers.append('Access-Control-Allow-Origin', '*');
-        this.headers.append('Accept', 'application/json,text/*,*/*');
-    }
-
+    constructor(private http: Http) { }
+    // This is where the HTTP GET service is performed
+    // for keyword search from user
     searchData(term: string): Promise<string> {
-        return this.http.get(`${this.url}?keyword=${term}`, {headers: this.headers})
+        return this.http.get(`${this.url}?keyword=${term}`)
             .toPromise()
             .then(res => res.json());
     }

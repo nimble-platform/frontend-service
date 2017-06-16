@@ -1,28 +1,35 @@
+/**
+ * This file takes care of the details of Visualization
+ * of the Data (JSON) that will be received from Backend
+ */
 import { Component, AfterViewInit, ViewChild , ElementRef } from '@angular/core';
-import { ExplorativeSearchFormComponent } from './explorative-search-form.component';
-// GoJS var
-declare var go: any;
+import * as go from 'gojs';
 
 @Component({
     selector: 'explore-search-details',
-    template: `<div #myDiagramDiv style="width:100%; height: 450px;"></div>`,
+    template: `<div class="displayArea" #myDiagramDiv style="height:450px; width: 100%; position: relative;"></div>`,
+    styles: [`.displayArea {background-color: lightgrey;}`]
 })
 
 export class ExplorativeSearchDetailsComponent extends AfterViewInit {
-    // GoJS div
+
+    // GoJS div as mentioned above in the @Component `template` param
     @ViewChild('myDiagramDiv') div: ElementRef;
-    constructor(private formComponent: ExplorativeSearchFormComponent) {
-        super();
-    }
+
     ngAfterViewInit(): void {
-    const MAKE = go.GraphObject.make;
+        /**
+         * This code is taken from https://github.com/musale/angular-gojs-test
+         * and changed for testing purposes
+         */
+        // create a make type from go namespace and assign it to MAKE
+        const MAKE = go.GraphObject.make;
 
         // get the div in the HTML file
         const diagramDiv = this.div.nativeElement;
 
         // instatiate MAKE with Diagram type and the diagramDiv
         const myDiagram =
-        MAKE(go.Diagram, diagramDiv,
+            MAKE(go.Diagram, diagramDiv,
                 {
                     initialContentAlignment: go.Spot.Center, // center Diagram contents
                     'undoManager.isEnabled': true, // enable Ctrl-Z to undo and Ctrl-Y to redo
@@ -31,26 +38,31 @@ export class ExplorativeSearchDetailsComponent extends AfterViewInit {
                 });
 
         // the template we defined earlier
-        myDiagram.nodeTemplate = MAKE(go.Node, 'Horizontal',
+        myDiagram.nodeTemplate =
+            MAKE(go.Node, 'Horizontal',
                 { background: '#DD4814' },
                 MAKE(go.TextBlock, 'Default Text',
                     { margin: 12, stroke: 'white', font: 'bold 16px sans-serif' },
-                    new go.Binding('text', 'name')));
+                    new go.Binding('text', 'name'))
+            );
 
         // define a Link template that routes orthogonally, with no arrowhead
-        myDiagram.linkTemplate = MAKE(go.Link,
+        myDiagram.linkTemplate =
+            MAKE(go.Link,
                 { routing: go.Link.Orthogonal, corner: 5 },
                 MAKE(go.Shape, { strokeWidth: 3, stroke: '#555' })); // the link shape
 
         let model = MAKE(go.TreeModel);
-        model.nodeDataArray = [
-                { key: '1',              name: 'Don Meow' },
-                { key: '2', parent: '1', name: 'Roquefort' },
-                { key: '3', parent: '1', name: 'Toulouse'},
-                { key: '4', parent: '3', name: 'Peppo'},
-                { key: '5', parent: '3', name: 'Alonzo'},
-                { key: '6', parent: '2', name: 'Berlioz'}];
+        model.nodeDataArray =
+            [
+                { key: '1',              name: 'Keyword' },
+                { key: '2', parent: '1', name: 'Property1' },
+                { key: '3', parent: '1', name: 'Property2' },
+                { key: '4', parent: '3', name: 'Property3' },
+                { key: '5', parent: '3', name: 'Property4' },
+                { key: '6', parent: '2', name: 'Property5'}
+            ];
         myDiagram.model = model;
-        console.log(JSON.stringify(this.formComponent.Output));
+
     }
 }
