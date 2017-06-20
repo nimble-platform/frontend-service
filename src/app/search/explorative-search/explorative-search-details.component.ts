@@ -3,13 +3,15 @@
  * of the Data (JSON) that will be received from Backend
  */
 import { Component, AfterViewInit, ViewChild , ElementRef } from '@angular/core';
+// import { KeysPipe } from './pipes/keys'; 
 import * as go from 'gojs';
 
 @Component({
     selector: 'explore-search-details',
     template: `<div class="displayArea" #myDiagramDiv style="height:450px; width: 100%; position: relative;"></div>`,
-    styles: [`.displayArea {background-color: lightgrey;}`]
+    styles: [`.displayArea {background-color: lightgrey;}`],
 })
+
 
 export class ExplorativeSearchDetailsComponent extends AfterViewInit {
 

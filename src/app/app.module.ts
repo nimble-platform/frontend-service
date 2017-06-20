@@ -22,6 +22,7 @@ import { ExplorativeSearchComponent } from './search/explorative-search/explorat
 import { ExplorativeSearchService } from './search/explorative-search/explorative-search.service';
 import { ExplorativeSearchFormComponent } from './search/explorative-search/explorative-search-form.component';
 import { ExplorativeSearchDetailsComponent } from './search/explorative-search/explorative-search-details.component';
+import { KeysPipe } from './search/explorative-search/pipes/keys';
 
 @NgModule({
     imports: [
@@ -44,6 +45,7 @@ import { ExplorativeSearchDetailsComponent } from './search/explorative-search/e
         ExplorativeSearchComponent,
         ExplorativeSearchFormComponent,
         ExplorativeSearchDetailsComponent,
+        KeysPipe,
         AdditionalItemPropertyComponent
         ],
         providers: [

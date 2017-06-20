@@ -53,13 +53,19 @@
         <li *ngFor="let eachOutput of Output">
             <!-- Testing of the JSON data here from the backend Server -->
             <!-- This will be removed later -->
-            <div class="queryOutputs">{{eachOutput.resp.conceptOverview.PostalAddress[0]}}</div>
-            <div class="queryOutputs">{{eachOutput.resp.conceptOverview.PostalAddress[1]}}</div>
+            <div id="kwBtn" *ngFor="let each of eachOutput.resp.conceptOverview | keys">
+                <button class="btn btn-success">{{each}}</button>
+            </div>
         </li>
     </ul>
 </div>
 </div>
-
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
 <!-- The Graph Display Component -->
 <!-- Data Visualization here-->
+
 <explore-search-details></explore-search-details>
