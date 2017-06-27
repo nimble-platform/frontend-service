@@ -13,6 +13,7 @@
 		<script src="node_modules/core-js/client/shim.min.js"></script>
 		<script src="node_modules/zone.js/dist/zone.js"></script>
 		<script src="node_modules/systemjs/dist/system.src.js"></script>
+		<script src="node_modules/gojs/release/go-debug.js"></script>
 		<script src="systemjs.config.js"></script>
 		<script src="sha256.js"></script>
 		<script>
@@ -22,7 +23,7 @@
 			document.locale = locale;
 			System.config({
 				map: {
-					text: 'systemjs-text-plugin.js'
+					text: 'systemjs-text-plugin.js',
 				}
 			});
 			System.import('main.js').catch(function(err){

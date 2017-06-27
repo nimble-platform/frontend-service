@@ -1,0 +1,70 @@
+<!-- Search Bar -->
+<div class="row">
+    <div class="col-12">
+        <div class="input-group form-group">
+            <label class="input-group-addon">Search</label>
+            <input type="text" class="form-control" #searchVal (keyup.enter)="Search(searchVal.value)"  placeholder="Company/Business/Product"/>
+            <span><button (click)="Search(searchVal.value)" class="btn btn-success" type="button">Search</button></span>
+        </div> <!--input-group-->
+    </div> <!-- col-12 -->
+</div> <!--row-->
+
+<!-- Entered Keywords to Displayed -->
+<div class="align-center">
+    <h5><b> Search History </b></h5>
+</div>
+
+<!-- Search Keywords go here -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 kwArea">
+            <ul>
+                <!-- list of all the search keywords by user -->
+                <li class="searchQueries" *ngFor="let keyword of Output">
+                    <span>
+                        <input #kwCheck type="checkbox" (change)="cbInput= kwCheck.checked"/> {{keyword.kw}}
+                        <span><button class="btn btn-xs btn-danger"
+                            (click)="deleteKW(keyword.kw); $event.stopPropagation()" 
+                            [disabled]=!kwCheck.checked
+                            [hidden]="!kwCheck.checked">&times;</button></span>
+                    </span>
+                </li>
+            </ul>
+        </div>
+        <!-- This button is according to Specification
+            If not logged in route directly to Login Page
+            if logged in route to dashboard -->
+        <div class="col-md-2">
+            <a class="btn btn-warning" routerLink="/dashboard">Home</a>
+        </div>
+    </div>
+</div>
+<br/>
+<br/>
+
+<!-- Display of Content from server -->
+<div class="container">
+<div class="col-12">
+    <ul>
+        <li *ngFor="let eachOutput of Output; let outerindex = index">
+            <div id="kwBtn" *ngFor="let each of eachOutput.resp.conceptOverview; let innerIndex = index">
+                <button class="btn btn-success" *ngIf="innerIndex === 0 || showMore[outerIndex]"
+                  (click)="postQuery(each)"
+                >{{each}}</button>
+            </div>
+            <div style="display:inline">
+                <button *ngIf="eachOutput.resp.conceptOverview.length > 1"
+                    (click)="showMore[outerIndex]=!showMore[outerIndex]">
+                    {{showMore[outerIndex] ? 'Hide': 'Show'}} Options
+                </button>
+            </div>
+        </li>
+    </ul>
+</div>
+</div>
+<br/>
+<br/>
+
+<!-- The Graph Display Component -->
+<!-- Data Visualization here-->
+<explore-search-details [config]="visData" [name]="testString"></explore-search-details>

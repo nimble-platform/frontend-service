@@ -7,6 +7,10 @@ button {
 	cursor :pointer;
 }
 
+textarea {
+	min-height: 2.375rem;
+}
+
 #loading-icon {
 	position: fixed;
 	left: 50%;
@@ -45,4 +49,8 @@ button {
 
 .ng-invalid:not(form)  {
 	border-right: 5px solid #a94442;
+}
+
+.align-center {
+	text-align: center;
 }
