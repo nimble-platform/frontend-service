@@ -23,7 +23,7 @@
 					<span i18n>Showing results</span> {{ start }} - {{ end }} <span i18n>of</span> {{ size }}
 				</div>
 				<div class="col-6">
-					<ngb-pagination [(collectionSize)]="size" [(page)]="page" [maxSize]="5" [boundaryLinks]="true" (click)="get(objToSubmit)"></ngb-pagination>
+					<ngb-pagination [(collectionSize)]="size" [(page)]="page" [maxSize]="5" [boundaryLinks]="true" (pageChange)="get(objToSubmit)"></ngb-pagination>
 				</div>
 			</div>
 		
