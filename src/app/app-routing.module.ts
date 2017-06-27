@@ -5,7 +5,7 @@ import { LogoutComponent } from './user-mgmt/logout.component';
 import { RegistrationComponent } from './user-mgmt/registration.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { CategorySearchComponent } from './catalogue/category/category-search.component';
-import { ExplorativeSearchComponent } from './search/explorative-search/explorative-search.component';
+import { ExplorativeSearchComponent } from './explorative-search/explorative-search.component';
 import { ProductPublishComponent } from './catalogue/product-publish.component';
 
 

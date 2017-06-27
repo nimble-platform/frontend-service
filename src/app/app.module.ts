@@ -18,11 +18,11 @@ import { CategoryService } from './catalogue/category/category.service';
 import { ProductPublishComponent } from './catalogue/product-publish.component';
 import { AdditionalItemPropertyComponent } from './catalogue/additional-item-property.component';
 import {CatalogueService} from './catalogue/catalogue.service';
-import { ExplorativeSearchComponent } from './search/explorative-search/explorative-search.component';
-import { ExplorativeSearchService } from './search/explorative-search/explorative-search.service';
-import { ExplorativeSearchFormComponent } from './search/explorative-search/explorative-search-form.component';
-import { ExplorativeSearchDetailsComponent } from './search/explorative-search/explorative-search-details.component';
-import { KeysPipe } from './search/explorative-search/pipes/keys';
+import { ExplorativeSearchComponent } from './explorative-search/explorative-search.component';
+import { ExplorativeSearchService } from './explorative-search/explorative-search.service';
+import { ExplorativeSearchFormComponent } from './explorative-search/explorative-search-form.component';
+import { ExplorativeSearchDetailsComponent } from './explorative-search/explorative-search-details.component';
+
 
 @NgModule({
     imports: [
@@ -45,7 +45,6 @@ import { KeysPipe } from './search/explorative-search/pipes/keys';
         ExplorativeSearchComponent,
         ExplorativeSearchFormComponent,
         ExplorativeSearchDetailsComponent,
-        KeysPipe,
         AdditionalItemPropertyComponent
         ],
         providers: [
