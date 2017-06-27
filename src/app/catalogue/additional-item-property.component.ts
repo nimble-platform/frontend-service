@@ -16,7 +16,7 @@ export class AdditionalItemPropertyComponent implements OnInit {
     binaryValue:boolean = false;
 
     ngOnInit(): void {
-        if(this.additionalItemProperty.embeddedDocumentBinaryObjects.length != 0) {
+        if(this.additionalItemProperty.embeddedDocumentBinaryObject.length != 0) {
             this.stringValue = false;
             this.binaryValue = true;
         }

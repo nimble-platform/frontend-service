@@ -8,11 +8,11 @@ import * as myGlobals from '../globals';
 export class CredentialsService {
 
 	private headers = new Headers({'Content-Type': 'application/json'});
-	private url = myGlobals.endpoint;
+	private url = myGlobals.user_mgmt_endpoint;
 	constructor(private http: Http) { }
 	
 	post(credentials: Credentials): Promise<any> {
-		const url = `${this.url}/identity/login`;
+		const url = `${this.url}/login`;
 		return this.http
 		.post(url, JSON.stringify(credentials), {headers: this.headers})
 		.toPromise()

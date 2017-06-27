@@ -1,0 +1,12 @@
+.thumb {
+	max-height: 3rem;
+	max-width: 6rem;
+}
+
+.card {
+	margin-bottom: 1rem !important;
+}
+
+.pagination {
+	margin-bottom: 0 !important;
+}

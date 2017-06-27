@@ -1,0 +1,87 @@
+<form (ngSubmit)="onSubmit()" class="space-before" #simpleSearchForm="ngForm" novalidate>
+
+	<div class="input-group form-group">
+		<label for="searchTerm" class="input-group-addon" i18n>Search term</label>
+		<input type="text" class="form-control" id="searchTerm" required [(ngModel)]="model.q" name="searchTerm" #q="ngModel" pattern=".{1,}">
+		<span class="input-group-btn">
+			<button type="submit" class="btn btn-secondary" [disabled]="!simpleSearchForm.form.valid">
+				<img src="assets/search_black.png" class="inline-icon"/>
+			</button>
+		</span>
+	</div>
+	
+	<div [hidden]="error_detc || callback || !submitted">
+		<img class="space-before" src="assets/form_loader.gif"/>
+	</div>
+	
+	<div [hidden]="!callback">
+		<hr/>
+		<div [hidden]="size==0">
+		
+			<div class="row space-after">
+				<div class="col-6">
+					<span i18n>Showing results</span> {{ start }} - {{ end }} <span i18n>of</span> {{ size }}
+				</div>
+				<div class="col-6">
+					<ngb-pagination [(collectionSize)]="size" [(page)]="page" [maxSize]="5" [boundaryLinks]="true" (click)="get(objToSubmit)"></ngb-pagination>
+				</div>
+			</div>
+		
+			<div class="row">
+			
+				<div class="col-4">
+		
+					<div *ngFor="let facet of facetObj">
+						<div class="card">
+							<div class="card-header">
+								{{ facet.name }}
+							</div>
+							<div class="card-block">
+								<div *ngFor="let facetInner of facet.options">
+									<div *ngIf="!checkFacet(facet.name,facetInner.name)">
+										<span class="clickable" (click)="setFacet(facet.name,facetInner.name)">{{ facetInner.name }} ({{ facetInner.count }})</span>
+									</div>
+									<div *ngIf="checkFacet(facet.name,facetInner.name)">
+										<span class="clickable" (click)="setFacet(facet.name,facetInner.name)"><b>{{ facetInner.name }} ({{ facetInner.count }})</b></span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				
+				</div>
+				
+				<div class="col-8">
+		
+					<div *ngFor="let result of response">
+						<div class="card pointer" [routerLink]="['/simple-search-details', result.id]">
+							<div class="card-block">
+								<div class="row">
+									<div class="col-2">
+										<div *ngIf="isJson(result[product_img])">
+											<img src="{{result[product_img]}}" class="thumb" onerror="this.src='assets/empty_img.png';"/>
+										</div>
+										<div *ngIf="!isJson(result[product_img])">
+											<img src="{{result[product_img]}}" class="thumb" onerror="this.src='assets/empty_img.png';"/>
+										</div>
+									</div>
+									<div class="col-10">
+										<b>{{ result[product_name] }}</b><br/>
+										<i>{{ result[product_vendor_name] }}</i>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				
+				</div>
+				
+			</div>
+
+		</div>
+		<div [hidden]="size>0">
+			<span i18n>No search results</span>
+		</div>
+	</div>
+	
+</form>

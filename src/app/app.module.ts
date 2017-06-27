@@ -18,6 +18,11 @@ import { CategoryService } from './catalogue/category/category.service';
 import { ProductPublishComponent } from './catalogue/product-publish.component';
 import { AdditionalItemPropertyComponent } from './catalogue/additional-item-property.component';
 import {CatalogueService} from './catalogue/catalogue.service';
+import { SimpleSearchComponent } from './simple-search/simple-search.component';
+import { SimpleSearchDetailsComponent } from './simple-search/simple-search-details.component';
+import { SimpleSearchFormComponent } from './simple-search/simple-search-form.component';
+import { SimpleSearchService } from './simple-search/simple-search.service';
+import { BPEService } from './bpe/bpe.service';
 import { ExplorativeSearchComponent } from './explorative-search/explorative-search.component';
 import { ExplorativeSearchService } from './explorative-search/explorative-search.service';
 import { ExplorativeSearchFormComponent } from './explorative-search/explorative-search-form.component';
@@ -42,6 +47,10 @@ import { ExplorativeSearchDetailsComponent } from './explorative-search/explorat
         CredentialsFormComponent,
         CategorySearchComponent,
         ProductPublishComponent,
+		AdditionalItemPropertyComponent,
+		SimpleSearchComponent,
+		SimpleSearchDetailsComponent,
+		SimpleSearchFormComponent,
         ExplorativeSearchComponent,
         ExplorativeSearchFormComponent,
         ExplorativeSearchDetailsComponent,
@@ -52,6 +61,8 @@ import { ExplorativeSearchDetailsComponent } from './explorative-search/explorat
         CredentialsService,
         CategoryService,
         CatalogueService,
+		SimpleSearchService,
+		BPEService,
         ExplorativeSearchService
         ],
         bootstrap: [

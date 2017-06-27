@@ -2,7 +2,7 @@
  * Created by suat on 17-May-17.
  */
 
-import {Headers, Http} from "@angular/http";
+import {Http} from "@angular/http";
 import {Component, ElementRef, OnInit, ViewChild} from "@angular/core";
 import {GoodsItem} from "./model/publish/goods-item";
 import {CategoryService} from "./category/category.service";
@@ -11,52 +11,64 @@ import {Item} from "./model/publish/item";
 import {BinaryObject} from "./model/publish/binary-object";
 import {CatalogueService} from "./catalogue.service";
 import {Category} from "./model/category/category";
+import {Identifier} from "./model/publish/identifier";
+import {CatalogueLine} from "./model/publish/catalogue-line";
+import {Catalogue} from "./model/publish/catalogue";
+import {CookieService} from "ng2-cookies";
 
 @Component({
     selector: 'product-publish',
-    templateUrl: './product-publish.component.html',
+    templateUrl: './product-publish.component.html'
 })
 
 export class ProductPublishComponent implements OnInit {
     @ViewChild('propertyValueType') propertyValueType: ElementRef;
 
-    private headers = new Headers({'Content-Type': 'application/json'});
-    //private url = myGlobals.endpoint;
-    // TODO remove the hardcoded URL
-    private url = `http://localhost:8095/catalogue/product`;
+    // data objects
     selectedCategory: Category;
-    singleItemUpload: boolean = true;
     goodsItem: GoodsItem;
-    newProperty: AdditionalItemProperty = new AdditionalItemProperty(this.generateUUID(), "", "", new Array<BinaryObject>(), "", "", null, null);
+    newProperty: AdditionalItemProperty = new AdditionalItemProperty("", [''], new Array<BinaryObject>(), "", "", "STRING", null, null);
 
-    constructor(private http: Http,
-                private categoryService: CategoryService,
-                private catalogueService: CatalogueService) {
+    // state objects
+    singleItemUpload: boolean = true;
+    private submitted = false;
+    private callback = false;
+    private error_detc = false;
+
+    constructor(private categoryService: CategoryService,
+                private catalogueService: CatalogueService,
+                private cookieService: CookieService) {
     }
 
     ngOnInit() {
-        // initiate the goods item with the selected property
-        this.selectedCategory = this.categoryService.getSelectedCategory();
+        let userId = this.cookieService.get("user_id");
+        this.catalogueService.getCatalogue(userId).then(catalogue => {
 
-        // create additional item properties
-        let additionalItemProperties = new Array<AdditionalItemProperty>();
-        // create item
-        let item = new Item("", additionalItemProperties, null);
-        // create goods item
-        this.goodsItem = new GoodsItem("", item);
+            // initiate the goods item with the selected property
+            this.selectedCategory = this.categoryService.getSelectedCategory();
 
-        if (this.selectedCategory != null) {
-            for (let i = 0; i < this.selectedCategory.properties.length; i++) {
-                let property = this.selectedCategory.properties[i];
-                let unit = "";
-                if (property.unit != null) {
-                    unit = property.unit.shortName;
+            // create additional item properties
+            let additionalItemProperties = new Array<AdditionalItemProperty>();
+            // create item
+            let item = new Item("", "", additionalItemProperties, catalogue.providerParty, [], "");
+            // identifier
+            let giId = new Identifier(this.generateUUID(), "", "");
+            // create goods item
+            this.goodsItem = new GoodsItem(giId, item);
+
+            if (this.selectedCategory != null) {
+                for (let i = 0; i < this.selectedCategory.properties.length; i++) {
+                    let property = this.selectedCategory.properties[i];
+                    let unit = "";
+                    if (property.unit != null) {
+                        unit = property.unit.shortName;
+                    }
+                    let valueQualifier = property.dataType;
+                    let aip = new AdditionalItemProperty(property.preferredName, [''], new Array<BinaryObject>(), "", unit, valueQualifier, null, null);
+                    additionalItemProperties.push(aip);
                 }
-                let valueQualifier = property.dataType;
-                let aip = new AdditionalItemProperty(property.id, property.preferredName, "", new Array<BinaryObject>(), unit, valueQualifier, null, null);
-                additionalItemProperties.push(aip);
             }
-        }
+        });
     }
 
     private onTabClick(event: any) {
@@ -68,21 +80,96 @@ export class ProductPublishComponent implements OnInit {
         }
     }
 
+    private publishProduct(): void {
+        this.error_detc = false;
+        this.callback = false;
+        this.submitted = true;
+
+        let userId = this.cookieService.get("user_id");
+        this.catalogueService.getCatalogue(userId).then(catalogue => {
+                let line: CatalogueLine = new CatalogueLine(null, this.goodsItem);
+                catalogue.catalogueLine.push(line);
+                this.mergeMultipleValuesIntoSingleField(catalogue);
+                if (catalogue.uuid == null) {
+                    this.catalogueService.postCatalogue(catalogue)
+                        .then(() => this.onSuccessfulPublish())
+                        .catch(() => this.onFailedPublish());
+                } else {
+                    this.catalogueService.putCatalogue(catalogue)
+                        .then(() => this.onSuccessfulPublish())
+                        .catch(() => this.onFailedPublish())
+                }
+            }
+        );
+    }
+
+    private onSuccessfulPublish():void {
+        this.callback = true;
+        this.error_detc = false;
+        this.ngOnInit();
+    }
+
+    private onFailedPublish():void {
+        this.error_detc = true;
+    }
+
+    private mergeMultipleValuesIntoSingleField(catalogue: Catalogue): void {
+        for (let i: number = 0; i < catalogue.catalogueLine.length; i++) {
+            let props = catalogue.catalogueLine[i].goodsItem.item.additionalItemProperty;
+
+            for (let j: number = 0; j < props.length; j++) {
+                props[j].demoSpecificMultipleContent = JSON.stringify(props[j].embeddedDocumentBinaryObject);
+            }
+        }
+        //demo specific
+        catalogue.catalogueLine[0].goodsItem.item.itemConfigurationImages = JSON.stringify(catalogue.catalogueLine[0].goodsItem.item.itemConfigurationImageArray);
+    }
+
+
+    private onValueTypeChange(event: any) {
+        if (event.target.value == "Text") {
+            this.newProperty.valueQualifier = "STRING";
+        } else if (event.target.value == "Number") {
+            this.newProperty.valueQualifier = "REAL_MEASURE";
+        } else if (event.target.value == "Image" || event.target.valueQualifier == "File") {
+            this.newProperty.valueQualifier = "BINARY";
+        }
+        console.log(event.target.selectedIndex);
+    }
+
     private imageChange(event: any) {
         let fileList: FileList = event.target.files;
         if (fileList.length > 0) {
-            let binaryObjects = this.newProperty.embeddedDocumentBinaryObjects;
+            let binaryObjects = this.newProperty.embeddedDocumentBinaryObject;
 
             for (let i = 0; i < fileList.length; i++) {
                 let file: File = fileList[i];
                 let reader = new FileReader();
 
                 reader.onload = function (e: any) {
-                    let binaryObject = new BinaryObject("", reader.result, "", "");
+                    let base64String = reader.result.split(',').pop();
+                    let binaryObject = new BinaryObject(base64String, file.type, file.name, "", "");
                     binaryObjects.push(binaryObject);
                 };
                 reader.readAsDataURL(file);
             }
+        }
+    }
+
+    //TODO update the method below so that the parameters are passed dynamically
+    private overallProductImageImage(event: any, wallTilesValue: string, floorTilesValue: string) {
+        let fileList: FileList = event.target.files;
+        if (fileList.length > 0) {
+            let itemConfigurationImageArray = this.goodsItem.item.itemConfigurationImageArray;
+            let file: File = fileList[0];
+            let reader = new FileReader();
+
+            reader.onload = function (e: any) {
+                let base64String = reader.result.split(',').pop();
+                let binaryObject = new BinaryObject(base64String, file.type, file.name, "", "{wall: " + wallTilesValue + ", floor: " + floorTilesValue + "}");
+                itemConfigurationImageArray.push(binaryObject);
+            };
+            reader.readAsDataURL(file);
         }
     }
 
@@ -99,15 +186,11 @@ export class ProductPublishComponent implements OnInit {
         }
     }
 
-    private publishProduct(): void {
-        this.catalogueService.publishProduct(this.goodsItem);
-    }
-
     private addCustomProperty(): void {
-        this.goodsItem.item.additionalItemProperties.push(this.newProperty);
+        this.goodsItem.item.additionalItemProperty.push(this.newProperty);
 
         // reset the custom property view
-        this.newProperty = new AdditionalItemProperty(this.generateUUID(), null, "", new Array<BinaryObject>(), "", "", null, null);
+        this.newProperty = new AdditionalItemProperty(null, [''], new Array<BinaryObject>(), "", "", "STRING", null, null);
         this.propertyValueType.nativeElement.selectedIndex = 0;
     }
 

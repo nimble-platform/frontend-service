@@ -4,7 +4,11 @@ body {
 }
 
 button {
-	cursor :pointer;
+	cursor: pointer;
+}
+
+textarea {
+	min-height: 2.375rem;
 }
 
 textarea {
@@ -53,4 +57,82 @@ textarea {
 
 .align-center {
 	text-align: center;
+}
+
+.inline-icon {
+	max-height: 1rem;
+	margin-top: -0.2rem;
+	margin-right: 0.2rem;
+}
+
+.btn-img {
+	max-height: 4rem;
+	max-width: 100%;
+	margin-right: 0.2rem;
+	padding: 0.2rem;
+	background-color: white;
+	border: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+.img-max {
+	max-width: 100%;
+	max-height: 30rem;
+}
+
+.img-sm {
+	max-height: 2rem;
+	max-width: 100%;
+	margin-top: -0.2rem;
+}
+
+.bordered {
+	border: 1px solid rgba(0, 0, 0, 0.15) !important;
+	border-radius: 0.25rem !important;
+	padding: 0.5rem !important;
+}
+
+.clickable {
+	cursor: pointer;
+	text-decoration: underline;
+}
+
+.pointer {
+	cursor: pointer;
+}
+
+.align-left {
+	text-align: left;
+}
+
+.align-right {
+	text-align: right;
+}
+
+.align-center {
+	text-align: center;
+}
+
+.navbar-inverse .navbar-nav .nav-link {
+	color: white !important;
+	opacity: 0.5 !important;
+}
+
+.navbar-inverse .navbar-nav .active > .nav-link, .navbar-inverse .navbar-nav .nav-link.active, .navbar-inverse .navbar-nav .nav-link.open, .navbar-inverse .navbar-nav .open > .nav-link {
+	opacity: 1 !important;
+}
+
+ngb-pagination nav .pagination {
+	margin-bottom: 0 !important;
+	-moz-box-pack: end;
+    justify-content: flex-end;
+}
+
+ngb-pagination nav .pagination .page-item .page-link {
+	color: #a21c26;
+}
+
+ngb-pagination nav .pagination .page-item.active .page-link {
+	background-color: #a21c26;
+	border-color: #a21c26;
+	color: #fff;
 }

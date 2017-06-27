@@ -18,17 +18,101 @@
         <source>Publish</source>
         <target>Veröffentlichen</target>
       </trans-unit>
+	  <trans-unit id="7e892ba15f2c6c17e83510e273b3e10fc32ea016" datatype="html">
+        <source>Search</source>
+        <target>Suche</target>
+      </trans-unit>
 	  <trans-unit id="bb694b49d408265c91c62799c2b3a7e3151c824d" datatype="html">
         <source>Logout</source>
         <target>Abmelden</target>
       </trans-unit>
-	   <trans-unit id="bb694b49d408265c91c62799c2b3a7e3151c824a" datatype="html">
-        <source>Search</source>
-        <target>Suche</target>
+	  <trans-unit id="9236c32653c2449278b7ae44e3552e6d64497f86" datatype="html">
+        <source>Welcome to the</source>
+        <target>Willkommen auf der</target>
       </trans-unit>
-	  <trans-unit id="25f853c0b1fa019eceb9d086ddcd0a2c0ab329c2" datatype="html">
-        <source>Welcome to the NIMBLE platform,</source>
-        <target>Willkommen auf der NIMBLE Plattform,</target>
+      <trans-unit id="d026a408203a6e38f1f52c46e2e7d813cfc344b1" datatype="html">
+        <source>platform,</source>
+        <target>Plattform,</target>
+      </trans-unit>
+      <trans-unit id="12cbfc1584df29b3f0c65220c4d13e79120490a1" datatype="html">
+        <source>Sales</source>
+        <target>Verkäufe</target>
+      </trans-unit>
+	  <trans-unit id="2f933b826a570836cab04f683970a2d22068458c" datatype="html">
+        <source>Date</source>
+        <target>Datum</target>
+      </trans-unit>
+      <trans-unit id="d3cbff754f1c148f3fec696edd246993aea35b01" datatype="html">
+        <source>Product</source>
+        <target>Produkt</target>
+      </trans-unit>
+      <trans-unit id="dfc2fb58e2a04ed944a4bd80f0a2087775134068" datatype="html">
+        <source>Amount</source>
+		<target>Menge</target>
+      </trans-unit>
+      <trans-unit id="a7cee30e3df57f6b3b38712261c670aff46643e9" datatype="html">
+        <source>Buyer</source>
+        <target>Käufer</target>
+      </trans-unit>
+      <trans-unit id="ccac601bf473fa28c9ac46794f1cd40542f74347" datatype="html">
+        <source>Message</source>
+        <target>Nachricht</target>
+      </trans-unit>
+      <trans-unit id="81b97b8ea996ad1e4f9fca8415021850214884b1" datatype="html">
+        <source>Status</source>
+        <target>Status</target>
+      </trans-unit>
+	  <trans-unit id="24813b8a3e45f0b57136c18d003027262cfe2d1f" datatype="html">
+        <source>Options</source>
+        <target>Optionen</target>
+      </trans-unit>
+      <trans-unit id="643d97562e69424462b2faf3f0124000e9cc79f3" datatype="html">
+        <source>Action required</source>
+        <target>Aktion erforderlich</target>
+      </trans-unit>
+	  <trans-unit id="48f6d7edad116a39618612c19d20ed2089b54acb" datatype="html">
+        <source>Approved</source>
+        <target>Angenommen</target>
+      </trans-unit>
+      <trans-unit id="2310400448b90e879fb988300d6839eb9316edf8" datatype="html">
+        <source>Declined</source>
+        <target>Abgelehnt</target>
+      </trans-unit>
+      <trans-unit id="73a83c0db2dbf61230eba62e1d22a6da3d190c4c" datatype="html">
+        <source>Approve</source>
+        <target>Annehmen</target>
+      </trans-unit>
+      <trans-unit id="ce3bb7411069c96e2065502c115323680e7f1ce0" datatype="html">
+        <source>Decline</source>
+        <target>Ablehnen</target>
+      </trans-unit>
+      <trans-unit id="10de27ff02fd6bdf94b32ca462d0d43ea7ce6eb5" datatype="html">
+        <source>Negotiate</source>
+        <target>Verhandeln</target>
+      </trans-unit>
+	  <trans-unit id="daace82faf38ed52faa97ad380012b17d9bd6aa6" datatype="html">
+        <source>Remove from history</source>
+        <target>Aus der Historie entfernen</target>
+      </trans-unit>
+      <trans-unit id="d6111969b4b0929debd4fd0d910733a6fccd37b2" datatype="html">
+        <source>No data</source>
+        <target>Keine Daten</target>
+      </trans-unit>
+	  <trans-unit id="a0539c7b74e50e2b172d4209154905dcca2b7888" datatype="html">
+        <source>Purchases</source>
+        <target>Käufe</target>
+      </trans-unit>
+      <trans-unit id="328c759c9dd77f41866119252dca13c72c980344" datatype="html">
+        <source>Seller</source>
+        <target>Verkäufer</target>
+      </trans-unit>
+      <trans-unit id="8ddf7d586e5a7c177b267fb1c0ef9e253b7ab496" datatype="html">
+        <source>Waiting for response</source>
+        <target>Warte auf Antwort</target>
+      </trans-unit>
+	  <trans-unit id="d7b35c384aecd25a516200d6921836374613dfe7" datatype="html">
+        <source>Cancel</source>
+        <target>Abbrechen</target>
       </trans-unit>
       <trans-unit id="80e6a18f9329abccbc0c0fbfccd80192660c03e4" datatype="html">
         <source>Choose product (or service) category</source>
@@ -53,6 +137,14 @@
       <trans-unit id="1ac60ec338aa3efff8c17de2e128eb00cdc601fe" datatype="html">
         <source>Selected category:</source>
         <target>Ausgewählte Kategorie:</target>
+      </trans-unit>
+	  <trans-unit id="28d2ef00e6b67d8c4a4b3643f9aadcf717e3cc6a" datatype="html">
+        <source>Product published!</source>
+        <target>Produkt veröffentlicht!</target>
+      </trans-unit>
+      <trans-unit id="c913b48de7e7c19149f6a133f673daf9b47fb640" datatype="html">
+        <source>Fail to publish product!</source>
+        <target>Produktveröffentlichung fehlgeschlagen!</target>
       </trans-unit>
       <trans-unit id="e653a757f7e5c68f9fd2e5566a633149590589a9" datatype="html">
         <source>Publish Product</source>
@@ -82,9 +174,13 @@
         <source>Value type:</source>
         <target>Typ des Wertes:</target>
       </trans-unit>
-      <trans-unit id="471719c00d1267105c7a2de31d2937b3e71b693b" datatype="html">
-        <source>Text / Number</source>
-        <target>Text / Zahl</target>
+      <trans-unit id="8ba143716c2da6e4120c0c1a804f0bdd9a7e5f5b" datatype="html">
+        <source>Text</source>
+        <target>Text</target>
+      </trans-unit>
+      <trans-unit id="fbcb0d75afbe6aec04269381598a737f4bd19db7" datatype="html">
+        <source>Number</source>
+        <target>Zahl</target>
       </trans-unit>
       <trans-unit id="a5f9ba9bb9faa8284bcadb1cdbc6aaf969e9c4bb" datatype="html">
         <source>Image</source>
@@ -97,6 +193,18 @@
       <trans-unit id="ccd94c9d494a8fb7cb742c8d04f6f303ef50d22a" datatype="html">
         <source>Add property</source>
         <target>Eigenschaft hinzufügen</target>
+      </trans-unit>
+      <trans-unit id="5704ec2049d007c5f5fb495a5d8b607e68d58081" datatype="html">
+        <source>Order</source>
+        <target>Bestellen</target>
+      </trans-unit>
+      <trans-unit id="f6949a4d9337a0da0cec7679827dadbdf49bc62f" datatype="html">
+        <source>An error occured - please try again later</source>
+        <target>Ein Fehler ist aufgetreten - bitte versuchen Sie es später noch einmal</target>
+      </trans-unit>
+      <trans-unit id="e587762dff7438af869760072a568e9776ee5118" datatype="html">
+        <source>Order successful - track to progress on your <x id="START_LINK" ctype="x-a"/>dashboard<x id="CLOSE_LINK" ctype="x-a"/></source>
+        <target>Bestellung erfolgreich - verfolgen Sie den Fortschritt in Ihrer <x id="START_LINK" ctype="x-a"/>Übersicht<x id="CLOSE_LINK" ctype="x-a"/></target>
       </trans-unit>
       <trans-unit id="6d3b88a3ae6ff3d987f86395605397ec736dee9c" datatype="html">
         <source>E-Mail</source>
@@ -173,6 +281,22 @@
       <trans-unit id="33e552773f62cdf0c61e881a8cce8368e2940de8" datatype="html">
         <source>Login successful</source>
         <target>Anmeldung erfolgreich</target>
+      </trans-unit>
+	  <trans-unit id="a4f38c1011dce644d3c25ac4ef5f8862c445d298" datatype="html">
+        <source>Search term</source>
+        <target>Suchbegriff</target>
+      </trans-unit>
+	  <trans-unit id="90f4817715d17ba563365fb94cf852213aa5a633" datatype="html">
+        <source>Showing results</source>
+        <target>Zeige Ergebnisse</target>
+      </trans-unit>
+      <trans-unit id="169eed2bc3e08e1bea977bcc5d799379f6b8a758" datatype="html">
+        <source>of</source>
+        <target>von</target>
+      </trans-unit>
+	  <trans-unit id="07190520c4e8884bfa6feff14b9af54f9bd3d444" datatype="html">
+        <source>No search results</source>
+        <target>Keine Suchergebnisse</target>
       </trans-unit>
     </body>
   </file>
