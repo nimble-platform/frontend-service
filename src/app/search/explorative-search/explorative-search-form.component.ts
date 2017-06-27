@@ -7,7 +7,7 @@
  * upon clicking it the content and the keyword itself are removed from 
  * the HTML file
  */
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ExplorativeSearchService } from './explorative-search.service';
 import { Explorative } from './model/explorative';
 
@@ -20,7 +20,6 @@ import { Explorative } from './model/explorative';
  */
 export const OUTPUT: Explorative[] = [];
 
-
 @Component({
     selector: 'explore-search-form',
     templateUrl: './explorative-search-form.component.html',
@@ -29,7 +28,7 @@ export const OUTPUT: Explorative[] = [];
 })
 
 
-export class ExplorativeSearchFormComponent {
+export class ExplorativeSearchFormComponent implements OnInit {
 
     // checkbox for every keyword in Search History
     // remember: the variable name is same as in the HTML file
@@ -38,9 +37,18 @@ export class ExplorativeSearchFormComponent {
     // data visualization
     // remember: the variable `Output` is the same as in the HTML file
     Output = OUTPUT;
+    visData: Object[] = []; // send this to details component
+    testString: string;
+
+    // For response which constitutes more than one option..
+    showMore: boolean[] = [];
 
     constructor(private expSearch: ExplorativeSearchService) {}
 
+    ngOnInit(): void {
+        this.showMore = new Array(this.Output.length);
+        this.showMore.fill(false);
+    }
     /**
      * Search: will get a HTTP response from the server (HTTP GET)
      *          of the keyword which user inputs.
@@ -71,5 +79,27 @@ export class ExplorativeSearchFormComponent {
             // remove the whole entry from the list
             this.Output.splice(index, 1);
         }
+    }
+
+    /**
+     * postQuery: for the when the user will click a specific keyword button
+     * the parameter will be sent as JSON request to get the Visualization values
+     * @param inputVal the name of the Button clicked by the User
+     */
+
+    postQuery(inputVal: string) {
+        // HTTP GET to backend Server for visualization
+        // create a JSON request for the queried button
+        let temp = {'concept': inputVal, 'stepRange': 2, 'frozenConcept': 'ddd'};
+        // console.log(JSON.stringify(temp)); // Debug: check
+        // get the requested query
+        this.expSearch.getLogicalView(temp)
+            .then(res => {
+                // console.log(res);
+                this.visData.push(res);
+                // console.log(this.visData);
+                this.testString = temp.concept;
+            }
+        );
     }
 }

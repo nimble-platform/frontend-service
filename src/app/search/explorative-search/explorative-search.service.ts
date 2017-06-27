@@ -15,12 +15,19 @@ import * as myGlobals from '../../globals';
 
 export class ExplorativeSearchService {
     private url = myGlobals.endpoint;
+    private logicalUrl = myGlobals.logicalViewEndpoint;
 
     constructor(private http: Http) { }
     // This is where the HTTP GET service is performed
     // for keyword search from user
-    searchData(term: string): Promise<string> {
+    searchData(term: string): Promise<any> {
         return this.http.get(`${this.url}?keyword=${term}`)
+            .toPromise()
+            .then(res => res.json());
+    }
+
+    getLogicalView(term: Object): Promise<any> {
+        return this.http.get(`${this.logicalUrl}?inputAsJson=${JSON.stringify(term)}`)
             .toPromise()
             .then(res => res.json());
     }

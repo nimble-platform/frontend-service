@@ -43,18 +43,20 @@
 <br/>
 
 <!-- Display of Content from server -->
-<div class="container displayArea">
+<div class="container">
 <div class="col-12">
-    <div id="kwBtn" *ngFor="let keyword of Output">
-                <!-- Each displayed keyword will be shown as a button in the display area -->
-                <button class="btn btn-default">{{keyword.kw}}</button>
-    </div><br/><br/>
     <ul>
-        <li *ngFor="let eachOutput of Output">
-            <!-- Testing of the JSON data here from the backend Server -->
-            <!-- This will be removed later -->
-            <div id="kwBtn" *ngFor="let each of eachOutput.resp.conceptOverview | keys">
-                <button class="btn btn-success">{{each}}</button>
+        <li *ngFor="let eachOutput of Output; let outerindex = index">
+            <div id="kwBtn" *ngFor="let each of eachOutput.resp.conceptOverview; let innerIndex = index">
+                <button class="btn btn-success" *ngIf="innerIndex === 0 || showMore[outerIndex]"
+                  (click)="postQuery(each)"
+                >{{each}}</button>
+            </div>
+            <div style="display:inline">
+                <button *ngIf="eachOutput.resp.conceptOverview.length > 1"
+                    (click)="showMore[outerIndex]=!showMore[outerIndex]">
+                    {{showMore[outerIndex] ? 'Hide': 'Show'}} Options
+                </button>
             </div>
         </li>
     </ul>
@@ -62,10 +64,7 @@
 </div>
 <br/>
 <br/>
-<br/>
-<br/>
-<br/>
+
 <!-- The Graph Display Component -->
 <!-- Data Visualization here-->
-
-<explore-search-details></explore-search-details>
+<explore-search-details [config]="visData" [name]="testString"></explore-search-details>
