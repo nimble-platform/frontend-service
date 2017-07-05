@@ -1,0 +1,16 @@
+<div class="delivery-terms-form" [formGroup]="deliveryTermsForm">
+    <div class="form-group col-xs-3">
+        <label>Terms</label>
+        <input type="text" class="form-control" formControlName="specialTerms">
+        <small [hidden]="deliveryTermsForm.controls.specialTerms.valid || deliveryTermsForm.controls.specialTerms.pristine" class="text-danger">
+            Terms are required
+        </small>
+    </div>
+    <div class="form-group col-xs-3">
+        <label>Avergage delivery time in days</label>
+        <input type="number" class="form-control" formControlName="estimatedDeliveryTime">
+    </div>
+
+    <h4>Delivery Address</h4>
+    <address-form [group]="deliveryTermsForm.controls.deliveryAddress"></address-form>
+</div>

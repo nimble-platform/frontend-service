@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { AppRoutingModule } from './app-routing.module';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -27,6 +27,9 @@ import { ExplorativeSearchComponent } from './explorative-search/explorative-sea
 import { ExplorativeSearchService } from './explorative-search/explorative-search.service';
 import { ExplorativeSearchFormComponent } from './explorative-search/explorative-search-form.component';
 import { ExplorativeSearchDetailsComponent } from './explorative-search/explorative-search-details.component';
+import { CompanySettingsComponent } from './user-mgmt/company-settings.component';
+import { AddressSubForm } from './user-mgmt/subforms/address.component';
+import { DeliveryTermsSubForm } from './user-mgmt/subforms/delivery-terms.component';
 
 
 @NgModule({
@@ -35,7 +38,8 @@ import { ExplorativeSearchDetailsComponent } from './explorative-search/explorat
         FormsModule,
         HttpModule,
         AppRoutingModule,
-        NgbModule.forRoot()
+        NgbModule.forRoot(),
+        ReactiveFormsModule,
         ],
         declarations: [
         AppComponent,
@@ -54,7 +58,10 @@ import { ExplorativeSearchDetailsComponent } from './explorative-search/explorat
         ExplorativeSearchComponent,
         ExplorativeSearchFormComponent,
         ExplorativeSearchDetailsComponent,
-        AdditionalItemPropertyComponent
+        AdditionalItemPropertyComponent,
+            CompanySettingsComponent,
+            AddressSubForm,
+            DeliveryTermsSubForm,
         ],
         providers: [
         UserService,

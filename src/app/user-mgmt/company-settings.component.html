@@ -1,0 +1,21 @@
+<h1>Company Settings</h1>
+
+<form [formGroup]="settingsForm" novalidate (ngSubmit)="save(settingsForm)">
+    <!-- we will place our fields here -->
+
+    <!-- name -->
+    <div class="form-group">
+        <label>Name</label>
+        <input type="text" formControlName="name">
+        <!--display error message if name is not valid-->
+        <small *ngIf="!settingsForm.controls.name.valid && !settingsForm.controls.name.pristine" class="text-danger">
+            Name is required (minimum 5 characters).
+        </small>
+    </div>
+
+    <h4>Delivery Terms</h4>
+    <delivery-terms-form [group]="settingsForm.controls.deliveryTerms"></delivery-terms-form>
+
+    <button type="button" (click)="save(settingsForm)" [disabled]="!settingsForm.valid">Submit</button>
+
+</form>

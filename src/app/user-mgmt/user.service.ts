@@ -6,6 +6,7 @@ import * as myGlobals from '../globals';
 import {Party} from "../catalogue/model/publish/party";
 import {Identifier} from "../catalogue/model/publish/identifier";
 import {PartyName} from "../catalogue/model/publish/party-name";
+import { CompanySettings } from './model/company-settings';
 
 @Injectable()
 export class UserService {
@@ -34,16 +35,33 @@ export class UserService {
 		.get(url, {headers: this.headers})
 		.toPromise()
 		.then(res => {
+
+			let partyObj = res.json()[0];
+			// console.log(url + ' returned ' + JSON.stringify(partyObj));
+
 			// ToDo: make identity service using the latest version of the data model
-			let id:Identifier = new Identifier(res.json()[0].partyIdentification[0].id.value, null, null);
-			let names:PartyName[] = [new PartyName(res.json()[0].partyName[0].name)];
+			let id:Identifier = new Identifier(partyObj.id.value, null, null);
+			let names:PartyName[] = [new PartyName(partyObj.partyName[0].name)];
 			this.userParty = new Party(id, names, null);
 			return Promise.resolve(this.userParty);
 		})
 		.catch(this.handleError);
 	}
 
+    getCompanySettings(userId: string): Promise<CompanySettings> {
+
+        return this.getUserParty(userId).then(party => {
+            const url = `${this.url}/company-settings/${party.id.value}`;
+            return this.http
+                .get(url, {headers: this.headers})
+                .toPromise()
+                .then(response => response.json() as CompanySettings)
+                .catch(this.handleError)
+        });
+    }
+
 	private handleError(error: any): Promise<any> {
+		console.error('An error occurred', error); // for demo purposes only
 		return Promise.reject(error.message || error);
 	}
 
