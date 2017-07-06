@@ -1,12 +1,9 @@
 /**
  * This file takes care of the details of Visualization
  * of the Data (JSON) that will be received from Backend
- * NOTE: Initial Implementation only displays the single Query.
- * Upon clicking the next query button -> there are errors.
- * The page needs to be refreshed for the next query
  */
 
-import { Component, AfterViewInit, ViewChild , ElementRef, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, AfterViewInit, ViewChild , ElementRef, Input, OnChanges } from '@angular/core';
 import * as go from 'gojs';
 import { RadialLayout } from './layout/RadialLayout';
 
@@ -19,7 +16,7 @@ import { RadialLayout } from './layout/RadialLayout';
 
 export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChanges {
 
-    @Input() config: Object[];
+    @Input() config: Object;
     // GoJS div as mentioned above in the @Component `template` param
     @ViewChild('myDiagramDiv') div: ElementRef;
 
@@ -28,20 +25,29 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
 
     constructor() {}
 
-    ngOnChanges(changes: SimpleChanges): void {
-        if (!this.config || this.config.length === 0) { return; }
-        // console.log(JSON.stringify(changes));
-        // console.log(JSON.stringify(this.config));
-        this.generateGraph();
+    /**
+     * using OnChanges LifeCycle Hook for incoming Configuration
+     * from the Parent Component
+     */
+
+    ngOnChanges(): void {
+        if (!this.config) { return; }
+
+        let recApproach = new RecClass();
+        recApproach.generateGraphRecApproach(this.config, this.myDiagram, this.$);
     }
 
+    /**
+     * AfterViewInit LifeCycle Hook for diagram initialization for GoJS
+     */
     ngAfterViewInit(): void {
         this.myDiagram = this.$(go.Diagram, this.div.nativeElement,
     {
       initialContentAlignment: go.Spot.Center,
       padding: 10,
       isReadOnly: true,
-      'animationManager.isEnabled': false
+      'animationManager.isEnabled': true,
+        'allowVerticalScroll': false
     });
     let commonToolTip = this.$(go.Adornment, 'Auto',
             {
@@ -69,7 +75,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
             {
                 locationSpot: go.Spot.Center,
                 locationObjectName: 'SHAPE',  // Node.location is the center of the Shape
-                selectionAdorned: false,
+                selectionAdorned: true,
                 click: this.nodeClicked,
                 toolTip: commonToolTip
             },
@@ -125,74 +131,144 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
         );
     }
 
-    private generateGraph(): void {
-        // Current Implementation shows only the figure for Single Query
-        // need checks here..
-        let names: string[] = [];
-        for (let eachEntry of this.config) {
-            names.push(eachEntry['concept']);
-            for (let conceptName of eachEntry['dataproperties']){
-                names.push(conceptName);
-            }
-        }
-        // console.log(names);
+    nodeClicked(e, node): void {
+        console.log(node.data.text);
+    }
+}
 
-        let nodeDataArray: any = [];
-        for (let i = 0; i < names.length; i++ ) {
-            nodeDataArray.push({key: i, text: names[i], color: go.Brush.randomColor(128, 240) });
-        }
-        let linkDataArray: any = [];
-        for (let i = 0; i < nodeDataArray.length - 1; i++ ) {
+/**
+ * class OntNode
+ * A Node structure for Binary Tree of the complete Data obtained from server
+ */
+class OntNode {
+    public id: number; // ID of the node
+    public attr: any[] = []; // Array of all attributes connected to the node
+    public children: OntNode[] = []; // Check for Nodes with Children
+}
 
-            linkDataArray.push({from: 0, to: (i + 1), color: go.Brush.randomColor(0, 128) });
+/**
+ * Recursion Class for generating the Graph
+ */
+class RecClass {
+    names: string[] = []; // store the Strings from the JSON
+    /**
+     * generateGraphRecApproach : Rercusively generate graphs from the incoming JSON config
+     * @param cnf : Incoming JSON config from Parent Component
+     * @param myDiagram: Diagram parameter for GoJS
+     * @param $: Make function for GoJS
+     */
+    public generateGraphRecApproach(cnf: any, myDiagram: any, $: any): void {
+        // get a Tree structure of the incoming JSON
+        let linkedOntTree = this.recursionParseJson(cnf);
+        // console.log('Complete Tree:\n' + JSON.stringify(linkedOntTree)); --> DEBUG
+        let nodeDataArray: any = []; // Create an Array of Nodes for GoJS.
+        for (let i = 1; i < this.names.length + 1; i++ ) {
+            nodeDataArray.push({key: i, text: this.names[i - 1], color: go.Brush.randomColor(128, 240) });
         }
-        this.myDiagram.layout = this.$(RadialLayout, {
+        // Create The Links to Each node in the Tree with Recursion
+        let linkDataArray: any = this.recursionLink(linkedOntTree);
+        // console.log('LinkedDataList: ' + JSON.stringify(linkDataArray)); --> DEBUG
+        // Diagram Layout..
+        myDiagram.layout = $(RadialLayout, {
             maxLayers: 2,
             rotateNode: function(node: any, angle: any, sweep: any, radius: any) {
-                    // rotate the nodes and make sure the text is not upside-down
-                    node.angle = angle;
-                    let label = node.findObject('TEXTBLOCK');
-                    if (label !== null) {
+                // rotate the nodes and make sure the text is not upside-down
+                node.angle = angle;
+                let label = node.findObject('TEXTBLOCK');
+                if (label !== null) {
                     label.angle = ((angle > 90 && angle < 270 || angle < -90) ? 180 : 0);
-                    }
-                },
-                commitLayers: function() {
-                    // optional: add circles in the background
-                    // need to remove any old ones first
-                    let diagram = this.diagram;
-                    let gridlayer = diagram.findLayer('Grid');
-                    let circles = new go.Set(go.Part);
-                    gridlayer.parts.each((circle: any) => {
+                }
+            },
+            commitLayers: function() {
+                // optional: add circles in the background
+                // need to remove any old ones first
+                let diagram = this.diagram;
+                let gridlayer = diagram.findLayer('Grid');
+                let circles = new go.Set(go.Part);
+                gridlayer.parts.each((circle: any) => {
                     if (circle.name === 'CIRCLE') { circles.add(circle); }
-                    });
-                    circles.each(function(circle) {
+                });
+                circles.each(function(circle) {
                     diagram.remove(circle);
-                    });
-                    // add circles centered at the root
-                    let $ = go.GraphObject.make;  // for conciseness in defining templates
-                    for (let lay = 1; lay <= this.maxLayers; lay++) {
+                });
+                // add circles centered at the root
+                // let $ = go.GraphObject.make;  // for conciseness in defining templates
+                for (let lay = 1; lay <= this.maxLayers; lay++) {
                     let radius = lay * this.layerThickness;
                     let circle =
                         $(go.Part,
-                        { name: 'CIRCLE', layerName: 'Grid' },
-                        { locationSpot: go.Spot.Center, location: this.root.location },
-                        $(go.Shape, 'Circle',
-                            { width: radius * 2, height: radius * 2 },
-                            { fill: 'rgba(200,200,200,0.2)', stroke: null }));
+                            { name: 'CIRCLE', layerName: 'Grid' },
+                            { locationSpot: go.Spot.Center, location: this.root.location },
+                            $(go.Shape, 'Circle',
+                                { width: radius * 2, height: radius * 2 },
+                                { fill: 'rgba(200,200,200,0.2)', stroke: null }));
                     diagram.add(circle);
-                    }
                 }
+            }
         });
+        // Use the Lists to Create the Radial Layout...
+        myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
+        // For Determining the Root of the Diagram
+        let centerPoint = nodeDataArray[0];
+        let rootNode = myDiagram.findNodeForData(centerPoint);
+        let rootDiagram = rootNode.diagram;
+        rootNode.category = 'Root';
+        rootDiagram.layoutDiagram(true);
+    }
 
-     this.myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
-     let centerPoint = nodeDataArray[0];
-     let rootNode = this.myDiagram.findNodeForData(centerPoint);
-     let rootDiagram = rootNode.diagram;
-     rootNode.category = 'Root';
-     rootDiagram.layoutDiagram(true);
-    } // ngAfterViewInit ends..
+    /**
+     * recursionParseJson: returns a Tree of all the nodes from the JSON data
+     * @param jsonNode JSON value from the Parent Component
+     * @returns {OntNode}
+     */
 
-    nodeClicked(e, root): void {
-        console.log(root.data.text);
+    private recursionParseJson(jsonNode: any): any {
+        let node = new OntNode();
+
+        // Adding node name
+        this.names.push(jsonNode['concept']);
+        node.id = this.names.length;
+
+        // Adding Attributes
+        for (let eachDatProp of jsonNode.dataproperties) {
+            this.names.push(eachDatProp);
+            node.attr.push(this.names.length);
+        }
+
+        // Adding Children
+        for (let childKey in jsonNode.objectproperties) {
+            if (jsonNode.objectproperties.hasOwnProperty(childKey)) {
+                // console.log(childKey); --> DEBUG
+                node.children.push(this.recursionParseJson(jsonNode.objectproperties[childKey]));
+            }
+        }
+
+        // console.log('Finished recFunc created node: ' + node.id); --> DEBUG
+        return node;
+    }
+
+    /**
+     * recursionLink: Create Links using Recursion for the Tree
+     * @param linkedOntTree return value from recursionParseJson
+     * @returns an Array of Link Information
+     */
+    private recursionLink(linkedOntTree: any): any {
+        let linkedDataArray: any = [];
+
+        for (let attr of linkedOntTree.attr) {
+            linkedDataArray.push({from: linkedOntTree.id, to: attr});
+        }
+
+        for (let child of linkedOntTree.children) {
+            linkedDataArray.push({from: linkedOntTree.id, to: child.id});
+            let childrenJson = this.recursionLink(child);
+            childrenJson.forEach(element => {
+                linkedDataArray.push(element);
+            });
+        }
+
+        return linkedDataArray;
     }
 }
+
+

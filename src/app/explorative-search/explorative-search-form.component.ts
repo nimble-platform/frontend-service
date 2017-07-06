@@ -37,7 +37,7 @@ export class ExplorativeSearchFormComponent implements OnInit {
     // data visualization
     // remember: the variable `Output` is the same as in the HTML file
     Output = OUTPUT;
-    visData: Object[] = []; // send this to details component
+    visData: Object; // send this to details component
 
     // For response which constitutes more than one option..
     showMore: boolean[] = [];
@@ -95,8 +95,8 @@ export class ExplorativeSearchFormComponent implements OnInit {
         this.expSearch.getLogicalView(temp)
             .then(res => {
                 // console.log(res);
-                this.visData = new Array();
-                this.visData.push(res);
+                // this.visData = new Array();
+                this.visData = res;
                 // console.log(this.visData);
             }
         );
