@@ -15,7 +15,13 @@ export class AddressSubForm {
 
 
     public static update(addressForm, address: Address) {
-        addressForm.controls.streetName.setValue(address.streetName);
+        if (address) {
+            addressForm.controls.streetName.setValue(address.streetName);
+            addressForm.controls.buildingNumber.setValue(address.buildingNumber);
+            addressForm.controls.cityName.setValue(address.cityName);
+            addressForm.controls.postalCode.setValue(address.postalCode);
+            addressForm.controls.country.setValue(address.country);
+        }
     }
 
     public static generateForm(builder: FormBuilder) {

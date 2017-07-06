@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DeliveryTermsSubForm } from './subforms/delivery-terms.component';
 import { UserService } from './user.service';
 import { CookieService } from 'ng2-cookies';
+import { AddressSubForm } from './subforms/address.component';
 
 @Component({
     selector: 'company-settings',
@@ -20,7 +21,7 @@ export class CompanySettingsComponent implements OnInit {
 
     ngOnInit() {
         this.settingsForm = this._fb.group({
-            name: ['', [Validators.required, Validators.minLength(5)]],
+            address: AddressSubForm.generateForm(this._fb),
             deliveryTerms: DeliveryTermsSubForm.generateForm(this._fb),
         });
 
@@ -30,8 +31,11 @@ export class CompanySettingsComponent implements OnInit {
     initForm() {
         let userId = this.cookieService.get('user_id');
         this.userService.getCompanySettings(userId).then( settings => {
+
             console.log('Fetched settings: ' + JSON.stringify(settings));
-            this.settingsForm.controls['name'].setValue('Hoooonnes');
+
+            // update forms
+            AddressSubForm.update(this.settingsForm.controls['address'], settings.address);
             DeliveryTermsSubForm.update(this.settingsForm.controls['deliveryTerms'], settings.deliveryTerms);
         });
     }

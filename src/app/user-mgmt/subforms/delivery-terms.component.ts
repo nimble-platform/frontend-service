@@ -15,9 +15,8 @@ export class DeliveryTermsSubForm {
     public deliveryTermsForm: FormGroup;
 
     public static update(deliveryTermsForm, deliveryTerms: DeliveryTerms) {
-        deliveryTermsForm.controls.specialTerms.setValue(deliveryTerms.deliveryAddress);
-        if( deliveryTerms.deliveryAddress )
-            AddressSubForm.update(deliveryTermsForm.controls.deliveryAddress, deliveryTerms.deliveryAddress);
+        deliveryTermsForm.controls.specialTerms.setValue(deliveryTerms.specialTerms);
+        AddressSubForm.update(deliveryTermsForm.controls.deliveryAddress, deliveryTerms.deliveryAddress);
         deliveryTermsForm.controls.estimatedDeliveryTime.setValue(deliveryTerms.estimatedDeliveryTime);
     }
 

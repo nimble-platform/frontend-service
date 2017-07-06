@@ -1,7 +1,7 @@
 <div class="delivery-terms-form" [formGroup]="deliveryTermsForm">
     <div class="form-group col-xs-3">
         <label>Terms</label>
-        <input type="text" class="form-control" formControlName="specialTerms">
+        <textarea type="text" class="form-control" formControlName="specialTerms"></textarea>
         <small [hidden]="deliveryTermsForm.controls.specialTerms.valid || deliveryTermsForm.controls.specialTerms.pristine" class="text-danger">
             Terms are required
         </small>
@@ -11,6 +11,6 @@
         <input type="number" class="form-control" formControlName="estimatedDeliveryTime">
     </div>
 
-    <h4>Delivery Address</h4>
+    <h5>Delivery Address</h5>
     <address-form [group]="deliveryTermsForm.controls.deliveryAddress"></address-form>
 </div>
