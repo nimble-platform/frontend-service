@@ -55,6 +55,9 @@ export class CompanySettingsComponent implements OnInit {
             .then(res => {
                 console.log(`Saved Company Settings for user ${userId}. Response: ${res}`);
                 this.isSubmitting = false;
+            })
+            .catch(reason => {
+                this.isSubmitting = false;
             });
     }
 }
