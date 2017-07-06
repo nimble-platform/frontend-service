@@ -30,6 +30,7 @@ import { ExplorativeSearchDetailsComponent } from './explorative-search/explorat
 import { CompanySettingsComponent } from './user-mgmt/company-settings.component';
 import { AddressSubForm } from './user-mgmt/subforms/address.component';
 import { DeliveryTermsSubForm } from './user-mgmt/subforms/delivery-terms.component';
+import { PaymentMeansForm } from './user-mgmt/subforms/payment-means.component';
 
 
 @NgModule({
@@ -62,6 +63,7 @@ import { DeliveryTermsSubForm } from './user-mgmt/subforms/delivery-terms.compon
             CompanySettingsComponent,
             AddressSubForm,
             DeliveryTermsSubForm,
+            PaymentMeansForm,
         ],
         providers: [
         UserService,
