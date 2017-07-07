@@ -26,11 +26,11 @@ export class AddressSubForm {
 
     public static generateForm(builder: FormBuilder) {
         return builder.group({
-            streetName: ['', Validators.required],
-            buildingNumber: ['', Validators.required],
-            cityName: ['', Validators.required],
-            postalCode: ['', Validators.required],
-            country: ['', Validators.required],
+            streetName: [''],
+            buildingNumber: [''],
+            cityName: [''],
+            postalCode: [''],
+            country: [''],
         });
     }
 }

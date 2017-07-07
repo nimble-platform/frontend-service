@@ -46,17 +46,19 @@ export class CompanySettingsComponent implements OnInit {
     }
 
     save(model: FormGroup) {
+
         console.log(JSON.stringify(model.getRawValue()));
 
         // save settings
         this.isSubmitting = true;
         let userId = this.cookieService.get('user_id');
         this.userService.putSettings(model.getRawValue(), userId)
-            .then(res => {
-                console.log(`Saved Company Settings for user ${userId}. Response: ${res}`);
+            .then(response => {
+                console.log(`Saved Company Settings for user ${userId}. Response: ${response}`);
                 this.isSubmitting = false;
             })
-            .catch(reason => {
+            .catch(error => {
+                console.error('An error occurred', error); // for demo purposes only
                 this.isSubmitting = false;
             });
     }

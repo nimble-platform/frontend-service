@@ -22,7 +22,7 @@ export class DeliveryTermsSubForm {
 
     public static generateForm(builder: FormBuilder) {
         return builder.group({
-            specialTerms: ['', Validators.required],
+            specialTerms: [''],
             deliveryAddress: AddressSubForm.generateForm(builder),
             estimatedDeliveryTime: ['', Validators.pattern('\\d+')], // only digits
         });
