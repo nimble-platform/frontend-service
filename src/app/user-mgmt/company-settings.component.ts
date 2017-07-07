@@ -34,7 +34,7 @@ export class CompanySettingsComponent implements OnInit {
 
     initForm() {
         let userId = this.cookieService.get('user_id');
-        this.userService.getCompanySettings(userId).then(settings => {
+        this.userService.getSettings(userId).then(settings => {
 
             console.log('Fetched settings: ' + JSON.stringify(settings));
 

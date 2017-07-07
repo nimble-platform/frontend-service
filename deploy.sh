@@ -18,6 +18,6 @@ elif [ "$1" == "docker-run" ]; then
 
 elif [ "$1" == "docker-push" ]; then
 
-    docker push nimbleplatform/frontend-service
+    docker push nimbleplatform/frontend-service:latest
 
 fi
