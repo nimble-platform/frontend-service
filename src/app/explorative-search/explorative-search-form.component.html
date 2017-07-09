@@ -47,9 +47,9 @@
 <div class="col-12">
     <ul>
         <li *ngFor="let eachOutput of Output; let outerindex = index">
-            <div id="kwBtn" *ngFor="let each of eachOutput.resp.conceptOverview; let innerIndex = index">
+            <div class="btn-group" role="group" *ngFor="let each of eachOutput.resp.conceptOverview; let innerIndex = index">
                 <button class="btn btn-success" *ngIf="innerIndex === 0 || showMore[outerIndex]"
-                  (click)="postQuery(each)"
+                  (click)="getQuery(each)"
                 >{{each}}</button>
             </div>
             <div style="display:inline">
@@ -67,4 +67,4 @@
 
 <!-- The Graph Display Component -->
 <!-- Data Visualization here-->
-<explore-search-details [config]="visData" [name]="testString"></explore-search-details>
+<explore-search-details [config]="visData"></explore-search-details>

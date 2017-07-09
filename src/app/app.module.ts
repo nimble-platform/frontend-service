@@ -27,7 +27,7 @@ import { ExplorativeSearchComponent } from './explorative-search/explorative-sea
 import { ExplorativeSearchService } from './explorative-search/explorative-search.service';
 import { ExplorativeSearchFormComponent } from './explorative-search/explorative-search-form.component';
 import { ExplorativeSearchDetailsComponent } from './explorative-search/explorative-search-details.component';
-
+import { ExplorativeSearchFilterComponent } from './explorative-search/explorative-search-filter.component';
 
 @NgModule({
     imports: [
@@ -47,13 +47,14 @@ import { ExplorativeSearchDetailsComponent } from './explorative-search/explorat
         CredentialsFormComponent,
         CategorySearchComponent,
         ProductPublishComponent,
-		AdditionalItemPropertyComponent,
-		SimpleSearchComponent,
-		SimpleSearchDetailsComponent,
-		SimpleSearchFormComponent,
+        AdditionalItemPropertyComponent,
+        SimpleSearchComponent,
+        SimpleSearchDetailsComponent,
+        SimpleSearchFormComponent,
         ExplorativeSearchComponent,
         ExplorativeSearchFormComponent,
         ExplorativeSearchDetailsComponent,
+        ExplorativeSearchFilterComponent,
         AdditionalItemPropertyComponent
         ],
         providers: [
@@ -61,8 +62,8 @@ import { ExplorativeSearchDetailsComponent } from './explorative-search/explorat
         CredentialsService,
         CategoryService,
         CatalogueService,
-		SimpleSearchService,
-		BPEService,
+        SimpleSearchService,
+        BPEService,
         ExplorativeSearchService
         ],
         bootstrap: [
