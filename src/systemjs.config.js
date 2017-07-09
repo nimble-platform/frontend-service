@@ -17,7 +17,7 @@
 			'angular-in-memory-web-api': 'npm:angular-in-memory-web-api/bundles/in-memory-web-api.umd.js',
 			'@ng-bootstrap/ng-bootstrap': 'npm:@ng-bootstrap/ng-bootstrap/bundles/ng-bootstrap.js',
 			'ng2-cookies': 'npm:ng2-cookies/cookie.js',
-			'gojs': 'npm:gojs/release/go-debug.js',
+			'gojs': 'npm:gojs/release/go.js'
 		},
 		packages: {
 			app: {

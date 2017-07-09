@@ -1,0 +1,19 @@
+<div *ngIf="(filterConfig | json) != '{}'">
+    <p>{{keyForConf}} Filter</p>
+    <div *ngFor="let every of result">
+        <input #cbCheck type="checkbox"
+               (change)="cbInput=cbCheck.checked"
+               [value]="every.description"
+            (click)="checkedValues(cbCheck.value, $event.target.checked)">{{every.description}}
+    </div>
+    <br>
+    <br>
+    <div>
+        <p>Amount Of Groups  <span #rangeVal>3</span></p>
+        <input #grpRange type="range" min="1" max="10" value="3" (change)="getGroupVal(grpRange.value)">
+    </div>
+    <button [disabled]="userSelections.length === 0" type="submit" class="btn btn-large btn-success"
+            (click)="submitFilter()">
+        Submit
+    </button>
+</div>

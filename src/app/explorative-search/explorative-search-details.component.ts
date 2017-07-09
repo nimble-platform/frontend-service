@@ -6,11 +6,13 @@
 import { Component, AfterViewInit, ViewChild , ElementRef, Input, OnChanges } from '@angular/core';
 import * as go from 'gojs';
 import { RadialLayout } from './layout/RadialLayout';
+import { ExplorativeSearchService } from './explorative-search.service';
 
 @Component({
     selector: 'explore-search-details',
-    template: `<div class="displayArea" #myDiagramDiv></div>`,
-    styleUrls: ['./explorative-search-form.component.css']
+    templateUrl: './explorative-search-details.component.html',
+    styleUrls: ['./explorative-search-details.component.css'],
+    providers: [ExplorativeSearchService]
 })
 
 
@@ -19,11 +21,13 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
     @Input() config: Object;
     // GoJS div as mentioned above in the @Component `template` param
     @ViewChild('myDiagramDiv') div: ElementRef;
-
+    // private localTemp: any;
     private myDiagram: go.Diagram;
     private $ = go.GraphObject.make;
+    filterQuery: string;
+    filterJSON: Object;
 
-    constructor() {}
+    constructor(private  expSearch: ExplorativeSearchService) { }
 
     /**
      * using OnChanges LifeCycle Hook for incoming Configuration
@@ -76,7 +80,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                 locationSpot: go.Spot.Center,
                 locationObjectName: 'SHAPE',  // Node.location is the center of the Shape
                 selectionAdorned: true,
-                click: this.nodeClicked,
+                click: (e: go.InputEvent, obj: go.GraphObject): void => { this.nodeClicked(e, obj); },
                 toolTip: commonToolTip
             },
             this.$(go.Shape, 'Circle',
@@ -132,9 +136,19 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
     }
 
     nodeClicked(e, node): void {
-        console.log(node.data.text);
+        // console.log(node.findTreeRoot().data.text, node.data.text);
+        let rootConcept = node.findTreeRoot().data.text;
+        let clickedNode = node.data.text;
+        this.filterQuery = clickedNode;
+        let filteringInput = {'concept': rootConcept, 'property': clickedNode, 'amountOfGroups': 3};
+        // console.log(JSON.stringify(filteringInput));
+         this.expSearch.getPropertyValues(filteringInput)
+            .then(
+                res => this.filterJSON = res
+            );
     }
 }
+
 
 /**
  * class OntNode
@@ -206,6 +220,7 @@ class RecClass {
                 }
             }
         });
+
         // Use the Lists to Create the Radial Layout...
         myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
         // For Determining the Root of the Diagram

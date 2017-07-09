@@ -1,0 +1,15 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="displayArea" #myDiagramDiv></div>
+        </div>
+        <div class="col-md-4">
+           <div *ngIf="filterQuery"class="panel panel-default">
+               <div class="panel-body" *ngIf="(filterConfig | json)!= '{}'">
+                   <!-- <p><b>{{filterQuery}} Filter</b></p> -->
+                   <search-filter [filterConfig]="filterJSON" [keyForConf]="filterQuery"></search-filter>
+               </div>
+           </div>
+        </div>
+    </div>
+</div>
