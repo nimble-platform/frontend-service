@@ -1,6 +1,10 @@
-<div *ngIf="(filterConfig | json) != '{}'">
-    <p>{{keyForConf}} Filter</p>
+<!-- Explorative Search Filter HTML -->
+
+<!-- Display the Filter Panel only when the filterConfig is non empty -->
+<div class="filterArea" *ngIf="(filterConfig | json) != '{}'">
+    <h4>{{keyForConf}} Filter</h4>
     <div *ngFor="let every of result">
+        <!-- CheckBoxes for the Filter -->
         <input #cbCheck type="checkbox"
                (change)="cbInput=cbCheck.checked"
                [value]="every.description"
@@ -8,12 +12,13 @@
     </div>
     <br>
     <br>
+    <!-- Slider -->
     <div>
         <p>Amount Of Groups  <span #rangeVal>3</span></p>
-        <input #grpRange type="range" min="1" max="10" value="3" (change)="getGroupVal(grpRange.value)">
+        <input type="range" min="1" max="10" value="3" (change)="getGroupVal($event.target.value)">
     </div>
-    <button [disabled]="userSelections.length === 0" type="submit" class="btn btn-large btn-success"
-            (click)="submitFilter()">
-        Submit
+    <!-- Submission of Filter Parameters -->
+    <button type="submit" class="btn btn-large btn-success"
+            (click)="submitFilter()">Submit
     </button>
 </div>

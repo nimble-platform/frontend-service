@@ -1,15 +1,45 @@
+<!-- Explorative Search Details HTML -->
 <div class="container">
     <div class="row">
         <div class="col-md-8">
-            <div class="displayArea" #myDiagramDiv></div>
+            <!-- if there is no tableResult show the Diagram -->
+            <div *ngIf="!tableResult" class="displayArea" #myDiagramDiv></div>
+
+            <!-- temporary hack here
+                Image is not rendered again on button click
+                because tableResult still exists in class.
+            -->
+            <!-- Show Table -->
+            <div>
+                <table *ngIf="tableResult">
+                    <tr >
+                        <th *ngFor="let column of tableResult?.columns">{{column}}</th>
+                    </tr>
+                    <tr *ngFor="let row of tableResult?.rows">
+                        <td *ngFor="let field of row">{{field}}</td>
+                    </tr>
+                </table>
+            </div>
+            <!-- End Table -->
         </div>
         <div class="col-md-4">
+            <!-- Child Component Explorative Search Filter-->
            <div *ngIf="filterQuery"class="panel panel-default">
                <div class="panel-body" *ngIf="(filterConfig | json)!= '{}'">
-                   <!-- <p><b>{{filterQuery}} Filter</b></p> -->
-                   <search-filter [filterConfig]="filterJSON" [keyForConf]="filterQuery"></search-filter>
+                   <!-- pass all the variables of class to child -->
+                   <search-filter [filterConfig]="filterJSON" [keyForConf]="filterQuery"
+                                  [mainConceptName]="filterQueryRoot">
+                   </search-filter>
                </div>
            </div>
+        </div> <!-- child component Search Filter ends here -->
+    </div>
+    <!-- container for the Big Red Search Button -->
+    <div class="row">
+        <div class="col-md-8"></div>
+        <!-- will show up only when filterQuery Exists -->
+        <div class="col-md-4" *ngIf="filterQuery">
+              <button class="btn btn-lg btn-danger" (click)="genTable()">Search</button>
         </div>
     </div>
 </div>

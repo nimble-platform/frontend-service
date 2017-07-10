@@ -1,6 +1,10 @@
 /**
  * This file takes care of the details of Visualization
  * of the Data (JSON) that will be received from Backend
+ * It also sends data to the filter attributes of the Nodes.
+ *
+ * Parent of this Component: explorative-search-form.component
+ * Child of this component: explorative-search-filter.component
  */
 
 import { Component, AfterViewInit, ViewChild , ElementRef, Input, OnChanges } from '@angular/core';
@@ -18,14 +22,22 @@ import { ExplorativeSearchService } from './explorative-search.service';
 
 export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChanges {
 
-    @Input() config: Object;
+    @Input() config: Object; // this comes from `explorative-search-form.component` (Parent)
     // GoJS div as mentioned above in the @Component `template` param
     @ViewChild('myDiagramDiv') div: ElementRef;
-    // private localTemp: any;
+    /*GOJS Variables*/
     private myDiagram: go.Diagram;
     private $ = go.GraphObject.make;
+    /*Parameters that will be passed to `explorative-search-filter.component (Child)*/
+    filterQueryRoot: string;
     filterQuery: string;
     filterJSON: Object;
+    /* HardCoded JSON for the Big red Search Button*/
+    tableJSON = {'concept': 'HighChair', 'parameters':
+        ['hasHeight', 'hasWidth'],
+        'filters': [{'min': 3.0, 'max': 5.2}]};
+    /*The API response from tableJSON will be stored in tableResult*/
+    tableResult: any;
 
     constructor(private  expSearch: ExplorativeSearchService) { }
 
@@ -36,7 +48,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
 
     ngOnChanges(): void {
         if (!this.config) { return; }
-
+        // this.tableResult = null;
         let recApproach = new RecClass();
         recApproach.generateGraphRecApproach(this.config, this.myDiagram, this.$);
     }
@@ -135,20 +147,50 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
         );
     }
 
+    /**
+     * nodeClicked: function handles the click feature for GoJS
+     * @param e : event parameter
+     * @param node: node entity
+     */
     nodeClicked(e, node): void {
-        // console.log(node.findTreeRoot().data.text, node.data.text);
+        /**
+         * MULTISELECT STILL REMAINING
+         */
+        // console.log(node.findTreeRoot().data.text, node.data.text); DEBUG
         let rootConcept = node.findTreeRoot().data.text;
-        let clickedNode = node.data.text;
-        this.filterQuery = clickedNode;
+        let clickedNode = node.data.text; // name of the clicked node
+        this.filterQuery = clickedNode; // pass it to the child component
+        this.filterQueryRoot = rootConcept; // pass this to the child component
+        // create a JSON for the API call
         let filteringInput = {'concept': rootConcept, 'property': clickedNode, 'amountOfGroups': 3};
-        // console.log(JSON.stringify(filteringInput));
+        // console.log(JSON.stringify(filteringInput)); DEBUG
+        // API Call and store the value
          this.expSearch.getPropertyValues(filteringInput)
             .then(
-                res => this.filterJSON = res
+                res => this.filterJSON = res // pass this to the child component
             );
     }
+
+    /**
+     * Currently this function will call the hardcoded JSON (tableJSON)
+     * to get the results for the TABLE display.
+     */
+    genTable(): void {
+        // call the API for table data
+        this.expSearch.getTableValues(this.tableJSON)
+            .then(
+                // store the result in tableResult
+                // which will be used in HTML file
+                res => this.tableResult = res
+            );
+        console.log(JSON.stringify(this.tableResult)); // DEBUG CHECK
+    }
+
 }
 
+/**
+ * Creating of tree for visualizing data on diagram
+ */
 
 /**
  * class OntNode
@@ -182,6 +224,7 @@ class RecClass {
         // Create The Links to Each node in the Tree with Recursion
         let linkDataArray: any = this.recursionLink(linkedOntTree);
         // console.log('LinkedDataList: ' + JSON.stringify(linkDataArray)); --> DEBUG
+
         // Diagram Layout..
         myDiagram.layout = $(RadialLayout, {
             maxLayers: 2,

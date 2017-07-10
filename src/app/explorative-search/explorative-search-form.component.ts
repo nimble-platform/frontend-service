@@ -6,7 +6,11 @@
  * Delete button: appears once the checkbox beside the keyword is checked
  * upon clicking it the content and the keyword itself are removed from 
  * the HTML file
+ *
+ * Parent for this class: explorative-search.component
+ * Child for this class: explorative-search-details.component
  */
+
 import { Component, OnInit } from '@angular/core';
 import { ExplorativeSearchService } from './explorative-search.service';
 import { Explorative } from './model/explorative';

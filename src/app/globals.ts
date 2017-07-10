@@ -24,6 +24,7 @@ export const bpe_endpoint="http://nimble-platform.salzburgresearch.at:443/busine
 export const endpoint = 'http://hydra2.ikap.biba.uni-bremen.de:8090/detectMeaning';
 export const logicalViewEndpoint = 'http://hydra2.ikap.biba.uni-bremen.de:8090/getLogicalView';
 export const propertyEndPoint = 'http://hydra2.ikap.biba.uni-bremen.de:8090/getPropertyValuesDiscretised';
+export const sparqlEndPoint = 'http://hydra2.ikap.biba.uni-bremen.de:8090/executeSPARQLSelect';
 
 
 // Endpoint variables - Local development via service discovery
