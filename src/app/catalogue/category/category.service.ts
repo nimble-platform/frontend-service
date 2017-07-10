@@ -11,7 +11,7 @@ export class CategoryService {
     private headers = new Headers({'Accept': 'application/json'});
     private baseUrl = myGlobals.catalogue_endpoint + `/catalogue/category`;
     private categories: Category[] = null;
-    private selectedCategory: Category= null;
+    private selectedCategories: Category[] = [];
 
     constructor(private http: Http) {
     }
@@ -28,8 +28,8 @@ export class CategoryService {
             .catch(this.handleError);
     }
 
-    getCategory(id: string): Promise<Category> {
-        const url = `${this.baseUrl}/` + encodeURIComponent(id);
+    getCategory(category: Category): Promise<Category> {
+        const url = `${this.baseUrl}/` + category.taxonomyId + "/" + encodeURIComponent(category.id);
         return this.http
             .get(url, {headers: this.headers})
             .toPromise()
@@ -39,12 +39,16 @@ export class CategoryService {
             .catch(this.handleError);
     }
 
-    getSelectedCategory(): Category {
-        return this.selectedCategory;
+    getSelectedCategories(): Category[] {
+        return this.selectedCategories;
     }
 
-    setSelectedCategory(category: Category): void {
-        this.selectedCategory = category;
+    addSelectedCategory(category: Category): void {
+        this.selectedCategories.push(category);
+    }
+
+    resetSelectedCategories():void {
+        this.selectedCategories = [];
     }
 
     private handleError(error: any): Promise<any> {

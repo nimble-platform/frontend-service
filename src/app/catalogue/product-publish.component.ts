@@ -2,19 +2,18 @@
  * Created by suat on 17-May-17.
  */
 
-import {Http} from "@angular/http";
 import {Component, ElementRef, OnInit, ViewChild} from "@angular/core";
-import {GoodsItem} from "./model/publish/goods-item";
 import {CategoryService} from "./category/category.service";
 import {AdditionalItemProperty} from "./model/publish/additional-item-property";
-import {Item} from "./model/publish/item";
 import {BinaryObject} from "./model/publish/binary-object";
 import {CatalogueService} from "./catalogue.service";
 import {Category} from "./model/category/category";
-import {Identifier} from "./model/publish/identifier";
 import {CatalogueLine} from "./model/publish/catalogue-line";
 import {Catalogue} from "./model/publish/catalogue";
 import {CookieService} from "ng2-cookies";
+import {ModelUtils} from "./model/model-utils";
+import {ActivatedRoute, Params, Router} from "@angular/router";
+import {ProductPropertiesComponent} from "./product-properties.component";
 
 @Component({
     selector: 'product-publish',
@@ -23,13 +22,22 @@ import {CookieService} from "ng2-cookies";
 
 export class ProductPublishComponent implements OnInit {
     @ViewChild('propertyValueType') propertyValueType: ElementRef;
+    @ViewChild('productProperties') productProperties: ProductPropertiesComponent;
 
-    // data objects
-    selectedCategory: Category;
-    goodsItem: GoodsItem;
-    newProperty: AdditionalItemProperty = new AdditionalItemProperty("", [''], new Array<BinaryObject>(), "", "", "STRING", null, null);
+    /*
+     * data objects
+     */
 
-    // state objects
+    // reference to the selected categories for the draft item
+    selectedCategories: Category[] = [];
+    // reference to the draft item itself
+    catalogueLine: CatalogueLine;
+    // placeholder for the custom property
+    newProperty: AdditionalItemProperty = ModelUtils.createAdditionalItemProperty(null, "Custom");
+
+    /*
+     * state objects for feedback about the publish operation
+     */
     singleItemUpload: boolean = true;
     private submitted = false;
     private callback = false;
@@ -37,38 +45,64 @@ export class ProductPublishComponent implements OnInit {
 
     constructor(private categoryService: CategoryService,
                 private catalogueService: CatalogueService,
+                private router: Router,
+                private route: ActivatedRoute,
                 private cookieService: CookieService) {
+        console.log("constructor");
     }
 
     ngOnInit() {
+        console.log("init");
+        let publishFromScratch:boolean;
+        this.route.queryParams.subscribe((params: Params) => {
+            publishFromScratch = params['fromScratch'] == "true";
+            console.log("publish scratch: " + publishFromScratch)
+            this.initView(publishFromScratch);
+        });
+    }
+
+    private initView(publishFromScratch:boolean):void {
         let userId = this.cookieService.get("user_id");
         this.catalogueService.getCatalogue(userId).then(catalogue => {
 
             // initiate the goods item with the selected property
-            this.selectedCategory = this.categoryService.getSelectedCategory();
+            this.selectedCategories = this.categoryService.getSelectedCategories();
 
-            // create additional item properties
-            let additionalItemProperties = new Array<AdditionalItemProperty>();
-            // create item
-            let item = new Item("", "", additionalItemProperties, catalogue.providerParty, [], "");
-            // identifier
-            let giId = new Identifier(this.generateUUID(), "", "");
-            // create goods item
-            this.goodsItem = new GoodsItem(giId, item);
+            // initiate the "new" goods item if it is not already initiated
+            this.catalogueLine = this.catalogueService.getDraftItem();
 
-            if (this.selectedCategory != null) {
-                for (let i = 0; i < this.selectedCategory.properties.length; i++) {
-                    let property = this.selectedCategory.properties[i];
-                    let unit = "";
-                    if (property.unit != null) {
-                        unit = property.unit.shortName;
+            if (this.catalogueLine == null || publishFromScratch == true) {
+                this.catalogueLine = ModelUtils.createCatalogueLine(catalogue.providerParty)
+                this.catalogueService.setDraftItem(this.catalogueLine);
+            }
+
+            if (this.selectedCategories != []) {
+                for (let category of this.selectedCategories) {
+                    let newCategory = this.isNewCategory(category);
+
+                    if (newCategory) {
+                        this.updateItemWithNewCategory(category);
                     }
-                    let valueQualifier = property.dataType;
-                    let aip = new AdditionalItemProperty(property.preferredName, [''], new Array<BinaryObject>(), "", unit, valueQualifier, null, null);
-                    additionalItemProperties.push(aip);
                 }
             }
         });
+    }
+
+    private updateItemWithNewCategory(category: Category): void {
+        let commodityClassification = ModelUtils.createCommodityClassification(category);
+        this.catalogueLine.goodsItem.item.commodityClassification.push(commodityClassification);
+
+        for (let property of category.properties) {
+            let aip = ModelUtils.createAdditionalItemProperty(property, category.taxonomyId);
+            // check whether the same property exists already
+            for (let existingAip of this.catalogueLine.goodsItem.item.additionalItemProperty) {
+                if (aip.id.value == existingAip.id.value) {
+                    break;
+                }
+            }
+
+            this.catalogueLine.goodsItem.item.additionalItemProperty.push(aip);
+        }
     }
 
     private onTabClick(event: any) {
@@ -80,6 +114,10 @@ export class ProductPublishComponent implements OnInit {
         }
     }
 
+    private addCategoryOnClick(event: any): void {
+        this.router.navigate(['categorysearch'], {queryParams: {fromScratch:false}});
+    }
+
     private publishProduct(): void {
         this.error_detc = false;
         this.callback = false;
@@ -87,13 +125,16 @@ export class ProductPublishComponent implements OnInit {
 
         let userId = this.cookieService.get("user_id");
         this.catalogueService.getCatalogue(userId).then(catalogue => {
-                let line: CatalogueLine = new CatalogueLine(null, this.goodsItem);
-                catalogue.catalogueLine.push(line);
+                catalogue.catalogueLine.push(this.catalogueLine);
+
+                // TODO: merge stuff is demo-specific, handle it properly
                 this.mergeMultipleValuesIntoSingleField(catalogue);
+
                 if (catalogue.uuid == null) {
                     this.catalogueService.postCatalogue(catalogue)
                         .then(() => this.onSuccessfulPublish())
                         .catch(() => this.onFailedPublish());
+
                 } else {
                     this.catalogueService.putCatalogue(catalogue)
                         .then(() => this.onSuccessfulPublish())
@@ -103,13 +144,13 @@ export class ProductPublishComponent implements OnInit {
         );
     }
 
-    private onSuccessfulPublish():void {
+    private onSuccessfulPublish(): void {
         this.callback = true;
         this.error_detc = false;
         this.ngOnInit();
     }
 
-    private onFailedPublish():void {
+    private onFailedPublish(): void {
         this.error_detc = true;
     }
 
@@ -121,7 +162,7 @@ export class ProductPublishComponent implements OnInit {
                 props[j].demoSpecificMultipleContent = JSON.stringify(props[j].embeddedDocumentBinaryObject);
             }
         }
-        //demo specific
+        //TODO: demo specific handle properly
         catalogue.catalogueLine[0].goodsItem.item.itemConfigurationImages = JSON.stringify(catalogue.catalogueLine[0].goodsItem.item.itemConfigurationImageArray);
     }
 
@@ -134,7 +175,6 @@ export class ProductPublishComponent implements OnInit {
         } else if (event.target.value == "Image" || event.target.valueQualifier == "File") {
             this.newProperty.valueQualifier = "BINARY";
         }
-        console.log(event.target.selectedIndex);
     }
 
     private imageChange(event: any) {
@@ -160,7 +200,7 @@ export class ProductPublishComponent implements OnInit {
     private overallProductImageImage(event: any, wallTilesValue: string, floorTilesValue: string) {
         let fileList: FileList = event.target.files;
         if (fileList.length > 0) {
-            let itemConfigurationImageArray = this.goodsItem.item.itemConfigurationImageArray;
+            let itemConfigurationImageArray = this.catalogueLine.goodsItem.item.itemConfigurationImageArray;
             let file: File = fileList[0];
             let reader = new FileReader();
 
@@ -187,11 +227,25 @@ export class ProductPublishComponent implements OnInit {
     }
 
     private addCustomProperty(): void {
-        this.goodsItem.item.additionalItemProperty.push(this.newProperty);
+        this.catalogueLine.goodsItem.item.additionalItemProperty.push(this.newProperty);
+        this.productProperties.ngOnInit();
 
         // reset the custom property view
-        this.newProperty = new AdditionalItemProperty(null, [''], new Array<BinaryObject>(), "", "", "STRING", null, null);
+
+        this.newProperty = ModelUtils.createAdditionalItemProperty(null, "Custom");
         this.propertyValueType.nativeElement.selectedIndex = 0;
+    }
+
+
+    private isNewCategory(category: Category): boolean {
+        let newCategory: boolean = true;
+        for (let commodityClassification of this.catalogueLine.goodsItem.item.commodityClassification) {
+            if (category.id == commodityClassification.itemClassificationCode.value) {
+                newCategory = false;
+                break;
+            }
+        }
+        return newCategory;
     }
 
     private handleError(error: any): Promise<any> {

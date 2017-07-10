@@ -15,7 +15,7 @@ export const search = "both";
 // Endpoint variables - SRFG domain
 
 export const user_mgmt_endpoint="http://nimble-platform.salzburgresearch.at:443/identity";
-export const catalogue_endpoint="http://nimble-platform.salzburgresearch.at:443/catalog";
+export const catalogue_endpoint="http://localhost:8095";
 export const bpe_endpoint="http://nimble-platform.salzburgresearch.at:443/business-process";
 
 
@@ -49,8 +49,8 @@ export const logicalViewEndpoint = 'http://hydra2.ikap.biba.uni-bremen.de:8090/g
 
 // Marmotta endpoint variables
 
-//export const simple_search_endpoint="http://134.168.33.237:8080/marmotta/solr/Catalogue5/select";
-export const simple_search_endpoint="http://134.168.33.237:8080/marmotta/solr/fredo/select";
+export const simple_search_endpoint="http://134.168.33.237:8080/marmotta/solr/Catalogue3/select";
+//export const simple_search_endpoint="http://134.168.33.237:8080/marmotta/solr/fredo/select";
 
 
 // Catalogue format variables - "Bathroom" demo

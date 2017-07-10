@@ -2,9 +2,8 @@
  * Created by suat on 12-May-17.
  */
 
-import {Http} from "@angular/http";
-import {Component} from "@angular/core";
-import {Router} from '@angular/router';
+import {Component, OnInit} from "@angular/core";
+import {ActivatedRoute, Params, Router} from "@angular/router";
 import {Category} from "../model/category/category";
 import {CategoryService} from "./category.service";
 
@@ -13,12 +12,22 @@ import {CategoryService} from "./category.service";
     templateUrl: './category-search.component.html',
 })
 
-export class CategorySearchComponent {
+export class CategorySearchComponent implements OnInit {
     categories: Category[];
+    startPublishingFromScratch: boolean;
 
-    constructor(private http: Http,
-                private router: Router,
+    constructor(private router: Router,
+                private route: ActivatedRoute,
                 private categoryService: CategoryService) {
+    }
+
+    ngOnInit(): void {
+        this.route.queryParams.subscribe((params: Params) => {
+            this.startPublishingFromScratch = params['fromScratch'] == 'true';
+            if(this.startPublishingFromScratch) {
+                this.categoryService.resetSelectedCategories();
+            }
+        });
     }
 
     private getCategories(keyword: string): void {
@@ -30,13 +39,13 @@ export class CategorySearchComponent {
 
     private selectCategory(category: Category): void {
         if (category == null) {
-            this.router.navigate(['publish']);
+            this.router.navigate(['publish'], {queryParams: {fromScratch: this.startPublishingFromScratch}});
             return;
         }
-        this.categoryService.getCategory(category.id)
+        this.categoryService.getCategory(category)
             .then(category => {
-                this.categoryService.setSelectedCategory(category);
-                this.router.navigate(['publish'])
+                this.categoryService.addSelectedCategory(category);
+                this.router.navigate(['publish'], {queryParams: {fromScratch: this.startPublishingFromScratch}})
             });
     }
 }

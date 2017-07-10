@@ -27,6 +27,7 @@ import { ExplorativeSearchComponent } from './explorative-search/explorative-sea
 import { ExplorativeSearchService } from './explorative-search/explorative-search.service';
 import { ExplorativeSearchFormComponent } from './explorative-search/explorative-search-form.component';
 import { ExplorativeSearchDetailsComponent } from './explorative-search/explorative-search-details.component';
+import {ProductPropertiesComponent} from "./catalogue/product-properties.component";
 
 
 @NgModule({
@@ -48,6 +49,7 @@ import { ExplorativeSearchDetailsComponent } from './explorative-search/explorat
         CategorySearchComponent,
         ProductPublishComponent,
 		AdditionalItemPropertyComponent,
+        ProductPropertiesComponent,
 		SimpleSearchComponent,
 		SimpleSearchDetailsComponent,
 		SimpleSearchFormComponent,

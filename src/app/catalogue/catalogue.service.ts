@@ -10,15 +10,26 @@ import {Identifier} from "./model/publish/identifier";
 import {Party} from "./model/publish/party";
 import {UserService} from "../user-mgmt/user.service";
 import {FunctionCall, MethodCall} from "@angular/compiler/src/expression_parser/ast";
+import {CatalogueLine} from "./model/publish/catalogue-line";
 
 @Injectable()
 export class CatalogueService {
     private headers = new Headers({'Content-Type': 'application/json', 'Accept': 'application/json'});
     private baseUrl = myGlobals.catalogue_endpoint;
+
     private catalogue: Catalogue;
+    private draftCatalogueLine: CatalogueLine;
 
     constructor(private http: Http,
                 private userService: UserService) {
+    }
+
+    getDraftItem(): CatalogueLine {
+        return this.draftCatalogueLine;
+    }
+
+    setDraftItem(draftCatalogueLine:CatalogueLine): void {
+        this.draftCatalogueLine = draftCatalogueLine;
     }
 
     getCatalogue(userId: string): Promise<Catalogue> {

@@ -1,231 +1,32 @@
-<!-- Topmost navigation bar -->
-<ul class="nav nav-tabs">
-    <li class="nav-item">
-        <a href id="singleUpload"
-           [ngClass]="{'nav-link': true, active: singleItemUpload}"
-           (click)="onTabClick($event)"
-           i18n
-        >Upload Single Product</a>
-    </li>
-
-    <li class="nav-item">
-        <a href id="bulkUpload"
-           [ngClass]="{'nav-link': true, active: !singleItemUpload}"
-           (click)="onTabClick($event)"
-           i18n
-        >Upload Multiple Products</a>
-    </li>
-</ul>
-
-<!-- Single product publishing -->
-<div *ngIf="goodsItem && singleItemUpload" class="mt-3">
-
-    <!-- Top row: selected category, feedback alerts, etc. -->
-    <div class="d-flex justify-content-end">
-        <div class="mr-auto">
-            <h6 style="display: inline-block;" i18n>Selected category:</h6>
-            <button class="btn btn-info ml-3">{{selectedCategory != null ? selectedCategory.preferredName: 'None'}}
-            </button>
-        </div>
-        <div [hidden]="error_detc || callback || !submitted" class="pr-3">
-            <img src="assets/form_loader.gif"/>
-        </div>
-        <div [hidden]="!(callback && !error_detc)"
-             #successAlert (click)="successAlert.hidden=true;"
-             [style]="!(callback && !error_detc) ? '' : 'display: flex'">
-            <div class="alert-success mb-0 mr-3 d-flex" role="alert">
-                <div class="d-flex p-2" style="align-items: center">
-                    <span i18n>Product published!</span>
-                    <span class="ml-3" style="cursor:pointer"><strong>&times;</strong></span>
-                </div>
-            </div>
-        </div>
-        <div [hidden]="!(callback && error_detc)"
-             #errorAlert (click)="errorAlert.hidden=true"
-             [style]="hidden ? '' : 'display: flex'">
-            <div class="alert-danger mb-0 mr-3 d-flex" role="alert">
-                <div class="d-flex p-2" style="align-items: center">
-                    <span i18n>Fail to publish product!</span>
-                    <span class="ml-3" style="cursor:pointer"><strong>&times;</strong></span>
-                </div>
-            </div>
-        </div>
-        <button class="btn btn-success"
-                (click)="publishProduct()">
-            <span i18n>Publish Product</span>
-        </button>
-    </div>
-    <hr>
-    <!-- Form header row -->
-    <h4><u>Product Details</u></h4>
-    <div class="row mt-3">
-        <h5 class="col-3"><label i18n>Property Name</label></h5>
-        <h5 class="col-3"><label i18n>Property Value</label></h5>
-    </div>
-
-    <form class="space-before">
-        <!-- ubl properties -->
-        <div class="input-group form-group">
-            <label class="col-3 control-label">Name</label>
-            <input type="text" class="form-control" name="productName" [(ngModel)]="goodsItem.item.name">
-        </div>
-        <div class="input-group form-group">
-            <label class="col-3 control-label">Description</label>
-            <input type="text" class="form-control" name="productDescription" [(ngModel)]="goodsItem.item.description">
-        </div>
-
-        <!-- eClass properties -->
-        <additional-item-property *ngFor="let property of goodsItem.item.additionalItemProperty"
-                                  [additionalItemProperty]="property">
-        </additional-item-property>
-
-        <!-- new property -->
-        <hr class="mt-5">
-        <div class="form-group">
-            <h6 i18n>Add new property</h6>
-            <form #customPropertyForm="ngForm" class="d-flex">
-                <input name="propertyName"
-                       class="form-control col-3"
-                       [(ngModel)]="newProperty.name"
-                       placeholder="Property Name"
-                       required/>
-                <input *ngIf="propertyValueType.options.selectedIndex == 0 || propertyValueType.options.selectedIndex == 1"
-                       name="propertyValue"
-                       class="form-control col ml-2"
-                       [(ngModel)]="newProperty.value[0]"
-                       placeholder="Property Value"
-                       required/>
-
-                <div *ngIf="propertyValueType.options.selectedIndex == 2" (click)="image.click()"
-                     class="col-4"
-                     style="display: inline-block;">
-                    <input #image type="file" (change)="imageChange($event)" multiple accept="image/*"
-                           style="display: none">
-                    <img src="./assets/catalogue/add_button.png"/>
-                    <span i18n>Add image</span>
-                </div>
-
-                <div *ngIf="propertyValueType.options.selectedIndex == 3" (click)="file.click()"
-                     class="col-4"
-                     style="display: inline-block;">
-                    <input #file type="file" (change)="fileChange($event)" multiple accept="image/*"
-                           style="display: none">
-                    <img src="./assets/catalogue/add_button.png"/>
-                    <span i18n>Add file</span>
-                </div>
-
-                <div class="col">
-                    <div class="row justify-content-end ml-2">
-                        <div>
-                            <span i18n>Value type:</span>
-
-                            <select #propertyValueType class="custom-select" (change)="onValueTypeChange($event)">
-                                <option selected i18n>Text</option>
-                                <option i18n>Number</option>
-                                <option i18n>Image</option>
-                                <option i18n>File</option>
-                            </select>
-                        </div>
-
-                        <button [disabled]="!customPropertyForm.form.valid"
-                                class="btn btn-success ml-1"
-                                (click)="addCustomProperty()">
-                            <span i18n>Add property</span>
-                        </button>
-                    </div>
-                </div>
-            </form>
-
-            <!-- selected images or files -->
-            <div *ngIf="newProperty != null && newProperty.embeddedDocumentBinaryObject != null"
-                 class="offset-3 mt-3">
-                <ul class="list-group">
-                    <li *ngFor="let image of newProperty.embeddedDocumentBinaryObject"
-                        class="list-group-item pb-2 border-0">
-
-                        <div>
-                            <img class="mr-2"
-                                 src="data:{{image.mimeCode}};base64,{{image.value}}"
-                                 height="100"
-                                 width="100"
-                            />
-                            <div style="display: inline-block;">
-                                <label>Value Details:</label>
-                                <input type="text" class="form-control" aria-describedby="componentName"
-                                       [value]="image.objectMetadata"/>
-                            </div>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-            <!-- selected images or files -->
-        </div>
-        <!-- new property -->
-
-        <!-- product configuration images -->
-        <!--<!<div *ngIf="goodsItem.item.additionalItemProperty != null && goodsItem.item.additionalItemProperty.length >= 2">
-            <hr class="mt-5">
-            <div>
-                <h6>Add product images for different combinations of product features</h6>
-                <div class="row pb-3">
-                    TODO produce the cols below dynamically
-                    <div class="col-2">
-                        <label>Wall tile</label>
-                        <div>
-                            <select class="custom-select" #wallTileValues>
-                                <option selected>White</option>
-                                <option>Black</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-2">
-                        <label>Floor tile</label>
-                        <div>
-                            <select class="custom-select" #floorTileValues>
-                                <option selected>White</option>
-                                <option>Black</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div (click)="overallProductImage.click()">
-                        <input #overallProductImage type="file"
-                               (change)="overallProductImageImage($event, wallTileValues.value, floorTileValues.value)"
-                               accept="image/*"
-                               style="display: none">
-                        <img src="./assets/catalogue/add_button.png"/>
-                        <span>Add image</span>
-                    </div>
-                </div>
-                <div *ngIf="goodsItem.item.itemConfigurationImageArray.length > 0"
-                     class="input-group form-group">
-                    <div style="display: inline-block">
-                        <img *ngFor="let image of goodsItem.item.itemConfigurationImageArray"
-                             class="pr-2"
-                             src="data:{{image.mimeCode}};base64,{{image.value}}"
-                             height="100"
-                             width="100"/>
-                    </div>
-                </div>
-            </div>
-        </div>-->
-    </form>
+<!-- ubl properties -->
+<div class="input-group form-group">
+    <label class="col-3 control-label">Name</label>
+    <input type="text" class="form-control" name="productName" [(ngModel)]="catalogueLine.goodsItem.item.name">
+</div>
+<div class="input-group form-group">
+    <label class="col-3 control-label">Description</label>
+    <input type="text" class="form-control" name="productDescription" [(ngModel)]="catalogueLine.goodsItem.item.description">
+</div>
+<div class="input-group form-group">
+    <label class="col-3 control-label">Price</label>
+    <input type="text" class="form-control" name="productPrice" [(ngModel)]="catalogueLine.requiredItemLocationQuantity.price.priceAmount.value">
 </div>
 
-<!-- Bulk product publishing -->
-<div *ngIf="!singleItemUpload">
-    <div class="row justify-content-center">
-        <div class="col p-5">
-            <ol class="list-group">
-                <div class="d-flex justify-content-start p-2">
-                    <li>Download the product category template</li>
-                    <button class="btn btn-success ml-auto">Download template</button>
-                </div>
-                <div class="d-flex justify-content-start p-2">
-                    <li>Upload the template after filling it with your products' information
-                    </li>
-                    <button class="btn btn-success ml-auto">Upload template</button>
-                </div>
-            </ol>
-        </div>
+<!-- Custom properties -->
+<additional-item-property *ngFor="let property of customProperties"
+                          [additionalItemProperty]="property">
+</additional-item-property>
+
+<div *ngFor="let propertyBlock of propertyBlocks">
+    <p>
+        <button type="button" class="btn btn-outline-primary" (click)="propertyBlock.isCollapsed = !propertyBlock.isCollapsed"
+                [attr.aria-expanded]="!propertyBlock.isCollapsed" aria-controls="propertyBlock">
+            {{propertyBlock.name}}
+        </button>
+    </p>
+    <div id="propertyBlock" [ngbCollapse]="propertyBlock.isCollapsed">
+        <additional-item-property *ngFor="let property of propertyBlock[PROPERTY_BLOCK_FIELD_PROPERTIES]"
+                                  [additionalItemProperty]="property">
+        </additional-item-property>
     </div>
 </div>

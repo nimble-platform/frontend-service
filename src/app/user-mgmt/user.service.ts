@@ -35,7 +35,7 @@ export class UserService {
 		.toPromise()
 		.then(res => {
 			// ToDo: make identity service using the latest version of the data model
-			let id:Identifier = new Identifier(res.json()[0].partyIdentification[0].id.value, null, null);
+			let id:Identifier = new Identifier(res.json()[0].hjid, null, null);
 			let names:PartyName[] = [new PartyName(res.json()[0].partyName[0].name)];
 			this.userParty = new Party(id, names, null);
 			return Promise.resolve(this.userParty);

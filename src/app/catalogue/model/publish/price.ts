@@ -2,14 +2,9 @@
  * Created by suat on 12-May-17.
  */
 
-import {Party} from "./party";
-import {Identifier} from "./identifier";
-import {CatalogueLine} from "./catalogue-line";
+import {Amount} from "./amount";
 
-export class Catalogue {
-    constructor(public id: Identifier,
-                public uuid: Identifier,
-                public providerParty: Party,
-                public catalogueLine: CatalogueLine[]) {
+export class Price {
+    constructor(public priceAmount: Amount) {
     }
 }

@@ -2,209 +2,186 @@
  * Created by suat on 17-May-17.
  */
 
-import {Http} from "@angular/http";
-import {Component, ElementRef, OnInit, ViewChild} from "@angular/core";
-import {GoodsItem} from "./model/publish/goods-item";
-import {CategoryService} from "./category/category.service";
-import {AdditionalItemProperty} from "./model/publish/additional-item-property";
-import {Item} from "./model/publish/item";
-import {BinaryObject} from "./model/publish/binary-object";
-import {CatalogueService} from "./catalogue.service";
+import {Component, Input, OnInit} from "@angular/core";
 import {Category} from "./model/category/category";
-import {Identifier} from "./model/publish/identifier";
+import {Property} from "./model/category/property";
+import {AdditionalItemProperty} from "./model/publish/additional-item-property";
 import {CatalogueLine} from "./model/publish/catalogue-line";
-import {Catalogue} from "./model/publish/catalogue";
-import {CookieService} from "ng2-cookies";
+
+const PROPERTY_BLOCK_FIELD_NAME: string = "name";
+const PROPERTY_BLOCK_FIELD_ISCOLLAPSED = "isCollapsed";
+const PROPERTY_BLOCK_FIELD_PROPERTIES = "properties";
 
 @Component({
-    selector: 'product-publish',
-    templateUrl: './product-publish.component.html'
+    selector: 'product-properties',
+    templateUrl: './product-properties.component.html'
 })
 
-export class ProductPublishComponent implements OnInit {
-    @ViewChild('propertyValueType') propertyValueType: ElementRef;
+export class ProductPropertiesComponent implements OnInit {
+    readonly PROPERTY_BLOCK_FIELD_NAME: string = "name";
+    readonly PROPERTY_BLOCK_FIELD_ISCOLLAPSED = "isCollapsed";
+    readonly PROPERTY_BLOCK_FIELD_PROPERTIES = "properties";
 
-    // data objects
-    selectedCategory: Category;
-    goodsItem: GoodsItem;
-    newProperty: AdditionalItemProperty = new AdditionalItemProperty("", [''], new Array<BinaryObject>(), "", "", "STRING", null, null);
+    @Input() catalogueLine: CatalogueLine;
+    @Input() selectedCategories: Category[];
 
-    // state objects
-    singleItemUpload: boolean = true;
-    private submitted = false;
-    private callback = false;
-    private error_detc = false;
+    // list keeping the custom additional properties
+    customProperties: AdditionalItemProperty[] = [];
+    // list keeping the block for each category associated to the item
+    propertyBlocks: Array<Object> = [];
+    // list keeping the properties in order not to render the same property more than once
+    renderedPropertyIds: Array<string> = [];
 
-    constructor(private categoryService: CategoryService,
-                private catalogueService: CatalogueService,
-                private cookieService: CookieService) {
+    ngOnInit(): void {
+        this.refreshPropertyBlocks();
     }
 
-    ngOnInit() {
-        let userId = this.cookieService.get("user_id");
-        this.catalogueService.getCatalogue(userId).then(catalogue => {
+    refreshPropertyBlocks(): void {
+        this.customProperties = [];
+        this.propertyBlocks = [];
+        this.renderedPropertyIds = [];
 
-            // initiate the goods item with the selected property
-            this.selectedCategory = this.categoryService.getSelectedCategory();
-
-            // create additional item properties
-            let additionalItemProperties = new Array<AdditionalItemProperty>();
-            // create item
-            let item = new Item("", "", additionalItemProperties, catalogue.providerParty, [], "");
-            // identifier
-            let giId = new Identifier(this.generateUUID(), "", "");
-            // create goods item
-            this.goodsItem = new GoodsItem(giId, item);
-
-            if (this.selectedCategory != null) {
-                for (let i = 0; i < this.selectedCategory.properties.length; i++) {
-                    let property = this.selectedCategory.properties[i];
-                    let unit = "";
-                    if (property.unit != null) {
-                        unit = property.unit.shortName;
-                    }
-                    let valueQualifier = property.dataType;
-                    let aip = new AdditionalItemProperty(property.preferredName, [''], new Array<BinaryObject>(), "", unit, valueQualifier, null, null);
-                    additionalItemProperties.push(aip);
-                }
+        // create a list including the custom properties created by the user
+        for (let property of this.catalogueLine.goodsItem.item.additionalItemProperty) {
+            if (property.itemPropertyGroup.name == "Custom") {
+                this.customProperties.push(property);
+                this.renderedPropertyIds.push(property.id.value);
             }
-        });
-    }
-
-    private onTabClick(event: any) {
-        event.preventDefault();
-        if (event.target.id == "singleUpload") {
-            this.singleItemUpload = true;
-        } else {
-            this.singleItemUpload = false;
         }
-    }
 
-    private publishProduct(): void {
-        this.error_detc = false;
-        this.callback = false;
-        this.submitted = true;
-
-        let userId = this.cookieService.get("user_id");
-        this.catalogueService.getCatalogue(userId).then(catalogue => {
-                let line: CatalogueLine = new CatalogueLine(null, this.goodsItem);
-                catalogue.catalogueLine.push(line);
-                this.mergeMultipleValuesIntoSingleField(catalogue);
-                if (catalogue.uuid == null) {
-                    this.catalogueService.postCatalogue(catalogue)
-                        .then(() => this.onSuccessfulPublish())
-                        .catch(() => this.onFailedPublish());
+        // commodity classifications
+        if (this.selectedCategories != null) {
+            for (let category of this.selectedCategories) {
+                if (category.taxonomyId == 'eClass') {
+                    this.createEClassPropertyBlocks(category);
                 } else {
-                    this.catalogueService.putCatalogue(catalogue)
-                        .then(() => this.onSuccessfulPublish())
-                        .catch(() => this.onFailedPublish())
+                    this.createPropertyBlock(category);
                 }
             }
-        );
+        }
     }
 
-    private onSuccessfulPublish():void {
-        this.callback = true;
-        this.error_detc = false;
-        this.ngOnInit();
-    }
+    /**
+     * Creates two blocks as eClass-base and eClass-specific and puts properties into those
+     */
+    private createEClassPropertyBlocks(category: Category): void {
 
-    private onFailedPublish():void {
-        this.error_detc = true;
-    }
+        let basePropertyBlock: any = {};
+        basePropertyBlock[PROPERTY_BLOCK_FIELD_NAME] = category.preferredName + " (" + category.taxonomyId + " - Base)";
+        basePropertyBlock[PROPERTY_BLOCK_FIELD_ISCOLLAPSED] = true;
+        this.propertyBlocks.push(basePropertyBlock);
+        let specificPropertyBlock: any = {};
+        specificPropertyBlock[PROPERTY_BLOCK_FIELD_NAME] = category.preferredName + " (" + category.taxonomyId + " - Specific)";
+        specificPropertyBlock[PROPERTY_BLOCK_FIELD_ISCOLLAPSED] = true;
+        this.propertyBlocks.push(specificPropertyBlock);
 
-    private mergeMultipleValuesIntoSingleField(catalogue: Catalogue): void {
-        for (let i: number = 0; i < catalogue.catalogueLine.length; i++) {
-            let props = catalogue.catalogueLine[i].goodsItem.item.additionalItemProperty;
-
-            for (let j: number = 0; j < props.length; j++) {
-                props[j].demoSpecificMultipleContent = JSON.stringify(props[j].embeddedDocumentBinaryObject);
+        let baseProperties: AdditionalItemProperty[] = [];
+        let specificProperties: AdditionalItemProperty[] = [];
+        for (let property of category.properties) {
+            let aip = this.getItemProperty(property);
+            if (!this.isPropertyPresentedAlready(property)) {
+                if (this.isBaseEClassProperty(property)) {
+                    baseProperties.push(aip);
+                } else {
+                    specificProperties.push(aip);
+                }
+                this.renderedPropertyIds.push(property.id);
             }
         }
-        //demo specific
-        catalogue.catalogueLine[0].goodsItem.item.itemConfigurationImages = JSON.stringify(catalogue.catalogueLine[0].goodsItem.item.itemConfigurationImageArray);
+
+        basePropertyBlock[PROPERTY_BLOCK_FIELD_PROPERTIES] = baseProperties;
+        specificPropertyBlock[PROPERTY_BLOCK_FIELD_PROPERTIES] = specificProperties;
     }
 
+    private createPropertyBlock(category: Category): void {
 
-    private onValueTypeChange(event: any) {
-        if (event.target.value == "Text") {
-            this.newProperty.valueQualifier = "STRING";
-        } else if (event.target.value == "Number") {
-            this.newProperty.valueQualifier = "REAL_MEASURE";
-        } else if (event.target.value == "Image" || event.target.valueQualifier == "File") {
-            this.newProperty.valueQualifier = "BINARY";
-        }
-        console.log(event.target.selectedIndex);
-    }
+        let propertyBlock: any = {};
+        propertyBlock[PROPERTY_BLOCK_FIELD_NAME] = category.preferredName + " (" + category.taxonomyId + ")";
+        propertyBlock[PROPERTY_BLOCK_FIELD_ISCOLLAPSED] = true;
+        this.propertyBlocks.push(propertyBlock);
 
-    private imageChange(event: any) {
-        let fileList: FileList = event.target.files;
-        if (fileList.length > 0) {
-            let binaryObjects = this.newProperty.embeddedDocumentBinaryObject;
-
-            for (let i = 0; i < fileList.length; i++) {
-                let file: File = fileList[i];
-                let reader = new FileReader();
-
-                reader.onload = function (e: any) {
-                    let base64String = reader.result.split(',').pop();
-                    let binaryObject = new BinaryObject(base64String, file.type, file.name, "", "");
-                    binaryObjects.push(binaryObject);
-                };
-                reader.readAsDataURL(file);
+        let properties: AdditionalItemProperty[] = [];
+        for (let property of category.properties) {
+            if (!this.isPropertyPresentedAlready(property)) {
+                properties.push(this.getItemProperty(property));
+                this.renderedPropertyIds.push(property.id)
             }
         }
+        propertyBlock[PROPERTY_BLOCK_FIELD_PROPERTIES] = properties;
     }
 
-    //TODO update the method below so that the parameters are passed dynamically
-    private overallProductImageImage(event: any, wallTilesValue: string, floorTilesValue: string) {
-        let fileList: FileList = event.target.files;
-        if (fileList.length > 0) {
-            let itemConfigurationImageArray = this.goodsItem.item.itemConfigurationImageArray;
-            let file: File = fileList[0];
-            let reader = new FileReader();
+    private isPropertyPresentedAlready(property: Property): boolean {
+        for (let id of this.renderedPropertyIds) {
+            if (property.id == id) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-            reader.onload = function (e: any) {
-                let base64String = reader.result.split(',').pop();
-                let binaryObject = new BinaryObject(base64String, file.type, file.name, "", "{wall: " + wallTilesValue + ", floor: " + floorTilesValue + "}");
-                itemConfigurationImageArray.push(binaryObject);
-            };
-            reader.readAsDataURL(file);
+    private getItemProperty(property: Property): AdditionalItemProperty {
+        for (let aip of this.catalogueLine.goodsItem.item.additionalItemProperty) {
+            if (aip.id.value == property.id) {
+                return aip;
+            }
+        }
+        console.error("Property could not be found in additional item properties: " + property.id)
+    }
+
+    /*
+     Checks whether the property is a base property common for many eClass properties
+
+     The properties that are treated as a base property :
+     0173-1#02-AAD931#005 - customs tariff number (TARIC)
+     0173-1#02-AAO663#003 - GTIN
+     0173-1#02-BAB392#012 - certificate/approval
+     0173-1#02-AAO677#002 - Manufacturer name
+     0173-1#02-AAO676#003 - product article number of manufacturer
+     0173-1#02-AAO736#004 - product article number of supplier
+     0173-1#02-AAO735#003 - name of supplier
+
+     0173-1#02-AAP794#001 - Offerer/supplier
+     0173-1#02-AAQ326#002 - address of additional link
+     0173-1#02-BAE391#004 - Scope of performance
+     0173-1#02-AAP796#004 - supplier of the identifier
+     0173-1#02-BAF831#002 - Personnel qualification
+     0173-1#02-AAM551#002 - Supplier product designation
+     0173-1#02-AAU734#001 - Manufacturer product description
+     0173-1#02-AAU733#001 - Manufacturer product order suffix
+     0173-1#02-AAU732#001 - Manufacturer product root
+     0173-1#02-AAU731#001 - Manufacturer product family
+     0173-1#02-AAU730#001 - Supplier product description
+     0173-1#02-AAU729#001 - Supplier product root
+     0173-1#02-AAU728#001 - Supplier product family
+     0173-1#02-AAO742#002 - Brand
+     0173-1#02-AAW336#001 - Supplier product type
+     0173-1#02-AAW337#001 - Supplier product order suffix
+     0173-1#02-AAW338#001 - Manufacturer product designation
+     0173-1#02-AAO057#002 - Product type
+     */
+    private isBaseEClassProperty(property: Property): boolean {
+        let pid: string = property.id;
+        if (pid == "0173-1#02-AAP794#001" ||
+            pid == "0173-1#02-AAQ326#002" ||
+            pid == "0173-1#02-BAE391#004" ||
+            pid == "0173-1#02-AAP796#004" ||
+            pid == "0173-1#02-BAF831#002" ||
+            pid == "0173-1#02-AAM551#002" ||
+            pid == "0173-1#02-AAU734#001" ||
+            pid == "0173-1#02-AAU733#001" ||
+            pid == "0173-1#02-AAU732#001" ||
+            pid == "0173-1#02-AAU731#001" ||
+            pid == "0173-1#02-AAU730#001" ||
+            pid == "0173-1#02-AAU729#001" ||
+            pid == "0173-1#02-AAU728#001" ||
+            pid == "0173-1#02-AAO742#002" ||
+            pid == "0173-1#02-AAW336#001" ||
+            pid == "0173-1#02-AAW337#001" ||
+            pid == "0173-1#02-AAW338#001" ||
+            pid == "0173-1#02-AAO057#002") {
+            return true;
+        } else {
+            return false;
         }
     }
-
-    private fileChange(event: any) {
-        let fileList: FileList = event.target.files;
-        if (fileList.length > 0) {
-            let file: File = fileList[0];
-            var reader = new FileReader();
-            reader.onload = function (e) {
-                // get loaded data and render thumbnail.
-                document.getElementById('img').setAttribute("src", reader.result);
-            };
-            reader.readAsDataURL(file);
-        }
-    }
-
-    private addCustomProperty(): void {
-        this.goodsItem.item.additionalItemProperty.push(this.newProperty);
-
-        // reset the custom property view
-        this.newProperty = new AdditionalItemProperty(null, [''], new Array<BinaryObject>(), "", "", "STRING", null, null);
-        this.propertyValueType.nativeElement.selectedIndex = 0;
-    }
-
-    private handleError(error: any): Promise<any> {
-        return Promise.reject(error.message || error);
-    }
-
-    private generateUUID(): string {
-        var d = new Date().getTime();
-        var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-            var r = (d + Math.random() * 16) % 16 | 0;
-            d = Math.floor(d / 16);
-            return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
-        });
-        return uuid;
-    };
 }
