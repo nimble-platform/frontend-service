@@ -96,7 +96,7 @@ export class ProductPublishComponent implements OnInit {
             let aip = ModelUtils.createAdditionalItemProperty(property, category.taxonomyId);
             // check whether the same property exists already
             for (let existingAip of this.catalogueLine.goodsItem.item.additionalItemProperty) {
-                if (aip.id.value == existingAip.id.value) {
+                if (aip.id == existingAip.id) {
                     break;
                 }
             }

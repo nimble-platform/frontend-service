@@ -6,10 +6,7 @@ import {Http, Headers} from '@angular/http';
 import * as myGlobals from '../globals';
 import {GoodsItem} from "./model/publish/goods-item";
 import {Catalogue} from "./model/publish/catalogue";
-import {Identifier} from "./model/publish/identifier";
-import {Party} from "./model/publish/party";
 import {UserService} from "../user-mgmt/user.service";
-import {FunctionCall, MethodCall} from "@angular/compiler/src/expression_parser/ast";
 import {CatalogueLine} from "./model/publish/catalogue-line";
 
 @Injectable()
@@ -41,15 +38,14 @@ export class CatalogueService {
             return this.userService.getUserParty(userId).then(party => {
 
                 // using the party query the default catalogue
-                let url = this.baseUrl + `/catalogue/${party.id.value}/default`;
+                let url = this.baseUrl + `/catalogue/${party.id}/default`;
                 return this.http
                     .get(url, {headers: this.headers})
                     .toPromise()
                     .then(res => {
                         if (res.status == 204) {
                             // no default catalogue yet, create new one
-                            let id: Identifier = new Identifier("default", null, null);
-                            this.catalogue = new Catalogue(id, null, party, []);
+                            this.catalogue = new Catalogue("default", null, party, []);
                         } else {
                             this.catalogue = res.json() as Catalogue;
                         }

@@ -45,7 +45,7 @@ export class ProductPropertiesComponent implements OnInit {
         for (let property of this.catalogueLine.goodsItem.item.additionalItemProperty) {
             if (property.itemPropertyGroup.name == "Custom") {
                 this.customProperties.push(property);
-                this.renderedPropertyIds.push(property.id.value);
+                this.renderedPropertyIds.push(property.id);
             }
         }
 
@@ -121,7 +121,7 @@ export class ProductPropertiesComponent implements OnInit {
 
     private getItemProperty(property: Property): AdditionalItemProperty {
         for (let aip of this.catalogueLine.goodsItem.item.additionalItemProperty) {
-            if (aip.id.value == property.id) {
+            if (aip.id == property.id) {
                 return aip;
             }
         }

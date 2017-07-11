@@ -1,5 +1,4 @@
 import {AdditionalItemProperty} from "./publish/additional-item-property";
-import {Identifier} from "./publish/identifier";
 import {BinaryObject} from "./publish/binary-object";
 import {CommodityClassification} from "./publish/commodity-classification";
 import {Code} from "./publish/code";
@@ -20,19 +19,17 @@ export class ModelUtils {
      public static createAdditionalItemProperty(property:Property, itemPropertyGroupStr:string):AdditionalItemProperty {
         let aip:AdditionalItemProperty;
         if(property == null) {
-            let id: Identifier = new Identifier(this.generateUUID(), null, null);
             let ipg: ItemPropertyGroup = new ItemPropertyGroup(itemPropertyGroupStr);
-            aip = new AdditionalItemProperty(id, "", [""], new Array<BinaryObject>(), "", "", "STRING", ipg, null);
+            aip = new AdditionalItemProperty(this.generateUUID(), "", [""], new Array<BinaryObject>(), "", "", "STRING", ipg, null);
 
         } else {
-            let id: Identifier = new Identifier(property.id, null, null);
             let unit = "";
             if (property.unit != null) {
                 unit = property.unit.shortName;
             }
             let valueQualifier = property.dataType;
             let itemPropertyGroup: ItemPropertyGroup = new ItemPropertyGroup(itemPropertyGroupStr);
-            aip = new AdditionalItemProperty(id, property.preferredName, [''], new Array<BinaryObject>(), "", unit, valueQualifier, itemPropertyGroup, null);
+            aip = new AdditionalItemProperty(property.id, property.preferredName, [''], new Array<BinaryObject>(), "", unit, valueQualifier, itemPropertyGroup, null);
         }
         return aip;
     }
@@ -68,11 +65,8 @@ export class ModelUtils {
         // create item
         let item = new Item("", "", additionalItemProperties, providerParty, [], [], "");
 
-        // identifier
-        let giId = new Identifier(this.generateUUID(), "", "");
-
         // create goods item
-        let goodsItem = new GoodsItem(giId, item);
+        let goodsItem = new GoodsItem(this.generateUUID(), item);
 
         // create required item location quantity
         let ilq = this.createItemLocationQuantity("");
