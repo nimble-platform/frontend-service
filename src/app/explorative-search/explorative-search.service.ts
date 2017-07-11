@@ -41,7 +41,7 @@ export class ExplorativeSearchService {
     }
 
     getTableValues(term: Object): Promise<any> {
-        return this.http.get(`${this.sparqlEndPoint}?inputAsJson=${JSON.stringify(term)}`)
+        return this.http.get(`${this.sparqlEndPoint}?inputAsJson=${(term)}`)
             .toPromise()
             .then(res => res.json());
     }

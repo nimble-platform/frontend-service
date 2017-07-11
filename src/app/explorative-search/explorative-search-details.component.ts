@@ -33,9 +33,12 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
     filterQuery: string;
     filterJSON: Object;
     /* HardCoded JSON for the Big red Search Button*/
+	private selectedProperties : Array<string> =[]; 
+	keywordCounter = 0;
     tableJSON = {'concept': 'HighChair', 'parameters':
         ['hasHeight', 'hasWidth'],
         'filters': [{'min': 3.0, 'max': 5.2}]};
+		
     /*The API response from tableJSON will be stored in tableResult*/
     tableResult: any;
 
@@ -163,6 +166,27 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
         this.filterQueryRoot = rootConcept; // pass this to the child component
         // create a JSON for the API call
         let filteringInput = {'concept': rootConcept, 'property': clickedNode, 'amountOfGroups': 3};
+		 console.log("Concept: " + rootConcept); // DEBUG CHECK#
+		  console.log("Property: " + clickedNode); // DEBUG CHECK#
+		  this.selectedProperties[this.keywordCounter] = clickedNode;
+		  this.keywordCounter = this.keywordCounter +1;
+		  for (var item of this.selectedProperties) {
+			console.log(item); // 9,2,5
+			}
+			this.tableJSON = "{\"concept\": \""+ rootConcept +"\", \"parameters\":[ ";
+			 for (var item of this.selectedProperties) {
+			this.tableJSON+= "\"" + item + "\", ";
+			console.log(item); // 9,2,5
+			}
+			this.tableJSON = this.tableJSON.substring(0, this.tableJSON.length-2);
+			this.tableJSON += "],\"filters\": []}";
+			console.log(this.tableJSON ):
+		  /**
+		  *tableJSON = {'concept': 'HighChair', 'parameters':
+        ['hasHeight', 'hasWidth'],
+        'filters': [{'min': 3.0, 'max': 5.2}]};
+		  *
+		  */
         // console.log(JSON.stringify(filteringInput)); DEBUG
         // API Call and store the value
          this.expSearch.getPropertyValues(filteringInput)
@@ -182,8 +206,10 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                 // store the result in tableResult
                 // which will be used in HTML file
                 res => this.tableResult = res
+				
             );
-        console.log(JSON.stringify(this.tableResult)); // DEBUG CHECK
+        console.log(JSON.stringify(this.tableResult)); // DEBUG CHECK#
+		 
     }
 
 }
