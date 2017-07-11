@@ -10,7 +10,8 @@ import * as myGlobals from '../globals';
 
 @Component({
 	selector: 'simple-search-details',
-	templateUrl: './simple-search-details.component.html'
+	templateUrl: './simple-search-details.component.html',
+	styleUrls: ['./simple-search-details.component.css']
 })
 
 export class SimpleSearchDetailsComponent implements OnInit {
@@ -24,6 +25,7 @@ export class SimpleSearchDetailsComponent implements OnInit {
 	product_configurable = myGlobals.product_configurable;
 	set_configs = myGlobals.product_default;
 
+	negotiationExpanded = false;
 	callback = false;
 	error_detc = false;
 	submitted2 = false;
