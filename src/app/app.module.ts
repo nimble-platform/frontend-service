@@ -28,6 +28,7 @@ import { ExplorativeSearchService } from './explorative-search/explorative-searc
 import { ExplorativeSearchFormComponent } from './explorative-search/explorative-search-form.component';
 import { ExplorativeSearchDetailsComponent } from './explorative-search/explorative-search-details.component';
 import {ProductPropertiesComponent} from "./catalogue/product-properties.component";
+import {NegotationMainComponent} from "./negotiation/negotiation-main.component";
 
 
 @NgModule({
@@ -56,7 +57,8 @@ import {ProductPropertiesComponent} from "./catalogue/product-properties.compone
         ExplorativeSearchComponent,
         ExplorativeSearchFormComponent,
         ExplorativeSearchDetailsComponent,
-        AdditionalItemPropertyComponent
+        AdditionalItemPropertyComponent,
+            NegotationMainComponent
         ],
         providers: [
         UserService,
