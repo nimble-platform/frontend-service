@@ -14,6 +14,9 @@ import {CookieService} from "ng2-cookies";
 import {ModelUtils} from "./model/model-utils";
 import {ActivatedRoute, Params, Router} from "@angular/router";
 import {ProductPropertiesComponent} from "./product-properties.component";
+import 'rxjs/Rx' ;
+
+const uploadModalityKey: string = "UploadModality";
 
 @Component({
     selector: 'product-publish',
@@ -38,7 +41,7 @@ export class ProductPublishComponent implements OnInit {
     /*
      * state objects for feedback about the publish operation
      */
-    singleItemUpload: boolean = true;
+    singleItemUpload: boolean = this.isSingleItemUpload();
     private submitted = false;
     private callback = false;
     private error_detc = false;
@@ -48,20 +51,17 @@ export class ProductPublishComponent implements OnInit {
                 private router: Router,
                 private route: ActivatedRoute,
                 private cookieService: CookieService) {
-        console.log("constructor");
     }
 
     ngOnInit() {
-        console.log("init");
-        let publishFromScratch:boolean;
+        let publishFromScratch: boolean;
         this.route.queryParams.subscribe((params: Params) => {
             publishFromScratch = params['fromScratch'] == "true";
-            console.log("publish scratch: " + publishFromScratch)
             this.initView(publishFromScratch);
         });
     }
 
-    private initView(publishFromScratch:boolean):void {
+    private initView(publishFromScratch: boolean): void {
         let userId = this.cookieService.get("user_id");
         this.catalogueService.getCatalogue(userId).then(catalogue => {
 
@@ -109,13 +109,15 @@ export class ProductPublishComponent implements OnInit {
         event.preventDefault();
         if (event.target.id == "singleUpload") {
             this.singleItemUpload = true;
+            localStorage.setItem(uploadModalityKey, "singleUpload");
         } else {
             this.singleItemUpload = false;
+            localStorage.setItem(uploadModalityKey, "bulkUpload");
         }
     }
 
     private addCategoryOnClick(event: any): void {
-        this.router.navigate(['categorysearch'], {queryParams: {fromScratch:false}});
+        this.router.navigate(['categorysearch'], {queryParams: {fromScratch: false}});
     }
 
     private publishProduct(): void {
@@ -236,6 +238,21 @@ export class ProductPublishComponent implements OnInit {
         this.propertyValueType.nativeElement.selectedIndex = 0;
     }
 
+    private downloadTemplate() {
+        var reader = new FileReader();
+        this.catalogueService.downloadTemplate(this.selectedCategories[0])
+            .subscribe(data => {
+
+                    var contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+                    var link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(data);
+                    link.download = "template.xlsx";
+                    link.click();
+                },
+                error => console.log("Error downloading the file."),
+                () => console.log('Completed file download.'));
+    }
+
 
     private isNewCategory(category: Category): boolean {
         let newCategory: boolean = true;
@@ -246,6 +263,15 @@ export class ProductPublishComponent implements OnInit {
             }
         }
         return newCategory;
+    }
+
+    private isSingleItemUpload(): boolean {
+        let uploadModality: string = localStorage.getItem(uploadModalityKey);
+        if (uploadModality == "singleUpload") {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private handleError(error: any): Promise<any> {

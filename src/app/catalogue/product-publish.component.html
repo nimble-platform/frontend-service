@@ -23,7 +23,8 @@
     <!-- Top row: selected category, feedback alerts, etc. -->
     <div class="d-flex justify-content-end">
         <div class="mr-auto">
-            <h6 *ngIf="catalogueLine.goodsItem.item.commodityClassification.length > 0" style="display: inline-block;" i18n>Selected category:</h6>
+            <h6 *ngIf="catalogueLine.goodsItem.item.commodityClassification.length > 0" style="display: inline-block;"
+                i18n>Selected category:</h6>
             <button *ngFor="let selectedCategory of selectedCategories"
                     class="btn btn-info ml-3">
                 {{selectedCategory.preferredName}}
@@ -213,12 +214,31 @@
 
 <!-- Bulk product publishing -->
 <div *ngIf="!singleItemUpload">
+    <div class="d-flex justify-content-end mt-3">
+        <div class="mr-auto">
+            <h6 *ngIf="selectedCategories.length > 0" style="display: inline-block;"
+                i18n>Selected category:</h6>
+            <button *ngFor="let selectedCategory of selectedCategories"
+                    class="btn btn-info ml-3">
+                {{selectedCategory.preferredName}}
+            </button>
+            <div (click)="addCategoryOnClick()"
+                 style="display: inline-block;">
+                <img src="./assets/catalogue/add_button.png"/>
+                <span *ngIf="selectedCategories.length == 0" i18n>Select a product category</span>
+                <span *ngIf="selectedCategories.length > 0" i18n>Add another product category</span>
+            </div>
+        </div>
+    </div>
     <div class="row justify-content-center">
         <div class="col p-5">
             <ol class="list-group">
                 <div class="d-flex justify-content-start p-2">
                     <li>Download the product category template</li>
-                    <button class="btn btn-success ml-auto">Download template</button>
+                    <button class="btn btn-success ml-auto"
+                            (click)="downloadTemplate()"
+                            [disabled]="selectedCategories.length == 0">Download template
+                    </button>
                 </div>
                 <div class="d-flex justify-content-start p-2">
                     <li>Upload the template after filling it with your products' information

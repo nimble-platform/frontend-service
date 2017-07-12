@@ -8,6 +8,8 @@ import {GoodsItem} from "./model/publish/goods-item";
 import {Catalogue} from "./model/publish/catalogue";
 import {UserService} from "../user-mgmt/user.service";
 import {CatalogueLine} from "./model/publish/catalogue-line";
+import {Category} from "./model/category/category";
+import {Observable} from "rxjs/Observable";
 
 @Injectable()
 export class CatalogueService {
@@ -84,6 +86,34 @@ export class CatalogueService {
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
+    }
+
+    downloadTemplate(category:Category): Observable<any> {
+        const url = this.baseUrl + `/catalogue/template?taxonomyId=${category.taxonomyId}&categoryId=${encodeURIComponent(category.id)}`;
+        let downloadTemplateHeaders = new Headers({'Accept': 'application/octet-stream'});
+        return Observable.create(observer => {
+
+            let xhr = new XMLHttpRequest();
+
+            xhr.open('GET', this.baseUrl + `/catalogue/template?taxonomyId=${category.taxonomyId}&categoryId=${encodeURIComponent(category.id)}`, true);
+            xhr.setRequestHeader('Accept', 'application/octet-stream');
+            xhr.responseType='blob';
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+
+                        var contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+                        var blob = new Blob([xhr.response], { type: contentType });
+                        observer.next(blob);
+                        observer.complete();
+                    } else {
+                        observer.error(xhr.response);
+                    }
+                }
+            }
+            xhr.send();
+        });
     }
 
     private handleError(error: any): Promise<any> {
