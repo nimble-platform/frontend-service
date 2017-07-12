@@ -35,10 +35,12 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
     /* HardCoded JSON for the Big red Search Button*/
 	private selectedProperties : Array<string> =[]; 
 	keywordCounter = 0;
-    tableJSON = {'concept': 'HighChair', 'parameters':
-        ['hasHeight', 'hasWidth'],
-        'filters': [{'min': 3.0, 'max': 5.2}]};
-		
+    /**tableJSON = {'concept': 'HighChair', 'parameters':
+    *    ['hasHeight', 'hasWidth'],
+     *   'filters': [{'min': 3.0, 'max': 5.2}]};
+	*/	
+	tableJSON = "";
+	
     /*The API response from tableJSON will be stored in tableResult*/
     tableResult: any;
 
@@ -180,7 +182,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
 			}
 			this.tableJSON = this.tableJSON.substring(0, this.tableJSON.length-2);
 			this.tableJSON += "],\"filters\": []}";
-			console.log(this.tableJSON ):
+			console.log(this.tableJSON );
 		  /**
 		  *tableJSON = {'concept': 'HighChair', 'parameters':
         ['hasHeight', 'hasWidth'],
@@ -200,6 +202,9 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
      * to get the results for the TABLE display.
      */
     genTable(): void {
+		//clear data structures
+		 this.selectedProperties  =[];
+		  this.keywordCounter = 0;
         // call the API for table data
         this.expSearch.getTableValues(this.tableJSON)
             .then(
