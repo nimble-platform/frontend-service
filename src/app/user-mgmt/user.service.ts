@@ -40,7 +40,7 @@ export class UserService {
 			console.log(url + ' returned ' + JSON.stringify(partyObj));
 
 			// ToDo: make identity service using the latest version of the data model
-			let id:Identifier = new Identifier(partyObj.id.value, null, null);
+			let id:Identifier = new Identifier(partyObj.id, null, null);
 			let names:PartyName[] = [new PartyName(partyObj.partyName[0].name)];
 			this.userParty = new Party(id, names, null);
 			return Promise.resolve(this.userParty);
