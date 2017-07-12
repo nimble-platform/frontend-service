@@ -56,6 +56,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
         // this.tableResult = null;
         let recApproach = new RecClass();
         recApproach.generateGraphRecApproach(this.config, this.myDiagram, this.$);
+        this.resetSelection();
     }
 
     /**
@@ -205,14 +206,23 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
             );
     }
 
+/**
+ * This method is used to clear the current selection of selected nodes
+ */
+resetSelection(): void{
+    //clear data structures
+    console.log("Before reset: " + this.selectedProperties);
+	this.selectedProperties  =[];
+	this.keywordCounter = 0;
+    console.log("After reset: " + this.selectedProperties);
+}
+
     /**
      * Currently this function will call the hardcoded JSON (tableJSON)
      * to get the results for the TABLE display.
      */
     genTable(): void {
-		//clear data structures
-		 this.selectedProperties  =[];
-		  this.keywordCounter = 0;
+		this.resetSelection();
         // call the API for table data
         this.expSearch.getTableValues(this.tableJSON)
             .then(
