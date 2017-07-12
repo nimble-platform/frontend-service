@@ -170,15 +170,23 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
         let filteringInput = {'concept': rootConcept, 'property': clickedNode, 'amountOfGroups': 3};
 		 console.log("Concept: " + rootConcept); // DEBUG CHECK#
 		  console.log("Property: " + clickedNode); // DEBUG CHECK#
-		  this.selectedProperties[this.keywordCounter] = clickedNode;
+		  let contained = false;
+           for (var item of this.selectedProperties) {
+            if (item === clickedNode){
+                contained = true;
+            }
+           }
+          if (contained==false){
+          this.selectedProperties[this.keywordCounter] = clickedNode;
 		  this.keywordCounter = this.keywordCounter +1;
+          }
 		  for (var item of this.selectedProperties) {
-			console.log(item); // 9,2,5
+			    console.log(item); // 9,2,5
 			}
 			this.tableJSON = "{\"concept\": \""+ rootConcept +"\", \"parameters\":[ ";
 			 for (var item of this.selectedProperties) {
-			this.tableJSON+= "\"" + item + "\", ";
-			console.log(item); // 9,2,5
+			    this.tableJSON+= "\"" + item + "\", ";
+			    console.log(item); // 9,2,5
 			}
 			this.tableJSON = this.tableJSON.substring(0, this.tableJSON.length-2);
 			this.tableJSON += "],\"filters\": []}";
