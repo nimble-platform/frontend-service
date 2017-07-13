@@ -32,9 +32,15 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
     filterQueryRoot: string;
     filterQuery: string;
     filterJSON: Object;
-    /* HardCoded JSON for the Big red Search Button*/
+    /* To store selected properties*/
 	private selectedProperties : Array<string> =[]; 
 	keywordCounter = 0;
+
+    /*To store filters*/
+    private lala :Object
+    private selectedFilters : Array<string> =[]; 
+	filterCounter = -1;
+
     /**tableJSON = {'concept': 'HighChair', 'parameters':
     *    ['hasHeight', 'hasWidth'],
      *   'filters': [{'min': 3.0, 'max': 5.2}]};
@@ -163,6 +169,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
          * MULTISELECT STILL REMAINING
          */
         // console.log(node.findTreeRoot().data.text, node.data.text); DEBUG
+        console.log("Multitoach: " + e.isMultiTouch);
         let rootConcept = node.findTreeRoot().data.text;
         let clickedNode = node.data.text; // name of the clicked node
         this.filterQuery = clickedNode; // pass it to the child component
@@ -200,10 +207,27 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
 		  */
         // console.log(JSON.stringify(filteringInput)); DEBUG
         // API Call and store the value
+        let temp = "";
+        this.filterCounter++;
          this.expSearch.getPropertyValues(filteringInput)
-            .then(
-                res => this.filterJSON = res // pass this to the child component
+         .then(res => this.filterJSON = res)
+          .then(res => this.lala = res)
+          .then (res => this.selectedFilters[this.filterCounter] =res)
+            .then(function(res)
+            {
+                 console.log(res);
+                 console.log(typeof res)
+                //this.filterJSON = res; // pass this to the child component
+                //this.selectedFilters[this.filterCounter] = res;
+                //this.filterCounter++;
+                 console.log("Counter: " + this.filterCounter)
+               //  this.lala = res; 
+                
+
+            }.bind(this)
+                
             );
+            
     }
 
 /**
@@ -222,6 +246,11 @@ resetSelection(): void{
      * to get the results for the TABLE display.
      */
     genTable(): void {
+        console.log(this.filterCounter);
+       for (let i = 1; i <= this.filterCounter; i++ ) {
+
+        console.log(this.selectedFilters[i])
+       }
 		this.resetSelection();
         // call the API for table data
         this.expSearch.getTableValues(this.tableJSON)
@@ -232,6 +261,8 @@ resetSelection(): void{
 				
             );
         console.log(JSON.stringify(this.tableResult)); // DEBUG CHECK#
+        let recApproach = new RecClass();
+        recApproach.generateGraphRecApproach(this.config, this.myDiagram, this.$);
 		 
     }
 

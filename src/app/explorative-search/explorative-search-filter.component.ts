@@ -16,6 +16,8 @@ import {ExplorativeSearchService} from './explorative-search.service';
     providers: [ExplorativeSearchService]
 })
 
+//export var finalSelectionJSON: Object;
+
 export class ExplorativeSearchFilterComponent implements OnChanges {
     /*variables for values coming from Parent Component `search-details`*/
     @Input() mainConceptName: string;
