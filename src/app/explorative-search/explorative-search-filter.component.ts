@@ -6,7 +6,7 @@
  * Child Component for this class: none
  */
 
-import {Component, Input, OnChanges, ViewChild, ElementRef } from '@angular/core';
+import {Component, Input, OnChanges, ViewChild, ElementRef, Output, EventEmitter  } from '@angular/core';
 import {ExplorativeSearchService} from './explorative-search.service';
 
 @Component({
@@ -23,6 +23,11 @@ export class ExplorativeSearchFilterComponent implements OnChanges {
     @Input() mainConceptName: string;
     @Input() filterConfig: Object;
     @Input() keyForConf: string;
+
+    @Output() filterSelectionUpdated = new EventEmitter();
+
+    /*Final Data to be sent back to parent for processing.. Maybe..*/
+    finalSelectionJSON: Object;
     /*for storing array from JSON response for checkboxes*/
     result: any[] = [];
     /*Default checkbox value*/
@@ -31,8 +36,6 @@ export class ExplorativeSearchFilterComponent implements OnChanges {
     userSelections: any[] = [];
     /*Component where the slider value is shown everytime the value changes*/
     @ViewChild('rangeVal') slider: ElementRef;
-    /*Final Data to be sent back to parent for processing.. Maybe..*/
-    finalSelectionJSON: Object;
 
     constructor(private expSearch: ExplorativeSearchService) {}
 
@@ -110,6 +113,7 @@ export class ExplorativeSearchFilterComponent implements OnChanges {
         // console.log(Number(this.groupSelectVal)); DEBUG
         // This needs to be changed according to Backend API
         this.finalSelectionJSON = {'root': this.mainConceptName, 'filter': this.userSelections};
+        this.filterSelectionUpdated.emit(this.finalSelectionJSON);
         console.log(this.finalSelectionJSON); // DEBUG CHECK
     }
 }

@@ -30,7 +30,7 @@
                <div class="panel-body" *ngIf="(filterConfig | json)!= '{}'">
                    <!-- pass all the variables of class to child -->
                    <search-filter [filterConfig]="filterJSON" [keyForConf]="filterQuery"
-                                  [mainConceptName]="filterQueryRoot">
+                                  [mainConceptName]="filterQueryRoot" (filterSelectionUpdated)="handleFilterSelectionUpdated($event)">
                    </search-filter>
                </div>
            </div>

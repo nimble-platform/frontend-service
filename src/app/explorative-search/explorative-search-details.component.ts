@@ -46,6 +46,9 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
      *   'filters': [{'min': 3.0, 'max': 5.2}]};
 	*/	
 	tableJSON = "";
+
+    /*Final Data to be sent back to parent for processing.. Maybe..*/
+    finalSelectionJSON: Object;
 	
     /*The API response from tableJSON will be stored in tableResult*/
     tableResult: any;
@@ -252,6 +255,9 @@ resetSelection(): void{
         console.log(this.selectedFilters[i])
        }
 		this.resetSelection();
+
+        console.log(this.finalSelectionJSON); // DEBUG CHECK
+
         // call the API for table data
         this.expSearch.getTableValues(this.tableJSON)
             .then(
@@ -264,6 +270,11 @@ resetSelection(): void{
         let recApproach = new RecClass();
         recApproach.generateGraphRecApproach(this.config, this.myDiagram, this.$);
 		 
+    }
+
+    handleFilterSelectionUpdated(finalSelectionJSON)
+    {
+        this.finalSelectionJSON = finalSelectionJSON;
     }
 
 }
