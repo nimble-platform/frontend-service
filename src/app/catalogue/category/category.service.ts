@@ -10,7 +10,6 @@ import * as myGlobals from '../../globals';
 export class CategoryService {
     private headers = new Headers({'Accept': 'application/json'});
     private baseUrl = myGlobals.catalogue_endpoint + `/catalogue/category`;
-    private categories: Category[] = null;
     private selectedCategories: Category[] = [];
 
     constructor(private http: Http) {
@@ -22,8 +21,7 @@ export class CategoryService {
             .get(url, {headers: this.headers})
             .toPromise()
             .then(res => {
-                this.categories = res.json() as Category[];
-                return this.categories;
+                return res.json() as Category[];
             })
             .catch(this.handleError);
     }
@@ -49,6 +47,10 @@ export class CategoryService {
 
     resetSelectedCategories():void {
         this.selectedCategories = [];
+    }
+
+    resetData():void {
+        this.resetSelectedCategories();
     }
 
     private handleError(error: any): Promise<any> {

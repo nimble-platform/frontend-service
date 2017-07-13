@@ -41,6 +41,10 @@ export class UserService {
 		.catch(this.handleError);
 	}
 
+	resetData():void {
+		this.userParty = null;
+	}
+
 	private handleError(error: any): Promise<any> {
 		return Promise.reject(error.message || error);
 	}

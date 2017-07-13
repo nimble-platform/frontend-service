@@ -142,7 +142,7 @@ export class CatalogueService {
         });
     }
 
-    uploadTemplate2(userId: string, template: File):Promise<any> {
+    uploadTemplate2(userId: string, template: File): Promise<any> {
         return this.userService.getUserParty(userId).then(party => {
             const url = this.baseUrl + `/catalogue/template/upload?companyId=${party.id}&companyName=${party.partyName[0].name}`;
             return new Promise<any>((resolve, reject) => {
@@ -165,6 +165,11 @@ export class CatalogueService {
                 xhr.send(formData);
             });
         });
+    }
+
+    resetData(): void {
+        this.catalogue = null;
+        this.draftCatalogueLine = null;
     }
 
     private handleError(error: any): Promise<any> {
