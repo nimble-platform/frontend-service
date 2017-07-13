@@ -256,7 +256,7 @@ export class ProductPublishComponent implements OnInit {
     private uploadTemplate(event: any) {
         let catalogueService = this.catalogueService;
         let companyId: string = this.cookieService.get("company_id");
-        let userId:string = this.cookieService.get("user_id");
+        let userId: string = this.cookieService.get("user_id");
         let fileList: FileList = event.target.files;
         if (fileList.length > 0) {
             let file: File = fileList[0];
@@ -264,11 +264,6 @@ export class ProductPublishComponent implements OnInit {
             reader.onload = function (e) {
                 // reset the target value so that the same file could be chosen more than once
                 event.target.value = "";
-                /*catalogueService.uploadTemplate(companyId, "", file).subscribe(res => {
-                        console.log("upload result: " + res);
-                    },
-                    error => console.log("Error downloading the file."),
-                    () => console.log('Completed file download.'));*/
                 catalogueService.uploadTemplate2(userId, file).then(res => {
                         console.log("upload result: " + res);
                     },
