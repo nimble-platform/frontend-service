@@ -23,7 +23,7 @@ export class DashboardComponent implements OnInit {
 		private bpeService: BPEService,
 		private appComponent: AppComponent
 	) {	}
-	
+
 	ngOnInit() {
 		if (this.cookieService.get("user_fullname"))
 			this.fullName = this.cookieService.get("user_fullname");
@@ -32,12 +32,12 @@ export class DashboardComponent implements OnInit {
 			this.buyer_history = [];
 			this.seller_history_temp = [];
 			this.seller_history = [];
-			this.loadOrders();			
+			this.loadOrders();
 		}
 		else
 			this.appComponent.checkLogin("/login");
 	}
-	
+
 	loadOrders() {
 		this.bpeService.getBuyerHistory(this.cookieService.get("company_id"))
 		.then(res => {
@@ -54,6 +54,7 @@ export class DashboardComponent implements OnInit {
 				this.bpeService.getProcessDetailsHistory(task.processInstanceId)
 				.then(res => {
 					var vBuyer = "", vBuyerName = "", vSeller = "", vSellerName = "", vOrder = "", vOrderResponse = "", vTask_id = "", vProcess_id = "", vStart_time = "";
+					var vProcessType = res[0]["processDefinitionKey"];
 					for (let field of res) {
 						vProcess_id = field.processInstanceId;
 						if (field.name == "buyer")
@@ -68,6 +69,9 @@ export class DashboardComponent implements OnInit {
 							vOrder = field.value;
 						else if (field.name == "orderResponse")
 							vOrderResponse = field.value;
+						else if (field.name == "terms")
+							vOrder = field.value;
+
 						for (let t of this.buyer_history_temp) {
 							if (t.process_id == vProcess_id) {
 								vTask_id = t.task_id;
@@ -80,7 +84,8 @@ export class DashboardComponent implements OnInit {
 					if (this.isJson(vOrderResponse))
 						vOrderResponse = JSON.parse(vOrderResponse);
 					this.buyer_history.push({
-						"task_id":vTask_id,
+						"processType":vProcessType,
+                        "task_id":vTask_id,
 						"process_id":vProcess_id,
 						"start_time":vStart_time,
 						"buyer":vBuyer,
@@ -88,7 +93,7 @@ export class DashboardComponent implements OnInit {
 						"seller":vSeller,
 						"sellerName":vSellerName,
 						"order":vOrder,
-						"orderResponse":vOrderResponse
+						"orderResponse":vOrderResponse,
 					});
 					this.buyer_history.sort(function(a:any,b:any){
 						var a_comp = a.start_time;
@@ -97,12 +102,12 @@ export class DashboardComponent implements OnInit {
 					});
 				})
 				.catch(error => {
-					
+
 				});
 			}
 		})
 		.catch(error => {
-			
+
 		});
 		this.bpeService.getSellerHistory(this.cookieService.get("company_id"))
 		.then(res => {
@@ -117,6 +122,7 @@ export class DashboardComponent implements OnInit {
 				this.bpeService.getProcessDetailsHistory(task.processInstanceId)
 				.then(res => {
 					var vBuyer = "", vBuyerName = "", vSeller = "", vSellerName = "", vOrder = "", vOrderResponse = "", vTask_id = "", vProcess_id = "", vStart_time = "";
+					var vProcessType = res[0]["processDefinitionKey"];
 					for (let field of res) {
 						vProcess_id = field.processInstanceId;
 						if (field.name == "buyer")
@@ -143,6 +149,7 @@ export class DashboardComponent implements OnInit {
 					if (this.isJson(vOrderResponse))
 						vOrderResponse = JSON.parse(vOrderResponse);
 					this.seller_history.push({
+						"processType":vProcessType,
 						"task_id":vTask_id,
 						"process_id":vProcess_id,
 						"start_time":vStart_time,
@@ -160,15 +167,15 @@ export class DashboardComponent implements OnInit {
 					});
 				})
 				.catch(error => {
-					
+
 				});
 			}
 		})
 		.catch(error => {
-			
+
 		});
 	}
-	
+
 	respondToOrder(task: string, response: string) {
 		var orderResponse = new OrderResponse('','');
 		orderResponse.response = response;
@@ -180,7 +187,7 @@ export class DashboardComponent implements OnInit {
 			this.loadOrders();
 		});
 	}
-	
+
 	removeOrder(process:string) {
 		this.bpeService.removeOrder(process)
 		.then(res => {
@@ -190,7 +197,7 @@ export class DashboardComponent implements OnInit {
 			this.loadOrders();
 		});
 	}
-	
+
 	cancelOrder(process:string) {
 		this.bpeService.cancelOrder(process)
 		.then(res => {
@@ -200,7 +207,7 @@ export class DashboardComponent implements OnInit {
 			this.removeOrder(process);
 		});
 	}
-	
+
 	isJson(str: string): boolean {
 		try {
 			JSON.parse(str);

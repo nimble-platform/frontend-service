@@ -7,7 +7,11 @@
 <div id="negotiationParams" [ngbCollapse]="!negotiationExpanded">
     <div class=" input-group form-group">
         <label class="input-group-addon">Amount</label>
-        <input type="text" class="form-control" [(value)]="amount">
+        <input type="text" class="form-control" [(ngModel)]="terms.amount">
+    </div>
+    <div class=" input-group form-group">
+        <label class="input-group-addon">Price</label>
+        <input type="text" class="form-control" [(ngModel)]="terms.price">
     </div>
     <div *ngFor="let param of negotiatables">
         <div class=" input-group form-group">
@@ -15,5 +19,5 @@
             <input type="text" class="form-control" [value]="param.value">
         </div>
     </div>
-    <button class="btn btn-success">Send Requested Terms</button>
+    <button class="btn btn-success" (click)="sendRfq()">Send Requested Terms</button>
 </div>
