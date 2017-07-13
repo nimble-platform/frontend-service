@@ -243,7 +243,10 @@
                 <div class="d-flex justify-content-start p-2">
                     <li>Upload the template after filling it with your products' information
                     </li>
-                    <button class="btn btn-success ml-auto">Upload template</button>
+                    <input #template type="file" (change)="uploadTemplate($event)" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                           style="display: none">
+                    <button class="btn btn-success ml-auto"
+                            (click)="template.click()">Upload template</button>
                 </div>
             </ol>
         </div>

@@ -1,15 +1,16 @@
 /**
  * Created by suat on 17-May-17.
  */
-import {Injectable} from '@angular/core';
-import {Http, Headers} from '@angular/http';
-import * as myGlobals from '../globals';
+import {Injectable} from "@angular/core";
+import {Headers, Http} from "@angular/http";
+import * as myGlobals from "../globals";
 import {GoodsItem} from "./model/publish/goods-item";
 import {Catalogue} from "./model/publish/catalogue";
 import {UserService} from "../user-mgmt/user.service";
 import {CatalogueLine} from "./model/publish/catalogue-line";
 import {Category} from "./model/category/category";
 import {Observable} from "rxjs/Observable";
+import {Party} from "./model/publish/party";
 
 @Injectable()
 export class CatalogueService {
@@ -27,7 +28,7 @@ export class CatalogueService {
         return this.draftCatalogueLine;
     }
 
-    setDraftItem(draftCatalogueLine:CatalogueLine): void {
+    setDraftItem(draftCatalogueLine: CatalogueLine): void {
         this.draftCatalogueLine = draftCatalogueLine;
     }
 
@@ -88,7 +89,7 @@ export class CatalogueService {
             .catch(this.handleError);
     }
 
-    downloadTemplate(category:Category): Observable<any> {
+    downloadTemplate(category: Category): Observable<any> {
         const url = this.baseUrl + `/catalogue/template?taxonomyId=${category.taxonomyId}&categoryId=${encodeURIComponent(category.id)}`;
         let downloadTemplateHeaders = new Headers({'Accept': 'application/octet-stream'});
         return Observable.create(observer => {
@@ -97,14 +98,14 @@ export class CatalogueService {
 
             xhr.open('GET', this.baseUrl + `/catalogue/template?taxonomyId=${category.taxonomyId}&categoryId=${encodeURIComponent(category.id)}`, true);
             xhr.setRequestHeader('Accept', 'application/octet-stream');
-            xhr.responseType='blob';
+            xhr.responseType = 'blob';
 
             xhr.onreadystatechange = function () {
                 if (xhr.readyState === 4) {
                     if (xhr.status === 200) {
 
                         var contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-                        var blob = new Blob([xhr.response], { type: contentType });
+                        var blob = new Blob([xhr.response], {type: contentType});
                         observer.next(blob);
                         observer.complete();
                     } else {
@@ -113,6 +114,56 @@ export class CatalogueService {
                 }
             }
             xhr.send();
+        });
+    }
+
+    uploadTemplate(companyId: string, companyName: String, template: File): Observable<any> {
+
+        const url = this.baseUrl + `/catalogue/template/upload?companyId=${companyId}&companyName=${companyName}`;
+        return Observable.create(observer => {
+            let formData: FormData = new FormData();
+            formData.append("file", template, template.name);
+
+            let xhr: XMLHttpRequest = new XMLHttpRequest();
+            xhr.onreadystatechange = () => {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        //observer.next(JSON.parse(xhr.response));
+                        observer.complete();
+                    } else {
+                        observer.error(xhr.response);
+                    }
+                }
+            };
+
+            xhr.open('POST', url, true);
+            xhr.send(formData);
+
+        });
+    }
+
+    uploadTemplate2(userId: string, template: File):Promise<any> {
+        return this.userService.getUserParty(userId).then(party => {
+            const url = this.baseUrl + `/catalogue/template/upload?companyId=${party.id}&companyName=${party.partyName[0].name}`;
+            return new Promise<any>((resolve, reject) => {
+                let formData: FormData = new FormData();
+                formData.append("file", template, template.name);
+
+                let xhr: XMLHttpRequest = new XMLHttpRequest();
+                xhr.onreadystatechange = () => {
+                    if (xhr.readyState === 4) {
+                        if (xhr.status === 200) {
+                            //observer.next(JSON.parse(xhr.response));
+                            resolve(xhr.response);
+                        } else {
+                            reject(xhr.status);
+                        }
+                    }
+                };
+
+                xhr.open('POST', url, true);
+                xhr.send(formData);
+            });
         });
     }
 
