@@ -161,7 +161,14 @@ export class ProductPropertiesComponent implements OnInit {
      */
     private isBaseEClassProperty(property: Property): boolean {
         let pid: string = property.id;
-        if (pid == "0173-1#02-AAP794#001" ||
+        if (pid == "0173-1#02-AAD931#005" ||
+            pid == "0173-1#02-AAO663#003" ||
+            pid == "0173-1#02-BAB392#012" ||
+            pid == "0173-1#02-AAO677#002" ||
+            pid == "0173-1#02-AAO676#003" ||
+            pid == "0173-1#02-AAO736#004" ||
+            pid == "0173-1#02-AAO735#003" ||
+            pid == "0173-1#02-AAP794#001" ||
             pid == "0173-1#02-AAQ326#002" ||
             pid == "0173-1#02-BAE391#004" ||
             pid == "0173-1#02-AAP796#004" ||
