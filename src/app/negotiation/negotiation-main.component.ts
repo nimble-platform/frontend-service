@@ -1,9 +1,12 @@
 import {Component, Input} from '@angular/core';
 import * as myGlobals from '../globals';
+<<<<<<< HEAD
 import {RequestForQuotation} from "../bpe/model/request-for-quotation";
 import {Terms} from "../bpe/model/request-for-quotation-terms";
 import {CookieService} from "ng2-cookies";
 import {BPEService} from "../bpe/bpe.service";
+=======
+>>>>>>> c4cbc57f502006c842bc4da32e40773fe3617f7a
 
 @Component({
     selector: 'negotiation-params',

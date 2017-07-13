@@ -91,4 +91,4 @@ export const product_configurable = [];
 export const product_default = {};
 export const facet_min = 1;
 //TODO let user determine the negotiatable parameters
-export const negotiatables = ["price", "size", "date"];
+export const negotiatables = ["price", "size", "duration"];
