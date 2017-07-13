@@ -137,6 +137,8 @@ export class DashboardComponent implements OnInit {
 							vOrder = field.value;
 						else if (field.name == "orderResponse")
 							vOrderResponse = field.value;
+						else if (field.name == "terms")
+							vOrder = field.value;
 						for (let t of this.seller_history_temp) {
 							if (t.process_id == vProcess_id) {
 								vTask_id = t.task_id;
