@@ -244,6 +244,41 @@ resetSelection(): void{
     console.log("After reset: " + this.selectedProperties);
 }
 
+
+/**
+ *  Create the filter text for the input json string for the webservice method to execute a SPARQL query against an ontology
+ * @param index  default should be 0
+ * @param finalSelection  the selction which was created if the user clicks on submit of a filter
+ */
+    createFilterText(index, finalSelection){
+         let filter = finalSelection["filter"][index];
+         let filterproperty = filter["property"];
+         let values = filter["values"];
+         
+         let min = values[0];
+         let max = values[1];
+
+         let resultString = "{\"property\":\""+filterproperty+"\",\"min\":"+min+",\"max\":"+max+"}";
+         return resultString;
+
+    }
+
+
+    /**
+     * Add the filtertext to the input json string for the webservice method to execute a SPARQL query against an ontology
+     * @param filterText String of the filter
+     * @param inputJsonForSPARQLWebservice String containing the cocnept and the properties
+     */
+    addFilterTextToTableJson(filterText, inputJsonForSPARQLWebservice){
+       let index = inputJsonForSPARQLWebservice.indexOf("filters\":");
+       let resultString =inputJsonForSPARQLWebservice;
+       if (index !== -1){
+            resultString = inputJsonForSPARQLWebservice.substring(0, index + 11);
+            resultString += filterText + "]}";
+       }
+    return resultString;
+
+    }
     /**
      * Currently this function will call the hardcoded JSON (tableJSON)
      * to get the results for the TABLE display.
@@ -256,8 +291,11 @@ resetSelection(): void{
        }
 		this.resetSelection();
 
-        console.log(this.finalSelectionJSON); // DEBUG CHECK
-
+       
+        let filter = this.createFilterText(0, this.finalSelectionJSON);
+        this.tableJSON =this.addFilterTextToTableJson(filter, this.tableJSON);
+        
+        console.log("inputJsonForSPARQLSELECT: " + this.tableJSON);
         // call the API for table data
         this.expSearch.getTableValues(this.tableJSON)
             .then(
@@ -266,9 +304,9 @@ resetSelection(): void{
                 res => this.tableResult = res
 				
             );
-        console.log(JSON.stringify(this.tableResult)); // DEBUG CHECK#
-        let recApproach = new RecClass();
-        recApproach.generateGraphRecApproach(this.config, this.myDiagram, this.$);
+       
+       // let recApproach = new RecClass();
+       // recApproach.generateGraphRecApproach(this.config, this.myDiagram, this.$);
 		 
     }
 
