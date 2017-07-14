@@ -74,6 +74,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
             if (this.isMultiSelectActivated == false) {
                 console.log("MultiSelect activated");
                 this.isMultiSelectActivated = true;
+                this.reloadRadialGraph();
             }
         }
     }
@@ -90,6 +91,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                 this.isMultiSelectActivated = false;
                  this.selectedProperties = [];
                  this.keywordCounter =0;
+                 this.reloadRadialGraph();
             }
         }
     }
@@ -378,8 +380,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
 
             );
 
-        let recApproach = new RecClass();
-        recApproach.generateGraphRecApproach(this.config, this.myDiagram, this.$);
+       this.reloadRadialGraph();
         this.resetSelection();
 
     }
@@ -388,7 +389,13 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
         this.finalSelectionJSON = finalSelectionJSON;
     }
 
+reloadRadialGraph(): void{
+ let recApproach = new RecClass();
+        recApproach.generateGraphRecApproach(this.config, this.myDiagram, this.$);
 }
+}
+
+
 
 /**
  * Creating of tree for visualizing data on diagram
