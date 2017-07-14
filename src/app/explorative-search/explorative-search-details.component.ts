@@ -7,7 +7,7 @@
  * Child of this component: explorative-search-filter.component
  */
 
-import { Component, AfterViewInit, ViewChild , ElementRef, Input, OnChanges } from '@angular/core';
+import { Component, AfterViewInit, ViewChild, ElementRef, Input, OnChanges } from '@angular/core';
 import * as go from 'gojs';
 import { RadialLayout } from './layout/RadialLayout';
 import { ExplorativeSearchService } from './explorative-search.service';
@@ -16,6 +16,11 @@ import { ExplorativeSearchService } from './explorative-search.service';
     selector: 'explore-search-details',
     templateUrl: './explorative-search-details.component.html',
     styleUrls: ['./explorative-search-details.component.css'],
+    host: {
+        '(document:keydown)': 'handleKeyboardEventsDown($event)',
+        '(document:keyup)': 'handleKeyboardEventsUp($event)'
+    },
+
     providers: [ExplorativeSearchService]
 })
 
@@ -33,27 +38,62 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
     filterQuery: string;
     filterJSON: Object;
     /* To store selected properties*/
-	private selectedProperties : Array<string> =[]; 
-	keywordCounter = 0;
+    private selectedProperties: Array<string> = [];
+    keywordCounter = 0;
 
     /*To store filters*/
-    private lala :Object
-    private selectedFilters : Array<string> =[]; 
-	filterCounter = -1;
+    private lala: Object
+    private selectedFilters: Array<string> = [];
+    filterCounter = -1;
+    private key: number
+    private isMultiSelectActivated = false;
 
     /**tableJSON = {'concept': 'HighChair', 'parameters':
     *    ['hasHeight', 'hasWidth'],
      *   'filters': [{'min': 3.0, 'max': 5.2}]};
-	*/	
-	tableJSON = "";
+	*/
+    tableJSON = "";
 
     /*Final Data to be sent back to parent for processing.. Maybe..*/
     finalSelectionJSON: Object;
-	
+
     /*The API response from tableJSON will be stored in tableResult*/
     tableResult: any;
 
-    constructor(private  expSearch: ExplorativeSearchService) { }
+    constructor(private expSearch: ExplorativeSearchService) { }
+
+
+
+    /**
+     * Activate Multiselect
+     * @param event key event
+     */
+    handleKeyboardEventsDown(event: KeyboardEvent) {
+        this.key = event.which || event.keyCode;
+        if (this.key == 17) {
+            if (this.isMultiSelectActivated == false) {
+                console.log("MultiSelect activated");
+                this.isMultiSelectActivated = true;
+            }
+        }
+    }
+
+    /**
+     * DeActivate Multiselect
+     * @param event key event
+     */
+    handleKeyboardEventsUp(event: KeyboardEvent) {
+        this.key = event.which || event.keyCode;
+        if (this.key == 17) {
+            if (this.isMultiSelectActivated == true) {
+                console.log("MultiSelect DEactivated");
+                this.isMultiSelectActivated = false;
+                 this.selectedProperties = [];
+                 this.keywordCounter =0;
+            }
+        }
+    }
+
 
     /**
      * using OnChanges LifeCycle Hook for incoming Configuration
@@ -73,93 +113,93 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
      */
     ngAfterViewInit(): void {
         this.myDiagram = this.$(go.Diagram, this.div.nativeElement,
-    {
-      initialContentAlignment: go.Spot.Center,
-      padding: 10,
-      isReadOnly: true,
-      'animationManager.isEnabled': true,
-        'allowVerticalScroll': false
-    });
-    let commonToolTip = this.$(go.Adornment, 'Auto',
             {
-              isShadowed: true
+                initialContentAlignment: go.Spot.Center,
+                padding: 10,
+                isReadOnly: true,
+                'animationManager.isEnabled': true,
+                'allowVerticalScroll': false
+            });
+        let commonToolTip = this.$(go.Adornment, 'Auto',
+            {
+                isShadowed: true
             },
             this.$(go.Shape, { fill: '#FFFFCC' }),
             this.$(go.Panel, 'Vertical',
                 {
-                  margin: 3
+                    margin: 3
                 },
                 this.$(go.TextBlock,  // bound to node data
-                  {
-                    margin: 4, font: 'bold 12pt sans-serif'
-                  },
-                  new go.Binding('text')),
-                  this.$(go.TextBlock,  // bound to Adornment because of call to Binding.ofObject
-                new go.Binding('text', '',
-                (ad) => {
-                  return 'Connections: ' + ad.adornedPart.linksConnected.count;
-                }).ofObject())
+                    {
+                        margin: 4, font: 'bold 12pt sans-serif'
+                    },
+                    new go.Binding('text')),
+                this.$(go.TextBlock,  // bound to Adornment because of call to Binding.ofObject
+                    new go.Binding('text', '',
+                        (ad) => {
+                            return 'Connections: ' + ad.adornedPart.linksConnected.count;
+                        }).ofObject())
             )  // end Vertical Panel
-            );  // end Adornment
-    this.myDiagram.nodeTemplate =
+        );  // end Adornment
+        this.myDiagram.nodeTemplate =
             this.$(go.Node, 'Spot',
-            {
-                locationSpot: go.Spot.Center,
-                locationObjectName: 'SHAPE',  // Node.location is the center of the Shape
-                selectionAdorned: true,
-                click: (e: go.InputEvent, obj: go.GraphObject): void => { this.nodeClicked(e, obj); },
-                toolTip: commonToolTip
-            },
-            this.$(go.Shape, 'Circle',
                 {
-                name: 'SHAPE',
-                fill: 'lightgray',  // default value, but also data-bound
-                stroke: 'transparent',
-                strokeWidth: 2,
-                desiredSize: new go.Size(20, 20),
-                portId: ''  // so links will go to the shape, not the whole node
+                    locationSpot: go.Spot.Center,
+                    locationObjectName: 'SHAPE',  // Node.location is the center of the Shape
+                    selectionAdorned: true,
+                    click: (e: go.InputEvent, obj: go.GraphObject): void => { this.nodeClicked(e, obj); },
+                    toolTip: commonToolTip
                 },
-                new go.Binding('fill', 'color')),
-            this.$(go.TextBlock,
-                {
-                name: 'TEXTBLOCK',
-                alignment: go.Spot.Right,
-                alignmentFocus: go.Spot.Left
-                },
-                new go.Binding('text'))
+                this.$(go.Shape, 'Circle',
+                    {
+                        name: 'SHAPE',
+                        fill: 'lightgray',  // default value, but also data-bound
+                        stroke: 'transparent',
+                        strokeWidth: 2,
+                        desiredSize: new go.Size(20, 20),
+                        portId: ''  // so links will go to the shape, not the whole node
+                    },
+                    new go.Binding('fill', 'color')),
+                this.$(go.TextBlock,
+                    {
+                        name: 'TEXTBLOCK',
+                        alignment: go.Spot.Right,
+                        alignmentFocus: go.Spot.Left
+                    },
+                    new go.Binding('text'))
             );
 
         // this is the root node, at the center of the circular layers
         this.myDiagram.nodeTemplateMap.add('Root',
             this.$(go.Node, 'Auto',
-            {
-                locationSpot: go.Spot.Center,
-                selectionAdorned: false,
-                toolTip: commonToolTip
-            },
-            this.$(go.Shape, 'Circle',
-                { fill: 'white' }),
-            this.$(go.TextBlock,
-                { font: 'bold 12pt sans-serif', margin: 5 },
-                new go.Binding('text'))
+                {
+                    locationSpot: go.Spot.Center,
+                    selectionAdorned: false,
+                    toolTip: commonToolTip
+                },
+                this.$(go.Shape, 'Circle',
+                    { fill: 'white' }),
+                this.$(go.TextBlock,
+                    { font: 'bold 12pt sans-serif', margin: 5 },
+                    new go.Binding('text'))
             ));
 
         // define the Link template
         this.myDiagram.linkTemplate =
             this.$(go.Link,
-            {
-                routing: go.Link.Normal,
-                curve: go.Link.Bezier,
-                selectionAdorned: false,
-                layerName: 'Background'
-            },
-            this.$(go.Shape,
                 {
-                stroke: 'black',  // default value, but is data-bound
-                strokeWidth: 1
+                    routing: go.Link.Normal,
+                    curve: go.Link.Bezier,
+                    selectionAdorned: false,
+                    layerName: 'Background'
                 },
-                new go.Binding('stroke', 'color'))
-        );
+                this.$(go.Shape,
+                    {
+                        stroke: 'black',  // default value, but is data-bound
+                        strokeWidth: 1
+                    },
+                    new go.Binding('stroke', 'color'))
+            );
     }
 
     /**
@@ -172,99 +212,125 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
          * MULTISELECT STILL REMAINING
          */
         // console.log(node.findTreeRoot().data.text, node.data.text); DEBUG
-        console.log("Multitoach: " + e.isMultiTouch);
+        //  console.log("Multitoach: " + e.isMultiTouch);
         let rootConcept = node.findTreeRoot().data.text;
         let clickedNode = node.data.text; // name of the clicked node
         this.filterQuery = clickedNode; // pass it to the child component
         this.filterQueryRoot = rootConcept; // pass this to the child component
         // create a JSON for the API call
-        let filteringInput = {'concept': rootConcept, 'property': clickedNode, 'amountOfGroups': 3};
-		 console.log("Concept: " + rootConcept); // DEBUG CHECK#
-		  console.log("Property: " + clickedNode); // DEBUG CHECK#
-		  let contained = false;
-           for (var item of this.selectedProperties) {
-            if (item === clickedNode){
-                contained = true;
+        let filteringInput = { 'concept': rootConcept, 'property': clickedNode, 'amountOfGroups': 3 };
+        //	 console.log("Concept: " + rootConcept); // DEBUG CHECK#
+        //	  console.log("Property: " + clickedNode); // DEBUG CHECK#
+        if (this.isMultiSelectActivated == true) {
+            let contained = false;
+           let index = 0;
+           let indexForRemove = -1;
+            for (var item of this.selectedProperties) {
+              
+                if (item === clickedNode) {
+                    contained = true;
+                    indexForRemove = index;
+
+                }
+                index = index +1;
             }
-           }
-          if (contained==false){
-          this.selectedProperties[this.keywordCounter] = clickedNode;
-		  this.keywordCounter = this.keywordCounter +1;
-          }
-		  for (var item of this.selectedProperties) {
-			    console.log(item); // 9,2,5
-			}
-			this.tableJSON = "{\"concept\": \""+ rootConcept +"\", \"parameters\":[ ";
-			 for (var item of this.selectedProperties) {
-			    this.tableJSON+= "\"" + item + "\", ";
-			    console.log(item); // 9,2,5
-			}
-			this.tableJSON = this.tableJSON.substring(0, this.tableJSON.length-2);
-			this.tableJSON += "],\"filters\": []}";
-			console.log(this.tableJSON );
-		  /**
-		  *tableJSON = {'concept': 'HighChair', 'parameters':
-        ['hasHeight', 'hasWidth'],
-        'filters': [{'min': 3.0, 'max': 5.2}]};
-		  *
-		  */
+         //   if (contained== undefined){
+          //       this.selectedProperties.splice(indexForRemove,1);
+           // }
+            if (contained == false) {
+                if (clickedNode == null){
+                    console.log ("Delselect of current property");
+                }
+                else{
+                this.selectedProperties[this.keywordCounter] = clickedNode;
+                this.keywordCounter = this.keywordCounter + 1;
+                }
+            }
+            else{
+                 this.selectedProperties.splice(indexForRemove,1);
+                 this.keywordCounter = this.keywordCounter - 1;
+            }
+
+
+        }
+        else {
+            //Single Select
+            console.log("Single selection of property: ");
+            this.keywordCounter = 0;
+            this.selectedProperties[this.keywordCounter] = clickedNode;
+
+        }
+
+        this.tableJSON = "{\"concept\": \"" + rootConcept + "\", \"parameters\":[ ";
+        for (var item of this.selectedProperties) {
+            this.tableJSON += "\"" + item + "\", ";
+            console.log(item); // 9,2,5
+        }
+        this.tableJSON = this.tableJSON.substring(0, this.tableJSON.length - 2);
+        this.tableJSON += "],\"filters\": []}";
+        console.log(this.tableJSON);
+        /**
+        *tableJSON = {'concept': 'HighChair', 'parameters':
+      ['hasHeight', 'hasWidth'],
+      'filters': [{'min': 3.0, 'max': 5.2}]};
+        *
+        */
         // console.log(JSON.stringify(filteringInput)); DEBUG
         // API Call and store the value
         let temp = "";
         this.filterCounter++;
-         this.expSearch.getPropertyValues(filteringInput)
-         .then(res => this.filterJSON = res)
-          .then(res => this.lala = res)
-          .then (res => this.selectedFilters[this.filterCounter] =res)
-            .then(function(res)
-            {
-                 console.log(res);
-                 console.log(typeof res)
-                 console.log("Counter: " + this.filterCounter)   
+        this.expSearch.getPropertyValues(filteringInput)
+            .then(res => this.filterJSON = res)
+            .then(res => this.lala = res)
+            .then(res => this.selectedFilters[this.filterCounter] = res)
+            .then(function (res) {
+                console.log(res);
+                console.log(typeof res)
+                console.log("Counter: " + this.filterCounter)
 
             }.bind(this)
-                
+
             );
-            
+
     }
 
-/**
- * This method is used to clear the current selection of selected nodes
- */
-resetSelection(): void{
-    //clear data structures
-    console.log("Before selection reset: " + this.selectedProperties);
-	this.selectedProperties  =[];
-	this.keywordCounter = 0;
-    this.finalSelectionJSON = null;
-    this.tableJSON="{}";
-    console.log("After seelction reset: " + this.selectedProperties);
-}
+    /**
+     * This method is used to clear the current selection of selected nodes
+     */
+    resetSelection(): void {
+        //clear data structures
+        console.log("Before selection reset: " + this.selectedProperties);
+        this.selectedProperties = [];
+        this.keywordCounter = 0;
+        this.finalSelectionJSON = null;
+        this.tableJSON = "{}";
+        console.log("After seelction reset: " + this.selectedProperties);
+    }
 
 
-/**
- *  Create the filter text for the input json string for the webservice method to execute a SPARQL query against an ontology
- * @param index  default should be 0
- * @param finalSelection  the selction which was created if the user clicks on submit of a filter
- */
-    createFilterText(index, finalSelection){
-        if (finalSelection == null){
+    /**
+     *  Create the filter text for the input json string for the webservice method to execute a SPARQL query against an ontology
+     * @param index  default should be 0
+     * @param finalSelection  the selction which was created if the user clicks on submit of a filter
+     */
+    createFilterText(index, finalSelection) {
+        if (finalSelection == null) {
             return "";
         }
-        if ( finalSelection["filter"].length > 0){
-         let filter = finalSelection["filter"][index];
-         let filterproperty = filter["property"];
-         let values = filter["values"];
-         
-         let min = values[0];
-         let max = values[1];
+        if (finalSelection["filter"].length > 0) {
+            let filter = finalSelection["filter"][index];
+            let filterproperty = filter["property"];
+            let values = filter["values"];
 
-         let resultString = "{\"property\":\""+filterproperty+"\",\"min\":"+min+",\"max\":"+max+"}";
-         return resultString;
+            let min = values[0];
+            let max = values[1];
+
+            let resultString = "{\"property\":\"" + filterproperty + "\",\"min\":" + min + ",\"max\":" + max + "}";
+            return resultString;
         }
-       
+
         return "";
-    
+
 
     }
 
@@ -274,14 +340,14 @@ resetSelection(): void{
      * @param filterText String of the filter
      * @param inputJsonForSPARQLWebservice String containing the cocnept and the properties
      */
-    addFilterTextToTableJson(filterText, inputJsonForSPARQLWebservice){
-       let index = inputJsonForSPARQLWebservice.indexOf("filters\":");
-       let resultString =inputJsonForSPARQLWebservice;
-       if (index !== -1){
+    addFilterTextToTableJson(filterText, inputJsonForSPARQLWebservice) {
+        let index = inputJsonForSPARQLWebservice.indexOf("filters\":");
+        let resultString = inputJsonForSPARQLWebservice;
+        if (index !== -1) {
             resultString = inputJsonForSPARQLWebservice.substring(0, index + 11);
             resultString += filterText + "]}";
-       }
-    return resultString;
+        }
+        return resultString;
 
     }
     /**
@@ -289,37 +355,36 @@ resetSelection(): void{
      * to get the results for the TABLE display.
      */
     genTable(): void {
-        this.tableResult=null;
+        this.tableResult = null;
         console.log(this.filterCounter);
-       for (let i = 1; i <= this.filterCounter; i++ ) {
+        for (let i = 1; i <= this.filterCounter; i++) {
 
-        console.log(this.selectedFilters[i])
-       }
-		
+            console.log(this.selectedFilters[i])
+        }
 
-       
+
+
         let filter = this.createFilterText(0, this.finalSelectionJSON);
-        this.tableJSON =this.addFilterTextToTableJson(filter, this.tableJSON);
-        
+        this.tableJSON = this.addFilterTextToTableJson(filter, this.tableJSON);
+
         console.log("inputJsonForSPARQLSELECT: " + this.tableJSON);
-       
+
         // call the API for table data
         this.expSearch.getTableValues(this.tableJSON)
             .then(
-                // store the result in tableResult
-                // which will be used in HTML file
-                res => this.tableResult = res
-				
+            // store the result in tableResult
+            // which will be used in HTML file
+            res => this.tableResult = res
+
             );
-       
+
         let recApproach = new RecClass();
         recApproach.generateGraphRecApproach(this.config, this.myDiagram, this.$);
         this.resetSelection();
-		 
+
     }
 
-    handleFilterSelectionUpdated(finalSelectionJSON)
-    {
+    handleFilterSelectionUpdated(finalSelectionJSON) {
         this.finalSelectionJSON = finalSelectionJSON;
     }
 
@@ -355,8 +420,8 @@ class RecClass {
         let linkedOntTree = this.recursionParseJson(cnf);
         // console.log('Complete Tree:\n' + JSON.stringify(linkedOntTree)); --> DEBUG
         let nodeDataArray: any = []; // Create an Array of Nodes for GoJS.
-        for (let i = 1; i < this.names.length + 1; i++ ) {
-            nodeDataArray.push({key: i, text: this.names[i - 1], color: go.Brush.randomColor(128, 240) });
+        for (let i = 1; i < this.names.length + 1; i++) {
+            nodeDataArray.push({ key: i, text: this.names[i - 1], color: go.Brush.randomColor(128, 240) });
         }
         // Create The Links to Each node in the Tree with Recursion
         let linkDataArray: any = this.recursionLink(linkedOntTree);
@@ -365,7 +430,7 @@ class RecClass {
         // Diagram Layout..
         myDiagram.layout = $(RadialLayout, {
             maxLayers: 2,
-            rotateNode: function(node: any, angle: any, sweep: any, radius: any) {
+            rotateNode: function (node: any, angle: any, sweep: any, radius: any) {
                 // rotate the nodes and make sure the text is not upside-down
                 node.angle = angle;
                 let label = node.findObject('TEXTBLOCK');
@@ -373,7 +438,7 @@ class RecClass {
                     label.angle = ((angle > 90 && angle < 270 || angle < -90) ? 180 : 0);
                 }
             },
-            commitLayers: function() {
+            commitLayers: function () {
                 // optional: add circles in the background
                 // need to remove any old ones first
                 let diagram = this.diagram;
@@ -382,7 +447,7 @@ class RecClass {
                 gridlayer.parts.each((circle: any) => {
                     if (circle.name === 'CIRCLE') { circles.add(circle); }
                 });
-                circles.each(function(circle) {
+                circles.each(function (circle) {
                     diagram.remove(circle);
                 });
                 // add circles centered at the root
@@ -451,11 +516,11 @@ class RecClass {
         let linkedDataArray: any = [];
 
         for (let attr of linkedOntTree.attr) {
-            linkedDataArray.push({from: linkedOntTree.id, to: attr});
+            linkedDataArray.push({ from: linkedOntTree.id, to: attr });
         }
 
         for (let child of linkedOntTree.children) {
-            linkedDataArray.push({from: linkedOntTree.id, to: child.id});
+            linkedDataArray.push({ from: linkedOntTree.id, to: child.id });
             let childrenJson = this.recursionLink(child);
             childrenJson.forEach(element => {
                 linkedDataArray.push(element);
