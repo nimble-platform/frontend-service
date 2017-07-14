@@ -38,13 +38,14 @@
 						<button class="btn btn-block btn-danger" (click)="respondToOrder(seller.task_id,'declined')" i18n>Decline</button>
 					</td>
 					<td *ngIf="seller.orderResponse!=''">
-						<button class="btn btn-block btn-default" (click)="removeOrder(seller.process_id)" i18n>Remove from history</button>
+						<button class="btn btn-block btn-danger" (click)="removeOrder(seller.process_id)" i18n>Remove from history</button>
 					</td>
 
 					<!-- negotiation options -->
 					<td *ngIf="seller.processType == 'Negotiation' && seller.orderResponse==''">
 						<button class="btn btn-block btn-success" i18n>Approve</button>
-						<button class="btn btn-block btn-danger" i18n>Negotiate</button>
+						<button class="btn btn-block btn-info" i18n>Negotiate</button>
+						<button class="btn btn-block btn-danger" (click)="respondToOrder(seller.task_id,'declined')" i18n>Decline</button>
 					</td>
 				</tr>
 			</table>
@@ -81,18 +82,21 @@
 
 					<!-- order options -->
 					<td *ngIf="buyer.processType == 'Order' && buyer.orderResponse==''">
-						<button class="btn btn-block btn-default" (click)="cancelOrder(buyer.process_id)" i18n>Cancel</button>
+						<button class="btn btn-block btn-danger" (click)="cancelOrder(buyer.process_id)" i18n>Cancel</button>
 					</td>
 					<td *ngIf="buyer.processType == 'Order' && buyer.orderResponse!=''">
-						<button class="btn btn-block btn-default" (click)="removeOrder(buyer.process_id)" i18n>Remove from history</button>
+						<button class="btn btn-block btn-danger" (click)="removeOrder(buyer.process_id)" i18n>Remove from history</button>
 					</td>
 
 					<!-- negotation options -->
 					<td *ngIf="buyer.processType == 'Negotiation' && buyer.orderResponse==''">
-						<button class="btn btn-block btn-default" i18n>Cancel</button>
+						<button class="btn btn-block btn-danger" (click)="cancelOrder(buyer.process_id)" i18n>Cancel</button>
+					</td>
+					<td *ngIf="buyer.processType == 'Negotiation' && buyer.orderResponse=='approved'">
+						<button class="btn btn-block btn-info" i18n>Order</button>
 					</td>
 					<td *ngIf="buyer.processType == 'Negotiation' && buyer.orderResponse!=''">
-						<button class="btn btn-block btn-warning" i18n>Remove from history</button>
+						<button class="btn btn-block btn-danger" (click)="removeOrder(buyer.process_id)" i18n>Remove from history</button>
 					</td>
 				</tr>
 			</table>
