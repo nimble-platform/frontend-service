@@ -220,12 +220,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
             {
                  console.log(res);
                  console.log(typeof res)
-                //this.filterJSON = res; // pass this to the child component
-                //this.selectedFilters[this.filterCounter] = res;
-                //this.filterCounter++;
-                 console.log("Counter: " + this.filterCounter)
-               //  this.lala = res; 
-                
+                 console.log("Counter: " + this.filterCounter)   
 
             }.bind(this)
                 
@@ -238,10 +233,12 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
  */
 resetSelection(): void{
     //clear data structures
-    console.log("Before reset: " + this.selectedProperties);
+    console.log("Before selection reset: " + this.selectedProperties);
 	this.selectedProperties  =[];
 	this.keywordCounter = 0;
-    console.log("After reset: " + this.selectedProperties);
+    this.finalSelectionJSON = null;
+    this.tableJSON="{}";
+    console.log("After seelction reset: " + this.selectedProperties);
 }
 
 
@@ -251,6 +248,10 @@ resetSelection(): void{
  * @param finalSelection  the selction which was created if the user clicks on submit of a filter
  */
     createFilterText(index, finalSelection){
+        if (finalSelection == null){
+            return "";
+        }
+        if ( finalSelection["filter"].length > 0){
          let filter = finalSelection["filter"][index];
          let filterproperty = filter["property"];
          let values = filter["values"];
@@ -260,6 +261,10 @@ resetSelection(): void{
 
          let resultString = "{\"property\":\""+filterproperty+"\",\"min\":"+min+",\"max\":"+max+"}";
          return resultString;
+        }
+       
+        return "";
+    
 
     }
 
@@ -284,18 +289,20 @@ resetSelection(): void{
      * to get the results for the TABLE display.
      */
     genTable(): void {
+        this.tableResult=null;
         console.log(this.filterCounter);
        for (let i = 1; i <= this.filterCounter; i++ ) {
 
         console.log(this.selectedFilters[i])
        }
-		this.resetSelection();
+		
 
        
         let filter = this.createFilterText(0, this.finalSelectionJSON);
         this.tableJSON =this.addFilterTextToTableJson(filter, this.tableJSON);
         
         console.log("inputJsonForSPARQLSELECT: " + this.tableJSON);
+       
         // call the API for table data
         this.expSearch.getTableValues(this.tableJSON)
             .then(
@@ -305,8 +312,9 @@ resetSelection(): void{
 				
             );
        
-       // let recApproach = new RecClass();
-       // recApproach.generateGraphRecApproach(this.config, this.myDiagram, this.$);
+        let recApproach = new RecClass();
+        recApproach.generateGraphRecApproach(this.config, this.myDiagram, this.$);
+        this.resetSelection();
 		 
     }
 
