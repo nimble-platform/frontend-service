@@ -9,6 +9,9 @@ export class Catalogue {
     constructor(public id: string,
                 public uuid: string,
                 public providerParty: Party,
-                public catalogueLine: CatalogueLine[]) {
+                public issueDate: string, // TODO not sure about string for date/time
+                public issueTime: string, // TODO not sure about string for date/time
+                public catalogueLine: CatalogueLine[]
+                ) {
     }
 }

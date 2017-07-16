@@ -36,7 +36,7 @@ export class ModelUtils {
 
     public static createCommodityClassification(category: Category): CommodityClassification {
         let code: Code = new Code(category.id, category.preferredName, category.taxonomyId, null);
-        let commodityClassification = new CommodityClassification(code);
+        let commodityClassification = new CommodityClassification(code, null, null, "");
         return commodityClassification;
     }
 
@@ -54,7 +54,7 @@ export class ModelUtils {
         // price
         let price: Price = new Price(amountObj);
         // item location quantity
-        let ilq:ItemLocationQuantity = new ItemLocationQuantity(price);
+        let ilq:ItemLocationQuantity = new ItemLocationQuantity(price, null, null, []);
         return ilq;
     }
 
@@ -63,15 +63,15 @@ export class ModelUtils {
         let additionalItemProperties = new Array<AdditionalItemProperty>();
 
         // create item
-        let item = new Item("", "", additionalItemProperties, providerParty, [], [], "");
+        let item = new Item("", "", false, additionalItemProperties, providerParty, null, null, [],[], [], [], "");
 
         // create goods item
-        let goodsItem = new GoodsItem(this.generateUUID(), item);
+        let goodsItem = new GoodsItem(this.generateUUID(), item, null);
 
         // create required item location quantity
         let ilq = this.createItemLocationQuantity("");
 
-        let catalogueLine = new CatalogueLine(null, null, goodsItem, ilq);
+        let catalogueLine = new CatalogueLine(null, null, null, [], ilq, goodsItem);
         return catalogueLine;
     }
 

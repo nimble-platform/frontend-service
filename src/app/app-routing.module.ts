@@ -9,6 +9,7 @@ import { ProductPublishComponent } from './catalogue/product-publish.component';
 import { SimpleSearchComponent } from './simple-search/simple-search.component';
 import { SimpleSearchDetailsComponent } from './simple-search/simple-search-details.component';
 import { ExplorativeSearchComponent } from './explorative-search/explorative-search.component';
+import {CatalogueViewComponent} from "./catalogue/catalogue-view.component";
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -20,7 +21,8 @@ const routes: Routes = [
   { path: 'publish', component: ProductPublishComponent },
   { path: 'simple-search', component: SimpleSearchComponent },
   { path: 'simple-search-details/:id', component: SimpleSearchDetailsComponent },
-  { path: 'explore-search', component: ExplorativeSearchComponent }
+  { path: 'explore-search', component: ExplorativeSearchComponent },
+  { path: 'catalogue', component: CatalogueViewComponent}
 ];
 
 @NgModule({

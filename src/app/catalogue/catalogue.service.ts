@@ -48,7 +48,7 @@ export class CatalogueService {
                     .then(res => {
                         if (res.status == 204) {
                             // no default catalogue yet, create new one
-                            this.catalogue = new Catalogue("default", null, party, []);
+                            this.catalogue = new Catalogue("default", null, party, "", "", []);
                         } else {
                             this.catalogue = res.json() as Catalogue;
                         }
