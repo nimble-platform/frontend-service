@@ -15,6 +15,7 @@ export class AppComponent implements OnInit {
 	public isLoggedIn = false;
 	public isCollapsed = true;
 	public fullName = "";
+	public activeCompanyName = null;
 	public eMail = "";
 	public search = myGlobals.search;
 	
@@ -32,6 +33,14 @@ export class AppComponent implements OnInit {
 			this.isLoggedIn = true;
 			this.fullName = this.cookieService.get("user_fullname");
 			this.eMail = this.cookieService.get("user_email");
+
+			// handle active company
+			if (this.cookieService.get("active_company_id")) {
+				this.activeCompanyName = this.cookieService.get("active_company_name");
+			}
+			else {
+				this.activeCompanyName = null;
+			}
 		}
 		else {
 			this.isLoggedIn = false;

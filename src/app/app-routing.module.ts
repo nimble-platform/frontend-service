@@ -10,12 +10,14 @@ import { SimpleSearchComponent } from './simple-search/simple-search.component';
 import { SimpleSearchDetailsComponent } from './simple-search/simple-search-details.component';
 import { ExplorativeSearchComponent } from './explorative-search/explorative-search.component';
 import { CompanySettingsComponent } from './user-mgmt/company-settings.component';
+import { CompanyRegistrationComponent } from './user-mgmt/register-company';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'login',  component: LoginComponent },
   { path: 'logout',  component: LogoutComponent },
   { path: 'registration', component: RegistrationComponent },
+  { path: 'company-registration', component: CompanyRegistrationComponent },
   { path: 'dashboard', component: DashboardComponent },
   { path: 'categorysearch', component: CategorySearchComponent },
   { path: 'publish', component: ProductPublishComponent },

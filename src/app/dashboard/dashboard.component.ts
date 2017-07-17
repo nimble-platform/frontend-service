@@ -13,6 +13,7 @@ import { OrderResponse } from '../bpe/model/order-response';
 export class DashboardComponent implements OnInit {
 
 	fullName = "";
+	companyName: string;
 	buyer_history_temp: any;
 	buyer_history: any;
 	seller_history_temp: any;

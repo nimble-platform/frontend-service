@@ -31,11 +31,14 @@ import { CompanySettingsComponent } from './user-mgmt/company-settings.component
 import { AddressSubForm } from './user-mgmt/subforms/address.component';
 import { DeliveryTermsSubForm } from './user-mgmt/subforms/delivery-terms.component';
 import { PaymentMeansForm } from './user-mgmt/subforms/payment-means.component';
+import { CommonModule } from '@angular/common';
+import { CompanyRegistrationComponent } from './user-mgmt/register-company';
 
 
 @NgModule({
     imports: [
             BrowserModule,
+        CommonModule,
         FormsModule,
         HttpModule,
         AppRoutingModule,
@@ -64,6 +67,7 @@ import { PaymentMeansForm } from './user-mgmt/subforms/payment-means.component';
             AddressSubForm,
             DeliveryTermsSubForm,
             PaymentMeansForm,
+            CompanyRegistrationComponent,
         ],
         providers: [
         UserService,
