@@ -5,13 +5,6 @@
 export const debug=false;
 
 
-// Search settings
-
-//export const search = "simple";
-//export const search = "explorative";
-export const search = "both";
-
-
 // Endpoint variables - SRFG domain
 
 export const user_mgmt_endpoint="http://nimble-platform.salzburgresearch.at:443/identity";

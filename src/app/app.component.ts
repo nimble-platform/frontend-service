@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CookieService } from 'ng2-cookies';
 import { Router } from '@angular/router';
-import * as myGlobals from './globals';
 
 @Component({
 	selector: 'nimble-app',
@@ -16,7 +15,6 @@ export class AppComponent implements OnInit {
 	public isCollapsed = true;
 	public fullName = "";
 	public eMail = "";
-	public search = myGlobals.search;
 	
 	constructor(
 		private cookieService: CookieService,
