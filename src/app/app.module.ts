@@ -27,6 +27,7 @@ import { ExplorativeSearchComponent } from './explorative-search/explorative-sea
 import { ExplorativeSearchService } from './explorative-search/explorative-search.service';
 import { ExplorativeSearchFormComponent } from './explorative-search/explorative-search-form.component';
 import { ExplorativeSearchDetailsComponent } from './explorative-search/explorative-search-details.component';
+import { NegotationMainComponent } from './negotiation/negotiation-main.component';
 import { CompanySettingsComponent } from './user-mgmt/company-settings.component';
 import { AddressSubForm } from './user-mgmt/subforms/address.component';
 import { DeliveryTermsSubForm } from './user-mgmt/subforms/delivery-terms.component';
@@ -62,10 +63,11 @@ import { ProductPropertiesComponent } from './catalogue/product-properties.compo
         ExplorativeSearchFormComponent,
         ExplorativeSearchDetailsComponent,
         AdditionalItemPropertyComponent,
+            NegotationMainComponent,
             CompanySettingsComponent,
             AddressSubForm,
             DeliveryTermsSubForm,
-            PaymentMeansForm,
+            PaymentMeansForm
         ],
         providers: [
         UserService,
