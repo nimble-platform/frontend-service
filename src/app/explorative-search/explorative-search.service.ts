@@ -18,6 +18,7 @@ export class ExplorativeSearchService {
     private logicalUrl = myGlobals.logicalViewEndpoint;
     private propEndPoint = myGlobals.propertyEndPoint;
     private sparqlEndPoint = myGlobals.sparqlEndPoint;
+    private sparqlOptionEndPoint = myGlobals.sparqlOptionalSelectEndPoint;
 
     constructor(private http: Http) { }
     // This is where the HTTP GET service is performed
@@ -42,6 +43,12 @@ export class ExplorativeSearchService {
 
     getTableValues(term: Object): Promise<any> {
         return this.http.get(`${this.sparqlEndPoint}?inputAsJson=${(term)}`)
+            .toPromise()
+            .then(res => res.json());
+    }
+
+    getOptionalSelect(term: Object): Promise<any> {
+        return this.http.get(`${this.sparqlOptionEndPoint}?inputAsJson=${JSON.stringify(term)}`)
             .toPromise()
             .then(res => res.json());
     }

@@ -5,20 +5,37 @@
             <!-- if there is no tableResult show the Diagram -->
             
             <!-- <div *ngIf="!tableResult" class="displayArea" #myDiagramDiv></div> -->
-            <div  class="displayArea" #myDiagramDiv></div>
-
+            <div [hidden]="hiddenElement" class="displayArea" #myDiagramDiv></div>
+            <div [hidden]="!hiddenElement" style="height: 200px; overflow: auto;">
+                <table *ngFor="let column of sparqlSelectedOption?.columns; let i=index">
+                    <tr>
+                        <th>{{column}}</th>
+                        <td>{{sparqlSelectedOption?.rows[0][i]}}</td>
+                    </tr>
+                </table>
+            </div>
+            <div>
+                <button [hidden]="!hiddenElement" class="btn btn-lg btn-warning" (click)="diagramAgain()">
+                    Back
+                </button>
+            </div>
+            <br>
+            <br>
             <!-- temporary hack here
                 Image is not rendered again on button click
                 because tableResult still exists in class.
             -->
             <!-- Show Table -->
-            <div>
-                <table *ngIf="tableResult">
-                    <tr >
+            <div *ngIf="tableResult" style="overflow: auto; height: 100px;">
+                <table>
+                    <tr>
                         <th *ngFor="let column of tableResult?.columns">{{column}}</th>
                     </tr>
-                    <tr *ngFor="let row of tableResult?.rows">
-                        <td *ngFor="let field of row">{{field}}</td>
+                    <tr *ngFor="let row of tableResult?.rows; let i=index;">
+                        <td *ngFor="let field of row"> {{field}}</td>
+                        <td *ngIf="tableResult?.uuids">
+                            <button class="btn btn-sm btn-success" (click)="getSparqlOptionalSelect(i)">
+                            More</button></td>
                     </tr>
                 </table>
             </div>

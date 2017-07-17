@@ -11,6 +11,7 @@ import { Component, AfterViewInit, ViewChild, ElementRef, Input, OnChanges } fro
 import * as go from 'gojs';
 import { RadialLayout } from './layout/RadialLayout';
 import { ExplorativeSearchService } from './explorative-search.service';
+import {el} from "@angular/platform-browser/testing/browser_util";
 
 @Component({
     selector: 'explore-search-details',
@@ -30,6 +31,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
     @Input() config: Object; // this comes from `explorative-search-form.component` (Parent)
     // GoJS div as mentioned above in the @Component `template` param
     @ViewChild('myDiagramDiv') div: ElementRef;
+    private hiddenElement: boolean = false;
     /*GOJS Variables*/
     private myDiagram: go.Diagram;
     private $ = go.GraphObject.make;
@@ -42,11 +44,12 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
     keywordCounter = 0;
 
     /*To store filters*/
-    private lala: Object
+    private lala: Object;
     private selectedFilters: Array<string> = [];
     filterCounter = -1;
-    private key: number
+    private key: number;
     private isMultiSelectActivated = false;
+    private sparqlSelectedOption: Object;
 
     /**tableJSON = {'concept': 'HighChair', 'parameters':
     *    ['hasHeight', 'hasWidth'],
@@ -119,7 +122,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                 initialContentAlignment: go.Spot.Center,
                 padding: 10,
                 isReadOnly: true,
-                'animationManager.isEnabled': true,
+                'animationManager.isEnabled': false,
                 'allowVerticalScroll': false
             });
         let commonToolTip = this.$(go.Adornment, 'Auto',
@@ -223,40 +226,36 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
         let filteringInput = { 'concept': rootConcept, 'property': clickedNode, 'amountOfGroups': 3 };
         //	 console.log("Concept: " + rootConcept); // DEBUG CHECK#
         //	  console.log("Property: " + clickedNode); // DEBUG CHECK#
-        if (this.isMultiSelectActivated == true) {
+        if (this.isMultiSelectActivated === true) {
             let contained = false;
            let index = 0;
            let indexForRemove = -1;
-            for (var item of this.selectedProperties) {
-              
+            for (let item of this.selectedProperties) {
                 if (item === clickedNode) {
                     contained = true;
                     indexForRemove = index;
 
                 }
-                index = index +1;
+                index = index + 1;
             }
          //   if (contained== undefined){
           //       this.selectedProperties.splice(indexForRemove,1);
            // }
-            if (contained == false) {
-                if (clickedNode == null){
+            if (contained === false) {
+                if (clickedNode == null) {
                     console.log ("Delselect of current property");
-                }
-                else{
+                } else {
                 this.selectedProperties[this.keywordCounter] = clickedNode;
                 this.keywordCounter = this.keywordCounter + 1;
                 }
-            }
-            else{
+            } else {
                  this.selectedProperties.splice(indexForRemove,1);
                  this.keywordCounter = this.keywordCounter - 1;
             }
 
 
-        }
-        else {
-            //Single Select
+        } else {
+            // Single Select
             console.log("Single selection of property: ");
             this.keywordCounter = 0;
             this.selectedProperties[this.keywordCounter] = clickedNode;
@@ -389,7 +388,27 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
         this.finalSelectionJSON = finalSelectionJSON;
     }
 
-reloadRadialGraph(): void{
+    getSparqlOptionalSelect(indexInp: number) {
+        console.log(indexInp);
+        // need URI component in order to send url as JSON.stringify
+        let optSelectJSON = {'uuid': encodeURIComponent(this.tableResult.uuids[indexInp].trim())};
+        console.log(optSelectJSON);
+        this.expSearch.getOptionalSelect(optSelectJSON)
+          .then(res => this.sparqlSelectedOption = res );
+        this.hiddenElement = true;
+    }
+
+    diagramAgain(): void {
+        // this.sparqlSelectedOption = null;
+        if (this.hiddenElement) {
+            this.hiddenElement = false;
+        } else {
+            this.hiddenElement = true;
+        }
+        // this.reloadRadialGraph();
+    }
+
+reloadRadialGraph(): void {
  let recApproach = new RecClass();
         recApproach.generateGraphRecApproach(this.config, this.myDiagram, this.$);
 }

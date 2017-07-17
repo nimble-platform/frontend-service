@@ -25,6 +25,7 @@ export const endpoint = 'http://hydra2.ikap.biba.uni-bremen.de:8090/detectMeanin
 export const logicalViewEndpoint = 'http://hydra2.ikap.biba.uni-bremen.de:8090/getLogicalView';
 export const propertyEndPoint = 'http://hydra2.ikap.biba.uni-bremen.de:8090/getPropertyValuesDiscretised';
 export const sparqlEndPoint = 'http://hydra2.ikap.biba.uni-bremen.de:8090/executeSPARQLSelect';
+export const sparqlOptionalSelectEndPoint = 'http://hydra2.ikap.biba.uni-bremen.de:8090/executeSPARQLOptionalSelect';
 
 
 // Endpoint variables - Local development via service discovery
