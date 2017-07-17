@@ -36,7 +36,7 @@ export class ModelUtils {
 
     public static createCommodityClassification(category: Category): CommodityClassification {
         let code: Code = new Code(category.id, category.preferredName, category.taxonomyId, null);
-        let commodityClassification = new CommodityClassification(code, null, null, "");
+        let commodityClassification = new CommodityClassification(code, null, null, "", "");
         return commodityClassification;
     }
 

@@ -10,7 +10,7 @@ export class DocumentReference {
     constructor(
         public id: string,
         public uuid: string,
-        public issueDate: Date,
+        public issueDate: string,
         public issueTime: string, // TODO server side handles date/time separately
         public documentTypeCode: Code,
         public documentType: string,
