@@ -5,6 +5,7 @@ import { User } from './model/user';
 import * as myGlobals from '../globals';
 import {Party} from "../catalogue/model/publish/party";
 import {PartyName} from "../catalogue/model/publish/party-name";
+import { CompanySettings } from './model/company-settings';
 
 @Injectable()
 export class UserService {
@@ -33,12 +34,40 @@ export class UserService {
 		.get(url, {headers: this.headers})
 		.toPromise()
 		.then(res => {
+
+			let partyObj = res.json()[0];
+			console.log(url + ' returned ' + JSON.stringify(partyObj));
+
 			// ToDo: make identity service using the latest version of the data model
-			let names:PartyName[] = [new PartyName(res.json()[0].partyName[0].name)];
-			this.userParty = new Party(res.json()[0].hjid, names, null);
+			let id:Identifier = new Identifier(partyObj.id, null, null);
+			let names:PartyName[] = [new PartyName(partyObj.partyName[0].name)];
+			this.userParty = new Party(id, names, null);
 			return Promise.resolve(this.userParty);
 		})
 		.catch(this.handleError);
+	}
+
+    getSettings(userId: string): Promise<CompanySettings> {
+
+        return this.getUserParty(userId).then(party => {
+            const url = `${this.url}/company-settings/${party.id.value}`;
+            return this.http
+                .get(url, {headers: this.headers})
+                .toPromise()
+                .then(response => response.json() as CompanySettings)
+                .catch(this.handleError)
+        });
+    }
+
+	putSettings(settings: CompanySettings, userId: string): Promise<any> {
+		return this.getUserParty(userId).then(party => {
+			const url = `${this.url}/company-settings/${party.id.value}`;
+			return this.http
+                .put(url, settings, {headers: this.headers})
+                .toPromise()
+                .then(response => response.json())
+                .catch(this.handleError)
+		});
 	}
 
 	resetData():void {
@@ -46,6 +75,7 @@ export class UserService {
 	}
 
 	private handleError(error: any): Promise<any> {
+		console.error('An error occurred', error); // for demo purposes only
 		return Promise.reject(error.message || error);
 	}
 

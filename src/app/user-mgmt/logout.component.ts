@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { AppComponent } from '../app.component';
 import { CookieService } from 'ng2-cookies';
-import {CategoryService} from "../catalogue/category/category.service";
-import {CatalogueService} from "../catalogue/catalogue.service";
-import {UserService} from "./user.service";
+import { UserService } from './user.service';
+import { CategoryService } from '../catalogue/category/category.service';
+import { CatalogueService } from '../catalogue/catalogue.service';
+
 
 @Component({
 	selector: 'nimble-logout',
@@ -15,10 +16,10 @@ export class LogoutComponent implements OnInit {
 
 	constructor(
 		private cookieService: CookieService,
-		private userService:UserService,
+		private appComponent: AppComponent,
+		private userService: UserService
 		private categoryService: CategoryService,
-		private catalogueService: CatalogueService,
-		private appComponent: AppComponent
+		private catalogueService: CatalogueService
 	) {	}
 
 	ngOnInit() {
