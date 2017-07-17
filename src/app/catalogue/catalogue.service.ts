@@ -1,24 +1,35 @@
 /**
  * Created by suat on 17-May-17.
  */
-import {Injectable} from '@angular/core';
-import {Http, Headers} from '@angular/http';
-import * as myGlobals from '../globals';
+import {Injectable} from "@angular/core";
+import {Headers, Http} from "@angular/http";
+import * as myGlobals from "../globals";
 import {GoodsItem} from "./model/publish/goods-item";
 import {Catalogue} from "./model/publish/catalogue";
-import {Identifier} from "./model/publish/identifier";
-import {Party} from "./model/publish/party";
 import {UserService} from "../user-mgmt/user.service";
-import {FunctionCall, MethodCall} from "@angular/compiler/src/expression_parser/ast";
+import {CatalogueLine} from "./model/publish/catalogue-line";
+import {Category} from "./model/category/category";
+import {Observable} from "rxjs/Observable";
+import {Party} from "./model/publish/party";
 
 @Injectable()
 export class CatalogueService {
     private headers = new Headers({'Content-Type': 'application/json', 'Accept': 'application/json'});
     private baseUrl = myGlobals.catalogue_endpoint;
+
     private catalogue: Catalogue;
+    private draftCatalogueLine: CatalogueLine;
 
     constructor(private http: Http,
                 private userService: UserService) {
+    }
+
+    getDraftItem(): CatalogueLine {
+        return this.draftCatalogueLine;
+    }
+
+    setDraftItem(draftCatalogueLine: CatalogueLine): void {
+        this.draftCatalogueLine = draftCatalogueLine;
     }
 
     getCatalogue(userId: string): Promise<Catalogue> {
@@ -30,15 +41,14 @@ export class CatalogueService {
             return this.userService.getUserParty(userId).then(party => {
 
                 // using the party query the default catalogue
-                let url = this.baseUrl + `/catalogue/${party.id.value}/default`;
+                let url = this.baseUrl + `/catalogue/${party.id}/default`;
                 return this.http
                     .get(url, {headers: this.headers})
                     .toPromise()
                     .then(res => {
                         if (res.status == 204) {
                             // no default catalogue yet, create new one
-                            let id: Identifier = new Identifier("default", null, null);
-                            this.catalogue = new Catalogue(id, null, party, []);
+                            this.catalogue = new Catalogue("default", null, party, []);
                         } else {
                             this.catalogue = res.json() as Catalogue;
                         }
@@ -77,6 +87,89 @@ export class CatalogueService {
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
+    }
+
+    downloadTemplate(category: Category): Observable<any> {
+        const url = this.baseUrl + `/catalogue/template?taxonomyId=${category.taxonomyId}&categoryId=${encodeURIComponent(category.id)}`;
+        let downloadTemplateHeaders = new Headers({'Accept': 'application/octet-stream'});
+        return Observable.create(observer => {
+
+            let xhr = new XMLHttpRequest();
+
+            xhr.open('GET', this.baseUrl + `/catalogue/template?taxonomyId=${category.taxonomyId}&categoryId=${encodeURIComponent(category.id)}`, true);
+            xhr.setRequestHeader('Accept', 'application/octet-stream');
+            xhr.responseType = 'blob';
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+
+                        var contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+                        var blob = new Blob([xhr.response], {type: contentType});
+                        observer.next(blob);
+                        observer.complete();
+                    } else {
+                        observer.error(xhr.response);
+                    }
+                }
+            }
+            xhr.send();
+        });
+    }
+
+    uploadTemplate(companyId: string, companyName: String, template: File): Observable<any> {
+
+        const url = this.baseUrl + `/catalogue/template/upload?companyId=${companyId}&companyName=${companyName}`;
+        return Observable.create(observer => {
+            let formData: FormData = new FormData();
+            formData.append("file", template, template.name);
+
+            let xhr: XMLHttpRequest = new XMLHttpRequest();
+            xhr.onreadystatechange = () => {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        //observer.next(JSON.parse(xhr.response));
+                        observer.complete();
+                    } else {
+                        observer.error(xhr.response);
+                    }
+                }
+            };
+
+            xhr.open('POST', url, true);
+            xhr.send(formData);
+
+        });
+    }
+
+    uploadTemplate2(userId: string, template: File): Promise<any> {
+        return this.userService.getUserParty(userId).then(party => {
+            const url = this.baseUrl + `/catalogue/template/upload?companyId=${party.id}&companyName=${party.partyName[0].name}`;
+            return new Promise<any>((resolve, reject) => {
+                let formData: FormData = new FormData();
+                formData.append("file", template, template.name);
+
+                let xhr: XMLHttpRequest = new XMLHttpRequest();
+                xhr.onreadystatechange = () => {
+                    if (xhr.readyState === 4) {
+                        if (xhr.status === 200) {
+                            //observer.next(JSON.parse(xhr.response));
+                            resolve(xhr.response);
+                        } else {
+                            reject(xhr.status);
+                        }
+                    }
+                };
+
+                xhr.open('POST', url, true);
+                xhr.send(formData);
+            });
+        });
+    }
+
+    resetData(): void {
+        this.catalogue = null;
+        this.draftCatalogueLine = null;
     }
 
     private handleError(error: any): Promise<any> {

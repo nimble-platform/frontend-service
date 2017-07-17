@@ -7,6 +7,7 @@ import {BinaryObject} from "./binary-object";
 
 export class AdditionalItemProperty {
     constructor(
+        public id: string,
         public name: string,
         public value: string[],
         public embeddedDocumentBinaryObject:BinaryObject[],

@@ -17,7 +17,7 @@ import { CategorySearchComponent } from './catalogue/category/category-search.co
 import { CategoryService } from './catalogue/category/category.service';
 import { ProductPublishComponent } from './catalogue/product-publish.component';
 import { AdditionalItemPropertyComponent } from './catalogue/additional-item-property.component';
-import {CatalogueService} from './catalogue/catalogue.service';
+import { CatalogueService } from './catalogue/catalogue.service';
 import { SimpleSearchComponent } from './simple-search/simple-search.component';
 import { SimpleSearchDetailsComponent } from './simple-search/simple-search-details.component';
 import { SimpleSearchFormComponent } from './simple-search/simple-search-form.component';
@@ -31,6 +31,7 @@ import { CompanySettingsComponent } from './user-mgmt/company-settings.component
 import { AddressSubForm } from './user-mgmt/subforms/address.component';
 import { DeliveryTermsSubForm } from './user-mgmt/subforms/delivery-terms.component';
 import { PaymentMeansForm } from './user-mgmt/subforms/payment-means.component';
+import { ProductPropertiesComponent } from './catalogue/product-properties.component';
 
 
 @NgModule({
@@ -53,6 +54,7 @@ import { PaymentMeansForm } from './user-mgmt/subforms/payment-means.component';
         CategorySearchComponent,
         ProductPublishComponent,
 		AdditionalItemPropertyComponent,
+        ProductPropertiesComponent,
 		SimpleSearchComponent,
 		SimpleSearchDetailsComponent,
 		SimpleSearchFormComponent,

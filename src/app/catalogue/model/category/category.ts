@@ -14,5 +14,7 @@ export class Category {
         public remark: string,
         public properties: Property[],
         public keywords: string[],
+        public taxonomyId: string,
+        public categoryUri: string,
     ) {  }
 }

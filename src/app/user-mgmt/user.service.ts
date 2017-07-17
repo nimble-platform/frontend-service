@@ -4,7 +4,6 @@ import 'rxjs/add/operator/toPromise';
 import { User } from './model/user';
 import * as myGlobals from '../globals';
 import {Party} from "../catalogue/model/publish/party";
-import {Identifier} from "../catalogue/model/publish/identifier";
 import {PartyName} from "../catalogue/model/publish/party-name";
 import { CompanySettings } from './model/company-settings';
 
@@ -71,7 +70,7 @@ export class UserService {
 		});
 	}
 
-	reset(): void {
+	resetData():void {
 		this.userParty = null;
 	}
 

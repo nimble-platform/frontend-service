@@ -1,4 +1,3 @@
-import {Identifier} from "./identifier";
 import {PartyName} from "./party-name";
 import {Person} from "./person";
 /**
@@ -6,7 +5,7 @@ import {Person} from "./person";
  */
 export class Party {
     constructor(
-        public id:Identifier,
+        public id:string,
         public partyName: PartyName[],
         public person:Person
     ) {  }
