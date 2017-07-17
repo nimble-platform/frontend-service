@@ -43,7 +43,7 @@ export class ProductPropertiesComponent implements OnInit {
 
         // create a list including the custom properties created by the user
         for (let property of this.catalogueLine.goodsItem.item.additionalItemProperty) {
-            if (property.itemPropertyGroup.name == "Custom") {
+            if (property.itemClassificationCode.listID === "Custom") {
                 this.customProperties.push(property);
                 this.renderedPropertyIds.push(property.id);
             }

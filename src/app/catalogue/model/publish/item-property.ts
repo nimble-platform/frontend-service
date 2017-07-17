@@ -4,6 +4,7 @@
 import {ItemPropertyGroup} from "./item-property-group";
 import {ItemPropertyRange} from "./item-property-range";
 import {BinaryObject} from "./binary-object";
+import {Code} from "./code";
 
 export class ItemProperty {
     constructor(
@@ -14,7 +15,8 @@ export class ItemProperty {
         public demoSpecificMultipleContent:string,
         public unit: string,
         public valueQualifier: string,
-        public itemPropertyGroup: ItemPropertyGroup,
+        //public itemPropertyGroup: ItemPropertyGroup,
+        public itemClassificationCode: Code,
         public itemPropertyRange: ItemPropertyRange
     ) {  }
 }

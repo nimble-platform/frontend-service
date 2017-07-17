@@ -7,10 +7,25 @@
 
 <body>
 
-<div class="container rounded" style="border-style: solid; border-color: #a21c26; border-width: 3px">
-    <h3>Item name: {{line.goodsItem.item.name}}</h3>
+<div class="container" style="border-style: solid; border-color: #a21c26; border-width: 3px">
+    <h3>Product Details:</h3>
+    <p>Item name: {{line.goodsItem.item.name}}</p>
+    <p>Description: {{line.goodsItem.item.description}}</p>
+
+    <!-- Repeat commodity class -->
+    <div *ngFor="let class of line.goodsItem.item.commodityClassification" [attr.data-index]="i"
+         class="container" style="border-style: solid; border-color: #a21c26; border-width: 3px">
+        <p>Class name: {{class.itemClassificationCode.name}}</p>
+
+        <div *ngFor="let property of line.goodsItem.item.additionalItemProperty">
+            <div *ngIf="property.itemClassificationCode.value === class.itemClassificationCode.value">
+                <!-- following filter is needed due to redundant property bug -->
+                <p *ngIf="property.value[0] !== ''">Name: {{property.name}}, Value: {{property.value}}</p>
+            </div>
+        </div>
+    </div>
+
     <ul>
-        <li><strong>CATALOGUE LINE PROPERTIES: </strong></li>
         <li>Warranty Validity Period: {{line.warrantyValidityPeriod}}</li>
         <li>Warranty Information: {{line.warrantyInformation}}</li>
         <li><strong>REQUIRED ITEM LOCATION QUANTITY PROPERTIES: </strong></li>
@@ -60,7 +75,6 @@
                     <li>Free of Charge? {{line.goodsItem.item.freeOfChargeIndicator}}</li>
                     <li>Origin Country: {{line.goodsItem.item.originCountry}}</li>
                     <li>Commodity Classification: {{line.goodsItem.item.commodityClassification | json}}</li>
-                    <li>Additional Item Property: {{line.goodsItem.item.additionalItemProperty | json}}</li>
                     <li>Certificate: {{line.goodsItem.item.certificate}}</li>
                     <li>Dimension: {{line.goodsItem.item.dimension}}</li>
                     <li>Seller's Item ID:

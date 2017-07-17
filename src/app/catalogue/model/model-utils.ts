@@ -16,11 +16,20 @@ import {CatalogueLine} from "./publish/catalogue-line";
  * Created by suat on 05-Jul-17.
  */
 export class ModelUtils {
-     public static createAdditionalItemProperty(property:Property, itemPropertyGroupStr:string):ItemProperty {
-        let aip:ItemProperty;
-        if(property == null) {
-            let ipg: ItemPropertyGroup = new ItemPropertyGroup(itemPropertyGroupStr);
-            aip = new ItemProperty(this.generateUUID(), "", [""], new Array<BinaryObject>(), "", "", "STRING", ipg, null);
+    public static createAdditionalItemProperty(property: Property, category: Category): ItemProperty {
+        let taxonomyId: string;
+        let code: Code;
+
+        if (category !== null) {
+            code = new Code(category.id, category.preferredName, category.taxonomyId, null);
+        }
+        else {
+            code = new Code(null, null, "Custom", null);
+        }
+
+        let aip: ItemProperty;
+        if (property == null) {
+            aip = new ItemProperty(this.generateUUID(), "", [], new Array<BinaryObject>(), "", "", "STRING", code, null);
 
         } else {
             let unit = "";
@@ -28,8 +37,9 @@ export class ModelUtils {
                 unit = property.unit.shortName;
             }
             let valueQualifier = property.dataType;
-            let itemPropertyGroup: ItemPropertyGroup = new ItemPropertyGroup(itemPropertyGroupStr);
-            aip = new ItemProperty(property.id, property.preferredName, [''], new Array<BinaryObject>(), "", unit, valueQualifier, itemPropertyGroup, null);
+
+            aip = new ItemProperty(property.id, property.preferredName, [''], new Array<BinaryObject>(), "", unit,
+                valueQualifier, code, null);
         }
         return aip;
     }
@@ -54,7 +64,7 @@ export class ModelUtils {
         // price
         let price: Price = new Price(amountObj);
         // item location quantity
-        let ilq:ItemLocationQuantity = new ItemLocationQuantity(price, null, null, []);
+        let ilq: ItemLocationQuantity = new ItemLocationQuantity(price, null, null, []);
         return ilq;
     }
 
@@ -63,7 +73,7 @@ export class ModelUtils {
         let additionalItemProperties = new Array<ItemProperty>();
 
         // create item
-        let item = new Item("", "", false, additionalItemProperties, providerParty, null, null, [],[], [], [], "");
+        let item = new Item("", "", false, additionalItemProperties, providerParty, null, null, [], [], [], "", [], "");
 
         // create goods item
         let goodsItem = new GoodsItem(this.generateUUID(), item, null);

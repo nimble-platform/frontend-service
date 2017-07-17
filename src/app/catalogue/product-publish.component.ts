@@ -36,7 +36,7 @@ export class ProductPublishComponent implements OnInit {
     // reference to the draft item itself
     catalogueLine: CatalogueLine;
     // placeholder for the custom property
-    newProperty: ItemProperty = ModelUtils.createAdditionalItemProperty(null, "Custom");
+    newProperty: ItemProperty = ModelUtils.createAdditionalItemProperty(null, null);
 
     /*
      * state objects for feedback about the publish operation
@@ -93,7 +93,7 @@ export class ProductPublishComponent implements OnInit {
         this.catalogueLine.goodsItem.item.commodityClassification.push(commodityClassification);
 
         for (let property of category.properties) {
-            let aip = ModelUtils.createAdditionalItemProperty(property, category.taxonomyId);
+            let aip = ModelUtils.createAdditionalItemProperty(property, category);
             // check whether the same property exists already
             for (let existingAip of this.catalogueLine.goodsItem.item.additionalItemProperty) {
                 if (aip.id == existingAip.id) {
@@ -234,7 +234,7 @@ export class ProductPublishComponent implements OnInit {
 
         // reset the custom property view
 
-        this.newProperty = ModelUtils.createAdditionalItemProperty(null, "Custom");
+        this.newProperty = ModelUtils.createAdditionalItemProperty(null, null);
         this.propertyValueType.nativeElement.selectedIndex = 0;
     }
 

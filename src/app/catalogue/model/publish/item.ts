@@ -23,6 +23,7 @@ export class Item {
         public commodityClassification: CommodityClassification[],
         public certificate: Certificate[],
         public dimension: Dimension[],
+        public hjid: string,
 
         // for demo
         public itemConfigurationImageArray:BinaryObject[],

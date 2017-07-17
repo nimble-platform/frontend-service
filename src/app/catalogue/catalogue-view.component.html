@@ -11,7 +11,6 @@
 <!-- *ngIf div to wait for asynchronous data -->
 <div *ngIf="catalogue">
     <p>Issue date: {{catalogue.issueDate}}</p>
-    <p>Issue time: {{catalogue.issueTime}}</p>
     <catalogue-line-view *ngFor="let line of catalogue.catalogueLine"
                          [line]="line">
     </catalogue-line-view>
