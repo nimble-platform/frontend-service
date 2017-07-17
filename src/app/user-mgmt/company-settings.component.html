@@ -1,0 +1,37 @@
+<h1>Company Settings</h1>
+
+<form class="company-settings-form" [formGroup]="settingsForm" novalidate (ngSubmit)="save(settingsForm)">
+
+    <div class="row">
+        <!-- Company Address -->
+        <div class="col-sm-6 company-settings-block">
+            <h3>Company Address</h3>
+            <address-form [group]="settingsForm.controls.address"></address-form>
+        </div>
+
+        <!-- Delivery Terms -->
+        <div class="col-sm-6 company-settings-block">
+            <h3>Delivery Terms</h3>
+            <delivery-terms-form [group]="settingsForm.controls.deliveryTerms"></delivery-terms-form>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Payment Means-->
+        <div class="col-sm-6 company-settings-block">
+            <h3>Payment Information</h3>
+            <payment-means-form [group]="settingsForm.controls.paymentMeans"></payment-means-form>
+        </div>
+    </div>
+
+    <div>
+        <button type="submit"
+                (click)="save(settingsForm)"
+                [disabled]="!settingsForm.valid">
+            <span>{{ isSubmitting == false ? 'Save' : 'Saving' }}</span>
+            <img [hidden]="!isSubmitting" class="loading-indicator" src="assets/ajax_loader.gif"/>
+        </button>
+
+    </div>
+
+</form>

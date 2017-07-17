@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { AppRoutingModule } from './app-routing.module';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -17,7 +17,7 @@ import { CategorySearchComponent } from './catalogue/category/category-search.co
 import { CategoryService } from './catalogue/category/category.service';
 import { ProductPublishComponent } from './catalogue/product-publish.component';
 import { AdditionalItemPropertyComponent } from './catalogue/additional-item-property.component';
-import {CatalogueService} from './catalogue/catalogue.service';
+import { CatalogueService } from './catalogue/catalogue.service';
 import { SimpleSearchComponent } from './simple-search/simple-search.component';
 import { SimpleSearchDetailsComponent } from './simple-search/simple-search-details.component';
 import { SimpleSearchFormComponent } from './simple-search/simple-search-form.component';
@@ -27,7 +27,11 @@ import { ExplorativeSearchComponent } from './explorative-search/explorative-sea
 import { ExplorativeSearchService } from './explorative-search/explorative-search.service';
 import { ExplorativeSearchFormComponent } from './explorative-search/explorative-search-form.component';
 import { ExplorativeSearchDetailsComponent } from './explorative-search/explorative-search-details.component';
-import {ProductPropertiesComponent} from "./catalogue/product-properties.component";
+import { CompanySettingsComponent } from './user-mgmt/company-settings.component';
+import { AddressSubForm } from './user-mgmt/subforms/address.component';
+import { DeliveryTermsSubForm } from './user-mgmt/subforms/delivery-terms.component';
+import { PaymentMeansForm } from './user-mgmt/subforms/payment-means.component';
+import { ProductPropertiesComponent } from './catalogue/product-properties.component';
 
 
 @NgModule({
@@ -36,7 +40,8 @@ import {ProductPropertiesComponent} from "./catalogue/product-properties.compone
         FormsModule,
         HttpModule,
         AppRoutingModule,
-        NgbModule.forRoot()
+        NgbModule.forRoot(),
+        ReactiveFormsModule,
         ],
         declarations: [
         AppComponent,
@@ -56,7 +61,11 @@ import {ProductPropertiesComponent} from "./catalogue/product-properties.compone
         ExplorativeSearchComponent,
         ExplorativeSearchFormComponent,
         ExplorativeSearchDetailsComponent,
-        AdditionalItemPropertyComponent
+        AdditionalItemPropertyComponent,
+            CompanySettingsComponent,
+            AddressSubForm,
+            DeliveryTermsSubForm,
+            PaymentMeansForm,
         ],
         providers: [
         UserService,
