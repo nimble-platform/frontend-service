@@ -27,13 +27,13 @@ import { ExplorativeSearchComponent } from './explorative-search/explorative-sea
 import { ExplorativeSearchService } from './explorative-search/explorative-search.service';
 import { ExplorativeSearchFormComponent } from './explorative-search/explorative-search-form.component';
 import { ExplorativeSearchDetailsComponent } from './explorative-search/explorative-search-details.component';
-import { NegotationMainComponent } from './negotiation/negotiation-main.component';
-import { CompanySettingsComponent } from './user-mgmt/company-settings.component';
+import { KeysPipe } from './explorative-search/pipes/keys';
+import { ProductPropertiesComponent } from './catalogue/product-properties.component';
 import { AddressSubForm } from './user-mgmt/subforms/address.component';
 import { DeliveryTermsSubForm } from './user-mgmt/subforms/delivery-terms.component';
 import { PaymentMeansForm } from './user-mgmt/subforms/payment-means.component';
-import { ProductPropertiesComponent } from './catalogue/product-properties.component';
-
+import { CompanySettingsComponent } from './user-mgmt/company-settings.component';
+import { NegotiationMainComponent } from './negotiation/negotiation-main.component';
 
 @NgModule({
     imports: [
@@ -41,8 +41,8 @@ import { ProductPropertiesComponent } from './catalogue/product-properties.compo
         FormsModule,
         HttpModule,
         AppRoutingModule,
-        NgbModule.forRoot(),
-        ReactiveFormsModule,
+		ReactiveFormsModule,
+        NgbModule.forRoot()
         ],
         declarations: [
         AppComponent,
@@ -55,19 +55,20 @@ import { ProductPropertiesComponent } from './catalogue/product-properties.compo
         CategorySearchComponent,
         ProductPublishComponent,
 		AdditionalItemPropertyComponent,
-        ProductPropertiesComponent,
 		SimpleSearchComponent,
 		SimpleSearchDetailsComponent,
 		SimpleSearchFormComponent,
         ExplorativeSearchComponent,
         ExplorativeSearchFormComponent,
         ExplorativeSearchDetailsComponent,
+		KeysPipe,
         AdditionalItemPropertyComponent,
-            NegotationMainComponent,
-            CompanySettingsComponent,
-            AddressSubForm,
-            DeliveryTermsSubForm,
-            PaymentMeansForm
+		ProductPropertiesComponent,
+		AddressSubForm,
+		DeliveryTermsSubForm,
+		PaymentMeansForm,
+		CompanySettingsComponent,
+		NegotiationMainComponent
         ],
         providers: [
         UserService,

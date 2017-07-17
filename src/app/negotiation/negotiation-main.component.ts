@@ -10,7 +10,7 @@ import {BPEService} from "../bpe/bpe.service";
     templateUrl: './negotiation-main.component.html'
 })
 
-export class NegotationMainComponent {
+export class NegotiationMainComponent {
     @Input() productResponse: any;
 
     terms: Terms = new Terms("", "", "", "", "");

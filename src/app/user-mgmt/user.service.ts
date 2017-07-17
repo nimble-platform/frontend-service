@@ -39,9 +39,8 @@ export class UserService {
 			console.log(url + ' returned ' + JSON.stringify(partyObj));
 
 			// ToDo: make identity service using the latest version of the data model
-			let id:Identifier = new Identifier(partyObj.id, null, null);
-			let names:PartyName[] = [new PartyName(partyObj.partyName[0].name)];
-			this.userParty = new Party(id, names, null);
+			let names:PartyName[] = [new PartyName(res.json()[0].partyName[0].name)];
+			this.userParty = new Party(res.json()[0].hjid, names, null);
 			return Promise.resolve(this.userParty);
 		})
 		.catch(this.handleError);
@@ -50,7 +49,7 @@ export class UserService {
     getSettings(userId: string): Promise<CompanySettings> {
 
         return this.getUserParty(userId).then(party => {
-            const url = `${this.url}/company-settings/${party.id.value}`;
+            const url = `${this.url}/company-settings/${party.id}`;
             return this.http
                 .get(url, {headers: this.headers})
                 .toPromise()
@@ -61,7 +60,7 @@ export class UserService {
 
 	putSettings(settings: CompanySettings, userId: string): Promise<any> {
 		return this.getUserParty(userId).then(party => {
-			const url = `${this.url}/company-settings/${party.id.value}`;
+			const url = `${this.url}/company-settings/${party.id}`;
 			return this.http
                 .put(url, settings, {headers: this.headers})
                 .toPromise()

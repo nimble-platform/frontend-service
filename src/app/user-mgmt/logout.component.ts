@@ -17,7 +17,7 @@ export class LogoutComponent implements OnInit {
 	constructor(
 		private cookieService: CookieService,
 		private appComponent: AppComponent,
-		private userService: UserService
+		private userService: UserService,
 		private categoryService: CategoryService,
 		private catalogueService: CatalogueService
 	) {	}
