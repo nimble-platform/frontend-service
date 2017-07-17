@@ -5,7 +5,7 @@ import {ItemPropertyGroup} from "./item-property-group";
 import {ItemPropertyRange} from "./item-property-range";
 import {BinaryObject} from "./binary-object";
 
-export class AdditionalItemProperty {
+export class ItemProperty {
     constructor(
         public id: string,
         public name: string,

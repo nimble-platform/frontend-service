@@ -1,12 +1,13 @@
 import {Code} from "./code";
+import {Quantity} from "./quantity";
 /**
  * Created by deniz on 16/07/17.
  */
 
 export class Package {
     constructor(
-        public quantity: string, // TODO should have been QuantityType
-        public packagingTypeCode: Code
-        // TODO left hjid out?
+        public quantity: Quantity,
+        public packagingTypeCode: Code,
+        public hjid: string
     ) {  }
 }

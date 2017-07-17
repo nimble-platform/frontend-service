@@ -1,3 +1,4 @@
+import {Quantity} from "./quantity";
 /**
  * Created by deniz on 15/07/17.
  */
@@ -8,7 +9,7 @@ export class Period {
         public startTime: string,
         public endDate: string,
         public endTime: string,
-        public durationMeasure: string // TODO should have been QuantityType
-        // TODO left hjid out?
+        public durationMeasure: Quantity,
+        public hjid: string
     ) {  }
 }

@@ -2,7 +2,7 @@
  * Created by suat on 12-May-17.
  */
 
-import {AdditionalItemProperty} from "./additional-item-property";
+import {ItemProperty} from "./item-property";
 import {Party} from "./party";
 import {BinaryObject} from "./binary-object";
 import {CommodityClassification} from "./commodity-classification";
@@ -16,7 +16,7 @@ export class Item {
         public name: string,
         public description: string,
         public freeOfChargeIndicator: boolean,
-        public additionalItemProperty: AdditionalItemProperty[], // TODO this is of ItemPropertyType[] in server side
+        public additionalItemProperty: ItemProperty[],
         public manufacturerParty: Party,
         public sellersItemIdentification: ItemIdentification,
         public originCountry: Country,

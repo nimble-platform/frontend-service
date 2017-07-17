@@ -7,7 +7,7 @@ export class CommodityClassification {
         public itemClassificationCode: Code,
         public natureCode: Code,
         public cargoTypeCode: Code,
-        public itemPropertyURI: string
-        // TODO left hjid out?
+        public itemPropertyURI: string,
+        public hjid: string
     ) { }
 }

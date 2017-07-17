@@ -4,7 +4,7 @@
 
 import {Component, ElementRef, OnInit, ViewChild} from "@angular/core";
 import {CategoryService} from "./category/category.service";
-import {AdditionalItemProperty} from "./model/publish/additional-item-property";
+import {ItemProperty} from "./model/publish/item-property";
 import {BinaryObject} from "./model/publish/binary-object";
 import {CatalogueService} from "./catalogue.service";
 import {Category} from "./model/category/category";
@@ -36,7 +36,7 @@ export class ProductPublishComponent implements OnInit {
     // reference to the draft item itself
     catalogueLine: CatalogueLine;
     // placeholder for the custom property
-    newProperty: AdditionalItemProperty = ModelUtils.createAdditionalItemProperty(null, "Custom");
+    newProperty: ItemProperty = ModelUtils.createAdditionalItemProperty(null, "Custom");
 
     /*
      * state objects for feedback about the publish operation

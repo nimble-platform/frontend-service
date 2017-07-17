@@ -2,7 +2,7 @@
  * Created by suat on 18-May-17.
  */
 import {Component, Input, OnInit} from "@angular/core";
-import {AdditionalItemProperty} from "./model/publish/additional-item-property";
+import {ItemProperty} from "./model/publish/item-property";
 
 @Component({
     selector: 'additional-item-property',
@@ -10,7 +10,7 @@ import {AdditionalItemProperty} from "./model/publish/additional-item-property";
 })
 
 export class AdditionalItemPropertyComponent implements OnInit {
-    @Input() additionalItemProperty:AdditionalItemProperty;
+    @Input() additionalItemProperty:ItemProperty;
 
     stringValue:boolean = true;
     binaryValue:boolean = false;

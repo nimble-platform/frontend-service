@@ -6,9 +6,8 @@ import {ExternalReference} from "./external-reference";
 
 export class Attachment {
     constructor(
-        //TODO is BinaryObject equivalent to BinaryObjectType in server side?
         public embeddedDocumentBinaryObject: BinaryObject,
-        public externalReference: ExternalReference
-        // TODO left hjid out?
+        public externalReference: ExternalReference,
+        public hjid: string
     ) {  }
 }

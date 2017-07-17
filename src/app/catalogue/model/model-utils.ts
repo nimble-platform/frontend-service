@@ -1,4 +1,4 @@
-import {AdditionalItemProperty} from "./publish/additional-item-property";
+import {ItemProperty} from "./publish/item-property";
 import {BinaryObject} from "./publish/binary-object";
 import {CommodityClassification} from "./publish/commodity-classification";
 import {Code} from "./publish/code";
@@ -16,11 +16,11 @@ import {CatalogueLine} from "./publish/catalogue-line";
  * Created by suat on 05-Jul-17.
  */
 export class ModelUtils {
-     public static createAdditionalItemProperty(property:Property, itemPropertyGroupStr:string):AdditionalItemProperty {
-        let aip:AdditionalItemProperty;
+     public static createAdditionalItemProperty(property:Property, itemPropertyGroupStr:string):ItemProperty {
+        let aip:ItemProperty;
         if(property == null) {
             let ipg: ItemPropertyGroup = new ItemPropertyGroup(itemPropertyGroupStr);
-            aip = new AdditionalItemProperty(this.generateUUID(), "", [""], new Array<BinaryObject>(), "", "", "STRING", ipg, null);
+            aip = new ItemProperty(this.generateUUID(), "", [""], new Array<BinaryObject>(), "", "", "STRING", ipg, null);
 
         } else {
             let unit = "";
@@ -29,7 +29,7 @@ export class ModelUtils {
             }
             let valueQualifier = property.dataType;
             let itemPropertyGroup: ItemPropertyGroup = new ItemPropertyGroup(itemPropertyGroupStr);
-            aip = new AdditionalItemProperty(property.id, property.preferredName, [''], new Array<BinaryObject>(), "", unit, valueQualifier, itemPropertyGroup, null);
+            aip = new ItemProperty(property.id, property.preferredName, [''], new Array<BinaryObject>(), "", unit, valueQualifier, itemPropertyGroup, null);
         }
         return aip;
     }
@@ -60,7 +60,7 @@ export class ModelUtils {
 
     public static createCatalogueLine(providerParty: Party,): CatalogueLine {
         // create additional item properties
-        let additionalItemProperties = new Array<AdditionalItemProperty>();
+        let additionalItemProperties = new Array<ItemProperty>();
 
         // create item
         let item = new Item("", "", false, additionalItemProperties, providerParty, null, null, [],[], [], [], "");

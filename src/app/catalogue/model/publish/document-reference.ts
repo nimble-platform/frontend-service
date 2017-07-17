@@ -10,17 +10,17 @@ export class DocumentReference {
     constructor(
         public id: string,
         public uuid: string,
-        public issueDate: string, // TODO not sure about string for date/time
-        public issueTime: string, // TODO not sure about string for date/time
+        public issueDate: Date,
+        public issueTime: string, // TODO server side handles date/time separately
         public documentTypeCode: Code,
         public documentType: string,
         public languageID: string,
         public versionID: string,
-        public documentDescription: number, // TODO this is of type BigDecimal in server side
+        public documentDescription: number,
         public attachment: Attachment,
         public validityPeriod: Period,
-        public issuerParty: Party
-        // TODO left hjid out?
+        public issuerParty: Party,
+        public hjid: string
     ) {  }
 }
 

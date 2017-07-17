@@ -6,7 +6,7 @@ export class ExternalReference {
     constructor(
         public uri: string,
         public fileName: string,
-        public description: string
-        // TODO left hjid out?
+        public description: string,
+        public hjid: string
     ) {  }
 }

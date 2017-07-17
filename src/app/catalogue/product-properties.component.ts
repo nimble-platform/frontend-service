@@ -5,7 +5,7 @@
 import {Component, Input, OnInit} from "@angular/core";
 import {Category} from "./model/category/category";
 import {Property} from "./model/category/property";
-import {AdditionalItemProperty} from "./model/publish/additional-item-property";
+import {ItemProperty} from "./model/publish/item-property";
 import {CatalogueLine} from "./model/publish/catalogue-line";
 
 const PROPERTY_BLOCK_FIELD_NAME: string = "name";
@@ -26,7 +26,7 @@ export class ProductPropertiesComponent implements OnInit {
     @Input() selectedCategories: Category[];
 
     // list keeping the custom additional properties
-    customProperties: AdditionalItemProperty[] = [];
+    customProperties: ItemProperty[] = [];
     // list keeping the block for each category associated to the item
     propertyBlocks: Array<Object> = [];
     // list keeping the properties in order not to render the same property more than once
@@ -75,8 +75,8 @@ export class ProductPropertiesComponent implements OnInit {
         specificPropertyBlock[PROPERTY_BLOCK_FIELD_ISCOLLAPSED] = true;
         this.propertyBlocks.push(specificPropertyBlock);
 
-        let baseProperties: AdditionalItemProperty[] = [];
-        let specificProperties: AdditionalItemProperty[] = [];
+        let baseProperties: ItemProperty[] = [];
+        let specificProperties: ItemProperty[] = [];
         for (let property of category.properties) {
             let aip = this.getItemProperty(property);
             if (!this.isPropertyPresentedAlready(property)) {
@@ -100,7 +100,7 @@ export class ProductPropertiesComponent implements OnInit {
         propertyBlock[PROPERTY_BLOCK_FIELD_ISCOLLAPSED] = true;
         this.propertyBlocks.push(propertyBlock);
 
-        let properties: AdditionalItemProperty[] = [];
+        let properties: ItemProperty[] = [];
         for (let property of category.properties) {
             if (!this.isPropertyPresentedAlready(property)) {
                 properties.push(this.getItemProperty(property));
@@ -119,7 +119,7 @@ export class ProductPropertiesComponent implements OnInit {
         return false;
     }
 
-    private getItemProperty(property: Property): AdditionalItemProperty {
+    private getItemProperty(property: Property): ItemProperty {
         for (let aip of this.catalogueLine.goodsItem.item.additionalItemProperty) {
             if (aip.id == property.id) {
                 return aip;

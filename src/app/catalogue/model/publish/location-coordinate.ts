@@ -1,4 +1,5 @@
 import {Code} from "./code";
+import {Quantity} from "./quantity";
 /**
  * Created by deniz on 16/07/17.
  */
@@ -6,13 +7,13 @@ import {Code} from "./code";
 export class LocationCoordinate {
     constructor(
         public coordinateSystemCode: Code,
-    public latitudeDegreesMeasure: string, // TODO should have been QuantityType
-    public latitudeMinutesMeasure: string, // TODO should have been QuantityType
-    public latitudeDirectionCode: Code,
-    public longitudeDegreesMeasure: string, // TODO should have been QuantityType
-    public longitudeMinutesMeasure: string, // TODO should have been QuantityType
-    public longitudeDirectionCode: Code,
-    public altitudeMeasure: string // TODO should have been QuantityType
-   // TODO left hjid out?
+        public latitudeDegreesMeasure: Quantity,
+        public latitudeMinutesMeasure: Quantity,
+        public latitudeDirectionCode: Code,
+        public longitudeDegreesMeasure: Quantity,
+        public longitudeMinutesMeasure: Quantity,
+        public longitudeDirectionCode: Code,
+        public altitudeMeasure: Quantity,
+        public hjid: string
     ) {  }
 }

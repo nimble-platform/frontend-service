@@ -30,7 +30,7 @@ export class Address {
         public district: string,
         public addressLine: AddressLine[],
         public country: Country,
-        public locationCoordinate: LocationCoordinate[]
-        // TODO left hjid out?
+        public locationCoordinate: LocationCoordinate[],
+        public hjid: string
         ) {  }
 }

@@ -5,76 +5,75 @@
     <title>Title</title>
 </head>
 
-<!-- Some items commented out due to null properties -->
-
 <body>
 
-<h3>Item name: {{line.goodsItem.item.name}}</h3>
-<ul>
-    <li><strong>CATALOGUE LINE PROPERTIES: </strong></li>
-    <li>Warranty Validity Period: {{line.warrantyValidityPeriod}}</li>
-    <li>Warranty Information: {{line.warrantyInformation}}</li>
-
-    <li><strong>REQUIRED ITEM LOCATION QUANTITY PROPERTIES: </strong></li>
+<div class="container rounded" style="border-style: solid; border-color: #a21c26; border-width: 3px">
+    <h3>Item name: {{line.goodsItem.item.name}}</h3>
     <ul>
-        <li>Price: {{line.requiredItemLocationQuantity.price | json}}</li>
-        <li>Applicable Territory Address: {{line.requiredItemLocationQuantity.applicableTerritoryAddress}}</li>
-        <li>Trading Restrictions: {{line.requiredItemLocationQuantity.tradingRestrictions}}</li>
-
-        <li><strong>PACKAGE PROPERTIES: </strong></li>
+        <li><strong>CATALOGUE LINE PROPERTIES: </strong></li>
+        <li>Warranty Validity Period: {{line.warrantyValidityPeriod}}</li>
+        <li>Warranty Information: {{line.warrantyInformation}}</li>
+        <li><strong>REQUIRED ITEM LOCATION QUANTITY PROPERTIES: </strong></li>
         <ul>
-            <li>Packaging Type Code:
-                <span *ngIf="line.requiredItemLocationQuantity._package">
-                    {{line.requiredItemLocationQuantity._package.packagingTypeCode}}
-                </span>
-            </li>
-            <li>Quantity:
-                <span *ngIf="line.requiredItemLocationQuantity._package">
-                    {{line.requiredItemLocationQuantity._package.quantity}}
-                </span>
-            </li>
-        </ul>
+            <li>Price: {{line.requiredItemLocationQuantity.price | json}}</li>
+            <li>Applicable Territory Address: {{line.requiredItemLocationQuantity.applicableTerritoryAddress}}</li>
+            <li>Trading Restrictions: {{line.requiredItemLocationQuantity.tradingRestrictions}}</li>
 
-        <li><strong>GOODSITEM PROPERTIES: </strong></li>
-        <ul>
-            <li><strong>DELIVERY PROPERTIES: </strong></li>
+            <li><strong>PACKAGE PROPERTIES: </strong></li>
             <ul>
-                <li>Estimated Delivery Period:
-                    <span *ngIf="line.goodsItem.delivery">
-                        {{line.goodsItem.delivery.estimatedDeliveryPeriod}}>
+                <li>Packaging Type Code:
+                    <span *ngIf="line.requiredItemLocationQuantity._package">
+                        {{line.requiredItemLocationQuantity._package.packagingTypeCode}}
                     </span>
                 </li>
-                <li>Requested Delivery Period:
-                    <span *ngIf="line.goodsItem.delivery">
-                        {{line.goodsItem.delivery.requestedDeliveryPeriod}}>
-                    </span>
-                </li>
-                <li>Special Terms:
-                    <span *ngIf="line.goodsItem.delivery">
-                        {{line.goodsItem.delivery.deliveryTerms.specialTerms}}>
+                <li>Quantity:
+                    <span *ngIf="line.requiredItemLocationQuantity._package">
+                        {{line.requiredItemLocationQuantity._package.quantity}}
                     </span>
                 </li>
             </ul>
 
-            <li><strong>ITEM PROPERTIES: </strong></li>
+            <li><strong>GOODS ITEM PROPERTIES: </strong></li>
             <ul>
-                <li>Description: {{line.goodsItem.item.description}}</li>
-                <li>Free of Charge? {{line.goodsItem.item.freeOfChargeIndicator}}</li>
-                <li>Origin Country: {{line.goodsItem.item.originCountry}}</li>
-                <li>Commodity Classification: {{line.goodsItem.item.commodityClassification | json}}</li>
-                <li>Additional Item Property: {{line.goodsItem.item.additionalItemProperty | json}}</li>
-                <li>Certificate: {{line.goodsItem.item.certificate}}</li>
-                <li>Dimension: {{line.goodsItem.item.dimension}}</li>
-                <li>Seller's Item ID:
-                    <span *ngIf="line.goodsItem.item.sellersItemIdentification">
-                        {{line.goodsItem.item.sellersItemIdentification.id}}
-                    </span>
-                </li>
-            </ul>
-        </ul>
+                <li><strong>DELIVERY PROPERTIES: </strong></li>
+                <ul>
+                    <li>Estimated Delivery Period:
+                        <span *ngIf="line.goodsItem.delivery">
+                            {{line.goodsItem.delivery.estimatedDeliveryPeriod}}>
+                        </span>
+                    </li>
+                    <li>Requested Delivery Period:
+                        <span *ngIf="line.goodsItem.delivery">
+                            {{line.goodsItem.delivery.requestedDeliveryPeriod}}>
+                        </span>
+                    </li>
+                    <li>Special Terms:
+                        <span *ngIf="line.goodsItem.delivery">
+                            {{line.goodsItem.delivery.deliveryTerms.specialTerms}}>
+                        </span>
+                    </li>
+                </ul>
 
+                <li><strong>ITEM PROPERTIES: </strong></li>
+                <ul>
+                    <li>Description: {{line.goodsItem.item.description}}</li>
+                    <li>Free of Charge? {{line.goodsItem.item.freeOfChargeIndicator}}</li>
+                    <li>Origin Country: {{line.goodsItem.item.originCountry}}</li>
+                    <li>Commodity Classification: {{line.goodsItem.item.commodityClassification | json}}</li>
+                    <li>Additional Item Property: {{line.goodsItem.item.additionalItemProperty | json}}</li>
+                    <li>Certificate: {{line.goodsItem.item.certificate}}</li>
+                    <li>Dimension: {{line.goodsItem.item.dimension}}</li>
+                    <li>Seller's Item ID:
+                        <span *ngIf="line.goodsItem.item.sellersItemIdentification">
+                            {{line.goodsItem.item.sellersItemIdentification.id}}
+                        </span>
+                    </li>
+                </ul>
+            </ul>
+
+        </ul>
     </ul>
-</ul>
+</div>
 
 </body>
 </html>

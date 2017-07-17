@@ -4,7 +4,7 @@
 
 export class AddressLine {
     constructor(
-        public line: string, // TODO not sure about string for date/time
-        // TODO left hjid out?
+        public line: string,
+        public hjid: string
     ) {  }
 }
