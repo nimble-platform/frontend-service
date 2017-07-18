@@ -25,12 +25,13 @@ export class AddressSubForm {
     }
 
     public static generateForm(builder: FormBuilder) {
+        let formDef = [''];
         return builder.group({
-            streetName: [''],
-            buildingNumber: [''],
-            cityName: [''],
-            postalCode: [''],
-            country: [''],
+            streetName: formDef,
+            buildingNumber: formDef,
+            cityName: formDef,
+            postalCode: formDef,
+            country: formDef,
         });
     }
 }

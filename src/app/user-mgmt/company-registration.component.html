@@ -1,1 +1,29 @@
-<company-settings [isRegistration]=true></company-settings>
+<h1>Company Registration</h1>
+
+<form class="company-settings-form" [formGroup]="registrationForm" novalidate (ngSubmit)="save(registrationForm)">
+
+    <div class="row">
+
+        <!-- Company Name -->
+        <div class="col-sm-12 company-settings-block">
+            <h3>Company Legal Name</h3>
+            <input type="text" class="form-control" name="companyName" [formControl]="registrationForm.controls['name']">
+        </div>
+
+        <!-- Company Address -->
+        <div class="col-sm-12 company-settings-block">
+            <h3>Company Address</h3>
+            <address-form [group]="registrationForm.controls.address"></address-form>
+        </div>
+
+        <div>
+            <button class="btn btn-success" type="submit"
+                    (click)="save(registrationForm)"
+                    [disabled]="!registrationForm.valid">
+                <span>{{ isSubmitting == false ? 'Add' : 'Adding' }}</span>
+                <img [hidden]="!isSubmitting" class="loading-indicator" src="assets/ajax_loader.gif"/>
+            </button>
+
+        </div>
+    </div>
+</form>

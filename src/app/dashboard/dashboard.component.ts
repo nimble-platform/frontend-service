@@ -7,7 +7,8 @@ import { OrderResponse } from '../bpe/model/order-response';
 @Component({
 	selector: 'nimble-dashboard',
 	providers: [ CookieService ],
-	templateUrl: './dashboard.component.html'
+	templateUrl: './dashboard.component.html',
+	styleUrls: ['./dashboard.component.css']
 })
 
 export class DashboardComponent implements OnInit {
@@ -33,7 +34,13 @@ export class DashboardComponent implements OnInit {
 			this.buyer_history = [];
 			this.seller_history_temp = [];
 			this.seller_history = [];
-			this.loadOrders();			
+			this.loadOrders();
+
+			console.log(typeof this.cookieService.get("company_id"));
+
+			if( this.cookieService.get("company_id") != 'null') { // ToDo: handle proper handling of non existing company ids
+				this.companyName = this.cookieService.get("active_company_name");
+			}
 		}
 		else
 			this.appComponent.checkLogin("/login");

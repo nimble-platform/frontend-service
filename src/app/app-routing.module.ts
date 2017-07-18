@@ -10,7 +10,7 @@ import { SimpleSearchComponent } from './simple-search/simple-search.component';
 import { SimpleSearchDetailsComponent } from './simple-search/simple-search-details.component';
 import { ExplorativeSearchComponent } from './explorative-search/explorative-search.component';
 import { CompanySettingsComponent } from './user-mgmt/company-settings.component';
-import { CompanyRegistrationComponent } from './user-mgmt/register-company';
+import { CompanyRegistrationComponent } from './user-mgmt/company-registration.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },

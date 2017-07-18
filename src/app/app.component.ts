@@ -35,7 +35,7 @@ export class AppComponent implements OnInit {
 			this.eMail = this.cookieService.get("user_email");
 
 			// handle active company
-			if (this.cookieService.get("active_company_id")) {
+			if (this.cookieService.get("company_id") != 'null') {
 				this.activeCompanyName = this.cookieService.get("active_company_name");
 			}
 			else {

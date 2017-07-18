@@ -1,5 +1,4 @@
-<h1 *ngIf="isRegistration">Register a new company</h1>
-<h1 *ngIf="!isRegistration">Company Settings</h1>
+<h1>Company Settings</h1>
 
 <form class="company-settings-form" [formGroup]="settingsForm" novalidate (ngSubmit)="save(settingsForm)">
 
@@ -10,6 +9,7 @@
             <h3>Company Legal Name</h3>
             <input type="text" class="form-control" [formControl]="settingsForm.controls['name']">
         </div>
+
         <!-- Company Address -->
         <div class="col-sm-12 company-settings-block">
             <h3>Company Address</h3>
