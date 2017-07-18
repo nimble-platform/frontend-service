@@ -26,10 +26,10 @@
 						<span class="text-danger" i18n>Action required</span>
 					</td>
 					<td *ngIf="seller.orderResponse.response=='approved'">
-						<span class="text-success" i18n>Approved</span><span *ngIf="seller.orderResponse.message!=''"> ( {{ seller.orderResponse.message }} )</span>
+						<span class="text-success" i18n>Approved</span><!--<span *ngIf="seller.orderResponse.message!=''"> ( {{ seller.orderResponse.message }} )</span>-->
 					</td>
 					<td *ngIf="seller.orderResponse.response=='declined'">
-						<span class="text-danger" i18n>Declined</span><span *ngIf="seller.orderResponse.message!=''"> ( {{ seller.orderResponse.message }} )</span>
+						<span class="text-danger" i18n>Declined</span><!--<span *ngIf="seller.orderResponse.message!=''"> ( {{ seller.orderResponse.message }} )</span>-->
 					</td>
 
 					<!-- order options -->
@@ -37,15 +37,17 @@
 						<button class="btn btn-block btn-success" (click)="respondToOrder(seller.task_id,'approved')" i18n>Approve</button>
 						<button class="btn btn-block btn-danger" (click)="respondToOrder(seller.task_id,'declined')" i18n>Decline</button>
 					</td>
-					<td *ngIf="seller.orderResponse!=''">
+					<td *ngIf="seller.processType == 'Order' && seller.orderResponse!=''">
 						<button class="btn btn-block btn-danger" (click)="removeOrder(seller.process_id)" i18n>Remove from history</button>
 					</td>
 
 					<!-- negotiation options -->
 					<td *ngIf="seller.processType == 'Negotiation' && seller.orderResponse==''">
-						<button class="btn btn-block btn-success" i18n>Approve</button>
-						<button class="btn btn-block btn-info" i18n>Negotiate</button>
-						<button class="btn btn-block btn-danger" (click)="respondToOrder(seller.task_id,'declined')" i18n>Decline</button>
+						<button class="btn btn-block btn-success" (click)="respondToRFQ(seller.task_id,'approved',seller.order.message)" i18n>Approve</button>
+						<button class="btn btn-block btn-danger" (click)="respondToRFQ(seller.task_id,'declined','')" i18n>Decline</button>
+					</td>
+					<td *ngIf="seller.processType == 'Negotiation' && seller.orderResponse!=''">
+						<button class="btn btn-block btn-danger" (click)="removeOrder(seller.process_id)" i18n>Remove from history</button>
 					</td>
 				</tr>
 			</table>
@@ -74,10 +76,10 @@
 						<span class="text-warning" i18n>Waiting for response</span>
 					</td>
 					<td *ngIf="buyer.orderResponse.response=='approved'">
-						<span class="text-success" i18n>Approved</span><span *ngIf="buyer.orderResponse.message!=''"> ( {{ buyer.orderResponse.message }} )</span>
+						<span class="text-success" i18n>Approved</span><!--<span *ngIf="buyer.orderResponse.message!=''"> ( {{ buyer.orderResponse.message }} )</span>-->
 					</td>
 					<td *ngIf="buyer.orderResponse.response=='declined'">
-						<span class="text-danger" i18n>Declined</span><span *ngIf="buyer.orderResponse.message!=''"> ( {{ buyer.orderResponse.message }} )</span>
+						<span class="text-danger" i18n>Declined</span><!--<span *ngIf="buyer.orderResponse.message!=''"> ( {{ buyer.orderResponse.message }} )</span>-->
 					</td>
 
 					<!-- order options -->
@@ -92,10 +94,8 @@
 					<td *ngIf="buyer.processType == 'Negotiation' && buyer.orderResponse==''">
 						<button class="btn btn-block btn-danger" (click)="cancelOrder(buyer.process_id)" i18n>Cancel</button>
 					</td>
-					<td *ngIf="buyer.processType == 'Negotiation' && buyer.orderResponse=='approved'">
-						<button class="btn btn-block btn-info" i18n>Order</button>
-					</td>
 					<td *ngIf="buyer.processType == 'Negotiation' && buyer.orderResponse!=''">
+						<button *ngIf="buyer.orderResponse.response=='approved'" class="btn btn-block btn-info" (click)="placeOrder(buyer)" i18n>Order</button>
 						<button class="btn btn-block btn-danger" (click)="removeOrder(buyer.process_id)" i18n>Remove from history</button>
 					</td>
 				</tr>

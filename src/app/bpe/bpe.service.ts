@@ -134,7 +134,7 @@ export class BPEService {
             .catch(this.handleError);
 	}
 
-	respondToRfq(task: string, rfqResponse: RequestForQuotationResponse): Promise<any> {
+	respondToRFQ(task: string, rfqResponse: RequestForQuotationResponse): Promise<any> {
 		const url = `${this.url}/rest/engine/default/task/${task}/complete`;
 		var jsonToSend = {
 			"variables": {

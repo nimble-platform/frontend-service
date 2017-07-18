@@ -3,6 +3,9 @@ import { AppComponent } from '../app.component';
 import { CookieService } from 'ng2-cookies';
 import { BPEService } from '../bpe/bpe.service';
 import { OrderResponse } from '../bpe/model/order-response';
+import { Order } from '../bpe/model/order';
+import { OrderObject } from '../bpe/model/order-object';
+import { RequestForQuotationResponse } from '../bpe/model/request-for-quotation-response';
 
 @Component({
 	selector: 'nimble-dashboard',
@@ -71,6 +74,8 @@ export class DashboardComponent implements OnInit {
 							vOrderResponse = field.value;
 						else if (field.name == "terms")
 							vOrder = field.value;
+						else if (field.name == "rfqResponse")
+							vOrderResponse = field.value;
 
 						for (let t of this.buyer_history_temp) {
 							if (t.process_id == vProcess_id) {
@@ -139,6 +144,8 @@ export class DashboardComponent implements OnInit {
 							vOrderResponse = field.value;
 						else if (field.name == "terms")
 							vOrder = field.value;
+						else if (field.name == "rfqResponse")
+							vOrderResponse = field.value;
 						for (let t of this.seller_history_temp) {
 							if (t.process_id == vProcess_id) {
 								vTask_id = t.task_id;
@@ -178,10 +185,45 @@ export class DashboardComponent implements OnInit {
 		});
 	}
 
+	placeOrder(obj: any) {
+		var orderObj = new OrderObject('','','','','','','');
+		var order = new Order('','','','');
+		order.amount = obj.order.amount;
+		order.message = obj.order.message;
+		order.product_id = obj.order.product_id;
+		order.product_name = obj.order.product_name;
+		orderObj.order = JSON.stringify(order);
+		orderObj.seller = obj.seller;
+		orderObj.sellerName = obj.sellerName;
+		orderObj.buyer = obj.buyer;
+		orderObj.buyerName = obj.buyerName;
+		orderObj.connection = "|"+obj.seller+"|"+obj.buyer+"|";
+		this.bpeService.placeOrder(orderObj)
+		.then(res => {
+			this.removeOrder(obj.process_id);
+		})
+		.catch(error => {
+			this.loadOrders();
+		});
+	}
+	
 	respondToOrder(task: string, response: string) {
 		var orderResponse = new OrderResponse('','');
 		orderResponse.response = response;
 		this.bpeService.respondToOrder(task,orderResponse)
+		.then(res => {
+			this.loadOrders();
+		})
+		.catch(error => {
+			this.loadOrders();
+		});
+	}
+	
+	respondToRFQ(task: string, response: string, message: string) {
+		var rfqResponse = new RequestForQuotationResponse('','');
+		rfqResponse.response = response;
+		rfqResponse.message = message;
+		this.bpeService.respondToRFQ(task,rfqResponse)
 		.then(res => {
 			this.loadOrders();
 		})
