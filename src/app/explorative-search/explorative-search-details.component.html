@@ -3,16 +3,24 @@
     <div class="row">
         <div class="col-md-8">
             <!-- if there is no tableResult show the Diagram -->
-            
+
             <!-- <div *ngIf="!tableResult" class="displayArea" #myDiagramDiv></div> -->
             <div [hidden]="hiddenElement" class="displayArea" #myDiagramDiv></div>
             <div [hidden]="!hiddenElement" style="height: 200px; overflow: auto;">
-                <table *ngFor="let column of sparqlSelectedOption?.columns; let i=index">
-                      
+                <table >
+
                     <tr>
-                        
-                        <th style="width:50%" >{{column}}</th>
-                        <td style="width:50%" >{{sparqlSelectedOption?.rows[0][i]}} <br/></td>
+                        <th style="width:50%">Property</th>
+                        <td style="width:50%;font-weight: bold">Value
+                            <wbr/>
+                        </td>
+                    </tr>
+                    <tr *ngFor="let column of sparqlSelectedOption?.columns; let i=index">
+
+                        <th style="width:50%">{{column}}</th>
+                        <td style="width:50%">{{sparqlSelectedOption?.rows[0][i]}}
+                            <wbr/>
+                        </td>
                     </tr>
                 </table>
             </div>
@@ -45,22 +53,22 @@
         </div>
         <div class="col-md-4">
             <!-- Child Component Explorative Search Filter-->
-           <div *ngIf="filterQuery"class="panel panel-default">
-               <div class="panel-body" *ngIf="(filterConfig | json)!= '{}'">
-                   <!-- pass all the variables of class to child -->
-                   <search-filter [filterConfig]="filterJSON" [keyForConf]="filterQuery"
-                                  [mainConceptName]="filterQueryRoot" (filterSelectionUpdated)="handleFilterSelectionUpdated($event)">
-                   </search-filter>
-               </div>
-           </div>
-        </div> <!-- child component Search Filter ends here -->
+            <div *ngIf="filterQuery" class="panel panel-default">
+                <div class="panel-body" *ngIf="(filterConfig | json)!= '{}'">
+                    <!-- pass all the variables of class to child -->
+                    <search-filter [filterConfig]="filterJSON" [keyForConf]="filterQuery" [mainConceptName]="filterQueryRoot" (filterSelectionUpdated)="handleFilterSelectionUpdated($event)">
+                    </search-filter>
+                </div>
+            </div>
+        </div>
+        <!-- child component Search Filter ends here -->
     </div>
     <!-- container for the Big Red Search Button -->
     <div class="row">
         <div class="col-md-8"></div>
         <!-- will show up only when filterQuery Exists -->
         <div class="col-md-4" *ngIf="filterQuery">
-              <button class="btn btn-lg btn-danger" (click)="genTable()">Search</button>
+            <button class="btn btn-lg btn-danger" (click)="genTable()">Search</button>
         </div>
     </div>
 </div>
