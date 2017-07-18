@@ -8,9 +8,11 @@
             <div [hidden]="hiddenElement" class="displayArea" #myDiagramDiv></div>
             <div [hidden]="!hiddenElement" style="height: 200px; overflow: auto;">
                 <table *ngFor="let column of sparqlSelectedOption?.columns; let i=index">
+                      
                     <tr>
-                        <th>{{column}}</th>
-                        <td>{{sparqlSelectedOption?.rows[0][i]}}</td>
+                        
+                        <th style="width:50%" >{{column}}</th>
+                        <td style="width:50%" >{{sparqlSelectedOption?.rows[0][i]}} <br/></td>
                     </tr>
                 </table>
             </div>
