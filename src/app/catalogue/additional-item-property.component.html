@@ -1,7 +1,18 @@
 <div *ngIf="stringValue" class="input-group form-group">
-    <label class="col-3 control-label">{{additionalItemProperty.name}}</label>
+
+    <label class="col-6 control-label" [ngClass]="{'font-weight-bold': displayOnly}">
+        {{additionalItemProperty.name}}<span *ngIf="displayOnly">:</span>
+    </label>
     <!--<input type="text" class="form-control" [value]="additionalItemProperty.value[0]">-->
-    <input type="text" class="form-control" [(ngModel)]="additionalItemProperty.value[0]">
+
+    <input *ngIf="!displayOnly" type="text" class="form-control"
+           [(ngModel)]="additionalItemProperty.value[0]">
+
+    <span contenteditable="true" *ngIf="displayOnly" disabled="true"
+          class="text-box" [(ngModel)]="additionalItemProperty.value[0]" ngDefaultControl>
+    {{additionalItemProperty.value[0]}}</span>
+
+
 </div>
 <div *ngIf="binaryValue" class="input-group form-group">
     <label class="col-3 control-label">{{additionalItemProperty.name}}</label>

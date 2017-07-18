@@ -7,86 +7,32 @@
 
 <body>
 
-<div class="container" style="border-style: solid; border-color: #a21c26; border-width: 3px">
-    <h3>Product Details:</h3>
-    <p>Item name: {{line.goodsItem.item.name}}</p>
-    <p>Description: {{line.goodsItem.item.description}}</p>
+<div class="container well">
 
-    <!-- Repeat commodity class -->
-    <div *ngFor="let class of line.goodsItem.item.commodityClassification" [attr.data-index]="i"
-         class="container" style="border-style: solid; border-color: #a21c26; border-width: 3px">
-        <p>Class name: {{class.itemClassificationCode.name}}</p>
+    <div class="row">
+        <div class="col-sm-9"><h4><u>Product Overview</u></h4></div>
+        <div class="col-sm-3">Seller's ID: {{catalogueLine.goodsItem.item.sellersItemIdentification}}</div>
+    </div>
 
-        <div *ngFor="let property of line.goodsItem.item.additionalItemProperty">
-            <div *ngIf="property.itemClassificationCode.value === class.itemClassificationCode.value">
-                <!-- following filter is needed due to redundant property bug -->
-                <p *ngIf="property.value[0] !== ''">Name: {{property.name}}, Value: {{property.value}}</p>
-            </div>
+    <div class="row space-after">
+        <div class="col-sm-3"><strong>Item name:</strong> {{catalogueLine.goodsItem.item.name}}</div>
+        <div class="col-sm-3"><strong>Dimensions:</strong> {{catalogueLine.goodsItem.item.dimension}}</div>
+        <div class="col-sm-3"><strong>Certificates:</strong> {{catalogueLine.goodsItem.item.certificate}}</div>
+        <div class="col-sm-3"><strong *ngIf="catalogueLine.goodsItem.item.freeOfChargeIndicator">Free of charge!</strong></div>
+    </div>
+
+    <p><strong>Description:</strong> {{catalogueLine.goodsItem.item.description}}</p>
+
+    <div class="align-center space-after">
+        <div class="btn-group" role="group" style="display: inline-block">
+            <button type="button" class="btn btn-info pointer" (click)="selectedTab = 'Product Details'">Product Details</button>
+            <button type="button" class="btn btn-info pointer" (click)="selectedTab = 'Trading Details'">Trading Details</button>
         </div>
     </div>
 
-    <ul>
-        <li>Warranty Validity Period: {{line.warrantyValidityPeriod}}</li>
-        <li>Warranty Information: {{line.warrantyInformation}}</li>
-        <li><strong>REQUIRED ITEM LOCATION QUANTITY PROPERTIES: </strong></li>
-        <ul>
-            <li>Price: {{line.requiredItemLocationQuantity.price | json}}</li>
-            <li>Applicable Territory Address: {{line.requiredItemLocationQuantity.applicableTerritoryAddress}}</li>
-            <li>Trading Restrictions: {{line.requiredItemLocationQuantity.tradingRestrictions}}</li>
+    <product-details *ngIf="selectedTab === 'Product Details'" [catalogueLine]="catalogueLine"></product-details>
 
-            <li><strong>PACKAGE PROPERTIES: </strong></li>
-            <ul>
-                <li>Packaging Type Code:
-                    <span *ngIf="line.requiredItemLocationQuantity._package">
-                        {{line.requiredItemLocationQuantity._package.packagingTypeCode}}
-                    </span>
-                </li>
-                <li>Quantity:
-                    <span *ngIf="line.requiredItemLocationQuantity._package">
-                        {{line.requiredItemLocationQuantity._package.quantity}}
-                    </span>
-                </li>
-            </ul>
-
-            <li><strong>GOODS ITEM PROPERTIES: </strong></li>
-            <ul>
-                <li><strong>DELIVERY PROPERTIES: </strong></li>
-                <ul>
-                    <li>Estimated Delivery Period:
-                        <span *ngIf="line.goodsItem.delivery">
-                            {{line.goodsItem.delivery.estimatedDeliveryPeriod}}>
-                        </span>
-                    </li>
-                    <li>Requested Delivery Period:
-                        <span *ngIf="line.goodsItem.delivery">
-                            {{line.goodsItem.delivery.requestedDeliveryPeriod}}>
-                        </span>
-                    </li>
-                    <li>Special Terms:
-                        <span *ngIf="line.goodsItem.delivery">
-                            {{line.goodsItem.delivery.deliveryTerms.specialTerms}}>
-                        </span>
-                    </li>
-                </ul>
-
-                <li><strong>ITEM PROPERTIES: </strong></li>
-                <ul>
-                    <li>Description: {{line.goodsItem.item.description}}</li>
-                    <li>Free of Charge? {{line.goodsItem.item.freeOfChargeIndicator}}</li>
-                    <li>Origin Country: {{line.goodsItem.item.originCountry}}</li>
-                    <li>Commodity Classification: {{line.goodsItem.item.commodityClassification | json}}</li>
-                    <li>Certificate: {{line.goodsItem.item.certificate}}</li>
-                    <li>Dimension: {{line.goodsItem.item.dimension}}</li>
-                    <li>Seller's Item ID:
-                        <span *ngIf="line.goodsItem.item.sellersItemIdentification">
-                            {{line.goodsItem.item.sellersItemIdentification.id}}
-                        </span>
-                    </li>
-                </ul>
-            </ul>
-
-        </ul>
-    </ul>
+    <trading-details *ngIf="selectedTab === 'Trading Details'" [catalogueLine]="catalogueLine"></trading-details>
 </div>
 
 </body>

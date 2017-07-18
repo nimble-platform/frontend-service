@@ -1,4 +1,4 @@
-import { Component, Input } from "@angular/core";
+import {Component, Input} from "@angular/core";
 import { CatalogueLine } from "./model/publish/catalogue-line";
 
 @Component({
@@ -8,6 +8,7 @@ import { CatalogueLine } from "./model/publish/catalogue-line";
 
 export class CatalogueLineViewComponent {
 
-    @Input() line: CatalogueLine;
+    selectedTab: string = "Product Details";
+    @Input() catalogueLine: CatalogueLine;
 
 }

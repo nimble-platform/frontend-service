@@ -12,7 +12,7 @@
 <div *ngIf="catalogue">
     <p>Issue date: {{catalogue.issueDate}}</p>
     <catalogue-line-view *ngFor="let line of catalogue.catalogueLine"
-                         [line]="line">
+                         [catalogueLine]="line">
     </catalogue-line-view>
 </div>
 

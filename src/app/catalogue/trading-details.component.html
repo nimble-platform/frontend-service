@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body style="background-color: #f5f5f5">
+
+<div *ngIf="catalogueLine.goodsItem.delivery">
+<h5><u>Delivery</u></h5>
+<p><strong>Delivery terms:</strong> {{catalogueLine.goodsItem.delivery.deliveryTerms}}</p>
+<p><strong>Special terms:</strong> {{catalogueLine.goodsItem.delivery.deliveryTerms.specialTerms}}</p>
+<p><strong>Estimated delivery period:</strong> {{catalogueLine.goodsItem.delivery.estimatedDeliveryPeriod}}</p>
+<p><strong>Requested delivery period:</strong> {{catalogueLine.goodsItem.delivery.requestedDeliveryPeriod}}</p>
+<p><strong>Applicable territory:</strong> {{catalogueLine.requiredItemLocationQuantity.applicableTerritoryAddress}}</p>
+</div>
+
+<div *ngIf="catalogueLine.requiredItemLocationQuantity._package">
+<h5><u>Packaging</u></h5>
+<p><strong>Quantity:</strong> {{catalogueLine.requiredItemLocationQuantity._package.quantity}}</p>
+<p><strong>Packaging type:</strong> {{catalogueLine.requiredItemLocationQuantity._package.packagingTypeCode.name}}</p>
+</div>
+
+<h5><u>Warranty</u></h5>
+<p><strong>Warranty validity period:</strong> {{catalogueLine.warrantyValidityPeriod}}</p>
+<p><strong>Warranty information:</strong> {{catalogueLine.warrantyInformation}}</p>
+<p><strong>Trading restrictions:</strong> {{catalogueLine.requiredItemLocationQuantity.tradingRestrictions}}</p>
+
+</body>
+</html>

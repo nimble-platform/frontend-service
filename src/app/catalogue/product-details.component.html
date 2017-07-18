@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body style="background-color: #f5f5f5">
+
+    <!-- Custom properties go here -->
+    <div *ngIf="customPropertiesBlock">
+        <p>
+            <button type="button" class="btn btn-outline-primary" (click)="customPropertiesBlock.isCollapsed = !customPropertiesBlock.isCollapsed"
+                    [attr.aria-expanded]="!customPropertiesBlock.isCollapsed" aria-controls="propertyBlock">
+                {{customPropertiesBlock.name}}
+            </button>
+        </p>
+        <div id="customPropertiesBlock" [ngbCollapse]="customPropertiesBlock.isCollapsed">
+            <additional-item-property *ngFor="let property of customPropertiesBlock[PROPERTY_BLOCK_FIELD_PROPERTIES]"
+                                      [additionalItemProperty]="property" [displayOnly]="true">
+            </additional-item-property>
+        </div>
+    </div>
+
+    <div *ngFor="let propertyBlock of propertyBlocks">
+        <p>
+            <button type="button" class="btn btn-outline-primary" (click)="propertyBlock.isCollapsed = !propertyBlock.isCollapsed"
+                    [attr.aria-expanded]="!propertyBlock.isCollapsed" aria-controls="propertyBlock">
+                {{propertyBlock.name}}
+            </button>
+        </p>
+        <div id="propertyBlock" [ngbCollapse]="propertyBlock.isCollapsed">
+            <div *ngFor="let property of propertyBlock[PROPERTY_BLOCK_FIELD_PROPERTIES]">
+                <!-- *ngIf required because of duplicate catalog property bug -->
+                <additional-item-property *ngIf="property.value[0] !== ''" [displayOnly]="true"
+                                          [additionalItemProperty]="property">
+                </additional-item-property>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

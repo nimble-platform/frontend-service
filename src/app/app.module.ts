@@ -30,6 +30,8 @@ import {ExplorativeSearchDetailsComponent} from './explorative-search/explorativ
 import {ProductPropertiesComponent} from "./catalogue/product-properties.component";
 import {CatalogueViewComponent} from "./catalogue/catalogue-view.component";
 import {CatalogueLineViewComponent} from "./catalogue/catalogue-line-view.component";
+import {ProductDetailsComponent} from "./catalogue/product-details.component";
+import {TradingDetailsComponent} from "./catalogue/trading-details.component";
 
 
 @NgModule({
@@ -60,7 +62,9 @@ import {CatalogueLineViewComponent} from "./catalogue/catalogue-line-view.compon
         ExplorativeSearchDetailsComponent,
         AdditionalItemPropertyComponent,
         CatalogueViewComponent,
-        CatalogueLineViewComponent
+        CatalogueLineViewComponent,
+        ProductDetailsComponent,
+        TradingDetailsComponent
     ],
     providers: [
         UserService,
