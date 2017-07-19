@@ -15,6 +15,8 @@ import {CategoryService} from "./category.service";
 export class CategorySearchComponent implements OnInit {
     categories: Category[];
     startPublishingFromScratch: boolean;
+    submitted: boolean = false;
+    callback: boolean = false;
 
     constructor(private router: Router,
                 private route: ActivatedRoute,
@@ -34,6 +36,8 @@ export class CategorySearchComponent implements OnInit {
         this.categoryService.getCategories(keyword)
             .then(categories => {
                 this.categories = categories;
+                this.callback = true;
+                this.submitted = false;
             });
     }
 

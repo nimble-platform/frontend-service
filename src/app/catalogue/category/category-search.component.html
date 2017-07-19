@@ -1,7 +1,15 @@
 <h3 i18n>Choose product (or service) category</h3>
+
 <div class="row justify-content-md-center col-12 mt-3">
+
+    <div [hidden]="callback || !submitted" class="space-right">
+        <img class="space-before" src="assets/form_loader.gif"/>
+    </div>
+
     <input #searchBox class="form-control col-4"/>
-    <button type="button" (click)="getCategories(searchBox.value)" class="btn btn-success col-3 ml-3" i18n>Search product category</button>
+    <button type="button" (click)="getCategories(searchBox.value); callback = false; submitted = true"
+            class="btn btn-success col-3 ml-3" i18n>Search product category</button>
+
 </div>
 
 <ul class="list-group container mt-4" style="max-height: 500px; overflow-y: scroll;">
