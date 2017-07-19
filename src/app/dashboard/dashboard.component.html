@@ -96,6 +96,7 @@
 					</td>
 					<td *ngIf="buyer.processType == 'Negotiation' && buyer.orderResponse!=''">
 						<button *ngIf="buyer.orderResponse.response=='approved'" class="btn btn-block btn-info" (click)="placeOrder(buyer)" i18n>Order</button>
+						<button *ngIf="buyer.orderResponse.response=='declined'" class="btn btn-block btn-info" (click)="negotiate(buyer.order)" i18n>Negotiate</button>
 						<button class="btn btn-block btn-danger" (click)="removeOrder(buyer.process_id)" i18n>Remove from history</button>
 					</td>
 				</tr>

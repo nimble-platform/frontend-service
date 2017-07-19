@@ -15,6 +15,7 @@ export class NegotiationMainComponent {
 
     terms: Terms = new Terms("", "", "", "", "");
     negotiatables = [];
+	negotiationExpanded = false;
 	submitted = false;
 	callback = false;
 	error_detc = false;
@@ -37,6 +38,24 @@ export class NegotiationMainComponent {
             var b_comp = b.key;
             return a_comp.localeCompare(b_comp);
         });
+		if (this.isJson(this.cookieService.get("negotiation_details"))) {
+			var negDetails = JSON.parse(this.cookieService.get("negotiation_details"));
+			if (this.isJson(negDetails.message)) {
+				if (negDetails.product_id == this.productResponse.id) {
+					var negParams = JSON.parse(negDetails.message);
+					this.negotiationExpanded = true;
+					this.terms.amount = negParams.amount;
+					this.terms.price = negParams.price;
+					for (let negSrc in negParams) {
+						for (let negTar of this.negotiatables) {
+							if (negTar.key == negSrc) {
+								negTar.value = negParams[negSrc];
+							}
+						}
+					}
+				}
+			}
+		}
     }
 
 	onKey(event: any) {
@@ -87,4 +106,14 @@ export class NegotiationMainComponent {
         }
         return negotiatable;
     }
+	
+	isJson(str: string): boolean {
+		try {
+			JSON.parse(str);
+		} catch (e) {
+			return false;
+		}
+		return true;
+	}
+	
 }

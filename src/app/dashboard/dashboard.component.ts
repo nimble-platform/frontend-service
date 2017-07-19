@@ -6,6 +6,7 @@ import { OrderResponse } from '../bpe/model/order-response';
 import { Order } from '../bpe/model/order';
 import { OrderObject } from '../bpe/model/order-object';
 import { RequestForQuotationResponse } from '../bpe/model/request-for-quotation-response';
+import { Router } from '@angular/router';
 
 @Component({
 	selector: 'nimble-dashboard',
@@ -24,6 +25,7 @@ export class DashboardComponent implements OnInit {
 	constructor(
 		private cookieService: CookieService,
 		private bpeService: BPEService,
+		private router: Router,
 		private appComponent: AppComponent
 	) {	}
 
@@ -230,6 +232,11 @@ export class DashboardComponent implements OnInit {
 		.catch(error => {
 			this.loadOrders();
 		});
+	}
+	
+	negotiate(obj: any) {
+		this.cookieService.set("negotiation_details",JSON.stringify(obj),new Date(new Date().getTime()+5000));
+		this.router.navigate(['/simple-search-details',obj.product_id]);
 	}
 
 	removeOrder(process:string) {
