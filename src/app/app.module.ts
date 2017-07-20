@@ -27,6 +27,7 @@ import { ExplorativeSearchComponent } from './explorative-search/explorative-sea
 import { ExplorativeSearchService } from './explorative-search/explorative-search.service';
 import { ExplorativeSearchFormComponent } from './explorative-search/explorative-search-form.component';
 import { ExplorativeSearchDetailsComponent } from './explorative-search/explorative-search-details.component';
+import { ExplorativeSearchFilterComponent } from './explorative-search/explorative-search-filter.component';
 import { KeysPipe } from './explorative-search/pipes/keys';
 import { ProductPropertiesComponent } from './catalogue/product-properties.component';
 import { AddressSubForm } from './user-mgmt/subforms/address.component';
@@ -58,9 +59,10 @@ import { NegotiationMainComponent } from './negotiation/negotiation-main.compone
 		SimpleSearchComponent,
 		SimpleSearchDetailsComponent,
 		SimpleSearchFormComponent,
-        ExplorativeSearchComponent,
+         ExplorativeSearchComponent,
         ExplorativeSearchFormComponent,
         ExplorativeSearchDetailsComponent,
+        ExplorativeSearchFilterComponent,
 		KeysPipe,
         AdditionalItemPropertyComponent,
 		ProductPropertiesComponent,

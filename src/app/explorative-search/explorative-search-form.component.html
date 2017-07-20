@@ -1,9 +1,10 @@
+<!-- Explorative Search Form HTML -->
 <!-- Search Bar -->
 <div class="row">
     <div class="col-12">
         <div class="input-group form-group">
             <label class="input-group-addon">Search</label>
-            <input type="text" class="form-control" #searchVal (keyup.enter)="Search(searchVal.value)"  placeholder="Company/Business/Product"/>
+            <input type="text" class="form-control" #searchVal (keyup.enter)="Search(searchVal.value)" placeholder="Company/Business/Product"/>
             <span><button (click)="Search(searchVal.value)" class="btn btn-success" type="button">Search</button></span>
         </div> <!--input-group-->
     </div> <!-- col-12 -->
@@ -47,9 +48,9 @@
 <div class="col-12">
     <ul>
         <li *ngFor="let eachOutput of Output; let outerindex = index">
-            <div id="kwBtn" *ngFor="let each of eachOutput.resp.conceptOverview; let innerIndex = index">
+            <div class="btn-group" role="group" *ngFor="let each of eachOutput.resp.conceptOverview; let innerIndex = index">
                 <button class="btn btn-success" *ngIf="innerIndex === 0 || showMore[outerIndex]"
-                  (click)="postQuery(each)"
+                  (click)="getQuery(each)"
                 >{{each}}</button>
             </div>
             <div style="display:inline">
@@ -67,4 +68,4 @@
 
 <!-- The Graph Display Component -->
 <!-- Data Visualization here-->
-<explore-search-details [config]="visData" [name]="testString"></explore-search-details>
+<explore-search-details [config]="visData"></explore-search-details>
