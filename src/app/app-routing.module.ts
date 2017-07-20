@@ -22,7 +22,7 @@ const routes: Routes = [
   { path: 'simple-search', component: SimpleSearchComponent },
   { path: 'simple-search-details/:id', component: SimpleSearchDetailsComponent },
   { path: 'explore-search', component: ExplorativeSearchComponent },
-  { path: 'catalogue', component: CatalogueViewComponent }
+  { path: 'catalogue', component: CatalogueViewComponent },
 ];
 
 @NgModule({

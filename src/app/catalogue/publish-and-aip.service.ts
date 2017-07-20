@@ -50,4 +50,11 @@ export class PublishAndAIPCService {
         let index = this.deletedProperties.indexOf(inputVal);
         this.deletedProperties.splice(index, 1);
     }
+
+    resetService() {
+        this.customProperties = [];
+        this.baseProperties = [];
+        this.specificProperties = [];
+        this.deletedProperties = [];
+    }
 }

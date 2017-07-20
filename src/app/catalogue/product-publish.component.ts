@@ -14,13 +14,14 @@ import {CookieService} from "ng2-cookies";
 import {ModelUtils} from "./model/model-utils";
 import {ActivatedRoute, Params, Router} from "@angular/router";
 import {ProductPropertiesComponent} from "./product-properties.component";
+import {PublishAndAIPCService} from "./publish-and-aip.service";
 import 'rxjs/Rx' ;
 
 const uploadModalityKey: string = "UploadModality";
 
 @Component({
     selector: 'product-publish',
-    templateUrl: './product-publish.component.html'
+    templateUrl: './product-publish.component.html',
 })
 
 export class ProductPublishComponent implements OnInit {
@@ -49,44 +50,59 @@ export class ProductPublishComponent implements OnInit {
 
     constructor(private categoryService: CategoryService,
                 private catalogueService: CatalogueService,
+                private publishAndAIPCService: PublishAndAIPCService,
                 private router: Router,
                 private route: ActivatedRoute,
                 private cookieService: CookieService) {
     }
 
     ngOnInit() {
+
         let publishFromScratch: boolean;
+        let editCatalogueLine: boolean;
+
         this.route.queryParams.subscribe((params: Params) => {
             publishFromScratch = params['fromScratch'] == "true";
-            this.initView(publishFromScratch);
+            editCatalogueLine = params['edit'] == "true";
+
+            this.initView(publishFromScratch, editCatalogueLine);
         });
     }
 
-    private initView(publishFromScratch: boolean): void {
-        let userId = this.cookieService.get("user_id");
-        this.catalogueService.getCatalogue(userId).then(catalogue => {
+    private initView(publishFromScratch: boolean, editCatalogueLine: boolean): void {
 
-            // initiate the goods item with the selected property
-            this.selectedCategories = this.categoryService.getSelectedCategories();
+        if (editCatalogueLine) {
+            this.catalogueLine = this.catalogueService.catalogueLineToEdit;
+            // TODO somehow extract categories from CatalogueLine and push to selectedCategories
+        }
+        else {
+            this.catalogueLine = null;
+            this.publishAndAIPCService.resetService();
+            let userId = this.cookieService.get("user_id");
+            this.catalogueService.getCatalogue(userId).then(catalogue => {
 
-            // initiate the "new" goods item if it is not already initiated
-            this.catalogueLine = this.catalogueService.getDraftItem();
+                // initiate the goods item with the selected property
+                this.selectedCategories = this.categoryService.getSelectedCategories();
 
-            if (this.catalogueLine == null || publishFromScratch == true) {
-                this.catalogueLine = ModelUtils.createCatalogueLine(catalogue.providerParty)
-                this.catalogueService.setDraftItem(this.catalogueLine);
-            }
+                // initiate the "new" goods item if it is not already initiated
+                this.catalogueLine = this.catalogueService.getDraftItem();
 
-            if (this.selectedCategories != []) {
-                for (let category of this.selectedCategories) {
-                    let newCategory = this.isNewCategory(category);
+                if (this.catalogueLine == null || publishFromScratch == true) {
+                    this.catalogueLine = ModelUtils.createCatalogueLine(catalogue.providerParty)
+                    this.catalogueService.setDraftItem(this.catalogueLine);
+                }
 
-                    if (newCategory) {
-                        this.updateItemWithNewCategory(category);
+                if (this.selectedCategories != []) {
+                    for (let category of this.selectedCategories) {
+                        let newCategory = this.isNewCategory(category);
+
+                        if (newCategory) {
+                            this.updateItemWithNewCategory(category);
+                        }
                     }
                 }
-            }
-        });
+            });
+        }
     }
 
     private updateItemWithNewCategory(category: Category): void {
@@ -118,7 +134,7 @@ export class ProductPublishComponent implements OnInit {
     }
 
     private addCategoryOnClick(event: any): void {
-        this.router.navigate(['categorysearch'], {queryParams: {fromScratch: false}});
+        this.router.navigate(['categorysearch'], {queryParams: {fromScratch: false, edit: false}});
     }
 
     private publishProduct(): void {
@@ -319,4 +335,5 @@ export class ProductPublishComponent implements OnInit {
         });
         return uuid;
     };
+
 }

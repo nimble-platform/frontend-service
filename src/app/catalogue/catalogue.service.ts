@@ -20,6 +20,8 @@ export class CatalogueService {
     private catalogue: Catalogue;
     private draftCatalogueLine: CatalogueLine;
 
+    public catalogueLineToEdit: CatalogueLine;
+
     constructor(private http: Http,
                 private userService: UserService) {
     }
