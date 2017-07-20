@@ -155,6 +155,9 @@
                                 <input type="text" class="form-control" aria-describedby="componentName"
                                        [value]="image.objectMetadata"/>
                             </div>
+                            <span><button class="btn btn-xs" style="background-color: white; color: #0d6cd8"
+                                          (click)="imageCancel(image.fileName);"
+                            >&times;</button></span>
                         </div>
                     </li>
                 </ul>

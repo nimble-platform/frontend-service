@@ -38,6 +38,7 @@ export class ProductPublishComponent implements OnInit {
     // placeholder for the custom property
     newProperty: ItemProperty = ModelUtils.createAdditionalItemProperty(null, null);
 
+
     /*
      * state objects for feedback about the publish operation
      */
@@ -225,6 +226,18 @@ export class ProductPublishComponent implements OnInit {
                 document.getElementById('img').setAttribute("src", reader.result);
             };
             reader.readAsDataURL(file);
+        }
+    }
+
+    /* cancel an image upload */
+    imageCancel(fileName: string) {
+        let binaryObjects = this.newProperty.embeddedDocumentBinaryObject;
+
+        let index = binaryObjects.findIndex( img => img.fileName === fileName );
+
+        console.log(index);
+        if(index > -1){
+            binaryObjects.splice(index,1);
         }
     }
 
