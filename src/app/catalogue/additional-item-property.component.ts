@@ -12,12 +12,6 @@ import {PublishAndAIPCService} from "./publish-and-aip.service";
 
 export class AdditionalItemPropertyComponent implements OnInit {
     @Input() additionalItemProperty:ItemProperty;
-    /* Display only attribute bolds the label text, adds
-     * a colon to the end of the label, and makes properties
-     * multi-line viewable and uneditable
-     * TODO: make this a separate component?
-     */
-    @Input() displayOnly = false;
 
     stringValue:boolean = true;
     binaryValue:boolean = false;
