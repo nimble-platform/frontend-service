@@ -1,26 +1,42 @@
 <div *ngIf="stringValue" class="input-group form-group">
 
     <label class="col-6 control-label" [ngClass]="{'font-weight-bold': displayOnly}">
-        {{additionalItemProperty.name}}<span *ngIf="displayOnly">:</span>
-    </label>
-    <!--<input type="text" class="form-control" [value]="additionalItemProperty.value[0]">-->
+        <div (mouseover)="mouseover=true" (mouseout)="mouseover=false" >
+            {{additionalItemProperty.name}}
+        </div>
 
-    <input *ngIf="!displayOnly" type="text" class="form-control"
-           [(ngModel)]="additionalItemProperty.value[0]">
+    </label>
+
+    <!--<input type="text" class="form-control" [value]="additionalItemProperty.value[0]">-->
+    <input *ngIf="!displayOnly" type="text" class="form-control" [(ngModel)]="additionalItemProperty.value[0]">
+    <span *ngIf="!displayOnly" ><button class="btn btn-xs btn-danger"
+                  (click)="deleteCP(additionalItemProperty.name); $event.stopPropagation()"
+    >&times;</button></span>
 
     <span contenteditable="true" *ngIf="displayOnly" disabled="true"
           class="text-box" [(ngModel)]="additionalItemProperty.value[0]" ngDefaultControl>
     {{additionalItemProperty.value[0]}}</span>
 
-
 </div>
+
+<div style="background-color: #daeeff; padding-bottom: 10px; padding-top: 10px;padding-left: 14px;
+ padding-right: 14px;margin-bottom: 16px; border-radius: 8px" *ngIf="mouseover">
+    {{additionalItemProperty.propertyDefinition}}
+</div>
+
 <div *ngIf="binaryValue" class="input-group form-group">
     <label class="col-3 control-label">{{additionalItemProperty.name}}</label>
     <div style="display: inline-block">
         <img *ngFor="let image of additionalItemProperty.embeddedDocumentBinaryObject"
+
              class="pr-2"
              src="data:{{image.mimeCode}};base64,{{image.value}}"
              height="100"
-             width="100"/>
+             width="100"
+
+        />
+        <span><button class="btn btn-xs btn-danger"
+                      (click)="deleteCP(additionalItemProperty.name); $event.stopPropagation()"
+        >&times;</button></span>
     </div>
 </div>

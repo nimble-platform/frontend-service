@@ -3,6 +3,7 @@
  */
 import {Component, Input, OnInit} from "@angular/core";
 import {ItemProperty} from "./model/publish/item-property";
+import {PublishAndAIPCService} from "./publish-and-aip.service";
 
 @Component({
     selector: 'additional-item-property',
@@ -21,10 +22,18 @@ export class AdditionalItemPropertyComponent implements OnInit {
     stringValue:boolean = true;
     binaryValue:boolean = false;
 
+    constructor(
+        private _publishAndAIPCService: PublishAndAIPCService) { }
+
     ngOnInit(): void {
         if(this.additionalItemProperty.embeddedDocumentBinaryObject.length != 0) {
             this.stringValue = false;
             this.binaryValue = true;
         }
+    }
+
+    //store in deleted properties for later check
+    deleteCP(inputVal: string) {
+        this._publishAndAIPCService.addToDeletedProperties(inputVal);
     }
 }

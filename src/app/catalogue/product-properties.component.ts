@@ -2,11 +2,12 @@
  * Created by suat on 17-May-17.
  */
 
-import {Component, Input, OnInit} from "@angular/core";
+import {Component, Input, OnChanges, OnInit} from "@angular/core";
 import {Category} from "./model/category/category";
 import {Property} from "./model/category/property";
 import {ItemProperty} from "./model/publish/item-property";
 import {CatalogueLine} from "./model/publish/catalogue-line";
+import {PublishAndAIPCService} from "./publish-and-aip.service";
 
 const PROPERTY_BLOCK_FIELD_NAME: string = "name";
 const PROPERTY_BLOCK_FIELD_ISCOLLAPSED = "isCollapsed";
@@ -32,22 +33,43 @@ export class ProductPropertiesComponent implements OnInit {
     // list keeping the properties in order not to render the same property more than once
     renderedPropertyIds: Array<string> = [];
 
+    //deletedProperties: Array<string> = [];
+
+    constructor(private _publishAndAIPCService: PublishAndAIPCService) {
+    }
+
     ngOnInit(): void {
+
         this.refreshPropertyBlocks();
+
     }
 
     refreshPropertyBlocks(): void {
+
         this.customProperties = [];
         this.propertyBlocks = [];
         this.renderedPropertyIds = [];
 
+        for (let property of this.catalogueLine.goodsItem.item.additionalItemProperty) {
+            let index = this._publishAndAIPCService.deletedProperties.findIndex(dp => dp == property.name);
+            if (index > -1) {
+                let indexCatalogue = this.catalogueLine.goodsItem.item.additionalItemProperty.indexOf(property);
+                this.catalogueLine.goodsItem.item.additionalItemProperty.splice(indexCatalogue, 1);
+                this._publishAndAIPCService.removeFromDeleted(property.name);
+            }
+        }
         // create a list including the custom properties created by the user
         for (let property of this.catalogueLine.goodsItem.item.additionalItemProperty) {
-            if (property.itemClassificationCode.listID === "Custom") {
-                this.customProperties.push(property);
+            if (property.itemClassificationCode.listID === "Custom" &&
+                this._publishAndAIPCService.deletedProperties.indexOf(property.name) <= -1 &&
+                this._publishAndAIPCService.customProperties.indexOf(property) <= -1) {
+                this._publishAndAIPCService.insertCustom(property);
                 this.renderedPropertyIds.push(property.id);
             }
         }
+
+        this.customProperties = this._publishAndAIPCService.customProperties;
+
 
         // commodity classifications
         if (this.selectedCategories != null) {
@@ -78,19 +100,41 @@ export class ProductPropertiesComponent implements OnInit {
         let baseProperties: ItemProperty[] = [];
         let specificProperties: ItemProperty[] = [];
         for (let property of category.properties) {
-            let aip = this.getItemProperty(property);
+            let aip: ItemProperty;
+            let index = this.catalogueLine.goodsItem.item.additionalItemProperty.findIndex(ip => ip.id == property.id);
+            if (index > -1) {
+                aip = this.catalogueLine.goodsItem.item.additionalItemProperty[index];
+            }
+            else continue;
+
+            aip.propertyDefinition = property.definition;
             if (!this.isPropertyPresentedAlready(property)) {
                 if (this.isBaseEClassProperty(property)) {
-                    baseProperties.push(aip);
+                    if (this._publishAndAIPCService.deletedProperties.indexOf(aip.name) <= -1 &&
+                        this._publishAndAIPCService.baseProperties.indexOf(aip) <= -1) {
+                        this._publishAndAIPCService.insertBase(aip);
+                    }
+
                 } else {
-                    specificProperties.push(aip);
+                    if (this._publishAndAIPCService.deletedProperties.indexOf(aip.name) <= -1 &&
+                        this._publishAndAIPCService.specificProperties.indexOf(aip) <= -1) {
+                        this._publishAndAIPCService.insertSpecific(aip);
+                    }
+
                 }
                 this.renderedPropertyIds.push(property.id);
             }
         }
+        baseProperties = this._publishAndAIPCService.baseProperties;
+        specificProperties = this._publishAndAIPCService.specificProperties;
 
         basePropertyBlock[PROPERTY_BLOCK_FIELD_PROPERTIES] = baseProperties;
         specificPropertyBlock[PROPERTY_BLOCK_FIELD_PROPERTIES] = specificProperties;
+    }
+
+    deleteAdditionalProperty(inputVal: string) {
+        let index = this.customProperties.findIndex(ap => ap.name == inputVal);
+        this.customProperties.splice(index, 1);
     }
 
     private createPropertyBlock(category: Category): void {

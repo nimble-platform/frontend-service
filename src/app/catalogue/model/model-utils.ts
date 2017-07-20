@@ -29,7 +29,7 @@ export class ModelUtils {
 
         let aip: ItemProperty;
         if (property == null) {
-            aip = new ItemProperty(this.generateUUID(), "", [], new Array<BinaryObject>(), "", "", "STRING", code, null);
+            aip = new ItemProperty(this.generateUUID(), "", [], new Array<BinaryObject>(), "", "", "STRING", code,"", null);
 
         } else {
             let unit = "";
@@ -39,7 +39,7 @@ export class ModelUtils {
             let valueQualifier = property.dataType;
 
             aip = new ItemProperty(property.id, property.preferredName, [''], new Array<BinaryObject>(), "", unit,
-                valueQualifier, code, null);
+                valueQualifier, code, "",null);
         }
         return aip;
     }

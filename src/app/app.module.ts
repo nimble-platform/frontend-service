@@ -33,6 +33,7 @@ import {CatalogueLineViewComponent} from "./catalogue/catalogue-line-view.compon
 import {ProductDetailsComponent} from "./catalogue/product-details.component";
 import {TradingDetailsComponent} from "./catalogue/trading-details.component";
 
+import { PublishAndAIPCService } from "./catalogue/publish-and-aip.service";
 
 @NgModule({
     imports: [
@@ -73,7 +74,8 @@ import {TradingDetailsComponent} from "./catalogue/trading-details.component";
         CatalogueService,
         SimpleSearchService,
         BPEService,
-        ExplorativeSearchService
+	ExplorativeSearchService,
+ PublishAndAIPCService 
     ],
     bootstrap: [
         AppComponent

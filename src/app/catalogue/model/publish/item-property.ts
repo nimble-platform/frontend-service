@@ -17,6 +17,7 @@ export class ItemProperty {
         public valueQualifier: string,
         //public itemPropertyGroup: ItemPropertyGroup,
         public itemClassificationCode: Code,
+	    public propertyDefinition: string,
         public itemPropertyRange: ItemPropertyRange
     ) {  }
 }
