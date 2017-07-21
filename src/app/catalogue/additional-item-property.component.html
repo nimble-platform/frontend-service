@@ -14,23 +14,30 @@
 
 </div>
 
+<div *ngIf="definitionNeeded" >
 <div style="background-color: #daeeff; padding-bottom: 10px; padding-top: 10px;padding-left: 14px;
  padding-right: 14px;margin-bottom: 16px; border-radius: 8px" *ngIf="mouseover">
     {{additionalItemProperty.propertyDefinition}}
+</div>
 </div>
 
 <div *ngIf="binaryValue" class="input-group form-group">
     <label class="col-3 control-label">{{additionalItemProperty.name}}</label>
     <div style="display: inline-block">
-        <img *ngFor="let image of additionalItemProperty.embeddedDocumentBinaryObject"
+        <div *ngFor="let image of additionalItemProperty.embeddedDocumentBinaryObject"
+             style="display: inline-block">
 
-             class="pr-2"
+        <img class="pr-2"
              src="data:{{image.mimeCode}};base64,{{image.value}}"
              height="100"
              width="100"
-
         />
-        <span><button class="btn btn-xs btn-danger"
+
+            <span style="display:inline-block; width: 30px;"></span>
+            {{image.objectMetadata}}
+        </div>
+
+       <span><button class="btn btn-xs btn-danger"
                       (click)="deleteCP(additionalItemProperty.name); $event.stopPropagation()"
         >&times;</button></span>
     </div>

@@ -21,48 +21,65 @@
 <div *ngIf="catalogueLine && singleItemUpload" class="mt-3">
 
     <!-- Top row: selected category, feedback alerts, etc. -->
-    <div class="d-flex justify-content-end">
-        <div class="mr-auto">
-            <h6 *ngIf="catalogueLine.goodsItem.item.commodityClassification.length > 0" style="display: inline-block;"
-                i18n>Selected category:</h6>
-            <button *ngFor="let selectedCategory of selectedCategories"
-                    class="btn btn-info ml-3">
-                {{selectedCategory.preferredName}}
-            </button>
-            <div (click)="addCategoryOnClick()"
-                 style="display: inline-block;">
-                <img src="./assets/catalogue/add_button.png"/>
-                <span *ngIf="catalogueLine.goodsItem.item.commodityClassification.length == 0" i18n>Select a product category</span>
-                <span *ngIf="catalogueLine.goodsItem.item.commodityClassification.length > 0" i18n>Add another product category</span>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-9">
+                <div class="d-flex justify-content-end">
+
+                    <div class="mr-auto">
+                        <h6 *ngIf="catalogueLine.goodsItem.item.commodityClassification.length > 0"
+                            style="display: inline-block;"
+                            i18n>Selected category:</h6>
+                        <button *ngFor="let selectedCategory of selectedCategories"
+                                class="btn btn-info ml-3">
+                            <div>{{selectedCategory.preferredName}}
+                                <span><button class="btn btn-info btn-xs"
+                                              (click)="categoryCancel(selectedCategory.id)"
+                                >&times;</button></span></div>
+                        </button>
+
+                    </div>
+                    <div [hidden]="error_detc || callback || !submitted" class="pr-3">
+                        <img src="assets/form_loader.gif"/>
+                    </div>
+                    <div [hidden]="!(callback && !error_detc)"
+                         #successAlert (click)="successAlert.hidden=true;"
+                         [style]="!(callback && !error_detc) ? '' : 'display: flex'">
+                        <div class="alert-success mb-0 mr-3 d-flex" role="alert">
+                            <div class="d-flex p-2" style="align-items: center">
+                                <span i18n>Product published!</span>
+                                <span class="ml-3" style="cursor:pointer"><strong>&times;</strong></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div [hidden]="!(callback && error_detc)"
+                         #errorAlert (click)="errorAlert.hidden=true"
+                         [style]="hidden ? '' : 'display: flex'">
+                        <div class="alert-danger mb-0 mr-3 d-flex" role="alert">
+                            <div class="d-flex p-2" style="align-items: center">
+                                <span i18n>Fail to publish product!</span>
+                                <span class="ml-3" style="cursor:pointer"><strong>&times;</strong></span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
             </div>
-        </div>
-        <div [hidden]="error_detc || callback || !submitted" class="pr-3">
-            <img src="assets/form_loader.gif"/>
-        </div>
-        <div [hidden]="!(callback && !error_detc)"
-             #successAlert (click)="successAlert.hidden=true;"
-             [style]="!(callback && !error_detc) ? '' : 'display: flex'">
-            <div class="alert-success mb-0 mr-3 d-flex" role="alert">
-                <div class="d-flex p-2" style="align-items: center">
-                    <span i18n>Product published!</span>
-                    <span class="ml-3" style="cursor:pointer"><strong>&times;</strong></span>
+            <div class="col-sm-3">
+                <label class="col-3 control-label">
+                    <button class="btn btn-success btn-xs"
+                            (click)="publishProduct()">
+                        <span i18n>Publish Product</span>
+                    </button>
+                </label>
+                <div (click)="addCategoryOnClick()"
+                     style="display: inline-block;">
+                    <img src="./assets/catalogue/add_button.png"/>
+                    <span *ngIf="catalogueLine.goodsItem.item.commodityClassification.length == 0" i18n>Select a product category</span>
+                    <span *ngIf="catalogueLine.goodsItem.item.commodityClassification.length > 0" i18n>Add another product category</span>
                 </div>
             </div>
         </div>
-        <div [hidden]="!(callback && error_detc)"
-             #errorAlert (click)="errorAlert.hidden=true"
-             [style]="hidden ? '' : 'display: flex'">
-            <div class="alert-danger mb-0 mr-3 d-flex" role="alert">
-                <div class="d-flex p-2" style="align-items: center">
-                    <span i18n>Fail to publish product!</span>
-                    <span class="ml-3" style="cursor:pointer"><strong>&times;</strong></span>
-                </div>
-            </div>
-        </div>
-        <button class="btn btn-success"
-                (click)="publishProduct()">
-            <span i18n>Publish Product</span>
-        </button>
     </div>
     <hr>
     <!-- Form header row -->
@@ -152,8 +169,9 @@
                             />
                             <div style="display: inline-block;">
                                 <label>Value Details:</label>
-                                <input type="text" class="form-control" aria-describedby="componentName"
-                                       [value]="image.objectMetadata"/>
+                                <input type="text" class="form-control"
+                                       [(ngModel)]="image.objectMetadata" name="valueDetails"
+                                >
                             </div>
                             <span><button class="btn btn-xs" style="background-color: white; color: #0d6cd8"
                                           (click)="imageCancel(image.fileName);"
@@ -246,10 +264,12 @@
                 <div class="d-flex justify-content-start p-2">
                     <li>Upload the template after filling it with your products' information
                     </li>
-                    <input #template type="file" (change)="uploadTemplate($event)" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                    <input #template type="file" (change)="uploadTemplate($event)"
+                           accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                            style="display: none">
                     <button class="btn btn-success ml-auto"
-                            (click)="template.click()">Upload template</button>
+                            (click)="template.click()">Upload template
+                    </button>
                 </div>
             </ol>
         </div>

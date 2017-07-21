@@ -132,11 +132,6 @@ export class ProductPropertiesComponent implements OnInit {
         specificPropertyBlock[PROPERTY_BLOCK_FIELD_PROPERTIES] = specificProperties;
     }
 
-    deleteAdditionalProperty(inputVal: string) {
-        let index = this.customProperties.findIndex(ap => ap.name == inputVal);
-        this.customProperties.splice(index, 1);
-    }
-
     private createPropertyBlock(category: Category): void {
 
         let propertyBlock: any = {};

@@ -257,6 +257,16 @@ export class ProductPublishComponent implements OnInit {
         }
     }
 
+    /* deselect a category */
+    categoryCancel(categoryId: string) {
+        let index = this.selectedCategories.findIndex(c => c.id == categoryId);
+        if(index > -1) {
+            this.selectedCategories.splice(index,1);
+            this.productProperties.ngOnInit();
+        }
+    }
+
+
     private addCustomProperty(): void {
         this.catalogueLine.goodsItem.item.additionalItemProperty.push(this.newProperty);
         this.productProperties.ngOnInit();
