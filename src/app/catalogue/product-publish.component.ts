@@ -236,13 +236,21 @@ export class ProductPublishComponent implements OnInit {
     private fileChange(event: any) {
         let fileList: FileList = event.target.files;
         if (fileList.length > 0) {
-            let file: File = fileList[0];
-            var reader = new FileReader();
-            reader.onload = function (e) {
-                // get loaded data and render thumbnail.
-                document.getElementById('img').setAttribute("src", reader.result);
-            };
-            reader.readAsDataURL(file);
+            let binaryObjects = this.newProperty.embeddedDocumentBinaryObject;
+
+            for (let i = 0; i < fileList.length; i++) {
+                let file: File = fileList[i];
+                let reader = new FileReader();
+
+                reader.onload = function (e: any) {
+                    let base64String = reader.result.split(',').pop();
+                    console.log(base64String);
+                    console.log(file.type);
+                    let binaryObject = new BinaryObject(base64String, file.type, file.name, "", "");
+                    binaryObjects.push(binaryObject);
+                };
+                reader.readAsDataURL(file);
+            }
         }
     }
 

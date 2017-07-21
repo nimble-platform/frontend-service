@@ -24,17 +24,24 @@
 <div *ngIf="binaryValue" class="input-group form-group">
     <label class="col-3 control-label">{{additionalItemProperty.name}}</label>
     <div style="display: inline-block">
-        <div *ngFor="let image of additionalItemProperty.embeddedDocumentBinaryObject"
+        <div *ngFor="let file of additionalItemProperty.embeddedDocumentBinaryObject"
              style="display: inline-block">
 
+            <div *ngIf="file.mimeCode.split('/')[0]=='image'">
         <img class="pr-2"
-             src="data:{{image.mimeCode}};base64,{{image.value}}"
+             src="data:{{file.mimeCode}};base64,{{file.value}}"
              height="100"
              width="100"
         />
 
             <span style="display:inline-block; width: 30px;"></span>
-            {{image.objectMetadata}}
+            {{file.objectMetadata}}
+            </div>
+
+            <div *ngIf="file.mimeCode.split('/')[0]=='application'||file.mimeCode.split('/')[0]=='text'">
+                {{file.fileName}}
+                <span style="display:inline-block; width: 20px;"></span>
+            </div>
         </div>
 
        <span><button class="btn btn-xs btn-danger"

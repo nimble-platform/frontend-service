@@ -126,7 +126,7 @@
                 <div *ngIf="propertyValueType.options.selectedIndex == 3" (click)="file.click()"
                      class="col-4"
                      style="display: inline-block;">
-                    <input #file type="file" (change)="fileChange($event)" multiple accept="image/*"
+                    <input #file type="file" (change)="fileChange($event)" multiple accept="file/*"
                            style="display: none">
                     <img src="./assets/catalogue/add_button.png"/>
                     <span i18n>Add file</span>
@@ -155,27 +155,37 @@
             </form>
 
             <!-- selected images or files -->
-            <div *ngIf="newProperty != null && newProperty.embeddedDocumentBinaryObject != null"
+	    <div *ngIf="newProperty != null && newProperty.embeddedDocumentBinaryObject.length > 0"
                  class="offset-3 mt-3">
                 <ul class="list-group">
-                    <li *ngFor="let image of newProperty.embeddedDocumentBinaryObject"
+                    <li *ngFor="let afile of newProperty.embeddedDocumentBinaryObject"
                         class="list-group-item pb-2 border-0">
 
                         <div>
-                            <img class="mr-2"
-                                 src="data:{{image.mimeCode}};base64,{{image.value}}"
-                                 height="100"
-                                 width="100"
-                            />
-                            <div style="display: inline-block;">
-                                <label>Value Details:</label>
-                                <input type="text" class="form-control"
-                                       [(ngModel)]="image.objectMetadata" name="valueDetails"
-                                >
+
+			                <div *ngIf="afile.mimeCode.split('/')[0]=='application'||afile.mimeCode.split('/')[0]=='text'">
+                                {{afile.fileName}}
+                                <span style="display:inline-block; width: 20px;"></span>
+                                <span><button class="btn btn-xs" style="background-color: white; color: #0d6cd8"
+                                              (click)="imageCancel(afile.fileName);"
+                                >&times;</button></span>
                             </div>
-                            <span><button class="btn btn-xs" style="background-color: white; color: #0d6cd8"
-                                          (click)="imageCancel(image.fileName);"
-                            >&times;</button></span>
+                            <div *ngIf="afile.mimeCode.split('/')[0]=='image'">
+                                <img class="mr-2"
+                                     src="data:{{afile.mimeCode}};base64,{{afile.value}}"
+                                     height="100"
+                                     width="100"
+                                />
+                                <div style="display: inline-block;">
+                                    <label>Value Details:</label>
+                                    <input type="text" class="form-control"
+                                           [(ngModel)]="afile.objectMetadata" name="valueDetails">
+                                </div>
+                                <span><button class="btn btn-xs" style="background-color: white; color: #0d6cd8"
+                                              (click)="imageCancel(afile.fileName);"
+                                >&times;</button></span>
+
+                            </div>
                         </div>
                     </li>
                 </ul>
