@@ -72,7 +72,8 @@ export class ProductPublishComponent implements OnInit {
     private initView(publishFromScratch: boolean, editCatalogueLine: boolean): void {
 
         if (editCatalogueLine) {
-            this.catalogueLine = this.catalogueService.catalogueLineToEdit;
+            this.publishAndAIPCService.resetService();
+            this.catalogueLine = this.catalogueService.getCatalogueLineBeingEdited();
             // TODO somehow extract categories from CatalogueLine and push to selectedCategories
         }
         else {

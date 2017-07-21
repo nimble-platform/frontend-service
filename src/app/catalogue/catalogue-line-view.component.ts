@@ -17,7 +17,7 @@ export class CatalogueLineViewComponent {
                 private router: Router) {}
 
     redirectToEdit() {
-        this.catalogueService.catalogueLineToEdit = this.catalogueLine;
+        this.catalogueService.editCatalogueLine(this.catalogueLine);
         this.router.navigate(['publish'], {queryParams: {fromScratch: false, edit: true}});
     }
 }

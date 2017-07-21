@@ -21,10 +21,11 @@ export class CatalogueViewComponent implements OnInit {
     catalogue: Catalogue;
 
     ngOnInit() {
+        // TODO request each time catalogueview is loaded
         this.requestCatalogue();
     }
 
-    private requestCatalogue(): void {
+    public requestCatalogue(): void {
         let userId = this.cookieService.get("user_id");
         this.catalogueService.getCatalogue(userId).then(catalogue => {
                 this.catalogue = catalogue;

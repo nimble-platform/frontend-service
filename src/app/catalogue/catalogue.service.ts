@@ -20,7 +20,8 @@ export class CatalogueService {
     private catalogue: Catalogue;
     private draftCatalogueLine: CatalogueLine;
 
-    public catalogueLineToEdit: CatalogueLine;
+    // properties for editing
+    private catalogueLineBeingEdited: CatalogueLine;
 
     constructor(private http: Http,
                 private userService: UserService) {
@@ -176,5 +177,16 @@ export class CatalogueService {
 
     private handleError(error: any): Promise<any> {
         return Promise.reject(error.message || error);
+    }
+
+    // Editing functionality
+
+    getCatalogueLineBeingEdited() {
+        return this.catalogueLineBeingEdited;
+    }
+
+    editCatalogueLine(catalogueLine: CatalogueLine) {
+        // Deep copy trick to guard original catalogueLine model
+        this.catalogueLineBeingEdited = JSON.parse(JSON.stringify(catalogueLine));
     }
 }
