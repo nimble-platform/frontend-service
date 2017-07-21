@@ -1,0 +1,9 @@
+<div class="payment-means-form" [formGroup]="paymentMeansForm">
+    <div class="form-group col-xs-3">
+        <label>Terms</label>
+        <textarea type="text" class="form-control" formControlName="instructionNote"></textarea>
+        <small [hidden]="paymentMeansForm.controls.instructionNote.valid || paymentMeansForm.controls.instructionNote.pristine" class="text-danger">
+            Terms are required
+        </small>
+    </div>
+</div>
