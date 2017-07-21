@@ -4,6 +4,8 @@ import 'rxjs/add/operator/toPromise';
 import { OrderObject } from './model/order-object';
 import { OrderResponse } from './model/order-response';
 import * as myGlobals from '../globals';
+import {RequestForQuotation} from "./model/request-for-quotation";
+import {RequestForQuotationResponse} from "./model/request-for-quotation-response";
 
 @Injectable()
 export class BPEService {
@@ -76,7 +78,7 @@ export class BPEService {
 		.then(res => res.json())
 		.catch(this.handleError);
 	}
-	
+
 	getProcessDetails(id: string): Promise<any> {
 		const url = `${this.url}/rest/engine/default/variable-instance?processInstanceIdIn=${id}`;
 		return this.http
@@ -112,7 +114,44 @@ export class BPEService {
 		.then(res => res.json())
 		.catch(this.handleError);
 	}
-	
+
+	sendRfq(rfq: RequestForQuotation): Promise<any> {
+		const url = `${this.url}/rest/engine/default/process-definition/key/Negotiation/start`;
+		var jsonToSend = {
+			"variables": {},
+			"businessKey" : ""
+		}
+		for (let rfq_var in rfq) {
+			jsonToSend.variables[rfq_var] = {
+				"value":rfq[rfq_var],
+				"type":"String"
+			}
+		}
+		return this.http
+            .post(url, JSON.stringify(jsonToSend), {headers: this.headers})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+	}
+
+	respondToRFQ(task: string, rfqResponse: RequestForQuotationResponse): Promise<any> {
+		const url = `${this.url}/rest/engine/default/task/${task}/complete`;
+		var jsonToSend = {
+			"variables": {
+				"rfqResponse": {
+					"value": JSON.stringify(rfqResponse),
+					"type": "String"
+				}
+			},
+			"businessKey" : ""
+		}
+		return this.http
+            .post(url, JSON.stringify(jsonToSend), {headers: this.headers})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+	}
+
 	private handleError(error: any): Promise<any> {
 		return Promise.reject(error.message || error);
 	}

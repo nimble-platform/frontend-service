@@ -3,12 +3,11 @@
  */
 
 import {Party} from "./party";
-import {Identifier} from "./identifier";
 import {CatalogueLine} from "./catalogue-line";
 
 export class Catalogue {
-    constructor(public id: Identifier,
-                public uuid: Identifier,
+    constructor(public id: string,
+                public uuid: string,
                 public providerParty: Party,
                 public catalogueLine: CatalogueLine[]) {
     }
