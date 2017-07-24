@@ -1,25 +1,30 @@
 <div *ngIf="stringValue" class="input-group form-group">
 
     <label class="col-3 control-label">
-        <div (mouseover)="mouseover=true" (mouseout)="mouseover=false">
+        {{additionalItemProperty.name}}
+        <span *ngIf="eClassValue" style="color: #556b2f" data-toggle="tooltip" data-placement="top" title="{{additionalItemProperty.propertyDefinition}}">
+            &#9432;
+        </span>
+
+        <!--<div (mouseover)="mouseover=true" (mouseout)="mouseover=false">
             {{additionalItemProperty.name}}
-        </div>
+        </div>-->
     </label>
 
     <!--<input type="text" class="form-control" [value]="additionalItemProperty.value[0]">-->
     <input type="text" class="form-control" [(ngModel)]="additionalItemProperty.value[0]">
-    <span><button class="btn btn-xs btn-danger"
+    <span *ngIf="!eClassValue"><button class="btn btn-xs btn-danger"
                   (click)="deleteCP(additionalItemProperty.name); $event.stopPropagation()"
     >&times;</button></span>
 
 </div>
-
-<div *ngIf="definitionNeeded" >
+<!--
+<div *ngIf="eClassValue" >
 <div style="background-color: #daeeff; padding-bottom: 10px; padding-top: 10px;padding-left: 14px;
  padding-right: 14px;margin-bottom: 16px; border-radius: 8px" *ngIf="mouseover">
     {{additionalItemProperty.propertyDefinition}}
 </div>
-</div>
+</div>-->
 
 <div *ngIf="binaryValue" class="input-group form-group">
     <label class="col-3 control-label">{{additionalItemProperty.name}}</label>
@@ -28,14 +33,15 @@
              style="display: inline-block">
 
             <div *ngIf="file.mimeCode.split('/')[0]=='image'">
-        <img class="pr-2"
-             src="data:{{file.mimeCode}};base64,{{file.value}}"
-             height="100"
-             width="100"
-        />
+                <img class="pr-2"
+                     src="data:{{file.mimeCode}};base64,{{file.value}}"
+                     height="100"
+                     width="100"
+                />
 
-            <span style="display:inline-block; width: 30px;"></span>
-            {{file.objectMetadata}}
+                <span style="display:inline-block; width: 10px;"></span>
+                {{file.objectMetadata}}
+                <span style="display:inline-block; width: 30px;"></span>
             </div>
 
             <div *ngIf="file.mimeCode.split('/')[0]=='application'||file.mimeCode.split('/')[0]=='text'">

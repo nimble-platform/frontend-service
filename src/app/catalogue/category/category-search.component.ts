@@ -42,7 +42,8 @@ export class CategorySearchComponent implements OnInit {
     }
 
     private selectCategory(category: Category): void {
-        if (category == null) {
+        /* check if the property exists already, if so, do not add */
+        if (category == null || this.categoryService.getSelectedCategories().findIndex(c => c.id == category.id) > -1) {
             this.router.navigate(['publish'], {queryParams: {fromScratch: this.startPublishingFromScratch}});
             return;
         }

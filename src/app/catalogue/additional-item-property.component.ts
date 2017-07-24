@@ -16,7 +16,7 @@ export class AdditionalItemPropertyComponent implements OnInit {
     stringValue:boolean = true;
     binaryValue:boolean = false;
 
-    definitionNeeded:boolean = true;
+    eClassValue:boolean = false;
 
     constructor(
         private _publishAndAIPCService: PublishAndAIPCService) { }
@@ -25,10 +25,13 @@ export class AdditionalItemPropertyComponent implements OnInit {
         if(this.additionalItemProperty.embeddedDocumentBinaryObject.length != 0) {
             this.stringValue = false;
             this.binaryValue = true;
-            this.definitionNeeded = false;
         }
         if(this.additionalItemProperty.itemClassificationCode.listID == "Custom") {
-            this.definitionNeeded = false;
+            this.eClassValue = false;
+        }
+        if(this.additionalItemProperty.itemClassificationCode.listID == "eClass") {
+            this.eClassValue = true;
+
         }
     }
 

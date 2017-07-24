@@ -88,14 +88,17 @@ export class ProductPropertiesComponent implements OnInit {
      */
     private createEClassPropertyBlocks(category: Category): void {
 
+        /* reset the property blocks in the shared service */
+        this._publishAndAIPCService.resetPropertyBlocks();
+
         let basePropertyBlock: any = {};
         basePropertyBlock[PROPERTY_BLOCK_FIELD_NAME] = category.preferredName + " (" + category.taxonomyId + " - Base)";
         basePropertyBlock[PROPERTY_BLOCK_FIELD_ISCOLLAPSED] = true;
-        this.propertyBlocks.push(basePropertyBlock);
+
         let specificPropertyBlock: any = {};
         specificPropertyBlock[PROPERTY_BLOCK_FIELD_NAME] = category.preferredName + " (" + category.taxonomyId + " - Specific)";
         specificPropertyBlock[PROPERTY_BLOCK_FIELD_ISCOLLAPSED] = true;
-        this.propertyBlocks.push(specificPropertyBlock);
+
 
         let baseProperties: ItemProperty[] = [];
         let specificProperties: ItemProperty[] = [];
@@ -127,6 +130,9 @@ export class ProductPropertiesComponent implements OnInit {
         }
         baseProperties = this._publishAndAIPCService.baseProperties;
         specificProperties = this._publishAndAIPCService.specificProperties;
+
+        this.propertyBlocks.push(basePropertyBlock);
+        this.propertyBlocks.push(specificPropertyBlock);
 
         basePropertyBlock[PROPERTY_BLOCK_FIELD_PROPERTIES] = baseProperties;
         specificPropertyBlock[PROPERTY_BLOCK_FIELD_PROPERTIES] = specificProperties;
@@ -166,6 +172,11 @@ export class ProductPropertiesComponent implements OnInit {
         }
         console.error("Property could not be found in additional item properties: " + property.id)
     }
+
+   /* isPropertyCommonToOthercategories(propertyName: string) {
+        index1 = this._publishAndAIPCService.baseProperties.findIndex(p => p.name == propertyName);
+        if()
+    }*/
 
     /*
      Checks whether the property is a base property common for many eClass properties

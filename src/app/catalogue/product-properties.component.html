@@ -25,7 +25,8 @@
 
 <div *ngFor="let propertyBlock of propertyBlocks">
     <p>
-        <button type="button" class="btn btn-outline-primary" (click)="propertyBlock.isCollapsed = !propertyBlock.isCollapsed"
+        <!-- display the propertyBlock only if it is not empty -->
+        <button *ngIf="propertyBlock[PROPERTY_BLOCK_FIELD_PROPERTIES].length > 0" type="button" class="btn btn-outline-primary" (click)="propertyBlock.isCollapsed = !propertyBlock.isCollapsed"
                 [attr.aria-expanded]="!propertyBlock.isCollapsed" aria-controls="propertyBlock">
             {{propertyBlock.name}}
         </button>

@@ -57,4 +57,8 @@ export class PublishAndAIPCService {
         this.specificProperties = [];
         this.deletedProperties = [];
     }
+    resetPropertyBlocks() {
+        this.baseProperties = [];
+        this.specificProperties = [];
+    }
 }
