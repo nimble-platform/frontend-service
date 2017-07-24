@@ -28,7 +28,7 @@ export class ExplorativeSearchService {
     // for keyword search from user
     searchData(term: string): Promise<any> {
         console.log("Search term for language: " + this.userLang + " and used backend url " + this.url);
-        let input = "{ \"keyword\":\""+term+"\", \"language\":" + this.userLang + "\"}";
+        let input = "{ \"keyword\":\""+term+"\", \"language\":\"" + this.userLang + "\"}";
         return this.http.get(`${this.url}?inputAsJson=${input}`)
             .toPromise()
             .then(res => res.json());

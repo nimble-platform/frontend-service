@@ -23,7 +23,7 @@
                 <!-- list of all the search keywords by user -->
                 <li class="searchQueries" *ngFor="let keyword of Output">
                     <span>
-                        <input #kwCheck type="checkbox" (change)="cbInput= kwCheck.checked"/> {{keyword.kw}}
+                        <input #kwCheck type="checkbox" (change)="cbInput= kwCheck.checked"/> {{keyword.resp["translatedURL"]}}
                         <span><button class="btn btn-xs btn-danger"
                             (click)="deleteKW(keyword.kw); $event.stopPropagation()" 
                             [disabled]=!kwCheck.checked
@@ -51,7 +51,7 @@
             <div class="btn-group" role="group" *ngFor="let each of eachOutput.resp.conceptOverview; let innerIndex = index">
                 <button class="btn btn-success" *ngIf="innerIndex === 0 || showMore[outerIndex]"
                   (click)="getQuery(each)"
-                >{{each}}</button>
+                >{{each["translatedURL"]}}</button>
             </div>
             <div style="display:inline">
                 <button *ngIf="eachOutput.resp.conceptOverview.length > 1"
