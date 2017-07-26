@@ -75,6 +75,9 @@ export class ProductPublishComponent implements OnInit {
     private initView(publishFromScratch: boolean, editCatalogueLine: boolean): void {
 
         if (editCatalogueLine) {
+            //this.publishAndAIPCService.resetService();
+            this.catalogueLine = this.catalogueService.getCatalogueLineBeingEdited();
+            // TODO somehow extract categories from CatalogueLine and push to selectedCategories
             this.selectedCategories = [];
             this.catalogueLine = this.catalogueService.getDraftItem();
 
@@ -107,6 +110,7 @@ export class ProductPublishComponent implements OnInit {
         }
         else {
             this.catalogueLine = null;
+            //this.publishAndAIPCService.resetService();
             let userId = this.cookieService.get("user_id");
             this.catalogueService.getCatalogue(userId).then(catalogue => {
 
@@ -167,7 +171,6 @@ export class ProductPublishComponent implements OnInit {
     }
 
     private publishProduct(): void {
-
         this.error_detc = false;
         this.callback = false;
         this.submitted = true;

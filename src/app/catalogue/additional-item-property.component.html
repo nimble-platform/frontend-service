@@ -1,30 +1,94 @@
+<style>
+    .modal {
+        position: fixed;
+        top: 6px;
+        width: 76%;
+        left: 120px;
+        height: 100%;
+        z-index: 100;
+        display: none;
+        overflow: hidden;
+        pointer-events: none;
+    }
+
+    .modal-header {
+        padding: 2px 16px;
+        background-color: #bd4147;
+        color: white;
+        pointer-events: all;
+
+    }
+
+    .modal-body {padding: 2px 16px;}
+
+    /* Modal Content */
+    .modal-content {
+        position: relative;
+        background-color: #fefefe;
+        margin: auto;
+        padding: 0;
+        width: 80%;
+        box-shadow: 0 4px 4px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+        -webkit-animation-name: animatetop;
+        -webkit-animation-duration: 0.4s;
+        animation-name: animatetop;
+        animation-duration: 0.4s
+    }
+
+
+    /* Add Animation */
+    @-webkit-keyframes animatetop {
+        from {top: -300px; opacity: 0}
+        to {top: 0; opacity: 1}
+    }
+
+    @keyframes animatetop {
+        from {top: -300px; opacity: 0}
+        to {top: 0; opacity: 1}
+    }
+</style>
+
+<div id="myModal" class="modal">
+
+    <div class="modal-content">
+        <div class="modal-header">
+            <div id="header"></div>
+            <span class="close" (click)="spanClose();">&times;</span>
+        </div>
+        <div class="modal-body">
+            <span style="color: #8b4513;">Description: </span>
+            <span id="prop_def"></span>
+
+            <div></div>
+            <span style="color: #8b4513;" id="unit_label"></span>
+            <span style="color: #000000;" id="prop_unit"></span>
+        </div>
+    </div>
+
+</div>
+
 <div *ngIf="stringValue" class="input-group form-group">
 
-    <label class="col-3 control-label">
-        {{additionalItemProperty.name}}
-        <span *ngIf="eClassValue" style="color: #556b2f" data-toggle="tooltip" data-placement="top" title="{{additionalItemProperty.propertyDefinition}}">
-            &#9432;
-        </span>
-
-        <!--<div (mouseover)="mouseover=true" (mouseout)="mouseover=false">
+    <div *ngIf="eClassValue" class="col-3 control-label" (click)="openModal()">
+        <div style="cursor: pointer">
             {{additionalItemProperty.name}}
-        </div>-->
-    </label>
+            <span *ngIf="eClassValue">&#9432;</span>
+        </div>
+    </div>
+
+    <div *ngIf="!eClassValue" class="col-3 control-label" >
+        {{additionalItemProperty.name}}
+        <span style="display:inline-block; width: 30px;"></span>
+    </div>
 
     <!--<input type="text" class="form-control" [value]="additionalItemProperty.value[0]">-->
-    <input type="text" class="form-control" [(ngModel)]="additionalItemProperty.value[0]">
+    <input type="text" id="prop_val" class="form-control" [(ngModel)]="additionalItemProperty.value[0]">
     <span *ngIf="!eClassValue"><button class="btn btn-xs btn-danger"
-                  (click)="deleteCP(additionalItemProperty.name); $event.stopPropagation()"
+                  (click)="deleteCustomProperty(additionalItemProperty.name); $event.stopPropagation()"
     >&times;</button></span>
 
 </div>
-<!--
-<div *ngIf="eClassValue" >
-<div style="background-color: #daeeff; padding-bottom: 10px; padding-top: 10px;padding-left: 14px;
- padding-right: 14px;margin-bottom: 16px; border-radius: 8px" *ngIf="mouseover">
-    {{additionalItemProperty.propertyDefinition}}
-</div>
-</div>-->
+
 
 <div *ngIf="binaryValue" class="input-group form-group">
     <label class="col-3 control-label">{{additionalItemProperty.name}}</label>
@@ -51,7 +115,7 @@
         </div>
 
        <span><button class="btn btn-xs btn-danger"
-                      (click)="deleteCP(additionalItemProperty.name); $event.stopPropagation()"
+                      (click)="deleteCustomProperty(additionalItemProperty.name); $event.stopPropagation()"
         >&times;</button></span>
     </div>
 </div>
