@@ -158,43 +158,13 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
 
     /**
      * nodeClicked: function handles the click feature for GoJS
-     * @param e : event parameter
+     * @param ev : event parameter
      * @param node: node entity
      */
-    nodeClicked(e, node): void {
+    nodeClicked(ev, node): void {
 
         let rootConcept = node.findTreeRoot().data.text;
         let clickedNode = node.data.text; // name of the clicked node
-
-        // MULTISELECTION via GOJS Library
-        if (e.control) { // if the CTRL Key is pressed..
-            console.log('CTRL key pressed.. Multiselect On');
-            if (node.isSelected) { // if the particular node is selected add to list
-                // avoid duplicate entries in the list
-                if (!this.selectedProperties.find( e => e === clickedNode)) {
-                    this.selectedProperties.push(clickedNode);
-                }
-            } else { // the node was clicked again and deselected remove from list
-                let index = this.selectedProperties.indexOf(clickedNode);
-                if (index > -1) {
-                    this.selectedProperties.splice(index, 1);
-                }
-            }
-        } else { // no CTRL Button pressed but node selected
-            console.log('CTRL key released.. Multiselect off');
-            if (node.isSelected) { // if node is selected add to list
-                // avoid duplicate entries in the list
-                if (!this.selectedProperties.find(e => e === clickedNode)) {
-                    this.selectedProperties.push(clickedNode);
-                }
-            } else { // if the node is deselected remove if from list
-                let index = this.selectedProperties.indexOf(clickedNode);
-                if (index > -1) {
-                    this.selectedProperties.splice(index, 1);
-                }
-            }
-        }
-        console.log(this.selectedProperties);
         let rootConceptUrl = this.config['concept']['url'];
         let nodeConceptUrl;
         for (let eachDatProp of this.config['dataproperties']) {
@@ -203,6 +173,37 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                 nodeConceptUrl = this.config['dataproperties'][index]['url'];
             }
         }
+
+        // MULTISELECTION via GOJS Library
+        if (ev.control) { // if the CTRL Key is pressed..
+            console.log('CTRL key pressed.. Multiselect On');
+            if (node.isSelected) { // if the particular node is selected add to list
+                // avoid duplicate entries in the list
+                if (!this.selectedProperties.find( e => e === nodeConceptUrl)) {
+                    this.selectedProperties.push(nodeConceptUrl);
+                }
+            } else { // the node was clicked again and deselected remove from list
+                let index = this.selectedProperties.indexOf(nodeConceptUrl);
+                if (index > -1) {
+                    this.selectedProperties.splice(index, 1);
+                }
+            }
+        } else { // no CTRL Button pressed but node selected
+            console.log('CTRL key released.. Multiselect off');
+            if (node.isSelected) { // if node is selected add to list
+                // avoid duplicate entries in the list
+                if (!this.selectedProperties.find(e => e === nodeConceptUrl)) {
+                    this.selectedProperties.push(nodeConceptUrl);
+                }
+            } else { // if the node is deselected remove if from list
+                let index = this.selectedProperties.indexOf(nodeConceptUrl);
+                if (index > -1) {
+                    this.selectedProperties.splice(index, 1);
+                }
+            }
+        }
+        console.log(this.selectedProperties);
+
         // console.log(rootConceptUrl, nodeConceptUrl); // DEBUG --CHECK
         let filteringInput = { 'concept': encodeURIComponent(rootConceptUrl.trim()),
             'property': encodeURIComponent(nodeConceptUrl.trim()), 'amountOfGroups': 3
@@ -219,14 +220,22 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
      * store result in tableResult Variable
      */
     genTable(): void {
-        this.tableJSON['concept'] = encodeURIComponent(this.finalSelectionJSON['root']);
-        this.tableJSON['parameters'] = new Array();
-        for (let eachFilProp of this.finalSelectionJSON['filter']) {
-            this.tableJSON['parameters'].push(encodeURIComponent(eachFilProp['property']));
-        }
-        this.tableJSON['filters'] = new Array();
-        for (let eachFilVal of this.finalSelectionJSON['filter']) {
-            this.tableJSON['filters'].push({'min': eachFilVal['values'][0], 'max': eachFilVal['values'][1]});
+        if (this.finalSelectionJSON) {
+            this.tableJSON['concept'] = encodeURIComponent(this.finalSelectionJSON['root']);
+            this.tableJSON['parameters'] = new Array();
+            for (let eachFilProp of this.finalSelectionJSON['filter']) {
+                this.tableJSON['parameters'].push(encodeURIComponent(eachFilProp['property']));
+            }
+            this.tableJSON['filters'] = new Array();
+            for (let eachFilVal of this.finalSelectionJSON['filter']) {
+                this.tableJSON['filters'].push({'min': eachFilVal['values'][0], 'max': eachFilVal['values'][1]});
+            }
+        } else { // if user directly clicks on the Search button
+            this.tableJSON['concept'] = encodeURIComponent(this.filterQueryRootUrl);
+            this.tableJSON['parameters'] = new Array();
+            for (let eachSelectedProp of this.selectedProperties) {
+                this.tableJSON['parameters'].push(encodeURIComponent(eachSelectedProp));
+            }
         }
         this.tableJSON['language'] = this.lang;
         console.log(this.tableJSON);
