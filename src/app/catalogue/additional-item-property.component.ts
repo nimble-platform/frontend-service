@@ -18,6 +18,44 @@ export class AdditionalItemPropertyComponent implements OnInit {
 
     eClassValue:boolean = false;
 
+    propertyUnitDefined:boolean = false;
+
+    openModal(): void {
+        //if(this.eClassValue == true){
+            let modal = document.getElementById('myModal');
+
+            let header = document.getElementById('header');
+            header.innerText = this.additionalItemProperty.name;
+
+            let prop_def = document.getElementById('prop_def');
+            prop_def.innerText = this.additionalItemProperty.propertyDefinition;
+
+            if(this.propertyUnitDefined == true) {
+                let prop_unit = document.getElementById('prop_unit');
+                prop_unit.innerText = this.additionalItemProperty.unit;
+
+                let unit_label = document.getElementById('unit_label');
+                unit_label.innerText = "Unit: ";
+            }
+            else {
+                let prop_unit = document.getElementById('prop_unit');
+                prop_unit.innerText = "";
+
+                let unit_label = document.getElementById('unit_label');
+                unit_label.innerText = "";
+            }
+
+            modal.style.display = "block";
+       // }
+    }
+
+    spanClose() {
+    let modal = document.getElementById('myModal');
+
+    modal.style.display = "none";
+}
+    
+
     constructor(
         private _publishAndAIPCService: PublishAndAIPCService) { }
 
@@ -31,12 +69,16 @@ export class AdditionalItemPropertyComponent implements OnInit {
         }
         if(this.additionalItemProperty.itemClassificationCode.listID == "eClass") {
             this.eClassValue = true;
-
+        }
+        if(this.additionalItemProperty.unit.length > 0) {
+            this.propertyUnitDefined = true;
         }
     }
 
-    //store in deleted properties for later check
-    deleteCP(inputVal: string) {
-        this._publishAndAIPCService.addToDeletedProperties(inputVal);
+    // deletes the custom property with the given name
+    deleteCustomProperty = function (inputVal: string) {
+        // calls deleteProperty method in the shared service
+        this._publishAndAIPCService.deleteProperty(inputVal);
     }
+
 }

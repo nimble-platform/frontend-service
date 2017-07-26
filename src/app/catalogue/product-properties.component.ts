@@ -36,6 +36,13 @@ export class ProductPropertiesComponent implements OnInit {
     //deletedProperties: Array<string> = [];
 
     constructor(private _publishAndAIPCService: PublishAndAIPCService) {
+        this._publishAndAIPCService.componentMethodCalled$.subscribe(
+            (inputVal: string) => {
+                let indexCatalogue = this.catalogueLine.goodsItem.item.additionalItemProperty.findIndex(p => p.name == inputVal);
+                this.catalogueLine.goodsItem.item.additionalItemProperty.splice(indexCatalogue, 1);
+                this.refreshPropertyBlocks();
+            }
+        );
     }
 
     ngOnInit(): void {
@@ -50,25 +57,14 @@ export class ProductPropertiesComponent implements OnInit {
         this.propertyBlocks = [];
         this.renderedPropertyIds = [];
 
-        for (let property of this.catalogueLine.goodsItem.item.additionalItemProperty) {
-            let index = this._publishAndAIPCService.deletedProperties.findIndex(dp => dp == property.name);
-            if (index > -1) {
-                let indexCatalogue = this.catalogueLine.goodsItem.item.additionalItemProperty.indexOf(property);
-                this.catalogueLine.goodsItem.item.additionalItemProperty.splice(indexCatalogue, 1);
-                this._publishAndAIPCService.removeFromDeleted(property.name);
-            }
-        }
         // create a list including the custom properties created by the user
         for (let property of this.catalogueLine.goodsItem.item.additionalItemProperty) {
             if (property.itemClassificationCode.listID === "Custom" &&
-                this._publishAndAIPCService.deletedProperties.indexOf(property.name) <= -1 &&
-                this._publishAndAIPCService.customProperties.indexOf(property) <= -1) {
-                this._publishAndAIPCService.insertCustom(property);
+                this.customProperties.indexOf(property) <= -1) {
+                this.customProperties.push(property);
                 this.renderedPropertyIds.push(property.id);
             }
         }
-
-        this.customProperties = this._publishAndAIPCService.customProperties;
 
 
         // commodity classifications
@@ -88,8 +84,6 @@ export class ProductPropertiesComponent implements OnInit {
      */
     private createEClassPropertyBlocks(category: Category): void {
 
-        /* reset the property blocks in the shared service */
-        this._publishAndAIPCService.resetPropertyBlocks();
 
         let basePropertyBlock: any = {};
         basePropertyBlock[PROPERTY_BLOCK_FIELD_NAME] = category.preferredName + " (" + category.taxonomyId + " - Base)";
@@ -113,23 +107,19 @@ export class ProductPropertiesComponent implements OnInit {
             aip.propertyDefinition = property.definition;
             if (!this.isPropertyPresentedAlready(property)) {
                 if (this.isBaseEClassProperty(property)) {
-                    if (this._publishAndAIPCService.deletedProperties.indexOf(aip.name) <= -1 &&
-                        this._publishAndAIPCService.baseProperties.indexOf(aip) <= -1) {
-                        this._publishAndAIPCService.insertBase(aip);
+                    if (baseProperties.indexOf(aip) <= -1) {
+                        baseProperties.push(aip);
                     }
 
                 } else {
-                    if (this._publishAndAIPCService.deletedProperties.indexOf(aip.name) <= -1 &&
-                        this._publishAndAIPCService.specificProperties.indexOf(aip) <= -1) {
-                        this._publishAndAIPCService.insertSpecific(aip);
+                    if (specificProperties.indexOf(aip) <= -1) {
+                        specificProperties.push(aip);
                     }
 
                 }
                 this.renderedPropertyIds.push(property.id);
             }
         }
-        baseProperties = this._publishAndAIPCService.baseProperties;
-        specificProperties = this._publishAndAIPCService.specificProperties;
 
         this.propertyBlocks.push(basePropertyBlock);
         this.propertyBlocks.push(specificPropertyBlock);
@@ -172,6 +162,8 @@ export class ProductPropertiesComponent implements OnInit {
         }
         console.error("Property could not be found in additional item properties: " + property.id)
     }
+
+
 
    /* isPropertyCommonToOthercategories(propertyName: string) {
         index1 = this._publishAndAIPCService.baseProperties.findIndex(p => p.name == propertyName);
