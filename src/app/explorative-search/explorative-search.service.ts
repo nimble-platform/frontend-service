@@ -12,55 +12,66 @@ import 'rxjs/add/operator/toPromise';
 import * as myGlobals from '../globals';
 
 @Injectable()
-
 export class ExplorativeSearchService {
+    private langUrl = myGlobals.languageEndPoint;
     private url = myGlobals.endpoint;
     private logicalUrl = myGlobals.logicalViewEndpoint;
     private propEndPoint = myGlobals.propertyEndPoint;
     private sparqlEndPoint = myGlobals.sparqlEndPoint;
     private sparqlOptionEndPoint = myGlobals.sparqlOptionalSelectEndPoint;
-    private  userLang = navigator.language; 
-
+    private userLang: string;
 
 
     constructor(private http: Http) { }
+
+    getLanguageSupport(): Promise<any> {
+        return this.http.get(this.langUrl)
+            .toPromise()
+            .then(res => res.json())
+            .catch(err => console.log(err));
+    }
     // This is where the HTTP GET service is performed
     // for keyword search from user
-    searchData(term: string): Promise<any> {
-        console.log("Search term for language: " + this.userLang + " and used backend url " + this.url);
-        let input = "{ \"keyword\":\""+term+"\", \"language\":\"" + this.userLang + "\"}";
-        return this.http.get(`${this.url}?inputAsJson=${input}`)
+    searchData(term: string, lang: string): Promise<any> {
+        this.userLang = lang;
+        console.log('Search term for language: ' + lang + ' and used backend url ' + this.url);
+        let input = {'keyword': term, 'language': this.userLang};
+        return this.http.get(`${this.url}?inputAsJson=${JSON.stringify(input)}`)
             .toPromise()
-            .then(res => res.json());
+            .then(res => res.json())
+            .catch(err => console.log(err));
     }
 
     getLogicalView(term: Object): Promise<any> {
-        term["language"] = this.userLang;
+        term['language'] = this.userLang;
+        console.log('getlogicalview', this.userLang);
         return this.http.get(`${this.logicalUrl}?inputAsJson=${JSON.stringify(term)}`)
             .toPromise()
-            .then(res => res.json());
+            .then(res => res.json())
+            .catch(err => console.log(err));
     }
 
     getPropertyValues(term: Object): Promise<any> {
-         term["language"] = this.userLang;
+        console.log('propvalue', term['language']);
         return this.http.get(`${this.propEndPoint}?inputAsJson=${JSON.stringify(term)}`)
             .toPromise()
-            .then(res => res.json());
+            .then(res => res.json())
+            .catch(err => console.log(err));
     }
 
-    getTableValues(term: String): Promise<any> {
-         term = term.substring(0, term.length-1);
-         term +=", \"language\":" + this.userLang + "\"}";
-         console.log ("Send: " + term);
-        return this.http.get(`${this.sparqlEndPoint}?inputAsJson=${(term)}`)
+    getTableValues(term: Object): Promise<any> {
+        console.log('gettableview', term['language']);
+        return this.http.get(`${this.sparqlEndPoint}?inputAsJson=${JSON.stringify(term)}`)
             .toPromise()
-            .then(res => res.json());
+            .then(res => res.json())
+            .catch(err => console.log(err));
     }
 
     getOptionalSelect(term: Object): Promise<any> {
-         term["language"] = this.userLang;
+         console.log('getoptselect', term['language']);
         return this.http.get(`${this.sparqlOptionEndPoint}?inputAsJson=${JSON.stringify(term)}`)
             .toPromise()
-            .then(res => res.json());
+            .then(res => res.json())
+            .catch(err => console.log);
     }
 }

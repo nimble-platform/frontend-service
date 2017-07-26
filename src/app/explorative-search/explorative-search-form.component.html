@@ -5,7 +5,7 @@
         <div class="input-group form-group">
             <label class="input-group-addon">Search</label>
             <input type="text" class="form-control" #searchVal (keyup.enter)="Search(searchVal.value)" placeholder="Company/Business/Product"/>
-            <span><button (click)="Search(searchVal.value)" class="btn btn-success" type="button">Search</button></span>
+            <span><button (click)="Search(searchVal.value, language)" class="btn btn-success" type="button">Search</button></span>
         </div> <!--input-group-->
     </div> <!-- col-12 -->
 </div> <!--row-->
@@ -23,11 +23,11 @@
                 <!-- list of all the search keywords by user -->
                 <li class="searchQueries" *ngFor="let keyword of Output">
                     <span>
-                        <input #kwCheck type="checkbox" (change)="cbInput= kwCheck.checked"/> {{keyword.resp["translatedURL"]}}
+                        <input #kwCheck type="checkbox" (change)="cbInput= kwCheck.checked" checked="true"/> {{keyword.kw}}
                         <span><button class="btn btn-xs btn-danger"
-                            (click)="deleteKW(keyword.kw); $event.stopPropagation()" 
-                            [disabled]=!kwCheck.checked
-                            [hidden]="!kwCheck.checked">&times;</button></span>
+                            (click)="deleteKW(keyword.kw); $event.stopPropagation()"
+                            [disabled]=kwCheck.checked
+                            [hidden]="kwCheck.checked">&times;</button></span>
                     </span>
                 </li>
             </ul>
@@ -36,7 +36,14 @@
             If not logged in route directly to Login Page
             if logged in route to dashboard -->
         <div class="col-md-2">
-            <a class="btn btn-warning" routerLink="/dashboard">Home</a>
+            <!--<a class="btn btn-warning" routerLink="/dashboard">Home</a>-->
+            <b>Choose Language</b>
+            <form *ngFor="let eachLang of availableLanguages['languages']">
+                <label>
+                    <input type="radio" (click)="language = eachLang"/>
+                    {{eachLang}}
+                </label>
+            </form>
         </div>
     </div>
 </div>
@@ -50,8 +57,8 @@
         <li *ngFor="let eachOutput of Output; let outerindex = index">
             <div class="btn-group" role="group" *ngFor="let each of eachOutput.resp.conceptOverview; let innerIndex = index">
                 <button class="btn btn-success" *ngIf="innerIndex === 0 || showMore[outerIndex]"
-                  (click)="getQuery(each)"
-                >{{each["translatedURL"]}}</button>
+                  (click)="getQuery(each.url)"
+                >{{each.translatedURL}}</button>
             </div>
             <div style="display:inline">
                 <button *ngIf="eachOutput.resp.conceptOverview.length > 1"
@@ -68,4 +75,4 @@
 
 <!-- The Graph Display Component -->
 <!-- Data Visualization here-->
-<explore-search-details [config]="visData"></explore-search-details>
+<explore-search-details [config]="visData" [lang]="language"></explore-search-details>

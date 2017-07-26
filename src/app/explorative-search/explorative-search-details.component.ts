@@ -11,17 +11,11 @@ import { Component, AfterViewInit, ViewChild, ElementRef, Input, OnChanges } fro
 import * as go from 'gojs';
 import { RadialLayout } from './layout/RadialLayout';
 import { ExplorativeSearchService } from './explorative-search.service';
-import {el} from "@angular/platform-browser/testing/browser_util";
 
 @Component({
     selector: 'explore-search-details',
     templateUrl: './explorative-search-details.component.html',
     styleUrls: ['./explorative-search-details.component.css'],
-    host: {
-        '(document:keydown)': 'handleKeyboardEventsDown($event)',
-        '(document:keyup)': 'handleKeyboardEventsUp($event)'
-    },
-
     providers: [ExplorativeSearchService]
 })
 
@@ -29,6 +23,7 @@ import {el} from "@angular/platform-browser/testing/browser_util";
 export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChanges {
 
     @Input() config: Object; // this comes from `explorative-search-form.component` (Parent)
+    @Input() lang: string; // language selection hack
     // GoJS div as mentioned above in the @Component `template` param
     @ViewChild('myDiagramDiv') div: ElementRef;
     private hiddenElement: boolean = false;
@@ -37,25 +32,15 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
     private $ = go.GraphObject.make;
     /*Parameters that will be passed to `explorative-search-filter.component (Child)*/
     filterQueryRoot: string;
+    filterQueryRootUrl: string;
     filterQuery: string;
+    nodeFilterName: string;
     filterJSON: Object;
     /* To store selected properties*/
     private selectedProperties: Array<string> = [];
-    keywordCounter = 0;
 
-    /*To store filters*/
-    private lala: Object;
-    private selectedFilters: Array<string> = [];
-    filterCounter = -1;
-    private key: number;
-    private isMultiSelectActivated = false;
     private sparqlSelectedOption: Object;
-
-    /**tableJSON = {'concept': 'HighChair', 'parameters':
-    *    ['hasHeight', 'hasWidth'],
-     *   'filters': [{'min': 3.0, 'max': 5.2}]};
-	*/
-    tableJSON = "";
+    private tableJSON: Object = {};
 
     /*Final Data to be sent back to parent for processing.. Maybe..*/
     finalSelectionJSON: Object;
@@ -65,52 +50,16 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
 
     constructor(private expSearch: ExplorativeSearchService) { }
 
-
-
-    /**
-     * Activate Multiselect
-     * @param event key event
-     */
-    handleKeyboardEventsDown(event: KeyboardEvent) {
-        this.key = event.which || event.keyCode;
-        if (this.key == 17) {
-            if (this.isMultiSelectActivated == false) {
-                console.log("MultiSelect activated");
-                this.isMultiSelectActivated = true;
-                this.reloadRadialGraph();
-            }
-        }
-    }
-
-    /**
-     * DeActivate Multiselect
-     * @param event key event
-     */
-    handleKeyboardEventsUp(event: KeyboardEvent) {
-        this.key = event.which || event.keyCode;
-        if (this.key == 17) {
-            if (this.isMultiSelectActivated == true) {
-                console.log("MultiSelect DEactivated");
-                this.isMultiSelectActivated = false;
-                 this.selectedProperties = [];
-                 this.keywordCounter =0;
-                 this.reloadRadialGraph();
-            }
-        }
-    }
-
-
     /**
      * using OnChanges LifeCycle Hook for incoming Configuration
      * from the Parent Component
      */
-
     ngOnChanges(): void {
         if (!this.config) { return; }
-        // this.tableResult = null;
+        // console.log(JSON.stringify(this.config)); // DEBUG -CHECK
         let recApproach = new RecClass();
         recApproach.generateGraphRecApproach(this.config, this.myDiagram, this.$);
-        this.resetSelection();
+        // this.resetSelection();
     }
 
     /**
@@ -213,185 +162,93 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
      * @param node: node entity
      */
     nodeClicked(e, node): void {
-        /**
-         * MULTISELECT STILL REMAINING
-         */
-        // console.log(node.findTreeRoot().data.text, node.data.text); DEBUG
-        //  console.log("Multitoach: " + e.isMultiTouch);
+
         let rootConcept = node.findTreeRoot().data.text;
         let clickedNode = node.data.text; // name of the clicked node
-        this.filterQuery = clickedNode; // pass it to the child component
-        this.filterQueryRoot = rootConcept; // pass this to the child component
-        // create a JSON for the API call
-        let filteringInput = { 'concept': rootConcept, 'property': clickedNode, 'amountOfGroups': 3 };
-        //	 console.log("Concept: " + rootConcept); // DEBUG CHECK#
-        //	  console.log("Property: " + clickedNode); // DEBUG CHECK#
-        if (this.isMultiSelectActivated === true) {
-            let contained = false;
-           let index = 0;
-           let indexForRemove = -1;
-            for (let item of this.selectedProperties) {
-                if (item === clickedNode) {
-                    contained = true;
-                    indexForRemove = index;
 
+        // MULTISELECTION via GOJS Library
+        if (e.control) { // if the CTRL Key is pressed..
+            console.log('CTRL key pressed.. Multiselect On');
+            if (node.isSelected) { // if the particular node is selected add to list
+                // avoid duplicate entries in the list
+                if (!this.selectedProperties.find( e => e === clickedNode)) {
+                    this.selectedProperties.push(clickedNode);
                 }
-                index = index + 1;
-            }
-         //   if (contained== undefined){
-          //       this.selectedProperties.splice(indexForRemove,1);
-           // }
-            if (contained === false) {
-                if (clickedNode == null) {
-                    console.log ("Delselect of current property");
-                } else {
-                this.selectedProperties[this.keywordCounter] = clickedNode;
-                this.keywordCounter = this.keywordCounter + 1;
+            } else { // the node was clicked again and deselected remove from list
+                let index = this.selectedProperties.indexOf(clickedNode);
+                if (index > -1) {
+                    this.selectedProperties.splice(index, 1);
                 }
-            } else {
-                 this.selectedProperties.splice(indexForRemove,1);
-                 this.keywordCounter = this.keywordCounter - 1;
             }
-
-
-        } else {
-            // Single Select
-            console.log("Single selection of property: ");
-            this.keywordCounter = 0;
-            this.selectedProperties[this.keywordCounter] = clickedNode;
-
+        } else { // no CTRL Button pressed but node selected
+            console.log('CTRL key released.. Multiselect off');
+            if (node.isSelected) { // if node is selected add to list
+                // avoid duplicate entries in the list
+                if (!this.selectedProperties.find(e => e === clickedNode)) {
+                    this.selectedProperties.push(clickedNode);
+                }
+            } else { // if the node is deselected remove if from list
+                let index = this.selectedProperties.indexOf(clickedNode);
+                if (index > -1) {
+                    this.selectedProperties.splice(index, 1);
+                }
+            }
         }
-
-        this.tableJSON = "{\"concept\": \"" + rootConcept + "\", \"parameters\":[ ";
-        for (var item of this.selectedProperties) {
-            this.tableJSON += "\"" + item + "\", ";
-            console.log(item); // 9,2,5
+        console.log(this.selectedProperties);
+        let rootConceptUrl = this.config['concept']['url'];
+        let nodeConceptUrl;
+        for (let eachDatProp of this.config['dataproperties']) {
+            if (eachDatProp['translatedURL'] === clickedNode) {
+                let index = this.config['dataproperties'].indexOf(eachDatProp);
+                nodeConceptUrl = this.config['dataproperties'][index]['url'];
+            }
         }
-        this.tableJSON = this.tableJSON.substring(0, this.tableJSON.length - 2);
-        this.tableJSON += "],\"filters\": []}";
-        console.log(this.tableJSON);
-        /**
-        *tableJSON = {'concept': 'HighChair', 'parameters':
-      ['hasHeight', 'hasWidth'],
-      'filters': [{'min': 3.0, 'max': 5.2}]};
-        *
-        */
-        // console.log(JSON.stringify(filteringInput)); DEBUG
-        // API Call and store the value
-        let temp = "";
-        this.filterCounter++;
+        // console.log(rootConceptUrl, nodeConceptUrl); // DEBUG --CHECK
+        let filteringInput = { 'concept': encodeURIComponent(rootConceptUrl.trim()),
+            'property': encodeURIComponent(nodeConceptUrl.trim()), 'amountOfGroups': 3
+                , 'language': this.lang};
+        this.nodeFilterName = clickedNode;
+        this.filterQuery = nodeConceptUrl;
+        this.filterQueryRoot = rootConcept;
+        this.filterQueryRootUrl = rootConceptUrl;
         this.expSearch.getPropertyValues(filteringInput)
-            .then(res => this.filterJSON = res)
-            .then(res => this.lala = res)
-            .then(res => this.selectedFilters[this.filterCounter] = res)
-            .then(function (res) {
-                console.log(res);
-                console.log(typeof res)
-                console.log("Counter: " + this.filterCounter)
-
-            }.bind(this)
-
-            );
-
-    }
-
-    /**
-     * This method is used to clear the current selection of selected nodes
-     */
-    resetSelection(): void {
-        //clear data structures
-        console.log("Before selection reset: " + this.selectedProperties);
-        this.selectedProperties = [];
-        this.keywordCounter = 0;
-        this.finalSelectionJSON = null;
-        this.tableJSON = "{}";
-        console.log("After seelction reset: " + this.selectedProperties);
-    }
-
-
-    /**
-     *  Create the filter text for the input json string for the webservice method to execute a SPARQL query against an ontology
-     * @param index  default should be 0
-     * @param finalSelection  the selction which was created if the user clicks on submit of a filter
-     */
-    createFilterText(index, finalSelection) {
-        if (finalSelection == null) {
-            return "";
-        }
-        if (finalSelection["filter"].length > 0) {
-            let filter = finalSelection["filter"][index];
-            let filterproperty = filter["property"];
-            let values = filter["values"];
-
-            let min = values[0];
-            let max = values[1];
-
-            let resultString = "{\"property\":\"" + filterproperty + "\",\"min\":" + min + ",\"max\":" + max + "}";
-            return resultString;
-        }
-
-        return "";
-
-
-    }
-
-
-    /**
-     * Add the filtertext to the input json string for the webservice method to execute a SPARQL query against an ontology
-     * @param filterText String of the filter
-     * @param inputJsonForSPARQLWebservice String containing the cocnept and the properties
-     */
-    addFilterTextToTableJson(filterText, inputJsonForSPARQLWebservice) {
-        let index = inputJsonForSPARQLWebservice.indexOf("filters\":");
-        let resultString = inputJsonForSPARQLWebservice;
-        if (index !== -1) {
-            resultString = inputJsonForSPARQLWebservice.substring(0, index + 11);
-            resultString += filterText + "]}";
-        }
-        return resultString;
-
+            .then(res => this.filterJSON = res);
     }
     /**
-     * Currently this function will call the hardcoded JSON (tableJSON)
-     * to get the results for the TABLE display.
+     * genTable: Generate a Dynamic tableJSON query for the API Call and
+     * store result in tableResult Variable
      */
     genTable(): void {
-        this.tableResult = null;
-        console.log(this.filterCounter);
-        for (let i = 1; i <= this.filterCounter; i++) {
-
-            console.log(this.selectedFilters[i])
+        this.tableJSON['concept'] = encodeURIComponent(this.finalSelectionJSON['root']);
+        this.tableJSON['parameters'] = new Array();
+        for (let eachFilProp of this.finalSelectionJSON['filter']) {
+            this.tableJSON['parameters'].push(encodeURIComponent(eachFilProp['property']));
         }
-
-
-
-        let filter = this.createFilterText(0, this.finalSelectionJSON);
-        this.tableJSON = this.addFilterTextToTableJson(filter, this.tableJSON);
-
-        console.log("inputJsonForSPARQLSELECT: " + this.tableJSON);
-
-        // call the API for table data
+        this.tableJSON['filters'] = new Array();
+        for (let eachFilVal of this.finalSelectionJSON['filter']) {
+            this.tableJSON['filters'].push({'min': eachFilVal['values'][0], 'max': eachFilVal['values'][1]});
+        }
+        this.tableJSON['language'] = this.lang;
+        console.log(this.tableJSON);
         this.expSearch.getTableValues(this.tableJSON)
-            .then(
-            // store the result in tableResult
-            // which will be used in HTML file
-            res => this.tableResult = res
-
-            );
-
-       this.reloadRadialGraph();
-        this.resetSelection();
-
+            .then(res => this.tableResult = res)
+            .catch(err => console.log(err));
     }
 
+    /**
+     * Data from the Child's Event Emitter
+     * @param finalSelectionJSON same name as the child's variable
+     */
     handleFilterSelectionUpdated(finalSelectionJSON) {
         this.finalSelectionJSON = finalSelectionJSON;
+        console.log('returned JSON', this.finalSelectionJSON);
     }
 
     getSparqlOptionalSelect(indexInp: number) {
         console.log(indexInp);
         // need URI component in order to send url as JSON.stringify
         let optSelectJSON = {'uuid': encodeURIComponent(this.tableResult.uuids[indexInp].trim())};
+        optSelectJSON['language'] = this.lang;
         console.log(optSelectJSON);
         this.expSearch.getOptionalSelect(optSelectJSON)
           .then(res => this.sparqlSelectedOption = res );
@@ -405,13 +262,12 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
         } else {
             this.hiddenElement = true;
         }
-        // this.reloadRadialGraph();
     }
 
-reloadRadialGraph(): void {
- let recApproach = new RecClass();
+    reloadRadialGraph(): void {
+        let recApproach = new RecClass();
         recApproach.generateGraphRecApproach(this.config, this.myDiagram, this.$);
-}
+    }
 }
 
 
@@ -444,14 +300,14 @@ class RecClass {
     public generateGraphRecApproach(cnf: any, myDiagram: any, $: any): void {
         // get a Tree structure of the incoming JSON
         let linkedOntTree = this.recursionParseJson(cnf);
-        // console.log('Complete Tree:\n' + JSON.stringify(linkedOntTree)); --> DEBUG
+        // console.log('Complete Tree:\n' + JSON.stringify(linkedOntTree)); // --> DEBUG
         let nodeDataArray: any = []; // Create an Array of Nodes for GoJS.
         for (let i = 1; i < this.names.length + 1; i++) {
             nodeDataArray.push({ key: i, text: this.names[i - 1], color: go.Brush.randomColor(128, 240) });
         }
         // Create The Links to Each node in the Tree with Recursion
         let linkDataArray: any = this.recursionLink(linkedOntTree);
-        // console.log('LinkedDataList: ' + JSON.stringify(linkDataArray)); --> DEBUG
+        // console.log('LinkedDataList: ' + JSON.stringify(linkDataArray)); // --> DEBUG
 
         // Diagram Layout..
         myDiagram.layout = $(RadialLayout, {
@@ -512,24 +368,24 @@ class RecClass {
         let node = new OntNode();
 
         // Adding node name
-        this.names.push(jsonNode['concept']);
+        this.names.push(jsonNode['concept']['translatedURL']);
         node.id = this.names.length;
 
         // Adding Attributes
         for (let eachDatProp of jsonNode.dataproperties) {
-            this.names.push(eachDatProp);
+            this.names.push(eachDatProp.translatedURL);
             node.attr.push(this.names.length);
         }
 
         // Adding Children
         for (let childKey in jsonNode.objectproperties) {
             if (jsonNode.objectproperties.hasOwnProperty(childKey)) {
-                // console.log(childKey); --> DEBUG
+                // console.log(childKey); // --> DEBUG
                 node.children.push(this.recursionParseJson(jsonNode.objectproperties[childKey]));
             }
         }
 
-        // console.log('Finished recFunc created node: ' + node.id); --> DEBUG
+        // console.log('Finished recFunc created node: ' + node.id); // --> DEBUG
         return node;
     }
 
@@ -556,5 +412,3 @@ class RecClass {
         return linkedDataArray;
     }
 }
-
-

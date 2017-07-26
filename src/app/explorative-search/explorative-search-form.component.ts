@@ -36,13 +36,14 @@ export class ExplorativeSearchFormComponent implements OnInit {
 
     // checkbox for every keyword in Search History
     // remember: the variable name is same as in the HTML file
-    cbInput = false;
+    cbInput = true;
+    public language: string = 'en'; // default search in english
+    availableLanguages = {};
     // Use the stored data which might further
     // data visualization
     // remember: the variable `Output` is the same as in the HTML file
     Output = OUTPUT;
     visData: Object; // send this to details component
-
     // For response which constitutes more than one option..
     showMore: boolean[] = [];
 
@@ -51,18 +52,28 @@ export class ExplorativeSearchFormComponent implements OnInit {
     ngOnInit(): void {
         this.showMore = new Array(this.Output.length);
         this.showMore.fill(false);
+        this.expSearch.getLanguageSupport()
+            .then(res => this.availableLanguages = res);
+        console.log('oninit', this.availableLanguages);
     }
     /**
      * Search: will get a HTTP response from the server (HTTP GET)
      *          of the keyword which user inputs.
      * @param inputVal string obtained from the input bar of the HTML file
+     * @param inpLang string which language the user queries
      */
-    Search(inputVal: string): void {
+    Search(inputVal: string, inpLang: string): void {
+        if (!inpLang) {
+            // default is english
+            inpLang = this.language;
+        }
+        this.language = inpLang;
         inputVal = inputVal.trim(); // trim whitespaces
         if (!inputVal) { return; } // if no input; do nothing
 
         // Let the Service do its fetching of data from server
-        this.expSearch.searchData(inputVal)
+        // console.log(lang)
+        this.expSearch.searchData(inputVal, this.language)
                 .then(res => {
                     // push the data in to List
                     this.Output.push(<Explorative> {kw: inputVal, resp: res});
@@ -91,9 +102,10 @@ export class ExplorativeSearchFormComponent implements OnInit {
      */
 
     getQuery(inputVal: string) {
+        // console.log(inputVal);
         // HTTP GET to backend Server for visualization
         // create a JSON request for the queried button
-        let temp = {'concept': inputVal, 'stepRange': 2, 'frozenConcept': 'ddd'};
+        let temp = {'concept': encodeURIComponent(inputVal.trim()), 'stepRange': 2, 'frozenConcept': 'ddd'};
         // console.log(JSON.stringify(temp)); // Debug: check
         // get the requested query
         this.expSearch.getLogicalView(temp)

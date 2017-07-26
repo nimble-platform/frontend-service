@@ -16,13 +16,13 @@ import {ExplorativeSearchService} from './explorative-search.service';
     providers: [ExplorativeSearchService]
 })
 
-//export var finalSelectionJSON: Object;
-
 export class ExplorativeSearchFilterComponent implements OnChanges {
     /*variables for values coming from Parent Component `search-details`*/
     @Input() mainConceptName: string;
+    @Input() mainConceptUrl: string;
     @Input() filterConfig: Object;
     @Input() keyForConf: string;
+    @Input() filterName: string;
 
     @Output() filterSelectionUpdated = new EventEmitter();
 
@@ -44,12 +44,12 @@ export class ExplorativeSearchFilterComponent implements OnChanges {
      * a new filter configuration to the child
      */
     ngOnChanges(): void {
-
+        // console.log('FilterConfig', this.filterConfig); // DEBUG Check
         for (let keyConfig in this.filterConfig) {
             if (this.filterConfig[keyConfig]) {
                 // store the JSON array in the result array for display
                 this.result = this.filterConfig[keyConfig];
-                // console.log(this.result); DEBUG
+                // console.log(this.result); // DEBUG
             }
         }
     }
@@ -94,8 +94,13 @@ export class ExplorativeSearchFilterComponent implements OnChanges {
         // console.log(eventValue); DEBUG
         // Create a JSON for the Filter and `amountOfGroups` should be changed
         // according to the slider values.
-        let filteringInput = {'concept': this.mainConceptName,
-            'property': this.keyForConf,
+        for (let key in this.filterConfig) {
+            if (this.filterConfig.hasOwnProperty(key)) {
+                this.keyForConf = key;
+            }
+        }
+        let filteringInput = {'concept': encodeURIComponent(this.mainConceptUrl.trim()),
+            'property': encodeURIComponent(this.keyForConf.trim()),
             'amountOfGroups': eventValue};
         // Call API everytime the slider value changes.
         this.expSearch.getPropertyValues(filteringInput)
@@ -112,8 +117,8 @@ export class ExplorativeSearchFilterComponent implements OnChanges {
     submitFilter(): void {
         // console.log(Number(this.groupSelectVal)); DEBUG
         // This needs to be changed according to Backend API
-        this.finalSelectionJSON = {'root': this.mainConceptName, 'filter': this.userSelections};
+        this.finalSelectionJSON = {'root': this.mainConceptUrl, 'filter': this.userSelections};
         this.filterSelectionUpdated.emit(this.finalSelectionJSON);
-        console.log(this.finalSelectionJSON); // DEBUG CHECK
+        console.log('finalSelectionJSON', this.finalSelectionJSON); // DEBUG CHECK
     }
 }

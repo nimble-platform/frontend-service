@@ -2,7 +2,7 @@
 
 <!-- Display the Filter Panel only when the filterConfig is non empty -->
 <div class="filterArea" *ngIf="(filterConfig | json) != '{}'">
-    <h4>{{keyForConf}} Filter</h4>
+    <h4>{{filterName}} Filter</h4>
     <div *ngFor="let every of result">
         <!-- CheckBoxes for the Filter -->
         <input #cbCheck type="checkbox"
