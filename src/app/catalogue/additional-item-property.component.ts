@@ -11,6 +11,8 @@ import {PublishAndAIPCService} from "./publish-and-aip.service";
 })
 
 export class AdditionalItemPropertyComponent implements OnInit {
+    i: Array<number> = [5];
+
     @Input() additionalItemProperty:ItemProperty;
 
     stringValue:boolean = true;
@@ -50,11 +52,16 @@ export class AdditionalItemPropertyComponent implements OnInit {
     }
 
     spanClose() {
-    let modal = document.getElementById('myModal');
+        let modal = document.getElementById('myModal');
 
-    modal.style.display = "none";
-}
-    
+        modal.style.display = "none";
+    }
+
+    addAnotherPropertyValue(aipName: string) {
+        console.log(this.i.length);
+        this.i.push(5);
+
+    }
 
     constructor(
         private _publishAndAIPCService: PublishAndAIPCService) { }
@@ -70,7 +77,7 @@ export class AdditionalItemPropertyComponent implements OnInit {
         if(this.additionalItemProperty.itemClassificationCode.listID == "eClass") {
             this.eClassValue = true;
         }
-        if(this.additionalItemProperty.unit.length > 0) {
+        if(this.additionalItemProperty.unit && this.additionalItemProperty.unit.length > 0) {
             this.propertyUnitDefined = true;
         }
     }

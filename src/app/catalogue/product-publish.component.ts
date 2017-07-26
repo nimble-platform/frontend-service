@@ -76,7 +76,7 @@ export class ProductPublishComponent implements OnInit {
 
         if (editCatalogueLine) {
             //this.publishAndAIPCService.resetService();
-            this.catalogueLine = this.catalogueService.getCatalogueLineBeingEdited();
+            //this.catalogueLine = this.catalogueService.getCatalogueLineBeingEdited();
             // TODO somehow extract categories from CatalogueLine and push to selectedCategories
             this.selectedCategories = [];
             this.catalogueLine = this.catalogueService.getDraftItem();
@@ -346,11 +346,38 @@ export class ProductPublishComponent implements OnInit {
 
     /* deselect a category */
     categoryCancel(categoryId: string) {
+        let c = 0;
+        let i = this.catalogueLine.goodsItem.item.commodityClassification.findIndex(c => c.itemClassificationCode.value == categoryId);
+
+        if(i > -1) {
+            this.catalogueLine.goodsItem.item.commodityClassification.splice(i, 1);
+        }
+
         let index = this.selectedCategories.findIndex(c => c.id == categoryId);
         if (index > -1) {
-            this.selectedCategories.splice(index, 1);
-            this.productProperties.ngOnInit();
+
+        for (let property of this.selectedCategories[index].properties) {
+            for (let category of this.selectedCategories) {
+                if (category.id == categoryId)
+                    continue;
+
+                for (let p of category.properties) {
+                    if (property.id == p.id)
+                        c++;
+                }
+            }
+            if(c==0){
+
+                let j = this.catalogueLine.goodsItem.item.additionalItemProperty.findIndex(p => p.id == property.id);
+                if (j > -1)
+                    this.catalogueLine.goodsItem.item.additionalItemProperty.splice(j, 1);
+            }
         }
+
+        this.selectedCategories.splice(index, 1);
+        }
+        this.productProperties.ngOnInit();
+
     }
 
 
