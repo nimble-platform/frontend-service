@@ -70,7 +70,7 @@ export class AdditionalItemPropertyComponent implements OnInit {
         if(this.additionalItemProperty.itemClassificationCode.listID == "eClass") {
             this.eClassValue = true;
         }
-        if(this.additionalItemProperty.unit.length > 0) {
+        if(this.additionalItemProperty.unit && this.additionalItemProperty.unit.length > 0) {
             this.propertyUnitDefined = true;
         }
     }

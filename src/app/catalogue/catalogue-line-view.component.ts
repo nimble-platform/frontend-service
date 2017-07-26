@@ -9,6 +9,8 @@ import {CategoryService} from "./category/category.service";
     templateUrl: './catalogue-line-view.component.html'
 })
 
+// Component that displays information for individual catalogue lines in the Catalogue page
+
 export class CatalogueLineViewComponent {
 
     selectedTab: string = "Product Details";

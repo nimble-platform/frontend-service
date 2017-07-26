@@ -20,6 +20,7 @@ export class CatalogueService {
     private catalogue: Catalogue;
     private draftCatalogueLine: CatalogueLine;
 
+    // To save a reference to the original version of the item being edited
     private originalCatalogueLine: CatalogueLine;
 
     constructor(private http: Http,
@@ -179,7 +180,6 @@ export class CatalogueService {
     }
 
     // Editing functionality
-
     getOriginalItem() {
         return this.originalCatalogueLine;
     }

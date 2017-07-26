@@ -7,13 +7,13 @@ import {ItemProperty} from "./model/publish/item-property";
     templateUrl: './product-details.component.html',
 })
 
-// TODO disabled inputs need to get larger when contents don't fit
+// Component that displays category and custom properties inside the "product details" tab in CatalogueLin
 
 export class ProductDetailsComponent implements OnInit{
 
-    readonly PROPERTY_BLOCK_FIELD_NAME: string = "name";
-    readonly PROPERTY_BLOCK_FIELD_ISCOLLAPSED = "isCollapsed";
-    readonly PROPERTY_BLOCK_FIELD_PROPERTIES = "properties";
+    PROPERTY_BLOCK_FIELD_NAME: string = "name";
+    PROPERTY_BLOCK_FIELD_ISCOLLAPSED = "isCollapsed";
+    PROPERTY_BLOCK_FIELD_PROPERTIES = "properties";
 
     @Input() catalogueLine: CatalogueLine;
 

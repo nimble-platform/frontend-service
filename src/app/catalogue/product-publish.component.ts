@@ -74,14 +74,14 @@ export class ProductPublishComponent implements OnInit {
 
     private initView(publishFromScratch: boolean, editCatalogueLine: boolean): void {
 
+        // Following "if" block is executed when redirected by an "edit" button
+        // "else" block is executed when redirected by "publish" tab
         if (editCatalogueLine) {
-            //this.publishAndAIPCService.resetService();
-            this.catalogueLine = this.catalogueService.getCatalogueLineBeingEdited();
-            // TODO somehow extract categories from CatalogueLine and push to selectedCategories
-            this.selectedCategories = [];
-            this.catalogueLine = this.catalogueService.getDraftItem();
 
+            // Initialization
+            this.selectedCategories = [];
             let classificationCodes: Code[] = [];
+            this.catalogueLine = this.catalogueService.getDraftItem();
 
             // Get categories of item to edit
             for (let classification of this.catalogueLine.goodsItem.item.commodityClassification)
@@ -89,6 +89,8 @@ export class ProductPublishComponent implements OnInit {
 
             this.categoryService.getMultipleCategories(classificationCodes).then(
                 (categories: Category[]) => {
+
+                    // Then merge existing properties of the item with newly selected properties
                     this.selectedCategories = categories;
                     this.selectedCategories = this.selectedCategories.concat(this.categoryService.getSelectedCategories());
 
@@ -102,8 +104,14 @@ export class ProductPublishComponent implements OnInit {
                         }
                     }
 
-                    // Input property of child component won't update, so force update
+                    // Following method is called when editing to make sure the item has
+                    // all properties of its categories in the correct order
+                    this.restoreItemProperties();
+
+                    // Input properties of child component won't update, so force update
+                    this.productProperties.catalogueLine = this.catalogueLine;
                     this.productProperties.selectedCategories = this.selectedCategories;
+
                     this.productProperties.refreshPropertyBlocks();
                 });
 
@@ -136,6 +144,29 @@ export class ProductPublishComponent implements OnInit {
                 }
             });
         }
+    }
+
+    private restoreItemProperties() {
+        let newProperties: ItemProperty[] = [];
+        let existingProperties: ItemProperty[] = this.catalogueLine.goodsItem.item.additionalItemProperty;
+
+        for (let category of this.selectedCategories) {
+            for (let property of category.properties) {
+                let aip = ModelUtils.createAdditionalItemProperty(property, category);
+                aip.propertyDefinition = property.definition;
+                newProperties.push(aip);
+            }
+        }
+
+        for (let i = 0; i < newProperties.length; i++) {
+            for (let j = 0; j < existingProperties.length; j++) {
+                if (newProperties[i].id == existingProperties[j].id) {
+                    newProperties[i] = existingProperties[j];
+                }
+            }
+        }
+
+        this.catalogueLine.goodsItem.item.additionalItemProperty = newProperties;
     }
 
     private updateItemWithNewCategory(category: Category): void {
@@ -177,13 +208,30 @@ export class ProductPublishComponent implements OnInit {
 
         let userId = this.cookieService.get("user_id");
         this.catalogueService.getCatalogue(userId).then(catalogue => {
-                catalogue.catalogueLine.push(this.catalogueLine);
+
+                // Make deep copy of catalogue line so we can remove empty fields without disturbing UI model
+                // This is required because there is no redirect after publish action
+                let catalogueLineCopy: CatalogueLine = JSON.parse(JSON.stringify(this.catalogueLine));
+
+                // splice out properties that are unfilled
+                let properties: ItemProperty[] = catalogueLineCopy.goodsItem.item.additionalItemProperty;
+                let propertiesToBeSpliced: ItemProperty[] = [];
+
+                for (let property of properties) {
+                    // ASSUMPTION: if zeroth entry of a property is empty, all entries are
+                    if (property.value[0] === "") {
+                        propertiesToBeSpliced.push(property);
+                    }
+                }
+
+                for (let property of propertiesToBeSpliced) {
+                    properties.splice(properties.indexOf(property), 1);
+                }
+
+                catalogue.catalogueLine.push(catalogueLineCopy);
 
                 // TODO: merge stuff is demo-specific, handle it properly
                 //this.mergeMultipleValuesIntoSingleField(catalogue);
-
-                // TODO test log remove
-                console.log(this.catalogueLine);
 
                 if (catalogue.uuid == null) {
                     this.catalogueService.postCatalogue(catalogue)
@@ -208,22 +256,9 @@ export class ProductPublishComponent implements OnInit {
         let userId = this.cookieService.get("user_id");
         this.catalogueService.getCatalogue(userId).then(catalogue => {
 
-                // Make deep copy of catalogue line so we can remove empty fields without disturbing UI model
-                let catalogueLineCopy: CatalogueLine = JSON.parse(JSON.stringify(this.catalogueLine));
-
-                let properties: ItemProperty[] = catalogueLineCopy.goodsItem.item.additionalItemProperty;
-                // remove empty fields from catalogue line
-                for (let i = 0; i < properties.length; i++) {
-                    if (properties[i].value[0] == '') {
-                        alert("splice!");
-                        properties.splice(i, 1);
-                    }
-                }
-                console.log(properties);
-
-                // NOTE: indexOf is not supported in IE 7 & 8
+                // Replace original line in the array with the edited version
                 let indexOfOriginalLine = catalogue.catalogueLine.indexOf(this.catalogueService.getOriginalItem());
-                catalogue.catalogueLine[indexOfOriginalLine] = catalogueLineCopy;
+                catalogue.catalogueLine[indexOfOriginalLine] = this.catalogueLine;
 
                 // TODO: merge stuff is demo-specific, handle it properly
                 //this.mergeMultipleValuesIntoSingleField(catalogue);
@@ -349,10 +384,9 @@ export class ProductPublishComponent implements OnInit {
         let index = this.selectedCategories.findIndex(c => c.id == categoryId);
         if (index > -1) {
             this.selectedCategories.splice(index, 1);
-            this.productProperties.ngOnInit();
+            this.productProperties.refreshPropertyBlocks();
         }
     }
-
 
     private addCustomProperty(): void {
         this.catalogueLine.goodsItem.item.additionalItemProperty.push(this.newProperty);

@@ -8,6 +8,7 @@ import {Property} from "./model/category/property";
 import {ItemProperty} from "./model/publish/item-property";
 import {CatalogueLine} from "./model/publish/catalogue-line";
 import {PublishAndAIPCService} from "./publish-and-aip.service";
+import {ModelUtils} from "./model/model-utils";
 
 const PROPERTY_BLOCK_FIELD_NAME: string = "name";
 const PROPERTY_BLOCK_FIELD_ISCOLLAPSED = "isCollapsed";
@@ -46,9 +47,7 @@ export class ProductPropertiesComponent implements OnInit {
     }
 
     ngOnInit(): void {
-
         this.refreshPropertyBlocks();
-
     }
 
     refreshPropertyBlocks(): void {
@@ -66,7 +65,6 @@ export class ProductPropertiesComponent implements OnInit {
             }
         }
 
-
         // commodity classifications
         if (this.selectedCategories != null) {
             for (let category of this.selectedCategories) {
@@ -83,7 +81,6 @@ export class ProductPropertiesComponent implements OnInit {
      * Creates two blocks as eClass-base and eClass-specific and puts properties into those
      */
     private createEClassPropertyBlocks(category: Category): void {
-
 
         let basePropertyBlock: any = {};
         basePropertyBlock[PROPERTY_BLOCK_FIELD_NAME] = category.preferredName + " (" + category.taxonomyId + " - Base)";
@@ -164,11 +161,10 @@ export class ProductPropertiesComponent implements OnInit {
     }
 
 
-
-   /* isPropertyCommonToOthercategories(propertyName: string) {
-        index1 = this._publishAndAIPCService.baseProperties.findIndex(p => p.name == propertyName);
-        if()
-    }*/
+    /* isPropertyCommonToOthercategories(propertyName: string) {
+     index1 = this._publishAndAIPCService.baseProperties.findIndex(p => p.name == propertyName);
+     if()
+     }*/
 
     /*
      Checks whether the property is a base property common for many eClass properties
