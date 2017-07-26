@@ -5,6 +5,7 @@ import {Injectable} from '@angular/core';
 import {Http, Headers} from '@angular/http';
 import {Category} from "../model/category/category";
 import * as myGlobals from '../../globals';
+import {Code} from "../model/publish/code";
 
 @Injectable()
 export class CategoryService {
@@ -37,12 +38,41 @@ export class CategoryService {
             .catch(this.handleError);
     }
 
+    getCategoryByCode(code: Code): Promise<Category> {
+        const url = `${this.baseUrl}/` + code.listID + "/" + encodeURIComponent(code.value);
+        return this.http
+            .get(url, {headers: this.headers})
+            .toPromise()
+            .then(res => {
+                return res.json() as Category;
+            })
+            .catch(this.handleError);
+    }
+
+    getMultipleCategories(codes: Code[]): Promise<Category[]> {
+        let url = `${this.baseUrl}/multiple/`;
+
+        for (let code of codes)
+            url += code.listID + "," + encodeURIComponent(code.value) + ",";
+
+        return this.http
+            .get(url, {headers: this.headers})
+            .toPromise()
+            .then(res => {
+                return res.json() as Category;
+            })
+            .catch(this.handleError);
+    }
+
     getSelectedCategories(): Category[] {
         return this.selectedCategories;
     }
 
     addSelectedCategory(category: Category): void {
-        this.selectedCategories.push(category);
+        // Only add if category is not null and doesn't exist in selected categories
+        if (category != null && this.getSelectedCategories().findIndex(c => c.id == category.id) == -1) {
+            this.selectedCategories.push(category);
+        }
     }
 
     resetSelectedCategories():void {

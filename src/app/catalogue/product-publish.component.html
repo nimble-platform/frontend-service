@@ -67,12 +67,20 @@
                 </div>
             </div>
             <div class="col-sm-3">
-                <label class="col-3 control-label">
+                <label class="col-3 control-label" *ngIf="!editCatalogueLine">
                     <button class="btn btn-success btn-xs"
                             (click)="publishProduct()">
                         <span i18n>Publish Product</span>
                     </button>
                 </label>
+
+                <label class="col-3 control-label" *ngIf="editCatalogueLine">
+                    <button class="btn btn-success btn-xs"
+                            (click)="editProduct()">
+                        <span i18n>Save Changes</span>
+                    </button>
+                </label>
+
                 <div (click)="addCategoryOnClick()"
                      style="display: inline-block;">
                     <img src="./assets/catalogue/add_button.png"/>

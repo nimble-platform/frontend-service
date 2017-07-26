@@ -16,6 +16,7 @@ import {ActivatedRoute, Params, Router} from "@angular/router";
 import {ProductPropertiesComponent} from "./product-properties.component";
 import {PublishAndAIPCService} from "./publish-and-aip.service";
 import 'rxjs/Rx' ;
+import {Code} from "./model/publish/code";
 
 const uploadModalityKey: string = "UploadModality";
 
@@ -39,6 +40,9 @@ export class ProductPublishComponent implements OnInit {
     // placeholder for the custom property
     newProperty: ItemProperty = ModelUtils.createAdditionalItemProperty(null, null);
 
+    // boolean to indicate whether it's a new publish or an edit
+    editCatalogueLine: boolean;
+
 
     /*
      * state objects for feedback about the publish operation
@@ -47,6 +51,7 @@ export class ProductPublishComponent implements OnInit {
     private submitted = false;
     private callback = false;
     private error_detc = false;
+
 
     constructor(private categoryService: CategoryService,
                 private catalogueService: CatalogueService,
@@ -57,28 +62,51 @@ export class ProductPublishComponent implements OnInit {
     }
 
     ngOnInit() {
-
         let publishFromScratch: boolean;
-        let editCatalogueLine: boolean;
 
         this.route.queryParams.subscribe((params: Params) => {
             publishFromScratch = params['fromScratch'] == "true";
-            editCatalogueLine = params['edit'] == "true";
+            this.editCatalogueLine = params['edit'] == "true";
 
-            this.initView(publishFromScratch, editCatalogueLine);
+            this.initView(publishFromScratch, this.editCatalogueLine);
         });
     }
 
     private initView(publishFromScratch: boolean, editCatalogueLine: boolean): void {
 
         if (editCatalogueLine) {
-            this.publishAndAIPCService.resetService();
-            this.catalogueLine = this.catalogueService.getCatalogueLineBeingEdited();
-            // TODO somehow extract categories from CatalogueLine and push to selectedCategories
+            this.selectedCategories = [];
+            this.catalogueLine = this.catalogueService.getDraftItem();
+
+            let classificationCodes: Code[] = [];
+
+            // Get categories of item to edit
+            for (let classification of this.catalogueLine.goodsItem.item.commodityClassification)
+                classificationCodes.push(classification.itemClassificationCode);
+
+            this.categoryService.getMultipleCategories(classificationCodes).then(
+                (categories: Category[]) => {
+                    this.selectedCategories = categories;
+                    this.selectedCategories = this.selectedCategories.concat(this.categoryService.getSelectedCategories());
+
+                    if (this.selectedCategories != []) {
+                        for (let category of this.selectedCategories) {
+                            let newCategory = this.isNewCategory(category);
+
+                            if (newCategory) {
+                                this.updateItemWithNewCategory(category);
+                            }
+                        }
+                    }
+
+                    // Input property of child component won't update, so force update
+                    this.productProperties.selectedCategories = this.selectedCategories;
+                    this.productProperties.refreshPropertyBlocks();
+                });
+
         }
         else {
             this.catalogueLine = null;
-            this.publishAndAIPCService.resetService();
             let userId = this.cookieService.get("user_id");
             this.catalogueService.getCatalogue(userId).then(catalogue => {
 
@@ -135,10 +163,11 @@ export class ProductPublishComponent implements OnInit {
     }
 
     private addCategoryOnClick(event: any): void {
-        this.router.navigate(['categorysearch'], {queryParams: {fromScratch: false, edit: false}});
+        this.router.navigate(['categorysearch'], {queryParams: {fromScratch: false, edit: this.editCatalogueLine}});
     }
 
     private publishProduct(): void {
+
         this.error_detc = false;
         this.callback = false;
         this.submitted = true;
@@ -148,7 +177,53 @@ export class ProductPublishComponent implements OnInit {
                 catalogue.catalogueLine.push(this.catalogueLine);
 
                 // TODO: merge stuff is demo-specific, handle it properly
-                this.mergeMultipleValuesIntoSingleField(catalogue);
+                //this.mergeMultipleValuesIntoSingleField(catalogue);
+
+                // TODO test log remove
+                console.log(this.catalogueLine);
+
+                if (catalogue.uuid == null) {
+                    this.catalogueService.postCatalogue(catalogue)
+                        .then(() => this.onSuccessfulPublish())
+                        .catch(() => this.onFailedPublish());
+
+                } else {
+                    this.catalogueService.putCatalogue(catalogue)
+                        .then(() => this.onSuccessfulPublish())
+                        .catch(() => this.onFailedPublish())
+                }
+            }
+        );
+    }
+
+    private editProduct(): void {
+
+        this.error_detc = false;
+        this.callback = false;
+        this.submitted = true;
+
+        let userId = this.cookieService.get("user_id");
+        this.catalogueService.getCatalogue(userId).then(catalogue => {
+
+                // Make deep copy of catalogue line so we can remove empty fields without disturbing UI model
+                let catalogueLineCopy: CatalogueLine = JSON.parse(JSON.stringify(this.catalogueLine));
+
+                let properties: ItemProperty[] = catalogueLineCopy.goodsItem.item.additionalItemProperty;
+                // remove empty fields from catalogue line
+                for (let i = 0; i < properties.length; i++) {
+                    if (properties[i].value[0] == '') {
+                        alert("splice!");
+                        properties.splice(i, 1);
+                    }
+                }
+                console.log(properties);
+
+                // NOTE: indexOf is not supported in IE 7 & 8
+                let indexOfOriginalLine = catalogue.catalogueLine.indexOf(this.catalogueService.getOriginalItem());
+                catalogue.catalogueLine[indexOfOriginalLine] = catalogueLineCopy;
+
+                // TODO: merge stuff is demo-specific, handle it properly
+                //this.mergeMultipleValuesIntoSingleField(catalogue);
 
                 if (catalogue.uuid == null) {
                     this.catalogueService.postCatalogue(catalogue)
@@ -258,19 +333,19 @@ export class ProductPublishComponent implements OnInit {
     imageCancel(fileName: string) {
         let binaryObjects = this.newProperty.embeddedDocumentBinaryObject;
 
-        let index = binaryObjects.findIndex( img => img.fileName === fileName );
+        let index = binaryObjects.findIndex(img => img.fileName === fileName);
 
         console.log(index);
-        if(index > -1){
-            binaryObjects.splice(index,1);
+        if (index > -1) {
+            binaryObjects.splice(index, 1);
         }
     }
 
     /* deselect a category */
     categoryCancel(categoryId: string) {
         let index = this.selectedCategories.findIndex(c => c.id == categoryId);
-        if(index > -1) {
-            this.selectedCategories.splice(index,1);
+        if (index > -1) {
+            this.selectedCategories.splice(index, 1);
             this.productProperties.ngOnInit();
         }
     }

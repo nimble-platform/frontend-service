@@ -2,7 +2,7 @@
  * Created by suat on 17-May-17.
  */
 
-import {Component, Input, OnChanges, OnInit} from "@angular/core";
+import {Component, Input, OnInit} from "@angular/core";
 import {Category} from "./model/category/category";
 import {Property} from "./model/category/property";
 import {ItemProperty} from "./model/publish/item-property";
@@ -35,17 +35,13 @@ export class ProductPropertiesComponent implements OnInit {
 
     //deletedProperties: Array<string> = [];
 
-    constructor(private _publishAndAIPCService: PublishAndAIPCService) {
-    }
+    constructor(private _publishAndAIPCService: PublishAndAIPCService) {}
 
     ngOnInit(): void {
-
         this.refreshPropertyBlocks();
-
     }
 
     refreshPropertyBlocks(): void {
-
         this.customProperties = [];
         this.propertyBlocks = [];
         this.renderedPropertyIds = [];
@@ -69,7 +65,6 @@ export class ProductPropertiesComponent implements OnInit {
         }
 
         this.customProperties = this._publishAndAIPCService.customProperties;
-
 
         // commodity classifications
         if (this.selectedCategories != null) {
@@ -138,7 +133,7 @@ export class ProductPropertiesComponent implements OnInit {
         specificPropertyBlock[PROPERTY_BLOCK_FIELD_PROPERTIES] = specificProperties;
     }
 
-    private createPropertyBlock(category: Category): void {
+    public createPropertyBlock(category: Category): void {
 
         let propertyBlock: any = {};
         propertyBlock[PROPERTY_BLOCK_FIELD_NAME] = category.preferredName + " (" + category.taxonomyId + ")";
@@ -164,7 +159,9 @@ export class ProductPropertiesComponent implements OnInit {
         return false;
     }
 
+    // maps Property in categories to ItemProperties in additionalItemProperty[]
     private getItemProperty(property: Property): ItemProperty {
+
         for (let aip of this.catalogueLine.goodsItem.item.additionalItemProperty) {
             if (aip.id == property.id) {
                 return aip;

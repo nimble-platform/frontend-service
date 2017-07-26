@@ -20,8 +20,7 @@ export class CatalogueService {
     private catalogue: Catalogue;
     private draftCatalogueLine: CatalogueLine;
 
-    // properties for editing
-    private catalogueLineBeingEdited: CatalogueLine;
+    private originalCatalogueLine: CatalogueLine;
 
     constructor(private http: Http,
                 private userService: UserService) {
@@ -181,12 +180,15 @@ export class CatalogueService {
 
     // Editing functionality
 
-    getCatalogueLineBeingEdited() {
-        return this.catalogueLineBeingEdited;
+    getOriginalItem() {
+        return this.originalCatalogueLine;
     }
 
     editCatalogueLine(catalogueLine: CatalogueLine) {
         // Deep copy trick to guard original catalogueLine model
-        this.catalogueLineBeingEdited = JSON.parse(JSON.stringify(catalogueLine));
+        this.draftCatalogueLine = JSON.parse(JSON.stringify(catalogueLine));
+
+        // save reference to original
+        this.originalCatalogueLine = catalogueLine;
     }
 }

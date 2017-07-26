@@ -15,6 +15,7 @@ import {CategoryService} from "./category.service";
 export class CategorySearchComponent implements OnInit {
     categories: Category[];
     startPublishingFromScratch: boolean;
+    editCatalogueLine: boolean;
     submitted: boolean = false;
     callback: boolean = false;
 
@@ -26,8 +27,13 @@ export class CategorySearchComponent implements OnInit {
     ngOnInit(): void {
         this.route.queryParams.subscribe((params: Params) => {
             this.startPublishingFromScratch = params['fromScratch'] == 'true';
+            this.editCatalogueLine = params['edit'] == 'true';
+
             if(this.startPublishingFromScratch) {
                 this.categoryService.resetSelectedCategories();
+            }
+            else if (this.editCatalogueLine) {
+
             }
         });
     }
@@ -50,7 +56,8 @@ export class CategorySearchComponent implements OnInit {
         this.categoryService.getCategory(category)
             .then(category => {
                 this.categoryService.addSelectedCategory(category);
-                this.router.navigate(['publish'], {queryParams: {fromScratch: this.startPublishingFromScratch}})
+                this.router.navigate(['publish'], {queryParams: {fromScratch: this.startPublishingFromScratch,
+                    edit: this.editCatalogueLine}})
             });
     }
 }

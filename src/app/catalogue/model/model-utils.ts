@@ -30,8 +30,8 @@ export class ModelUtils {
         let aip: ItemProperty;
         if (property == null) {
             aip = new ItemProperty(this.generateUUID(), "", [], new Array<BinaryObject>(), "", "", "STRING", code,"", null);
-
-        } else {
+        }
+        else {
             let unit = "";
             if (property.unit != null) {
                 unit = property.unit.shortName;
