@@ -11,7 +11,7 @@ import {PublishAndAIPCService} from "./publish-and-aip.service";
 })
 
 export class AdditionalItemPropertyComponent implements OnInit {
-    i: Array<number> = [5];
+    i: Array<number> = [];
 
     @Input() additionalItemProperty:ItemProperty;
 

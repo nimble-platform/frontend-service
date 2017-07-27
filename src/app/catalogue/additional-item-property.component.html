@@ -68,32 +68,38 @@
 </div>
 
 <div id="stringValueDiv">
-<div *ngIf="stringValue" id="stringValueDiv" class="input-group form-group">
+<div *ngIf="stringValue" id="stringValueDiv">
 
-    <div *ngIf="eClassValue" class="col-3 control-label" (click)="openModal()">
-        <div style="cursor: pointer">
-            {{additionalItemProperty.name}}
-            <span *ngIf="eClassValue">&#9432;</span>
+    <div class="input-group form-group">
+        <div *ngIf="eClassValue" class="col-3 control-label" (click)="openModal()">
+            <div style="cursor: pointer">
+                {{additionalItemProperty.name}}
+                <span *ngIf="eClassValue">&#9432;</span>
+            </div>
         </div>
-    </div>
 
-    <div *ngIf="!eClassValue" class="col-3 control-label" >
-        {{additionalItemProperty.name}}
-        <span style="display:inline-block; width: 30px;"></span>
+        <div *ngIf="!eClassValue" class="col-3 control-label" >
+            {{additionalItemProperty.name}}
+            <span style="display:inline-block; width: 30px;"></span>
+        </div>
+        <input type="text" id="prop_val" class="form-control" [(ngModel)]="additionalItemProperty.value[0]">
+
+        <span *ngIf="!eClassValue"><button class="btn btn-xs btn-danger"
+                                           (click)="deleteCustomProperty(additionalItemProperty.name); $event.stopPropagation()"
+        >&times;</button></span>
+
+        <span *ngIf="eClassValue">
+            <button class="btn btn-primary btn-xs"
+                    (click)="addAnotherPropertyValue(additionalItemProperty.name)"
+            >+</button>
+        </span>
     </div>
     <!--<input type="text" class="form-control" [value]="additionalItemProperty.value[0]">-->
-    <div *ngFor="let m of i" >
+    <div *ngFor="let m of i" class="input-group form-group">
+        <label class="col-3 control-label"></label>
         <input type="text" id="prop_val" class="form-control" [(ngModel)]="additionalItemProperty.value[i.length]">
     </div>
-    <span *ngIf="!eClassValue"><button class="btn btn-xs btn-danger"
-                  (click)="deleteCustomProperty(additionalItemProperty.name); $event.stopPropagation()"
-    >&times;</button></span>
 
-    <span *ngIf="eClassValue">
-        <button class="btn btn-primary btn-xs"
-                (click)="addAnotherPropertyValue(additionalItemProperty.name)"
-        >+</button>
-    </span>
 </div>
 
 </div>

@@ -142,12 +142,13 @@ export class ProductPublishComponent implements OnInit {
         let commodityClassification = ModelUtils.createCommodityClassification(category);
         this.catalogueLine.goodsItem.item.commodityClassification.push(commodityClassification);
 
+        loop1:
         for (let property of category.properties) {
             let aip = ModelUtils.createAdditionalItemProperty(property, category);
             // check whether the same property exists already
             for (let existingAip of this.catalogueLine.goodsItem.item.additionalItemProperty) {
                 if (aip.id == existingAip.id) {
-                    break;
+                    continue loop1;
                 }
             }
 
@@ -347,27 +348,22 @@ export class ProductPublishComponent implements OnInit {
     /* deselect a category */
     categoryCancel(categoryId: string) {
         let c = 0;
-        let i = this.catalogueLine.goodsItem.item.commodityClassification.findIndex(c => c.itemClassificationCode.value == categoryId);
-
-        if(i > -1) {
-            this.catalogueLine.goodsItem.item.commodityClassification.splice(i, 1);
-        }
 
         let index = this.selectedCategories.findIndex(c => c.id == categoryId);
         if (index > -1) {
 
         for (let property of this.selectedCategories[index].properties) {
+            c = 0;
             for (let category of this.selectedCategories) {
-                if (category.id == categoryId)
-                    continue;
+                if (category.id != categoryId) {
 
-                for (let p of category.properties) {
-                    if (property.id == p.id)
-                        c++;
+                    for (let p of category.properties) {
+                        if (property.id == p.id)
+                            c++;
+                    }
                 }
             }
             if(c==0){
-
                 let j = this.catalogueLine.goodsItem.item.additionalItemProperty.findIndex(p => p.id == property.id);
                 if (j > -1)
                     this.catalogueLine.goodsItem.item.additionalItemProperty.splice(j, 1);
@@ -376,6 +372,14 @@ export class ProductPublishComponent implements OnInit {
 
         this.selectedCategories.splice(index, 1);
         }
+
+        let i = this.catalogueLine.goodsItem.item.commodityClassification.findIndex(c => c.itemClassificationCode.value == categoryId);
+
+        if(i > -1) {
+            this.catalogueLine.goodsItem.item.commodityClassification.splice(i, 1);
+        }
+        console.log(this.selectedCategories.length);
+
         this.productProperties.ngOnInit();
 
     }
