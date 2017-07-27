@@ -173,6 +173,15 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                 nodeConceptUrl = this.config['dataproperties'][index]['url'];
             }
         }
+        // get values to be passed to child....
+        this.nodeFilterName = clickedNode;
+        this.filterQuery = nodeConceptUrl;
+        this.filterQueryRoot = rootConcept;
+        this.filterQueryRootUrl = rootConceptUrl;
+        // build the Query Parameter
+        let filteringInput = { 'concept': encodeURIComponent(rootConceptUrl.trim()),
+            'property': encodeURIComponent(nodeConceptUrl.trim()), 'amountOfGroups': 3
+            , 'language': this.lang};
 
         // MULTISELECTION via GOJS Library
         if (ev.control) { // if the CTRL Key is pressed..
@@ -181,11 +190,16 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                 // avoid duplicate entries in the list
                 if (!this.selectedProperties.find( e => e === nodeConceptUrl)) {
                     this.selectedProperties.push(nodeConceptUrl);
+                    // call the respective API...
+                    this.expSearch.getPropertyValues(filteringInput)
+                        .then(res => this.filterJSON = res);
                 }
             } else { // the node was clicked again and deselected remove from list
                 let index = this.selectedProperties.indexOf(nodeConceptUrl);
                 if (index > -1) {
                     this.selectedProperties.splice(index, 1);
+                    // do not send anything to child .. Remove the Filter from display
+                    this.filterJSON = {};
                 }
             }
         } else { // no CTRL Button pressed but node selected
@@ -194,26 +208,26 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                 // avoid duplicate entries in the list
                 if (!this.selectedProperties.find(e => e === nodeConceptUrl)) {
                     this.selectedProperties.push(nodeConceptUrl);
+                    // call the respective API
+                    this.expSearch.getPropertyValues(filteringInput)
+                        .then(res => this.filterJSON = res);
                 }
             } else { // if the node is deselected remove if from list
                 let index = this.selectedProperties.indexOf(nodeConceptUrl);
                 if (index > -1) {
                     this.selectedProperties.splice(index, 1);
+                    // do not send anything to child.. Remove the Filter from display
+                    this.filterJSON = {};
                 }
             }
         }
         console.log(this.selectedProperties);
+        // if all properties deselected
+        if (this.selectedProperties.length === 0) {
+            this.tableResult = {};
+        }
 
         // console.log(rootConceptUrl, nodeConceptUrl); // DEBUG --CHECK
-        let filteringInput = { 'concept': encodeURIComponent(rootConceptUrl.trim()),
-            'property': encodeURIComponent(nodeConceptUrl.trim()), 'amountOfGroups': 3
-                , 'language': this.lang};
-        this.nodeFilterName = clickedNode;
-        this.filterQuery = nodeConceptUrl;
-        this.filterQueryRoot = rootConcept;
-        this.filterQueryRootUrl = rootConceptUrl;
-        this.expSearch.getPropertyValues(filteringInput)
-            .then(res => this.filterJSON = res);
     }
     /**
      * genTable: Generate a Dynamic tableJSON query for the API Call and
@@ -223,8 +237,11 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
         if (this.finalSelectionJSON) {
             this.tableJSON['concept'] = encodeURIComponent(this.finalSelectionJSON['root']);
             this.tableJSON['parameters'] = new Array();
-            for (let eachFilProp of this.finalSelectionJSON['filter']) {
-                this.tableJSON['parameters'].push(encodeURIComponent(eachFilProp['property']));
+            // for (let eachFilProp of this.finalSelectionJSON['filter']) {
+            //    this.tableJSON['parameters'].push(encodeURIComponent(eachFilProp['property']));
+            // }
+            for (let eachSelectedProp of this.selectedProperties) {
+                this.tableJSON['parameters'].push(encodeURIComponent(eachSelectedProp));
             }
             this.tableJSON['filters'] = new Array();
             for (let eachFilVal of this.finalSelectionJSON['filter']) {

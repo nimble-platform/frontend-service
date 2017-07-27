@@ -35,19 +35,29 @@
         <!-- This button is according to Specification
             If not logged in route directly to Login Page
             if logged in route to dashboard -->
-        <div class="col-md-2">
+        <div class="col-md-2 form-group">
             <!--<a class="btn btn-warning" routerLink="/dashboard">Home</a>-->
+            <!--
             <b>Choose Language</b>
-            <form *ngFor="let eachLang of availableLanguages['languages']">
+            <form>
+                <div  *ngFor="let eachLang of availableLanguages['languages']">
+                    <label>
+                        <input #en type="radio" (click)="language = en.value" value="en"/>
+                        en
+                        <input type="radio" (click)="language = eachLang"/>
+                        {{eachLang}}
+                    </label>
+                </div>
+            </form> -->
+            <label>Choose Language</label>
+            <div class="radio" *ngFor="let eachLang of availableLanguages['languages']">
                 <label>
-                    <input #en type="radio" (click)="language = en.value" value="en"/>
+                    <input type="radio" #en value="en" (click)="language = en.value"/>
                     en
+                    <input type="radio" (click)="language = eachLang"/>{{eachLang}}
                 </label>
-                <label>
-                    <input type="radio" (click)="language = eachLang"/>
-                    {{eachLang}}
-                </label>
-            </form>
+            </div>
+
         </div>
     </div>
 </div>
