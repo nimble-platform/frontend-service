@@ -40,6 +40,10 @@
             <b>Choose Language</b>
             <form *ngFor="let eachLang of availableLanguages['languages']">
                 <label>
+                    <input #en type="radio" (click)="language = en.value" value="en"/>
+                    en
+                </label>
+                <label>
                     <input type="radio" (click)="language = eachLang"/>
                     {{eachLang}}
                 </label>
