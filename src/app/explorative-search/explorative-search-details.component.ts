@@ -60,6 +60,13 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
         let recApproach = new RecClass();
         recApproach.generateGraphRecApproach(this.config, this.myDiagram, this.$);
         // this.resetSelection();
+        this.selectedProperties = [];
+        this.tableResult = {};
+        this.filterJSON = {};
+        this.filterQueryRoot = '';
+        this.filterQueryRootUrl = '';
+        this.filterQuery = '';
+        this.nodeFilterName = '';
     }
 
     /**
