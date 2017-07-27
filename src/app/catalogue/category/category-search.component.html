@@ -2,13 +2,17 @@
 
 <div class="row justify-content-md-center col-12 mt-3">
 
-    <div [hidden]="callback || !submitted" class="space-right">
-        <img class="space-before" src="assets/form_loader.gif"/>
-    </div>
+    <!-- search by pressing enter! -->
+    <form (ngSubmit)="getCategories(searchBox.value); callback = false; submitted = true"
+          class="col-12 row justify-content-md-center">
 
-    <input #searchBox class="form-control col-4"/>
-    <button type="button" (click)="getCategories(searchBox.value); callback = false; submitted = true"
-            class="btn btn-success col-3 ml-3" i18n>Search product category</button>
+        <div [hidden]="callback || !submitted" class="space-right">
+            <img class="space-before" src="assets/form_loader.gif"/>
+        </div>
+
+        <input #searchBox class="form-control col-4"/>
+        <button type="submit" class="btn btn-success col-3 ml-3" i18n>Search product category</button>
+    </form>
 
 </div>
 
@@ -22,5 +26,7 @@
 </ul>
 
 <div class="row col-12 justify-content-center">
-    <button class="btn btn-warning mt-3" (click)="selectCategory(null)" i18n>Publish products without selecting a category</button>
+    <button class="btn btn-warning mt-3" (click)="selectCategory(null)" i18n>Publish products without selecting a
+        category
+    </button>
 </div>

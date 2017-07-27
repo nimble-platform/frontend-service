@@ -1,6 +1,8 @@
 import {Component, Input, OnInit} from "@angular/core";
 import { CatalogueLine } from "./model/publish/catalogue-line";
 import {ItemProperty} from "./model/publish/item-property";
+import {Property} from "./model/category/property";
+import {Code} from "./model/publish/code";
 
 @Component({
     selector: 'product-details',
@@ -19,10 +21,13 @@ export class ProductDetailsComponent implements OnInit{
 
     // list keeping the custom additional properties
     customProperties: ItemProperty[] = [];
-    // hash storing the blocks of each category, indexed by itemClassificationCode.value
+    /*
+     * hash storing the blocks of each category
+     * For eClasses, base block is held at propertyBlocks[itemClassificationCode.value][0]
+     * and specific block at propertyBlocks[itemClassificationCode.value][1]
+     * For others, the block is held at propertyBlocks[itemClassificationCode.listID][0]
+     */
     propertyBlocks: any = {};
-    // custom properties block, if there are any
-    customPropertiesBlock: any = null;
 
     ngOnInit(): void {
         this.refreshPropertyBlocks();
@@ -34,32 +39,100 @@ export class ProductDetailsComponent implements OnInit{
 
         // determine categories the item belongs to
         for (let classification of this.catalogueLine.goodsItem.item.commodityClassification) {
-            let propertyBlock: any = {};
-            propertyBlock[this.PROPERTY_BLOCK_FIELD_NAME] = classification.itemClassificationCode.name;
-            propertyBlock[this.PROPERTY_BLOCK_FIELD_ISCOLLAPSED] = true;
-            propertyBlock[this.PROPERTY_BLOCK_FIELD_PROPERTIES] = [];
-            this.propertyBlocks[classification.itemClassificationCode.value] = propertyBlock;
+
+            if (classification.itemClassificationCode.listID == "eClass") {
+                this.createEClassPropertyBlocks(classification.itemClassificationCode);
+             }
         }
 
         // put all properties into their blocks
         for (let property of this.catalogueLine.goodsItem.item.additionalItemProperty) {
-            if (property.itemClassificationCode.listID === "Custom") {
-                this.customProperties.push(property);
+
+            if (property.itemClassificationCode.listID === "eClass") {
+                if (ProductDetailsComponent.isBaseEClassProperty(property.id)) {
+                    this.propertyBlocks[property.itemClassificationCode.value][0]
+                        [this.PROPERTY_BLOCK_FIELD_PROPERTIES].push(property);
+                }
+                else {
+                    this.propertyBlocks[property.itemClassificationCode.value][1]
+                        [this.PROPERTY_BLOCK_FIELD_PROPERTIES].push(property);
+                }
             }
-            else if (property.itemClassificationCode.listID === "eClass") {
-                this.propertyBlocks[property.itemClassificationCode.value][this.PROPERTY_BLOCK_FIELD_PROPERTIES].push(property);
+            else {
+                if (this.propertyBlocks[property.itemClassificationCode.listID] === undefined) {
+                    this.createPropertyBlock(property.itemClassificationCode);
+                }
+
+                this.propertyBlocks[property.itemClassificationCode.listID][0][this.PROPERTY_BLOCK_FIELD_PROPERTIES].push(property);
             }
         }
 
-        // Configure custom properties block if there are any custom properties
-        if (this.customProperties.length > 0) {
-            this.customPropertiesBlock = {};
-            this.customPropertiesBlock[this.PROPERTY_BLOCK_FIELD_NAME] = "Custom Properties";
-            this.customPropertiesBlock[this.PROPERTY_BLOCK_FIELD_ISCOLLAPSED] = true;
-            this.customPropertiesBlock[this.PROPERTY_BLOCK_FIELD_PROPERTIES] = this.customProperties;
-        }
+        // strip the hash into an array of its values
+        let propertyBlocksValues = this.propertyBlocks = (<any>Object).values(this.propertyBlocks);
 
-        // Convert propertyBlocks to an array of its values so it's iterable to *ngFor
-        this.propertyBlocks = (<any>Object).values(this.propertyBlocks);
+        // empty property blocks
+        this.propertyBlocks = [];
+
+        // flatten the array of arrays and put it into propertyBlocks
+        for (let block of propertyBlocksValues)
+            this.propertyBlocks = this.propertyBlocks.concat(block);
+    }
+
+    private createEClassPropertyBlocks(code: Code) {
+        let basePropertyBlock: any = {};
+        basePropertyBlock[this.PROPERTY_BLOCK_FIELD_NAME] = code.name + " (" + code.listID + " - Base)";
+        basePropertyBlock[this.PROPERTY_BLOCK_FIELD_ISCOLLAPSED] = true;
+        basePropertyBlock[this.PROPERTY_BLOCK_FIELD_PROPERTIES] = [];
+
+        let specificPropertyBlock: any = {};
+        specificPropertyBlock[this.PROPERTY_BLOCK_FIELD_NAME] = code.name + " (" + code.listID + " - Specific)";
+        specificPropertyBlock[this.PROPERTY_BLOCK_FIELD_ISCOLLAPSED] = true;
+        specificPropertyBlock[this.PROPERTY_BLOCK_FIELD_PROPERTIES] = [];
+
+        let eClassGroup = [basePropertyBlock, specificPropertyBlock];
+        this.propertyBlocks[code.value] = eClassGroup;
+    }
+
+    private createPropertyBlock(itemClassificationCode: Code) {
+        let propertyBlock: any = {};
+        propertyBlock[this.PROPERTY_BLOCK_FIELD_NAME] = itemClassificationCode.listID;
+        propertyBlock[this.PROPERTY_BLOCK_FIELD_ISCOLLAPSED] = true;
+        propertyBlock[this.PROPERTY_BLOCK_FIELD_PROPERTIES] = [];
+
+        this.propertyBlocks[itemClassificationCode.listID] = [];
+        this.propertyBlocks[itemClassificationCode.listID].push(propertyBlock);
+    }
+
+    private static isBaseEClassProperty(id: string): boolean {
+        let pid: string = id;
+        if (pid == "0173-1#02-AAD931#005" ||
+            pid == "0173-1#02-AAO663#003" ||
+            pid == "0173-1#02-BAB392#012" ||
+            pid == "0173-1#02-AAO677#002" ||
+            pid == "0173-1#02-AAO676#003" ||
+            pid == "0173-1#02-AAO736#004" ||
+            pid == "0173-1#02-AAO735#003" ||
+            pid == "0173-1#02-AAP794#001" ||
+            pid == "0173-1#02-AAQ326#002" ||
+            pid == "0173-1#02-BAE391#004" ||
+            pid == "0173-1#02-AAP796#004" ||
+            pid == "0173-1#02-BAF831#002" ||
+            pid == "0173-1#02-AAM551#002" ||
+            pid == "0173-1#02-AAU734#001" ||
+            pid == "0173-1#02-AAU733#001" ||
+            pid == "0173-1#02-AAU732#001" ||
+            pid == "0173-1#02-AAU731#001" ||
+            pid == "0173-1#02-AAU730#001" ||
+            pid == "0173-1#02-AAU729#001" ||
+            pid == "0173-1#02-AAU728#001" ||
+            pid == "0173-1#02-AAO742#002" ||
+            pid == "0173-1#02-AAW336#001" ||
+            pid == "0173-1#02-AAW337#001" ||
+            pid == "0173-1#02-AAW338#001" ||
+            pid == "0173-1#02-AAO057#002") {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

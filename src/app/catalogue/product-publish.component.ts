@@ -95,6 +95,7 @@ export class ProductPublishComponent implements OnInit {
                     this.selectedCategories = this.selectedCategories.concat(this.categoryService.getSelectedCategories());
 
                     if (this.selectedCategories != []) {
+
                         for (let category of this.selectedCategories) {
                             let newCategory = this.isNewCategory(category);
 
@@ -112,13 +113,15 @@ export class ProductPublishComponent implements OnInit {
                     this.productProperties.catalogueLine = this.catalogueLine;
                     this.productProperties.selectedCategories = this.selectedCategories;
 
+
                     this.productProperties.refreshPropertyBlocks();
+                    console.log("2");
+                    console.log(this.catalogueLine);
                 });
 
         }
         else {
             this.catalogueLine = null;
-            //this.publishAndAIPCService.resetService();
             let userId = this.cookieService.get("user_id");
             this.catalogueService.getCatalogue(userId).then(catalogue => {
 
@@ -146,26 +149,46 @@ export class ProductPublishComponent implements OnInit {
         }
     }
 
+    // Ensures the user is presented with all properties of the category when editing
     private restoreItemProperties() {
         let newProperties: ItemProperty[] = [];
         let existingProperties: ItemProperty[] = this.catalogueLine.goodsItem.item.additionalItemProperty;
+        let customProperties: ItemProperty[] = [];
 
+        // prepare empty category fields
         for (let category of this.selectedCategories) {
             for (let property of category.properties) {
                 let aip = ModelUtils.createAdditionalItemProperty(property, category);
                 aip.propertyDefinition = property.definition;
-                newProperties.push(aip);
+
+                // Make sure each property is pushed once
+                if (newProperties.findIndex(p => p.id == property.id) <= -1) {
+                    newProperties.push(aip);
+                }
             }
         }
 
         for (let i = 0; i < newProperties.length; i++) {
             for (let j = 0; j < existingProperties.length; j++) {
+
+                // in the first iteration, set aside custom properties
+                if (i == 0) {
+                    if (existingProperties[j].itemClassificationCode.listID !== "eClass") {
+                        customProperties.push(existingProperties[j]);
+                    }
+                }
+
+                // If a property already exists, copy it over
                 if (newProperties[i].id == existingProperties[j].id) {
                     newProperties[i] = existingProperties[j];
                 }
             }
         }
 
+        console.log(existingProperties);
+        console.log(newProperties);
+
+        newProperties = newProperties.concat(customProperties);
         this.catalogueLine.goodsItem.item.additionalItemProperty = newProperties;
     }
 
@@ -173,17 +196,17 @@ export class ProductPublishComponent implements OnInit {
         let commodityClassification = ModelUtils.createCommodityClassification(category);
         this.catalogueLine.goodsItem.item.commodityClassification.push(commodityClassification);
 
-        for (let property of category.properties) {
-            let aip = ModelUtils.createAdditionalItemProperty(property, category);
-            // check whether the same property exists already
-            for (let existingAip of this.catalogueLine.goodsItem.item.additionalItemProperty) {
-                if (aip.id == existingAip.id) {
-                    break;
+        loop1:
+            for (let property of category.properties) {
+                let aip = ModelUtils.createAdditionalItemProperty(property, category);
+                // check whether the same property exists already
+                for (let existingAip of this.catalogueLine.goodsItem.item.additionalItemProperty) {
+                    if (aip.id == existingAip.id) {
+                        continue loop1;
+                    }
                 }
+                this.catalogueLine.goodsItem.item.additionalItemProperty.push(aip);
             }
-
-            this.catalogueLine.goodsItem.item.additionalItemProperty.push(aip);
-        }
     }
 
     private onTabClick(event: any) {
@@ -209,26 +232,10 @@ export class ProductPublishComponent implements OnInit {
         let userId = this.cookieService.get("user_id");
         this.catalogueService.getCatalogue(userId).then(catalogue => {
 
-                // Make deep copy of catalogue line so we can remove empty fields without disturbing UI model
-                // This is required because there is no redirect after publish action
-                let catalogueLineCopy: CatalogueLine = JSON.parse(JSON.stringify(this.catalogueLine));
-
-                // splice out properties that are unfilled
-                let properties: ItemProperty[] = catalogueLineCopy.goodsItem.item.additionalItemProperty;
-                let propertiesToBeSpliced: ItemProperty[] = [];
-
-                for (let property of properties) {
-                    // ASSUMPTION: if zeroth entry of a property is empty, all entries are
-                    if (property.value[0] === "") {
-                        propertiesToBeSpliced.push(property);
-                    }
-                }
-
-                for (let property of propertiesToBeSpliced) {
-                    properties.splice(properties.indexOf(property), 1);
-                }
-
-                catalogue.catalogueLine.push(catalogueLineCopy);
+                // remove unused properties from catalogueLine
+                let splicedCatalogueLine: CatalogueLine = this.removeEmptyProperties(this.catalogueLine);
+                // add new line to the end of catalogue
+                catalogue.catalogueLine.push(splicedCatalogueLine);
 
                 // TODO: merge stuff is demo-specific, handle it properly
                 //this.mergeMultipleValuesIntoSingleField(catalogue);
@@ -256,9 +263,12 @@ export class ProductPublishComponent implements OnInit {
         let userId = this.cookieService.get("user_id");
         this.catalogueService.getCatalogue(userId).then(catalogue => {
 
-                // Replace original line in the array with the edited version
+                // remove unused properties from catalogueLine
+                let splicedCatalogueLine: CatalogueLine = this.removeEmptyProperties(this.catalogueLine);
+
+                // Replace original line in the catalogue with the edited version
                 let indexOfOriginalLine = catalogue.catalogueLine.indexOf(this.catalogueService.getOriginalItem());
-                catalogue.catalogueLine[indexOfOriginalLine] = this.catalogueLine;
+                catalogue.catalogueLine[indexOfOriginalLine] = splicedCatalogueLine;
 
                 // TODO: merge stuff is demo-specific, handle it properly
                 //this.mergeMultipleValuesIntoSingleField(catalogue);
@@ -277,7 +287,35 @@ export class ProductPublishComponent implements OnInit {
         );
     }
 
+    // Removes empty properties from catalogueLines about to be sent
+    private removeEmptyProperties(catalogueLine: CatalogueLine): CatalogueLine {
+
+        // Make deep copy of catalogue line so we can remove empty fields without disturbing UI model
+        // This is required because there is no redirect after publish action
+        let catalogueLineCopy: CatalogueLine = JSON.parse(JSON.stringify(catalogueLine));
+
+        // splice out properties that are unfilled
+        let properties: ItemProperty[] = catalogueLineCopy.goodsItem.item.additionalItemProperty;
+        let propertiesToBeSpliced: ItemProperty[] = [];
+
+        for (let property of properties) {
+            // ASSUMPTION: if zeroth entry of a property is empty, all entries are
+            if (property.value[0] === "") {
+                propertiesToBeSpliced.push(property);
+            }
+        }
+
+        for (let property of propertiesToBeSpliced) {
+            properties.splice(properties.indexOf(property), 1);
+        }
+
+        return catalogueLineCopy;
+    }
+
     private onSuccessfulPublish(): void {
+        // avoid category duplication
+        this.categoryService.resetSelectedCategories();
+
         this.callback = true;
         this.error_detc = false;
         this.ngOnInit();
@@ -381,11 +419,45 @@ export class ProductPublishComponent implements OnInit {
 
     /* deselect a category */
     categoryCancel(categoryId: string) {
+        let c = 0;
+
         let index = this.selectedCategories.findIndex(c => c.id == categoryId);
         if (index > -1) {
+
+            for (let property of this.selectedCategories[index].properties) {
+                c = 0;
+                for (let category of this.selectedCategories) {
+                    if (category.id == categoryId)
+                        continue;
+
+                    for (let p of category.properties) {
+                        if (property.id == p.id)
+                            c++;
+                    }
+                }
+                if (c == 0) {
+
+                    let j = this.catalogueLine.goodsItem.item.additionalItemProperty.findIndex(p => p.id == property.id);
+                    if (j > -1)
+                        this.catalogueLine.goodsItem.item.additionalItemProperty.splice(j, 1);
+
+                    let k = this.productProperties.renderedPropertyIds.findIndex(p => p == property.id);
+                    if (k > -1)
+                        this.productProperties.renderedPropertyIds.splice(k, 1);
+                }
+            }
+
             this.selectedCategories.splice(index, 1);
-            this.productProperties.refreshPropertyBlocks();
         }
+
+        let i = this.catalogueLine.goodsItem.item.commodityClassification.findIndex(c => c.itemClassificationCode.value == categoryId);
+
+        if (i > -1) {
+            this.catalogueLine.goodsItem.item.commodityClassification.splice(i, 1);
+        }
+
+        this.productProperties.ngOnInit();
+
     }
 
     private addCustomProperty(): void {

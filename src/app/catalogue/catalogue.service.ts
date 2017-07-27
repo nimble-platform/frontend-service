@@ -185,9 +185,8 @@ export class CatalogueService {
     }
 
     editCatalogueLine(catalogueLine: CatalogueLine) {
-        // Deep copy trick to guard original catalogueLine model
+        // Deep copy to guard original catalogueLine model
         this.draftCatalogueLine = JSON.parse(JSON.stringify(catalogueLine));
-
         // save reference to original
         this.originalCatalogueLine = catalogueLine;
     }
