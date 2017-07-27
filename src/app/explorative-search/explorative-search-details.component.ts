@@ -252,7 +252,8 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
             }
             this.tableJSON['filters'] = new Array();
             for (let eachFilVal of this.finalSelectionJSON['filter']) {
-                this.tableJSON['filters'].push({'min': eachFilVal['values'][0], 'max': eachFilVal['values'][1]});
+                this.tableJSON['filters'].push({'property': encodeURIComponent(eachFilVal['property']),
+                    'min': eachFilVal['values'][0], 'max': eachFilVal['values'][1]});
             }
         } else { // if user directly clicks on the Search button
             this.tableJSON['concept'] = encodeURIComponent(this.filterQueryRootUrl);
