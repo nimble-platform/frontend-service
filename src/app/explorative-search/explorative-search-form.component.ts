@@ -106,7 +106,9 @@ export class ExplorativeSearchFormComponent implements OnInit {
         // console.log(inputVal);
         // HTTP GET to backend Server for visualization
         // create a JSON request for the queried button
-        let temp = {'concept': encodeURIComponent(inputVal.trim()), 'stepRange': 2, 'frozenConcept': 'ddd'};
+        let temp = {'concept': encodeURIComponent(inputVal.trim()), 'stepRange': 2, 'frozenConcept': 'ddd',
+            'language': this.language
+        };
         // console.log(JSON.stringify(temp)); // Debug: check
         // get the requested query
         this.expSearch.getLogicalView(temp)

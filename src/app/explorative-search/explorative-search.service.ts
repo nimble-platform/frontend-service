@@ -43,8 +43,7 @@ export class ExplorativeSearchService {
     }
 
     getLogicalView(term: Object): Promise<any> {
-        term['language'] = this.userLang;
-        console.log('getlogicalview', this.userLang);
+        console.log('getlogicalview', term['language']);
         return this.http.get(`${this.logicalUrl}?inputAsJson=${JSON.stringify(term)}`)
             .toPromise()
             .then(res => res.json())
