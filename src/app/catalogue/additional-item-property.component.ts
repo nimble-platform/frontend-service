@@ -11,7 +11,8 @@ import {PublishAndAIPCService} from "./publish-and-aip.service";
 })
 
 export class AdditionalItemPropertyComponent implements OnInit {
-    i: Array<number> = [];
+    i: Array<string> = [];
+    c: number = 1;
 
     @Input() additionalItemProperty:ItemProperty;
 
@@ -21,6 +22,8 @@ export class AdditionalItemPropertyComponent implements OnInit {
     eClassValue:boolean = false;
 
     propertyUnitDefined:boolean = false;
+
+    buttonDisabled: boolean = true;
 
     openModal(): void {
         //if(this.eClassValue == true){
@@ -50,10 +53,22 @@ export class AdditionalItemPropertyComponent implements OnInit {
             modal.style.display = "block";
        // }
     }
+   
+    spanClose() {
+        let modal = document.getElementById('myModal');
+
+        modal.style.display = "none";
+    }
 
     addAnotherPropertyValue(aipName: string) {
+
         console.log(this.i.length);
-        this.i.push(5);
+        let d = this.generateUUID();
+        this.i.push(d);
+        this.c++;
+        console.log(this.i);
+
+        this.buttonDisabled = true;
 
     }
 
@@ -74,7 +89,49 @@ export class AdditionalItemPropertyComponent implements OnInit {
         if(this.additionalItemProperty.unit && this.additionalItemProperty.unit.length > 0) {
             this.propertyUnitDefined = true;
         }
+     this.buttonEnabledOrDisabled();
+
     }
+
+    buttonEnabledOrDisabled() {
+        let n = 0;
+        for (; n < this.c; n++) {
+            console.log(!this.additionalItemProperty.value[n]);
+            if(!this.additionalItemProperty.value[n] || this.additionalItemProperty.value[n].length==0){
+                break;
+            }
+        }
+        if(n==this.c){
+            this.buttonDisabled = false;
+        } else {
+            this.buttonDisabled = true;
+        }
+    }
+
+    removeAddedValue(index: number) {
+        if(index==0){
+            this.additionalItemProperty.value.splice(index, 1);
+            this.i.splice(index, 1);
+            this.c--;
+        } else {
+            console.log(index);
+            this.i.splice(index-1, 1);
+            this.additionalItemProperty.value.splice(index, 1);
+            this.c--;
+            console.log(this.additionalItemProperty.value);
+        }
+        this.buttonEnabledOrDisabled();
+    }
+
+    private generateUUID(): string {
+        var d = new Date().getTime();
+        var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+            var r = (d + Math.random() * 16) % 16 | 0;
+            d = Math.floor(d / 16);
+            return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+        });
+        return uuid;
+    };
 
     // deletes the custom property with the given name
     deleteCustomProperty = function (inputVal: string) {

@@ -164,13 +164,11 @@
             </form>
 
             <!-- selected images or files -->
-	    <div *ngIf="newProperty != null && newProperty.embeddedDocumentBinaryObject.length > 0"
+	        <div *ngIf="newProperty != null && newProperty.embeddedDocumentBinaryObject.length > 0"
                  class="offset-3 mt-3">
                 <ul class="list-group">
                     <li *ngFor="let afile of newProperty.embeddedDocumentBinaryObject"
                         class="list-group-item pb-2 border-0">
-
-                        <div>
 
 			                <div *ngIf="afile.mimeCode.split('/')[0]=='application'||afile.mimeCode.split('/')[0]=='text'">
                                 {{afile.fileName}}
@@ -195,7 +193,6 @@
                                 >&times;</button></span>
 
                             </div>
-                        </div>
                     </li>
                 </ul>
             </div>

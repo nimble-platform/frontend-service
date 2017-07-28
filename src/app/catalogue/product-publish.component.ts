@@ -414,6 +414,11 @@ export class ProductPublishComponent implements OnInit {
         }
     }
 
+    customPropertyValueCancel(val: string) {
+        let index = this.newProperty.value.indexOf(val);
+        this.newProperty.value.splice(index, 1);
+    }
+
     /* deselect a category */
     categoryCancel(categoryId: string) {
         let c = 0;
@@ -525,6 +530,7 @@ export class ProductPublishComponent implements OnInit {
     private handleError(error: any): Promise<any> {
         return Promise.reject(error.message || error);
     }
+
 
     private generateUUID(): string {
         var d = new Date().getTime();

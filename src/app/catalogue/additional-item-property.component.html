@@ -1,4 +1,3 @@
-<div>
 <div *ngIf="stringValue" id="stringValueDiv">
 
     <div class="input-group form-group">
@@ -13,27 +12,47 @@
             {{additionalItemProperty.name}}
             <span style="display:inline-block; width: 30px;"></span>
         </div>
-        <input type="text" class="form-control" [(ngModel)]="additionalItemProperty.value[0]">
+
+        <input type="text" id="prop_val" class="form-control"
+               [(ngModel)]="additionalItemProperty.value[0]"
+               (ngModelChange)="buttonEnabledOrDisabled()">
 
         <span *ngIf="!eClassValue"><button class="btn btn-xs btn-danger"
                                            (click)="deleteCustomProperty(additionalItemProperty.name); $event.stopPropagation()"
         >&times;</button></span>
 
-        <span *ngIf="eClassValue">
+        <span *ngIf="i.length > 0"><button class="btn btn-xs btn-danger"
+                                           (click)="removeAddedValue(0); $event.stopPropagation()"
+        >&times;</button></span>
+
+        <span *ngIf="eClassValue && i.length == 0">
             <button class="btn btn-primary btn-xs"
                     (click)="addAnotherPropertyValue(additionalItemProperty.name)"
-            >+</button>
+                    [disabled]="buttonDisabled"
+            ><strong>+</strong></button>
         </span>
     </div>
     <!--<input type="text" class="form-control" [value]="additionalItemProperty.value[0]">-->
-    <div *ngFor="let m of i" class="input-group form-group">
+    <div *ngFor="let m of i;" class="input-group form-group">
         <label class="col-3 control-label"></label>
-        <input type="text" class="form-control" [(ngModel)]="additionalItemProperty.value[i.length]">
+        <input type="text" id="prop_val" class="form-control"
+               [(ngModel)]="additionalItemProperty.value[i.indexOf(m)+1]"
+               (ngModelChange)="buttonEnabledOrDisabled()"
+        >
+        <span><button class="btn btn-xs btn-danger"
+                      (click)="removeAddedValue(i.indexOf(m)+1);"
+        >&times;</button></span>
+
+        <span *ngIf="i.indexOf(m)==i.length-1" ><button class="btn btn-primary btn-xs"
+                (click)="addAnotherPropertyValue(additionalItemProperty.name)"
+                [disabled]="buttonDisabled"
+        ><strong>+</strong></button>
+        </span>
     </div>
 
 </div>
 
-</div>
+
 
 <div *ngIf="binaryValue" class="input-group form-group">
     <label class="col-3 control-label">{{additionalItemProperty.name}}</label>
@@ -49,7 +68,7 @@
                 />
 
                 <span style="display:inline-block; width: 10px;"></span>
-                {{file.objectMetadata}}
+                    {{file.objectMetadata}}
                 <span style="display:inline-block; width: 30px;"></span>
             </div>
 
