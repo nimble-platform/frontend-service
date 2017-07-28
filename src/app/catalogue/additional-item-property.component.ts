@@ -11,6 +11,8 @@ import {PublishAndAIPCService} from "./publish-and-aip.service";
 })
 
 export class AdditionalItemPropertyComponent implements OnInit {
+    i: Array<number> = [];
+
     @Input() additionalItemProperty:ItemProperty;
 
     stringValue:boolean = true;
@@ -50,11 +52,16 @@ export class AdditionalItemPropertyComponent implements OnInit {
     }
 
     spanClose() {
-    let modal = document.getElementById('myModal');
+        let modal = document.getElementById('myModal');
 
-    modal.style.display = "none";
-}
-    
+        modal.style.display = "none";
+    }
+
+    addAnotherPropertyValue(aipName: string) {
+        console.log(this.i.length);
+        this.i.push(5);
+
+    }
 
     constructor(
         private _publishAndAIPCService: PublishAndAIPCService) { }

@@ -3,10 +3,10 @@
 <div class="row justify-content-md-center col-12 mt-3">
 
     <!-- search by pressing enter! -->
-    <form (ngSubmit)="getCategories(searchBox.value); callback = false; submitted = true"
+    <form (ngSubmit)="getCategories(searchBox.value)"
           class="col-12 row justify-content-md-center">
 
-        <div [hidden]="callback || !submitted" class="space-right">
+        <div [hidden]="callback || !submitted || error_detc" class="space-right">
             <img class="space-before" src="assets/form_loader.gif"/>
         </div>
 

@@ -6,6 +6,7 @@ import {Component, OnInit} from "@angular/core";
 import {ActivatedRoute, Params, Router} from "@angular/router";
 import {Category} from "../model/category/category";
 import {CategoryService} from "./category.service";
+import {error} from "selenium-webdriver";
 
 @Component({
     selector: 'category-search',
@@ -16,8 +17,10 @@ export class CategorySearchComponent implements OnInit {
     categories: Category[];
     startPublishingFromScratch: boolean;
     editCatalogueLine: boolean;
+
     submitted: boolean = false;
     callback: boolean = false;
+    error_detc: boolean = false;
 
     constructor(private router: Router,
                 private route: ActivatedRoute,
@@ -39,12 +42,23 @@ export class CategorySearchComponent implements OnInit {
     }
 
     private getCategories(keyword: string): void {
+
+        if (keyword.length < 1)
+            return;
+
+        this.callback = false;
+        this.submitted = true;
+        this.error_detc = false;
+
         this.categoryService.getCategories(keyword)
             .then(categories => {
                 this.categories = categories;
                 this.callback = true;
                 this.submitted = false;
-            });
+            }).catch( () => {
+                this.error_detc = true;
+            }
+        );
     }
 
     private selectCategory(category: Category): void {

@@ -112,11 +112,7 @@ export class ProductPublishComponent implements OnInit {
                     // Input properties of child component won't update, so force update
                     this.productProperties.catalogueLine = this.catalogueLine;
                     this.productProperties.selectedCategories = this.selectedCategories;
-
-
                     this.productProperties.refreshPropertyBlocks();
-                    console.log("2");
-                    console.log(this.catalogueLine);
                 });
 
         }
@@ -197,16 +193,17 @@ export class ProductPublishComponent implements OnInit {
         this.catalogueLine.goodsItem.item.commodityClassification.push(commodityClassification);
 
         loop1:
-            for (let property of category.properties) {
-                let aip = ModelUtils.createAdditionalItemProperty(property, category);
-                // check whether the same property exists already
-                for (let existingAip of this.catalogueLine.goodsItem.item.additionalItemProperty) {
-                    if (aip.id == existingAip.id) {
-                        continue loop1;
-                    }
+        for (let property of category.properties) {
+            let aip = ModelUtils.createAdditionalItemProperty(property, category);
+            // check whether the same property exists already
+            for (let existingAip of this.catalogueLine.goodsItem.item.additionalItemProperty) {
+                if (aip.id == existingAip.id) {
+                    continue loop1;
                 }
-                this.catalogueLine.goodsItem.item.additionalItemProperty.push(aip);
             }
+
+            this.catalogueLine.goodsItem.item.additionalItemProperty.push(aip);
+        }
     }
 
     private onTabClick(event: any) {
