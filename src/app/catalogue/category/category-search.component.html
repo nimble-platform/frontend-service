@@ -16,6 +16,10 @@
 
 </div>
 
+<div *ngIf="callback && (!categories || categories.length == 0)" class="align-center space-before">
+    <h4>No results found.</h4>
+</div>
+
 <ul class="list-group container mt-4" style="max-height: 500px; overflow-y: scroll;">
     <li *ngFor="let category of categories"
         class="list-group-item p-3 row"

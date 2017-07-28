@@ -6,7 +6,6 @@ import {Component, OnInit} from "@angular/core";
 import {ActivatedRoute, Params, Router} from "@angular/router";
 import {Category} from "../model/category/category";
 import {CategoryService} from "./category.service";
-import {error} from "selenium-webdriver";
 
 @Component({
     selector: 'category-search',
@@ -57,6 +56,7 @@ export class CategorySearchComponent implements OnInit {
                 this.submitted = false;
             }).catch( () => {
                 this.error_detc = true;
+                console.log(this.error_detc);
             }
         );
     }
