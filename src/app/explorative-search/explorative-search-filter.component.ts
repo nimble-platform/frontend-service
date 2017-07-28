@@ -44,7 +44,11 @@ export class ExplorativeSearchFilterComponent implements OnChanges {
      * a new filter configuration to the child
      */
     ngOnChanges(): void {
-        // console.log('FilterConfig', this.filterConfig); // DEBUG Check
+        console.log('FilterConfig ', this.filterConfig); // DEBUG Check
+        if (this.filterConfig === {}) {
+            this.userSelections = [];
+            // this.finalSelectionJSON = {};
+        }
         for (let keyConfig in this.filterConfig) {
             if (this.filterConfig[keyConfig]) {
                 // store the JSON array in the result array for display
@@ -117,7 +121,12 @@ export class ExplorativeSearchFilterComponent implements OnChanges {
     submitFilter(): void {
         // console.log(Number(this.groupSelectVal)); DEBUG
         // This needs to be changed according to Backend API
-        this.finalSelectionJSON = {'root': this.mainConceptUrl, 'filter': this.userSelections};
+        if (this.userSelections.length > 0) {
+            this.finalSelectionJSON = {'root': this.mainConceptUrl, 'filter': this.userSelections};
+        } else {
+            console.log('this.userSelections', this.userSelections);
+            this.finalSelectionJSON = {'root': this.mainConceptUrl, filter: []};
+        }
         this.filterSelectionUpdated.emit(this.finalSelectionJSON);
         console.log('finalSelectionJSON', this.finalSelectionJSON); // DEBUG CHECK
     }

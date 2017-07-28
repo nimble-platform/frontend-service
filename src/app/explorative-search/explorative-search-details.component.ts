@@ -26,7 +26,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
     @Input() lang: string; // language selection hack
     // GoJS div as mentioned above in the @Component `template` param
     @ViewChild('myDiagramDiv') div: ElementRef;
-    private hiddenElement: boolean = false;
+    private hiddenElement: boolean = false; // to hide the graph or table
     /*GOJS Variables*/
     private myDiagram: go.Diagram;
     private $ = go.GraphObject.make;
@@ -79,7 +79,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                 padding: 10,
                 isReadOnly: true,
                 'animationManager.isEnabled': false,
-                'allowVerticalScroll': false
+                'allowVerticalScroll': false,
             });
         let commonToolTip = this.$(go.Adornment, 'Auto',
             {
@@ -135,7 +135,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
             this.$(go.Node, 'Auto',
                 {
                     locationSpot: go.Spot.Center,
-                    selectionAdorned: false,
+                    selectionAdorned: true,
                     toolTip: commonToolTip
                 },
                 this.$(go.Shape, 'Circle',
@@ -161,7 +161,27 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                     },
                     new go.Binding('stroke', 'color'))
             );
+        this.myDiagram.addDiagramListener('ChangedSelection', (e: any) => {
+            // check for selection changes.. especially when Multiselect is off
+            console.log('Selection Change occured');
+            console.log('Selection Count ', e.diagram.selection.count);
+            if (e.diagram.selection.count === 0) { // if in non Multiselect if all selections removed
+                // reset all
+                this.selectedProperties = [];
+                this.tableJSON = {};
+                this.tableResult = {};
+                this.filterJSON = {};
+                this.filterQueryRoot = '';
+                this.filterQueryRootUrl = '';
+                this.filterQuery = '';
+                this.nodeFilterName = '';
+                if (this.finalSelectionJSON['filter'].length > 0) {
+                    this.finalSelectionJSON['filter'] = [];
+                }
+            }
+            });
     }
+
 
     /**
      * nodeClicked: function handles the click feature for GoJS
@@ -170,8 +190,8 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
      */
     nodeClicked(ev, node): void {
 
-        let rootConcept = node.findTreeRoot().data.text;
-        let clickedNode = node.data.text; // name of the clicked node
+        let rootConcept = node.part.findTreeRoot().data.text;
+        let clickedNode = node.part.data.text; // name of the clicked node
         let rootConceptUrl = this.config['concept']['url'];
         let nodeConceptUrl;
         for (let eachDatProp of this.config['dataproperties']) {
@@ -187,9 +207,8 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
         this.filterQueryRootUrl = rootConceptUrl;
         // build the Query Parameter
         let filteringInput = { 'concept': encodeURIComponent(rootConceptUrl.trim()),
-            'property': encodeURIComponent(nodeConceptUrl.trim()), 'amountOfGroups': 3
-            , 'language': this.lang};
-
+          'property': encodeURIComponent(nodeConceptUrl.trim()), 'amountOfGroups': 3
+          , 'language': this.lang};
         // MULTISELECTION via GOJS Library
         if (ev.control) { // if the CTRL Key is pressed..
             console.log('CTRL key pressed.. Multiselect On');
@@ -220,21 +239,15 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                         .then(res => this.filterJSON = res);
                 }
             } else { // if the node is deselected remove if from list
-                let index = this.selectedProperties.indexOf(nodeConceptUrl);
-                if (index > -1) {
-                    this.selectedProperties.splice(index, 1);
-                    // do not send anything to child.. Remove the Filter from display
-                    this.filterJSON = {};
-                }
             }
         }
         console.log(this.selectedProperties);
         // if all properties deselected
-        if (this.selectedProperties.length === 0) {
-            this.tableResult = {};
-        }
+         if (this.selectedProperties.length === 0) {
+             this.tableResult = {};
+         }
 
-        // console.log(rootConceptUrl, nodeConceptUrl); // DEBUG --CHECK
+        console.log(rootConceptUrl, nodeConceptUrl); // DEBUG --CHECK
     }
     /**
      * genTable: Generate a Dynamic tableJSON query for the API Call and
@@ -243,24 +256,28 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
     genTable(): void {
         if (this.finalSelectionJSON) {
             this.tableJSON['concept'] = encodeURIComponent(this.finalSelectionJSON['root']);
-            this.tableJSON['parameters'] = new Array();
+            this.tableJSON['parameters'] = [];
             // for (let eachFilProp of this.finalSelectionJSON['filter']) {
             //    this.tableJSON['parameters'].push(encodeURIComponent(eachFilProp['property']));
             // }
             for (let eachSelectedProp of this.selectedProperties) {
                 this.tableJSON['parameters'].push(encodeURIComponent(eachSelectedProp));
             }
-            this.tableJSON['filters'] = new Array();
-            for (let eachFilVal of this.finalSelectionJSON['filter']) {
-                this.tableJSON['filters'].push({'property': encodeURIComponent(eachFilVal['property']),
-                    'min': eachFilVal['values'][0], 'max': eachFilVal['values'][1]});
+            this.tableJSON['filters'] = [];
+            for (let eachFilVal of this.finalSelectionJSON['filter']) { // push only selected property filters
+                if (this.selectedProperties.indexOf(eachFilVal['property']) > -1 ) {
+                    this.tableJSON['filters'].push({'property': encodeURIComponent(eachFilVal['property']),
+                        'min': eachFilVal['values'][0], 'max': eachFilVal['values'][1]});
+                }
             }
         } else { // if user directly clicks on the Search button
+            console.log('user directly clicked on Search');
             this.tableJSON['concept'] = encodeURIComponent(this.filterQueryRootUrl);
-            this.tableJSON['parameters'] = new Array();
+            this.tableJSON['parameters'] = [];
             for (let eachSelectedProp of this.selectedProperties) {
                 this.tableJSON['parameters'].push(encodeURIComponent(eachSelectedProp));
             }
+            console.log('filters after direct click', this.tableJSON['filters']);
         }
         this.tableJSON['language'] = this.lang;
         console.log(this.tableJSON);

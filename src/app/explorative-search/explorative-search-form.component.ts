@@ -55,7 +55,6 @@ export class ExplorativeSearchFormComponent implements OnInit {
         this.showMore.fill(false);
         this.expSearch.getLanguageSupport()
             .then(res => this.availableLanguages = res);
-        console.log('oninit', this.availableLanguages);
     }
     /**
      * Search: will get a HTTP response from the server (HTTP GET)
