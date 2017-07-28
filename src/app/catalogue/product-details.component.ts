@@ -19,8 +19,6 @@ export class ProductDetailsComponent implements OnInit{
 
     @Input() catalogueLine: CatalogueLine;
 
-    // list keeping the custom additional properties
-    customProperties: ItemProperty[] = [];
     /*
      * hash storing the blocks of each category
      * For eClasses, base block is held at propertyBlocks[itemClassificationCode.value][0]
@@ -34,7 +32,6 @@ export class ProductDetailsComponent implements OnInit{
     }
 
     refreshPropertyBlocks(): void {
-        this.customProperties = [];
         this.propertyBlocks = {};
 
         // determine categories the item belongs to
