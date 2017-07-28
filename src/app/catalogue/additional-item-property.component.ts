@@ -51,12 +51,6 @@ export class AdditionalItemPropertyComponent implements OnInit {
        // }
     }
 
-    spanClose() {
-        let modal = document.getElementById('myModal');
-
-        modal.style.display = "none";
-    }
-
     addAnotherPropertyValue(aipName: string) {
         console.log(this.i.length);
         this.i.push(5);

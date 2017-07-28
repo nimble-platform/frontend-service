@@ -229,4 +229,10 @@ export class ProductPropertiesComponent implements OnInit {
             return false;
         }
     }
+
+    spanClose() {
+        let modal = document.getElementById('myModal');
+
+        modal.style.display = "none";
+    }
 }
