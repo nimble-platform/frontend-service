@@ -177,7 +177,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                 this.nodeFilterName = '';
                 if (this.finalSelectionJSON === undefined) {
                     // make the JSON
-                    this.finalSelectionJSON = {'root': encodeURIComponent(this.filterQueryRootUrl), 'filter': []};
+                    this.finalSelectionJSON = {'root': this.filterQueryRootUrl, 'filter': []};
                     console.log("Hardcode selection", this.finalSelectionJSON);
                 } else {
                     if (this.finalSelectionJSON['filter'].length > 0) {
@@ -303,7 +303,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
             this.finalSelectionJSON = finalSelectionJSON;
             console.log('returned JSON', this.finalSelectionJSON);
         } else {
-            this.finalSelectionJSON = {'root': encodeURIComponent(this.filterQueryRootUrl), 'filter': []};
+            this.finalSelectionJSON = {'root': this.filterQueryRootUrl, 'filter': []};
         }
     }
 

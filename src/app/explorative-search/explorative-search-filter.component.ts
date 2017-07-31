@@ -46,9 +46,9 @@ export class ExplorativeSearchFilterComponent implements OnChanges {
     ngOnChanges(): void {
         console.log('FilterConfig ', this.filterConfig); // DEBUG Check
         this.result = [];
+        this.finalSelectionJSON = {'root': this.mainConceptUrl, 'filter': []};
         if (this.filterConfig === {}) {
             this.userSelections = [];
-            // this.finalSelectionJSON = {};
         }
         for (let keyConfig in this.filterConfig) {
             if (this.filterConfig[keyConfig]) {
@@ -78,7 +78,7 @@ export class ExplorativeSearchFilterComponent implements OnChanges {
                     });
                 }
             }
-        } else if (!status) { // if the checkbox is unchecked remove from array
+        } else if (!status && this.userSelections.indexOf(inp) !== -1) { // if the checkbox is unchecked remove from array
             let index = this.userSelections.indexOf(inp);
             this.userSelections.splice(index, 1);
         }
