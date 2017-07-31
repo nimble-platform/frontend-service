@@ -43,7 +43,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
     private tableJSON: Object = {};
 
     /*Final Data to be sent back to parent for processing.. Maybe..*/
-    finalSelectionJSON: Object;
+    public finalSelectionJSON: Object;
 
     /*The API response from tableJSON will be stored in tableResult*/
     tableResult: any;
@@ -172,11 +172,17 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                 this.tableResult = {};
                 this.filterJSON = {};
                 this.filterQueryRoot = '';
-                this.filterQueryRootUrl = '';
+                // this.filterQueryRootUrl = '';
                 this.filterQuery = '';
                 this.nodeFilterName = '';
-                if (this.finalSelectionJSON['filter'].length > 0) {
-                    this.finalSelectionJSON['filter'] = [];
+                if (this.finalSelectionJSON === undefined) {
+                    // make the JSON
+                    this.finalSelectionJSON = {'root': encodeURIComponent(this.filterQueryRootUrl), 'filter': []};
+                    console.log("Hardcode selection", this.finalSelectionJSON);
+                } else {
+                    if (this.finalSelectionJSON['filter'].length > 0) {
+                        this.finalSelectionJSON['filter'] = [];
+                    }
                 }
             }
             });
@@ -263,11 +269,13 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
             for (let eachSelectedProp of this.selectedProperties) {
                 this.tableJSON['parameters'].push(encodeURIComponent(eachSelectedProp));
             }
-            this.tableJSON['filters'] = [];
-            for (let eachFilVal of this.finalSelectionJSON['filter']) { // push only selected property filters
-                if (this.selectedProperties.indexOf(eachFilVal['property']) > -1 ) {
-                    this.tableJSON['filters'].push({'property': encodeURIComponent(eachFilVal['property']),
-                        'min': eachFilVal['values'][0], 'max': eachFilVal['values'][1]});
+            if (this.finalSelectionJSON['filter'].length > 0) {
+                this.tableJSON['filters'] = [];
+                for (let eachFilVal of this.finalSelectionJSON['filter']) { // push only selected property filters
+                    if (this.selectedProperties.indexOf(eachFilVal['property']) > -1 ) {
+                        this.tableJSON['filters'].push({'property': encodeURIComponent(eachFilVal['property']),
+                            'min': eachFilVal['values'][0], 'max': eachFilVal['values'][1]});
+                    }
                 }
             }
         } else { // if user directly clicks on the Search button
@@ -291,8 +299,12 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
      * @param finalSelectionJSON same name as the child's variable
      */
     handleFilterSelectionUpdated(finalSelectionJSON) {
-        this.finalSelectionJSON = finalSelectionJSON;
-        console.log('returned JSON', this.finalSelectionJSON);
+        if (finalSelectionJSON) {
+            this.finalSelectionJSON = finalSelectionJSON;
+            console.log('returned JSON', this.finalSelectionJSON);
+        } else {
+            this.finalSelectionJSON = {'root': encodeURIComponent(this.filterQueryRootUrl), 'filter': []};
+        }
     }
 
     getSparqlOptionalSelect(indexInp: number) {

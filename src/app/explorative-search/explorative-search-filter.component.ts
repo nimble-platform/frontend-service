@@ -6,7 +6,7 @@
  * Child Component for this class: none
  */
 
-import {Component, Input, OnChanges, ViewChild, ElementRef, Output, EventEmitter  } from '@angular/core';
+import {Component, Input, OnChanges, ViewChild, ElementRef, Output, EventEmitter } from '@angular/core';
 import {ExplorativeSearchService} from './explorative-search.service';
 
 @Component({
@@ -45,6 +45,7 @@ export class ExplorativeSearchFilterComponent implements OnChanges {
      */
     ngOnChanges(): void {
         console.log('FilterConfig ', this.filterConfig); // DEBUG Check
+        this.result = [];
         if (this.filterConfig === {}) {
             this.userSelections = [];
             // this.finalSelectionJSON = {};
@@ -81,7 +82,7 @@ export class ExplorativeSearchFilterComponent implements OnChanges {
             let index = this.userSelections.indexOf(inp);
             this.userSelections.splice(index, 1);
         }
-        console.log(JSON.stringify(this.userSelections)); // DEBUG CHECK
+        console.log('Filter Area: ', JSON.stringify(this.userSelections)); // DEBUG CHECK
     }
 
     /**
@@ -124,10 +125,11 @@ export class ExplorativeSearchFilterComponent implements OnChanges {
         if (this.userSelections.length > 0) {
             this.finalSelectionJSON = {'root': this.mainConceptUrl, 'filter': this.userSelections};
         } else {
-            console.log('this.userSelections', this.userSelections);
-            this.finalSelectionJSON = {'root': this.mainConceptUrl, filter: []};
+            console.log('FilterArea: this.userSelections', this.userSelections);
+            // this.finalSelectionJSON = {'root': this.mainConceptUrl, 'filter': []};
+            this.finalSelectionJSON = null;
         }
         this.filterSelectionUpdated.emit(this.finalSelectionJSON);
-        console.log('finalSelectionJSON', this.finalSelectionJSON); // DEBUG CHECK
+        console.log('FilterArea: finalSelectionJSON', this.finalSelectionJSON); // DEBUG CHECK
     }
 }
