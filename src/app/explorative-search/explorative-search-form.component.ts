@@ -6,7 +6,11 @@
  * Delete button: appears once the checkbox beside the keyword is checked
  * upon clicking it the content and the keyword itself are removed from 
  * the HTML file
+ *
+ * Parent for this class: explorative-search.component
+ * Child for this class: explorative-search-details.component
  */
+
 import { Component, OnInit } from '@angular/core';
 import { ExplorativeSearchService } from './explorative-search.service';
 import { Explorative } from './model/explorative';
@@ -37,8 +41,7 @@ export class ExplorativeSearchFormComponent implements OnInit {
     // data visualization
     // remember: the variable `Output` is the same as in the HTML file
     Output = OUTPUT;
-    visData: Object[] = []; // send this to details component
-    testString: string;
+    visData: Object; // send this to details component
 
     // For response which constitutes more than one option..
     showMore: boolean[] = [];
@@ -82,12 +85,12 @@ export class ExplorativeSearchFormComponent implements OnInit {
     }
 
     /**
-     * postQuery: for the when the user will click a specific keyword button
+     * getQuery: for the when the user will click a specific keyword button
      * the parameter will be sent as JSON request to get the Visualization values
      * @param inputVal the name of the Button clicked by the User
      */
 
-    postQuery(inputVal: string) {
+    getQuery(inputVal: string) {
         // HTTP GET to backend Server for visualization
         // create a JSON request for the queried button
         let temp = {'concept': inputVal, 'stepRange': 2, 'frozenConcept': 'ddd'};
@@ -96,9 +99,9 @@ export class ExplorativeSearchFormComponent implements OnInit {
         this.expSearch.getLogicalView(temp)
             .then(res => {
                 // console.log(res);
-                this.visData.push(res);
+                // this.visData = new Array();
+                this.visData = res;
                 // console.log(this.visData);
-                this.testString = temp.concept;
             }
         );
     }

@@ -5,13 +5,6 @@
 export const debug=false;
 
 
-// Search settings
-
-//export const search = "simple";
-//export const search = "explorative";
-export const search = "both";
-
-
 // Endpoint variables - SRFG domain
 
 export const user_mgmt_endpoint="http://nimble-platform.salzburgresearch.at:443/identity";
@@ -21,8 +14,11 @@ export const user_mgmt_endpoint="http://nimble-platform.salzburgresearch.at:443/
 
 // Endpoint variables - BIBA domain
 
-export const endpoint = 'http://hydra2.ikap.biba.uni-bremen.de:8090/detectMeaning';
-export const logicalViewEndpoint = 'http://hydra2.ikap.biba.uni-bremen.de:8090/getLogicalView';
+export const endpoint = 'http://localhost:8090/detectMeaning';
+export const logicalViewEndpoint = 'http://localhost:8090/getLogicalView';
+export const propertyEndPoint = 'http://localhost:8090/getPropertyValuesDiscretised';
+export const sparqlEndPoint = 'http://localhost:8090/executeSPARQLSelect';
+export const sparqlOptionalSelectEndPoint = 'http://localhost:8090/executeSPARQLOptionalSelect';
 
 
 // Endpoint variables - Local development via service discovery
@@ -89,3 +85,5 @@ export const product_nonfilter_regex = ["lmf.","_id"];
 export const product_configurable = [];
 export const product_default = {};
 export const facet_min = 1;
+//TODO let user determine the negotiatable parameters
+export const negotiatables = ["size", "duration"];

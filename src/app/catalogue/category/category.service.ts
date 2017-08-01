@@ -27,7 +27,7 @@ export class CategoryService {
     }
 
     getCategory(category: Category): Promise<Category> {
-        const url = `${this.baseUrl}/` + category.taxonomyId + "/" + encodeURIComponent(category.id);
+        const url = `${this.baseUrl}/` + category.taxonomyId + `?categoryId=` + encodeURIComponent(category.id);
         return this.http
             .get(url, {headers: this.headers})
             .toPromise()

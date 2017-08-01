@@ -29,27 +29,32 @@
 					<img src="assets/upload_white.png" class="inline-icon"/> <span i18n>Publish</span>
 				</a>
 			</li>
-			<li *ngIf="search=='simple'||search=='both'" class="nav-item" routerLinkActive="active">
-				<a class="nav-link" routerLink="/simple-search">
+			<li ngbDropdown class="nav-item" routerLinkActive="active">
+				<a class="nav-link" id="dropdownMenuSearch" style="cursor:pointer" ngbDropdownToggle>
 					<img src="assets/search_white.png" class="inline-icon"/> <span i18n>Search</span>
 				</a>
-			</li>
-			<li *ngIf="search=='explorative'||search=='both'" class="nav-item" routerLinkActive="active">
-				<a class="nav-link" routerLink="/explore-search">
-					<img src="assets/search_white.png" class="inline-icon"/> <span>Explorative Search</span>
-				</a>
+				<div class="dropdown-menu" aria-labelledby="dropdownMenuSearch">
+					<a class="dropdown-item" routerLink="/simple-search" routerLinkActive="active">
+						<img src="assets/text_black.png" class="inline-icon"/> Text-based
+					</a>
+					<a class="dropdown-item" routerLink="/explore-search" routerLinkActive="active">
+						<img src="assets/explore_black.png" class="inline-icon"/> Explorative
+					</a>
+				</div>
 			</li>
 		</ul>
 		<ul *ngIf="isLoggedIn" class="nav navbar-nav">
-			<li ngbDropdown class="nav-item">
-				<a class="nav-link" id="dropdownMenu1" style="cursor:pointer" ngbDropdownToggle>
+			<li ngbDropdown class="nav-item" routerLinkActive="active">
+				<a class="nav-link" id="dropdownMenuUser" style="cursor:pointer" ngbDropdownToggle>
 					<img src="assets/avatar_white.png" class="inline-icon"/> {{fullName}}
 				</a>
-				<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
+				<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuUser">
+					<a class="dropdown-item" routerLink="/company-settings" routerLinkActive="active">
+						<img src="assets/gear_black.png" class="inline-icon"/> Account Settings
+					</a>
 					<a class="dropdown-item" routerLink="/catalogue">
 						<img src="assets/list_black.png" class="inline-icon"/> <span i18n>Catalogue</span>
 					</a>
-
 					<a class="dropdown-item" routerLink="/logout">
 						<img src="assets/logout_black.png" class="inline-icon"/> <span i18n>Logout</span>
 					</a>

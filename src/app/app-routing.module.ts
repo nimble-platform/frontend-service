@@ -10,6 +10,7 @@ import { SimpleSearchComponent } from './simple-search/simple-search.component';
 import { SimpleSearchDetailsComponent } from './simple-search/simple-search-details.component';
 import { ExplorativeSearchComponent } from './explorative-search/explorative-search.component';
 import {CatalogueViewComponent} from "./catalogue/catalogue-view.component";
+import { CompanySettingsComponent } from './user-mgmt/company-settings.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -23,6 +24,7 @@ const routes: Routes = [
   { path: 'simple-search-details/:id', component: SimpleSearchDetailsComponent },
   { path: 'explore-search', component: ExplorativeSearchComponent },
   { path: 'catalogue', component: CatalogueViewComponent },
+  { path: 'company-settings', component: CompanySettingsComponent}
 ];
 
 @NgModule({

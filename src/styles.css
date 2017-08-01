@@ -44,7 +44,9 @@ textarea {
 }
 
 .input-group-addon {
-    min-width: 12rem;
+	width: 12rem;
+	white-space: normal;
+	word-wrap: break-word;
 }
 
 .ng-valid[required], .ng-valid.required {

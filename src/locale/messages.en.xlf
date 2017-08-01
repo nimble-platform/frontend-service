@@ -86,12 +86,12 @@
         <source>Decline</source>
         <target/>
       </trans-unit>
-      <trans-unit id="10de27ff02fd6bdf94b32ca462d0d43ea7ce6eb5" datatype="html">
-        <source>Negotiate</source>
-        <target/>
-      </trans-unit>
       <trans-unit id="daace82faf38ed52faa97ad380012b17d9bd6aa6" datatype="html">
         <source>Remove from history</source>
+        <target/>
+      </trans-unit>
+      <trans-unit id="10de27ff02fd6bdf94b32ca462d0d43ea7ce6eb5" datatype="html">
+        <source>Negotiate</source>
         <target/>
       </trans-unit>
       <trans-unit id="d6111969b4b0929debd4fd0d910733a6fccd37b2" datatype="html">
@@ -112,6 +112,10 @@
       </trans-unit>
       <trans-unit id="d7b35c384aecd25a516200d6921836374613dfe7" datatype="html">
         <source>Cancel</source>
+        <target/>
+      </trans-unit>
+      <trans-unit id="5704ec2049d007c5f5fb495a5d8b607e68d58081" datatype="html">
+        <source>Order</source>
         <target/>
       </trans-unit>
       <trans-unit id="80e6a18f9329abccbc0c0fbfccd80192660c03e4" datatype="html">
@@ -138,6 +142,14 @@
         <source>Selected category:</source>
         <target/>
       </trans-unit>
+      <trans-unit id="168857758078b1f74de55beebaf10a2519d50bfb" datatype="html">
+        <source>Select a product category</source>
+        <target/>
+      </trans-unit>
+      <trans-unit id="e21f7f42db4e8fedbfe144f158c662f700dd1ca9" datatype="html">
+        <source>Add another product category</source>
+        <target/>
+      </trans-unit>
       <trans-unit id="28d2ef00e6b67d8c4a4b3643f9aadcf717e3cc6a" datatype="html">
         <source>Product published!</source>
         <target/>
@@ -148,14 +160,6 @@
       </trans-unit>
       <trans-unit id="e653a757f7e5c68f9fd2e5566a633149590589a9" datatype="html">
         <source>Publish Product</source>
-        <target/>
-      </trans-unit>
-      <trans-unit id="b2eb16e6a2316a3af64f74a4ca06ca5d3577d188" datatype="html">
-        <source>Property Name</source>
-        <target/>
-      </trans-unit>
-      <trans-unit id="baf5544fafa09e7fc3aebc5990b245677008ff35" datatype="html">
-        <source>Property Value</source>
         <target/>
       </trans-unit>
       <trans-unit id="5e5b7fbd35818ca167149f91cbfc322b79dddd01" datatype="html">
@@ -192,10 +196,6 @@
       </trans-unit>
       <trans-unit id="ccd94c9d494a8fb7cb742c8d04f6f303ef50d22a" datatype="html">
         <source>Add property</source>
-        <target/>
-      </trans-unit>
-      <trans-unit id="5704ec2049d007c5f5fb495a5d8b607e68d58081" datatype="html">
-        <source>Order</source>
         <target/>
       </trans-unit>
       <trans-unit id="f6949a4d9337a0da0cec7679827dadbdf49bc62f" datatype="html">
@@ -296,6 +296,12 @@
       </trans-unit>
       <trans-unit id="07190520c4e8884bfa6feff14b9af54f9bd3d444" datatype="html">
         <source>No search results</source>
+        <target/>
+      </trans-unit>
+      <trans-unit id="3de07e6affe53be4f5b7e0993200ec12cd503064" datatype="html">
+        <source>
+    Negotiation Options
+</source>
         <target/>
       </trans-unit>
     </body>

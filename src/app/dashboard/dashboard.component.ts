@@ -3,6 +3,10 @@ import { AppComponent } from '../app.component';
 import { CookieService } from 'ng2-cookies';
 import { BPEService } from '../bpe/bpe.service';
 import { OrderResponse } from '../bpe/model/order-response';
+import { Order } from '../bpe/model/order';
+import { OrderObject } from '../bpe/model/order-object';
+import { RequestForQuotationResponse } from '../bpe/model/request-for-quotation-response';
+import { Router } from '@angular/router';
 
 @Component({
 	selector: 'nimble-dashboard',
@@ -21,9 +25,10 @@ export class DashboardComponent implements OnInit {
 	constructor(
 		private cookieService: CookieService,
 		private bpeService: BPEService,
+		private router: Router,
 		private appComponent: AppComponent
 	) {	}
-	
+
 	ngOnInit() {
 		if (this.cookieService.get("user_fullname"))
 			this.fullName = this.cookieService.get("user_fullname");
@@ -32,12 +37,12 @@ export class DashboardComponent implements OnInit {
 			this.buyer_history = [];
 			this.seller_history_temp = [];
 			this.seller_history = [];
-			this.loadOrders();			
+			this.loadOrders();
 		}
 		else
 			this.appComponent.checkLogin("/login");
 	}
-	
+
 	loadOrders() {
 		this.bpeService.getBuyerHistory(this.cookieService.get("company_id"))
 		.then(res => {
@@ -54,6 +59,7 @@ export class DashboardComponent implements OnInit {
 				this.bpeService.getProcessDetailsHistory(task.processInstanceId)
 				.then(res => {
 					var vBuyer = "", vBuyerName = "", vSeller = "", vSellerName = "", vOrder = "", vOrderResponse = "", vTask_id = "", vProcess_id = "", vStart_time = "";
+					var vProcessType = res[0]["processDefinitionKey"];
 					for (let field of res) {
 						vProcess_id = field.processInstanceId;
 						if (field.name == "buyer")
@@ -68,6 +74,11 @@ export class DashboardComponent implements OnInit {
 							vOrder = field.value;
 						else if (field.name == "orderResponse")
 							vOrderResponse = field.value;
+						else if (field.name == "terms")
+							vOrder = field.value;
+						else if (field.name == "rfqResponse")
+							vOrderResponse = field.value;
+
 						for (let t of this.buyer_history_temp) {
 							if (t.process_id == vProcess_id) {
 								vTask_id = t.task_id;
@@ -80,7 +91,8 @@ export class DashboardComponent implements OnInit {
 					if (this.isJson(vOrderResponse))
 						vOrderResponse = JSON.parse(vOrderResponse);
 					this.buyer_history.push({
-						"task_id":vTask_id,
+						"processType":vProcessType,
+                        "task_id":vTask_id,
 						"process_id":vProcess_id,
 						"start_time":vStart_time,
 						"buyer":vBuyer,
@@ -88,7 +100,7 @@ export class DashboardComponent implements OnInit {
 						"seller":vSeller,
 						"sellerName":vSellerName,
 						"order":vOrder,
-						"orderResponse":vOrderResponse
+						"orderResponse":vOrderResponse,
 					});
 					this.buyer_history.sort(function(a:any,b:any){
 						var a_comp = a.start_time;
@@ -97,12 +109,12 @@ export class DashboardComponent implements OnInit {
 					});
 				})
 				.catch(error => {
-					
+
 				});
 			}
 		})
 		.catch(error => {
-			
+
 		});
 		this.bpeService.getSellerHistory(this.cookieService.get("company_id"))
 		.then(res => {
@@ -117,6 +129,7 @@ export class DashboardComponent implements OnInit {
 				this.bpeService.getProcessDetailsHistory(task.processInstanceId)
 				.then(res => {
 					var vBuyer = "", vBuyerName = "", vSeller = "", vSellerName = "", vOrder = "", vOrderResponse = "", vTask_id = "", vProcess_id = "", vStart_time = "";
+					var vProcessType = res[0]["processDefinitionKey"];
 					for (let field of res) {
 						vProcess_id = field.processInstanceId;
 						if (field.name == "buyer")
@@ -131,6 +144,10 @@ export class DashboardComponent implements OnInit {
 							vOrder = field.value;
 						else if (field.name == "orderResponse")
 							vOrderResponse = field.value;
+						else if (field.name == "terms")
+							vOrder = field.value;
+						else if (field.name == "rfqResponse")
+							vOrderResponse = field.value;
 						for (let t of this.seller_history_temp) {
 							if (t.process_id == vProcess_id) {
 								vTask_id = t.task_id;
@@ -143,6 +160,7 @@ export class DashboardComponent implements OnInit {
 					if (this.isJson(vOrderResponse))
 						vOrderResponse = JSON.parse(vOrderResponse);
 					this.seller_history.push({
+						"processType":vProcessType,
 						"task_id":vTask_id,
 						"process_id":vProcess_id,
 						"start_time":vStart_time,
@@ -160,12 +178,34 @@ export class DashboardComponent implements OnInit {
 					});
 				})
 				.catch(error => {
-					
+
 				});
 			}
 		})
 		.catch(error => {
-			
+
+		});
+	}
+
+	placeOrder(obj: any) {
+		var orderObj = new OrderObject('','','','','','','');
+		var order = new Order('','','','');
+		order.amount = obj.order.amount;
+		order.message = obj.order.message;
+		order.product_id = obj.order.product_id;
+		order.product_name = obj.order.product_name;
+		orderObj.order = JSON.stringify(order);
+		orderObj.seller = obj.seller;
+		orderObj.sellerName = obj.sellerName;
+		orderObj.buyer = obj.buyer;
+		orderObj.buyerName = obj.buyerName;
+		orderObj.connection = "|"+obj.seller+"|"+obj.buyer+"|";
+		this.bpeService.placeOrder(orderObj)
+		.then(res => {
+			this.removeOrder(obj.process_id);
+		})
+		.catch(error => {
+			this.loadOrders();
 		});
 	}
 	
@@ -181,6 +221,24 @@ export class DashboardComponent implements OnInit {
 		});
 	}
 	
+	respondToRFQ(task: string, response: string, message: string) {
+		var rfqResponse = new RequestForQuotationResponse('','');
+		rfqResponse.response = response;
+		rfqResponse.message = message;
+		this.bpeService.respondToRFQ(task,rfqResponse)
+		.then(res => {
+			this.loadOrders();
+		})
+		.catch(error => {
+			this.loadOrders();
+		});
+	}
+	
+	negotiate(obj: any) {
+		this.cookieService.set("negotiation_details",JSON.stringify(obj),new Date(new Date().getTime()+5000));
+		this.router.navigate(['/simple-search-details',obj.product_id]);
+	}
+
 	removeOrder(process:string) {
 		this.bpeService.removeOrder(process)
 		.then(res => {
@@ -190,7 +248,7 @@ export class DashboardComponent implements OnInit {
 			this.loadOrders();
 		});
 	}
-	
+
 	cancelOrder(process:string) {
 		this.bpeService.cancelOrder(process)
 		.then(res => {
@@ -200,7 +258,7 @@ export class DashboardComponent implements OnInit {
 			this.removeOrder(process);
 		});
 	}
-	
+
 	isJson(str: string): boolean {
 		try {
 			JSON.parse(str);
