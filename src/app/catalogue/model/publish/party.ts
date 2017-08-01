@@ -1,4 +1,3 @@
-import {PartyName} from "./party-name";
 import {Person} from "./person";
 /**
  * Created by suat on 12-May-17.
@@ -6,7 +5,7 @@ import {Person} from "./person";
 export class Party {
     constructor(
         public id:string,
-        public partyName: PartyName[],
+        public name: string,
         public person:Person
     ) {  }
 }

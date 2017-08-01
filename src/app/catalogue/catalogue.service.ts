@@ -10,7 +10,6 @@ import {UserService} from "../user-mgmt/user.service";
 import {CatalogueLine} from "./model/publish/catalogue-line";
 import {Category} from "./model/category/category";
 import {Observable} from "rxjs/Observable";
-import {Party} from "./model/publish/party";
 
 @Injectable()
 export class CatalogueService {
@@ -144,7 +143,7 @@ export class CatalogueService {
 
     uploadTemplate2(userId: string, template: File): Promise<any> {
         return this.userService.getUserParty(userId).then(party => {
-            const url = this.baseUrl + `/catalogue/template/upload?companyId=${party.id}&companyName=${party.partyName[0].name}`;
+            const url = this.baseUrl + `/catalogue/template/upload?companyId=${party.id}&companyName=${party.name}`;
             return new Promise<any>((resolve, reject) => {
                 let formData: FormData = new FormData();
                 formData.append("file", template, template.name);
