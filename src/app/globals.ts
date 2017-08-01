@@ -44,6 +44,8 @@ export const logicalViewEndpoint = 'http://hydra2.ikap.biba.uni-bremen.de:8090/g
 //export const user_mgmt_endpoint="http://localhost:9096";
 export const catalogue_endpoint="http://localhost:8095";
 export const bpe_endpoint="http://localhost:8081";
+//export const endpoint = 'http://localhost:8090/detectMeaning'; // for local catalog search service
+//export const logicalViewEndpoint = 'http://localhost:8090/getLogicalView'; // for visualization
 
 
 // Marmotta endpoint variables
