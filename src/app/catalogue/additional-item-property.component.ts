@@ -96,7 +96,6 @@ export class AdditionalItemPropertyComponent implements OnInit {
     buttonEnabledOrDisabled() {
         let n = 0;
         for (; n < this.c; n++) {
-            console.log(!this.additionalItemProperty.value[n]);
             if(!this.additionalItemProperty.value[n] || this.additionalItemProperty.value[n].length==0){
                 break;
             }
@@ -114,13 +113,23 @@ export class AdditionalItemPropertyComponent implements OnInit {
             this.i.splice(index, 1);
             this.c--;
         } else {
-            console.log(index);
             this.i.splice(index-1, 1);
             this.additionalItemProperty.value.splice(index, 1);
             this.c--;
             console.log(this.additionalItemProperty.value);
         }
         this.buttonEnabledOrDisabled();
+    }
+
+    //remove a value from displayed custom property
+    removeCustomValue(index: number) {
+        this.additionalItemProperty.value.splice(index, 1);
+        console.log(this.additionalItemProperty.value);
+
+        // if the property no longer has a value, delete it
+        if(this.additionalItemProperty.value.length == 0){
+            this.deleteCustomProperty(this.additionalItemProperty.name);
+        }
     }
 
     private generateUUID(): string {

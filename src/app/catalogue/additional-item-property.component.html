@@ -1,6 +1,28 @@
 <div *ngIf="stringValue" id="stringValueDiv">
 
-    <div class="input-group form-group">
+    <div *ngIf="!eClassValue">
+        <div *ngFor="let value of additionalItemProperty.value; let index = index" class="input-group form-group">
+            <div *ngIf="additionalItemProperty.value.indexOf(value)==0" class="col-3 control-label" >
+                {{additionalItemProperty.name}}
+                <span style="display:inline-block; width: 30px;"></span>
+            </div>
+
+            <div *ngIf="additionalItemProperty.value.indexOf(value)>0" class="col-3 control-label" >
+                <span style="display:inline-block; width: 30px;"></span>
+            </div>
+
+
+            <input type="text" class="form-control"
+                       [(ngModel)]="additionalItemProperty.value[index]"
+                       (ngModelChange)="buttonEnabledOrDisabled()">
+
+            <span><button class="btn btn-xs btn-danger"
+                                               (click)="removeCustomValue(index); $event.stopPropagation()"
+            >&times;</button></span>
+        </div>
+    </div>
+
+    <div *ngIf="eClassValue" class="input-group form-group">
         <div *ngIf="eClassValue" class="col-3 control-label" (click)="openModal()">
             <div style="cursor: pointer">
                 {{additionalItemProperty.name}}
@@ -8,42 +30,33 @@
             </div>
         </div>
 
-        <div *ngIf="!eClassValue" class="col-3 control-label" >
-            {{additionalItemProperty.name}}
-            <span style="display:inline-block; width: 30px;"></span>
-        </div>
-
-        <input type="text" id="prop_val" class="form-control"
+        <input type="text" class="form-control"
                [(ngModel)]="additionalItemProperty.value[0]"
                (ngModelChange)="buttonEnabledOrDisabled()">
-
-        <span *ngIf="!eClassValue"><button class="btn btn-xs btn-danger"
-                                           (click)="deleteCustomProperty(additionalItemProperty.name); $event.stopPropagation()"
-        >&times;</button></span>
 
         <span *ngIf="i.length > 0"><button class="btn btn-xs btn-danger"
                                            (click)="removeAddedValue(0); $event.stopPropagation()"
         >&times;</button></span>
 
-        <span *ngIf="eClassValue && i.length == 0">
+        <span *ngIf="i.length == 0">
             <button class="btn btn-primary btn-xs"
                     (click)="addAnotherPropertyValue(additionalItemProperty.name)"
                     [disabled]="buttonDisabled"
             ><strong>+</strong></button>
         </span>
     </div>
-    <!--<input type="text" class="form-control" [value]="additionalItemProperty.value[0]">-->
-    <div *ngFor="let m of i;" class="input-group form-group">
+
+    <div *ngFor="let uuid of i;" class="input-group form-group">
         <label class="col-3 control-label"></label>
-        <input type="text" id="prop_val" class="form-control"
-               [(ngModel)]="additionalItemProperty.value[i.indexOf(m)+1]"
+        <input type="text" class="form-control"
+               [(ngModel)]="additionalItemProperty.value[i.indexOf(uuid)+1]"
                (ngModelChange)="buttonEnabledOrDisabled()"
         >
         <span><button class="btn btn-xs btn-danger"
-                      (click)="removeAddedValue(i.indexOf(m)+1);"
+                      (click)="removeAddedValue(i.indexOf(uuid)+1);"
         >&times;</button></span>
 
-        <span *ngIf="i.indexOf(m)==i.length-1" ><button class="btn btn-primary btn-xs"
+        <span *ngIf="i.indexOf(uuid)==i.length-1" ><button class="btn btn-primary btn-xs"
                 (click)="addAnotherPropertyValue(additionalItemProperty.name)"
                 [disabled]="buttonDisabled"
         ><strong>+</strong></button>

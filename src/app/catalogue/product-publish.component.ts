@@ -43,6 +43,10 @@ export class ProductPublishComponent implements OnInit {
     // boolean to indicate whether it's a new publish or an edit
     editCatalogueLine: boolean;
 
+    i: Array<string> = [];
+    c: number = 1;
+    buttonDisabled: boolean = true;
+
 
     /*
      * state objects for feedback about the publish operation
@@ -470,6 +474,9 @@ export class ProductPublishComponent implements OnInit {
 
         this.newProperty = ModelUtils.createAdditionalItemProperty(null, null);
         this.propertyValueType.nativeElement.selectedIndex = 0;
+
+        this.i = [];
+        this.c = 1;
     }
 
     private downloadTemplate() {
@@ -504,6 +511,47 @@ export class ProductPublishComponent implements OnInit {
                     error => console.log("Error downloading the file."));
             };
             reader.readAsDataURL(file);
+        }
+    }
+
+    addAnotherCustomValue() {
+
+        console.log(this.i.length);
+        let d = this.generateUUID();
+        this.i.push(d);
+        this.c++;
+        console.log(this.newProperty.value);
+
+        this.buttonDisabled = true;
+
+    }
+
+    removeAddedValue(index: number) {
+        if(index==0){
+            this.newProperty.value.splice(index, 1);
+            this.i.splice(index, 1);
+            this.c--;
+        } else {
+            console.log(index);
+            this.i.splice(index-1, 1);
+            this.newProperty.value.splice(index, 1);
+            this.c--;
+        }
+        this.buttonEnabledOrDisabled();
+        console.log(this.newProperty.value);
+    }
+
+    buttonEnabledOrDisabled() {
+        let n = 0;
+        for (; n < this.c; n++) {
+            if(!this.newProperty.value[n] || this.newProperty.value[n].length==0){
+                break;
+            }
+        }
+        if(n==this.c){
+            this.buttonDisabled = false;
+        } else {
+            this.buttonDisabled = true;
         }
     }
 
