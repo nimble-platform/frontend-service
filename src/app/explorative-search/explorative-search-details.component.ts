@@ -78,9 +78,12 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                 initialContentAlignment: go.Spot.Center,
                 padding: 10,
                 isReadOnly: true,
-                'animationManager.isEnabled': false,
-                'allowVerticalScroll': false,
+                'animationManager.isEnabled': false, // disable Animation
+                'allowVerticalScroll': false, // no vertical scroll for diagram
+                'toolManager.mouseWheelBehavior': go.ToolManager.WheelNone // do not zoom diagram on wheel scroll
             });
+        this.myDiagram.addLayerBefore(this.$(go.Layer, { name: 'red' }), this.myDiagram.findLayer('Grid'));
+        this.myDiagram.addLayerBefore(this.$(go.Layer, { name: 'green' }), this.myDiagram.findLayer('Grid'));
         let commonToolTip = this.$(go.Adornment, 'Auto',
             {
                 isShadowed: true
@@ -109,7 +112,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                     locationObjectName: 'SHAPE',  // Node.location is the center of the Shape
                     selectionAdorned: true,
                     click: (e: go.InputEvent, obj: go.GraphObject): void => { this.nodeClicked(e, obj); },
-                    toolTip: commonToolTip
+                    toolTip: commonToolTip,
                 },
                 this.$(go.Shape, 'Circle',
                     {
@@ -127,7 +130,8 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                         alignment: go.Spot.Right,
                         alignmentFocus: go.Spot.Left
                     },
-                    new go.Binding('text'))
+                    new go.Binding('text')),
+                    new go.Binding('layerName', 'color')
             );
 
         // this is the root node, at the center of the circular layers
@@ -178,7 +182,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                 if (this.finalSelectionJSON === undefined) {
                     // make the JSON
                     this.finalSelectionJSON = {'root': this.filterQueryRootUrl, 'filter': []};
-                    console.log("Hardcode selection", this.finalSelectionJSON);
+                    console.log('Hardcode selection', this.finalSelectionJSON);
                 } else {
                     if (this.finalSelectionJSON['filter'].length > 0) {
                         this.finalSelectionJSON['filter'] = [];
@@ -206,6 +210,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                 nodeConceptUrl = this.config['dataproperties'][index]['url'];
             }
         }
+        console.log('layername', node.part.layerName);
         // get values to be passed to child....
         this.nodeFilterName = clickedNode;
         this.filterQuery = nodeConceptUrl;
@@ -353,10 +358,10 @@ class OntNode {
  * Recursion Class for generating the Graph
  */
 class RecClass {
-    names: string[] = []; // store the Strings from the JSON
+    names: any[] = []; // store the Strings from the JSON
     /**
      * generateGraphRecApproach : Rercusively generate graphs from the incoming JSON config
-     * @param cnf : Incoming JSON config from Parent Component
+     * @param cnf : JSON config from Parent Component
      * @param myDiagram: Diagram parameter for GoJS
      * @param $: Make function for GoJS
      */
@@ -366,7 +371,7 @@ class RecClass {
         // console.log('Complete Tree:\n' + JSON.stringify(linkedOntTree)); // --> DEBUG
         let nodeDataArray: any = []; // Create an Array of Nodes for GoJS.
         for (let i = 1; i < this.names.length + 1; i++) {
-            nodeDataArray.push({ key: i, text: this.names[i - 1], color: go.Brush.randomColor(128, 240) });
+            nodeDataArray.push({ key: i, text: this.names[i - 1]['name'], color: this.names[i - 1]['color'] });
         }
         // Create The Links to Each node in the Tree with Recursion
         let linkDataArray: any = this.recursionLink(linkedOntTree);
@@ -431,12 +436,12 @@ class RecClass {
         let node = new OntNode();
 
         // Adding node name
-        this.names.push(jsonNode['concept']['translatedURL']);
+        this.names.push({name: jsonNode['concept']['translatedURL'], color: 'red'});
         node.id = this.names.length;
 
         // Adding Attributes
         for (let eachDatProp of jsonNode.dataproperties) {
-            this.names.push(eachDatProp.translatedURL);
+            this.names.push({name: eachDatProp.translatedURL, color: 'green'});
             node.attr.push(this.names.length);
         }
 
@@ -461,11 +466,11 @@ class RecClass {
         let linkedDataArray: any = [];
 
         for (let attr of linkedOntTree.attr) {
-            linkedDataArray.push({ from: linkedOntTree.id, to: attr });
+            linkedDataArray.push({ from: linkedOntTree.id, to: attr});
         }
 
         for (let child of linkedOntTree.children) {
-            linkedDataArray.push({ from: linkedOntTree.id, to: child.id });
+            linkedDataArray.push({ from: linkedOntTree.id, to: child.id});
             let childrenJson = this.recursionLink(child);
             childrenJson.forEach(element => {
                 linkedDataArray.push(element);
