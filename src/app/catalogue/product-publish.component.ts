@@ -16,6 +16,7 @@ import {ActivatedRoute, Params, Router} from "@angular/router";
 import {ProductPropertiesComponent} from "./product-properties.component";
 import {PublishAndAIPCService} from "./publish-and-aip.service";
 import 'rxjs/Rx' ;
+import {Code} from "./model/publish/code";
 
 const uploadModalityKey: string = "UploadModality";
 
@@ -39,6 +40,13 @@ export class ProductPublishComponent implements OnInit {
     // placeholder for the custom property
     newProperty: ItemProperty = ModelUtils.createAdditionalItemProperty(null, null);
 
+    // boolean to indicate whether it's a new publish or an edit
+    editCatalogueLine: boolean;
+
+    i: Array<string> = [];
+    c: number = 1;
+    buttonDisabled: boolean = true;
+
 
     /*
      * state objects for feedback about the publish operation
@@ -47,6 +55,7 @@ export class ProductPublishComponent implements OnInit {
     private submitted = false;
     private callback = false;
     private error_detc = false;
+
 
     constructor(private categoryService: CategoryService,
                 private catalogueService: CatalogueService,
@@ -57,28 +66,62 @@ export class ProductPublishComponent implements OnInit {
     }
 
     ngOnInit() {
-
         let publishFromScratch: boolean;
-        let editCatalogueLine: boolean;
 
         this.route.queryParams.subscribe((params: Params) => {
             publishFromScratch = params['fromScratch'] == "true";
-            editCatalogueLine = params['edit'] == "true";
+            this.editCatalogueLine = params['edit'] == "true";
 
-            this.initView(publishFromScratch, editCatalogueLine);
+            this.initView(publishFromScratch, this.editCatalogueLine);
         });
     }
 
     private initView(publishFromScratch: boolean, editCatalogueLine: boolean): void {
 
+        // Following "if" block is executed when redirected by an "edit" button
+        // "else" block is executed when redirected by "publish" tab
         if (editCatalogueLine) {
-            this.publishAndAIPCService.resetService();
-            this.catalogueLine = this.catalogueService.getCatalogueLineBeingEdited();
-            // TODO somehow extract categories from CatalogueLine and push to selectedCategories
+
+            // Initialization
+            this.selectedCategories = [];
+            let classificationCodes: Code[] = [];
+            this.catalogueLine = this.catalogueService.getDraftItem();
+
+            // Get categories of item to edit
+            for (let classification of this.catalogueLine.goodsItem.item.commodityClassification)
+                classificationCodes.push(classification.itemClassificationCode);
+
+            this.categoryService.getMultipleCategories(classificationCodes).then(
+                (categories: Category[]) => {
+
+                    // Then merge existing properties of the item with newly selected properties
+                    this.selectedCategories = categories;
+                    this.selectedCategories = this.selectedCategories.concat(this.categoryService.getSelectedCategories());
+
+                    if (this.selectedCategories != []) {
+
+                        for (let category of this.selectedCategories) {
+                            let newCategory = this.isNewCategory(category);
+
+                            if (newCategory) {
+                                this.updateItemWithNewCategory(category);
+                            }
+                        }
+                    }
+
+                    // Following method is called when editing to make sure the item has
+                    // all properties of its categories in the correct order
+                    this.restoreItemProperties();
+
+                    // Input properties of child component won't update, so force update
+                    this.productProperties.catalogueLine = this.catalogueLine;
+                    this.productProperties.selectedCategories = this.selectedCategories;
+                    this.productProperties.refreshPropertyBlocks();
+                });
+
         }
         else {
             this.catalogueLine = null;
-            this.publishAndAIPCService.resetService();
             let userId = this.cookieService.get("user_id");
             this.catalogueService.getCatalogue(userId).then(catalogue => {
 
@@ -106,16 +149,60 @@ export class ProductPublishComponent implements OnInit {
         }
     }
 
+    // Ensures the user is presented with all properties of the category when editing
+    private restoreItemProperties() {
+        let newProperties: ItemProperty[] = [];
+        let existingProperties: ItemProperty[] = this.catalogueLine.goodsItem.item.additionalItemProperty;
+        let customProperties: ItemProperty[] = [];
+
+        // prepare empty category fields
+        for (let category of this.selectedCategories) {
+            for (let property of category.properties) {
+                let aip = ModelUtils.createAdditionalItemProperty(property, category);
+                aip.propertyDefinition = property.definition;
+
+                // Make sure each property is pushed once
+                if (newProperties.findIndex(p => p.id == property.id) <= -1) {
+                    newProperties.push(aip);
+                }
+            }
+        }
+
+        for (let i = 0; i < newProperties.length; i++) {
+            for (let j = 0; j < existingProperties.length; j++) {
+
+                // in the first iteration, set aside custom properties
+                if (i == 0) {
+                    if (existingProperties[j].itemClassificationCode.listID !== "eClass") {
+                        customProperties.push(existingProperties[j]);
+                    }
+                }
+
+                // If a property already exists, copy it over
+                if (newProperties[i].id == existingProperties[j].id) {
+                    newProperties[i] = existingProperties[j];
+                }
+            }
+        }
+
+        console.log(existingProperties);
+        console.log(newProperties);
+
+        newProperties = newProperties.concat(customProperties);
+        this.catalogueLine.goodsItem.item.additionalItemProperty = newProperties;
+    }
+
     private updateItemWithNewCategory(category: Category): void {
         let commodityClassification = ModelUtils.createCommodityClassification(category);
         this.catalogueLine.goodsItem.item.commodityClassification.push(commodityClassification);
 
+        loop1:
         for (let property of category.properties) {
             let aip = ModelUtils.createAdditionalItemProperty(property, category);
             // check whether the same property exists already
             for (let existingAip of this.catalogueLine.goodsItem.item.additionalItemProperty) {
                 if (aip.id == existingAip.id) {
-                    break;
+                    continue loop1;
                 }
             }
 
@@ -135,7 +222,7 @@ export class ProductPublishComponent implements OnInit {
     }
 
     private addCategoryOnClick(event: any): void {
-        this.router.navigate(['categorysearch'], {queryParams: {fromScratch: false, edit: false}});
+        this.router.navigate(['categorysearch'], {queryParams: {fromScratch: false, edit: this.editCatalogueLine}});
     }
 
     private publishProduct(): void {
@@ -145,10 +232,14 @@ export class ProductPublishComponent implements OnInit {
 
         let userId = this.cookieService.get("user_id");
         this.catalogueService.getCatalogue(userId).then(catalogue => {
-                catalogue.catalogueLine.push(this.catalogueLine);
+
+                // remove unused properties from catalogueLine
+                let splicedCatalogueLine: CatalogueLine = this.removeEmptyProperties(this.catalogueLine);
+                // add new line to the end of catalogue
+                catalogue.catalogueLine.push(splicedCatalogueLine);
 
                 // TODO: merge stuff is demo-specific, handle it properly
-                this.mergeMultipleValuesIntoSingleField(catalogue);
+                //this.mergeMultipleValuesIntoSingleField(catalogue);
 
                 if (catalogue.uuid == null) {
                     this.catalogueService.postCatalogue(catalogue)
@@ -164,7 +255,68 @@ export class ProductPublishComponent implements OnInit {
         );
     }
 
+    private editProduct(): void {
+
+        this.error_detc = false;
+        this.callback = false;
+        this.submitted = true;
+
+        let userId = this.cookieService.get("user_id");
+        this.catalogueService.getCatalogue(userId).then(catalogue => {
+
+                // remove unused properties from catalogueLine
+                let splicedCatalogueLine: CatalogueLine = this.removeEmptyProperties(this.catalogueLine);
+
+                // Replace original line in the catalogue with the edited version
+                let indexOfOriginalLine = catalogue.catalogueLine.indexOf(this.catalogueService.getOriginalItem());
+                catalogue.catalogueLine[indexOfOriginalLine] = splicedCatalogueLine;
+
+                // TODO: merge stuff is demo-specific, handle it properly
+                //this.mergeMultipleValuesIntoSingleField(catalogue);
+
+                if (catalogue.uuid == null) {
+                    this.catalogueService.postCatalogue(catalogue)
+                        .then(() => this.onSuccessfulPublish())
+                        .catch(() => this.onFailedPublish());
+
+                } else {
+                    this.catalogueService.putCatalogue(catalogue)
+                        .then(() => this.onSuccessfulPublish())
+                        .catch(() => this.onFailedPublish())
+                }
+            }
+        );
+    }
+
+    // Removes empty properties from catalogueLines about to be sent
+    private removeEmptyProperties(catalogueLine: CatalogueLine): CatalogueLine {
+
+        // Make deep copy of catalogue line so we can remove empty fields without disturbing UI model
+        // This is required because there is no redirect after publish action
+        let catalogueLineCopy: CatalogueLine = JSON.parse(JSON.stringify(catalogueLine));
+
+        // splice out properties that are unfilled
+        let properties: ItemProperty[] = catalogueLineCopy.goodsItem.item.additionalItemProperty;
+        let propertiesToBeSpliced: ItemProperty[] = [];
+
+        for (let property of properties) {
+            // ASSUMPTION: if zeroth entry of a property is empty, all entries are
+            if (property.value[0] === "") {
+                propertiesToBeSpliced.push(property);
+            }
+        }
+
+        for (let property of propertiesToBeSpliced) {
+            properties.splice(properties.indexOf(property), 1);
+        }
+
+        return catalogueLineCopy;
+    }
+
     private onSuccessfulPublish(): void {
+        // avoid category duplication
+        this.categoryService.resetSelectedCategories();
+
         this.callback = true;
         this.error_detc = false;
         this.ngOnInit();
@@ -258,23 +410,61 @@ export class ProductPublishComponent implements OnInit {
     imageCancel(fileName: string) {
         let binaryObjects = this.newProperty.embeddedDocumentBinaryObject;
 
-        let index = binaryObjects.findIndex( img => img.fileName === fileName );
+        let index = binaryObjects.findIndex(img => img.fileName === fileName);
 
         console.log(index);
-        if(index > -1){
-            binaryObjects.splice(index,1);
+        if (index > -1) {
+            binaryObjects.splice(index, 1);
         }
+    }
+
+    customPropertyValueCancel(val: string) {
+        let index = this.newProperty.value.indexOf(val);
+        this.newProperty.value.splice(index, 1);
     }
 
     /* deselect a category */
     categoryCancel(categoryId: string) {
-        let index = this.selectedCategories.findIndex(c => c.id == categoryId);
-        if(index > -1) {
-            this.selectedCategories.splice(index,1);
-            this.productProperties.ngOnInit();
-        }
-    }
+        let c = 0;
 
+        let index = this.selectedCategories.findIndex(c => c.id == categoryId);
+        if (index > -1) {
+
+            for (let property of this.selectedCategories[index].properties) {
+                c = 0;
+                for (let category of this.selectedCategories) {
+                    if (category.id == categoryId)
+                        continue;
+
+                    for (let p of category.properties) {
+                        if (property.id == p.id)
+                            c++;
+                    }
+                }
+                if (c == 0) {
+
+                    let j = this.catalogueLine.goodsItem.item.additionalItemProperty.findIndex(p => p.id == property.id);
+                    if (j > -1)
+                        this.catalogueLine.goodsItem.item.additionalItemProperty.splice(j, 1);
+
+                    let k = this.productProperties.renderedPropertyIds.findIndex(p => p == property.id);
+                    if (k > -1)
+                        this.productProperties.renderedPropertyIds.splice(k, 1);
+                }
+            }
+
+            this.selectedCategories.splice(index, 1);
+        }
+
+        let i = this.catalogueLine.goodsItem.item.commodityClassification.findIndex(c => c.itemClassificationCode.value == categoryId);
+
+        if (i > -1) {
+            this.catalogueLine.goodsItem.item.commodityClassification.splice(i, 1);
+        }
+
+        this.productProperties.ngOnInit();
+
+    }
 
     private addCustomProperty(): void {
         this.catalogueLine.goodsItem.item.additionalItemProperty.push(this.newProperty);
@@ -284,6 +474,9 @@ export class ProductPublishComponent implements OnInit {
 
         this.newProperty = ModelUtils.createAdditionalItemProperty(null, null);
         this.propertyValueType.nativeElement.selectedIndex = 0;
+
+        this.i = [];
+        this.c = 1;
     }
 
     private downloadTemplate() {
@@ -321,6 +514,47 @@ export class ProductPublishComponent implements OnInit {
         }
     }
 
+    addAnotherCustomValue() {
+
+        console.log(this.i.length);
+        let d = this.generateUUID();
+        this.i.push(d);
+        this.c++;
+        console.log(this.newProperty.value);
+
+        this.buttonDisabled = true;
+
+    }
+
+    removeAddedValue(index: number) {
+        if(index==0){
+            this.newProperty.value.splice(index, 1);
+            this.i.splice(index, 1);
+            this.c--;
+        } else {
+            console.log(index);
+            this.i.splice(index-1, 1);
+            this.newProperty.value.splice(index, 1);
+            this.c--;
+        }
+        this.buttonEnabledOrDisabled();
+        console.log(this.newProperty.value);
+    }
+
+    buttonEnabledOrDisabled() {
+        let n = 0;
+        for (; n < this.c; n++) {
+            if(!this.newProperty.value[n] || this.newProperty.value[n].length==0){
+                break;
+            }
+        }
+        if(n==this.c){
+            this.buttonDisabled = false;
+        } else {
+            this.buttonDisabled = true;
+        }
+    }
+
     private isNewCategory(category: Category): boolean {
         let newCategory: boolean = true;
         for (let commodityClassification of this.catalogueLine.goodsItem.item.commodityClassification) {
@@ -344,6 +578,7 @@ export class ProductPublishComponent implements OnInit {
     private handleError(error: any): Promise<any> {
         return Promise.reject(error.message || error);
     }
+
 
     private generateUUID(): string {
         var d = new Date().getTime();

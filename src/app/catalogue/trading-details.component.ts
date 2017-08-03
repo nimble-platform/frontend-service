@@ -6,6 +6,8 @@ import { CatalogueLine } from "./model/publish/catalogue-line";
     templateUrl: './trading-details.component.html',
 })
 
+// Component that displays warranty information etc. inside the "trading details" tab in CatalogueLineView
+
 export class TradingDetailsComponent {
 
     @Input() catalogueLine: CatalogueLine;

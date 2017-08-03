@@ -8,6 +8,7 @@ import {Property} from "./model/category/property";
 import {ItemProperty} from "./model/publish/item-property";
 import {CatalogueLine} from "./model/publish/catalogue-line";
 import {PublishAndAIPCService} from "./publish-and-aip.service";
+import {ModelUtils} from "./model/model-utils";
 
 const PROPERTY_BLOCK_FIELD_NAME: string = "name";
 const PROPERTY_BLOCK_FIELD_ISCOLLAPSED = "isCollapsed";
@@ -36,12 +37,17 @@ export class ProductPropertiesComponent implements OnInit {
     //deletedProperties: Array<string> = [];
 
     constructor(private _publishAndAIPCService: PublishAndAIPCService) {
+        this._publishAndAIPCService.componentMethodCalled$.subscribe(
+            (inputVal: string) => {
+                let indexCatalogue = this.catalogueLine.goodsItem.item.additionalItemProperty.findIndex(p => p.name == inputVal);
+                this.catalogueLine.goodsItem.item.additionalItemProperty.splice(indexCatalogue, 1);
+                this.refreshPropertyBlocks();
+            }
+        );
     }
 
     ngOnInit(): void {
-
         this.refreshPropertyBlocks();
-
     }
 
     refreshPropertyBlocks(): void {
@@ -50,26 +56,14 @@ export class ProductPropertiesComponent implements OnInit {
         this.propertyBlocks = [];
         this.renderedPropertyIds = [];
 
-        for (let property of this.catalogueLine.goodsItem.item.additionalItemProperty) {
-            let index = this._publishAndAIPCService.deletedProperties.findIndex(dp => dp == property.name);
-            if (index > -1) {
-                let indexCatalogue = this.catalogueLine.goodsItem.item.additionalItemProperty.indexOf(property);
-                this.catalogueLine.goodsItem.item.additionalItemProperty.splice(indexCatalogue, 1);
-                this._publishAndAIPCService.removeFromDeleted(property.name);
-            }
-        }
         // create a list including the custom properties created by the user
         for (let property of this.catalogueLine.goodsItem.item.additionalItemProperty) {
             if (property.itemClassificationCode.listID === "Custom" &&
-                this._publishAndAIPCService.deletedProperties.indexOf(property.name) <= -1 &&
-                this._publishAndAIPCService.customProperties.indexOf(property) <= -1) {
-                this._publishAndAIPCService.insertCustom(property);
+                this.customProperties.indexOf(property) <= -1) {
+                this.customProperties.push(property);
                 this.renderedPropertyIds.push(property.id);
             }
         }
-
-        this.customProperties = this._publishAndAIPCService.customProperties;
-
 
         // commodity classifications
         if (this.selectedCategories != null) {
@@ -87,9 +81,6 @@ export class ProductPropertiesComponent implements OnInit {
      * Creates two blocks as eClass-base and eClass-specific and puts properties into those
      */
     private createEClassPropertyBlocks(category: Category): void {
-
-        /* reset the property blocks in the shared service */
-        this._publishAndAIPCService.resetPropertyBlocks();
 
         let basePropertyBlock: any = {};
         basePropertyBlock[PROPERTY_BLOCK_FIELD_NAME] = category.preferredName + " (" + category.taxonomyId + " - Base)";
@@ -113,23 +104,19 @@ export class ProductPropertiesComponent implements OnInit {
             aip.propertyDefinition = property.definition;
             if (!this.isPropertyPresentedAlready(property)) {
                 if (this.isBaseEClassProperty(property)) {
-                    if (this._publishAndAIPCService.deletedProperties.indexOf(aip.name) <= -1 &&
-                        this._publishAndAIPCService.baseProperties.indexOf(aip) <= -1) {
-                        this._publishAndAIPCService.insertBase(aip);
+                    if (baseProperties.indexOf(aip) <= -1) {
+                        baseProperties.push(aip);
                     }
 
                 } else {
-                    if (this._publishAndAIPCService.deletedProperties.indexOf(aip.name) <= -1 &&
-                        this._publishAndAIPCService.specificProperties.indexOf(aip) <= -1) {
-                        this._publishAndAIPCService.insertSpecific(aip);
+                    if (specificProperties.indexOf(aip) <= -1) {
+                        specificProperties.push(aip);
                     }
 
                 }
                 this.renderedPropertyIds.push(property.id);
             }
         }
-        baseProperties = this._publishAndAIPCService.baseProperties;
-        specificProperties = this._publishAndAIPCService.specificProperties;
 
         this.propertyBlocks.push(basePropertyBlock);
         this.propertyBlocks.push(specificPropertyBlock);
@@ -173,10 +160,11 @@ export class ProductPropertiesComponent implements OnInit {
         console.error("Property could not be found in additional item properties: " + property.id)
     }
 
-   /* isPropertyCommonToOthercategories(propertyName: string) {
-        index1 = this._publishAndAIPCService.baseProperties.findIndex(p => p.name == propertyName);
-        if()
-    }*/
+
+    /* isPropertyCommonToOthercategories(propertyName: string) {
+     index1 = this._publishAndAIPCService.baseProperties.findIndex(p => p.name == propertyName);
+     if()
+     }*/
 
     /*
      Checks whether the property is a base property common for many eClass properties
@@ -240,5 +228,11 @@ export class ProductPropertiesComponent implements OnInit {
         } else {
             return false;
         }
+    }
+
+    spanClose() {
+        let modal = document.getElementById('myModal');
+
+        modal.style.display = "none";
     }
 }

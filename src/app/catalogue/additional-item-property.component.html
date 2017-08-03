@@ -1,30 +1,71 @@
-<div *ngIf="stringValue" class="input-group form-group">
+<div *ngIf="stringValue" id="stringValueDiv">
 
-    <label class="col-3 control-label">
-        {{additionalItemProperty.name}}
-        <span *ngIf="eClassValue" style="color: #556b2f" data-toggle="tooltip" data-placement="top" title="{{additionalItemProperty.propertyDefinition}}">
-            &#9432;
+    <div *ngIf="!eClassValue">
+        <div *ngFor="let value of additionalItemProperty.value; let index = index" class="input-group form-group">
+            <div *ngIf="additionalItemProperty.value.indexOf(value)==0" class="col-3 control-label" >
+                {{additionalItemProperty.name}}
+                <span style="display:inline-block; width: 30px;"></span>
+            </div>
+
+            <div *ngIf="additionalItemProperty.value.indexOf(value)>0" class="col-3 control-label" >
+                <span style="display:inline-block; width: 30px;"></span>
+            </div>
+
+
+            <input type="text" class="form-control"
+                       [(ngModel)]="additionalItemProperty.value[index]"
+                       (ngModelChange)="buttonEnabledOrDisabled()">
+
+            <span><button class="btn btn-xs btn-danger"
+                                               (click)="removeCustomValue(index); $event.stopPropagation()"
+            >&times;</button></span>
+        </div>
+    </div>
+
+    <div *ngIf="eClassValue" class="input-group form-group">
+        <div *ngIf="eClassValue" class="col-3 control-label" (click)="openModal()">
+            <div style="cursor: pointer">
+                {{additionalItemProperty.name}}
+                <span *ngIf="eClassValue">&#9432;</span>
+            </div>
+        </div>
+
+        <input type="text" class="form-control"
+               [(ngModel)]="additionalItemProperty.value[0]"
+               (ngModelChange)="buttonEnabledOrDisabled()">
+
+        <span *ngIf="i.length > 0"><button class="btn btn-xs btn-danger"
+                                           (click)="removeAddedValue(0); $event.stopPropagation()"
+        >&times;</button></span>
+
+        <span *ngIf="i.length == 0">
+            <button class="btn btn-primary btn-xs"
+                    (click)="addAnotherPropertyValue(additionalItemProperty.name)"
+                    [disabled]="buttonDisabled"
+            ><strong>+</strong></button>
         </span>
+    </div>
 
-        <!--<div (mouseover)="mouseover=true" (mouseout)="mouseover=false">
-            {{additionalItemProperty.name}}
-        </div>-->
-    </label>
+    <div *ngFor="let uuid of i;" class="input-group form-group">
+        <label class="col-3 control-label"></label>
+        <input type="text" class="form-control"
+               [(ngModel)]="additionalItemProperty.value[i.indexOf(uuid)+1]"
+               (ngModelChange)="buttonEnabledOrDisabled()"
+        >
+        <span><button class="btn btn-xs btn-danger"
+                      (click)="removeAddedValue(i.indexOf(uuid)+1);"
+        >&times;</button></span>
 
-    <!--<input type="text" class="form-control" [value]="additionalItemProperty.value[0]">-->
-    <input type="text" class="form-control" [(ngModel)]="additionalItemProperty.value[0]">
-    <span *ngIf="!eClassValue"><button class="btn btn-xs btn-danger"
-                  (click)="deleteCP(additionalItemProperty.name); $event.stopPropagation()"
-    >&times;</button></span>
+        <span *ngIf="i.indexOf(uuid)==i.length-1" ><button class="btn btn-primary btn-xs"
+                (click)="addAnotherPropertyValue(additionalItemProperty.name)"
+                [disabled]="buttonDisabled"
+        ><strong>+</strong></button>
+        </span>
+    </div>
 
 </div>
-<!--
-<div *ngIf="eClassValue" >
-<div style="background-color: #daeeff; padding-bottom: 10px; padding-top: 10px;padding-left: 14px;
- padding-right: 14px;margin-bottom: 16px; border-radius: 8px" *ngIf="mouseover">
-    {{additionalItemProperty.propertyDefinition}}
-</div>
-</div>-->
+
+
 
 <div *ngIf="binaryValue" class="input-group form-group">
     <label class="col-3 control-label">{{additionalItemProperty.name}}</label>
@@ -40,7 +81,7 @@
                 />
 
                 <span style="display:inline-block; width: 10px;"></span>
-                {{file.objectMetadata}}
+                    {{file.objectMetadata}}
                 <span style="display:inline-block; width: 30px;"></span>
             </div>
 
@@ -51,7 +92,7 @@
         </div>
 
        <span><button class="btn btn-xs btn-danger"
-                      (click)="deleteCP(additionalItemProperty.name); $event.stopPropagation()"
+                      (click)="deleteCustomProperty(additionalItemProperty.name); $event.stopPropagation()"
         >&times;</button></span>
     </div>
 </div>

@@ -11,6 +11,8 @@ import {Catalogue} from "./model/publish/catalogue";
     providers: [ CookieService ]
 })
 
+// Container component for CatalogueLineView's
+
 export class CatalogueViewComponent implements OnInit {
 
     constructor(
@@ -21,7 +23,6 @@ export class CatalogueViewComponent implements OnInit {
     catalogue: Catalogue;
 
     ngOnInit() {
-        // TODO request each time catalogueview is loaded
         this.requestCatalogue();
     }
 

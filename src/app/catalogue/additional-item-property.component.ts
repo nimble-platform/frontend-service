@@ -11,12 +11,66 @@ import {PublishAndAIPCService} from "./publish-and-aip.service";
 })
 
 export class AdditionalItemPropertyComponent implements OnInit {
+    i: Array<string> = [];
+    c: number = 1;
+
     @Input() additionalItemProperty:ItemProperty;
 
     stringValue:boolean = true;
     binaryValue:boolean = false;
 
     eClassValue:boolean = false;
+
+    propertyUnitDefined:boolean = false;
+
+    buttonDisabled: boolean = true;
+
+    openModal(): void {
+        //if(this.eClassValue == true){
+            let modal = document.getElementById('myModal');
+
+            let header = document.getElementById('header');
+            header.innerText = this.additionalItemProperty.name;
+
+            let prop_def = document.getElementById('prop_def');
+            prop_def.innerText = this.additionalItemProperty.propertyDefinition;
+
+            if(this.propertyUnitDefined == true) {
+                let prop_unit = document.getElementById('prop_unit');
+                prop_unit.innerText = this.additionalItemProperty.unit;
+
+                let unit_label = document.getElementById('unit_label');
+                unit_label.innerText = "Unit: ";
+            }
+            else {
+                let prop_unit = document.getElementById('prop_unit');
+                prop_unit.innerText = "";
+
+                let unit_label = document.getElementById('unit_label');
+                unit_label.innerText = "";
+            }
+
+            modal.style.display = "block";
+       // }
+    }
+   
+    spanClose() {
+        let modal = document.getElementById('myModal');
+
+        modal.style.display = "none";
+    }
+
+    addAnotherPropertyValue(aipName: string) {
+
+        console.log(this.i.length);
+        let d = this.generateUUID();
+        this.i.push(d);
+        this.c++;
+        console.log(this.i);
+
+        this.buttonDisabled = true;
+
+    }
 
     constructor(
         private _publishAndAIPCService: PublishAndAIPCService) { }
@@ -31,12 +85,67 @@ export class AdditionalItemPropertyComponent implements OnInit {
         }
         if(this.additionalItemProperty.itemClassificationCode.listID == "eClass") {
             this.eClassValue = true;
+        }
+        if(this.additionalItemProperty.unit && this.additionalItemProperty.unit.length > 0) {
+            this.propertyUnitDefined = true;
+        }
+     this.buttonEnabledOrDisabled();
 
+    }
+
+    buttonEnabledOrDisabled() {
+        let n = 0;
+        for (; n < this.c; n++) {
+            if(!this.additionalItemProperty.value[n] || this.additionalItemProperty.value[n].length==0){
+                break;
+            }
+        }
+        if(n==this.c){
+            this.buttonDisabled = false;
+        } else {
+            this.buttonDisabled = true;
         }
     }
 
-    //store in deleted properties for later check
-    deleteCP(inputVal: string) {
-        this._publishAndAIPCService.addToDeletedProperties(inputVal);
+    removeAddedValue(index: number) {
+        if(index==0){
+            this.additionalItemProperty.value.splice(index, 1);
+            this.i.splice(index, 1);
+            this.c--;
+        } else {
+            this.i.splice(index-1, 1);
+            this.additionalItemProperty.value.splice(index, 1);
+            this.c--;
+            console.log(this.additionalItemProperty.value);
+        }
+        this.buttonEnabledOrDisabled();
     }
+
+    //remove a value from displayed custom property
+    removeCustomValue(index: number) {
+        this.additionalItemProperty.value.splice(index, 1);
+        console.log(this.additionalItemProperty.value);
+
+        // if the property no longer has a value, delete it
+        if(this.additionalItemProperty.value.length == 0){
+            this.deleteCustomProperty(this.additionalItemProperty.name);
+        }
+    }
+
+    private generateUUID(): string {
+        var d = new Date().getTime();
+        var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+            var r = (d + Math.random() * 16) % 16 | 0;
+            d = Math.floor(d / 16);
+            return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+        });
+        return uuid;
+    };
+
+    // deletes the custom property with the given name
+    deleteCustomProperty = function (inputVal: string) {
+        // calls deleteProperty method in the shared service
+        this._publishAndAIPCService.deleteProperty(inputVal);
+    }
+
 }

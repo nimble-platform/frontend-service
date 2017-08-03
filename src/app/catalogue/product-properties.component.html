@@ -1,3 +1,24 @@
+<link rel="stylesheet" type="text/css" href="modal-style.css">
+
+<div id="myModal" class="modal">
+
+    <div class="modal-content">
+        <div class="modal-header">
+            <div id="header"></div>
+            <span class="close" (click)="spanClose();">&times;</span>
+        </div>
+        <div class="modal-body">
+            <span style="color: #8b4513;">Description: </span>
+            <span id="prop_def"></span>
+
+            <div></div>
+            <span style="color: #8b4513;" id="unit_label"></span>
+            <span style="color: #000000;" id="prop_unit"></span>
+        </div>
+    </div>
+
+</div>
+
 <!-- ubl properties -->
 <div class="input-group form-group">
     <label class="col-3 control-label">Name</label>
@@ -15,7 +36,7 @@
 
     <label >Currency</label>
     <span style="display:inline-block; width: 20px;"></span>
-    <input type="text" class="form-control" width="20" name="productPriceUnit" [(ngModel)]="catalogueLine.requiredItemLocationQuantity.price.priceAmount.currencyID">
+    <input type="text" class="form-control" name="productPriceUnit" [(ngModel)]="catalogueLine.requiredItemLocationQuantity.price.priceAmount.currencyID">
 </div>
 
 <!-- Custom properties -->

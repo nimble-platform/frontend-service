@@ -6,29 +6,6 @@
 </head>
 <body style="background-color: #f5f5f5">
 
-<div *ngIf="customPropertiesBlock">
-    <p>
-        <button type="button" class="btn btn-outline-primary"
-                (click)="customPropertiesBlock.isCollapsed = !customPropertiesBlock.isCollapsed"
-                [attr.aria-expanded]="!customPropertiesBlock.isCollapsed" aria-controls="propertyBlock">
-            {{customPropertiesBlock.name}}
-        </button>
-    </p>
-    <div id="customPropertiesBlock" [ngbCollapse]="customPropertiesBlock.isCollapsed"
-         *ngFor="let property of customPropertiesBlock[PROPERTY_BLOCK_FIELD_PROPERTIES]">
-
-        <div class="input-group form-group">
-            <label class="col-6 control-label" [ngClass]="'font-weight-bold'">{{property.name}}:</label>
-
-            <span contenteditable="false" (disabled)="true" class="text-box" [(ngModel)]="property.value[0]"
-                  ngDefaultControl>
-    {{property.value[0]}}
-            </span>
-        </div>
-
-    </div>
-</div>
-
 <div *ngFor="let propertyBlock of propertyBlocks">
     <p>
         <button type="button" class="btn btn-outline-primary"

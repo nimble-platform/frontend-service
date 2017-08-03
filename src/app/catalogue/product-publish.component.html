@@ -67,12 +67,20 @@
                 </div>
             </div>
             <div class="col-sm-3">
-                <label class="col-3 control-label">
+                <label class="col-3 control-label" *ngIf="!editCatalogueLine">
                     <button class="btn btn-success btn-xs"
                             (click)="publishProduct()">
                         <span i18n>Publish Product</span>
                     </button>
                 </label>
+
+                <label class="col-3 control-label" *ngIf="editCatalogueLine">
+                    <button class="btn btn-success btn-xs"
+                            (click)="editProduct()">
+                        <span i18n>Save Changes</span>
+                    </button>
+                </label>
+
                 <div (click)="addCategoryOnClick()"
                      style="display: inline-block;">
                     <img src="./assets/catalogue/add_button.png"/>
@@ -115,6 +123,21 @@
                        placeholder="Property Value"
                        required/>
 
+                <span *ngIf="i.length == 0 && !propertyValueType.options.selectedIndex">
+                    <button class="btn btn-info btn-xs"
+                            (click)="addAnotherCustomValue()"
+                            [disabled]="!customPropertyForm.form.valid"
+                    ><strong>+</strong></button>
+                </span>
+
+                <span *ngIf="i.length > 0">
+                    <button class="btn btn-xs btn-danger"
+                            (click)="removeAddedValue(0); $event.stopPropagation()">
+                        &times;
+                    </button>
+                </span>
+
+
                 <div *ngIf="propertyValueType.options.selectedIndex == 2" (click)="image.click()"
                      class="col-4"
                      style="display: inline-block;">
@@ -154,15 +177,37 @@
                     </div>
                 </div>
             </form>
+            <p></p>
+            <div *ngFor="let uuid of i;" class="input-group form-group">
+                <label class="col-3 control-label"></label>
+                <input type="text" class="form-control col ml-2"
+                       [(ngModel)]="newProperty.value[i.indexOf(uuid)+1]"
+                       [ngModelOptions]="{standalone: true}"
+                       (ngModelChange)="buttonEnabledOrDisabled()"
+                >
+                <span><button class="btn btn-xs btn-danger"
+                              (click)="removeAddedValue(i.indexOf(uuid)+1);"
+                >&times;</button></span>
+
+                <span *ngIf="i.indexOf(uuid)==i.length-1" >
+                        <button class="btn btn-info btn-xs"
+                                (click)="addAnotherCustomValue()"
+                                [disabled]="buttonDisabled">
+                            <strong>+</strong>
+                        </button>
+                </span>
+                <div class="col">
+                    <div class="row justify-content-end ml-2">
+                    </div>
+                </div>
+            </div>
 
             <!-- selected images or files -->
-	    <div *ngIf="newProperty != null && newProperty.embeddedDocumentBinaryObject.length > 0"
+	        <div *ngIf="newProperty != null && newProperty.embeddedDocumentBinaryObject.length > 0"
                  class="offset-3 mt-3">
                 <ul class="list-group">
                     <li *ngFor="let afile of newProperty.embeddedDocumentBinaryObject"
                         class="list-group-item pb-2 border-0">
-
-                        <div>
 
 			                <div *ngIf="afile.mimeCode.split('/')[0]=='application'||afile.mimeCode.split('/')[0]=='text'">
                                 {{afile.fileName}}
@@ -187,7 +232,6 @@
                                 >&times;</button></span>
 
                             </div>
-                        </div>
                     </li>
                 </ul>
             </div>

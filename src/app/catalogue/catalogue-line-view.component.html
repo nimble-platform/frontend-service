@@ -24,12 +24,23 @@
 
     <p><strong>Description:</strong> {{catalogueLine.goodsItem.item.description}}</p>
 
-    <div class="align-center space-after">
-        <div class="btn-group" role="group" style="display: inline-block">
-            <button type="button" class="btn btn-info pointer" (click)="selectedTab = 'Product Details'">Product Details</button>
-            <button type="button" class="btn btn-info pointer" (click)="selectedTab = 'Trading Details'">Trading Details</button>
-        </div>
-    </div>
+    <ul class="nav nav-tabs">
+        <li class="nav-item pointer">
+            <a
+               [ngClass]="{'nav-link': true, active: selectedTab === 'Product Details'}"
+               (click)="selectedTab = 'Product Details'"
+               i18n
+            >Product Details</a>
+        </li>
+
+        <li class="nav-item pointer">
+            <a
+               [ngClass]="{'nav-link': true, active: selectedTab === 'Trading Details'}"
+               (click)="selectedTab = 'Trading Details'"
+               i18n
+            >Trading Details</a>
+        </li>
+    </ul>
 
     <product-details *ngIf="selectedTab === 'Product Details'" [catalogueLine]="catalogueLine"></product-details>
 
