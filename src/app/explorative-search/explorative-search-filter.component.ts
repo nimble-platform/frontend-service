@@ -18,12 +18,13 @@ import {ExplorativeSearchService} from './explorative-search.service';
 
 export class ExplorativeSearchFilterComponent implements OnChanges {
     /*variables for values coming from Parent Component `search-details`*/
-    @Input() mainConceptName: string;
+    /*@Input() mainConceptName: string;
     @Input() mainConceptUrl: string;
     @Input() filterConfig: Object;
     @Input() keyForConf: string;
     @Input() filterName: string;
-
+    */
+    @Input() filterProperties: Object;
     @Output() filterSelectionUpdated = new EventEmitter();
 
     /*Final Data to be sent back to parent for processing.. Maybe..*/
@@ -44,16 +45,16 @@ export class ExplorativeSearchFilterComponent implements OnChanges {
      * a new filter configuration to the child
      */
     ngOnChanges(): void {
-        console.log('FilterConfig ', this.filterConfig); // DEBUG Check
+        console.log('FilterConfig ', this.filterProperties['filterJSON']); // DEBUG Check
         this.result = [];
-        this.finalSelectionJSON = {'root': this.mainConceptUrl, 'filter': []};
-        if (this.filterConfig === {}) {
+        this.finalSelectionJSON = {'root': this.filterProperties['fQueryRootUrl'], 'filter': []};
+        if (this.filterProperties['filterJSON'] === {}) {
             this.userSelections = [];
         }
-        for (let keyConfig in this.filterConfig) {
-            if (this.filterConfig[keyConfig]) {
+        for (let keyConfig in this.filterProperties['filterJSON']) {
+            if (this.filterProperties['filterJSON'][keyConfig]) {
                 // store the JSON array in the result array for display
-                this.result = this.filterConfig[keyConfig];
+                this.result = this.filterProperties['filterJSON'][keyConfig];
                 // console.log(this.result); // DEBUG
             }
         }
@@ -73,7 +74,7 @@ export class ExplorativeSearchFilterComponent implements OnChanges {
                     // NEED TO WORK HERE.. Must be a Array of JSON according to API input
                     // let tempArr: any[] = [];
                     // tempArr.push({'property': this.keyForConf, 'values': [eachResult['min'], eachResult['max']]});
-                    this.userSelections.push({'property': this.keyForConf,
+                    this.userSelections.push({'property': this.filterProperties['fQuery'],
                         'values': [eachResult['min'], eachResult['max']]
                     });
                 }
@@ -99,18 +100,18 @@ export class ExplorativeSearchFilterComponent implements OnChanges {
         // console.log(eventValue); DEBUG
         // Create a JSON for the Filter and `amountOfGroups` should be changed
         // according to the slider values.
-        for (let key in this.filterConfig) {
-            if (this.filterConfig.hasOwnProperty(key)) {
-                this.keyForConf = key;
+        for (let key in this.filterProperties['filterJSON']) {
+            if (this.filterProperties['filterJSON'].hasOwnProperty(key)) {
+                this.filterProperties['fQuery'] = key;
             }
         }
-        let filteringInput = {'concept': encodeURIComponent(this.mainConceptUrl.trim()),
-            'property': encodeURIComponent(this.keyForConf.trim()),
+        let filteringInput = {'concept': encodeURIComponent(this.filterProperties['fQueryRoot'].trim()),
+            'property': encodeURIComponent(this.filterProperties['fQuery'].trim()),
             'amountOfGroups': eventValue};
         // Call API everytime the slider value changes.
         this.expSearch.getPropertyValues(filteringInput)
             .then(res => {
-                this.result = res[this.keyForConf]; // store the array in JSON response in the result array
+                this.result = res[this.filterProperties['fQuery']]; // store the array in JSON response in the result array
             });
     }
 
@@ -123,7 +124,7 @@ export class ExplorativeSearchFilterComponent implements OnChanges {
         // console.log(Number(this.groupSelectVal)); DEBUG
         // This needs to be changed according to Backend API
         if (this.userSelections.length > 0) {
-            this.finalSelectionJSON = {'root': this.mainConceptUrl, 'filter': this.userSelections};
+            this.finalSelectionJSON = {'root': this.filterProperties['fQueryRoot'], 'filter': this.userSelections};
         } else {
             console.log('FilterArea: this.userSelections', this.userSelections);
             // this.finalSelectionJSON = {'root': this.mainConceptUrl, 'filter': []};

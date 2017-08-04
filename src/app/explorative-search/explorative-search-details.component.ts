@@ -12,6 +12,7 @@ import * as go from 'gojs';
 import { RadialLayout } from './layout/RadialLayout';
 import { ExplorativeSearchService } from './explorative-search.service';
 
+
 @Component({
     selector: 'explore-search-details',
     templateUrl: './explorative-search-details.component.html',
@@ -31,6 +32,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
     private myDiagram: go.Diagram;
     private $ = go.GraphObject.make;
     /*Parameters that will be passed to `explorative-search-filter.component (Child)*/
+    arrayPassedToChild: any[] = []; // this is passed to the child NOW
     filterQueryRoot: string;
     filterQueryRootUrl: string;
     filterQuery: string;
@@ -188,6 +190,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                         this.finalSelectionJSON['filter'] = [];
                     }
                 }
+                this.arrayPassedToChild = [];
             }
             });
     }
@@ -199,7 +202,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
      * @param node: node entity
      */
     nodeClicked(ev, node): void {
-
+        let jsonFilterForEachChild = {};
         let rootConcept = node.part.findTreeRoot().data.text;
         let clickedNode = node.part.data.text; // name of the clicked node
         let rootConceptUrl = this.config['concept']['url'];
@@ -216,6 +219,10 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
         this.filterQuery = nodeConceptUrl;
         this.filterQueryRoot = rootConcept;
         this.filterQueryRootUrl = rootConceptUrl;
+        jsonFilterForEachChild['fName'] = this.nodeFilterName;
+        jsonFilterForEachChild['fQuery'] = this.filterQuery;
+        jsonFilterForEachChild['fQueryRoot'] = this.filterQueryRoot;
+        jsonFilterForEachChild['fQueryRootUrl'] = this.filterQueryRootUrl;
         // build the Query Parameter
         let filteringInput = { 'concept': encodeURIComponent(rootConceptUrl.trim()),
           'property': encodeURIComponent(nodeConceptUrl.trim()), 'amountOfGroups': 3
@@ -229,12 +236,21 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                     this.selectedProperties.push(nodeConceptUrl);
                     // call the respective API...
                     this.expSearch.getPropertyValues(filteringInput)
-                        .then(res => this.filterJSON = res);
+                        .then(res => {
+                            this.filterJSON = res;
+                            jsonFilterForEachChild['filterJSON'] = this.filterJSON;
+                            setTimeout(() => { // Need to introduce a latency here to avoid filter display errors
+                                this.arrayPassedToChild.push(jsonFilterForEachChild);
+                                console.log('jsonFilterForChild ', jsonFilterForEachChild);
+                                console.log('arrayPassedToChild ', this.arrayPassedToChild);
+                            }, 500);
+                        });
                 }
             } else { // the node was clicked again and deselected remove from list
                 let index = this.selectedProperties.indexOf(nodeConceptUrl);
                 if (index > -1) {
                     this.selectedProperties.splice(index, 1);
+                    this.arrayPassedToChild.splice(index, 1); // they were pushed at the same index
                     // do not send anything to child .. Remove the Filter from display
                     this.filterJSON = {};
                 }
@@ -247,18 +263,24 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                     this.selectedProperties.push(nodeConceptUrl);
                     // call the respective API
                     this.expSearch.getPropertyValues(filteringInput)
-                        .then(res => this.filterJSON = res);
+                        .then(res => {
+                            this.filterJSON = res;
+                            jsonFilterForEachChild['filterJSON'] = this.filterJSON;
+                            setTimeout(() => { // Need to introduce a latency here to avoid filter display errors
+                                this.arrayPassedToChild.push(jsonFilterForEachChild);
+                                console.log('jsonFilterForChild ', jsonFilterForEachChild);
+                                console.log('arrayPassedToChild ', this.arrayPassedToChild);
+                            }, 500);
+                        });
                 }
-            } else { // if the node is deselected remove if from list
-            }
+            } // if the node is deselected remove if from list via selection count = 0 for GoJS
         }
         console.log(this.selectedProperties);
         // if all properties deselected
          if (this.selectedProperties.length === 0) {
              this.tableResult = {};
          }
-
-        console.log(rootConceptUrl, nodeConceptUrl); // DEBUG --CHECK
+        // console.log(rootConceptUrl, nodeConceptUrl); // DEBUG --CHECK
     }
     /**
      * genTable: Generate a Dynamic tableJSON query for the API Call and

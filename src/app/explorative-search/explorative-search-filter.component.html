@@ -1,8 +1,8 @@
 <!-- Explorative Search Filter HTML -->
 
 <!-- Display the Filter Panel only when the filterConfig is non empty -->
-<div class="filterArea" *ngIf="(filterConfig | json) != '{}'">
-    <h4>{{filterName}} Filter</h4>
+<div class="filterArea" *ngIf="(filterProperties['filterJSON'] | json) != '{}'">
+    <h4>{{filterProperties.fName}} Filter</h4>
     <div *ngFor="let every of result">
         <!-- CheckBoxes for the Filter -->
         <input #cbCheck type="checkbox"
