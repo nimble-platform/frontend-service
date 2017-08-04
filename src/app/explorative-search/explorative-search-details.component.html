@@ -59,7 +59,8 @@
                     <search-filter [filterConfig]="filterJSON" [keyForConf]="filterQuery" [mainConceptName]="filterQueryRoot" [mainConceptUrl]="filterQueryRootUrl"
                                    [filterName]="nodeFilterName" (filterSelectionUpdated)="handleFilterSelectionUpdated($event)">
                     </search-filter>-->
-                    <search-filter *ngFor="let eachFilter of arrayPassedToChild" [filterProperties]="eachFilter">
+                    <search-filter *ngFor="let eachFilter of arrayPassedToChild" [filterProperties]="eachFilter"
+                                   (filterSelectionUpdated)="handleFilterSelectionUpdated($event)">
                     </search-filter>
                 </div>
             </div>

@@ -31,8 +31,6 @@ export class ExplorativeSearchFilterComponent implements OnChanges {
     finalSelectionJSON: Object;
     /*for storing array from JSON response for checkboxes*/
     result: any[] = [];
-    /*Default checkbox value*/
-    cbCheck = false;
     /*Collection of User selections..*/
     userSelections: any[] = [];
     /*Component where the slider value is shown everytime the value changes*/
@@ -79,11 +77,11 @@ export class ExplorativeSearchFilterComponent implements OnChanges {
                     });
                 }
             }
-        } else if (!status && this.userSelections.indexOf(inp) !== -1) { // if the checkbox is unchecked remove from array
+        } else if (!status) { // if the checkbox is unchecked remove from array
             let index = this.userSelections.indexOf(inp);
             this.userSelections.splice(index, 1);
         }
-        console.log('Filter Area: ', JSON.stringify(this.userSelections)); // DEBUG CHECK
+        console.log('Filter Area: ', this.userSelections); // DEBUG CHECK
     }
 
     /**
@@ -127,8 +125,7 @@ export class ExplorativeSearchFilterComponent implements OnChanges {
             this.finalSelectionJSON = {'root': this.filterProperties['fQueryRoot'], 'filter': this.userSelections};
         } else {
             console.log('FilterArea: this.userSelections', this.userSelections);
-            // this.finalSelectionJSON = {'root': this.mainConceptUrl, 'filter': []};
-            this.finalSelectionJSON = null;
+            this.finalSelectionJSON = {'root': this.filterProperties['fQueryRoot'], 'filter': []};
         }
         this.filterSelectionUpdated.emit(this.finalSelectionJSON);
         console.log('FilterArea: finalSelectionJSON', this.finalSelectionJSON); // DEBUG CHECK

@@ -304,6 +304,8 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                             'min': eachFilVal['values'][0], 'max': eachFilVal['values'][1]});
                     }
                 }
+            } else {
+                this.tableJSON['filters'] = [];
             }
         } else { // if user directly clicks on the Search button
             console.log('user directly clicked on Search');
@@ -326,12 +328,8 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
      * @param finalSelectionJSON same name as the child's variable
      */
     handleFilterSelectionUpdated(finalSelectionJSON) {
-        if (finalSelectionJSON) {
-            this.finalSelectionJSON = finalSelectionJSON;
-            console.log('returned JSON', this.finalSelectionJSON);
-        } else {
-            this.finalSelectionJSON = {'root': this.filterQueryRootUrl, 'filter': []};
-        }
+        this.finalSelectionJSON = finalSelectionJSON;
+        console.log('returned JSON ', this.finalSelectionJSON);
     }
 
     getSparqlOptionalSelect(indexInp: number) {
