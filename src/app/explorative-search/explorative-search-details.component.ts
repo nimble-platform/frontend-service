@@ -43,6 +43,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
 
     private sparqlSelectedOption: Object;
     private tableJSON: Object = {};
+    private collectionOfFiltersFromChildren: any[] = [];
 
     /*Final Data to be sent back to parent for processing.. Maybe..*/
     public finalSelectionJSON: Object;
@@ -191,6 +192,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                     }
                 }
                 this.arrayPassedToChild = [];
+                this.collectionOfFiltersFromChildren = [];
             }
             });
     }
@@ -296,7 +298,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
             for (let eachSelectedProp of this.selectedProperties) {
                 this.tableJSON['parameters'].push(encodeURIComponent(eachSelectedProp));
             }
-            if (this.finalSelectionJSON['filter'].length > 0) {
+            /*if (this.finalSelectionJSON['filter'].length > 0) {
                 this.tableJSON['filters'] = [];
                 for (let eachFilVal of this.finalSelectionJSON['filter']) { // push only selected property filters
                     if (this.selectedProperties.indexOf(eachFilVal['property']) > -1 ) {
@@ -304,7 +306,16 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                             'min': eachFilVal['values'][0], 'max': eachFilVal['values'][1]});
                     }
                 }
-            } else {
+            }*/
+            if (this.collectionOfFiltersFromChildren.length > 0) {
+                this.tableJSON['filters'] = [];
+                for (let eachFilter of this.collectionOfFiltersFromChildren) {
+                    if (this.selectedProperties.indexOf(eachFilter['property']) > -1 ) {
+                        this.tableJSON['filters'].push({'property': encodeURIComponent(eachFilter['property']),
+                            'min': eachFilter['values'][0], 'max': eachFilter['values'][1]});
+                    }
+                }
+            }else {
                 this.tableJSON['filters'] = [];
             }
         } else { // if user directly clicks on the Search button
@@ -329,6 +340,18 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
      */
     handleFilterSelectionUpdated(finalSelectionJSON) {
         this.finalSelectionJSON = finalSelectionJSON;
+        if (this.finalSelectionJSON['filter'].length > 0) {
+            this.collectionOfFiltersFromChildren.push(this.finalSelectionJSON['filter'][0]);
+            console.log('collection of filters: ', this.collectionOfFiltersFromChildren);
+        } else if (this.finalSelectionJSON['filter'].length === 0) {
+            this.collectionOfFiltersFromChildren.forEach(el => {
+                if (el['property'] === this.finalSelectionJSON['child']) {
+                    let indexToRemove = this.collectionOfFiltersFromChildren.indexOf(el);
+                    this.collectionOfFiltersFromChildren.splice(indexToRemove, 1);
+                    console.log('filter Removed');
+                }
+            });
+        }
         console.log('returned JSON ', this.finalSelectionJSON);
     }
 
