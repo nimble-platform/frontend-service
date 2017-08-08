@@ -290,7 +290,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
      */
     genTable(): void {
         if (this.finalSelectionJSON) {
-            this.tableJSON['concept'] = encodeURIComponent(this.finalSelectionJSON['root']);
+            this.tableJSON['concept'] = encodeURIComponent(this.filterQueryRootUrl);
             this.tableJSON['parameters'] = [];
             // for (let eachFilProp of this.finalSelectionJSON['filter']) {
             //    this.tableJSON['parameters'].push(encodeURIComponent(eachFilProp['property']));
