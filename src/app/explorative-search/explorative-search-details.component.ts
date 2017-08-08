@@ -12,6 +12,7 @@ import * as go from 'gojs';
 import { RadialLayout } from './layout/RadialLayout';
 import { ExplorativeSearchService } from './explorative-search.service';
 
+
 @Component({
     selector: 'explore-search-details',
     templateUrl: './explorative-search-details.component.html',
@@ -31,6 +32,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
     private myDiagram: go.Diagram;
     private $ = go.GraphObject.make;
     /*Parameters that will be passed to `explorative-search-filter.component (Child)*/
+    arrayPassedToChild: any[] = []; // this is passed to the child NOW
     filterQueryRoot: string;
     filterQueryRootUrl: string;
     filterQuery: string;
@@ -41,6 +43,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
 
     private sparqlSelectedOption: Object;
     private tableJSON: Object = {};
+    private collectionOfFiltersFromChildren: any[] = [];
 
     /*Final Data to be sent back to parent for processing.. Maybe..*/
     public finalSelectionJSON: Object;
@@ -78,9 +81,12 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                 initialContentAlignment: go.Spot.Center,
                 padding: 10,
                 isReadOnly: true,
-                'animationManager.isEnabled': false,
-                'allowVerticalScroll': false,
+                'animationManager.isEnabled': false, // disable Animation
+                'allowVerticalScroll': false, // no vertical scroll for diagram
+                'toolManager.mouseWheelBehavior': go.ToolManager.WheelNone // do not zoom diagram on wheel scroll
             });
+        this.myDiagram.addLayerBefore(this.$(go.Layer, { name: 'red' }), this.myDiagram.findLayer('Grid'));
+        this.myDiagram.addLayerBefore(this.$(go.Layer, { name: 'green' }), this.myDiagram.findLayer('Grid'));
         let commonToolTip = this.$(go.Adornment, 'Auto',
             {
                 isShadowed: true
@@ -109,7 +115,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                     locationObjectName: 'SHAPE',  // Node.location is the center of the Shape
                     selectionAdorned: true,
                     click: (e: go.InputEvent, obj: go.GraphObject): void => { this.nodeClicked(e, obj); },
-                    toolTip: commonToolTip
+                    toolTip: commonToolTip,
                 },
                 this.$(go.Shape, 'Circle',
                     {
@@ -127,7 +133,8 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                         alignment: go.Spot.Right,
                         alignmentFocus: go.Spot.Left
                     },
-                    new go.Binding('text'))
+                    new go.Binding('text')),
+                    new go.Binding('layerName', 'color')
             );
 
         // this is the root node, at the center of the circular layers
@@ -178,12 +185,14 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                 if (this.finalSelectionJSON === undefined) {
                     // make the JSON
                     this.finalSelectionJSON = {'root': this.filterQueryRootUrl, 'filter': []};
-                    console.log("Hardcode selection", this.finalSelectionJSON);
+                    console.log('Hardcode selection', this.finalSelectionJSON);
                 } else {
                     if (this.finalSelectionJSON['filter'].length > 0) {
                         this.finalSelectionJSON['filter'] = [];
                     }
                 }
+                this.arrayPassedToChild = [];
+                this.collectionOfFiltersFromChildren = [];
             }
             });
     }
@@ -195,7 +204,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
      * @param node: node entity
      */
     nodeClicked(ev, node): void {
-
+        let jsonFilterForEachChild = {};
         let rootConcept = node.part.findTreeRoot().data.text;
         let clickedNode = node.part.data.text; // name of the clicked node
         let rootConceptUrl = this.config['concept']['url'];
@@ -206,11 +215,16 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                 nodeConceptUrl = this.config['dataproperties'][index]['url'];
             }
         }
+        console.log('layername', node.part.layerName);
         // get values to be passed to child....
         this.nodeFilterName = clickedNode;
         this.filterQuery = nodeConceptUrl;
         this.filterQueryRoot = rootConcept;
         this.filterQueryRootUrl = rootConceptUrl;
+        jsonFilterForEachChild['fName'] = this.nodeFilterName;
+        jsonFilterForEachChild['fQuery'] = this.filterQuery;
+        jsonFilterForEachChild['fQueryRoot'] = this.filterQueryRoot;
+        jsonFilterForEachChild['fQueryRootUrl'] = this.filterQueryRootUrl;
         // build the Query Parameter
         let filteringInput = { 'concept': encodeURIComponent(rootConceptUrl.trim()),
           'property': encodeURIComponent(nodeConceptUrl.trim()), 'amountOfGroups': 3
@@ -224,12 +238,21 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                     this.selectedProperties.push(nodeConceptUrl);
                     // call the respective API...
                     this.expSearch.getPropertyValues(filteringInput)
-                        .then(res => this.filterJSON = res);
+                        .then(res => {
+                            this.filterJSON = res;
+                            jsonFilterForEachChild['filterJSON'] = this.filterJSON;
+                            setTimeout(() => { // Need to introduce a latency here to avoid filter display errors
+                                this.arrayPassedToChild.push(jsonFilterForEachChild);
+                                console.log('jsonFilterForChild ', jsonFilterForEachChild);
+                                console.log('arrayPassedToChild ', this.arrayPassedToChild);
+                            }, 500);
+                        });
                 }
             } else { // the node was clicked again and deselected remove from list
                 let index = this.selectedProperties.indexOf(nodeConceptUrl);
                 if (index > -1) {
                     this.selectedProperties.splice(index, 1);
+                    this.arrayPassedToChild.splice(index, 1); // they were pushed at the same index
                     // do not send anything to child .. Remove the Filter from display
                     this.filterJSON = {};
                 }
@@ -242,18 +265,24 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                     this.selectedProperties.push(nodeConceptUrl);
                     // call the respective API
                     this.expSearch.getPropertyValues(filteringInput)
-                        .then(res => this.filterJSON = res);
+                        .then(res => {
+                            this.filterJSON = res;
+                            jsonFilterForEachChild['filterJSON'] = this.filterJSON;
+                            setTimeout(() => { // Need to introduce a latency here to avoid filter display errors
+                                this.arrayPassedToChild.push(jsonFilterForEachChild);
+                                console.log('jsonFilterForChild ', jsonFilterForEachChild);
+                                console.log('arrayPassedToChild ', this.arrayPassedToChild);
+                            }, 500);
+                        });
                 }
-            } else { // if the node is deselected remove if from list
-            }
+            } // if the node is deselected remove if from list via selection count = 0 for GoJS
         }
         console.log(this.selectedProperties);
         // if all properties deselected
          if (this.selectedProperties.length === 0) {
              this.tableResult = {};
          }
-
-        console.log(rootConceptUrl, nodeConceptUrl); // DEBUG --CHECK
+        // console.log(rootConceptUrl, nodeConceptUrl); // DEBUG --CHECK
     }
     /**
      * genTable: Generate a Dynamic tableJSON query for the API Call and
@@ -261,7 +290,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
      */
     genTable(): void {
         if (this.finalSelectionJSON) {
-            this.tableJSON['concept'] = encodeURIComponent(this.finalSelectionJSON['root']);
+            this.tableJSON['concept'] = encodeURIComponent(this.filterQueryRootUrl);
             this.tableJSON['parameters'] = [];
             // for (let eachFilProp of this.finalSelectionJSON['filter']) {
             //    this.tableJSON['parameters'].push(encodeURIComponent(eachFilProp['property']));
@@ -269,7 +298,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
             for (let eachSelectedProp of this.selectedProperties) {
                 this.tableJSON['parameters'].push(encodeURIComponent(eachSelectedProp));
             }
-            if (this.finalSelectionJSON['filter'].length > 0) {
+            /*if (this.finalSelectionJSON['filter'].length > 0) {
                 this.tableJSON['filters'] = [];
                 for (let eachFilVal of this.finalSelectionJSON['filter']) { // push only selected property filters
                     if (this.selectedProperties.indexOf(eachFilVal['property']) > -1 ) {
@@ -277,6 +306,17 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                             'min': eachFilVal['values'][0], 'max': eachFilVal['values'][1]});
                     }
                 }
+            }*/
+            if (this.collectionOfFiltersFromChildren.length > 0) {
+                this.tableJSON['filters'] = [];
+                for (let eachFilter of this.collectionOfFiltersFromChildren) {
+                    if (this.selectedProperties.indexOf(eachFilter['property']) > -1 ) {
+                        this.tableJSON['filters'].push({'property': encodeURIComponent(eachFilter['property']),
+                            'min': eachFilter['values'][0], 'max': eachFilter['values'][1]});
+                    }
+                }
+            }else {
+                this.tableJSON['filters'] = [];
             }
         } else { // if user directly clicks on the Search button
             console.log('user directly clicked on Search');
@@ -299,12 +339,20 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
      * @param finalSelectionJSON same name as the child's variable
      */
     handleFilterSelectionUpdated(finalSelectionJSON) {
-        if (finalSelectionJSON) {
-            this.finalSelectionJSON = finalSelectionJSON;
-            console.log('returned JSON', this.finalSelectionJSON);
-        } else {
-            this.finalSelectionJSON = {'root': this.filterQueryRootUrl, 'filter': []};
+        this.finalSelectionJSON = finalSelectionJSON;
+        if (this.finalSelectionJSON['filter'].length > 0) {
+            this.collectionOfFiltersFromChildren.push(this.finalSelectionJSON['filter'][0]);
+            console.log('collection of filters: ', this.collectionOfFiltersFromChildren);
+        } else if (this.finalSelectionJSON['filter'].length === 0) {
+            this.collectionOfFiltersFromChildren.forEach(el => {
+                if (el['property'] === this.finalSelectionJSON['child']) {
+                    let indexToRemove = this.collectionOfFiltersFromChildren.indexOf(el);
+                    this.collectionOfFiltersFromChildren.splice(indexToRemove, 1);
+                    console.log('filter Removed');
+                }
+            });
         }
+        console.log('returned JSON ', this.finalSelectionJSON);
     }
 
     getSparqlOptionalSelect(indexInp: number) {
@@ -353,10 +401,10 @@ class OntNode {
  * Recursion Class for generating the Graph
  */
 class RecClass {
-    names: string[] = []; // store the Strings from the JSON
+    names: any[] = []; // store the Strings from the JSON
     /**
      * generateGraphRecApproach : Rercusively generate graphs from the incoming JSON config
-     * @param cnf : Incoming JSON config from Parent Component
+     * @param cnf : JSON config from Parent Component
      * @param myDiagram: Diagram parameter for GoJS
      * @param $: Make function for GoJS
      */
@@ -366,7 +414,7 @@ class RecClass {
         // console.log('Complete Tree:\n' + JSON.stringify(linkedOntTree)); // --> DEBUG
         let nodeDataArray: any = []; // Create an Array of Nodes for GoJS.
         for (let i = 1; i < this.names.length + 1; i++) {
-            nodeDataArray.push({ key: i, text: this.names[i - 1], color: go.Brush.randomColor(128, 240) });
+            nodeDataArray.push({ key: i, text: this.names[i - 1]['name'], color: this.names[i - 1]['color'] });
         }
         // Create The Links to Each node in the Tree with Recursion
         let linkDataArray: any = this.recursionLink(linkedOntTree);
@@ -431,12 +479,12 @@ class RecClass {
         let node = new OntNode();
 
         // Adding node name
-        this.names.push(jsonNode['concept']['translatedURL']);
+        this.names.push({name: jsonNode['concept']['translatedURL'], color: 'red'});
         node.id = this.names.length;
 
         // Adding Attributes
         for (let eachDatProp of jsonNode.dataproperties) {
-            this.names.push(eachDatProp.translatedURL);
+            this.names.push({name: eachDatProp.translatedURL, color: 'green'});
             node.attr.push(this.names.length);
         }
 
@@ -461,11 +509,11 @@ class RecClass {
         let linkedDataArray: any = [];
 
         for (let attr of linkedOntTree.attr) {
-            linkedDataArray.push({ from: linkedOntTree.id, to: attr });
+            linkedDataArray.push({ from: linkedOntTree.id, to: attr});
         }
 
         for (let child of linkedOntTree.children) {
-            linkedDataArray.push({ from: linkedOntTree.id, to: child.id });
+            linkedDataArray.push({ from: linkedOntTree.id, to: child.id});
             let childrenJson = this.recursionLink(child);
             childrenJson.forEach(element => {
                 linkedDataArray.push(element);

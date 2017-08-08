@@ -55,9 +55,12 @@
             <!-- Child Component Explorative Search Filter-->
             <div *ngIf="filterQuery" class="panel panel-default">
                 <div class="panel-body" *ngIf="(filterConfig | json)!= '{}'">
-                    <!-- pass all the variables of class to child -->
+                    <!-- pass all the variables of class to child
                     <search-filter [filterConfig]="filterJSON" [keyForConf]="filterQuery" [mainConceptName]="filterQueryRoot" [mainConceptUrl]="filterQueryRootUrl"
                                    [filterName]="nodeFilterName" (filterSelectionUpdated)="handleFilterSelectionUpdated($event)">
+                    </search-filter>-->
+                    <search-filter *ngFor="let eachFilter of arrayPassedToChild" [filterProperties]="eachFilter"
+                                   (filterSelectionUpdated)="handleFilterSelectionUpdated($event)">
                     </search-filter>
                 </div>
             </div>
