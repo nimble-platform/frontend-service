@@ -20,83 +20,71 @@
 <!-- Single product publishing -->
 <div *ngIf="catalogueLine && singleItemUpload" class="mt-3">
 
-    <!-- Top row: selected category, feedback alerts, etc. -->
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-9">
-                <div class="d-flex justify-content-end">
+    <!-- Top row: selected category, feedback messages, etc. -->
+    <div class="d-flex justify-content-end">
 
-                    <div class="mr-auto">
-
-                        <h6 *ngIf="catalogueLine.goodsItem.item.commodityClassification.length > 0"
-                            style="display: inline-block;"
-                            i18n>Selected category:</h6>
-                        <button *ngFor="let selectedCategory of selectedCategories"
-                                class="btn btn-info ml-3">
-                            {{selectedCategory.preferredName}}
-                            <span><i
-                                          (click)="categoryCancel(selectedCategory.id)"
-                            >&times;</i ></span>
-                        </button>
-
-                    </div>
-                    <div [hidden]="error_detc || callback || !submitted" class="pr-3">
-                        <img src="assets/form_loader.gif"/>
-                    </div>
-                    <div [hidden]="!(callback && !error_detc)"
-                         #successAlert (click)="successAlert.hidden=true;"
-                         [style]="!(callback && !error_detc) ? '' : 'display: flex'">
-                        <div class="alert-success mb-0 mr-3 d-flex" role="alert">
-                            <div class="d-flex p-2" style="align-items: center">
-                                <span i18n>Product published!</span>
-                                <span class="ml-3" style="cursor:pointer"><strong>&times;</strong></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div [hidden]="!(callback && error_detc)"
-                         #errorAlert (click)="errorAlert.hidden=true"
-                         [style]="hidden ? '' : 'display: flex'">
-                        <div class="alert-danger mb-0 mr-3 d-flex" role="alert">
-                            <div class="d-flex p-2" style="align-items: center">
-                                <span i18n>Fail to publish product!</span>
-                                <span class="ml-3" style="cursor:pointer"><strong>&times;</strong></span>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
+        <div class="mr-auto">
+            <!-- category related elements -->
+            <h6 *ngIf="catalogueLine.goodsItem.item.commodityClassification.length > 0"
+                style="display: inline-block;"
+                i18n>Selected category:</h6>
+            <button *ngFor="let selectedCategory of selectedCategories"
+                    class="btn btn-info ml-3">
+                {{selectedCategory.preferredName}}
+                <span>
+                    <i (click)="categoryCancel(selectedCategory.id)">&times;</i>
+                </span>
+            </button>
+            <div (click)="addCategoryOnClick()"
+                 style="display: inline-block;">
+                <img src="./assets/catalogue/add_button.png"/>
+                <span *ngIf="catalogueLine.goodsItem.item.commodityClassification.length == 0" i18n>Select a product category</span>
+                <span *ngIf="catalogueLine.goodsItem.item.commodityClassification.length > 0" i18n>Add another product category</span>
             </div>
-            <div class="col-sm-3">
-                <label class="col-3 control-label" *ngIf="!editCatalogueLine">
-                    <button class="btn btn-success btn-xs"
-                            (click)="publishProduct()">
-                        <span i18n>Publish Product</span>
-                    </button>
-                </label>
+        </div>
 
-                <label class="col-3 control-label" *ngIf="editCatalogueLine">
-                    <button class="btn btn-success btn-xs"
-                            (click)="editProduct()">
-                        <span i18n>Save Changes</span>
-                    </button>
-                </label>
-
-                <div (click)="addCategoryOnClick()"
-                     style="display: inline-block;">
-                    <img src="./assets/catalogue/add_button.png"/>
-                    <span *ngIf="catalogueLine.goodsItem.item.commodityClassification.length == 0" i18n>Select a product category</span>
-                    <span *ngIf="catalogueLine.goodsItem.item.commodityClassification.length > 0" i18n>Add another product category</span>
+        <!-- feedbacks elements for publish and edit operations -->
+        <div [hidden]="error_detc || callback || !submitted" class="pr-3">
+            <img src="assets/form_loader.gif"/>
+        </div>
+        <div [hidden]="!(callback && !error_detc)"
+             #successAlert (click)="successAlert.hidden=true;"
+             [style]="!(callback && !error_detc) ? '' : 'display: flex'">
+            <div class="alert-success mb-0 mr-3 d-flex" role="alert">
+                <div class="d-flex p-2" style="align-items: center">
+                    <span i18n>Product published!</span>
+                    <span class="ml-3" style="cursor:pointer"><strong>&times;</strong></span>
                 </div>
             </div>
         </div>
+        <div [hidden]="!(callback && error_detc)"
+             #errorAlert (click)="errorAlert.hidden=true"
+             [style]="hidden ? '' : 'display: flex'">
+            <div class="alert-danger mb-0 mr-3 d-flex" role="alert">
+                <div class="d-flex p-2" style="align-items: center">
+                    <span i18n>Fail to publish product!</span>
+                    <span class="ml-3" style="cursor:pointer"><strong>&times;</strong></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Publish / edit buttons -->
+        <button *ngIf="!editMode"
+                class="btn btn-success"
+                (click)="publishProduct()">
+            <span i18n>Publish Product</span>
+        </button>
+        <button *ngIf="editMode"
+                class="btn btn-success btn-xs"
+                (click)="editProduct()">
+            <span i18n>Save Changes</span>
+        </button>
     </div>
+
     <hr>
+
     <!-- Form header row -->
     <h4><u>Product Details</u></h4>
-    <!--<div class="row mt-3">
-        <h5 class="col-3"><label i18n>Property Name</label></h5>
-        <h5 class="col-3"><label i18n>Property Value</label></h5>
-    </div>-->
 
     <form class="space-before">
         <product-properties
@@ -111,11 +99,15 @@
         <div class="form-group">
             <h6 i18n>Add new property</h6>
             <form #customPropertyForm="ngForm" class="d-flex">
+
+                <!-- property name -->
                 <input name="propertyName"
                        class="form-control col-3"
                        [(ngModel)]="newProperty.name"
                        placeholder="Property Name"
                        required/>
+
+                <!-- property value -->
                 <input *ngIf="propertyValueType.options.selectedIndex == 0 || propertyValueType.options.selectedIndex == 1"
                        name="propertyValue"
                        class="form-control col ml-2"
@@ -123,21 +115,23 @@
                        placeholder="Property Value"
                        required/>
 
-                <span *ngIf="i.length == 0 && !propertyValueType.options.selectedIndex">
+                <!-- add additional value button -->
+                <span *ngIf="propertyAdditionalValueIndices.length == 0 && !propertyValueType.options.selectedIndex">
                     <button class="btn btn-info btn-xs"
-                            (click)="addAnotherCustomValue()"
+                            (click)="addValueToProperty()"
                             [disabled]="!customPropertyForm.form.valid"
                     ><strong>+</strong></button>
                 </span>
 
-                <span *ngIf="i.length > 0">
+                <!-- remove value button -->
+                <span *ngIf="propertyAdditionalValueIndices.length > 0">
                     <button class="btn btn-xs btn-danger"
                             (click)="removeAddedValue(0); $event.stopPropagation()">
                         &times;
                     </button>
                 </span>
 
-
+                <!-- add image button -->
                 <div *ngIf="propertyValueType.options.selectedIndex == 2" (click)="image.click()"
                      class="col-4"
                      style="display: inline-block;">
@@ -147,6 +141,7 @@
                     <span i18n>Add image</span>
                 </div>
 
+                <!-- add file button -->
                 <div *ngIf="propertyValueType.options.selectedIndex == 3" (click)="file.click()"
                      class="col-4"
                      style="display: inline-block;">
@@ -156,6 +151,7 @@
                     <span i18n>Add file</span>
                 </div>
 
+                <!-- combobox for choosing the property value type -->
                 <div class="col">
                     <div class="row justify-content-end ml-2">
                         <div>
@@ -178,20 +174,24 @@
                 </div>
             </form>
             <p></p>
-            <div *ngFor="let uuid of i;" class="input-group form-group">
+
+            <!-- additonal values -->
+            <!-- additional values are drawn here as the top row contains
+            `value type selection button` and `add property buttons`-->
+            <div *ngFor="let uuid of propertyAdditionalValueIndices;" class="input-group form-group">
                 <label class="col-3 control-label"></label>
                 <input type="text" class="form-control col ml-2"
-                       [(ngModel)]="newProperty.value[i.indexOf(uuid)+1]"
+                       [(ngModel)]="newProperty.value[propertyAdditionalValueIndices.indexOf(uuid)+1]"
                        [ngModelOptions]="{standalone: true}"
                        (ngModelChange)="buttonEnabledOrDisabled()"
                 >
                 <span><button class="btn btn-xs btn-danger"
-                              (click)="removeAddedValue(i.indexOf(uuid)+1);"
+                              (click)="removeAddedValue(propertyAdditionalValueIndices.indexOf(uuid)+1);"
                 >&times;</button></span>
 
-                <span *ngIf="i.indexOf(uuid)==i.length-1" >
+                <span *ngIf="propertyAdditionalValueIndices.indexOf(uuid)==propertyAdditionalValueIndices.length-1">
                         <button class="btn btn-info btn-xs"
-                                (click)="addAnotherCustomValue()"
+                                (click)="addValueToProperty()"
                                 [disabled]="buttonDisabled">
                             <strong>+</strong>
                         </button>
@@ -203,35 +203,38 @@
             </div>
 
             <!-- selected images or files -->
-	        <div *ngIf="newProperty != null && newProperty.embeddedDocumentBinaryObject.length > 0"
+            <div *ngIf="newProperty != null && newProperty.valueBinary.length > 0"
                  class="offset-3 mt-3">
                 <ul class="list-group">
-                    <li *ngFor="let afile of newProperty.embeddedDocumentBinaryObject"
+                    <li *ngFor="let afile of newProperty.valueBinary"
                         class="list-group-item pb-2 border-0">
 
-			                <div *ngIf="afile.mimeCode.split('/')[0]=='application'||afile.mimeCode.split('/')[0]=='text'">
-                                {{afile.fileName}}
-                                <span style="display:inline-block; width: 20px;"></span>
-                                <span><button class="btn btn-xs" style="background-color: white; color: #0d6cd8"
-                                              (click)="imageCancel(afile.fileName);"
-                                >&times;</button></span>
-                            </div>
-                            <div *ngIf="afile.mimeCode.split('/')[0]=='image'">
-                                <img class="mr-2"
-                                     src="data:{{afile.mimeCode}};base64,{{afile.value}}"
-                                     height="100"
-                                     width="100"
-                                />
-                                <div style="display: inline-block;">
-                                    <label>Value Details:</label>
-                                    <input type="text" class="form-control"
-                                           [(ngModel)]="afile.objectMetadata" name="valueDetails">
-                                </div>
-                                <span><button class="btn btn-xs" style="background-color: white; color: #0d6cd8"
-                                              (click)="imageCancel(afile.fileName);"
-                                >&times;</button></span>
+                        <!-- selected files -->
+                        <div *ngIf="afile.mimeCode.split('/')[0]!='image'">
+                            {{afile.fileName}}
+                            <span style="display:inline-block; width: 20px;"></span>
+                            <span><button class="btn btn-xs" style="background-color: white; color: #0d6cd8"
+                                          (click)="imageCancel(afile.fileName);"
+                            >&times;</button></span>
+                        </div>
 
+                        <!-- selected images -->
+                        <div *ngIf="afile.mimeCode.split('/')[0]=='image'">
+                            <img class="mr-2"
+                                 src="data:{{afile.mimeCode}};base64,{{afile.value}}"
+                                 height="100"
+                                 width="100"
+                            />
+                            <div style="display: inline-block;">
+                                <label>Value Details:</label>
+                                <input type="text" class="form-control"
+                                       [(ngModel)]="afile.objectMetadata" name="valueDetails">
                             </div>
+                            <span><button class="btn btn-xs" style="background-color: white; color: #0d6cd8"
+                                          (click)="imageCancel(afile.fileName);"
+                            >&times;</button></span>
+
+                        </div>
                     </li>
                 </ul>
             </div>
@@ -299,7 +302,7 @@
                 {{selectedCategory.preferredName}}
                 <span><i
                         (click)="categoryCancel(selectedCategory.id)"
-                >&times;</i ></span>
+                >&times;</i></span>
             </button>
             <div (click)="addCategoryOnClick()"
                  style="display: inline-block;">

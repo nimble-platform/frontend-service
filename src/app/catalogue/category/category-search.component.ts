@@ -62,11 +62,13 @@ export class CategorySearchComponent implements OnInit {
     }
 
     private selectCategory(category: Category): void {
-        /* check if the property exists already, if so, do not add */
+        // if no category is selected or if the selected category is already selected
+        // navigate to the publishing page directly
         if (category == null || this.categoryService.getSelectedCategories().findIndex(c => c.id == category.id) > -1) {
             this.router.navigate(['publish'], {queryParams: {fromScratch: this.startPublishingFromScratch}});
             return;
         }
+
         this.categoryService.getCategory(category)
             .then(category => {
                 this.categoryService.addSelectedCategory(category);

@@ -4,14 +4,23 @@ import {ProductPropertiesComponent} from "./product-properties.component";
 import { Subject } from 'rxjs/Subject';
 
 @Injectable()
-export class PublishAndAIPCService {
-    @ViewChildren('productProperties') productProperties: ProductPropertiesComponent;
+export class PublishService {
+    propertyBlockCollapsedStates:Map<string, boolean> = new Map<string, boolean>();
 
-    private componentMethodCallSource = new Subject<any>();
+    getCollapsedStates():any {
+        return this.propertyBlockCollapsedStates;
+    }
 
-    componentMethodCalled$ = this.componentMethodCallSource.asObservable();
+    getCollapsedState(blockName:string):boolean {
+        if(this.propertyBlockCollapsedStates.has(blockName)) {
+            return this.propertyBlockCollapsedStates.get(blockName);
+        } else {
+            this.propertyBlockCollapsedStates.set(blockName, true);
+            return true;
+        }
+    }
 
-    deleteProperty(inputVal: string) {
-        this.componentMethodCallSource.next(inputVal);
+    resetData():void {
+        this.propertyBlockCollapsedStates = new Map<string, boolean>();
     }
 }

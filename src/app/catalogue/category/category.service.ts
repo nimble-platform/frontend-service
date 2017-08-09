@@ -50,10 +50,11 @@ export class CategoryService {
     }
 
     getMultipleCategories(codes: Code[]): Promise<Category[]> {
-        let url = `${this.baseUrl}/multiple/`;
+        let url = `${this.baseUrl}?ids=`;
 
-        for (let code of codes)
-            url += code.listID + "," + encodeURIComponent(code.value) + ",";
+        for (let code of codes) {
+            url += code.listID + encodeURIComponent("," + code.value + ",");
+        }
 
         return this.http
             .get(url, {headers: this.headers})
@@ -76,7 +77,7 @@ export class CategoryService {
     }
 
     resetSelectedCategories():void {
-        this.selectedCategories = [];
+        this.selectedCategories.length = 0;
     }
 
     resetData():void {

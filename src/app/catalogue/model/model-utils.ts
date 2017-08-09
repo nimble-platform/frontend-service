@@ -16,6 +16,20 @@ import {CatalogueLine} from "./publish/catalogue-line";
  * Created by suat on 05-Jul-17.
  */
 export class ModelUtils {
+    /**
+     * Create a property based on the given property and category parameters.
+     *
+     * If the category is not null then a corresponding code is created and used in the item property to be returned. The
+     * code refers to the category in the corresponding taxonomy is created. If the category is null, the code refers to
+     * the "Custom" property.
+     *
+     * If the property is not null; unit, value qualifier, id and name is used from the given property. Fields keeping
+     * actual data are still set to empty values.
+     *
+     * @param property
+     * @param category
+     * @returns {ItemProperty}
+     */
     public static createAdditionalItemProperty(property: Property, category: Category): ItemProperty {
         let taxonomyId: string;
         let code: Code;
@@ -29,7 +43,7 @@ export class ModelUtils {
 
         let aip: ItemProperty;
         if (property == null) {
-            aip = new ItemProperty(this.generateUUID(), "", [], new Array<BinaryObject>(), "", "", "STRING", code,"", null);
+            aip = new ItemProperty(this.generateUUID(), "", [], [], new Array<BinaryObject>(), "", "", "STRING", code, "", null);
         }
         else {
             let unit = "";
@@ -38,8 +52,8 @@ export class ModelUtils {
             }
             let valueQualifier = property.dataType;
 
-            aip = new ItemProperty(property.id, property.preferredName, [''], new Array<BinaryObject>(), "", unit,
-                valueQualifier, code, "",null);
+            aip = new ItemProperty(property.id, property.preferredName, [''], [], new Array<BinaryObject>(), "", unit,
+                valueQualifier, code, "", null);
         }
         return aip;
     }

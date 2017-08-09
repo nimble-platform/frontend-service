@@ -39,7 +39,8 @@ import {CatalogueViewComponent} from "./catalogue/catalogue-view.component";
 import {CatalogueLineViewComponent} from "./catalogue/catalogue-line-view.component";
 import {ProductDetailsComponent} from "./catalogue/product-details.component";
 import {TradingDetailsComponent} from "./catalogue/trading-details.component";
-import { PublishAndAIPCService } from "./catalogue/publish-and-aip.service";
+import { PublishService } from "./catalogue/publish-and-aip.service";
+import {PropertyBlockPipe} from "./catalogue/property-block-pipe";
 
 @NgModule({
     imports: [
@@ -79,7 +80,8 @@ import { PublishAndAIPCService } from "./catalogue/publish-and-aip.service";
         CatalogueViewComponent,
         CatalogueLineViewComponent,
         ProductDetailsComponent,
-        TradingDetailsComponent
+        TradingDetailsComponent,
+        PropertyBlockPipe
         ],
         providers: [
         UserService,
@@ -89,7 +91,7 @@ import { PublishAndAIPCService } from "./catalogue/publish-and-aip.service";
         SimpleSearchService,
         BPEService,
 	    ExplorativeSearchService,
-        PublishAndAIPCService
+        PublishService
     ],
     bootstrap: [
         AppComponent

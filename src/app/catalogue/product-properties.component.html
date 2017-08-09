@@ -1,11 +1,11 @@
 <link rel="stylesheet" type="text/css" href="modal-style.css">
 
+<!-- popup for presenting the details of the property -->
 <div id="myModal" class="modal">
-
     <div class="modal-content">
         <div class="modal-header">
             <div id="header"></div>
-            <span class="close" (click)="spanClose();">&times;</span>
+            <span class="close" (click)="closePropertyDetailsPopup();">&times;</span>
         </div>
         <div class="modal-body">
             <span style="color: #8b4513;">Description: </span>
@@ -16,7 +16,6 @@
             <span style="color: #000000;" id="prop_unit"></span>
         </div>
     </div>
-
 </div>
 
 <!-- ubl properties -->
@@ -31,28 +30,28 @@
 <div class="input-group form-group">
     <label class="col-3 control-label">Price</label>
     <input type="text" class="form-control" name="productPrice" [(ngModel)]="catalogueLine.requiredItemLocationQuantity.price.priceAmount.value">
-
-    <span style="display:inline-block; width: 30px;"></span>
-
-    <label >Currency</label>
-    <span style="display:inline-block; width: 20px;"></span>
+    <label class="ml-3 mr-3">Currency</label>
     <input type="text" class="form-control" name="productPriceUnit" [(ngModel)]="catalogueLine.requiredItemLocationQuantity.price.priceAmount.currencyID">
 </div>
 
 <!-- Custom properties -->
-<additional-item-property *ngFor="let property of customProperties"
+<additional-item-property *ngFor="let property of retrieveCustomProperties(this.catalogueLine.goodsItem.item.additionalItemProperty)"
                           [additionalItemProperty]="property">
 </additional-item-property>
 
-<div *ngFor="let propertyBlock of propertyBlocks">
+<div *ngFor="let propertyBlock of this.catalogueLine.goodsItem.item.additionalItemProperty | propertyBlockPipe">
     <p>
         <!-- display the propertyBlock only if it is not empty -->
-        <button *ngIf="propertyBlock[PROPERTY_BLOCK_FIELD_PROPERTIES].length > 0" type="button" class="btn btn-outline-primary" (click)="propertyBlock.isCollapsed = !propertyBlock.isCollapsed"
-                [attr.aria-expanded]="!propertyBlock.isCollapsed" aria-controls="propertyBlock">
-            {{propertyBlock.name}}
+        <button *ngIf="propertyBlock[PROPERTY_BLOCK_FIELD_PROPERTIES].length > 0"
+                type="button"
+                class="btn btn-outline-primary"
+                (click)="toggleCollapsed(propertyBlock[PROPERTY_BLOCK_FIELD_NAME]);"
+                [attr.aria-expanded]="!propertyBlockCollapsedStates.get(propertyBlock[PROPERTY_BLOCK_FIELD_NAME])"
+                aria-controls="propertyBlock">
+            {{propertyBlock[PROPERTY_BLOCK_FIELD_NAME]}}
         </button>
     </p>
-    <div id="propertyBlock" [ngbCollapse]="propertyBlock.isCollapsed">
+    <div id="propertyBlock" [ngbCollapse]="propertyBlockCollapsedStates.get(propertyBlock[PROPERTY_BLOCK_FIELD_NAME])">
         <additional-item-property *ngFor="let property of propertyBlock[PROPERTY_BLOCK_FIELD_PROPERTIES]"
                                   [additionalItemProperty]="property">
         </additional-item-property>

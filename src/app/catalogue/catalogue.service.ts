@@ -10,6 +10,7 @@ import {UserService} from "../user-mgmt/user.service";
 import {CatalogueLine} from "./model/publish/catalogue-line";
 import {Category} from "./model/category/category";
 import {Observable} from "rxjs/Observable";
+import {ModelUtils} from "./model/model-utils";
 
 @Injectable()
 export class CatalogueService {
@@ -30,8 +31,14 @@ export class CatalogueService {
         return this.draftCatalogueLine;
     }
 
-    setDraftItem(draftCatalogueLine: CatalogueLine): void {
-        this.draftCatalogueLine = draftCatalogueLine;
+    resetDraftItem(userId: string):void {
+        this.userService.getUserParty(userId).then(party => {
+            this.draftCatalogueLine = ModelUtils.createCatalogueLine(party);
+        });
+    }
+
+    setDraftItem(catalogueLine: CatalogueLine): void {
+        this.draftCatalogueLine = catalogueLine;
     }
 
     getCatalogue(userId: string): Promise<Catalogue> {

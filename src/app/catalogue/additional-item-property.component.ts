@@ -3,7 +3,8 @@
  */
 import {Component, Input, OnInit} from "@angular/core";
 import {ItemProperty} from "./model/publish/item-property";
-import {PublishAndAIPCService} from "./publish-and-aip.service";
+import {PublishService} from "./publish-and-aip.service";
+import {CatalogueService} from "./catalogue.service";
 
 @Component({
     selector: 'additional-item-property',
@@ -11,29 +12,27 @@ import {PublishAndAIPCService} from "./publish-and-aip.service";
 })
 
 export class AdditionalItemPropertyComponent implements OnInit {
-    i: Array<string> = [];
-    c: number = 1;
+    propertyAdditionalValueIndices: Array<string> = [];
+    customPropertyValueCount: number = 1;
 
     @Input() additionalItemProperty:ItemProperty;
 
     stringValue:boolean = true;
     binaryValue:boolean = false;
 
-    eClassValue:boolean = false;
-
+    customProperty:boolean = false;
     propertyUnitDefined:boolean = false;
+    addValueButtonDisabled: boolean = true;
 
-    buttonDisabled: boolean = true;
-
-    openModal(): void {
-        //if(this.eClassValue == true){
+    openPropertyDetails(): void {
             let modal = document.getElementById('myModal');
 
             let header = document.getElementById('header');
             header.innerText = this.additionalItemProperty.name;
 
             let prop_def = document.getElementById('prop_def');
-            prop_def.innerText = this.additionalItemProperty.propertyDefinition;
+            //TODO retrieve the property definition from the actual property objects
+            //prop_def.innerText = this.additionalItemProperty.propertyDefinition;
 
             if(this.propertyUnitDefined == true) {
                 let prop_unit = document.getElementById('prop_unit');
@@ -51,40 +50,26 @@ export class AdditionalItemPropertyComponent implements OnInit {
             }
 
             modal.style.display = "block";
-       // }
-    }
-   
-    spanClose() {
-        let modal = document.getElementById('myModal');
-
-        modal.style.display = "none";
     }
 
-    addAnotherPropertyValue(aipName: string) {
-
-        console.log(this.i.length);
-        let d = this.generateUUID();
-        this.i.push(d);
-        this.c++;
-        console.log(this.i);
-
-        this.buttonDisabled = true;
-
+    addValueToProperty(aipName: string) {
+        let valueId = this.generateUUID();
+        this.propertyAdditionalValueIndices.push(valueId);
+        this.customPropertyValueCount++;
+        this.addValueButtonDisabled = true;
     }
 
     constructor(
-        private _publishAndAIPCService: PublishAndAIPCService) { }
+        private catalogueService: CatalogueService,
+        private publishAndAIPCService: PublishService) { }
 
     ngOnInit(): void {
-        if(this.additionalItemProperty.embeddedDocumentBinaryObject.length != 0) {
+        if(this.additionalItemProperty.valueBinary.length != 0) {
             this.stringValue = false;
             this.binaryValue = true;
         }
         if(this.additionalItemProperty.itemClassificationCode.listID == "Custom") {
-            this.eClassValue = false;
-        }
-        if(this.additionalItemProperty.itemClassificationCode.listID == "eClass") {
-            this.eClassValue = true;
+            this.customProperty = true;
         }
         if(this.additionalItemProperty.unit && this.additionalItemProperty.unit.length > 0) {
             this.propertyUnitDefined = true;
@@ -95,28 +80,27 @@ export class AdditionalItemPropertyComponent implements OnInit {
 
     buttonEnabledOrDisabled() {
         let n = 0;
-        for (; n < this.c; n++) {
+        for (; n < this.customPropertyValueCount; n++) {
             if(!this.additionalItemProperty.value[n] || this.additionalItemProperty.value[n].length==0){
                 break;
             }
         }
-        if(n==this.c){
-            this.buttonDisabled = false;
+        if(n==this.customPropertyValueCount){
+            this.addValueButtonDisabled = false;
         } else {
-            this.buttonDisabled = true;
+            this.addValueButtonDisabled = true;
         }
     }
 
     removeAddedValue(index: number) {
         if(index==0){
             this.additionalItemProperty.value.splice(index, 1);
-            this.i.splice(index, 1);
-            this.c--;
+            this.propertyAdditionalValueIndices.splice(index, 1);
+            this.customPropertyValueCount--;
         } else {
-            this.i.splice(index-1, 1);
+            this.propertyAdditionalValueIndices.splice(index-1, 1);
             this.additionalItemProperty.value.splice(index, 1);
-            this.c--;
-            console.log(this.additionalItemProperty.value);
+            this.customPropertyValueCount--;
         }
         this.buttonEnabledOrDisabled();
     }
@@ -124,7 +108,6 @@ export class AdditionalItemPropertyComponent implements OnInit {
     //remove a value from displayed custom property
     removeCustomValue(index: number) {
         this.additionalItemProperty.value.splice(index, 1);
-        console.log(this.additionalItemProperty.value);
 
         // if the property no longer has a value, delete it
         if(this.additionalItemProperty.value.length == 0){
@@ -143,9 +126,14 @@ export class AdditionalItemPropertyComponent implements OnInit {
     };
 
     // deletes the custom property with the given name
-    deleteCustomProperty = function (inputVal: string) {
+    deleteCustomProperty(inputVal: string) {
+        let draftCatalogueLine = this.catalogueService.getDraftItem();
+        let indexCatalogue = draftCatalogueLine.goodsItem.item.additionalItemProperty.findIndex(p => p.name == inputVal);
+        draftCatalogueLine.goodsItem.item.additionalItemProperty.splice(indexCatalogue, 1);
+
         // calls deleteProperty method in the shared service
-        this._publishAndAIPCService.deleteProperty(inputVal);
+        //this.publishAndAIPCService.deleteProperty(inputVal);
+
     }
 
 }

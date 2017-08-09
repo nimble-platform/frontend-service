@@ -2,7 +2,7 @@
  * Created by suat on 17-May-17.
  */
 
-import {Component, ElementRef, OnInit, ViewChild} from "@angular/core";
+import {ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from "@angular/core";
 import {CategoryService} from "./category/category.service";
 import {ItemProperty} from "./model/publish/item-property";
 import {BinaryObject} from "./model/publish/binary-object";
@@ -14,9 +14,10 @@ import {CookieService} from "ng2-cookies";
 import {ModelUtils} from "./model/model-utils";
 import {ActivatedRoute, Params, Router} from "@angular/router";
 import {ProductPropertiesComponent} from "./product-properties.component";
-import {PublishAndAIPCService} from "./publish-and-aip.service";
 import 'rxjs/Rx' ;
 import {Code} from "./model/publish/code";
+import {PublishService} from "./publish-and-aip.service";
+import {UserService} from "../user-mgmt/user.service";
 
 const uploadModalityKey: string = "UploadModality";
 
@@ -36,15 +37,18 @@ export class ProductPublishComponent implements OnInit {
     // reference to the selected categories for the draft item
     selectedCategories: Category[] = [];
     // reference to the draft item itself
-    catalogueLine: CatalogueLine;
+    catalogueLine: CatalogueLine = null;
     // placeholder for the custom property
     newProperty: ItemProperty = ModelUtils.createAdditionalItemProperty(null, null);
 
+    // indicates whether the navigation is done for the first time
+    publishFromScratch:boolean = true;
     // boolean to indicate whether it's a new publish or an edit
-    editCatalogueLine: boolean;
+    editMode: boolean = false;
 
-    i: Array<string> = [];
-    c: number = 1;
+    // array keeping the values set for the custom property
+    propertyAdditionalValueIndices: Array<string> = [];
+    customPropertyValueCount: number = 1;
     buttonDisabled: boolean = true;
 
 
@@ -59,50 +63,47 @@ export class ProductPublishComponent implements OnInit {
 
     constructor(private categoryService: CategoryService,
                 private catalogueService: CatalogueService,
-                private publishAndAIPCService: PublishAndAIPCService,
+                private publishStateService: PublishService,
+                private userService: UserService,
                 private router: Router,
                 private route: ActivatedRoute,
                 private cookieService: CookieService) {
+        this.selectedCategories = this.categoryService.getSelectedCategories();
     }
 
     ngOnInit() {
-        let publishFromScratch: boolean;
-
         this.route.queryParams.subscribe((params: Params) => {
-            publishFromScratch = params['fromScratch'] == "true";
-            this.editCatalogueLine = params['edit'] == "true";
-
-            this.initView(publishFromScratch, this.editCatalogueLine);
+            this.publishFromScratch = params['fromScratch'] == "true";
+            this.editMode = params['edit'] == "true";
+            this.initView();
         });
     }
 
-    private initView(publishFromScratch: boolean, editCatalogueLine: boolean): void {
+    private initView(): void {
+        this.publishStateService.resetData();
 
         // Following "if" block is executed when redirected by an "edit" button
         // "else" block is executed when redirected by "publish" tab
-        if (editCatalogueLine) {
-
-            // Initialization
-            this.selectedCategories = [];
-            let classificationCodes: Code[] = [];
+        if (this.editMode && this.publishFromScratch) {
+            // Initialization (draft item is already initialized while navigating from the catalogue views)
+            this.categoryService.resetData();
             this.catalogueLine = this.catalogueService.getDraftItem();
 
             // Get categories of item to edit
-            for (let classification of this.catalogueLine.goodsItem.item.commodityClassification)
+            let classificationCodes: Code[] = [];
+            for (let classification of this.catalogueLine.goodsItem.item.commodityClassification) {
                 classificationCodes.push(classification.itemClassificationCode);
+            }
 
             this.categoryService.getMultipleCategories(classificationCodes).then(
                 (categories: Category[]) => {
-
-                    // Then merge existing properties of the item with newly selected properties
-                    this.selectedCategories = categories;
-                    this.selectedCategories = this.selectedCategories.concat(this.categoryService.getSelectedCategories());
+                    for(let category of categories) {
+                        this.selectedCategories.push(category);
+                    }
 
                     if (this.selectedCategories != []) {
-
                         for (let category of this.selectedCategories) {
                             let newCategory = this.isNewCategory(category);
-
                             if (newCategory) {
                                 this.updateItemWithNewCategory(category);
                             }
@@ -112,29 +113,23 @@ export class ProductPublishComponent implements OnInit {
                     // Following method is called when editing to make sure the item has
                     // all properties of its categories in the correct order
                     this.restoreItemProperties();
-
-                    // Input properties of child component won't update, so force update
-                    this.productProperties.catalogueLine = this.catalogueLine;
-                    this.productProperties.selectedCategories = this.selectedCategories;
-                    this.productProperties.refreshPropertyBlocks();
                 });
 
-        }
-        else {
-            this.catalogueLine = null;
-            let userId = this.cookieService.get("user_id");
-            this.catalogueService.getCatalogue(userId).then(catalogue => {
 
-                // initiate the goods item with the selected property
-                this.selectedCategories = this.categoryService.getSelectedCategories();
+        // publishing from scratch
+        } else {
+            let userId = this.cookieService.get("user_id");
+            this.userService.getUserParty(userId).then(party => {
 
                 // initiate the "new" goods item if it is not already initiated
-                this.catalogueLine = this.catalogueService.getDraftItem();
 
-                if (this.catalogueLine == null || publishFromScratch == true) {
-                    this.catalogueLine = ModelUtils.createCatalogueLine(catalogue.providerParty)
+
+                // catalogue line is null when the
+                //if (this.catalogueLine == null || this.publishFromScratch == true) {
+                    this.catalogueLine = ModelUtils.createCatalogueLine(party)
                     this.catalogueService.setDraftItem(this.catalogueLine);
-                }
+                    //this.catalogueService.resetDraftItem(userId);
+                //}
 
                 if (this.selectedCategories != []) {
                     for (let category of this.selectedCategories) {
@@ -149,7 +144,9 @@ export class ProductPublishComponent implements OnInit {
         }
     }
 
-    // Ensures the user is presented with all properties of the category when editing
+    /**
+     * Ensures the user is presented with all properties of the category when editing
+     */
     private restoreItemProperties() {
         let newProperties: ItemProperty[] = [];
         let existingProperties: ItemProperty[] = this.catalogueLine.goodsItem.item.additionalItemProperty;
@@ -159,7 +156,7 @@ export class ProductPublishComponent implements OnInit {
         for (let category of this.selectedCategories) {
             for (let property of category.properties) {
                 let aip = ModelUtils.createAdditionalItemProperty(property, category);
-                aip.propertyDefinition = property.definition;
+                //aip.propertyDefinition = property.definition;
 
                 // Make sure each property is pushed once
                 if (newProperties.findIndex(p => p.id == property.id) <= -1) {
@@ -168,16 +165,16 @@ export class ProductPublishComponent implements OnInit {
             }
         }
 
+        // gather the custom properties
+        for (let i = 0; i < existingProperties.length; i++) {
+            if (existingProperties[i].itemClassificationCode.listID == "Custom") {
+                customProperties.push(existingProperties[i]);
+            }
+        }
+
+        // replace the empty properties with the existing ones
         for (let i = 0; i < newProperties.length; i++) {
-            for (let j = 0; j < existingProperties.length; j++) {
-
-                // in the first iteration, set aside custom properties
-                if (i == 0) {
-                    if (existingProperties[j].itemClassificationCode.listID !== "eClass") {
-                        customProperties.push(existingProperties[j]);
-                    }
-                }
-
+            for (let j = customProperties.length; j < existingProperties.length; j++) {
                 // If a property already exists, copy it over
                 if (newProperties[i].id == existingProperties[j].id) {
                     newProperties[i] = existingProperties[j];
@@ -185,8 +182,8 @@ export class ProductPublishComponent implements OnInit {
             }
         }
 
-        console.log(existingProperties);
-        console.log(newProperties);
+        console.log("existing props: " + existingProperties);
+        console.log("new props: " + newProperties);
 
         newProperties = newProperties.concat(customProperties);
         this.catalogueLine.goodsItem.item.additionalItemProperty = newProperties;
@@ -208,6 +205,7 @@ export class ProductPublishComponent implements OnInit {
 
             this.catalogueLine.goodsItem.item.additionalItemProperty.push(aip);
         }
+        this.catalogueLine.goodsItem.item.additionalItemProperty = [].concat(this.catalogueLine.goodsItem.item.additionalItemProperty);
     }
 
     private onTabClick(event: any) {
@@ -222,7 +220,7 @@ export class ProductPublishComponent implements OnInit {
     }
 
     private addCategoryOnClick(event: any): void {
-        this.router.navigate(['categorysearch'], {queryParams: {fromScratch: false, edit: this.editCatalogueLine}});
+        this.router.navigate(['categorysearch'], {queryParams: {fromScratch: false, edit: this.editMode}});
     }
 
     private publishProduct(): void {
@@ -314,12 +312,20 @@ export class ProductPublishComponent implements OnInit {
     }
 
     private onSuccessfulPublish(): void {
-        // avoid category duplication
-        this.categoryService.resetSelectedCategories();
+        let userId = this.cookieService.get("user_id");
+        this.userService.getUserParty(userId).then(party => {
+            this.catalogueLine = ModelUtils.createCatalogueLine(party)
+            this.catalogueService.setDraftItem(this.catalogueLine);
 
-        this.callback = true;
-        this.error_detc = false;
-        this.ngOnInit();
+            // avoid category duplication
+            this.categoryService.resetSelectedCategories();
+            this.publishStateService.resetData();
+            this.router.navigate(['catalogue']);
+
+            this.callback = true;
+            this.error_detc = false;
+
+        });
     }
 
     private onFailedPublish(): void {
@@ -331,7 +337,7 @@ export class ProductPublishComponent implements OnInit {
             let props = catalogue.catalogueLine[i].goodsItem.item.additionalItemProperty;
 
             for (let j: number = 0; j < props.length; j++) {
-                props[j].demoSpecificMultipleContent = JSON.stringify(props[j].embeddedDocumentBinaryObject);
+                props[j].demoSpecificMultipleContent = JSON.stringify(props[j].valueBinary);
             }
         }
         //TODO: demo specific handle properly
@@ -352,7 +358,7 @@ export class ProductPublishComponent implements OnInit {
     private imageChange(event: any) {
         let fileList: FileList = event.target.files;
         if (fileList.length > 0) {
-            let binaryObjects = this.newProperty.embeddedDocumentBinaryObject;
+            let binaryObjects = this.newProperty.valueBinary;
 
             for (let i = 0; i < fileList.length; i++) {
                 let file: File = fileList[i];
@@ -388,7 +394,7 @@ export class ProductPublishComponent implements OnInit {
     private fileChange(event: any) {
         let fileList: FileList = event.target.files;
         if (fileList.length > 0) {
-            let binaryObjects = this.newProperty.embeddedDocumentBinaryObject;
+            let binaryObjects = this.newProperty.valueBinary;
 
             for (let i = 0; i < fileList.length; i++) {
                 let file: File = fileList[i];
@@ -408,7 +414,7 @@ export class ProductPublishComponent implements OnInit {
 
     /* cancel an image upload */
     imageCancel(fileName: string) {
-        let binaryObjects = this.newProperty.embeddedDocumentBinaryObject;
+        let binaryObjects = this.newProperty.valueBinary;
 
         let index = binaryObjects.findIndex(img => img.fileName === fileName);
 
@@ -423,7 +429,12 @@ export class ProductPublishComponent implements OnInit {
         this.newProperty.value.splice(index, 1);
     }
 
-    /* deselect a category */
+    /**
+     * deselect a category
+     * 1) remove the property from additional item properties
+     * 2) remove the category from the selected categories
+     * 3) remove the corresponding commodity classification from the item
+     */
     categoryCancel(categoryId: string) {
         let c = 0;
 
@@ -431,6 +442,8 @@ export class ProductPublishComponent implements OnInit {
         if (index > -1) {
 
             for (let property of this.selectedCategories[index].properties) {
+                // check whether the property of the deleted category are included in other properties,
+                // which is the case for base eClass properties
                 c = 0;
                 for (let category of this.selectedCategories) {
                     if (category.id == categoryId)
@@ -441,15 +454,17 @@ export class ProductPublishComponent implements OnInit {
                             c++;
                     }
                 }
+                // if the property is not included in other categories, remove it from the additional item properties
                 if (c == 0) {
 
                     let j = this.catalogueLine.goodsItem.item.additionalItemProperty.findIndex(p => p.id == property.id);
-                    if (j > -1)
+                    if (j > -1) {
                         this.catalogueLine.goodsItem.item.additionalItemProperty.splice(j, 1);
-
-                    let k = this.productProperties.renderedPropertyIds.findIndex(p => p == property.id);
-                    if (k > -1)
-                        this.productProperties.renderedPropertyIds.splice(k, 1);
+                        // FIXME: dirty hack so that angular would recognize the change in the additionItemProperty array
+                        // https://stackoverflow.com/questions/36247016/angular2-refreshing-view-on-array-push
+                        // https://stackoverflow.com/questions/40829951/angular2-ngfor-onpush-change-detection-with-array-mutations
+                        this.catalogueLine.goodsItem.item.additionalItemProperty = [].concat(this.catalogueLine.goodsItem.item.additionalItemProperty);
+                    }
                 }
             }
 
@@ -457,26 +472,22 @@ export class ProductPublishComponent implements OnInit {
         }
 
         let i = this.catalogueLine.goodsItem.item.commodityClassification.findIndex(c => c.itemClassificationCode.value == categoryId);
-
         if (i > -1) {
             this.catalogueLine.goodsItem.item.commodityClassification.splice(i, 1);
         }
-
-        this.productProperties.ngOnInit();
-
     }
 
     private addCustomProperty(): void {
         this.catalogueLine.goodsItem.item.additionalItemProperty.push(this.newProperty);
-        this.productProperties.ngOnInit();
+        //this.productProperties.ngOnInit();
 
         // reset the custom property view
-
         this.newProperty = ModelUtils.createAdditionalItemProperty(null, null);
         this.propertyValueType.nativeElement.selectedIndex = 0;
 
-        this.i = [];
-        this.c = 1;
+        // reset the custom property value entities
+        this.propertyAdditionalValueIndices = [];
+        this.customPropertyValueCount = 1;
     }
 
     private downloadTemplate() {
@@ -514,12 +525,12 @@ export class ProductPublishComponent implements OnInit {
         }
     }
 
-    addAnotherCustomValue() {
+    addValueToProperty() {
 
-        console.log(this.i.length);
-        let d = this.generateUUID();
-        this.i.push(d);
-        this.c++;
+        console.log(this.propertyAdditionalValueIndices.length);
+        let valueId = this.generateUUID();
+        this.propertyAdditionalValueIndices.push(valueId);
+        this.customPropertyValueCount++;
         console.log(this.newProperty.value);
 
         this.buttonDisabled = true;
@@ -529,26 +540,26 @@ export class ProductPublishComponent implements OnInit {
     removeAddedValue(index: number) {
         if(index==0){
             this.newProperty.value.splice(index, 1);
-            this.i.splice(index, 1);
-            this.c--;
+            this.propertyAdditionalValueIndices.splice(index, 1);
+            this.customPropertyValueCount--;
+
         } else {
-            console.log(index);
-            this.i.splice(index-1, 1);
+            this.propertyAdditionalValueIndices.splice(index-1, 1);
             this.newProperty.value.splice(index, 1);
-            this.c--;
+            this.customPropertyValueCount--;
         }
+
         this.buttonEnabledOrDisabled();
-        console.log(this.newProperty.value);
     }
 
     buttonEnabledOrDisabled() {
         let n = 0;
-        for (; n < this.c; n++) {
+        for (; n < this.customPropertyValueCount; n++) {
             if(!this.newProperty.value[n] || this.newProperty.value[n].length==0){
                 break;
             }
         }
-        if(n==this.c){
+        if(n==this.customPropertyValueCount){
             this.buttonDisabled = false;
         } else {
             this.buttonDisabled = true;

@@ -1,6 +1,6 @@
 <div *ngIf="stringValue" id="stringValueDiv">
 
-    <div *ngIf="!eClassValue">
+    <div *ngIf="customProperty">
         <div *ngFor="let value of additionalItemProperty.value; let index = index" class="input-group form-group">
             <div *ngIf="additionalItemProperty.value.indexOf(value)==0" class="col-3 control-label" >
                 {{additionalItemProperty.name}}
@@ -22,11 +22,11 @@
         </div>
     </div>
 
-    <div *ngIf="eClassValue" class="input-group form-group">
-        <div *ngIf="eClassValue" class="col-3 control-label" (click)="openModal()">
+    <div *ngIf="!customProperty" class="input-group form-group">
+        <div *ngIf="!customProperty" class="col-3 control-label" (click)="openPropertyDetails()">
             <div style="cursor: pointer">
                 {{additionalItemProperty.name}}
-                <span *ngIf="eClassValue">&#9432;</span>
+                <span *ngIf="!customProperty">&#9432;</span>
             </div>
         </div>
 
@@ -34,31 +34,31 @@
                [(ngModel)]="additionalItemProperty.value[0]"
                (ngModelChange)="buttonEnabledOrDisabled()">
 
-        <span *ngIf="i.length > 0"><button class="btn btn-xs btn-danger"
-                                           (click)="removeAddedValue(0); $event.stopPropagation()"
+        <span *ngIf="propertyAdditionalValueIndices.length > 0"><button class="btn btn-xs btn-danger"
+                                                                        (click)="removeAddedValue(0); $event.stopPropagation()"
         >&times;</button></span>
 
-        <span *ngIf="i.length == 0">
+        <span *ngIf="propertyAdditionalValueIndices.length == 0">
             <button class="btn btn-primary btn-xs"
-                    (click)="addAnotherPropertyValue(additionalItemProperty.name)"
-                    [disabled]="buttonDisabled"
+                    (click)="addValueToProperty(additionalItemProperty.name)"
+                    [disabled]="addValueButtonDisabled"
             ><strong>+</strong></button>
         </span>
     </div>
 
-    <div *ngFor="let uuid of i;" class="input-group form-group">
+    <div *ngFor="let uuid of propertyAdditionalValueIndices;" class="input-group form-group">
         <label class="col-3 control-label"></label>
         <input type="text" class="form-control"
-               [(ngModel)]="additionalItemProperty.value[i.indexOf(uuid)+1]"
+               [(ngModel)]="additionalItemProperty.value[propertyAdditionalValueIndices.indexOf(uuid)+1]"
                (ngModelChange)="buttonEnabledOrDisabled()"
         >
         <span><button class="btn btn-xs btn-danger"
-                      (click)="removeAddedValue(i.indexOf(uuid)+1);"
+                      (click)="removeAddedValue(propertyAdditionalValueIndices.indexOf(uuid)+1);"
         >&times;</button></span>
 
-        <span *ngIf="i.indexOf(uuid)==i.length-1" ><button class="btn btn-primary btn-xs"
-                (click)="addAnotherPropertyValue(additionalItemProperty.name)"
-                [disabled]="buttonDisabled"
+        <span *ngIf="propertyAdditionalValueIndices.indexOf(uuid)==propertyAdditionalValueIndices.length-1" ><button class="btn btn-primary btn-xs"
+                                                                                                                     (click)="addValueToProperty(additionalItemProperty.name)"
+                                                                                                                     [disabled]="addValueButtonDisabled"
         ><strong>+</strong></button>
         </span>
     </div>
@@ -70,7 +70,7 @@
 <div *ngIf="binaryValue" class="input-group form-group">
     <label class="col-3 control-label">{{additionalItemProperty.name}}</label>
     <div style="display: inline-block">
-        <div *ngFor="let file of additionalItemProperty.embeddedDocumentBinaryObject"
+        <div *ngFor="let file of additionalItemProperty.valueBinary"
              style="display: inline-block">
 
             <div *ngIf="file.mimeCode.split('/')[0]=='image'">
@@ -85,7 +85,7 @@
                 <span style="display:inline-block; width: 30px;"></span>
             </div>
 
-            <div *ngIf="file.mimeCode.split('/')[0]=='application'||file.mimeCode.split('/')[0]=='text'">
+            <div *ngIf="file.mimeCode.split('/')[0]!='image'">
                 {{file.fileName}}
                 <span style="display:inline-block; width: 20px;"></span>
             </div>
