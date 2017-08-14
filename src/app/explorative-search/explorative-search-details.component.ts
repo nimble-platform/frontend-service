@@ -61,7 +61,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
         if (!this.config) { return; }
         // console.log(JSON.stringify(this.config)); // DEBUG -CHECK
         let recApproach = new RecClass();
-        recApproach.generateGraphRecApproach(this.config, this.myDiagram, this.$);
+        recApproach.generateGraphRecApproach(this.config, this.myDiagram, this.$, 2);
         // this.resetSelection();
         this.selectedProperties = [];
         this.tableResult = {};
@@ -216,73 +216,121 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
             }
         }
         console.log('layername', node.part.layerName);
-        // get values to be passed to child....
-        this.nodeFilterName = clickedNode;
-        this.filterQuery = nodeConceptUrl;
-        this.filterQueryRoot = rootConcept;
-        this.filterQueryRootUrl = rootConceptUrl;
-        jsonFilterForEachChild['fName'] = this.nodeFilterName;
-        jsonFilterForEachChild['fQuery'] = this.filterQuery;
-        jsonFilterForEachChild['fQueryRoot'] = this.filterQueryRoot;
-        jsonFilterForEachChild['fQueryRootUrl'] = this.filterQueryRootUrl;
-        // build the Query Parameter
-        let filteringInput = { 'concept': encodeURIComponent(rootConceptUrl.trim()),
-          'property': encodeURIComponent(nodeConceptUrl.trim()), 'amountOfGroups': 3
-          , 'language': this.lang};
-        // MULTISELECTION via GOJS Library
-        if (ev.control) { // if the CTRL Key is pressed..
-            console.log('CTRL key pressed.. Multiselect On');
-            if (node.isSelected) { // if the particular node is selected add to list
-                // avoid duplicate entries in the list
-                if (!this.selectedProperties.find( e => e === nodeConceptUrl)) {
-                    this.selectedProperties.push(nodeConceptUrl);
-                    // call the respective API...
-                    this.expSearch.getPropertyValues(filteringInput)
-                        .then(res => {
-                            this.filterJSON = res;
-                            jsonFilterForEachChild['filterJSON'] = this.filterJSON;
-                            setTimeout(() => { // Need to introduce a latency here to avoid filter display errors
-                                this.arrayPassedToChild.push(jsonFilterForEachChild);
-                                console.log('jsonFilterForChild ', jsonFilterForEachChild);
-                                console.log('arrayPassedToChild ', this.arrayPassedToChild);
-                            }, 500);
-                        });
+        if (node.part.layerName === 'red') { // OBJECT Property Clicked
+            this.objPropertyDetails(node);
+        } else {
+            // get values to be passed to child....
+            this.nodeFilterName = clickedNode;
+            this.filterQuery = nodeConceptUrl;
+            this.filterQueryRoot = rootConcept;
+            this.filterQueryRootUrl = rootConceptUrl;
+            jsonFilterForEachChild['fName'] = this.nodeFilterName;
+            jsonFilterForEachChild['fQuery'] = this.filterQuery;
+            jsonFilterForEachChild['fQueryRoot'] = this.filterQueryRoot;
+            jsonFilterForEachChild['fQueryRootUrl'] = this.filterQueryRootUrl;
+            // build the Query Parameter
+            let filteringInput = {
+                'concept': encodeURIComponent(rootConceptUrl.trim()),
+                'property': encodeURIComponent(nodeConceptUrl.trim()), 'amountOfGroups': 3
+                , 'language': this.lang
+            };
+            // MULTISELECTION via GOJS Library
+            if (ev.control) { // if the CTRL Key is pressed..
+                console.log('CTRL key pressed.. Multiselect On');
+                if (node.isSelected) { // if the particular node is selected add to list
+                    // avoid duplicate entries in the list
+                    if (!this.selectedProperties.find(e => e === nodeConceptUrl)) {
+                        this.selectedProperties.push(nodeConceptUrl);
+                        // call the respective API...
+                        this.expSearch.getPropertyValues(filteringInput)
+                            .then(res => {
+                                this.filterJSON = res;
+                                jsonFilterForEachChild['filterJSON'] = this.filterJSON;
+                                setTimeout(() => { // Need to introduce a latency here to avoid filter display errors
+                                    this.arrayPassedToChild.push(jsonFilterForEachChild);
+                                    console.log('jsonFilterForChild ', jsonFilterForEachChild);
+                                    console.log('arrayPassedToChild ', this.arrayPassedToChild);
+                                }, 500);
+                            });
+                    }
+                } else { // the node was clicked again and deselected remove from list
+                    let index = this.selectedProperties.indexOf(nodeConceptUrl);
+                    if (index > -1) {
+                        this.selectedProperties.splice(index, 1);
+                        this.arrayPassedToChild.splice(index, 1); // they were pushed at the same index
+                        // do not send anything to child .. Remove the Filter from display
+                        this.filterJSON = {};
+                    }
                 }
-            } else { // the node was clicked again and deselected remove from list
-                let index = this.selectedProperties.indexOf(nodeConceptUrl);
-                if (index > -1) {
-                    this.selectedProperties.splice(index, 1);
-                    this.arrayPassedToChild.splice(index, 1); // they were pushed at the same index
-                    // do not send anything to child .. Remove the Filter from display
-                    this.filterJSON = {};
+            } else { // no CTRL Button pressed but node selected
+                console.log('CTRL key released.. Multiselect off');
+                if (node.isSelected) { // if node is selected add to list
+                    // avoid duplicate entries in the list
+                    if (!this.selectedProperties.find(e => e === nodeConceptUrl)) {
+                        this.selectedProperties.push(nodeConceptUrl);
+                        // call the respective API
+                        this.expSearch.getPropertyValues(filteringInput)
+                            .then(res => {
+                                this.filterJSON = res;
+                                jsonFilterForEachChild['filterJSON'] = this.filterJSON;
+                                setTimeout(() => { // Need to introduce a latency here to avoid filter display errors
+                                    this.arrayPassedToChild.push(jsonFilterForEachChild);
+                                    console.log('jsonFilterForChild ', jsonFilterForEachChild);
+                                    console.log('arrayPassedToChild ', this.arrayPassedToChild);
+                                }, 500);
+                            });
+                    }
+                } // if the node is deselected remove if from list via selection count = 0 for GoJS
+            }
+            console.log(this.selectedProperties);
+            // if all properties deselected
+            if (this.selectedProperties.length === 0) {
+                this.tableResult = {};
+            }
+            // console.log(rootConceptUrl, nodeConceptUrl); // DEBUG --CHECK
+        }
+    }
+    objPropertyDetails(node: any): void {
+        let immediateParentNode = node.part.findTreeParentNode().data.text;
+        let clickedNode = node.part.data.text;
+        console.log('My Parent is..', immediateParentNode);
+        console.log('Me: ', clickedNode);
+        for (let eachObjPropKey in this.config['objectproperties']) {
+            if (this.config['objectproperties'].hasOwnProperty(eachObjPropKey)) {
+                if (this.config['objectproperties'][eachObjPropKey]['concept']['translatedURL'] === immediateParentNode) {
+                    // console.log(this.config['objectproperties'][eachObjPropKey]['objectproperties']);
+                    for (let eachKeyWithinObjProp in this.config['objectproperties'][eachObjPropKey]['objectproperties']) {
+                        if (this.config['objectproperties'][eachObjPropKey]['objectproperties'].hasOwnProperty(eachKeyWithinObjProp)) {
+                            if (clickedNode === this.config['objectproperties'][eachObjPropKey]['objectproperties']
+                                    [eachKeyWithinObjProp]['concept']['translatedURL']) {
+                                // console.log(this.config['objectproperties'][eachObjPropKey]['objectproperties'][eachKeyWithinObjProp]);
+
+                                // build JSON for query
+                                let layerJSON = {
+                                'concept': this.config['objectproperties'][eachObjPropKey]['objectproperties']
+                                    [eachKeyWithinObjProp]['concept']['url'],
+                                'language': this.lang,
+                                'conceptURIPath': this.config['objectproperties'][eachObjPropKey]['objectproperties']
+                                    [eachKeyWithinObjProp]['conceptURIPath'],
+                                'stepRange': 1,
+                                'frozenConcept':  this.config['objectproperties'][eachObjPropKey]['objectproperties']
+                                    [eachKeyWithinObjProp]['frozenConcept'],
+                                'distanceToFrozenConcept':  this.config['objectproperties'][eachObjPropKey]
+                                    ['objectproperties'][eachKeyWithinObjProp]['distanceToFrozenConcept'],
+                                'oldJsonLogicalView': this.config};
+                                console.log('DYNAMIC JSON ', layerJSON);
+                                this.expSearch.getLogicalView(layerJSON)
+                                    .then(res =>
+                                        this.config = res
+                                    );
+                                this.reloadRadialGraph(3);
+                            }
+                        }
+                    }
+
                 }
             }
-        } else { // no CTRL Button pressed but node selected
-            console.log('CTRL key released.. Multiselect off');
-            if (node.isSelected) { // if node is selected add to list
-                // avoid duplicate entries in the list
-                if (!this.selectedProperties.find(e => e === nodeConceptUrl)) {
-                    this.selectedProperties.push(nodeConceptUrl);
-                    // call the respective API
-                    this.expSearch.getPropertyValues(filteringInput)
-                        .then(res => {
-                            this.filterJSON = res;
-                            jsonFilterForEachChild['filterJSON'] = this.filterJSON;
-                            setTimeout(() => { // Need to introduce a latency here to avoid filter display errors
-                                this.arrayPassedToChild.push(jsonFilterForEachChild);
-                                console.log('jsonFilterForChild ', jsonFilterForEachChild);
-                                console.log('arrayPassedToChild ', this.arrayPassedToChild);
-                            }, 500);
-                        });
-                }
-            } // if the node is deselected remove if from list via selection count = 0 for GoJS
         }
-        console.log(this.selectedProperties);
-        // if all properties deselected
-         if (this.selectedProperties.length === 0) {
-             this.tableResult = {};
-         }
-        // console.log(rootConceptUrl, nodeConceptUrl); // DEBUG --CHECK
     }
     /**
      * genTable: Generate a Dynamic tableJSON query for the API Call and
@@ -375,9 +423,10 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
         }
     }
 
-    reloadRadialGraph(): void {
+    reloadRadialGraph(lay: number): void {
+        // this.myDiagram.layout.maxLayers = lay;
         let recApproach = new RecClass();
-        recApproach.generateGraphRecApproach(this.config, this.myDiagram, this.$);
+        recApproach.generateGraphRecApproach(this.config, this.myDiagram, this.$, lay);
     }
 }
 
@@ -408,7 +457,7 @@ class RecClass {
      * @param myDiagram: Diagram parameter for GoJS
      * @param $: Make function for GoJS
      */
-    public generateGraphRecApproach(cnf: any, myDiagram: any, $: any): void {
+    public generateGraphRecApproach(cnf: any, myDiagram: any, $: any, layerCount: number): void {
         // get a Tree structure of the incoming JSON
         let linkedOntTree = this.recursionParseJson(cnf);
         // console.log('Complete Tree:\n' + JSON.stringify(linkedOntTree)); // --> DEBUG
@@ -422,7 +471,8 @@ class RecClass {
 
         // Diagram Layout..
         myDiagram.layout = $(RadialLayout, {
-            maxLayers: 2,
+            maxLayers: layerCount,
+            // layerThickness: 150, for node spreading
             rotateNode: function (node: any, angle: any, sweep: any, radius: any) {
                 // rotate the nodes and make sure the text is not upside-down
                 node.angle = angle;

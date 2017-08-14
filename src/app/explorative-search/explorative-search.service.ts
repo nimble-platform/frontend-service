@@ -6,7 +6,7 @@
  */
 
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
+import { Http, Headers, RequestOptions } from '@angular/http';
 
 import 'rxjs/add/operator/toPromise';
 import * as myGlobals from '../globals';
@@ -20,6 +20,7 @@ export class ExplorativeSearchService {
     private sparqlEndPoint = myGlobals.sparqlEndPoint;
     private sparqlOptionEndPoint = myGlobals.sparqlOptionalSelectEndPoint;
     private userLang: string;
+    private headers = new Headers();
 
 
     constructor(private http: Http) { }
@@ -42,9 +43,17 @@ export class ExplorativeSearchService {
             .catch(err => console.log(err));
     }
 
-    getLogicalView(term: Object): Promise<any> {
+    /*getLogicalView(term: Object): Promise<any> {
         console.log('getlogicalview', term['language']);
         return this.http.get(`${this.logicalUrl}?inputAsJson=${JSON.stringify(term)}`)
+            .toPromise()
+            .then(res => res.json())
+            .catch(err => console.log(err));
+    }*/
+    getLogicalView(term: Object): Promise<any> {
+        // console.log('From Service(logicalView', JSON.stringify(term));
+        this.headers.append('Content-Type', 'application/json; charset=UTF-8');
+        return this.http.post(this.logicalUrl, term, new RequestOptions({ headers: this.headers }))
             .toPromise()
             .then(res => res.json())
             .catch(err => console.log(err));
