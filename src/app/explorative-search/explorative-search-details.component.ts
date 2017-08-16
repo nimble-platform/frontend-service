@@ -80,7 +80,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
             {
                 initialContentAlignment: go.Spot.Center,
                 padding: 10,
-                isReadOnly: true,
+                isReadOnly: false,
                 'animationManager.isEnabled': false, // disable Animation
                 'allowVerticalScroll': false, // no vertical scroll for diagram
                 'toolManager.mouseWheelBehavior': go.ToolManager.WheelNone // do not zoom diagram on wheel scroll
@@ -209,16 +209,38 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
         let clickedNode = node.part.data.text; // name of the clicked node
         let rootConceptUrl = this.config['concept']['url'];
         let nodeConceptUrl;
-        for (let eachDatProp of this.config['dataproperties']) {
-            if (eachDatProp['translatedURL'] === clickedNode) {
-                let index = this.config['dataproperties'].indexOf(eachDatProp);
-                nodeConceptUrl = this.config['dataproperties'][index]['url'];
+        let immediateParentName = node.part.findTreeParentNode().data.text;
+        // at this point check if the immediate parent is same as root concept
+        if (immediateParentName === rootConcept) {
+            // we are in layer 1
+            // console.log('dataproperty in layer 1');
+            for (let eachDatProp of this.config['dataproperties']) {
+                if (eachDatProp['translatedURL'] === clickedNode) { // if first layer data properties
+                    let index = this.config['dataproperties'].indexOf(eachDatProp);
+                    nodeConceptUrl = this.config['dataproperties'][index]['url'];
+                }
+            }
+        } else {
+            // console.log('data property of an object property');
+            for (let everyKey in this.config['objectproperties']) {
+                if (this.config['objectproperties'].hasOwnProperty(everyKey)) {
+                    if (this.config['objectproperties'][everyKey]['concept']['translatedURL'] === immediateParentName) {
+                        for (let eachDatPropWithinObjProp of this.config['objectproperties'][everyKey]['dataproperties']) {
+                            if (eachDatPropWithinObjProp['translatedURL'] === clickedNode) {
+                                let index = this.config['objectproperties'][everyKey]
+                                    ['dataproperties'].indexOf(eachDatPropWithinObjProp);
+                                nodeConceptUrl = this.config['objectproperties'][everyKey]['dataproperties'][index]['url'];
+                            }
+                        }
+                    }
+                }
             }
         }
+        console.log('nodeConceptURL CHECK', nodeConceptUrl);
         console.log('layername', node.part.layerName);
         if (node.part.layerName === 'red') { // OBJECT Property Clicked
             this.objPropertyDetails(node);
-        } else {
+        } else { // layer green Data properties clicked....
             // get values to be passed to child....
             this.nodeFilterName = clickedNode;
             this.filterQuery = nodeConceptUrl;
@@ -295,6 +317,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
         let clickedNode = node.part.data.text;
         console.log('My Parent is..', immediateParentNode);
         console.log('Me: ', clickedNode);
+        console.log('My Key,', node.part.data.key);
         for (let eachObjPropKey in this.config['objectproperties']) {
             if (this.config['objectproperties'].hasOwnProperty(eachObjPropKey)) {
                 if (this.config['objectproperties'][eachObjPropKey]['concept']['translatedURL'] === immediateParentNode) {
@@ -323,7 +346,12 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                                     .then(res =>
                                         this.config = res
                                     );
-                                this.reloadRadialGraph(3);
+                                // this.reloadRadialGraph(3);
+                                // Latency needed in order to avoid double click
+                                setTimeout(() => {
+                                    this.reloadRadialGraph(3, immediateParentNode);
+                                }, 600);
+
                             }
                         }
                     }
@@ -417,16 +445,64 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
     diagramAgain(): void {
         // this.sparqlSelectedOption = null;
         if (this.hiddenElement) {
-            this.hiddenElement = false;
-        } else {
-            this.hiddenElement = true;
+            this.hiddenElement = !this.hiddenElement;
         }
     }
 
-    reloadRadialGraph(lay: number): void {
-        // this.myDiagram.layout.maxLayers = lay;
+    reloadRadialGraph(lay: number, pNode: any): void {
         let recApproach = new RecClass();
         recApproach.generateGraphRecApproach(this.config, this.myDiagram, this.$, lay);
+        /*
+        perform node hiding here...
+         */
+
+        let objJson = this.config['objectproperties'];
+        for (let eachKey in objJson) {
+            if (objJson.hasOwnProperty(eachKey)) {
+                if (objJson[eachKey]['concept']['translatedURL'] === pNode) {// find the parent
+                    for (let everyObjKeyWithin in objJson[eachKey]['objectproperties']) {
+                        // hide object properties first
+                        if (objJson[eachKey]['objectproperties'].hasOwnProperty(everyObjKeyWithin)) {
+                            if (objJson[eachKey]['objectproperties'][everyObjKeyWithin]['concept']['isHidden']) {
+                                for (let itr = this.myDiagram.nodes; itr.next(); ) {
+                                    let particularNode = itr.value;
+                                    if (particularNode.data.text === objJson[eachKey]['objectproperties'][everyObjKeyWithin]
+                                            ['concept']['translatedURL']) {
+                                        particularNode.visible = false;
+                                        console.log(particularNode.data.text, 'isHidden');
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    for (let everyDatProp of objJson[eachKey]['dataproperties']) { // hide the data properties..
+                        if (everyDatProp['isHidden']) {
+                            for (let dataPItr = this.myDiagram.nodes; dataPItr.next(); ) {
+                                let particularDatNode = dataPItr.value;
+                                if (particularDatNode.data.text === everyDatProp['translatedURL']) {
+                                    particularDatNode.visible = false;
+                                    console.log(particularDatNode.data.text, 'DatProp isHidden');
+                                }
+                            }
+                        }
+                    }
+                    if (objJson[eachKey]['concept']['isHidden']) {
+                        let root = this.myDiagram.findNodeForKey(1);
+                        this.myDiagram.nodes.each(n => {
+                            if (n.data.text === pNode) { // should not show parent node as of now
+                                n.opacity = 0.3;
+                            }
+                        });
+                        root.findLinksOutOf().each(link => {
+                            if (link.toNode.data.text === pNode) {
+                                link.path.strokeDashArray = [4, 4];
+                            }
+                        });
+                        this.myDiagram.model.setDataProperty(root, 'strokeDashArray', [4, 4]);
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -456,6 +532,7 @@ class RecClass {
      * @param cnf : JSON config from Parent Component
      * @param myDiagram: Diagram parameter for GoJS
      * @param $: Make function for GoJS
+     * @param layerCount: How many layers to plot
      */
     public generateGraphRecApproach(cnf: any, myDiagram: any, $: any, layerCount: number): void {
         // get a Tree structure of the incoming JSON
@@ -472,8 +549,7 @@ class RecClass {
         // Diagram Layout..
         myDiagram.layout = $(RadialLayout, {
             maxLayers: layerCount,
-            // layerThickness: 150, for node spreading
-            rotateNode: function (node: any, angle: any, sweep: any, radius: any) {
+            rotateNode: function (node: any, angle: any) {
                 // rotate the nodes and make sure the text is not upside-down
                 node.angle = angle;
                 let label = node.findObject('TEXTBLOCK');
