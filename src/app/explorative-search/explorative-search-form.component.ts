@@ -78,7 +78,7 @@ export class ExplorativeSearchFormComponent implements OnInit {
                     // push the data in to List
                     this.Output.push(<Explorative> {kw: inputVal, resp: res});
                 });
-        console.log('OUTPUT', this.Output);
+        // console.log('OUTPUT', this.Output);
     }
 
     /**
@@ -106,7 +106,7 @@ export class ExplorativeSearchFormComponent implements OnInit {
         // console.log(inputVal);
         // HTTP GET to backend Server for visualization
         // create a JSON request for the queried button
-        let temp = {'concept': inputVal.trim(), 'stepRange': 2, 'frozenConcept': 'HighChair',
+        let temp = {'concept': inputVal.trim(), 'stepRange': 2, 'frozenConcept': inputVal.trim(),
             'language': this.language, 'distanceToFrozenConcept': 0,
             'conceptURIPath': [inputVal.trim()]
         };
