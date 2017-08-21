@@ -39,6 +39,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
     filterJSON: Object;
     /* To store selected properties*/
     private selectedProperties: Array<string> = [];
+    private selectedNodeKeys: any[] = [];
 
     private sparqlSelectedOption: Object;
     private tableJSON: Object = {};
@@ -69,6 +70,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
         this.filterQueryRootUrl = '';
         this.filterQuery = '';
         this.nodeFilterName = '';
+        this.selectedNodeKeys = [];
     }
 
     /**
@@ -169,8 +171,8 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
             );
         this.myDiagram.addDiagramListener('ChangedSelection', (e: any) => {
             // check for selection changes.. especially when Multiselect is off
-            console.log('Selection Change occured');
-            console.log('Selection Count ', e.diagram.selection.count);
+            // console.log('Selection Change occured');
+            // console.log('Selection Count ', e.diagram.selection.count);
             if (e.diagram.selection.count === 0) { // if in non Multiselect if all selections removed
                 // reset all
                 this.selectedProperties = [];
@@ -259,6 +261,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
             if (ev.control) { // if the CTRL Key is pressed..
                 console.log('CTRL key pressed.. Multiselect On');
                 if (node.isSelected) { // if the particular node is selected add to list
+                    this.selectedNodeKeys.push(node.part.data.key);
                     // avoid duplicate entries in the list
                     if (!this.selectedProperties.find(e => e === nodeConceptUrl)) {
                         this.selectedProperties.push(nodeConceptUrl);
@@ -484,6 +487,11 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
         for (let eachPreviousSelection of this.config['currentSelections']) {
             this.selectedProperties.push(eachPreviousSelection.pop());
         }
+        for (let eachNodeKey of this.selectedNodeKeys) {
+            let nodeToBeSelected = this.myDiagram.findNodeForKey(eachNodeKey);
+            nodeToBeSelected.part.isSelected = true;
+        }
+        console.log(this.myDiagram.selection.count);
         console.log(this.selectedProperties);
     }
 }
