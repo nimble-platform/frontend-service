@@ -11,6 +11,7 @@ import {CatalogueLine} from "./model/publish/catalogue-line";
 import {Category} from "./model/category/category";
 import {Observable} from "rxjs/Observable";
 import {ModelUtils} from "./model/model-utils";
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 
 @Injectable()
 export class CatalogueService {
@@ -22,6 +23,10 @@ export class CatalogueService {
 
     // To save a reference to the original version of the item being edited
     private originalCatalogueLine: CatalogueLine;
+
+    // edit mode
+    private editMode = new BehaviorSubject<boolean>(false);
+    _editMode$ = this.editMode.asObservable();
 
     constructor(private http: Http,
                 private userService: UserService) {
@@ -176,6 +181,18 @@ export class CatalogueService {
         });
     }
 
+    deleteCatalogueLine(id:string):Promise<any> {
+        const url = this.baseUrl + `/catalogueline/${id}`;
+        return this.http
+            .delete(url)
+            .toPromise()
+            .then(res => {
+                let deletedLineIndex = this.catalogue.catalogueLine.findIndex(line => line.id == id);
+                this.catalogue.catalogueLine.splice(deletedLineIndex, 1)
+            })
+            .catch(this.handleError);
+    }
+
     resetData(): void {
         this.catalogue = null;
         this.draftCatalogueLine = null;
@@ -195,5 +212,9 @@ export class CatalogueService {
         this.draftCatalogueLine = JSON.parse(JSON.stringify(catalogueLine));
         // save reference to original
         this.originalCatalogueLine = catalogueLine;
+    }
+
+    setEditMode(editMode:boolean):void {
+        this.editMode.next(editMode);
     }
 }

@@ -6,6 +6,7 @@ import {Period} from "./period";
  */
 export class CatalogueLine {
     constructor(
+        public id:string,
         public hjid:string,
         public orderableUnit: string,
         public warrantyValidityPeriod: Period,

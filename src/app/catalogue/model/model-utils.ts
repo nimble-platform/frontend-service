@@ -52,7 +52,7 @@ export class ModelUtils {
             }
             let valueQualifier = property.dataType;
 
-            aip = new ItemProperty(property.id, property.preferredName, [''], [], new Array<BinaryObject>(), "", unit,
+            aip = new ItemProperty(property.id, property.preferredName, [''], [0], new Array<BinaryObject>(), "", unit,
                 valueQualifier, code, "", null);
         }
         return aip;
@@ -90,12 +90,13 @@ export class ModelUtils {
         let item = new Item("", "", false, additionalItemProperties, providerParty, null, null, [], [], [], "", [], "");
 
         // create goods item
-        let goodsItem = new GoodsItem(this.generateUUID(), item, null);
+        let uuid:string = this.generateUUID();
+        let goodsItem = new GoodsItem(uuid, item, null);
 
         // create required item location quantity
         let ilq = this.createItemLocationQuantity("");
 
-        let catalogueLine = new CatalogueLine(null, null, null, [], ilq, goodsItem);
+        let catalogueLine = new CatalogueLine(uuid, null, null, null, [], ilq, goodsItem);
         return catalogueLine;
     }
 
