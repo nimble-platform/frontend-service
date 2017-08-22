@@ -14,7 +14,7 @@ import {CategoryService} from "./category.service";
 
 export class CategorySearchComponent implements OnInit {
     categories: Category[];
-    startPublishingFromScratch: boolean;
+    newPublishing: boolean;
     editCatalogueLine: boolean;
 
     submitted: boolean = false;
@@ -28,10 +28,10 @@ export class CategorySearchComponent implements OnInit {
 
     ngOnInit(): void {
         this.route.queryParams.subscribe((params: Params) => {
-            this.startPublishingFromScratch = params['fromScratch'] == 'true';
+            this.newPublishing = params['newPublishing'] == 'true';
             this.editCatalogueLine = params['edit'] == 'true';
 
-            if(this.startPublishingFromScratch) {
+            if(this.newPublishing) {
                 this.categoryService.resetSelectedCategories();
             }
             else if (this.editCatalogueLine) {
@@ -65,14 +65,14 @@ export class CategorySearchComponent implements OnInit {
         // if no category is selected or if the selected category is already selected
         // navigate to the publishing page directly
         if (category == null || this.categoryService.getSelectedCategories().findIndex(c => c.id == category.id) > -1) {
-            this.router.navigate(['publish'], {queryParams: {fromScratch: this.startPublishingFromScratch}});
+            this.router.navigate(['publish'], {queryParams: {newPublishing: this.newPublishing}});
             return;
         }
 
         this.categoryService.getCategory(category)
             .then(category => {
                 this.categoryService.addSelectedCategory(category);
-                this.router.navigate(['publish'], {queryParams: {fromScratch: this.startPublishingFromScratch,
+                this.router.navigate(['publish'], {queryParams: {newPublishing: this.newPublishing,
                     edit: this.editCatalogueLine}})
             });
     }

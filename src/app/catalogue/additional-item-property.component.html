@@ -1,73 +1,51 @@
-<div *ngIf="stringValue" id="stringValueDiv">
-
-    <div *ngIf="customProperty">
-        <div *ngFor="let value of additionalItemProperty.value; let index = index" class="input-group form-group">
-            <div *ngIf="additionalItemProperty.value.indexOf(value)==0" class="col-3 control-label" >
-                {{additionalItemProperty.name}}
-                <span style="display:inline-block; width: 30px;"></span>
-            </div>
-
-            <div *ngIf="additionalItemProperty.value.indexOf(value)>0" class="col-3 control-label" >
-                <span style="display:inline-block; width: 30px;"></span>
-            </div>
-
-
-            <input type="text" class="form-control"
-                       [(ngModel)]="additionalItemProperty.value[index]"
-                       (ngModelChange)="buttonEnabledOrDisabled()">
-
-            <span><button class="btn btn-xs btn-danger"
-                                               (click)="removeCustomValue(index); $event.stopPropagation()"
-            >&times;</button></span>
-        </div>
-    </div>
-
-    <div *ngIf="!customProperty" class="input-group form-group">
-        <div *ngIf="!customProperty" class="col-3 control-label" (click)="openPropertyDetails()">
-            <div style="cursor: pointer">
-                {{additionalItemProperty.name}}
-                <span *ngIf="!customProperty">&#9432;</span>
-            </div>
+<!-- ngFor belows presents the string or decimal values of the item property -->
+<ng-container *ngIf="additionalItemProperty.valueQualifier == 'STRING' || additionalItemProperty.valueQualifier == 'REAL_MEASURE'">
+    <div *ngFor="let value of additionalItemProperty.valueQualifier | itemPropertyDataSourcePipe : additionalItemProperty; let i = index; trackBy : trackByIndex" class="input-group form-group">
+        <!-- name of the property is shown once near the first value associated to it -->
+        <div *ngIf="i == 0"
+             class="col-3 control-label"
+             style="cursor: pointer"
+             (click)="openPropertyDetails()">
+            {{additionalItemProperty.name}}&#9432;
         </div>
 
-        <input type="text" class="form-control"
-               [(ngModel)]="additionalItemProperty.value[0]"
-               (ngModelChange)="buttonEnabledOrDisabled()">
+        <!-- string value associated to the property -->
+        <input *ngIf="additionalItemProperty.valueQualifier == 'STRING'"
+               type="text" class="form-control"
+               [ngClass]="{'offset-3' : i > 0} "
+               [(ngModel)]="additionalItemProperty.value[i]"
+               [readonly]="!editMode">
 
-        <span *ngIf="propertyAdditionalValueIndices.length > 0"><button class="btn btn-xs btn-danger"
-                                                                        (click)="removeAddedValue(0); $event.stopPropagation()"
-        >&times;</button></span>
+        <!-- decimal value associated to the property -->
+        <input *ngIf="additionalItemProperty.valueQualifier == 'REAL_MEASURE'"
+               type="text" class="form-control"
+               [ngClass]="{'offset-3' : i > 0} "
+               [(ngModel)]="additionalItemProperty.valueDecimal[i]"
+               [readonly]="!editMode">
 
-        <span *ngIf="propertyAdditionalValueIndices.length == 0">
+        <!-- remove value button -->
+        <span *ngIf="editMode &&
+                       (additionalItemProperty.itemClassificationCode.listID != 'Custom' &&
+                       ((additionalItemProperty.valueQualifier == 'STRING' &&additionalItemProperty.value.length > 1) ||
+                       (additionalItemProperty.valueQualifier == 'REAL_MEASURE' &&additionalItemProperty.valueDecimal.length > 1))||
+                       additionalItemProperty.itemClassificationCode.listID == 'Custom')">
+            <button class="btn btn-xs btn-danger"
+                    (click)="removeCustomValue(i); $event.stopPropagation()">&times;
+            </button>
+        </span>
+
+        <!-- add value button -->
+        <span *ngIf="editMode && ((additionalItemProperty.valueQualifier == 'STRING' && i == this.additionalItemProperty.value.length - 1) ||
+                      (additionalItemProperty.valueQualifier == 'REAL_MEASURE' && i == this.additionalItemProperty.valueDecimal.length - 1))">
             <button class="btn btn-primary btn-xs"
                     (click)="addValueToProperty(additionalItemProperty.name)"
-                    [disabled]="addValueButtonDisabled"
             ><strong>+</strong></button>
         </span>
     </div>
+</ng-container>
 
-    <div *ngFor="let uuid of propertyAdditionalValueIndices;" class="input-group form-group">
-        <label class="col-3 control-label"></label>
-        <input type="text" class="form-control"
-               [(ngModel)]="additionalItemProperty.value[propertyAdditionalValueIndices.indexOf(uuid)+1]"
-               (ngModelChange)="buttonEnabledOrDisabled()"
-        >
-        <span><button class="btn btn-xs btn-danger"
-                      (click)="removeAddedValue(propertyAdditionalValueIndices.indexOf(uuid)+1);"
-        >&times;</button></span>
-
-        <span *ngIf="propertyAdditionalValueIndices.indexOf(uuid)==propertyAdditionalValueIndices.length-1" ><button class="btn btn-primary btn-xs"
-                                                                                                                     (click)="addValueToProperty(additionalItemProperty.name)"
-                                                                                                                     [disabled]="addValueButtonDisabled"
-        ><strong>+</strong></button>
-        </span>
-    </div>
-
-</div>
-
-
-
-<div *ngIf="binaryValue" class="input-group form-group">
+<!-- renders the binary content -->
+<div *ngIf="additionalItemProperty.valueQualifier=='BINARY'" class="input-group form-group">
     <label class="col-3 control-label">{{additionalItemProperty.name}}</label>
     <div style="display: inline-block">
         <div *ngFor="let file of additionalItemProperty.valueBinary"
@@ -81,7 +59,7 @@
                 />
 
                 <span style="display:inline-block; width: 10px;"></span>
-                    {{file.objectMetadata}}
+                {{file.objectMetadata}}
                 <span style="display:inline-block; width: 30px;"></span>
             </div>
 
@@ -91,7 +69,7 @@
             </div>
         </div>
 
-       <span><button class="btn btn-xs btn-danger"
+        <span *ngIf="editMode"><button class="btn btn-xs btn-danger"
                       (click)="deleteCustomProperty(additionalItemProperty.name); $event.stopPropagation()"
         >&times;</button></span>
     </div>

@@ -23,6 +23,7 @@ export class CatalogueViewComponent implements OnInit {
     catalogue: Catalogue;
 
     ngOnInit() {
+        this.catalogueService.setEditMode(false);
         this.requestCatalogue();
     }
 
