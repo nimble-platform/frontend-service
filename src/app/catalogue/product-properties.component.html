@@ -39,7 +39,7 @@
                           [additionalItemProperty]="property">
 </additional-item-property>
 
-<div *ngFor="let propertyBlock of this.catalogueLine.goodsItem.item.additionalItemProperty | propertyBlockPipe">
+<div *ngFor="let propertyBlock of this.catalogueLine.goodsItem.item.additionalItemProperty | propertyBlockPipe; trackBy : trackByIndex">
     <p>
         <!-- display the propertyBlock only if it is not empty -->
         <button *ngIf="propertyBlock[PROPERTY_BLOCK_FIELD_PROPERTIES].length > 0"
@@ -52,7 +52,7 @@
         </button>
     </p>
     <div id="propertyBlock" [ngbCollapse]="propertyBlockCollapsedStates.get(propertyBlock[PROPERTY_BLOCK_FIELD_NAME])">
-        <additional-item-property *ngFor="let property of propertyBlock[PROPERTY_BLOCK_FIELD_PROPERTIES]"
+        <additional-item-property *ngFor="let property of propertyBlock[PROPERTY_BLOCK_FIELD_PROPERTIES]; trackBy : trackByIndex"
                                   [additionalItemProperty]="property">
         </additional-item-property>
     </div>

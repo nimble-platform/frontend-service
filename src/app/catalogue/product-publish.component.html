@@ -87,6 +87,8 @@
     <h4><u>Product Details</u></h4>
 
     <form class="space-before">
+
+        <!-- product properties -->
         <product-properties
                 #productProperties
                 [catalogueLine]="catalogueLine"
@@ -94,7 +96,7 @@
         >
         </product-properties>
 
-        <!-- new property -->
+        <!-- new property block -->
         <hr class="mt-5">
         <div class="form-group">
             <h6 i18n>Add new property</h6>
@@ -108,27 +110,34 @@
                        required/>
 
                 <!-- property value -->
-                <input *ngIf="propertyValueType.options.selectedIndex == 0 || propertyValueType.options.selectedIndex == 1"
+                <input *ngIf="propertyValueType.options.selectedIndex == 0"
                        name="propertyValue"
                        class="form-control col ml-2"
                        [(ngModel)]="newProperty.value[0]"
                        placeholder="Property Value"
                        required/>
-
-                <!-- add additional value button -->
-                <span *ngIf="propertyAdditionalValueIndices.length == 0 && !propertyValueType.options.selectedIndex">
-                    <button class="btn btn-info btn-xs"
-                            (click)="addValueToProperty()"
-                            [disabled]="!customPropertyForm.form.valid"
-                    ><strong>+</strong></button>
-                </span>
+                <input *ngIf="propertyValueType.options.selectedIndex == 1"
+                       name="propertyValue"
+                       class="form-control col ml-2"
+                       [(ngModel)]="newProperty.valueDecimal[0]"
+                       placeholder="Property Value"
+                       required/>
 
                 <!-- remove value button -->
-                <span *ngIf="propertyAdditionalValueIndices.length > 0">
+                <span *ngIf="(newProperty.valueQualifier == 'STRING' && newProperty.value.length > 1)
+                             || (newProperty.valueQualifier == 'REAL_MEASURE' && newProperty.valueDecimal.length > 1)">
                     <button class="btn btn-xs btn-danger"
-                            (click)="removeAddedValue(0); $event.stopPropagation()">
+                            (click)="removeValueFromProperty(0); $event.stopPropagation()">
                         &times;
                     </button>
+                </span>
+
+                <!-- add additional value button -->
+                <span *ngIf="(newProperty.valueQualifier == 'STRING' && newProperty.value.length == 1)
+                             || (newProperty.valueQualifier == 'REAL_MEASURE' && newProperty.valueDecimal.length == 1)">
+                    <button class="btn btn-info btn-xs"
+                            (click)="addValueToProperty()"
+                    ><strong>+</strong></button>
                 </span>
 
                 <!-- add image button -->
@@ -165,7 +174,7 @@
                             </select>
                         </div>
 
-                        <button [disabled]="!customPropertyForm.form.valid"
+                        <button [disabled]="!customPropertyForm.form.valid || (newProperty.valueQualifier == 'BINARY' && newProperty.valueBinary.length == 0)"
                                 class="btn btn-success ml-1"
                                 (click)="addCustomProperty()">
                             <span i18n>Add property</span>
@@ -177,33 +186,43 @@
 
             <!-- additonal values -->
             <!-- additional values are drawn here as the top row contains
-            `value type selection button` and `add property buttons`-->
-            <div *ngFor="let uuid of propertyAdditionalValueIndices;" class="input-group form-group">
-                <label class="col-3 control-label"></label>
-                <input type="text" class="form-control col ml-2"
-                       [(ngModel)]="newProperty.value[propertyAdditionalValueIndices.indexOf(uuid)+1]"
-                       [ngModelOptions]="{standalone: true}"
-                       (ngModelChange)="buttonEnabledOrDisabled()"
-                >
-                <span><button class="btn btn-xs btn-danger"
-                              (click)="removeAddedValue(propertyAdditionalValueIndices.indexOf(uuid)+1);"
-                >&times;</button></span>
+            `value type selection button` and `add property buttons` in addition to the first value associated to the new property -->
+            <div *ngFor="let val of newProperty.valueQualifier | itemPropertyDataSourcePipe : newProperty; let i = index; trackBy : trackByIndex">
+                <div *ngIf="i > 0" class="input-group form-group">
+                    <label class="col-3 control-label"></label>
+                    <input *ngIf="newProperty.valueQualifier=='STRING'"
+                            type="text" class="form-control col ml-2"
+                           [(ngModel)]="newProperty.value[i]"
+                           [ngModelOptions]="{standalone: true}"
+                    >
+                    <input *ngIf="newProperty.valueQualifier=='REAL_MEASURE'"
+                           type="text" class="form-control col ml-2"
+                           [(ngModel)]="newProperty.valueDecimal[i]"
+                           [ngModelOptions]="{standalone: true}"
+                    >
+                    <!-- remove value button -->
+                    <button *ngIf="newProperty.valueQualifier != 'BINARY'"
+                            class="btn btn-xs btn-danger"
+                            (click)="removeValueFromProperty(i); $event.stopPropagation()">&times;
+                    </button>
 
-                <span *ngIf="propertyAdditionalValueIndices.indexOf(uuid)==propertyAdditionalValueIndices.length-1">
-                        <button class="btn btn-info btn-xs"
+                    <!-- add value button -->
+                    <span *ngIf="(newProperty.valueQualifier == 'STRING' && i == this.newProperty.value.length - 1) ||
+                                 (newProperty.valueQualifier == 'REAL_MEASURE' && i == this.newProperty.valueDecimal.length - 1)">
+                        <button class="btn btn-primary btn-xs"
                                 (click)="addValueToProperty()"
-                                [disabled]="buttonDisabled">
-                            <strong>+</strong>
-                        </button>
-                </span>
-                <div class="col">
-                    <div class="row justify-content-end ml-2">
-                    </div>
+                        ><strong>+</strong></button>
+                    </span>
+
+                    <!--<div class="col">
+                        <div class="row justify-content-end ml-2">
+                        </div>
+                    </div>-->
                 </div>
             </div>
 
             <!-- selected images or files -->
-            <div *ngIf="newProperty != null && newProperty.valueBinary.length > 0"
+            <div *ngIf="newProperty != null && newProperty.valueBinary.length > 0 && newProperty.valueQualifier == 'BINARY'"
                  class="offset-3 mt-3">
                 <ul class="list-group">
                     <li *ngFor="let afile of newProperty.valueBinary"

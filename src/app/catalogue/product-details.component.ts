@@ -25,6 +25,7 @@ export class ProductDetailsComponent implements OnInit{
      * and specific block at propertyBlocks[itemClassificationCode.value][1]
      * For others, the block is held at propertyBlocks[itemClassificationCode.listID][0]
      */
+    // TODO why has but not a list at the beginning. the hash is being transformed to a list anyway...
     propertyBlocks: any = {};
 
     ngOnInit(): void {
@@ -34,28 +35,24 @@ export class ProductDetailsComponent implements OnInit{
     refreshPropertyBlocks(): void {
         this.propertyBlocks = {};
 
-        // determine categories the item belongs to
-        for (let classification of this.catalogueLine.goodsItem.item.commodityClassification) {
-
-            if (classification.itemClassificationCode.listID == "eClass") {
-                this.createEClassPropertyBlocks(classification.itemClassificationCode);
-             }
-        }
-
         // put all properties into their blocks
         for (let property of this.catalogueLine.goodsItem.item.additionalItemProperty) {
 
             if (property.itemClassificationCode.listID === "eClass") {
+                if (this.propertyBlocks[property.itemClassificationCode.value] === undefined) {
+                    this.createEClassPropertyBlocks(property.itemClassificationCode);
+                }
+
                 if (ProductDetailsComponent.isBaseEClassProperty(property.id)) {
                     this.propertyBlocks[property.itemClassificationCode.value][0]
                         [this.PROPERTY_BLOCK_FIELD_PROPERTIES].push(property);
-                }
-                else {
+
+                } else {
                     this.propertyBlocks[property.itemClassificationCode.value][1]
                         [this.PROPERTY_BLOCK_FIELD_PROPERTIES].push(property);
                 }
-            }
-            else {
+
+            } else {
                 if (this.propertyBlocks[property.itemClassificationCode.listID] === undefined) {
                     this.createPropertyBlock(property.itemClassificationCode);
                 }
@@ -71,8 +68,9 @@ export class ProductDetailsComponent implements OnInit{
         this.propertyBlocks = [];
 
         // flatten the array of arrays and put it into propertyBlocks
-        for (let block of propertyBlocksValues)
+        for (let block of propertyBlocksValues) {
             this.propertyBlocks = this.propertyBlocks.concat(block);
+        }
     }
 
     private createEClassPropertyBlocks(code: Code) {

@@ -60,4 +60,8 @@ export class ProductPropertiesComponent {
         let modal = document.getElementById('myModal');
         modal.style.display = "none";
     }
+
+    trackByIndex(index: any, item: any) {
+        return index;
+    }
 }

@@ -18,11 +18,13 @@ import 'rxjs/Rx' ;
 import {Code} from "./model/publish/code";
 import {PublishService} from "./publish-and-aip.service";
 import {UserService} from "../user-mgmt/user.service";
+import {ItemPropertyDataSourcePipe} from "./item-property-data-source-pipe";
 
 const uploadModalityKey: string = "UploadModality";
 
 @Component({
     selector: 'product-publish',
+    providers: [ItemPropertyDataSourcePipe],
     templateUrl: './product-publish.component.html',
 })
 
@@ -42,15 +44,9 @@ export class ProductPublishComponent implements OnInit {
     newProperty: ItemProperty = ModelUtils.createAdditionalItemProperty(null, null);
 
     // indicates whether the navigation is done for the first time
-    publishFromScratch:boolean = true;
+    newPublishing:boolean = true;
     // boolean to indicate whether it's a new publish or an edit
     editMode: boolean = false;
-
-    // array keeping the values set for the custom property
-    propertyAdditionalValueIndices: Array<string> = [];
-    customPropertyValueCount: number = 1;
-    buttonDisabled: boolean = true;
-
 
     /*
      * state objects for feedback about the publish operation
@@ -73,20 +69,23 @@ export class ProductPublishComponent implements OnInit {
 
     ngOnInit() {
         this.route.queryParams.subscribe((params: Params) => {
-            this.publishFromScratch = params['fromScratch'] == "true";
+            this.newPublishing = params['newPublishing'] == "true";
             this.editMode = params['edit'] == "true";
             this.initView();
         });
     }
 
     private initView(): void {
+        this.catalogueService.setEditMode(true);
         this.publishStateService.resetData();
 
         // Following "if" block is executed when redirected by an "edit" button
         // "else" block is executed when redirected by "publish" tab
-        if (this.editMode && this.publishFromScratch) {
+        if (this.editMode) {
             // Initialization (draft item is already initialized while navigating from the catalogue views)
-            this.categoryService.resetData();
+            if(this.newPublishing) {
+                this.categoryService.resetData();
+            }
             this.catalogueLine = this.catalogueService.getDraftItem();
 
             // Get categories of item to edit
@@ -97,8 +96,11 @@ export class ProductPublishComponent implements OnInit {
 
             this.categoryService.getMultipleCategories(classificationCodes).then(
                 (categories: Category[]) => {
-                    for(let category of categories) {
-                        this.selectedCategories.push(category);
+                    // upon navigating from the catalogue view, classification codes are set as selected categories
+                    if(this.newPublishing) {
+                        for (let category of categories) {
+                            this.selectedCategories.push(category);
+                        }
                     }
 
                     if (this.selectedCategories != []) {
@@ -115,21 +117,19 @@ export class ProductPublishComponent implements OnInit {
                     this.restoreItemProperties();
                 });
 
-
-        // publishing from scratch
         } else {
             let userId = this.cookieService.get("user_id");
             this.userService.getUserParty(userId).then(party => {
 
-                // initiate the "new" goods item if it is not already initiated
-
-
-                // catalogue line is null when the
-                //if (this.catalogueLine == null || this.publishFromScratch == true) {
+                // new publishing is the first entry to the publishing page
+                if (this.newPublishing) {
                     this.catalogueLine = ModelUtils.createCatalogueLine(party)
                     this.catalogueService.setDraftItem(this.catalogueLine);
-                    //this.catalogueService.resetDraftItem(userId);
-                //}
+
+                    // this "else" is required when coming back from the catalogue selection page in editing
+                } else {
+                    this.catalogueLine = this.catalogueService.getDraftItem();
+                }
 
                 if (this.selectedCategories != []) {
                     for (let category of this.selectedCategories) {
@@ -182,10 +182,7 @@ export class ProductPublishComponent implements OnInit {
             }
         }
 
-        console.log("existing props: " + existingProperties);
-        console.log("new props: " + newProperties);
-
-        newProperties = newProperties.concat(customProperties);
+        newProperties = customProperties.concat(newProperties);
         this.catalogueLine.goodsItem.item.additionalItemProperty = newProperties;
     }
 
@@ -220,7 +217,7 @@ export class ProductPublishComponent implements OnInit {
     }
 
     private addCategoryOnClick(event: any): void {
-        this.router.navigate(['categorysearch'], {queryParams: {fromScratch: false, edit: this.editMode}});
+        this.router.navigate(['categorysearch'], {queryParams: {newPublishing: false, edit: this.editMode}});
     }
 
     private publishProduct(): void {
@@ -350,7 +347,7 @@ export class ProductPublishComponent implements OnInit {
             this.newProperty.valueQualifier = "STRING";
         } else if (event.target.value == "Number") {
             this.newProperty.valueQualifier = "REAL_MEASURE";
-        } else if (event.target.value == "Image" || event.target.valueQualifier == "File") {
+        } else if (event.target.value == "Image" || event.target.value == "File") {
             this.newProperty.valueQualifier = "BINARY";
         }
     }
@@ -477,17 +474,53 @@ export class ProductPublishComponent implements OnInit {
         }
     }
 
+    /**
+     * Adds the new property to the end of existing custom properties. Processes the value arrays of the property;
+     * keeps only the relevant array based on the value qualifier and removes the empty values
+     */
     private addCustomProperty(): void {
-        this.catalogueLine.goodsItem.item.additionalItemProperty.push(this.newProperty);
-        //this.productProperties.ngOnInit();
+        // remove empty/undefined values and keep only the the data array relevant to the value qualifier
+        if(this.newProperty.valueQualifier == "STRING") {
+            let filledValues:string[] = [];
+            for(let val of this.newProperty.value) {
+                if(val != "") {
+                    filledValues.push(val);
+                }
+            }
+
+            this.newProperty.value = filledValues;
+            this.newProperty.valueDecimal = [];
+            this.newProperty.valueBinary = [];
+
+        } else if(this.newProperty.valueQualifier == "REAL_MEASURE") {
+            let filledValues:number[] = [];
+            for(let val of this.newProperty.valueDecimal) {
+                if(val != undefined && val != null && val.toString() != "") {
+                    filledValues.push(val);
+                }
+            }
+
+            this.newProperty.valueDecimal = filledValues;
+            this.newProperty.value = [];
+            this.newProperty.valueBinary = [];
+
+        } else if(this.newProperty.valueQualifier == "BINARY") {
+            this.newProperty.value = [];
+            this.newProperty.valueDecimal = [];
+        }
+
+        // add the custom property to the end of existing custom properties
+        let i=0;
+        for(i=0; i<this.catalogueLine.goodsItem.item.additionalItemProperty.length; i++) {
+            if(this.catalogueLine.goodsItem.item.additionalItemProperty[i].itemClassificationCode.listID != "Custom") {
+                break;
+            }
+        }
+        this.catalogueLine.goodsItem.item.additionalItemProperty.splice(i, 0, this.newProperty);
 
         // reset the custom property view
         this.newProperty = ModelUtils.createAdditionalItemProperty(null, null);
         this.propertyValueType.nativeElement.selectedIndex = 0;
-
-        // reset the custom property value entities
-        this.propertyAdditionalValueIndices = [];
-        this.customPropertyValueCount = 1;
     }
 
     private downloadTemplate() {
@@ -525,44 +558,27 @@ export class ProductPublishComponent implements OnInit {
         }
     }
 
+    /**
+     * Used to establish the two-way binding on the additional values of custom properties
+     */
+    trackByIndex(index: any, item: any) {
+        return index;
+    }
+
     addValueToProperty() {
-
-        console.log(this.propertyAdditionalValueIndices.length);
-        let valueId = this.generateUUID();
-        this.propertyAdditionalValueIndices.push(valueId);
-        this.customPropertyValueCount++;
-        console.log(this.newProperty.value);
-
-        this.buttonDisabled = true;
-
+        if(this.newProperty.valueQualifier == 'STRING') {
+            this.newProperty.value.push('');
+        } else if(this.newProperty.valueQualifier == 'REAL_MEASURE') {
+            let newNumber:number;
+            this.newProperty.valueDecimal.push(newNumber);
+        }
     }
 
-    removeAddedValue(index: number) {
-        if(index==0){
-            this.newProperty.value.splice(index, 1);
-            this.propertyAdditionalValueIndices.splice(index, 1);
-            this.customPropertyValueCount--;
-
-        } else {
-            this.propertyAdditionalValueIndices.splice(index-1, 1);
-            this.newProperty.value.splice(index, 1);
-            this.customPropertyValueCount--;
-        }
-
-        this.buttonEnabledOrDisabled();
-    }
-
-    buttonEnabledOrDisabled() {
-        let n = 0;
-        for (; n < this.customPropertyValueCount; n++) {
-            if(!this.newProperty.value[n] || this.newProperty.value[n].length==0){
-                break;
-            }
-        }
-        if(n==this.customPropertyValueCount){
-            this.buttonDisabled = false;
-        } else {
-            this.buttonDisabled = true;
+    removeValueFromProperty(valueIndex:number): void {
+        if(this.newProperty.valueQualifier == 'STRING') {
+            this.newProperty.value.splice(valueIndex, 1)
+        } else if(this.newProperty.valueQualifier == 'REAL_MEASURE') {
+            this.newProperty.valueDecimal.splice(valueIndex, 1)
         }
     }
 
