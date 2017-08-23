@@ -11,7 +11,8 @@ import {Code} from "../model/publish/code";
 export class CategoryService {
     private headers = new Headers({'Accept': 'application/json'});
     private baseUrl = myGlobals.catalogue_endpoint + `/catalogue/category`;
-    private selectedCategories: Category[] = [];
+
+    selectedCategories: Category[] = [];
 
     constructor(private http: Http) {
     }
@@ -65,13 +66,9 @@ export class CategoryService {
             .catch(this.handleError);
     }
 
-    getSelectedCategories(): Category[] {
-        return this.selectedCategories;
-    }
-
     addSelectedCategory(category: Category): void {
         // Only add if category is not null and doesn't exist in selected categories
-        if (category != null && this.getSelectedCategories().findIndex(c => c.id == category.id) == -1) {
+        if (category != null && this.selectedCategories.findIndex(c => c.id == category.id) == -1) {
             this.selectedCategories.push(category);
         }
     }

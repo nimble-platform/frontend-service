@@ -24,6 +24,6 @@ export class CatalogueLineViewComponent {
     }
 
     deleteCatalogueLine():void {
-        this.catalogueService.deleteCatalogueLine(this.catalogueLine.id);
+        this.catalogueService.deleteCatalogueLine(this.catalogueService.catalogue.uuid, this.catalogueLine.id);
     }
 }

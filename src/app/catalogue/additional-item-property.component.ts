@@ -99,7 +99,7 @@ export class AdditionalItemPropertyComponent implements OnInit, OnDestroy {
      * deletes the custom property with the given name
      */
     deleteCustomProperty(inputVal: string) {
-        let draftCatalogueLine = this.catalogueService.getDraftItem();
+        let draftCatalogueLine = this.catalogueService.draftCatalogueLine;
         let indexCatalogue = draftCatalogueLine.goodsItem.item.additionalItemProperty.findIndex(p => p.name == inputVal);
         draftCatalogueLine.goodsItem.item.additionalItemProperty.splice(indexCatalogue, 1);
     }

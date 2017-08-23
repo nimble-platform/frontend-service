@@ -26,8 +26,7 @@ export class PropertyBlockPipe implements PipeTransform {
     }
 
     transform(itemProperties: ItemProperty[]): any {
-        console.log("in pipe");
-        this.selectedCategories = this.categoryService.getSelectedCategories();
+        this.selectedCategories = this.categoryService.selectedCategories;
         //this.itemProperties = itemProperties.goodsItem.item.additionalItemProperty;
         this.itemProperties = itemProperties;
         this.propertyBlocks = [];

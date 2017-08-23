@@ -18,11 +18,9 @@ export class ItemPropertyDataSourcePipe implements PipeTransform {
 
     transform(qualifier:string, itemProperty: ItemProperty): Array<any> {
         if (itemProperty.valueQualifier == "STRING") {
-            console.log("Returning value array");
             return itemProperty.value;
             //return [].concat(itemProperty.value);
         } else if (itemProperty.valueQualifier == "REAL_MEASURE") {
-            console.log("Returning value decimal array");
             return itemProperty.valueDecimal;
             //return [].concat(itemProperty.valueDecimal);
         } else if (itemProperty.valueQualifier == "BINARY") {

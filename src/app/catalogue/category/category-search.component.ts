@@ -6,6 +6,8 @@ import {Component, OnInit} from "@angular/core";
 import {ActivatedRoute, Params, Router} from "@angular/router";
 import {Category} from "../model/category/category";
 import {CategoryService} from "./category.service";
+import {CookieService} from "ng2-cookies";
+import {CatalogueService} from "../catalogue.service";
 
 @Component({
     selector: 'category-search',
@@ -23,7 +25,9 @@ export class CategorySearchComponent implements OnInit {
 
     constructor(private router: Router,
                 private route: ActivatedRoute,
-                private categoryService: CategoryService) {
+                private cookieService: CookieService,
+                private categoryService: CategoryService,
+                private catalogueService: CatalogueService) {
     }
 
     ngOnInit(): void {
@@ -64,16 +68,22 @@ export class CategorySearchComponent implements OnInit {
     private selectCategory(category: Category): void {
         // if no category is selected or if the selected category is already selected
         // navigate to the publishing page directly
-        if (category == null || this.categoryService.getSelectedCategories().findIndex(c => c.id == category.id) > -1) {
-            this.router.navigate(['publish'], {queryParams: {newPublishing: this.newPublishing}});
+        if (category == null || this.categoryService.selectedCategories.findIndex(c => c.id == category.id) > -1) {
+            this.navigateToPublishingPage();
             return;
         }
 
         this.categoryService.getCategory(category)
             .then(category => {
                 this.categoryService.addSelectedCategory(category);
-                this.router.navigate(['publish'], {queryParams: {newPublishing: this.newPublishing,
-                    edit: this.editCatalogueLine}})
+                this.navigateToPublishingPage();
             });
+    }
+
+    private navigateToPublishingPage():void {
+        let userId = this.cookieService.get("user_id");
+        this.catalogueService.getCatalogue(userId).then(catalogue => {
+            this.router.navigate(['publish'], {queryParams: {newPublishing: this.newPublishing, edit: this.editCatalogueLine}});
+        });
     }
 }

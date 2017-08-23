@@ -37,11 +37,11 @@ export class ProductPublishComponent implements OnInit {
      */
 
     // reference to the selected categories for the draft item
-    selectedCategories: Category[] = [];
+    private selectedCategories: Category[] = [];
     // reference to the draft item itself
-    catalogueLine: CatalogueLine = null;
+    private catalogueLine: CatalogueLine = null;
     // placeholder for the custom property
-    newProperty: ItemProperty = ModelUtils.createAdditionalItemProperty(null, null);
+    private newProperty: ItemProperty = ModelUtils.createAdditionalItemProperty(null, null);
 
     // indicates whether the navigation is done for the first time
     newPublishing:boolean = true;
@@ -64,14 +64,18 @@ export class ProductPublishComponent implements OnInit {
                 private router: Router,
                 private route: ActivatedRoute,
                 private cookieService: CookieService) {
-        this.selectedCategories = this.categoryService.getSelectedCategories();
+        this.selectedCategories = this.categoryService.selectedCategories;
     }
 
     ngOnInit() {
         this.route.queryParams.subscribe((params: Params) => {
             this.newPublishing = params['newPublishing'] == "true";
             this.editMode = params['edit'] == "true";
-            this.initView();
+            let userId = this.cookieService.get("user_id");
+            this.catalogueService.getCatalogue(userId).then(catalogue => {
+                this.initView();
+                }
+            );
         });
     }
 
@@ -86,7 +90,7 @@ export class ProductPublishComponent implements OnInit {
             if(this.newPublishing) {
                 this.categoryService.resetData();
             }
-            this.catalogueLine = this.catalogueService.getDraftItem();
+            this.catalogueLine = this.catalogueService.draftCatalogueLine;
 
             // Get categories of item to edit
             let classificationCodes: Code[] = [];
@@ -128,7 +132,7 @@ export class ProductPublishComponent implements OnInit {
 
                     // this "else" is required when coming back from the catalogue selection page in editing
                 } else {
-                    this.catalogueLine = this.catalogueService.getDraftItem();
+                    this.catalogueLine = this.catalogueService.draftCatalogueLine;
                 }
 
                 if (this.selectedCategories != []) {
@@ -225,29 +229,24 @@ export class ProductPublishComponent implements OnInit {
         this.callback = false;
         this.submitted = true;
 
-        let userId = this.cookieService.get("user_id");
-        this.catalogueService.getCatalogue(userId).then(catalogue => {
+        // remove unused properties from catalogueLine
+        let splicedCatalogueLine: CatalogueLine = this.removeEmptyProperties(this.catalogueLine);
+        // add new line to the end of catalogue
+        this.catalogueService.catalogue.catalogueLine.push(splicedCatalogueLine);
 
-                // remove unused properties from catalogueLine
-                let splicedCatalogueLine: CatalogueLine = this.removeEmptyProperties(this.catalogueLine);
-                // add new line to the end of catalogue
-                catalogue.catalogueLine.push(splicedCatalogueLine);
+        // TODO: merge stuff is demo-specific, handle it properly
+        //this.mergeMultipleValuesIntoSingleField(catalogue);
 
-                // TODO: merge stuff is demo-specific, handle it properly
-                //this.mergeMultipleValuesIntoSingleField(catalogue);
+        if (this.catalogueService.catalogue.uuid == null) {
+            this.catalogueService.postCatalogue(this.catalogueService.catalogue)
+                .then(() => this.onSuccessfulPublish())
+                .catch(() => this.onFailedPublish());
 
-                if (catalogue.uuid == null) {
-                    this.catalogueService.postCatalogue(catalogue)
-                        .then(() => this.onSuccessfulPublish())
-                        .catch(() => this.onFailedPublish());
-
-                } else {
-                    this.catalogueService.putCatalogue(catalogue)
-                        .then(() => this.onSuccessfulPublish())
-                        .catch(() => this.onFailedPublish())
-                }
-            }
-        );
+        } else {
+            this.catalogueService.putCatalogue(this.catalogueService.catalogue)
+                .then(() => this.onSuccessfulPublish())
+                .catch(() => this.onFailedPublish())
+        }
     }
 
     private editProduct(): void {
@@ -256,31 +255,26 @@ export class ProductPublishComponent implements OnInit {
         this.callback = false;
         this.submitted = true;
 
-        let userId = this.cookieService.get("user_id");
-        this.catalogueService.getCatalogue(userId).then(catalogue => {
+        // remove unused properties from catalogueLine
+        let splicedCatalogueLine: CatalogueLine = this.removeEmptyProperties(this.catalogueLine);
 
-                // remove unused properties from catalogueLine
-                let splicedCatalogueLine: CatalogueLine = this.removeEmptyProperties(this.catalogueLine);
+        // Replace original line in the catalogue with the edited version
+        let indexOfOriginalLine = this.catalogueService.catalogue.catalogueLine.indexOf(this.catalogueService.originalCatalogueLine);
+        this.catalogueService.catalogue.catalogueLine[indexOfOriginalLine] = splicedCatalogueLine;
 
-                // Replace original line in the catalogue with the edited version
-                let indexOfOriginalLine = catalogue.catalogueLine.indexOf(this.catalogueService.getOriginalItem());
-                catalogue.catalogueLine[indexOfOriginalLine] = splicedCatalogueLine;
+        // TODO: merge stuff is demo-specific, handle it properly
+        //this.mergeMultipleValuesIntoSingleField(catalogue);
 
-                // TODO: merge stuff is demo-specific, handle it properly
-                //this.mergeMultipleValuesIntoSingleField(catalogue);
+        if (this.catalogueService.catalogue.uuid == null) {
+            this.catalogueService.postCatalogue(this.catalogueService.catalogue)
+                .then(() => this.onSuccessfulPublish())
+                .catch(() => this.onFailedPublish());
 
-                if (catalogue.uuid == null) {
-                    this.catalogueService.postCatalogue(catalogue)
-                        .then(() => this.onSuccessfulPublish())
-                        .catch(() => this.onFailedPublish());
-
-                } else {
-                    this.catalogueService.putCatalogue(catalogue)
-                        .then(() => this.onSuccessfulPublish())
-                        .catch(() => this.onFailedPublish())
-                }
-            }
-        );
+        } else {
+            this.catalogueService.putCatalogue(this.catalogueService.catalogue)
+                .then(() => this.onSuccessfulPublish())
+                .catch(() => this.onFailedPublish())
+        }
     }
 
     // Removes empty properties from catalogueLines about to be sent
@@ -549,7 +543,7 @@ export class ProductPublishComponent implements OnInit {
             reader.onload = function (e) {
                 // reset the target value so that the same file could be chosen more than once
                 event.target.value = "";
-                catalogueService.uploadTemplate2(userId, file).then(res => {
+                catalogueService.uploadTemplate(userId, file).then(res => {
                         console.log("upload result: " + res);
                     },
                     error => console.log("Error downloading the file."));
