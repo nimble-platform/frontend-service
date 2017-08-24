@@ -1,4 +1,4 @@
-import {AdditionalItemProperty} from "./publish/additional-item-property";
+import {ItemProperty} from "./publish/item-property";
 import {BinaryObject} from "./publish/binary-object";
 import {CommodityClassification} from "./publish/commodity-classification";
 import {Code} from "./publish/code";
@@ -16,27 +16,51 @@ import {CatalogueLine} from "./publish/catalogue-line";
  * Created by suat on 05-Jul-17.
  */
 export class ModelUtils {
-     public static createAdditionalItemProperty(property:Property, itemPropertyGroupStr:string):AdditionalItemProperty {
-        let aip:AdditionalItemProperty;
-        if(property == null) {
-            let ipg: ItemPropertyGroup = new ItemPropertyGroup(itemPropertyGroupStr);
-            aip = new AdditionalItemProperty(this.generateUUID(), "", [""], new Array<BinaryObject>(), "", "", "STRING", ipg, null);
+    /**
+     * Create a property based on the given property and category parameters.
+     *
+     * If the category is not null then a corresponding code is created and used in the item property to be returned. The
+     * code refers to the category in the corresponding taxonomy is created. If the category is null, the code refers to
+     * the "Custom" property.
+     *
+     * If the property is not null; unit, value qualifier, id and name is used from the given property. Fields keeping
+     * actual data are still set to empty values.
+     *
+     * @param property
+     * @param category
+     * @returns {ItemProperty}
+     */
+    public static createAdditionalItemProperty(property: Property, category: Category): ItemProperty {
+        let taxonomyId: string;
+        let code: Code;
 
-        } else {
+        if (category !== null) {
+            code = new Code(category.id, category.preferredName, category.taxonomyId, null);
+        }
+        else {
+            code = new Code(null, null, "Custom", null);
+        }
+
+        let aip: ItemProperty;
+        if (property == null) {
+            aip = new ItemProperty(this.generateUUID(), "", [], [], new Array<BinaryObject>(), "", "", "STRING", code, "", null);
+        }
+        else {
             let unit = "";
             if (property.unit != null) {
                 unit = property.unit.shortName;
             }
             let valueQualifier = property.dataType;
-            let itemPropertyGroup: ItemPropertyGroup = new ItemPropertyGroup(itemPropertyGroupStr);
-            aip = new AdditionalItemProperty(property.id, property.preferredName, [''], new Array<BinaryObject>(), "", unit, valueQualifier, itemPropertyGroup, null);
+
+            aip = new ItemProperty(property.id, property.preferredName, [''], [0], new Array<BinaryObject>(), "", unit,
+                valueQualifier, code, "", null);
         }
         return aip;
     }
 
     public static createCommodityClassification(category: Category): CommodityClassification {
         let code: Code = new Code(category.id, category.preferredName, category.taxonomyId, null);
-        let commodityClassification = new CommodityClassification(code);
+        let commodityClassification = new CommodityClassification(code, null, null, "", "");
         return commodityClassification;
     }
 
@@ -54,24 +78,25 @@ export class ModelUtils {
         // price
         let price: Price = new Price(amountObj);
         // item location quantity
-        let ilq:ItemLocationQuantity = new ItemLocationQuantity(price);
+        let ilq: ItemLocationQuantity = new ItemLocationQuantity(price, null, null, []);
         return ilq;
     }
 
     public static createCatalogueLine(providerParty: Party,): CatalogueLine {
         // create additional item properties
-        let additionalItemProperties = new Array<AdditionalItemProperty>();
+        let additionalItemProperties = new Array<ItemProperty>();
 
         // create item
-        let item = new Item("", "", additionalItemProperties, providerParty, [], [], "");
+        let item = new Item("", "", false, additionalItemProperties, providerParty, null, null, [], [], [], "", [], "");
 
         // create goods item
-        let goodsItem = new GoodsItem(this.generateUUID(), item);
+        let uuid:string = this.generateUUID();
+        let goodsItem = new GoodsItem(uuid, item, null);
 
         // create required item location quantity
         let ilq = this.createItemLocationQuantity("");
 
-        let catalogueLine = new CatalogueLine(null, null, goodsItem, ilq);
+        let catalogueLine = new CatalogueLine(uuid, null, null, null, [], ilq, goodsItem);
         return catalogueLine;
     }
 

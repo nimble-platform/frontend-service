@@ -5,12 +5,14 @@ import {Injectable} from '@angular/core';
 import {Http, Headers} from '@angular/http';
 import {Category} from "../model/category/category";
 import * as myGlobals from '../../globals';
+import {Code} from "../model/publish/code";
 
 @Injectable()
 export class CategoryService {
     private headers = new Headers({'Accept': 'application/json'});
     private baseUrl = myGlobals.catalogue_endpoint + `/catalogue/category`;
-    private selectedCategories: Category[] = [];
+
+    selectedCategories: Category[] = [];
 
     constructor(private http: Http) {
     }
@@ -37,16 +39,42 @@ export class CategoryService {
             .catch(this.handleError);
     }
 
-    getSelectedCategories(): Category[] {
-        return this.selectedCategories;
+    getCategoryByCode(code: Code): Promise<Category> {
+        const url = `${this.baseUrl}/` + code.listID + "/" + encodeURIComponent(code.value);
+        return this.http
+            .get(url, {headers: this.headers})
+            .toPromise()
+            .then(res => {
+                return res.json() as Category;
+            })
+            .catch(this.handleError);
+    }
+
+    getMultipleCategories(codes: Code[]): Promise<Category[]> {
+        let url = `${this.baseUrl}?ids=`;
+
+        for (let code of codes) {
+            url += code.listID + encodeURIComponent("," + code.value + ",");
+        }
+
+        return this.http
+            .get(url, {headers: this.headers})
+            .toPromise()
+            .then(res => {
+                return res.json() as Category;
+            })
+            .catch(this.handleError);
     }
 
     addSelectedCategory(category: Category): void {
-        this.selectedCategories.push(category);
+        // Only add if category is not null and doesn't exist in selected categories
+        if (category != null && this.selectedCategories.findIndex(c => c.id == category.id) == -1) {
+            this.selectedCategories.push(category);
+        }
     }
 
     resetSelectedCategories():void {
-        this.selectedCategories = [];
+        this.selectedCategories.length = 0;
     }
 
     resetData():void {

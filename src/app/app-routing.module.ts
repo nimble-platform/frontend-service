@@ -9,6 +9,7 @@ import {ProductPublishComponent} from './catalogue/product-publish.component';
 import {SimpleSearchComponent} from './simple-search/simple-search.component';
 import {SimpleSearchDetailsComponent} from './simple-search/simple-search-details.component';
 import {ExplorativeSearchComponent} from './explorative-search/explorative-search.component';
+import {CatalogueViewComponent} from './catalogue/catalogue-view.component';
 import {CompanySettingsComponent} from './user-mgmt/company-settings.component';
 import {BPsComponent} from './bpe/bps.component';
 import {BPDetailComponent} from './bpe/bp-detail.component';
@@ -25,6 +26,7 @@ const routes: Routes = [
     {path: 'simple-search', component: SimpleSearchComponent},
     {path: 'simple-search-details/:id', component: SimpleSearchDetailsComponent},
     {path: 'explore-search', component: ExplorativeSearchComponent},
+    {path: 'catalogue', component: CatalogueViewComponent},
     {path: 'company-settings', component: CompanySettingsComponent},
     {path: 'detail/:processID', component: BPDetailComponent},
     {path: 'create', component: BPDetailComponent},

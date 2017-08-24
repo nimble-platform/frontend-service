@@ -10,26 +10,34 @@ import {UserService} from "../user-mgmt/user.service";
 import {CatalogueLine} from "./model/publish/catalogue-line";
 import {Category} from "./model/category/category";
 import {Observable} from "rxjs/Observable";
-import {Party} from "./model/publish/party";
+import {ModelUtils} from "./model/model-utils";
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 
 @Injectable()
 export class CatalogueService {
     private headers = new Headers({'Content-Type': 'application/json', 'Accept': 'application/json'});
     private baseUrl = myGlobals.catalogue_endpoint;
 
-    private catalogue: Catalogue;
-    private draftCatalogueLine: CatalogueLine;
+    catalogue: Catalogue;
+    draftCatalogueLine: CatalogueLine;
+    // To save a reference to the original version of the item being edited
+    originalCatalogueLine: CatalogueLine;
+    // edit mode switch (observable as it is provided by parent to its grandchild components)
+    private editMode = new BehaviorSubject<boolean>(false);
+    _editMode$ = this.editMode.asObservable();
 
     constructor(private http: Http,
                 private userService: UserService) {
     }
 
-    getDraftItem(): CatalogueLine {
-        return this.draftCatalogueLine;
+    resetDraftItem(userId: string):void {
+        this.userService.getUserParty(userId).then(party => {
+            this.draftCatalogueLine = ModelUtils.createCatalogueLine(party);
+        });
     }
 
-    setDraftItem(draftCatalogueLine: CatalogueLine): void {
-        this.draftCatalogueLine = draftCatalogueLine;
+    setDraftItem(catalogueLine: CatalogueLine): void {
+        this.draftCatalogueLine = catalogueLine;
     }
 
     getCatalogue(userId: string): Promise<Catalogue> {
@@ -48,7 +56,7 @@ export class CatalogueService {
                     .then(res => {
                         if (res.status == 204) {
                             // no default catalogue yet, create new one
-                            this.catalogue = new Catalogue("default", null, party, []);
+                            this.catalogue = new Catalogue("default", null, party, "", "", []);
                         } else {
                             this.catalogue = res.json() as Catalogue;
                         }
@@ -80,15 +88,6 @@ export class CatalogueService {
             .catch(this.handleError);
     }
 
-    publishProduct(goodsItem: GoodsItem): Promise<any> {
-        const url = this.baseUrl + `/catalogue/product`;
-        return this.http
-            .post(url, JSON.stringify(goodsItem), {headers: this.headers})
-            .toPromise()
-            .then(res => res.json())
-            .catch(this.handleError);
-    }
-
     downloadTemplate(category: Category): Observable<any> {
         const url = this.baseUrl + `/catalogue/template?taxonomyId=${category.taxonomyId}&categoryId=${encodeURIComponent(category.id)}`;
         let downloadTemplateHeaders = new Headers({'Accept': 'application/octet-stream'});
@@ -117,34 +116,9 @@ export class CatalogueService {
         });
     }
 
-    uploadTemplate(companyId: string, companyName: String, template: File): Observable<any> {
-
-        const url = this.baseUrl + `/catalogue/template/upload?companyId=${companyId}&companyName=${companyName}`;
-        return Observable.create(observer => {
-            let formData: FormData = new FormData();
-            formData.append("file", template, template.name);
-
-            let xhr: XMLHttpRequest = new XMLHttpRequest();
-            xhr.onreadystatechange = () => {
-                if (xhr.readyState === 4) {
-                    if (xhr.status === 200) {
-                        //observer.next(JSON.parse(xhr.response));
-                        observer.complete();
-                    } else {
-                        observer.error(xhr.response);
-                    }
-                }
-            };
-
-            xhr.open('POST', url, true);
-            xhr.send(formData);
-
-        });
-    }
-
-    uploadTemplate2(userId: string, template: File): Promise<any> {
+    uploadTemplate(userId: string, template: File): Promise<any> {
         return this.userService.getUserParty(userId).then(party => {
-            const url = this.baseUrl + `/catalogue/template/upload?companyId=${party.id}&companyName=${party.partyName[0].name}`;
+            const url = this.baseUrl + `/catalogue/template/upload?companyId=${party.id}&companyName=${party.name}`;
             return new Promise<any>((resolve, reject) => {
                 let formData: FormData = new FormData();
                 formData.append("file", template, template.name);
@@ -167,6 +141,18 @@ export class CatalogueService {
         });
     }
 
+    deleteCatalogueLine(catalogueId:string, lineId:string):Promise<any> {
+        const url = this.baseUrl + `/${catalogueId}/catalogueline/${lineId}`;
+        return this.http
+            .delete(url)
+            .toPromise()
+            .then(res => {
+                let deletedLineIndex = this.catalogue.catalogueLine.findIndex(line => line.id == lineId);
+                this.catalogue.catalogueLine.splice(deletedLineIndex, 1)
+            })
+            .catch(this.handleError);
+    }
+
     resetData(): void {
         this.catalogue = null;
         this.draftCatalogueLine = null;
@@ -174,5 +160,17 @@ export class CatalogueService {
 
     private handleError(error: any): Promise<any> {
         return Promise.reject(error.message || error);
+    }
+
+    // Editing functionality
+    editCatalogueLine(catalogueLine: CatalogueLine) {
+        // Deep copy to guard original catalogueLine model
+        this.draftCatalogueLine = JSON.parse(JSON.stringify(catalogueLine));
+        // save reference to original
+        this.originalCatalogueLine = catalogueLine;
+    }
+
+    setEditMode(editMode:boolean):void {
+        this.editMode.next(editMode);
     }
 }

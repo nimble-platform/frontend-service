@@ -25,7 +25,7 @@
 				</a>
 			</li>
 			<li class="nav-item" routerLinkActive="active">
-				<a class="nav-link" [routerLink]="['/categorysearch']" [queryParams]="{fromScratch: true}">
+				<a class="nav-link" [routerLink]="['/categorysearch']" [queryParams]="{newPublishing: true, edit: false}">
 					<img src="assets/upload_white.png" class="inline-icon"/> <span i18n>Publish</span>
 				</a>
 			</li>
@@ -56,6 +56,9 @@
 				<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuUser">
 					<a class="dropdown-item" routerLink="/company-settings" routerLinkActive="active">
 						<img src="assets/gear_black.png" class="inline-icon"/> Account Settings
+					</a>
+					<a class="dropdown-item" routerLink="/catalogue">
+						<img src="assets/list_black.png" class="inline-icon"/> <span i18n>Catalogue</span>
 					</a>
 					<a class="dropdown-item" routerLink="/logout">
 						<img src="assets/logout_black.png" class="inline-icon"/> <span i18n>Logout</span>

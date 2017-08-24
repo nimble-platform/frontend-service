@@ -1,15 +1,76 @@
-<div *ngIf="stringValue" class="input-group form-group">
-    <label class="col-3 control-label">{{additionalItemProperty.name}}</label>
-    <!--<input type="text" class="form-control" [value]="additionalItemProperty.value[0]">-->
-    <input type="text" class="form-control" [(ngModel)]="additionalItemProperty.value[0]">
-</div>
-<div *ngIf="binaryValue" class="input-group form-group">
+<!-- ngFor belows presents the string or decimal values of the item property -->
+<ng-container *ngIf="additionalItemProperty.valueQualifier == 'STRING' || additionalItemProperty.valueQualifier == 'REAL_MEASURE'">
+    <div *ngFor="let value of additionalItemProperty.valueQualifier | itemPropertyDataSourcePipe : additionalItemProperty; let i = index; trackBy : trackByIndex" class="input-group form-group">
+        <!-- name of the property is shown once near the first value associated to it -->
+        <div *ngIf="i == 0"
+             class="col-3 control-label"
+             style="cursor: pointer"
+             (click)="openPropertyDetails()">
+            {{additionalItemProperty.name}}&#9432;
+        </div>
+
+        <!-- string value associated to the property -->
+        <input *ngIf="additionalItemProperty.valueQualifier == 'STRING'"
+               type="text" class="form-control"
+               [ngClass]="{'offset-3' : i > 0} "
+               [(ngModel)]="additionalItemProperty.value[i]"
+               [readonly]="!editMode">
+
+        <!-- decimal value associated to the property -->
+        <input *ngIf="additionalItemProperty.valueQualifier == 'REAL_MEASURE'"
+               type="text" class="form-control"
+               [ngClass]="{'offset-3' : i > 0} "
+               [(ngModel)]="additionalItemProperty.valueDecimal[i]"
+               [readonly]="!editMode">
+
+        <!-- remove value button -->
+        <span *ngIf="editMode &&
+                       (additionalItemProperty.itemClassificationCode.listID != 'Custom' &&
+                       ((additionalItemProperty.valueQualifier == 'STRING' &&additionalItemProperty.value.length > 1) ||
+                       (additionalItemProperty.valueQualifier == 'REAL_MEASURE' &&additionalItemProperty.valueDecimal.length > 1))||
+                       additionalItemProperty.itemClassificationCode.listID == 'Custom')">
+            <button class="btn btn-xs btn-danger"
+                    (click)="removeCustomValue(i); $event.stopPropagation()">&times;
+            </button>
+        </span>
+
+        <!-- add value button -->
+        <span *ngIf="editMode && ((additionalItemProperty.valueQualifier == 'STRING' && i == this.additionalItemProperty.value.length - 1) ||
+                      (additionalItemProperty.valueQualifier == 'REAL_MEASURE' && i == this.additionalItemProperty.valueDecimal.length - 1))">
+            <button class="btn btn-primary btn-xs"
+                    (click)="addValueToProperty(additionalItemProperty.name)"
+            ><strong>+</strong></button>
+        </span>
+    </div>
+</ng-container>
+
+<!-- renders the binary content -->
+<div *ngIf="additionalItemProperty.valueQualifier=='BINARY'" class="input-group form-group">
     <label class="col-3 control-label">{{additionalItemProperty.name}}</label>
     <div style="display: inline-block">
-        <img *ngFor="let image of additionalItemProperty.embeddedDocumentBinaryObject"
-             class="pr-2"
-             src="data:{{image.mimeCode}};base64,{{image.value}}"
-             height="100"
-             width="100"/>
+        <div *ngFor="let file of additionalItemProperty.valueBinary"
+             style="display: inline-block">
+
+            <div *ngIf="file.mimeCode.split('/')[0]=='image'">
+                <img class="pr-2"
+                     src="data:{{file.mimeCode}};base64,{{file.value}}"
+                     height="100"
+                     width="100"
+                />
+
+                <span style="display:inline-block; width: 10px;"></span>
+                {{file.objectMetadata}}
+                <span style="display:inline-block; width: 30px;"></span>
+            </div>
+
+            <div *ngIf="file.mimeCode.split('/')[0]!='image'">
+                {{file.fileName}}
+                <span style="display:inline-block; width: 20px;"></span>
+            </div>
+        </div>
+
+        <span *ngIf="editMode"><button class="btn btn-xs btn-danger"
+                      (click)="deleteCustomProperty(additionalItemProperty.name); $event.stopPropagation()"
+        >&times;</button></span>
     </div>
 </div>

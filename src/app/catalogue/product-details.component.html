@@ -1,0 +1,16 @@
+<div *ngFor="let propertyBlock of propertyBlocks">
+    <p>
+        <button type="button" class="btn btn-outline-primary"
+                (click)="propertyBlock.isCollapsed = !propertyBlock.isCollapsed"
+                [attr.aria-expanded]="!propertyBlock.isCollapsed" aria-controls="propertyBlock">
+            {{propertyBlock.name}}
+        </button>
+    </p>
+
+    <div id="propertyBlock" [ngbCollapse]="propertyBlock.isCollapsed">
+        <additional-item-property *ngFor="let property of propertyBlock[PROPERTY_BLOCK_FIELD_PROPERTIES]; trackBy : trackByIndex"
+                                  [additionalItemProperty]="property">
+        </additional-item-property>
+
+    </div>
+</div>

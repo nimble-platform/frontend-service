@@ -1,46 +1,46 @@
 body {
-	margin: 0.6rem 0;
-	background-color: #fefefe;
+    margin: 0.6rem 0;
+    background-color: #fefefe;
 }
 
 button {
-	cursor: pointer;
+    cursor: pointer;
 }
 
 textarea {
-	min-height: 2.375rem;
+    min-height: 2.375rem;
 }
 
 textarea {
-	min-height: 2.375rem;
+    min-height: 2.375rem;
 }
 
 #loading-icon {
-	position: fixed;
-	left: 50%;
-	top: 50%;
-	margin-left: -100px;
-	margin-top: -100px;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    margin-left: -100px;
+    margin-top: -100px;
 }
 
 .nimble-bg {
-	background-color: #a21c26;
+    background-color: #a21c26;
 }
 
 .space-before {
-	margin-top: 1rem;
+    margin-top: 1rem;
 }
 
 .space-after {
-	margin-bottom: 1rem;
+    margin-bottom: 1rem;
 }
 
 .space-left {
-	margin-left: 0.5rem;
+    margin-left: 0.5rem;
 }
 
 .space-right {
-	margin-right: 0.5rem;
+    margin-right: 0.5rem;
 }
 
 .input-group-addon {
@@ -49,92 +49,117 @@ textarea {
 	word-wrap: break-word;
 }
 
-.ng-valid[required], .ng-valid.required  {
-	border-right: 5px solid #42A948;
+.ng-valid[required], .ng-valid.required {
+    border-right: 5px solid #42A948;
 }
 
-.ng-invalid:not(form)  {
-	border-right: 5px solid #a94442;
+.ng-invalid:not(form) {
+    border-right: 5px solid #a94442;
 }
 
 .align-center {
-	text-align: center;
+    text-align: center;
 }
 
 .inline-icon {
-	max-height: 1rem;
-	margin-top: -0.2rem;
-	margin-right: 0.2rem;
+    max-height: 1rem;
+    margin-top: -0.2rem;
+    margin-right: 0.2rem;
 }
 
 .btn-img {
-	max-height: 4rem;
-	max-width: 100%;
-	margin-right: 0.2rem;
-	padding: 0.2rem;
-	background-color: white;
-	border: 1px solid rgba(0, 0, 0, 0.15);
+    max-height: 4rem;
+    max-width: 100%;
+    margin-right: 0.2rem;
+    padding: 0.2rem;
+    background-color: white;
+    border: 1px solid rgba(0, 0, 0, 0.15);
 }
 
 .img-max {
-	max-width: 100%;
-	max-height: 30rem;
+    max-width: 100%;
+    max-height: 30rem;
 }
 
 .img-sm {
-	max-height: 2rem;
-	max-width: 100%;
-	margin-top: -0.2rem;
+    max-height: 2rem;
+    max-width: 100%;
+    margin-top: -0.2rem;
 }
 
 .bordered {
-	border: 1px solid rgba(0, 0, 0, 0.15) !important;
-	border-radius: 0.25rem !important;
-	padding: 0.5rem !important;
+    border: 1px solid rgba(0, 0, 0, 0.15) !important;
+    border-radius: 0.25rem !important;
+    padding: 0.5rem !important;
 }
 
 .clickable {
-	cursor: pointer;
-	text-decoration: underline;
+    cursor: pointer;
+    text-decoration: underline;
 }
 
 .pointer {
-	cursor: pointer;
+    cursor: pointer;
 }
 
 .align-left {
-	text-align: left;
+    text-align: left;
 }
 
 .align-right {
-	text-align: right;
+    text-align: right;
 }
 
 .align-center {
-	text-align: center;
+    text-align: center;
 }
 
 .navbar-inverse .navbar-nav .nav-link {
-	color: white !important;
-	opacity: 0.5 !important;
+    color: white !important;
+    opacity: 0.5 !important;
 }
 
 .navbar-inverse .navbar-nav .active > .nav-link, .navbar-inverse .navbar-nav .nav-link.active, .navbar-inverse .navbar-nav .nav-link.open, .navbar-inverse .navbar-nav .open > .nav-link {
-	opacity: 1 !important;
+    opacity: 1 !important;
 }
 
 ngb-pagination nav .pagination {
-	margin-bottom: 0 !important;
-	-moz-box-pack: end;
+    margin-bottom: 0 !important;
+    -moz-box-pack: end;
     justify-content: flex-end;
 }
 
 ngb-pagination nav .pagination .page-item .page-link {
-	color: #a21c26;
+    color: #a21c26;
 }
 
 ngb-pagination nav .pagination .page-item.active .page-link {
-	background-color: #a21c26;
-	border-color: #a21c26;
-	color: #fff;
+    background-color: #a21c26;
+    border-color: #a21c26;
+    color: #fff;
+}
+
+/* Bootstrap well */
+.well {
+    min-height: 20px;
+    padding: 19px;
+    margin-bottom: 20px;
+    background-color: #f5f5f5;
+    border: 1px solid #e3e3e3;
+    border-radius: 4px;
+}
+
+.well blockquote {
+    border-color: #ddd;
+    border-color: rgba(0, 0, 0, .15)
+}
+
+.well-lg {
+    padding: 24px;
+    border-radius: 6px
+}
+
+.well-sm {
+    padding: 9px;
+    border-radius: 3px
 }

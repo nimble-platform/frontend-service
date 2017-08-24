@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+
+<body>
+
+<div class="container well">
+
+    <div class="row">
+        <div class="col-sm-7"><h4><u>Product Overview</u></h4></div>
+        <div class="col-sm-3">Seller's ID: {{catalogueLine.goodsItem.item.sellersItemIdentification}}</div>
+        <div class="col-sm-1"><button type="button" class="btn btn-success" (click)="deleteCatalogueLine()">Delete</button></div>
+        <div class="col-sm-1"><button type="button" class="btn btn-success" (click)="redirectToEdit()">Edit</button></div>
+    </div>
+
+    <div class="row space-after">
+        <div class="col-sm-3"><strong>Item name:</strong> {{catalogueLine.goodsItem.item.name}}</div>
+        <div class="col-sm-3"><strong>Dimensions:</strong> {{catalogueLine.goodsItem.item.dimension}}</div>
+        <div class="col-sm-3"><strong>Certificates:</strong> {{catalogueLine.goodsItem.item.certificate}}</div>
+        <div class="col-sm-3"><strong *ngIf="catalogueLine.goodsItem.item.freeOfChargeIndicator">Free of charge!</strong></div>
+    </div>
+
+    <p><strong>Description:</strong> {{catalogueLine.goodsItem.item.description}}</p>
+
+    <ul class="nav nav-tabs">
+        <li class="nav-item pointer">
+            <a
+               [ngClass]="{'nav-link': true, active: selectedTab === 'Product Details'}"
+               (click)="selectedTab = 'Product Details'"
+               i18n
+            >Product Details</a>
+        </li>
+
+        <li class="nav-item pointer">
+            <a
+               [ngClass]="{'nav-link': true, active: selectedTab === 'Trading Details'}"
+               (click)="selectedTab = 'Trading Details'"
+               i18n
+            >Trading Details</a>
+        </li>
+    </ul>
+
+    <product-details *ngIf="selectedTab === 'Product Details'" [catalogueLine]="catalogueLine"></product-details>
+
+    <trading-details *ngIf="selectedTab === 'Trading Details'" [catalogueLine]="catalogueLine"></trading-details>
+</div>
+
+</body>
+</html>

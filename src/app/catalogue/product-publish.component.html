@@ -20,14 +20,20 @@
 <!-- Single product publishing -->
 <div *ngIf="catalogueLine && singleItemUpload" class="mt-3">
 
-    <!-- Top row: selected category, feedback alerts, etc. -->
+    <!-- Top row: selected category, feedback messages, etc. -->
     <div class="d-flex justify-content-end">
+
         <div class="mr-auto">
-            <h6 *ngIf="catalogueLine.goodsItem.item.commodityClassification.length > 0" style="display: inline-block;"
+            <!-- category related elements -->
+            <h6 *ngIf="catalogueLine.goodsItem.item.commodityClassification.length > 0"
+                style="display: inline-block;"
                 i18n>Selected category:</h6>
             <button *ngFor="let selectedCategory of selectedCategories"
                     class="btn btn-info ml-3">
                 {{selectedCategory.preferredName}}
+                <span>
+                    <i (click)="categoryCancel(selectedCategory.id)">&times;</i>
+                </span>
             </button>
             <div (click)="addCategoryOnClick()"
                  style="display: inline-block;">
@@ -36,6 +42,8 @@
                 <span *ngIf="catalogueLine.goodsItem.item.commodityClassification.length > 0" i18n>Add another product category</span>
             </div>
         </div>
+
+        <!-- feedbacks elements for publish and edit operations -->
         <div [hidden]="error_detc || callback || !submitted" class="pr-3">
             <img src="assets/form_loader.gif"/>
         </div>
@@ -59,20 +67,28 @@
                 </div>
             </div>
         </div>
-        <button class="btn btn-success"
+
+        <!-- Publish / edit buttons -->
+        <button *ngIf="!editMode"
+                class="btn btn-success"
                 (click)="publishProduct()">
             <span i18n>Publish Product</span>
         </button>
+        <button *ngIf="editMode"
+                class="btn btn-success btn-xs"
+                (click)="editProduct()">
+            <span i18n>Save Changes</span>
+        </button>
     </div>
+
     <hr>
+
     <!-- Form header row -->
     <h4><u>Product Details</u></h4>
-    <!--<div class="row mt-3">
-        <h5 class="col-3"><label i18n>Property Name</label></h5>
-        <h5 class="col-3"><label i18n>Property Value</label></h5>
-    </div>-->
 
     <form class="space-before">
+
+        <!-- product properties -->
         <product-properties
                 #productProperties
                 [catalogueLine]="catalogueLine"
@@ -80,23 +96,51 @@
         >
         </product-properties>
 
-        <!-- new property -->
+        <!-- new property block -->
         <hr class="mt-5">
         <div class="form-group">
             <h6 i18n>Add new property</h6>
             <form #customPropertyForm="ngForm" class="d-flex">
+
+                <!-- property name -->
                 <input name="propertyName"
                        class="form-control col-3"
                        [(ngModel)]="newProperty.name"
                        placeholder="Property Name"
                        required/>
-                <input *ngIf="propertyValueType.options.selectedIndex == 0 || propertyValueType.options.selectedIndex == 1"
+
+                <!-- property value -->
+                <input *ngIf="propertyValueType.options.selectedIndex == 0"
                        name="propertyValue"
                        class="form-control col ml-2"
                        [(ngModel)]="newProperty.value[0]"
                        placeholder="Property Value"
                        required/>
+                <input *ngIf="propertyValueType.options.selectedIndex == 1"
+                       name="propertyValue"
+                       class="form-control col ml-2"
+                       [(ngModel)]="newProperty.valueDecimal[0]"
+                       placeholder="Property Value"
+                       required/>
 
+                <!-- remove value button -->
+                <span *ngIf="(newProperty.valueQualifier == 'STRING' && newProperty.value.length > 1)
+                             || (newProperty.valueQualifier == 'REAL_MEASURE' && newProperty.valueDecimal.length > 1)">
+                    <button class="btn btn-xs btn-danger"
+                            (click)="removeValueFromProperty(0); $event.stopPropagation()">
+                        &times;
+                    </button>
+                </span>
+
+                <!-- add additional value button -->
+                <span *ngIf="(newProperty.valueQualifier == 'STRING' && newProperty.value.length == 1)
+                             || (newProperty.valueQualifier == 'REAL_MEASURE' && newProperty.valueDecimal.length == 1)">
+                    <button class="btn btn-info btn-xs"
+                            (click)="addValueToProperty()"
+                    ><strong>+</strong></button>
+                </span>
+
+                <!-- add image button -->
                 <div *ngIf="propertyValueType.options.selectedIndex == 2" (click)="image.click()"
                      class="col-4"
                      style="display: inline-block;">
@@ -106,15 +150,17 @@
                     <span i18n>Add image</span>
                 </div>
 
+                <!-- add file button -->
                 <div *ngIf="propertyValueType.options.selectedIndex == 3" (click)="file.click()"
                      class="col-4"
                      style="display: inline-block;">
-                    <input #file type="file" (change)="fileChange($event)" multiple accept="image/*"
+                    <input #file type="file" (change)="fileChange($event)" multiple accept="file/*"
                            style="display: none">
                     <img src="./assets/catalogue/add_button.png"/>
                     <span i18n>Add file</span>
                 </div>
 
+                <!-- combobox for choosing the property value type -->
                 <div class="col">
                     <div class="row justify-content-end ml-2">
                         <div>
@@ -128,7 +174,7 @@
                             </select>
                         </div>
 
-                        <button [disabled]="!customPropertyForm.form.valid"
+                        <button [disabled]="!customPropertyForm.form.valid || (newProperty.valueQualifier == 'BINARY' && newProperty.valueBinary.length == 0)"
                                 class="btn btn-success ml-1"
                                 (click)="addCustomProperty()">
                             <span i18n>Add property</span>
@@ -136,25 +182,77 @@
                     </div>
                 </div>
             </form>
+            <p></p>
+
+            <!-- additonal values -->
+            <!-- additional values are drawn here as the top row contains
+            `value type selection button` and `add property buttons` in addition to the first value associated to the new property -->
+            <div *ngFor="let val of newProperty.valueQualifier | itemPropertyDataSourcePipe : newProperty; let i = index; trackBy : trackByIndex">
+                <div *ngIf="i > 0" class="input-group form-group">
+                    <label class="col-3 control-label"></label>
+                    <input *ngIf="newProperty.valueQualifier=='STRING'"
+                            type="text" class="form-control col ml-2"
+                           [(ngModel)]="newProperty.value[i]"
+                           [ngModelOptions]="{standalone: true}"
+                    >
+                    <input *ngIf="newProperty.valueQualifier=='REAL_MEASURE'"
+                           type="text" class="form-control col ml-2"
+                           [(ngModel)]="newProperty.valueDecimal[i]"
+                           [ngModelOptions]="{standalone: true}"
+                    >
+                    <!-- remove value button -->
+                    <button *ngIf="newProperty.valueQualifier != 'BINARY'"
+                            class="btn btn-xs btn-danger"
+                            (click)="removeValueFromProperty(i); $event.stopPropagation()">&times;
+                    </button>
+
+                    <!-- add value button -->
+                    <span *ngIf="(newProperty.valueQualifier == 'STRING' && i == this.newProperty.value.length - 1) ||
+                                 (newProperty.valueQualifier == 'REAL_MEASURE' && i == this.newProperty.valueDecimal.length - 1)">
+                        <button class="btn btn-primary btn-xs"
+                                (click)="addValueToProperty()"
+                        ><strong>+</strong></button>
+                    </span>
+
+                    <!--<div class="col">
+                        <div class="row justify-content-end ml-2">
+                        </div>
+                    </div>-->
+                </div>
+            </div>
 
             <!-- selected images or files -->
-            <div *ngIf="newProperty != null && newProperty.embeddedDocumentBinaryObject != null"
+            <div *ngIf="newProperty != null && newProperty.valueBinary.length > 0 && newProperty.valueQualifier == 'BINARY'"
                  class="offset-3 mt-3">
                 <ul class="list-group">
-                    <li *ngFor="let image of newProperty.embeddedDocumentBinaryObject"
+                    <li *ngFor="let afile of newProperty.valueBinary"
                         class="list-group-item pb-2 border-0">
 
-                        <div>
+                        <!-- selected files -->
+                        <div *ngIf="afile.mimeCode.split('/')[0]!='image'">
+                            {{afile.fileName}}
+                            <span style="display:inline-block; width: 20px;"></span>
+                            <span><button class="btn btn-xs" style="background-color: white; color: #0d6cd8"
+                                          (click)="imageCancel(afile.fileName);"
+                            >&times;</button></span>
+                        </div>
+
+                        <!-- selected images -->
+                        <div *ngIf="afile.mimeCode.split('/')[0]=='image'">
                             <img class="mr-2"
-                                 src="data:{{image.mimeCode}};base64,{{image.value}}"
+                                 src="data:{{afile.mimeCode}};base64,{{afile.value}}"
                                  height="100"
                                  width="100"
                             />
                             <div style="display: inline-block;">
                                 <label>Value Details:</label>
-                                <input type="text" class="form-control" aria-describedby="componentName"
-                                       [value]="image.objectMetadata"/>
+                                <input type="text" class="form-control"
+                                       [(ngModel)]="afile.objectMetadata" name="valueDetails">
                             </div>
+                            <span><button class="btn btn-xs" style="background-color: white; color: #0d6cd8"
+                                          (click)="imageCancel(afile.fileName);"
+                            >&times;</button></span>
+
                         </div>
                     </li>
                 </ul>
@@ -221,6 +319,9 @@
             <button *ngFor="let selectedCategory of selectedCategories"
                     class="btn btn-info ml-3">
                 {{selectedCategory.preferredName}}
+                <span><i
+                        (click)="categoryCancel(selectedCategory.id)"
+                >&times;</i></span>
             </button>
             <div (click)="addCategoryOnClick()"
                  style="display: inline-block;">
@@ -243,10 +344,12 @@
                 <div class="d-flex justify-content-start p-2">
                     <li>Upload the template after filling it with your products' information
                     </li>
-                    <input #template type="file" (change)="uploadTemplate($event)" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                    <input #template type="file" (change)="uploadTemplate($event)"
+                           accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                            style="display: none">
                     <button class="btn btn-success ml-auto"
-                            (click)="template.click()">Upload template</button>
+                            (click)="template.click()">Upload template
+                    </button>
                 </div>
             </ol>
         </div>

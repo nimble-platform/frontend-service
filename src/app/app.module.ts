@@ -35,10 +35,17 @@ import {DeliveryTermsSubForm} from './user-mgmt/subforms/delivery-terms.componen
 import {PaymentMeansForm} from './user-mgmt/subforms/payment-means.component';
 import {CompanySettingsComponent} from './user-mgmt/company-settings.component';
 import {NegotiationMainComponent} from './negotiation/negotiation-main.component';
-import { BPConfigureComponent }   from './bpe/bp-configure.component';
-import { BPsComponent }      from './bpe/bps.component';
-import { BPDetailComponent }  from './bpe/bp-detail.component';
-import { BPService }          from './bpe/bp.service';
+import {CatalogueViewComponent} from './catalogue/catalogue-view.component';
+import {CatalogueLineViewComponent} from './catalogue/catalogue-line-view.component';
+import {ProductDetailsComponent} from './catalogue/product-details.component';
+import {TradingDetailsComponent} from './catalogue/trading-details.component';
+import {PublishService} from './catalogue/publish-and-aip.service';
+import {PropertyBlockPipe} from './catalogue/property-block-pipe';
+import {ItemPropertyDataSourcePipe} from './catalogue/item-property-data-source-pipe';
+import {BPConfigureComponent} from './bpe/bp-configure.component';
+import {BPsComponent} from './bpe/bps.component';
+import {BPDetailComponent} from './bpe/bp-detail.component';
+import {BPService} from './bpe/bp.service';
 
 @NgModule({
     imports: [
@@ -75,6 +82,12 @@ import { BPService }          from './bpe/bp.service';
         PaymentMeansForm,
         CompanySettingsComponent,
         NegotiationMainComponent,
+        CatalogueViewComponent,
+        CatalogueLineViewComponent,
+        ProductDetailsComponent,
+        TradingDetailsComponent,
+        PropertyBlockPipe,
+        ItemPropertyDataSourcePipe,
         BPConfigureComponent,
         BPDetailComponent,
         BPsComponent
@@ -87,6 +100,7 @@ import { BPService }          from './bpe/bp.service';
         SimpleSearchService,
         BPEService,
         ExplorativeSearchService,
+        PublishService,
         BPService
     ],
     bootstrap: [
