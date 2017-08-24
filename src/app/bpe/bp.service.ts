@@ -2,6 +2,7 @@
 import {Injectable} from '@angular/core';
 import {Http, Response, Headers, RequestOptions} from '@angular/http';
 import {Observable} from 'rxjs/Rx';
+import * as configuration from '../globals';
 
 // Import RxJs required methods
 import 'rxjs/add/operator/map';
@@ -15,7 +16,8 @@ export class BPService {
 
     private headers = new Headers({'Content-Type': 'application/json'});
     private options = new RequestOptions({headers: this.headers});
-    private endpoint = 'http://localhost:8081';
+    // private endpoint = 'http://localhost:8081';
+    private endpoint = configuration.bpe_endpoint;
     private bpsUrl = this.endpoint + '/content';  // URL to web api
     private configurationUrl = this.endpoint + '/application';  // URL to web api
 
