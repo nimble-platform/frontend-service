@@ -78,7 +78,7 @@ export class BPService {
     }
 
     private handleError(error: any): Observable<any> {
-        let errorMsg = error.message || `There was a problem with our the rest service and we couldn't retrieve the data!`
+        let errorMsg = error.message || `There was a problem with our the rest service and we couldn't retrieve the data!`;
         console.error(errorMsg);
 
         // throw an application level error
