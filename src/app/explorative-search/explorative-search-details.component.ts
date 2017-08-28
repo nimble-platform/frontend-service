@@ -9,8 +9,9 @@
 
 import { Component, AfterViewInit, ViewChild, ElementRef, Input, OnChanges } from '@angular/core';
 import * as go from 'gojs';
-import { RadialLayout } from './layout/RadialLayout';
+import { RecClass } from './model/RecClass';
 import { ExplorativeSearchService } from './explorative-search.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
     selector: 'explore-search-details',
@@ -23,36 +24,40 @@ import { ExplorativeSearchService } from './explorative-search.service';
 export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChanges {
 
     @Input() config: Object; // this comes from `explorative-search-form.component` (Parent)
-    @Input() lang: string; // language selection hack
-    // GoJS div as mentioned above in the @Component `template` param
-    @ViewChild('myDiagramDiv') div: ElementRef;
+    @Input() lang: string; // language selection which comes from the Parent
+    @ViewChild('myDiagramDiv') div: ElementRef; // GoJS div as mentioned above in the @Component `template` param
     private hiddenElement: boolean = false; // to hide the graph or table
     /*GOJS Variables*/
     private myDiagram: go.Diagram;
     private $ = go.GraphObject.make;
     /*Parameters that will be passed to `explorative-search-filter.component (Child)*/
     arrayPassedToChild: any[] = []; // this is passed to the child NOW
-    filterQueryRoot: string;
-    filterQueryRootUrl: string;
+    private filterQueryRoot: string;
+    private filterQueryRootUrl: string;
     filterQuery: string;
-    nodeFilterName: string;
-    filterJSON: Object;
+    private nodeFilterName: string;
+    private filterJSON: Object;
     /* To store selected properties*/
     private selectedProperties: Array<string> = [];
     private selectedNodeKeys: any[] = [];
-
+    /* SPARQL TABLE Variables */
     private sparqlSelectedOption: Object;
     private tableJSON: Object = {};
-    private collectionOfFiltersFromChildren: any[] = [];
+    private _tableJSONPaths = []; // for storing Paths when the figure is rendered again..
+    private collectionOfFiltersFromChildren: any[] = []; // filters from the Children Components
 
-    /*Final Data to be sent back to parent for processing.. Maybe..*/
-    public finalSelectionJSON: Object;
+    /*Final Data to be sent back to parent for processing.*/
+    finalSelectionJSON: Object;
 
     /*The API response from tableJSON will be stored in tableResult*/
     tableResult: any;
 
-    constructor(private expSearch: ExplorativeSearchService) { }
+    // BackEnd Service + Modal Service declared here
+    constructor(private expSearch: ExplorativeSearchService, private modalService: NgbModal) { }
 
+    private open(content) { // display the Modal when CTRL is released or Single Select Feature Enabled..
+        this.modalService.open(content);
+    }
     /**
      * using OnChanges LifeCycle Hook for incoming Configuration
      * from the Parent Component
@@ -62,7 +67,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
         // console.log(JSON.stringify(this.config)); // DEBUG -CHECK
         let recApproach = new RecClass();
         recApproach.generateGraphRecApproach(this.config, this.myDiagram, this.$, 2);
-        // this.resetSelection();
+        // Reset Selections for New Diagram.. Usually when the user clicks the button about the product..
         this.selectedProperties = [];
         this.tableResult = {};
         this.filterJSON = {};
@@ -114,7 +119,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                 {
                     locationSpot: go.Spot.Center,
                     locationObjectName: 'SHAPE',  // Node.location is the center of the Shape
-                    selectionAdorned: true,
+                    selectionAdorned: false, // keep it false to differentiate between click and drag of a node..
                     click: (e: go.InputEvent, obj: go.GraphObject): void => { this.nodeClicked(e, obj); },
                     toolTip: commonToolTip,
                 },
@@ -171,22 +176,19 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
             );
         this.myDiagram.addDiagramListener('ChangedSelection', (e: any) => {
             // check for selection changes.. especially when Multiselect is off
-            // console.log('Selection Change occured');
-            // console.log('Selection Count ', e.diagram.selection.count);
-            if (e.diagram.selection.count === 0) { // if in non Multiselect if all selections removed
+            if (e.diagram.selection.count === 0) { // if in non Multiselect all selections removed
                 // reset all
                 this.selectedProperties = [];
                 this.tableJSON = {};
                 this.tableResult = {};
                 this.filterJSON = {};
                 this.filterQueryRoot = '';
-                // this.filterQueryRootUrl = '';
                 this.filterQuery = '';
                 this.nodeFilterName = '';
                 if (this.finalSelectionJSON === undefined) {
                     // make the JSON
                     this.finalSelectionJSON = {'root': this.filterQueryRootUrl, 'filter': []};
-                    console.log('Hardcode selection', this.finalSelectionJSON);
+                    // console.log('Hardcode selection', this.finalSelectionJSON); // DEBUG-CHECK
                 } else {
                     if (this.finalSelectionJSON['filter'].length > 0) {
                         this.finalSelectionJSON['filter'] = [];
@@ -200,48 +202,68 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
 
 
     /**
-     * nodeClicked: function handles the click feature for GoJS
+     * nodeClicked: function handles the click feature for GoJS Diagram
      * @param ev : event parameter
      * @param node: node entity
      */
-    nodeClicked(ev, node): void {
-        let jsonFilterForEachChild = {};
-        let rootConcept = node.part.findTreeRoot().data.text;
+    private nodeClicked(ev, node): void {
+        node.selectionAdorned = true; // show adornment only when the node is clicked or selected..
+        let pathJSON = {}; // for tableJSON['paramatersIncludingPath'] ..
+        let jsonFilterForEachChild = {}; // for Filters to be displayed ..
+        let rootConcept = node.part.findTreeRoot().data.text; // get the ROOT name
         let clickedNode = node.part.data.text; // name of the clicked node
-        let rootConceptUrl = this.config['viewStructure']['concept']['url'];
-        let nodeConceptUrl;
-        let immediateParentName = node.part.findTreeParentNode().data.text;
-        // at this point check if the immediate parent is same as root concept
-        if (immediateParentName === rootConcept) {
-            // we are in layer 1
-            // console.log('dataproperty in layer 1');
-            for (let eachDatProp of this.config['viewStructure']['dataproperties']) {
+        let rootConceptUrl = this.config['viewStructure']['concept']['url']; // get ROOT URL
+        let nodeConceptUrl; // clicked node's URL
+        let immediateParentName = node.part.findTreeParentNode().data.text; // If there is a parent between ROOT and Node
+
+        if (immediateParentName === rootConcept) { // at this point check if the immediate parent is same as root concept
+            // we are in layer 1 All green nodes
+            for (let eachDatProp of this.config['viewStructure']['dataproperties']) { // get the Node's URL
                 if (eachDatProp['translatedURL'] === clickedNode) { // if first layer data properties
                     let index = this.config['viewStructure']['dataproperties'].indexOf(eachDatProp);
                     nodeConceptUrl = this.config['viewStructure']['dataproperties'][index]['url'];
                 }
             }
-        } else {
-            // console.log('data property of an object property');
+
+            pathJSON['urlOfProperty'] = encodeURIComponent(nodeConceptUrl); // for tableJSON['parametersIncludingPath']
+            pathJSON['path'] = [encodeURIComponent(rootConceptUrl)]; // for TableJSON['parametersIncludingPath']
+            if (! ('parametersIncludingPath' in this.tableJSON) || this.tableJSON['parametersIncludingPath'] === undefined) {
+                // if the key value pair is not previously not found in the JSON create an empty array..
+                // usually triggered for First ever Node click..
+                this.tableJSON['parametersIncludingPath'] = [];
+            }
+        } else { // if URL wasn't found it must be in the object properties (red nodes)
             for (let everyKey in this.config['viewStructure']['objectproperties']) {
                 if (this.config['viewStructure']['objectproperties'].hasOwnProperty(everyKey)) {
                     if (this.config['viewStructure']['objectproperties'][everyKey]['concept']['translatedURL'] === immediateParentName) {
+                        // find the parent node first and then iterate through..
                         for (let eachDatPropWithinObjProp of this.config['viewStructure']['objectproperties'][everyKey]['dataproperties']) {
-                            if (eachDatPropWithinObjProp['translatedURL'] === clickedNode) {
+                            if (eachDatPropWithinObjProp['translatedURL'] === clickedNode) { // find the clicked node
                                 let index = this.config['viewStructure']['objectproperties'][everyKey]
                                     ['dataproperties'].indexOf(eachDatPropWithinObjProp);
+                                // get the URL..
                                 nodeConceptUrl = this.config['viewStructure']['objectproperties'][everyKey]['dataproperties'][index]['url'];
+                                /* for tableJSON['parametersIncludingPath'] */
+                                pathJSON['urlOfProperty'] = encodeURIComponent(nodeConceptUrl);
+                                pathJSON['path'] = [];
+                                for ( let eachPath of this.config['viewStructure']['objectproperties'][everyKey]['conceptURIPath']) {
+                                    pathJSON['path'].push(encodeURIComponent(eachPath));
+                                }
+                                if (! ('parametersIncludingPath' in this.tableJSON) ||
+                                    this.tableJSON['parametersIncludingPath'] === undefined) {
+                                    // similar logic as above, if does not exist create an Array ..
+                                    this.tableJSON['parametersIncludingPath'] = [];
+                                }
                             }
                         }
                     }
                 }
             }
         }
-        console.log('nodeConceptURL CHECK', nodeConceptUrl);
-        console.log('layername', node.part.layerName);
-        if (node.part.layerName === 'red') { // OBJECT Property Clicked
+        // console.log('nodeConceptURL CHECK', nodeConceptUrl); // DEBUG CHECK -> to see if URL for node was acquired..
+        if (node.part.layerName === 'red') { // OBJECT Property Clicked (RED NODE)
             this.objPropertyDetails(node);
-        } else { // layer green Data properties clicked....
+        } else { // layer green Data properties clicked.... (green node)
             // get values to be passed to child....
             this.nodeFilterName = clickedNode;
             this.filterQuery = nodeConceptUrl;
@@ -257,11 +279,11 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                 'property': encodeURIComponent(nodeConceptUrl.trim()), 'amountOfGroups': 3
                 , 'language': this.lang
             };
-            // MULTISELECTION via GOJS Library
+            // MULTISELECTION check..
             if (ev.control) { // if the CTRL Key is pressed..
-                console.log('CTRL key pressed.. Multiselect On');
+                // console.log('CTRL key pressed.. Multiselect On'); // DEBUG-CHECK
                 if (node.isSelected) { // if the particular node is selected add to list
-                    this.selectedNodeKeys.push(node.part.data.key);
+                    this.selectedNodeKeys.push(node.part.data.key); // store the key of then GoJS node..
                     // avoid duplicate entries in the list
                     if (!this.selectedProperties.find(e => e === nodeConceptUrl)) {
                         this.selectedProperties.push(nodeConceptUrl);
@@ -276,19 +298,38 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                                     console.log('arrayPassedToChild ', this.arrayPassedToChild);
                                 }, 500);
                             });
+                        // create the tableJSON so the user can
+                        // click the RED Button..
+                        this.tableJSON['parametersIncludingPath'].push(pathJSON);
                     }
-                } else { // the node was clicked again and deselected remove from list
+                } else { // the node was clicked again and deselected, hence remove from list
                     let index = this.selectedProperties.indexOf(nodeConceptUrl);
-                    if (index > -1) {
+                    if (index > -1) { // Everything is sequentially pushed so with the same index
+                        // same index is used to remove node's properties from all arrays
                         this.selectedProperties.splice(index, 1);
-                        this.arrayPassedToChild.splice(index, 1); // they were pushed at the same index
+                        this.arrayPassedToChild.splice(index, 1);
+                        this.tableJSON['parametersIncludingPath'].splice(index, 1);
                         // do not send anything to child .. Remove the Filter from display
                         this.filterJSON = {};
                     }
+                    let keyIndex = this.selectedNodeKeys.indexOf(node.part.data.key);
+                    if (keyIndex > -1) { // remove the GoJS key value of the node too..
+                        this.selectedNodeKeys.splice(keyIndex, 1);
+                    }
                 }
-            } else { // no CTRL Button pressed but node selected
-                console.log('CTRL key released.. Multiselect off');
-                if (node.isSelected) { // if node is selected add to list
+            } else { // no CTRL Button pressed but node selected -> Single Selection Feature
+                // better to warn and let the user understand the usage with CTRL key
+                let content = `NO CTRL Button Pressed.
+                                If previous Selection were selected using Multiselect Feature,
+                                they will be deleted.`;
+                this.open(content); // show the modal.. Everytime
+                // reset the selections..
+                this.selectedProperties = [];
+                this.arrayPassedToChild = [];
+                this.tableResult = {};
+                this.selectedNodeKeys = [];
+                // console.log('CTRL key released.. Multiselect off'); // DEBUG-CHECK
+                if (node.isSelected) { // if node is selected in Single Select, add to list
                     // avoid duplicate entries in the list
                     if (!this.selectedProperties.find(e => e === nodeConceptUrl)) {
                         this.selectedProperties.push(nodeConceptUrl);
@@ -304,23 +345,31 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                                 }, 500);
                             });
                     }
-                } // if the node is deselected remove if from list via selection count = 0 for GoJS
+                    /* add the tableJSON so the user can click on Red Search Button anytime */
+                    this.tableJSON['parametersIncludingPath'] = []; // start fresh
+                    this.tableJSON['parametersIncludingPath'].push(pathJSON);
+                } // if the node is deselected remove if from list via selection.count = 0 for GoJS DiagramListener above
             }
-            console.log(this.selectedProperties);
+            // console.log(this.selectedProperties); // DEBUG-CHECK
             // if all properties deselected
-            if (this.selectedProperties.length === 0) {
+            if (this.selectedProperties.length === 0) { // remove the table below the diagram
                 this.tableResult = {};
             }
-            // console.log(rootConceptUrl, nodeConceptUrl); // DEBUG --CHECK
         }
     }
-    objPropertyDetails(node: any): void {
-        let immediateParentNode = node.part.findTreeParentNode().data.text;
-        let clickedNode = node.part.data.text;
-        console.log('My Parent is..', immediateParentNode);
-        console.log('Me: ', clickedNode);
-        console.log('My Key,', node.part.data.key);
+
+    /**
+     * Acquiring Node information for Object Properties (RED Node)
+     * @param node: go.GraphObject. Red Node that was clicked.
+     */
+    private objPropertyDetails(node: any): void {
+        let immediateParentNode = node.part.findTreeParentNode().data.text; // get the Parent
+        let clickedNode = node.part.data.text; // get the clickedNode's text
+        // console.log('My Parent is..', immediateParentNode); // DEBUG--CHECK
+        // console.log('Me: ', clickedNode); // DEBUG--CHECK
+        // console.log('My Key,', node.part.data.key); // DEBUG--CHECK
         for (let eachObjPropKey in this.config['viewStructure']['objectproperties']) {
+            // go through the viewStructure configuration to obtain new Logical View
             if (this.config['viewStructure']['objectproperties'].hasOwnProperty(eachObjPropKey)) {
                 if (this.config['viewStructure']['objectproperties'][eachObjPropKey]['concept']['translatedURL'] === immediateParentNode) {
                     // console.log(this.config['viewStructure']['objectproperties'][eachObjPropKey]['objectproperties']);
@@ -330,7 +379,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                             if (clickedNode === this.config['viewStructure']['objectproperties'][eachObjPropKey]['objectproperties']
                                     [eachKeyWithinObjProp]['concept']['translatedURL']) {
 
-                                // build JSON for query
+                                // build JSON for query getLogicalView
                                 let layerJSON = {
                                 'concept': this.config['completeStructure']['objectproperties'][eachObjPropKey]['objectproperties']
                                     [eachKeyWithinObjProp]['concept']['url'],
@@ -344,20 +393,24 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                                     ['objectproperties'][eachKeyWithinObjProp]['distanceToFrozenConcept'],
                                 'oldJsonLogicalView': this.config['completeStructure']};
 
-                                if (this.selectedProperties.length) {
+                                if (this.selectedProperties.length) { // send previous selections to server to retrieve them back
                                     let arrInArr = [];
                                     for (let eachSelection of this.selectedProperties) {
                                         arrInArr.push([eachSelection]);
                                     }
                                     layerJSON['currentSelections'] = arrInArr;
                                 }
-                                console.log('DYNAMIC JSON ', layerJSON);
+                                // console.log('DYNAMIC JSON ', layerJSON); // DEBUG--CHECK
+                                // call the API..
                                 this.expSearch.getLogicalView(layerJSON)
                                     .then(res =>
                                         this.config = res
                                     );
-                                // this.reloadRadialGraph(3);
+
+                                // store the previous tableJSON things in private variable
+                                this._tableJSONPaths = this.tableJSON['parametersIncludingPath'];
                                 // Latency needed in order to avoid double click
+                                // reload the diagram again..
                                 setTimeout(() => {
                                     this.reloadRadialGraph(2, immediateParentNode, clickedNode);
                                 }, 600);
@@ -374,25 +427,14 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
      * store result in tableResult Variable
      */
     genTable(): void {
-        if (this.finalSelectionJSON) {
+        // console.log('genTable call ', this.tableJSON); // DEBUG-CHECK -> 'parametersIncludingPath' to see if it was right.
+        if (this.finalSelectionJSON) { // create the tableJSON
             this.tableJSON['concept'] = encodeURIComponent(this.filterQueryRootUrl);
             this.tableJSON['parameters'] = [];
-            // for (let eachFilProp of this.finalSelectionJSON['filter']) {
-            //    this.tableJSON['parameters'].push(encodeURIComponent(eachFilProp['property']));
-            // }
             for (let eachSelectedProp of this.selectedProperties) {
                 this.tableJSON['parameters'].push(encodeURIComponent(eachSelectedProp));
             }
-            /*if (this.finalSelectionJSON['filter'].length > 0) {
-                this.tableJSON['filters'] = [];
-                for (let eachFilVal of this.finalSelectionJSON['filter']) { // push only selected property filters
-                    if (this.selectedProperties.indexOf(eachFilVal['property']) > -1 ) {
-                        this.tableJSON['filters'].push({'property': encodeURIComponent(eachFilVal['property']),
-                            'min': eachFilVal['values'][0], 'max': eachFilVal['values'][1]});
-                    }
-                }
-            }*/
-            if (this.collectionOfFiltersFromChildren.length > 0) {
+            if (this.collectionOfFiltersFromChildren.length > 0) { // create the filters from the child components
                 this.tableJSON['filters'] = [];
                 for (let eachFilter of this.collectionOfFiltersFromChildren) {
                     if (this.selectedProperties.indexOf(eachFilter['property']) > -1 ) {
@@ -400,20 +442,21 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                             'min': eachFilter['values'][0], 'max': eachFilter['values'][1]});
                     }
                 }
-            }else {
+            }else { // if there were no filters from the children
                 this.tableJSON['filters'] = [];
             }
-        } else { // if user directly clicks on the Search button
-            console.log('user directly clicked on Search');
+        } else { // if user directly clicks on the Search button.. without previously generated finalSelectionJSON
+            // console.log('user directly clicked on Search'); // DEBUG-CHECK
             this.tableJSON['concept'] = encodeURIComponent(this.filterQueryRootUrl);
             this.tableJSON['parameters'] = [];
             for (let eachSelectedProp of this.selectedProperties) {
                 this.tableJSON['parameters'].push(encodeURIComponent(eachSelectedProp));
             }
-            console.log('filters after direct click', this.tableJSON['filters']);
+            // console.log('filters after direct click', this.tableJSON['filters']); // filters shouldn't exist
         }
         this.tableJSON['language'] = this.lang;
-        console.log(this.tableJSON);
+        // console.log(this.tableJSON); // DEBUG-CHECK
+        // call the API..
         this.expSearch.getTableValues(this.tableJSON)
             .then(res => this.tableResult = res)
             .catch(err => console.log(err));
@@ -424,21 +467,26 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
      * @param finalSelectionJSON same name as the child's variable
      */
     handleFilterSelectionUpdated(finalSelectionJSON) {
-        this.finalSelectionJSON = finalSelectionJSON;
-        if (this.finalSelectionJSON['filter'].length > 0) {
+        this.finalSelectionJSON = finalSelectionJSON; // assign the JSON from child.
+        if (this.finalSelectionJSON['filter'].length > 0) { // push the filters to collection
             this.collectionOfFiltersFromChildren.push(this.finalSelectionJSON['filter'][0]);
-            console.log('collection of filters: ', this.collectionOfFiltersFromChildren);
-        } else if (this.finalSelectionJSON['filter'].length === 0) {
+            // console.log('collection of filters: ', this.collectionOfFiltersFromChildren); // DEBUG--CHECK
+        } else if (this.finalSelectionJSON['filter'].length === 0) { // if the user removed the filter by de-checking filter box
             this.collectionOfFiltersFromChildren.forEach(el => {
                 if (el['property'] === this.finalSelectionJSON['child']) {
                     let indexToRemove = this.collectionOfFiltersFromChildren.indexOf(el);
                     this.collectionOfFiltersFromChildren.splice(indexToRemove, 1);
-                    console.log('filter Removed');
+                    // console.log('filter Removed'); //DEBUG-CHECK
                 }
             });
         }
-        console.log('returned JSON ', this.finalSelectionJSON);
+        // console.log('returned JSON ', this.finalSelectionJSON); //DEBUG-CHECK
     }
+
+    /**
+     * Hide the diagram and show the Complete Product Table instead.
+     * @param {number} indexInp The Index of the Table for Complete Product Table
+     */
 
     getSparqlOptionalSelect(indexInp: number) {
         console.log(indexInp);
@@ -451,6 +499,9 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
         this.hiddenElement = true;
     }
 
+    /**
+     * toggle the diagram and table with the BACK Button
+     */
     diagramAgain(): void {
         // this.sparqlSelectedOption = null;
         if (this.hiddenElement) {
@@ -458,22 +509,28 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
         }
     }
 
-    reloadRadialGraph(lay: number, pNode: any, cNode: any): void {
+    /**
+     * Reload the Diagram with the new Layer..
+     * @param {number} lay: how many layers of the diagram to be shown.
+     * @param pNode Parent Node of the ObjectProperty node
+     * @param cNode ChildNode (Clicked Node itself)
+     */
+    private reloadRadialGraph(lay: number, pNode: any, cNode: any): void {
         let recApproach = new RecClass();
         recApproach.generateGraphRecApproach(this.config, this.myDiagram, this.$, lay);
         /*
-        perform node hiding here...
+            perform node hiding here...
          */
-        let nodeOfInterest = pNode + '/' + cNode;
-        let rootNode = this.myDiagram.findNodeForKey(1);
-        console.log(nodeOfInterest);
-        let objJson = this.config['viewStructure']['objectproperties'];
+        let nodeOfInterest = pNode + '/' + cNode; // make the key for new objectProperty (Manufacturer/Legislation)
+        let rootNode = this.myDiagram.findNodeForKey(1); // root node..
+        // console.log(nodeOfInterest); // DEBUG-CHECK
+        let objJson = this.config['viewStructure']['objectproperties']; // for easy iteration and parsing.
         for (let eachKey in objJson) {
             if (objJson.hasOwnProperty(eachKey)) {
-                if (objJson[eachKey]['concept']['translatedURL'] === nodeOfInterest) {
-                    if (objJson[eachKey]['hasHiddenDirectParent']) {
+                if (objJson[eachKey]['concept']['translatedURL'] === nodeOfInterest) { // find the node of interest
+                    if (objJson[eachKey]['hasHiddenDirectParent']) { // check if the parent is hidden
                         rootNode.findLinksOutOf().each(eachLink => {
-                            if (eachLink.toNode.data.text === nodeOfInterest) {
+                            if (eachLink.toNode.data.text === nodeOfInterest) { // create the dashed line
                                 eachLink.path.strokeDashArray = [4, 4];
 
                             }
@@ -482,161 +539,20 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                 }
             }
         }
-        this.myDiagram.model.setDataProperty(rootNode, 'strokeDashArray', [4, 4]);
-        console.log('currentSelections in New Config', this.config['currentSelections']);
-        for (let eachPreviousSelection of this.config['currentSelections']) {
+        this.myDiagram.model.setDataProperty(rootNode, 'strokeDashArray', [4, 4]); // set the dashed line in Diagram
+        // console.log('currentSelections in New Config', this.config['currentSelections']); // previous selections from server
+        for (let eachPreviousSelection of this.config['currentSelections']) { // add them again for reuse
             this.selectedProperties.push(eachPreviousSelection.pop());
         }
-        for (let eachNodeKey of this.selectedNodeKeys) {
-            let nodeToBeSelected = this.myDiagram.findNodeForKey(eachNodeKey);
-            nodeToBeSelected.part.isSelected = true;
-        }
-        console.log(this.myDiagram.selection.count);
-        console.log(this.selectedProperties);
-    }
-}
-
-
-
-/**
- * Creating of tree for visualizing data on diagram
- */
-
-/**
- * class OntNode
- * A Node structure for Binary Tree of the complete Data obtained from server
- */
-class OntNode {
-    public id: number; // ID of the node
-    public attr: any[] = []; // Array of all attributes connected to the node
-    public children: OntNode[] = []; // Check for Nodes with Children
-}
-
-/**
- * Recursion Class for generating the Graph
- */
-class RecClass {
-    names: any[] = []; // store the Strings from the JSON
-    /**
-     * generateGraphRecApproach : Rercusively generate graphs from the incoming JSON config
-     * @param cnf : JSON config from Parent Component
-     * @param myDiagram: Diagram parameter for GoJS
-     * @param $: Make function for GoJS
-     * @param layerCount: How many layers to plot
-     */
-    public generateGraphRecApproach(cnf: any, myDiagram: any, $: any, layerCount: number): void {
-        // get a Tree structure of the incoming JSON
-        let linkedOntTree = this.recursionParseJson(cnf['viewStructure']);
-        // console.log('Complete Tree:\n' + JSON.stringify(linkedOntTree)); // --> DEBUG
-        let nodeDataArray: any = []; // Create an Array of Nodes for GoJS.
-        for (let i = 1; i < this.names.length + 1; i++) {
-            nodeDataArray.push({ key: i, text: this.names[i - 1]['name'], color: this.names[i - 1]['color'] });
-        }
-        // Create The Links to Each node in the Tree with Recursion
-        let linkDataArray: any = this.recursionLink(linkedOntTree);
-        // console.log('LinkedDataList: ' + JSON.stringify(linkDataArray)); // --> DEBUG
-
-        // Diagram Layout..
-        myDiagram.layout = $(RadialLayout, {
-            maxLayers: layerCount,
-            rotateNode: function (node: any, angle: any) {
-                // rotate the nodes and make sure the text is not upside-down
-                node.angle = angle;
-                let label = node.findObject('TEXTBLOCK');
-                if (label !== null) {
-                    label.angle = ((angle > 90 && angle < 270 || angle < -90) ? 180 : 0);
-                }
-            },
-            commitLayers: function () {
-                // optional: add circles in the background
-                // need to remove any old ones first
-                let diagram = this.diagram;
-                let gridlayer = diagram.findLayer('Grid');
-                let circles = new go.Set(go.Part);
-                gridlayer.parts.each((circle: any) => {
-                    if (circle.name === 'CIRCLE') { circles.add(circle); }
-                });
-                circles.each(function (circle) {
-                    diagram.remove(circle);
-                });
-                // add circles centered at the root
-                // let $ = go.GraphObject.make;  // for conciseness in defining templates
-                for (let lay = 1; lay <= this.maxLayers; lay++) {
-                    let radius = lay * this.layerThickness;
-                    let circle =
-                        $(go.Part,
-                            { name: 'CIRCLE', layerName: 'Grid' },
-                            { locationSpot: go.Spot.Center, location: this.root.location },
-                            $(go.Shape, 'Circle',
-                                { width: radius * 2, height: radius * 2 },
-                                { fill: 'rgba(200,200,200,0.2)', stroke: null }));
-                    diagram.add(circle);
-                }
-            }
-        });
-
-        // Use the Lists to Create the Radial Layout...
-        myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
-        // For Determining the Root of the Diagram
-        let centerPoint = nodeDataArray[0];
-        let rootNode = myDiagram.findNodeForData(centerPoint);
-        let rootDiagram = rootNode.diagram;
-        rootNode.category = 'Root';
-        rootDiagram.layoutDiagram(true);
-    }
-
-    /**
-     * recursionParseJson: returns a Tree of all the nodes from the JSON data
-     * @param jsonNode JSON value from the Parent Component
-     * @returns {OntNode}
-     */
-
-    private recursionParseJson(jsonNode: any): any {
-        let node = new OntNode();
-
-        // Adding node name
-        this.names.push({name: jsonNode['concept']['translatedURL'], color: 'red'});
-        node.id = this.names.length;
-
-        // Adding Attributes
-        for (let eachDatProp of jsonNode['dataproperties']) {
-            this.names.push({name: eachDatProp['translatedURL'], color: 'green'});
-            node.attr.push(this.names.length);
-        }
-
-        // Adding Children
-        for (let childKey in jsonNode['objectproperties']) {
-            if (jsonNode['objectproperties'].hasOwnProperty(childKey)) {
-                // console.log(childKey); // --> DEBUG
-                // console.log(jsonNode['objectproperties'][childKey]);
-                node.children.push(this.recursionParseJson(jsonNode['objectproperties'][childKey]));
+        if (this.selectedNodeKeys.length > 0) { // find the node keys for previous selection and make them visible (selected)
+            for (let eachNodeKey of this.selectedNodeKeys) {
+                let nodeToBeSelected = this.myDiagram.findNodeForKey(eachNodeKey);
+                nodeToBeSelected.part.isSelected = true;
+                nodeToBeSelected.selectionAdorned = true;
             }
         }
-
-        // console.log('Finished recFunc created node: ' + node.id); // --> DEBUG
-        return node;
-    }
-
-    /**
-     * recursionLink: Create Links using Recursion for the Tree
-     * @param linkedOntTree return value from recursionParseJson
-     * @returns an Array of Link Information
-     */
-    private recursionLink(linkedOntTree: any): any {
-        let linkedDataArray: any = [];
-
-        for (let attr of linkedOntTree.attr) {
-            linkedDataArray.push({ from: linkedOntTree.id, to: attr});
-        }
-
-        for (let child of linkedOntTree.children) {
-            linkedDataArray.push({ from: linkedOntTree.id, to: child.id});
-            let childrenJson = this.recursionLink(child);
-            childrenJson.forEach(element => {
-                linkedDataArray.push(element);
-            });
-        }
-
-        return linkedDataArray;
+        this.tableJSON['parametersIncludingPath'] = this._tableJSONPaths; // store back the previous paths
+        // console.log(this.myDiagram.selection.count); // DEBUG_CHECK (should match the previous selection count)
+        // console.log(this.selectedProperties); // DEBUG_CHECK
     }
 }

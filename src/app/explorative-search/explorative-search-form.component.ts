@@ -38,7 +38,7 @@ export class ExplorativeSearchFormComponent implements OnInit {
     // remember: the variable name is same as in the HTML file
     cbInput = true;
     langInput = true;
-    public language: string = 'en'; // default search in english
+    language: string = 'en'; // default search in english
     availableLanguages = {};
     // Use the stored data which might further
     // data visualization
