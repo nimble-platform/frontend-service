@@ -41,10 +41,7 @@
             <form>
                 <div  *ngFor="let eachLang of availableLanguages['languages']">
                     <label>
-                        <input #en type="radio" (change)="language = en.value; langInput=!langInput" value="en"
-                               [checked]="langInput"/>
-                        en
-                        <input type="radio" [checked]="!langInput"(change)="language = eachLang; langInput=!langInput"/>
+                        <input type="radio" name="language" [checked]="langInput"(change)="language =eachLang"/>
                         {{eachLang}}
                     </label>
                 </div>
@@ -59,17 +56,13 @@
 <div class="container">
 <div class="col-12">
     <ul>
-        <li *ngFor="let eachOutput of Output; let outerindex = index">
+        <li *ngFor="let eachOutput of Output; let outerIndex = index">
             <div class="btn-group" role="group" *ngFor="let each of eachOutput.resp.conceptOverview; let innerIndex = index">
-                <button class="btn btn-success" *ngIf="innerIndex === 0 || showMore[outerIndex]"
-                  (click)="getQuery(each.url)"
-                >{{each.translatedURL}}</button>
+                <button class="btn btn-success" *ngIf="innerIndex === 0 || showMore[outerIndex]" (click)="getQuery(each.url)">{{each.translatedURL}}</button>
             </div>
-            <div style="display:inline">
-                <button *ngIf="eachOutput.resp.conceptOverview.length > 1"
-                    (click)="showMore[outerIndex]=!showMore[outerIndex]">
-                    {{showMore[outerIndex] ? 'Hide': 'Show'}} Options
-                </button>
+            <div style="display: inline">
+                <button *ngIf="eachOutput.resp.conceptOverview.length > 1" (click)="showMore[outerIndex]=!showMore[outerIndex]">
+                    {{showMore[outerIndex] ? 'Hide': 'Show'}} Options</button>
             </div>
         </li>
     </ul>
