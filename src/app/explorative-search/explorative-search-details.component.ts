@@ -64,7 +64,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
      */
     ngOnChanges(): void {
         if (!this.config) { return; }
-        // console.log(JSON.stringify(this.config)); // DEBUG -CHECK
+        // console.log(this.config['viewStructure']); // DEBUG -CHECK
         let recApproach = new RecClass();
         recApproach.generateGraphRecApproach(this.config, this.myDiagram, this.$, 2);
         // Reset Selections for New Diagram.. Usually when the user clicks the button about the product..
@@ -224,9 +224,18 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                     nodeConceptUrl = this.config['viewStructure']['dataproperties'][index]['url'];
                 }
             }
-
-            pathJSON['urlOfProperty'] = encodeURIComponent(nodeConceptUrl); // for tableJSON['parametersIncludingPath']
-            pathJSON['path'] = [encodeURIComponent(rootConceptUrl)]; // for TableJSON['parametersIncludingPath']
+            /*
+             * creation of tableJSON['parametersIncludingPath']
+             * if the data property (Green nodes) immediately connected to the root is detected created a simple
+             *    pathJSON = {
+             *                  urlOfProperty: clicked node's url,
+             *                  path: [{
+             *                      'concept': root concept's url
+             *                  }]
+             *    }
+             */
+            pathJSON['urlOfProperty'] = encodeURIComponent(nodeConceptUrl);
+            pathJSON['path'] = [{concept: encodeURIComponent(rootConceptUrl)}];
             if (! ('parametersIncludingPath' in this.tableJSON) || this.tableJSON['parametersIncludingPath'] === undefined) {
                 // if the key value pair is not previously not found in the JSON create an empty array..
                 // usually triggered for First ever Node click..
@@ -243,12 +252,54 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                                     ['dataproperties'].indexOf(eachDatPropWithinObjProp);
                                 // get the URL..
                                 nodeConceptUrl = this.config['viewStructure']['objectproperties'][everyKey]['dataproperties'][index]['url'];
-                                /* for tableJSON['parametersIncludingPath'] */
+                                /*
+                                 * creation of tableJSON['parametersIncludingPath']
+                                 * if data propety belongs to a object property create a complex pathJSON as follows:
+                                 *  {
+                                 *    urlOfProperty: clicked node's url,
+                                 *    path: [
+                                 *      {concept: root's url},
+                                 *      {urlOfProperty: parent_1 node's objPropertySource, concept: parent_1 node's url},
+                                 *      {urlOfProperty: parent_2 node's objPropertySource, concept: parent_2 node's url},
+                                 *    ]
+                                 *  }
+                                 */
                                 pathJSON['urlOfProperty'] = encodeURIComponent(nodeConceptUrl);
                                 pathJSON['path'] = [];
-                                for ( let eachPath of this.config['viewStructure']['objectproperties'][everyKey]['conceptURIPath']) {
-                                    pathJSON['path'].push(encodeURIComponent(eachPath));
-                                }
+                                pathJSON['path'].push({concept: encodeURIComponent(rootConceptUrl)}); // root goes in.
+                                // iteration through the complete data structure not the one that is seen..
+                                // find the keys to the object properties..
+                                for (let eachCompKey in this.config['completeStructure']['objectproperties']) {
+                                    if (this.config['completeStructure']['objectproperties'].hasOwnProperty(eachCompKey)) {
+                                        // at this point the parent of the clicked node has changed ..
+                                        // Example: Manufacturer was previously the immediateParentNode
+                                        //          after re-rendering the diagram
+                                        //          immediateParentNode = Manufacturer/Legislation
+                                        // A way to compare the 'viewStructure' and 'completeStructure' would be to
+                                        // split the immediateParentNode into ['Manufacturer, 'Legislation']
+                                        // find the object who has 'translatedURL'  === 'Manufacturer'
+                                        // in the 'completeStructure'
+                                        if (this.config['completeStructure']['objectproperties'][eachCompKey]
+                                                ['concept']['translatedURL'] === immediateParentName.split('/')[0]) {
+                                            // and simply push the 'objectPropertySource' link for the present object
+                                            pathJSON['path'].push({
+                                                urlOfProperty: encodeURIComponent(this.config['completeStructure']
+                                                ['objectproperties'][eachCompKey]['objectPropertySource']),
+                                                concept: encodeURIComponent(this.config['completeStructure']
+                                                    ['objectproperties'][eachCompKey]
+                                                    ['concept']['url'])
+                                            });
+                                            // console.log('TRUE'); // DEBUG--CHECK if the condition was true
+                                        }
+                                    }
+                                } /*TO DO: try a more concrete way to check the key within the "ConceptURIPath'*/
+
+                                // use the 'objectPropertySource' from the 'viewStructure'. No need for 'completeStructure'
+                                pathJSON['path'].push({
+                                    urlOfProperty: encodeURIComponent(this.config['viewStructure']
+                                        ['objectproperties'][everyKey]['objectPropertySource']),
+                                    concept: encodeURIComponent(nodeConceptUrl)
+                                });
                                 if (! ('parametersIncludingPath' in this.tableJSON) ||
                                     this.tableJSON['parametersIncludingPath'] === undefined) {
                                     // similar logic as above, if does not exist create an Array ..
@@ -403,10 +454,11 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                                 // console.log('DYNAMIC JSON ', layerJSON); // DEBUG--CHECK
                                 // call the API..
                                 this.expSearch.getLogicalView(layerJSON)
-                                    .then(res =>
-                                        this.config = res
-                                    );
-
+                                    .then(res => {
+                                        this.config = res;
+                                        // console.log(this.config['completeStructure']);
+                                        // console.log(this.config['viewStructure']);
+                                    });
                                 // store the previous tableJSON things in private variable
                                 this._tableJSONPaths = this.tableJSON['parametersIncludingPath'];
                                 // Latency needed in order to avoid double click
