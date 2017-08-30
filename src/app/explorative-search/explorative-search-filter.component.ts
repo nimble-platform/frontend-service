@@ -50,7 +50,7 @@ export class ExplorativeSearchFilterComponent implements OnChanges {
             this.userSelections = [];
         }
         for (let keyConfig in this.filterProperties['filterJSON']) {
-            if (this.filterProperties['filterJSON'][keyConfig]) {
+            if (this.filterProperties['filterJSON'].hasOwnProperty(keyConfig)) {
                 // store the JSON array in the result array for display
                 this.result = this.filterProperties['filterJSON'][keyConfig];
                 // console.log(this.result); // DEBUG

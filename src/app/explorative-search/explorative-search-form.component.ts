@@ -38,7 +38,7 @@ export class ExplorativeSearchFormComponent implements OnInit {
     // remember: the variable name is same as in the HTML file
     cbInput = true;
     langInput = true;
-    public language: string = 'en'; // default search in english
+    language: string = 'en'; // default search in english
     availableLanguages = {};
     // Use the stored data which might further
     // data visualization
@@ -78,6 +78,7 @@ export class ExplorativeSearchFormComponent implements OnInit {
                     // push the data in to List
                     this.Output.push(<Explorative> {kw: inputVal, resp: res});
                 });
+        // console.log('OUTPUT', this.Output);
     }
 
     /**
@@ -105,8 +106,9 @@ export class ExplorativeSearchFormComponent implements OnInit {
         // console.log(inputVal);
         // HTTP GET to backend Server for visualization
         // create a JSON request for the queried button
-        let temp = {'concept': encodeURIComponent(inputVal.trim()), 'stepRange': 2, 'frozenConcept': 'ddd',
-            'language': this.language
+        let temp = {'concept': inputVal.trim(), 'stepRange': 2, 'frozenConcept': inputVal.trim(),
+            'language': this.language, 'distanceToFrozenConcept': 0,
+            'conceptURIPath': [inputVal.trim()]
         };
         // console.log(JSON.stringify(temp)); // Debug: check
         // get the requested query

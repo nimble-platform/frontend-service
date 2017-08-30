@@ -18,6 +18,7 @@ export const bpe_endpoint="http://nimble-platform.salzburgresearch.at:443/busine
 export const languageEndPoint = 'http://hydra2.ikap.biba.uni-bremen.de:8090/getSupportedLanguages';
 export const endpoint = 'http://hydra2.ikap.biba.uni-bremen.de:8090/detectMeaningLanguageSpecific';
 export const logicalViewEndpoint = 'http://hydra2.ikap.biba.uni-bremen.de:8090/getLogicalView';
+//export const logicalViewEndpoint = 'http://localhost:8090/getLogicalView';
 export const propertyEndPoint = 'http://hydra2.ikap.biba.uni-bremen.de:8090/getPropertyValuesDiscretised';
 export const sparqlEndPoint = 'http://hydra2.ikap.biba.uni-bremen.de:8090/executeSPARQLSelect';
 export const sparqlOptionalSelectEndPoint = 'http://hydra2.ikap.biba.uni-bremen.de:8090/executeSPARQLOptionalSelect';
