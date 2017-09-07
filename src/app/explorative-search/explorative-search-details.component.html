@@ -24,10 +24,16 @@
                     </tr>
                 </table>
             </div>
-            <div>
-                <button [hidden]="!hiddenElement" class="btn btn-lg btn-warning" (click)="diagramAgain()">
-                    Back
-                </button>
+            <div class="row">
+                <div class="col-8">
+                    <button [hidden]="!hiddenElement" class="btn btn-lg btn-warning" (click)="diagramAgain()">
+                        Back
+                    </button>
+                </div>
+                <div class="col-4 pull-right">
+                    <a class="btn btn-lg btn-primary" routerLink="/simple-search-details/:id" [hidden]="!hiddenElement">
+                        Negotiation</a>
+                </div>
             </div>
             <br>
             <br>
