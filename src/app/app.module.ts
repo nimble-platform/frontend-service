@@ -28,7 +28,6 @@ import { ExplorativeSearchService } from './explorative-search/explorative-searc
 import { ExplorativeSearchFormComponent } from './explorative-search/explorative-search-form.component';
 import { ExplorativeSearchDetailsComponent } from './explorative-search/explorative-search-details.component';
 import { ExplorativeSearchFilterComponent } from './explorative-search/explorative-search-filter.component';
-import { KeysPipe } from './explorative-search/pipes/keys';
 import { ProductPropertiesComponent } from './catalogue/product-properties.component';
 import { AddressSubForm } from './user-mgmt/subforms/address.component';
 import { DeliveryTermsSubForm } from './user-mgmt/subforms/delivery-terms.component';
@@ -42,7 +41,7 @@ import { NegotiationMainComponent } from './negotiation/negotiation-main.compone
         FormsModule,
         HttpModule,
         AppRoutingModule,
-		ReactiveFormsModule,
+        ReactiveFormsModule,
         NgbModule.forRoot()
         ],
         declarations: [
@@ -55,30 +54,29 @@ import { NegotiationMainComponent } from './negotiation/negotiation-main.compone
         CredentialsFormComponent,
         CategorySearchComponent,
         ProductPublishComponent,
-		AdditionalItemPropertyComponent,
-		SimpleSearchComponent,
-		SimpleSearchDetailsComponent,
-		SimpleSearchFormComponent,
-         ExplorativeSearchComponent,
+        AdditionalItemPropertyComponent,
+        SimpleSearchComponent,
+        SimpleSearchDetailsComponent,
+        SimpleSearchFormComponent,
+        ExplorativeSearchComponent,
         ExplorativeSearchFormComponent,
         ExplorativeSearchDetailsComponent,
         ExplorativeSearchFilterComponent,
-		KeysPipe,
         AdditionalItemPropertyComponent,
-		ProductPropertiesComponent,
-		AddressSubForm,
-		DeliveryTermsSubForm,
-		PaymentMeansForm,
-		CompanySettingsComponent,
-		NegotiationMainComponent
+        ProductPropertiesComponent,
+        AddressSubForm,
+        DeliveryTermsSubForm,
+        PaymentMeansForm,
+        CompanySettingsComponent,
+        NegotiationMainComponent
         ],
         providers: [
         UserService,
         CredentialsService,
         CategoryService,
         CatalogueService,
-		SimpleSearchService,
-		BPEService,
+        SimpleSearchService,
+        BPEService,
         ExplorativeSearchService
         ],
         bootstrap: [
