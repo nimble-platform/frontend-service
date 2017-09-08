@@ -47,6 +47,9 @@ export class ExplorativeSearchFormComponent implements OnInit {
     visData: Object; // send this to details component
     // For response which constitutes more than one option..
     showMore: boolean[] = [];
+    private _error_detected_kw = false;
+    private _error_detected_query = false;
+    private _warning_kw = false;
 
     constructor(private expSearch: ExplorativeSearchService) {}
 
@@ -76,8 +79,19 @@ export class ExplorativeSearchFormComponent implements OnInit {
         this.expSearch.searchData(inputVal, this.language)
                 .then(res => {
                     // push the data in to List
-                    this.Output.push(<Explorative> {kw: inputVal, resp: res});
-                });
+                    if (res['conceptOverview'].length !== 0) { // if the keyword does exist..
+                        // only then push
+                        this.Output.push(<Explorative> {kw: inputVal, resp: res});
+                        this._warning_kw = false;
+                    } else { // display warning
+                        this._warning_kw = true;
+                    }
+                    this._error_detected_kw = false;
+                })
+            .catch(error => {
+                console.log(error);
+                this._error_detected_kw = true;
+            });
         // console.log('OUTPUT', this.Output);
     }
 
@@ -118,7 +132,12 @@ export class ExplorativeSearchFormComponent implements OnInit {
                 // this.visData = new Array();
                 this.visData = res;
                 // console.log(this.visData);
+                this._error_detected_query = false;
             }
-        );
+        )
+            .catch(error => {
+                console.log(error);
+                this._error_detected_query = true;
+            });
     }
 }

@@ -29,7 +29,7 @@ export class ExplorativeSearchService {
         return this.http.get(this.langUrl)
             .toPromise()
             .then(res => res.json())
-            .catch(err => console.log(err));
+            .catch(this.handleError);
     }
     // This is where the HTTP GET service is performed
     // for keyword search from user
@@ -40,7 +40,7 @@ export class ExplorativeSearchService {
         return this.http.get(`${this.url}?inputAsJson=${JSON.stringify(input)}`)
             .toPromise()
             .then(res => res.json())
-            .catch(err => console.log(err));
+            .catch(this.handleError);
     }
 
     /*getLogicalView(term: Object): Promise<any> {
@@ -56,30 +56,34 @@ export class ExplorativeSearchService {
         return this.http.post(this.logicalUrl, term, new RequestOptions({ headers: this.headers }))
             .toPromise()
             .then(res => res.json())
-            .catch(err => console.log(err));
+            .catch(this.handleError);
     }
 
     getPropertyValues(term: Object): Promise<any> {
-        console.log('propvalue', term['language']);
+        // console.log('propvalue', term['language']);
         return this.http.get(`${this.propEndPoint}?inputAsJson=${JSON.stringify(term)}`)
             .toPromise()
             .then(res => res.json())
-            .catch(err => console.log(err));
+            .catch(this.handleError);
     }
 
     getTableValues(term: Object): Promise<any> {
-        console.log('gettableview', term['language']);
+        // console.log('gettableview', term['language']);
         return this.http.get(`${this.sparqlEndPoint}?inputAsJson=${JSON.stringify(term)}`)
             .toPromise()
             .then(res => res.json())
-            .catch(err => console.log(err));
+            .catch(this.handleError);
     }
 
     getOptionalSelect(term: Object): Promise<any> {
-         console.log('getoptselect', term['language']);
+        // console.log('getoptselect', term['language']);
         return this.http.get(`${this.sparqlOptionEndPoint}?inputAsJson=${JSON.stringify(term)}`)
             .toPromise()
             .then(res => res.json())
-            .catch(err => console.log);
+            .catch(this.handleError);
+    }
+
+    private handleError(error: any): Promise<any> {
+        return Promise.reject(error.message || error);
     }
 }

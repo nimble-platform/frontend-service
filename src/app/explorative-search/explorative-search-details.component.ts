@@ -52,6 +52,10 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
     /*The API response from tableJSON will be stored in tableResult*/
     tableResult: any;
 
+    private _error_detected_getProperties = false;
+    private _error_detected_getLogicalView = false;
+    private _error_detected_getSPARQLSelect = false;
+    private _error_detected_getTableValues = false;
     // BackEnd Service + Modal Service declared here
     constructor(private expSearch: ExplorativeSearchService, private modalService: NgbModal) { }
 
@@ -345,9 +349,14 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                                 jsonFilterForEachChild['filterJSON'] = this.filterJSON;
                                 setTimeout(() => { // Need to introduce a latency here to avoid filter display errors
                                     this.arrayPassedToChild.push(jsonFilterForEachChild);
-                                    console.log('jsonFilterForChild ', jsonFilterForEachChild);
-                                    console.log('arrayPassedToChild ', this.arrayPassedToChild);
+                                    // console.log('jsonFilterForChild ', jsonFilterForEachChild);
+                                    // console.log('arrayPassedToChild ', this.arrayPassedToChild);
                                 }, 500);
+                                this._error_detected_getProperties = false;
+                            })
+                            .catch(error => {
+                                console.log(error);
+                                this._error_detected_getProperties = true;
                             });
                         // create the tableJSON so the user can
                         // click the RED Button..
@@ -391,9 +400,14 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                                 jsonFilterForEachChild['filterJSON'] = this.filterJSON;
                                 setTimeout(() => { // Need to introduce a latency here to avoid filter display errors
                                     this.arrayPassedToChild.push(jsonFilterForEachChild);
-                                    console.log('jsonFilterForChild ', jsonFilterForEachChild);
-                                    console.log('arrayPassedToChild ', this.arrayPassedToChild);
+                                    // console.log('jsonFilterForChild ', jsonFilterForEachChild);
+                                    // console.log('arrayPassedToChild ', this.arrayPassedToChild);
                                 }, 500);
+                                this._error_detected_getProperties = false;
+                            })
+                            .catch(error => {
+                                console.log(error);
+                                this._error_detected_getProperties = true;
                             });
                     }
                     /* add the tableJSON so the user can click on Red Search Button anytime */
@@ -458,6 +472,11 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                                         this.config = res;
                                         // console.log(this.config['completeStructure']);
                                         // console.log(this.config['viewStructure']);
+                                        this._error_detected_getLogicalView = false;
+                                    })
+                                    .catch(error => {
+                                        console.log(error);
+                                        this._error_detected_getLogicalView = true;
                                     });
                                 // store the previous tableJSON things in private variable
                                 this._tableJSONPaths = this.tableJSON['parametersIncludingPath'];
@@ -510,8 +529,14 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
         // console.log(this.tableJSON); // DEBUG-CHECK
         // call the API..
         this.expSearch.getTableValues(this.tableJSON)
-            .then(res => this.tableResult = res)
-            .catch(err => console.log(err));
+            .then(res => {
+                this.tableResult = res;
+                this._error_detected_getTableValues = false;
+            })
+            .catch(err => {
+                console.log(err);
+                this._error_detected_getTableValues = true;
+            });
     }
 
     /**
@@ -547,7 +572,14 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
         optSelectJSON['language'] = this.lang;
         console.log(optSelectJSON);
         this.expSearch.getOptionalSelect(optSelectJSON)
-          .then(res => this.sparqlSelectedOption = res );
+          .then(res => {
+              this.sparqlSelectedOption = res;
+              this._error_detected_getSPARQLSelect = false;
+          })
+            .catch(error => {
+                console.log(error);
+                this._error_detected_getSPARQLSelect = true;
+            });
         this.hiddenElement = true;
     }
 
