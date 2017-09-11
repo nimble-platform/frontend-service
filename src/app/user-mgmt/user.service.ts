@@ -5,13 +5,16 @@ import { User } from './model/user';
 import * as myGlobals from '../globals';
 import {Party} from "../catalogue/model/publish/party";
 import { CompanySettings } from './model/company-settings';
+import {Observable} from "rxjs/Observable";
+import {toPromise} from "rxjs/operator/toPromise";
 
 @Injectable()
 export class UserService {
 
 	private headers = new Headers({'Content-Type': 'application/json'});
 	private url = myGlobals.user_mgmt_endpoint;
-	private userParty: Party;
+
+	userParty: Party;
 
 	constructor(private http: Http) { }
 
@@ -24,6 +27,22 @@ export class UserService {
 		.catch(this.handleError);
 	}
 
+	getParty(partyId:string):Promise<Party> {
+		const url = `${this.url}/party/${partyId}`;
+		return this.http
+            .get(url, {headers: this.headers})
+			.toPromise()
+            .catch(err => {
+            	if(err.status == 302) {
+					// ToDo: make identity service using the latest version of the data model
+					let party:Party = new Party(err.json().hjid, err.json().id, err.json().partyName[0].name, null);
+					return Promise.resolve(party);
+				} else {
+            		return this.handleError(err);
+				}
+            });
+	}
+
 	getUserParty(userId: string): Promise<Party> {
 		if(this.userParty != null) {
 			return Promise.resolve(this.userParty);
@@ -33,12 +52,8 @@ export class UserService {
 		.get(url, {headers: this.headers})
 		.toPromise()
 		.then(res => {
-
-			let partyObj = res.json()[0];
-			console.log(url + ' returned ' + JSON.stringify(partyObj));
-
 			// ToDo: make identity service using the latest version of the data model
-			this.userParty = new Party(res.json()[0].hjid, res.json()[0].partyName[0].name, null);
+			this.userParty = new Party(res.json()[0].hjid, res.json()[0].hjid, res.json()[0].partyName[0].name, null);
 			return Promise.resolve(this.userParty);
 		})
 		.catch(this.handleError);

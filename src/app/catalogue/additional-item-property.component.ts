@@ -69,7 +69,7 @@ export class AdditionalItemPropertyComponent implements OnInit, OnDestroy {
             this.propertyUnitDefined = true;
         }
 
-        this.editModeSubscription= this.catalogueService._editMode$
+        this.editModeSubscription= this.catalogueService.editModeObs
             .subscribe(editMode => this.editMode = editMode);
     }
 

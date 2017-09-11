@@ -10,7 +10,7 @@ import {UserService} from "../user-mgmt/user.service";
 import {CatalogueLine} from "./model/publish/catalogue-line";
 import {Category} from "./model/category/category";
 import {Observable} from "rxjs/Observable";
-import {ModelUtils} from "./model/model-utils";
+import {UBLModelUtils} from "./model/ubl-model-utils";
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 
 @Injectable()
@@ -24,7 +24,7 @@ export class CatalogueService {
     originalCatalogueLine: CatalogueLine;
     // edit mode switch (observable as it is provided by parent to its grandchild components)
     private editMode = new BehaviorSubject<boolean>(false);
-    _editMode$ = this.editMode.asObservable();
+    editModeObs = this.editMode.asObservable();
 
     constructor(private http: Http,
                 private userService: UserService) {
@@ -32,7 +32,7 @@ export class CatalogueService {
 
     resetDraftItem(userId: string):void {
         this.userService.getUserParty(userId).then(party => {
-            this.draftCatalogueLine = ModelUtils.createCatalogueLine(party);
+            this.draftCatalogueLine = UBLModelUtils.createCatalogueLine(party);
         });
     }
 

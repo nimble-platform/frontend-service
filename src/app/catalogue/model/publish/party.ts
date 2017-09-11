@@ -4,6 +4,7 @@ import {Person} from "./person";
  */
 export class Party {
     constructor(
+        public hjid,
         public id:string,
         public name: string,
         public person:Person

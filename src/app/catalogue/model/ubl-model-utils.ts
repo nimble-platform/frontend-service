@@ -12,10 +12,20 @@ import {Party} from "./publish/party";
 import {Item} from "./publish/item";
 import {GoodsItem} from "./publish/goods-item";
 import {CatalogueLine} from "./publish/catalogue-line";
+import {OrderResponseSimple} from "../../bpe/model/ubl/order-response-simple";
+import {Order} from "../../bpe/model/ubl/order";
+import {OrderReference} from "../../bpe/model/order-reference";
+import {DocumentReference} from "./publish/document-reference";
+import {ProcessVariables} from "../../bpe/model/process-variables";
+import {Quantity} from "./publish/quantity";
+import {LineItem} from "./publish/line-item";
+import {OrderLine} from "./publish/order-line";
+import {CustomerParty} from "./publish/customer-party";
+import {SupplierParty} from "./publish/supplier-party";
 /**
  * Created by suat on 05-Jul-17.
  */
-export class ModelUtils {
+export class UBLModelUtils {
     /**
      * Create a property based on the given property and category parameters.
      *
@@ -98,6 +108,41 @@ export class ModelUtils {
 
         let catalogueLine = new CatalogueLine(uuid, null, null, null, [], ilq, goodsItem);
         return catalogueLine;
+    }
+
+    public static createOrder():Order {
+        let quantity:Quantity = new Quantity(null, "", null);
+        let item:Item = this.createItem();
+        let lineItem:LineItem = new LineItem(quantity, item);
+        let orderLine:OrderLine = new OrderLine(lineItem);
+        let order = new Order(this.generateUUID(), "Some note", null, null, [orderLine]);
+        return order;
+    }
+
+    public static createOrderResponseSimple(order:Order, acceptedIndicator:boolean):OrderResponseSimple {
+        let documentReference:DocumentReference = new DocumentReference(order.id);
+        let orderReference:OrderReference = new OrderReference(documentReference);
+        let customerParty:CustomerParty = this.removeHjidFieldsFromObject(order.buyerCustomerParty);
+        let supplierParty:SupplierParty = this.removeHjidFieldsFromObject(order.sellerSupplierParty);
+        let obj = {"hjid":1234, "a":"b", "c":"d", "e":{"hjid":1234, "f":"g", "h":"i", "j":{"hjid":1234, "a":"b", "c":"d"}}};
+        obj = this.removeHjidFieldsFromObject(obj);
+        console.log(obj);
+        let orderResponseSimple:OrderResponseSimple = new OrderResponseSimple("", acceptedIndicator, orderReference, supplierParty, customerParty);
+        return orderResponseSimple;
+    }
+
+
+    public static createItem():Item {
+        let item = new Item("", "", false, [], null, null, null, [], [], [], "", [], "");
+        return item;
+    }
+
+    public static removeHjidFieldsFromObject(object:any):any {
+        delete object.hjid;
+        for(let field of object) {
+            field = this.removeHjidFieldsFromObject(object.field);
+        }
+        return object;
     }
 
     private static generateUUID(): string {

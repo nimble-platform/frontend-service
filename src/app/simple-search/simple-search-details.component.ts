@@ -1,12 +1,17 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Params } from '@angular/router';
-import { Search } from './model/search';
-import { SimpleSearchService } from './simple-search.service';
-import { BPEService } from '../bpe/bpe.service';
-import { OrderObject } from '../bpe/model/order-object';
-import { Order } from '../bpe/model/order';
-import { CookieService } from 'ng2-cookies';
-import * as myGlobals from '../globals';
+import {Component, OnInit} from "@angular/core";
+import {ActivatedRoute} from "@angular/router";
+import {SimpleSearchService} from "./simple-search.service";
+import {BPEService} from "../bpe/bpe.service";
+import {Order} from "../bpe/model/ubl/order";
+import {CookieService} from "ng2-cookies";
+import * as myGlobals from "../globals";
+import {ProcessInstanceInputMessage} from "../bpe/model/process-instance-input-message";
+import {ProcessVariables} from "../bpe/model/process-variables";
+import {ModelUtils} from "../bpe/model/model-utils";
+import {UserService} from "../user-mgmt/user.service";
+import {UBLModelUtils} from "../catalogue/model/ubl-model-utils";
+import {CustomerParty} from "../catalogue/model/publish/customer-party";
+import {SupplierParty} from "../catalogue/model/publish/supplier-party";
 
 @Component({
 	selector: 'simple-search-details',
@@ -31,17 +36,17 @@ export class SimpleSearchDetailsComponent implements OnInit {
 	submitted2 = false;
 	callback2 = false;
 	error_detc2 = false;
-	model = new Order('','','','');
-	orderToSubmit = new Order('','','','');
-	orderObjToSubmit = new OrderObject('','','','','','','');
 	temp: any;
 	response: any;
 	details: any;
 	configs: any;
+
+	order = UBLModelUtils.createOrder();
 	
 	constructor(
 		private simpleSearchService: SimpleSearchService,
 		private bpeService: BPEService,
+		private userService: UserService,
 		private cookieService: CookieService,
 		private route: ActivatedRoute
 	) {
@@ -103,33 +108,31 @@ export class SimpleSearchDetailsComponent implements OnInit {
 		});
     }
 	
-	order(obj: Order) {
-		this.orderToSubmit = JSON.parse(JSON.stringify(obj));
-		this.orderToSubmit.message = JSON.stringify(this.set_configs);
-		this.orderToSubmit.product_id = this.response[0].id.toString();
-		this.orderToSubmit.product_name = this.response[0][this.product_name].toString();
-		this.orderObjToSubmit.order = JSON.stringify(this.orderToSubmit);
-		if (this.product_vendor_id == "")
-			this.orderObjToSubmit.seller = "";
-		else
-			this.orderObjToSubmit.seller = this.response[0][this.product_vendor_id].toString();
-		if (this.product_vendor_name == "")
-			this.orderObjToSubmit.sellerName = "";
-		else
-			this.orderObjToSubmit.sellerName = this.response[0][this.product_vendor_name].toString();
-		this.orderObjToSubmit.buyer = this.cookieService.get("company_id");
-		this.orderObjToSubmit.buyerName = this.cookieService.get("user_fullname");
-		if (this.product_vendor_id == "")
-			this.orderObjToSubmit.connection = "||"+this.cookieService.get("company_id")+"|";
-		else
-			this.orderObjToSubmit.connection = "|"+this.response[0][this.product_vendor_id].toString()+"|"+this.cookieService.get("company_id")+"|";
-		this.bpeService.placeOrder(this.orderObjToSubmit)
-		.then(res => {
-			this.callback2 = true;
-			this.error_detc2 = false;
-		})
-		.catch(error => {
-			this.error_detc2 = true;
+	sendOrder() {
+		this.order.orderLine[0].lineItem.item.name = this.response[0][this.product_name][0];
+
+		//first initialize the seller and buyer parties.
+		//once they are fetched continue with starting the ordering process
+		let sellerId:string = this.response[0][this.product_vendor_id].toString();
+		let buyerId:string = this.cookieService.get("company_id");
+
+		this.userService.getParty(buyerId).then(buyerParty => {
+			this.order.buyerCustomerParty = new CustomerParty(buyerParty)
+
+			this.userService.getParty(sellerId).then(sellerParty => {
+				this.order.sellerSupplierParty = new SupplierParty(sellerParty);
+				let vars:ProcessVariables = ModelUtils.createProcessVariables("Order", buyerId, sellerId, JSON.stringify(this.order));
+				let piim:ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
+
+				this.bpeService.startBusinessProcess(piim)
+                    .then(res => {
+						this.callback2 = true;
+						this.error_detc2 = false;
+					})
+                    .catch(error => {
+						this.error_detc2 = true;
+					});
+			});
 		});
 	}
 	
@@ -172,7 +175,7 @@ export class SimpleSearchDetailsComponent implements OnInit {
 	
 	onSubmit() {
 		this.submitted2 = true;
-		this.order(this.model);
+		this.sendOrder();
 	}
 	
 	isJson(str: string): boolean {

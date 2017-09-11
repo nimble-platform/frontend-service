@@ -11,7 +11,7 @@ import {Category} from "./model/category/category";
 import {CatalogueLine} from "./model/publish/catalogue-line";
 import {Catalogue} from "./model/publish/catalogue";
 import {CookieService} from "ng2-cookies";
-import {ModelUtils} from "./model/model-utils";
+import {UBLModelUtils} from "./model/ubl-model-utils";
 import {ActivatedRoute, Params, Router} from "@angular/router";
 import {ProductPropertiesComponent} from "./product-properties.component";
 import 'rxjs/Rx' ;
@@ -41,7 +41,7 @@ export class ProductPublishComponent implements OnInit {
     // reference to the draft item itself
     private catalogueLine: CatalogueLine = null;
     // placeholder for the custom property
-    private newProperty: ItemProperty = ModelUtils.createAdditionalItemProperty(null, null);
+    private newProperty: ItemProperty = UBLModelUtils.createAdditionalItemProperty(null, null);
 
     // indicates whether the navigation is done for the first time
     newPublishing:boolean = true;
@@ -127,7 +127,7 @@ export class ProductPublishComponent implements OnInit {
 
                 // new publishing is the first entry to the publishing page
                 if (this.newPublishing) {
-                    this.catalogueLine = ModelUtils.createCatalogueLine(party)
+                    this.catalogueLine = UBLModelUtils.createCatalogueLine(party)
                     this.catalogueService.setDraftItem(this.catalogueLine);
 
                     // this "else" is required when coming back from the catalogue selection page in editing
@@ -159,7 +159,7 @@ export class ProductPublishComponent implements OnInit {
         // prepare empty category fields
         for (let category of this.selectedCategories) {
             for (let property of category.properties) {
-                let aip = ModelUtils.createAdditionalItemProperty(property, category);
+                let aip = UBLModelUtils.createAdditionalItemProperty(property, category);
                 //aip.propertyDefinition = property.definition;
 
                 // Make sure each property is pushed once
@@ -191,12 +191,12 @@ export class ProductPublishComponent implements OnInit {
     }
 
     private updateItemWithNewCategory(category: Category): void {
-        let commodityClassification = ModelUtils.createCommodityClassification(category);
+        let commodityClassification = UBLModelUtils.createCommodityClassification(category);
         this.catalogueLine.goodsItem.item.commodityClassification.push(commodityClassification);
 
         loop1:
         for (let property of category.properties) {
-            let aip = ModelUtils.createAdditionalItemProperty(property, category);
+            let aip = UBLModelUtils.createAdditionalItemProperty(property, category);
             // check whether the same property exists already
             for (let existingAip of this.catalogueLine.goodsItem.item.additionalItemProperty) {
                 if (aip.id == existingAip.id) {
@@ -305,7 +305,7 @@ export class ProductPublishComponent implements OnInit {
     private onSuccessfulPublish(): void {
         let userId = this.cookieService.get("user_id");
         this.userService.getUserParty(userId).then(party => {
-            this.catalogueLine = ModelUtils.createCatalogueLine(party)
+            this.catalogueLine = UBLModelUtils.createCatalogueLine(party)
             this.catalogueService.setDraftItem(this.catalogueLine);
 
             // avoid category duplication
@@ -513,7 +513,7 @@ export class ProductPublishComponent implements OnInit {
         this.catalogueLine.goodsItem.item.additionalItemProperty.splice(i, 0, this.newProperty);
 
         // reset the custom property view
-        this.newProperty = ModelUtils.createAdditionalItemProperty(null, null);
+        this.newProperty = UBLModelUtils.createAdditionalItemProperty(null, null);
         this.propertyValueType.nativeElement.selectedIndex = 0;
     }
 

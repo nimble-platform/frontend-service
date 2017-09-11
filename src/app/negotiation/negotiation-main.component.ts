@@ -1,7 +1,7 @@
 import {Component, Input} from '@angular/core';
 import * as myGlobals from '../globals';
-import {RequestForQuotation} from "../bpe/model/request-for-quotation";
-import {Terms} from "../bpe/model/request-for-quotation-terms";
+import {RequestForQuotation} from "../bpe/model/ubl/request-for-quotation";
+import {Terms} from "../bpe/model/ubl/request-for-quotation-terms";
 import {CookieService} from "ng2-cookies";
 import {BPEService} from "../bpe/bpe.service";
 
