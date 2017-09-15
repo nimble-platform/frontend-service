@@ -35,6 +35,7 @@ export class ExplorativeSearchFilterComponent implements OnChanges {
     userSelections: any[] = [];
     /*Component where the slider value is shown everytime the value changes*/
     @ViewChild('rangeVal') slider: ElementRef;
+    private  _error_detected_slider;
 
     constructor(private expSearch: ExplorativeSearchService) {}
 
@@ -43,7 +44,7 @@ export class ExplorativeSearchFilterComponent implements OnChanges {
      * a new filter configuration to the child
      */
     ngOnChanges(): void {
-        console.log('FilterConfig ', this.filterProperties['filterJSON']); // DEBUG Check
+        // console.log('FilterConfig ', this.filterProperties['filterJSON']); // DEBUG Check
         this.result = [];
         this.finalSelectionJSON = {'root': this.filterProperties['fQueryRootUrl'], 'filter': []};
         if (this.filterProperties['filterJSON'] === {}) {
@@ -81,16 +82,16 @@ export class ExplorativeSearchFilterComponent implements OnChanges {
             let index = this.userSelections.indexOf(inp);
             this.userSelections.splice(index, 1);
         }
-        console.log('Filter Area: ', this.userSelections); // DEBUG CHECK
+        // console.log('Filter Area: ', this.userSelections); // DEBUG CHECK
         if (this.userSelections.length > 0) {
             this.finalSelectionJSON = {'root': this.filterProperties['fQueryRoot'], 'filter': this.userSelections};
         } else {
-            console.log('FilterArea: this.userSelections', this.userSelections);
+            // console.log('FilterArea: this.userSelections', this.userSelections);
             this.finalSelectionJSON = {'root': this.filterProperties['fQueryRoot'],
                 'child': this.filterProperties['fQuery'], 'filter': []};
         }
         this.filterSelectionUpdated.emit(this.finalSelectionJSON);
-        console.log('FilterArea: finalSelectionJSON', this.finalSelectionJSON); // DEBUG CHECK
+        // console.log('FilterArea: finalSelectionJSON', this.finalSelectionJSON); // DEBUG CHECK
     }
 
     /**
@@ -119,6 +120,11 @@ export class ExplorativeSearchFilterComponent implements OnChanges {
         this.expSearch.getPropertyValues(filteringInput)
             .then(res => {
                 this.result = res[this.filterProperties['fQuery']]; // store the array in JSON response in the result array
+                this._error_detected_slider = false;
+            })
+            .catch(error => {
+                console.log(error);
+                this._error_detected_slider = true;
             });
     }
 

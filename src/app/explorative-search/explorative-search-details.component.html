@@ -24,10 +24,16 @@
                     </tr>
                 </table>
             </div>
-            <div>
-                <button [hidden]="!hiddenElement" class="btn btn-lg btn-warning" (click)="diagramAgain()">
-                    Back
-                </button>
+            <div class="row">
+                <div class="col-8">
+                    <button [hidden]="!hiddenElement" class="btn btn-lg btn-warning" (click)="diagramAgain()">
+                        Back
+                    </button>
+                </div>
+                <div class="col-4 pull-right">
+                    <a class="btn btn-lg btn-primary" routerLink="/simple-search-details/:id" [hidden]="!hiddenElement">
+                        Negotiation</a>
+                </div>
             </div>
             <br>
             <br>
@@ -75,4 +81,12 @@
             <button class="btn btn-lg btn-danger" (click)="genTable()">Search</button>
         </div>
     </div>
+</div>
+
+<div [hidden]="!(_error_detected_getLogicalView || _error_detected_getProperties || _error_detected_getSPARQLSelect || _error_detected_getTableValues)">
+    <div class="alert alert-danger space-before" role="alert">An error occured - please try again later</div>
+</div>
+
+<div [hidden]="!(_warning_table_results)">
+    <div class="alert alert-warning space-before" role="alert">No Matches Found. Please try again with different Queries</div>
 </div>

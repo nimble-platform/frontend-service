@@ -40,6 +40,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
     /* To store selected properties*/
     private selectedProperties: Array<string> = [];
     private selectedNodeKeys: any[] = [];
+    private _nodeKeysBackup: any[] = [];
     /* SPARQL TABLE Variables */
     private sparqlSelectedOption: Object;
     private tableJSON: Object = {};
@@ -52,6 +53,11 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
     /*The API response from tableJSON will be stored in tableResult*/
     tableResult: any;
 
+    private _error_detected_getProperties = false;
+    private _error_detected_getLogicalView = false;
+    private _error_detected_getSPARQLSelect = false;
+    private _error_detected_getTableValues = false;
+    private _warning_table_results = false;
     // BackEnd Service + Modal Service declared here
     constructor(private expSearch: ExplorativeSearchService, private modalService: NgbModal) { }
 
@@ -76,6 +82,12 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
         this.filterQuery = '';
         this.nodeFilterName = '';
         this.selectedNodeKeys = [];
+        // reset errors/warnings too since this is a fresh start.
+        this._error_detected_getSPARQLSelect = false;
+        this._error_detected_getTableValues = false;
+        this._error_detected_getProperties = false;
+        this._error_detected_getLogicalView = false;
+        this._warning_table_results = false;
     }
 
     /**
@@ -196,6 +208,9 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                 }
                 this.arrayPassedToChild = [];
                 this.collectionOfFiltersFromChildren = [];
+                this._nodeKeysBackup = this.selectedNodeKeys;
+                this.selectedNodeKeys = [];
+                this._warning_table_results = false;
             }
             });
     }
@@ -345,9 +360,14 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                                 jsonFilterForEachChild['filterJSON'] = this.filterJSON;
                                 setTimeout(() => { // Need to introduce a latency here to avoid filter display errors
                                     this.arrayPassedToChild.push(jsonFilterForEachChild);
-                                    console.log('jsonFilterForChild ', jsonFilterForEachChild);
-                                    console.log('arrayPassedToChild ', this.arrayPassedToChild);
+                                    // console.log('jsonFilterForChild ', jsonFilterForEachChild);
+                                    // console.log('arrayPassedToChild ', this.arrayPassedToChild);
                                 }, 500);
+                                this._error_detected_getProperties = false;
+                            })
+                            .catch(error => {
+                                console.log(error);
+                                this._error_detected_getProperties = true;
                             });
                         // create the tableJSON so the user can
                         // click the RED Button..
@@ -379,6 +399,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                 this.arrayPassedToChild = [];
                 this.tableResult = {};
                 this.selectedNodeKeys = [];
+                this._nodeKeysBackup = [];
                 // console.log('CTRL key released.. Multiselect off'); // DEBUG-CHECK
                 if (node.isSelected) { // if node is selected in Single Select, add to list
                     // avoid duplicate entries in the list
@@ -391,9 +412,14 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                                 jsonFilterForEachChild['filterJSON'] = this.filterJSON;
                                 setTimeout(() => { // Need to introduce a latency here to avoid filter display errors
                                     this.arrayPassedToChild.push(jsonFilterForEachChild);
-                                    console.log('jsonFilterForChild ', jsonFilterForEachChild);
-                                    console.log('arrayPassedToChild ', this.arrayPassedToChild);
+                                    // console.log('jsonFilterForChild ', jsonFilterForEachChild);
+                                    // console.log('arrayPassedToChild ', this.arrayPassedToChild);
                                 }, 500);
+                                this._error_detected_getProperties = false;
+                            })
+                            .catch(error => {
+                                console.log(error);
+                                this._error_detected_getProperties = true;
                             });
                     }
                     /* add the tableJSON so the user can click on Red Search Button anytime */
@@ -458,6 +484,11 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                                         this.config = res;
                                         // console.log(this.config['completeStructure']);
                                         // console.log(this.config['viewStructure']);
+                                        this._error_detected_getLogicalView = false;
+                                    })
+                                    .catch(error => {
+                                        console.log(error);
+                                        this._error_detected_getLogicalView = true;
                                     });
                                 // store the previous tableJSON things in private variable
                                 this._tableJSONPaths = this.tableJSON['parametersIncludingPath'];
@@ -510,8 +541,16 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
         // console.log(this.tableJSON); // DEBUG-CHECK
         // call the API..
         this.expSearch.getTableValues(this.tableJSON)
-            .then(res => this.tableResult = res)
-            .catch(err => console.log(err));
+            .then(res => {
+                this.tableResult = res;
+                // console.log(this.tableResult); // DEBUG-CHECK
+                (this.tableResult['rows'].length === 0) ? this._warning_table_results = true : this._warning_table_results = false;
+                this._error_detected_getTableValues = false;
+            })
+            .catch(err => {
+                console.log(err);
+                this._error_detected_getTableValues = true;
+            });
     }
 
     /**
@@ -547,7 +586,14 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
         optSelectJSON['language'] = this.lang;
         console.log(optSelectJSON);
         this.expSearch.getOptionalSelect(optSelectJSON)
-          .then(res => this.sparqlSelectedOption = res );
+          .then(res => {
+              this.sparqlSelectedOption = res;
+              this._error_detected_getSPARQLSelect = false;
+          })
+            .catch(error => {
+                console.log(error);
+                this._error_detected_getSPARQLSelect = true;
+            });
         this.hiddenElement = true;
     }
 
@@ -555,7 +601,6 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
      * toggle the diagram and table with the BACK Button
      */
     diagramAgain(): void {
-        // this.sparqlSelectedOption = null;
         if (this.hiddenElement) {
             this.hiddenElement = !this.hiddenElement;
         }
@@ -596,8 +641,8 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
         for (let eachPreviousSelection of this.config['currentSelections']) { // add them again for reuse
             this.selectedProperties.push(eachPreviousSelection.pop());
         }
-        if (this.selectedNodeKeys.length > 0) { // find the node keys for previous selection and make them visible (selected)
-            for (let eachNodeKey of this.selectedNodeKeys) {
+        if (this._nodeKeysBackup.length > 0) { // find the node keys for previous selection and make them visible (selected)
+            for (let eachNodeKey of this._nodeKeysBackup) {
                 let nodeToBeSelected = this.myDiagram.findNodeForKey(eachNodeKey);
                 nodeToBeSelected.part.isSelected = true;
                 nodeToBeSelected.selectionAdorned = true;
