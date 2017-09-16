@@ -289,9 +289,24 @@ export class ProductPublishComponent implements OnInit {
         let propertiesToBeSpliced: ItemProperty[] = [];
 
         for (let property of properties) {
-            // ASSUMPTION: if zeroth entry of a property is empty, all entries are
-            if (property.value[0] === "") {
-                propertiesToBeSpliced.push(property);
+            let valueQualifier:string = property.valueQualifier.toLocaleLowerCase();
+            if(valueQualifier == "real_measure" ||
+                valueQualifier == "int" ||
+                valueQualifier == "double" ||
+                valueQualifier == "number") {
+                if(property.valueDecimal.length == 0 || property.valueDecimal[0] == undefined) {
+                    propertiesToBeSpliced.push(property);
+                }
+
+            } else if(valueQualifier == "binary") {
+                if(property.valueBinary.length == 0) {
+                    propertiesToBeSpliced.push(property);
+                }
+
+            } else {
+                if(property.value.length == 0 || property.value[0] == '') {
+                    propertiesToBeSpliced.push(property);
+                }
             }
         }
 
@@ -518,18 +533,17 @@ export class ProductPublishComponent implements OnInit {
     }
 
     private downloadTemplate() {
+        let userId: string = this.cookieService.get("user_id");
         var reader = new FileReader();
-        this.catalogueService.downloadTemplate(this.selectedCategories[0])
-            .subscribe(data => {
-
-                    var contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-                    var link = document.createElement('a');
-                    link.href = window.URL.createObjectURL(data);
-                    link.download = "template.xlsx";
-                    link.click();
-                },
-                error => console.log("Error downloading the file."),
-                () => console.log('Completed file download.'));
+        this.catalogueService.downloadTemplate(userId, this.selectedCategories)
+            .then(data => {
+                var contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+                var link = document.createElement('a');
+                link.href = window.URL.createObjectURL(data);
+                link.download = "template.xlsx";
+                link.click();
+            },
+            error => console.log("Error downloading the file."));
     }
 
     private uploadTemplate(event: any) {

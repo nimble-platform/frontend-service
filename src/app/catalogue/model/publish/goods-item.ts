@@ -3,11 +3,14 @@
  */
 import {Item} from "./item";
 import {Delivery} from "./delivery";
+import {DeliveryTerms} from "./delivery-terms";
+import {Package} from "./package";
 
 export class GoodsItem {
     constructor(
         public id: string,
         public item: Item,
-        public delivery: Delivery
+        public containingPackage: Package,
+        public deliveryTerms: DeliveryTerms
     ) {  }
 }

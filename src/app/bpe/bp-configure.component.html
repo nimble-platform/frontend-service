@@ -1,0 +1,38 @@
+<div *ngIf="bp">
+    <h3>{{bp.processName}} Process Configuration</h3>
+    <p *ngIf="startSelecting" style="color: maroon">
+        <i i18n>Please select the role and transaction you would like to configure!</i>
+    </p>
+    <div id="diagram"></div>
+
+    <div *ngIf="selectedTransactionID != '' && partnerRole != ''">
+        <div class="input-group form-group">
+            <label class="input-group-addon" i18n>Data Adapter: </label>
+            <select class="form-control" [(ngModel)]="dataAdapterType">
+                <option value="JAVA">JAVA</option>
+                <option value="MICROSERVICE">MICROSERVICE</option>
+                <option value="OTHER">OTHER</option>
+            </select>
+            <input class="form-control" [(ngModel)]="dataAdapterURI" placeholder="Data Adapter URI" />
+        </div>
+        <div class="input-group form-group">
+            <label class="input-group-addon" i18n>Data Processor: </label>
+            <select class="form-control" [(ngModel)]="dataProcessorType">
+                <option value="JAVA">JAVA</option>
+                <option value="MICROSERVICE">MICROSERVICE</option>
+                <option value="OTHER">OTHER</option>
+            </select>
+            <input class="form-control" [(ngModel)]="dataProcessorURI" placeholder="Data Processor URI" />
+        </div>
+        <div class="input-group form-group">
+            <label class="input-group-addon" i18n>Data Channel: </label>
+            <select class="form-control" [(ngModel)]="dataChannelType">
+                <option value="JAVA">JAVA</option>
+                <option value="MICROSERVICE">MICROSERVICE</option>
+                <option value="OTHER">OTHER</option>
+            </select>
+            <input class="form-control" [(ngModel)]="dataChannelURI" placeholder="Data Channel URI" />
+        </div>
+        <button (click)="configure()">&nbsp; Save &nbsp;</button>
+    </div>
+</div>

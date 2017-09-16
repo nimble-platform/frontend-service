@@ -88,31 +88,38 @@ export class CatalogueService {
             .catch(this.handleError);
     }
 
-    downloadTemplate(category: Category): Observable<any> {
-        const url = this.baseUrl + `/catalogue/template?taxonomyId=${category.taxonomyId}&categoryId=${encodeURIComponent(category.id)}`;
-        let downloadTemplateHeaders = new Headers({'Accept': 'application/octet-stream'});
-        return Observable.create(observer => {
+    downloadTemplate(userId:string, categories: Category[]): Promise<any> {
+        let taxonomyIds:string = "", categoryIds:string = "";
+        for(let category of categories) {
+            categoryIds += category.id + ",";
+            taxonomyIds += category.taxonomyId + ",";
+        }
+        categoryIds = categoryIds.substr(0, categoryIds.length-1);
+        taxonomyIds = taxonomyIds.substr(0, taxonomyIds.length-1);
 
-            let xhr = new XMLHttpRequest();
+        return this.userService.getUserParty(userId).then(party => {
+            const url = this.baseUrl + `/catalogue/template?partyId=${party.id}&partyName=${party.name}&categoryIds=${encodeURIComponent(categoryIds)}&taxonomyIds=${encodeURIComponent(taxonomyIds)}`;
+            return new Promise<any>((resolve, reject) => {
 
-            xhr.open('GET', this.baseUrl + `/catalogue/template?taxonomyId=${category.taxonomyId}&categoryId=${encodeURIComponent(category.id)}`, true);
-            xhr.setRequestHeader('Accept', 'application/octet-stream');
-            xhr.responseType = 'blob';
+                let xhr = new XMLHttpRequest();
+                xhr.open('GET', url, true);
+                xhr.setRequestHeader('Accept', 'application/octet-stream');
+                xhr.responseType = 'blob';
 
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState === 4) {
-                    if (xhr.status === 200) {
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4) {
+                        if (xhr.status === 200) {
 
-                        var contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-                        var blob = new Blob([xhr.response], {type: contentType});
-                        observer.next(blob);
-                        observer.complete();
-                    } else {
-                        observer.error(xhr.response);
+                            var contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+                            var blob = new Blob([xhr.response], {type: contentType});
+                            resolve(blob);
+                        } else {
+                            reject(xhr.status);
+                        }
                     }
                 }
-            }
-            xhr.send();
+                xhr.send();
+            });
         });
     }
 

@@ -22,6 +22,10 @@ import {LineItem} from "./publish/line-item";
 import {OrderLine} from "./publish/order-line";
 import {CustomerParty} from "./publish/customer-party";
 import {SupplierParty} from "./publish/supplier-party";
+import {DeliveryTerms} from "./publish/delivery-terms";
+import {Period} from "./publish/period";
+import {Package} from "./publish/package";
+import {ItemIdentification} from "./publish/item-identification";
 /**
  * Created by suat on 05-Jul-17.
  */
@@ -62,7 +66,8 @@ export class UBLModelUtils {
             }
             let valueQualifier = property.dataType;
 
-            aip = new ItemProperty(property.id, property.preferredName, [''], [0], new Array<BinaryObject>(), "", unit,
+            let number;
+            aip = new ItemProperty(property.id, property.preferredName, [''], [number], new Array<BinaryObject>(), "", unit,
                 valueQualifier, code, "", null);
         }
         return aip;
@@ -76,7 +81,7 @@ export class UBLModelUtils {
 
     public static createPrice(amount: string): Price {
         // create amount
-        let amountObj: Amount = new Amount(amount, "Euro");
+        let amountObj: Amount = this.createAmountWithCurrency("EUR")
         // price
         let price: Price = new Price(amountObj);
         return price;
@@ -84,7 +89,7 @@ export class UBLModelUtils {
 
     public static createItemLocationQuantity(amount: string): ItemLocationQuantity {
         // create amount
-        let amountObj: Amount = new Amount(amount, "Euro");
+        let amountObj: Amount = this.createAmountWithCurrency("EUR")
         // price
         let price: Price = new Price(amountObj);
         // item location quantity
@@ -92,21 +97,21 @@ export class UBLModelUtils {
         return ilq;
     }
 
-    public static createCatalogueLine(providerParty: Party,): CatalogueLine {
+    public static createCatalogueLine(providerParty: Party): CatalogueLine {
         // create additional item properties
         let additionalItemProperties = new Array<ItemProperty>();
 
         // create item
-        let item = new Item("", "", false, additionalItemProperties, providerParty, null, null, [], [], [], "", [], "");
+        let item = new Item("", "", [], false, additionalItemProperties, providerParty, this.createItemIdentification(), null, [], [], [], "", [], "");
 
         // create goods item
         let uuid:string = this.generateUUID();
-        let goodsItem = new GoodsItem(uuid, item, null);
+        let goodsItem = new GoodsItem(uuid, item, this.createPackage(), this.createDeliveryTerms());
 
         // create required item location quantity
         let ilq = this.createItemLocationQuantity("");
 
-        let catalogueLine = new CatalogueLine(uuid, null, null, null, [], ilq, goodsItem);
+        let catalogueLine = new CatalogueLine(uuid, null, null, this.createPeriod(), [], ilq, goodsItem);
         return catalogueLine;
     }
 
@@ -133,16 +138,52 @@ export class UBLModelUtils {
 
 
     public static createItem():Item {
-        let item = new Item("", "", false, [], null, null, null, [], [], [], "", [], "");
+        let item = new Item("", "", [], false, [], null, this.createItemIdentification(), null, [], [], [], null, [], "");
         return item;
     }
 
     public static removeHjidFieldsFromObject(object:any):any {
         delete object.hjid;
-        for(let field of object) {
+        for (let field of object) {
             field = this.removeHjidFieldsFromObject(object.field);
         }
         return object;
+    }
+
+    public static createPackage():Package {
+        return new Package(this.createQuantity(), this.createCode(), null);
+    }
+
+    public static createCode():Code {
+        return new Code(null, null, null, null);
+    }
+
+    public static createDeliveryTerms():DeliveryTerms {
+        let deliveryTerms = new DeliveryTerms(null, this.createPeriod(), null, null, this.createAmount(), null);
+        return deliveryTerms;
+    }
+
+    public static createPeriod():Period {
+        let period:Period = new Period(null, null, null, null, this.createQuantity(), null);
+        return period;
+    }
+
+    public static createQuantity():Quantity {
+        let quantity:Quantity = new Quantity(null, null, null);
+        return quantity;
+    }
+
+    public static createAmount():Amount{
+        let amount:Amount = new Amount(null, null);
+        return amount;
+    }
+
+    public static createAmountWithCurrency(currency:string):Amount {
+        return new Amount(null, currency);
+    }
+
+    public static createItemIdentification():ItemIdentification {
+        return new ItemIdentification(this.generateUUID());
     }
 
     private static generateUUID(): string {

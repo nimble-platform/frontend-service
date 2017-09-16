@@ -1,0 +1,19 @@
+<div class="input-group form-group">
+    <button class="btn btn-secondary"  (click)="create();"><span class="fa fa-plus"></span> Add New Business Process</button>
+</div>
+<div class="input-group form-group">
+    <table class="table table-striped">
+        <tr>
+            <th><span i18n>Process ID</span></th>
+            <th><span i18n>Process Name</span></th>
+            <th><span i18n>Controls</span></th>
+        </tr>
+        <tr *ngFor="let bp of bps">
+            <th scope="row"><span>{{bp.processID}}</span></th>
+            <td><span>{{bp.processName}}</span></td>
+            <td><button class="btn btn-secondary" (click)="delete(bp); $event.stopPropagation()"><span class="fa fa-trash"></span> Delete</button>
+            <button class="btn btn-secondary" (click)="edit(bp)"><span class="fa fa-pencil"></span> Edit</button>
+            <button class="btn btn-secondary" (click)="configure(bp)"><span class="fa fa-plug"></span> Configure</button></td>
+        </tr>
+    </table>
+</div>

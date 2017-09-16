@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { Headers, Http } from '@angular/http';
+import {Injectable} from '@angular/core';
+import {Headers, Http} from '@angular/http';
 import 'rxjs/add/operator/toPromise';
 import * as myGlobals from '../globals';
 import {RequestForQuotation} from "./model/ubl/request-for-quotation";
@@ -111,36 +111,36 @@ export class BPEService {
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
-	}
+    }
 
-	respondToRFQ(task: string, rfqResponse: RequestForQuotationResponse): Promise<any> {
-		const url = `${this.url}/rest/engine/default/task/${task}/complete`;
-		var jsonToSend = {
-			"variables": {
-				"rfqResponse": {
-					"value": JSON.stringify(rfqResponse),
-					"type": "String"
-				}
-			},
-			"businessKey" : ""
-		}
-		return this.http
+    respondToRFQ(task: string, rfqResponse: RequestForQuotationResponse): Promise<any> {
+        const url = `${this.url}/rest/engine/default/task/${task}/complete`;
+        var jsonToSend = {
+            "variables": {
+                "rfqResponse": {
+                    "value": JSON.stringify(rfqResponse),
+                    "type": "String"
+                }
+            },
+            "businessKey": ""
+        }
+        return this.http
             .post(url, JSON.stringify(jsonToSend), {headers: this.headers})
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
-	}
+    }
 
 	getDocumentJsonContent(documentId:string):Promise<string> {
 		const url = `${this.url}/document/json/${documentId}`;
 		return this.http
             .get(url, {headers: this.headers})
             .toPromise()
+            .then(res => res.json())
             .catch(this.handleError);
 	}
 
 	private handleError(error: any): Promise<any> {
 		return Promise.reject(error.message || error);
 	}
-	
 }
