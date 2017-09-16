@@ -10,15 +10,17 @@ import {ItemIdentification} from "./item-identification";
 import {Country} from "./country";
 import {Certificate} from "./certificate";
 import {Dimension} from "./dimension";
+import {Period} from "./period";
 
 export class Item {
     constructor(
         public name: string,
         public description: string,
+        public productImage:BinaryObject[],
         public freeOfChargeIndicator: boolean,
         public additionalItemProperty: ItemProperty[],
         public manufacturerParty: Party,
-        public sellersItemIdentification: ItemIdentification,
+        public manufacturersItemIdentification: ItemIdentification,
         public originCountry: Country,
         public commodityClassification: CommodityClassification[],
         public certificate: Certificate[],

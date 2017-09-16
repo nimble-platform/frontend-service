@@ -1,29 +1,46 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-
-<body>
-
 <div class="container well">
 
-    <div class="row">
-        <div class="col-sm-7"><h4><u>Product Overview</u></h4></div>
-        <div class="col-sm-3">Seller's ID: {{catalogueLine.goodsItem.item.sellersItemIdentification}}</div>
+    <div class="row mt-3">
+        <div class="col-sm-10"><h4><u>Product Overview</u></h4></div>
         <div class="col-sm-1"><button type="button" class="btn btn-success" (click)="deleteCatalogueLine()">Delete</button></div>
         <div class="col-sm-1"><button type="button" class="btn btn-success" (click)="redirectToEdit()">Edit</button></div>
     </div>
 
-    <div class="row space-after">
-        <div class="col-sm-3"><strong>Item name:</strong> {{catalogueLine.goodsItem.item.name}}</div>
-        <div class="col-sm-3"><strong>Dimensions:</strong> {{catalogueLine.goodsItem.item.dimension}}</div>
-        <div class="col-sm-3"><strong>Certificates:</strong> {{catalogueLine.goodsItem.item.certificate}}</div>
-        <div class="col-sm-3"><strong *ngIf="catalogueLine.goodsItem.item.freeOfChargeIndicator">Free of charge!</strong></div>
+    <div class="input-group">
+        <label class="col-3 control-label"><strong>Product Identifier</strong></label>
+        <!-- TODO create id for item for items published through UI-->
+        <label *ngIf="catalogueLine.goodsItem.item.manufacturersItemIdentification!= null && !editMode">{{catalogueLine.goodsItem.item.manufacturersItemIdentification.id}}</label>
+        <input *ngIf="catalogueLine.goodsItem.item.manufacturersItemIdentification!= null && editMode" class="col-9" type="text" [(ngModel)]="catalogueLine.goodsItem.item.manufacturersItemIdentification.id" [readonly]="!editMode">
+    </div>
+    <div class="input-group">
+        <label class="col-3 control-label"><strong>Name</strong></label>
+        <label *ngIf="!editMode">{{catalogueLine.goodsItem.item.name}}</label>
+        <input *ngIf="editMode" class="col-9" type="text" [(ngModel)]="catalogueLine.goodsItem.item.name" [readonly]="!editMode">
+    </div>
+    <div class="input-group">
+        <label class="col-3 control-label"><strong>Description</strong></label>
+        <label *ngIf="!editMode">{{catalogueLine.goodsItem.item.description}}</label>
+        <input *ngIf="editMode" class="col-9" type="text" [(ngModel)]="catalogueLine.goodsItem.item.description" [readonly]="!editMode">
+    </div>
+    <div class="d-flex flex-wrap">
+        <label class="col-3 control-label"><strong>Commodity Classifications</strong></label>
+        <div *ngFor="let classification of catalogueLine.goodsItem.item.commodityClassification">
+            <button class="btn btn-info mr-2">{{classification.itemClassificationCode.name}}</button>
+        </div>
     </div>
 
-    <p><strong>Description:</strong> {{catalogueLine.goodsItem.item.description}}</p>
+    <!-- images -->
+    <div class="d-flex justify-content-start mb-3">
+        <div *ngFor="let image of catalogueLine.goodsItem.item.productImage">
+            <div *ngIf="image.mimeCode.split('/')[0]=='image'">
+                <img class=" pr-2"
+                     src="data:{{image.mimeCode}};base64,{{image.value}}"
+                     height="100"
+                     width="100"
+                />
+            </div>
+        </div>
+    </div>
 
     <ul class="nav nav-tabs">
         <li class="nav-item pointer">
@@ -36,17 +53,13 @@
 
         <li class="nav-item pointer">
             <a
-               [ngClass]="{'nav-link': true, active: selectedTab === 'Trading Details'}"
-               (click)="selectedTab = 'Trading Details'"
+               [ngClass]="{'nav-link': true, active: selectedTab === 'Trading & Delivery Terms'}"
+               (click)="selectedTab = 'Trading & Delivery Terms'"
                i18n
-            >Trading Details</a>
+            >Trading & Delivery Terms</a>
         </li>
     </ul>
 
     <product-details *ngIf="selectedTab === 'Product Details'" [catalogueLine]="catalogueLine"></product-details>
-
-    <trading-details *ngIf="selectedTab === 'Trading Details'" [catalogueLine]="catalogueLine"></trading-details>
+    <trading-details *ngIf="selectedTab === 'Trading & Delivery Terms'" [catalogueLine]="catalogueLine"></trading-details>
 </div>
-
-</body>
-</html>

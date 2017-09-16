@@ -1,0 +1,8 @@
+<div class="input-group">
+    <label class="col-3 control-label">{{propName}}</label>
+    <label *ngIf="!editMode" class="col-7">{{quantity.value}}</label>
+    <input *ngIf="editMode" class="col-7" type="text" name="productPrice" [(ngModel)]="quantity.value">
+    <label class="col-1" class="ml-3 mr-3">Unit</label>
+    <label *ngIf="!editMode" class="col-1">{{quantity.unitCode}}</label>
+    <input *ngIf="editMode" class="col-1" type="text" name="productPriceUnit" [(ngModel)]="quantity.unitCode">
+</div>

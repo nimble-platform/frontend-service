@@ -1,3 +1,21 @@
+<!-- dimensions -->
+<h5 class="mt-3">Dimensions</h5>
+<div *ngFor="let dimension of catalogueLine.goodsItem.item.dimension">
+    <quantity-view class="row"
+            [propName]="dimension.attributeID"
+            [quantity]="dimension.measure">
+    </quantity-view>
+</div>
+
+<!-- certificates -->
+<h5 class="mt-3">Certificates</h5>
+<div *ngFor="let certificate of catalogueLine.goodsItem.item.certificate" class="d-flex flex-wrap">
+    <label class="col-3">{{certificate.certificateType}}</label>
+</div>
+
+<div class="col-sm-3"><strong *ngIf="catalogueLine.goodsItem.item.freeOfChargeIndicator">Free of charge!</strong></div>
+
+
 <div *ngFor="let propertyBlock of propertyBlocks">
     <p>
         <button type="button" class="btn btn-outline-primary"

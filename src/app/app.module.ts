@@ -42,6 +42,7 @@ import {TradingDetailsComponent} from "./catalogue/trading-details.component";
 import { PublishService } from "./catalogue/publish-and-aip.service";
 import {PropertyBlockPipe} from "./catalogue/property-block-pipe";
 import {ItemPropertyDataSourcePipe} from "./catalogue/item-property-data-source-pipe";
+import {QuantityViewComponent} from "./catalogue/built-in-data-view/quantity-view.component";
 
 @NgModule({
     imports: [
@@ -83,7 +84,8 @@ import {ItemPropertyDataSourcePipe} from "./catalogue/item-property-data-source-
         ProductDetailsComponent,
         TradingDetailsComponent,
         PropertyBlockPipe,
-        ItemPropertyDataSourcePipe
+        ItemPropertyDataSourcePipe,
+        QuantityViewComponent
         ],
         providers: [
         UserService,
