@@ -11,7 +11,7 @@ import { Component, AfterViewInit, ViewChild, ElementRef, Input, OnChanges } fro
 import * as go from 'gojs';
 import { RadialLayout } from './layout/RadialLayout';
 import { ExplorativeSearchService } from './explorative-search.service';
-import {el} from "@angular/platform-browser/testing/browser_util";
+// import {el} from "@angular/platform-browser/testing/browser_util";
 
 @Component({
     selector: 'explore-search-details',
