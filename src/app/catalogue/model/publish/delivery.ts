@@ -6,8 +6,6 @@ import {DeliveryTerms} from "./delivery-terms";
 
 export class Delivery {
     constructor(
-        public deliveryTerms: DeliveryTerms,
-        public estimatedDeliveryPeriod: Period,
-        public requestedDeliveryPeriod: Period
+        public deliveryTerms: DeliveryTerms
     ) {  }
 }

@@ -4,6 +4,14 @@ import {RequestForQuotation} from "../bpe/model/ubl/request-for-quotation";
 import {Terms} from "../bpe/model/ubl/request-for-quotation-terms";
 import {CookieService} from "ng2-cookies";
 import {BPEService} from "../bpe/bpe.service";
+import {ProcessVariables} from "../bpe/model/process-variables";
+import {ProcessInstanceInputMessage} from "../bpe/model/process-instance-input-message";
+import {UserService} from "../user-mgmt/user.service";
+import {UBLModelUtils} from "../catalogue/model/ubl-model-utils";
+import {SupplierParty} from "../catalogue/model/publish/supplier-party";
+import {CustomerParty} from "../catalogue/model/publish/customer-party";
+import {ModelUtils} from "../bpe/model/model-utils";
+import {LineReference} from "../catalogue/model/publish/line-reference";
 
 @Component({
     selector: 'negotiation-params',
@@ -13,7 +21,7 @@ import {BPEService} from "../bpe/bpe.service";
 export class NegotiationMainComponent {
     @Input() productResponse: any;
 
-    terms: Terms = new Terms("", "", "", "", "");
+    rfq:RequestForQuotation = UBLModelUtils.createRequestForQuotation();
     negotiatables = [];
 	negotiationExpanded = false;
 	submitted = false;
@@ -21,6 +29,7 @@ export class NegotiationMainComponent {
 	error_detc = false;
 
     constructor(private bpeService: BPEService,
+                private userService: UserService,
                 private cookieService: CookieService) {
     }
 
@@ -38,14 +47,14 @@ export class NegotiationMainComponent {
             var b_comp = b.key;
             return a_comp.localeCompare(b_comp);
         });
-		if (this.isJson(this.cookieService.get("negotiation_details"))) {
+		/*if (this.isJson(this.cookieService.get("negotiation_details"))) {
 			var negDetails = JSON.parse(this.cookieService.get("negotiation_details"));
 			if (this.isJson(negDetails.message)) {
 				if (negDetails.product_id == this.productResponse.id) {
 					var negParams = JSON.parse(negDetails.message);
 					this.negotiationExpanded = true;
-					this.terms.amount = negParams.amount;
-					this.terms.price = negParams.price;
+					this.rfq.amount = negParams.amount;
+					this.rfq.price = negParams.price;
 					for (let negSrc in negParams) {
 						for (let negTar of this.negotiatables) {
 							if (negTar.key == negSrc) {
@@ -55,7 +64,7 @@ export class NegotiationMainComponent {
 					}
 				}
 			}
-		}
+		}*/
     }
 
 	onKey(event: any) {
@@ -67,34 +76,32 @@ export class NegotiationMainComponent {
 	
     private sendRfq(): void {
 		this.submitted = true;
-        let rfq: RequestForQuotation = new RequestForQuotation("", "", "", "", "", "", "");
-        this.terms.message = this.generateMessage();
-        this.terms.product_id = this.productResponse.id.toString();
-        this.terms.product_name = this.productResponse[myGlobals.product_name].toString();
-        rfq.terms = JSON.stringify(this.terms);
-        rfq.seller = this.productResponse[myGlobals.product_vendor_id].toString();
-        rfq.sellerName = this.productResponse[myGlobals.product_vendor_name].toString();
-        rfq.buyer = this.cookieService.get("company_id");
-        rfq.buyerName = this.cookieService.get("user_fullname");
-        rfq.connection = "|" + this.productResponse[myGlobals.product_vendor_id].toString() + "|" + this.cookieService.get("company_id") + "|";
-        this.bpeService.sendRfq(rfq)
-            .then(res => {
-				this.error_detc = false;
-				this.callback = true;
-            })
-            .catch(error => {
-				this.error_detc = true;
-            });
-    }
+		this.rfq.requestForQuotationLine[0].lineItem.item.name = this.productResponse[myGlobals.product_name].toString();
+		this.rfq.requestForQuotationLine[0].lineItem.lineReference = [new LineReference(this.productResponse["item_id"][0])];
 
-    private generateMessage(): string {
-        let msg = {}
-		msg["amount"] = this.terms.amount;
-		msg["price"] = this.terms.price;
-		for (let entry of this.negotiatables) {
-			msg[entry.key] = entry.value;
-		}
-        return JSON.stringify(msg);
+		//first initialize the seller and buyer parties.
+		//once they are fetched continue with starting the ordering process
+		let sellerId:string = this.productResponse[myGlobals.product_vendor_id].toString();
+		let buyerId:string = this.cookieService.get("company_id");
+
+		this.userService.getParty(buyerId).then(buyerParty => {
+			this.rfq.buyerCustomerParty = new CustomerParty(buyerParty)
+
+			this.userService.getParty(sellerId).then(sellerParty => {
+				this.rfq.sellerSupplierParty = new SupplierParty(sellerParty);
+				let vars:ProcessVariables = ModelUtils.createProcessVariables("Negotiation", buyerId, sellerId, this.rfq);
+				let piim:ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
+
+				this.bpeService.startBusinessProcess(piim)
+                    .then(res => {
+						this.error_detc = false;
+						this.callback = true;
+					})
+                    .catch(error => {
+						this.error_detc = true;
+					});
+			});
+		});
     }
 
     private isNegotiable(property: string): boolean {

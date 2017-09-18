@@ -40,24 +40,6 @@ export class BPEService {
             .catch(this.handleError);
 	}
 
-	respondToOrder(task: string, orderResponse: OrderResponseSimple): Promise<any> {
-		const url = `${this.url}/rest/engine/default/task/${task}/complete`;
-		var jsonToSend = {
-			"variables": {
-				"orderResponse": {
-					"value": JSON.stringify(orderResponse),
-					"type": "String"
-				}
-			},
-			"businessKey" : ""
-		}
-		return this.http
-		.post(url, JSON.stringify(jsonToSend), {headers: this.headers})
-		.toPromise()
-		.then(res => res.json())
-		.catch(this.handleError);
-	}
-	
 	getProcessDetails(id: string): Promise<any> {
 		const url = `${this.url}/rest/engine/default/variable-instance?processInstanceIdIn=${id}`;
 		return this.http
@@ -93,43 +75,6 @@ export class BPEService {
 		.then(res => res.json())
 		.catch(this.handleError);
 	}
-
-	sendRfq(rfq: RequestForQuotation): Promise<any> {
-		const url = `${this.url}/rest/engine/default/process-definition/key/Negotiation/start`;
-		var jsonToSend = {
-			"variables": {},
-			"businessKey" : ""
-		}
-		for (let rfq_var in rfq) {
-			jsonToSend.variables[rfq_var] = {
-				"value":rfq[rfq_var],
-				"type":"String"
-			}
-		}
-		return this.http
-            .post(url, JSON.stringify(jsonToSend), {headers: this.headers})
-            .toPromise()
-            .then(res => res.json())
-            .catch(this.handleError);
-    }
-
-    respondToRFQ(task: string, rfqResponse: RequestForQuotationResponse): Promise<any> {
-        const url = `${this.url}/rest/engine/default/task/${task}/complete`;
-        var jsonToSend = {
-            "variables": {
-                "rfqResponse": {
-                    "value": JSON.stringify(rfqResponse),
-                    "type": "String"
-                }
-            },
-            "businessKey": ""
-        }
-        return this.http
-            .post(url, JSON.stringify(jsonToSend), {headers: this.headers})
-            .toPromise()
-            .then(res => res.json())
-            .catch(this.handleError);
-    }
 
 	getDocumentJsonContent(documentId:string):Promise<string> {
 		const url = `${this.url}/document/json/${documentId}`;

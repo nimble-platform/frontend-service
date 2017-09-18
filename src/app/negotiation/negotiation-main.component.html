@@ -8,11 +8,11 @@
 	<form (ngSubmit)="sendRfq()" class="space-before" #negotiationForm="ngForm" novalidate>
 		<div class=" input-group form-group">
 			<label class="input-group-addon">Amount</label>
-			<input type="text" class="form-control" required [(ngModel)]="terms.amount" name="negAmount" pattern="\d*">
+			<input type="text" class="form-control" required [(ngModel)]="rfq.requestForQuotationLine[0].lineItem.quantity.value" name="negAmount" pattern="\d*">
 		</div>
 		<div class=" input-group form-group">
 			<label class="input-group-addon">Price</label>
-			<input type="text" class="form-control" required [(ngModel)]="terms.price" name="negPrice">
+			<input type="text" class="form-control" required [(ngModel)]="rfq.requestForQuotationLine[0].lineItem.price.priceAmount.value" name="negPrice">
 		</div>
 		<div *ngFor="let param of negotiatables">
 			<div class=" input-group form-group">

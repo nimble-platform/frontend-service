@@ -12,6 +12,7 @@ import {UserService} from "../user-mgmt/user.service";
 import {UBLModelUtils} from "../catalogue/model/ubl-model-utils";
 import {CustomerParty} from "../catalogue/model/publish/customer-party";
 import {SupplierParty} from "../catalogue/model/publish/supplier-party";
+import {LineReference} from "../catalogue/model/publish/line-reference";
 
 @Component({
 	selector: 'simple-search-details',
@@ -110,6 +111,7 @@ export class SimpleSearchDetailsComponent implements OnInit {
 	
 	sendOrder() {
 		this.order.orderLine[0].lineItem.item.name = this.response[0][this.product_name][0];
+		this.order.orderLine[0].lineItem.lineReference = [new LineReference(this.response[0]["item_id"][0])];
 
 		//first initialize the seller and buyer parties.
 		//once they are fetched continue with starting the ordering process
@@ -121,7 +123,7 @@ export class SimpleSearchDetailsComponent implements OnInit {
 
 			this.userService.getParty(sellerId).then(sellerParty => {
 				this.order.sellerSupplierParty = new SupplierParty(sellerParty);
-				let vars:ProcessVariables = ModelUtils.createProcessVariables("Order", buyerId, sellerId, JSON.stringify(this.order));
+				let vars:ProcessVariables = ModelUtils.createProcessVariables("Order", buyerId, sellerId, this.order);
 				let piim:ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
 
 				this.bpeService.startBusinessProcess(piim)

@@ -28,11 +28,17 @@
 						<button class="btn btn-block btn-success" (click)="respondToOrder(processMetadata.process_id, processMetadata.content, true)" i18n>Approve</button>
 						<button class="btn btn-block btn-danger" (click)="respondToOrder(processMetadata.process_id, processMetadata.content, false)" i18n>Decline</button>
 					</td>
+					<td *ngIf="processMetadata.processType == 'Order' && processMetadata.status != 'Started'">
+						-
+					</td>
 
 					<!-- negotiation options -->
-					<td *ngIf="processMetadata.processType == 'Negotiation' && processMetadata.orderResponse==''">
-						<button class="btn btn-block btn-success" (click)="respondToRFQ(processMetadata.process_id,'approved',processMetadata.order.message)" i18n>Approve</button>
-						<button class="btn btn-block btn-danger" (click)="respondToRFQ(processMetadata.process_id,'declined','')" i18n>Decline</button>
+					<td *ngIf="processMetadata.processType == 'Negotiation' && processMetadata.status=='Started'">
+						<button class="btn btn-block btn-success" (click)="respondToRFQ(processMetadata.process_id, processMetadata.content, true)" i18n>Approve</button>
+						<button class="btn btn-block btn-danger" (click)="respondToRFQ(processMetadata.process_id, processMetadata.content, false)" i18n>Decline</button>
+					</td>
+					<td *ngIf="processMetadata.processType == 'Negotiation' && processMetadata.status=='Completed'">
+						-
 					</td>
 				</tr>
 			</table>
@@ -64,16 +70,25 @@
 					<!--</td>-->
 
 					<!-- order options -->
-					<td>-</td>
+					<td *ngIf="processMetadata.processType == 'Order'">
+						-
+					</td>
 
 					<!-- negotation options -->
-					<td *ngIf="processMetadata.processType == 'Negotiation' && processMetadata.orderResponse==''">
-						<button class="btn btn-block btn-danger" (click)="cancelOrder(processMetadata.process_id)" i18n>Cancel</button>
+					<td *ngIf="processMetadata.processType == 'Negotiation' && processMetadata.status == 'Started'">
+						-
 					</td>
-					<td *ngIf="processMetadata.processType == 'Negotiation' && processMetadata.orderResponse!=''">
-						<button *ngIf="processMetadata.orderResponse.response=='approved'" class="btn btn-block btn-info" (click)="placeOrder(processMetadata)" i18n>Order</button>
-						<button *ngIf="processMetadata.orderResponse.response=='declined'" class="btn btn-block btn-info" (click)="negotiate(processMetadata.order)" i18n>Negotiate</button>
-						<button class="btn btn-block btn-danger" (click)="removeOrder(processMetadata.process_id)" i18n>Remove from history</button>
+					<td *ngIf="processMetadata.processType == 'Negotiation' && processMetadata.status == 'Completed'">
+						<button *ngIf="processMetadata.response=='Approved'"
+								class="btn btn-block btn-info"
+								[routerLink]="['/simple-search-details', processMetadata.productId]"
+								i18n>Order
+						</button>
+						<button *ngIf="processMetadata.response=='Declined'"
+								class="btn btn-block btn-info"
+								[routerLink]="['/simple-search-details', processMetadata.productId]"
+								i18n>Negotiate
+						</button>
 					</td>
 				</tr>
 			</table>

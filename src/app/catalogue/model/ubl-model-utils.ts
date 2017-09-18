@@ -26,6 +26,11 @@ import {DeliveryTerms} from "./publish/delivery-terms";
 import {Period} from "./publish/period";
 import {Package} from "./publish/package";
 import {ItemIdentification} from "./publish/item-identification";
+import {RequestForQuotation} from "../../bpe/model/ubl/request-for-quotation";
+import {RequestForQuotationLine} from "./publish/request-for-quotation-line";
+import {Delivery} from "./publish/delivery";
+import {Quotation} from "../../bpe/model/ubl/quotation";
+import {QuotationLine} from "./publish/quotation-line";
 /**
  * Created by suat on 05-Jul-17.
  */
@@ -79,14 +84,6 @@ export class UBLModelUtils {
         return commodityClassification;
     }
 
-    public static createPrice(amount: string): Price {
-        // create amount
-        let amountObj: Amount = this.createAmountWithCurrency("EUR")
-        // price
-        let price: Price = new Price(amountObj);
-        return price;
-    }
-
     public static createItemLocationQuantity(amount: string): ItemLocationQuantity {
         // create amount
         let amountObj: Amount = this.createAmountWithCurrency("EUR")
@@ -118,7 +115,8 @@ export class UBLModelUtils {
     public static createOrder():Order {
         let quantity:Quantity = new Quantity(null, "", null);
         let item:Item = this.createItem();
-        let lineItem:LineItem = new LineItem(quantity, item);
+        let price: Price = this.createPrice(null);
+        let lineItem:LineItem = this.createLineItem(quantity, price, item);
         let orderLine:OrderLine = new OrderLine(lineItem);
         let order = new Order(this.generateUUID(), "Some note", null, null, [orderLine]);
         return order;
@@ -127,35 +125,71 @@ export class UBLModelUtils {
     public static createOrderResponseSimple(order:Order, acceptedIndicator:boolean):OrderResponseSimple {
         let documentReference:DocumentReference = new DocumentReference(order.id);
         let orderReference:OrderReference = new OrderReference(documentReference);
-        let customerParty:CustomerParty = this.removeHjidFieldsFromObject(order.buyerCustomerParty);
-        let supplierParty:SupplierParty = this.removeHjidFieldsFromObject(order.sellerSupplierParty);
-        let obj = {"hjid":1234, "a":"b", "c":"d", "e":{"hjid":1234, "f":"g", "h":"i", "j":{"hjid":1234, "a":"b", "c":"d"}}};
-        obj = this.removeHjidFieldsFromObject(obj);
-        console.log(obj);
+        this.removeHjidFieldsFromObject(order.buyerCustomerParty);
+        this.removeHjidFieldsFromObject(order.sellerSupplierParty);
+        let customerParty:CustomerParty = order.buyerCustomerParty;
+        let supplierParty:SupplierParty = order.sellerSupplierParty;
         let orderResponseSimple:OrderResponseSimple = new OrderResponseSimple("", acceptedIndicator, orderReference, supplierParty, customerParty);
         return orderResponseSimple;
     }
 
+    public static createRequestForQuotation():RequestForQuotation {
+        let quantity:Quantity = new Quantity(null, "", null);
+        let item:Item = this.createItem();
+        let price:Price = this.createPrice(null)
+        let lineItem:LineItem = this.createLineItem(quantity, price, item);
+        let requestForQuotationLine:RequestForQuotationLine = new RequestForQuotationLine(lineItem);
+        let delivery:Delivery = this.createDelivery();
+        let rfq = new RequestForQuotation(this.generateUUID(), ["Some note"], null, null, delivery, [requestForQuotationLine]);
+        return rfq;
+    }
+
+    public static createQuotation(rfq:RequestForQuotation):Quotation {
+        let quantity: Quantity = new Quantity(null, "", null);
+        let item: Item = this.createItem();
+        let price: Price = this.createPrice(null);
+        let lineItem:LineItem = new LineItem(quantity, price, item, null);
+        let quotationLine:QuotationLine = new QuotationLine(lineItem, null);
+
+        let delivery:Delivery = this.createDelivery();
+
+        this.removeHjidFieldsFromObject(rfq.buyerCustomerParty);
+        this.removeHjidFieldsFromObject(rfq.sellerSupplierParty);
+        let customerParty:CustomerParty = rfq.buyerCustomerParty;
+        let supplierParty:SupplierParty = rfq.sellerSupplierParty;
+
+        let documentReference:DocumentReference = new DocumentReference(rfq.id);
+
+        let quotation = new Quotation(this.generateUUID(), ["Some note"], 1, documentReference, customerParty, supplierParty, delivery, [quotationLine]);
+        return quotation;
+    }
 
     public static createItem():Item {
         let item = new Item("", "", [], false, [], null, this.createItemIdentification(), null, [], [], [], null, [], "");
         return item;
     }
 
-    public static removeHjidFieldsFromObject(object:any):any {
-        delete object.hjid;
-        for (let field of object) {
-            field = this.removeHjidFieldsFromObject(object.field);
-        }
-        return object;
+    public static createLineItem(quantity, price, item):LineItem {
+        return new LineItem(quantity, price, item, null);
     }
 
     public static createPackage():Package {
         return new Package(this.createQuantity(), this.createCode(), null);
     }
 
-    public static createCode():Code {
-        return new Code(null, null, null, null);
+    public static createPrice(amount: string): Price {
+        // create amount
+        if(amount == null) {
+            amount = "EUR";
+        }
+        let amountObj: Amount = this.createAmountWithCurrency("EUR")
+        // price
+        let price: Price = new Price(amountObj);
+        return price;
+    }
+
+    public static createDelivery():Delivery {
+        return new Delivery(this.createDeliveryTerms());
     }
 
     public static createDeliveryTerms():DeliveryTerms {
@@ -184,6 +218,19 @@ export class UBLModelUtils {
 
     public static createItemIdentification():ItemIdentification {
         return new ItemIdentification(this.generateUUID());
+    }
+
+    public static createCode():Code {
+        return new Code(null, null, null, null);
+    }
+
+    public static removeHjidFieldsFromObject(object:any):void {
+        delete object.hjid;
+        for (let field in object) {
+            if(object.hasOwnProperty(field) && object[field] != null && typeof(object[field]) === 'object') {
+                this.removeHjidFieldsFromObject(object[field]);
+            }
+        }
     }
 
     private static generateUUID(): string {
