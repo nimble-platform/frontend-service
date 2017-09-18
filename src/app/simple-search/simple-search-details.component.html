@@ -58,6 +58,7 @@
         </form>
         <negotiation-params
                 *ngIf="response != null"
+                [catalogueLine]="catalogueLine"
                 [productResponse]="response[0]"
         ></negotiation-params>
     </div>

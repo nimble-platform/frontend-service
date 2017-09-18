@@ -13,6 +13,8 @@ import {UBLModelUtils} from "../catalogue/model/ubl-model-utils";
 import {CustomerParty} from "../catalogue/model/publish/customer-party";
 import {SupplierParty} from "../catalogue/model/publish/supplier-party";
 import {LineReference} from "../catalogue/model/publish/line-reference";
+import {CatalogueService} from "../catalogue/catalogue.service";
+import {CatalogueLine} from "../catalogue/model/publish/catalogue-line";
 
 @Component({
 	selector: 'simple-search-details',
@@ -42,11 +44,13 @@ export class SimpleSearchDetailsComponent implements OnInit {
 	details: any;
 	configs: any;
 
+	catalogueLine: CatalogueLine;
 	order = UBLModelUtils.createOrder();
 	
 	constructor(
 		private simpleSearchService: SimpleSearchService,
 		private bpeService: BPEService,
+		private catalogueService: CatalogueService,
 		private userService: UserService,
 		private cookieService: CookieService,
 		private route: ActivatedRoute
@@ -107,6 +111,15 @@ export class SimpleSearchDetailsComponent implements OnInit {
 			});
 			
 		});
+
+		let userId = this.cookieService.get("user_id");
+		this.catalogueService.getCatalogue(userId).then(
+			catalogue => {
+				this.catalogueService.getCatalogueLine(catalogue.uuid, this.response[0]["item_id"][0]).then(
+					line => this.catalogueLine = line
+				)
+			}
+		);
     }
 	
 	sendOrder() {

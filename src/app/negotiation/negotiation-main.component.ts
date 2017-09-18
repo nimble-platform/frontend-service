@@ -12,6 +12,8 @@ import {SupplierParty} from "../catalogue/model/publish/supplier-party";
 import {CustomerParty} from "../catalogue/model/publish/customer-party";
 import {ModelUtils} from "../bpe/model/model-utils";
 import {LineReference} from "../catalogue/model/publish/line-reference";
+import {CatalogueLine} from "../catalogue/model/publish/catalogue-line";
+import {CatalogueService} from "../catalogue/catalogue.service";
 
 @Component({
     selector: 'negotiation-params',
@@ -19,7 +21,8 @@ import {LineReference} from "../catalogue/model/publish/line-reference";
 })
 
 export class NegotiationMainComponent {
-    @Input() productResponse: any;
+    @Input() catalogueLine:CatalogueLine;
+	@Input() productResponse: any;
 
     rfq:RequestForQuotation = UBLModelUtils.createRequestForQuotation();
     negotiatables = [];
@@ -29,6 +32,7 @@ export class NegotiationMainComponent {
 	error_detc = false;
 
     constructor(private bpeService: BPEService,
+                private catalogueService: CatalogueService,
                 private userService: UserService,
                 private cookieService: CookieService) {
     }
@@ -47,6 +51,7 @@ export class NegotiationMainComponent {
             var b_comp = b.key;
             return a_comp.localeCompare(b_comp);
         });
+
 		/*if (this.isJson(this.cookieService.get("negotiation_details"))) {
 			var negDetails = JSON.parse(this.cookieService.get("negotiation_details"));
 			if (this.isJson(negDetails.message)) {
