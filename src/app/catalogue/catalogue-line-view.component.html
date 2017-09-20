@@ -8,19 +8,18 @@
 
     <div class="input-group">
         <label class="col-3 control-label"><strong>Product Identifier</strong></label>
-        <!-- TODO create id for item for items published through UI-->
-        <label *ngIf="catalogueLine.goodsItem.item.manufacturersItemIdentification!= null && !editMode">{{catalogueLine.goodsItem.item.manufacturersItemIdentification.id}}</label>
-        <input *ngIf="catalogueLine.goodsItem.item.manufacturersItemIdentification!= null && editMode" class="col-9" type="text" [(ngModel)]="catalogueLine.goodsItem.item.manufacturersItemIdentification.id" [readonly]="!editMode">
+        <label *ngIf="catalogueLine.goodsItem.item.manufacturersItemIdentification!= null && !presentationMode">{{catalogueLine.goodsItem.item.manufacturersItemIdentification.id}}</label>
+        <input *ngIf="catalogueLine.goodsItem.item.manufacturersItemIdentification!= null && presentationMode" class="col-9" type="text" [(ngModel)]="catalogueLine.goodsItem.item.manufacturersItemIdentification.id" [readonly]="!presentationMode">
     </div>
     <div class="input-group">
         <label class="col-3 control-label"><strong>Name</strong></label>
-        <label *ngIf="!editMode">{{catalogueLine.goodsItem.item.name}}</label>
-        <input *ngIf="editMode" class="col-9" type="text" [(ngModel)]="catalogueLine.goodsItem.item.name" [readonly]="!editMode">
+        <label *ngIf="!presentationMode">{{catalogueLine.goodsItem.item.name}}</label>
+        <input *ngIf="presentationMode" class="col-9" type="text" [(ngModel)]="catalogueLine.goodsItem.item.name" [readonly]="!presentationMode">
     </div>
     <div class="input-group">
         <label class="col-3 control-label"><strong>Description</strong></label>
-        <label *ngIf="!editMode">{{catalogueLine.goodsItem.item.description}}</label>
-        <input *ngIf="editMode" class="col-9" type="text" [(ngModel)]="catalogueLine.goodsItem.item.description" [readonly]="!editMode">
+        <label *ngIf="!presentationMode">{{catalogueLine.goodsItem.item.description}}</label>
+        <input *ngIf="presentationMode" class="col-9" type="text" [(ngModel)]="catalogueLine.goodsItem.item.description" [readonly]="!presentationMode">
     </div>
     <div class="d-flex flex-wrap">
         <label class="col-3 control-label"><strong>Commodity Classifications</strong></label>
@@ -43,22 +42,22 @@
     </div>
 
     <ul class="nav nav-tabs">
-        <li class="nav-item pointer">
-            <a
-               [ngClass]="{'nav-link': true, active: selectedTab === 'Product Details'}"
-               (click)="selectedTab = 'Product Details'"
-               i18n
-            >Product Details</a>
-        </li>
+    <li class="nav-item pointer">
+        <a
+                [ngClass]="{'nav-link': true, active: selectedTab === 'Product Details'}"
+                (click)="selectedTab = 'Product Details'"
+                i18n
+        >Product Details</a>
+    </li>
 
-        <li class="nav-item pointer">
-            <a
-               [ngClass]="{'nav-link': true, active: selectedTab === 'Trading & Delivery Terms'}"
-               (click)="selectedTab = 'Trading & Delivery Terms'"
-               i18n
-            >Trading & Delivery Terms</a>
-        </li>
-    </ul>
+    <li class="nav-item pointer">
+        <a
+                [ngClass]="{'nav-link': true, active: selectedTab === 'Trading & Delivery Terms'}"
+                (click)="selectedTab = 'Trading & Delivery Terms'"
+                i18n
+        >Trading & Delivery Terms</a>
+    </li>
+</ul>
 
     <product-details *ngIf="selectedTab === 'Product Details'" [catalogueLine]="catalogueLine"></product-details>
     <trading-details *ngIf="selectedTab === 'Trading & Delivery Terms'" [catalogueLine]="catalogueLine"></trading-details>

@@ -1,0 +1,76 @@
+<button type="button" class="btn btn-primary space-before" (click)="orderExpanded = !orderExpanded"
+        [attr.aria-expanded]="orderExpanded" aria-controls="orderParams"
+        i18n>
+    Order
+</button>
+
+<div id="orderParams" class="space-before" [ngbCollapse]="!orderExpanded">
+	<div>
+		<ul class="nav nav-tabs">
+			<li class="nav-item pointer">
+				<a
+						[ngClass]="{'nav-link': true, active: selectedTab === 'Product Details'}"
+						(click)="selectedTab = 'Product Details'"
+						i18n
+				>Product Characteristics</a>
+			</li>
+			<li class="nav-item pointer">
+				<a
+						[ngClass]="{'nav-link': true, active: selectedTab === 'Trading & Delivery Terms'}"
+						(click)="selectedTab = 'Trading & Delivery Terms'"
+						i18n
+				>Trading & Delivery Terms</a>
+			</li>
+			<li class="nav-item pointer">
+				<a
+						[ngClass]="{'nav-link': true, active: selectedTab === 'Order Details'}"
+						(click)="selectedTab = 'Order Details'"
+						i18n
+				>Order Details</a>
+			</li>
+		</ul>
+	</div>
+	<div *ngIf="catalogueLine"
+		class="p-3">
+		<product-details *ngIf="selectedTab === 'Product Details'"
+						 [catalogueLine]="catalogueLine"
+						 [presentationMode]="'singlevalue'"
+						 [bpType]="'Order'">
+		</product-details>
+		<trading-details *ngIf="selectedTab === 'Trading & Delivery Terms'"
+						 [catalogueLine]="catalogueLine"
+						 [presentationMode]="'singlevalue'"
+						 [priceEditable]="false">
+		</trading-details>
+		<div *ngIf="selectedTab == 'Order Details'"
+			class="p-1">
+			<quantity-view class="row"
+						   [propName]="'Quantity'"
+						   [quantity]="[order.orderLine[0].lineItem.quantity]"
+						   [presentationMode]="'edit'">
+			</quantity-view>
+
+			<h5>Payment Means</h5>
+			<div class="input-group">
+				<label class="col-3 control-label">Card Account</label>
+				<input class="col-7" type="text">
+			</div>
+		</div>
+	</div>
+	<div class="container ">
+		<div class="row justify-content-end">
+			<button class="btn btn-success col-4" (click)="sendOrder()">Send Order</button>
+		</div>
+	</div>
+</div>
+
+<div [hidden]="error_detc || callback || !submitted">
+    <img class="space-before" src="assets/form_loader.gif"/>
+</div>
+<div [hidden]="!callback">
+    <div class="alert alert-success space-before" role="alert" i18n>Request placed - track the progress on your <a
+            routerLink="/dashboard">dashboard</a></div>
+</div>
+<div [hidden]="!error_detc">
+    <div class="alert alert-danger space-before" role="alert" i18n>An error occured - please try again later</div>
+</div>
