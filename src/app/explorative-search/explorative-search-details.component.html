@@ -31,7 +31,7 @@
                     </button>
                 </div>
                 <div class="col-4 pull-right">
-                    <a class="btn btn-lg btn-primary" routerLink="/simple-search-details/:id" [hidden]="!hiddenElement">
+                    <a class="btn btn-lg btn-primary" (click)="negotiation()" [hidden]="!hiddenElement">
                         Negotiation</a>
                 </div>
             </div>

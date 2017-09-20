@@ -12,6 +12,7 @@ import * as go from 'gojs';
 import { RecClass } from './model/RecClass';
 import { ExplorativeSearchService } from './explorative-search.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'explore-search-details',
@@ -46,6 +47,8 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
     private tableJSON: Object = {};
     private _tableJSONPaths = []; // for storing Paths when the figure is rendered again..
     private collectionOfFiltersFromChildren: any[] = []; // filters from the Children Components
+    private _optSelectJSON = {};
+    private _negotation_instance_name;
 
     /*Final Data to be sent back to parent for processing.*/
     finalSelectionJSON: Object;
@@ -59,7 +62,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
     private _error_detected_getTableValues = false;
     private _warning_table_results = false;
     // BackEnd Service + Modal Service declared here
-    constructor(private expSearch: ExplorativeSearchService, private modalService: NgbModal) { }
+    constructor(private expSearch: ExplorativeSearchService, private modalService: NgbModal, private router: Router) { }
 
     private open(content) { // display the Modal when CTRL is released or Single Select Feature Enabled..
         this.modalService.open(content);
@@ -455,48 +458,47 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                                 ['objectproperties'].hasOwnProperty(eachKeyWithinObjProp)) {
                             if (clickedNode === this.config['viewStructure']['objectproperties'][eachObjPropKey]['objectproperties']
                                     [eachKeyWithinObjProp]['concept']['translatedURL']) {
-
+                                console.log(eachObjPropKey);
                                 // build JSON for query getLogicalView
-                                let layerJSON = {
-                                'concept': this.config['completeStructure']['objectproperties'][eachObjPropKey]['objectproperties']
-                                    [eachKeyWithinObjProp]['concept']['url'],
-                                'language': this.lang,
-                                'conceptURIPath': this.config['completeStructure']['objectproperties'][eachObjPropKey]['objectproperties']
-                                    [eachKeyWithinObjProp]['conceptURIPath'],
-                                'stepRange': 1,
-                                'frozenConcept':  this.config['completeStructure']['objectproperties'][eachObjPropKey]['objectproperties']
-                                    [eachKeyWithinObjProp]['frozenConcept'],
-                                'distanceToFrozenConcept':  this.config['completeStructure']['objectproperties'][eachObjPropKey]
-                                    ['objectproperties'][eachKeyWithinObjProp]['distanceToFrozenConcept'],
-                                'oldJsonLogicalView': this.config['completeStructure']};
-
-                                if (this.selectedProperties.length) { // send previous selections to server to retrieve them back
-                                    let arrInArr = [];
-                                    for (let eachSelection of this.selectedProperties) {
-                                        arrInArr.push([eachSelection]);
+                                    let layerJSON = {
+                                    'concept': this.config['viewStructure']['objectproperties'][eachObjPropKey]['objectproperties']
+                                        [eachKeyWithinObjProp]['concept']['url'],
+                                    'language': this.lang,
+                                    'conceptURIPath': this.config['viewStructure']['objectproperties'][eachObjPropKey]['objectproperties']
+                                        [eachKeyWithinObjProp]['conceptURIPath'],
+                                    'stepRange': 1,
+                                    'frozenConcept':  this.config['viewStructure']['objectproperties'][eachObjPropKey]['objectproperties']
+                                        [eachKeyWithinObjProp]['frozenConcept'],
+                                    'distanceToFrozenConcept':  this.config['viewStructure']['objectproperties'][eachObjPropKey]
+                                        ['objectproperties'][eachKeyWithinObjProp]['distanceToFrozenConcept'],
+                                    'oldJsonLogicalView': this.config['completeStructure']};
+                                    if (this.selectedProperties.length) { // send previous selections to server to retrieve them back
+                                        let arrInArr = [];
+                                        for (let eachSelection of this.selectedProperties) {
+                                            arrInArr.push([eachSelection]);
+                                        }
+                                        layerJSON['currentSelections'] = arrInArr;
                                     }
-                                    layerJSON['currentSelections'] = arrInArr;
-                                }
-                                // console.log('DYNAMIC JSON ', layerJSON); // DEBUG--CHECK
-                                // call the API..
-                                this.expSearch.getLogicalView(layerJSON)
-                                    .then(res => {
-                                        this.config = res;
-                                        // console.log(this.config['completeStructure']);
-                                        // console.log(this.config['viewStructure']);
-                                        this._error_detected_getLogicalView = false;
-                                    })
-                                    .catch(error => {
-                                        console.log(error);
-                                        this._error_detected_getLogicalView = true;
-                                    });
-                                // store the previous tableJSON things in private variable
-                                this._tableJSONPaths = this.tableJSON['parametersIncludingPath'];
-                                // Latency needed in order to avoid double click
-                                // reload the diagram again..
-                                setTimeout(() => {
-                                    this.reloadRadialGraph(2, immediateParentNode, clickedNode);
-                                }, 600);
+                                    // console.log('DYNAMIC JSON ', layerJSON); // DEBUG--CHECK
+                                    // call the API..
+                                    this.expSearch.getLogicalView(layerJSON)
+                                        .then(res => {
+                                            this.config = res;
+                                            // console.log(this.config['completeStructure']);
+                                            // console.log(this.config['viewStructure']);
+                                            this._error_detected_getLogicalView = false;
+                                        })
+                                        .catch(error => {
+                                            console.log(error);
+                                            this._error_detected_getLogicalView = true;
+                                        });
+                                    // store the previous tableJSON things in private variable
+                                    this._tableJSONPaths = this.tableJSON['parametersIncludingPath'];
+                                    // Latency needed in order to avoid double click
+                                    // reload the diagram again..
+                                    setTimeout(() => {
+                                        this.reloadRadialGraph(2, immediateParentNode, clickedNode);
+                                    }, 600);
                             }
                         }
                     }
@@ -582,10 +584,10 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
     getSparqlOptionalSelect(indexInp: number) {
         console.log(indexInp);
         // need URI component in order to send url as JSON.stringify
-        let optSelectJSON = {'uuid': encodeURIComponent(this.tableResult.uuids[indexInp].trim())};
-        optSelectJSON['language'] = this.lang;
-        console.log(optSelectJSON);
-        this.expSearch.getOptionalSelect(optSelectJSON)
+        this._optSelectJSON = {'uuid': encodeURIComponent(this.tableResult.uuids[indexInp].trim())};
+        this._optSelectJSON['language'] = this.lang;
+        console.log(this._optSelectJSON);
+        this.expSearch.getOptionalSelect(this._optSelectJSON)
           .then(res => {
               this.sparqlSelectedOption = res;
               this._error_detected_getSPARQLSelect = false;
@@ -651,5 +653,12 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
         this.tableJSON['parametersIncludingPath'] = this._tableJSONPaths; // store back the previous paths
         // console.log(this.myDiagram.selection.count); // DEBUG_CHECK (should match the previous selection count)
         // console.log(this.selectedProperties); // DEBUG_CHECK
+    }
+    negotiation(): void {
+        let instance_name_url = this._optSelectJSON['uuid'];
+        console.log(instance_name_url);
+        this._negotation_instance_name = instance_name_url.split('%23')[1];
+        // this.router.navigate(['/simple-search-details', this._negotation_instance_name]);
+        document.location.href = 'http://95.9.71.171:8383/#/simple-search-details/' + this._negotation_instance_name;
     }
 }
