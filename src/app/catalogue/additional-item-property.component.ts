@@ -5,6 +5,7 @@ import {Component, Input, OnDestroy, OnInit} from "@angular/core";
 import {ItemProperty} from "./model/publish/item-property";
 import {CatalogueService} from "./catalogue.service";
 import {Subscription} from "rxjs/Subscription";
+import {BPDataService} from "../bpe/bp-data-service";
 
 @Component({
     selector: 'additional-item-property',
@@ -12,65 +13,80 @@ import {Subscription} from "rxjs/Subscription";
 })
 
 export class AdditionalItemPropertyComponent implements OnInit, OnDestroy {
-    @Input() additionalItemProperty:ItemProperty;
-    editMode:boolean = false;
-    editModeSubscription:Subscription;
 
-    customProperty:boolean = false;
-    propertyUnitDefined:boolean = false;
+    @Input() additionalItemProperty: ItemProperty;
+    /* presentation mode can take three values: view, edit, singlevalue
+     view: all values for the item property are presented
+     edit: all values are presented and they are editable
+     singlevalue: only a single value can be chosen for the property. this mode is expected to be used when the
+     item is used in business processes like negotiation */
+    @Input() presentationMode: string;
+    @Input() bpType: string;
+
+    editModeSubscription: Subscription;
+
+    customProperty: boolean = false;
+    propertyUnitDefined: boolean = false;
+
+    constructor(private catalogueService:CatalogueService,
+                private bpDataService: BPDataService) {
+    }
 
     openPropertyDetails(): void {
-            let modal = document.getElementById('myModal');
+        let modal = document.getElementById('myModal');
 
-            let header = document.getElementById('header');
-            header.innerText = this.additionalItemProperty.name;
+        let header = document.getElementById('header');
+        header.innerText = this.additionalItemProperty.name;
 
-            let prop_def = document.getElementById('prop_def');
-            //TODO retrieve the property definition from the actual property objects
-            //prop_def.innerText = this.additionalItemProperty.propertyDefinition;
+        let prop_def = document.getElementById('prop_def');
+        //TODO retrieve the property definition from the actual property objects
+        //prop_def.innerText = this.additionalItemProperty.propertyDefinition;
 
-            if(this.propertyUnitDefined == true) {
-                let prop_unit = document.getElementById('prop_unit');
-                prop_unit.innerText = this.additionalItemProperty.unit;
+        if (this.propertyUnitDefined == true) {
+            let prop_unit = document.getElementById('prop_unit');
+            prop_unit.innerText = this.additionalItemProperty.unit;
 
-                let unit_label = document.getElementById('unit_label');
-                unit_label.innerText = "Unit: ";
-            }
-            else {
-                let prop_unit = document.getElementById('prop_unit');
-                prop_unit.innerText = "";
+            let unit_label = document.getElementById('unit_label');
+            unit_label.innerText = "Unit: ";
+        }
+        else {
+            let prop_unit = document.getElementById('prop_unit');
+            prop_unit.innerText = "";
 
-                let unit_label = document.getElementById('unit_label');
-                unit_label.innerText = "";
-            }
+            let unit_label = document.getElementById('unit_label');
+            unit_label.innerText = "";
+        }
 
-            modal.style.display = "block";
+        modal.style.display = "block";
     }
 
     addValueToProperty(aipName: string) {
-        if(this.additionalItemProperty.valueQualifier == "STRING") {
+        if (this.additionalItemProperty.valueQualifier == "STRING") {
             this.additionalItemProperty.value.push('');
-        } else if(this.additionalItemProperty.valueQualifier == "REAL_MEASURE") {
-            let newNumber:number;
+        } else if (this.additionalItemProperty.valueQualifier == "REAL_MEASURE") {
+            let newNumber: number;
             this.additionalItemProperty.valueDecimal.push(newNumber);
-        } else if(this.additionalItemProperty.valueQualifier == "BINARY") {
+        } else if (this.additionalItemProperty.valueQualifier == "BINARY") {
             // not applicable
         }
     }
 
-    constructor(
-        private catalogueService: CatalogueService) { }
-
     ngOnInit(): void {
-        if(this.additionalItemProperty.itemClassificationCode.listID == "Custom") {
+        if (this.additionalItemProperty.itemClassificationCode.listID == "Custom") {
             this.customProperty = true;
         }
-        if(this.additionalItemProperty.unit && this.additionalItemProperty.unit.length > 0) {
+        if (this.additionalItemProperty.unit && this.additionalItemProperty.unit.length > 0) {
             this.propertyUnitDefined = true;
         }
 
-        this.editModeSubscription= this.catalogueService.editModeObs
-            .subscribe(editMode => this.editMode = editMode);
+        this.editModeSubscription = this.catalogueService.editModeObs
+            .subscribe(editMode => {
+                if (editMode == true) {
+                    //this.presentationMode = "edit";
+                } else {
+                    //this.presentationMode = "view";
+                }
+            });
     }
 
     ngOnDestroy(): void {
@@ -79,18 +95,18 @@ export class AdditionalItemPropertyComponent implements OnInit, OnDestroy {
 
     //remove a value from displayed custom property
     removeCustomValue(index: number) {
-        let dataSource:Array<any>;
-        if(this.additionalItemProperty.valueQualifier == "STRING") {
+        let dataSource: Array<any>;
+        if (this.additionalItemProperty.valueQualifier == "STRING") {
             this.additionalItemProperty.value.splice(index, 1);
             dataSource = this.additionalItemProperty.value;
 
-        } else if(this.additionalItemProperty.valueQualifier == "REAL_MEASURE") {
+        } else if (this.additionalItemProperty.valueQualifier == "REAL_MEASURE") {
             this.additionalItemProperty.valueDecimal.splice(index, 1);
             dataSource = this.additionalItemProperty.valueDecimal;
         }
 
         // if the property no longer has a value, delete it
-        if(dataSource.length == 0){
+        if (dataSource.length == 0) {
             this.deleteCustomProperty(this.additionalItemProperty.name);
         }
     }
@@ -102,6 +118,11 @@ export class AdditionalItemPropertyComponent implements OnInit, OnDestroy {
         let draftCatalogueLine = this.catalogueService.draftCatalogueLine;
         let indexCatalogue = draftCatalogueLine.goodsItem.item.additionalItemProperty.findIndex(p => p.name == inputVal);
         draftCatalogueLine.goodsItem.item.additionalItemProperty.splice(indexCatalogue, 1);
+    }
+
+    updateNegotiationItemPropertyData(event:any) {
+        let selectedValue:any = event.target.value;
+        this.bpDataService.updateItemProperty(this.bpType, selectedValue, this.additionalItemProperty);
     }
 
     private generateUUID(): string {

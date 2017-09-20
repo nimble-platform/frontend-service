@@ -3,6 +3,9 @@ import { CatalogueLine } from "./model/publish/catalogue-line";
 import {ItemProperty} from "./model/publish/item-property";
 import {Property} from "./model/category/property";
 import {Code} from "./model/publish/code";
+import {Quantity} from "./model/publish/quantity";
+import {Dimension} from "./model/publish/dimension";
+import {BPDataService} from "../bpe/bp-data-service";
 
 @Component({
     selector: 'product-details',
@@ -17,7 +20,9 @@ export class ProductDetailsComponent implements OnInit{
     PROPERTY_BLOCK_FIELD_ISCOLLAPSED = "isCollapsed";
     PROPERTY_BLOCK_FIELD_PROPERTIES = "properties";
 
+    @Input() presentationMode: string
     @Input() catalogueLine: CatalogueLine;
+    @Input() bpType: string;
 
     /*
      * hash storing the blocks of each category
@@ -27,9 +32,27 @@ export class ProductDetailsComponent implements OnInit{
      */
     // TODO why has but not a list at the beginning. the hash is being transformed to a list anyway...
     propertyBlocks: any = {};
+    object = Object;
+    dimensions: any = null;
+
+    constructor(private bpDataService:BPDataService) {
+
+    }
 
     ngOnInit(): void {
         this.refreshPropertyBlocks();
+        this.createDimensionBlocks();
+    }
+
+    createDimensionBlocks():void {
+        this.dimensions = {};
+        for(let dim of this.catalogueLine.goodsItem.item.dimension) {
+            if(this.dimensions[dim.attributeID] != null) {
+                this.dimensions[dim.attributeID].push(dim.measure);
+            } else {
+                this.dimensions[dim.attributeID] = [dim.measure];
+            }
+        }
     }
 
     refreshPropertyBlocks(): void {
@@ -90,7 +113,7 @@ export class ProductDetailsComponent implements OnInit{
 
     private createPropertyBlock(itemClassificationCode: Code) {
         let propertyBlock: any = {};
-        propertyBlock[this.PROPERTY_BLOCK_FIELD_NAME] = itemClassificationCode.listID;
+        propertyBlock[this.PROPERTY_BLOCK_FIELD_NAME] = itemClassificationCode.name != null ? itemClassificationCode.name : "" + " (" + itemClassificationCode.listID + ")";
         propertyBlock[this.PROPERTY_BLOCK_FIELD_ISCOLLAPSED] = true;
         propertyBlock[this.PROPERTY_BLOCK_FIELD_PROPERTIES] = [];
 
@@ -129,5 +152,9 @@ export class ProductDetailsComponent implements OnInit{
         } else {
             return false;
         }
+    }
+
+    updateNegotiationItemDimensionData(attributeId, event:any) {
+        this.bpDataService.updateDimension(this.bpType, attributeId, event.target.value);
     }
 }

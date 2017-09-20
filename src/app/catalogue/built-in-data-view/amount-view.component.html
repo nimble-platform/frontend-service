@@ -1,0 +1,26 @@
+<!-- TODO add support for multiple values in edit and view modes -->
+<ng-container *ngIf="presentationMode != 'singlevalue'">
+    <div class="input-group">
+        <label class="col-3 control-label">{{propName}}</label>
+        <label *ngIf="presentationMode == 'view'" class="col-7">{{amount[0].value}}</label>
+        <input *ngIf="presentationMode == 'edit'" class="col-7" type="text" [(ngModel)]="amount[0].value">
+        <label class="col-1" class="ml-3 mr-3">Unit: </label>
+        <label *ngIf="presentationMode == 'view'" class="col-1">{{amount[0].currencyID}}</label>
+        <input *ngIf="presentationMode == 'edit'" class="col-1" type="text" [(ngModel)]="amount[0].currencyID">
+    </div>
+</ng-container>
+<ng-container *ngIf="presentationMode == 'singlevalue'">
+    <div class="input-group">
+        <label class="col-3 control-label">{{propName}}</label>
+        <select *ngIf="amount.length > 1"
+                class="custom-select col-7">
+            <option *ngFor="let value of amount">{{value}}</option>
+        </select>
+        <input *ngIf="amount.length == 1"
+               type="text" class="form-control col-7"
+               [(ngModel)]="amount[0].value"
+               readonly>
+        <label class="col-1" class="ml-3 mr-3">Currency: </label>
+        <label class="col-1">{{amount[0].currencyID}}</label>
+    </div>
+</ng-container>

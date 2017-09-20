@@ -1,61 +1,87 @@
+<h5 class="mt-3">Price</h5>
+<div class="row">
+    <amount-view class="col"
+                   [presentationMode]="priceEditable ? 'edit' : 'view'"
+                   [propName]="'Amount'"
+                   [amount]="[catalogueLine.requiredItemLocationQuantity.price.priceAmount]">
+    </amount-view>
+</div>
+<div class="row">
+    <quantity-view class="col"
+                   [presentationMode]="presentationMode"
+                   [propName]="'Price Base Quantity'"
+                   [quantity]="[catalogueLine.requiredItemLocationQuantity.price.baseQuantity]">
+    </quantity-view>
+</div>
+
 <!-- TODO use reusable component to render item properties -->
 <div class="input-group mt-2">
     <div class="col-3 control-label">
         Free sample:
     </div>
-    <input type="checkbox" [checked]="catalogueLine.goodsItem.item.freeOfChargeIndicator == true" [readonly]="!editMode">
+    <input type="checkbox" [checked]="catalogueLine.goodsItem.item.freeOfChargeIndicator == true" [readonly]="!presentationMode">
 </div>
 
 <h5 class="mt-3">Delivery Terms</h5>
-<div class="input-group">
-    <label class="col-3 control-label">Incoterms</label>
-    <label *ngIf="!editMode" class="col-9">{{catalogueLine.goodsItem.deliveryTerms.incoterms}}</label>
-    <input *ngIf="editMode" class="col-9" type="text" [(ngModel)]="catalogueLine.goodsItem.deliveryTerms.incoterms">
+<div class="row">
+    <value-view class="col"
+                [presentationMode]="presentationMode"
+                [propName]="'Incoterms'"
+                [multiValue]="false"
+                [(value)]="catalogueLine.goodsItem.deliveryTerms.incoterms">
+    </value-view>
 </div>
 <div class="row">
     <quantity-view class="col"
-            [editMode]="editMode"
+            [presentationMode]="presentationMode"
             [propName]="'Estimated Delivery Period'"
-            [quantity]="catalogueLine.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure">
+            [quantity]="[catalogueLine.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure]">
     </quantity-view>
 </div>
 <div class="input-group">
     <label class="col-3 control-label">Applicable Territory</label>
-    <label *ngIf="!editMode" class="col-9">{{catalogueLine.requiredItemLocationQuantity.applicableTerritoryAddress}}</label>
-    <input *ngIf="editMode" class="col-9" type="text" [(ngModel)]="catalogueLine.requiredItemLocationQuantity.applicableTerritoryAddress">
+    <label *ngIf="presentationMode == 'view'" class="col-9">{{catalogueLine.requiredItemLocationQuantity.applicableTerritoryAddress}}</label>
+    <input *ngIf="presentationMode == 'edit'" class="col-9" type="text" [(ngModel)]="catalogueLine.requiredItemLocationQuantity.applicableTerritoryAddress">
 </div>
-<div class="input-group">
-    <label class="col-3 control-label">Special Terms</label>
-    <label *ngIf="!editMode" class="col-9">{{catalogueLine.goodsItem.deliveryTerms.specialTerms}}</label>
-    <input *ngIf="editMode" class="col-9" type="text" [(ngModel)]="catalogueLine.goodsItem.deliveryTerms.specialTerms">
+<div class="row">
+    <value-view class="col"
+                [presentationMode]="presentationMode"
+                [propName]="'Special Terms'"
+                [multiValue]="false"
+                [(value)]="catalogueLine.goodsItem.deliveryTerms.specialTerms">
+    </value-view>
 </div>
-
 
 <h5 class="mt-3">Packaging</h5>
 <div class="row">
     <quantity-view class="col"
-                   [editMode]="editMode"
+                   [presentationMode]="presentationMode"
                    [propName]="'Quantity'"
-                   [quantity]="catalogueLine.goodsItem.containingPackage.quantity">
+                   [quantity]="[catalogueLine.goodsItem.containingPackage.quantity]">
     </quantity-view>
 </div>
-<div class="input-group">
-    <label class="col-3 control-label">Packaging Type</label>
-    <label *ngIf="!editMode" class="col-9">{{catalogueLine.goodsItem.containingPackage.packagingTypeCode.value}}</label>
-    <input *ngIf="editMode" class="col-9" type="text" [(ngModel)]="catalogueLine.goodsItem.containingPackage.packagingTypeCode.value">
+<div class="row">
+    <value-view class="col"
+                [presentationMode]="presentationMode"
+                [propName]="'Packaging Type'"
+                [multiValue]="false"
+                [(value)]="catalogueLine.goodsItem.containingPackage.packagingTypeCode.value">
+    </value-view>
 </div>
 
 <h5 class="mt-3">Warranty</h5>
 <div class="row">
     <quantity-view class="col"
-                   [editMode]="editMode"
+                   [presentationMode]="presentationMode"
                    [propName]="'Validity Period'"
-                   [quantity]="catalogueLine.warrantyValidityPeriod.durationMeasure">
+                   [quantity]="[catalogueLine.warrantyValidityPeriod.durationMeasure]">
     </quantity-view>
 </div>
-<div class="input-group">
-    <label class="col-3 control-label">Warranty information</label>
-    <label *ngIf="!editMode && catalogueLine.warrantyInformation != null && catalogueLine.warrantyInformation.length > 0" class="col-9">{{catalogueLine.warrantyInformation[0]}}</label>
-    <input *ngIf="editMode && catalogueLine.warrantyInformation != null && catalogueLine.warrantyInformation.length > 0"
-           class="col-9" type="text" [(ngModel)]="catalogueLine.warrantyInformation[0]" [readonly]="!editMode">
+<div class="row">
+    <value-view class="col"
+                [presentationMode]="presentationMode"
+                [propName]="'Warranty information'"
+                [multiValue]="true"
+                [(values)]="catalogueLine.warrantyInformation">
+    </value-view>
 </div>

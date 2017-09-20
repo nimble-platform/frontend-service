@@ -61,7 +61,20 @@ export class SimpleSearchDetailsComponent implements OnInit {
 		this.route.params.subscribe(params => {
 			this.details = [];
 			this.configs = [];
-			this.simpleSearchService.getSingle(params['id'])
+
+			// TODO demo specific id mapping
+			let id = params['id'];
+			if(id == 'MDF_Board_11190914') {
+				id = '7bdd6e06-a5a8-434c-9e3e-0ae62c9a2282';
+			} else if(id == 'MDF_Board_138495') {
+				id = '93822137-a469-4a9c-8957-1fb429eb2905';
+			} else if(id == 'Nicole_White') {
+				id = 'e027295d-a0e2-42ad-9368-2f64df1fa34e';
+			} else if(id == 'Globito_White') {
+				id = 'cecd47e0-5e6e-4814-8f37-b63a3765c38c';
+			}
+
+			this.simpleSearchService.getSingle(id)
 			.then(res => {
 				this.temp = res.response.docs;
 				for (let doc in this.temp) {
@@ -103,6 +116,15 @@ export class SimpleSearchDetailsComponent implements OnInit {
 					var b_comp = b.key;
 					return a_comp.localeCompare(b_comp);
 				});
+
+				let userId = this.cookieService.get("user_id");
+				this.catalogueService.getCatalogue(userId).then(
+					catalogue => {
+						this.catalogueService.getCatalogueLine(catalogue.uuid, this.response[0]["item_id"][0]).then(
+							line => this.catalogueLine = line
+						)
+					}
+				);
 				this.callback = true;
 				this.error_detc = false;
 			})
@@ -111,45 +133,7 @@ export class SimpleSearchDetailsComponent implements OnInit {
 			});
 			
 		});
-
-		let userId = this.cookieService.get("user_id");
-		this.catalogueService.getCatalogue(userId).then(
-			catalogue => {
-				this.catalogueService.getCatalogueLine(catalogue.uuid, this.response[0]["item_id"][0]).then(
-					line => this.catalogueLine = line
-				)
-			}
-		);
     }
-	
-	sendOrder() {
-		this.order.orderLine[0].lineItem.item.name = this.response[0][this.product_name][0];
-		this.order.orderLine[0].lineItem.lineReference = [new LineReference(this.response[0]["item_id"][0])];
-
-		//first initialize the seller and buyer parties.
-		//once they are fetched continue with starting the ordering process
-		let sellerId:string = this.response[0][this.product_vendor_id].toString();
-		let buyerId:string = this.cookieService.get("company_id");
-
-		this.userService.getParty(buyerId).then(buyerParty => {
-			this.order.buyerCustomerParty = new CustomerParty(buyerParty)
-
-			this.userService.getParty(sellerId).then(sellerParty => {
-				this.order.sellerSupplierParty = new SupplierParty(sellerParty);
-				let vars:ProcessVariables = ModelUtils.createProcessVariables("Order", buyerId, sellerId, this.order);
-				let piim:ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
-
-				this.bpeService.startBusinessProcess(piim)
-                    .then(res => {
-						this.callback2 = true;
-						this.error_detc2 = false;
-					})
-                    .catch(error => {
-						this.error_detc2 = true;
-					});
-			});
-		});
-	}
 	
 	setImage(key: string, value: string) {
 		this.set_configs[key] = value;
@@ -186,11 +170,6 @@ export class SimpleSearchDetailsComponent implements OnInit {
 		if (this.set_configs[key] != value)
 			match = false;
 		return match;
-	}
-	
-	onSubmit() {
-		this.submitted2 = true;
-		this.sendOrder();
 	}
 	
 	isJson(str: string): boolean {

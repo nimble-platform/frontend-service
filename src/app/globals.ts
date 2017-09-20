@@ -38,8 +38,8 @@ export const sparqlOptionalSelectEndPoint = 'http://localhost:8090/executeSPARQL
 // Endpoint variables - Local development direct links
 
 //export const user_mgmt_endpoint="http://localhost:9096";
-export const catalogue_endpoint="http://localhost:8095";
-export const bpe_endpoint="http://localhost:8081";
+export const catalogue_endpoint="http://95.9.71.171:8384";
+export const bpe_endpoint="http://95.9.71.171:8385";
 //export const endpoint = 'http://localhost:8090/detectMeaning'; // for local catalog search service
 //export const logicalViewEndpoint = 'http://localhost:8090/getLogicalView'; // for visualization
 

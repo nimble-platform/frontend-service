@@ -5,6 +5,7 @@ import {ItemPropertyGroup} from "./item-property-group";
 import {ItemPropertyRange} from "./item-property-range";
 import {BinaryObject} from "./binary-object";
 import {Code} from "./code";
+import {Quantity} from "./quantity";
 
 export class ItemProperty {
     constructor(
@@ -12,6 +13,7 @@ export class ItemProperty {
         public name: string,
         public value: string[],
         public valueDecimal: number[],
+        public valueQuantity:Quantity[],
         public valueBinary:BinaryObject[],
         public demoSpecificMultipleContent:string,
         public unit: string,
