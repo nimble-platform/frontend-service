@@ -62,7 +62,7 @@ export class UBLModelUtils {
 
         let aip: ItemProperty;
         if (property == null) {
-            aip = new ItemProperty(this.generateUUID(), "", [], [], new Array<BinaryObject>(), "", "", "STRING", code, "", null);
+            aip = new ItemProperty(this.generateUUID(), "", [], [], [], new Array<BinaryObject>(), "", "", "STRING", code, "", null);
         }
         else {
             let unit = "";
@@ -72,7 +72,8 @@ export class UBLModelUtils {
             let valueQualifier = property.dataType;
 
             let number;
-            aip = new ItemProperty(property.id, property.preferredName, [''], [number], new Array<BinaryObject>(), "", unit,
+            let quantity:Quantity = this.createQuantity();
+            aip = new ItemProperty(property.id, property.preferredName, [''], [number], [quantity], new Array<BinaryObject>(), "", unit,
                 valueQualifier, code, "", null);
         }
         return aip;
@@ -85,10 +86,8 @@ export class UBLModelUtils {
     }
 
     public static createItemLocationQuantity(amount: string): ItemLocationQuantity {
-        // create amount
-        let amountObj: Amount = this.createAmountWithCurrency("EUR")
         // price
-        let price: Price = new Price(amountObj);
+        let price: Price = this.createPrice(null);
         // item location quantity
         let ilq: ItemLocationQuantity = new ItemLocationQuantity(price, null, null, []);
         return ilq;
@@ -182,9 +181,9 @@ export class UBLModelUtils {
         if(amount == null) {
             amount = "EUR";
         }
-        let amountObj: Amount = this.createAmountWithCurrency("EUR")
-        // price
-        let price: Price = new Price(amountObj);
+        let amountObj: Amount = this.createAmountWithCurrency("EUR");
+        let quantity: Quantity = this.createQuantity();
+        let price: Price = new Price(amountObj, quantity);
         return price;
     }
 
@@ -224,13 +223,14 @@ export class UBLModelUtils {
         return new Code(null, null, null, null);
     }
 
-    public static removeHjidFieldsFromObject(object:any):void {
+    public static removeHjidFieldsFromObject(object:any):any {
         delete object.hjid;
         for (let field in object) {
             if(object.hasOwnProperty(field) && object[field] != null && typeof(object[field]) === 'object') {
                 this.removeHjidFieldsFromObject(object[field]);
             }
         }
+        return object;
     }
 
     private static generateUUID(): string {

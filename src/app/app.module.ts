@@ -34,7 +34,7 @@ import {AddressSubForm} from './user-mgmt/subforms/address.component';
 import {DeliveryTermsSubForm} from './user-mgmt/subforms/delivery-terms.component';
 import {PaymentMeansForm} from './user-mgmt/subforms/payment-means.component';
 import {CompanySettingsComponent} from './user-mgmt/company-settings.component';
-import {NegotiationMainComponent} from './negotiation/negotiation-main.component';
+import {NegotiationMainComponent} from './bpe/negotiation/negotiation-main.component';
 import {CatalogueViewComponent} from './catalogue/catalogue-view.component';
 import {CatalogueLineViewComponent} from './catalogue/catalogue-line-view.component';
 import {ProductDetailsComponent} from './catalogue/product-details.component';
@@ -47,6 +47,10 @@ import {BPsComponent} from './bpe/bps.component';
 import {BPDetailComponent} from './bpe/bp-detail.component';
 import {BPService} from './bpe/bp.service';
 import {QuantityViewComponent} from "./catalogue/built-in-data-view/quantity-view.component";
+import {AmountViewComponent} from "./catalogue/built-in-data-view/amount-view.component";
+import {ValueViewComponent} from "./catalogue/built-in-data-view/value-view.component";
+import {OrderParametersComponent} from "./bpe/order/order-parameters.component";
+import {BPDataService} from "./bpe/bp-data-service";
 
 @NgModule({
     imports: [
@@ -83,6 +87,7 @@ import {QuantityViewComponent} from "./catalogue/built-in-data-view/quantity-vie
         PaymentMeansForm,
         CompanySettingsComponent,
         NegotiationMainComponent,
+        OrderParametersComponent,
         CatalogueViewComponent,
         CatalogueLineViewComponent,
         ProductDetailsComponent,
@@ -90,6 +95,8 @@ import {QuantityViewComponent} from "./catalogue/built-in-data-view/quantity-vie
         PropertyBlockPipe,
         ItemPropertyDataSourcePipe,
         QuantityViewComponent,
+        AmountViewComponent,
+        ValueViewComponent,
         BPConfigureComponent,
         BPDetailComponent,
         BPsComponent
@@ -103,7 +110,8 @@ import {QuantityViewComponent} from "./catalogue/built-in-data-view/quantity-vie
         BPEService,
         ExplorativeSearchService,
         PublishService,
-        BPService
+        BPService,
+        BPDataService
     ],
     bootstrap: [
         AppComponent

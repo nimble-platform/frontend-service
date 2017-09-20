@@ -9,7 +9,7 @@ import { CatalogueLine } from "./model/publish/catalogue-line";
 // Component that displays warranty information etc. inside the "trading details" tab in CatalogueLineView
 
 export class TradingDetailsComponent {
-    @Input() editMode:boolean;
+    @Input() presentationMode:string;
     @Input() catalogueLine: CatalogueLine;
-
+    @Input() priceEditable:boolean;
 }

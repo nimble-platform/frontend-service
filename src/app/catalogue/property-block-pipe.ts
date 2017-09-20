@@ -42,6 +42,7 @@ export class PropertyBlockPipe implements PipeTransform {
         return this.propertyBlocks;
     }
 
+    // TODO there is a code block product-details.component.ts for same the purpose. remove one of these
     refreshPropertyBlocks(): void {
 
         // commodity classifications
@@ -104,7 +105,7 @@ export class PropertyBlockPipe implements PipeTransform {
     private createPropertyBlock(category: Category): void {
 
         let propertyBlock: any = {};
-        let name:string = category.preferredName + " (" + category.taxonomyId + ")";
+        let name:string = category.preferredName != null ? category.preferredName : "" + " (" + category.taxonomyId + ")";
         propertyBlock['name'] = name;
         propertyBlock['isCollapsed'] = this.publishStateService.getCollapsedState(name);
         this.propertyBlocks.push(propertyBlock);
