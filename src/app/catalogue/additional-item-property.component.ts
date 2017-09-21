@@ -21,7 +21,6 @@ export class AdditionalItemPropertyComponent implements OnInit, OnDestroy {
      singlevalue: only a single value can be chosen for the property. this mode is expected to be used when the
      item is used in business processes like negotiation */
     @Input() presentationMode: string;
-    @Input() bpType: string;
 
     editModeSubscription: Subscription;
 
@@ -122,7 +121,7 @@ export class AdditionalItemPropertyComponent implements OnInit, OnDestroy {
 
     updateNegotiationItemPropertyData(event:any) {
         let selectedValue:any = event.target.value;
-        this.bpDataService.updateItemProperty(this.bpType, selectedValue, this.additionalItemProperty);
+        this.bpDataService.updateItemProperty(selectedValue, this.additionalItemProperty);
     }
 
     private generateUUID(): string {

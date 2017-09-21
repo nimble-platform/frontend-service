@@ -33,7 +33,8 @@ export class SimpleSearchDetailsComponent implements OnInit {
 	product_configurable = myGlobals.product_configurable;
 	set_configs = myGlobals.product_default;
 
-	negotiationExpanded = false;
+	selectedOption:string = "";
+
 	callback = false;
 	error_detc = false;
 	submitted2 = false;
@@ -65,13 +66,13 @@ export class SimpleSearchDetailsComponent implements OnInit {
 			// TODO demo specific id mapping
 			let id = params['id'];
 			if(id == 'MDF_Board_11190914') {
-				id = '7bdd6e06-a5a8-434c-9e3e-0ae62c9a2282';
+				id = '662ea024-edec-4357-93ad-3df2bd522883';
 			} else if(id == 'MDF_Board_138495') {
-				id = '93822137-a469-4a9c-8957-1fb429eb2905';
+				id = '8c2fee8a-b74c-4908-b82f-537626cc14b2';
 			} else if(id == 'Nicole_White') {
-				id = 'e027295d-a0e2-42ad-9368-2f64df1fa34e';
+				id = '76c77611-3763-44b0-a789-49fdc5bd5cfc';
 			} else if(id == 'Globito_White') {
-				id = 'cecd47e0-5e6e-4814-8f37-b63a3765c38c';
+				id = 'd8a24ccb-97c5-4392-bc01-b5763b06b12e';
 			}
 
 			this.simpleSearchService.getSingle(id)

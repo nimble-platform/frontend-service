@@ -47,8 +47,7 @@ export class OrderParametersComponent implements OnInit {
         this.submitted = true;
 
         // final check on the rfq
-        this.bpDataService.chooseFirstValuesOfItemProperties("Order");
-        this.bpDataService.chooseAllDimensions("Order");
+        this.order.orderLine[0].lineItem.item = this.bpDataService.modifiedCatalogueLine.goodsItem.item;
         UBLModelUtils.removeHjidFieldsFromObject(this.order);
 
         //first initialize the seller and buyer parties.

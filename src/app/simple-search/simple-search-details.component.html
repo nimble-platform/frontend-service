@@ -51,14 +51,30 @@
             <button type="submit" class="btn btn-success" [disabled]="!orderForm.form.valid" i18n>Order</button>
         </form>-->
         <ng-container *ngIf="response && catalogueLine">
+            <div class="row">
+                <button type="button" class="btn btn-primary space-before" (click)="selectedOption = selectedOption != 'order' ? 'order' : ''"
+                        [attr.aria-expanded]="orderExpanded" aria-controls="orderParams"
+                        i18n>
+                    Order
+                </button>
+                <button type="button" class="btn btn-primary space-before" (click)="selectedOption = selectedOption != 'negotiation' ? 'negotiation' : ''"
+                        [attr.aria-expanded]="negotiationExpanded" aria-controls="negotiationParams"
+                        i18n>
+                    Negotiate
+                </button>
+            </div>
             <div class="container row">
                 <order-parameters
+                        id="orderParams"
                         [catalogueLine]="catalogueLine"
-                        [productResponse]="response[0]">
+                        [productResponse]="response[0]"
+                        [ngbCollapse]="selectedOption != 'order'">
                 </order-parameters>
                 <negotiation-params
+                        id="negotiationParams"
                         [catalogueLine]="catalogueLine"
-                        [productResponse]="response[0]">
+                        [productResponse]="response[0]"
+                        [ngbCollapse]="selectedOption != 'negotiation'">
                 </negotiation-params>
             </div>
         </ng-container>

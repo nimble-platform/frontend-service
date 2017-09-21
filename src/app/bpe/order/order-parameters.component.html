@@ -1,10 +1,4 @@
-<button type="button" class="btn btn-primary space-before" (click)="orderExpanded = !orderExpanded"
-        [attr.aria-expanded]="orderExpanded" aria-controls="orderParams"
-        i18n>
-    Order
-</button>
-
-<div id="orderParams" class="space-before" [ngbCollapse]="!orderExpanded">
+<div id="orderParams" class="space-before">
 	<div>
 		<ul class="nav nav-tabs">
 			<li class="nav-item pointer">
@@ -34,8 +28,7 @@
 		class="p-3">
 		<product-details *ngIf="selectedTab === 'Product Details'"
 						 [catalogueLine]="catalogueLine"
-						 [presentationMode]="'singlevalue'"
-						 [bpType]="'Order'">
+						 [presentationMode]="'singlevalue'">
 		</product-details>
 		<trading-details *ngIf="selectedTab === 'Trading & Delivery Terms'"
 						 [catalogueLine]="catalogueLine"

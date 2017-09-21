@@ -22,7 +22,6 @@ export class ProductDetailsComponent implements OnInit{
 
     @Input() presentationMode: string
     @Input() catalogueLine: CatalogueLine;
-    @Input() bpType: string;
 
     /*
      * hash storing the blocks of each category
@@ -155,6 +154,6 @@ export class ProductDetailsComponent implements OnInit{
     }
 
     updateNegotiationItemDimensionData(attributeId, event:any) {
-        this.bpDataService.updateDimension(this.bpType, attributeId, event.target.value);
+        this.bpDataService.updateDimension(attributeId, event.target.value);
     }
 }

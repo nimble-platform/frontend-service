@@ -47,8 +47,7 @@ export class NegotiationMainComponent implements OnInit {
 		this.submitted = true;
 
 		// final check on the rfq
-		this.bpDataService.chooseFirstValuesOfItemProperties("Negotiation");
-		this.bpDataService.chooseAllDimensions("Negotiation");
+		this.rfq.requestForQuotationLine[0].lineItem.item = this.bpDataService.modifiedCatalogueLine.goodsItem.item;
 		UBLModelUtils.removeHjidFieldsFromObject(this.rfq);
 
 		//first initialize the seller and buyer parties.

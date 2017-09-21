@@ -1,10 +1,4 @@
-<button type="button" class="btn btn-primary space-before" (click)="negotiationExpanded = !negotiationExpanded"
-        [attr.aria-expanded]="negotiationExpanded" aria-controls="negotiationParams"
-        i18n>
-    Negotiate
-</button>
-
-<div id="negotiationParams" class="space-before" [ngbCollapse]="!negotiationExpanded">
+<div class="space-before">
 	<div>
 		<ul class="nav nav-tabs">
 			<li class="nav-item pointer">
@@ -27,8 +21,7 @@
 	<ng-container *ngIf="catalogueLine">
 		<product-details *ngIf="selectedTab === 'Product Details'"
 						 [catalogueLine]="catalogueLine"
-						 [presentationMode]="'singlevalue'"
-						 [bpType]="'Negotiation'">
+						 [presentationMode]="'singlevalue'">
 		</product-details>
 		<trading-details *ngIf="selectedTab === 'Trading & Delivery Terms'"
 						 [catalogueLine]="catalogueLine"

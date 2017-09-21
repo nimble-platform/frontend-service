@@ -31,8 +31,7 @@
     <div id="propertyBlock" [ngbCollapse]="propertyBlock.isCollapsed">
         <additional-item-property *ngFor="let property of propertyBlock[PROPERTY_BLOCK_FIELD_PROPERTIES]; trackBy : trackByIndex"
                                   [additionalItemProperty]="property"
-                                  [presentationMode]="presentationMode"
-                                  [bpType]="bpType">
+                                  [presentationMode]="presentationMode">
         </additional-item-property>
 
     </div>
