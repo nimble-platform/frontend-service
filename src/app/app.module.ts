@@ -53,6 +53,7 @@ import {OrderParametersComponent} from "./bpe/order/order-parameters.component";
 import {BPDataService} from "./bpe/bp-data-service";
 import {ValueArrayViewComponent} from "./catalogue/built-in-data-view/value-array-view.component";
 import {BooleanViewComponent} from "./catalogue/built-in-data-view/boolean-view-component";
+import {AddressViewComponent} from "./catalogue/address-view.component";
 
 @NgModule({
     imports: [
@@ -96,6 +97,7 @@ import {BooleanViewComponent} from "./catalogue/built-in-data-view/boolean-view-
         TradingDetailsComponent,
         PropertyBlockPipe,
         ItemPropertyDataSourcePipe,
+        AddressViewComponent,
         QuantityViewComponent,
         AmountViewComponent,
         ValueArrayViewComponent,
