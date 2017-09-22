@@ -1,0 +1,12 @@
+<div class="input-group">
+    <label class="col-3 control-label">{{propName}}</label>
+    <input type="checkbox"
+           [checked]="value === true || (typeof === 'string' && value.toUpperCase() === 'TRUE')"
+           [disabled]="presentationMode != 'edit'"
+           (change)="onCheckChanged($event)">
+</div>
+
+
+
+
+

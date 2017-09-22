@@ -1,27 +1,66 @@
-<!-- TODO add support for multiple values in edit and view modes -->
-<ng-container *ngIf="presentationMode != 'singlevalue'">
-    <div class="input-group">
-        <label class="col-3 control-label">{{propName}}</label>
-        <label *ngIf="presentationMode == 'view'" class="col-7">{{quantity[0].value}}</label>
-        <input *ngIf="presentationMode == 'edit'" class="col-7" type="text" [(ngModel)]="quantity[0].value">
+<!-- view mode -->
+<ng-container *ngIf="presentationMode == 'view'">
+    <ng-container *ngIf="quantity.length > 0">
+        <div *ngFor="let value of quantity; let i = index;" class="input-group form-group">
+            <!-- show label next to the first value only -->
+            <label *ngIf="i == 0" class="col-3 control-label">{{propName}}</label>
+            <input type="text" class="form-control "
+                    [(ngModel)]="value.value"
+                    [ngClass]="{'offset-3' : i > 0} "
+                    readonly>
+            <label class="col-1" class="ml-3 mr-3">Unit: </label>
+            <input type="text"
+                   class="col-1 form-control"
+                   [(ngModel)]="quantity[0].unitCode"
+                   readonly>
+        </div>
+    </ng-container>
+    <ng-container *ngIf="quantity.length == 0">
+        <label *ngIf="i == 0" class="col-3 control-label">{{propName}}</label>
+        <input type="text" class="form-control" readonly>
         <label class="col-1" class="ml-3 mr-3">Unit: </label>
-        <label *ngIf="presentationMode == 'view'" class="col-1">{{quantity[0].unitCode}}</label>
-        <input *ngIf="presentationMode == 'edit'" class="col-1" type="text" [(ngModel)]="quantity[0].unitCode">
+        <input type="text" class="col-1 form-control" readonly>
+    </ng-container>
+</ng-container>
+
+<!-- edit mode -->
+<ng-container *ngIf="presentationMode == 'edit'">
+    <div *ngFor="let value of quantity; let i = index;" class="input-group form-group">
+        <!-- show label next to the first value only -->
+        <label *ngIf="i == 0" class="col-3 control-label">{{propName}}</label>
+        <input type="text" class="form-control "
+               [(ngModel)]="value.value"
+               [ngClass]="{'offset-3' : i > 0} ">
+
+        <!-- remove value button -->
+        <span *ngIf="quantity.length > 1">
+            <button class="btn btn-xs btn-danger" (click)="removeValue(i)">&times;
+            </button>
+        </span>
+
+        <!-- add value button -->
+        <span *ngIf="multiValue && i == quantity.length - 1">
+            <button class="btn btn-primary btn-xs" (click)="addNewValue()"><strong>+</strong></button>
+        </span>
+
+        <label class="col-1" class="ml-3 mr-3">Unit: </label>
+        <input type="text"
+               class="col-1 form-control"
+               [(ngModel)]="value.unitCode">
     </div>
 </ng-container>
-<ng-container *ngIf="presentationMode == 'singlevalue' && quantity.length > 0">
-    <div class="input-group">
-        <label class="col-3 control-label">{{propName}}</label>
-        <select *ngIf="quantity.length > 1"
-                class="custom-select col-7"
-                (change)="selectChanged($event)">
-            <option *ngFor="let value of quantity">{{value.value}}</option>
-        </select>
-        <input *ngIf="quantity.length == 1"
-               type="text" class="form-control col-7"
-               [(ngModel)]="quantity[0].value"
-               readonly>
-        <label class="col-1" class="ml-3 mr-3">Unit: </label>
-        <label class="col-1">{{quantity[0].unitCode}}</label>
-    </div>
+
+<!-- single value mode (used when only a single value should be chosen among the alternatives -->
+<ng-container *ngIf="presentationMode == 'singlevalue'">
+    <select *ngIf="quantity.length > 1"
+            class="custom-select col-7"
+            (change)="selectChanged($event)">
+        <option *ngFor="let value of quantity">{{value.value}}</option>
+    </select>
+    <input *ngIf="quantity.length == 1"
+           type="text" class="form-control col-7"
+           [(ngModel)]="quantity[0].value"
+           readonly>
+    <label class="col-1" class="ml-3 mr-3">Unit: </label>
+    <label class="col-1">{{quantity[0].unitCode}}</label>
 </ng-container>

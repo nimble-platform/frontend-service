@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, Output} from "@angular/core";
 import {Quantity} from "../model/publish/quantity";
-import {Subject} from "rxjs/Subject";
+import {UBLModelUtils} from "../model/ubl-model-utils";
 
 @Component({
     selector: 'quantity-view',
@@ -11,15 +11,23 @@ export class QuantityViewComponent {
     @Input() presentationMode: string;
     @Input() propName: string;
     @Input() quantity: Quantity[];
+    @Input() multiValue: boolean;
     @Output() onSelectChange = new EventEmitter();
+    @Output() onValueAdded = new EventEmitter();
+    @Output() onValueDeleted = new EventEmitter();
+
+    addNewValue():void {
+        this.quantity.push(UBLModelUtils.createQuantity());
+        this.onValueAdded.emit();
+    }
+
+    removeValue(index:number):void {
+        let value:number = this.quantity[index].value;
+        this.quantity.splice(index, 1);
+        this.onValueDeleted.emit(value);
+    }
 
     selectChanged(event:any):void {
         this.onSelectChange.emit(event);
     }
-    // private selectedValue = new Subject();
-    // selectedValueObs = this.selectedValue.asObservable();
-    //
-    // onSelectQuantityValue(selectedValue:any):void {
-    //     this.selectedValue.next(selectedValue);
-    // }
 }

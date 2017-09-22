@@ -31,6 +31,7 @@ import {RequestForQuotationLine} from "./publish/request-for-quotation-line";
 import {Delivery} from "./publish/delivery";
 import {Quotation} from "../../bpe/model/ubl/quotation";
 import {QuotationLine} from "./publish/quotation-line";
+import {Dimension} from "./publish/dimension";
 /**
  * Created by suat on 05-Jul-17.
  */
@@ -199,6 +200,12 @@ export class UBLModelUtils {
     public static createPeriod():Period {
         let period:Period = new Period(null, null, null, null, this.createQuantity(), null);
         return period;
+    }
+
+    public static createDimension(attributeId:string, unitCode:string):Dimension {
+        let quantity:Quantity = this.createQuantity();
+        quantity.unitCode = unitCode;
+        return new Dimension(attributeId, quantity, null, null, null, null);
     }
 
     public static createQuantity():Quantity {

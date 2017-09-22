@@ -59,6 +59,12 @@
     </li>
 </ul>
 
-    <product-details *ngIf="selectedTab === 'Product Details'" [catalogueLine]="catalogueLine"></product-details>
-    <trading-details *ngIf="selectedTab === 'Trading & Delivery Terms'" [catalogueLine]="catalogueLine"></trading-details>
+    <product-details *ngIf="selectedTab === 'Product Details'"
+                     [catalogueLine]="catalogueLine"
+                     [presentationMode]="'view'">
+    </product-details>
+    <trading-details *ngIf="selectedTab === 'Trading & Delivery Terms'"
+                     [catalogueLine]="catalogueLine"
+                     [presentationMode]="'view'">
+    </trading-details>
 </div>

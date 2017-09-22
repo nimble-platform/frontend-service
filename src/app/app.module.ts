@@ -51,6 +51,8 @@ import {AmountViewComponent} from "./catalogue/built-in-data-view/amount-view.co
 import {ValueViewComponent} from "./catalogue/built-in-data-view/value-view.component";
 import {OrderParametersComponent} from "./bpe/order/order-parameters.component";
 import {BPDataService} from "./bpe/bp-data-service";
+import {ValueArrayViewComponent} from "./catalogue/built-in-data-view/value-array-view.component";
+import {BooleanViewComponent} from "./catalogue/built-in-data-view/boolean-view-component";
 
 @NgModule({
     imports: [
@@ -96,7 +98,9 @@ import {BPDataService} from "./bpe/bp-data-service";
         ItemPropertyDataSourcePipe,
         QuantityViewComponent,
         AmountViewComponent,
+        ValueArrayViewComponent,
         ValueViewComponent,
+        BooleanViewComponent,
         BPConfigureComponent,
         BPDetailComponent,
         BPsComponent

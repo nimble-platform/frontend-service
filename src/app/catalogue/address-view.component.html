@@ -1,0 +1,17 @@
+<!-- view mode -->
+<ng-container *ngIf="presentationMode == 'view'">
+    <div class="input-group form-group">
+        <!-- show label next to the first value only -->
+        <label *ngIf="i == 0" class="col-3 control-label">{{propName}}</label>
+        <label>Country</label>
+        <select *ngIf="address.length > 0"
+                class="custom-select">
+            <option *ngFor="let value of address">{{value.country.name}}</option>
+        </select>
+        <label>City</label>
+        <select *ngIf="address.length > 0"
+                class="custom-select">
+            <option *ngFor="let value of address">{{value.cityName}}</option>
+        </select>
+    </div>
+</ng-container>

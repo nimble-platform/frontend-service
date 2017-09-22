@@ -1,33 +1,7 @@
-<ng-container *ngIf="!multiValue">
-    <div class="input-group">
-        <label class="col-3 control-label">{{propName}}</label>
-        <input class="col-7 form-control"
-               type="text"
-               [(ngModel)]="value"
-               [readonly]="presentationMode == 'view' || presentationMode == 'singlevalue'">
-    </div>
-</ng-container>
-
-<!-- TODO add support for multiple values in edit and view modes -->
-<ng-container *ngIf="multiValue">
-    <ng-container *ngIf="presentationMode != 'singlevalue'">
-        <div class="input-group">
-            <label class="col-3 control-label">{{propName}}</label>
-            <label *ngIf="presentationMode == 'view'" class="col-7">{{values[0]}}</label>
-            <input *ngIf="presentationMode == 'edit'" class="col-7" type="text" [(ngModel)]="values[0]">
-        </div>
-    </ng-container>
-    <ng-container *ngIf="presentationMode == 'singlevalue'">
-        <div class="input-group">
-            <label class="col-3 control-label">{{propName}}</label>
-            <select *ngIf="values.length > 1"
-                    class="custom-select col-7">
-                <option *ngFor="let val of values">{{val}}</option>
-            </select>
-            <input *ngIf="values.length == 1"
-                   type="text" class="form-control col-7"
-                   [(ngModel)]="values[0]"
-                   readonly>
-        </div>
-    </ng-container>
-</ng-container>
+<div class="input-group form-group">
+    <label class="col-3 control-label">{{propName}}</label>
+    <input class="form-control"
+           type="text"
+           [(ngModel)]="value"
+           [readonly]="presentationMode == 'view' || presentationMode == 'singlevalue'">
+</div>

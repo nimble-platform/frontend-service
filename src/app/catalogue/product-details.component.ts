@@ -6,6 +6,7 @@ import {Code} from "./model/publish/code";
 import {Quantity} from "./model/publish/quantity";
 import {Dimension} from "./model/publish/dimension";
 import {BPDataService} from "../bpe/bp-data-service";
+import {UBLModelUtils} from "./model/ubl-model-utils";
 
 @Component({
     selector: 'product-details',
@@ -34,6 +35,7 @@ export class ProductDetailsComponent implements OnInit{
     object = Object;
     dimensions: any = null;
 
+
     constructor(private bpDataService:BPDataService) {
 
     }
@@ -43,6 +45,7 @@ export class ProductDetailsComponent implements OnInit{
         this.createDimensionBlocks();
     }
 
+    // this process might be realized in a pipe
     createDimensionBlocks():void {
         this.dimensions = {};
         for(let dim of this.catalogueLine.goodsItem.item.dimension) {
@@ -155,5 +158,19 @@ export class ProductDetailsComponent implements OnInit{
 
     updateNegotiationItemDimensionData(attributeId, event:any) {
         this.bpDataService.updateDimension(attributeId, event.target.value);
+    }
+
+    createDimensionAttribute(attributeId:string, unitCode:string):void {
+        console.log(event);
+        let dimension:Dimension = UBLModelUtils.createDimension(attributeId, unitCode);
+        this.catalogueLine.goodsItem.item.dimension.push(dimension);
+        this.createDimensionBlocks();
+    }
+
+    deleteDimensionAttribute(attributeId:string, value:number):void {
+        let dimension:Dimension[] = this.catalogueLine.goodsItem.item.dimension;
+        let index:number = dimension.findIndex(dim => dim.attributeID == attributeId && dim.measure.value == value);
+        dimension.splice(index, 1);
+        this.createDimensionBlocks();
     }
 }

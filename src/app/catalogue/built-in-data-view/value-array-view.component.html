@@ -1,0 +1,30 @@
+<!-- view and edit modes -->
+<ng-container *ngIf="presentationMode != 'singlevalue'">
+    <div *ngFor="let value of values; let i = index; trackBy : trackByIndex" class="input-group form-group">
+        <!-- show label next to the first value only -->
+        <label *ngIf="i == 0" class="col-3 control-label">{{propName}}</label>
+        <input type="text" class="form-control "
+               [(ngModel)]="values[i]"
+               [ngClass]="{'offset-3' : i > 0} "
+               [readonly]="presentationMode != 'edit'">
+    </div>
+    <ng-container *ngIf="values.length == 0">
+        <label *ngIf="i == 0" class="col-3 control-label">{{propName}}</label>
+        <input type="text" class="form-control" [readonly]="presentationMode != 'edit'">
+    </ng-container>
+</ng-container>
+
+<!-- single value mode -->
+<ng-container *ngIf="presentationMode == 'singlevalue'">
+    <div class="input-group form-group">
+        <label class="col-3 control-label">{{propName}}</label>
+        <select *ngIf="values.length > 1"
+                class="custom-select">
+            <option *ngFor="let val of values">{{val}}</option>
+        </select>
+        <input *ngIf="values.length == 1"
+               type="text" class="form-control"
+               [(ngModel)]="values[0]"
+               readonly>
+    </div>
+</ng-container>
