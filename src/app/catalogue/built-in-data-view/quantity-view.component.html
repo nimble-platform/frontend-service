@@ -16,10 +16,12 @@
         </div>
     </ng-container>
     <ng-container *ngIf="quantity.length == 0">
-        <label *ngIf="i == 0" class="col-3 control-label">{{propName}}</label>
-        <input type="text" class="form-control" readonly>
-        <label class="col-1" class="ml-3 mr-3">Unit: </label>
-        <input type="text" class="col-1 form-control" readonly>
+        <div class="input-group form-group">
+            <label *ngIf="i == 0" class="col-3 control-label">{{propName}}</label>
+            <input type="text" class="form-control" readonly>
+            <label class="col-1" class="ml-3 mr-3">Unit: </label>
+            <input type="text" class="col-1 form-control" readonly>
+        </div>
     </ng-container>
 </ng-container>
 
@@ -33,7 +35,7 @@
                [ngClass]="{'offset-3' : i > 0} ">
 
         <!-- remove value button -->
-        <span *ngIf="quantity.length > 1">
+        <span *ngIf="multiValue && quantity.length > 1">
             <button class="btn btn-xs btn-danger" (click)="removeValue(i)">&times;
             </button>
         </span>

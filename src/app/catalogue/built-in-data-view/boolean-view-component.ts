@@ -11,11 +11,17 @@ import {Component, EventEmitter, Input, Output} from "@angular/core";
 export class BooleanViewComponent {
     @Input() presentationMode: string;
     @Input() propName: string;
-    @Input() value:any; // can be string or boolean
     @Output() valueChanged = new EventEmitter();
-    typeof = typeof this.value;
 
-    onCheckChanged(event):void {
-        this.valueChanged.emit(event.target.checked);
+    valueObj:boolean;
+    @Input()
+    get value() {
+        return this.valueObj;
+    }
+
+    set value(val) {
+        this.valueObj = val;
+        this.valueChanged.emit(val);
+        console.log("changeeed: " + val);
     }
 }

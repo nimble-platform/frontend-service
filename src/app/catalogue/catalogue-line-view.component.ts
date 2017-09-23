@@ -14,6 +14,7 @@ export class CatalogueLineViewComponent {
 
     selectedTab: string = "Product Details";
     @Input() catalogueLine: CatalogueLine;
+    @Input() presentationMode: string;
 
     constructor(private catalogueService: CatalogueService,
                 private router: Router) {}

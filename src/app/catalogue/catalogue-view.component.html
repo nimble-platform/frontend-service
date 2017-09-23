@@ -1,23 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Catalogue</title>
-</head>
-<body>
-
-<h2>Catalogue</h2>
+<h2>My Products</h2>
 
 <!-- *ngIf div to wait for asynchronous data -->
 <div *ngIf="catalogue">
     <div *ngIf="catalogue.catalogueLine.length > 0">
-        <p>Issue date: {{catalogue.issueDate}}</p>
+        <!--<p>Issue date: {{catalogue.issueDate}}</p>-->
         <catalogue-line-view *ngFor="let line of catalogue.catalogueLine"
-                             [catalogueLine]="line">
+                             [catalogueLine]="line"
+                             [presentationMode]="'view'">
         </catalogue-line-view>
     </div>
     <h3 *ngIf="catalogue.catalogueLine.length <= 0">No published products.</h3>
 </div>
-
-</body>
-</html>

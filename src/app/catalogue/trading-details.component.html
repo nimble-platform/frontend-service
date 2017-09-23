@@ -1,6 +1,6 @@
 <h5 class="mt-3 mb-3">Price</h5>
 <!-- Price Amount -->
-<amount-view [presentationMode]="priceEditable ? 'edit' : 'view'"
+<amount-view [presentationMode]="editPrice ? 'edit' : presentationMode"
              [propName]="'Amount'"
              [amount]="[catalogueLine.requiredItemLocationQuantity.price.priceAmount]">
 </amount-view>
@@ -14,7 +14,8 @@
 <!-- Free sample indicator -->
 <boolean-view [presentationMode]="presentationMode"
               [propName]="'Free Sample'"
-              (valueChanged)="updateFreeSample($event)">
+              [value]="catalogueLine.goodsItem.item.freeOfChargeIndicator"
+              (valueChanged)="catalogueLine.goodsItem.item.freeOfChargeIndicator = $event">
 </boolean-view>
 
 <h5 class="mb-3">Delivery Terms</h5>
@@ -79,4 +80,3 @@
             [(values)]="catalogueLine.warrantyInformation">
     </value-array-view>
 </ng-container>
-

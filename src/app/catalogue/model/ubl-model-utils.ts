@@ -209,8 +209,11 @@ export class UBLModelUtils {
     }
 
     public static createQuantity():Quantity {
-        let quantity:Quantity = new Quantity(null, null, null);
-        return quantity;
+        return this.createQuantityWithUnit(null);
+    }
+
+    public static createQuantityWithUnit(unit:string):Quantity {
+        return new Quantity(null, unit, null);
     }
 
     public static createAmount():Amount{

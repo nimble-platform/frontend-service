@@ -11,16 +11,15 @@ export class ValueViewComponent {
     @Input() presentationMode: string;
     @Input() propName: string;
 
-    @Input() @Output() value;
-
-    // two-way binding for "value" field
-    /*@Input() localValue: any;
+    valueObj;
     @Output() valueChange = new EventEmitter();
+
     @Input()
     get value() {
-        return this.localValue;
+        return this.valueObj;
     }
     set value(val) {
-        this.valueChange.emit(this.localValue);
-    }*/
+        this.valueObj = val;
+        this.valueChange.emit(this.valueObj);
+    }
 }

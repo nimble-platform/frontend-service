@@ -35,11 +35,12 @@
 </div>
 
 <!-- Custom properties -->
-<additional-item-property *ngFor="let property of retrieveCustomProperties(this.catalogueLine.goodsItem.item.additionalItemProperty)"
-                          [additionalItemProperty]="property">
-</additional-item-property>
+<!--<additional-item-property *ngFor="let property of retrieveCustomProperties(this.catalogueLine.goodsItem.item.additionalItemProperty)"
+                          [additionalItemProperty]="property"
+                          [presentationMode]="'edit'">
+</additional-item-property>-->
 
-<div *ngFor="let propertyBlock of this.catalogueLine.goodsItem.item.additionalItemProperty | propertyBlockPipe; trackBy : trackByIndex">
+<div *ngFor="let propertyBlock of this.catalogueLine.goodsItem.item.additionalItemProperty | propertyBlockPipe : presentationMode; trackBy : trackByIndex">
     <p>
         <!-- display the propertyBlock only if it is not empty -->
         <button *ngIf="propertyBlock[PROPERTY_BLOCK_FIELD_PROPERTIES].length > 0"
@@ -53,7 +54,8 @@
     </p>
     <div id="propertyBlock" [ngbCollapse]="propertyBlockCollapsedStates.get(propertyBlock[PROPERTY_BLOCK_FIELD_NAME])">
         <additional-item-property *ngFor="let property of propertyBlock[PROPERTY_BLOCK_FIELD_PROPERTIES]; trackBy : trackByIndex"
-                                  [additionalItemProperty]="property">
+                                  [additionalItemProperty]="property"
+                                  [presentationMode]="'edit'">
         </additional-item-property>
     </div>
 </div>

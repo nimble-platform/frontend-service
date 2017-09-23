@@ -41,7 +41,7 @@ export class ProductDetailsComponent implements OnInit{
     }
 
     ngOnInit(): void {
-        this.refreshPropertyBlocks();
+        //this.refreshPropertyBlocks();
         this.createDimensionBlocks();
     }
 
@@ -172,5 +172,14 @@ export class ProductDetailsComponent implements OnInit{
         let index:number = dimension.findIndex(dim => dim.attributeID == attributeId && dim.measure.value == value);
         dimension.splice(index, 1);
         this.createDimensionBlocks();
+    }
+
+    debugg() {
+        console.log(this.catalogueLine);
+    }
+
+
+    trackByIndex(index: any, item: any) {
+        return index;
     }
 }

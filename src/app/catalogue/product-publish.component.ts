@@ -19,6 +19,7 @@ import {Code} from "./model/publish/code";
 import {PublishService} from "./publish-and-aip.service";
 import {UserService} from "../user-mgmt/user.service";
 import {ItemPropertyDataSourcePipe} from "./item-property-data-source-pipe";
+import {Quantity} from "./model/publish/quantity";
 
 const uploadModalityKey: string = "UploadModality";
 
@@ -303,7 +304,12 @@ export class ProductPublishComponent implements OnInit {
                     propertiesToBeSpliced.push(property);
                 }
 
-            } else {
+            } else if(valueQualifier.toLowerCase() == 'quantity') {
+                if(property.valueQuantity.length == 0) {
+                    propertiesToBeSpliced.push(property);
+                }
+
+            } else{
                 if(property.value.length == 0 || property.value[0] == '') {
                     propertiesToBeSpliced.push(property);
                 }
@@ -500,6 +506,7 @@ export class ProductPublishComponent implements OnInit {
             this.newProperty.value = filledValues;
             this.newProperty.valueDecimal = [];
             this.newProperty.valueBinary = [];
+            this.newProperty.valueQuantity = [];
 
         } else if(this.newProperty.valueQualifier == "REAL_MEASURE") {
             let filledValues:number[] = [];
@@ -512,10 +519,24 @@ export class ProductPublishComponent implements OnInit {
             this.newProperty.valueDecimal = filledValues;
             this.newProperty.value = [];
             this.newProperty.valueBinary = [];
+            this.newProperty.valueQuantity = [];
 
         } else if(this.newProperty.valueQualifier == "BINARY") {
             this.newProperty.value = [];
             this.newProperty.valueDecimal = [];
+            this.newProperty.valueQuantity = [];
+
+        } else if(this.newProperty.valueQualifier == 'QUANTITY') {
+            let filledValues:Quantity[] = [];
+            for(let val of this.newProperty.valueQuantity) {
+                if(val != undefined && val != null && val.toString() != "") {
+                    filledValues.push(val);
+                }
+            }
+            this.newProperty.valueQuantity = filledValues;
+            this.newProperty.value = [];
+            this.newProperty.valueDecimal = [];
+            this.newProperty.valueBinary = [];
         }
 
         // add the custom property to the end of existing custom properties

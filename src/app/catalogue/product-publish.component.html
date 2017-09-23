@@ -84,17 +84,19 @@
     <hr>
 
     <!-- Form header row -->
-    <h4><u>Product Details</u></h4>
-
     <form class="space-before">
 
         <!-- product properties -->
-        <product-properties
+        <!--<product-properties
                 #productProperties
                 [catalogueLine]="catalogueLine"
                 [selectedCategories]="selectedCategories"
         >
-        </product-properties>
+        </product-properties>-->
+        <catalogue-line-view
+                             [catalogueLine]="catalogueLine"
+                             [presentationMode]="'edit'">
+        </catalogue-line-view>
 
         <!-- new property block -->
         <hr class="mt-5">

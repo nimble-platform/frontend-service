@@ -12,7 +12,9 @@ export class QuantityViewComponent {
     @Input() propName: string;
     @Input() quantity: Quantity[];
     @Input() multiValue: boolean;
+    // single mode events
     @Output() onSelectChange = new EventEmitter();
+    // edit mode events
     @Output() onValueAdded = new EventEmitter();
     @Output() onValueDeleted = new EventEmitter();
 

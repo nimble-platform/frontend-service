@@ -10,9 +10,5 @@ import { CatalogueLine } from "./model/publish/catalogue-line";
 export class TradingDetailsComponent {
     @Input() presentationMode:string;
     @Input() catalogueLine: CatalogueLine;
-    @Input() priceEditable:boolean;
-
-    updateFreeSample(value:boolean):void {
-        this.catalogueLine.goodsItem.item.freeOfChargeIndicator = value;
-    }
+    @Input() editPrice:boolean;
 }
