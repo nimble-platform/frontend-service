@@ -28,7 +28,6 @@ import {ExplorativeSearchService} from './explorative-search/explorative-search.
 import {ExplorativeSearchFormComponent} from './explorative-search/explorative-search-form.component';
 import {ExplorativeSearchDetailsComponent} from './explorative-search/explorative-search-details.component';
 import {ExplorativeSearchFilterComponent} from './explorative-search/explorative-search-filter.component';
-import {KeysPipe} from './explorative-search/pipes/keys';
 import {ProductPropertiesComponent} from './catalogue/product-properties.component';
 import {AddressSubForm} from './user-mgmt/subforms/address.component';
 import {DeliveryTermsSubForm} from './user-mgmt/subforms/delivery-terms.component';
@@ -82,7 +81,6 @@ import {AddressViewComponent} from "./catalogue/address-view.component";
         ExplorativeSearchFormComponent,
         ExplorativeSearchDetailsComponent,
         ExplorativeSearchFilterComponent,
-        KeysPipe,
         AdditionalItemPropertyComponent,
         ProductPropertiesComponent,
         AddressSubForm,
