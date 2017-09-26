@@ -658,7 +658,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
         let instance_name_url = this._optSelectJSON['uuid'];
         console.log(instance_name_url);
         this._negotation_instance_name = instance_name_url.split('%23')[1];
-        // this.router.navigate(['/simple-search-details', this._negotation_instance_name]);
-        document.location.href = 'http://95.9.71.171:8383/#/simple-search-details/' + this._negotation_instance_name;
+        this.router.navigate(['/simple-search-details', this._negotation_instance_name]);
+        // document.location.href = 'http://95.9.71.171:8383/#/simple-search-details/' + this._negotation_instance_name;
     }
 }
