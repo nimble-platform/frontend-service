@@ -70,7 +70,7 @@ export class CatalogueService {
     }
 
     getCatalogueLine(catalogueId:string, lineId:string):Promise<CatalogueLine> {
-        let url = this.baseUrl + `/${catalogueId}/catalogueline/${lineId}`;
+        let url = this.baseUrl + `/catalogue/${catalogueId}/catalogueline/${lineId}`;
         return this.http
             .get(url, {headers: this.headers})
             .toPromise()
@@ -81,7 +81,7 @@ export class CatalogueService {
     }
 
     postCatalogue(catalogue: Catalogue): Promise<Catalogue> {
-        const url = this.baseUrl + `/catalogue`;
+        const url = this.baseUrl + `/catalogue/ubl`;
         return this.http
             .post(url, JSON.stringify(catalogue), {headers: this.headers})
             .toPromise()
@@ -92,7 +92,7 @@ export class CatalogueService {
     }
 
     putCatalogue(catalogue: Catalogue): Promise<Catalogue> {
-        const url = this.baseUrl + `/catalogue`;
+        const url = this.baseUrl + `/catalogue/ubl`;
         return this.http
             .put(url, JSON.stringify(catalogue), {headers: this.headers})
             .toPromise()
@@ -136,7 +136,7 @@ export class CatalogueService {
 
     uploadTemplate(userId: string, template: File): Promise<any> {
         return this.userService.getUserParty(userId).then(party => {
-            const url = this.baseUrl + `/catalogue/template/upload?companyId=${party.id}&companyName=${party.name}`;
+            const url = this.baseUrl + `/catalogue/template/upload?partyId=${party.id}&partyName=${party.name}`;
             return new Promise<any>((resolve, reject) => {
                 let formData: FormData = new FormData();
                 formData.append("file", template, template.name);
@@ -160,7 +160,7 @@ export class CatalogueService {
     }
 
     deleteCatalogueLine(catalogueId:string, lineId:string):Promise<any> {
-        const url = this.baseUrl + `/${catalogueId}/catalogueline/${lineId}`;
+        const url = this.baseUrl + `/catalogue/${catalogueId}/catalogueline/${lineId}`;
         return this.http
             .delete(url)
             .toPromise()
