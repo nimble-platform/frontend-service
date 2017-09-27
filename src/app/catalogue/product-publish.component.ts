@@ -88,10 +88,15 @@ export class ProductPublishComponent implements OnInit {
         // "else" block is executed when redirected by "publish" tab
         if (this.editMode) {
             // Initialization (draft item is already initialized while navigating from the catalogue views)
+            // TODO eliminate this edit mode / new publishing differentiation
             if(this.newPublishing) {
                 this.categoryService.resetData();
             }
             this.catalogueLine = this.catalogueService.draftCatalogueLine;
+            if(this.catalogueLine == null) {
+                this.router.navigate(['publish'], {queryParams: {newPublishing: true, edit: false}});
+                return;
+            }
 
             // Get categories of item to edit
             let classificationCodes: Code[] = [];
@@ -99,28 +104,30 @@ export class ProductPublishComponent implements OnInit {
                 classificationCodes.push(classification.itemClassificationCode);
             }
 
-            this.categoryService.getMultipleCategories(classificationCodes).then(
-                (categories: Category[]) => {
-                    // upon navigating from the catalogue view, classification codes are set as selected categories
-                    if(this.newPublishing) {
-                        for (let category of categories) {
-                            this.selectedCategories.push(category);
-                        }
-                    }
-
-                    if (this.selectedCategories != []) {
-                        for (let category of this.selectedCategories) {
-                            let newCategory = this.isNewCategory(category);
-                            if (newCategory) {
-                                this.updateItemWithNewCategory(category);
+            if(classificationCodes.length > 0) {
+                this.categoryService.getCategoriesByIds(classificationCodes).then(
+                    (categories: Category[]) => {
+                        // upon navigating from the catalogue view, classification codes are set as selected categories
+                        if (this.newPublishing) {
+                            for (let category of categories) {
+                                this.selectedCategories.push(category);
                             }
                         }
-                    }
 
-                    // Following method is called when editing to make sure the item has
-                    // all properties of its categories in the correct order
-                    this.restoreItemProperties();
-                });
+                        if (this.selectedCategories != []) {
+                            for (let category of this.selectedCategories) {
+                                let newCategory = this.isNewCategory(category);
+                                if (newCategory) {
+                                    this.updateItemWithNewCategory(category);
+                                }
+                            }
+                        }
+
+                        // Following method is called when editing to make sure the item has
+                        // all properties of its categories in the correct order
+                        this.restoreItemProperties();
+                    });
+            }
 
         } else {
             let userId = this.cookieService.get("user_id");

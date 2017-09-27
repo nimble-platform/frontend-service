@@ -53,7 +53,7 @@ export class CategorySearchComponent implements OnInit {
         this.submitted = true;
         this.error_detc = false;
 
-        this.categoryService.getCategories(keyword)
+        this.categoryService.getCategoriesByName(keyword)
             .then(categories => {
                 this.categories = categories;
                 this.callback = true;

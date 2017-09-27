@@ -17,8 +17,8 @@ export class CategoryService {
     constructor(private http: Http) {
     }
 
-    getCategories(keyword: string): Promise<Category[]> {
-        const url = `${this.baseUrl}?categoryName=${keyword}`;
+    getCategoriesByName(keywords: string): Promise<Category[]> {
+        const url = `${this.baseUrl}?categoryNames=${keywords}`;
         return this.http
             .get(url, {headers: this.headers})
             .toPromise()
@@ -28,35 +28,39 @@ export class CategoryService {
             .catch(this.handleError);
     }
 
-    getCategory(category: Category): Promise<Category> {
-        const url = `${this.baseUrl}/` + category.taxonomyId + `?categoryId=` + encodeURIComponent(category.id);
+    getCategoriesByIds(codes: Code[]): Promise<Category[]> {
+        let url = this.baseUrl;
+        let categoryIds:string = '';
+        let taxonomyIds:string = '';
+
+        for (let code of codes) {
+            categoryIds += encodeURIComponent(code.value) + ",";
+            taxonomyIds += code.listID + ",";
+        }
+        url += "?taxonomyIds=" + taxonomyIds + "&categoryIds=" + categoryIds;
+
         return this.http
             .get(url, {headers: this.headers})
             .toPromise()
             .then(res => {
                 return res.json() as Category;
+            })
+            .catch(this.handleError);
+    }
+
+    getCategory(category: Category): Promise<Category> {
+        const url = `${this.baseUrl}?taxonomyIds=` + category.taxonomyId + `&categoryIds=` + encodeURIComponent(category.id);
+        return this.http
+            .get(url, {headers: this.headers})
+            .toPromise()
+            .then(res => {
+                return res.json()[0] as Category;
             })
             .catch(this.handleError);
     }
 
     getCategoryByCode(code: Code): Promise<Category> {
         const url = `${this.baseUrl}/` + code.listID + "/" + encodeURIComponent(code.value);
-        return this.http
-            .get(url, {headers: this.headers})
-            .toPromise()
-            .then(res => {
-                return res.json() as Category;
-            })
-            .catch(this.handleError);
-    }
-
-    getMultipleCategories(codes: Code[]): Promise<Category[]> {
-        let url = `${this.baseUrl}?ids=`;
-
-        for (let code of codes) {
-            url += code.listID + encodeURIComponent("," + code.value + ",");
-        }
-
         return this.http
             .get(url, {headers: this.headers})
             .toPromise()
