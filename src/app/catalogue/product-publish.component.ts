@@ -554,6 +554,7 @@ export class ProductPublishComponent implements OnInit {
             }
         }
         this.catalogueLine.goodsItem.item.additionalItemProperty.splice(i, 0, this.newProperty);
+        this.catalogueLine.goodsItem.item.additionalItemProperty = [].concat(this.catalogueLine.goodsItem.item.additionalItemProperty);
 
         // reset the custom property view
         this.newProperty = UBLModelUtils.createAdditionalItemProperty(null, null);

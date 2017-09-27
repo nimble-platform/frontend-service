@@ -24,18 +24,18 @@
 </ng-container>
 
 <!-- product properties -->
-<h5 *ngIf="object.keys(propertyBlocks).length > 0" class="mt-3">Detailed Properties</h5>
-<!--<div *ngFor="let propertyBlock of propertyBlocks">-->
-<div *ngFor="let propertyBlock of catalogueLine.goodsItem.item.additionalItemProperty | propertyBlockPipe : presentationMode; trackBy : trackByIndex">
+<div *ngFor="let propertyBlock of catalogueLine.goodsItem.item.additionalItemProperty | propertyBlockPipe : presentationMode; let i = index; trackBy : trackByIndex">
+    <h5 *ngIf="i==0" class="mt-3">Detailed Properties</h5>
     <p>
         <button type="button" class="btn btn-outline-primary"
-                (click)="propertyBlock.isCollapsed = !propertyBlock.isCollapsed"
-                [attr.aria-expanded]="!propertyBlock.isCollapsed" aria-controls="propertyBlock">
+                (click)="toggleCollapsed(propertyBlock[PROPERTY_BLOCK_FIELD_NAME]);"
+                [attr.aria-expanded]="!propertyBlockCollapsedStates.get(propertyBlock[PROPERTY_BLOCK_FIELD_NAME])"
+                aria-controls="propertyBlock">
             {{propertyBlock.name}}
         </button>
     </p>
 
-    <div id="propertyBlock" [ngbCollapse]="propertyBlock.isCollapsed">
+    <div id="propertyBlock" [ngbCollapse]="propertyBlockCollapsedStates.get(propertyBlock[PROPERTY_BLOCK_FIELD_NAME])">
         <additional-item-property
                 *ngFor="let property of propertyBlock[PROPERTY_BLOCK_FIELD_PROPERTIES]; trackBy : trackByIndex"
                 [additionalItemProperty]="property"
@@ -43,4 +43,3 @@
         </additional-item-property>
     </div>
 </div>
-<button (click)="debugg()">Debug</button>

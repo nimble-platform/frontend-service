@@ -7,9 +7,12 @@ import {Quantity} from "./model/publish/quantity";
 import {Dimension} from "./model/publish/dimension";
 import {BPDataService} from "../bpe/bp-data-service";
 import {UBLModelUtils} from "./model/ubl-model-utils";
+import {PropertyBlockPipe} from "./property-block-pipe";
+import {PublishService} from "./publish-and-aip.service";
 
 @Component({
     selector: 'product-details',
+    providers: [PropertyBlockPipe],
     templateUrl: './product-details.component.html',
 })
 
@@ -35,9 +38,13 @@ export class ProductDetailsComponent implements OnInit{
     object = Object;
     dimensions: any = null;
 
+    // keeping the collapsed state of property blocks. it is actually a reference to the actual kept in publish service
+    propertyBlockCollapsedStates: Map<string, boolean> = new Map<string, boolean>();
 
-    constructor(private bpDataService:BPDataService) {
 
+    constructor(private bpDataService:BPDataService,
+                private publishService: PublishService) {
+        this.propertyBlockCollapsedStates = this.publishService.getCollapsedStates();
     }
 
     ngOnInit(): void {
@@ -174,10 +181,9 @@ export class ProductDetailsComponent implements OnInit{
         this.createDimensionBlocks();
     }
 
-    debugg() {
-        console.log(this.catalogueLine);
+    toggleCollapsed(blockName:string):void {
+        this.propertyBlockCollapsedStates.set(blockName, !this.propertyBlockCollapsedStates.get(blockName));
     }
-
 
     trackByIndex(index: any, item: any) {
         return index;
