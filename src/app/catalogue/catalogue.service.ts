@@ -123,7 +123,8 @@ export class CatalogueService {
 
                             var contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
                             var blob = new Blob([xhr.response], {type: contentType});
-                            resolve(blob);
+                            let fileName = xhr.getResponseHeader("Content-Disposition").split("=")[1];
+                            resolve({fileName: fileName, content: blob});
                         } else {
                             reject(xhr.status);
                         }
@@ -131,6 +132,31 @@ export class CatalogueService {
                 }
                 xhr.send();
             });
+        });
+    }
+
+    downloadExampleTemplate(): Promise<any> {
+        const url = this.baseUrl + `/catalogue/template/example`;
+        return new Promise<any>((resolve, reject) => {
+            let xhr = new XMLHttpRequest();
+            xhr.open('GET', url, true);
+            xhr.setRequestHeader('Accept', 'application/octet-stream');
+            xhr.responseType = 'blob';
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+
+                        let contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+                        let blob = new Blob([xhr.response], {type: contentType});
+                        let fileName = xhr.getResponseHeader("Content-Disposition").split("=")[1];
+                        resolve({fileName: fileName, content: blob});
+                    } else {
+                        reject(xhr.status);
+                    }
+                }
+            }
+            xhr.send();
         });
     }
 
@@ -144,11 +170,11 @@ export class CatalogueService {
                 let xhr: XMLHttpRequest = new XMLHttpRequest();
                 xhr.onreadystatechange = () => {
                     if (xhr.readyState === 4) {
-                        if (xhr.status === 200) {
+                        if (xhr.status === 200 || xhr.status === 201) {
                             //observer.next(JSON.parse(xhr.response));
                             resolve(xhr.response);
                         } else {
-                            reject(xhr.status);
+                            reject(JSON.parse(xhr.response).message);
                         }
                     }
                 };

@@ -57,6 +57,11 @@ export class ProductPublishComponent implements OnInit {
     private callback = false;
     private error_detc = false;
 
+    private fb_bulk_publish_submitted = false;
+    private fb_bulk_publish_callback = false;
+    private fb_bulk_publish_errordetc = false;
+    private fb_bulk_publish_message = "Message";
+
 
     constructor(private categoryService: CategoryService,
                 private catalogueService: CatalogueService,
@@ -242,9 +247,6 @@ export class ProductPublishComponent implements OnInit {
         // add new line to the end of catalogue
         this.catalogueService.catalogue.catalogueLine.push(splicedCatalogueLine);
 
-        // TODO: merge stuff is demo-specific, handle it properly
-        //this.mergeMultipleValuesIntoSingleField(catalogue);
-
         if (this.catalogueService.catalogue.uuid == null) {
             this.catalogueService.postCatalogue(this.catalogueService.catalogue)
                 .then(() => this.onSuccessfulPublish())
@@ -269,9 +271,6 @@ export class ProductPublishComponent implements OnInit {
         // Replace original line in the catalogue with the edited version
         let indexOfOriginalLine = this.catalogueService.catalogue.catalogueLine.indexOf(this.catalogueService.originalCatalogueLine);
         this.catalogueService.catalogue.catalogueLine[indexOfOriginalLine] = splicedCatalogueLine;
-
-        // TODO: merge stuff is demo-specific, handle it properly
-        //this.mergeMultipleValuesIntoSingleField(catalogue);
 
         if (this.catalogueService.catalogue.uuid == null) {
             this.catalogueService.postCatalogue(this.catalogueService.catalogue)
@@ -351,17 +350,6 @@ export class ProductPublishComponent implements OnInit {
         this.error_detc = true;
     }
 
-    private mergeMultipleValuesIntoSingleField(catalogue: Catalogue): void {
-        for (let i: number = 0; i < catalogue.catalogueLine.length; i++) {
-            let props = catalogue.catalogueLine[i].goodsItem.item.additionalItemProperty;
-
-            for (let j: number = 0; j < props.length; j++) {
-                props[j].demoSpecificMultipleContent = JSON.stringify(props[j].valueBinary);
-            }
-        }
-        //TODO: demo specific handle properly
-        catalogue.catalogueLine[0].goodsItem.item.itemConfigurationImages = JSON.stringify(catalogue.catalogueLine[0].goodsItem.item.itemConfigurationImageArray);
-    }
 
 
     private onValueTypeChange(event: any) {
@@ -562,37 +550,68 @@ export class ProductPublishComponent implements OnInit {
     }
 
     private downloadTemplate() {
+        this.fb_bulk_publish_submitted = true;
+
         let userId: string = this.cookieService.get("user_id");
         var reader = new FileReader();
         this.catalogueService.downloadTemplate(userId, this.selectedCategories)
-            .then(data => {
+            .then(result => {
                 var contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
                 var link = document.createElement('a');
-                link.href = window.URL.createObjectURL(data);
-                link.download = "template.xlsx";
+                link.href = window.URL.createObjectURL(result.content);
+                link.download = result.fileName;
                 link.click();
+                this.fb_bulk_publish_callback = true;
+                this.fb_bulk_publish_message = "Download completed";
             },
-            error => console.log("Error downloading the file."));
+            error => {
+                this.fb_bulk_publish_errordetc = true;
+                this.fb_bulk_publish_message = "Failed to download";
+            });
     }
 
     private uploadTemplate(event: any) {
+        this.fb_bulk_publish_submitted = true;
         let catalogueService = this.catalogueService;
         let companyId: string = this.cookieService.get("company_id");
         let userId: string = this.cookieService.get("user_id");
         let fileList: FileList = event.target.files;
         if (fileList.length > 0) {
             let file: File = fileList[0];
+            let self = this;
             var reader = new FileReader();
             reader.onload = function (e) {
                 // reset the target value so that the same file could be chosen more than once
                 event.target.value = "";
                 catalogueService.uploadTemplate(userId, file).then(res => {
-                        console.log("upload result: " + res);
+                        self.fb_bulk_publish_callback = true;
+                        self.router.navigate(['catalogue']);
                     },
-                    error => console.log("Error downloading the file."));
+                    error => {
+                        self.fb_bulk_publish_errordetc = true;
+                        self.fb_bulk_publish_message = "Failed to upload the template:  " + error;
+                    });
             };
             reader.readAsDataURL(file);
         }
+    }
+
+    private downloadExampleTemplate() {
+        var reader = new FileReader();
+        this.catalogueService.downloadExampleTemplate()
+            .then(result => {
+                    var contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+                    var link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(result.content);
+                    link.download = result.fileName;
+                    link.click();
+                    this.fb_bulk_publish_callback = true;
+                    this.fb_bulk_publish_message = "Download completed";
+                },
+                error => {
+                    this.fb_bulk_publish_errordetc = true;
+                    this.fb_bulk_publish_message = "Failed to download";
+                });
     }
 
     /**
@@ -642,16 +661,4 @@ export class ProductPublishComponent implements OnInit {
     private handleError(error: any): Promise<any> {
         return Promise.reject(error.message || error);
     }
-
-
-    private generateUUID(): string {
-        var d = new Date().getTime();
-        var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-            var r = (d + Math.random() * 16) % 16 | 0;
-            d = Math.floor(d / 16);
-            return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
-        });
-        return uuid;
-    };
-
 }

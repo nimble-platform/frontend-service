@@ -339,8 +339,7 @@
                 <div class="d-flex justify-content-start p-2">
                     <li>Download the product category template</li>
                     <button class="btn btn-success ml-auto"
-                            (click)="downloadTemplate()"
-                            [disabled]="selectedCategories.length == 0">Download template
+                            (click)="downloadTemplate()">Download template
                     </button>
                 </div>
                 <div class="d-flex justify-content-start p-2">
@@ -353,7 +352,22 @@
                             (click)="template.click()">Upload template
                     </button>
                 </div>
+                <div class="d-flex justify-content-start p-2">
+                    Download an example filled in template
+                    <button class="btn btn-success ml-auto"
+                            (click)="downloadExampleTemplate()">Download example template
+                    </button>
+                </div>
             </ol>
         </div>
+    </div>
+    <div [hidden]="fb_bulk_publish_errordetc || fb_bulk_publish_callback || !fb_bulk_publish_submitted">
+        <img class="space-before" src="assets/form_loader.gif"/>
+    </div>
+    <div [hidden]="!fb_bulk_publish_callback">
+        <div class="alert alert-success space-before" role="alert" i18n>{{fb_bulk_publish_message}}</div>
+    </div>
+    <div [hidden]="!fb_bulk_publish_errordetc">
+        <div class="alert alert-danger space-before" role="alert" i18n>{{fb_bulk_publish_message}}</div>
     </div>
 </div>
