@@ -40,9 +40,9 @@ export class CatalogueService {
         this.draftCatalogueLine = catalogueLine;
     }
 
-    getCatalogue(userId: string): Promise<Catalogue> {
+    getCatalogueForceUpdate(userId: string, forceUpdate:boolean): Promise<Catalogue> {
         // if the default catalogue is already fetched, return it
-        if (this.catalogue == null) {
+        if (this.catalogue == null || forceUpdate == true) {
 
             // chain the promise for getting the user's party with the promise for getting the default catalogue
             // for the party
@@ -67,6 +67,10 @@ export class CatalogueService {
         } else {
             return Promise.resolve(this.catalogue);
         }
+    }
+
+    getCatalogue(userId: string): Promise<Catalogue> {
+        return this.getCatalogueForceUpdate(userId, false);
     }
 
     getCatalogueLine(catalogueId:string, lineId:string):Promise<CatalogueLine> {
@@ -95,6 +99,14 @@ export class CatalogueService {
         const url = this.baseUrl + `/catalogue/ubl`;
         return this.http
             .put(url, JSON.stringify(catalogue), {headers: this.headers})
+            .toPromise()
+            .catch(this.handleError);
+    }
+
+    deleteCatalogue():Promise<any> {
+        const url = this.baseUrl + `/catalogue/ubl/${this.catalogue.uuid}`;
+        return this.http
+            .delete(url)
             .toPromise()
             .catch(this.handleError);
     }

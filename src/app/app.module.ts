@@ -53,6 +53,7 @@ import {BPDataService} from "./bpe/bp-data-service";
 import {ValueArrayViewComponent} from "./catalogue/built-in-data-view/value-array-view.component";
 import {BooleanViewComponent} from "./catalogue/built-in-data-view/boolean-view-component";
 import {AddressViewComponent} from "./catalogue/address-view.component";
+import {CallStatusComponent} from "./common/call-status.component";
 
 @NgModule({
     imports: [
@@ -103,7 +104,8 @@ import {AddressViewComponent} from "./catalogue/address-view.component";
         BooleanViewComponent,
         BPConfigureComponent,
         BPDetailComponent,
-        BPsComponent
+        BPsComponent,
+        CallStatusComponent
     ],
     providers: [
         UserService,

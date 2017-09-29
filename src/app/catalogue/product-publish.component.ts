@@ -13,7 +13,6 @@ import {Catalogue} from "./model/publish/catalogue";
 import {CookieService} from "ng2-cookies";
 import {UBLModelUtils} from "./model/ubl-model-utils";
 import {ActivatedRoute, Params, Router} from "@angular/router";
-import {ProductPropertiesComponent} from "./product-properties.component";
 import 'rxjs/Rx' ;
 import {Code} from "./model/publish/code";
 import {PublishService} from "./publish-and-aip.service";
@@ -31,7 +30,6 @@ const uploadModalityKey: string = "UploadModality";
 
 export class ProductPublishComponent implements OnInit {
     @ViewChild('propertyValueType') propertyValueType: ElementRef;
-    @ViewChild('productProperties') productProperties: ProductPropertiesComponent;
 
     /*
      * data objects
@@ -585,7 +583,7 @@ export class ProductPublishComponent implements OnInit {
                 event.target.value = "";
                 catalogueService.uploadTemplate(userId, file).then(res => {
                         self.fb_bulk_publish_callback = true;
-                        self.router.navigate(['catalogue']);
+                        self.router.navigate(['catalogue'], {queryParams: {forceUpdate: true}});
                     },
                     error => {
                         self.fb_bulk_publish_errordetc = true;
