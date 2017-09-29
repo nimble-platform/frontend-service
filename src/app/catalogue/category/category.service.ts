@@ -29,14 +29,22 @@ export class CategoryService {
     }
 
     getCategoriesByIds(codes: Code[]): Promise<Category[]> {
+        if(!codes) {
+            return Promise.resolve([]);
+        }
+
         let url = this.baseUrl;
         let categoryIds:string = '';
         let taxonomyIds:string = '';
 
-        for (let code of codes) {
-            categoryIds += encodeURIComponent(code.value) + ",";
-            taxonomyIds += code.listID + ",";
+        let i = 0;
+        for (; i<codes.length-1; i++) {
+            categoryIds += encodeURIComponent(codes[i].value) + ",";
+            taxonomyIds += codes[i].listID + ",";
         }
+        categoryIds += encodeURIComponent(codes[i].value);
+        taxonomyIds += codes[i].listID;
+
         url += "?taxonomyIds=" + taxonomyIds + "&categoryIds=" + categoryIds;
 
         return this.http

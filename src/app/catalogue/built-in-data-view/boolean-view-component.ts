@@ -22,6 +22,5 @@ export class BooleanViewComponent {
     set value(val) {
         this.valueObj = val;
         this.valueChanged.emit(val);
-        console.log("changeeed: " + val);
     }
 }

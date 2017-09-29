@@ -16,8 +16,7 @@ import {CatalogueService} from "../catalogue.service";
 
 export class CategorySearchComponent implements OnInit {
     categories: Category[];
-    newPublishing: boolean;
-    editCatalogueLine: boolean;
+    pageRef: string;
 
     submitted: boolean = false;
     callback: boolean = false;
@@ -32,13 +31,11 @@ export class CategorySearchComponent implements OnInit {
 
     ngOnInit(): void {
         this.route.queryParams.subscribe((params: Params) => {
-            this.newPublishing = params['newPublishing'] == 'true';
-            this.editCatalogueLine = params['edit'] == 'true';
+            this.pageRef = params['pageRef'];
 
-            if(this.newPublishing) {
+            if(this.pageRef == 'menu') {
                 this.categoryService.resetSelectedCategories();
-            }
-            else if (this.editCatalogueLine) {
+            } else if (this.pageRef == 'publish') {
 
             }
         });
@@ -83,7 +80,7 @@ export class CategorySearchComponent implements OnInit {
     private navigateToPublishingPage():void {
         let userId = this.cookieService.get("user_id");
         this.catalogueService.getCatalogue(userId).then(catalogue => {
-            this.router.navigate(['publish'], {queryParams: {newPublishing: this.newPublishing, edit: this.editCatalogueLine}});
+            this.router.navigate(['publish'], {queryParams: {pageRef: "category"}});
         });
     }
 }

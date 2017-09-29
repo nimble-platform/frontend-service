@@ -361,6 +361,9 @@
             </ol>
         </div>
     </div>
+    <call-status [callStatus]="bulkPublishStatus"
+            [large]="true">
+    </call-status>
     <div [hidden]="fb_bulk_publish_errordetc || fb_bulk_publish_callback || !fb_bulk_publish_submitted">
         <img class="space-before" src="assets/form_loader.gif"/>
     </div>

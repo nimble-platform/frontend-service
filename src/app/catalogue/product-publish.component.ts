@@ -19,6 +19,7 @@ import {PublishService} from "./publish-and-aip.service";
 import {UserService} from "../user-mgmt/user.service";
 import {ItemPropertyDataSourcePipe} from "./item-property-data-source-pipe";
 import {Quantity} from "./model/publish/quantity";
+import {CallStatus} from "../common/call-status";
 
 const uploadModalityKey: string = "UploadModality";
 
@@ -42,10 +43,9 @@ export class ProductPublishComponent implements OnInit {
     // placeholder for the custom property
     private newProperty: ItemProperty = UBLModelUtils.createAdditionalItemProperty(null, null);
 
-    // indicates whether the navigation is done for the first time
-    newPublishing:boolean = true;
-    // boolean to indicate whether it's a new publish or an edit
-    editMode: boolean = false;
+    // indicates the previous page navigating to the publishing page
+    // it could be the category page or catalogue page
+    pageRef:string = "category";
 
     /*
      * state objects for feedback about the publish operation
@@ -55,10 +55,7 @@ export class ProductPublishComponent implements OnInit {
     private callback = false;
     private error_detc = false;
 
-    private fb_bulk_publish_submitted = false;
-    private fb_bulk_publish_callback = false;
-    private fb_bulk_publish_errordetc = false;
-    private fb_bulk_publish_message = "Message";
+    private bulkPublishStatus:CallStatus = new CallStatus();
 
 
     constructor(private categoryService: CategoryService,
@@ -68,13 +65,13 @@ export class ProductPublishComponent implements OnInit {
                 private router: Router,
                 private route: ActivatedRoute,
                 private cookieService: CookieService) {
-        this.selectedCategories = this.categoryService.selectedCategories;
     }
 
     ngOnInit() {
+        this.selectedCategories = this.categoryService.selectedCategories;
+
         this.route.queryParams.subscribe((params: Params) => {
-            this.newPublishing = params['newPublishing'] == "true";
-            this.editMode = params['edit'] == "true";
+            this.pageRef = params['pageRef'];
             let userId = this.cookieService.get("user_id");
             this.catalogueService.getCatalogue(userId).then(catalogue => {
                 this.initView();
@@ -86,18 +83,13 @@ export class ProductPublishComponent implements OnInit {
     private initView(): void {
         this.catalogueService.setEditMode(true);
         this.publishStateService.resetData();
+        this.catalogueLine = this.catalogueService.draftCatalogueLine;
 
         // Following "if" block is executed when redirected by an "edit" button
         // "else" block is executed when redirected by "publish" tab
-        if (this.editMode) {
-            // Initialization (draft item is already initialized while navigating from the catalogue views)
-            // TODO eliminate this edit mode / new publishing differentiation
-            if(this.newPublishing) {
-                this.categoryService.resetData();
-            }
-            this.catalogueLine = this.catalogueService.draftCatalogueLine;
+        if (this.pageRef == 'catalogue') {
             if(this.catalogueLine == null) {
-                this.router.navigate(['publish'], {queryParams: {newPublishing: true, edit: false}});
+                this.router.navigate(['publish'], {queryParams: {pageRef: "category"}});
                 return;
             }
 
@@ -111,7 +103,7 @@ export class ProductPublishComponent implements OnInit {
                 this.categoryService.getCategoriesByIds(classificationCodes).then(
                     (categories: Category[]) => {
                         // upon navigating from the catalogue view, classification codes are set as selected categories
-                        if (this.newPublishing) {
+                        if (this.pageRef) {
                             for (let category of categories) {
                                 this.selectedCategories.push(category);
                             }
@@ -137,13 +129,10 @@ export class ProductPublishComponent implements OnInit {
             this.userService.getUserParty(userId).then(party => {
 
                 // new publishing is the first entry to the publishing page
-                if (this.newPublishing) {
+                // i.e. publishing from scratch
+                if(!this.catalogueLine) {
                     this.catalogueLine = UBLModelUtils.createCatalogueLine(party)
                     this.catalogueService.setDraftItem(this.catalogueLine);
-
-                    // this "else" is required when coming back from the catalogue selection page in editing
-                } else {
-                    this.catalogueLine = this.catalogueService.draftCatalogueLine;
                 }
 
                 if (this.selectedCategories != []) {
@@ -232,7 +221,7 @@ export class ProductPublishComponent implements OnInit {
     }
 
     private addCategoryOnClick(event: any): void {
-        this.router.navigate(['categorysearch'], {queryParams: {newPublishing: false, edit: this.editMode}});
+        this.router.navigate(['categorysearch'], {queryParams: {pageRef: "publish"}});
     }
 
     private publishProduct(): void {
@@ -309,7 +298,7 @@ export class ProductPublishComponent implements OnInit {
                 }
 
             } else if(valueQualifier.toLowerCase() == 'quantity') {
-                if(property.valueQuantity.length == 0) {
+                if(property.valueQuantity.length == 0 || !property.valueQuantity[0].value) {
                     propertiesToBeSpliced.push(property);
                 }
 
@@ -429,11 +418,6 @@ export class ProductPublishComponent implements OnInit {
         }
     }
 
-    customPropertyValueCancel(val: string) {
-        let index = this.newProperty.value.indexOf(val);
-        this.newProperty.value.splice(index, 1);
-    }
-
     /**
      * deselect a category
      * 1) remove the property from additional item properties
@@ -548,7 +532,7 @@ export class ProductPublishComponent implements OnInit {
     }
 
     private downloadTemplate() {
-        this.fb_bulk_publish_submitted = true;
+        this.bulkPublishStatus.submit();
 
         let userId: string = this.cookieService.get("user_id");
         var reader = new FileReader();
@@ -559,17 +543,15 @@ export class ProductPublishComponent implements OnInit {
                 link.href = window.URL.createObjectURL(result.content);
                 link.download = result.fileName;
                 link.click();
-                this.fb_bulk_publish_callback = true;
-                this.fb_bulk_publish_message = "Download completed";
+                this.bulkPublishStatus.callback("Download completed");
             },
             error => {
-                this.fb_bulk_publish_errordetc = true;
-                this.fb_bulk_publish_message = "Failed to download";
+                this.bulkPublishStatus.error("Download failed");
             });
     }
 
     private uploadTemplate(event: any) {
-        this.fb_bulk_publish_submitted = true;
+        this.bulkPublishStatus.submit();
         let catalogueService = this.catalogueService;
         let companyId: string = this.cookieService.get("company_id");
         let userId: string = this.cookieService.get("user_id");
@@ -582,12 +564,11 @@ export class ProductPublishComponent implements OnInit {
                 // reset the target value so that the same file could be chosen more than once
                 event.target.value = "";
                 catalogueService.uploadTemplate(userId, file).then(res => {
-                        self.fb_bulk_publish_callback = true;
+                        self.bulkPublishStatus.callback(null);
                         self.router.navigate(['catalogue'], {queryParams: {forceUpdate: true}});
                     },
                     error => {
-                        self.fb_bulk_publish_errordetc = true;
-                        self.fb_bulk_publish_message = "Failed to upload the template:  " + error;
+                        self.bulkPublishStatus.error("Failed to upload the template:  " + error);
                     });
             };
             reader.readAsDataURL(file);
@@ -603,12 +584,10 @@ export class ProductPublishComponent implements OnInit {
                     link.href = window.URL.createObjectURL(result.content);
                     link.download = result.fileName;
                     link.click();
-                    this.fb_bulk_publish_callback = true;
-                    this.fb_bulk_publish_message = "Download completed";
+                    this.bulkPublishStatus.callback("Download completed");
                 },
                 error => {
-                    this.fb_bulk_publish_errordetc = true;
-                    this.fb_bulk_publish_message = "Failed to download";
+                    this.bulkPublishStatus.error("Download failed");
                 });
     }
 

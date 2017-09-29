@@ -117,6 +117,7 @@ export class AdditionalItemPropertyComponent implements OnInit, OnDestroy {
         let draftCatalogueLine = this.catalogueService.draftCatalogueLine;
         let indexCatalogue = draftCatalogueLine.goodsItem.item.additionalItemProperty.findIndex(p => p.name == inputVal);
         draftCatalogueLine.goodsItem.item.additionalItemProperty.splice(indexCatalogue, 1);
+        draftCatalogueLine.goodsItem.item.additionalItemProperty = [].concat(draftCatalogueLine.goodsItem.item.additionalItemProperty);
     }
 
     updateNegotiationItemPropertyData(event:any) {

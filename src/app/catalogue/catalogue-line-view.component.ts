@@ -21,7 +21,7 @@ export class CatalogueLineViewComponent {
 
     redirectToEdit() {
         this.catalogueService.editCatalogueLine(this.catalogueLine);
-        this.router.navigate(['publish'], {queryParams: {newPublishing: true, edit: true}});
+        this.router.navigate(['publish'], {queryParams: {pageRef: "catalogue"}});
     }
 
     deleteCatalogueLine():void {
