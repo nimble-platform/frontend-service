@@ -32,6 +32,8 @@ import {Delivery} from "./publish/delivery";
 import {Quotation} from "../../bpe/model/ubl/quotation";
 import {QuotationLine} from "./publish/quotation-line";
 import {Dimension} from "./publish/dimension";
+import {Address} from "./publish/address";
+import {Country} from "./publish/country";
 /**
  * Created by suat on 05-Jul-17.
  */
@@ -206,6 +208,14 @@ export class UBLModelUtils {
         let quantity:Quantity = this.createQuantity();
         quantity.unitCode = unitCode;
         return new Dimension(attributeId, quantity, null, null, null, null);
+    }
+
+    public static createAddress():Address {
+        return new Address(null, this.createCountry());
+    }
+
+    public static createCountry():Country {
+        return new Country(null, null, null);
     }
 
     public static createQuantity():Quantity {

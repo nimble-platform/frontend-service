@@ -33,10 +33,10 @@
 </quantity-view>
 
 <!-- Applicable territory -->
-<ng-container *ngIf="false">
+<ng-container *ngIf="catalogueLine.requiredItemLocationQuantity.applicableTerritoryAddress">
     <address-view [presentationMode]="presentationMode"
                   [propName]="'Estimated Delivery Period'"
-                  [address]="[catalogueLine.requiredItemLocationQuantity.applicableTerritoryAddress]">
+                  [address]="catalogueLine.requiredItemLocationQuantity.applicableTerritoryAddress">
     </address-view>
 </ng-container>
 
@@ -80,3 +80,5 @@
             [(values)]="catalogueLine.warrantyInformation">
     </value-array-view>
 </ng-container>
+
+<button *ngIf="false" (click)="debugg()">Debug</button>

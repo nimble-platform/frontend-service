@@ -69,12 +69,12 @@
         </div>
 
         <!-- Publish / edit buttons -->
-        <button *ngIf="!editMode"
+        <button *ngIf="pageRef == 'category'"
                 class="btn btn-success"
                 (click)="publishProduct()">
             <span i18n>Publish Product</span>
         </button>
-        <button *ngIf="editMode"
+        <button *ngIf="pageRef == 'catalogue'"
                 class="btn btn-success btn-xs"
                 (click)="editProduct()">
             <span i18n>Save Changes</span>
@@ -262,53 +262,6 @@
             <!-- end of selected images or files -->
         </div>
         <!-- end of new property -->
-
-        <!-- product configuration images -->
-        <!--<!<div *ngIf="goodsItem.item.additionalItemProperty != null && goodsItem.item.additionalItemProperty.length >= 2">
-            <hr class="mt-5">
-            <div>
-                <h6>Add product images for different combinations of product features</h6>
-                <div class="row pb-3">
-                    TODO produce the cols below dynamically
-                    <div class="col-2">
-                        <label>Wall tile</label>
-                        <div>
-                            <select class="custom-select" #wallTileValues>
-                                <option selected>White</option>
-                                <option>Black</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-2">
-                        <label>Floor tile</label>
-                        <div>
-                            <select class="custom-select" #floorTileValues>
-                                <option selected>White</option>
-                                <option>Black</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div (click)="overallProductImage.click()">
-                        <input #overallProductImage type="file"
-                               (change)="overallProductImageImage($event, wallTileValues.value, floorTileValues.value)"
-                               accept="image/*"
-                               style="display: none">
-                        <img src="./assets/catalogue/add_button.png"/>
-                        <span>Add image</span>
-                    </div>
-                </div>
-                <div *ngIf="goodsItem.item.itemConfigurationImageArray.length > 0"
-                     class="input-group form-group">
-                    <div style="display: inline-block">
-                        <img *ngFor="let image of goodsItem.item.itemConfigurationImageArray"
-                             class="pr-2"
-                             src="data:{{image.mimeCode}};base64,{{image.value}}"
-                             height="100"
-                             width="100"/>
-                    </div>
-                </div>
-            </div>
-        </div>-->
     </form>
 </div>
 
@@ -364,13 +317,4 @@
     <call-status [callStatus]="bulkPublishStatus"
             [large]="true">
     </call-status>
-    <div [hidden]="fb_bulk_publish_errordetc || fb_bulk_publish_callback || !fb_bulk_publish_submitted">
-        <img class="space-before" src="assets/form_loader.gif"/>
-    </div>
-    <div [hidden]="!fb_bulk_publish_callback">
-        <div class="alert alert-success space-before" role="alert" i18n>{{fb_bulk_publish_message}}</div>
-    </div>
-    <div [hidden]="!fb_bulk_publish_errordetc">
-        <div class="alert alert-danger space-before" role="alert" i18n>{{fb_bulk_publish_message}}</div>
-    </div>
 </div>

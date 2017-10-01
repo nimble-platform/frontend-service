@@ -11,4 +11,8 @@ export class TradingDetailsComponent {
     @Input() presentationMode:string;
     @Input() catalogueLine: CatalogueLine;
     @Input() editPrice:boolean;
+
+    debugg():void {
+        console.log(this.catalogueLine);
+    }
 }

@@ -1,17 +1,38 @@
-<!-- view mode -->
-<ng-container *ngIf="presentationMode == 'view'">
+<!-- view and singlevalue mode -->
+<ng-container *ngIf="presentationMode == 'view' || presentationMode == 'singlevalue'">
     <div class="input-group form-group">
         <!-- show label next to the first value only -->
-        <label *ngIf="i == 0" class="col-3 control-label">{{propName}}</label>
-        <label>Country</label>
+        <label class="col-3 control-label">{{propName}}</label>
         <select *ngIf="address.length > 0"
                 class="custom-select">
             <option *ngFor="let value of address">{{value.country.name}}</option>
         </select>
-        <label>City</label>
+        <!--<label>City</label>
         <select *ngIf="address.length > 0"
                 class="custom-select">
             <option *ngFor="let value of address">{{value.cityName}}</option>
-        </select>
+        </select>-->
+    </div>
+</ng-container>
+
+<!-- edit mode -->
+<ng-container *ngIf="presentationMode == 'edit'">
+    <div *ngFor="let addr of address; let i = index;" class="input-group form-group">
+        <!-- show label next to the first value only -->
+        <label *ngIf="i == 0" class="col-3 control-label">{{propName}}</label>
+        <input type="text" class="form-control "
+               [(ngModel)]="addr.country.name"
+               [ngClass]="{'offset-3' : i > 0} ">
+
+        <!-- remove value button -->
+        <span *ngIf="address.length > 1">
+            <button class="btn btn-xs btn-danger" (click)="removeValue(i)">&times;
+            </button>
+        </span>
+
+        <!-- add value button -->
+        <span *ngIf="i == address.length - 1">
+            <button class="btn btn-primary btn-xs" (click)="addNewValue()"><strong>+</strong></button>
+        </span>
     </div>
 </ng-container>
