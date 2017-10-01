@@ -197,6 +197,28 @@ export class CatalogueService {
         });
     }
 
+    uploadZipPackage(pck:File): Promise<any> {
+        const url = this.baseUrl + `/catalogue/image/upload?catalogueUuid=${this.catalogue.uuid}`;
+        return new Promise<any>((resolve, reject) => {
+            let formData: FormData = new FormData();
+            formData.append("package", pck, pck.name);
+
+            let xhr: XMLHttpRequest = new XMLHttpRequest();
+            xhr.onreadystatechange = () => {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        resolve(xhr.response);
+                    } else {
+                        reject(JSON.parse(xhr.response).message);
+                    }
+                }
+            };
+
+            xhr.open('POST', url, true);
+            xhr.send(formData);
+        });
+    }
+
     deleteCatalogueLine(catalogueId:string, lineId:string):Promise<any> {
         const url = this.baseUrl + `/catalogue/${catalogueId}/catalogueline/${lineId}`;
         return this.http

@@ -553,7 +553,6 @@ export class ProductPublishComponent implements OnInit {
     private uploadTemplate(event: any) {
         this.bulkPublishStatus.submit();
         let catalogueService = this.catalogueService;
-        let companyId: string = this.cookieService.get("company_id");
         let userId: string = this.cookieService.get("user_id");
         let fileList: FileList = event.target.files;
         if (fileList.length > 0) {
@@ -569,6 +568,30 @@ export class ProductPublishComponent implements OnInit {
                     },
                     error => {
                         self.bulkPublishStatus.error("Failed to upload the template:  " + error);
+                    });
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    private uploadImagePackage(event: any):void {
+        this.bulkPublishStatus.submit();
+        let catalogueService = this.catalogueService;
+        let userId: string = this.cookieService.get("user_id");
+        let fileList: FileList = event.target.files;
+        if (fileList.length > 0) {
+            let file: File = fileList[0];
+            let self = this;
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                // reset the target value so that the same file could be chosen more than once
+                event.target.value = "";
+                catalogueService.uploadZipPackage(file).then(res => {
+                        self.bulkPublishStatus.callback(null);
+                        self.router.navigate(['catalogue'], {queryParams: {forceUpdate: true}});
+                    },
+                    error => {
+                        self.bulkPublishStatus.error("Failed to upload the image package:  " + error);
                     });
             };
             reader.readAsDataURL(file);

@@ -267,7 +267,7 @@
 
 <!-- Bulk product publishing -->
 <div *ngIf="!singleItemUpload">
-    <div class="d-flex justify-content-end mt-3">
+    <div class="d-flex justify-content-end mt-3 mb-3">
         <div class="mr-auto">
             <h6 *ngIf="selectedCategories.length > 0" style="display: inline-block;"
                 i18n>Selected category:</h6>
@@ -286,33 +286,37 @@
             </div>
         </div>
     </div>
-    <div class="row justify-content-center">
-        <div class="col p-5">
-            <ol class="list-group">
-                <div class="d-flex justify-content-start p-2">
-                    <li>Download the product category template</li>
-                    <button class="btn btn-success ml-auto"
-                            (click)="downloadTemplate()">Download template
-                    </button>
-                </div>
-                <div class="d-flex justify-content-start p-2">
-                    <li>Upload the template after filling it with your products' information
-                    </li>
-                    <input #template type="file" (change)="uploadTemplate($event)"
-                           accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                           style="display: none">
-                    <button class="btn btn-success ml-auto"
-                            (click)="template.click()">Upload template
-                    </button>
-                </div>
-                <div class="d-flex justify-content-start p-2">
-                    Download an example filled in template
-                    <button class="btn btn-success ml-auto"
-                            (click)="downloadExampleTemplate()">Download example template
-                    </button>
-                </div>
-            </ol>
-        </div>
+    <div class="d-flex mt-3 mb-2">
+        <label class="col-9">1. Download the product category template</label>
+        <button class="btn btn-success col-3"
+                (click)="downloadTemplate()">Download template
+        </button>
+    </div>
+    <div class="d-flex mb-2">
+        <label class="col-9">2. Upload the template after filling it with your products' information
+        </label>
+        <input #template type="file" (change)="uploadTemplate($event)"
+               accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+               style="display: none">
+        <button class="btn btn-success col-3"
+                (click)="template.click()">Upload template
+        </button>
+    </div>
+    <div class="d-flex mb-2">
+        <label class="col-9">3. Upload a "zip package" including product images. Each image must be suffixed with the identifier of the product. For example: pid1.imageFile.jpg, pid1.imageFile2.png, etc.
+        </label>
+        <input #imagePackage type="file" (change)="uploadImagePackage($event)"
+               accept="application/zip"
+               style="display: none">
+        <button class="btn btn-success col-3 d-table-cell"
+                (click)="imagePackage.click()">Upload Image Package
+        </button>
+    </div>
+    <div class="d-flex mt-4 mb-3">
+        <label class="col-9">Download an example filled in template</label>
+        <button class="btn btn-success col-3"
+                (click)="downloadExampleTemplate()">Download example template
+        </button>
     </div>
     <call-status [callStatus]="bulkPublishStatus"
             [large]="true">
