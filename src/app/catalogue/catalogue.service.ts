@@ -30,12 +30,6 @@ export class CatalogueService {
                 private userService: UserService) {
     }
 
-    resetDraftItem(userId: string):void {
-        this.userService.getUserParty(userId).then(party => {
-            this.draftCatalogueLine = UBLModelUtils.createCatalogueLine(party);
-        });
-    }
-
     setDraftItem(catalogueLine: CatalogueLine): void {
         this.draftCatalogueLine = catalogueLine;
     }

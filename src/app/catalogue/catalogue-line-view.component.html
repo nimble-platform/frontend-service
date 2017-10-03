@@ -14,11 +14,7 @@
             <div class="bordered align-center">
                 <img *ngIf="catalogueLine.goodsItem.item.productImage.length == 0"
                      class="img-max"
-                     src="assets/empty_img.png"
-                     (click)="image.click()">
-                <input #image type="file" (change)="addImage($event)" multiple accept="image/*"
-                       style="display: none">
-                <!-- add image button -->
+                     src="assets/empty_img.png">
                 <img *ngIf="catalogueLine.goodsItem.item.productImage.length > 0"
                      class="img-max"
                      src="data:{{catalogueLine.goodsItem.item.productImage[0].mimeCode}};base64,{{catalogueLine.goodsItem.item.productImage[0].value}}"/>
@@ -50,7 +46,7 @@
     </div>
 
     <!-- images -->
-    <div *ngIf="presentationMode=='edit' && catalogueLine.goodsItem.item.productImage.length == 0" class="offset-2 col-10">
+    <div *ngIf="presentationMode=='edit' && catalogueLine.goodsItem.item.productImage.length == 0" class="offset-2 col-10 mt-3 mb-3">
         <label *ngIf="catalogueLine.goodsItem.item.productImage.length == 0">Add Image</label>
         <input #image type="file" (change)="addImage($event)" multiple accept="image/*"
                style="display: none">

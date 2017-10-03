@@ -11,6 +11,7 @@ import {Country} from "./country";
 import {Certificate} from "./certificate";
 import {Dimension} from "./dimension";
 import {Period} from "./period";
+import {DocumentReference} from "./document-reference";
 
 export class Item {
     constructor(
@@ -21,6 +22,7 @@ export class Item {
         public additionalItemProperty: ItemProperty[],
         public manufacturerParty: Party,
         public manufacturersItemIdentification: ItemIdentification,
+        public catalogueDocumentReference: DocumentReference,
         public originCountry: Country,
         public commodityClassification: CommodityClassification[],
         public certificate: Certificate[],

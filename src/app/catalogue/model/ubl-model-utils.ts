@@ -96,12 +96,16 @@ export class UBLModelUtils {
         return ilq;
     }
 
-    public static createCatalogueLine(providerParty: Party): CatalogueLine {
+    public static createCatalogueLine(catalogueUuid:string, providerParty: Party): CatalogueLine {
         // create additional item properties
         let additionalItemProperties = new Array<ItemProperty>();
 
+        // catalogue document reference
+        let docRef:DocumentReference = new DocumentReference();
+        docRef.id = catalogueUuid;
+
         // create item
-        let item = new Item("", "", [], false, additionalItemProperties, providerParty, this.createItemIdentification(), null, [], [], [], "", [], "");
+        let item = new Item("", "", [], false, additionalItemProperties, providerParty, this.createItemIdentification(), docRef, null, [], [], [], "", [], "");
 
         // create goods item
         let uuid:string = this.generateUUID();
@@ -167,7 +171,7 @@ export class UBLModelUtils {
     }
 
     public static createItem():Item {
-        let item = new Item("", "", [], false, [], null, this.createItemIdentification(), null, [], [], [], null, [], "");
+        let item = new Item("", "", [], false, [], null, this.createItemIdentification(), null, null, [], [], [], null, [], "");
         return item;
     }
 

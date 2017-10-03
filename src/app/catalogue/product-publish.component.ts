@@ -131,17 +131,17 @@ export class ProductPublishComponent implements OnInit {
                 // new publishing is the first entry to the publishing page
                 // i.e. publishing from scratch
                 if(!this.catalogueLine) {
-                    this.catalogueLine = UBLModelUtils.createCatalogueLine(party)
-                    this.catalogueService.setDraftItem(this.catalogueLine);
+                    this.catalogueService.getCatalogue(userId).then(catalogue => {
+                        this.catalogueLine = UBLModelUtils.createCatalogueLine(catalogue.uuid, party);
+                        this.catalogueService.setDraftItem(this.catalogueLine);
+                    });
                 }
 
-                if (this.selectedCategories != []) {
-                    for (let category of this.selectedCategories) {
-                        let newCategory = this.isNewCategory(category);
+                for (let category of this.selectedCategories) {
+                    let newCategory = this.isNewCategory(category);
 
-                        if (newCategory) {
-                            this.updateItemWithNewCategory(category);
-                        }
+                    if (newCategory) {
+                        this.updateItemWithNewCategory(category);
                     }
                 }
             });
@@ -319,17 +319,18 @@ export class ProductPublishComponent implements OnInit {
     private onSuccessfulPublish(): void {
         let userId = this.cookieService.get("user_id");
         this.userService.getUserParty(userId).then(party => {
-            this.catalogueLine = UBLModelUtils.createCatalogueLine(party)
-            this.catalogueService.setDraftItem(this.catalogueLine);
+            this.catalogueService.getCatalogue(userId).then(catalogue => {
+                this.catalogueLine = UBLModelUtils.createCatalogueLine(catalogue.uuid, party)
+                this.catalogueService.setDraftItem(this.catalogueLine);
 
-            // avoid category duplication
-            this.categoryService.resetSelectedCategories();
-            this.publishStateService.resetData();
-            this.router.navigate(['catalogue']);
+                // avoid category duplication
+                this.categoryService.resetSelectedCategories();
+                this.publishStateService.resetData();
+                this.router.navigate(['catalogue']);
 
-            this.callback = true;
-            this.error_detc = false;
-
+                this.callback = true;
+                this.error_detc = false;
+            });
         });
     }
 

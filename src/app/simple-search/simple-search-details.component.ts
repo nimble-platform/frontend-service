@@ -118,14 +118,10 @@ export class SimpleSearchDetailsComponent implements OnInit {
 					return a_comp.localeCompare(b_comp);
 				});
 
-				let userId = this.cookieService.get("user_id");
-				this.catalogueService.getCatalogue(userId).then(
-					catalogue => {
-						this.catalogueService.getCatalogueLine(catalogue.uuid, this.response[0]["item_id"][0]).then(
-							line => this.catalogueLine = line
-						)
-					}
+				this.catalogueService.getCatalogueLine(this.response[0]["item_catalogue_id"][0], this.response[0]["item_id"][0]).then(
+					line => this.catalogueLine = line
 				);
+
 				this.callback = true;
 				this.error_detc = false;
 			})
