@@ -551,7 +551,7 @@ export class ProductPublishComponent implements OnInit {
             });
     }
 
-    private uploadTemplate(event: any) {
+    private uploadTemplate(event: any, uploadMode:string) {
         this.bulkPublishStatus.submit();
         let catalogueService = this.catalogueService;
         let userId: string = this.cookieService.get("user_id");
@@ -563,7 +563,7 @@ export class ProductPublishComponent implements OnInit {
             reader.onload = function (e) {
                 // reset the target value so that the same file could be chosen more than once
                 event.target.value = "";
-                catalogueService.uploadTemplate(userId, file).then(res => {
+                catalogueService.uploadTemplate(userId, file, uploadMode).then(res => {
                         self.bulkPublishStatus.callback(null);
                         self.router.navigate(['catalogue'], {queryParams: {forceUpdate: true}});
                     },

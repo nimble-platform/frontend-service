@@ -166,9 +166,9 @@ export class CatalogueService {
         });
     }
 
-    uploadTemplate(userId: string, template: File): Promise<any> {
+    uploadTemplate(userId: string, template: File, uploadMode:string): Promise<any> {
         return this.userService.getUserParty(userId).then(party => {
-            const url = this.baseUrl + `/catalogue/template/upload?partyId=${party.id}&partyName=${party.name}`;
+            const url = this.baseUrl + `/catalogue/template/upload?partyId=${party.id}&partyName=${party.name}&uploadMode=${uploadMode}`;
             return new Promise<any>((resolve, reject) => {
                 let formData: FormData = new FormData();
                 formData.append("file", template, template.name);
