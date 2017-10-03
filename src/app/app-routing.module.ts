@@ -9,7 +9,7 @@ import {ProductPublishComponent} from './catalogue/product-publish.component';
 import {SimpleSearchComponent} from './simple-search/simple-search.component';
 import {SimpleSearchDetailsComponent} from './simple-search/simple-search-details.component';
 import {ExplorativeSearchComponent} from './explorative-search/explorative-search.component';
-import {CatalogueViewComponent} from './catalogue/built-in-data-view/catalogue-view.component';
+import {CatalogueViewComponent} from './catalogue/ubl-model-view/catalogue-view.component';
 import {CompanySettingsComponent} from './user-mgmt/company-settings.component';
 import {BPsComponent} from './bpe/bps.component';
 import {BPDetailComponent} from './bpe/bp-detail.component';
