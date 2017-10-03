@@ -2,10 +2,10 @@
  * Created by suat on 18-May-17.
  */
 import {Component, Input, OnDestroy, OnInit} from "@angular/core";
-import {ItemProperty} from "./model/publish/item-property";
-import {CatalogueService} from "./catalogue.service";
+import {ItemProperty} from "../model/publish/item-property";
+import {CatalogueService} from "../catalogue.service";
 import {Subscription} from "rxjs/Subscription";
-import {BPDataService} from "../bpe/bp-data-service";
+import {BPDataService} from "../../bpe/bp-data-service";
 
 @Component({
     selector: 'additional-item-property',

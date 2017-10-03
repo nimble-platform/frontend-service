@@ -1,8 +1,8 @@
 import {Component, Input} from "@angular/core";
-import {CatalogueLine} from "./model/publish/catalogue-line";
-import {CatalogueService} from "./catalogue.service";
+import {CatalogueLine} from "../model/publish/catalogue-line";
+import {CatalogueService} from "../catalogue.service";
 import {Router} from "@angular/router";
-import {BinaryObject} from "./model/publish/binary-object";
+import {BinaryObject} from "../model/publish/binary-object";
 
 @Component({
     selector: 'catalogue-line-view',

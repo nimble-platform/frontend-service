@@ -1,15 +1,12 @@
 /**
  * Created by suat on 05-Aug-17.
  */
-import {Pipe, PipeTransform} from '@angular/core';
+import {Pipe, PipeTransform} from "@angular/core";
 import {ItemProperty} from "./model/publish/item-property";
 import {Category} from "./model/category/category";
 import {Property} from "./model/category/property";
 import {CategoryService} from "./category/category.service";
-import {ProductPropertiesComponent} from "./product-properties.component";
 import {PublishService} from "./publish-and-aip.service";
-import {CatalogueLine} from "./model/publish/catalogue-line";
-import {Code} from "./model/publish/code";
 
 /**
  * Pipe to transform the custom properties and properties of selected categories for a product to property blocks to

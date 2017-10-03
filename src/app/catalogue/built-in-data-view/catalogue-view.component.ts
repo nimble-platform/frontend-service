@@ -1,9 +1,9 @@
 import {Component, OnInit} from "@angular/core";
 import {CookieService} from 'ng2-cookies';
-import {CatalogueService} from "./catalogue.service";
-import {CatalogueLine} from "./model/publish/catalogue-line";
-import {Catalogue} from "./model/publish/catalogue";
-import {CallStatus} from "../common/call-status";
+import {CatalogueService} from "../catalogue.service";
+import {CatalogueLine} from "../model/publish/catalogue-line";
+import {Catalogue} from "../model/publish/catalogue";
+import {CallStatus} from "../../common/call-status";
 import {ActivatedRoute, Params} from "@angular/router";
 
 
