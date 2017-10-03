@@ -1,4 +1,4 @@
-<div class="space-before">
+<div>
 	<div>
 		<ul class="nav nav-tabs">
 			<li class="nav-item pointer">
@@ -18,7 +18,8 @@
 			</li>
 		</ul>
 	</div>
-	<ng-container *ngIf="catalogueLine">
+	<div *ngIf="catalogueLine"
+				  class="p-3">
 		<product-details *ngIf="selectedTab === 'Product Details'"
 						 [catalogueLine]="catalogueLine"
 						 [presentationMode]="'singlevalue'">
@@ -28,7 +29,12 @@
 						 [presentationMode]="'singlevalue'"
 						 [editPrice]="true">
 		</trading-details>
-	</ng-container>
+	</div>
+	<hr>
+	<value-view [presentationMode]="'edit'"
+				[propName]="'Note for the order'"
+				[(value)]="rfq.note[0]">
+	</value-view>
 	<div class="container ">
 		<div class="row justify-content-end">
 			<button class="btn btn-success col-4" (click)="sendRfq()">Send Requested Terms</button>

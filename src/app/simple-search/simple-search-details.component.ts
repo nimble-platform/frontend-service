@@ -33,7 +33,8 @@ export class SimpleSearchDetailsComponent implements OnInit {
 	product_configurable = myGlobals.product_configurable;
 	set_configs = myGlobals.product_default;
 
-	selectedOption:string = "";
+	selectedOption:string = "order";
+	showBPOptions:boolean = false;
 
 	callback = false;
 	error_detc = false;

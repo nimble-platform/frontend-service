@@ -56,12 +56,12 @@
                 {{additionalItemProperty.name}}&#9432;
             </div>
             <select *ngIf="additionalItemProperty.value.length > 1"
-                    class="custom-select col-7"
+                    class="custom-select"
                     (change)="updateNegotiationItemPropertyData($event)">
                 <option *ngFor="let value of additionalItemProperty.value">{{value}}</option>
             </select>
             <input *ngIf="additionalItemProperty.value.length == 1"
-                   type="text" class="form-control col-7"
+                   type="text" class="form-control"
                    [(ngModel)]="additionalItemProperty.value[0]"
                    readonly>
         </div>

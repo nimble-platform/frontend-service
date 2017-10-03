@@ -124,7 +124,7 @@ export class UBLModelUtils {
         let price: Price = this.createPrice(null);
         let lineItem:LineItem = this.createLineItem(quantity, price, item);
         let orderLine:OrderLine = new OrderLine(lineItem);
-        let order = new Order(this.generateUUID(), "Some note", null, null, [orderLine]);
+        let order = new Order(this.generateUUID(), "", null, null, [orderLine]);
         return order;
     }
 
@@ -146,7 +146,7 @@ export class UBLModelUtils {
         let lineItem:LineItem = this.createLineItem(quantity, price, item);
         let requestForQuotationLine:RequestForQuotationLine = new RequestForQuotationLine(lineItem);
         let delivery:Delivery = this.createDelivery();
-        let rfq = new RequestForQuotation(this.generateUUID(), ["Some note"], null, null, delivery, [requestForQuotationLine]);
+        let rfq = new RequestForQuotation(this.generateUUID(), [""], null, null, delivery, [requestForQuotationLine]);
         return rfq;
     }
 
@@ -166,7 +166,7 @@ export class UBLModelUtils {
 
         let documentReference:DocumentReference = new DocumentReference(rfq.id);
 
-        let quotation = new Quotation(this.generateUUID(), ["Some note"], 1, documentReference, customerParty, supplierParty, delivery, [quotationLine]);
+        let quotation = new Quotation(this.generateUUID(), [""], 1, documentReference, customerParty, supplierParty, delivery, [quotationLine]);
         return quotation;
     }
 
