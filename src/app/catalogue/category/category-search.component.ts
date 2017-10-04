@@ -8,6 +8,8 @@ import {Category} from "../model/category/category";
 import {CategoryService} from "./category.service";
 import {CookieService} from "ng2-cookies";
 import {CatalogueService} from "../catalogue.service";
+import {UBLModelUtils} from "../model/ubl-model-utils";
+import {UserService} from "../../user-mgmt/user.service";
 
 @Component({
     selector: 'category-search',
@@ -26,7 +28,8 @@ export class CategorySearchComponent implements OnInit {
                 private route: ActivatedRoute,
                 private cookieService: CookieService,
                 private categoryService: CategoryService,
-                private catalogueService: CatalogueService) {
+                private catalogueService: CatalogueService,
+                private userService: UserService) {
     }
 
     ngOnInit(): void {
@@ -34,7 +37,15 @@ export class CategorySearchComponent implements OnInit {
             this.pageRef = params['pageRef'];
 
             if(this.pageRef == 'menu') {
+                // reset categories
                 this.categoryService.resetSelectedCategories();
+                // reset draft catalogue line
+                let userId = this.cookieService.get("user_id");
+                this.userService.getUserParty(userId).then(party => {
+                    this.catalogueService.getCatalogue(userId).then(catalogue => {
+                        this.catalogueService.draftCatalogueLine = UBLModelUtils.createCatalogueLine(catalogue.uuid, party)
+                    });
+                });
             } else if (this.pageRef == 'publish') {
 
             }

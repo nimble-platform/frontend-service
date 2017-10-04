@@ -133,7 +133,7 @@ export class ProductPublishComponent implements OnInit {
                 if(!this.catalogueLine) {
                     this.catalogueService.getCatalogue(userId).then(catalogue => {
                         this.catalogueLine = UBLModelUtils.createCatalogueLine(catalogue.uuid, party);
-                        this.catalogueService.setDraftItem(this.catalogueLine);
+                        this.catalogueService.draftCatalogueLine = this.catalogueLine;
                     });
                 }
 
@@ -321,7 +321,7 @@ export class ProductPublishComponent implements OnInit {
         this.userService.getUserParty(userId).then(party => {
             this.catalogueService.getCatalogue(userId).then(catalogue => {
                 this.catalogueLine = UBLModelUtils.createCatalogueLine(catalogue.uuid, party)
-                this.catalogueService.setDraftItem(this.catalogueLine);
+                this.catalogueService.draftCatalogueLine = this.catalogueLine;
 
                 // avoid category duplication
                 this.categoryService.resetSelectedCategories();

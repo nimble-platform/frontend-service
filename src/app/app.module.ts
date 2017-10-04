@@ -53,6 +53,7 @@ import {ValueArrayViewComponent} from "./catalogue/ubl-model-view/value-array-vi
 import {BooleanViewComponent} from "./catalogue/ubl-model-view/boolean-view-component";
 import {AddressViewComponent} from "./catalogue/ubl-model-view/address-view.component";
 import {CallStatusComponent} from "./common/call-status.component";
+import {CertificateViewComponent} from "./catalogue/ubl-model-view/certificate-view.component";
 
 @NgModule({
     imports: [
@@ -95,6 +96,7 @@ import {CallStatusComponent} from "./common/call-status.component";
         PropertyBlockPipe,
         ItemPropertyDataSourcePipe,
         AddressViewComponent,
+        CertificateViewComponent,
         QuantityViewComponent,
         AmountViewComponent,
         ValueArrayViewComponent,

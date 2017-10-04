@@ -38,17 +38,14 @@
             </div>
             <div class="col-3 align-center">
                 <div class="bordered">
-                    <img *ngIf="catalogueLine"
+                    <img *ngIf="catalogueLine && catalogueLine.goodsItem.item.productImage.length > 0"
                          src="data:{{catalogueLine.goodsItem.item.productImage[0].mimeCode}};base64,{{catalogueLine.goodsItem.item.productImage[0].value}}"
                          class="img-max"
                          onerror="this.src='assets/empty_img.png';"/>
+                    <img *ngIf="!catalogueLine || catalogueLine.goodsItem.item.productImage.length == 0"
+                         src="assets/empty_img.png"
+                         class="img-max"/>
                 </div>
-                <!--<h5 style="cursor: pointer">
-                    <span class="badge badge-info"
-                          (click)="showBPOptions = !showBPOptions"
-                          i18n>
-                    </span>
-                </h5>-->
                 <a *ngIf="response && catalogueLine"
                    href="#bpPanel"
                    class="btn btn-info col mt-3"

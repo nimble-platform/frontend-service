@@ -30,10 +30,6 @@ export class CatalogueService {
                 private userService: UserService) {
     }
 
-    setDraftItem(catalogueLine: CatalogueLine): void {
-        this.draftCatalogueLine = catalogueLine;
-    }
-
     getCatalogueForceUpdate(userId: string, forceUpdate:boolean): Promise<Catalogue> {
         // if the default catalogue is already fetched, return it
         if (this.catalogue == null || forceUpdate == true) {

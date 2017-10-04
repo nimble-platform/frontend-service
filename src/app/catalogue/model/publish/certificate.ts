@@ -7,11 +7,6 @@ import {DocumentReference} from "./document-reference";
 
 export class Certificate {
     constructor(
-        public id: string,
-        public certificateTypeCode: Code,
-        public certificateType: string,
-        public remarks: String[],
-        public issuerParty: Party,
-        public documentReference: DocumentReference
+        public certificateType: string = "",
     ) {  }
 }
