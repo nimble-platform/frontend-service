@@ -5,7 +5,7 @@
             <i>{{ result[product_vendor_name] }}</i>
         </h3>
         <div class="row">
-            <div class="col-8">
+            <div class="col-9">
                 <div *ngFor="let detail of details">
                     <div class="input-group form-group">
                         <label class="input-group-addon">{{ detail.key }}</label>
@@ -36,10 +36,22 @@
                     </div>
                 </div>
             </div>
-            <div class="col-4 align-center">
+            <div class="col-3 align-center">
                 <div class="bordered">
-                    <img src="{{result[product_img]}}" class="img-max" onerror="this.src='assets/empty_img.png';"/>
+                    <img *ngIf="catalogueLine && catalogueLine.goodsItem.item.productImage.length > 0"
+                         src="data:{{catalogueLine.goodsItem.item.productImage[0].mimeCode}};base64,{{catalogueLine.goodsItem.item.productImage[0].value}}"
+                         class="img-max"
+                         onerror="this.src='assets/empty_img.png';"/>
+                    <img *ngIf="!catalogueLine || catalogueLine.goodsItem.item.productImage.length == 0"
+                         src="assets/empty_img.png"
+                         class="img-max"/>
                 </div>
+                <a *ngIf="response && catalogueLine"
+                   href="#bpPanel"
+                   class="btn btn-info col mt-3"
+                   (click)="showBPOptions = !showBPOptions"
+                   i18n
+                >Show available business options</a>
             </div>
         </div>
         <!--<form (ngSubmit)="onSubmit()" class="space-before" #orderForm="ngForm" novalidate>
@@ -50,18 +62,41 @@
             </div>
             <button type="submit" class="btn btn-success" [disabled]="!orderForm.form.valid" i18n>Order</button>
         </form>-->
-        <ng-container *ngIf="response && catalogueLine">
-            <div class="container row">
+        <div *ngIf="showBPOptions" id="bpPanel" class="mt-5">
+            <h4 class="btn btn-warning col mb-3">The business processes that you can initiate for this item with the seller</h4>
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a href id="ordertab"
+                       [ngClass]="{'nav-link': true, active: selectedOption == 'order'}"
+                       (click)="selectedOption = 'order'; $event.preventDefault();"
+                       i18n
+                    >Order</a>
+                </li>
+
+                <li class="nav-item">
+                    <a href id="negotiationtab"
+                       [ngClass]="{'nav-link': true, active: selectedOption == 'negotiation'}"
+                       (click)="selectedOption = 'negotiation'; $event.preventDefault();"
+                       i18n
+                    >Negotiate</a>
+                </li>
+            </ul>
+
+            <div *ngIf="showBPOptions">
                 <order-parameters
+                        *ngIf="selectedOption == 'order'"
+                        id="orderParams"
                         [catalogueLine]="catalogueLine"
                         [productResponse]="response[0]">
                 </order-parameters>
                 <negotiation-params
+                        *ngIf="selectedOption == 'negotiation'"
+                        id="negotiationParams"
                         [catalogueLine]="catalogueLine"
                         [productResponse]="response[0]">
                 </negotiation-params>
             </div>
-        </ng-container>
+        </div>
     </div>
 </div>
 

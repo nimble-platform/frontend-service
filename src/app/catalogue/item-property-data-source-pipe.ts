@@ -6,7 +6,6 @@ import {ItemProperty} from "./model/publish/item-property";
 import {Category} from "./model/category/category";
 import {Property} from "./model/category/property";
 import {CategoryService} from "./category/category.service";
-import {ProductPropertiesComponent} from "./product-properties.component";
 import {PublishService} from "./publish-and-aip.service";
 import {CatalogueLine} from "./model/publish/catalogue-line";
 

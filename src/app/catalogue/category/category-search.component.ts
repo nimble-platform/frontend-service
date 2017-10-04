@@ -8,6 +8,8 @@ import {Category} from "../model/category/category";
 import {CategoryService} from "./category.service";
 import {CookieService} from "ng2-cookies";
 import {CatalogueService} from "../catalogue.service";
+import {UBLModelUtils} from "../model/ubl-model-utils";
+import {UserService} from "../../user-mgmt/user.service";
 
 @Component({
     selector: 'category-search',
@@ -16,8 +18,7 @@ import {CatalogueService} from "../catalogue.service";
 
 export class CategorySearchComponent implements OnInit {
     categories: Category[];
-    newPublishing: boolean;
-    editCatalogueLine: boolean;
+    pageRef: string;
 
     submitted: boolean = false;
     callback: boolean = false;
@@ -27,18 +28,25 @@ export class CategorySearchComponent implements OnInit {
                 private route: ActivatedRoute,
                 private cookieService: CookieService,
                 private categoryService: CategoryService,
-                private catalogueService: CatalogueService) {
+                private catalogueService: CatalogueService,
+                private userService: UserService) {
     }
 
     ngOnInit(): void {
         this.route.queryParams.subscribe((params: Params) => {
-            this.newPublishing = params['newPublishing'] == 'true';
-            this.editCatalogueLine = params['edit'] == 'true';
+            this.pageRef = params['pageRef'];
 
-            if(this.newPublishing) {
+            if(this.pageRef == 'menu') {
+                // reset categories
                 this.categoryService.resetSelectedCategories();
-            }
-            else if (this.editCatalogueLine) {
+                // reset draft catalogue line
+                let userId = this.cookieService.get("user_id");
+                this.userService.getUserParty(userId).then(party => {
+                    this.catalogueService.getCatalogue(userId).then(catalogue => {
+                        this.catalogueService.draftCatalogueLine = UBLModelUtils.createCatalogueLine(catalogue.uuid, party)
+                    });
+                });
+            } else if (this.pageRef == 'publish') {
 
             }
         });
@@ -53,7 +61,7 @@ export class CategorySearchComponent implements OnInit {
         this.submitted = true;
         this.error_detc = false;
 
-        this.categoryService.getCategories(keyword)
+        this.categoryService.getCategoriesByName(keyword)
             .then(categories => {
                 this.categories = categories;
                 this.callback = true;
@@ -83,7 +91,7 @@ export class CategorySearchComponent implements OnInit {
     private navigateToPublishingPage():void {
         let userId = this.cookieService.get("user_id");
         this.catalogueService.getCatalogue(userId).then(catalogue => {
-            this.router.navigate(['publish'], {queryParams: {newPublishing: this.newPublishing, edit: this.editCatalogueLine}});
+            this.router.navigate(['publish'], {queryParams: {pageRef: "category"}});
         });
     }
 }

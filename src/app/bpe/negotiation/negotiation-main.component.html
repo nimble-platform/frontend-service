@@ -1,10 +1,4 @@
-<button type="button" class="btn btn-primary space-before" (click)="negotiationExpanded = !negotiationExpanded"
-        [attr.aria-expanded]="negotiationExpanded" aria-controls="negotiationParams"
-        i18n>
-    Negotiate
-</button>
-
-<div id="negotiationParams" class="space-before" [ngbCollapse]="!negotiationExpanded">
+<div>
 	<div>
 		<ul class="nav nav-tabs">
 			<li class="nav-item pointer">
@@ -24,18 +18,23 @@
 			</li>
 		</ul>
 	</div>
-	<ng-container *ngIf="catalogueLine">
+	<div *ngIf="catalogueLine"
+				  class="p-3">
 		<product-details *ngIf="selectedTab === 'Product Details'"
 						 [catalogueLine]="catalogueLine"
-						 [presentationMode]="'singlevalue'"
-						 [bpType]="'Negotiation'">
+						 [presentationMode]="'singlevalue'">
 		</product-details>
 		<trading-details *ngIf="selectedTab === 'Trading & Delivery Terms'"
 						 [catalogueLine]="catalogueLine"
 						 [presentationMode]="'singlevalue'"
-						 [priceEditable]="true">
+						 [editPrice]="true">
 		</trading-details>
-	</ng-container>
+	</div>
+	<hr>
+	<value-view [presentationMode]="'edit'"
+				[propName]="'Note for the negotiation'"
+				[(value)]="rfq.note[0]">
+	</value-view>
 	<div class="container ">
 		<div class="row justify-content-end">
 			<button class="btn btn-success col-4" (click)="sendRfq()">Send Requested Terms</button>

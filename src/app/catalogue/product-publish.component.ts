@@ -13,12 +13,13 @@ import {Catalogue} from "./model/publish/catalogue";
 import {CookieService} from "ng2-cookies";
 import {UBLModelUtils} from "./model/ubl-model-utils";
 import {ActivatedRoute, Params, Router} from "@angular/router";
-import {ProductPropertiesComponent} from "./product-properties.component";
 import 'rxjs/Rx' ;
 import {Code} from "./model/publish/code";
 import {PublishService} from "./publish-and-aip.service";
 import {UserService} from "../user-mgmt/user.service";
 import {ItemPropertyDataSourcePipe} from "./item-property-data-source-pipe";
+import {Quantity} from "./model/publish/quantity";
+import {CallStatus} from "../common/call-status";
 
 const uploadModalityKey: string = "UploadModality";
 
@@ -30,7 +31,6 @@ const uploadModalityKey: string = "UploadModality";
 
 export class ProductPublishComponent implements OnInit {
     @ViewChild('propertyValueType') propertyValueType: ElementRef;
-    @ViewChild('productProperties') productProperties: ProductPropertiesComponent;
 
     /*
      * data objects
@@ -43,10 +43,9 @@ export class ProductPublishComponent implements OnInit {
     // placeholder for the custom property
     private newProperty: ItemProperty = UBLModelUtils.createAdditionalItemProperty(null, null);
 
-    // indicates whether the navigation is done for the first time
-    newPublishing:boolean = true;
-    // boolean to indicate whether it's a new publish or an edit
-    editMode: boolean = false;
+    // indicates the previous page navigating to the publishing page
+    // it could be the category page or catalogue page
+    pageRef:string = "category";
 
     /*
      * state objects for feedback about the publish operation
@@ -56,6 +55,8 @@ export class ProductPublishComponent implements OnInit {
     private callback = false;
     private error_detc = false;
 
+    private bulkPublishStatus:CallStatus = new CallStatus();
+
 
     constructor(private categoryService: CategoryService,
                 private catalogueService: CatalogueService,
@@ -64,13 +65,13 @@ export class ProductPublishComponent implements OnInit {
                 private router: Router,
                 private route: ActivatedRoute,
                 private cookieService: CookieService) {
-        this.selectedCategories = this.categoryService.selectedCategories;
     }
 
     ngOnInit() {
+        this.selectedCategories = this.categoryService.selectedCategories;
+
         this.route.queryParams.subscribe((params: Params) => {
-            this.newPublishing = params['newPublishing'] == "true";
-            this.editMode = params['edit'] == "true";
+            this.pageRef = params['pageRef'];
             let userId = this.cookieService.get("user_id");
             this.catalogueService.getCatalogue(userId).then(catalogue => {
                 this.initView();
@@ -82,15 +83,15 @@ export class ProductPublishComponent implements OnInit {
     private initView(): void {
         this.catalogueService.setEditMode(true);
         this.publishStateService.resetData();
+        this.catalogueLine = this.catalogueService.draftCatalogueLine;
 
         // Following "if" block is executed when redirected by an "edit" button
         // "else" block is executed when redirected by "publish" tab
-        if (this.editMode) {
-            // Initialization (draft item is already initialized while navigating from the catalogue views)
-            if(this.newPublishing) {
-                this.categoryService.resetData();
+        if (this.pageRef == 'catalogue') {
+            if(this.catalogueLine == null) {
+                this.router.navigate(['publish'], {queryParams: {pageRef: "category"}});
+                return;
             }
-            this.catalogueLine = this.catalogueService.draftCatalogueLine;
 
             // Get categories of item to edit
             let classificationCodes: Code[] = [];
@@ -98,50 +99,49 @@ export class ProductPublishComponent implements OnInit {
                 classificationCodes.push(classification.itemClassificationCode);
             }
 
-            this.categoryService.getMultipleCategories(classificationCodes).then(
-                (categories: Category[]) => {
-                    // upon navigating from the catalogue view, classification codes are set as selected categories
-                    if(this.newPublishing) {
-                        for (let category of categories) {
-                            this.selectedCategories.push(category);
-                        }
-                    }
-
-                    if (this.selectedCategories != []) {
-                        for (let category of this.selectedCategories) {
-                            let newCategory = this.isNewCategory(category);
-                            if (newCategory) {
-                                this.updateItemWithNewCategory(category);
+            if(classificationCodes.length > 0) {
+                this.categoryService.getCategoriesByIds(classificationCodes).then(
+                    (categories: Category[]) => {
+                        // upon navigating from the catalogue view, classification codes are set as selected categories
+                        if (this.pageRef) {
+                            for (let category of categories) {
+                                this.selectedCategories.push(category);
                             }
                         }
-                    }
 
-                    // Following method is called when editing to make sure the item has
-                    // all properties of its categories in the correct order
-                    this.restoreItemProperties();
-                });
+                        if (this.selectedCategories != []) {
+                            for (let category of this.selectedCategories) {
+                                let newCategory = this.isNewCategory(category);
+                                if (newCategory) {
+                                    this.updateItemWithNewCategory(category);
+                                }
+                            }
+                        }
+
+                        // Following method is called when editing to make sure the item has
+                        // all properties of its categories in the correct order
+                        this.restoreItemProperties();
+                    });
+            }
 
         } else {
             let userId = this.cookieService.get("user_id");
             this.userService.getUserParty(userId).then(party => {
 
                 // new publishing is the first entry to the publishing page
-                if (this.newPublishing) {
-                    this.catalogueLine = UBLModelUtils.createCatalogueLine(party)
-                    this.catalogueService.setDraftItem(this.catalogueLine);
-
-                    // this "else" is required when coming back from the catalogue selection page in editing
-                } else {
-                    this.catalogueLine = this.catalogueService.draftCatalogueLine;
+                // i.e. publishing from scratch
+                if(!this.catalogueLine) {
+                    this.catalogueService.getCatalogue(userId).then(catalogue => {
+                        this.catalogueLine = UBLModelUtils.createCatalogueLine(catalogue.uuid, party);
+                        this.catalogueService.draftCatalogueLine = this.catalogueLine;
+                    });
                 }
 
-                if (this.selectedCategories != []) {
-                    for (let category of this.selectedCategories) {
-                        let newCategory = this.isNewCategory(category);
+                for (let category of this.selectedCategories) {
+                    let newCategory = this.isNewCategory(category);
 
-                        if (newCategory) {
-                            this.updateItemWithNewCategory(category);
-                        }
+                    if (newCategory) {
+                        this.updateItemWithNewCategory(category);
                     }
                 }
             });
@@ -221,7 +221,7 @@ export class ProductPublishComponent implements OnInit {
     }
 
     private addCategoryOnClick(event: any): void {
-        this.router.navigate(['categorysearch'], {queryParams: {newPublishing: false, edit: this.editMode}});
+        this.router.navigate(['categorysearch'], {queryParams: {pageRef: "publish"}});
     }
 
     private publishProduct(): void {
@@ -233,9 +233,6 @@ export class ProductPublishComponent implements OnInit {
         let splicedCatalogueLine: CatalogueLine = this.removeEmptyProperties(this.catalogueLine);
         // add new line to the end of catalogue
         this.catalogueService.catalogue.catalogueLine.push(splicedCatalogueLine);
-
-        // TODO: merge stuff is demo-specific, handle it properly
-        //this.mergeMultipleValuesIntoSingleField(catalogue);
 
         if (this.catalogueService.catalogue.uuid == null) {
             this.catalogueService.postCatalogue(this.catalogueService.catalogue)
@@ -261,9 +258,6 @@ export class ProductPublishComponent implements OnInit {
         // Replace original line in the catalogue with the edited version
         let indexOfOriginalLine = this.catalogueService.catalogue.catalogueLine.indexOf(this.catalogueService.originalCatalogueLine);
         this.catalogueService.catalogue.catalogueLine[indexOfOriginalLine] = splicedCatalogueLine;
-
-        // TODO: merge stuff is demo-specific, handle it properly
-        //this.mergeMultipleValuesIntoSingleField(catalogue);
 
         if (this.catalogueService.catalogue.uuid == null) {
             this.catalogueService.postCatalogue(this.catalogueService.catalogue)
@@ -303,7 +297,12 @@ export class ProductPublishComponent implements OnInit {
                     propertiesToBeSpliced.push(property);
                 }
 
-            } else {
+            } else if(valueQualifier.toLowerCase() == 'quantity') {
+                if(property.valueQuantity.length == 0 || !property.valueQuantity[0].value) {
+                    propertiesToBeSpliced.push(property);
+                }
+
+            } else{
                 if(property.value.length == 0 || property.value[0] == '') {
                     propertiesToBeSpliced.push(property);
                 }
@@ -320,17 +319,18 @@ export class ProductPublishComponent implements OnInit {
     private onSuccessfulPublish(): void {
         let userId = this.cookieService.get("user_id");
         this.userService.getUserParty(userId).then(party => {
-            this.catalogueLine = UBLModelUtils.createCatalogueLine(party)
-            this.catalogueService.setDraftItem(this.catalogueLine);
+            this.catalogueService.getCatalogue(userId).then(catalogue => {
+                this.catalogueLine = UBLModelUtils.createCatalogueLine(catalogue.uuid, party)
+                this.catalogueService.draftCatalogueLine = this.catalogueLine;
 
-            // avoid category duplication
-            this.categoryService.resetSelectedCategories();
-            this.publishStateService.resetData();
-            this.router.navigate(['catalogue']);
+                // avoid category duplication
+                this.categoryService.resetSelectedCategories();
+                this.publishStateService.resetData();
+                this.router.navigate(['catalogue']);
 
-            this.callback = true;
-            this.error_detc = false;
-
+                this.callback = true;
+                this.error_detc = false;
+            });
         });
     }
 
@@ -338,17 +338,6 @@ export class ProductPublishComponent implements OnInit {
         this.error_detc = true;
     }
 
-    private mergeMultipleValuesIntoSingleField(catalogue: Catalogue): void {
-        for (let i: number = 0; i < catalogue.catalogueLine.length; i++) {
-            let props = catalogue.catalogueLine[i].goodsItem.item.additionalItemProperty;
-
-            for (let j: number = 0; j < props.length; j++) {
-                props[j].demoSpecificMultipleContent = JSON.stringify(props[j].valueBinary);
-            }
-        }
-        //TODO: demo specific handle properly
-        catalogue.catalogueLine[0].goodsItem.item.itemConfigurationImages = JSON.stringify(catalogue.catalogueLine[0].goodsItem.item.itemConfigurationImageArray);
-    }
 
 
     private onValueTypeChange(event: any) {
@@ -430,11 +419,6 @@ export class ProductPublishComponent implements OnInit {
         }
     }
 
-    customPropertyValueCancel(val: string) {
-        let index = this.newProperty.value.indexOf(val);
-        this.newProperty.value.splice(index, 1);
-    }
-
     /**
      * deselect a category
      * 1) remove the property from additional item properties
@@ -500,6 +484,7 @@ export class ProductPublishComponent implements OnInit {
             this.newProperty.value = filledValues;
             this.newProperty.valueDecimal = [];
             this.newProperty.valueBinary = [];
+            this.newProperty.valueQuantity = [];
 
         } else if(this.newProperty.valueQualifier == "REAL_MEASURE") {
             let filledValues:number[] = [];
@@ -512,10 +497,24 @@ export class ProductPublishComponent implements OnInit {
             this.newProperty.valueDecimal = filledValues;
             this.newProperty.value = [];
             this.newProperty.valueBinary = [];
+            this.newProperty.valueQuantity = [];
 
         } else if(this.newProperty.valueQualifier == "BINARY") {
             this.newProperty.value = [];
             this.newProperty.valueDecimal = [];
+            this.newProperty.valueQuantity = [];
+
+        } else if(this.newProperty.valueQualifier == 'QUANTITY') {
+            let filledValues:Quantity[] = [];
+            for(let val of this.newProperty.valueQuantity) {
+                if(val != undefined && val != null && val.toString() != "") {
+                    filledValues.push(val);
+                }
+            }
+            this.newProperty.valueQuantity = filledValues;
+            this.newProperty.value = [];
+            this.newProperty.valueDecimal = [];
+            this.newProperty.valueBinary = [];
         }
 
         // add the custom property to the end of existing custom properties
@@ -526,6 +525,7 @@ export class ProductPublishComponent implements OnInit {
             }
         }
         this.catalogueLine.goodsItem.item.additionalItemProperty.splice(i, 0, this.newProperty);
+        this.catalogueLine.goodsItem.item.additionalItemProperty = [].concat(this.catalogueLine.goodsItem.item.additionalItemProperty);
 
         // reset the custom property view
         this.newProperty = UBLModelUtils.createAdditionalItemProperty(null, null);
@@ -533,37 +533,86 @@ export class ProductPublishComponent implements OnInit {
     }
 
     private downloadTemplate() {
+        this.bulkPublishStatus.submit();
+
         let userId: string = this.cookieService.get("user_id");
         var reader = new FileReader();
         this.catalogueService.downloadTemplate(userId, this.selectedCategories)
-            .then(data => {
+            .then(result => {
                 var contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
                 var link = document.createElement('a');
-                link.href = window.URL.createObjectURL(data);
-                link.download = "template.xlsx";
+                link.href = window.URL.createObjectURL(result.content);
+                link.download = result.fileName;
                 link.click();
+                this.bulkPublishStatus.callback("Download completed");
             },
-            error => console.log("Error downloading the file."));
+            error => {
+                this.bulkPublishStatus.error("Download failed");
+            });
     }
 
-    private uploadTemplate(event: any) {
+    private uploadTemplate(event: any, uploadMode:string) {
+        this.bulkPublishStatus.submit();
         let catalogueService = this.catalogueService;
-        let companyId: string = this.cookieService.get("company_id");
         let userId: string = this.cookieService.get("user_id");
         let fileList: FileList = event.target.files;
         if (fileList.length > 0) {
             let file: File = fileList[0];
+            let self = this;
             var reader = new FileReader();
             reader.onload = function (e) {
                 // reset the target value so that the same file could be chosen more than once
                 event.target.value = "";
-                catalogueService.uploadTemplate(userId, file).then(res => {
-                        console.log("upload result: " + res);
+                catalogueService.uploadTemplate(userId, file, uploadMode).then(res => {
+                        self.bulkPublishStatus.callback(null);
+                        self.router.navigate(['catalogue'], {queryParams: {forceUpdate: true}});
                     },
-                    error => console.log("Error downloading the file."));
+                    error => {
+                        self.bulkPublishStatus.error("Failed to upload the template:  " + error);
+                    });
             };
             reader.readAsDataURL(file);
         }
+    }
+
+    private uploadImagePackage(event: any):void {
+        this.bulkPublishStatus.submit();
+        let catalogueService = this.catalogueService;
+        let userId: string = this.cookieService.get("user_id");
+        let fileList: FileList = event.target.files;
+        if (fileList.length > 0) {
+            let file: File = fileList[0];
+            let self = this;
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                // reset the target value so that the same file could be chosen more than once
+                event.target.value = "";
+                catalogueService.uploadZipPackage(file).then(res => {
+                        self.bulkPublishStatus.callback(null);
+                        self.router.navigate(['catalogue'], {queryParams: {forceUpdate: true}});
+                    },
+                    error => {
+                        self.bulkPublishStatus.error("Failed to upload the image package:  " + error);
+                    });
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    private downloadExampleTemplate() {
+        var reader = new FileReader();
+        this.catalogueService.downloadExampleTemplate()
+            .then(result => {
+                    var contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+                    var link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(result.content);
+                    link.download = result.fileName;
+                    link.click();
+                    this.bulkPublishStatus.callback("Download completed");
+                },
+                error => {
+                    this.bulkPublishStatus.error("Download failed");
+                });
     }
 
     /**
@@ -613,16 +662,4 @@ export class ProductPublishComponent implements OnInit {
     private handleError(error: any): Promise<any> {
         return Promise.reject(error.message || error);
     }
-
-
-    private generateUUID(): string {
-        var d = new Date().getTime();
-        var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-            var r = (d + Math.random() * 16) % 16 | 0;
-            d = Math.floor(d / 16);
-            return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
-        });
-        return uuid;
-    };
-
 }

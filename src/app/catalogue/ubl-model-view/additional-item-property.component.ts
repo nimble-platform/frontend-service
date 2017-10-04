@@ -2,10 +2,10 @@
  * Created by suat on 18-May-17.
  */
 import {Component, Input, OnDestroy, OnInit} from "@angular/core";
-import {ItemProperty} from "./model/publish/item-property";
-import {CatalogueService} from "./catalogue.service";
+import {ItemProperty} from "../model/publish/item-property";
+import {CatalogueService} from "../catalogue.service";
 import {Subscription} from "rxjs/Subscription";
-import {BPDataService} from "../bpe/bp-data-service";
+import {BPDataService} from "../../bpe/bp-data-service";
 
 @Component({
     selector: 'additional-item-property',
@@ -21,7 +21,6 @@ export class AdditionalItemPropertyComponent implements OnInit, OnDestroy {
      singlevalue: only a single value can be chosen for the property. this mode is expected to be used when the
      item is used in business processes like negotiation */
     @Input() presentationMode: string;
-    @Input() bpType: string;
 
     editModeSubscription: Subscription;
 
@@ -118,11 +117,12 @@ export class AdditionalItemPropertyComponent implements OnInit, OnDestroy {
         let draftCatalogueLine = this.catalogueService.draftCatalogueLine;
         let indexCatalogue = draftCatalogueLine.goodsItem.item.additionalItemProperty.findIndex(p => p.name == inputVal);
         draftCatalogueLine.goodsItem.item.additionalItemProperty.splice(indexCatalogue, 1);
+        draftCatalogueLine.goodsItem.item.additionalItemProperty = [].concat(draftCatalogueLine.goodsItem.item.additionalItemProperty);
     }
 
     updateNegotiationItemPropertyData(event:any) {
         let selectedValue:any = event.target.value;
-        this.bpDataService.updateItemProperty(this.bpType, selectedValue, this.additionalItemProperty);
+        this.bpDataService.updateItemProperty(selectedValue, this.additionalItemProperty);
     }
 
     private generateUUID(): string {

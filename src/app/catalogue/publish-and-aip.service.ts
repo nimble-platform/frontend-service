@@ -1,7 +1,4 @@
-import {Injectable, ViewChildren} from '@angular/core';
-import {ItemProperty} from './model/publish/item-property';
-import {ProductPropertiesComponent} from "./product-properties.component";
-import { Subject } from 'rxjs/Subject';
+import {Injectable} from "@angular/core";
 
 @Injectable()
 export class PublishService {

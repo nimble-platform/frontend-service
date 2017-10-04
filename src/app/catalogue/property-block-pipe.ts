@@ -1,14 +1,12 @@
 /**
  * Created by suat on 05-Aug-17.
  */
-import {Pipe, PipeTransform} from '@angular/core';
+import {Pipe, PipeTransform} from "@angular/core";
 import {ItemProperty} from "./model/publish/item-property";
 import {Category} from "./model/category/category";
 import {Property} from "./model/category/property";
 import {CategoryService} from "./category/category.service";
-import {ProductPropertiesComponent} from "./product-properties.component";
 import {PublishService} from "./publish-and-aip.service";
-import {CatalogueLine} from "./model/publish/catalogue-line";
 
 /**
  * Pipe to transform the custom properties and properties of selected categories for a product to property blocks to
@@ -16,18 +14,22 @@ import {CatalogueLine} from "./model/publish/catalogue-line";
  */
 @Pipe({name: 'propertyBlockPipe'})
 export class PropertyBlockPipe implements PipeTransform {
+    PROPERTY_BLOCK_FIELD_NAME: string = "name";
+    PROPERTY_BLOCK_FIELD_ISCOLLAPSED = "isCollapsed";
+    PROPERTY_BLOCK_FIELD_PROPERTIES = "properties";
+
     private selectedCategories: Category[] = [];
     private itemProperties: ItemProperty[] = [];
     private propertyBlocks: Array<any> = [];
     private checkedProperties: Array<string> = [];
+    private presentationMode:string;
 
     constructor(private categoryService: CategoryService,
                 private publishStateService: PublishService) {
     }
 
-    transform(itemProperties: ItemProperty[]): any {
+    transform(itemProperties: ItemProperty[], presentationMode:string): any {
         this.selectedCategories = this.categoryService.selectedCategories;
-        //this.itemProperties = itemProperties.goodsItem.item.additionalItemProperty;
         this.itemProperties = itemProperties;
         this.propertyBlocks = [];
         this.checkedProperties = [];
@@ -38,12 +40,18 @@ export class PropertyBlockPipe implements PipeTransform {
      * Creates the property block array by parsing the additional item property array of the item
      */
     retrievePropertyBlocks(): any {
-        this.refreshPropertyBlocks();
+        if (this.presentationMode == 'edit') {
+            this.refreshPropertyBlocks();
+        } else {
+            this.createPropertyBlocksWithExistingProperties();
+        }
         return this.propertyBlocks;
     }
 
     // TODO there is a code block product-details.component.ts for same the purpose. remove one of these
     refreshPropertyBlocks(): void {
+        // get custom properties
+        this.createCustomPropertyBlock();
 
         // commodity classifications
         if (this.selectedCategories != null) {
@@ -57,19 +65,33 @@ export class PropertyBlockPipe implements PipeTransform {
         }
     }
 
+    private createCustomPropertyBlock():void {
+        let customPropertyBlock: any = {};
+        let name:string = "Custom";
+
+        customPropertyBlock['name'] = name;
+        customPropertyBlock['isCollapsed'] = this.publishStateService.getCollapsedState(name);
+
+        let customProps:ItemProperty[] = []
+        for(let property of this.itemProperties) {
+            if(property.itemClassificationCode.listID == "Custom") {
+                customProps.push(property);
+                this.checkedProperties.push(property.id);
+            }
+        }
+        customPropertyBlock['properties'] = customProps;
+        this.propertyBlocks.push(customPropertyBlock);
+    }
+
     /**
      * Creates two blocks as eClass-base and eClass-specific and puts properties into those
      */
     private createEClassPropertyBlocks(category: Category): void {
+        let eClassBlocks = this.createEmptyEClassPropertyBlocks(category.preferredName);
+        let basePropertyBlock: any = eClassBlocks[0];
+        let specificPropertyBlock: any = eClassBlocks[1];
 
-        let basePropertyBlock: any = {};
-        let name:string = category.preferredName + " (" + category.taxonomyId + " - Base)";
-        basePropertyBlock['name'] = name;
         basePropertyBlock['isCollapsed'] = this.publishStateService.getCollapsedState(name);
-
-        let specificPropertyBlock: any = {};
-        name = category.preferredName + " (" + category.taxonomyId + " - Specific)";
-        specificPropertyBlock['name'] = name;
         specificPropertyBlock['isCollapsed'] = this.publishStateService.getCollapsedState(name);
 
 
@@ -85,7 +107,7 @@ export class PropertyBlockPipe implements PipeTransform {
 
             //aip.propertyDefinition = property.definition;
             if (!this.isPropertyPresentedAlready(property)) {
-                if (this.isBaseEClassProperty(property)) {
+                if (this.isBaseEClassProperty(property.id)) {
                     baseProperties.push(aip);
 
                 } else {
@@ -103,10 +125,7 @@ export class PropertyBlockPipe implements PipeTransform {
     }
 
     private createPropertyBlock(category: Category): void {
-
-        let propertyBlock: any = {};
-        let name:string = category.preferredName != null ? category.preferredName : "" + " (" + category.taxonomyId + ")";
-        propertyBlock['name'] = name;
+        let propertyBlock: any = this.createEmptyPropertyBlock(category.preferredName, category.taxonomyId);
         propertyBlock['isCollapsed'] = this.publishStateService.getCollapsedState(name);
         this.propertyBlocks.push(propertyBlock);
 
@@ -136,6 +155,81 @@ export class PropertyBlockPipe implements PipeTransform {
             }
         }
         console.error("Property could not be found in additional item properties: " + property.id)
+    }
+
+    private createPropertyBlocksWithExistingProperties() {
+        this.propertyBlocks = [];
+
+        // put all properties into their blocks
+        for (let property of this.itemProperties) {
+            if (property.itemClassificationCode.listID === "eClass") {
+                let isBaseProperty:boolean = this.isBaseEClassProperty(property.id);
+                let blockName = this.getBlockNameForEClass(property.itemClassificationCode.name, isBaseProperty);
+                let blockIndex = this.propertyBlocks.findIndex(block => block[this.PROPERTY_BLOCK_FIELD_NAME] == blockName);
+                if (blockIndex == -1) {
+                    let eClassBlocks = this.createEmptyEClassPropertyBlocks(property.itemClassificationCode.name);
+                    this.propertyBlocks.push(eClassBlocks[0]);
+                    this.propertyBlocks.push(eClassBlocks[1]);
+
+                    blockIndex = this.propertyBlocks.length - 2;
+                    if(!isBaseProperty) {
+                        blockIndex++;
+                    }
+                }
+
+                this.propertyBlocks[blockIndex][this.PROPERTY_BLOCK_FIELD_PROPERTIES].push(property);
+
+            } else {
+                let blockName = this.getBlockName(property.itemClassificationCode.name, property.itemClassificationCode.listID);
+                let blockIndex = this.propertyBlocks.findIndex(block => block[this.PROPERTY_BLOCK_FIELD_NAME] == blockName);
+                if (blockIndex == -1) {
+                    let block = this.createEmptyPropertyBlock(property.itemClassificationCode.name, property.itemClassificationCode.listID);
+                    this.propertyBlocks.push(block);
+                    blockIndex = this.propertyBlocks.length-1;
+                }
+
+                this.propertyBlocks[blockIndex][this.PROPERTY_BLOCK_FIELD_PROPERTIES].push(property);
+            }
+        }
+    }
+
+    private createEmptyEClassPropertyBlocks(categoryName):any {
+        let basePropertyBlock: any = {};
+        basePropertyBlock[this.PROPERTY_BLOCK_FIELD_NAME] = this.getBlockNameForEClass(categoryName, true);
+        basePropertyBlock[this.PROPERTY_BLOCK_FIELD_ISCOLLAPSED] = true;
+        basePropertyBlock[this.PROPERTY_BLOCK_FIELD_PROPERTIES] = [];
+
+        let specificPropertyBlock: any = {};
+        specificPropertyBlock[this.PROPERTY_BLOCK_FIELD_NAME] = this.getBlockNameForEClass(categoryName, false);
+        specificPropertyBlock[this.PROPERTY_BLOCK_FIELD_ISCOLLAPSED] = true;
+        specificPropertyBlock[this.PROPERTY_BLOCK_FIELD_PROPERTIES] = [];
+
+        return [basePropertyBlock, specificPropertyBlock];
+    }
+
+    private createEmptyPropertyBlock(categoryName, taxonomyId):any {
+        let propertyBlock: any = {};
+        propertyBlock[this.PROPERTY_BLOCK_FIELD_NAME] = this.getBlockName(categoryName, taxonomyId);
+        propertyBlock[this.PROPERTY_BLOCK_FIELD_ISCOLLAPSED] = true;
+        propertyBlock[this.PROPERTY_BLOCK_FIELD_PROPERTIES] = [];
+
+        return propertyBlock;
+    }
+
+    private getBlockNameForEClass(categoryName:string, base:boolean):string {
+        if(base) {
+            return categoryName + " (eClass - Base)"
+        } else {
+            return categoryName + " (eClass - Specific)";
+        }
+    }
+
+    private getBlockName(categoryName:string, taxonomyId:string):string {
+        if(categoryName != null) {
+            return categoryName + " (" + taxonomyId + ")";
+        } else {
+            return "Custom";
+        }
     }
 
     /*
@@ -169,8 +263,7 @@ export class PropertyBlockPipe implements PipeTransform {
      0173-1#02-AAW338#001 - Manufacturer product designation
      0173-1#02-AAO057#002 - Product type
      */
-    private isBaseEClassProperty(property: Property): boolean {
-        let pid: string = property.id;
+    private isBaseEClassProperty(pid: string): boolean {
         if (pid == "0173-1#02-AAD931#005" ||
             pid == "0173-1#02-AAO663#003" ||
             pid == "0173-1#02-BAB392#012" ||

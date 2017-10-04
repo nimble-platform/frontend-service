@@ -1,4 +1,4 @@
-import {Component, Input, Output, EventEmitter} from "@angular/core";
+import {Component, EventEmitter, Input, Output} from "@angular/core";
 /**
  * Created by suat on 19-Sep-17.
  */
@@ -10,18 +10,16 @@ import {Component, Input, Output, EventEmitter} from "@angular/core";
 export class ValueViewComponent {
     @Input() presentationMode: string;
     @Input() propName: string;
-    @Input() multiValue:boolean;
-    @Input() values: any[];
 
-    // two-way binding for "value" field
-    localValue: any;
+    valueObj;
     @Output() valueChange = new EventEmitter();
+
     @Input()
     get value() {
-        return this.localValue;
+        return this.valueObj;
     }
     set value(val) {
-        this.localValue = val;
-        this.valueChange.emit(this.localValue);
+        this.valueObj = val;
+        this.valueChange.emit(this.valueObj);
     }
 }

@@ -35,7 +35,7 @@ export class UserService {
             .catch(err => {
             	if(err.status == 302) {
 					// ToDo: make identity service using the latest version of the data model
-					let party:Party = new Party(err.json().hjid, err.json().id, err.json().partyName[0].name, null);
+					let party:Party = new Party(null, err.json().id, err.json().partyName[0].name, null);
 					return Promise.resolve(party);
 				} else {
             		return this.handleError(err);
@@ -53,7 +53,7 @@ export class UserService {
 		.toPromise()
 		.then(res => {
 			// ToDo: make identity service using the latest version of the data model
-			this.userParty = new Party(res.json()[0].hjid, res.json()[0].hjid, res.json()[0].partyName[0].name, null);
+			this.userParty = new Party(null, res.json()[0].hjid, res.json()[0].partyName[0].name, null);
 			return Promise.resolve(this.userParty);
 		})
 		.catch(this.handleError);

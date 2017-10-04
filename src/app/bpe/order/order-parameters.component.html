@@ -1,10 +1,4 @@
-<button type="button" class="btn btn-primary space-before" (click)="orderExpanded = !orderExpanded"
-        [attr.aria-expanded]="orderExpanded" aria-controls="orderParams"
-        i18n>
-    Order
-</button>
-
-<div id="orderParams" class="space-before" [ngbCollapse]="!orderExpanded">
+<div id="orderParams">
 	<div>
 		<ul class="nav nav-tabs">
 			<li class="nav-item pointer">
@@ -34,13 +28,12 @@
 		class="p-3">
 		<product-details *ngIf="selectedTab === 'Product Details'"
 						 [catalogueLine]="catalogueLine"
-						 [presentationMode]="'singlevalue'"
-						 [bpType]="'Order'">
+						 [presentationMode]="'singlevalue'">
 		</product-details>
 		<trading-details *ngIf="selectedTab === 'Trading & Delivery Terms'"
 						 [catalogueLine]="catalogueLine"
 						 [presentationMode]="'singlevalue'"
-						 [priceEditable]="false">
+						 [editPrice]="false">
 		</trading-details>
 		<div *ngIf="selectedTab == 'Order Details'"
 			class="p-1">
@@ -57,6 +50,11 @@
 			</div>
 		</div>
 	</div>
+	<hr>
+	<value-view [presentationMode]="'edit'"
+				[propName]="'Note for the order'"
+				[(value)]="order.note">
+	</value-view>
 	<div class="container ">
 		<div class="row justify-content-end">
 			<button class="btn btn-success col-4" (click)="sendOrder()">Send Order</button>

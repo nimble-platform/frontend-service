@@ -16,7 +16,7 @@ import {CredentialsService} from './user-mgmt/credentials.service';
 import {CategorySearchComponent} from './catalogue/category/category-search.component';
 import {CategoryService} from './catalogue/category/category.service';
 import {ProductPublishComponent} from './catalogue/product-publish.component';
-import {AdditionalItemPropertyComponent} from './catalogue/additional-item-property.component';
+import {AdditionalItemPropertyComponent} from './catalogue/ubl-model-view/additional-item-property.component';
 import {CatalogueService} from './catalogue/catalogue.service';
 import {SimpleSearchComponent} from './simple-search/simple-search.component';
 import {SimpleSearchDetailsComponent} from './simple-search/simple-search-details.component';
@@ -28,15 +28,13 @@ import {ExplorativeSearchService} from './explorative-search/explorative-search.
 import {ExplorativeSearchFormComponent} from './explorative-search/explorative-search-form.component';
 import {ExplorativeSearchDetailsComponent} from './explorative-search/explorative-search-details.component';
 import {ExplorativeSearchFilterComponent} from './explorative-search/explorative-search-filter.component';
-import {KeysPipe} from './explorative-search/pipes/keys';
-import {ProductPropertiesComponent} from './catalogue/product-properties.component';
 import {AddressSubForm} from './user-mgmt/subforms/address.component';
 import {DeliveryTermsSubForm} from './user-mgmt/subforms/delivery-terms.component';
 import {PaymentMeansForm} from './user-mgmt/subforms/payment-means.component';
 import {CompanySettingsComponent} from './user-mgmt/company-settings.component';
 import {NegotiationMainComponent} from './bpe/negotiation/negotiation-main.component';
-import {CatalogueViewComponent} from './catalogue/catalogue-view.component';
-import {CatalogueLineViewComponent} from './catalogue/catalogue-line-view.component';
+import {CatalogueViewComponent} from './catalogue/ubl-model-view/catalogue-view.component';
+import {CatalogueLineViewComponent} from './catalogue/ubl-model-view/catalogue-line-view.component';
 import {ProductDetailsComponent} from './catalogue/product-details.component';
 import {TradingDetailsComponent} from './catalogue/trading-details.component';
 import {PublishService} from './catalogue/publish-and-aip.service';
@@ -46,11 +44,16 @@ import {BPConfigureComponent} from './bpe/bp-configure.component';
 import {BPsComponent} from './bpe/bps.component';
 import {BPDetailComponent} from './bpe/bp-detail.component';
 import {BPService} from './bpe/bp.service';
-import {QuantityViewComponent} from "./catalogue/built-in-data-view/quantity-view.component";
-import {AmountViewComponent} from "./catalogue/built-in-data-view/amount-view.component";
-import {ValueViewComponent} from "./catalogue/built-in-data-view/value-view.component";
+import {QuantityViewComponent} from "./catalogue/ubl-model-view/quantity-view.component";
+import {AmountViewComponent} from "./catalogue/ubl-model-view/amount-view.component";
+import {ValueViewComponent} from "./catalogue/ubl-model-view/value-view.component";
 import {OrderParametersComponent} from "./bpe/order/order-parameters.component";
 import {BPDataService} from "./bpe/bp-data-service";
+import {ValueArrayViewComponent} from "./catalogue/ubl-model-view/value-array-view.component";
+import {BooleanViewComponent} from "./catalogue/ubl-model-view/boolean-view-component";
+import {AddressViewComponent} from "./catalogue/ubl-model-view/address-view.component";
+import {CallStatusComponent} from "./common/call-status.component";
+import {CertificateViewComponent} from "./catalogue/ubl-model-view/certificate-view.component";
 
 @NgModule({
     imports: [
@@ -79,9 +82,7 @@ import {BPDataService} from "./bpe/bp-data-service";
         ExplorativeSearchFormComponent,
         ExplorativeSearchDetailsComponent,
         ExplorativeSearchFilterComponent,
-        KeysPipe,
         AdditionalItemPropertyComponent,
-        ProductPropertiesComponent,
         AddressSubForm,
         DeliveryTermsSubForm,
         PaymentMeansForm,
@@ -94,12 +95,17 @@ import {BPDataService} from "./bpe/bp-data-service";
         TradingDetailsComponent,
         PropertyBlockPipe,
         ItemPropertyDataSourcePipe,
+        AddressViewComponent,
+        CertificateViewComponent,
         QuantityViewComponent,
         AmountViewComponent,
+        ValueArrayViewComponent,
         ValueViewComponent,
+        BooleanViewComponent,
         BPConfigureComponent,
         BPDetailComponent,
-        BPsComponent
+        BPsComponent,
+        CallStatusComponent
     ],
     providers: [
         UserService,

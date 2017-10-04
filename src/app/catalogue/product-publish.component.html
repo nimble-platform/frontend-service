@@ -69,12 +69,12 @@
         </div>
 
         <!-- Publish / edit buttons -->
-        <button *ngIf="!editMode"
+        <button *ngIf="pageRef == 'category'"
                 class="btn btn-success"
                 (click)="publishProduct()">
             <span i18n>Publish Product</span>
         </button>
-        <button *ngIf="editMode"
+        <button *ngIf="pageRef == 'catalogue'"
                 class="btn btn-success btn-xs"
                 (click)="editProduct()">
             <span i18n>Save Changes</span>
@@ -84,17 +84,13 @@
     <hr>
 
     <!-- Form header row -->
-    <h4><u>Product Details</u></h4>
-
     <form class="space-before">
 
         <!-- product properties -->
-        <product-properties
-                #productProperties
-                [catalogueLine]="catalogueLine"
-                [selectedCategories]="selectedCategories"
-        >
-        </product-properties>
+        <catalogue-line-view
+                             [catalogueLine]="catalogueLine"
+                             [presentationMode]="'edit'">
+        </catalogue-line-view>
 
         <!-- new property block -->
         <hr class="mt-5">
@@ -260,59 +256,12 @@
             <!-- end of selected images or files -->
         </div>
         <!-- end of new property -->
-
-        <!-- product configuration images -->
-        <!--<!<div *ngIf="goodsItem.item.additionalItemProperty != null && goodsItem.item.additionalItemProperty.length >= 2">
-            <hr class="mt-5">
-            <div>
-                <h6>Add product images for different combinations of product features</h6>
-                <div class="row pb-3">
-                    TODO produce the cols below dynamically
-                    <div class="col-2">
-                        <label>Wall tile</label>
-                        <div>
-                            <select class="custom-select" #wallTileValues>
-                                <option selected>White</option>
-                                <option>Black</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-2">
-                        <label>Floor tile</label>
-                        <div>
-                            <select class="custom-select" #floorTileValues>
-                                <option selected>White</option>
-                                <option>Black</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div (click)="overallProductImage.click()">
-                        <input #overallProductImage type="file"
-                               (change)="overallProductImageImage($event, wallTileValues.value, floorTileValues.value)"
-                               accept="image/*"
-                               style="display: none">
-                        <img src="./assets/catalogue/add_button.png"/>
-                        <span>Add image</span>
-                    </div>
-                </div>
-                <div *ngIf="goodsItem.item.itemConfigurationImageArray.length > 0"
-                     class="input-group form-group">
-                    <div style="display: inline-block">
-                        <img *ngFor="let image of goodsItem.item.itemConfigurationImageArray"
-                             class="pr-2"
-                             src="data:{{image.mimeCode}};base64,{{image.value}}"
-                             height="100"
-                             width="100"/>
-                    </div>
-                </div>
-            </div>
-        </div>-->
     </form>
 </div>
 
 <!-- Bulk product publishing -->
 <div *ngIf="!singleItemUpload">
-    <div class="d-flex justify-content-end mt-3">
+    <div class="d-flex justify-content-end mt-3 mb-3">
         <div class="mr-auto">
             <h6 *ngIf="selectedCategories.length > 0" style="display: inline-block;"
                 i18n>Selected category:</h6>
@@ -331,27 +280,51 @@
             </div>
         </div>
     </div>
-    <div class="row justify-content-center">
-        <div class="col p-5">
-            <ol class="list-group">
-                <div class="d-flex justify-content-start p-2">
-                    <li>Download the product category template</li>
-                    <button class="btn btn-success ml-auto"
-                            (click)="downloadTemplate()"
-                            [disabled]="selectedCategories.length == 0">Download template
-                    </button>
-                </div>
-                <div class="d-flex justify-content-start p-2">
-                    <li>Upload the template after filling it with your products' information
-                    </li>
-                    <input #template type="file" (change)="uploadTemplate($event)"
-                           accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                           style="display: none">
-                    <button class="btn btn-success ml-auto"
-                            (click)="template.click()">Upload template
-                    </button>
-                </div>
-            </ol>
-        </div>
+    <div class="d-flex mt-3 mb-4">
+        <label class="col-9">1. Download the product category template</label>
+        <button class="btn btn-success col-3"
+                (click)="downloadTemplate()">Download template
+        </button>
     </div>
+    <div class="d-flex mb-4">
+        <label class="col-9">2. Select upload mode.
+            <ul>
+                <li>Append mode: Already published products are updated if newer versions are provided in the template, new products are appended to the current catalogue.</li>
+                <li>Replace mode: All previously published items are deleted; and only the new ones are added to the catalogue.</li>
+            </ul>
+        </label>
+        <select #uploadModeSelect class="col-3 btn btn-success align-self-start" style="text-align-last:center;">
+            <option value="append">Append</option>
+            <option value="replace">Replace</option>
+        </select>
+    </div>
+    <div class="d-flex mb-4">
+        <label class="col-9">3. Upload the template after filling it with your products' information
+        </label>
+        <input #template type="file" (change)="uploadTemplate($event, uploadModeSelect.value)"
+               accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+               style="display: none">
+        <button class="btn btn-success col-3"
+                (click)="template.click()">Upload template
+        </button>
+    </div>
+    <div class="d-flex mb-4">
+        <label class="col-9">4. Upload a "zip package" including product images. Each image must be suffixed with the identifier of the product. For example: pid1.imageFile.jpg, pid1.imageFile2.png, etc.
+        </label>
+        <input #imagePackage type="file" (change)="uploadImagePackage($event)"
+               accept="application/zip"
+               style="display: none">
+        <button class="btn btn-success col-3 align-self-start"
+                (click)="imagePackage.click()">Upload Image Package
+        </button>
+    </div>
+    <div class="d-flex mt-4 mb-3">
+        <label class="col-9">Download an example filled in template</label>
+        <button class="btn btn-success col-3"
+                (click)="downloadExampleTemplate()">Download example template
+        </button>
+    </div>
+    <call-status [callStatus]="bulkPublishStatus"
+            [large]="true">
+    </call-status>
 </div>

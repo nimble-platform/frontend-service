@@ -31,6 +31,9 @@ import {RequestForQuotationLine} from "./publish/request-for-quotation-line";
 import {Delivery} from "./publish/delivery";
 import {Quotation} from "../../bpe/model/ubl/quotation";
 import {QuotationLine} from "./publish/quotation-line";
+import {Dimension} from "./publish/dimension";
+import {Address} from "./publish/address";
+import {Country} from "./publish/country";
 /**
  * Created by suat on 05-Jul-17.
  */
@@ -93,12 +96,16 @@ export class UBLModelUtils {
         return ilq;
     }
 
-    public static createCatalogueLine(providerParty: Party): CatalogueLine {
+    public static createCatalogueLine(catalogueUuid:string, providerParty: Party): CatalogueLine {
         // create additional item properties
         let additionalItemProperties = new Array<ItemProperty>();
 
+        // catalogue document reference
+        let docRef:DocumentReference = new DocumentReference();
+        docRef.id = catalogueUuid;
+
         // create item
-        let item = new Item("", "", [], false, additionalItemProperties, providerParty, this.createItemIdentification(), null, [], [], [], "", [], "");
+        let item = new Item("", "", [], false, additionalItemProperties, providerParty, this.createItemIdentification(), docRef, null, [], [], [], "", [], "");
 
         // create goods item
         let uuid:string = this.generateUUID();
@@ -117,7 +124,7 @@ export class UBLModelUtils {
         let price: Price = this.createPrice(null);
         let lineItem:LineItem = this.createLineItem(quantity, price, item);
         let orderLine:OrderLine = new OrderLine(lineItem);
-        let order = new Order(this.generateUUID(), "Some note", null, null, [orderLine]);
+        let order = new Order(this.generateUUID(), "", null, null, [orderLine]);
         return order;
     }
 
@@ -139,7 +146,7 @@ export class UBLModelUtils {
         let lineItem:LineItem = this.createLineItem(quantity, price, item);
         let requestForQuotationLine:RequestForQuotationLine = new RequestForQuotationLine(lineItem);
         let delivery:Delivery = this.createDelivery();
-        let rfq = new RequestForQuotation(this.generateUUID(), ["Some note"], null, null, delivery, [requestForQuotationLine]);
+        let rfq = new RequestForQuotation(this.generateUUID(), [""], null, null, delivery, [requestForQuotationLine]);
         return rfq;
     }
 
@@ -159,12 +166,12 @@ export class UBLModelUtils {
 
         let documentReference:DocumentReference = new DocumentReference(rfq.id);
 
-        let quotation = new Quotation(this.generateUUID(), ["Some note"], 1, documentReference, customerParty, supplierParty, delivery, [quotationLine]);
+        let quotation = new Quotation(this.generateUUID(), [""], 1, documentReference, customerParty, supplierParty, delivery, [quotationLine]);
         return quotation;
     }
 
     public static createItem():Item {
-        let item = new Item("", "", [], false, [], null, this.createItemIdentification(), null, [], [], [], null, [], "");
+        let item = new Item("", "", [], false, [], null, this.createItemIdentification(), null, null, [], [], [], null, [], "");
         return item;
     }
 
@@ -201,9 +208,26 @@ export class UBLModelUtils {
         return period;
     }
 
+    public static createDimension(attributeId:string, unitCode:string):Dimension {
+        let quantity:Quantity = this.createQuantity();
+        quantity.unitCode = unitCode;
+        return new Dimension(attributeId, quantity, null, null, null, null);
+    }
+
+    public static createAddress():Address {
+        return new Address(null, this.createCountry());
+    }
+
+    public static createCountry():Country {
+        return new Country(null, null, null);
+    }
+
     public static createQuantity():Quantity {
-        let quantity:Quantity = new Quantity(null, null, null);
-        return quantity;
+        return this.createQuantityWithUnit(null);
+    }
+
+    public static createQuantityWithUnit(unit:string):Quantity {
+        return new Quantity(null, unit, null);
     }
 
     public static createAmount():Amount{

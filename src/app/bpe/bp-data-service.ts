@@ -15,81 +15,39 @@ import {Dimension} from "../catalogue/model/publish/dimension";
 export class BPDataService {
     requestForQuotation:RequestForQuotation;
     order:Order;
+    // original catalogue line to initialize the business process data
+    catalogueLine:CatalogueLine;
+    // catalogue line object that is kept updated based on user selections
+    modifiedCatalogueLine:CatalogueLine;
 
     initRfq(catalogueLine:CatalogueLine):void {
+        this.catalogueLine = catalogueLine;
+        this.modifiedCatalogueLine = JSON.parse(JSON.stringify(catalogueLine));
         this.requestForQuotation = UBLModelUtils.createRequestForQuotation();
         this.requestForQuotation.requestForQuotationLine[0].lineItem.item = catalogueLine.goodsItem.item;
         this.requestForQuotation.requestForQuotationLine[0].lineItem.lineReference = [new LineReference(catalogueLine.id)];
+        this.selectFirstValuesAmongAlternatives();
     }
 
     initOrder(catalogueLine:CatalogueLine):void {
+        this.catalogueLine = catalogueLine;
+        this.modifiedCatalogueLine = JSON.parse(JSON.stringify(catalogueLine));
         this.order = UBLModelUtils.createOrder();
         this.order.orderLine[0].lineItem.item = catalogueLine.goodsItem.item;
         this.order.orderLine[0].lineItem.lineReference = [new LineReference(catalogueLine.id)];
+        this.selectFirstValuesAmongAlternatives();
     }
 
-    updateItemProperty(bpType:string, selectedValue:any, itemProperty:ItemProperty):void {
-        let item:Item;
-        if(bpType == 'RequestForQuotation') {
-            item = this.requestForQuotation.requestForQuotationLine[0].lineItem.item;
-        } else {
-            item = this.order.orderLine[0].lineItem.item;
-        }
-
-        let targetProp:ItemProperty;
-        for(let prop of item.additionalItemProperty) {
-            if(prop.id == itemProperty.id) {
-                targetProp = prop;
-                break;
-            }
-        }
-
-        if(itemProperty.valueQualifier == 'STRING') {
-            targetProp.value[0] = selectedValue;
-        } else if(itemProperty.valueQualifier == 'REAL_MEASURE') {
-            targetProp.valueDecimal[0] = selectedValue;
-        } else if(itemProperty.valueQualifier == 'BOOLEAN') {
-            targetProp.value[0] = selectedValue;
-        } else if(itemProperty.valueQualifier == 'QUANTITY') {
-            targetProp.valueQuantity[0] = selectedValue;
-        }
+    selectFirstValuesAmongAlternatives():void {
+        this.chooseAllDimensions();
+        this.chooseFirstValuesOfItemProperties();
     }
 
-    updateDimension(attributeId:string, selectedValue:number, bpType:string):void {
-        let dimensions:Dimension[];
-        if(bpType == 'RequestForQuotation') {
-            dimensions = this.requestForQuotation.requestForQuotationLine[0].lineItem.item.dimension;
-        } else {
-            dimensions = this.order.orderLine[0].lineItem.item.dimension;
-        }
-        let newDimensions:Dimension[] = [];
-
-        for(let dim of dimensions) {
-            if(dim.attributeID == attributeId) {
-                // only insert the dimension with the selected value
-                if(dim.measure.value == selectedValue) {
-                    newDimensions.push(dim);
-                }
-            } else {
-                newDimensions.push(dim);
-            }
-        }
-
-        if(bpType == 'RequestForQuotation') {
-            this.requestForQuotation.requestForQuotationLine[0].lineItem.item.dimension = newDimensions;
-        } else {
-            this.order.orderLine[0].lineItem.item.dimension = newDimensions;
-        }
-    }
-
-    chooseAllDimensions(bpType:string):void {
-        let dimensions:Dimension[];
-        if(bpType == 'RequestForQuotation') {
-            dimensions = this.requestForQuotation.requestForQuotationLine[0].lineItem.item.dimension;
-        } else {
-            dimensions = this.order.orderLine[0].lineItem.item.dimension;
-        }
-
+    /**
+     * Updates modified catalogue line's dimensions with only the first occurrences of the dimension attributes
+     */
+    chooseAllDimensions():void {
+        let dimensions:Dimension[] = this.modifiedCatalogueLine.goodsItem.item.dimension;
         let finalDimensions:Dimension[] = [];
         let chosenAttributes:string[] = [];
 
@@ -100,21 +58,11 @@ export class BPDataService {
                 finalDimensions.push(dim);
             }
         }
-
-        if(bpType == 'RequestForQuotation') {
-            this.requestForQuotation.requestForQuotationLine[0].lineItem.item.dimension = finalDimensions;
-        } else {
-            this.order.orderLine[0].lineItem.item.dimension = finalDimensions;
-        }
+        this.modifiedCatalogueLine.goodsItem.item.dimension = finalDimensions;
     }
 
-    chooseFirstValuesOfItemProperties(bpType:string):void {
-        let item:Item;
-        if(bpType == 'RequestForQuotation') {
-            item = this.requestForQuotation.requestForQuotationLine[0].lineItem.item;
-        } else {
-            item = this.order.orderLine[0].lineItem.item;
-        }
+    chooseFirstValuesOfItemProperties():void {
+        let item:Item = this.modifiedCatalogueLine.goodsItem.item;
 
         for(let prop of item.additionalItemProperty) {
             if(prop.valueQualifier == 'STRING') {
@@ -135,5 +83,43 @@ export class BPDataService {
                 }
             }
         }
+    }
+
+    updateItemProperty(selectedValue:any, itemProperty:ItemProperty):void {
+        let item:Item = this.modifiedCatalogueLine.goodsItem.item;
+
+        let targetProp:ItemProperty;
+        for(let prop of item.additionalItemProperty) {
+            if(prop.id == itemProperty.id) {
+                targetProp = prop;
+                break;
+            }
+        }
+
+        if(itemProperty.valueQualifier == 'STRING') {
+            targetProp.value[0] = selectedValue;
+        } else if(itemProperty.valueQualifier == 'REAL_MEASURE') {
+            targetProp.valueDecimal[0] = selectedValue;
+        } else if(itemProperty.valueQualifier == 'BOOLEAN') {
+            targetProp.value[0] = selectedValue;
+        } else if(itemProperty.valueQualifier == 'QUANTITY') {
+            targetProp.valueQuantity[0] = selectedValue;
+        }
+    }
+
+    /**
+     * Keeps only the selected value for the given attribute in the dimension array
+     */
+    updateDimension(attributeId:string, selectedValue:number):void {
+        let dimensions:Dimension[] = this.modifiedCatalogueLine.goodsItem.item.dimension;
+        let allDimensions:Dimension[] = this.catalogueLine.goodsItem.item.dimension;
+        let attIndexInOriginal = allDimensions.findIndex(dim => attributeId == dim.attributeID && selectedValue == dim.measure.value);
+        let attIndexInModified = dimensions.findIndex(dim => attributeId == dim.attributeID);
+        // return the items after the target attribute
+        let remaining = dimensions.splice(attIndexInModified + 1);
+        // remove the last item
+        dimensions.splice(dimensions.length - 1);
+        dimensions = dimensions.concat([allDimensions[attIndexInOriginal]]).concat(remaining);
+        this.modifiedCatalogueLine.goodsItem.item.dimension = dimensions;
     }
 }
