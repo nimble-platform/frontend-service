@@ -11,7 +11,6 @@ import {Certificate} from "../model/publish/certificate";
 export class CertificateViewComponent {
     @Input() presentationMode: string;
     @Input() certificates: Certificate[];
-    initialCertificate:Certificate = new Certificate();
 
     addNewValue():void {
         let certificate:Certificate = new Certificate();

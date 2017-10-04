@@ -9,14 +9,29 @@ import {UBLModelUtils} from "../model/ubl-model-utils";
 
 export class QuantityViewComponent {
     @Input() presentationMode: string;
-    @Input() propName: string;
     @Input() quantity: Quantity[];
+    // whether the quantity value can multiple values
     @Input() multiValue: boolean;
+    // whether the quantity value can have no value at all
+    @Input() zeroValue: boolean;
+    @Input() editablePropName:boolean;
+
     // single mode events
     @Output() onSelectChange = new EventEmitter();
     // edit mode events
     @Output() onValueAdded = new EventEmitter();
     @Output() onValueDeleted = new EventEmitter();
+
+    propNameValue:string;
+    @Output() onPropNameChange = new EventEmitter();
+    @Input()
+    get propName() {
+        return this.propNameValue;
+    }
+    set propName(val) {
+        this.propNameValue = val;
+        this.onPropNameChange.emit(this.propNameValue);
+    }
 
     addNewValue():void {
         this.quantity.push(UBLModelUtils.createQuantity());

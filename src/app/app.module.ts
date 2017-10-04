@@ -54,6 +54,7 @@ import {BooleanViewComponent} from "./catalogue/ubl-model-view/boolean-view-comp
 import {AddressViewComponent} from "./catalogue/ubl-model-view/address-view.component";
 import {CallStatusComponent} from "./common/call-status.component";
 import {CertificateViewComponent} from "./catalogue/ubl-model-view/certificate-view.component";
+import {DimensionViewComponent} from "./catalogue/ubl-model-view/dimension-view.component";
 
 @NgModule({
     imports: [
@@ -97,6 +98,7 @@ import {CertificateViewComponent} from "./catalogue/ubl-model-view/certificate-v
         ItemPropertyDataSourcePipe,
         AddressViewComponent,
         CertificateViewComponent,
+        DimensionViewComponent,
         QuantityViewComponent,
         AmountViewComponent,
         ValueArrayViewComponent,
