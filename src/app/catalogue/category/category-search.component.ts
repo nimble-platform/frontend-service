@@ -68,12 +68,15 @@ export class CategorySearchComponent implements OnInit {
                 this.submitted = false;
             }).catch( () => {
                 this.error_detc = true;
-                console.log(this.error_detc);
             }
         );
     }
 
     private selectCategory(category: Category): void {
+        this.callback = false;
+        this.submitted = true;
+        this.error_detc = false;
+
         // if no category is selected or if the selected category is already selected
         // navigate to the publishing page directly
         if (category == null || this.categoryService.selectedCategories.findIndex(c => c.id == category.id) > -1) {
@@ -85,7 +88,10 @@ export class CategorySearchComponent implements OnInit {
             .then(category => {
                 this.categoryService.addSelectedCategory(category);
                 this.navigateToPublishingPage();
-            });
+            }).catch( () => {
+                this.error_detc = true;
+            }
+        );
     }
 
     private navigateToPublishingPage():void {

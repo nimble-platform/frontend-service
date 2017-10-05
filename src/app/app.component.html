@@ -29,17 +29,19 @@
 					<img src="assets/upload_white.png" class="inline-icon"/> <span i18n>Publish</span>
 				</a>
 			</li>
-			<li ngbDropdown class="nav-item" routerLinkActive="active">
-				<a class="nav-link" id="dropdownMenuSearch" style="cursor:pointer" ngbDropdownToggle>
-					<img src="assets/search_white.png" class="inline-icon"/> <span i18n>Search</span>
-				</a>
-				<div class="dropdown-menu" aria-labelledby="dropdownMenuSearch">
-					<a class="dropdown-item" routerLink="/simple-search" routerLinkActive="active">
-						<img src="assets/text_black.png" class="inline-icon"/> Text-based
+			<li class="nav-item" routerLinkActive="active">
+				<div ngbDropdown class="dropdown">
+					<a class="nav-link" id="dropdownMenuSearch" style="cursor:pointer" ngbDropdownToggle>
+						<img src="assets/search_white.png" class="inline-icon"/> <span i18n>Search</span>
 					</a>
-					<a class="dropdown-item" routerLink="/explore-search" routerLinkActive="active">
-						<img src="assets/explore_black.png" class="inline-icon"/> Explorative
-					</a>
+					<div class="dropdown-menu" aria-labelledby="dropdownMenuSearch">
+						<a class="dropdown-item" routerLink="/simple-search" routerLinkActive="active">
+							<img src="assets/text_black.png" class="inline-icon"/> Text-based
+						</a>
+						<a class="dropdown-item" routerLink="/explore-search" routerLinkActive="active">
+							<img src="assets/explore_black.png" class="inline-icon"/> Explorative
+						</a>
+					</div>
 				</div>
 			</li>
 			<li class="nav-item" routerLinkActive="active">
