@@ -23,6 +23,7 @@ export class ProductDetailsComponent {
     PROPERTY_BLOCK_FIELD_NAME: string = "name";
     PROPERTY_BLOCK_FIELD_ISCOLLAPSED = "isCollapsed";
     PROPERTY_BLOCK_FIELD_PROPERTIES = "properties";
+    PROPERTY_BLOCK_FIELD_PROPERTY_DETAILS = "propertyDetails";
 
     @Input() presentationMode: string
     @Input() catalogueLine: CatalogueLine;

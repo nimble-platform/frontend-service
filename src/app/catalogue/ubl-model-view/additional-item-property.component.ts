@@ -6,6 +6,7 @@ import {ItemProperty} from "../model/publish/item-property";
 import {CatalogueService} from "../catalogue.service";
 import {Subscription} from "rxjs/Subscription";
 import {BPDataService} from "../../bpe/bp-data-service";
+import {Property} from "../model/category/property";
 
 @Component({
     selector: 'additional-item-property',
@@ -15,6 +16,7 @@ import {BPDataService} from "../../bpe/bp-data-service";
 export class AdditionalItemPropertyComponent implements OnInit, OnDestroy {
 
     @Input() additionalItemProperty: ItemProperty;
+    @Input() propertyDetails: Property;
     /* presentation mode can take three values: view, edit, singlevalue
      view: all values for the item property are presented
      edit: all values are presented and they are editable
@@ -23,7 +25,7 @@ export class AdditionalItemPropertyComponent implements OnInit, OnDestroy {
     @Input() presentationMode: string;
 
     editModeSubscription: Subscription;
-
+    showPropertyDetails: boolean = false;
     customProperty: boolean = false;
     propertyUnitDefined: boolean = false;
 
@@ -32,7 +34,9 @@ export class AdditionalItemPropertyComponent implements OnInit, OnDestroy {
     }
 
     openPropertyDetails(): void {
-        let modal = document.getElementById('myModal');
+        this.showPropertyDetails = !this.showPropertyDetails;
+
+        /*let modal = document.getElementById('myModal');
 
         let header = document.getElementById('header');
         header.innerText = this.additionalItemProperty.name;
@@ -56,7 +60,7 @@ export class AdditionalItemPropertyComponent implements OnInit, OnDestroy {
             unit_label.innerText = "";
         }
 
-        modal.style.display = "block";
+        modal.style.display = "block";*/
     }
 
     addValueToProperty(aipName: string) {

@@ -17,6 +17,7 @@ export class PropertyBlockPipe implements PipeTransform {
     PROPERTY_BLOCK_FIELD_NAME: string = "name";
     PROPERTY_BLOCK_FIELD_ISCOLLAPSED = "isCollapsed";
     PROPERTY_BLOCK_FIELD_PROPERTIES = "properties";
+    PROPERTY_BLOCK_FIELD_PROPERTY_DETAILS = "propertyDetails";
 
     private selectedCategories: Category[] = [];
     private itemProperties: ItemProperty[] = [];
@@ -31,13 +32,16 @@ export class PropertyBlockPipe implements PipeTransform {
     transform(itemProperties: ItemProperty[], presentationMode:string): any {
         this.selectedCategories = this.categoryService.selectedCategories;
         this.itemProperties = itemProperties;
+        this.presentationMode = presentationMode;
         this.propertyBlocks = [];
         this.checkedProperties = [];
         return this.retrievePropertyBlocks();
     }
 
     /**
-     * Creates the property block array by parsing the additional item property array of the item
+     * Creates the property block array by parsing the additional item property array of the item.
+     * In the edit mode, it gathers all the properties included in the category, however, in other presentation modes,
+     * it considers only the properties belonging to the item
      */
     retrievePropertyBlocks(): any {
         if (this.presentationMode == 'edit') {
@@ -48,7 +52,6 @@ export class PropertyBlockPipe implements PipeTransform {
         return this.propertyBlocks;
     }
 
-    // TODO there is a code block product-details.component.ts for same the purpose. remove one of these
     refreshPropertyBlocks(): void {
         // get custom properties
         this.createCustomPropertyBlock();
@@ -69,8 +72,8 @@ export class PropertyBlockPipe implements PipeTransform {
         let customPropertyBlock: any = {};
         let name:string = "Custom";
 
-        customPropertyBlock['name'] = name;
-        customPropertyBlock['isCollapsed'] = this.publishStateService.getCollapsedState(name);
+        customPropertyBlock[this.PROPERTY_BLOCK_FIELD_NAME] = name;
+        customPropertyBlock[this.PROPERTY_BLOCK_FIELD_ISCOLLAPSED] = this.publishStateService.getCollapsedState(name);
 
         let customProps:ItemProperty[] = []
         for(let property of this.itemProperties) {
@@ -79,7 +82,7 @@ export class PropertyBlockPipe implements PipeTransform {
                 this.checkedProperties.push(property.id);
             }
         }
-        customPropertyBlock['properties'] = customProps;
+        customPropertyBlock[this.PROPERTY_BLOCK_FIELD_PROPERTIES] = customProps;
         this.propertyBlocks.push(customPropertyBlock);
     }
 
@@ -96,7 +99,9 @@ export class PropertyBlockPipe implements PipeTransform {
 
 
         let baseProperties: ItemProperty[] = [];
+        let basePropertyDetails: Property[] = [];
         let specificProperties: ItemProperty[] = [];
+        let specificPropertyDetails: Property[] = [];
         for (let property of category.properties) {
             let aip: ItemProperty;
             let index = this.itemProperties.findIndex(ip => ip.id == property.id);
@@ -109,19 +114,23 @@ export class PropertyBlockPipe implements PipeTransform {
             if (!this.isPropertyPresentedAlready(property)) {
                 if (this.isBaseEClassProperty(property.id)) {
                     baseProperties.push(aip);
+                    basePropertyDetails.push(property);
 
                 } else {
                     specificProperties.push(aip);
+                    specificPropertyDetails.push(property);
                 }
                 this.checkedProperties.push(property.id);
             }
         }
 
+        basePropertyBlock[this.PROPERTY_BLOCK_FIELD_PROPERTIES] = baseProperties;
+        basePropertyBlock[this.PROPERTY_BLOCK_FIELD_PROPERTY_DETAILS] = basePropertyDetails;
+        specificPropertyBlock[this.PROPERTY_BLOCK_FIELD_PROPERTIES] = specificProperties;
+        specificPropertyBlock[this.PROPERTY_BLOCK_FIELD_PROPERTY_DETAILS] = specificPropertyDetails;
+
         this.propertyBlocks.push(basePropertyBlock);
         this.propertyBlocks.push(specificPropertyBlock);
-
-        basePropertyBlock['properties'] = baseProperties;
-        specificPropertyBlock['properties'] = specificProperties;
     }
 
     private createPropertyBlock(category: Category): void {
@@ -198,11 +207,13 @@ export class PropertyBlockPipe implements PipeTransform {
         basePropertyBlock[this.PROPERTY_BLOCK_FIELD_NAME] = this.getBlockNameForEClass(categoryName, true);
         basePropertyBlock[this.PROPERTY_BLOCK_FIELD_ISCOLLAPSED] = true;
         basePropertyBlock[this.PROPERTY_BLOCK_FIELD_PROPERTIES] = [];
+        basePropertyBlock[this.PROPERTY_BLOCK_FIELD_PROPERTY_DETAILS] = [];
 
         let specificPropertyBlock: any = {};
         specificPropertyBlock[this.PROPERTY_BLOCK_FIELD_NAME] = this.getBlockNameForEClass(categoryName, false);
         specificPropertyBlock[this.PROPERTY_BLOCK_FIELD_ISCOLLAPSED] = true;
         specificPropertyBlock[this.PROPERTY_BLOCK_FIELD_PROPERTIES] = [];
+        specificPropertyBlock[this.PROPERTY_BLOCK_FIELD_PROPERTY_DETAILS] = [];
 
         return [basePropertyBlock, specificPropertyBlock];
     }
@@ -212,6 +223,7 @@ export class PropertyBlockPipe implements PipeTransform {
         propertyBlock[this.PROPERTY_BLOCK_FIELD_NAME] = this.getBlockName(categoryName, taxonomyId);
         propertyBlock[this.PROPERTY_BLOCK_FIELD_ISCOLLAPSED] = true;
         propertyBlock[this.PROPERTY_BLOCK_FIELD_PROPERTIES] = [];
+        propertyBlock[this.PROPERTY_BLOCK_FIELD_PROPERTY_DETAILS] = [];
 
         return propertyBlock;
     }

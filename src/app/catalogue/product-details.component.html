@@ -6,21 +6,6 @@
 </h5>
 
 <!-- dimensions -->
-<!--<ng-container *ngIf="dimensions != null && object.keys(dimensions).length > 0">
-    <h5 class="mt-3">Dimensions</h5>
-    <div *ngFor="let key of object.keys(dimensions)"
-         class="container">
-        <quantity-view
-                [propName]="key"
-                [quantity]="dimensions[key]"
-                [presentationMode]="presentationMode"
-                [multiValue]="true"
-                (onSelectChange)="updateNegotiationItemDimensionData(key, $event)"
-                (onValueAdded)="createDimensionAttribute(key, dimensions[key][0].unitCode)"
-                (onValueDeleted)="deleteDimensionAttribute(key, $event)">
-        </quantity-view>
-    </div>
-</ng-container>-->
 <dimension-view [presentationMode]="presentationMode"
                 [itemDimensions]="catalogueLine.goodsItem.item.dimension">
 </dimension-view>
@@ -44,8 +29,9 @@
 
     <div id="propertyBlock" [ngbCollapse]="propertyBlockCollapsedStates.get(propertyBlock[PROPERTY_BLOCK_FIELD_NAME])">
         <additional-item-property
-                *ngFor="let property of propertyBlock[PROPERTY_BLOCK_FIELD_PROPERTIES]; trackBy : trackByIndex"
+                *ngFor="let property of propertyBlock[PROPERTY_BLOCK_FIELD_PROPERTIES]; let i = index; trackBy : trackByIndex"
                 [additionalItemProperty]="property"
+                [propertyDetails]="propertyBlock[PROPERTY_BLOCK_FIELD_PROPERTY_DETAILS] != undefined ? propertyBlock[PROPERTY_BLOCK_FIELD_PROPERTY_DETAILS][i] : null"
                 [presentationMode]="presentationMode">
         </additional-item-property>
     </div>
