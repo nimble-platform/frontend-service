@@ -1,0 +1,9 @@
+/**
+ * StyleSheet for Explorative Search Filter
+ */
+.filterArea {
+    border: 1px solid black;
+    background-color: peachpuff;
+    align-content: center;
+    text-align: center;
+}

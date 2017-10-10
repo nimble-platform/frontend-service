@@ -1,16 +1,25 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Params } from '@angular/router';
-import { Search } from './model/search';
-import { SimpleSearchService } from './simple-search.service';
-import { BPEService } from '../bpe/bpe.service';
-import { OrderObject } from '../bpe/model/order-object';
-import { Order } from '../bpe/model/order';
-import { CookieService } from 'ng2-cookies';
-import * as myGlobals from '../globals';
+import {Component, OnInit} from "@angular/core";
+import {ActivatedRoute} from "@angular/router";
+import {SimpleSearchService} from "./simple-search.service";
+import {BPEService} from "../bpe/bpe.service";
+import {Order} from "../bpe/model/ubl/order";
+import {CookieService} from "ng2-cookies";
+import * as myGlobals from "../globals";
+import {ProcessInstanceInputMessage} from "../bpe/model/process-instance-input-message";
+import {ProcessVariables} from "../bpe/model/process-variables";
+import {ModelUtils} from "../bpe/model/model-utils";
+import {UserService} from "../user-mgmt/user.service";
+import {UBLModelUtils} from "../catalogue/model/ubl-model-utils";
+import {CustomerParty} from "../catalogue/model/publish/customer-party";
+import {SupplierParty} from "../catalogue/model/publish/supplier-party";
+import {LineReference} from "../catalogue/model/publish/line-reference";
+import {CatalogueService} from "../catalogue/catalogue.service";
+import {CatalogueLine} from "../catalogue/model/publish/catalogue-line";
 
 @Component({
 	selector: 'simple-search-details',
-	templateUrl: './simple-search-details.component.html'
+	templateUrl: './simple-search-details.component.html',
+	styleUrls: ['./simple-search-details.component.css']
 })
 
 export class SimpleSearchDetailsComponent implements OnInit {
@@ -24,22 +33,27 @@ export class SimpleSearchDetailsComponent implements OnInit {
 	product_configurable = myGlobals.product_configurable;
 	set_configs = myGlobals.product_default;
 
+	selectedOption:string = "order";
+	showBPOptions:boolean = false;
+
 	callback = false;
 	error_detc = false;
 	submitted2 = false;
 	callback2 = false;
 	error_detc2 = false;
-	model = new Order('','','','');
-	orderToSubmit = new Order('','','','');
-	orderObjToSubmit = new OrderObject('','','','','','','');
 	temp: any;
 	response: any;
 	details: any;
 	configs: any;
+
+	catalogueLine: CatalogueLine;
+	order = UBLModelUtils.createOrder();
 	
 	constructor(
 		private simpleSearchService: SimpleSearchService,
 		private bpeService: BPEService,
+		private catalogueService: CatalogueService,
+		private userService: UserService,
 		private cookieService: CookieService,
 		private route: ActivatedRoute
 	) {
@@ -49,7 +63,20 @@ export class SimpleSearchDetailsComponent implements OnInit {
 		this.route.params.subscribe(params => {
 			this.details = [];
 			this.configs = [];
-			this.simpleSearchService.getSingle(params['id'])
+
+			// TODO demo specific id mapping
+			let id = params['id'];
+			if(id == 'MDF_Board_11190914') {
+				id = '662ea024-edec-4357-93ad-3df2bd522883';
+			} else if(id == 'MDF_Board_138495') {
+				id = '8c2fee8a-b74c-4908-b82f-537626cc14b2';
+			} else if(id == 'Nicole_White') {
+				id = '76c77611-3763-44b0-a789-49fdc5bd5cfc';
+			} else if(id == 'Globito_White') {
+				id = 'd8a24ccb-97c5-4392-bc01-b5763b06b12e';
+			}
+
+			this.simpleSearchService.getSingle(id)
 			.then(res => {
 				this.temp = res.response.docs;
 				for (let doc in this.temp) {
@@ -91,6 +118,11 @@ export class SimpleSearchDetailsComponent implements OnInit {
 					var b_comp = b.key;
 					return a_comp.localeCompare(b_comp);
 				});
+
+				this.catalogueService.getCatalogueLine(this.response[0]["item_catalogue_id"][0], this.response[0]["item_id"][0]).then(
+					line => this.catalogueLine = line
+				);
+
 				this.callback = true;
 				this.error_detc = false;
 			})
@@ -100,36 +132,6 @@ export class SimpleSearchDetailsComponent implements OnInit {
 			
 		});
     }
-	
-	order(obj: Order) {
-		this.orderToSubmit = JSON.parse(JSON.stringify(obj));
-		this.orderToSubmit.message = JSON.stringify(this.set_configs);
-		this.orderToSubmit.product_id = this.response[0].id.toString();
-		this.orderToSubmit.product_name = this.response[0][this.product_name].toString();
-		this.orderObjToSubmit.order = JSON.stringify(this.orderToSubmit);
-		if (this.product_vendor_id == "")
-			this.orderObjToSubmit.seller = "";
-		else
-			this.orderObjToSubmit.seller = this.response[0][this.product_vendor_id].toString();
-		if (this.product_vendor_name == "")
-			this.orderObjToSubmit.sellerName = "";
-		else
-			this.orderObjToSubmit.sellerName = this.response[0][this.product_vendor_name].toString();
-		this.orderObjToSubmit.buyer = this.cookieService.get("company_id");
-		this.orderObjToSubmit.buyerName = this.cookieService.get("user_fullname");
-		if (this.product_vendor_id == "")
-			this.orderObjToSubmit.connection = "||"+this.cookieService.get("company_id")+"|";
-		else
-			this.orderObjToSubmit.connection = "|"+this.response[0][this.product_vendor_id].toString()+"|"+this.cookieService.get("company_id")+"|";
-		this.bpeService.placeOrder(this.orderObjToSubmit)
-		.then(res => {
-			this.callback2 = true;
-			this.error_detc2 = false;
-		})
-		.catch(error => {
-			this.error_detc2 = true;
-		});
-	}
 	
 	setImage(key: string, value: string) {
 		this.set_configs[key] = value;
@@ -166,11 +168,6 @@ export class SimpleSearchDetailsComponent implements OnInit {
 		if (this.set_configs[key] != value)
 			match = false;
 		return match;
-	}
-	
-	onSubmit() {
-		this.submitted2 = true;
-		this.order(this.model);
 	}
 	
 	isJson(str: string): boolean {

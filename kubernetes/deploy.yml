@@ -1,0 +1,55 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: nimble-platform
+    name: frontend-service
+  name: frontend-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nimble-platform
+      name: frontend-service
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  revisionHistoryLimit: 5
+  template:
+    metadata:
+      labels:
+        app: nimble-platform
+        name: frontend-service
+    spec:
+      containers:
+      - image: nimbleplatform/frontend-service
+        imagePullPolicy: Always
+        name: frontend-service
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        resources:
+          requests:
+            cpu: 200m
+            memory: 256Mi
+
+---
+
+kind: Service
+metadata:
+  name: frontend-service
+  labels:
+    app: nimble-platform
+    name: frontend-service
+spec:
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+  selector:
+    app: nimble-platform
+    name: frontend-service

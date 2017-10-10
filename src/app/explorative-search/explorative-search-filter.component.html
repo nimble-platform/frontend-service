@@ -1,0 +1,26 @@
+<!-- Explorative Search Filter HTML -->
+
+<!-- Display the Filter Panel only when the filterConfig is non empty -->
+<div class="filterArea" *ngIf="(filterProperties['filterJSON'] | json) != '{}'">
+    <h4>{{filterProperties.fName}} Filter</h4>
+    <div *ngFor="let every of result">
+        <!-- CheckBoxes for the Filter -->
+        <input #cbCheck type="checkbox"
+               (change)="cbCheck.checked"
+               [value]="every.description"
+            (click)="checkedValues(cbCheck.value, $event.target.checked)">{{every.description}}
+    </div>
+    <br>
+    <!-- Slider -->
+    <div>
+        <p>Amount Of Groups  <span #rangeVal>3</span></p>
+        <input type="range" min="1" max="10" value="3" (change)="getGroupVal($event.target.value)">
+    </div>
+    <!-- Submission of Filter Parameters -->
+    <!--<button type="submit" class="btn btn-large btn-success"
+            (click)="submitFilter()">Submit
+    </button> -->
+</div>
+<div [hidden]="!_error_detected_slider">
+    <div class="alert alert-danger space-before" role="alert">An error occured - please try again later</div>
+</div>

@@ -6,7 +6,11 @@
  * Delete button: appears once the checkbox beside the keyword is checked
  * upon clicking it the content and the keyword itself are removed from 
  * the HTML file
+ *
+ * Parent for this class: explorative-search.component
+ * Child for this class: explorative-search-details.component
  */
+
 import { Component, OnInit } from '@angular/core';
 import { ExplorativeSearchService } from './explorative-search.service';
 import { Explorative } from './model/explorative';
@@ -32,38 +36,63 @@ export class ExplorativeSearchFormComponent implements OnInit {
 
     // checkbox for every keyword in Search History
     // remember: the variable name is same as in the HTML file
-    cbInput = false;
+    cbInput = true;
+    langInput = true;
+    language: string = 'en'; // default search in english
+    availableLanguages = {};
     // Use the stored data which might further
     // data visualization
     // remember: the variable `Output` is the same as in the HTML file
     Output = OUTPUT;
-    visData: Object[] = []; // send this to details component
-    testString: string;
-
+    visData: Object; // send this to details component
     // For response which constitutes more than one option..
     showMore: boolean[] = [];
+    private _error_detected_kw = false;
+    private _error_detected_query = false;
+    private _warning_kw = false;
 
     constructor(private expSearch: ExplorativeSearchService) {}
 
     ngOnInit(): void {
         this.showMore = new Array(this.Output.length);
         this.showMore.fill(false);
+        this.expSearch.getLanguageSupport()
+            .then(res => this.availableLanguages = res);
     }
     /**
      * Search: will get a HTTP response from the server (HTTP GET)
      *          of the keyword which user inputs.
      * @param inputVal string obtained from the input bar of the HTML file
+     * @param inpLang string which language the user queries
      */
-    Search(inputVal: string): void {
+    Search(inputVal: string, inpLang: string): void {
+        if (!inpLang) {
+            // default is english
+            inpLang = this.language;
+        }
+        this.language = inpLang;
         inputVal = inputVal.trim(); // trim whitespaces
         if (!inputVal) { return; } // if no input; do nothing
 
         // Let the Service do its fetching of data from server
-        this.expSearch.searchData(inputVal)
+        // console.log(lang)
+        this.expSearch.searchData(inputVal, this.language)
                 .then(res => {
                     // push the data in to List
-                    this.Output.push(<Explorative> {kw: inputVal, resp: res});
-                });
+                    if (res['conceptOverview'].length !== 0) { // if the keyword does exist..
+                        // only then push
+                        this.Output.push(<Explorative> {kw: inputVal, resp: res});
+                        this._warning_kw = false;
+                    } else { // display warning
+                        this._warning_kw = true;
+                    }
+                    this._error_detected_kw = false;
+                })
+            .catch(error => {
+                console.log(error);
+                this._error_detected_kw = true;
+            });
+        // console.log('OUTPUT', this.Output);
     }
 
     /**
@@ -82,24 +111,33 @@ export class ExplorativeSearchFormComponent implements OnInit {
     }
 
     /**
-     * postQuery: for the when the user will click a specific keyword button
+     * getQuery: for the when the user will click a specific keyword button
      * the parameter will be sent as JSON request to get the Visualization values
      * @param inputVal the name of the Button clicked by the User
      */
 
-    postQuery(inputVal: string) {
+    getQuery(inputVal: string) {
+        // console.log(inputVal);
         // HTTP GET to backend Server for visualization
         // create a JSON request for the queried button
-        let temp = {'concept': inputVal, 'stepRange': 2, 'frozenConcept': 'ddd'};
+        let temp = {'concept': inputVal.trim(), 'stepRange': 2, 'frozenConcept': inputVal.trim(),
+            'language': this.language, 'distanceToFrozenConcept': 0,
+            'conceptURIPath': [inputVal.trim()]
+        };
         // console.log(JSON.stringify(temp)); // Debug: check
         // get the requested query
         this.expSearch.getLogicalView(temp)
             .then(res => {
                 // console.log(res);
-                this.visData.push(res);
+                // this.visData = new Array();
+                this.visData = res;
                 // console.log(this.visData);
-                this.testString = temp.concept;
+                this._error_detected_query = false;
             }
-        );
+        )
+            .catch(error => {
+                console.log(error);
+                this._error_detected_query = true;
+            });
     }
 }

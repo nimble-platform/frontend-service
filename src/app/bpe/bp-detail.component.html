@@ -1,0 +1,49 @@
+<div  *ngIf="bp">
+    <br/>
+	<h2>{{bp.processName}} Details</h2>
+	<div class="input-group form-group">
+		<label class="input-group-addon" i18n>Process ID: </label>
+        <input class="form-control" [(ngModel)]="bp.processID" placeholder="processID" />
+    </div>
+	<div class="input-group form-group">
+		<label class="input-group-addon" i18n>Process Name: </label>
+		<input class="form-control" [(ngModel)]="bp.processName" placeholder="processName" />
+	</div>
+    <div class="input-group form-group">
+        <label class="input-group-addon" i18n>Process Type: </label>
+        <select [(ngModel)]="bp.processType">
+            <option value="CATALOGUE">CATALOGUE</option>
+            <option value="NEGOTIATION">NEGOTIATION</option>
+            <option value="ORDER">ORDER</option>
+            <option value="REMITTANCEADVICE">REMITTANCEADVICE</option>
+            <option value="INVOICE">INVOICE</option>
+            <option value="TRACKING">TRACKING</option>
+            <option value="FULFILLMENT">FULFILLMENT</option>
+            <option value="PRODUCTCONFIGURATION">PRODUCTCONFIGURATION</option>
+            <option value="OTHER">OTHER</option>
+        </select>
+    </div>
+    <div class="input-group form-group">
+        <label class="input-group-addon" i18n>Process Content: </label>
+        <textarea rows="10" cols="40" id="editor" placeholder="textContent" [(ngModel)]="bp.textContent"></textarea>
+        <div id="diagram"></div>
+    </div>
+    <br/>
+    <!-- TODO: asagidaki fonksiyonlar create(bp) seklinde cagiriliyordu -->
+    <button *ngIf="isCreatePage" (click)="create()">&nbsp; Create &nbsp;</button>
+    <button *ngIf="!isCreatePage" (click)="update()">&nbsp; Update &nbsp;</button>
+</div>
+
+<!--div>
+    <label>Textual Content: </label>
+    <div class="editor-wrapper">
+        <div class="editor">Title: ORDER
+            Buyer -> Seller: Order
+            Note right of Seller: Evaluate Order
+            Seller -> Buyer: Order Response Simple</div>
+    </div>
+</div>
+<div id="diagram">Diagram</div-->
+
+
+

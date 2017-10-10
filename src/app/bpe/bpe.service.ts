@@ -1,9 +1,12 @@
-import { Injectable } from '@angular/core';
-import { Headers, Http } from '@angular/http';
+import {Injectable} from '@angular/core';
+import {Headers, Http} from '@angular/http';
 import 'rxjs/add/operator/toPromise';
-import { OrderObject } from './model/order-object';
-import { OrderResponse } from './model/order-response';
 import * as myGlobals from '../globals';
+import {RequestForQuotation} from "./model/ubl/request-for-quotation";
+import {RequestForQuotationResponse} from "./model/ubl/request-for-quotation-response";
+import {ProcessInstanceInputMessage} from "./model/process-instance-input-message";
+import {ProcessInstance} from "./model/process-instance";
+import {OrderResponseSimple} from "./model/ubl/order-response-simple";
 
 @Injectable()
 export class BPEService {
@@ -13,70 +16,30 @@ export class BPEService {
 	
 	constructor(private http: Http) { }
 
-	placeOrder(orderObject: OrderObject): Promise<any> {
-		const url = `${this.url}/rest/engine/default/process-definition/key/Order/start`;
-		var jsonToSend = {
-			"variables": {},
-			"businessKey" : ""
-		}
-		for (let order_var in orderObject) {
-			jsonToSend.variables[order_var] = {
-				"value":orderObject[order_var],
-				"type":"String"
-			}
-		}
+	startBusinessProcess(piim:ProcessInstanceInputMessage):Promise<ProcessInstance> {
+		const url = `${this.url}/start`;
 		return this.http
-		.post(url, JSON.stringify(jsonToSend), {headers: this.headers})
-		.toPromise()
-		.then(res => res.json())
-		.catch(this.handleError);
+            .post(url, JSON.stringify(piim), {headers: this.headers})
+            .toPromise()
+            .then(res => {
+				console.log(res.json());
+            	return res.json();
+            })
+            .catch(this.handleError);
 	}
-	
-	respondToOrder(task: string, orderResponse: OrderResponse): Promise<any> {
-		const url = `${this.url}/rest/engine/default/task/${task}/complete`;
-		var jsonToSend = {
-			"variables": {
-				"orderResponse": {
-					"value": JSON.stringify(orderResponse),
-					"type": "String"
-				}
-			},
-			"businessKey" : ""
-		}
+
+	continueBusinessProcess(piim:ProcessInstanceInputMessage):Promise<ProcessInstance> {
+		const url = `${this.url}/continue`;
 		return this.http
-		.post(url, JSON.stringify(jsonToSend), {headers: this.headers})
-		.toPromise()
-		.then(res => res.json())
-		.catch(this.handleError);
+            .post(url, JSON.stringify(piim), {headers: this.headers})
+            .toPromise()
+            .then(res => {
+				console.log(res.json());
+				return res.json();
+			})
+            .catch(this.handleError);
 	}
-	
-	removeOrder(process: string): Promise<any> {
-		const url = `${this.url}/rest/engine/default/history/process-instance/${process}`;
-		return this.http
-		.delete(url, {headers: this.headers})
-		.toPromise()
-		.then(res => res.json())
-		.catch(this.handleError);
-	}
-	
-	cancelOrder(process: string): Promise<any> {
-		const url = `${this.url}/rest/engine/default/process-instance/${process}`;
-		return this.http
-		.delete(url, {headers: this.headers})
-		.toPromise()
-		.then(res => res.json())
-		.catch(this.handleError);
-	}
-	
-	getOrders(id: string): Promise<any> {
-		const url = `${this.url}/rest/engine/default/task?sortBy=created&sortOrder=desc&processVariables=connection_like_%|${id}|%`;
-		return this.http
-		.get(url, {headers: this.headers})
-		.toPromise()
-		.then(res => res.json())
-		.catch(this.handleError);
-	}
-	
+
 	getProcessDetails(id: string): Promise<any> {
 		const url = `${this.url}/rest/engine/default/variable-instance?processInstanceIdIn=${id}`;
 		return this.http
@@ -85,9 +48,9 @@ export class BPEService {
 		.then(res => res.json())
 		.catch(this.handleError);
 	}
-	
-	getBuyerHistory(id: string): Promise<any> {
-		const url = `${this.url}/rest/engine/default/history/task?processVariables=buyer_eq_${id}&sortBy=startTime&sortOrder=desc&maxResults=10`;
+
+	getInitiatorHistory(id: string): Promise<any> {
+		const url = `${this.url}/rest/engine/default/history/task?processVariables=initiatorID_eq_${id}&sortBy=startTime&sortOrder=desc&maxResults=10`;
 		return this.http
 		.get(url, {headers: this.headers})
 		.toPromise()
@@ -95,8 +58,8 @@ export class BPEService {
 		.catch(this.handleError);
 	}
 	
-	getSellerHistory(id: string): Promise<any> {
-		const url = `${this.url}/rest/engine/default/history/task?processVariables=seller_eq_${id}&sortBy=startTime&sortOrder=desc&maxResults=10`;
+	getRecipientHistory(id: string): Promise<any> {
+		const url = `${this.url}/rest/engine/default/history/task?processVariables=responderID_eq_${id}&sortBy=startTime&sortOrder=desc&maxResults=10`;
 		return this.http
 		.get(url, {headers: this.headers})
 		.toPromise()
@@ -112,9 +75,17 @@ export class BPEService {
 		.then(res => res.json())
 		.catch(this.handleError);
 	}
-	
+
+	getDocumentJsonContent(documentId:string):Promise<string> {
+		const url = `${this.url}/document/json/${documentId}`;
+		return this.http
+            .get(url, {headers: this.headers})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+	}
+
 	private handleError(error: any): Promise<any> {
 		return Promise.reject(error.message || error);
 	}
-	
 }

@@ -7,79 +7,94 @@
 	</div>
 </div>
 
-<div *ngIf="companyName">
-	<h4 class="company-name-header">Company {{companyName}}</h4>
-	<div class="row space-before">
-		<div class="col-12">
-			<h4 class="space-after" i18n>Sales</h4>
-			<div *ngIf="seller_history.length > 0">
-				<table class="table table-striped table-bordered">
-					<tr><th i18n>Date</th><th i18n>Product</th><th i18n>Amount</th><th i18n>Buyer</th><th i18n>Message</th><th i18n>Status</th><th i18n>Options</th></tr>
-					<tr *ngFor="let seller of seller_history">
-						<td>{{ seller.start_time }}</td>
-						<td>{{ seller.order.product_name }}</td>
-						<td>{{ seller.order.amount }}</td>
-						<td>{{ seller.buyerName }}</td>
-						<td>{{ seller.order.message }}</td>
-						<td *ngIf="seller.orderResponse==''">
-							<span class="text-danger" i18n>Action required</span>
-						</td>
-						<td *ngIf="seller.orderResponse.response=='approved'">
-							<span class="text-success" i18n>Approved</span><span *ngIf="seller.orderResponse.message!=''"> ( {{ seller.orderResponse.message }} )</span>
-						</td>
-						<td *ngIf="seller.orderResponse.response=='declined'">
-							<span class="text-danger" i18n>Declined</span><span *ngIf="seller.orderResponse.message!=''"> ( {{ seller.orderResponse.message }} )</span>
-						</td>
-						<td *ngIf="seller.orderResponse==''">
-							<button class="btn btn-block btn-success" (click)="respondToOrder(seller.task_id,'approved')" i18n>Approve</button>
-							<button class="btn btn-block btn-danger" (click)="respondToOrder(seller.task_id,'declined')" i18n>Decline</button>
-							<button class="btn btn-block btn-default" disabled i18n>Negotiate</button>
-						</td>
-						<td *ngIf="seller.orderResponse!=''">
-							<button class="btn btn-block btn-default" (click)="removeOrder(seller.process_id)" i18n>Remove from history</button>
-						</td>
-					</tr>
-				</table>
-			</div>
-			<div *ngIf="seller_history.length == 0">
-				<span i18n>No data</span>
-			</div>
+<div class="row space-before">
+	<div class="col-12">
+		<h4 class="space-after" i18n>Sales</h4>
+		<div *ngIf="seller_history.length > 0">
+			<table class="table table-striped table-bordered">
+				<tr><th>Process</th><th i18n>Date</th><th i18n>Product</th><th i18n>Buyer</th><th i18n>Note</th><th i18n>Status</th><th i18n>Response</th><th i18n>Options</th></tr>
+				<tr *ngFor="let processMetadata of seller_history">
+
+					<td>{{processMetadata.processType}}</td>
+					<td>{{processMetadata.start_time }}</td>
+					<td>{{processMetadata.product_name}}</td>
+					<td>{{processMetadata.buyerName }}</td>
+					<td>{{processMetadata.note}}</td>
+					<td>{{processMetadata.status}}</td>
+					<td>{{processMetadata.response}}</td>
+
+					<!-- order options -->
+					<td *ngIf="processMetadata.processType == 'Order' && processMetadata.status == 'Started'">
+						<button class="btn btn-block btn-success" (click)="respondToOrder(processMetadata.process_id, processMetadata.content, true)" i18n>Approve</button>
+						<button class="btn btn-block btn-danger" (click)="respondToOrder(processMetadata.process_id, processMetadata.content, false)" i18n>Decline</button>
+					</td>
+					<td *ngIf="processMetadata.processType == 'Order' && processMetadata.status != 'Started'">
+						-
+					</td>
+
+					<!-- negotiation options -->
+					<td *ngIf="processMetadata.processType == 'Negotiation' && processMetadata.status=='Started'">
+						<button class="btn btn-block btn-success" (click)="respondToRFQ(processMetadata.process_id, processMetadata.content, true)" i18n>Approve</button>
+						<button class="btn btn-block btn-danger" (click)="respondToRFQ(processMetadata.process_id, processMetadata.content, false)" i18n>Decline</button>
+					</td>
+					<td *ngIf="processMetadata.processType == 'Negotiation' && processMetadata.status=='Completed'">
+						-
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div *ngIf="seller_history.length == 0">
+			<span i18n>No data</span>
 		</div>
 	</div>
+</div>
 
-	<div class="row space-before">
-		<div class="col-12">
-			<h4 class="space-after" i18n>Purchases</h4>
-			<div *ngIf="buyer_history.length > 0">
-				<table class="table table-striped table-bordered">
-					<tr><th i18n>Date</th><th i18n>Product</th><th i18n>Amount</th><th i18n>Seller</th><th i18n>Message</th><th i18n>Status</th><th i18n>Options</th></tr>
-					<tr *ngFor="let buyer of buyer_history">
-						<td>{{ buyer.start_time }}</td>
-						<td>{{ buyer.order.product_name }}</td>
-						<td>{{ buyer.order.amount }}</td>
-						<td>{{ buyer.sellerName }}</td>
-						<td>{{ buyer.order.message }}</td>
-						<td *ngIf="buyer.orderResponse==''">
-							<span class="text-warning" i18n>Waiting for response</span>
-						</td>
-						<td *ngIf="buyer.orderResponse.response=='approved'">
-							<span class="text-success" i18n>Approved</span><span *ngIf="buyer.orderResponse.message!=''"> ( {{ buyer.orderResponse.message }} )</span>
-						</td>
-						<td *ngIf="buyer.orderResponse.response=='declined'">
-							<span class="text-danger" i18n>Declined</span><span *ngIf="buyer.orderResponse.message!=''"> ( {{ buyer.orderResponse.message }} )</span>
-						</td>
-						<td *ngIf="buyer.orderResponse==''">
-							<button class="btn btn-block btn-default" (click)="cancelOrder(buyer.process_id)" i18n>Cancel</button>
-						</td>
-						<td *ngIf="buyer.orderResponse!=''">
-							<button class="btn btn-block btn-default" (click)="removeOrder(buyer.process_id)" i18n>Remove from history</button>
-						</td>
-					</tr>
-				</table>
-			</div>
-			<div *ngIf="buyer_history.length == 0">
-				<span i18n>No data</span>
-			</div>
+<div class="row space-before">
+	<div class="col-12">
+		<h4 class="space-after" i18n>Purchases</h4>
+		<div *ngIf="buyer_history.length > 0">
+			<table class="table table-striped table-bordered">
+				<tr><th>Process</th><th i18n>Date</th><th i18n>Product</th><th i18n>Seller</th><th i18n>Note</th><th i18n>Status</th><th i18n>Response</th><th i18n>Options</th></tr>
+				<tr *ngFor="let processMetadata of buyer_history">
+					<td>{{processMetadata.processType}}</td>
+					<td>{{processMetadata.start_time }}</td>
+					<td>{{processMetadata.product_name}}</td>
+					<td>{{processMetadata.sellerName }}</td>
+					<td>{{processMetadata.note}}</td>
+					<td>{{processMetadata.status}}</td>
+					<td>{{processMetadata.response}}</td>
+
+					<!-- details column -->
+					<!--<td>-->
+						<!--<button class="btn btn-block btn-info" (click)="navigateToBPDetails()" i18n>Details</button>-->
+					<!--</td>-->
+
+					<!-- order options -->
+					<td *ngIf="processMetadata.processType == 'Order'">
+						-
+					</td>
+
+					<!-- negotation options -->
+					<td *ngIf="processMetadata.processType == 'Negotiation' && processMetadata.status == 'Started'">
+						-
+					</td>
+					<td *ngIf="processMetadata.processType == 'Negotiation' && processMetadata.status == 'Completed'">
+						<button *ngIf="processMetadata.response=='Approved'"
+								class="btn btn-block btn-info"
+								[routerLink]="['/simple-search-details', processMetadata.productId]"
+								i18n>Order
+						</button>
+						<button *ngIf="processMetadata.response=='Declined'"
+								class="btn btn-block btn-info"
+								[routerLink]="['/simple-search-details', processMetadata.productId]"
+								i18n>Negotiate
+						</button>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div *ngIf="buyer_history.length == 0">
+			<span i18n>No data</span>
 		</div>
 	</div>
 </div>

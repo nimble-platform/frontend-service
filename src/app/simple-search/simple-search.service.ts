@@ -31,7 +31,7 @@ export class SimpleSearchService {
 	
 	get(query: string, facets: [string], facetQueries: [string], page: number): Promise<any> {
 		var start = page*10-10;
-		const url = `${this.url}?q=${query}&start=${start}&facet=true&sort=score%20desc&rows=10&facet.sort=count&facet.limit=10&facet.mincount=${this.facetMin}&json.nl=map&wt=json`;
+		const url = `${this.url}?q=${query}&start=${start}&facet=true&sort=score%20desc&rows=10&facet.sort=count&facet.limit=30&facet.mincount=${this.facetMin}&json.nl=map&wt=json`;
 		var full_url = url + "";
 		for (let facet of facets) {
 			full_url += "&facet.field="+facet;
@@ -47,7 +47,7 @@ export class SimpleSearchService {
 	}
 	
 	getSingle(id: string): Promise<any> {
-		const url = `${this.url}?q=*&rows=1&wt=json&fq=id:${id}`;
+		const url = `${this.url}?q=*&rows=1&wt=json&fq=item_id:${id}`;
 		return this.http
 		.get(url, {headers: this.headers})
 		.toPromise()

@@ -3,18 +3,19 @@ import { Headers, Http } from '@angular/http';
 import 'rxjs/add/operator/toPromise';
 import * as myGlobals from '../globals';
 import {Party} from "../catalogue/model/publish/party";
-import {Identifier} from "../catalogue/model/publish/identifier";
-import {PartyName} from "../catalogue/model/publish/party-name";
 import { CompanySettings } from './model/company-settings';
 import { UserRegistration } from './model/user-registration';
 import { CompanyRegistration } from './model/company-registration';
+import {Observable} from "rxjs/Observable";
+import {toPromise} from "rxjs/operator/toPromise";
 
 @Injectable()
 export class UserService {
 
 	private headers = new Headers({'Content-Type': 'application/json'});
 	private url = myGlobals.user_mgmt_endpoint;
-	private userParty: Party;
+
+	userParty: Party;
 
 	constructor(private http: Http) { }
 
@@ -36,6 +37,22 @@ export class UserService {
             .catch(this.handleError);
 	}
 
+	getParty(partyId:string):Promise<Party> {
+		const url = `${this.url}/party/${partyId}`;
+		return this.http
+            .get(url, {headers: this.headers})
+			.toPromise()
+            .catch(err => {
+            	if(err.status == 302) {
+					// ToDo: make identity service using the latest version of the data model
+					let party:Party = new Party(null, err.json().id, err.json().partyName[0].name, null);
+					return Promise.resolve(party);
+				} else {
+            		return this.handleError(err);
+				}
+            });
+	}
+
 	getUserParty(userId: string): Promise<Party> {
 		if(this.userParty != null) {
 			return Promise.resolve(this.userParty);
@@ -45,14 +62,8 @@ export class UserService {
 		.get(url, {headers: this.headers})
 		.toPromise()
 		.then(res => {
-
-			let partyObj = res.json()[0];
-			console.log(url + ' returned ' + JSON.stringify(partyObj));
-
 			// ToDo: make identity service using the latest version of the data model
-			let id:Identifier = new Identifier(partyObj.id, null, null);
-			let names:PartyName[] = [new PartyName(partyObj.partyName[0].name)];
-			this.userParty = new Party(id, names, null);
+			this.userParty = new Party(null, res.json()[0].hjid, res.json()[0].partyName[0].name, null);
 			return Promise.resolve(this.userParty);
 		})
 		.catch(this.handleError);
@@ -61,7 +72,7 @@ export class UserService {
     getSettings(userId: string): Promise<CompanySettings> {
 
         return this.getUserParty(userId).then(party => {
-            const url = `${this.url}/company-settings/${party.id.value}`;
+            const url = `${this.url}/company-settings/${party.id}`;
             return this.http
                 .get(url, {headers: this.headers})
                 .toPromise()
@@ -72,7 +83,7 @@ export class UserService {
 
 	putSettings(settings: CompanySettings, userId: string): Promise<any> {
 		return this.getUserParty(userId).then(party => {
-			const url = `${this.url}/company-settings/${party.id.value}`;
+			const url = `${this.url}/company-settings/${party.id}`;
 			return this.http
                 .put(url, settings, {headers: this.headers})
                 .toPromise()
@@ -81,7 +92,7 @@ export class UserService {
 		});
 	}
 
-	reset(): void {
+	resetData():void {
 		this.userParty = null;
 	}
 
