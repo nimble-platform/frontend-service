@@ -6,8 +6,6 @@ import {Party} from "../catalogue/model/publish/party";
 import { CompanySettings } from './model/company-settings';
 import { UserRegistration } from './model/user-registration';
 import { CompanyRegistration } from './model/company-registration';
-import {Observable} from "rxjs/Observable";
-import {toPromise} from "rxjs/operator/toPromise";
 
 @Injectable()
 export class UserService {
