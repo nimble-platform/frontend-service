@@ -24,6 +24,7 @@ export class CompanySettingsComponent implements OnInit {
 
     ngOnInit() {
         this.settingsForm = this._fb.group({
+            name: [''],
             address: AddressSubForm.generateForm(this._fb),
             deliveryTerms: DeliveryTermsSubForm.generateForm(this._fb),
             paymentMeans: PaymentMeansForm.generateForm(this._fb),
@@ -33,23 +34,25 @@ export class CompanySettingsComponent implements OnInit {
     }
 
     initForm() {
-        let userId = this.cookieService.get('user_id');
-        this.userService.getSettings(userId).then(settings => {
 
-            console.log('Fetched settings: ' + JSON.stringify(settings));
+            let userId = this.cookieService.get('user_id');
+            this.userService.getSettings(userId).then(settings => {
 
-            // update forms
-            AddressSubForm.update(this.settingsForm.controls['address'], settings.address);
-            PaymentMeansForm.update(this.settingsForm.controls['paymentMeans'], settings.paymentMeans);
-            DeliveryTermsSubForm.update(this.settingsForm.controls['deliveryTerms'], settings.deliveryTerms);
-        });
+                console.log('Fetched settings: ' + JSON.stringify(settings));
+
+                // update forms
+                this.settingsForm.controls['name'].setValue(settings.name);
+                AddressSubForm.update(this.settingsForm.controls['address'], settings.address);
+                PaymentMeansForm.update(this.settingsForm.controls['paymentMeans'], settings.paymentMeans);
+                DeliveryTermsSubForm.update(this.settingsForm.controls['deliveryTerms'], settings.deliveryTerms);
+            });
     }
 
     save(model: FormGroup) {
 
-        console.log(JSON.stringify(model.getRawValue()));
+        console.log(`Changing company ${JSON.stringify(model.getRawValue())}`);
 
-        // save settings
+        // update settings
         this.isSubmitting = true;
         let userId = this.cookieService.get('user_id');
         this.userService.putSettings(model.getRawValue(), userId)

@@ -2,7 +2,8 @@
     <div class="form-group col-xs-3">
         <label>Terms</label>
         <textarea type="text" class="form-control" formControlName="specialTerms"></textarea>
-        <small [hidden]="deliveryTermsForm.controls.specialTerms.valid || deliveryTermsForm.controls.specialTerms.pristine" class="text-danger">
+        <small [hidden]="deliveryTermsForm.controls.specialTerms.valid || deliveryTermsForm.controls.specialTerms.pristine"
+               class="text-danger">
             Terms are required
         </small>
     </div>
@@ -12,5 +13,7 @@
     </div>
 
     <h5>Delivery Address</h5>
-    <address-form [group]="deliveryTermsForm.controls.deliveryAddress"></address-form>
+    <div>
+        <address-form [group]="deliveryTermsForm.controls.deliveryAddress"></address-form>
+    </div>
 </div>
