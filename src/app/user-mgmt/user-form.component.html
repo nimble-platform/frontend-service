@@ -1,55 +1,32 @@
 <form (ngSubmit)="onSubmit()" class="space-before" #userForm="ngForm" novalidate>
 	<div class="input-group form-group">
 		<label for="email" class="input-group-addon" i18n>E-Mail</label>
-		<input type="email" class="form-control" id="email" required [(ngModel)]="model.email" name="email" #email="ngModel" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$" i18n-placeholder placeholder="e.g. user@domain.com">
+		<input type="email" class="form-control" id="email" required [(ngModel)]="model.user.email" name="email" #email="ngModel" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$" i18n-placeholder placeholder="e.g. user@domain.com">
 	</div>
 	<div class="input-group form-group">
 		<label for="password" class="input-group-addon" i18n>Password</label>
-		<input type="password" class="form-control" id="password" required [(ngModel)]="model.password" name="password" #password="ngModel" pattern=".{6,}" i18n-placeholder placeholder="Six or more characters">
+		<input type="password" class="form-control" id="password" required [(ngModel)]="model.credentials.password" name="password" #password="ngModel" pattern=".{6,}" i18n-placeholder placeholder="Six or more characters">
 	</div>
 	<div class="input-group form-group">
 		<label for="firstname" class="input-group-addon" i18n>First Name</label>
-		<input type="text" class="form-control" id="firstname" required [(ngModel)]="model.firstname" name="firstname" #firstname="ngModel">
+		<input type="text" class="form-control" id="firstname" required [(ngModel)]="model.user.firstname" name="firstname" #firstname="ngModel">
 	</div>
 	<div class="input-group form-group">
 		<label for="lastname" class="input-group-addon" i18n>Last Name</label>
-		<input type="text" class="form-control" id="lastname" required [(ngModel)]="model.lastname" name="lastname" #lastname="ngModel">
+		<input type="text" class="form-control" id="lastname" required [(ngModel)]="model.user.lastname" name="lastname" #lastname="ngModel">
 	</div>
 	<div class="input-group form-group">
 		<label for="dateOfBirth" class="input-group-addon" i18n>Date Of Birth</label>
-		<input type="text" class="form-control" id="dateOfBirth" required [(ngModel)]="model.dateOfBirth" name="dateOfBirth" #dateOfBirth="ngModel" pattern="[0-9]{4}-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])" placeholder="YYYY-MM-DD">
+		<input type="text" class="form-control" id="dateOfBirth" [(ngModel)]="model.user.dateOfBirth" name="dateOfBirth" #dateOfBirth="ngModel" pattern="[0-9]{4}-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])" placeholder="YYYY-MM-DD">
 	</div>
 	<div class="input-group form-group">
 		<label for="placeOfBirth" class="input-group-addon" i18n>Place Of Birth</label>
-		<input type="text" class="form-control" id="placeOfBirth" [(ngModel)]="model.placeOfBirth" name="placeOfBirth" #placeOfBirth="ngModel">
-	</div>
-	<div class="input-group form-group">
-		<label for="jobTitle" class="input-group-addon" i18n>Job Title</label>
-		<input type="text" class="form-control" id="jobTitle" [(ngModel)]="model.jobTitle" name="jobTitle" #jobTitle="ngModel">
-	</div>
-	<div class="input-group form-group">
-		<label for="legalDomain" class="input-group-addon" i18n>Legal Domain</label>
-		<input type="text" class="form-control" id="legalDomain" [(ngModel)]="model.legalDomain" name="legalDomain" #legalDomain="ngModel">
+		<input type="text" class="form-control" id="placeOfBirth" [(ngModel)]="model.user.placeOfBirth" name="placeOfBirth" #placeOfBirth="ngModel">
 	</div>
 	<div class="input-group form-group">
 		<label for="phoneNumber" class="input-group-addon" i18n>Phone Number</label>
-		<input type="tel" class="form-control" id="phoneNumber" [(ngModel)]="model.phoneNumber" name="phoneNumber" #phoneNumber="ngModel">
+		<input type="tel" class="form-control" id="phoneNumber" [(ngModel)]="model.user.phoneNumber" name="phoneNumber" #phoneNumber="ngModel">
 	</div>
-	
-	<!-- ToDo: Hackathon only BEGIN -->
-	<div class="input-group form-group">
-		<label for="companyName" class="input-group-addon" i18n>Company Name</label>
-		<input type="text" class="form-control" id="companyName" required [(ngModel)]="model.companyName" name="companyName" #companyName="ngModel">
-	</div>
-	<div class="input-group form-group">
-		<label for="companyAddress" class="input-group-addon" i18n>Company Address</label>
-		<input type="text" class="form-control" id="companyAddress" required [(ngModel)]="model.companyAddress" name="companyAddress" #companyAddress="ngModel">
-	</div>
-	<div class="input-group form-group">
-		<label for="companyCountry" class="input-group-addon" i18n>Company Country</label>
-		<input type="text" class="form-control" id="companyCountry" required [(ngModel)]="model.companyCountry" name="companyCountry" #companyCountry="ngModel">
-	</div>
-	<!-- ToDo: Hackathon only END -->
 	
 	<button type="submit" class="btn btn-success" [disabled]="!userForm.form.valid" i18n>Submit</button>
 	<button type="button" class="btn btn-secondary space-left" (click)="userForm.reset();reset()" [hidden]="userForm.form.pristine" i18n>Reset</button>

@@ -1,25 +1,25 @@
 <div class="address-form" [formGroup]="addressForm">
     <div class="form-group col-xs-3">
         <label>Street</label>
-        <input type="text" class="form-control" formControlName="streetName">
+        <input type="text" class="form-control" name="streetName" formControlName="streetName">
         <small [hidden]="addressForm.controls.streetName.valid || addressForm.controls.streetName.pristine" class="text-danger">
             Street is required
         </small>
     </div>
     <div class="form-group col-xs-3">
         <label>Building Number</label>
-        <input type="text" class="form-control" formControlName="buildingNumber">
+        <input type="text" class="form-control" name="buildingNumber" formControlName="buildingNumber">
     </div>
     <div class="form-group col-xs-3">
         <label>City</label>
-        <input type="text" class="form-control" formControlName="cityName">
+        <input type="text" class="form-control" name="cityName" formControlName="cityName">
     </div>
     <div class="form-group col-xs-3">
         <label>Postal code</label>
-        <input type="text" class="form-control" formControlName="postalCode">
+        <input type="text" class="form-control" name="postalCode" formControlName="postalCode">
     </div>
     <div class="form-group col-xs-3">
         <label>Country</label>
-        <input type="text" class="form-control" formControlName="country">
+        <input type="text" class="form-control" name="country" formControlName="country">
     </div>
 </div>

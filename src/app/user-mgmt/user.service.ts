@@ -1,12 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Headers, Http } from '@angular/http';
 import 'rxjs/add/operator/toPromise';
-import { User } from './model/user';
 import * as myGlobals from '../globals';
 import {Party} from "../catalogue/model/publish/party";
 import { CompanySettings } from './model/company-settings';
-import {Observable} from "rxjs/Observable";
-import {toPromise} from "rxjs/operator/toPromise";
+import { UserRegistration } from './model/user-registration';
+import { CompanyRegistration } from './model/company-registration';
 
 @Injectable()
 export class UserService {
@@ -18,13 +17,22 @@ export class UserService {
 
 	constructor(private http: Http) { }
 
-	post(user: User): Promise<any> {
-		const url = `${this.url}/registerCompany`;
+	registerUser(user: UserRegistration): Promise<any> {
+		const url = `${this.url}/register/user`;
 		return this.http
 		.post(url, JSON.stringify(user), {headers: this.headers})
 		.toPromise()
 		.then(res => res.json())
 		.catch(this.handleError);
+	}
+
+	registerCompany(company: CompanyRegistration) {
+		const url = `${this.url}/register/company`;
+		return this.http
+            .post(url, JSON.stringify(company), {headers: this.headers})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
 	}
 
 	getParty(partyId:string):Promise<Party> {
