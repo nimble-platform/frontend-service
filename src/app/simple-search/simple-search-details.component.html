@@ -46,12 +46,11 @@
                          src="assets/empty_img.png"
                          class="img-max"/>
                 </div>
-                <a *ngIf="response && catalogueLine"
-                   href="#bpPanel"
+                <button *ngIf="response && catalogueLine"
                    class="btn btn-info col mt-3"
-                   (click)="showBPOptions = !showBPOptions"
+                   (click)="showBPOptions = !showBPOptions; navigateToBPPanel()"
                    i18n
-                >Show available business options</a>
+                >Show available business options</button>
             </div>
         </div>
         <!--<form (ngSubmit)="onSubmit()" class="space-before" #orderForm="ngForm" novalidate>
@@ -62,7 +61,10 @@
             </div>
             <button type="submit" class="btn btn-success" [disabled]="!orderForm.form.valid" i18n>Order</button>
         </form>-->
-        <div *ngIf="showBPOptions" id="bpPanel" class="mt-5">
+
+        <div id="bpPanel"
+            [ngClass]="{'d-none' : !showBPOptions}"
+             class="mt-5" >
             <h4 class="btn btn-warning col mb-3">The business processes that you can initiate for this item with the seller</h4>
             <ul class="nav nav-tabs">
                 <li class="nav-item">

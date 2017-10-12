@@ -34,6 +34,10 @@ import {QuotationLine} from "./publish/quotation-line";
 import {Dimension} from "./publish/dimension";
 import {Address} from "./publish/address";
 import {Country} from "./publish/country";
+import {DespatchLine} from "./publish/despatch-line";
+import {DespatchAdvice} from "./publish/despatch-advice";
+import {ReceiptAdvice} from "./publish/receipt-advice";
+import {ReceiptLine} from "./publish/receipt-line";
 /**
  * Created by suat on 05-Jul-17.
  */
@@ -129,8 +133,7 @@ export class UBLModelUtils {
     }
 
     public static createOrderResponseSimple(order:Order, acceptedIndicator:boolean):OrderResponseSimple {
-        let documentReference:DocumentReference = new DocumentReference(order.id);
-        let orderReference:OrderReference = new OrderReference(documentReference);
+        let orderReference:OrderReference = this.createOrderReference(order.id);
         this.removeHjidFieldsFromObject(order.buyerCustomerParty);
         this.removeHjidFieldsFromObject(order.sellerSupplierParty);
         let customerParty:CustomerParty = order.buyerCustomerParty;
@@ -168,6 +171,32 @@ export class UBLModelUtils {
 
         let quotation = new Quotation(this.generateUUID(), [""], 1, documentReference, customerParty, supplierParty, delivery, [quotationLine]);
         return quotation;
+    }
+
+    public static createDespatchAdvice(order:Order):DespatchAdvice {
+        let despatchAdvice:DespatchAdvice = new DespatchAdvice();
+        despatchAdvice.id = this.generateUUID();
+        despatchAdvice.orderReference = [UBLModelUtils.createOrderReference(order.id)];
+        despatchAdvice.despatchLine = [new DespatchLine(order.orderLine[0].lineItem.item)];
+        despatchAdvice.despatchSupplierParty = order.sellerSupplierParty;
+        despatchAdvice.deliveryCustomerParty = order.buyerCustomerParty;
+        return despatchAdvice
+    }
+
+    public static createReceiptAdvice(despatchAdvice:DespatchAdvice):ReceiptAdvice {
+        let receiptAdvice:ReceiptAdvice = new ReceiptAdvice();
+        receiptAdvice.orderReference = [JSON.parse(JSON.stringify(despatchAdvice.orderReference))];
+        receiptAdvice.despatchDocumentReference = [new DocumentReference(despatchAdvice.id)];
+        receiptAdvice.deliveryCustomerParty = despatchAdvice.deliveryCustomerParty;
+        receiptAdvice.despatchSupplierParty = despatchAdvice.despatchSupplierParty;
+        receiptAdvice.receiptLine = [new ReceiptLine(despatchAdvice.despatchLine[0].item)];
+        return receiptAdvice;
+    }
+
+    public static createOrderReference(orderId:string):OrderReference {
+        let documentReference:DocumentReference = new DocumentReference(orderId);
+        let orderReference:OrderReference = new OrderReference(documentReference);
+        return orderReference;
     }
 
     public static createItem():Item {

@@ -64,17 +64,7 @@ export class SimpleSearchDetailsComponent implements OnInit {
 			this.details = [];
 			this.configs = [];
 
-			// TODO demo specific id mapping
 			let id = params['id'];
-			if(id == 'MDF_Board_11190914') {
-				id = '662ea024-edec-4357-93ad-3df2bd522883';
-			} else if(id == 'MDF_Board_138495') {
-				id = '8c2fee8a-b74c-4908-b82f-537626cc14b2';
-			} else if(id == 'Nicole_White') {
-				id = '76c77611-3763-44b0-a789-49fdc5bd5cfc';
-			} else if(id == 'Globito_White') {
-				id = 'd8a24ccb-97c5-4392-bc01-b5763b06b12e';
-			}
 
 			this.simpleSearchService.getSingle(id)
 			.then(res => {
@@ -161,6 +151,12 @@ export class SimpleSearchDetailsComponent implements OnInit {
 				this.response = JSON.parse(JSON.stringify(this.temp));
 			}
 		}
+	}
+
+	navigateToBPPanel() {
+		setTimeout(function(){
+			document.getElementById('bpPanel').scrollIntoView();
+		},300);
 	}
 	
 	checkConfig(key: string, value: string): boolean {
