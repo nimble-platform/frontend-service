@@ -6,6 +6,7 @@ import {Party} from "../catalogue/model/publish/party";
 import { CompanySettings } from './model/company-settings';
 import { UserRegistration } from './model/user-registration';
 import { CompanyRegistration } from './model/company-registration';
+import {UBLModelUtils} from "../catalogue/model/ubl-model-utils";
 
 @Injectable()
 export class UserService {
@@ -42,8 +43,8 @@ export class UserService {
 			.toPromise()
             .catch(err => {
             	if(err.status == 302) {
-					// ToDo: make identity service using the latest version of the data model
-					let party:Party = new Party(null, err.json().id, err.json().partyName[0].name, null);
+					let party:Party = err.json();
+					UBLModelUtils.removeHjidFieldsFromObject(party);
 					return Promise.resolve(party);
 				} else {
             		return this.handleError(err);
@@ -60,8 +61,8 @@ export class UserService {
 		.get(url, {headers: this.headers})
 		.toPromise()
 		.then(res => {
-			// ToDo: make identity service using the latest version of the data model
-			this.userParty = new Party(null, res.json()[0].hjid, res.json()[0].partyName[0].name, null);
+			this.userParty = res.json()[0];
+			UBLModelUtils.removeHjidFieldsFromObject(this.userParty);
 			return Promise.resolve(this.userParty);
 		})
 		.catch(this.handleError);
