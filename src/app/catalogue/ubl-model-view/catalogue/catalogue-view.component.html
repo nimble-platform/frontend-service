@@ -14,10 +14,10 @@
 <div *ngIf="catalogue">
     <div *ngIf="catalogue.catalogueLine.length > 0">
         <!--<p>Issue date: {{catalogue.issueDate}}</p>-->
-        <catalogue-line-view *ngFor="let line of catalogue.catalogueLine"
+        <catalogue-line-panel *ngFor="let line of catalogue.catalogueLine"
                              [catalogueLine]="line"
                              [presentationMode]="'view'">
-        </catalogue-line-view>
+        </catalogue-line-panel>
     </div>
     <h3 *ngIf="catalogue.catalogueLine.length <= 0">No published products.</h3>
 </div>

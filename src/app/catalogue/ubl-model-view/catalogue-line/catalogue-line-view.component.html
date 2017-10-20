@@ -1,0 +1,90 @@
+<div class="row">
+    <div class="col-2">
+        <div class="bordered align-center">
+            <img *ngIf="catalogueLine.goodsItem.item.productImage.length == 0"
+                 class="img-max"
+                 src="assets/empty_img.png">
+            <img *ngIf="catalogueLine.goodsItem.item.productImage.length > 0"
+                 class="img-max"
+                 src="data:{{catalogueLine.goodsItem.item.productImage[0].mimeCode}};base64,{{catalogueLine.goodsItem.item.productImage[0].value}}"/>
+        </div>
+    </div>
+    <div class="col-10">
+        <div class="input-group form-group">
+            <label class="col-3 control-label"><strong>Product Identifier</strong></label>
+            <label *ngIf="catalogueLine.goodsItem.item.manufacturersItemIdentification!= null && presentationMode != 'edit'">{{catalogueLine.goodsItem.item.manufacturersItemIdentification.id}}</label>
+            <input *ngIf="catalogueLine.goodsItem.item.manufacturersItemIdentification!= null && presentationMode == 'edit'" class="col-9" type="text" [(ngModel)]="catalogueLine.goodsItem.item.manufacturersItemIdentification.id">
+        </div>
+        <div class="input-group form-group">
+            <label class="col-3 control-label"><strong>Name</strong></label>
+            <label *ngIf="presentationMode != 'edit'">{{catalogueLine.goodsItem.item.name}}</label>
+            <input *ngIf="presentationMode == 'edit'" class="col-9" type="text" [(ngModel)]="catalogueLine.goodsItem.item.name">
+        </div>
+        <div class="input-group form-group">
+            <label class="col-3 control-label"><strong>Description</strong></label>
+            <label *ngIf="presentationMode != 'edit'">{{catalogueLine.goodsItem.item.description}}</label>
+            <input *ngIf="presentationMode == 'edit'" class="col-9" type="text" [(ngModel)]="catalogueLine.goodsItem.item.description">
+        </div>
+        <div *ngIf="catalogueLine.goodsItem.item.commodityClassification.length > 0" class="d-flex flex-wrap">
+            <label class="col-3 control-label"><strong>Commodity Classifications</strong></label>
+            <div *ngFor="let classification of catalogueLine.goodsItem.item.commodityClassification">
+                <button class="btn btn-info mr-2">{{classification.itemClassificationCode.name}}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- images -->
+<div *ngIf="presentationMode=='edit' && catalogueLine.goodsItem.item.productImage.length == 0" class="offset-2 col-10 mt-3 mb-3">
+    <label *ngIf="catalogueLine.goodsItem.item.productImage.length == 0">Add Image</label>
+    <input #image type="file" (change)="addImage($event)" multiple accept="image/*"
+           style="display: none">
+    <img src="./assets/catalogue/add_button.png"
+         (click)="image.click()"/>
+</div>
+<div *ngIf="catalogueLine.goodsItem.item.productImage.length > 0"
+     class="d-flex flex-wrap justify-content-start offset-2 mb-3">
+    <div *ngFor="let image of catalogueLine.goodsItem.item.productImage; let i = index">
+        <div *ngIf="image.mimeCode.split('/')[0]=='image'">
+            <img class=" pr-2"
+                 src="data:{{image.mimeCode}};base64,{{image.value}}"
+                 height="100"
+                 width="100"
+                 (click)="deleteImage(i)"
+            />
+        </div>
+    </div>
+    <div *ngIf="presentationMode=='edit'" class="align-self-center ml-3">
+        <input #image type="file" (change)="addImage($event)" multiple accept="image/*"
+               style="display: none">
+        <img src="./assets/catalogue/add_button.png"
+            (click)="image.click()"/>
+    </div>
+</div>
+
+<ul class="nav nav-tabs">
+    <li class="nav-item pointer">
+        <a
+                [ngClass]="{'nav-link': true, active: selectedTab === 'Product Details'}"
+                (click)="selectedTab = 'Product Details'"
+                i18n
+        >Product Details</a>
+    </li>
+
+    <li class="nav-item pointer">
+        <a
+                [ngClass]="{'nav-link': true, active: selectedTab === 'Trading & Delivery Terms'}"
+                (click)="selectedTab = 'Trading & Delivery Terms'"
+                i18n
+        >Trading & Delivery Terms</a>
+    </li>
+</ul>
+
+<product-details *ngIf="selectedTab === 'Product Details'"
+                 [catalogueLine]="catalogueLine"
+                 [presentationMode]="presentationMode">
+</product-details>
+<trading-details *ngIf="selectedTab === 'Trading & Delivery Terms'"
+                 [catalogueLine]="catalogueLine"
+                 [presentationMode]="presentationMode">
+</trading-details>

@@ -33,10 +33,11 @@ import { DeliveryTermsSubForm } from './user-mgmt/subforms/delivery-terms.compon
 import { PaymentMeansForm } from './user-mgmt/subforms/payment-means.component';
 import { CompanySettingsComponent } from './user-mgmt/company-settings.component';
 import { NegotiationMainComponent } from './bpe/negotiation/negotiation-main.component';
-import { CatalogueViewComponent } from './catalogue/ubl-model-view/catalogue-view.component';
-import { CatalogueLineViewComponent } from './catalogue/ubl-model-view/catalogue-line-view.component';
-import { ProductDetailsComponent } from './catalogue/product-details.component';
-import { TradingDetailsComponent } from './catalogue/trading-details.component';
+import {CatalogueViewComponent} from "./catalogue/ubl-model-view/catalogue/catalogue-view.component";
+import {CatalogueLinePanelComponent} from "./catalogue/ubl-model-view/catalogue/catalogue-line-panel.component";
+import {CatalogueLineViewComponent} from "./catalogue/ubl-model-view/catalogue-line/catalogue-line-view.component";
+import { ProductDetailsComponent } from './catalogue/ubl-model-view/catalogue-line/product-details.component';
+import { TradingDetailsComponent } from './catalogue/ubl-model-view/catalogue-line/trading-details.component';
 import { PublishService } from './catalogue/publish-and-aip.service';
 import { PropertyBlockPipe } from './catalogue/property-block-pipe';
 import { ItemPropertyDataSourcePipe } from './catalogue/item-property-data-source-pipe';
@@ -93,6 +94,7 @@ import { CommonModule } from '@angular/common';
         NegotiationMainComponent,
         OrderParametersComponent,
         CatalogueViewComponent,
+        CatalogueLinePanelComponent,
         CatalogueLineViewComponent,
         ProductDetailsComponent,
         TradingDetailsComponent,

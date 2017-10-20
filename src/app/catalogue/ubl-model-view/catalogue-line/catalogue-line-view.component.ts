@@ -1,8 +1,8 @@
 import {Component, Input} from "@angular/core";
-import {CatalogueLine} from "../model/publish/catalogue-line";
-import {CatalogueService} from "../catalogue.service";
+import {CatalogueLine} from "../../model/publish/catalogue-line";
+import {CatalogueService} from "../../catalogue.service";
 import {Router} from "@angular/router";
-import {BinaryObject} from "../model/publish/binary-object";
+import {BinaryObject} from "../../model/publish/binary-object";
 
 @Component({
     selector: 'catalogue-line-view',
@@ -16,15 +16,6 @@ export class CatalogueLineViewComponent {
     selectedTab: string = "Product Details";
     @Input() catalogueLine: CatalogueLine;
     @Input() presentationMode: string;
-
-    constructor(private catalogueService: CatalogueService,
-                private router: Router) {
-    }
-
-    redirectToEdit() {
-        this.catalogueService.editCatalogueLine(this.catalogueLine);
-        this.router.navigate(['publish'], {queryParams: {pageRef: "catalogue"}});
-    }
 
     private addImage(event: any) {
         let fileList: FileList = event.target.files;
@@ -49,9 +40,5 @@ export class CatalogueLineViewComponent {
         if (this.presentationMode == 'edit') {
             this.catalogueLine.goodsItem.item.productImage.splice(index, 1);
         }
-    }
-
-    deleteCatalogueLine(): void {
-        this.catalogueService.deleteCatalogueLine(this.catalogueService.catalogue.uuid, this.catalogueLine.id);
     }
 }

@@ -15,6 +15,7 @@ import {SupplierParty} from "../catalogue/model/publish/supplier-party";
 import {LineReference} from "../catalogue/model/publish/line-reference";
 import {CatalogueService} from "../catalogue/catalogue.service";
 import {CatalogueLine} from "../catalogue/model/publish/catalogue-line";
+import {CallStatus} from "../common/call-status";
 
 @Component({
 	selector: 'simple-search-details',
@@ -27,28 +28,19 @@ export class SimpleSearchDetailsComponent implements OnInit {
 	product_name = myGlobals.product_name;
 	product_vendor_id = myGlobals.product_vendor_id;
 	product_vendor_name = myGlobals.product_vendor_name;
-	product_img = myGlobals.product_img;
-	product_nonfilter_full = myGlobals.product_nonfilter_full;
-	product_nonfilter_regex = myGlobals.product_nonfilter_regex;
-	product_configurable = myGlobals.product_configurable;
 	set_configs = myGlobals.product_default;
 
+	catalogueLine: CatalogueLine;
 	selectedOption:string = "order";
-	showBPOptions:boolean = false;
+	bpOptionsActive:boolean = false;
+
 
 	callback = false;
 	error_detc = false;
-	submitted2 = false;
-	callback2 = false;
-	error_detc2 = false;
-	temp: any;
-	response: any;
+	getCatalogueLineStatus:CallStatus = new CallStatus();
 	details: any;
 	configs: any;
 
-	catalogueLine: CatalogueLine;
-	order = UBLModelUtils.createOrder();
-	
 	constructor(
 		private simpleSearchService: SimpleSearchService,
 		private bpeService: BPEService,
@@ -65,8 +57,16 @@ export class SimpleSearchDetailsComponent implements OnInit {
 			this.configs = [];
 
 			let id = params['id'];
+			let catalogueId = params['catalogueId'];
+			this.getCatalogueLineStatus.submit();
+			this.catalogueService.getCatalogueLine(catalogueId, id).then(line => {
+				this.catalogueLine = line;
+				this.getCatalogueLineStatus.callback("Retrieved product details", true);
+			}).catch(error => {
+				this.getCatalogueLineStatus.error("Failed to retrieve product details");
+			});
 
-			this.simpleSearchService.getSingle(id)
+			/*this.simpleSearchService.getSingle(id)
 			.then(res => {
 				this.temp = res.response.docs;
 				for (let doc in this.temp) {
@@ -118,12 +118,14 @@ export class SimpleSearchDetailsComponent implements OnInit {
 			})
 			.catch(error => {
 				this.error_detc = true;
-			});
+			});*/
+
+
 			
 		});
     }
 	
-	setImage(key: string, value: string) {
+	/*setImage(key: string, value: string) {
 		this.set_configs[key] = value;
 		var overall_match = false;
 		for (let doc in this.temp) {
@@ -151,28 +153,5 @@ export class SimpleSearchDetailsComponent implements OnInit {
 				this.response = JSON.parse(JSON.stringify(this.temp));
 			}
 		}
-	}
-
-	navigateToBPPanel() {
-		setTimeout(function(){
-			document.getElementById('bpPanel').scrollIntoView();
-		},300);
-	}
-	
-	checkConfig(key: string, value: string): boolean {
-		var match = true;
-		if (this.set_configs[key] != value)
-			match = false;
-		return match;
-	}
-	
-	isJson(str: string): boolean {
-		try {
-			JSON.parse(str);
-		} catch (e) {
-			return false;
-		}
-		return true;
-	}
-
+	}*/
 }

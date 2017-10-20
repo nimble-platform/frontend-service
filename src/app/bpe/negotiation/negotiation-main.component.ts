@@ -14,6 +14,7 @@ import {ModelUtils} from "../model/model-utils";
 import {LineReference} from "../../catalogue/model/publish/line-reference";
 import {CatalogueLine} from "../../catalogue/model/publish/catalogue-line";
 import {BPDataService} from "../bp-data-service";
+import {Quotation} from "../model/ubl/quotation";
 
 @Component({
     selector: 'negotiation-params',
@@ -25,6 +26,7 @@ export class NegotiationMainComponent implements OnInit {
 	@Input() productResponse: any;
 
 	rfq:RequestForQuotation;
+	quotation:Quotation;
 
 	selectedTab: string = "Product Details";
 	negotiationExpanded = false;

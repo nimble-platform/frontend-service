@@ -7,9 +7,9 @@ export const debug=false;
 
 // Endpoint variables - SRFG domain
 
-// export const user_mgmt_endpoint="http://nimble-platform.salzburgresearch.at:443/identity";
-export const catalogue_endpoint="http://nimble-platform.salzburgresearch.at:443/catalog";
-export const bpe_endpoint="http://nimble-platform.salzburgresearch.at:443/business-process";
+export const user_mgmt_endpoint="http://nimble-platform.salzburgresearch.at:443/identity";
+// export const catalogue_endpoint="http://nimble-platform.salzburgresearch.at:443/catalog";
+// export const bpe_endpoint="http://nimble-platform.salzburgresearch.at:443/business-process";
 
 // export const catalogue_endpoint="http://localhost:10095";
 // export const bpe_endpoint="http://localhost:8085";
@@ -45,9 +45,9 @@ export const sparqlOptionalSelectEndPoint = 'http://hydra2.ikap.biba.uni-bremen.
 
 // Endpoint variables - Local development direct links
 
-export const user_mgmt_endpoint="http://localhost:9096";
-// export const catalogue_endpoint="http://localhost:8095";
-// export const bpe_endpoint="http://localhost:8081";
+//export const user_mgmt_endpoint="http://localhost:9096";
+export const catalogue_endpoint="http://localhost:8095";
+export const bpe_endpoint="http://localhost:8081";
 //export const endpoint = 'http://localhost:8090/detectMeaning'; // for local catalog search service
 //export const logicalViewEndpoint = 'http://localhost:8090/getLogicalView'; // for visualization
 
