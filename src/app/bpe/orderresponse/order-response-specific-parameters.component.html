@@ -1,0 +1,13 @@
+<ng-container *ngIf="orderResponse">
+    <h5>Notes</h5>
+    <value-view [presentationMode]="'edit'"
+                [propName]="'Note'"
+                [(value)]="orderResponse.note">
+    </value-view>
+
+    <value-view [presentationMode]="'edit'"
+                [propName]="'Rejection Note'"
+                [(value)]="orderResponse.rejectionNode">
+    </value-view>
+</ng-container>
+<h5 *ngIf="!orderResponse">No response yet</h5>

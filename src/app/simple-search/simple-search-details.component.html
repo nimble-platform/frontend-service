@@ -1,8 +1,8 @@
-<div *ngIf="catalogueLine">
+<div *ngIf="bpDataService.catalogueLine">
     <h3 class="d-flex justify-content-start space-after">
-        <div class="">
-            <b>{{ catalogueLine.goodsItem.item.name }}</b><br/>
-            <i>{{ catalogueLine.goodsItem.item.manufacturerParty.name }}</i>
+        <div>
+            <b>{{ bpDataService.catalogueLine.goodsItem.item.name }}</b><br/>
+            <i>{{ bpDataService.catalogueLine.goodsItem.item.manufacturerParty.name }}</i>
         </div>
         <button *ngIf="!bpOptionsActive"
                 class="ml-auto align-self-start btn btn-success"
@@ -12,49 +12,14 @@
     </h3>
 
     <catalogue-line-view *ngIf="!bpOptionsActive"
-                         [catalogueLine]="catalogueLine"
+                         [catalogueLine]="bpDataService.catalogueLine"
                          [presentationMode]="'view'">
     </catalogue-line-view>
 
-    <div *ngIf="bpOptionsActive"
-            id="bpPanel">
-        <ul class="nav nav-tabs">
-            <li class="nav-item">
-                <a href id="ordertab"
-                   [ngClass]="{'nav-link': true, active: selectedOption == 'order'}"
-                   (click)="selectedOption = 'order'; $event.preventDefault();"
-                   i18n
-                >Order</a>
-            </li>
-
-            <li class="nav-item">
-                <a href id="negotiationtab"
-                   [ngClass]="{'nav-link': true, active: selectedOption == 'negotiation'}"
-                   (click)="selectedOption = 'negotiation'; $event.preventDefault();"
-                   i18n
-                >Negotiate</a>
-            </li>
-
-            <li class="nav-item ml-auto">
-                <button class="btn btn-success"
-                    (click)="bpOptionsActive = !bpOptionsActive;"><i class="fa fa-angle-double-up" aria-hidden="true"></i>
-                </button>
-            </li>
-        </ul>
-
-        <div *ngIf="bpOptionsActive">
-            <order-parameters
-                    *ngIf="selectedOption == 'order'"
-                    id="orderParams"
-                    [catalogueLine]="catalogueLine">
-            </order-parameters>
-            <negotiation-params
-                    *ngIf="selectedOption == 'negotiation'"
-                    id="negotiationParams"
-                    [catalogueLine]="catalogueLine">
-            </negotiation-params>
-        </div>
-    </div>
+    <product-bp-options *ngIf="bpOptionsActive"
+                        [singleMode]="false"
+                     (closeBpOptionsEvent)="bpOptionsActive = !bpOptionsActive">
+    </product-bp-options>
 </div>
 
 <call-status [callStatus]="getCatalogueLineStatus"

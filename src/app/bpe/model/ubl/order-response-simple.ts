@@ -4,10 +4,11 @@ import {SupplierParty} from "../../../catalogue/model/publish/supplier-party";
 import {CustomerParty} from "../../../catalogue/model/publish/customer-party";
 export class OrderResponseSimple {
 	constructor(
-		public note: string,
-		public acceptedIndicator: boolean,
-		public orderReference:OrderReference,
-		public sellerSupplierParty: SupplierParty,
-		public buyerCustomerParty: CustomerParty
+		public note: string = null,
+		public rejectionNode: string = null,
+		public acceptedIndicator: boolean = null,
+		public orderReference:OrderReference = null,
+		public sellerSupplierParty: SupplierParty = null,
+		public buyerCustomerParty: CustomerParty = null
 	) {  }
 }

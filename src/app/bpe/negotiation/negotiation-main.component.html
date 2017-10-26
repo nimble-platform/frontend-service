@@ -21,11 +21,11 @@
 	<div *ngIf="catalogueLine"
 				  class="p-3">
 		<product-details *ngIf="selectedTab === 'Product Details'"
-						 [catalogueLine]="catalogueLine"
+						 [catalogueLine]="bpDataService.catalogueLine"
 						 [presentationMode]="'singlevalue'">
 		</product-details>
 		<trading-details *ngIf="selectedTab === 'Trading & Delivery Terms'"
-						 [catalogueLine]="catalogueLine"
+						 [catalogueLine]="bpDataService.catalogueLine"
 						 [presentationMode]="'singlevalue'"
 						 [editPrice]="true">
 		</trading-details>
@@ -33,7 +33,7 @@
 	<hr>
 	<value-view [presentationMode]="'edit'"
 				[propName]="'Note for the negotiation'"
-				[(value)]="rfq.note[0]">
+				[(value)]="bpDataService.requestForQuotation.note[0]">
 	</value-view>
 	<div class="container ">
 		<div class="row justify-content-end">

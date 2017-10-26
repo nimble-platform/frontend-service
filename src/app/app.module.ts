@@ -58,6 +58,11 @@ import { CertificateViewComponent } from "./catalogue/ubl-model-view/certificate
 import { DimensionViewComponent } from "./catalogue/ubl-model-view/dimension-view.component";
 import { CompanyRegistrationComponent } from './user-mgmt/company-registration.component';
 import { CommonModule } from '@angular/common';
+import {CatalogueLineHeaderComponent} from "./catalogue/ubl-model-view/catalogue-line/catalogue-line-header.component";
+import {ProductBpOptionsComponent} from "./bpe/product-bp-options.component";
+import {OrderSpecificParametersComponent} from "./bpe/order/order-specific-parameters.component";
+import {OrderResponseParametersComponent} from "./bpe/orderresponse/order-response-parameters.component";
+import {OrderResponseSpecificParametersComponent} from "./bpe/orderresponse/order-response-specific-parameters.component";
 
 @NgModule({
     imports: [
@@ -93,7 +98,11 @@ import { CommonModule } from '@angular/common';
         PaymentMeansForm, CompanySettingsComponent,
         NegotiationMainComponent,
         OrderParametersComponent,
+        OrderSpecificParametersComponent,
+        OrderResponseParametersComponent,
+        OrderResponseSpecificParametersComponent,
         CatalogueViewComponent,
+        CatalogueLineHeaderComponent,
         CatalogueLinePanelComponent,
         CatalogueLineViewComponent,
         ProductDetailsComponent,
@@ -111,8 +120,9 @@ import { CommonModule } from '@angular/common';
         BPConfigureComponent,
         BPDetailComponent,
         BPsComponent,
+        ProductBpOptionsComponent,
         CallStatusComponent,
-        CompanyRegistrationComponent,],
+        CompanyRegistrationComponent],
     providers: [
         UserService,
         CredentialsService,

@@ -4,7 +4,6 @@ import {CommodityClassification} from "./publish/commodity-classification";
 import {Code} from "./publish/code";
 import {Property} from "./category/property";
 import {Category} from "./category/category";
-import {ItemPropertyGroup} from "./publish/item-property-group";
 import {Price} from "./publish/price";
 import {Amount} from "./publish/amount";
 import {ItemLocationQuantity} from "./publish/item-location-quantity";
@@ -16,7 +15,6 @@ import {OrderResponseSimple} from "../../bpe/model/ubl/order-response-simple";
 import {Order} from "../../bpe/model/ubl/order";
 import {OrderReference} from "../../bpe/model/order-reference";
 import {DocumentReference} from "./publish/document-reference";
-import {ProcessVariables} from "../../bpe/model/process-variables";
 import {Quantity} from "./publish/quantity";
 import {LineItem} from "./publish/line-item";
 import {OrderLine} from "./publish/order-line";
@@ -38,6 +36,7 @@ import {DespatchLine} from "./publish/despatch-line";
 import {DespatchAdvice} from "./publish/despatch-advice";
 import {ReceiptAdvice} from "./publish/receipt-advice";
 import {ReceiptLine} from "./publish/receipt-line";
+import {PaymentMeans} from "./publish/payment-means";
 /**
  * Created by suat on 05-Jul-17.
  */
@@ -109,10 +108,10 @@ export class UBLModelUtils {
         docRef.id = catalogueUuid;
 
         // create item
-        let item = new Item("", "", [], false, additionalItemProperties, providerParty, this.createItemIdentification(), docRef, null, [], [], [], "", [], "");
+        let uuid:string = this.generateUUID();
+        let item = new Item("", "", [], false, additionalItemProperties, providerParty, this.createItemIdentificationWithId(uuid), docRef, null, [], [], [], "", [], "");
 
         // create goods item
-        let uuid:string = this.generateUUID();
         let goodsItem = new GoodsItem(uuid, item, this.createPackage(), this.createDeliveryTerms());
 
         // create required item location quantity
@@ -128,7 +127,7 @@ export class UBLModelUtils {
         let price: Price = this.createPrice(null);
         let lineItem:LineItem = this.createLineItem(quantity, price, item);
         let orderLine:OrderLine = new OrderLine(lineItem);
-        let order = new Order(this.generateUUID(), "", null, null, [orderLine]);
+        let order = new Order(this.generateUUID(), "", null, null, new PaymentMeans(), [orderLine]);
         return order;
     }
 
@@ -138,7 +137,7 @@ export class UBLModelUtils {
         this.removeHjidFieldsFromObject(order.sellerSupplierParty);
         let customerParty:CustomerParty = order.buyerCustomerParty;
         let supplierParty:SupplierParty = order.sellerSupplierParty;
-        let orderResponseSimple:OrderResponseSimple = new OrderResponseSimple("", acceptedIndicator, orderReference, supplierParty, customerParty);
+        let orderResponseSimple:OrderResponseSimple = new OrderResponseSimple("", "", acceptedIndicator, orderReference, supplierParty, customerParty);
         return orderResponseSimple;
     }
 
@@ -268,8 +267,12 @@ export class UBLModelUtils {
         return new Amount(null, currency);
     }
 
+    public static createItemIdentificationWithId(id:string):ItemIdentification {
+        return new ItemIdentification(id);
+    }
+
     public static createItemIdentification():ItemIdentification {
-        return new ItemIdentification(this.generateUUID());
+        return this.createItemIdentificationWithId(this.generateUUID());
     }
 
     public static createCode():Code {

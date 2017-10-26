@@ -18,11 +18,14 @@ import {DespatchAdvice} from "../catalogue/model/publish/despatch-advice";
 import {Item} from "../catalogue/model/publish/item";
 import {DespatchLine} from "../catalogue/model/publish/despatch-line";
 import {ReceiptAdvice} from "../catalogue/model/publish/receipt-advice";
+import {BPDataService} from "../bpe/bp-data-service";
+import {ActivityVariableParser} from "../bpe/activity-variable-parser";
 
 @Component({
     selector: 'nimble-dashboard',
     providers: [CookieService],
-    templateUrl: './dashboard.component.html'
+    templateUrl: './dashboard.component.html',
+    styleUrls: ['./dashboard.component.css']
 })
 
 export class DashboardComponent implements OnInit {
@@ -35,6 +38,7 @@ export class DashboardComponent implements OnInit {
 
     constructor(private cookieService: CookieService,
                 private bpeService: BPEService,
+                private bpDataService: BPDataService,
                 private router: Router,
                 private appComponent: AppComponent,
                 private userService: UserService) {
@@ -74,19 +78,20 @@ export class DashboardComponent implements OnInit {
                     this.bpeService.getProcessDetailsHistory(task.processInstanceId)
                         .then(activityVariables => {
 
-                            var vProductName = "", vContent = "", vNote = "", vActionStatus = "", vBPStatus = "",
-                                vTask_id = "", vProcess_id = "", vStart_time = "", vSellerName = "", vProductId;
-                            var vProcessType = activityVariables[0]["processDefinitionKey"];
-                            let response: any = this.getResponse(activityVariables);
-                            let initialDoc: any = this.getInitialDocument(activityVariables);
-                            vProductId = this.getProducIdFromProcessData(initialDoc);
-                            vProductName = this.getProductNameFromProcessData(initialDoc);
-                            vNote = this.getNoteFromProcessData(initialDoc);
-                            vSellerName = this.getResponderNameProcessData(initialDoc);
+                            var vContent = "", vNote = "", vActionStatus = "", vBPStatus = "",
+                                vTask_id = "", vProcess_id = "", vStart_time = "", vSellerName = "", vProduct,
+                                vBpOptionMenuItems: any;
+                            var vProcessType = ActivityVariableParser.getProcessType(activityVariables);
+                            let response: any = ActivityVariableParser.getResponse(activityVariables);
+                            let initialDoc: any = ActivityVariableParser.getInitialDocument(activityVariables);
+                            vProduct = ActivityVariableParser.getProductFromProcessData(initialDoc);
+                            vNote = ActivityVariableParser.getNoteFromProcessData(initialDoc);
+                            vSellerName = ActivityVariableParser.getResponderNameProcessData(initialDoc);
                             vProcess_id = initialDoc.processInstanceId;
                             vActionStatus = this.getActionStatus(vProcessType, response, true);
                             vBPStatus = this.getBPStatus(response);
                             vContent = initialDoc.value;
+                            vBpOptionMenuItems = this.getBpOptionsMenuItems(vProcessType, response, true);
 
                             for (let t of this.buyer_history_temp) {
                                 if (t.process_id == vProcess_id) {
@@ -101,13 +106,13 @@ export class DashboardComponent implements OnInit {
                                 "process_id": vProcess_id,
                                 "start_time": vStart_time,
                                 "sellerName": vSellerName,
-                                "productId": vProductId,
-                                "product_name": vProductName,
+                                "product": vProduct,
                                 "note": vNote,
                                 "processStatus": vBPStatus,
                                 "actionStatus": vActionStatus,
                                 "content": vContent,
-                                "activityVariables": activityVariables
+                                "activityVariables": activityVariables,
+                                "bpOptionMenuItems": vBpOptionMenuItems
                             });
 
                             this.buyer_history.sort(function (a: any, b: any) {
@@ -141,19 +146,20 @@ export class DashboardComponent implements OnInit {
                     this.bpeService.getProcessDetailsHistory(task.processInstanceId)
                         .then(activityVariables => {
 
-                            var vProductName = "", vContent = "", vNote = "", vActionStatus = "", vBPStatus = "",
-                                vTask_id = "", vProcess_id = "", vStart_time = "", vBuyerName = "", vProductId;
-                            var vProcessType = activityVariables[0]["processDefinitionKey"];
-                            let response: any = this.getResponse(activityVariables);
-                            let initialDoc: any = this.getInitialDocument(activityVariables);
-                            vProductId = this.getProducIdFromProcessData(initialDoc);
-                            vProductName = this.getProductNameFromProcessData(initialDoc);
-                            vNote = this.getNoteFromProcessData(initialDoc);
-                            vBuyerName = this.getInitiatorNameProcessData(initialDoc);
+                            var vContent = "", vNote = "", vActionStatus = "", vBPStatus = "",
+                                vTask_id = "", vProcess_id = "", vStart_time = "", vBuyerName = "", vProduct,
+                                vBpOptionMenuItems: any;
+                            var vProcessType = ActivityVariableParser.getProcessType(activityVariables);
+                            let response: any = ActivityVariableParser.getResponse(activityVariables);
+                            let initialDoc: any = ActivityVariableParser.getInitialDocument(activityVariables);
+                            vProduct = ActivityVariableParser.getProductFromProcessData(initialDoc);
+                            vNote = ActivityVariableParser.getNoteFromProcessData(initialDoc);
+                            vBuyerName = ActivityVariableParser.getInitiatorNameProcessData(initialDoc);
                             vProcess_id = initialDoc.processInstanceId;
                             vActionStatus = this.getActionStatus(vProcessType, response, false);
                             vBPStatus = this.getBPStatus(response);
                             vContent = initialDoc.value;
+                            vBpOptionMenuItems = this.getBpOptionsMenuItems(vProcessType, response, false);
 
                             for (let t of this.seller_history_temp) {
                                 if (t.process_id == vProcess_id) {
@@ -168,13 +174,13 @@ export class DashboardComponent implements OnInit {
                                 "process_id": vProcess_id,
                                 "start_time": vStart_time,
                                 "buyerName": vBuyerName,
-                                "productId": vProductId,
-                                "product_name": vProductName,
+                                "product": vProduct,
                                 "note": vNote,
                                 "processStatus": vBPStatus,
                                 "actionStatus": vActionStatus,
                                 "content": vContent,
-                                "activityVariables": activityVariables
+                                "activityVariables": activityVariables,
+                                "bpOptionMenuItems": vBpOptionMenuItems
                             });
                             this.seller_history.sort(function (a: any, b: any) {
                                 var a_comp = a.start_time;
@@ -192,22 +198,8 @@ export class DashboardComponent implements OnInit {
             });
     }
 
-    navigateToProductDetailsPage():void {
+    navigateToProductDetailsPage(): void {
         this.router.navigate(['publish'], {queryParams: {pageRef: "catalogue"}});
-    }
-
-    respondToOrder(processId: string, order: Order, acceptedIndicator: boolean) {
-        let orderResponse: OrderResponseSimple = UBLModelUtils.createOrderResponseSimple(order, acceptedIndicator);
-        let vars: ProcessVariables = ModelUtils.createProcessVariables("Order", order.buyerCustomerParty.party.id, order.sellerSupplierParty.party.id, orderResponse);
-        let piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, processId);
-
-        this.bpeService.continueBusinessProcess(piim)
-            .then(res => {
-                this.loadOrders();
-            })
-            .catch(error => {
-                this.loadOrders();
-            });
     }
 
     respondToRFQ(processId: string, rfq: RequestForQuotation, acceptedIndicator: boolean) {
@@ -229,7 +221,7 @@ export class DashboardComponent implements OnInit {
     }
 
     sendDespatchAdvice(activityVariables: any): void {
-        let order: Order = activityVariables.find(v => v.name == 'order').value;
+        let order: Order = activityVariables.find(v => v.name == 'Order').value;
         let despatchAdvice: DespatchAdvice = UBLModelUtils.createDespatchAdvice(order);
         UBLModelUtils.removeHjidFieldsFromObject(despatchAdvice);
 
@@ -259,84 +251,9 @@ export class DashboardComponent implements OnInit {
             });
     }
 
-    getResponderNameProcessData(variable: any): string {
-        let processType: string = variable.processDefinitionKey;
-        if (processType == "Order") {
-            let order: Order = variable.value as Order;
-            return order.sellerSupplierParty.party.name;
-
-        } else if (processType == "Negotiation") {
-            let rfq: RequestForQuotation = variable.value as RequestForQuotation;
-            return rfq.sellerSupplierParty.party.name;
-
-        } else if (processType == "Fulfilment") {
-            let despatchAdvice: DespatchAdvice = variable.value as DespatchAdvice;
-            return despatchAdvice.despatchSupplierParty.party.name;
-        }
-    }
-
-    getInitiatorNameProcessData(variable: any): string {
-        let processType: string = variable.processDefinitionKey;
-        if (processType == "Order") {
-            let order: Order = variable.value as Order;
-            return order.buyerCustomerParty.party.name;
-
-        } else if (processType == "Negotiation") {
-            let rfq: RequestForQuotation = variable.value as RequestForQuotation;
-            return rfq.buyerCustomerParty.party.name;
-
-        } else if (processType == "Fulfilment") {
-            let despatchAdvice: DespatchAdvice = variable.value as DespatchAdvice;
-            return despatchAdvice.deliveryCustomerParty.party.name;
-        }
-    }
-
-    getProducIdFromProcessData(variable: any): string {
-        let processType: string = variable.processDefinitionKey;
-        if (processType == "Order") {
-            let order: Order = variable.value as Order;
-            return order.orderLine[0].lineItem.lineReference[0].lineID;
-
-        } else if (processType == "Negotiation") {
-            let rfq: RequestForQuotation = variable.value as RequestForQuotation;
-            return rfq.requestForQuotationLine[0].lineItem.lineReference[0].lineID;
-
-        } else if (processType == "Fulfilment") {
-            // not required for fulfilment process records, for the time being
-            return "";
-        }
-    }
-
-    getProductNameFromProcessData(variable: any): string {
-        let processType: string = variable.processDefinitionKey;
-        if (processType == "Order") {
-            let order: Order = variable.value as Order;
-            return order.orderLine[0].lineItem.item.name;
-
-        } else if (processType == "Negotiation") {
-            let rfq: RequestForQuotation = variable.value as RequestForQuotation;
-            return rfq.requestForQuotationLine[0].lineItem.item.name;
-
-        } else if (processType == "Fulfilment") {
-            let despatchAdvice: DespatchAdvice = variable.value as DespatchAdvice;
-            return despatchAdvice.despatchLine[0].item.name;
-        }
-    }
-
-    getNoteFromProcessData(variable: any): string {
-        let processType: string = variable.processDefinitionKey;
-        if (processType == "Order") {
-            let order: Order = variable.value as Order;
-            return order.note;
-
-        } else if (processType == "Negotiation") {
-            let rfq: RequestForQuotation = variable.value as RequestForQuotation;
-            return rfq.note[0];
-
-        } else if (processType == "Fulfilment") {
-            let despatchAdvice: DespatchAdvice = variable.value as DespatchAdvice;
-            return despatchAdvice.note[0];
-        }
+    openBpProcessView(role:string, processMetadata:any) {
+        this.bpDataService.setBpOptionParameters(role, processMetadata);
+        this.router.navigate(['bpe-exec'], {queryParams: {catalogueId:  processMetadata.product.catalogueDocumentReference.id, id:processMetadata.product.manufacturersItemIdentification.id}});
     }
 
     getActionStatus(processType: string, response: any, buyer: boolean): string {
@@ -375,14 +292,14 @@ export class DashboardComponent implements OnInit {
                 }
 
             } else if (processType == 'Negotiation') {
-                if(buyer) {
+                if (buyer) {
                     responseMessage = "Quotation received";
                 } else {
                     responseMessage = "Quotation sent";
                 }
 
             } else if (processType == 'Fulfilment') {
-                if(buyer) {
+                if (buyer) {
                     responseMessage = "Receipt Advice sent"
                 } else {
                     responseMessage = "Receipt Advice received"
@@ -390,6 +307,30 @@ export class DashboardComponent implements OnInit {
             }
         }
         return responseMessage;
+    }
+
+    getBpOptionsMenuItems(processType: string, response: any, buyer: boolean): any {
+        let bpOptionMenuItems: Array<string> = ['Business History'];
+
+        // messages if there is no response from the responder party
+        if (response == null) {
+            // messages for the buyer
+            if (buyer) {
+                if (processType == 'Fulfilment') {
+                    bpOptionMenuItems.push('Send Receipt Advice');
+                }
+            }
+
+            // messages for the seller
+            else {
+                if (processType == 'Order') {
+                    bpOptionMenuItems.push('Send Order Response');
+                } else if (processType == 'Negotiation') {
+                    bpOptionMenuItems.push('Send Quotation');
+                }
+            }
+        }
+        return bpOptionMenuItems;
     }
 
     getBPStatus(response: any): string {
@@ -400,24 +341,6 @@ export class DashboardComponent implements OnInit {
             bpStatus = "Completed";
         }
         return bpStatus;
-    }
-
-    getInitialDocument(processVariables: any[]): any {
-        for (let variable of processVariables) {
-            if (variable.name == "order" || variable.name == "requestForQuotation" || variable.name == "despatchAdvice") {
-                return variable;
-            }
-        }
-        return null;
-    }
-
-    getResponse(processVariables: any[]): any {
-        for (let variable of processVariables) {
-            if (variable.name == "orderResponse" || variable.name == "quotation" || variable.name == "receiptAdvice") {
-                return variable;
-            }
-        }
-        return null;
     }
 
     isJson(str: string): boolean {

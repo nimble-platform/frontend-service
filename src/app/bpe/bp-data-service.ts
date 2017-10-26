@@ -7,34 +7,72 @@ import {Injectable} from "@angular/core";
 import {ItemProperty} from "../catalogue/model/publish/item-property";
 import {Item} from "../catalogue/model/publish/item";
 import {Dimension} from "../catalogue/model/publish/dimension";
+import {ActivityVariableParser} from "./activity-variable-parser";
+import {OrderResponseSimple} from "./model/ubl/order-response-simple";
+import {Quotation} from "./model/ubl/quotation";
 /**
  * Created by suat on 20-Sep-17.
  */
 
 @Injectable()
 export class BPDataService {
-    requestForQuotation:RequestForQuotation;
-    order:Order;
     // original catalogue line to initialize the business process data
     catalogueLine:CatalogueLine;
     // catalogue line object that is kept updated based on user selections
     modifiedCatalogueLine:CatalogueLine;
 
-    initRfq(catalogueLine:CatalogueLine):void {
-        this.catalogueLine = catalogueLine;
-        this.modifiedCatalogueLine = JSON.parse(JSON.stringify(catalogueLine));
+    requestForQuotation:RequestForQuotation;
+    quotation:Quotation;
+    order:Order;
+    orderResponse:OrderResponseSimple;
+
+    ////////////////////////////////////////////////////////////////////////////
+    //////// variables used when navigating to bp options details page //////
+    ////////////////////////////////////////////////////////////////////////////
+    // setBpOptionParameters method must be used to set these values
+    processType:string;
+    userRole:string;
+    processMetadata:any;
+
+    setBpOptionParameters(userRole:string, processMetadata:any):void {
+        let activityVariables = processMetadata.activityVariables;
+        this.processType = ActivityVariableParser.getProcessType(activityVariables);
+        this.userRole = userRole;
+        this.processMetadata = processMetadata;
+
+        // decompose the activity variables
+        if(this.processType == 'Order') {
+            this.order = ActivityVariableParser.getInitialDocument(activityVariables).value
+
+            let orderResponseVariable = ActivityVariableParser.getResponse(activityVariables);
+            if(orderResponseVariable == null) {
+                // initialize the order response only if the user is in seller role
+                if(this.userRole == 'seller') {
+                    this.orderResponse = UBLModelUtils.createOrderResponseSimple(this.order, true);
+                }
+
+            } else {
+                this.orderResponse = orderResponseVariable.value;
+            }
+
+        } else if(this.processType == 'Negotiation') {
+            this.requestForQuotation = ActivityVariableParser.getInitialDocument(activityVariables).value;
+        }
+    }
+
+    initRfq():void {
+        this.modifiedCatalogueLine = JSON.parse(JSON.stringify(this.catalogueLine));
         this.requestForQuotation = UBLModelUtils.createRequestForQuotation();
-        this.requestForQuotation.requestForQuotationLine[0].lineItem.item = catalogueLine.goodsItem.item;
-        this.requestForQuotation.requestForQuotationLine[0].lineItem.lineReference = [new LineReference(catalogueLine.id)];
+        this.requestForQuotation.requestForQuotationLine[0].lineItem.item = this.catalogueLine.goodsItem.item;
+        this.requestForQuotation.requestForQuotationLine[0].lineItem.lineReference = [new LineReference(this.catalogueLine.id)];
         this.selectFirstValuesAmongAlternatives();
     }
 
-    initOrder(catalogueLine:CatalogueLine):void {
-        this.catalogueLine = catalogueLine;
-        this.modifiedCatalogueLine = JSON.parse(JSON.stringify(catalogueLine));
+    initOrder():void {
+        this.modifiedCatalogueLine = JSON.parse(JSON.stringify(this.catalogueLine));
         this.order = UBLModelUtils.createOrder();
-        this.order.orderLine[0].lineItem.item = catalogueLine.goodsItem.item;
-        this.order.orderLine[0].lineItem.lineReference = [new LineReference(catalogueLine.id)];
+        this.order.orderLine[0].lineItem.item = this.catalogueLine.goodsItem.item;
+        this.order.orderLine[0].lineItem.lineReference = [new LineReference(this.catalogueLine.id)];
         this.selectFirstValuesAmongAlternatives();
     }
 

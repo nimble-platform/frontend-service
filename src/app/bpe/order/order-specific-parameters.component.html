@@ -1,0 +1,21 @@
+<quantity-view class="row"
+			   [propName]="'Quantity'"
+			   [quantity]="[order.orderLine[0].lineItem.quantity]"
+			   [presentationMode]="'edit'">
+</quantity-view>
+
+<h5>Payment Means</h5>
+<value-view [presentationMode]="'edit'"
+			[propName]="'Payment Means Code'"
+			[(value)]="order.paymentMeans.paymentMeansCode.value">
+</value-view>
+
+<value-view [presentationMode]="'edit'"
+			[propName]="'Payee Account ID'"
+			[(value)]="order.paymentMeans.payeeFinancialAccount.id">
+</value-view>
+
+<value-view [presentationMode]="'edit'"
+			[propName]="'Order Note'"
+			[(value)]="order.note">
+</value-view>
