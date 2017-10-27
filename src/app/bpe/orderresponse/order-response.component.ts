@@ -18,23 +18,22 @@ import {CallStatus} from "../../common/call-status";
  * Created by suat on 20-Sep-17.
  */
 @Component({
-    selector: 'order-parameters',
-    templateUrl: './order-parameters.component.html'
+    selector: 'order-response',
+    templateUrl: './order-response.component.html'
 })
 
-export class OrderParametersComponent implements OnInit {
+export class OrderResponseComponent implements OnInit {
 
     selectedTab: string = "Order Details";
     callStatus:CallStatus = new CallStatus();
 
-    constructor(public bpeService: BPEService,
-                public bpDataService: BPDataService,
-                public userService: UserService,
-                public cookieService: CookieService) {
+    constructor(private bpeService: BPEService,
+                private bpDataService: BPDataService,
+                private userService: UserService,
+                private cookieService: CookieService) {
     }
 
     ngOnInit() {
-        // order is null when buyer initiates an ordering process
         if(this.bpDataService.order == null) {
             this.bpDataService.initOrder();
         }
@@ -72,11 +71,11 @@ export class OrderParametersComponent implements OnInit {
         });
     }
 
-    respondToOrder(processId: string, order: Order, acceptedIndicator: boolean) {
+    respondToOrder(acceptedIndicator: boolean) {
         this.bpDataService.orderResponse.acceptedIndicator = acceptedIndicator;
 
-        let vars: ProcessVariables = ModelUtils.createProcessVariables("Order", order.buyerCustomerParty.party.id, order.sellerSupplierParty.party.id, this.bpDataService.orderResponse);
-        let piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, processId);
+        let vars: ProcessVariables = ModelUtils.createProcessVariables("Order", this.bpDataService.order.buyerCustomerParty.party.id, this.bpDataService.order.sellerSupplierParty.party.id, this.bpDataService.orderResponse);
+        let piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.bpDataService.processMetadata.process_id);
 
         this.callStatus.submit();
         this.bpeService.continueBusinessProcess(piim).then(

@@ -57,9 +57,22 @@ export class BPDataService {
 
         } else if(this.processType == 'Negotiation') {
             this.requestForQuotation = ActivityVariableParser.getInitialDocument(activityVariables).value;
+
+            let quotationVariable = ActivityVariableParser.getResponse(activityVariables);
+            if(quotationVariable == null) {
+                // initialize the quotation only if the user is in seller role
+                if(this.userRole == 'seller') {
+                    this.quotation = UBLModelUtils.createQuotation(this.requestForQuotation);
+                }
+
+            } else {
+                this.quotation = quotationVariable.value;
+            }
         }
     }
 
+    // this method is supposed to be called when the user is about to initialize a business process via the
+    // search details page
     initRfq():void {
         this.modifiedCatalogueLine = JSON.parse(JSON.stringify(this.catalogueLine));
         this.requestForQuotation = UBLModelUtils.createRequestForQuotation();
@@ -68,6 +81,8 @@ export class BPDataService {
         this.selectFirstValuesAmongAlternatives();
     }
 
+    // this method is supposed to be called when the user is about to initialize a business process via the
+    // search details page
     initOrder():void {
         this.modifiedCatalogueLine = JSON.parse(JSON.stringify(this.catalogueLine));
         this.order = UBLModelUtils.createOrder();

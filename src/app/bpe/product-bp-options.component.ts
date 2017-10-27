@@ -16,7 +16,7 @@ export class ProductBpOptionsComponent implements OnInit {
     @Input() singleMode:boolean = true;
     @Output() closeBpOptionsEvent = new EventEmitter();
 
-    selectedOption:string = "Order";
+    selectedOption:string;
     getCatalogueLineStatus:CallStatus = new CallStatus();
 
     constructor(public bpDataService: BPDataService,
@@ -25,6 +25,8 @@ export class ProductBpOptionsComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        this.selectedOption = this.bpDataService.processType != null ? this.bpDataService.processType : 'Order';
+
         // if the catalgoue line is already fetched, use it
         if(this.bpDataService.catalogueLine != null) {
             return;

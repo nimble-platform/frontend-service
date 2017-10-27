@@ -22,7 +22,7 @@
                         i18n
                 >Order Details</a>
             </li>
-            <li class="nav-item pointer">
+            <li *ngIf="bpDataService.orderResponse" class="nav-item pointer">
                 <a
                         [ngClass]="{'nav-link': true, active: selectedTab === 'Order Response Details'}"
                         (click)="selectedTab = 'Order Response Details'"

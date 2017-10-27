@@ -27,14 +27,14 @@
         </li>
     </ul>
 
-    <order-response-parameters
+    <order-response
             *ngIf="selectedOption == 'Order'"
             id="orderParams">
-    </order-response-parameters>
-    <negotiation-params
-            *ngIf="selectedOption == 'Negotiation'"
-            id="negotiationParams">
-    </negotiation-params>
+    </order-response>
+    <quotation
+        *ngIf="selectedOption == 'Negotiation'"
+        id="negotiationParams">
+    </quotation>
 </ng-container>
 
 <call-status [callStatus]="getCatalogueLineStatus"

@@ -202,24 +202,6 @@ export class DashboardComponent implements OnInit {
         this.router.navigate(['publish'], {queryParams: {pageRef: "catalogue"}});
     }
 
-    respondToRFQ(processId: string, rfq: RequestForQuotation, acceptedIndicator: boolean) {
-        let quotation: Quotation = UBLModelUtils.createQuotation(rfq);
-        if (acceptedIndicator == false) {
-            quotation.lineCountNumeric = 0;
-            quotation.quotationLine = [];
-        }
-        let vars: ProcessVariables = ModelUtils.createProcessVariables("Order", quotation.buyerCustomerParty.party.id, quotation.sellerSupplierParty.party.id, quotation);
-        let piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, processId);
-
-        this.bpeService.continueBusinessProcess(piim)
-            .then(res => {
-                this.loadOrders();
-            })
-            .catch(error => {
-                this.loadOrders();
-            });
-    }
-
     sendDespatchAdvice(activityVariables: any): void {
         let order: Order = activityVariables.find(v => v.name == 'Order').value;
         let despatchAdvice: DespatchAdvice = UBLModelUtils.createDespatchAdvice(order);

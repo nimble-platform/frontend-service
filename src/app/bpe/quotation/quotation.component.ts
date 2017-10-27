@@ -1,7 +1,5 @@
-import {Component, Input, OnInit} from '@angular/core';
-import * as myGlobals from '../../globals';
+import {Component, OnInit} from "@angular/core";
 import {RequestForQuotation} from "../model/ubl/request-for-quotation";
-import {Terms} from "../model/ubl/request-for-quotation-terms";
 import {CookieService} from "ng2-cookies";
 import {BPEService} from "../bpe.service";
 import {ProcessVariables} from "../model/process-variables";
@@ -11,22 +9,18 @@ import {UBLModelUtils} from "../../catalogue/model/ubl-model-utils";
 import {SupplierParty} from "../../catalogue/model/publish/supplier-party";
 import {CustomerParty} from "../../catalogue/model/publish/customer-party";
 import {ModelUtils} from "../model/model-utils";
-import {LineReference} from "../../catalogue/model/publish/line-reference";
-import {CatalogueLine} from "../../catalogue/model/publish/catalogue-line";
 import {BPDataService} from "../bp-data-service";
+import {CallStatus} from "../../common/call-status";
 import {Quotation} from "../model/ubl/quotation";
 
 @Component({
-    selector: 'negotiation-params',
-    templateUrl: './negotiation-main.component.html'
+    selector: 'quotation',
+    templateUrl: './quotation.component.html'
 })
 
-export class NegotiationMainComponent implements OnInit {
-	selectedTab: string = "Product Details";
-	negotiationExpanded = false;
-	submitted = false;
-	callback = false;
-	error_detc = false;
+export class QuotationComponent implements OnInit {
+	selectedTab: string = "Request for Quotation Details";
+	callStatus:CallStatus = new CallStatus();
 
     constructor(private bpeService: BPEService,
                 private bpDataService:BPDataService,
@@ -35,11 +29,13 @@ export class NegotiationMainComponent implements OnInit {
     }
 
     ngOnInit() {
-    	this.bpDataService.initRfq();
+		if(this.bpDataService.requestForQuotation == null) {
+			this.bpDataService.initRfq();
+		}
 	}
 
     sendRfq(): void {
-		this.submitted = true;
+		this.callStatus.submit();
 		let rfq:RequestForQuotation = JSON.parse(JSON.stringify(this.bpDataService.requestForQuotation));
 
 		// final check on the rfq
@@ -61,13 +57,26 @@ export class NegotiationMainComponent implements OnInit {
 
 				this.bpeService.startBusinessProcess(piim)
                     .then(res => {
-						this.error_detc = false;
-						this.callback = true;
+						this.callStatus.callback("Terms Sent", true);
 					})
                     .catch(error => {
-						this.error_detc = true;
+						this.callStatus.error("Failed to Sent Terms");
 					});
 			});
 		});
     }
+
+	respondToRFQ() {
+		let vars: ProcessVariables = ModelUtils.createProcessVariables("Negotiation", this.bpDataService.requestForQuotation.buyerCustomerParty.party.id, this.bpDataService.requestForQuotation.sellerSupplierParty.party.id, this.bpDataService.quotation);
+		let piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.bpDataService.processMetadata.process_id);
+
+		this.callStatus.submit();
+		this.bpeService.continueBusinessProcess(piim)
+            .then(
+            	res => this.callStatus.callback("Quotation sent", true)
+			)
+            .catch(
+				error => this.callStatus.error("Failed to send quotation")
+			);
+	}
 }

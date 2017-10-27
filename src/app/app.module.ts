@@ -32,7 +32,6 @@ import { AddressSubForm } from './user-mgmt/subforms/address.component';
 import { DeliveryTermsSubForm } from './user-mgmt/subforms/delivery-terms.component';
 import { PaymentMeansForm } from './user-mgmt/subforms/payment-means.component';
 import { CompanySettingsComponent } from './user-mgmt/company-settings.component';
-import { NegotiationMainComponent } from './bpe/negotiation/negotiation-main.component';
 import {CatalogueViewComponent} from "./catalogue/ubl-model-view/catalogue/catalogue-view.component";
 import {CatalogueLinePanelComponent} from "./catalogue/ubl-model-view/catalogue/catalogue-line-panel.component";
 import {CatalogueLineViewComponent} from "./catalogue/ubl-model-view/catalogue-line/catalogue-line-view.component";
@@ -48,7 +47,6 @@ import { BPService } from './bpe/bp.service';
 import { QuantityViewComponent } from "./catalogue/ubl-model-view/quantity-view.component";
 import { AmountViewComponent } from "./catalogue/ubl-model-view/amount-view.component";
 import { ValueViewComponent } from "./catalogue/ubl-model-view/value-view.component";
-import { OrderParametersComponent } from "./bpe/order/order-parameters.component";
 import { BPDataService } from "./bpe/bp-data-service";
 import { ValueArrayViewComponent } from "./catalogue/ubl-model-view/value-array-view.component";
 import { BooleanViewComponent } from "./catalogue/ubl-model-view/boolean-view-component";
@@ -61,8 +59,11 @@ import { CommonModule } from '@angular/common';
 import {CatalogueLineHeaderComponent} from "./catalogue/ubl-model-view/catalogue-line/catalogue-line-header.component";
 import {ProductBpOptionsComponent} from "./bpe/product-bp-options.component";
 import {OrderSpecificParametersComponent} from "./bpe/order/order-specific-parameters.component";
-import {OrderResponseParametersComponent} from "./bpe/orderresponse/order-response-parameters.component";
 import {OrderResponseSpecificParametersComponent} from "./bpe/orderresponse/order-response-specific-parameters.component";
+import {RequestForQuotationComponent} from "./bpe/requestforquotation/request-for-quotation.component";
+import {OrderResponseComponent} from "./bpe/orderresponse/order-response.component";
+import {QuotationComponent} from "./bpe/quotation/quotation.component";
+import {QuotationSpecificParametersComponent} from "./bpe/quotation/quotation-specific-parameters.component";
 
 @NgModule({
     imports: [
@@ -96,10 +97,11 @@ import {OrderResponseSpecificParametersComponent} from "./bpe/orderresponse/orde
         AddressSubForm,
         DeliveryTermsSubForm,
         PaymentMeansForm, CompanySettingsComponent,
-        NegotiationMainComponent,
-        OrderParametersComponent,
+        RequestForQuotationComponent,
+        QuotationComponent,
+        QuotationSpecificParametersComponent,
         OrderSpecificParametersComponent,
-        OrderResponseParametersComponent,
+        OrderResponseComponent,
         OrderResponseSpecificParametersComponent,
         CatalogueViewComponent,
         CatalogueLineHeaderComponent,

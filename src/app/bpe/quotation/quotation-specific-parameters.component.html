@@ -1,0 +1,23 @@
+<quantity-view class="row"
+               [propName]="'Quantity'"
+               [quantity]="[quotation.quotationLine[0].lineItem.quantity]"
+               [presentationMode]="'edit'">
+</quantity-view>
+
+<amount-view class="row"
+             [presentationMode]="'edit'"
+             [propName]="'Price'"
+             [amount]="[quotation.quotationLine[0].lineItem.price.priceAmount]">
+</amount-view>
+
+<quantity-view class="row"
+               [presentationMode]="'edit'"
+               [propName]="'Price Base Quantity'"
+               [quantity]="[quotation.quotationLine[0].lineItem.price.baseQuantity]">
+</quantity-view>
+
+<value-view class="row"
+            [presentationMode]="'edit'"
+            [propName]="'Note'"
+            [(value)]="quotation.note[0]">
+</value-view>
