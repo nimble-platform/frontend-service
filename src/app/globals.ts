@@ -7,9 +7,9 @@ export const debug=false;
 
 // Endpoint variables - SRFG domain
 
-export const user_mgmt_endpoint="http://nimble-platform.salzburgresearch.at:443/identity";
-export const catalogue_endpoint="http://nimble-platform.salzburgresearch.at:443/catalog";
-export const bpe_endpoint="http://nimble-platform.salzburgresearch.at:443/business-process";
+export const user_mgmt_endpoint="http://nimble-platform.salzburgresearch.at:443/nimble/identity";
+export const catalogue_endpoint="http://nimble-platform.salzburgresearch.at:443/nimble/catalog";
+export const bpe_endpoint="http://nimble-platform.salzburgresearch.at:443/nimble/business-process";
 
 // Endpoint variables - Kubernetes domain
 
