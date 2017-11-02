@@ -7,9 +7,9 @@ export const debug=false;
 
 // Endpoint variables - SRFG domain
 
-export const user_mgmt_endpoint="http://nimble-platform.salzburgresearch.at:443/nimble/identity";
-export const catalogue_endpoint="http://nimble-platform.salzburgresearch.at:443/nimble/catalog";
-export const bpe_endpoint="http://nimble-platform.salzburgresearch.at:443/nimble/business-process";
+export const user_mgmt_endpoint="https://nimble-platform.salzburgresearch.at/nimble/identity";
+export const catalogue_endpoint="https://nimble-platform.salzburgresearch.at/nimble/catalog";
+export const bpe_endpoint="https://nimble-platform.salzburgresearch.at/nimble/business-process";
 
 // Endpoint variables - Kubernetes domain
 
@@ -60,7 +60,8 @@ export const sparqlOptionalSelectEndPoint = 'http://hydra2.ikap.biba.uni-bremen.
 
 // Marmotta endpoint variables
 
-export const simple_search_endpoint="http://134.168.33.237:8080/marmotta/solr/catalogue2/select";
+export const simple_search_endpoint="https://nimble-platform.salzburgresearch.at/marmotta/marmotta/solr/catalogue2/select";
+// export const simple_search_endpoint="http://134.168.33.237:8080/marmotta/solr/catalogue2/select";
 //export const simple_search_endpoint="http://134.168.33.237:8080/marmotta/solr/fredo/select";
 
 
