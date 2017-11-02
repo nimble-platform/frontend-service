@@ -36,7 +36,7 @@ import {CatalogueViewComponent} from "./catalogue/ubl-model-view/catalogue/catal
 import {CatalogueLinePanelComponent} from "./catalogue/ubl-model-view/catalogue/catalogue-line-panel.component";
 import {CatalogueLineViewComponent} from "./catalogue/ubl-model-view/catalogue-line/catalogue-line-view.component";
 import { ProductDetailsComponent } from './catalogue/ubl-model-view/catalogue-line/product-details.component';
-import { TradingDetailsComponent } from './catalogue/ubl-model-view/catalogue-line/trading-details.component';
+import { TradingDetailsComponent } from './bpe/trading-details.component';
 import { PublishService } from './catalogue/publish-and-aip.service';
 import { PropertyBlockPipe } from './catalogue/property-block-pipe';
 import { ItemPropertyDataSourcePipe } from './catalogue/item-property-data-source-pipe';
@@ -58,12 +58,16 @@ import { CompanyRegistrationComponent } from './user-mgmt/company-registration.c
 import { CommonModule } from '@angular/common';
 import {CatalogueLineHeaderComponent} from "./catalogue/ubl-model-view/catalogue-line/catalogue-line-header.component";
 import {ProductBpOptionsComponent} from "./bpe/product-bp-options.component";
-import {OrderSpecificParametersComponent} from "./bpe/order/order-specific-parameters.component";
-import {OrderResponseSpecificParametersComponent} from "./bpe/orderresponse/order-response-specific-parameters.component";
-import {RequestForQuotationComponent} from "./bpe/requestforquotation/request-for-quotation.component";
-import {OrderResponseComponent} from "./bpe/orderresponse/order-response.component";
-import {QuotationComponent} from "./bpe/quotation/quotation.component";
-import {QuotationSpecificParametersComponent} from "./bpe/quotation/quotation-specific-parameters.component";
+import {RequestForQuotationComponent} from "./bpe/bp-view/negotiation/request-for-quotation.component";
+import {OrderResponseComponent} from "./bpe/bp-view/order/order-response.component";
+import {OrderBpComponent} from "./bpe/bp-view/order/order-bp.component";
+import {OrderComponent} from "./bpe/bp-view/order/order.component";
+import {FulfilmentComponent} from "./bpe/bp-view/fulfilment/fulfilment.component";
+import {DespatchAdviceComponent} from "./bpe/bp-view/fulfilment/despatch-advice.component";
+import {ReceiptAdviceComponent} from "./bpe/bp-view/fulfilment/receipt-advice.component";
+import {NegotiationComponent} from "./bpe/bp-view/negotiation/negotiation.component";
+import {QuotationComponent} from "./bpe/bp-view/negotiation/quotation.component";
+import {ProductTradingDetailsComponent} from "./catalogue/ubl-model-view/catalogue-line/product-trading-details.component";
 
 @NgModule({
     imports: [
@@ -96,18 +100,23 @@ import {QuotationSpecificParametersComponent} from "./bpe/quotation/quotation-sp
         AdditionalItemPropertyComponent,
         AddressSubForm,
         DeliveryTermsSubForm,
-        PaymentMeansForm, CompanySettingsComponent,
+        PaymentMeansForm,
+        CompanySettingsComponent,
+        NegotiationComponent,
         RequestForQuotationComponent,
         QuotationComponent,
-        QuotationSpecificParametersComponent,
-        OrderSpecificParametersComponent,
+        OrderBpComponent,
+        OrderComponent,
         OrderResponseComponent,
-        OrderResponseSpecificParametersComponent,
+        FulfilmentComponent,
+        DespatchAdviceComponent,
+        ReceiptAdviceComponent,
         CatalogueViewComponent,
         CatalogueLineHeaderComponent,
         CatalogueLinePanelComponent,
         CatalogueLineViewComponent,
         ProductDetailsComponent,
+        ProductTradingDetailsComponent,
         TradingDetailsComponent,
         PropertyBlockPipe,
         ItemPropertyDataSourcePipe,

@@ -2,24 +2,19 @@ import {Component, OnInit} from "@angular/core";
 import {AppComponent} from "../app.component";
 import {CookieService} from "ng2-cookies";
 import {BPEService} from "../bpe/bpe.service";
-import {OrderResponseSimple} from "../bpe/model/ubl/order-response-simple";
-import {Order} from "../bpe/model/ubl/order";
-import {RequestForQuotationResponse} from "../bpe/model/ubl/request-for-quotation-response";
 import {Router} from "@angular/router";
 import {UserService} from "../user-mgmt/user.service";
 import {ProcessInstanceInputMessage} from "../bpe/model/process-instance-input-message";
 import {ProcessVariables} from "../bpe/model/process-variables";
 import {UBLModelUtils} from "../catalogue/model/ubl-model-utils";
 import {ModelUtils} from "../bpe/model/model-utils";
-import {RequestForQuotation} from "../bpe/model/ubl/request-for-quotation";
-import {Quotation} from "../bpe/model/ubl/quotation";
-import {LineItem} from "../catalogue/model/publish/line-item";
 import {DespatchAdvice} from "../catalogue/model/publish/despatch-advice";
-import {Item} from "../catalogue/model/publish/item";
-import {DespatchLine} from "../catalogue/model/publish/despatch-line";
 import {ReceiptAdvice} from "../catalogue/model/publish/receipt-advice";
 import {BPDataService} from "../bpe/bp-data-service";
 import {ActivityVariableParser} from "../bpe/activity-variable-parser";
+import {Quotation} from "../catalogue/model/publish/quotation";
+import {OrderResponseSimple} from "../catalogue/model/publish/order-response-simple";
+import {Order} from "../catalogue/model/publish/order";
 
 @Component({
     selector: 'nimble-dashboard',
@@ -233,9 +228,18 @@ export class DashboardComponent implements OnInit {
             });
     }
 
-    openBpProcessView(role:string, processMetadata:any) {
-        this.bpDataService.setBpOptionParameters(role, processMetadata);
-        this.router.navigate(['bpe-exec'], {queryParams: {catalogueId:  processMetadata.product.catalogueDocumentReference.id, id:processMetadata.product.manufacturersItemIdentification.id}});
+    openBpProcessView(role: string, targetProcess:string, processMetadata: any) {
+        if(targetProcess == null) {
+            targetProcess = ActivityVariableParser.getProcessType(processMetadata.activityVariables);
+        }
+
+        this.bpDataService.setBpOptionParameters_NavFromDashboard(role, targetProcess, processMetadata);
+        this.router.navigate(['bpe-exec'], {
+            queryParams: {
+                catalogueId: processMetadata.product.catalogueDocumentReference.id,
+                id: processMetadata.product.manufacturersItemIdentification.id
+            }
+        });
     }
 
     getActionStatus(processType: string, response: any, buyer: boolean): string {
@@ -292,26 +296,37 @@ export class DashboardComponent implements OnInit {
     }
 
     getBpOptionsMenuItems(processType: string, response: any, buyer: boolean): any {
-        let bpOptionMenuItems: Array<string> = ['Business History'];
+        let bpOptionMenuItems: Array<any> = [{itemLabel: 'Business History'}];
 
         // messages if there is no response from the responder party
-        if (response == null) {
+        /*if (response == null) {
             // messages for the buyer
             if (buyer) {
                 if (processType == 'Fulfilment') {
-                    bpOptionMenuItems.push('Send Receipt Advice');
+                    bpOptionMenuItems.push({itemLabel: 'Send Receipt Advice'});
                 }
             }
 
             // messages for the seller
             else {
                 if (processType == 'Order') {
-                    bpOptionMenuItems.push('Send Order Response');
+                    bpOptionMenuItems.push({itemLabel:'Send Order Response'});
                 } else if (processType == 'Negotiation') {
-                    bpOptionMenuItems.push('Send Quotation');
+                    bpOptionMenuItems.push({itemLabel: 'Send Quotation'});
                 }
             }
-        }
+
+            // if the response is not null
+        } else {
+            if (processType == 'Order') {
+                if(!buyer) {
+                    let orderResponse: OrderResponseSimple = response.value;
+                    if (orderResponse.acceptedIndicator == true) {
+                        bpOptionMenuItems.push({itemLabel: 'Send Despatch Advice'});
+                    }
+                }
+            }
+        }*/
         return bpOptionMenuItems;
     }
 

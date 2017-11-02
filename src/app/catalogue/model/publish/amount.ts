@@ -4,7 +4,7 @@
 
 export class Amount {
     constructor(
-        public value: string,
-        public currencyID:string
+        public value: string = null,
+        public currencyID:string = null
     ) {  }
 }

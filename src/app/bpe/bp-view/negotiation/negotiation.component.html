@@ -1,0 +1,51 @@
+<div>
+	<div>
+		<ul class="nav nav-tabs">
+			<li class="nav-item pointer">
+				<a [ngClass]="{'nav-link': true, active: selectedTab === 'Product Details'}"
+						(click)="selectedTab = 'Product Details'"
+						i18n
+				>Product Characteristics</a>
+			</li>
+			<li class="nav-item pointer">
+				<a [ngClass]="{'nav-link': true, active: selectedTab === 'Product Trading & Delivery Terms'}"
+						(click)="selectedTab = 'Trading & Delivery Terms'"
+						i18n
+				>Trading & Delivery Terms</a>
+			</li>
+			<li class="nav-item pointer">
+				<a [ngClass]="{'nav-link': true, active: selectedTab === 'Request for Quotation Details'}"
+				   (click)="selectedTab = 'Request for Quotation Details'"
+				   i18n
+				>Request for Quotation Details</a>
+			</li>
+			<li *ngIf="(bpDataService.userRole == 'buyer' && bpDataService.processMetadata != null && bpDataService.processMetadata.processStatus == 'Completed') ||
+                        (bpDataService.userRole == 'seller')"
+                class="nav-item pointer">
+				<a [ngClass]="{'nav-link': true, active: selectedTab === 'Quotation Details'}"
+				   (click)="selectedTab = 'Quotation Details'"
+				   i18n
+				>Quotation Details</a>
+			</li>
+		</ul>
+	</div>
+	<div *ngIf="bpDataService.catalogueLine"
+				  class="p-3">
+		<product-details *ngIf="selectedTab === 'Product Details'"
+						 [catalogueLine]="bpDataService.catalogueLine"
+						 [presentationMode]="'view'">
+		</product-details>
+		<product-trading-details *ngIf="selectedTab === 'Product Trading & Delivery Terms'"
+						 [catalogueLine]="bpDataService.catalogueLine"
+						 [presentationMode]="'view'"
+						 [editPrice]="true">
+		</product-trading-details>
+		<request-for-quotation *ngIf="selectedTab === 'Request for Quotation Details'"
+			[requestForQuotation]="bpDataService.requestForQuotation">
+		</request-for-quotation>
+		<quotation *ngIf="selectedTab == 'Quotation Details'"
+				   [quotation]="bpDataService.quotation"
+				   (newProcessInitialized)="selectedTab = 'Request for Quotation Details'">
+		</quotation>
+	</div>
+</div>

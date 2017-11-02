@@ -11,8 +11,6 @@ import {Party} from "./publish/party";
 import {Item} from "./publish/item";
 import {GoodsItem} from "./publish/goods-item";
 import {CatalogueLine} from "./publish/catalogue-line";
-import {OrderResponseSimple} from "../../bpe/model/ubl/order-response-simple";
-import {Order} from "../../bpe/model/ubl/order";
 import {OrderReference} from "../../bpe/model/order-reference";
 import {DocumentReference} from "./publish/document-reference";
 import {Quantity} from "./publish/quantity";
@@ -24,10 +22,8 @@ import {DeliveryTerms} from "./publish/delivery-terms";
 import {Period} from "./publish/period";
 import {Package} from "./publish/package";
 import {ItemIdentification} from "./publish/item-identification";
-import {RequestForQuotation} from "../../bpe/model/ubl/request-for-quotation";
 import {RequestForQuotationLine} from "./publish/request-for-quotation-line";
 import {Delivery} from "./publish/delivery";
-import {Quotation} from "../../bpe/model/ubl/quotation";
 import {QuotationLine} from "./publish/quotation-line";
 import {Dimension} from "./publish/dimension";
 import {Address} from "./publish/address";
@@ -37,6 +33,11 @@ import {DespatchAdvice} from "./publish/despatch-advice";
 import {ReceiptAdvice} from "./publish/receipt-advice";
 import {ReceiptLine} from "./publish/receipt-line";
 import {PaymentMeans} from "./publish/payment-means";
+import {Order} from "./publish/order";
+import {OrderResponseSimple} from "./publish/order-response-simple";
+import {RequestForQuotation} from "./publish/request-for-quotation";
+import {Quotation} from "./publish/quotation";
+import {Location} from "./publish/location";
 /**
  * Created by suat on 05-Jul-17.
  */
@@ -156,7 +157,7 @@ export class UBLModelUtils {
         let quantity: Quantity = new Quantity(null, "", null);
         let item: Item = this.createItem();
         let price: Price = this.createPrice(null);
-        let lineItem:LineItem = new LineItem(quantity, price, item, null);
+        let lineItem:LineItem = new LineItem(quantity, [], new DeliveryTerms(), price, item, new Period(), null);
         let quotationLine:QuotationLine = new QuotationLine(lineItem, null);
 
         let delivery:Delivery = this.createDelivery();
@@ -204,7 +205,7 @@ export class UBLModelUtils {
     }
 
     public static createLineItem(quantity, price, item):LineItem {
-        return new LineItem(quantity, price, item, null);
+        return new LineItem(quantity, [], new DeliveryTerms(), price, item, new Period(), null);
     }
 
     public static createPackage():Package {
@@ -227,7 +228,7 @@ export class UBLModelUtils {
     }
 
     public static createDeliveryTerms():DeliveryTerms {
-        let deliveryTerms = new DeliveryTerms(null, this.createPeriod(), null, null, this.createAmount(), null);
+        let deliveryTerms = new DeliveryTerms(null, this.createPeriod(), null, null, this.createAmount(), new Location(), null);
         return deliveryTerms;
     }
 

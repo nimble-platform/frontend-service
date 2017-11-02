@@ -1,7 +1,7 @@
-import {Order} from "./model/ubl/order";
-import {RequestForQuotation} from "./model/ubl/request-for-quotation";
 import {DespatchAdvice} from "../catalogue/model/publish/despatch-advice";
 import {Item} from "../catalogue/model/publish/item";
+import {Order} from "../catalogue/model/publish/order";
+import {RequestForQuotation} from "../catalogue/model/publish/request-for-quotation";
 /**
  * Created by suat on 24-Oct-17.
  */

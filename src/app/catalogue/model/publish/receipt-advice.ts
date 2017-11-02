@@ -13,6 +13,7 @@ import {CustomerParty} from "./customer-party";
  */
 export class ReceiptAdvice {
     constructor(
+        public note:string[] = null,
         public orderReference:OrderReference[] = null,
         public despatchDocumentReference:DocumentReference[] = null,
         public deliveryCustomerParty:CustomerParty = null,

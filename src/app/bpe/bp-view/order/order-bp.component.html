@@ -10,7 +10,7 @@
             </li>
             <li class="nav-item pointer">
                 <a
-                        [ngClass]="{'nav-link': true, active: selectedTab === 'Trading & Delivery Terms'}"
+                        [ngClass]="{'nav-link': true, active: selectedTab === 'Product Trading & Delivery Terms'}"
                         (click)="selectedTab = 'Trading & Delivery Terms'"
                         i18n
                 >Trading & Delivery Terms</a>
@@ -37,18 +37,18 @@
                          [catalogueLine]="bpDataService.catalogueLine"
                          [presentationMode]="'singlevalue'">
         </product-details>
-        <trading-details *ngIf="selectedTab === 'Trading & Delivery Terms'"
-                         [catalogueLine]="bpDataService.catalogueLine"
-                         [presentationMode]="'singlevalue'"
-                         [editPrice]="false">
-        </trading-details>
-        <order-specific-parameters *ngIf="selectedTab === 'Order Details'"
-                                   [order]="bpDataService.order">
-        </order-specific-parameters>
-        <order-response-specific-parameters *ngIf="selectedTab === 'Order Response Details'"
-                                            [order]="bpDataService.order"
-                                            [orderResponse]="bpDataService.orderResponse">
-        </order-response-specific-parameters>
+        <product-trading-details *ngIf="selectedTab === 'Product Trading & Delivery Terms'"
+                                 [catalogueLine]="bpDataService.catalogueLine"
+                                 [presentationMode]="'singlevalue'"
+                                 [editPrice]="false">
+        </product-trading-details>
+        <order *ngIf="selectedTab === 'Order Details'"
+               [order]="bpDataService.order">
+        </order>
+        <order-response *ngIf="selectedTab === 'Order Response Details'"
+                        [order]="bpDataService.order"
+                        [orderResponse]="bpDataService.orderResponse">
+        </order-response>
 
     </div>
 
@@ -74,7 +74,7 @@
         placed - track the progress on your <a
                 routerLink="/dashboard">dashboard</a></div>
     <div *ngIf="bpDataService.userRole == 'seller'" class="alert alert-success space-before" role="alert" i18n>Order
-        Response placed - track the progress on your <a
+        Response placed - go to your <a
                 routerLink="/dashboard">dashboard</a></div>
 </div>
 <div [hidden]="!callStatus.fb_errordetc">

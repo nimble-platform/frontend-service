@@ -2,7 +2,6 @@ import {Component, OnInit} from "@angular/core";
 import {ActivatedRoute} from "@angular/router";
 import {SimpleSearchService} from "./simple-search.service";
 import {BPEService} from "../bpe/bpe.service";
-import {Order} from "../bpe/model/ubl/order";
 import {CookieService} from "ng2-cookies";
 import * as myGlobals from "../globals";
 import {ProcessInstanceInputMessage} from "../bpe/model/process-instance-input-message";

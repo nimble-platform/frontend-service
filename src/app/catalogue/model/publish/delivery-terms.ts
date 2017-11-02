@@ -1,5 +1,5 @@
 import {Amount} from "./amount";
-import {Delivery} from "./delivery";
+import {Location} from "./location";
 import {Period} from "./period";
 /**
  * Created by deniz on 16/07/17.
@@ -7,11 +7,12 @@ import {Period} from "./period";
 
 export class DeliveryTerms {
     constructor(
-        public id: string,
-        public estimatedDeliveryPeriod:Period,
-        public specialTerms: string,
-        public incoterms: string,
-        public amount: Amount,
-        public hjid: string
+        public id: string = null,
+        public estimatedDeliveryPeriod:Period = new Period(),
+        public specialTerms: string = null,
+        public incoterms: string = null,
+        public amount: Amount = new Amount(),
+        public deliveryLocation:Location = new Location(),
+        public hjid: string = null
     ) {  }
 }

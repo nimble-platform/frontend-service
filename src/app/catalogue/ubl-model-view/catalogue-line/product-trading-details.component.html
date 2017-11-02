@@ -1,3 +1,4 @@
+<!-- TODO use trading-details for common elements -->
 <h5 class="mt-3 mb-3">Price</h5>
 <!-- Price Amount -->
 <amount-view [presentationMode]="editPrice ? 'edit' : presentationMode"
@@ -28,14 +29,14 @@
 
 <!-- Estimated delivery period -->
 <quantity-view [presentationMode]="presentationMode"
-        [propName]="'Estimated Delivery Period'"
-        [quantity]="[catalogueLine.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure]">
+               [propName]="'Estimated Delivery Period'"
+               [quantity]="[catalogueLine.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure]">
 </quantity-view>
 
 <!-- Applicable territory -->
 <ng-container *ngIf="catalogueLine.requiredItemLocationQuantity.applicableTerritoryAddress">
     <address-view [presentationMode]="presentationMode"
-                  [propName]="'Estimated Delivery Period'"
+                  [propName]="'Applicable Territory Address'"
                   [address]="catalogueLine.requiredItemLocationQuantity.applicableTerritoryAddress">
     </address-view>
 </ng-container>

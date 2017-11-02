@@ -42,7 +42,7 @@
     <li class="nav-item pointer">
         <a
                 [ngClass]="{'nav-link': true, active: selectedTab === 'Trading & Delivery Terms'}"
-                (click)="selectedTab = 'Trading & Delivery Terms'"
+                (click)="selectedTab = 'Product Trading & Delivery Terms'"
                 i18n
         >Trading & Delivery Terms</a>
     </li>
@@ -52,7 +52,7 @@
                  [catalogueLine]="catalogueLine"
                  [presentationMode]="presentationMode">
 </product-details>
-<trading-details *ngIf="selectedTab === 'Trading & Delivery Terms'"
+<product-trading-details *ngIf="selectedTab === 'Product Trading & Delivery Terms'"
                  [catalogueLine]="catalogueLine"
                  [presentationMode]="presentationMode">
-</trading-details>
+</product-trading-details>

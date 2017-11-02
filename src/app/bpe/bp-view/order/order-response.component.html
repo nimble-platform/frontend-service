@@ -1,0 +1,14 @@
+<ng-container *ngIf="orderResponse">
+    <h5>Notes</h5>
+    <value-view class="row"
+                [presentationMode]="'edit'"
+                [propName]="'Note'"
+                [(value)]="orderResponse.note">
+    </value-view>
+
+    <value-view class="row"
+                [presentationMode]="'edit'"
+                [propName]="'Rejection Note'"
+                [(value)]="orderResponse.rejectionNote">
+    </value-view>
+</ng-container>

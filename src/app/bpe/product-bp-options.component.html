@@ -4,13 +4,6 @@
     </catalogue-line-header>
 
     <ul *ngIf="!singleMode" class="nav nav-tabs">
-        <li class="nav-item">
-            <a href id="ordertab"
-               [ngClass]="{'nav-link': true, active: selectedOption == 'Order'}"
-               (click)="selectedOption = 'Order'; $event.preventDefault();"
-               i18n
-            >Order</a>
-        </li>
 
         <li class="nav-item">
             <a href id="negotiationtab"
@@ -20,6 +13,14 @@
             >Negotiate</a>
         </li>
 
+        <li class="nav-item">
+            <a href id="ordertab"
+               [ngClass]="{'nav-link': true, active: selectedOption == 'Order'}"
+               (click)="selectedOption = 'Order'; $event.preventDefault();"
+               i18n
+            >Order</a>
+        </li>
+
         <li class="nav-item ml-auto">
             <button class="btn btn-success"
                     (click)="closeBpOptions()"><i class="fa fa-angle-double-up" aria-hidden="true"></i>
@@ -27,14 +28,12 @@
         </li>
     </ul>
 
-    <order-response
-            *ngIf="selectedOption == 'Order'"
+    <negotiation *ngIf="selectedOption == 'Negotiation'"
+                 id="negotiationParams">
+    </negotiation>
+    <order-bp *ngIf="selectedOption == 'Order'"
             id="orderParams">
-    </order-response>
-    <quotation
-        *ngIf="selectedOption == 'Negotiation'"
-        id="negotiationParams">
-    </quotation>
+    </order-bp>
 </ng-container>
 
 <call-status [callStatus]="getCatalogueLineStatus"
