@@ -1,37 +1,37 @@
 <ng-container *ngIf="requestForQuotation">
-<quantity-view class="row"
-               [propName]="'Quantity'"
-               [quantity]="[requestForQuotation.requestForQuotationLine[0].lineItem.quantity]"
-               [presentationMode]="'edit'">
-</quantity-view>
+    <quantity-view class="row"
+                   [propName]="'Quantity'"
+                   [quantity]="[requestForQuotation.requestForQuotationLine[0].lineItem.quantity]"
+                   [presentationMode]="'edit'">
+    </quantity-view>
 
-<div class="row">
-    <trading-details class="container"
-                     [lineItem]="requestForQuotation.requestForQuotationLine[0].lineItem"
-                     [presentationMode]="'edit'">
-    </trading-details>
-</div>
-
-<hr>
-
-<value-view class="row"
-            [presentationMode]="'edit'"
-            [propName]="'Note'"
-            [(value)]="requestForQuotation.note[0]">
-</value-view>
-
-<div class="container ">
-    <div class="row justify-content-end">
-        <ng-container *ngIf="bpDataService.userRole == 'buyer'">
-            <!-- if processMetadata is null, it means a negotiation is initialized right now -->
-            <button *ngIf="bpDataService.processMetadata == null ||
-								(bpDataService.processMetadata.processStatus == 'Completed' && bpDataService.quotation.quotationLine[0].lineItem.quantity.value == 0)"
-                    class="btn btn-success" (click)="sendRfq()">Send Requested Terms
-            </button>
-        </ng-container>
+    <div class="row">
+        <trading-details class="container"
+                         [lineItem]="requestForQuotation.requestForQuotationLine[0].lineItem"
+                         [presentationMode]="'edit'">
+        </trading-details>
     </div>
-</div>
+
+    <hr>
+
+    <value-view class="row"
+                [presentationMode]="'edit'"
+                [propName]="'Note'"
+                [(value)]="requestForQuotation.note[0]">
+    </value-view>
+
+    <div class="container ">
+        <div class="row justify-content-end">
+            <ng-container *ngIf="bpDataService.userRole == 'buyer'">
+                <!-- if processMetadata is null, it means a negotiation is initialized right now -->
+                <button *ngIf="bpDataService.processMetadata == null ||
+								(bpDataService.processMetadata.processStatus == 'Completed' && bpDataService.quotation.quotationLine[0].lineItem.quantity.value == 0)"
+                        class="btn btn-success" (click)="sendRfq()">Send Requested Terms
+                </button>
+            </ng-container>
+        </div>
+    </div>
 </ng-container>
 <call-status [callStatus]="callStatus"
-            [large]="true">
+             [large]="true">
 </call-status>
