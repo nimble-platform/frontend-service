@@ -4,17 +4,17 @@ node ('nimble-jenkins-slave') {
         git(url: 'https://github.com/nimble-platform/frontend-service.git', branch: env.BRANCH_NAME)
     }
 
-    stage('Build Application') {
-        sh 'npm install'
-    	sh 'mvn install'
-    }
-
-    stage ('Build Docker') {
-        sh 'docker build -t nimbleplatform/frontend-service ./target'
-    }
+//     stage('Build Application') {
+//    	sh 'mvn install'
+//    }
+//
+//    stage ('Build Docker') {
+//        sh 'docker build -t nimbleplatform/frontend-service ./target'
+//    }
 
     if (env.BRANCH_NAME == 'master') {
         stage('Deploy') {
+            sh 'docker pull nimbleplatform/frontend-service'
             sh 'ssh nimble "cd /data/nimble_setup/ && sudo ./run-prod.sh restart-single frontend-service"'
         }
     }
@@ -25,7 +25,6 @@ node ('nimble-jenkins-slave') {
 	//        withDockerRegistry([credentialsId: 'NimbleDocker']) {
 	//            sh '/bin/bash -xe deploy.sh docker-push'
 	//        }
-
 	//    }
     //
 	//    stage ('Apply to Cluster') {
