@@ -13,6 +13,7 @@ import {Quotation} from "../catalogue/model/publish/quotation";
 import {Order} from "../catalogue/model/publish/order";
 import {OrderResponseSimple} from "../catalogue/model/publish/order-response-simple";
 import {BehaviorSubject} from "rxjs/BehaviorSubject";
+import {OrderReference} from "./model/order-reference";
 /**
  * Created by suat on 20-Sep-17.
  */
@@ -135,12 +136,11 @@ export class BPDataService {
         this.requestForQuotation.requestForQuotationLine[0].lineItem = copyQuotation.quotationLine[0].lineItem;
     }
 
-    initRfqWithRfq() {
-        let copyRfq:RequestForQuotation = JSON.parse(JSON.stringify(this.quotation));
+    initDespatchAdviceWithOrder() {
+        let copyOrder:Order = JSON.parse(JSON.stringify(this.order));
         this.resetBpDataExceptCatalogueLine();
         this.modifiedCatalogueLine = JSON.parse(JSON.stringify(this.catalogueLine));
-        this.requestForQuotation = UBLModelUtils.createRequestForQuotation();
-        this.requestForQuotation.requestForQuotationLine[0].lineItem = copyRfq.requestForQuotationLine[0].lineItem;
+        this.despatchAdvice = UBLModelUtils.createDespatchAdvice(copyOrder);
     }
 
     resetBpData():void {

@@ -197,37 +197,6 @@ export class DashboardComponent implements OnInit {
         this.router.navigate(['publish'], {queryParams: {pageRef: "catalogue"}});
     }
 
-    sendDespatchAdvice(activityVariables: any): void {
-        let order: Order = activityVariables.find(v => v.name == 'Order').value;
-        let despatchAdvice: DespatchAdvice = UBLModelUtils.createDespatchAdvice(order);
-        UBLModelUtils.removeHjidFieldsFromObject(despatchAdvice);
-
-        let vars: ProcessVariables = ModelUtils.createProcessVariables("Fulfilment", despatchAdvice.deliveryCustomerParty.party.id, despatchAdvice.despatchSupplierParty.party.id, despatchAdvice);
-        let piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
-
-        this.bpeService.startBusinessProcess(piim)
-            .then(res => {
-                this.loadOrders();
-            })
-            .catch(error => {
-                this.loadOrders();
-            });
-    }
-
-    sendReceiptAdvice(processId: string, despatchAdvice: DespatchAdvice): void {
-        let receiptAdvice: ReceiptAdvice = UBLModelUtils.createReceiptAdvice(despatchAdvice);
-        let vars: ProcessVariables = ModelUtils.createProcessVariables("Fulfilment", receiptAdvice.deliveryCustomerParty.party.id, receiptAdvice.despatchSupplierParty.party.id, receiptAdvice);
-        let piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, processId);
-
-        this.bpeService.continueBusinessProcess(piim)
-            .then(res => {
-                this.loadOrders();
-            })
-            .catch(error => {
-                this.loadOrders();
-            });
-    }
-
     openBpProcessView(role: string, targetProcess:string, processMetadata: any) {
         if(targetProcess == null) {
             targetProcess = ActivityVariableParser.getProcessType(processMetadata.activityVariables);

@@ -36,7 +36,7 @@ export class OrderResponseComponent {
         this.callStatus.submit();
         this.bpeService.continueBusinessProcess(piim).then(
             res => {
-                this.callStatus.callback("Order Response Placed", true);
+                this.callStatus.callback("Order Response placed", true);
                 this.router.navigate(['dashboard']);
             }
         ).catch(
@@ -44,7 +44,8 @@ export class OrderResponseComponent {
         );
     }
 
-    initiateDespatchAdvice(): void {
-
+    initiateDespatchAdvice() {
+        this.bpDataService.initDespatchAdviceWithOrder();
+        this.bpDataService.setBpOptionParameters('buyer', 'Fulfilment');
     }
 }

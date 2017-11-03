@@ -57,7 +57,7 @@ export class OrderComponent {
 
                 this.bpeService.startBusinessProcess(piim)
                     .then(res => {
-                        this.callStatus.callback("Order Placed", true);
+                        this.callStatus.callback("Order placed", true);
                         this.router.navigate(['dashboard']);
                     })
                     .catch(error => {

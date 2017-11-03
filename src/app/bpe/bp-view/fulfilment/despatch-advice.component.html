@@ -1,5 +1,20 @@
-<value-view class="row"
-            [presentationMode]="'edit'"
-            [propName]="'Note'"
-            [(value)]="despatchAdvice.note[0]">
-</value-view>
+<ng-container *ngIf="bpDataService.despatchAdvice">
+    <value-view class="row"
+                [presentationMode]="'edit'"
+                [propName]="'Note'"
+                [(value)]="despatchAdvice.note[0]">
+    </value-view>
+
+    <div class="container ">
+        <div class="row justify-content-end">
+            <button *ngIf="bpDataService.processMetadata == null && bpDataService.userRole == 'seller'"
+                    class="btn btn-success" (click)="sendDespatchAdvice()">
+                Send Despatch Advice
+            </button>
+        </div>
+    </div>
+</ng-container>
+
+<call-status [callStatus]="callStatus"
+             [large]="true">
+</call-status>

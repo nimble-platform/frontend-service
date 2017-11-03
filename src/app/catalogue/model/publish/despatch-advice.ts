@@ -12,8 +12,8 @@ import {SupplierParty} from "./supplier-party";
 export class DespatchAdvice {
     constructor(
         public id:string = null,
-        public note:string[] = null,
-        public orderReference:OrderReference[] = null,
+        public note:string[] = [],
+        public orderReference:OrderReference[] = [],
         public deliveryCustomerParty:CustomerParty = null,
         public despatchSupplierParty:SupplierParty = null,
         public despatchLine:DespatchLine[] = null

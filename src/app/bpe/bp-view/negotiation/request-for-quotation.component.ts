@@ -54,11 +54,11 @@ export class RequestForQuotationComponent {
 
                 this.bpeService.startBusinessProcess(piim)
                     .then(res => {
-                        this.callStatus.callback("Terms Sent", true);
+                        this.callStatus.callback("Terms sent", true);
                         this.router.navigate(['dashboard']);
                     })
                     .catch(error => {
-                        this.callStatus.error("Failed to Sent Terms");
+                        this.callStatus.error("Failed to sent Terms");
                     });
             });
         });
