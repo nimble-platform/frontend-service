@@ -46,6 +46,6 @@ export class OrderResponseComponent {
 
     initiateDespatchAdvice() {
         this.bpDataService.initDespatchAdviceWithOrder();
-        this.bpDataService.setBpOptionParameters('buyer', 'Fulfilment');
+        this.bpDataService.setBpOptionParameters('seller', 'Fulfilment');
     }
 }

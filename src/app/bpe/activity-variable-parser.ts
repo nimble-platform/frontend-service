@@ -72,8 +72,8 @@ export class ActivityVariableParser {
             return rfq.requestForQuotationLine[0].lineItem.item;
 
         } else if (processType == "Fulfilment") {
-            // not required for fulfilment process records, for the time being
-            return null;
+            let despatchAdvice:DespatchAdvice = initialDocument.value as DespatchAdvice;
+            return despatchAdvice.despatchLine[0].item;
         }
     }
 

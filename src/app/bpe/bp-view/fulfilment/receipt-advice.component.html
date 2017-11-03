@@ -3,20 +3,11 @@
     <value-view class="row"
                 [presentationMode]="'edit'"
                 [propName]="'Note'"
-                [(value)]="orderResponse.note">
-    </value-view>
-
-    <value-view class="row"
-                [presentationMode]="'edit'"
-                [propName]="'Rejection Note'"
-                [(value)]="orderResponse.rejectionNote">
+                [(value)]="receiptAdvice.note[0]">
     </value-view>
 
     <div class="container ">
         <div class="row justify-content-end">
-            <button *ngIf="bpDataService.userRole == 'seller'" class="btn btn-success" (click)="sendDespatchAdvice()">
-                Send Despatch Advice
-            </button>
             <button *ngIf="bpDataService.userRole == 'buyer'" class="btn btn-success"
                     (click)="sendReceiptAdvice()">Send Receipt Advice
             </button>
