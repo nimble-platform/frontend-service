@@ -24,6 +24,7 @@ node ('nimble-jenkins-slave') {
 	//        withDockerRegistry([credentialsId: 'NimbleDocker']) {
 	//            sh '/bin/bash -xe deploy.sh docker-push'
 	//        }
+
 	//    }
     //
 	//    stage ('Apply to Cluster') {
