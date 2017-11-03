@@ -17,7 +17,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     @Input() singleMode:boolean = true;
     @Output() closeBpOptionsEvent = new EventEmitter();
 
-    selectedOption:string = 'Negotiation';
+    selectedOption:string;// = 'Negotiation';
     processTypeSubs:Subscription;
     getCatalogueLineStatus:CallStatus = new CallStatus();
 

@@ -8,7 +8,7 @@
         <li class="nav-item">
             <a href id="negotiationtab"
                [ngClass]="{'nav-link': true, active: selectedOption == 'Negotiation'}"
-               (click)="selectedOption = 'Negotiation'; $event.preventDefault();"
+               (click)="bpDataService.setProcessType('Negotiation'); $event.preventDefault();"
                i18n
             >Negotiate</a>
         </li>

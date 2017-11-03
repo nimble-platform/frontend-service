@@ -16,7 +16,7 @@ import {Router} from "@angular/router";
 export class QuotationComponent {
 
 	@Input() quotation:Quotation;
-	@Output() newProcessInitialized = new EventEmitter();
+	@Output() newNegotiationInitialized = new EventEmitter();
 
     callStatus:CallStatus = new CallStatus();
 
@@ -43,13 +43,13 @@ export class QuotationComponent {
     }
 
     initiateOrder() {
-        this.bpDataService.setBpOptionParameters('buyer', 'Order');
         this.bpDataService.initOrderWithQuotation();
+        this.bpDataService.setBpOptionParameters('buyer', 'Order');
     }
 
     initiateNewNegotiation() {
-        this.bpDataService.setBpOptionParameters('buyer', 'Negotiation');
         this.bpDataService.initRfqWithQuotation();
-        this.newProcessInitialized.next();
+        this.bpDataService.setBpOptionParameters('buyer', 'Negotiation');
+        this.newNegotiationInitialized.next();
     }
 }

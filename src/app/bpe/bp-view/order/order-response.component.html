@@ -11,4 +11,26 @@
                 [propName]="'Rejection Note'"
                 [(value)]="orderResponse.rejectionNote">
     </value-view>
+
+    <div class="container ">
+        <div class="row justify-content-end">
+            <ng-container *ngIf="bpDataService.processMetadata.processStatus != 'Completed'">
+                <button *ngIf="bpDataService.userRole == 'seller'" class="btn btn-success mr-3"
+                        (click)="respondToOrder(true)">Accept Order
+                </button>
+                <button *ngIf="bpDataService.userRole == 'seller'" class="btn btn-danger" (click)="respondToOrder(false)">
+                    Reject Order
+                </button>
+            </ng-container>
+            <ng-container *ngIf="bpDataService.processMetadata.processStatus == 'Completed'">
+                <button *ngIf="bpDataService.userRole == 'seller' && bpDataService.orderResponse.acceptedIndicator == true"
+                        class="btn btn-success mr-3"
+                        (click)="initiateDespatchAdvice()">Initiate Despatch Advice
+                </button>
+            </ng-container>
+        </div>
+    </div>
 </ng-container>
+<call-status [callStatus]="callStatus"
+             [large]="true">
+</call-status>

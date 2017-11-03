@@ -101,7 +101,6 @@ export class BPDataService {
     // this method is supposed to be called when the user is about to initialize a business process via the
     // search details page
     initRfq():void {
-        this.resetBpDataExceptCatalogueLine();
         this.modifiedCatalogueLine = JSON.parse(JSON.stringify(this.catalogueLine));
         this.requestForQuotation = UBLModelUtils.createRequestForQuotation();
         this.requestForQuotation.requestForQuotationLine[0].lineItem.item = this.modifiedCatalogueLine.goodsItem.item;
@@ -112,7 +111,6 @@ export class BPDataService {
     // this method is supposed to be called when the user is about to initialize a business process via the
     // search details page
     initOrder():void {
-        this.resetBpDataExceptCatalogueLine();
         this.modifiedCatalogueLine = JSON.parse(JSON.stringify(this.catalogueLine));
         this.order = UBLModelUtils.createOrder();
         this.order.orderLine[0].lineItem.item = this.modifiedCatalogueLine.goodsItem.item;
@@ -124,7 +122,6 @@ export class BPDataService {
         let copyQuotation:Quotation = JSON.parse(JSON.stringify(this.quotation));
         this.resetBpDataExceptCatalogueLine();
         this.modifiedCatalogueLine = JSON.parse(JSON.stringify(this.catalogueLine));
-        this.userRole = 'buyer';
         this.order = UBLModelUtils.createOrder();
         this.order.orderLine[0].lineItem = copyQuotation.quotationLine[0].lineItem;
         this.setProcessType('Order');
@@ -134,13 +131,25 @@ export class BPDataService {
         let copyQuotation:Quotation = JSON.parse(JSON.stringify(this.quotation));
         this.resetBpDataExceptCatalogueLine();
         this.modifiedCatalogueLine = JSON.parse(JSON.stringify(this.catalogueLine));
-        this.userRole = 'buyer';
         this.requestForQuotation = UBLModelUtils.createRequestForQuotation();
         this.requestForQuotation.requestForQuotationLine[0].lineItem = copyQuotation.quotationLine[0].lineItem;
     }
 
+    initRfqWithRfq() {
+        let copyRfq:RequestForQuotation = JSON.parse(JSON.stringify(this.quotation));
+        this.resetBpDataExceptCatalogueLine();
+        this.modifiedCatalogueLine = JSON.parse(JSON.stringify(this.catalogueLine));
+        this.requestForQuotation = UBLModelUtils.createRequestForQuotation();
+        this.requestForQuotation.requestForQuotationLine[0].lineItem = copyRfq.requestForQuotationLine[0].lineItem;
+    }
+
+    resetBpData():void {
+        this.catalogueLine = null;
+        this.userRole = null;
+        this.resetBpDataExceptCatalogueLine();
+    }
+
     resetBpDataExceptCatalogueLine():void {
-        this.setProcessType('Negotiation');
         this.processMetadata = null;
         this.userRole = null;
         this.modifiedCatalogueLine = null;
