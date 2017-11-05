@@ -32,11 +32,11 @@
      class="p-3">
     <product-details *ngIf="selectedTab === 'Product Details'"
                      [catalogueLine]="bpDataService.catalogueLine"
-                     [presentationMode]="'view'">
+                     [presentationMode]="'singlevalue'">
     </product-details>
     <product-trading-details *ngIf="selectedTab === 'Product Trading & Delivery Terms'"
                              [catalogueLine]="bpDataService.catalogueLine"
-                             [presentationMode]="'view'"
+                             [presentationMode]="'singlevalue'"
                              [editPrice]="true">
     </product-trading-details>
     <request-for-quotation *ngIf="selectedTab === 'Request for Quotation Details'"

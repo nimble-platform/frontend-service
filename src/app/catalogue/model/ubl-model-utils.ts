@@ -38,6 +38,7 @@ import {OrderResponseSimple} from "./publish/order-response-simple";
 import {RequestForQuotation} from "./publish/request-for-quotation";
 import {Quotation} from "./publish/quotation";
 import {Location} from "./publish/location";
+import {Shipment} from "./publish/shipment";
 /**
  * Created by suat on 05-Jul-17.
  */
@@ -128,7 +129,7 @@ export class UBLModelUtils {
         let price: Price = this.createPrice(null);
         let lineItem:LineItem = this.createLineItem(quantity, price, item);
         let orderLine:OrderLine = new OrderLine(lineItem);
-        let order = new Order(this.generateUUID(), "", null, null, new PaymentMeans(), [orderLine]);
+        let order = new Order(this.generateUUID(), "", new Period(), new Address(), null, null, new PaymentMeans(), [orderLine]);
         return order;
     }
 
@@ -157,7 +158,7 @@ export class UBLModelUtils {
         let quantity: Quantity = new Quantity(null, "", null);
         let item: Item = this.createItem();
         let price: Price = this.createPrice(null);
-        let lineItem:LineItem = new LineItem(quantity, [], new DeliveryTerms(), price, item, new Period(), null);
+        let lineItem:LineItem = new LineItem(quantity, [], new Delivery(), new DeliveryTerms(), price, item, new Period(), null);
         let quotationLine:QuotationLine = new QuotationLine(lineItem, null);
 
         let delivery:Delivery = this.createDelivery();
@@ -177,7 +178,7 @@ export class UBLModelUtils {
         let despatchAdvice:DespatchAdvice = new DespatchAdvice();
         despatchAdvice.id = this.generateUUID();
         despatchAdvice.orderReference = [UBLModelUtils.createOrderReference(order.id)];
-        despatchAdvice.despatchLine = [new DespatchLine(order.orderLine[0].lineItem.item)];
+        despatchAdvice.despatchLine = [new DespatchLine(new Quantity(), order.orderLine[0].lineItem.item, [new Shipment()])];
         despatchAdvice.despatchSupplierParty = order.sellerSupplierParty;
         despatchAdvice.deliveryCustomerParty = order.buyerCustomerParty;
         return despatchAdvice
@@ -189,7 +190,7 @@ export class UBLModelUtils {
         receiptAdvice.despatchDocumentReference = [new DocumentReference(despatchAdvice.id)];
         receiptAdvice.deliveryCustomerParty = despatchAdvice.deliveryCustomerParty;
         receiptAdvice.despatchSupplierParty = despatchAdvice.despatchSupplierParty;
-        receiptAdvice.receiptLine = [new ReceiptLine(despatchAdvice.despatchLine[0].item)];
+        receiptAdvice.receiptLine = [new ReceiptLine(new Quantity(), [], despatchAdvice.despatchLine[0].item)];
         return receiptAdvice;
     }
 
@@ -205,7 +206,7 @@ export class UBLModelUtils {
     }
 
     public static createLineItem(quantity, price, item):LineItem {
-        return new LineItem(quantity, [], new DeliveryTerms(), price, item, new Period(), null);
+        return new LineItem(quantity, [], new Delivery(), new DeliveryTerms(), price, item, new Period(), null);
     }
 
     public static createPackage():Package {
@@ -224,7 +225,7 @@ export class UBLModelUtils {
     }
 
     public static createDelivery():Delivery {
-        return new Delivery(this.createDeliveryTerms());
+        return new Delivery(new Period(), this.createDeliveryTerms());
     }
 
     public static createDeliveryTerms():DeliveryTerms {

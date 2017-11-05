@@ -22,11 +22,11 @@
             [(value)]="lineItem.deliveryTerms.incoterms">
 </value-view>
 
-<!-- Estimated delivery period -->
+<!-- Request delivery period -->
 <quantity-view class="row"
                [presentationMode]="presentationMode"
-               [propName]="'Estimated Delivery Period'"
-               [quantity]="[lineItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure]">
+               [propName]="'Requested Delivery Period'"
+               [quantity]="[lineItem.delivery.requestedDeliveryPeriod.durationMeasure]">
 </quantity-view>
 
 <!-- Delivery Location -->

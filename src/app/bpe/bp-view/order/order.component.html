@@ -20,17 +20,37 @@
                    [quantity]="[order.orderLine[0].lineItem.price.baseQuantity]">
     </quantity-view>
 
+    <h5 class="mt-3 mb-3">Delivery Terms</h5>
+    <!-- Request delivery period -->
+    <quantity-view class="row"
+                   [presentationMode]="'edit'"
+                   [propName]="'Requested Delivery Period'"
+                   [quantity]="[order.orderLine[0].lineItem.delivery.requestedDeliveryPeriod.durationMeasure]">
+    </quantity-view>
+
+    <!-- Delivery Location -->
+    <address-view class="row"
+                  [presentationMode]="'edit'"
+                  [propName]="'Delivery Location'"
+                  [address]="[order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address]">
+    </address-view>
 
     <h5 class="mt-3 mb-3">Payment Means</h5>
     <value-view class="row"
                 [presentationMode]="'edit'"
-                [propName]="'Payment Means Code'"
+                [propName]="'Payment Means'"
                 [(value)]="order.paymentMeans.paymentMeansCode.value">
     </value-view>
 
     <value-view class="row"
                 [presentationMode]="'edit'"
-                [propName]="'Payee Account ID'"
+                [propName]="'Payer Account'"
+                [(value)]="order.paymentMeans.payerFinancialAccount.id">
+    </value-view>
+
+    <value-view class="row"
+                [presentationMode]="'edit'"
+                [propName]="'Payee Account'"
                 [(value)]="order.paymentMeans.payeeFinancialAccount.id">
     </value-view>
 

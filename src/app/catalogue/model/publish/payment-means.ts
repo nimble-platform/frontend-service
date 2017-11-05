@@ -4,6 +4,7 @@ import {FinancialAccount} from "./financial-account";
 
 export class PaymentMeans {
     constructor(public paymentMeansCode: Code = new Code(),
-                public payeeFinancialAccount: FinancialAccount = new FinancialAccount()) {
+                public payerFinancialAccount: FinancialAccount = new FinancialAccount(),
+                public payeeFinancialAccount: FinancialAccount = new FinancialAccount(),) {
     }
 }

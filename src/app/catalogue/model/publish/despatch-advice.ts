@@ -16,6 +16,6 @@ export class DespatchAdvice {
         public orderReference:OrderReference[] = [],
         public deliveryCustomerParty:CustomerParty = null,
         public despatchSupplierParty:SupplierParty = null,
-        public despatchLine:DespatchLine[] = null
+        public despatchLine:DespatchLine[] = []
     ) {  }
 }
