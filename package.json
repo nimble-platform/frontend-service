@@ -45,7 +45,7 @@
     "ng2-cookies": "1.0.10",
     "gojs": "^1.7.12",
     "jshint": "^2.9.5",
-    "rxjs": "^5.1.0",
+    "rxjs": "^5.0.1",
     "systemjs": "0.19.39",
     "underscore": "^1.8.3",
     "zone.js": "^0.8.4"
