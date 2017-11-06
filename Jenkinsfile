@@ -15,7 +15,7 @@ node ('nimble-jenkins-slave') {
     if (env.BRANCH_NAME == 'master') {
         stage('Deploy') {
 //            sh 'docker pull nimbleplatform/frontend-service'
-            sh 'ssh nimble "cd /data/nimble_setup/ && sudo ./run-prod.sh restart-single frontend-service"'
+            sh 'ssh nimble "cd /data/deployment_setup/prod/ && sudo ./run-prod.sh restart-single frontend-service"'
         }
     }
 
