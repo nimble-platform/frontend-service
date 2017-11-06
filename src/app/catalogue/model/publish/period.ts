@@ -5,11 +5,11 @@ import {Quantity} from "./quantity";
 
 export class Period {
     constructor(
-        public startDate: string, // TODO not sure about string for date/time
-        public startTime: string,
-        public endDate: string,
-        public endTime: string,
-        public durationMeasure: Quantity,
-        public hjid: string
+        public startDate: string = null, // TODO not sure about string for date/time
+        public startTime: string = null,
+        public endDate: string = null,
+        public endTime: string = null,
+        public durationMeasure: Quantity = new Quantity(),
+        public hjid: string = null
     ) {  }
 }

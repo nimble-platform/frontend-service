@@ -8,7 +8,7 @@ import {Code} from "./code";
 
 export class Address {
     constructor(
-        public cityName: string,
-        public country: Country,
+        public cityName: string = '',
+        public country: Country = new Country(),
         ) {  }
 }

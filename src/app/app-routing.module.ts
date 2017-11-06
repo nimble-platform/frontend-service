@@ -9,12 +9,13 @@ import {ProductPublishComponent} from './catalogue/product-publish.component';
 import {SimpleSearchComponent} from './simple-search/simple-search.component';
 import {SimpleSearchDetailsComponent} from './simple-search/simple-search-details.component';
 import {ExplorativeSearchComponent} from './explorative-search/explorative-search.component';
-import {CatalogueViewComponent} from './catalogue/ubl-model-view/catalogue-view.component';
+import {CatalogueViewComponent} from './catalogue/ubl-model-view/catalogue/catalogue-view.component';
 import {CompanySettingsComponent} from './user-mgmt/company-settings.component';
 import {BPsComponent} from './bpe/bps.component';
 import {BPDetailComponent} from './bpe/bp-detail.component';
 import {BPConfigureComponent} from './bpe/bp-configure.component';
 import {CompanyRegistrationComponent} from './user-mgmt/company-registration.component';
+import {ProductBpOptionsComponent} from "./bpe/product-bp-options.component";
 
 const routes: Routes = [
     {path: '', redirectTo: '/login', pathMatch: 'full'},
@@ -26,14 +27,15 @@ const routes: Routes = [
     {path: 'categorysearch', component: CategorySearchComponent},
     {path: 'publish', component: ProductPublishComponent},
     {path: 'simple-search', component: SimpleSearchComponent},
-    {path: 'simple-search-details/:id', component: SimpleSearchDetailsComponent},
+    {path: 'simple-search-details', component: SimpleSearchDetailsComponent},
     {path: 'explore-search', component: ExplorativeSearchComponent},
     {path: 'catalogue', component: CatalogueViewComponent},
     {path: 'company-settings', component: CompanySettingsComponent},
     {path: 'detail/:processID', component: BPDetailComponent},
-    {path: 'create', component: BPDetailComponent},
-    {path: 'bpe', component: BPsComponent},
-    {path: 'configure/:processID', component: BPConfigureComponent}
+    {path: 'bpe-design/create', component: BPDetailComponent},
+    {path: 'bpe-design', component: BPsComponent},
+    {path: 'bpe-design/configure/:processID', component: BPConfigureComponent},
+    {path: 'bpe-exec', component: ProductBpOptionsComponent}
 ];
 
 @NgModule({

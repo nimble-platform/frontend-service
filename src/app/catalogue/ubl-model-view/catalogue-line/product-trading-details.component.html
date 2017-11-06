@@ -1,0 +1,85 @@
+<!-- TODO use trading-details for common elements -->
+<h5 class="mt-3 mb-3">Price</h5>
+<!-- Price Amount -->
+<amount-view [presentationMode]="editPrice ? 'edit' : presentationMode"
+             [propName]="'Amount'"
+             [amount]="[catalogueLine.requiredItemLocationQuantity.price.priceAmount]">
+</amount-view>
+
+<!-- Price Base Quantity -->
+<quantity-view [presentationMode]="presentationMode"
+               [propName]="'Price Base Quantity'"
+               [quantity]="[catalogueLine.requiredItemLocationQuantity.price.baseQuantity]">
+</quantity-view>
+
+<!-- Free sample indicator -->
+<boolean-view [presentationMode]="presentationMode"
+              [propName]="'Free Sample'"
+              [value]="catalogueLine.goodsItem.item.freeOfChargeIndicator"
+              (valueChanged)="catalogueLine.goodsItem.item.freeOfChargeIndicator = $event">
+</boolean-view>
+
+<h5 class="mb-3">Delivery Terms</h5>
+
+<!-- Incoterms -->
+<value-view [presentationMode]="presentationMode"
+            [propName]="'Incoterms'"
+            [(value)]="catalogueLine.goodsItem.deliveryTerms.incoterms">
+</value-view>
+
+<!-- Estimated delivery period -->
+<quantity-view [presentationMode]="presentationMode"
+               [propName]="'Estimated Delivery Period'"
+               [quantity]="[catalogueLine.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure]">
+</quantity-view>
+
+<!-- Applicable territory -->
+<ng-container *ngIf="catalogueLine.requiredItemLocationQuantity.applicableTerritoryAddress">
+    <address-view [presentationMode]="presentationMode"
+                  [propName]="'Applicable Territory Address'"
+                  [address]="catalogueLine.requiredItemLocationQuantity.applicableTerritoryAddress">
+    </address-view>
+</ng-container>
+
+<!-- Special terms -->
+<value-view [presentationMode]="presentationMode"
+            [propName]="'Special Terms'"
+            [(value)]="catalogueLine.goodsItem.deliveryTerms.specialTerms">
+</value-view>
+
+
+<ng-container *ngIf="catalogueLine.goodsItem.containingPackage.quantity.value != null || catalogueLine.goodsItem.containingPackage.packagingTypeCode != null">
+    <h5 class="mb-3">Packaging</h5>
+
+    <!-- Package quantity -->
+    <quantity-view [presentationMode]="presentationMode"
+                   [propName]="'Quantity'"
+                   [quantity]="[catalogueLine.goodsItem.containingPackage.quantity]">
+    </quantity-view>
+
+    <!-- Packaging type -->
+    <value-view [presentationMode]="presentationMode"
+                [propName]="'Packaging Type'"
+                [(value)]="catalogueLine.goodsItem.containingPackage.packagingTypeCode.value">
+    </value-view>
+</ng-container>
+
+
+<ng-container *ngIf="catalogueLine.warrantyValidityPeriod.durationMeasure.value != null || catalogueLine.warrantyInformation.length > 0">
+    <h5 class="mt-3">Warranty</h5>
+
+    <!-- Validity period -->
+    <quantity-view [presentationMode]="presentationMode"
+                   [propName]="'Validity Period'"
+                   [quantity]="[catalogueLine.warrantyValidityPeriod.durationMeasure]">
+    </quantity-view>
+
+    <!-- Warranty information -->
+    <value-array-view
+            [presentationMode]="presentationMode"
+            [propName]="'Warranty information'"
+            [(values)]="catalogueLine.warrantyInformation">
+    </value-array-view>
+</ng-container>
+
+<button *ngIf="false" (click)="debugg()">Debug</button>

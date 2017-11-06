@@ -1,0 +1,52 @@
+<div>
+    <ul class="nav nav-tabs">
+        <li class="nav-item pointer">
+            <a
+                    [ngClass]="{'nav-link': true, active: selectedTab === 'Product Details'}"
+                    (click)="selectedTab = 'Product Details'"
+                    i18n
+            >Product Characteristics</a>
+        </li>
+        <li class="nav-item pointer">
+            <a
+                    [ngClass]="{'nav-link': true, active: selectedTab === 'Product Trading & Delivery Terms'}"
+                    (click)="selectedTab = 'Product Trading & Delivery Terms'"
+                    i18n
+            >Product Trading & Delivery Terms</a>
+        </li>
+        <li class="nav-item pointer">
+            <a
+                    [ngClass]="{'nav-link': true, active: selectedTab === 'Order Details'}"
+                    (click)="selectedTab = 'Order Details'"
+                    i18n
+            >Order Details</a>
+        </li>
+        <li *ngIf="bpDataService.orderResponse" class="nav-item pointer">
+            <a
+                    [ngClass]="{'nav-link': true, active: selectedTab === 'Order Response Details'}"
+                    (click)="selectedTab = 'Order Response Details'"
+                    i18n
+            >Order Response Details</a>
+        </li>
+    </ul>
+</div>
+<div *ngIf="bpDataService.catalogueLine"
+     class="p-3">
+    <product-details *ngIf="selectedTab === 'Product Details'"
+                     [catalogueLine]="bpDataService.catalogueLine"
+                     [presentationMode]="'singlevalue'">
+    </product-details>
+    <product-trading-details *ngIf="selectedTab === 'Product Trading & Delivery Terms'"
+                             [catalogueLine]="bpDataService.catalogueLine"
+                             [presentationMode]="'singlevalue'"
+                             [editPrice]="false">
+    </product-trading-details>
+    <order *ngIf="selectedTab === 'Order Details'"
+           [order]="bpDataService.order">
+    </order>
+    <order-response *ngIf="selectedTab === 'Order Response Details'"
+                    [order]="bpDataService.order"
+                    [orderResponse]="bpDataService.orderResponse">
+    </order-response>
+
+</div>

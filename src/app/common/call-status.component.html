@@ -1,7 +1,7 @@
-<div [hidden]="callStatus.fb_errordetc || callStatus.fb_callback || !callStatus.fb_submitted">
+<div [hidden]="callStatus.fb_errordetc || callStatus.fbcallback || !callStatus.fb_submitted">
 	<img src="assets/form_loader.gif"/>
 </div>
-<div *ngIf="callStatus.fb_callback" #successBox
+<div *ngIf="callStatus.fb_callback && !callStatus.fb_autoCloseOnCallBack" #successBox
 	 class="d-flex alert-success pl-2 pr-2"
 	 [ngClass]="{'alert' : large} ">
 	<div class="align-self-center" role="alert">{{callStatus.fb_message}}</div>

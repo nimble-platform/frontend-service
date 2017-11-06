@@ -2,11 +2,8 @@ import {Injectable} from '@angular/core';
 import {Headers, Http} from '@angular/http';
 import 'rxjs/add/operator/toPromise';
 import * as myGlobals from '../globals';
-import {RequestForQuotation} from "./model/ubl/request-for-quotation";
-import {RequestForQuotationResponse} from "./model/ubl/request-for-quotation-response";
 import {ProcessInstanceInputMessage} from "./model/process-instance-input-message";
 import {ProcessInstance} from "./model/process-instance";
-import {OrderResponseSimple} from "./model/ubl/order-response-simple";
 
 @Injectable()
 export class BPEService {

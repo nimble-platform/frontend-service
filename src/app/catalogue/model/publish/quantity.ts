@@ -4,8 +4,8 @@
 
 export class Quantity {
     constructor(
-        public value: number,
-        public unitCode: string,
-        public hjid: string
+        public value: number = null,
+        public unitCode: string = null,
+        public hjid: string = null
     ) { }
 }

@@ -6,6 +6,7 @@ import {DeliveryTerms} from "./delivery-terms";
 
 export class Delivery {
     constructor(
-        public deliveryTerms: DeliveryTerms
+        public requestedDeliveryPeriod: Period = new Period(),
+        public deliveryTerms: DeliveryTerms = new DeliveryTerms()
     ) {  }
 }

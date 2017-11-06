@@ -17,31 +17,28 @@
 
 					<td>{{processMetadata.processType}}</td>
 					<td>{{processMetadata.start_time }}</td>
-					<td>{{processMetadata.product_name}}</td>
+					<td>{{processMetadata.product.name}}</td>
 					<td>{{processMetadata.buyerName }}</td>
 					<td>{{processMetadata.note}}</td>
 					<td>{{processMetadata.actionStatus}}</td>
 
-					<!-- order options -->
-					<td *ngIf="processMetadata.processType == 'Order' && processMetadata.processStatus == 'Started'">
-						<button class="btn btn-block btn-success" (click)="respondToOrder(processMetadata.process_id, processMetadata.content, true)" i18n>Approve</button>
-						<button class="btn btn-block btn-danger" (click)="respondToOrder(processMetadata.process_id, processMetadata.content, false)" i18n>Decline</button>
-					</td>
-					<td *ngIf="processMetadata.processType == 'Order' && processMetadata.processStatus == 'Completed'">
-						<button *ngIf="processMetadata.actionStatus == 'Order approved'" class="btn btn-block btn-success" (click)="sendDespatchAdvice(processMetadata.activityVariables)" i18n>Send Despatch Advice</button>
-						<label *ngIf="processMetadata.actionStatus == 'Order declined'">-</label>
-					</td>
-
-					<!-- negotiation options -->
-					<td *ngIf="processMetadata.processType == 'Negotiation'">
-						<button *ngIf="processMetadata.processStatus=='Started'" class="btn btn-block btn-success" (click)="respondToRFQ(processMetadata.process_id, processMetadata.content, true)" i18n>Approve</button>
-						<button *ngIf="processMetadata.processStatus=='Started'" class="btn btn-block btn-danger" (click)="respondToRFQ(processMetadata.process_id, processMetadata.content, false)" i18n>Decline</button>
-						<label *ngIf="processMetadata.processStatus == 'Completed'">-</label>
-					</td>
-
-					<!-- fulfilment options -->
-					<td *ngIf="processMetadata.processType == 'Fulfilment'">
-						<label>-</label>
+					<td>
+						<div ngbDropdown placement="left">
+							<i class="fa fa-bars fa-lg nav-link" id="bpOptionsMenuSeller" style="cursor:pointer" ngbDropdownToggle aria-hidden="true"></i>
+							<div ngbDropdownMenu aria-labelledby="bpOptionsMenuSeller">
+								<div *ngFor="let menuItem of processMetadata.bpOptionMenuItems; let i = index"
+									class="dropdown-item">
+									<label *ngIf="i == 0"
+										   (click)="openBpProcessView('seller', menuItem.targetProcess ,processMetadata)">
+										{{menuItem.itemLabel}}
+									</label>
+									<label *ngIf="i == 1"
+										   (click)="openBpProcessView('seller', menuItem.targetProcess ,processMetadata)">
+										{{menuItem.itemLabel}}
+									</label>
+								</div>
+							</div>
+						</div>
 					</td>
 				</tr>
 			</table>
@@ -61,36 +58,28 @@
 				<tr *ngFor="let processMetadata of buyer_history">
 					<td>{{processMetadata.processType}}</td>
 					<td>{{processMetadata.start_time }}</td>
-					<td>{{processMetadata.product_name}}</td>
+					<td>{{processMetadata.product.name}}</td>
 					<td>{{processMetadata.sellerName }}</td>
 					<td>{{processMetadata.note}}</td>
 					<td>{{processMetadata.actionStatus}}</td>
 
-					<!-- order options -->
-					<td *ngIf="processMetadata.processType == 'Order'">
-						<label>-</label>
-						<!--<i class="fa fa-bars fa-lg" aria-hidden="true"></i>-->
-					</td>
-
-					<!-- negotation options -->
-					<td *ngIf="processMetadata.processType == 'Negotiation' && processMetadata.processStatus == 'Started'">
-						<label>-</label>
-					</td>
-					<td *ngIf="processMetadata.processType == 'Negotiation' && processMetadata.processStatus == 'Completed'">
-						<button class="btn btn-block btn-success"
-								[routerLink]="['/simple-search-details', processMetadata.productId]"
-								i18n>Order
-						</button>
-						<button class="btn btn-block btn-success"
-								[routerLink]="['/simple-search-details', processMetadata.productId]"
-								i18n>Negotiate
-						</button>
-					</td>
-
-					<!-- fulfilment options -->
-					<td *ngIf="processMetadata.processType == 'Fulfilment'">
-						<button *ngIf="processMetadata.processStatus != 'Completed'" class="btn btn-block btn-success" (click)="sendReceiptAdvice(processMetadata.process_id, processMetadata.content)" i18n>Send Receipt Advice</button>
-						<label *ngIf="processMetadata.processStatus == 'Completed'">-</label>
+					<td>
+						<div ngbDropdown placement="left">
+							<i class="fa fa-bars fa-lg nav-link" id="bpOptionsMenuBuyer" style="cursor:pointer" ngbDropdownToggle aria-hidden="true"></i>
+							<div ngbDropdownMenu aria-labelledby="bpOptionsMenuBuyer">
+								<div *ngFor="let menuItem of processMetadata.bpOptionMenuItems; let i = index"
+									 class="dropdown-item">
+									<label *ngIf="i == 0"
+										   (click)="openBpProcessView('buyer',  menuItem.targetProcess, processMetadata)">
+										{{menuItem.itemLabel}}
+									</label>
+									<label *ngIf="i == 1"
+										   (click)="openBpProcessView('buyer', menuItem.targetProcess, processMetadata)">
+										{{menuItem.itemLabel}}
+									</label>
+								</div>
+							</div>
+						</div>
 					</td>
 				</tr>
 			</table>
