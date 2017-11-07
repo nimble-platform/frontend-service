@@ -37,7 +37,7 @@ export const propertyEndPoint = `${ub_base_8092}/getPropertyValuesDiscretised`;
 // export const propertyEndPoint = 'http://localhost:8090/getPropertyValuesDiscretised';
 export const sparqlEndPoint = `${ub_base_8092}/executeSPARQLSelect`;
 // export const sparqlEndPoint = 'http://localhost:8090/executeSPARQLSelect';
-export const sparqlOptionalSelectEndPoint = `${ub_base_8090}/executeSPARQLOptionalSelect`;
+export const sparqlOptionalSelectEndPoint = `${ub_base_8092}/executeSPARQLOptionalSelect`;
 // export const sparqlOptionalSelectEndPoint = 'http://localhost:8090/executeSPARQLOptionalSelect';
 
 // Endpoint variables - Local development via service discovery
