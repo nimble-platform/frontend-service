@@ -24,8 +24,10 @@ export const bpe_endpoint="https://nimble-platform.salzburgresearch.at/nimble/bu
 // Endpoint variables - BIBA domain
 // const ub_base_8090="http://hydra2.ikap.biba.uni-bremen.de:8090";
 // const ub_base_8092="http://hydra2.ikap.biba.uni-bremen.de:8092";
+
 const ub_base_8090="https://nimble-platform.salzburgresearch.at/uni-bremen-8090";
 const ub_base_8092="https://nimble-platform.salzburgresearch.at/uni-bremen-8092";
+
 // export const endpoint = 'http://localhost:8090/detectMeaningLanguageSpecific';
 export const languageEndPoint = `${ub_base_8090}/getSupportedLanguages`;
 export const endpoint = `${ub_base_8092}/detectMeaningLanguageSpecific`;
