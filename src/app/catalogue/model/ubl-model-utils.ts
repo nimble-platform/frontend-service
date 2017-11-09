@@ -111,7 +111,7 @@ export class UBLModelUtils {
 
         // create item
         let uuid:string = this.generateUUID();
-        let item = new Item("", "", [], false, additionalItemProperties, providerParty, this.createItemIdentificationWithId(uuid), docRef, null, [], [], [], "", [], "");
+        let item = new Item("", "", [], false, additionalItemProperties, providerParty, this.createItemIdentificationWithId(uuid), docRef, null, [], [], [], null, null, [], "");
 
         // create goods item
         let goodsItem = new GoodsItem(uuid, item, this.createPackage(), this.createDeliveryTerms());
@@ -201,7 +201,7 @@ export class UBLModelUtils {
     }
 
     public static createItem():Item {
-        let item = new Item("", "", [], false, [], null, this.createItemIdentification(), null, null, [], [], [], null, [], "");
+        let item = new Item("", "", [], false, [], null, this.createItemIdentification(), null, null, [], [], [], null, null, [], "");
         return item;
     }
 

@@ -12,6 +12,7 @@ import {BPDataService} from "../../bpe/bp-data-service";
 
 export class DimensionViewComponent implements OnInit {
     @Input() presentationMode: string;
+    @Input() header:string;
     @Input() itemDimensions: Dimension[];
     dimensions: any = {};
     object = Object;

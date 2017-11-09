@@ -68,6 +68,7 @@ import {ReceiptAdviceComponent} from "./bpe/bp-view/fulfilment/receipt-advice.co
 import {NegotiationComponent} from "./bpe/bp-view/negotiation/negotiation.component";
 import {QuotationComponent} from "./bpe/bp-view/negotiation/quotation.component";
 import {ProductTradingDetailsComponent} from "./catalogue/ubl-model-view/catalogue-line/product-trading-details.component";
+import {TransportationServiceDetails} from "./catalogue/ubl-model-view/catalogue-line/transportation-service-details.component";
 
 @NgModule({
     imports: [
@@ -133,7 +134,8 @@ import {ProductTradingDetailsComponent} from "./catalogue/ubl-model-view/catalog
         BPsComponent,
         ProductBpOptionsComponent,
         CallStatusComponent,
-        CompanyRegistrationComponent],
+        CompanyRegistrationComponent,
+        TransportationServiceDetails],
     providers: [
         UserService,
         CredentialsService,

@@ -12,6 +12,8 @@ import {Certificate} from "./certificate";
 import {Dimension} from "./dimension";
 import {Period} from "./period";
 import {DocumentReference} from "./document-reference";
+import {TransportationService} from "./transportation-service";
+import {TransportationServiceDetails} from "../../ubl-model-view/catalogue-line/transportation-service-details.component";
 
 export class Item {
     constructor(
@@ -27,6 +29,7 @@ export class Item {
         public commodityClassification: CommodityClassification[],
         public certificate: Certificate[],
         public dimension: Dimension[],
+        public transportationServiceDetails = new TransportationService(),
         public hjid: string,
 
         // for demo

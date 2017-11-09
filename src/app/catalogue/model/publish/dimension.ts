@@ -5,11 +5,11 @@ import {Quantity} from "./quantity";
 
 export class Dimension {
     constructor(
-        public attributeID: string,
-        public measure: Quantity,
-        public description: string[],
-        public minimumMeasure: Quantity,
-        public maximumMeasure: Quantity,
-        public hjid: string
+        public attributeID: string = null,
+        public measure: Quantity = new Quantity(),
+        public description: string[] = [],
+        public minimumMeasure: Quantity = new Quantity(),
+        public maximumMeasure: Quantity = new Quantity(),
+        public hjid: string = null
     ) {  }
 }

@@ -3,6 +3,7 @@ import {CatalogueLine} from "../../model/publish/catalogue-line";
 import {CatalogueService} from "../../catalogue.service";
 import {Router} from "@angular/router";
 import {BinaryObject} from "../../model/publish/binary-object";
+import {UserService} from "../../../user-mgmt/user.service";
 
 @Component({
     selector: 'catalogue-line-view',
@@ -16,6 +17,10 @@ export class CatalogueLineViewComponent {
     selectedTab: string = "Product Details";
     @Input() catalogueLine: CatalogueLine;
     @Input() presentationMode: string;
+
+    constructor(public userService:UserService) {
+
+    }
 
     private addImage(event: any) {
         let fileList: FileList = event.target.files;
