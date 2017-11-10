@@ -5,6 +5,6 @@ import {TransportEquipment} from "./transport-equipment";
  */
 export class TransportMeans {
     constructor(public transportMeansTypeCode: Code = new Code(),
-                public transportEquipments: TransportEquipment[] = []) {
+                public transportEquipment: TransportEquipment[] = [new TransportEquipment()]) {
     }
 }

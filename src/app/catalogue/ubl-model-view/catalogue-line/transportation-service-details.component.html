@@ -30,11 +30,10 @@
     </quantity-view>
 
     <!-- scheduled service frequency -->
-    <value-array-view class="row"
-                      [presentationMode]="presentationMode"
+    <value-view [presentationMode]="presentationMode"
                       [propName]="'Scheduled Days'"
-                      [(values)]="catalogueLine.goodsItem.item.transportationServiceDetails.scheduledServiceFrequency[0].weekDayCode.name">
-    </value-array-view>
+                      [(value)]="catalogueLine.goodsItem.item.transportationServiceDetails.scheduledServiceFrequency[0].weekDayCode.name">
+    </value-view>
 </div>
 
 <!-- shipment stage -->
@@ -50,16 +49,43 @@
     </value-view>
 </div>
 
+<!-- transport means / equipment -->
 <div class="well">
-<h6>Environmental Emission</h6>
-<value-view [presentationMode]="presentationMode"
-            [propName]="'Emission Type'"
-            [(value)]="catalogueLine.goodsItem.item.transportationServiceDetails.environmentalEmission[0].environmentalEmissionTypeCode.name">
-</value-view>
-<quantity-view [propName]="'Value Measure'"
-               [quantity]="[catalogueLine.goodsItem.item.transportationServiceDetails.environmentalEmission[0].valueMeasure]"
-               [presentationMode]="presentationMode">
-</quantity-view>
+    <h6>Transport Means / Equipment</h6>
+    <value-view [presentationMode]="presentationMode"
+                [propName]="'Transport Means'"
+                [(value)]="catalogueLine.goodsItem.item.transportationServiceDetails.shipmentStage[0].transportMeans.transportMeansTypeCode.name">
+    </value-view>
+    <hr>
+    <value-view [presentationMode]="presentationMode"
+                [propName]="'Associated Equipment'"
+                [(value)]="catalogueLine.goodsItem.item.transportationServiceDetails.shipmentStage[0].transportMeans.transportEquipment[0].transportEquipmentTypeCode.name">
+    </value-view>
+    <value-view [presentationMode]="presentationMode"
+                [propName]="'Equipment Humidity Percent'"
+                [(value)]="catalogueLine.goodsItem.item.transportationServiceDetails.shipmentStage[0].transportMeans.transportEquipment[0].humidityPercent">
+    </value-view>
+    <boolean-view [presentationMode]="presentationMode"
+                [propName]="'Refrigerator Indicator'"
+                [(value)]="catalogueLine.goodsItem.item.transportationServiceDetails.shipmentStage[0].transportMeans.transportEquipment[0].refrigeratorIndicator"
+                (valueChanged)="catalogueLine.goodsItem.item.transportationServiceDetails.shipmentStage[0].transportMeans.transportEquipment[0].refrigeratorIndicator = $event">
+    </boolean-view>
+    <value-view [presentationMode]="presentationMode"
+                [propName]="'Equipment Characteristics'"
+                [(value)]="catalogueLine.goodsItem.item.transportationServiceDetails.shipmentStage[0].transportMeans.transportEquipment[0].characteristics">
+    </value-view>
+</div>
+
+<div class="well">
+    <h6>Environmental Emission</h6>
+    <value-view [presentationMode]="presentationMode"
+                [propName]="'Emission Type'"
+                [(value)]="catalogueLine.goodsItem.item.transportationServiceDetails.environmentalEmission[0].environmentalEmissionTypeCode.name">
+    </value-view>
+    <quantity-view [propName]="'Value Measure'"
+                   [quantity]="[catalogueLine.goodsItem.item.transportationServiceDetails.environmentalEmission[0].valueMeasure]"
+                   [presentationMode]="presentationMode">
+    </quantity-view>
 </div>
 
 

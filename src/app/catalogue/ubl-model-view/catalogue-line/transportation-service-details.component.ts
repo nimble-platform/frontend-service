@@ -36,7 +36,9 @@ export class TransportationServiceDetails implements OnInit{
     }
 
     ngOnInit(): void {
-        this.catalogueLine.goodsItem.item.transportationServiceDetails = new TransportationService();
+        if(this.catalogueLine.goodsItem.item.transportationServiceDetails == null) {
+            this.catalogueLine.goodsItem.item.transportationServiceDetails = new TransportationService();
+        }
     }
 
     toggleCollapsed(blockName:string):void {
