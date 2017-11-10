@@ -15,12 +15,9 @@ import {UserService} from "../../../user-mgmt/user.service";
 export class CatalogueLineViewComponent {
 
     selectedTab: string = "Product Details";
+    partyRole: string = "";
     @Input() catalogueLine: CatalogueLine;
     @Input() presentationMode: string;
-
-    constructor(public userService:UserService) {
-
-    }
 
     private addImage(event: any) {
         let fileList: FileList = event.target.files;

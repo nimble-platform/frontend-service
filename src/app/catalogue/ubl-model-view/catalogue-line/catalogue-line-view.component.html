@@ -2,7 +2,7 @@
                        [presentationMode]="presentationMode">
 </catalogue-line-header>
 
-<button (click)="userService.userParty.role = userService.userParty.role == 'Transport Service Provider' ? 'Manufacturer' : 'Transport Service Provider'">
+<button (click)="partyRole = partyRole == 'Transport Service Provider' ? 'Manufacturer' : 'Transport Service Provider'">
     Switch company role
 </button>
 
@@ -35,7 +35,7 @@
     </div>
 </div>
 
-<ng-container *ngIf="userService.userParty.role == 'Manufacturer'">
+<ng-container *ngIf="partyRole == 'Manufacturer'">
     <ul class="nav nav-tabs">
         <li class="nav-item pointer">
             <a
@@ -64,7 +64,7 @@
     </product-trading-details>
 </ng-container>
 
-<ng-container *ngIf="userService.userParty.role == 'Transport Service Provider'">
+<ng-container *ngIf="partyRole == 'Transport Service Provider'">
     <ul class="nav nav-tabs mb-3">
         <li class="nav-item pointer">
             <a i18n>Transportation Service Details</a>
