@@ -47,6 +47,8 @@ export class ExplorativeSearchFormComponent implements OnInit {
     visData: Object; // send this to details component
     // For response which constitutes more than one option..
     showMore: boolean[] = [];
+    // when unchecked in search history, do not show respective keywords
+    showParticularKeyword: boolean[] = [];
     private _error_detected_kw = false;
     private _error_detected_query = false;
     private _warning_kw = false;
@@ -56,6 +58,8 @@ export class ExplorativeSearchFormComponent implements OnInit {
     ngOnInit(): void {
         this.showMore = new Array(this.Output.length);
         this.showMore.fill(false);
+        this.showParticularKeyword = new Array(this.Output.length);
+        this.showParticularKeyword.fill(false);
         this.expSearch.getLanguageSupport()
             .then(res => this.availableLanguages = res);
     }
@@ -107,6 +111,16 @@ export class ExplorativeSearchFormComponent implements OnInit {
         if (index > -1) {
             // remove the whole entry from the list
             this.Output.splice(index, 1);
+        }
+    }
+
+    /**
+     * hideKW: if unchecked the resultant keywords should be hidden
+     * @param inputIndex index number of the output keyword that needs to hidden
+     */
+    hideKW(inputIndex: number) {
+        if (inputIndex > -1) {
+            this.showParticularKeyword[inputIndex] = !this.showParticularKeyword[inputIndex];
         }
     }
 
