@@ -154,4 +154,16 @@ export class ExplorativeSearchFormComponent implements OnInit {
                 this._error_detected_query = true;
             });
     }
+
+    previousStateRestore() {
+        if (!this.visData || !this.language) {
+            this.visData = JSON.parse(localStorage.getItem('prevVisData'));
+            this.language = localStorage.getItem('prevLanguage');
+        }
+    }
+
+    previousStateStore() {
+        localStorage.setItem('prevVisData', JSON.stringify(this.visData));
+        localStorage.setItem('prevLanguage', this.language);
+    }
 }

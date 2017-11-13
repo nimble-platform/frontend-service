@@ -75,7 +75,10 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
         if (!this.config) { return; }
         // console.log(this.config['viewStructure']); // DEBUG -CHECK
         let recApproach = new RecClass();
-        recApproach.generateGraphRecApproach(this.config, this.myDiagram, this.$, 2);
+        setTimeout(() => {
+                recApproach.generateGraphRecApproach(this.config, this.myDiagram, this.$, 2);
+        });
+        // recApproach.generateGraphRecApproach(this.config, this.myDiagram, this.$, 2);
         // Reset Selections for New Diagram.. Usually when the user clicks the button about the product..
         this.selectedProperties = [];
         this.tableResult = {};
@@ -658,7 +661,6 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
         let instance_name_url = this._optSelectJSON['uuid'];
         console.log(instance_name_url);
         this._negotation_instance_name = instance_name_url.split('%23')[1];
-        // this.router.navigate(['/simple-search-details', this._negotation_instance_name]);
-        document.location.href = 'http://95.9.71.171:8383/#/simple-search-details/' + this._negotation_instance_name;
+        this.router.navigate(['/simple-search-details', this._negotation_instance_name]);
     }
 }
