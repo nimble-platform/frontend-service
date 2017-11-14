@@ -47,6 +47,8 @@ export class ExplorativeSearchFormComponent implements OnInit {
     visData: Object; // send this to details component
     // For response which constitutes more than one option..
     showMore: boolean[] = [];
+    // when unchecked in search history, do not show respective keywords
+    showParticularKeyword: boolean[] = [];
     private _error_detected_kw = false;
     private _error_detected_query = false;
     private _warning_kw = false;
@@ -56,6 +58,8 @@ export class ExplorativeSearchFormComponent implements OnInit {
     ngOnInit(): void {
         this.showMore = new Array(this.Output.length);
         this.showMore.fill(false);
+        this.showParticularKeyword = new Array(this.Output.length);
+        this.showParticularKeyword.fill(false);
         this.expSearch.getLanguageSupport()
             .then(res => this.availableLanguages = res);
     }
@@ -111,6 +115,16 @@ export class ExplorativeSearchFormComponent implements OnInit {
     }
 
     /**
+     * hideKW: if unchecked the resultant keywords should be hidden
+     * @param inputIndex index number of the output keyword that needs to hidden
+     */
+    hideKW(inputIndex: number) {
+        if (inputIndex > -1) {
+            this.showParticularKeyword[inputIndex] = !this.showParticularKeyword[inputIndex];
+        }
+    }
+
+    /**
      * getQuery: for the when the user will click a specific keyword button
      * the parameter will be sent as JSON request to get the Visualization values
      * @param inputVal the name of the Button clicked by the User
@@ -139,5 +153,17 @@ export class ExplorativeSearchFormComponent implements OnInit {
                 console.log(error);
                 this._error_detected_query = true;
             });
+    }
+
+    previousStateRestore() {
+        if (!this.visData || !this.language) {
+            this.visData = JSON.parse(localStorage.getItem('prevVisData'));
+            this.language = localStorage.getItem('prevLanguage');
+        }
+    }
+
+    previousStateStore() {
+        localStorage.setItem('prevVisData', JSON.stringify(this.visData));
+        localStorage.setItem('prevLanguage', this.language);
     }
 }

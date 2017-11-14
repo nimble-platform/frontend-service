@@ -34,6 +34,7 @@ import { DeliveryTermsSubForm } from './user-mgmt/subforms/delivery-terms.compon
 import { PaymentMeansForm } from './user-mgmt/subforms/payment-means.component';
 import { CompanySettingsComponent } from './user-mgmt/company-settings.component';
 import { NegotiationMainComponent } from './negotiation/negotiation-main.component';
+import {ExplorativeSearchSemanticComponent} from './explorative-search/explorative-search-semantic.component';
 
 @NgModule({
     imports: [
@@ -62,6 +63,7 @@ import { NegotiationMainComponent } from './negotiation/negotiation-main.compone
         ExplorativeSearchFormComponent,
         ExplorativeSearchDetailsComponent,
         ExplorativeSearchFilterComponent,
+        ExplorativeSearchSemanticComponent,
         AdditionalItemPropertyComponent,
         ProductPropertiesComponent,
         AddressSubForm,
