@@ -1,10 +1,10 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from "@angular/core";
-import {CatalogueLine} from "../catalogue/model/publish/catalogue-line";
 import {BPDataService} from "./bp-data-service";
 import {ActivatedRoute} from "@angular/router";
 import {CallStatus} from "../common/call-status";
 import {CatalogueService} from "../catalogue/catalogue.service";
 import {Subscription} from "rxjs/Subscription";
+import {SearchContextService} from "../simple-search/search-context.service";
 /**
  * Created by suat on 20-Oct-17.
  */
@@ -18,16 +18,18 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     @Output() closeBpOptionsEvent = new EventEmitter();
 
     selectedOption:string;// = 'Negotiation';
+    availableProcesses:string[] = [];
     processTypeSubs:Subscription;
     getCatalogueLineStatus:CallStatus = new CallStatus();
 
     constructor(public bpDataService: BPDataService,
                 public catalogueService:CatalogueService,
+                public searchContextService: SearchContextService,
                 public route: ActivatedRoute) {
     }
 
     ngOnInit(): void {
-        this.processTypeSubs = this.bpDataService.processTypeObs.subscribe(processType => {
+        this.processTypeSubs = this.bpDataService.processTypeObservable.subscribe(processType => {
             this.selectedOption = processType;
         });
 
@@ -50,6 +52,22 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                 this.getCatalogueLineStatus.error("Failed to retrieve product details");
             });
         });
+
+        this.identifyAvailableProcesses()
+    }
+
+    private identifyAvailableProcesses() {
+        this.availableProcesses = [];
+
+        // first check search context whether the search process is associated with a specific process
+        if(this.searchContextService.associatedProcessType != null) {
+            this.availableProcesses.push(this.bpDataService.processTypeSubject.getValue());
+
+            // regular order and negotiation processes
+        } else {
+            this.availableProcesses.push('Negotiation');
+            this.availableProcesses.push('Order');
+        }
     }
 
     ngOnDestroy(): void {

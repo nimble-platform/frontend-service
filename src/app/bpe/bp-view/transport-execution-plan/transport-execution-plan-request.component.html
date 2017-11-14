@@ -1,0 +1,65 @@
+<ng-container *ngIf="bpDataService.transportExecutionPlanRequest">
+
+    <div class="well">
+        <h6>Consolidated Shipment</h6>
+        <value-view class="row"
+                    [presentationMode]="'edit'"
+                    [propName]="'Goods Item'"
+                    [value]="transportExecutionPlanRequest.consignment[0].consolidatedShipment[0].goodsItem[0].item.name">
+        </value-view>
+
+        <quantity-view class="row"
+                       [presentationMode]="'edit'"
+                       [propName]="'Gross Volume Measure'"
+                       [quantity]="[transportExecutionPlanRequest.consignment[0].grossVolumeMeasure]">
+        </quantity-view>
+
+        <quantity-view class="row"
+                       [presentationMode]="'edit'"
+                       [propName]="'Gross Weight Measure'"
+                       [quantity]="[transportExecutionPlanRequest.consignment[0].grossWeightMeasure]">
+        </quantity-view>
+
+        <shipment-view [shipment]="transportExecutionPlanRequest.consignment[0].consolidatedShipment[0]"
+                       [presentationMode]="'edit'">
+        </shipment-view>
+    </div>
+
+    <div class="well">
+        <h6>Execution Plan</h6>
+        <value-view class="row"
+                    [presentationMode]="'edit'"
+                    [propName]="'Service Start Date'"
+                    [(value)]="transportExecutionPlanRequest.serviceStartTimePeriod.startDate">
+        </value-view>
+
+        <value-view class="row"
+                    [presentationMode]="'edit'"
+                    [propName]="'Service End Date'"
+                    [(value)]="transportExecutionPlanRequest.serviceEndTimePeriod.endDate">
+        </value-view>
+
+        <address-view class="row"
+                      [presentationMode]="'edit'"
+                      [propName]="'From Location'"
+                      [address]="[transportExecutionPlanRequest.fromLocation.address]">
+        </address-view>
+
+        <address-view class="row"
+                      [presentationMode]="'edit'"
+                      [propName]="'From Location'"
+                      [address]="[transportExecutionPlanRequest.toLocation.address]">
+        </address-view>
+    </div>
+
+    <div class="container ">
+        <div class="row justify-content-end">
+            <button *ngIf="bpDataService.userRole == 'buyer' && bpDataService.processMetadata == null"
+                    class="btn btn-success" (click)="sendTransportExecutionPlanRequest()">Use Service for Order
+            </button>
+        </div>
+    </div>
+</ng-container>
+<call-status [callStatus]="callStatus"
+             [large]="true">
+</call-status>

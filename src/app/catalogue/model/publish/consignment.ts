@@ -6,6 +6,6 @@ import {Shipment} from "./shipment";
 export class Consignment {
     constructor(public grossWeightMeasure: Quantity = new Quantity(),
                 public grossVolumeMeasure: Quantity = new Quantity(),
-                public consolidatedShipment: Shipment = new Shipment()) {
+                public consolidatedShipment: Shipment[] = [new Shipment()]) {
     }
 }

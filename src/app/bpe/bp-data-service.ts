@@ -14,6 +14,9 @@ import {Order} from "../catalogue/model/publish/order";
 import {OrderResponseSimple} from "../catalogue/model/publish/order-response-simple";
 import {BehaviorSubject} from "rxjs/BehaviorSubject";
 import {OrderReference} from "./model/order-reference";
+import {TransportExecutionPlanRequest} from "../catalogue/model/publish/transport-execution-plan-request";
+import {TransportExecutionPlan} from "../catalogue/model/publish/transport-execution-plan";
+import {SearchContextService} from "../simple-search/search-context.service";
 /**
  * Created by suat on 20-Sep-17.
  */
@@ -31,24 +34,31 @@ export class BPDataService {
     orderResponse:OrderResponseSimple;
     despatchAdvice:DespatchAdvice;
     receiptAdvice:ReceiptAdvice;
+    transportExecutionPlanRequest:TransportExecutionPlanRequest;
+    transportExecutionPlan:TransportExecutionPlan;
 
     ////////////////////////////////////////////////////////////////////////////
     //////// variables used when navigating to bp options details page //////
     ////////////////////////////////////////////////////////////////////////////
     // setBpOptionParameters method must be used to set these values
-    processType:BehaviorSubject<string> = new BehaviorSubject<string>('Negotiation');
-    processTypeObs = this.processType.asObservable();
+    processTypeSubject:BehaviorSubject<string> = new BehaviorSubject<string>('Negotiation');
+    processTypeObservable = this.processTypeSubject.asObservable();
     userRole:string;
     processMetadata:any;
 
-    setBpOptionParameters_NavFromDashboard(userRole:string, targetProcess:string, processMetadata:any):void {
-        this.resetBpDataExceptCatalogueLine();
-        let activityVariables = processMetadata.activityVariables;
+    constructor(public searchContextService: SearchContextService) {
+    }
+
+    setBpOptionParametersWithProcessMetadata(userRole:string, targetProcess:string, processMetadata:any):void {
+        this.resetBpData();
         this.setBpOptionParameters(userRole, targetProcess);
         this.processMetadata = processMetadata;
+        this.setBpMessages(this.processTypeSubject.getValue(), processMetadata);
+    }
 
-        // decompose the activity variables
-        if(this.processType.getValue() == 'Negotiation') {
+    setBpMessages(processType:string, processMetadata:any) {
+        let activityVariables = processMetadata.activityVariables;
+        if(processType == 'Negotiation') {
             this.requestForQuotation = ActivityVariableParser.getInitialDocument(activityVariables).value;
 
             let quotationVariable = ActivityVariableParser.getResponse(activityVariables);
@@ -64,7 +74,7 @@ export class BPDataService {
                 this.order.orderLine[0].lineItem = this.quotation.quotationLine[0].lineItem;
             }
 
-        } else if(this.processType.getValue() == 'Order') {
+        } else if(processType == 'Order') {
             this.order = ActivityVariableParser.getInitialDocument(activityVariables).value;
 
             let orderResponseVariable = ActivityVariableParser.getResponse(activityVariables);
@@ -78,7 +88,7 @@ export class BPDataService {
                 this.orderResponse = orderResponseVariable.value;
             }
 
-        } else if(this.processType.getValue() == 'Fulfilment') {
+        } else if(processType == 'Fulfilment') {
             this.despatchAdvice = ActivityVariableParser.getInitialDocument(activityVariables).value;
 
             let receiptAdviceVariable = ActivityVariableParser.getResponse(activityVariables);
@@ -121,7 +131,7 @@ export class BPDataService {
 
     initOrderWithQuotation() {
         let copyQuotation:Quotation = JSON.parse(JSON.stringify(this.quotation));
-        this.resetBpDataExceptCatalogueLine();
+        this.resetBpData();
         this.modifiedCatalogueLine = JSON.parse(JSON.stringify(this.catalogueLine));
         this.order = UBLModelUtils.createOrder();
         this.order.orderLine[0].lineItem = copyQuotation.quotationLine[0].lineItem;
@@ -130,7 +140,7 @@ export class BPDataService {
 
     initRfqWithQuotation() {
         let copyQuotation:Quotation = JSON.parse(JSON.stringify(this.quotation));
-        this.resetBpDataExceptCatalogueLine();
+        this.resetBpData();
         this.modifiedCatalogueLine = JSON.parse(JSON.stringify(this.catalogueLine));
         this.requestForQuotation = UBLModelUtils.createRequestForQuotation();
         this.requestForQuotation.requestForQuotationLine[0].lineItem = copyQuotation.quotationLine[0].lineItem;
@@ -138,20 +148,22 @@ export class BPDataService {
 
     initDespatchAdviceWithOrder() {
         let copyOrder:Order = JSON.parse(JSON.stringify(this.order));
-        this.resetBpDataExceptCatalogueLine();
+        this.resetBpData();
         this.modifiedCatalogueLine = JSON.parse(JSON.stringify(this.catalogueLine));
         this.despatchAdvice = UBLModelUtils.createDespatchAdvice(copyOrder);
     }
 
-    resetBpData():void {
-        this.catalogueLine = null;
-        this.userRole = null;
-        this.resetBpDataExceptCatalogueLine();
+    initTransportExecutionPlanRequestWithOrder(processMetadata:any) {
+        this.resetBpData();
+        this.setBpMessages('Order', this.searchContextService.associatedProcessMetadata);
+        let copyOrder:Order = JSON.parse(JSON.stringify(this.order));
+        this.modifiedCatalogueLine = JSON.parse(JSON.stringify(this.catalogueLine));
+        this.transportExecutionPlanRequest = UBLModelUtils.createTransportExecutionPlanRequest(copyOrder, this.catalogueLine);
     }
 
-    resetBpDataExceptCatalogueLine():void {
+    resetBpData():void {
+        //this.setProcessType(null);
         this.processMetadata = null;
-        this.userRole = null;
         this.modifiedCatalogueLine = null;
         this.requestForQuotation = null;
         this.quotation = null;
@@ -159,6 +171,11 @@ export class BPDataService {
         this.orderResponse = null;
         this.despatchAdvice = null;
         this.receiptAdvice = null;
+        this.transportExecutionPlanRequest = null;
+        this.transportExecutionPlan = null;
+
+        // reinitialize the messages considering the search context
+        //this.setBpMessages(this.searchContextService.associatedProcessType, this.searchContextService.associatedProcessMetadata);
     }
 
     selectFirstValuesAmongAlternatives():void {
@@ -247,6 +264,6 @@ export class BPDataService {
     }
 
     setProcessType(processType:string): void {
-        this.processType.next(processType);
+        this.processTypeSubject.next(processType);
     }
 }

@@ -6,7 +6,7 @@ import {Code} from "./code";
 export class Country {
     constructor(
         public identificationCode: Code = new Code(),
-        public name: string = '',
+        public name: string = null,
         public hjid: string = null
     ) {  }
 }

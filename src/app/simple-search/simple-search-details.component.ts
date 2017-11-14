@@ -25,6 +25,7 @@ import {BPDataService} from "../bpe/bp-data-service";
 
 export class SimpleSearchDetailsComponent implements OnInit {
 	bpOptionsActive:boolean = false;
+	singleMode:boolean = false;
 	getCatalogueLineStatus:CallStatus = new CallStatus();
 
 	constructor(
@@ -40,7 +41,7 @@ export class SimpleSearchDetailsComponent implements OnInit {
 			let catalogueId = params['catalogueId'];
 			this.getCatalogueLineStatus.submit();
 			this.catalogueService.getCatalogueLine(catalogueId, id).then(line => {
-				this.bpDataService.resetBpDataExceptCatalogueLine();
+				this.bpDataService.resetBpData();
 				this.bpDataService.catalogueLine = line;
 				this.bpDataService.userRole = 'buyer';
 				this.getCatalogueLineStatus.callback("Retrieved product details", true);

@@ -1,4 +1,4 @@
-<ng-container *ngIf="orderResponse">
+<ng-container *ngIf="transportExecutionPlan">
     <h5>Notes</h5>
     <value-view class="row"
                 [presentationMode]="'edit'"
@@ -35,7 +35,6 @@
         </div>
     </div>
 </ng-container>
-
 <call-status [callStatus]="callStatus"
              [large]="true">
 </call-status>

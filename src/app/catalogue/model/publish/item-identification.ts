@@ -4,6 +4,6 @@
 
 export class ItemIdentification {
     constructor(
-        public id: string
+        public id: string = null
     ) {  }
 }

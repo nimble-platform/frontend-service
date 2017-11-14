@@ -2,6 +2,7 @@ import {DespatchAdvice} from "../catalogue/model/publish/despatch-advice";
 import {Item} from "../catalogue/model/publish/item";
 import {Order} from "../catalogue/model/publish/order";
 import {RequestForQuotation} from "../catalogue/model/publish/request-for-quotation";
+import {TransportExecutionPlanRequest} from "../catalogue/model/publish/transport-execution-plan-request";
 /**
  * Created by suat on 24-Oct-17.
  */
@@ -13,7 +14,10 @@ export class ActivityVariableParser {
 
     static getInitialDocument(processVariables: any[]): any {
         for (let variable of processVariables) {
-            if (variable.name == "order" || variable.name == "requestForQuotation" || variable.name == "despatchAdvice") {
+            if (variable.name == "order" ||
+                variable.name == "requestForQuotation" ||
+                variable.name == "despatchAdvice" ||
+                variable.name == "transportExecutionPlanRequest") {
                 return variable;
             }
         }
@@ -22,7 +26,10 @@ export class ActivityVariableParser {
 
     static getResponse(processVariables: any[]): any {
         for (let variable of processVariables) {
-            if (variable.name == "orderResponse" || variable.name == "quotation" || variable.name == "receiptAdvice") {
+            if (variable.name == "orderResponse" ||
+                variable.name == "quotation" ||
+                variable.name == "receiptAdvice" ||
+                variable.name == "transportExecutionPlan") {
                 return variable;
             }
         }
@@ -42,6 +49,10 @@ export class ActivityVariableParser {
         } else if (processType == "Fulfilment") {
             let despatchAdvice: DespatchAdvice = initialDocument.value as DespatchAdvice;
             return despatchAdvice.despatchSupplierParty.party.name;
+
+        } else if(processType == "Transport_Execution_Plan") {
+            let tepr: TransportExecutionPlanRequest = initialDocument.value as TransportExecutionPlanRequest;
+            return tepr.transportServiceProviderParty.name;
         }
     }
 
@@ -58,6 +69,10 @@ export class ActivityVariableParser {
         } else if (processType == "Fulfilment") {
             let despatchAdvice: DespatchAdvice = initialDocument.value as DespatchAdvice;
             return despatchAdvice.deliveryCustomerParty.party.name;
+
+        } else if(processType == "Transport_Execution_Plan") {
+            let tepr: TransportExecutionPlanRequest = initialDocument.value as TransportExecutionPlanRequest;
+            return tepr.transportUserParty.name;
         }
     }
 
@@ -74,6 +89,10 @@ export class ActivityVariableParser {
         } else if (processType == "Fulfilment") {
             let despatchAdvice:DespatchAdvice = initialDocument.value as DespatchAdvice;
             return despatchAdvice.despatchLine[0].item;
+
+        } else if(processType == "Transport_Execution_Plan") {
+            let tepr: TransportExecutionPlanRequest = initialDocument.value as TransportExecutionPlanRequest;
+            return tepr.mainTransportationService;
         }
     }
 
@@ -90,6 +109,10 @@ export class ActivityVariableParser {
         } else if (processType == "Fulfilment") {
             let despatchAdvice: DespatchAdvice = initialDocument.value as DespatchAdvice;
             return despatchAdvice.despatchLine[0].item.name;
+
+        } else if(processType == "Transport_Execution_Plan") {
+            let tepr: TransportExecutionPlanRequest = initialDocument.value as TransportExecutionPlanRequest;
+            return tepr.mainTransportationService.name;
         }
     }
 
@@ -106,6 +129,10 @@ export class ActivityVariableParser {
         } else if (processType == "Fulfilment") {
             let despatchAdvice: DespatchAdvice = initialDocument.value as DespatchAdvice;
             return despatchAdvice.note[0];
+
+        } else if(processType == "Transport_Execution_Plan") {
+            let tepr: TransportExecutionPlanRequest = initialDocument.value as TransportExecutionPlanRequest;
+            return tepr.note[0];
         }
     }
 }

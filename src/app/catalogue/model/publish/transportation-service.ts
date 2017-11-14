@@ -12,6 +12,7 @@ import {Period} from "./period";
 export class TransportationService {
     constructor(
         public transportServiceCode:Code = new Code(),
+        public name:string = null,
         public supportedCommodityClassification:CommodityClassification[] = [new CommodityClassification()],
         public totalCapacityDimension:Dimension = new Dimension(),
         public shipmentStage:ShipmentStage[] = [new ShipmentStage()],

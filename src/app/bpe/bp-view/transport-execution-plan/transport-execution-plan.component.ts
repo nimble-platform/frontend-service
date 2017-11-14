@@ -9,17 +9,17 @@ import {ModelUtils} from "../../model/model-utils";
 import {CallStatus} from "../../../common/call-status";
 import {Router} from "@angular/router";
 import {SearchContextService} from "../../../simple-search/search-context.service";
+import {TransportExecutionPlan} from "../../../catalogue/model/publish/transport-execution-plan";
 /**
  * Created by suat on 20-Sep-17.
  */
 @Component({
-    selector: 'order-response',
-    templateUrl: './order-response.component.html'
+    selector: 'transport-execution-plan',
+    templateUrl: './transport-execution-plan.component.html'
 })
 
-export class OrderResponseComponent {
-    @Input() order:Order;
-    @Input() orderResponse:OrderResponseSimple;
+export class TransportExecutionPlanComponent {
+    @Input() transportExecutionPlan:TransportExecutionPlan;
 
     callStatus:CallStatus = new CallStatus();
 
@@ -29,7 +29,7 @@ export class OrderResponseComponent {
                 private router:Router) {
     }
 
-    respondToOrder(acceptedIndicator: boolean) {
+    respondToTransportExecutionPlanRequest(acceptedIndicator: boolean) {
         this.bpDataService.orderResponse.acceptedIndicator = acceptedIndicator;
 
         let vars: ProcessVariables = ModelUtils.createProcessVariables("Order", this.bpDataService.order.buyerCustomerParty.party.id, this.bpDataService.order.sellerSupplierParty.party.id, this.bpDataService.orderResponse);
@@ -53,9 +53,7 @@ export class OrderResponseComponent {
 
     searchTransportServiceProvider() {
         this.searchContextService.targetPartyRole = 'Transport Service Provider';
-        this.searchContextService.associatedProcessType = 'Order';
         this.searchContextService.associatedProcessMetadata = this.bpDataService.processMetadata;
-        this.bpDataService.setBpOptionParameters('buyer', 'Transport_Execution_Plan');
         this.router.navigate(['simple-search'], {queryParams: {targetRole: encodeURIComponent("Transport Service Provider")}});
     }
 }

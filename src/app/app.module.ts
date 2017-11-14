@@ -69,6 +69,11 @@ import {NegotiationComponent} from "./bpe/bp-view/negotiation/negotiation.compon
 import {QuotationComponent} from "./bpe/bp-view/negotiation/quotation.component";
 import {ProductTradingDetailsComponent} from "./catalogue/ubl-model-view/catalogue-line/product-trading-details.component";
 import {TransportationServiceDetails} from "./catalogue/ubl-model-view/catalogue-line/transportation-service-details.component";
+import {TransportExecutionPlanBpComponent} from "./bpe/bp-view/transport-execution-plan/transport-execution-plan-bp.component";
+import {TransportExecutionPlanRequestComponent} from "./bpe/bp-view/transport-execution-plan/transport-execution-plan-request.component";
+import {TransportExecutionPlanComponent} from "./bpe/bp-view/transport-execution-plan/transport-execution-plan.component";
+import {SearchContextService} from "./simple-search/search-context.service";
+import {ShipmentViewComponent} from "./catalogue/ubl-model-view/shipment-view.component";
 
 @NgModule({
     imports: [
@@ -112,11 +117,15 @@ import {TransportationServiceDetails} from "./catalogue/ubl-model-view/catalogue
         FulfilmentComponent,
         DespatchAdviceComponent,
         ReceiptAdviceComponent,
+        TransportExecutionPlanBpComponent,
+        TransportExecutionPlanRequestComponent,
+        TransportExecutionPlanComponent,
         CatalogueViewComponent,
         CatalogueLineHeaderComponent,
         CatalogueLinePanelComponent,
         CatalogueLineViewComponent,
         ProductDetailsComponent,
+        TransportationServiceDetails,
         ProductTradingDetailsComponent,
         TradingDetailsComponent,
         PropertyBlockPipe,
@@ -129,13 +138,13 @@ import {TransportationServiceDetails} from "./catalogue/ubl-model-view/catalogue
         ValueArrayViewComponent,
         ValueViewComponent,
         BooleanViewComponent,
+        ShipmentViewComponent,
         BPConfigureComponent,
         BPDetailComponent,
         BPsComponent,
         ProductBpOptionsComponent,
         CallStatusComponent,
-        CompanyRegistrationComponent,
-        TransportationServiceDetails],
+        CompanyRegistrationComponent],
     providers: [
         UserService,
         CredentialsService,
@@ -146,7 +155,8 @@ import {TransportationServiceDetails} from "./catalogue/ubl-model-view/catalogue
         ExplorativeSearchService,
         PublishService,
         BPService,
-        BPDataService
+        BPDataService,
+        SearchContextService
     ],
     bootstrap: [
         AppComponent

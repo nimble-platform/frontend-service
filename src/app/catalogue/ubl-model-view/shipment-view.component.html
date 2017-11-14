@@ -1,0 +1,22 @@
+<ng-container *ngIf="shipment">
+    <value-view class="row"
+                [presentationMode]="presentationMode"
+                [propName]="'Handling Instructions'"
+                [(value)]="shipment.handlingInstructions">
+    </value-view>
+    <value-view class="row"
+                [presentationMode]="presentationMode"
+                [propName]="'Estimated Delivery Date'"
+                [(value)]="shipment.shipmentStage[0].estimatedDeliveryDate">
+    </value-view>
+    <value-view class="row"
+                [presentationMode]="presentationMode"
+                [propName]="'Carrier Party'"
+                [(value)]="shipment.shipmentStage[0].carrierParty.name">
+    </value-view>
+    <value-view class="row"
+                [presentationMode]="presentationMode"
+                [propName]="'Carrier Party Contact'"
+                [(value)]="shipment.shipmentStage[0].carrierParty.contact.telephone">
+    </value-view>
+</ng-container>

@@ -202,7 +202,7 @@ export class DashboardComponent implements OnInit {
             targetProcess = ActivityVariableParser.getProcessType(processMetadata.activityVariables);
         }
 
-        this.bpDataService.setBpOptionParameters_NavFromDashboard(role, targetProcess, processMetadata);
+        this.bpDataService.setBpOptionParametersWithProcessMetadata(role, targetProcess, processMetadata);
         this.router.navigate(['bpe-exec'], {
             queryParams: {
                 catalogueId: processMetadata.product.catalogueDocumentReference.id,
@@ -222,8 +222,11 @@ export class DashboardComponent implements OnInit {
                     responseMessage = "Receipt Advice should be sent";
                 } else if (processType == 'Order') {
                     responseMessage = "Waiting for Order Response";
-                } else if (processType == 'Negotiation')
+                } else if (processType == 'Negotiation') {
                     responseMessage = "Waiting for Quotation";
+                } else if (processType == 'Transport_Execution_Plan') {
+                    responseMessage = "Waiting for Transport Execution Plan";
+                }
             }
 
             // messages for the seller
@@ -234,6 +237,8 @@ export class DashboardComponent implements OnInit {
                     responseMessage = "Order Response should be sent";
                 } else if (processType == 'Negotiation') {
                     responseMessage = "Quotation should be sent";
+                } else if (processType == 'Transport_Execution_Plan') {
+                    responseMessage = "Transport Execution Plan should be sent";
                 }
             }
 
@@ -258,6 +263,13 @@ export class DashboardComponent implements OnInit {
                     responseMessage = "Receipt Advice sent"
                 } else {
                     responseMessage = "Receipt Advice received"
+                }
+
+            } else if (processType == 'Transport_Execution_Plan') {
+                if (buyer) {
+                    responseMessage = "Transport Execution Plan received"
+                } else {
+                    responseMessage = "Transport Execution Plan sent"
                 }
             }
         }

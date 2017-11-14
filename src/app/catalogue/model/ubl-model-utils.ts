@@ -39,6 +39,8 @@ import {RequestForQuotation} from "./publish/request-for-quotation";
 import {Quotation} from "./publish/quotation";
 import {Location} from "./publish/location";
 import {Shipment} from "./publish/shipment";
+import {TransportExecutionPlanRequest} from "./publish/transport-execution-plan-request";
+import {TransportationService} from "./publish/transportation-service";
 /**
  * Created by suat on 05-Jul-17.
  */
@@ -193,6 +195,15 @@ export class UBLModelUtils {
         receiptAdvice.receiptLine = [new ReceiptLine(new Quantity(), [], despatchAdvice.despatchLine[0].item)];
         return receiptAdvice;
     }
+
+    public static createTransportExecutionPlanRequest(order:Order, transportationServiceLine:CatalogueLine):TransportExecutionPlanRequest {
+        let transportExecutionPlanRequest:TransportExecutionPlanRequest = new TransportExecutionPlanRequest();
+        transportExecutionPlanRequest.id = this.generateUUID();
+        transportExecutionPlanRequest.mainTransportationService = transportationServiceLine.goodsItem.item;
+        transportExecutionPlanRequest.consignment[0].consolidatedShipment[0].goodsItem[0].item = order.orderLine[0].lineItem.item;
+        return transportExecutionPlanRequest
+    }
+
 
     public static createOrderReference(orderId:string):OrderReference {
         let documentReference:DocumentReference = new DocumentReference(orderId);
