@@ -46,6 +46,7 @@ export class CredentialsFormComponent implements OnInit {
 			this.cookieService.set("active_company_name",res.companyName);
 			this.cookieService.set("user_fullname",res.firstname+" "+res.lastname);
 			this.cookieService.set("user_email",res.email);
+			this.cookieService.set("bearer_token",res.accessToken);
 			this.callback = true;
 			this.error_detc = false;
 			this.appComponent.checkLogin("/dashboard");
@@ -56,6 +57,7 @@ export class CredentialsFormComponent implements OnInit {
 			this.cookieService.delete("user_fullname");
 			this.cookieService.delete("user_email");
 			this.cookieService.delete("active_company_name");
+			this.cookieService.delete("bearer_token");
 			this.appComponent.checkLogin("");
 			this.error_detc = true;
 		});

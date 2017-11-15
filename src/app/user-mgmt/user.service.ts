@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Headers, Http } from '@angular/http';
+import { Headers, Http, RequestOptions } from '@angular/http';
 import 'rxjs/add/operator/toPromise';
 import * as myGlobals from '../globals';
 import {Party} from "../catalogue/model/publish/party";
@@ -27,10 +27,12 @@ export class UserService {
 		.catch(this.handleError);
 	}
 
-	registerCompany(company: CompanyRegistration) {
+	registerCompany(company: CompanyRegistration, token:string) {
 		const url = `${this.url}/register/company`;
+		const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
+		const options = new RequestOptions({headers: headers_token, withCredentials: true});
 		return this.http
-            .post(url, JSON.stringify(company), {headers: this.headers})
+            .post(url, JSON.stringify(company), options)
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);

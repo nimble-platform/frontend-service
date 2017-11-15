@@ -35,18 +35,21 @@ export class CompanyRegistrationComponent implements OnInit {
 
         // create company registration DTO
         let userId = this.cookieService.get('user_id');
+		let token = 'Bearer '+this.cookieService.get('bearer_token');
         let companyRegistration: CompanyRegistration = new CompanyRegistration(
             userId, null, model.getRawValue()['name'], model.getRawValue()['address']);
 
         console.log(`Registering company ${JSON.stringify(companyRegistration)}`);
 
         this.isSubmitting = true;
-        this.userService.registerCompany(companyRegistration)
+        this.userService.registerCompany(companyRegistration,token)
             .then(response => {
                 console.log(`Saved Company Settings for user ${userId}. Response: ${JSON.stringify(response)}`);
 
                 this.isSubmitting = false;
 
+				this.cookieService.set('bearer_token',response.accessToken);
+				
                 if( response['companyID'] ) {
                     this.cookieService.set("company_id", response['companyID']);
                     this.cookieService.set("active_company_name", response['name']);
