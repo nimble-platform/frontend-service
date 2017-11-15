@@ -21,7 +21,7 @@ export class UserService {
 	registerUser(user: UserRegistration): Promise<any> {
 		const url = `${this.url}/register/user`;
 		return this.http
-		.post(url, JSON.stringify(user), {headers: this.headers})
+		.post(url, JSON.stringify(user), {headers: this.headers, withCredentials: true})
 		.toPromise()
 		.then(res => res.json())
 		.catch(this.handleError);
@@ -41,7 +41,7 @@ export class UserService {
 	getParty(partyId:string):Promise<Party> {
 		const url = `${this.url}/party/${partyId}`;
 		return this.http
-            .get(url, {headers: this.headers})
+            .get(url, {headers: this.headers, withCredentials: true})
 			.toPromise()
             .catch(err => {
             	if(err.status == 302) {
@@ -60,7 +60,7 @@ export class UserService {
 		}
 		const url = `${this.url}/party_by_person/${userId}`;
 		return this.http
-		.get(url, {headers: this.headers})
+		.get(url, {headers: this.headers, withCredentials: true})
 		.toPromise()
 		.then(res => {
 			this.userParty = res.json()[0];
@@ -75,7 +75,7 @@ export class UserService {
         return this.getUserParty(userId).then(party => {
             const url = `${this.url}/company-settings/${party.id}`;
             return this.http
-                .get(url, {headers: this.headers})
+                .get(url, {headers: this.headers, withCredentials: true})
                 .toPromise()
                 .then(response => response.json() as CompanySettings)
                 .catch(this.handleError)
@@ -86,7 +86,7 @@ export class UserService {
 		return this.getUserParty(userId).then(party => {
 			const url = `${this.url}/company-settings/${party.id}`;
 			return this.http
-                .put(url, settings, {headers: this.headers})
+                .put(url, settings, {headers: this.headers, withCredentials: true})
                 .toPromise()
                 .then(response => response.json())
                 .catch(this.handleError)

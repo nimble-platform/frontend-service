@@ -17,9 +17,9 @@ export const bpe_endpoint="https://nimble-platform.salzburgresearch.at/nimble/bu
 // export const catalogue_endpoint="http://nimble.uk-south.containers.mybluemix.net/catalog";
 // export const bpe_endpoint="http://nimble.uk-south.containers.mybluemix.net/business-process";
 
+// export const user_mgmt_endpoint="http://localhost:9096";
 // export const catalogue_endpoint="http://localhost:10095";
 // export const bpe_endpoint="http://localhost:8085";
-
 
 // Endpoint variables - BIBA domain
 // const ub_base_8090="http://hydra2.ikap.biba.uni-bremen.de:8090";
