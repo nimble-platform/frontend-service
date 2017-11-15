@@ -5,7 +5,7 @@ import {Property} from "../../model/category/property";
 import {Code} from "../../model/publish/code";
 import {Quantity} from "../../model/publish/quantity";
 import {Dimension} from "../../model/publish/dimension";
-import {BPDataService} from "../../../bpe/bp-data-service";
+import {BPDataService} from "../../../bpe/bp-view/bp-data-service";
 import {UBLModelUtils} from "../../model/ubl-model-utils";
 import {PropertyBlockPipe} from "../../property-block-pipe";
 import {PublishService} from "../../publish-and-aip.service";

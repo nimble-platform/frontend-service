@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from "@angular/core";
-import {BPDataService} from "../../bp-data-service";
+import {BPDataService} from "../bp-data-service";
 import {BPEService} from "../../bpe.service";
 import {UBLModelUtils} from "../../../catalogue/model/ubl-model-utils";
 import {CookieService} from "ng2-cookies";

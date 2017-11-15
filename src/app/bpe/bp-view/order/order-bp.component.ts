@@ -1,5 +1,5 @@
 import {Component, OnInit} from "@angular/core";
-import {BPDataService} from "../../bp-data-service";
+import {BPDataService} from "../bp-data-service";
 import {BPEService} from "../../bpe.service";
 import {UBLModelUtils} from "../../../catalogue/model/ubl-model-utils";
 import {CookieService} from "ng2-cookies";
@@ -21,6 +21,7 @@ import {CallStatus} from "../../../common/call-status";
 export class OrderBpComponent implements OnInit {
 
     selectedTab: string = "Order Details";
+    tabs:string[] = [];
 
     constructor(private bpDataService: BPDataService) {
     }
@@ -29,6 +30,16 @@ export class OrderBpComponent implements OnInit {
         if(this.bpDataService.order == null) {
             // initiating a new business process from scratch
             this.bpDataService.initOrder();
+        }
+        this.populateTabs();
+    }
+
+    populateTabs() {
+        if(this.bpDataService.catalogueLine.goodsItem.item.transportationServiceDetails == null) {
+            this.tabs.push('Product Characteristics');
+            this.tabs.push('Product Trading & Delivery Terms');
+        } else {
+            this.tabs.push('Service Characteristics');
         }
     }
 }

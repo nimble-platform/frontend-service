@@ -1,10 +1,10 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from "@angular/core";
 import {BPDataService} from "./bp-data-service";
 import {ActivatedRoute} from "@angular/router";
-import {CallStatus} from "../common/call-status";
-import {CatalogueService} from "../catalogue/catalogue.service";
+import {CallStatus} from "../../common/call-status";
+import {CatalogueService} from "../../catalogue/catalogue.service";
 import {Subscription} from "rxjs/Subscription";
-import {SearchContextService} from "../simple-search/search-context.service";
+import {SearchContextService} from "../../simple-search/search-context.service";
 /**
  * Created by suat on 20-Oct-17.
  */
@@ -47,13 +47,12 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
             this.getCatalogueLineStatus.submit();
             this.catalogueService.getCatalogueLine(catalogueId, id).then(line => {
                 this.bpDataService.catalogueLine = line;
+                this.identifyAvailableProcesses();
                 this.getCatalogueLineStatus.callback("Retrieved product details", true);
             }).catch(error => {
                 this.getCatalogueLineStatus.error("Failed to retrieve product details");
             });
         });
-
-        this.identifyAvailableProcesses()
     }
 
     private identifyAvailableProcesses() {
@@ -66,7 +65,9 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
             // regular order and negotiation processes
         } else {
             this.availableProcesses.push('Negotiation');
-            this.availableProcesses.push('Order');
+            if(this.bpDataService.catalogueLine.goodsItem.item.transportationServiceDetails == null) {
+                this.availableProcesses.push('Order');
+            }
         }
     }
 

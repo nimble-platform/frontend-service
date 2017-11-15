@@ -15,7 +15,7 @@ import {BPsComponent} from './bpe/bps.component';
 import {BPDetailComponent} from './bpe/bp-detail.component';
 import {BPConfigureComponent} from './bpe/bp-configure.component';
 import {CompanyRegistrationComponent} from './user-mgmt/company-registration.component';
-import {ProductBpOptionsComponent} from "./bpe/product-bp-options.component";
+import {ProductBpOptionsComponent} from "./bpe/bp-view/product-bp-options.component";
 
 const routes: Routes = [
     {path: '', redirectTo: '/login', pathMatch: 'full'},

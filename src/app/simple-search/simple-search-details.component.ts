@@ -15,7 +15,7 @@ import {LineReference} from "../catalogue/model/publish/line-reference";
 import {CatalogueService} from "../catalogue/catalogue.service";
 import {CatalogueLine} from "../catalogue/model/publish/catalogue-line";
 import {CallStatus} from "../common/call-status";
-import {BPDataService} from "../bpe/bp-data-service";
+import {BPDataService} from "../bpe/bp-view/bp-data-service";
 
 @Component({
 	selector: 'simple-search-details',

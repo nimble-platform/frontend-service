@@ -5,7 +5,7 @@ import {Component, Input, OnDestroy, OnInit} from "@angular/core";
 import {ItemProperty} from "../model/publish/item-property";
 import {CatalogueService} from "../catalogue.service";
 import {Subscription} from "rxjs/Subscription";
-import {BPDataService} from "../../bpe/bp-data-service";
+import {BPDataService} from "../../bpe/bp-view/bp-data-service";
 import {Property} from "../model/category/property";
 
 @Component({

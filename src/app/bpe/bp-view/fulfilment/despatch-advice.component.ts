@@ -8,7 +8,7 @@ import {UBLModelUtils} from "../../../catalogue/model/ubl-model-utils";
 import {SupplierParty} from "../../../catalogue/model/publish/supplier-party";
 import {CustomerParty} from "../../../catalogue/model/publish/customer-party";
 import {ModelUtils} from "../../model/model-utils";
-import {BPDataService} from "../../bp-data-service";
+import {BPDataService} from "../bp-data-service";
 import {DespatchAdvice} from "../../../catalogue/model/publish/despatch-advice";
 import {CallStatus} from "../../../common/call-status";
 import {Router} from "@angular/router";

@@ -1,17 +1,14 @@
 <div>
     <ul class="nav nav-tabs">
-        <li class="nav-item pointer">
-            <a [ngClass]="{'nav-link': true, active: selectedTab === 'Product Details'}"
-               (click)="selectedTab = 'Product Details'"
-               i18n
-            >Product Characteristics</a>
+        <!-- tabs generated to present details of the product or service -->
+        <li *ngFor="let tab of tabs" class="nav-item pointer">
+            <a
+                    [ngClass]="{'nav-link': true, active: selectedTab === tab}"
+                    (click)="selectedTab = tab"
+                    i18n
+            >{{tab}}</a>
         </li>
-        <li class="nav-item pointer">
-            <a [ngClass]="{'nav-link': true, active: selectedTab === 'Product Trading & Delivery Terms'}"
-               (click)="selectedTab = 'Product Trading & Delivery Terms'"
-               i18n
-            >Product Trading & Delivery Terms</a>
-        </li>
+        <!-- tabs specific to the order process -->
         <li class="nav-item pointer">
             <a [ngClass]="{'nav-link': true, active: selectedTab === 'Request for Quotation Details'}"
                (click)="selectedTab = 'Request for Quotation Details'"
@@ -30,15 +27,11 @@
 </div>
 <div *ngIf="bpDataService.catalogueLine"
      class="p-3">
-    <product-details *ngIf="selectedTab === 'Product Details'"
-                     [catalogueLine]="bpDataService.catalogueLine"
-                     [presentationMode]="'singlevalue'">
-    </product-details>
-    <product-trading-details *ngIf="selectedTab === 'Product Trading & Delivery Terms'"
-                             [catalogueLine]="bpDataService.catalogueLine"
-                             [presentationMode]="'singlevalue'"
-                             [editPrice]="true">
-    </product-trading-details>
+    <bp-product-details *ngIf="selectedTab == 'Product Characteristics' || selectedTab == 'Product Trading & Delivery Terms' || selectedTab == 'Service Characteristics'"
+                        [catalogueLine]="bpDataService.catalogueLine"
+                        [presentationMode]="'singlevalue'"
+                        [selectedTab]="selectedTab">
+    </bp-product-details>
     <request-for-quotation *ngIf="selectedTab === 'Request for Quotation Details'"
                            [requestForQuotation]="bpDataService.requestForQuotation">
     </request-for-quotation>

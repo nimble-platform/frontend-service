@@ -1,6 +1,6 @@
 import {Component, Input} from "@angular/core";
 import {RequestForQuotation} from "../../../catalogue/model/publish/request-for-quotation";
-import {BPDataService} from "../../bp-data-service";
+import {BPDataService} from "../bp-data-service";
 import {UBLModelUtils} from "../../../catalogue/model/ubl-model-utils";
 import {CustomerParty} from "../../../catalogue/model/publish/customer-party";
 import {SupplierParty} from "../../../catalogue/model/publish/supplier-party";

@@ -1,5 +1,5 @@
 import {Component, OnInit} from "@angular/core";
-import {BPDataService} from "../../bp-data-service";
+import {BPDataService} from "../bp-data-service";
 import {SearchContextService} from "../../../simple-search/search-context.service";
 /**
  * Created by suat on 20-Sep-17.

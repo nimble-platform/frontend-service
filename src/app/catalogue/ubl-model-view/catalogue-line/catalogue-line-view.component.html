@@ -35,7 +35,8 @@
     </div>
 </div>
 
-<ng-container *ngIf="partyRole == '' || partyRole == 'Manufacturer'">
+<ng-container *ngIf="(presentationMode == 'edit' && partyRole == '' || partyRole == 'Manufacturer') ||
+                     (presentationMode != 'edit' && catalogueLine.goodsItem.item.transportationServiceDetails == null)">
     <ul class="nav nav-tabs">
         <li class="nav-item pointer">
             <a
@@ -64,10 +65,11 @@
     </product-trading-details>
 </ng-container>
 
-<ng-container *ngIf="partyRole == 'Transport Service Provider'">
+<ng-container *ngIf="(presentationMode == 'edit' && partyRole == 'Transport Service Provider') ||
+                    (presentationMode != 'edit' && catalogueLine.goodsItem.item.transportationServiceDetails != null)">
     <ul class="nav nav-tabs mb-3">
         <li class="nav-item pointer">
-            <a i18n>Transportation Service Details</a>
+            <a class="nav-link active" i18n>Transportation Service Details</a>
         </li>
     </ul>
 

@@ -1,7 +1,7 @@
 import {Component, Input} from "@angular/core";
 import {Order} from "../../../catalogue/model/publish/order";
 import {OrderResponseSimple} from "../../../catalogue/model/publish/order-response-simple";
-import {BPDataService} from "../../bp-data-service";
+import {BPDataService} from "../bp-data-service";
 import {BPEService} from "../../bpe.service";
 import {ProcessVariables} from "../../model/process-variables";
 import {ProcessInstanceInputMessage} from "../../model/process-instance-input-message";
