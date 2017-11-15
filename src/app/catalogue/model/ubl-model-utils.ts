@@ -41,6 +41,8 @@ import {Location} from "./publish/location";
 import {Shipment} from "./publish/shipment";
 import {TransportExecutionPlanRequest} from "./publish/transport-execution-plan-request";
 import {TransportationService} from "./publish/transportation-service";
+import {TransportExecutionPlan} from "./publish/transport-execution-plan";
+import {Consignment} from "./publish/consignment";
 /**
  * Created by suat on 05-Jul-17.
  */
@@ -151,8 +153,7 @@ export class UBLModelUtils {
         let price:Price = this.createPrice(null)
         let lineItem:LineItem = this.createLineItem(quantity, price, item);
         let requestForQuotationLine:RequestForQuotationLine = new RequestForQuotationLine(lineItem);
-        let delivery:Delivery = this.createDelivery();
-        let rfq = new RequestForQuotation(this.generateUUID(), [""], null, null, delivery, [requestForQuotationLine]);
+        let rfq = new RequestForQuotation(this.generateUUID(), [""], null, null, new Delivery(), [requestForQuotationLine]);
         return rfq;
     }
 
@@ -161,9 +162,7 @@ export class UBLModelUtils {
         let item: Item = this.createItem();
         let price: Price = this.createPrice(null);
         let lineItem:LineItem = new LineItem(quantity, [], new Delivery(), new DeliveryTerms(), price, item, new Period(), null);
-        let quotationLine:QuotationLine = new QuotationLine(lineItem, null);
-
-        let delivery:Delivery = this.createDelivery();
+        let quotationLine:QuotationLine = new QuotationLine(lineItem);
 
         this.removeHjidFieldsFromObject(rfq.buyerCustomerParty);
         this.removeHjidFieldsFromObject(rfq.sellerSupplierParty);
@@ -172,7 +171,7 @@ export class UBLModelUtils {
 
         let documentReference:DocumentReference = new DocumentReference(rfq.id);
 
-        let quotation = new Quotation(this.generateUUID(), [""], 1, documentReference, customerParty, supplierParty, delivery, [quotationLine]);
+        let quotation = new Quotation(this.generateUUID(), [""], 1, documentReference, customerParty, supplierParty, new Delivery(), [quotationLine]);
         return quotation;
     }
 
@@ -198,12 +197,21 @@ export class UBLModelUtils {
 
     public static createTransportExecutionPlanRequest(order:Order, transportationServiceLine:CatalogueLine):TransportExecutionPlanRequest {
         let transportExecutionPlanRequest:TransportExecutionPlanRequest = new TransportExecutionPlanRequest();
+        transportExecutionPlanRequest.consignment[0].consolidatedShipment.push(new Shipment());
         transportExecutionPlanRequest.id = this.generateUUID();
         transportExecutionPlanRequest.mainTransportationService = transportationServiceLine.goodsItem.item;
         transportExecutionPlanRequest.consignment[0].consolidatedShipment[0].goodsItem[0].item = order.orderLine[0].lineItem.item;
         return transportExecutionPlanRequest
     }
 
+    public static createTransportExecutionPlan(transportExecutionPlanRequest:TransportExecutionPlanRequest):TransportExecutionPlan {
+        let transportExecutionPlan:TransportExecutionPlan = new TransportExecutionPlan();
+        transportExecutionPlan.id = this.generateUUID();
+        transportExecutionPlan.transportExecutionPlanRequestDocumentReference = new DocumentReference(transportExecutionPlanRequest.id);
+        transportExecutionPlan.transportUserParty = transportExecutionPlanRequest.transportUserParty;
+        transportExecutionPlan.transportServiceProviderParty = transportExecutionPlanRequest.transportServiceProviderParty;
+        return transportExecutionPlan;
+    }
 
     public static createOrderReference(orderId:string):OrderReference {
         let documentReference:DocumentReference = new DocumentReference(orderId);
@@ -233,10 +241,6 @@ export class UBLModelUtils {
         let quantity: Quantity = this.createQuantity();
         let price: Price = new Price(amountObj, quantity);
         return price;
-    }
-
-    public static createDelivery():Delivery {
-        return new Delivery(new Period(), this.createDeliveryTerms());
     }
 
     public static createDeliveryTerms():DeliveryTerms {

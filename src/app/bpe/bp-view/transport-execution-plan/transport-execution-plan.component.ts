@@ -29,31 +29,18 @@ export class TransportExecutionPlanComponent {
                 private router:Router) {
     }
 
-    respondToTransportExecutionPlanRequest(acceptedIndicator: boolean) {
-        this.bpDataService.orderResponse.acceptedIndicator = acceptedIndicator;
-
-        let vars: ProcessVariables = ModelUtils.createProcessVariables("Order", this.bpDataService.order.buyerCustomerParty.party.id, this.bpDataService.order.sellerSupplierParty.party.id, this.bpDataService.orderResponse);
+    respondToTransportExecutionPlanRequest() {
+        let vars: ProcessVariables = ModelUtils.createProcessVariables("Transport_Execution_Plan", this.bpDataService.transportExecutionPlan.transportUserParty.id, this.bpDataService.transportExecutionPlan.transportServiceProviderParty.id, this.bpDataService.transportExecutionPlan);
         let piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.bpDataService.processMetadata.process_id);
 
         this.callStatus.submit();
         this.bpeService.continueBusinessProcess(piim).then(
             res => {
-                this.callStatus.callback("Order Response placed", true);
+                this.callStatus.callback("Transport Execution Plan sent", true);
                 this.router.navigate(['dashboard']);
             }
         ).catch(
-            error => this.callStatus.error("Failed to send Order Response")
+            error => this.callStatus.error("Failed to send Transport Execution Plan")
         );
-    }
-
-    initiateDespatchAdvice() {
-        this.bpDataService.initDespatchAdviceWithOrder();
-        this.bpDataService.setBpOptionParameters('seller', 'Fulfilment');
-    }
-
-    searchTransportServiceProvider() {
-        this.searchContextService.targetPartyRole = 'Transport Service Provider';
-        this.searchContextService.associatedProcessMetadata = this.bpDataService.processMetadata;
-        this.router.navigate(['simple-search'], {queryParams: {targetRole: encodeURIComponent("Transport Service Provider")}});
     }
 }

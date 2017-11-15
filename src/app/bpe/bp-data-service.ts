@@ -101,6 +101,20 @@ export class BPDataService {
             } else {
                 this.receiptAdvice = receiptAdviceVariable.value;
             }
+
+        } else if(processType == 'Transport_Execution_Plan') {
+            this.transportExecutionPlanRequest = ActivityVariableParser.getInitialDocument(activityVariables).value;
+
+            let transportExecutionPlanVariable = ActivityVariableParser.getResponse(activityVariables);
+            if(transportExecutionPlanVariable == null) {
+                // initialize the quotation only if the user is in seller role
+                if(this.userRole == 'seller') {
+                    this.transportExecutionPlan = UBLModelUtils.createTransportExecutionPlan(this.transportExecutionPlanRequest);
+                }
+
+            } else {
+                this.transportExecutionPlan = transportExecutionPlanVariable.value;
+            }
         }
     }
 
