@@ -4,7 +4,7 @@ import { Credentials } from './model/credentials';
 import { CredentialsService } from './credentials.service';
 import * as myGlobals from '../globals';
 import { CookieService } from 'ng2-cookies';
-declare var jsSHA: any;
+//declare var jsSHA: any;
 
 @Component({
 	selector: 'credentials-form',
@@ -38,7 +38,8 @@ export class CredentialsFormComponent implements OnInit {
 		this.credentialsService.post(credentials)
 		.then(res => {
 
-			console.log(`User logged in . Response: ${JSON.stringify(res)}`);
+			if (myGlobals.debug)
+				console.log(`User logged in . Response: ${JSON.stringify(res)}`);
 
 			this.response = res;
 			this.cookieService.set("user_id",res.userID);
@@ -73,9 +74,11 @@ export class CredentialsFormComponent implements OnInit {
 	
 	onSubmit() {
 		this.objToSubmit = JSON.parse(JSON.stringify(this.model));
+		/*
 		this.shaObj = new jsSHA("SHA-256", "TEXT");
 		this.shaObj.update(this.model.password);
         this.objToSubmit.password = this.shaObj.getHash("HEX");
+		*/
 		this.submitted = true;
 		this.post(this.objToSubmit);
 	}

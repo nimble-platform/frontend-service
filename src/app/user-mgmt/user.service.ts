@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
-import { Headers, Http, RequestOptions } from '@angular/http';
+import { Headers, Http } from '@angular/http';
 import 'rxjs/add/operator/toPromise';
 import * as myGlobals from '../globals';
 import {Party} from "../catalogue/model/publish/party";
 import { CompanySettings } from './model/company-settings';
 import { UserRegistration } from './model/user-registration';
 import { CompanyRegistration } from './model/company-registration';
+import { CompanyInvitation } from './model/company-invitation';
 import {UBLModelUtils} from "../catalogue/model/ubl-model-utils";
 
 @Injectable()
@@ -30,11 +31,30 @@ export class UserService {
 	registerCompany(company: CompanyRegistration, token:string) {
 		const url = `${this.url}/register/company`;
 		const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
-		const options = new RequestOptions({headers: headers_token, withCredentials: true});
 		return this.http
-            .post(url, JSON.stringify(company), options)
+            .post(url, JSON.stringify(company), {headers: headers_token, withCredentials: true})
             .toPromise()
             .then(res => res.json())
+            .catch(this.handleError);
+	}
+	
+	getInviteList(token:string) {
+		const url = `${this.url}/invitations`;
+		const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
+		return this.http
+            .get(url, {headers: headers_token, withCredentials: true})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+	}
+	
+	inviteCompany(invitation: CompanyInvitation, token:string) {
+		const url = `${this.url}/send_invitation`;
+		const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
+		return this.http
+            .post(url, JSON.stringify(invitation), {headers: headers_token, withCredentials: true})
+            .toPromise()
+            .then(res => res)
             .catch(this.handleError);
 	}
 

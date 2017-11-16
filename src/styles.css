@@ -123,6 +123,11 @@ textarea {
     opacity: 1 !important;
 }
 
+.dropdown-item.active, .dropdown-item:active {
+	color: #292b2c !important;
+	background-color: #ccc !important;
+}
+
 ngb-pagination nav .pagination {
     margin-bottom: 0 !important;
     -moz-box-pack: end;
