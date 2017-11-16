@@ -60,7 +60,7 @@ export class CompanyRegistrationComponent implements OnInit {
                     this.cookieService.set("active_company_name", response['name']);
                 }
 
-				this.appComponent.checkLogin("");
+				this.appComponent.checkLogin("/dashboard");
             })
             .catch(error => {
                 console.error('An error occurred', error); // for demo purposes only
