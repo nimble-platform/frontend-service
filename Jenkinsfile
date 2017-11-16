@@ -5,7 +5,6 @@ node ('nimble-jenkins-slave') {
     }
 
     stage('Build Application') {
-        sh 'mvn clean'
     	sh 'mvn clean install'
     }
 
