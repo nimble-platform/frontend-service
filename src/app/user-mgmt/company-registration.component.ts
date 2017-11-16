@@ -5,6 +5,8 @@ import { UserService } from './user.service';
 import { CookieService } from 'ng2-cookies';
 import { CompanyRegistration } from './model/company-registration';
 import { Router } from '@angular/router';
+import { AppComponent } from '../app.component';
+import * as myGlobals from '../globals';
 
 @Component({
     selector: 'company-registration',
@@ -18,6 +20,7 @@ export class CompanyRegistrationComponent implements OnInit {
     public isSubmitting = false;
 
     constructor(private _fb: FormBuilder,
+				private appComponent: AppComponent,
                 private cookieService: CookieService,
                 private router: Router,
                 private userService: UserService) {
@@ -35,24 +38,29 @@ export class CompanyRegistrationComponent implements OnInit {
 
         // create company registration DTO
         let userId = this.cookieService.get('user_id');
+		let token = 'Bearer '+this.cookieService.get('bearer_token');
         let companyRegistration: CompanyRegistration = new CompanyRegistration(
             userId, null, model.getRawValue()['name'], model.getRawValue()['address']);
 
-        console.log(`Registering company ${JSON.stringify(companyRegistration)}`);
+		if (myGlobals.debug)
+			console.log(`Registering company ${JSON.stringify(companyRegistration)}`);
 
         this.isSubmitting = true;
-        this.userService.registerCompany(companyRegistration)
+        this.userService.registerCompany(companyRegistration,token)
             .then(response => {
-                console.log(`Saved Company Settings for user ${userId}. Response: ${JSON.stringify(response)}`);
+				if (myGlobals.debug)
+					console.log(`Saved Company Settings for user ${userId}. Response: ${JSON.stringify(response)}`);
 
                 this.isSubmitting = false;
 
+				this.cookieService.set('bearer_token',response.accessToken);
+				
                 if( response['companyID'] ) {
                     this.cookieService.set("company_id", response['companyID']);
                     this.cookieService.set("active_company_name", response['name']);
                 }
 
-                this.router.navigate([""]);
+				this.appComponent.checkLogin("");
             })
             .catch(error => {
                 console.error('An error occurred', error); // for demo purposes only

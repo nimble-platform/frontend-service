@@ -6,6 +6,7 @@ import {Party} from "../catalogue/model/publish/party";
 import { CompanySettings } from './model/company-settings';
 import { UserRegistration } from './model/user-registration';
 import { CompanyRegistration } from './model/company-registration';
+import { CompanyInvitation } from './model/company-invitation';
 import {UBLModelUtils} from "../catalogue/model/ubl-model-utils";
 
 @Injectable()
@@ -21,25 +22,46 @@ export class UserService {
 	registerUser(user: UserRegistration): Promise<any> {
 		const url = `${this.url}/register/user`;
 		return this.http
-		.post(url, JSON.stringify(user), {headers: this.headers})
+		.post(url, JSON.stringify(user), {headers: this.headers, withCredentials: true})
 		.toPromise()
 		.then(res => res.json())
 		.catch(this.handleError);
 	}
 
-	registerCompany(company: CompanyRegistration) {
+	registerCompany(company: CompanyRegistration, token:string) {
 		const url = `${this.url}/register/company`;
+		const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
 		return this.http
-            .post(url, JSON.stringify(company), {headers: this.headers})
+            .post(url, JSON.stringify(company), {headers: headers_token, withCredentials: true})
             .toPromise()
             .then(res => res.json())
+            .catch(this.handleError);
+	}
+	
+	getInviteList(token:string) {
+		const url = `${this.url}/invitations`;
+		const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
+		return this.http
+            .get(url, {headers: headers_token, withCredentials: true})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+	}
+	
+	inviteCompany(invitation: CompanyInvitation, token:string) {
+		const url = `${this.url}/send_invitation`;
+		const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
+		return this.http
+            .post(url, JSON.stringify(invitation), {headers: headers_token, withCredentials: true})
+            .toPromise()
+            .then(res => res)
             .catch(this.handleError);
 	}
 
 	getParty(partyId:string):Promise<Party> {
 		const url = `${this.url}/party/${partyId}`;
 		return this.http
-            .get(url, {headers: this.headers})
+            .get(url, {headers: this.headers, withCredentials: true})
 			.toPromise()
             .catch(err => {
             	if(err.status == 302) {
@@ -58,7 +80,7 @@ export class UserService {
 		}
 		const url = `${this.url}/party_by_person/${userId}`;
 		return this.http
-		.get(url, {headers: this.headers})
+		.get(url, {headers: this.headers, withCredentials: true})
 		.toPromise()
 		.then(res => {
 			this.userParty = res.json()[0];
@@ -73,7 +95,7 @@ export class UserService {
         return this.getUserParty(userId).then(party => {
             const url = `${this.url}/company-settings/${party.id}`;
             return this.http
-                .get(url, {headers: this.headers})
+                .get(url, {headers: this.headers, withCredentials: true})
                 .toPromise()
                 .then(response => response.json() as CompanySettings)
                 .catch(this.handleError)
@@ -84,7 +106,7 @@ export class UserService {
 		return this.getUserParty(userId).then(party => {
 			const url = `${this.url}/company-settings/${party.id}`;
 			return this.http
-                .put(url, settings, {headers: this.headers})
+                .put(url, settings, {headers: this.headers, withCredentials: true})
                 .toPromise()
                 .then(response => response.json())
                 .catch(this.handleError)
