@@ -10,9 +10,4 @@ import { CatalogueLine } from "../../model/publish/catalogue-line";
 export class ProductTradingDetailsComponent {
     @Input() presentationMode:string;
     @Input() catalogueLine: CatalogueLine;
-    @Input() editPrice:boolean;
-
-    debugg():void {
-        console.log(this.catalogueLine);
-    }
 }

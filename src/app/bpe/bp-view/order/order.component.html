@@ -25,7 +25,7 @@
     <quantity-view class="row"
                    [presentationMode]="'edit'"
                    [propName]="'Requested Delivery Period'"
-                   [quantity]="[order.orderLine[0].lineItem.delivery.requestedDeliveryPeriod.durationMeasure]">
+                   [quantity]="[order.orderLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure]">
     </quantity-view>
 
     <!-- Delivery Location -->

@@ -11,13 +11,13 @@ import {Delivery} from "./delivery";
  */
 export class LineItem {
     constructor(
-        public quantity:Quantity,
-        public warrantyInformation:string[],
-        public delivery:Delivery,
-        public deliveryTerms:DeliveryTerms,
-        public price:Price,
-        public item:Item,
-        public warrantyValidityPeriod:Period,
-        public lineReference:LineReference[]
+        public quantity:Quantity = new Quantity(),
+        public warrantyInformation:string[] = [],
+        public delivery:Delivery[] = [new Delivery()],
+        public deliveryTerms:DeliveryTerms = new DeliveryTerms(),
+        public price:Price = new Price(),
+        public item:Item = new Item(),
+        public warrantyValidityPeriod:Period = new Period(),
+        public lineReference:LineReference[] = [new LineReference()]
     ) {  }
 }

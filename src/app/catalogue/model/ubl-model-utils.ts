@@ -154,6 +154,14 @@ export class UBLModelUtils {
         let lineItem:LineItem = this.createLineItem(quantity, price, item);
         let requestForQuotationLine:RequestForQuotationLine = new RequestForQuotationLine(lineItem);
         let rfq = new RequestForQuotation(this.generateUUID(), [""], null, null, new Delivery(), [requestForQuotationLine]);
+
+        // TODO remove this custom dimension addition once the dimension-view is improved to handle such cases
+        let handlingUnitDimension:Dimension = new Dimension();
+        handlingUnitDimension.attributeID = 'Handling Unit Length';
+        rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.transportHandlingUnit[0].measurementDimension.push(handlingUnitDimension);
+        handlingUnitDimension = new Dimension();
+        handlingUnitDimension.attributeID = 'Handling Unit Width';
+        rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.transportHandlingUnit[0].measurementDimension.push(handlingUnitDimension);
         return rfq;
     }
 
@@ -161,7 +169,7 @@ export class UBLModelUtils {
         let quantity: Quantity = new Quantity(null, "", null);
         let item: Item = this.createItem();
         let price: Price = this.createPrice(null);
-        let lineItem:LineItem = new LineItem(quantity, [], new Delivery(), new DeliveryTerms(), price, item, new Period(), null);
+        let lineItem:LineItem = new LineItem(quantity, [], [new Delivery()], new DeliveryTerms(), price, item, new Period(), null);
         let quotationLine:QuotationLine = new QuotationLine(lineItem);
 
         this.removeHjidFieldsFromObject(rfq.buyerCustomerParty);
@@ -171,7 +179,7 @@ export class UBLModelUtils {
 
         let documentReference:DocumentReference = new DocumentReference(rfq.id);
 
-        let quotation = new Quotation(this.generateUUID(), [""], 1, documentReference, customerParty, supplierParty, new Delivery(), [quotationLine]);
+        let quotation = new Quotation(this.generateUUID(), [""], new Code(), new Code(), 1, documentReference, customerParty, supplierParty, new Delivery(), [quotationLine]);
         return quotation;
     }
 
@@ -225,7 +233,7 @@ export class UBLModelUtils {
     }
 
     public static createLineItem(quantity, price, item):LineItem {
-        return new LineItem(quantity, [], new Delivery(), new DeliveryTerms(), price, item, new Period(), null);
+        return new LineItem(quantity, [], [new Delivery()], new DeliveryTerms(), price, item, new Period(), null);
     }
 
     public static createPackage():Package {

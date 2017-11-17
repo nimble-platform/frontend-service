@@ -3,6 +3,6 @@
  */
 export class LineReference {
     constructor(
-        public lineID:string
+        public lineID:string = null
     ) {  }
 }

@@ -6,7 +6,7 @@ import {Amount} from "./amount";
 import {Quantity} from "./quantity";
 
 export class Price {
-    constructor(public priceAmount: Amount,
-                public baseQuantity: Quantity) {
+    constructor(public priceAmount: Amount = new Amount(),
+                public baseQuantity: Quantity = new Quantity()) {
     }
 }
