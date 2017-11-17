@@ -1,0 +1,66 @@
+<div class="container displayArea">
+    <br>
+    <br>
+
+    <div class="row">
+        <div class="col-12">
+            <h5>Your Semantic Query</h5>
+            <code>
+                {{sentence | json}}
+            </code>
+            <div class="form-group">
+                <form class="form-inline">
+                    <input type="search" class="form-control"
+                           [(ngModel)] = "sentence"
+                           [formControl]="searchField"
+                    #searchbox style="width: 500px;">
+                </form>
+            </div>
+            <div>
+                <p class="lead" *ngIf="loading">Loading...</p>
+            </div>
+            <ul class="list-group ac-keywords" *ngIf="searchField.value !== '' && !selected">
+                <li class="list-group-item"
+                    *ngFor="let eachProp of results | async" (click)="searchbox.value = eachProp.translated; selected=true; sentence=sentence+eachProp.translated; selectedPropertyURL = eachProp.url"
+                >
+                    {{eachProp.translated}}
+                </li>
+            </ul>
+            <ul class="list-group ac-keywords" *ngIf="searchvalue.length > 0">
+                <li *ngFor="let eachval of searchvalue" (click)="searchbox.value = eachval; selected=true; sentence=sentence+eachval;">
+                {{eachval}}
+                </li>
+            </ul>
+    </div>
+    </div>
+    <br>
+    <br>
+    <div class="row">
+        <br>
+        <br>
+
+        <div class="col-8">
+            <ul>
+                <div class="btn-group">
+                    <li>
+                        <button class="btn btn-primary btn-lg"
+                                (click)="hasPropertyRelation('hasProperty')"> hasProperty </button>
+                    </li>
+                    <li>
+                        <button class="btn btn-primary btn-lg"
+                                (click)="hasValueRelation('hasValue')"> hasValue </button>
+                    </li>
+                    <li>
+                        <button class="btn btn-primary btn-lg" #refBtn
+                                (click)="hasReferenceRelation('hasReference')"> hasReference </button>
+                    </li>
+                    <li *ngFor="let eachButton of objectRelationsButton['listOfSQP']">
+                        <button class="btn btn-warning btn-lg" #objBtn (click)="objectPropRelation(eachButton)">
+                            {{eachButton}}
+                        </button>
+                    </li>
+                </div>
+            </ul>
+        </div>
+    </div>
+</div>

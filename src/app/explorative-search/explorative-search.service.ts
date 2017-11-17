@@ -10,6 +10,8 @@ import { Http, Headers, RequestOptions } from '@angular/http';
 
 import 'rxjs/add/operator/toPromise';
 import * as myGlobals from '../globals';
+import {Observable} from 'rxjs/Observable';
+import {SearchItem} from './model/SearchItem';
 
 @Injectable()
 export class ExplorativeSearchService {
@@ -19,6 +21,11 @@ export class ExplorativeSearchService {
     private propEndPoint = myGlobals.propertyEndPoint;
     private sparqlEndPoint = myGlobals.sparqlEndPoint;
     private sparqlOptionEndPoint = myGlobals.sparqlOptionalSelectEndPoint;
+    // SQP Endpoints
+    private sqpButtonEndPoint = myGlobals.spqButton;
+    private obsPropertySQP = myGlobals.obs_propFromConcept;
+    private obsPropertyValuesSQP = myGlobals.obs_propValueFromConcept;
+
     private userLang: string;
     private headers = new Headers();
 
@@ -82,6 +89,42 @@ export class ExplorativeSearchService {
             .then(res => res.json())
             .catch(this.handleError);
     }
+
+    //
+    // Semantic Query Patterns API Call Handlers
+    //
+
+    getSQPButton(term: Object): Promise<any> {
+        return this.http.get(`${this.sqpButtonEndPoint}?inputAsJson=${JSON.stringify(term)}`)
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+    }
+
+    searchForProperty(term: Object): Observable<SearchItem[]> {
+        return this.http.get(`${this.obsPropertySQP}?inputAsJson=${JSON.stringify(term)}`)
+            .map(res => {
+                return res.json().outputForPropertiesFromConcept.map(item => {
+                    return new SearchItem(
+                        item.propertyURL,
+                        item.translatedProperty
+                    );
+                });
+            });
+    }
+
+    searchForPropertyValues(term: Object): Promise<any> {
+        return this.http.get(`${this.obsPropertyValuesSQP}?inputAsJson=${JSON.stringify(term)}`)
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+    }
+
+    /**
+     * Error Handling for API Calls
+     * @param error
+     * @returns {Promise<any>}
+     */
 
     private handleError(error: any): Promise<any> {
         return Promise.reject(error.message || error);

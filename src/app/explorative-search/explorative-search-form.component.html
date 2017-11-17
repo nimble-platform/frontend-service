@@ -65,7 +65,7 @@
         <li *ngFor="let eachOutput of Output; let outerIndex = index">
             <div [hidden]="showParticularKeyword[outerIndex]">
                 <div class="btn-group" role="group" *ngFor="let each of eachOutput.resp.conceptOverview; let innerIndex = index">
-                    <button class="btn btn-success" *ngIf="innerIndex === 0 || showMore[outerIndex]" (click)="getQuery(each.url)">{{each.translatedURL}}</button>
+                    <button class="btn btn-success" *ngIf="innerIndex === 0 || showMore[outerIndex]" (click)="getQuery(each.url, each.translatedURL)">{{each.translatedURL}}</button>
                 </div>
                 <div style="display: inline">
                     <button *ngIf="eachOutput.resp.conceptOverview.length > 1" (click)="showMore[outerIndex]=!showMore[outerIndex]">
@@ -79,8 +79,8 @@
 <br/>
 <br/>
 
-<ngb-tabset>
-    <ngb-tab title="Graph Navigation" (click)="preserveStateRestore()">
+<ngb-tabset (tabChange)="activeTab($event)">
+    <ngb-tab title="Graph Navigation" (click)="preserveStateRestore()" id="graphNav">
         <template ngbTabContent>
         <explore-search-details [config]="visData" [lang]="language"></explore-search-details>
         <div [hidden]="!_error_detected_query">
@@ -88,9 +88,9 @@
         </div>
         </template>
     </ngb-tab>
-    <ngb-tab title="Semantic Query" (click)="previousStateStore()">
+    <ngb-tab title="Semantic Query" (click)="previousStateStore()" id="sqp">
         <template ngbTabContent>
-            <explore-search-semantic></explore-search-semantic>
+            <explore-search-semantic [configSPQ]="SQPConfig" [lang]="language"></explore-search-semantic>
         </template>
     </ngb-tab>
 
