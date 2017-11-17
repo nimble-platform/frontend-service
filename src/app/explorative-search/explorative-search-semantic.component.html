@@ -8,29 +8,35 @@
             <code>
                 {{sentence | json}}
             </code>
-            <div class="form-group">
-                <form class="form-inline">
+            <div class="form-group" *ngIf=" results.length > 1 && !selectedConcept">
+                <p><b>Search Property</b></p>
                     <input type="search" class="form-control"
-                           [(ngModel)] = "sentence"
-                           [formControl]="searchField"
-                    #searchbox style="width: 500px;">
-                </form>
+                           [(ngModel)]="model"
+                           [ngbTypeahead]="search"
+                           [resultTemplate]="rt"
+                           [inputFormatter]="formatter"
+                           (keyup.enter)="sentence=sentence+model.translatedProperty; selectedPropertyURL=model.propertyURL; selectedConcept=true;"
+                    style="width: 500px;"/>
             </div>
-            <div>
-                <p class="lead" *ngIf="loading">Loading...</p>
-            </div>
-            <ul class="list-group ac-keywords" *ngIf="searchField.value !== '' && !selected">
+            <template #rt let-r="result" let-t="term">
+                <div>
+                {{r.translatedProperty}}
+                </div>
+            </template>
+
+            <div *ngIf="searchvalue.length > 0 && !selectedValue">
+                <p><b>Available Values</b></p>
+            <ul class="list-group ac-keywords">
                 <li class="list-group-item"
-                    *ngFor="let eachProp of results | async" (click)="searchbox.value = eachProp.translated; selected=true; sentence=sentence+eachProp.translated; selectedPropertyURL = eachProp.url"
-                >
-                    {{eachProp.translated}}
-                </li>
-            </ul>
-            <ul class="list-group ac-keywords" *ngIf="searchvalue.length > 0">
-                <li *ngFor="let eachval of searchvalue" (click)="searchbox.value = eachval; selected=true; sentence=sentence+eachval;">
+                    *ngFor="let eachval of searchvalue" (click)="sentence=sentence+eachval; selectedValue=true;">
                 {{eachval}}
                 </li>
             </ul>
+            </div>
+
+            <div>
+                {{referenceResults['allAvailableReferences'] | json}}
+            </div>
     </div>
     </div>
     <br>

@@ -25,6 +25,7 @@ export class ExplorativeSearchService {
     private sqpButtonEndPoint = myGlobals.spqButton;
     private obsPropertySQP = myGlobals.obs_propFromConcept;
     private obsPropertyValuesSQP = myGlobals.obs_propValueFromConcept;
+    private referenceFromConcept = myGlobals.referenceFromConcept;
 
     private userLang: string;
     private headers = new Headers();
@@ -101,20 +102,21 @@ export class ExplorativeSearchService {
             .catch(this.handleError);
     }
 
-    searchForProperty(term: Object): Observable<SearchItem[]> {
+    searchForProperty(term: Object): Promise<any> {
         return this.http.get(`${this.obsPropertySQP}?inputAsJson=${JSON.stringify(term)}`)
-            .map(res => {
-                return res.json().outputForPropertiesFromConcept.map(item => {
-                    return new SearchItem(
-                        item.propertyURL,
-                        item.translatedProperty
-                    );
-                });
-            });
+            .toPromise()
+            .then(res => res.json().outputForPropertiesFromConcept);
     }
 
     searchForPropertyValues(term: Object): Promise<any> {
         return this.http.get(`${this.obsPropertyValuesSQP}?inputAsJson=${JSON.stringify(term)}`)
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+    }
+
+    getReferencesFromConcept(term: Object): Promise<any> {
+        return this.http.get(`${this.referenceFromConcept}?inputAsJson=${JSON.stringify(term)}`)
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);

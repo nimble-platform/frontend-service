@@ -1,11 +1,9 @@
 import {Component, Input, OnChanges, OnInit} from '@angular/core';
 import {ExplorativeSearchService} from './explorative-search.service';
 import { Observable } from 'rxjs/Observable';
-import { SearchItem } from './model/SearchItem';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/distinctUntilChanged';
-import {FormControl} from '@angular/forms';
 
 @Component({
     selector: 'explore-search-semantic',
@@ -15,18 +13,26 @@ import {FormControl} from '@angular/forms';
 })
 
 export class ExplorativeSearchSemanticComponent implements OnInit, OnChanges {
-
-    private loading: boolean = false;
+    @Input() configSPQ: Object;
+    @Input() lang: string;
     private objectRelationsButton = {};
-    public sentence: any;
-    private results: Observable<SearchItem[]>;
+    public sentence: string = '';
+    public model: any;
+    public selectedConcept: boolean = false;
+    public selectedValue: boolean = false;
+    public results: any[] = [];
     public searchvalue: string[] = [];
     public selectedPropertyURL: string;
     public valueResults: Object = {};
-    private searchField: FormControl;
-    selected: boolean = false;
-    @Input() configSPQ: Object;
-    @Input() lang: string;
+    public referenceResults: Object = {};
+    public search = (text$: Observable<string>) =>
+        text$
+            .debounceTime(200)
+            .map(term => term === '' ? []
+                : this.results.filter(v => v.translatedProperty.toLowerCase()
+                    .indexOf(term.toLowerCase()) > -1).slice(0, 10));
+    public formatter = (x: {translatedProperty: string}) => x.translatedProperty;
+
     constructor(private expSearch: ExplorativeSearchService) {}
 
 
@@ -36,7 +42,6 @@ export class ExplorativeSearchSemanticComponent implements OnInit, OnChanges {
     }
 
     ngOnInit(): void {
-        this.searchField = new FormControl();
         let dummyJSON = this.configSPQ;
         this.expSearch.getSQPButton(dummyJSON)
             .then(res => this.objectRelationsButton = res);
@@ -44,16 +49,12 @@ export class ExplorativeSearchSemanticComponent implements OnInit, OnChanges {
     }
     hasPropertyRelation(inputVal: string) {
        this.sentence += ' <' + inputVal + '> ';
-        this.results = this.searchField.valueChanges
-            .debounceTime(400)
-            .distinctUntilChanged()
-            .do( () => this.loading = true)
-            .switchMap(term => {
-                if (term) {
-                    return this.expSearch.searchForProperty(this.configSPQ);
+        this.expSearch.searchForProperty(this.configSPQ)
+            .then(res => {
+                    // console.log(res);
+                    this.results = res;
                 }
-                })
-            .do( () => this.loading = false);
+            );
     }
 
 
@@ -75,6 +76,14 @@ export class ExplorativeSearchSemanticComponent implements OnInit, OnChanges {
 
     hasReferenceRelation(inputVal: string) {
         this.sentence += ' <' + inputVal + '> ';
+        let dummyJSON = {'conceptURL': this.configSPQ['concept'], 'language': this.configSPQ['language']};
+        this.expSearch.getReferencesFromConcept(dummyJSON)
+            .then(res => {
+                // console.log(res);
+                this.referenceResults = res;
+                console.log(this.referenceResults);
+                this.sentence += this.referenceResults['allAvailableReferences'][0].translatedProperty;
+            });
     }
 
     objectPropRelation(inputVal: string) {
