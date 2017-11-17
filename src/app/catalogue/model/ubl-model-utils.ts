@@ -166,12 +166,7 @@ export class UBLModelUtils {
     }
 
     public static createQuotation(rfq:RequestForQuotation):Quotation {
-        let quantity: Quantity = new Quantity(null, "", null);
-        let item: Item = this.createItem();
-        let price: Price = this.createPrice(null);
-        let lineItem:LineItem = new LineItem(quantity, [], [new Delivery()], new DeliveryTerms(), price, item, new Period(), null);
-        let quotationLine:QuotationLine = new QuotationLine(lineItem);
-
+        let quotationLine:QuotationLine = new QuotationLine(rfq.requestForQuotationLine[0].lineItem);
         this.removeHjidFieldsFromObject(rfq.buyerCustomerParty);
         this.removeHjidFieldsFromObject(rfq.sellerSupplierParty);
         let customerParty:CustomerParty = rfq.buyerCustomerParty;
@@ -179,7 +174,7 @@ export class UBLModelUtils {
 
         let documentReference:DocumentReference = new DocumentReference(rfq.id);
 
-        let quotation = new Quotation(this.generateUUID(), [""], new Code(), new Code(), 1, documentReference, customerParty, supplierParty, new Delivery(), [quotationLine]);
+        let quotation = new Quotation(this.generateUUID(), [""], new Code(), new Code(), 1, documentReference, customerParty, supplierParty, [quotationLine]);
         return quotation;
     }
 

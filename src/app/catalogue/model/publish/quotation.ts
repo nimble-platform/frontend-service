@@ -17,7 +17,6 @@ export class Quotation {
         public requestForQuotationDocumentReference:DocumentReference,
         public buyerCustomerParty:CustomerParty,
         public sellerSupplierParty:SupplierParty,
-        public delivery:Delivery,
         public quotationLine:QuotationLine[]
     ) {  }
 }

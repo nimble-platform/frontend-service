@@ -15,7 +15,8 @@
     </quantity-view>
 
     <!-- Requested quantity -->
-    <quantity-view class="row"
+    <quantity-view *ngIf="lineItem.item.transportationServiceDetails == null"
+                   class="row"
                    [propName]="'Requested Quantity'"
                    [quantity]="[lineItem.quantity]"
                    [presentationMode]="presentationMode">

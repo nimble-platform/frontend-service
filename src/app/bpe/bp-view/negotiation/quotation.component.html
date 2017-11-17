@@ -1,16 +1,61 @@
 <ng-container *ngIf="quotation">
-    <quantity-view class="row"
-                   [propName]="'Quantity'"
-                   [quantity]="[quotation.quotationLine[0].lineItem.quantity]"
-                   [presentationMode]="'edit'">
-    </quantity-view>
-
     <div class="row">
         <trading-details class="container"
                          [lineItem]="quotation.quotationLine[0].lineItem"
                          [presentationMode]="'edit'">
         </trading-details>
     </div>
+
+    <!-- negotiation parameters for transportation services -->
+    <ng-container *ngIf="bpDataService.catalogueLine.goodsItem.item.transportationServiceDetails != null">
+        <div class="well">
+            <h6>Handling Unit Details</h6>
+            <value-view class="row"
+                        [presentationMode]="'edit'"
+                        [propName]="'Transport Handling Unit'"
+                        [value]="quotation.quotationLine[0].lineItem.delivery[0].shipment.transportHandlingUnit[0].transportHandlingUnitTypeCode.name">
+            </value-view>
+
+            <quantity-view class="row"
+                           [presentationMode]="'edit'"
+                           [propName]="quotation.quotationLine[0].lineItem.delivery[0].shipment.transportHandlingUnit[0].measurementDimension[0].attributeID"
+                           [quantity]="[quotation.quotationLine[0].lineItem.delivery[0].shipment.transportHandlingUnit[0].measurementDimension[0].measure]">
+            </quantity-view>
+
+            <quantity-view class="row"
+                           [presentationMode]="'edit'"
+                           [propName]="quotation.quotationLine[0].lineItem.delivery[0].shipment.transportHandlingUnit[0].measurementDimension[1].attributeID"
+                           [quantity]="[quotation.quotationLine[0].lineItem.delivery[0].shipment.transportHandlingUnit[0].measurementDimension[1].measure]">
+            </quantity-view>
+        </div>
+
+        <div class="well">
+            <h6>Consolidated Shipment</h6>
+            <value-view class="row"
+                        [presentationMode]="'edit'"
+                        [propName]="'Goods Item'"
+                        [value]="quotation.quotationLine[0].lineItem.delivery[0].shipment.goodsItem[0].item.name">
+            </value-view>
+
+            <quantity-view class="row"
+                           [propName]="'Quantity'"
+                           [quantity]="[quotation.quotationLine[0].lineItem.delivery[0].shipment.totalTransportHandlingUnitQuantity]"
+                           [presentationMode]="'edit'">
+            </quantity-view>
+
+            <quantity-view class="row"
+                           [presentationMode]="'edit'"
+                           [propName]="'Gross Volume Measure'"
+                           [quantity]="[quotation.quotationLine[0].lineItem.delivery[0].shipment.consignment[0].grossVolumeMeasure]">
+            </quantity-view>
+
+            <quantity-view class="row"
+                           [presentationMode]="'edit'"
+                           [propName]="'Gross Weight Measure'"
+                           [quantity]="[quotation.quotationLine[0].lineItem.delivery[0].shipment.consignment[0].grossWeightMeasure]">
+            </quantity-view>
+        </div>
+    </ng-container>
 
     <hr>
 
