@@ -20,7 +20,6 @@ export class Item {
         public name: string = null,
         public description: string = null,
         public productImage:BinaryObject[] = [],
-        public freeOfChargeIndicator: boolean = null,
         public additionalItemProperty: ItemProperty[] = [],
         public manufacturerParty: Party = new Party(),
         public manufacturersItemIdentification: ItemIdentification = new ItemIdentification(),

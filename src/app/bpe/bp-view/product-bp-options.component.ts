@@ -14,16 +14,16 @@ import {SearchContextService} from "../../simple-search/search-context.service";
 })
 export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     // singular mode is true if only one business process view is to be presented
-    @Input() singleMode:boolean = true;
+    @Input() singleMode: boolean = true;
     @Output() closeBpOptionsEvent = new EventEmitter();
 
-    selectedOption:string;// = 'Negotiation';
-    availableProcesses:string[] = [];
-    processTypeSubs:Subscription;
-    getCatalogueLineStatus:CallStatus = new CallStatus();
+    selectedOption: string;// = 'Negotiation';
+    availableProcesses: string[] = [];
+    processTypeSubs: Subscription;
+    getCatalogueLineStatus: CallStatus = new CallStatus();
 
     constructor(public bpDataService: BPDataService,
-                public catalogueService:CatalogueService,
+                public catalogueService: CatalogueService,
                 public searchContextService: SearchContextService,
                 public route: ActivatedRoute) {
     }
@@ -38,10 +38,12 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
             let catalogueId = params['catalogueId'];
 
             // if the catalgoue line is already fetched, use it
-            if(this.bpDataService.catalogueLine != null &&
-               this.bpDataService.catalogueLine.id == id &&
-               this.bpDataService.catalogueLine.goodsItem.item.catalogueDocumentReference.id == catalogueId) {
-                    return;
+            if (this.bpDataService.catalogueLine != null &&
+                this.bpDataService.catalogueLine.id == id &&
+                this.bpDataService.catalogueLine.goodsItem.item.catalogueDocumentReference.id == catalogueId) {
+
+                this.identifyAvailableProcesses();
+                return;
             }
 
             this.getCatalogueLineStatus.submit();
@@ -59,13 +61,13 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
         this.availableProcesses = [];
 
         // first check search context whether the search process is associated with a specific process
-        if(this.searchContextService.associatedProcessType != null) {
+        if (this.searchContextService.associatedProcessType != null) {
             this.availableProcesses.push(this.bpDataService.processTypeSubject.getValue());
 
             // regular order and negotiation processes
         } else {
             this.availableProcesses.push('Negotiation');
-            if(this.bpDataService.catalogueLine.goodsItem.item.transportationServiceDetails == null) {
+            if (this.bpDataService.catalogueLine.goodsItem.item.transportationServiceDetails == null) {
                 this.availableProcesses.push('Order');
             }
         }
@@ -75,7 +77,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
         this.processTypeSubs.unsubscribe();
     }
 
-    closeBpOptions():void {
+    closeBpOptions(): void {
         this.closeBpOptionsEvent.next();
     }
 }

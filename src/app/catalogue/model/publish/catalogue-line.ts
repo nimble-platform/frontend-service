@@ -9,6 +9,7 @@ export class CatalogueLine {
         public id:string,
         public hjid:string,
         public orderableUnit: string,
+        public freeOfChargeIndicator: boolean = null,
         public warrantyValidityPeriod: Period,
         public warrantyInformation: string[],
         public requiredItemLocationQuantity: ItemLocationQuantity,
