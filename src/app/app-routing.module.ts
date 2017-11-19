@@ -16,6 +16,7 @@ import {BPDetailComponent} from './bpe/bp-detail.component';
 import {BPConfigureComponent} from './bpe/bp-configure.component';
 import {CompanyRegistrationComponent} from './user-mgmt/company-registration.component';
 import {ProductBpOptionsComponent} from "./bpe/bp-view/product-bp-options.component";
+import {CompanyInvitationComponent} from './user-mgmt/company-invitation.component';
 
 const routes: Routes = [
     {path: '', redirectTo: '/login', pathMatch: 'full'},
@@ -23,6 +24,7 @@ const routes: Routes = [
     {path: 'logout', component: LogoutComponent},
     {path: 'registration', component: RegistrationComponent},
     {path: 'company-registration', component: CompanyRegistrationComponent },
+	{path: 'company-invitation', component: CompanyInvitationComponent },
     {path: 'dashboard', component: DashboardComponent},
     {path: 'categorysearch', component: CategorySearchComponent},
     {path: 'publish', component: ProductPublishComponent},

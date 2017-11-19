@@ -26,6 +26,10 @@ import {Order} from "../catalogue/model/publish/order";
 export class DashboardComponent implements OnInit {
 
     fullName = "";
+	hasCompany = false;
+	roles = [];
+	alert1Closed = false;
+	alert2Closed = false;
     buyer_history_temp: any;
     buyer_history: any;
     seller_history_temp: any;
@@ -43,6 +47,14 @@ export class DashboardComponent implements OnInit {
         if (this.cookieService.get("user_fullname"))
             this.fullName = this.cookieService.get("user_fullname");
         if (this.cookieService.get("user_id") && this.cookieService.get("company_id")) {
+			if (this.cookieService.get("active_company_name")) {
+				if (this.cookieService.get("active_company_name") == null || this.cookieService.get("active_company_name") == "null")
+					this.hasCompany = false;
+				else
+					this.hasCompany = true;
+			}
+			else
+				this.hasCompany = false;
             this.buyer_history_temp = [];
             this.buyer_history = [];
             this.seller_history_temp = [];
@@ -51,9 +63,24 @@ export class DashboardComponent implements OnInit {
         }
         else
             this.appComponent.checkLogin("/login");
+		if (this.cookieService.get('bearer_token')) {
+			const at = this.cookieService.get('bearer_token');
+			if (at.split(".").length == 3) {
+				const at_payload = at.split(".")[1];
+				try {
+					const at_payload_json = JSON.parse(atob(at_payload));
+					const at_payload_json_roles = at_payload_json["realm_access"]["roles"];
+					this.roles = at_payload_json_roles;
+				}
+				catch(e){}
+			}
+		}
+		else
+			this.roles = [];
     }
 
     loadOrders() {
+	
         this.bpeService.getInitiatorHistory(this.cookieService.get("company_id"))
             .then(activeTasks => {
                 this.buyer_history_temp = [];

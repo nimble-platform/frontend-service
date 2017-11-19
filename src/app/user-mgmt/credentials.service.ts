@@ -14,7 +14,7 @@ export class CredentialsService {
 	post(credentials: Credentials): Promise<any> {
 		const url = `${this.url}/login`;
 		return this.http
-		.post(url, JSON.stringify(credentials), {headers: this.headers})
+		.post(url, JSON.stringify(credentials), {headers: this.headers, withCredentials: true})
 		.toPromise()
 		.then(res => res.json())
 		.catch(this.handleError);

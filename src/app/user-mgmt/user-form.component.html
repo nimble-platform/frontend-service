@@ -1,11 +1,15 @@
 <form (ngSubmit)="onSubmit()" class="space-before" #userForm="ngForm" novalidate>
 	<div class="input-group form-group">
 		<label for="email" class="input-group-addon" i18n>E-Mail</label>
-		<input type="email" class="form-control" id="email" required [(ngModel)]="model.user.email" name="email" #email="ngModel" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$" i18n-placeholder placeholder="e.g. user@domain.com">
+		<input type="email" class="form-control" id="email" [(disabled)]="email_preset" required [(ngModel)]="model.user.email" name="email" #email="ngModel" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$" i18n-placeholder placeholder="e.g. user@domain.com">
 	</div>
 	<div class="input-group form-group">
 		<label for="password" class="input-group-addon" i18n>Password</label>
-		<input type="password" class="form-control" id="password" required [(ngModel)]="model.credentials.password" name="password" #password="ngModel" pattern=".{6,}" i18n-placeholder placeholder="Six or more characters">
+		<input type="password" class="form-control" id="password" required (input)="validatePW()" [(ngModel)]="model.credentials.password" name="password" #password="ngModel" pattern=".{6,}" i18n-placeholder placeholder="Six or more characters">
+	</div>
+	<div class="input-group form-group">
+		<label for="password2" class="input-group-addon">Password (repeat)</label>
+		<input type="password" class="form-control" [ngClass]="pw_val_class" id="password2" required (input)="validatePW()" [(ngModel)]="password_validate" name="password2" #password2="ngModel" pattern=".{6,}" i18n-placeholder placeholder="Six or more characters">
 	</div>
 	<div class="input-group form-group">
 		<label for="firstname" class="input-group-addon" i18n>First Name</label>
@@ -28,7 +32,7 @@
 		<input type="tel" class="form-control" id="phoneNumber" [(ngModel)]="model.user.phoneNumber" name="phoneNumber" #phoneNumber="ngModel">
 	</div>
 	
-	<button type="submit" class="btn btn-success" [disabled]="!userForm.form.valid" i18n>Submit</button>
+	<button type="submit" class="btn btn-success" [disabled]="!userForm.form.valid||!passwords_matching" i18n>Submit</button>
 	<button type="button" class="btn btn-secondary space-left" (click)="userForm.reset();reset()" [hidden]="userForm.form.pristine" i18n>Reset</button>
 	
 	<div [hidden]="error_detc || callback || !submitted">

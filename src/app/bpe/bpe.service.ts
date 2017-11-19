@@ -19,7 +19,8 @@ export class BPEService {
             .post(url, JSON.stringify(piim), {headers: this.headers})
             .toPromise()
             .then(res => {
-				console.log(res.json());
+				if (myGlobals.debug)
+					console.log(res.json());
             	return res.json();
             })
             .catch(this.handleError);
@@ -31,7 +32,8 @@ export class BPEService {
             .post(url, JSON.stringify(piim), {headers: this.headers})
             .toPromise()
             .then(res => {
-				console.log(res.json());
+				if (myGlobals.debug)
+					console.log(res.json());
 				return res.json();
 			})
             .catch(this.handleError);

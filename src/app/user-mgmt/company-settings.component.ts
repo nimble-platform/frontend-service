@@ -5,6 +5,7 @@ import { UserService } from './user.service';
 import { CookieService } from 'ng2-cookies';
 import { AddressSubForm } from './subforms/address.component';
 import { PaymentMeansForm } from './subforms/payment-means.component';
+import * as myGlobals from '../globals';
 
 @Component({
     selector: 'company-settings',
@@ -38,7 +39,8 @@ export class CompanySettingsComponent implements OnInit {
             let userId = this.cookieService.get('user_id');
             this.userService.getSettings(userId).then(settings => {
 
-                console.log('Fetched settings: ' + JSON.stringify(settings));
+				if (myGlobals.debug)
+					console.log('Fetched settings: ' + JSON.stringify(settings));
 
                 // update forms
                 this.settingsForm.controls['name'].setValue(settings.name);
@@ -50,14 +52,16 @@ export class CompanySettingsComponent implements OnInit {
 
     save(model: FormGroup) {
 
-        console.log(`Changing company ${JSON.stringify(model.getRawValue())}`);
+		if (myGlobals.debug)
+			console.log(`Changing company ${JSON.stringify(model.getRawValue())}`);
 
         // update settings
         this.isSubmitting = true;
         let userId = this.cookieService.get('user_id');
         this.userService.putSettings(model.getRawValue(), userId)
             .then(response => {
-                console.log(`Saved Company Settings for user ${userId}. Response: ${response}`);
+				if (myGlobals.debug)
+					console.log(`Saved Company Settings for user ${userId}. Response: ${response}`);
                 this.isSubmitting = false;
             })
             .catch(error => {

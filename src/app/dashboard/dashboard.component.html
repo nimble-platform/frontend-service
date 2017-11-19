@@ -1,6 +1,21 @@
 <div class="row">
 	<div class="col-12">
 		<h3 i18n>Dashboard</h3>
+		<div *ngIf="!hasCompany&&!alert1Closed">
+			<p class="space-before">
+				<ngb-alert type="info" (close)="alert1Closed=true">
+					You are not yet linked to a company.<br/>
+					You can register your company now.
+				</ngb-alert>
+			</p>
+		</div>
+		<p *ngIf="roles.indexOf('initial_representative')!=-1&&roles.indexOf('legal_representative')==-1&&!alert2Closed" class="space-before">
+			<ngb-alert type="info" (close)="alert2Closed=true">
+				Your company is now registered.<br/>
+				You can start publishing your catalogue.<br/>
+				In order to execute business processes your company needs to be verified by an administrator - please stay tuned.
+			</ngb-alert>
+		</p>
 		<div class="space-before">
 			<span i18n>Welcome to the</span> <img class="img-sm" src="assets/nimble_logo.png"/> <span i18n>platform,</span> {{fullName}}!
 		</div>

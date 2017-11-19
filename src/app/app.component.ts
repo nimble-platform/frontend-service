@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CookieService } from 'ng2-cookies';
 import { Router } from '@angular/router';
+import * as myGlobals from './globals';
 
 @Component({
 	selector: 'nimble-app',
@@ -16,6 +17,7 @@ export class AppComponent implements OnInit {
 	public fullName = "";
 	public activeCompanyName = null;
 	public eMail = "";
+	public roles = [];
 	
 	constructor(
 		private cookieService: CookieService,
@@ -31,6 +33,22 @@ export class AppComponent implements OnInit {
 			this.isLoggedIn = true;
 			this.fullName = this.cookieService.get("user_fullname");
 			this.eMail = this.cookieService.get("user_email");
+			if (this.cookieService.get('bearer_token')) {
+				const at = this.cookieService.get('bearer_token');
+				if (at.split(".").length == 3) {
+					const at_payload = at.split(".")[1];
+					try {
+						const at_payload_json = JSON.parse(atob(at_payload));
+						const at_payload_json_roles = at_payload_json["realm_access"]["roles"];
+						this.roles = at_payload_json_roles;
+						if (myGlobals.debug)
+							console.log(`Detected roles: ${at_payload_json_roles}`);
+					}
+					catch(e){}
+				}
+			}
+			else
+				this.roles = [];
 
 			// handle active company
 			if (this.cookieService.get("company_id") != 'null') {
@@ -44,6 +62,7 @@ export class AppComponent implements OnInit {
 			this.isLoggedIn = false;
 			this.fullName = "";
 			this.eMail = "";
+			this.roles = [];
 		}
 		if (path != "")
 			this.router.navigate([path]);

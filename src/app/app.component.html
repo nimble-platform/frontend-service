@@ -24,39 +24,42 @@
 					<img src="assets/list_white.png" class="inline-icon"/> <span i18n>Dashboard</span>
 				</a>
 			</li>
-			<li class="nav-item" *ngIf="activeCompanyName" routerLinkActive="active">
+			<li class="nav-item" *ngIf="roles.indexOf('initial_representative')!=-1||roles.indexOf('legal_representative')!=-1" routerLinkActive="active">
 				<a class="nav-link" [routerLink]="['/categorysearch']" [queryParams]="{pageRef: 'menu'}">
 					<img src="assets/upload_white.png" class="inline-icon"/> <span i18n>Publish</span>
 				</a>
 			</li>
-			<li class="nav-item" routerLinkActive="active">
-				<div ngbDropdown class="dropdown">
-					<a class="nav-link" id="dropdownMenuSearch" style="cursor:pointer" ngbDropdownToggle>
-						<img src="assets/search_white.png" class="inline-icon"/> <span i18n>Search</span>
+			<li ngbDropdown class="nav-item dropdown" routerLinkActive="active">
+				<a class="nav-link" id="dropdownMenuSearch" style="cursor:pointer" ngbDropdownToggle>
+					<img src="assets/search_white.png" class="inline-icon"/> <span i18n>Search</span>
+				</a>
+				<div class="dropdown-menu" aria-labelledby="dropdownMenuSearch">
+					<a class="dropdown-item" routerLink="/simple-search" routerLinkActive="active">
+						<img src="assets/text_black.png" class="inline-icon"/> Text-based
 					</a>
-					<div class="dropdown-menu" aria-labelledby="dropdownMenuSearch">
-						<a class="dropdown-item" routerLink="/simple-search" routerLinkActive="active">
-							<img src="assets/text_black.png" class="inline-icon"/> Text-based
-						</a>
-						<a class="dropdown-item" routerLink="/explore-search" routerLinkActive="active">
-							<img src="assets/explore_black.png" class="inline-icon"/> Explorative
-						</a>
-					</div>
+					<a class="dropdown-item" routerLink="/explore-search" routerLinkActive="active">
+						<img src="assets/explore_black.png" class="inline-icon"/> Explorative
+					</a>
 				</div>
 			</li>
-			<li class="nav-item" routerLinkActive="active">
+			<li class="nav-item" *ngIf="roles.indexOf('legal_representative')!=-1" routerLinkActive="active">
 				<a class="nav-link" [routerLink]="['/bpe-design']" [queryParams]="{fromScratch: true}">
-					<img src="assets/bpe/bp.png" class="inline-icon"/> <span i18n>Business Process</span>
+					<img src="assets/process_white.png" class="inline-icon"/> <span i18n>Business Process</span>
 				</a>
 			</li>
 			<li class="nav-item" *ngIf="!activeCompanyName" routerLinkActive="active">
 				<a class="nav-link" routerLink="/company-registration">
-					<img src="assets/register_white.png" class="inline-icon"/> <span i18n>Register a company</span>
+					<img src="assets/register_white.png" class="inline-icon"/> <span i18n>Register a Company</span>
+				</a>
+			</li>
+			<li class="nav-item" *ngIf="roles.indexOf('legal_representative')!=-1" routerLinkActive="active">
+				<a class="nav-link" routerLink="/company-invitation">
+					<img src="assets/company_white.png" class="inline-icon"/> Company Members
 				</a>
 			</li>
 		</ul>
 		<ul *ngIf="isLoggedIn" class="nav navbar-nav">
-			<li ngbDropdown class="nav-item" routerLinkActive="active">
+			<li ngbDropdown class="nav-item dropdown" routerLinkActive="active">
 				<a class="nav-link" id="dropdownMenuUser" style="cursor:pointer" ngbDropdownToggle>
 					<img src="assets/avatar_white.png" class="inline-icon"/> {{fullName}}
 				</a>
@@ -64,8 +67,8 @@
 					<a class="dropdown-item" routerLink="/company-settings" routerLinkActive="active">
 						<img src="assets/gear_black.png" class="inline-icon"/> Account Settings
 					</a>
-					<a class="dropdown-item" routerLink="/catalogue">
-						<img src="assets/list_black.png" class="inline-icon"/> <span i18n>Catalogue</span>
+					<a class="dropdown-item" routerLink="/catalogue" routerLinkActive="active">
+						<img src="assets/catalog_black.png" class="inline-icon"/> <span i18n>Catalogue</span>
 					</a>
 					<a class="dropdown-item" routerLink="/logout">
 						<img src="assets/logout_black.png" class="inline-icon"/> <span i18n>Logout</span>

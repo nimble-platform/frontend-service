@@ -16,14 +16,17 @@
             <address-form [group]="registrationForm.controls.address"></address-form>
         </div>
 
-        <div>
+        <div class="col-sm-12">
             <button class="btn btn-success" type="submit"
                     (click)="save(registrationForm)"
                     [disabled]="!registrationForm.valid">
-                <span>{{ isSubmitting == false ? 'Add' : 'Adding' }}</span>
-                <img [hidden]="!isSubmitting" class="loading-indicator" src="assets/ajax_loader.gif"/>
+                <span>Add</span>
             </button>
-
         </div>
+		
+		<div class="col-sm-12" [hidden]="!isSubmitting">
+			<img src="assets/form_loader.gif"/>
+		</div>
+		
     </div>
 </form>

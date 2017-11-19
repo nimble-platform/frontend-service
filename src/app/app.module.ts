@@ -55,6 +55,7 @@ import { CallStatusComponent } from "./common/call-status.component";
 import { CertificateViewComponent } from "./catalogue/ubl-model-view/certificate-view.component";
 import { DimensionViewComponent } from "./catalogue/ubl-model-view/dimension-view.component";
 import { CompanyRegistrationComponent } from './user-mgmt/company-registration.component';
+import { CompanyInvitationComponent } from './user-mgmt/company-invitation.component';
 import { CommonModule } from '@angular/common';
 import {CatalogueLineHeaderComponent} from "./catalogue/ubl-model-view/catalogue-line/catalogue-line-header.component";
 import {ProductBpOptionsComponent} from "./bpe/bp-view/product-bp-options.component";
@@ -150,7 +151,8 @@ import {ItemInformationRequestComponent} from "./bpe/bp-view/item-information-re
         ProductBpOptionsComponent,
         BpProductDetailsComponent,
         CallStatusComponent,
-        CompanyRegistrationComponent],
+        CompanyRegistrationComponent,
+		CompanyInvitationComponent],
     providers: [
         UserService,
         CredentialsService,
