@@ -43,6 +43,8 @@ import {TransportExecutionPlanRequest} from "./publish/transport-execution-plan-
 import {TransportationService} from "./publish/transportation-service";
 import {TransportExecutionPlan} from "./publish/transport-execution-plan";
 import {Consignment} from "./publish/consignment";
+import {ItemInformationRequest} from "./publish/item-information-request";
+import {ItemInformationResponse} from "./publish/item-information-response";
 /**
  * Created by suat on 05-Jul-17.
  */
@@ -115,7 +117,7 @@ export class UBLModelUtils {
 
         // create item
         let uuid:string = this.generateUUID();
-        let item = new Item("", "", [], additionalItemProperties, providerParty, this.createItemIdentificationWithId(uuid), docRef, null, [], [], [], null, null, [], "");
+        let item = new Item("", "", [], [], additionalItemProperties, providerParty, this.createItemIdentificationWithId(uuid), docRef, null, [], [], [], null, null, [], "");
 
         // create goods item
         let goodsItem = new GoodsItem(uuid, item, this.createPackage(), this.createDeliveryTerms());
@@ -216,6 +218,23 @@ export class UBLModelUtils {
         return transportExecutionPlan;
     }
 
+    public static createItemInformationRequest():ItemInformationRequest {
+        let itemInformationRequest:ItemInformationRequest = new ItemInformationRequest();
+        itemInformationRequest.id = this.generateUUID();
+        return itemInformationRequest;
+    }
+
+    public static createItemInformationResponse(itemInformationRequest:ItemInformationRequest):ItemInformationResponse {
+        let itemInformationResponse:ItemInformationResponse = new ItemInformationResponse();
+        itemInformationResponse.itemInformationRequestDocumentReference = new DocumentReference(itemInformationRequest.id);
+        itemInformationResponse.item[0] = JSON.parse(JSON.stringify(itemInformationRequest.itemInformationRequestLine[0].salesItem[0].item));
+        itemInformationResponse.item[0].itemSpecificationDocumentReference = [];
+        itemInformationResponse.sellerSupplierParty = itemInformationRequest.sellerSupplierParty;
+        itemInformationResponse.buyerCustomerParty = itemInformationResponse.buyerCustomerParty;
+        this.removeHjidFieldsFromObject(itemInformationResponse);
+        return itemInformationResponse;
+    }
+
     public static createOrderReference(orderId:string):OrderReference {
         let documentReference:DocumentReference = new DocumentReference(orderId);
         let orderReference:OrderReference = new OrderReference(documentReference);
@@ -223,7 +242,7 @@ export class UBLModelUtils {
     }
 
     public static createItem():Item {
-        let item = new Item("", "", [], [], null, this.createItemIdentification(), null, null, [], [], [], null, null, [], "");
+        let item = new Item("", "", [], [], [], null, this.createItemIdentification(), null, null, [], [], [], null, null, [], "");
         return item;
     }
 

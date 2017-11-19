@@ -19,6 +19,7 @@ export class Item {
     constructor(
         public name: string = null,
         public description: string = null,
+        public itemSpecificationDocumentReference:DocumentReference[] = [],
         public productImage:BinaryObject[] = [],
         public additionalItemProperty: ItemProperty[] = [],
         public manufacturerParty: Party = new Party(),

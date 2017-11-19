@@ -17,6 +17,8 @@ import {OrderReference} from "../model/order-reference";
 import {TransportExecutionPlanRequest} from "../../catalogue/model/publish/transport-execution-plan-request";
 import {TransportExecutionPlan} from "../../catalogue/model/publish/transport-execution-plan";
 import {SearchContextService} from "../../simple-search/search-context.service";
+import {ItemInformationRequest} from "../../catalogue/model/publish/item-information-request";
+import {ItemInformationResponse} from "../../catalogue/model/publish/item-information-response";
 /**
  * Created by suat on 20-Sep-17.
  */
@@ -36,6 +38,8 @@ export class BPDataService {
     receiptAdvice:ReceiptAdvice;
     transportExecutionPlanRequest:TransportExecutionPlanRequest;
     transportExecutionPlan:TransportExecutionPlan;
+    itemInformationRequest:ItemInformationRequest;
+    itemInformationResponse:ItemInformationResponse;
 
     ////////////////////////////////////////////////////////////////////////////
     //////// variables used when navigating to bp options details page //////
@@ -107,13 +111,25 @@ export class BPDataService {
 
             let transportExecutionPlanVariable = ActivityVariableParser.getResponse(activityVariables);
             if(transportExecutionPlanVariable == null) {
-                // initialize the quotation only if the user is in seller role
                 if(this.userRole == 'seller') {
                     this.transportExecutionPlan = UBLModelUtils.createTransportExecutionPlan(this.transportExecutionPlanRequest);
                 }
 
             } else {
                 this.transportExecutionPlan = transportExecutionPlanVariable.value;
+            }
+
+        } else if(processType == 'Item_Information_Request') {
+            this.itemInformationRequest = ActivityVariableParser.getInitialDocument(activityVariables).value;
+
+            let itemInformationResponseVariable = ActivityVariableParser.getResponse(activityVariables);
+            if(itemInformationResponseVariable == null) {
+                if(this.userRole == 'seller') {
+                    this.itemInformationResponse = UBLModelUtils.createItemInformationResponse(this.itemInformationRequest);
+                }
+
+            } else {
+                this.itemInformationResponse = itemInformationResponseVariable.value;
             }
         }
     }
@@ -140,6 +156,13 @@ export class BPDataService {
         this.order = UBLModelUtils.createOrder();
         this.order.orderLine[0].lineItem.item = this.modifiedCatalogueLine.goodsItem.item;
         this.order.orderLine[0].lineItem.lineReference = [new LineReference(this.modifiedCatalogueLine.id)];
+        this.selectFirstValuesAmongAlternatives();
+    }
+
+    initItemInformationRequest():void {
+        this.modifiedCatalogueLine = JSON.parse(JSON.stringify(this.catalogueLine));
+        this.itemInformationRequest = UBLModelUtils.createItemInformationRequest();
+        this.itemInformationRequest.itemInformationRequestLine[0].salesItem[0].item = this.modifiedCatalogueLine.goodsItem.item;
         this.selectFirstValuesAmongAlternatives();
     }
 

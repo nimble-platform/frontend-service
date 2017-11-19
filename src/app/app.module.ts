@@ -75,6 +75,8 @@ import {TransportExecutionPlanComponent} from "./bpe/bp-view/transport-execution
 import {SearchContextService} from "./simple-search/search-context.service";
 import {ShipmentViewComponent} from "./catalogue/ubl-model-view/shipment-view.component";
 import {BpProductDetailsComponent} from "./bpe/bp-view/bp-product-details.component";
+import {ItemInformationRequestBpComponent} from "./bpe/bp-view/item-information-request/item-information-request-bp.component";
+import {ItemInformationRequestComponent} from "./bpe/bp-view/item-information-request/item-information-request.component";
 
 @NgModule({
     imports: [
@@ -121,6 +123,8 @@ import {BpProductDetailsComponent} from "./bpe/bp-view/bp-product-details.compon
         TransportExecutionPlanBpComponent,
         TransportExecutionPlanRequestComponent,
         TransportExecutionPlanComponent,
+        ItemInformationRequestBpComponent,
+        ItemInformationRequestComponent,
         CatalogueViewComponent,
         CatalogueLineHeaderComponent,
         CatalogueLinePanelComponent,

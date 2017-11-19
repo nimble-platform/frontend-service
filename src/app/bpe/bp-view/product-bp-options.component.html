@@ -20,6 +20,8 @@
         </li>
     </ul>
 
+    <item-information-request-bp *ngIf="selectedOption == 'Item_Information_Request'">
+    </item-information-request-bp>
     <negotiation *ngIf="selectedOption == 'Negotiation'">
     </negotiation>
     <order-bp *ngIf="selectedOption == 'Order'">

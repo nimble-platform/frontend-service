@@ -226,6 +226,8 @@ export class DashboardComponent implements OnInit {
                     responseMessage = "Waiting for Quotation";
                 } else if (processType == 'Transport_Execution_Plan') {
                     responseMessage = "Waiting for Transport Execution Plan";
+                } else if (processType == 'Item_Information_Request') {
+                    responseMessage = 'Waiting for Information Response';
                 }
             }
 
@@ -239,6 +241,8 @@ export class DashboardComponent implements OnInit {
                     responseMessage = "Quotation should be sent";
                 } else if (processType == 'Transport_Execution_Plan') {
                     responseMessage = "Transport Execution Plan should be sent";
+                } else if (processType == 'Item_Information_Request') {
+                    responseMessage = 'Information Response should be sent';
                 }
             }
 
@@ -270,6 +274,13 @@ export class DashboardComponent implements OnInit {
                     responseMessage = "Transport Execution Plan received"
                 } else {
                     responseMessage = "Transport Execution Plan sent"
+                }
+
+            } else if (processType == 'Item_Information_Request') {
+                if (buyer) {
+                    responseMessage = "Information Request received"
+                } else {
+                    responseMessage = "Information Response sent"
                 }
             }
         }

@@ -3,6 +3,7 @@ import {Item} from "../../catalogue/model/publish/item";
 import {Order} from "../../catalogue/model/publish/order";
 import {RequestForQuotation} from "../../catalogue/model/publish/request-for-quotation";
 import {TransportExecutionPlanRequest} from "../../catalogue/model/publish/transport-execution-plan-request";
+import {ItemInformationRequest} from "../../catalogue/model/publish/item-information-request";
 /**
  * Created by suat on 24-Oct-17.
  */
@@ -17,7 +18,8 @@ export class ActivityVariableParser {
             if (variable.name == "order" ||
                 variable.name == "requestForQuotation" ||
                 variable.name == "despatchAdvice" ||
-                variable.name == "transportExecutionPlanRequest") {
+                variable.name == "transportExecutionPlanRequest" ||
+                variable.name == 'itemInformationRequest') {
                 return variable;
             }
         }
@@ -29,7 +31,8 @@ export class ActivityVariableParser {
             if (variable.name == "orderResponse" ||
                 variable.name == "quotation" ||
                 variable.name == "receiptAdvice" ||
-                variable.name == "transportExecutionPlan") {
+                variable.name == "transportExecutionPlan" ||
+                variable.name == 'itemInformationResponse') {
                 return variable;
             }
         }
@@ -53,6 +56,10 @@ export class ActivityVariableParser {
         } else if(processType == "Transport_Execution_Plan") {
             let tepr: TransportExecutionPlanRequest = initialDocument.value as TransportExecutionPlanRequest;
             return tepr.transportServiceProviderParty.name;
+
+        } else if(processType == 'Item_Information_Request') {
+            let itemInformationRequest: ItemInformationRequest = initialDocument.value as ItemInformationRequest;
+            return itemInformationRequest.sellerSupplierParty.party.name;
         }
     }
 
@@ -73,6 +80,10 @@ export class ActivityVariableParser {
         } else if(processType == "Transport_Execution_Plan") {
             let tepr: TransportExecutionPlanRequest = initialDocument.value as TransportExecutionPlanRequest;
             return tepr.transportUserParty.name;
+
+        } else if(processType == 'Item_Information_Request') {
+            let itemInformationRequest: ItemInformationRequest = initialDocument.value as ItemInformationRequest;
+            return itemInformationRequest.buyerCustomerParty.party.name;
         }
     }
 
@@ -93,6 +104,10 @@ export class ActivityVariableParser {
         } else if(processType == "Transport_Execution_Plan") {
             let tepr: TransportExecutionPlanRequest = initialDocument.value as TransportExecutionPlanRequest;
             return tepr.mainTransportationService;
+
+        } else if(processType == 'Item_Information_Request') {
+            let itemInformationRequest: ItemInformationRequest = initialDocument.value as ItemInformationRequest;
+            return itemInformationRequest.itemInformationRequestLine[0].salesItem[0].item;
         }
     }
 
@@ -113,6 +128,10 @@ export class ActivityVariableParser {
         } else if(processType == "Transport_Execution_Plan") {
             let tepr: TransportExecutionPlanRequest = initialDocument.value as TransportExecutionPlanRequest;
             return tepr.mainTransportationService.name;
+
+        } else if(processType == 'Item_Information_Request') {
+            let itemInformationRequest: ItemInformationRequest = initialDocument.value as ItemInformationRequest;
+            return itemInformationRequest.itemInformationRequestLine[0].salesItem[0].item.name;
         }
     }
 
@@ -133,6 +152,10 @@ export class ActivityVariableParser {
         } else if(processType == "Transport_Execution_Plan") {
             let tepr: TransportExecutionPlanRequest = initialDocument.value as TransportExecutionPlanRequest;
             return tepr.note[0];
+
+        } else if(processType == 'Item_Information_Request') {
+            let itemInformationRequest: ItemInformationRequest = initialDocument.value as ItemInformationRequest;
+            return itemInformationRequest.note[0];
         }
     }
 }
