@@ -8,6 +8,7 @@ import { UserRegistration } from './model/user-registration';
 import { CompanyRegistration } from './model/company-registration';
 import { CompanyInvitation } from './model/company-invitation';
 import {UBLModelUtils} from "../catalogue/model/ubl-model-utils";
+import { CookieService } from 'ng2-cookies';
 
 @Injectable()
 export class UserService {
@@ -17,7 +18,10 @@ export class UserService {
 
 	userParty: Party;
 
-	constructor(private http: Http) { }
+	constructor(
+		private http: Http,
+		private cookieService: CookieService
+	) { }
 
 	registerUser(user: UserRegistration): Promise<any> {
 		const url = `${this.url}/register/user`;
@@ -28,8 +32,9 @@ export class UserService {
 		.catch(this.handleError);
 	}
 
-	registerCompany(company: CompanyRegistration, token:string) {
+	registerCompany(company: CompanyRegistration) {
 		const url = `${this.url}/register/company`;
+		const token = 'Bearer '+this.cookieService.get("bearer_token");
 		const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
 		return this.http
             .post(url, JSON.stringify(company), {headers: headers_token, withCredentials: true})
@@ -40,6 +45,7 @@ export class UserService {
 	
 	getInviteList(token:string) {
 		const url = `${this.url}/invitations`;
+		const token = 'Bearer '+this.cookieService.get("bearer_token");
 		const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
 		return this.http
             .get(url, {headers: headers_token, withCredentials: true})
@@ -48,8 +54,9 @@ export class UserService {
             .catch(this.handleError);
 	}
 	
-	inviteCompany(invitation: CompanyInvitation, token:string) {
+	inviteCompany(invitation: CompanyInvitation) {
 		const url = `${this.url}/send_invitation`;
+		const token = 'Bearer '+this.cookieService.get("bearer_token");
 		const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
 		return this.http
             .post(url, JSON.stringify(invitation), {headers: headers_token, withCredentials: true})
@@ -60,8 +67,10 @@ export class UserService {
 
 	getParty(partyId:string):Promise<Party> {
 		const url = `${this.url}/party/${partyId}`;
+		const token = 'Bearer '+this.cookieService.get("bearer_token");
+		const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
 		return this.http
-            .get(url, {headers: this.headers, withCredentials: true})
+            .get(url, {headers: headers_token, withCredentials: true})
 			.toPromise()
             .catch(err => {
             	if(err.status == 302) {
@@ -79,8 +88,10 @@ export class UserService {
 			return Promise.resolve(this.userParty);
 		}
 		const url = `${this.url}/party_by_person/${userId}`;
+		const token = 'Bearer '+this.cookieService.get("bearer_token");
+		const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
 		return this.http
-		.get(url, {headers: this.headers, withCredentials: true})
+		.get(url, {headers: headers_token, withCredentials: true})
 		.toPromise()
 		.then(res => {
 			this.userParty = res.json()[0];
@@ -91,11 +102,12 @@ export class UserService {
 	}
 
     getSettings(userId: string): Promise<CompanySettings> {
-
         return this.getUserParty(userId).then(party => {
             const url = `${this.url}/company-settings/${party.id}`;
+			const token = 'Bearer '+this.cookieService.get("bearer_token");
+			const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
             return this.http
-                .get(url, {headers: this.headers, withCredentials: true})
+                .get(url, {headers: headers_token, withCredentials: true})
                 .toPromise()
                 .then(response => response.json() as CompanySettings)
                 .catch(this.handleError)
@@ -105,8 +117,10 @@ export class UserService {
 	putSettings(settings: CompanySettings, userId: string): Promise<any> {
 		return this.getUserParty(userId).then(party => {
 			const url = `${this.url}/company-settings/${party.id}`;
+			const token = 'Bearer '+this.cookieService.get("bearer_token");
+			const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
 			return this.http
-                .put(url, settings, {headers: this.headers, withCredentials: true})
+                .put(url, settings, {headers: headers_token, withCredentials: true})
                 .toPromise()
                 .then(response => response.json())
                 .catch(this.handleError)

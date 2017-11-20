@@ -78,6 +78,7 @@ import {ShipmentViewComponent} from "./catalogue/ubl-model-view/shipment-view.co
 import {BpProductDetailsComponent} from "./bpe/bp-view/bp-product-details.component";
 import {ItemInformationRequestBpComponent} from "./bpe/bp-view/item-information-request/item-information-request-bp.component";
 import {ItemInformationRequestComponent} from "./bpe/bp-view/item-information-request/item-information-request.component";
+import { CookieService } from 'ng2-cookies';
 
 @NgModule({
     imports: [
@@ -164,7 +165,8 @@ import {ItemInformationRequestComponent} from "./bpe/bp-view/item-information-re
         PublishService,
         BPService,
         BPDataService,
-        SearchContextService
+        SearchContextService,
+		CookieService
     ],
     bootstrap: [
         AppComponent
