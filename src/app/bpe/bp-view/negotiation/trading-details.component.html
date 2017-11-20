@@ -41,8 +41,7 @@
     </quantity-view>
 
     <!-- Delivery Location -->
-    <address-view *ngIf="lineItem.item.transportationServiceDetails == null"
-                  class="row"
+    <address-view class="row"
                   [presentationMode]="presentationMode"
                   [propName]="'Delivery Location'"
                   [address]="[lineItem.deliveryTerms.deliveryLocation.address]">
