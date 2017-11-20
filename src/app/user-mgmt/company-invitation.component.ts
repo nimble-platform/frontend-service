@@ -29,8 +29,7 @@ export class CompanyInvitationComponent implements OnInit {
 	
 	loadInvites() {
 		this.callback2 = false;
-		let token = 'Bearer '+this.cookieService.get('bearer_token');
-		this.userService.getInviteList(token)
+		this.userService.getInviteList()
             .then(response => {
                 this.invPending = response;
 				this.callback2 = true;
@@ -44,14 +43,13 @@ export class CompanyInvitationComponent implements OnInit {
 
 	onSubmit() {
 		let companyId = this.cookieService.get('company_id');
-		let token = 'Bearer '+this.cookieService.get('bearer_token');
 		let companyInvitation: CompanyInvitation = new CompanyInvitation(companyId, this.invEmail);
 		if (myGlobals.debug)
 			console.log(`Sending invitation ${JSON.stringify(companyInvitation)}`);
 		this.submitted = true;
 		this.callback = false;
 		this.error_detc = false;
-		this.userService.inviteCompany(companyInvitation,token)
+		this.userService.inviteCompany(companyInvitation)
             .then(response => {
                 this.submitted = false;
 				this.callback = true;
