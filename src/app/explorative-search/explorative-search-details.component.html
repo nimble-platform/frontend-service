@@ -31,8 +31,11 @@
                     </button>
                 </div>
                 <div class="col-4 pull-right">
-                    <a class="btn btn-lg btn-primary" (click)="negotiation()" [hidden]="!hiddenElement">
-                        Negotiation</a>
+                    <button class="btn btn-lg btn-primary"
+                    (click)="negotiation()"
+                    [hidden]="!hiddenElement"
+                    [disabled]="!negotiationEnable">
+                        Negotiation</button>
                 </div>
             </div>
             <br>
