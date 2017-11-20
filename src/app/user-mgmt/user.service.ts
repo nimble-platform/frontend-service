@@ -43,7 +43,7 @@ export class UserService {
             .catch(this.handleError);
 	}
 	
-	getInviteList(token:string) {
+	getInviteList() {
 		const url = `${this.url}/invitations`;
 		const token = 'Bearer '+this.cookieService.get("bearer_token");
 		const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
