@@ -61,6 +61,18 @@
 
     <value-view class="row"
                 [presentationMode]="'edit'"
+                [propName]="'Response'"
+                [(value)]="quotation.documentStatusCode.name">
+    </value-view>
+
+    <value-view class="row"
+                [presentationMode]="'edit'"
+                [propName]="'Response Reason'"
+                [(value)]="quotation.documentStatusReasonCode.name">
+    </value-view>
+
+    <value-view class="row"
+                [presentationMode]="'edit'"
                 [propName]="'Note'"
                 [(value)]="quotation.note[0]">
     </value-view>

@@ -200,12 +200,24 @@ export class UBLModelUtils {
         return receiptAdvice;
     }
 
-    public static createTransportExecutionPlanRequest(order:Order, transportationServiceLine:CatalogueLine):TransportExecutionPlanRequest {
+    public static createTransportExecutionPlanRequestWithOrder(order:Order, transportationServiceLine:CatalogueLine):TransportExecutionPlanRequest {
         let transportExecutionPlanRequest:TransportExecutionPlanRequest = new TransportExecutionPlanRequest();
         transportExecutionPlanRequest.consignment[0].consolidatedShipment.push(new Shipment());
         transportExecutionPlanRequest.id = this.generateUUID();
         transportExecutionPlanRequest.mainTransportationService = transportationServiceLine.goodsItem.item;
         transportExecutionPlanRequest.consignment[0].consolidatedShipment[0].goodsItem[0].item = order.orderLine[0].lineItem.item;
+        this.removeHjidFieldsFromObject(transportExecutionPlanRequest);
+        return transportExecutionPlanRequest
+    }
+
+    public static createTransportExecutionPlanRequestWithQuotation(quotation:Quotation): TransportExecutionPlanRequest {
+        let transportExecutionPlanRequest:TransportExecutionPlanRequest = new TransportExecutionPlanRequest();
+        transportExecutionPlanRequest.consignment[0].consolidatedShipment.push(new Shipment());
+        transportExecutionPlanRequest.id = this.generateUUID();
+        transportExecutionPlanRequest.mainTransportationService = quotation.quotationLine[0].lineItem.item;
+        transportExecutionPlanRequest.consignment = quotation.quotationLine[0].lineItem.delivery[0].shipment.consignment;
+        transportExecutionPlanRequest.consignment[0].consolidatedShipment = [new Shipment()];
+        this.removeHjidFieldsFromObject(transportExecutionPlanRequest);
         return transportExecutionPlanRequest
     }
 
@@ -215,6 +227,7 @@ export class UBLModelUtils {
         transportExecutionPlan.transportExecutionPlanRequestDocumentReference = new DocumentReference(transportExecutionPlanRequest.id);
         transportExecutionPlan.transportUserParty = transportExecutionPlanRequest.transportUserParty;
         transportExecutionPlan.transportServiceProviderParty = transportExecutionPlanRequest.transportServiceProviderParty;
+        this.removeHjidFieldsFromObject(transportExecutionPlan);
         return transportExecutionPlan;
     }
 

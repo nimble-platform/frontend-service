@@ -195,7 +195,14 @@ export class BPDataService {
         this.setBpMessages('Order', this.searchContextService.associatedProcessMetadata);
         let copyOrder:Order = JSON.parse(JSON.stringify(this.order));
         this.modifiedCatalogueLine = JSON.parse(JSON.stringify(this.catalogueLine));
-        this.transportExecutionPlanRequest = UBLModelUtils.createTransportExecutionPlanRequest(copyOrder, this.catalogueLine);
+        this.transportExecutionPlanRequest = UBLModelUtils.createTransportExecutionPlanRequestWithOrder(copyOrder, this.catalogueLine);
+    }
+
+    initTransportExecutionPlanRequestWithQuotation() {
+        let copyQuotation:Quotation = JSON.parse(JSON.stringify(this.quotation));
+        this.resetBpData();
+        this.modifiedCatalogueLine = JSON.parse(JSON.stringify(this.catalogueLine));
+        this.transportExecutionPlanRequest = UBLModelUtils.createTransportExecutionPlanRequestWithQuotation(copyQuotation);
     }
 
     resetBpData():void {

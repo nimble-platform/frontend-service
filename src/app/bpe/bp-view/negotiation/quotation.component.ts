@@ -52,4 +52,9 @@ export class QuotationComponent {
         this.bpDataService.setBpOptionParameters('buyer', 'Negotiation');
         this.newNegotiationInitialized.next();
     }
+
+    initiateTransportExecutionPlan() {
+        this.bpDataService.initTransportExecutionPlanRequestWithQuotation();
+        this.bpDataService.setBpOptionParameters('buyer', 'Transport_Execution_Plan');
+    }
 }
