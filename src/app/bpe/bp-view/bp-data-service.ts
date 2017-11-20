@@ -45,7 +45,7 @@ export class BPDataService {
     //////// variables used when navigating to bp options details page //////
     ////////////////////////////////////////////////////////////////////////////
     // setBpOptionParameters method must be used to set these values
-    processTypeSubject:BehaviorSubject<string> = new BehaviorSubject<string>('Negotiation');
+    processTypeSubject:BehaviorSubject<string> = new BehaviorSubject<string>('Item_Information_Request');
     processTypeObservable = this.processTypeSubject.asObservable();
     userRole:string;
     processMetadata:any;
