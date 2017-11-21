@@ -15,6 +15,7 @@ import {ActivityVariableParser} from "../bpe/bp-view/activity-variable-parser";
 import {Quotation} from "../catalogue/model/publish/quotation";
 import {OrderResponseSimple} from "../catalogue/model/publish/order-response-simple";
 import {Order} from "../catalogue/model/publish/order";
+import {Item} from "../catalogue/model/publish/item";
 
 @Component({
     selector: 'nimble-dashboard',
@@ -236,6 +237,15 @@ export class DashboardComponent implements OnInit {
                 id: processMetadata.product.manufacturersItemIdentification.id
             }
         });
+    }
+
+    navigateToSearchDetails(item:Item) {
+        this.router.navigate(['/simple-search-details'],
+            { queryParams: {
+                catalogueId: item.catalogueDocumentReference.id,
+                id: item.manufacturersItemIdentification.id,
+                showOptions: true
+            }});
     }
 
     getActionStatus(processType: string, response: any, buyer: boolean): string {

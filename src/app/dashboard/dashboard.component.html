@@ -73,7 +73,11 @@
 				<tr *ngFor="let processMetadata of buyer_history">
 					<td>{{processMetadata.processType}}</td>
 					<td>{{processMetadata.start_time }}</td>
-					<td>{{processMetadata.product.name}}</td>
+					<td>
+						<label class="clickable" (click)="navigateToSearchDetails(processMetadata.product)">
+							{{processMetadata.product.name}}
+						</label>
+					</td>
 					<td>{{processMetadata.sellerName }}</td>
 					<td>{{processMetadata.note}}</td>
 					<td>{{processMetadata.actionStatus}}</td>
