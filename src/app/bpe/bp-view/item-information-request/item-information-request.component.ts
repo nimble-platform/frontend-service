@@ -136,4 +136,9 @@ export class ItemInformationRequestComponent {
             error => this.callStatus.error("Failed to send Information Response")
         );
     }
+
+    navigateToSearchDetails() {
+        this.router.navigate(['/simple-search-details'],
+            { queryParams: {catalogueId: this.bpDataService.catalogueLine.goodsItem.item.catalogueDocumentReference.id, id: this.bpDataService.catalogueLine.id} });
+    }
 }

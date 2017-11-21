@@ -94,6 +94,9 @@
         <button *ngIf="bpDataService.userRole == 'buyer' && bpDataService.processMetadata == null"
                 class="btn btn-success" (click)="sendInformationRequest()">Request Information
         </button>
+        <button *ngIf="bpDataService.userRole == 'buyer' && bpDataService.processMetadata.processStatus == 'Completed'"
+                class="btn btn-success" (click)="navigateToSearchDetails()">See Business Options
+        </button>
         <button *ngIf="bpDataService.userRole == 'seller' && bpDataService.processMetadata.processStatus != 'Completed'"
                 class="btn btn-success" (click)="sendInformationResponse()">Respond to Information Request
         </button>
