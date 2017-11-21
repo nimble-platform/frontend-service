@@ -139,6 +139,10 @@ export class ItemInformationRequestComponent {
 
     navigateToSearchDetails() {
         this.router.navigate(['/simple-search-details'],
-            { queryParams: {catalogueId: this.bpDataService.catalogueLine.goodsItem.item.catalogueDocumentReference.id, id: this.bpDataService.catalogueLine.id} });
+            { queryParams: {
+                catalogueId: this.bpDataService.catalogueLine.goodsItem.item.catalogueDocumentReference.id,
+                id: this.bpDataService.catalogueLine.id,
+                showOptions: true
+            }});
     }
 }

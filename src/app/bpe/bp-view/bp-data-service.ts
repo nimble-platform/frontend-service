@@ -217,6 +217,8 @@ export class BPDataService {
         this.receiptAdvice = null;
         this.transportExecutionPlanRequest = null;
         this.transportExecutionPlan = null;
+        this.itemInformationRequest = null;
+        this.itemInformationResponse = null;
 
         // reinitialize the messages considering the search context
         //this.setBpMessages(this.searchContextService.associatedProcessType, this.searchContextService.associatedProcessMetadata);

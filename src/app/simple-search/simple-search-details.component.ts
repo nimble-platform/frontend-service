@@ -44,6 +44,7 @@ export class SimpleSearchDetailsComponent implements OnInit {
 				this.bpDataService.resetBpData();
 				this.bpDataService.catalogueLine = line;
 				this.bpDataService.userRole = 'buyer';
+				this.bpOptionsActive = params['showOptions'] == 'true';
 				this.getCatalogueLineStatus.callback("Retrieved product details", true);
 			}).catch(error => {
 				this.getCatalogueLineStatus.error("Failed to retrieve product details");
