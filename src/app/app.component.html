@@ -24,8 +24,8 @@
 					<img src="assets/list_white.png" class="inline-icon"/> <span i18n>Dashboard</span>
 				</a>
 			</li>
-			<!--<li class="nav-item" *ngIf="roles.indexOf('initial_representative')!=-1||roles.indexOf('legal_representative')!=-1" routerLinkActive="active">-->
-			<li class="nav-item" routerLinkActive="active">
+			<li class="nav-item" *ngIf="roles.indexOf('initial_representative')!=-1||roles.indexOf('legal_representative')!=-1" routerLinkActive="active">
+			<!--<li class="nav-item" routerLinkActive="active">-->
 				<a class="nav-link" [routerLink]="['/categorysearch']" [queryParams]="{pageRef: 'menu'}">
 					<img src="assets/upload_white.png" class="inline-icon"/> <span i18n>Publish</span>
 				</a>
