@@ -11,7 +11,7 @@
  * Child for this class: explorative-search-details.component
  */
 
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import { ExplorativeSearchService } from './explorative-search.service';
 import { Explorative } from './model/explorative';
 import {NgbTabChangeEvent} from '@ng-bootstrap/ng-bootstrap';
@@ -68,6 +68,7 @@ export class ExplorativeSearchFormComponent implements OnInit {
         this.expSearch.getLanguageSupport()
             .then(res => this.availableLanguages = res);
     }
+
     /**
      * Search: will get a HTTP response from the server (HTTP GET)
      *          of the keyword which user inputs.
@@ -154,7 +155,14 @@ export class ExplorativeSearchFormComponent implements OnInit {
             .then(res => {
                 // console.log(res);
                 // this.visData = new Array();
+                if (this.activeTabName === 'sqp') {
+                    this.SQPConfig = {'concept': encodeURIComponent(this.conceptURL), 'stepRange': 1, 'language': this.language,
+                        frozenConcept: this.conceptName, 'distanceToFrozenConcept': 0, 'conceptURIPath': [],
+                        'currenSelections': []
+                    };
+                }
                 this.visData = res;
+
                 // console.log(this.visData);
                 this._error_detected_query = false;
             }
@@ -178,11 +186,7 @@ export class ExplorativeSearchFormComponent implements OnInit {
     }
 
     public activeTab($event: NgbTabChangeEvent) {
-        // console.log($event.nextId);
+        console.log($event.activeId);
         this.activeTabName = $event.nextId;
-        this.SQPConfig = {'concept': encodeURIComponent(this.conceptURL), 'stepRange': 1, 'language': this.language,
-            frozenConcept: this.conceptName, 'distanceToFrozenConcept': 0, 'conceptURIPath': [],
-            'currenSelections': []
-        };
     }
 }

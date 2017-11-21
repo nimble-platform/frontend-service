@@ -1,50 +1,84 @@
 <div class="container displayArea">
-    <br>
-    <br>
-
     <div class="row">
         <div class="col-12">
-            <h5>Your Semantic Query</h5>
-            <code>
-                {{sentence | json}}
-            </code>
-            <div class="form-group" *ngIf=" results.length > 1 && !selectedConcept">
-                <p><b>Search Property</b></p>
+            <div [hidden]="hiddenElement">
+                <h5>Your Semantic Query</h5>
+                <code>
+                    {{sentence | json}}
+                </code>
+                <span><button (click)="genTable()">Search Query</button></span>
+                <div class="form-group" *ngIf=" results.length > 1 && !selectedConcept">
+                    <p><b>Search Property</b></p>
                     <input type="search" class="form-control"
                            [(ngModel)]="model"
                            [ngbTypeahead]="search"
                            [resultTemplate]="rt"
                            [inputFormatter]="formatter"
-                           (keyup.enter)="sentence=sentence+model.translatedProperty; selectedPropertyURL=model.propertyURL; selectedConcept=true;"
-                    style="width: 500px;"/>
-            </div>
-            <template #rt let-r="result" let-t="term">
-                <div>
-                {{r.translatedProperty}}
+                           (keyup.enter)="sentence=sentence+model.translatedProperty; applyURL(model.propertyURL); selectedPropertyURL=model.propertyURL; selectedConcept=true;"
+                           style="width: 500px;"/>
                 </div>
-            </template>
+                <template #rt let-r="result" let-t="term">
+                    <div>
+                        {{r.translatedProperty}}
+                    </div>
+                </template>
 
-            <div *ngIf="searchvalue.length > 0 && !selectedValue">
-                <p><b>Available Values</b></p>
-            <ul class="list-group ac-keywords">
-                <li class="list-group-item"
-                    *ngFor="let eachval of searchvalue" (click)="sentence=sentence+eachval; selectedValue=true;">
-                {{eachval}}
-                </li>
-            </ul>
+                <div *ngIf="searchvalue.length > 0 && !selectedValue">
+                    <p><b>Available Values</b></p>
+                    <ul class="list-group ac-keywords">
+                        <li class="list-group-item"
+                            *ngFor="let eachval of searchvalue" (click)="sentence=sentence+eachval; selectedValue=true; applyFilter(eachval, selectedPropertyURL);">
+                            {{eachval}}
+                        </li>
+                    </ul>
+                </div>
+
+                <div *ngIf="refResultsRange.length > 0 && !selectedReference">
+                    <p><b>Available Options</b></p>
+                    <ul class="list-group ac-keywords">
+                        <li class="list-group-item" *ngFor="let eachRefResult of refResultsRange" (click)="sentence=sentence+eachRefResult.translation; selectedReference=true;selectedPropertyURL=eachRefResult.original;">
+                            {{eachRefResult.translation}}
+                        </li>
+                    </ul>
+                </div>
             </div>
 
-            <div>
-                {{referenceResults['allAvailableReferences'] | json}}
-            </div>
-    </div>
-    </div>
-    <br>
-    <br>
-    <div class="row">
-        <br>
-        <br>
+            <div [hidden]="!hiddenElement" style="height: 500px; overflow: auto;">
+                <table >
 
+                    <tr>
+                        <th style="width:50%">Property</th>
+                        <td style="width:50%;font-weight: bold">Value
+                            <wbr/>
+                        </td>
+                    </tr>
+                    <tr *ngFor="let column of sparqlSelectedOption?.columns; let i=index">
+
+                        <th style="width:50%">{{column}}</th>
+                        <td style="width:50%">{{sparqlSelectedOption?.rows[0][i]}}
+                            <wbr/>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="row">
+                <div class="col-8">
+                    <button [hidden]="!hiddenElement" class="btn btn-lg btn-warning" (click)="hiddenElement=!hiddenElement;">
+                        Back
+                    </button>
+                </div>
+                <div class="col-4 pull-right">
+                    <button class="btn btn-lg btn-primary" (click)="negotiation()"
+                            [disabled]="!negotiationEnable"
+                            [hidden]="!hiddenElement">
+                        Negotiation</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    <hr>
+    <div class="row" [hidden]="hiddenElement">
         <div class="col-8">
             <ul>
                 <div class="btn-group">
@@ -69,4 +103,17 @@
             </ul>
         </div>
     </div>
+        <div *ngIf="tableResult" style="overflow: auto; height: 100px;">
+            <table>
+                <tr>
+                    <th *ngFor="let column of tableResult?.columns">{{column}}</th>
+                </tr>
+                <tr *ngFor="let row of tableResult?.rows; let i=index;">
+                    <td *ngFor="let field of row"> {{field}}</td>
+                    <td *ngIf="tableResult?.uuids">
+                        <button class="btn btn-sm btn-success" (click)="getSparqlOptionalSelect(i)">
+                            More</button></td>
+                </tr>
+            </table>
+        </div>
 </div>
