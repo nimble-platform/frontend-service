@@ -81,7 +81,7 @@
                             <goal>npm</goal>
                         </goals>
                         <configuration>
-                            <arguments>run build</arguments>
+                            <arguments>run build --prod --build-optimizer</arguments>
                         </configuration>
                     </execution>
                     <execution>
