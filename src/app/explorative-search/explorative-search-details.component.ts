@@ -48,7 +48,9 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
     private _tableJSONPaths = []; // for storing Paths when the figure is rendered again..
     private collectionOfFiltersFromChildren: any[] = []; // filters from the Children Components
     private _optSelectJSON = {};
-    private _negotation_instance_name;
+    private _negotiation_id;
+    private _negotation_catalogue_id;
+    public negotiationEnable: boolean = false;
 
     /*Final Data to be sent back to parent for processing.*/
     finalSelectionJSON: Object;
@@ -594,11 +596,23 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
           .then(res => {
               this.sparqlSelectedOption = res;
               this._error_detected_getSPARQLSelect = false;
+              if (this.sparqlSelectedOption['columns'].findIndex(i => i === 'id') >= 0 &&
+                  this.sparqlSelectedOption['columns'].findIndex(j => j === 'catalogueId') >= 0) {
+                  console.log('Negotiation can exist');
+                  this.negotiationEnable = true;
+                  let index_id = this.sparqlSelectedOption['columns'].findIndex(i => i === 'id');
+                  let index_catalogue = this.sparqlSelectedOption['columns'].findIndex(i => i === 'catalogueId');
+                  this._negotiation_id = this.sparqlSelectedOption['rows'][0][index_id];
+                  this._negotation_catalogue_id = this.sparqlSelectedOption['rows'][0][index_catalogue];
+              } else {
+                  this.negotiationEnable = false;
+              }
           })
             .catch(error => {
                 console.log(error);
                 this._error_detected_getSPARQLSelect = true;
             });
+
         this.hiddenElement = true;
     }
 
@@ -658,9 +672,9 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
         // console.log(this.selectedProperties); // DEBUG_CHECK
     }
     negotiation(): void {
-        let instance_name_url = this._optSelectJSON['uuid'];
-        console.log(instance_name_url);
-        this._negotation_instance_name = instance_name_url.split('%23')[1];
-        this.router.navigate(['/simple-search-details', this._negotation_instance_name]);
+        // console.log(this._negotation_catalogue_id, this._negotiation_id);
+        // console.log(`/simple-search-details?catalogueId=${this._negotation_catalogue_id}&id=${this._negotiation_id}`);
+        this.router.navigate(['/simple-search-details'],
+            { queryParams: {id: this._negotiation_id, catalogueId: this._negotation_catalogue_id} });
     }
 }

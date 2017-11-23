@@ -26,6 +26,11 @@ export const sparqlEndPoint = 'http://hydra2.ikap.biba.uni-bremen.de:8092/execut
 export const sparqlOptionalSelectEndPoint = 'http://hydra2.ikap.biba.uni-bremen.de:8092/executeSPARQLOptionalSelect';
 // export const sparqlOptionalSelectEndPoint = 'http://localhost:8090/executeSPARQLOptionalSelect';
 
+export const spqButton = 'https://hydra2.ikap.biba.uni-bremen.de:8443/getSQPFromOrangeGroup';
+export const obs_propFromConcept = 'https://hydra2.ikap.biba.uni-bremen.de:8443/getPropertyFromConcept';
+export const obs_propValueFromConcept = 'https://hydra2.ikap.biba.uni-bremen.de:8443/getPropertyValuesFromGreenGroup';
+export const referenceFromConcept = 'https://hydra2.ikap.biba.uni-bremen.de:8443/getReferencesFromAConcept';
+
 // Endpoint variables - Local development via service discovery
 
 //export const user_mgmt_endpoint="http://localhost:443/identity";

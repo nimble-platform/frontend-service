@@ -11,9 +11,10 @@
  * Child for this class: explorative-search-details.component
  */
 
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import { ExplorativeSearchService } from './explorative-search.service';
 import { Explorative } from './model/explorative';
+import {NgbTabChangeEvent} from '@ng-bootstrap/ng-bootstrap';
 
 /**
  * Array for storing incoming HTTP responses
@@ -52,6 +53,10 @@ export class ExplorativeSearchFormComponent implements OnInit {
     private _error_detected_kw = false;
     private _error_detected_query = false;
     private _warning_kw = false;
+    private activeTabName = 'graphNav';
+    private conceptName = '';
+    private conceptURL = '';
+    SQPConfig: Object;
 
     constructor(private expSearch: ExplorativeSearchService) {}
 
@@ -63,6 +68,7 @@ export class ExplorativeSearchFormComponent implements OnInit {
         this.expSearch.getLanguageSupport()
             .then(res => this.availableLanguages = res);
     }
+
     /**
      * Search: will get a HTTP response from the server (HTTP GET)
      *          of the keyword which user inputs.
@@ -111,6 +117,8 @@ export class ExplorativeSearchFormComponent implements OnInit {
         if (index > -1) {
             // remove the whole entry from the list
             this.Output.splice(index, 1);
+            // remove its visibility values too
+            this.showParticularKeyword.splice(index, 1);
         }
     }
 
@@ -119,6 +127,7 @@ export class ExplorativeSearchFormComponent implements OnInit {
      * @param inputIndex index number of the output keyword that needs to hidden
      */
     hideKW(inputIndex: number) {
+        console.log(this.cbInput);
         if (inputIndex > -1) {
             this.showParticularKeyword[inputIndex] = !this.showParticularKeyword[inputIndex];
         }
@@ -130,8 +139,10 @@ export class ExplorativeSearchFormComponent implements OnInit {
      * @param inputVal the name of the Button clicked by the User
      */
 
-    getQuery(inputVal: string) {
-        // console.log(inputVal);
+    getQuery(inputVal: string, urlVal: string) {
+        console.log(inputVal);
+        this.conceptName = urlVal;
+        this.conceptURL = inputVal;
         // HTTP GET to backend Server for visualization
         // create a JSON request for the queried button
         let temp = {'concept': inputVal.trim(), 'stepRange': 2, 'frozenConcept': inputVal.trim(),
@@ -144,7 +155,14 @@ export class ExplorativeSearchFormComponent implements OnInit {
             .then(res => {
                 // console.log(res);
                 // this.visData = new Array();
+                if (this.activeTabName === 'sqp') {
+                    this.SQPConfig = {'concept': encodeURIComponent(this.conceptURL), 'stepRange': 1, 'language': this.language,
+                        frozenConcept: this.conceptName, 'distanceToFrozenConcept': 0, 'conceptURIPath': [],
+                        'currenSelections': []
+                    };
+                }
                 this.visData = res;
+
                 // console.log(this.visData);
                 this._error_detected_query = false;
             }
@@ -165,5 +183,10 @@ export class ExplorativeSearchFormComponent implements OnInit {
     previousStateStore() {
         localStorage.setItem('prevVisData', JSON.stringify(this.visData));
         localStorage.setItem('prevLanguage', this.language);
+    }
+
+    public activeTab($event: NgbTabChangeEvent) {
+        console.log($event.activeId);
+        this.activeTabName = $event.nextId;
     }
 }
