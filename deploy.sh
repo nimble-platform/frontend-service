@@ -1,19 +1,23 @@
-#!/usr/bin/env bash
+    #!/usr/bin/env bash
 
-set -e
+    set -e
 
-if [ "$1" == "docker-build" ]; then
+    if [ "$1" == "docker-build" ]; then
 
-    mvn clean install
-	docker build -t nimbleplatform/frontend-service ./target
+        mvn install
+        docker build -t nimbleplatform/frontend-service ./target
 
-elif [ "$1" == "docker-run" ]; then
+    elif [ "$1" == "docker-run" ]; then
 
-    docker run \
-		-it \
-		--rm \
-		-p 9092:8080 \
-		--name nimble-core_frontend-service \
-        nimbleplatform/frontend-service
+        docker run \
+            -it \
+            --rm \
+            -p 9092:8080 \
+            --name nimble-core_frontend-service \
+            nimbleplatform/frontend-service
 
-fi
+    elif [ "$1" == "docker-push" ]; then
+
+        docker push nimbleplatform/frontend-service:latest
+
+    fi

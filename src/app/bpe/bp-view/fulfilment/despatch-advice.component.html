@@ -1,0 +1,33 @@
+<ng-container *ngIf="bpDataService.despatchAdvice">
+    <quantity-view class="row"
+                   [propName]="'Delivered Quantity'"
+                   [quantity]="[despatchAdvice.despatchLine[0].deliveredQuantity]"
+                   [presentationMode]="'edit'">
+    </quantity-view>
+
+    <h5 class="mt-3 mb-3">Shipment</h5>
+    <shipment-view [shipment]="despatchAdvice.despatchLine[0].shipment[0]"
+                   [presentationMode]="presentationMode">
+    </shipment-view>
+
+    <hr>
+
+    <value-view class="row"
+                [presentationMode]="'edit'"
+                [propName]="'Note'"
+                [(value)]="despatchAdvice.note[0]">
+    </value-view>
+
+    <div class="container ">
+        <div class="row justify-content-end">
+            <button *ngIf="bpDataService.processMetadata == null && bpDataService.userRole == 'seller'"
+                    class="btn btn-success" (click)="sendDespatchAdvice()">
+                Send Despatch Advice
+            </button>
+        </div>
+    </div>
+</ng-container>
+
+<call-status [callStatus]="callStatus"
+             [large]="true">
+</call-status>

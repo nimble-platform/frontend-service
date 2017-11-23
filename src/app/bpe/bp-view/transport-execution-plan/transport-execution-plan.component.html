@@ -1,0 +1,33 @@
+<ng-container *ngIf="transportExecutionPlan">
+
+    <value-view class="row"
+                [presentationMode]="'edit'"
+                [propName]="'Response'"
+                [(value)]="transportExecutionPlan.documentStatusCode.name">
+    </value-view>
+
+    <value-view class="row"
+                [presentationMode]="'edit'"
+                [propName]="'Response Reason'"
+                [(value)]="transportExecutionPlan.documentStatusReasonCode.name">
+    </value-view>
+
+    <value-view class="row"
+                [presentationMode]="'edit'"
+                [propName]="'Note'"
+                [(value)]="transportExecutionPlan.note[0]">
+    </value-view>
+
+    <div class="container ">
+        <div class="row justify-content-end">
+            <ng-container *ngIf="bpDataService.processMetadata.processStatus != 'Completed'">
+                <button *ngIf="bpDataService.userRole == 'seller'" class="btn btn-success mr-3"
+                        (click)="respondToTransportExecutionPlanRequest()">Respond to Execution Plan
+                </button>
+            </ng-container>
+        </div>
+    </div>
+</ng-container>
+<call-status [callStatus]="callStatus"
+             [large]="true">
+</call-status>

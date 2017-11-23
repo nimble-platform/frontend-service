@@ -3,6 +3,6 @@
  */
 export class Person {
     constructor(
-        public id: string,
+        public id: string = null,
     ) {  }
 }

@@ -1,7 +1,8 @@
 (function (global) {
 	System.config({
 		paths: {
-			'npm:': 'node_modules/'
+			'npm:': 'node_modules/',
+            'underscore': 'node_modules/underscore/underscore-min.js'
 		},
 		map: {
 			'app': 'app',

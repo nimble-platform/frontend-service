@@ -54,7 +54,7 @@
 				<div class="col-8">
 		
 					<div *ngFor="let result of response">
-						<div class="card pointer" [routerLink]="['/simple-search-details', result.id]">
+						<div *ngIf="result.item_id != null" class="card pointer" [routerLink]="['/simple-search-details']" [queryParams]="{catalogueId: result.item_catalogue_id[0], id: result.item_id[0]}">
 							<div class="card-block">
 								<div class="row">
 									<div class="col-2">

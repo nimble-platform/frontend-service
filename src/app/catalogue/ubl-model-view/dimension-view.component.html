@@ -1,0 +1,22 @@
+<h5 *ngIf="presentationMode == 'edit' || (presentationMode != 'edit' && itemDimensions.length > 0)"
+        class="mt-3">{{header}}</h5>
+
+<div *ngFor="let key of object.keys(dimensions)"
+     class="container">
+    <quantity-view
+            [editablePropName]="true"
+            [multiValue]="true"
+            [propName]="key"
+            [quantity]="dimensions[key]"
+            [presentationMode]="presentationMode"
+            (onPropNameChange)="updateDimensionAttribute(key, $event)"
+            (onSelectChange)="selectDimension(key, $event)"
+            (onValueAdded)="addDimension(key, dimensions[key][0].unitCode)"
+            (onValueDeleted)="removeDimension(key, $event)">
+    </quantity-view>
+</div>
+<div *ngIf="presentationMode == 'edit'">
+    <label>Add Dimension</label>
+    <img src="./assets/catalogue/add_button.png"
+         (click)="addDimension('', '')"/>
+</div>

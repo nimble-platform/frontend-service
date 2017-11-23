@@ -187,9 +187,6 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
         // console.log(this._negotation_catalogue_id, this._negotiation_id);
         // console.log(`/simple-search-details?catalogueId=${this._negotation_catalogue_id}&id=${this._negotiation_id}`);
         this.router.navigate(['/simple-search-details'],
-            { queryParams: {id: this._negotiation_id, catalogueId: this._negotation_catalogue_id} });
+            { queryParams: {catalogueId: this._negotation_catalogue_id, id: this._negotiation_id} });
     }
-
-
-
 }

@@ -9,6 +9,9 @@ export class Catalogue {
     constructor(public id: string,
                 public uuid: string,
                 public providerParty: Party,
-                public catalogueLine: CatalogueLine[]) {
+                public issueDate: string,
+                public issueTime: string, // TODO server side handles date/time separately
+                public catalogueLine: CatalogueLine[]
+                ) {
     }
 }

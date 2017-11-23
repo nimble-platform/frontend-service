@@ -1,0 +1,7 @@
+<div class="input-group form-group">
+    <label class="col-3 control-label">{{propName}}</label>
+    <input class="form-control"
+           type="text"
+           [(ngModel)]="value"
+           [readonly]="presentationMode == 'view' || presentationMode == 'singlevalue'">
+</div>

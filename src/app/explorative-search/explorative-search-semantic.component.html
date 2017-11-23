@@ -17,11 +17,11 @@
                            (keyup.enter)="sentence=sentence+model.translatedProperty; applyURL(model.propertyURL); selectedPropertyURL=model.propertyURL; selectedConcept=true;"
                            style="width: 500px;"/>
                 </div>
-                <template #rt let-r="result" let-t="term">
+                <ng-template #rt let-r="result" let-t="term">
                     <div>
                         {{r.translatedProperty}}
                     </div>
-                </template>
+                </ng-template>
 
                 <div *ngIf="searchvalue.length > 0 && !selectedValue">
                     <p><b>Available Values</b></p>

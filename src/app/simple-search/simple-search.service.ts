@@ -47,7 +47,7 @@ export class SimpleSearchService {
 	}
 	
 	getSingle(id: string): Promise<any> {
-		const url = `${this.url}?q=*&rows=1&wt=json&fq=id:${id}`;
+		const url = `${this.url}?q=*&rows=1&wt=json&fq=item_id:${id}`;
 		return this.http
 		.get(url, {headers: this.headers})
 		.toPromise()

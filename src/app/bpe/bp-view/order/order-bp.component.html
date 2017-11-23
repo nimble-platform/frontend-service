@@ -1,0 +1,43 @@
+<div>
+    <ul class="nav nav-tabs">
+        <!-- tabs generated to present details of the product or service -->
+        <li *ngFor="let tab of tabs" class="nav-item pointer">
+            <a
+                    [ngClass]="{'nav-link': true, active: selectedTab === tab}"
+                    (click)="selectedTab = tab"
+                    i18n
+            >{{tab}}</a>
+        </li>
+        <!-- tabs specific to the order process -->
+        <li class="nav-item pointer">
+            <a
+                    [ngClass]="{'nav-link': true, active: selectedTab === 'Order Details'}"
+                    (click)="selectedTab = 'Order Details'"
+                    i18n
+            >Order Details</a>
+        </li>
+        <li *ngIf="bpDataService.orderResponse" class="nav-item pointer">
+            <a
+                    [ngClass]="{'nav-link': true, active: selectedTab === 'Order Response Details'}"
+                    (click)="selectedTab = 'Order Response Details'"
+                    i18n
+            >Order Response Details</a>
+        </li>
+    </ul>
+</div>
+<div *ngIf="bpDataService.catalogueLine"
+     class="p-3">
+    <bp-product-details *ngIf="selectedTab == 'Product Characteristics' || selectedTab == 'Product Trading & Delivery Terms' || 'Service Characteristics'"
+                        [catalogueLine]="bpDataService.catalogueLine"
+                        [presentationMode]="'singlevalue'"
+                        [selectedTab]="selectedTab">
+    </bp-product-details>
+    <order *ngIf="selectedTab === 'Order Details'"
+           [order]="bpDataService.order">
+    </order>
+    <order-response *ngIf="selectedTab === 'Order Response Details'"
+                    [order]="bpDataService.order"
+                    [orderResponse]="bpDataService.orderResponse">
+    </order-response>
+
+</div>
