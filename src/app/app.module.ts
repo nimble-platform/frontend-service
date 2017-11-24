@@ -68,6 +68,10 @@ import {ReceiptAdviceComponent} from "./bpe/bp-view/fulfilment/receipt-advice.co
 import {NegotiationComponent} from "./bpe/bp-view/negotiation/negotiation.component";
 import {QuotationComponent} from "./bpe/bp-view/negotiation/quotation.component";
 import {ProductTradingDetailsComponent} from "./catalogue/ubl-model-view/catalogue-line/product-trading-details.component";
+import {PpapComponent} from "./bpe/bp-view/ppap/ppap.component";
+import {PpapResponseComponent} from "./bpe/bp-view/ppap/ppap-response.component";
+import {PpapViewComponent} from "./bpe/bp-view/ppap/ppap-view.component";
+import {CookieService} from "ng2-cookies";
 
 @NgModule({
     imports: [
@@ -133,7 +137,10 @@ import {ProductTradingDetailsComponent} from "./catalogue/ubl-model-view/catalog
         BPsComponent,
         ProductBpOptionsComponent,
         CallStatusComponent,
-        CompanyRegistrationComponent],
+        CompanyRegistrationComponent,
+        PpapComponent,
+        PpapResponseComponent,
+        PpapViewComponent],
     providers: [
         UserService,
         CredentialsService,
@@ -144,7 +151,8 @@ import {ProductTradingDetailsComponent} from "./catalogue/ubl-model-view/catalog
         ExplorativeSearchService,
         PublishService,
         BPService,
-        BPDataService
+        BPDataService,
+        CookieService
     ],
     bootstrap: [
         AppComponent

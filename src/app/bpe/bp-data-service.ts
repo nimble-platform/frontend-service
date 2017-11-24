@@ -13,7 +13,9 @@ import {Quotation} from "../catalogue/model/publish/quotation";
 import {Order} from "../catalogue/model/publish/order";
 import {OrderResponseSimple} from "../catalogue/model/publish/order-response-simple";
 import {BehaviorSubject} from "rxjs/BehaviorSubject";
+import {Ppap} from "../catalogue/model/publish/ppap";
 import {OrderReference} from "./model/order-reference";
+import {PpapResponse} from "../catalogue/model/publish/ppap-response";
 /**
  * Created by suat on 20-Sep-17.
  */
@@ -28,6 +30,8 @@ export class BPDataService {
     requestForQuotation:RequestForQuotation;
     quotation:Quotation;
     order:Order;
+    ppap:Ppap;
+    ppapResponse:PpapResponse;
     orderResponse:OrderResponseSimple;
     despatchAdvice:DespatchAdvice;
     receiptAdvice:ReceiptAdvice;
@@ -78,6 +82,19 @@ export class BPDataService {
                 this.orderResponse = orderResponseVariable.value;
             }
 
+        } else if(this.processType.getValue() == 'Ppap'){
+          this.ppap = ActivityVariableParser.getInitialDocument(activityVariables).value;
+
+          let ppapResponseVariable = ActivityVariableParser.getResponse(activityVariables);
+          if(ppapResponseVariable == null){
+              if(this.userRole == 'seller'){
+                  this.ppapResponse = UBLModelUtils.createPpapResponse(this.ppap,true);
+              }
+              else{
+                  this.ppapResponse = ppapResponseVariable.value;
+              }
+          }
+
         } else if(this.processType.getValue() == 'Fulfilment') {
             this.despatchAdvice = ActivityVariableParser.getInitialDocument(activityVariables).value;
 
@@ -106,6 +123,14 @@ export class BPDataService {
         this.requestForQuotation = UBLModelUtils.createRequestForQuotation();
         this.requestForQuotation.requestForQuotationLine[0].lineItem.item = this.modifiedCatalogueLine.goodsItem.item;
         this.requestForQuotation.requestForQuotationLine[0].lineItem.lineReference = [new LineReference(this.modifiedCatalogueLine.id)];
+        this.selectFirstValuesAmongAlternatives();
+    }
+
+    initPpap(documents:string[]):void{
+        this.modifiedCatalogueLine = JSON.parse(JSON.stringify(this.catalogueLine));
+        this.ppap = UBLModelUtils.createPpap(documents);
+        this.ppap.lineItem.item = this.catalogueLine.goodsItem.item;
+        this.ppap.lineItem.lineReference = [new LineReference(this.catalogueLine.id)];
         this.selectFirstValuesAmongAlternatives();
     }
 
@@ -159,6 +184,8 @@ export class BPDataService {
         this.orderResponse = null;
         this.despatchAdvice = null;
         this.receiptAdvice = null;
+        this.ppap = null;
+        this.ppapResponse = null;
     }
 
     selectFirstValuesAmongAlternatives():void {

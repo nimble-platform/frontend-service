@@ -2,6 +2,7 @@ import {DespatchAdvice} from "../catalogue/model/publish/despatch-advice";
 import {Item} from "../catalogue/model/publish/item";
 import {Order} from "../catalogue/model/publish/order";
 import {RequestForQuotation} from "../catalogue/model/publish/request-for-quotation";
+import {Ppap} from "../catalogue/model/publish/ppap";
 /**
  * Created by suat on 24-Oct-17.
  */
@@ -13,7 +14,7 @@ export class ActivityVariableParser {
 
     static getInitialDocument(processVariables: any[]): any {
         for (let variable of processVariables) {
-            if (variable.name == "order" || variable.name == "requestForQuotation" || variable.name == "despatchAdvice") {
+            if (variable.name == "order" || variable.name == "requestForQuotation" || variable.name == "despatchAdvice" || variable.name=="ppapRequest") {
                 return variable;
             }
         }
@@ -22,7 +23,7 @@ export class ActivityVariableParser {
 
     static getResponse(processVariables: any[]): any {
         for (let variable of processVariables) {
-            if (variable.name == "orderResponse" || variable.name == "quotation" || variable.name == "receiptAdvice") {
+            if (variable.name == "orderResponse" || variable.name == "quotation" || variable.name == "receiptAdvice" || variable.name == "ppapResponse") {
                 return variable;
             }
         }
@@ -35,6 +36,9 @@ export class ActivityVariableParser {
             let order: Order = initialDocument.value as Order;
             return order.sellerSupplierParty.party.name;
 
+        } else if(processType == "Ppap"){
+            let ppap: Ppap = initialDocument.value as Ppap;
+            return ppap.sellerSupplierParty.party.name;
         } else if (processType == "Negotiation") {
             let rfq: RequestForQuotation = initialDocument.value as RequestForQuotation;
             return rfq.sellerSupplierParty.party.name;
@@ -51,6 +55,9 @@ export class ActivityVariableParser {
             let order: Order = initialDocument.value as Order;
             return order.buyerCustomerParty.party.name;
 
+        } else if(processType == "Ppap"){
+            let ppap: Ppap = initialDocument.value as Ppap;
+            return ppap.buyerCustomerParty.party.name;
         } else if (processType == "Negotiation") {
             let rfq: RequestForQuotation = initialDocument.value as RequestForQuotation;
             return rfq.buyerCustomerParty.party.name;
@@ -67,6 +74,9 @@ export class ActivityVariableParser {
             let order: Order = initialDocument.value as Order;
             return order.orderLine[0].lineItem.item;
 
+        } else if(processType == "Ppap"){
+            let ppap: Ppap = initialDocument.value as Ppap;
+            return ppap.lineItem.item;
         } else if (processType == "Negotiation") {
             let rfq: RequestForQuotation = initialDocument.value as RequestForQuotation;
             return rfq.requestForQuotationLine[0].lineItem.item;
@@ -83,6 +93,9 @@ export class ActivityVariableParser {
             let order: Order = initialDocument.value as Order;
             return order.orderLine[0].lineItem.item.name;
 
+        } else if(processType == "Ppap"){
+            let ppap:Ppap = initialDocument.value() as Ppap;
+            return ppap.lineItem.item.name;
         } else if (processType == "Negotiation") {
             let rfq: RequestForQuotation = initialDocument.value as RequestForQuotation;
             return rfq.requestForQuotationLine[0].lineItem.item.name;
@@ -99,6 +112,9 @@ export class ActivityVariableParser {
             let order: Order = initialDocument.value as Order;
             return order.note;
 
+        } else if(processType == "Ppap"){
+            let ppap: Ppap = initialDocument.value as Ppap;
+            return ppap.note;
         } else if (processType == "Negotiation") {
             let rfq: RequestForQuotation = initialDocument.value as RequestForQuotation;
             return rfq.note[0];

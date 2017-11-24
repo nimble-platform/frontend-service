@@ -19,6 +19,13 @@
                i18n
             >Order</a>
         </li>
+        <li class="nav-item">
+            <a href id="ppaptab"
+               [ngClass]="{'nav-link': true, active: selectedOption == 'Ppap'}"
+               (click)="selectedOption = 'Ppap'; $event.preventDefault();"
+               i18n
+            >Ppap</a>
+        </li>
 
         <li class="nav-item ml-auto">
             <button class="btn btn-success"
@@ -35,6 +42,8 @@
     </order-bp>
     <fulfilment *ngIf="selectedOption == 'Fulfilment'">
     </fulfilment>
+    <ppap *ngIf="selectedOption == 'Ppap'">
+    </ppap>
 </ng-container>
 
 <call-status [callStatus]="getCatalogueLineStatus"

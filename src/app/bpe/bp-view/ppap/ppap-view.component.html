@@ -1,0 +1,33 @@
+<ng-container *ngIf="bpDataService.catalogueLine">
+    <catalogue-line-header [catalogueLine]="bpDataService.catalogueLine"
+                           [presentationMode]="'view'">
+    </catalogue-line-header>
+</ng-container>
+<div class="row space-before">
+    <div class="col-12">
+        <h4 class="space-after" i18n>Ppap Request</h4>
+        <div *ngIf="ppapDocuments.length > 0">
+            <table class="table table-striped table-bordered">
+                <tr><th>Document</th><th i18n>Download</th></tr>
+                <tr *ngFor="let document of keys">
+
+                    <td>{{document}}</td>
+                    <div>
+                        <button class="btn btn-success "
+                                (click)="downloadFile(document)">Download
+                        </button>
+
+                    </div>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+<hr>
+<value-view class="row"
+            [presentationMode]="'view'"
+            [propName]="'Note From Seller'"
+            [(value)]="note">
+</value-view>
+

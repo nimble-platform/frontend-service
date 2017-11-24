@@ -38,6 +38,8 @@ import {OrderResponseSimple} from "./publish/order-response-simple";
 import {RequestForQuotation} from "./publish/request-for-quotation";
 import {Quotation} from "./publish/quotation";
 import {Location} from "./publish/location";
+import {Ppap} from "./publish/ppap";
+import {PpapResponse} from "./publish/ppap-response";
 /**
  * Created by suat on 05-Jul-17.
  */
@@ -130,6 +132,26 @@ export class UBLModelUtils {
         let orderLine:OrderLine = new OrderLine(lineItem);
         let order = new Order(this.generateUUID(), "", null, null, new PaymentMeans(), [orderLine]);
         return order;
+    }
+
+    public static createPpap(documents:String[]):Ppap {
+        let quantity:Quantity = new Quantity(null, "", null);
+        let item:Item = this.createItem();
+        let price: Price = this.createPrice(null);
+        let lineItem:LineItem = this.createLineItem(quantity, price, item);
+        let ppap = new Ppap(this.generateUUID(), "",documents, null, null, lineItem);
+        return ppap;
+    }
+
+    public static createPpapResponse(ppap:Ppap,acceptedIndicator:boolean):PpapResponse{
+        let documentReference:DocumentReference = new DocumentReference();
+        documentReference.id = ppap.id;
+        this.removeHjidFieldsFromObject(ppap.buyerCustomerParty);
+        this.removeHjidFieldsFromObject(ppap.sellerSupplierParty);
+        let customerParty:CustomerParty = ppap.buyerCustomerParty;
+        let supplierParty:SupplierParty = ppap.sellerSupplierParty;
+        let ppapResponse:PpapResponse = new PpapResponse("","",acceptedIndicator,customerParty,supplierParty,null,documentReference);
+        return ppapResponse;
     }
 
     public static createOrderResponseSimple(order:Order, acceptedIndicator:boolean):OrderResponseSimple {

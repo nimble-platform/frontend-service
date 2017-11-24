@@ -244,6 +244,7 @@ export class ProductPublishComponent implements OnInit {
                 .then(() => this.onSuccessfulPublish())
                 .catch(() => this.onFailedPublish())
         }
+        console.log(this.catalogueService.catalogue);
     }
 
     private editProduct(): void {

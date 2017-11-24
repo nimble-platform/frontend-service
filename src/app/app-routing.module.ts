@@ -16,6 +16,8 @@ import {BPDetailComponent} from './bpe/bp-detail.component';
 import {BPConfigureComponent} from './bpe/bp-configure.component';
 import {CompanyRegistrationComponent} from './user-mgmt/company-registration.component';
 import {ProductBpOptionsComponent} from "./bpe/product-bp-options.component";
+import {PpapResponseComponent} from "./bpe/bp-view/ppap/ppap-response.component";
+import {PpapViewComponent} from "./bpe/bp-view/ppap/ppap-view.component";
 
 const routes: Routes = [
     {path: '', redirectTo: '/login', pathMatch: 'full'},
@@ -35,7 +37,9 @@ const routes: Routes = [
     {path: 'bpe-design/create', component: BPDetailComponent},
     {path: 'bpe-design', component: BPsComponent},
     {path: 'bpe-design/configure/:processID', component: BPConfigureComponent},
-    {path: 'bpe-exec', component: ProductBpOptionsComponent}
+    {path: 'bpe-exec', component: ProductBpOptionsComponent},
+    {path: 'bpe-ppap', component: PpapResponseComponent},
+    {path: 'bpe-ppapView', component: PpapViewComponent}
 ];
 
 @NgModule({

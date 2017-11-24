@@ -26,6 +26,10 @@ import {Order} from "../catalogue/model/publish/order";
 export class DashboardComponent implements OnInit {
 
     fullName = "";
+    hasCompany = false;
+    roles = [];
+    alert1Closed = false;
+    alert2Closed = false;
     buyer_history_temp: any;
     buyer_history: any;
     seller_history_temp: any;
@@ -43,6 +47,14 @@ export class DashboardComponent implements OnInit {
         if (this.cookieService.get("user_fullname"))
             this.fullName = this.cookieService.get("user_fullname");
         if (this.cookieService.get("user_id") && this.cookieService.get("company_id")) {
+            if (this.cookieService.get("active_company_name")) {
+                if (this.cookieService.get("active_company_name") == null || this.cookieService.get("active_company_name") == "null")
+                    this.hasCompany = false;
+                else
+                    this.hasCompany = true;
+            }
+            else
+                this.hasCompany = false;
             this.buyer_history_temp = [];
             this.buyer_history = [];
             this.seller_history_temp = [];
@@ -51,7 +63,22 @@ export class DashboardComponent implements OnInit {
         }
         else
             this.appComponent.checkLogin("/login");
+        if (this.cookieService.get('bearer_token')) {
+            const at = this.cookieService.get('bearer_token');
+            if (at.split(".").length == 3) {
+                const at_payload = at.split(".")[1];
+                try {
+                    const at_payload_json = JSON.parse(atob(at_payload));
+                    const at_payload_json_roles = at_payload_json["realm_access"]["roles"];
+                    this.roles = at_payload_json_roles;
+                }
+                catch(e){}
+            }
+        }
+        else
+            this.roles = [];
     }
+
 
     loadOrders() {
         this.bpeService.getInitiatorHistory(this.cookieService.get("company_id"))
@@ -59,7 +86,6 @@ export class DashboardComponent implements OnInit {
                 this.buyer_history_temp = [];
                 this.buyer_history = [];
                 for (let task of activeTasks) {
-
                     var time_offset = -(new Date().getTimezoneOffset() / 60);
                     var time_locale = new Date(new Date().setTime(new Date(task.startTime).getTime() + (time_offset * 60 * 60 * 1000))).toLocaleTimeString();
                     this.buyer_history_temp.push({
@@ -72,7 +98,6 @@ export class DashboardComponent implements OnInit {
 
                     this.bpeService.getProcessDetailsHistory(task.processInstanceId)
                         .then(activityVariables => {
-
                             var vContent = "", vNote = "", vActionStatus = "", vBPStatus = "",
                                 vTask_id = "", vProcess_id = "", vStart_time = "", vSellerName = "", vProduct,
                                 vBpOptionMenuItems: any;
@@ -115,11 +140,13 @@ export class DashboardComponent implements OnInit {
                                 var b_comp = b.start_time;
                                 return b_comp.localeCompare(a_comp);
                             });
+                            console.log(this.buyer_history);
                         })
                         .catch(error => {
                             console.error(error);
                         });
                 }
+                console.log(this.buyer_history);
             })
             .catch(error => {
                 console.error(error);
@@ -137,7 +164,6 @@ export class DashboardComponent implements OnInit {
                         "process_id": task.processInstanceId,
                         "start_time": new Date(task.startTime).toLocaleDateString() + "\n" + new Date(task.startTime).toLocaleTimeString()
                     });
-
                     this.bpeService.getProcessDetailsHistory(task.processInstanceId)
                         .then(activityVariables => {
 
@@ -182,11 +208,13 @@ export class DashboardComponent implements OnInit {
                                 var b_comp = b.start_time;
                                 return b_comp.localeCompare(a_comp);
                             });
+
                         })
                         .catch(error => {
                             console.error(error);
                         });
                 }
+                console.log(this.seller_history);
             })
             .catch(error => {
                 console.error(error);
@@ -202,13 +230,36 @@ export class DashboardComponent implements OnInit {
             targetProcess = ActivityVariableParser.getProcessType(processMetadata.activityVariables);
         }
 
-        this.bpDataService.setBpOptionParameters_NavFromDashboard(role, targetProcess, processMetadata);
-        this.router.navigate(['bpe-exec'], {
-            queryParams: {
-                catalogueId: processMetadata.product.catalogueDocumentReference.id,
-                id: processMetadata.product.manufacturersItemIdentification.id
-            }
-        });
+        if(targetProcess == "Ppap" && role=="seller"){
+            this.bpDataService.setBpOptionParameters_NavFromDashboard(role, targetProcess, processMetadata);
+            this.router.navigate(['bpe-ppap'], {
+                queryParams: {
+                    catalogueId: processMetadata.product.catalogueDocumentReference.id,
+                    id: processMetadata.product.manufacturersItemIdentification.id,
+                    pid: processMetadata.process_id
+                }
+            });
+        }
+        else if(targetProcess == "Ppap" && role=="buyer"){
+            this.bpDataService.setBpOptionParameters_NavFromDashboard(role, targetProcess, processMetadata);
+            this.router.navigate(['bpe-ppapView'], {
+                queryParams: {
+                    catalogueId: processMetadata.product.catalogueDocumentReference.id,
+                    id: processMetadata.product.manufacturersItemIdentification.id,
+                    pid: processMetadata.process_id
+                }
+            });
+        }
+        else{
+            this.bpDataService.setBpOptionParameters_NavFromDashboard(role, targetProcess, processMetadata);
+            this.router.navigate(['bpe-exec'], {
+                queryParams: {
+                    catalogueId: processMetadata.product.catalogueDocumentReference.id,
+                    id: processMetadata.product.manufacturersItemIdentification.id
+                }
+            });
+        }
+
     }
 
     getActionStatus(processType: string, response: any, buyer: boolean): string {
@@ -224,6 +275,8 @@ export class DashboardComponent implements OnInit {
                     responseMessage = "Waiting for Order Response";
                 } else if (processType == 'Negotiation')
                     responseMessage = "Waiting for Quotation";
+                  else if (processType == 'Ppap')
+                      responseMessage = "Waiting for Ppap Response";
             }
 
             // messages for the seller
@@ -234,6 +287,9 @@ export class DashboardComponent implements OnInit {
                     responseMessage = "Order Response should be sent";
                 } else if (processType == 'Negotiation') {
                     responseMessage = "Quotation should be sent";
+                }
+                  else if(processType == 'Ppap'){
+                    responseMessage = "Ppap Response should be sent"
                 }
             }
 
@@ -259,6 +315,13 @@ export class DashboardComponent implements OnInit {
                 } else {
                     responseMessage = "Receipt Advice received"
                 }
+            } else if(processType == 'Ppap'){
+                if(response.value.acceptedIndicator){
+                    responseMessage = "Ppap approved";
+                } else {
+                    responseMessage = "Ppap declined";
+                }
+
             }
         }
         return responseMessage;
@@ -267,6 +330,12 @@ export class DashboardComponent implements OnInit {
     getBpOptionsMenuItems(processType: string, response: any, buyer: boolean): any {
         let bpOptionMenuItems: Array<any> = [{itemLabel: 'Business History'}];
 
+        if(processType == "Ppap" && !buyer){
+            bpOptionMenuItems.push({itemLabel:'View Ppap Request'});
+        }
+        else if(processType == "Ppap" && buyer && response){
+            bpOptionMenuItems.push({itemLabel:'View Ppap Response'});
+        }
         // messages if there is no response from the responder party
         /*if (response == null) {
             // messages for the buyer
