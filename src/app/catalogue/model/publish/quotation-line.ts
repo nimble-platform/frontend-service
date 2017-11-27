@@ -4,7 +4,6 @@ import {LineItem} from "./line-item";
  */
 export class QuotationLine {
     constructor(
-        public lineItem:LineItem,
-        public sellerProposedSubstituteLineItem
+        public lineItem:LineItem
     ) {  }
 }

@@ -25,12 +25,17 @@
             <ng-container *ngIf="bpDataService.processMetadata.processStatus == 'Completed'">
                 <button *ngIf="bpDataService.userRole == 'seller' && bpDataService.orderResponse.acceptedIndicator == true"
                         class="btn btn-success mr-3"
+                        (click)="searchTransportServiceProvider()">Search Transport Service Provider
+                </button>
+                <button *ngIf="bpDataService.userRole == 'seller' && bpDataService.orderResponse.acceptedIndicator == true"
+                        class="btn btn-success mr-3"
                         (click)="initiateDespatchAdvice()">Initiate Despatch Advice
                 </button>
             </ng-container>
         </div>
     </div>
 </ng-container>
+
 <call-status [callStatus]="callStatus"
              [large]="true">
 </call-status>

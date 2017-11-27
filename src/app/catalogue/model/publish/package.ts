@@ -6,8 +6,8 @@ import {Quantity} from "./quantity";
 
 export class Package {
     constructor(
-        public quantity: Quantity,
-        public packagingTypeCode: Code,
-        public hjid: string
+        public quantity: Quantity = new Quantity(),
+        public packagingTypeCode: Code = new Code(),
+        public hjid: string = null
     ) {  }
 }

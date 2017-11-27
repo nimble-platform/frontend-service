@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from "@angular/core";
 import {Dimension} from "../model/publish/dimension";
 import {UBLModelUtils} from "../model/ubl-model-utils";
-import {BPDataService} from "../../bpe/bp-data-service";
+import {BPDataService} from "../../bpe/bp-view/bp-data-service";
 /**
  * Created by suat on 04-Oct-17.
  */
@@ -12,6 +12,7 @@ import {BPDataService} from "../../bpe/bp-data-service";
 
 export class DimensionViewComponent implements OnInit {
     @Input() presentationMode: string;
+    @Input() header:string;
     @Input() itemDimensions: Dimension[];
     dimensions: any = {};
     object = Object;

@@ -19,12 +19,15 @@ import {ProductBpOptionsComponent} from "./bpe/product-bp-options.component";
 import {PpapResponseComponent} from "./bpe/bp-view/ppap/ppap-response.component";
 import {PpapViewComponent} from "./bpe/bp-view/ppap/ppap-view.component";
 
+import {CompanyInvitationComponent} from './user-mgmt/company-invitation.component';
+
 const routes: Routes = [
     {path: '', redirectTo: '/login', pathMatch: 'full'},
     {path: 'login', component: LoginComponent},
     {path: 'logout', component: LogoutComponent},
     {path: 'registration', component: RegistrationComponent},
     {path: 'company-registration', component: CompanyRegistrationComponent },
+	{path: 'company-invitation', component: CompanyInvitationComponent },
     {path: 'dashboard', component: DashboardComponent},
     {path: 'categorysearch', component: CategorySearchComponent},
     {path: 'publish', component: ProductPublishComponent},

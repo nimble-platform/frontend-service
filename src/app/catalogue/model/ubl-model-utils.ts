@@ -40,6 +40,13 @@ import {Quotation} from "./publish/quotation";
 import {Location} from "./publish/location";
 import {Ppap} from "./publish/ppap";
 import {PpapResponse} from "./publish/ppap-response";
+import {Shipment} from "./publish/shipment";
+import {TransportExecutionPlanRequest} from "./publish/transport-execution-plan-request";
+import {TransportationService} from "./publish/transportation-service";
+import {TransportExecutionPlan} from "./publish/transport-execution-plan";
+import {Consignment} from "./publish/consignment";
+import {ItemInformationRequest} from "./publish/item-information-request";
+import {ItemInformationResponse} from "./publish/item-information-response";
 /**
  * Created by suat on 05-Jul-17.
  */
@@ -112,7 +119,7 @@ export class UBLModelUtils {
 
         // create item
         let uuid:string = this.generateUUID();
-        let item = new Item("", "", [], false, additionalItemProperties, providerParty, this.createItemIdentificationWithId(uuid), docRef, null, [], [], [], "", [], "");
+        let item = new Item("", "", [], [], additionalItemProperties, providerParty, this.createItemIdentificationWithId(uuid), docRef, null, [], [], [], null, null, [], "");
 
         // create goods item
         let goodsItem = new GoodsItem(uuid, item, this.createPackage(), this.createDeliveryTerms());
@@ -120,7 +127,7 @@ export class UBLModelUtils {
         // create required item location quantity
         let ilq = this.createItemLocationQuantity("");
 
-        let catalogueLine = new CatalogueLine(uuid, null, null, this.createPeriod(), [], ilq, goodsItem);
+        let catalogueLine = new CatalogueLine(uuid, null, null, false, this.createPeriod(), [], ilq, goodsItem);
         return catalogueLine;
     }
 
@@ -130,7 +137,7 @@ export class UBLModelUtils {
         let price: Price = this.createPrice(null);
         let lineItem:LineItem = this.createLineItem(quantity, price, item);
         let orderLine:OrderLine = new OrderLine(lineItem);
-        let order = new Order(this.generateUUID(), "", null, null, new PaymentMeans(), [orderLine]);
+        let order = new Order(this.generateUUID(), "", new Period(), new Address(), null, null, new PaymentMeans(), [orderLine]);
         return order;
     }
 
@@ -170,20 +177,20 @@ export class UBLModelUtils {
         let price:Price = this.createPrice(null)
         let lineItem:LineItem = this.createLineItem(quantity, price, item);
         let requestForQuotationLine:RequestForQuotationLine = new RequestForQuotationLine(lineItem);
-        let delivery:Delivery = this.createDelivery();
-        let rfq = new RequestForQuotation(this.generateUUID(), [""], null, null, delivery, [requestForQuotationLine]);
+        let rfq = new RequestForQuotation(this.generateUUID(), [""], null, null, new Delivery(), [requestForQuotationLine]);
+
+        // TODO remove this custom dimension addition once the dimension-view is improved to handle such cases
+        let handlingUnitDimension:Dimension = new Dimension();
+        handlingUnitDimension.attributeID = 'Handling Unit Length';
+        rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.transportHandlingUnit[0].measurementDimension.push(handlingUnitDimension);
+        handlingUnitDimension = new Dimension();
+        handlingUnitDimension.attributeID = 'Handling Unit Width';
+        rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.transportHandlingUnit[0].measurementDimension.push(handlingUnitDimension);
         return rfq;
     }
 
     public static createQuotation(rfq:RequestForQuotation):Quotation {
-        let quantity: Quantity = new Quantity(null, "", null);
-        let item: Item = this.createItem();
-        let price: Price = this.createPrice(null);
-        let lineItem:LineItem = new LineItem(quantity, [], new DeliveryTerms(), price, item, new Period(), null);
-        let quotationLine:QuotationLine = new QuotationLine(lineItem, null);
-
-        let delivery:Delivery = this.createDelivery();
-
+        let quotationLine:QuotationLine = new QuotationLine(rfq.requestForQuotationLine[0].lineItem);
         this.removeHjidFieldsFromObject(rfq.buyerCustomerParty);
         this.removeHjidFieldsFromObject(rfq.sellerSupplierParty);
         let customerParty:CustomerParty = rfq.buyerCustomerParty;
@@ -191,7 +198,7 @@ export class UBLModelUtils {
 
         let documentReference:DocumentReference = new DocumentReference(rfq.id);
 
-        let quotation = new Quotation(this.generateUUID(), [""], 1, documentReference, customerParty, supplierParty, delivery, [quotationLine]);
+        let quotation = new Quotation(this.generateUUID(), [""], new Code(), new Code(), 1, documentReference, customerParty, supplierParty, [quotationLine]);
         return quotation;
     }
 
@@ -199,7 +206,7 @@ export class UBLModelUtils {
         let despatchAdvice:DespatchAdvice = new DespatchAdvice();
         despatchAdvice.id = this.generateUUID();
         despatchAdvice.orderReference = [UBLModelUtils.createOrderReference(order.id)];
-        despatchAdvice.despatchLine = [new DespatchLine(order.orderLine[0].lineItem.item)];
+        despatchAdvice.despatchLine = [new DespatchLine(new Quantity(), order.orderLine[0].lineItem.item, [new Shipment()])];
         despatchAdvice.despatchSupplierParty = order.sellerSupplierParty;
         despatchAdvice.deliveryCustomerParty = order.buyerCustomerParty;
         return despatchAdvice
@@ -211,8 +218,56 @@ export class UBLModelUtils {
         receiptAdvice.despatchDocumentReference = [new DocumentReference(despatchAdvice.id)];
         receiptAdvice.deliveryCustomerParty = despatchAdvice.deliveryCustomerParty;
         receiptAdvice.despatchSupplierParty = despatchAdvice.despatchSupplierParty;
-        receiptAdvice.receiptLine = [new ReceiptLine(despatchAdvice.despatchLine[0].item)];
+        receiptAdvice.receiptLine = [new ReceiptLine(new Quantity(), [], despatchAdvice.despatchLine[0].item)];
         return receiptAdvice;
+    }
+
+    public static createTransportExecutionPlanRequestWithOrder(order:Order, transportationServiceLine:CatalogueLine):TransportExecutionPlanRequest {
+        let transportExecutionPlanRequest:TransportExecutionPlanRequest = new TransportExecutionPlanRequest();
+        transportExecutionPlanRequest.consignment[0].consolidatedShipment.push(new Shipment());
+        transportExecutionPlanRequest.id = this.generateUUID();
+        transportExecutionPlanRequest.mainTransportationService = transportationServiceLine.goodsItem.item;
+        transportExecutionPlanRequest.consignment[0].consolidatedShipment[0].goodsItem[0].item = order.orderLine[0].lineItem.item;
+        this.removeHjidFieldsFromObject(transportExecutionPlanRequest);
+        return transportExecutionPlanRequest
+    }
+
+    public static createTransportExecutionPlanRequestWithQuotation(quotation:Quotation): TransportExecutionPlanRequest {
+        let transportExecutionPlanRequest:TransportExecutionPlanRequest = new TransportExecutionPlanRequest();
+        transportExecutionPlanRequest.consignment[0].consolidatedShipment.push(new Shipment());
+        transportExecutionPlanRequest.id = this.generateUUID();
+        transportExecutionPlanRequest.mainTransportationService = quotation.quotationLine[0].lineItem.item;
+        transportExecutionPlanRequest.consignment = quotation.quotationLine[0].lineItem.delivery[0].shipment.consignment;
+        transportExecutionPlanRequest.consignment[0].consolidatedShipment = [new Shipment()];
+        this.removeHjidFieldsFromObject(transportExecutionPlanRequest);
+        return transportExecutionPlanRequest
+    }
+
+    public static createTransportExecutionPlan(transportExecutionPlanRequest:TransportExecutionPlanRequest):TransportExecutionPlan {
+        let transportExecutionPlan:TransportExecutionPlan = new TransportExecutionPlan();
+        transportExecutionPlan.id = this.generateUUID();
+        transportExecutionPlan.transportExecutionPlanRequestDocumentReference = new DocumentReference(transportExecutionPlanRequest.id);
+        transportExecutionPlan.transportUserParty = transportExecutionPlanRequest.transportUserParty;
+        transportExecutionPlan.transportServiceProviderParty = transportExecutionPlanRequest.transportServiceProviderParty;
+        this.removeHjidFieldsFromObject(transportExecutionPlan);
+        return transportExecutionPlan;
+    }
+
+    public static createItemInformationRequest():ItemInformationRequest {
+        let itemInformationRequest:ItemInformationRequest = new ItemInformationRequest();
+        itemInformationRequest.id = this.generateUUID();
+        return itemInformationRequest;
+    }
+
+    public static createItemInformationResponse(itemInformationRequest:ItemInformationRequest):ItemInformationResponse {
+        let itemInformationResponse:ItemInformationResponse = new ItemInformationResponse();
+        itemInformationResponse.itemInformationRequestDocumentReference = new DocumentReference(itemInformationRequest.id);
+        itemInformationResponse.item[0] = JSON.parse(JSON.stringify(itemInformationRequest.itemInformationRequestLine[0].salesItem[0].item));
+        itemInformationResponse.item[0].itemSpecificationDocumentReference = [];
+        itemInformationResponse.sellerSupplierParty = itemInformationRequest.sellerSupplierParty;
+        itemInformationResponse.buyerCustomerParty = itemInformationResponse.buyerCustomerParty;
+        this.removeHjidFieldsFromObject(itemInformationResponse);
+        return itemInformationResponse;
     }
 
     public static createOrderReference(orderId:string):OrderReference {
@@ -222,12 +277,12 @@ export class UBLModelUtils {
     }
 
     public static createItem():Item {
-        let item = new Item("", "", [], false, [], null, this.createItemIdentification(), null, null, [], [], [], null, [], "");
+        let item = new Item("", "", [], [], [], null, this.createItemIdentification(), null, null, [], [], [], null, null, [], "");
         return item;
     }
 
     public static createLineItem(quantity, price, item):LineItem {
-        return new LineItem(quantity, [], new DeliveryTerms(), price, item, new Period(), null);
+        return new LineItem(quantity, [], [new Delivery()], new DeliveryTerms(), price, item, new Period(), null);
     }
 
     public static createPackage():Package {
@@ -243,10 +298,6 @@ export class UBLModelUtils {
         let quantity: Quantity = this.createQuantity();
         let price: Price = new Price(amountObj, quantity);
         return price;
-    }
-
-    public static createDelivery():Delivery {
-        return new Delivery(this.createDeliveryTerms());
     }
 
     public static createDeliveryTerms():DeliveryTerms {

@@ -10,11 +10,12 @@ import {UBLModelUtils} from "../catalogue/model/ubl-model-utils";
 import {ModelUtils} from "../bpe/model/model-utils";
 import {DespatchAdvice} from "../catalogue/model/publish/despatch-advice";
 import {ReceiptAdvice} from "../catalogue/model/publish/receipt-advice";
-import {BPDataService} from "../bpe/bp-data-service";
-import {ActivityVariableParser} from "../bpe/activity-variable-parser";
+import {BPDataService} from "../bpe/bp-view/bp-data-service";
+import {ActivityVariableParser} from "../bpe/bp-view/activity-variable-parser";
 import {Quotation} from "../catalogue/model/publish/quotation";
 import {OrderResponseSimple} from "../catalogue/model/publish/order-response-simple";
 import {Order} from "../catalogue/model/publish/order";
+import {Item} from "../catalogue/model/publish/item";
 
 @Component({
     selector: 'nimble-dashboard',
@@ -47,6 +48,7 @@ export class DashboardComponent implements OnInit {
         if (this.cookieService.get("user_fullname"))
             this.fullName = this.cookieService.get("user_fullname");
         if (this.cookieService.get("user_id") && this.cookieService.get("company_id")) {
+
             if (this.cookieService.get("active_company_name")) {
                 if (this.cookieService.get("active_company_name") == null || this.cookieService.get("active_company_name") == "null")
                     this.hasCompany = false;
@@ -81,6 +83,7 @@ export class DashboardComponent implements OnInit {
 
 
     loadOrders() {
+	
         this.bpeService.getInitiatorHistory(this.cookieService.get("company_id"))
             .then(activeTasks => {
                 this.buyer_history_temp = [];
@@ -230,6 +233,7 @@ export class DashboardComponent implements OnInit {
             targetProcess = ActivityVariableParser.getProcessType(processMetadata.activityVariables);
         }
 
+
         if(targetProcess == "Ppap" && role=="seller"){
             this.bpDataService.setBpOptionParameters_NavFromDashboard(role, targetProcess, processMetadata);
             this.router.navigate(['bpe-ppap'], {
@@ -262,6 +266,15 @@ export class DashboardComponent implements OnInit {
 
     }
 
+    navigateToSearchDetails(item:Item) {
+        this.router.navigate(['/simple-search-details'],
+            { queryParams: {
+                catalogueId: item.catalogueDocumentReference.id,
+                id: item.manufacturersItemIdentification.id,
+                showOptions: true
+            }});
+    }
+
     getActionStatus(processType: string, response: any, buyer: boolean): string {
         let responseMessage;
 
@@ -273,10 +286,15 @@ export class DashboardComponent implements OnInit {
                     responseMessage = "Receipt Advice should be sent";
                 } else if (processType == 'Order') {
                     responseMessage = "Waiting for Order Response";
-                } else if (processType == 'Negotiation')
+                } else if (processType == 'Negotiation') {
                     responseMessage = "Waiting for Quotation";
                   else if (processType == 'Ppap')
                       responseMessage = "Waiting for Ppap Response";
+                } else if (processType == 'Transport_Execution_Plan') {
+                    responseMessage = "Waiting for Transport Execution Plan";
+                } else if (processType == 'Item_Information_Request') {
+                    responseMessage = 'Waiting for Information Response';
+                }
             }
 
             // messages for the seller
@@ -287,6 +305,10 @@ export class DashboardComponent implements OnInit {
                     responseMessage = "Order Response should be sent";
                 } else if (processType == 'Negotiation') {
                     responseMessage = "Quotation should be sent";
+                } else if (processType == 'Transport_Execution_Plan') {
+                    responseMessage = "Transport Execution Plan should be sent";
+                } else if (processType == 'Item_Information_Request') {
+                    responseMessage = 'Information Response should be sent';
                 }
                   else if(processType == 'Ppap'){
                     responseMessage = "Ppap Response should be sent"
@@ -322,6 +344,19 @@ export class DashboardComponent implements OnInit {
                     responseMessage = "Ppap declined";
                 }
 
+            } else if (processType == 'Transport_Execution_Plan') {
+                if (buyer) {
+                    responseMessage = "Transport Execution Plan received"
+                } else {
+                    responseMessage = "Transport Execution Plan sent"
+                }
+
+            } else if (processType == 'Item_Information_Request') {
+                if (buyer) {
+                    responseMessage = "Information Request received"
+                } else {
+                    responseMessage = "Information Response sent"
+                }
             }
         }
         return responseMessage;

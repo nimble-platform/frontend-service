@@ -4,10 +4,10 @@ import {Code} from "./code";
  */
 export class CommodityClassification {
     constructor(
-        public itemClassificationCode: Code,
-        public natureCode: Code,
-        public cargoTypeCode: Code,
-        public itemPropertyURI: string,
-        public hjid: string
+        public itemClassificationCode: Code = new Code(),
+        public natureCode: Code = new Code(),
+        public cargoTypeCode: Code = new Code(),
+        public itemPropertyURI: string = null,
+        public hjid: string = null
     ) { }
 }

@@ -2,8 +2,13 @@
                        [presentationMode]="presentationMode">
 </catalogue-line-header>
 
+<button (click)="partyRole = partyRole == 'Transport Service Provider' ? 'Manufacturer' : 'Transport Service Provider'">
+    Switch company role
+</button>
+
 <!-- images -->
-<div *ngIf="presentationMode=='edit' && catalogueLine.goodsItem.item.productImage.length == 0" class="offset-2 col-10 mt-3 mb-3">
+<div *ngIf="presentationMode=='edit' && catalogueLine.goodsItem.item.productImage.length == 0"
+     class="offset-2 col-10 mt-3 mb-3">
     <label *ngIf="catalogueLine.goodsItem.item.productImage.length == 0">Add Image</label>
     <input #image type="file" (change)="addImage($event)" multiple accept="image/*"
            style="display: none">
@@ -26,33 +31,49 @@
         <input #image type="file" (change)="addImage($event)" multiple accept="image/*"
                style="display: none">
         <img src="./assets/catalogue/add_button.png"
-            (click)="image.click()"/>
+             (click)="image.click()"/>
     </div>
 </div>
 
-<ul class="nav nav-tabs">
-    <li class="nav-item pointer">
-        <a
-                [ngClass]="{'nav-link': true, active: selectedTab === 'Product Details'}"
-                (click)="selectedTab = 'Product Details'"
-                i18n
-        >Product Details</a>
-    </li>
+<ng-container *ngIf="(presentationMode == 'edit' && partyRole == '' || partyRole == 'Manufacturer') ||
+                     (presentationMode != 'edit' && catalogueLine.goodsItem.item.transportationServiceDetails == null)">
+    <ul class="nav nav-tabs">
+        <li class="nav-item pointer">
+            <a
+                    [ngClass]="{'nav-link': true, active: selectedTab === 'Product Details'}"
+                    (click)="selectedTab = 'Product Details'"
+                    i18n
+            >Product Details</a>
+        </li>
 
-    <li class="nav-item pointer">
-        <a
-                [ngClass]="{'nav-link': true, active: selectedTab === 'Product Trading & Delivery Terms'}"
-                (click)="selectedTab = 'Product Trading & Delivery Terms'"
-                i18n
-        >Product Trading & Delivery Terms</a>
-    </li>
-</ul>
+        <li class="nav-item pointer">
+            <a
+                    [ngClass]="{'nav-link': true, active: selectedTab === 'Product Trading & Delivery Terms'}"
+                    (click)="selectedTab = 'Product Trading & Delivery Terms'"
+                    i18n
+            >Product Trading & Delivery Terms</a>
+        </li>
+    </ul>
 
-<product-details *ngIf="selectedTab === 'Product Details'"
-                 [catalogueLine]="catalogueLine"
-                 [presentationMode]="presentationMode">
-</product-details>
-<product-trading-details *ngIf="selectedTab === 'Product Trading & Delivery Terms'"
-                 [catalogueLine]="catalogueLine"
-                 [presentationMode]="presentationMode">
-</product-trading-details>
+    <product-details *ngIf="selectedTab === 'Product Details'"
+                     [catalogueLine]="catalogueLine"
+                     [presentationMode]="presentationMode">
+    </product-details>
+    <product-trading-details *ngIf="selectedTab === 'Product Trading & Delivery Terms'"
+                             [catalogueLine]="catalogueLine"
+                             [presentationMode]="presentationMode">
+    </product-trading-details>
+</ng-container>
+
+<ng-container *ngIf="(presentationMode == 'edit' && partyRole == 'Transport Service Provider') ||
+                    (presentationMode != 'edit' && catalogueLine.goodsItem.item.transportationServiceDetails != null)">
+    <ul class="nav nav-tabs mb-3">
+        <li class="nav-item pointer">
+            <a class="nav-link active" i18n>Transportation Service Details</a>
+        </li>
+    </ul>
+
+    <transportation-service-details [catalogueLine]="catalogueLine"
+                                    [presentationMode]="presentationMode">
+    </transportation-service-details>
+</ng-container>

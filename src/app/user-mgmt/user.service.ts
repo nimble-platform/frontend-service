@@ -18,6 +18,7 @@ export class UserService {
 
     userParty: Party;
 
+
     constructor(
         private http: Http,
         private cookieService: CookieService
@@ -113,6 +114,7 @@ export class UserService {
                 .catch(this.handleError)
         });
     }
+
 
     putSettings(settings: CompanySettings, userId: string): Promise<any> {
         return this.getUserParty(userId).then(party => {

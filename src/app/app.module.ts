@@ -36,7 +36,7 @@ import {CatalogueViewComponent} from "./catalogue/ubl-model-view/catalogue/catal
 import {CatalogueLinePanelComponent} from "./catalogue/ubl-model-view/catalogue/catalogue-line-panel.component";
 import {CatalogueLineViewComponent} from "./catalogue/ubl-model-view/catalogue-line/catalogue-line-view.component";
 import { ProductDetailsComponent } from './catalogue/ubl-model-view/catalogue-line/product-details.component';
-import { TradingDetailsComponent } from './bpe/trading-details.component';
+import { TradingDetailsComponent } from './bpe/bp-view/negotiation/trading-details.component';
 import { PublishService } from './catalogue/publish-and-aip.service';
 import { PropertyBlockPipe } from './catalogue/property-block-pipe';
 import { ItemPropertyDataSourcePipe } from './catalogue/item-property-data-source-pipe';
@@ -47,7 +47,7 @@ import { BPService } from './bpe/bp.service';
 import { QuantityViewComponent } from "./catalogue/ubl-model-view/quantity-view.component";
 import { AmountViewComponent } from "./catalogue/ubl-model-view/amount-view.component";
 import { ValueViewComponent } from "./catalogue/ubl-model-view/value-view.component";
-import { BPDataService } from "./bpe/bp-data-service";
+import { BPDataService } from "./bpe/bp-view/bp-data-service";
 import { ValueArrayViewComponent } from "./catalogue/ubl-model-view/value-array-view.component";
 import { BooleanViewComponent } from "./catalogue/ubl-model-view/boolean-view-component";
 import { AddressViewComponent } from "./catalogue/ubl-model-view/address-view.component";
@@ -55,9 +55,10 @@ import { CallStatusComponent } from "./common/call-status.component";
 import { CertificateViewComponent } from "./catalogue/ubl-model-view/certificate-view.component";
 import { DimensionViewComponent } from "./catalogue/ubl-model-view/dimension-view.component";
 import { CompanyRegistrationComponent } from './user-mgmt/company-registration.component';
+import { CompanyInvitationComponent } from './user-mgmt/company-invitation.component';
 import { CommonModule } from '@angular/common';
 import {CatalogueLineHeaderComponent} from "./catalogue/ubl-model-view/catalogue-line/catalogue-line-header.component";
-import {ProductBpOptionsComponent} from "./bpe/product-bp-options.component";
+import {ProductBpOptionsComponent} from "./bpe/bp-view/product-bp-options.component";
 import {RequestForQuotationComponent} from "./bpe/bp-view/negotiation/request-for-quotation.component";
 import {OrderResponseComponent} from "./bpe/bp-view/order/order-response.component";
 import {OrderBpComponent} from "./bpe/bp-view/order/order-bp.component";
@@ -72,6 +73,16 @@ import {PpapComponent} from "./bpe/bp-view/ppap/ppap.component";
 import {PpapResponseComponent} from "./bpe/bp-view/ppap/ppap-response.component";
 import {PpapViewComponent} from "./bpe/bp-view/ppap/ppap-view.component";
 import {CookieService} from "ng2-cookies";
+import {TransportationServiceDetails} from "./catalogue/ubl-model-view/catalogue-line/transportation-service-details.component";
+import {TransportExecutionPlanBpComponent} from "./bpe/bp-view/transport-execution-plan/transport-execution-plan-bp.component";
+import {TransportExecutionPlanRequestComponent} from "./bpe/bp-view/transport-execution-plan/transport-execution-plan-request.component";
+import {TransportExecutionPlanComponent} from "./bpe/bp-view/transport-execution-plan/transport-execution-plan.component";
+import {SearchContextService} from "./simple-search/search-context.service";
+import {ShipmentViewComponent} from "./catalogue/ubl-model-view/shipment-view.component";
+import {BpProductDetailsComponent} from "./bpe/bp-view/bp-product-details.component";
+import {ItemInformationRequestBpComponent} from "./bpe/bp-view/item-information-request/item-information-request-bp.component";
+import {ItemInformationRequestComponent} from "./bpe/bp-view/item-information-request/item-information-request.component";
+
 
 @NgModule({
     imports: [
@@ -115,11 +126,17 @@ import {CookieService} from "ng2-cookies";
         FulfilmentComponent,
         DespatchAdviceComponent,
         ReceiptAdviceComponent,
+        TransportExecutionPlanBpComponent,
+        TransportExecutionPlanRequestComponent,
+        TransportExecutionPlanComponent,
+        ItemInformationRequestBpComponent,
+        ItemInformationRequestComponent,
         CatalogueViewComponent,
         CatalogueLineHeaderComponent,
         CatalogueLinePanelComponent,
         CatalogueLineViewComponent,
         ProductDetailsComponent,
+        TransportationServiceDetails,
         ProductTradingDetailsComponent,
         TradingDetailsComponent,
         PropertyBlockPipe,
@@ -132,15 +149,18 @@ import {CookieService} from "ng2-cookies";
         ValueArrayViewComponent,
         ValueViewComponent,
         BooleanViewComponent,
+        ShipmentViewComponent,
         BPConfigureComponent,
         BPDetailComponent,
         BPsComponent,
         ProductBpOptionsComponent,
+        BpProductDetailsComponent,
         CallStatusComponent,
         CompanyRegistrationComponent,
         PpapComponent,
         PpapResponseComponent,
-        PpapViewComponent],
+        PpapViewComponent,
+	CompanyInvitationComponent],
     providers: [
         UserService,
         CredentialsService,
@@ -152,7 +172,8 @@ import {CookieService} from "ng2-cookies";
         PublishService,
         BPService,
         BPDataService,
-        CookieService
+        SearchContextService,
+	CookieService
     ],
     bootstrap: [
         AppComponent

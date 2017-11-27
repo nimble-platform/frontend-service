@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, Output} from "@angular/core";
 import {Quotation} from "../../../catalogue/model/publish/quotation";
-import {BPDataService} from "../../bp-data-service";
+import {BPDataService} from "../bp-data-service";
 import {ProcessVariables} from "../../model/process-variables";
 import {ProcessInstanceInputMessage} from "../../model/process-instance-input-message";
 import {ModelUtils} from "../../model/model-utils";
@@ -51,5 +51,10 @@ export class QuotationComponent {
         this.bpDataService.initRfqWithQuotation();
         this.bpDataService.setBpOptionParameters('buyer', 'Negotiation');
         this.newNegotiationInitialized.next();
+    }
+
+    initiateTransportExecutionPlan() {
+        this.bpDataService.initTransportExecutionPlanRequestWithQuotation();
+        this.bpDataService.setBpOptionParameters('buyer', 'Transport_Execution_Plan');
     }
 }

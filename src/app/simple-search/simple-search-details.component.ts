@@ -15,7 +15,7 @@ import {LineReference} from "../catalogue/model/publish/line-reference";
 import {CatalogueService} from "../catalogue/catalogue.service";
 import {CatalogueLine} from "../catalogue/model/publish/catalogue-line";
 import {CallStatus} from "../common/call-status";
-import {BPDataService} from "../bpe/bp-data-service";
+import {BPDataService} from "../bpe/bp-view/bp-data-service";
 
 @Component({
 	selector: 'simple-search-details',
@@ -25,6 +25,7 @@ import {BPDataService} from "../bpe/bp-data-service";
 
 export class SimpleSearchDetailsComponent implements OnInit {
 	bpOptionsActive:boolean = false;
+	singleMode:boolean = false;
 	getCatalogueLineStatus:CallStatus = new CallStatus();
 
 	constructor(
@@ -40,9 +41,10 @@ export class SimpleSearchDetailsComponent implements OnInit {
 			let catalogueId = params['catalogueId'];
 			this.getCatalogueLineStatus.submit();
 			this.catalogueService.getCatalogueLine(catalogueId, id).then(line => {
-				this.bpDataService.resetBpDataExceptCatalogueLine();
+				this.bpDataService.resetBpData();
 				this.bpDataService.catalogueLine = line;
 				this.bpDataService.userRole = 'buyer';
+				this.bpOptionsActive = params['showOptions'] == 'true';
 				this.getCatalogueLineStatus.callback("Retrieved product details", true);
 			}).catch(error => {
 				this.getCatalogueLineStatus.error("Failed to retrieve product details");

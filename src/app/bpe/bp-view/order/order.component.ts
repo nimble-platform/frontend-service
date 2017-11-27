@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from "@angular/core";
 import {CatalogueLine} from "../../../catalogue/model/publish/catalogue-line";
-import {BPDataService} from "../../bp-data-service";
+import {BPDataService} from "../bp-data-service";
 import {BPEService} from "../../bpe.service";
 import {UBLModelUtils} from "../../../catalogue/model/ubl-model-utils";
 import {CookieService} from "ng2-cookies";

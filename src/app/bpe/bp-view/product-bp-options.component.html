@@ -1,0 +1,37 @@
+<ng-container *ngIf="bpDataService.catalogueLine">
+    <catalogue-line-header [catalogueLine]="bpDataService.catalogueLine"
+                           [presentationMode]="'view'">
+    </catalogue-line-header>
+
+    <div *ngIf="!singleMode"
+         class="d-flex justify-content-center">
+        <button class="btn btn-success col-4 m-3"
+                (click)="closeBpOptions()">Back to Product Details &nbsp; <i class="fa fa-angle-double-up" aria-hidden="true"></i>
+        </button>
+    </div>
+
+    <!-- The following block includes the bp options that can be initiated from scratch without any previous business history-->
+    <ul *ngIf="availableProcesses.length > 0 && !singleMode" class="nav nav-tabs">
+        <li *ngFor="let process of availableProcesses">
+            <a href [ngClass]="{'nav-link': true, active: selectedOption == process}"
+               (click)="bpDataService.setProcessType(process); $event.preventDefault();"
+               i18n
+            >{{process}}</a>
+        </li>
+    </ul>
+
+    <item-information-request-bp *ngIf="selectedOption == 'Item_Information_Request'">
+    </item-information-request-bp>
+    <negotiation *ngIf="selectedOption == 'Negotiation'">
+    </negotiation>
+    <order-bp *ngIf="selectedOption == 'Order'">
+    </order-bp>
+    <fulfilment *ngIf="selectedOption == 'Fulfilment'">
+    </fulfilment>
+    <transport-execution-plan-bp *ngIf="selectedOption == 'Transport_Execution_Plan'">
+    </transport-execution-plan-bp>
+</ng-container>
+
+<call-status [callStatus]="getCatalogueLineStatus"
+             [large]="true">
+</call-status>

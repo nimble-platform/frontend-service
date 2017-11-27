@@ -6,8 +6,8 @@ import {ExternalReference} from "./external-reference";
 
 export class Attachment {
     constructor(
-        public embeddedDocumentBinaryObject: BinaryObject,
-        public externalReference: ExternalReference,
-        public hjid: string
+        public embeddedDocumentBinaryObject: BinaryObject = null,
+        public externalReference: ExternalReference = null,
+        public hjid: string = null
     ) {  }
 }

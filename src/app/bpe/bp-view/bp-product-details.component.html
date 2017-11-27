@@ -1,0 +1,17 @@
+<ng-container *ngIf="catalogueLine.goodsItem.item.transportationServiceDetails == null">
+    <product-details *ngIf="selectedTab === 'Product Characteristics'"
+                     [catalogueLine]="catalogueLine"
+                     [presentationMode]="presentationMode">
+    </product-details>
+    <product-trading-details *ngIf="selectedTab === 'Product Trading & Delivery Terms'"
+                             [catalogueLine]="catalogueLine"
+                             [presentationMode]="presentationMode">
+    </product-trading-details>
+</ng-container>
+
+<ng-container *ngIf="catalogueLine.goodsItem.item.transportationServiceDetails != null">
+    <transportation-service-details *ngIf="selectedTab === 'Service Characteristics'"
+                                    [catalogueLine]="catalogueLine"
+                                    [presentationMode]="presentationMode">
+    </transportation-service-details>
+</ng-container>

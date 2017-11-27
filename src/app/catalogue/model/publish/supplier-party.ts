@@ -4,6 +4,6 @@ import {Party} from "./party";
  */
 export class SupplierParty {
     constructor(
-        public party:Party
+        public party:Party = new Party()
     ) { }
 }

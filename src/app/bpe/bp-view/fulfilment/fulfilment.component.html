@@ -38,8 +38,7 @@
     </product-details>
     <product-trading-details *ngIf="selectedTab === 'Product Trading & Delivery Terms'"
                              [catalogueLine]="bpDataService.catalogueLine"
-                             [presentationMode]="'singlevalue'"
-                             [editPrice]="false">
+                             [presentationMode]="'singlevalue'">
     </product-trading-details>
     <despatch-advice *ngIf="selectedTab === 'Despatch Advice Details'"
                      [despatchAdvice]="bpDataService.despatchAdvice">

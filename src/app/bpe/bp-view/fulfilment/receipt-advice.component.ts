@@ -3,7 +3,7 @@ import {ReceiptAdvice} from "../../../catalogue/model/publish/receipt-advice";
 import {CallStatus} from "../../../common/call-status";
 import {UBLModelUtils} from "../../../catalogue/model/ubl-model-utils";
 import {BPEService} from "../../bpe.service";
-import {BPDataService} from "../../bp-data-service";
+import {BPDataService} from "../bp-data-service";
 import {Router} from "@angular/router";
 import {ProcessVariables} from "../../model/process-variables";
 import {ModelUtils} from "../../model/model-utils";

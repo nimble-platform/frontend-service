@@ -3,6 +3,7 @@ import {CatalogueLine} from "../../model/publish/catalogue-line";
 import {CatalogueService} from "../../catalogue.service";
 import {Router} from "@angular/router";
 import {BinaryObject} from "../../model/publish/binary-object";
+import {UserService} from "../../../user-mgmt/user.service";
 
 @Component({
     selector: 'catalogue-line-view',
@@ -14,6 +15,7 @@ import {BinaryObject} from "../../model/publish/binary-object";
 export class CatalogueLineViewComponent {
 
     selectedTab: string = "Product Details";
+    partyRole: string = "";
     @Input() catalogueLine: CatalogueLine;
     @Input() presentationMode: string;
 

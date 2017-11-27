@@ -1,13 +1,14 @@
 import {Component, Input} from "@angular/core";
 import {Order} from "../../../catalogue/model/publish/order";
 import {OrderResponseSimple} from "../../../catalogue/model/publish/order-response-simple";
-import {BPDataService} from "../../bp-data-service";
+import {BPDataService} from "../bp-data-service";
 import {BPEService} from "../../bpe.service";
 import {ProcessVariables} from "../../model/process-variables";
 import {ProcessInstanceInputMessage} from "../../model/process-instance-input-message";
 import {ModelUtils} from "../../model/model-utils";
 import {CallStatus} from "../../../common/call-status";
 import {Router} from "@angular/router";
+import {SearchContextService} from "../../../simple-search/search-context.service";
 /**
  * Created by suat on 20-Sep-17.
  */
@@ -24,6 +25,7 @@ export class OrderResponseComponent {
 
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
+                private searchContextService: SearchContextService,
                 private router:Router) {
     }
 
@@ -46,6 +48,14 @@ export class OrderResponseComponent {
 
     initiateDespatchAdvice() {
         this.bpDataService.initDespatchAdviceWithOrder();
-        this.bpDataService.setBpOptionParameters('buyer', 'Fulfilment');
+        this.bpDataService.setBpOptionParameters('seller', 'Fulfilment');
+    }
+
+    searchTransportServiceProvider() {
+        this.searchContextService.targetPartyRole = 'Transport Service Provider';
+        this.searchContextService.associatedProcessType = 'Order';
+        this.searchContextService.associatedProcessMetadata = this.bpDataService.processMetadata;
+        this.bpDataService.setBpOptionParameters('buyer', 'Transport_Execution_Plan');
+        this.router.navigate(['simple-search'], {queryParams: {targetRole: encodeURIComponent("Transport Service Provider")}});
     }
 }

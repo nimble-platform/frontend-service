@@ -8,25 +8,36 @@ export const debug=false;
 // Endpoint variables - SRFG domain
 
 export const user_mgmt_endpoint="https://nimble-platform.salzburgresearch.at/nimble/identity";
-// export const catalogue_endpoint="http://nimble-platform.salzburgresearch.at:443/catalog";
-// export const bpe_endpoint="http://nimble-platform.salzburgresearch.at:443/business-process";
+export const catalogue_endpoint="https://nimble-platform.salzburgresearch.at/nimble/catalog";
+export const bpe_endpoint="https://nimble-platform.salzburgresearch.at/nimble/business-process";
 
+// Endpoint variables - Kubernetes domain
+
+// export const user_mgmt_endpoint="http://nimble.uk-south.containers.mybluemix.net/identity";
+// export const catalogue_endpoint="http://nimble.uk-south.containers.mybluemix.net/catalog";
+// export const bpe_endpoint="http://nimble.uk-south.containers.mybluemix.net/business-process";
+
+// export const user_mgmt_endpoint="http://localhost:9096";
 // export const catalogue_endpoint="http://localhost:10095";
 // export const bpe_endpoint="http://localhost:8085";
 
-
 // Endpoint variables - BIBA domain
+// const ub_base_8090="http://hydra2.ikap.biba.uni-bremen.de:8090";
+// const ub_base_8092="http://hydra2.ikap.biba.uni-bremen.de:8092";
+
+const ub_base_8090="https://nimble-platform.salzburgresearch.at/uni-bremen-8090";
+const ub_base_8092="https://nimble-platform.salzburgresearch.at/uni-bremen-8092";
 
 // export const endpoint = 'http://localhost:8090/detectMeaningLanguageSpecific';
-export const languageEndPoint = 'http://hydra2.ikap.biba.uni-bremen.de:8090/getSupportedLanguages';
-export const endpoint = 'http://hydra2.ikap.biba.uni-bremen.de:8092/detectMeaningLanguageSpecific';
-export const logicalViewEndpoint = 'http://hydra2.ikap.biba.uni-bremen.de:8092/getLogicalView';
+export const languageEndPoint = `${ub_base_8090}/getSupportedLanguages`;
+export const endpoint = `${ub_base_8092}/detectMeaningLanguageSpecific`;
+export const logicalViewEndpoint = `${ub_base_8092}/getLogicalView`;
 // export const logicalViewEndpoint = 'http://localhost:8090/getLogicalView';
-export const propertyEndPoint = 'http://hydra2.ikap.biba.uni-bremen.de:8092/getPropertyValuesDiscretised';
+export const propertyEndPoint = `${ub_base_8092}/getPropertyValuesDiscretised`;
 // export const propertyEndPoint = 'http://localhost:8090/getPropertyValuesDiscretised';
-export const sparqlEndPoint = 'http://hydra2.ikap.biba.uni-bremen.de:8092/executeSPARQLSelect';
+export const sparqlEndPoint = `${ub_base_8092}/executeSPARQLSelect`;
 // export const sparqlEndPoint = 'http://localhost:8090/executeSPARQLSelect';
-export const sparqlOptionalSelectEndPoint = 'http://hydra2.ikap.biba.uni-bremen.de:8092/executeSPARQLOptionalSelect';
+export const sparqlOptionalSelectEndPoint = `${ub_base_8092}/executeSPARQLOptionalSelect`;
 // export const sparqlOptionalSelectEndPoint = 'http://localhost:8090/executeSPARQLOptionalSelect';
 
 // Endpoint variables - Local development via service discovery
@@ -46,15 +57,16 @@ export const sparqlOptionalSelectEndPoint = 'http://hydra2.ikap.biba.uni-bremen.
 // Endpoint variables - Local development direct links
 
 //export const user_mgmt_endpoint="http://localhost:9096";
-export const catalogue_endpoint="http://localhost:8095";
-export const bpe_endpoint="http://localhost:8081";
+//export const catalogue_endpoint="http://localhost:8095";
+//export const bpe_endpoint="http://localhost:8081";
 //export const endpoint = 'http://localhost:8090/detectMeaning'; // for local catalog search service
 //export const logicalViewEndpoint = 'http://localhost:8090/getLogicalView'; // for visualization
 
 
 // Marmotta endpoint variables
 
-export const simple_search_endpoint="http://134.168.33.237:8080/marmotta/solr/catalogue2/select";
+export const simple_search_endpoint="https://nimble-platform.salzburgresearch.at/marmotta/marmotta/solr/catalogue2/select";
+// export const simple_search_endpoint="http://134.168.33.237:8080/marmotta/solr/catalogue2/select";
 //export const simple_search_endpoint="http://134.168.33.237:8080/marmotta/solr/fredo/select";
 
 

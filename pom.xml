@@ -55,7 +55,7 @@
                 <executions>
                     <execution>
                         <id>install</id>
-                        <phase>install</phase>
+                        <phase>compile</phase>
                         <goals>
                             <goal>install-node-and-npm</goal>
                         </goals>
@@ -66,7 +66,7 @@
                     </execution>
                     <execution>
                         <id>npm install</id>
-                        <phase>install</phase>
+                        <phase>compile</phase>
                         <goals>
                             <goal>npm</goal>
                         </goals>
@@ -76,12 +76,12 @@
                     </execution>
                     <execution>
                         <id>npm run build</id>
-                        <phase>install</phase>
+                        <phase>compile</phase>
                         <goals>
                             <goal>npm</goal>
                         </goals>
                         <configuration>
-                            <arguments>run build</arguments>
+                            <arguments>run build --prod --build-optimizer</arguments>
                         </configuration>
                     </execution>
                     <execution>
@@ -129,13 +129,13 @@
                 <executions>
                     <execution>
                         <id>copy-node-modules</id>
-                        <phase>process-resources</phase>
+                        <phase>process-test-resources</phase>
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
                             <!-- @Oliver: We may remove this line, due to time reasons. This behaviour can also be achieved by 'mvn clean'-->
-                            <!-- <overwrite>true</overwrite> -->
+                            <overwrite>true</overwrite>
                             <outputDirectory>${project.build.directory}/${finalName}/node_modules</outputDirectory>
                             <resources>
                                 <resource>
@@ -146,7 +146,7 @@
                     </execution>
                     <execution>
                         <id>copy-sources</id>
-                        <phase>process-resources</phase>
+                        <phase>process-test-resources</phase>
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>

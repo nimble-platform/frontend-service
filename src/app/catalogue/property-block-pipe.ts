@@ -82,8 +82,11 @@ export class PropertyBlockPipe implements PipeTransform {
                 this.checkedProperties.push(property.id);
             }
         }
-        customPropertyBlock[this.PROPERTY_BLOCK_FIELD_PROPERTIES] = customProps;
-        this.propertyBlocks.push(customPropertyBlock);
+
+        if(customProps.length > 0) {
+            customPropertyBlock[this.PROPERTY_BLOCK_FIELD_PROPERTIES] = customProps;
+            this.propertyBlocks.push(customPropertyBlock);
+        }
     }
 
     /**

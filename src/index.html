@@ -2,59 +2,69 @@
 
 <html>
 
-	<head>
-		<base href="./">
-		<title>NIMBLE</title>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-		<link rel="icon" type="image/x-icon" href="assets/favicon.ico">
-		<link rel="stylesheet" href="bootstrap.min.css">
-		<link rel="stylesheet" href="styles.css">
+<head>
+    <base href="./">
+    <title>NIMBLE</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-        <link rel="stylesheet" type="text/css" href="https://bramp.github.io/js-sequence-diagrams/css/sequence-diagram-min.css" media="screen" />
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+    <link rel="stylesheet" href="bootstrap.min.css">
+    <link rel="stylesheet" href="styles.css">
 
-		<script src="node_modules/core-js/client/shim.min.js"></script>
-		<script src="node_modules/zone.js/dist/zone.js"></script>
-		<script src="node_modules/systemjs/dist/system.src.js"></script>
-		<script src="node_modules/gojs/release/go-debug.js"></script>
-		<script src="systemjs.config.js"></script>
-		<script src="sha256.js"></script>
-		<script>
-			var locale = navigator.language || navigator.userLanguage;
-			if (locale.length > 2)
-				locale = locale.substr(0,2);
-			document.locale = locale;
-			System.config({
-				map: {
-					text: 'systemjs-text-plugin.js',
-				}
-			});
-			System.import('main.js').catch(function(err){
-				console.error(err);
-			});
-		</script>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css"
+          href="https://bramp.github.io/js-sequence-diagrams/css/sequence-diagram-min.css" media="screen"/>
 
-		<!-- Needed for the text editor and diagram-->
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.5/ace.js" type="text/javascript"
-				charset="utf-8"></script>
-		<script src="lib/bpe/js/jquery-3.2.1.min.js"></script>
-		<script src="node_modules/underscore/underscore-min.js"></script>
-		<script src="lib/bpe/js/webfont.js"></script>
-		<script src="lib/bpe/js/snap.svg-min.js"></script>
-		<script src="lib/bpe/js/sequence-diagram-min.js"></script>
-		<script src="lib/bpe/js/svginnerhtml.min.js"></script>
+    <script src="node_modules/core-js/client/shim.min.js"></script>
+    <script src="node_modules/zone.js/dist/zone.js"></script>
+    <script src="node_modules/systemjs/dist/system.src.js"></script>
+    <script src="node_modules/gojs/release/go-debug.js"></script>
+    <script src="systemjs.config.js"></script>
+    <script src="sha256.js"></script>
+    <script>
+        var locale = navigator.language || navigator.userLanguage;
+        if (locale.length > 2)
+            locale = locale.substr(0, 2);
+        document.locale = locale;
+        System.config({
+            map: {
+                text: 'systemjs-text-plugin.js',
+            }
+        });
+        System.import('main.js').catch(function (err) {
+            console.error(err);
+        });
+    </script>
 
-	</head>
+    <!-- Needed for the text editor and diagram-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.5/ace.js" type="text/javascript"
+            charset="utf-8"></script>
+    <script src="lib/bpe/js/jquery-3.2.1.min.js"></script>
+    <script src="node_modules/underscore/underscore-min.js"></script>
+    <script src="lib/bpe/js/webfont.js"></script>
+    <script src="lib/bpe/js/snap.svg-min.js"></script>
+    <script src="lib/bpe/js/sequence-diagram-min.js"></script>
+    <script src="lib/bpe/js/svginnerhtml.min.js"></script>
 
-	<body>
-		<div class="container">
-			<nimble-app>
-				<center>
-					<img id="loading-icon" src="assets/ajax_loader.gif"/>
-				</center>
-			</nimble-app>
-		</div>
-	</body>
-  
+</head>
+
+<body>
+<div class="container">
+    <nimble-app>
+        <center>
+            <!--<img id="loading-icon" src="assets/ajax_loader.gif"/>-->
+			<div id="sk-loading-icon">
+				<div class="sk-folding-cube">
+					<div class="sk-cube1 sk-cube"></div>
+					<div class="sk-cube2 sk-cube"></div>
+					<div class="sk-cube4 sk-cube"></div>
+					<div class="sk-cube3 sk-cube"></div>
+				</div>
+			</div>
+        </center>
+    </nimble-app>
+</div>
+</body>
+
 </html>
