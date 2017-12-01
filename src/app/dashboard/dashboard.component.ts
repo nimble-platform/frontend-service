@@ -143,13 +143,11 @@ export class DashboardComponent implements OnInit {
                                 var b_comp = b.start_time;
                                 return b_comp.localeCompare(a_comp);
                             });
-                            console.log(this.buyer_history);
                         })
                         .catch(error => {
                             console.error(error);
                         });
                 }
-                console.log(this.buyer_history);
             })
             .catch(error => {
                 console.error(error);
@@ -217,7 +215,6 @@ export class DashboardComponent implements OnInit {
                             console.error(error);
                         });
                 }
-                console.log(this.seller_history);
             })
             .catch(error => {
                 console.error(error);
@@ -235,7 +232,7 @@ export class DashboardComponent implements OnInit {
 
 
         if(targetProcess == "Ppap" && role=="seller"){
-            this.bpDataService.setBpOptionParameters_NavFromDashboard(role, targetProcess, processMetadata);
+            this.bpDataService.setBpOptionParametersWithProcessMetadata(role,targetProcess,processMetadata);
             this.router.navigate(['bpe-ppap'], {
                 queryParams: {
                     catalogueId: processMetadata.product.catalogueDocumentReference.id,
@@ -245,7 +242,7 @@ export class DashboardComponent implements OnInit {
             });
         }
         else if(targetProcess == "Ppap" && role=="buyer"){
-            this.bpDataService.setBpOptionParameters_NavFromDashboard(role, targetProcess, processMetadata);
+            this.bpDataService.setBpOptionParametersWithProcessMetadata(role,targetProcess,processMetadata);
             this.router.navigate(['bpe-ppapView'], {
                 queryParams: {
                     catalogueId: processMetadata.product.catalogueDocumentReference.id,
@@ -255,7 +252,7 @@ export class DashboardComponent implements OnInit {
             });
         }
         else{
-            this.bpDataService.setBpOptionParameters_NavFromDashboard(role, targetProcess, processMetadata);
+            this.bpDataService.setBpOptionParametersWithProcessMetadata(role,targetProcess,processMetadata);
             this.router.navigate(['bpe-exec'], {
                 queryParams: {
                     catalogueId: processMetadata.product.catalogueDocumentReference.id,
@@ -288,7 +285,8 @@ export class DashboardComponent implements OnInit {
                     responseMessage = "Waiting for Order Response";
                 } else if (processType == 'Negotiation') {
                     responseMessage = "Waiting for Quotation";
-                  else if (processType == 'Ppap')
+                }
+                  else if (processType == 'Ppap') {
                       responseMessage = "Waiting for Ppap Response";
                 } else if (processType == 'Transport_Execution_Plan') {
                     responseMessage = "Waiting for Transport Execution Plan";

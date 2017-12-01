@@ -1,7 +1,7 @@
 import {Component, Input} from "@angular/core";
 import {Ppap} from "../../../catalogue/model/publish/ppap";
 import {PpapResponse} from "../../../catalogue/model/publish/ppap-response";
-import {BPDataService} from "../../bp-data-service";
+import {BPDataService} from "../bp-data-service";
 import {BPEService} from "../../bpe.service";
 import {ProcessVariables} from "../../model/process-variables";
 import {ProcessInstanceInputMessage} from "../../model/process-instance-input-message";
@@ -70,10 +70,7 @@ export class PpapResponseComponent{
 
     private fileChange(event: any,documentName:string) {
         let fileList: FileList = event.target.files;
-        console.log("FileList : ");
-        console.log(fileList);
         let binaryObjects: BinaryObject[] = [];
-        console.log(this.binaryObjects);
         if (fileList.length > 0) {
             for (let i = 0; i < fileList.length; i++) {
                 let file: File = fileList[i];
@@ -109,7 +106,6 @@ export class PpapResponseComponent{
     }
 
     responseToPpapRequest(acceptedIndicator: boolean){
-        console.log(this.binaryObjects);
         for(let i=0;i<this.binaryObjects.length;i++){
             for(let j=0;j<this.binaryObjects[i].documents.length;j++){
                 let attachment : Attachment = new Attachment(this.binaryObjects[i].documents[j],null,null);
@@ -117,7 +113,6 @@ export class PpapResponseComponent{
                 this.ppapDocuments.push(new PpapDocument(documentRef));
             }
         }
-        console.log(this.ppapDocuments);
 
 
         this.ppapResponse = UBLModelUtils.createPpapResponse(this.ppap,acceptedIndicator);
@@ -125,7 +120,7 @@ export class PpapResponseComponent{
         this.ppapResponse.note = this.noteToSend;
         let vars: ProcessVariables = ModelUtils.createProcessVariables("Ppap", this.ppap.buyerCustomerParty.party.id, this.ppap.sellerSupplierParty.party.id, this.ppapResponse);
         let piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.bpDataService.processMetadata.process_id);
-        console.log(piim);
+
 
 
         this.callStatus.submit();

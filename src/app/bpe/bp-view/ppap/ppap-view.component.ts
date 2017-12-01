@@ -1,5 +1,5 @@
 import {Component, Input} from "@angular/core";
-import {BPDataService} from "../../bp-data-service";
+import {BPDataService} from "../bp-data-service";
 import {BPEService} from "../../bpe.service";
 import {CatalogueService} from "../../../catalogue/catalogue.service";
 import {ActivatedRoute, Router} from "@angular/router";

@@ -124,3 +124,6 @@
 <div *ngIf="level" class="row justify-content-end">
     <button class="btn btn-success col-4" (click)="sendRequest()">Send Request</button>
 </div>
+<call-status [callStatus]="callStatus"
+             [large]="true">
+</call-status>

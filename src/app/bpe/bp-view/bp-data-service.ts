@@ -13,10 +13,9 @@ import {Quotation} from "../../catalogue/model/publish/quotation";
 import {Order} from "../../catalogue/model/publish/order";
 import {OrderResponseSimple} from "../../catalogue/model/publish/order-response-simple";
 import {BehaviorSubject} from "rxjs/BehaviorSubject";
-import {Ppap} from "../catalogue/model/publish/ppap";
-import {OrderReference} from "./model/order-reference";
-import {PpapResponse} from "../catalogue/model/publish/ppap-response";
-import {OrderReference} from "../model/order-reference";
+import {Ppap} from "../../catalogue/model/publish/ppap";
+import {OrderReference} from "../../bpe/model/order-reference";
+import {PpapResponse} from "../../catalogue/model/publish/ppap-response";
 import {TransportExecutionPlanRequest} from "../../catalogue/model/publish/transport-execution-plan-request";
 import {TransportExecutionPlan} from "../../catalogue/model/publish/transport-execution-plan";
 import {SearchContextService} from "../../simple-search/search-context.service";
@@ -98,7 +97,7 @@ export class BPDataService {
             }
 
 
-        } else if(this.processType.getValue() == 'Ppap'){
+        } else if(processType == 'Ppap'){
           this.ppap = ActivityVariableParser.getInitialDocument(activityVariables).value;
 
           let ppapResponseVariable = ActivityVariableParser.getResponse(activityVariables);

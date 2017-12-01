@@ -1,8 +1,8 @@
-import {DespatchAdvice} from "../catalogue/model/publish/despatch-advice";
-import {Item} from "../catalogue/model/publish/item";
-import {Order} from "../catalogue/model/publish/order";
-import {RequestForQuotation} from "../catalogue/model/publish/request-for-quotation";
-import {Ppap} from "../catalogue/model/publish/ppap";
+import {DespatchAdvice} from "../../catalogue/model/publish/despatch-advice";
+import {Item} from "../../catalogue/model/publish/item";
+import {Order} from "../../catalogue/model/publish/order";
+import {RequestForQuotation} from "../../catalogue/model/publish/request-for-quotation";
+import {Ppap} from "../../catalogue/model/publish/ppap";
 import {TransportExecutionPlanRequest} from "../../catalogue/model/publish/transport-execution-plan-request";
 import {ItemInformationRequest} from "../../catalogue/model/publish/item-information-request";
 /**

@@ -15,7 +15,7 @@ import {BPsComponent} from './bpe/bps.component';
 import {BPDetailComponent} from './bpe/bp-detail.component';
 import {BPConfigureComponent} from './bpe/bp-configure.component';
 import {CompanyRegistrationComponent} from './user-mgmt/company-registration.component';
-import {ProductBpOptionsComponent} from "./bpe/product-bp-options.component";
+import {ProductBpOptionsComponent} from "./bpe/bp-view/product-bp-options.component";
 import {PpapResponseComponent} from "./bpe/bp-view/ppap/ppap-response.component";
 import {PpapViewComponent} from "./bpe/bp-view/ppap/ppap-view.component";
 

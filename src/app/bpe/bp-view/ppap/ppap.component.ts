@@ -2,7 +2,7 @@ import {Component, Input, OnInit} from "@angular/core";
 import {BPEService} from "../../bpe.service";
 import {UserService} from "../../../user-mgmt/user.service";
 import {CookieService} from "ng2-cookies";
-import {BPDataService} from "../../bp-data-service";
+import {BPDataService} from "../bp-data-service";
 import * as myGlobals from '../../../globals';
 import {CustomerParty} from "../../../catalogue/model/publish/customer-party";
 import {SupplierParty} from "../../../catalogue/model/publish/supplier-party";
@@ -11,6 +11,8 @@ import {ProcessVariables} from "../../model/process-variables";
 import {ModelUtils} from "../../model/model-utils";
 import {ProcessInstanceInputMessage} from "../../model/process-instance-input-message";
 import {Ppap} from "../../../catalogue/model/publish/ppap";
+import {CallStatus} from "../../../common/call-status";
+import {Router} from "@angular/router";
 
 @Component({
     selector: 'ppap',
@@ -19,6 +21,7 @@ import {Ppap} from "../../../catalogue/model/publish/ppap";
 
 export class PpapComponent implements OnInit{
 
+    callStatus:CallStatus = new CallStatus();
     error_detc: boolean;
     callback: boolean;
 
@@ -31,7 +34,8 @@ export class PpapComponent implements OnInit{
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
                 private userService: UserService,
-                private cookieService: CookieService) {
+                private cookieService: CookieService,
+                private router:Router) {
     }
 
     ngOnInit() {
@@ -41,6 +45,7 @@ export class PpapComponent implements OnInit{
 
     sendRequest()
     {
+        this.callStatus.submit();
         let answer: String[] = [];
         for(var i = 0; i< this.documents.length ; i=i+1)
         {
@@ -52,7 +57,7 @@ export class PpapComponent implements OnInit{
         this.ppap.documentType = answer;
         this.ppap.note = this.note;
 
-        // final check on the rfq
+
         this.ppap.lineItem.item = this.bpDataService.modifiedCatalogueLine.goodsItem.item;
         UBLModelUtils.removeHjidFieldsFromObject(this.ppap);
 
@@ -68,14 +73,16 @@ export class PpapComponent implements OnInit{
                 this.ppap.sellerSupplierParty = new SupplierParty(sellerParty);
                 let vars:ProcessVariables = ModelUtils.createProcessVariables("Ppap", buyerId, sellerId, this.ppap);
                 let piim:ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
-
                 this.bpeService.startBusinessProcess(piim)
                     .then(res => {
+                        this.callStatus.callback("Ppap request is sent", true);
+                        this.router.navigate(['dashboard']);
                         this.error_detc = false;
                         this.callback = true;
                     })
                     .catch(error => {
                         this.error_detc = true;
+                        this.callStatus.error("Failed to send Ppap request");
                     });
             });
         });
