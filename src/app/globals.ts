@@ -65,7 +65,7 @@ export const sparqlOptionalSelectEndPoint = `${ub_base_8092}/executeSPARQLOption
 
 // Marmotta endpoint variables
 
-export const simple_search_endpoint="https://nimble-platform.salzburgresearch.at/marmotta/marmotta/solr/catalogue2/select";
+export const simple_search_endpoint="https://nimble-platform.salzburgresearch.at/marmotta/solr/catalogue2/select";
 // export const simple_search_endpoint="http://134.168.33.237:8080/marmotta/solr/catalogue2/select";
 //export const simple_search_endpoint="http://134.168.33.237:8080/marmotta/solr/fredo/select";
 
