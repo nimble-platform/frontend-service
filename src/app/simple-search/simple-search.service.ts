@@ -34,7 +34,9 @@ export class SimpleSearchService {
 		const url = `${this.url}?q=${query}&start=${start}&facet=true&sort=score%20desc&rows=10&facet.sort=count&facet.limit=30&facet.mincount=${this.facetMin}&json.nl=map&wt=json`;
 		var full_url = url + "";
 		for (let facet of facets) {
-			full_url += "&facet.field="+facet;
+			if (facet.length === 0 || !facet.trim()) {}
+			else
+				full_url += "&facet.field="+facet;
 		}
 		for (let facetQuery of facetQueries) {
 			full_url += "&fq="+encodeURIComponent(facetQuery);
