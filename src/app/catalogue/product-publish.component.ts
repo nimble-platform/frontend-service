@@ -13,7 +13,7 @@ import {Catalogue} from "./model/publish/catalogue";
 import {CookieService} from "ng2-cookies";
 import {UBLModelUtils} from "./model/ubl-model-utils";
 import {ActivatedRoute, Params, Router} from "@angular/router";
-import 'rxjs/Rx' ;
+//import 'rxjs/Rx' ;
 import {Code} from "./model/publish/code";
 import {PublishService} from "./publish-and-aip.service";
 import {UserService} from "../user-mgmt/user.service";
@@ -89,7 +89,7 @@ export class ProductPublishComponent implements OnInit {
         // "else" block is executed when redirected by "publish" tab
         if (this.pageRef == 'catalogue') {
             if(this.catalogueLine == null) {
-                this.router.navigate(['publish'], {queryParams: {pageRef: "category"}});
+                this.router.navigate(['catalogue/publish'], {queryParams: {pageRef: "category"}});
                 return;
             }
 
@@ -221,7 +221,7 @@ export class ProductPublishComponent implements OnInit {
     }
 
     private addCategoryOnClick(event: any): void {
-        this.router.navigate(['categorysearch'], {queryParams: {pageRef: "publish"}});
+        this.router.navigate(['catalogue/categorysearch'], {queryParams: {pageRef: "publish"}});
     }
 
     private publishProduct(): void {
@@ -326,7 +326,7 @@ export class ProductPublishComponent implements OnInit {
                 // avoid category duplication
                 this.categoryService.resetSelectedCategories();
                 this.publishStateService.resetData();
-                this.router.navigate(['catalogue']);
+                this.router.navigate(['catalogue/catalogue']);
 
                 this.callback = true;
                 this.error_detc = false;
@@ -565,7 +565,7 @@ export class ProductPublishComponent implements OnInit {
                 event.target.value = "";
                 catalogueService.uploadTemplate(userId, file, uploadMode).then(res => {
                         self.bulkPublishStatus.callback(null);
-                        self.router.navigate(['catalogue'], {queryParams: {forceUpdate: true}});
+                        self.router.navigate(['catalogue/catalogue'], {queryParams: {forceUpdate: true}});
                     },
                     error => {
                         self.bulkPublishStatus.error("Failed to upload the template:  " + error);
@@ -589,7 +589,7 @@ export class ProductPublishComponent implements OnInit {
                 event.target.value = "";
                 catalogueService.uploadZipPackage(file).then(res => {
                         self.bulkPublishStatus.callback(null);
-                        self.router.navigate(['catalogue'], {queryParams: {forceUpdate: true}});
+                        self.router.navigate(['catalogue/catalogue'], {queryParams: {forceUpdate: true}});
                     },
                     error => {
                         self.bulkPublishStatus.error("Failed to upload the image package:  " + error);

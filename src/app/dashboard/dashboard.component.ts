@@ -63,7 +63,7 @@ export class DashboardComponent implements OnInit {
             this.loadOrders();
         }
         else
-            this.appComponent.checkLogin("/login");
+            this.appComponent.checkLogin("/user-mgmt/login");
 		if (this.cookieService.get('bearer_token')) {
 			const at = this.cookieService.get('bearer_token');
 			if (at.split(".").length == 3) {
@@ -222,7 +222,7 @@ export class DashboardComponent implements OnInit {
     }
 
     navigateToProductDetailsPage(): void {
-        this.router.navigate(['publish'], {queryParams: {pageRef: "catalogue"}});
+        this.router.navigate(['catalogue/publish'], {queryParams: {pageRef: "catalogue"}});
     }
 
     openBpProcessView(role: string, targetProcess:string, processMetadata: any) {
@@ -231,7 +231,7 @@ export class DashboardComponent implements OnInit {
         }
 
         this.bpDataService.setBpOptionParametersWithProcessMetadata(role, targetProcess, processMetadata);
-        this.router.navigate(['bpe-exec'], {
+        this.router.navigate(['bpe/bpe-exec'], {
             queryParams: {
                 catalogueId: processMetadata.product.catalogueDocumentReference.id,
                 id: processMetadata.product.manufacturersItemIdentification.id
@@ -240,7 +240,7 @@ export class DashboardComponent implements OnInit {
     }
 
     navigateToSearchDetails(item:Item) {
-        this.router.navigate(['/simple-search-details'],
+        this.router.navigate(['/simple-search/details'],
             { queryParams: {
                 catalogueId: item.catalogueDocumentReference.id,
                 id: item.manufacturersItemIdentification.id,
