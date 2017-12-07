@@ -1,4 +1,4 @@
-import {DocumentReference} from "../../catalogue/model/publish/document-reference";
+import {DocumentReference} from "./document-reference";
 /**
  * Created by suat on 25-Aug-17.
  */

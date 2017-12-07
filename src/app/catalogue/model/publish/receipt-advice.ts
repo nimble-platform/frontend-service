@@ -2,7 +2,7 @@ import {GoodsItem} from "./goods-item";
 import {ItemLocationQuantity} from "./item-location-quantity";
 import {Period} from "./period";
 import {LineItem} from "./line-item";
-import {OrderReference} from "../../../bpe/model/order-reference";
+import {OrderReference} from "./order-reference";
 import {DespatchLine} from "./despatch-line";
 import {DocumentReference} from "./document-reference";
 import {ReceiptLine} from "./receipt-line";

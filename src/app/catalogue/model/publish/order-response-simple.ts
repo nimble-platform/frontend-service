@@ -1,6 +1,6 @@
 import {SupplierParty} from "../../../catalogue/model/publish/supplier-party";
 import {CustomerParty} from "../../../catalogue/model/publish/customer-party";
-import {OrderReference} from "../../../bpe/model/order-reference";
+import {OrderReference} from "./order-reference";
 export class OrderResponseSimple {
 	constructor(
 		public note: string = null,
