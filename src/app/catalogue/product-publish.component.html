@@ -28,7 +28,7 @@
             <h6 *ngIf="catalogueLine.goodsItem.item.commodityClassification.length > 0"
                 style="display: inline-block;"
                 i18n>Selected category:</h6>
-            <button *ngFor="let selectedCategory of selectedCategories"
+            <button *ngFor="let selectedCategory of categoryService.selectedCategories"
                     class="btn btn-info ml-3">
                 {{selectedCategory.preferredName}}
                 <span>
@@ -263,9 +263,9 @@
 <div *ngIf="!singleItemUpload">
     <div class="d-flex justify-content-end mt-3 mb-3">
         <div class="mr-auto">
-            <h6 *ngIf="selectedCategories.length > 0" style="display: inline-block;"
+            <h6 *ngIf="categoryService.selectedCategories.length > 0" style="display: inline-block;"
                 i18n>Selected category:</h6>
-            <button *ngFor="let selectedCategory of selectedCategories"
+            <button *ngFor="let selectedCategory of categoryService.selectedCategories"
                     class="btn btn-info ml-3">
                 {{selectedCategory.preferredName}}
                 <span><i
@@ -275,8 +275,8 @@
             <div (click)="addCategoryOnClick()"
                  style="display: inline-block;">
                 <img src="./assets/catalogue/add_button.png"/>
-                <span *ngIf="selectedCategories.length == 0" i18n>Select a product category</span>
-                <span *ngIf="selectedCategories.length > 0" i18n>Add another product category</span>
+                <span *ngIf="categoryService.selectedCategories.length == 0" i18n>Select a product category</span>
+                <span *ngIf="categoryService.selectedCategories.length > 0" i18n>Add another product category</span>
             </div>
         </div>
     </div>

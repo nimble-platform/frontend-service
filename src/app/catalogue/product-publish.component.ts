@@ -36,8 +36,6 @@ export class ProductPublishComponent implements OnInit {
      * data objects
      */
 
-    // reference to the selected categories for the draft item
-    private selectedCategories: Category[] = [];
     // reference to the draft item itself
     private catalogueLine: CatalogueLine = null;
     // placeholder for the custom property
@@ -58,7 +56,7 @@ export class ProductPublishComponent implements OnInit {
     private bulkPublishStatus:CallStatus = new CallStatus();
 
 
-    constructor(private categoryService: CategoryService,
+    constructor(public categoryService: CategoryService,
                 private catalogueService: CatalogueService,
                 private publishStateService: PublishService,
                 private userService: UserService,
@@ -68,8 +66,6 @@ export class ProductPublishComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.selectedCategories = this.categoryService.selectedCategories;
-
         this.route.queryParams.subscribe((params: Params) => {
             this.pageRef = params['pageRef'];
             let userId = this.cookieService.get("user_id");
@@ -93,6 +89,9 @@ export class ProductPublishComponent implements OnInit {
                 return;
             }
 
+            // reset the selected category list
+            this.categoryService.selectedCategories = [];
+
             // Get categories of item to edit
             let classificationCodes: Code[] = [];
             for (let classification of this.catalogueLine.goodsItem.item.commodityClassification) {
@@ -105,12 +104,12 @@ export class ProductPublishComponent implements OnInit {
                         // upon navigating from the catalogue view, classification codes are set as selected categories
                         if (this.pageRef) {
                             for (let category of categories) {
-                                this.selectedCategories.push(category);
+                                this.categoryService.selectedCategories.push(category);
                             }
                         }
 
-                        if (this.selectedCategories != []) {
-                            for (let category of this.selectedCategories) {
+                        if (this.categoryService.selectedCategories != []) {
+                            for (let category of this.categoryService.selectedCategories) {
                                 let newCategory = this.isNewCategory(category);
                                 if (newCategory) {
                                     this.updateItemWithNewCategory(category);
@@ -137,7 +136,7 @@ export class ProductPublishComponent implements OnInit {
                     });
                 }
 
-                for (let category of this.selectedCategories) {
+                for (let category of this.categoryService.selectedCategories) {
                     let newCategory = this.isNewCategory(category);
 
                     if (newCategory) {
@@ -157,7 +156,7 @@ export class ProductPublishComponent implements OnInit {
         let customProperties: ItemProperty[] = [];
 
         // prepare empty category fields
-        for (let category of this.selectedCategories) {
+        for (let category of this.categoryService.selectedCategories) {
             for (let property of category.properties) {
                 let aip = UBLModelUtils.createAdditionalItemProperty(property, category);
                 //aip.propertyDefinition = property.definition;
@@ -428,14 +427,14 @@ export class ProductPublishComponent implements OnInit {
     categoryCancel(categoryId: string) {
         let c = 0;
 
-        let index = this.selectedCategories.findIndex(c => c.id == categoryId);
+        let index = this.categoryService.selectedCategories.findIndex(c => c.id == categoryId);
         if (index > -1) {
 
-            for (let property of this.selectedCategories[index].properties) {
+            for (let property of this.categoryService.selectedCategories[index].properties) {
                 // check whether the property of the deleted category are included in other properties,
                 // which is the case for base eClass properties
                 c = 0;
-                for (let category of this.selectedCategories) {
+                for (let category of this.categoryService.selectedCategories) {
                     if (category.id == categoryId)
                         continue;
 
@@ -458,7 +457,7 @@ export class ProductPublishComponent implements OnInit {
                 }
             }
 
-            this.selectedCategories.splice(index, 1);
+            this.categoryService.selectedCategories.splice(index, 1);
         }
 
         let i = this.catalogueLine.goodsItem.item.commodityClassification.findIndex(c => c.itemClassificationCode.value == categoryId);
@@ -537,7 +536,7 @@ export class ProductPublishComponent implements OnInit {
 
         let userId: string = this.cookieService.get("user_id");
         var reader = new FileReader();
-        this.catalogueService.downloadTemplate(userId, this.selectedCategories)
+        this.catalogueService.downloadTemplate(userId, this.categoryService.selectedCategories)
             .then(result => {
                 var contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
                 var link = document.createElement('a');
