@@ -7,15 +7,12 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { CatalogueRoutingModule } from './catalogue-routing.module';
 
 import { CategorySearchComponent } from './category/category-search.component';
-import { CategoryService } from './category/category.service';
 import { ProductPublishComponent } from './product-publish.component';
 import { AdditionalItemPropertyComponent } from './ubl-model-view/additional-item-property.component';
-import { CatalogueService } from './catalogue.service';
 import { CatalogueViewComponent } from "./ubl-model-view/catalogue/catalogue-view.component";
 import { CatalogueLinePanelComponent } from "./ubl-model-view/catalogue/catalogue-line-panel.component";
 import { CatalogueLineViewComponent } from "./ubl-model-view/catalogue-line/catalogue-line-view.component";
 import { ProductDetailsComponent } from './ubl-model-view/catalogue-line/product-details.component';
-import { PublishService } from './publish-and-aip.service';
 import { PropertyBlockPipe } from './property-block-pipe';
 import { ItemPropertyDataSourcePipe } from './item-property-data-source-pipe';
 import { QuantityViewComponent } from "./ubl-model-view/quantity-view.component";
@@ -30,6 +27,10 @@ import { CatalogueLineHeaderComponent} from "./ubl-model-view/catalogue-line/cat
 import { ProductTradingDetailsComponent } from "./ubl-model-view/catalogue-line/product-trading-details.component";
 import { TransportationServiceDetails } from "./ubl-model-view/catalogue-line/transportation-service-details.component";
 import { ShipmentViewComponent } from "./ubl-model-view/shipment-view.component";
+
+//import { CategoryService } from './category/category.service';
+//import { CatalogueService } from './catalogue.service';
+//import { PublishService } from './publish-and-aip.service';
 
 @NgModule({
 	imports: [
@@ -86,6 +87,8 @@ import { ShipmentViewComponent } from "./ubl-model-view/shipment-view.component"
 		ShipmentViewComponent,
 		PropertyBlockPipe,
 		ItemPropertyDataSourcePipe
+	],
+	providers: [
 	]
 })
 

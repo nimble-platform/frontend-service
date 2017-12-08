@@ -11,13 +11,17 @@ import { CookieService } from 'ng2-cookies';
 import { AppCommonModule } from "./common/common.module";
 
 // ToDo: Get rid of these dependencies or offer via AppCommonModule
-import { UserService } from './user-mgmt/user.service';
 import { BPEService } from './bpe/bpe.service';
+import { BPService } from './bpe/bp.service';
 import { BPDataService } from "./bpe/bp-view/bp-data-service";
+import { CatalogueService } from "./catalogue/catalogue.service";
+import { CategoryService } from "./catalogue/category/category.service";
+import { PublishService } from "./catalogue/publish-and-aip.service";
+import { ExplorativeSearchService } from './explorative-search/explorative-search.service';
+import { SimpleSearchService } from './simple-search/simple-search.service';
 import { SearchContextService } from './simple-search/search-context.service';
-import {CatalogueService} from "./catalogue/catalogue.service";
-import {CategoryService} from "./catalogue/category/category.service";
-import {PublishService} from "./catalogue/publish-and-aip.service";
+import { UserService } from './user-mgmt/user.service';
+import { CredentialsService } from './user-mgmt/credentials.service';
 
 @NgModule({
     imports: [
@@ -35,13 +39,17 @@ import {PublishService} from "./catalogue/publish-and-aip.service";
 	],
     providers: [
 		CookieService,
-		UserService,
-        CatalogueService,
+		BPEService,
+		BPService,
+		BPDataService,
+		CatalogueService,
         CategoryService,
         PublishService,
-		BPEService,
-		BPDataService,
-		SearchContextService
+		ExplorativeSearchService,
+		SimpleSearchService,
+		SearchContextService,
+		UserService,
+		CredentialsService
     ],
     bootstrap: [
         AppComponent
