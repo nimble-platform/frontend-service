@@ -98,6 +98,8 @@ export class CategorySearchComponent implements OnInit {
         let userId = this.cookieService.get("user_id");
         this.catalogueService.getCatalogue(userId).then(catalogue => {
             this.router.navigate(['publish'], {queryParams: {pageRef: "category"}});
+        }).catch(() => {
+            this.error_detc = true;
         });
     }
 }
