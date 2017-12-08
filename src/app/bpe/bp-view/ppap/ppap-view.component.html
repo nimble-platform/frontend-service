@@ -1,18 +1,18 @@
 <div class="row space-before">
     <div class="col-12">
-        <h4 class="space-after" i18n>Ppap Request</h4>
+        <h4 class="space-after" i18n>Ppap Response</h4>
         <div *ngIf="ppapDocuments.length > 0">
             <table class="table table-striped table-bordered">
-                <tr><th>Document</th><th i18n>Download</th></tr>
-                <tr *ngFor="let document of keys">
+                <tr><th>Document</th></tr>
+                <tr *ngFor="let document of requestedDocuments">
 
-                    <td>{{document}}</td>
-                    <div>
-                        <button class="btn btn-success "
+                    <td class="d-flex">{{document}}
+
+                        <button *ngIf="keys.indexOf(document) != -1" class="btn btn-success ml-auto"
                                 (click)="downloadFile(document)">Download
                         </button>
-
-                    </div>
+                        <label *ngIf="keys.indexOf(document) == -1" class="ml-auto">No File Sent</label>
+                    </td>
                 </tr>
             </table>
         </div>

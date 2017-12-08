@@ -1,13 +1,10 @@
-<!--
-<ng-container *ngIf="bpDataService.catalogueLine">
-    <catalogue-line-header [catalogueLine]="bpDataService.catalogueLine"
-                           [presentationMode]="'view'">
-    </catalogue-line-header>
-</ng-container>
--->
 <div class="row space-before">
     <div class="col-12">
         <h4 class="space-after" i18n>Ppap Request</h4>
+        <hr>
+        <div *ngIf="documents.length == 0">
+            <h3>No File Requested</h3>
+        </div>
         <div *ngIf="documents.length > 0">
             <table class="table table-striped table-bordered">
                 <tr><th>Document</th><th i18n>Upload</th><th *ngIf="binaryObjects.length != 0">Files</th></tr>

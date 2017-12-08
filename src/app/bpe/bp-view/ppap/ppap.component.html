@@ -1,6 +1,20 @@
 <div>
     <ul class="nav nav-tabs">
         <!-- tabs specific to the ppap process -->
+        <li class="nav-item pointer">
+            <a
+                    [ngClass]="{'nav-link': true, active: selectedTab === 'Product Characteristics'}"
+                    (click)="selectedTab = 'Product Characteristics'"
+                    i18n
+            >Product Characteristics</a>
+        </li>
+        <li class="nav-item pointer">
+            <a
+                    [ngClass]="{'nav-link': true, active: selectedTab === 'Product Trading & Delivery Terms'}"
+                    (click)="selectedTab = 'Product Trading & Delivery Terms'"
+                    i18n
+            >Product Trading & Delivery Terms</a>
+        </li>
         <li *ngIf="!seller" class="nav-item pointer">
             <a
                     [ngClass]="{'nav-link': true, active: selectedTab === 'Ppap Details'}"
@@ -9,7 +23,7 @@
             >Ppap Details</a>
         </li>
         <!-- tab for the seller -->
-        <li *ngIf="bpDataService.ppapResponse && seller" class="nav-item pointer">
+        <li *ngIf="bpDataService.ppapResponse && seller && bpDataService.ppapResponse.ppapDocument == null" class="nav-item pointer">
             <a
                     [ngClass]="{'nav-link': true, active: selectedTab === 'Ppap Response'}"
                     (click)="selectedTab = 'Ppap Response'"
@@ -26,7 +40,11 @@
         </li>
     </ul>
 </div>
-
+<bp-product-details *ngIf="selectedTab == 'Product Characteristics' || selectedTab == 'Product Trading & Delivery Terms'"
+                    [catalogueLine]="bpDataService.catalogueLine"
+                    [presentationMode]="'singlevalue'"
+                    [selectedTab]="selectedTab">
+</bp-product-details>
 <ppap-response *ngIf="selectedTab=='Ppap Response'"></ppap-response>
 <ppap-view *ngIf="selectedTab=='Ppap Response Details'"></ppap-view>
 

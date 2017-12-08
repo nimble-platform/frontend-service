@@ -5,6 +5,7 @@ import {CatalogueService} from "../../../catalogue/catalogue.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {PpapResponse} from "../../../catalogue/model/publish/ppap-response";
 import {PpapDocument} from "../../../catalogue/model/publish/PpapDocument";
+import {Ppap} from "../../../catalogue/model/publish/ppap";
 
 @Component({
     selector: 'ppap-view',
@@ -29,6 +30,8 @@ export class PpapViewComponent{
     note: any;
     documents = [];
     keys = [];
+
+    requestedDocuments = [];
     ngOnInit() {
         this.route.queryParams.subscribe(params =>{
             this.processid = params['pid'];
@@ -56,6 +59,8 @@ export class PpapViewComponent{
                 this.note = this.ppapResponse.note;
                 this.keys = Object.keys(this.documents);
 
+                let ppap = task[3].value as Ppap;
+                this.requestedDocuments = ppap.documentType;
             });
         });
     }

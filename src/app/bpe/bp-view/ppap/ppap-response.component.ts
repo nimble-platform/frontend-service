@@ -34,7 +34,7 @@ export class PpapResponseComponent{
     id : any;
     catalogueId: any;
     ppap : Ppap;
-    documents: any;
+    documents = [];
     newProperty: ItemProperty = UBLModelUtils.createAdditionalItemProperty(null, null);
 
     ppapResponse : PpapResponse = null;
@@ -143,7 +143,6 @@ export class PpapResponseComponent{
         this.ppapResponse.note = this.noteToSend;
         let vars: ProcessVariables = ModelUtils.createProcessVariables("Ppap", this.ppap.buyerCustomerParty.party.id, this.ppap.sellerSupplierParty.party.id, this.ppapResponse);
         let piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.bpDataService.processMetadata.process_id);
-
 
 
         this.callStatus.submit();

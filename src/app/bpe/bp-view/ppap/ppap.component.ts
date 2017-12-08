@@ -49,16 +49,8 @@ export class PpapComponent implements OnInit{
         let currentCompanyId:string = this.cookieService.get("company_id");
         let sellerId:string = this.bpDataService.catalogueLine.goodsItem.item.manufacturerParty.id;
 
-        this.selectedTab= "Ppap Details";
-        if(currentCompanyId == sellerId){
-            this.seller = true;
-            if(this.bpDataService.ppapResponse && this.bpDataService.ppapResponse.ppapDocument != null){
-                this.selectedTab = "Ppap Response Details";
-            }
-            else{
-                this.selectedTab = "Ppap Response";
-            }
-        }
+        let flag = true;
+
         this.route.queryParams.subscribe(params =>{
             let check = params['pid'];
             if(check != null){
@@ -71,12 +63,28 @@ export class PpapComponent implements OnInit{
                         let documentName = ppap.documentType[i];
                         let obj = this.documents.find(o => o.text === documentName);
                         obj.select = true;
-                        //this.documents[index].select = true;
                     }
                     this.note = this.ppap.note;
                 });
             }
-        })
+            else{
+                this.selectedTab= "Ppap Details";
+                flag = false;
+            }
+        });
+        if(flag){
+            this.selectedTab= "Ppap Details";
+            if(currentCompanyId == sellerId){
+                this.seller = true;
+                if(this.bpDataService.ppapResponse && this.bpDataService.ppapResponse.ppapDocument != null){
+                    this.selectedTab = "Ppap Response Details";
+                }
+                else{
+                    this.selectedTab = "Ppap Response";
+                }
+            }
+        }
+
     }
 
 
@@ -102,6 +110,7 @@ export class PpapComponent implements OnInit{
         //once they are fetched continue with starting the ordering process
         let sellerId:string = this.bpDataService.catalogueLine.goodsItem.item.manufacturerParty.id;
         let buyerId:string = this.cookieService.get("company_id");
+
 
         this.userService.getParty(buyerId).then(buyerParty => {
             this.ppap.buyerCustomerParty = new CustomerParty(buyerParty);
