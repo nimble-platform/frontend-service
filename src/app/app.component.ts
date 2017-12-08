@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CookieService } from 'ng2-cookies';
-import { Router } from '@angular/router';
+import { Router, NavigationStart, NavigationEnd } from '@angular/router';
 import * as myGlobals from './globals';
 
 @Component({
@@ -12,6 +12,7 @@ import * as myGlobals from './globals';
 
 export class AppComponent implements OnInit {
 
+	public loading = false;
 	public isLoggedIn = false;
 	public isCollapsed = true;
 	public fullName = "";
@@ -22,7 +23,18 @@ export class AppComponent implements OnInit {
 	constructor(
 		private cookieService: CookieService,
 		private router: Router
-	) {	}
+	) {	
+		router.events.subscribe(event => {
+			if(event instanceof NavigationStart) {
+				this.loading = true;
+			}
+		});
+		router.events.subscribe(event => {
+			if(event instanceof NavigationEnd) {
+				this.loading = false;
+			}
+		});
+	}
 	
 	ngOnInit() {
 		this.checkLogin("");

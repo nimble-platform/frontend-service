@@ -64,21 +64,21 @@ export class DashboardComponent implements OnInit {
             this.loadOrders();
         }
         else
-            this.appComponent.checkLogin("/login");
-        if (this.cookieService.get('bearer_token')) {
-            const at = this.cookieService.get('bearer_token');
-            if (at.split(".").length == 3) {
-                const at_payload = at.split(".")[1];
-                try {
-                    const at_payload_json = JSON.parse(atob(at_payload));
-                    const at_payload_json_roles = at_payload_json["realm_access"]["roles"];
-                    this.roles = at_payload_json_roles;
-                }
-                catch(e){}
-            }
-        }
-        else
-            this.roles = [];
+            this.appComponent.checkLogin("/user-mgmt/login");
+		if (this.cookieService.get('bearer_token')) {
+			const at = this.cookieService.get('bearer_token');
+			if (at.split(".").length == 3) {
+				const at_payload = at.split(".")[1];
+				try {
+					const at_payload_json = JSON.parse(atob(at_payload));
+					const at_payload_json_roles = at_payload_json["realm_access"]["roles"];
+					this.roles = at_payload_json_roles;
+				}
+				catch(e){}
+			}
+		}
+		else
+			this.roles = [];
     }
 
 
@@ -222,15 +222,15 @@ export class DashboardComponent implements OnInit {
     }
 
     navigateToProductDetailsPage(): void {
-        this.router.navigate(['publish'], {queryParams: {pageRef: "catalogue"}});
+        this.router.navigate(['catalogue/publish'], {queryParams: {pageRef: "catalogue"}});
     }
 
     openBpProcessView(role: string, targetProcess:string, processMetadata: any) {
         if(targetProcess == null) {
             targetProcess = ActivityVariableParser.getProcessType(processMetadata.activityVariables);
         }
-        this.bpDataService.setBpOptionParametersWithProcessMetadata(role,targetProcess,processMetadata);
-        this.router.navigate(['bpe-exec'], {
+        this.bpDataService.setBpOptionParametersWithProcessMetadata(role, targetProcess, processMetadata);
+        this.router.navigate(['bpe/bpe-exec'], {
             queryParams: {
                 catalogueId: processMetadata.product.catalogueDocumentReference.id,
                 id: processMetadata.product.manufacturersItemIdentification.id,
@@ -241,7 +241,7 @@ export class DashboardComponent implements OnInit {
     }
 
     navigateToSearchDetails(item:Item) {
-        this.router.navigate(['/simple-search-details'],
+        this.router.navigate(['/simple-search/details'],
             { queryParams: {
                 catalogueId: item.catalogueDocumentReference.id,
                 id: item.manufacturersItemIdentification.id,

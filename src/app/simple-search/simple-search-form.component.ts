@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Search } from './model/search';
 import { SimpleSearchService } from './simple-search.service';
+import { Router, ActivatedRoute} from "@angular/router";
 import * as myGlobals from '../globals';
 
 @Component({
@@ -9,7 +10,7 @@ import * as myGlobals from '../globals';
 	styleUrls: ['./simple-search-form.component.css']
 })
 
-export class SimpleSearchFormComponent {
+export class SimpleSearchFormComponent implements OnInit {
 
 	product_name = myGlobals.product_name;
 	product_vendor_id = myGlobals.product_vendor_id;
@@ -33,14 +34,48 @@ export class SimpleSearchFormComponent {
 	response: any;
 
 	constructor(
-		private simpleSearchService: SimpleSearchService
+		private simpleSearchService: SimpleSearchService,
+		public route: ActivatedRoute,
+		public router: Router
 	) {
 	}
 	
+	ngOnInit(): void {
+		this.route.queryParams.subscribe(params => {
+			let q = params['q'];
+			let fq = params['fq'];
+			let p = params['p'];
+			if (fq)
+				fq = decodeURIComponent(fq).split("_SEP_");
+			else
+				fq = [];
+			// ToDo: Prevent overwrite by pagination
+			if (p && !isNaN(p)) {
+				p = parseInt(p);
+				this.page = p;
+			}
+			else
+				p = 1;
+			if (q)
+				this.getCall(q,fq,p);
+		});
+    }
+	
 	get(search: Search): void {
+		this.router.navigate(['/simple-search'], { queryParams : { q: search.q, fq: encodeURIComponent(this.facetQuery.join('_SEP_')), p: this.page } });
+	}
+	
+	getCall(q:string, fq:any, p:number) {
+		this.callback = false;
+		this.error_detc = false;
+		this.submitted = true;
+		this.model.q=q;
+		this.objToSubmit.q=q;
+		this.facetQuery=fq;
+		this.page=p;
 		this.simpleSearchService.getFields()
 		.then(res => {
-			this.simpleSearchService.get(search.q,res._body.split(","),this.facetQuery,this.page)
+			this.simpleSearchService.get(q,res._body.split(","),fq,p)
 			.then(res => {
 				this.facetObj = [];
 				this.temp = [];
@@ -91,10 +126,12 @@ export class SimpleSearchFormComponent {
 	}
 	
 	onSubmit() {
+		/*
 		this.callback = false;
 		this.error_detc = false;
-		this.objToSubmit = JSON.parse(JSON.stringify(this.model));
 		this.submitted = true;
+		*/
+		this.objToSubmit = JSON.parse(JSON.stringify(this.model));
 		this.facetQuery = [];
 		this.get(this.objToSubmit);
 	}

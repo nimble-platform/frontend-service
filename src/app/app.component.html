@@ -8,12 +8,12 @@
 	<div class="navbar-collapse" [ngbCollapse]="isCollapsed" id="navbarNavAltMarkup">
 		<ul *ngIf="!isLoggedIn" class="nav navbar-nav mr-auto">
 			<li class="nav-item" routerLinkActive="active">
-				<a class="nav-link" routerLink="/login">
+				<a class="nav-link" routerLink="/user-mgmt/login">
 					<img src="assets/login_white.png" class="inline-icon"/> <span i18n>Login</span>
 				</a>
 			</li>
 			<li class="nav-item" routerLinkActive="active">
-				<a class="nav-link" routerLink="/registration">
+				<a class="nav-link" routerLink="/user-mgmt/registration">
 					<img src="assets/register_white.png" class="inline-icon"/> <span i18n>Registration</span>
 				</a>
 			</li>
@@ -26,7 +26,7 @@
 			</li>
 			<!--<li class="nav-item" *ngIf="roles.indexOf('initial_representative')!=-1||roles.indexOf('legal_representative')!=-1" routerLinkActive="active">-->
 			<li class="nav-item" routerLinkActive="active">
-				<a class="nav-link" [routerLink]="['/categorysearch']" [queryParams]="{pageRef: 'menu'}">
+				<a class="nav-link" [routerLink]="['/catalogue/categorysearch']" [queryParams]="{pageRef: 'menu'}">
 					<img src="assets/upload_white.png" class="inline-icon"/> <span i18n>Publish</span>
 				</a>
 			</li>
@@ -45,17 +45,17 @@
 			</li>
 			<!--<li class="nav-item" *ngIf="roles.indexOf('legal_representative')!=-1" routerLinkActive="active">-->
 			<li class="nav-item" routerLinkActive="active">
-				<a class="nav-link" [routerLink]="['/bpe-design']" [queryParams]="{fromScratch: true}">
+				<a class="nav-link" [routerLink]="['/bpe/bpe-design']" [queryParams]="{fromScratch: true}">
 					<img src="assets/process_white.png" class="inline-icon"/> <span i18n>Business Process</span>
 				</a>
 			</li>
 			<li class="nav-item" *ngIf="!activeCompanyName" routerLinkActive="active">
-				<a class="nav-link" routerLink="/company-registration">
+				<a class="nav-link" routerLink="/user-mgmt/company-registration">
 					<img src="assets/register_white.png" class="inline-icon"/> <span i18n>Register a Company</span>
 				</a>
 			</li>
 			<li class="nav-item" *ngIf="roles.indexOf('legal_representative')!=-1" routerLinkActive="active">
-				<a class="nav-link" routerLink="/company-invitation">
+				<a class="nav-link" routerLink="/user-mgmt/company-invitation">
 					<img src="assets/company_white.png" class="inline-icon"/> Company Members
 				</a>
 			</li>
@@ -66,13 +66,13 @@
 					<img src="assets/avatar_white.png" class="inline-icon"/> {{fullName}}
 				</a>
 				<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuUser">
-					<a class="dropdown-item" routerLink="/company-settings" routerLinkActive="active">
+					<a class="dropdown-item" routerLink="/user-mgmt/company-settings" routerLinkActive="active">
 						<img src="assets/gear_black.png" class="inline-icon"/> Account Settings
 					</a>
-					<a class="dropdown-item" routerLink="/catalogue" routerLinkActive="active">
+					<a class="dropdown-item" routerLink="/catalogue/catalogue" routerLinkActive="active">
 						<img src="assets/catalog_black.png" class="inline-icon"/> <span i18n>Catalogue</span>
 					</a>
-					<a class="dropdown-item" routerLink="/logout">
+					<a class="dropdown-item" routerLink="/user-mgmt/logout">
 						<img src="assets/logout_black.png" class="inline-icon"/> <span i18n>Logout</span>
 					</a>
 				</div>
@@ -80,6 +80,17 @@
 		</ul>
 	</div>
 </nav>
+
+<div id="loading-bg" *ngIf="loading">
+	<div id="sk-loading-icon">
+		<div class="sk-folding-cube">
+			<div class="sk-cube1 sk-cube"></div>
+			<div class="sk-cube2 sk-cube"></div>
+			<div class="sk-cube4 sk-cube"></div>
+			<div class="sk-cube3 sk-cube"></div>
+		</div>
+	</div>
+</div>
 
 <router-outlet></router-outlet>
 
