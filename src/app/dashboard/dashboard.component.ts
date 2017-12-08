@@ -229,37 +229,14 @@ export class DashboardComponent implements OnInit {
         if(targetProcess == null) {
             targetProcess = ActivityVariableParser.getProcessType(processMetadata.activityVariables);
         }
-
-
-        if(targetProcess == "Ppap" && role=="seller"){
-            this.bpDataService.setBpOptionParametersWithProcessMetadata(role,targetProcess,processMetadata);
-            this.router.navigate(['bpe-ppap'], {
-                queryParams: {
-                    catalogueId: processMetadata.product.catalogueDocumentReference.id,
-                    id: processMetadata.product.manufacturersItemIdentification.id,
-                    pid: processMetadata.process_id
-                }
-            });
-        }
-        else if(targetProcess == "Ppap" && role=="buyer"){
-            this.bpDataService.setBpOptionParametersWithProcessMetadata(role,targetProcess,processMetadata);
-            this.router.navigate(['bpe-ppapView'], {
-                queryParams: {
-                    catalogueId: processMetadata.product.catalogueDocumentReference.id,
-                    id: processMetadata.product.manufacturersItemIdentification.id,
-                    pid: processMetadata.process_id
-                }
-            });
-        }
-        else{
-            this.bpDataService.setBpOptionParametersWithProcessMetadata(role,targetProcess,processMetadata);
-            this.router.navigate(['bpe-exec'], {
-                queryParams: {
-                    catalogueId: processMetadata.product.catalogueDocumentReference.id,
-                    id: processMetadata.product.manufacturersItemIdentification.id
-                }
-            });
-        }
+        this.bpDataService.setBpOptionParametersWithProcessMetadata(role,targetProcess,processMetadata);
+        this.router.navigate(['bpe-exec'], {
+            queryParams: {
+                catalogueId: processMetadata.product.catalogueDocumentReference.id,
+                id: processMetadata.product.manufacturersItemIdentification.id,
+                pid: processMetadata.process_id
+            }
+        });
 
     }
 
@@ -362,13 +339,6 @@ export class DashboardComponent implements OnInit {
 
     getBpOptionsMenuItems(processType: string, response: any, buyer: boolean): any {
         let bpOptionMenuItems: Array<any> = [{itemLabel: 'Business History'}];
-
-        if(processType == "Ppap" && !buyer){
-            bpOptionMenuItems.push({itemLabel:'View Ppap Request'});
-        }
-        else if(processType == "Ppap" && buyer && response){
-            bpOptionMenuItems.push({itemLabel:'View Ppap Response'});
-        }
         // messages if there is no response from the responder party
         /*if (response == null) {
             // messages for the buyer

@@ -37,7 +37,6 @@ export class CredentialsFormComponent implements OnInit {
 	post(credentials: Credentials): void {
 		this.credentialsService.post(credentials)
 		.then(res => {
-
 			if (myGlobals.debug)
 				console.log(`User logged in . Response: ${JSON.stringify(res)}`);
 

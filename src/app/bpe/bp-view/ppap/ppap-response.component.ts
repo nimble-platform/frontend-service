@@ -105,7 +105,24 @@ export class PpapResponseComponent{
         return false;
     }
 
+    remove(documentName,document): void{
+        for(var i=0;i<this.binaryObjects.length;i++){
+            if(documentName == this.binaryObjects[i].documentName){
+                for(var j=0;j<this.binaryObjects[i].documents.length;j++){
+                    if(this.binaryObjects[i].documents[j] == document){
+                        this.binaryObjects[i].documents.splice(j, 1);
+                        if(this.binaryObjects[i].documents.length == 0){
+                            this.binaryObjects.splice(i,1);
+                        }
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
     responseToPpapRequest(acceptedIndicator: boolean){
+
         for(let i=0;i<this.binaryObjects.length;i++){
             for(let j=0;j<this.binaryObjects[i].documents.length;j++){
                 let attachment : Attachment = new Attachment(this.binaryObjects[i].documents[j],null,null);
@@ -116,7 +133,13 @@ export class PpapResponseComponent{
 
 
         this.ppapResponse = UBLModelUtils.createPpapResponse(this.ppap,acceptedIndicator);
-        this.ppapResponse.ppapDocument = this.ppapDocuments;
+        if(this.ppapDocuments.length == 0){
+            this.ppapResponse.ppapDocument = [];
+        }
+        else{
+            this.ppapResponse.ppapDocument = this.ppapDocuments;
+        }
+
         this.ppapResponse.note = this.noteToSend;
         let vars: ProcessVariables = ModelUtils.createProcessVariables("Ppap", this.ppap.buyerCustomerParty.party.id, this.ppap.sellerSupplierParty.party.id, this.ppapResponse);
         let piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.bpDataService.processMetadata.process_id);
@@ -132,5 +155,6 @@ export class PpapResponseComponent{
         ).catch(
             error => this.callStatus.error("Failed to send Ppap Response")
         );
+
     }
 }

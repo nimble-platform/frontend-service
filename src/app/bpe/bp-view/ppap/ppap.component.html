@@ -1,3 +1,37 @@
+<div>
+    <ul class="nav nav-tabs">
+        <!-- tabs specific to the ppap process -->
+        <li *ngIf="!seller" class="nav-item pointer">
+            <a
+                    [ngClass]="{'nav-link': true, active: selectedTab === 'Ppap Details'}"
+                    (click)="selectedTab = 'Ppap Details'"
+                    i18n
+            >Ppap Details</a>
+        </li>
+        <!-- tab for the seller -->
+        <li *ngIf="bpDataService.ppapResponse && seller" class="nav-item pointer">
+            <a
+                    [ngClass]="{'nav-link': true, active: selectedTab === 'Ppap Response'}"
+                    (click)="selectedTab = 'Ppap Response'"
+                    i18n
+            >Ppap Response</a>
+        </li>
+        <!-- tab for the seller and the buyer-->
+        <li *ngIf="bpDataService.ppapResponse && bpDataService.ppapResponse.ppapDocument != null" class="nav-item pointer">
+            <a
+                    [ngClass]="{'nav-link': true, active: selectedTab === 'Ppap Response Details'}"
+                    (click)="selectedTab = 'Ppap Response Details'"
+                    i18n
+            >Ppap Response Details</a>
+        </li>
+    </ul>
+</div>
+
+<ppap-response *ngIf="selectedTab=='Ppap Response'"></ppap-response>
+<ppap-view *ngIf="selectedTab=='Ppap Response Details'"></ppap-view>
+
+<div *ngIf="selectedTab == 'Ppap Details'">
+
 <h6 class="space-after">
     <b> What is Production Part Approval Process (PPAP) ? </b>
 </h6>
@@ -12,9 +46,9 @@
 <p>The PPAP levels indicate which elements need to be submitted to the customer.</p>
 
 
-<label><b> Select a PPAP level : </b> </label>
+<label *ngIf="level != 0"><b> Select a PPAP level : </b> </label>
 
-<select [(ngModel)]="level" class="custom-select" (change)="setDocuments()">
+<select *ngIf="level != 0" [(ngModel)]="level" class="custom-select" (change)="setDocuments()">
     <option></option>
     <option [ngValue]='1'>Level 1</option>
     <option [ngValue]='2'>Level 2</option>
@@ -32,8 +66,8 @@
 <p *ngIf="level=='5'">Level 5 – PSW with product samples and complete supporting data available for review at the supplier’s manufacturing location.</p>
 
 
-<h3 *ngIf="level">Choose which elements of PPAP you want</h3>
-<div *ngIf="level" style='border: 1px solid black;overflow: auto'>
+<h3 *ngIf="level==0 || level==1 || level==2 || level==3 || level==4 || level==5 ">Choose which elements of PPAP you want</h3>
+<div *ngIf="level==0 || level==1 || level==2 || level==3 || level==4 || level==5 " style='border: 1px solid black;overflow: auto'>
 
     <div style="width: 50%;float: left;padding: 1em">
         <div>
@@ -108,7 +142,7 @@
             <label>Customer Specific Requirements</label>
         </div>
         <div>
-            <input [(ngModel)]="documents[17].select" type="checkbox" >
+            <input [(ngModel)]="documents[17].select" type="checkbox">
             <label>Part Submission Warrant</label>
         </div>
     </div>
@@ -116,14 +150,16 @@
 
 <hr>
 
-<value-view *ngIf="level" class="row"
+<value-view *ngIf="level==0 || level==1 || level==2 || level==3 || level==4 || level==5 " class="row"
             [presentationMode]="'edit'"
             [propName]="'Note'"
             [(value)]="note">
 </value-view>
-<div *ngIf="level" class="row justify-content-end">
+<div *ngIf="level != 0 && !seller" class="row justify-content-end">
     <button class="btn btn-success col-4" (click)="sendRequest()">Send Request</button>
 </div>
 <call-status [callStatus]="callStatus"
              [large]="true">
 </call-status>
+
+</div>

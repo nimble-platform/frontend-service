@@ -1,33 +1,41 @@
+<!--
 <ng-container *ngIf="bpDataService.catalogueLine">
     <catalogue-line-header [catalogueLine]="bpDataService.catalogueLine"
                            [presentationMode]="'view'">
     </catalogue-line-header>
 </ng-container>
+-->
 <div class="row space-before">
     <div class="col-12">
         <h4 class="space-after" i18n>Ppap Request</h4>
         <div *ngIf="documents.length > 0">
             <table class="table table-striped table-bordered">
-                <tr><th>Document</th><th i18n>Upload</th></tr>
+                <tr><th>Document</th><th i18n>Upload</th><th *ngIf="binaryObjects.length != 0">Files</th></tr>
                 <tr *ngFor="let document of documents" >
                     <td *ngIf="!isSent(document)">{{document}}</td>
                     <td *ngIf="isSent(document)" style="background-color: green;">{{document}}</td>
-                    <div (click)="file.click()"
+                    <td><div (click)="file.click()"
                          class="col-4"
                          style="display: inline-block;">
                         <input #file type="file" (change)="fileChange($event,document)" multiple accept="file/*"
                                style="display: none">
                         <img src="./assets/catalogue/add_button.png"/>
                         <span i18n>Add file</span>
+                    </div></td>
+                    <div *ngFor="let object of binaryObjects">
+                        <div *ngFor="let doc of object.documents">
+                            <td *ngIf="document == object.documentName" style="border: none">{{doc.fileName}}
+                                    <button  style="align: right" class="btn btn-xs btn-danger" (click)="remove(document,doc)"
+                            >&times;
+                                    </button>
+                            </td>
+                        </div>
                     </div>
-
-
                 </tr>
             </table>
         </div>
     </div>
 </div>
-
 <hr>
 <value-view class="row"
             [presentationMode]="'view'"

@@ -101,14 +101,14 @@ export class BPDataService {
           this.ppap = ActivityVariableParser.getInitialDocument(activityVariables).value;
 
           let ppapResponseVariable = ActivityVariableParser.getResponse(activityVariables);
-          if(ppapResponseVariable == null){
-              if(this.userRole == 'seller'){
-                  this.ppapResponse = UBLModelUtils.createPpapResponse(this.ppap,true);
+          if(ppapResponseVariable == null) {
+              if (this.userRole == 'seller') {
+                  this.ppapResponse = UBLModelUtils.createPpapResponse(this.ppap, true);
               }
+          }
               else{
                   this.ppapResponse = ppapResponseVariable.value;
               }
-          }
 
         } else if(processType == 'Fulfilment') {
             this.despatchAdvice = ActivityVariableParser.getInitialDocument(activityVariables).value;

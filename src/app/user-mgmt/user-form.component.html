@@ -31,18 +31,18 @@
 		<label for="phoneNumber" class="input-group-addon" i18n>Phone Number</label>
 		<input type="tel" class="form-control" id="phoneNumber" [(ngModel)]="model.user.phoneNumber" name="phoneNumber" #phoneNumber="ngModel">
 	</div>
-	
+
 	<button type="submit" class="btn btn-success" [disabled]="!userForm.form.valid||!passwords_matching" i18n>Submit</button>
 	<button type="button" class="btn btn-secondary space-left" (click)="userForm.reset();reset()" [hidden]="userForm.form.pristine" i18n>Reset</button>
-	
+
 	<div [hidden]="error_detc || callback || !submitted">
 		<img class="space-before" src="assets/form_loader.gif"/>
 	</div>
-	
+
 	<div [hidden]="!callback">
 		<div class="alert alert-success space-before" role="alert" i18n>Registration successful</div>
 	</div>
-	
+
 	<div *ngIf="debug">
 		<div [hidden]="!submitted">
 			<hr/>
@@ -55,5 +55,5 @@
 			<pre>{{ response | json }}</pre>
 		</div>
 	</div>
-	
+
 </form>

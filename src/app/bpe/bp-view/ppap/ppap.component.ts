@@ -12,7 +12,7 @@ import {ModelUtils} from "../../model/model-utils";
 import {ProcessInstanceInputMessage} from "../../model/process-instance-input-message";
 import {Ppap} from "../../../catalogue/model/publish/ppap";
 import {CallStatus} from "../../../common/call-status";
-import {Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 
 @Component({
     selector: 'ppap',
@@ -21,6 +21,8 @@ import {Router} from "@angular/router";
 
 export class PpapComponent implements OnInit{
 
+    selectedTab: string;
+
     callStatus:CallStatus = new CallStatus();
     error_detc: boolean;
     callback: boolean;
@@ -28,20 +30,55 @@ export class PpapComponent implements OnInit{
     level: any;
     note: any;
     ppap: Ppap;
+    seller: boolean = false;
 
-    documents: {text: string, select: boolean}[] = [];
+    documents: {text: String, select: boolean}[] = [];
 
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
                 private userService: UserService,
                 private cookieService: CookieService,
+                public route: ActivatedRoute,
                 private router:Router) {
     }
 
     ngOnInit() {
         this.bpDataService.initPpap([]);
         this.ppap = this.bpDataService.ppap;
+
+        let currentCompanyId:string = this.cookieService.get("company_id");
+        let sellerId:string = this.bpDataService.catalogueLine.goodsItem.item.manufacturerParty.id;
+
+        this.selectedTab= "Ppap Details";
+        if(currentCompanyId == sellerId){
+            this.seller = true;
+            if(this.bpDataService.ppapResponse && this.bpDataService.ppapResponse.ppapDocument != null){
+                this.selectedTab = "Ppap Response Details";
+            }
+            else{
+                this.selectedTab = "Ppap Response";
+            }
+        }
+        this.route.queryParams.subscribe(params =>{
+            let check = params['pid'];
+            if(check != null){
+                this.level = 0;
+                this.setDocuments();
+                this.bpeService.getProcessDetailsHistory(check).then(task => {
+                    let ppap = task[3].value as Ppap;
+                    let i = 0;
+                    for(;i<ppap.documentType.length;i++){
+                        let documentName = ppap.documentType[i];
+                        let obj = this.documents.find(o => o.text === documentName);
+                        obj.select = true;
+                        //this.documents[index].select = true;
+                    }
+                    this.note = this.ppap.note;
+                });
+            }
+        })
     }
+
 
     sendRequest()
     {
@@ -91,7 +128,21 @@ export class PpapComponent implements OnInit{
 
     setDocuments()
     {
-        if(this.level === 1)
+        if(this.level === 0)
+        {
+            this.documents = [
+                {text:'Design Documentation',select:false},{text:'Engineering Change Documentation',select:false},
+                {text:'Customer Engineering Approval',select:false},{text:'Design Failure Mode and Effects Analysis',select:false},
+                {text:'Process Flow Diagram',select:false},{text:'Process Failure Mode and Effects Analysis',select:false},
+                {text:'Control Plan',select:false},{text:'Measurement System Analysis Studies',select:false},
+                {text:'Dimensional Results',select:false},{text:'Records of Material / Performance Tests',select:false},
+                {text:'Initial Process Studies',select:false},{text:'Qualified Laboratory Documentation',select:false},
+                {text:'Appearance Approval Report',select:false},{text:'Sample Production Parts',select:false},
+                {text:'Master Sample',select:false},{text:'Checking Aids',select:false},
+                {text:'Customer Specific Requirements',select:false},{text:'Part Submission Warrant',select:false}
+            ];
+        }
+        else if(this.level === 1)
         {
             this.documents = [
                 {text:'Design Documentation',select:false},{text:'Engineering Change Documentation',select:false},
