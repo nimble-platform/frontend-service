@@ -26,7 +26,7 @@ import {ItemInformationResponse} from "../../catalogue/model/publish/item-inform
  */
 
 @Injectable()
-export class BPDataService {
+export class BPDataService{
     // original catalogue line to initialize the business process data
     catalogueLine:CatalogueLine;
     // catalogue line object that is kept updated based on user selections
