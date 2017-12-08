@@ -23,6 +23,16 @@ textarea {
     margin-top: -100px;
 }
 
+#loading-bg {
+	position:absolute;
+	left:0;
+	top:0;
+	height:100%;
+	width:100%;
+	background-color:rgba(255,255,255,0.7);
+	z-index:9999;
+}
+
 .nimble-bg {
     background-color: #a21c26;
 }

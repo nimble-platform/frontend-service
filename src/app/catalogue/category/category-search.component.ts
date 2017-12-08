@@ -97,7 +97,7 @@ export class CategorySearchComponent implements OnInit {
     private navigateToPublishingPage():void {
         let userId = this.cookieService.get("user_id");
         this.catalogueService.getCatalogue(userId).then(catalogue => {
-            this.router.navigate(['publish'], {queryParams: {pageRef: "category"}});
+            this.router.navigate(['catalogue/publish'], {queryParams: {pageRef: "category"}});
         }).catch(() => {
             this.error_detc = true;
         });

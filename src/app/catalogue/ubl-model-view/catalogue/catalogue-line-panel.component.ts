@@ -19,7 +19,7 @@ export class CatalogueLinePanelComponent {
 
     redirectToEdit() {
         this.catalogueService.editCatalogueLine(this.catalogueLine);
-        this.router.navigate(['publish'], {queryParams: {pageRef: "catalogue"}});
+        this.router.navigate(['catalogue/publish'], {queryParams: {pageRef: "catalogue"}});
     }
 
     deleteCatalogueLine(): void {
