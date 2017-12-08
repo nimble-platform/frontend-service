@@ -43,12 +43,11 @@
 					</a>
 				</div>
 			</li>
-			<!--<li class="nav-item" *ngIf="roles.indexOf('legal_representative')!=-1" routerLinkActive="active">-->
-			<li class="nav-item" routerLinkActive="active">
+			<!--<li class="nav-item" *ngIf="roles.indexOf('legal_representative')!=-1" routerLinkActive="active">
 				<a class="nav-link" [routerLink]="['/bpe/bpe-design']" [queryParams]="{fromScratch: true}">
 					<img src="assets/process_white.png" class="inline-icon"/> <span i18n>Business Process</span>
 				</a>
-			</li>
+			</li>-->
 			<li class="nav-item" *ngIf="!activeCompanyName" routerLinkActive="active">
 				<a class="nav-link" routerLink="/user-mgmt/company-registration">
 					<img src="assets/register_white.png" class="inline-icon"/> <span i18n>Register a Company</span>

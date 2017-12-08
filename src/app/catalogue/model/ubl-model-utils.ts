@@ -11,7 +11,7 @@ import {Party} from "./publish/party";
 import {Item} from "./publish/item";
 import {GoodsItem} from "./publish/goods-item";
 import {CatalogueLine} from "./publish/catalogue-line";
-import {OrderReference} from "../../bpe/model/order-reference";
+import {OrderReference} from "./publish/order-reference";
 import {DocumentReference} from "./publish/document-reference";
 import {Quantity} from "./publish/quantity";
 import {LineItem} from "./publish/line-item";

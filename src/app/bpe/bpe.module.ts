@@ -93,11 +93,6 @@ import { PpapViewComponent} from "./bp-view/ppap/ppap-view.component";
 		BpProductDetailsComponent,
 		ItemInformationRequestBpComponent,
 		ItemInformationRequestComponent
-	],
-	providers: [
-		BPEService,
-		BPService,
-		BPDataService
 	]
 })
 

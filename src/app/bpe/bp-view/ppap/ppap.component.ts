@@ -27,7 +27,7 @@ export class PpapComponent implements OnInit{
     error_detc: boolean;
     callback: boolean;
 
-    level: any;
+    level: any = -1;
     note: any;
     ppap: Ppap;
     seller: boolean = false;
