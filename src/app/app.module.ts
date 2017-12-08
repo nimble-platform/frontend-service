@@ -15,6 +15,9 @@ import { UserService } from './user-mgmt/user.service';
 import { BPEService } from './bpe/bpe.service';
 import { BPDataService } from "./bpe/bp-view/bp-data-service";
 import { SearchContextService } from './simple-search/search-context.service';
+import {CatalogueService} from "./catalogue/catalogue.service";
+import {CategoryService} from "./catalogue/category/category.service";
+import {PublishService} from "./catalogue/publish-and-aip.service";
 
 @NgModule({
     imports: [
@@ -33,6 +36,9 @@ import { SearchContextService } from './simple-search/search-context.service';
     providers: [
 		CookieService,
 		UserService,
+        CatalogueService,
+        CategoryService,
+        PublishService,
 		BPEService,
 		BPDataService,
 		SearchContextService

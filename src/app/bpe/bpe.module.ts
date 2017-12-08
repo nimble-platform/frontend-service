@@ -87,11 +87,6 @@ import { ItemInformationRequestComponent } from "./bp-view/item-information-requ
 		BpProductDetailsComponent,
 		ItemInformationRequestBpComponent,
 		ItemInformationRequestComponent
-	],
-	providers: [
-		BPEService,
-		BPService,
-		BPDataService
 	]
 })
 

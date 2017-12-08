@@ -86,11 +86,6 @@ import { ShipmentViewComponent } from "./ubl-model-view/shipment-view.component"
 		ShipmentViewComponent,
 		PropertyBlockPipe,
 		ItemPropertyDataSourcePipe
-	],
-	providers: [
-		CategoryService,
-        CatalogueService,
-		PublishService
 	]
 })
 
