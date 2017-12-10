@@ -3,6 +3,7 @@ import { Search } from './model/search';
 import { SimpleSearchService } from './simple-search.service';
 import { Router, ActivatedRoute} from "@angular/router";
 import * as myGlobals from '../globals';
+import {SearchContextService} from "./search-context.service";
 
 @Component({
 	selector: 'simple-search-form',
@@ -26,6 +27,7 @@ export class SimpleSearchFormComponent implements OnInit {
 	page = 1;
 	start = 0;
 	end = 0;
+	searchContext = null;
 	model = new Search('');
 	objToSubmit = new Search('');
 	facetObj: any;
@@ -35,6 +37,7 @@ export class SimpleSearchFormComponent implements OnInit {
 
 	constructor(
 		private simpleSearchService: SimpleSearchService,
+		private searchContextService: SearchContextService,
 		public route: ActivatedRoute,
 		public router: Router
 	) {
@@ -45,6 +48,7 @@ export class SimpleSearchFormComponent implements OnInit {
 			let q = params['q'];
 			let fq = params['fq'];
 			let p = params['p'];
+			let searchContext = params['searchContext'];
 			if (fq)
 				fq = decodeURIComponent(fq).split("_SEP_");
 			else
@@ -58,11 +62,17 @@ export class SimpleSearchFormComponent implements OnInit {
 				p = 1;
 			if (q)
 				this.getCall(q,fq,p);
+
+			if(searchContext == null) {
+				this.searchContextService.clearSearchContext();
+			} else {
+				this.searchContext = searchContext;
+			}
 		});
     }
 	
 	get(search: Search): void {
-		this.router.navigate(['/simple-search'], { queryParams : { q: search.q, fq: encodeURIComponent(this.facetQuery.join('_SEP_')), p: this.page } });
+		this.router.navigate(['/simple-search'], { queryParams : { q: search.q, fq: encodeURIComponent(this.facetQuery.join('_SEP_')), p: this.page, searchContext: this.searchContext } });
 	}
 	
 	getCall(q:string, fq:any, p:number) {
