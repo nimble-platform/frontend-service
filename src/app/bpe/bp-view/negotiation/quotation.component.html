@@ -87,7 +87,9 @@
                     </button>
                     <button *ngIf="bpDataService.processMetadata.processStatus == 'Completed' &&
                                    bpDataService.catalogueLine.goodsItem.item.transportationServiceDetails == null &&
-                                   bpDataService.quotation.quotationLine[0].lineItem.quantity.value > 0"
+                                   bpDataService.quotation.quotationLine[0].lineItem.quantity.value > 0 &&
+                                   bpDataService.quotation.quotationLine[0].lineItem.price.priceAmount.value != null &&
+                                   bpDataService.quotation.quotationLine[0].lineItem.price.baseQuantity.value != null"
                             class="btn btn-success" (click)="initiateOrder()">Initiate Order
                     </button>
                     <button *ngIf="bpDataService.processMetadata.processStatus == 'Completed' &&
