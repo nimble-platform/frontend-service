@@ -221,10 +221,6 @@ export class DashboardComponent implements OnInit {
             });
     }
 
-    navigateToProductDetailsPage(): void {
-        this.router.navigate(['catalogue/publish'], {queryParams: {pageRef: "catalogue"}});
-    }
-
     openBpProcessView(role: string, targetProcess:string, processMetadata: any) {
         if(targetProcess == null) {
             targetProcess = ActivityVariableParser.getProcessType(processMetadata.activityVariables);

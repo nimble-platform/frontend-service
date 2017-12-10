@@ -69,12 +69,12 @@
         </div>
 
         <!-- Publish / edit buttons -->
-        <button *ngIf="pageRef == 'category'"
+        <button *ngIf="publishStateService.publishMode == 'create'"
                 class="btn btn-success"
                 (click)="publishProduct()">
             <span i18n>Publish Product</span>
         </button>
-        <button *ngIf="pageRef == 'catalogue'"
+        <button *ngIf="publishStateService.publishMode == 'edit'"
                 class="btn btn-success btn-xs"
                 (click)="editProduct()">
             <span i18n>Save Changes</span>

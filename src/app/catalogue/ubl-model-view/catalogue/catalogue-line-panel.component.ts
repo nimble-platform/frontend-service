@@ -2,6 +2,7 @@ import {Component, Input} from "@angular/core";
 import {CatalogueLine} from "../../model/publish/catalogue-line";
 import {CatalogueService} from "../../catalogue.service";
 import {Router} from "@angular/router";
+import {PublishService} from "../../publish-and-aip.service";
 
 @Component({
     selector: 'catalogue-line-panel',
@@ -14,12 +15,15 @@ export class CatalogueLinePanelComponent {
     @Input() presentationMode: string;
 
     constructor(private catalogueService: CatalogueService,
+                private publishService: PublishService,
                 private router: Router) {
     }
 
     redirectToEdit() {
         this.catalogueService.editCatalogueLine(this.catalogueLine);
-        this.router.navigate(['catalogue/publish'], {queryParams: {pageRef: "catalogue"}});
+        this.publishService.publishMode = 'edit';
+        this.publishService.publishingStarted = false;
+        this.router.navigate(['catalogue/publish']);
     }
 
     deleteCatalogueLine(): void {

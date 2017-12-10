@@ -10,6 +10,7 @@ import {CookieService} from "ng2-cookies";
 import {CatalogueService} from "../catalogue.service";
 import {UBLModelUtils} from "../model/ubl-model-utils";
 import {UserService} from "../../user-mgmt/user.service";
+import {PublishService} from "../publish-and-aip.service";
 
 @Component({
     selector: 'category-search',
@@ -18,7 +19,7 @@ import {UserService} from "../../user-mgmt/user.service";
 
 export class CategorySearchComponent implements OnInit {
     categories: Category[];
-    pageRef: string;
+    pageRef: string = null;
 
     submitted: boolean = false;
     callback: boolean = false;
@@ -29,25 +30,19 @@ export class CategorySearchComponent implements OnInit {
                 private cookieService: CookieService,
                 private categoryService: CategoryService,
                 private catalogueService: CatalogueService,
-                private userService: UserService) {
+                private publishService:PublishService) {
     }
 
     ngOnInit(): void {
         this.route.queryParams.subscribe((params: Params) => {
             this.pageRef = params['pageRef'];
 
-            if(this.pageRef == 'menu') {
+            if(this.pageRef == null || this.pageRef == 'menu') {
                 // reset categories
                 this.categoryService.resetSelectedCategories();
                 // reset draft catalogue line
-                let userId = this.cookieService.get("user_id");
-                this.userService.getUserParty(userId).then(party => {
-                    this.catalogueService.getCatalogue(userId).then(catalogue => {
-                        this.catalogueService.draftCatalogueLine = UBLModelUtils.createCatalogueLine(catalogue.uuid, party)
-                    });
-                });
-            } else if (this.pageRef == 'publish') {
-
+                this.publishService.publishingStarted = false;
+                this.publishService.publishMode = 'create';
             }
         });
     }
@@ -97,7 +92,7 @@ export class CategorySearchComponent implements OnInit {
     private navigateToPublishingPage():void {
         let userId = this.cookieService.get("user_id");
         this.catalogueService.getCatalogue(userId).then(catalogue => {
-            this.router.navigate(['catalogue/publish'], {queryParams: {pageRef: "category"}});
+            this.router.navigate(['catalogue/publish']);
         }).catch(() => {
             this.error_detc = true;
         });
