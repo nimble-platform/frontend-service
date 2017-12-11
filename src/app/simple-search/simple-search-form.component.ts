@@ -53,21 +53,20 @@ export class SimpleSearchFormComponent implements OnInit {
 				fq = decodeURIComponent(fq).split("_SEP_");
 			else
 				fq = [];
-			// ToDo: Prevent overwrite by pagination
 			if (p && !isNaN(p)) {
 				p = parseInt(p);
+				this.size = p*10;
 				this.page = p;
 			}
 			else
 				p = 1;
-			if (q)
-				this.getCall(q,fq,p);
-
-			if(searchContext == null) {
+			if (searchContext == null) {
 				this.searchContextService.clearSearchContext();
 			} else {
 				this.searchContext = searchContext;
 			}
+			if (q)
+				this.getCall(q,fq,p);
 		});
     }
 	
@@ -121,6 +120,7 @@ export class SimpleSearchFormComponent implements OnInit {
 				}
 				this.response = JSON.parse(JSON.stringify(this.temp));
 				this.size = res.response.numFound;
+				this.page = p;
 				this.start = this.page*10-10+1;
 				this.end = this.start+res.response.docs.length-1;
 				this.callback = true;
