@@ -24,8 +24,7 @@
 					<img src="assets/list_white.png" class="inline-icon"/> <span i18n>Dashboard</span>
 				</a>
 			</li>
-			<!--<li class="nav-item" *ngIf="roles.indexOf('initial_representative')!=-1||roles.indexOf('legal_representative')!=-1" routerLinkActive="active">-->
-			<li class="nav-item" routerLinkActive="active">
+			<li class="nav-item" *ngIf="debug||roles.indexOf('initial_representative')!=-1||roles.indexOf('legal_representative')!=-1" routerLinkActive="active">
 				<a class="nav-link" [routerLink]="['/catalogue/categorysearch']" [queryParams]="{pageRef: 'menu'}">
 					<img src="assets/upload_white.png" class="inline-icon"/> <span i18n>Publish</span>
 				</a>
@@ -43,17 +42,19 @@
 					</a>
 				</div>
 			</li>
-			<!--<li class="nav-item" *ngIf="roles.indexOf('legal_representative')!=-1" routerLinkActive="active">
+			<!--
+			<li class="nav-item" *ngIf="debug||roles.indexOf('legal_representative')!=-1" routerLinkActive="active">
 				<a class="nav-link" [routerLink]="['/bpe/bpe-design']" [queryParams]="{fromScratch: true}">
 					<img src="assets/process_white.png" class="inline-icon"/> <span i18n>Business Process</span>
 				</a>
-			</li>-->
+			</li>
+			-->
 			<li class="nav-item" *ngIf="!activeCompanyName" routerLinkActive="active">
 				<a class="nav-link" routerLink="/user-mgmt/company-registration">
 					<img src="assets/register_white.png" class="inline-icon"/> <span i18n>Register a Company</span>
 				</a>
 			</li>
-			<li class="nav-item" *ngIf="roles.indexOf('legal_representative')!=-1" routerLinkActive="active">
+			<li class="nav-item" *ngIf="debug||roles.indexOf('legal_representative')!=-1" routerLinkActive="active">
 				<a class="nav-link" routerLink="/user-mgmt/company-invitation">
 					<img src="assets/company_white.png" class="inline-icon"/> Company Members
 				</a>

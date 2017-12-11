@@ -19,6 +19,7 @@ export class AppComponent implements OnInit {
 	public activeCompanyName = null;
 	public eMail = "";
 	public roles = [];
+	public debug = myGlobals.debug;
 	
 	constructor(
 		private cookieService: CookieService,

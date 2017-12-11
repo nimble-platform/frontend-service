@@ -53,21 +53,20 @@ export class SimpleSearchFormComponent implements OnInit {
 				fq = decodeURIComponent(fq).split("_SEP_");
 			else
 				fq = [];
-			// ToDo: Prevent overwrite by pagination
 			if (p && !isNaN(p)) {
 				p = parseInt(p);
+				this.size = p*10;
 				this.page = p;
 			}
 			else
 				p = 1;
-			if (q)
-				this.getCall(q,fq,p);
-
-			if(searchContext == null) {
+			if (searchContext == null) {
 				this.searchContextService.clearSearchContext();
 			} else {
 				this.searchContext = searchContext;
 			}
+			if (q)
+				this.getCall(q,fq,p);
 		});
     }
 	
@@ -95,15 +94,44 @@ export class SimpleSearchFormComponent implements OnInit {
 						if (this.simpleSearchService.checkField(facet)) {
 							this.facetObj.push({
 								"name":facet,
-								"options":[]
+								"options":[],
+								"total":0,
+								"selected":false
 							});
 							for (let facet_inner in res.facet_counts.facet_fields[facet]) {
 								this.facetObj[index].options.push({
 									"name":facet_inner,
 									"count":res.facet_counts.facet_fields[facet][facet_inner]
 								});
+								this.facetObj[index].total += res.facet_counts.facet_fields[facet][facet_inner];
+								if (this.checkFacet(this.facetObj[index].name,facet_inner))
+									this.facetObj[index].selected=true;
 							}
+							this.facetObj[index].options.sort(function(a,b){
+								var a_c = a.name;
+								var b_c = b.name;
+								return a_c.localeCompare(b_c);
+							});
+							this.facetObj[index].options.sort(function(a,b){
+								return b.count-a.count;
+							});
 							index++;
+							this.facetObj.sort(function(a,b){
+								var a_c = a.name;
+								var b_c = b.name;
+								return a_c.localeCompare(b_c);
+							});
+							this.facetObj.sort(function(a,b){
+								return b.total-a.total;
+							});
+							this.facetObj.sort(function(a,b){
+								var ret = 0;
+								if (a.selected && !b.selected)
+									ret = -1;
+								else if (!a.selected && b.selected)
+									ret = 1;
+								return ret;
+							});
 						}
 					}
 				}
@@ -121,6 +149,7 @@ export class SimpleSearchFormComponent implements OnInit {
 				}
 				this.response = JSON.parse(JSON.stringify(this.temp));
 				this.size = res.response.numFound;
+				this.page = p;
 				this.start = this.page*10-10+1;
 				this.end = this.start+res.response.docs.length-1;
 				this.callback = true;
