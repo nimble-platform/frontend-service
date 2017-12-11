@@ -94,15 +94,44 @@ export class SimpleSearchFormComponent implements OnInit {
 						if (this.simpleSearchService.checkField(facet)) {
 							this.facetObj.push({
 								"name":facet,
-								"options":[]
+								"options":[],
+								"total":0,
+								"selected":false
 							});
 							for (let facet_inner in res.facet_counts.facet_fields[facet]) {
 								this.facetObj[index].options.push({
 									"name":facet_inner,
 									"count":res.facet_counts.facet_fields[facet][facet_inner]
 								});
+								this.facetObj[index].total += res.facet_counts.facet_fields[facet][facet_inner];
+								if (this.checkFacet(this.facetObj[index].name,facet_inner))
+									this.facetObj[index].selected=true;
 							}
+							this.facetObj[index].options.sort(function(a,b){
+								var a_c = a.name;
+								var b_c = b.name;
+								return a_c.localeCompare(b_c);
+							});
+							this.facetObj[index].options.sort(function(a,b){
+								return b.count-a.count;
+							});
 							index++;
+							this.facetObj.sort(function(a,b){
+								var a_c = a.name;
+								var b_c = b.name;
+								return a_c.localeCompare(b_c);
+							});
+							this.facetObj.sort(function(a,b){
+								return b.total-a.total;
+							});
+							this.facetObj.sort(function(a,b){
+								var ret = 0;
+								if (a.selected && !b.selected)
+									ret = -1;
+								else if (!a.selected && b.selected)
+									ret = 1;
+								return ret;
+							});
 						}
 					}
 				}
