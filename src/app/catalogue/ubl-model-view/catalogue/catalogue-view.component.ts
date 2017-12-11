@@ -50,18 +50,20 @@ export class CatalogueViewComponent implements OnInit {
     }
 
     public onDeleteCatalogue(): void {
-        this.deleteCatalogueStatus.submit();
+		if (confirm("Are you sure that you want to delete your entire catalogue?")) {
+			this.deleteCatalogueStatus.submit();
 
-        this.catalogueService.deleteCatalogue().then(res => {
-                this.catalogueService.catalogue = null;
-                this.deleteCatalogueStatus.reset();
-                this.requestCatalogue(false);
-                /*this.fb_get_catalogue_callback = true;
-                 this.fb_get_catalogue_submitted = false;*/
-            },
-            error => {
-                this.deleteCatalogueStatus.error("Failed to delete catalogue");
-            }
-        );
+			this.catalogueService.deleteCatalogue().then(res => {
+					this.catalogueService.catalogue = null;
+					this.deleteCatalogueStatus.reset();
+					this.requestCatalogue(false);
+					/*this.fb_get_catalogue_callback = true;
+					 this.fb_get_catalogue_submitted = false;*/
+				},
+				error => {
+					this.deleteCatalogueStatus.error("Failed to delete catalogue");
+				}
+			);
+		}
     }
 }

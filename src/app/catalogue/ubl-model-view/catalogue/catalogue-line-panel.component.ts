@@ -3,7 +3,6 @@ import {CatalogueLine} from "../../model/publish/catalogue-line";
 import {CatalogueService} from "../../catalogue.service";
 import {Router} from "@angular/router";
 import {PublishService} from "../../publish-and-aip.service";
-import {CategoryService} from "../../category/category.service";
 
 @Component({
     selector: 'catalogue-line-panel',
@@ -17,7 +16,6 @@ export class CatalogueLinePanelComponent {
 
     constructor(private catalogueService: CatalogueService,
                 private publishService: PublishService,
-                private categoryService: CategoryService,
                 private router: Router) {
     }
 
@@ -25,11 +23,12 @@ export class CatalogueLinePanelComponent {
         this.catalogueService.editCatalogueLine(this.catalogueLine);
         this.publishService.publishMode = 'edit';
         this.publishService.publishingStarted = false;
-        this.categoryService.resetSelectedCategories();
         this.router.navigate(['catalogue/publish']);
     }
 
     deleteCatalogueLine(): void {
-        this.catalogueService.deleteCatalogueLine(this.catalogueService.catalogue.uuid, this.catalogueLine.id);
+		if (confirm("Are you sure that you want to delete this catalogue item?")) {
+			this.catalogueService.deleteCatalogueLine(this.catalogueService.catalogue.uuid, this.catalogueLine.id);
+		}
     }
 }
