@@ -74,7 +74,9 @@
                 (click)="publishProduct()">
             <span i18n>Publish Product</span>
         </button>
-        <button *ngIf="publishStateService.publishMode == 'edit'"
+        <button *ngIf="publishStateService.publishMode == 'edit' &&
+                       (productCategoryRetrievalStatus.fb_submitted == false ||
+                        productCategoryRetrievalStatus.fb_submitted == true && productCategoryRetrievalStatus.fb_callback == true)"
                 class="btn btn-success btn-xs"
                 (click)="editProduct()">
             <span i18n>Save Changes</span>
@@ -91,6 +93,10 @@
                              [catalogueLine]="catalogueLine"
                              [presentationMode]="'edit'">
         </catalogue-line-view>
+
+        <!-- loader for retrieval of the details of the product categories -->
+        <call-status [callStatus]="productCategoryRetrievalStatus">
+        </call-status>
 
         <!-- new property block -->
         <hr class="mt-5">

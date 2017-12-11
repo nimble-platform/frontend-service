@@ -50,7 +50,7 @@ export class ProductPublishComponent implements OnInit {
     private error_detc = false;
 
     private bulkPublishStatus: CallStatus = new CallStatus();
-
+    private productCategoryRetrievalStatus: CallStatus = new CallStatus();
 
     constructor(public categoryService: CategoryService,
                 private catalogueService: CatalogueService,
@@ -66,7 +66,6 @@ export class ProductPublishComponent implements OnInit {
 
             let userId = this.cookieService.get("user_id");
             this.userService.getUserParty(userId).then(party => {
-
                 this.catalogueService.getCatalogue(userId).then(catalogue => {
                     this.initView(party, catalogue);
                     this.publishStateService.publishingStarted = true;
@@ -92,21 +91,21 @@ export class ProductPublishComponent implements OnInit {
             }
 
             // Get categories of item to edit
-            let classificationCodes: Code[] = [];
-            for (let classification of this.catalogueLine.goodsItem.item.commodityClassification) {
-                classificationCodes.push(classification.itemClassificationCode);
-            }
+            if(this.publishStateService.publishingStarted == false) {
+                let classificationCodes: Code[] = [];
+                for (let classification of this.catalogueLine.goodsItem.item.commodityClassification) {
+                    classificationCodes.push(classification.itemClassificationCode);
+                }
 
-            if (classificationCodes.length > 0) {
-                // temporarily store publishing started variable as it will be used inside the following callback
-                let publishingModeStarted = this.publishStateService.publishingStarted;
-                this.categoryService.getCategoriesByIds(classificationCodes).then(
-                    (categories: Category[]) => {
+                if (classificationCodes.length > 0) {
+                    // temporarily store publishing started variable as it will be used inside the following callback
+                    this.productCategoryRetrievalStatus.submit();
+                    //let publishingModeStarted = this.publishStateService.publishingStarted;
+                    this.categoryService.getCategoriesByIds(classificationCodes).then((categories: Category[]) => {
                         // upon navigating from the catalogue view, classification codes are set as selected categories
-                        if(publishingModeStarted == false) {
-                            for (let category of categories) {
-                                this.categoryService.selectedCategories.push(category);
-                            }
+
+                        for (let category of categories) {
+                            this.categoryService.selectedCategories.push(category);
                         }
 
                         if (this.categoryService.selectedCategories != []) {
@@ -121,7 +120,19 @@ export class ProductPublishComponent implements OnInit {
                         // Following method is called when editing to make sure the item has
                         // all properties of its categories in the correct order
                         this.restoreItemProperties();
-                    });
+                        this.productCategoryRetrievalStatus.callback('Retrieved product categories', true);
+                    }).catch(err =>
+                        this.productCategoryRetrievalStatus.error('Failed to get product categories')
+                    );
+                }
+
+            } else {
+                for (let category of this.categoryService.selectedCategories) {
+                    let newCategory = this.isNewCategory(category);
+                    if (newCategory) {
+                        this.updateItemWithNewCategory(category);
+                    }
+                }
             }
 
         } else {
