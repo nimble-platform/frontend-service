@@ -299,7 +299,7 @@
                 <li>Replace mode: All previously published items are deleted; and only the new ones are added to the catalogue.</li>
             </ul>
         </label>
-        <select #uploadModeSelect class="col-3 btn btn-success align-self-start" style="text-align-last:center;">
+        <select #uploadModeSelect class="col-3 btn btn-secondary align-self-start" style="text-align-last:center;" (change)="checkMode(uploadModeSelect.value)">
             <option value="append">Append</option>
             <option value="replace">Replace</option>
         </select>

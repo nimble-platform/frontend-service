@@ -16,8 +16,9 @@
 				In order to execute business processes your company needs to be verified by an administrator - please stay tuned.
 			</ngb-alert>
 		</p>
-		<div class="space-before">
-			<span i18n>Welcome to the</span> <img class="img-sm" src="assets/nimble_logo.png"/> <span i18n>platform,</span> {{fullName}}!
+		<div class="space-before nimble-col">
+			<span i18n>Welcome to the</span> NIMBLE <span i18n>platform,</span> {{fullName}}!<br/>
+			<i><small>Collaborative Network for Industry, Manufacturing, Business and Logistics in Europe.</small></i>
 		</div>
 	</div>
 </div>
@@ -51,6 +52,9 @@
 										   (click)="openBpProcessView('seller', menuItem.targetProcess ,processMetadata)">
 										{{menuItem.itemLabel}}
 									</label>
+								</div>
+								<div class="dropdown-item">
+									<label (click)="cancelBP(processMetadata.process_id)">Cancel Process</label>
 								</div>
 							</div>
 						</div>
@@ -96,6 +100,9 @@
 										   (click)="openBpProcessView('buyer', menuItem.targetProcess, processMetadata)">
 										{{menuItem.itemLabel}}
 									</label>
+								</div>
+								<div class="dropdown-item">
+									<label (click)="cancelBP(processMetadata.process_id)">Cancel Process</label>
 								</div>
 							</div>
 						</div>

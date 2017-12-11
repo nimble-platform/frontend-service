@@ -67,6 +67,10 @@ export class ProductPublishComponent implements OnInit {
             let userId = this.cookieService.get("user_id");
             this.userService.getUserParty(userId).then(party => {
                 this.catalogueService.getCatalogue(userId).then(catalogue => {
+
+                    if (this.publishStateService.publishingStarted == false) {
+                        this.categoryService.resetSelectedCategories();
+                    }
                     this.initView(party, catalogue);
                     this.publishStateService.publishingStarted = true;
 
@@ -226,6 +230,11 @@ export class ProductPublishComponent implements OnInit {
             localStorage.setItem(uploadModalityKey, "bulkUpload");
         }
     }
+	
+	private checkMode(mode: string) {
+		if (mode == "replace")
+			alert("Beware: All previously published items are deleted and only the new ones are added to the catalogue in replace mode!");
+	}
 
     private addCategoryOnClick(event: any): void {
         this.router.navigate(['catalogue/categorysearch'], {queryParams: {pageRef: "publish"}});
