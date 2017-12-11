@@ -68,10 +68,6 @@ export class ProductPublishComponent implements OnInit {
             this.userService.getUserParty(userId).then(party => {
 
                 this.catalogueService.getCatalogue(userId).then(catalogue => {
-
-                    if (this.publishStateService.publishingStarted == false) {
-                        this.categoryService.resetSelectedCategories();
-                    }
                     this.initView(party, catalogue);
                     this.publishStateService.publishingStarted = true;
 
