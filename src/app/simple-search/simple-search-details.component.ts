@@ -27,11 +27,13 @@ export class SimpleSearchDetailsComponent implements OnInit {
 	bpOptionsActive:boolean = false;
 	singleMode:boolean = false;
 	getCatalogueLineStatus:CallStatus = new CallStatus();
+	public roles = [];
 
 	constructor(
 		public catalogueService: CatalogueService,
 		public bpDataService: BPDataService,
-		public route: ActivatedRoute
+		public route: ActivatedRoute,
+		public cookieService: CookieService
 	) {
 	}
 	
@@ -50,5 +52,19 @@ export class SimpleSearchDetailsComponent implements OnInit {
 				this.getCatalogueLineStatus.error("Failed to retrieve product details");
 			});
 		});
+		if (this.cookieService.get('bearer_token')) {
+			const at = this.cookieService.get('bearer_token');
+			if (at.split(".").length == 3) {
+				const at_payload = at.split(".")[1];
+				try {
+					const at_payload_json = JSON.parse(atob(at_payload));
+					const at_payload_json_roles = at_payload_json["realm_access"]["roles"];
+					this.roles = at_payload_json_roles;
+				}
+				catch(e){}
+			}
+		}
+		else
+			this.roles = [];
     }
 }

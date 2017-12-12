@@ -4,6 +4,7 @@ import {CatalogueService} from "../../catalogue.service";
 import {Router} from "@angular/router";
 import {BinaryObject} from "../../model/publish/binary-object";
 import {UserService} from "../../../user-mgmt/user.service";
+import * as myGlobals from '../../../globals';
 
 @Component({
     selector: 'catalogue-line-view',
@@ -16,6 +17,7 @@ export class CatalogueLineViewComponent {
 
     selectedTab: string = "Product Details";
     partyRole: string = "";
+	public debug = myGlobals.debug;
     @Input() catalogueLine: CatalogueLine;
     @Input() presentationMode: string;
 
