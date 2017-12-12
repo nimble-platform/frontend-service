@@ -28,6 +28,7 @@ export class SimpleSearchDetailsComponent implements OnInit {
 	singleMode:boolean = false;
 	getCatalogueLineStatus:CallStatus = new CallStatus();
 	public roles = [];
+	public debug = myGlobals.debug;
 
 	constructor(
 		public catalogueService: CatalogueService,
