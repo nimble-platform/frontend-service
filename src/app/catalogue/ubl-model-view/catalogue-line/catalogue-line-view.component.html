@@ -2,7 +2,7 @@
                        [presentationMode]="presentationMode">
 </catalogue-line-header>
 
-<button (click)="partyRole = partyRole == 'Transport Service Provider' ? 'Manufacturer' : 'Transport Service Provider'">
+<button *ngIf="debug" (click)="partyRole = partyRole == 'Transport Service Provider' ? 'Manufacturer' : 'Transport Service Provider'">
     Switch company role
 </button>
 
