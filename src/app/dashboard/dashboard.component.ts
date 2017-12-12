@@ -87,7 +87,7 @@ export class DashboardComponent implements OnInit {
                 this.buyer_history_temp = [];
                 this.buyer_history = [];
                 for (let task of activeTasks) {
-					if (task.deleteReason!="deleted") {
+					//if (task.deleteReason!="deleted") {
 						var time_offset = -(new Date().getTimezoneOffset() / 60);
 						var time_locale = new Date(new Date().setTime(new Date(task.startTime).getTime() + (time_offset * 60 * 60 * 1000))).toLocaleTimeString();
 						this.buyer_history_temp.push({
@@ -95,13 +95,14 @@ export class DashboardComponent implements OnInit {
 							"task_name": task.name,
 							"task_description": task.description,
 							"process_id": task.processInstanceId,
-							"start_time": new Date(task.startTime).toLocaleDateString() + "\n" + time_locale
+							"status_code": task.deleteReason,
+							"start_time": new Date(task.startTime).toLocaleDateString() + " " + time_locale
 						});
 
 						this.bpeService.getProcessDetailsHistory(task.processInstanceId)
 							.then(activityVariables => {
 
-								var vContent = "", vNote = "", vActionStatus = "", vBPStatus = "",
+								var vContent = "", vNote = "", vStatusCode = "", vActionStatus = "", vBPStatus = "",
 									vTask_id = "", vProcess_id = "", vStart_time = "", vSellerName = "", vProduct,
 									vBpOptionMenuItems: any;
 								var vProcessType = ActivityVariableParser.getProcessType(activityVariables);
@@ -120,6 +121,7 @@ export class DashboardComponent implements OnInit {
 									if (t.process_id == vProcess_id) {
 										vTask_id = t.task_id;
 										vStart_time = t.start_time;
+										vStatusCode = t.status_code;
 									}
 								}
 
@@ -132,6 +134,7 @@ export class DashboardComponent implements OnInit {
 									"product": vProduct,
 									"note": vNote,
 									"processStatus": vBPStatus,
+									"statusCode": vStatusCode,
 									"actionStatus": vActionStatus,
 									"content": vContent,
 									"activityVariables": activityVariables,
@@ -147,7 +150,7 @@ export class DashboardComponent implements OnInit {
 							.catch(error => {
 								console.error(error);
 							});
-					}
+					//}
                 }
             })
             .catch(error => {
@@ -159,19 +162,22 @@ export class DashboardComponent implements OnInit {
                 this.seller_history_temp = [];
                 this.seller_history = [];
                 for (let task of res) {
-					if (task.deleteReason!="deleted") {
+					//if (task.deleteReason!="deleted") {
+						var time_offset = -(new Date().getTimezoneOffset() / 60);
+						var time_locale = new Date(new Date().setTime(new Date(task.startTime).getTime() + (time_offset * 60 * 60 * 1000))).toLocaleTimeString();
 						this.seller_history_temp.push({
 							"task_id": task.id,
 							"task_name": task.name,
 							"task_description": task.description,
 							"process_id": task.processInstanceId,
-							"start_time": new Date(task.startTime).toLocaleDateString() + "\n" + new Date(task.startTime).toLocaleTimeString()
+							"status_code": task.deleteReason,
+							"start_time": new Date(task.startTime).toLocaleDateString() + " " + time_locale
 						});
 
 						this.bpeService.getProcessDetailsHistory(task.processInstanceId)
 							.then(activityVariables => {
 
-								var vContent = "", vNote = "", vActionStatus = "", vBPStatus = "",
+								var vContent = "", vNote = "", vStatusCode= "", vActionStatus = "", vBPStatus = "",
 									vTask_id = "", vProcess_id = "", vStart_time = "", vBuyerName = "", vProduct,
 									vBpOptionMenuItems: any;
 								var vProcessType = ActivityVariableParser.getProcessType(activityVariables);
@@ -190,6 +196,7 @@ export class DashboardComponent implements OnInit {
 									if (t.process_id == vProcess_id) {
 										vTask_id = t.task_id;
 										vStart_time = t.start_time;
+										vStatusCode = t.status_code;
 									}
 								}
 
@@ -202,6 +209,7 @@ export class DashboardComponent implements OnInit {
 									"product": vProduct,
 									"note": vNote,
 									"processStatus": vBPStatus,
+									"statusCode": vStatusCode,
 									"actionStatus": vActionStatus,
 									"content": vContent,
 									"activityVariables": activityVariables,
@@ -216,7 +224,7 @@ export class DashboardComponent implements OnInit {
 							.catch(error => {
 								console.error(error);
 							});
-					}
+					//}
                 }
             })
             .catch(error => {
