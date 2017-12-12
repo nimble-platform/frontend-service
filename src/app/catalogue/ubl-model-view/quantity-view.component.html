@@ -32,6 +32,7 @@
         <label *ngIf="i == 0 && !editablePropName" class="col-3 control-label">{{propName}}</label>
         <input *ngIf="i == 0 && editablePropName"
                class="form-control col-3"
+               (blur)="onPropNameEditFocusOut($event)"
                [(ngModel)]="propName">
         <input type="text" class="form-control align-self-start"
                [(ngModel)]="value.value"
