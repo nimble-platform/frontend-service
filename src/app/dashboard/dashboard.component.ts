@@ -29,7 +29,6 @@ export class DashboardComponent implements OnInit {
     fullName = "";
 	hasCompany = false;
 	roles = [];
-	alertBetaClosed = false;
 	alert1Closed = false;
 	alert2Closed = false;
     buyer_history_temp: any;
