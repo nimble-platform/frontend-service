@@ -109,6 +109,21 @@
 	</div>
 </ng-template>
 
+<ng-template #beta let-d="dismiss">
+	<div class="modal-header">
+		<h4 class="modal-title">Beta Disclaimer</h4>
+		<button type="button" class="close" aria-label="Close" (click)="d('')">
+			<span aria-hidden="true">&times;</span>
+		</button>
+	</div>
+	<div class="modal-body">
+		Beware!<br/>
+		This platform is in beta / early access stage.<br/>
+		Downtimes and bugs have to be expected.
+	</div>
+</ng-template>
+
+<div id="beta-btn" (click)="open(beta)"><b>&beta;</b></div>
 <div id="support-btn" (click)="open(support)"><img id="support-img" src="assets/support_white.png"/></div>
 
 <!--<button class="btn btn-lg btn-outline-primary" (click)="open(support)">Support</button>-->

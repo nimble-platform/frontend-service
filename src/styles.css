@@ -45,6 +45,22 @@ textarea {
 	cursor: pointer;
 }
 
+#beta-btn {
+	position: fixed;
+	left: 1rem;
+	bottom: 1rem;
+	width: 70px;
+	height: 70px;
+	border-radius: 35px;
+	background-color: #a21c26;
+	z-index: 9998;
+	cursor: pointer;
+	font-size: 40px;
+	line-height: 60px;
+	text-align: center;
+	color: white;
+}
+
 #support-img {
 	height: 50px;
 	width: 50px;
