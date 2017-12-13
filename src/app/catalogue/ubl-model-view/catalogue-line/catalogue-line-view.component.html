@@ -2,10 +2,6 @@
                        [presentationMode]="presentationMode">
 </catalogue-line-header>
 
-<button (click)="partyRole = partyRole == 'Transport Service Provider' ? 'Manufacturer' : 'Transport Service Provider'">
-    Switch company role
-</button>
-
 <!-- images -->
 <div *ngIf="presentationMode=='edit' && catalogueLine.goodsItem.item.productImage.length == 0"
      class="offset-2 col-10 mt-3 mb-3">
@@ -33,6 +29,15 @@
         <img src="./assets/catalogue/add_button.png"
              (click)="image.click()"/>
     </div>
+</div>
+
+<div *ngIf="presentationMode=='edit'" class="space-before space-after">
+	<button *ngIf="partyRole == 'Transport Service Provider'" class="btn btn-primary" (click)="partyRole = 'Manufacturer'">
+		Switch to manufacturer view
+	</button>
+	<button *ngIf="partyRole == 'Manufacturer' || partyRole == ''" class="btn btn-primary" (click)="partyRole = 'Transport Service Provider'">
+		Switch to logistics view
+	</button>
 </div>
 
 <ng-container *ngIf="(presentationMode == 'edit' && partyRole == '' || partyRole == 'Manufacturer') ||

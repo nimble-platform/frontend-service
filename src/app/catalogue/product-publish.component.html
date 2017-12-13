@@ -28,7 +28,7 @@
             <h6 *ngIf="catalogueLine.goodsItem.item.commodityClassification.length > 0"
                 style="display: inline-block;"
                 i18n>Selected category:</h6>
-            <button *ngFor="let selectedCategory of selectedCategories"
+            <button *ngFor="let selectedCategory of categoryService.selectedCategories"
                     class="btn btn-info ml-3">
                 {{selectedCategory.preferredName}}
                 <span>
@@ -69,12 +69,14 @@
         </div>
 
         <!-- Publish / edit buttons -->
-        <button *ngIf="pageRef == 'category'"
+        <button *ngIf="publishStateService.publishMode == 'create'"
                 class="btn btn-success"
                 (click)="publishProduct()">
             <span i18n>Publish Product</span>
         </button>
-        <button *ngIf="pageRef == 'catalogue'"
+        <button *ngIf="publishStateService.publishMode == 'edit' &&
+                       (productCategoryRetrievalStatus.fb_submitted == false ||
+                        productCategoryRetrievalStatus.fb_submitted == true && productCategoryRetrievalStatus.fb_callback == true)"
                 class="btn btn-success btn-xs"
                 (click)="editProduct()">
             <span i18n>Save Changes</span>
@@ -91,6 +93,10 @@
                              [catalogueLine]="catalogueLine"
                              [presentationMode]="'edit'">
         </catalogue-line-view>
+
+        <!-- loader for retrieval of the details of the product categories -->
+        <call-status [callStatus]="productCategoryRetrievalStatus">
+        </call-status>
 
         <!-- new property block -->
         <hr class="mt-5">
@@ -263,9 +269,9 @@
 <div *ngIf="!singleItemUpload">
     <div class="d-flex justify-content-end mt-3 mb-3">
         <div class="mr-auto">
-            <h6 *ngIf="selectedCategories.length > 0" style="display: inline-block;"
+            <h6 *ngIf="categoryService.selectedCategories.length > 0" style="display: inline-block;"
                 i18n>Selected category:</h6>
-            <button *ngFor="let selectedCategory of selectedCategories"
+            <button *ngFor="let selectedCategory of categoryService.selectedCategories"
                     class="btn btn-info ml-3">
                 {{selectedCategory.preferredName}}
                 <span><i
@@ -275,8 +281,8 @@
             <div (click)="addCategoryOnClick()"
                  style="display: inline-block;">
                 <img src="./assets/catalogue/add_button.png"/>
-                <span *ngIf="selectedCategories.length == 0" i18n>Select a product category</span>
-                <span *ngIf="selectedCategories.length > 0" i18n>Add another product category</span>
+                <span *ngIf="categoryService.selectedCategories.length == 0" i18n>Select a product category</span>
+                <span *ngIf="categoryService.selectedCategories.length > 0" i18n>Add another product category</span>
             </div>
         </div>
     </div>
@@ -293,7 +299,7 @@
                 <li>Replace mode: All previously published items are deleted; and only the new ones are added to the catalogue.</li>
             </ul>
         </label>
-        <select #uploadModeSelect class="col-3 btn btn-success align-self-start" style="text-align-last:center;">
+        <select #uploadModeSelect class="col-3 btn btn-secondary align-self-start" style="text-align-last:center;" (change)="checkMode(uploadModeSelect.value)">
             <option value="append">Append</option>
             <option value="replace">Replace</option>
         </select>

@@ -59,14 +59,14 @@
 <ng-container *ngIf="lineItem.item.transportationServiceDetails == null">
     <h5 class="mt-3">Warranty</h5>
     <!-- Validity period -->
-    <quantity-view class="row"
+    <quantity-view
                    [presentationMode]="presentationMode"
                    [propName]="'Validity Period'"
                    [quantity]="[lineItem.warrantyValidityPeriod.durationMeasure]">
     </quantity-view>
 
     <!-- Warranty information -->
-    <value-array-view class="row"
+    <value-array-view
                       [presentationMode]="presentationMode"
                       [propName]="'Warranty information'"
                       [(values)]="lineItem.warrantyInformation">

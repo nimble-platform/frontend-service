@@ -16,8 +16,9 @@
 				In order to execute business processes your company needs to be verified by an administrator - please stay tuned.
 			</ngb-alert>
 		</p>
-		<div class="space-before">
-			<span i18n>Welcome to the</span> <img class="img-sm" src="assets/nimble_logo.png"/> <span i18n>platform,</span> {{fullName}}!
+		<div class="space-before nimble-col">
+			<span i18n>Welcome to the</span> NIMBLE <span i18n>platform,</span> {{fullName}}!<br/>
+			<i><small>Collaborative Network for Industry, Manufacturing, Business and Logistics in Europe.</small></i>
 		</div>
 	</div>
 </div>
@@ -27,18 +28,24 @@
 		<h4 class="space-after" i18n>Sales</h4>
 		<div *ngIf="seller_history.length > 0">
 			<table class="table table-striped table-bordered">
-				<tr><th>Process</th><th i18n>Date</th><th i18n>Product</th><th i18n>Buyer</th><th i18n>Note</th><th i18n>Status</th><th i18n>Options</th></tr>
+				<tr><th>Process</th><th i18n>Date</th><th i18n>Product</th><th i18n>Buyer</th><th i18n>Note</th><th colspan="2" i18n>Status</th><th i18n>Options</th></tr>
 				<tr *ngFor="let processMetadata of seller_history">
 
 					<td>{{processMetadata.processType}}</td>
 					<td>{{processMetadata.start_time }}</td>
-					<td>{{processMetadata.product.name}}</td>
+					<td>
+						<label class="clickable" (click)="navigateToSearchDetails(processMetadata.product)">
+							{{processMetadata.product.name}}
+						</label>
+					</td>
 					<td>{{processMetadata.buyerName }}</td>
 					<td>{{processMetadata.note}}</td>
-					<td>{{processMetadata.actionStatus}}</td>
+					<td *ngIf="processMetadata.statusCode=='deleted'" class="table-danger">{{processMetadata.actionStatus}}</td><td *ngIf="processMetadata.statusCode=='deleted'" class="table-danger">Canceled</td>
+					<td *ngIf="processMetadata.statusCode=='completed'" class="table-success">{{processMetadata.actionStatus}}</td><td *ngIf="processMetadata.statusCode=='completed'" class="table-success">Completed</td>
+					<td *ngIf="processMetadata.statusCode!='deleted' && processMetadata.statusCode!='completed'" class="table-warning">{{processMetadata.actionStatus}}</td><td *ngIf="processMetadata.statusCode!='deleted' && processMetadata.statusCode!='completed'" class="table-warning">In Progress</td>
 
 					<td>
-						<div ngbDropdown placement="left">
+						<div *ngIf="processMetadata.statusCode!='deleted'" ngbDropdown placement="left">
 							<i class="fa fa-bars fa-lg nav-link" id="bpOptionsMenuSeller" style="cursor:pointer" ngbDropdownToggle aria-hidden="true"></i>
 							<div ngbDropdownMenu aria-labelledby="bpOptionsMenuSeller">
 								<div *ngFor="let menuItem of processMetadata.bpOptionMenuItems; let i = index"
@@ -51,6 +58,9 @@
 										   (click)="openBpProcessView('seller', menuItem.targetProcess ,processMetadata)">
 										{{menuItem.itemLabel}}
 									</label>
+								</div>
+								<div *ngIf="processMetadata.statusCode!='completed'" class="dropdown-item">
+									<label (click)="cancelBP(processMetadata.process_id)">Cancel Process</label>
 								</div>
 							</div>
 						</div>
@@ -69,7 +79,7 @@
 		<h4 class="space-after" i18n>Purchases</h4>
 		<div *ngIf="buyer_history.length > 0">
 			<table class="table table-striped table-bordered">
-				<tr><th>Process</th><th i18n>Date</th><th i18n>Product</th><th i18n>Seller</th><th i18n>Note</th><th i18n>Status</th><th i18n>Options</th></tr>
+				<tr><th>Process</th><th i18n>Date</th><th i18n>Product</th><th i18n>Seller</th><th i18n>Note</th><th colspan="2" i18n>Status</th><th i18n>Options</th></tr>
 				<tr *ngFor="let processMetadata of buyer_history">
 					<td>{{processMetadata.processType}}</td>
 					<td>{{processMetadata.start_time }}</td>
@@ -80,10 +90,12 @@
 					</td>
 					<td>{{processMetadata.sellerName }}</td>
 					<td>{{processMetadata.note}}</td>
-					<td>{{processMetadata.actionStatus}}</td>
+					<td *ngIf="processMetadata.statusCode=='deleted'" class="table-danger">{{processMetadata.actionStatus}}</td><td *ngIf="processMetadata.statusCode=='deleted'" class="table-danger">Canceled</td>
+					<td *ngIf="processMetadata.statusCode=='completed'" class="table-success">{{processMetadata.actionStatus}}</td><td *ngIf="processMetadata.statusCode=='completed'" class="table-success">Completed</td>
+					<td *ngIf="processMetadata.statusCode!='deleted' && processMetadata.statusCode!='completed'" class="table-warning">{{processMetadata.actionStatus}}</td><td *ngIf="processMetadata.statusCode!='deleted' && processMetadata.statusCode!='completed'" class="table-warning">In Progress</td>
 
 					<td>
-						<div ngbDropdown placement="left">
+						<div *ngIf="processMetadata.statusCode!='deleted'" ngbDropdown placement="left">
 							<i class="fa fa-bars fa-lg nav-link" id="bpOptionsMenuBuyer" style="cursor:pointer" ngbDropdownToggle aria-hidden="true"></i>
 							<div ngbDropdownMenu aria-labelledby="bpOptionsMenuBuyer">
 								<div *ngFor="let menuItem of processMetadata.bpOptionMenuItems; let i = index"
@@ -96,6 +108,9 @@
 										   (click)="openBpProcessView('buyer', menuItem.targetProcess, processMetadata)">
 										{{menuItem.itemLabel}}
 									</label>
+								</div>
+								<div *ngIf="processMetadata.statusCode!='completed'" class="dropdown-item">
+									<label (click)="cancelBP(processMetadata.process_id)">Cancel Process</label>
 								</div>
 							</div>
 						</div>

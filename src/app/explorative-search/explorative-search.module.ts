@@ -7,10 +7,11 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ExplorativeSearchRoutingModule } from './explorative-search-routing.module';
 
 import { ExplorativeSearchComponent } from './explorative-search.component';
-import { ExplorativeSearchService } from './explorative-search.service';
 import { ExplorativeSearchFormComponent } from './explorative-search-form.component';
 import { ExplorativeSearchDetailsComponent } from './explorative-search-details.component';
 import { ExplorativeSearchFilterComponent } from './explorative-search-filter.component';
+
+//import { ExplorativeSearchService } from './explorative-search.service';
 
 @NgModule({
 	imports: [
@@ -35,7 +36,6 @@ import { ExplorativeSearchFilterComponent } from './explorative-search-filter.co
         ExplorativeSearchFilterComponent
 	],
 	providers: [
-		ExplorativeSearchService
 	]
 })
 

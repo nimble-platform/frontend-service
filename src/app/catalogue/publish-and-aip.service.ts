@@ -2,6 +2,8 @@ import {Injectable} from "@angular/core";
 
 @Injectable()
 export class PublishService {
+    publishMode:string = 'create'; // or can be edit
+    publishingStarted:boolean = false;
     propertyBlockCollapsedStates:Map<string, boolean> = new Map<string, boolean>();
 
     getCollapsedStates():any {

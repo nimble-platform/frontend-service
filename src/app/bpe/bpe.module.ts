@@ -9,13 +9,10 @@ import { BPERoutingModule } from './bpe-routing.module';
 // ToDo: Get rid of these dependencies
 import { CatalogueModule } from '../catalogue/catalogue.module';
 
-import { BPEService } from './bpe.service';
 import { TradingDetailsComponent } from './bp-view/negotiation/trading-details.component';
 import { BPConfigureComponent } from './bp-configure.component';
 import { BPsComponent } from './bps.component';
 import { BPDetailComponent } from './bp-detail.component';
-import { BPService } from './bp.service';
-import { BPDataService } from "./bp-view/bp-data-service";
 import { ProductBpOptionsComponent } from "./bp-view/product-bp-options.component";
 import { RequestForQuotationComponent } from "./bp-view/negotiation/request-for-quotation.component";
 import { OrderResponseComponent } from "./bp-view/order/order-response.component";
@@ -35,6 +32,10 @@ import { ItemInformationRequestComponent } from "./bp-view/item-information-requ
 import { PpapComponent} from "./bp-view/ppap/ppap.component";
 import { PpapResponseComponent} from "./bp-view/ppap/ppap-response.component";
 import { PpapViewComponent} from "./bp-view/ppap/ppap-view.component";
+
+//import { BPEService } from './bpe.service';
+//import { BPService } from './bp.service';
+//import { BPDataService } from "./bp-view/bp-data-service";
 
 @NgModule({
 	imports: [
@@ -93,6 +94,8 @@ import { PpapViewComponent} from "./bp-view/ppap/ppap-view.component";
 		BpProductDetailsComponent,
 		ItemInformationRequestBpComponent,
 		ItemInformationRequestComponent
+	],
+	providers: [
 	]
 })
 

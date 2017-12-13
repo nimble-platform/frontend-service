@@ -33,8 +33,34 @@ textarea {
 	z-index:9999;
 }
 
+#support-btn {
+	position: fixed;
+	right: 1rem;
+	bottom: 1rem;
+	width: 70px;
+	height: 70px;
+	border-radius: 35px;
+	background-color: #a21c26;
+	z-index: 9998;
+	cursor: pointer;
+}
+
+#support-img {
+	height: 50px;
+	width: 50px;
+	margin-left: 10px;
+	margin-top: 8px;
+}
+
 .nimble-bg {
     background-color: #a21c26;
+}
+
+.nimble-col {
+	border: 2px solid #a21c26;
+	border-radius: 0.25rem;
+	padding: 0.5rem;
+	text-align: center;
 }
 
 .space-before {

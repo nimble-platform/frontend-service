@@ -11,14 +11,14 @@
 
             <!-- string value associated to the property -->
             <input *ngIf="additionalItemProperty.valueQualifier == 'STRING'"
-                   type="text" class="form-control"
+                   type="text" class="form-control align-self-start"
                    [ngClass]="{'offset-3' : i > 0} "
                    [(ngModel)]="additionalItemProperty.value[i]"
                    [readonly]="presentationMode != 'edit'">
 
             <!-- decimal value associated to the property -->
             <input *ngIf="additionalItemProperty.valueQualifier == 'REAL_MEASURE'"
-                   type="text" class="form-control"
+                   type="text" class="form-control align-self-start"
                    [ngClass]="{'offset-3' : i > 0} "
                    [(ngModel)]="additionalItemProperty.valueDecimal[i]"
                    [readonly]="presentationMode != 'edit'">

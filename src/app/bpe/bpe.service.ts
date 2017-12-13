@@ -38,6 +38,15 @@ export class BPEService {
 			})
             .catch(this.handleError);
 	}
+	
+	cancelBusinessProcess(id: string): Promise<any> {
+		const url = `${this.url}/rest/engine/default/process-instance/${id}`;
+		return this.http
+		.delete(url, {headers: this.headers})
+		.toPromise()
+		.then(res => res.json())
+		.catch(this.handleError);
+	}
 
 	getProcessDetails(id: string): Promise<any> {
 		const url = `${this.url}/rest/engine/default/variable-instance?processInstanceIdIn=${id}`;

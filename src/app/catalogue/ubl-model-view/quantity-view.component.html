@@ -4,22 +4,22 @@
         <div *ngFor="let value of quantity; let i = index;" class="input-group form-group">
             <!-- show label next to the first value only -->
             <label *ngIf="i == 0" class="col-3 control-label">{{propName}}</label>
-            <input type="text" class="form-control "
+            <input type="text" class="form-control align-self-start"
                    [(ngModel)]="value.value"
                    [ngClass]="{'offset-3' : i > 0} "
                    readonly>
             <label class="col-1" class="ml-3 mr-3">Unit: </label>
             <input type="text"
-                   class="col-1 form-control"
+                   class="col-1 form-control align-self-start"
                    [(ngModel)]="quantity[0].unitCode"
                    readonly>
         </div>
     </ng-container>
     <ng-container *ngIf="quantity.length == 0">
         <div class="input-group form-group">
-            <label *ngIf="i == 0" class="col-3 control-label">{{propName}}</label>
+            <label *ngIf="i == 0" class="col-3 control-label align-self-start">{{propName}}</label>
             <input type="text" class="form-control" readonly>
-            <label class="col-1" class="ml-3 mr-3">Unit: </label>
+            <label class="col-1" class="ml-3 mr-3 align-self-start">Unit: </label>
             <input type="text" class="col-1 form-control" readonly>
         </div>
     </ng-container>
@@ -32,9 +32,9 @@
         <label *ngIf="i == 0 && !editablePropName" class="col-3 control-label">{{propName}}</label>
         <input *ngIf="i == 0 && editablePropName"
                class="form-control col-3"
-               placeholder="Dimension Attribute"
+               (blur)="onPropNameEditFocusOut($event)"
                [(ngModel)]="propName">
-        <input type="text" class="form-control "
+        <input type="text" class="form-control align-self-start"
                [(ngModel)]="value.value"
                [ngClass]="{'offset-3' : i > 0} ">
 
@@ -51,7 +51,7 @@
 
         <label class="col-1" class="ml-3 mr-3">Unit: </label>
         <input type="text"
-               class="col-1 form-control"
+               class="col-1 form-control align-self-start"
                [(ngModel)]="value.unitCode">
     </div>
 </ng-container>
@@ -66,11 +66,11 @@
             <option *ngFor="let value of quantity">{{value.value}}</option>
         </select>
         <input *ngIf="quantity.length == 1"
-               type="text" class="form-control"
+               type="text" class="form-control align-self-start"
                [(ngModel)]="quantity[0].value">
         <label class="col-1" class="ml-3 mr-3">Unit: </label>
         <input type="text"
-               class="col-1"
+               class="col-1 align-self-start"
                [(ngModel)]="quantity[0].unitCode">
     </div>
 </ng-container>

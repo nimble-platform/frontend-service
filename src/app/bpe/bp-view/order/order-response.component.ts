@@ -56,6 +56,6 @@ export class OrderResponseComponent {
         this.searchContextService.associatedProcessType = 'Order';
         this.searchContextService.associatedProcessMetadata = this.bpDataService.processMetadata;
         this.bpDataService.setBpOptionParameters('buyer', 'Transport_Execution_Plan');
-        this.router.navigate(['simple-search'], {queryParams: {targetRole: encodeURIComponent("Transport Service Provider")}});
+        this.router.navigate(['simple-search'], {queryParams: {searchContext: 'orderbp'}});
     }
 }
