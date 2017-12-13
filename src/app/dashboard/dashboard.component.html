@@ -1,6 +1,14 @@
 <div class="row">
 	<div class="col-12">
 		<h3 i18n>Dashboard</h3>
+		<div *ngIf="!alertBetaClosed">
+			<p class="space-before">
+				<ngb-alert type="danger" (close)="alertBetaClosed=true">
+					This platform is in an early access / testing stage.<br/>
+					Downtimes and bugs have to be expected.
+				</ngb-alert>
+			</p>
+		</div>
 		<div *ngIf="!hasCompany&&!alert1Closed">
 			<p class="space-before">
 				<ngb-alert type="info" (close)="alert1Closed=true">

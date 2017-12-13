@@ -108,7 +108,9 @@
 		<a [href]="mailto" type="button" class="btn btn-primary" (click)="d('')">Open mail template</a>
 	</div>
 </ng-template>
+<div id="support-btn" (click)="open(support)"><img id="support-img" src="assets/support_white.png"/></div>
 
+<!--
 <ng-template #beta let-d="dismiss">
 	<div class="modal-header">
 		<h4 class="modal-title">Beta Disclaimer</h4>
@@ -122,11 +124,8 @@
 		Downtimes and bugs have to be expected.
 	</div>
 </ng-template>
-
 <div id="beta-btn" (click)="open(beta)"><b>&beta;</b></div>
-<div id="support-btn" (click)="open(support)"><img id="support-img" src="assets/support_white.png"/></div>
-
-<!--<button class="btn btn-lg btn-outline-primary" (click)="open(support)">Support</button>-->
+-->
 
 <router-outlet></router-outlet>
 
