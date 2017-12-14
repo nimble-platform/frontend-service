@@ -81,6 +81,15 @@
 	</div>
 </nav>
 
+<div *ngIf="!alertBetaClosed">
+	<p class="space-before">
+		<ngb-alert type="danger" (close)="alertBetaClosed=true">
+			This platform is in an early access / testing stage.<br/>
+			Downtimes and bugs have to be expected.
+		</ngb-alert>
+	</p>
+</div>
+
 <div id="loading-bg" *ngIf="loading">
 	<div id="sk-loading-icon">
 		<div class="sk-folding-cube">
@@ -108,10 +117,7 @@
 		<a [href]="mailto" type="button" class="btn btn-primary" (click)="d('')">Open mail template</a>
 	</div>
 </ng-template>
-
 <div id="support-btn" (click)="open(support)"><img id="support-img" src="assets/support_white.png"/></div>
-
-<!--<button class="btn btn-lg btn-outline-primary" (click)="open(support)">Support</button>-->
 
 <router-outlet></router-outlet>
 

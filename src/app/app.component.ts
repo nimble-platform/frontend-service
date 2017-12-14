@@ -16,6 +16,7 @@ export class AppComponent implements OnInit {
 	public loading = false;
 	public isLoggedIn = false;
 	public isCollapsed = true;
+	public alertBetaClosed = false;
 	public fullName = "";
 	public activeCompanyName = null;
 	public eMail = "";
@@ -47,13 +48,11 @@ export class AppComponent implements OnInit {
 	
 	public open(content) {
 		this.mailto = "mailto:nimble-support@salzburgresearch.at";
-		var subject = "NIMBLE Support Request";
+		var subject = "NIMBLE Support Request (UserID: "+this.userID+", Timestamp: "+new Date().toISOString()+")";
 		this.mailto += "?subject="+encodeURIComponent(subject);
 		var body = "Dear NIMBLE support team,";
 		body += "\n\n\n";
 		body += "I have encountered an issue.";
-		body += "\n\n";
-		body += "Timestamp:\n"+new Date().toISOString();
 		body += "\n\n";
 		body += "Path:\n"+window.location.href;
 		body += "\n\n";
@@ -67,7 +66,7 @@ export class AppComponent implements OnInit {
 		body += "\n\n";
 		body += this.fullName;
 		body += "\n";
-		body += "(E-Mail: "+this.eMail+", UserID: "+this.userID+", Company: "+this.activeCompanyName+")";
+		body += "(E-Mail: "+this.eMail+", Company: "+this.activeCompanyName+")";
 		this.mailto += "&body="+encodeURIComponent(body);
 		this.modalService.open(content);
 	}
