@@ -84,9 +84,16 @@ export class ItemInformationRequestComponent {
         var blob = new Blob(byteArrays, {type: binaryObject.mimeCode});
 
         var link = document.createElement('a');
+		link.id = 'downloadLink';
         link.href = window.URL.createObjectURL(blob);
         link.download = binaryObject.fileName;
-        link.click();
+        //link.click();
+		
+		document.body.appendChild(link);
+		var downloadLink = document.getElementById('downloadLink');
+		downloadLink.click();
+		document.body.removeChild(downloadLink);
+		
     }
 
     sendInformationRequest() {
