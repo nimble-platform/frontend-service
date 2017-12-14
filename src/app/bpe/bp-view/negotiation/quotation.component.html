@@ -98,7 +98,7 @@
                     </button>
                     <button *ngIf="bpDataService.processMetadata.processStatus == 'Completed' &&
                                    bpDataService.catalogueLine.goodsItem.item.transportationServiceDetails != null &&
-                                   bpDataService.quotation.documentStatusCode.name == 'Rejected'"
+                                   bpDataService.quotation.documentStatusCode.name != 'Rejected'"
                             class="btn btn-success" (click)="initiateTransportExecutionPlan()">Initiate Transport
                         Execution Plan
                     </button>
