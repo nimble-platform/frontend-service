@@ -59,11 +59,17 @@
 
     <hr>
 
-    <value-view class="row"
-                [presentationMode]="'edit'"
-                [propName]="'Response'"
-                [(value)]="quotation.documentStatusCode.name">
-    </value-view>
+    <div class="row">
+        <div class="input-group form-group">
+            <label class="col-3 control-label">Response</label>
+            <select class="custom-select"
+                    [(ngModel)]="quotation.documentStatusCode.name">
+                <option>Accepted</option>
+                <option>Terms Updated</option>
+                <option>Rejected</option>
+            </select>
+        </div>
+    </div>
 
     <value-view class="row"
                 [presentationMode]="'edit'"
@@ -87,14 +93,12 @@
                     </button>
                     <button *ngIf="bpDataService.processMetadata.processStatus == 'Completed' &&
                                    bpDataService.catalogueLine.goodsItem.item.transportationServiceDetails == null &&
-                                   bpDataService.quotation.quotationLine[0].lineItem.quantity.value > 0 &&
-                                   bpDataService.quotation.quotationLine[0].lineItem.price.priceAmount.value != null &&
-                                   bpDataService.quotation.quotationLine[0].lineItem.price.baseQuantity.value != null"
+                                   bpDataService.quotation.documentStatusCode.name != 'Rejected'"
                             class="btn btn-success" (click)="initiateOrder()">Initiate Order
                     </button>
                     <button *ngIf="bpDataService.processMetadata.processStatus == 'Completed' &&
                                    bpDataService.catalogueLine.goodsItem.item.transportationServiceDetails != null &&
-                                   bpDataService.quotation.documentStatusCode.name == 'Accepted'"
+                                   bpDataService.quotation.documentStatusCode.name != 'Rejected'"
                             class="btn btn-success" (click)="initiateTransportExecutionPlan()">Initiate Transport
                         Execution Plan
                     </button>
