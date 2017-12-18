@@ -1,4 +1,4 @@
-import {Component, Input} from "@angular/core";
+import {Component} from "@angular/core";
 import {Ppap} from "../../../catalogue/model/publish/ppap";
 import {PpapResponse} from "../../../catalogue/model/publish/ppap-response";
 import {BPDataService} from "../bp-data-service";

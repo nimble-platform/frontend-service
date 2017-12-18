@@ -106,8 +106,7 @@ export class PpapComponent implements OnInit{
         this.ppap.lineItem.item = this.bpDataService.modifiedCatalogueLine.goodsItem.item;
         UBLModelUtils.removeHjidFieldsFromObject(this.ppap);
 
-        //first initialize the seller and buyer parties.
-        //once they are fetched continue with starting the ordering process
+
         let sellerId:string = this.bpDataService.catalogueLine.goodsItem.item.manufacturerParty.id;
         let buyerId:string = this.cookieService.get("company_id");
 
