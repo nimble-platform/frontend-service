@@ -43,6 +43,10 @@
 		<div class="alert alert-success space-before" role="alert" i18n>Registration successful</div>
 	</div>
 	
+	<div [hidden]="!error_detc">
+		<div class="alert alert-danger space-before" role="alert">Registration failed - please make sure your account is not yet registered and try again later</div>
+	</div>
+	
 	<div *ngIf="debug">
 		<div [hidden]="!submitted">
 			<hr/>
