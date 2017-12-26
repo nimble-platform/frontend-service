@@ -45,9 +45,9 @@ export class ProductPublishComponent implements OnInit {
      * state objects for feedback about the publish operation
      */
     singleItemUpload: boolean = this.isSingleItemUpload();
-    private submitted = false;
-    private callback = false;
-    private error_detc = false;
+    submitted = false;
+    callback = false;
+    error_detc = false;
 
     private bulkPublishStatus: CallStatus = new CallStatus();
     private productCategoryRetrievalStatus: CallStatus = new CallStatus();
@@ -339,6 +339,7 @@ export class ProductPublishComponent implements OnInit {
                 this.publishStateService.resetData();
                 this.router.navigate(['catalogue/catalogue']);
 
+                this.submitted = false;
                 this.callback = true;
                 this.error_detc = false;
             });
@@ -346,6 +347,7 @@ export class ProductPublishComponent implements OnInit {
     }
 
     private onFailedPublish(): void {
+        this.submitted = false;
         this.error_detc = true;
     }
 

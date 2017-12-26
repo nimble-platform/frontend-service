@@ -70,15 +70,18 @@
 
         <!-- Publish / edit buttons -->
         <button *ngIf="publishStateService.publishMode == 'create'"
+                type="submit"
                 class="btn btn-success"
-                (click)="publishProduct()">
+                (click)="publishProduct()"
+                [disabled]="submitted == true ">
             <span i18n>Publish Product</span>
         </button>
         <button *ngIf="publishStateService.publishMode == 'edit' &&
                        (productCategoryRetrievalStatus.fb_submitted == false ||
                         productCategoryRetrievalStatus.fb_submitted == true && productCategoryRetrievalStatus.fb_callback == true)"
                 class="btn btn-success btn-xs"
-                (click)="editProduct()">
+                (click)="editProduct()"
+                [disabled]="submitted == true">
             <span i18n>Save Changes</span>
         </button>
     </div>
