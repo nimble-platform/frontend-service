@@ -43,182 +43,45 @@ export class PpapComponent implements OnInit{
     }
 
     ngOnInit() {
+
         this.bpDataService.initPpap([]);
         this.ppap = this.bpDataService.ppap;
 
         let currentCompanyId:string = this.cookieService.get("company_id");
         let sellerId:string = this.bpDataService.catalogueLine.goodsItem.item.manufacturerParty.id;
 
-        let flag = true;
+        // checks whether a PPAP process is started or not
+        let pidExists = true;
 
         this.route.queryParams.subscribe(params =>{
             let check = params['pid'];
-            if(check != null){
-                this.level = 0;
-                this.setDocuments();
-                this.bpeService.getProcessDetailsHistory(check).then(task => {
-                    let ppap = task[3].value as Ppap;
-                    let i = 0;
-                    for(;i<ppap.documentType.length;i++){
-                        let documentName = ppap.documentType[i];
-                        let obj = this.documents.find(o => o.text === documentName);
-                        obj.select = true;
-                    }
-                    this.note = this.ppap.note;
-                });
-            }
-            else{
-                this.selectedTab= "Ppap Details";
-                flag = false;
+            if(check == null){
+                this.selectedTab= "Ppap Select";
+                pidExists = false;
             }
         });
-        if(flag){
-            this.selectedTab= "Ppap Details";
+        if(pidExists){
+            // seller
             if(currentCompanyId == sellerId){
                 this.seller = true;
-                if(this.bpDataService.ppapResponse && this.bpDataService.ppapResponse.ppapDocument != null){
-                    this.selectedTab = "Ppap Response Details";
+                if(this.bpDataService.ppapResponse && this.bpDataService.ppapResponse.requestedDocument != null){
+                    this.selectedTab = "Ppap Download";
                 }
                 else{
-                    this.selectedTab = "Ppap Response";
+                    this.selectedTab = "Ppap Upload";
+                }
+            }
+            // buyer
+            else{
+                if(!this.bpDataService.ppapResponse){
+                    this.selectedTab = "Ppap Select";
+                }
+                else{
+                    this.selectedTab = "Ppap Download";
                 }
             }
         }
 
     }
 
-
-    sendRequest()
-    {
-        this.callStatus.submit();
-        let answer: String[] = [];
-        for(var i = 0; i< this.documents.length ; i=i+1)
-        {
-            if(this.documents[i].select)
-            {
-                 answer.push(this.documents[i].text);
-            }
-        }
-        this.ppap.documentType = answer;
-        this.ppap.note = this.note;
-
-
-        this.ppap.lineItem.item = this.bpDataService.modifiedCatalogueLine.goodsItem.item;
-        UBLModelUtils.removeHjidFieldsFromObject(this.ppap);
-
-
-        let sellerId:string = this.bpDataService.catalogueLine.goodsItem.item.manufacturerParty.id;
-        let buyerId:string = this.cookieService.get("company_id");
-
-
-        this.userService.getParty(buyerId).then(buyerParty => {
-            this.ppap.buyerCustomerParty = new CustomerParty(buyerParty);
-
-            this.userService.getParty(sellerId).then(sellerParty => {
-                this.ppap.sellerSupplierParty = new SupplierParty(sellerParty);
-                let vars:ProcessVariables = ModelUtils.createProcessVariables("Ppap", buyerId, sellerId, this.ppap);
-                let piim:ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
-                this.bpeService.startBusinessProcess(piim)
-                    .then(res => {
-                        this.callStatus.callback("Ppap request is sent", true);
-                        this.router.navigate(['dashboard']);
-                        this.error_detc = false;
-                        this.callback = true;
-                    })
-                    .catch(error => {
-                        this.error_detc = true;
-                        this.callStatus.error("Failed to send Ppap request");
-                    });
-            });
-        });
-
-    }
-
-    setDocuments()
-    {
-        if(this.level === 0)
-        {
-            this.documents = [
-                {text:'Design Documentation',select:false},{text:'Engineering Change Documentation',select:false},
-                {text:'Customer Engineering Approval',select:false},{text:'Design Failure Mode and Effects Analysis',select:false},
-                {text:'Process Flow Diagram',select:false},{text:'Process Failure Mode and Effects Analysis',select:false},
-                {text:'Control Plan',select:false},{text:'Measurement System Analysis Studies',select:false},
-                {text:'Dimensional Results',select:false},{text:'Records of Material / Performance Tests',select:false},
-                {text:'Initial Process Studies',select:false},{text:'Qualified Laboratory Documentation',select:false},
-                {text:'Appearance Approval Report',select:false},{text:'Sample Production Parts',select:false},
-                {text:'Master Sample',select:false},{text:'Checking Aids',select:false},
-                {text:'Customer Specific Requirements',select:false},{text:'Part Submission Warrant',select:false}
-            ];
-        }
-        else if(this.level === 1)
-        {
-            this.documents = [
-                {text:'Design Documentation',select:false},{text:'Engineering Change Documentation',select:false},
-                {text:'Customer Engineering Approval',select:false},{text:'Design Failure Mode and Effects Analysis',select:false},
-                {text:'Process Flow Diagram',select:false},{text:'Process Failure Mode and Effects Analysis',select:false},
-                {text:'Control Plan',select:false},{text:'Measurement System Analysis Studies',select:false},
-                {text:'Dimensional Results',select:false},{text:'Records of Material / Performance Tests',select:false},
-                {text:'Initial Process Studies',select:false},{text:'Qualified Laboratory Documentation',select:false},
-                {text:'Appearance Approval Report',select:true},{text:'Sample Production Parts',select:false},
-                {text:'Master Sample',select:false},{text:'Checking Aids',select:false},
-                {text:'Customer Specific Requirements',select:false},{text:'Part Submission Warrant',select:true}
-            ];
-        }
-        else if(this.level === 2)
-        {
-            this.documents = [
-                {text:'Design Documentation',select:true},{text:'Engineering Change Documentation',select:true},
-                {text:'Customer Engineering Approval',select:false},{text:'Design Failure Mode and Effects Analysis',select:false},
-                {text:'Process Flow Diagram',select:false},{text:'Process Failure Mode and Effects Analysis',select:false},
-                {text:'Control Plan',select:false},{text:'Measurement System Analysis Studies',select:false},
-                {text:'Dimensional Results',select:true},{text:'Records of Material / Performance Tests',select:true},
-                {text:'Initial Process Studies',select:false},{text:'Qualified Laboratory Documentation',select:true},
-                {text:'Appearance Approval Report',select:true},{text:'Sample Production Parts',select:true},
-                {text:'Master Sample',select:false},{text:'Checking Aids',select:false},
-                {text:'Customer Specific Requirements',select:false},{text:'Part Submission Warrant',select:true}
-            ];
-        }
-        else if(this.level === 3)
-        {
-            this.documents = [
-                {text:'Design Documentation',select:true},{text:'Engineering Change Documentation',select:true},
-                {text:'Customer Engineering Approval',select:true},{text:'Design Failure Mode and Effects Analysis',select:true},
-                {text:'Process Flow Diagram',select:true},{text:'Process Failure Mode and Effects Analysis',select:true},
-                {text:'Control Plan',select:true},{text:'Measurement System Analysis Studies',select:true},
-                {text:'Dimensional Results',select:true},{text:'Records of Material / Performance Tests',select:true},
-                {text:'Initial Process Studies',select:true},{text:'Qualified Laboratory Documentation',select:true},
-                {text:'Appearance Approval Report',select:true},{text:'Sample Production Parts',select:true},
-                {text:'Master Sample',select:false},{text:'Checking Aids',select:false},
-                {text:'Customer Specific Requirements',select:false},{text:'Part Submission Warrant',select:true}
-            ];
-        }
-        else if(this.level === 4)
-        {
-            this.documents = [
-                {text:'Design Documentation',select:true},{text:'Engineering Change Documentation',select:true},
-                {text:'Customer Engineering Approval',select:false},{text:'Design Failure Mode and Effects Analysis',select:false},
-                {text:'Process Flow Diagram',select:false},{text:'Process Failure Mode and Effects Analysis',select:false},
-                {text:'Control Plan',select:false},{text:'Measurement System Analysis Studies',select:false},
-                {text:'Dimensional Results',select:true},{text:'Records of Material / Performance Tests',select:true},
-                {text:'Initial Process Studies',select:false},{text:'Qualified Laboratory Documentation',select:true},
-                {text:'Appearance Approval Report',select:true},{text:'Sample Production Parts',select:true},
-                {text:'Master Sample',select:true},{text:'Checking Aids',select:true},
-                {text:'Customer Specific Requirements',select:true},{text:'Part Submission Warrant',select:true}
-            ];
-        }
-        else if(this.level === 5)
-        {
-            this.documents = [
-                {text:'Design Documentation',select:true},{text:'Engineering Change Documentation',select:true},
-                {text:'Customer Engineering Approval',select:true},{text:'Design Failure Mode and Effects Analysis',select:true},
-                {text:'Process Flow Diagram',select:true},{text:'Process Failure Mode and Effects Analysis',select:true},
-                {text:'Control Plan',select:true},{text:'Measurement System Analysis Studies',select:true},
-                {text:'Dimensional Results',select:true},{text:'Records of Material / Performance Tests',select:true},
-                {text:'Initial Process Studies',select:true},{text:'Qualified Laboratory Documentation',select:true},
-                {text:'Appearance Approval Report',select:true},{text:'Sample Production Parts',select:true},
-                {text:'Master Sample',select:true},{text:'Checking Aids',select:true},
-                {text:'Customer Specific Requirements',select:false},{text:'Part Submission Warrant',select:true}
-            ];
-        }
-    }
 }

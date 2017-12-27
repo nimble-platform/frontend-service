@@ -9,19 +9,19 @@ import {ModelUtils} from "../../model/model-utils";
 import {CallStatus} from "../../../common/call-status";
 import {ActivatedRoute, Router} from "@angular/router";
 import {CatalogueService} from "../../../catalogue/catalogue.service";
-import {PpapDocument} from "../../../catalogue/model/publish/PpapDocument";
 import {BinaryObject} from "../../../catalogue/model/publish/binary-object";
 import {ItemProperty} from "../../../catalogue/model/publish/item-property";
 import {UBLModelUtils} from "../../../catalogue/model/ubl-model-utils";
 import {DocumentReference} from "../../../catalogue/model/publish/document-reference";
 import {Attachment} from "../../../catalogue/model/publish/attachment";
+import {ActivityVariableParser} from "../activity-variable-parser";
 
 @Component({
-    selector: 'ppap-response',
-    templateUrl: './ppap-response.component.html'
+    selector: 'ppap-document-upload',
+    templateUrl: './ppap-document-upload.component.html'
 })
 
-export class PpapResponseComponent{
+export class PpapDocumentUploadComponent{
 
     constructor(public bpDataService: BPDataService,
                 public bpeService: BPEService,
@@ -35,11 +35,10 @@ export class PpapResponseComponent{
     catalogueId: any;
     ppap : Ppap;
     documents = [];
-    newProperty: ItemProperty = UBLModelUtils.createAdditionalItemProperty(null, null);
 
     ppapResponse : PpapResponse = null;
 
-    ppapDocuments : PpapDocument[] = [];
+    ppapDocuments : DocumentReference[] = [];
     note: any;
     noteToSend : any;
     binaryObjects: any[] = [];
@@ -57,7 +56,7 @@ export class PpapResponseComponent{
             });
 
             this.bpeService.getProcessDetailsHistory(this.processid).then(task => {
-                this.ppap = task[3].value as Ppap;
+                this.ppap = ActivityVariableParser.getInitialDocument(task).value as Ppap;
                 let i = 0;
                 this.documents = [];
                 for(;i<this.ppap.documentType.length;i++){
@@ -86,15 +85,7 @@ export class PpapResponseComponent{
         this.binaryObjects.push({documentName:documentName,documents:binaryObjects});
     }
 
-    private static generateUUID(): string {
-        var d = new Date().getTime();
-        var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-            var r = (d + Math.random() * 16) % 16 | 0;
-            d = Math.floor(d / 16);
-            return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
-        });
-        return uuid;
-    };
+
 
     isSent(document):boolean{
         for(var i=0;i<this.binaryObjects.length;i++){
@@ -122,27 +113,27 @@ export class PpapResponseComponent{
     }
 
     responseToPpapRequest(acceptedIndicator: boolean){
-
         for(let i=0;i<this.binaryObjects.length;i++){
             for(let j=0;j<this.binaryObjects[i].documents.length;j++){
                 let attachment : Attachment = new Attachment(this.binaryObjects[i].documents[j],null,null);
-                let documentRef: DocumentReference = new DocumentReference(PpapResponseComponent.generateUUID(),null,null,null,null,this.binaryObjects[i].documentName,null,null,null,attachment,null,null,null);
-                this.ppapDocuments.push(new PpapDocument(documentRef));
+                let documentRef: DocumentReference = new DocumentReference(UBLModelUtils.generateUUID(),null,null,null,null,this.binaryObjects[i].documentName,null,null,null,attachment,null,null,null);
+                this.ppapDocuments.push(documentRef);
             }
         }
 
 
         this.ppapResponse = UBLModelUtils.createPpapResponse(this.ppap,acceptedIndicator);
         if(this.ppapDocuments.length == 0){
-            this.ppapResponse.ppapDocument = [];
+            this.ppapResponse.requestedDocument = [];
         }
         else{
-            this.ppapResponse.ppapDocument = this.ppapDocuments;
+            this.ppapResponse.requestedDocument = this.ppapDocuments;
         }
 
         this.ppapResponse.note = this.noteToSend;
         let vars: ProcessVariables = ModelUtils.createProcessVariables("Ppap", this.ppap.buyerCustomerParty.party.id, this.ppap.sellerSupplierParty.party.id, this.ppapResponse);
         let piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.bpDataService.processMetadata.process_id);
+
 
 
         this.callStatus.submit();

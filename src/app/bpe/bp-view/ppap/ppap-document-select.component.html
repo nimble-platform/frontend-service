@@ -1,0 +1,129 @@
+<h6 class="space-after">
+    <b> What is Production Part Approval Process (PPAP) ? </b>
+</h6>
+<p>The Production Part Approval Process (PPAP) is a standardized process that helps manufacturers and suppliers communicate and approve production designs and processes before, during, and after manufacture.</p>
+<h6 class="space-after">
+    <b> What is the goal of the PPAP process ? </b>
+</h6>
+<p>The goal of the PPAP process is to ensure that all designs and specifications are understood by the supplier and that the production process and produce products that consistently meet these requirements when running at rate.</p>
+<h6 class="space-after">
+    <b> What is the meaning of the PPAP levels ? </b>
+</h6>
+<p>The PPAP levels indicate which elements need to be submitted to the customer.</p>
+
+
+<label *ngIf="level != 0 "><b> Select a PPAP level : </b> </label>
+
+<select *ngIf="level != 0" [(ngModel)]="level" class="custom-select" (change)="setDocuments()">
+    <option [ngValue]='-1'></option>
+    <option [ngValue]='1'>Level 1</option>
+    <option [ngValue]='2'>Level 2</option>
+    <option [ngValue]='3'>Level 3</option>
+    <option [ngValue]='4'>Level 4</option>
+    <option [ngValue]='5'>Level 5</option>
+</select>
+
+
+
+<p *ngIf="level=='1'">Level 1 - Part Submission Warrant (PSW) only submitted to the customer.</p>
+<p *ngIf="level=='2'">Level 2 – PSW with product samples and limited supporting data.</p>
+<p *ngIf="level=='3'">Level 3 – PSW with product samples and complete supporting data.</p>
+<p *ngIf="level=='4'">Level 4 – PSW and other requirements as defined by the customer.</p>
+<p *ngIf="level=='5'">Level 5 – PSW with product samples and complete supporting data available for review at the supplier’s manufacturing location.</p>
+
+
+<h3 *ngIf="(level==0 || level==1 || level==2 || level==3 || level==4 || level==5) ">Choose which elements of PPAP you want</h3>
+<div *ngIf="(level==0 || level==1 || level==2 || level==3 || level==4 || level==5) " style='border: 1px solid black;overflow: auto'>
+
+    <div style="width: 50%;float: left;padding: 1em">
+        <div>
+            <input [(ngModel)]="documents[0].select" type="checkbox" >
+            <label >Design Documentation</label>
+        </div>
+        <div>
+            <input [(ngModel)]="documents[1].select" type="checkbox" >
+            <label>Engineering Change Documentation</label>
+        </div>
+        <div>
+            <input [(ngModel)]="documents[2].select" type="checkbox" >
+            <label>Customer Engineering Approval</label>
+        </div>
+        <div>
+            <input [(ngModel)]="documents[3].select" type="checkbox" >
+            <label>Design Failure Mode and Effects Analysis</label>
+        </div>
+        <div>
+            <input [(ngModel)]="documents[4].select" type="checkbox" >
+            <label>Process Flow Diagram</label>
+        </div>
+        <div>
+            <input [(ngModel)]="documents[5].select" type="checkbox" >
+            <label>Process Failure Mode and Effects Analysis</label>
+        </div>
+        <div>
+            <input [(ngModel)]="documents[6].select" type="checkbox" >
+            <label>Control Plan</label>
+        </div>
+        <div>
+            <input [(ngModel)]="documents[7].select" type="checkbox" >
+            <label>Measurement System Analysis Studies</label>
+        </div>
+        <div>
+            <input [(ngModel)]="documents[8].select" type="checkbox" >
+            <label>Dimensional Results</label>
+        </div>
+    </div>
+
+    <div style="width: 50%;float: right;padding: 1em">
+        <div>
+            <input [(ngModel)]="documents[9].select" type="checkbox" >
+            <label>Records of Material / Performance Tests</label>
+        </div>
+        <div>
+            <input [(ngModel)]="documents[10].select" type="checkbox" >
+            <label>Initial Process Studies</label>
+        </div>
+        <div>
+            <input [(ngModel)]="documents[11].select" type="checkbox" >
+            <label>Qualified Laboratory Documentation</label>
+        </div>
+        <div>
+            <input [(ngModel)]="documents[12].select" type="checkbox" >
+            <label>Appearance Approval Report</label>
+        </div>
+        <div>
+            <input [(ngModel)]="documents[13].select" type="checkbox" >
+            <label>Sample Production Parts</label>
+        </div>
+        <div>
+            <input [(ngModel)]="documents[14].select" type="checkbox" >
+            <label>Master Sample</label>
+        </div>
+        <div>
+            <input [(ngModel)]="documents[15].select" type="checkbox" >
+            <label>Checking Aids</label>
+        </div>
+        <div>
+            <input [(ngModel)]="documents[16].select" type="checkbox" >
+            <label>Customer Specific Requirements</label>
+        </div>
+        <div>
+            <input [(ngModel)]="documents[17].select" type="checkbox">
+            <label>Part Submission Warrant</label>
+        </div>
+    </div>
+</div>
+
+<hr>
+
+<value-view *ngIf="level==0 || level==1 || level==2 || level==3 || level==4 || level==5 " class="row"
+            [presentationMode]="'edit'"
+            [propName]="'Note'"
+            [(value)]="note">
+</value-view>
+<div *ngIf="level != -1 && level != 0 && !seller" class="row justify-content-end">
+    <button class="btn btn-success col-4" (click)="sendRequest()">Send Request</button>
+</div>
+<call-status [callStatus]="callStatus"
+             [large]="true">
+</call-status>

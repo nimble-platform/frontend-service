@@ -30,8 +30,10 @@ import { BpProductDetailsComponent } from "./bp-view/bp-product-details.componen
 import { ItemInformationRequestBpComponent } from "./bp-view/item-information-request/item-information-request-bp.component";
 import { ItemInformationRequestComponent } from "./bp-view/item-information-request/item-information-request.component";
 import { PpapComponent} from "./bp-view/ppap/ppap.component";
-import { PpapResponseComponent} from "./bp-view/ppap/ppap-response.component";
-import { PpapViewComponent} from "./bp-view/ppap/ppap-view.component";
+
+import { PpapDocumentSelectComponent} from "./bp-view/ppap/ppap-document-select.component";
+import { PpapDocumentUploadComponent} from "./bp-view/ppap/ppap-document-upload.component";
+import { PpapDocumentDownloadComponent} from "./bp-view/ppap/ppap-document-download.component";
 
 //import { BPEService } from './bpe.service';
 //import { BPService } from './bp.service';
@@ -70,8 +72,9 @@ import { PpapViewComponent} from "./bp-view/ppap/ppap-view.component";
 		ItemInformationRequestBpComponent,
 		ItemInformationRequestComponent,
         PpapComponent,
-        PpapResponseComponent,
-        PpapViewComponent
+        PpapDocumentSelectComponent,
+		PpapDocumentUploadComponent,
+		PpapDocumentDownloadComponent
 	],
 	exports: [
 		TradingDetailsComponent,

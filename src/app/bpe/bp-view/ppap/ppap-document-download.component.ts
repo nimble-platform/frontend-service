@@ -4,15 +4,16 @@ import {BPEService} from "../../bpe.service";
 import {CatalogueService} from "../../../catalogue/catalogue.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {PpapResponse} from "../../../catalogue/model/publish/ppap-response";
-import {PpapDocument} from "../../../catalogue/model/publish/PpapDocument";
 import {Ppap} from "../../../catalogue/model/publish/ppap";
+import {DocumentReference} from "../../../catalogue/model/publish/document-reference";
+import {ActivityVariableParser} from "../activity-variable-parser";
 
 @Component({
-    selector: 'ppap-view',
-    templateUrl: './ppap-view.component.html'
+    selector: 'ppap-document-download',
+    templateUrl: './ppap-document-download.component.html'
 })
 
-export class PpapViewComponent{
+export class PpapDocumentDownloadComponent{
 
     constructor(public bpDataService: BPDataService,
                 public bpeService: BPEService,
@@ -26,8 +27,9 @@ export class PpapViewComponent{
     catalogueId: any;
 
     ppapResponse : PpapResponse = null;
-    ppapDocuments : PpapDocument[] = [];
+    ppapDocuments : DocumentReference[] = [];
     note: any;
+    noteBuyer: any;
     documents = [];
     keys = [];
 
@@ -45,24 +47,26 @@ export class PpapViewComponent{
             });
 
             this.bpeService.getProcessDetailsHistory(this.processid).then(task => {
-                this.ppapResponse = task[4].value as PpapResponse;
-                this.ppapDocuments = this.ppapResponse.ppapDocument;
+                let ppap = ActivityVariableParser.getInitialDocument(task).value as Ppap;
+                this.noteBuyer = ppap.note;
+                this.ppapResponse = ActivityVariableParser.getResponse(task).value as PpapResponse;
+                this.ppapDocuments = this.ppapResponse.requestedDocument;
 
                 for(let i=0;i<this.ppapDocuments.length;i++){
-                    if(!(this.ppapDocuments[i].documentReference.documentType in this.documents)){
-                        this.documents[this.ppapDocuments[i].documentReference.documentType]=[this.ppapDocuments[i].documentReference.attachment.embeddedDocumentBinaryObject];
+                    if(!(this.ppapDocuments[i].documentType in this.documents)){
+                        this.documents[this.ppapDocuments[i].documentType]=[this.ppapDocuments[i].attachment.embeddedDocumentBinaryObject];
                     }
                     else{
-                        this.documents[this.ppapDocuments[i].documentReference.documentType].push(this.ppapDocuments[i].documentReference.attachment.embeddedDocumentBinaryObject);
+                        this.documents[this.ppapDocuments[i].documentType].push(this.ppapDocuments[i].attachment.embeddedDocumentBinaryObject);
                     }
                 }
                 this.note = this.ppapResponse.note;
                 this.keys = Object.keys(this.documents);
 
-                let ppap = task[3].value as Ppap;
                 this.requestedDocuments = ppap.documentType;
             });
         });
+
     }
 
     downloadFile(key) :void {

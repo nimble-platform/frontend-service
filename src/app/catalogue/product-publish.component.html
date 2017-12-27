@@ -162,6 +162,29 @@
                     <span i18n>Add file</span>
                 </div>
 
+                <div *ngIf="propertyValueType.options.selectedIndex == 4">
+                    <input name="propertyValue"
+                           class="form-control col ml-2"
+                           [(ngModel)]="quantity.value"
+                           placeholder="Property Value"
+                           required/>
+                    <label class="col-1" class="ml-3 mr-3">Unit: </label>
+                    <input name="unit"
+                           class="form-control col ml-2"
+                           [(ngModel)]="quantity.unitCode"
+                           placeholder="Unit"
+                           required/>
+                </div>
+
+                <div *ngIf="propertyValueType.options.selectedIndex == 5" class="col-4"
+                     style="display: inline-block;">
+
+                    <input type="checkbox"
+                           [checked]="newProperty.value[0] == 'true'"
+                           (change)="newProperty.value[0] == 'true ' ? newProperty.value[0] = 'false' : newProperty.value[0] = 'true'"
+                           >
+
+                </div>
                 <!-- combobox for choosing the property value type -->
                 <div class="col">
                     <div class="row justify-content-end ml-2">
@@ -173,6 +196,8 @@
                                 <option i18n>Number</option>
                                 <option i18n>Image</option>
                                 <option i18n>File</option>
+                                <option i18n>Quantity</option>
+                                <option i18n>Boolean</option>
                             </select>
                         </div>
 
@@ -247,9 +272,6 @@
                                  width="100"
                             />
                             <div style="display: inline-block;">
-                                <label>Value Details:</label>
-                                <input type="text" class="form-control"
-                                       [(ngModel)]="afile.objectMetadata" name="valueDetails">
                             </div>
                             <span><button class="btn btn-xs" style="background-color: white; color: #0d6cd8"
                                           (click)="imageCancel(afile.fileName);"

@@ -20,6 +20,8 @@ import {UserService} from "../user-mgmt/user.service";
 import {ItemPropertyDataSourcePipe} from "./item-property-data-source-pipe";
 import {Quantity} from "./model/publish/quantity";
 import {CallStatus} from "../common/call-status";
+import {Dimension} from "./model/publish/dimension";
+import {BPDataService} from "../bpe/bp-view/bp-data-service";
 
 const uploadModalityKey: string = "UploadModality";
 
@@ -51,6 +53,10 @@ export class ProductPublishComponent implements OnInit {
 
     private bulkPublishStatus: CallStatus = new CallStatus();
     private productCategoryRetrievalStatus: CallStatus = new CallStatus();
+
+    // used to add a new property which has a unit
+    private quantity = new Quantity(null,null);
+
 
     constructor(public categoryService: CategoryService,
                 private catalogueService: CatalogueService,
@@ -358,6 +364,10 @@ export class ProductPublishComponent implements OnInit {
             this.newProperty.valueQualifier = "REAL_MEASURE";
         } else if (event.target.value == "Image" || event.target.value == "File") {
             this.newProperty.valueQualifier = "BINARY";
+        } else if(event.target.value == "Quantity"){
+            this.newProperty.valueQualifier = "QUANTITY";
+        } else if(event.target.value == "Boolean"){
+            this.newProperty.valueQualifier = "BOOLEAN";
         }
     }
 
@@ -483,8 +493,26 @@ export class ProductPublishComponent implements OnInit {
      * keeps only the relevant array based on the value qualifier and removes the empty values
      */
     private addCustomProperty(): void {
+        if (this.newProperty.valueQualifier == "BOOLEAN"){
+            let filledValues: string[] = [];
+            for (let val of this.newProperty.value) {
+                if (val != "") {
+                    filledValues.push(val);
+                }
+            }
+            this.newProperty.value = filledValues;
+            this.newProperty.valueDecimal = [];
+            this.newProperty.valueBinary = [];
+            this.newProperty.valueQuantity = [];
+        }
+        else if (this.newProperty.valueQualifier == "QUANTITY"){
+            this.newProperty.value = [];
+            this.newProperty.valueDecimal = [];
+            this.newProperty.valueBinary = [];
+            this.newProperty.valueQuantity = [this.quantity];
+        }
         // remove empty/undefined values and keep only the the data array relevant to the value qualifier
-        if (this.newProperty.valueQualifier == "STRING") {
+        else if (this.newProperty.valueQualifier == "STRING") {
             let filledValues: string[] = [];
             for (let val of this.newProperty.value) {
                 if (val != "") {
@@ -515,17 +543,6 @@ export class ProductPublishComponent implements OnInit {
             this.newProperty.valueDecimal = [];
             this.newProperty.valueQuantity = [];
 
-        } else if (this.newProperty.valueQualifier == 'QUANTITY') {
-            let filledValues: Quantity[] = [];
-            for (let val of this.newProperty.valueQuantity) {
-                if (val != undefined && val != null && val.toString() != "") {
-                    filledValues.push(val);
-                }
-            }
-            this.newProperty.valueQuantity = filledValues;
-            this.newProperty.value = [];
-            this.newProperty.valueDecimal = [];
-            this.newProperty.valueBinary = [];
         }
 
         // add the custom property to the end of existing custom properties
@@ -540,7 +557,9 @@ export class ProductPublishComponent implements OnInit {
 
         // reset the custom property view
         this.newProperty = UBLModelUtils.createAdditionalItemProperty(null, null);
+        this.quantity = new Quantity(null,null);
         this.propertyValueType.nativeElement.selectedIndex = 0;
+
     }
 
     private downloadTemplate() {
@@ -669,6 +688,7 @@ export class ProductPublishComponent implements OnInit {
             return false;
         }
     }
+
 
     private handleError(error: any): Promise<any> {
         return Promise.reject(error.message || error);

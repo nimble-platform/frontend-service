@@ -103,7 +103,6 @@ export class DashboardComponent implements OnInit {
 
                     this.bpeService.getProcessDetailsHistory(task.processInstanceId)
                         .then(activityVariables => {
-
                             var vContent = "", vNote = "", vStatusCode = "", vActionStatus = "", vBPStatus = "",
                                 vTask_id = "", vProcess_id = "", vStart_time = "", vSellerName = "", vProduct,
                                 vBpOptionMenuItems: any;

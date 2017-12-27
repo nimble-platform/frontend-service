@@ -12,8 +12,8 @@
                     <td *ngIf="!isSent(document)">{{document}}</td>
                     <td *ngIf="isSent(document)" style="background-color: green;">{{document}}</td>
                     <td><div (click)="file.click()"
-                         class="col-4"
-                         style="display: inline-block;">
+                             class="col-4"
+                             style="display: inline-block;">
                         <input #file type="file" (change)="fileChange($event,document)" multiple accept="file/*"
                                style="display: none">
                         <img src="./assets/catalogue/add_button.png"/>
@@ -22,9 +22,9 @@
                     <div *ngFor="let object of binaryObjects">
                         <div *ngFor="let doc of object.documents">
                             <td *ngIf="document == object.documentName" style="border: none">{{doc.fileName}}
-                                    <button  style="align: right" class="btn btn-xs btn-danger" (click)="remove(document,doc)"
-                            >&times;
-                                    </button>
+                                <button  style="align: right" class="btn btn-xs btn-danger" (click)="remove(document,doc)"
+                                >&times;
+                                </button>
                             </td>
                         </div>
                     </div>

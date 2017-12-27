@@ -141,6 +141,16 @@ export class UBLModelUtils {
         return order;
     }
 
+    public static createOrderResponseSimple(order:Order, acceptedIndicator:boolean):OrderResponseSimple {
+        let orderReference:OrderReference = this.createOrderReference(order.id);
+        this.removeHjidFieldsFromObject(order.buyerCustomerParty);
+        this.removeHjidFieldsFromObject(order.sellerSupplierParty);
+        let customerParty:CustomerParty = order.buyerCustomerParty;
+        let supplierParty:SupplierParty = order.sellerSupplierParty;
+        let orderResponseSimple:OrderResponseSimple = new OrderResponseSimple("", "", acceptedIndicator, orderReference, supplierParty, customerParty);
+        return orderResponseSimple;
+    }
+
     public static createPpap(documents:String[]):Ppap {
         let quantity:Quantity = new Quantity(null, "", null);
         let item:Item = this.createItem();
@@ -151,25 +161,26 @@ export class UBLModelUtils {
     }
 
     public static createPpapResponse(ppap:Ppap,acceptedIndicator:boolean):PpapResponse{
-        let documentReference:DocumentReference = new DocumentReference();
-        documentReference.id = ppap.id;
+        /*
+        let documentReference:DocumentReference = new DocumentReference(ppap.id);
+        let ppapDocumentReference:PPAPDocumentReference = new PPAPDocumentReference(documentReference);
         this.removeHjidFieldsFromObject(ppap.buyerCustomerParty);
         this.removeHjidFieldsFromObject(ppap.sellerSupplierParty);
         let customerParty:CustomerParty = ppap.buyerCustomerParty;
         let supplierParty:SupplierParty = ppap.sellerSupplierParty;
         let ppapResponse:PpapResponse = new PpapResponse("","",acceptedIndicator,customerParty,supplierParty,null,documentReference);
+        return ppapResponse;*/
+        let ppapResponse:PpapResponse = new PpapResponse();
+        ppapResponse.ppapDocumentReference = new DocumentReference(ppap.id);
+        this.removeHjidFieldsFromObject(ppap.buyerCustomerParty);
+        this.removeHjidFieldsFromObject(ppap.sellerSupplierParty);
+        ppapResponse.buyerCustomerParty = ppap.buyerCustomerParty;
+        ppapResponse.sellerSupplierParty = ppap.sellerSupplierParty;
+        ppapResponse.acceptedIndicator = acceptedIndicator;
         return ppapResponse;
     }
 
-    public static createOrderResponseSimple(order:Order, acceptedIndicator:boolean):OrderResponseSimple {
-        let orderReference:OrderReference = this.createOrderReference(order.id);
-        this.removeHjidFieldsFromObject(order.buyerCustomerParty);
-        this.removeHjidFieldsFromObject(order.sellerSupplierParty);
-        let customerParty:CustomerParty = order.buyerCustomerParty;
-        let supplierParty:SupplierParty = order.sellerSupplierParty;
-        let orderResponseSimple:OrderResponseSimple = new OrderResponseSimple("", "", acceptedIndicator, orderReference, supplierParty, customerParty);
-        return orderResponseSimple;
-    }
+
 
     public static createRequestForQuotation():RequestForQuotation {
         let quantity:Quantity = new Quantity(null, "", null);
@@ -363,7 +374,7 @@ export class UBLModelUtils {
         return object;
     }
 
-    private static generateUUID(): string {
+    public static generateUUID(): string {
         var d = new Date().getTime();
         var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
             var r = (d + Math.random() * 16) % 16 | 0;
