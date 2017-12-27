@@ -17,6 +17,7 @@ export class UserFormComponent implements OnInit {
     email_preset = false;
     submitted = false;
     callback = false;
+	error_detc = false;
     debug = myGlobals.debug;
     /* ToDo: Hackathon only BEGIN */
     model: UserRegistration = UserRegistration.initEmpty();
@@ -57,12 +58,17 @@ export class UserFormComponent implements OnInit {
             .then(res => {
                 this.response = res;
                 this.callback = true;
+            })
+			.catch(error => {
+				this.error_detc = true;
+                console.error(error);
             });
     }
 
     reset() {
         this.submitted = false;
         this.callback = false;
+		this.error_detc = false;
         /* ToDo: Hackathon only BEGIN */
         this.model = UserRegistration.initEmpty();
         this.objToSubmit = UserRegistration.initEmpty();

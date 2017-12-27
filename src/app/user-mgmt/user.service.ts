@@ -133,9 +133,8 @@ export class UserService {
         this.userParty = null;
     }
 
-    private handleError(error: any): Promise<any> {
-        console.error('An error occurred', error); // for demo purposes only
-        return Promise.reject(error.message || error);
-    }
+	private handleError(error: any): Promise<any> {
+		return Promise.reject(error.message || error);
+	}
 
 }
