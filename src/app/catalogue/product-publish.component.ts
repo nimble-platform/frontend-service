@@ -265,7 +265,6 @@ export class ProductPublishComponent implements OnInit {
     }
 
     private editProduct(): void {
-
         this.error_detc = false;
         this.callback = false;
         this.submitted = true;
@@ -274,7 +273,7 @@ export class ProductPublishComponent implements OnInit {
         let splicedCatalogueLine: CatalogueLine = this.removeEmptyProperties(this.catalogueLine);
 
         // Replace original line in the catalogue with the edited version
-        let indexOfOriginalLine = this.catalogueService.catalogue.catalogueLine.indexOf(this.catalogueService.originalCatalogueLine);
+        let indexOfOriginalLine = this.catalogueService.catalogue.catalogueLine.findIndex(line => line.id === this.catalogueLine.id);
         this.catalogueService.catalogue.catalogueLine[indexOfOriginalLine] = splicedCatalogueLine;
 
         if (this.catalogueService.catalogue.uuid == null) {
