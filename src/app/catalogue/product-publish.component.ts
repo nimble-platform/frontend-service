@@ -2,24 +2,23 @@
  * Created by suat on 17-May-17.
  */
 
-import {ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from "@angular/core";
+import {Component, ElementRef, ViewChild} from "@angular/core";
 import {CategoryService} from "./category/category.service";
 import {ItemProperty} from "./model/publish/item-property";
 import {BinaryObject} from "./model/publish/binary-object";
 import {CatalogueService} from "./catalogue.service";
 import {Category} from "./model/category/category";
 import {CatalogueLine} from "./model/publish/catalogue-line";
-import {Catalogue} from "./model/publish/catalogue";
 import {CookieService} from "ng2-cookies";
 import {UBLModelUtils} from "./model/ubl-model-utils";
 import {ActivatedRoute, Params, Router} from "@angular/router";
-//import 'rxjs/Rx' ;
 import {Code} from "./model/publish/code";
 import {PublishService} from "./publish-and-aip.service";
 import {UserService} from "../user-mgmt/user.service";
 import {ItemPropertyDataSourcePipe} from "./item-property-data-source-pipe";
 import {Quantity} from "./model/publish/quantity";
 import {CallStatus} from "../common/call-status";
+import {FormGroup} from "@angular/forms";
 
 const uploadModalityKey: string = "UploadModality";
 
@@ -29,7 +28,7 @@ const uploadModalityKey: string = "UploadModality";
     templateUrl: './product-publish.component.html',
 })
 
-export class ProductPublishComponent implements OnInit {
+export class ProductPublishComponent {
     @ViewChild('propertyValueType') propertyValueType: ElementRef;
 
     /*
@@ -40,6 +39,8 @@ export class ProductPublishComponent implements OnInit {
     private catalogueLine: CatalogueLine = null;
     // placeholder for the custom property
     private newProperty: ItemProperty = UBLModelUtils.createAdditionalItemProperty(null, null);
+    // form model to be provided as root model to the inner components used in publishing
+    publishForm: FormGroup = new FormGroup({});
 
     /*
      * state objects for feedback about the publish operation
@@ -48,6 +49,8 @@ export class ProductPublishComponent implements OnInit {
     submitted = false;
     callback = false;
     error_detc = false;
+
+    json = JSON;
 
     private bulkPublishStatus: CallStatus = new CallStatus();
     private productCategoryRetrievalStatus: CallStatus = new CallStatus();
@@ -409,8 +412,6 @@ export class ProductPublishComponent implements OnInit {
 
                 reader.onload = function (e: any) {
                     let base64String = reader.result.split(',').pop();
-                    console.log(base64String);
-                    console.log(file.type);
                     let binaryObject = new BinaryObject(base64String, file.type, file.name, "", "");
                     binaryObjects.push(binaryObject);
                 };

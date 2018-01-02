@@ -1,4 +1,5 @@
 <catalogue-line-header [catalogueLine]="catalogueLine"
+                       [parentForm]="parentForm"
                        [presentationMode]="presentationMode">
 </catalogue-line-header>
 
@@ -54,17 +55,19 @@
         <li class="nav-item pointer">
             <a
                     [ngClass]="{'nav-link': true, active: selectedTab === 'Product Trading & Delivery Terms'}"
-                    (click)="selectedTab = 'Product Trading & Delivery Terms'"
+                    (click)="selectedTab = 'Product Trading & Delivery Terms';"
                     i18n
             >Product Trading & Delivery Terms</a>
         </li>
     </ul>
 
-    <product-details *ngIf="selectedTab === 'Product Details'"
+    <product-details [hidden]="selectedTab !== 'Product Details'"
                      [catalogueLine]="catalogueLine"
-                     [presentationMode]="presentationMode">
+                     [presentationMode]="presentationMode"
+                     [parentForm]="parentForm">
     </product-details>
-    <product-trading-details *ngIf="selectedTab === 'Product Trading & Delivery Terms'"
+    <product-trading-details [hidden]="selectedTab !== 'Product Trading & Delivery Terms'"
+                             [parentForm]="parentForm"
                              [catalogueLine]="catalogueLine"
                              [presentationMode]="presentationMode">
     </product-trading-details>
@@ -79,6 +82,7 @@
     </ul>
 
     <transportation-service-details [catalogueLine]="catalogueLine"
-                                    [presentationMode]="presentationMode">
+                                    [presentationMode]="presentationMode"
+                                    [parentForm]="parentForm">
     </transportation-service-details>
 </ng-container>

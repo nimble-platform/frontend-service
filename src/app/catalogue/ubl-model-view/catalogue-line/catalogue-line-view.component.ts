@@ -5,6 +5,7 @@ import {Router} from "@angular/router";
 import {BinaryObject} from "../../model/publish/binary-object";
 import {UserService} from "../../../user-mgmt/user.service";
 import * as myGlobals from '../../../globals';
+import {FormGroup} from "@angular/forms";
 
 @Component({
     selector: 'catalogue-line-view',
@@ -18,8 +19,10 @@ export class CatalogueLineViewComponent {
     selectedTab: string = "Product Details";
     partyRole: string = "";
 	public debug = myGlobals.debug;
-    @Input() catalogueLine: CatalogueLine;
+
+	@Input() catalogueLine: CatalogueLine;
     @Input() presentationMode: string;
+    @Input() parentForm: FormGroup;
 
     private addImage(event: any) {
         let fileList: FileList = event.target.files;

@@ -1,17 +1,27 @@
-<ng-container *ngIf="presentationMode != 'singlevalue'">
-    <div class="input-group form-group">
-        <label class="col-3 control-label">{{propName}}</label>
-        <input type="text" class="form-control "
-               [(ngModel)]="amount[0].value"
-               [ngClass]="{'offset-3' : i > 0} "
-               [readonly]="presentationMode != 'edit'">
-        <label class="col-1" class="ml-3 mr-3">Currency: </label>
-        <input type="text"
-               class="col-1 form-control"
-               [(ngModel)]="amount[0].currencyID"
-               [readonly]="presentationMode != 'edit'">
+<form *ngIf="presentationMode != 'singlevalue'"
+      [formGroup]="amountForm">
+    <div class="mb-3">
+        <div class="input-group">
+            <label class="col-3 control-label">{{propName}}</label>
+            <input type="number" class="form-control "
+                   [(ngModel)]="amount[0].value"
+                   [ngClass]="{'offset-3' : i > 0} "
+                   [readonly]="presentationMode != 'edit'"
+                   [formControlName]="'amount'">
+            <label class="col-1" class="ml-3 mr-3">Currency: </label>
+            <input type="text"
+                   class="col-1 form-control"
+                   [(ngModel)]="amount[0].currencyID"
+                   [readonly]="presentationMode != 'edit'"
+                   [formControlName]="'currency'">
+        </div>
+
+        <!-- validation message -->
+        <small *ngIf="presentationMode == 'edit' && amountForm.errors?.bothValues == false" class="offset-3 text-danger">
+            Both amount and currency must be filled
+        </small>
     </div>
-</ng-container>
+</form>
 
 <ng-container *ngIf="presentationMode == 'singlevalue'">
     <div class="input-group form-group">
@@ -21,7 +31,7 @@
             <option *ngFor="let value of amount">{{value}}</option>
         </select>
         <input *ngIf="amount.length == 1"
-               type="text" class="form-control"
+               type="number" class="form-control"
                [(ngModel)]="amount[0].value"
                readonly>
         <label class="col-1" class="ml-3 mr-3">Currency: </label>

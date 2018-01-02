@@ -9,7 +9,8 @@
 <!-- dimensions -->
 <dimension-view [presentationMode]="presentationMode"
                 [itemDimensions]="catalogueLine.goodsItem.item.dimension"
-                [header]="'Dimensions'">
+                [header]="'Dimensions'"
+                [parentForm]="parentForm">
 </dimension-view>
 
 <!-- certificates -->
@@ -35,7 +36,8 @@
                 *ngFor="let property of propertyBlock[PROPERTY_BLOCK_FIELD_PROPERTIES]; let i = index; trackBy : trackByIndex"
                 [additionalItemProperty]="property"
                 [propertyDetails]="propertyBlock[PROPERTY_BLOCK_FIELD_PROPERTY_DETAILS] != undefined ? propertyBlock[PROPERTY_BLOCK_FIELD_PROPERTY_DETAILS][i] : null"
-                [presentationMode]="presentationMode">
+                [presentationMode]="presentationMode"
+                [parentForm]="parentForm">
         </additional-item-property>
     </div>
 </div>

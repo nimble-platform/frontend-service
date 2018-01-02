@@ -73,7 +73,7 @@
                 type="submit"
                 class="btn btn-success"
                 (click)="publishProduct()"
-                [disabled]="submitted == true ">
+                [disabled]="submitted == true || !publishForm.valid">
             <span i18n>Publish Product</span>
         </button>
         <button *ngIf="publishStateService.publishMode == 'edit' &&
@@ -81,7 +81,7 @@
                         productCategoryRetrievalStatus.fb_submitted == true && productCategoryRetrievalStatus.fb_callback == true)"
                 class="btn btn-success btn-xs"
                 (click)="editProduct()"
-                [disabled]="submitted == true">
+                [disabled]="submitted == true || !publishForm.valid">
             <span i18n>Save Changes</span>
         </button>
     </div>
@@ -89,10 +89,10 @@
     <hr>
 
     <!-- Form header row -->
-    <form class="space-before">
+    <form [formGroup]="publishForm" class="space-before">
 
         <!-- product properties -->
-        <catalogue-line-view
+        <catalogue-line-view [parentForm]="publishForm"
                              [catalogueLine]="catalogueLine"
                              [presentationMode]="'edit'">
         </catalogue-line-view>

@@ -20,13 +20,15 @@
     <!-- maximum capacity dimensions -->
     <quantity-view [propName]="'Total Capacity'"
                    [quantity]="[catalogueLine.goodsItem.item.transportationServiceDetails.totalCapacityDimension.measure]"
-                   [presentationMode]="presentationMode">
+                   [presentationMode]="presentationMode"
+                   [parentForm]="parentForm">
     </quantity-view>
 
     <!-- estimated duration period -->
     <quantity-view [propName]="'Estimated Duration'"
                    [quantity]="[catalogueLine.goodsItem.item.transportationServiceDetails.estimatedDurationPeriod.durationMeasure]"
-                   [presentationMode]="presentationMode">
+                   [presentationMode]="presentationMode"
+                   [parentForm]="parentForm">
     </quantity-view>
 
     <!-- scheduled service frequency -->
@@ -84,7 +86,8 @@
     </value-view>
     <quantity-view [propName]="'Value Measure'"
                    [quantity]="[catalogueLine.goodsItem.item.transportationServiceDetails.environmentalEmission[0].valueMeasure]"
-                   [presentationMode]="presentationMode">
+                   [presentationMode]="presentationMode"
+                   [parentForm]="parentForm">
     </quantity-view>
 </div>
 
@@ -107,7 +110,8 @@
                 *ngFor="let property of propertyBlock[PROPERTY_BLOCK_FIELD_PROPERTIES]; let i = index; trackBy : trackByIndex"
                 [additionalItemProperty]="property"
                 [propertyDetails]="propertyBlock[PROPERTY_BLOCK_FIELD_PROPERTY_DETAILS] != undefined ? propertyBlock[PROPERTY_BLOCK_FIELD_PROPERTY_DETAILS][i] : null"
-                [presentationMode]="presentationMode">
+                [presentationMode]="presentationMode"
+                [parentForm]="parentForm">
         </additional-item-property>
     </div>
 </div>

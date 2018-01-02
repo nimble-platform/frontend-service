@@ -10,21 +10,22 @@
         </div>
     </div>
     <div class="col-10">
-        <div class="input-group form-group">
-            <label class="col-3 control-label"><strong>Product Identifier</strong></label>
-            <label *ngIf="catalogueLine.goodsItem.item.manufacturersItemIdentification!= null && presentationMode != 'edit'">{{catalogueLine.goodsItem.item.manufacturersItemIdentification.id}}</label>
-            <input *ngIf="catalogueLine.goodsItem.item.manufacturersItemIdentification!= null && presentationMode == 'edit'" class="col-9" type="text" [(ngModel)]="catalogueLine.goodsItem.item.manufacturersItemIdentification.id">
-        </div>
-        <div class="input-group form-group">
-            <label class="col-3 control-label"><strong>Name</strong></label>
-            <label *ngIf="presentationMode != 'edit'">{{catalogueLine.goodsItem.item.name}}</label>
-            <input *ngIf="presentationMode == 'edit'" class="col-9" type="text" [(ngModel)]="catalogueLine.goodsItem.item.name">
-        </div>
-        <div class="input-group form-group">
-            <label class="col-3 control-label"><strong>Description</strong></label>
-            <label *ngIf="presentationMode != 'edit'">{{catalogueLine.goodsItem.item.description}}</label>
-            <input *ngIf="presentationMode == 'edit'" class="col-9" type="text" [(ngModel)]="catalogueLine.goodsItem.item.description">
-        </div>
+        <value-view [presentationMode]="presentationMode"
+                    [propName]="'Product Identifier'"
+                    [parentForm]="parentForm"
+                    [mandatory]="true"
+                    [(value)]="catalogueLine.goodsItem.item.manufacturersItemIdentification.id">
+        </value-view>
+        <value-view [presentationMode]="presentationMode"
+                    [propName]="'Product Name'"
+                    [parentForm]="parentForm"
+                    [mandatory]="true"
+                    [(value)]="catalogueLine.goodsItem.item.name">
+        </value-view>
+        <value-view [presentationMode]="presentationMode"
+                    [propName]="'Product Description'"
+                    [(value)]="catalogueLine.goodsItem.item.description">
+        </value-view>
         <div *ngIf="catalogueLine.goodsItem.item.commodityClassification.length > 0" class="d-flex flex-wrap">
             <label class="col-3 control-label"><strong>Commodity Classifications</strong></label>
             <div *ngFor="let classification of catalogueLine.goodsItem.item.commodityClassification">
