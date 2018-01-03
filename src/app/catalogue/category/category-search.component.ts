@@ -11,6 +11,7 @@ import {CatalogueService} from "../catalogue.service";
 import {UBLModelUtils} from "../model/ubl-model-utils";
 import {UserService} from "../../user-mgmt/user.service";
 import {PublishService} from "../publish-and-aip.service";
+import {ProductPublishComponent} from "../product-publish.component";
 
 @Component({
     selector: 'category-search',
@@ -92,6 +93,7 @@ export class CategorySearchComponent implements OnInit {
     private navigateToPublishingPage():void {
         let userId = this.cookieService.get("user_id");
         this.catalogueService.getCatalogue(userId).then(catalogue => {
+            ProductPublishComponent.dialogBox = true;
             this.router.navigate(['catalogue/publish']);
         }).catch(() => {
             this.error_detc = true;

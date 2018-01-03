@@ -27,6 +27,7 @@ import { CatalogueLineHeaderComponent} from "./ubl-model-view/catalogue-line/cat
 import { ProductTradingDetailsComponent } from "./ubl-model-view/catalogue-line/product-trading-details.component";
 import { TransportationServiceDetails } from "./ubl-model-view/catalogue-line/transportation-service-details.component";
 import { ShipmentViewComponent } from "./ubl-model-view/shipment-view.component";
+import {PublishDeactivateGuardService} from "./publish-deactivate-guard.service";
 
 //import { CategoryService } from './category/category.service';
 //import { CatalogueService } from './catalogue.service';
@@ -89,6 +90,7 @@ import { ShipmentViewComponent } from "./ubl-model-view/shipment-view.component"
 		ItemPropertyDataSourcePipe
 	],
 	providers: [
+	    PublishDeactivateGuardService
 	]
 })
 

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CookieService } from 'ng2-cookies';
-import { Router, NavigationStart, NavigationEnd } from '@angular/router';
+import {Router, NavigationStart, NavigationEnd, NavigationCancel} from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import * as myGlobals from './globals';
 
@@ -40,6 +40,11 @@ export class AppComponent implements OnInit {
 				this.loading = false;
 			}
 		});
+        router.events.subscribe(event => {
+            if(event instanceof NavigationCancel) {
+                this.loading = false;
+            }
+        });
 	}
 	
 	ngOnInit() {
