@@ -17,7 +17,8 @@
                        [quantity]="[transportExecutionPlanRequest.consignment[0].grossWeightMeasure]">
         </quantity-view>
 
-        <shipment-view [shipment]="transportExecutionPlanRequest.consignment[0].consolidatedShipment[0]"
+        <shipment-view [showCarrierPartyDetails]="bpDataService?.userRole != 'buyer'"
+                       [shipment]="transportExecutionPlanRequest.consignment[0].consolidatedShipment[0]"
                        [presentationMode]="'edit'">
         </shipment-view>
     </div>

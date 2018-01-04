@@ -1,9 +1,13 @@
 <ng-container *ngIf="transportExecutionPlan">
 
-    <value-view [presentationMode]="'edit'"
-                [propName]="'Response'"
-                [(value)]="transportExecutionPlan.documentStatusCode.name">
-    </value-view>
+    <div class="input-group form-group">
+        <label class="col-3 control-label">Response</label>
+        <select class="custom-select"
+                [(ngModel)]="transportExecutionPlan.documentStatusCode.name">
+            <option>Accepted</option>
+            <option>Rejected</option>
+        </select>
+    </div>
 
     <value-view [presentationMode]="'edit'"
                 [propName]="'Response Reason'"

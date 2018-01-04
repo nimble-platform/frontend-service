@@ -7,12 +7,14 @@
                 [propName]="'Estimated Delivery Date'"
                 [(value)]="shipment.shipmentStage[0].estimatedDeliveryDate">
     </value-view>
-    <value-view [presentationMode]="presentationMode"
-                [propName]="'Carrier Party'"
-                [(value)]="shipment.shipmentStage[0].carrierParty.name">
-    </value-view>
-    <value-view [presentationMode]="presentationMode"
-                [propName]="'Carrier Party Contact'"
-                [(value)]="shipment.shipmentStage[0].carrierParty.contact.telephone">
-    </value-view>
+    <ng-container *ngIf="showCarrierPartyDetails">
+        <value-view [presentationMode]="presentationMode"
+                    [propName]="'Carrier Party'"
+                    [(value)]="shipment.shipmentStage[0].carrierParty.name">
+        </value-view>
+        <value-view [presentationMode]="presentationMode"
+                    [propName]="'Carrier Party Contact'"
+                    [(value)]="shipment.shipmentStage[0].carrierParty.contact.telephone">
+        </value-view>
+    </ng-container>
 </ng-container>
