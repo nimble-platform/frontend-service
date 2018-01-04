@@ -1,12 +1,10 @@
 import {Component, Input} from "@angular/core";
 import {CatalogueLine} from "../../model/publish/catalogue-line";
-import {CatalogueService} from "../../catalogue.service";
-import {Router} from "@angular/router";
 import {BinaryObject} from "../../model/publish/binary-object";
-import {UserService} from "../../../user-mgmt/user.service";
-import * as myGlobals from '../../../globals';
+import * as myGlobals from "../../../globals";
 import {FormGroup} from "@angular/forms";
 import {ChildForm} from "../../child-form";
+import {PublishService} from "../../publish-and-aip.service";
 
 @Component({
     selector: 'catalogue-line-view',
@@ -26,6 +24,10 @@ export class CatalogueLineViewComponent extends ChildForm {
     regularProductDetailsForm: FormGroup = new FormGroup({});
     transportationServiceDetailsForm: FormGroup = new FormGroup({});
 	public debug = myGlobals.debug;
+
+	constructor(private publishService: PublishService) {
+	    super();
+    }
 
 	ngOnInit() {
 	    this.addToParentForm('productDetails', this.regularProductDetailsForm);
@@ -66,10 +68,12 @@ export class CatalogueLineViewComponent extends ChildForm {
         if(role == 'Manufacturer') {
             this.removeFromParentForm('transportationServiceDetails');
             this.addToParentForm('productDetails', this.regularProductDetailsForm);
+            this.publishService.publishedProductNature = 'Regular product';
 
         } else if(role == 'Transport Service Provider') {
             this.removeFromParentForm('productDetails');
             this.addToParentForm('transportationServiceDetails', this.transportationServiceDetailsForm);
+            this.publishService.publishedProductNature = 'Transportation service';
         }
     }
 }

@@ -257,6 +257,9 @@ export class ProductPublishComponent {
 
         // remove unused properties from catalogueLine
         let splicedCatalogueLine: CatalogueLine = this.removeEmptyProperties(this.catalogueLine);
+        // nullify the transportation service details if a regular product is being published
+        this.checkProductNature(splicedCatalogueLine);
+
         // add new line to the end of catalogue
         this.catalogueService.catalogue.catalogueLine.push(splicedCatalogueLine);
 
@@ -279,6 +282,8 @@ export class ProductPublishComponent {
 
         // remove unused properties from catalogueLine
         let splicedCatalogueLine: CatalogueLine = this.removeEmptyProperties(this.catalogueLine);
+        // nullify the transportation service details if a regular product is being published
+        this.checkProductNature(splicedCatalogueLine);
 
         // Replace original line in the catalogue with the edited version
         let indexOfOriginalLine = this.catalogueService.catalogue.catalogueLine.findIndex(line => line.id === this.catalogueLine.id);
@@ -293,6 +298,12 @@ export class ProductPublishComponent {
             this.catalogueService.putCatalogue(this.catalogueService.catalogue)
                 .then(() => this.onSuccessfulPublish())
                 .catch(() => this.onFailedPublish())
+        }
+    }
+
+    private checkProductNature(catalogueLine: CatalogueLine) {
+        if(this.publishStateService.publishedProductNature == 'Regular product') {
+            catalogueLine.goodsItem.item.transportationServiceDetails = null;
         }
     }
 
