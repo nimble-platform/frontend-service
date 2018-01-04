@@ -1,4 +1,4 @@
-import {Component, OnInit} from "@angular/core";
+import {ChangeDetectorRef, Component, OnInit} from "@angular/core";
 import {ActivatedRoute} from "@angular/router";
 import {SimpleSearchService} from "./simple-search.service";
 import {BPEService} from "../bpe/bpe.service";
@@ -34,7 +34,8 @@ export class SimpleSearchDetailsComponent implements OnInit {
 		public catalogueService: CatalogueService,
 		public bpDataService: BPDataService,
 		public route: ActivatedRoute,
-		public cookieService: CookieService
+		public cookieService: CookieService,
+		private cdr: ChangeDetectorRef
 	) {
 	}
 	

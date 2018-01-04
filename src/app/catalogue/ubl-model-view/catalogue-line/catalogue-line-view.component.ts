@@ -31,6 +31,9 @@ export class CatalogueLineViewComponent extends ChildForm {
 
 	ngOnInit() {
 	    this.addToParentForm('productDetails', this.regularProductDetailsForm);
+	    if(this.catalogueLine.goodsItem.item.transportationServiceDetails != null) {
+	        this.changePartyRole('Transport Service Provider')
+        }
     }
 
     ngOnDestroy() {

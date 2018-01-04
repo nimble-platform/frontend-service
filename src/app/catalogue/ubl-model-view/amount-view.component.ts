@@ -44,7 +44,6 @@ export class AmountViewComponent extends ChildForm implements OnInit {
         this.amountForm.addControl('currency', currencyControl);
 
         this.addToParentForm(this.propName, this.amountForm);
-        console.log("in amount init: " + this.propName);
     }
 
     ngOnDestroy() {

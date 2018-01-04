@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from "@angular/core";
+import {ChangeDetectorRef, Component, Input, OnInit, SimpleChange, SimpleChanges} from "@angular/core";
 import {Dimension} from "../model/publish/dimension";
 import {UBLModelUtils} from "../model/ubl-model-utils";
 import {BPDataService} from "../../bpe/bp-view/bp-data-service";
@@ -22,7 +22,8 @@ export class DimensionViewComponent extends ChildForm implements OnInit {
     keys: string[];
     object = Object;
 
-    constructor(private bpDataService: BPDataService) {
+    constructor(private bpDataService: BPDataService,
+                private cdr: ChangeDetectorRef) {
         super();
     }
 
@@ -33,6 +34,14 @@ export class DimensionViewComponent extends ChildForm implements OnInit {
 
     ngOnDestroy() {
         this.removeFromParentForm('dimensions');
+    }
+
+    ngOnChanges(changes: SimpleChanges) {
+        // manually triggering the creation of dimension blocks as the list is initialized after ngOnInit is called
+        let itemDimensionChanges: SimpleChange = changes.itemDimensions;
+        if(itemDimensionChanges && !itemDimensionChanges.firstChange) {
+            this.createDimensionBlocks();
+        }
     }
 
     addValueToDimension(attributeId: string, unitCode: string): void {
