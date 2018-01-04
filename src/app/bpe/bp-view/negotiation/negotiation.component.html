@@ -25,7 +25,7 @@
     </ul>
 
 <ng-container *ngIf="bpDataService.catalogueLine"
-     class="">
+     class="mt-3">
     <bp-product-details *ngIf="selectedTab == 'Product Characteristics' || selectedTab == 'Product Trading & Delivery Terms' || selectedTab == 'Service Characteristics'"
                         [catalogueLine]="bpDataService.catalogueLine"
                         [presentationMode]="'singlevalue'"

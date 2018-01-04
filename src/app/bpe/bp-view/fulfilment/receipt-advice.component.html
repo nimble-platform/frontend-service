@@ -1,18 +1,15 @@
 <ng-container *ngIf="bpDataService.receiptAdvice">
-    <quantity-view class="row"
-                   [propName]="'Rejected Quantity'"
+    <quantity-view [propName]="'Rejected Quantity'"
                    [quantity]="[receiptAdvice.receiptLine[0].rejectedQuantity]"
                    [presentationMode]="'edit'">
     </quantity-view>
 
-    <value-view class="row"
-                [presentationMode]="'edit'"
+    <value-view [presentationMode]="'edit'"
                 [propName]="'Reject Reason'"
                 [(value)]="receiptAdvice.receiptLine[0].rejectReason[0]">
     </value-view>
 
-    <value-view class="row"
-                [presentationMode]="'edit'"
+    <value-view [presentationMode]="'edit'"
                 [propName]="'Note'"
                 [(value)]="receiptAdvice.note[0]">
     </value-view>

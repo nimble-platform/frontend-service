@@ -2,20 +2,17 @@
 
     <div class="well">
         <h6>Consolidated Shipment</h6>
-        <value-view class="row"
-                    [presentationMode]="'edit'"
+        <value-view [presentationMode]="'edit'"
                     [propName]="'Goods Item'"
                     [value]="transportExecutionPlanRequest.consignment[0].consolidatedShipment[0].goodsItem[0].item.name">
         </value-view>
 
-        <quantity-view class="row"
-                       [presentationMode]="'edit'"
+        <quantity-view [presentationMode]="'edit'"
                        [propName]="'Gross Volume Measure'"
                        [quantity]="[transportExecutionPlanRequest.consignment[0].grossVolumeMeasure]">
         </quantity-view>
 
-        <quantity-view class="row"
-                       [presentationMode]="'edit'"
+        <quantity-view [presentationMode]="'edit'"
                        [propName]="'Gross Weight Measure'"
                        [quantity]="[transportExecutionPlanRequest.consignment[0].grossWeightMeasure]">
         </quantity-view>
@@ -27,37 +24,31 @@
 
     <div class="well">
         <h6>Execution Plan</h6>
-        <value-view class="row"
-                    [presentationMode]="'edit'"
+        <value-view [presentationMode]="'edit'"
                     [propName]="'Service Start Date'"
                     [(value)]="transportExecutionPlanRequest.serviceStartTimePeriod.startDate">
         </value-view>
 
-        <value-view class="row"
-                    [presentationMode]="'edit'"
+        <value-view [presentationMode]="'edit'"
                     [propName]="'Service End Date'"
                     [(value)]="transportExecutionPlanRequest.serviceEndTimePeriod.endDate">
         </value-view>
 
-        <address-view class="row"
-                      [presentationMode]="'edit'"
+        <address-view [presentationMode]="'edit'"
                       [propName]="'From Location'"
                       [address]="[transportExecutionPlanRequest.fromLocation.address]">
         </address-view>
 
-        <address-view class="row"
-                      [presentationMode]="'edit'"
+        <address-view [presentationMode]="'edit'"
                       [propName]="'To Location'"
                       [address]="[transportExecutionPlanRequest.toLocation.address]">
         </address-view>
     </div>
 
-    <div class="container ">
-        <div class="row justify-content-end">
-            <button *ngIf="bpDataService.userRole == 'buyer' && bpDataService.processMetadata == null"
-                    class="btn btn-success" (click)="sendTransportExecutionPlanRequest()">Use Service
-            </button>
-        </div>
+    <div class="d-flex justify-content-end">
+        <button *ngIf="bpDataService.userRole == 'buyer' && bpDataService.processMetadata == null"
+                class="btn btn-success" (click)="sendTransportExecutionPlanRequest()">Use Service
+        </button>
     </div>
 </ng-container>
 <call-status [callStatus]="callStatus"
