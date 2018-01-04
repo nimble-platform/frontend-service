@@ -30,7 +30,13 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.processTypeSubs = this.bpDataService.processTypeObservable.subscribe(processType => {
-            this.selectedOption = processType;
+            if(processType) {
+                this.selectedOption = processType;
+            } else if(this.availableProcesses.length > 0) {
+                this.selectedOption = this.availableProcesses[0];
+            } else {
+                this.selectedOption = 'Item_Information_Request';
+            }
         });
 
         this.route.queryParams.subscribe(params => {
