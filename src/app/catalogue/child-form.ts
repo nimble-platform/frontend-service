@@ -8,13 +8,17 @@ export class ChildForm {
 
     addToParentForm(elementName: string, control: AbstractControl) {
         if (this.parentForm) {
-            setTimeout(() => this.parentForm.addControl(elementName, control));
+            setTimeout(() => {
+                this.parentForm.addControl(elementName, control);
+            });
         }
     }
 
     removeFromParentForm(elementName: string) {
         if (this.parentForm) {
-            setTimeout(() => this.parentForm.removeControl(elementName));
+            setTimeout(() => {
+                this.parentForm.removeControl(elementName);
+            });
         }
     }
 }

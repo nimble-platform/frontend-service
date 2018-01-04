@@ -31,6 +31,10 @@ export class DimensionViewComponent extends ChildForm implements OnInit {
         this.addToParentForm('dimensions', this.dimensionForm);
     }
 
+    ngOnDestroy() {
+        this.removeFromParentForm('dimensions');
+    }
+
     addValueToDimension(attributeId: string, unitCode: string): void {
         let dimension: Dimension = UBLModelUtils.createDimension(attributeId, unitCode);
         this.itemDimensions.push(dimension);

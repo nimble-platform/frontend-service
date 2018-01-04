@@ -17,7 +17,11 @@
         </div>
 
         <!-- validation message -->
-        <small *ngIf="presentationMode == 'edit' && amountForm.errors?.bothValues == false" class="offset-3 text-danger">
+        <small *ngIf="presentationMode == 'edit' &&
+                        (amountForm.errors?.bothValues == false ||
+                        (amountForm.controls['amount']?.errors ||
+                            amountForm.controls['currency']?.errors))"
+               class="offset-3 text-danger">
             Both amount and currency must be filled
         </small>
     </div>

@@ -6,6 +6,7 @@ import {BinaryObject} from "../../model/publish/binary-object";
 import {UserService} from "../../../user-mgmt/user.service";
 import * as myGlobals from '../../../globals';
 import {FormGroup} from "@angular/forms";
+import {ChildForm} from "../../child-form";
 
 @Component({
     selector: 'catalogue-line-view',
@@ -14,15 +15,26 @@ import {FormGroup} from "@angular/forms";
 
 // Component that displays information for individual catalogue lines in the Catalogue page
 
-export class CatalogueLineViewComponent {
+export class CatalogueLineViewComponent extends ChildForm {
+
+    @Input() catalogueLine: CatalogueLine;
+    @Input() presentationMode: string;
+    @Input() parentForm: FormGroup;
 
     selectedTab: string = "Product Details";
     partyRole: string = "";
+    regularProductDetailsForm: FormGroup = new FormGroup({});
+    transportationServiceDetailsForm: FormGroup = new FormGroup({});
 	public debug = myGlobals.debug;
 
-	@Input() catalogueLine: CatalogueLine;
-    @Input() presentationMode: string;
-    @Input() parentForm: FormGroup;
+	ngOnInit() {
+	    this.addToParentForm('productDetails', this.regularProductDetailsForm);
+    }
+
+    ngOnDestroy() {
+	    this.removeFromParentForm('productDetails');
+	    this.removeFromParentForm('transportationServiceDetails');
+    }
 
     private addImage(event: any) {
         let fileList: FileList = event.target.files;
@@ -46,6 +58,18 @@ export class CatalogueLineViewComponent {
     deleteImage(index: number): void {
         if (this.presentationMode == 'edit') {
             this.catalogueLine.goodsItem.item.productImage.splice(index, 1);
+        }
+    }
+
+    changePartyRole(role:string) {
+        this.partyRole = role;
+        if(role == 'Manufacturer') {
+            this.removeFromParentForm('transportationServiceDetails');
+            this.addToParentForm('productDetails', this.regularProductDetailsForm);
+
+        } else if(role == 'Transport Service Provider') {
+            this.removeFromParentForm('productDetails');
+            this.addToParentForm('transportationServiceDetails', this.transportationServiceDetailsForm);
         }
     }
 }

@@ -37,4 +37,8 @@ export class ValueViewComponent extends ChildForm implements OnInit {
         this.control = new FormControl(null, this.mandatory ? Validators.required : null);
         this.addToParentForm(this.propName, this.control);
     }
+
+    ngOnDestroy() {
+        this.removeFromParentForm(this.propName);
+    }
 }

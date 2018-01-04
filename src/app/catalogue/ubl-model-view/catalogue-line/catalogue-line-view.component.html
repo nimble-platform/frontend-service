@@ -33,10 +33,10 @@
 </div>
 
 <div *ngIf="presentationMode=='edit'" class="space-before space-after">
-	<button *ngIf="partyRole == 'Transport Service Provider'" class="btn btn-primary" (click)="partyRole = 'Manufacturer'">
+	<button *ngIf="partyRole == 'Transport Service Provider'" class="btn btn-primary" (click)="changePartyRole('Manufacturer')">
 		Switch to manufacturer view
 	</button>
-	<button *ngIf="partyRole == 'Manufacturer' || partyRole == ''" class="btn btn-primary" (click)="partyRole = 'Transport Service Provider'">
+	<button *ngIf="partyRole == 'Manufacturer' || partyRole == ''" class="btn btn-primary" (click)="changePartyRole('Transport Service Provider')">
 		Switch to logistics view
 	</button>
 </div>
@@ -64,10 +64,10 @@
     <product-details [hidden]="selectedTab !== 'Product Details'"
                      [catalogueLine]="catalogueLine"
                      [presentationMode]="presentationMode"
-                     [parentForm]="parentForm">
+                     [parentForm]="regularProductDetailsForm">
     </product-details>
     <product-trading-details [hidden]="selectedTab !== 'Product Trading & Delivery Terms'"
-                             [parentForm]="parentForm"
+                             [parentForm]="regularProductDetailsForm"
                              [catalogueLine]="catalogueLine"
                              [presentationMode]="presentationMode">
     </product-trading-details>
@@ -83,6 +83,6 @@
 
     <transportation-service-details [catalogueLine]="catalogueLine"
                                     [presentationMode]="presentationMode"
-                                    [parentForm]="parentForm">
+                                    [parentForm]="transportationServiceDetailsForm">
     </transportation-service-details>
 </ng-container>
