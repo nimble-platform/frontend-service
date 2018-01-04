@@ -55,6 +55,9 @@ export class ProductPublishComponent {
     private bulkPublishStatus: CallStatus = new CallStatus();
     private productCategoryRetrievalStatus: CallStatus = new CallStatus();
 
+    // check whether dialogBox is necessary or not during navigation
+    public static dialogBox = true;
+
     constructor(public categoryService: CategoryService,
                 private catalogueService: CatalogueService,
                 public publishStateService: PublishService,
@@ -75,6 +78,14 @@ export class ProductPublishComponent {
                 });
             });
         });
+    }
+
+    canDeactivate():boolean {
+        if(ProductPublishComponent.dialogBox){
+            return confirm("You will lose any changes you made, are you sure you want to quit ?");
+        }
+        ProductPublishComponent.dialogBox = true;
+        return true;
     }
 
     private initView(userParty, userCatalogue): void {
@@ -235,6 +246,7 @@ export class ProductPublishComponent {
 	}
 
     private addCategoryOnClick(event: any): void {
+        ProductPublishComponent.dialogBox = false;
         this.router.navigate(['catalogue/categorysearch'], {queryParams: {pageRef: "publish"}});
     }
 
@@ -330,6 +342,9 @@ export class ProductPublishComponent {
     }
 
     private onSuccessfulPublish(): void {
+        // since every changes is saved,we do not need a dialog box
+        ProductPublishComponent.dialogBox = false;
+
         let userId = this.cookieService.get("user_id");
         this.userService.getUserParty(userId).then(party => {
             this.catalogueService.getCatalogue(userId).then(catalogue => {
@@ -577,6 +592,7 @@ export class ProductPublishComponent {
                 event.target.value = "";
                 catalogueService.uploadTemplate(userId, file, uploadMode).then(res => {
                         self.bulkPublishStatus.callback(null);
+                        ProductPublishComponent.dialogBox = false;
                         self.router.navigate(['catalogue/catalogue'], {queryParams: {forceUpdate: true}});
                     },
                     error => {
@@ -601,6 +617,7 @@ export class ProductPublishComponent {
                 event.target.value = "";
                 catalogueService.uploadZipPackage(file).then(res => {
                         self.bulkPublishStatus.callback(null);
+                        ProductPublishComponent.dialogBox = false;
                         self.router.navigate(['catalogue/catalogue'], {queryParams: {forceUpdate: true}});
                     },
                     error => {
