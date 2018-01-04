@@ -26,6 +26,10 @@ export class CategorySearchComponent implements OnInit {
     callback: boolean = false;
     error_detc: boolean = false;
 
+    // It checks whether user will return publishing page or not
+    isReturnPublish: boolean = false;
+    // It checks whether user is publishing or not
+    public static inPublish: boolean = false;
     constructor(private router: Router,
                 private route: ActivatedRoute,
                 private cookieService: CookieService,
@@ -34,9 +38,23 @@ export class CategorySearchComponent implements OnInit {
                 private publishService:PublishService) {
     }
 
+
     ngOnInit(): void {
         this.route.queryParams.subscribe((params: Params) => {
+
+            // This part is necessary since only the params has changes,canDeactivate method will not be called.
+            if(CategorySearchComponent.inPublish == true){
+                if(!confirm("You will lose any changes you made, are you sure you want to quit ?")){
+                    this.selectCategory(null);
+                    return;
+                }
+            }
             this.pageRef = params['pageRef'];
+
+            // If pageRef is 'publish',then user is publishing.
+            if(this.pageRef == 'publish'){
+                CategorySearchComponent.inPublish = true;
+            }
 
             if(this.pageRef == null || this.pageRef == 'menu') {
                 // reset categories
@@ -46,6 +64,16 @@ export class CategorySearchComponent implements OnInit {
                 this.publishService.publishMode = 'create';
             }
         });
+    }
+
+    canDeactivate():boolean{
+        CategorySearchComponent.inPublish = false;
+        if(this.pageRef == "publish" && this.isReturnPublish == false){
+            if(!confirm("You will lose any changes you made, are you sure you want to quit ?")){
+                this.selectCategory(null);
+            }
+        }
+        return true;
     }
 
     private getCategories(keyword: string): void {
@@ -94,6 +122,7 @@ export class CategorySearchComponent implements OnInit {
         let userId = this.cookieService.get("user_id");
         this.catalogueService.getCatalogue(userId).then(catalogue => {
             ProductPublishComponent.dialogBox = true;
+            this.isReturnPublish = true;
             this.router.navigate(['catalogue/publish']);
         }).catch(() => {
             this.error_detc = true;
