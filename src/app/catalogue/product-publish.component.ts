@@ -292,13 +292,20 @@ export class ProductPublishComponent {
         if (this.catalogueService.catalogue.uuid == null) {
             this.catalogueService.postCatalogue(this.catalogueService.catalogue)
                 .then(() => this.onSuccessfulPublish())
+                .then(() => this.changePublishModeToCreate())
                 .catch(() => this.onFailedPublish());
 
         } else {
             this.catalogueService.putCatalogue(this.catalogueService.catalogue)
                 .then(() => this.onSuccessfulPublish())
+                .then(() => this.changePublishModeToCreate())
                 .catch(() => this.onFailedPublish())
         }
+    }
+
+    // changes publisMode to create
+    private changePublishModeToCreate():void{
+        this.publishStateService.publishMode = "create";
     }
 
     private checkProductNature(catalogueLine: CatalogueLine) {
