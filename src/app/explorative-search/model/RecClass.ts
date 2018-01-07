@@ -33,7 +33,8 @@ export class RecClass {
         // console.log('Complete Tree:\n' + JSON.stringify(linkedOntTree)); // --> DEBUG
         let nodeDataArray: any = []; // Create an Array of Nodes for GoJS.
         for (let i = 1; i < this.names.length + 1; i++) {
-            nodeDataArray.push({ key: i, text: this.names[i - 1]['name'], color: this.names[i - 1]['color'] });
+            nodeDataArray.push({ key: i, text: this.names[i - 1]['name'], color: this.names[i - 1]['color'],
+                url: this.names[i - 1]['url']});
         }
         // Create The Links to Each node in the Tree with Recursion
         let linkDataArray: any = this.recursionLink(linkedOntTree);
@@ -96,14 +97,21 @@ export class RecClass {
 
     private recursionParseJson(jsonNode: any): any {
         let node = new OntNode();
-
+        let inp_json = {name: '', url: '', color: ''};
         // Adding node name
-        this.names.push({name: jsonNode['concept']['translatedURL'], color: 'red'});
+        inp_json = {name: jsonNode['concept']['translatedURL'],
+                url: jsonNode['concept']['url'],
+                color: 'red'};
+        this.names.push(inp_json);
         node.id = this.names.length;
 
         // Adding Attributes
         for (let eachDatProp of jsonNode['dataproperties']) {
-            this.names.push({name: eachDatProp['translatedURL'], color: 'green'});
+            this.names.push({
+                    name: eachDatProp['translatedURL'],
+                    url: eachDatProp['url'],
+                    color: 'green'
+            });
             node.attr.push(this.names.length);
         }
 
@@ -111,7 +119,7 @@ export class RecClass {
         for (let childKey in jsonNode['objectproperties']) {
             if (jsonNode['objectproperties'].hasOwnProperty(childKey)) {
                 // console.log(childKey); // --> DEBUG
-                // console.log(jsonNode['objectproperties'][childKey]);
+                // console.log(jsonNode['objectproperties'][childKey][]);
                 node.children.push(this.recursionParseJson(jsonNode['objectproperties'][childKey]));
             }
         }
