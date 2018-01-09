@@ -431,24 +431,28 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                         }
                         // console.log('DYNAMIC JSON ', layerJSON); // DEBUG--CHECK
                         // call the API..
-                        this.expSearch.getLogicalView(layerJSON)
-                            .then(res => {
-                                this.config = res;
-                                // console.log(this.config['completeStructure']);
-                                // console.log(this.config['viewStructure']);
-                                this._error_detected_getLogicalView = false;
-                            })
-                            .catch(error => {
-                                console.log(error);
-                                this._error_detected_getLogicalView = true;
-                            });
+                        setTimeout(() => {
+                            this.expSearch.getLogicalView(layerJSON)
+                                .then(res => {
+                                    if (!(res === this.config)) {
+                                        this.config = res;
+                                    }
+                                    // console.log(this.config['completeStructure']);
+                                    // console.log(this.config['viewStructure']);
+                                    this._error_detected_getLogicalView = false;
+                                })
+                                .catch(error => {
+                                    console.log(error);
+                                    this._error_detected_getLogicalView = true;
+                                });
+                        }, 1000);
                         // store the previous tableJSON things in private variable
                         this._tableJSONPaths = this.tableJSON['parametersIncludingPath'];
                         // Latency needed in order to avoid double click
                         // reload the diagram again..
                         setTimeout(() => {
                             this.reloadRadialGraph(2, immediateParentNode, clickedNode);
-                        }, 600);
+                        }, 5000);
                 }
             }
         }
@@ -580,20 +584,22 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
          */
         let nodeOfInterest = pNode + '/' + cNode; // make the key for new objectProperty (Manufacturer/Legislation)
         let rootNode = this.myDiagram.findNodeForKey(1); // root node..
-        // console.log(nodeOfInterest); // DEBUG-CHECK
+        console.log(nodeOfInterest); // DEBUG-CHECK
         this.myDiagram.model.startTransaction('change link style');
         let objJson = this.config['viewStructure']['objectproperties']; // for easy iteration and parsing.
+        // console.log(objJson);
+
         for (let eachKey in objJson) {
             if (objJson.hasOwnProperty(eachKey)) {
-                if (objJson[eachKey]['concept']['translatedURL'] === nodeOfInterest) { // find the node of interest
-                    if (objJson[eachKey]['hasHiddenDirectParent']) { // check if the parent is hidden
+                if (eachKey === nodeOfInterest) { // find the node of interest
+                    // if (objJson[eachKey]['hasHiddenDirectParent']) { // check if the parent is hidden
                         rootNode.findLinksOutOf().each(eachLink => {
-                            if (eachLink.toNode.data.text === nodeOfInterest) { // create the dashed line
+                            if (eachLink.toNode.data.text === nodeOfInterest.split('#')[1]) { // create the dashed line
                                 eachLink.path.strokeDashArray = [4, 4];
 
                             }
                         });
-                    }
+                    // }
                 }
             }
         }
