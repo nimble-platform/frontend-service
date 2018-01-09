@@ -50,7 +50,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
     private collectionOfFiltersFromChildren: any[] = []; // filters from the Children Components
     private _optSelectJSON = {};
     private _negotiation_id;
-    private _negotation_catalogue_id;
+    private _negotiation_catalogue_id;
     public negotiationEnable: boolean = false;
 
     /*Final Data to be sent back to parent for processing.*/
@@ -548,7 +548,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                   let index_id = this.sparqlSelectedOption['columns'].findIndex(i => i === 'id');
                   let index_catalogue = this.sparqlSelectedOption['columns'].findIndex(i => i === 'catalogueId');
                   this._negotiation_id = this.sparqlSelectedOption['rows'][0][index_id];
-                  this._negotation_catalogue_id = this.sparqlSelectedOption['rows'][0][index_catalogue];
+                  this._negotiation_catalogue_id = this.sparqlSelectedOption['rows'][0][index_catalogue];
               } else {
                   this.negotiationEnable = false;
               }
