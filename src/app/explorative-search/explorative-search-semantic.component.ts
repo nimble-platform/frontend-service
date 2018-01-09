@@ -2,6 +2,7 @@ import {Component, Input, OnChanges, OnInit} from '@angular/core';
 import { Router } from '@angular/router';
 import {ExplorativeSearchService} from './explorative-search.service';
 import { Observable } from 'rxjs/Observable';
+import { NgbAccordionConfig } from '@ng-bootstrap/ng-bootstrap';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/distinctUntilChanged';
@@ -10,24 +11,29 @@ import 'rxjs/add/operator/distinctUntilChanged';
     selector: 'explore-search-semantic',
     templateUrl: './explorative-search-semantic.component.html',
     styleUrls: ['./explorative-search-semantic.component.css'],
-    providers: [ExplorativeSearchService]
+    providers: [ExplorativeSearchService, NgbAccordionConfig]
 })
 
 export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
+    // Components from the Parent Component
     @Input() configSPQ: Object;
     @Input() lang: string;
+    // store the incoming JSON for Further Purposes.
+    private _propertyGetterJSON: Object = {};
+    private _mainConceptName = '';
+    // Yellow Button from BackendAPI
     private objectRelationsButton = {};
     private _optSelectJSON = {};
     public sparqlSelectedOption = {};
+    // reference JSON
+    private _referenceJSON: Object = {};
     public negotiationEnable: boolean = false;
     private _negotiation_id: any;
     private _negotation_catalogue_id: any;
     public hiddenElement: boolean = false;
     public sentence: string = '';
     public model: any;
-    public selectedConcept: boolean = false;
     public selectedValue: boolean = false;
-    public Value: any;
     public selectedReference: boolean = false;
     public results: any[] = [];
     public searchvalue: string[] = [];
@@ -46,14 +52,17 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
     public formatter = (x: {translatedProperty: string}) => x.translatedProperty;
 
 
-    constructor(private expSearch: ExplorativeSearchService, private router: Router) {}
-
-
+    constructor(private expSearch: ExplorativeSearchService, private router: Router, accConfig: NgbAccordionConfig) {
+        accConfig.closeOthers = true;
+    }
     ngOnChanges(): void {
         if (!this.configSPQ) { return; }
+        this._mainConceptName = this.configSPQ['concept'];
         // console.log(this.configSPQ); // DEBUG_CHECK
-        let dummyJSON = this.configSPQ;
-        this.expSearch.getSQPButton(dummyJSON)
+        this._propertyGetterJSON = this.configSPQ;
+        // console.log(this._propertyGetterJSON);
+        // get the button
+        this.expSearch.getSQPButton(this.configSPQ)
             .then(res => this.objectRelationsButton = res);
         this.sentence = this.configSPQ['frozenConcept'];
         this.tableResult = {};
@@ -62,6 +71,8 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
         this.sparqlJSON['parametersIncludingPath'] = [];
         this.sparqlJSON['parameters'] = [];
         this.sparqlJSON['filters'] = [];
+        this.referenceResults = {};
+        this.refResultsRange = [];
     }
 
     ngOnInit(): void {
@@ -70,14 +81,18 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
         this.sparqlJSON['filters'] = [];
     }
 
-    // ngAfterViewInit(): void {
-    //
-    // }
+    /**
+     * hasPropertyRelation: use to determine if the main/reference concept has properties.
+     * triggered when hasProperty button is clicked
+     *
+     */
 
-    hasPropertyRelation(inputVal: string) {
-        this.selectedConcept = false;
-       this.sentence += ' <' + inputVal + '> ';
-        this.expSearch.searchForProperty(this.configSPQ)
+    hasPropertyRelation() {
+       // console.log('hasPropertyRelation', this._propertyGetterJSON);
+        if (!this.selectedReference) {
+            this._propertyGetterJSON['concept'] = this._mainConceptName;
+        }
+        this.expSearch.searchForProperty(this._propertyGetterJSON)
             .then(res => {
                     // console.log(res);
                     this.results = res;
@@ -86,11 +101,31 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
     }
 
 
+    applyProperty() {
+        this.selectedPropertyURL = this.model.propertyURL;
+        this.sentence += ' <hasProperty> ' + this.model.translatedProperty;
+        if (this.selectedReference) {
+            this.sparqlJSON['parameters'].push(encodeURIComponent(this.selectedPropertyURL));
+            this.sparqlJSON['parametersIncludingPath'].push(
+            {'urlOfProperty': encodeURIComponent(this.model.propertyURL),
+                'path': [{'concept': this._mainConceptName},
+                    {'urlOfProperty': encodeURIComponent(this._referenceJSON['objectPropertyURL']),
+                        'concept': encodeURIComponent(this._referenceJSON['range'][0]['original'])
+                    }]
+            });
+            this.selectedReference = false;
+        }else {
+            this.applyURL(this.selectedPropertyURL);
+        }
+    }
+
+
 
     hasValueRelation(inputVal: string) {
         this.selectedValue = false;
         let temp: any[] = [];
         this.sentence += ' <' + inputVal + '> ';
+        console.log('hasValueRelation ', this.configSPQ);
         let dummyJSON = {'conceptURL': this.configSPQ['concept'],
             'propertyURL': encodeURIComponent(this.selectedPropertyURL)};
         this.expSearch.searchForPropertyValues(dummyJSON)
@@ -105,17 +140,33 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
 
     hasReferenceRelation(inputVal: string) {
         this.selectedReference = false;
-        this.sentence += ' <' + inputVal + '> ';
+        // console.log('hasReferenceRelation', this.configSPQ);
         let dummyJSON = {'conceptURL': this.configSPQ['concept'], 'language': this.configSPQ['language']};
         this.expSearch.getReferencesFromConcept(dummyJSON)
             .then(res => {
                 // console.log(res);
                 this.referenceResults = res;
-                console.log(this.referenceResults);
-                this.sentence += this.referenceResults['allAvailableReferences'][0].translatedProperty;
-                this.refResultsRange = this.referenceResults['allAvailableReferences'][0].range;
+                // console.log(this.referenceResults);
+                // this.sentence += this.referenceResults['allAvailableReferences'][0].translatedProperty;
+                // this.refResultsRange = this.referenceResults['allAvailableReferences'][0].range;
             });
 
+    }
+
+    showRefResults(index: number) {
+        this.refResultsRange = this.referenceResults['allAvailableReferences'][index].range;
+        // console.log('showRefResults', this.referenceResults['allAvailableReferences'][index]);
+        this._referenceJSON = this.referenceResults['allAvailableReferences'][index];
+    }
+
+    referenceSelection(ref: any): void {
+        this.selectedReference = true;
+        this.sentence += ' <hasReference> ';
+        this.sentence = this.sentence + ref.translation;
+        this.selectedPropertyURL = ref.original;
+        // console.log(this._propertyGetterJSON);
+        this._propertyGetterJSON['concept'] = encodeURIComponent(this.selectedPropertyURL);
+        this._propertyGetterJSON['distanceToFrozenConcept'] += 1;
     }
 
     objectPropRelation(inputVal: string) {
@@ -125,7 +176,8 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
     genTable(): void {
         // this.sparqlJSON['parametersIncludingPath'].push({'urlOfProperty': encodeURIComponent(this.selectedPropertyURL),
         // 'path': [{'concept': this.configSPQ['concept']}]});
-        this.sparqlJSON['concept'] = this.configSPQ['concept'];
+        // console.log('genTable' + this.configSPQ);
+        this.sparqlJSON['concept'] = this._mainConceptName;
         // this.sparqlJSON['parameters'].push(encodeURIComponent(this.selectedPropertyURL));
 
         // this.sparqlJSON['filters'].push({'property': encodeURIComponent(this.selectedPropertyURL), 'min': Number(this.Value),
@@ -139,9 +191,11 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
 
     applyURL(url: string): void {
         // this.sparqlJSON['parameters'].push(encodeURIComponent(this.selectedPropertyURL));
+        // console.log(url);
         this.sparqlJSON['parameters'].push(encodeURIComponent(url));
         // this.sparqlJSON['parametersIncludingPath'].push({'urlOfProperty': encodeURIComponent(this.selectedPropertyURL),
         //     'path': [{'concept': this.configSPQ['concept']}]});
+        // console.log('applyURL', this.configSPQ);
         this.sparqlJSON['parametersIncludingPath'].push({'urlOfProperty': encodeURIComponent(url),
                 'path': [{'concept': this.configSPQ['concept']}]});
     }
@@ -154,11 +208,11 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
     }
 
     getSparqlOptionalSelect(indexInp: number) {
-        console.log(indexInp);
+        // console.log(indexInp);
         // need URI component in order to send url as JSON.stringify
         this._optSelectJSON = {'uuid': encodeURIComponent(this.tableResult.uuids[indexInp].trim())};
         this._optSelectJSON['language'] = this.lang;
-        console.log(this._optSelectJSON);
+        // console.log(this._optSelectJSON);
         this.expSearch.getOptionalSelect(this._optSelectJSON)
             .then(res => {
                 this.sparqlSelectedOption = res;

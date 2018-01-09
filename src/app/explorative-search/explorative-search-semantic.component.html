@@ -1,4 +1,5 @@
 <div class="container displayArea">
+    <br>
     <div class="row">
         <div class="col-12">
             <div [hidden]="hiddenElement">
@@ -7,40 +8,72 @@
                     {{sentence | json}}
                 </code>
                 <span><button (click)="genTable()">Search Query</button></span>
-                <div class="form-group" *ngIf=" results.length > 1 && !selectedConcept">
-                    <p><b>Search Property</b></p>
-                    <input type="search" class="form-control"
-                           [(ngModel)]="model"
-                           [ngbTypeahead]="search"
-                           [resultTemplate]="rt"
-                           [inputFormatter]="formatter"
-                           (keyup.enter)="sentence=sentence+model.translatedProperty; applyURL(model.propertyURL); selectedPropertyURL=model.propertyURL; selectedConcept=true;"
-                           style="width: 500px;"/>
-                </div>
-                <ng-template #rt let-r="result" let-t="term">
-                    <div>
-                        {{r.translatedProperty}}
-                    </div>
-                </ng-template>
+                <br>
+                <br>
+                <!--<div class="form-group" *ngIf=" results.length > 1 && !selectedConcept">-->
+                    <ngb-accordion #acc="ngbAccordion">
 
-                <div *ngIf="searchvalue.length > 0 && !selectedValue">
-                    <p><b>Available Values</b></p>
-                    <ul class="list-group ac-keywords">
-                        <li class="list-group-item"
-                            *ngFor="let eachval of searchvalue" (click)="sentence=sentence+eachval; selectedValue=true; applyFilter(eachval, selectedPropertyURL);">
-                            {{eachval}}
-                        </li>
-                    </ul>
-                </div>
+                        <!-- Property panel -->
+                        <ngb-panel title="Property Panel" id="toggle-property" [disabled]="!configSPQ">
+                            <ng-template ngbPanelContent>
+                                    <div class="input-group">
+                                    <label class="input-group-addon">Search Property</label>
+                                    <input type="search" class="form-control" style="width: 500px;"
+                                        [(ngModel)]="model"
+                                        [ngbTypeahead]="search"
+                                        [resultTemplate]="rt"
+                                        [inputFormatter]="formatter"
+                                        (keyup.enter)="applyProperty();acc.toggle('toggle-property'); model='';"/>
+                                    </div>
+                                <ng-template #rt let-r="result" let-t="term">
+                                    <div>
+                                        {{r.translatedProperty}}
+                                    </div>
+                                </ng-template>
+                            </ng-template>
+                        </ngb-panel>
 
-                <div *ngIf="refResultsRange.length > 0 && !selectedReference">
-                    <p><b>Available Options</b></p>
-                    <ul class="list-group ac-keywords">
-                        <li class="list-group-item" *ngFor="let eachRefResult of refResultsRange" (click)="sentence=sentence+eachRefResult.translation; selectedReference=true;selectedPropertyURL=eachRefResult.original;">
-                            {{eachRefResult.translation}}
-                        </li>
-                    </ul>
-                </div>
+                        <!--Value Panel-->
+                        <ngb-panel title="Values Panel" id="toggle-value" [disabled]="!configSPQ">
+                            <ng-template ngbPanelContent>
+                            <ul class="list-group">
+                                <li class="list-group-item"
+                                    *ngFor="let eachval of searchvalue"
+                                    (click)="sentence=sentence+eachval; acc.toggle('toggle-value'); applyFilter(eachval, selectedPropertyURL);">
+                                    {{eachval}}
+                                </li>
+                            </ul>
+                            </ng-template>
+                        </ngb-panel>
+
+                        <!--- Reference Panel -->
+                        <ngb-panel title="Reference Panel" id="toggle-reference" [disabled]="!configSPQ">
+                            <ng-template ngbPanelContent>
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="exampleFormControlSelect2"><b>Product References</b></label>
+                                        <select multiple class="form-control" id="exampleFormControlSelect2">
+                                            <option *ngFor="let eachRef of referenceResults['allAvailableReferences']; let i=index;" (click)="showRefResults(i);">
+                                                {{eachRef.translatedProperty}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-6" *ngIf="refResultsRange.length > 0">
+                                    <label for="exampleFormControlSelect2"><b>Selected Reference</b></label>
+                                    <ul class="list-group">
+                                        <li class="list-group-item" *ngFor="let eachRefResult of refResultsRange" (click)="referenceSelection(eachRefResult); acc.toggle('toggle-reference')">
+                                            {{eachRefResult.translation}}
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            </ng-template>
+                        </ngb-panel>
+
+
+                    </ngb-accordion>
             </div>
 
             <div [hidden]="!hiddenElement" style="height: 500px; overflow: auto;">
@@ -80,29 +113,37 @@
     <hr>
     <div class="row" [hidden]="hiddenElement">
         <div class="col-8">
-            <ul>
-                <div class="btn-group">
-                    <li>
-                        <button class="btn btn-primary btn-lg"
-                                (click)="hasPropertyRelation('hasProperty')"> hasProperty </button>
-                    </li>
-                    <li>
-                        <button class="btn btn-primary btn-lg"
-                                (click)="hasValueRelation('hasValue')"> hasValue </button>
-                    </li>
-                    <li>
-                        <button class="btn btn-primary btn-lg" #refBtn
-                                (click)="hasReferenceRelation('hasReference')"> hasReference </button>
-                    </li>
-                    <li *ngFor="let eachButton of objectRelationsButton['listOfSQP']">
-                        <button class="btn btn-warning btn-lg" #objBtn (click)="objectPropRelation(eachButton)">
-                            {{eachButton}}
-                        </button>
-                    </li>
-                </div>
-            </ul>
+
+            <div class="btn-group">
+
+                <button class="btn btn-outline-primary btn-lg"
+                        [disabled]="!configSPQ"
+                        placement="bottom"
+                        ngbTooltip="Search for Product/Reference Property"
+                        (click)="hasPropertyRelation('hasProperty'); acc.toggle('toggle-property');"> hasProperty </button>
+
+
+                <button class="btn btn-outline-primary btn-lg"
+                        [disabled]="!configSPQ"
+                        placement="bottom"
+                        ngbTooltip="Search for Property Specific Values"
+                        (click)="hasValueRelation('hasValue'); acc.toggle('toggle-value');"> hasValue </button>
+
+
+                <button class="btn btn-outline-primary btn-lg" #refBtn
+                        [disabled]="!configSPQ"
+                        placement="bottom"
+                        ngbTooltip="Search for Product References"
+                        (click)="hasReferenceRelation('hasReference');acc.toggle('toggle-reference')"> hasReference </button>
+
+                <button class="btn btn-outline-warning btn-lg" #objBtn (click)="objectPropRelation(eachButton)"
+                        *ngFor="let eachButton of objectRelationsButton['listOfSQP']">
+                {{eachButton}}
+                </button>
+            </div>
         </div>
     </div>
+    <br>
         <div *ngIf="tableResult" style="overflow: auto; height: 100px;">
             <table>
                 <tr>
@@ -116,4 +157,11 @@
                 </tr>
             </table>
         </div>
+
+    <!--<div class="row">-->
+        <!--<pre>-->
+            <!--{{sparqlJSON | json}}-->
+        <!--</pre>-->
+
+    <!--</div>-->
 </div>

@@ -5,6 +5,12 @@
             <!-- if there is no tableResult show the Diagram -->
 
             <!-- <div *ngIf="!tableResult" class="displayArea" #myDiagramDiv></div> -->
+            <div [hidden]="!(_warning_selection)">
+                <div class="alert alert-warning space-before">
+                    <p>NO <kbd>CTRL</kbd> Button Pressed.If previous Selection were selected using Multiselect Feature, they will be
+                    deleted.</p>
+                </div>
+            </div>
             <div [hidden]="hiddenElement" class="displayArea" #myDiagramDiv></div>
             <div [hidden]="!hiddenElement" style="height: 500px; overflow: auto;">
                 <table >
