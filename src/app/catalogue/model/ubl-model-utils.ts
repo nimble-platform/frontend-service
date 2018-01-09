@@ -11,7 +11,7 @@ import {Party} from "./publish/party";
 import {Item} from "./publish/item";
 import {GoodsItem} from "./publish/goods-item";
 import {CatalogueLine} from "./publish/catalogue-line";
-import {OrderReference} from "../../bpe/model/order-reference";
+import {OrderReference} from "./publish/order-reference";
 import {DocumentReference} from "./publish/document-reference";
 import {Quantity} from "./publish/quantity";
 import {LineItem} from "./publish/line-item";
@@ -200,6 +200,15 @@ export class UBLModelUtils {
         return receiptAdvice;
     }
 
+    public static createTransportExecutionPlanRequest(transportationServiceLine:CatalogueLine): TransportExecutionPlanRequest {
+        let transportExecutionPlanRequest:TransportExecutionPlanRequest = new TransportExecutionPlanRequest();
+        transportExecutionPlanRequest.id = this.generateUUID();
+        transportExecutionPlanRequest.consignment[0].consolidatedShipment.push(new Shipment());
+        transportExecutionPlanRequest.mainTransportationService = transportationServiceLine.goodsItem.item;
+        this.removeHjidFieldsFromObject(transportExecutionPlanRequest);
+        return transportExecutionPlanRequest;
+    }
+
     public static createTransportExecutionPlanRequestWithOrder(order:Order, transportationServiceLine:CatalogueLine):TransportExecutionPlanRequest {
         let transportExecutionPlanRequest:TransportExecutionPlanRequest = new TransportExecutionPlanRequest();
         transportExecutionPlanRequest.consignment[0].consolidatedShipment.push(new Shipment());
@@ -216,7 +225,6 @@ export class UBLModelUtils {
         transportExecutionPlanRequest.id = this.generateUUID();
         transportExecutionPlanRequest.mainTransportationService = quotation.quotationLine[0].lineItem.item;
         transportExecutionPlanRequest.consignment = quotation.quotationLine[0].lineItem.delivery[0].shipment.consignment;
-        transportExecutionPlanRequest.consignment[0].consolidatedShipment = [new Shipment()];
         this.removeHjidFieldsFromObject(transportExecutionPlanRequest);
         return transportExecutionPlanRequest
     }
@@ -341,7 +349,7 @@ export class UBLModelUtils {
         return object;
     }
 
-    private static generateUUID(): string {
+    public static generateUUID(): string {
         var d = new Date().getTime();
         var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
             var r = (d + Math.random() * 16) % 16 | 0;

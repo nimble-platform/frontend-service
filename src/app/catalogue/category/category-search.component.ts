@@ -10,6 +10,8 @@ import {CookieService} from "ng2-cookies";
 import {CatalogueService} from "../catalogue.service";
 import {UBLModelUtils} from "../model/ubl-model-utils";
 import {UserService} from "../../user-mgmt/user.service";
+import {PublishService} from "../publish-and-aip.service";
+import {ProductPublishComponent} from "../product-publish.component";
 
 @Component({
     selector: 'category-search',
@@ -18,38 +20,59 @@ import {UserService} from "../../user-mgmt/user.service";
 
 export class CategorySearchComponent implements OnInit {
     categories: Category[];
-    pageRef: string;
+    pageRef: string = null;
 
     submitted: boolean = false;
     callback: boolean = false;
     error_detc: boolean = false;
 
+    // It checks whether user will return publishing page or not
+    isReturnPublish: boolean = false;
+    // It checks whether user is publishing or not
+    inPublish: boolean = false;
     constructor(private router: Router,
                 private route: ActivatedRoute,
                 private cookieService: CookieService,
                 private categoryService: CategoryService,
                 private catalogueService: CatalogueService,
-                private userService: UserService) {
+                private publishService:PublishService) {
     }
 
     ngOnInit(): void {
         this.route.queryParams.subscribe((params: Params) => {
+
+            // This part is necessary since only the params has changes,canDeactivate method will not be called.
+            if(this.inPublish == true){
+                if(!confirm("You will lose any changes you made, are you sure you want to quit ?")){
+                    this.selectCategory(null);
+                    return;
+                }
+            }
             this.pageRef = params['pageRef'];
 
-            if(this.pageRef == 'menu') {
+            // If pageRef is 'publish',then user is publishing.
+            if(this.pageRef == 'publish'){
+                this.inPublish = true;
+            }
+
+            if(this.pageRef == null || this.pageRef == 'menu') {
                 // reset categories
                 this.categoryService.resetSelectedCategories();
                 // reset draft catalogue line
-                let userId = this.cookieService.get("user_id");
-                this.userService.getUserParty(userId).then(party => {
-                    this.catalogueService.getCatalogue(userId).then(catalogue => {
-                        this.catalogueService.draftCatalogueLine = UBLModelUtils.createCatalogueLine(catalogue.uuid, party)
-                    });
-                });
-            } else if (this.pageRef == 'publish') {
-
+                this.publishService.publishingStarted = false;
+                this.publishService.publishMode = 'create';
             }
         });
+    }
+
+    canDeactivate():boolean{
+        this.inPublish = false;
+        if(this.pageRef == "publish" && this.isReturnPublish == false){
+            if(!confirm("You will lose any changes you made, are you sure you want to quit ?")){
+                this.selectCategory(null);
+            }
+        }
+        return true;
     }
 
     private getCategories(keyword: string): void {
@@ -97,7 +120,11 @@ export class CategorySearchComponent implements OnInit {
     private navigateToPublishingPage():void {
         let userId = this.cookieService.get("user_id");
         this.catalogueService.getCatalogue(userId).then(catalogue => {
-            this.router.navigate(['publish'], {queryParams: {pageRef: "category"}});
+            ProductPublishComponent.dialogBox = true;
+            this.isReturnPublish = true;
+            this.router.navigate(['catalogue/publish']);
+        }).catch(() => {
+            this.error_detc = true;
         });
     }
 }

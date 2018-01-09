@@ -1,29 +1,24 @@
 <ng-container *ngIf="quotation">
-    <div class="row">
-        <trading-details class="container"
-                         [lineItem]="quotation.quotationLine[0].lineItem"
-                         [presentationMode]="'edit'">
-        </trading-details>
-    </div>
+    <trading-details class="container"
+                     [lineItem]="quotation.quotationLine[0].lineItem"
+                     [presentationMode]="'edit'">
+    </trading-details>
 
     <!-- negotiation parameters for transportation services -->
     <ng-container *ngIf="bpDataService.catalogueLine.goodsItem.item.transportationServiceDetails != null">
         <div class="well">
             <h6>Handling Unit Details</h6>
-            <value-view class="row"
-                        [presentationMode]="'edit'"
+            <value-view [presentationMode]="'edit'"
                         [propName]="'Transport Handling Unit'"
                         [value]="quotation.quotationLine[0].lineItem.delivery[0].shipment.transportHandlingUnit[0].transportHandlingUnitTypeCode.name">
             </value-view>
 
-            <quantity-view class="row"
-                           [presentationMode]="'edit'"
+            <quantity-view [presentationMode]="'edit'"
                            [propName]="quotation.quotationLine[0].lineItem.delivery[0].shipment.transportHandlingUnit[0].measurementDimension[0].attributeID"
                            [quantity]="[quotation.quotationLine[0].lineItem.delivery[0].shipment.transportHandlingUnit[0].measurementDimension[0].measure]">
             </quantity-view>
 
-            <quantity-view class="row"
-                           [presentationMode]="'edit'"
+            <quantity-view [presentationMode]="'edit'"
                            [propName]="quotation.quotationLine[0].lineItem.delivery[0].shipment.transportHandlingUnit[0].measurementDimension[1].attributeID"
                            [quantity]="[quotation.quotationLine[0].lineItem.delivery[0].shipment.transportHandlingUnit[0].measurementDimension[1].measure]">
             </quantity-view>
@@ -31,26 +26,22 @@
 
         <div class="well">
             <h6>Consolidated Shipment</h6>
-            <value-view class="row"
-                        [presentationMode]="'edit'"
+            <value-view [presentationMode]="'edit'"
                         [propName]="'Goods Item'"
                         [value]="quotation.quotationLine[0].lineItem.delivery[0].shipment.goodsItem[0].item.name">
             </value-view>
 
-            <quantity-view class="row"
-                           [propName]="'Quantity'"
+            <quantity-view [propName]="'Quantity'"
                            [quantity]="[quotation.quotationLine[0].lineItem.delivery[0].shipment.totalTransportHandlingUnitQuantity]"
                            [presentationMode]="'edit'">
             </quantity-view>
 
-            <quantity-view class="row"
-                           [presentationMode]="'edit'"
+            <quantity-view [presentationMode]="'edit'"
                            [propName]="'Gross Volume Measure'"
                            [quantity]="[quotation.quotationLine[0].lineItem.delivery[0].shipment.consignment[0].grossVolumeMeasure]">
             </quantity-view>
 
-            <quantity-view class="row"
-                           [presentationMode]="'edit'"
+            <quantity-view [presentationMode]="'edit'"
                            [propName]="'Gross Weight Measure'"
                            [quantity]="[quotation.quotationLine[0].lineItem.delivery[0].shipment.consignment[0].grossWeightMeasure]">
             </quantity-view>
@@ -59,52 +50,52 @@
 
     <hr>
 
-    <value-view class="row"
-                [presentationMode]="'edit'"
-                [propName]="'Response'"
-                [(value)]="quotation.documentStatusCode.name">
-    </value-view>
+    <div class="input-group form-group">
+        <label class="col-3 control-label">Response</label>
+        <select class="custom-select"
+                [(ngModel)]="quotation.documentStatusCode.name">
+            <option>Accepted</option>
+            <option>Terms Updated</option>
+            <option>Rejected</option>
+        </select>
+    </div>
 
-    <value-view class="row"
-                [presentationMode]="'edit'"
+    <value-view [presentationMode]="'edit'"
                 [propName]="'Response Reason'"
                 [(value)]="quotation.documentStatusReasonCode.name">
     </value-view>
 
-    <value-view class="row"
-                [presentationMode]="'edit'"
+    <value-view [presentationMode]="'edit'"
                 [propName]="'Note'"
                 [(value)]="quotation.note[0]">
     </value-view>
 
-    <div class="container ">
-        <div class="row justify-content-end">
-            <ng-container *ngIf="bpDataService.userRole == 'buyer'">
-                <!-- if processMetadata is null, it means a negotiation is initialized right now -->
-                <ng-container *ngIf="bpDataService.processMetadata != null">
-                    <button *ngIf="bpDataService.processMetadata.processStatus == 'Completed'"
-                            class="btn btn-success mr-3" (click)="initiateNewNegotiation()">Request New Quotation
-                    </button>
-                    <button *ngIf="bpDataService.processMetadata.processStatus == 'Completed' &&
-                                   bpDataService.catalogueLine.goodsItem.item.transportationServiceDetails == null &&
-                                   bpDataService.quotation.quotationLine[0].lineItem.quantity.value > 0"
-                            class="btn btn-success" (click)="initiateOrder()">Initiate Order
-                    </button>
-                    <button *ngIf="bpDataService.processMetadata.processStatus == 'Completed' &&
-                                   bpDataService.catalogueLine.goodsItem.item.transportationServiceDetails != null &&
-                                   bpDataService.quotation.documentStatusCode.name == 'Accepted'"
-                            class="btn btn-success" (click)="initiateTransportExecutionPlan()">Initiate Transport
-                        Execution Plan
-                    </button>
-                </ng-container>
-            </ng-container>
-            <ng-container *ngIf="bpDataService.userRole == 'seller'">
-                <button *ngIf="bpDataService.processMetadata.processStatus == 'Started'"
-                        class="btn btn-success"
-                        (click)="respondToRFQ()">Send Quotation
+    <div class="d-flex justify-content-end">
+        <ng-container *ngIf="bpDataService.userRole == 'buyer'">
+            <!-- if processMetadata is null, it means a negotiation is initialized right now -->
+            <ng-container *ngIf="bpDataService.processMetadata != null">
+                <button *ngIf="bpDataService.processMetadata.processStatus == 'Completed'"
+                        class="btn btn-success mr-3" (click)="initiateNewNegotiation()">Request New Quotation
+                </button>
+                <button *ngIf="bpDataService.processMetadata.processStatus == 'Completed' &&
+                               bpDataService.catalogueLine.goodsItem.item.transportationServiceDetails == null &&
+                               bpDataService.quotation.documentStatusCode.name != 'Rejected'"
+                        class="btn btn-success" (click)="initiateOrder()">Initiate Order
+                </button>
+                <button *ngIf="bpDataService.processMetadata.processStatus == 'Completed' &&
+                               bpDataService.catalogueLine.goodsItem.item.transportationServiceDetails != null &&
+                               bpDataService.quotation.documentStatusCode.name != 'Rejected'"
+                        class="btn btn-success" (click)="initiateTransportExecutionPlan()">Initiate Transport
+                    Execution Plan
                 </button>
             </ng-container>
-        </div>
+        </ng-container>
+        <ng-container *ngIf="bpDataService.userRole == 'seller'">
+            <button *ngIf="bpDataService.processMetadata.processStatus == 'Started'"
+                    class="btn btn-success"
+                    (click)="respondToRFQ()">Send Quotation
+            </button>
+        </ng-container>
     </div>
 </ng-container>
 

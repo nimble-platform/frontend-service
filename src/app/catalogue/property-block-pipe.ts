@@ -97,8 +97,8 @@ export class PropertyBlockPipe implements PipeTransform {
         let basePropertyBlock: any = eClassBlocks[0];
         let specificPropertyBlock: any = eClassBlocks[1];
 
-        basePropertyBlock['isCollapsed'] = this.publishStateService.getCollapsedState(name);
-        specificPropertyBlock['isCollapsed'] = this.publishStateService.getCollapsedState(name);
+        basePropertyBlock['isCollapsed'] = this.publishStateService.getCollapsedState(basePropertyBlock.name);
+        specificPropertyBlock['isCollapsed'] = this.publishStateService.getCollapsedState(specificPropertyBlock.name);
 
 
         let baseProperties: ItemProperty[] = [];
@@ -138,7 +138,7 @@ export class PropertyBlockPipe implements PipeTransform {
 
     private createPropertyBlock(category: Category): void {
         let propertyBlock: any = this.createEmptyPropertyBlock(category.preferredName, category.taxonomyId);
-        propertyBlock['isCollapsed'] = this.publishStateService.getCollapsedState(name);
+        propertyBlock['isCollapsed'] = this.publishStateService.getCollapsedState(propertyBlock.name);
         this.propertyBlocks.push(propertyBlock);
 
         let properties: ItemProperty[] = [];

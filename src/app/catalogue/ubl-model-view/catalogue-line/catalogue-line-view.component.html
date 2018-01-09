@@ -1,10 +1,7 @@
 <catalogue-line-header [catalogueLine]="catalogueLine"
+                       [parentForm]="parentForm"
                        [presentationMode]="presentationMode">
 </catalogue-line-header>
-
-<button (click)="partyRole = partyRole == 'Transport Service Provider' ? 'Manufacturer' : 'Transport Service Provider'">
-    Switch company role
-</button>
 
 <!-- images -->
 <div *ngIf="presentationMode=='edit' && catalogueLine.goodsItem.item.productImage.length == 0"
@@ -35,6 +32,15 @@
     </div>
 </div>
 
+<div *ngIf="presentationMode=='edit'" class="space-before space-after">
+	<button *ngIf="partyRole == 'Transport Service Provider'" class="btn btn-primary" (click)="changePartyRole('Manufacturer')">
+		Switch to manufacturer view
+	</button>
+	<button *ngIf="partyRole == 'Manufacturer' || partyRole == ''" class="btn btn-primary" (click)="changePartyRole('Transport Service Provider')">
+		Switch to logistics view
+	</button>
+</div>
+
 <ng-container *ngIf="(presentationMode == 'edit' && partyRole == '' || partyRole == 'Manufacturer') ||
                      (presentationMode != 'edit' && catalogueLine.goodsItem.item.transportationServiceDetails == null)">
     <ul class="nav nav-tabs">
@@ -49,17 +55,19 @@
         <li class="nav-item pointer">
             <a
                     [ngClass]="{'nav-link': true, active: selectedTab === 'Product Trading & Delivery Terms'}"
-                    (click)="selectedTab = 'Product Trading & Delivery Terms'"
+                    (click)="selectedTab = 'Product Trading & Delivery Terms';"
                     i18n
             >Product Trading & Delivery Terms</a>
         </li>
     </ul>
 
-    <product-details *ngIf="selectedTab === 'Product Details'"
+    <product-details [hidden]="selectedTab !== 'Product Details'"
                      [catalogueLine]="catalogueLine"
-                     [presentationMode]="presentationMode">
+                     [presentationMode]="presentationMode"
+                     [parentForm]="regularProductDetailsForm">
     </product-details>
-    <product-trading-details *ngIf="selectedTab === 'Product Trading & Delivery Terms'"
+    <product-trading-details [hidden]="selectedTab !== 'Product Trading & Delivery Terms'"
+                             [parentForm]="regularProductDetailsForm"
                              [catalogueLine]="catalogueLine"
                              [presentationMode]="presentationMode">
     </product-trading-details>
@@ -74,6 +82,7 @@
     </ul>
 
     <transportation-service-details [catalogueLine]="catalogueLine"
-                                    [presentationMode]="presentationMode">
+                                    [presentationMode]="presentationMode"
+                                    [parentForm]="transportationServiceDetailsForm">
     </transportation-service-details>
 </ng-container>

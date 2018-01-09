@@ -4,7 +4,7 @@
             <b>{{ bpDataService.catalogueLine.goodsItem.item.name }}</b><br/>
             <i>{{ bpDataService.catalogueLine.goodsItem.item.manufacturerParty.name }}</i>
         </div>
-        <button *ngIf="!bpOptionsActive"
+        <button *ngIf="!bpOptionsActive&&(debug||roles.indexOf('legal_representative')!=-1)"
                 class="ml-auto align-self-start btn btn-success"
                 (click)="bpOptionsActive = !bpOptionsActive">
             See Available Business Options&nbsp;&nbsp;<i class="fa fa-angle-double-down" aria-hidden="true"></i>

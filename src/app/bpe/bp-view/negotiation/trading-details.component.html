@@ -1,22 +1,19 @@
 <div class="well">
     <h5 class="mt-3 mb-3">Price / Requested Quantity</h5>
     <!-- Price Amount -->
-    <amount-view class="row"
-                 [presentationMode]="presentationMode"
+    <amount-view [presentationMode]="presentationMode"
                  [propName]="'Amount'"
                  [amount]="[lineItem.price.priceAmount]">
     </amount-view>
 
     <!-- Price Base Quantity -->
-    <quantity-view class="row"
-                   [presentationMode]="presentationMode"
+    <quantity-view [presentationMode]="presentationMode"
                    [propName]="'Price Base Quantity'"
                    [quantity]="[lineItem.price.baseQuantity]">
     </quantity-view>
 
     <!-- Requested quantity -->
     <quantity-view *ngIf="lineItem.item.transportationServiceDetails == null"
-                   class="row"
                    [propName]="'Requested Quantity'"
                    [quantity]="[lineItem.quantity]"
                    [presentationMode]="presentationMode">
@@ -27,29 +24,25 @@
     <h5 class="mb-3">Delivery Terms</h5>
 
     <!-- Incoterms -->
-    <value-view class="row"
-                [presentationMode]="presentationMode"
+    <value-view [presentationMode]="presentationMode"
                 [propName]="'Incoterms'"
                 [(value)]="lineItem.deliveryTerms.incoterms">
     </value-view>
 
     <!-- Request delivery period -->
-    <quantity-view class="row"
-                   [presentationMode]="presentationMode"
+    <quantity-view [presentationMode]="presentationMode"
                    [propName]="'Requested Delivery Period'"
                    [quantity]="[lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure]">
     </quantity-view>
 
     <!-- Delivery Location -->
-    <address-view class="row"
-                  [presentationMode]="presentationMode"
+    <address-view [presentationMode]="presentationMode"
                   [propName]="'Delivery Location'"
                   [address]="[lineItem.deliveryTerms.deliveryLocation.address]">
     </address-view>
 
     <!-- Special terms -->
-    <value-view class="row"
-                [presentationMode]="presentationMode"
+    <value-view [presentationMode]="presentationMode"
                 [propName]="'Special Terms'"
                 [(value)]="lineItem.deliveryTerms.specialTerms">
     </value-view>
@@ -59,15 +52,13 @@
 <ng-container *ngIf="lineItem.item.transportationServiceDetails == null">
     <h5 class="mt-3">Warranty</h5>
     <!-- Validity period -->
-    <quantity-view class="row"
-                   [presentationMode]="presentationMode"
+    <quantity-view [presentationMode]="presentationMode"
                    [propName]="'Validity Period'"
                    [quantity]="[lineItem.warrantyValidityPeriod.durationMeasure]">
     </quantity-view>
 
     <!-- Warranty information -->
-    <value-array-view class="row"
-                      [presentationMode]="presentationMode"
+    <value-array-view [presentationMode]="presentationMode"
                       [propName]="'Warranty information'"
                       [(values)]="lineItem.warrantyInformation">
     </value-array-view>

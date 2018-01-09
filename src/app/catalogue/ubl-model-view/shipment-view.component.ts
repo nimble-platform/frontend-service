@@ -11,4 +11,5 @@ import {Shipment} from "../model/publish/shipment";
 export class ShipmentViewComponent {
     @Input() shipment: Shipment;
     @Input() presentationMode: string;
+    @Input() showCarrierPartyDetails: boolean = true;
 }

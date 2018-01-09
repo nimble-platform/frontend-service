@@ -8,12 +8,12 @@
 	<div class="navbar-collapse" [ngbCollapse]="isCollapsed" id="navbarNavAltMarkup">
 		<ul *ngIf="!isLoggedIn" class="nav navbar-nav mr-auto">
 			<li class="nav-item" routerLinkActive="active">
-				<a class="nav-link" routerLink="/login">
+				<a class="nav-link" routerLink="/user-mgmt/login">
 					<img src="assets/login_white.png" class="inline-icon"/> <span i18n>Login</span>
 				</a>
 			</li>
 			<li class="nav-item" routerLinkActive="active">
-				<a class="nav-link" routerLink="/registration">
+				<a class="nav-link" routerLink="/user-mgmt/registration">
 					<img src="assets/register_white.png" class="inline-icon"/> <span i18n>Registration</span>
 				</a>
 			</li>
@@ -24,12 +24,17 @@
 					<img src="assets/list_white.png" class="inline-icon"/> <span i18n>Dashboard</span>
 				</a>
 			</li>
-			<li class="nav-item" *ngIf="roles.indexOf('initial_representative')!=-1||roles.indexOf('legal_representative')!=-1" routerLinkActive="active">
-			<!--<li class="nav-item" routerLinkActive="active">-->
-				<a class="nav-link" [routerLink]="['/categorysearch']" [queryParams]="{pageRef: 'menu'}">
+			<li class="nav-item" *ngIf="debug||roles.indexOf('initial_representative')!=-1||roles.indexOf('legal_representative')!=-1" routerLinkActive="active">
+				<a class="nav-link" [routerLink]="['/catalogue/categorysearch']" [queryParams]="{pageRef: 'menu'}">
 					<img src="assets/upload_white.png" class="inline-icon"/> <span i18n>Publish</span>
 				</a>
 			</li>
+			<li class="nav-item" routerLinkActive="active">
+				<a class="nav-link" routerLink="/simple-search">
+					<img src="assets/search_white.png" class="inline-icon"/> <span i18n>Search</span>
+				</a>
+			</li>
+			<!--
 			<li ngbDropdown class="nav-item dropdown" routerLinkActive="active">
 				<a class="nav-link" id="dropdownMenuSearch" style="cursor:pointer" ngbDropdownToggle>
 					<img src="assets/search_white.png" class="inline-icon"/> <span i18n>Search</span>
@@ -43,18 +48,21 @@
 					</a>
 				</div>
 			</li>
-			<li class="nav-item" *ngIf="roles.indexOf('legal_representative')!=-1" routerLinkActive="active">
-				<a class="nav-link" [routerLink]="['/bpe-design']" [queryParams]="{fromScratch: true}">
+			-->
+			<!--
+			<li class="nav-item" *ngIf="debug||roles.indexOf('legal_representative')!=-1" routerLinkActive="active">
+				<a class="nav-link" [routerLink]="['/bpe/bpe-design']" [queryParams]="{fromScratch: true}">
 					<img src="assets/process_white.png" class="inline-icon"/> <span i18n>Business Process</span>
 				</a>
 			</li>
+			-->
 			<li class="nav-item" *ngIf="!activeCompanyName" routerLinkActive="active">
-				<a class="nav-link" routerLink="/company-registration">
+				<a class="nav-link" routerLink="/user-mgmt/company-registration">
 					<img src="assets/register_white.png" class="inline-icon"/> <span i18n>Register a Company</span>
 				</a>
 			</li>
-			<li class="nav-item" *ngIf="roles.indexOf('legal_representative')!=-1" routerLinkActive="active">
-				<a class="nav-link" routerLink="/company-invitation">
+			<li class="nav-item" *ngIf="debug||roles.indexOf('legal_representative')!=-1" routerLinkActive="active">
+				<a class="nav-link" routerLink="/user-mgmt/company-invitation">
 					<img src="assets/company_white.png" class="inline-icon"/> Company Members
 				</a>
 			</li>
@@ -65,13 +73,13 @@
 					<img src="assets/avatar_white.png" class="inline-icon"/> {{fullName}}
 				</a>
 				<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuUser">
-					<a class="dropdown-item" routerLink="/company-settings" routerLinkActive="active">
+					<a class="dropdown-item" routerLink="/user-mgmt/company-settings" routerLinkActive="active">
 						<img src="assets/gear_black.png" class="inline-icon"/> Account Settings
 					</a>
-					<a class="dropdown-item" routerLink="/catalogue" routerLinkActive="active">
+					<a class="dropdown-item" routerLink="/catalogue/catalogue" routerLinkActive="active">
 						<img src="assets/catalog_black.png" class="inline-icon"/> <span i18n>Catalogue</span>
 					</a>
-					<a class="dropdown-item" routerLink="/logout">
+					<a class="dropdown-item" routerLink="/user-mgmt/logout">
 						<img src="assets/logout_black.png" class="inline-icon"/> <span i18n>Logout</span>
 					</a>
 				</div>
@@ -79,6 +87,44 @@
 		</ul>
 	</div>
 </nav>
+
+<div *ngIf="!alertBetaClosed">
+	<p class="space-before">
+		<ngb-alert type="danger" (close)="alertBetaClosed=true">
+			This platform is in an early access / testing stage.<br/>
+			Downtimes and bugs have to be expected.
+		</ngb-alert>
+	</p>
+</div>
+
+<div id="loading-bg" *ngIf="loading">
+	<div id="sk-loading-icon">
+		<div class="sk-folding-cube">
+			<div class="sk-cube1 sk-cube"></div>
+			<div class="sk-cube2 sk-cube"></div>
+			<div class="sk-cube4 sk-cube"></div>
+			<div class="sk-cube3 sk-cube"></div>
+		</div>
+	</div>
+</div>
+
+<ng-template #support let-d="dismiss">
+	<div class="modal-header">
+		<h4 class="modal-title">Support</h4>
+		<button type="button" class="close" aria-label="Close" (click)="d('')">
+			<span aria-hidden="true">&times;</span>
+		</button>
+	</div>
+	<div class="modal-body">
+		When you press "Open mail template" a partially prefilled mail template will open in the mail client of your choice.<br/><br/>
+		Please make sure to fill out the description and cause of the issue properly and add screenshots if they are of use.<br/><br/>
+		We will get back to you as soon as possible.
+	</div>
+	<div class="modal-footer">
+		<a [href]="mailto" type="button" class="btn btn-primary" (click)="d('')">Open mail template</a>
+	</div>
+</ng-template>
+<div id="support-btn" (click)="open(support)"><img id="support-img" src="assets/support_white.png"/></div>
 
 <router-outlet></router-outlet>
 

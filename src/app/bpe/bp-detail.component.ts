@@ -20,7 +20,7 @@ export class BPDetailComponent implements OnInit {
     constructor(private bpService: BPService,
                 private route: ActivatedRoute,
                 private location: Location) {
-        this.isCreatePage = this.location.isCurrentPathEqualTo('/create');
+        this.isCreatePage = this.location.isCurrentPathEqualTo('/bpe/bpe-design/create');
         if (this.isCreatePage) {
             this.bp = new BP('', '', '', '', '', []);
         }

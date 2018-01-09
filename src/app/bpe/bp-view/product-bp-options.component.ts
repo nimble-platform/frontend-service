@@ -30,7 +30,13 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.processTypeSubs = this.bpDataService.processTypeObservable.subscribe(processType => {
-            this.selectedOption = processType;
+            if(processType) {
+                this.selectedOption = processType;
+            } else if(this.availableProcesses.length > 0) {
+                this.selectedOption = this.availableProcesses[0];
+            } else {
+                this.selectedOption = 'Item_Information_Request';
+            }
         });
 
         this.route.queryParams.subscribe(params => {
@@ -68,8 +74,11 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
         } else {
             this.availableProcesses.push('Item_Information_Request');
             this.availableProcesses.push('Negotiation');
+
             if (this.bpDataService.catalogueLine.goodsItem.item.transportationServiceDetails == null) {
                 this.availableProcesses.push('Order');
+            } else {
+                this.availableProcesses.push('Transport_Execution_Plan');
             }
         }
     }

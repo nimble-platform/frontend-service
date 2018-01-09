@@ -13,7 +13,7 @@ import {Quotation} from "../../catalogue/model/publish/quotation";
 import {Order} from "../../catalogue/model/publish/order";
 import {OrderResponseSimple} from "../../catalogue/model/publish/order-response-simple";
 import {BehaviorSubject} from "rxjs/BehaviorSubject";
-import {OrderReference} from "../model/order-reference";
+import {OrderReference} from "../../catalogue/model/publish/order-reference";
 import {TransportExecutionPlanRequest} from "../../catalogue/model/publish/transport-execution-plan-request";
 import {TransportExecutionPlan} from "../../catalogue/model/publish/transport-execution-plan";
 import {SearchContextService} from "../../simple-search/search-context.service";
@@ -190,6 +190,11 @@ export class BPDataService {
         this.despatchAdvice = UBLModelUtils.createDespatchAdvice(copyOrder);
     }
 
+    initTransportExecutionPlanRequest() {
+        this.modifiedCatalogueLine = JSON.parse(JSON.stringify(this.catalogueLine));
+        this.transportExecutionPlanRequest = UBLModelUtils.createTransportExecutionPlanRequest(this.modifiedCatalogueLine);
+    }
+
     initTransportExecutionPlanRequestWithOrder(processMetadata:any) {
         this.resetBpData();
         this.setBpMessages('Order', this.searchContextService.associatedProcessMetadata);
@@ -206,7 +211,7 @@ export class BPDataService {
     }
 
     resetBpData():void {
-        //this.setProcessType(null);
+        this.setProcessType(null);
         this.processMetadata = null;
         this.modifiedCatalogueLine = null;
         this.requestForQuotation = null;

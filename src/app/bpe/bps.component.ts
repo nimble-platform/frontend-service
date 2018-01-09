@@ -34,14 +34,14 @@ export class BPsComponent implements OnInit {
   }
 
   edit(bp: BP): void {
-    this.router.navigate(['bpe-design/detail', bp.processID]);
+    this.router.navigate(['bpe/bpe-design/detail', bp.processID]);
   }
 
   configure(bp: BP): void {
-    this.router.navigate(['bpe-design/configure', bp.processID]);
+    this.router.navigate(['bpe/bpe-design/configure', bp.processID]);
   }
 
   create(): void {
-      this.router.navigate(['bpe-design/create']);
+      this.router.navigate(['bpe/bpe-design/create']);
   }
 }

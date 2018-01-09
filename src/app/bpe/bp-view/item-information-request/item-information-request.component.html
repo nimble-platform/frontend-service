@@ -28,7 +28,7 @@
         </ng-container>
 
         <!-- seller -->
-        <ng-container *ngIf="bpDataService.userRole == 'seller'">
+        <ng-container *ngIf="bpDataService.userRole == 'seller' && itemInformationRequest.itemInformationRequestLine[0].salesItem[0].item.itemSpecificationDocumentReference.length > 0">
             {{itemInformationRequest.itemInformationRequestLine[0].salesItem[0].item.itemSpecificationDocumentReference[0].attachment.embeddedDocumentBinaryObject.fileName}}
             <button class="btn btn-success ml-auto"
                     (click)="downloadTechnicalDataSheet(bpDataService.itemInformationRequest.itemInformationRequestLine[0].salesItem[0].item.itemSpecificationDocumentReference[0].attachment.embeddedDocumentBinaryObject)">Download Technical Data Sheet
@@ -42,14 +42,14 @@
                 [(value)]="itemInformationRequest.note[0]">
     </value-view>
 
-    <hr class="mb-3 mt-3">
-
     <ng-container *ngIf="itemInformationResponse">
+        <hr class="mb-3 mt-3">
+
         <div class="mb-3 row">
             <label class="col-3 control-label">Technical data sheet response</label>
             <!-- seller document part -->
             <!-- buyer -->
-            <ng-container *ngIf="bpDataService.userRole == 'buyer'">
+            <ng-container *ngIf="bpDataService.userRole == 'buyer' && itemInformationResponse.item[0].itemSpecificationDocumentReference.length > 0">
                 {{itemInformationResponse.item[0].itemSpecificationDocumentReference[0].attachment.embeddedDocumentBinaryObject.fileName}}
                 <button class="btn btn-success ml-auto align-self-start"
                         (click)="downloadTechnicalDataSheet(bpDataService.itemInformationResponse.item[0].itemSpecificationDocumentReference[0].attachment.embeddedDocumentBinaryObject)">Download Technical Data Sheet

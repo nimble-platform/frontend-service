@@ -1,38 +1,34 @@
 <ng-container *ngIf="orderResponse">
     <h5>Notes</h5>
-    <value-view class="row"
-                [presentationMode]="'edit'"
+    <value-view [presentationMode]="'edit'"
                 [propName]="'Note'"
                 [(value)]="orderResponse.note">
     </value-view>
 
-    <value-view class="row"
-                [presentationMode]="'edit'"
+    <value-view [presentationMode]="'edit'"
                 [propName]="'Rejection Note'"
                 [(value)]="orderResponse.rejectionNote">
     </value-view>
 
-    <div class="container ">
-        <div class="row justify-content-end">
-            <ng-container *ngIf="bpDataService.processMetadata.processStatus != 'Completed'">
-                <button *ngIf="bpDataService.userRole == 'seller'" class="btn btn-success mr-3"
-                        (click)="respondToOrder(true)">Accept Order
-                </button>
-                <button *ngIf="bpDataService.userRole == 'seller'" class="btn btn-danger" (click)="respondToOrder(false)">
-                    Reject Order
-                </button>
-            </ng-container>
-            <ng-container *ngIf="bpDataService.processMetadata.processStatus == 'Completed'">
-                <button *ngIf="bpDataService.userRole == 'seller' && bpDataService.orderResponse.acceptedIndicator == true"
-                        class="btn btn-success mr-3"
-                        (click)="searchTransportServiceProvider()">Search Transport Service Provider
-                </button>
-                <button *ngIf="bpDataService.userRole == 'seller' && bpDataService.orderResponse.acceptedIndicator == true"
-                        class="btn btn-success mr-3"
-                        (click)="initiateDespatchAdvice()">Initiate Despatch Advice
-                </button>
-            </ng-container>
-        </div>
+    <div class="d-flex justify-content-end">
+        <ng-container *ngIf="bpDataService.processMetadata.processStatus != 'Completed'">
+            <button *ngIf="bpDataService.userRole == 'seller'" class="btn btn-success ml-auto mr-3"
+                    (click)="respondToOrder(true)">Accept Order
+            </button>
+            <button *ngIf="bpDataService.userRole == 'seller'" class="btn btn-danger" (click)="respondToOrder(false)">
+                Reject Order
+            </button>
+        </ng-container>
+        <ng-container *ngIf="bpDataService.processMetadata.processStatus == 'Completed'">
+            <button *ngIf="bpDataService.userRole == 'seller' && bpDataService.orderResponse.acceptedIndicator == true"
+                    class="btn btn-success mr-3"
+                    (click)="searchTransportServiceProvider()">Search Transport Service Provider
+            </button>
+            <button *ngIf="bpDataService.userRole == 'seller' && bpDataService.orderResponse.acceptedIndicator == true"
+                    class="btn btn-success"
+                    (click)="initiateDespatchAdvice()">Initiate Despatch Advice
+            </button>
+        </ng-container>
     </div>
 </ng-container>
 

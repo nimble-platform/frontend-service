@@ -1,7 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Search } from './model/search';
 import { SimpleSearchService } from './simple-search.service';
+import { Router, ActivatedRoute} from "@angular/router";
 import * as myGlobals from '../globals';
+import {SearchContextService} from "./search-context.service";
 
 @Component({
 	selector: 'simple-search-form',
@@ -9,7 +11,7 @@ import * as myGlobals from '../globals';
 	styleUrls: ['./simple-search-form.component.css']
 })
 
-export class SimpleSearchFormComponent {
+export class SimpleSearchFormComponent implements OnInit {
 
 	product_name = myGlobals.product_name;
 	product_vendor_id = myGlobals.product_vendor_id;
@@ -25,6 +27,7 @@ export class SimpleSearchFormComponent {
 	page = 1;
 	start = 0;
 	end = 0;
+	searchContext = null;
 	model = new Search('');
 	objToSubmit = new Search('');
 	facetObj: any;
@@ -33,14 +36,55 @@ export class SimpleSearchFormComponent {
 	response: any;
 
 	constructor(
-		private simpleSearchService: SimpleSearchService
+		private simpleSearchService: SimpleSearchService,
+		private searchContextService: SearchContextService,
+		public route: ActivatedRoute,
+		public router: Router
 	) {
 	}
 	
+	ngOnInit(): void {
+		this.route.queryParams.subscribe(params => {
+			let q = params['q'];
+			let fq = params['fq'];
+			let p = params['p'];
+			let searchContext = params['searchContext'];
+			if (fq)
+				fq = decodeURIComponent(fq).split("_SEP_");
+			else
+				fq = [];
+			if (p && !isNaN(p)) {
+				p = parseInt(p);
+				this.size = p*10;
+				this.page = p;
+			}
+			else
+				p = 1;
+			if (searchContext == null) {
+				this.searchContextService.clearSearchContext();
+			} else {
+				this.searchContext = searchContext;
+			}
+			if (q)
+				this.getCall(q,fq,p);
+		});
+    }
+	
 	get(search: Search): void {
+		this.router.navigate(['/simple-search'], { queryParams : { q: search.q, fq: encodeURIComponent(this.facetQuery.join('_SEP_')), p: this.page, searchContext: this.searchContext } });
+	}
+	
+	getCall(q:string, fq:any, p:number) {
+		this.callback = false;
+		this.error_detc = false;
+		this.submitted = true;
+		this.model.q=q;
+		this.objToSubmit.q=q;
+		this.facetQuery=fq;
+		this.page=p;
 		this.simpleSearchService.getFields()
 		.then(res => {
-			this.simpleSearchService.get(search.q,res._body.split(","),this.facetQuery,this.page)
+			this.simpleSearchService.get(q,res._body.split(","),fq,p)
 			.then(res => {
 				this.facetObj = [];
 				this.temp = [];
@@ -50,15 +94,44 @@ export class SimpleSearchFormComponent {
 						if (this.simpleSearchService.checkField(facet)) {
 							this.facetObj.push({
 								"name":facet,
-								"options":[]
+								"options":[],
+								"total":0,
+								"selected":false
 							});
 							for (let facet_inner in res.facet_counts.facet_fields[facet]) {
 								this.facetObj[index].options.push({
 									"name":facet_inner,
 									"count":res.facet_counts.facet_fields[facet][facet_inner]
 								});
+								this.facetObj[index].total += res.facet_counts.facet_fields[facet][facet_inner];
+								if (this.checkFacet(this.facetObj[index].name,facet_inner))
+									this.facetObj[index].selected=true;
 							}
+							this.facetObj[index].options.sort(function(a,b){
+								var a_c = a.name;
+								var b_c = b.name;
+								return a_c.localeCompare(b_c);
+							});
+							this.facetObj[index].options.sort(function(a,b){
+								return b.count-a.count;
+							});
 							index++;
+							this.facetObj.sort(function(a,b){
+								var a_c = a.name;
+								var b_c = b.name;
+								return a_c.localeCompare(b_c);
+							});
+							this.facetObj.sort(function(a,b){
+								return b.total-a.total;
+							});
+							this.facetObj.sort(function(a,b){
+								var ret = 0;
+								if (a.selected && !b.selected)
+									ret = -1;
+								else if (!a.selected && b.selected)
+									ret = 1;
+								return ret;
+							});
 						}
 					}
 				}
@@ -76,6 +149,7 @@ export class SimpleSearchFormComponent {
 				}
 				this.response = JSON.parse(JSON.stringify(this.temp));
 				this.size = res.response.numFound;
+				this.page = p;
 				this.start = this.page*10-10+1;
 				this.end = this.start+res.response.docs.length-1;
 				this.callback = true;
@@ -91,10 +165,12 @@ export class SimpleSearchFormComponent {
 	}
 	
 	onSubmit() {
+		/*
 		this.callback = false;
 		this.error_detc = false;
-		this.objToSubmit = JSON.parse(JSON.stringify(this.model));
 		this.submitted = true;
+		*/
+		this.objToSubmit = JSON.parse(JSON.stringify(this.model));
 		this.facetQuery = [];
 		this.get(this.objToSubmit);
 	}

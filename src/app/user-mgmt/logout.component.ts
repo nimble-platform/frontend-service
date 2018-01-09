@@ -32,7 +32,7 @@ export class LogoutComponent implements OnInit {
 		this.cookieService.delete("active_company_name");
 		this.cookieService.delete("bearer_token");
 		this.userService.resetData();
-		this.appComponent.checkLogin("/login");
+		this.appComponent.checkLogin("/user-mgmt/login");
 	}
 
 }

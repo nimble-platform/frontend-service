@@ -7,6 +7,7 @@ import {CatalogueService} from "../catalogue.service";
 import {Subscription} from "rxjs/Subscription";
 import {BPDataService} from "../../bpe/bp-view/bp-data-service";
 import {Property} from "../model/category/property";
+import {FormGroup} from "@angular/forms";
 
 @Component({
     selector: 'additional-item-property',
@@ -23,6 +24,7 @@ export class AdditionalItemPropertyComponent implements OnInit, OnDestroy {
      singlevalue: only a single value can be chosen for the property. this mode is expected to be used when the
      item is used in business processes like negotiation */
     @Input() presentationMode: string;
+    @Input() parentForm: FormGroup;
 
     editModeSubscription: Subscription;
     showPropertyDetails: boolean = false;
@@ -35,32 +37,6 @@ export class AdditionalItemPropertyComponent implements OnInit, OnDestroy {
 
     openPropertyDetails(): void {
         this.showPropertyDetails = !this.showPropertyDetails;
-
-        /*let modal = document.getElementById('myModal');
-
-        let header = document.getElementById('header');
-        header.innerText = this.additionalItemProperty.name;
-
-        let prop_def = document.getElementById('prop_def');
-        //TODO retrieve the property definition from the actual property objects
-        //prop_def.innerText = this.additionalItemProperty.propertyDefinition;
-
-        if (this.propertyUnitDefined == true) {
-            let prop_unit = document.getElementById('prop_unit');
-            prop_unit.innerText = this.additionalItemProperty.unit;
-
-            let unit_label = document.getElementById('unit_label');
-            unit_label.innerText = "Unit: ";
-        }
-        else {
-            let prop_unit = document.getElementById('prop_unit');
-            prop_unit.innerText = "";
-
-            let unit_label = document.getElementById('unit_label');
-            unit_label.innerText = "";
-        }
-
-        modal.style.display = "block";*/
     }
 
     addValueToProperty(aipName: string) {
