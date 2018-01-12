@@ -81,20 +81,19 @@
 <br/>
 
 <ngb-tabset (tabChange)="activeTab($event)">
-    <ngb-tab title="Graph Navigation" (click)="preserveStateRestore()" id="graphNav">
-        <ng-template ngbTabContent>
-        <explore-search-details [config]="visData" [lang]="language"></explore-search-details>
-        <div [hidden]="!_error_detected_query">
-            <div class="alert alert-danger space-before" role="alert" i18n>An error occured - please try again later</div>
-        </div>
-        </ng-template>
-    </ngb-tab>
-    <ngb-tab title="Semantic Query" (click)="previousStateStore()" id="sqp">
+    <ngb-tab title="Semantic Query" (click)="previousStateStore()" id="sqp" >
         <ng-template ngbTabContent>
             <explore-search-semantic [configSPQ]="SQPConfig" [lang]="language"></explore-search-semantic>
         </ng-template>
     </ngb-tab>
-
+    <ngb-tab title="Graph Navigation" (click)="preserveStateRestore()" id="graphNav" [disabled]="true">
+        <ng-template ngbTabContent>
+            <explore-search-details [config]="visData" [lang]="language"></explore-search-details>
+            <div [hidden]="!_error_detected_query">
+                <div class="alert alert-danger space-before" role="alert" i18n>An error occured - please try again later</div>
+            </div>
+        </ng-template>
+    </ngb-tab>
 </ngb-tabset>
 <!-- The Graph Display Component -->
 <!-- Data Visualization here-->

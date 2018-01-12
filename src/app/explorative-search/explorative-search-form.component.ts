@@ -53,7 +53,7 @@ export class ExplorativeSearchFormComponent implements OnInit {
     private _error_detected_kw = false;
     private _error_detected_query = false;
     private _warning_kw = false;
-    private activeTabName = 'graphNav';
+    private activeTabName = 'sqp';
     private conceptName = '';
     private conceptURL = '';
     SQPConfig: Object;
@@ -140,7 +140,7 @@ export class ExplorativeSearchFormComponent implements OnInit {
      */
 
     getQuery(inputVal: string, urlVal: string) {
-        console.log(inputVal);
+        // console.log(inputVal);
         this.conceptName = urlVal;
         this.conceptURL = inputVal;
         // HTTP GET to backend Server for visualization
@@ -186,7 +186,7 @@ export class ExplorativeSearchFormComponent implements OnInit {
     }
 
     public activeTab($event: NgbTabChangeEvent) {
-        console.log($event.activeId);
+        //console.log($event.activeId);
         this.activeTabName = $event.nextId;
     }
 }
