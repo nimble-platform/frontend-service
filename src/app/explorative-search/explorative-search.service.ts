@@ -10,8 +10,8 @@ import { Http, Headers, RequestOptions } from '@angular/http';
 
 import 'rxjs/add/operator/toPromise';
 import * as myGlobals from '../globals';
-import {Observable} from 'rxjs/Observable';
-import {SearchItem} from './model/SearchItem';
+// import {Observable} from 'rxjs/Observable';
+// import {SearchItem} from './model/SearchItem';
 
 @Injectable()
 export class ExplorativeSearchService {
@@ -26,6 +26,7 @@ export class ExplorativeSearchService {
     private obsPropertySQP = myGlobals.obs_propFromConcept;
     private obsPropertyValuesSQP = myGlobals.obs_propValueFromConcept;
     private referenceFromConcept = myGlobals.referenceFromConcept;
+    private sqpOrangeConcept = myGlobals.sqpOrangeConcept;
 
     private userLang: string;
     private headers = new Headers();
@@ -117,6 +118,13 @@ export class ExplorativeSearchService {
 
     getReferencesFromConcept(term: Object): Promise<any> {
         return this.http.get(`${this.referenceFromConcept}?inputAsJson=${JSON.stringify(term)}`)
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+    }
+
+    getPropertyValuesFromOrangeGroup(term: Object): Promise<any> {
+        return this.http.get(`${this.sqpOrangeConcept}?inputAsJson=${JSON.stringify(term)}`)
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);

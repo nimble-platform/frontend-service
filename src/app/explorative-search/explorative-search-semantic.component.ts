@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, OnInit} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, ViewChild} from '@angular/core';
 import { Router } from '@angular/router';
 import {ExplorativeSearchService} from './explorative-search.service';
 import { Observable } from 'rxjs/Observable';
@@ -21,10 +21,13 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
     // store the incoming JSON for Further Purposes.
     private _propertyGetterJSON: Object = {};
     private _mainConceptName = '';
-    // Yellow Button from BackendAPI
+    // Orange Button from BackendAPI
     private objectRelationsButton = {};
     private _optSelectJSON = {};
     public sparqlSelectedOption = {};
+    public objRelationOutputJSON = {};
+    searchOrangevalue: string[] = [];
+    @ViewChild('acc') acc;
     // reference JSON
     private _referenceJSON: Object = {};
     public negotiationEnable: boolean = false;
@@ -52,7 +55,7 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
     public formatter = (x: {translatedProperty: string}) => x.translatedProperty;
 
 
-    constructor(private expSearch: ExplorativeSearchService, private router: Router, accConfig: NgbAccordionConfig) {
+    constructor(private expSearch: ExplorativeSearchService, private router: Router, private accConfig: NgbAccordionConfig) {
         accConfig.closeOthers = true;
     }
     ngOnChanges(): void {
@@ -125,7 +128,7 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
         this.selectedValue = false;
         let temp: any[] = [];
         this.sentence += ' <' + inputVal + '> ';
-        console.log('hasValueRelation ', this.configSPQ);
+        // console.log('hasValueRelation ', this.configSPQ);
         let dummyJSON = {'conceptURL': this.configSPQ['concept'],
             'propertyURL': encodeURIComponent(this.selectedPropertyURL)};
         this.expSearch.searchForPropertyValues(dummyJSON)
@@ -170,7 +173,19 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
     }
 
     objectPropRelation(inputVal: string) {
+        let orangeJSON = {conceptURL: this.configSPQ['concept'], orangeCommand: inputVal};
         this.sentence += ' <' + inputVal + '> ';
+        // console.log(orangeJSON);
+        // call API
+        this.expSearch.getPropertyValuesFromOrangeGroup(orangeJSON)
+            .then(res => {
+                this.objRelationOutputJSON = res;
+                console.log(this.objRelationOutputJSON);
+                this.selectedValue = false;
+                this.searchvalue = this.objRelationOutputJSON['allValues'];
+                this.acc.toggle('toggle-value');
+            });
+
     }
 
     genTable(): void {

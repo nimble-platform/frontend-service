@@ -44,6 +44,7 @@ export const spqButton = 'https://hydra2.ikap.biba.uni-bremen.de:8443/getSQPFrom
 export const obs_propFromConcept = 'https://hydra2.ikap.biba.uni-bremen.de:8443/getPropertyFromConcept';
 export const obs_propValueFromConcept = 'https://hydra2.ikap.biba.uni-bremen.de:8443/getPropertyValuesFromGreenGroup';
 export const referenceFromConcept = 'https://hydra2.ikap.biba.uni-bremen.de:8443/getReferencesFromAConcept';
+export const sqpOrangeConcept = 'https://hydra2.ikap.biba.uni-bremen.de:8443/getPropertyValuesFromOrangeGroup'
 
 // Endpoint variables - Local development via service discovery
 
