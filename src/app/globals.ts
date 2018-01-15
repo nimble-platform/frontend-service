@@ -38,7 +38,8 @@ export const propertyEndPoint = `${ub_base_8092}/getPropertyValuesDiscretised`;
 // export const sparqlEndPoint = `${ub_base_8092}/executeSPARQLSelect`;
 export const sparqlEndPoint = `https://hydra2.ikap.biba.uni-bremen.de:8443/executeSPARQLSelect`;
 // export const sparqlEndPoint = 'http://localhost:8090/executeSPARQLSelect';
-export const sparqlOptionalSelectEndPoint = `${ub_base_8092}/executeSPARQLOptionalSelect`;
+// export const sparqlOptionalSelectEndPoint = `${ub_base_8092}/executeSPARQLOptionalSelect`;
+export const sparqlOptionalSelectEndPoint = 'https://hydra2.ikap.biba.uni-bremen.de:8443/executeSPARQLOptionalSelect';
 // export const sparqlOptionalSelectEndPoint = 'http://localhost:8090/executeSPARQLOptionalSelect';
 
 export const spqButton = 'https://hydra2.ikap.biba.uni-bremen.de:8443/getSQPFromOrangeGroup';

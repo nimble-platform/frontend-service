@@ -223,12 +223,11 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
         // this.sparqlJSON['filters'].push({'property': encodeURIComponent(this.selectedPropertyURL), 'min': Number(this.Value),
         //     'max': Number(this.Value) + 1});
         console.log(val, url);
-        if (url.split('#')[1] !== val) { // this check is critical because when an orange button is clicked,
-            // the previous value of the url is still existing.
-           console.log('orange button was pressed');
-        } else {
+        if (Number(val)) {
             this.sparqlJSON['filters'].push({'property': encodeURIComponent(url), 'min': Number(val),
                 'max': Number(val) + 1});
+        } else {
+            console.log('orange button pressed');
         }
     }
 
@@ -237,7 +236,8 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
         // need URI component in order to send url as JSON.stringify
         this._optSelectJSON = {'uuid': encodeURIComponent(this.tableResult.uuids[indexInp].trim())};
         this._optSelectJSON['language'] = this.lang;
-        // console.log(this._optSelectJSON);
+        this._optSelectJSON['orangeCommandSelected'] = {'names': this.sparqlJSON['orangeCommandSelected']['names']};
+        console.log(this._optSelectJSON);
         this.expSearch.getOptionalSelect(this._optSelectJSON)
             .then(res => {
                 this.sparqlSelectedOption = res;
