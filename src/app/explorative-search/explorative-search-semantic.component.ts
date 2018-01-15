@@ -26,7 +26,6 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
     private _optSelectJSON = {};
     public sparqlSelectedOption = {};
     public objRelationOutputJSON = {};
-    searchOrangevalue: string[] = [];
     @ViewChild('acc') acc;
     // reference JSON
     private _referenceJSON: Object = {};
@@ -74,6 +73,7 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
         this.sparqlJSON['parametersIncludingPath'] = [];
         this.sparqlJSON['parameters'] = [];
         this.sparqlJSON['filters'] = [];
+        this.sparqlJSON['orangeCommandSelected'] = {names: []};
         this.referenceResults = {};
         this.refResultsRange = [];
     }
@@ -82,6 +82,7 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
         this.sparqlJSON['parametersIncludingPath'] = [];
         this.sparqlJSON['parameters'] = [];
         this.sparqlJSON['filters'] = [];
+        this.sparqlJSON['orangeCommandSelected'] = {name: ''};
     }
 
     /**
@@ -129,6 +130,7 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
         let temp: any[] = [];
         this.sentence += ' <' + inputVal + '> ';
         // console.log('hasValueRelation ', this.configSPQ);
+        console.log(this.selectedPropertyURL);
         let dummyJSON = {'conceptURL': this.configSPQ['concept'],
             'propertyURL': encodeURIComponent(this.selectedPropertyURL)};
         this.expSearch.searchForPropertyValues(dummyJSON)
@@ -175,6 +177,7 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
     objectPropRelation(inputVal: string) {
         let orangeJSON = {conceptURL: this.configSPQ['concept'], orangeCommand: inputVal};
         this.sentence += ' <' + inputVal + '> ';
+        this.sparqlJSON['orangeCommandSelected']['names'].push(inputVal);
         // console.log(orangeJSON);
         // call API
         this.expSearch.getPropertyValuesFromOrangeGroup(orangeJSON)
@@ -185,7 +188,6 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
                 this.searchvalue = this.objRelationOutputJSON['allValues'];
                 this.acc.toggle('toggle-value');
             });
-
     }
 
     genTable(): void {
@@ -207,7 +209,9 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
     applyURL(url: string): void {
         // this.sparqlJSON['parameters'].push(encodeURIComponent(this.selectedPropertyURL));
         // console.log(url);
-        this.sparqlJSON['parameters'].push(encodeURIComponent(url));
+        // this.sparqlJSON['parameters'].push(encodeURIComponent(url));
+        this.sparqlJSON['parameters'].push(url.split('#')[1]);
+        this.sparqlJSON['parametersURL'] = [];
         // this.sparqlJSON['parametersIncludingPath'].push({'urlOfProperty': encodeURIComponent(this.selectedPropertyURL),
         //     'path': [{'concept': this.configSPQ['concept']}]});
         // console.log('applyURL', this.configSPQ);
@@ -218,8 +222,14 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
     applyFilter(val: string, url: string) {
         // this.sparqlJSON['filters'].push({'property': encodeURIComponent(this.selectedPropertyURL), 'min': Number(this.Value),
         //     'max': Number(this.Value) + 1});
-        this.sparqlJSON['filters'].push({'property': encodeURIComponent(url), 'min': Number(val),
-            'max': Number(val) + 1});
+        console.log(val, url);
+        if (url.split('#')[1] !== val) { // this check is critical because when an orange button is clicked,
+            // the previous value of the url is still existing.
+           console.log('orange button was pressed');
+        } else {
+            this.sparqlJSON['filters'].push({'property': encodeURIComponent(url), 'min': Number(val),
+                'max': Number(val) + 1});
+        }
     }
 
     getSparqlOptionalSelect(indexInp: number) {
