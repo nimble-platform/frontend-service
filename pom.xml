@@ -74,6 +74,16 @@
                             <arguments>update</arguments>
                         </configuration>
                     </execution>
+					<execution>
+                        <id>npm phantom</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>install phantomjs-prebuilt@2.1.16 --ignore-scripts</arguments>
+                        </configuration>
+					</execution>
                     <execution>
                         <id>npm install</id>
                         <phase>compile</phase>
