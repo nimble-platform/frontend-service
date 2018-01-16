@@ -64,6 +64,16 @@
                             <npmVersion>5.6.0</npmVersion>
                         </configuration>
                     </execution>
+					<execution>
+                        <id>npm update</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>update</arguments>
+                        </configuration>
+                    </execution>
                     <execution>
                         <id>npm install</id>
                         <phase>compile</phase>
