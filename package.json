@@ -23,7 +23,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "Apache License 2.0",
+  "license": "Apache-2.0",
   "dependencies": {
     "@angular/animations": "~4.3.1",
     "@angular/common": "~4.3.1",
@@ -45,7 +45,7 @@
     "ng2-cookies": "1.0.10",
     "gojs": "^1.7.12",
     "jshint": "^2.9.5",
-    "rxjs": "^5.0.1",
+    "rxjs": "~5.0.1",
     "systemjs": "0.19.39",
     "underscore": "^1.8.3",
     "zone.js": "^0.8.4"
@@ -60,16 +60,14 @@
     "@types/angular-sanitize": "^1.3.3",
     "@types/jasmine": "2.5.36",
     "@types/node": "^6.0.45",
-    "@types/underscore": "^1.8.1",
     "babel-cli": "^6.16.0",
     "babel-preset-angular2": "^0.0.2",
-    "babel-preset-es2015": "^6.16.0",
+    "babel-preset-env": "^1.6.1",
     "canonical-path": "0.0.2",
     "concurrently": "^3.0.0",
-    "gulp-tsd": "^0.1.1",
-    "http-server": "^0.9.0",
-    "jasmine": "~2.4.1",
-    "jasmine-core": "~2.4.1",
+    "http-server": "^0.11.1",
+    "jasmine": "~2.8.0",
+    "jasmine-core": "~2.8.0",
     "karma": "^1.3.0",
     "karma-chrome-launcher": "^2.0.0",
     "karma-cli": "^1.0.1",
@@ -86,7 +84,8 @@
     "rollup-plugin-uglify": "^1.0.1",
     "source-map-explorer": "^1.3.2",
     "tslint": "^3.15.1",
-    "typescript": "~2.3.2"
+    "typescript": "~2.3.2",
+    "typings": "^2.1.1"
   },
   "repository": {}
 }
