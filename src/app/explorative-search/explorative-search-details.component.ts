@@ -452,7 +452,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                         // reload the diagram again..
                         setTimeout(() => {
                             this.reloadRadialGraph(2, immediateParentNode, clickedNode);
-                        }, 5000);
+                        }, 2500);
                 }
             }
         }
