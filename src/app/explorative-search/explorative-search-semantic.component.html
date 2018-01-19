@@ -4,7 +4,7 @@
         <div class="col-12">
             <div [hidden]="hiddenElement">
                 <h5>Your Semantic Query</h5>
-                <code>
+                <code (click)="editSemanticQuery()">
                     {{sentence | json}}
                 </code>
                 <span><button (click)="genTable()">Search Query</button></span>
@@ -124,7 +124,7 @@
 
 
                 <button class="btn btn-outline-primary btn-lg"
-                        [disabled]="!configSPQ"
+                        [disabled]="!results.length"
                         placement="bottom"
                         ngbTooltip="Search for Property Specific Values"
                         (click)="hasValueRelation('hasValue'); acc.toggle('toggle-value');"> hasValue </button>
@@ -157,11 +157,12 @@
                 </tr>
             </table>
         </div>
+     <!--<ng-template (removedKeys)="processModalInteraction($event)"></ng-template>-->
 
-    <!--<div class="row">-->
-        <!--<pre>-->
-            <!--{{sparqlJSON | json}}-->
-        <!--</pre>-->
+    <div class="row">
+        <pre>
+            {{semQJSon | json}}
+        </pre>
 
-    <!--</div>-->
+    </div>
 </div>
