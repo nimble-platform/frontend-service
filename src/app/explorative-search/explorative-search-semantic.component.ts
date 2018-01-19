@@ -1,11 +1,48 @@
-import {Component, Input, OnChanges, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, ViewChild, TemplateRef} from '@angular/core';
 import { Router } from '@angular/router';
 import {ExplorativeSearchService} from './explorative-search.service';
 import { Observable } from 'rxjs/Observable';
-import { NgbAccordionConfig } from '@ng-bootstrap/ng-bootstrap';
+import {NgbAccordionConfig, NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/distinctUntilChanged';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+
+/*Modal Component where the User can Edit their query*/
+@Component({
+    selector: 'ngbd-modal-content',
+    template: `
+    <div class="modal-header">
+      <h4 class="modal-title">Edit your Semantic Query</h4>
+      <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+        Available Keywords that can be Removed:
+      <ul *ngIf="modalKeys.length > 1">
+          <li *ngFor="let eachKey of modalKeys; let i=index;">
+              <div>
+                <span><code>{{eachKey}}</code></span> <button class="btn-xs btn-danger" 
+                                                              *ngIf="i > 0" (click)="removeQParam(eachKey,i);">&times;</button>
+              </div>
+          </li>
+      </ul>
+    </div>
+  `
+})
+
+export class NgbdModalContent {
+    @Input() modalKeys: string[] = [];
+    // @Output() removedKeys = new EventEmitter();
+    constructor(public activeModal: NgbActiveModal) {}
+    removeQParam(keyword: string, clickedIndex: number) {
+        this.modalKeys.splice(clickedIndex, 1);
+        // this.removedKeys.emit(keyword);
+        this.activeModal.close(keyword);
+    }
+
+}
 
 @Component({
     selector: 'explore-search-semantic',
@@ -14,10 +51,13 @@ import 'rxjs/add/operator/distinctUntilChanged';
     providers: [ExplorativeSearchService, NgbAccordionConfig]
 })
 
+
+
 export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
     // Components from the Parent Component
     @Input() configSPQ: Object;
     @Input() lang: string;
+
     // store the incoming JSON for Further Purposes.
     private _propertyGetterJSON: Object = {};
     private _mainConceptName = '';
@@ -27,6 +67,9 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
     public sparqlSelectedOption = {};
     public objRelationOutputJSON = {};
     @ViewChild('acc') acc;
+    @ViewChild('content') modalContent: TemplateRef<void>;
+    /*Create a Responsive JSON structure for Semantic Query*/
+    public semQJSon: Object = {};
     // reference JSON
     private _referenceJSON: Object = {};
     public negotiationEnable: boolean = false;
@@ -54,7 +97,9 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
     public formatter = (x: {translatedProperty: string}) => x.translatedProperty;
 
 
-    constructor(private expSearch: ExplorativeSearchService, private router: Router, private accConfig: NgbAccordionConfig) {
+
+    constructor(private expSearch: ExplorativeSearchService, private router: Router,
+                private accConfig: NgbAccordionConfig, private modal: NgbModal) {
         accConfig.closeOthers = true;
     }
     ngOnChanges(): void {
@@ -67,6 +112,7 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
         this.expSearch.getSQPButton(this.configSPQ)
             .then(res => this.objectRelationsButton = res);
         this.sentence = this.configSPQ['frozenConcept'];
+        this.semQJSon['keyword'] = this.configSPQ['frozenConcept'];
         this.tableResult = {};
         this.selectedPropertyURL = '';
         this.sparqlJSON = {};
@@ -76,6 +122,13 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
         this.sparqlJSON['orangeCommandSelected'] = {names: []};
         this.referenceResults = {};
         this.refResultsRange = [];
+        if (this.acc.activeIds.length) {
+            this.acc.activeIds.forEach(openPanel => {
+                // console.log(openPanel);
+                this.acc.toggle(openPanel);
+            });
+        }
+        this.results = [];
     }
 
     ngOnInit(): void {
@@ -83,6 +136,7 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
         this.sparqlJSON['parameters'] = [];
         this.sparqlJSON['filters'] = [];
         this.sparqlJSON['orangeCommandSelected'] = {name: ''};
+        this.accConfig.closeOthers = true;
     }
 
     /**
@@ -107,7 +161,10 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
 
     applyProperty() {
         this.selectedPropertyURL = this.model.propertyURL;
+        let selectedPropName = this.model.translatedProperty;
+        let insertedPart = ' <hasProperty> ' + this.model.translatedProperty;
         this.sentence += ' <hasProperty> ' + this.model.translatedProperty;
+        this.semQJSon[selectedPropName] = insertedPart;
         if (this.selectedReference) {
             this.sparqlJSON['parameters'].push(encodeURIComponent(this.selectedPropertyURL));
             this.sparqlJSON['parametersIncludingPath'].push(
@@ -222,7 +279,8 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
     applyFilter(val: string, url: string) {
         // this.sparqlJSON['filters'].push({'property': encodeURIComponent(this.selectedPropertyURL), 'min': Number(this.Value),
         //     'max': Number(this.Value) + 1});
-        console.log(val, url);
+        // console.log(val, url);
+        this.semQJSon[val] = `<hasValue> ` + val;
         if (Number(val)) {
             this.sparqlJSON['filters'].push({'property': encodeURIComponent(url), 'min': Number(val),
                 'max': Number(val) + 1});
@@ -267,5 +325,22 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
         // console.log(`/simple-search-details?catalogueId=${this._negotation_catalogue_id}&id=${this._negotiation_id}`);
         this.router.navigate(['/simple-search-details'],
             { queryParams: {catalogueId: this._negotation_catalogue_id, id: this._negotiation_id} });
+    }
+
+    editSemanticQuery() {
+        let keys: string[] = [];
+        for (let key in this.semQJSon) {
+            if (this.semQJSon.hasOwnProperty(key)) {
+                keys.push(key);
+            }
+        }
+        const modalRef = this.modal.open(NgbdModalContent);
+        modalRef.componentInstance.modalKeys = keys;
+        modalRef.result
+            .then((result) => {
+                // console.log(result);
+                this.sentence = this.sentence.replace(this.semQJSon[result], '');
+                delete this.semQJSon[result];
+            });
     }
 }
