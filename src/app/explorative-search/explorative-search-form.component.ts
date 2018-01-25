@@ -186,7 +186,7 @@ export class ExplorativeSearchFormComponent implements OnInit {
     }
 
     public activeTab($event: NgbTabChangeEvent) {
-        //console.log($event.activeId);
+        // console.log($event.activeId);
         this.activeTabName = $event.nextId;
     }
 }

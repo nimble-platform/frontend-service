@@ -4,12 +4,13 @@
         <div class="col-12">
             <div [hidden]="hiddenElement">
                 <h5>Your Semantic Query</h5>
-                <code (click)="editSemanticQuery()">
+                <code (click)="editSemanticQuery()" placement="bottom" ngbTooltip="Click on the Query to Edit it">
                     {{sentence | json}}
                 </code>
                 <span><button (click)="genTable()">Search Query</button></span>
                 <br>
                 <br>
+                <p><b>You are currently at:</b> <b>{{whereAreYou}}</b></p>
                 <!--<div class="form-group" *ngIf=" results.length > 1 && !selectedConcept">-->
                     <ngb-accordion #acc="ngbAccordion">
 
@@ -157,12 +158,17 @@
                 </tr>
             </table>
         </div>
-     <!--<ng-template (removedKeys)="processModalInteraction($event)"></ng-template>-->
 
-    <div class="row">
-        <pre>
-            {{semQJSon | json}}
-        </pre>
+    <!--<div class="row">-->
+        <!--<pre>-->
+            <!--{{semQJSon | json}}-->
+        <!--</pre>-->
 
-    </div>
+    <!--</div>-->
+    <!--<div class="row">-->
+        <!--<pre>-->
+            <!--{{sparqlJSON | json}}-->
+        <!--</pre>-->
+
+    <!--</div>-->
 </div>
