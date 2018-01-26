@@ -190,6 +190,7 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
         this.sparqlJSON = {};
         this.sparqlJSON['parametersIncludingPath'] = [];
         this.sparqlJSON['parameters'] = [];
+        this.sparqlJSON['parametersURL'] = [];
         this.sparqlJSON['filters'] = [];
         this.sparqlJSON['orangeCommandSelected'] = {names: []};
         this.referenceResults = {};
@@ -211,6 +212,7 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
     ngOnInit(): void {
         this.sparqlJSON['parametersIncludingPath'] = [];
         this.sparqlJSON['parameters'] = [];
+        this.sparqlJSON['parametersURL'] = [];
         this.sparqlJSON['filters'] = [];
         this.sparqlJSON['orangeCommandSelected'] = {name: ''};
         this.accConfig.closeOthers = true;
@@ -257,10 +259,10 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
         let selectedPropName = this.model.translatedProperty;
         let insertedPart = ' <hasProperty> ' + this.model.translatedProperty;
         this.sentence += insertedPart; // Update the sentence
-
+        console.log(selectedPropName);
         if (this.selectedReference) {
             // If the property belongs to a Reference Update the SPARQL Query
-            this.sparqlJSON['parameters'].push(encodeURIComponent(this.selectedPropertyURL.split('#')[1]));
+            this.sparqlJSON['parameters'].push(selectedPropName);
             this.sparqlJSON['parametersIncludingPath'].push(
             {'urlOfProperty': encodeURIComponent(this.model.propertyURL),
                 'path': [{'concept': this._mainConceptName},
@@ -268,6 +270,7 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
                         'concept': encodeURIComponent(this._referenceJSON['range'][0]['original'])
                     }]
             });
+            this.sparqlJSON['parametersURL'].push(encodeURIComponent(this.selectedPropertyURL));
             // Add Semantic Query JSON parameters accordingly
             for (let semQKeys in this.semQJSon) {
                 if (this.semQJSon.hasOwnProperty(semQKeys)) {
@@ -278,7 +281,7 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
             }
             this.selectedReference = false;
         }else { // the property is directly connected to the Main Concept
-            this.applyURL(this.selectedPropertyURL);
+            this.applyURL(this.selectedPropertyURL, selectedPropName);
             this.semQJSon[selectedPropName] = {value: insertedPart, type: 'dataprop'};
         }
     }
@@ -288,12 +291,13 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
      * Create the SPARQLJSON Structure
      * @param {string} url: URL of the Parameter under consideration
      */
-    applyURL(url: string): void {
+    applyURL(url: string, propName: string): void {
         // this.sparqlJSON['parameters'].push(encodeURIComponent(this.selectedPropertyURL));
         // console.log(url);
         // this.sparqlJSON['parameters'].push(encodeURIComponent(url));
+        // this.sparqlJSON['parameters'].push(propName);
         this.sparqlJSON['parameters'].push(url.split('#')[1]);
-        this.sparqlJSON['parametersURL'] = [];
+        this.sparqlJSON['parametersURL'].push(encodeURIComponent(url));
         // this.sparqlJSON['parametersIncludingPath'].push({'urlOfProperty': encodeURIComponent(this.selectedPropertyURL),
         //     'path': [{'concept': this.configSPQ['concept']}]});
         // console.log('applyURL', this.configSPQ);
@@ -514,6 +518,7 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
                                 console.log(nextProps);
                                 this.sparqlJSON['parameters'].splice(removalIndex, 1);
                                 this.sparqlJSON['parametersIncludingPath'].splice(removalIndex, 1);
+                                this.sparqlJSON['parametersURL'].splice(removalIndex, 1);
                                 this.sentence = this.sentence.replace(
                                     this.semQJSon[result['toRemove']][nextProps]['value'], '');
                             }
@@ -529,6 +534,7 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
                     if (removalIndex > -1) {
                         this.sparqlJSON['parameters'].splice(removalIndex, 1);
                         this.sparqlJSON['parametersIncludingPath'].splice(removalIndex, 1);
+                        this.sparqlJSON['parametersURL'].splice(removalIndex, 1);
                     }
                 } else {
                     this.sentence = this.sentence.replace(this.semQJSon[result['toRemove']]['value'], '');
