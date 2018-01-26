@@ -262,7 +262,8 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
         console.log(selectedPropName);
         if (this.selectedReference) {
             // If the property belongs to a Reference Update the SPARQL Query
-            this.sparqlJSON['parameters'].push(selectedPropName);
+            // this.sparqlJSON['parameters'].push(selectedPropName);
+            this.sparqlJSON['parameters'].push(this.selectedPropertyURL.split('#')[1]);
             this.sparqlJSON['parametersIncludingPath'].push(
             {'urlOfProperty': encodeURIComponent(this.model.propertyURL),
                 'path': [{'concept': this._mainConceptName},
