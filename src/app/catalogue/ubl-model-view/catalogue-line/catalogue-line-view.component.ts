@@ -19,7 +19,8 @@ export class CatalogueLineViewComponent extends ChildForm {
     @Input() presentationMode: string;
     @Input() parentForm: FormGroup;
 
-    selectedTab: string = "Product Details";
+    //selectedTab: string = "Product Details";
+	selectedTab: string = "Product Trading & Delivery Terms";
     partyRole: string = "";
     regularProductDetailsForm: FormGroup = new FormGroup({});
     transportationServiceDetailsForm: FormGroup = new FormGroup({});
