@@ -86,7 +86,7 @@
             <explore-search-semantic [configSPQ]="SQPConfig" [lang]="language"></explore-search-semantic>
         </ng-template>
     </ngb-tab>
-    <ngb-tab title="Graph Navigation" (click)="preserveStateRestore()" id="graphNav" [disabled]="false">
+    <ngb-tab title="Graph Navigation" (click)="preserveStateRestore()" id="graphNav" [disabled]="true">
         <ng-template ngbTabContent>
             <explore-search-details [config]="visData" [lang]="language"></explore-search-details>
             <div [hidden]="!_error_detected_query">

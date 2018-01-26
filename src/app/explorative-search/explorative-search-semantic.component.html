@@ -1,6 +1,32 @@
 <div class="container displayArea">
     <br>
     <div class="row">
+    <p>
+        <ngb-alert [dismissible]="true" *ngIf="basicInfoAlert" type="info" (close)="basicInfoAlert=!basicInfoAlert">
+            <ul>
+                <li>
+                    You can search Properties like <em>height, width etc.</em> by clicking on
+                    <strong>hasProperty</strong>
+                </li>
+                <li>
+                    If you want to find a property's available value click on <strong>hasValue</strong>
+                </li>
+                <li>
+                    You can find information for <em>Legislation, Manufacturer etc.</em> by clicking on
+                    <strong>hasReference</strong>
+                </li>
+                <li>
+                    You can Edit your Query by simply clicking on it. This Feature works currently for
+                    <strong>English</strong> Semantic Queries and not in <strong>Spanish</strong> ones.
+                </li>
+            </ul>
+        </ngb-alert>
+    </p>
+        <p>
+            <ngb-alert [dismissible]="false" *ngIf=" lang==='es' ">
+                <strong>Under Development</strong> Deletion Feature for Spanish Language is On-Going.
+            </ngb-alert>
+        </p>
         <div class="col-12">
             <div [hidden]="hiddenElement">
                 <h5>Your Semantic Query</h5>
@@ -10,8 +36,8 @@
                 <span><button (click)="genTable()">Search Query</button></span>
                 <br>
                 <br>
-                <p><b>You are currently at:</b> <b>{{whereAreYou}}</b></p>
-                <!--<div class="form-group" *ngIf=" results.length > 1 && !selectedConcept">-->
+                <p><b>You are currently at:{{whereAreYou}}</b></p>
+
                     <ngb-accordion #acc="ngbAccordion">
 
                         <!-- Property panel -->
@@ -40,7 +66,8 @@
                             <ul class="list-group">
                                 <li class="list-group-item"
                                     *ngFor="let eachval of searchvalue"
-                                    (click)="sentence=sentence+eachval; acc.toggle('toggle-value'); applyFilter(eachval, selectedPropertyURL);">
+                                    (click)="sentence=sentence+eachval; acc.toggle('toggle-value');
+                                    applyFilter(eachval, selectedPropertyURL);">
                                     {{eachval}}
                                 </li>
                             </ul>
@@ -55,7 +82,8 @@
                                     <div class="form-group">
                                         <label for="exampleFormControlSelect2"><b>Product References</b></label>
                                         <select multiple class="form-control" id="exampleFormControlSelect2">
-                                            <option *ngFor="let eachRef of referenceResults['allAvailableReferences']; let i=index;" (click)="showRefResults(i);">
+                                            <option *ngFor="let eachRef of referenceResults['allAvailableReferences'];
+                                             let i=index;" (click)="showRefResults(i);">
                                                 {{eachRef.translatedProperty}}
                                             </option>
                                         </select>
@@ -64,7 +92,8 @@
                                 <div class="col-6" *ngIf="refResultsRange.length > 0">
                                     <label for="exampleFormControlSelect2"><b>Selected Reference</b></label>
                                     <ul class="list-group">
-                                        <li class="list-group-item" *ngFor="let eachRefResult of refResultsRange" (click)="referenceSelection(eachRefResult); acc.toggle('toggle-reference')">
+                                        <li class="list-group-item" *ngFor="let eachRefResult of refResultsRange"
+                                            (click)="referenceSelection(eachRefResult); acc.toggle('toggle-reference')">
                                             {{eachRefResult.translation}}
                                         </li>
                                     </ul>
@@ -125,7 +154,7 @@
 
 
                 <button class="btn btn-outline-primary btn-lg"
-                        [disabled]="!results.length"
+                        [disabled]="(!results.length)"
                         placement="bottom"
                         ngbTooltip="Search for Property Specific Values"
                         (click)="hasValueRelation('hasValue'); acc.toggle('toggle-value');"> hasValue </button>
@@ -143,6 +172,12 @@
                 </button>
             </div>
         </div>
+        <p>
+            <ngb-alert [dismissible]="false" type="info" *ngIf="selectedReference">
+                <strong>INFO</strong> You have clicked a Reference, Click on <em>hasProperty</em> next!
+            </ngb-alert>
+        </p>
+
     </div>
     <br>
         <div *ngIf="tableResult" style="overflow: auto; height: 100px;">

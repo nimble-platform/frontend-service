@@ -21,32 +21,48 @@ export const bpe_endpoint="https://nimble-platform.salzburgresearch.at/nimble/bu
 // export const catalogue_endpoint="http://localhost:10095";
 // export const bpe_endpoint="http://localhost:8085";
 
-// Endpoint variables - BIBA domain
+/**
+ *  Endpoint variables - BIBA domain
+ */
+
 // const ub_base_8090="http://hydra2.ikap.biba.uni-bremen.de:8090";
 // const ub_base_8092="http://hydra2.ikap.biba.uni-bremen.de:8092";
 
-const ub_base_8090="https://nimble-platform.salzburgresearch.at/uni-bremen-8090";
-const ub_base_8092="https://nimble-platform.salzburgresearch.at/uni-bremen-8092";
+// PROXY ENDPOINTS for UB provided SRFG
+// const ub_base_8090="https://nimble-platform.salzburgresearch.at/uni-bremen-8090";
+// const ub_base_8092="https://nimble-platform.salzburgresearch.at/uni-bremen-8092";
+
+// export const languageEndPoint = `${ub_base_8090}/getSupportedLanguages`; // OLD
+export const languageEndPoint = `https://hydra2.ikap.biba.uni-bremen.de:8443/getSupportedLanguages`;
 
 // export const endpoint = 'http://localhost:8090/detectMeaningLanguageSpecific';
-export const languageEndPoint = `${ub_base_8090}/getSupportedLanguages`;
-export const endpoint = `${ub_base_8092}/detectMeaningLanguageSpecific`;
-export const logicalViewEndpoint = `${ub_base_8092}/getLogicalView`;
-// export const logicalViewEndpoint = 'http://localhost:8090/getLogicalView';
-export const propertyEndPoint = `${ub_base_8092}/getPropertyValuesDiscretised`;
-// export const propertyEndPoint = 'http://localhost:8090/getPropertyValuesDiscretised';
-// export const sparqlEndPoint = `${ub_base_8092}/executeSPARQLSelect`;
-export const sparqlEndPoint = `https://hydra2.ikap.biba.uni-bremen.de:8443/executeSPARQLSelect`;
-// export const sparqlEndPoint = 'http://localhost:8090/executeSPARQLSelect';
-// export const sparqlOptionalSelectEndPoint = `${ub_base_8092}/executeSPARQLOptionalSelect`;
-export const sparqlOptionalSelectEndPoint = 'https://hydra2.ikap.biba.uni-bremen.de:8443/executeSPARQLOptionalSelect';
-// export const sparqlOptionalSelectEndPoint = 'http://localhost:8090/executeSPARQLOptionalSelect';
+// export const endpoint = `${ub_base_8092}/detectMeaningLanguageSpecific`; // OLD
+export const endpoint = `https://hydra2.ikap.biba.uni-bremen.de:8443/detectMeaningLanguageSpecific`;
 
+// export const logicalViewEndpoint = `${ub_base_8092}/getLogicalView`; // OLD
+// export const logicalViewEndpoint = 'http://localhost:8090/getLogicalView';
+export const logicalViewEndpoint = `https://hydra2.ikap.biba.uni-bremen.de:8443/getLogicalView`;
+
+// export const propertyEndPoint = 'http://localhost:8090/getPropertyValuesDiscretised'; // TEST
+// export const propertyEndPoint = `${ub_base_8092}/getPropertyValuesDiscretised`; // OLD
+export const propertyEndPoint = `https://hydra2.ikap.biba.uni-bremen.de:8443/getPropertyValuesDiscretised`;
+
+
+// export const sparqlEndPoint = `${ub_base_8092}/executeSPARQLSelect`; // OLD
+// export const sparqlEndPoint = 'http://localhost:8090/executeSPARQLSelect'; // TEST
+export const sparqlEndPoint = `https://hydra2.ikap.biba.uni-bremen.de:8443/executeSPARQLSelect`;
+
+// export const sparqlOptionalSelectEndPoint = 'http://localhost:8090/executeSPARQLOptionalSelect'; // TEST
+// export const sparqlOptionalSelectEndPoint = `${ub_base_8092}/executeSPARQLOptionalSelect`; // OLD
+export const sparqlOptionalSelectEndPoint = 'https://hydra2.ikap.biba.uni-bremen.de:8443/executeSPARQLOptionalSelect';
+
+
+/* Semantic Query Pattern EndPoints for Uni-Bremen*/
 export const spqButton = 'https://hydra2.ikap.biba.uni-bremen.de:8443/getSQPFromOrangeGroup';
 export const obs_propFromConcept = 'https://hydra2.ikap.biba.uni-bremen.de:8443/getPropertyFromConcept';
 export const obs_propValueFromConcept = 'https://hydra2.ikap.biba.uni-bremen.de:8443/getPropertyValuesFromGreenGroup';
 export const referenceFromConcept = 'https://hydra2.ikap.biba.uni-bremen.de:8443/getReferencesFromAConcept';
-export const sqpOrangeConcept = 'https://hydra2.ikap.biba.uni-bremen.de:8443/getPropertyValuesFromOrangeGroup'
+export const sqpOrangeConcept = 'https://hydra2.ikap.biba.uni-bremen.de:8443/getPropertyValuesFromOrangeGroup';
 
 // Endpoint variables - Local development via service discovery
 
