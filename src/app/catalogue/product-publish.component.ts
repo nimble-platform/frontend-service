@@ -585,9 +585,14 @@ export class ProductPublishComponent {
             .then(result => {
                     var contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
                     var link = document.createElement('a');
+					link.id = 'downloadLink';
                     link.href = window.URL.createObjectURL(result.content);
                     link.download = result.fileName;
-                    link.click();
+                    //link.click();
+					document.body.appendChild(link);
+					var downloadLink = document.getElementById('downloadLink');
+					downloadLink.click();
+					document.body.removeChild(downloadLink);
                     this.bulkPublishStatus.callback("Download completed");
                 },
                 error => {
@@ -651,9 +656,14 @@ export class ProductPublishComponent {
             .then(result => {
                     var contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
                     var link = document.createElement('a');
+					link.id = 'downloadLink';
                     link.href = window.URL.createObjectURL(result.content);
                     link.download = result.fileName;
-                    link.click();
+                    //link.click();
+					document.body.appendChild(link);
+					var downloadLink = document.getElementById('downloadLink');
+					downloadLink.click();
+					document.body.removeChild(downloadLink);
                     this.bulkPublishStatus.callback("Download completed");
                 },
                 error => {
