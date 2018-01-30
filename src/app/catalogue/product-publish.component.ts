@@ -19,6 +19,7 @@ import {ItemPropertyDataSourcePipe} from "./item-property-data-source-pipe";
 import {Quantity} from "./model/publish/quantity";
 import {CallStatus} from "../common/call-status";
 import {FormGroup} from "@angular/forms";
+import 'file-saver';
 
 const uploadModalityKey: string = "UploadModality";
 
@@ -584,15 +585,10 @@ export class ProductPublishComponent {
         this.catalogueService.downloadTemplate(userId, this.categoryService.selectedCategories)
             .then(result => {
                     var contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-                    var link = document.createElement('a');
-					link.id = 'downloadLink';
-                    link.href = window.URL.createObjectURL(result.content);
-                    link.download = result.fileName;
-                    //link.click();
-					document.body.appendChild(link);
-					var downloadLink = document.getElementById('downloadLink');
-					downloadLink.click();
-					document.body.removeChild(downloadLink);
+					var data = result.content;
+					var fileName = result.fileName;
+					var blob = new Blob([data],{type:contentType});
+					saveAs(blob,fileName);
                     this.bulkPublishStatus.callback("Download completed");
                 },
                 error => {
@@ -655,15 +651,10 @@ export class ProductPublishComponent {
         this.catalogueService.downloadExampleTemplate()
             .then(result => {
                     var contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-                    var link = document.createElement('a');
-					link.id = 'downloadLink';
-                    link.href = window.URL.createObjectURL(result.content);
-                    link.download = result.fileName;
-                    //link.click();
-					document.body.appendChild(link);
-					var downloadLink = document.getElementById('downloadLink');
-					downloadLink.click();
-					document.body.removeChild(downloadLink);
+					var data = result.content;
+					var fileName = result.fileName;
+					var blob = new Blob([data],{type:contentType});
+					saveAs(blob,fileName);
                     this.bulkPublishStatus.callback("Download completed");
                 },
                 error => {

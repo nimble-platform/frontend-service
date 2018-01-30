@@ -18,6 +18,7 @@
 			'angular-in-memory-web-api': 'npm:angular-in-memory-web-api/bundles/in-memory-web-api.umd.js',
 			'@ng-bootstrap/ng-bootstrap': 'npm:@ng-bootstrap/ng-bootstrap/bundles/ng-bootstrap.js',
 			'ng2-cookies': 'npm:ng2-cookies/cookie.js',
+			'file-saver': 'npm:file-saver',
 			'gojs': 'npm:gojs/release/go-debug.js',
 		},
 		packages: {
@@ -31,6 +32,11 @@
 				}
 			},
 			rxjs: {
+				defaultExtension: 'js'
+			},
+			'file-saver': {
+				format: 'global',
+				main: 'FileSaver.js',
 				defaultExtension: 'js'
 			}
 		}

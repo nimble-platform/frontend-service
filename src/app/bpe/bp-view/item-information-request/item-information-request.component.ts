@@ -19,6 +19,7 @@ import {ItemInformationRequest} from "../../../catalogue/model/publish/item-info
 import {BinaryObject} from "../../../catalogue/model/publish/binary-object";
 import {DocumentReference} from "../../../catalogue/model/publish/document-reference";
 import {Attachment} from "../../../catalogue/model/publish/attachment";
+import 'file-saver';
 /**
  * Created by suat on 19-Nov-17.
  */
@@ -81,19 +82,10 @@ export class ItemInformationRequestComponent {
             var byteArray = new Uint8Array(byteNumbers);
             byteArrays.push(byteArray);
         }
+		
         var blob = new Blob(byteArrays, {type: binaryObject.mimeCode});
-
-        var link = document.createElement('a');
-		link.id = 'downloadLink';
-        link.href = window.URL.createObjectURL(blob);
-        link.download = binaryObject.fileName;
-        //link.click();
-		
-		document.body.appendChild(link);
-		var downloadLink = document.getElementById('downloadLink');
-		downloadLink.click();
-		document.body.removeChild(downloadLink);
-		
+		var fileName = binaryObject.fileName;
+		saveAs(blob,fileName);
     }
 
     sendInformationRequest() {
