@@ -15,12 +15,12 @@ export class ItemProperty {
         public valueDecimal: number[],
         public valueQuantity:Quantity[],
         public valueBinary:BinaryObject[],
-        public demoSpecificMultipleContent:string,
         public unit: string,
         public valueQualifier: string,
         //public itemPropertyGroup: ItemPropertyGroup,
         public itemClassificationCode: Code,
 	    public propertyDefinition: string,
-        public itemPropertyRange: ItemPropertyRange
+        public itemPropertyRange: ItemPropertyRange,
+        public uri: string
     ) {  }
 }
