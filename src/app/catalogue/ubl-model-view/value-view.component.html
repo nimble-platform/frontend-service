@@ -1,7 +1,41 @@
-<div class="input-group form-group">
-    <label class="col-3 control-label">{{propName}}</label>
-    <input class="form-control"
-           type="text"
-           [(ngModel)]="value"
-           [readonly]="presentationMode == 'view' || presentationMode == 'singlevalue'">
-</div>
+<ng-container *ngIf="!largeInput">
+    <div *ngIf="presentationMode == 'edit'"
+         class="input-group form-group border-0"
+         [formGroup]="parentForm">
+        <label class="col-3">{{propName}}</label>
+        <input class="form-control"
+               [formControl]="control"
+               type="text"
+               [(ngModel)]="value">
+    </div>
+    <div *ngIf="presentationMode != 'edit'"
+         class="input-group form-group border-0">
+        <label class="col-3">{{propName}}</label>
+        <input class="form-control"
+               type="text"
+               [(ngModel)]="value"
+               readonly>
+    </div>
+</ng-container>
+
+<ng-container *ngIf="largeInput">
+    <div *ngIf="presentationMode == 'edit'"
+         class="input-group form-group border-0"
+         [formGroup]="parentForm">
+        <label class="col-3">{{propName}}</label>
+        <textarea class="form-control"
+                  [formControl]="control"
+                  rows="3"
+                  [(ngModel)]="value">
+        </textarea>
+    </div>
+    <div *ngIf="presentationMode != 'edit'"
+         class="input-group form-group border-0">
+        <label class="col-3">{{propName}}</label>
+        <textarea class="form-control"
+                  rows="3"
+                  [(ngModel)]="value"
+                  readonly>
+    </textarea>
+    </div>
+</ng-container>

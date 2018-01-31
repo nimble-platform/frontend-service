@@ -1,4 +1,6 @@
-import {Component, EventEmitter, Input, Output} from "@angular/core";
+import {Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
+import {FormControl, FormGroup, Validators} from "@angular/forms";
+import {ChildForm} from "../child-form";
 /**
  * Created by suat on 19-Sep-17.
  */
@@ -7,9 +9,13 @@ import {Component, EventEmitter, Input, Output} from "@angular/core";
     templateUrl: './value-view.component.html'
 })
 
-export class ValueViewComponent {
+export class ValueViewComponent extends ChildForm implements OnInit {
     @Input() presentationMode: string;
     @Input() propName: string;
+    @Input() mandatory:boolean = false;
+    @Input() largeInput: boolean = false;
+
+    control:FormControl;
 
     valueObj;
     @Output() valueChange = new EventEmitter();
@@ -18,8 +24,22 @@ export class ValueViewComponent {
     get value() {
         return this.valueObj;
     }
+
     set value(val) {
         this.valueObj = val;
         this.valueChange.emit(this.valueObj);
+    }
+    json=JSON
+    constructor() {
+        super();
+    }
+
+    ngOnInit() {
+        this.control = new FormControl(null, this.mandatory ? Validators.required : null);
+        this.addToParentForm(this.propName, this.control);
+    }
+
+    ngOnDestroy() {
+        this.removeFromParentForm(this.propName);
     }
 }

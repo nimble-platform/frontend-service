@@ -3,6 +3,7 @@ import {CatalogueLine} from "../../model/publish/catalogue-line";
 import {CatalogueService} from "../../catalogue.service";
 import {Router} from "@angular/router";
 import {PublishService} from "../../publish-and-aip.service";
+import {CategoryService} from "../../category/category.service";
 
 @Component({
     selector: 'catalogue-line-panel',
@@ -15,6 +16,7 @@ export class CatalogueLinePanelComponent {
     @Input() presentationMode: string;
 
     constructor(private catalogueService: CatalogueService,
+                private categoryService: CategoryService,
                 private publishService: PublishService,
                 private router: Router) {
     }
@@ -23,6 +25,7 @@ export class CatalogueLinePanelComponent {
         this.catalogueService.editCatalogueLine(this.catalogueLine);
         this.publishService.publishMode = 'edit';
         this.publishService.publishingStarted = false;
+        this.categoryService.resetSelectedCategories();
         this.router.navigate(['catalogue/publish']);
     }
 

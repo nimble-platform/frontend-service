@@ -70,15 +70,15 @@ export class UBLModelUtils {
         let code: Code;
 
         if (category !== null) {
-            code = new Code(category.id, category.preferredName, category.taxonomyId, null);
+            code = new Code(category.id, category.preferredName, category.categoryUri, category.taxonomyId, null);
         }
         else {
-            code = new Code(null, null, "Custom", null);
+            code = new Code(null, null, null, "Custom", null);
         }
 
         let aip: ItemProperty;
         if (property == null) {
-            aip = new ItemProperty(this.generateUUID(), "", [], [], [], new Array<BinaryObject>(), "", "", "STRING", code, "", null);
+            aip = new ItemProperty(this.generateUUID(), "", [], [], [], new Array<BinaryObject>(), "", "STRING", code, "", null, null);
         }
         else {
             let unit = "";
@@ -89,15 +89,15 @@ export class UBLModelUtils {
 
             let number;
             let quantity:Quantity = this.createQuantity();
-            aip = new ItemProperty(property.id, property.preferredName, [''], [number], [quantity], new Array<BinaryObject>(), "", unit,
-                valueQualifier, code, "", null);
+            aip = new ItemProperty(property.id, property.preferredName, [''], [number], [quantity], new Array<BinaryObject>(), unit,
+                valueQualifier, code, "", null, property.uri);
         }
         return aip;
     }
 
     public static createCommodityClassification(category: Category): CommodityClassification {
-        let code: Code = new Code(category.id, category.preferredName, category.taxonomyId, null);
-        let commodityClassification = new CommodityClassification(code, null, null, "", "");
+        let code: Code = new Code(category.id, category.preferredName, category.categoryUri, category.taxonomyId, null);
+        let commodityClassification = new CommodityClassification(code, null, null, "");
         return commodityClassification;
     }
 
@@ -233,6 +233,15 @@ export class UBLModelUtils {
         return receiptAdvice;
     }
 
+    public static createTransportExecutionPlanRequest(transportationServiceLine:CatalogueLine): TransportExecutionPlanRequest {
+        let transportExecutionPlanRequest:TransportExecutionPlanRequest = new TransportExecutionPlanRequest();
+        transportExecutionPlanRequest.id = this.generateUUID();
+        transportExecutionPlanRequest.consignment[0].consolidatedShipment.push(new Shipment());
+        transportExecutionPlanRequest.mainTransportationService = transportationServiceLine.goodsItem.item;
+        this.removeHjidFieldsFromObject(transportExecutionPlanRequest);
+        return transportExecutionPlanRequest;
+    }
+
     public static createTransportExecutionPlanRequestWithOrder(order:Order, transportationServiceLine:CatalogueLine):TransportExecutionPlanRequest {
         let transportExecutionPlanRequest:TransportExecutionPlanRequest = new TransportExecutionPlanRequest();
         transportExecutionPlanRequest.consignment[0].consolidatedShipment.push(new Shipment());
@@ -297,7 +306,7 @@ export class UBLModelUtils {
     }
 
     public static createPackage():Package {
-        return new Package(this.createQuantity(), this.createCode(), null);
+        return new Package(this.createQuantity(), new Code(), null);
     }
 
     public static createPrice(amount: string): Price {
@@ -358,10 +367,6 @@ export class UBLModelUtils {
 
     public static createItemIdentification():ItemIdentification {
         return this.createItemIdentificationWithId(this.generateUUID());
-    }
-
-    public static createCode():Code {
-        return new Code(null, null, null, null);
     }
 
     public static removeHjidFieldsFromObject(object:any):any {

@@ -2,26 +2,23 @@
  * Created by suat on 17-May-17.
  */
 
-import {ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from "@angular/core";
+import {Component, ElementRef, ViewChild} from "@angular/core";
 import {CategoryService} from "./category/category.service";
 import {ItemProperty} from "./model/publish/item-property";
 import {BinaryObject} from "./model/publish/binary-object";
 import {CatalogueService} from "./catalogue.service";
 import {Category} from "./model/category/category";
 import {CatalogueLine} from "./model/publish/catalogue-line";
-import {Catalogue} from "./model/publish/catalogue";
 import {CookieService} from "ng2-cookies";
 import {UBLModelUtils} from "./model/ubl-model-utils";
 import {ActivatedRoute, Params, Router} from "@angular/router";
-//import 'rxjs/Rx' ;
 import {Code} from "./model/publish/code";
 import {PublishService} from "./publish-and-aip.service";
 import {UserService} from "../user-mgmt/user.service";
 import {ItemPropertyDataSourcePipe} from "./item-property-data-source-pipe";
 import {Quantity} from "./model/publish/quantity";
 import {CallStatus} from "../common/call-status";
-import {Dimension} from "./model/publish/dimension";
-import {BPDataService} from "../bpe/bp-view/bp-data-service";
+import {FormGroup} from "@angular/forms";
 
 const uploadModalityKey: string = "UploadModality";
 
@@ -31,7 +28,7 @@ const uploadModalityKey: string = "UploadModality";
     templateUrl: './product-publish.component.html',
 })
 
-export class ProductPublishComponent implements OnInit {
+export class ProductPublishComponent {
     @ViewChild('propertyValueType') propertyValueType: ElementRef;
 
     /*
@@ -42,14 +39,18 @@ export class ProductPublishComponent implements OnInit {
     private catalogueLine: CatalogueLine = null;
     // placeholder for the custom property
     private newProperty: ItemProperty = UBLModelUtils.createAdditionalItemProperty(null, null);
+    // form model to be provided as root model to the inner components used in publishing
+    publishForm: FormGroup = new FormGroup({});
 
     /*
      * state objects for feedback about the publish operation
      */
     singleItemUpload: boolean = this.isSingleItemUpload();
-    private submitted = false;
-    private callback = false;
-    private error_detc = false;
+    submitted = false;
+    callback = false;
+    error_detc = false;
+
+    json = JSON;
 
     private bulkPublishStatus: CallStatus = new CallStatus();
     private productCategoryRetrievalStatus: CallStatus = new CallStatus();
@@ -258,6 +259,9 @@ export class ProductPublishComponent implements OnInit {
 
         // remove unused properties from catalogueLine
         let splicedCatalogueLine: CatalogueLine = this.removeEmptyProperties(this.catalogueLine);
+        // nullify the transportation service details if a regular product is being published
+        this.checkProductNature(splicedCatalogueLine);
+
         // add new line to the end of catalogue
         this.catalogueService.catalogue.catalogueLine.push(splicedCatalogueLine);
 
@@ -281,6 +285,8 @@ export class ProductPublishComponent implements OnInit {
 
         // remove unused properties from catalogueLine
         let splicedCatalogueLine: CatalogueLine = this.removeEmptyProperties(this.catalogueLine);
+        // nullify the transportation service details if a regular product is being published
+        this.checkProductNature(splicedCatalogueLine);
 
         // Replace original line in the catalogue with the edited version
         let indexOfOriginalLine = this.catalogueService.catalogue.catalogueLine.findIndex(line => line.id === this.catalogueLine.id);
@@ -289,12 +295,25 @@ export class ProductPublishComponent implements OnInit {
         if (this.catalogueService.catalogue.uuid == null) {
             this.catalogueService.postCatalogue(this.catalogueService.catalogue)
                 .then(() => this.onSuccessfulPublish())
+                .then(() => this.changePublishModeToCreate())
                 .catch(() => this.onFailedPublish());
 
         } else {
             this.catalogueService.putCatalogue(this.catalogueService.catalogue)
                 .then(() => this.onSuccessfulPublish())
+                .then(() => this.changePublishModeToCreate())
                 .catch(() => this.onFailedPublish())
+        }
+    }
+
+    // changes publisMode to create
+    private changePublishModeToCreate():void{
+        this.publishStateService.publishMode = "create";
+    }
+
+    private checkProductNature(catalogueLine: CatalogueLine) {
+        if(this.publishStateService.publishedProductNature == 'Regular product') {
+            catalogueLine.goodsItem.item.transportationServiceDetails = null;
         }
     }
 
@@ -358,6 +377,7 @@ export class ProductPublishComponent implements OnInit {
                 this.publishStateService.resetData();
                 this.router.navigate(['catalogue/catalogue']);
 
+                this.submitted = false;
                 this.callback = true;
                 this.error_detc = false;
             });
@@ -365,6 +385,7 @@ export class ProductPublishComponent implements OnInit {
     }
 
     private onFailedPublish(): void {
+        this.submitted = false;
         this.error_detc = true;
     }
 
@@ -430,8 +451,6 @@ export class ProductPublishComponent implements OnInit {
 
                 reader.onload = function (e: any) {
                     let base64String = reader.result.split(',').pop();
-                    console.log(base64String);
-                    console.log(file.type);
                     let binaryObject = new BinaryObject(base64String, file.type, file.name, "", "");
                     binaryObjects.push(binaryObject);
                 };
@@ -581,11 +600,16 @@ export class ProductPublishComponent implements OnInit {
         var reader = new FileReader();
         this.catalogueService.downloadTemplate(userId, this.categoryService.selectedCategories)
             .then(result => {
-                    var contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
                     var link = document.createElement('a');
+                    link.id = 'downloadLink';
                     link.href = window.URL.createObjectURL(result.content);
                     link.download = result.fileName;
-                    link.click();
+
+                    document.body.appendChild(link);
+                    var downloadLink = document.getElementById('downloadLink');
+                    downloadLink.click();
+                    document.body.removeChild(downloadLink);
+
                     this.bulkPublishStatus.callback("Download completed");
                 },
                 error => {

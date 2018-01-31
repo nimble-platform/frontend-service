@@ -216,6 +216,11 @@ export class BPDataService{
         this.despatchAdvice = UBLModelUtils.createDespatchAdvice(copyOrder);
     }
 
+    initTransportExecutionPlanRequest() {
+        this.modifiedCatalogueLine = JSON.parse(JSON.stringify(this.catalogueLine));
+        this.transportExecutionPlanRequest = UBLModelUtils.createTransportExecutionPlanRequest(this.modifiedCatalogueLine);
+    }
+
     initTransportExecutionPlanRequestWithOrder(processMetadata:any) {
         this.resetBpData();
         this.setBpMessages('Order', this.searchContextService.associatedProcessMetadata);
@@ -232,7 +237,7 @@ export class BPDataService{
     }
 
     resetBpData():void {
-        //this.setProcessType(null);
+        this.setProcessType(null);
         this.processMetadata = null;
         this.modifiedCatalogueLine = null;
         this.requestForQuotation = null;

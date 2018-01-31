@@ -29,7 +29,7 @@ export class CategorySearchComponent implements OnInit {
     // It checks whether user will return publishing page or not
     isReturnPublish: boolean = false;
     // It checks whether user is publishing or not
-    public static inPublish: boolean = false;
+    inPublish: boolean = false;
     constructor(private router: Router,
                 private route: ActivatedRoute,
                 private cookieService: CookieService,
@@ -43,7 +43,7 @@ export class CategorySearchComponent implements OnInit {
         this.route.queryParams.subscribe((params: Params) => {
 
             // This part is necessary since only the params has changes,canDeactivate method will not be called.
-            if(CategorySearchComponent.inPublish == true){
+            if(this.inPublish == true){
                 if(!confirm("You will lose any changes you made, are you sure you want to quit ?")){
                     this.selectCategory(null);
                     return;
@@ -53,7 +53,7 @@ export class CategorySearchComponent implements OnInit {
 
             // If pageRef is 'publish',then user is publishing.
             if(this.pageRef == 'publish'){
-                CategorySearchComponent.inPublish = true;
+                this.inPublish = true;
             }
 
             if(this.pageRef == null || this.pageRef == 'menu') {
@@ -67,7 +67,7 @@ export class CategorySearchComponent implements OnInit {
     }
 
     canDeactivate():boolean{
-        CategorySearchComponent.inPublish = false;
+        this.inPublish = false;
         if(this.pageRef == "publish" && this.isReturnPublish == false){
             if(!confirm("You will lose any changes you made, are you sure you want to quit ?")){
                 this.selectCategory(null);

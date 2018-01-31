@@ -19,6 +19,7 @@ export class Property {
         public attributeType: string,
         public dataType: string,
         public synonyms: KeywordSynonym[],
-        public values: Value[]
+        public values: Value[],
+        public uri: string
     ) {  }
 }

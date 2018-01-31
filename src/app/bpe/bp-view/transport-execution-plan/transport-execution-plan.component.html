@@ -1,31 +1,30 @@
 <ng-container *ngIf="transportExecutionPlan">
 
-    <value-view class="row"
-                [presentationMode]="'edit'"
-                [propName]="'Response'"
-                [(value)]="transportExecutionPlan.documentStatusCode.name">
-    </value-view>
+    <div class="input-group form-group">
+        <label class="col-3 control-label">Response</label>
+        <select class="custom-select"
+                [(ngModel)]="transportExecutionPlan.documentStatusCode.name">
+            <option>Accepted</option>
+            <option>Rejected</option>
+        </select>
+    </div>
 
-    <value-view class="row"
-                [presentationMode]="'edit'"
+    <value-view [presentationMode]="'edit'"
                 [propName]="'Response Reason'"
                 [(value)]="transportExecutionPlan.documentStatusReasonCode.name">
     </value-view>
 
-    <value-view class="row"
-                [presentationMode]="'edit'"
+    <value-view [presentationMode]="'edit'"
                 [propName]="'Note'"
                 [(value)]="transportExecutionPlan.note[0]">
     </value-view>
 
-    <div class="container ">
-        <div class="row justify-content-end">
-            <ng-container *ngIf="bpDataService.processMetadata.processStatus != 'Completed'">
-                <button *ngIf="bpDataService.userRole == 'seller'" class="btn btn-success mr-3"
-                        (click)="respondToTransportExecutionPlanRequest()">Respond to Execution Plan
-                </button>
-            </ng-container>
-        </div>
+    <div class="d-flex justify-content-end">
+        <ng-container *ngIf="bpDataService.processMetadata.processStatus != 'Completed'">
+            <button *ngIf="bpDataService.userRole == 'seller'" class="btn btn-success"
+                    (click)="respondToTransportExecutionPlanRequest()">Respond to Execution Plan
+            </button>
+        </ng-container>
     </div>
 </ng-container>
 <call-status [callStatus]="callStatus"
