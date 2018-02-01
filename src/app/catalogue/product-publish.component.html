@@ -166,13 +166,13 @@
                 </div>
 
                 <div *ngIf="propertyValueType.options.selectedIndex == 4">
-                    <input name="propertyValue"
+                    <input type="number" name="propertyValue"
                            class="form-control col ml-2"
                            [(ngModel)]="quantity.value"
                            placeholder="Property Value"
                            required/>
                     <label class="col-1" class="ml-3 mr-3">Unit: </label>
-                    <input name="unit"
+                    <input type="text" name="unit"
                            class="form-control col ml-2"
                            [(ngModel)]="quantity.unitCode"
                            placeholder="Unit"
