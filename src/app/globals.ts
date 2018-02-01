@@ -8,8 +8,8 @@ export const debug=false;
 // Endpoint variables - SRFG domain
 
 export const user_mgmt_endpoint="https://nimble-platform.salzburgresearch.at/nimble/identity";
-//export const catalogue_endpoint="https://nimble-platform.salzburgresearch.at/nimble/catalog";
-//export const bpe_endpoint="https://nimble-platform.salzburgresearch.at/nimble/business-process";
+export const catalogue_endpoint="https://nimble-platform.salzburgresearch.at/nimble/catalog";
+export const bpe_endpoint="https://nimble-platform.salzburgresearch.at/nimble/business-process";
 
 // Endpoint variables - Kubernetes domain
 
@@ -57,8 +57,8 @@ export const sparqlOptionalSelectEndPoint = `${ub_base_8092}/executeSPARQLOption
 // Endpoint variables - Local development direct links
 
 //export const user_mgmt_endpoint="http://localhost:9096";
-export const catalogue_endpoint="http://localhost:8095";
-export const bpe_endpoint="http://localhost:8081";
+//export const catalogue_endpoint="http://localhost:8095";
+//export const bpe_endpoint="http://localhost:8081";
 //export const endpoint = 'http://localhost:8090/detectMeaning'; // for local catalog search service
 //export const logicalViewEndpoint = 'http://localhost:8090/getLogicalView'; // for visualization
 
