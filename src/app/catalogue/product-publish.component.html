@@ -122,6 +122,7 @@
                        placeholder="Property Value"
                        required/>
                 <input *ngIf="propertyValueType.options.selectedIndex == 1"
+                       type="number"
                        name="propertyValue"
                        class="form-control col ml-2"
                        [(ngModel)]="newProperty.valueDecimal[0]"
