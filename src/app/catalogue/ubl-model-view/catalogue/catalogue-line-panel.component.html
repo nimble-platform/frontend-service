@@ -1,7 +1,7 @@
-<div class="container well">
+<div class="container well" *ngIf="show">
 
-    <div class="d-flex mt-3 mb-3">
-        <h4 class="mr-auto"><u>Product Overview</u></h4>
+    <div class="d-flex mt-3 mb-3" (click)="show = false;showChange.emit(false)">
+        <h4 class="mr-auto"><u>{{catalogueLine.goodsItem.item.name}}</u></h4>
         <!-- catalogue lines are in view mode in catalogue view -->
         <ng-container *ngIf="presentationMode == 'view'">
             <div class="mr-1"><button type="button" class="btn btn-success" (click)="deleteCatalogueLine()">Delete</button></div>

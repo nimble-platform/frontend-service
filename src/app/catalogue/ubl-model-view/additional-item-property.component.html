@@ -73,7 +73,8 @@
                    [propName]="additionalItemProperty.name"
                    [quantity]="additionalItemProperty.valueQuantity"
                    [multiValue]="true"
-                   [parentForm]="parentForm">
+                   [parentForm]="parentForm"
+                   [zeroValue]="additionalItemProperty.itemClassificationCode.listID == 'Custom'">
     </quantity-view>
 </ng-container>
 
@@ -86,10 +87,14 @@
         {{additionalItemProperty.name}}&#9432;
     </div>
 
-    <input type="checkbox"
+    <input type="checkbox" class="space-right"
            [checked]="additionalItemProperty.value[0] == 'true'"
            (change)="additionalItemProperty.value[0] == 'true ' ? additionalItemProperty.value[0] = 'false' : additionalItemProperty.value[0] = 'true'"
            [disabled]="presentationMode != 'edit'">
+
+    <span *ngIf="presentationMode == 'edit'"><button class="btn btn-xs btn-danger"
+                                                     (click)="deleteCustomProperty(additionalItemProperty.name); $event.stopPropagation()"
+    >&times;</button></span>
 </div>
 
 <!-- renders the binary content -->

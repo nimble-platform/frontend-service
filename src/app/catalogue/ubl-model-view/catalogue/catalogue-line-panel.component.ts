@@ -1,4 +1,4 @@
-import {Component, Input} from "@angular/core";
+import {Component, Input, Output,EventEmitter} from "@angular/core";
 import {CatalogueLine} from "../../model/publish/catalogue-line";
 import {CatalogueService} from "../../catalogue.service";
 import {Router} from "@angular/router";
@@ -14,6 +14,10 @@ export class CatalogueLinePanelComponent {
 
     @Input() catalogueLine: CatalogueLine;
     @Input() presentationMode: string;
+
+    // check whether catalogue-line-panel should be displayed
+    @Input() show = false;
+    @Output() showChange = new EventEmitter<boolean>();
 
     constructor(private catalogueService: CatalogueService,
                 private categoryService: CategoryService,

@@ -66,6 +66,14 @@ export class CatalogueLineViewComponent extends ChildForm {
         }
     }
 
+    changeImage(index: number): void {
+        if (this.presentationMode == 'edit'){
+            let x = this.catalogueLine.goodsItem.item.productImage[0];
+            this.catalogueLine.goodsItem.item.productImage[0] = this.catalogueLine.goodsItem.item.productImage[index];
+            this.catalogueLine.goodsItem.item.productImage[index] = x;
+        }
+    }
+
     changePartyRole(role:string) {
         this.partyRole = role;
         if(role == 'Manufacturer') {

@@ -12,10 +12,9 @@ import {FormGroup} from "@angular/forms";
 
 // Component that displays category and custom properties inside the "product details" tab in CatalogueLin
 
-export class ProductDetailsComponent {
+export class ProductDetailsComponent{
 
     PROPERTY_BLOCK_FIELD_NAME: string = "name";
-    PROPERTY_BLOCK_FIELD_ISCOLLAPSED = "isCollapsed";
     PROPERTY_BLOCK_FIELD_PROPERTIES = "properties";
     PROPERTY_BLOCK_FIELD_PROPERTY_DETAILS = "propertyDetails";
 
@@ -25,7 +24,6 @@ export class ProductDetailsComponent {
 
     // keeping the collapsed state of property blocks. it is actually a reference to the actual kept in publish service
     propertyBlockCollapsedStates: Map<string, boolean> = new Map<string, boolean>();
-
 
     constructor(private publishService: PublishService) {
         this.propertyBlockCollapsedStates = this.publishService.getCollapsedStates();

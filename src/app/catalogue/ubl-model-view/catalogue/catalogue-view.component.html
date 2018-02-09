@@ -10,17 +10,74 @@
     </button>
 </div>
 
-<!-- *ngIf div to wait for asynchronous data -->
+
 <div *ngIf="catalogue">
     <div *ngIf="catalogue.catalogueLine.length > 0">
-        <!--<p>Issue date: {{catalogue.issueDate}}</p>-->
-        <catalogue-line-panel *ngFor="let line of catalogue.catalogueLine"
-                             [catalogueLine]="line"
-                             [presentationMode]="'view'">
-        </catalogue-line-panel>
+        <div class="d-flex justify-content-between card-block" style="background-color:#F2F2F2;padding-left: 25px;padding-top: 20px;padding-bottom: 20px;">
+            <div class="col-4">
+                <input style="margin-top: 45px" class="form-control" type="text" [(ngModel)]="searchKey" (keyup)="search()" placeholder="Search ...">
+            </div>
+
+            <div class="col-4">
+                <label><strong>Category :</strong>
+                </label>
+                <select style="margin-top: 10px" class="form-control" [(ngModel)]="selectedType" (change)="typeChanged()">
+                    <option>All</option>
+                    <option *ngFor="let type of typeOfProducts">{{type}}</option>
+                </select>
+            </div>
+
+            <div class="col-4">
+                <label><strong>Sort by:</strong>
+                </label>
+                <select style="margin-top: 10px" class="form-control" [(ngModel)]="sortOption" (change)="sortCatalogueLines()">
+                    <option></option>
+                    <option>Price:Low to High</option>
+                    <option>Price:High to Low</option>
+                </select>
+            </div>
+        </div>
+
+        <div *ngFor="let catLine of catalogueLinesArray.slice((page-1)*pageSize,page*pageSize) " class="space-before">
+            <div class="card pointer">
+                <div class="card-block">
+                    <div class="row" *ngIf="!catalogueLineView[catLine.id]" (click)="catalogueLineView[catLine.id]=true">
+                        <div class="col-2">
+                            <div>
+                                <img *ngIf="catLine.goodsItem.item.productImage.length == 0"
+                                     style="max-height:100%; max-width:100%"
+                                     src="assets/empty_img.png">
+                                <img *ngIf="catLine.goodsItem.item.productImage.length > 0"
+                                     style="max-height:100%; max-width:100%"
+                                     src="data:{{catLine.goodsItem.item.productImage[0].mimeCode}};base64,{{catLine.goodsItem.item.productImage[0].value}}"/>
+                            </div>
+                        </div>
+                        <div class="col-10 d-flex justify-content-between">
+                            <div class="col-8">
+                                <p style="word-break: break-all;word-wrap: break-word;white-space: pre-wrap;"><b>{{catLine.goodsItem.item.name}}</b></p>
+                                <p style="word-break: break-all;word-wrap: break-word;white-space: pre-wrap">{{catLine.goodsItem.item.description}}</p>
+                                {{catLine.requiredItemLocationQuantity.price.priceAmount.value+" "+catLine.requiredItemLocationQuantity.price.priceAmount.currencyID}} <br/>
+                            </div>
+                            <div class="col-2">
+                                <button type="button" class="btn btn-success space-after col" (click)="redirectToEdit(catLine)" style="display: block">Edit</button>
+                                <button type="button" class="btn btn-danger col" (click)="deleteCatalogueLine(catLine); $event.stopPropagation();">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                    <catalogue-line-panel [catalogueLine]="catLine"
+                                          [presentationMode]="'view'"
+                                          [(show)]="catalogueLineView[catLine.id]">
+                    </catalogue-line-panel>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="catalogueLinesArray.length > 0" class="pagination justify-content-center space-before">
+            <ngb-pagination [(collectionSize)]="collectionSize" [(pageSize)]="pageSize" [(page)]="page" [maxSize]="5" [boundaryLinks]="true"></ngb-pagination>
+        </div>
     </div>
     <h3 *ngIf="catalogue.catalogueLine.length <= 0">No published products.</h3>
 </div>
+
 <call-status [callStatus]="getCatalogueStatus"
                 [large]="true">
 
