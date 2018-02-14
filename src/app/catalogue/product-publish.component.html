@@ -86,6 +86,11 @@
         </button>
     </div>
 
+    <div class="alert alert-danger space-before" role="alert" *ngIf="sameIdError">
+        <strong>Product Identifier Conflict!</strong><br>
+        You already have a product with product identifier : {{catalogueLine.id}}
+    </div>
+
     <hr>
 
     <!-- Form header row -->

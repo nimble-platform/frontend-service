@@ -62,7 +62,6 @@ export class CatalogueViewComponent implements OnInit {
 
     public requestCatalogue(forceUpdate:boolean): void {
         this.getCatalogueStatus.submit();
-
         let userId = this.cookieService.get("user_id");
         this.catalogueService.getCatalogueForceUpdate(userId, forceUpdate).then(catalogue => {
                 this.catalogue = catalogue;

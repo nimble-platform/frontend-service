@@ -49,7 +49,8 @@ export class ProductPublishComponent {
     submitted = false;
     callback = false;
     error_detc = false;
-
+    // check whether product id conflict exists or not
+    sameIdError = false;
     json = JSON;
 
     private bulkPublishStatus: CallStatus = new CallStatus();
@@ -262,18 +263,24 @@ export class ProductPublishComponent {
         // nullify the transportation service details if a regular product is being published
         this.checkProductNature(splicedCatalogueLine);
 
-        // add new line to the end of catalogue
-        this.catalogueService.catalogue.catalogueLine.push(splicedCatalogueLine);
-
         if (this.catalogueService.catalogue.uuid == null) {
+            // add new line to the end of catalogue
+            this.catalogueService.catalogue.catalogueLine.push(splicedCatalogueLine);
+
             this.catalogueService.postCatalogue(this.catalogueService.catalogue)
                 .then(() => this.onSuccessfulPublish())
-                .catch(() => this.onFailedPublish());
-
+                .catch(err => {
+                    this.catalogueService.catalogue.catalogueLine.pop();
+                    this.onFailedPublish(err);
+                })
         } else {
-            this.catalogueService.putCatalogue(this.catalogueService.catalogue)
-                .then(() => this.onSuccessfulPublish())
-                .catch(() => this.onFailedPublish())
+            this.catalogueService.addCatalogueLine(this.catalogueService.catalogue.uuid,JSON.stringify(splicedCatalogueLine))
+                .then(() => {
+                    // add new line to the end of catalogue
+                    this.catalogueService.catalogue.catalogueLine.push(splicedCatalogueLine);
+                    this.onSuccessfulPublish();
+                })
+                .catch(err=> this.onFailedPublish(err))
         }
         console.log(this.catalogueService.catalogue);
     }
@@ -290,19 +297,26 @@ export class ProductPublishComponent {
 
         // Replace original line in the catalogue with the edited version
         let indexOfOriginalLine = this.catalogueService.catalogue.catalogueLine.findIndex(line => line.id === this.catalogueLine.id);
+        let originalLine = this.catalogueService.catalogue.catalogueLine[indexOfOriginalLine];
         this.catalogueService.catalogue.catalogueLine[indexOfOriginalLine] = splicedCatalogueLine;
 
         if (this.catalogueService.catalogue.uuid == null) {
             this.catalogueService.postCatalogue(this.catalogueService.catalogue)
                 .then(() => this.onSuccessfulPublish())
                 .then(() => this.changePublishModeToCreate())
-                .catch(() => this.onFailedPublish());
+                .catch(err => {
+                    this.catalogueService.catalogue.catalogueLine[indexOfOriginalLine] = originalLine;
+                    this.onFailedPublish(err);
+                });
 
         } else {
-            this.catalogueService.putCatalogue(this.catalogueService.catalogue)
-                .then(() => this.onSuccessfulPublish())
-                .then(() => this.changePublishModeToCreate())
-                .catch(() => this.onFailedPublish())
+                this.catalogueService.updateCatalogueLine(this.catalogueService.catalogue.uuid,JSON.stringify(splicedCatalogueLine))
+                    .then(() => this.onSuccessfulPublish())
+                    .then(() => this.changePublishModeToCreate())
+                    .catch(err => {
+                        this.catalogueService.catalogue.catalogueLine[indexOfOriginalLine] = originalLine;
+                        this.onFailedPublish(err);
+                    });
         }
     }
 
@@ -368,7 +382,9 @@ export class ProductPublishComponent {
 
         let userId = this.cookieService.get("user_id");
         this.userService.getUserParty(userId).then(party => {
-            this.catalogueService.getCatalogue(userId).then(catalogue => {
+            this.catalogueService.getCatalogueForceUpdate(userId, true).then(catalogue => {
+                console.log(catalogue);
+                this.catalogueService.catalogue = catalogue;
                 this.catalogueLine = UBLModelUtils.createCatalogueLine(catalogue.uuid, party)
                 this.catalogueService.draftCatalogueLine = this.catalogueLine;
 
@@ -384,9 +400,12 @@ export class ProductPublishComponent {
         });
     }
 
-    private onFailedPublish(): void {
+    private onFailedPublish(err): void {
         this.submitted = false;
         this.error_detc = true;
+        if(err.status == 406){
+            this.sameIdError = true;
+        }
     }
 
 

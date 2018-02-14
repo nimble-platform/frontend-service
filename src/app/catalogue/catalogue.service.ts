@@ -74,6 +74,22 @@ export class CatalogueService {
             .catch(this.handleError);
     }
 
+    addCatalogueLine(catalogueId:string,catalogueLineJson:string){
+        const url = this.baseUrl + `/catalogue/${catalogueId}/catalogueline/${catalogueId}`;
+        return this.http
+            .post(url,catalogueLineJson,{headers:this.headers})
+            .toPromise()
+            .catch(this.handleError);
+    }
+
+    updateCatalogueLine(catalogueId:string,catalogueLineJson:string){
+        const url = this.baseUrl + `/catalogue/${catalogueId}/catalogueline`;
+        return this.http
+            .put(url,catalogueLineJson,{headers:this.headers})
+            .toPromise()
+            .catch(this.handleError);
+    }
+
     postCatalogue(catalogue: Catalogue): Promise<Catalogue> {
         const url = this.baseUrl + `/catalogue/ubl`;
         return this.http
