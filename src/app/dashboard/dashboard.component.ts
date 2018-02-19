@@ -27,10 +27,10 @@ import {Item} from "../catalogue/model/publish/item";
 export class DashboardComponent implements OnInit {
 
     fullName = "";
-	hasCompany = false;
-	roles = [];
-	alert1Closed = false;
-	alert2Closed = false;
+    hasCompany = false;
+    roles = [];
+    alert1Closed = false;
+    alert2Closed = false;
     buyer_history_temp: any;
     buyer_history: any;
     seller_history_temp: any;
@@ -48,14 +48,15 @@ export class DashboardComponent implements OnInit {
         if (this.cookieService.get("user_fullname"))
             this.fullName = this.cookieService.get("user_fullname");
         if (this.cookieService.get("user_id") && this.cookieService.get("company_id")) {
-			if (this.cookieService.get("active_company_name")) {
-				if (this.cookieService.get("active_company_name") == null || this.cookieService.get("active_company_name") == "null")
-					this.hasCompany = false;
-				else
-					this.hasCompany = true;
-			}
-			else
-				this.hasCompany = false;
+
+            if (this.cookieService.get("active_company_name")) {
+                if (this.cookieService.get("active_company_name") == null || this.cookieService.get("active_company_name") == "null")
+                    this.hasCompany = false;
+                else
+                    this.hasCompany = true;
+            }
+            else
+                this.hasCompany = false;
             this.buyer_history_temp = [];
             this.buyer_history = [];
             this.seller_history_temp = [];
@@ -80,6 +81,7 @@ export class DashboardComponent implements OnInit {
 			this.roles = [];
     }
 
+
     loadOrders() {
 
         this.bpeService.getInitiatorHistory(this.cookieService.get("company_id"))
@@ -87,70 +89,69 @@ export class DashboardComponent implements OnInit {
                 this.buyer_history_temp = [];
                 this.buyer_history = [];
                 for (let task of activeTasks) {
-					//if (task.deleteReason!="deleted") {
-						var time_offset = -(new Date().getTimezoneOffset() / 60);
-						var time_locale = new Date(new Date().setTime(new Date(task.startTime).getTime() + (time_offset * 60 * 60 * 1000))).toLocaleTimeString();
-						this.buyer_history_temp.push({
-							"task_id": task.id,
-							"task_name": task.name,
-							"task_description": task.description,
-							"process_id": task.processInstanceId,
-							"status_code": task.deleteReason,
-							"start_time": new Date(task.startTime).toLocaleDateString() + " " + time_locale
-						});
+                    //if (task.deleteReason!="deleted") {
+                    var time_offset = -(new Date().getTimezoneOffset() / 60);
+                    var time_locale = new Date(new Date().setTime(new Date(task.startTime).getTime() + (time_offset * 60 * 60 * 1000))).toLocaleTimeString();
+                    this.buyer_history_temp.push({
+                        "task_id": task.id,
+                        "task_name": task.name,
+                        "task_description": task.description,
+                        "process_id": task.processInstanceId,
+                        "status_code": task.deleteReason,
+                        "start_time": new Date(task.startTime).toLocaleDateString() + " " + time_locale
+                    });
 
-						this.bpeService.getProcessDetailsHistory(task.processInstanceId)
-							.then(activityVariables => {
+                    this.bpeService.getProcessDetailsHistory(task.processInstanceId)
+                        .then(activityVariables => {
+                            var vContent = "", vNote = "", vStatusCode = "", vActionStatus = "", vBPStatus = "",
+                                vTask_id = "", vProcess_id = "", vStart_time = "", vSellerName = "", vProduct,
+                                vBpOptionMenuItems: any;
+                            var vProcessType = ActivityVariableParser.getProcessType(activityVariables);
+                            let response: any = ActivityVariableParser.getResponse(activityVariables);
+                            let initialDoc: any = ActivityVariableParser.getInitialDocument(activityVariables);
+                            vProduct = ActivityVariableParser.getProductFromProcessData(initialDoc);
+                            vNote = ActivityVariableParser.getNoteFromProcessData(initialDoc);
+                            vSellerName = ActivityVariableParser.getResponderNameProcessData(initialDoc);
+                            vProcess_id = initialDoc.processInstanceId;
+                            vActionStatus = this.getActionStatus(vProcessType, response, true);
+                            vBPStatus = this.getBPStatus(response);
+                            vContent = initialDoc.value;
+                            vBpOptionMenuItems = this.getBpOptionsMenuItems(vProcessType, response, true);
 
-								var vContent = "", vNote = "", vStatusCode = "", vActionStatus = "", vBPStatus = "",
-									vTask_id = "", vProcess_id = "", vStart_time = "", vSellerName = "", vProduct,
-									vBpOptionMenuItems: any;
-								var vProcessType = ActivityVariableParser.getProcessType(activityVariables);
-								let response: any = ActivityVariableParser.getResponse(activityVariables);
-								let initialDoc: any = ActivityVariableParser.getInitialDocument(activityVariables);
-								vProduct = ActivityVariableParser.getProductFromProcessData(initialDoc);
-								vNote = ActivityVariableParser.getNoteFromProcessData(initialDoc);
-								vSellerName = ActivityVariableParser.getResponderNameProcessData(initialDoc);
-								vProcess_id = initialDoc.processInstanceId;
-								vActionStatus = this.getActionStatus(vProcessType, response, true);
-								vBPStatus = this.getBPStatus(response);
-								vContent = initialDoc.value;
-								vBpOptionMenuItems = this.getBpOptionsMenuItems(vProcessType, response, true);
+                            for (let t of this.buyer_history_temp) {
+                                if (t.process_id == vProcess_id) {
+                                    vTask_id = t.task_id;
+                                    vStart_time = t.start_time;
+                                    vStatusCode = t.status_code;
+                                }
+                            }
 
-								for (let t of this.buyer_history_temp) {
-									if (t.process_id == vProcess_id) {
-										vTask_id = t.task_id;
-										vStart_time = t.start_time;
-										vStatusCode = t.status_code;
-									}
-								}
+                            this.buyer_history.push({
+                                "processType": vProcessType,
+                                "task_id": vTask_id,
+                                "process_id": vProcess_id,
+                                "start_time": vStart_time,
+                                "sellerName": vSellerName,
+                                "product": vProduct,
+                                "note": vNote,
+                                "processStatus": vBPStatus,
+                                "statusCode": vStatusCode,
+                                "actionStatus": vActionStatus,
+                                "content": vContent,
+                                "activityVariables": activityVariables,
+                                "bpOptionMenuItems": vBpOptionMenuItems
+                            });
 
-								this.buyer_history.push({
-									"processType": vProcessType,
-									"task_id": vTask_id,
-									"process_id": vProcess_id,
-									"start_time": vStart_time,
-									"sellerName": vSellerName,
-									"product": vProduct,
-									"note": vNote,
-									"processStatus": vBPStatus,
-									"statusCode": vStatusCode,
-									"actionStatus": vActionStatus,
-									"content": vContent,
-									"activityVariables": activityVariables,
-									"bpOptionMenuItems": vBpOptionMenuItems
-								});
-
-								this.buyer_history.sort(function (a: any, b: any) {
-									var a_comp = a.start_time;
-									var b_comp = b.start_time;
-									return b_comp.localeCompare(a_comp);
-								});
-							})
-							.catch(error => {
-								console.error(error);
-							});
-					//}
+                            this.buyer_history.sort(function (a: any, b: any) {
+                                var a_comp = a.start_time;
+                                var b_comp = b.start_time;
+                                return b_comp.localeCompare(a_comp);
+                            });
+                        })
+                        .catch(error => {
+                            console.error(error);
+                        });
+                    //}
                 }
             })
             .catch(error => {
@@ -162,69 +163,69 @@ export class DashboardComponent implements OnInit {
                 this.seller_history_temp = [];
                 this.seller_history = [];
                 for (let task of res) {
-					//if (task.deleteReason!="deleted") {
-						var time_offset = -(new Date().getTimezoneOffset() / 60);
-						var time_locale = new Date(new Date().setTime(new Date(task.startTime).getTime() + (time_offset * 60 * 60 * 1000))).toLocaleTimeString();
-						this.seller_history_temp.push({
-							"task_id": task.id,
-							"task_name": task.name,
-							"task_description": task.description,
-							"process_id": task.processInstanceId,
-							"status_code": task.deleteReason,
-							"start_time": new Date(task.startTime).toLocaleDateString() + " " + time_locale
-						});
+                    //if (task.deleteReason!="deleted") {
+                    var time_offset = -(new Date().getTimezoneOffset() / 60);
+                    var time_locale = new Date(new Date().setTime(new Date(task.startTime).getTime() + (time_offset * 60 * 60 * 1000))).toLocaleTimeString();
+                    this.seller_history_temp.push({
+                        "task_id": task.id,
+                        "task_name": task.name,
+                        "task_description": task.description,
+                        "process_id": task.processInstanceId,
+                        "status_code": task.deleteReason,
+                        "start_time": new Date(task.startTime).toLocaleDateString() + " " + time_locale
+                    });
 
-						this.bpeService.getProcessDetailsHistory(task.processInstanceId)
-							.then(activityVariables => {
+                    this.bpeService.getProcessDetailsHistory(task.processInstanceId)
+                        .then(activityVariables => {
 
-								var vContent = "", vNote = "", vStatusCode= "", vActionStatus = "", vBPStatus = "",
-									vTask_id = "", vProcess_id = "", vStart_time = "", vBuyerName = "", vProduct,
-									vBpOptionMenuItems: any;
-								var vProcessType = ActivityVariableParser.getProcessType(activityVariables);
-								let response: any = ActivityVariableParser.getResponse(activityVariables);
-								let initialDoc: any = ActivityVariableParser.getInitialDocument(activityVariables);
-								vProduct = ActivityVariableParser.getProductFromProcessData(initialDoc);
-								vNote = ActivityVariableParser.getNoteFromProcessData(initialDoc);
-								vBuyerName = ActivityVariableParser.getInitiatorNameProcessData(initialDoc);
-								vProcess_id = initialDoc.processInstanceId;
-								vActionStatus = this.getActionStatus(vProcessType, response, false);
-								vBPStatus = this.getBPStatus(response);
-								vContent = initialDoc.value;
-								vBpOptionMenuItems = this.getBpOptionsMenuItems(vProcessType, response, false);
+                            var vContent = "", vNote = "", vStatusCode= "", vActionStatus = "", vBPStatus = "",
+                                vTask_id = "", vProcess_id = "", vStart_time = "", vBuyerName = "", vProduct,
+                                vBpOptionMenuItems: any;
+                            var vProcessType = ActivityVariableParser.getProcessType(activityVariables);
+                            let response: any = ActivityVariableParser.getResponse(activityVariables);
+                            let initialDoc: any = ActivityVariableParser.getInitialDocument(activityVariables);
+                            vProduct = ActivityVariableParser.getProductFromProcessData(initialDoc);
+                            vNote = ActivityVariableParser.getNoteFromProcessData(initialDoc);
+                            vBuyerName = ActivityVariableParser.getInitiatorNameProcessData(initialDoc);
+                            vProcess_id = initialDoc.processInstanceId;
+                            vActionStatus = this.getActionStatus(vProcessType, response, false);
+                            vBPStatus = this.getBPStatus(response);
+                            vContent = initialDoc.value;
+                            vBpOptionMenuItems = this.getBpOptionsMenuItems(vProcessType, response, false);
 
-								for (let t of this.seller_history_temp) {
-									if (t.process_id == vProcess_id) {
-										vTask_id = t.task_id;
-										vStart_time = t.start_time;
-										vStatusCode = t.status_code;
-									}
-								}
+                            for (let t of this.seller_history_temp) {
+                                if (t.process_id == vProcess_id) {
+                                    vTask_id = t.task_id;
+                                    vStart_time = t.start_time;
+                                    vStatusCode = t.status_code;
+                                }
+                            }
 
-								this.seller_history.push({
-									"processType": vProcessType,
-									"task_id": vTask_id,
-									"process_id": vProcess_id,
-									"start_time": vStart_time,
-									"buyerName": vBuyerName,
-									"product": vProduct,
-									"note": vNote,
-									"processStatus": vBPStatus,
-									"statusCode": vStatusCode,
-									"actionStatus": vActionStatus,
-									"content": vContent,
-									"activityVariables": activityVariables,
-									"bpOptionMenuItems": vBpOptionMenuItems
-								});
-								this.seller_history.sort(function (a: any, b: any) {
-									var a_comp = a.start_time;
-									var b_comp = b.start_time;
-									return b_comp.localeCompare(a_comp);
-								});
-							})
-							.catch(error => {
-								console.error(error);
-							});
-					//}
+                            this.seller_history.push({
+                                "processType": vProcessType,
+                                "task_id": vTask_id,
+                                "process_id": vProcess_id,
+                                "start_time": vStart_time,
+                                "buyerName": vBuyerName,
+                                "product": vProduct,
+                                "note": vNote,
+                                "processStatus": vBPStatus,
+                                "statusCode": vStatusCode,
+                                "actionStatus": vActionStatus,
+                                "content": vContent,
+                                "activityVariables": activityVariables,
+                                "bpOptionMenuItems": vBpOptionMenuItems
+                            });
+                            this.seller_history.sort(function (a: any, b: any) {
+                                var a_comp = a.start_time;
+                                var b_comp = b.start_time;
+                                return b_comp.localeCompare(a_comp);
+                            });
+                        })
+                        .catch(error => {
+                            console.error(error);
+                        });
+                    //}
                 }
             })
             .catch(error => {
@@ -236,14 +237,15 @@ export class DashboardComponent implements OnInit {
         if(targetProcess == null) {
             targetProcess = ActivityVariableParser.getProcessType(processMetadata.activityVariables);
         }
-
         this.bpDataService.setBpOptionParametersWithProcessMetadata(role, targetProcess, processMetadata);
         this.router.navigate(['bpe/bpe-exec'], {
             queryParams: {
                 catalogueId: processMetadata.product.catalogueDocumentReference.id,
-                id: processMetadata.product.manufacturersItemIdentification.id
+                id: processMetadata.product.manufacturersItemIdentification.id,
+                pid: processMetadata.process_id
             }
         });
+
     }
 	
 	cancelBP(processID: string) {
@@ -280,6 +282,9 @@ export class DashboardComponent implements OnInit {
                     responseMessage = "Waiting for Order Response";
                 } else if (processType == 'Negotiation') {
                     responseMessage = "Waiting for Quotation";
+                }
+                  else if (processType == 'Ppap') {
+                      responseMessage = "Waiting for Ppap Response";
                 } else if (processType == 'Transport_Execution_Plan') {
                     responseMessage = "Waiting for Transport Execution Plan";
                 } else if (processType == 'Item_Information_Request') {
@@ -299,6 +304,9 @@ export class DashboardComponent implements OnInit {
                     responseMessage = "Transport Execution Plan should be sent";
                 } else if (processType == 'Item_Information_Request') {
                     responseMessage = 'Information Response should be sent';
+                }
+                  else if(processType == 'Ppap'){
+                    responseMessage = "Ppap Response should be sent"
                 }
             }
 
@@ -324,6 +332,12 @@ export class DashboardComponent implements OnInit {
                 } else {
                     responseMessage = "Receipt Advice received"
                 }
+            } else if(processType == 'Ppap'){
+                if(response.value.acceptedIndicator){
+                    responseMessage = "Ppap approved";
+                } else {
+                    responseMessage = "Ppap declined";
+                }
 
             } else if (processType == 'Transport_Execution_Plan') {
                 if (buyer) {
@@ -345,7 +359,6 @@ export class DashboardComponent implements OnInit {
 
     getBpOptionsMenuItems(processType: string, response: any, buyer: boolean): any {
         let bpOptionMenuItems: Array<any> = [{itemLabel: 'Business History'}];
-
         // messages if there is no response from the responder party
         /*if (response == null) {
             // messages for the buyer

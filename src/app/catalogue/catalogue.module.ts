@@ -92,7 +92,7 @@ import {CategoryDeactivateGuardService} from "./category/category-deactivate-gua
 	],
 	providers: [
 	    PublishDeactivateGuardService,
-        CategoryDeactivateGuardService
+		CategoryDeactivateGuardService
 	]
 })
 

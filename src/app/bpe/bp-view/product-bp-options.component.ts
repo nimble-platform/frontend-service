@@ -76,6 +76,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
             this.availableProcesses.push('Negotiation');
 
             if (this.bpDataService.catalogueLine.goodsItem.item.transportationServiceDetails == null) {
+                this.availableProcesses.push('Ppap');
                 this.availableProcesses.push('Order');
             } else {
                 this.availableProcesses.push('Transport_Execution_Plan');

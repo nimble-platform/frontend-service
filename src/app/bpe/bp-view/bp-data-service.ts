@@ -13,6 +13,8 @@ import {Quotation} from "../../catalogue/model/publish/quotation";
 import {Order} from "../../catalogue/model/publish/order";
 import {OrderResponseSimple} from "../../catalogue/model/publish/order-response-simple";
 import {BehaviorSubject} from "rxjs/BehaviorSubject";
+import {Ppap} from "../../catalogue/model/publish/ppap";
+import {PpapResponse} from "../../catalogue/model/publish/ppap-response";
 import {OrderReference} from "../../catalogue/model/publish/order-reference";
 import {TransportExecutionPlanRequest} from "../../catalogue/model/publish/transport-execution-plan-request";
 import {TransportExecutionPlan} from "../../catalogue/model/publish/transport-execution-plan";
@@ -24,7 +26,7 @@ import {ItemInformationResponse} from "../../catalogue/model/publish/item-inform
  */
 
 @Injectable()
-export class BPDataService {
+export class BPDataService{
     // original catalogue line to initialize the business process data
     catalogueLine:CatalogueLine;
     // catalogue line object that is kept updated based on user selections
@@ -33,6 +35,8 @@ export class BPDataService {
     requestForQuotation:RequestForQuotation;
     quotation:Quotation;
     order:Order;
+    ppap:Ppap;
+    ppapResponse:PpapResponse;
     orderResponse:OrderResponseSimple;
     despatchAdvice:DespatchAdvice;
     receiptAdvice:ReceiptAdvice;
@@ -92,6 +96,20 @@ export class BPDataService {
                 this.orderResponse = orderResponseVariable.value;
             }
 
+
+        } else if(processType == 'Ppap'){
+          this.ppap = ActivityVariableParser.getInitialDocument(activityVariables).value;
+
+          let ppapResponseVariable = ActivityVariableParser.getResponse(activityVariables);
+          if(ppapResponseVariable == null) {
+              if (this.userRole == 'seller') {
+                  this.ppapResponse = UBLModelUtils.createPpapResponse(this.ppap, true);
+              }
+          }
+              else{
+                  this.ppapResponse = ppapResponseVariable.value;
+              }
+
         } else if(processType == 'Fulfilment') {
             this.despatchAdvice = ActivityVariableParser.getInitialDocument(activityVariables).value;
 
@@ -146,6 +164,14 @@ export class BPDataService {
         this.requestForQuotation = UBLModelUtils.createRequestForQuotation();
         this.requestForQuotation.requestForQuotationLine[0].lineItem.item = this.modifiedCatalogueLine.goodsItem.item;
         this.requestForQuotation.requestForQuotationLine[0].lineItem.lineReference = [new LineReference(this.modifiedCatalogueLine.id)];
+        this.selectFirstValuesAmongAlternatives();
+    }
+
+    initPpap(documents:string[]):void{
+        this.modifiedCatalogueLine = JSON.parse(JSON.stringify(this.catalogueLine));
+        this.ppap = UBLModelUtils.createPpap(documents);
+        this.ppap.lineItem.item = this.catalogueLine.goodsItem.item;
+        this.ppap.lineItem.lineReference = [new LineReference(this.catalogueLine.id)];
         this.selectFirstValuesAmongAlternatives();
     }
 
@@ -220,6 +246,8 @@ export class BPDataService {
         this.orderResponse = null;
         this.despatchAdvice = null;
         this.receiptAdvice = null;
+        this.ppap = null;
+        this.ppapResponse = null;
         this.transportExecutionPlanRequest = null;
         this.transportExecutionPlan = null;
         this.itemInformationRequest = null;

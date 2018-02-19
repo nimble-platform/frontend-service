@@ -30,6 +30,8 @@
     </fulfilment>
     <transport-execution-plan-bp *ngIf="selectedOption == 'Transport_Execution_Plan'">
     </transport-execution-plan-bp>
+    <ppap *ngIf="selectedOption == 'Ppap'">
+    </ppap>
 </ng-container>
 
 <call-status [callStatus]="getCatalogueLineStatus"

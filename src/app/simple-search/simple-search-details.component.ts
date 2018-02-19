@@ -43,6 +43,7 @@ export class SimpleSearchDetailsComponent implements OnInit {
 		this.route.queryParams.subscribe(params => {
 			let id = params['id'];
 			let catalogueId = params['catalogueId'];
+            this.bpDataService.catalogueLine = null;
 			this.getCatalogueLineStatus.submit();
 			this.catalogueService.getCatalogueLine(catalogueId, id).then(line => {
 				this.bpDataService.resetBpData();

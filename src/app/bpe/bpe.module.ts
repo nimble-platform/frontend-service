@@ -29,6 +29,11 @@ import { TransportExecutionPlanComponent } from "./bp-view/transport-execution-p
 import { BpProductDetailsComponent } from "./bp-view/bp-product-details.component";
 import { ItemInformationRequestBpComponent } from "./bp-view/item-information-request/item-information-request-bp.component";
 import { ItemInformationRequestComponent } from "./bp-view/item-information-request/item-information-request.component";
+import { PpapComponent} from "./bp-view/ppap/ppap.component";
+
+import { PpapDocumentSelectComponent} from "./bp-view/ppap/ppap-document-select.component";
+import { PpapDocumentUploadComponent} from "./bp-view/ppap/ppap-document-upload.component";
+import { PpapDocumentDownloadComponent} from "./bp-view/ppap/ppap-document-download.component";
 
 //import { BPEService } from './bpe.service';
 //import { BPService } from './bp.service';
@@ -65,7 +70,11 @@ import { ItemInformationRequestComponent } from "./bp-view/item-information-requ
 		TransportExecutionPlanComponent,
 		BpProductDetailsComponent,
 		ItemInformationRequestBpComponent,
-		ItemInformationRequestComponent
+		ItemInformationRequestComponent,
+        PpapComponent,
+        PpapDocumentSelectComponent,
+		PpapDocumentUploadComponent,
+		PpapDocumentDownloadComponent
 	],
 	exports: [
 		TradingDetailsComponent,

@@ -24,12 +24,16 @@ export class PropertyBlockPipe implements PipeTransform {
     private propertyBlocks: Array<any> = [];
     private checkedProperties: Array<string> = [];
     private presentationMode:string;
+    private customProperties:boolean;
 
     constructor(private categoryService: CategoryService,
                 private publishStateService: PublishService) {
     }
 
-    transform(itemProperties: ItemProperty[], presentationMode:string): any {
+    // If customProperties == true,then we get custom properties only.
+    // If customProperties == false,then we get all properties which are not custom.
+    transform(itemProperties: ItemProperty[], presentationMode:string, customProperties:boolean = null): any {
+        this.customProperties = customProperties;
         this.selectedCategories = this.categoryService.selectedCategories;
         this.itemProperties = itemProperties;
         this.presentationMode = presentationMode;
@@ -41,16 +45,67 @@ export class PropertyBlockPipe implements PipeTransform {
     /**
      * Creates the property block array by parsing the additional item property array of the item.
      * In the edit mode, it gathers all the properties included in the category, however, in other presentation modes,
-     * it considers only the properties belonging to the item
+     * it considers only the properties belonging to the item iff customProperties is null.
      */
     retrievePropertyBlocks(): any {
-        if (this.presentationMode == 'edit') {
+        if (this.presentationMode == 'edit' && this.customProperties == null) {
             this.refreshPropertyBlocks();
-        } else {
+        } else if(this.customProperties == null) {
             this.createPropertyBlocksWithExistingProperties();
+        } else{
+            if(this.customProperties == true){
+                this.createCustomPropertyBlock();
+            }
+            else{
+            //    this.createPropertyBlocksWithExistingProperties();
+                this.createNotCustomProperties();
+            }
         }
+
         return this.propertyBlocks;
+
+
     }
+
+    createNotCustomProperties():void{
+        this.propertyBlocks = [];
+
+        // put all properties into their blocks
+        for (let property of this.itemProperties) {
+            if(property.itemClassificationCode.listID === "Custom"){
+                continue;
+            }
+            else if (property.itemClassificationCode.listID === "eClass") {
+                let isBaseProperty:boolean = this.isBaseEClassProperty(property.id);
+                let blockName = this.getBlockNameForEClass(property.itemClassificationCode.name, isBaseProperty);
+                let blockIndex = this.propertyBlocks.findIndex(block => block[this.PROPERTY_BLOCK_FIELD_NAME] == blockName);
+                if (blockIndex == -1) {
+                    let eClassBlocks = this.createEmptyEClassPropertyBlocks(property.itemClassificationCode.name);
+                    this.propertyBlocks.push(eClassBlocks[0]);
+                    this.propertyBlocks.push(eClassBlocks[1]);
+
+                    blockIndex = this.propertyBlocks.length - 2;
+                    if(!isBaseProperty) {
+                        blockIndex++;
+                    }
+                }
+
+                this.propertyBlocks[blockIndex][this.PROPERTY_BLOCK_FIELD_PROPERTIES].push(property);
+
+            } else {
+                let blockName = this.getBlockName(property.itemClassificationCode.name, property.itemClassificationCode.listID);
+                let blockIndex = this.propertyBlocks.findIndex(block => block[this.PROPERTY_BLOCK_FIELD_NAME] == blockName);
+                if (blockIndex == -1) {
+                    let block = this.createEmptyPropertyBlock(property.itemClassificationCode.name, property.itemClassificationCode.listID);
+                    this.propertyBlocks.push(block);
+                    blockIndex = this.propertyBlocks.length-1;
+                }
+
+                this.propertyBlocks[blockIndex][this.PROPERTY_BLOCK_FIELD_PROPERTIES].push(property);
+            }
+        }
+    }
+
 
     refreshPropertyBlocks(): void {
         // get custom properties

@@ -38,6 +38,7 @@ export class CategorySearchComponent implements OnInit {
                 private publishService:PublishService) {
     }
 
+
     ngOnInit(): void {
         this.route.queryParams.subscribe((params: Params) => {
 

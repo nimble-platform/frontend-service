@@ -50,11 +50,15 @@ export class ProductPublishComponent {
     submitted = false;
     callback = false;
     error_detc = false;
-
+    // check whether product id conflict exists or not
+    sameIdError = false;
     json = JSON;
 
     private bulkPublishStatus: CallStatus = new CallStatus();
     private productCategoryRetrievalStatus: CallStatus = new CallStatus();
+
+    // used to add a new property which has a unit
+    private quantity = new Quantity(null,null);
 
     // check whether dialogBox is necessary or not during navigation
     public static dialogBox = true;
@@ -92,7 +96,6 @@ export class ProductPublishComponent {
     private initView(userParty, userCatalogue): void {
         this.catalogueService.setEditMode(true);
         this.publishStateService.resetData();
-
         // Following "if" block is executed when redirected by an "edit" button
         // "else" block is executed when redirected by "publish" tab
         let publishMode = this.publishStateService.publishMode;
@@ -260,19 +263,26 @@ export class ProductPublishComponent {
         // nullify the transportation service details if a regular product is being published
         this.checkProductNature(splicedCatalogueLine);
 
-        // add new line to the end of catalogue
-        this.catalogueService.catalogue.catalogueLine.push(splicedCatalogueLine);
-
         if (this.catalogueService.catalogue.uuid == null) {
+            // add new line to the end of catalogue
+            this.catalogueService.catalogue.catalogueLine.push(splicedCatalogueLine);
+
             this.catalogueService.postCatalogue(this.catalogueService.catalogue)
                 .then(() => this.onSuccessfulPublish())
-                .catch(() => this.onFailedPublish());
-
+                .catch(err => {
+                    this.catalogueService.catalogue.catalogueLine.pop();
+                    this.onFailedPublish(err);
+                })
         } else {
-            this.catalogueService.putCatalogue(this.catalogueService.catalogue)
-                .then(() => this.onSuccessfulPublish())
-                .catch(() => this.onFailedPublish())
+            this.catalogueService.addCatalogueLine(this.catalogueService.catalogue.uuid,JSON.stringify(splicedCatalogueLine))
+                .then(() => {
+                    // add new line to the end of catalogue
+                    this.catalogueService.catalogue.catalogueLine.push(splicedCatalogueLine);
+                    this.onSuccessfulPublish();
+                })
+                .catch(err=> this.onFailedPublish(err))
         }
+        console.log(this.catalogueService.catalogue);
     }
 
     private editProduct(): void {
@@ -287,19 +297,26 @@ export class ProductPublishComponent {
 
         // Replace original line in the catalogue with the edited version
         let indexOfOriginalLine = this.catalogueService.catalogue.catalogueLine.findIndex(line => line.id === this.catalogueLine.id);
+        let originalLine = this.catalogueService.catalogue.catalogueLine[indexOfOriginalLine];
         this.catalogueService.catalogue.catalogueLine[indexOfOriginalLine] = splicedCatalogueLine;
 
         if (this.catalogueService.catalogue.uuid == null) {
             this.catalogueService.postCatalogue(this.catalogueService.catalogue)
                 .then(() => this.onSuccessfulPublish())
                 .then(() => this.changePublishModeToCreate())
-                .catch(() => this.onFailedPublish());
+                .catch(err => {
+                    this.catalogueService.catalogue.catalogueLine[indexOfOriginalLine] = originalLine;
+                    this.onFailedPublish(err);
+                });
 
         } else {
-            this.catalogueService.putCatalogue(this.catalogueService.catalogue)
-                .then(() => this.onSuccessfulPublish())
-                .then(() => this.changePublishModeToCreate())
-                .catch(() => this.onFailedPublish())
+                this.catalogueService.updateCatalogueLine(this.catalogueService.catalogue.uuid,JSON.stringify(splicedCatalogueLine))
+                    .then(() => this.onSuccessfulPublish())
+                    .then(() => this.changePublishModeToCreate())
+                    .catch(err => {
+                        this.catalogueService.catalogue.catalogueLine[indexOfOriginalLine] = originalLine;
+                        this.onFailedPublish(err);
+                    });
         }
     }
 
@@ -365,7 +382,9 @@ export class ProductPublishComponent {
 
         let userId = this.cookieService.get("user_id");
         this.userService.getUserParty(userId).then(party => {
-            this.catalogueService.getCatalogue(userId).then(catalogue => {
+            this.catalogueService.getCatalogueForceUpdate(userId, true).then(catalogue => {
+                console.log(catalogue);
+                this.catalogueService.catalogue = catalogue;
                 this.catalogueLine = UBLModelUtils.createCatalogueLine(catalogue.uuid, party)
                 this.catalogueService.draftCatalogueLine = this.catalogueLine;
 
@@ -381,9 +400,12 @@ export class ProductPublishComponent {
         });
     }
 
-    private onFailedPublish(): void {
+    private onFailedPublish(err): void {
         this.submitted = false;
         this.error_detc = true;
+        if(err.status == 406){
+            this.sameIdError = true;
+        }
     }
 
 
@@ -394,6 +416,10 @@ export class ProductPublishComponent {
             this.newProperty.valueQualifier = "REAL_MEASURE";
         } else if (event.target.value == "Image" || event.target.value == "File") {
             this.newProperty.valueQualifier = "BINARY";
+        } else if(event.target.value == "Quantity"){
+            this.newProperty.valueQualifier = "QUANTITY";
+        } else if(event.target.value == "Boolean"){
+            this.newProperty.valueQualifier = "BOOLEAN";
         }
     }
 
@@ -517,8 +543,26 @@ export class ProductPublishComponent {
      * keeps only the relevant array based on the value qualifier and removes the empty values
      */
     private addCustomProperty(): void {
+        if (this.newProperty.valueQualifier == "BOOLEAN"){
+            let filledValues: string[] = [];
+            for (let val of this.newProperty.value) {
+                if (val != "") {
+                    filledValues.push(val);
+                }
+            }
+            this.newProperty.value = filledValues;
+            this.newProperty.valueDecimal = [];
+            this.newProperty.valueBinary = [];
+            this.newProperty.valueQuantity = [];
+        }
+        else if (this.newProperty.valueQualifier == "QUANTITY"){
+            this.newProperty.value = [];
+            this.newProperty.valueDecimal = [];
+            this.newProperty.valueBinary = [];
+            this.newProperty.valueQuantity = [this.quantity];
+        }
         // remove empty/undefined values and keep only the the data array relevant to the value qualifier
-        if (this.newProperty.valueQualifier == "STRING") {
+        else if (this.newProperty.valueQualifier == "STRING") {
             let filledValues: string[] = [];
             for (let val of this.newProperty.value) {
                 if (val != "") {
@@ -549,17 +593,6 @@ export class ProductPublishComponent {
             this.newProperty.valueDecimal = [];
             this.newProperty.valueQuantity = [];
 
-        } else if (this.newProperty.valueQualifier == 'QUANTITY') {
-            let filledValues: Quantity[] = [];
-            for (let val of this.newProperty.valueQuantity) {
-                if (val != undefined && val != null && val.toString() != "") {
-                    filledValues.push(val);
-                }
-            }
-            this.newProperty.valueQuantity = filledValues;
-            this.newProperty.value = [];
-            this.newProperty.valueDecimal = [];
-            this.newProperty.valueBinary = [];
         }
 
         // add the custom property to the end of existing custom properties
@@ -574,7 +607,9 @@ export class ProductPublishComponent {
 
         // reset the custom property view
         this.newProperty = UBLModelUtils.createAdditionalItemProperty(null, null);
+        this.quantity = new Quantity(null,null);
         this.propertyValueType.nativeElement.selectedIndex = 0;
+
     }
 
     private downloadTemplate() {
@@ -584,11 +619,16 @@ export class ProductPublishComponent {
         var reader = new FileReader();
         this.catalogueService.downloadTemplate(userId, this.categoryService.selectedCategories)
             .then(result => {
-                    var contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-					var data = result.content;
-					var fileName = result.fileName;
-					var blob = new Blob([data],{type:contentType});
-					saveAs(blob,fileName);
+                    var link = document.createElement('a');
+                    link.id = 'downloadLink';
+                    link.href = window.URL.createObjectURL(result.content);
+                    link.download = result.fileName;
+
+                    document.body.appendChild(link);
+                    var downloadLink = document.getElementById('downloadLink');
+                    downloadLink.click();
+                    document.body.removeChild(downloadLink);
+
                     this.bulkPublishStatus.callback("Download completed");
                 },
                 error => {
@@ -705,6 +745,7 @@ export class ProductPublishComponent {
             return false;
         }
     }
+
 
     private handleError(error: any): Promise<any> {
         return Promise.reject(error.message || error);

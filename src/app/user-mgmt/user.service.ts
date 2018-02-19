@@ -13,99 +13,100 @@ import { CookieService } from 'ng2-cookies';
 @Injectable()
 export class UserService {
 
-	private headers = new Headers({'Content-Type': 'application/json'});
-	private url = myGlobals.user_mgmt_endpoint;
+    private headers = new Headers({'Content-Type': 'application/json'});
+    private url = myGlobals.user_mgmt_endpoint;
 
-	userParty: Party;
+    userParty: Party;
 
-	constructor(
-		private http: Http,
-		private cookieService: CookieService
-	) { }
 
-	registerUser(user: UserRegistration): Promise<any> {
-		const url = `${this.url}/register/user`;
-		return this.http
-		.post(url, JSON.stringify(user), {headers: this.headers, withCredentials: true})
-		.toPromise()
-		.then(res => res.json())
-		.catch(this.handleError);
-	}
+    constructor(
+        private http: Http,
+        private cookieService: CookieService
+    ) { }
 
-	registerCompany(company: CompanyRegistration) {
-		const url = `${this.url}/register/company`;
-		const token = 'Bearer '+this.cookieService.get("bearer_token");
-		const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
-		return this.http
+    registerUser(user: UserRegistration): Promise<any> {
+        const url = `${this.url}/register/user`;
+        return this.http
+            .post(url, JSON.stringify(user), {headers: this.headers, withCredentials: true})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+    }
+
+    registerCompany(company: CompanyRegistration) {
+        const url = `${this.url}/register/company`;
+        const token = 'Bearer '+this.cookieService.get("bearer_token");
+        const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
+        return this.http
             .post(url, JSON.stringify(company), {headers: headers_token, withCredentials: true})
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
-	}
+    }
 
-	getInviteList() {
-		const url = `${this.url}/invitations`;
-		const token = 'Bearer '+this.cookieService.get("bearer_token");
-		const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
-		return this.http
+    getInviteList() {
+        const url = `${this.url}/invitations`;
+        const token = 'Bearer '+this.cookieService.get("bearer_token");
+        const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
+        return this.http
             .get(url, {headers: headers_token, withCredentials: true})
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
-	}
+    }
 
-	inviteCompany(invitation: CompanyInvitation) {
-		const url = `${this.url}/send_invitation`;
-		const token = 'Bearer '+this.cookieService.get("bearer_token");
-		const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
-		return this.http
+    inviteCompany(invitation: CompanyInvitation) {
+        const url = `${this.url}/send_invitation`;
+        const token = 'Bearer '+this.cookieService.get("bearer_token");
+        const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
+        return this.http
             .post(url, JSON.stringify(invitation), {headers: headers_token, withCredentials: true})
             .toPromise()
             .then(res => res)
             .catch(this.handleError);
-	}
+    }
 
-	getParty(partyId:string):Promise<Party> {
-		const url = `${this.url}/party/${partyId}`;
-		const token = 'Bearer '+this.cookieService.get("bearer_token");
-		const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
-		return this.http
+    getParty(partyId:string):Promise<Party> {
+        const url = `${this.url}/party/${partyId}`;
+        const token = 'Bearer '+this.cookieService.get("bearer_token");
+        const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
+        return this.http
             .get(url, {headers: headers_token, withCredentials: true})
-			.toPromise()
+            .toPromise()
             .catch(err => {
-            	if(err.status == 302) {
-					let party:Party = err.json();
-					UBLModelUtils.removeHjidFieldsFromObject(party);
-					return Promise.resolve(party);
-				} else {
-            		return this.handleError(err);
-				}
+                if(err.status == 302) {
+                    let party:Party = err.json();
+                    UBLModelUtils.removeHjidFieldsFromObject(party);
+                    return Promise.resolve(party);
+                } else {
+                    return this.handleError(err);
+                }
             });
-	}
+    }
 
-	getUserParty(userId: string): Promise<Party> {
-		if(this.userParty != null) {
-			return Promise.resolve(this.userParty);
-		}
-		const url = `${this.url}/party_by_person/${userId}`;
-		const token = 'Bearer '+this.cookieService.get("bearer_token");
-		const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
-		return this.http
-		.get(url, {headers: headers_token, withCredentials: true})
-		.toPromise()
-		.then(res => {
-			this.userParty = res.json()[0];
-			UBLModelUtils.removeHjidFieldsFromObject(this.userParty);
-			return Promise.resolve(this.userParty);
-		})
-		.catch(this.handleError);
-	}
+    getUserParty(userId: string): Promise<Party> {
+        if(this.userParty != null) {
+            return Promise.resolve(this.userParty);
+        }
+        const url = `${this.url}/party_by_person/${userId}`;
+        const token = 'Bearer '+this.cookieService.get("bearer_token");
+        const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
+        return this.http
+            .get(url, {headers: headers_token, withCredentials: true})
+            .toPromise()
+            .then(res => {
+                this.userParty = res.json()[0];
+                UBLModelUtils.removeHjidFieldsFromObject(this.userParty);
+                return Promise.resolve(this.userParty);
+            })
+            .catch(this.handleError);
+    }
 
     getSettings(userId: string): Promise<CompanySettings> {
         return this.getUserParty(userId).then(party => {
             const url = `${this.url}/company-settings/${party.id}`;
-			const token = 'Bearer '+this.cookieService.get("bearer_token");
-			const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
+            const token = 'Bearer '+this.cookieService.get("bearer_token");
+            const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
             return this.http
                 .get(url, {headers: headers_token, withCredentials: true})
                 .toPromise()
@@ -114,22 +115,23 @@ export class UserService {
         });
     }
 
-	putSettings(settings: CompanySettings, userId: string): Promise<any> {
-		return this.getUserParty(userId).then(party => {
-			const url = `${this.url}/company-settings/${party.id}`;
-			const token = 'Bearer '+this.cookieService.get("bearer_token");
-			const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
-			return this.http
+
+    putSettings(settings: CompanySettings, userId: string): Promise<any> {
+        return this.getUserParty(userId).then(party => {
+            const url = `${this.url}/company-settings/${party.id}`;
+            const token = 'Bearer '+this.cookieService.get("bearer_token");
+            const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
+            return this.http
                 .put(url, settings, {headers: headers_token, withCredentials: true})
                 .toPromise()
                 .then(response => response.json())
                 .catch(this.handleError)
-		});
-	}
+        });
+    }
 
-	resetData():void {
-		this.userParty = null;
-	}
+    resetData():void {
+        this.userParty = null;
+    }
 
 	private handleError(error: any): Promise<any> {
 		return Promise.reject(error.message || error);
