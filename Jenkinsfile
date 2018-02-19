@@ -21,7 +21,7 @@ node ('nimble-jenkins-slave') {
 			}
 
 			stage('Deploy') {
-				sh 'ssh staging "cd /srv/nimble-staging/ && ./run-staging.sh restart-single frontend-serivce"'
+				sh 'ssh staging "cd /srv/nimble-staging/ && ./run-staging.sh restart-single frontend-service"'
 			}
 		} else {
 			stage ('Build Docker') {
