@@ -4,7 +4,15 @@
 
     if [ "$1" == "docker-build" ]; then
 
-        mvn install
+		if [ "$2" == "dev" ]; then
+			mvn clean install -Denv=dev
+		elif [ "$2" == "k8s" ]; then
+			mvn clean install -Denv=prod
+		elif [ "$2" == "staging" ]; then
+			mvn clean install -Denv=staging
+		else
+			mvn clean install -Denv=prod
+		fi
         docker build -t nimbleplatform/frontend-service ./target
 
     elif [ "$1" == "docker-run" ]; then

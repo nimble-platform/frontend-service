@@ -132,6 +132,25 @@
                 </executions>
             </plugin>
 
+			<plugin>
+				<groupId>com.coderplus.maven.plugins</groupId>
+				<artifactId>copy-rename-maven-plugin</artifactId>
+				<version>1.0</version>
+				<executions>
+					<execution>
+						<id>copy-file</id>
+						<phase>process-resources</phase>
+						<goals>
+						<goal>copy</goal>
+						</goals>
+						<configuration>
+							<sourceFile>${project.basedir}/src/environments/globals.${env}.ts</sourceFile>
+							<destinationFile>${project.basedir}/src/app/globals.ts</destinationFile>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>

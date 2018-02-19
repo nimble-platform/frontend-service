@@ -14,9 +14,9 @@ export const debug=false;
 
 // Endpoint variables - SRFG productive
 
-export const user_mgmt_endpoint="https://nimble-platform.salzburgresearch.at/nimble/identity";
-export const catalogue_endpoint="https://nimble-platform.salzburgresearch.at/nimble/catalog";
-export const bpe_endpoint="https://nimble-platform.salzburgresearch.at/nimble/business-process";
+//export const user_mgmt_endpoint="https://nimble-platform.salzburgresearch.at/nimble/identity";
+//export const catalogue_endpoint="https://nimble-platform.salzburgresearch.at/nimble/catalog";
+//export const bpe_endpoint="https://nimble-platform.salzburgresearch.at/nimble/business-process";
 
 
 // Endpoint variables - K8S domain
@@ -28,9 +28,9 @@ export const bpe_endpoint="https://nimble-platform.salzburgresearch.at/nimble/bu
 
 // Endpoint variables - Local development via service discovery
 
-//export const user_mgmt_endpoint="http://localhost:443/identity";
-//export const catalogue_endpoint="http://localhost:443/catalog";
-//export const bpe_endpoint="http://localhost:443/business-process";
+export const user_mgmt_endpoint="http://localhost:443/identity";
+export const catalogue_endpoint="http://localhost:443/catalog";
+export const bpe_endpoint="http://localhost:443/business-process";
 
 
 // Marmotta endpoint variables
