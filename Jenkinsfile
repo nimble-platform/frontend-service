@@ -4,8 +4,16 @@ node ('nimble-jenkins-slave') {
 		git(url: 'https://github.com/nimble-platform/frontend-service.git', branch: env.BRANCH_NAME)
 	}
 
-	stage('Build Application') {
-		sh 'mvn clean install'
+	if (env.BRANCH_NAME == 'master') {
+		stage('Build Application') {
+			sh 'mvn clean install -Denv=prod'
+		}
+	}
+	
+	if (env.BRANCH_NAME == 'staging') {
+		stage('Build Application') {
+			sh 'mvn clean install -Denv=staging'
+		}
 	}
 
 	stage ('Build Docker') {

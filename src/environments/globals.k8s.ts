@@ -14,16 +14,16 @@ export const debug=false;
 
 // Endpoint variables - SRFG productive
 
-export const user_mgmt_endpoint="https://nimble-platform.salzburgresearch.at/nimble/identity";
-export const catalogue_endpoint="https://nimble-platform.salzburgresearch.at/nimble/catalog";
-export const bpe_endpoint="https://nimble-platform.salzburgresearch.at/nimble/business-process";
+//export const user_mgmt_endpoint="https://nimble-platform.salzburgresearch.at/nimble/identity";
+//export const catalogue_endpoint="https://nimble-platform.salzburgresearch.at/nimble/catalog";
+//export const bpe_endpoint="https://nimble-platform.salzburgresearch.at/nimble/business-process";
 
 
 // Endpoint variables - K8S domain
 
-//export const user_mgmt_endpoint="http://nimble.uk-south.containers.mybluemix.net/identity";
-//export const catalogue_endpoint="http://nimble.uk-south.containers.mybluemix.net/catalog";
-//export const bpe_endpoint="http://nimble.uk-south.containers.mybluemix.net/business-process";
+export const user_mgmt_endpoint="http://nimble.uk-south.containers.mybluemix.net/identity";
+export const catalogue_endpoint="http://nimble.uk-south.containers.mybluemix.net/catalog";
+export const bpe_endpoint="http://nimble.uk-south.containers.mybluemix.net/business-process";
 
 
 // Endpoint variables - Local development via service discovery
