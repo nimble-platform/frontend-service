@@ -52,6 +52,9 @@ export class ProductPublishComponent {
     error_detc = false;
     // check whether product id conflict exists or not
     sameIdError = false;
+    // the value of the erroneousID
+    erroneousID = "";
+
     json = JSON;
 
     private bulkPublishStatus: CallStatus = new CallStatus();
@@ -405,6 +408,10 @@ export class ProductPublishComponent {
         this.error_detc = true;
         if(err.status == 406){
             this.sameIdError = true;
+            this.erroneousID = this.catalogueLine.id;
+        }
+        else{
+            this.sameIdError = false;
         }
     }
 
