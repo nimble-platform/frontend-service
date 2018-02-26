@@ -312,9 +312,9 @@ export class UBLModelUtils {
     public static createPrice(amount: string): Price {
         // create amount
         if(amount == null) {
-            amount = "EUR";
+            amount = "";
         }
-        let amountObj: Amount = this.createAmountWithCurrency("EUR");
+        let amountObj: Amount = this.createAmountWithCurrency("");
         let quantity: Quantity = this.createQuantity();
         let price: Price = new Price(amountObj, quantity);
         return price;

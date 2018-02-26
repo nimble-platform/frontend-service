@@ -4,7 +4,6 @@
 <amount-view [presentationMode]="presentationMode"
              [propName]="'Amount'"
              [amount]="[catalogueLine.requiredItemLocationQuantity.price.priceAmount]"
-             [mandatory]="true"
              [parentForm]="parentForm">
 </amount-view>
 
@@ -13,7 +12,6 @@
 <quantity-view [presentationMode]="presentationMode"
                [propName]="'Price Base Quantity'"
                [quantity]="[catalogueLine.requiredItemLocationQuantity.price.baseQuantity]"
-               [mandatory]="true"
                [multiValue]="true"
                [parentForm]="parentForm">
 </quantity-view>

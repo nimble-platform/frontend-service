@@ -56,7 +56,7 @@
                             <div class="col-8">
                                 <p style="word-break: break-all;word-wrap: break-word;white-space: pre-wrap;"><b>{{catLine.goodsItem.item.name}}</b></p>
                                 <p style="word-break: break-all;word-wrap: break-word;white-space: pre-wrap">{{catLine.goodsItem.item.description}}</p>
-                                {{catLine.requiredItemLocationQuantity.price.priceAmount.value+" "+catLine.requiredItemLocationQuantity.price.priceAmount.currencyID}} <br/>
+                                <p *ngIf="catLine.requiredItemLocationQuantity.price.priceAmount.value != null" style="word-break: break-all;word-wrap: break-word;white-space: pre-wrap">{{catLine.requiredItemLocationQuantity.price.priceAmount.value+" "+catLine.requiredItemLocationQuantity.price.priceAmount.currencyID}}</p>
                             </div>
                             <div class="col-2">
                                 <button type="button" class="btn btn-success space-after col" (click)="redirectToEdit(catLine)" style="display: block">Edit</button>
