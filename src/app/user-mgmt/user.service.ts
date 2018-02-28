@@ -9,6 +9,7 @@ import { CompanyRegistration } from './model/company-registration';
 import { CompanyInvitation } from './model/company-invitation';
 import {UBLModelUtils} from "../catalogue/model/ubl-model-utils";
 import { CookieService } from 'ng2-cookies';
+import { UserRole } from './model/user-role';
 
 @Injectable()
 export class UserService {
@@ -113,6 +114,23 @@ export class UserService {
                 .then(response => response.json() as CompanySettings)
                 .catch(this.handleError)
         });
+    }
+
+    getUserRoles(): Promise<UserRole[]> {
+        const url = `${this.url}/roles`;
+        const token = 'Bearer '+this.cookieService.get("bearer_token");
+        const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
+        return this.http
+            .get(url, {headers: headers_token, withCredentials: true})
+            .toPromise()
+            .then(res => {
+                let roles: UserRole[] = [];
+                const resultJson = res.json();
+                for( var roleId in resultJson )
+                    roles.push(new UserRole(roleId, resultJson[roleId]));
+                return Promise.resolve(roles);
+            })
+            .catch(this.handleError);
     }
 
 

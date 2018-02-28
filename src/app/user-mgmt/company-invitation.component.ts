@@ -6,13 +6,16 @@ import * as myGlobals from '../globals';
 
 @Component({
     selector: 'company-invitation',
-    templateUrl: './company-invitation.component.html'
+	templateUrl: './company-invitation.component.html',
+    styleUrls: ['./company-invitation.component.css']
 })
 
 export class CompanyInvitationComponent implements OnInit {
 
 	invEmail = "";
+	invRoles = [];
 	invPending = [];
+	userRoles = [];
 	submitted = false;
     callback = false;
 	callback2 = false;
@@ -24,7 +27,8 @@ export class CompanyInvitationComponent implements OnInit {
 	) {}
 	
 	ngOnInit() {
-        this.loadInvites();
+		this.loadInvites();
+		this.loadRoles();
     }
 	
 	loadInvites() {
@@ -40,10 +44,21 @@ export class CompanyInvitationComponent implements OnInit {
                 console.error('An error occurred', error); // for demo purposes only
             });
 	}
+	
+	loadRoles() {
+		this.userService.getUserRoles()
+            .then(response => {
+                this.userRoles = response;
+            })
+			.catch(error => {
+				this.userRoles = [];
+                console.error('An error occurred', error); // for demo purposes only
+            });
+	}
 
 	onSubmit() {
 		let companyId = this.cookieService.get('company_id');
-		let companyInvitation: CompanyInvitation = new CompanyInvitation(companyId, this.invEmail);
+		let companyInvitation: CompanyInvitation = new CompanyInvitation(companyId, this.invEmail, this.invRoles);
 		if (myGlobals.debug)
 			console.log(`Sending invitation ${JSON.stringify(companyInvitation)}`);
 		this.submitted = true;
