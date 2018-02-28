@@ -14,7 +14,7 @@ export const debug=false;
 
 // Endpoint variables - SRFG productive
 
-export const user_mgmt_endpoint="http://localhost:9096";
+export const user_mgmt_endpoint="http://nimble-staging.salzburgresearch.at/identity";
 export const catalogue_endpoint="http://nimble-staging.salzburgresearch.at/catalog";
 export const bpe_endpoint="http://nimble-staging.salzburgresearch.at/business-process";
 
