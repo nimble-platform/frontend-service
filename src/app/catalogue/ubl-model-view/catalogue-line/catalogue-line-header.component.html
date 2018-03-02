@@ -83,7 +83,7 @@
         <br>
 
         <div>
-            <div *ngFor="let propertyBlock of catalogueLine.goodsItem.item.additionalItemProperty | propertyBlockPipe: presentationMode: true; let i = index; trackBy : trackByIndex">
+            <div *ngFor="let propertyBlock of catalogueLine.goodsItem.item.additionalItemProperty | propertyBlockPipe: presentationMode: 'Custom'; let i = index; trackBy : trackByIndex">
                 <div id="propertyBlock" [ngbCollapse]="propertyBlockCollapsedStates.get(propertyBlock[PROPERTY_BLOCK_FIELD_NAME])">
                     <div *ngFor="let property of propertyBlock[PROPERTY_BLOCK_FIELD_PROPERTIES];let i = index; let l=last ; trackBy : trackByIndex" >
                         <additional-item-property

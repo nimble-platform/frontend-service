@@ -186,12 +186,7 @@ export class ProductPublishComponent {
         // prepare empty category fields
         for (let category of this.categoryService.selectedCategories) {
             for (let property of category.properties) {
-                let aip = UBLModelUtils.createAdditionalItemProperty(property, category);
-                //aip.propertyDefinition = property.definition;
-                // Make sure each property is pushed once
-                if (newProperties.findIndex(p => p.id == property.id) <= -1) {
-                    newProperties.push(aip);
-                }
+                newProperties.push(UBLModelUtils.createAdditionalItemProperty(property, category));
             }
         }
 
@@ -202,11 +197,16 @@ export class ProductPublishComponent {
             }
         }
 
+        // existingProperties contains only non-custom properties now
+        existingProperties = existingProperties.filter(function(el){
+           return el.itemClassificationCode.listID != "Custom";
+        });
+
         // replace the empty properties with the existing ones
         for (let i = 0; i < newProperties.length; i++) {
-            for (let j = customProperties.length; j < existingProperties.length; j++) {
+            for (let j = 0; j < existingProperties.length; j++) {
                 // If a property already exists, copy it over
-                if (newProperties[i].id == existingProperties[j].id) {
+                if (newProperties[i].id == existingProperties[j].id && newProperties[i].itemClassificationCode.value == existingProperties[j].itemClassificationCode.value) {
                     newProperties[i] = existingProperties[j];
                 }
             }
@@ -219,19 +219,9 @@ export class ProductPublishComponent {
     private updateItemWithNewCategory(category: Category): void {
         let commodityClassification = UBLModelUtils.createCommodityClassification(category);
         this.catalogueLine.goodsItem.item.commodityClassification.push(commodityClassification);
-
-        loop1:
-            for (let property of category.properties) {
-                let aip = UBLModelUtils.createAdditionalItemProperty(property, category);
-                // check whether the same property exists already
-                for (let existingAip of this.catalogueLine.goodsItem.item.additionalItemProperty) {
-                    if (aip.id == existingAip.id) {
-                        continue loop1;
-                    }
-                }
-
-                this.catalogueLine.goodsItem.item.additionalItemProperty.push(aip);
-            }
+        for (let property of category.properties) {
+            this.catalogueLine.goodsItem.item.additionalItemProperty.push(UBLModelUtils.createAdditionalItemProperty(property, category));
+        }
         this.catalogueLine.goodsItem.item.additionalItemProperty = [].concat(this.catalogueLine.goodsItem.item.additionalItemProperty);
     }
 
@@ -344,13 +334,15 @@ export class ProductPublishComponent {
         // splice out properties that are unfilled
         let properties: ItemProperty[] = catalogueLineCopy.goodsItem.item.additionalItemProperty;
         let propertiesToBeSpliced: ItemProperty[] = [];
-
         for (let property of properties) {
             let valueQualifier: string = property.valueQualifier.toLocaleLowerCase();
             if (valueQualifier == "real_measure" ||
                 valueQualifier == "int" ||
                 valueQualifier == "double" ||
                 valueQualifier == "number") {
+                property.valueDecimal = property.valueDecimal.filter(function (el){
+                    return (el != null && el.toString() != "");
+                });
                 if (property.valueDecimal.length == 0 || property.valueDecimal[0] == undefined) {
                     propertiesToBeSpliced.push(property);
                 }
@@ -504,37 +496,11 @@ export class ProductPublishComponent {
      * 3) remove the corresponding commodity classification from the item
      */
     categoryCancel(categoryId: string) {
-        let c = 0;
-
         let index = this.categoryService.selectedCategories.findIndex(c => c.id == categoryId);
         if (index > -1) {
-
-            for (let property of this.categoryService.selectedCategories[index].properties) {
-                // check whether the property of the deleted category are included in other properties,
-                // which is the case for base eClass properties
-                c = 0;
-                for (let category of this.categoryService.selectedCategories) {
-                    if (category.id == categoryId)
-                        continue;
-
-                    for (let p of category.properties) {
-                        if (property.id == p.id)
-                            c++;
-                    }
-                }
-                // if the property is not included in other categories, remove it from the additional item properties
-                if (c == 0) {
-
-                    let j = this.catalogueLine.goodsItem.item.additionalItemProperty.findIndex(p => p.id == property.id);
-                    if (j > -1) {
-                        this.catalogueLine.goodsItem.item.additionalItemProperty.splice(j, 1);
-                        // FIXME: dirty hack so that angular would recognize the change in the additionItemProperty array
-                        // https://stackoverflow.com/questions/36247016/angular2-refreshing-view-on-array-push
-                        // https://stackoverflow.com/questions/40829951/angular2-ngfor-onpush-change-detection-with-array-mutations
-                        this.catalogueLine.goodsItem.item.additionalItemProperty = [].concat(this.catalogueLine.goodsItem.item.additionalItemProperty);
-                    }
-                }
-            }
+            this.catalogueLine.goodsItem.item.additionalItemProperty = this.catalogueLine.goodsItem.item.additionalItemProperty.filter(function (el) {
+                return el.itemClassificationCode.value != categoryId;
+            });
 
             this.categoryService.selectedCategories.splice(index, 1);
         }

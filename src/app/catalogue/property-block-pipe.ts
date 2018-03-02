@@ -22,18 +22,16 @@ export class PropertyBlockPipe implements PipeTransform {
     private selectedCategories: Category[] = [];
     private itemProperties: ItemProperty[] = [];
     private propertyBlocks: Array<any> = [];
-    private checkedProperties: Array<string> = [];
+    private checkedProperties: Array<{propId:string,categoryId:string}> = [];
     private presentationMode:string;
-    private customProperties:boolean;
+    private properties:string;
 
     constructor(private categoryService: CategoryService,
                 private publishStateService: PublishService) {
     }
 
-    // If customProperties == true,then we get custom properties only.
-    // If customProperties == false,then we get all properties which are not custom.
-    transform(itemProperties: ItemProperty[], presentationMode:string, customProperties:boolean = null): any {
-        this.customProperties = customProperties;
+    transform(itemProperties: ItemProperty[], presentationMode:string, properties:string): any {
+        this.properties = properties;
         this.selectedCategories = this.categoryService.selectedCategories;
         this.itemProperties = itemProperties;
         this.presentationMode = presentationMode;
@@ -42,26 +40,21 @@ export class PropertyBlockPipe implements PipeTransform {
         return this.retrievePropertyBlocks();
     }
 
-    /**
-     * Creates the property block array by parsing the additional item property array of the item.
-     * In the edit mode, it gathers all the properties included in the category, however, in other presentation modes,
-     * it considers only the properties belonging to the item iff customProperties is null.
-     */
     retrievePropertyBlocks(): any {
-        if (this.presentationMode == 'edit' && this.customProperties == null) {
-            this.refreshPropertyBlocks();
-        } else if(this.customProperties == null) {
-            this.createPropertyBlocksWithExistingProperties();
-        } else{
-            if(this.customProperties == true){
-                this.createCustomPropertyBlock();
+        // custom properties belonging to the item
+        if(this.properties == 'Custom'){
+            this.createCustomPropertyBlock();
+        }
+        else{
+            // all the properties included in the category
+            if(this.presentationMode == 'edit'){
+                this.categoryPropertyBlocks();
             }
+            // non-custom properties belonging to the item
             else{
-            //    this.createPropertyBlocksWithExistingProperties();
                 this.createNotCustomProperties();
             }
         }
-
         return this.propertyBlocks;
 
 
@@ -107,10 +100,7 @@ export class PropertyBlockPipe implements PipeTransform {
     }
 
 
-    refreshPropertyBlocks(): void {
-        // get custom properties
-        this.createCustomPropertyBlock();
-
+    categoryPropertyBlocks(): void {
         // commodity classifications
         if (this.selectedCategories != null) {
             for (let category of this.selectedCategories) {
@@ -130,11 +120,11 @@ export class PropertyBlockPipe implements PipeTransform {
         customPropertyBlock[this.PROPERTY_BLOCK_FIELD_NAME] = name;
         customPropertyBlock[this.PROPERTY_BLOCK_FIELD_ISCOLLAPSED] = this.publishStateService.getCollapsedState(name);
 
-        let customProps:ItemProperty[] = []
+        let customProps:ItemProperty[] = [];
         for(let property of this.itemProperties) {
             if(property.itemClassificationCode.listID == "Custom") {
                 customProps.push(property);
-                this.checkedProperties.push(property.id);
+                this.checkedProperties.push({propId:property.id,categoryId:"Custom"});
             }
         }
 
@@ -162,14 +152,13 @@ export class PropertyBlockPipe implements PipeTransform {
         let specificPropertyDetails: Property[] = [];
         for (let property of category.properties) {
             let aip: ItemProperty;
-            let index = this.itemProperties.findIndex(ip => ip.id == property.id);
+            let index = this.itemProperties.findIndex(ip => ip.id == property.id && ip.itemClassificationCode.value == category.id);
             if (index > -1) {
                 aip = this.itemProperties[index];
             }
             else continue;
 
-            //aip.propertyDefinition = property.definition;
-            if (!this.isPropertyPresentedAlready(property)) {
+            if (!this.isPropertyPresentedAlready(property,category.id)) {
                 if (this.isBaseEClassProperty(property.id)) {
                     baseProperties.push(aip);
                     basePropertyDetails.push(property);
@@ -178,7 +167,7 @@ export class PropertyBlockPipe implements PipeTransform {
                     specificProperties.push(aip);
                     specificPropertyDetails.push(property);
                 }
-                this.checkedProperties.push(property.id);
+                this.checkedProperties.push({propId:property.id,categoryId:category.id});
             }
         }
 
@@ -198,67 +187,32 @@ export class PropertyBlockPipe implements PipeTransform {
 
         let properties: ItemProperty[] = [];
         for (let property of category.properties) {
-            if (!this.isPropertyPresentedAlready(property)) {
-                properties.push(this.getItemProperty(property));
-                this.checkedProperties.push(property.id)
+            if (!this.isPropertyPresentedAlready(property,category.id)) {
+                properties.push(this.getItemProperty(property,category.id));
+                this.checkedProperties.push({propId:property.id,categoryId:category.id});
             }
         }
         propertyBlock['properties'] = properties;
     }
 
-    private isPropertyPresentedAlready(property: Property): boolean {
-        for (let id of this.checkedProperties) {
-            if (property.id == id) {
+    private isPropertyPresentedAlready(property: Property,categoryId: string): boolean {
+        for (let x of this.checkedProperties) {
+            if (property.id == x.propId && categoryId == x.categoryId) {
                 return true;
             }
         }
         return false;
     }
 
-    private getItemProperty(property: Property): ItemProperty {
+    private getItemProperty(property: Property,categoryId: string): ItemProperty {
         for (let aip of this.itemProperties) {
-            if (aip.id == property.id) {
+            if (aip.id == property.id && aip.itemClassificationCode.value == categoryId) {
                 return aip;
             }
         }
         console.error("Property could not be found in additional item properties: " + property.id)
     }
 
-    private createPropertyBlocksWithExistingProperties() {
-        this.propertyBlocks = [];
-
-        // put all properties into their blocks
-        for (let property of this.itemProperties) {
-            if (property.itemClassificationCode.listID === "eClass") {
-                let isBaseProperty:boolean = this.isBaseEClassProperty(property.id);
-                let blockName = this.getBlockNameForEClass(property.itemClassificationCode.name, isBaseProperty);
-                let blockIndex = this.propertyBlocks.findIndex(block => block[this.PROPERTY_BLOCK_FIELD_NAME] == blockName);
-                if (blockIndex == -1) {
-                    let eClassBlocks = this.createEmptyEClassPropertyBlocks(property.itemClassificationCode.name);
-                    this.propertyBlocks.push(eClassBlocks[0]);
-                    this.propertyBlocks.push(eClassBlocks[1]);
-
-                    blockIndex = this.propertyBlocks.length - 2;
-                    if(!isBaseProperty) {
-                        blockIndex++;
-                    }
-                }
-
-                this.propertyBlocks[blockIndex][this.PROPERTY_BLOCK_FIELD_PROPERTIES].push(property);
-
-            } else {
-                let blockName = this.getBlockName(property.itemClassificationCode.name, property.itemClassificationCode.listID);
-                let blockIndex = this.propertyBlocks.findIndex(block => block[this.PROPERTY_BLOCK_FIELD_NAME] == blockName);
-                if (blockIndex == -1) {
-                    let block = this.createEmptyPropertyBlock(property.itemClassificationCode.name, property.itemClassificationCode.listID);
-                    this.propertyBlocks.push(block);
-                    blockIndex = this.propertyBlocks.length-1;
-                }
-
-                this.propertyBlocks[blockIndex][this.PROPERTY_BLOCK_FIELD_PROPERTIES].push(property);
-            }
-        }
-    }
 
     private createEmptyEClassPropertyBlocks(categoryName):any {
         let basePropertyBlock: any = {};
