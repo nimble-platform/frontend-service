@@ -191,6 +191,8 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
         this.sparqlJSON['parametersIncludingPath'] = [];
         this.sparqlJSON['parameters'] = [];
         this.sparqlJSON['filters'] = [];
+        this.sparqlJSON['parametersURL'] = [];
+        this.sparqlJSON['propertySources'] = [];
         this.sparqlJSON['orangeCommandSelected'] = {names: []};
         this.referenceResults = {};
         this.refResultsRange = [];
@@ -213,6 +215,8 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
         this.sparqlJSON['parameters'] = [];
         this.sparqlJSON['filters'] = [];
         this.sparqlJSON['orangeCommandSelected'] = {name: ''};
+        this.sparqlJSON['parametersURL'] = [];
+        this.sparqlJSON['propertySources'] = [];
         this.accConfig.closeOthers = true;
         this.semQJSon = {};
         setTimeout(() => this.basicInfoAlert = true, 6000);
@@ -233,7 +237,7 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
         // API CALL
         this.expSearch.searchForProperty(this._propertyGetterJSON)
             .then((res) => {
-                // console.log(res); // DEBUG
+                console.log(res); // DEBUG
                 this.results = [];
                 res.filter(value => {
                     // filter out only datatype properties from all available properties
@@ -293,12 +297,13 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
         // console.log(url);
         // this.sparqlJSON['parameters'].push(encodeURIComponent(url));
         this.sparqlJSON['parameters'].push(url.split('#')[1]);
-        this.sparqlJSON['parametersURL'] = [];
+        this.sparqlJSON['parametersURL'].push(encodeURIComponent(url));
         // this.sparqlJSON['parametersIncludingPath'].push({'urlOfProperty': encodeURIComponent(this.selectedPropertyURL),
         //     'path': [{'concept': this.configSPQ['concept']}]});
         // console.log('applyURL', this.configSPQ);
         this.sparqlJSON['parametersIncludingPath'].push({'urlOfProperty': encodeURIComponent(url),
             'path': [{'concept': this.configSPQ['concept']}]});
+        this.sparqlJSON['propertySources'].push(this.model.propertySource);
     }
 
     /**
@@ -313,7 +318,8 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
         // console.log('hasValueRelation ', this.configSPQ);
         // console.log(this.selectedPropertyURL);
         let dummyJSON = {'conceptURL': this.configSPQ['concept'],
-            'propertyURL': encodeURIComponent(this.selectedPropertyURL)};
+            'propertyURL': encodeURIComponent(this.selectedPropertyURL),
+            'propertySource': this.model.propertySource};
         this.expSearch.searchForPropertyValues(dummyJSON)
             .then(res => {
                 this.valueResults = res;
@@ -529,6 +535,8 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
                     if (removalIndex > -1) {
                         this.sparqlJSON['parameters'].splice(removalIndex, 1);
                         this.sparqlJSON['parametersIncludingPath'].splice(removalIndex, 1);
+                        this.sparqlJSON['parametersURL'].splice(removalIndex, 1);
+                        this.sparqlJSON['propertySources'].splice(removalIndex, 1);
                     }
                 } else {
                     this.sentence = this.sentence.replace(this.semQJSon[result['toRemove']]['value'], '');
