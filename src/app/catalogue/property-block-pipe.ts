@@ -104,6 +104,10 @@ export class PropertyBlockPipe implements PipeTransform {
         // commodity classifications
         if (this.selectedCategories != null) {
             for (let category of this.selectedCategories) {
+                // custom categories
+                if(category.taxonomyId == 'Custom'){
+                    continue;
+                }
                 if (category.taxonomyId == 'eClass') {
                     this.createEClassPropertyBlocks(category);
                 } else {

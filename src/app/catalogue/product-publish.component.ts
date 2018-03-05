@@ -65,6 +65,8 @@ export class ProductPublishComponent {
 
     // check whether dialogBox is necessary or not during navigation
     public static dialogBox = true;
+    // check whether changing publish-mode to 'create' is necessary or not
+    changePublishModeCreate: boolean = false;
 
     constructor(public categoryService: CategoryService,
                 private catalogueService: CatalogueService,
@@ -89,8 +91,17 @@ export class ProductPublishComponent {
     }
 
     canDeactivate():boolean {
+        if(this.changePublishModeCreate){
+            this.publishStateService.publishMode = 'create';
+            this.publishStateService.publishingStarted = false;
+        }
         if(ProductPublishComponent.dialogBox){
-            return confirm("You will lose any changes you made, are you sure you want to quit ?");
+            let x:boolean = confirm("You will lose any changes you made, are you sure you want to quit ?");
+            if(x){
+                this.publishStateService.publishMode = 'create';
+                this.publishStateService.publishingStarted = false;
+            }
+            return x;
         }
         ProductPublishComponent.dialogBox = true;
         return true;
@@ -167,7 +178,6 @@ export class ProductPublishComponent {
 
             for (let category of this.categoryService.selectedCategories) {
                 let newCategory = this.isNewCategory(category);
-
                 if (newCategory) {
                     this.updateItemWithNewCategory(category);
                 }
@@ -313,9 +323,9 @@ export class ProductPublishComponent {
         }
     }
 
-    // changes publisMode to create
+    // changes publishMode to create
     private changePublishModeToCreate():void{
-        this.publishStateService.publishMode = "create";
+        this.changePublishModeCreate = true;
     }
 
     private checkProductNature(catalogueLine: CatalogueLine) {
@@ -495,19 +505,36 @@ export class ProductPublishComponent {
      * 2) remove the category from the selected categories
      * 3) remove the corresponding commodity classification from the item
      */
-    categoryCancel(categoryId: string) {
-        let index = this.categoryService.selectedCategories.findIndex(c => c.id == categoryId);
-        if (index > -1) {
-            this.catalogueLine.goodsItem.item.additionalItemProperty = this.catalogueLine.goodsItem.item.additionalItemProperty.filter(function (el) {
-                return el.itemClassificationCode.value != categoryId;
-            });
+    categoryCancel(category:Category) {
+        // custom categories
+        if(category.taxonomyId == 'Custom'){
+            let index = this.categoryService.selectedCategories.findIndex(c => c.preferredName == category.preferredName);
+            if (index > -1) {
+                this.catalogueLine.goodsItem.item.additionalItemProperty = this.catalogueLine.goodsItem.item.additionalItemProperty.filter(function (el) {
+                    return el.itemClassificationCode.name != category.preferredName;
+                });
 
-            this.categoryService.selectedCategories.splice(index, 1);
+                this.categoryService.selectedCategories.splice(index, 1);
+            }
+            let i = this.catalogueLine.goodsItem.item.commodityClassification.findIndex(c => c.itemClassificationCode.name == category.preferredName);
+            if (i > -1) {
+                this.catalogueLine.goodsItem.item.commodityClassification.splice(i, 1);
+            }
         }
+        else{
+            let index = this.categoryService.selectedCategories.findIndex(c => c.id == category.id);
+            if (index > -1) {
+                this.catalogueLine.goodsItem.item.additionalItemProperty = this.catalogueLine.goodsItem.item.additionalItemProperty.filter(function (el) {
+                    return el.itemClassificationCode.value != category.id;
+                });
 
-        let i = this.catalogueLine.goodsItem.item.commodityClassification.findIndex(c => c.itemClassificationCode.value == categoryId);
-        if (i > -1) {
-            this.catalogueLine.goodsItem.item.commodityClassification.splice(i, 1);
+                this.categoryService.selectedCategories.splice(index, 1);
+            }
+
+            let i = this.catalogueLine.goodsItem.item.commodityClassification.findIndex(c => c.itemClassificationCode.value == category.id);
+            if (i > -1) {
+                this.catalogueLine.goodsItem.item.commodityClassification.splice(i, 1);
+            }
         }
     }
 
@@ -701,10 +728,21 @@ export class ProductPublishComponent {
 
     private isNewCategory(category: Category): boolean {
         let newCategory: boolean = true;
-        for (let commodityClassification of this.catalogueLine.goodsItem.item.commodityClassification) {
-            if (category.id == commodityClassification.itemClassificationCode.value) {
-                newCategory = false;
-                break;
+        // custom categories
+        if(category.taxonomyId == 'Custom'){
+            for (let commodityClassification of this.catalogueLine.goodsItem.item.commodityClassification) {
+                if (category.preferredName == commodityClassification.itemClassificationCode.name) {
+                    newCategory = false;
+                    break;
+                }
+            }
+        }
+        else{
+            for (let commodityClassification of this.catalogueLine.goodsItem.item.commodityClassification) {
+                if (category.id == commodityClassification.itemClassificationCode.value) {
+                    newCategory = false;
+                    break;
+                }
             }
         }
         return newCategory;

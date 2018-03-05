@@ -1,5 +1,5 @@
 <!-- Topmost navigation bar -->
-<ul class="nav nav-tabs">
+<ul class="nav nav-tabs" *ngIf="publishStateService.publishMode != 'edit'">
     <li class="nav-item">
         <a href id="singleUpload"
            [ngClass]="{'nav-link': true, active: singleItemUpload}"
@@ -32,7 +32,7 @@
                     class="btn btn-info ml-3">
                 {{selectedCategory.preferredName}}
                 <span>
-                    <i (click)="categoryCancel(selectedCategory.id)">&times;</i>
+                    <i (click)="categoryCancel(selectedCategory)">&times;</i>
                 </span>
             </button>
             <div (click)="addCategoryOnClick()"
@@ -305,7 +305,7 @@
                     class="btn btn-info ml-3">
                 {{selectedCategory.preferredName}}
                 <span><i
-                        (click)="categoryCancel(selectedCategory.id)"
+                        (click)="categoryCancel(selectedCategory)"
                 >&times;</i></span>
             </button>
             <div (click)="addCategoryOnClick()"
