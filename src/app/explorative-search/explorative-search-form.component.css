@@ -3,8 +3,14 @@
 */
 .kwArea {
     border: 1px solid black;
-    background-color: peachpuff;
+    background-color: #f7f7f7;
     align-content: left;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    -o-border-radius: 10px;
+    -ms-border-radius: 10px;
+    -khtml-border-radius: 10px;
+    border-radius: 10px;
 }
 
 .searchQueries {

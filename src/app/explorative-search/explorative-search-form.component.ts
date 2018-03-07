@@ -37,6 +37,7 @@ export class ExplorativeSearchFormComponent implements OnInit {
 
     // checkbox for every keyword in Search History
     // remember: the variable name is same as in the HTML file
+    public loading = false;
     cbInput = true;
     langInput = true;
     language: string = 'en'; // default search in english
@@ -77,6 +78,7 @@ export class ExplorativeSearchFormComponent implements OnInit {
      * @param inpLang string which language the user queries
      */
     Search(inputVal: string, inpLang: string): void {
+        this.loading = true;
         if (!inpLang) {
             // default is english
             inpLang = this.language;
@@ -105,6 +107,7 @@ export class ExplorativeSearchFormComponent implements OnInit {
                 this._error_detected_kw = true;
             });
         // console.log('OUTPUT', this.Output);
+        this.loading = false;
     }
 
     /**
@@ -142,6 +145,7 @@ export class ExplorativeSearchFormComponent implements OnInit {
      */
 
     getQuery(inputVal: string, urlVal: string) {
+        this.loading = true;
         // console.log(inputVal);
         this.conceptName = urlVal;
         this.conceptURL = inputVal;
@@ -183,6 +187,7 @@ export class ExplorativeSearchFormComponent implements OnInit {
                 console.log(error);
                 this._error_detected_query = true;
             });
+        this.loading = false;
     }
 
     previousStateRestore() {
