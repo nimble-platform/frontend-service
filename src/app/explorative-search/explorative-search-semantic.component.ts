@@ -345,7 +345,8 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
      * @param {string} inputVal: String value from the clicked panel
      */
     hasValueRelation(inputVal: string) {
-        this.selectedValue = false;
+        this.loading = true;
+
         this.sentence += ' <' + inputVal + '> ';
         // console.log('hasValueRelation ', this.configSPQ);
         // console.log(this.selectedPropertyURL);
@@ -356,7 +357,10 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
             .then(res => {
                 this.valueResults = res;
                 this.searchvalue = this.valueResults['allValues'];
+                this.loading = false;
+                this.selectedValue = false;
             });
+
     }
 
     /**
@@ -454,12 +458,18 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
         let valJSON = {value: val, type: 'fValue'};
         this.semQJSon['selections'].push(valJSON);
 
-        if (Number(val)) { // the value is a number add the SPARQL filter for the same
-            this.sparqlJSON['filters'].push({'property': encodeURIComponent(url), 'min': Number(val),
-                'max': Number(val) + 1});
-        } else {
-            // console.log('orange button pressed'); // currently no logic for text based filter available
-        }
+        /**
+         *
+         * V2.0 Implementation for SPARQL fitlers
+         */
+        this.sparqlJSON['filters'].push({'property': encodeURIComponent(url), 'exactValue': val});
+
+        // if (Number(val)) { // the value is a number add the SPARQL filter for the same
+        //     this.sparqlJSON['filters'].push({'property': encodeURIComponent(url), 'min': Number(val),
+        //         'max': Number(val) + 1});
+        // } else {
+        //     // console.log('orange button pressed'); // currently no logic for text based filter available
+        // }
         this.results = []; // avoid clicking the hasValue button again (disable it)
     }
 

@@ -78,7 +78,6 @@ export class ExplorativeSearchFormComponent implements OnInit {
      * @param inpLang string which language the user queries
      */
     Search(inputVal: string, inpLang: string): void {
-        this.loading = true;
         if (!inpLang) {
             // default is english
             inpLang = this.language;
@@ -107,7 +106,6 @@ export class ExplorativeSearchFormComponent implements OnInit {
                 this._error_detected_kw = true;
             });
         // console.log('OUTPUT', this.Output);
-        this.loading = false;
     }
 
     /**
@@ -178,6 +176,7 @@ export class ExplorativeSearchFormComponent implements OnInit {
                     };
                 }
                 this.visData = res;
+                this.loading = false;
 
                 // console.log(this.visData);
                 this._error_detected_query = false;
@@ -187,7 +186,6 @@ export class ExplorativeSearchFormComponent implements OnInit {
                 console.log(error);
                 this._error_detected_query = true;
             });
-        this.loading = false;
     }
 
     previousStateRestore() {

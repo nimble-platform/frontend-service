@@ -12,7 +12,7 @@
                 </div>
             </div>
             <div class="form-group row">
-                <label class="col-form-label-lg col-sm-2">Languages</label>
+                <label class="col-form-label col-sm-2">Languages</label>
                 <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic" [(ngModel)]="language"
                          *ngFor="let eachLang of availableLanguages['languages']">
                         <label ngbButtonLabel class="btn-primary">
@@ -34,7 +34,16 @@
 <div [hidden]="!_warning_kw">
     <div class="alert alert-warning space-before" role="alert">no such result found</div>
 </div>
-
+    <div id="loading-bg" *ngIf="loading">
+        <div id="sk-loading-icon">
+            <div class="sk-folding-cube">
+                <div class="sk-cube1 sk-cube"></div>
+                <div class="sk-cube2 sk-cube"></div>
+                <div class="sk-cube4 sk-cube"></div>
+                <div class="sk-cube3 sk-cube"></div>
+            </div>
+        </div>
+    </div>
 <!-- Search Keywords go here -->
 <div class="container" *ngIf="Output.length">
     <div class="row">
