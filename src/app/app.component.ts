@@ -24,6 +24,7 @@ export class AppComponent implements OnInit {
 	public roles = [];
 	public debug = myGlobals.debug;
 	public mailto = "";
+	public allowed = false;
 
 	constructor(
 		private cookieService: CookieService,
@@ -116,6 +117,62 @@ export class AppComponent implements OnInit {
 		}
 		if (path != "")
 			this.router.navigate([path]);
+	}
+	
+	public checkRoles(func) {
+		this.allowed = false;
+		if (this.cookieService.get("company_id") != 'null') {
+			this.activeCompanyName = this.cookieService.get("active_company_name");
+		}
+		else {
+			this.activeCompanyName = null;
+		}
+		const admin = this.roles.indexOf("company_admin") != -1;
+		const external = this.roles.indexOf("external_representative") != -1;
+		const initial = this.roles.indexOf("initial_representative") != -1;
+		const legal = this.roles.indexOf("legal_representative") != -1 || this.debug;
+		const monitor = this.roles.indexOf("monitor") != -1;
+		const publish = this.roles.indexOf("publisher") != -1;
+		const purch = this.roles.indexOf("purchaser") != -1;
+		const sales = this.roles.indexOf("sales_offices") != -1;
+		const all_rights = admin || external || legal;
+		switch (func) {
+			case "reg_comp":
+				if (!this.activeCompanyName)
+					this.allowed = true;
+				break;
+			case "wait_comp":
+				if (initial && !legal)
+					this.allowed = true;
+				break;
+			case "sales":
+				if (all_rights || sales || monitor)
+					this.allowed = true;
+				break;
+			case "purchases":
+				if (all_rights || purch || monitor)
+					this.allowed = true;
+				break;
+			case "catalogue":
+				if (all_rights || publish || initial)
+					this.allowed = true;
+				break;
+			case "bp":
+				if (all_rights || purch || sales)
+					this.allowed = true;
+				break;
+			case "comp":
+				if (all_rights)
+					this.allowed = true;
+				break;
+			case "legal":
+				if (legal)
+					this.allowed = true;
+				break;
+			default:
+				break;
+		}
+		return this.allowed;
 	}
 
 }

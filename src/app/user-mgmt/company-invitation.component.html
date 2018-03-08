@@ -6,7 +6,21 @@
 		<input type="email" class="form-control" id="email" required [(ngModel)]="invEmail" name="email" #email="ngModel" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$"
 		 i18n-placeholder placeholder="e.g. user@domain.com">
 	</div>
-
+	
+	<div class="input-group form-group">
+		<label class="input-group-addon" i18n>Roles</label>
+		<div class="form-control" [ngClass]="{'ng-valid required':rolesSelected,'ng-invalid':!rolesSelected}">
+			<span [hidden]="callback3">
+				<img src="assets/form_loader.gif" />
+			</span>
+			<span *ngFor="let role of userRoles">
+				<input [id]="role.identifier" type="checkbox" [value]="role.identifier" class="form-check-input" [disabled]="checkDisable(role.identifier)" (change)="setRoles(role.identifier)">
+				<label class="form-check-label" [for]="role.identifier">{{role.name}}</label>
+			</span>
+		</div>
+	</div>
+	
+	<!--
 	<div class="row roles-header">
 		<div class="col-md-12 mb-12">
 			<h4>Roles:</h4>
@@ -20,8 +34,9 @@
 			</select>
 		</div>
 	</div>
+	-->
 
-	<button type="submit" class="btn btn-success" [disabled]="!inviteForm.form.valid" i18n>Submit</button>
+	<button type="submit" class="btn btn-success" [disabled]="!inviteForm.form.valid||!rolesSelected" i18n>Submit</button>
 
 	<div [hidden]="callback || error_detc || !submitted">
 		<img class="space-before" src="assets/form_loader.gif" />
@@ -45,14 +60,15 @@
 			<th>E-mail</th>
 			<th>Status</th>
 			<th>Assigned Roles</th>
+			<th>Options</th>
 		</tr>
 		<tr [hidden]="callback2">
-			<td colspan="2">
+			<td colspan="4">
 				<img src="assets/form_loader.gif" />
 			</td>
 		</tr>
 		<tr [hidden]="!callback2 || invPending.length > 0">
-			<td colspan="2">No data</td>
+			<td colspan="4">No data</td>
 		</tr>
 		<tr *ngFor="let inv of invPending">
 			<td>{{inv.email}}</td>
@@ -60,7 +76,43 @@
 				<span *ngIf="!inv.pending" class="badge badge-success">Registered</span>
 				<span *ngIf="inv.pending" class="badge badge-info">Invitation pending</span>
 			</td>
-			<td>{{inv.roleIDs}}</td>
+			<td>
+				<span *ngFor="let role of userRoles">
+					<div *ngIf="inv.roleIDs.indexOf(role.identifier)!=-1">{{role.name}}</div>
+				</span>
+			</td>
+			<td>
+				<button *ngIf="!inv.pending&&!checkMail(inv.email)" class="btn btn-primary btn-sm" (click)="editRole(inv);openModal(role);">Edit</button>
+				<button *ngIf="!inv.pending&&!checkMail(inv.email)&&appComponent.checkRoles('legal')" class="btn btn-danger btn-sm" (click)="deleteInvite(inv)">Delete</button>
+			</td>
 		</tr>
 	</table>
 </div>
+
+<ng-template #role let-d="dismiss">
+	<div class="modal-header">
+		<h4 class="modal-title">Change Roles</h4>
+		<button type="button" class="close" aria-label="Close" (click)="d('')">
+			<span aria-hidden="true">&times;</span>
+		</button>
+	</div>
+	<div class="modal-body">
+		<div class="input-group form-group">
+			<label for="email" class="input-group-addon" i18n>E-Mail</label>
+			<input type="text" class="form-control" [(ngModel)]="invToChange.email" disabled>
+		</div>
+		
+		<div class="input-group form-group">
+			<label class="input-group-addon" i18n>Roles</label>
+			<div class="form-control" [ngClass]="{'ng-valid required':rolesChangeSelected,'ng-invalid':!rolesChangeSelected}">
+				<span *ngFor="let role of userRoles">
+					<input [id]="role.identifier+'_2'" type="checkbox" class="form-check-input" (change)="setChangeRoles(role.identifier)" [checked]="invToChange.roleIDs && invToChange.roleIDs.indexOf(role.identifier)!=-1" [disabled]="checkDisable(role.identifier)">
+					<label class="form-check-label" [for]="role.identifier+'_2'">{{role.name}}</label>
+				</span>
+			</div>
+		</div>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-success" [disabled]="!rolesChangeSelected" (click)="changeRoles();d('');">Save</button>
+	</div>
+</ng-template>

@@ -7,16 +7,16 @@ export const debug=false;
 
 // Endpoint variables - SRFG staging
 
-//export const user_mgmt_endpoint="http://nimble-staging.salzburgresearch.at/identity";
-//export const catalogue_endpoint="http://nimble-staging.salzburgresearch.at/catalog";
-//export const bpe_endpoint="http://nimble-staging.salzburgresearch.at/business-process";
+export const user_mgmt_endpoint="http://nimble-staging.salzburgresearch.at/identity";
+export const catalogue_endpoint="http://nimble-staging.salzburgresearch.at/catalog";
+export const bpe_endpoint="http://nimble-staging.salzburgresearch.at/business-process";
 
 
 // Endpoint variables - SRFG productive
 
-export const user_mgmt_endpoint="http://nimble-staging.salzburgresearch.at/identity";
-export const catalogue_endpoint="http://nimble-staging.salzburgresearch.at/catalog";
-export const bpe_endpoint="http://nimble-staging.salzburgresearch.at/business-process";
+//export const user_mgmt_endpoint="https://nimble-platform.salzburgresearch.at/nimble/identity";
+//export const catalogue_endpoint="https://nimble-platform.salzburgresearch.at/nimble/catalog";
+//export const bpe_endpoint="https://nimble-platform.salzburgresearch.at/nimble/business-process";
 
 
 // Endpoint variables - K8S domain

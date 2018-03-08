@@ -204,6 +204,11 @@ ngb-pagination nav .pagination .page-item.active .page-link {
     padding: 9px;
     border-radius: 3px
 }
+
+.modal-dialog {
+	max-width: 800px !important;
+}
+
 /* ------------------- */
 
 /* CSS Loader */

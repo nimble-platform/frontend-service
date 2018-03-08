@@ -55,6 +55,18 @@ export class UserService {
             .then(res => res.json())
             .catch(this.handleError);
     }
+	
+	deleteInvite(email:string) {
+		var encodedMail = encodeURIComponent(email);
+		const url = `${this.url}/invitations?username=${encodedMail}`;
+        const token = 'Bearer '+this.cookieService.get("bearer_token");
+        const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
+        return this.http
+            .delete(url, {headers: headers_token, withCredentials: true})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+	}
 
     inviteCompany(invitation: CompanyInvitation) {
         const url = `${this.url}/send_invitation`;
@@ -133,6 +145,17 @@ export class UserService {
             .catch(this.handleError);
     }
 
+	setRoles(email: string, roleIDs: string[]) {
+		const encodedMail = encodeURIComponent(email);
+		const url = `${this.url}/roles/user?username=${encodedMail}`;
+        const token = 'Bearer '+this.cookieService.get("bearer_token");
+        const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
+        return this.http
+            .post(url, JSON.stringify(roleIDs), {headers: headers_token, withCredentials: true})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+	}
 
     putSettings(settings: CompanySettings, userId: string): Promise<any> {
         return this.getUserParty(userId).then(party => {
