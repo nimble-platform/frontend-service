@@ -37,6 +37,7 @@ export class ExplorativeSearchFormComponent implements OnInit {
 
     // checkbox for every keyword in Search History
     // remember: the variable name is same as in the HTML file
+    public loading = false;
     cbInput = true;
     langInput = true;
     language: string = 'en'; // default search in english
@@ -56,6 +57,7 @@ export class ExplorativeSearchFormComponent implements OnInit {
     private activeTabName = 'sqp';
     private conceptName = '';
     private conceptURL = '';
+    private conceptSource = '';
     SQPConfig: Object;
 
     constructor(private expSearch: ExplorativeSearchService) {}
@@ -89,6 +91,7 @@ export class ExplorativeSearchFormComponent implements OnInit {
         this.expSearch.searchData(inputVal, this.language)
                 .then(res => {
                     // push the data in to List
+                    // console.log(res);
                     if (res['conceptOverview'].length !== 0) { // if the keyword does exist..
                         // only then push
                         this.Output.push(<Explorative> {kw: inputVal, resp: res});
@@ -140,14 +143,24 @@ export class ExplorativeSearchFormComponent implements OnInit {
      */
 
     getQuery(inputVal: string, urlVal: string) {
+        this.loading = true;
         // console.log(inputVal);
         this.conceptName = urlVal;
         this.conceptURL = inputVal;
+
+        for (let eachOutput of this.Output) {
+            const index = eachOutput.resp['conceptOverview'].findIndex(op => op.translatedURL === urlVal);
+            if (index > -1) {
+                // console.log(eachOutput.resp['conceptOverview'][index]['conceptSource']);
+                this.conceptSource = eachOutput.resp['conceptOverview'][index]['conceptSource'];
+            }
+        }
         // HTTP GET to backend Server for visualization
         // create a JSON request for the queried button
         let temp = {'concept': inputVal.trim(), 'stepRange': 2, 'frozenConcept': inputVal.trim(),
             'language': this.language, 'distanceToFrozenConcept': 0,
-            'conceptURIPath': [inputVal.trim()]
+            'conceptURIPath': [inputVal.trim()],
+            'conceptSource': this.conceptSource
         };
         // console.log(JSON.stringify(temp)); // Debug: check
         // get the requested query
@@ -158,10 +171,12 @@ export class ExplorativeSearchFormComponent implements OnInit {
                 if (this.activeTabName === 'sqp') {
                     this.SQPConfig = {'concept': encodeURIComponent(this.conceptURL), 'stepRange': 1, 'language': this.language,
                         frozenConcept: this.conceptName, 'distanceToFrozenConcept': 0, 'conceptURIPath': [],
-                        'currenSelections': []
+                        'currenSelections': [],
+                        conceptSource: this.conceptSource
                     };
                 }
                 this.visData = res;
+                this.loading = false;
 
                 // console.log(this.visData);
                 this._error_detected_query = false;

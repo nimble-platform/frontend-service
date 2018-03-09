@@ -1,12 +1,31 @@
 <!-- Explorative Search Form HTML -->
 <!-- Search Bar -->
+<div class="container">
 <div class="row">
     <div class="col-12">
-        <div class="input-group form-group">
-            <label class="input-group-addon">Search</label>
-            <input type="text" class="form-control" #searchVal (keyup.enter)="Search(searchVal.value)" placeholder="Company/Business/Product"/>
-            <span><button (click)="Search(searchVal.value, language)" class="btn btn-success" type="button">Search</button></span>
-        </div> <!--input-group-->
+        <form>
+            <div class="form-group row">
+                <label class="col-form-label-lg col-sm-2">Search</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" #searchVal
+                        placeholder="Company/Business/Product"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-form-label col-sm-2">Languages</label>
+                <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic" [(ngModel)]="language"
+                         *ngFor="let eachLang of availableLanguages['languages']">
+                        <label ngbButtonLabel class="btn-primary">
+                            <input ngbButton class="col-sm-10" type="radio" [value]="eachLang"> {{eachLang}}
+                        </label>
+                </div>
+            </div>
+        <div class="form-group row">
+            <div class="col-sm-10">
+                <button (click)="Search(searchVal.value, language)" class="btn btn-success">Search</button>
+            </div>
+        </div>
+        </form>
     </div> <!-- col-12 -->
 </div> <!--row-->
 <div [hidden]="!_error_detected_kw">
@@ -15,16 +34,23 @@
 <div [hidden]="!_warning_kw">
     <div class="alert alert-warning space-before" role="alert">no such result found</div>
 </div>
-
-<!-- Entered Keywords to Displayed -->
-<div class="align-center">
-    <h5><b> Search History </b></h5>
-</div>
-
+    <div id="loading-bg" *ngIf="loading">
+        <div id="sk-loading-icon">
+            <div class="sk-folding-cube">
+                <div class="sk-cube1 sk-cube"></div>
+                <div class="sk-cube2 sk-cube"></div>
+                <div class="sk-cube4 sk-cube"></div>
+                <div class="sk-cube3 sk-cube"></div>
+            </div>
+        </div>
+    </div>
 <!-- Search Keywords go here -->
-<div class="container">
+<div class="container" *ngIf="Output.length">
     <div class="row">
-        <div class="col-md-10 kwArea">
+        <div class="col-sm-2">
+            <label class="col-form-label-lg"><b> Search History </b></label>
+        </div>
+        <div class="col-sm-10 kwArea">
             <ul>
                 <!-- list of all the search keywords by user -->
                 <li class="searchQueries" *ngFor="let keyword of Output; let cbIndex = index">
@@ -38,21 +64,6 @@
                 </li>
             </ul>
         </div>
-        <!-- This button is according to Specification
-            If not logged in route directly to Login Page
-            if logged in route to dashboard -->
-        <div class="col-md-2 form-group">
-            <!--<a class="btn btn-warning" routerLink="/dashboard">Home</a>-->
-            <b>Choose Language</b>
-            <form>
-                <div  *ngFor="let eachLang of availableLanguages['languages']">
-                    <label>
-                        <input type="radio" name="language" [checked]="langInput"(change)="language =eachLang"/>
-                        {{eachLang}}
-                    </label>
-                </div>
-            </form>
-        </div>
     </div>
 </div>
 <br/>
@@ -60,15 +71,20 @@
 
 <!-- Display of Content from server -->
 <div class="container">
-<div class="col-12">
+<div class="col-sm-offset-2">
     <ul>
         <li *ngFor="let eachOutput of Output; let outerIndex = index">
             <div [hidden]="showParticularKeyword[outerIndex]">
-                <div class="btn-group" role="group" *ngFor="let each of eachOutput.resp.conceptOverview; let innerIndex = index">
-                    <button class="btn btn-success" *ngIf="innerIndex === 0 || showMore[outerIndex]" (click)="getQuery(each.url, each.translatedURL)">{{each.translatedURL}}</button>
+                <div class="btn-group" role="group" aria-label="available keywords"
+                     *ngFor="let each of eachOutput.resp.conceptOverview; let innerIndex = index">
+                    <button type="button" class="btn btn-dark"
+                            *ngIf="innerIndex === 0 || showMore[outerIndex]"
+                            (click)="getQuery(each.url, each.translatedURL)">{{each.translatedURL}}
+                    </button>
                 </div>
                 <div style="display: inline">
-                    <button *ngIf="eachOutput.resp.conceptOverview.length > 1" (click)="showMore[outerIndex]=!showMore[outerIndex]">
+                    <button type="button" class="btn btn-secondary"
+                            *ngIf="eachOutput.resp.conceptOverview.length > 1" (click)="showMore[outerIndex]=!showMore[outerIndex]">
                         {{showMore[outerIndex] ? 'Hide': 'Show'}} Options</button>
                 </div>
             </div>
@@ -97,3 +113,4 @@
 </ngb-tabset>
 <!-- The Graph Display Component -->
 <!-- Data Visualization here-->
+</div>
