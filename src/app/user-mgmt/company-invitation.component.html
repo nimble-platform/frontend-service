@@ -8,7 +8,10 @@
 	</div>
 	
 	<div class="input-group form-group">
-		<label class="input-group-addon" i18n>Roles</label>
+		<label class="input-group-addon">
+			<span i18n>Roles</span>
+			<span class="tooltip-icon" (click)="showRoleTT(tooltip)"><img class="inline-icon" src="../../assets/question_black.png"/></span>
+		</label>
 		<div class="form-control" [ngClass]="{'ng-valid required':rolesSelected,'ng-invalid':!rolesSelected}">
 			<span [hidden]="callback3">
 				<img src="assets/form_loader.gif" />
@@ -103,7 +106,10 @@
 		</div>
 		
 		<div class="input-group form-group">
-			<label class="input-group-addon" i18n>Roles</label>
+			<label class="input-group-addon">
+				<span i18n>Roles</span>
+				<span class="tooltip-icon" (click)="showRoleTT(tooltip)"><img class="inline-icon" src="../../assets/question_black.png"/></span>
+			</label>
 			<div class="form-control" [ngClass]="{'ng-valid required':rolesChangeSelected,'ng-invalid':!rolesChangeSelected}">
 				<span *ngFor="let role of userRoles">
 					<input [id]="role.identifier+'_2'" type="checkbox" class="form-check-input" (change)="setChangeRoles(role.identifier)" [checked]="invToChange.roleIDs && invToChange.roleIDs.indexOf(role.identifier)!=-1" [disabled]="checkDisable(role.identifier)">
@@ -114,5 +120,16 @@
 	</div>
 	<div class="modal-footer">
 		<button class="btn btn-success" [disabled]="!rolesChangeSelected" (click)="changeRoles();d('');">Save</button>
+	</div>
+</ng-template>
+
+<ng-template #tooltip let-d="dismiss">
+	<div class="modal-header">
+		<h4 class="modal-title">Tooltip</h4>
+		<button type="button" class="close" aria-label="Close" (click)="d('')">
+			<span aria-hidden="true">&times;</span>
+		</button>
+	</div>
+	<div class="modal-body" [innerHTML]="tooltipHTML">
 	</div>
 </ng-template>

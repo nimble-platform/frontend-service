@@ -99,7 +99,7 @@ textarea {
 
 .inline-icon {
     max-height: 1rem;
-    margin-top: -0.2rem;
+    margin-top: -0.3rem;
     margin-right: 0.2rem;
 }
 
@@ -207,6 +207,14 @@ ngb-pagination nav .pagination .page-item.active .page-link {
 
 .modal-dialog {
 	max-width: 800px !important;
+}
+
+.tooltip-icon {
+	width: 1rem;
+	height: 1rem;
+	position: absolute;
+	left: 10.5rem;
+	cursor: pointer;
 }
 
 /* ------------------- */

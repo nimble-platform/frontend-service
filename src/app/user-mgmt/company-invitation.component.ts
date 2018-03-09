@@ -19,6 +19,7 @@ export class CompanyInvitationComponent implements OnInit {
 	invRoles = [];
 	invPending = [];
 	invToChange = "";
+	tooltipHTML = "";
 	userRoles = [];
 	rolesSelected = false;
 	rolesChangeSelected = true;
@@ -144,6 +145,21 @@ export class CompanyInvitationComponent implements OnInit {
 					this.loadInvites();
 				});
 		}
+	}
+	
+	showRoleTT(content) {
+		var tooltip = "";
+		tooltip += "<table class='table table-striped table-bordered'>";
+		tooltip += "<tr><th>Role</th><th>Permissions</th></tr>";
+		tooltip += "<tr><td>Company Admin</td><td>A member of the company that got all rights on the NIMBLE platform (except for assigning external/legal representatives)</td></tr>";
+		tooltip += "<tr><td>External Representative</td><td>Somebody from outside the company that got all rights connected to the company on the NIMBLE platform (except for assigning external/legal representatives)</td></tr>";
+		tooltip += "<tr><td>Legal Representative</td><td>The legally liable representative of your company. Usually a single person. Has got all rights on the NIMBLE platform</td></tr>";
+		tooltip += "<tr><td>Monitor</td><td>Can observe sales, purchases and relevant business data on the NIMBLE platform without executing the associated business processes</td></tr>";
+		tooltip += "<tr><td>Publisher</td><td>Can publish and maintain the catalogues of the company</td></tr>";
+		tooltip += "<tr><td>Purchaser</td><td>Can observe purchases on the NIMBLE platform and execute the associated business processes</td></tr>";
+		tooltip += "<tr><td>Sales Offices</td><td>Can observe sales on the NIMBLE platform and execute the associated business processes</td></tr>";
+		this.tooltipHTML = tooltip
+		this.modalService.open(content);
 	}
 
 	onSubmit() {
