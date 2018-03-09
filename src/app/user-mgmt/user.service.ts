@@ -9,6 +9,7 @@ import { CompanyRegistration } from './model/company-registration';
 import { CompanyInvitation } from './model/company-invitation';
 import {UBLModelUtils} from "../catalogue/model/ubl-model-utils";
 import { CookieService } from 'ng2-cookies';
+import { UserRole } from './model/user-role';
 
 @Injectable()
 export class UserService {
@@ -54,6 +55,18 @@ export class UserService {
             .then(res => res.json())
             .catch(this.handleError);
     }
+	
+	deleteInvite(email:string) {
+		var encodedMail = encodeURIComponent(email);
+		const url = `${this.url}/invitations?username=${encodedMail}`;
+        const token = 'Bearer '+this.cookieService.get("bearer_token");
+        const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
+        return this.http
+            .delete(url, {headers: headers_token, withCredentials: true})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+	}
 
     inviteCompany(invitation: CompanyInvitation) {
         const url = `${this.url}/send_invitation`;
@@ -115,6 +128,34 @@ export class UserService {
         });
     }
 
+    getUserRoles(): Promise<UserRole[]> {
+        const url = `${this.url}/roles`;
+        const token = 'Bearer '+this.cookieService.get("bearer_token");
+        const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
+        return this.http
+            .get(url, {headers: headers_token, withCredentials: true})
+            .toPromise()
+            .then(res => {
+                let roles: UserRole[] = [];
+                const resultJson = res.json();
+                for( var roleId in resultJson )
+                    roles.push(new UserRole(roleId, resultJson[roleId]));
+                return Promise.resolve(roles);
+            })
+            .catch(this.handleError);
+    }
+
+	setRoles(email: string, roleIDs: string[]) {
+		const encodedMail = encodeURIComponent(email);
+		const url = `${this.url}/roles/user?username=${encodedMail}`;
+        const token = 'Bearer '+this.cookieService.get("bearer_token");
+        const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
+        return this.http
+            .post(url, JSON.stringify(roleIDs), {headers: headers_token, withCredentials: true})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+	}
 
     putSettings(settings: CompanySettings, userId: string): Promise<any> {
         return this.getUserParty(userId).then(party => {

@@ -24,7 +24,7 @@
 					<img src="assets/list_white.png" class="inline-icon"/> <span i18n>Dashboard</span>
 				</a>
 			</li>
-			<li class="nav-item" *ngIf="debug||roles.indexOf('initial_representative')!=-1||roles.indexOf('legal_representative')!=-1||activeCompanyName" routerLinkActive="active">
+			<li class="nav-item" *ngIf="checkRoles('catalogue')" routerLinkActive="active">
 				<a class="nav-link" [routerLink]="['/catalogue/categorysearch']" [queryParams]="{pageRef: 'menu'}">
 					<img src="assets/upload_white.png" class="inline-icon"/> <span i18n>Publish</span>
 				</a>
@@ -56,12 +56,12 @@
 				</a>
 			</li>
 			-->
-			<li class="nav-item" *ngIf="!activeCompanyName" routerLinkActive="active">
+			<li class="nav-item" *ngIf="checkRoles('reg_comp')" routerLinkActive="active">
 				<a class="nav-link" routerLink="/user-mgmt/company-registration">
 					<img src="assets/register_white.png" class="inline-icon"/> <span i18n>Register a Company</span>
 				</a>
 			</li>
-			<li class="nav-item" *ngIf="debug||roles.indexOf('legal_representative')!=-1" routerLinkActive="active">
+			<li class="nav-item" *ngIf="checkRoles('comp')" routerLinkActive="active">
 				<a class="nav-link" routerLink="/user-mgmt/company-invitation">
 					<img src="assets/company_white.png" class="inline-icon"/> Company Members
 				</a>
@@ -73,10 +73,10 @@
 					<img src="assets/avatar_white.png" class="inline-icon"/> {{fullName}}
 				</a>
 				<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuUser">
-					<a class="dropdown-item" routerLink="/user-mgmt/company-settings" routerLinkActive="active">
+					<a *ngIf="checkRoles('comp')" class="dropdown-item" routerLink="/user-mgmt/company-settings" routerLinkActive="active">
 						<img src="assets/gear_black.png" class="inline-icon"/> Account Settings
 					</a>
-					<a class="dropdown-item" routerLink="/catalogue/catalogue" routerLinkActive="active">
+					<a *ngIf="checkRoles('catalogue')" class="dropdown-item" routerLink="/catalogue/catalogue" routerLinkActive="active">
 						<img src="assets/catalog_black.png" class="inline-icon"/> <span i18n>Catalogue</span>
 					</a>
 					<a class="dropdown-item" routerLink="/user-mgmt/logout">
