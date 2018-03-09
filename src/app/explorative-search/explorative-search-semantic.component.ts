@@ -24,7 +24,7 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
         <span aria-hidden="true">&times;</span>
       </button>
     </div>
-        
+
     <!-- Body for Modal -->
     <div class="modal-body">
         <p>Available Keywords that can be Removed:</p>
@@ -35,7 +35,7 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
       <ul>
           <li *ngFor="let eachKey of modalKeys; let i=index">
               <div>
-                <span><code>{{eachKey.value}}</code></span> 
+                <span><code>{{eachKey.value}}</code></span>
                   <button class="btn-xs btn-danger" (click)="removeQParam(eachKey,i);">&times;</button>
               </div>
           </li>
@@ -283,13 +283,6 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
         let selectedPropName = this.model.translatedProperty;
         let insertedPart = ' <hasProperty> ' + this.model.translatedProperty;
         this.sentence += insertedPart; // Update the sentence
-<<<<<<< HEAD
-        console.log(selectedPropName);
-        if (this.selectedReference) {
-            // If the property belongs to a Reference Update the SPARQL Query
-            // this.sparqlJSON['parameters'].push(selectedPropName);
-            this.sparqlJSON['parameters'].push(this.selectedPropertyURL.split('#')[1]);
-=======
         /**
          * For V2.0 References can be passed over.
          */
@@ -301,7 +294,6 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
                 this.sparqlJSON['parameters'].push(encodeURIComponent(this.selectedPropertyURL));
             }
 
->>>>>>> c19c07c0edb2baafbfb56c1513c2a81c47aab426
             this.sparqlJSON['parametersIncludingPath'].push(
             {'urlOfProperty': encodeURIComponent(this.model.propertyURL),
                 'path': [{'concept': this._mainConceptName},
@@ -319,16 +311,10 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
                 }
             }
             this.selectedReference = false;
-<<<<<<< HEAD
-        }else { // the property is directly connected to the Main Concept
-            this.applyURL(this.selectedPropertyURL, selectedPropName);
-            this.semQJSon[selectedPropName] = {value: insertedPart, type: 'dataprop'};
-=======
         }else { // the property is directly connected to the Main Concept (data properties)
             this.applyURL(this.selectedPropertyURL); // create the SPARQL JSON
             let propJSON = {value: selectedPropName, type: 'dataprop'};
             this.semQJSon['selections'].push(propJSON);
->>>>>>> c19c07c0edb2baafbfb56c1513c2a81c47aab426
         }
     }
 
@@ -337,20 +323,15 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
      * Create the SPARQLJSON Structure
      * @param {string} url: URL of the Parameter under consideration
      */
-    applyURL(url: string, propName: string): void {
+    applyURL(url: string): void {
         // this.sparqlJSON['parameters'].push(encodeURIComponent(this.selectedPropertyURL));
         // console.log(url);
         // this.sparqlJSON['parameters'].push(encodeURIComponent(url));
-<<<<<<< HEAD
-        // this.sparqlJSON['parameters'].push(propName);
-        this.sparqlJSON['parameters'].push(url.split('#')[1]);
-=======
         if (this.selectedPropertyURL.indexOf('#') > -1) {
             this.sparqlJSON['parameters'].push(encodeURIComponent(this.selectedPropertyURL.split('#')[1]));
         } else {
             this.sparqlJSON['parameters'].push(encodeURIComponent(this.selectedPropertyURL));
         }
->>>>>>> c19c07c0edb2baafbfb56c1513c2a81c47aab426
         this.sparqlJSON['parametersURL'].push(encodeURIComponent(url));
         // this.sparqlJSON['parametersIncludingPath'].push({'urlOfProperty': encodeURIComponent(this.selectedPropertyURL),
         //     'path': [{'concept': this.configSPQ['concept']}]});
@@ -558,62 +539,6 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
         const modalRef = this.modal.open(NgbdModalContent);
         modalRef.componentInstance.modalKeys = keys;
         modalRef.result
-<<<<<<< HEAD
-            .then((result) => { // how the user interacted with Modal
-                console.log(result);
-                // No filterValue but the `toRemove` is a Digit Implies FilterValue
-                if (result['filterValue'] === null && Number(result['toRemove']) > -1) {
-                    // console.log('filter', result['toRemove']);
-
-                    // edit the sentence (remove the keywords)
-                    this.sentence = this.sentence.replace(this.semQJSon[result['toRemove']]['value'], '');
-
-                    // remove the filter from the SPARQL QUERY too
-                    for (let eachFilter of this.sparqlJSON['filters']) {
-                        if (Number(result['toRemove']) === eachFilter.min) {
-                            this.sparqlJSON['filters'].splice(this.sparqlJSON['filters'].indexOf(eachFilter), 1);
-                            // console.log(this.sparqlJSON['filters']);
-                            this.results = []; // disable the value button in order to avoid false values to be displayed
-                            this.searchvalue = []; // empty the values array
-                        }
-                    }
-                } else if (result['filterValue'] === null && this.semQJSon[result['toRemove']]['type'] === 'objprop') {
-                    // If the user selected an objectproperty; then remove the prop and it's dataprop
-                    // console.log('objprop deleted');
-                    for (let nextProps in this.semQJSon[result['toRemove']]) {
-                        if (this.semQJSon[result['toRemove']].hasOwnProperty(nextProps)) {
-                            let removalIndex = this.sparqlJSON['parameters'].indexOf(nextProps);
-                            if (removalIndex > -1) {
-                                console.log(nextProps);
-                                this.sparqlJSON['parameters'].splice(removalIndex, 1);
-                                this.sparqlJSON['parametersIncludingPath'].splice(removalIndex, 1);
-                                this.sparqlJSON['parametersURL'].splice(removalIndex, 1);
-                                this.sentence = this.sentence.replace(
-                                    this.semQJSon[result['toRemove']][nextProps]['value'], '');
-                            }
-                        }
-                    }
-                    this.sentence = this.sentence.replace(this.semQJSon[result['toRemove']]['value'], '');
-
-                } else if (result['filterValue'] === null && this.semQJSon[result['toRemove']]['type'] === 'dataprop') {
-                    // Remove a dataproperty of the main concept
-                    // console.log('datprop deletion');
-                    this.sentence = this.sentence.replace(this.semQJSon[result['toRemove']]['value'], '');
-                    let removalIndex = this.sparqlJSON['parameters'].indexOf(result['toRemove']);
-                    if (removalIndex > -1) {
-                        this.sparqlJSON['parameters'].splice(removalIndex, 1);
-                        this.sparqlJSON['parametersIncludingPath'].splice(removalIndex, 1);
-                        this.sparqlJSON['parametersURL'].splice(removalIndex, 1);
-                    }
-                } else {
-                    this.sentence = this.sentence.replace(this.semQJSon[result['toRemove']]['value'], '');
-                    this.sentence = this.sentence.replace(this.semQJSon[result['filterValue']]['value'], '');
-                    this.sparqlJSON['parametersIncludingPath'].splice(this.sparqlJSON['parameters'].indexOf(
-                        result['toRemove']
-                    ), 1);
-                    this.sparqlJSON['parameters'].splice(this.sparqlJSON['parameters'].indexOf(result['toRemove']), 1);
-                    this.sparqlJSON['filters'].splice(this.sparqlJSON['parameters'].indexOf(result['toRemove'], 1));
-=======
             .then((returnedResult) => { // how the user interacted with Modal
                 console.log(returnedResult);
                 if ((returnedResult['prop'] !== null) && returnedResult['filter'] !== null) { // filter exists
@@ -656,7 +581,6 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
                     this.sentence = this.sentence.replace(' <hasProperty> ' + returnedResult['prop'], '');
                     this.semQJSon['selections'].splice(
                         this.semQJSon['selections'].findIndex(f => f.value === returnedResult['prop']), 1);
->>>>>>> c19c07c0edb2baafbfb56c1513c2a81c47aab426
                 }
                 if (this.semQJSon['selections'].length === 0) { // hide the table if the all selections deleted making it status quo
                     this.tableResult = {};
