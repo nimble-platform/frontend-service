@@ -16,7 +16,7 @@ import {Quotation} from "../catalogue/model/publish/quotation";
 import {OrderResponseSimple} from "../catalogue/model/publish/order-response-simple";
 import {Order} from "../catalogue/model/publish/order";
 import {Item} from "../catalogue/model/publish/item";
-import "moment";
+import * as moment from 'moment';
 
 @Component({
     selector: 'nimble-dashboard',
