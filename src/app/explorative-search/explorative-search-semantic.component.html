@@ -1,27 +1,24 @@
-<div class="container displayArea">
+<div class="container">
     <br>
     <div class="row">
-    <p>
         <ngb-alert [dismissible]="true" *ngIf="basicInfoAlert" type="info" (close)="basicInfoAlert=!basicInfoAlert">
-            <ul>
-                <li>
+            <h3>Tips for Semantic Query Patterns Search</h3>
+            <br>
+                <p>
                     You can search Properties like <em>height, width etc.</em> by clicking on
                     <strong>hasProperty</strong>
-                </li>
-                <li>
+                </p>
+                <p>
                     If you want to find a property's available value click on <strong>hasValue</strong>
-                </li>
-                <li>
+                </p>
+                <p>
                     You can find information for <em>Legislation, Manufacturer etc.</em> by clicking on
                     <strong>hasReference</strong>
-                </li>
-                <li>
-                    You can Edit your Query by simply clicking on it. This Feature works currently for
-                    <strong>English</strong> Semantic Queries and not in <strong>Spanish</strong> ones.
-                </li>
-            </ul>
+                </p>
+                <p>
+                    You can Edit your Query by simply clicking on it.
+                </p>
         </ngb-alert>
-    </p>
         <p>
             <ngb-alert [dismissible]="false" *ngIf=" lang==='es' ">
                 <strong>Under Development</strong> Deletion Feature for Spanish Language is On-Going.
@@ -33,7 +30,8 @@
                 <code (click)="editSemanticQuery()" placement="bottom" ngbTooltip="Click on the Query to Edit it">
                     {{sentence | json}}
                 </code>
-                <span><button (click)="genTable()">Search Query</button></span>
+                <span>
+                    <button (click)="genTable()" [disabled]="!semQJSon['selections'].length">Search Query</button></span>
                 <br>
                 <br>
                 <p><b>You are currently at:{{whereAreYou}}</b></p>
@@ -206,4 +204,14 @@
         <!--</pre>-->
 
     <!--</div>-->
+    <div id="loading-bg" *ngIf="loading">
+        <div id="sk-loading-icon">
+            <div class="sk-folding-cube">
+                <div class="sk-cube1 sk-cube"></div>
+                <div class="sk-cube2 sk-cube"></div>
+                <div class="sk-cube4 sk-cube"></div>
+                <div class="sk-cube3 sk-cube"></div>
+            </div>
+        </div>
+    </div>
 </div>
