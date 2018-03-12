@@ -7,6 +7,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { DashboardRoutingModule } from './dashboard-routing.module';
 
 import { DashboardComponent } from './dashboard.component';
+import {DashboardThreadedComponent} from "./dashboard-threaded.component";
+import {ThreadSummaryComponent} from "./thread-summary-component";
 
 @NgModule({
 	imports: [
@@ -19,10 +21,14 @@ import { DashboardComponent } from './dashboard.component';
 		NgbModule.forRoot()
 	],
 	declarations: [
-		DashboardComponent
+		DashboardComponent,
+		DashboardThreadedComponent,
+		ThreadSummaryComponent
 	],
 	exports: [
-		DashboardComponent
+		DashboardComponent,
+		DashboardThreadedComponent,
+		ThreadSummaryComponent
 	],
 	providers: [
 	]

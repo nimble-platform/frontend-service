@@ -4,6 +4,7 @@ import 'rxjs/add/operator/toPromise';
 import * as myGlobals from '../globals';
 import {ProcessInstanceInputMessage} from "./model/process-instance-input-message";
 import {ProcessInstance} from "./model/process-instance";
+import {ProcessInstanceGroup} from "./model/process-instance-group";
 
 @Injectable()
 export class BPEService {
@@ -86,6 +87,15 @@ export class BPEService {
 
 	getDocumentJsonContent(documentId:string):Promise<string> {
 		const url = `${this.url}/document/json/${documentId}`;
+		return this.http
+            .get(url, {headers: this.headers})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+	}
+
+	getProcessInstanceGroups(partyId:string): Promise<ProcessInstanceGroup[]> {
+		const url = `${this.url}/group/temp`;
 		return this.http
             .get(url, {headers: this.headers})
             .toPromise()
