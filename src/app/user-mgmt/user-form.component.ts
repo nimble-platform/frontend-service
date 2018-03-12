@@ -3,7 +3,9 @@ import { UserService } from './user.service';
 import * as myGlobals from '../globals';
 import { UserRegistration } from './model/user-registration';
 import { ActivatedRoute } from "@angular/router";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 //declare var jsSHA: any;
+
 @Component({
     selector: 'user-form',
     templateUrl: './user-form.component.html'
@@ -18,6 +20,7 @@ export class UserFormComponent implements OnInit {
     submitted = false;
     callback = false;
 	error_detc = false;
+	eula_accepted = false;
     debug = myGlobals.debug;
     /* ToDo: Hackathon only BEGIN */
     model: UserRegistration = UserRegistration.initEmpty();
@@ -28,13 +31,14 @@ export class UserFormComponent implements OnInit {
 
     constructor(
         private userService: UserService,
+		private modalService: NgbModal,
         public route: ActivatedRoute
     ) {}
 
     ngOnInit(): void {
         this.route.queryParams.subscribe(params => {
             if (params['email']) {
-                const test = /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$/.test(params['email']);
+                const test = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9._-]+\.[a-z]{2,3}$/.test(params['email']);
                 if (test) {
                     this.model.user.email = params['email'];
                     this.email_preset = true;
@@ -101,5 +105,9 @@ export class UserFormComponent implements OnInit {
         this.submitted = true;
         this.post(this.objToSubmit);
     }
+	
+	open(content) {
+		this.modalService.open(content);
+	}
 
 }

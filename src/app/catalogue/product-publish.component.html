@@ -28,13 +28,11 @@
             <h6 *ngIf="catalogueLine.goodsItem.item.commodityClassification.length > 0"
                 style="display: inline-block;"
                 i18n>Selected category:</h6>
-            <button *ngFor="let selectedCategory of categoryService.selectedCategories"
-                    class="btn btn-info ml-3">
+            <div *ngFor="let selectedCategory of categoryService.selectedCategories"
+                    class="bordered inline space-right">
                 {{selectedCategory.preferredName}}
-                <span>
-                    <i (click)="categoryCancel(selectedCategory)">&times;</i>
-                </span>
-            </button>
+                <button class="btn btn-sm btn-danger" (click)="categoryCancel(selectedCategory)">&times;</button>
+            </div>
             <div (click)="addCategoryOnClick()"
                  style="display: inline-block;">
                 <img src="./assets/catalogue/add_button.png"/>
@@ -301,13 +299,11 @@
         <div class="mr-auto">
             <h6 *ngIf="categoryService.selectedCategories.length > 0" style="display: inline-block;"
                 i18n>Selected category:</h6>
-            <button *ngFor="let selectedCategory of categoryService.selectedCategories"
-                    class="btn btn-info ml-3">
+			<div *ngFor="let selectedCategory of categoryService.selectedCategories"
+                    class="bordered inline space-right">
                 {{selectedCategory.preferredName}}
-                <span><i
-                        (click)="categoryCancel(selectedCategory)"
-                >&times;</i></span>
-            </button>
+                <button class="btn btn-sm btn-danger" (click)="categoryCancel(selectedCategory)">&times;</button>
+            </div>
             <div (click)="addCategoryOnClick()"
                  style="display: inline-block;">
                 <img src="./assets/catalogue/add_button.png"/>

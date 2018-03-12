@@ -16,6 +16,7 @@ import {Quotation} from "../catalogue/model/publish/quotation";
 import {OrderResponseSimple} from "../catalogue/model/publish/order-response-simple";
 import {Order} from "../catalogue/model/publish/order";
 import {Item} from "../catalogue/model/publish/item";
+import * as moment from 'moment';
 
 @Component({
     selector: 'nimble-dashboard',
@@ -27,14 +28,15 @@ import {Item} from "../catalogue/model/publish/item";
 export class DashboardComponent implements OnInit {
 
     fullName = "";
-    hasCompany = false;
-    roles = [];
+	tab = "sales";
     alert1Closed = false;
     alert2Closed = false;
     buyer_history_temp: any;
     buyer_history: any;
     seller_history_temp: any;
     seller_history: any;
+	active_buyer_num = 0;
+	active_seller_num = 0;
 
     constructor(private cookieService: CookieService,
                 private bpeService: BPEService,
@@ -48,15 +50,8 @@ export class DashboardComponent implements OnInit {
         if (this.cookieService.get("user_fullname"))
             this.fullName = this.cookieService.get("user_fullname");
         if (this.cookieService.get("user_id") && this.cookieService.get("company_id")) {
-
-            if (this.cookieService.get("active_company_name")) {
-                if (this.cookieService.get("active_company_name") == null || this.cookieService.get("active_company_name") == "null")
-                    this.hasCompany = false;
-                else
-                    this.hasCompany = true;
-            }
-            else
-                this.hasCompany = false;
+			if (!this.appComponent.checkRoles('sales') && this.appComponent.checkRoles('purchases'))
+				this.tab = "purchases";
             this.buyer_history_temp = [];
             this.buyer_history = [];
             this.seller_history_temp = [];
@@ -65,40 +60,28 @@ export class DashboardComponent implements OnInit {
         }
         else
             this.appComponent.checkLogin("/user-mgmt/login");
-		if (this.cookieService.get('bearer_token')) {
-			const at = this.cookieService.get('bearer_token');
-			if (at.split(".").length == 3) {
-				const at_payload = at.split(".")[1];
-				try {
-					const at_payload_json = JSON.parse(atob(at_payload));
-					const at_payload_json_roles = at_payload_json["realm_access"]["roles"];
-					this.roles = at_payload_json_roles;
-				}
-				catch(e){}
-			}
-		}
-		else
-			this.roles = [];
     }
 
 
     loadOrders() {
-
+		this.active_buyer_num = 0;
+		this.active_seller_num = 0;
         this.bpeService.getInitiatorHistory(this.cookieService.get("company_id"))
             .then(activeTasks => {
                 this.buyer_history_temp = [];
                 this.buyer_history = [];
                 for (let task of activeTasks) {
                     //if (task.deleteReason!="deleted") {
-                    var time_offset = -(new Date().getTimezoneOffset() / 60);
-                    var time_locale = new Date(new Date().setTime(new Date(task.startTime).getTime() + (time_offset * 60 * 60 * 1000))).toLocaleTimeString();
+                    //var time_offset = -(new Date().getTimezoneOffset() / 60);
+                    //var time_locale = new Date(new Date().setTime(new Date(task.startTime).getTime() + (time_offset * 60 * 60 * 1000))).toLocaleTimeString();
                     this.buyer_history_temp.push({
                         "task_id": task.id,
                         "task_name": task.name,
                         "task_description": task.description,
                         "process_id": task.processInstanceId,
                         "status_code": task.deleteReason,
-                        "start_time": new Date(task.startTime).toLocaleDateString() + " " + time_locale
+						"start_time": moment(task.startTime+"Z").format("YYYY-MM-DD HH:mm")
+                        //"start_time": new Date(task.startTime).toLocaleDateString() + " " + time_locale
                     });
 
                     this.bpeService.getProcessDetailsHistory(task.processInstanceId)
@@ -141,12 +124,31 @@ export class DashboardComponent implements OnInit {
                                 "activityVariables": activityVariables,
                                 "bpOptionMenuItems": vBpOptionMenuItems
                             });
+							if (vStatusCode != "deleted" && vStatusCode != "completed")
+								this.active_buyer_num++;
 
                             this.buyer_history.sort(function (a: any, b: any) {
                                 var a_comp = a.start_time;
                                 var b_comp = b.start_time;
                                 return b_comp.localeCompare(a_comp);
                             });
+							this.buyer_history.sort(function(a: any, b: any) {
+								var a_comp = a.statusCode;
+								var b_comp = b.statusCode;
+								if (a_comp == "completed")
+									a_comp = 2;
+								else if (a_comp == "deleted")
+									a_comp = 3;
+								else
+									a_comp = 1;
+								if (b_comp == "completed")
+									b_comp = 2;
+								else if (b_comp == "deleted")
+									b_comp = 3;
+								else
+									b_comp = 1;
+								return a_comp-b_comp;
+							});
                         })
                         .catch(error => {
                             console.error(error);
@@ -164,15 +166,16 @@ export class DashboardComponent implements OnInit {
                 this.seller_history = [];
                 for (let task of res) {
                     //if (task.deleteReason!="deleted") {
-                    var time_offset = -(new Date().getTimezoneOffset() / 60);
-                    var time_locale = new Date(new Date().setTime(new Date(task.startTime).getTime() + (time_offset * 60 * 60 * 1000))).toLocaleTimeString();
+                    //var time_offset = -(new Date().getTimezoneOffset() / 60);
+                    //var time_locale = new Date(new Date().setTime(new Date(task.startTime).getTime() + (time_offset * 60 * 60 * 1000))).toLocaleTimeString();
                     this.seller_history_temp.push({
                         "task_id": task.id,
                         "task_name": task.name,
                         "task_description": task.description,
                         "process_id": task.processInstanceId,
                         "status_code": task.deleteReason,
-                        "start_time": new Date(task.startTime).toLocaleDateString() + " " + time_locale
+						"start_time": moment(task.startTime+"Z").format("YYYY-MM-DD HH:mm")
+                        //"start_time": new Date(task.startTime).toLocaleDateString() + " " + time_locale
                     });
 
                     this.bpeService.getProcessDetailsHistory(task.processInstanceId)
@@ -216,11 +219,31 @@ export class DashboardComponent implements OnInit {
                                 "activityVariables": activityVariables,
                                 "bpOptionMenuItems": vBpOptionMenuItems
                             });
+							if (vStatusCode != "deleted" && vStatusCode != "completed")
+								this.active_seller_num++;
+							
                             this.seller_history.sort(function (a: any, b: any) {
                                 var a_comp = a.start_time;
                                 var b_comp = b.start_time;
                                 return b_comp.localeCompare(a_comp);
                             });
+							this.seller_history.sort(function(a: any, b: any) {
+								var a_comp = a.statusCode;
+								var b_comp = b.statusCode;
+								if (a_comp == "completed")
+									a_comp = 2;
+								else if (a_comp == "deleted")
+									a_comp = 3;
+								else
+									a_comp = 1;
+								if (b_comp == "completed")
+									b_comp = 2;
+								else if (b_comp == "deleted")
+									b_comp = 3;
+								else
+									b_comp = 1;
+								return a_comp-b_comp;
+							});
                         })
                         .catch(error => {
                             console.error(error);
