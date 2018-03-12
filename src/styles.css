@@ -134,6 +134,10 @@ textarea {
     text-decoration: underline;
 }
 
+.inline {
+	display: inline-block !important;
+}
+
 .pointer {
     cursor: pointer;
 }

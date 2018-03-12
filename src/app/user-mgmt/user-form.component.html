@@ -31,7 +31,14 @@
 		<label for="phoneNumber" class="input-group-addon" i18n>Phone Number</label>
 		<input type="tel" class="form-control" id="phoneNumber" [(ngModel)]="model.user.phoneNumber" name="phoneNumber" #phoneNumber="ngModel">
 	</div>
-
+	<div class="input-group form-group">
+		<span class="input-group-addon">
+			<input id="eula" type="checkbox" name="eula" required [(ngModel)]="eula_accepted" #eula="ngModel">
+		</span>
+		<span class="form-control inline" [ngClass]="{'ng-invalid':!eula_accepted,'ng-valid required':eula_accepted}">
+			I agree to the <span class="clickable" (click)="open(eula)">End-User License Agreement (EULA)</span>
+		</span>
+	</div>
 	<button type="submit" class="btn btn-success" [disabled]="!userForm.form.valid||!passwords_matching" i18n>Submit</button>
 	<button type="button" class="btn btn-secondary space-left" (click)="userForm.reset();reset()" [hidden]="userForm.form.pristine" i18n>Reset</button>
 
@@ -61,3 +68,37 @@
 	</div>
 
 </form>
+
+<ng-template #eula let-d="dismiss">
+	<div class="modal-header">
+		<h4 class="modal-title">End-User License Agreement (EULA)</h4>
+		<button type="button" class="close" aria-label="Close" (click)="d('')">
+			<span aria-hidden="true">&times;</span>
+		</button>
+	</div>
+	<div class="modal-body">
+		Please read this End-User License Agreement ("Agreement") carefully before clicking the "I Agree" button, downloading or using the NIMBLE platform ("Application").<br/>
+		By clicking the "I Agree" button, downloading or using the Application, you are agreeing to be bound by the terms and conditions of this Agreement.<br/>
+		If you do not agree to the terms of this Agreement, do not click on the "I Agree" button and do not download or use the Application.<br/><br/>
+		<h3>License</h3>
+		Salzburg Research as the coordinating partner of the NIMBLE project acting on behalf of the consortium grants you a revocable, non-exclusive, non-transferable, limited license to register a company, publish a catalogue of products or services and use the Application solely for those purposes that are strictly in accordance with the terms of this Agreement.<br/><br/>
+		<h3>Restrictions</h3>
+		You agree not to, and you will not permit others to:<br/>
+		a) license, sell, rent, lease, assign, distribute, transmit, host, outsource, disclose or otherwise commercially exploit the Application or make the Application available to any third party.<br/>
+		b) You agree that the purpose of the Application is to facilitate in a lawful manner, the collaboration of companies in supply chains and you will not engage in any unlawful activity when using the platform.<br/>
+		c) You agree that the Application is subject to the European <a href="https://gdpr-info.eu/" target="_blank">GDPR 2018</a> and that you will ensure compliance of your firm with GDPR 2018 when processing data obtained through using the Application.<br/><br/>
+		<h3>Modifications to Application</h3>
+		Salzburg Research as the coordinating partner of the NIMBLE project acting on behalf of the consortium, reserves the right to modify, suspend or discontinue, temporarily or permanently, the Application or any service to which it connects, with or without notice and without liability to you.<br/><br/>
+		<h3>Term and Termination</h3>
+		This Agreement shall remain in effect until terminated by you or Salzburg Research as the coordinating partner of the NIMBLE project acting on behalf of the consortium.<br/>
+		Salzburg Research as the coordinating partner of the NIMBLE project acting on behalf of the consortium may, in its sole discretion, at any time and for any or no reason, suspend or terminate this Agreement with or without prior notice.<br/>
+		This Agreement will terminate immediately, without prior notice from Salzburg Research as the coordinating partner of the NIMBLE project acting on behalf of the consortium, in the event that you fail to comply with any provision of this Agreement. You may also terminate this Agreement by deleting the Application and all copies thereof from your mobile device or from your desktop.<br/>
+		Upon termination of this Agreement, you shall cease all use of the Application and delete all copies of the Application from your mobile device or from your desktop.<br/><br/>
+		<h3>Severability</h3>
+		If any provision of this Agreement is held to be unenforceable or invalid, such provision will be changed and interpreted to accomplish the objectives of such provision to the greatest extent possible under applicable law and the remaining provisions will continue in full force and effect.<br/><br/>
+		<h3>Amendments to this Agreement</h3>
+		Salzburg Research as the coordinating partner of the NIMBLE project acting on behalf of the consortium, reserves the right, at its sole discretion, to modify or replace this Agreement at any time. If a revision is material we will provide at least 30 days' notice prior to any new terms taking effect. What constitutes a material change will be determined at our sole discretion.<br/><br/>
+		<h3>Contact Information</h3>
+		If you have any questions about this Agreement, please contact us at <a href="mailto:nimble-support@salzburgresearch.at">nimble-support@salzburgresearch.at</a>
+	</div>
+</ng-template>
