@@ -16,6 +16,7 @@ import {Quotation} from "../catalogue/model/publish/quotation";
 import {OrderResponseSimple} from "../catalogue/model/publish/order-response-simple";
 import {Order} from "../catalogue/model/publish/order";
 import {Item} from "../catalogue/model/publish/item";
+import "moment";
 
 @Component({
     selector: 'nimble-dashboard',
@@ -65,15 +66,16 @@ export class DashboardComponent implements OnInit {
                 this.buyer_history = [];
                 for (let task of activeTasks) {
                     //if (task.deleteReason!="deleted") {
-                    var time_offset = -(new Date().getTimezoneOffset() / 60);
-                    var time_locale = new Date(new Date().setTime(new Date(task.startTime).getTime() + (time_offset * 60 * 60 * 1000))).toLocaleTimeString();
+                    //var time_offset = -(new Date().getTimezoneOffset() / 60);
+                    //var time_locale = new Date(new Date().setTime(new Date(task.startTime).getTime() + (time_offset * 60 * 60 * 1000))).toLocaleTimeString();
                     this.buyer_history_temp.push({
                         "task_id": task.id,
                         "task_name": task.name,
                         "task_description": task.description,
                         "process_id": task.processInstanceId,
                         "status_code": task.deleteReason,
-                        "start_time": new Date(task.startTime).toLocaleDateString() + " " + time_locale
+						"start_time": moment(task.startTime).format("YYYY-MM-DD HH:mm")
+                        //"start_time": new Date(task.startTime).toLocaleDateString() + " " + time_locale
                     });
 
                     this.bpeService.getProcessDetailsHistory(task.processInstanceId)
@@ -139,15 +141,16 @@ export class DashboardComponent implements OnInit {
                 this.seller_history = [];
                 for (let task of res) {
                     //if (task.deleteReason!="deleted") {
-                    var time_offset = -(new Date().getTimezoneOffset() / 60);
-                    var time_locale = new Date(new Date().setTime(new Date(task.startTime).getTime() + (time_offset * 60 * 60 * 1000))).toLocaleTimeString();
+                    //var time_offset = -(new Date().getTimezoneOffset() / 60);
+                    //var time_locale = new Date(new Date().setTime(new Date(task.startTime).getTime() + (time_offset * 60 * 60 * 1000))).toLocaleTimeString();
                     this.seller_history_temp.push({
                         "task_id": task.id,
                         "task_name": task.name,
                         "task_description": task.description,
                         "process_id": task.processInstanceId,
                         "status_code": task.deleteReason,
-                        "start_time": new Date(task.startTime).toLocaleDateString() + " " + time_locale
+						"start_time": moment(task.startTime).format("YYYY-MM-DD HH:mm")
+                        //"start_time": new Date(task.startTime).toLocaleDateString() + " " + time_locale
                     });
 
                     this.bpeService.getProcessDetailsHistory(task.processInstanceId)
