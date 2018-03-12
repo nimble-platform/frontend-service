@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CookieService } from 'ng2-cookies';
-import {Router, NavigationStart, NavigationEnd, NavigationCancel} from '@angular/router';
+import {Router, NavigationStart, NavigationEnd, NavigationCancel, RoutesRecognized} from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import * as myGlobals from './globals';
 
@@ -46,6 +46,11 @@ export class AppComponent implements OnInit {
                 this.loading = false;
             }
         });
+		router.events.subscribe(event => {
+            if(event instanceof RoutesRecognized) {
+                this.checkState(event.url);
+            }
+        });
 	}
 
 	ngOnInit() {
@@ -77,6 +82,18 @@ export class AppComponent implements OnInit {
 		this.modalService.open(content);
 	}
 
+	public checkState(url) {
+		if (url) {
+			var link = url.split("?")[0];
+			if (this.debug)
+				console.log("Loading route "+link);
+			if (!this.cookieService.get("user_id")) {
+				if (link != "/" && link != "/user-mgmt/login" && link != "/user-mgmt/registration")
+					this.router.navigate(["/user-mgmt/login"]);
+			}
+		}
+	}
+	
 	public checkLogin(path:any) {
 		if (this.cookieService.get("user_id")) {
 			this.isLoggedIn = true;
@@ -91,7 +108,7 @@ export class AppComponent implements OnInit {
 						const at_payload_json = JSON.parse(atob(at_payload));
 						const at_payload_json_roles = at_payload_json["realm_access"]["roles"];
 						this.roles = at_payload_json_roles;
-						if (myGlobals.debug)
+						if (this.debug)
 							console.log(`Detected roles: ${at_payload_json_roles}`);
 					}
 					catch(e){}
