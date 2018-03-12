@@ -29,12 +29,15 @@
 					<img src="assets/upload_white.png" class="inline-icon"/> <span i18n>Publish</span>
 				</a>
 			</li>
+			
+			<!--
 			<li class="nav-item" routerLinkActive="active">
 				<a class="nav-link" routerLink="/simple-search">
 					<img src="assets/search_white.png" class="inline-icon"/> <span i18n>Search</span>
 				</a>
 			</li>
-			<!--
+			-->
+			
 			<li ngbDropdown class="nav-item dropdown" routerLinkActive="active">
 				<a class="nav-link" id="dropdownMenuSearch" style="cursor:pointer" ngbDropdownToggle>
 					<img src="assets/search_white.png" class="inline-icon"/> <span i18n>Search</span>
@@ -48,7 +51,7 @@
 					</a>
 				</div>
 			</li>
-			-->
+			
 			<!--
 			<li class="nav-item" *ngIf="debug||roles.indexOf('legal_representative')!=-1" routerLinkActive="active">
 				<a class="nav-link" [routerLink]="['/bpe/bpe-design']" [queryParams]="{fromScratch: true}">
@@ -56,6 +59,7 @@
 				</a>
 			</li>
 			-->
+			
 			<li class="nav-item" *ngIf="checkRoles('reg_comp')" routerLinkActive="active">
 				<a class="nav-link" routerLink="/user-mgmt/company-registration">
 					<img src="assets/register_white.png" class="inline-icon"/> <span i18n>Register a Company</span>
