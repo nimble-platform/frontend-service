@@ -34,8 +34,8 @@
         </value-view>
         <div *ngIf="catalogueLine.goodsItem.item.commodityClassification.length > 0" class="d-flex flex-wrap">
             <label class="col-3 control-label">Product Types</label>
-            <div *ngFor="let classification of catalogueLine.goodsItem.item.commodityClassification">
-                <button class="btn btn-info mr-2">{{classification.itemClassificationCode.name}}</button>
+            <div *ngFor="let classification of catalogueLine.goodsItem.item.commodityClassification" class="bordered inline space-right">
+				{{classification.itemClassificationCode.name}}
             </div>
         </div>
 
