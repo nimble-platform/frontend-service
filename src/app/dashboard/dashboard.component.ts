@@ -28,12 +28,15 @@ import * as moment from 'moment';
 export class DashboardComponent implements OnInit {
 
     fullName = "";
+	tab = "sales";
     alert1Closed = false;
     alert2Closed = false;
     buyer_history_temp: any;
     buyer_history: any;
     seller_history_temp: any;
     seller_history: any;
+	active_buyer_num = 0;
+	active_seller_num = 0;
 
     constructor(private cookieService: CookieService,
                 private bpeService: BPEService,
@@ -47,6 +50,8 @@ export class DashboardComponent implements OnInit {
         if (this.cookieService.get("user_fullname"))
             this.fullName = this.cookieService.get("user_fullname");
         if (this.cookieService.get("user_id") && this.cookieService.get("company_id")) {
+			if (!this.appComponent.checkRoles('sales') && this.appComponent.checkRoles('purchases'))
+				this.tab = "purchases";
             this.buyer_history_temp = [];
             this.buyer_history = [];
             this.seller_history_temp = [];
@@ -59,7 +64,8 @@ export class DashboardComponent implements OnInit {
 
 
     loadOrders() {
-
+		this.active_buyer_num = 0;
+		this.active_seller_num = 0;
         this.bpeService.getInitiatorHistory(this.cookieService.get("company_id"))
             .then(activeTasks => {
                 this.buyer_history_temp = [];
@@ -74,7 +80,7 @@ export class DashboardComponent implements OnInit {
                         "task_description": task.description,
                         "process_id": task.processInstanceId,
                         "status_code": task.deleteReason,
-						"start_time": moment(task.startTime).format("YYYY-MM-DD HH:mm")
+						"start_time": moment(task.startTime+"Z").format("YYYY-MM-DD HH:mm")
                         //"start_time": new Date(task.startTime).toLocaleDateString() + " " + time_locale
                     });
 
@@ -118,12 +124,31 @@ export class DashboardComponent implements OnInit {
                                 "activityVariables": activityVariables,
                                 "bpOptionMenuItems": vBpOptionMenuItems
                             });
+							if (vStatusCode != "deleted" && vStatusCode != "completed")
+								this.active_buyer_num++;
 
                             this.buyer_history.sort(function (a: any, b: any) {
                                 var a_comp = a.start_time;
                                 var b_comp = b.start_time;
                                 return b_comp.localeCompare(a_comp);
                             });
+							this.buyer_history.sort(function(a: any, b: any) {
+								var a_comp = a.statusCode;
+								var b_comp = b.statusCode;
+								if (a_comp == "completed")
+									a_comp = 2;
+								else if (a_comp == "deleted")
+									a_comp = 3;
+								else
+									a_comp = 1;
+								if (b_comp == "completed")
+									b_comp = 2;
+								else if (b_comp == "deleted")
+									b_comp = 3;
+								else
+									b_comp = 1;
+								return a_comp-b_comp;
+							});
                         })
                         .catch(error => {
                             console.error(error);
@@ -149,7 +174,7 @@ export class DashboardComponent implements OnInit {
                         "task_description": task.description,
                         "process_id": task.processInstanceId,
                         "status_code": task.deleteReason,
-						"start_time": moment(task.startTime).format("YYYY-MM-DD HH:mm")
+						"start_time": moment(task.startTime+"Z").format("YYYY-MM-DD HH:mm")
                         //"start_time": new Date(task.startTime).toLocaleDateString() + " " + time_locale
                     });
 
@@ -194,11 +219,31 @@ export class DashboardComponent implements OnInit {
                                 "activityVariables": activityVariables,
                                 "bpOptionMenuItems": vBpOptionMenuItems
                             });
+							if (vStatusCode != "deleted" && vStatusCode != "completed")
+								this.active_seller_num++;
+							
                             this.seller_history.sort(function (a: any, b: any) {
                                 var a_comp = a.start_time;
                                 var b_comp = b.start_time;
                                 return b_comp.localeCompare(a_comp);
                             });
+							this.seller_history.sort(function(a: any, b: any) {
+								var a_comp = a.statusCode;
+								var b_comp = b.statusCode;
+								if (a_comp == "completed")
+									a_comp = 2;
+								else if (a_comp == "deleted")
+									a_comp = 3;
+								else
+									a_comp = 1;
+								if (b_comp == "completed")
+									b_comp = 2;
+								else if (b_comp == "deleted")
+									b_comp = 3;
+								else
+									b_comp = 1;
+								return a_comp-b_comp;
+							});
                         })
                         .catch(error => {
                             console.error(error);

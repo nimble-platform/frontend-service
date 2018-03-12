@@ -24,9 +24,18 @@
 	</div>
 </div>
 
-<div class="row space-before" *ngIf="appComponent.checkRoles('sales')">
+<ul class="nav nav-tabs space-before">
+	<li *ngIf="appComponent.checkRoles('sales')" class="nav-item">
+		<a class="nav-link" [ngClass]="{'active':tab=='sales'}" routerLink="/dashboard" (click)="tab='sales'">Sales <span class="badge badge-pill badge-warning">{{active_seller_num}}</span></a>
+	</li>
+	<li *ngIf="appComponent.checkRoles('purchases')" class="nav-item">
+		<a class="nav-link" [ngClass]="{'active':tab=='purchases'}" routerLink="/dashboard" (click)="tab='purchases'">Purchases <span class="badge badge-pill badge-warning">{{active_buyer_num}}</span></a>
+	</li>
+</ul>
+
+<div class="row space-before" *ngIf="appComponent.checkRoles('sales') && tab=='sales'">
 	<div class="col-12">
-		<h4 class="space-after" i18n>Sales</h4>
+		<!--<h4 class="space-after" i18n>Sales</h4>-->
 		<div *ngIf="seller_history.length > 0">
 			<table class="table table-striped table-bordered">
 				<tr><th>Process</th><th i18n>Date</th><th i18n>Product</th><th i18n>Buyer</th><th i18n>Note</th><th colspan="2" i18n>Status</th><th i18n>Options</th></tr>
@@ -75,9 +84,9 @@
 	</div>
 </div>
 
-<div class="row space-before" *ngIf="appComponent.checkRoles('purchases')">
+<div class="row space-before" *ngIf="appComponent.checkRoles('purchases') && tab=='purchases'">
 	<div class="col-12">
-		<h4 class="space-after" i18n>Purchases</h4>
+		<!--<h4 class="space-after" i18n>Purchases</h4>-->
 		<div *ngIf="buyer_history.length > 0">
 			<table class="table table-striped table-bordered">
 				<tr><th>Process</th><th i18n>Date</th><th i18n>Product</th><th i18n>Seller</th><th i18n>Note</th><th colspan="2" i18n>Status</th><th i18n>Options</th></tr>
