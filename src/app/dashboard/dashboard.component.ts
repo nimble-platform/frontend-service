@@ -86,7 +86,7 @@ export class DashboardComponent implements OnInit {
 
                     this.bpeService.getProcessDetailsHistory(task.processInstanceId)
                         .then(activityVariables => {
-                            var vContent = "", vNote = "", vStatusCode = "", vActionStatus = "", vActionRequired = "",vBPStatus = "",
+                            var vContent = "", vNote = "", vStatusCode = "", vActionStatus = "", vActionRequired = false,vBPStatus = "",
                                 vTask_id = "", vProcess_id = "", vStart_time = "", vSellerName = "", vProduct,
                                 vBpOptionMenuItems: any;
                             var vProcessType = ActivityVariableParser.getProcessType(activityVariables);
@@ -195,7 +195,7 @@ export class DashboardComponent implements OnInit {
                     this.bpeService.getProcessDetailsHistory(task.processInstanceId)
                         .then(activityVariables => {
 
-                            var vContent = "", vNote = "", vStatusCode= "", vActionStatus = "", vActionRequired = "", vBPStatus = "",
+                            var vContent = "", vNote = "", vStatusCode= "", vActionStatus = "", vActionRequired = false, vBPStatus = "",
                                 vTask_id = "", vProcess_id = "", vStart_time = "", vBuyerName = "", vProduct,
                                 vBpOptionMenuItems: any;
                             var vProcessType = ActivityVariableParser.getProcessType(activityVariables);
