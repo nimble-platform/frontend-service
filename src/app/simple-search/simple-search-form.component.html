@@ -58,7 +58,7 @@
 							<div class="card-block">
 								<div class="row">
 									<div class="col-2">
-										<img src="data:image/png;base64,{{result[product_img]}}" class="thumb" onerror="this.src='assets/empty_img.png';">
+										<img [src]="domSanitizer.bypassSecurityTrustUrl(result[product_img])" class="thumb" onerror="this.src='assets/empty_img.png';">
 										<!--
 										<div *ngIf="isJson(result[product_img])">
 											<img src="{{result[product_img]}}" class="thumb" onerror="this.src='assets/empty_img.png';"/>
