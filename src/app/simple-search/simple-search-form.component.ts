@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { DomSanitizer } from '@angular/platform-browser';
 import { Search } from './model/search';
 import { SimpleSearchService } from './simple-search.service';
 import { Router, ActivatedRoute} from "@angular/router";
@@ -39,7 +38,6 @@ export class SimpleSearchFormComponent implements OnInit {
 	constructor(
 		private simpleSearchService: SimpleSearchService,
 		private searchContextService: SearchContextService,
-		private domSanitizer: DomSanitizer,
 		public route: ActivatedRoute,
 		public router: Router
 	) {
@@ -138,12 +136,6 @@ export class SimpleSearchFormComponent implements OnInit {
 					}
 				}
 				this.temp = res.response.docs;
-				for (let doc in this.temp) {
-					if (this.temp[doc][this.product_img]) {
-						var img = "data:image/png;base64,"+this.temp[doc][this.product_img];
-						this.temp[doc][this.product_img] = img;
-					}
-				}
 				/*
 				for (let doc in this.temp) {
 					if (this.isJson(this.temp[doc][this.product_img])) {
