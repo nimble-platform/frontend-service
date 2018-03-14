@@ -22,6 +22,7 @@ export class CompanySettingsComponent implements OnInit {
     public isSubmitting = false;
 	public aM = false;
 	public mailto = "";
+	tooltipHTML = "";
 
     constructor(private _fb: FormBuilder,
 				private appComponent: AppComponent,
@@ -34,6 +35,9 @@ export class CompanySettingsComponent implements OnInit {
 		this.loading = true;
         this.settingsForm = this._fb.group({
             name: [''],
+			vatNumber: [''],
+			verificationInformation: [''],
+			website: [''],
             address: AddressSubForm.generateForm(this._fb),
             deliveryTerms: DeliveryTermsSubForm.generateForm(this._fb),
             paymentMeans: PaymentMeansForm.generateForm(this._fb)
@@ -53,6 +57,9 @@ export class CompanySettingsComponent implements OnInit {
 
                 // update forms
                 this.settingsForm.controls['name'].setValue(settings.name);
+				this.settingsForm.controls['vatNumber'].setValue(settings.vatNumber);
+				this.settingsForm.controls['verificationInformation'].setValue(settings.verificationInformation);
+				this.settingsForm.controls['website'].setValue(settings.website);
                 AddressSubForm.update(this.settingsForm.controls['address'], settings.address);
                 PaymentMeansForm.update(this.settingsForm.controls['paymentMeans'], settings.paymentMeans);
                 DeliveryTermsSubForm.update(this.settingsForm.controls['deliveryTerms'], settings.deliveryTerms);
@@ -69,8 +76,14 @@ export class CompanySettingsComponent implements OnInit {
 		body += "\n\n\n";
 		body += "I would like to change my company data to the following:";
 		body += "\n\n";
-		body += "Company Legal Name:\n";
+		body += "Legal Name:\n";
 		body += this.settingsForm.controls['name'].value+"\n\n";
+		body += "VAT Number:\n";
+		body += this.settingsForm.controls['vatNumber'].value+"\n\n";
+		body += "Verification Info:\n";
+		body += this.settingsForm.controls['verificationInformation'].value+"\n\n";
+		body += "Website:\n";
+		body += this.settingsForm.controls['website'].value+"\n\n";
 		body += "Street:\n";
 		body += company_json.streetName+"\n\n";
 		body += "Building Number:\n";
@@ -120,9 +133,11 @@ export class CompanySettingsComponent implements OnInit {
 		}
 		if (address_matching) {
 			this.aM = true;
+			this.changeFlag();
 		}
 		else {
 			this.aM = false;
+			this.changeFlag();
 		}
 		this.loading = false;
 	}
@@ -151,4 +166,13 @@ export class CompanySettingsComponent implements OnInit {
                 this.isSubmitting = false;
             });
     }
+	
+	showVerificationTT(content) {
+		var tooltip = "";
+		tooltip += "Please provide links to external resources or any other information that prove your connection to the company you want to register as a legal representative.<br/><br/>";
+		tooltip += "e.g. Company member listing on an official website, signing authority, company registration at external authorities, additional identification numbers, ...";
+		this.tooltipHTML = tooltip;
+		this.modalService.open(content);
+	}
+	
 }

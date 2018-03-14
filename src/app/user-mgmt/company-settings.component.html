@@ -9,15 +9,30 @@
 		<span>Request Company Data Change</span>
 	</button>
 	<div class="input-group form-group">
-		<label class="input-group-addon">Company Legal Name</label>
+		<label class="input-group-addon">Legal Name</label>
 		<input type="text" class="form-control" [formControl]="settingsForm.controls['name']" readonly>
+	</div>
+	<div class="input-group form-group">
+		<label class="input-group-addon">VAT Number</label>
+		<input type="text" class="form-control" [formControl]="settingsForm.controls['vatNumber']" readonly>
+	</div>
+	<div class="input-group form-group">
+		<label class="input-group-addon">
+			<span>Verification Info</span>
+			<span class="tooltip-icon" (click)="showVerificationTT(tooltip)"><img class="inline-icon" src="assets/question_black.png"/></span>
+		</label>
+		<input type="text" class="form-control" [formControl]="settingsForm.controls['verificationInformation']" readonly>
+	</div>
+	<div class="input-group form-group">
+		<label class="input-group-addon">Website</label>
+		<input type="text" class="form-control" [formControl]="settingsForm.controls['website']" readonly>
 	</div>
 	<address-form [group]="settingsForm.controls.address"></address-form>
 
 	<h3 class="space-after">Delivery Terms</h3>
 	<div class="input-group form-group">
 		<span class="input-group-addon">
-			<input type="checkbox" [(ngModel)]="aM" [ngModelOptions]="{standalone:true}" (change)="changeFlag()">
+			<input type="checkbox" [(ngModel)]="aM" [ngModelOptions]="{standalone:true}" (change)="settingsForm.controls['name'].markAsDirty();changeFlag();">
 		</span>
 		<span class="form-control">Deliver to company address</span>
 	</div>
@@ -51,5 +66,16 @@
 	</div>
 	<div class="modal-footer">
 		<a [href]="mailto" type="button" class="btn btn-primary" (click)="d('')">Open mail template</a>
+	</div>
+</ng-template>
+
+<ng-template #tooltip let-d="dismiss">
+	<div class="modal-header">
+		<h4 class="modal-title">Tooltip</h4>
+		<button type="button" class="close" aria-label="Close" (click)="d('')">
+			<span aria-hidden="true">&times;</span>
+		</button>
+	</div>
+	<div class="modal-body" [innerHTML]="tooltipHTML">
 	</div>
 </ng-template>
