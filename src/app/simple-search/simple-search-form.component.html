@@ -57,17 +57,26 @@
 						<div *ngIf="result.item_id != null" class="card pointer" [routerLink]="['/simple-search/details']" [queryParams]="{catalogueId: result.item_catalogue_id[0], id: result.item_id[0]}">
 							<div class="card-block">
 								<div class="row">
-									<div class="col-2">
+									<div class="col-2 align-center">
+										<img src="data:image/png;base64,{{result[product_img]}}" class="thumb" onerror="this.src='assets/empty_img.png';"/>
+										<!--
 										<div *ngIf="isJson(result[product_img])">
 											<img src="{{result[product_img]}}" class="thumb" onerror="this.src='assets/empty_img.png';"/>
 										</div>
 										<div *ngIf="!isJson(result[product_img])">
 											<img src="{{result[product_img]}}" class="thumb" onerror="this.src='assets/empty_img.png';"/>
 										</div>
+										{{result[product_img]}}
+										-->
 									</div>
-									<div class="col-10">
+									<div class="col-8">
 										<b>{{ result[product_name] }}</b><br/>
-										<i>{{ result[product_vendor_name] }}</i>
+										<i>{{ result[product_vendor_name] }}</i><br/>
+										<small *ngIf="result.item_description">{{result.item_description}}</small>
+									</div>
+									<div class="col-2 align-right">
+										<span class="badge badge-primary" *ngIf="result.item_price">{{result.item_price}} {{result.item_price_currency}}</span>
+										<span class="badge badge-warning" *ngIf="!result.item_price">Upon request</span>
 									</div>
 								</div>
 							</div>

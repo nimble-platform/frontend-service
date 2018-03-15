@@ -19,6 +19,7 @@
 			'@ng-bootstrap/ng-bootstrap': 'npm:@ng-bootstrap/ng-bootstrap/bundles/ng-bootstrap.js',
 			'ng2-cookies': 'npm:ng2-cookies/cookie.js',
 			'file-saver': 'npm:file-saver',
+			'moment': 'npm:moment',
 			'gojs': 'npm:gojs/release/go-debug.js',
 		},
 		packages: {
@@ -37,6 +38,11 @@
 			'file-saver': {
 				format: 'global',
 				main: 'FileSaver.js',
+				defaultExtension: 'js'
+			},
+			'moment' : {
+				format: 'global',
+				main: 'moment.js',
 				defaultExtension: 'js'
 			}
 		}

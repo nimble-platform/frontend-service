@@ -7,7 +7,6 @@ export class CommodityClassification {
         public itemClassificationCode: Code = new Code(),
         public natureCode: Code = new Code(),
         public cargoTypeCode: Code = new Code(),
-        public itemPropertyURI: string = null,
         public hjid: string = null
     ) { }
 }

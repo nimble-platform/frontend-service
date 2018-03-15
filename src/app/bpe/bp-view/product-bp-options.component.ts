@@ -68,7 +68,8 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
 
         // first check search context whether the search process is associated with a specific process
         if (this.searchContextService.associatedProcessType != null) {
-            this.availableProcesses.push(this.bpDataService.processTypeSubject.getValue());
+            //this.availableProcesses.push(this.bpDataService.processTypeSubject.getValue());
+            this.availableProcesses.push('Transport_Execution_Plan');
 
             // regular order and negotiation processes
         } else {
@@ -76,6 +77,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
             this.availableProcesses.push('Negotiation');
 
             if (this.bpDataService.catalogueLine.goodsItem.item.transportationServiceDetails == null) {
+                this.availableProcesses.push('Ppap');
                 this.availableProcesses.push('Order');
             } else {
                 this.availableProcesses.push('Transport_Execution_Plan');

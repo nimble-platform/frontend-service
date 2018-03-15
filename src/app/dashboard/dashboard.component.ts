@@ -16,6 +16,7 @@ import {Quotation} from "../catalogue/model/publish/quotation";
 import {OrderResponseSimple} from "../catalogue/model/publish/order-response-simple";
 import {Order} from "../catalogue/model/publish/order";
 import {Item} from "../catalogue/model/publish/item";
+import * as moment from 'moment';
 
 @Component({
     selector: 'nimble-dashboard',
@@ -27,14 +28,15 @@ import {Item} from "../catalogue/model/publish/item";
 export class DashboardComponent implements OnInit {
 
     fullName = "";
-	hasCompany = false;
-	roles = [];
-	alert1Closed = false;
-	alert2Closed = false;
+	tab = "sales";
+    alert1Closed = false;
+    alert2Closed = false;
     buyer_history_temp: any;
     buyer_history: any;
     seller_history_temp: any;
     seller_history: any;
+	active_buyer_num = 0;
+	active_seller_num = 0;
 
     constructor(private cookieService: CookieService,
                 private bpeService: BPEService,
@@ -48,14 +50,8 @@ export class DashboardComponent implements OnInit {
         if (this.cookieService.get("user_fullname"))
             this.fullName = this.cookieService.get("user_fullname");
         if (this.cookieService.get("user_id") && this.cookieService.get("company_id")) {
-			if (this.cookieService.get("active_company_name")) {
-				if (this.cookieService.get("active_company_name") == null || this.cookieService.get("active_company_name") == "null")
-					this.hasCompany = false;
-				else
-					this.hasCompany = true;
-			}
-			else
-				this.hasCompany = false;
+			if (!this.appComponent.checkRoles('sales') && this.appComponent.checkRoles('purchases'))
+				this.tab = "purchases";
             this.buyer_history_temp = [];
             this.buyer_history = [];
             this.seller_history_temp = [];
@@ -64,93 +60,114 @@ export class DashboardComponent implements OnInit {
         }
         else
             this.appComponent.checkLogin("/user-mgmt/login");
-		if (this.cookieService.get('bearer_token')) {
-			const at = this.cookieService.get('bearer_token');
-			if (at.split(".").length == 3) {
-				const at_payload = at.split(".")[1];
-				try {
-					const at_payload_json = JSON.parse(atob(at_payload));
-					const at_payload_json_roles = at_payload_json["realm_access"]["roles"];
-					this.roles = at_payload_json_roles;
-				}
-				catch(e){}
-			}
-		}
-		else
-			this.roles = [];
     }
 
-    loadOrders() {
 
+    loadOrders() {
+		this.active_buyer_num = 0;
+		this.active_seller_num = 0;
         this.bpeService.getInitiatorHistory(this.cookieService.get("company_id"))
             .then(activeTasks => {
                 this.buyer_history_temp = [];
                 this.buyer_history = [];
                 for (let task of activeTasks) {
-					//if (task.deleteReason!="deleted") {
-						var time_offset = -(new Date().getTimezoneOffset() / 60);
-						var time_locale = new Date(new Date().setTime(new Date(task.startTime).getTime() + (time_offset * 60 * 60 * 1000))).toLocaleTimeString();
-						this.buyer_history_temp.push({
-							"task_id": task.id,
-							"task_name": task.name,
-							"task_description": task.description,
-							"process_id": task.processInstanceId,
-							"status_code": task.deleteReason,
-							"start_time": new Date(task.startTime).toLocaleDateString() + " " + time_locale
-						});
+                    //if (task.deleteReason!="deleted") {
+                    //var time_offset = -(new Date().getTimezoneOffset() / 60);
+                    //var time_locale = new Date(new Date().setTime(new Date(task.startTime).getTime() + (time_offset * 60 * 60 * 1000))).toLocaleTimeString();
+                    this.buyer_history_temp.push({
+                        "task_id": task.id,
+                        "task_name": task.name,
+                        "task_description": task.description,
+                        "process_id": task.processInstanceId,
+                        "status_code": task.deleteReason,
+						"start_time": moment(task.startTime+"Z").format("YYYY-MM-DD HH:mm")
+                        //"start_time": new Date(task.startTime).toLocaleDateString() + " " + time_locale
+                    });
 
-						this.bpeService.getProcessDetailsHistory(task.processInstanceId)
-							.then(activityVariables => {
+                    this.bpeService.getProcessDetailsHistory(task.processInstanceId)
+                        .then(activityVariables => {
+                            var vContent = "", vNote = "", vStatusCode = "", vActionStatus = "", vActionRequired = false,vBPStatus = "",
+                                vTask_id = "", vProcess_id = "", vStart_time = "", vSellerName = "", vProduct,
+                                vBpOptionMenuItems: any;
+                            var vProcessType = ActivityVariableParser.getProcessType(activityVariables);
+							var vProcessTypeReadable = vProcessType.replace(/_/g,' ');
+                            let response: any = ActivityVariableParser.getResponse(activityVariables);
+                            let initialDoc: any = ActivityVariableParser.getInitialDocument(activityVariables);
+                            vProduct = ActivityVariableParser.getProductFromProcessData(initialDoc);
+                            vNote = ActivityVariableParser.getNoteFromProcessData(initialDoc);
+                            vSellerName = ActivityVariableParser.getResponderNameProcessData(initialDoc);
+                            vProcess_id = initialDoc.processInstanceId;
+                            vActionStatus = this.getActionStatus(vProcessType, response, true)[0];
+                            vBPStatus = this.getBPStatus(response);
+                            vContent = initialDoc.value;
+                            vBpOptionMenuItems = this.getBpOptionsMenuItems(vProcessType, response, true);
 
-								var vContent = "", vNote = "", vStatusCode = "", vActionStatus = "", vBPStatus = "",
-									vTask_id = "", vProcess_id = "", vStart_time = "", vSellerName = "", vProduct,
-									vBpOptionMenuItems: any;
-								var vProcessType = ActivityVariableParser.getProcessType(activityVariables);
-								let response: any = ActivityVariableParser.getResponse(activityVariables);
-								let initialDoc: any = ActivityVariableParser.getInitialDocument(activityVariables);
-								vProduct = ActivityVariableParser.getProductFromProcessData(initialDoc);
-								vNote = ActivityVariableParser.getNoteFromProcessData(initialDoc);
-								vSellerName = ActivityVariableParser.getResponderNameProcessData(initialDoc);
-								vProcess_id = initialDoc.processInstanceId;
-								vActionStatus = this.getActionStatus(vProcessType, response, true);
-								vBPStatus = this.getBPStatus(response);
-								vContent = initialDoc.value;
-								vBpOptionMenuItems = this.getBpOptionsMenuItems(vProcessType, response, true);
+                            for (let t of this.buyer_history_temp) {
+                                if (t.process_id == vProcess_id) {
+                                    vTask_id = t.task_id;
+                                    vStart_time = t.start_time;
+                                    vStatusCode = t.status_code;
+                                }
+                            }
+							vActionRequired = (this.getActionStatus(vProcessType, response, true)[1] && vStatusCode != "deleted" && vStatusCode != "completed");
+							
+                            this.buyer_history.push({
+                                "processType": vProcessType,
+								"processTypeReadable": vProcessTypeReadable,
+                                "task_id": vTask_id,
+                                "process_id": vProcess_id,
+                                "start_time": vStart_time,
+                                "sellerName": vSellerName,
+                                "product": vProduct,
+                                "note": vNote,
+                                "processStatus": vBPStatus,
+                                "statusCode": vStatusCode,
+                                "actionStatus": vActionStatus,
+								"actionRequired": vActionRequired,
+                                "content": vContent,
+                                "activityVariables": activityVariables,
+                                "bpOptionMenuItems": vBpOptionMenuItems
+                            });
+							if (vActionRequired)
+								this.active_buyer_num++;
 
-								for (let t of this.buyer_history_temp) {
-									if (t.process_id == vProcess_id) {
-										vTask_id = t.task_id;
-										vStart_time = t.start_time;
-										vStatusCode = t.status_code;
-									}
+                            this.buyer_history.sort(function (a: any, b: any) {
+                                var a_comp = a.start_time;
+                                var b_comp = b.start_time;
+                                return b_comp.localeCompare(a_comp);
+                            });
+							this.buyer_history.sort(function(a: any, b: any) {
+								var a_comp = a.statusCode;
+								var a2_comp = a.actionRequired;
+								var b_comp = b.statusCode;
+								var b2_comp = b.actionRequired;
+								if (a_comp == "completed")
+									a_comp = 2;
+								else if (a_comp == "deleted")
+									a_comp = 3;
+								else {
+									if (a2_comp)
+										a_comp = 0;
+									else
+										a_comp = 1;
 								}
-
-								this.buyer_history.push({
-									"processType": vProcessType,
-									"task_id": vTask_id,
-									"process_id": vProcess_id,
-									"start_time": vStart_time,
-									"sellerName": vSellerName,
-									"product": vProduct,
-									"note": vNote,
-									"processStatus": vBPStatus,
-									"statusCode": vStatusCode,
-									"actionStatus": vActionStatus,
-									"content": vContent,
-									"activityVariables": activityVariables,
-									"bpOptionMenuItems": vBpOptionMenuItems
-								});
-
-								this.buyer_history.sort(function (a: any, b: any) {
-									var a_comp = a.start_time;
-									var b_comp = b.start_time;
-									return b_comp.localeCompare(a_comp);
-								});
-							})
-							.catch(error => {
-								console.error(error);
+								if (b_comp == "completed")
+									b_comp = 2;
+								else if (b_comp == "deleted")
+									b_comp = 3;
+								else {
+									if (b2_comp)
+										b_comp = 0;
+									else
+										b_comp = 1;
+								}
+								return a_comp-b_comp;
 							});
-					//}
+                        })
+                        .catch(error => {
+                            console.error(error);
+                        });
+                    //}
                 }
             })
             .catch(error => {
@@ -162,69 +179,104 @@ export class DashboardComponent implements OnInit {
                 this.seller_history_temp = [];
                 this.seller_history = [];
                 for (let task of res) {
-					//if (task.deleteReason!="deleted") {
-						var time_offset = -(new Date().getTimezoneOffset() / 60);
-						var time_locale = new Date(new Date().setTime(new Date(task.startTime).getTime() + (time_offset * 60 * 60 * 1000))).toLocaleTimeString();
-						this.seller_history_temp.push({
-							"task_id": task.id,
-							"task_name": task.name,
-							"task_description": task.description,
-							"process_id": task.processInstanceId,
-							"status_code": task.deleteReason,
-							"start_time": new Date(task.startTime).toLocaleDateString() + " " + time_locale
-						});
+                    //if (task.deleteReason!="deleted") {
+                    //var time_offset = -(new Date().getTimezoneOffset() / 60);
+                    //var time_locale = new Date(new Date().setTime(new Date(task.startTime).getTime() + (time_offset * 60 * 60 * 1000))).toLocaleTimeString();
+                    this.seller_history_temp.push({
+                        "task_id": task.id,
+                        "task_name": task.name,
+                        "task_description": task.description,
+                        "process_id": task.processInstanceId,
+                        "status_code": task.deleteReason,
+						"start_time": moment(task.startTime+"Z").format("YYYY-MM-DD HH:mm")
+                        //"start_time": new Date(task.startTime).toLocaleDateString() + " " + time_locale
+                    });
 
-						this.bpeService.getProcessDetailsHistory(task.processInstanceId)
-							.then(activityVariables => {
+                    this.bpeService.getProcessDetailsHistory(task.processInstanceId)
+                        .then(activityVariables => {
 
-								var vContent = "", vNote = "", vStatusCode= "", vActionStatus = "", vBPStatus = "",
-									vTask_id = "", vProcess_id = "", vStart_time = "", vBuyerName = "", vProduct,
-									vBpOptionMenuItems: any;
-								var vProcessType = ActivityVariableParser.getProcessType(activityVariables);
-								let response: any = ActivityVariableParser.getResponse(activityVariables);
-								let initialDoc: any = ActivityVariableParser.getInitialDocument(activityVariables);
-								vProduct = ActivityVariableParser.getProductFromProcessData(initialDoc);
-								vNote = ActivityVariableParser.getNoteFromProcessData(initialDoc);
-								vBuyerName = ActivityVariableParser.getInitiatorNameProcessData(initialDoc);
-								vProcess_id = initialDoc.processInstanceId;
-								vActionStatus = this.getActionStatus(vProcessType, response, false);
-								vBPStatus = this.getBPStatus(response);
-								vContent = initialDoc.value;
-								vBpOptionMenuItems = this.getBpOptionsMenuItems(vProcessType, response, false);
+                            var vContent = "", vNote = "", vStatusCode= "", vActionStatus = "", vActionRequired = false, vBPStatus = "",
+                                vTask_id = "", vProcess_id = "", vStart_time = "", vBuyerName = "", vProduct,
+                                vBpOptionMenuItems: any;
+                            var vProcessType = ActivityVariableParser.getProcessType(activityVariables);
+							var vProcessTypeReadable = vProcessType.replace(/_/g,' ');
+                            let response: any = ActivityVariableParser.getResponse(activityVariables);
+                            let initialDoc: any = ActivityVariableParser.getInitialDocument(activityVariables);
+                            vProduct = ActivityVariableParser.getProductFromProcessData(initialDoc);
+                            vNote = ActivityVariableParser.getNoteFromProcessData(initialDoc);
+                            vBuyerName = ActivityVariableParser.getInitiatorNameProcessData(initialDoc);
+                            vProcess_id = initialDoc.processInstanceId;
+                            vActionStatus = this.getActionStatus(vProcessType, response, false)[0];
+                            vBPStatus = this.getBPStatus(response);
+                            vContent = initialDoc.value;
+                            vBpOptionMenuItems = this.getBpOptionsMenuItems(vProcessType, response, false);
 
-								for (let t of this.seller_history_temp) {
-									if (t.process_id == vProcess_id) {
-										vTask_id = t.task_id;
-										vStart_time = t.start_time;
-										vStatusCode = t.status_code;
-									}
+                            for (let t of this.seller_history_temp) {
+                                if (t.process_id == vProcess_id) {
+                                    vTask_id = t.task_id;
+                                    vStart_time = t.start_time;
+                                    vStatusCode = t.status_code;
+                                }
+                            }
+							vActionRequired = (this.getActionStatus(vProcessType, response, false)[1] && vStatusCode != "deleted" && vStatusCode != "completed");
+
+                            this.seller_history.push({
+                                "processType": vProcessType,
+								"processTypeReadable": vProcessTypeReadable,
+                                "task_id": vTask_id,
+                                "process_id": vProcess_id,
+                                "start_time": vStart_time,
+                                "buyerName": vBuyerName,
+                                "product": vProduct,
+                                "note": vNote,
+                                "processStatus": vBPStatus,
+                                "statusCode": vStatusCode,
+                                "actionStatus": vActionStatus,
+								"actionRequired": vActionRequired,
+                                "content": vContent,
+                                "activityVariables": activityVariables,
+                                "bpOptionMenuItems": vBpOptionMenuItems
+                            });
+							if (vActionRequired)
+								this.active_seller_num++;
+							
+                            this.seller_history.sort(function (a: any, b: any) {
+                                var a_comp = a.start_time;
+                                var b_comp = b.start_time;
+                                return b_comp.localeCompare(a_comp);
+                            });
+							this.seller_history.sort(function(a: any, b: any) {
+								var a_comp = a.statusCode;
+								var a2_comp = a.actionRequired;
+								var b_comp = b.statusCode;
+								var b2_comp = b.actionRequired;
+								if (a_comp == "completed")
+									a_comp = 2;
+								else if (a_comp == "deleted")
+									a_comp = 3;
+								else {
+									if (a2_comp)
+										a_comp = 0;
+									else
+										a_comp = 1;
 								}
-
-								this.seller_history.push({
-									"processType": vProcessType,
-									"task_id": vTask_id,
-									"process_id": vProcess_id,
-									"start_time": vStart_time,
-									"buyerName": vBuyerName,
-									"product": vProduct,
-									"note": vNote,
-									"processStatus": vBPStatus,
-									"statusCode": vStatusCode,
-									"actionStatus": vActionStatus,
-									"content": vContent,
-									"activityVariables": activityVariables,
-									"bpOptionMenuItems": vBpOptionMenuItems
-								});
-								this.seller_history.sort(function (a: any, b: any) {
-									var a_comp = a.start_time;
-									var b_comp = b.start_time;
-									return b_comp.localeCompare(a_comp);
-								});
-							})
-							.catch(error => {
-								console.error(error);
+								if (b_comp == "completed")
+									b_comp = 2;
+								else if (b_comp == "deleted")
+									b_comp = 3;
+								else {
+									if (b2_comp)
+										b_comp = 0;
+									else
+										b_comp = 1;
+								}
+								return a_comp-b_comp;
 							});
-					//}
+                        })
+                        .catch(error => {
+                            console.error(error);
+                        });
+                    //}
                 }
             })
             .catch(error => {
@@ -236,14 +288,15 @@ export class DashboardComponent implements OnInit {
         if(targetProcess == null) {
             targetProcess = ActivityVariableParser.getProcessType(processMetadata.activityVariables);
         }
-
         this.bpDataService.setBpOptionParametersWithProcessMetadata(role, targetProcess, processMetadata);
         this.router.navigate(['bpe/bpe-exec'], {
             queryParams: {
                 catalogueId: processMetadata.product.catalogueDocumentReference.id,
-                id: processMetadata.product.manufacturersItemIdentification.id
+                id: processMetadata.product.manufacturersItemIdentification.id,
+                pid: processMetadata.process_id
             }
         });
+
     }
 	
 	cancelBP(processID: string) {
@@ -267,8 +320,9 @@ export class DashboardComponent implements OnInit {
             }});
     }
 
-    getActionStatus(processType: string, response: any, buyer: boolean): string {
+    getActionStatus(processType: string, response: any, buyer: boolean): [string,boolean] {
         let responseMessage;
+		var actionRequired = false;
 
         // messages if there is no response from the responder party
         if (response == null) {
@@ -276,10 +330,14 @@ export class DashboardComponent implements OnInit {
             if (buyer) {
                 if (processType == 'Fulfilment') {
                     responseMessage = "Receipt Advice should be sent";
+					actionRequired = true;
                 } else if (processType == 'Order') {
                     responseMessage = "Waiting for Order Response";
                 } else if (processType == 'Negotiation') {
                     responseMessage = "Waiting for Quotation";
+                }
+                  else if (processType == 'Ppap') {
+                      responseMessage = "Waiting for Ppap Response";
                 } else if (processType == 'Transport_Execution_Plan') {
                     responseMessage = "Waiting for Transport Execution Plan";
                 } else if (processType == 'Item_Information_Request') {
@@ -293,12 +351,20 @@ export class DashboardComponent implements OnInit {
                     responseMessage = "Waiting for Receipt Advice";
                 } else if (processType == 'Order') {
                     responseMessage = "Order Response should be sent";
+					actionRequired = true;
                 } else if (processType == 'Negotiation') {
                     responseMessage = "Quotation should be sent";
+					actionRequired = true;
                 } else if (processType == 'Transport_Execution_Plan') {
                     responseMessage = "Transport Execution Plan should be sent";
+					actionRequired = true;
                 } else if (processType == 'Item_Information_Request') {
                     responseMessage = 'Information Response should be sent';
+					actionRequired = true;
+                }
+                  else if(processType == 'Ppap'){
+                    responseMessage = "Ppap Response should be sent";
+					actionRequired = true;
                 }
             }
 
@@ -324,6 +390,12 @@ export class DashboardComponent implements OnInit {
                 } else {
                     responseMessage = "Receipt Advice received"
                 }
+            } else if(processType == 'Ppap'){
+                if(response.value.acceptedIndicator){
+                    responseMessage = "Ppap approved";
+                } else {
+                    responseMessage = "Ppap declined";
+                }
 
             } else if (processType == 'Transport_Execution_Plan') {
                 if (buyer) {
@@ -340,12 +412,11 @@ export class DashboardComponent implements OnInit {
                 }
             }
         }
-        return responseMessage;
+        return [responseMessage,actionRequired];
     }
 
     getBpOptionsMenuItems(processType: string, response: any, buyer: boolean): any {
         let bpOptionMenuItems: Array<any> = [{itemLabel: 'Business History'}];
-
         // messages if there is no response from the responder party
         /*if (response == null) {
             // messages for the buyer

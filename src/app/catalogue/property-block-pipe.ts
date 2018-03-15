@@ -22,14 +22,16 @@ export class PropertyBlockPipe implements PipeTransform {
     private selectedCategories: Category[] = [];
     private itemProperties: ItemProperty[] = [];
     private propertyBlocks: Array<any> = [];
-    private checkedProperties: Array<string> = [];
+    private checkedProperties: Array<{propId:string,categoryId:string}> = [];
     private presentationMode:string;
+    private properties:string;
 
     constructor(private categoryService: CategoryService,
                 private publishStateService: PublishService) {
     }
 
-    transform(itemProperties: ItemProperty[], presentationMode:string): any {
+    transform(itemProperties: ItemProperty[], presentationMode:string, properties:string): any {
+        this.properties = properties;
         this.selectedCategories = this.categoryService.selectedCategories;
         this.itemProperties = itemProperties;
         this.presentationMode = presentationMode;
@@ -38,143 +40,35 @@ export class PropertyBlockPipe implements PipeTransform {
         return this.retrievePropertyBlocks();
     }
 
-    /**
-     * Creates the property block array by parsing the additional item property array of the item.
-     * In the edit mode, it gathers all the properties included in the category, however, in other presentation modes,
-     * it considers only the properties belonging to the item
-     */
     retrievePropertyBlocks(): any {
-        if (this.presentationMode == 'edit') {
-            this.refreshPropertyBlocks();
-        } else {
-            this.createPropertyBlocksWithExistingProperties();
+        // custom properties belonging to the item
+        if(this.properties == 'Custom'){
+            this.createCustomPropertyBlock();
+        }
+        else{
+            // all the properties included in the category
+            if(this.presentationMode == 'edit'){
+                this.categoryPropertyBlocks();
+            }
+            // non-custom properties belonging to the item
+            else{
+                this.createNotCustomProperties();
+            }
         }
         return this.propertyBlocks;
+
+
     }
 
-    refreshPropertyBlocks(): void {
-        // get custom properties
-        this.createCustomPropertyBlock();
-
-        // commodity classifications
-        if (this.selectedCategories != null) {
-            for (let category of this.selectedCategories) {
-                if (category.taxonomyId == 'eClass') {
-                    this.createEClassPropertyBlocks(category);
-                } else {
-                    this.createPropertyBlock(category);
-                }
-            }
-        }
-    }
-
-    private createCustomPropertyBlock():void {
-        let customPropertyBlock: any = {};
-        let name:string = "Custom";
-
-        customPropertyBlock[this.PROPERTY_BLOCK_FIELD_NAME] = name;
-        customPropertyBlock[this.PROPERTY_BLOCK_FIELD_ISCOLLAPSED] = this.publishStateService.getCollapsedState(name);
-
-        let customProps:ItemProperty[] = []
-        for(let property of this.itemProperties) {
-            if(property.itemClassificationCode.listID == "Custom") {
-                customProps.push(property);
-                this.checkedProperties.push(property.id);
-            }
-        }
-
-        if(customProps.length > 0) {
-            customPropertyBlock[this.PROPERTY_BLOCK_FIELD_PROPERTIES] = customProps;
-            this.propertyBlocks.push(customPropertyBlock);
-        }
-    }
-
-    /**
-     * Creates two blocks as eClass-base and eClass-specific and puts properties into those
-     */
-    private createEClassPropertyBlocks(category: Category): void {
-        let eClassBlocks = this.createEmptyEClassPropertyBlocks(category.preferredName);
-        let basePropertyBlock: any = eClassBlocks[0];
-        let specificPropertyBlock: any = eClassBlocks[1];
-
-        basePropertyBlock['isCollapsed'] = this.publishStateService.getCollapsedState(basePropertyBlock.name);
-        specificPropertyBlock['isCollapsed'] = this.publishStateService.getCollapsedState(specificPropertyBlock.name);
-
-
-        let baseProperties: ItemProperty[] = [];
-        let basePropertyDetails: Property[] = [];
-        let specificProperties: ItemProperty[] = [];
-        let specificPropertyDetails: Property[] = [];
-        for (let property of category.properties) {
-            let aip: ItemProperty;
-            let index = this.itemProperties.findIndex(ip => ip.id == property.id);
-            if (index > -1) {
-                aip = this.itemProperties[index];
-            }
-            else continue;
-
-            //aip.propertyDefinition = property.definition;
-            if (!this.isPropertyPresentedAlready(property)) {
-                if (this.isBaseEClassProperty(property.id)) {
-                    baseProperties.push(aip);
-                    basePropertyDetails.push(property);
-
-                } else {
-                    specificProperties.push(aip);
-                    specificPropertyDetails.push(property);
-                }
-                this.checkedProperties.push(property.id);
-            }
-        }
-
-        basePropertyBlock[this.PROPERTY_BLOCK_FIELD_PROPERTIES] = baseProperties;
-        basePropertyBlock[this.PROPERTY_BLOCK_FIELD_PROPERTY_DETAILS] = basePropertyDetails;
-        specificPropertyBlock[this.PROPERTY_BLOCK_FIELD_PROPERTIES] = specificProperties;
-        specificPropertyBlock[this.PROPERTY_BLOCK_FIELD_PROPERTY_DETAILS] = specificPropertyDetails;
-
-        this.propertyBlocks.push(basePropertyBlock);
-        this.propertyBlocks.push(specificPropertyBlock);
-    }
-
-    private createPropertyBlock(category: Category): void {
-        let propertyBlock: any = this.createEmptyPropertyBlock(category.preferredName, category.taxonomyId);
-        propertyBlock['isCollapsed'] = this.publishStateService.getCollapsedState(propertyBlock.name);
-        this.propertyBlocks.push(propertyBlock);
-
-        let properties: ItemProperty[] = [];
-        for (let property of category.properties) {
-            if (!this.isPropertyPresentedAlready(property)) {
-                properties.push(this.getItemProperty(property));
-                this.checkedProperties.push(property.id)
-            }
-        }
-        propertyBlock['properties'] = properties;
-    }
-
-    private isPropertyPresentedAlready(property: Property): boolean {
-        for (let id of this.checkedProperties) {
-            if (property.id == id) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private getItemProperty(property: Property): ItemProperty {
-        for (let aip of this.itemProperties) {
-            if (aip.id == property.id) {
-                return aip;
-            }
-        }
-        console.error("Property could not be found in additional item properties: " + property.id)
-    }
-
-    private createPropertyBlocksWithExistingProperties() {
+    createNotCustomProperties():void{
         this.propertyBlocks = [];
 
         // put all properties into their blocks
         for (let property of this.itemProperties) {
-            if (property.itemClassificationCode.listID === "eClass") {
+            if(property.itemClassificationCode.listID === "Custom"){
+                continue;
+            }
+            else if (property.itemClassificationCode.listID === "eClass") {
                 let isBaseProperty:boolean = this.isBaseEClassProperty(property.id);
                 let blockName = this.getBlockNameForEClass(property.itemClassificationCode.name, isBaseProperty);
                 let blockIndex = this.propertyBlocks.findIndex(block => block[this.PROPERTY_BLOCK_FIELD_NAME] == blockName);
@@ -204,6 +98,125 @@ export class PropertyBlockPipe implements PipeTransform {
             }
         }
     }
+
+
+    categoryPropertyBlocks(): void {
+        // commodity classifications
+        if (this.selectedCategories != null) {
+            for (let category of this.selectedCategories) {
+                // custom categories
+                if(category.taxonomyId == 'Custom'){
+                    continue;
+                }
+                if (category.taxonomyId == 'eClass') {
+                    this.createEClassPropertyBlocks(category);
+                } else {
+                    this.createPropertyBlock(category);
+                }
+            }
+        }
+    }
+
+    private createCustomPropertyBlock():void {
+        let customPropertyBlock: any = {};
+        let name:string = "Custom";
+
+        customPropertyBlock[this.PROPERTY_BLOCK_FIELD_NAME] = name;
+        customPropertyBlock[this.PROPERTY_BLOCK_FIELD_ISCOLLAPSED] = this.publishStateService.getCollapsedState(name);
+
+        let customProps:ItemProperty[] = [];
+        for(let property of this.itemProperties) {
+            if(property.itemClassificationCode.listID == "Custom") {
+                customProps.push(property);
+                this.checkedProperties.push({propId:property.id,categoryId:"Custom"});
+            }
+        }
+
+        if(customProps.length > 0) {
+            customPropertyBlock[this.PROPERTY_BLOCK_FIELD_PROPERTIES] = customProps;
+            this.propertyBlocks.push(customPropertyBlock);
+        }
+    }
+
+    /**
+     * Creates two blocks as eClass-base and eClass-specific and puts properties into those
+     */
+    private createEClassPropertyBlocks(category: Category): void {
+        let eClassBlocks = this.createEmptyEClassPropertyBlocks(category.preferredName);
+        let basePropertyBlock: any = eClassBlocks[0];
+        let specificPropertyBlock: any = eClassBlocks[1];
+
+        basePropertyBlock['isCollapsed'] = this.publishStateService.getCollapsedState(basePropertyBlock.name);
+        specificPropertyBlock['isCollapsed'] = this.publishStateService.getCollapsedState(specificPropertyBlock.name);
+
+
+        let baseProperties: ItemProperty[] = [];
+        let basePropertyDetails: Property[] = [];
+        let specificProperties: ItemProperty[] = [];
+        let specificPropertyDetails: Property[] = [];
+        for (let property of category.properties) {
+            let aip: ItemProperty;
+            let index = this.itemProperties.findIndex(ip => ip.id == property.id && ip.itemClassificationCode.value == category.id);
+            if (index > -1) {
+                aip = this.itemProperties[index];
+            }
+            else continue;
+
+            if (!this.isPropertyPresentedAlready(property,category.id)) {
+                if (this.isBaseEClassProperty(property.id)) {
+                    baseProperties.push(aip);
+                    basePropertyDetails.push(property);
+
+                } else {
+                    specificProperties.push(aip);
+                    specificPropertyDetails.push(property);
+                }
+                this.checkedProperties.push({propId:property.id,categoryId:category.id});
+            }
+        }
+
+        basePropertyBlock[this.PROPERTY_BLOCK_FIELD_PROPERTIES] = baseProperties;
+        basePropertyBlock[this.PROPERTY_BLOCK_FIELD_PROPERTY_DETAILS] = basePropertyDetails;
+        specificPropertyBlock[this.PROPERTY_BLOCK_FIELD_PROPERTIES] = specificProperties;
+        specificPropertyBlock[this.PROPERTY_BLOCK_FIELD_PROPERTY_DETAILS] = specificPropertyDetails;
+
+        this.propertyBlocks.push(basePropertyBlock);
+        this.propertyBlocks.push(specificPropertyBlock);
+    }
+
+    private createPropertyBlock(category: Category): void {
+        let propertyBlock: any = this.createEmptyPropertyBlock(category.preferredName, category.taxonomyId);
+        propertyBlock['isCollapsed'] = this.publishStateService.getCollapsedState(propertyBlock.name);
+        this.propertyBlocks.push(propertyBlock);
+
+        let properties: ItemProperty[] = [];
+        for (let property of category.properties) {
+            if (!this.isPropertyPresentedAlready(property,category.id)) {
+                properties.push(this.getItemProperty(property,category.id));
+                this.checkedProperties.push({propId:property.id,categoryId:category.id});
+            }
+        }
+        propertyBlock['properties'] = properties;
+    }
+
+    private isPropertyPresentedAlready(property: Property,categoryId: string): boolean {
+        for (let x of this.checkedProperties) {
+            if (property.id == x.propId && categoryId == x.categoryId) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private getItemProperty(property: Property,categoryId: string): ItemProperty {
+        for (let aip of this.itemProperties) {
+            if (aip.id == property.id && aip.itemClassificationCode.value == categoryId) {
+                return aip;
+            }
+        }
+        console.error("Property could not be found in additional item properties: " + property.id)
+    }
+
 
     private createEmptyEClassPropertyBlocks(categoryName):any {
         let basePropertyBlock: any = {};

@@ -3,33 +3,7 @@
                        [presentationMode]="presentationMode">
 </catalogue-line-header>
 
-<!-- images -->
-<div *ngIf="presentationMode=='edit' && catalogueLine.goodsItem.item.productImage.length == 0"
-     class="offset-2 col-10 mt-3 mb-3">
-    <label *ngIf="catalogueLine.goodsItem.item.productImage.length == 0">Add Image</label>
-    <input #image type="file" (change)="addImage($event)" multiple accept="image/*"
-           style="display: none">
-    <img src="./assets/catalogue/add_button.png"
-         (click)="image.click()"/>
-</div>
-<div *ngIf="catalogueLine.goodsItem.item.productImage.length > 0"
-     class="d-flex flex-wrap justify-content-start offset-2 mb-3">
-    <div *ngFor="let image of catalogueLine.goodsItem.item.productImage; let i = index">
-        <div *ngIf="image.mimeCode.split('/')[0]=='image'">
-            <img class=" pr-2"
-                 src="data:{{image.mimeCode}};base64,{{image.value}}"
-                 height="100"
-                 (click)="deleteImage(i)"
-            />
-        </div>
-    </div>
-    <div *ngIf="presentationMode=='edit'" class="align-self-center ml-3">
-        <input #image type="file" (change)="addImage($event)" multiple accept="image/*"
-               style="display: none">
-        <img src="./assets/catalogue/add_button.png"
-             (click)="image.click()"/>
-    </div>
-</div>
+
 
 <div *ngIf="presentationMode=='edit'" class="space-before space-after">
 	<button *ngIf="partyRole == 'Transport Service Provider'" class="btn btn-primary" (click)="changePartyRole('Manufacturer')">

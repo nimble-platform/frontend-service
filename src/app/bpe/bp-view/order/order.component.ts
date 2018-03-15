@@ -46,9 +46,8 @@ export class OrderComponent {
         //once they are fetched continue with starting the ordering process
         let sellerId:string = this.bpDataService.catalogueLine.goodsItem.item.manufacturerParty.id;
         let buyerId:string = this.cookieService.get("company_id");
-
         this.userService.getParty(buyerId).then(buyerParty => {
-            order.buyerCustomerParty = new CustomerParty(buyerParty)
+            order.buyerCustomerParty = new CustomerParty(buyerParty);
 
             this.userService.getParty(sellerId).then(sellerParty => {
                 order.sellerSupplierParty = new SupplierParty(sellerParty);

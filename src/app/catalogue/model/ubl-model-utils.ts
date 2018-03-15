@@ -38,6 +38,8 @@ import {OrderResponseSimple} from "./publish/order-response-simple";
 import {RequestForQuotation} from "./publish/request-for-quotation";
 import {Quotation} from "./publish/quotation";
 import {Location} from "./publish/location";
+import {Ppap} from "./publish/ppap";
+import {PpapResponse} from "./publish/ppap-response";
 import {Shipment} from "./publish/shipment";
 import {TransportExecutionPlanRequest} from "./publish/transport-execution-plan-request";
 import {TransportationService} from "./publish/transportation-service";
@@ -68,15 +70,15 @@ export class UBLModelUtils {
         let code: Code;
 
         if (category !== null) {
-            code = new Code(category.id, category.preferredName, category.taxonomyId, null);
+            code = new Code(category.id, category.preferredName, category.categoryUri, category.taxonomyId, null);
         }
         else {
-            code = new Code(null, null, "Custom", null);
+            code = new Code(null, null, null, "Custom", null);
         }
 
         let aip: ItemProperty;
         if (property == null) {
-            aip = new ItemProperty(this.generateUUID(), "", [], [], [], new Array<BinaryObject>(), "", "", "STRING", code, "", null);
+            aip = new ItemProperty(this.generateUUID(), "", [], [], [], new Array<BinaryObject>(), "", "STRING", code, "", null, null);
         }
         else {
             let unit = "";
@@ -87,15 +89,15 @@ export class UBLModelUtils {
 
             let number;
             let quantity:Quantity = this.createQuantity();
-            aip = new ItemProperty(property.id, property.preferredName, [''], [number], [quantity], new Array<BinaryObject>(), "", unit,
-                valueQualifier, code, "", null);
+            aip = new ItemProperty(property.id, property.preferredName, [''], [number], [quantity], new Array<BinaryObject>(), unit,
+                valueQualifier, code, "", null, property.uri);
         }
         return aip;
     }
 
     public static createCommodityClassification(category: Category): CommodityClassification {
-        let code: Code = new Code(category.id, category.preferredName, category.taxonomyId, null);
-        let commodityClassification = new CommodityClassification(code, null, null, "", "");
+        let code: Code = new Code(category.id, category.preferredName, category.categoryUri, category.taxonomyId, null);
+        let commodityClassification = new CommodityClassification(code, null, null, "");
         return commodityClassification;
     }
 
@@ -148,6 +150,37 @@ export class UBLModelUtils {
         let orderResponseSimple:OrderResponseSimple = new OrderResponseSimple("", "", acceptedIndicator, orderReference, supplierParty, customerParty);
         return orderResponseSimple;
     }
+
+    public static createPpap(documents:String[]):Ppap {
+        let quantity:Quantity = new Quantity(null, "", null);
+        let item:Item = this.createItem();
+        let price: Price = this.createPrice(null);
+        let lineItem:LineItem = this.createLineItem(quantity, price, item);
+        let ppap = new Ppap(this.generateUUID(), "",documents, null, null, lineItem);
+        return ppap;
+    }
+
+    public static createPpapResponse(ppap:Ppap,acceptedIndicator:boolean):PpapResponse{
+        /*
+        let documentReference:DocumentReference = new DocumentReference(ppap.id);
+        let ppapDocumentReference:PPAPDocumentReference = new PPAPDocumentReference(documentReference);
+        this.removeHjidFieldsFromObject(ppap.buyerCustomerParty);
+        this.removeHjidFieldsFromObject(ppap.sellerSupplierParty);
+        let customerParty:CustomerParty = ppap.buyerCustomerParty;
+        let supplierParty:SupplierParty = ppap.sellerSupplierParty;
+        let ppapResponse:PpapResponse = new PpapResponse("","",acceptedIndicator,customerParty,supplierParty,null,documentReference);
+        return ppapResponse;*/
+        let ppapResponse:PpapResponse = new PpapResponse();
+        ppapResponse.ppapDocumentReference = new DocumentReference(ppap.id);
+        this.removeHjidFieldsFromObject(ppap.buyerCustomerParty);
+        this.removeHjidFieldsFromObject(ppap.sellerSupplierParty);
+        ppapResponse.buyerCustomerParty = ppap.buyerCustomerParty;
+        ppapResponse.sellerSupplierParty = ppap.sellerSupplierParty;
+        ppapResponse.acceptedIndicator = acceptedIndicator;
+        return ppapResponse;
+    }
+
+
 
     public static createRequestForQuotation():RequestForQuotation {
         let quantity:Quantity = new Quantity(null, "", null);
@@ -225,6 +258,7 @@ export class UBLModelUtils {
         transportExecutionPlanRequest.id = this.generateUUID();
         transportExecutionPlanRequest.mainTransportationService = quotation.quotationLine[0].lineItem.item;
         transportExecutionPlanRequest.consignment = quotation.quotationLine[0].lineItem.delivery[0].shipment.consignment;
+        transportExecutionPlanRequest.consignment[0].consolidatedShipment = [new Shipment()];
         this.removeHjidFieldsFromObject(transportExecutionPlanRequest);
         return transportExecutionPlanRequest
     }
@@ -272,15 +306,15 @@ export class UBLModelUtils {
     }
 
     public static createPackage():Package {
-        return new Package(this.createQuantity(), this.createCode(), null);
+        return new Package(this.createQuantity(), new Code(), null);
     }
 
     public static createPrice(amount: string): Price {
         // create amount
         if(amount == null) {
-            amount = "EUR";
+            amount = "";
         }
-        let amountObj: Amount = this.createAmountWithCurrency("EUR");
+        let amountObj: Amount = this.createAmountWithCurrency("");
         let quantity: Quantity = this.createQuantity();
         let price: Price = new Price(amountObj, quantity);
         return price;
@@ -333,10 +367,6 @@ export class UBLModelUtils {
 
     public static createItemIdentification():ItemIdentification {
         return this.createItemIdentificationWithId(this.generateUUID());
-    }
-
-    public static createCode():Code {
-        return new Code(null, null, null, null);
     }
 
     public static removeHjidFieldsFromObject(object:any):any {

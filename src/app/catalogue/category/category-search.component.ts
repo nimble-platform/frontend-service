@@ -8,8 +8,6 @@ import {Category} from "../model/category/category";
 import {CategoryService} from "./category.service";
 import {CookieService} from "ng2-cookies";
 import {CatalogueService} from "../catalogue.service";
-import {UBLModelUtils} from "../model/ubl-model-utils";
-import {UserService} from "../../user-mgmt/user.service";
 import {PublishService} from "../publish-and-aip.service";
 import {ProductPublishComponent} from "../product-publish.component";
 
@@ -30,6 +28,10 @@ export class CategorySearchComponent implements OnInit {
     isReturnPublish: boolean = false;
     // It checks whether user is publishing or not
     inPublish: boolean = false;
+
+    // whether customCategoryPage is displayed or not
+    customCategoryPage: boolean = false;
+
     constructor(private router: Router,
                 private route: ActivatedRoute,
                 private cookieService: CookieService,
@@ -37,6 +39,7 @@ export class CategorySearchComponent implements OnInit {
                 private catalogueService: CatalogueService,
                 private publishService:PublishService) {
     }
+
 
     ngOnInit(): void {
         this.route.queryParams.subscribe((params: Params) => {
@@ -115,6 +118,11 @@ export class CategorySearchComponent implements OnInit {
                 this.error_detc = true;
             }
         );
+    }
+
+    private addCustomCategory(text: string): void{
+        this.categoryService.addSelectedCategory(new Category(null,text,null,null,null,null,null,[],[],'Custom',null));
+        this.navigateToPublishingPage();
     }
 
     private navigateToPublishingPage():void {

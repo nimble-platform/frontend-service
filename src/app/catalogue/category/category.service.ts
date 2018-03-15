@@ -33,27 +33,53 @@ export class CategoryService {
             return Promise.resolve([]);
         }
 
-        let url = this.baseUrl;
-        let categoryIds:string = '';
-        let taxonomyIds:string = '';
+        let customCategoryCodes: Code[] = [];
+        let customCategories: Category[] = [];
+        let categories:Category[];
 
-        let i = 0;
-        for (; i<codes.length-1; i++) {
-            categoryIds += encodeURIComponent(codes[i].value) + ",";
-            taxonomyIds += codes[i].listID + ",";
+
+        customCategoryCodes = codes.filter(function (cat) {
+           return cat.listID == 'Custom';
+        });
+        // get custom categories
+        for(let cat of customCategoryCodes){
+            customCategories.push(new Category(null,cat.name,null,null,null,null,null,[],[],'Custom',null));
         }
-        categoryIds += encodeURIComponent(codes[i].value);
-        taxonomyIds += codes[i].listID;
 
-        url += "?taxonomyIds=" + taxonomyIds + "&categoryIds=" + categoryIds;
+        categories = customCategories;
 
-        return this.http
-            .get(url, {headers: this.headers})
-            .toPromise()
-            .then(res => {
-                return res.json() as Category;
-            })
-            .catch(this.handleError);
+        // get non-custom categories
+        codes = codes.filter(function (cat) {
+           return cat.listID != 'Custom';
+        });
+
+        if(codes.length > 0){
+            let url = this.baseUrl;
+            let categoryIds:string = '';
+            let taxonomyIds:string = '';
+
+            let i = 0;
+            for (; i<codes.length-1; i++) {
+                categoryIds += encodeURIComponent(codes[i].value) + ",";
+                taxonomyIds += codes[i].listID + ",";
+            }
+            categoryIds += encodeURIComponent(codes[i].value);
+            taxonomyIds += codes[i].listID;
+
+            url += "?taxonomyIds=" + taxonomyIds + "&categoryIds=" + categoryIds;
+
+            return this.http
+                .get(url, {headers: this.headers})
+                .toPromise()
+                .then(res => {
+                    categories = categories.concat(res.json() as Category[]);
+                    return categories;
+                })
+                .catch(this.handleError);
+        }
+        else{
+            return Promise.resolve(categories);
+        }
     }
 
     getCategory(category: Category): Promise<Category> {
@@ -79,10 +105,20 @@ export class CategoryService {
     }
 
     addSelectedCategory(category: Category): void {
-        // Only add if category is not null and doesn't exist in selected categories
-        if (category != null && this.selectedCategories.findIndex(c => c.id == category.id) == -1) {
-            this.selectedCategories.push(category);
+        // custom categories
+        if(category != null && category.taxonomyId == 'Custom'){
+            // Only add if category is not null and doesn't exist in selected categories
+            if (this.selectedCategories.findIndex(c => c.preferredName == category.preferredName) == -1) {
+                this.selectedCategories.push(category);
+            }
         }
+        else{
+            // Only add if category is not null and doesn't exist in selected categories
+            if (category != null && this.selectedCategories.findIndex(c => c.id == category.id) == -1) {
+                this.selectedCategories.push(category);
+            }
+        }
+
     }
 
     resetSelectedCategories():void {

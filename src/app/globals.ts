@@ -7,16 +7,16 @@ export const debug=false;
 
 // Endpoint variables - SRFG staging
 
-//export const user_mgmt_endpoint="http://nimble-staging.salzburgresearch.at/identity";
-//export const catalogue_endpoint="http://nimble-staging.salzburgresearch.at/catalog";
-//export const bpe_endpoint="http://nimble-staging.salzburgresearch.at/business-process";
+export const user_mgmt_endpoint="http://nimble-staging.salzburgresearch.at/identity";
+export const catalogue_endpoint="http://nimble-staging.salzburgresearch.at/catalog";
+export const bpe_endpoint="http://nimble-staging.salzburgresearch.at/business-process";
 
 
 // Endpoint variables - SRFG productive
 
-export const user_mgmt_endpoint="https://nimble-platform.salzburgresearch.at/nimble/identity";
-export const catalogue_endpoint="https://nimble-platform.salzburgresearch.at/nimble/catalog";
-export const bpe_endpoint="https://nimble-platform.salzburgresearch.at/nimble/business-process";
+//export const user_mgmt_endpoint="https://nimble-platform.salzburgresearch.at/nimble/identity";
+//export const catalogue_endpoint="https://nimble-platform.salzburgresearch.at/nimble/catalog";
+//export const bpe_endpoint="https://nimble-platform.salzburgresearch.at/nimble/business-process";
 
 
 // Endpoint variables - K8S domain
@@ -73,8 +73,8 @@ export const sqpOrangeConcept = "https://hydra2.ikap.biba.uni-bremen.de:8443/get
 export const product_name = "item_name";
 export const product_vendor_id = "item_manufacturer_id";
 export const product_vendor_name = "item_manufacturer_name";
-export const product_img = "thumb";
-export const product_nonfilter_full = ["id","_version_"];
+export const product_img = "item_image";
+export const product_nonfilter_full = ["id","_version_","item_description","item_price","item_price_currency"];
 export const product_nonfilter_regex = ["lmf.","_id"];
 export const product_configurable = [];
 export const product_default = {};

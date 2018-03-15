@@ -13,6 +13,7 @@ export class ValueViewComponent extends ChildForm implements OnInit {
     @Input() presentationMode: string;
     @Input() propName: string;
     @Input() mandatory:boolean = false;
+    @Input() largeInput: boolean = false;
 
     control:FormControl;
 

@@ -1,19 +1,19 @@
 <div class="delivery-terms-form" [formGroup]="deliveryTermsForm">
-    <div class="form-group col-xs-3">
-        <label>Terms</label>
-        <textarea type="text" class="form-control" formControlName="specialTerms"></textarea>
-        <small [hidden]="deliveryTermsForm.controls.specialTerms.valid || deliveryTermsForm.controls.specialTerms.pristine"
-               class="text-danger">
-            Terms are required
-        </small>
+	<div class="input-group form-group hidden-xl-down">
+		<span class="input-group-addon">
+			<input type="checkbox" [(ngModel)]="deliveryTermsForm.aM" [ngModelOptions]="{standalone:true}">
+		</span>
+		<span class="form-control">Deliver to company address</span>
+	</div>
+	<div [ngClass]="{'hidden-xl-down':deliveryTermsForm.aM,'':!deliveryTermsForm.aM}">
+	    <address-form [group]="deliveryTermsForm.controls.deliveryAddress"></address-form>
     </div>
-    <div class="form-group col-xs-3">
-        <label>Avergage delivery time in days (not working yet)</label>
-        <input type="number" class="form-control" formControlName="estimatedDeliveryTime">
-    </div>
-
-    <h5>Delivery Address</h5>
-    <div>
-        <address-form [group]="deliveryTermsForm.controls.deliveryAddress"></address-form>
-    </div>
+	<div class="input-group form-group">
+		<label class="input-group-addon">Terms</label>
+		<input type="text" class="form-control" formControlName="specialTerms">
+	</div>
+	<div class="input-group form-group">
+		<label class="input-group-addon">Delivery time (days)</label>
+		<input type="number" class="form-control" formControlName="estimatedDeliveryTime">
+	</div>
 </div>

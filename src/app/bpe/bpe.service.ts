@@ -58,7 +58,7 @@ export class BPEService {
 	}
 
 	getInitiatorHistory(id: string): Promise<any> {
-		const url = `${this.url}/rest/engine/default/history/task?processVariables=initiatorID_eq_${id}&sortBy=startTime&sortOrder=desc&maxResults=10`;
+		const url = `${this.url}/rest/engine/default/history/task?processVariables=initiatorID_eq_${id}&sortBy=startTime&sortOrder=desc&maxResults=20`;
 		return this.http
 		.get(url, {headers: this.headers})
 		.toPromise()
@@ -67,7 +67,7 @@ export class BPEService {
 	}
 
 	getRecipientHistory(id: string): Promise<any> {
-		const url = `${this.url}/rest/engine/default/history/task?processVariables=responderID_eq_${id}&sortBy=startTime&sortOrder=desc&maxResults=10`;
+		const url = `${this.url}/rest/engine/default/history/task?processVariables=responderID_eq_${id}&sortBy=startTime&sortOrder=desc&maxResults=20`;
 		return this.http
 		.get(url, {headers: this.headers})
 		.toPromise()

@@ -37,14 +37,19 @@ export class CredentialsFormComponent implements OnInit {
 	post(credentials: Credentials): void {
 		this.credentialsService.post(credentials)
 		.then(res => {
-
 			if (myGlobals.debug)
 				console.log(`User logged in . Response: ${JSON.stringify(res)}`);
 
 			this.response = res;
 			this.cookieService.set("user_id",res.userID);
-			this.cookieService.set("company_id",res.companyID);
-			this.cookieService.set("active_company_name",res.companyName);
+			if (res.companyID)
+				this.cookieService.set("company_id",res.companyID);
+			else
+				this.cookieService.set("company_id",null);
+			if (res.companyName)
+				this.cookieService.set("active_company_name",res.companyName);
+			else
+				this.cookieService.set("active_company_name",null);
 			this.cookieService.set("user_fullname",res.firstname+" "+res.lastname);
 			this.cookieService.set("user_email",res.email);
 			this.cookieService.set("bearer_token",res.accessToken);
