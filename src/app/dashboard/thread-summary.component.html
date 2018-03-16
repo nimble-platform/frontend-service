@@ -1,5 +1,5 @@
 <div class="space-after thread-entry">
-    <div class="row space-after thread-entry-row" style="margin-right: 0; margin-left: 0">
+    <div class="row thread-entry-row" style="margin-right: 0; margin-left: 0">
         <div class="col">{{processInstanceGroup.id}}</div>
     </div>
 
@@ -9,32 +9,28 @@
                 <div class="row thread-entry-row">
                     <div class="col-1"><b>First Activity:</b></div>
                     <div class="col-2">{{singleMetadata.presentableProcessType}}</div>
-                    <div class="col-2">{{singleMetadata.start_time}}</div>
+                    <div class="col-1">{{singleMetadata.start_time}}</div>
                     <div class="col-2">
                         <label class="clickable" (click)="navigateToSearchDetails(singleMetadata.product)">
                             {{singleMetadata.product.name}}
                         </label>
                     </div>
                     <div class="col-1">{{singleMetadata.tradingPartner}}</div>
-                    <div class="col-1">{{singleMetadata.note}}</div>
-                    <div class="col-1">
-                        <ng-container *ngIf="singleMetadata.statusCode=='EXTERNALLY_TERMINATED'"><span class="cancelled-font">Canceled</span></ng-container>
-                        <ng-container *ngIf="singleMetadata.statusCode=='COMPLETED'"><span class="success-font">Completed</span></ng-container>
-                        <ng-container *ngIf="singleMetadata.statusCode=='ACTIVE'"><span class="success-font">In Progress</span></ng-container>
+                    <div class="col-2">{{singleMetadata.note}}</div>
+                    <div *ngIf="singleMetadata.statusCode=='EXTERNALLY_TERMINATED'" class="col-1 alert-danger">Cancelled</div>
+                    <div *ngIf="singleMetadata.statusCode=='COMPLETED'" class="col-1 alert-success">Completed</div>
+                    <div *ngIf="singleMetadata.statusCode=='ACTIVE'" class="col-1 alert-warning">In Progress</div>
+                    <div *ngIf="singleMetadata.statusCode=='EXTERNALLY_TERMINATED'" class="col-2 alert-danger">
+                        <span class="clickable"
+                                   (click)="openBpProcessView(i)">{{singleMetadata.actionStatus}}</span>
                     </div>
-                    <div class="col-2">
-                        <ng-container *ngIf="singleMetadata.statusCode=='EXTERNALLY_TERMINATED'">
-                            <label class="clickable cancelled-font"
-                                   (click)="openBpProcessView(i)">{{singleMetadata.actionStatus}}</label>
-                        </ng-container>
-                        <ng-container *ngIf="singleMetadata.statusCode=='COMPLETED'">
-                            <label class="clickable success-font"
-                                   (click)="openBpProcessView(i)">{{singleMetadata.actionStatus}}</label>
-                        </ng-container>
-                        <ng-container *ngIf="singleMetadata.statusCode=='ACTIVE'">
-                            <label class="clickable danger-font"
-                                   (click)="openBpProcessView(i)">{{singleMetadata.actionStatus}}</label>
-                        </ng-container>
+                    <div *ngIf="singleMetadata.statusCode=='COMPLETED'" class="col-2 alert-success">
+                        <span class="clickable"
+                              (click)="openBpProcessView(i)">{{singleMetadata.actionStatus}}</span>
+                    </div>
+                    <div *ngIf="singleMetadata.statusCode=='ACTIVE'" class="col-2 alert-warning">
+                        <span class="clickable"
+                              (click)="openBpProcessView(i)">{{singleMetadata.actionStatus}}</span>
                     </div>
                 </div>
             </ng-container>

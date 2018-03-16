@@ -50,10 +50,10 @@
     <ng-container *ngIf="seller_history.length > 0">
         <div class="row space-after inherit-side-margins">
             <div class="thread-column-header col-3">Process</div>
-            <div class="thread-column-header col-2">Date</div>
+            <div class="thread-column-header col-1">Date</div>
             <div class="thread-column-header col-2">Product</div>
             <div class="thread-column-header col-1">Buyer</div>
-            <div class="thread-column-header col-1">Note</div>
+            <div class="thread-column-header col-2">Note</div>
             <div class="thread-column-header col-3">Status</div>
         </div>
         <thread-summary *ngFor="let processInstanceGroup of seller_history"
@@ -71,10 +71,10 @@
     <ng-container *ngIf="buyer_history.length > 0">
         <div class="row space-after inherit-side-margins">
             <div class="thread-column-header col-3">Process</div>
-            <div class="thread-column-header col-2">Date</div>
+            <div class="thread-column-header col-1">Date</div>
             <div class="thread-column-header col-2">Product</div>
             <div class="thread-column-header col-1">Seller</div>
-            <div class="thread-column-header col-1">Note</div>
+            <div class="thread-column-header col-2">Note</div>
             <div class="thread-column-header col-3">Status</div>
         </div>
         <thread-summary *ngFor="let processInstanceGroup of buyer_history"

@@ -6,26 +6,33 @@
 .thread-entry .thread-entry-row:nth-of-type(1) {
     border-bottom: 1px solid rgba(0, 0, 0, 0.15);
     background: rgba(0,0,0,.05);
+    padding-bottom: .5rem;
+    padding-top: .5rem;
+}
+
+.thread-entry .thread-entry-row:nth-of-type(2) > div {
+    padding-bottom: .5rem;
+    padding-top: .5rem;
+    padding-left: .2rem;
+    padding-right: .2rem;
 }
 
 .thread-entry-row {
     margin-left: 0;
     margin-right: 0;
-    padding-bottom: .5rem;
-    padding-top: .5rem;
 }
 
-.success-font {
-    color: #3c763d;
-    font-weight: bold;
-}
+/*.success-font {*/
+    /*color: #3c763d;*/
+    /*font-weight: bold;*/
+/*}*/
 
-.danger-font {
-    color: #a94442;
-    font-weight: bold;
-}
+/*.danger-font {*/
+    /*color: #a94442;*/
+    /*font-weight: bold;*/
+/*}*/
 
-.cancelled-font {
-    color: #777;
-    font-weight: bold;
-}
+/*.cancelled-font {*/
+    /*color: #777;*/
+    /*font-weight: bold;*/
+/*}*/
