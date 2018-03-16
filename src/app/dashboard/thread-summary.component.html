@@ -24,13 +24,16 @@
                     </div>
                     <div class="col-2">
                         <ng-container *ngIf="singleMetadata.statusCode=='EXTERNALLY_TERMINATED'">
-                            <span class="cancelled-font">{{singleMetadata.actionStatus}}</span>
+                            <label class="clickable cancelled-font"
+                                   (click)="openBpProcessView(i)">{{singleMetadata.actionStatus}}</label>
                         </ng-container>
                         <ng-container *ngIf="singleMetadata.statusCode=='COMPLETED'">
-                            <span class="success-font">{{singleMetadata.actionStatus}}</span>
+                            <label class="clickable success-font"
+                                   (click)="openBpProcessView(i)">{{singleMetadata.actionStatus}}</label>
                         </ng-container>
                         <ng-container *ngIf="singleMetadata.statusCode=='ACTIVE'">
-                            <span class="danger-font">{{singleMetadata.actionStatus}}</span>
+                            <label class="clickable danger-font"
+                                   (click)="openBpProcessView(i)">{{singleMetadata.actionStatus}}</label>
                         </ng-container>
                     </div>
                 </div>

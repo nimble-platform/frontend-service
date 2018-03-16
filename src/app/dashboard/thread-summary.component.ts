@@ -7,6 +7,7 @@ import {BPService} from "../bpe/bp.service";
 import {BPEService} from "../bpe/bpe.service";
 import {ActivityVariableParser} from "../bpe/bp-view/activity-variable-parser";
 import * as moment from 'moment';
+import {Item} from "../catalogue/model/publish/item";
 
 /**
  * Created by suat on 12-Mar-18.
@@ -198,13 +199,25 @@ export class ThreadSummaryComponent implements OnInit {
         this.bpDataService.setRelatedGroupId(this.processInstanceGroup.id);
     }
 
-    navigateToSearchDetails(productId: string) {
+    navigateToSearchDetails(item:Item) {
         this.router.navigate(['/simple-search/details'],
-            {
-                queryParams: {
-                    pid: productId,
-                    showOptions: true
-                }
-            });
+            { queryParams: {
+                catalogueId: item.catalogueDocumentReference.id,
+                id: item.manufacturersItemIdentification.id,
+                showOptions: true
+            }});
+    }
+
+    openBpProcessView(processInstanceIndex: number) {
+        let processMetadata: any = this.processMetadata[processInstanceIndex];
+        this.bpDataService.setBpOptionParametersWithProcessMetadata(this.processInstanceGroup.collaborationRole.toLocaleLowerCase(), processMetadata.processType, processMetadata);
+        this.router.navigate(['bpe/bpe-exec'], {
+            queryParams: {
+                catalogueId: processMetadata.product.catalogueDocumentReference.id,
+                id: processMetadata.product.manufacturersItemIdentification.id,
+                pid: processMetadata.process_id
+            }
+        });
+
     }
 }
