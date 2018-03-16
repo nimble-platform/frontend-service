@@ -40,18 +40,18 @@ export const simple_search_endpoint="https://nimble-platform.salzburgresearch.at
 
 // Endpoint variables - BIBA domain
 
-// export const languageEndPoint = `${ub_base_8090}/getSupportedLanguages`;
-export const languageEndPoint = "https://nimble-platform.salzburgresearch.at/nimble/search/getSupportedLanguages";
-export const endpoint = "https://nimble-platform.salzburgresearch.at/nimble/search/detectMeaningLanguageSpecific";
-export const logicalViewEndpoint = "https://nimble-platform.salzburgresearch.at/nimble/search/getLogicalView";
-export const propertyEndPoint = "https://nimble-platform.salzburgresearch.at/nimble/search/getPropertyValuesDiscretised";
-export const sparqlEndPoint = "https://nimble-platform.salzburgresearch.at/nimble/search/executeSPARQLSelect";
-export const sparqlOptionalSelectEndPoint = "https://nimble-platform.salzburgresearch.at/nimble/search/executeSPARQLOptionalSelect";
-export const spqButton = "https://nimble-platform.salzburgresearch.at/nimble/search/getSQPFromOrangeGroup";
-export const obs_propFromConcept = "https://nimble-platform.salzburgresearch.at/nimble/search/getPropertyFromConcept";
-export const obs_propValueFromConcept = "https://nimble-platform.salzburgresearch.at/nimble/search/getPropertyValuesFromGreenGroup";
-export const referenceFromConcept = "https://nimble-platform.salzburgresearch.at/nimble/search/getReferencesFromAConcept";
-export const sqpOrangeConcept = "https://nimble-platform.salzburgresearch.at/nimble/search/getPropertyValuesFromOrangeGroup";
+const ub_base = 'http://nimble-staging.salzburgresearch.at/search';
+export const languageEndPoint = `${ub_base}/getSupportedLanguages`;
+export const endpoint = `${ub_base}/detectMeaningLanguageSpecific`;
+export const logicalViewEndpoint = `${ub_base}/getLogicalView`;
+export const propertyEndPoint = `/getPropertyValuesDiscretised`;
+export const sparqlEndPoint = `${ub_base}/executeSPARQLSelect`;
+export const sparqlOptionalSelectEndPoint = `${ub_base}/executeSPARQLOptionalSelect`;
+export const spqButton = `${ub_base}/getSQPFromOrangeGroup`;
+export const obs_propFromConcept = `${ub_base}/getPropertyFromConcept`;
+export const obs_propValueFromConcept = `${ub_base}/getPropertyValuesFromGreenGroup`;
+export const referenceFromConcept = `${ub_base}/getReferencesFromAConcept`;
+export const sqpOrangeConcept = `${ub_base}/getPropertyValuesFromOrangeGroup`;
 
 
 // Catalogue format variables
