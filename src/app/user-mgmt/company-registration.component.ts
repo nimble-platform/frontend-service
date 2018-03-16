@@ -6,6 +6,7 @@ import { CookieService } from 'ng2-cookies';
 import { CompanyRegistration } from './model/company-registration';
 import { Router } from '@angular/router';
 import { AppComponent } from '../app.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import * as myGlobals from '../globals';
 
 @Component({
@@ -18,10 +19,12 @@ export class CompanyRegistrationComponent implements OnInit {
 
     public registrationForm: FormGroup;
     public isSubmitting = false;
+	tooltipHTML = "";
 
     constructor(private _fb: FormBuilder,
 				private appComponent: AppComponent,
                 private cookieService: CookieService,
+				private modalService: NgbModal,
                 private router: Router,
                 private userService: UserService) {
     }
@@ -29,6 +32,9 @@ export class CompanyRegistrationComponent implements OnInit {
     ngOnInit() {
         this.registrationForm = this._fb.group({
             name: [''],
+			vatNumber: [''],
+			verificationInformation: [''],
+			website: [''],
             address: AddressSubForm.generateForm(this._fb),
         });
     }
@@ -39,7 +45,7 @@ export class CompanyRegistrationComponent implements OnInit {
         // create company registration DTO
         let userId = this.cookieService.get('user_id');
         let companyRegistration: CompanyRegistration = new CompanyRegistration(
-            userId, null, model.getRawValue()['name'], model.getRawValue()['address']);
+            userId, null, model.getRawValue()['name'], model.getRawValue()['vatNumber'], model.getRawValue()['verificationInformation'], model.getRawValue()['website'], model.getRawValue()['address']);
 
 		if (myGlobals.debug)
 			console.log(`Registering company ${JSON.stringify(companyRegistration)}`);
@@ -68,4 +74,13 @@ export class CompanyRegistrationComponent implements OnInit {
 
         return false;
     }
+	
+	showVerificationTT(content) {
+		var tooltip = "";
+		tooltip += "Please provide links to external resources or any other information that prove your connection to the company you want to register as a legal representative.<br/><br/>";
+		tooltip += "e.g. Company member listing on an official website, signing authority, company registration at external authorities, additional identification numbers, ...";
+		this.tooltipHTML = tooltip;
+		this.modalService.open(content);
+	}
+	
 }

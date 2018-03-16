@@ -21,6 +21,7 @@ export class AppComponent implements OnInit {
 	public activeCompanyName = null;
 	public eMail = "";
 	public userID = "";
+	public companyID = "";
 	public roles = [];
 	public debug = myGlobals.debug;
 	public mailto = "";
@@ -77,7 +78,7 @@ export class AppComponent implements OnInit {
 		body += "\n\n";
 		body += this.fullName;
 		body += "\n";
-		body += "(E-Mail: "+this.eMail+", Company: "+this.activeCompanyName+")";
+		body += "(E-Mail: "+this.eMail+", Company: "+this.activeCompanyName+", CompanyID: "+this.companyID+")";
 		this.mailto += "&body="+encodeURIComponent(body);
 		this.modalService.open(content);
 	}
@@ -120,9 +121,11 @@ export class AppComponent implements OnInit {
 			// handle active company
 			if (this.cookieService.get("company_id") != 'null') {
 				this.activeCompanyName = this.cookieService.get("active_company_name");
+				this.companyID = this.cookieService.get("company_id");
 			}
 			else {
 				this.activeCompanyName = null;
+				this.companyID = null;
 			}
 		}
 		else {

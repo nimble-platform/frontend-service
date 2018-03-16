@@ -219,6 +219,7 @@ ngb-pagination nav .pagination .page-item.active .page-link {
 	position: absolute;
 	left: 10.5rem;
 	cursor: pointer;
+	margin-top: -0.2rem;
 }
 
 /* ------------------- */
