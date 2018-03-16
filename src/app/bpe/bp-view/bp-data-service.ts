@@ -54,7 +54,26 @@ export class BPDataService{
     userRole:string;
     processMetadata:any;
 
+    // variable to keep the business process instance group related to the new process being initiated
+    private relatedGroupId: string;
+
     constructor(public searchContextService: SearchContextService) {
+    }
+
+    getRelatedGroupId(): string {
+        return this.relatedGroupId;
+    }
+
+    setRelatedGroupId(id:string): void {
+        // If there is an active search context, we do not nullify the related group id.
+        // For example, when the user is looking for a transport service provider, we should not reset the id
+        if(id == null) {
+            if(this.searchContextService.associatedProcessType == null) {
+                this.relatedGroupId = null;
+            }
+        } else {
+            this.relatedGroupId = id;
+        }
     }
 
     setBpOptionParametersWithProcessMetadata(userRole:string, targetProcess:string, processMetadata:any):void {

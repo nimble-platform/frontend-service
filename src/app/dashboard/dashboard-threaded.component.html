@@ -1,39 +1,87 @@
 <div class="row">
-	<div class="col-12">
-		<h3 i18n>Dashboard</h3>
-		<div *ngIf="!hasCompany&&!alert1Closed">
-			<p class="space-before">
-				<ngb-alert type="info" (close)="alert1Closed=true">
-					You are not yet linked to a company.<br/>
-					You can register your company now.
-				</ngb-alert>
-			</p>
-		</div>
-		<p *ngIf="roles.indexOf('initial_representative')!=-1&&roles.indexOf('legal_representative')==-1&&!alert2Closed" class="space-before">
-			<ngb-alert type="info" (close)="alert2Closed=true">
-				Your company is now registered.<br/>
-				You can start publishing your catalogue.<br/>
-				In order to execute business processes your company needs to be verified by an administrator - please stay tuned.<br/>
-				If you are not being verified with 24h, please contact our support nimble-support@salzburgresearch.at.
-			</ngb-alert>
-		</p>
-		<div class="space-before nimble-col">
-			<span i18n>Welcome to the</span> NIMBLE <span i18n>platform,</span> {{fullName}}!<br/>
-			<i><small>Collaborative Network for Industry, Manufacturing, Business and Logistics in Europe.</small></i>
-		</div>
-	</div>
+    <div class="col-12">
+        <h3 i18n>Dashboard</h3>
+        <div *ngIf="!hasCompany&&!alert1Closed">
+            <p class="space-before">
+                <ngb-alert type="info" (close)="alert1Closed=true">
+                    You are not yet linked to a company.<br/>
+                    You can register your company now.
+                </ngb-alert>
+            </p>
+        </div>
+        <p *ngIf="roles.indexOf('initial_representative')!=-1&&roles.indexOf('legal_representative')==-1&&!alert2Closed" class="space-before">
+            <ngb-alert type="info" (close)="alert2Closed=true">
+                Your company is now registered.<br/>
+                You can start publishing your catalogue.<br/>
+                In order to execute business processes your company needs to be verified by an administrator - please stay tuned.<br/>
+                If you are not being verified with 24h, please contact our support nimble-support@salzburgresearch.at.
+            </ngb-alert>
+        </p>
+        <div class="space-before nimble-col">
+            <span i18n>Welcome to the</span> NIMBLE <span i18n>platform,</span> {{fullName}}!<br/>
+            <i>
+                <small>Collaborative Network for Industry, Manufacturing, Business and Logistics in Europe.</small>
+            </i>
+        </div>
+    </div>
 </div>
 
-<div class="row space-before">
-	<div class="col-12">
-		<h4 class="space-after" i18n>Sales</h4>
-		<div *ngIf="buyer_history.length > 0">
-			<thread-summary *ngFor="let processInstanceGroup of buyer_history"
-							[processInstanceGroup]="processInstanceGroup">
-			</thread-summary>
-		</div>
-		<div *ngIf="buyer_history.length == 0">
-			<span i18n>No data</span>
-		</div>
-	</div>
+<ul class="nav nav-tabs space-before">
+    <li class="nav-item">
+        <a href id="salesTab"
+           [ngClass]="{'nav-link': true, active: collaborationType == COLLABORATION_TYPE_SALE}"
+           (click)="onTabClick($event)"
+           i18n
+        >Sales</a>
+    </li>
+
+    <li class="nav-item">
+        <a href id="purchasesTab"
+           [ngClass]="{'nav-link': true, active: collaborationType == COLLABORATION_TYPE_PURCHASE}"
+           (click)="onTabClick($event)"
+           i18n
+        >Purchases</a>
+    </li>
+</ul>
+
+<div *ngIf="collaborationType == COLLABORATION_TYPE_SALE"
+     class="space-before">
+
+    <ng-container *ngIf="seller_history.length > 0">
+        <div class="row space-after inherit-side-margins">
+            <div class="thread-column-header col-3">Process</div>
+            <div class="thread-column-header col-2">Date</div>
+            <div class="thread-column-header col-2">Product</div>
+            <div class="thread-column-header col-1">Buyer</div>
+            <div class="thread-column-header col-1">Note</div>
+            <div class="thread-column-header col-3">Status</div>
+        </div>
+        <thread-summary *ngFor="let processInstanceGroup of seller_history"
+                        [processInstanceGroup]="processInstanceGroup">
+        </thread-summary>
+    </ng-container>
+    <div *ngIf="seller_history.length == 0">
+        <span i18n>No data</span>
+    </div>
+</div>
+
+<div *ngIf="collaborationType == COLLABORATION_TYPE_PURCHASE"
+     class="space-before">
+
+    <ng-container *ngIf="buyer_history.length > 0">
+        <div class="row space-after inherit-side-margins">
+            <div class="thread-column-header col-3">Process</div>
+            <div class="thread-column-header col-2">Date</div>
+            <div class="thread-column-header col-2">Product</div>
+            <div class="thread-column-header col-1">Seller</div>
+            <div class="thread-column-header col-1">Note</div>
+            <div class="thread-column-header col-3">Status</div>
+        </div>
+        <thread-summary *ngFor="let processInstanceGroup of buyer_history"
+                        [processInstanceGroup]="processInstanceGroup">
+        </thread-summary>
+    </ng-container>
+    <div *ngIf="buyer_history.length == 0">
+        <span i18n>No data</span>
+    </div>
 </div>

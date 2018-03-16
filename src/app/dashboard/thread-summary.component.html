@@ -1,0 +1,40 @@
+<div class="space-after thread-entry">
+    <div class="row space-after thread-entry-row" style="margin-right: 0; margin-left: 0">
+        <div class="col">{{processInstanceGroup.id}}</div>
+    </div>
+
+    <ng-container *ngIf="processMetadataAggregated">
+        <ng-container *ngFor="let singleMetadata of processMetadata; let i = index">
+            <ng-container *ngIf="(!expanded && (i == 0 || i == lastIndex)) || expanded">
+                <div class="row thread-entry-row">
+                    <div class="col-1"><b>First Activity:</b></div>
+                    <div class="col-2">{{singleMetadata.presentableProcessType}}</div>
+                    <div class="col-2">{{singleMetadata.start_time}}</div>
+                    <div class="col-2">
+                        <label class="clickable" (click)="navigateToSearchDetails(singleMetadata.product)">
+                            {{singleMetadata.product.name}}
+                        </label>
+                    </div>
+                    <div class="col-1">{{singleMetadata.tradingPartner}}</div>
+                    <div class="col-1">{{singleMetadata.note}}</div>
+                    <div class="col-1">
+                        <ng-container *ngIf="singleMetadata.statusCode=='EXTERNALLY_TERMINATED'"><span class="cancelled-font">Canceled</span></ng-container>
+                        <ng-container *ngIf="singleMetadata.statusCode=='COMPLETED'"><span class="success-font">Completed</span></ng-container>
+                        <ng-container *ngIf="singleMetadata.statusCode=='ACTIVE'"><span class="success-font">In Progress</span></ng-container>
+                    </div>
+                    <div class="col-2">
+                        <ng-container *ngIf="singleMetadata.statusCode=='EXTERNALLY_TERMINATED'">
+                            <span class="cancelled-font">{{singleMetadata.actionStatus}}</span>
+                        </ng-container>
+                        <ng-container *ngIf="singleMetadata.statusCode=='COMPLETED'">
+                            <span class="success-font">{{singleMetadata.actionStatus}}</span>
+                        </ng-container>
+                        <ng-container *ngIf="singleMetadata.statusCode=='ACTIVE'">
+                            <span class="danger-font">{{singleMetadata.actionStatus}}</span>
+                        </ng-container>
+                    </div>
+                </div>
+            </ng-container>
+        </ng-container>
+    </ng-container>
+</div>

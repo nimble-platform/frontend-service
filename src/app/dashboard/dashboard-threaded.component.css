@@ -1,0 +1,11 @@
+.thread-column-header {
+    background: rgba(0,0,0,.05);
+    border: 1px solid rgb(236, 238, 239);
+    padding: .75rem;
+    font-weight: bold;
+}
+
+.inherit-side-margins {
+    margin-left: inherit;
+    margin-right: inherit;
+}

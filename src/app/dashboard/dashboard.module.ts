@@ -8,7 +8,7 @@ import { DashboardRoutingModule } from './dashboard-routing.module';
 
 import { DashboardComponent } from './dashboard.component';
 import {DashboardThreadedComponent} from "./dashboard-threaded.component";
-import {ThreadSummaryComponent} from "./thread-summary-component";
+import {ThreadSummaryComponent} from "./thread-summary.component";
 
 @NgModule({
 	imports: [

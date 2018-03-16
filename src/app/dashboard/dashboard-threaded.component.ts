@@ -6,13 +6,17 @@ import {Router} from "@angular/router";
 import {UserService} from "../user-mgmt/user.service";
 import {BPDataService} from "../bpe/bp-view/bp-data-service";
 import {ProcessInstanceGroup} from "../bpe/model/process-instance-group";
+import {COLLABORATION_ROLE_BUYER, COLLABORATION_ROLE_SELLER} from "./thread-summary.component";
 
 @Component({
     selector: 'dashboard-threaded',
-    templateUrl: './dashboard-threaded.component.html'
+    templateUrl: './dashboard-threaded.component.html',
+    styleUrls: ['./dashboard-threaded.component.css']
 })
 
 export class DashboardThreadedComponent implements OnInit {
+    COLLABORATION_TYPE_SALE = 'Sale';
+    COLLABORATION_TYPE_PURCHASE = 'Purchase';
 
     fullName = "";
     hasCompany = false;
@@ -20,7 +24,9 @@ export class DashboardThreadedComponent implements OnInit {
     alert1Closed = false;
     alert2Closed = false;
 
-    buyer_history: ProcessInstanceGroup[];
+    collaborationType:string = this.COLLABORATION_TYPE_SALE;
+    seller_history: ProcessInstanceGroup[] = [];
+    buyer_history: ProcessInstanceGroup[] = [];
 
 
     constructor(private cookieService: CookieService,
@@ -44,7 +50,6 @@ export class DashboardThreadedComponent implements OnInit {
             }
             else
                 this.hasCompany = false;
-            this.buyer_history = [];
             this.getProcessInstanceGroups();
         }
         else
@@ -66,9 +71,22 @@ export class DashboardThreadedComponent implements OnInit {
     }
 
     getProcessInstanceGroups() {
-        this.bpeService.getProcessInstanceGroups(this.cookieService.get("company_id"))
+        this.bpeService.getProcessInstanceGroups(this.cookieService.get("company_id"), COLLABORATION_ROLE_SELLER)
+            .then(processInstanceGroups => {
+                this.seller_history = processInstanceGroups;
+            });
+        this.bpeService.getProcessInstanceGroups(this.cookieService.get("company_id"), COLLABORATION_ROLE_BUYER)
             .then(processInstanceGroups => {
                 this.buyer_history = processInstanceGroups;
             });
+    }
+
+    private onTabClick(event: any) {
+        event.preventDefault();
+        if (event.target.id == "salesTab") {
+            this.collaborationType = this.COLLABORATION_TYPE_SALE;
+        } else {
+            this.collaborationType = this.COLLABORATION_TYPE_PURCHASE;
+        }
     }
 }
