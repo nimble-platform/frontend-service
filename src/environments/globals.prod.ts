@@ -40,7 +40,7 @@ export const simple_search_endpoint="https://nimble-platform.salzburgresearch.at
 
 // Endpoint variables - BIBA domain
 
-const ub_base = 'http://nimble-staging.salzburgresearch.at/search';
+const ub_base = 'https://nimble-platform.salzburgresearch.at/ub-search';
 export const languageEndPoint = `${ub_base}/getSupportedLanguages`;
 export const endpoint = `${ub_base}/detectMeaningLanguageSpecific`;
 export const logicalViewEndpoint = `${ub_base}/getLogicalView`;
