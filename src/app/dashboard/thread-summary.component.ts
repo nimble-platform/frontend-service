@@ -215,4 +215,8 @@ export class ThreadSummaryComponent implements OnInit {
         });
 
     }
+
+    toggleExpanded() {
+        this.expanded = !this.expanded;
+    }
 }

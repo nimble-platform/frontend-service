@@ -1,18 +1,52 @@
 <div class="space-after thread-entry">
     <div class="row thread-entry-row">
-        <div class="d-flex justify-content-end">
+        <div class="col d-flex justify-content-end align-items-center">
             <div class="mr-auto p-2">{{processInstanceGroup.id}}</div>
-            <div><i class="fas fa-expand-arrows-alt" aria-hidden="true"></i></div>
+            <div><i class="fa fa-trash-o p-2" style="cursor: pointer" aria-hidden="true"></i></div>
+            <div *ngIf="expanded" (click)="toggleExpanded()"><i class="fa fa-compress p-2" style="cursor: pointer" aria-hidden="true"></i></div>
         </div>
     </div>
 
     <ng-container *ngIf="processMetadataAggregated">
-        <ng-container *ngFor="let singleMetadata of processMetadata; let i = index">
-            <ng-container *ngIf="(!expanded && (i == 0 || i == lastIndex)) || expanded">
-                <div class="row thread-entry-row">
-                    <div class="col-1"><b>First Activity:</b></div>
+        <!--<ng-container *ngFor="let singleMetadata of processMetadata; let i = index">-->
+        <ng-container *ngIf="!expanded">
+            <ng-container *ngFor="let singleMetadata of processMetadata; let i = index">
+                <div *ngIf="i == 0 || i == lastIndex" class="row thread-entry-row">
                     <div class="col-2">{{singleMetadata.presentableProcessType}}</div>
-                    <div class="col-1">{{singleMetadata.start_time}}</div>
+                    <div class="col-2">{{singleMetadata.start_time}}</div>
+                    <div class="col-2">
+                        <label class="clickable" (click)="navigateToSearchDetails(singleMetadata.product)">
+                            {{singleMetadata.product.name}}
+                        </label>
+                    </div>
+                    <div class="col-1">{{singleMetadata.tradingPartner}}</div>
+                    <div class="col-2">{{singleMetadata.note}}</div>
+                    <div *ngIf="singleMetadata.statusCode=='EXTERNALLY_TERMINATED'" class="col-1 alert-danger">Cancelled</div>
+                    <div *ngIf="singleMetadata.statusCode=='COMPLETED'" class="col-1 alert-success">Completed</div>
+                    <div *ngIf="singleMetadata.statusCode=='ACTIVE'" class="col-1 alert-warning">In Progress</div>
+                    <div *ngIf="singleMetadata.statusCode=='EXTERNALLY_TERMINATED'" class="col-2 alert-danger">
+                        <span class="clickable"
+                              (click)="openBpProcessView(i)">{{singleMetadata.actionStatus}}</span>
+                    </div>
+                    <div *ngIf="singleMetadata.statusCode=='COMPLETED'" class="col-2 alert-success">
+                        <span class="clickable"
+                              (click)="openBpProcessView(i)">{{singleMetadata.actionStatus}}</span>
+                    </div>
+                    <div *ngIf="singleMetadata.statusCode=='ACTIVE'" class="col-2 alert-warning">
+                        <span class="clickable"
+                              (click)="openBpProcessView(i)">{{singleMetadata.actionStatus}}</span>
+                    </div>
+                </div>
+                <div *ngIf="!(i == 0 || i == lastIndex)" class="row thread-entry-row justify-content-center" style="cursor: pointer">
+                    <div><div class="btn alert-info" (click)="toggleExpanded()">See more</div></div>
+                </div>
+            </ng-container>
+        </ng-container>
+        <ng-container *ngIf="expanded">
+            <ng-container *ngFor="let singleMetadata of processMetadata; let i = index">
+                <div class="row thread-entry-row">
+                    <div class="col-2">{{singleMetadata.presentableProcessType}}</div>
+                    <div class="col-2">{{singleMetadata.start_time}}</div>
                     <div class="col-2">
                         <label class="clickable" (click)="navigateToSearchDetails(singleMetadata.product)">
                             {{singleMetadata.product.name}}
