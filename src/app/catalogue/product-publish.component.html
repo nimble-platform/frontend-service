@@ -2,7 +2,7 @@
 <ul class="nav nav-tabs" *ngIf="publishStateService.publishMode != 'edit'">
     <li class="nav-item">
         <a href id="singleUpload"
-           [ngClass]="{'nav-link': true, active: singleItemUpload}"
+           [ngClass]="{'nav-link': true, active: publishingGranularity == 'single'}"
            (click)="onTabClick($event)"
            i18n
         >Upload Single Product</a>
@@ -10,7 +10,7 @@
 
     <li class="nav-item">
         <a href id="bulkUpload"
-           [ngClass]="{'nav-link': true, active: !singleItemUpload}"
+           [ngClass]="{'nav-link': true, active: publishingGranularity == 'bulk'}"
            (click)="onTabClick($event)"
            i18n
         >Upload Multiple Products</a>
@@ -18,7 +18,7 @@
 </ul>
 
 <!-- Single product publishing -->
-<div *ngIf="catalogueLine && singleItemUpload" class="mt-3">
+<div *ngIf="catalogueLine && publishingGranularity == 'single'" class="mt-3">
 
     <!-- Top row: selected category, feedback messages, etc. -->
     <div class="d-flex justify-content-end">
@@ -294,7 +294,7 @@
 </div>
 
 <!-- Bulk product publishing -->
-<div *ngIf="!singleItemUpload">
+<div *ngIf="publishingGranularity == 'bulk'">
     <div class="d-flex justify-content-end mt-3 mb-3">
         <div class="mr-auto">
             <h6 *ngIf="categoryService.selectedCategories.length > 0" style="display: inline-block;"

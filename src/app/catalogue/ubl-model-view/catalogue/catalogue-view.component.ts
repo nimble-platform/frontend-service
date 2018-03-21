@@ -115,7 +115,7 @@ export class CatalogueViewComponent implements OnInit {
         this.publishService.publishMode = 'edit';
         this.publishService.publishingStarted = false;
         this.categoryService.resetSelectedCategories();
-        this.router.navigate(['catalogue/publish']);
+        this.router.navigate(['catalogue/publish'], {queryParams: {pg: "single"}});
     }
 
     deleteCatalogueLine(catalogueLine): void {
