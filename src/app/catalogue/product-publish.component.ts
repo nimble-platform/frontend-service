@@ -392,7 +392,6 @@ export class ProductPublishComponent {
         let userId = this.cookieService.get("user_id");
         this.userService.getUserParty(userId).then(party => {
             this.catalogueService.getCatalogueForceUpdate(userId, true).then(catalogue => {
-                console.log(catalogue);
                 this.catalogueService.catalogue = catalogue;
                 this.catalogueLine = UBLModelUtils.createCatalogueLine(catalogue.uuid, party)
                 this.catalogueService.draftCatalogueLine = this.catalogueLine;

@@ -14,15 +14,18 @@ import * as constants from '../constants';
     styleUrls: ['./dashboard-threaded.component.css']
 })
 
-export class ThreadListComponent implements OnInit{
+export class ThreadListComponent implements OnInit {
     COLLABORATION_ROLE_BUYER: string = constants.COLLABORATION_ROLE_BUYER;
     COLLABORATION_ROLE_SELLER: string = constants.COLLABORATION_ROLE_SELLER;
 
-    @Input() groups: ProcessInstanceGroup[] = [];
     @Input() collaborationRole: string;
 
+    groups: ProcessInstanceGroup[] = [];
+    archived: boolean = false;
     page: number = 1;
     limit: number = 5;
+    start: number;
+    end: number;
     pageSize: number = 5;
     size: number;
 
@@ -31,14 +34,16 @@ export class ThreadListComponent implements OnInit{
     }
 
     ngOnInit(): void {
-        this.retrieveProcessInstanceGroups( );
+        this.retrieveProcessInstanceGroups();
     }
 
     retrieveProcessInstanceGroups(): void {
-        this.bpeService.getProcessInstanceGroups(this.cookieService.get("company_id"), this.collaborationRole, this.page-1, this.limit)
+        this.bpeService.getProcessInstanceGroups(this.cookieService.get("company_id"), this.collaborationRole, this.page - 1, this.limit, this.archived)
             .then(response => {
                 this.groups = response.processInstanceGroups;
                 this.size = response.size;
+                this.start = this.page * this.pageSize - this.pageSize + 1;
+                this.end = this.start + this.size - 1;
             });
     }
 }

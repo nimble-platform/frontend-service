@@ -128,9 +128,9 @@ export class BPEService {
      //        .catch(this.handleError);
 	// }
 
-	getProcessInstanceGroups(partyId:string, collaborationRole:string, page: number, limit: number): Promise<ProcessInstanceGroupResponse> {
+	getProcessInstanceGroups(partyId:string, collaborationRole:string, page: number, limit: number, archived: boolean): Promise<ProcessInstanceGroupResponse> {
 		let offset:number = page * limit;
-		const url = `${this.url}/group?partyID=${partyId}&collaborationRole=${collaborationRole}&offset=${offset}&limit=${limit}`;
+		const url = `${this.url}/group?partyID=${partyId}&collaborationRole=${collaborationRole}&offset=${offset}&limit=${limit}&archived=${archived}`;
 		return this.http
             .get(url, {headers: this.headers})
             .toPromise()
@@ -147,6 +147,23 @@ export class BPEService {
             .catch(this.handleError);
 	}
 
+	deleteProcessInstanceGroup(groupId: string) {
+		const url = `${this.url}/group/${groupId}`;
+		return this.http
+            .delete(url)
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+	}
+
+	archiveProcessInstanceGroup(groupId: string) {
+		const url = `${this.url}/group/${groupId}/archive`;
+		return this.http
+            .post(url, null)
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+	}
 
 	private handleError(error: any): Promise<any> {
 		return Promise.reject(error.message || error);

@@ -9,6 +9,7 @@ import {ActivityVariableParser} from "../bpe/bp-view/activity-variable-parser";
 import * as moment from 'moment';
 import * as constants from '../constants';
 import {Item} from "../catalogue/model/publish/item";
+import {CallStatus} from "../common/call-status";
 
 /**
  * Created by suat on 12-Mar-18.
@@ -28,6 +29,8 @@ export class ThreadSummaryComponent implements OnInit {
     aggregatedMetadataCount: number = 0;
     processMetadataAggregated: boolean = false;
 
+    archiveCallStatus: CallStatus = new CallStatus();
+
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
                 private router: Router) {
@@ -35,13 +38,13 @@ export class ThreadSummaryComponent implements OnInit {
 
     ngOnInit(): void {
         this.lastIndex = this.processInstanceGroup.processInstanceIDs.length - 1;
-        for(let i=0; i<=this.lastIndex; i++) {
+        for (let i = 0; i <= this.lastIndex; i++) {
             this.processMetadata.push({});
             this.aggregateThreadData(this.processInstanceGroup.processInstanceIDs[i], i)
         }
     }
 
-    aggregateThreadData(processInstanceId:string, targetIndex: number): void {
+    aggregateThreadData(processInstanceId: string, targetIndex: number): void {
         this.bpeService.getProcessDetailsHistory(processInstanceId)
             .then(activityVariables => {
 
@@ -58,11 +61,11 @@ export class ThreadSummaryComponent implements OnInit {
                         let vProcessType = ActivityVariableParser.getProcessType(activityVariables);
                         let vActionStatus = this.getActionStatus(vProcessType, response, this.processInstanceGroup.collaborationRole == constants.COLLABORATION_ROLE_BUYER ? true : false);
                         let vBPStatus = this.getBPStatus(response);
-                        let vStart_time = moment(lastActivity.startTime+"Z", 'YYYY-MM-DDTHH:mm:ssZ').format("YYYY-MM-DD HH:mm");
+                        let vStart_time = moment(lastActivity.startTime + "Z", 'YYYY-MM-DDTHH:mm:ssZ').format("YYYY-MM-DD HH:mm");
                         let vProduct = ActivityVariableParser.getProductFromProcessData(initialDoc);
                         let vTradingPartnerName = ""
 
-                        if(this.processInstanceGroup.collaborationRole == constants.COLLABORATION_ROLE_SELLER) {
+                        if (this.processInstanceGroup.collaborationRole == constants.COLLABORATION_ROLE_SELLER) {
                             vTradingPartnerName = ActivityVariableParser.getInitiatorNameProcessData(initialDoc);
                         } else {
                             vTradingPartnerName = ActivityVariableParser.getResponderNameProcessData(initialDoc);
@@ -84,7 +87,7 @@ export class ThreadSummaryComponent implements OnInit {
                         };
                         this.aggregatedMetadataCount++;
                         this.processMetadata = [].concat(this.processMetadata);
-                        if(this.aggregatedMetadataCount == this.processInstanceGroup.processInstanceIDs.length) {
+                        if (this.aggregatedMetadataCount == this.processInstanceGroup.processInstanceIDs.length) {
                             this.processMetadataAggregated = true;
                         }
                     });
@@ -193,13 +196,15 @@ export class ThreadSummaryComponent implements OnInit {
         return bpStatus;
     }
 
-    navigateToSearchDetails(item:Item) {
+    navigateToSearchDetails(item: Item) {
         this.router.navigate(['/simple-search/details'],
-            { queryParams: {
-                catalogueId: item.catalogueDocumentReference.id,
-                id: item.manufacturersItemIdentification.id,
-                showOptions: true
-            }});
+            {
+                queryParams: {
+                    catalogueId: item.catalogueDocumentReference.id,
+                    id: item.manufacturersItemIdentification.id,
+                    showOptions: true
+                }
+            });
     }
 
     openBpProcessView(processInstanceIndex: number) {
@@ -216,7 +221,23 @@ export class ThreadSummaryComponent implements OnInit {
 
     }
 
-    toggleExpanded() {
+    toggleExpanded(): void {
         this.expanded = !this.expanded;
+    }
+
+    archiveGroup(): void {
+        this.archiveCallStatus.submit();
+        this.bpeService.archiveProcessInstanceGroup(this.processInstanceGroup.id)
+            .then(() => {
+                this.archiveCallStatus.callback('Thread archived successfully');
+                
+            })
+            .catch(err => {
+                this.archiveCallStatus.error('Failed to archive the thread');
+            });
+    }
+
+    deleteGroup(): void {
+
     }
 }

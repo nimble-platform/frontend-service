@@ -2,7 +2,7 @@ import {Component, OnInit} from "@angular/core";
 import {AppComponent} from "../app.component";
 import {CookieService} from "ng2-cookies";
 import {BPEService} from "../bpe/bpe.service";
-import {Router} from "@angular/router";
+import {ActivatedRoute, Params, Router} from "@angular/router";
 import {UserService} from "../user-mgmt/user.service";
 import {BPDataService} from "../bpe/bp-view/bp-data-service";
 import * as constants from '../constants';
