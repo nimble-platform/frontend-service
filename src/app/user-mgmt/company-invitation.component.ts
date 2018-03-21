@@ -158,7 +158,7 @@ export class CompanyInvitationComponent implements OnInit {
 		tooltip += "<tr><td>Publisher</td><td>Can publish and maintain the catalogues of the company</td></tr>";
 		tooltip += "<tr><td>Purchaser</td><td>Can observe purchases on the NIMBLE platform and execute the associated business processes</td></tr>";
 		tooltip += "<tr><td>Sales Offices</td><td>Can observe sales on the NIMBLE platform and execute the associated business processes</td></tr>";
-		this.tooltipHTML = tooltip
+		this.tooltipHTML = tooltip;
 		this.modalService.open(content);
 	}
 

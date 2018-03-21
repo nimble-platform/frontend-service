@@ -137,6 +137,15 @@ export class SimpleSearchFormComponent implements OnInit {
 				}
 				this.temp = res.response.docs;
 				for (let doc in this.temp) {
+					if (this.temp[doc][this.product_img]) {
+						var img = this.temp[doc][this.product_img];
+						if (Array.isArray(img)) {
+							this.temp[doc][this.product_img] = img[0];
+						}
+					}
+				}
+				/*
+				for (let doc in this.temp) {
 					if (this.isJson(this.temp[doc][this.product_img])) {
 						var json = JSON.parse(this.temp[doc][this.product_img]);
 						var img = "";
@@ -147,6 +156,7 @@ export class SimpleSearchFormComponent implements OnInit {
 						this.temp[doc][this.product_img] = img;
 					}
 				}
+				*/
 				this.response = JSON.parse(JSON.stringify(this.temp));
 				this.size = res.response.numFound;
 				this.page = p;

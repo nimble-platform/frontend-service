@@ -86,17 +86,18 @@ export class DashboardComponent implements OnInit {
 
                     this.bpeService.getProcessDetailsHistory(task.processInstanceId)
                         .then(activityVariables => {
-                            var vContent = "", vNote = "", vStatusCode = "", vActionStatus = "", vBPStatus = "",
+                            var vContent = "", vNote = "", vStatusCode = "", vActionStatus = "", vActionRequired = false,vBPStatus = "",
                                 vTask_id = "", vProcess_id = "", vStart_time = "", vSellerName = "", vProduct,
                                 vBpOptionMenuItems: any;
                             var vProcessType = ActivityVariableParser.getProcessType(activityVariables);
+							var vProcessTypeReadable = vProcessType.replace(/_/g,' ');
                             let response: any = ActivityVariableParser.getResponse(activityVariables);
                             let initialDoc: any = ActivityVariableParser.getInitialDocument(activityVariables);
                             vProduct = ActivityVariableParser.getProductFromProcessData(initialDoc);
                             vNote = ActivityVariableParser.getNoteFromProcessData(initialDoc);
                             vSellerName = ActivityVariableParser.getResponderNameProcessData(initialDoc);
                             vProcess_id = initialDoc.processInstanceId;
-                            vActionStatus = this.getActionStatus(vProcessType, response, true);
+                            vActionStatus = this.getActionStatus(vProcessType, response, true)[0];
                             vBPStatus = this.getBPStatus(response);
                             vContent = initialDoc.value;
                             vBpOptionMenuItems = this.getBpOptionsMenuItems(vProcessType, response, true);
@@ -108,9 +109,11 @@ export class DashboardComponent implements OnInit {
                                     vStatusCode = t.status_code;
                                 }
                             }
-
+							vActionRequired = (this.getActionStatus(vProcessType, response, true)[1] && vStatusCode != "deleted" && vStatusCode != "completed");
+							
                             this.buyer_history.push({
                                 "processType": vProcessType,
+								"processTypeReadable": vProcessTypeReadable,
                                 "task_id": vTask_id,
                                 "process_id": vProcess_id,
                                 "start_time": vStart_time,
@@ -120,11 +123,12 @@ export class DashboardComponent implements OnInit {
                                 "processStatus": vBPStatus,
                                 "statusCode": vStatusCode,
                                 "actionStatus": vActionStatus,
+								"actionRequired": vActionRequired,
                                 "content": vContent,
                                 "activityVariables": activityVariables,
                                 "bpOptionMenuItems": vBpOptionMenuItems
                             });
-							if (vStatusCode != "deleted" && vStatusCode != "completed")
+							if (vActionRequired)
 								this.active_buyer_num++;
 
                             this.buyer_history.sort(function (a: any, b: any) {
@@ -134,19 +138,29 @@ export class DashboardComponent implements OnInit {
                             });
 							this.buyer_history.sort(function(a: any, b: any) {
 								var a_comp = a.statusCode;
+								var a2_comp = a.actionRequired;
 								var b_comp = b.statusCode;
+								var b2_comp = b.actionRequired;
 								if (a_comp == "completed")
 									a_comp = 2;
 								else if (a_comp == "deleted")
 									a_comp = 3;
-								else
-									a_comp = 1;
+								else {
+									if (a2_comp)
+										a_comp = 0;
+									else
+										a_comp = 1;
+								}
 								if (b_comp == "completed")
 									b_comp = 2;
 								else if (b_comp == "deleted")
 									b_comp = 3;
-								else
-									b_comp = 1;
+								else {
+									if (b2_comp)
+										b_comp = 0;
+									else
+										b_comp = 1;
+								}
 								return a_comp-b_comp;
 							});
                         })
@@ -181,17 +195,18 @@ export class DashboardComponent implements OnInit {
                     this.bpeService.getProcessDetailsHistory(task.processInstanceId)
                         .then(activityVariables => {
 
-                            var vContent = "", vNote = "", vStatusCode= "", vActionStatus = "", vBPStatus = "",
+                            var vContent = "", vNote = "", vStatusCode= "", vActionStatus = "", vActionRequired = false, vBPStatus = "",
                                 vTask_id = "", vProcess_id = "", vStart_time = "", vBuyerName = "", vProduct,
                                 vBpOptionMenuItems: any;
                             var vProcessType = ActivityVariableParser.getProcessType(activityVariables);
+							var vProcessTypeReadable = vProcessType.replace(/_/g,' ');
                             let response: any = ActivityVariableParser.getResponse(activityVariables);
                             let initialDoc: any = ActivityVariableParser.getInitialDocument(activityVariables);
                             vProduct = ActivityVariableParser.getProductFromProcessData(initialDoc);
                             vNote = ActivityVariableParser.getNoteFromProcessData(initialDoc);
                             vBuyerName = ActivityVariableParser.getInitiatorNameProcessData(initialDoc);
                             vProcess_id = initialDoc.processInstanceId;
-                            vActionStatus = this.getActionStatus(vProcessType, response, false);
+                            vActionStatus = this.getActionStatus(vProcessType, response, false)[0];
                             vBPStatus = this.getBPStatus(response);
                             vContent = initialDoc.value;
                             vBpOptionMenuItems = this.getBpOptionsMenuItems(vProcessType, response, false);
@@ -203,9 +218,11 @@ export class DashboardComponent implements OnInit {
                                     vStatusCode = t.status_code;
                                 }
                             }
+							vActionRequired = (this.getActionStatus(vProcessType, response, false)[1] && vStatusCode != "deleted" && vStatusCode != "completed");
 
                             this.seller_history.push({
                                 "processType": vProcessType,
+								"processTypeReadable": vProcessTypeReadable,
                                 "task_id": vTask_id,
                                 "process_id": vProcess_id,
                                 "start_time": vStart_time,
@@ -215,11 +232,12 @@ export class DashboardComponent implements OnInit {
                                 "processStatus": vBPStatus,
                                 "statusCode": vStatusCode,
                                 "actionStatus": vActionStatus,
+								"actionRequired": vActionRequired,
                                 "content": vContent,
                                 "activityVariables": activityVariables,
                                 "bpOptionMenuItems": vBpOptionMenuItems
                             });
-							if (vStatusCode != "deleted" && vStatusCode != "completed")
+							if (vActionRequired)
 								this.active_seller_num++;
 							
                             this.seller_history.sort(function (a: any, b: any) {
@@ -229,19 +247,29 @@ export class DashboardComponent implements OnInit {
                             });
 							this.seller_history.sort(function(a: any, b: any) {
 								var a_comp = a.statusCode;
+								var a2_comp = a.actionRequired;
 								var b_comp = b.statusCode;
+								var b2_comp = b.actionRequired;
 								if (a_comp == "completed")
 									a_comp = 2;
 								else if (a_comp == "deleted")
 									a_comp = 3;
-								else
-									a_comp = 1;
+								else {
+									if (a2_comp)
+										a_comp = 0;
+									else
+										a_comp = 1;
+								}
 								if (b_comp == "completed")
 									b_comp = 2;
 								else if (b_comp == "deleted")
 									b_comp = 3;
-								else
-									b_comp = 1;
+								else {
+									if (b2_comp)
+										b_comp = 0;
+									else
+										b_comp = 1;
+								}
 								return a_comp-b_comp;
 							});
                         })
@@ -292,8 +320,9 @@ export class DashboardComponent implements OnInit {
             }});
     }
 
-    getActionStatus(processType: string, response: any, buyer: boolean): string {
+    getActionStatus(processType: string, response: any, buyer: boolean): [string,boolean] {
         let responseMessage;
+		var actionRequired = false;
 
         // messages if there is no response from the responder party
         if (response == null) {
@@ -301,6 +330,7 @@ export class DashboardComponent implements OnInit {
             if (buyer) {
                 if (processType == 'Fulfilment') {
                     responseMessage = "Receipt Advice should be sent";
+					actionRequired = true;
                 } else if (processType == 'Order') {
                     responseMessage = "Waiting for Order Response";
                 } else if (processType == 'Negotiation') {
@@ -321,15 +351,20 @@ export class DashboardComponent implements OnInit {
                     responseMessage = "Waiting for Receipt Advice";
                 } else if (processType == 'Order') {
                     responseMessage = "Order Response should be sent";
+					actionRequired = true;
                 } else if (processType == 'Negotiation') {
                     responseMessage = "Quotation should be sent";
+					actionRequired = true;
                 } else if (processType == 'Transport_Execution_Plan') {
                     responseMessage = "Transport Execution Plan should be sent";
+					actionRequired = true;
                 } else if (processType == 'Item_Information_Request') {
                     responseMessage = 'Information Response should be sent';
+					actionRequired = true;
                 }
                   else if(processType == 'Ppap'){
-                    responseMessage = "Ppap Response should be sent"
+                    responseMessage = "Ppap Response should be sent";
+					actionRequired = true;
                 }
             }
 
@@ -377,7 +412,7 @@ export class DashboardComponent implements OnInit {
                 }
             }
         }
-        return responseMessage;
+        return [responseMessage,actionRequired];
     }
 
     getBpOptionsMenuItems(processType: string, response: any, buyer: boolean): any {

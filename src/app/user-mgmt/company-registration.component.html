@@ -1,32 +1,42 @@
-<h1>Company Registration</h1>
-
 <form class="company-settings-form" [formGroup]="registrationForm" novalidate (ngSubmit)="save(registrationForm)">
-
-    <div class="row">
-
-        <!-- Company Name -->
-        <div class="col-sm-12 company-settings-block">
-            <h3>Company Legal Name</h3>
-            <input type="text" class="form-control" name="companyName" [formControl]="registrationForm.controls['name']">
-        </div>
-
-        <!-- Company Address -->
-        <div class="col-sm-12 company-settings-block">
-            <h3>Company Address</h3>
-            <address-form [group]="registrationForm.controls.address"></address-form>
-        </div>
-
-        <div class="col-sm-12">
-            <button class="btn btn-success" type="submit"
-                    (click)="save(registrationForm)"
-                    [disabled]="!registrationForm.valid">
-                <span>Add</span>
-            </button>
-        </div>
-		
-		<div class="col-sm-12" [hidden]="!isSubmitting">
+	<h3 class="space-after">Company Registration</h3>
+	<div class="input-group form-group">
+		<label class="input-group-addon">Legal Name</label>
+		<input type="text" class="form-control" name="companyName" [formControl]="registrationForm.controls['name']" required>
+	</div>
+	<div class="input-group form-group">
+		<label class="input-group-addon">VAT Number</label>
+		<input type="text" class="form-control" [formControl]="registrationForm.controls['vatNumber']" required>
+	</div>
+	<div class="input-group form-group">
+		<label class="input-group-addon">
+			<span>Verification Info</span>
+			<span class="tooltip-icon" (click)="showVerificationTT(tooltip)"><img class="inline-icon" src="assets/question_black.png"/></span>
+		</label>
+		<input type="text" class="form-control" [formControl]="registrationForm.controls['verificationInformation']">
+	</div>
+	<div class="input-group form-group">
+		<label class="input-group-addon">Website</label>
+		<input type="text" class="form-control" [formControl]="registrationForm.controls['website']">
+	</div>
+	<address-form [group]="registrationForm.controls.address"></address-form>
+	<div>
+		<button class="btn btn-success" type="submit" [disabled]="!registrationForm.valid||isSubmitting">
+			<span>Register</span>
+		</button>
+		<div [hidden]="!isSubmitting" class="space-before">
 			<img src="assets/form_loader.gif"/>
 		</div>
-		
     </div>
 </form>
+
+<ng-template #tooltip let-d="dismiss">
+	<div class="modal-header">
+		<h4 class="modal-title">Tooltip</h4>
+		<button type="button" class="close" aria-label="Close" (click)="d('')">
+			<span aria-hidden="true">&times;</span>
+		</button>
+	</div>
+	<div class="modal-body" [innerHTML]="tooltipHTML">
+	</div>
+</ng-template>

@@ -40,32 +40,18 @@ export const simple_search_endpoint="https://nimble-platform.salzburgresearch.at
 
 // Endpoint variables - BIBA domain
 
-// const ub_base_8090="http://hydra2.ikap.biba.uni-bremen.de:8090";
-// const ub_base_8092="http://hydra2.ikap.biba.uni-bremen.de:8092";
-// const ub_base_8090="https://nimble-platform.salzburgresearch.at/uni-bremen-8090";
-// const ub_base_8092="https://nimble-platform.salzburgresearch.at/uni-bremen-8092";
-// export const languageEndPoint = `${ub_base_8090}/getSupportedLanguages`;
-export const languageEndPoint = "https://hydra2.ikap.biba.uni-bremen.de:8443/getSupportedLanguages";
-// export const endpoint = "http://localhost:8090/detectMeaningLanguageSpecific";
-// export const endpoint = `${ub_base_8092}/detectMeaningLanguageSpecific`;
-export const endpoint = "https://hydra2.ikap.biba.uni-bremen.de:8443/detectMeaningLanguageSpecific";
-// export const logicalViewEndpoint = `${ub_base_8092}/getLogicalView`;
-// export const logicalViewEndpoint = "http://localhost:8090/getLogicalView";
-export const logicalViewEndpoint = "https://hydra2.ikap.biba.uni-bremen.de:8443/getLogicalView";
-// export const propertyEndPoint = "http://localhost:8090/getPropertyValuesDiscretised";
-// export const propertyEndPoint = `${ub_base_8092}/getPropertyValuesDiscretised`;
-export const propertyEndPoint = "https://hydra2.ikap.biba.uni-bremen.de:8443/getPropertyValuesDiscretised";
-// export const sparqlEndPoint = `${ub_base_8092}/executeSPARQLSelect`;
-// export const sparqlEndPoint = 'http://localhost:8090/executeSPARQLSelect';
-export const sparqlEndPoint = "https://hydra2.ikap.biba.uni-bremen.de:8443/executeSPARQLSelect";
-// export const sparqlOptionalSelectEndPoint = "http://localhost:8090/executeSPARQLOptionalSelect";
-// export const sparqlOptionalSelectEndPoint = `${ub_base_8092}/executeSPARQLOptionalSelect`;
-export const sparqlOptionalSelectEndPoint = "https://hydra2.ikap.biba.uni-bremen.de:8443/executeSPARQLOptionalSelect";
-export const spqButton = "https://hydra2.ikap.biba.uni-bremen.de:8443/getSQPFromOrangeGroup";
-export const obs_propFromConcept = "https://hydra2.ikap.biba.uni-bremen.de:8443/getPropertyFromConcept";
-export const obs_propValueFromConcept = "https://hydra2.ikap.biba.uni-bremen.de:8443/getPropertyValuesFromGreenGroup";
-export const referenceFromConcept = "https://hydra2.ikap.biba.uni-bremen.de:8443/getReferencesFromAConcept";
-export const sqpOrangeConcept = "https://hydra2.ikap.biba.uni-bremen.de:8443/getPropertyValuesFromOrangeGroup";
+const ub_base = 'https://nimble-platform.salzburgresearch.at/ub-search';
+export const languageEndPoint = `${ub_base}/getSupportedLanguages`;
+export const endpoint = `${ub_base}/detectMeaningLanguageSpecific`;
+export const logicalViewEndpoint = `${ub_base}/getLogicalView`;
+export const propertyEndPoint = `/getPropertyValuesDiscretised`;
+export const sparqlEndPoint = `${ub_base}/executeSPARQLSelect`;
+export const sparqlOptionalSelectEndPoint = `${ub_base}/executeSPARQLOptionalSelect`;
+export const spqButton = `${ub_base}/getSQPFromOrangeGroup`;
+export const obs_propFromConcept = `${ub_base}/getPropertyFromConcept`;
+export const obs_propValueFromConcept = `${ub_base}/getPropertyValuesFromGreenGroup`;
+export const referenceFromConcept = `${ub_base}/getReferencesFromAConcept`;
+export const sqpOrangeConcept = `${ub_base}/getPropertyValuesFromOrangeGroup`;
 
 
 // Catalogue format variables
@@ -73,8 +59,8 @@ export const sqpOrangeConcept = "https://hydra2.ikap.biba.uni-bremen.de:8443/get
 export const product_name = "item_name";
 export const product_vendor_id = "item_manufacturer_id";
 export const product_vendor_name = "item_manufacturer_name";
-export const product_img = "thumb";
-export const product_nonfilter_full = ["id","_version_"];
+export const product_img = "item_image";
+export const product_nonfilter_full = ["id","_version_","item_description","item_price","item_price_currency"];
 export const product_nonfilter_regex = ["lmf.","_id"];
 export const product_configurable = [];
 export const product_default = {};

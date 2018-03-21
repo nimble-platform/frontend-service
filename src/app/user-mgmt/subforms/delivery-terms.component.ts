@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AddressSubForm } from './address.component';
 import { DeliveryTerms } from '../model/delivery-terms';
+import { Address } from '../model/address';
 
 @Component({
     moduleId: module.id,
@@ -13,7 +14,21 @@ export class DeliveryTermsSubForm {
 
     @Input('group')
     public deliveryTermsForm: FormGroup;
-
+	public aM = false;
+	
+	public static setMatch(deliveryTermsForm, flag) {
+		deliveryTermsForm.aM = flag;
+	}
+	
+	public static setSame(deliveryTermsForm, address: Address) {
+		AddressSubForm.update(deliveryTermsForm.controls.deliveryAddress, address);
+		deliveryTermsForm.aM = true;
+	}
+	
+	public static getAddress(deliveryTermsForm): Address {
+		return AddressSubForm.get(deliveryTermsForm.controls.deliveryAddress)
+	}
+	
     public static update(deliveryTermsForm, deliveryTerms: DeliveryTerms) {
         deliveryTermsForm.controls.specialTerms.setValue(deliveryTerms.specialTerms);
         AddressSubForm.update(deliveryTermsForm.controls.deliveryAddress, deliveryTerms.deliveryAddress);
@@ -24,7 +39,7 @@ export class DeliveryTermsSubForm {
         return builder.group({
             specialTerms: [''],
             deliveryAddress: AddressSubForm.generateForm(builder),
-            estimatedDeliveryTime: ['', Validators.pattern('\\d+')], // only digits
+            estimatedDeliveryTime: ['', Validators.pattern('\\d+')] // only digits
         });
     }
 }
