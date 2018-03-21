@@ -1,6 +1,9 @@
 <div class="space-after thread-entry">
-    <div class="row thread-entry-row" style="margin-right: 0; margin-left: 0">
-        <div class="col">{{processInstanceGroup.id}}</div>
+    <div class="row thread-entry-row">
+        <div class="d-flex justify-content-end">
+            <div class="mr-auto p-2">{{processInstanceGroup.id}}</div>
+            <div><i class="fas fa-expand-arrows-alt" aria-hidden="true"></i></div>
+        </div>
     </div>
 
     <ng-container *ngIf="processMetadataAggregated">
@@ -22,7 +25,7 @@
                     <div *ngIf="singleMetadata.statusCode=='ACTIVE'" class="col-1 alert-warning">In Progress</div>
                     <div *ngIf="singleMetadata.statusCode=='EXTERNALLY_TERMINATED'" class="col-2 alert-danger">
                         <span class="clickable"
-                                   (click)="openBpProcessView(i)">{{singleMetadata.actionStatus}}</span>
+                              (click)="openBpProcessView(i)">{{singleMetadata.actionStatus}}</span>
                     </div>
                     <div *ngIf="singleMetadata.statusCode=='COMPLETED'" class="col-2 alert-success">
                         <span class="clickable"

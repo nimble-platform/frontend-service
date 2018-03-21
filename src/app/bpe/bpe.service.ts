@@ -6,6 +6,7 @@ import {ProcessInstanceInputMessage} from "./model/process-instance-input-messag
 import {ProcessInstance} from "./model/process-instance";
 import {ProcessInstanceGroup} from "./model/process-instance-group";
 import {BPDataService} from "./bp-view/bp-data-service";
+import {ProcessInstanceGroupResponse} from "./model/process-instance-group-response";
 
 @Injectable()
 export class BPEService {
@@ -127,8 +128,9 @@ export class BPEService {
      //        .catch(this.handleError);
 	// }
 
-	getProcessInstanceGroups(partyId:string, collaborationRole:string): Promise<ProcessInstanceGroup[]> {
-		const url = `${this.url}/group?partyID=${partyId}&collaborationRole=${collaborationRole}`;
+	getProcessInstanceGroups(partyId:string, collaborationRole:string, page: number, limit: number): Promise<ProcessInstanceGroupResponse> {
+		let offset:number = page * limit;
+		const url = `${this.url}/group?partyID=${partyId}&collaborationRole=${collaborationRole}&offset=${offset}&limit=${limit}`;
 		return this.http
             .get(url, {headers: this.headers})
             .toPromise()
@@ -144,6 +146,7 @@ export class BPEService {
             .then(res => res.json())
             .catch(this.handleError);
 	}
+
 
 	private handleError(error: any): Promise<any> {
 		return Promise.reject(error.message || error);

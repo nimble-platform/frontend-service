@@ -7,14 +7,12 @@ import {BPService} from "../bpe/bp.service";
 import {BPEService} from "../bpe/bpe.service";
 import {ActivityVariableParser} from "../bpe/bp-view/activity-variable-parser";
 import * as moment from 'moment';
+import * as constants from '../constants';
 import {Item} from "../catalogue/model/publish/item";
 
 /**
  * Created by suat on 12-Mar-18.
  */
-export const COLLABORATION_ROLE_BUYER: string = 'BUYER';
-export const COLLABORATION_ROLE_SELLER: string = 'SELLER';
-
 @Component({
     selector: 'thread-summary',
     templateUrl: './thread-summary.component.html',
@@ -58,13 +56,13 @@ export class ThreadSummaryComponent implements OnInit {
                         let vNote = ActivityVariableParser.getNoteFromProcessData(initialDoc);
                         let vStatusCode = processInstance.state;
                         let vProcessType = ActivityVariableParser.getProcessType(activityVariables);
-                        let vActionStatus = this.getActionStatus(vProcessType, response, this.processInstanceGroup.collaborationRole == COLLABORATION_ROLE_BUYER ? true : false);
+                        let vActionStatus = this.getActionStatus(vProcessType, response, this.processInstanceGroup.collaborationRole == constants.COLLABORATION_ROLE_BUYER ? true : false);
                         let vBPStatus = this.getBPStatus(response);
                         let vStart_time = moment(lastActivity.startTime+"Z", 'YYYY-MM-DDTHH:mm:ssZ').format("YYYY-MM-DD HH:mm");
                         let vProduct = ActivityVariableParser.getProductFromProcessData(initialDoc);
                         let vTradingPartnerName = ""
 
-                        if(this.processInstanceGroup.collaborationRole == COLLABORATION_ROLE_SELLER) {
+                        if(this.processInstanceGroup.collaborationRole == constants.COLLABORATION_ROLE_SELLER) {
                             vTradingPartnerName = ActivityVariableParser.getInitiatorNameProcessData(initialDoc);
                         } else {
                             vTradingPartnerName = ActivityVariableParser.getResponderNameProcessData(initialDoc);
@@ -195,10 +193,6 @@ export class ThreadSummaryComponent implements OnInit {
         return bpStatus;
     }
 
-    navigateToProcessDetails(): void {
-        this.bpDataService.setRelatedGroupId(this.processInstanceGroup.id);
-    }
-
     navigateToSearchDetails(item:Item) {
         this.router.navigate(['/simple-search/details'],
             { queryParams: {
@@ -211,6 +205,7 @@ export class ThreadSummaryComponent implements OnInit {
     openBpProcessView(processInstanceIndex: number) {
         let processMetadata: any = this.processMetadata[processInstanceIndex];
         this.bpDataService.setBpOptionParametersWithProcessMetadata(this.processInstanceGroup.collaborationRole.toLocaleLowerCase(), processMetadata.processType, processMetadata);
+        this.bpDataService.setRelatedGroupId(this.processInstanceGroup.id);
         this.router.navigate(['bpe/bpe-exec'], {
             queryParams: {
                 catalogueId: processMetadata.product.catalogueDocumentReference.id,

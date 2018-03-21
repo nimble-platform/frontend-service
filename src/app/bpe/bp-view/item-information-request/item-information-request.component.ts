@@ -141,6 +141,7 @@ export class ItemInformationRequestComponent {
             { queryParams: {
                 catalogueId: this.bpDataService.catalogueLine.goodsItem.item.catalogueDocumentReference.id,
                 id: this.bpDataService.catalogueLine.id,
+                gid: this.bpDataService.getRelatedGroupId(),
                 showOptions: true
             }});
     }

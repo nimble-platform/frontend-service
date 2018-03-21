@@ -9,6 +9,7 @@ import { DashboardRoutingModule } from './dashboard-routing.module';
 import { DashboardComponent } from './dashboard.component';
 import {DashboardThreadedComponent} from "./dashboard-threaded.component";
 import {ThreadSummaryComponent} from "./thread-summary.component";
+import {ThreadListComponent} from "./thread-list-component";
 
 @NgModule({
 	imports: [
@@ -23,11 +24,13 @@ import {ThreadSummaryComponent} from "./thread-summary.component";
 	declarations: [
 		DashboardComponent,
 		DashboardThreadedComponent,
+		ThreadListComponent,
 		ThreadSummaryComponent
 	],
 	exports: [
 		DashboardComponent,
 		DashboardThreadedComponent,
+		ThreadListComponent,
 		ThreadSummaryComponent
 	],
 	providers: [

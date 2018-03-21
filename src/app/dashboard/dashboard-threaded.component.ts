@@ -5,8 +5,7 @@ import {BPEService} from "../bpe/bpe.service";
 import {Router} from "@angular/router";
 import {UserService} from "../user-mgmt/user.service";
 import {BPDataService} from "../bpe/bp-view/bp-data-service";
-import {ProcessInstanceGroup} from "../bpe/model/process-instance-group";
-import {COLLABORATION_ROLE_BUYER, COLLABORATION_ROLE_SELLER} from "./thread-summary.component";
+import * as constants from '../constants';
 
 @Component({
     selector: 'dashboard-threaded',
@@ -15,19 +14,15 @@ import {COLLABORATION_ROLE_BUYER, COLLABORATION_ROLE_SELLER} from "./thread-summ
 })
 
 export class DashboardThreadedComponent implements OnInit {
-    COLLABORATION_TYPE_SALE = 'Sale';
-    COLLABORATION_TYPE_PURCHASE = 'Purchase';
-
     fullName = "";
     hasCompany = false;
     roles = [];
     alert1Closed = false;
     alert2Closed = false;
 
-    collaborationType:string = this.COLLABORATION_TYPE_SALE;
-    seller_history: ProcessInstanceGroup[] = [];
-    buyer_history: ProcessInstanceGroup[] = [];
-
+    COLLABORATION_ROLE_BUYER: string = constants.COLLABORATION_ROLE_BUYER;
+    COLLABORATION_ROLE_SELLER: string = constants.COLLABORATION_ROLE_SELLER;
+    collaborationRole: string = constants.COLLABORATION_ROLE_SELLER;
 
     constructor(private cookieService: CookieService,
                 private bpeService: BPEService,
@@ -50,7 +45,6 @@ export class DashboardThreadedComponent implements OnInit {
             }
             else
                 this.hasCompany = false;
-            this.getProcessInstanceGroups();
         }
         else
             this.appComponent.checkLogin("/user-mgmt/login");
@@ -70,23 +64,12 @@ export class DashboardThreadedComponent implements OnInit {
 			this.roles = [];
     }
 
-    getProcessInstanceGroups() {
-        this.bpeService.getProcessInstanceGroups(this.cookieService.get("company_id"), COLLABORATION_ROLE_SELLER)
-            .then(processInstanceGroups => {
-                this.seller_history = processInstanceGroups;
-            });
-        this.bpeService.getProcessInstanceGroups(this.cookieService.get("company_id"), COLLABORATION_ROLE_BUYER)
-            .then(processInstanceGroups => {
-                this.buyer_history = processInstanceGroups;
-            });
-    }
-
     private onTabClick(event: any) {
         event.preventDefault();
         if (event.target.id == "salesTab") {
-            this.collaborationType = this.COLLABORATION_TYPE_SALE;
+            this.collaborationRole = constants.COLLABORATION_ROLE_SELLER;
         } else {
-            this.collaborationType = this.COLLABORATION_TYPE_PURCHASE;
+            this.collaborationRole = constants.COLLABORATION_ROLE_BUYER;
         }
     }
 }
