@@ -53,20 +53,37 @@
     </div>
 </div>
 
-<div class="row">
-    <div class="col-12">
-        <div *ngIf="collaborationRole == COLLABORATION_ROLE_SELLER"
-             class="space-before">
-
-            <thread-list [collaborationRole]="collaborationRole">
-            </thread-list>
+<ng-container *ngIf="groups.length > 0">
+    <div class="row space-before">
+        <div class="col-3">
+            <span i18n>Showing results</span> {{ start }} - {{ end }} <span i18n>of</span> {{ size }}
         </div>
-
-        <div *ngIf="collaborationRole == COLLABORATION_ROLE_BUYER"
-             class="space-before">
-
-            <thread-list [collaborationRole]="collaborationRole">
-            </thread-list>
+        <div class="pagination col-9 justify-content-center ">
+            <ngb-pagination [(collectionSize)]="size" [(pageSize)]="pageSize" [(page)]="page" [maxSize]="limit" [boundaryLinks]="false"
+                            (pageChange)="filterChangeHandler()"></ngb-pagination>
         </div>
+    </div>
+</ng-container>
+
+<div class="row"
+    [ngClass]="{'space-before' : groups.length == 0}">
+    <div class="col-2">
+        <div class="card">
+            <div class="card-header">
+                Archived
+            </div>
+            <input type="checkbox"
+                   class="m-2"
+                   [checked]="archived"
+                   (change)="archived = !archived; filterChangeHandler()">
+        </div>
+    </div>
+    <div *ngIf="groups.length == 0" class="space-after">
+        <span i18n>No data</span>
+    </div>
+    <div *ngIf="groups.length > 0" class="col-10">
+        <thread-summary *ngFor="let processInstanceGroup of groups"
+                        [processInstanceGroup]="processInstanceGroup">
+        </thread-summary>
     </div>
 </div>

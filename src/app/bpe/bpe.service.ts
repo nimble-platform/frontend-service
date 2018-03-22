@@ -165,6 +165,15 @@ export class BPEService {
             .catch(this.handleError);
 	}
 
+	restoreProcessInstanceGroup(groupId: string) {
+		const url = `${this.url}/group/${groupId}/restore`;
+		return this.http
+            .post(url, null)
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+	}
+
 	private handleError(error: any): Promise<any> {
 		return Promise.reject(error.message || error);
 	}

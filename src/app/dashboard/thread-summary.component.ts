@@ -230,11 +230,15 @@ export class ThreadSummaryComponent implements OnInit {
         this.bpeService.archiveProcessInstanceGroup(this.processInstanceGroup.id)
             .then(() => {
                 this.archiveCallStatus.callback('Thread archived successfully');
-                
+
             })
             .catch(err => {
                 this.archiveCallStatus.error('Failed to archive the thread');
             });
+    }
+
+    restoreGroup(): void {
+
     }
 
     deleteGroup(): void {
