@@ -47,7 +47,7 @@
                              (click)="openBpProcessView(i)">{{singleMetadata.actionStatus}}</div>
                     </div>
                 </div>
-                <div *ngIf="!(i == 0 || i == lastIndex)" class="row thread-entry-row justify-content-center" style="cursor: pointer">
+                <div *ngIf="!(i == 0 || i == lastIndex) && i == 1" class="row thread-entry-row justify-content-center" style="cursor: pointer">
                     <div><div class="btn alert-info" (click)="toggleExpanded()">See Intermediate Activities</div></div>
                 </div>
             </ng-container>

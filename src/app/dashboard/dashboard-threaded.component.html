@@ -83,7 +83,8 @@
     </div>
     <div *ngIf="groups.length > 0" class="col-10">
         <thread-summary *ngFor="let processInstanceGroup of groups"
-                        [processInstanceGroup]="processInstanceGroup">
+                        [processInstanceGroup]="processInstanceGroup"
+                        (threadStateUpdated)="retrieveProcessInstanceGroups()">
         </thread-summary>
     </div>
 </div>

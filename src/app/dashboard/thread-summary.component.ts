@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from "@angular/core";
+import {Component, Input, OnInit, Output, EventEmitter} from "@angular/core";
 import {ProcessInstanceGroup} from "../bpe/model/process-instance-group";
 import {ProcessInstance} from "../bpe/model/process-instance";
 import {Router} from "@angular/router";
@@ -22,6 +22,7 @@ import {CallStatus} from "../common/call-status";
 export class ThreadSummaryComponent implements OnInit {
 
     @Input() processInstanceGroup: ProcessInstanceGroup;
+    @Output() threadStateUpdated = new EventEmitter();
 
     lastIndex: number;
     processMetadata: any[] = [];
@@ -230,18 +231,34 @@ export class ThreadSummaryComponent implements OnInit {
         this.bpeService.archiveProcessInstanceGroup(this.processInstanceGroup.id)
             .then(() => {
                 this.archiveCallStatus.callback('Thread archived successfully');
-
+                this.threadStateUpdated.next();
             })
             .catch(err => {
-                this.archiveCallStatus.error('Failed to archive the thread');
+                this.archiveCallStatus.error('Failed to archive thread');
             });
     }
 
     restoreGroup(): void {
-
+        this.archiveCallStatus.submit();
+        this.bpeService.restoreProcessInstanceGroup(this.processInstanceGroup.id)
+            .then(() => {
+                this.archiveCallStatus.callback('Thread restored successfully');
+                this.threadStateUpdated.next();
+            })
+            .catch(err => {
+                this.archiveCallStatus.error('Failed to restore thread');
+            });
     }
 
     deleteGroup(): void {
-
+        this.archiveCallStatus.submit();
+        this.bpeService.deleteProcessInstanceGroup(this.processInstanceGroup.id)
+            .then(() => {
+                this.archiveCallStatus.callback('Thread deleted permanently');
+                this.threadStateUpdated.next();
+            })
+            .catch(err => {
+                this.archiveCallStatus.error('Failed to delete thread permanently');
+            });
     }
 }

@@ -35,7 +35,11 @@ export class BPEService {
 	}
 
 	continueBusinessProcess(piim:ProcessInstanceInputMessage):Promise<ProcessInstance> {
-		const url = `${this.url}/continue`;
+		let url = `${this.url}/continue`;
+		if(this.bpDataService.getRelatedGroupId() != null) {
+			url += '?gid=' + this.bpDataService.getRelatedGroupId();
+		}
+
 		return this.http
             .post(url, JSON.stringify(piim), {headers: this.headers})
             .toPromise()
