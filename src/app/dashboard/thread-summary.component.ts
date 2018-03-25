@@ -251,14 +251,16 @@ export class ThreadSummaryComponent implements OnInit {
     }
 
     deleteGroup(): void {
-        this.archiveCallStatus.submit();
-        this.bpeService.deleteProcessInstanceGroup(this.processInstanceGroup.id)
-            .then(() => {
-                this.archiveCallStatus.callback('Thread deleted permanently');
-                this.threadStateUpdated.next();
-            })
-            .catch(err => {
-                this.archiveCallStatus.error('Failed to delete thread permanently');
-            });
+        if (confirm("Are you sure that you want to delete this business process thread?")) {
+            this.archiveCallStatus.submit();
+            this.bpeService.deleteProcessInstanceGroup(this.processInstanceGroup.id)
+                .then(() => {
+                    this.archiveCallStatus.callback('Thread deleted permanently');
+                    this.threadStateUpdated.next();
+                })
+                .catch(err => {
+                    this.archiveCallStatus.error('Failed to delete thread permanently');
+                });
+        }
     }
 }
