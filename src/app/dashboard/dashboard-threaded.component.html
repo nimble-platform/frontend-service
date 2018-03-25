@@ -68,14 +68,15 @@
 <div class="row"
     [ngClass]="{'space-before' : groups.length == 0}">
     <div class="col-2">
-        <div class="card">
+        <div class="card facet">
             <div class="card-header">
                 Archived
             </div>
-            <input type="checkbox"
-                   class="m-2"
-                   [checked]="archived"
-                   (change)="archived = !archived; filterChangeHandler()">
+            <div class="clickable" (click)="archived = !archived; filterChangeHandler();">
+                <input type="checkbox"
+                       class="m-2"
+                       [checked]="archived">
+            </div>
         </div>
     </div>
     <div *ngIf="groups.length == 0" class="space-after">
