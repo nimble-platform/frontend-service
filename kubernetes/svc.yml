@@ -1,0 +1,15 @@
+kind: Service
+metadata:
+  name: frontend-service
+  labels:
+    app: frontend-service
+    name: frontend-service
+spec:
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+  selector:
+    app: frontend-service
+    name: frontend-service

@@ -1,60 +1,33 @@
 node ('nimble-jenkins-slave') {
-	
 	stage('Clone and Update') {
-		git(url: 'https://github.com/nimble-platform/frontend-service.git', branch: env.BRANCH_NAME)
+		git(url: 'https://github.com/nimble-platform/frontend-service.git', branch: 'k8s-integration')
 	}
 
-	if (env.BRANCH_NAME == 'master') {
-		stage('Build Application') {
-			sh 'mvn clean install -Denv=prod'
-		}
-	}
-	
-	if (env.BRANCH_NAME == 'staging') {
-		stage('Build Application') {
-			sh 'mvn clean install -Denv=staging'
-		}
-	}
+    stage('Build Application') {
+        sh 'mvn clean install -Denv=prod'
+    }
 
-	stage ('Build Docker') {
-		sh 'docker build -t nimbleplatform/frontend-service ./target'
-	}
-	if (env.BRANCH_NAME == 'staging') {
-			stage('Build Docker') {
-		sh 'docker build -t nimbleplatform/frontend-service:staging ./target'
-			}
+    stage ('Build docker image') {
+        sh 'mvn clean install -DskipTests'
+        sh 'docker build -t nimbleplatform/frontend-service:${BUILD_NUMBER} ./target'
+        sh 'sleep 5' // For the tag to populate
+    }
 
-			stage('Push Docker') {
-				sh 'docker push nimbleplatform/frontend-service:staging'
-			}
+    stage ('Push docker image') {
+        withDockerRegistry([credentialsId: 'NimbleDocker']) {
+            sh 'docker push nimbleplatform/frontend-service:${BUILD_NUMBER}'
+        }
+    }
 
-			stage('Deploy') {
-				sh 'ssh staging "cd /srv/nimble-staging/ && ./run-staging.sh restart-single frontend-service"'
-			}
-		} else {
-			stage ('Build Docker') {
-				sh 'docker build -t nimbleplatform/frontend-service ./target'
-			}
-		}
+    stage ('Deploy') {
+        sh ''' sed -i 's/IMAGE_TAG/'"$BUILD_NUMBER"'/g' kubernetes/deploy.yml '''
 
-	if (env.BRANCH_NAME == 'master') {
-		stage('Deploy') {
-//            sh 'docker pull nimbleplatform/frontend-service'
-			sh 'ssh nimble "cd /data/deployment_setup/prod/ && sudo ./run-prod.sh restart-single frontend-service"'
-		}
-	}
+        sh 'kubectl apply -f kubernetes/deploy.yml -n prod --validate=false'
+        sh 'kubectl apply -f kubernetes/svc.yml -n prod --validate=false'
+    }
 
-	// Kubernetes is disabled for now
-	//if (env.BRANCH_NAME == 'master') {
-	//   stage ('Push Docker image') {
-	//        withDockerRegistry([credentialsId: 'NimbleDocker']) {
-	//            sh '/bin/bash -xe deploy.sh docker-push'
-	//        }
-	//    }
-	//
-	//    stage ('Apply to Cluster') {
-	//        sh 'kubectl apply -f kubernetes/deploy.yml -n prod --validate=false'
-	//    }
-	//}
-	
+    stage ('Print-deploy logs') {
+        sh 'sleep 60'
+        sh 'kubectl  -n prod logs deploy/frontend-service -c frontend-service'
+    }
 }
