@@ -125,7 +125,7 @@ export class BPEService {
 	}
 
 	getProcessInstanceGroupFilters(partyId:string, collaborationRole:string, archived: boolean, products: string[], categories: string[], partners: string[]): Promise<ProcessInstanceGroupFilter> {
-		let url:string = `${this.url}/group/filter-criteria?partyID=${partyId}&collaborationRole=${collaborationRole}&archived=${archived}`;
+		let url:string = `${this.url}/group/filters?partyID=${partyId}&collaborationRole=${collaborationRole}&archived=${archived}`;
 		if(products.length > 0) {
 			url += '&relatedProducts=' + this.stringtifyArray(products);
 		}
