@@ -42,7 +42,7 @@
 </div>
 <bp-product-details *ngIf="selectedTab == 'Product Characteristics' || selectedTab == 'Product Trading & Delivery Terms'"
                     [catalogueLine]="bpDataService.catalogueLines[0]"
-                    [presentationMode]="'singlevalue'"
+                    [presentationMode]="presentationMode"
                     [selectedTab]="selectedTab">
 </bp-product-details>
 

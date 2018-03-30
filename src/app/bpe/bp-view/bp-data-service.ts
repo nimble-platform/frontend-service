@@ -262,6 +262,7 @@ export class BPDataService{
     initTransportExecutionPlanRequest() {
         this.modifiedCatalogueLines = JSON.parse(JSON.stringify(this.catalogueLines));
         this.transportExecutionPlanRequest = UBLModelUtils.createTransportExecutionPlanRequest(this.modifiedCatalogueLines[0]);
+        this.selectFirstValuesAmongAlternatives();
     }
 
     initTransportExecutionPlanRequestWithOrder(processMetadata:any) {
@@ -270,6 +271,7 @@ export class BPDataService{
         let copyOrder:Order = JSON.parse(JSON.stringify(this.order));
         this.modifiedCatalogueLines = JSON.parse(JSON.stringify(this.catalogueLines));
         this.transportExecutionPlanRequest = UBLModelUtils.createTransportExecutionPlanRequestWithOrder(copyOrder, this.modifiedCatalogueLines[0]);
+        this.selectFirstValuesAmongAlternatives();
     }
 
     initTransportExecutionPlanRequestWithQuotation() {
@@ -360,43 +362,40 @@ export class BPDataService{
         }
     }
 
-    updateItemProperty(selectedValue:any, itemProperty:ItemProperty):void {
-        let item:Item = this.modifiedCatalogueLines[0].goodsItem.item;
-
-        let targetProp:ItemProperty;
-        for(let prop of item.additionalItemProperty) {
-            if(prop.id == itemProperty.id) {
-                targetProp = prop;
-                break;
-            }
-        }
-
+    updateItemProperty(itemProperty:ItemProperty):void {
         if(itemProperty.valueQualifier == 'STRING') {
-            targetProp.value[0] = selectedValue;
+            let index = this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty.findIndex(item => item.name == itemProperty.name);
+            this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty[index].value[0] = itemProperty.value[0];
         } else if(itemProperty.valueQualifier == 'REAL_MEASURE') {
-            targetProp.valueDecimal[0] = selectedValue;
+            let index = this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty.findIndex(item => item.name == itemProperty.name);
+            this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty[index].valueDecimal[0] = itemProperty.valueDecimal[0];
         } else if(itemProperty.valueQualifier == 'BOOLEAN') {
-            targetProp.value[0] = selectedValue;
+            let index = this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty.findIndex(item => item.name == itemProperty.name);
+            this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty[index].value[0] = itemProperty.value[0];
         } else if(itemProperty.valueQualifier == 'QUANTITY') {
-            targetProp.valueQuantity[0] = selectedValue;
+            let index = this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty.findIndex(item => item.name == itemProperty.name);
+            this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty[index].valueQuantity[0] = itemProperty.valueQuantity[0];
         }
     }
 
     /**
      * Keeps only the selected value for the given attribute in the dimension array
      */
-    updateDimension(attributeId:string, selectedValue:number):void {
-        let targetedLine = this
 
-        let dimensions:Dimension[] = this.modifiedCatalogueLines[0].goodsItem.item.dimension;
+    updateDimension(attributeId:string, event: any):void {
+        // update catalogueLine
         let allDimensions:Dimension[] = this.catalogueLines[0].goodsItem.item.dimension;
-        let attIndexInOriginal = allDimensions.findIndex(dim => attributeId == dim.attributeID && selectedValue == dim.measure.value);
+        let index = allDimensions.findIndex(dim => attributeId == dim.attributeID);
+        let firstDim = this.catalogueLines[0].goodsItem.item.dimension[index];
+
+        this.catalogueLines[0].goodsItem.item.dimension[index] = this.catalogueLines[0].goodsItem.item.dimension[index+event.target.selectedIndex];
+        this.catalogueLines[0].goodsItem.item.dimension[index+event.target.selectedIndex] = firstDim;
+        this.catalogueLines[0].goodsItem.item.dimension = [].concat(this.catalogueLines[0].goodsItem.item.dimension);
+
+        // update modifiedCatalogueLine
+        let dimensions:Dimension[] = this.modifiedCatalogueLines[0].goodsItem.item.dimension;
         let attIndexInModified = dimensions.findIndex(dim => attributeId == dim.attributeID);
-        // return the items after the target attribute
-        let remaining = dimensions.splice(attIndexInModified + 1);
-        // remove the last item
-        dimensions.splice(dimensions.length - 1);
-        dimensions = dimensions.concat([allDimensions[attIndexInOriginal]]).concat(remaining);
+        dimensions[attIndexInModified] = this.catalogueLines[0].goodsItem.item.dimension[index];
         this.modifiedCatalogueLines[0].goodsItem.item.dimension = dimensions;
     }
 }

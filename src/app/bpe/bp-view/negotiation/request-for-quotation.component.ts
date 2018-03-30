@@ -47,7 +47,7 @@ export class RequestForQuotationComponent {
         let buyerId:string = this.cookieService.get("company_id");
 
         this.userService.getParty(buyerId).then(buyerParty => {
-            rfq.buyerCustomerParty = new CustomerParty(buyerParty)
+            rfq.buyerCustomerParty = new CustomerParty(buyerParty);
 
             this.userService.getParty(sellerId).then(sellerParty => {
                 rfq.sellerSupplierParty = new SupplierParty(sellerParty);

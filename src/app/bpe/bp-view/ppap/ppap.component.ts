@@ -3,13 +3,6 @@ import {BPEService} from "../../bpe.service";
 import {UserService} from "../../../user-mgmt/user.service";
 import {CookieService} from "ng2-cookies";
 import {BPDataService} from "../bp-data-service";
-import * as myGlobals from '../../../globals';
-import {CustomerParty} from "../../../catalogue/model/publish/customer-party";
-import {SupplierParty} from "../../../catalogue/model/publish/supplier-party";
-import {UBLModelUtils} from "../../../catalogue/model/ubl-model-utils";
-import {ProcessVariables} from "../../model/process-variables";
-import {ModelUtils} from "../../model/model-utils";
-import {ProcessInstanceInputMessage} from "../../model/process-instance-input-message";
 import {Ppap} from "../../../catalogue/model/publish/ppap";
 import {CallStatus} from "../../../common/call-status";
 import {ActivatedRoute, Router} from "@angular/router";
@@ -20,7 +13,7 @@ import {ActivatedRoute, Router} from "@angular/router";
 })
 
 export class PpapComponent implements OnInit{
-
+    @Input() presentationMode: string;
     selectedTab: string;
 
     callStatus:CallStatus = new CallStatus();

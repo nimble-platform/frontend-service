@@ -1,6 +1,5 @@
 import {Component, OnInit} from "@angular/core";
 import {BPDataService} from "../bp-data-service";
-import {CallStatus} from "../../../common/call-status";
 
 @Component({
     selector: 'negotiation',
