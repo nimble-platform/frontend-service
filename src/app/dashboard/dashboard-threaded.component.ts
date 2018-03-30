@@ -160,7 +160,7 @@ export class DashboardThreadedComponent implements OnInit {
                 this.groups = response.processInstanceGroups;
                 this.size = response.size;
                 this.start = this.qp_page * this.pageSize - this.pageSize + 1;
-                this.end = this.start + this.size - 1 <= this.size ? this.start + this.size - 1 : this.size;
+                this.end = this.start + this.pageSize - 1 <= this.size ? this.start + this.pageSize - 1 : this.size;
             });
 
         this.filterQueryStatus.submit();
