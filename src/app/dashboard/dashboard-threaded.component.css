@@ -10,6 +10,14 @@
     margin-right: inherit;
 }
 
+.facet {
+    margin-bottom: .75rem;
+}
+
+.facet > div:nth-of-type(n+1) {
+    cursor: pointer;
+}
+
 .facet .card-header {
     padding: .25rem .5rem;
 }

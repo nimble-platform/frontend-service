@@ -7,6 +7,7 @@ import {ProcessInstance} from "./model/process-instance";
 import {ProcessInstanceGroup} from "./model/process-instance-group";
 import {BPDataService} from "./bp-view/bp-data-service";
 import {ProcessInstanceGroupResponse} from "./model/process-instance-group-response";
+import {ProcessInstanceGroupFilter} from "./model/process-instance-group-filter";
 
 @Injectable()
 export class BPEService {
@@ -123,18 +124,36 @@ export class BPEService {
             .catch(this.handleError);
 	}
 
-	// getProcessInstanceGroups(partyId:string): Promise<ProcessInstanceGroup[]> {
-	// 	const url = `${this.url}/group/temp`;
-	// 	return this.http
-     //        .get(url, {headers: this.headers})
-     //        .toPromise()
-     //        .then(res => res.json())
-     //        .catch(this.handleError);
-	// }
+	getProcessInstanceGroupFilters(partyId:string, collaborationRole:string, archived: boolean, products: string[], categories: string[], partners: string[]): Promise<ProcessInstanceGroupFilter> {
+		let url:string = `${this.url}/group/filter-criteria?partyID=${partyId}&collaborationRole=${collaborationRole}&archived=${archived}`;
+		if(products.length > 0) {
+			url += '&relatedProducts=' + this.stringtifyArray(products);
+		}
+		if(categories.length > 0) {
+			url += '&relatedProductCategories=' + this.stringtifyArray(categories);
+		}
+		if(partners.length > 0) {
+			url += '&tradingPartnerIDs=' + this.stringtifyArray(partners);
+		}
+		return this.http
+            .get(url, {headers: this.headers})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+	}
 
-	getProcessInstanceGroups(partyId:string, collaborationRole:string, page: number, limit: number, archived: boolean): Promise<ProcessInstanceGroupResponse> {
+	getProcessInstanceGroups(partyId:string, collaborationRole:string, page: number, limit: number, archived: boolean, products: string[], categories: string[], partners: string[]): Promise<ProcessInstanceGroupResponse> {
 		let offset:number = page * limit;
-		const url = `${this.url}/group?partyID=${partyId}&collaborationRole=${collaborationRole}&offset=${offset}&limit=${limit}&archived=${archived}`;
+		let url:string = `${this.url}/group?partyID=${partyId}&collaborationRole=${collaborationRole}&offset=${offset}&limit=${limit}&archived=${archived}`;
+		if(products.length > 0) {
+			url += '&relatedProducts=' + this.stringtifyArray(products);
+		}
+		if(categories.length > 0) {
+			url += '&relatedProductCategories=' + this.stringtifyArray(categories);
+		}
+		if(partners.length > 0) {
+			url += '&tradingPartnerIDs=' + this.stringtifyArray(partners);
+		}
 		return this.http
             .get(url, {headers: this.headers})
             .toPromise()
@@ -176,6 +195,15 @@ export class BPEService {
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
+	}
+
+	private stringtifyArray(values: any[]): string {
+		let paramVal: string = '';
+		for (let value of values) {
+			paramVal += value + ',';
+		}
+		paramVal = paramVal.substring(0, paramVal.length-1);
+		return paramVal;
 	}
 
 	private handleError(error: any): Promise<any> {

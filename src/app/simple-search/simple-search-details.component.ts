@@ -48,11 +48,11 @@ export class SimpleSearchDetailsComponent implements OnInit {
 			let catalogueId = params['catalogueId'];
 			let gid = params['gid'];
 
-            this.bpDataService.catalogueLine = null;
+            //this.bpDataService.catalogueLine = null;
 			this.getCatalogueLineStatus.submit();
 			this.catalogueService.getCatalogueLine(catalogueId, id).then(line => {
 				this.bpDataService.resetBpData();
-				this.bpDataService.catalogueLine = line;
+				this.bpDataService.setCatalogueLines([line]);
 				this.bpDataService.userRole = 'buyer';
 				this.bpDataService.setRelatedGroupId(gid);
 				this.bpOptionsActive = params['showOptions'] == 'true';

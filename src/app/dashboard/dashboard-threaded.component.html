@@ -36,7 +36,7 @@
         <ul class="nav nav-tabs">
             <li class="nav-item">
                 <a href id="salesTab"
-                   [ngClass]="{'nav-link': true, active: collaborationRole == COLLABORATION_ROLE_SELLER}"
+                   [ngClass]="{'nav-link': true, active: qp_collaborationRole == COLLABORATION_ROLE_SELLER}"
                    (click)="onTabClick($event)"
                    i18n
                 >Sales</a>
@@ -44,7 +44,7 @@
 
             <li class="nav-item">
                 <a href id="purchasesTab"
-                   [ngClass]="{'nav-link': true, active: collaborationRole == COLLABORATION_ROLE_BUYER}"
+                   [ngClass]="{'nav-link': true, active: qp_collaborationRole == COLLABORATION_ROLE_BUYER}"
                    (click)="onTabClick($event)"
                    i18n
                 >Purchases</a>
@@ -59,33 +59,50 @@
             <span i18n>Showing results</span> {{ start }} - {{ end }} <span i18n>of</span> {{ size }}
         </div>
         <div class="pagination col-9 justify-content-center ">
-            <ngb-pagination [(collectionSize)]="size" [(pageSize)]="pageSize" [(page)]="page" [maxSize]="limit" [boundaryLinks]="false"
-                            (pageChange)="filterChangeHandler()"></ngb-pagination>
+            <ngb-pagination [(collectionSize)]="size" [(pageSize)]="pageSize" [(page)]="qp_page" [maxSize]="limit" [boundaryLinks]="false"
+                            (pageChange)="paginationHandler()"></ngb-pagination>
         </div>
     </div>
 </ng-container>
 
 <div class="row"
-    [ngClass]="{'space-before' : groups.length == 0}">
-    <div class="col-2">
-        <div class="card facet">
-            <div class="card-header">
-                Archived
-            </div>
-            <div class="clickable" (click)="archived = !archived; filterChangeHandler();">
-                <input type="checkbox"
-                       class="m-2"
-                       [checked]="archived">
-            </div>
-        </div>
+     [ngClass]="{'space-before' : groups.length == 0}">
+
+    <div *ngIf="filterSet" class="col-2">
+        <facet [title]="'Archived'"
+               [dataType]="'boolean'"
+               [booleanValue]="qp_archived"
+               (booleanValueChanged)="qp_archived = $event;"
+               (triggerCriteriaChanged)="filterChangeHandler();">
+        </facet>
+        <facet [title]="'Product'"
+               [dataType]="'string'"
+               [stringValues]="filterSet.relatedProducts"
+               [selectedStringValues]="modifiedFilterSet.relatedProducts"
+               (triggerCriteriaChanged)="filterChangeHandler();">
+        </facet>
+        <facet [title]="'Product category'"
+               [dataType]="'string'"
+               [stringValues]="filterSet.relatedProductCategories"
+               [selectedStringValues]="modifiedFilterSet.relatedProductCategories"
+               (triggerCriteriaChanged)="filterChangeHandler();">
+        </facet>
+        <!--<facet [title]="'Trading partner'"-->
+               <!--[dataType]="'string'"-->
+               <!--[stringValues]="filterSet.tradingPartnerNames"-->
+               <!--[selectedStringValues]="modifiedFilterSet.tradingPartnerNames"-->
+               <!--(triggerCriteriaChanged)="filterChangeHandler();">-->
+        <!--</facet>-->
     </div>
+    <call-status *ngIf="!filterSet" class="col-2" [callStatus]="filterQueryStatus"></call-status>
+
     <div *ngIf="groups.length == 0" class="space-after">
         <span i18n>No data</span>
     </div>
     <div *ngIf="groups.length > 0" class="col-10">
         <thread-summary *ngFor="let processInstanceGroup of groups"
                         [processInstanceGroup]="processInstanceGroup"
-                        (threadStateUpdated)="retrieveProcessInstanceGroups()">
+                        (threadStateUpdated)="paginationHandler()">
         </thread-summary>
     </div>
 </div>

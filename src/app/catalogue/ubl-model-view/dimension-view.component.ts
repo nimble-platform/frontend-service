@@ -88,6 +88,7 @@ export class DimensionViewComponent extends ChildForm implements OnInit {
         }
     }
 
+    // TODO: this is not the proper place to have such a method
     selectDimension(attributeId, event: any) {
         this.bpDataService.updateDimension(attributeId, event.target.value);
     }
