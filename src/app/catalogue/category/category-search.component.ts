@@ -33,6 +33,11 @@ export class CategorySearchComponent implements OnInit {
     // whether customCategoryPage is displayed or not
     customCategoryPage: boolean = false;
 
+    // keeps the query term
+    categoryKeyword: string;
+    // custom category name
+    customCategory: string;
+
     constructor(private router: Router,
                 private route: ActivatedRoute,
                 private cookieService: CookieService,
@@ -46,12 +51,12 @@ export class CategorySearchComponent implements OnInit {
         this.route.queryParams.subscribe((params: Params) => {
 
             // This part is necessary since only the params has changes,canDeactivate method will not be called.
-            if(this.inPublish == true){
-                if(!confirm("You will lose any changes you made, are you sure you want to quit ?")){
-                    this.selectCategory(null);
-                    return;
-                }
-            }
+            // if(this.inPublish == true){
+            //     if(!confirm("You will lose any changes you made, are you sure you want to quit ?")){
+            //         this.selectCategory(null);
+            //         return;
+            //     }
+            // }
 
             // current page regs considered: menu, publish, null
             this.pageRef = params['pageRef'];
@@ -74,6 +79,12 @@ export class CategorySearchComponent implements OnInit {
             if(this.pageRef == null) {
                 this.pageRef = 'single';
             }
+
+            // handle category query term
+            this.categoryKeyword = params['cat'];
+            if(this.categoryKeyword != null) {
+                this.getCategories();
+            }
         });
     }
 
@@ -87,16 +98,17 @@ export class CategorySearchComponent implements OnInit {
         return true;
     }
 
-    private getCategories(keyword: string): void {
+    onSearchCategory(): void {
+        this.router.navigate(['/catalogue/categorysearch'], {queryParams: {pg: this.publishingGranularity, pageRef: this.pageRef, cat: this.categoryKeyword}});
+    }
 
-        if (keyword.length < 1)
-            return;
+    private getCategories(): void {
 
         this.callback = false;
         this.submitted = true;
         this.error_detc = false;
 
-        this.categoryService.getCategoriesByName(keyword)
+        this.categoryService.getCategoriesByName(this.categoryKeyword)
             .then(categories => {
                 this.categories = categories;
                 this.callback = true;
