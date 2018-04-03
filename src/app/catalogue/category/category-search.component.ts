@@ -143,7 +143,7 @@ export class CategorySearchComponent implements OnInit {
     }
 
     private addCustomCategory(text: string): void{
-        this.categoryService.addSelectedCategory(new Category(UBLModelUtils.generateUUID(),text,null,null,null,null,null,[],[],'Custom',null));
+        this.categoryService.addSelectedCategory(new Category(text,text,null,null,null,null,null,[],[],'Custom',null));
         this.navigateToPublishingPage();
     }
 
