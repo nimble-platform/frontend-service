@@ -10,6 +10,7 @@ import {CookieService} from "ng2-cookies";
 import {CatalogueService} from "../catalogue.service";
 import {PublishService} from "../publish-and-aip.service";
 import {ProductPublishComponent} from "../product-publish.component";
+import {UBLModelUtils} from "../model/ubl-model-utils";
 
 @Component({
     selector: 'category-search',
@@ -142,7 +143,7 @@ export class CategorySearchComponent implements OnInit {
     }
 
     private addCustomCategory(text: string): void{
-        this.categoryService.addSelectedCategory(new Category(null,text,null,null,null,null,null,[],[],'Custom',null));
+        this.categoryService.addSelectedCategory(new Category(UBLModelUtils.generateUUID(),text,null,null,null,null,null,[],[],'Custom',null));
         this.navigateToPublishingPage();
     }
 
