@@ -51,16 +51,15 @@ export class CategorySearchComponent implements OnInit {
     ngOnInit(): void {
         this.route.queryParams.subscribe((params: Params) => {
 
-            // This part is necessary since only the params has changes,canDeactivate method will not be called.
-            // if(this.inPublish == true){
-            //     if(!confirm("You will lose any changes you made, are you sure you want to quit ?")){
-            //         this.selectCategory(null);
-            //         return;
-            //     }
-            // }
-
             // current page regs considered: menu, publish, null
             this.pageRef = params['pageRef'];
+
+            // This part is necessary since only the params has changes,canDeactivate method will not be called.
+            if(this.inPublish == true && this.pageRef == 'menu'){
+                if(!confirm("You will lose any changes you made, are you sure you want to quit ?")){
+                    return;
+                }
+            }
 
             // If pageRef is 'publish',then user is publishing.
             if(this.pageRef == 'publish'){
@@ -90,10 +89,11 @@ export class CategorySearchComponent implements OnInit {
     }
 
     canDeactivate():boolean{
+        //
         this.inPublish = false;
         if(this.pageRef == "publish" && this.isReturnPublish == false){
             if(!confirm("You will lose any changes you made, are you sure you want to quit ?")){
-                this.selectCategory(null);
+                return false;
             }
         }
         return true;
@@ -151,6 +151,7 @@ export class CategorySearchComponent implements OnInit {
         let userId = this.cookieService.get("user_id");
         this.catalogueService.getCatalogue(userId).then(catalogue => {
             ProductPublishComponent.dialogBox = true;
+            // set isReturnPublish in order not to show confirmation popup
             this.isReturnPublish = true;
             this.router.navigate(['catalogue/publish'], {queryParams: {pg: this.publishingGranularity}});
         }).catch(() => {
