@@ -80,11 +80,11 @@ export class PpapDocumentSelectComponent implements OnInit{
         this.ppap.note = this.note;
 
 
-        this.ppap.lineItem.item = this.bpDataService.modifiedCatalogueLine.goodsItem.item;
+        this.ppap.lineItem.item = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;
         UBLModelUtils.removeHjidFieldsFromObject(this.ppap);
 
 
-        let sellerId:string = this.bpDataService.catalogueLine.goodsItem.item.manufacturerParty.id;
+        let sellerId:string = this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty.id;
         let buyerId:string = this.cookieService.get("company_id");
 
 
@@ -93,7 +93,7 @@ export class PpapDocumentSelectComponent implements OnInit{
 
             this.userService.getParty(sellerId).then(sellerParty => {
                 this.ppap.sellerSupplierParty = new SupplierParty(sellerParty);
-                let vars:ProcessVariables = ModelUtils.createProcessVariables("Ppap", buyerId, sellerId, this.ppap);
+                let vars:ProcessVariables = ModelUtils.createProcessVariables("Ppap", buyerId, sellerId, this.ppap, this.bpDataService);
                 let piim:ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
                 this.bpeService.startBusinessProcess(piim)
                     .then(res => {

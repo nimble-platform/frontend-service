@@ -41,7 +41,7 @@ export class PpapDocumentDownloadComponent{
             this.catalogueId = params['catalogueId'];
 
             this.catalogueService.getCatalogueLine(this.catalogueId,this.id).then(line =>{
-                this.bpDataService.catalogueLine = line;
+                this.bpDataService.setCatalogueLines([line]);
             }).catch(error => {
 
             });
