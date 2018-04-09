@@ -33,7 +33,7 @@ export class DespatchAdviceComponent {
         let despatchAdvice: DespatchAdvice = JSON.parse(JSON.stringify(this.bpDataService.despatchAdvice));
         UBLModelUtils.removeHjidFieldsFromObject(despatchAdvice);
 
-        let vars: ProcessVariables = ModelUtils.createProcessVariables("Fulfilment", despatchAdvice.deliveryCustomerParty.party.id, despatchAdvice.despatchSupplierParty.party.id, despatchAdvice);
+        let vars: ProcessVariables = ModelUtils.createProcessVariables("Fulfilment", despatchAdvice.despatchSupplierParty.party.id, despatchAdvice.deliveryCustomerParty.party.id, despatchAdvice, this.bpDataService);
         let piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
 
         this.callStatus.submit();

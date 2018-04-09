@@ -22,6 +22,7 @@ export class CallStatusComponent {
     @Input() callStatus:CallStatus;
     // if true adds the alert class to the component for top and bottom padding
     @Input() large:boolean;
+    closed: boolean = true;
 
     handleClick(event){
         // remove the alert if it shown already, otherwise it removes the loading icon as well

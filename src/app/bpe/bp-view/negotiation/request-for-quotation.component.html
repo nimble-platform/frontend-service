@@ -5,7 +5,7 @@
     </trading-details>
 
     <!-- negotiation parameters for transportation services -->
-    <ng-container *ngIf="bpDataService.catalogueLine.goodsItem.item.transportationServiceDetails != null">
+    <ng-container *ngIf="bpDataService.getCatalogueLine().goodsItem.item.transportationServiceDetails != null">
         <div class="well">
             <h6>Handling Unit Details</h6>
             <value-view [presentationMode]="'edit'"

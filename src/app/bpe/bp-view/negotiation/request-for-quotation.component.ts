@@ -36,12 +36,12 @@ export class RequestForQuotationComponent {
         let rfq:RequestForQuotation = JSON.parse(JSON.stringify(this.bpDataService.requestForQuotation));
 
         // final check on the rfq
-        rfq.requestForQuotationLine[0].lineItem.item = this.bpDataService.modifiedCatalogueLine.goodsItem.item;
+        rfq.requestForQuotationLine[0].lineItem.item = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;
         UBLModelUtils.removeHjidFieldsFromObject(rfq);
 
         //first initialize the seller and buyer parties.
         //once they are fetched continue with starting the ordering process
-        let sellerId:string = this.bpDataService.modifiedCatalogueLine.goodsItem.item.manufacturerParty.id;
+        let sellerId:string = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item.manufacturerParty.id;
         let buyerId:string = this.cookieService.get("company_id");
 
         this.userService.getParty(buyerId).then(buyerParty => {
@@ -49,7 +49,7 @@ export class RequestForQuotationComponent {
 
             this.userService.getParty(sellerId).then(sellerParty => {
                 rfq.sellerSupplierParty = new SupplierParty(sellerParty);
-                let vars:ProcessVariables = ModelUtils.createProcessVariables("Negotiation", buyerId, sellerId, rfq);
+                let vars:ProcessVariables = ModelUtils.createProcessVariables("Negotiation", buyerId, sellerId, rfq, this.bpDataService);
                 let piim:ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
 
                 this.bpeService.startBusinessProcess(piim)

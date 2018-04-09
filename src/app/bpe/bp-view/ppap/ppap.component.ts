@@ -48,7 +48,7 @@ export class PpapComponent implements OnInit{
         this.ppap = this.bpDataService.ppap;
 
         let currentCompanyId:string = this.cookieService.get("company_id");
-        let sellerId:string = this.bpDataService.catalogueLine.goodsItem.item.manufacturerParty.id;
+        let sellerId:string = this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty.id;
 
         // checks whether a PPAP process is started or not
         let pidExists = true;

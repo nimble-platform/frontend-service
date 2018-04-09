@@ -169,19 +169,19 @@
                     <span i18n>Add file</span>
                 </div>
 
-                <div *ngIf="propertyValueType.options.selectedIndex == 4">
+                <ng-container *ngIf="propertyValueType.options.selectedIndex == 4">
                     <input type="number" name="propertyValue"
-                           class="form-control col ml-2"
+                           class="form-control col-3 ml-2"
                            [(ngModel)]="quantity.value"
                            placeholder="Property Value"
                            required/>
                     <label class="col-1" class="ml-3 mr-3">Unit: </label>
                     <input type="text" name="unit"
-                           class="form-control col ml-2"
+                           class="form-control col-1 ml-2"
                            [(ngModel)]="quantity.unitCode"
                            placeholder="Unit"
                            required/>
-                </div>
+                </ng-container>
 
                 <div *ngIf="propertyValueType.options.selectedIndex == 5" class="col-4"
                      style="display: inline-block;">
