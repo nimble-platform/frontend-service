@@ -28,6 +28,8 @@ export class SimpleSearchDetailsComponent implements OnInit {
 	bpOptionsActive:boolean = false;
 	singleMode:boolean = false;
 	getCatalogueLineStatus:CallStatus = new CallStatus();
+	// process group instance id related to the business process to be initiated
+	gid: string;
 	public debug = myGlobals.debug;
 
 	constructor(
@@ -44,12 +46,15 @@ export class SimpleSearchDetailsComponent implements OnInit {
 		this.route.queryParams.subscribe(params => {
 			let id = params['id'];
 			let catalogueId = params['catalogueId'];
-            this.bpDataService.catalogueLine = null;
+			let gid = params['gid'];
+
+            //this.bpDataService.catalogueLine = null;
 			this.getCatalogueLineStatus.submit();
 			this.catalogueService.getCatalogueLine(catalogueId, id).then(line => {
 				this.bpDataService.resetBpData();
-				this.bpDataService.catalogueLine = line;
+				this.bpDataService.setCatalogueLines([line]);
 				this.bpDataService.userRole = 'buyer';
+				this.bpDataService.setRelatedGroupId(gid);
 				this.bpOptionsActive = params['showOptions'] == 'true';
 				this.getCatalogueLineStatus.callback("Retrieved product details", true);
 			}).catch(error => {

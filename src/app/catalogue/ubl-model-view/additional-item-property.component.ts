@@ -100,6 +100,7 @@ export class AdditionalItemPropertyComponent implements OnInit, OnDestroy {
         draftCatalogueLine.goodsItem.item.additionalItemProperty = [].concat(draftCatalogueLine.goodsItem.item.additionalItemProperty);
     }
 
+    // TODO: this is not the proper place to have such a method
     updateNegotiationItemPropertyData(event:any) {
         let selectedValue:any = event.target.value;
         this.bpDataService.updateItemProperty(selectedValue, this.additionalItemProperty);

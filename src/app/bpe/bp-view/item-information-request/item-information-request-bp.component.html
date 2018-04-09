@@ -18,11 +18,11 @@
         </li>
     </ul>
 </div>
-<div *ngIf="bpDataService.catalogueLine"
+<div *ngIf="bpDataService.catalogueLines[0]"
      class="p-3">
     <bp-product-details
             *ngIf="selectedTab == 'Product Characteristics' || selectedTab == 'Product Trading & Delivery Terms' || 'Service Characteristics'"
-            [catalogueLine]="bpDataService.catalogueLine"
+            [catalogueLine]="bpDataService.catalogueLines[0]"
             [presentationMode]="'singlevalue'"
             [selectedTab]="selectedTab">
     </bp-product-details>

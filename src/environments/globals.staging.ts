@@ -35,7 +35,7 @@ export const bpe_endpoint="http://nimble-staging.salzburgresearch.at/business-pr
 
 // Marmotta endpoint variables
 
-export const simple_search_endpoint="https://nimble-platform.salzburgresearch.at/marmotta/solr/catalogue2/select";
+export const simple_search_endpoint="http://nimble-staging.salzburgresearch.at/marmotta/solr/catalogue2/select";
 
 
 // Endpoint variables - BIBA domain

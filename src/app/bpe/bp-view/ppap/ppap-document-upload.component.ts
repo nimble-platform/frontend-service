@@ -50,7 +50,7 @@ export class PpapDocumentUploadComponent{
             this.catalogueId = params['catalogueId'];
 
             this.catalogueService.getCatalogueLine(this.catalogueId,this.id).then(line =>{
-                this.bpDataService.catalogueLine = line;
+                this.bpDataService.setCatalogueLines([line]);
             }).catch(error => {
 
             });
@@ -131,7 +131,7 @@ export class PpapDocumentUploadComponent{
         }
 
         this.ppapResponse.note = this.noteToSend;
-        let vars: ProcessVariables = ModelUtils.createProcessVariables("Ppap", this.ppap.buyerCustomerParty.party.id, this.ppap.sellerSupplierParty.party.id, this.ppapResponse);
+        let vars: ProcessVariables = ModelUtils.createProcessVariables("Ppap", this.ppap.buyerCustomerParty.party.id, this.ppap.sellerSupplierParty.party.id, this.ppapResponse, this.bpDataService);
         let piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.bpDataService.processMetadata.process_id);
 
 
