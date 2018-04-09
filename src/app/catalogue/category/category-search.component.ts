@@ -19,6 +19,7 @@ import {ProductPublishComponent} from "../product-publish.component";
 export class CategorySearchComponent implements OnInit {
     categories: Category[];
     pageRef: string = null;
+    publishingGranularity: string;
 
     submitted: boolean = false;
     callback: boolean = false;
@@ -51,6 +52,8 @@ export class CategorySearchComponent implements OnInit {
                     return;
                 }
             }
+
+            // current page regs considered: menu, publish, null
             this.pageRef = params['pageRef'];
 
             // If pageRef is 'publish',then user is publishing.
@@ -64,6 +67,12 @@ export class CategorySearchComponent implements OnInit {
                 // reset draft catalogue line
                 this.publishService.publishingStarted = false;
                 this.publishService.publishMode = 'create';
+            }
+
+            // publishing granularity: single, bulk, null
+            this.publishingGranularity = params['pg'];
+            if(this.pageRef == null) {
+                this.pageRef = 'single';
             }
         });
     }
@@ -130,7 +139,7 @@ export class CategorySearchComponent implements OnInit {
         this.catalogueService.getCatalogue(userId).then(catalogue => {
             ProductPublishComponent.dialogBox = true;
             this.isReturnPublish = true;
-            this.router.navigate(['catalogue/publish']);
+            this.router.navigate(['catalogue/publish'], {queryParams: {pg: this.publishingGranularity}});
         }).catch(() => {
             this.error_detc = true;
         });

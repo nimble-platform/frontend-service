@@ -46,7 +46,7 @@ export class ProductPublishComponent {
     /*
      * state objects for feedback about the publish operation
      */
-    singleItemUpload: boolean = this.isSingleItemUpload();
+    publishingGranularity: string;
     submitted = false;
     callback = false;
     error_detc = false;
@@ -87,6 +87,12 @@ export class ProductPublishComponent {
                     this.publishStateService.publishingStarted = true;
                 });
             });
+
+            // handle publishing granularity: single, bulk, null
+            this.publishingGranularity = params['pg'];
+            if(this.publishingGranularity == null) {
+                this.publishingGranularity = 'single';
+            }
         });
     }
 
@@ -238,11 +244,9 @@ export class ProductPublishComponent {
     private onTabClick(event: any) {
         event.preventDefault();
         if (event.target.id == "singleUpload") {
-            this.singleItemUpload = true;
-            localStorage.setItem(uploadModalityKey, "singleUpload");
+            this.publishingGranularity = 'single';
         } else {
-            this.singleItemUpload = false;
-            localStorage.setItem(uploadModalityKey, "bulkUpload");
+            this.publishingGranularity = 'bulk';
         }
     }
 
@@ -253,7 +257,7 @@ export class ProductPublishComponent {
 
     private addCategoryOnClick(event: any): void {
         ProductPublishComponent.dialogBox = false;
-        this.router.navigate(['catalogue/categorysearch'], {queryParams: {pageRef: "publish"}});
+        this.router.navigate(['catalogue/categorysearch'], {queryParams: {pageRef: "publish", pg: this.publishingGranularity}});
     }
 
     private publishProduct(): void {
@@ -747,16 +751,6 @@ export class ProductPublishComponent {
         }
         return newCategory;
     }
-
-    private isSingleItemUpload(): boolean {
-        let uploadModality: string = localStorage.getItem(uploadModalityKey);
-        if (uploadModality == "singleUpload") {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
 
     private handleError(error: any): Promise<any> {
         return Promise.reject(error.message || error);
