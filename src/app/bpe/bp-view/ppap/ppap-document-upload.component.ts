@@ -43,6 +43,8 @@ export class PpapDocumentUploadComponent{
     noteToSend : any;
     binaryObjects: any[] = [];
     callStatus:CallStatus = new CallStatus();
+    // check whether 'Send Response' button is clicked
+    submitted: boolean = false;
     ngOnInit() {
         this.route.queryParams.subscribe(params =>{
             this.processid = params['pid'];
@@ -113,6 +115,7 @@ export class PpapDocumentUploadComponent{
     }
 
     responseToPpapRequest(acceptedIndicator: boolean){
+        this.submitted = true;
         for(let i=0;i<this.binaryObjects.length;i++){
             for(let j=0;j<this.binaryObjects[i].documents.length;j++){
                 let attachment : Attachment = new Attachment(this.binaryObjects[i].documents[j],null,null);
@@ -142,8 +145,10 @@ export class PpapDocumentUploadComponent{
                 this.callStatus.callback("Ppap Response placed", true);
                 this.router.navigate(['dashboard']);
             }
-        ).catch(
-            error => this.callStatus.error("Failed to send Ppap Response")
+        ).catch(error => {
+                this.submitted = false;
+                error => this.callStatus.error("Failed to send Ppap Response")
+            }
         );
 
     }

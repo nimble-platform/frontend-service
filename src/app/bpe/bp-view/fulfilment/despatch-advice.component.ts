@@ -23,13 +23,15 @@ export class DespatchAdviceComponent {
 	@Input() despatchAdvice:DespatchAdvice;
 
 	callStatus:CallStatus = new CallStatus();
-
+    // check whether 'Send Despatch Advice' button is clicked or not
+	submitted:boolean = false;
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
                 private router:Router) {
     }
 
     sendDespatchAdvice(): void {
+        this.submitted = true;
         let despatchAdvice: DespatchAdvice = JSON.parse(JSON.stringify(this.bpDataService.despatchAdvice));
         UBLModelUtils.removeHjidFieldsFromObject(despatchAdvice);
 
@@ -43,6 +45,7 @@ export class DespatchAdviceComponent {
                 this.router.navigate(['dashboard']);
             })
             .catch(error => {
+                this.submitted = false;
                 this.callStatus.error("Failed to send Despatch Advice");
             });
     }

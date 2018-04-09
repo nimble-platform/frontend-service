@@ -27,7 +27,8 @@ export class TransportExecutionPlanRequestComponent {
     @Input() transportExecutionPlanRequest:TransportExecutionPlanRequest;
 
     callStatus:CallStatus = new CallStatus();
-
+    // check whether 'Use Service' button is clicked
+    submitted:boolean = false;
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
                 private userService: UserService,
@@ -36,6 +37,7 @@ export class TransportExecutionPlanRequestComponent {
     }
 
     sendTransportExecutionPlanRequest() {
+        this.submitted = true;
         this.callStatus.submit();
         let transportationExecutionPlanRequest:TransportExecutionPlanRequest = JSON.parse(JSON.stringify(this.bpDataService.transportExecutionPlanRequest));
 
@@ -62,6 +64,7 @@ export class TransportExecutionPlanRequestComponent {
                         this.router.navigate(['dashboard']);
                     })
                     .catch(error => {
+                        this.submitted = false;
                         this.callStatus.error("Failed to send Transport Execution Plan");
                     });
             });

@@ -19,6 +19,7 @@
     <div class="container ">
         <div class="row justify-content-end">
             <button *ngIf="bpDataService.processMetadata == null && bpDataService.userRole == 'seller'"
+                    [disabled]="submitted"
                     class="btn btn-success" (click)="sendDespatchAdvice()">
                 Send Despatch Advice
             </button>

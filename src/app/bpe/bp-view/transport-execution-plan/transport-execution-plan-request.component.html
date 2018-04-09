@@ -47,7 +47,7 @@
     </div>
 
     <div class="d-flex justify-content-end">
-        <button *ngIf="bpDataService.userRole == 'buyer' && bpDataService.processMetadata == null"
+        <button *ngIf="bpDataService.userRole == 'buyer' && bpDataService.processMetadata == null" [disabled]="submitted"
                 class="btn btn-success" (click)="sendTransportExecutionPlanRequest()">Use Service
         </button>
     </div>

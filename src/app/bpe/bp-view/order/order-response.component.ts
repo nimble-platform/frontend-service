@@ -22,7 +22,8 @@ export class OrderResponseComponent {
     @Input() orderResponse:OrderResponseSimple;
 
     callStatus:CallStatus = new CallStatus();
-
+    // check whether 'Accept Order' button or 'Reject Order' button is clicked
+    submitted: boolean = false;
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
                 private searchContextService: SearchContextService,
@@ -30,6 +31,7 @@ export class OrderResponseComponent {
     }
 
     respondToOrder(acceptedIndicator: boolean) {
+        this.submitted = true;
         this.bpDataService.orderResponse.acceptedIndicator = acceptedIndicator;
 
         let vars: ProcessVariables = ModelUtils.createProcessVariables("Order", this.bpDataService.order.buyerCustomerParty.party.id, this.bpDataService.order.sellerSupplierParty.party.id, this.bpDataService.orderResponse, this.bpDataService);
@@ -41,8 +43,10 @@ export class OrderResponseComponent {
                 this.callStatus.callback("Order Response placed", true);
                 this.router.navigate(['dashboard']);
             }
-        ).catch(
-            error => this.callStatus.error("Failed to send Order Response")
+        ).catch(error => {
+                this.submitted = false;
+                this.callStatus.error("Failed to send Order Response");
+            }
         );
     }
 

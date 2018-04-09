@@ -92,7 +92,7 @@
         </ng-container>
         <ng-container *ngIf="bpDataService.userRole == 'seller'">
             <button *ngIf="bpDataService.processMetadata.processStatus == 'Started'"
-                    class="btn btn-success"
+                    class="btn btn-success" [disabled]="submitted"
                     (click)="respondToRFQ()">Send Quotation
             </button>
         </ng-container>
