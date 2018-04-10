@@ -122,7 +122,7 @@
             [(value)]="note">
 </value-view>
 <div *ngIf="level != -1 && level != 0 && !seller" class="row justify-content-end">
-    <button class="btn btn-success col-4" (click)="sendRequest()">Send Request</button>
+    <button class="btn btn-success col-4" (click)="sendRequest()" [disabled]="submitted">Send Request</button>
 </div>
 <call-status [callStatus]="callStatus"
              [large]="true">

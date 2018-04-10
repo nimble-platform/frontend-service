@@ -19,13 +19,15 @@ export class QuotationComponent {
 	@Output() newNegotiationInitialized = new EventEmitter();
 
     callStatus:CallStatus = new CallStatus();
-
+    // check whether 'Send Quotation' button is clicked or not
+    submitted: boolean = false;
     constructor(private bpeService:BPEService,
                 public bpDataService:BPDataService,
                 private router:Router) {
     }
 
     respondToRFQ() {
+        this.submitted = true;
         let vars: ProcessVariables = ModelUtils.createProcessVariables("Negotiation", this.bpDataService.requestForQuotation.buyerCustomerParty.party.id, this.bpDataService.requestForQuotation.sellerSupplierParty.party.id, this.bpDataService.quotation, this.bpDataService);
         let piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.bpDataService.processMetadata.process_id);
 
@@ -37,8 +39,11 @@ export class QuotationComponent {
                     this.router.navigate(['dashboard']);
                 }
             )
-            .catch(
-                error => this.callStatus.error("Failed to send quotation")
+            .catch(error => {
+                this.submitted = false;
+                this.callStatus.error("Failed to send quotation")
+            }
+
             );
     }
 

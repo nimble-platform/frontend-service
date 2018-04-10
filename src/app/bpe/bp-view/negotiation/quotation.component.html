@@ -5,7 +5,7 @@
     </trading-details>
 
     <!-- negotiation parameters for transportation services -->
-    <ng-container *ngIf="bpDataService.catalogueLine.goodsItem.item.transportationServiceDetails != null">
+    <ng-container *ngIf="bpDataService.getCatalogueLine().goodsItem.item.transportationServiceDetails != null">
         <div class="well">
             <h6>Handling Unit Details</h6>
             <value-view [presentationMode]="'edit'"
@@ -78,12 +78,12 @@
                         class="btn btn-success mr-3" (click)="initiateNewNegotiation()">Request New Quotation
                 </button>
                 <button *ngIf="bpDataService.processMetadata.processStatus == 'Completed' &&
-                               bpDataService.catalogueLine.goodsItem.item.transportationServiceDetails == null &&
+                               bpDataService.getCatalogueLine().goodsItem.item.transportationServiceDetails == null &&
                                bpDataService.quotation.documentStatusCode.name != 'Rejected'"
                         class="btn btn-success" (click)="initiateOrder()">Initiate Order
                 </button>
                 <button *ngIf="bpDataService.processMetadata.processStatus == 'Completed' &&
-                               bpDataService.catalogueLine.goodsItem.item.transportationServiceDetails != null &&
+                               bpDataService.getCatalogueLine().goodsItem.item.transportationServiceDetails != null &&
                                bpDataService.quotation.documentStatusCode.name != 'Rejected'"
                         class="btn btn-success" (click)="initiateTransportExecutionPlan()">Initiate Transport
                     Execution Plan
@@ -92,7 +92,7 @@
         </ng-container>
         <ng-container *ngIf="bpDataService.userRole == 'seller'">
             <button *ngIf="bpDataService.processMetadata.processStatus == 'Started'"
-                    class="btn btn-success"
+                    class="btn btn-success" [disabled]="submitted"
                     (click)="respondToRFQ()">Send Quotation
             </button>
         </ng-container>

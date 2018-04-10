@@ -23,7 +23,8 @@ export class RequestForQuotationComponent {
 	@Input() requestForQuotation:RequestForQuotation;
 
     callStatus:CallStatus = new CallStatus();
-
+    // check whether 'Send Requested Terms' button is clicked or not
+    submitted:boolean = false;
     constructor(private bpeService:BPEService,
                 public bpDataService:BPDataService,
                 private userService:UserService,
@@ -32,6 +33,7 @@ export class RequestForQuotationComponent {
     }
 
     sendRfq(): void {
+        this.submitted = true;
         this.callStatus.submit();
         let rfq:RequestForQuotation = JSON.parse(JSON.stringify(this.bpDataService.requestForQuotation));
 
@@ -58,6 +60,7 @@ export class RequestForQuotationComponent {
                         this.router.navigate(['dashboard']);
                     })
                     .catch(error => {
+                        this.submitted = false;
                         this.callStatus.error("Failed to sent Terms");
                     });
             });

@@ -21,7 +21,7 @@
 
     <div class="d-flex justify-content-end">
         <ng-container *ngIf="bpDataService.processMetadata.processStatus != 'Completed'">
-            <button *ngIf="bpDataService.userRole == 'seller'" class="btn btn-success"
+            <button *ngIf="bpDataService.userRole == 'seller'" class="btn btn-success" [disabled]="submitted"
                     (click)="respondToTransportExecutionPlanRequest()">Respond to Execution Plan
             </button>
         </ng-container>
