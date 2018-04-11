@@ -1,24 +1,24 @@
 <ng-container *ngIf="quotation">
     <trading-details class="container"
                      [lineItem]="quotation.quotationLine[0].lineItem"
-                     [presentationMode]="'edit'">
+                     [presentationMode]="bpDataService.processMetadata.processStatus == 'Started' ? 'edit' : 'singlevalue'">
     </trading-details>
 
     <!-- negotiation parameters for transportation services -->
     <ng-container *ngIf="bpDataService.getCatalogueLine().goodsItem.item.transportationServiceDetails != null">
         <div class="well">
             <h6>Handling Unit Details</h6>
-            <value-view [presentationMode]="'edit'"
+            <value-view [presentationMode]="bpDataService.processMetadata.processStatus == 'Started' ? 'edit' : 'singlevalue'"
                         [propName]="'Transport Handling Unit'"
-                        [value]="quotation.quotationLine[0].lineItem.delivery[0].shipment.transportHandlingUnit[0].transportHandlingUnitTypeCode.name">
+                        [(value)]="quotation.quotationLine[0].lineItem.delivery[0].shipment.transportHandlingUnit[0].transportHandlingUnitTypeCode.name">
             </value-view>
 
-            <quantity-view [presentationMode]="'edit'"
+            <quantity-view [presentationMode]="bpDataService.processMetadata.processStatus == 'Started' ? 'edit' : 'singlevalue'"
                            [propName]="quotation.quotationLine[0].lineItem.delivery[0].shipment.transportHandlingUnit[0].measurementDimension[0].attributeID"
                            [quantity]="[quotation.quotationLine[0].lineItem.delivery[0].shipment.transportHandlingUnit[0].measurementDimension[0].measure]">
             </quantity-view>
 
-            <quantity-view [presentationMode]="'edit'"
+            <quantity-view [presentationMode]="bpDataService.processMetadata.processStatus == 'Started' ? 'edit' : 'singlevalue'"
                            [propName]="quotation.quotationLine[0].lineItem.delivery[0].shipment.transportHandlingUnit[0].measurementDimension[1].attributeID"
                            [quantity]="[quotation.quotationLine[0].lineItem.delivery[0].shipment.transportHandlingUnit[0].measurementDimension[1].measure]">
             </quantity-view>
@@ -26,22 +26,22 @@
 
         <div class="well">
             <h6>Consolidated Shipment</h6>
-            <value-view [presentationMode]="'edit'"
+            <value-view [presentationMode]="bpDataService.processMetadata.processStatus == 'Started' ? 'edit' : 'singlevalue'"
                         [propName]="'Goods Item'"
-                        [value]="quotation.quotationLine[0].lineItem.delivery[0].shipment.goodsItem[0].item.name">
+                        [(value)]="quotation.quotationLine[0].lineItem.delivery[0].shipment.goodsItem[0].item.name">
             </value-view>
 
             <quantity-view [propName]="'Quantity'"
                            [quantity]="[quotation.quotationLine[0].lineItem.delivery[0].shipment.totalTransportHandlingUnitQuantity]"
-                           [presentationMode]="'edit'">
+                           [presentationMode]="bpDataService.processMetadata.processStatus == 'Started' ? 'edit' : 'singlevalue'">
             </quantity-view>
 
-            <quantity-view [presentationMode]="'edit'"
+            <quantity-view [presentationMode]="bpDataService.processMetadata.processStatus == 'Started' ? 'edit' : 'singlevalue'"
                            [propName]="'Gross Volume Measure'"
                            [quantity]="[quotation.quotationLine[0].lineItem.delivery[0].shipment.consignment[0].grossVolumeMeasure]">
             </quantity-view>
 
-            <quantity-view [presentationMode]="'edit'"
+            <quantity-view [presentationMode]="bpDataService.processMetadata.processStatus == 'Started' ? 'edit' : 'singlevalue'"
                            [propName]="'Gross Weight Measure'"
                            [quantity]="[quotation.quotationLine[0].lineItem.delivery[0].shipment.consignment[0].grossWeightMeasure]">
             </quantity-view>
@@ -53,19 +53,20 @@
     <div class="input-group form-group">
         <label class="col-3 control-label">Response</label>
         <select class="custom-select"
-                [(ngModel)]="quotation.documentStatusCode.name">
+                [(ngModel)]="quotation.documentStatusCode.name"
+                [disabled]="bpDataService.processMetadata.processStatus != 'Started'">
             <option>Accepted</option>
             <option>Terms Updated</option>
             <option>Rejected</option>
         </select>
     </div>
 
-    <value-view [presentationMode]="'edit'"
+    <value-view [presentationMode]="bpDataService.processMetadata.processStatus == 'Started' ? 'edit' : 'singlevalue'"
                 [propName]="'Response Reason'"
                 [(value)]="quotation.documentStatusReasonCode.name">
     </value-view>
 
-    <value-view [presentationMode]="'edit'"
+    <value-view [presentationMode]="bpDataService.processMetadata.processStatus == 'Started' ? 'edit' : 'singlevalue'"
                 [propName]="'Note'"
                 [(value)]="quotation.note[0]">
     </value-view>

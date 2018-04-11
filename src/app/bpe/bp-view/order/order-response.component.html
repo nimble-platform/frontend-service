@@ -1,11 +1,11 @@
 <ng-container *ngIf="orderResponse">
     <h5>Notes</h5>
-    <value-view [presentationMode]="'edit'"
+    <value-view [presentationMode]="bpDataService.processMetadata.processStatus == 'Completed' ? 'singlevalue': 'edit'"
                 [propName]="'Note'"
                 [(value)]="orderResponse.note">
     </value-view>
 
-    <value-view [presentationMode]="'edit'"
+    <value-view [presentationMode]="bpDataService.processMetadata.processStatus == 'Completed' ? 'singlevalue': 'edit'"
                 [propName]="'Rejection Note'"
                 [(value)]="orderResponse.rejectionNote">
     </value-view>

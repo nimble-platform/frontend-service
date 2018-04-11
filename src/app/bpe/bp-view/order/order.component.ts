@@ -28,6 +28,8 @@ export class OrderComponent {
     callStatus:CallStatus = new CallStatus();
     // check whether 'Send Order' button is clicked or not
     submitted:boolean = false;
+
+    presentationMode:string = this.bpDataService.processMetadata == null ? 'edit':'singlevalue';
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
                 private userService: UserService,
