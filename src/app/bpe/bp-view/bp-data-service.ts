@@ -116,7 +116,7 @@ export class BPDataService{
             if(quotationVariable == null) {
                 // initialize the quotation only if the user is in seller role
                 if(this.userRole == 'seller') {
-                    this.quotation = UBLModelUtils.createQuotation(this.requestForQuotation);
+                    this.quotation = JSON.parse(JSON.stringify(UBLModelUtils.createQuotation(this.requestForQuotation)));
                 }
 
             } else {
