@@ -20,14 +20,16 @@ export class ReceiptAdviceComponent {
     @Input() receiptAdvice:ReceiptAdvice;
 
     callStatus:CallStatus = new CallStatus();
-
+    // check 'Send Receipt Advice' button is clicked or not
+    submitted:boolean = false;
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
                 private router:Router) {
     }
 
     sendReceiptAdvice(): void {
-        let vars: ProcessVariables = ModelUtils.createProcessVariables("Fulfilment", this.bpDataService.receiptAdvice.deliveryCustomerParty.party.id, this.bpDataService.receiptAdvice.despatchSupplierParty.party.id, this.bpDataService.receiptAdvice);
+        this.submitted = true;
+        let vars: ProcessVariables = ModelUtils.createProcessVariables("Fulfilment", this.bpDataService.receiptAdvice.despatchSupplierParty.party.id, this.bpDataService.receiptAdvice.deliveryCustomerParty.party.id, this.bpDataService.receiptAdvice, this.bpDataService);
         let piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.bpDataService.processMetadata.process_id);
 
         this.callStatus.submit();
@@ -36,8 +38,10 @@ export class ReceiptAdviceComponent {
                 this.callStatus.callback("Receipt Advice sent", true);
                 this.router.navigate(['dashboard']);
             }
-        ).catch(
-            error => this.callStatus.error("Failed to send Receipt Advice")
+        ).catch(error => {
+                this.submitted = false;
+                this.callStatus.error("Failed to send Receipt Advice")
+            }
         );
     }
 }

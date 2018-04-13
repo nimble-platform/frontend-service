@@ -27,7 +27,8 @@ export class TransportExecutionPlanRequestComponent {
     @Input() transportExecutionPlanRequest:TransportExecutionPlanRequest;
 
     callStatus:CallStatus = new CallStatus();
-
+    // check whether 'Use Service' button is clicked
+    submitted:boolean = false;
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
                 private userService: UserService,
@@ -36,16 +37,17 @@ export class TransportExecutionPlanRequestComponent {
     }
 
     sendTransportExecutionPlanRequest() {
+        this.submitted = true;
         this.callStatus.submit();
         let transportationExecutionPlanRequest:TransportExecutionPlanRequest = JSON.parse(JSON.stringify(this.bpDataService.transportExecutionPlanRequest));
 
         // final check on the transportationExecutionPlanRequest
-        transportationExecutionPlanRequest.mainTransportationService = this.bpDataService.modifiedCatalogueLine.goodsItem.item;
+        transportationExecutionPlanRequest.mainTransportationService = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;
         UBLModelUtils.removeHjidFieldsFromObject(transportationExecutionPlanRequest);
 
         //first initialize the seller and buyer parties.
         //once they are fetched continue with starting the ordering process
-        let sellerId:string = this.bpDataService.catalogueLine.goodsItem.item.manufacturerParty.id;
+        let sellerId:string = this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty.id;
         let buyerId:string = this.cookieService.get("company_id");
 
         this.userService.getParty(buyerId).then(buyerParty => {
@@ -53,7 +55,7 @@ export class TransportExecutionPlanRequestComponent {
 
             this.userService.getParty(sellerId).then(sellerParty => {
                 transportationExecutionPlanRequest.transportServiceProviderParty = sellerParty;
-                let vars:ProcessVariables = ModelUtils.createProcessVariables("Transport_Execution_Plan", buyerId, sellerId, transportationExecutionPlanRequest);
+                let vars:ProcessVariables = ModelUtils.createProcessVariables("Transport_Execution_Plan", buyerId, sellerId, transportationExecutionPlanRequest, this.bpDataService);
                 let piim:ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
 
                 this.bpeService.startBusinessProcess(piim)
@@ -62,6 +64,7 @@ export class TransportExecutionPlanRequestComponent {
                         this.router.navigate(['dashboard']);
                     })
                     .catch(error => {
+                        this.submitted = false;
                         this.callStatus.error("Failed to send Transport Execution Plan");
                     });
             });

@@ -7,9 +7,9 @@ export const debug=false;
 
 // Endpoint variables - SRFG staging
 
-export const user_mgmt_endpoint="http://nimble-staging.salzburgresearch.at/identity";
-export const catalogue_endpoint="http://nimble-staging.salzburgresearch.at/catalog";
-export const bpe_endpoint="http://nimble-staging.salzburgresearch.at/business-process";
+//export const user_mgmt_endpoint="http://nimble-staging.salzburgresearch.at/identity";
+//export const catalogue_endpoint="http://nimble-staging.salzburgresearch.at/catalog";
+//export const bpe_endpoint="http://nimble-staging.salzburgresearch.at/business-process";
 
 
 // Endpoint variables - SRFG productive
@@ -21,9 +21,9 @@ export const bpe_endpoint="http://nimble-staging.salzburgresearch.at/business-pr
 
 // Endpoint variables - K8S domain
 
-//export const user_mgmt_endpoint="http://nimble.uk-south.containers.mybluemix.net/identity";
-//export const catalogue_endpoint="http://nimble.uk-south.containers.mybluemix.net/catalog";
-//export const bpe_endpoint="http://nimble.uk-south.containers.mybluemix.net/business-process";
+export const user_mgmt_endpoint="https://nimble.salzburgresearch.at/identity";
+export const catalogue_endpoint="https://nimble.salzburgresearch.at/catalog";
+export const bpe_endpoint="https://nimble.salzburgresearch.at/business-process";
 
 
 // Endpoint variables - Local development via service discovery
@@ -35,7 +35,7 @@ export const bpe_endpoint="http://nimble-staging.salzburgresearch.at/business-pr
 
 // Marmotta endpoint variables
 
-export const simple_search_endpoint="http://nimble-staging.salzburgresearch.at/marmotta/solr/catalogue2/select";
+export const simple_search_endpoint="https://nimble-platform.salzburgresearch.at/marmotta/solr/catalogue2/select";
 
 
 // Endpoint variables - BIBA domain

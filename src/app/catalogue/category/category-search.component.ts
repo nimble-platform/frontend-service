@@ -10,6 +10,7 @@ import {CookieService} from "ng2-cookies";
 import {CatalogueService} from "../catalogue.service";
 import {PublishService} from "../publish-and-aip.service";
 import {ProductPublishComponent} from "../product-publish.component";
+import {UBLModelUtils} from "../model/ubl-model-utils";
 
 @Component({
     selector: 'category-search',
@@ -19,6 +20,7 @@ import {ProductPublishComponent} from "../product-publish.component";
 export class CategorySearchComponent implements OnInit {
     categories: Category[];
     pageRef: string = null;
+    publishingGranularity: string;
 
     submitted: boolean = false;
     callback: boolean = false;
@@ -32,6 +34,11 @@ export class CategorySearchComponent implements OnInit {
     // whether customCategoryPage is displayed or not
     customCategoryPage: boolean = false;
 
+    // keeps the query term
+    categoryKeyword: string;
+    // custom category name
+    customCategory: string;
+
     constructor(private router: Router,
                 private route: ActivatedRoute,
                 private cookieService: CookieService,
@@ -44,14 +51,15 @@ export class CategorySearchComponent implements OnInit {
     ngOnInit(): void {
         this.route.queryParams.subscribe((params: Params) => {
 
+            // current page regs considered: menu, publish, null
+            this.pageRef = params['pageRef'];
+
             // This part is necessary since only the params has changes,canDeactivate method will not be called.
-            if(this.inPublish == true){
+            if(this.inPublish == true && this.pageRef == 'menu'){
                 if(!confirm("You will lose any changes you made, are you sure you want to quit ?")){
-                    this.selectCategory(null);
                     return;
                 }
             }
-            this.pageRef = params['pageRef'];
 
             // If pageRef is 'publish',then user is publishing.
             if(this.pageRef == 'publish'){
@@ -65,29 +73,43 @@ export class CategorySearchComponent implements OnInit {
                 this.publishService.publishingStarted = false;
                 this.publishService.publishMode = 'create';
             }
+
+            // publishing granularity: single, bulk, null
+            this.publishingGranularity = params['pg'];
+            if(this.pageRef == null) {
+                this.pageRef = 'single';
+            }
+
+            // handle category query term
+            this.categoryKeyword = params['cat'];
+            if(this.categoryKeyword != null) {
+                this.getCategories();
+            }
         });
     }
 
     canDeactivate():boolean{
+        //
         this.inPublish = false;
         if(this.pageRef == "publish" && this.isReturnPublish == false){
             if(!confirm("You will lose any changes you made, are you sure you want to quit ?")){
-                this.selectCategory(null);
+                return false;
             }
         }
         return true;
     }
 
-    private getCategories(keyword: string): void {
+    onSearchCategory(): void {
+        this.router.navigate(['/catalogue/categorysearch'], {queryParams: {pg: this.publishingGranularity, pageRef: this.pageRef, cat: this.categoryKeyword}});
+    }
 
-        if (keyword.length < 1)
-            return;
+    private getCategories(): void {
 
         this.callback = false;
         this.submitted = true;
         this.error_detc = false;
 
-        this.categoryService.getCategoriesByName(keyword)
+        this.categoryService.getCategoriesByName(this.categoryKeyword)
             .then(categories => {
                 this.categories = categories;
                 this.callback = true;
@@ -121,7 +143,7 @@ export class CategorySearchComponent implements OnInit {
     }
 
     private addCustomCategory(text: string): void{
-        this.categoryService.addSelectedCategory(new Category(null,text,null,null,null,null,null,[],[],'Custom',null));
+        this.categoryService.addSelectedCategory(new Category(text,text,null,null,null,null,null,[],[],'Custom',null));
         this.navigateToPublishingPage();
     }
 
@@ -129,8 +151,9 @@ export class CategorySearchComponent implements OnInit {
         let userId = this.cookieService.get("user_id");
         this.catalogueService.getCatalogue(userId).then(catalogue => {
             ProductPublishComponent.dialogBox = true;
+            // set isReturnPublish in order not to show confirmation popup
             this.isReturnPublish = true;
-            this.router.navigate(['catalogue/publish']);
+            this.router.navigate(['catalogue/publish'], {queryParams: {pg: this.publishingGranularity}});
         }).catch(() => {
             this.error_detc = true;
         });

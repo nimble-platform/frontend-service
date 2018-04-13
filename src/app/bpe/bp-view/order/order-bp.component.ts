@@ -35,7 +35,7 @@ export class OrderBpComponent implements OnInit {
     }
 
     populateTabs() {
-        if(this.bpDataService.catalogueLine.goodsItem.item.transportationServiceDetails == null) {
+        if(this.bpDataService.getCatalogueLine().goodsItem.item.transportationServiceDetails == null) {
             this.tabs.push('Product Characteristics');
             this.tabs.push('Product Trading & Delivery Terms');
         } else {

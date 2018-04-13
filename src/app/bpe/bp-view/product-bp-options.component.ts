@@ -44,9 +44,9 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
             let catalogueId = params['catalogueId'];
 
             // if the catalgoue line is already fetched, use it
-            if (this.bpDataService.catalogueLine != null &&
-                this.bpDataService.catalogueLine.id == id &&
-                this.bpDataService.catalogueLine.goodsItem.item.catalogueDocumentReference.id == catalogueId) {
+            if (this.bpDataService.getCatalogueLine() != null &&
+                this.bpDataService.getCatalogueLine().id == id &&
+                this.bpDataService.getCatalogueLine().goodsItem.item.catalogueDocumentReference.id == catalogueId) {
 
                 this.identifyAvailableProcesses();
                 return;
@@ -54,7 +54,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
 
             this.getCatalogueLineStatus.submit();
             this.catalogueService.getCatalogueLine(catalogueId, id).then(line => {
-                this.bpDataService.catalogueLine = line;
+                this.bpDataService.setCatalogueLines([line]);
                 this.identifyAvailableProcesses();
                 this.getCatalogueLineStatus.callback("Retrieved product details", true);
             }).catch(error => {
@@ -76,7 +76,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
             this.availableProcesses.push('Item_Information_Request');
             this.availableProcesses.push('Negotiation');
 
-            if (this.bpDataService.catalogueLine.goodsItem.item.transportationServiceDetails == null) {
+            if (this.bpDataService.getCatalogueLine().goodsItem.item.transportationServiceDetails == null) {
                 this.availableProcesses.push('Ppap');
                 this.availableProcesses.push('Order');
             } else {

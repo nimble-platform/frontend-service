@@ -26,7 +26,8 @@ export class OrderComponent {
     @Input() order:Order;
 
     callStatus:CallStatus = new CallStatus();
-
+    // check whether 'Send Order' button is clicked or not
+    submitted:boolean = false;
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
                 private userService: UserService,
@@ -35,23 +36,24 @@ export class OrderComponent {
     }
 
     sendOrder() {
+        this.submitted = true;
         this.callStatus.submit();
         let order = JSON.parse(JSON.stringify(this.bpDataService.order));
 
         // final check on the order
-        order.orderLine[0].lineItem.item = this.bpDataService.modifiedCatalogueLine.goodsItem.item;
+        order.orderLine[0].lineItem.item = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;
         UBLModelUtils.removeHjidFieldsFromObject(order);
 
         //first initialize the seller and buyer parties.
         //once they are fetched continue with starting the ordering process
-        let sellerId:string = this.bpDataService.catalogueLine.goodsItem.item.manufacturerParty.id;
+        let sellerId:string = this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty.id;
         let buyerId:string = this.cookieService.get("company_id");
         this.userService.getParty(buyerId).then(buyerParty => {
             order.buyerCustomerParty = new CustomerParty(buyerParty);
 
             this.userService.getParty(sellerId).then(sellerParty => {
                 order.sellerSupplierParty = new SupplierParty(sellerParty);
-                let vars:ProcessVariables = ModelUtils.createProcessVariables("Order", buyerId, sellerId, order);
+                let vars:ProcessVariables = ModelUtils.createProcessVariables("Order", buyerId, sellerId, order, this.bpDataService);
                 let piim:ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
 
                 this.bpeService.startBusinessProcess(piim)
@@ -60,6 +62,7 @@ export class OrderComponent {
                         this.router.navigate(['dashboard']);
                     })
                     .catch(error => {
+                        this.submitted = false;
                         this.callStatus.error("Failed to send Order");
                     });
             });

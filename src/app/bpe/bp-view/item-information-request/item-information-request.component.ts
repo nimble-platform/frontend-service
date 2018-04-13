@@ -33,7 +33,8 @@ export class ItemInformationRequestComponent {
     @Input() itemInformationResponse: ItemInformationResponse;
 
     callStatus: CallStatus = new CallStatus();
-
+    // check whether 'Request Information' button or 'Respond to Information Request' button is clicked or not
+    submitted: boolean = false;
     constructor(public bpeService: BPEService,
                 public bpDataService: BPDataService,
                 public userService: UserService,
@@ -89,16 +90,17 @@ export class ItemInformationRequestComponent {
     }
 
     sendInformationRequest() {
+        this.submitted = true;
         this.callStatus.submit();
         let itemInformationRequest: ItemInformationRequest = JSON.parse(JSON.stringify(this.bpDataService.itemInformationRequest));
 
         // final check on the order
-        itemInformationRequest.itemInformationRequestLine[0].salesItem[0].item = this.bpDataService.modifiedCatalogueLine.goodsItem.item;
+        itemInformationRequest.itemInformationRequestLine[0].salesItem[0].item = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;
         UBLModelUtils.removeHjidFieldsFromObject(itemInformationRequest);
 
         //first initialize the seller and buyer parties.
         //once they are fetched continue with starting the ordering process
-        let sellerId: string = this.bpDataService.catalogueLine.goodsItem.item.manufacturerParty.id;
+        let sellerId: string = this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty.id;
         let buyerId: string = this.cookieService.get("company_id");
 
         this.userService.getParty(buyerId).then(buyerParty => {
@@ -106,7 +108,7 @@ export class ItemInformationRequestComponent {
 
             this.userService.getParty(sellerId).then(sellerParty => {
                 itemInformationRequest.sellerSupplierParty = new SupplierParty(sellerParty);
-                let vars: ProcessVariables = ModelUtils.createProcessVariables("Item_Information_Request", buyerId, sellerId, itemInformationRequest);
+                let vars: ProcessVariables = ModelUtils.createProcessVariables("Item_Information_Request", buyerId, sellerId, itemInformationRequest, this.bpDataService);
                 let piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
 
                 this.bpeService.startBusinessProcess(piim)
@@ -115,6 +117,7 @@ export class ItemInformationRequestComponent {
                         this.router.navigate(['dashboard']);
                     })
                     .catch(error => {
+                        this.submitted = false;
                         this.callStatus.error("Failed to send Item Information Request");
                     });
             });
@@ -122,7 +125,8 @@ export class ItemInformationRequestComponent {
     }
 
     sendInformationResponse() {
-        let vars: ProcessVariables = ModelUtils.createProcessVariables("Item_Information_Request", this.bpDataService.itemInformationRequest.buyerCustomerParty.party.id, this.bpDataService.itemInformationRequest.sellerSupplierParty.party.id, this.bpDataService.itemInformationResponse);
+        this.submitted = true;
+        let vars: ProcessVariables = ModelUtils.createProcessVariables("Item_Information_Request", this.bpDataService.itemInformationRequest.buyerCustomerParty.party.id, this.bpDataService.itemInformationRequest.sellerSupplierParty.party.id, this.bpDataService.itemInformationResponse, this.bpDataService);
         let piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.bpDataService.processMetadata.process_id);
 
         this.callStatus.submit();
@@ -131,16 +135,19 @@ export class ItemInformationRequestComponent {
                 this.callStatus.callback("Information Response sent", true);
                 this.router.navigate(['dashboard']);
             }
-        ).catch(
-            error => this.callStatus.error("Failed to send Information Response")
+        ).catch(error => {
+            this.submitted = false;
+            this.callStatus.error("Failed to send Information Response")
+            }
         );
     }
 
     navigateToSearchDetails() {
         this.router.navigate(['/simple-search/details'],
             { queryParams: {
-                catalogueId: this.bpDataService.catalogueLine.goodsItem.item.catalogueDocumentReference.id,
-                id: this.bpDataService.catalogueLine.id,
+                catalogueId: this.bpDataService.getCatalogueLine().goodsItem.item.catalogueDocumentReference.id,
+                id: this.bpDataService.getCatalogueLine().id,
+                gid: this.bpDataService.getRelatedGroupId(),
                 showOptions: true
             }});
     }

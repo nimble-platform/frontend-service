@@ -1,8 +1,8 @@
-<div *ngIf="bpDataService.catalogueLine">
+<div *ngIf="bpDataService.catalogueLines[0]">
     <h3 class="d-flex justify-content-start space-after">
         <div>
-            <b>{{ bpDataService.catalogueLine.goodsItem.item.name }}</b><br/>
-            <i>{{ bpDataService.catalogueLine.goodsItem.item.manufacturerParty.name }}</i>
+            <b>{{ bpDataService.catalogueLines[0].goodsItem.item.name }}</b><br/>
+            <i>{{ bpDataService.catalogueLines[0].goodsItem.item.manufacturerParty.name }}</i>
         </div>
         <button *ngIf="!bpOptionsActive&&(appComponent.checkRoles('bp'))"
                 class="ml-auto align-self-start btn btn-success"
@@ -12,7 +12,7 @@
     </h3>
 
     <catalogue-line-view *ngIf="!bpOptionsActive"
-                         [catalogueLine]="bpDataService.catalogueLine"
+                         [catalogueLine]="bpDataService.catalogueLines[0]"
                          [presentationMode]="'view'">
     </catalogue-line-view>
 

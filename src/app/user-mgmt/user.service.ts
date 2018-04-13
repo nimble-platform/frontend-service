@@ -86,15 +86,12 @@ export class UserService {
         return this.http
             .get(url, {headers: headers_token, withCredentials: true})
             .toPromise()
-            .catch(err => {
-                if(err.status == 302) {
-                    let party:Party = err.json();
-                    UBLModelUtils.removeHjidFieldsFromObject(party);
-                    return Promise.resolve(party);
-                } else {
-                    return this.handleError(err);
-                }
-            });
+            .then(res => {
+                let party:Party = res.json()[0];
+                UBLModelUtils.removeHjidFieldsFromObject(party);
+                return Promise.resolve(party);
+            })
+            .catch(this.handleError);
     }
 
     getUserParty(userId: string): Promise<Party> {
