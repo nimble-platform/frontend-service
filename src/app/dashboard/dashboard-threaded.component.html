@@ -102,7 +102,7 @@
     <div *ngIf="groups.length > 0" class="col-10">
         <thread-summary *ngFor="let processInstanceGroup of groups"
                         [processInstanceGroup]="processInstanceGroup"
-                        (threadStateUpdated)="paginationHandler()">
+                        (threadStateUpdated)="paginationHandler(true)">
         </thread-summary>
     </div>
 </div>

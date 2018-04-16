@@ -204,9 +204,14 @@ export class DashboardThreadedComponent implements OnInit {
         this.filterChangeHandler();
     }
 
-    paginationHandler(): void {
-        // use the same parameters in case of pagination (page is already updated here)
-        let queryParams: any = {pg: this.qp_page, cr: this.qp_collaborationRole, arch: this.qp_archived, prd: this.qp_prd, cat: this.qp_cat, prt: this.qp_prt, t: Date.now()};
+    paginationHandler(removed:boolean = false): void {
+        let page = this.qp_page;
+        // if one thread is removed then check whether there are other threads in this page or not
+        if(removed && this.groups.length - 1 == 0 && this.qp_page != 1){
+            page = page - 1;
+        }
+        
+        let queryParams: any = {pg: page, cr: this.qp_collaborationRole, arch: this.qp_archived, prd: this.qp_prd, cat: this.qp_cat, prt: this.qp_prt, t: Date.now()};
         this.filterSet = null;
         this.router.navigate(['dashboard'], {queryParams: queryParams});
     }
