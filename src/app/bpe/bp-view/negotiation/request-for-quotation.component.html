@@ -10,6 +10,7 @@
             <h6>Handling Unit Details</h6>
             <value-view [presentationMode]="'edit'"
                         [propName]="'Transport Handling Unit'"
+                        [definition]="'The transport handling unit used'"
                         [value]="requestForQuotation.requestForQuotationLine[0].lineItem.delivery[0].shipment.transportHandlingUnit[0].transportHandlingUnitTypeCode.name">
             </value-view>
 
@@ -28,6 +29,7 @@
             <h6>Consolidated Shipment</h6>
             <value-view [presentationMode]="'edit'"
                         [propName]="'Goods Item'"
+                        [definition]="'A goods item included in this shipment'"
                         [value]="requestForQuotation.requestForQuotationLine[0].lineItem.delivery[0].shipment.goodsItem[0].item.name">
             </value-view>
 
@@ -38,11 +40,13 @@
 
             <quantity-view [presentationMode]="'edit'"
                            [propName]="'Gross Volume Measure'"
+                           [definition]="'The total volume of the goods in this shipment, including packaging'"
                            [quantity]="[requestForQuotation.requestForQuotationLine[0].lineItem.delivery[0].shipment.consignment[0].grossVolumeMeasure]">
             </quantity-view>
 
             <quantity-view [presentationMode]="'edit'"
                            [propName]="'Gross Weight Measure'"
+                           [definition]="'The total gross weight of a shipment; the weight of the goods plus packaging plus transport equipment'"
                            [quantity]="[requestForQuotation.requestForQuotationLine[0].lineItem.delivery[0].shipment.consignment[0].grossWeightMeasure]">
             </quantity-view>
         </div>

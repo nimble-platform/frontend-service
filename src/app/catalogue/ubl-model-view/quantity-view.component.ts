@@ -20,7 +20,8 @@ export class QuantityViewComponent extends ChildForm implements OnInit {
     // whether the quantity value can have no value at all
     @Input() zeroValue: boolean = false;
     @Input() editablePropName:boolean;
-
+    // the definition of this quantity
+    @Input() definition: string = null;
     // single mode events
     @Output() onSelectChange = new EventEmitter();
     // edit mode events

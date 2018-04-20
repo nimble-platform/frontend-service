@@ -14,7 +14,8 @@ export class ValueViewComponent extends ChildForm implements OnInit {
     @Input() propName: string;
     @Input() mandatory:boolean = false;
     @Input() largeInput: boolean = false;
-
+    // the definition of the property
+    @Input() definition: string = null;
     control:FormControl;
 
     valueObj;

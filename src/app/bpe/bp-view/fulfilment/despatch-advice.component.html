@@ -1,5 +1,6 @@
 <ng-container *ngIf="bpDataService.despatchAdvice">
     <quantity-view [propName]="'Delivered Quantity'"
+                   [definition]="'The quantity despatched'"
                    [quantity]="[despatchAdvice.despatchLine[0].deliveredQuantity]"
                    [presentationMode]="'edit'">
     </quantity-view>

@@ -9,6 +9,7 @@
     <!-- Price Base Quantity -->
     <quantity-view [presentationMode]="presentationMode"
                    [propName]="'Price Base Quantity'"
+                   [definition]="'The price of a product at a legally set quantity'"
                    [quantity]="[lineItem.price.baseQuantity]">
     </quantity-view>
 
@@ -26,6 +27,7 @@
     <!-- Incoterms -->
     <value-view [presentationMode]="presentationMode"
                 [propName]="'Incoterms'"
+                [definition]="'A set of international rules for the interpretation of the most commonly used trade terms'"
                 [(value)]="lineItem.deliveryTerms.incoterms">
     </value-view>
 
@@ -44,6 +46,7 @@
     <!-- Special terms -->
     <value-view [presentationMode]="presentationMode"
                 [propName]="'Special Terms'"
+                [definition]="'A description of any terms or conditions relating to the delivery items'"
                 [(value)]="lineItem.deliveryTerms.specialTerms">
     </value-view>
 </div>
@@ -54,6 +57,7 @@
     <!-- Validity period -->
     <quantity-view [presentationMode]="presentationMode"
                    [propName]="'Validity Period'"
+                   [definition]="'A period during which this price is valid'"
                    [quantity]="[lineItem.warrantyValidityPeriod.durationMeasure]">
     </quantity-view>
 
