@@ -35,6 +35,7 @@ import { PpapDocumentSelectComponent} from "./bp-view/ppap/ppap-document-select.
 import { PpapDocumentUploadComponent} from "./bp-view/ppap/ppap-document-upload.component";
 import { PpapDocumentDownloadComponent} from "./bp-view/ppap/ppap-document-download.component";
 
+import { BusinessProcessOptions} from './bp-view/business-process-options';
 //import { BPEService } from './bpe.service';
 //import { BPService } from './bp.service';
 //import { BPDataService } from "./bp-view/bp-data-service";
@@ -74,7 +75,8 @@ import { PpapDocumentDownloadComponent} from "./bp-view/ppap/ppap-document-downl
         PpapComponent,
         PpapDocumentSelectComponent,
 		PpapDocumentUploadComponent,
-		PpapDocumentDownloadComponent
+		PpapDocumentDownloadComponent,
+        BusinessProcessOptions
 	],
 	exports: [
 		TradingDetailsComponent,
@@ -96,7 +98,8 @@ import { PpapDocumentDownloadComponent} from "./bp-view/ppap/ppap-document-downl
 		TransportExecutionPlanComponent,
 		BpProductDetailsComponent,
 		ItemInformationRequestBpComponent,
-		ItemInformationRequestComponent
+		ItemInformationRequestComponent,
+        BusinessProcessOptions
 	],
 	providers: [
 	]

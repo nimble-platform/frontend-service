@@ -29,7 +29,6 @@ export class PpapComponent implements OnInit{
 
     level: any = -1;
     note: any;
-    ppap: Ppap;
     seller: boolean = false;
 
     documents: {text: String, select: boolean}[] = [];
@@ -43,9 +42,9 @@ export class PpapComponent implements OnInit{
     }
 
     ngOnInit() {
-
-        this.bpDataService.initPpap([]);
-        this.ppap = this.bpDataService.ppap;
+        if(this.bpDataService.ppap == null){
+            this.bpDataService.initPpap([]);
+        }
 
         let currentCompanyId:string = this.cookieService.get("company_id");
         let sellerId:string = this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty.id;

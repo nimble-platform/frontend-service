@@ -49,3 +49,9 @@
 <ppap-document-select *ngIf="selectedTab=='Ppap Select'"></ppap-document-select>
 <ppap-document-upload *ngIf="selectedTab=='Ppap Upload'"></ppap-document-upload>
 <ppap-document-download *ngIf="selectedTab=='Ppap Download'"></ppap-document-download>
+<businessProcess-options    *ngIf="bpDataService.ppapResponse && bpDataService.ppapResponse.requestedDocument != null"
+                            (selectedTabChanged)="selectedTab = 'Ppap Select'"
+                            [processName]="'Ppap'"
+                            [userRole]="bpDataService.userRole"
+                            [transportationService]="bpDataService.getCatalogueLine().goodsItem.item.transportationServiceDetails != null">
+</businessProcess-options>

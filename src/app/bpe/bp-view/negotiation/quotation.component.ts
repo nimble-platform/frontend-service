@@ -46,20 +46,4 @@ export class QuotationComponent {
 
             );
     }
-
-    initiateOrder() {
-        this.bpDataService.initOrderWithQuotation();
-        this.bpDataService.setBpOptionParameters('buyer', 'Order');
-    }
-
-    initiateNewNegotiation() {
-        this.bpDataService.initRfqWithQuotation();
-        this.bpDataService.setBpOptionParameters('buyer', 'Negotiation');
-        this.newNegotiationInitialized.next();
-    }
-
-    initiateTransportExecutionPlan() {
-        this.bpDataService.initTransportExecutionPlanRequestWithQuotation();
-        this.bpDataService.setBpOptionParameters('buyer', 'Transport_Execution_Plan');
-    }
 }

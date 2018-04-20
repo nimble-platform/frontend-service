@@ -47,18 +47,18 @@ export class PpapDocumentSelectComponent implements OnInit{
         this.route.queryParams.subscribe(params =>{
             let check = params['pid'];
             if(check != null){
-                  this.level = 0;
-                  this.setDocuments();
-                  this.bpeService.getProcessDetailsHistory(check).then(task => {
-                      this.ppap = ActivityVariableParser.getInitialDocument(task).value as Ppap;
-                      let i = 0;
-                      for(;i<this.ppap.documentType.length;i++){
-                          let documentName = this.ppap.documentType[i];
-                          let obj = this.documents.find(o => o.text === documentName);
-                          obj.select = true;
-                      }
-                      this.note = this.ppap.note;
-                  });
+                if(this.bpDataService.processMetadata){
+                    this.level = 0;
+                    this.setDocuments();
+                    this.ppap = this.bpDataService.ppap;
+                    let i = 0;
+                    for(;i<this.ppap.documentType.length;i++){
+                        let documentName = this.ppap.documentType[i];
+                        let obj = this.documents.find(o => o.text === documentName);
+                        obj.select = true;
+                    }
+                    this.note = this.ppap.note;
+                }
             }
         });
     }

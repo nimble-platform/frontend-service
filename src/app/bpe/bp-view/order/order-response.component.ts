@@ -8,7 +8,6 @@ import {ProcessInstanceInputMessage} from "../../model/process-instance-input-me
 import {ModelUtils} from "../../model/model-utils";
 import {CallStatus} from "../../../common/call-status";
 import {Router} from "@angular/router";
-import {SearchContextService} from "../../../simple-search/search-context.service";
 /**
  * Created by suat on 20-Sep-17.
  */
@@ -26,7 +25,6 @@ export class OrderResponseComponent {
     submitted: boolean = false;
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
-                private searchContextService: SearchContextService,
                 private router:Router) {
     }
 
@@ -48,18 +46,5 @@ export class OrderResponseComponent {
                 this.callStatus.error("Failed to send Order Response");
             }
         );
-    }
-
-    initiateDespatchAdvice() {
-        this.bpDataService.initDespatchAdviceWithOrder();
-        this.bpDataService.setBpOptionParameters('seller', 'Fulfilment');
-    }
-
-    searchTransportServiceProvider() {
-        this.searchContextService.targetPartyRole = 'Transport Service Provider';
-        this.searchContextService.associatedProcessType = 'Order';
-        this.searchContextService.associatedProcessMetadata = this.bpDataService.processMetadata;
-        this.bpDataService.setBpOptionParameters('buyer', 'Transport_Execution_Plan');
-        this.router.navigate(['simple-search'], {queryParams: {searchContext: 'orderbp'}});
     }
 }

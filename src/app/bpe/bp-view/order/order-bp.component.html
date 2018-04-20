@@ -39,5 +39,12 @@
                     [order]="bpDataService.order"
                     [orderResponse]="bpDataService.orderResponse">
     </order-response>
-
+    <businessProcess-options    *ngIf="selectedTab === 'Order Response Details' && bpDataService.processMetadata && bpDataService.processMetadata.processStatus == 'Completed'"
+                                (searchTransportServiceProvider)="searchTransportServiceProvider()"
+                                (selectedTabChanged)="selectedTab='Order Details'"
+                                [processName]="'Order'"
+                                [acceptedIndicator]="bpDataService.orderResponse.acceptedIndicator"
+                                [userRole]="bpDataService.userRole"
+                                [transportationService]="bpDataService.getCatalogueLine().goodsItem.item.transportationServiceDetails != null">
+    </businessProcess-options>
 </div>

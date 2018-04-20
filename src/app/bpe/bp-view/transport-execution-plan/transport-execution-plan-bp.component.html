@@ -35,4 +35,13 @@
     <transport-execution-plan *ngIf="selectedTab === 'Transport Execution Plan Details'"
                               [transportExecutionPlan]="bpDataService.transportExecutionPlan">
     </transport-execution-plan>
+
+    <businessProcess-options    *ngIf="selectedTab === 'Transport Execution Plan Details' && bpDataService.processMetadata && bpDataService.processMetadata.processStatus == 'Completed'"
+                                (selectedTabChanged)="selectedTab='Transport Execution Plan Request Details'"
+                                [processName]="'Transport_Execution_Plan'"
+                                [acceptedIndicator]="bpDataService.transportExecutionPlan.documentStatusCode.name === 'Accepted'"
+                                [userRole]="bpDataService.userRole"
+                                [transportationService]="true">
+    </businessProcess-options>
+
 </div>

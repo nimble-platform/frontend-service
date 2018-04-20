@@ -10,6 +10,8 @@ import {ModelUtils} from "../../model/model-utils";
 import {ProcessInstanceInputMessage} from "../../model/process-instance-input-message";
 import {UserService} from "../../../user-mgmt/user.service";
 import {CallStatus} from "../../../common/call-status";
+import {SearchContextService} from '../../../simple-search/search-context.service';
+import {Router} from '@angular/router';
 /**
  * Created by suat on 20-Sep-17.
  */
@@ -23,7 +25,9 @@ export class OrderBpComponent implements OnInit {
     selectedTab: string = "Order Details";
     tabs:string[] = [];
 
-    constructor(private bpDataService: BPDataService) {
+    constructor(private bpDataService: BPDataService,
+                private searchContextService: SearchContextService,
+                private router:Router) {
     }
 
     ngOnInit() {
@@ -41,5 +45,13 @@ export class OrderBpComponent implements OnInit {
         } else {
             this.tabs.push('Service Characteristics');
         }
+    }
+
+    searchTransportServiceProvider() {
+        this.searchContextService.targetPartyRole = 'Transport Service Provider';
+        this.searchContextService.associatedProcessType = 'Order';
+        this.searchContextService.associatedProcessMetadata = this.bpDataService.processMetadata;
+        this.bpDataService.setBpOptionParameters('buyer', 'Transport_Execution_Plan');
+        this.router.navigate(['simple-search'], {queryParams: {searchContext: 'orderbp'}});
     }
 }

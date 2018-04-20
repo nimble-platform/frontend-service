@@ -105,6 +105,12 @@
             </button>
         </ng-container>
     </div>
+
+    <businessProcess-options    *ngIf="bpDataService.processMetadata && bpDataService.processMetadata.processStatus == 'Completed'"
+                                [processName]="'Item_Information_Request'"
+                                [userRole]="bpDataService.userRole"
+                                [transportationService]="bpDataService.itemInformationRequest.itemInformationRequestLine[0].salesItem[0].item.transportationServiceDetails != null">
+    </businessProcess-options>
 </ng-container>
 
 <call-status [callStatus]="callStatus"

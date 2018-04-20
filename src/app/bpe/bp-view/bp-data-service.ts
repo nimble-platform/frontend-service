@@ -244,6 +244,15 @@ export class BPDataService{
         this.setProcessType('Order');
     }
 
+    initOrderWithExistingOrder(){
+        let copyOrder:Order = JSON.parse(JSON.stringify(this.order));
+        this.resetBpData();
+        this.modifiedCatalogueLines = JSON.parse(JSON.stringify(this.catalogueLines));
+        this.order = UBLModelUtils.createOrder();
+        this.order.orderLine[0].lineItem = copyOrder.orderLine[0].lineItem;
+        this.setProcessType('Order');
+    }
+
     initRfqWithQuotation() {
         let copyQuotation:Quotation = JSON.parse(JSON.stringify(this.quotation));
         this.resetBpData();

@@ -71,25 +71,6 @@
     </value-view>
 
     <div class="d-flex justify-content-end">
-        <ng-container *ngIf="bpDataService.userRole == 'buyer'">
-            <!-- if processMetadata is null, it means a negotiation is initialized right now -->
-            <ng-container *ngIf="bpDataService.processMetadata != null">
-                <button *ngIf="bpDataService.processMetadata.processStatus == 'Completed'"
-                        class="btn btn-success mr-3" (click)="initiateNewNegotiation()">Request New Quotation
-                </button>
-                <button *ngIf="bpDataService.processMetadata.processStatus == 'Completed' &&
-                               bpDataService.getCatalogueLine().goodsItem.item.transportationServiceDetails == null &&
-                               bpDataService.quotation.documentStatusCode.name != 'Rejected'"
-                        class="btn btn-success" (click)="initiateOrder()">Initiate Order
-                </button>
-                <button *ngIf="bpDataService.processMetadata.processStatus == 'Completed' &&
-                               bpDataService.getCatalogueLine().goodsItem.item.transportationServiceDetails != null &&
-                               bpDataService.quotation.documentStatusCode.name != 'Rejected'"
-                        class="btn btn-success" (click)="initiateTransportExecutionPlan()">Initiate Transport
-                    Execution Plan
-                </button>
-            </ng-container>
-        </ng-container>
         <ng-container *ngIf="bpDataService.userRole == 'seller'">
             <button *ngIf="bpDataService.processMetadata.processStatus == 'Started'"
                     class="btn btn-success" [disabled]="submitted"
