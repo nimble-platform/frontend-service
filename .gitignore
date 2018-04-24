@@ -5,6 +5,7 @@
 ### Node ###
 node/
 node_modules/
+package-lock.json
 src/*.js.map
 src/app/*.css.map
 src/app/*.js

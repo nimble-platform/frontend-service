@@ -13,9 +13,11 @@
     <div class="d-flex justify-content-end">
         <ng-container *ngIf="bpDataService.processMetadata.processStatus != 'Completed'">
             <button *ngIf="bpDataService.userRole == 'seller'" class="btn btn-success ml-auto mr-3"
+                    [disabled]="submitted"
                     (click)="respondToOrder(true)">Accept Order
             </button>
-            <button *ngIf="bpDataService.userRole == 'seller'" class="btn btn-danger" (click)="respondToOrder(false)">
+            <button *ngIf="bpDataService.userRole == 'seller'" class="btn btn-danger" (click)="respondToOrder(false)"
+                    [disabled]="submitted">
                 Reject Order
             </button>
         </ng-container>

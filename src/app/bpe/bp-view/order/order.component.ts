@@ -26,7 +26,8 @@ export class OrderComponent {
     @Input() order:Order;
 
     callStatus:CallStatus = new CallStatus();
-
+    // check whether 'Send Order' button is clicked or not
+    submitted:boolean = false;
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
                 private userService: UserService,
@@ -35,6 +36,7 @@ export class OrderComponent {
     }
 
     sendOrder() {
+        this.submitted = true;
         this.callStatus.submit();
         let order = JSON.parse(JSON.stringify(this.bpDataService.order));
 
@@ -60,6 +62,7 @@ export class OrderComponent {
                         this.router.navigate(['dashboard']);
                     })
                     .catch(error => {
+                        this.submitted = false;
                         this.callStatus.error("Failed to send Order");
                     });
             });

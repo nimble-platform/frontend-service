@@ -22,7 +22,8 @@ export class TransportExecutionPlanComponent {
     @Input() transportExecutionPlan:TransportExecutionPlan;
 
     callStatus:CallStatus = new CallStatus();
-
+    // check whether 'Respond to Execution Plan' button is clicked or not
+    submitted:boolean = false;
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
                 private searchContextService: SearchContextService,
@@ -30,6 +31,7 @@ export class TransportExecutionPlanComponent {
     }
 
     respondToTransportExecutionPlanRequest() {
+        this.submitted = true;
         let vars: ProcessVariables = ModelUtils.createProcessVariables("Transport_Execution_Plan", this.bpDataService.transportExecutionPlan.transportUserParty.id, this.bpDataService.transportExecutionPlan.transportServiceProviderParty.id, this.bpDataService.transportExecutionPlan, this.bpDataService);
         let piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.bpDataService.processMetadata.process_id);
 
@@ -39,8 +41,10 @@ export class TransportExecutionPlanComponent {
                 this.callStatus.callback("Transport Execution Plan sent", true);
                 this.router.navigate(['dashboard']);
             }
-        ).catch(
-            error => this.callStatus.error("Failed to send Transport Execution Plan")
+        ).catch( error => {
+                this.submitted = false;
+                this.callStatus.error("Failed to send Transport Execution Plan")
+            }
         );
     }
 }

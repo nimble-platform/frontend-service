@@ -67,29 +67,36 @@ export class CatalogueViewComponent implements OnInit {
                 this.catalogue = catalogue;
                 this.getCatalogueStatus.callback(null);
 
-
-                let len = this.catalogue.catalogueLine.length;
-                this.collectionSize = len;
-                this.catalogueLinesArray = this.catalogue.catalogueLine;
-                this.catalogueLinesWRTTypes = this.catalogueLinesArray;
-                let i = 0;
-                // Initialize catalogueLineView and typeOfProducts
-                for(;i<len;i++){
-                    this.catalogueLineView[this.catalogue.catalogueLine[i].id] = false;
-
-                    let j = 0;
-                    let lenOfCom = this.catalogue.catalogueLine[i].goodsItem.item.commodityClassification.length;
-                    for(;j<lenOfCom;j++){
-                        if(this.typeOfProducts.indexOf(this.catalogue.catalogueLine[i].goodsItem.item.commodityClassification[j].itemClassificationCode.name) <= -1){
-                            this.typeOfProducts.push(this.catalogue.catalogueLine[i].goodsItem.item.commodityClassification[j].itemClassificationCode.name);
-                        }
-                    }
-                }
+                this.init();
             },
             error => {
                 this.getCatalogueStatus.error("Failed to get catalogue");
             }
         )
+    }
+
+    init (): void {
+        let len = this.catalogue.catalogueLine.length;
+        this.collectionSize = len;
+        this.catalogueLinesArray = this.catalogue.catalogueLine;
+        this.catalogueLinesWRTTypes = this.catalogueLinesArray;
+        let i = 0;
+        this.typeOfProducts = [];
+        this.selectedType = "All";
+        this.searchKey = "";
+        this.sortOption = null;
+        // Initialize catalogueLineView and typeOfProducts
+        for(;i<len;i++){
+            this.catalogueLineView[this.catalogue.catalogueLine[i].id] = false;
+
+            let j = 0;
+            let lenOfCom = this.catalogue.catalogueLine[i].goodsItem.item.commodityClassification.length;
+            for(;j<lenOfCom;j++){
+                if(this.typeOfProducts.indexOf(this.catalogue.catalogueLine[i].goodsItem.item.commodityClassification[j].itemClassificationCode.name) <= -1){
+                    this.typeOfProducts.push(this.catalogue.catalogueLine[i].goodsItem.item.commodityClassification[j].itemClassificationCode.name);
+                }
+            }
+        }
     }
 
     public onDeleteCatalogue(): void {
@@ -120,7 +127,9 @@ export class CatalogueViewComponent implements OnInit {
 
     deleteCatalogueLine(catalogueLine): void {
         if (confirm("Are you sure that you want to delete this catalogue item?")) {
-            this.catalogueService.deleteCatalogueLine(this.catalogueService.catalogue.uuid, catalogueLine.id);
+            this.catalogueService.deleteCatalogueLine(this.catalogueService.catalogue.uuid, catalogueLine.id).then(res => {
+                this.init();
+            });
         }
     }
 

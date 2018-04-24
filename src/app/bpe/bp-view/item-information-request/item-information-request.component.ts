@@ -33,7 +33,8 @@ export class ItemInformationRequestComponent {
     @Input() itemInformationResponse: ItemInformationResponse;
 
     callStatus: CallStatus = new CallStatus();
-
+    // check whether 'Request Information' button or 'Respond to Information Request' button is clicked or not
+    submitted: boolean = false;
     constructor(public bpeService: BPEService,
                 public bpDataService: BPDataService,
                 public userService: UserService,
@@ -89,6 +90,7 @@ export class ItemInformationRequestComponent {
     }
 
     sendInformationRequest() {
+        this.submitted = true;
         this.callStatus.submit();
         let itemInformationRequest: ItemInformationRequest = JSON.parse(JSON.stringify(this.bpDataService.itemInformationRequest));
 
@@ -115,6 +117,7 @@ export class ItemInformationRequestComponent {
                         this.router.navigate(['dashboard']);
                     })
                     .catch(error => {
+                        this.submitted = false;
                         this.callStatus.error("Failed to send Item Information Request");
                     });
             });
@@ -122,6 +125,7 @@ export class ItemInformationRequestComponent {
     }
 
     sendInformationResponse() {
+        this.submitted = true;
         let vars: ProcessVariables = ModelUtils.createProcessVariables("Item_Information_Request", this.bpDataService.itemInformationRequest.buyerCustomerParty.party.id, this.bpDataService.itemInformationRequest.sellerSupplierParty.party.id, this.bpDataService.itemInformationResponse, this.bpDataService);
         let piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.bpDataService.processMetadata.process_id);
 
@@ -131,8 +135,10 @@ export class ItemInformationRequestComponent {
                 this.callStatus.callback("Information Response sent", true);
                 this.router.navigate(['dashboard']);
             }
-        ).catch(
-            error => this.callStatus.error("Failed to send Information Response")
+        ).catch(error => {
+            this.submitted = false;
+            this.callStatus.error("Failed to send Information Response")
+            }
         );
     }
 

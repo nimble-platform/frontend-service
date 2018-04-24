@@ -21,7 +21,7 @@ node ('nimble-jenkins-slave') {
 	}
 	if (env.BRANCH_NAME == 'staging') {
 			stage('Build Docker') {
-		sh 'docker build -t nimbleplatform/frontend-service:staging ./target'
+				sh 'docker build -t nimbleplatform/frontend-service:staging ./target'
 			}
 
 			stage('Push Docker') {
