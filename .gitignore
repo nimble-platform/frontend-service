@@ -14,6 +14,7 @@ src/app/**/*.css.map
 src/app/**/*.js
 src/app/**/*.js.map
 src/app/**/*.metadata.json
+src/environments/*.js
 
 ### Maven ###
 target/
