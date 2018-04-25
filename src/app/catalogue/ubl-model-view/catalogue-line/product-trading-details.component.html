@@ -11,8 +11,9 @@
 <!-- Price Base Quantity -->
 <quantity-view [presentationMode]="presentationMode"
                [propName]="'Price Base Quantity'"
+               [definition]="'The price of a product at a legally set quantity'"
                [quantity]="[catalogueLine.requiredItemLocationQuantity.price.baseQuantity]"
-               [multiValue]="true"
+               [multiValue]="false"
                [parentForm]="parentForm">
 </quantity-view>
 
@@ -29,12 +30,17 @@
 <value-view *ngIf="presentationMode == 'view'"
             [presentationMode]="'view'"
             [propName]="'Incoterms'"
+            [definition]="'A set of international rules for the interpretation of the most commonly used trade terms'"
             [(value)]="catalogueLine.goodsItem.deliveryTerms.incoterms">
 </value-view>
 
 <ng-container *ngIf="presentationMode != 'view'">
     <div class="input-group form-group">
-        <label class="col-3">Incoterms</label>
+        <label class="col-3">Incoterms
+            <span class="label label-default" title="A set of international rules for the interpretation of the most commonly used trade terms">
+                    &#9432;
+                </span>
+        </label>
         <select class="form-control custom-select" [(ngModel)]="catalogueLine.goodsItem.deliveryTerms.incoterms">
             <option></option>
             <option>CIF (Cost, Insurance and Freight)</option>
@@ -70,6 +76,7 @@
 <!-- Special terms -->
 <value-view [presentationMode]="presentationMode"
             [propName]="'Special Terms'"
+            [definition]="'A description of any terms or conditions relating to the delivery items'"
             [(value)]="catalogueLine.goodsItem.deliveryTerms.specialTerms">
 </value-view>
 
@@ -100,6 +107,7 @@
     <!-- Validity period -->
     <quantity-view [presentationMode]="presentationMode"
                    [propName]="'Validity Period'"
+                   [definition]="'A period during which this price is valid'"
                    [quantity]="[catalogueLine.warrantyValidityPeriod.durationMeasure]"
                    [parentForm]="parentForm">
     </quantity-view>
