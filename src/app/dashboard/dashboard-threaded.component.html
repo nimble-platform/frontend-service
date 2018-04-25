@@ -87,12 +87,12 @@
                [selectedStringValues]="modifiedFilterSet.relatedProductCategories"
                (triggerCriteriaChanged)="filterChangeHandler();">
         </facet>
-        <!--<facet [title]="'Trading partner'"-->
-               <!--[dataType]="'string'"-->
-               <!--[stringValues]="filterSet.tradingPartnerNames"-->
-               <!--[selectedStringValues]="modifiedFilterSet.tradingPartnerNames"-->
-               <!--(triggerCriteriaChanged)="filterChangeHandler();">-->
-        <!--</facet>-->
+        <facet [title]="'Trading partner'"
+               [dataType]="'string'"
+               [stringValues]="filterSet.tradingPartnerNames"
+               [selectedStringValues]="modifiedFilterSet.tradingPartnerNames"
+               (triggerCriteriaChanged)="filterChangeHandler();">
+        </facet>
     </div>
     <call-status *ngIf="!filterSet" class="col-2" [callStatus]="filterQueryStatus"></call-status>
 

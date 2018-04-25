@@ -8,6 +8,7 @@ import {ProcessInstanceGroup} from "./model/process-instance-group";
 import {BPDataService} from "./bp-view/bp-data-service";
 import {ProcessInstanceGroupResponse} from "./model/process-instance-group-response";
 import {ProcessInstanceGroupFilter} from "./model/process-instance-group-filter";
+import {CookieService} from "ng2-cookies";
 
 @Injectable()
 export class BPEService {
@@ -16,7 +17,8 @@ export class BPEService {
 	private url = myGlobals.bpe_endpoint;
 
 	constructor(private http: Http,
-				private bpDataService:BPDataService) { }
+				private bpDataService:BPDataService,
+				private cookieService: CookieService) { }
 
 	startBusinessProcess(piim:ProcessInstanceInputMessage):Promise<ProcessInstance> {
 		let url = `${this.url}/start`;
@@ -125,6 +127,10 @@ export class BPEService {
 	}
 
 	getProcessInstanceGroupFilters(partyId:string, collaborationRole:string, archived: boolean, products: string[], categories: string[], partners: string[]): Promise<ProcessInstanceGroupFilter> {
+		const token = 'Bearer '+this.cookieService.get("bearer_token");
+		let headers = new Headers({'Accept': 'application/json','Authorization': token});
+		this.headers.keys().forEach(header => headers.append(header, this.headers.get(header)));
+
 		let url:string = `${this.url}/group/filters?partyID=${partyId}&collaborationRole=${collaborationRole}&archived=${archived}`;
 		if(products.length > 0) {
 			url += '&relatedProducts=' + this.stringtifyArray(products);
@@ -136,7 +142,7 @@ export class BPEService {
 			url += '&tradingPartnerIDs=' + this.stringtifyArray(partners);
 		}
 		return this.http
-            .get(url, {headers: this.headers})
+            .get(url, {headers: headers})
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
