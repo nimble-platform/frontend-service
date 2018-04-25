@@ -26,10 +26,31 @@
 <h5 class="mb-3">Delivery Terms</h5>
 
 <!-- Incoterms -->
-<value-view [presentationMode]="presentationMode"
+<value-view *ngIf="presentationMode == 'view'"
+            [presentationMode]="'view'"
             [propName]="'Incoterms'"
             [(value)]="catalogueLine.goodsItem.deliveryTerms.incoterms">
 </value-view>
+
+<ng-container *ngIf="presentationMode != 'view'">
+    <div class="input-group form-group">
+        <label class="col-3">Incoterms</label>
+        <select class="form-control custom-select" [(ngModel)]="catalogueLine.goodsItem.deliveryTerms.incoterms">
+            <option></option>
+            <option>CIF (Cost, Insurance and Freight)</option>
+            <option>CIP (Carriage and Insurance Paid to)</option>
+            <option>CFR (Cost and Freight)</option>
+            <option>CPT (Carriage paid to)</option>
+            <option>DAT (Delivered at Terminal)</option>
+            <option>DAP (Delivered at Place)</option>
+            <option>DDP (Delivery Duty Paid)</option>
+            <option>EXW (Ex Works)</option>
+            <option>FAS (Free Alongside Ship)</option>
+            <option>FCA (Free Carrier)</option>
+            <option>FOB (Free on Board)</option>
+        </select>
+    </div>
+</ng-container>
 
 <!-- Estimated delivery period -->
 <quantity-view [presentationMode]="presentationMode"
