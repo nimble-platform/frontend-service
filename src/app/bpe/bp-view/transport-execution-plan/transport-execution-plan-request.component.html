@@ -23,7 +23,7 @@
 
         <shipment-view [showCarrierPartyDetails]="bpDataService?.userRole != 'buyer'"
                        [shipment]="transportExecutionPlanRequest.consignment[0].consolidatedShipment[0]"
-                       [presentationMode]="bpDataService.processMetadata == null ? 'edit' : 'singlevalue'">
+                       [presentationMode]="bpDataService.processMetadata == null ? 'edit' : 'view'">
         </shipment-view>
     </div>
 

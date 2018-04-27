@@ -1,6 +1,4 @@
 import {Component, Input} from "@angular/core";
-import {Address} from "../model/publish/address";
-import {UBLModelUtils} from "../model/ubl-model-utils";
 import {Shipment} from "../model/publish/shipment";
 
 @Component({
@@ -12,4 +10,10 @@ export class ShipmentViewComponent {
     @Input() shipment: Shipment;
     @Input() presentationMode: string;
     @Input() showCarrierPartyDetails: boolean = true;
+    // used to get correct format for the estimatedDeliveryDate of shipment
+    date:any;
+
+    getEstimatedDeliveryDate():string{
+        return this.date.year+"-"+this.date.month+"-"+this.date.day;
+    }
 }
