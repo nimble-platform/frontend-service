@@ -1,14 +1,31 @@
 <h5 *ngIf="presentationMode == 'edit' || (presentationMode != 'edit' && certificates.length > 0)"
     class="mt-3">Certificates</h5>
 
-<!-- view/singlevalue modes -->
-<ng-container *ngIf="presentationMode == 'view' || presentationMode == 'singlevalue'">
+<!-- view modes -->
+<ng-container *ngIf="presentationMode == 'view'">
     <div *ngFor="let certificate of certificates; let i = index" class="input-group form-group">
         <!-- show label next to the first value only -->
         <label *ngIf="i == 0" class="col-3 control-label">Certificate Type</label>
         <input type="text" class="form-control "
                [(ngModel)]="certificate.certificateType"
                [ngClass]="{'offset-3' : i > 0} "
+               readonly>
+    </div>
+</ng-container>
+
+<!-- singlevalue mode -->
+<ng-container *ngIf="presentationMode == 'singlevalue' && certificates">
+    <div class="input-group form-group">
+        <!-- name of the property is shown once near the first value associated to it -->
+        <label class="col-3 control-label">Certificate Type</label>
+        <select *ngIf="certificates.length > 1"
+                class="custom-select"
+                (change)="updateCertificate($event)">
+            <option *ngFor="let certificate of certificates">{{certificate.certificateType}}</option>
+        </select>
+        <input *ngIf="certificates.length == 1"
+               type="text" class="form-control"
+               [(ngModel)]="certificates[0].certificateType"
                readonly>
     </div>
 </ng-container>

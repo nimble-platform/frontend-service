@@ -1,15 +1,5 @@
 import {Component, OnInit} from "@angular/core";
 import {BPDataService} from "../bp-data-service";
-import {BPEService} from "../../bpe.service";
-import {UBLModelUtils} from "../../../catalogue/model/ubl-model-utils";
-import {CookieService} from "ng2-cookies";
-import {CustomerParty} from "../../../catalogue/model/publish/customer-party";
-import {SupplierParty} from "../../../catalogue/model/publish/supplier-party";
-import {ProcessVariables} from "../../model/process-variables";
-import {ModelUtils} from "../../model/model-utils";
-import {ProcessInstanceInputMessage} from "../../model/process-instance-input-message";
-import {UserService} from "../../../user-mgmt/user.service";
-import {CallStatus} from "../../../common/call-status";
 import {SearchContextService} from '../../../simple-search/search-context.service';
 import {Router} from '@angular/router';
 /**

@@ -1,4 +1,4 @@
-import {Component, Input} from "@angular/core";
+import {Component, EventEmitter, Input, Output} from "@angular/core";
 import {CatalogueLine} from "../../model/publish/catalogue-line";
 import * as myGlobals from "../../../globals";
 import {FormGroup} from "@angular/forms";
@@ -17,7 +17,8 @@ export class CatalogueLineViewComponent extends ChildForm {
     @Input() catalogueLine: CatalogueLine;
     @Input() presentationMode: string;
     @Input() parentForm: FormGroup;
-
+    @Input() fromSearchDetails: boolean = false;
+    @Output() openBpOptionsEvent:EventEmitter<any> = new EventEmitter();
 
     selectedTab: string = "Product Details";
     partyRole: string = "";

@@ -23,7 +23,7 @@
     <bp-product-details
             *ngIf="selectedTab == 'Product Characteristics' || selectedTab == 'Product Trading & Delivery Terms' || 'Service Characteristics'"
             [catalogueLine]="bpDataService.catalogueLines[0]"
-            [presentationMode]="'singlevalue'"
+            [presentationMode]="presentationMode"
             [selectedTab]="selectedTab">
     </bp-product-details>
     <item-information-request *ngIf="selectedTab === 'Item Information Request Details'"

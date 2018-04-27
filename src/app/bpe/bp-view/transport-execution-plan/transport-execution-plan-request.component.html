@@ -2,19 +2,20 @@
 
     <div class="well">
         <h6>Consolidated Shipment</h6>
-        <value-view [presentationMode]="'edit'"
+        <value-view [presentationMode]="bpDataService.processMetadata == null ? 'edit' : 'singlevalue'"
                     [propName]="'Goods Item'"
                     [definition]="'A goods item included in this shipment'"
-                    [value]="transportExecutionPlanRequest.consignment[0].consolidatedShipment[0].goodsItem[0].item.name">
+                    [(value)]="transportExecutionPlanRequest.consignment[0].consolidatedShipment[0].goodsItem[0].item.name">
+
         </value-view>
 
-        <quantity-view [presentationMode]="'edit'"
+        <quantity-view [presentationMode]="bpDataService.processMetadata == null ? 'edit' : 'singlevalue'"
                        [propName]="'Gross Volume Measure'"
                        [definition]="'The total volume of the goods in this shipment, including packaging'"
                        [quantity]="[transportExecutionPlanRequest.consignment[0].grossVolumeMeasure]">
         </quantity-view>
 
-        <quantity-view [presentationMode]="'edit'"
+        <quantity-view [presentationMode]="bpDataService.processMetadata == null ? 'edit' : 'singlevalue'"
                        [propName]="'Gross Weight Measure'"
                        [definition]="'The total gross weight of a shipment; the weight of the goods plus packaging plus transport equipment'"
                        [quantity]="[transportExecutionPlanRequest.consignment[0].grossWeightMeasure]">
@@ -22,28 +23,28 @@
 
         <shipment-view [showCarrierPartyDetails]="bpDataService?.userRole != 'buyer'"
                        [shipment]="transportExecutionPlanRequest.consignment[0].consolidatedShipment[0]"
-                       [presentationMode]="'edit'">
+                       [presentationMode]="bpDataService.processMetadata == null ? 'edit' : 'singlevalue'">
         </shipment-view>
     </div>
 
     <div class="well">
         <h6>Execution Plan</h6>
-        <value-view [presentationMode]="'edit'"
+        <value-view [presentationMode]="bpDataService.processMetadata == null ? 'edit' : 'singlevalue'"
                     [propName]="'Service Start Date'"
                     [(value)]="transportExecutionPlanRequest.serviceStartTimePeriod.startDate">
         </value-view>
 
-        <value-view [presentationMode]="'edit'"
+        <value-view [presentationMode]="bpDataService.processMetadata == null ? 'edit' : 'singlevalue'"
                     [propName]="'Service End Date'"
                     [(value)]="transportExecutionPlanRequest.serviceEndTimePeriod.endDate">
         </value-view>
 
-        <address-view [presentationMode]="'edit'"
+        <address-view [presentationMode]="bpDataService.processMetadata == null ? 'edit' : 'singlevalue'"
                       [propName]="'From Location'"
                       [address]="[transportExecutionPlanRequest.fromLocation.address]">
         </address-view>
 
-        <address-view [presentationMode]="'edit'"
+        <address-view [presentationMode]="bpDataService.processMetadata == null ? 'edit' : 'singlevalue'"
                       [propName]="'To Location'"
                       [address]="[transportExecutionPlanRequest.toLocation.address]">
         </address-view>

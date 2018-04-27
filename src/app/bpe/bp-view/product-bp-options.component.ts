@@ -5,6 +5,7 @@ import {CallStatus} from "../../common/call-status";
 import {CatalogueService} from "../../catalogue/catalogue.service";
 import {Subscription} from "rxjs/Subscription";
 import {SearchContextService} from "../../simple-search/search-context.service";
+import {CatalogueLine} from "../../catalogue/model/publish/catalogue-line";
 /**
  * Created by suat on 20-Oct-17.
  */
@@ -16,6 +17,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     // singular mode is true if only one business process view is to be presented
     @Input() singleMode: boolean = true;
     @Output() closeBpOptionsEvent = new EventEmitter();
+    @Input() presentationMode: string = 'view';
 
     selectedOption: string;// = 'Negotiation';
     availableProcesses: string[] = [];
@@ -43,24 +45,27 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
             let id = params['id'];
             let catalogueId = params['catalogueId'];
 
-            // if the catalgoue line is already fetched, use it
-            if (this.bpDataService.getCatalogueLine() != null &&
-                this.bpDataService.getCatalogueLine().id == id &&
-                this.bpDataService.getCatalogueLine().goodsItem.item.catalogueDocumentReference.id == catalogueId) {
-
-                this.identifyAvailableProcesses();
-                return;
-            }
-
             this.getCatalogueLineStatus.submit();
             this.catalogueService.getCatalogueLine(catalogueId, id).then(line => {
-                this.bpDataService.setCatalogueLines([line]);
+                this.bpDataService.setCatalogueLines([this.removeUnnecessaryProperties(line)]);
                 this.identifyAvailableProcesses();
                 this.getCatalogueLineStatus.callback("Retrieved product details", true);
             }).catch(error => {
                 this.getCatalogueLineStatus.error("Failed to retrieve product details");
             });
         });
+    }
+
+    private removeUnnecessaryProperties(line: CatalogueLine){
+        if(this.bpDataService.processMetadata){
+            // additionalItemProperties
+            line.goodsItem.item.additionalItemProperty = this.bpDataService.processMetadata.product.additionalItemProperty;
+            // dimensions
+            line.goodsItem.item.dimension = this.bpDataService.processMetadata.product.dimension;
+            // certificate
+            line.goodsItem.item.certificate = this.bpDataService.processMetadata.product.certificate;
+        }
+        return line;
     }
 
     private identifyAvailableProcesses() {

@@ -1,4 +1,4 @@
-import {Component, OnInit} from "@angular/core";
+import {Component, Input, OnInit} from "@angular/core";
 import {BPDataService} from "../bp-data-service";
 /**
  * Created by suat on 19-Nov-17.
@@ -9,7 +9,7 @@ import {BPDataService} from "../bp-data-service";
 })
 
 export class ItemInformationRequestBpComponent implements OnInit {
-
+    @Input() presentationMode: string;
     selectedTab: string = "Item Information Request Details";
     tabs:string[] = [];
 

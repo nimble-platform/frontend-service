@@ -40,12 +40,6 @@ export class PpapDocumentDownloadComponent{
             this.id = params['id'];
             this.catalogueId = params['catalogueId'];
 
-            this.catalogueService.getCatalogueLine(this.catalogueId,this.id).then(line =>{
-                this.bpDataService.setCatalogueLines([line]);
-            }).catch(error => {
-
-            });
-
             this.bpeService.getProcessDetailsHistory(this.processid).then(task => {
                 let ppap = ActivityVariableParser.getInitialDocument(task).value as Ppap;
                 this.noteBuyer = ppap.note;

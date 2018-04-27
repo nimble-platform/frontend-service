@@ -2,17 +2,17 @@
     <quantity-view [propName]="'Delivered Quantity'"
                    [definition]="'The quantity despatched'"
                    [quantity]="[despatchAdvice.despatchLine[0].deliveredQuantity]"
-                   [presentationMode]="'edit'">
+                   [presentationMode]="bpDataService.processMetadata == null ? 'edit': 'singlevalue'">
     </quantity-view>
 
     <h5 class="mt-3 mb-3">Shipment</h5>
     <shipment-view [shipment]="despatchAdvice.despatchLine[0].shipment[0]"
-                   [presentationMode]="'edit'">
+                   [presentationMode]="bpDataService.processMetadata == null ? 'edit': 'singlevalue'">
     </shipment-view>
 
     <hr>
 
-    <value-view [presentationMode]="'edit'"
+    <value-view [presentationMode]="bpDataService.processMetadata == null ? 'edit': 'singlevalue'"
                 [propName]="'Note'"
                 [(value)]="despatchAdvice.note[0]">
     </value-view>
