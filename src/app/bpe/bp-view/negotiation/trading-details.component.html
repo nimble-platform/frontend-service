@@ -25,14 +25,14 @@
     <h5 class="mb-3">Delivery Terms</h5>
 
     <!-- Incoterms -->
-    <value-view *ngIf="presentationMode == 'view'"
+    <value-view *ngIf="presentationMode != 'edit'"
                 [presentationMode]="'view'"
                 [propName]="'Incoterms'"
                 [definition]="'A set of international rules for the interpretation of the most commonly used trade terms'"
                 [(value)]="lineItem.deliveryTerms.incoterms">
     </value-view>
 
-    <ng-container *ngIf="presentationMode != 'view'">
+    <ng-container *ngIf="presentationMode == 'edit'">
         <div class="input-group form-group">
             <label class="col-3">Incoterms
                 <span class="label label-default" title="A set of international rules for the interpretation of the most commonly used trade terms">
