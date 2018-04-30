@@ -14,7 +14,7 @@
 </ng-container>
 
 <!-- singlevalue mode -->
-<ng-container *ngIf="presentationMode == 'singlevalue' && certificates">
+<ng-container *ngIf="presentationMode == 'singlevalue' && certificates && certificates.length > 0">
     <div class="input-group form-group">
         <!-- name of the property is shown once near the first value associated to it -->
         <label class="col-3 control-label">Certificate Type</label>

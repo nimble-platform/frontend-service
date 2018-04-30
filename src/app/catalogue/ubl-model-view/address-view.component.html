@@ -3,10 +3,22 @@
     <div class="input-group form-group">
         <!-- show label next to the first value only -->
         <label class="col-3 control-label">{{propName}}</label>
-        <select *ngIf="address.length > 0"
+        <select *ngIf="address.length > 1"
                 class="custom-select">
             <option *ngFor="let value of address">{{value.country.name}}</option>
         </select>
+
+        <input *ngIf="address.length == 1"
+               class="form-control"
+               type="text"
+               [(ngModel)]="address[0].country.name"
+               readonly>
+
+        <input *ngIf="address.length == 0"
+               class="form-control"
+               type="text"
+               readonly>
+
         <!--<label>City</label>
         <select *ngIf="address.length > 0"
                 class="custom-select">
@@ -25,13 +37,13 @@
                [ngClass]="{'offset-3' : i > 0} ">
 
         <!-- remove value button -->
-        <span *ngIf="address.length > 1">
+        <span *ngIf="address.length > 1 && multiValue">
             <button class="btn btn-xs btn-danger" (click)="removeValue(i)">&times;
             </button>
         </span>
 
         <!-- add value button -->
-        <span *ngIf="i == address.length - 1">
+        <span *ngIf="i == address.length - 1 && multiValue">
             <button class="btn btn-primary btn-xs" (click)="addNewValue()"><strong>+</strong></button>
         </span>
     </div>

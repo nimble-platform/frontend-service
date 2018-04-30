@@ -69,6 +69,7 @@
 <ng-container *ngIf="catalogueLine.requiredItemLocationQuantity.applicableTerritoryAddress">
     <address-view [presentationMode]="presentationMode"
                   [propName]="'Applicable Territory Address'"
+                  [multiValue]="true"
                   [address]="catalogueLine.requiredItemLocationQuantity.applicableTerritoryAddress">
     </address-view>
 </ng-container>
