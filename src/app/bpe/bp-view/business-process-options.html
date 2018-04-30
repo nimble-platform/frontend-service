@@ -1,6 +1,10 @@
-<label class="space-before" *ngIf="followUpProcesses.length > 0 "><b> Choose one of the available business options : </b> </label>
+<ng-container>
+    <div class="input-group form-group">
+        <label class="space-before" *ngIf="followUpProcesses.length > 0 "><b> Choose one of the available business options : </b> </label>
 
-<select *ngIf="followUpProcesses.length > 0" class="space-before custom-select" [(ngModel)]="nextProcess" (change)="continueWithNextProcess()">
-    <option></option>
-    <option *ngFor="let option of followUpProcesses">{{option}}</option>
-</select>
+        <select *ngIf="followUpProcesses.length > 0" class="space-before space-left custom-select form-control" [(ngModel)]="nextProcess" (change)="continueWithNextProcess()">
+            <option></option>
+            <option *ngFor="let option of followUpProcesses">{{option}}</option>
+        </select>
+    </div>
+</ng-container>
