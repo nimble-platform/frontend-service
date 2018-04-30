@@ -29,6 +29,9 @@ export class TransportExecutionPlanRequestComponent {
     callStatus:CallStatus = new CallStatus();
     // check whether 'Use Service' button is clicked
     submitted:boolean = false;
+    // used to get correct format for start and end dates
+    startDate:any;
+    endDate:any;
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
                 private userService: UserService,
@@ -69,5 +72,14 @@ export class TransportExecutionPlanRequestComponent {
                     });
             });
         });
+    }
+
+
+
+    getDate(type:string):string{
+        if(type == "Start"){
+            return this.startDate.year+"-"+this.startDate.month+"-"+this.startDate.day;
+        }
+        return this.endDate.year+"-"+this.endDate.month+"-"+this.endDate.day;
     }
 }

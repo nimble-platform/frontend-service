@@ -29,15 +29,44 @@
 
     <div class="well">
         <h6>Execution Plan</h6>
-        <value-view [presentationMode]="bpDataService.processMetadata == null ? 'edit' : 'singlevalue'"
+        <value-view *ngIf="bpDataService.processMetadata != null"
+                    [presentationMode]="'view'"
                     [propName]="'Service Start Date'"
                     [(value)]="transportExecutionPlanRequest.serviceStartTimePeriod.startDate">
         </value-view>
 
-        <value-view [presentationMode]="bpDataService.processMetadata == null ? 'edit' : 'singlevalue'"
+        <ng-container *ngIf="bpDataService.processMetadata == null">
+            <div class="input-group space-after">
+                <label class="col-3">Service Start Date</label>
+                <input class="form-control" placeholder="YYYY-MM-DD" style="height: 60px;" (dateSelect)="transportExecutionPlanRequest.serviceStartTimePeriod.startDate = getDate('Start')"
+                       name="dp" [(ngModel)]="startDate" ngbDatepicker #d="ngbDatepicker" readonly>
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" (click)="d.toggle()" type="button">
+                        <img src="../../../assets/calendar-icon.svg" style="width: 1.2rem; height: 1rem; cursor: pointer;"/>
+                    </button>
+                </div>
+            </div>
+        </ng-container>
+
+        <value-view *ngIf="bpDataService.processMetadata != null"
+                    [presentationMode]="'view'"
                     [propName]="'Service End Date'"
                     [(value)]="transportExecutionPlanRequest.serviceEndTimePeriod.endDate">
         </value-view>
+
+        <ng-container *ngIf="bpDataService.processMetadata == null">
+            <div class="input-group space-after">
+                <label class="col-3">Service End Date</label>
+                <input class="form-control" placeholder="YYYY-MM-DD" style="height: 60px;" (dateSelect)="transportExecutionPlanRequest.serviceEndTimePeriod.endDate = getDate('End')"
+                       name="dp" [(ngModel)]="endDate" ngbDatepicker #d="ngbDatepicker" readonly>
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" (click)="d.toggle()" type="button">
+                        <img src="../../../assets/calendar-icon.svg" style="width: 1.2rem; height: 1rem; cursor: pointer;"/>
+                    </button>
+                </div>
+            </div>
+        </ng-container>
+
 
         <address-view [presentationMode]="bpDataService.processMetadata == null ? 'edit' : 'singlevalue'"
                       [propName]="'From Location'"
