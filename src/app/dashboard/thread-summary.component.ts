@@ -210,7 +210,8 @@ export class ThreadSummaryComponent implements OnInit {
 
     openBpProcessView(processInstanceIndex: number) {
         let processMetadata: any = this.processMetadata[processInstanceIndex];
-        this.bpDataService.setBpOptionParametersWithProcessMetadata(this.processInstanceGroup.collaborationRole.toLocaleLowerCase(), processMetadata.processType, processMetadata);
+        let role:string = processMetadata.activityVariables[2].value == this.processInstanceGroup.partyID ? 'buyer' : 'seller';
+        this.bpDataService.setBpOptionParametersWithProcessMetadata(role, processMetadata.processType, processMetadata);
         this.bpDataService.setRelatedGroupId(this.processInstanceGroup.id);
         this.router.navigate(['bpe/bpe-exec'], {
             queryParams: {
