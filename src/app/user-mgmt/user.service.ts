@@ -87,7 +87,7 @@ export class UserService {
             .get(url, {headers: headers_token, withCredentials: true})
             .toPromise()
             .then(res => {
-                let party:Party = res.json()[0];
+                let party:Party = res.json();
                 UBLModelUtils.removeHjidFieldsFromObject(party);
                 return Promise.resolve(party);
             })
