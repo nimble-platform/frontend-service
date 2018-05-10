@@ -25,6 +25,14 @@ export class BPEService {
 		if(this.bpDataService.getRelatedGroupId() != null) {
 			url += '?gid=' + this.bpDataService.getRelatedGroupId();
 		}
+		if(this.bpDataService.precedingProcessId != null) {
+			if(this.bpDataService.getRelatedGroupId() != null) {
+				url += '&';
+			} else {
+				url += '?';
+			}
+			url += 'precedingPid=' + this.bpDataService.precedingProcessId;
+		}
 
 		return this.http
             .post(url, JSON.stringify(piim), {headers: this.headers})
@@ -160,15 +168,6 @@ export class BPEService {
 		if(partners.length > 0) {
 			url += '&tradingPartnerIDs=' + this.stringtifyArray(partners);
 		}
-		return this.http
-            .get(url, {headers: this.headers})
-            .toPromise()
-            .then(res => res.json())
-            .catch(this.handleError);
-	}
-
-	getProcessInstancesOfGroup(groupId: string): Promise<ProcessInstance[]> {
-		const url = `${this.url}/group/${groupId}/process-instance`;
 		return this.http
             .get(url, {headers: this.headers})
             .toPromise()

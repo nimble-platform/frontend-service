@@ -31,6 +31,9 @@ export class BPDataService{
     private catalogueLines:CatalogueLine[] = [];
     // catalogue line object that is kept updated based on user selections
     modifiedCatalogueLines:CatalogueLine[] = [];
+    // variables to keep the products and product categories related to the active business process
+    relatedProducts: string[];
+    relatedProductCategories: string[];
 
     requestForQuotation:RequestForQuotation;
     quotation:Quotation;
@@ -56,10 +59,7 @@ export class BPDataService{
 
     // variable to keep the business process instance group related to the new process being initiated
     private relatedGroupId: string;
-
-    // variables to keep the products and product categories related to the active business process
-    relatedProducts: string[];
-    relatedProductCategories: string[];
+    precedingProcessId: string;
 
     constructor(public searchContextService: SearchContextService) {
     }

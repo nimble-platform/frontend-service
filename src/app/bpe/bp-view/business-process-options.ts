@@ -1,5 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {BPDataService} from './bp-data-service';
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
     selector: 'businessProcess-options',
@@ -8,6 +9,7 @@ import {BPDataService} from './bp-data-service';
 
 export class BusinessProcessOptions implements OnInit {
     @Input() processName:string;
+    @Input() processId: string;
     @Input() transportationService:boolean;
     @Input() userRole:string;
     @Input() acceptedIndicator:boolean;
@@ -19,10 +21,22 @@ export class BusinessProcessOptions implements OnInit {
     nextProcess:string;
 
 
-    constructor(private bpDataService:BPDataService){
+    constructor(private bpDataService:BPDataService,
+                private route:ActivatedRoute){
     }
 
     ngOnInit() {
+        // the preceding process id can be initiated either via the query parameter
+        this.route.queryParams.subscribe(params => {
+            this.processId = params['pid'];
+            this.bpDataService.precedingProcessId = this.processId;
+        });
+        // or using the cached id in the service.
+        // TODO: We should pass such parameters as query parameters, it becomes complicated to manage them in a common service
+        if(this.processId == null) {
+            this.processId = this.bpDataService.precedingProcessId;
+        }
+
         if(this.processName == "Item_Information_Request"){
             if(this.userRole == "buyer"){
                 this.followUpProcesses.push("Item_Information_Request");
@@ -30,6 +44,7 @@ export class BusinessProcessOptions implements OnInit {
                     this.followUpProcesses.push("PPAP");
                 }
                 this.followUpProcesses.push("Negotiation");
+                this.followUpProcesses.push("Order");
             }
         }
         else if(this.processName == "Negotiation"){
@@ -96,7 +111,12 @@ export class BusinessProcessOptions implements OnInit {
             this.bpDataService.setBpOptionParameters(this.userRole,'Item_Information_Request');
         }
         else if(this.nextProcess == "Order"){
-            this.bpDataService.initOrderWithQuotation();
+            if(this.bpDataService.quotation != null) {
+                this.bpDataService.initOrderWithQuotation();
+            } else {
+                this.bpDataService.resetBpData();
+                this.bpDataService.initOrder();
+            }
             this.bpDataService.setBpOptionParameters(this.userRole,'Order');
         }
         else if(this.nextProcess == "New Order"){

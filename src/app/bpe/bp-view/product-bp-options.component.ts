@@ -23,6 +23,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     availableProcesses: string[] = [];
     processTypeSubs: Subscription;
     getCatalogueLineStatus: CallStatus = new CallStatus();
+    precedingProcessId: string;
 
     constructor(public bpDataService: BPDataService,
                 public catalogueService: CatalogueService,
@@ -44,6 +45,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
         this.route.queryParams.subscribe(params => {
             let id = params['id'];
             let catalogueId = params['catalogueId'];
+            this.precedingProcessId = params['pid'];
 
             this.getCatalogueLineStatus.submit();
             this.catalogueService.getCatalogueLine(catalogueId, id).then(line => {
