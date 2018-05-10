@@ -34,7 +34,6 @@ export class SimpleSearchDetailsComponent implements OnInit {
 		this.route.queryParams.subscribe(params => {
 			let id = params['id'];
 			let catalogueId = params['catalogueId'];
-			let gid = params['gid'];
 
             //this.bpDataService.catalogueLine = null;
 			this.getCatalogueLineStatus.submit();
@@ -42,7 +41,7 @@ export class SimpleSearchDetailsComponent implements OnInit {
 				this.bpDataService.resetBpData();
 				this.bpDataService.setCatalogueLines([line]);
 				this.bpDataService.userRole = 'buyer';
-				this.bpDataService.setRelatedGroupId(gid);
+				this.bpDataService.setRelatedGroupId(null);
 				this.bpOptionsActive = params['showOptions'] == 'true';
 				this.getCatalogueLineStatus.callback("Retrieved product details", true);
 			}).catch(error => {
