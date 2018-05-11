@@ -112,9 +112,6 @@
                 class="btn btn-success" (click)="sendInformationRequest()">Request Information
         </button>
         <ng-container *ngIf="bpDataService.processMetadata != null">
-            <button *ngIf="bpDataService.userRole == 'buyer' && bpDataService.processMetadata.processStatus == 'Completed'"
-                    class="btn btn-success" (click)="navigateToSearchDetails()">See Business Options
-            </button>
             <button *ngIf="bpDataService.userRole == 'seller' && bpDataService.processMetadata.processStatus != 'Completed'"
                     [disabled]="submitted"
                     class="btn btn-success" (click)="sendInformationResponse()">Respond to Information Request

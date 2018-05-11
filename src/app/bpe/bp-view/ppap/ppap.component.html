@@ -52,6 +52,6 @@
 <businessProcess-options    *ngIf="bpDataService.ppapResponse && bpDataService.ppapResponse.requestedDocument != null"
                             (selectedTabChanged)="selectedTab = 'Ppap Select'"
                             [processName]="'Ppap'"
-                            [userRole]="bpDataService.userRole"
+                            [userRole]="this.seller ?'seller':'buyer'"
                             [transportationService]="bpDataService.getCatalogueLine().goodsItem.item.transportationServiceDetails != null">
 </businessProcess-options>
