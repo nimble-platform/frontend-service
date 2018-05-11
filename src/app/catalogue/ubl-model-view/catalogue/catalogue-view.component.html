@@ -4,6 +4,19 @@
         class="d-flex">
 
     </call-status>
+    <div class="d-flex ml-3" *ngIf="catalogue && catalogue.catalogueLine.length > 0">
+        <input #imagePackage type="file" (change)="uploadImagePackage($event)"
+               accept="application/zip"
+               style="display: none">
+        <button class="btn btn-danger ml-3"
+                (click)="imagePackage.click()">Upload Image Package
+        </button>
+    </div>
+    <button *ngIf="catalogue && catalogue.catalogueLine.length > 0"
+            class="btn btn-danger ml-3"
+            (click)="navigateToThePublishPage()"
+    >Publish New Product/Service
+    </button>
     <button *ngIf="catalogue && catalogue.catalogueLine.length > 0"
             class="btn btn-danger ml-3"
             (click)="onDeleteCatalogue()">Delete Catalogue
