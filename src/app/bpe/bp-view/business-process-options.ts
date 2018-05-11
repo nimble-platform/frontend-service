@@ -48,11 +48,6 @@ export class BusinessProcessOptions implements OnInit {
                 else{
                     this.followUpProcesses.push("Negotiation");
                 }
-<<<<<<< HEAD
-                this.followUpProcesses.push("Negotiation");
-                this.followUpProcesses.push("Order");
-=======
->>>>>>> 00f296860d28ae227a553fa7a5233adc57ca28af
             }
         }
         else if(this.processName == "Negotiation"){
