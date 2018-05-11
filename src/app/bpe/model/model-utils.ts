@@ -7,7 +7,7 @@ import {BPDataService} from "../bp-view/bp-data-service";
 export class ModelUtils {
     public static createProcessVariables(processId:string, initiatorId:string, responderId:string, content:any, bpDataService: BPDataService):ProcessVariables {
         UBLModelUtils.removeHjidFieldsFromObject(content);
-        let vars:ProcessVariables = new ProcessVariables(processId, initiatorId, responderId,UBLModelUtils.generateUUID(), bpDataService.relatedProducts, bpDataService.relatedProductCategories, JSON.stringify(content));
+        let vars:ProcessVariables = new ProcessVariables(processId, initiatorId, responderId, content.id, bpDataService.relatedProducts, bpDataService.relatedProductCategories, JSON.stringify(content));
         return vars;
     }
 

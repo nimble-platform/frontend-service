@@ -9,6 +9,7 @@ import {BPDataService} from "./bp-view/bp-data-service";
 import {ProcessInstanceGroupResponse} from "./model/process-instance-group-response";
 import {ProcessInstanceGroupFilter} from "./model/process-instance-group-filter";
 import {CookieService} from "ng2-cookies";
+import {Contract} from "../catalogue/model/publish/contract";
 
 @Injectable()
 export class BPEService {
@@ -202,6 +203,14 @@ export class BPEService {
             .catch(this.handleError);
 	}
 
+	constructContractForProcess(processInstancesId: string): Promise<Contract> {
+		const url = `${this.url}/contracts?processInstanceId=${processInstancesId}`;
+		return this.http
+            .get(url, {headers: this.headers})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+	}
 	private stringtifyArray(values: any[]): string {
 		let paramVal: string = '';
 		for (let value of values) {

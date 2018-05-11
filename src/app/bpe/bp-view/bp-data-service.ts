@@ -94,6 +94,7 @@ export class BPDataService{
         if(id == null) {
             if(this.searchContextService.associatedProcessType == null) {
                 this.relatedGroupId = null;
+                this.precedingProcessId = null;
             }
         } else {
             this.relatedGroupId = id;

@@ -171,6 +171,7 @@ export class UBLModelUtils {
         let ppapResponse:PpapResponse = new PpapResponse("","",acceptedIndicator,customerParty,supplierParty,null,documentReference);
         return ppapResponse;*/
         let ppapResponse:PpapResponse = new PpapResponse();
+        ppapResponse.id = this.generateUUID();
         ppapResponse.ppapDocumentReference = new DocumentReference(ppap.id);
         this.removeHjidFieldsFromObject(ppap.buyerCustomerParty);
         this.removeHjidFieldsFromObject(ppap.sellerSupplierParty);
@@ -281,6 +282,7 @@ export class UBLModelUtils {
 
     public static createItemInformationResponse(itemInformationRequest:ItemInformationRequest):ItemInformationResponse {
         let itemInformationResponse:ItemInformationResponse = new ItemInformationResponse();
+        itemInformationResponse.id = this.generateUUID();
         itemInformationResponse.itemInformationRequestDocumentReference = new DocumentReference(itemInformationRequest.id);
         itemInformationResponse.item[0] = JSON.parse(JSON.stringify(itemInformationRequest.itemInformationRequestLine[0].salesItem[0].item));
         itemInformationResponse.item[0].itemSpecificationDocumentReference = [];

@@ -14,6 +14,7 @@ import {UserService} from "../../../user-mgmt/user.service";
 import {CallStatus} from "../../../common/call-status";
 import {Order} from "../../../catalogue/model/publish/order";
 import {Router} from "@angular/router";
+import {Contract} from "../../../catalogue/model/publish/contract";
 /**
  * Created by suat on 20-Sep-17.
  */
@@ -22,8 +23,9 @@ import {Router} from "@angular/router";
     templateUrl: './order.component.html'
 })
 
-export class OrderComponent {
+export class OrderComponent implements OnInit {
     @Input() order:Order;
+    contract:Contract = null;
 
     callStatus:CallStatus = new CallStatus();
     // check whether 'Send Order' button is clicked or not
@@ -35,6 +37,12 @@ export class OrderComponent {
                 private userService: UserService,
                 private cookieService: CookieService,
                 private router:Router) {
+    }
+
+    ngOnInit(): void {
+        this.bpeService.constructContractForProcess(this.bpDataService.precedingProcessId).then(contract => {
+            this.contract = contract
+        });
     }
 
     sendOrder() {

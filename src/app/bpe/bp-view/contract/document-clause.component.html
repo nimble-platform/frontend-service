@@ -1,0 +1,12 @@
+<ng-container *ngIf="clause.type == 'ITEM_DETAILS'">
+
+</ng-container>
+<ng-container *ngIf="clause.type == 'PPAP'">
+
+</ng-container>
+<ng-container *ngIf="clause.type == 'NEGOTIATION' && clauseDocument != null">
+    <!--<quotation [quotation]="clauseDocument"></quotation>-->
+</ng-container>
+<call-status [callStatus]="clauseDocumentRetrievalStatus"
+             [large]="true">
+</call-status>

@@ -63,6 +63,10 @@
                 class="btn btn-success" (click)="sendOrder()">Send Order
         </button>
     </div>
+
+    <contract [contract]="contract">
+
+    </contract>
 </ng-container>
 <call-status [callStatus]="callStatus"
              [large]="true">

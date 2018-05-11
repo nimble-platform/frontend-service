@@ -36,6 +36,10 @@ import { PpapDocumentUploadComponent} from "./bp-view/ppap/ppap-document-upload.
 import { PpapDocumentDownloadComponent} from "./bp-view/ppap/ppap-document-download.component";
 
 import { BusinessProcessOptions} from './bp-view/business-process-options';
+import {ContractComponent} from "./bp-view/contract/contract.component";
+import {ClauseComponent} from "./bp-view/contract/clause.component";
+import {DataMonitoringClauseComponent} from "./bp-view/contract/data-monitoring-clause.component";
+import {DocumentClauseComponent} from "./bp-view/contract/document-clause.component";
 //import { BPEService } from './bpe.service';
 //import { BPService } from './bp.service';
 //import { BPDataService } from "./bp-view/bp-data-service";
@@ -76,7 +80,11 @@ import { BusinessProcessOptions} from './bp-view/business-process-options';
         PpapDocumentSelectComponent,
 		PpapDocumentUploadComponent,
 		PpapDocumentDownloadComponent,
-        BusinessProcessOptions
+        BusinessProcessOptions,
+		ContractComponent,
+		ClauseComponent,
+		DataMonitoringClauseComponent,
+		DocumentClauseComponent
 	],
 	exports: [
 		TradingDetailsComponent,
@@ -99,7 +107,11 @@ import { BusinessProcessOptions} from './bp-view/business-process-options';
 		BpProductDetailsComponent,
 		ItemInformationRequestBpComponent,
 		ItemInformationRequestComponent,
-        BusinessProcessOptions
+        BusinessProcessOptions,
+		ContractComponent,
+		ClauseComponent,
+		DataMonitoringClauseComponent,
+		DocumentClauseComponent
 	],
 	providers: [
 	]

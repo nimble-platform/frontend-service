@@ -1,0 +1,21 @@
+<div (click)="toggleVisible()"
+     class="d-flex"
+     style="cursor: pointer;">
+    <span class="mr-auto">
+        {{clause.type}}
+    </span>
+    <i class="fa fa-chevron-down" aria-hidden="true"></i>
+</div>
+<ng-container *ngIf="visible">
+    <hr>
+    <ng-container *ngIf="clause.type == 'DATA_MONITORING'">
+        <data-monitoring-clause>
+
+        </data-monitoring-clause>
+    </ng-container>
+    <ng-container *ngIf="clause.type != 'DATA_MONITORING'">
+        <document-clause [clause]="clause">
+
+        </document-clause>
+    </ng-container>
+</ng-container>
