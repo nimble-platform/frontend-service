@@ -76,6 +76,8 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
         // first check search context whether the search process is associated with a specific process
         if (this.searchContextService.associatedProcessType != null) {
             //this.availableProcesses.push(this.bpDataService.processTypeSubject.getValue());
+            this.availableProcesses.push('Item_Information_Request');
+            this.availableProcesses.push('Negotiation');
             this.availableProcesses.push('Transport_Execution_Plan');
 
             // regular order and negotiation processes
