@@ -4,12 +4,14 @@ import {SupplierParty} from "../../../catalogue/model/publish/supplier-party";
 import {PaymentMeans} from "../../../catalogue/model/publish/payment-means";
 import {Address} from "./address";
 import {Period} from "./period";
+import {Contract} from "./contract";
 export class Order {
 	constructor(
 		public id:string = null,
 		public note: string = null,
 		public requestedDeliveryPeriod:Period = new Period(),
 		public deliveryAddress: Address = new Address(),
+		public contract: Contract[] = null,
 		public buyerCustomerParty:CustomerParty = null,
 		public sellerSupplierParty:SupplierParty = null,
 		public paymentMeans:PaymentMeans = new PaymentMeans(),

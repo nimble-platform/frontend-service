@@ -137,7 +137,7 @@ export class UBLModelUtils {
         let price: Price = this.createPrice(null);
         let lineItem:LineItem = this.createLineItem(quantity, price, item);
         let orderLine:OrderLine = new OrderLine(lineItem);
-        let order = new Order(this.generateUUID(), "", new Period(), new Address(), null, null, new PaymentMeans(), [orderLine]);
+        let order = new Order(this.generateUUID(), "", new Period(), new Address(), null, null, null, new PaymentMeans(), [orderLine]);
         return order;
     }
 
@@ -253,6 +253,7 @@ export class UBLModelUtils {
 
     public static createReceiptAdvice(despatchAdvice:DespatchAdvice):ReceiptAdvice {
         let receiptAdvice:ReceiptAdvice = new ReceiptAdvice();
+        receiptAdvice.id = this.generateUUID();
         receiptAdvice.orderReference = [JSON.parse(JSON.stringify(despatchAdvice.orderReference))];
         receiptAdvice.despatchDocumentReference = [new DocumentReference(despatchAdvice.id)];
         receiptAdvice.deliveryCustomerParty = despatchAdvice.deliveryCustomerParty;

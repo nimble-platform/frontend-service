@@ -40,9 +40,11 @@ export class OrderComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.bpeService.constructContractForProcess(this.bpDataService.precedingProcessId).then(contract => {
-            this.contract = contract
-        });
+        if(this.bpDataService.precedingProcessId != null) {
+            this.bpeService.constructContractForProcess(this.bpDataService.precedingProcessId).then(contract => {
+                this.contract = contract
+            });
+        }
     }
 
     sendOrder() {
@@ -63,6 +65,8 @@ export class OrderComponent implements OnInit {
 
             this.userService.getParty(sellerId).then(sellerParty => {
                 order.sellerSupplierParty = new SupplierParty(sellerParty);
+                order.contract = [this.contract];
+
                 let vars:ProcessVariables = ModelUtils.createProcessVariables("Order", buyerId, sellerId, order, this.bpDataService);
                 let piim:ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
 
@@ -75,6 +79,7 @@ export class OrderComponent implements OnInit {
                         this.submitted = false;
                         this.callStatus.error("Failed to send Order");
                     });
+
             });
         });
     }
