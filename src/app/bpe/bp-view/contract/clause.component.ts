@@ -12,6 +12,5 @@ export class ClauseComponent {
 
     toggleVisible(): void {
         this.visible = !this.visible;
-        console.log("visible:" + this.visible)
     }
 }
