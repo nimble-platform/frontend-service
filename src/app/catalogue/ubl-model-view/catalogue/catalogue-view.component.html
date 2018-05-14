@@ -5,7 +5,9 @@
     </call-status>
     <ul class="nav navbar-nav" *ngIf="catalogue && catalogue.catalogueLine.length > 0">
         <li ngbDropdown class="nav-item dropdown">
-            <span id="dropdownMenuUser" ngbDropdownToggle class="fa fa-bars" aria-hidden="true" style="font-size: 40px;cursor: pointer"></span>
+            <button class="navbar-toggler bordered" type="button" aria-controls="navbarNavAltMarkup" ngbDropdownToggle>
+                <span class="fa fa-bars"></span>
+            </button>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuUser">
                 <input #imagePackage type="file" (change)="uploadImagePackage($event)"
                        accept="application/zip"
