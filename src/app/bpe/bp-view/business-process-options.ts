@@ -26,17 +26,6 @@ export class BusinessProcessOptions implements OnInit {
     }
 
     ngOnInit() {
-        // the preceding process id can be initiated either via the query parameter
-        this.route.queryParams.subscribe(params => {
-            this.processId = params['pid'];
-            this.bpDataService.precedingProcessId = this.processId;
-        });
-        // or using the cached id in the service.
-        // TODO: We should pass such parameters as query parameters, it becomes complicated to manage them in a common service
-        if(this.processId == null) {
-            this.processId = this.bpDataService.precedingProcessId;
-        }
-
         if(this.processName == "Item_Information_Request"){
             if(this.userRole == "buyer"){
                 this.followUpProcesses.push("Item Information Request");
