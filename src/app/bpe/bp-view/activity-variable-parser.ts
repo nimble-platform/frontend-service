@@ -40,57 +40,55 @@ export class ActivityVariableParser {
         return null;
     }
 
-    static getResponderNameProcessData(initialDocument: any): string {
+    static getTradingPartnerName(initialDocument: any, partyId: string): string {
         let processType: string = initialDocument.processDefinitionKey;
         if (processType == "Order") {
             let order: Order = initialDocument.value as Order;
-            return order.sellerSupplierParty.party.name;
+            if(order.buyerCustomerParty.party.id == partyId) {
+                return order.sellerSupplierParty.party.name;
+            } else {
+                return order.buyerCustomerParty.party.name;
+            }
 
         } else if(processType == "Ppap"){
             let ppap: Ppap = initialDocument.value as Ppap;
-            return ppap.sellerSupplierParty.party.name;
+            if(ppap.buyerCustomerParty.party.id == partyId) {
+                return ppap.sellerSupplierParty.party.name;
+            } else {
+                return ppap.buyerCustomerParty.party.name;
+            }
+
         } else if (processType == "Negotiation") {
             let rfq: RequestForQuotation = initialDocument.value as RequestForQuotation;
-            return rfq.sellerSupplierParty.party.name;
+            if(rfq.buyerCustomerParty.party.id == partyId) {
+                return rfq.sellerSupplierParty.party.name;
+            } else {
+                return rfq.buyerCustomerParty.party.name;
+            }
 
         } else if (processType == "Fulfilment") {
             let despatchAdvice: DespatchAdvice = initialDocument.value as DespatchAdvice;
-            return despatchAdvice.despatchSupplierParty.party.name;
+            if(despatchAdvice.despatchSupplierParty.party.id == partyId) {
+                return despatchAdvice.deliveryCustomerParty.party.name;
+            } else {
+                return despatchAdvice.despatchSupplierParty.party.name;
+            }
 
         } else if(processType == "Transport_Execution_Plan") {
             let tepr: TransportExecutionPlanRequest = initialDocument.value as TransportExecutionPlanRequest;
-            return tepr.transportServiceProviderParty.name;
+            if(tepr.transportUserParty.id == partyId) {
+                return tepr.transportServiceProviderParty.name;
+            } else {
+                return tepr.transportUserParty.name;
+            }
 
         } else if(processType == 'Item_Information_Request') {
             let itemInformationRequest: ItemInformationRequest = initialDocument.value as ItemInformationRequest;
-            return itemInformationRequest.sellerSupplierParty.party.name;
-        }
-    }
-
-    static getInitiatorNameProcessData(initialDocument: any): string {
-        let processType: string = initialDocument.processDefinitionKey;
-        if (processType == "Order") {
-            let order: Order = initialDocument.value as Order;
-            return order.buyerCustomerParty.party.name;
-
-        } else if(processType == "Ppap"){
-            let ppap: Ppap = initialDocument.value as Ppap;
-            return ppap.buyerCustomerParty.party.name;
-        } else if (processType == "Negotiation") {
-            let rfq: RequestForQuotation = initialDocument.value as RequestForQuotation;
-            return rfq.buyerCustomerParty.party.name;
-
-        } else if (processType == "Fulfilment") {
-            let despatchAdvice: DespatchAdvice = initialDocument.value as DespatchAdvice;
-            return despatchAdvice.deliveryCustomerParty.party.name;
-
-        } else if(processType == "Transport_Execution_Plan") {
-            let tepr: TransportExecutionPlanRequest = initialDocument.value as TransportExecutionPlanRequest;
-            return tepr.transportUserParty.name;
-
-        } else if(processType == 'Item_Information_Request') {
-            let itemInformationRequest: ItemInformationRequest = initialDocument.value as ItemInformationRequest;
-            return itemInformationRequest.buyerCustomerParty.party.name;
+            if(itemInformationRequest.buyerCustomerParty.party.id == partyId) {
+                return itemInformationRequest.sellerSupplierParty.party.name;
+            } else {
+                return itemInformationRequest.buyerCustomerParty.party.name;
+            }
         }
     }
 

@@ -1,15 +1,14 @@
-import {Component, Input, OnInit, Output, EventEmitter} from "@angular/core";
+import {Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
 import {ProcessInstanceGroup} from "../bpe/model/process-instance-group";
-import {ProcessInstance} from "../bpe/model/process-instance";
 import {Router} from "@angular/router";
 import {BPDataService} from "../bpe/bp-view/bp-data-service";
-import {BPService} from "../bpe/bp.service";
 import {BPEService} from "../bpe/bpe.service";
 import {ActivityVariableParser} from "../bpe/bp-view/activity-variable-parser";
-import * as moment from 'moment';
-import * as constants from '../constants';
+import * as moment from "moment";
+import * as constants from "../constants";
 import {Item} from "../catalogue/model/publish/item";
 import {CallStatus} from "../common/call-status";
+import {CookieService} from "ng2-cookies";
 
 /**
  * Created by suat on 12-Mar-18.
@@ -34,6 +33,7 @@ export class ThreadSummaryComponent implements OnInit {
 
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
+                private cookieService: CookieService,
                 private router: Router) {
     }
 
@@ -64,13 +64,7 @@ export class ThreadSummaryComponent implements OnInit {
                         let vBPStatus = this.getBPStatus(response);
                         let vStart_time = moment(lastActivity.startTime + "Z", 'YYYY-MM-DDTHH:mm:ssZ').format("YYYY-MM-DD HH:mm");
                         let vProduct = ActivityVariableParser.getProductFromProcessData(initialDoc);
-                        let vTradingPartnerName = ""
-
-                        if (this.processInstanceGroup.collaborationRole == constants.COLLABORATION_ROLE_SELLER) {
-                            vTradingPartnerName = ActivityVariableParser.getInitiatorNameProcessData(initialDoc);
-                        } else {
-                            vTradingPartnerName = ActivityVariableParser.getResponderNameProcessData(initialDoc);
-                        }
+                        let vTradingPartnerName = ActivityVariableParser.getTradingPartnerName(initialDoc, this.cookieService.get("company_id"));
 
                         this.processMetadata[targetIndex] = {
                             "processType": vProcessType,

@@ -96,7 +96,7 @@ export class DashboardComponent implements OnInit {
                             let initialDoc: any = ActivityVariableParser.getInitialDocument(activityVariables);
                             vProduct = ActivityVariableParser.getProductFromProcessData(initialDoc);
                             vNote = ActivityVariableParser.getNoteFromProcessData(initialDoc);
-                            vSellerName = ActivityVariableParser.getResponderNameProcessData(initialDoc);
+                            vSellerName = ActivityVariableParser.getTradingPartnerName(initialDoc, this.cookieService.get("company_id"));
                             vProcess_id = initialDoc.processInstanceId;
                             vActionStatus = this.getActionStatus(vProcessType, response, true)[0];
                             vBPStatus = this.getBPStatus(response);
@@ -208,7 +208,7 @@ export class DashboardComponent implements OnInit {
                             let initialDoc: any = ActivityVariableParser.getInitialDocument(activityVariables);
                             vProduct = ActivityVariableParser.getProductFromProcessData(initialDoc);
                             vNote = ActivityVariableParser.getNoteFromProcessData(initialDoc);
-                            vBuyerName = ActivityVariableParser.getInitiatorNameProcessData(initialDoc);
+                            vBuyerName = ActivityVariableParser.getTradingPartnerName(initialDoc, this.cookieService.get("company_id"));
                             vProcess_id = initialDoc.processInstanceId;
                             vActionStatus = this.getActionStatus(vProcessType, response, false)[0];
                             vBPStatus = this.getBPStatus(response);
