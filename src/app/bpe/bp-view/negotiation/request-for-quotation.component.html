@@ -1,6 +1,5 @@
 <ng-container *ngIf="requestForQuotation">
-    <trading-details class="container"
-                     [lineItem]="requestForQuotation.requestForQuotationLine[0].lineItem"
+    <trading-details [lineItem]="requestForQuotation.requestForQuotationLine[0].lineItem"
                      [presentationMode]="bpDataService.processMetadata == null ? 'edit' : 'singlevalue'">
     </trading-details>
 

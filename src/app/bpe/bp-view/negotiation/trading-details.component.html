@@ -1,5 +1,5 @@
 <div class="well">
-    <h5 class="mt-3 mb-3">Price / Requested Quantity</h5>
+    <h5 class="mb-3">Price / Requested Quantity</h5>
     <!-- Price Amount -->
     <amount-view [presentationMode]="presentationMode"
                  [propName]="'Amount'"
@@ -22,7 +22,7 @@
 </div>
 
 <div class="well">
-    <h5 class="mb-3">Delivery Terms</h5>
+    <h5>Delivery Terms</h5>
 
     <!-- Incoterms -->
     <value-view *ngIf="presentationMode != 'edit'"
@@ -78,17 +78,19 @@
 
 <!-- Warranty -->
 <ng-container *ngIf="lineItem.item.transportationServiceDetails == null">
-    <h5 class="mt-3">Warranty</h5>
-    <!-- Validity period -->
-    <quantity-view [presentationMode]="presentationMode"
-                   [propName]="'Validity Period'"
-                   [definition]="'A period during which this price is valid'"
-                   [quantity]="[lineItem.warrantyValidityPeriod.durationMeasure]">
-    </quantity-view>
+    <div class="well">
+        <h5>Warranty</h5>
+        <!-- Validity period -->
+        <quantity-view [presentationMode]="presentationMode"
+                       [propName]="'Validity Period'"
+                       [definition]="'A period during which this price is valid'"
+                       [quantity]="[lineItem.warrantyValidityPeriod.durationMeasure]">
+        </quantity-view>
 
-    <!-- Warranty information -->
-    <value-array-view [presentationMode]="presentationMode"
-                      [propName]="'Warranty information'"
-                      [(values)]="lineItem.warrantyInformation">
-    </value-array-view>
+        <!-- Warranty information -->
+        <value-array-view [presentationMode]="presentationMode"
+                          [propName]="'Warranty information'"
+                          [(values)]="lineItem.warrantyInformation">
+        </value-array-view>
+    </div>
 </ng-container>

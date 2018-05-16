@@ -1,6 +1,5 @@
 <ng-container *ngIf="quotation">
-    <trading-details class="container"
-                     [lineItem]="quotation.quotationLine[0].lineItem"
+    <trading-details [lineItem]="quotation.quotationLine[0].lineItem"
                      [presentationMode]="presentationMode">
     </trading-details>
 
