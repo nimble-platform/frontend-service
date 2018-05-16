@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, Output} from "@angular/core";
+import {Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
 import {Quotation} from "../../../catalogue/model/publish/quotation";
 import {BPDataService} from "../bp-data-service";
 import {ProcessVariables} from "../../model/process-variables";
@@ -13,17 +13,23 @@ import {Router} from "@angular/router";
     templateUrl: './quotation.component.html'
 })
 
-export class QuotationComponent {
+export class QuotationComponent implements OnInit {
 
-	@Input() quotation:Quotation;
-	@Output() newNegotiationInitialized = new EventEmitter();
+    @Input() quotation: Quotation;
+    @Input() presentationMode: string;
+    @Input() parentElement: string;
 
-    callStatus:CallStatus = new CallStatus();
+    callStatus: CallStatus = new CallStatus();
     // check whether 'Send Quotation' button is clicked or not
     submitted: boolean = false;
-    constructor(private bpeService:BPEService,
-                public bpDataService:BPDataService,
-                private router:Router) {
+
+    constructor(private bpeService: BPEService,
+                public bpDataService: BPDataService,
+                private router: Router) {
+    }
+
+    ngOnInit(): void {
+        this.calculatePresentationMode();
     }
 
     respondToRFQ() {
@@ -40,10 +46,19 @@ export class QuotationComponent {
                 }
             )
             .catch(error => {
-                this.submitted = false;
-                this.callStatus.error("Failed to send quotation")
-            }
-
+                    this.submitted = false;
+                    this.callStatus.error("Failed to send quotation")
+                }
             );
+    }
+
+    calculatePresentationMode(): void {
+        if (this.presentationMode == null) {
+            if (this.bpDataService.processMetadata != null && this.bpDataService.processMetadata.processStatus == 'Started') {
+                this.presentationMode = 'edit';
+            } else {
+                this.presentationMode = 'singlevalue';
+            }
+        }
     }
 }

@@ -204,6 +204,7 @@ export class ThreadSummaryComponent implements OnInit {
 
     openBpProcessView(processInstanceIndex: number) {
         let processMetadata: any = this.processMetadata[processInstanceIndex];
+        // TODO: define the required method in ActivityVariableParser itself
         let initialDoc: any = ActivityVariableParser.getInitialDocument(processMetadata.activityVariables);
         let buyerId:any = ActivityVariableParser.getBuyerId(initialDoc);
         let role:string = buyerId == this.processInstanceGroup.partyID ? 'buyer' : 'seller';

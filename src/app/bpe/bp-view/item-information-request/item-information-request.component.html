@@ -110,6 +110,8 @@
         </ng-container>
     </div>
 
+    <!-- TODO there might be cases where parentElement = clause but bpDataService.processMetadata is null e.g. when this component is inside a document clause-->
+    <!-- we should pass parameters like process status as input to such components -->
     <value-view class="row"
                 [presentationMode]="(parentElement == 'clause' || bpDataService.processMetadata.processStatus == 'Completed') ? 'singlevalue' :'edit'"
                 [propName]="'Information Response Note'"

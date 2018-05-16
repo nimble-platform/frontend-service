@@ -28,6 +28,7 @@ import "file-saver";
 export class ItemInformationRequestComponent {
     @Input() itemInformationRequest: ItemInformationRequest;
     @Input() itemInformationResponse: ItemInformationResponse;
+    @Input() presentationMode: string;
     @Input() parentElement: string;
 
     callStatus: CallStatus = new CallStatus();

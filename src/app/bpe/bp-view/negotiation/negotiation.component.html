@@ -35,8 +35,7 @@
                            [requestForQuotation]="bpDataService.requestForQuotation">
     </request-for-quotation>
     <quotation *ngIf="selectedTab == 'Quotation Details'"
-               [quotation]="bpDataService.quotation"
-               (newNegotiationInitialized)="selectedTab = 'Request for Quotation Details'">
+               [quotation]="bpDataService.quotation">
     </quotation>
     <businessProcess-options    *ngIf="selectedTab == 'Quotation Details' && bpDataService.processMetadata && bpDataService.processMetadata.processStatus == 'Completed'"
                                 (selectedTabChanged)="selectedTab = 'Request for Quotation Details'"

@@ -7,7 +7,9 @@
 
 </ng-container>
 <ng-container *ngIf="clause.type == 'NEGOTIATION' && clauseDocument != null">
-    <quotation [quotation]="clauseDocument"></quotation>
+    <quotation [quotation]="clauseDocument"
+               [parentElement]="'clause'"
+               [presentationMode]="'singlevalue'"></quotation>
 </ng-container>
 <call-status [callStatus]="clauseDocumentRetrievalStatus"
              [large]="true">

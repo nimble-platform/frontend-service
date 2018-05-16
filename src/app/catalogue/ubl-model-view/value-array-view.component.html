@@ -8,7 +8,7 @@
                [ngClass]="{'offset-3' : i > 0} "
                readonly>
     </div>
-    <ng-container *ngIf="values.length == 0">
+    <ng-container *ngIf="!values || values.length == 0">
         <div class="input-group form-group">
             <label class="col-3 control-label">{{propName}}</label>
             <input type="text" class="form-control" readonly>
