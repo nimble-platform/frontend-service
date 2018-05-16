@@ -17,14 +17,13 @@ export class DocumentClauseComponent extends ClauseComponent implements OnInit {
 
     ngOnInit(): void {
         if (this.clauseDocument == null) {
-            console.log("getting doc");
-            let documentClause: DocumentClause = this.clause as DocumentClause;
             this.clauseDocumentRetrievalStatus.submit();
+            let documentClause: DocumentClause = this.clause as DocumentClause;
             this.bpeService.getDocumentJsonContent(documentClause.clauseDocumentRef.id).then(result => {
                 this.clauseDocumentRetrievalStatus.callback("", true);
                 this.clauseDocument = result;
             }).catch(error => {
-                this.clauseDocumentRetrievalStatus.error("Failed to retrieve product details");
+                this.clauseDocumentRetrievalStatus.error("Failed to retrieve clause document details");
             });
         }
     }

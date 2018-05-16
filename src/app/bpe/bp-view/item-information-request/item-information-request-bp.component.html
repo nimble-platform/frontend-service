@@ -28,6 +28,7 @@
     </bp-product-details>
     <item-information-request *ngIf="selectedTab === 'Item Information Request Details'"
                               [itemInformationRequest]="bpDataService.itemInformationRequest"
-                              [itemInformationResponse]="bpDataService.itemInformationResponse">
+                              [itemInformationResponse]="bpDataService.itemInformationResponse"
+                              [parentElement]="'business_process'">
     </item-information-request>
 </div>

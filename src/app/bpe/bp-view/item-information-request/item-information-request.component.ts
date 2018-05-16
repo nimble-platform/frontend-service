@@ -1,10 +1,8 @@
-import {Component, Input, OnInit} from "@angular/core";
-import {CatalogueLine} from "../../../catalogue/model/publish/catalogue-line";
+import {Component, Input} from "@angular/core";
 import {BPDataService} from "../bp-data-service";
 import {BPEService} from "../../bpe.service";
 import {UBLModelUtils} from "../../../catalogue/model/ubl-model-utils";
 import {CookieService} from "ng2-cookies";
-import * as myGlobals from '../../../globals';
 import {CustomerParty} from "../../../catalogue/model/publish/customer-party";
 import {SupplierParty} from "../../../catalogue/model/publish/supplier-party";
 import {ProcessVariables} from "../../model/process-variables";
@@ -12,14 +10,13 @@ import {ModelUtils} from "../../model/model-utils";
 import {ProcessInstanceInputMessage} from "../../model/process-instance-input-message";
 import {UserService} from "../../../user-mgmt/user.service";
 import {CallStatus} from "../../../common/call-status";
-import {Order} from "../../../catalogue/model/publish/order";
 import {Router} from "@angular/router";
 import {ItemInformationResponse} from "../../../catalogue/model/publish/item-information-response";
 import {ItemInformationRequest} from "../../../catalogue/model/publish/item-information-request";
 import {BinaryObject} from "../../../catalogue/model/publish/binary-object";
 import {DocumentReference} from "../../../catalogue/model/publish/document-reference";
 import {Attachment} from "../../../catalogue/model/publish/attachment";
-import 'file-saver';
+import "file-saver";
 /**
  * Created by suat on 19-Nov-17.
  */
@@ -31,6 +28,7 @@ import 'file-saver';
 export class ItemInformationRequestComponent {
     @Input() itemInformationRequest: ItemInformationRequest;
     @Input() itemInformationResponse: ItemInformationResponse;
+    @Input() parentElement: string;
 
     callStatus: CallStatus = new CallStatus();
     // check whether 'Request Information' button or 'Respond to Information Request' button is clicked or not

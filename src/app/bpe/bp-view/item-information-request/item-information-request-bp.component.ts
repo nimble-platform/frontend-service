@@ -1,5 +1,6 @@
 import {Component, Input, OnInit} from "@angular/core";
 import {BPDataService} from "../bp-data-service";
+import {Router} from "@angular/router";
 /**
  * Created by suat on 19-Nov-17.
  */
@@ -13,10 +14,15 @@ export class ItemInformationRequestBpComponent implements OnInit {
     selectedTab: string = "Item Information Request Details";
     tabs:string[] = [];
 
-    constructor(private bpDataService: BPDataService) {
+    constructor(private bpDataService: BPDataService,
+                private router: Router) {
     }
 
     ngOnInit() {
+        if(this.bpDataService.userRole == null) {
+            this.router.navigate(['dashboard']);
+        }
+
         if(this.bpDataService.itemInformationRequest == null) {
             // initiating a new business process from scratch
             this.bpDataService.initItemInformationRequest();

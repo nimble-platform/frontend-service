@@ -10,6 +10,7 @@ import {ProcessInstanceGroupResponse} from "./model/process-instance-group-respo
 import {ProcessInstanceGroupFilter} from "./model/process-instance-group-filter";
 import {CookieService} from "ng2-cookies";
 import {Contract} from "../catalogue/model/publish/contract";
+import {Clause} from "../catalogue/model/publish/clause";
 
 @Injectable()
 export class BPEService {
@@ -211,6 +212,16 @@ export class BPEService {
             .then(res => res.json())
             .catch(this.handleError);
 	}
+
+	getClauseDetails(clauseId:string): Promise<Clause> {
+		const url = `${this.url}/clauses/${clauseId}`;
+		return this.http
+            .get(url, {headers: this.headers})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+	}
+
 	private stringtifyArray(values: any[]): string {
 		let paramVal: string = '';
 		for (let value of values) {

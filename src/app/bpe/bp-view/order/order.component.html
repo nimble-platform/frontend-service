@@ -64,9 +64,11 @@
         </button>
     </div>
 
-    <contract [contract]="contract">
+    <ng-container *ngIf="order.contract">
+        <contract [contract]="order.contract[0]">
 
-    </contract>
+        </contract>
+    </ng-container>
 </ng-container>
 <call-status [callStatus]="callStatus"
              [large]="true">

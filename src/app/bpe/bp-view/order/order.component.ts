@@ -25,7 +25,7 @@ import {Contract} from "../../../catalogue/model/publish/contract";
 
 export class OrderComponent implements OnInit {
     @Input() order:Order;
-    contract:Contract = null;
+    contract: Contract;
 
     callStatus:CallStatus = new CallStatus();
     // check whether 'Send Order' button is clicked or not
@@ -40,9 +40,9 @@ export class OrderComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        if(this.bpDataService.precedingProcessId != null) {
+        if(this.order.contract == null && this.bpDataService.precedingProcessId != null) {
             this.bpeService.constructContractForProcess(this.bpDataService.precedingProcessId).then(contract => {
-                this.contract = contract
+                this.order.contract = [contract];
             });
         }
     }
@@ -65,17 +65,16 @@ export class OrderComponent implements OnInit {
 
             this.userService.getParty(sellerId).then(sellerParty => {
                 order.sellerSupplierParty = new SupplierParty(sellerParty);
-                order.contract = [this.contract];
 
                 let vars:ProcessVariables = ModelUtils.createProcessVariables("Order", buyerId, sellerId, order, this.bpDataService);
                 let piim:ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
 
                 this.bpeService.startBusinessProcess(piim)
                     .then(res => {
-                        this.callStatus.callback("Order placed", true);
-                        this.router.navigate(['dashboard']);
-                    })
-                    .catch(error => {
+                            this.callStatus.callback("Order placed", true);
+                            this.router.navigate(['dashboard']);
+
+                    }).catch(error => {
                         this.submitted = false;
                         this.callStatus.error("Failed to send Order");
                     });
