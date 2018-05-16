@@ -4,7 +4,8 @@
     </item-information-request>
 </ng-container>
 <ng-container *ngIf="clause.type == 'PPAP'">
-
+    <ppap-clause [ppapResponse]="clauseDocument">
+    </ppap-clause>
 </ng-container>
 <ng-container *ngIf="clause.type == 'NEGOTIATION' && clauseDocument != null">
     <quotation [quotation]="clauseDocument"

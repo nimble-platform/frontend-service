@@ -1,0 +1,28 @@
+<ng-container *ngIf="ppapResponse">
+    <div class="row space-before">
+        <div class="col-12">
+            <div *ngIf="ppapResponse.requestedDocument && ppapResponse.requestedDocument.length > 0">
+                <table class="table table-striped table-bordered">
+                    <tr>
+                        <th>Document</th>
+                    </tr>
+                    <tr *ngFor="let document of ppapResponse.requestedDocument">
+                        <td class="d-flex">{{document.documentType}}
+                            <button class="btn btn-success ml-auto"
+                                    (click)="downloadFile(document)">Download
+                            </button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <value-view class="row"
+                [presentationMode]="'view'"
+                [propName]="'Note'"
+                [(value)]="ppapResponse.note">
+    </value-view>
+</ng-container>

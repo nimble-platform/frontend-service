@@ -40,6 +40,7 @@ import {ContractComponent} from "./bp-view/contract/contract.component";
 import {ClauseComponent} from "./bp-view/contract/clause.component";
 import {DataMonitoringClauseComponent} from "./bp-view/contract/data-monitoring-clause.component";
 import {DocumentClauseComponent} from "./bp-view/contract/document-clause.component";
+import {PpapClauseComponent} from "./bp-view/contract/ppap-clause.component";
 //import { BPEService } from './bpe.service';
 //import { BPService } from './bp.service';
 //import { BPDataService } from "./bp-view/bp-data-service";
@@ -84,7 +85,8 @@ import {DocumentClauseComponent} from "./bp-view/contract/document-clause.compon
 		ContractComponent,
 		ClauseComponent,
 		DataMonitoringClauseComponent,
-		DocumentClauseComponent
+		DocumentClauseComponent,
+		PpapClauseComponent
 	],
 	exports: [
 		TradingDetailsComponent,
@@ -111,7 +113,8 @@ import {DocumentClauseComponent} from "./bp-view/contract/document-clause.compon
 		ContractComponent,
 		ClauseComponent,
 		DataMonitoringClauseComponent,
-		DocumentClauseComponent
+		DocumentClauseComponent,
+		PpapClauseComponent
 	],
 	providers: [
 	]

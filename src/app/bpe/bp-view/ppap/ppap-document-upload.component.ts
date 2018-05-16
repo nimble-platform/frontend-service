@@ -31,8 +31,6 @@ export class PpapDocumentUploadComponent{
     }
 
     processid : any;
-    id : any;
-    catalogueId: any;
     ppap : Ppap;
     documents = [];
 
@@ -48,8 +46,6 @@ export class PpapDocumentUploadComponent{
     ngOnInit() {
         this.route.queryParams.subscribe(params =>{
             this.processid = params['pid'];
-            this.id = params['id'];
-            this.catalogueId = params['catalogueId'];
 
             this.bpeService.getProcessDetailsHistory(this.processid).then(task => {
                 this.ppap = ActivityVariableParser.getInitialDocument(task).value as Ppap;
