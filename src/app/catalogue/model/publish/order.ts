@@ -4,6 +4,7 @@ import {SupplierParty} from "../../../catalogue/model/publish/supplier-party";
 import {PaymentMeans} from "../../../catalogue/model/publish/payment-means";
 import {Address} from "./address";
 import {Period} from "./period";
+import {PaymentTerms} from './payment-terms';
 export class Order {
 	constructor(
 		public id:string = null,
@@ -13,6 +14,7 @@ export class Order {
 		public buyerCustomerParty:CustomerParty = null,
 		public sellerSupplierParty:SupplierParty = null,
 		public paymentMeans:PaymentMeans = new PaymentMeans(),
+		public paymentTerms:PaymentTerms = new PaymentTerms(),
 		public orderLine:OrderLine[] = null
 	) {  }
 }

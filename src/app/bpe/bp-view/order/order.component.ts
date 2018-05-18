@@ -22,7 +22,7 @@ import {Router} from "@angular/router";
     templateUrl: './order.component.html'
 })
 
-export class OrderComponent {
+export class OrderComponent implements OnInit{
     @Input() order:Order;
 
     callStatus:CallStatus = new CallStatus();
@@ -30,11 +30,56 @@ export class OrderComponent {
     submitted:boolean = false;
 
     presentationMode:string = this.bpDataService.processMetadata == null ? 'edit':'singlevalue';
+    // order.paymentTerms
+    paymentTerms: {term: string, checked: boolean}[] = [];
+
+    // necessary fields for A/B NET X payment term
+    // A: discount percentage, B:the number of days the invoice must be paid within to receive the discount,
+    // X: an invoice is due X days after being received
+    discount:any = null;
+    withinDays:any = null;
+    dueDays:any  = null;
+
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
                 private userService: UserService,
                 private cookieService: CookieService,
                 private router:Router) {
+    }
+
+    ngOnInit():void{
+        this.setTerms();
+        // check selected payment terms
+        if(this.order.paymentTerms.paymentConditions){
+
+            for(let i = 0;i<this.order.paymentTerms.paymentConditions.length;i++){
+                let selectedTerm = this.order.paymentTerms.paymentConditions[i];
+
+                if(selectedTerm.indexOf("NET") != -1){
+                    // A/B NET X
+                    if(selectedTerm.indexOf("/") != -1){
+                        this.discount = selectedTerm.substring(0,selectedTerm.indexOf("/"));
+                        this.withinDays = selectedTerm.substring(selectedTerm.indexOf("/")+1,selectedTerm.indexOf(" "));
+                        this.dueDays = selectedTerm.substring(selectedTerm.indexOf("T")+2);
+                        this.paymentTerms[6].checked = true;
+                    }
+                    // NET X
+                    else{
+                        this.paymentTerms[1].term = selectedTerm.substring(4);
+                        this.paymentTerms[1].checked = true;
+                    }
+                }
+                // X MFI
+                else if(selectedTerm.indexOf("MFI") != -1){
+                    this.paymentTerms[5].term = selectedTerm.substring(0,selectedTerm.indexOf("MFI")-1);
+                    this.paymentTerms[5].checked = true;
+                }
+                else{
+                    let term = this.paymentTerms.find(o => o.term === selectedTerm);
+                    term.checked = true;
+                }
+            }
+        }
     }
 
     sendOrder() {
@@ -44,6 +89,31 @@ export class OrderComponent {
 
         // final check on the order
         order.orderLine[0].lineItem.item = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;
+
+        let selectedPaymentTerms: string[] = [];
+        for(let i = 0; i< this.paymentTerms.length ; i=i+1)
+        {
+            if(this.paymentTerms[i].checked)
+            {
+                if(i == 1){
+                    selectedPaymentTerms.push("NET " + this.paymentTerms[i].term);
+                }
+                else if(i == 5){
+                    selectedPaymentTerms.push(this.paymentTerms[i].term + " MFI");
+                }
+                else if(i == 6){
+                    selectedPaymentTerms.push(this.discount + "/" + this.withinDays + " NET "+ this.dueDays);
+                }
+                else{
+                    selectedPaymentTerms.push(this.paymentTerms[i].term);
+                }
+
+            }
+        }
+        // set payment terms
+        order.paymentTerms.paymentConditions = selectedPaymentTerms;
+
+
         UBLModelUtils.removeHjidFieldsFromObject(order);
 
         //first initialize the seller and buyer parties.
@@ -69,5 +139,34 @@ export class OrderComponent {
                     });
             });
         });
+    }
+
+    setTerms(){
+        this.paymentTerms = [
+            {term:'PIA',checked:false},{term:null,checked:false},{term:'EOM',checked:false},{term:'CND',checked:false},
+            {term:'CBS',checked:false},{term:null,checked:false},{term:null,checked:false},
+            {term:'COD',checked:false},{term:'CWO',checked:false},{term:'CIA',checked:false}
+        ];
+    }
+
+    disableCheckBox(termNumber){
+        // NET X
+        if(termNumber == 1){
+            if(this.paymentTerms[1].term == null){
+                this.paymentTerms[1].checked = false;
+            }
+        }
+        // X MFI
+        else if(termNumber == 5){
+            if(this.paymentTerms[5].term == null){
+                this.paymentTerms[5].checked = false;
+            }
+        }
+        // A/B NET X
+        else if(termNumber == 6){
+            if(this.discount == null || this.withinDays == null || this.dueDays == null){
+                this.paymentTerms[6].checked = false;
+            }
+        }
     }
 }
