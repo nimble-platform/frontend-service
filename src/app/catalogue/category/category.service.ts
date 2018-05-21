@@ -108,6 +108,17 @@ export class CategoryService {
             .catch(this.handleError);
     }
 
+    getParentCategories(category: Category): Promise<Category>{
+        const url = `${this.baseUrl}/` + category.taxonomyId + "/" + encodeURIComponent(category.id)+"/tree";
+        return this.http
+            .get(url, {headers: this.headers})
+            .toPromise()
+            .then(res => {
+                return res.json() as Category;
+            })
+            .catch(this.handleError);
+    }
+
     addSelectedCategory(category: Category): void {
         // custom categories
         if(category != null && category.taxonomyId == 'Custom'){

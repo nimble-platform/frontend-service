@@ -11,6 +11,7 @@ import {CatalogueService} from "../catalogue.service";
 import {PublishService} from "../publish-and-aip.service";
 import {ProductPublishComponent} from "../product-publish.component";
 import {UBLModelUtils} from "../model/ubl-model-utils";
+import {CallStatus} from '../../common/call-status';
 
 @Component({
     selector: 'category-search',
@@ -38,6 +39,18 @@ export class CategorySearchComponent implements OnInit {
     categoryKeyword: string;
     // custom category name
     customCategory: string;
+
+    treeView = false;
+    parentCategories = null;
+
+    selectedCategory = null;
+    selectedCategoryLevel1 = null;
+    selectedCategoryLevel2 = null;
+    selectedCategoryLevel3 = null;
+    selectedCategoryLevel4 = null;
+
+    showOtherProperties = null;
+    callStatus: CallStatus = new CallStatus();
 
     constructor(private router: Router,
                 private route: ActivatedRoute,
@@ -89,7 +102,7 @@ export class CategorySearchComponent implements OnInit {
     }
 
     canDeactivate():boolean{
-        //
+
         this.inPublish = false;
         if(this.pageRef == "publish" && this.isReturnPublish == false){
             if(!confirm("You will lose any changes you made, are you sure you want to quit ?")){
@@ -100,6 +113,7 @@ export class CategorySearchComponent implements OnInit {
     }
 
     onSearchCategory(): void {
+        this.treeView = false;
         this.router.navigate(['/catalogue/categorysearch'], {queryParams: {pg: this.publishingGranularity, pageRef: this.pageRef, cat: this.categoryKeyword}});
     }
 
@@ -121,6 +135,12 @@ export class CategorySearchComponent implements OnInit {
     }
 
     private selectCategory(category: Category): void {
+        if(this.selectedCategory && category && this.selectedCategory.id == category.id){
+            this.categoryService.addSelectedCategory(category);
+            this.navigateToPublishingPage();
+            return;
+        }
+
         this.callback = false;
         this.submitted = true;
         this.error_detc = false;
@@ -157,5 +177,58 @@ export class CategorySearchComponent implements OnInit {
         }).catch(() => {
             this.error_detc = true;
         });
+    }
+
+    getCategoryTree(category){
+        this.selectedCategory = null;
+        this.treeView = true;
+        this.callStatus.submit();
+        this.categoryService.getParentCategories(category).then(categories => {
+
+            this.categoryService.getCategory(category)
+                .then(category => {
+                    this.selectedCategory = category;
+
+                    this.parentCategories = categories; // parents categories
+
+                    // set selectedCategoryLevels
+                    if(this.parentCategories.parents[0]){
+                        this.selectedCategoryLevel1 = this.parentCategories.parents[0].code;
+                    }
+                    if(this.parentCategories.parents[1]){
+                        this.selectedCategoryLevel2 = this.parentCategories.parents[1].code;
+                    }
+                    if(this.parentCategories.parents[2]){
+                        this.selectedCategoryLevel3 = this.parentCategories.parents[2].code;
+                    }
+                    if(this.parentCategories.parents[3]){
+                        this.selectedCategoryLevel4 = this.parentCategories.parents[3].code;
+                    }
+
+                    this.callStatus.callback( null);
+                }).catch( err => {
+                    this.callStatus.error(null)
+                }
+            );
+
+        })
+            .catch(res=>
+                this.callStatus.error(null)
+            );
+    }
+
+    getCategoryDetails(category){
+        this.selectedCategory = null;
+        this.callStatus.submit();
+
+        this.showOtherProperties = false;
+        this.categoryService.getCategory(category)
+            .then(category => {
+                this.callStatus.callback( "Retrieved details of the category",true);
+                this.selectedCategory = category;
+            }).catch( err => {
+            this.callStatus.error("Failed to retrieved details of the category")
+            }
+        );
     }
 }
