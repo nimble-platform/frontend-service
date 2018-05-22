@@ -94,6 +94,39 @@ export class ActivityVariableParser {
         }
     }
 
+    static getBuyerId(initialDocument:any){
+        let processType: string = initialDocument.processDefinitionKey;
+        if (processType == "Order") {
+            let order: Order = initialDocument.value as Order;
+            return order.buyerCustomerParty.party.id;
+
+        } else if(processType == "Ppap"){
+            let ppap: Ppap = initialDocument.value as Ppap;
+            return ppap.buyerCustomerParty.party.id;
+        } else if (processType == "Negotiation") {
+            let rfq: RequestForQuotation = initialDocument.value as RequestForQuotation;
+            return rfq.buyerCustomerParty.party.id;
+
+        } else if (processType == "Fulfilment") {
+            let despatchAdvice: DespatchAdvice = initialDocument.value as DespatchAdvice;
+            return despatchAdvice.deliveryCustomerParty.party.id;
+
+        } else if(processType == "Transport_Execution_Plan") {
+            let tepr: TransportExecutionPlanRequest = initialDocument.value as TransportExecutionPlanRequest;
+            return tepr.transportUserParty.id;
+
+        } else if(processType == 'Item_Information_Request') {
+            let itemInformationRequest: ItemInformationRequest = initialDocument.value as ItemInformationRequest;
+            return itemInformationRequest.buyerCustomerParty.party.id;
+        }
+    }
+
+    static getUserRole(activityVariables: any,partyId:any):string{
+        let initialDoc: any = ActivityVariableParser.getInitialDocument(activityVariables);
+        let buyerId:any = ActivityVariableParser.getBuyerId(initialDoc);
+        return buyerId == partyId ? 'buyer' : 'seller';
+    }
+
     static getProductFromProcessData(initialDocument: any): Item {
         let processType: string = initialDocument.processDefinitionKey;
         if (processType == "Order") {

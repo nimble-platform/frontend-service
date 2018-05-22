@@ -1,13 +1,29 @@
 <div class="d-flex justify-content-end mb-2">
     <h2 class="mr-auto">My Catalogue</h2>
-    <call-status [callStatus]="deleteCatalogueStatus"
+    <call-status [callStatus]="callStatus"
         class="d-flex">
-
     </call-status>
-    <button *ngIf="catalogue && catalogue.catalogueLine.length > 0"
-            class="btn btn-danger ml-3"
-            (click)="onDeleteCatalogue()">Delete Catalogue
-    </button>
+    <ul class="nav navbar-nav" *ngIf="catalogue && catalogue.catalogueLine.length > 0">
+        <li ngbDropdown class="nav-item dropdown">
+            <button class="navbar-toggler bordered" type="button" aria-controls="navbarNavAltMarkup" ngbDropdownToggle>
+                <span class="fa fa-bars"></span>
+            </button>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuUser">
+                <input #imagePackage type="file" (change)="uploadImagePackage($event)"
+                       accept="application/zip"
+                       style="display: none">
+                <button class="dropdown-item" (click)="imagePackage.click()">
+                    Upload Image Package
+                </button>
+                <button class="dropdown-item" (click)="navigateToThePublishPage()">
+                    Publish New Product/Service
+                </button>
+                <button class="dropdown-item" (click)="onDeleteCatalogue()">
+                    Delete Catalogue
+                </button>
+            </div>
+        </li>
+    </ul>
 </div>
 
 

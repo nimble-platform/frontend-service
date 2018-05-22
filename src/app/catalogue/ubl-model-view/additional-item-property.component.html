@@ -114,7 +114,7 @@
            (change)="additionalItemProperty.value[0] == 'true ' ? additionalItemProperty.value[0] = 'false' : additionalItemProperty.value[0] = 'true'"
            [disabled]="presentationMode != 'edit'">
 
-    <span *ngIf="presentationMode == 'edit'"><button class="btn btn-xs btn-danger"
+    <span *ngIf="presentationMode == 'edit' && customProperty"><button class="btn btn-xs btn-danger"
                                                      (click)="deleteCustomProperty(additionalItemProperty.name); $event.stopPropagation()"
     >&times;</button></span>
 </div>
