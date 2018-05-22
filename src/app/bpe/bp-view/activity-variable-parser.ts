@@ -119,6 +119,12 @@ export class ActivityVariableParser {
         }
     }
 
+    static getUserRole(activityVariables: any,partyId:any):string{
+        let initialDoc: any = ActivityVariableParser.getInitialDocument(activityVariables);
+        let buyerId:any = ActivityVariableParser.getBuyerId(initialDoc);
+        return buyerId == partyId ? 'buyer' : 'seller';
+    }
+
     static getProductFromProcessData(initialDocument: any): Item {
         let processType: string = initialDocument.processDefinitionKey;
         if (processType == "Order") {
