@@ -237,7 +237,7 @@ export class UBLModelUtils {
 
         let documentReference:DocumentReference = new DocumentReference(rfq.id);
 
-        let quotation = new Quotation(this.generateUUID(), [""], new Code(), new Code(), 1, rfq.dataMonitoringServiceIndicator, documentReference, customerParty, supplierParty, [quotationLine]);
+        let quotation = new Quotation(this.generateUUID(), [""], new Code(), new Code(), 1, false, documentReference, customerParty, supplierParty, [quotationLine]);
         return quotation;
     }
 

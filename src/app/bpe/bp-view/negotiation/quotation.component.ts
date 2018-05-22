@@ -7,6 +7,7 @@ import {ModelUtils} from "../../model/model-utils";
 import {CallStatus} from "../../../common/call-status";
 import {BPEService} from "../../bpe.service";
 import {Router} from "@angular/router";
+import {RequestForQuotation} from "../../../catalogue/model/publish/request-for-quotation";
 
 @Component({
     selector: 'quotation',
@@ -16,6 +17,7 @@ import {Router} from "@angular/router";
 export class QuotationComponent implements OnInit {
 
     @Input() quotation: Quotation;
+    @Input() requestForQuotation: RequestForQuotation;
     @Input() presentationMode: string;
     @Input() parentElement: string;
 

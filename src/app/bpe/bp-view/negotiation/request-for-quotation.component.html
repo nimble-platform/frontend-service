@@ -3,6 +3,19 @@
                      [presentationMode]="bpDataService.processMetadata == null ? 'edit' : 'singlevalue'">
     </trading-details>
 
+    <div *ngIf="bpDataService.getCatalogueLine().goodsItem.item.transportationServiceDetails == null"
+         class="well">
+
+        <h5 class="mb-3">Data Monitoring Service</h5>
+
+        <boolean-view [presentationMode]="bpDataService.processMetadata == null ? 'edit' : 'singlevalue'"
+                      [propName]="'Service Demand Indicator'"
+                      [definition]="'Data monitoring service for the production process of the ordered product'"
+                      [(value)]="requestForQuotation.dataMonitoringRequested"
+                      (valueChanged)="requestForQuotation.dataMonitoringRequested = $event">
+        </boolean-view>
+    </div>
+
     <!-- negotiation parameters for transportation services -->
     <ng-container *ngIf="bpDataService.getCatalogueLine().goodsItem.item.transportationServiceDetails != null">
         <div class="well">

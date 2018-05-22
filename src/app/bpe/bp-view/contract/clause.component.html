@@ -10,7 +10,7 @@
 <ng-container *ngIf="visible">
     <hr>
     <ng-container *ngIf="clause.type == 'DATA_MONITORING'">
-        <data-monitoring-clause>
+        <data-monitoring-clause [clause]="clause">
 
         </data-monitoring-clause>
     </ng-container>

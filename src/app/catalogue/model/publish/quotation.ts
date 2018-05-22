@@ -14,7 +14,7 @@ export class Quotation {
         public documentStatusCode:Code,
         public documentStatusReasonCode:Code,
         public lineCountNumeric: number,
-        public dataMonitoringServiceIndicator: boolean,
+        public dataMonitoringPromised: boolean,
         public requestForQuotationDocumentReference:DocumentReference,
         public buyerCustomerParty:CustomerParty,
         public sellerSupplierParty:SupplierParty,

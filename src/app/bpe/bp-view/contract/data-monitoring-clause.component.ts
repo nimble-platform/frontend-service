@@ -4,6 +4,6 @@ import {ClauseComponent} from "./clause.component";
     selector: 'data-monitoring-clause',
     templateUrl: './data-monitoring-clause.component.html'
 })
-export class DataMonitoringClauseComponent {
+export class DataMonitoringClauseComponent extends ClauseComponent {
 
 }

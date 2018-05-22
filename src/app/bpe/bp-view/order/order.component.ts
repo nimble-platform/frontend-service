@@ -15,6 +15,7 @@ import {CallStatus} from "../../../common/call-status";
 import {Order} from "../../../catalogue/model/publish/order";
 import {Router} from "@angular/router";
 import {Contract} from "../../../catalogue/model/publish/contract";
+import {DataMonitoringClause} from "../../../catalogue/model/publish/data-monitoring-clause";
 /**
  * Created by suat on 20-Sep-17.
  */
@@ -32,6 +33,8 @@ export class OrderComponent implements OnInit {
     submitted:boolean = false;
 
     presentationMode:string = this.bpDataService.processMetadata == null ? 'edit':'singlevalue';
+    dmsBtnClicked: boolean = false;
+
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
                 private userService: UserService,
@@ -40,12 +43,29 @@ export class OrderComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        // null check is for checking whether a new order is initialized
+        // preceding process id check is for checking whether there is any preceding process before the order
         if(this.order.contract == null && this.bpDataService.precedingProcessId != null) {
             this.bpeService.constructContractForProcess(this.bpDataService.precedingProcessId).then(contract => {
                 this.order.contract = [contract];
             });
         }
     }
+
+    // addDataMonitoringClause(): void {
+    //     if(this.order.contract == null) {
+    //         this.order.contract = [new Contract()];
+    //     }
+    //
+    //     let dmClause: DataMonitoringClause = new DataMonitoringClause();
+    //     dmClause.id = UBLModelUtils.generateUUID();
+    //     dmClause.type = 'DATA_MONITORING';
+    //     this.order.contract[0].clause.push(dmClause);
+    // }
+    //
+    // removeDataMonitoringClause(): void {
+    //     this.order.contract[0].clause.pop();
+    // }
 
     sendOrder() {
         this.submitted = true;

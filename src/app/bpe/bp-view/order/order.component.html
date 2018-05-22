@@ -50,6 +50,31 @@
                 [(value)]="order.paymentMeans.payeeFinancialAccount.id">
     </value-view>
 
+    <!--<ng-container *ngIf="bpDataService.userRole == 'buyer' && bpDataService.processMetadata == null">-->
+        <!--<hr>-->
+
+        <!--<div class=" d-flex">-->
+            <!--<label class="col-3">-->
+                <!--Data Monitoring Service-->
+                <!--<span class="label label-default" title="'Data monitoring service for the production process of the ordered product'">-->
+                <!--&#9432;-->
+                <!--</span>-->
+            <!--</label>-->
+            <!--<button type="button"-->
+                    <!--class="col btn mr-2"-->
+                    <!--[ngClass]="{'btn-warning active': !dmsBtnClicked, 'alert-warning': dmsBtnClicked}"-->
+                    <!--(click)="dmsBtnClicked = true; addDataMonitoringClause()"-->
+                    <!--[disabled]="dmsBtnClicked">-->
+                <!--<span *ngIf="!dmsBtnClicked">Demand data monitoring service</span>-->
+                <!--<span *ngIf="dmsBtnClicked">Data monitoring clause has been added to the order contract</span>-->
+            <!--</button>-->
+            <!--<button *ngIf="dmsBtnClicked"-->
+                    <!--class="btn btn-xs btn-danger alert-danger"-->
+                    <!--(click)="dmsBtnClicked = false; removeDataMonitoringClause()">×-->
+            <!--</button>-->
+        <!--</div>-->
+    <!--</ng-container>-->
+
     <hr>
 
     <value-view [presentationMode]="presentationMode"
@@ -64,7 +89,7 @@
         </button>
     </div>
 
-    <ng-container *ngIf="order.contract">
+    <ng-container *ngIf="order.contract && order.contract[0]?.clause.length > 0">
         <contract [contract]="order.contract[0]">
 
         </contract>
