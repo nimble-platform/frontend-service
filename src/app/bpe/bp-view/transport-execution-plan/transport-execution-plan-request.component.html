@@ -38,7 +38,7 @@
         <ng-container *ngIf="bpDataService.processMetadata == null">
             <div class="input-group space-after">
                 <label class="col-3">Service Start Date</label>
-                <input class="form-control" placeholder="YYYY-MM-DD" style="height: 60px;" (dateSelect)="transportExecutionPlanRequest.serviceStartTimePeriod.startDate = getDate('Start')"
+                <input class="form-control" placeholder="YYYY-MM-DD" (dateSelect)="transportExecutionPlanRequest.serviceStartTimePeriod.startDate = getDate('Start')"
                        name="dp" [(ngModel)]="startDate" ngbDatepicker #d="ngbDatepicker" readonly>
                 <div class="input-group-append">
                     <button class="btn btn-outline-secondary" (click)="d.toggle()" type="button">
@@ -57,7 +57,7 @@
         <ng-container *ngIf="bpDataService.processMetadata == null">
             <div class="input-group space-after">
                 <label class="col-3">Service End Date</label>
-                <input class="form-control" placeholder="YYYY-MM-DD" style="height: 60px;" (dateSelect)="transportExecutionPlanRequest.serviceEndTimePeriod.endDate = getDate('End')"
+                <input class="form-control" placeholder="YYYY-MM-DD" (dateSelect)="transportExecutionPlanRequest.serviceEndTimePeriod.endDate = getDate('End')"
                        name="dp" [(ngModel)]="endDate" ngbDatepicker #d="ngbDatepicker" readonly>
                 <div class="input-group-append">
                     <button class="btn btn-outline-secondary" (click)="d.toggle()" type="button">
