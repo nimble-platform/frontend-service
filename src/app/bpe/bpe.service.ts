@@ -23,6 +23,10 @@ export class BPEService {
 				private cookieService: CookieService) { }
 
 	startBusinessProcess(piim:ProcessInstanceInputMessage):Promise<ProcessInstance> {
+		const token = 'Bearer '+this.cookieService.get("bearer_token");
+		let headers = new Headers({'Accept': 'application/json','Authorization': token});
+		this.headers.keys().forEach(header => headers.append(header, this.headers.get(header)));
+
 		let url = `${this.url}/start`;
 		if(this.bpDataService.getRelatedGroupId() != null) {
 			url += '?gid=' + this.bpDataService.getRelatedGroupId();
@@ -37,7 +41,7 @@ export class BPEService {
 		}
 
 		return this.http
-            .post(url, JSON.stringify(piim), {headers: this.headers})
+            .post(url, JSON.stringify(piim), {headers: headers})
             .toPromise()
             .then(res => {
 				if (myGlobals.debug)
@@ -48,13 +52,17 @@ export class BPEService {
 	}
 
 	continueBusinessProcess(piim:ProcessInstanceInputMessage):Promise<ProcessInstance> {
+		const token = 'Bearer '+this.cookieService.get("bearer_token");
+		let headers = new Headers({'Accept': 'application/json','Authorization': token});
+		this.headers.keys().forEach(header => headers.append(header, this.headers.get(header)));
+
 		let url = `${this.url}/continue`;
 		if(this.bpDataService.getRelatedGroupId() != null) {
 			url += '?gid=' + this.bpDataService.getRelatedGroupId();
 		}
 
 		return this.http
-            .post(url, JSON.stringify(piim), {headers: this.headers})
+            .post(url, JSON.stringify(piim), {headers: headers})
             .toPromise()
             .then(res => {
 				if (myGlobals.debug)

@@ -3,7 +3,8 @@
                      [presentationMode]="presentationMode">
     </trading-details>
 
-    <div class="well">
+    <div *ngIf="bpDataService.getCatalogueLine().goodsItem.item.transportationServiceDetails == null"
+         class="well">
 
         <h5 class="mb-3">Data Monitoring Service</h5>
         <ng-container *ngIf="bpDataService.processMetadata?.processStatus == 'Started' && requestForQuotation?.dataMonitoringRequested">

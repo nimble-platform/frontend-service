@@ -26,14 +26,13 @@ import {DataMonitoringClause} from "../../../catalogue/model/publish/data-monito
 
 export class OrderComponent implements OnInit {
     @Input() order:Order;
-    contract: Contract;
 
     callStatus:CallStatus = new CallStatus();
     // check whether 'Send Order' button is clicked or not
     submitted:boolean = false;
 
     presentationMode:string = this.bpDataService.processMetadata == null ? 'edit':'singlevalue';
-    dmsBtnClicked: boolean = false;
+    // dmsBtnClicked: boolean = false;
     // order.paymentTerms
     paymentTerms: {term: string, checked: boolean}[] = [];
 

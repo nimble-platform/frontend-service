@@ -23,7 +23,7 @@ import {TransportExecutionPlanRequest} from "../../../catalogue/model/publish/tr
     templateUrl: './transport-execution-plan-request.component.html'
 })
 
-export class TransportExecutionPlanRequestComponent {
+export class TransportExecutionPlanRequestComponent implements OnInit {
     @Input() transportExecutionPlanRequest:TransportExecutionPlanRequest;
 
     callStatus:CallStatus = new CallStatus();
@@ -37,6 +37,16 @@ export class TransportExecutionPlanRequestComponent {
                 private userService: UserService,
                 private cookieService: CookieService,
                 private router:Router) {
+    }
+
+    ngOnInit(): void {
+        // TODO instead of checking the transport contract whether it is null or not,
+        // pass a query parameter for indicating initiation of a new process
+        if(this.transportExecutionPlanRequest.transportContract == null && this.bpDataService.precedingProcessId != null) {
+            this.bpeService.constructContractForProcess(this.bpDataService.precedingProcessId).then(contract => {
+                this.transportExecutionPlanRequest.transportContract = contract;
+            });
+        }
     }
 
     sendTransportExecutionPlanRequest() {

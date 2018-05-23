@@ -4,6 +4,7 @@ import {Period} from "./period";
 import {Consignment} from "./consignment";
 import {Code} from "./code";
 import {DocumentReference} from "./document-reference";
+import {Contract} from "./contract";
 /**
  * Created by suat on 10-Nov-17.
  */

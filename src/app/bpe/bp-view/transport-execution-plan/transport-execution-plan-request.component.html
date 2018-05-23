@@ -79,6 +79,13 @@
         </address-view>
     </div>
 
+    <ng-container *ngIf="transportExecutionPlanRequest.transportContract && transportExecutionPlanRequest.transportContract?.clause.length > 0">
+        <contract [contract]="transportExecutionPlanRequest.transportContract">
+
+        </contract>
+    </ng-container>
+
+
     <div class="d-flex justify-content-end">
         <button *ngIf="bpDataService.userRole == 'buyer' && bpDataService.processMetadata == null" [disabled]="submitted"
                 class="btn btn-success" (click)="sendTransportExecutionPlanRequest()">Use Service
