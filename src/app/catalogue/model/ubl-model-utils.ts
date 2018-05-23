@@ -148,7 +148,7 @@ export class UBLModelUtils {
         this.removeHjidFieldsFromObject(order.sellerSupplierParty);
         let customerParty:CustomerParty = order.buyerCustomerParty;
         let supplierParty:SupplierParty = order.sellerSupplierParty;
-        let orderResponseSimple:OrderResponseSimple = new OrderResponseSimple("", "", acceptedIndicator, orderReference, supplierParty, customerParty);
+        let orderResponseSimple:OrderResponseSimple = new OrderResponseSimple(this.generateUUID(), "", "", acceptedIndicator, orderReference, supplierParty, customerParty);
         return orderResponseSimple;
     }
 
