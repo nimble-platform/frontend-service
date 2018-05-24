@@ -222,6 +222,11 @@ ngb-pagination nav .pagination .page-item.active .page-link {
 	margin-top: -0.2rem;
 }
 
+.text-std, .text-std:focus, .text-std:hover {
+	color: #292b2c !important;
+	text-decoration: none !important;
+}
+
 /* ------------------- */
 
 /* CSS Loader */
