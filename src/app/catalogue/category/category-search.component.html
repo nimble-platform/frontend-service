@@ -186,7 +186,7 @@
     <button class="btn btn-warning mt-3" (click)="selectCategory(null)" i18n>Continue publishing without a
         category
     </button>
-    <button *ngIf="selectedCategory" class="btn btn-warning mt-3 space-left" (click)="selectCategory(selectedCategory)" i18n>Continue publishing with the selected
+    <button *ngIf="selectedCategory && !customCategoryPage" class="btn btn-warning mt-3 space-left" (click)="selectCategory(selectedCategory)" i18n>Continue publishing with the selected
         category
     </button>
 </div>
