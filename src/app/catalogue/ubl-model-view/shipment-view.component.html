@@ -13,7 +13,7 @@
     <ng-container *ngIf="presentationMode != 'view'">
         <div class="input-group space-after">
             <label class="col-3">Estimated Delivery Date</label>
-            <input class="form-control" placeholder="YYYY-MM-DD" style="height: 60px;" (dateSelect)="shipment.shipmentStage[0].estimatedDeliveryDate = getEstimatedDeliveryDate()"
+            <input class="form-control" placeholder="YYYY-MM-DD" (dateSelect)="shipment.shipmentStage[0].estimatedDeliveryDate = getEstimatedDeliveryDate()"
                    name="dp" [(ngModel)]="date" ngbDatepicker #d="ngbDatepicker" readonly>
             <div class="input-group-append">
                 <button class="btn btn-outline-secondary" (click)="d.toggle()" type="button">

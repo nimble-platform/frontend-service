@@ -60,7 +60,7 @@ export class ThreadSummaryComponent implements OnInit {
                         let vNote = ActivityVariableParser.getNoteFromProcessData(initialDoc);
                         let vStatusCode = processInstance.state;
                         let vProcessType = ActivityVariableParser.getProcessType(activityVariables);
-                        let vActionStatus = this.getActionStatus(vProcessType, response, this.processInstanceGroup.collaborationRole == constants.COLLABORATION_ROLE_BUYER ? true : false);
+                        let vActionStatus = this.getActionStatus(vProcessType, response, ActivityVariableParser.getUserRole(activityVariables,this.processInstanceGroup.partyID) == 'buyer' ? true : false);
                         let vBPStatus = this.getBPStatus(response);
                         let vStart_time = moment(lastActivity.startTime + "Z", 'YYYY-MM-DDTHH:mm:ssZ').format("YYYY-MM-DD HH:mm");
                         let vProduct = ActivityVariableParser.getProductFromProcessData(initialDoc);
