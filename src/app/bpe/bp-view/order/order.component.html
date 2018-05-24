@@ -178,25 +178,30 @@
         <!--</div>-->
     <!--</ng-container>-->
 
-    <hr>
+    <ng-container *ngIf="order.contract && order.contract[0]?.clause.length > 0">
+        <h5 class="mt-3 mb-3">Contract
+            <span class="label label-default" title="Contract contains clauses driven by the collaboration performed so far">
+                &#9432;
+            </span>
+        </h5>
+        <contract [contract]="order.contract[0]">
+        </contract>
+    </ng-container>
 
     <value-view [presentationMode]="presentationMode"
                 [propName]="'Order Note'"
                 [(value)]="order.note">
     </value-view>
 
-    <div class="d-flex justify-content-end">
-        <button *ngIf="bpDataService.userRole == 'buyer' && bpDataService.processMetadata == null"
-                [disabled]="submitted"
-                class="btn btn-success" (click)="sendOrder()">Send Order
-        </button>
-    </div>
-
-    <ng-container *ngIf="order.contract && order.contract[0]?.clause.length > 0">
-        <contract [contract]="order.contract[0]">
-
-        </contract>
+    <ng-container *ngIf="bpDataService.userRole == 'buyer' && bpDataService.processMetadata == null">
+        <hr>
+        <div class="d-flex justify-content-end">
+            <button [disabled]="submitted"
+                    class="btn btn-success" (click)="sendOrder()">Send Order
+            </button>
+        </div>
     </ng-container>
+
 </ng-container>
 <call-status [callStatus]="callStatus"
              [large]="true">

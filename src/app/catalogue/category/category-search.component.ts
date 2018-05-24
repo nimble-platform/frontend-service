@@ -43,7 +43,8 @@ export class CategorySearchComponent implements OnInit {
     treeView = false;
     parentCategories = null;
 
-    selectedCategory = null;
+    selectedCategory: Category = null;
+    selectedCategoryWithDetails: Category = null;
     selectedCategoriesWRTLevels = [];
 
     showOtherProperties = null;
@@ -111,7 +112,7 @@ export class CategorySearchComponent implements OnInit {
 
     onSearchCategory(): void {
         this.parentCategories = null;
-        this.selectedCategory=null;
+        this.selectedCategoryWithDetails=null;
         this.treeView = false;
         this.router.navigate(['/catalogue/categorysearch'], {queryParams: {pg: this.publishingGranularity, pageRef: this.pageRef, cat: this.categoryKeyword}});
     }
@@ -134,7 +135,7 @@ export class CategorySearchComponent implements OnInit {
     }
 
     private selectCategory(category: Category): void {
-        if(this.selectedCategory && category && this.selectedCategory.id == category.id){
+        if(this.selectedCategoryWithDetails && category && this.selectedCategoryWithDetails.id == category.id){
             this.categoryService.addSelectedCategory(category);
             this.navigateToPublishingPage();
             return;
@@ -179,14 +180,14 @@ export class CategorySearchComponent implements OnInit {
     }
 
     getCategoryTree(category){
-        this.selectedCategory = null;
+        this.selectedCategoryWithDetails = null;
         this.treeView = true;
         this.callStatus.submit();
         this.categoryService.getParentCategories(category).then(categories => {
 
             this.categoryService.getCategory(category)
                 .then(category => {
-                    this.selectedCategory = category;
+                    this.selectedCategoryWithDetails = category;
 
                     this.parentCategories = categories; // parents categories
                     this.selectedCategoriesWRTLevels = [];
@@ -207,14 +208,15 @@ export class CategorySearchComponent implements OnInit {
     }
 
     getCategoryDetails(category){
-        this.selectedCategory = null;
+        this.selectedCategory = category;
+        this.selectedCategoryWithDetails = null;
         this.callStatus.submit();
 
         this.showOtherProperties = false;
         this.categoryService.getCategory(category)
             .then(category => {
                 this.callStatus.callback( "Retrieved details of the category",true);
-                this.selectedCategory = category;
+                this.selectedCategoryWithDetails = category;
             }).catch( err => {
             this.callStatus.error("Failed to retrieved details of the category")
             }
