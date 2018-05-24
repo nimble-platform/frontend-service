@@ -33,11 +33,13 @@
         <li *ngFor="let category of categories"
             class="list-group-item p-3 row"
             style="cursor: pointer;"
-            (click)="getCategoryDetails(category)">
+            (click)="getCategoryDetails(category)"
+            [style.background-color]="selectedCategory && category.code == selectedCategory.code ? 'green' : 'white'"
+        >
             <div class="col-2">{{category.taxonomyId}}</div>
             <div class="col">{{category.preferredName}}</div>
     <!--        <img src="./assets/catalogue/add_button.png" (click)="selectCategory(category)"/> -->
-            <span class="fa fa-share-alt" aria-hidden="true" (click)="getCategoryTree(category)"></span>
+            <span *ngIf="category.taxonomyId == 'eClass'" class="fa fa-share-alt" aria-hidden="true" (click)="getCategoryTree(category)"></span>
         </li>
     </ul>
 </div>
@@ -69,48 +71,21 @@
     </div>
     <div *ngIf="parentCategories">
         <p class="space-before">
-            <ngb-alert *ngIf="parentCategories.parents.length == 4" type="info" (close)="treeView=false;selectedCategory=null">
-                {{parentCategories.parents[0].preferredName}} >> {{parentCategories.parents[1].preferredName}} >>
-                {{parentCategories.parents[2].preferredName}} >> {{parentCategories.parents[3].preferredName}}
-            </ngb-alert>
-            <ngb-alert *ngIf="parentCategories.parents.length == 3" type="info" (close)="treeView=false;selectedCategory=null">
-                {{parentCategories.parents[0].preferredName}} >> {{parentCategories.parents[1].preferredName}} >>
-                {{parentCategories.parents[2].preferredName}}
-            </ngb-alert>
-            <ngb-alert *ngIf="parentCategories.parents.length == 2" type="info" (close)="treeView=false;selectedCategory=null">
-                {{parentCategories.parents[0].preferredName}} >> {{parentCategories.parents[1].preferredName}}
-            </ngb-alert>
-            <ngb-alert *ngIf="parentCategories.parents.length == 1" type="info" (close)="treeView=false;selectedCategory=null">
-                {{parentCategories.parents[0].preferredName}}
+            <ngb-alert type="info" (close)="treeView=false;selectedCategory=null;parentCategories=null">
+                <span *ngFor="let parentCat of parentCategories.parents;let l=last">
+                    {{parentCat.preferredName}}
+                    <span *ngIf="!l">
+                         >>
+                    </span>
+                </span>
             </ngb-alert>
         </p>
         <div class="d-flex bordered" style="height: 400px">
-            <div class="col-3" style="overflow: hidden" onmouseover="this.style.overflow='auto'" onmouseout="this.style.overflow='hidden'">
-                <label *ngFor="let cat of parentCategories.categories[0]" (click)="getCategoryTree(cat)"
-                       [style.font-weight]="cat.code == selectedCategoryLevel1 ? 'bold' : 'normal'"
-                       [style.color]="cat.code == selectedCategoryLevel1 ? 'green' : 'black'"
-                       [style.text-decoration]="cat.code == selectedCategoryLevel1 ? 'underline' : 'none'"
-                       style="display: block;cursor: pointer">{{cat.preferredName}}</label>
-            </div>
-            <div class="col-3" style="overflow: hidden" onmouseover="this.style.overflow='auto'" onmouseout="this.style.overflow='hidden'">
-                <label *ngFor="let cat of parentCategories.categories[1]" (click)="getCategoryTree(cat)"
-                       [style.font-weight]="cat.code == selectedCategoryLevel2 ? 'bold' : 'normal'"
-                       [style.color]="cat.code == selectedCategoryLevel2 ? 'green' : 'black'"
-                       [style.text-decoration]="cat.code == selectedCategoryLevel2 ? 'underline' : 'none'"
-                       style="display: block;cursor: pointer">{{cat.preferredName}}</label>
-            </div>
-            <div class="col-3" style="overflow: hidden" onmouseover="this.style.overflow='auto'" onmouseout="this.style.overflow='hidden'">
-                <label *ngFor="let cat of parentCategories.categories[2]" (click)="getCategoryTree(cat)"
-                       [style.font-weight]="cat.code == selectedCategoryLevel3 ? 'bold' : 'normal'"
-                       [style.color]="cat.code == selectedCategoryLevel3 ? 'green' : 'black'"
-                       [style.text-decoration]="cat.code == selectedCategoryLevel3 ? 'underline' : 'none'"
-                       style="display: block;cursor: pointer">{{cat.preferredName}}</label>
-            </div>
-            <div class="col-3" style="overflow: hidden" onmouseover="this.style.overflow='auto'" onmouseout="this.style.overflow='hidden'">
-                <label *ngFor="let cat of parentCategories.categories[3]" (click)="getCategoryDetails(cat);selectedCategoryLevel4=cat.code"
-                       [style.font-weight]="cat.code == selectedCategoryLevel4 ? 'bold' : 'normal'"
-                       [style.color]="cat.code == selectedCategoryLevel4 ? 'green' : 'black'"
-                       [style.text-decoration]="cat.code == selectedCategoryLevel4 ? 'underline' : 'none'"
+            <div *ngFor="let categories of parentCategories.categories" class="col-3" style="overflow: hidden" onmouseover="this.style.overflow='auto'" onmouseout="this.style.overflow='hidden'">
+                <label *ngFor="let cat of categories" (click)="getCategoryTree(cat)"
+                       [style.font-weight]="selectedCategoriesWRTLevels.indexOf(cat.code)>-1 ? 'bold' : 'normal'"
+                       [style.color]="selectedCategoriesWRTLevels.indexOf(cat.code)>-1 ?'green' : 'black'"
+                       [style.text-decoration]="selectedCategoriesWRTLevels.indexOf(cat.code)>-1 ? 'underline' : 'none'"
                        style="display: block;cursor: pointer">{{cat.preferredName}}</label>
             </div>
         </div>
@@ -119,7 +94,8 @@
 
 <div *ngIf="!customCategoryPage && selectedCategory" class="bordered space-before">
     <div class="d-flex" *ngIf="selectedCategory.preferredName">
-        <label class="col-3"><b>Name:</b></label>{{selectedCategory.preferredName}}
+        <label class="col-3"><b>Name:</b></label><span>{{selectedCategory.preferredName}}</span>
+        <button class="btn btn-success ml-auto" (click)="selectCategory(selectedCategory)">Select</button>
     </div>
     <div *ngIf="selectedCategory.taxonomyId">
         <label class="col-3"><b>TaxonomyId:</b></label>{{selectedCategory.taxonomyId}}
@@ -184,9 +160,6 @@
 
 <div class="row col-12 justify-content-center">
     <button class="btn btn-warning mt-3" (click)="selectCategory(null)" i18n>Continue publishing without a
-        category
-    </button>
-    <button *ngIf="selectedCategory" class="btn btn-warning mt-3 space-left" (click)="selectCategory(selectedCategory)" i18n>Continue publishing with the selected
         category
     </button>
 </div>
