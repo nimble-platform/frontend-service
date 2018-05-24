@@ -44,10 +44,7 @@ export class CategorySearchComponent implements OnInit {
     parentCategories = null;
 
     selectedCategory = null;
-    selectedCategoryLevel1 = null;
-    selectedCategoryLevel2 = null;
-    selectedCategoryLevel3 = null;
-    selectedCategoryLevel4 = null;
+    selectedCategoriesWRTLevels = [];
 
     showOtherProperties = null;
     callStatus: CallStatus = new CallStatus();
@@ -113,6 +110,8 @@ export class CategorySearchComponent implements OnInit {
     }
 
     onSearchCategory(): void {
+        this.parentCategories = null;
+        this.selectedCategory=null;
         this.treeView = false;
         this.router.navigate(['/catalogue/categorysearch'], {queryParams: {pg: this.publishingGranularity, pageRef: this.pageRef, cat: this.categoryKeyword}});
     }
@@ -190,19 +189,9 @@ export class CategorySearchComponent implements OnInit {
                     this.selectedCategory = category;
 
                     this.parentCategories = categories; // parents categories
-
-                    // set selectedCategoryLevels
-                    if(this.parentCategories.parents[0]){
-                        this.selectedCategoryLevel1 = this.parentCategories.parents[0].code;
-                    }
-                    if(this.parentCategories.parents[1]){
-                        this.selectedCategoryLevel2 = this.parentCategories.parents[1].code;
-                    }
-                    if(this.parentCategories.parents[2]){
-                        this.selectedCategoryLevel3 = this.parentCategories.parents[2].code;
-                    }
-                    if(this.parentCategories.parents[3]){
-                        this.selectedCategoryLevel4 = this.parentCategories.parents[3].code;
+                    this.selectedCategoriesWRTLevels = [];
+                    for(let parent of this.parentCategories.parents){
+                        this.selectedCategoriesWRTLevels.push(parent.code);
                     }
 
                     this.callStatus.callback( null);
