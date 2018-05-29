@@ -29,10 +29,11 @@
         </quantity-view>
 
         <!-- Delivery Location -->
-        <address-view [presentationMode]="presentationMode"
-                      [propName]="'Delivery Location'"
-                      [address]="[order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address]">
-        </address-view>
+        <location-view  [propName]="'Delivery Location'"
+                        [processMetadataNull]="bpDataService.processMetadata == null"
+                        [presentationMode]="presentationMode"
+                        [deliveryAddress]="order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address">
+        </location-view>
     </div>
 
     <div class="well">

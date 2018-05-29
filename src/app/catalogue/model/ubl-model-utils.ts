@@ -369,7 +369,7 @@ export class UBLModelUtils {
     }
 
     public static createAddress():Address {
-        return new Address(null, this.createCountry());
+        return new Address(null,null,null,null, this.createCountry());
     }
 
     public static createCountry():Country {

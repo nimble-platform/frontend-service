@@ -67,16 +67,17 @@
             </div>
         </ng-container>
 
-
-        <address-view [presentationMode]="bpDataService.processMetadata == null ? 'edit' : 'singlevalue'"
-                      [propName]="'From Location'"
-                      [address]="[transportExecutionPlanRequest.fromLocation.address]">
-        </address-view>
-
-        <address-view [presentationMode]="bpDataService.processMetadata == null ? 'edit' : 'singlevalue'"
-                      [propName]="'To Location'"
-                      [address]="[transportExecutionPlanRequest.toLocation.address]">
-        </address-view>
+        <location-view [propName]="'From Location'"
+                       [presentationMode]="bpDataService.processMetadata == null ? 'edit' : 'singlevalue'"
+                       [processMetadataNull]="bpDataService.processMetadata == null"
+                       [useDefaultDeliveryLocation]="false"
+                       [deliveryAddress]="transportExecutionPlanRequest.fromLocation.address">
+        </location-view>
+        <location-view [propName]="'To Location'"
+                       [presentationMode]="bpDataService.processMetadata == null ? 'edit' : 'singlevalue'"
+                       [processMetadataNull]="bpDataService.processMetadata == null"
+                       [deliveryAddress]="transportExecutionPlanRequest.toLocation.address">
+        </location-view>
     </div>
 
     <ng-container *ngIf="transportExecutionPlanRequest.transportContract && transportExecutionPlanRequest.transportContract?.clause.length > 0">
