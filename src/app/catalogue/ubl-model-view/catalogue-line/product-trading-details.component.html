@@ -11,7 +11,7 @@
 <!-- Price Base Quantity -->
 <quantity-view [presentationMode]="presentationMode"
                [propName]="'Price Base Quantity'"
-               [definition]="'The price of a product at a legally set quantity'"
+               [definition]="'The price of a product at a legally set quantity.\nFor example,if you sell MDF board and charge €15,00 for 3 m2 of it, the base price will be €5,00 for 1 m2,i.e.,Quantity:5,Unit:m2.'"
                [quantity]="[catalogueLine.requiredItemLocationQuantity.price.baseQuantity]"
                [multiValue]="false"
                [parentForm]="parentForm">
@@ -61,6 +61,7 @@
 <!-- Estimated delivery period -->
 <quantity-view [presentationMode]="presentationMode"
                [propName]="'Estimated Delivery Period'"
+               [definition]="'The period estimated for delivery.It starts after the order confirmation.For example,Quantity:8,Unit:days'"
                [quantity]="[catalogueLine.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure]"
                [parentForm]="parentForm">
 </quantity-view>
@@ -70,6 +71,7 @@
     <address-view [presentationMode]="presentationMode"
                   [propName]="'Applicable Territory Address'"
                   [multiValue]="true"
+                  [definition]="'A reference to a territory (region, country, city, etc.) to which the product will apply'"
                   [address]="catalogueLine.requiredItemLocationQuantity.applicableTerritoryAddress">
     </address-view>
 </ng-container>
@@ -77,7 +79,7 @@
 <!-- Special terms -->
 <value-view [presentationMode]="presentationMode"
             [propName]="'Special Terms'"
-            [definition]="'A description of any terms or conditions relating to the delivery items'"
+            [definition]="'A description of any terms or conditions relating to the delivery items.For example,exceeding the delivery period entitles the buyer to terminate the agreement.'"
             [(value)]="catalogueLine.goodsItem.deliveryTerms.specialTerms">
 </value-view>
 
@@ -89,6 +91,7 @@
     <!-- Package quantity -->
     <quantity-view [presentationMode]="presentationMode"
                    [propName]="'Quantity'"
+                   [definition]="'The quantity of items contained in this package,e.g.,Quantity:30,Unit:KGM'"
                    [quantity]="[catalogueLine.goodsItem.containingPackage.quantity]"
                    [parentForm]="parentForm">
     </quantity-view>
@@ -96,6 +99,7 @@
     <!-- Packaging type -->
     <value-view [presentationMode]="presentationMode"
                 [propName]="'Packaging Type'"
+                [definition]="'Types of packing materials used,e.g.,crates or pallets'"
                 [(value)]="catalogueLine.goodsItem.containingPackage.packagingTypeCode.value">
     </value-view>
 </ng-container>
@@ -108,7 +112,7 @@
     <!-- Validity period -->
     <quantity-view [presentationMode]="presentationMode"
                    [propName]="'Validity Period'"
-                   [definition]="'A period during which this price is valid'"
+                   [definition]="'A period during which this price is valid,e.g.,Quantity:10,Unit:days'"
                    [quantity]="[catalogueLine.warrantyValidityPeriod.durationMeasure]"
                    [parentForm]="parentForm">
     </quantity-view>

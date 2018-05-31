@@ -35,6 +35,8 @@ export class PpapDocumentSelectComponent implements OnInit{
     documents: {text: String, select: boolean}[] = [];
     // check whether 'Send Request' button is clicked or not
     submitted:boolean = false;
+    // check whether the definition of PPAP is visible or not
+    showDetails = false;
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
                 private userService: UserService,

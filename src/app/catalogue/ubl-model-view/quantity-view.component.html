@@ -44,7 +44,8 @@
                 <label *ngIf="i == 0 && !editablePropName" class="col-3 control-label">{{propName}}
                     <span *ngIf="definition" class="label label-default" title="{{definition}}">
                     &#9432;
-                    </span></label>
+                    </span>
+                </label>
                 <input *ngIf="i == 0 && editablePropName"
                        class="form-control col-3 pr-3"
                        (blur)="onPropNameEditFocusOut($event)"
