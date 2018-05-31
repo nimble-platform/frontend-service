@@ -36,6 +36,7 @@ export class BusinessProcessOptions implements OnInit {
                 }
                 else{
                     this.followUpProcesses.push("Negotiation");
+                    this.followUpProcesses.push("Transport Execution Plan");
                 }
             }
         }
