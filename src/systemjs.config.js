@@ -20,7 +20,7 @@
 			'ng2-cookies': 'npm:ng2-cookies/cookie.js',
 			'file-saver': 'npm:file-saver',
 			'moment': 'npm:moment',
-			'gojs': 'npm:gojs/release/go-debug.js',
+			'd3': 'npm:d3/dist',
 		},
 		packages: {
 			app: {
@@ -43,6 +43,10 @@
 			'moment' : {
 				format: 'global',
 				main: 'moment.js',
+				defaultExtension: 'js'
+			},
+			'd3': {
+				main: 'd3.js',
 				defaultExtension: 'js'
 			}
 		}
