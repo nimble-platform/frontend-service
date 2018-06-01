@@ -1,6 +1,6 @@
 <ng-container *ngIf="quotation">
     <trading-details [lineItem]="quotation.quotationLine[0].lineItem"
-                     [processMetadataNull]="bpDataService.processMetadata == null"
+                     [fetchDefaultDeliveryAddress]="bpDataService.processMetadata == null && bpDataService.previousProcess == null"
                      [presentationMode]="presentationMode">
     </trading-details>
 

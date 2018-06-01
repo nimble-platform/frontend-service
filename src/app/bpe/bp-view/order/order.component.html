@@ -30,11 +30,11 @@
         </quantity-view>
 
         <!-- Delivery Location -->
-        <location-view  [propName]="'Delivery Location'"
-                        [processMetadataNull]="bpDataService.processMetadata == null"
+        <detailed-address-view  [propName]="'Delivery Location'"
                         [presentationMode]="presentationMode"
-                        [deliveryAddress]="order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address">
-        </location-view>
+                        [deliveryAddress]="order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address"
+                        [fetchDefaultDeliveryAddress]="bpDataService.processMetadata == null && bpDataService.previousProcess == null">
+        </detailed-address-view>
     </div>
 
     <div class="well">

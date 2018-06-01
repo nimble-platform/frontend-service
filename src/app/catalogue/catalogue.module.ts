@@ -29,7 +29,7 @@ import { TransportationServiceDetails } from "./ubl-model-view/catalogue-line/tr
 import { ShipmentViewComponent } from "./ubl-model-view/shipment-view.component";
 import {PublishDeactivateGuardService} from "./publish-deactivate-guard.service";
 import {CategoryDeactivateGuardService} from "./category/category-deactivate-guard.service";
-import {LocationViewComponent} from './ubl-model-view/location-view.component';
+import { DetailedAddressViewComponent } from './ubl-model-view/detailed-address-view.component';
 //import { CategoryService } from './category/category.service';
 //import { CatalogueService } from './catalogue.service';
 //import { PublishService } from './publish-and-aip.service';
@@ -66,7 +66,7 @@ import {LocationViewComponent} from './ubl-model-view/location-view.component';
 		ShipmentViewComponent,
 		PropertyBlockPipe,
 		ItemPropertyDataSourcePipe,
-        LocationViewComponent
+        DetailedAddressViewComponent
 	],
 	exports: [
 		CategorySearchComponent,
@@ -90,7 +90,7 @@ import {LocationViewComponent} from './ubl-model-view/location-view.component';
 		ShipmentViewComponent,
 		PropertyBlockPipe,
 		ItemPropertyDataSourcePipe,
-        LocationViewComponent
+        DetailedAddressViewComponent
 	],
 	providers: [
 	    PublishDeactivateGuardService,
