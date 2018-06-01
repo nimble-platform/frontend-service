@@ -15,6 +15,7 @@ export class AmountViewComponent extends ChildForm implements OnInit {
     @Input() propName: string;
     @Input() mandatory:boolean = false;
     @Input() amount: Amount[];
+    @Input() definition: string;
 
     // the validator below is used to enforce both values are populated in case
     // the amount element is optional and only one of the fields are filled in

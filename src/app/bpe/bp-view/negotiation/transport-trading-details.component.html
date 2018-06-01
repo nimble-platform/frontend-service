@@ -1,24 +1,13 @@
 <div class="well">
-    <h5 class="mb-3">Price / Requested Quantity</h5>
+    <h5 class="mb-3">Price</h5>
+
     <!-- Price Amount -->
     <amount-view [presentationMode]="presentationMode"
-                 [propName]="'Amount'"
+                 [propName]="'Price Amount'"
+                 [definition]="'The price of the transport service'"
                  [amount]="[lineItem.price.priceAmount]">
     </amount-view>
 
-    <!-- Price Base Quantity -->
-    <quantity-view [presentationMode]="presentationMode"
-                   [propName]="'Price Base Quantity'"
-                   [definition]="'The price of a product at a legally set quantity.\nFor example,if you sell MDF board and charge €15,00 for 3 m2 of it, the base price will be €5,00 for 1 m2,i.e.,Quantity:5,Unit:m2.'"
-                   [quantity]="[lineItem.price.baseQuantity]">
-    </quantity-view>
-
-    <!-- Requested quantity -->
-    <quantity-view *ngIf="lineItem.item.transportationServiceDetails == null"
-                   [propName]="'Requested Quantity'"
-                   [quantity]="[lineItem.quantity]"
-                   [presentationMode]="presentationMode">
-    </quantity-view>
 </div>
 
 <div class="well">
@@ -63,6 +52,13 @@
                    [quantity]="[lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure]">
     </quantity-view>
 
+    <!-- Start location -->
+    <location-view [propName]="'Origin Location'"
+                   [processMetadataNull]="processMetadataNull"
+                   [presentationMode]="presentationMode"
+                   [deliveryAddress]="lineItem.delivery[0].shipment.originAddress">
+    </location-view>
+
     <!-- Delivery Location -->
     <location-view [propName]="'Delivery Location'"
                    [processMetadataNull]="processMetadataNull"
@@ -77,22 +73,3 @@
                 [(value)]="lineItem.deliveryTerms.specialTerms">
     </value-view>
 </div>
-
-<!-- Warranty -->
-<ng-container *ngIf="lineItem.item.transportationServiceDetails == null">
-    <div class="well">
-        <h5>Warranty</h5>
-        <!-- Validity period -->
-        <quantity-view [presentationMode]="presentationMode"
-                       [propName]="'Validity Period'"
-                       [definition]="'A period during which this price is valid,e.g.,Quantity:10,Unit:days'"
-                       [quantity]="[lineItem.warrantyValidityPeriod.durationMeasure]">
-        </quantity-view>
-
-        <!-- Warranty information -->
-        <value-array-view [presentationMode]="presentationMode"
-                          [propName]="'Warranty information'"
-                          [(values)]="lineItem.warrantyInformation">
-        </value-array-view>
-    </div>
-</ng-container>
