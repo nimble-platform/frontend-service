@@ -2,7 +2,7 @@
     <!-- trading terms for regular products -->
     <ng-container *ngIf="bpDataService.getCatalogueLine().goodsItem.item.transportationServiceDetails == null">
         <negotiation-trading-details [lineItem]="requestForQuotation.requestForQuotationLine[0].lineItem"
-                                     [processMetadataNull]="bpDataService.processMetadata == null"
+                                     [fetchDefaultDeliveryAddress]="bpDataService.processMetadata == null && bpDataService.previousProcess == null"
                                      [presentationMode]="bpDataService.processMetadata == null ? 'edit' : 'singlevalue'">
         </negotiation-trading-details>
 

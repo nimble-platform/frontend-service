@@ -285,11 +285,12 @@ export class UBLModelUtils {
 
     public static createTransportExecutionPlanRequestWithQuotation(quotation:Quotation): TransportExecutionPlanRequest {
         let transportExecutionPlanRequest:TransportExecutionPlanRequest = new TransportExecutionPlanRequest();
-        transportExecutionPlanRequest.consignment[0].consolidatedShipment.push(new Shipment());
         transportExecutionPlanRequest.id = this.generateUUID();
         transportExecutionPlanRequest.mainTransportationService = quotation.quotationLine[0].lineItem.item;
-        transportExecutionPlanRequest.consignment = quotation.quotationLine[0].lineItem.delivery[0].shipment.consignment;
-        transportExecutionPlanRequest.consignment[0].consolidatedShipment = [new Shipment()];
+        transportExecutionPlanRequest.toLocation.address = quotation.quotationLine[0].lineItem.deliveryTerms.deliveryLocation.address;
+        let shipment = new Shipment();
+        shipment.goodsItem[0].item = quotation.quotationLine[0].lineItem.item;
+        transportExecutionPlanRequest.consignment[0].consolidatedShipment.push(shipment);
         this.removeHjidFieldsFromObject(transportExecutionPlanRequest);
         return transportExecutionPlanRequest
     }

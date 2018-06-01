@@ -1,7 +1,7 @@
 <ng-container *ngIf="quotation">
     <ng-container *ngIf="bpDataService.getCatalogueLine().goodsItem.item.transportationServiceDetails == null">
         <negotiation-trading-details [lineItem]="quotation.quotationLine[0].lineItem"
-                                     [processMetadataNull]="bpDataService.processMetadata == null"
+                                     [fetchDefaultDeliveryAddress]="bpDataService.processMetadata == null && bpDataService.previousProcess == null"
                                      [presentationMode]="presentationMode">
         </negotiation-trading-details>
 
@@ -15,8 +15,8 @@
                             (click)="quotation.dataMonitoringPromised = !quotation.dataMonitoringPromised">Promise service request &nbsp;
                         <span class="label label-default"
                               title="'Promise for provision of data monitoring service for the production process of the ordered product'">
-                    &#9432;
-                </span>
+                            &#9432;
+                        </span>
                     </button>
 
                     <input class="ml-3" type="checkbox"

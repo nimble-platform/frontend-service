@@ -2,32 +2,29 @@ import {Component, Input, OnInit} from '@angular/core';
 import {Address} from "../model/publish/address";
 import {CookieService} from 'ng2-cookies';
 import {UserService} from '../../user-mgmt/user.service';
-import {SearchContextService} from '../../simple-search/search-context.service';
 import {CallStatus} from '../../common/call-status';
 
 @Component({
-    selector: 'location-view',
-    templateUrl: './location-view.component.html'
+    selector: 'detailed-address-view',
+    templateUrl: './detailed-address-view.component.html'
 })
 
-export class LocationViewComponent implements OnInit{
+export class DetailedAddressViewComponent implements OnInit{
     @Input() propName:string;
     @Input() presentationMode:string;
-    @Input() processMetadataNull;
     @Input() deliveryAddress:Address;
-    @Input() useDefaultDeliveryLocation = true;
+    @Input() fetchDefaultDeliveryAddress:boolean;
 
     getDefaultDeliveryLocation:CallStatus = new CallStatus();
 
     constructor(
         private cookieService: CookieService,
-        private userService: UserService,
-        private searchContextService: SearchContextService
+        private userService: UserService
     ) {	}
 
     ngOnInit():void{
         // get company address
-        if(this.processMetadataNull && !this.deliveryAddress.hasOwnProperty('hjid') && this.useDefaultDeliveryLocation && !this.searchContextService.associatedProcessMetadata)
+        if(this.fetchDefaultDeliveryAddress)
         {
             this.getDefaultDeliveryLocation.submit();
             let userId = this.cookieService.get('user_id');

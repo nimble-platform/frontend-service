@@ -77,11 +77,11 @@
     </quantity-view>
 
     <!-- Delivery Location -->
-    <location-view [propName]="'Delivery Location'"
-                   [processMetadataNull]="processMetadataNull"
+    <detailed-address-view [propName]="'Delivery Location'"
                    [presentationMode]="presentationMode"
-                   [deliveryAddress]="lineItem.deliveryTerms.deliveryLocation.address">
-    </location-view>
+                   [deliveryAddress]="lineItem.deliveryTerms.deliveryLocation.address"
+                   [fetchDefaultDeliveryAddress]="fetchDefaultDeliveryAddress">
+    </detailed-address-view>
 
     <!-- Special terms -->
     <value-view [presentationMode]="presentationMode"
