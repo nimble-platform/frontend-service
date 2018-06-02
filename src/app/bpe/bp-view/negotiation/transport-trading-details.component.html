@@ -4,7 +4,7 @@
     <!-- Price Amount -->
     <amount-view [presentationMode]="presentationMode"
                  [propName]="'Price Amount'"
-                 [definition]="'The price of the transport service'"
+                 [definition]="'The price of the transport service for the specified terms'"
                  [amount]="[lineItem.price.priceAmount]">
     </amount-view>
 
@@ -53,18 +53,18 @@
     </quantity-view>
 
     <!-- Start location -->
-    <location-view [propName]="'Origin Location'"
-                   [processMetadataNull]="processMetadataNull"
+    <detailed-address-view [propName]="'From Location'"
+                   [fetchDefaultDeliveryAddress]="fetchDefaultDeliveryAddress"
                    [presentationMode]="presentationMode"
                    [deliveryAddress]="lineItem.delivery[0].shipment.originAddress">
-    </location-view>
+    </detailed-address-view>
 
     <!-- Delivery Location -->
-    <location-view [propName]="'Delivery Location'"
-                   [processMetadataNull]="processMetadataNull"
+    <detailed-address-view [propName]="'To Location'"
+                   [fetchDefaultDeliveryAddress]="fetchDefaultDeliveryAddress"
                    [presentationMode]="presentationMode"
                    [deliveryAddress]="lineItem.deliveryTerms.deliveryLocation.address">
-    </location-view>
+    </detailed-address-view>
 
     <!-- Special terms -->
     <value-view [presentationMode]="presentationMode"
