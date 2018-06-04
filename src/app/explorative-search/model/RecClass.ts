@@ -30,6 +30,7 @@ export class RecursionParse {
         this.nodes.push({
             name: jsonVal['concept']['translatedURL'],
             url: jsonVal['concept']['url'],
+            conceptSource: jsonVal['concept']['conceptSource'],
             id: this.nodes.length,
             color: 'red'
         });
@@ -41,6 +42,8 @@ export class RecursionParse {
                 name: datProp['translatedURL'],
                 url: datProp['url'],
                 id: this.nodes.length,
+                conceptSource: datProp['conceptSource'],
+                propertySource: datProp['propertySource'],
                 color: 'green'
             });
             node.attr.push(this.nodes.length);
