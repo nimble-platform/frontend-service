@@ -28,11 +28,13 @@
             </value-view>
 
             <quantity-view [presentationMode]="bpDataService.processMetadata == null ? 'edit' : 'singlevalue'"
+                           [type]="'length_quantity'"
                            [propName]="requestForQuotation.requestForQuotationLine[0].lineItem.delivery[0].shipment.transportHandlingUnit[0].measurementDimension[0].attributeID"
                            [quantity]="[requestForQuotation.requestForQuotationLine[0].lineItem.delivery[0].shipment.transportHandlingUnit[0].measurementDimension[0].measure]">
             </quantity-view>
 
             <quantity-view [presentationMode]="bpDataService.processMetadata == null ? 'edit' : 'singlevalue'"
+                           [type]="'length_quantity'"
                            [propName]="requestForQuotation.requestForQuotationLine[0].lineItem.delivery[0].shipment.transportHandlingUnit[0].measurementDimension[1].attributeID"
                            [quantity]="[requestForQuotation.requestForQuotationLine[0].lineItem.delivery[0].shipment.transportHandlingUnit[0].measurementDimension[1].measure]">
             </quantity-view>
@@ -54,12 +56,14 @@
 
             <quantity-view [presentationMode]="bpDataService.processMetadata == null ? 'edit' : 'singlevalue'"
                            [propName]="'Gross Volume Measure'"
+                           [type]="'volume_quantity'"
                            [definition]="'The total volume of the goods in this shipment, including packaging,e.g.,Quantity:78,Unit:MTQ'"
                            [quantity]="[requestForQuotation.requestForQuotationLine[0].lineItem.delivery[0].shipment.consignment[0].grossVolumeMeasure]">
             </quantity-view>
 
             <quantity-view [presentationMode]="bpDataService.processMetadata == null ? 'edit' : 'singlevalue'"
                            [propName]="'Gross Weight Measure'"
+                           [type]="'weight_quantity'"
                            [definition]="'The total gross weight of a shipment; the weight of the goods plus packaging plus transport equipment,e.g.,Quantity:12,Unit:KGM'"
                            [quantity]="[requestForQuotation.requestForQuotationLine[0].lineItem.delivery[0].shipment.consignment[0].grossWeightMeasure]">
             </quantity-view>
