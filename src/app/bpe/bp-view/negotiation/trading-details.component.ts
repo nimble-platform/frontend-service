@@ -11,4 +11,5 @@ import {DeliveryTerms} from "../../../catalogue/model/publish/delivery-terms";
 export class TradingDetailsComponent {
     @Input() presentationMode:string;
     @Input() lineItem:LineItem;
+    @Input() fetchDefaultDeliveryAddress;
 }

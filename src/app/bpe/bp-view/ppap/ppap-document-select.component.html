@@ -1,15 +1,17 @@
 <h6 class="space-after">
-    <b> What is Production Part Approval Process (PPAP) ? </b>
+    <b style="text-decoration: underline;cursor: pointer" (click)="showDetails = !showDetails"> What is Production Part Approval Process (PPAP) ? </b>
 </h6>
-<p>The Production Part Approval Process (PPAP) is a standardized process that helps manufacturers and suppliers communicate and approve production designs and processes before, during, and after manufacture.</p>
-<h6 class="space-after">
-    <b> What is the goal of the PPAP process ? </b>
-</h6>
-<p>The goal of the PPAP process is to ensure that all designs and specifications are understood by the supplier and that the production process and produce products that consistently meet these requirements when running at rate.</p>
-<h6 class="space-after">
-    <b> What is the meaning of the PPAP levels ? </b>
-</h6>
-<p>The PPAP levels indicate which elements need to be submitted to the customer.</p>
+<div *ngIf="showDetails">
+    <p>The Production Part Approval Process (PPAP) is a standardized process that helps manufacturers and suppliers communicate and approve production designs and processes before, during, and after manufacture.</p>
+    <h6 class="space-after">
+        <b> What is the goal of the PPAP process ? </b>
+    </h6>
+    <p>The goal of the PPAP process is to ensure that all designs and specifications are understood by the supplier and that the production process and produce products that consistently meet these requirements when running at rate.</p>
+    <h6 class="space-after">
+        <b> What is the meaning of the PPAP levels ? </b>
+    </h6>
+    <p>The PPAP levels indicate which elements need to be submitted to the customer.</p>
+</div>
 
 
 <label *ngIf="level != 0 "><b> Select a PPAP level : </b> </label>

@@ -1,0 +1,28 @@
+<div class="input-group form-group">
+    <label class="col-3 control-label">{{propName}}</label>
+    <call-status [callStatus]="getDefaultDeliveryLocation"
+                 [large]="true">
+    </call-status>
+    <span *ngIf="getDefaultDeliveryLocation.fb_callback" class="input-group-addon">
+                    Street
+    </span>
+    <input *ngIf="getDefaultDeliveryLocation.fb_callback" class="form-control" [(ngModel)]="deliveryAddress.streetName" [disabled]="presentationMode != 'edit'">
+</div>
+<div *ngIf="getDefaultDeliveryLocation.fb_callback" class="input-group form-group">
+    <label class="input-group-addon offset-3">Building Number</label>
+    <input type="text" class="form-control" [(ngModel)]="deliveryAddress.buildingNumber" [disabled]="presentationMode != 'edit'">
+</div>
+<div *ngIf="getDefaultDeliveryLocation.fb_callback" class="input-group form-group">
+    <label class="input-group-addon offset-3">City</label>
+    <input type="text" class="form-control" [(ngModel)]="deliveryAddress.cityName" [disabled]="presentationMode != 'edit'">
+</div>
+<div *ngIf="getDefaultDeliveryLocation.fb_callback" class="input-group form-group">
+    <label class="input-group-addon offset-3">Postal code</label>
+    <input type="text" class="form-control" [(ngModel)]="deliveryAddress.postalZone" [disabled]="presentationMode != 'edit'">
+</div>
+<div *ngIf="getDefaultDeliveryLocation.fb_callback" class="input-group form-group">
+    <label class="input-group-addon offset-3">Country</label>
+    <input type="text" class="form-control" [(ngModel)]="deliveryAddress.country.name" [disabled]="presentationMode != 'edit'">
+</div>
+
+

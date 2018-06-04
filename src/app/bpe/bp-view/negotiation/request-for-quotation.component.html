@@ -1,5 +1,6 @@
 <ng-container *ngIf="requestForQuotation">
     <trading-details [lineItem]="requestForQuotation.requestForQuotationLine[0].lineItem"
+                     [fetchDefaultDeliveryAddress]="bpDataService.processMetadata == null && bpDataService.previousProcess == null"
                      [presentationMode]="bpDataService.processMetadata == null ? 'edit' : 'singlevalue'">
     </trading-details>
 
@@ -53,13 +54,13 @@
 
             <quantity-view [presentationMode]="bpDataService.processMetadata == null ? 'edit' : 'singlevalue'"
                            [propName]="'Gross Volume Measure'"
-                           [definition]="'The total volume of the goods in this shipment, including packaging'"
+                           [definition]="'The total volume of the goods in this shipment, including packaging,e.g.,Quantity:78,Unit:MTQ'"
                            [quantity]="[requestForQuotation.requestForQuotationLine[0].lineItem.delivery[0].shipment.consignment[0].grossVolumeMeasure]">
             </quantity-view>
 
             <quantity-view [presentationMode]="bpDataService.processMetadata == null ? 'edit' : 'singlevalue'"
                            [propName]="'Gross Weight Measure'"
-                           [definition]="'The total gross weight of a shipment; the weight of the goods plus packaging plus transport equipment'"
+                           [definition]="'The total gross weight of a shipment; the weight of the goods plus packaging plus transport equipment,e.g.,Quantity:12,Unit:KGM'"
                            [quantity]="[requestForQuotation.requestForQuotationLine[0].lineItem.delivery[0].shipment.consignment[0].grossWeightMeasure]">
             </quantity-view>
         </div>

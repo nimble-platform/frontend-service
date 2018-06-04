@@ -1,7 +1,4 @@
-import {AddressLine} from "./address-line";
 import {Country} from "./country";
-import {LocationCoordinate} from "./location-coordinate";
-import {Code} from "./code";
 /**
  * Created by deniz on 16/07/17.
  */
@@ -9,6 +6,9 @@ import {Code} from "./code";
 export class Address {
     constructor(
         public cityName: string = '',
+        public postalZone: string = '',
+        public buildingNumber: string = '',
+        public streetName: string = '',
         public country: Country = new Country(),
         ) {  }
 }

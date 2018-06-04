@@ -9,7 +9,7 @@
     <!-- Price Base Quantity -->
     <quantity-view [presentationMode]="presentationMode"
                    [propName]="'Price Base Quantity'"
-                   [definition]="'The price of a product at a legally set quantity'"
+                   [definition]="'The price of a product at a legally set quantity.\nFor example,if you sell MDF board and charge €15,00 for 3 m2 of it, the base price will be €5,00 for 1 m2,i.e.,Quantity:5,Unit:m2.'"
                    [quantity]="[lineItem.price.baseQuantity]">
     </quantity-view>
 
@@ -59,19 +59,21 @@
     <!-- Request delivery period -->
     <quantity-view [presentationMode]="presentationMode"
                    [propName]="'Requested Delivery Period'"
+                   [definition]="'The period requested for delivery.It starts after the order confirmation.For example,Quantity:2,Unit:weeks'"
                    [quantity]="[lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure]">
     </quantity-view>
 
     <!-- Delivery Location -->
-    <address-view [presentationMode]="presentationMode"
-                  [propName]="'Delivery Location'"
-                  [address]="[lineItem.deliveryTerms.deliveryLocation.address]">
-    </address-view>
+    <detailed-address-view [propName]="'Delivery Location'"
+                   [presentationMode]="presentationMode"
+                   [deliveryAddress]="lineItem.deliveryTerms.deliveryLocation.address"
+                   [fetchDefaultDeliveryAddress]="fetchDefaultDeliveryAddress">
+    </detailed-address-view>
 
     <!-- Special terms -->
     <value-view [presentationMode]="presentationMode"
                 [propName]="'Special Terms'"
-                [definition]="'A description of any terms or conditions relating to the delivery items'"
+                [definition]="'A description of any terms or conditions relating to the delivery items.For example,exceeding the delivery period entitles the buyer to terminate the agreement.'"
                 [(value)]="lineItem.deliveryTerms.specialTerms">
     </value-view>
 </div>
@@ -83,7 +85,7 @@
         <!-- Validity period -->
         <quantity-view [presentationMode]="presentationMode"
                        [propName]="'Validity Period'"
-                       [definition]="'A period during which this price is valid'"
+                       [definition]="'A period during which this price is valid,e.g.,Quantity:10,Unit:days'"
                        [quantity]="[lineItem.warrantyValidityPeriod.durationMeasure]">
         </quantity-view>
 
