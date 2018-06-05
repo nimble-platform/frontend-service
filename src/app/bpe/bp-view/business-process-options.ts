@@ -96,9 +96,19 @@ export class BusinessProcessOptions implements OnInit {
             this.selectedTabChanged.next();
         }
         else if(this.nextProcess == "Negotiation"){
-            this.bpDataService.resetBpData();
-            this.bpDataService.initRfq();
-            this.bpDataService.setBpOptionParameters(this.userRole, 'Negotiation',null);
+            if(this.processName == "Order"){
+                this.bpDataService.initRfqWithOrder();
+                this.bpDataService.setBpOptionParameters(this.userRole, 'Negotiation','Order');
+            }
+            else if(this.processName == "Transport_Execution_Plan"){
+                this.bpDataService.initRfqWithTransportExecutionPlanRequest();
+                this.bpDataService.setBpOptionParameters(this.userRole, 'Negotiation','Transport Execution Plan');
+            }
+            else{
+                this.bpDataService.resetBpData();
+                this.bpDataService.initRfq();
+                this.bpDataService.setBpOptionParameters(this.userRole, 'Negotiation',null);
+            }
         }
         else if(this.nextProcess == "Item Information Request"){
             this.bpDataService.resetBpData();
@@ -121,10 +131,17 @@ export class BusinessProcessOptions implements OnInit {
             }
         }
         else if(this.nextProcess == "Transport Execution Plan"){
-            this.bpDataService.resetBpData();
-            this.bpDataService.initTransportExecutionPlanRequest();
-            this.bpDataService.setBpOptionParameters(this.userRole,'Transport_Execution_Plan',null);
-            this.selectedTabChanged.next();
+            if(this.processName == 'Transport_Execution_Plan'){
+                this.bpDataService.initTransportExecutionPlanRequestWithTransportExecutionPlanRequest();
+                this.bpDataService.setBpOptionParameters(this.userRole,'Transport_Execution_Plan','Transport_Execution_Plan');
+                this.selectedTabChanged.next();
+            }
+            else{
+                this.bpDataService.resetBpData();
+                this.bpDataService.initTransportExecutionPlanRequest();
+                this.bpDataService.setBpOptionParameters(this.userRole,'Transport_Execution_Plan',null);
+                this.selectedTabChanged.next();
+            }
         }
         else if(this.nextProcess == "Initiate Transport Execution Plan"){
             this.bpDataService.initTransportExecutionPlanRequestWithQuotation();

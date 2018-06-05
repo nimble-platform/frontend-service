@@ -229,6 +229,32 @@ export class UBLModelUtils {
         return rfq;
     }
 
+    public static createRequestForQuotationWithTransportExecutionPlanRequest(transportExecutionPlanRequest:TransportExecutionPlanRequest,catalogueLine:CatalogueLine):RequestForQuotation{
+        let quantity:Quantity = new Quantity(null, "", null);
+        let item:Item = this.createItem();
+        let price:Price = this.createPrice(null);
+        let lineItem:LineItem = this.createLineItem(quantity, price, item);
+        let requestForQuotationLine:RequestForQuotationLine = new RequestForQuotationLine(lineItem);
+        let rfq = new RequestForQuotation(this.generateUUID(), [""], false, null, null, new Delivery(), [requestForQuotationLine]);
+
+        rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.goodsItem[0].item.name = transportExecutionPlanRequest.consignment[0].consolidatedShipment[0].goodsItem[0].item.name;
+        rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.consignment[0].grossVolumeMeasure = transportExecutionPlanRequest.consignment[0].grossVolumeMeasure;
+        rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.consignment[0].grossWeightMeasure = transportExecutionPlanRequest.consignment[0].grossWeightMeasure;
+        rfq.requestForQuotationLine[0].lineItem.deliveryTerms.deliveryLocation.address = transportExecutionPlanRequest.toLocation.address;
+        rfq.requestForQuotationLine[0].lineItem.item.transportationServiceDetails = catalogueLine.goodsItem.item.transportationServiceDetails;
+
+        // TODO remove this custom dimension addition once the dimension-view is improved to handle such cases
+        let handlingUnitDimension:Dimension = new Dimension();
+        handlingUnitDimension.attributeID = 'Handling Unit Length';
+        rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.transportHandlingUnit[0].measurementDimension.push(handlingUnitDimension);
+        handlingUnitDimension = new Dimension();
+        handlingUnitDimension.attributeID = 'Handling Unit Width';
+        rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.transportHandlingUnit[0].measurementDimension.push(handlingUnitDimension);
+        this.removeHjidFieldsFromObject(rfq);
+
+        return rfq;
+    }
+
     public static createQuotation(rfq:RequestForQuotation):Quotation {
         let quotationLine:QuotationLine = new QuotationLine(rfq.requestForQuotationLine[0].lineItem);
         this.removeHjidFieldsFromObject(rfq.buyerCustomerParty);
@@ -288,11 +314,21 @@ export class UBLModelUtils {
         transportExecutionPlanRequest.id = this.generateUUID();
         transportExecutionPlanRequest.mainTransportationService = quotation.quotationLine[0].lineItem.item;
         transportExecutionPlanRequest.toLocation.address = quotation.quotationLine[0].lineItem.deliveryTerms.deliveryLocation.address;
+        transportExecutionPlanRequest.consignment[0].grossWeightMeasure = quotation.quotationLine[0].lineItem.delivery[0].shipment.consignment[0].grossWeightMeasure;
+        transportExecutionPlanRequest.consignment[0].grossVolumeMeasure = quotation.quotationLine[0].lineItem.delivery[0].shipment.consignment[0].grossVolumeMeasure;
         let shipment = new Shipment();
-        shipment.goodsItem[0].item = quotation.quotationLine[0].lineItem.item;
+        shipment.goodsItem[0].item = quotation.quotationLine[0].lineItem.delivery[0].shipment.goodsItem[0].item;
         transportExecutionPlanRequest.consignment[0].consolidatedShipment.push(shipment);
         this.removeHjidFieldsFromObject(transportExecutionPlanRequest);
         return transportExecutionPlanRequest
+    }
+
+    public static createTransportExecutionPlanRequestWithTransportExecutionPlanRequest(transportExecutionPlanRequest:TransportExecutionPlanRequest): TransportExecutionPlanRequest{
+        let tep:TransportExecutionPlanRequest = new TransportExecutionPlanRequest();
+        tep = transportExecutionPlanRequest;
+        tep.id = this.generateUUID();
+        this.removeHjidFieldsFromObject(tep);
+        return tep;
     }
 
     public static createTransportExecutionPlan(transportExecutionPlanRequest:TransportExecutionPlanRequest):TransportExecutionPlan {
