@@ -11,3 +11,8 @@
 	max-width: 1400px;
 	margin: 0 auto;
 }
+
+.dd-icon {
+	min-width: 1.5rem;
+	text-align: center;
+}

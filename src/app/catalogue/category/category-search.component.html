@@ -31,14 +31,14 @@
 
     <ul class="list-group container mt-4" style="max-height: 500px; overflow-y: scroll;" *ngIf="callback && !submitted">
         <li *ngFor="let category of categories"
-            class="list-group-item row"
-            style="cursor: pointer; padding: .25rem 1.25rem;"
+            class="list-group-item row pointer"
+            style="padding: .25rem 1.25rem;"
             (click)="getCategoryDetails(category)"
             [style.background-color]="selectedCategory && category.code == selectedCategory.code ? 'green' : 'white'"
         >
             <div class="col-2">{{category.taxonomyId}}</div>
             <div class="col">{{category.preferredName}}</div>
-    <!--        <img src="./assets/catalogue/add_button.png" (click)="selectCategory(category)"/> -->
+    <!--        <i class="fa fa-plus-circle pointer" (click)="selectCategory(category)"><i/> -->
             <span *ngIf="category.taxonomyId == 'eClass'" class="fa fa-share-alt" aria-hidden="true" (click)="getCategoryTree(category)"></span>
         </li>
     </ul>
@@ -86,7 +86,7 @@
                        [style.font-weight]="selectedCategoriesWRTLevels.indexOf(cat.code)>-1 ? 'bold' : 'normal'"
                        [style.color]="selectedCategoriesWRTLevels.indexOf(cat.code)>-1 ?'green' : 'black'"
                        [style.text-decoration]="selectedCategoriesWRTLevels.indexOf(cat.code)>-1 ? 'underline' : 'none'"
-                       style="display: block;cursor: pointer">{{cat.preferredName}}</label>
+                       class="pointer" style="display: block;">{{cat.preferredName}}</label>
             </div>
         </div>
     </div>
@@ -152,7 +152,7 @@
 <!-- custom category view -->
 <div *ngIf="customCategoryPage">
     <form #customCategoryForm="ngForm" class="row justify-content-md-center align-items-center col-12 mt-3">
-        <i class="fa fa-reply space-right" (click)="customCategoryPage = false;" style="cursor: pointer"></i>
+        <i class="fa fa-reply space-right pointer" (click)="customCategoryPage = false;"></i>
         <input name="inputCtrl" [(ngModel)]="customCategory" class="form-control space-right col-4" required>
         <button class="btn btn-success" (click)="addCustomCategory(customCategory)" [disabled]="!customCategoryForm.form.valid">Continue Publishing</button>
     </form>

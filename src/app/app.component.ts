@@ -60,11 +60,25 @@ export class AppComponent implements OnInit {
 	}
 
   public addVersion(id:String, ver:String, date:String) {
+    var idx = -1;
+    for (var i=0; i<this.versions.length; i++) {
+      var id_comp = this.versions[i].id
+      if (id_comp.localeCompare(id) == 0)
+        idx = i;
+    }
+    if (idx >= 0) {
+      this.versions.splice(idx,1);
+    }
     this.versions.push({
       "id":id,
       "ver":ver,
       "date":date
     });
+    this.versions.sort(function(a,b) {
+      var a_comp = a.id;
+      var b_comp = b.id;
+      return a_comp.localeCompare(b_comp);
+    })
     this.cookieService.set("versions",JSON.stringify(this.versions));
   }
 
@@ -76,6 +90,11 @@ export class AppComponent implements OnInit {
     }
     if (idx >= 0) {
       this.versions.splice(idx,1);
+      this.versions.sort(function(a,b) {
+        var a_comp = a.id;
+        var b_comp = b.id;
+        return a_comp.localeCompare(b_comp);
+      })
       this.cookieService.set("versions",JSON.stringify(this.versions));
     }
   }
