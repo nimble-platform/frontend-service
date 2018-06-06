@@ -6,11 +6,11 @@
 		<input type="email" class="form-control" id="email" required [(ngModel)]="invEmail" name="email" #email="ngModel" pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9._-]+\.[a-z]{2,3}$"
 		 i18n-placeholder placeholder="e.g. user@domain.com">
 	</div>
-	
+
 	<div class="input-group form-group">
 		<label class="input-group-addon">
 			<span i18n>Roles</span>
-			<span class="tooltip-icon" (click)="showRoleTT(tooltip)"><img class="inline-icon" src="assets/question_black.png"/></span>
+			<span class="tooltip-icon" (click)="showRoleTT(tooltip)"><i class="fa fa-question-circle"></i></span>
 		</label>
 		<div class="form-control" [ngClass]="{'ng-valid required':rolesSelected,'ng-invalid':!rolesSelected}">
 			<span [hidden]="callback3">
@@ -22,7 +22,7 @@
 			</span>
 		</div>
 	</div>
-	
+
 	<!--
 	<div class="row roles-header">
 		<div class="col-md-12 mb-12">
@@ -104,11 +104,11 @@
 			<label for="email" class="input-group-addon" i18n>E-Mail</label>
 			<input type="text" class="form-control" [(ngModel)]="invToChange.email" disabled>
 		</div>
-		
+
 		<div class="input-group form-group">
 			<label class="input-group-addon">
 				<span i18n>Roles</span>
-				<span class="tooltip-icon" (click)="showRoleTT(tooltip)"><img class="inline-icon" src="assets/question_black.png"/></span>
+				<span class="tooltip-icon" (click)="showRoleTT(tooltip)"><i class="fa fa-question-circle"></i></span>
 			</label>
 			<div class="form-control" [ngClass]="{'ng-valid required':rolesChangeSelected,'ng-invalid':!rolesChangeSelected}">
 				<span *ngFor="let role of userRoles">

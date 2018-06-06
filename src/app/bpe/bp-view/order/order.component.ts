@@ -183,17 +183,26 @@ export class OrderComponent implements OnInit {
             if(this.paymentTerms[1].term == null){
                 this.paymentTerms[1].checked = false;
             }
+            else{
+                this.paymentTerms[1].checked = true;
+            }
         }
         // X MFI
         else if(termNumber == 5){
             if(this.paymentTerms[5].term == null){
                 this.paymentTerms[5].checked = false;
             }
+            else{
+                this.paymentTerms[5].checked = true;
+            }
         }
         // A/B NET X
         else if(termNumber == 6){
             if(this.discount == null || this.withinDays == null || this.dueDays == null){
                 this.paymentTerms[6].checked = false;
+            }
+            else{
+                this.paymentTerms[6].checked = true;
             }
         }
     }

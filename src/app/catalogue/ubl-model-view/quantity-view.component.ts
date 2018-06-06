@@ -3,6 +3,7 @@ import {Quantity} from "../model/publish/quantity";
 import {UBLModelUtils} from "../model/ubl-model-utils";
 import {ChildForm} from "../child-form";
 import {AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
+import {UnitService} from '../../common/unit-service';
 
 @Component({
     selector: 'quantity-view',
@@ -22,6 +23,9 @@ export class QuantityViewComponent extends ChildForm implements OnInit {
     @Input() editablePropName:boolean;
     // the definition of this quantity
     @Input() definition: string = null;
+    // type of this quantity such as time or volume
+    @Input() type = null;
+
     // single mode events
     @Output() onSelectChange = new EventEmitter();
     // edit mode events
@@ -49,12 +53,19 @@ export class QuantityViewComponent extends ChildForm implements OnInit {
     parentFormKey: string = UBLModelUtils.generateUUID();
     json = JSON;
 
-    constructor(private fb:FormBuilder) {
+    unitValues = [];
+    constructor(private fb:FormBuilder,
+                private unitService:UnitService) {
         super();
         this.quantityForm.addControl('values', this.quantityFormArray)
     }
 
     ngOnInit() {
+        if(this.type){
+            this.unitService.getCachedUnitList(this.type).then(res => {
+                this.unitValues = [""].concat(res);
+            });
+        }
         this.createFormControlsForQuantities();
         this.addToParentForm(this.parentFormKey, this.quantityForm);
     }

@@ -59,11 +59,15 @@
                        placeholder="Quantity">
 
                 <label class="col-1" class="ml-3 mr-3">Unit: </label>
-                <input type="text"
+                <input *ngIf="!type"
+                        type="text"
                        class="col-1 form-control align-self-start"
                        [(ngModel)]="value.unitCode"
                        [formControlName]="'unit'"
                        placeholder="Unit">
+                <select *ngIf="type" class="col-1 custom-select" [(ngModel)]="value.unitCode" [formControlName]="'unit'">
+                    <option *ngFor="let unit of unitValues" [value]="unit">{{unit}}</option>
+                </select>
 
                 <!-- remove value button -->
                 <span *ngIf="multiValue && quantity.length > (zeroValue ? 0 : 1)">
@@ -95,7 +99,6 @@
                        class="offset-3 text-danger">
                     Both quantity and unit must be filled
                 </small>
-
             </ng-container>
         </div>
     </div>

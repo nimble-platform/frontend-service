@@ -3,8 +3,7 @@
         <div *ngFor="let value of additionalItemProperty.valueQualifier | itemPropertyDataSourcePipe : additionalItemProperty; let i = index; trackBy : trackByIndex" class="input-group form-group">
             <!-- name of the property is shown once near the first value associated to it -->
             <div *ngIf="i == 0"
-                 class="col-3 control-label"
-                 style="cursor: pointer"
+                 class="col-3 control-label pointer"
                  (click)="openPropertyDetails()">
                 {{additionalItemProperty.name}}&#9432;
             </div>
@@ -50,8 +49,7 @@
     <ng-container *ngIf="additionalItemProperty.valueQualifier == 'STRING'">
         <div class="input-group form-group">
             <!-- name of the property is shown once near the first value associated to it -->
-            <div class="col-3 control-label"
-                 style="cursor: pointer"
+            <div class="col-3 control-label cursor"
                  (click)="openPropertyDetails()">
                 {{additionalItemProperty.name}}&#9432;
             </div>
@@ -70,8 +68,7 @@
     <ng-container *ngIf="additionalItemProperty.valueQualifier == 'REAL_MEASURE'">
         <div class="input-group form-group">
             <!-- name of the property is shown once near the first value associated to it -->
-            <div class="col-3 control-label"
-                 style="cursor: pointer"
+            <div class="col-3 control-label pointer"
                  (click)="openPropertyDetails()">
                 {{additionalItemProperty.name}}&#9432;
             </div>
@@ -103,8 +100,7 @@
 <!-- renders boolean content -->
 <div *ngIf="additionalItemProperty.valueQualifier=='BOOLEAN'" class="input-group form-group">
     <!-- name of the property is shown once near the first value associated to it -->
-    <div class="col-3 control-label"
-         style="cursor: pointer"
+    <div class="col-3 control-label pointer"
          (click)="openPropertyDetails()">
         {{additionalItemProperty.name}}&#9432;
     </div>

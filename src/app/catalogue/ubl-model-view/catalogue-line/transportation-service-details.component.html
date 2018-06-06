@@ -29,6 +29,7 @@
 
     <!-- estimated duration period -->
     <quantity-view [propName]="'Estimated Duration'"
+                   [type]="'time_quantity'"
                    [quantity]="[catalogueLine.goodsItem.item.transportationServiceDetails.estimatedDurationPeriod.durationMeasure]"
                    [definition]="'The estimated duration of this transportation service,e.g.,Quantity:3,Unit:weeks'"
                    [presentationMode]="presentationMode"

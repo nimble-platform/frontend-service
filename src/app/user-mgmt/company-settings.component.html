@@ -19,7 +19,7 @@
 	<div class="input-group form-group">
 		<label class="input-group-addon">
 			<span>Verification Info</span>
-			<span class="tooltip-icon" (click)="showVerificationTT(tooltip)"><img class="inline-icon" src="assets/question_black.png"/></span>
+			<span class="tooltip-icon" (click)="showVerificationTT(tooltip)"><i class="fa fa-question-circle"></i></span>
 		</label>
 		<input type="text" class="form-control" [formControl]="settingsForm.controls['verificationInformation']" readonly>
 	</div>
@@ -37,7 +37,7 @@
 		<span class="form-control">Deliver to company address</span>
 	</div>
 	<delivery-terms-form [group]="settingsForm.controls.deliveryTerms"></delivery-terms-form>
-	
+
 	<h3 class="space-after">Payment Terms</h3>
 	<payment-means-form [group]="settingsForm.controls.paymentMeans"></payment-means-form>
 

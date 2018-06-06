@@ -5,19 +5,20 @@
 		<input type="text" class="form-control" id="searchTerm" required [(ngModel)]="model.q" name="searchTerm" #q="ngModel" pattern=".{1,}">
 		<span class="input-group-btn">
 			<button type="submit" class="btn btn-secondary" [disabled]="!simpleSearchForm.form.valid">
-				<img src="assets/search_black.png" class="inline-icon"/>
+				<i class="fa fa-search"></i>
+
 			</button>
 		</span>
 	</div>
-	
+
 	<div [hidden]="error_detc || callback || !submitted">
 		<img class="space-before" src="assets/form_loader.gif"/>
 	</div>
-	
+
 	<div [hidden]="!callback">
 		<hr/>
 		<div [hidden]="size==0">
-		
+
 			<div class="row space-after">
 				<div class="col-6">
 					<span i18n>Showing results</span> {{ start }} - {{ end }} <span i18n>of</span> {{ size }}
@@ -26,11 +27,11 @@
 					<ngb-pagination [(collectionSize)]="size" [(page)]="page" [maxSize]="5" [boundaryLinks]="true" (pageChange)="get(objToSubmit)"></ngb-pagination>
 				</div>
 			</div>
-		
+
 			<div class="row">
-			
+
 				<div class="col-4">
-		
+
 					<div *ngFor="let facet of facetObj">
 						<div class="card">
 							<div class="card-header">
@@ -48,11 +49,11 @@
 							</div>
 						</div>
 					</div>
-				
+
 				</div>
-				
+
 				<div class="col-8">
-		
+
 					<div *ngFor="let result of response">
 						<div *ngIf="result.item_id != null" class="card pointer">
 							<a class="text-std" [routerLink]="['/simple-search/details']" [queryParams]="{catalogueId: result.item_catalogue_id[0], id: result.item_id[0]}">
@@ -84,9 +85,9 @@
 							</a>
 						</div>
 					</div>
-				
+
 				</div>
-				
+
 			</div>
 
 		</div>
@@ -94,5 +95,5 @@
 			<span i18n>No search results</span>
 		</div>
 	</div>
-	
+
 </form>
