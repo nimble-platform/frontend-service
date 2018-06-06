@@ -1,5 +1,3 @@
-import * as constants from '../../constants';
-
 /**
  * Created by suat on 28-Mar-18.
  */

@@ -16,6 +16,7 @@ export class FacetComponent {
     @Input() stringValues: string[] = [];
     @Input() selectedStringValues: string[] = [];
     @Input() filterActive: boolean = false; // true means user already selected a value for this facet, in this case we check the checkboxes
+    @Input() loading: boolean = false
 
     @Output() booleanValueChanged: EventEmitter<boolean> = new EventEmitter<boolean>();
     @Output() triggerCriteriaChanged: EventEmitter<void> = new EventEmitter<void>();

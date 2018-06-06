@@ -16,7 +16,7 @@ export class AppComponent implements OnInit {
 	public loading = false;
 	public isLoggedIn = false;
 	public isCollapsed = true;
-	public alertBetaClosed = false;
+	// public alertBetaClosed = false;
 	public fullName = "";
 	public activeCompanyName = null;
 	public eMail = "";

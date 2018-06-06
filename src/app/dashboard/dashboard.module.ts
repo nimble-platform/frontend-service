@@ -10,6 +10,7 @@ import {DashboardComponent} from "./dashboard.component";
 import {DashboardThreadedComponent} from "./dashboard-threaded.component";
 import {ThreadSummaryComponent} from "./thread-summary.component";
 import {FacetComponent} from "./facet-component";
+import { DashboardPaginationComponent } from "./dashboard-pagination.component";
 
 @NgModule({
 	imports: [
@@ -25,7 +26,8 @@ import {FacetComponent} from "./facet-component";
 		DashboardComponent,
 		DashboardThreadedComponent,
 		ThreadSummaryComponent,
-		FacetComponent
+		FacetComponent,
+		DashboardPaginationComponent
 	],
 	exports: [
 		DashboardComponent,
