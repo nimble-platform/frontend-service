@@ -62,7 +62,7 @@ export class AppComponent implements OnInit {
   public addVersion(id:String, ver:String, date:String) {
     var idx = -1;
     for (var i=0; i<this.versions.length; i++) {
-      var id_comp = this.versions[i].id
+      var id_comp = this.versions[i].id;
       if (id_comp.localeCompare(id) == 0)
         idx = i;
     }
@@ -85,7 +85,8 @@ export class AppComponent implements OnInit {
   public removeVersion(id:String) {
     var idx = -1;
     for (var i=0; i<this.versions.length; i++) {
-      if (this.versions.id == id)
+      var id_comp = this.versions[i].id;
+      if (id_comp.localeCompare(id) == 0)
         idx = i;
     }
     if (idx >= 0) {
