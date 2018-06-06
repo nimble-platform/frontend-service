@@ -28,8 +28,9 @@ export class CredentialsFormComponent implements OnInit {
 		private cookieService: CookieService,
 		private appComponent: AppComponent
 	) {	}
-	
+
 	ngOnInit() {
+		this.getVersions();
 		if (this.cookieService.get("user_id"))
 			this.appComponent.checkLogin("/dashboard");
 	}
@@ -68,7 +69,40 @@ export class CredentialsFormComponent implements OnInit {
 			this.error_detc = true;
 		});
 	}
-	
+
+	getVersions(): void {
+		this.credentialsService.getVersionIdentity()
+		.then(res => {
+			if (res.git && res.git.branch && res.git.commit && res.git.commit.time && res.git.commit.id) {
+				const date_str = new Date(res.git.commit.time).toISOString();
+				this.appComponent.addVersion("identity",`${res.git.branch}-${res.git.commit.id}`,`${date_str}`);
+			}
+			else {
+				this.appComponent.removeVersion("identity");
+			}
+		});
+		this.credentialsService.getVersionBP()
+		.then(res => {
+			if (res.git && res.git.branch && res.git.commit && res.git.commit.time && res.git.commit.id) {
+				const date_str = new Date(res.git.commit.time).toISOString();
+				this.appComponent.addVersion("business-process",`${res.git.branch}-${res.git.commit.id}`,`${date_str}`);
+			}
+			else {
+				this.appComponent.removeVersion("business-process");
+			}
+		});
+		this.credentialsService.getVersionDataChannel()
+		.then(res => {
+			if (res.git && res.git.branch && res.git.commit && res.git.commit.time && res.git.commit.id) {
+				const date_str = new Date(res.git.commit.time).toISOString();
+				this.appComponent.addVersion("data-channels",`${res.git.branch}-${res.git.commit.id}`,`${date_str}`);
+			}
+			else {
+				this.appComponent.removeVersion("data-channels");
+			}
+		});
+	}
+
 	reset() {
 		this.submitted = false;
 		this.callback = false;
@@ -76,7 +110,7 @@ export class CredentialsFormComponent implements OnInit {
 		this.model = new Credentials('','');
 		this.objToSubmit = new Credentials('','');
 	}
-	
+
 	onSubmit() {
 		this.objToSubmit = JSON.parse(JSON.stringify(this.model));
 		/*
@@ -87,5 +121,5 @@ export class CredentialsFormComponent implements OnInit {
 		this.submitted = true;
 		this.post(this.objToSubmit);
 	}
-	
+
 }

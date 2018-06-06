@@ -11,12 +11,14 @@
 
         <quantity-view [presentationMode]="bpDataService.processMetadata == null ? 'edit' : 'singlevalue'"
                        [propName]="'Gross Volume Measure'"
+                       [type]="'volume_quantity'"
                        [definition]="'The total volume of the goods in this shipment, including packaging,e.g.,Quantity:78,Unit:MTQ'"
                        [quantity]="[transportExecutionPlanRequest.consignment[0].grossVolumeMeasure]">
         </quantity-view>
 
         <quantity-view [presentationMode]="bpDataService.processMetadata == null ? 'edit' : 'singlevalue'"
                        [propName]="'Gross Weight Measure'"
+                       [type]="'weight_quantity'"
                        [definition]="'The total gross weight of a shipment; the weight of the goods plus packaging plus transport equipment,e.g.,Quantity:12,Unit:KGM'"
                        [quantity]="[transportExecutionPlanRequest.consignment[0].grossWeightMeasure]">
         </quantity-view>
@@ -42,7 +44,7 @@
                        name="dp" [(ngModel)]="startDate" ngbDatepicker #d="ngbDatepicker" readonly>
                 <div class="input-group-append">
                     <button class="btn btn-outline-secondary" (click)="d.toggle()" type="button">
-                        <img src="../../../assets/calendar-icon.svg" style="width: 1.2rem; height: 1rem; cursor: pointer;"/>
+                        <i class="fa fa-calendar-alt pointer" style="width: 1.2rem; height: 1rem;"></i>
                     </button>
                 </div>
             </div>
@@ -61,7 +63,7 @@
                        name="dp" [(ngModel)]="endDate" ngbDatepicker #d="ngbDatepicker" readonly>
                 <div class="input-group-append">
                     <button class="btn btn-outline-secondary" (click)="d.toggle()" type="button">
-                        <img src="../../../assets/calendar-icon.svg" style="width: 1.2rem; height: 1rem; cursor: pointer;"/>
+                        <i class="fa fa-calendar-alt pointer" style="width: 1.2rem; height: 1rem;"></i>
                     </button>
                 </div>
             </div>

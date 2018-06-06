@@ -3,16 +3,16 @@
         <div class="col d-flex justify-content-end align-items-center">
             <div class="mr-auto p-2">{{processInstanceGroup.id}}</div>
             <div *ngIf="!processInstanceGroup.archived" (click)="archiveGroup()" data-toggle="tooltip" data-placement="top" title="Archive">
-                <i class="fa fa-archive p-2" style="cursor: pointer" aria-hidden="true"></i>
+                <i class="fa fa-archive p-2 pointer" aria-hidden="true"></i>
             </div>
             <div *ngIf="processInstanceGroup.archived" (click)="deleteGroup()" data-toggle="tooltip" data-placement="top" title="Delete Permanently">
-                <i class="fa fa-trash-o p-2" style="cursor: pointer" aria-hidden="true"></i>
+                <i class="fa fa-trash-o p-2 pointer" aria-hidden="true"></i>
             </div>
             <div *ngIf="processInstanceGroup.archived" (click)="restoreGroup()" data-toggle="tooltip" data-placement="top" title="Restore">
-                <i class="fa fa-undo p-2" style="cursor: pointer" aria-hidden="true"></i>
+                <i class="fa fa-undo p-2 pointer" aria-hidden="true"></i>
             </div>
             <div *ngIf="expanded" (click)="toggleExpanded()" data-toggle="tooltip" data-placement="top" title="Hide Intermediate Activities">
-                <i class="fa fa-compress p-2" style="cursor: pointer" aria-hidden="true"></i>
+                <i class="fa fa-compress p-2 pointer" aria-hidden="true"></i>
             </div>
         </div>
     </div>
@@ -47,7 +47,7 @@
                              (click)="openBpProcessView(i)">{{singleMetadata.actionStatus}}</div>
                     </div>
                 </div>
-                <div *ngIf="!(i == 0 || i == lastIndex) && i == 1" class="row thread-entry-row justify-content-center" style="cursor: pointer">
+                <div *ngIf="!(i == 0 || i == lastIndex) && i == 1" class="row thread-entry-row justify-content-center pointer">
                     <div><div class="btn alert-info" (click)="toggleExpanded()">See Intermediate Activities</div></div>
                 </div>
             </ng-container>

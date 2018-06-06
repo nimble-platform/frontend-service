@@ -26,6 +26,7 @@ export class AppComponent implements OnInit {
 	public debug = myGlobals.debug;
 	public mailto = "";
 	public allowed = false;
+  public versions = [];
 
 	constructor(
 		private cookieService: CookieService,
@@ -58,6 +59,46 @@ export class AppComponent implements OnInit {
 		this.checkLogin("");
 	}
 
+  public addVersion(id:String, ver:String, date:String) {
+    var idx = -1;
+    for (var i=0; i<this.versions.length; i++) {
+      var id_comp = this.versions[i].id
+      if (id_comp.localeCompare(id) == 0)
+        idx = i;
+    }
+    if (idx >= 0) {
+      this.versions.splice(idx,1);
+    }
+    this.versions.push({
+      "id":id,
+      "ver":ver,
+      "date":date
+    });
+    this.versions.sort(function(a,b) {
+      var a_comp = a.id;
+      var b_comp = b.id;
+      return a_comp.localeCompare(b_comp);
+    })
+    this.cookieService.set("versions",JSON.stringify(this.versions));
+  }
+
+  public removeVersion(id:String) {
+    var idx = -1;
+    for (var i=0; i<this.versions.length; i++) {
+      if (this.versions.id == id)
+        idx = i;
+    }
+    if (idx >= 0) {
+      this.versions.splice(idx,1);
+      this.versions.sort(function(a,b) {
+        var a_comp = a.id;
+        var b_comp = b.id;
+        return a_comp.localeCompare(b_comp);
+      })
+      this.cookieService.set("versions",JSON.stringify(this.versions));
+    }
+  }
+
 	public open(content) {
 		this.mailto = "mailto:nimble-support@salzburgresearch.at";
 		var subject = "NIMBLE Support Request (UserID: "+this.userID+", Timestamp: "+new Date().toISOString()+")";
@@ -68,6 +109,14 @@ export class AppComponent implements OnInit {
 		body += "\n\n";
 		body += "Path:\n"+window.location.href;
 		body += "\n\n";
+    body += "Versions:\n";
+    for (var i=0; i<this.versions.length; i++) {
+      if (i>0) {
+        body += " | ";
+      }
+      body += this.versions[i].id + ": " + this.versions[i].ver;
+    }
+    body += "\n\n";
 		body += "Description of the issue:\n";
 		body += "[Please insert a detailed description of the issue here. Add some screenshots as an attachement if they are of use.]";
 		body += "\n\n";
@@ -94,10 +143,13 @@ export class AppComponent implements OnInit {
 			}
 		}
 	}
-	
+
 	public checkLogin(path:any) {
 		if (this.cookieService.get("user_id")) {
 			this.isLoggedIn = true;
+      if (this.cookieService.get("versions")) {
+        this.versions = JSON.parse(this.cookieService.get("versions"));
+      }
 			this.fullName = this.cookieService.get("user_fullname");
 			this.eMail = this.cookieService.get("user_email");
 			this.userID = this.cookieService.get("user_id");
@@ -138,7 +190,7 @@ export class AppComponent implements OnInit {
 		if (path != "")
 			this.router.navigate([path]);
 	}
-	
+
 	public checkRoles(func) {
 		this.allowed = false;
 		if (this.cookieService.get("company_id") != 'null') {

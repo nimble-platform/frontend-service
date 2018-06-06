@@ -61,6 +61,7 @@
 <!-- Estimated delivery period -->
 <quantity-view [presentationMode]="presentationMode"
                [propName]="'Estimated Delivery Period'"
+               [type]="'time_quantity'"
                [definition]="'The period estimated for delivery.It starts after the order confirmation.For example,Quantity:8,Unit:days'"
                [quantity]="[catalogueLine.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure]"
                [parentForm]="parentForm">
@@ -91,6 +92,7 @@
     <!-- Package quantity -->
     <quantity-view [presentationMode]="presentationMode"
                    [propName]="'Quantity'"
+                   [type]="'package_quantity'"
                    [definition]="'The quantity of items contained in this package,e.g.,Quantity:30,Unit:KGM'"
                    [quantity]="[catalogueLine.goodsItem.containingPackage.quantity]"
                    [parentForm]="parentForm">
@@ -112,6 +114,7 @@
     <!-- Validity period -->
     <quantity-view [presentationMode]="presentationMode"
                    [propName]="'Validity Period'"
+                   [type]="'time_quantity'"
                    [definition]="'A period during which this price is valid,e.g.,Quantity:10,Unit:days'"
                    [quantity]="[catalogueLine.warrantyValidityPeriod.durationMeasure]"
                    [parentForm]="parentForm">
