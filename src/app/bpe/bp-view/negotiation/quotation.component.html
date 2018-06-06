@@ -35,7 +35,7 @@
 
     <!-- negotiation parameters for transportation services -->
     <ng-container *ngIf="bpDataService.getCatalogueLine().goodsItem.item.transportationServiceDetails != null">
-        <transport-trading-details [lineItem]="quotation.requestForQuotationLine[0].lineItem"
+        <transport-trading-details [lineItem]="quotation.quotationLine[0].lineItem"
                                    [fetchDefaultDeliveryAddress]="bpDataService.processMetadata == null"
                                    [presentationMode]="presentationMode">
         </transport-trading-details>

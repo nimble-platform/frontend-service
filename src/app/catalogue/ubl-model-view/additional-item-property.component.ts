@@ -29,7 +29,6 @@ export class AdditionalItemPropertyComponent implements OnInit, OnDestroy {
     editModeSubscription: Subscription;
     showPropertyDetails: boolean = false;
     customProperty: boolean = false;
-    propertyUnitDefined: boolean = false;
 
     constructor(private catalogueService:CatalogueService,
                 private bpDataService: BPDataService) {
@@ -53,9 +52,6 @@ export class AdditionalItemPropertyComponent implements OnInit, OnDestroy {
     ngOnInit(): void {
         if (this.additionalItemProperty.itemClassificationCode.listID == "Custom") {
             this.customProperty = true;
-        }
-        if (this.additionalItemProperty.unit && this.additionalItemProperty.unit.length > 0) {
-            this.propertyUnitDefined = true;
         }
 
         this.editModeSubscription = this.catalogueService.editModeObs

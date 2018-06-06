@@ -29,7 +29,6 @@ import {TransportationServiceDetails} from "./ubl-model-view/catalogue-line/tran
 import {ShipmentViewComponent} from "./ubl-model-view/shipment-view.component";
 import {PublishDeactivateGuardService} from "./publish-deactivate-guard.service";
 import {CategoryDeactivateGuardService} from "./category/category-deactivate-guard.service";
-import {LocationViewComponent} from "./ubl-model-view/location-view.component";
 import {QuantityValueViewComponent} from "./ubl-model-view/quantity-value-view.component";
 import {DetailedAddressViewComponent} from "./ubl-model-view/detailed-address-view.component";
 //import { CategoryService } from './category/category.service';

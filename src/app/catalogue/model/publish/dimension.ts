@@ -7,9 +7,5 @@ export class Dimension {
     constructor(
         public attributeID: string = null,
         public measure: Quantity = new Quantity(),
-        public description: string[] = [],
-        public minimumMeasure: Quantity = new Quantity(),
-        public maximumMeasure: Quantity = new Quantity(),
-        public hjid: string = null
     ) {  }
 }
