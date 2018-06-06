@@ -65,6 +65,7 @@ export class AppComponent implements OnInit {
       "ver":ver,
       "date":date
     });
+    this.cookieService.set("versions",JSON.stringify(this.versions));
   }
 
   public removeVersion(id:String) {
@@ -75,6 +76,7 @@ export class AppComponent implements OnInit {
     }
     if (idx >= 0) {
       this.versions.splice(idx,1);
+      this.cookieService.set("versions",JSON.stringify(this.versions));
     }
   }
 
@@ -126,6 +128,9 @@ export class AppComponent implements OnInit {
 	public checkLogin(path:any) {
 		if (this.cookieService.get("user_id")) {
 			this.isLoggedIn = true;
+      if (this.cookieService.get("versions")) {
+        this.versions = JSON.parse(this.cookieService.get("versions"));
+      }
 			this.fullName = this.cookieService.get("user_fullname");
 			this.eMail = this.cookieService.get("user_email");
 			this.userID = this.cookieService.get("user_id");
