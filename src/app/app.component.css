@@ -6,3 +6,8 @@
 	border-top: 1px solid #aaa;
 	color: #aaa;
 }
+
+#wrapper {
+	max-width: 1400px;
+	margin: 0 auto;
+}

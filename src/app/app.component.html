@@ -74,7 +74,7 @@
 
 		<ul class="nav navbar-nav">
 			<li class="nav-item">
-				<a class="nav-link" href="assets/user_manual.pdf" target="_blank">
+				<a class="nav-link pointer" (click)="open(support)">
 					<img src="assets/question_white.png" class="inline-icon" title="Help"/>
 				</a>
 			</li>
@@ -123,23 +123,27 @@
 
 <ng-template #support let-d="dismiss">
 	<div class="modal-header">
-		<h4 class="modal-title">Support</h4>
+		<h4 class="modal-title">Help</h4>
 		<button type="button" class="close" aria-label="Close" (click)="d('')">
 			<span aria-hidden="true">&times;</span>
 		</button>
 	</div>
 	<div class="modal-body">
-		When you press "Open mail template" a partially prefilled mail template will open in the mail client of your choice.<br/><br/>
-		Please make sure to fill out the description and cause of the issue properly and add screenshots if they are of use.<br/><br/>
+		When you press "Open manual" a PDF with an user manual will open in a new tab.<br/><br/>
+		When you press "Contact support" a partially prefilled mail template will open in the mail client of your choice.<br/>
+		Please make sure to fill out the description and cause of the issue properly and add screenshots if they are of use.<br/>
 		We will get back to you within one business day.
 	</div>
 	<div class="modal-footer">
-		<a [href]="mailto" type="button" class="btn btn-primary" (click)="d('')">Open mail template</a>
+		<a href="assets/user_manual.pdf" target="_blank" type="button" class="btn btn-primary" (click)="d('')">Open manual</a>
+		<a [href]="mailto" type="button" class="btn btn-primary" (click)="d('')">Contact support</a>
 	</div>
 </ng-template>
-<div id="support-btn" (click)="open(support)"><img id="support-img" src="assets/support_white.png"/></div>
+<!--<div id="support-btn" (click)="open(support)"><img id="support-img" src="assets/support_white.png"/></div>-->
 
-<router-outlet></router-outlet>
+<div id="wrapper">
+	<router-outlet></router-outlet>
+</div>
 
 <div id="footer">
 	<img src="assets/eu_flag.png" alt=""> This project has received funding from the European Union's Horizon 2020 research and innovation programme under grant agreement No 723810
