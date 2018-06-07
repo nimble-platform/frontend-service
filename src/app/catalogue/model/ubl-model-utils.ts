@@ -47,6 +47,7 @@ import {TransportExecutionPlan} from "./publish/transport-execution-plan";
 import {Consignment} from "./publish/consignment";
 import {ItemInformationRequest} from "./publish/item-information-request";
 import {ItemInformationResponse} from "./publish/item-information-response";
+import {PaymentTerms} from './publish/payment-terms';
 /**
  * Created by suat on 05-Jul-17.
  */
@@ -78,19 +79,12 @@ export class UBLModelUtils {
 
         let aip: ItemProperty;
         if (property == null) {
-            aip = new ItemProperty(this.generateUUID(), "", [], [], [], new Array<BinaryObject>(), "", "STRING", code, "", null, null);
-        }
-        else {
-            let unit = "";
-            if (property.unit != null) {
-                unit = property.unit.shortName;
-            }
+            aip = new ItemProperty(this.generateUUID(), "", [], [], [], new Array<BinaryObject>(), "STRING", code, null);
+        } else {
             let valueQualifier = property.dataType;
-
             let number;
             let quantity:Quantity = this.createQuantity();
-            aip = new ItemProperty(property.id, property.preferredName, [''], [number], [quantity], new Array<BinaryObject>(), unit,
-                valueQualifier, code, "", null, property.uri);
+            aip = new ItemProperty(property.id, property.preferredName, [''], [number], [quantity], new Array<BinaryObject>(), valueQualifier, code, property.uri);
         }
         return aip;
     }
@@ -105,7 +99,7 @@ export class UBLModelUtils {
         // price
         let price: Price = this.createPrice(null);
         // item location quantity
-        let ilq: ItemLocationQuantity = new ItemLocationQuantity(price, null, null, []);
+        let ilq: ItemLocationQuantity = new ItemLocationQuantity(price, null);
         return ilq;
     }
 
@@ -119,7 +113,7 @@ export class UBLModelUtils {
 
         // create item
         let uuid:string = this.generateUUID();
-        let item = new Item("", "", [], [], additionalItemProperties, providerParty, this.createItemIdentificationWithId(uuid), docRef, null, [], [], [], null, null, [], "");
+        let item = new Item("", "", [], [], additionalItemProperties, providerParty, this.createItemIdentificationWithId(uuid), docRef, [], [], [], null);
 
         // create goods item
         let goodsItem = new GoodsItem(uuid, item, this.createPackage(), this.createDeliveryTerms());
@@ -137,7 +131,7 @@ export class UBLModelUtils {
         let price: Price = this.createPrice(null);
         let lineItem:LineItem = this.createLineItem(quantity, price, item);
         let orderLine:OrderLine = new OrderLine(lineItem);
-        let order = new Order(this.generateUUID(), "", new Period(), new Address(), null, null, new PaymentMeans(), [orderLine]);
+        let order = new Order(this.generateUUID(), "", new Period(), new Address(), null, null, null, new PaymentMeans(),new PaymentTerms() ,[orderLine]);
         return order;
     }
 
@@ -147,7 +141,7 @@ export class UBLModelUtils {
         this.removeHjidFieldsFromObject(order.sellerSupplierParty);
         let customerParty:CustomerParty = order.buyerCustomerParty;
         let supplierParty:SupplierParty = order.sellerSupplierParty;
-        let orderResponseSimple:OrderResponseSimple = new OrderResponseSimple("", "", acceptedIndicator, orderReference, supplierParty, customerParty);
+        let orderResponseSimple:OrderResponseSimple = new OrderResponseSimple(this.generateUUID(), "", "", acceptedIndicator, orderReference, supplierParty, customerParty);
         return orderResponseSimple;
     }
 
@@ -171,6 +165,7 @@ export class UBLModelUtils {
         let ppapResponse:PpapResponse = new PpapResponse("","",acceptedIndicator,customerParty,supplierParty,null,documentReference);
         return ppapResponse;*/
         let ppapResponse:PpapResponse = new PpapResponse();
+        ppapResponse.id = this.generateUUID();
         ppapResponse.ppapDocumentReference = new DocumentReference(ppap.id);
         this.removeHjidFieldsFromObject(ppap.buyerCustomerParty);
         this.removeHjidFieldsFromObject(ppap.sellerSupplierParty);
@@ -188,7 +183,7 @@ export class UBLModelUtils {
         let price:Price = this.createPrice(null)
         let lineItem:LineItem = this.createLineItem(quantity, price, item);
         let requestForQuotationLine:RequestForQuotationLine = new RequestForQuotationLine(lineItem);
-        let rfq = new RequestForQuotation(this.generateUUID(), [""], null, null, new Delivery(), [requestForQuotationLine]);
+        let rfq = new RequestForQuotation(this.generateUUID(), [""], false, null, null, new Delivery(), [requestForQuotationLine]);
 
         // TODO remove this custom dimension addition once the dimension-view is improved to handle such cases
         let handlingUnitDimension:Dimension = new Dimension();
@@ -197,6 +192,33 @@ export class UBLModelUtils {
         handlingUnitDimension = new Dimension();
         handlingUnitDimension.attributeID = 'Handling Unit Width';
         rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.transportHandlingUnit[0].measurementDimension.push(handlingUnitDimension);
+        return rfq;
+    }
+
+    public static createRequestForQuotationWithOrder(order:Order,catalogueLine:CatalogueLine):RequestForQuotation{
+        let quantity:Quantity = new Quantity(null, "", null);
+        let item:Item = this.createItem();
+        let price:Price = this.createPrice(null);
+        let lineItem:LineItem = this.createLineItem(quantity, price, item);
+        let requestForQuotationLine:RequestForQuotationLine = new RequestForQuotationLine(lineItem);
+        let rfq = new RequestForQuotation(this.generateUUID(), [""], false, null, null, new Delivery(), [requestForQuotationLine]);
+
+        rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure = order.orderLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure;
+        rfq.requestForQuotationLine[0].lineItem.deliveryTerms.deliveryLocation.address = order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address;
+        rfq.requestForQuotationLine[0].lineItem.item.transportationServiceDetails = catalogueLine.goodsItem.item.transportationServiceDetails;
+
+        rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.goodsItem[0].item.name = order.orderLine[0].lineItem.item.name;
+        rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.totalTransportHandlingUnitQuantity = order.orderLine[0].lineItem.quantity;
+
+        // TODO remove this custom dimension addition once the dimension-view is improved to handle such cases
+        let handlingUnitDimension:Dimension = new Dimension();
+        handlingUnitDimension.attributeID = 'Handling Unit Length';
+        rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.transportHandlingUnit[0].measurementDimension.push(handlingUnitDimension);
+        handlingUnitDimension = new Dimension();
+        handlingUnitDimension.attributeID = 'Handling Unit Width';
+        rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.transportHandlingUnit[0].measurementDimension.push(handlingUnitDimension);
+        this.removeHjidFieldsFromObject(rfq);
+
         return rfq;
     }
 
@@ -209,7 +231,7 @@ export class UBLModelUtils {
 
         let documentReference:DocumentReference = new DocumentReference(rfq.id);
 
-        let quotation = new Quotation(this.generateUUID(), [""], new Code(), new Code(), 1, documentReference, customerParty, supplierParty, [quotationLine]);
+        let quotation = new Quotation(this.generateUUID(), [""], new Code(), new Code(), 1, false, documentReference, customerParty, supplierParty, [quotationLine]);
         return quotation;
     }
 
@@ -225,6 +247,7 @@ export class UBLModelUtils {
 
     public static createReceiptAdvice(despatchAdvice:DespatchAdvice):ReceiptAdvice {
         let receiptAdvice:ReceiptAdvice = new ReceiptAdvice();
+        receiptAdvice.id = this.generateUUID();
         receiptAdvice.orderReference = [JSON.parse(JSON.stringify(despatchAdvice.orderReference))];
         receiptAdvice.despatchDocumentReference = [new DocumentReference(despatchAdvice.id)];
         receiptAdvice.deliveryCustomerParty = despatchAdvice.deliveryCustomerParty;
@@ -247,6 +270,7 @@ export class UBLModelUtils {
         transportExecutionPlanRequest.consignment[0].consolidatedShipment.push(new Shipment());
         transportExecutionPlanRequest.id = this.generateUUID();
         transportExecutionPlanRequest.mainTransportationService = transportationServiceLine.goodsItem.item;
+        transportExecutionPlanRequest.toLocation.address = order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address;
         transportExecutionPlanRequest.consignment[0].consolidatedShipment[0].goodsItem[0].item = order.orderLine[0].lineItem.item;
         this.removeHjidFieldsFromObject(transportExecutionPlanRequest);
         return transportExecutionPlanRequest
@@ -254,11 +278,12 @@ export class UBLModelUtils {
 
     public static createTransportExecutionPlanRequestWithQuotation(quotation:Quotation): TransportExecutionPlanRequest {
         let transportExecutionPlanRequest:TransportExecutionPlanRequest = new TransportExecutionPlanRequest();
-        transportExecutionPlanRequest.consignment[0].consolidatedShipment.push(new Shipment());
         transportExecutionPlanRequest.id = this.generateUUID();
         transportExecutionPlanRequest.mainTransportationService = quotation.quotationLine[0].lineItem.item;
-        transportExecutionPlanRequest.consignment = quotation.quotationLine[0].lineItem.delivery[0].shipment.consignment;
-        transportExecutionPlanRequest.consignment[0].consolidatedShipment = [new Shipment()];
+        transportExecutionPlanRequest.toLocation.address = quotation.quotationLine[0].lineItem.deliveryTerms.deliveryLocation.address;
+        let shipment = new Shipment();
+        shipment.goodsItem[0].item = quotation.quotationLine[0].lineItem.item;
+        transportExecutionPlanRequest.consignment[0].consolidatedShipment.push(shipment);
         this.removeHjidFieldsFromObject(transportExecutionPlanRequest);
         return transportExecutionPlanRequest
     }
@@ -281,6 +306,7 @@ export class UBLModelUtils {
 
     public static createItemInformationResponse(itemInformationRequest:ItemInformationRequest):ItemInformationResponse {
         let itemInformationResponse:ItemInformationResponse = new ItemInformationResponse();
+        itemInformationResponse.id = this.generateUUID();
         itemInformationResponse.itemInformationRequestDocumentReference = new DocumentReference(itemInformationRequest.id);
         itemInformationResponse.item[0] = JSON.parse(JSON.stringify(itemInformationRequest.itemInformationRequestLine[0].salesItem[0].item));
         itemInformationResponse.item[0].itemSpecificationDocumentReference = [];
@@ -297,7 +323,7 @@ export class UBLModelUtils {
     }
 
     public static createItem():Item {
-        let item = new Item("", "", [], [], [], null, this.createItemIdentification(), null, null, [], [], [], null, null, [], "");
+        let item = new Item("", "", [], [], [], null, this.createItemIdentification(), null, [], [], [], null);
         return item;
     }
 
@@ -333,15 +359,15 @@ export class UBLModelUtils {
     public static createDimension(attributeId:string, unitCode:string):Dimension {
         let quantity:Quantity = this.createQuantity();
         quantity.unitCode = unitCode;
-        return new Dimension(attributeId, quantity, null, null, null, null);
+        return new Dimension(attributeId, quantity);
     }
 
     public static createAddress():Address {
-        return new Address(null, this.createCountry());
+        return new Address(null,null,null,null, this.createCountry());
     }
 
     public static createCountry():Country {
-        return new Country(null, null, null);
+        return new Country(null);
     }
 
     public static createQuantity():Quantity {

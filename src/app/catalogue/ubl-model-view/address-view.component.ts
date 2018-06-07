@@ -14,7 +14,8 @@ export class AddressViewComponent {
     @Input() address: Address[];
     @Input() propName: string;
     @Input() presentationMode: string;
-
+    @Input() multiValue: boolean = false;
+    @Input() definition: string = null;
     addNewValue():void {
         let value:Address = UBLModelUtils.createAddress();
         this.address.push(value);

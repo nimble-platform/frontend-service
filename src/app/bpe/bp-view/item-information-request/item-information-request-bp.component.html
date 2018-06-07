@@ -1,4 +1,4 @@
-<div>
+<div class="mb-3">
     <ul class="nav nav-tabs">
         <!-- tabs generated to present details of the product or service -->
         <li *ngFor="let tab of tabs" class="nav-item pointer">
@@ -18,16 +18,17 @@
         </li>
     </ul>
 </div>
-<div *ngIf="bpDataService.catalogueLine"
+<div *ngIf="bpDataService.catalogueLines[0]"
      class="p-3">
     <bp-product-details
             *ngIf="selectedTab == 'Product Characteristics' || selectedTab == 'Product Trading & Delivery Terms' || 'Service Characteristics'"
-            [catalogueLine]="bpDataService.catalogueLine"
-            [presentationMode]="'singlevalue'"
+            [catalogueLine]="bpDataService.catalogueLines[0]"
+            [presentationMode]="presentationMode"
             [selectedTab]="selectedTab">
     </bp-product-details>
     <item-information-request *ngIf="selectedTab === 'Item Information Request Details'"
                               [itemInformationRequest]="bpDataService.itemInformationRequest"
-                              [itemInformationResponse]="bpDataService.itemInformationResponse">
+                              [itemInformationResponse]="bpDataService.itemInformationResponse"
+                              [parentElement]="'business_process'">
     </item-information-request>
 </div>

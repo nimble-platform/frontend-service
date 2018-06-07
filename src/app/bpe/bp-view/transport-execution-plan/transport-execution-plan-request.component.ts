@@ -23,11 +23,15 @@ import {TransportExecutionPlanRequest} from "../../../catalogue/model/publish/tr
     templateUrl: './transport-execution-plan-request.component.html'
 })
 
-export class TransportExecutionPlanRequestComponent {
+export class TransportExecutionPlanRequestComponent implements OnInit {
     @Input() transportExecutionPlanRequest:TransportExecutionPlanRequest;
 
     callStatus:CallStatus = new CallStatus();
-
+    // check whether 'Use Service' button is clicked
+    submitted:boolean = false;
+    // used to get correct format for start and end dates
+    startDate:any;
+    endDate:any;
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
                 private userService: UserService,
@@ -35,17 +39,28 @@ export class TransportExecutionPlanRequestComponent {
                 private router:Router) {
     }
 
+    ngOnInit(): void {
+        // TODO instead of checking the transport contract whether it is null or not,
+        // pass a query parameter for indicating initiation of a new process
+        if(this.transportExecutionPlanRequest.transportContract == null && this.bpDataService.precedingProcessId != null) {
+            this.bpeService.constructContractForProcess(this.bpDataService.precedingProcessId).then(contract => {
+                this.transportExecutionPlanRequest.transportContract = contract;
+            });
+        }
+    }
+
     sendTransportExecutionPlanRequest() {
+        this.submitted = true;
         this.callStatus.submit();
         let transportationExecutionPlanRequest:TransportExecutionPlanRequest = JSON.parse(JSON.stringify(this.bpDataService.transportExecutionPlanRequest));
 
         // final check on the transportationExecutionPlanRequest
-        transportationExecutionPlanRequest.mainTransportationService = this.bpDataService.modifiedCatalogueLine.goodsItem.item;
+        transportationExecutionPlanRequest.mainTransportationService = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;
         UBLModelUtils.removeHjidFieldsFromObject(transportationExecutionPlanRequest);
 
         //first initialize the seller and buyer parties.
         //once they are fetched continue with starting the ordering process
-        let sellerId:string = this.bpDataService.catalogueLine.goodsItem.item.manufacturerParty.id;
+        let sellerId:string = this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty.id;
         let buyerId:string = this.cookieService.get("company_id");
 
         this.userService.getParty(buyerId).then(buyerParty => {
@@ -53,7 +68,7 @@ export class TransportExecutionPlanRequestComponent {
 
             this.userService.getParty(sellerId).then(sellerParty => {
                 transportationExecutionPlanRequest.transportServiceProviderParty = sellerParty;
-                let vars:ProcessVariables = ModelUtils.createProcessVariables("Transport_Execution_Plan", buyerId, sellerId, transportationExecutionPlanRequest);
+                let vars:ProcessVariables = ModelUtils.createProcessVariables("Transport_Execution_Plan", buyerId, sellerId, transportationExecutionPlanRequest, this.bpDataService);
                 let piim:ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
 
                 this.bpeService.startBusinessProcess(piim)
@@ -62,9 +77,19 @@ export class TransportExecutionPlanRequestComponent {
                         this.router.navigate(['dashboard']);
                     })
                     .catch(error => {
+                        this.submitted = false;
                         this.callStatus.error("Failed to send Transport Execution Plan");
                     });
             });
         });
+    }
+
+
+
+    getDate(type:string):string{
+        if(type == "Start"){
+            return this.startDate.year+"-"+this.startDate.month+"-"+this.startDate.day;
+        }
+        return this.endDate.year+"-"+this.endDate.month+"-"+this.endDate.day;
     }
 }

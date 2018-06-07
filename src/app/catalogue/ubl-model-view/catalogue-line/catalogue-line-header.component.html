@@ -14,28 +14,39 @@
         </p>
     </div>
     <div class="col-10">
-        <value-view *ngIf="presentationMode == 'edit'" [presentationMode]="presentationMode"
+        <value-view *ngIf="presentationMode == 'edit'" [presentationMode]="'edit'"
                     [propName]="'Product Identifier'"
                     [parentForm]="parentForm"
                     [mandatory]="true"
                     [(value)]="catalogueLine.goodsItem.item.manufacturersItemIdentification.id"
                     [(value)]="catalogueLine.id">
         </value-view>
-        <value-view *ngIf="presentationMode == 'edit'" [presentationMode]="presentationMode"
+        <value-view *ngIf="presentationMode == 'edit'" [presentationMode]="'edit'"
                     [propName]="'Product Name'"
                     [parentForm]="parentForm"
                     [mandatory]="true"
                     [(value)]="catalogueLine.goodsItem.item.name">
         </value-view>
-        <value-view [presentationMode]="presentationMode"
+        <value-view *ngIf="presentationMode == 'edit'" [presentationMode]="'edit'"
                     [propName]="'Product Description'"
                     [(value)]="catalogueLine.goodsItem.item.description"
                     [largeInput]="true">
         </value-view>
-        <div *ngIf="catalogueLine.goodsItem.item.commodityClassification.length > 0" class="d-flex flex-wrap">
+        <textarea *ngIf="presentationMode != 'edit' && catalogueLine.goodsItem.item.description" class="form-control mb-2"
+                  rows="3"
+                  style="margin-left: 15px"
+                  [(ngModel)]="catalogueLine.goodsItem.item.description"
+                  readonly>
+        </textarea>
+        <label class="col-4 mb-2" *ngIf="presentationMode != 'edit' && !catalogueLine.goodsItem.item.description">
+            <i>No available description</i>
+        </label>
+        <div *ngIf="catalogueLine.goodsItem.item.commodityClassification.length > 1" class="d-flex flex-wrap">
             <label class="col-3 control-label">Product Types</label>
-            <div *ngFor="let classification of catalogueLine.goodsItem.item.commodityClassification" class="bordered inline space-right">
-				{{classification.itemClassificationCode.name}}
+            <div *ngFor="let classification of catalogueLine.goodsItem.item.commodityClassification" >
+				<div *ngIf="classification.itemClassificationCode.listID != 'Default'" class="bordered inline space-right">
+                    {{classification.itemClassificationCode.name}}
+                </div>
             </div>
         </div>
 
@@ -46,13 +57,12 @@
             <label *ngIf="catalogueLine.goodsItem.item.productImage.length == 0">Add Image</label>
             <input #image type="file" (change)="addImage($event)" multiple accept="image/*"
                    style="display: none">
-            <img src="./assets/catalogue/add_button.png"
-                 (click)="image.click()"/>
+            <i class="fa fa-plus-circle pointer" (click)="image.click()"></i>
         </div>
         <div *ngIf="catalogueLine.goodsItem.item.productImage.length > 0"
              class="d-flex flex-wrap bordered" style="cursor: default;position:relative;left: 15px;width: 98%;">
             <div *ngFor="let image of catalogueLine.goodsItem.item.productImage; let i = index">
-                <div *ngIf="image.mimeCode.split('/')[0]=='image' && presentationMode=='edit'" style="position: relative;cursor: pointer">
+                <div *ngIf="image.mimeCode.split('/')[0]=='image' && presentationMode=='edit'" class="pointer" style="position: relative;">
                     <img class=" pr-2"
                          src="data:{{image.mimeCode}};base64,{{image.value}}"
                          height="100"
@@ -73,8 +83,7 @@
             <div *ngIf="presentationMode=='edit'" class="align-self-center ml-3" >
                 <input #image type="file" (change)="addImage($event)" multiple accept="image/*"
                        style="display: none">
-                <img src="./assets/catalogue/add_button.png"
-                     (click)="image.click()"/>
+                <i class="fa fa-plus-circle pointer" (click)="image.click()"></i>
             </div>
         </div>
 

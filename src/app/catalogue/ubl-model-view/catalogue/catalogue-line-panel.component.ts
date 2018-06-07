@@ -30,7 +30,7 @@ export class CatalogueLinePanelComponent {
         this.publishService.publishMode = 'edit';
         this.publishService.publishingStarted = false;
         this.categoryService.resetSelectedCategories();
-        this.router.navigate(['catalogue/publish']);
+        this.router.navigate(['catalogue/publish'], {queryParams: {pg: "single"}});
     }
 
     deleteCatalogueLine(): void {

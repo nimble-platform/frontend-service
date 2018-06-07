@@ -3,7 +3,11 @@
     <ng-container *ngIf="quantity.length > 0">
         <div *ngFor="let value of quantity; let i = index;" class="input-group form-group">
             <!-- show label next to the first value only -->
-            <label *ngIf="i == 0" class="col-3 control-label">{{propName}}</label>
+            <label *ngIf="i == 0" class="col-3 control-label">{{propName}}
+                <span *ngIf="definition" class="label label-default" title="{{definition}}">
+                    &#9432;
+                </span>
+            </label>
             <input type="text" class="form-control align-self-start"
                    [(ngModel)]="value.value"
                    [ngClass]="{'offset-3' : i > 0} "
@@ -11,13 +15,16 @@
             <label class="col-1" class="ml-3 mr-3">Unit: </label>
             <input type="text"
                    class="col-1 form-control align-self-start"
-                   [(ngModel)]="quantity[0].unitCode"
+                   [(ngModel)]="value.unitCode"
                    readonly>
         </div>
     </ng-container>
     <ng-container *ngIf="quantity.length == 0">
         <div class="input-group form-group">
-            <label *ngIf="i == 0" class="col-3 control-label align-self-start">{{propName}}</label>
+            <label *ngIf="i == 0" class="col-3 control-label align-self-start">{{propName}}
+                <span *ngIf="definition" class="label label-default" title="{{definition}}">
+                    &#9432;
+                </span></label>
             <input type="text" class="form-control" readonly>
             <label class="col-1" class="ml-3 mr-3 align-self-start">Unit: </label>
             <input type="text" class="col-1 form-control" readonly>
@@ -34,7 +41,11 @@
              [formGroupName]="i">
             <div class="input-group border-0">
                 <!-- show label next to the first value only -->
-                <label *ngIf="i == 0 && !editablePropName" class="col-3 control-label">{{propName}}</label>
+                <label *ngIf="i == 0 && !editablePropName" class="col-3 control-label">{{propName}}
+                    <span *ngIf="definition" class="label label-default" title="{{definition}}">
+                    &#9432;
+                    </span>
+                </label>
                 <input *ngIf="i == 0 && editablePropName"
                        class="form-control col-3 pr-3"
                        (blur)="onPropNameEditFocusOut($event)"
@@ -48,11 +59,15 @@
                        placeholder="Quantity">
 
                 <label class="col-1" class="ml-3 mr-3">Unit: </label>
-                <input type="text"
+                <input *ngIf="!type"
+                        type="text"
                        class="col-1 form-control align-self-start"
                        [(ngModel)]="value.unitCode"
                        [formControlName]="'unit'"
                        placeholder="Unit">
+                <select *ngIf="type" class="col-1 custom-select" [(ngModel)]="value.unitCode" [formControlName]="'unit'">
+                    <option *ngFor="let unit of unitValues" [value]="unit">{{unit}}</option>
+                </select>
 
                 <!-- remove value button -->
                 <span *ngIf="multiValue && quantity.length > (zeroValue ? 0 : 1)">
@@ -84,7 +99,6 @@
                        class="offset-3 text-danger">
                     Both quantity and unit must be filled
                 </small>
-
             </ng-container>
         </div>
     </div>
@@ -93,7 +107,11 @@
 <!-- single value mode (used when only a single value should be chosen among the alternatives -->
 <ng-container *ngIf="presentationMode == 'singlevalue'">
     <div class="input-group form-group">
-        <label class="col-3 control-label">{{propName}}</label>
+        <label class="col-3 control-label">{{propName}}
+            <span *ngIf="definition" class="label label-default" title="{{definition}}">
+                    &#9432;
+            </span>
+        </label>
         <select *ngIf="quantity.length > 1"
                 class="custom-select"
                 (change)="selectChanged($event)">

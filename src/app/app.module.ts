@@ -22,6 +22,8 @@ import { SimpleSearchService } from './simple-search/simple-search.service';
 import { SearchContextService } from './simple-search/search-context.service';
 import { UserService } from './user-mgmt/user.service';
 import { CredentialsService } from './user-mgmt/credentials.service';
+import { DataChannelService } from "./data-channel/data-channel.service";
+import { UnitService } from './common/unit-service';
 
 @NgModule({
     imports: [
@@ -40,6 +42,7 @@ import { CredentialsService } from './user-mgmt/credentials.service';
     providers: [
 		CookieService,
 		BPEService,
+        DataChannelService,
 		BPService,
 		BPDataService,
 		CatalogueService,
@@ -49,7 +52,8 @@ import { CredentialsService } from './user-mgmt/credentials.service';
 		SimpleSearchService,
 		SearchContextService,
 		UserService,
-		CredentialsService
+		CredentialsService,
+        UnitService
     ],
     bootstrap: [
         AppComponent

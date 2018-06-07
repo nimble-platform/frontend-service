@@ -1,19 +1,37 @@
 <ng-container *ngIf="shipment">
     <value-view [presentationMode]="presentationMode"
                 [propName]="'Handling Instructions'"
+                [definition]="'The handling required for this shipment'"
                 [(value)]="shipment.handlingInstructions">
     </value-view>
-    <value-view [presentationMode]="presentationMode"
+    <value-view *ngIf="presentationMode == 'view'"
+                [presentationMode]="'view'"
                 [propName]="'Estimated Delivery Date'"
                 [(value)]="shipment.shipmentStage[0].estimatedDeliveryDate">
     </value-view>
+
+    <ng-container *ngIf="presentationMode != 'view'">
+        <div class="input-group space-after">
+            <label class="col-3">Estimated Delivery Date</label>
+            <input class="form-control" placeholder="YYYY-MM-DD" (dateSelect)="shipment.shipmentStage[0].estimatedDeliveryDate = getEstimatedDeliveryDate()"
+                   name="dp" [(ngModel)]="date" ngbDatepicker #d="ngbDatepicker" readonly>
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary" (click)="d.toggle()" type="button">
+                    <i class="fa fa-calendar-alt pointer" style="width: 1.2rem; height: 1rem;"></i>
+                </button>
+            </div>
+        </div>
+    </ng-container>
+
     <ng-container *ngIf="showCarrierPartyDetails">
         <value-view [presentationMode]="presentationMode"
                     [propName]="'Carrier Party'"
+                    [definition]="'The party carrying the goods'"
                     [(value)]="shipment.shipmentStage[0].carrierParty.name">
         </value-view>
         <value-view [presentationMode]="presentationMode"
                     [propName]="'Carrier Party Contact'"
+                    [definition]="'The primary contact for carrier party'"
                     [(value)]="shipment.shipmentStage[0].carrierParty.contact.telephone">
         </value-view>
     </ng-container>

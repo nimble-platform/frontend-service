@@ -1,4 +1,4 @@
-<div>
+<div class="mb-3">
     <ul class="nav nav-tabs">
         <!-- tabs specific to the ppap process -->
         <li class="nav-item pointer">
@@ -41,11 +41,17 @@
     </ul>
 </div>
 <bp-product-details *ngIf="selectedTab == 'Product Characteristics' || selectedTab == 'Product Trading & Delivery Terms'"
-                    [catalogueLine]="bpDataService.catalogueLine"
-                    [presentationMode]="'singlevalue'"
+                    [catalogueLine]="bpDataService.catalogueLines[0]"
+                    [presentationMode]="presentationMode"
                     [selectedTab]="selectedTab">
 </bp-product-details>
 
 <ppap-document-select *ngIf="selectedTab=='Ppap Select'"></ppap-document-select>
 <ppap-document-upload *ngIf="selectedTab=='Ppap Upload'"></ppap-document-upload>
 <ppap-document-download *ngIf="selectedTab=='Ppap Download'"></ppap-document-download>
+<businessProcess-options    *ngIf="bpDataService.ppapResponse && bpDataService.ppapResponse.requestedDocument != null"
+                            (selectedTabChanged)="selectedTab = 'Ppap Select'"
+                            [processName]="'Ppap'"
+                            [userRole]="this.seller ?'seller':'buyer'"
+                            [transportationService]="bpDataService.getCatalogueLine().goodsItem.item.transportationServiceDetails != null">
+</businessProcess-options>

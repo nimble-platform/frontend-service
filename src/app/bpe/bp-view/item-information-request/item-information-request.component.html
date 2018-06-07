@@ -1,108 +1,150 @@
 <ng-container *ngIf="itemInformationRequest">
-    <div class="mb-3 row">
-        <label class="col-3 control-label">Technical data sheet</label>
-
-        <!-- buyer document part -->
-        <!-- buyer -->
-        <ng-container *ngIf="bpDataService.userRole == 'buyer'">
-            <!-- no document selected -->
-            <ng-container
-                    *ngIf="bpDataService.itemInformationRequest.itemInformationRequestLine[0].salesItem[0].item.itemSpecificationDocumentReference.length == 0">
-                <input #itemSpecInput type="file"
-                       (change)="selectItemSpecificationFile($event, bpDataService.itemInformationRequest.itemInformationRequestLine[0].salesItem[0].item.itemSpecificationDocumentReference)"
-                       style="display: none">
-                <button class="btn btn-success ml-auto"
-                        (click)="itemSpecInput.click()">Upload Technical Data Sheet
-                </button>
-            </ng-container>
-
-            <!-- document selected -->
-            <div *ngIf="bpDataService.itemInformationRequest.itemInformationRequestLine[0].salesItem[0].item.itemSpecificationDocumentReference.length > 0"
-                 style="display: inline-block">
-                {{bpDataService.itemInformationRequest.itemInformationRequestLine[0].salesItem[0].item.itemSpecificationDocumentReference[0].attachment.embeddedDocumentBinaryObject.fileName}}
-                <button class="btn btn-xs btn-danger"
-                        (click)="bpDataService.itemInformationRequest.itemInformationRequestLine[0].salesItem[0].item.itemSpecificationDocumentReference = []; $event.stopPropagation()"
-                >&times;
-                </button>
-            </div>
-        </ng-container>
-
-        <!-- seller -->
-        <ng-container *ngIf="bpDataService.userRole == 'seller' && itemInformationRequest.itemInformationRequestLine[0].salesItem[0].item.itemSpecificationDocumentReference.length > 0">
-            {{itemInformationRequest.itemInformationRequestLine[0].salesItem[0].item.itemSpecificationDocumentReference[0].attachment.embeddedDocumentBinaryObject.fileName}}
-            <button class="btn btn-success ml-auto"
-                    (click)="downloadTechnicalDataSheet(bpDataService.itemInformationRequest.itemInformationRequestLine[0].salesItem[0].item.itemSpecificationDocumentReference[0].attachment.embeddedDocumentBinaryObject)">Download Technical Data Sheet
-            </button>
-        </ng-container>
-    </div>
-
-    <value-view class="row"
-                [presentationMode]="'edit'"
-                [propName]="'Information Request Note'"
-                [(value)]="itemInformationRequest.note[0]">
-    </value-view>
-
-    <ng-container *ngIf="itemInformationResponse">
-        <hr class="mb-3 mt-3">
-
+    <ng-container *ngIf="parentElement == 'business_process'">
         <div class="mb-3 row">
-            <label class="col-3 control-label">Technical data sheet response</label>
-            <!-- seller document part -->
-            <!-- buyer -->
-            <ng-container *ngIf="bpDataService.userRole == 'buyer' && itemInformationResponse.item[0].itemSpecificationDocumentReference.length > 0">
-                {{itemInformationResponse.item[0].itemSpecificationDocumentReference[0].attachment.embeddedDocumentBinaryObject.fileName}}
-                <button class="btn btn-success ml-auto align-self-start"
-                        (click)="downloadTechnicalDataSheet(bpDataService.itemInformationResponse.item[0].itemSpecificationDocumentReference[0].attachment.embeddedDocumentBinaryObject)">Download Technical Data Sheet
-                </button>
-            </ng-container>
+            <label class="col-3 control-label">Technical data sheet
+                <span class="label label-default" title="A document that summarizes the performance and other technical characteristics of the product or the service">
+                    &#9432;
+                </span>
+            </label>
 
-            <!-- seller -->
-            <ng-container *ngIf="bpDataService.userRole == 'seller'">
+            <!-- buyer document part -->
+            <!-- buyer -->
+            <ng-container *ngIf="bpDataService.userRole == 'buyer'">
                 <!-- no document selected -->
                 <ng-container
-                        *ngIf="itemInformationResponse.item[0].itemSpecificationDocumentReference.length == 0">
-                    <input #itemSpecResponseInput type="file"
-                           (change)="selectItemSpecificationFile($event, itemInformationResponse.item[0].itemSpecificationDocumentReference)"
+                        *ngIf="!bpDataService.processMetadata && bpDataService.itemInformationRequest.itemInformationRequestLine[0].salesItem[0].item.itemSpecificationDocumentReference.length == 0">
+                    <input #itemSpecInput type="file"
+                           (change)="selectItemSpecificationFile($event, bpDataService.itemInformationRequest.itemInformationRequestLine[0].salesItem[0].item.itemSpecificationDocumentReference)"
                            style="display: none">
-                    <button class="btn btn-success ml-auto align-self-start"
-                            (click)="itemSpecResponseInput.click()">Upload Information Response
+                    <button class="btn btn-success ml-auto"
+                            (click)="itemSpecInput.click()">Upload Technical Data Sheet
                     </button>
                 </ng-container>
 
                 <!-- document selected -->
-                <div *ngIf="itemInformationResponse.item[0].itemSpecificationDocumentReference.length > 0"
-                     style="display: inline-block">
-                    {{itemInformationResponse.item[0].itemSpecificationDocumentReference[0].attachment.embeddedDocumentBinaryObject.fileName}}
-                    <button class="btn btn-xs btn-danger"
-                            (click)="bpDataService.itemInformationResponse.item[0].itemSpecificationDocumentReference = []; $event.stopPropagation()"
+                <ng-container *ngIf="!bpDataService.processMetadata &&
+                            bpDataService.itemInformationRequest.itemInformationRequestLine[0].salesItem[0].item.itemSpecificationDocumentReference.length > 0">
+                    {{bpDataService.itemInformationRequest.itemInformationRequestLine[0].salesItem[0].item.itemSpecificationDocumentReference[0].attachment.embeddedDocumentBinaryObject.fileName}}
+                    <button class="btn btn-xs btn-danger space-left"
+                            (click)="bpDataService.itemInformationRequest.itemInformationRequestLine[0].salesItem[0].item.itemSpecificationDocumentReference = []; $event.stopPropagation()"
                     >&times;
                     </button>
-                </div>
+                </ng-container>
+                <!-- document sent -->
+                <ng-container *ngIf="bpDataService.processMetadata &&
+                           bpDataService.itemInformationRequest.itemInformationRequestLine[0].salesItem[0].item.itemSpecificationDocumentReference.length > 0">
+                    {{bpDataService.itemInformationRequest.itemInformationRequestLine[0].salesItem[0].item.itemSpecificationDocumentReference[0].attachment.embeddedDocumentBinaryObject.fileName}}
+                    <button class="btn btn-success ml-auto"
+                            (click)="downloadTechnicalDataSheet(bpDataService.itemInformationRequest.itemInformationRequestLine[0].salesItem[0].item.itemSpecificationDocumentReference[0].attachment.embeddedDocumentBinaryObject)">
+                        Download Technical Data Sheet
+                    </button>
+                </ng-container>
+
+            </ng-container>
+
+            <!-- seller -->
+            <ng-container
+                    *ngIf="bpDataService.userRole == 'seller' && itemInformationRequest.itemInformationRequestLine[0].salesItem[0].item.itemSpecificationDocumentReference.length > 0">
+                {{itemInformationRequest.itemInformationRequestLine[0].salesItem[0].item.itemSpecificationDocumentReference[0].attachment.embeddedDocumentBinaryObject.fileName}}
+                <button class="btn btn-success ml-auto"
+                        (click)="downloadTechnicalDataSheet(bpDataService.itemInformationRequest.itemInformationRequestLine[0].salesItem[0].item.itemSpecificationDocumentReference[0].attachment.embeddedDocumentBinaryObject)">
+                    Download Technical Data Sheet
+                </button>
             </ng-container>
         </div>
 
         <value-view class="row"
-                    [presentationMode]="'edit'"
-                    [propName]="'Information Response Note'"
-                    [(value)]="itemInformationResponse.note[0]">
+                    [presentationMode]="bpDataService.processMetadata ? 'singlevalue' : 'edit'"
+                    [propName]="'Information Request Note'"
+                    [(value)]="itemInformationRequest.note[0]">
         </value-view>
-    </ng-container>
 
+        <hr *ngIf="itemInformationResponse" class="mb-3 mt-3">
+    </ng-container>
+</ng-container>
+
+<ng-container *ngIf="itemInformationResponse">
+    <div class="mb-3 row">
+        <label class="col-3 control-label">Technical data sheet response</label>
+        <!-- seller document part -->
+        <!-- buyer -->
+        <ng-container *ngIf="bpDataService.userRole == 'buyer' && itemInformationResponse.item[0].itemSpecificationDocumentReference.length > 0">
+            {{itemInformationResponse.item[0].itemSpecificationDocumentReference[0].attachment.embeddedDocumentBinaryObject.fileName}}
+            <button class="btn btn-success ml-auto align-self-start"
+                    (click)="downloadTechnicalDataSheet(itemInformationResponse.item[0].itemSpecificationDocumentReference[0].attachment.embeddedDocumentBinaryObject)">
+                Download Technical Data Sheet Response
+            </button>
+        </ng-container>
+
+        <!-- seller -->
+        <ng-container *ngIf="bpDataService.userRole == 'seller'">
+            <!-- no document selected -->
+            <ng-container
+                    *ngIf="bpDataService.processMetadata.processStatus != 'Completed' && itemInformationResponse.item[0].itemSpecificationDocumentReference.length == 0">
+                <input #itemSpecResponseInput type="file"
+                       (change)="selectItemSpecificationFile($event, itemInformationResponse.item[0].itemSpecificationDocumentReference)"
+                       style="display: none">
+                <button class="btn btn-success ml-auto align-self-start"
+                        (click)="itemSpecResponseInput.click()">Upload Information Response
+                </button>
+            </ng-container>
+
+            <!-- document selected -->
+            <ng-container
+                    *ngIf="parentElement == 'business_process' &&
+                    bpDataService.processMetadata.processStatus != 'Completed' &&
+                    itemInformationResponse.item[0].itemSpecificationDocumentReference.length > 0">
+
+                {{itemInformationResponse.item[0].itemSpecificationDocumentReference[0].attachment.embeddedDocumentBinaryObject.fileName}}
+                <button class="btn btn-xs btn-danger space-left"
+                        (click)="bpDataService.itemInformationResponse.item[0].itemSpecificationDocumentReference = []; $event.stopPropagation()">&times;
+                </button>
+            </ng-container>
+
+            <!-- document sent -->
+            <ng-container
+                    *ngIf="itemInformationResponse.item[0].itemSpecificationDocumentReference.length > 0 &&
+                            (parentElement == 'clause' || bpDataService.processMetadata.processStatus == 'Completed')">
+                {{itemInformationResponse.item[0].itemSpecificationDocumentReference[0].attachment.embeddedDocumentBinaryObject.fileName}}
+                <button class="btn btn-success ml-auto"
+                        (click)="downloadTechnicalDataSheet(itemInformationResponse.item[0].itemSpecificationDocumentReference[0].attachment.embeddedDocumentBinaryObject)">
+                    Download Technical Data Sheet Response
+                </button>
+            </ng-container>
+        </ng-container>
+    </div>
+
+    <!-- TODO there might be cases where parentElement = clause but bpDataService.processMetadata is null e.g. when this component is inside a document clause-->
+    <!-- we should pass parameters like process status as input to such components -->
+    <value-view class="row"
+                [presentationMode]="(parentElement == 'clause' || bpDataService.processMetadata.processStatus == 'Completed') ? 'singlevalue' :'edit'"
+                [propName]="'Information Response Note'"
+                [(value)]="itemInformationResponse.note[0]">
+    </value-view>
+</ng-container>
+
+<!-- business process options for both buyer and seller -->
+<ng-container *ngIf="parentElement == 'business_process'">
     <hr class="mb-3 mt-3">
 
     <div class="row justify-content-end">
         <button *ngIf="bpDataService.userRole == 'buyer' && bpDataService.processMetadata == null"
+                [disabled]="submitted"
                 class="btn btn-success" (click)="sendInformationRequest()">Request Information
         </button>
         <ng-container *ngIf="bpDataService.processMetadata != null">
-            <button *ngIf="bpDataService.userRole == 'buyer' && bpDataService.processMetadata.processStatus == 'Completed'"
-                    class="btn btn-success" (click)="navigateToSearchDetails()">See Business Options
-            </button>
             <button *ngIf="bpDataService.userRole == 'seller' && bpDataService.processMetadata.processStatus != 'Completed'"
+                    [disabled]="submitted"
                     class="btn btn-success" (click)="sendInformationResponse()">Respond to Information Request
             </button>
         </ng-container>
     </div>
+
+    <businessProcess-options *ngIf="bpDataService.processMetadata && bpDataService.processMetadata.processStatus == 'Completed'"
+                             [processName]="'Item_Information_Request'"
+                             [userRole]="bpDataService.userRole"
+                             [transportationService]="bpDataService.itemInformationRequest.itemInformationRequestLine[0].salesItem[0].item.transportationServiceDetails != null">
+    </businessProcess-options>
 </ng-container>
 
 <call-status [callStatus]="callStatus"

@@ -1,15 +1,17 @@
 <h6 class="space-after">
-    <b> What is Production Part Approval Process (PPAP) ? </b>
+    <b class="clickable" (click)="showDetails = !showDetails"> What is Production Part Approval Process (PPAP) ? </b>
 </h6>
-<p>The Production Part Approval Process (PPAP) is a standardized process that helps manufacturers and suppliers communicate and approve production designs and processes before, during, and after manufacture.</p>
-<h6 class="space-after">
-    <b> What is the goal of the PPAP process ? </b>
-</h6>
-<p>The goal of the PPAP process is to ensure that all designs and specifications are understood by the supplier and that the production process and produce products that consistently meet these requirements when running at rate.</p>
-<h6 class="space-after">
-    <b> What is the meaning of the PPAP levels ? </b>
-</h6>
-<p>The PPAP levels indicate which elements need to be submitted to the customer.</p>
+<div *ngIf="showDetails">
+    <p>The Production Part Approval Process (PPAP) is a standardized process that helps manufacturers and suppliers communicate and approve production designs and processes before, during, and after manufacture.</p>
+    <h6 class="space-after">
+        <b> What is the goal of the PPAP process ? </b>
+    </h6>
+    <p>The goal of the PPAP process is to ensure that all designs and specifications are understood by the supplier and that the production process and produce products that consistently meet these requirements when running at rate.</p>
+    <h6 class="space-after">
+        <b> What is the meaning of the PPAP levels ? </b>
+    </h6>
+    <p>The PPAP levels indicate which elements need to be submitted to the customer.</p>
+</div>
 
 
 <label *ngIf="level != 0 "><b> Select a PPAP level : </b> </label>
@@ -37,78 +39,78 @@
 
     <div style="width: 50%;float: left;padding: 1em">
         <div>
-            <input [(ngModel)]="documents[0].select" type="checkbox" >
+            <input [(ngModel)]="documents[0].select" type="checkbox" [disabled]="bpDataService.processMetadata">
             <label >Design Documentation</label>
         </div>
         <div>
-            <input [(ngModel)]="documents[1].select" type="checkbox" >
+            <input [(ngModel)]="documents[1].select" type="checkbox" [disabled]="bpDataService.processMetadata">
             <label>Engineering Change Documentation</label>
         </div>
         <div>
-            <input [(ngModel)]="documents[2].select" type="checkbox" >
+            <input [(ngModel)]="documents[2].select" type="checkbox" [disabled]="bpDataService.processMetadata">
             <label>Customer Engineering Approval</label>
         </div>
         <div>
-            <input [(ngModel)]="documents[3].select" type="checkbox" >
+            <input [(ngModel)]="documents[3].select" type="checkbox" [disabled]="bpDataService.processMetadata">
             <label>Design Failure Mode and Effects Analysis</label>
         </div>
         <div>
-            <input [(ngModel)]="documents[4].select" type="checkbox" >
+            <input [(ngModel)]="documents[4].select" type="checkbox" [disabled]="bpDataService.processMetadata">
             <label>Process Flow Diagram</label>
         </div>
         <div>
-            <input [(ngModel)]="documents[5].select" type="checkbox" >
+            <input [(ngModel)]="documents[5].select" type="checkbox" [disabled]="bpDataService.processMetadata">
             <label>Process Failure Mode and Effects Analysis</label>
         </div>
         <div>
-            <input [(ngModel)]="documents[6].select" type="checkbox" >
+            <input [(ngModel)]="documents[6].select" type="checkbox" [disabled]="bpDataService.processMetadata">
             <label>Control Plan</label>
         </div>
         <div>
-            <input [(ngModel)]="documents[7].select" type="checkbox" >
+            <input [(ngModel)]="documents[7].select" type="checkbox" [disabled]="bpDataService.processMetadata">
             <label>Measurement System Analysis Studies</label>
         </div>
         <div>
-            <input [(ngModel)]="documents[8].select" type="checkbox" >
+            <input [(ngModel)]="documents[8].select" type="checkbox" [disabled]="bpDataService.processMetadata">
             <label>Dimensional Results</label>
         </div>
     </div>
 
     <div style="width: 50%;float: right;padding: 1em">
         <div>
-            <input [(ngModel)]="documents[9].select" type="checkbox" >
+            <input [(ngModel)]="documents[9].select" type="checkbox" [disabled]="bpDataService.processMetadata">
             <label>Records of Material / Performance Tests</label>
         </div>
         <div>
-            <input [(ngModel)]="documents[10].select" type="checkbox" >
+            <input [(ngModel)]="documents[10].select" type="checkbox" [disabled]="bpDataService.processMetadata">
             <label>Initial Process Studies</label>
         </div>
         <div>
-            <input [(ngModel)]="documents[11].select" type="checkbox" >
+            <input [(ngModel)]="documents[11].select" type="checkbox" [disabled]="bpDataService.processMetadata">
             <label>Qualified Laboratory Documentation</label>
         </div>
         <div>
-            <input [(ngModel)]="documents[12].select" type="checkbox" >
+            <input [(ngModel)]="documents[12].select" type="checkbox" [disabled]="bpDataService.processMetadata">
             <label>Appearance Approval Report</label>
         </div>
         <div>
-            <input [(ngModel)]="documents[13].select" type="checkbox" >
+            <input [(ngModel)]="documents[13].select" type="checkbox" [disabled]="bpDataService.processMetadata">
             <label>Sample Production Parts</label>
         </div>
         <div>
-            <input [(ngModel)]="documents[14].select" type="checkbox" >
+            <input [(ngModel)]="documents[14].select" type="checkbox" [disabled]="bpDataService.processMetadata">
             <label>Master Sample</label>
         </div>
         <div>
-            <input [(ngModel)]="documents[15].select" type="checkbox" >
+            <input [(ngModel)]="documents[15].select" type="checkbox" [disabled]="bpDataService.processMetadata">
             <label>Checking Aids</label>
         </div>
         <div>
-            <input [(ngModel)]="documents[16].select" type="checkbox" >
+            <input [(ngModel)]="documents[16].select" type="checkbox" [disabled]="bpDataService.processMetadata">
             <label>Customer Specific Requirements</label>
         </div>
         <div>
-            <input [(ngModel)]="documents[17].select" type="checkbox">
+            <input [(ngModel)]="documents[17].select" type="checkbox" [disabled]="bpDataService.processMetadata">
             <label>Part Submission Warrant</label>
         </div>
     </div>
@@ -117,12 +119,12 @@
 <hr>
 
 <value-view *ngIf="level==0 || level==1 || level==2 || level==3 || level==4 || level==5 " class="row"
-            [presentationMode]="'edit'"
+            [presentationMode]="bpDataService.processMetadata ? 'singlevalue' : 'edit'"
             [propName]="'Note'"
             [(value)]="note">
 </value-view>
 <div *ngIf="level != -1 && level != 0 && !seller" class="row justify-content-end">
-    <button class="btn btn-success col-4" (click)="sendRequest()">Send Request</button>
+    <button class="btn btn-success col-4" (click)="sendRequest()" [disabled]="submitted">Send Request</button>
 </div>
 <call-status [callStatus]="callStatus"
              [large]="true">

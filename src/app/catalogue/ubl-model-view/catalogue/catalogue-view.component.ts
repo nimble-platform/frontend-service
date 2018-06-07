@@ -10,13 +10,14 @@ import {CategoryService} from "../../category/category.service";
 @Component({
     selector: 'catalogue-view',
     templateUrl: './catalogue-view.component.html',
+    styles: ['.dropdown-toggle:after{content: initial}'],
     providers: [CookieService]
 })
 
 export class CatalogueViewComponent implements OnInit {
 
     private getCatalogueStatus = new CallStatus();
-    private deleteCatalogueStatus = new CallStatus();
+    private callStatus = new CallStatus();
 
     constructor(private cookieService: CookieService,
                 private catalogueService: CatalogueService,
@@ -67,24 +68,7 @@ export class CatalogueViewComponent implements OnInit {
                 this.catalogue = catalogue;
                 this.getCatalogueStatus.callback(null);
 
-
-                let len = this.catalogue.catalogueLine.length;
-                this.collectionSize = len;
-                this.catalogueLinesArray = this.catalogue.catalogueLine;
-                this.catalogueLinesWRTTypes = this.catalogueLinesArray;
-                let i = 0;
-                // Initialize catalogueLineView and typeOfProducts
-                for(;i<len;i++){
-                    this.catalogueLineView[this.catalogue.catalogueLine[i].id] = false;
-
-                    let j = 0;
-                    let lenOfCom = this.catalogue.catalogueLine[i].goodsItem.item.commodityClassification.length;
-                    for(;j<lenOfCom;j++){
-                        if(this.typeOfProducts.indexOf(this.catalogue.catalogueLine[i].goodsItem.item.commodityClassification[j].itemClassificationCode.name) <= -1){
-                            this.typeOfProducts.push(this.catalogue.catalogueLine[i].goodsItem.item.commodityClassification[j].itemClassificationCode.name);
-                        }
-                    }
-                }
+                this.init();
             },
             error => {
                 this.getCatalogueStatus.error("Failed to get catalogue");
@@ -92,19 +76,43 @@ export class CatalogueViewComponent implements OnInit {
         )
     }
 
+    init (): void {
+        let len = this.catalogue.catalogueLine.length;
+        this.collectionSize = len;
+        this.catalogueLinesArray = this.catalogue.catalogueLine;
+        this.catalogueLinesWRTTypes = this.catalogueLinesArray;
+        let i = 0;
+        this.typeOfProducts = [];
+        this.selectedType = "All";
+        this.searchKey = "";
+        this.sortOption = null;
+        // Initialize catalogueLineView and typeOfProducts
+        for(;i<len;i++){
+            this.catalogueLineView[this.catalogue.catalogueLine[i].id] = false;
+
+            let j = 0;
+            let lenOfCom = this.catalogue.catalogueLine[i].goodsItem.item.commodityClassification.length;
+            for(;j<lenOfCom;j++){
+                if(this.typeOfProducts.indexOf(this.catalogue.catalogueLine[i].goodsItem.item.commodityClassification[j].itemClassificationCode.name) <= -1){
+                    this.typeOfProducts.push(this.catalogue.catalogueLine[i].goodsItem.item.commodityClassification[j].itemClassificationCode.name);
+                }
+            }
+        }
+    }
+
     public onDeleteCatalogue(): void {
 		if (confirm("Are you sure that you want to delete your entire catalogue?")) {
-			this.deleteCatalogueStatus.submit();
+			this.callStatus.submit();
 
 			this.catalogueService.deleteCatalogue().then(res => {
 					this.catalogueService.catalogue = null;
-					this.deleteCatalogueStatus.reset();
+					this.callStatus.reset();
 					this.requestCatalogue(false);
 					/*this.fb_get_catalogue_callback = true;
 					 this.fb_get_catalogue_submitted = false;*/
 				},
 				error => {
-					this.deleteCatalogueStatus.error("Failed to delete catalogue");
+					this.callStatus.error("Failed to delete catalogue");
 				}
 			);
 		}
@@ -115,12 +123,14 @@ export class CatalogueViewComponent implements OnInit {
         this.publishService.publishMode = 'edit';
         this.publishService.publishingStarted = false;
         this.categoryService.resetSelectedCategories();
-        this.router.navigate(['catalogue/publish']);
+        this.router.navigate(['catalogue/publish'], {queryParams: {pg: "single"}});
     }
 
     deleteCatalogueLine(catalogueLine): void {
         if (confirm("Are you sure that you want to delete this catalogue item?")) {
-            this.catalogueService.deleteCatalogueLine(this.catalogueService.catalogue.uuid, catalogueLine.id);
+            this.catalogueService.deleteCatalogueLine(this.catalogueService.catalogue.uuid, catalogueLine.id).then(res => {
+                this.init();
+            });
         }
     }
 
@@ -186,5 +196,32 @@ export class CatalogueViewComponent implements OnInit {
 
         this.catalogueLinesArray = answer;
         this.collectionSize = this.catalogueLinesArray.length;
+    }
+
+    private uploadImagePackage(event: any): void {
+        this.callStatus.submit();
+        let catalogueService = this.catalogueService;
+        let fileList: FileList = event.target.files;
+        if (fileList.length > 0) {
+            let file: File = fileList[0];
+            let self = this;
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                // reset the target value so that the same file could be chosen more than once
+                event.target.value = "";
+                catalogueService.uploadZipPackage(file).then(res => {
+                        self.callStatus.callback(null);
+                        self.router.navigate(['catalogue/catalogue'], {queryParams: {forceUpdate: true}});
+                    },
+                    error => {
+                        self.callStatus.error("Failed to upload the image package:  " + error);
+                    });
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    private navigateToThePublishPage(){
+        this.router.navigate(['/catalogue/categorysearch']);
     }
 }

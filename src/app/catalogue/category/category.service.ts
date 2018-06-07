@@ -37,6 +37,10 @@ export class CategoryService {
         let customCategories: Category[] = [];
         let categories:Category[];
 
+        // remove default category
+        codes = codes.filter(function (cat) {
+            return cat.listID != 'Default';
+        });
 
         customCategoryCodes = codes.filter(function (cat) {
            return cat.listID == 'Custom';
@@ -95,6 +99,17 @@ export class CategoryService {
 
     getCategoryByCode(code: Code): Promise<Category> {
         const url = `${this.baseUrl}/` + code.listID + "/" + encodeURIComponent(code.value);
+        return this.http
+            .get(url, {headers: this.headers})
+            .toPromise()
+            .then(res => {
+                return res.json() as Category;
+            })
+            .catch(this.handleError);
+    }
+
+    getParentCategories(category: Category): Promise<Category>{
+        const url = `${this.baseUrl}/` + category.taxonomyId + "/" + encodeURIComponent(category.id)+"/tree";
         return this.http
             .get(url, {headers: this.headers})
             .toPromise()

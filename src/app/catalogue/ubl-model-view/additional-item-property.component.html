@@ -3,8 +3,7 @@
         <div *ngFor="let value of additionalItemProperty.valueQualifier | itemPropertyDataSourcePipe : additionalItemProperty; let i = index; trackBy : trackByIndex" class="input-group form-group">
             <!-- name of the property is shown once near the first value associated to it -->
             <div *ngIf="i == 0"
-                 class="col-3 control-label"
-                 style="cursor: pointer"
+                 class="col-3 control-label pointer"
                  (click)="openPropertyDetails()">
                 {{additionalItemProperty.name}}&#9432;
             </div>
@@ -50,8 +49,7 @@
     <ng-container *ngIf="additionalItemProperty.valueQualifier == 'STRING'">
         <div class="input-group form-group">
             <!-- name of the property is shown once near the first value associated to it -->
-            <div class="col-3 control-label"
-                 style="cursor: pointer"
+            <div class="col-3 control-label cursor"
                  (click)="openPropertyDetails()">
                 {{additionalItemProperty.name}}&#9432;
             </div>
@@ -66,6 +64,26 @@
                    readonly>
         </div>
     </ng-container>
+
+    <ng-container *ngIf="additionalItemProperty.valueQualifier == 'REAL_MEASURE'">
+        <div class="input-group form-group">
+            <!-- name of the property is shown once near the first value associated to it -->
+            <div class="col-3 control-label pointer"
+                 (click)="openPropertyDetails()">
+                {{additionalItemProperty.name}}&#9432;
+            </div>
+            <select *ngIf="additionalItemProperty.valueDecimal.length > 1"
+                    class="custom-select"
+                    (change)="updateNegotiationItemPropertyData($event,additionalItemProperty)">
+                <option *ngFor="let value of additionalItemProperty.valueDecimal">{{value}}</option>
+            </select>
+            <input *ngIf="additionalItemProperty.valueDecimal.length == 1"
+                   type="text" class="form-control"
+                   [(ngModel)]="additionalItemProperty.valueDecimal[0]"
+                   readonly>
+        </div>
+    </ng-container>
+
 </ng-container>
 
 <ng-container *ngIf="additionalItemProperty.valueQualifier == 'QUANTITY'">
@@ -74,6 +92,7 @@
                    [quantity]="additionalItemProperty.valueQuantity"
                    [multiValue]="true"
                    [parentForm]="parentForm"
+                   (onSelectChange)="onSelectChange($event,additionalItemProperty)"
                    [zeroValue]="additionalItemProperty.itemClassificationCode.listID == 'Custom'">
     </quantity-view>
 </ng-container>
@@ -81,8 +100,7 @@
 <!-- renders boolean content -->
 <div *ngIf="additionalItemProperty.valueQualifier=='BOOLEAN'" class="input-group form-group">
     <!-- name of the property is shown once near the first value associated to it -->
-    <div class="col-3 control-label"
-         style="cursor: pointer"
+    <div class="col-3 control-label pointer"
          (click)="openPropertyDetails()">
         {{additionalItemProperty.name}}&#9432;
     </div>
@@ -92,7 +110,7 @@
            (change)="additionalItemProperty.value[0] == 'true ' ? additionalItemProperty.value[0] = 'false' : additionalItemProperty.value[0] = 'true'"
            [disabled]="presentationMode != 'edit'">
 
-    <span *ngIf="presentationMode == 'edit'"><button class="btn btn-xs btn-danger"
+    <span *ngIf="presentationMode == 'edit' && customProperty"><button class="btn btn-xs btn-danger"
                                                      (click)="deleteCustomProperty(additionalItemProperty.name); $event.stopPropagation()"
     >&times;</button></span>
 </div>

@@ -2,52 +2,94 @@
 
     <div class="well">
         <h6>Consolidated Shipment</h6>
-        <value-view [presentationMode]="'edit'"
+        <value-view [presentationMode]="bpDataService.processMetadata == null ? 'edit' : 'singlevalue'"
                     [propName]="'Goods Item'"
-                    [value]="transportExecutionPlanRequest.consignment[0].consolidatedShipment[0].goodsItem[0].item.name">
+                    [definition]="'A goods item included in this shipment'"
+                    [(value)]="transportExecutionPlanRequest.consignment[0].consolidatedShipment[0].goodsItem[0].item.name">
+
         </value-view>
 
-        <quantity-view [presentationMode]="'edit'"
+        <quantity-view [presentationMode]="bpDataService.processMetadata == null ? 'edit' : 'singlevalue'"
                        [propName]="'Gross Volume Measure'"
+                       [type]="'volume_quantity'"
+                       [definition]="'The total volume of the goods in this shipment, including packaging,e.g.,Quantity:78,Unit:MTQ'"
                        [quantity]="[transportExecutionPlanRequest.consignment[0].grossVolumeMeasure]">
         </quantity-view>
 
-        <quantity-view [presentationMode]="'edit'"
+        <quantity-view [presentationMode]="bpDataService.processMetadata == null ? 'edit' : 'singlevalue'"
                        [propName]="'Gross Weight Measure'"
+                       [type]="'weight_quantity'"
+                       [definition]="'The total gross weight of a shipment; the weight of the goods plus packaging plus transport equipment,e.g.,Quantity:12,Unit:KGM'"
                        [quantity]="[transportExecutionPlanRequest.consignment[0].grossWeightMeasure]">
         </quantity-view>
 
         <shipment-view [showCarrierPartyDetails]="bpDataService?.userRole != 'buyer'"
                        [shipment]="transportExecutionPlanRequest.consignment[0].consolidatedShipment[0]"
-                       [presentationMode]="'edit'">
+                       [presentationMode]="bpDataService.processMetadata == null ? 'edit' : 'view'">
         </shipment-view>
     </div>
 
     <div class="well">
         <h6>Execution Plan</h6>
-        <value-view [presentationMode]="'edit'"
+        <value-view *ngIf="bpDataService.processMetadata != null"
+                    [presentationMode]="'view'"
                     [propName]="'Service Start Date'"
                     [(value)]="transportExecutionPlanRequest.serviceStartTimePeriod.startDate">
         </value-view>
 
-        <value-view [presentationMode]="'edit'"
+        <ng-container *ngIf="bpDataService.processMetadata == null">
+            <div class="input-group space-after">
+                <label class="col-3">Service Start Date</label>
+                <input class="form-control" placeholder="YYYY-MM-DD" (dateSelect)="transportExecutionPlanRequest.serviceStartTimePeriod.startDate = getDate('Start')"
+                       name="dp" [(ngModel)]="startDate" ngbDatepicker #d="ngbDatepicker" readonly>
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" (click)="d.toggle()" type="button">
+                        <i class="fa fa-calendar-alt pointer" style="width: 1.2rem; height: 1rem;"></i>
+                    </button>
+                </div>
+            </div>
+        </ng-container>
+
+        <value-view *ngIf="bpDataService.processMetadata != null"
+                    [presentationMode]="'view'"
                     [propName]="'Service End Date'"
                     [(value)]="transportExecutionPlanRequest.serviceEndTimePeriod.endDate">
         </value-view>
 
-        <address-view [presentationMode]="'edit'"
-                      [propName]="'From Location'"
-                      [address]="[transportExecutionPlanRequest.fromLocation.address]">
-        </address-view>
+        <ng-container *ngIf="bpDataService.processMetadata == null">
+            <div class="input-group space-after">
+                <label class="col-3">Service End Date</label>
+                <input class="form-control" placeholder="YYYY-MM-DD" (dateSelect)="transportExecutionPlanRequest.serviceEndTimePeriod.endDate = getDate('End')"
+                       name="dp" [(ngModel)]="endDate" ngbDatepicker #d="ngbDatepicker" readonly>
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" (click)="d.toggle()" type="button">
+                        <i class="fa fa-calendar-alt pointer" style="width: 1.2rem; height: 1rem;"></i>
+                    </button>
+                </div>
+            </div>
+        </ng-container>
 
-        <address-view [presentationMode]="'edit'"
-                      [propName]="'To Location'"
-                      [address]="[transportExecutionPlanRequest.toLocation.address]">
-        </address-view>
+        <detailed-address-view [propName]="'From Location'"
+                       [presentationMode]="bpDataService.processMetadata == null ? 'edit' : 'singlevalue'"
+                       [deliveryAddress]="transportExecutionPlanRequest.fromLocation.address"
+                       [fetchDefaultDeliveryAddress]="false">
+        </detailed-address-view>
+        <detailed-address-view [propName]="'To Location'"
+                       [presentationMode]="bpDataService.processMetadata == null ? 'edit' : 'singlevalue'"
+                       [deliveryAddress]="transportExecutionPlanRequest.toLocation.address"
+                       [fetchDefaultDeliveryAddress]="bpDataService.processMetadata == null && bpDataService.previousProcess == null">
+        </detailed-address-view>
     </div>
 
+    <ng-container *ngIf="transportExecutionPlanRequest.transportContract && transportExecutionPlanRequest.transportContract?.clause.length > 0">
+        <contract [contract]="transportExecutionPlanRequest.transportContract">
+
+        </contract>
+    </ng-container>
+
+
     <div class="d-flex justify-content-end">
-        <button *ngIf="bpDataService.userRole == 'buyer' && bpDataService.processMetadata == null"
+        <button *ngIf="bpDataService.userRole == 'buyer' && bpDataService.processMetadata == null" [disabled]="submitted"
                 class="btn btn-success" (click)="sendTransportExecutionPlanRequest()">Use Service
         </button>
     </div>

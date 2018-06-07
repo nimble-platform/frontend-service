@@ -27,10 +27,13 @@ import {ItemInformationResponse} from "../../catalogue/model/publish/item-inform
 
 @Injectable()
 export class BPDataService{
-    // original catalogue line to initialize the business process data
-    catalogueLine:CatalogueLine;
+    // original catalogue lines to initialize the business process data
+    private catalogueLines:CatalogueLine[] = [];
     // catalogue line object that is kept updated based on user selections
-    modifiedCatalogueLine:CatalogueLine;
+    modifiedCatalogueLines:CatalogueLine[] = [];
+    // variables to keep the products and product categories related to the active business process
+    relatedProducts: string[];
+    relatedProductCategories: string[];
 
     requestForQuotation:RequestForQuotation;
     quotation:Quotation;
@@ -53,13 +56,55 @@ export class BPDataService{
     processTypeObservable = this.processTypeSubject.asObservable();
     userRole:string;
     processMetadata:any;
+    previousProcess:string;
+
+    // variable to keep the business process instance group related to the new process being initiated
+    private relatedGroupId: string;
+    precedingProcessId: string;
 
     constructor(public searchContextService: SearchContextService) {
     }
 
+    setCatalogueLines(catalogueLines: CatalogueLine[]): void {
+        this.catalogueLines = [];
+        this.relatedProducts = [];
+        this.relatedProductCategories = [];
+
+        for(let line of catalogueLines) {
+            this.catalogueLines.push(line);
+            this.relatedProducts.push(line.goodsItem.item.name);
+            for(let category of line.goodsItem.item.commodityClassification) {
+                if(this.relatedProductCategories.indexOf(category.itemClassificationCode.name) == -1) {
+                    this.relatedProductCategories.push(category.itemClassificationCode.name);
+                }
+            }
+        }
+    }
+
+    getCatalogueLine(): CatalogueLine {
+        return this.catalogueLines[0];
+    }
+
+    getRelatedGroupId(): string {
+        return this.relatedGroupId;
+    }
+
+    setRelatedGroupId(id:string): void {
+        // If there is an active search context, we do not nullify the related group id.
+        // For example, when the user is looking for a transport service provider, we should not reset the id
+        if(id == null) {
+            if(this.searchContextService.associatedProcessType == null) {
+                this.relatedGroupId = null;
+                this.precedingProcessId = null;
+            }
+        } else {
+            this.relatedGroupId = id;
+        }
+    }
+
     setBpOptionParametersWithProcessMetadata(userRole:string, targetProcess:string, processMetadata:any):void {
         this.resetBpData();
-        this.setBpOptionParameters(userRole, targetProcess);
+        this.setBpOptionParameters(userRole, targetProcess,null);
         this.processMetadata = processMetadata;
         this.setBpMessages(this.processTypeSubject.getValue(), processMetadata);
     }
@@ -73,7 +118,7 @@ export class BPDataService{
             if(quotationVariable == null) {
                 // initialize the quotation only if the user is in seller role
                 if(this.userRole == 'seller') {
-                    this.quotation = UBLModelUtils.createQuotation(this.requestForQuotation);
+                    this.quotation = JSON.parse(JSON.stringify(UBLModelUtils.createQuotation(this.requestForQuotation)));
                 }
 
             } else {
@@ -152,7 +197,8 @@ export class BPDataService{
         }
     }
 
-    setBpOptionParameters(userRole:string, targetProcess:string) {
+    setBpOptionParameters(userRole:string, targetProcess:string,previousProcess:string) {
+        this.previousProcess = previousProcess;
         this.setProcessType(targetProcess);
         this.userRole = userRole;
     }
@@ -160,51 +206,60 @@ export class BPDataService{
     // this method is supposed to be called when the user is about to initialize a business process via the
     // search details page
     initRfq():void {
-        this.modifiedCatalogueLine = JSON.parse(JSON.stringify(this.catalogueLine));
+        this.modifiedCatalogueLines = JSON.parse(JSON.stringify(this.catalogueLines));
         this.requestForQuotation = UBLModelUtils.createRequestForQuotation();
-        this.requestForQuotation.requestForQuotationLine[0].lineItem.item = this.modifiedCatalogueLine.goodsItem.item;
-        this.requestForQuotation.requestForQuotationLine[0].lineItem.lineReference = [new LineReference(this.modifiedCatalogueLine.id)];
+        this.requestForQuotation.requestForQuotationLine[0].lineItem.item = this.modifiedCatalogueLines[0].goodsItem.item;
+        this.requestForQuotation.requestForQuotationLine[0].lineItem.lineReference = [new LineReference(this.modifiedCatalogueLines[0].id)];
         this.selectFirstValuesAmongAlternatives();
     }
 
     initPpap(documents:string[]):void{
-        this.modifiedCatalogueLine = JSON.parse(JSON.stringify(this.catalogueLine));
+        this.modifiedCatalogueLines = JSON.parse(JSON.stringify(this.catalogueLines));
         this.ppap = UBLModelUtils.createPpap(documents);
-        this.ppap.lineItem.item = this.catalogueLine.goodsItem.item;
-        this.ppap.lineItem.lineReference = [new LineReference(this.catalogueLine.id)];
+        this.ppap.lineItem.item = this.modifiedCatalogueLines[0].goodsItem.item;
+        this.ppap.lineItem.lineReference = [new LineReference(this.modifiedCatalogueLines[0].id)];
         this.selectFirstValuesAmongAlternatives();
     }
 
     // this method is supposed to be called when the user is about to initialize a business process via the
     // search details page
     initOrder():void {
-        this.modifiedCatalogueLine = JSON.parse(JSON.stringify(this.catalogueLine));
+        this.modifiedCatalogueLines = JSON.parse(JSON.stringify(this.catalogueLines));
         this.order = UBLModelUtils.createOrder();
-        this.order.orderLine[0].lineItem.item = this.modifiedCatalogueLine.goodsItem.item;
-        this.order.orderLine[0].lineItem.lineReference = [new LineReference(this.modifiedCatalogueLine.id)];
+        this.order.orderLine[0].lineItem.item = this.modifiedCatalogueLines[0].goodsItem.item;
+        this.order.orderLine[0].lineItem.lineReference = [new LineReference(this.modifiedCatalogueLines[0].id)];
         this.selectFirstValuesAmongAlternatives();
     }
 
     initItemInformationRequest():void {
-        this.modifiedCatalogueLine = JSON.parse(JSON.stringify(this.catalogueLine));
+        this.modifiedCatalogueLines = JSON.parse(JSON.stringify(this.catalogueLines));
         this.itemInformationRequest = UBLModelUtils.createItemInformationRequest();
-        this.itemInformationRequest.itemInformationRequestLine[0].salesItem[0].item = this.modifiedCatalogueLine.goodsItem.item;
+        this.itemInformationRequest.itemInformationRequestLine[0].salesItem[0].item = this.modifiedCatalogueLines[0].goodsItem.item;
         this.selectFirstValuesAmongAlternatives();
     }
 
     initOrderWithQuotation() {
         let copyQuotation:Quotation = JSON.parse(JSON.stringify(this.quotation));
         this.resetBpData();
-        this.modifiedCatalogueLine = JSON.parse(JSON.stringify(this.catalogueLine));
+        this.modifiedCatalogueLines = JSON.parse(JSON.stringify(this.catalogueLines));
         this.order = UBLModelUtils.createOrder();
         this.order.orderLine[0].lineItem = copyQuotation.quotationLine[0].lineItem;
+        this.setProcessType('Order');
+    }
+
+    initOrderWithExistingOrder(){
+        let copyOrder:Order = JSON.parse(JSON.stringify(this.order));
+        this.resetBpData();
+        this.modifiedCatalogueLines = JSON.parse(JSON.stringify(this.catalogueLines));
+        this.order = UBLModelUtils.createOrder();
+        this.order.orderLine[0].lineItem = copyOrder.orderLine[0].lineItem;
         this.setProcessType('Order');
     }
 
     initRfqWithQuotation() {
         let copyQuotation:Quotation = JSON.parse(JSON.stringify(this.quotation));
         this.resetBpData();
-        this.modifiedCatalogueLine = JSON.parse(JSON.stringify(this.catalogueLine));
+        this.modifiedCatalogueLines = JSON.parse(JSON.stringify(this.catalogueLines));
         this.requestForQuotation = UBLModelUtils.createRequestForQuotation();
         this.requestForQuotation.requestForQuotationLine[0].lineItem = copyQuotation.quotationLine[0].lineItem;
     }
@@ -212,36 +267,42 @@ export class BPDataService{
     initDespatchAdviceWithOrder() {
         let copyOrder:Order = JSON.parse(JSON.stringify(this.order));
         this.resetBpData();
-        this.modifiedCatalogueLine = JSON.parse(JSON.stringify(this.catalogueLine));
+        this.modifiedCatalogueLines = JSON.parse(JSON.stringify(this.catalogueLines));
         this.despatchAdvice = UBLModelUtils.createDespatchAdvice(copyOrder);
     }
 
     initTransportExecutionPlanRequest() {
-        this.modifiedCatalogueLine = JSON.parse(JSON.stringify(this.catalogueLine));
-        this.transportExecutionPlanRequest = UBLModelUtils.createTransportExecutionPlanRequest(this.modifiedCatalogueLine);
+        this.modifiedCatalogueLines = JSON.parse(JSON.stringify(this.catalogueLines));
+        this.transportExecutionPlanRequest = UBLModelUtils.createTransportExecutionPlanRequest(this.modifiedCatalogueLines[0]);
+        this.selectFirstValuesAmongAlternatives();
     }
 
-    initTransportExecutionPlanRequestWithOrder(processMetadata:any) {
+    initTransportExecutionPlanRequestWithOrder() {
         this.resetBpData();
         this.setBpMessages('Order', this.searchContextService.associatedProcessMetadata);
         let copyOrder:Order = JSON.parse(JSON.stringify(this.order));
-        this.modifiedCatalogueLine = JSON.parse(JSON.stringify(this.catalogueLine));
-        this.transportExecutionPlanRequest = UBLModelUtils.createTransportExecutionPlanRequestWithOrder(copyOrder, this.catalogueLine);
+        this.modifiedCatalogueLines = JSON.parse(JSON.stringify(this.catalogueLines));
+        this.transportExecutionPlanRequest = UBLModelUtils.createTransportExecutionPlanRequestWithOrder(copyOrder, this.modifiedCatalogueLines[0]);
+
+        this.requestForQuotation = UBLModelUtils.createRequestForQuotationWithOrder(JSON.parse(JSON.stringify(this.order)),this.modifiedCatalogueLines[0]);
+
+        this.selectFirstValuesAmongAlternatives();
     }
 
     initTransportExecutionPlanRequestWithQuotation() {
         let copyQuotation:Quotation = JSON.parse(JSON.stringify(this.quotation));
         this.resetBpData();
-        this.modifiedCatalogueLine = JSON.parse(JSON.stringify(this.catalogueLine));
+        this.modifiedCatalogueLines = JSON.parse(JSON.stringify(this.catalogueLines));
         this.transportExecutionPlanRequest = UBLModelUtils.createTransportExecutionPlanRequestWithQuotation(copyQuotation);
     }
 
     resetBpData():void {
         if(this.searchContextService.associatedProcessType == null) {
             this.setProcessType(null);
+            this.previousProcess = null;
         }
         this.processMetadata = null;
-        this.modifiedCatalogueLine = null;
+        this.modifiedCatalogueLines = null;
         this.requestForQuotation = null;
         this.quotation = null;
         this.order = null;
@@ -259,6 +320,17 @@ export class BPDataService{
         //this.setBpMessages(this.searchContextService.associatedProcessType, this.searchContextService.associatedProcessMetadata);
     }
 
+    setProcessType(processType:string): void {
+        this.processTypeSubject.next(processType);
+    }
+
+    /********************************************************************************************
+     * Methods to update the modified catalogue lines based on the user activities on the UI
+     * For example, user would choose a particular dimension for the product to be ordered, or
+     * the user may choose a particular value for the color of the product among many.
+     * The modified objects reflect the user selections during the continuation of the process.
+     ********************************************************************************************/
+
     selectFirstValuesAmongAlternatives():void {
         this.chooseAllDimensions();
         this.chooseFirstValuesOfItemProperties();
@@ -268,7 +340,7 @@ export class BPDataService{
      * Updates modified catalogue line's dimensions with only the first occurrences of the dimension attributes
      */
     chooseAllDimensions():void {
-        let dimensions:Dimension[] = this.modifiedCatalogueLine.goodsItem.item.dimension;
+        let dimensions:Dimension[] = this.modifiedCatalogueLines[0].goodsItem.item.dimension;
         let finalDimensions:Dimension[] = [];
         let chosenAttributes:string[] = [];
 
@@ -279,11 +351,11 @@ export class BPDataService{
                 finalDimensions.push(dim);
             }
         }
-        this.modifiedCatalogueLine.goodsItem.item.dimension = finalDimensions;
+        this.modifiedCatalogueLines[0].goodsItem.item.dimension = finalDimensions;
     }
 
     chooseFirstValuesOfItemProperties():void {
-        let item:Item = this.modifiedCatalogueLine.goodsItem.item;
+        let item:Item = this.modifiedCatalogueLines[0].goodsItem.item;
 
         for(let prop of item.additionalItemProperty) {
             if(prop.valueQualifier == 'STRING') {
@@ -306,45 +378,40 @@ export class BPDataService{
         }
     }
 
-    updateItemProperty(selectedValue:any, itemProperty:ItemProperty):void {
-        let item:Item = this.modifiedCatalogueLine.goodsItem.item;
-
-        let targetProp:ItemProperty;
-        for(let prop of item.additionalItemProperty) {
-            if(prop.id == itemProperty.id) {
-                targetProp = prop;
-                break;
-            }
-        }
-
+    updateItemProperty(itemProperty:ItemProperty):void {
         if(itemProperty.valueQualifier == 'STRING') {
-            targetProp.value[0] = selectedValue;
+            let index = this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty.findIndex(item => item.name == itemProperty.name);
+            this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty[index].value[0] = itemProperty.value[0];
         } else if(itemProperty.valueQualifier == 'REAL_MEASURE') {
-            targetProp.valueDecimal[0] = selectedValue;
+            let index = this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty.findIndex(item => item.name == itemProperty.name);
+            this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty[index].valueDecimal[0] = itemProperty.valueDecimal[0];
         } else if(itemProperty.valueQualifier == 'BOOLEAN') {
-            targetProp.value[0] = selectedValue;
+            let index = this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty.findIndex(item => item.name == itemProperty.name);
+            this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty[index].value[0] = itemProperty.value[0];
         } else if(itemProperty.valueQualifier == 'QUANTITY') {
-            targetProp.valueQuantity[0] = selectedValue;
+            let index = this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty.findIndex(item => item.name == itemProperty.name);
+            this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty[index].valueQuantity[0] = itemProperty.valueQuantity[0];
         }
     }
 
     /**
      * Keeps only the selected value for the given attribute in the dimension array
      */
-    updateDimension(attributeId:string, selectedValue:number):void {
-        let dimensions:Dimension[] = this.modifiedCatalogueLine.goodsItem.item.dimension;
-        let allDimensions:Dimension[] = this.catalogueLine.goodsItem.item.dimension;
-        let attIndexInOriginal = allDimensions.findIndex(dim => attributeId == dim.attributeID && selectedValue == dim.measure.value);
-        let attIndexInModified = dimensions.findIndex(dim => attributeId == dim.attributeID);
-        // return the items after the target attribute
-        let remaining = dimensions.splice(attIndexInModified + 1);
-        // remove the last item
-        dimensions.splice(dimensions.length - 1);
-        dimensions = dimensions.concat([allDimensions[attIndexInOriginal]]).concat(remaining);
-        this.modifiedCatalogueLine.goodsItem.item.dimension = dimensions;
-    }
 
-    setProcessType(processType:string): void {
-        this.processTypeSubject.next(processType);
+    updateDimension(attributeId:string, event: any):void {
+        // update catalogueLine
+        let allDimensions:Dimension[] = this.catalogueLines[0].goodsItem.item.dimension;
+        let index = allDimensions.findIndex(dim => attributeId == dim.attributeID);
+        let firstDim = this.catalogueLines[0].goodsItem.item.dimension[index];
+
+        this.catalogueLines[0].goodsItem.item.dimension[index] = this.catalogueLines[0].goodsItem.item.dimension[index+event.target.selectedIndex];
+        this.catalogueLines[0].goodsItem.item.dimension[index+event.target.selectedIndex] = firstDim;
+        this.catalogueLines[0].goodsItem.item.dimension = [].concat(this.catalogueLines[0].goodsItem.item.dimension);
+
+        // update modifiedCatalogueLine
+        let dimensions:Dimension[] = this.modifiedCatalogueLines[0].goodsItem.item.dimension;
+        let attIndexInModified = dimensions.findIndex(dim => attributeId == dim.attributeID);
+        dimensions[attIndexInModified] = this.catalogueLines[0].goodsItem.item.dimension[index];
+        this.modifiedCatalogueLines[0].goodsItem.item.dimension = dimensions;
     }
 }

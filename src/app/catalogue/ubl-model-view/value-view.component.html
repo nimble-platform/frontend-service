@@ -2,7 +2,11 @@
     <div *ngIf="presentationMode == 'edit'"
          class="input-group form-group border-0"
          [formGroup]="parentForm">
-        <label class="col-3">{{propName}}</label>
+        <label class="col-3">{{propName}}
+            <span *ngIf="definition" class="label label-default" title="{{definition}}">
+                    &#9432;
+            </span>
+        </label>
         <input class="form-control"
                [formControl]="control"
                type="text"
@@ -10,7 +14,11 @@
     </div>
     <div *ngIf="presentationMode != 'edit'"
          class="input-group form-group border-0">
-        <label class="col-3">{{propName}}</label>
+        <label class="col-3">{{propName}}
+            <span *ngIf="definition" class="label label-default" title="{{definition}}">
+                    &#9432;
+            </span>
+        </label>
         <input class="form-control"
                type="text"
                [(ngModel)]="value"
@@ -22,7 +30,11 @@
     <div *ngIf="presentationMode == 'edit'"
          class="input-group form-group border-0"
          [formGroup]="parentForm">
-        <label class="col-3">{{propName}}</label>
+        <label class="col-3">{{propName}}
+            <span *ngIf="definition" class="label label-default" title="{{definition}}">
+                    &#9432;
+            </span>
+        </label>
         <textarea class="form-control"
                   [formControl]="control"
                   rows="3"
@@ -31,7 +43,11 @@
     </div>
     <div *ngIf="presentationMode != 'edit'"
          class="input-group form-group border-0">
-        <label class="col-3">{{propName}}</label>
+        <label class="col-3">{{propName}}
+            <span *ngIf="definition" class="label label-default" title="{{definition}}">
+                    &#9432;
+            </span>
+        </label>
         <textarea class="form-control"
                   rows="3"
                   [(ngModel)]="value"

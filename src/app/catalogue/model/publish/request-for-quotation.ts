@@ -7,6 +7,7 @@ export class RequestForQuotation {
 	constructor(
 		public id:string,
 		public note: string[],
+		public dataMonitoringRequested: boolean,
 		public buyerCustomerParty:CustomerParty,
 		public sellerSupplierParty:SupplierParty,
 		public delivery:Delivery,

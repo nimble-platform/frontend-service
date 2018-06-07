@@ -23,8 +23,6 @@ export class PpapDocumentDownloadComponent{
     }
 
     processid : any;
-    id : any;
-    catalogueId: any;
 
     ppapResponse : PpapResponse = null;
     ppapDocuments : DocumentReference[] = [];
@@ -37,14 +35,6 @@ export class PpapDocumentDownloadComponent{
     ngOnInit() {
         this.route.queryParams.subscribe(params =>{
             this.processid = params['pid'];
-            this.id = params['id'];
-            this.catalogueId = params['catalogueId'];
-
-            this.catalogueService.getCatalogueLine(this.catalogueId,this.id).then(line =>{
-                this.bpDataService.catalogueLine = line;
-            }).catch(error => {
-
-            });
 
             this.bpeService.getProcessDetailsHistory(this.processid).then(task => {
                 let ppap = ActivityVariableParser.getInitialDocument(task).value as Ppap;

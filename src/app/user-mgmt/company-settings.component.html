@@ -8,36 +8,46 @@
 	<button class="btn btn-primary space-after" type="button" (click)="changeData(changeModal)">
 		<span>Request Company Data Change</span>
 	</button>
-	<div class="input-group form-group">
-		<label class="input-group-addon">Legal Name</label>
-		<input type="text" class="form-control" [formControl]="settingsForm.controls['name']" readonly>
+	<div class="form-group row">
+		<label class="col-2 col-form-label">Legal Name</label>
+		<div class="col-10">
+			<input type="text" class="form-control" [formControl]="settingsForm.controls['name']" readonly>
+		</div>
 	</div>
-	<div class="input-group form-group">
-		<label class="input-group-addon">VAT Number</label>
-		<input type="text" class="form-control" [formControl]="settingsForm.controls['vatNumber']" readonly>
+	<div class="form-group row">
+		<label class="col-2 col-form-label">VAT Number</label>
+		<div class="col-10">
+			<input type="text" class="form-control" [formControl]="settingsForm.controls['vatNumber']" readonly>
+		</div>
 	</div>
-	<div class="input-group form-group">
-		<label class="input-group-addon">
+	<div class="form-group row">
+		<label class="col-2 col-form-label">
 			<span>Verification Info</span>
-			<span class="tooltip-icon" (click)="showVerificationTT(tooltip)"><img class="inline-icon" src="assets/question_black.png"/></span>
+			<span class="tooltip-icon" (click)="showVerificationTT(tooltip)"><i class="fa fa-question-circle"></i></span>
 		</label>
-		<input type="text" class="form-control" [formControl]="settingsForm.controls['verificationInformation']" readonly>
+		<div class="col-10">
+			<input type="text" class="form-control" [formControl]="settingsForm.controls['verificationInformation']" readonly>
+		</div>
 	</div>
-	<div class="input-group form-group">
-		<label class="input-group-addon">Website</label>
-		<input type="text" class="form-control" [formControl]="settingsForm.controls['website']" readonly>
+	<div class="form-group row">
+		<label class="col-2 col-form-label">Website</label>
+		<div class="col-10">
+			<input type="text" class="form-control" [formControl]="settingsForm.controls['website']" readonly>
+		</div>
 	</div>
 	<address-form [group]="settingsForm.controls.address"></address-form>
 
 	<h3 class="space-after">Delivery Terms</h3>
-	<div class="input-group form-group">
-		<span class="input-group-addon">
+	<div class="form-group row">
+		<span class="col-2 col-form-label">
 			<input type="checkbox" [(ngModel)]="aM" [ngModelOptions]="{standalone:true}" (change)="settingsForm.controls['name'].markAsDirty();changeFlag();">
 		</span>
-		<span class="form-control">Deliver to company address</span>
+		<div class="col-10">
+			<span class="form-control inline">Deliver to company address</span>
+		</div>
 	</div>
 	<delivery-terms-form [group]="settingsForm.controls.deliveryTerms"></delivery-terms-form>
-	
+
 	<h3 class="space-after">Payment Terms</h3>
 	<payment-means-form [group]="settingsForm.controls.paymentMeans"></payment-means-form>
 

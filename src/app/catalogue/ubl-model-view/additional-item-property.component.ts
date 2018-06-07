@@ -29,7 +29,6 @@ export class AdditionalItemPropertyComponent implements OnInit, OnDestroy {
     editModeSubscription: Subscription;
     showPropertyDetails: boolean = false;
     customProperty: boolean = false;
-    propertyUnitDefined: boolean = false;
 
     constructor(private catalogueService:CatalogueService,
                 private bpDataService: BPDataService) {
@@ -53,9 +52,6 @@ export class AdditionalItemPropertyComponent implements OnInit, OnDestroy {
     ngOnInit(): void {
         if (this.additionalItemProperty.itemClassificationCode.listID == "Custom") {
             this.customProperty = true;
-        }
-        if (this.additionalItemProperty.unit && this.additionalItemProperty.unit.length > 0) {
-            this.propertyUnitDefined = true;
         }
 
         this.editModeSubscription = this.catalogueService.editModeObs
@@ -101,10 +97,36 @@ export class AdditionalItemPropertyComponent implements OnInit, OnDestroy {
     }
 
     updateNegotiationItemPropertyData(event:any) {
-        let selectedValue:any = event.target.value;
-        this.bpDataService.updateItemProperty(selectedValue, this.additionalItemProperty);
+        let selectedIndex = event.target.selectedIndex;
+
+        if(this.additionalItemProperty.valueQualifier == 'STRING') {
+            let prevValue = this.additionalItemProperty.value[0];
+            this.additionalItemProperty.value[0] = event.target.value;
+            this.additionalItemProperty.value[selectedIndex] = prevValue;
+        } else if(this.additionalItemProperty.valueQualifier == 'REAL_MEASURE') {
+            let prevValue = this.additionalItemProperty.valueDecimal[0];
+            this.additionalItemProperty.valueDecimal[0] = event.target.value;
+            this.additionalItemProperty.valueDecimal[selectedIndex] = prevValue;
+        } else if(this.additionalItemProperty.valueQualifier == 'BOOLEAN') {
+            let prevValue = this.additionalItemProperty.value[0];
+            this.additionalItemProperty.value[0] = event.target.value;
+            this.additionalItemProperty.value[selectedIndex] = prevValue;
+        } else if(this.additionalItemProperty.valueQualifier == 'QUANTITY') {
+            let prevValue = this.additionalItemProperty.valueQuantity[0];
+            this.additionalItemProperty.valueQuantity[0] = event.target.value;
+            this.additionalItemProperty.valueQuantity[selectedIndex] = prevValue;
+        }
+
+        this.bpDataService.updateItemProperty(this.additionalItemProperty);
     }
 
+    onSelectChange(event:any){
+        let firstValue = this.additionalItemProperty.valueQuantity[0];
+        this.additionalItemProperty.valueQuantity[0] = this.additionalItemProperty.valueQuantity[event.target.selectedIndex];
+        this.additionalItemProperty.valueQuantity[event.target.selectedIndex] = firstValue;
+        let index = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty.findIndex(item => item.name == this.additionalItemProperty.name);
+        this.bpDataService.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty[index].valueQuantity[0] = this.additionalItemProperty.valueQuantity[0];
+    }
 
     trackByIndex(index: any, item: any) {
         return index;

@@ -11,8 +11,9 @@
 <!-- Price Base Quantity -->
 <quantity-view [presentationMode]="presentationMode"
                [propName]="'Price Base Quantity'"
+               [definition]="'The price of a product at a legally set quantity.\nFor example,if you sell MDF board and charge €15,00 for 3 m2 of it, the base price will be €5,00 for 1 m2,i.e.,Quantity:5,Unit:m2.'"
                [quantity]="[catalogueLine.requiredItemLocationQuantity.price.baseQuantity]"
-               [multiValue]="true"
+               [multiValue]="false"
                [parentForm]="parentForm">
 </quantity-view>
 
@@ -26,14 +27,42 @@
 <h5 class="mb-3">Delivery Terms</h5>
 
 <!-- Incoterms -->
-<value-view [presentationMode]="presentationMode"
+<value-view *ngIf="presentationMode != 'edit'"
+            [presentationMode]="'view'"
             [propName]="'Incoterms'"
+            [definition]="'A set of international rules for the interpretation of the most commonly used trade terms'"
             [(value)]="catalogueLine.goodsItem.deliveryTerms.incoterms">
 </value-view>
+
+<ng-container *ngIf="presentationMode == 'edit'">
+    <div class="input-group form-group">
+        <label class="col-3">Incoterms
+            <span class="label label-default" title="A set of international rules for the interpretation of the most commonly used trade terms">
+                    &#9432;
+                </span>
+        </label>
+        <select class="form-control custom-select" [(ngModel)]="catalogueLine.goodsItem.deliveryTerms.incoterms">
+            <option></option>
+            <option>CIF (Cost, Insurance and Freight)</option>
+            <option>CIP (Carriage and Insurance Paid to)</option>
+            <option>CFR (Cost and Freight)</option>
+            <option>CPT (Carriage paid to)</option>
+            <option>DAT (Delivered at Terminal)</option>
+            <option>DAP (Delivered at Place)</option>
+            <option>DDP (Delivery Duty Paid)</option>
+            <option>EXW (Ex Works)</option>
+            <option>FAS (Free Alongside Ship)</option>
+            <option>FCA (Free Carrier)</option>
+            <option>FOB (Free on Board)</option>
+        </select>
+    </div>
+</ng-container>
 
 <!-- Estimated delivery period -->
 <quantity-view [presentationMode]="presentationMode"
                [propName]="'Estimated Delivery Period'"
+               [type]="'time_quantity'"
+               [definition]="'The period estimated for delivery.It starts after the order confirmation.For example,Quantity:8,Unit:days'"
                [quantity]="[catalogueLine.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure]"
                [parentForm]="parentForm">
 </quantity-view>
@@ -42,6 +71,8 @@
 <ng-container *ngIf="catalogueLine.requiredItemLocationQuantity.applicableTerritoryAddress">
     <address-view [presentationMode]="presentationMode"
                   [propName]="'Applicable Territory Address'"
+                  [multiValue]="true"
+                  [definition]="'A reference to a territory (region, country, city, etc.) to which the product will apply'"
                   [address]="catalogueLine.requiredItemLocationQuantity.applicableTerritoryAddress">
     </address-view>
 </ng-container>
@@ -49,6 +80,7 @@
 <!-- Special terms -->
 <value-view [presentationMode]="presentationMode"
             [propName]="'Special Terms'"
+            [definition]="'A description of any terms or conditions relating to the delivery items.For example,exceeding the delivery period entitles the buyer to terminate the agreement.'"
             [(value)]="catalogueLine.goodsItem.deliveryTerms.specialTerms">
 </value-view>
 
@@ -60,6 +92,8 @@
     <!-- Package quantity -->
     <quantity-view [presentationMode]="presentationMode"
                    [propName]="'Quantity'"
+                   [type]="'package_quantity'"
+                   [definition]="'The quantity of items contained in this package,e.g.,Quantity:30,Unit:KGM'"
                    [quantity]="[catalogueLine.goodsItem.containingPackage.quantity]"
                    [parentForm]="parentForm">
     </quantity-view>
@@ -67,6 +101,7 @@
     <!-- Packaging type -->
     <value-view [presentationMode]="presentationMode"
                 [propName]="'Packaging Type'"
+                [definition]="'Types of packing materials used,e.g.,crates or pallets'"
                 [(value)]="catalogueLine.goodsItem.containingPackage.packagingTypeCode.value">
     </value-view>
 </ng-container>
@@ -79,6 +114,8 @@
     <!-- Validity period -->
     <quantity-view [presentationMode]="presentationMode"
                    [propName]="'Validity Period'"
+                   [type]="'time_quantity'"
+                   [definition]="'A period during which this price is valid,e.g.,Quantity:10,Unit:days'"
                    [quantity]="[catalogueLine.warrantyValidityPeriod.durationMeasure]"
                    [parentForm]="parentForm">
     </quantity-view>

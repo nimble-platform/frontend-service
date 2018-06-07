@@ -12,6 +12,8 @@ export class BooleanViewComponent {
     @Input() presentationMode: string;
     @Input() propName: string;
     @Output() valueChanged = new EventEmitter();
+    // the definition of the property
+    @Input() definition: string = null;
 
     valueObj:boolean;
     @Input()

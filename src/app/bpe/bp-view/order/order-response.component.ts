@@ -8,7 +8,6 @@ import {ProcessInstanceInputMessage} from "../../model/process-instance-input-me
 import {ModelUtils} from "../../model/model-utils";
 import {CallStatus} from "../../../common/call-status";
 import {Router} from "@angular/router";
-import {SearchContextService} from "../../../simple-search/search-context.service";
 /**
  * Created by suat on 20-Sep-17.
  */
@@ -22,17 +21,18 @@ export class OrderResponseComponent {
     @Input() orderResponse:OrderResponseSimple;
 
     callStatus:CallStatus = new CallStatus();
-
+    // check whether 'Accept Order' button or 'Reject Order' button is clicked
+    submitted: boolean = false;
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
-                private searchContextService: SearchContextService,
                 private router:Router) {
     }
 
     respondToOrder(acceptedIndicator: boolean) {
+        this.submitted = true;
         this.bpDataService.orderResponse.acceptedIndicator = acceptedIndicator;
 
-        let vars: ProcessVariables = ModelUtils.createProcessVariables("Order", this.bpDataService.order.buyerCustomerParty.party.id, this.bpDataService.order.sellerSupplierParty.party.id, this.bpDataService.orderResponse);
+        let vars: ProcessVariables = ModelUtils.createProcessVariables("Order", this.bpDataService.order.buyerCustomerParty.party.id, this.bpDataService.order.sellerSupplierParty.party.id, this.bpDataService.orderResponse, this.bpDataService);
         let piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.bpDataService.processMetadata.process_id);
 
         this.callStatus.submit();
@@ -41,21 +41,10 @@ export class OrderResponseComponent {
                 this.callStatus.callback("Order Response placed", true);
                 this.router.navigate(['dashboard']);
             }
-        ).catch(
-            error => this.callStatus.error("Failed to send Order Response")
+        ).catch(error => {
+                this.submitted = false;
+                this.callStatus.error("Failed to send Order Response");
+            }
         );
-    }
-
-    initiateDespatchAdvice() {
-        this.bpDataService.initDespatchAdviceWithOrder();
-        this.bpDataService.setBpOptionParameters('seller', 'Fulfilment');
-    }
-
-    searchTransportServiceProvider() {
-        this.searchContextService.targetPartyRole = 'Transport Service Provider';
-        this.searchContextService.associatedProcessType = 'Order';
-        this.searchContextService.associatedProcessMetadata = this.bpDataService.processMetadata;
-        this.bpDataService.setBpOptionParameters('buyer', 'Transport_Execution_Plan');
-        this.router.navigate(['simple-search'], {queryParams: {searchContext: 'orderbp'}});
     }
 }

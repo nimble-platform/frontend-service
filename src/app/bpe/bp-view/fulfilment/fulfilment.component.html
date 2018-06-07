@@ -1,4 +1,4 @@
-<div>
+<div class="mb-3">
     <ul class="nav nav-tabs">
         <li class="nav-item pointer">
             <a
@@ -30,14 +30,13 @@
         </li>
     </ul>
 </div>
-<div *ngIf="bpDataService.catalogueLine"
-    class="mt-3">
+<div *ngIf="bpDataService.catalogueLines[0]">
     <product-details *ngIf="selectedTab === 'Product Details'"
-                     [catalogueLine]="bpDataService.catalogueLine"
+                     [catalogueLine]="bpDataService.catalogueLines[0]"
                      [presentationMode]="'singlevalue'">
     </product-details>
     <product-trading-details *ngIf="selectedTab === 'Product Trading & Delivery Terms'"
-                             [catalogueLine]="bpDataService.catalogueLine"
+                             [catalogueLine]="bpDataService.catalogueLines[0]"
                              [presentationMode]="'singlevalue'">
     </product-trading-details>
     <despatch-advice *ngIf="selectedTab === 'Despatch Advice Details'"

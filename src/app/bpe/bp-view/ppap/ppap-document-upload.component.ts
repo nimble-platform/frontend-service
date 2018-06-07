@@ -31,8 +31,6 @@ export class PpapDocumentUploadComponent{
     }
 
     processid : any;
-    id : any;
-    catalogueId: any;
     ppap : Ppap;
     documents = [];
 
@@ -43,17 +41,11 @@ export class PpapDocumentUploadComponent{
     noteToSend : any;
     binaryObjects: any[] = [];
     callStatus:CallStatus = new CallStatus();
+    // check whether 'Send Response' button is clicked
+    submitted: boolean = false;
     ngOnInit() {
         this.route.queryParams.subscribe(params =>{
             this.processid = params['pid'];
-            this.id = params['id'];
-            this.catalogueId = params['catalogueId'];
-
-            this.catalogueService.getCatalogueLine(this.catalogueId,this.id).then(line =>{
-                this.bpDataService.catalogueLine = line;
-            }).catch(error => {
-
-            });
 
             this.bpeService.getProcessDetailsHistory(this.processid).then(task => {
                 this.ppap = ActivityVariableParser.getInitialDocument(task).value as Ppap;
@@ -113,10 +105,11 @@ export class PpapDocumentUploadComponent{
     }
 
     responseToPpapRequest(acceptedIndicator: boolean){
+        this.submitted = true;
         for(let i=0;i<this.binaryObjects.length;i++){
             for(let j=0;j<this.binaryObjects[i].documents.length;j++){
-                let attachment : Attachment = new Attachment(this.binaryObjects[i].documents[j],null,null);
-                let documentRef: DocumentReference = new DocumentReference(UBLModelUtils.generateUUID(),null,null,null,null,this.binaryObjects[i].documentName,null,null,null,attachment,null,null,null);
+                let attachment : Attachment = new Attachment(this.binaryObjects[i].documents[j]);
+                let documentRef: DocumentReference = new DocumentReference(UBLModelUtils.generateUUID(), this.binaryObjects[i].documentName, attachment);
                 this.ppapDocuments.push(documentRef);
             }
         }
@@ -131,7 +124,7 @@ export class PpapDocumentUploadComponent{
         }
 
         this.ppapResponse.note = this.noteToSend;
-        let vars: ProcessVariables = ModelUtils.createProcessVariables("Ppap", this.ppap.buyerCustomerParty.party.id, this.ppap.sellerSupplierParty.party.id, this.ppapResponse);
+        let vars: ProcessVariables = ModelUtils.createProcessVariables("Ppap", this.ppap.buyerCustomerParty.party.id, this.ppap.sellerSupplierParty.party.id, this.ppapResponse, this.bpDataService);
         let piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.bpDataService.processMetadata.process_id);
 
 
@@ -142,8 +135,10 @@ export class PpapDocumentUploadComponent{
                 this.callStatus.callback("Ppap Response placed", true);
                 this.router.navigate(['dashboard']);
             }
-        ).catch(
-            error => this.callStatus.error("Failed to send Ppap Response")
+        ).catch(error => {
+                this.submitted = false;
+                error => this.callStatus.error("Failed to send Ppap Response")
+            }
         );
 
     }

@@ -9,7 +9,7 @@ import { BPERoutingModule } from './bpe-routing.module';
 // ToDo: Get rid of these dependencies
 import { CatalogueModule } from '../catalogue/catalogue.module';
 
-import { TradingDetailsComponent } from './bp-view/negotiation/trading-details.component';
+import { NegotiationTradingDetailsComponent } from './bp-view/negotiation/negotiation-trading-details.component';
 import { BPConfigureComponent } from './bp-configure.component';
 import { BPsComponent } from './bps.component';
 import { BPDetailComponent } from './bp-detail.component';
@@ -35,6 +35,13 @@ import { PpapDocumentSelectComponent} from "./bp-view/ppap/ppap-document-select.
 import { PpapDocumentUploadComponent} from "./bp-view/ppap/ppap-document-upload.component";
 import { PpapDocumentDownloadComponent} from "./bp-view/ppap/ppap-document-download.component";
 
+import { BusinessProcessOptions} from './bp-view/business-process-options';
+import {ContractComponent} from "./bp-view/contract/contract.component";
+import {ClauseComponent} from "./bp-view/contract/clause.component";
+import {DataMonitoringClauseComponent} from "./bp-view/contract/data-monitoring-clause.component";
+import {DocumentClauseComponent} from "./bp-view/contract/document-clause.component";
+import {PpapClauseComponent} from "./bp-view/contract/ppap-clause.component";
+import {TransportTradingDetailsComponent} from "./bp-view/negotiation/transport-trading-details.component";
 //import { BPEService } from './bpe.service';
 //import { BPService } from './bp.service';
 //import { BPDataService } from "./bp-view/bp-data-service";
@@ -51,7 +58,8 @@ import { PpapDocumentDownloadComponent} from "./bp-view/ppap/ppap-document-downl
 		NgbModule.forRoot()
 	],
 	declarations: [
-		TradingDetailsComponent,
+		NegotiationTradingDetailsComponent,
+		TransportTradingDetailsComponent,
 		BPConfigureComponent,
 		BPsComponent,
 		BPDetailComponent,
@@ -74,10 +82,17 @@ import { PpapDocumentDownloadComponent} from "./bp-view/ppap/ppap-document-downl
         PpapComponent,
         PpapDocumentSelectComponent,
 		PpapDocumentUploadComponent,
-		PpapDocumentDownloadComponent
+		PpapDocumentDownloadComponent,
+        BusinessProcessOptions,
+		ContractComponent,
+		ClauseComponent,
+		DataMonitoringClauseComponent,
+		DocumentClauseComponent,
+		PpapClauseComponent
 	],
 	exports: [
-		TradingDetailsComponent,
+		NegotiationTradingDetailsComponent,
+		TransportTradingDetailsComponent,
 		BPConfigureComponent,
 		BPsComponent,
 		BPDetailComponent,
@@ -96,7 +111,13 @@ import { PpapDocumentDownloadComponent} from "./bp-view/ppap/ppap-document-downl
 		TransportExecutionPlanComponent,
 		BpProductDetailsComponent,
 		ItemInformationRequestBpComponent,
-		ItemInformationRequestComponent
+		ItemInformationRequestComponent,
+        BusinessProcessOptions,
+		ContractComponent,
+		ClauseComponent,
+		DataMonitoringClauseComponent,
+		DocumentClauseComponent,
+		PpapClauseComponent
 	],
 	providers: [
 	]

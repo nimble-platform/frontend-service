@@ -80,14 +80,15 @@ export class DashboardComponent implements OnInit {
                         "task_description": task.description,
                         "process_id": task.processInstanceId,
                         "status_code": task.deleteReason,
-						"start_time": moment(task.startTime+"Z").format("YYYY-MM-DD HH:mm")
+						"start_time": moment(task.startTime+"Z").format("YYYY-MM-DD HH:mm"),
+                        "start_time_sortable": task.startTime
                         //"start_time": new Date(task.startTime).toLocaleDateString() + " " + time_locale
                     });
 
                     this.bpeService.getProcessDetailsHistory(task.processInstanceId)
                         .then(activityVariables => {
                             var vContent = "", vNote = "", vStatusCode = "", vActionStatus = "", vActionRequired = false,vBPStatus = "",
-                                vTask_id = "", vProcess_id = "", vStart_time = "", vSellerName = "", vProduct,
+                                vTask_id = "", vProcess_id = "", vStart_time = "", vSellerName = "", vProduct,vStart_time_sortable ="",
                                 vBpOptionMenuItems: any;
                             var vProcessType = ActivityVariableParser.getProcessType(activityVariables);
 							var vProcessTypeReadable = vProcessType.replace(/_/g,' ');
@@ -95,7 +96,7 @@ export class DashboardComponent implements OnInit {
                             let initialDoc: any = ActivityVariableParser.getInitialDocument(activityVariables);
                             vProduct = ActivityVariableParser.getProductFromProcessData(initialDoc);
                             vNote = ActivityVariableParser.getNoteFromProcessData(initialDoc);
-                            vSellerName = ActivityVariableParser.getResponderNameProcessData(initialDoc);
+                            vSellerName = ActivityVariableParser.getTradingPartnerName(initialDoc, this.cookieService.get("company_id"));
                             vProcess_id = initialDoc.processInstanceId;
                             vActionStatus = this.getActionStatus(vProcessType, response, true)[0];
                             vBPStatus = this.getBPStatus(response);
@@ -106,6 +107,7 @@ export class DashboardComponent implements OnInit {
                                 if (t.process_id == vProcess_id) {
                                     vTask_id = t.task_id;
                                     vStart_time = t.start_time;
+                                    vStart_time_sortable = t.start_time_sortable;
                                     vStatusCode = t.status_code;
                                 }
                             }
@@ -117,6 +119,7 @@ export class DashboardComponent implements OnInit {
                                 "task_id": vTask_id,
                                 "process_id": vProcess_id,
                                 "start_time": vStart_time,
+                                "start_time_sortable": vStart_time_sortable,
                                 "sellerName": vSellerName,
                                 "product": vProduct,
                                 "note": vNote,
@@ -132,8 +135,8 @@ export class DashboardComponent implements OnInit {
 								this.active_buyer_num++;
 
                             this.buyer_history.sort(function (a: any, b: any) {
-                                var a_comp = a.start_time;
-                                var b_comp = b.start_time;
+                                var a_comp = a.start_time_sortable;
+                                var b_comp = b.start_time_sortable;
                                 return b_comp.localeCompare(a_comp);
                             });
 							this.buyer_history.sort(function(a: any, b: any) {
@@ -188,7 +191,8 @@ export class DashboardComponent implements OnInit {
                         "task_description": task.description,
                         "process_id": task.processInstanceId,
                         "status_code": task.deleteReason,
-						"start_time": moment(task.startTime+"Z").format("YYYY-MM-DD HH:mm")
+						"start_time": moment(task.startTime+"Z").format("YYYY-MM-DD HH:mm"),
+                        "start_time_sortable": task.startTime
                         //"start_time": new Date(task.startTime).toLocaleDateString() + " " + time_locale
                     });
 
@@ -196,7 +200,7 @@ export class DashboardComponent implements OnInit {
                         .then(activityVariables => {
 
                             var vContent = "", vNote = "", vStatusCode= "", vActionStatus = "", vActionRequired = false, vBPStatus = "",
-                                vTask_id = "", vProcess_id = "", vStart_time = "", vBuyerName = "", vProduct,
+                                vTask_id = "", vProcess_id = "", vStart_time = "", vBuyerName = "", vProduct,vStart_time_sortable="",
                                 vBpOptionMenuItems: any;
                             var vProcessType = ActivityVariableParser.getProcessType(activityVariables);
 							var vProcessTypeReadable = vProcessType.replace(/_/g,' ');
@@ -204,7 +208,7 @@ export class DashboardComponent implements OnInit {
                             let initialDoc: any = ActivityVariableParser.getInitialDocument(activityVariables);
                             vProduct = ActivityVariableParser.getProductFromProcessData(initialDoc);
                             vNote = ActivityVariableParser.getNoteFromProcessData(initialDoc);
-                            vBuyerName = ActivityVariableParser.getInitiatorNameProcessData(initialDoc);
+                            vBuyerName = ActivityVariableParser.getTradingPartnerName(initialDoc, this.cookieService.get("company_id"));
                             vProcess_id = initialDoc.processInstanceId;
                             vActionStatus = this.getActionStatus(vProcessType, response, false)[0];
                             vBPStatus = this.getBPStatus(response);
@@ -215,6 +219,7 @@ export class DashboardComponent implements OnInit {
                                 if (t.process_id == vProcess_id) {
                                     vTask_id = t.task_id;
                                     vStart_time = t.start_time;
+                                    vStart_time_sortable = t.start_time_sortable;
                                     vStatusCode = t.status_code;
                                 }
                             }
@@ -226,6 +231,7 @@ export class DashboardComponent implements OnInit {
                                 "task_id": vTask_id,
                                 "process_id": vProcess_id,
                                 "start_time": vStart_time,
+                                "start_time_sortable": vStart_time_sortable,
                                 "buyerName": vBuyerName,
                                 "product": vProduct,
                                 "note": vNote,
@@ -241,8 +247,8 @@ export class DashboardComponent implements OnInit {
 								this.active_seller_num++;
 							
                             this.seller_history.sort(function (a: any, b: any) {
-                                var a_comp = a.start_time;
-                                var b_comp = b.start_time;
+                                var a_comp = a.start_time_sortable;
+                                var b_comp = b.start_time_sortable;
                                 return b_comp.localeCompare(a_comp);
                             });
 							this.seller_history.sort(function(a: any, b: any) {

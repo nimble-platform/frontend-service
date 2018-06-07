@@ -3,7 +3,6 @@ import {BPEService} from "../../bpe.service";
 import {UserService} from "../../../user-mgmt/user.service";
 import {CookieService} from "ng2-cookies";
 import {BPDataService} from "../bp-data-service";
-import * as myGlobals from '../../../globals';
 import {CustomerParty} from "../../../catalogue/model/publish/customer-party";
 import {SupplierParty} from "../../../catalogue/model/publish/supplier-party";
 import {UBLModelUtils} from "../../../catalogue/model/ubl-model-utils";
@@ -34,7 +33,10 @@ export class PpapDocumentSelectComponent implements OnInit{
     seller: boolean = false;
 
     documents: {text: String, select: boolean}[] = [];
-
+    // check whether 'Send Request' button is clicked or not
+    submitted:boolean = false;
+    // check whether the definition of PPAP is visible or not
+    showDetails = false;
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
                 private userService: UserService,
@@ -47,18 +49,18 @@ export class PpapDocumentSelectComponent implements OnInit{
         this.route.queryParams.subscribe(params =>{
             let check = params['pid'];
             if(check != null){
-                  this.level = 0;
-                  this.setDocuments();
-                  this.bpeService.getProcessDetailsHistory(check).then(task => {
-                      this.ppap = ActivityVariableParser.getInitialDocument(task).value as Ppap;
-                      let i = 0;
-                      for(;i<this.ppap.documentType.length;i++){
-                          let documentName = this.ppap.documentType[i];
-                          let obj = this.documents.find(o => o.text === documentName);
-                          obj.select = true;
-                      }
-                      this.note = this.ppap.note;
-                  });
+                if(this.bpDataService.processMetadata){
+                    this.level = 0;
+                    this.setDocuments();
+                    this.ppap = this.bpDataService.ppap;
+                    let i = 0;
+                    for(;i<this.ppap.documentType.length;i++){
+                        let documentName = this.ppap.documentType[i];
+                        let obj = this.documents.find(o => o.text === documentName);
+                        obj.select = true;
+                    }
+                    this.note = this.ppap.note;
+                }
             }
         });
     }
@@ -66,6 +68,7 @@ export class PpapDocumentSelectComponent implements OnInit{
 
     sendRequest()
     {
+        this.submitted = true;
         this.ppap = UBLModelUtils.createPpap([]);
         this.callStatus.submit();
         let answer: String[] = [];
@@ -80,11 +83,11 @@ export class PpapDocumentSelectComponent implements OnInit{
         this.ppap.note = this.note;
 
 
-        this.ppap.lineItem.item = this.bpDataService.modifiedCatalogueLine.goodsItem.item;
+        this.ppap.lineItem.item = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;
         UBLModelUtils.removeHjidFieldsFromObject(this.ppap);
 
 
-        let sellerId:string = this.bpDataService.catalogueLine.goodsItem.item.manufacturerParty.id;
+        let sellerId:string = this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty.id;
         let buyerId:string = this.cookieService.get("company_id");
 
 
@@ -93,7 +96,7 @@ export class PpapDocumentSelectComponent implements OnInit{
 
             this.userService.getParty(sellerId).then(sellerParty => {
                 this.ppap.sellerSupplierParty = new SupplierParty(sellerParty);
-                let vars:ProcessVariables = ModelUtils.createProcessVariables("Ppap", buyerId, sellerId, this.ppap);
+                let vars:ProcessVariables = ModelUtils.createProcessVariables("Ppap", buyerId, sellerId, this.ppap, this.bpDataService);
                 let piim:ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
                 this.bpeService.startBusinessProcess(piim)
                     .then(res => {
@@ -103,6 +106,7 @@ export class PpapDocumentSelectComponent implements OnInit{
                         this.callback = true;
                     })
                     .catch(error => {
+                        this.submitted = false;
                         this.error_detc = true;
                         this.callStatus.error("Failed to send Ppap request");
                     });

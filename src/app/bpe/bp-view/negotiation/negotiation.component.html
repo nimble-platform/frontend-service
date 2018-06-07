@@ -1,4 +1,4 @@
-    <ul class="nav nav-tabs">
+    <ul class="nav nav-tabs mb-3">
         <!-- tabs generated to present details of the product or service -->
         <li *ngFor="let tab of tabs" class="nav-item pointer">
             <a
@@ -24,10 +24,9 @@
         </li>
     </ul>
 
-<ng-container *ngIf="bpDataService.catalogueLine"
-     class="mt-3">
+<ng-container *ngIf="bpDataService.catalogueLines[0]">
     <bp-product-details *ngIf="selectedTab == 'Product Characteristics' || selectedTab == 'Product Trading & Delivery Terms' || selectedTab == 'Service Characteristics'"
-                        [catalogueLine]="bpDataService.catalogueLine"
+                        [catalogueLine]="bpDataService.catalogueLines[0]"
                         [presentationMode]="'singlevalue'"
                         [selectedTab]="selectedTab">
     </bp-product-details>
@@ -35,7 +34,14 @@
                            [requestForQuotation]="bpDataService.requestForQuotation">
     </request-for-quotation>
     <quotation *ngIf="selectedTab == 'Quotation Details'"
-               [quotation]="bpDataService.quotation"
-               (newNegotiationInitialized)="selectedTab = 'Request for Quotation Details'">
+               [parentElement]="'business_process'"
+               [requestForQuotation]="bpDataService.requestForQuotation"
+               [quotation]="bpDataService.quotation">
     </quotation>
+    <businessProcess-options    *ngIf="selectedTab == 'Quotation Details' && bpDataService.processMetadata && bpDataService.processMetadata.processStatus == 'Completed'"
+                                (selectedTabChanged)="selectedTab = 'Request for Quotation Details'"
+                                [processName]="'Negotiation'"
+                                [userRole]="bpDataService.userRole"
+                                [transportationService]="bpDataService.getCatalogueLine().goodsItem.item.transportationServiceDetails != null">
+    </businessProcess-options>
 </ng-container>

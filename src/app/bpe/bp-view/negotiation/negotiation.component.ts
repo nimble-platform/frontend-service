@@ -1,6 +1,5 @@
 import {Component, OnInit} from "@angular/core";
 import {BPDataService} from "../bp-data-service";
-import {CallStatus} from "../../../common/call-status";
 
 @Component({
     selector: 'negotiation',
@@ -22,7 +21,7 @@ export class NegotiationComponent implements OnInit {
 	}
 
     populateTabs() {
-        if(this.bpDataService.catalogueLine.goodsItem.item.transportationServiceDetails == null) {
+        if(this.bpDataService.getCatalogueLine().goodsItem.item.transportationServiceDetails == null) {
             this.tabs.push('Product Characteristics');
             this.tabs.push('Product Trading & Delivery Terms');
         } else {

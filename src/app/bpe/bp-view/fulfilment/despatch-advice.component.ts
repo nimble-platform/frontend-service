@@ -23,17 +23,19 @@ export class DespatchAdviceComponent {
 	@Input() despatchAdvice:DespatchAdvice;
 
 	callStatus:CallStatus = new CallStatus();
-
+    // check whether 'Send Despatch Advice' button is clicked or not
+	submitted:boolean = false;
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
                 private router:Router) {
     }
 
     sendDespatchAdvice(): void {
+        this.submitted = true;
         let despatchAdvice: DespatchAdvice = JSON.parse(JSON.stringify(this.bpDataService.despatchAdvice));
         UBLModelUtils.removeHjidFieldsFromObject(despatchAdvice);
 
-        let vars: ProcessVariables = ModelUtils.createProcessVariables("Fulfilment", despatchAdvice.deliveryCustomerParty.party.id, despatchAdvice.despatchSupplierParty.party.id, despatchAdvice);
+        let vars: ProcessVariables = ModelUtils.createProcessVariables("Fulfilment", despatchAdvice.despatchSupplierParty.party.id, despatchAdvice.deliveryCustomerParty.party.id, despatchAdvice, this.bpDataService);
         let piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
 
         this.callStatus.submit();
@@ -43,6 +45,7 @@ export class DespatchAdviceComponent {
                 this.router.navigate(['dashboard']);
             })
             .catch(error => {
+                this.submitted = false;
                 this.callStatus.error("Failed to send Despatch Advice");
             });
     }

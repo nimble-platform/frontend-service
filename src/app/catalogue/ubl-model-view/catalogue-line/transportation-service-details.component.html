@@ -2,6 +2,7 @@
 <div class="well">
     <value-view [presentationMode]="presentationMode"
                 [propName]="'Service Type'"
+                [definition]="'The type of service provided,e.g.,port-to-port'"
                 [(value)]="catalogueLine.goodsItem.item.transportationServiceDetails.transportServiceCode.name">
     </value-view>
 
@@ -14,19 +15,23 @@
     <!-- supported cargo type -->
     <value-view [presentationMode]="presentationMode"
                 [propName]="'Supported Cargo Type'"
+                [definition]="'The type of cargo,e.g.,large freight containers or palletized'"
                 [(value)]="catalogueLine.goodsItem.item.transportationServiceDetails.supportedCommodityClassification[0].cargoTypeCode.name">
     </value-view>
 
     <!-- maximum capacity dimensions -->
     <quantity-view [propName]="'Total Capacity'"
                    [quantity]="[catalogueLine.goodsItem.item.transportationServiceDetails.totalCapacityDimension.measure]"
+                   [definition]="'The total capacity or volume available in this transportation service,e.g.,Quantity:50,Unit:MTQ'"
                    [presentationMode]="presentationMode"
                    [parentForm]="parentForm">
     </quantity-view>
 
     <!-- estimated duration period -->
     <quantity-view [propName]="'Estimated Duration'"
+                   [type]="'time_quantity'"
                    [quantity]="[catalogueLine.goodsItem.item.transportationServiceDetails.estimatedDurationPeriod.durationMeasure]"
+                   [definition]="'The estimated duration of this transportation service,e.g.,Quantity:3,Unit:weeks'"
                    [presentationMode]="presentationMode"
                    [parentForm]="parentForm">
     </quantity-view>
@@ -34,6 +39,7 @@
     <!-- scheduled service frequency -->
     <value-view [presentationMode]="presentationMode"
                       [propName]="'Scheduled Days'"
+                [definition]="'Which days of the week this transport service is operational'"
                       [(value)]="catalogueLine.goodsItem.item.transportationServiceDetails.scheduledServiceFrequency[0].weekDayCode.name">
     </value-view>
 </div>
@@ -43,10 +49,12 @@
     <h6>Shipment Stage</h6>
     <value-view [presentationMode]="presentationMode"
                 [propName]="'Transportation Mode'"
+                [definition]="'The method of transport used for this shipment stage,e.g.,road,air or rail'"
                 [(value)]="catalogueLine.goodsItem.item.transportationServiceDetails.shipmentStage[0].transportModeCode.name">
     </value-view>
     <value-view [presentationMode]="presentationMode"
                 [propName]="'Carrier Party'"
+                [definition]="'The party carrying the goods'"
                 [(value)]="catalogueLine.goodsItem.item.transportationServiceDetails.shipmentStage[0].carrierParty.name">
     </value-view>
 </div>
@@ -56,24 +64,29 @@
     <h6>Transport Means / Equipment</h6>
     <value-view [presentationMode]="presentationMode"
                 [propName]="'Transport Means'"
+                [definition]="'Transport means associated with this piece of transport equipment,e.g.,automobiles, airplanes or trains'"
                 [(value)]="catalogueLine.goodsItem.item.transportationServiceDetails.shipmentStage[0].transportMeans.transportMeansTypeCode.name">
     </value-view>
     <hr>
     <value-view [presentationMode]="presentationMode"
                 [propName]="'Associated Equipment'"
+                [definition]="'A piece of transport equipment used in this transportation service'"
                 [(value)]="catalogueLine.goodsItem.item.transportationServiceDetails.shipmentStage[0].transportMeans.transportEquipment[0].transportEquipmentTypeCode.name">
     </value-view>
     <value-view [presentationMode]="presentationMode"
                 [propName]="'Equipment Humidity Percent'"
+                [definition]="'The percent humidity within this piece of transport equipment'"
                 [(value)]="catalogueLine.goodsItem.item.transportationServiceDetails.shipmentStage[0].transportMeans.transportEquipment[0].humidityPercent">
     </value-view>
     <boolean-view [presentationMode]="presentationMode"
-                [propName]="'Refrigerator Indicator'"
-                [(value)]="catalogueLine.goodsItem.item.transportationServiceDetails.shipmentStage[0].transportMeans.transportEquipment[0].refrigeratorIndicator"
-                (valueChanged)="catalogueLine.goodsItem.item.transportationServiceDetails.shipmentStage[0].transportMeans.transportEquipment[0].refrigeratorIndicator = $event">
+                  [propName]="'Refrigerator Indicator'"
+                  [definition]="'An indicator that this piece of transport equipment is refrigerated (true) or not (false)'"
+                  [(value)]="catalogueLine.goodsItem.item.transportationServiceDetails.shipmentStage[0].transportMeans.transportEquipment[0].refrigeratorIndicator"
+                  (valueChanged)="catalogueLine.goodsItem.item.transportationServiceDetails.shipmentStage[0].transportMeans.transportEquipment[0].refrigeratorIndicator = $event">
     </boolean-view>
     <value-view [presentationMode]="presentationMode"
                 [propName]="'Equipment Characteristics'"
+                [definition]="'Characteristics of this piece of transport equipment'"
                 [(value)]="catalogueLine.goodsItem.item.transportationServiceDetails.shipmentStage[0].transportMeans.transportEquipment[0].characteristics">
     </value-view>
 </div>
@@ -85,6 +98,7 @@
                 [(value)]="catalogueLine.goodsItem.item.transportationServiceDetails.environmentalEmission[0].environmentalEmissionTypeCode.name">
     </value-view>
     <quantity-view [propName]="'Value Measure'"
+                   [definition]="'A value measurement for the environmental emission'"
                    [quantity]="[catalogueLine.goodsItem.item.transportationServiceDetails.environmentalEmission[0].valueMeasure]"
                    [presentationMode]="presentationMode"
                    [parentForm]="parentForm">

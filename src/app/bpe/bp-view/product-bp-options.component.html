@@ -1,6 +1,6 @@
-<ng-container *ngIf="bpDataService.catalogueLine">
-    <catalogue-line-header [catalogueLine]="bpDataService.catalogueLine"
-                           [presentationMode]="'view'">
+<ng-container *ngIf="bpDataService.getCatalogueLine()">
+    <catalogue-line-header [catalogueLine]="bpDataService.getCatalogueLine()"
+                           [presentationMode]="presentationMode">
     </catalogue-line-header>
 
     <div *ngIf="!singleMode"
@@ -20,7 +20,8 @@
         </li>
     </ul>
 
-    <item-information-request-bp *ngIf="selectedOption == 'Item_Information_Request'">
+    <item-information-request-bp *ngIf="selectedOption == 'Item_Information_Request'"
+            [presentationMode]="presentationMode">
     </item-information-request-bp>
     <negotiation *ngIf="selectedOption == 'Negotiation'">
     </negotiation>
@@ -30,7 +31,8 @@
     </fulfilment>
     <transport-execution-plan-bp *ngIf="selectedOption == 'Transport_Execution_Plan'">
     </transport-execution-plan-bp>
-    <ppap *ngIf="selectedOption == 'Ppap'">
+    <ppap *ngIf="selectedOption == 'Ppap'"
+            [presentationMode]="presentationMode">
     </ppap>
 </ng-container>
 

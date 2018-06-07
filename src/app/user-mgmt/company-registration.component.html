@@ -1,23 +1,31 @@
 <form class="company-settings-form" [formGroup]="registrationForm" novalidate (ngSubmit)="save(registrationForm)">
 	<h3 class="space-after">Company Registration</h3>
-	<div class="input-group form-group">
-		<label class="input-group-addon">Legal Name</label>
-		<input type="text" class="form-control" name="companyName" [formControl]="registrationForm.controls['name']" required>
+	<div class="form-group row">
+		<label class="col-2 col-form-label">Legal Name</label>
+		<div class="col-10">
+			<input type="text" class="form-control" name="companyName" [formControl]="registrationForm.controls['name']" required>
+		</div>
 	</div>
-	<div class="input-group form-group">
-		<label class="input-group-addon">VAT Number</label>
-		<input type="text" class="form-control" [formControl]="registrationForm.controls['vatNumber']" required>
+	<div class="form-group row">
+		<label class="col-2 col-form-label">VAT Number</label>
+		<div class="col-10">
+			<input type="text" class="form-control" [formControl]="registrationForm.controls['vatNumber']" required>
+		</div>
 	</div>
-	<div class="input-group form-group">
-		<label class="input-group-addon">
+	<div class="form-group row">
+		<label class="col-2 col-form-label">
 			<span>Verification Info</span>
-			<span class="tooltip-icon" (click)="showVerificationTT(tooltip)"><img class="inline-icon" src="assets/question_black.png"/></span>
+			<span class="tooltip-icon" (click)="showVerificationTT(tooltip)"><i class="fa fa-question-circle"></i></span>
 		</label>
-		<input type="text" class="form-control" [formControl]="registrationForm.controls['verificationInformation']">
+		<div class="col-10">
+			<input type="text" class="form-control" [formControl]="registrationForm.controls['verificationInformation']">
+		</div>
 	</div>
-	<div class="input-group form-group">
-		<label class="input-group-addon">Website</label>
-		<input type="text" class="form-control" [formControl]="registrationForm.controls['website']">
+	<div class="form-group row">
+		<label class="col-2 col-form-label">Website</label>
+		<div class="col-10">
+			<input type="text" class="form-control" [formControl]="registrationForm.controls['website']">
+		</div>
 	</div>
 	<address-form [group]="registrationForm.controls.address"></address-form>
 	<div>
