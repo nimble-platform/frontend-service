@@ -36,7 +36,7 @@ export const debug = false;
 // Base path variables - Local development via service discovery
 
 export const base_path = "http://localhost:443";
-export const ub_path = "http://localhost:8090";
+export const ub_base = "http://localhost:8090";
 export const simple_search_endpoint="http://nimble-platform.salzburgresearch.at/marmotta/solr/catalogue2/select";
 
 
