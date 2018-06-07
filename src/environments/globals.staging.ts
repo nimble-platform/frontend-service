@@ -16,28 +16,28 @@ export const simple_search_endpoint="http://nimble-staging.salzburgresearch.at/m
 
 // export const base_path = "https://nimble-platform.salzburgresearch.at/nimble";
 // export const ub_path = "https://nimble-platform.salzburgresearch.at/ub-search";
-// export const simple_search_endpoint="http://nimble-platform.salzburgresearch.at/marmotta/solr/catalogue2/select";
+// export const simple_search_endpoint="https://nimble-platform.salzburgresearch.at/marmotta/solr/catalogue2/select";
 
 
 // Base path variables - SRFG K8S
 
 // export const base_path = "https://nimble.salzburgresearch.at";
 // export const ub_base = "https://hydra2.ikap.biba.uni-bremen.de:8443";
-// export const simple_search_endpoint="http://nimble-platform.salzburgresearch.at/marmotta/solr/catalogue2/select";
+// export const simple_search_endpoint="https://nimble-platform.salzburgresearch.at/marmotta/solr/catalogue2/select";
 
 
 // Base path variabled - K8S domain
 
 // export const base_path = "http://nimble.uk-south.containers.mybluemix.net";
 // export const ub_base = "https://hydra2.ikap.biba.uni-bremen.de:8443";
-// export const simple_search_endpoint="http://nimble-platform.salzburgresearch.at/marmotta/solr/catalogue2/select";
+// export const simple_search_endpoint="https://nimble-platform.salzburgresearch.at/marmotta/solr/catalogue2/select";
 
 
 // Base path variables - Local development via service discovery
 
 // export const base_path = "http://localhost:443";
 // export const ub_path = "http://localhost:8090";
-// export const simple_search_endpoint="http://nimble-platform.salzburgresearch.at/marmotta/solr/catalogue2/select";
+// export const simple_search_endpoint="http://nimble-staging.salzburgresearch.at/marmotta/solr/catalogue2/select";
 
 
 // Service endpoints
