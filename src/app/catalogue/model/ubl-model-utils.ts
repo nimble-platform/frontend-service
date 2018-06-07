@@ -79,19 +79,12 @@ export class UBLModelUtils {
 
         let aip: ItemProperty;
         if (property == null) {
-            aip = new ItemProperty(this.generateUUID(), "", [], [], [], new Array<BinaryObject>(), "", "STRING", code, "", null, null);
-        }
-        else {
-            let unit = "";
-            if (property.unit != null) {
-                unit = property.unit.shortName;
-            }
+            aip = new ItemProperty(this.generateUUID(), "", [], [], [], new Array<BinaryObject>(), "STRING", code, null);
+        } else {
             let valueQualifier = property.dataType;
-
             let number;
             let quantity:Quantity = this.createQuantity();
-            aip = new ItemProperty(property.id, property.preferredName, [''], [number], [quantity], new Array<BinaryObject>(), unit,
-                valueQualifier, code, "", null, property.uri);
+            aip = new ItemProperty(property.id, property.preferredName, [''], [number], [quantity], new Array<BinaryObject>(), valueQualifier, code, property.uri);
         }
         return aip;
     }
@@ -106,7 +99,7 @@ export class UBLModelUtils {
         // price
         let price: Price = this.createPrice(null);
         // item location quantity
-        let ilq: ItemLocationQuantity = new ItemLocationQuantity(price, null, null, []);
+        let ilq: ItemLocationQuantity = new ItemLocationQuantity(price, null);
         return ilq;
     }
 
@@ -120,7 +113,7 @@ export class UBLModelUtils {
 
         // create item
         let uuid:string = this.generateUUID();
-        let item = new Item("", "", [], [], additionalItemProperties, providerParty, this.createItemIdentificationWithId(uuid), docRef, null, [], [], [], null, null, [], "");
+        let item = new Item("", "", [], [], additionalItemProperties, providerParty, this.createItemIdentificationWithId(uuid), docRef, [], [], [], null);
 
         // create goods item
         let goodsItem = new GoodsItem(uuid, item, this.createPackage(), this.createDeliveryTerms());
@@ -366,7 +359,7 @@ export class UBLModelUtils {
     }
 
     public static createItem():Item {
-        let item = new Item("", "", [], [], [], null, this.createItemIdentification(), null, null, [], [], [], null, null, [], "");
+        let item = new Item("", "", [], [], [], null, this.createItemIdentification(), null, [], [], [], null);
         return item;
     }
 
@@ -402,7 +395,7 @@ export class UBLModelUtils {
     public static createDimension(attributeId:string, unitCode:string):Dimension {
         let quantity:Quantity = this.createQuantity();
         quantity.unitCode = unitCode;
-        return new Dimension(attributeId, quantity, null, null, null, null);
+        return new Dimension(attributeId, quantity);
     }
 
     public static createAddress():Address {
@@ -410,7 +403,7 @@ export class UBLModelUtils {
     }
 
     public static createCountry():Country {
-        return new Country(null, null, null);
+        return new Country(null);
     }
 
     public static createQuantity():Quantity {

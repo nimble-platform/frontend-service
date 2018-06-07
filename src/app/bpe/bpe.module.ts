@@ -9,7 +9,7 @@ import { BPERoutingModule } from './bpe-routing.module';
 // ToDo: Get rid of these dependencies
 import { CatalogueModule } from '../catalogue/catalogue.module';
 
-import { TradingDetailsComponent } from './bp-view/negotiation/trading-details.component';
+import { NegotiationTradingDetailsComponent } from './bp-view/negotiation/negotiation-trading-details.component';
 import { BPConfigureComponent } from './bp-configure.component';
 import { BPsComponent } from './bps.component';
 import { BPDetailComponent } from './bp-detail.component';
@@ -41,6 +41,7 @@ import {ClauseComponent} from "./bp-view/contract/clause.component";
 import {DataMonitoringClauseComponent} from "./bp-view/contract/data-monitoring-clause.component";
 import {DocumentClauseComponent} from "./bp-view/contract/document-clause.component";
 import {PpapClauseComponent} from "./bp-view/contract/ppap-clause.component";
+import {TransportTradingDetailsComponent} from "./bp-view/negotiation/transport-trading-details.component";
 //import { BPEService } from './bpe.service';
 //import { BPService } from './bp.service';
 //import { BPDataService } from "./bp-view/bp-data-service";
@@ -57,7 +58,8 @@ import {PpapClauseComponent} from "./bp-view/contract/ppap-clause.component";
 		NgbModule.forRoot()
 	],
 	declarations: [
-		TradingDetailsComponent,
+		NegotiationTradingDetailsComponent,
+		TransportTradingDetailsComponent,
 		BPConfigureComponent,
 		BPsComponent,
 		BPDetailComponent,
@@ -89,7 +91,8 @@ import {PpapClauseComponent} from "./bp-view/contract/ppap-clause.component";
 		PpapClauseComponent
 	],
 	exports: [
-		TradingDetailsComponent,
+		NegotiationTradingDetailsComponent,
+		TransportTradingDetailsComponent,
 		BPConfigureComponent,
 		BPsComponent,
 		BPDetailComponent,

@@ -2,70 +2,65 @@
 
 // Development variables
 
-export const debug=false;
+export const debug = false;
 
 
-// Endpoint variables - SRFG staging
+// Base path variables - SRFG staging
 
-//export const user_mgmt_endpoint="http://nimble-staging.salzburgresearch.at/identity";
-//export const catalogue_endpoint="http://nimble-staging.salzburgresearch.at/catalog";
-//export const bpe_endpoint="http://nimble-staging.salzburgresearch.at/business-process";
-
-
-// Endpoint variables - SRFG productive
-
-//export const user_mgmt_endpoint="https://nimble-platform.salzburgresearch.at/nimble/identity";
-//export const catalogue_endpoint="https://nimble-platform.salzburgresearch.at/nimble/catalog";
-//export const bpe_endpoint="https://nimble-platform.salzburgresearch.at/nimble/business-process";
+// export const base_path = "http://nimble-staging.salzburgresearch.at";
+// export const ub_base = "http://nimble-staging.salzburgresearch.at/search";
+// export const simple_search_endpoint="http://nimble-staging.salzburgresearch.at/marmotta/solr/catalogue2/select";
 
 
-// Endpoint variables - K8S domain
+// Base path variables - SRFG productive
 
-export const user_mgmt_endpoint="http://nimble.uk-south.containers.mybluemix.net/identity";
-export const catalogue_endpoint="http://nimble.uk-south.containers.mybluemix.net/catalog";
-export const bpe_endpoint="http://nimble.uk-south.containers.mybluemix.net/business-process";
-
-
-// Endpoint variables - Local development via service discovery
-
-//export const user_mgmt_endpoint="http://localhost:443/identity";
-//export const catalogue_endpoint="http://localhost:443/catalog";
-//export const bpe_endpoint="http://localhost:443/business-process";
+// export const base_path = "https://nimble-platform.salzburgresearch.at/nimble";
+// export const ub_path = "https://nimble-platform.salzburgresearch.at/ub-search";
+// export const simple_search_endpoint="http://nimble-platform.salzburgresearch.at/marmotta/solr/catalogue2/select";
 
 
-// Marmotta endpoint variables
+// Base path variables - SRFG K8S
 
-export const simple_search_endpoint="https://nimble-platform.salzburgresearch.at/marmotta/solr/catalogue2/select";
+// export const base_path = "https://nimble.salzburgresearch.at";
+// export const ub_base = "https://hydra2.ikap.biba.uni-bremen.de:8443";
+// export const simple_search_endpoint="http://nimble-platform.salzburgresearch.at/marmotta/solr/catalogue2/select";
 
 
-// Endpoint variables - BIBA domain
+// Base path variabled - K8S domain
 
-// const ub_base_8090="http://hydra2.ikap.biba.uni-bremen.de:8090";
-// const ub_base_8092="http://hydra2.ikap.biba.uni-bremen.de:8092";
-// const ub_base_8090="https://nimble-platform.salzburgresearch.at/uni-bremen-8090";
-// const ub_base_8092="https://nimble-platform.salzburgresearch.at/uni-bremen-8092";
-// export const languageEndPoint = `${ub_base_8090}/getSupportedLanguages`;
-export const languageEndPoint = "https://hydra2.ikap.biba.uni-bremen.de:8443/getSupportedLanguages";
-// export const endpoint = "http://localhost:8090/detectMeaningLanguageSpecific";
-// export const endpoint = `${ub_base_8092}/detectMeaningLanguageSpecific`;
-export const endpoint = "https://hydra2.ikap.biba.uni-bremen.de:8443/detectMeaningLanguageSpecific";
-// export const logicalViewEndpoint = `${ub_base_8092}/getLogicalView`;
-// export const logicalViewEndpoint = "http://localhost:8090/getLogicalView";
-export const logicalViewEndpoint = "https://hydra2.ikap.biba.uni-bremen.de:8443/getLogicalView";
-// export const propertyEndPoint = "http://localhost:8090/getPropertyValuesDiscretised";
-// export const propertyEndPoint = `${ub_base_8092}/getPropertyValuesDiscretised`;
-export const propertyEndPoint = "https://hydra2.ikap.biba.uni-bremen.de:8443/getPropertyValuesDiscretised";
-// export const sparqlEndPoint = `${ub_base_8092}/executeSPARQLSelect`;
-// export const sparqlEndPoint = 'http://localhost:8090/executeSPARQLSelect';
-export const sparqlEndPoint = "https://hydra2.ikap.biba.uni-bremen.de:8443/executeSPARQLSelect";
-// export const sparqlOptionalSelectEndPoint = "http://localhost:8090/executeSPARQLOptionalSelect";
-// export const sparqlOptionalSelectEndPoint = `${ub_base_8092}/executeSPARQLOptionalSelect`;
-export const sparqlOptionalSelectEndPoint = "https://hydra2.ikap.biba.uni-bremen.de:8443/executeSPARQLOptionalSelect";
-export const spqButton = "https://hydra2.ikap.biba.uni-bremen.de:8443/getSQPFromOrangeGroup";
-export const obs_propFromConcept = "https://hydra2.ikap.biba.uni-bremen.de:8443/getPropertyFromConcept";
-export const obs_propValueFromConcept = "https://hydra2.ikap.biba.uni-bremen.de:8443/getPropertyValuesFromGreenGroup";
-export const referenceFromConcept = "https://hydra2.ikap.biba.uni-bremen.de:8443/getReferencesFromAConcept";
-export const sqpOrangeConcept = "https://hydra2.ikap.biba.uni-bremen.de:8443/getPropertyValuesFromOrangeGroup";
+export const base_path = "http://nimble.uk-south.containers.mybluemix.net";
+export const ub_base = "https://hydra2.ikap.biba.uni-bremen.de:8443";
+export const simple_search_endpoint="http://nimble-platform.salzburgresearch.at/marmotta/solr/catalogue2/select";
+
+
+// Base path variables - Local development via service discovery
+
+// export const base_path = "http://localhost:443";
+// export const ub_path = "http://localhost:8090";
+// export const simple_search_endpoint="http://nimble-platform.salzburgresearch.at/marmotta/solr/catalogue2/select";
+
+
+// Service endpoints
+
+export const user_mgmt_endpoint=`${base_path}/identity`;
+export const catalogue_endpoint=`${base_path}/catalog`;
+export const bpe_endpoint=`${base_path}/business-process`;
+export const data_channel_endpoint=`${base_path}/data-channel`;
+
+
+// BIBA endpoints
+
+export const languageEndPoint = `${ub_base}/getSupportedLanguages`;
+export const endpoint = `${ub_base}/detectMeaningLanguageSpecific`;
+export const logicalViewEndpoint = `${ub_base}/getLogicalView`;
+export const propertyEndPoint = `/getPropertyValuesDiscretised`;
+export const sparqlEndPoint = `${ub_base}/executeSPARQLSelect`;
+export const sparqlOptionalSelectEndPoint = `${ub_base}/executeSPARQLOptionalSelect`;
+export const spqButton = `${ub_base}/getSQPFromOrangeGroup`;
+export const obs_propFromConcept = `${ub_base}/getPropertyFromConcept`;
+export const obs_propValueFromConcept = `${ub_base}/getPropertyValuesFromGreenGroup`;
+export const referenceFromConcept = `${ub_base}/getReferencesFromAConcept`;
+export const sqpOrangeConcept = `${ub_base}/getPropertyValuesFromOrangeGroup`;
 
 
 // Catalogue format variables
@@ -79,5 +74,4 @@ export const product_nonfilter_regex = ["lmf.","_id"];
 export const product_configurable = [];
 export const product_default = {};
 export const facet_min = 1;
-// TODO: let user determine the negotiatable parameters
 export const negotiatables = ["size", "duration"];

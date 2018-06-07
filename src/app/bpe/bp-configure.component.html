@@ -6,32 +6,44 @@
     <div id="diagram"></div>
 
     <div *ngIf="selectedTransactionID != '' && partnerRole != ''">
-        <div class="input-group form-group">
-            <label class="input-group-addon" i18n>Data Adapter: </label>
-            <select class="form-control" [(ngModel)]="dataAdapterType">
-                <option value="JAVA">JAVA</option>
-                <option value="MICROSERVICE">MICROSERVICE</option>
-                <option value="OTHER">OTHER</option>
-            </select>
-            <input class="form-control" [(ngModel)]="dataAdapterURI" placeholder="Data Adapter URI" />
+        <div class="form-group row">
+            <label class="col-2 col-form-label" i18n>Data Adapter: </label>
+            <div class="col-5">
+              <select class="form-control" [(ngModel)]="dataAdapterType">
+                  <option value="JAVA">JAVA</option>
+                  <option value="MICROSERVICE">MICROSERVICE</option>
+                  <option value="OTHER">OTHER</option>
+              </select>
+            </div>
+            <div class="col-5">
+              <input class="form-control" [(ngModel)]="dataAdapterURI" placeholder="Data Adapter URI" />
+            </div>
         </div>
-        <div class="input-group form-group">
-            <label class="input-group-addon" i18n>Data Processor: </label>
-            <select class="form-control" [(ngModel)]="dataProcessorType">
-                <option value="JAVA">JAVA</option>
-                <option value="MICROSERVICE">MICROSERVICE</option>
-                <option value="OTHER">OTHER</option>
-            </select>
-            <input class="form-control" [(ngModel)]="dataProcessorURI" placeholder="Data Processor URI" />
+        <div class="form-group row">
+            <label class="col-2 col-form-label" i18n>Data Processor: </label>
+            <div class="col-5">
+              <select class="form-control" [(ngModel)]="dataProcessorType">
+                  <option value="JAVA">JAVA</option>
+                  <option value="MICROSERVICE">MICROSERVICE</option>
+                  <option value="OTHER">OTHER</option>
+              </select>
+            </div>
+            <div class="col-5">
+              <input class="form-control" [(ngModel)]="dataProcessorURI" placeholder="Data Processor URI" />
+            </div>
         </div>
-        <div class="input-group form-group">
-            <label class="input-group-addon" i18n>Data Channel: </label>
-            <select class="form-control" [(ngModel)]="dataChannelType">
-                <option value="JAVA">JAVA</option>
-                <option value="MICROSERVICE">MICROSERVICE</option>
-                <option value="OTHER">OTHER</option>
-            </select>
-            <input class="form-control" [(ngModel)]="dataChannelURI" placeholder="Data Channel URI" />
+        <div class="form-group row">
+            <label class="col-2 col-form-label" i18n>Data Channel: </label>
+            <div class="col-5">
+              <select class="form-control" [(ngModel)]="dataChannelType">
+                  <option value="JAVA">JAVA</option>
+                  <option value="MICROSERVICE">MICROSERVICE</option>
+                  <option value="OTHER">OTHER</option>
+              </select>
+            </div>
+            <div class="col-5">
+              <input class="form-control" [(ngModel)]="dataChannelURI" placeholder="Data Channel URI" />
+            </div>
         </div>
         <button (click)="configure()">&nbsp; Save &nbsp;</button>
     </div>
