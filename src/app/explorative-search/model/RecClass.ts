@@ -31,6 +31,7 @@ export class RecursionParse {
             name: jsonVal['concept']['translatedURL'],
             url: jsonVal['concept']['url'],
             conceptSource: jsonVal['concept']['conceptSource'],
+            objectPropertySource: jsonVal['objectPropertySource'],
             id: this.nodes.length,
             color: 'red'
         });
