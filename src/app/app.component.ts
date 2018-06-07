@@ -208,6 +208,7 @@ export class AppComponent implements OnInit {
 		const publish = this.roles.indexOf("publisher") != -1;
 		const purch = this.roles.indexOf("purchaser") != -1;
 		const sales = this.roles.indexOf("sales_offices") != -1;
+    const manager = this.roles.indexOf("platform_manager") != -1 || this.debug;
 		const all_rights = admin || external || legal;
 		switch (func) {
 			case "reg_comp":
@@ -238,6 +239,10 @@ export class AppComponent implements OnInit {
 				if (all_rights)
 					this.allowed = true;
 				break;
+      case "pm":
+        if (manager)
+          this.allowed = true;
+        break;
 			case "legal":
 				if (legal)
 					this.allowed = true;
