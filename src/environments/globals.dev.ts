@@ -31,6 +31,7 @@ export const debug=false;
 export const user_mgmt_endpoint="http://localhost:443/identity";
 export const catalogue_endpoint="http://localhost:443/catalog";
 export const bpe_endpoint="http://localhost:443/business-process";
+export const data_channel_endpoint="http://localhost:443/data-channel";
 
 
 // Marmotta endpoint variables

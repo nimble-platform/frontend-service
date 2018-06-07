@@ -17,6 +17,7 @@ export const debug=false;
 export const user_mgmt_endpoint="https://nimble-platform.salzburgresearch.at/nimble/identity";
 export const catalogue_endpoint="https://nimble-platform.salzburgresearch.at/nimble/catalog";
 export const bpe_endpoint="https://nimble-platform.salzburgresearch.at/nimble/business-process";
+export const data_channel_endpoint="https://nimble-platform.salzburgresearch.at/data-channel";
 
 
 // Endpoint variables - K8S domain
