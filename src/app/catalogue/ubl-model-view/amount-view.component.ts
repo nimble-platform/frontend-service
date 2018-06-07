@@ -4,6 +4,7 @@ import {Subject} from "rxjs/Subject";
 import {Amount} from "../model/publish/amount";
 import {ChildForm} from "../child-form";
 import {AbstractControl, FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
+import {UnitService} from '../../common/unit-service';
 
 @Component({
     selector: 'amount-view',
@@ -16,6 +17,8 @@ export class AmountViewComponent extends ChildForm implements OnInit {
     @Input() mandatory:boolean = false;
     @Input() amount: Amount[];
 
+    // units for currency
+    currencyValues = [];
     // the validator below is used to enforce both values are populated in case
     // the amount element is optional and only one of the fields are filled in
     bothValuesExist = (control: AbstractControl): {[key: string]: boolean} => {
@@ -33,11 +36,17 @@ export class AmountViewComponent extends ChildForm implements OnInit {
 
     amountForm:FormGroup = this.fb.group({}, { validator: this.bothValuesExist });
 
-    constructor(private fb:FormBuilder) {
+    constructor(private fb:FormBuilder,
+                private unitService:UnitService) {
         super();
     }
 
     ngOnInit() {
+
+        this.unitService.getCachedUnitList("currency_quantity").then(res => {
+            this.currencyValues = [""].concat(res);
+        });
+
         let amountControl:FormControl = new FormControl(null, this.mandatory ? Validators.required : null);
         let currencyControl:FormControl = new FormControl(null, this.mandatory ? Validators.required : null);
         this.amountForm.addControl('amount', amountControl);

@@ -2,7 +2,11 @@
 <ng-container *ngIf="presentationMode == 'view' || presentationMode == 'singlevalue'">
     <div class="input-group form-group">
         <!-- show label next to the first value only -->
-        <label class="col-3 control-label">{{propName}}</label>
+        <label class="col-3 control-label">{{propName}}
+            <span *ngIf="definition" class="label label-default" title="{{definition}}">
+                    &#9432;
+            </span>
+        </label>
         <select *ngIf="address.length > 1"
                 class="custom-select">
             <option *ngFor="let value of address">{{value.country.name}}</option>
@@ -31,7 +35,11 @@
 <ng-container *ngIf="presentationMode == 'edit'">
     <div *ngFor="let addr of address; let i = index;" class="input-group form-group">
         <!-- show label next to the first value only -->
-        <label *ngIf="i == 0" class="col-3 control-label">{{propName}}</label>
+        <label *ngIf="i == 0" class="col-3 control-label">{{propName}}
+            <span *ngIf="definition" class="label label-default" title="{{definition}}">
+                    &#9432;
+            </span>
+        </label>
         <input type="text" class="form-control "
                [(ngModel)]="addr.country.name"
                [ngClass]="{'offset-3' : i > 0} ">

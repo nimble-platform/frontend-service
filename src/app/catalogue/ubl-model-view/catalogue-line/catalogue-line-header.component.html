@@ -57,13 +57,12 @@
             <label *ngIf="catalogueLine.goodsItem.item.productImage.length == 0">Add Image</label>
             <input #image type="file" (change)="addImage($event)" multiple accept="image/*"
                    style="display: none">
-            <img src="./assets/catalogue/add_button.png"
-                 (click)="image.click()"/>
+            <i class="fa fa-plus-circle pointer" (click)="image.click()"></i>
         </div>
         <div *ngIf="catalogueLine.goodsItem.item.productImage.length > 0"
              class="d-flex flex-wrap bordered" style="cursor: default;position:relative;left: 15px;width: 98%;">
             <div *ngFor="let image of catalogueLine.goodsItem.item.productImage; let i = index">
-                <div *ngIf="image.mimeCode.split('/')[0]=='image' && presentationMode=='edit'" style="position: relative;cursor: pointer">
+                <div *ngIf="image.mimeCode.split('/')[0]=='image' && presentationMode=='edit'" class="pointer" style="position: relative;">
                     <img class=" pr-2"
                          src="data:{{image.mimeCode}};base64,{{image.value}}"
                          height="100"
@@ -84,8 +83,7 @@
             <div *ngIf="presentationMode=='edit'" class="align-self-center ml-3" >
                 <input #image type="file" (change)="addImage($event)" multiple accept="image/*"
                        style="display: none">
-                <img src="./assets/catalogue/add_button.png"
-                     (click)="image.click()"/>
+                <i class="fa fa-plus-circle pointer" (click)="image.click()"></i>
             </div>
         </div>
 
