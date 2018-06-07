@@ -11,6 +11,7 @@ import {DashboardThreadedComponent} from "./dashboard-threaded.component";
 import {ThreadSummaryComponent} from "./thread-summary.component";
 import {FacetComponent} from "./facet-component";
 import { DashboardPaginationComponent } from "./dashboard-pagination.component";
+import { CatalogueModule } from "../catalogue/catalogue.module";
 
 @NgModule({
 	imports: [
@@ -20,6 +21,7 @@ import { DashboardPaginationComponent } from "./dashboard-pagination.component";
 		HttpModule,
 		ReactiveFormsModule,
 		DashboardRoutingModule,
+		CatalogueModule,
 		NgbModule.forRoot()
 	],
 	declarations: [

@@ -26,6 +26,9 @@ export class DashboardPaginationComponent implements OnInit {
     }
 
     getStart(): number {
+        if(this.collectionSize === 0) {
+            return 0
+        }
         return (this.page - 1) * this.pageSize + 1
     }
 

@@ -1,7 +1,6 @@
 <div class="row space-before">
     <div class="pagination col justify-content-center ">
-        <span i18n>Results</span> {{ getStart() }} - {{ getEnd() }}
-        <span i18n>of</span> {{ collectionSize }}
+        <span i18n>Results</span> {{ getStart() }} - {{ getEnd() }} <span i18n>of</span> {{ collectionSize }}
         <ngb-pagination [collectionSize]="collectionSize" [pageSize]="pageSize" [(page)]="page" [maxSize]="limit" [boundaryLinks]="false" (pageChange)="pageChange()"></ngb-pagination>
     </div>
 </div>
