@@ -1,0 +1,40 @@
+<h1>Channel Details</h1>
+
+<table id="channel-details" class="table table-striped">
+    <tr>
+        <th><span i18n>Channel ID</span></th>
+        <th><span i18n>Business Process</span></th>
+        <th><span i18n>Description</span></th>
+        <th><span i18n>Start Time</span></th>
+        <th><span i18n>End Time</span></th>
+        <th><span i18n>Producer Topic</span></th>
+        <th><span i18n>Consumer Topics</span></th>
+    </tr>
+    <tr>
+        <td>{{channelConfig.channelID}}</td>
+        <td>{{channelConfig.businessProcessID}}</td>
+        <td>{{channelConfig.description}}</td>
+        <td>{{channelConfig.startDateTime}}</td>
+        <td>{{channelConfig.endDateTime}}</td>
+        <td>{{channelConfig.producerTopic}}</td>
+        <td><span ng-repeat="topic in channelConfig.consumerTopics">{{topic}}</span>
+        </td>
+    </tr>
+</table>
+
+<h1>Channel Messages</h1>
+
+<table id="channel-messages">
+    <tr>
+        <th><span i18n>Machine ID</span></th>
+        <th><span i18n>Time</span></th>
+        <th><span i18n>Payload</span></th>
+    </tr>
+    <ng-container *ngFor="let message of channelMessages">
+        <tr>
+            <td>{{message.header.machineId}}</td>
+            <td>{{message.header.time | date:'yyyy-MM-dd HH:mm:ss Z'}}</td>
+            <td>{{message.payload | json}}</td>
+        </tr>
+    </ng-container>
+</table>
