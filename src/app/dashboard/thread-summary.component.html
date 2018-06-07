@@ -5,6 +5,9 @@
             <div *ngIf="!processInstanceGroup.archived" (click)="archiveGroup()" data-toggle="tooltip" data-placement="top" title="Archive">
                 <i class="fa fa-archive p-2 pointer" aria-hidden="true"></i>
             </div>
+            <div *ngIf="showDataChannelButton" (click)="openDataChannelView()" data-toggle="tooltip" data-placement="top" title="Archive">
+                <i class="fa fa-compress p-2" style="cursor: pointer" aria-hidden="true"></i>
+            </div>
             <div *ngIf="processInstanceGroup.archived" (click)="deleteGroup()" data-toggle="tooltip" data-placement="top" title="Delete Permanently">
                 <i class="fa fa-trash-o p-2 pointer" aria-hidden="true"></i>
             </div>

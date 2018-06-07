@@ -41,14 +41,16 @@
                         <!-- Property panel -->
                         <ngb-panel title="Property Panel" id="toggle-property" [disabled]="!configSPQ">
                             <ng-template ngbPanelContent>
-                                    <div class="input-group">
-                                    <label class="input-group-addon">Search Property</label>
-                                    <input type="search" class="form-control" style="width: 500px;"
-                                        [(ngModel)]="model"
-                                        [ngbTypeahead]="search"
-                                        [resultTemplate]="rt"
-                                        [inputFormatter]="formatter"
-                                        (keyup.enter)="applyProperty();acc.toggle('toggle-property'); model='';"/>
+                                    <div class="form-group row">
+                                    <label class="col-2 col-form-label">Search Property</label>
+                                    <div class="col-10">
+                                      <input type="search" class="form-control" style="width: 500px;"
+                                          [(ngModel)]="model"
+                                          [ngbTypeahead]="search"
+                                          [resultTemplate]="rt"
+                                          [inputFormatter]="formatter"
+                                          (keyup.enter)="applyProperty();acc.toggle('toggle-property'); model='';"/>
+                                      </div>
                                     </div>
                                 <ng-template #rt let-r="result" let-t="term">
                                     <div>
@@ -124,7 +126,7 @@
             </div>
             <div class="row">
                 <div class="col-8">
-                    <button [hidden]="!hiddenElement" class="btn btn-lg btn-warning" (click)="hiddenElement=!hiddenElement;">
+                    <button [hidden]="!hiddenElement" class="btn btn-lg btn-outline-warning" (click)="hiddenElement=!hiddenElement;">
                         Back
                     </button>
                 </div>
