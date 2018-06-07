@@ -94,6 +94,7 @@ export class ThreadSummaryComponent implements OnInit {
                         this.processMetadata = [].concat(this.processMetadata);
                         if (this.aggregatedMetadataCount == this.processInstanceGroup.processInstanceIDs.length) {
                             this.processMetadataAggregated = true;
+                            this.sortProcesses();
                         }
                     });
                 });
@@ -101,6 +102,19 @@ export class ThreadSummaryComponent implements OnInit {
             .catch(error => {
                 console.error(error);
             });
+    }
+
+    sortProcesses() {
+      this.processMetadata.sort(function (a: any, b: any) {
+        var a_comp = moment(a.start_time);
+        var b_comp = moment(b.start_time);
+        if (a_comp.isBefore(b_comp))
+          return -1;
+        else if (b_comp.isBefore(a_comp))
+          return 1;
+        else
+          return 0;
+      });
     }
 
     getActionStatus(processType: string, response: any, buyer: boolean): string {
