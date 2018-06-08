@@ -63,7 +63,7 @@ export class DashboardThreadedComponent implements OnInit {
 
     private computeQueryParameters(params: Params): void {
             // handle simple parameters
-            this.qp_archived = params["arch"] == "true" ? true : false;
+            this.qp_archived = params["arch"] === "true";
             this.qp_tab = this.sanitizeTab(params["tab"]);
             this.qp_page = this.parsePage(params["pg"])
 
@@ -75,9 +75,6 @@ export class DashboardThreadedComponent implements OnInit {
                 const passedPartnersArray = this.parseArray(params["prt"]);
                 this.retrieveProcessInstanceGroups(passedProductsArray, passedCategoriesArray, passedPartnersArray);
                 return;
-            case TAB_CATALOGUE:
-                // TODO fetch
-                return
             default:
                 // nothing
             }
@@ -200,6 +197,17 @@ export class DashboardThreadedComponent implements OnInit {
         event.preventDefault();
         this.qp_tab = event.target.id;
         this.filterChangeHandler();
+    }
+
+    onCloseWelcomeTabClick(event: any) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        this.showWelcomeTab = false;
+        if(this.qp_tab === TAB_WELCOME) {
+            // TODO actually select the relevant tab (sales if we got sales, purchases otherwise...)
+            this.qp_tab = TAB_PURCHASES
+            this.filterChangeHandler();
+        }
     }
 
     paginationHandler(removed: boolean = false): void {

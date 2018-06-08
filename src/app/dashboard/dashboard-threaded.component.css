@@ -21,3 +21,10 @@
 .facet .card-header {
     padding: .25rem .5rem;
 }
+
+.welcome-tab a {
+    padding-right: 0.2rem;
+}
+.welcome-tab a button {
+    margin-left: 0.8rem;
+}

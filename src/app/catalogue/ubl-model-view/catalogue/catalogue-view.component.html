@@ -49,6 +49,10 @@
             </div>
         </div>
 
+        <div *ngIf="catalogueLinesArray.length > 0" class="pagination justify-content-center space-before">
+            <ngb-pagination [(collectionSize)]="collectionSize" [(pageSize)]="pageSize" [(page)]="page" [maxSize]="5" [boundaryLinks]="true"></ngb-pagination>
+        </div>
+
         <div *ngFor="let catLine of catalogueLinesArray.slice((page-1)*pageSize,page*pageSize) " class="space-before">
             <div class="card pointer">
                 <div class="card-block">

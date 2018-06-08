@@ -22,23 +22,22 @@
 <!-- Welcome jumbotron, no company -->
 <div class="row" *ngIf="!hasCompany">
     <div class="col-12">
-        <div class="jumbotron">
-            <p>You are not yet linked to a company.</p>
-            <p>You will not be able to make purchases or create a catalogue without a company.</p>
-            <a class="btn btn-primary btn-lg" href="#/user-mgmt/company-registration" role="button">Register a Company</a>
-        </div>
+        <h4 class="space-before">Welcome to the Nimble Platform</h4>
+        <p>You are not yet linked to a company.</p>
+        <p>You will not be able to make purchases or create a catalogue without a company.</p>
+        <a class="btn btn-primary btn-lg" href="#/user-mgmt/company-registration" role="button">Register a Company</a>
     </div>
 </div>
 
 <!-- Welcome jumbotron, company waiting for approval -->
 <div class="row" *ngIf="roles.indexOf('initial_representative')!= -1 && roles.indexOf('legal_representative') == -1">
-    <div class="col-12 ">
-        <div class="jumbotron">
-            <p>Your company is now registered.</p>
-            <p>You can start publishing your catalogue.</p>
-            <p>In order to execute business processes your company needs to be verified by an administrator - please stay tuned.</p>
-            <p>If you are not being verified with 24h, please contact our support nimble-support@salzburgresearch.at.</p>
-        </div>
+    <div class="col-12">
+        <h4 class="space-before">Your company is now registered</h4>
+        <p>TODO better text here...</p>
+        <p>You can start publishing your catalogue.</p>
+        <p>In order to execute business processes your company needs to be verified by an administrator - please stay tuned.</p>
+        <p>If you are not being verified with 24h, please contact our support nimble-support@salzburgresearch.at.</p>
+
     </div>
 </div>
 
@@ -50,9 +49,13 @@
         <div class="col">
             <ul class="nav nav-tabs">
                 <ng-container *ngIf="showWelcomeTab">
-                    <li class="nav-item">
-                        <a href id="WELCOME" [ngClass]="{'nav-link': true, active: qp_tab === TAB_WELCOME}" (click)="onTabClick($event)" i18n>Welcome</a>
-                        <!-- TODO Add close icon -->
+                    <li class="nav-item welcome-tab">
+                        <a href id="WELCOME" [ngClass]="{'nav-link': true, active: qp_tab === TAB_WELCOME}" (click)="onTabClick($event)" i18n>
+                            Welcome 
+                            <button type="button" class="close" aria-label="Close" (click)="onCloseWelcomeTabClick($event)">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </a>
                     </li>
                 </ng-container>
                 <li class="nav-item">
@@ -72,13 +75,11 @@
     <!-- Welcome tab -->
     <div *ngIf="qp_tab === TAB_WELCOME" class="row">
         <div class="col-12">
-            <div class="jumbotron">
-                <h4>Welcome to the Nimble Platform</h4>
-                <p>Looks like you are new here.</p>
-                <p>This is your dashboard, in this page you will see an overview of your purchases, sales, and the products you have in your catalogue.</p>
-                <p>If you want to buy products, you can start searching: TODO include button.</p>
-                <p>If you want to sell products, you can publish products: TODO include button.</p>
-            </div>
+            <h4 class="space-before">Welcome to the Nimble Platform</h4>
+            <p>Looks like you are new here.</p>
+            <p>This is your dashboard, in this page you will see an overview of your purchases, sales, and the products you have in your catalogue.</p>
+            <p>If you want to buy products, you can start searching: TODO include button.</p>
+            <p>If you want to sell products, you can publish products: TODO include button.</p>
         </div>
     </div>
 
@@ -86,43 +87,43 @@
     <div *ngIf="qp_tab === TAB_SALES || qp_tab === TAB_PURCHASES" class="row">
         <div class="col-12">
             <!-- No data -->
-            <div class="row" *ngIf="groups.length === 0">
+            <div class="row" *ngIf="groups.length === 0 && !qp_archived">
                 <div class="col-12">
                     <!-- Sales -->
-                    <div class="jumbotron" *ngIf="qp_tab === TAB_SALES">
-                        <button class="btn btn-secondary float-right" (click)="onToggleArchivedClick()">
-                            {{qp_archived ? "Show Non-archived" : "Show Archived"}}
+                    <ng-container *ngIf="qp_tab === TAB_SALES">
+                        <button class="btn btn-secondary float-right space-before" (click)="onToggleArchivedClick()">
+                            {{qp_archived ? "Back" : "Show Archived"}}
                         </button>
-                        <h4>No sales</h4>
+                        <h4 class="space-before">No sales</h4>
                         <p>TODO: add text/button</p>
-                    </div>
+                    </ng-container>
                     <!-- Purchases -->
-                    <div class="jumbotron" *ngIf="qp_tab === TAB_PURCHASES">
-                        <button class="btn btn-secondary float-right" (click)="onToggleArchivedClick()">
-                            {{qp_archived ? "Show Non-archived" : "Show Archived"}}
+                    <ng-container *ngIf="qp_tab === TAB_PURCHASES">
+                        <button class="btn btn-secondary float-right space-before" (click)="onToggleArchivedClick()">
+                            {{qp_archived ? "Back" : "Show Archived"}}
                         </button>
-                        <h4>No purchases</h4>
+                        <h4 class="space-before">No purchases</h4>
                         <p>TODO: add text/button</p>
-                    </div>
+                    </ng-container>
                 </div>
             </div>
 
             <!-- Data -->
-            <div class="row" *ngIf="groups.length > 0">
+            <div class="row" *ngIf="groups.length > 0 || qp_archived">
                 <div class="col-12">
                     <div class="row space-before">
                         <div class="col-5"></div>
                         <!-- Pagination Info -->
                         <div class="col-2 pagination justify-content-center">
                             <ngb-pagination [collectionSize]="size" [pageSize]="pageSize" [(page)]="qp_page" 
-                                [maxSize]="limit" [boundaryLinks]="false" (pageChange)="paginationHandler()">
+                                [maxSize]="limit" [boundaryLinks]="true" (pageChange)="paginationHandler()">
                             </ngb-pagination>
                         </div>
                         <div class="col-3"></div>
                         <!-- Show Archived Button -->
                         <div class="col-2">
                             <button class="btn btn-secondary float-right" (click)="onToggleArchivedClick()">
-                                {{qp_archived ? "Show Non-archived" : "Show Archived"}}
+                                {{qp_archived ? "Back" : "Show Archived"}}
                             </button>
                         </div>
                     </div>
@@ -161,7 +162,7 @@
                     <div class="row ">
                         <div class="col pagination justify-content-center">
                             <ngb-pagination [collectionSize]="size" [pageSize]="pageSize" [(page)]="qp_page" 
-                                [maxSize]="limit" [boundaryLinks]="false" (pageChange)="paginationHandler()">
+                                [maxSize]="limit" [boundaryLinks]="true" (pageChange)="paginationHandler()">
                             </ngb-pagination>
                         </div>
                     </div>
