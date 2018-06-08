@@ -287,6 +287,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
             }, 1000);
         } else if (nodeInfo.depth > 1 && nodeInfo.data.objectPropertySource !== '') {
             console.log('objprop -> objprop -> root');
+            console.log(nodeInfo.ancestors());
             askExtension();
         }
 

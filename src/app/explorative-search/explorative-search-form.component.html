@@ -53,7 +53,9 @@
         </div>
         <div class="col-sm-10 w-auto">
             <div class="btn-group btn-group-toggle" *ngFor="let keyword of Output; let cbIndex = index" data-toggle="buttons">
-                    <label class="btn d-flex align-items-center btn-primary px-3 mb-0" ngbButtonLabel>
+                    <label class="btn d-flex align-items-center btn-primary px-3 mb-0" ngbButtonLabel
+                           placement="top"
+                           ngbTooltip="{{(kwCheck.checked) ? 'show' : 'hide'}} result">
                         <input type="checkbox"
                                ngbButton
                                #kwCheck
@@ -63,7 +65,8 @@
                     <button class="btn btn-danger"
                               (click)="deleteKW(keyword.kw); $event.stopPropagation()"
                               [disabled]=kwCheck.checked
-                              [hidden]="kwCheck.checked">&times;
+                              [hidden]="kwCheck.checked">
+                        &times;
                     </button>
             </div>
         </div>

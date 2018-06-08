@@ -1,272 +1,214 @@
-<!--<div class="container">-->
-    <!--<pre>-->
+
+<ol class="breadcrumb">
+    <li class="breadcrumb-item active"
+        *ngFor="let concept of conceptPaths; let i=index;">
+        <button (click)="check(concept, i)"
+                class="btn btn-link btn-sm"
+                placement="bottom"
+                ngbTooltip="Click to go back to {{concept.concept}}"
+        >{{concept.concept}}</button>
+    </li>
+</ol>
+
+<ng-template #searchTip>
+    <p>Start typing and press <kbd>Tab</kbd> for Autocompletion</p>
+</ng-template>
+
+<ng-template #valuesTemplateRef let-values>
+    <div class="card">
+        <div class="card-header">Available Values</div>
+        <div class="card-block">
+            <p>Select One or More Values</p>
+            <div *ngFor="let eachVal of values">
+                <label>
+                    <input type="checkbox"
+                           (change)="filtersSelected(eachVal, $event)"/>
+                    <span><strong>{{eachVal}}</strong></span>
+                </label>
+            </div>
+            <hr>
+            <div *ngIf="valuesAreNumeric">
+                <div class="row">
+                    <p>Manual Filter
+                    <span><button
+                            class="btn btn-outline-secondary btn-sm"
+                            (click)="disableManualFilters = !disableManualFilters"
+                    >{{disableManualFilters ? 'Activate' : 'Deactivate'}}</button></span>
+                    </p>
+                </div>
+                <div class="input-group-sm">
+                    <label for="min"><span>min</span></label>
+                    <input id="min" type="number"
+                           class="form-control-sm"
+                           [disabled]="disableManualFilters"
+                           #minVal
+                    >
+                    <br>
+                    <label for="max"><span>max</span></label>
+                    <input id="max" type="number"
+                           class="form-control-sm"
+                           [disabled]="disableManualFilters"
+                           #maxVal
+                    >
+                    <button class="btn btn-primary btn-sm"
+                            [disabled]="disableManualFilters"
+                            (click)="applyManualFilter(minVal.value, maxVal.value)"
+                    >Apply</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+<div class="container" [hidden]="!hiddenElement">
+    <div class="row">
+        <!--<pre>-->
         <!--<code>-->
-            <!--&lt;!&ndash;{{propertyResults | json}}&ndash;&gt;-->
-            <!--searchModel : {{searchModel | json}}-->
-            <!--&lt;!&ndash;{{dataResults | json}}&ndash;&gt;-->
-            <!--&lt;!&ndash;{{objResults | json}}&ndash;&gt;-->
+        <!--{{sparqlSelectedOption | json}}-->
         <!--</code>-->
-    <!--</pre>-->
-<!--</div>-->
+        <!--</pre>-->
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered">
+                <caption>Product Overview</caption>
+                <thead>
+                <tr>
+                    <th>
+                        Properties
+                    </th>
+                    <th>
+                        Specifications
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let column of sparqlSelectedOption?.columns; let i=index">
+                    <th scope="row">
+                        {{column}}
+                    </th>
+                    <td>
+                        {{sparqlSelectedOption.rows[0][i]}}
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row" style="margin-top: 15px">
+        <div class="col-md-6">
+            <button class="btn btn-outline-primary" (click)="hiddenElement=!hiddenElement">Back to Explorer</button>
+        </div>
+        <div class="col-md-6">
+            <button class="btn btn-outline-warning" [disabled]="!negotiationEnable" (click)="negotiation()">
+                Negotiate</button>
+        </div>
+    </div>
+</div>
 
 
-<div class="container">
-        <h4> Property Explorer</h4>
+<div class="container" style="margin-top: 20px" *ngIf="configSPQ" [hidden]="hiddenElement">
+        <h4> Property Explorer for {{configSPQ.frozenConcept}}</h4>
         <div class="row">
             <div class="col-md-6">
                 <div class="card">
-                    <div class="card-header">Available Properties</div>
+                    <div class="card-header">
+                        Available Properties
+                    </div>
+                    <ngb-alert type="info" [dismissible]="false" *ngIf="updateInfoAlert">
+                        <p>Information Updated</p>
+                    </ngb-alert>
                     <div class="card-block">
-                        <div class="input-group">
-                            <label for="typeahead-template" class="input-group-addon"><span>Search</span></label>
+                        <div class="input-group-md">
+                            <label for="typeahead-template"><span>Search</span></label>
                             <input id="typeahead-template"
                                    type="text"
                                    class="form-control"
                                    [(ngModel)]="searchModel"
-                                   [ngbTypeahead]="search" [resultTemplate]="rt" [inputFormatter]="formatter"/>
-
-                            <ng-template #rt let-r="result" let-t="term">
-                                    {{ r.translatedProperty}}
-                            </ng-template>
+                                   [ngbTypeahead]="search" [resultTemplate]="rt" [inputFormatter]="formatter"
+                                   (keyup.enter)="checkUserSelection(searchModel)"
+                                   placement="top"
+                                   [ngbTooltip]="searchTip"
+                            />
                         </div>
                         <br>
                         <br>
-                    <select size="10" class="form-control mr-4">
-                        <optgroup label="Properties">
-                            <option *ngFor="let eachVal of dataResults"
-                                    [selected]="searchModel.translatedProperty===eachVal.translatedProperty"
-                            >
-                                {{eachVal.translatedProperty}}
-                            </option>
-                        </optgroup>
-                        <optgroup label="References">
-                            <option *ngFor="let eachVal of objResults"
-                                    [selected]="searchModel.translatedProperty===eachVal.translatedProperty"
-                            >
-                                {{eachVal.translatedProperty}}
-                            </option>
-                        </optgroup>
-                    </select>
+                        <select size="15" class="form-control mr-4">
+                            <optgroup label="Properties">
+                                <option *ngFor="let eachVal of dataResults"
+                                        [selected]="searchModel.translatedProperty===eachVal.translatedProperty"
+                                        (click)="getPropertyValues(eachVal)">
+                                    <span>{{eachVal.translatedProperty}}</span>
+                                </option>
+                            </optgroup>
+                            <optgroup label="References">
+                                <option *ngFor="let eachVal of objResults; let i=index;"
+                                        [selected]="searchModel.translatedProperty===eachVal.translatedProperty"
+                                        (click)="getReferenceValues(eachVal, i)">
+                                    <span>{{eachVal.translatedProperty}}</span>
+                                </option>
+                            </optgroup>
+                        </select>
+                    </div>
                 </div>
-                <div class="card-footer"></div>
+            </div>
+            <div class="col-md-4" *ngIf="searchvalue.length > 0">
+                <template [ngTemplateOutlet]="valuesTemplateRef" [ngTemplateOutletContext]="{$implicit: searchvalue}">
+                </template>
             </div>
         </div>
-    </div>
+    <hr>
 </div>
+<div class="container" *ngIf="sparqlJSON.parameters.length">
+    <div class="row" [hidden]="hiddenElement">
+        <button class="btn btn-lg btn-success" (click)="genTable()">Obtain Results</button>
+    </div>
+    <br>
+    <br>
+    <div class="row" *ngIf="tableResult?.columns !== undefined">
+        <div class="table-responsive">
+            <table class="table table-sm table-bordered">
+                <caption>Available Results from NIMBLE</caption>
+                <thead>
+                <tr>
+                    <th>
+                        Properties
+                    </th>
+                    <th *ngFor="let row of tableResult?.rows; let i=index" scope="col">
+                        Result #{{i+1}}
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let column of tableResult?.columns; let cind=index">
+                    <th scope="row">{{column}}</th>
+                    <td *ngFor="let row of tableResult?.rows">{{row[cind]}}</td>
+                </tr>
+                <tr>
+                    <th>More Info.</th>
+                    <td scope="row" *ngFor="let uuid of tableResult?.uuids; let uuidIndex=index">
+                        <button class="btn btn-xs btn-outline-success"
+                                (click)="getSparqlOptionalSelect(uuidIndex)">
+                            More
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+    <!--<pre>-->
+    <!--<code>{{tableJSON | json}}</code>-->
+    <!--</pre>-->
+</div>
+
 <!--<div class="container">-->
-    <!--<br>-->
-    <!--<div class="row">-->
-        <!--<ngb-alert [dismissible]="true" *ngIf="basicInfoAlert" type="info" (close)="basicInfoAlert=!basicInfoAlert">-->
-            <!--<h3>Tips for Semantic Query Patterns Search</h3>-->
-            <!--<br>-->
-                <!--<p>-->
-                    <!--You can search Properties like <em>height, width etc.</em> by clicking on-->
-                    <!--<strong>hasProperty</strong>-->
-                <!--</p>-->
-                <!--<p>-->
-                    <!--If you want to find a property's available value click on <strong>hasValue</strong>-->
-                <!--</p>-->
-                <!--<p>-->
-                    <!--You can find information for <em>Legislation, Manufacturer etc.</em> by clicking on-->
-                    <!--<strong>hasReference</strong>-->
-                <!--</p>-->
-                <!--<p>-->
-                    <!--You can Edit your Query by simply clicking on it.-->
-                <!--</p>-->
-        <!--</ngb-alert>-->
-        <!--<p>-->
-            <!--<ngb-alert [dismissible]="false" *ngIf=" lang==='es' ">-->
-                <!--<strong>Under Development</strong> Deletion Feature for Spanish Language is On-Going.-->
-            <!--</ngb-alert>-->
-        <!--</p>-->
-        <!--<div class="col-12">-->
-            <!--<div [hidden]="hiddenElement">-->
-                <!--<h5>Your Semantic Query</h5>-->
-                <!--<code (click)="editSemanticQuery()" placement="bottom" ngbTooltip="Click on the Query to Edit it">-->
-                    <!--{{sentence | json}}-->
-                <!--</code>-->
-                <!--<span>-->
-                    <!--<button (click)="genTable()" [disabled]="!semQJSon['selections'].length">Search Query</button></span>-->
-                <!--<br>-->
-                <!--<br>-->
-                <!--<p><b>You are currently at:{{whereAreYou}}</b></p>-->
-
-                    <!--<ngb-accordion #acc="ngbAccordion">-->
-
-                        <!--&lt;!&ndash; Property panel &ndash;&gt;-->
-                        <!--<ngb-panel title="Property Panel" id="toggle-property" [disabled]="!configSPQ">-->
-                            <!--<ng-template ngbPanelContent>-->
-                                    <!--<div class="input-group">-->
-                                    <!--<label class="input-group-addon">Search Property</label>-->
-                                    <!--<input type="search" class="form-control" style="width: 500px;"-->
-                                        <!--[(ngModel)]="model"-->
-                                        <!--[ngbTypeahead]="search"-->
-                                        <!--[resultTemplate]="rt"-->
-                                        <!--[inputFormatter]="formatter"-->
-                                        <!--(keyup.enter)="applyProperty();acc.toggle('toggle-property'); model='';"/>-->
-                                    <!--</div>-->
-                                <!--<ng-template #rt let-r="result" let-t="term">-->
-                                    <!--<div>-->
-                                        <!--{{r.translatedProperty}}-->
-                                    <!--</div>-->
-                                <!--</ng-template>-->
-                            <!--</ng-template>-->
-                        <!--</ngb-panel>-->
-
-                        <!--&lt;!&ndash;Value Panel&ndash;&gt;-->
-                        <!--<ngb-panel title="Values Panel" id="toggle-value" [disabled]="!configSPQ">-->
-                            <!--<ng-template ngbPanelContent>-->
-                            <!--<ul class="list-group">-->
-                                <!--<li class="list-group-item"-->
-                                    <!--*ngFor="let eachval of searchvalue"-->
-                                    <!--(click)="sentence=sentence+eachval; acc.toggle('toggle-value');-->
-                                    <!--applyFilter(eachval, selectedPropertyURL);">-->
-                                    <!--{{eachval}}-->
-                                <!--</li>-->
-                            <!--</ul>-->
-                            <!--</ng-template>-->
-                        <!--</ngb-panel>-->
-
-                        <!--&lt;!&ndash;- Reference Panel &ndash;&gt;-->
-                        <!--<ngb-panel title="Reference Panel" id="toggle-reference" [disabled]="!configSPQ">-->
-                            <!--<ng-template ngbPanelContent>-->
-                            <!--<div class="row">-->
-                                <!--<div class="col-6">-->
-                                    <!--<div class="form-group">-->
-                                        <!--<label for="exampleFormControlSelect2"><b>Product References</b></label>-->
-                                        <!--<select multiple class="form-control" id="exampleFormControlSelect2">-->
-                                            <!--<option *ngFor="let eachRef of referenceResults['allAvailableReferences'];-->
-                                             <!--let i=index;" (click)="showRefResults(i);">-->
-                                                <!--{{eachRef.translatedProperty}}-->
-                                            <!--</option>-->
-                                        <!--</select>-->
-                                    <!--</div>-->
-                                <!--</div>-->
-                                <!--<div class="col-6" *ngIf="refResultsRange.length > 0">-->
-                                    <!--<label for="exampleFormControlSelect2"><b>Selected Reference</b></label>-->
-                                    <!--<ul class="list-group">-->
-                                        <!--<li class="list-group-item" *ngFor="let eachRefResult of refResultsRange"-->
-                                            <!--(click)="referenceSelection(eachRefResult); acc.toggle('toggle-reference')">-->
-                                            <!--{{eachRefResult.translation}}-->
-                                        <!--</li>-->
-                                    <!--</ul>-->
-                                <!--</div>-->
-                            <!--</div>-->
-                            <!--</ng-template>-->
-                        <!--</ngb-panel>-->
-
-
-                    <!--</ngb-accordion>-->
-            <!--</div>-->
-
-            <!--<div [hidden]="!hiddenElement" style="height: 500px; overflow: auto;">-->
-                <!--<table >-->
-
-                    <!--<tr>-->
-                        <!--<th style="width:50%">Property</th>-->
-                        <!--<td style="width:50%;font-weight: bold">Value-->
-                            <!--<wbr/>-->
-                        <!--</td>-->
-                    <!--</tr>-->
-                    <!--<tr *ngFor="let column of sparqlSelectedOption?.columns; let i=index">-->
-
-                        <!--<th style="width:50%">{{column}}</th>-->
-                        <!--<td style="width:50%">{{sparqlSelectedOption?.rows[0][i]}}-->
-                            <!--<wbr/>-->
-                        <!--</td>-->
-                    <!--</tr>-->
-                <!--</table>-->
-            <!--</div>-->
-            <!--<div class="row">-->
-                <!--<div class="col-8">-->
-                    <!--<button [hidden]="!hiddenElement" class="btn btn-lg btn-warning" (click)="hiddenElement=!hiddenElement;">-->
-                        <!--Back-->
-                    <!--</button>-->
-                <!--</div>-->
-                <!--<div class="col-4 pull-right">-->
-                    <!--<button class="btn btn-lg btn-primary" (click)="negotiation()"-->
-                            <!--[disabled]="!negotiationEnable"-->
-                            <!--[hidden]="!hiddenElement">-->
-                        <!--Negotiation</button>-->
-                <!--</div>-->
-            <!--</div>-->
-        <!--</div>-->
-    <!--</div>-->
-    <!--<br>-->
-    <!--<hr>-->
-    <!--<div class="row" [hidden]="hiddenElement">-->
-        <!--<div class="col-8">-->
-
-            <!--<div class="btn-group">-->
-
-                <!--<button class="btn btn-outline-primary btn-lg"-->
-                        <!--[disabled]="!configSPQ"-->
-                        <!--placement="bottom"-->
-                        <!--ngbTooltip="Search for Product/Reference Property"-->
-                        <!--(click)="hasPropertyRelation('hasProperty'); acc.toggle('toggle-property');"> hasProperty </button>-->
-
-
-                <!--<button class="btn btn-outline-primary btn-lg"-->
-                        <!--[disabled]="(!results.length)"-->
-                        <!--placement="bottom"-->
-                        <!--ngbTooltip="Search for Property Specific Values"-->
-                        <!--(click)="hasValueRelation('hasValue'); acc.toggle('toggle-value');"> hasValue </button>-->
-
-
-                <!--<button class="btn btn-outline-primary btn-lg" #refBtn-->
-                        <!--[disabled]="!configSPQ"-->
-                        <!--placement="bottom"-->
-                        <!--ngbTooltip="Search for Product References"-->
-                        <!--(click)="hasReferenceRelation('hasReference');acc.toggle('toggle-reference')"> hasReference </button>-->
-
-                <!--<button class="btn btn-outline-warning btn-lg" #objBtn (click)="objectPropRelation(eachButton)"-->
-                        <!--*ngFor="let eachButton of objectRelationsButton['listOfSQP']">-->
-                <!--{{eachButton}}-->
-                <!--</button>-->
-            <!--</div>-->
-        <!--</div>-->
-        <!--<p>-->
-            <!--<ngb-alert [dismissible]="false" type="info" *ngIf="selectedReference">-->
-                <!--<strong>INFO</strong> You have clicked a Reference, Click on <em>hasProperty</em> next!-->
-            <!--</ngb-alert>-->
-        <!--</p>-->
-
-    <!--</div>-->
-    <!--<br>-->
-        <!--<div *ngIf="tableResult" style="overflow: auto; height: 100px;">-->
-            <!--<table>-->
-                <!--<tr>-->
-                    <!--<th *ngFor="let column of tableResult?.columns">{{column}}</th>-->
-                <!--</tr>-->
-                <!--<tr *ngFor="let row of tableResult?.rows; let i=index;">-->
-                    <!--<td *ngFor="let field of row"> {{field}}</td>-->
-                    <!--<td *ngIf="tableResult?.uuids">-->
-                        <!--<button class="btn btn-sm btn-success" (click)="getSparqlOptionalSelect(i)">-->
-                            <!--More</button></td>-->
-                <!--</tr>-->
-            <!--</table>-->
-        <!--</div>-->
-
-    <!--&lt;!&ndash;<div class="row">&ndash;&gt;-->
-        <!--&lt;!&ndash;<pre>&ndash;&gt;-->
-            <!--&lt;!&ndash;{{semQJSon | json}}&ndash;&gt;-->
-        <!--&lt;!&ndash;</pre>&ndash;&gt;-->
-
-    <!--&lt;!&ndash;</div>&ndash;&gt;-->
-    <!--&lt;!&ndash;<div class="row">&ndash;&gt;-->
-        <!--&lt;!&ndash;<pre>&ndash;&gt;-->
-            <!--&lt;!&ndash;{{sparqlJSON | json}}&ndash;&gt;-->
-        <!--&lt;!&ndash;</pre>&ndash;&gt;-->
-
-    <!--&lt;!&ndash;</div>&ndash;&gt;-->
-    <!--<div id="loading-bg" *ngIf="loading">-->
-        <!--<div id="sk-loading-icon">-->
-            <!--<div class="sk-folding-cube">-->
-                <!--<div class="sk-cube1 sk-cube"></div>-->
-                <!--<div class="sk-cube2 sk-cube"></div>-->
-                <!--<div class="sk-cube4 sk-cube"></div>-->
-                <!--<div class="sk-cube3 sk-cube"></div>-->
-            <!--</div>-->
-        <!--</div>-->
-    <!--</div>-->
+<!--<pre>-->
+<!--<code>-->
+<!--&lt;!&ndash;{{configSPQ | json}}&ndash;&gt;-->
+<!--&lt;!&ndash;{{propertyResults | json}}&ndash;&gt;-->
+<!--&lt;!&ndash;searchModel : {{searchModel | json}}&ndash;&gt;-->
+<!--&lt;!&ndash;{{dataResults | json}}&ndash;&gt;-->
+<!--&lt;!&ndash;{{objResults | json}}&ndash;&gt;-->
+<!--{{sparqlJSON | json}}-->
+<!--</code>-->
+<!--</pre>-->
 <!--</div>-->
