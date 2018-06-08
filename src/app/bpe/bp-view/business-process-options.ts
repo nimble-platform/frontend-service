@@ -36,6 +36,7 @@ export class BusinessProcessOptions implements OnInit {
                 }
                 else{
                     this.followUpProcesses.push("Negotiation");
+                    this.followUpProcesses.push("Transport Execution Plan");
                 }
             }
         }
@@ -86,52 +87,52 @@ export class BusinessProcessOptions implements OnInit {
         if(this.nextProcess == "PPAP"){
             this.bpDataService.resetBpData();
             this.bpDataService.initPpap([]);
-            this.bpDataService.setBpOptionParameters(this.userRole, 'Ppap');
+            this.bpDataService.setBpOptionParameters(this.userRole, 'Ppap',null);
             this.selectedTabChanged.next();
         }
         else if(this.nextProcess == "Request New Quotation"){
             this.bpDataService.initRfqWithQuotation();
-            this.bpDataService.setBpOptionParameters(this.userRole, 'Negotiation');
+            this.bpDataService.setBpOptionParameters(this.userRole, 'Negotiation',"Negotiation");
             this.selectedTabChanged.next();
         }
         else if(this.nextProcess == "Negotiation"){
             this.bpDataService.resetBpData();
             this.bpDataService.initRfq();
-            this.bpDataService.setBpOptionParameters(this.userRole, 'Negotiation');
+            this.bpDataService.setBpOptionParameters(this.userRole, 'Negotiation',null);
         }
         else if(this.nextProcess == "Item Information Request"){
             this.bpDataService.resetBpData();
             this.bpDataService.initItemInformationRequest();
-            this.bpDataService.setBpOptionParameters(this.userRole,'Item_Information_Request');
+            this.bpDataService.setBpOptionParameters(this.userRole,'Item_Information_Request',null);
         }
         else if(this.nextProcess == "Order"){
             if(this.processName == "Negotiation"){
                 this.bpDataService.initOrderWithQuotation();
-                this.bpDataService.setBpOptionParameters(this.userRole,'Order');
+                this.bpDataService.setBpOptionParameters(this.userRole,'Order',"Negotiation");
             }
             else if(this.processName == 'Order'){
                 this.bpDataService.initOrderWithExistingOrder();
-                this.bpDataService.setBpOptionParameters(this.userRole,'Order');
+                this.bpDataService.setBpOptionParameters(this.userRole,'Order',"Order");
                 this.selectedTabChanged.next();
             }
             else{
                 this.bpDataService.resetBpData();
-                this.bpDataService.setBpOptionParameters(this.userRole,'Order');
+                this.bpDataService.setBpOptionParameters(this.userRole,'Order',null);
             }
         }
         else if(this.nextProcess == "Transport Execution Plan"){
             this.bpDataService.resetBpData();
             this.bpDataService.initTransportExecutionPlanRequest();
-            this.bpDataService.setBpOptionParameters(this.userRole,'Transport_Execution_Plan');
+            this.bpDataService.setBpOptionParameters(this.userRole,'Transport_Execution_Plan',null);
             this.selectedTabChanged.next();
         }
         else if(this.nextProcess == "Initiate Transport Execution Plan"){
             this.bpDataService.initTransportExecutionPlanRequestWithQuotation();
-            this.bpDataService.setBpOptionParameters(this.userRole,'Transport_Execution_Plan');
+            this.bpDataService.setBpOptionParameters(this.userRole,'Transport_Execution_Plan',"Negotiation");
         }
         else if(this.nextProcess == "Initiate Despatch Advice"){
             this.bpDataService.initDespatchAdviceWithOrder();
-            this.bpDataService.setBpOptionParameters(this.userRole, 'Fulfilment');
+            this.bpDataService.setBpOptionParameters(this.userRole, 'Fulfilment',"Order");
         }
         else if(this.nextProcess == "Search Transport Service Provider"){
             this.selectedTabChanged.next();

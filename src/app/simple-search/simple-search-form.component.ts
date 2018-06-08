@@ -34,7 +34,8 @@ export class SimpleSearchFormComponent implements OnInit {
 	facetQuery: any;
 	temp: any;
 	response: any;
-
+    // check whether 'p' query parameter exists or not
+	noP = true;
 	constructor(
 		private simpleSearchService: SimpleSearchService,
 		private searchContextService: SearchContextService,
@@ -48,6 +49,9 @@ export class SimpleSearchFormComponent implements OnInit {
 			let q = params['q'];
 			let fq = params['fq'];
 			let p = params['p'];
+			if(p){
+				this.noP = false;
+			}
 			let searchContext = params['searchContext'];
 			if (fq)
 				fq = decodeURIComponent(fq).split("_SEP_");
@@ -71,14 +75,22 @@ export class SimpleSearchFormComponent implements OnInit {
     }
 	
 	get(search: Search): void {
-		this.router.navigate(['/simple-search'], { queryParams : { q: search.q, fq: encodeURIComponent(this.facetQuery.join('_SEP_')), p: this.page, searchContext: this.searchContext } });
+		if(this.searchContext && this.searchContext == 'orderbp'){
+            this.router.navigate(['/simple-search'], { queryParams : { q: search.q, fq:'item_commodity_classification%3A%22Transport Service%22', p: this.page, searchContext: this.searchContext } });
+		}
+		else{
+            this.router.navigate(['/simple-search'], { queryParams : { q: search.q, fq: encodeURIComponent(this.facetQuery.join('_SEP_')), p: this.page, searchContext: this.searchContext } });
+		}
+
 	}
 	
 	getCall(q:string, fq:any, p:number) {
 		this.callback = false;
 		this.error_detc = false;
 		this.submitted = true;
-		this.model.q=q;
+		if(this.searchContext && this.searchContext == 'orderbp' && !this.noP){
+            this.model.q=q;
+		}
 		this.objToSubmit.q=q;
 		this.facetQuery=fq;
 		this.page=p;

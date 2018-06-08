@@ -202,6 +202,7 @@ export class ThreadSummaryComponent implements OnInit {
     }
 
     navigateToSearchDetails(item: Item) {
+        this.bpDataService.previousProcess = null;
         this.router.navigate(['/simple-search/details'],
             {
                 queryParams: {

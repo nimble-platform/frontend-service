@@ -1,99 +1,106 @@
-<nav class="navbar navbar-toggleable-md navbar-inverse bg-faded nimble-bg space-after">
-	<button class="navbar-toggler navbar-toggler-right" type="button" (click)="isCollapsed = !isCollapsed" aria-controls="navbarNavAltMarkup" [attr.aria-expanded]="!isCollapsed">
-		<span class="navbar-toggler-icon"></span>
-	</button>
-	<a class="navbar-brand" routerLink="/" routerLinkActive="active">
+<nav class="navbar navbar-expand-lg navbar-dark bg-faded nimble-bg space-after">
+	<a *ngIf="isLoggedIn" class="navbar-brand" routerLink="/dashboard" routerLinkActive="active">
 		<img id="nav-logo" src="./assets/nimble_logo_white.png" height="30" class="d-inline-block align-top" alt="">
 	</a>
+	<a *ngIf="!isLoggedIn" class="navbar-brand" routerLink="/user-mgmt/login" routerLinkActive="active">
+		<img id="nav-logo" src="./assets/nimble_logo_white.png" height="30" class="d-inline-block align-top" alt="">
+	</a>
+	<button class="navbar-toggler" type="button" (click)="isCollapsed = !isCollapsed" aria-controls="navbarNavAltMarkup" [attr.aria-expanded]="!isCollapsed">
+		<span class="navbar-toggler-icon">
+			<span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+		</span>
+	</button>
 	<div class="navbar-collapse" [ngbCollapse]="isCollapsed" id="navbarNavAltMarkup">
 		<ul *ngIf="!isLoggedIn" class="nav navbar-nav mr-auto">
 			<li class="nav-item" routerLinkActive="active">
 				<a class="nav-link" routerLink="/user-mgmt/login">
-					<img src="assets/login_white.png" class="inline-icon"/> <span i18n>Login</span>
+					<i class="fa fa-unlock"></i> <span i18n>Login</span>
 				</a>
 			</li>
 			<li class="nav-item" routerLinkActive="active">
 				<a class="nav-link" routerLink="/user-mgmt/registration">
-					<img src="assets/register_white.png" class="inline-icon"/> <span i18n>Registration</span>
+					<i class="fa fa-edit"></i> <span i18n>Registration</span>
 				</a>
 			</li>
 		</ul>
 		<ul *ngIf="isLoggedIn" class="nav navbar-nav mr-auto">
 			<li class="nav-item" routerLinkActive="active">
 				<a class="nav-link" routerLink="/dashboard">
-					<img src="assets/list_white.png" class="inline-icon"/> <span i18n>Dashboard</span>
+					<i class="fa fa-list-ul"></i> <span i18n>Dashboard</span>
 				</a>
 			</li>
 			<li class="nav-item" *ngIf="checkRoles('catalogue')" routerLinkActive="active">
 				<a class="nav-link" [routerLink]="['/catalogue/categorysearch']" [queryParams]="{pageRef: 'menu'}">
-					<img src="assets/upload_white.png" class="inline-icon"/> <span i18n>Publish</span>
+					<i class="fa fa-arrow-up"></i> <span i18n>Publish</span>
 				</a>
 			</li>
-			
+
 			<!--
 			<li class="nav-item" routerLinkActive="active">
 				<a class="nav-link" routerLink="/simple-search">
-					<img src="assets/search_white.png" class="inline-icon"/> <span i18n>Search</span>
+					<i class="fa fa-search"></i> <span i18n>Search</span>
 				</a>
 			</li>
 			-->
-			
+
 			<li ngbDropdown class="nav-item dropdown" routerLinkActive="active">
-				<a class="nav-link" id="dropdownMenuSearch" style="cursor:pointer" ngbDropdownToggle>
-					<img src="assets/search_white.png" class="inline-icon"/> <span i18n>Search</span>
+				<a class="nav-link pointer" id="dropdownMenuSearch" ngbDropdownToggle>
+					<i class="fa fa-search"></i> <span i18n>Search</span>
 				</a>
-				<div class="dropdown-menu" aria-labelledby="dropdownMenuSearch">
+				<div class="dropdown-menu" aria-labelledby="dropdownMenuSearch" ngbDropdownMenu>
 					<a class="dropdown-item" routerLink="/simple-search" routerLinkActive="active">
-						<img src="assets/text_black.png" class="inline-icon"/> Text-based
+						<i class="fa fa-keyboard dd-icon"></i> Text-based
 					</a>
 					<a class="dropdown-item" routerLink="/explore-search" routerLinkActive="active">
-						<img src="assets/explore_black.png" class="inline-icon"/> Explorative
+						<i class="fa fa-code-branch dd-icon"></i> Explorative
 					</a>
 				</div>
 			</li>
-			
+
 			<!--
 			<li class="nav-item" *ngIf="debug||roles.indexOf('legal_representative')!=-1" routerLinkActive="active">
 				<a class="nav-link" [routerLink]="['/bpe/bpe-design']" [queryParams]="{fromScratch: true}">
-					<img src="assets/process_white.png" class="inline-icon"/> <span i18n>Business Process</span>
+					<i class="fa fa-exchange-alt"></i> <span i18n>Business Process</span>
 				</a>
 			</li>
 			-->
-			
+
 			<li class="nav-item" *ngIf="checkRoles('reg_comp')" routerLinkActive="active">
 				<a class="nav-link" routerLink="/user-mgmt/company-registration">
-					<img src="assets/register_white.png" class="inline-icon"/> <span i18n>Register a Company</span>
+					<i class="fa fa-edit"></i> <span i18n>Register a Company</span>
 				</a>
 			</li>
 			<li class="nav-item" *ngIf="checkRoles('comp')" routerLinkActive="active">
 				<a class="nav-link" routerLink="/user-mgmt/company-invitation">
-					<img src="assets/company_white.png" class="inline-icon"/> Company Members
+					<i class="fa fa-building"></i> Company Members
 				</a>
 			</li>
 		</ul>
-		
+
 		<ul class="nav navbar-nav">
 			<li class="nav-item">
-				<a class="nav-link" href="assets/user_manual.pdf" target="_blank">
-					<img src="assets/question_white.png" class="inline-icon" title="Help"/>
+				<a class="nav-link pointer" (click)="open(support)" title="Help">
+					<i class="fa fa-question-circle"></i>
 				</a>
 			</li>
 		</ul>
-		
+
 		<ul *ngIf="isLoggedIn" class="nav navbar-nav">
 			<li ngbDropdown class="nav-item dropdown" routerLinkActive="active">
-				<a class="nav-link" id="dropdownMenuUser" style="cursor:pointer" ngbDropdownToggle>
-					<img src="assets/avatar_white.png" class="inline-icon"/> {{fullName}}
+				<a class="nav-link pointer" id="dropdownMenuUser" ngbDropdownToggle>
+					<i class="fa fa-user"></i> {{fullName}}
 				</a>
-				<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuUser">
+				<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuUser" ngbDropdownMenu>
 					<a *ngIf="checkRoles('comp')" class="dropdown-item" routerLink="/user-mgmt/company-settings" routerLinkActive="active">
-						<img src="assets/gear_black.png" class="inline-icon"/> Company Settings
+						<i class="fa fa-cog dd-icon"></i> Company Settings
 					</a>
 					<a *ngIf="checkRoles('catalogue')" class="dropdown-item" routerLink="/catalogue/catalogue" routerLinkActive="active">
-						<img src="assets/catalog_black.png" class="inline-icon"/> <span i18n>Catalogue</span>
+						<i class="fa fa-book-open dd-icon"></i> <span i18n>Catalogue</span>
 					</a>
 					<a class="dropdown-item" routerLink="/user-mgmt/logout">
-						<img src="assets/logout_black.png" class="inline-icon"/> <span i18n>Logout</span>
+						<i class="fa fa-lock dd-icon"></i> <span i18n>Logout</span>
 					</a>
 				</div>
 			</li>
@@ -123,24 +130,35 @@
 
 <ng-template #support let-d="dismiss">
 	<div class="modal-header">
-		<h4 class="modal-title">Support</h4>
+		<h4 class="modal-title">Help</h4>
 		<button type="button" class="close" aria-label="Close" (click)="d('')">
 			<span aria-hidden="true">&times;</span>
 		</button>
 	</div>
 	<div class="modal-body">
-		When you press "Open mail template" a partially prefilled mail template will open in the mail client of your choice.<br/><br/>
-		Please make sure to fill out the description and cause of the issue properly and add screenshots if they are of use.<br/><br/>
+		When you press "Open manual" a PDF with an user manual will open in a new tab.<br/><br/>
+		When you press "Contact support" a partially prefilled mail template will open in the mail client of your choice.<br/>
+		Please make sure to fill out the description and cause of the issue properly and add screenshots if they are of use.<br/>
 		We will get back to you within one business day.
 	</div>
 	<div class="modal-footer">
-		<a [href]="mailto" type="button" class="btn btn-primary" (click)="d('')">Open mail template</a>
+		<a href="assets/user_manual.pdf" target="_blank" type="button" class="btn btn-primary" (click)="d('')">Open manual</a>
+		<a [href]="mailto" type="button" class="btn btn-primary" (click)="d('')">Contact support</a>
 	</div>
 </ng-template>
-<div id="support-btn" (click)="open(support)"><img id="support-img" src="assets/support_white.png"/></div>
+<!--<div id="support-btn" (click)="open(support)"><img id="support-img" src="assets/support_white.png"/></div>-->
 
-<router-outlet></router-outlet>
+<div id="wrapper">
+	<router-outlet></router-outlet>
+</div>
 
 <div id="footer">
 	<img src="assets/eu_flag.png" alt=""> This project has received funding from the European Union's Horizon 2020 research and innovation programme under grant agreement No 723810
+	<div *ngIf="versions.length > 0">
+		<small>
+			<span *ngFor="let version of versions; let i = index" [attr.data-index]="i">
+				<span><i *ngIf="i>0"> | </i>{{version.id}}: {{version.ver}}</span>
+			</span>
+		</small>
+	</div>
 </div>
