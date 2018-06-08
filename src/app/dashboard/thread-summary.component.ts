@@ -9,6 +9,7 @@ import * as constants from "../constants";
 import {Item} from "../catalogue/model/publish/item";
 import {CallStatus} from "../common/call-status";
 import {CookieService} from "ng2-cookies";
+import {DataChannelService} from "../data-channel/data-channel.service";
 
 /**
  * Created by suat on 12-Mar-18.
@@ -28,12 +29,14 @@ export class ThreadSummaryComponent implements OnInit {
     expanded: boolean = false;
     aggregatedMetadataCount: number = 0;
     processMetadataAggregated: boolean = false;
+    showDataChannelButton: boolean = false;
 
     archiveCallStatus: CallStatus = new CallStatus();
 
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
                 private cookieService: CookieService,
+                private dataChannelService: DataChannelService,
                 private router: Router) {
     }
 
@@ -60,11 +63,18 @@ export class ThreadSummaryComponent implements OnInit {
                         let vNote = ActivityVariableParser.getNoteFromProcessData(initialDoc);
                         let vStatusCode = processInstance.state;
                         let vProcessType = ActivityVariableParser.getProcessType(activityVariables);
-                        let vActionStatus = this.getActionStatus(vProcessType, response, ActivityVariableParser.getUserRole(activityVariables,this.processInstanceGroup.partyID) == 'buyer' ? true : false);
+                        let vActionStatus = this.getActionStatus(vProcessType, response, ActivityVariableParser.getUserRole(activityVariables, this.processInstanceGroup.partyID) == 'buyer' ? true : false);
                         let vBPStatus = this.getBPStatus(response);
                         let vStart_time = moment(lastActivity.startTime + "Z", 'YYYY-MM-DDTHH:mm:ssZ').format("YYYY-MM-DD HH:mm");
                         let vProduct = ActivityVariableParser.getProductFromProcessData(initialDoc);
                         let vTradingPartnerName = ActivityVariableParser.getTradingPartnerName(initialDoc, this.cookieService.get("company_id"));
+
+                        if (vProcessType === 'Order') {
+                            this.dataChannelService.isChannelAttached(processInstanceId)
+                                .then(isChannelAttached => {
+                                    this.showDataChannelButton = isChannelAttached;
+                                });
+                        }
 
                         this.processMetadata[targetIndex] = {
                             "processType": vProcessType,
@@ -84,6 +94,7 @@ export class ThreadSummaryComponent implements OnInit {
                         this.processMetadata = [].concat(this.processMetadata);
                         if (this.aggregatedMetadataCount == this.processInstanceGroup.processInstanceIDs.length) {
                             this.processMetadataAggregated = true;
+                            this.sortProcesses();
                         }
                     });
                 });
@@ -91,6 +102,19 @@ export class ThreadSummaryComponent implements OnInit {
             .catch(error => {
                 console.error(error);
             });
+    }
+
+    sortProcesses() {
+      this.processMetadata.sort(function (a: any, b: any) {
+        var a_comp = moment(a.start_time);
+        var b_comp = moment(b.start_time);
+        if (a_comp.isBefore(b_comp))
+          return -1;
+        else if (b_comp.isBefore(a_comp))
+          return 1;
+        else
+          return 0;
+      });
     }
 
     getActionStatus(processType: string, response: any, buyer: boolean): string {
@@ -205,7 +229,7 @@ export class ThreadSummaryComponent implements OnInit {
 
     openBpProcessView(processInstanceIndex: number) {
         let processMetadata: any = this.processMetadata[processInstanceIndex];
-        let role = ActivityVariableParser.getUserRole(processMetadata.activityVariables,this.processInstanceGroup.partyID);
+        let role = ActivityVariableParser.getUserRole(processMetadata.activityVariables, this.processInstanceGroup.partyID);
         this.bpDataService.setBpOptionParametersWithProcessMetadata(role, processMetadata.processType, processMetadata);
         this.bpDataService.setRelatedGroupId(this.processInstanceGroup.id);
         this.router.navigate(['bpe/bpe-exec'], {
@@ -257,6 +281,19 @@ export class ThreadSummaryComponent implements OnInit {
                 .catch(err => {
                     this.archiveCallStatus.error('Failed to delete thread permanently');
                 });
+        }
+    }
+
+    openDataChannelView(): void {
+        for (let process of this.processMetadata) {
+            if (process['processType'] === 'Order') {
+                this.dataChannelService.channelsForBusinessProcess(process['process_id'])
+                    .then(channels => {
+                        const channelId = channels[0].channelID;
+                        this.router.navigate([`/data-channel/details/${channelId}`]);
+                    })
+                // ToDo: handle error
+            }
         }
     }
 }

@@ -3,21 +3,34 @@
         <h5 class="mt-3 mb-3">Price/Requested Quantity</h5>
         <!-- Price Amount -->
         <amount-view [presentationMode]="presentationMode"
-                     [propName]="'Amount'"
+                     [propName]="'Price for Base Quantity'"
+                     [definition]="'The price of the product requested for the base quantity'"
                      [amount]="[order.orderLine[0].lineItem.price.priceAmount]">
         </amount-view>
 
         <!-- Price Base Quantity -->
         <quantity-view [presentationMode]="presentationMode"
                        [propName]="'Price Base Quantity'"
-                       [definition]="'The price of a product at a legally set quantity'"
+                       [propName]="'Base Quantity'"
+                       [definition]="'The base quantity for which a price is a specified.\nFor example, charging €5,00 for a base quantity of 1m2 indicates the total price of 3m2 product is charged with €15,00.\nExample:i.e.,Quantity:1,Unit:m2.'"
                        [quantity]="[order.orderLine[0].lineItem.price.baseQuantity]">
         </quantity-view>
 
         <quantity-view [propName]="'Requested Quantity'"
                        [quantity]="[order.orderLine[0].lineItem.quantity]"
+                       [definition]="'The requested quantity of the product'"
                        [presentationMode]="presentationMode">
         </quantity-view>
+
+        <!-- Total Price -->
+        <quantity-value-view
+                *ngIf="order.orderLine[0].lineItem.price.baseQuantity.unitCode == order.orderLine[0].lineItem.quantity.unitCode && order.orderLine[0].lineItem.price.baseQuantity.value"
+                [propName]="'Total Price'"
+                [definition]="'Total price for the requested quantity'"
+                [value]="order.orderLine[0].lineItem.price.priceAmount.value * order.orderLine[0].lineItem.quantity.value / order.orderLine[0].lineItem.price.baseQuantity.value"
+                [unitType]="'Currency'"
+                [unit]="order.orderLine[0].lineItem.price.priceAmount.currencyID">
+        </quantity-value-view>
     </div>
 
     <div class="well">
@@ -178,7 +191,7 @@
             <!--</label>-->
             <!--<button type="button"-->
                     <!--class="col btn mr-2"-->
-                    <!--[ngClass]="{'btn-warning active': !dmsBtnClicked, 'alert-warning': dmsBtnClicked}"-->
+                    <!--[ngClass]="{'btn-outline-warning active': !dmsBtnClicked, 'alert-warning': dmsBtnClicked}"-->
                     <!--(click)="dmsBtnClicked = true; addDataMonitoringClause()"-->
                     <!--[disabled]="dmsBtnClicked">-->
                 <!--<span *ngIf="!dmsBtnClicked">Demand data monitoring service</span>-->

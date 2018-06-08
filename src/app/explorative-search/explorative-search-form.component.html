@@ -103,6 +103,33 @@
 </div>
 
 <div class="container">
+<<<<<<< HEAD
+=======
+<div class="col-sm-offset-2">
+    <ul>
+        <li *ngFor="let eachOutput of Output; let outerIndex = index">
+            <div [hidden]="showParticularKeyword[outerIndex]">
+                <div class="btn-group" role="group" aria-label="available keywords"
+                     *ngFor="let each of eachOutput.resp.conceptOverview; let innerIndex = index">
+                    <button type="button" class="btn btn-dark"
+                            *ngIf="innerIndex === 0 || showMore[outerIndex]"
+                            (click)="getQuery(each.url, each.translatedURL)">{{each.translatedURL}}
+                    </button>
+                </div>
+                <div style="display: inline">
+                    <button type="button" class="btn btn-outline-secondary"
+                            *ngIf="eachOutput.resp.conceptOverview.length > 1" (click)="showMore[outerIndex]=!showMore[outerIndex]">
+                        {{showMore[outerIndex] ? 'Hide': 'Show'}} Options</button>
+                </div>
+            </div>
+        </li>
+    </ul>
+</div>
+</div>
+
+<br/>
+<br/>
+>>>>>>> c9bdb05a838334c217e8ead45bc01326c814ac05
 
 <ngb-tabset (tabChange)="activeTab($event)">
     <ngb-tab title="Semantic Query" (click)="previousStateStore()" id="sqp" [disabled]="!SQPConfig">
@@ -119,4 +146,10 @@
         </ng-template>
     </ngb-tab>
 </ngb-tabset>
+<<<<<<< HEAD
 </div>
+=======
+<!-- The Graph Display Component -->
+<!-- Data Visualization here-->
+</div>
+>>>>>>> c9bdb05a838334c217e8ead45bc01326c814ac05

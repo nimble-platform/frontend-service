@@ -127,6 +127,7 @@
                             {{sparqlSelectedOption.rows[0][i]}}
                         </td>
                     </tr>
+<<<<<<< HEAD
                 </tbody>
             </table>
         </div>
@@ -134,6 +135,44 @@
     <div class="row" style="margin-top: 15px">
         <div class="col-md-6">
             <button class="btn btn-outline-primary" (click)="hiddenElement=!hiddenElement">Back to Graph</button>
+=======
+                </table>
+            </div>
+            <div class="row">
+                <div class="col-8">
+                    <button [hidden]="!hiddenElement" class="btn btn-lg btn-outline-warning" (click)="diagramAgain()">
+                        Back
+                    </button>
+                </div>
+                <div class="col-4 pull-right">
+                    <button class="btn btn-lg btn-primary" (click)="negotiation()"
+                            [disabled]="!negotiationEnable"
+                            [hidden]="!hiddenElement">
+                        Negotiation</button>
+                </div>
+            </div>
+            <br>
+            <br>
+            <!-- temporary hack here
+                Image is not rendered again on button click
+                because tableResult still exists in class.
+            -->
+            <!-- Show Table -->
+            <div *ngIf="tableResult && selectedProperties.length > 0" style="overflow: auto; height: 100px;">
+                <table>
+                    <tr>
+                        <th *ngFor="let column of tableResult?.columns">{{column}}</th>
+                    </tr>
+                    <tr *ngFor="let row of tableResult?.rows; let i=index;">
+                        <td *ngFor="let field of row"> {{field}}</td>
+                        <td *ngIf="tableResult?.uuids">
+                            <button class="btn btn-sm btn-success" (click)="getSparqlOptionalSelect(i)">
+                            More</button></td>
+                    </tr>
+                </table>
+            </div>
+            <!-- End Table -->
+>>>>>>> c9bdb05a838334c217e8ead45bc01326c814ac05
         </div>
         <div class="col-md-6">
             <button class="btn btn-outline-warning" [disabled]="!negotiationEnable" (click)="negotiation()">
@@ -193,8 +232,18 @@
             </table>
         </div>
 
+<<<<<<< HEAD
     </div>
     <!--<pre>-->
         <!--<code>{{tableJSON | json}}</code>-->
     <!--</pre>-->
 </div>
+=======
+<div [hidden]="!(_error_detected_getLogicalView || _error_detected_getProperties || _error_detected_getSPARQLSelect || _error_detected_getTableValues)">
+    <div class="alert alert-danger space-before" role="alert">An error occured - please try again later</div>
+</div>
+
+<div [hidden]="!(_warning_table_results)">
+    <div class="alert alert-warning space-before" role="alert">No Matches Found. Please try again with different Queries</div>
+</div>
+>>>>>>> c9bdb05a838334c217e8ead45bc01326c814ac05

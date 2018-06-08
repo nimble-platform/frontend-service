@@ -1,19 +1,25 @@
 <div class="delivery-terms-form" [formGroup]="deliveryTermsForm">
-	<div class="input-group form-group hidden-xl-down">
-		<span class="input-group-addon">
+	<div class="form-group row d-none">
+		<span class="col-2 col-form-label">
 			<input type="checkbox" [(ngModel)]="deliveryTermsForm.aM" [ngModelOptions]="{standalone:true}">
 		</span>
-		<span class="form-control">Deliver to company address</span>
+		<div class="col-10">
+			<span class="form-control inline">Deliver to company address</span>
+		</div>
 	</div>
-	<div [ngClass]="{'hidden-xl-down':deliveryTermsForm.aM,'':!deliveryTermsForm.aM}">
+	<div [ngClass]="{'d-none':deliveryTermsForm.aM,'':!deliveryTermsForm.aM}">
 	    <address-form [group]="deliveryTermsForm.controls.deliveryAddress"></address-form>
     </div>
-	<div class="input-group form-group">
-		<label class="input-group-addon">Terms</label>
-		<input type="text" class="form-control" formControlName="specialTerms">
+	<div class="form-group row">
+		<label class="col-2 col-form-label">Terms</label>
+		<div class="col-10">
+			<input type="text" class="form-control" formControlName="specialTerms">
+		</div>
 	</div>
-	<div class="input-group form-group">
-		<label class="input-group-addon">Delivery time (days)</label>
-		<input type="number" class="form-control" formControlName="estimatedDeliveryTime">
+	<div class="form-group row">
+		<label class="col-2 col-form-label">Delivery time (days)</label>
+		<div class="col-10">
+			<input type="number" class="form-control" formControlName="estimatedDeliveryTime">
+		</div>
 	</div>
 </div>

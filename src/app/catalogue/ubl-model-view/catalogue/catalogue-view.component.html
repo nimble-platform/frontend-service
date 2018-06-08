@@ -30,7 +30,7 @@
                         <button class="navbar-toggler bordered" type="button" aria-controls="navbarNavAltMarkup" ngbDropdownToggle>
                             <span class="fa fa-bars"></span>
                         </button>
-                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuUser">
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuUser" ngbDropdownMenu>
                             <input #imagePackage type="file" (change)="uploadImagePackage($event)"
                                    accept="application/zip"
                                    style="display: none">
@@ -51,15 +51,15 @@
 
         <div *ngFor="let catLine of catalogueLinesArray.slice((page-1)*pageSize,page*pageSize) " class="space-before">
             <div class="card pointer">
-                <div class="card-block">
+                <div class="card-body">
                     <div class="row" *ngIf="!catalogueLineView[catLine.id]" (click)="catalogueLineView[catLine.id]=true">
                         <div class="col-2">
-                            <div>
+                            <div style="text-align:center">
                                 <img *ngIf="catLine.goodsItem.item.productImage.length == 0"
-                                     style="max-height:100%; max-width:100%"
+                                     style="max-height:150px; max-width:100%"
                                      src="assets/empty_img.png">
                                 <img *ngIf="catLine.goodsItem.item.productImage.length > 0"
-                                     style="max-height:100%; max-width:100%"
+                                     style="max-height:150px; max-width:100%"
                                      src="data:{{catLine.goodsItem.item.productImage[0].mimeCode}};base64,{{catLine.goodsItem.item.productImage[0].value}}"/>
                             </div>
                         </div>

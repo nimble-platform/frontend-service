@@ -1,13 +1,17 @@
-<nav class="navbar navbar-toggleable-md navbar-inverse bg-faded nimble-bg space-after">
-	<button class="navbar-toggler navbar-toggler-right" type="button" (click)="isCollapsed = !isCollapsed" aria-controls="navbarNavAltMarkup" [attr.aria-expanded]="!isCollapsed">
-		<span class="navbar-toggler-icon"></span>
-	</button>
+<nav class="navbar navbar-expand-lg navbar-dark bg-faded nimble-bg space-after">
 	<a *ngIf="isLoggedIn" class="navbar-brand" routerLink="/dashboard" routerLinkActive="active">
 		<img id="nav-logo" src="./assets/nimble_logo_white.png" height="30" class="d-inline-block align-top" alt="">
 	</a>
 	<a *ngIf="!isLoggedIn" class="navbar-brand" routerLink="/user-mgmt/login" routerLinkActive="active">
 		<img id="nav-logo" src="./assets/nimble_logo_white.png" height="30" class="d-inline-block align-top" alt="">
 	</a>
+	<button class="navbar-toggler" type="button" (click)="isCollapsed = !isCollapsed" aria-controls="navbarNavAltMarkup" [attr.aria-expanded]="!isCollapsed">
+		<span class="navbar-toggler-icon">
+			<span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+		</span>
+	</button>
 	<div class="navbar-collapse" [ngbCollapse]="isCollapsed" id="navbarNavAltMarkup">
 		<ul *ngIf="!isLoggedIn" class="nav navbar-nav mr-auto">
 			<li class="nav-item" routerLinkActive="active">
@@ -45,7 +49,7 @@
 				<a class="nav-link pointer" id="dropdownMenuSearch" ngbDropdownToggle>
 					<i class="fa fa-search"></i> <span i18n>Search</span>
 				</a>
-				<div class="dropdown-menu" aria-labelledby="dropdownMenuSearch">
+				<div class="dropdown-menu" aria-labelledby="dropdownMenuSearch" ngbDropdownMenu>
 					<a class="dropdown-item" routerLink="/simple-search" routerLinkActive="active">
 						<i class="fa fa-keyboard dd-icon"></i> Text-based
 					</a>
@@ -73,6 +77,19 @@
 					<i class="fa fa-building"></i> Company Members
 				</a>
 			</li>
+
+			<li ngbDropdown class="nav-item dropdown" *ngIf="checkRoles('pm')" routerLinkActive="active">
+				<a class="nav-link pointer" id="dropdownMenuPM" ngbDropdownToggle>
+					<i class="fa fa-chart-pie"></i> <span i18n>Platform Management</span>
+				</a>
+				<div class="dropdown-menu" aria-labelledby="dropdownMenuPM" ngbDropdownMenu>
+					<a class="dropdown-item" href="https://nimble-platform.uk-south.containers.mybluemix.net/dashboards/status" target="_blank">Health Report</a>
+					<a class="dropdown-item" href="http://nimble-platform.salzburgresearch.at:5602/app/kibana#/dashboard/5ad4bff0-119d-11e8-96a2-b11689429755" target="_blank">Activity Report</a>
+					<a class="dropdown-item" href="http://nimble-platform.salzburgresearch.at:5602/app/kibana#/dashboard/5f19a540-1250-11e8-96a2-b11689429755" target="_blank">Security Report</a>
+					<a class="dropdown-item" href="http://nimble-platform.salzburgresearch.at:5602/app/kibana#/dashboard/d0c4a3a0-1194-11e8-96a2-b11689429755" target="_blank">Log Analysis</a>
+				</div>
+			</li>
+
 		</ul>
 
 		<ul class="nav navbar-nav">
@@ -88,7 +105,7 @@
 				<a class="nav-link pointer" id="dropdownMenuUser" ngbDropdownToggle>
 					<i class="fa fa-user"></i> {{fullName}}
 				</a>
-				<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuUser">
+				<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuUser" ngbDropdownMenu>
 					<a *ngIf="checkRoles('comp')" class="dropdown-item" routerLink="/user-mgmt/company-settings" routerLinkActive="active">
 						<i class="fa fa-cog dd-icon"></i> Company Settings
 					</a>
