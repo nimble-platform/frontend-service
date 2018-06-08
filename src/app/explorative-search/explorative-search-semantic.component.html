@@ -10,14 +10,10 @@
     </li>
 </ol>
 
-<ng-template #searchTip>
-    <p>Start typing and press <kbd>Tab</kbd> for Autocompletion</p>
-</ng-template>
-
 <ng-template #valuesTemplateRef let-values>
     <div class="card">
         <div class="card-header">Available Values</div>
-        <div class="card-block">
+        <div class="card-body">
             <p>Select One or More Values</p>
             <div *ngFor="let eachVal of values">
                 <label>
@@ -115,7 +111,7 @@
                     <ngb-alert type="info" [dismissible]="false" *ngIf="updateInfoAlert">
                         <p>Information Updated</p>
                     </ngb-alert>
-                    <div class="card-block">
+                    <div class="card-body">
                         <div class="input-group-md">
                             <label for="typeahead-template"><span>Search</span></label>
                             <input id="typeahead-template"
@@ -124,9 +120,11 @@
                                    [(ngModel)]="searchModel"
                                    [ngbTypeahead]="search" [resultTemplate]="rt" [inputFormatter]="formatter"
                                    (keyup.enter)="checkUserSelection(searchModel)"
-                                   placement="top"
-                                   [ngbTooltip]="searchTip"
                             />
+                            <ng-template #rt let-r="result" let-t="term">
+                                {{ r.translatedProperty}}
+                            </ng-template>
+
                         </div>
                         <br>
                         <br>
