@@ -4,11 +4,11 @@ import {LineItem} from "../../../catalogue/model/publish/line-item";
 import {DeliveryTerms} from "../../../catalogue/model/publish/delivery-terms";
 
 @Component({
-    selector: 'trading-details',
-    templateUrl: './trading-details.component.html',
+    selector: 'transport-trading-details',
+    templateUrl: './transport-trading-details.component.html',
 })
 
-export class TradingDetailsComponent {
+export class TransportTradingDetailsComponent {
     @Input() presentationMode:string;
     @Input() lineItem:LineItem;
     @Input() fetchDefaultDeliveryAddress;

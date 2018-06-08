@@ -16,6 +16,7 @@ export class AmountViewComponent extends ChildForm implements OnInit {
     @Input() propName: string;
     @Input() mandatory:boolean = false;
     @Input() amount: Amount[];
+    @Input() definition: string;
 
     // units for currency
     currencyValues = [];
