@@ -1,110 +1,3 @@
-<<<<<<< HEAD
-=======
-<div class="container">
-    <br>
-    <div class="row">
-        <ngb-alert [dismissible]="true" *ngIf="basicInfoAlert" type="info" (close)="basicInfoAlert=!basicInfoAlert">
-            <h3>Tips for Semantic Query Patterns Search</h3>
-            <br>
-                <p>
-                    You can search Properties like <em>height, width etc.</em> by clicking on
-                    <strong>hasProperty</strong>
-                </p>
-                <p>
-                    If you want to find a property's available value click on <strong>hasValue</strong>
-                </p>
-                <p>
-                    You can find information for <em>Legislation, Manufacturer etc.</em> by clicking on
-                    <strong>hasReference</strong>
-                </p>
-                <p>
-                    You can Edit your Query by simply clicking on it.
-                </p>
-        </ngb-alert>
-        <p>
-            <ngb-alert [dismissible]="false" *ngIf=" lang==='es' ">
-                <strong>Under Development</strong> Deletion Feature for Spanish Language is On-Going.
-            </ngb-alert>
-        </p>
-        <div class="col-12">
-            <div [hidden]="hiddenElement">
-                <h5>Your Semantic Query</h5>
-                <code (click)="editSemanticQuery()" placement="bottom" ngbTooltip="Click on the Query to Edit it">
-                    {{sentence | json}}
-                </code>
-                <span>
-                    <button (click)="genTable()" [disabled]="!semQJSon['selections'].length">Search Query</button></span>
-                <br>
-                <br>
-                <p><b>You are currently at:{{whereAreYou}}</b></p>
-
-                    <ngb-accordion #acc="ngbAccordion">
-
-                        <!-- Property panel -->
-                        <ngb-panel title="Property Panel" id="toggle-property" [disabled]="!configSPQ">
-                            <ng-template ngbPanelContent>
-                                    <div class="form-group row">
-                                    <label class="col-2 col-form-label">Search Property</label>
-                                    <div class="col-10">
-                                      <input type="search" class="form-control" style="width: 500px;"
-                                          [(ngModel)]="model"
-                                          [ngbTypeahead]="search"
-                                          [resultTemplate]="rt"
-                                          [inputFormatter]="formatter"
-                                          (keyup.enter)="applyProperty();acc.toggle('toggle-property'); model='';"/>
-                                      </div>
-                                    </div>
-                                <ng-template #rt let-r="result" let-t="term">
-                                    <div>
-                                        {{r.translatedProperty}}
-                                    </div>
-                                </ng-template>
-                            </ng-template>
-                        </ngb-panel>
-
-                        <!--Value Panel-->
-                        <ngb-panel title="Values Panel" id="toggle-value" [disabled]="!configSPQ">
-                            <ng-template ngbPanelContent>
-                            <ul class="list-group">
-                                <li class="list-group-item"
-                                    *ngFor="let eachval of searchvalue"
-                                    (click)="sentence=sentence+eachval; acc.toggle('toggle-value');
-                                    applyFilter(eachval, selectedPropertyURL);">
-                                    {{eachval}}
-                                </li>
-                            </ul>
-                            </ng-template>
-                        </ngb-panel>
-
-                        <!--- Reference Panel -->
-                        <ngb-panel title="Reference Panel" id="toggle-reference" [disabled]="!configSPQ">
-                            <ng-template ngbPanelContent>
-                            <div class="row">
-                                <div class="col-6">
-                                    <div class="form-group">
-                                        <label for="exampleFormControlSelect2"><b>Product References</b></label>
-                                        <select multiple class="form-control" id="exampleFormControlSelect2">
-                                            <option *ngFor="let eachRef of referenceResults['allAvailableReferences'];
-                                             let i=index;" (click)="showRefResults(i);">
-                                                {{eachRef.translatedProperty}}
-                                            </option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-6" *ngIf="refResultsRange.length > 0">
-                                    <label for="exampleFormControlSelect2"><b>Selected Reference</b></label>
-                                    <ul class="list-group">
-                                        <li class="list-group-item" *ngFor="let eachRefResult of refResultsRange"
-                                            (click)="referenceSelection(eachRefResult); acc.toggle('toggle-reference')">
-                                            {{eachRefResult.translation}}
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            </ng-template>
-                        </ngb-panel>
-
->>>>>>> c9bdb05a838334c217e8ead45bc01326c814ac05
 
 <ol class="breadcrumb">
     <li class="breadcrumb-item active"
@@ -133,7 +26,6 @@
                     <span><strong>{{eachVal}}</strong></span>
                 </label>
             </div>
-<<<<<<< HEAD
             <hr>
             <div *ngIf="valuesAreNumeric">
                 <div class="row">
@@ -143,32 +35,6 @@
                             (click)="disableManualFilters = !disableManualFilters"
                     >{{disableManualFilters ? 'Activate' : 'Deactivate'}}</button></span>
                     </p>
-=======
-
-            <div [hidden]="!hiddenElement" style="height: 500px; overflow: auto;">
-                <table >
-
-                    <tr>
-                        <th style="width:50%">Property</th>
-                        <td style="width:50%;font-weight: bold">Value
-                            <wbr/>
-                        </td>
-                    </tr>
-                    <tr *ngFor="let column of sparqlSelectedOption?.columns; let i=index">
-
-                        <th style="width:50%">{{column}}</th>
-                        <td style="width:50%">{{sparqlSelectedOption?.rows[0][i]}}
-                            <wbr/>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            <div class="row">
-                <div class="col-8">
-                    <button [hidden]="!hiddenElement" class="btn btn-lg btn-outline-warning" (click)="hiddenElement=!hiddenElement;">
-                        Back
-                    </button>
->>>>>>> c9bdb05a838334c217e8ead45bc01326c814ac05
                 </div>
                 <div class="input-group-sm">
                     <label for="min"><span>min</span></label>
