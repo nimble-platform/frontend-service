@@ -90,11 +90,17 @@
                 <div class="col-12">
                     <!-- Sales -->
                     <div class="jumbotron" *ngIf="qp_tab === TAB_SALES">
+                        <button class="btn btn-secondary float-right" (click)="onToggleArchivedClick()">
+                            {{qp_archived ? "Show Non-archived" : "Show Archived"}}
+                        </button>
                         <h4>No sales</h4>
                         <p>TODO: add text/button</p>
                     </div>
                     <!-- Purchases -->
                     <div class="jumbotron" *ngIf="qp_tab === TAB_PURCHASES">
+                        <button class="btn btn-secondary float-right" (click)="onToggleArchivedClick()">
+                            {{qp_archived ? "Show Non-archived" : "Show Archived"}}
+                        </button>
                         <h4>No purchases</h4>
                         <p>TODO: add text/button</p>
                     </div>
@@ -104,20 +110,22 @@
             <!-- Data -->
             <div class="row" *ngIf="groups.length > 0">
                 <div class="col-12">
-                    <!-- Show Archived Button -->
                     <div class="row space-before">
-                        <div class="col-10"></div>
+                        <div class="col-5"></div>
+                        <!-- Pagination Info -->
+                        <div class="col-2 pagination justify-content-center">
+                            <ngb-pagination [collectionSize]="size" [pageSize]="pageSize" [(page)]="qp_page" 
+                                [maxSize]="limit" [boundaryLinks]="false" (pageChange)="paginationHandler()">
+                            </ngb-pagination>
+                        </div>
+                        <div class="col-3"></div>
+                        <!-- Show Archived Button -->
                         <div class="col-2">
-                            <label class="btn btn-secondary btn-outline" ngbButtonLabel>
-                                <input type="checkbox" ngbButton [(ngModel)]="qp_archived" (change)="filterChangeHandler()"> Show Archived
-                            </label>
+                            <button class="btn btn-secondary float-right" (click)="onToggleArchivedClick()">
+                                {{qp_archived ? "Show Non-archived" : "Show Archived"}}
+                            </button>
                         </div>
                     </div>
-                
-                    <!-- Pagination Info -->
-                    <dashboard-pagination *ngIf="groups.length > 0" [collectionSize]="size" [pageSize]="pageSize" 
-                        [(page)]="qp_page" [limit]="limit" (paginationHandler)="paginationHandler()">
-                    </dashboard-pagination>
 
                     <div class="row">
                         <!-- Filters -->
@@ -150,9 +158,13 @@
                     </div>
 
                     <!-- Pagination Info -->
-                    <dashboard-pagination [collectionSize]="size" [pageSize]="pageSize" 
-                        [(page)]="qp_page" [limit]="limit" (paginationHandler)="paginationHandler()">
-                    </dashboard-pagination>
+                    <div class="row ">
+                        <div class="col pagination justify-content-center">
+                            <ngb-pagination [collectionSize]="size" [pageSize]="pageSize" [(page)]="qp_page" 
+                                [maxSize]="limit" [boundaryLinks]="false" (pageChange)="paginationHandler()">
+                            </ngb-pagination>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

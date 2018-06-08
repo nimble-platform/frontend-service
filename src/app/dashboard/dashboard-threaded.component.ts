@@ -3,14 +3,11 @@ import { AppComponent } from "../app.component";
 import { CookieService } from "ng2-cookies";
 import { BPEService } from "../bpe/bpe.service";
 import { ActivatedRoute, Router, Params } from "@angular/router";
-import { UserService } from "../user-mgmt/user.service";
-import { BPDataService } from "../bpe/bp-view/bp-data-service";
 import { ProcessInstanceGroup } from "../bpe/model/process-instance-group";
 import { TAB_SALES, TAB_PURCHASES, TAB_CATALOGUE, TAB_WELCOME } from "./constants";
 import { ProcessInstanceGroupFilter } from "../bpe/model/process-instance-group-filter";
 import { CallStatus } from "../common/call-status";
 import { CollaborationRole } from "../bpe/model/collaboration-role";
-import { CatalogueService } from "../catalogue/catalogue.service";
 
 @Component({
     selector: "dashboard-threaded",
@@ -53,8 +50,7 @@ export class DashboardThreadedComponent implements OnInit {
         private bpeService: BPEService,
         private router: Router,
         private route: ActivatedRoute,
-        private appComponent: AppComponent,
-        private catalogueService: CatalogueService
+        private appComponent: AppComponent
     ) {}
 
     ngOnInit() {
@@ -144,10 +140,6 @@ export class DashboardThreadedComponent implements OnInit {
         }
     }
 
-    private getCollaborationRole(): CollaborationRole {
-        return this.qp_tab === TAB_PURCHASES ? "BUYER" : "SELLER";
-    }
-
     retrieveProcessInstanceGroups(products: string[], categories: string[], parties: string[]): void {
         this.bpeService
             .getProcessInstanceGroups(this.cookieService.get("company_id"), this.getCollaborationRole(), this.qp_page - 1, this.limit, this.qp_archived, products, categories, parties)
@@ -194,7 +186,17 @@ export class DashboardThreadedComponent implements OnInit {
             });
     }
 
-    private onTabClick(event: any) {
+    private getCollaborationRole(): CollaborationRole {
+        return this.qp_tab === TAB_PURCHASES ? "BUYER" : "SELLER";
+    }
+
+    onToggleArchivedClick() {
+        event.preventDefault();
+        this.qp_archived = !this.qp_archived
+        this.filterChangeHandler();
+    }
+
+    onTabClick(event: any) {
         event.preventDefault();
         this.qp_tab = event.target.id;
         this.filterChangeHandler();

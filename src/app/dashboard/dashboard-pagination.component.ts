@@ -1,5 +1,8 @@
 import { Component, OnInit, Input, Output, EventEmitter } from "@angular/core";
 
+/**
+ * Anthony: not used at the moment, waiting for review of the dashboard with business owner and I'll delete it then.
+ */
 @Component({
     selector: "dashboard-pagination",
     templateUrl: "./dashboard-pagination.component.html",

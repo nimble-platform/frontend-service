@@ -5,9 +5,9 @@ import {BPDataService} from "../bpe/bp-view/bp-data-service";
 import {BPEService} from "../bpe/bpe.service";
 import {ActivityVariableParser} from "../bpe/bp-view/activity-variable-parser";
 import * as moment from "moment";
-import {Item} from "../catalogue/model/publish/item";
 import {CallStatus} from "../common/call-status";
 import {CookieService} from "ng2-cookies";
+import { ThreadEvent } from "./model/ThreadEvent";
 
 /**
  * Created by suat on 12-Mar-18.
@@ -22,74 +22,97 @@ export class ThreadSummaryComponent implements OnInit {
     @Input() processInstanceGroup: ProcessInstanceGroup;
     @Output() threadStateUpdated = new EventEmitter();
 
-    lastIndex: number;
-    processMetadata: any[] = [];
-    expanded: boolean = false;
-    aggregatedMetadataCount: number = 0;
-    processMetadataAggregated: boolean = false;
+    // Most recent event
+    lastEvent: ThreadEvent;
 
+    // History of events
+    hasHistory: boolean = false;
+    history: ThreadEvent[];
+    historyExpanded: boolean = false;
+
+    // Utilities
+    eventCount: number = 0
     archiveCallStatus: CallStatus = new CallStatus();
 
     constructor(private bpeService: BPEService,
-                private bpDataService: BPDataService,
                 private cookieService: CookieService,
+                private bpDataService: BPDataService,
                 private router: Router) {
     }
 
     ngOnInit(): void {
-        this.lastIndex = this.processInstanceGroup.processInstanceIDs.length - 1;
-        for (let i = 0; i <= this.lastIndex; i++) {
-            this.processMetadata.push({});
-            this.aggregateThreadData(this.processInstanceGroup.processInstanceIDs[i], i)
+        this.eventCount = this.processInstanceGroup.processInstanceIDs.length;
+        this.hasHistory = this.eventCount > 1;
+        this.fetchLastEvent();
+    }
+
+    private fetchLastEvent(): void {
+        this.fetchThreadEvent(this.processInstanceGroup.processInstanceIDs[this.eventCount - 1]).then(threadEvent => {
+            this.lastEvent = threadEvent;
+        }).catch(error => {
+            console.log("Error while fetching event.", error);
+        })
+    }
+
+    toggleHistory(): void {
+        this.historyExpanded = !this.historyExpanded;
+        if(this.historyExpanded && !this.history) {
+            this.fetchHistory();
         }
     }
 
-    aggregateThreadData(processInstanceId: string, targetIndex: number): void {
-        this.bpeService.getProcessDetailsHistory(processInstanceId)
-            .then(activityVariables => {
+    private fetchHistory(): void {
+        const ids = this.processInstanceGroup.processInstanceIDs.slice(0, this.eventCount - 1)
 
-                let initialDoc: any = ActivityVariableParser.getInitialDocument(activityVariables);
-                let response: any = ActivityVariableParser.getResponse(activityVariables);
-                let vProcess_id = initialDoc.processInstanceId;
+        // inline function to avoid binding fetchThreadEvent
+        Promise.all(ids.map(id => this.fetchThreadEvent(id))).then(events => {
+            this.history = events.reverse()
+        }).catch(error => {
+            console.log("Error while fetching history.", error);
+        })
+    }
 
-                this.bpeService.getLastActivityForProcessInstance(vProcess_id).then(lastActivity => {
-                    this.bpeService.getProcessInstanceDetails(vProcess_id).then(processInstance => {
+    private async fetchThreadEvent(processInstanceId: string): Promise<ThreadEvent> {
+        const activityVariables = await this.bpeService.getProcessDetailsHistory(processInstanceId);
+        const vProcessType = ActivityVariableParser.getProcessType(activityVariables);
 
-                        let vContent = initialDoc.value;
-                        let vNote = ActivityVariableParser.getNoteFromProcessData(initialDoc);
-                        let vStatusCode = processInstance.state;
-                        let vProcessType = ActivityVariableParser.getProcessType(activityVariables);
-                        let vActionStatus = this.getActionStatus(vProcessType, response, ActivityVariableParser.getUserRole(activityVariables,this.processInstanceGroup.partyID) == 'buyer' ? true : false);
-                        let vBPStatus = this.getBPStatus(response);
-                        let vStart_time = moment(lastActivity.startTime + "Z", 'YYYY-MM-DDTHH:mm:ssZ').format("YYYY-MM-DD HH:mm");
-                        let vProduct = ActivityVariableParser.getProductFromProcessData(initialDoc);
-                        let vTradingPartnerName = ActivityVariableParser.getTradingPartnerName(initialDoc, this.cookieService.get("company_id"));
+        const initialDoc: any = ActivityVariableParser.getInitialDocument(activityVariables);
+        const response: any = ActivityVariableParser.getResponse(activityVariables);
+        const vProcess_id = initialDoc.processInstanceId;
 
-                        this.processMetadata[targetIndex] = {
-                            "processType": vProcessType,
-                            "presentableProcessType": vProcessType.replace(/[_]/gi, ' '),
-                            "process_id": vProcess_id,
-                            "start_time": vStart_time,
-                            "tradingPartner": vTradingPartnerName,
-                            "product": vProduct,
-                            "note": vNote,
-                            "processStatus": vBPStatus,
-                            "statusCode": vStatusCode,
-                            "actionStatus": vActionStatus,
-                            "content": vContent,
-                            "activityVariables": activityVariables
-                        };
-                        this.aggregatedMetadataCount++;
-                        this.processMetadata = [].concat(this.processMetadata);
-                        if (this.aggregatedMetadataCount == this.processInstanceGroup.processInstanceIDs.length) {
-                            this.processMetadataAggregated = true;
-                        }
-                    });
-                });
-            })
-            .catch(error => {
-                console.error(error);
-            });
+        const [lastActivity, processInstance] = await Promise.all([
+            this.bpeService.getLastActivityForProcessInstance(vProcess_id), 
+            this.bpeService.getProcessInstanceDetails(vProcess_id)]
+        )
+
+        return { 
+            processType: vProcessType, 
+            presentableProcessType: vProcessType.replace(/[_]/gi, " "), 
+            processId: vProcess_id, 
+            startTime: moment(lastActivity.startTime + "Z", 'YYYY-MM-DDTHH:mm:ssZ').format("YYYY-MM-DD HH:mm"), 
+            tradingPartner: ActivityVariableParser.getTradingPartnerName(initialDoc, this.cookieService.get("company_id")), 
+            product: ActivityVariableParser.getProductFromProcessData(initialDoc), 
+            note: ActivityVariableParser.getNoteFromProcessData(initialDoc), 
+            processStatus: this.getBPStatus(response), 
+            statusCode: processInstance.state, 
+            actionStatus: this.getActionStatus(vProcessType, response, ActivityVariableParser.getUserRole(activityVariables,this.processInstanceGroup.partyID) == 'buyer' ? true : false), 
+            content: initialDoc.value, 
+            activityVariables: activityVariables 
+        };
+    }
+
+    navigateToSearchDetails() {
+        const item = this.lastEvent.product
+        this.bpDataService.previousProcess = null;
+        this.router.navigate(['/simple-search/details'],
+            {
+                queryParams: {
+                    catalogueId: item.catalogueDocumentReference.id,
+                    id: item.manufacturersItemIdentification.id,
+                    showOptions: true
+                }
+            }
+        );
     }
 
     getActionStatus(processType: string, response: any, buyer: boolean): string {
@@ -100,7 +123,7 @@ export class ThreadSummaryComponent implements OnInit {
             // messages for the buyer
             if (buyer) {
                 if (processType == 'Fulfilment') {
-                    responseMessage = "Receipt Advice should be sent";
+                    responseMessage = "Send Receipt Advice";
                 } else if (processType == 'Order') {
                     responseMessage = "Waiting for Order Response";
                 } else if (processType == 'Negotiation') {
@@ -120,16 +143,16 @@ export class ThreadSummaryComponent implements OnInit {
                 if (processType == 'Fulfilment') {
                     responseMessage = "Waiting for Receipt Advice";
                 } else if (processType == 'Order') {
-                    responseMessage = "Order Response should be sent";
+                    responseMessage = "Send Order Response";
                 } else if (processType == 'Negotiation') {
-                    responseMessage = "Quotation should be sent";
+                    responseMessage = "Send Quotation";
                 } else if (processType == 'Transport_Execution_Plan') {
-                    responseMessage = "Transport Execution Plan should be sent";
+                    responseMessage = "Send Transport Execution Plan";
                 } else if (processType == 'Item_Information_Request') {
-                    responseMessage = 'Information Response should be sent';
+                    responseMessage = 'Send Information Response';
                 }
                 else if (processType == 'Ppap') {
-                    responseMessage = "Ppap Response should be sent"
+                    responseMessage = "Send Ppap Response"
                 }
             }
 
@@ -188,37 +211,6 @@ export class ThreadSummaryComponent implements OnInit {
             bpStatus = "Completed";
         }
         return bpStatus;
-    }
-
-    navigateToSearchDetails(item: Item) {
-        this.bpDataService.previousProcess = null;
-        this.router.navigate(['/simple-search/details'],
-            {
-                queryParams: {
-                    catalogueId: item.catalogueDocumentReference.id,
-                    id: item.manufacturersItemIdentification.id,
-                    showOptions: true
-                }
-            });
-    }
-
-    openBpProcessView(processInstanceIndex: number) {
-        let processMetadata: any = this.processMetadata[processInstanceIndex];
-        let role = ActivityVariableParser.getUserRole(processMetadata.activityVariables,this.processInstanceGroup.partyID);
-        this.bpDataService.setBpOptionParametersWithProcessMetadata(role, processMetadata.processType, processMetadata);
-        this.bpDataService.setRelatedGroupId(this.processInstanceGroup.id);
-        this.router.navigate(['bpe/bpe-exec'], {
-            queryParams: {
-                catalogueId: processMetadata.product.catalogueDocumentReference.id,
-                id: processMetadata.product.manufacturersItemIdentification.id,
-                pid: processMetadata.process_id
-            }
-        });
-
-    }
-
-    toggleExpanded(): void {
-        this.expanded = !this.expanded;
     }
 
     archiveGroup(): void {
