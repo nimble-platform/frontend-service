@@ -18,6 +18,7 @@ export class CredentialsFormComponent implements OnInit {
 	callback = false;
 	error_detc = false;
 	debug = myGlobals.debug;
+	pwLink = myGlobals.pw_reset_link;
 	model = new Credentials('','');
 	objToSubmit = new Credentials('','');
 	response: any;
