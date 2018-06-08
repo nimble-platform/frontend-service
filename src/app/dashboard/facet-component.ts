@@ -5,13 +5,13 @@ import {Component, EventEmitter, Input, Output} from "@angular/core";
 
 
 @Component({
-    selector: 'facet',
-    templateUrl: './facet-component.html',
-    styleUrls: ['./facet.component.css']
+    selector: "facet",
+    templateUrl: "./facet-component.html",
+    styleUrls: ["./facet-component.css"]
 })
 export class FacetComponent {
     @Input() title: string;
-    @Input() dataType: string = 'string'; // currently supports boolean and string
+    @Input() dataType: "string" | "boolean" = "string";
     @Input() booleanValue: boolean = false;
     @Input() stringValues: string[] = [];
     @Input() selectedStringValues: string[] = [];
@@ -28,5 +28,12 @@ export class FacetComponent {
         } else {
             this.selectedStringValues.splice(index, 1);
         }
+    }
+
+    noResults(): boolean {
+        if(this.loading) {
+            return false;
+        }
+        return this.dataType === "string" && (!this.stringValues || this.stringValues.length === 0);
     }
 }

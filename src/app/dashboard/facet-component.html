@@ -1,38 +1,40 @@
-<ng-container *ngIf="(dataType == 'string' && stringValues && stringValues.length > 0) || dataType != 'string' || loading">
-    <div class="card facet">
-        <div class="card-header d-flex">
-            <div>{{title}}</div>
+<div class="card facet">
+    <!-- Header -->
+    <div class="card-header d-flex">
+        <div>{{title}}</div>
 
-            <div class="ml-auto" ng-class="{ clickable: !loading, disabled: loading }" (click)="triggerCriteriaChanged.next()">
-                <i class="fa fa-refresh" ></i>
-            </div>
+        <div class="ml-auto" ng-class="{ clickable: !loading, disabled: loading }" (click)="triggerCriteriaChanged.next()">
+            <i class="fa fa-refresh"></i>
         </div>
-
-        <!-- loading -->
-        <ng-container *ngIf="loading">
-            <div>
-                <img src="assets/form_loader.gif"/>
-            </div>
-        </ng-container>
-
-        <!-- boolean data type -->
-        <ng-container *ngIf="dataType == 'boolean' && !loading">
-            <div (click)="booleanValue = !booleanValue; booleanValueChanged.next(booleanValue);">
-                <input type="checkbox"
-                       class="m-2"
-                       [checked]="booleanValue">
-            </div>
-        </ng-container>
-
-        <!-- string data type -->
-        <ng-container *ngIf="dataType == 'string' && !loading">
-            <div *ngFor="let value of stringValues"
-                 (click)="selectStringValue(value)">
-                <input type="checkbox"
-                       class="m-2"
-                       [checked]="selectedStringValues.indexOf(value) != -1">
-                <span>{{value}}</span>
-            </div>
-        </ng-container>
     </div>
-</ng-container>
+
+    <!-- Loading -->
+    <div *ngIf="loading">
+        <img src="assets/form_loader.gif"/>
+    </div>
+
+    <!-- No results -->
+    <div *ngIf="noResults()">
+        No results
+    </div>
+    
+    <!-- boolean data type -->
+    <div *ngIf="dataType == 'boolean' && !loading" class="filter-option"
+        (click)="booleanValue = !booleanValue; booleanValueChanged.next(booleanValue);">
+        <input type="checkbox"
+                class="m-2"
+                [checked]="booleanValue">
+    </div>
+
+    <!-- string data type -->
+    <ng-container *ngIf="dataType == 'string' && !loading">
+        <div *ngFor="let value of stringValues"
+            class="filter-option"
+            (click)="selectStringValue(value)">
+            <input type="checkbox"
+                    class="m-2"
+                    [checked]="selectedStringValues.indexOf(value) != -1">
+            <span>{{value}}</span>
+        </div>
+    </ng-container>
+</div>
