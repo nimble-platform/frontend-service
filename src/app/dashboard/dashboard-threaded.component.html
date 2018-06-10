@@ -1,11 +1,11 @@
 <!-- Welcome jumbotron, no company -->
 <div class="row" *ngIf="!user.hasCompany">
     <div class="col-12">
-        <h2>
+        <h4 class="text-center">
             <span i18n>Welcome to the</span> NIMBLE
             <span i18n>platform,</span> {{user.fullName}}!
-        </h2>
-        <p>
+        </h4>
+        <p class="text-center">
             <i>Collaborative Network for Industry, Manufacturing, Business and Logistics in Europe.</i>
         </p>
     </div>
@@ -20,18 +20,16 @@
 <!-- Welcome jumbotron, no company -->
 <div class="row" *ngIf="!user.hasCompany">
     <div class="col-12">
-        <h4 class="space-before">Welcome to the Nimble Platform</h4>
         <p>You are not yet linked to a company.</p>
         <p>You will not be able to make purchases or create a catalogue without a company.</p>
-        <a class="btn btn-primary btn-lg" href="#/user-mgmt/company-registration" role="button">Register a Company</a>
+        <p class="text-center"><a class="btn btn-primary btn-lg" href="#/user-mgmt/company-registration" role="button">Register a Company</a></p>
     </div>
 </div>
 
 <!-- Welcome jumbotron, company waiting for approval -->
 <div class="row" *ngIf="user.roles.indexOf('initial_representative')!= -1 && user.roles.indexOf('legal_representative') == -1">
-    <div class="col-12">
+    <div class="col-12 welcome-message">
         <h4 class="space-before">Your company is now registered</h4>
-        <p>TODO better text here...</p>
         <p>You can start publishing your catalogue.</p>
         <p>In order to execute business processes your company needs to be verified by an administrator - please stay tuned.</p>
         <p>If you are not being verified with 24h, please contact our support nimble-support@salzburgresearch.at.</p>
@@ -73,10 +71,26 @@
     <div *ngIf="queryParameters.tab === TABS.WELCOME" class="row">
         <div class="col-12">
             <h4 class="space-before">Welcome to the Nimble Platform</h4>
-            <p>Looks like you are new here.</p>
-            <p>This is your dashboard, in this page you will see an overview of your purchases, sales, and the products you have in your catalogue.</p>
-            <p>If you want to buy products, you can start searching: TODO include button.</p>
-            <p>If you want to sell products, you can publish products: TODO include button.</p>
+            <p>
+                Looks like you are new here.<br/>
+                This is your dashboard, it shows:
+            </p>
+            <ul>
+                <li><strong>In the purchases tab:</strong> the history of all your purchases</li>
+                <li><strong>In the sales tab:</strong> the history of all your sales</li>
+                <li><strong>In the catalogue tab:</strong> the list of all your purchases</li>
+            </ul>
+            <div class="row text-center">
+                <div class="col-6">
+                    <p>If you are looking to buy Products</p>
+                    <a class="btn btn-primary btn-lg" href="#/simple-search" role="button">Search for Products</a>
+                </div>
+
+                <div class="col-6">
+                    <p>If you are looking to sell Products</p>
+                    <a class="btn btn-primary btn-lg" href="#/catalogue/categorysearch" role="button">Publish a Product</a>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -93,8 +107,8 @@
                             [disabled]="!isToggleArchivedButtonEnabled()">
                             {{getToggleArchivedButtonText()}}
                         </button>
-                        <h4 class="space-before">No sales</h4>
-                        <p>TODO: add text/button</p>
+                        <h4 class="space-before text-center">You do not have any sales yet</h4>
+                        <p class="space-before">When a customer enquires about your published products, you will see the others here.</p>
                     </ng-container>
                     <!-- Purchases -->
                     <ng-container *ngIf="queryParameters.tab === TABS.PURCHASES">
@@ -103,8 +117,10 @@
                             [disabled]="!isToggleArchivedButtonEnabled()">
                             {{getToggleArchivedButtonText()}}
                         </button>
-                        <h4 class="space-before">No purchases</h4>
-                        <p>TODO: add text/button</p>
+                        <h4 class="space-before text-center">You have not bought anything yet</h4>
+                        <p class="space-before text-center">
+                            <a class="btn btn-primary btn-lg" href="#/simple-search" role="button">Search for Products</a>
+                        </p>
                     </ng-container>
                 </div>
             </div>
@@ -156,14 +172,9 @@
                 
                         <!-- Results -->
                         <div *ngIf="results.orders" class="col-10">
-                            <h4 *ngIf="results.orders.length === 0">No purchases</h4>
+                            <h4 *ngIf="results.orders.length === 0">No orders.</h4>
                             <thread-summary *ngFor="let order of results.orders" [processInstanceGroup]="order" (threadStateUpdated)="onOrderRemovedFromView()">
                             </thread-summary>
-                        </div>
-
-                        <!-- Loading -->
-                        <div *ngIf="!results.orders" class="col-10">
-                            <p>Loading...</p>
                         </div>
                     </div>
 

@@ -305,9 +305,6 @@ export class DashboardThreadedComponent implements OnInit {
             return true;
         }
 
-        console.log("isOrdersFiltersQueryNeeded", this.query, query, this.query.archived !== query.archived 
-        || this.query.collaborationRole !== query.collaborationRole)
-
         // Do not recompute the filters on filter changes.
         return this.query.archived !== query.archived 
             || this.query.collaborationRole !== query.collaborationRole;
