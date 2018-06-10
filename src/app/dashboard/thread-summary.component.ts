@@ -239,7 +239,7 @@ export class ThreadSummaryComponent implements OnInit {
     }
 
     private getStatus(processState: "EXTERNALLY_TERMINATED" | "COMPLETED" | "ACTIVE", 
-    processType: ProcessType, response: any, buyer: boolean): ThreadEventStatus {
+            processType: ProcessType, response: any, buyer: boolean): ThreadEventStatus {
         switch(processState) {
             case "COMPLETED":
                 return "DONE";

@@ -13,3 +13,7 @@
     padding-left: .4rem;
     padding-right: .2rem;
 }
+
+.thread-entry-row button {
+    margin-bottom: 0.5rem;
+}

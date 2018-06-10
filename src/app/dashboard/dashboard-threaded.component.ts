@@ -65,7 +65,7 @@ export class DashboardThreadedComponent implements OnInit {
     }
 
     onToggleArchived(): void {
-        this.updateQueryParameters({ archived: !this.queryParameters.archived });
+        this.updateQueryParameters({ arch: !this.queryParameters.arch });
     }
 
     onPageChange(): void {
@@ -81,8 +81,11 @@ export class DashboardThreadedComponent implements OnInit {
     }
 
     onOrderRemovedFromView(): void {
+        this.filterSet = null;
         if(this.results.resultCount === 1 && this.query.page > 1) {
-            this.updateQueryParameters({ pg: this.queryParameters.pg - 1 })
+            this.updateQueryParameters({ pg: this.queryParameters.pg - 1 });
+        } else {
+            this.updateStateFromQueryParameters(this.queryParameters);
         }
     }
     
@@ -155,7 +158,7 @@ export class DashboardThreadedComponent implements OnInit {
         // this.user.showWelcomeTab = this.cookieService.get("welcome_tab_closed") !== "true"
     }
 
-    private updateStateFromQueryParameters(params: Params): void {
+    private updateStateFromQueryParameters(params: Params | DashboardQueryParameters): void {
         this.queryParameters = new DashboardQueryParameters(
             this.sanitizeTab(params["tab"]),    // tab
             params["arch"] === "true",          // archived
@@ -293,9 +296,6 @@ export class DashboardThreadedComponent implements OnInit {
     }
 
     private isOrdersQueryNeeded(query: DashboardOrdersQuery): boolean {
-        if(query.collaborationRole) {
-            // TODO
-        }
         return true;
     }
 
@@ -312,7 +312,7 @@ export class DashboardThreadedComponent implements OnInit {
 
     private computeOrderQueryFromQueryParams(): DashboardOrdersQuery {
         return new DashboardOrdersQuery(
-            this.queryParameters.archived,
+            this.queryParameters.arch,
             this.queryParameters.tab === TABS.PURCHASES ? "BUYER" : "SELLER",
             this.queryParameters.pg,
             this.parseArray(this.queryParameters.prd),

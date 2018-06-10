@@ -6,7 +6,7 @@ import { TABS } from "../constants";
 export class DashboardQueryParameters {
     constructor(
         public tab: string = null,
-        public archived: boolean = false,
+        public arch: boolean = false,
         public pg: number = 1,
         public prd: string = "",
         public cat: string = "",
