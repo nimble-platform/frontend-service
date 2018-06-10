@@ -204,6 +204,7 @@ export class UBLModelUtils {
 
         rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure = order.orderLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure;
         rfq.requestForQuotationLine[0].lineItem.deliveryTerms.deliveryLocation.address = order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address;
+        rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.totalTransportHandlingUnitQuantity = order.orderLine[0].lineItem.quantity;
         rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.originAddress = order.orderLine[0].lineItem.item.manufacturerParty.postalAddress;
         rfq.requestForQuotationLine[0].lineItem.item.transportationServiceDetails = catalogueLine.goodsItem.item.transportationServiceDetails;
         rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.goodsItem[0].item.name = order.orderLine[0].lineItem.item.name;
@@ -221,12 +222,14 @@ export class UBLModelUtils {
         return rfq;
     }
 
-    public static createRequestForQuotationWithIir(iir: ItemInformationResponse, fromAddress: Address, toAddress: Address): RequestForQuotation {
+    public static createRequestForQuotationWithIir(iir: ItemInformationResponse, fromAddress: Address, toAddress: Address, orderMetadata: any): RequestForQuotation {
         let rfq: RequestForQuotation = this.createRequestForQuotation();
         rfq.requestForQuotationLine[0].lineItem.item = iir.item[0];
         if(iir.item[0].transportationServiceDetails != null) {
             rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.originAddress = fromAddress;
             rfq.requestForQuotationLine[0].lineItem.deliveryTerms.deliveryLocation.address = toAddress;
+            rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.goodsItem[0].item.name = orderMetadata.content.orderLine[0].lineItem.item.name;
+            rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.totalTransportHandlingUnitQuantity = orderMetadata.content.orderLine[0].lineItem.quantity;
         }
         this.removeHjidFieldsFromObject(rfq);
         return rfq;
@@ -287,13 +290,14 @@ export class UBLModelUtils {
         return transportExecutionPlanRequest
     }
 
-    public static createTransportExecutionPlanRequestWithIir(iir: ItemInformationResponse, fromAddress: Address, toAddress:Address): TransportExecutionPlanRequest {
+    public static createTransportExecutionPlanRequestWithIir(iir: ItemInformationResponse, fromAddress: Address, toAddress:Address, orderMetadata: any): TransportExecutionPlanRequest {
         let transportExecutionPlanRequest:TransportExecutionPlanRequest = new TransportExecutionPlanRequest();
         transportExecutionPlanRequest.id = this.generateUUID();
         transportExecutionPlanRequest.consignment[0].consolidatedShipment.push(new Shipment());
         transportExecutionPlanRequest.mainTransportationService = iir.item[0];
         transportExecutionPlanRequest.toLocation.address = toAddress;
         transportExecutionPlanRequest.fromLocation.address = fromAddress;
+        transportExecutionPlanRequest.consignment[0].consolidatedShipment[0].goodsItem[0].item.name = orderMetadata.content.orderLine[0].lineItem.item.name;
         this.removeHjidFieldsFromObject(transportExecutionPlanRequest);
         return transportExecutionPlanRequest;
     }
@@ -304,9 +308,10 @@ export class UBLModelUtils {
         transportExecutionPlanRequest.mainTransportationService = quotation.quotationLine[0].lineItem.item;
         transportExecutionPlanRequest.fromLocation.address = quotation.quotationLine[0].lineItem.delivery[0].shipment.originAddress;
         transportExecutionPlanRequest.toLocation.address = quotation.quotationLine[0].lineItem.deliveryTerms.deliveryLocation.address;
-        let shipment = new Shipment();
-        shipment.goodsItem[0].item = quotation.quotationLine[0].lineItem.item;
-        transportExecutionPlanRequest.consignment[0].consolidatedShipment.push(shipment);
+        transportExecutionPlanRequest.consignment[0].consolidatedShipment.push(quotation.quotationLine[0].lineItem.delivery[0].shipment);
+        transportExecutionPlanRequest.consignment[0].grossVolumeMeasure = quotation.quotationLine[0].lineItem.delivery[0].shipment.consignment[0].grossVolumeMeasure;
+        transportExecutionPlanRequest.consignment[0].grossWeightMeasure = quotation.quotationLine[0].lineItem.delivery[0].shipment.consignment[0].grossWeightMeasure;
+
         this.removeHjidFieldsFromObject(transportExecutionPlanRequest);
         return transportExecutionPlanRequest
     }

@@ -9,9 +9,9 @@ import {Item} from "../catalogue/model/publish/item";
 import {CallStatus} from "../common/call-status";
 import {CookieService} from "ng2-cookies";
 import {DataChannelService} from "../data-channel/data-channel.service";
-import {AddressCacheService} from "../bpe/bp-view/address-cache-service";
 import {UserService} from "../user-mgmt/user.service";
 import {UBLModelUtils} from "../catalogue/model/ubl-model-utils";
+import {PrecedingBPDataService} from "../bpe/bp-view/preceding-bp-data-service";
 
 /**
  * Created by suat on 12-Mar-18.
@@ -40,7 +40,7 @@ export class ThreadSummaryComponent implements OnInit {
                 private userService: UserService,
                 private cookieService: CookieService,
                 private dataChannelService: DataChannelService,
-                private addressCacheService: AddressCacheService,
+                private precedingBPDataService: PrecedingBPDataService,
                 private router: Router) {
     }
 
@@ -260,8 +260,9 @@ export class ThreadSummaryComponent implements OnInit {
             if(metadata.processType == 'Order') {
                 let userId = this.cookieService.get('user_id');
                 this.userService.getSettings(userId).then(settings => {
-                    this.addressCacheService.toAddress = metadata.content.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address;
-                    this.addressCacheService.fromAddress = UBLModelUtils.mapAddress(settings.address);
+                    this.precedingBPDataService.toAddress = JSON.parse(JSON.stringify(metadata.content.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address));
+                    this.precedingBPDataService.fromAddress = JSON.parse(JSON.stringify(UBLModelUtils.mapAddress(settings.address)));
+                    this.precedingBPDataService.orderMetadata = metadata;
                 });
                 break;
             }

@@ -7,9 +7,11 @@ import {Address} from "../../catalogue/model/publish/address";
  * Created by suat on 08-Jun-18.
  */
 @Injectable()
-export class AddressCacheService{
+export class PrecedingBPDataService{
     // to, delivery address
     toAddress: Address;
     // from address
     fromAddress: Address;
+    // last order process metadata between buyer and seller
+    orderMetadata: any;
 }

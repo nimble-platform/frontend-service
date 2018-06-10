@@ -21,7 +21,9 @@ import {TransportExecutionPlan} from "../../catalogue/model/publish/transport-ex
 import {SearchContextService} from "../../simple-search/search-context.service";
 import {ItemInformationRequest} from "../../catalogue/model/publish/item-information-request";
 import {ItemInformationResponse} from "../../catalogue/model/publish/item-information-response";
-import {AddressCacheService} from "./address-cache-service";
+import {CookieService} from "ng2-cookies";
+import {UserService} from "../../user-mgmt/user.service";
+import {PrecedingBPDataService} from "./preceding-bp-data-service";
 /**
  * Created by suat on 20-Sep-17.
  */
@@ -64,7 +66,9 @@ export class BPDataService{
     precedingProcessId: string;
 
     constructor(private searchContextService: SearchContextService,
-                private addressCacheService: AddressCacheService) {
+                private precedingBPDataService: PrecedingBPDataService,
+                private userService: UserService,
+                private cookieService: CookieService) {
     }
 
     setCatalogueLines(catalogueLines: CatalogueLine[]): void {
@@ -212,14 +216,25 @@ export class BPDataService{
         this.requestForQuotation = UBLModelUtils.createRequestForQuotation();
         this.requestForQuotation.requestForQuotationLine[0].lineItem.item = this.modifiedCatalogueLines[0].goodsItem.item;
         this.requestForQuotation.requestForQuotationLine[0].lineItem.lineReference = [new LineReference(this.modifiedCatalogueLines[0].id)];
+        this.requestForQuotation.requestForQuotationLine[0].lineItem.price = this.modifiedCatalogueLines[0].requiredItemLocationQuantity.price;
         this.selectFirstValuesAmongAlternatives();
+
+        let userId = this.cookieService.get('user_id');
+        this.userService.getSettings(userId).then(settings => {
+            this.requestForQuotation.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.value = settings.deliveryTerms.estimatedDeliveryTime;
+            this.requestForQuotation.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.unitCode = 'days';
+        });
     }
 
     initRfqWithIir(): void {
         let copyIir:ItemInformationResponse = JSON.parse(JSON.stringify(this.itemInformationResponse));
         this.resetBpData();
         this.modifiedCatalogueLines = JSON.parse(JSON.stringify(this.catalogueLines));
-        this.requestForQuotation = UBLModelUtils.createRequestForQuotationWithIir(copyIir, this.addressCacheService.fromAddress, this.addressCacheService.toAddress);
+        this.requestForQuotation = UBLModelUtils.createRequestForQuotationWithIir(
+            copyIir,
+            this.precedingBPDataService.fromAddress,
+            this.precedingBPDataService.toAddress,
+            this.precedingBPDataService.orderMetadata);
     }
 
     initPpap(documents:string[]):void{
@@ -237,7 +252,14 @@ export class BPDataService{
         this.order = UBLModelUtils.createOrder();
         this.order.orderLine[0].lineItem.item = this.modifiedCatalogueLines[0].goodsItem.item;
         this.order.orderLine[0].lineItem.lineReference = [new LineReference(this.modifiedCatalogueLines[0].id)];
+        this.order.orderLine[0].lineItem.price = this.modifiedCatalogueLines[0].requiredItemLocationQuantity.price;
         this.selectFirstValuesAmongAlternatives();
+
+        let userId = this.cookieService.get('user_id');
+        this.userService.getSettings(userId).then(settings => {
+            this.order.orderLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.value = settings.deliveryTerms.estimatedDeliveryTime;
+            this.order.orderLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.unitCode = 'days';
+        });
     }
 
     initItemInformationRequest():void {
@@ -302,7 +324,7 @@ export class BPDataService{
         let copyIir:ItemInformationResponse = JSON.parse(JSON.stringify(this.itemInformationResponse));
         this.resetBpData();
         this.modifiedCatalogueLines = JSON.parse(JSON.stringify(this.catalogueLines));
-        this.transportExecutionPlanRequest = UBLModelUtils.createTransportExecutionPlanRequestWithIir(copyIir, this.addressCacheService.fromAddress, this.addressCacheService.toAddress);
+        this.transportExecutionPlanRequest = UBLModelUtils.createTransportExecutionPlanRequestWithIir(copyIir, this.precedingBPDataService.fromAddress, this.precedingBPDataService.toAddress, this.precedingBPDataService.orderMetadata);
     }
 
     initTransportExecutionPlanRequestWithQuotation() {

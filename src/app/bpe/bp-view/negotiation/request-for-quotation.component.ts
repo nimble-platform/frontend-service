@@ -12,7 +12,7 @@ import {CallStatus} from "../../../common/call-status";
 import {UserService} from "../../../user-mgmt/user.service";
 import {BPEService} from "../../bpe.service";
 import {Router} from "@angular/router";
-import {AddressCacheService} from "../address-cache-service";
+import {PrecedingBPDataService} from "../preceding-bp-data-service";
 
 @Component({
     selector: 'request-for-quotation',
@@ -29,7 +29,6 @@ export class RequestForQuotationComponent {
     constructor(private bpeService:BPEService,
                 public bpDataService:BPDataService,
                 private userService:UserService,
-                private addressCacheService: AddressCacheService,
                 private cookieService: CookieService,
                 private router: Router) {
     }
@@ -38,10 +37,6 @@ export class RequestForQuotationComponent {
         this.submitted = true;
         this.callStatus.submit();
         let rfq:RequestForQuotation = JSON.parse(JSON.stringify(this.bpDataService.requestForQuotation));
-
-        // get addresses from the address cache
-        rfq.requestForQuotationLine[0].lineItem.deliveryTerms.deliveryLocation.address = this.addressCacheService.toAddress;
-        rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.originAddress = this.addressCacheService.fromAddress;
 
         // final check on the rfq
         rfq.requestForQuotationLine[0].lineItem.item = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;

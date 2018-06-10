@@ -24,7 +24,7 @@ import { UserService } from './user-mgmt/user.service';
 import { CredentialsService } from './user-mgmt/credentials.service';
 import { DataChannelService } from "./data-channel/data-channel.service";
 import { UnitService } from './common/unit-service';
-import {AddressCacheService} from "./bpe/bp-view/address-cache-service";
+import {PrecedingBPDataService} from "./bpe/bp-view/preceding-bp-data-service";
 
 @NgModule({
     imports: [
@@ -55,7 +55,7 @@ import {AddressCacheService} from "./bpe/bp-view/address-cache-service";
 		UserService,
 		CredentialsService,
         UnitService,
-        AddressCacheService
+        PrecedingBPDataService
     ],
     bootstrap: [
         AppComponent
