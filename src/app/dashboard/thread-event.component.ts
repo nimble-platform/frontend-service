@@ -35,18 +35,4 @@ export class ThreadEventComponent implements OnInit {
             }
         });
     }
-
-    navigateToSearchDetails() {
-        const item = this.event.product
-        this.bpDataService.previousProcess = null;
-        this.router.navigate(['/simple-search/details'],
-            {
-                queryParams: {
-                    catalogueId: item.catalogueDocumentReference.id,
-                    id: item.manufacturersItemIdentification.id,
-                    showOptions: true
-                }
-            }
-        );
-    }
 }
