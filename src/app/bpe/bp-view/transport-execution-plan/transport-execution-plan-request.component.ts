@@ -15,6 +15,7 @@ import {CallStatus} from "../../../common/call-status";
 import {Order} from "../../../catalogue/model/publish/order";
 import {Router} from "@angular/router";
 import {TransportExecutionPlanRequest} from "../../../catalogue/model/publish/transport-execution-plan-request";
+import {AddressCacheService} from "../address-cache-service";
 /**
  * Created by suat on 20-Sep-17.
  */
@@ -35,6 +36,7 @@ export class TransportExecutionPlanRequestComponent implements OnInit {
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
                 private userService: UserService,
+                private addressCacheService: AddressCacheService,
                 private cookieService: CookieService,
                 private router:Router) {
     }
@@ -53,6 +55,10 @@ export class TransportExecutionPlanRequestComponent implements OnInit {
         this.submitted = true;
         this.callStatus.submit();
         let transportationExecutionPlanRequest:TransportExecutionPlanRequest = JSON.parse(JSON.stringify(this.bpDataService.transportExecutionPlanRequest));
+
+        // get addresses from the address cache
+        transportationExecutionPlanRequest.toLocation.address = this.addressCacheService.toAddress;
+        transportationExecutionPlanRequest.fromLocation.address = this.addressCacheService.fromAddress;
 
         // final check on the transportationExecutionPlanRequest
         transportationExecutionPlanRequest.mainTransportationService = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;

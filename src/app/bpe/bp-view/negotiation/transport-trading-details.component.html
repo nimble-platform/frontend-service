@@ -46,26 +46,26 @@
     </ng-container>
 
     <!-- Request delivery period -->
-    <quantity-view [presentationMode]="presentationMode"
+    <!--<quantity-view [presentationMode]="presentationMode"
                    [propName]="'Requested Delivery Period'"
                    [type]="'time_quantity'"
                    [definition]="'The period requested for delivery.It starts after the order confirmation.For example,Quantity:2,Unit:weeks'"
                    [quantity]="[lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure]">
-    </quantity-view>
+    </quantity-view>-->
 
     <!-- Start location -->
     <detailed-address-view [propName]="'From Location'"
-                   [fetchDefaultDeliveryAddress]="fetchDefaultDeliveryAddress"
+                   [fetchDefaultDeliveryAddress]="false"
                    [presentationMode]="presentationMode"
                    [deliveryAddress]="lineItem.delivery[0].shipment.originAddress">
     </detailed-address-view>
 
     <!-- Delivery Location -->
     <detailed-address-view [propName]="'To Location'"
-                   [fetchDefaultDeliveryAddress]="fetchDefaultDeliveryAddress"
+                   [fetchDefaultDeliveryAddress]="false"
                    [presentationMode]="presentationMode"
                    [deliveryAddress]="lineItem.deliveryTerms.deliveryLocation.address">
-    </detailed-address-view>,
+    </detailed-address-view>
 
     <!-- Special terms -->
     <value-view [presentationMode]="presentationMode"

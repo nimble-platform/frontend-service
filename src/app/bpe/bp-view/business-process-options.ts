@@ -96,9 +96,15 @@ export class BusinessProcessOptions implements OnInit {
             this.selectedTabChanged.next();
         }
         else if(this.nextProcess == "Negotiation"){
-            this.bpDataService.resetBpData();
-            this.bpDataService.initRfq();
-            this.bpDataService.setBpOptionParameters(this.userRole, 'Negotiation',null);
+            if(this.processName == "Item_Information_Request") {
+                this.bpDataService.initRfqWithIir();
+                this.bpDataService.setBpOptionParameters(this.userRole, 'Negotiation', "Item_Information_Request");
+
+            } else {
+                this.bpDataService.resetBpData();
+                this.bpDataService.initRfq();
+                this.bpDataService.setBpOptionParameters(this.userRole, 'Negotiation', null);
+            }
         }
         else if(this.nextProcess == "Item Information Request"){
             this.bpDataService.resetBpData();
@@ -121,10 +127,16 @@ export class BusinessProcessOptions implements OnInit {
             }
         }
         else if(this.nextProcess == "Transport Execution Plan"){
-            this.bpDataService.resetBpData();
-            this.bpDataService.initTransportExecutionPlanRequest();
-            this.bpDataService.setBpOptionParameters(this.userRole,'Transport_Execution_Plan',null);
-            this.selectedTabChanged.next();
+            if(this.processName == "Item_Information_Request") {
+                this.bpDataService.initTransportExecutionPlanRequestWithIir();
+                this.bpDataService.setBpOptionParameters(this.userRole, 'Transport_Execution_Plan', "Item_Information_Request");
+
+            } else {
+                this.bpDataService.resetBpData();
+                this.bpDataService.initTransportExecutionPlanRequest();
+                this.bpDataService.setBpOptionParameters(this.userRole, 'Transport_Execution_Plan', null);
+                this.selectedTabChanged.next();
+            }
         }
         else if(this.nextProcess == "Initiate Transport Execution Plan"){
             this.bpDataService.initTransportExecutionPlanRequestWithQuotation();

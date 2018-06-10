@@ -5,11 +5,13 @@ import {BPDataService} from "../bpe/bp-view/bp-data-service";
 import {BPEService} from "../bpe/bpe.service";
 import {ActivityVariableParser} from "../bpe/bp-view/activity-variable-parser";
 import * as moment from "moment";
-import * as constants from "../constants";
 import {Item} from "../catalogue/model/publish/item";
 import {CallStatus} from "../common/call-status";
 import {CookieService} from "ng2-cookies";
 import {DataChannelService} from "../data-channel/data-channel.service";
+import {AddressCacheService} from "../bpe/bp-view/address-cache-service";
+import {UserService} from "../user-mgmt/user.service";
+import {UBLModelUtils} from "../catalogue/model/ubl-model-utils";
 
 /**
  * Created by suat on 12-Mar-18.
@@ -35,8 +37,10 @@ export class ThreadSummaryComponent implements OnInit {
 
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
+                private userService: UserService,
                 private cookieService: CookieService,
                 private dataChannelService: DataChannelService,
+                private addressCacheService: AddressCacheService,
                 private router: Router) {
     }
 
@@ -239,7 +243,29 @@ export class ThreadSummaryComponent implements OnInit {
                 pid: processMetadata.process_id
             }
         });
+        this.initializeAddressValues(processInstanceIndex);
+    }
 
+    initializeAddressValues(processMetadataIndex: number): void {
+        let processMetadata = this.processMetadata[processMetadataIndex];
+        // cache the address only if the the process is related to a logistics service
+        // and the current process is item information request
+        if(processMetadata != 'Item_Information_Request' && processMetadata.product.transportationServiceDetails == null) {
+            return;
+        }
+
+        // check preceeding processes until finding an order to find the initial customer's address
+        for(let i=processMetadataIndex-1; i>=0; i--) {
+            let metadata = this.processMetadata[i];
+            if(metadata.processType == 'Order') {
+                let userId = this.cookieService.get('user_id');
+                this.userService.getSettings(userId).then(settings => {
+                    this.addressCacheService.toAddress = metadata.content.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address;
+                    this.addressCacheService.fromAddress = UBLModelUtils.mapAddress(settings.address);
+                });
+                break;
+            }
+        }
     }
 
     toggleExpanded(): void {

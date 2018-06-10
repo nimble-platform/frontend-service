@@ -21,6 +21,7 @@ import {TransportExecutionPlan} from "../../catalogue/model/publish/transport-ex
 import {SearchContextService} from "../../simple-search/search-context.service";
 import {ItemInformationRequest} from "../../catalogue/model/publish/item-information-request";
 import {ItemInformationResponse} from "../../catalogue/model/publish/item-information-response";
+import {AddressCacheService} from "./address-cache-service";
 /**
  * Created by suat on 20-Sep-17.
  */
@@ -62,7 +63,8 @@ export class BPDataService{
     private relatedGroupId: string;
     precedingProcessId: string;
 
-    constructor(public searchContextService: SearchContextService) {
+    constructor(private searchContextService: SearchContextService,
+                private addressCacheService: AddressCacheService) {
     }
 
     setCatalogueLines(catalogueLines: CatalogueLine[]): void {
@@ -213,6 +215,13 @@ export class BPDataService{
         this.selectFirstValuesAmongAlternatives();
     }
 
+    initRfqWithIir(): void {
+        let copyIir:ItemInformationResponse = JSON.parse(JSON.stringify(this.itemInformationResponse));
+        this.resetBpData();
+        this.modifiedCatalogueLines = JSON.parse(JSON.stringify(this.catalogueLines));
+        this.requestForQuotation = UBLModelUtils.createRequestForQuotationWithIir(copyIir, this.addressCacheService.fromAddress, this.addressCacheService.toAddress);
+    }
+
     initPpap(documents:string[]):void{
         this.modifiedCatalogueLines = JSON.parse(JSON.stringify(this.catalogueLines));
         this.ppap = UBLModelUtils.createPpap(documents);
@@ -287,6 +296,13 @@ export class BPDataService{
         this.requestForQuotation = UBLModelUtils.createRequestForQuotationWithOrder(JSON.parse(JSON.stringify(this.order)),this.modifiedCatalogueLines[0]);
 
         this.selectFirstValuesAmongAlternatives();
+    }
+
+    initTransportExecutionPlanRequestWithIir(): void {
+        let copyIir:ItemInformationResponse = JSON.parse(JSON.stringify(this.itemInformationResponse));
+        this.resetBpData();
+        this.modifiedCatalogueLines = JSON.parse(JSON.stringify(this.catalogueLines));
+        this.transportExecutionPlanRequest = UBLModelUtils.createTransportExecutionPlanRequestWithIir(copyIir, this.addressCacheService.fromAddress, this.addressCacheService.toAddress);
     }
 
     initTransportExecutionPlanRequestWithQuotation() {
