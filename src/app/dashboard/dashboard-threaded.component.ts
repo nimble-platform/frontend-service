@@ -3,11 +3,13 @@ import { AppComponent } from "../app.component";
 import { CookieService } from "ng2-cookies";
 import { BPEService } from "../bpe/bpe.service";
 import { ActivatedRoute, Router, Params } from "@angular/router";
-import { ProcessInstanceGroup } from "../bpe/model/process-instance-group";
-import { TAB_SALES, TAB_PURCHASES, TAB_CATALOGUE, TAB_WELCOME } from "./constants";
+import { TABS, PAGE_SIZE } from "./constants";
 import { ProcessInstanceGroupFilter } from "../bpe/model/process-instance-group-filter";
 import { CallStatus } from "../common/call-status";
-import { CollaborationRole } from "../bpe/model/collaboration-role";
+import { DashboardOrdersQuery } from "./model/dashboard-orders-query";
+import { DashboardOrdersQueryResults } from "./model/dashboard-orders-query-results";
+import { DashboardQueryParameters } from "./model/dashboard-query-parameters";
+import { DashboardUser } from "./model/dashboard-user";
 
 @Component({
     selector: "dashboard-threaded",
@@ -15,35 +17,20 @@ import { CollaborationRole } from "../bpe/model/collaboration-role";
     styleUrls: ["./dashboard-threaded.component.css"]
 })
 export class DashboardThreadedComponent implements OnInit {
-    fullName = "";
-    hasCompany = false;
-    roles = [];
-    showWelcomeTab = true;
 
-    ///////////////////// url parameters //////////////////////////
-    qp_archived: boolean = false;
-    qp_tab: string;
-    qp_page: number = 1;
-    qp_prd: string;
-    qp_cat: string;
-    qp_prt: string;
-    ///////////////////// end of url parameters //////////////////////////
+    user: DashboardUser;
 
-    limit: number = 5;
-    pageSize: number = 5;
-    size: number;
-
-    groups: ProcessInstanceGroup[] = [];
-    filterSet: ProcessInstanceGroupFilter = new ProcessInstanceGroupFilter();
+    filterSet: ProcessInstanceGroupFilter;
     modifiedFilterSet: ProcessInstanceGroupFilter = new ProcessInstanceGroupFilter();
-
-    TAB_SALES: string = TAB_SALES;
-    TAB_PURCHASES: string = TAB_PURCHASES;
-    TAB_CATALOGUE: string = TAB_CATALOGUE;
-    TAB_WELCOME: string = TAB_WELCOME;
-
     filterQueryStatus: CallStatus = new CallStatus();
     filtersLoading: boolean = false;
+
+    queryParameters: DashboardQueryParameters = new DashboardQueryParameters();
+
+    query: DashboardOrdersQuery = new DashboardOrdersQuery();
+    results: DashboardOrdersQueryResults = new DashboardOrdersQueryResults();
+
+    TABS = TABS;
 
     constructor(
         private cookieService: CookieService,
@@ -54,72 +41,100 @@ export class DashboardThreadedComponent implements OnInit {
     ) {}
 
     ngOnInit() {
-        // TODO compute if the welcome tab should be closed
-        this.computeDataFromCookies();
-
-        // handle query parameters
-        this.route.queryParams.subscribe(params => this.computeQueryParameters(params));
+        this.computeUserFromCookies()
+        this.route.queryParams.subscribe(params => this.updateStateFromQueryParameters(params));
     }
 
-    private computeQueryParameters(params: Params): void {
-            // handle simple parameters
-            this.qp_archived = params["arch"] === "true";
-            this.qp_tab = this.sanitizeTab(params["tab"]);
-            this.qp_page = this.parsePage(params["pg"])
+    /*
+     * Handlers called from the template.
+     */
 
-            switch(this.qp_tab) {
-            case TAB_PURCHASES:
-            case TAB_SALES:
-                const passedProductsArray = this.parseArray(params["prd"]);
-                const passedCategoriesArray = this.parseArray(params["cat"]);
-                const passedPartnersArray = this.parseArray(params["prt"]);
-                this.retrieveProcessInstanceGroups(passedProductsArray, passedCategoriesArray, passedPartnersArray);
-                return;
-            default:
-                // nothing
-            }
+    onChangeTab(event: any): void {
+        event.preventDefault();
+        this.updateQueryParameters({ tab: event.target.id });
     }
 
-    private parseArray(param: string): string[] {
-        return param ? param.split(",") : []
-    }
-
-    private parsePage(page: string): number {
-        if (page == null) {
-            return this.qp_page || 0
+    onCloseWelcomeTab(event: any): void {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        this.user.showWelcomeTab = false;
+        if(this.queryParameters.tab === TABS.WELCOME) {
+            // TODO actually select the relevant tab (sales if we got sales, purchases otherwise...)
+            this.updateQueryParameters({ tab: TABS.PURCHASES })
         }
-        try {
-            return Number.parseInt(page);
-        } catch (e) {
-            return 0;
-        }
-        
     }
 
-    private sanitizeTab(tab: string): string {
-        if (!tab) {
-            if (this.qp_tab) {
-                return this.qp_tab
-            }
-            if(this.showWelcomeTab) {
-                return TAB_WELCOME
-            }
-        } else {
-            const upped = tab.toUpperCase()
-            if(upped === TAB_CATALOGUE || upped === TAB_SALES || upped === TAB_WELCOME) {
-                return upped
-            }
-        }
-        return TAB_PURCHASES
+    onToggleArchived(): void {
+        this.updateQueryParameters({ archived: !this.queryParameters.archived });
     }
 
-    private computeDataFromCookies(): void {
-        if (this.cookieService.get("user_fullname")) {
-            this.fullName = this.cookieService.get("user_fullname");
+    onPageChange(): void {
+        this.updateQueryParameters({ pg: this.queryParameters.pg });
+    }
+
+    onFilterChange(): void {
+        this.updateQueryParameters({ 
+            prd: this.toString(this.modifiedFilterSet.relatedProducts),
+            cat: this.toString(this.modifiedFilterSet.relatedProductCategories),
+            prt: this.getSelectedPartners(this.modifiedFilterSet),
+         })
+    }
+
+    onOrderRemovedFromView(): void {
+        if(this.results.resultCount === 1 && this.query.page > 1) {
+            this.updateQueryParameters({ pg: this.queryParameters.pg - 1 })
         }
+    }
+    
+    /*
+     * Getters for the template
+     */
+
+    isToggleArchivedButtonEnabled(): boolean {
+        return this.query.archived || this.results.hasArchivedOrders
+    }
+
+    getToggleArchivedButtonText(): string {
+        if(!this.isToggleArchivedButtonEnabled()) {
+            return "No Archived Orders"
+        }
+        return this.query.archived ? "Back" : "Show Archived"
+    }
+
+    /*
+     * Internal methods.
+     */
+
+    private toString(filters: string[]): string {
+        return filters.join(",")
+    }
+
+    private getSelectedPartners(filter: ProcessInstanceGroupFilter): string {
+        return filter.tradingPartnerNames.map(name => {
+            // get the index in the original filter set
+            const index = this.filterSet.tradingPartnerNames.indexOf(name)
+            // get the ID corresponding to the index
+            return filter.tradingPartnerIDs[index]
+        }).join(",")
+    }
+
+    /**
+     * Sets the parameters in the URL, this in turns triggers `this.updateStateFromQueryParameters(params)`.
+     * 
+     * @param params the updated parameters
+     */
+    private updateQueryParameters(params: Partial<DashboardQueryParameters>): void {
+        const queryParams = { ...this.queryParameters, ...params }
+        this.router.navigate(["dashboard"], { queryParams: queryParams });
+    }
+
+    private computeUserFromCookies(): void {
+        this.user = new DashboardUser(
+            this.cookieService.get("user_fullname") || ""
+        )
 
         if (this.cookieService.get("user_id") && this.cookieService.get("company_id")) {
-            this.hasCompany = this.cookieService.get("active_company_name") && this.cookieService.get("active_company_name") !== "null"
+            this.user.hasCompany = this.cookieService.get("active_company_name") && this.cookieService.get("active_company_name") !== "null"
         } else {
             this.appComponent.checkLogin("/user-mgmt/login");
         }
@@ -131,152 +146,186 @@ export class DashboardThreadedComponent implements OnInit {
                 try {
                     const at_payload_json = JSON.parse(atob(at_payload));
                     const at_payload_json_roles = at_payload_json["realm_access"]["roles"];
-                    this.roles = at_payload_json_roles;
+                    this.user.roles = at_payload_json_roles;
                 } catch (e) {}
             }
         }
+
+        // TODO uncomment this once the backend supports it
+        // this.user.showWelcomeTab = this.cookieService.get("welcome_tab_closed") !== "true"
     }
 
-    retrieveProcessInstanceGroups(products: string[], categories: string[], parties: string[]): void {
-        this.bpeService
-            .getProcessInstanceGroups(this.cookieService.get("company_id"), this.getCollaborationRole(), this.qp_page - 1, this.limit, this.qp_archived, products, categories, parties)
-            .then(response => {
-                this.groups = response.processInstanceGroups;
-                this.size = response.size;
-            });
+    private updateStateFromQueryParameters(params: Params): void {
+        this.queryParameters = new DashboardQueryParameters(
+            this.sanitizeTab(params["tab"]),    // tab
+            params["arch"] === "true",          // archived
+            this.sanitizePage(params["pg"]),    // page
+            params["prd"],                      // products
+            params["cat"],                      // categories
+            params["prt"]                       // partners
+        )
 
+        switch(this.queryParameters.tab) {
+            case TABS.PURCHASES:
+            case TABS.SALES:
+                this.queryOrdersIfNeeded();
+                return;
+            default:
+                // nothing
+        }
+    }
+
+    private sanitizeTab(tab: string): string {
+        if (!tab) {
+            if (this.queryParameters.tab) {
+                return this.queryParameters.tab;
+            }
+            if(this.user.showWelcomeTab) {
+                return TABS.WELCOME;
+            }
+        } else {
+            const upped = tab.toUpperCase()
+            if(upped === TABS.CATALOGUE || upped === TABS.SALES || upped === TABS.WELCOME) {
+                return upped;
+            }
+        }
+        return TABS.PURCHASES;
+    }
+
+    private sanitizePage(page: string): number {
+        if (page == null) {
+            return (this.queryParameters.pg) || 1;
+        }
+        try {
+            return Number.parseInt(page);
+        } catch (e) {
+            return 1;
+        }
+        
+    }
+
+    private queryOrdersIfNeeded(): void {
+        const query = this.computeOrderQueryFromQueryParams();
+
+        if(this.isOrdersQueryNeeded(query)) {
+            this.executeOrdersQuery(query);
+        }
+        if(this.isOrdersFiltersQueryNeeded(query)) {
+            this.executeOrdersFiltersQuery(query);
+        }
+        this.query = query
+    }
+
+    private executeOrdersQuery(query: DashboardOrdersQuery): void {
+        if(query.archived) {
+            // only one query needed
+            this.bpeService
+            .getProcessInstanceGroups(this.cookieService.get("company_id"), 
+                query.collaborationRole, query.page - 1, query.pageSize, query.archived, 
+                query.products, query.categories, query.partners)
+            .then(response => {
+                this.results = new DashboardOrdersQueryResults(
+                    response.processInstanceGroups,
+                    response.processInstanceGroups.length > 0,
+                    response.size
+                )
+            });
+        } else {
+            // Needs to query for archived orders to know if the "Show Archived" button should be enabled
+            Promise.all([
+                // regular query
+                this.bpeService.getProcessInstanceGroups(this.cookieService.get("company_id"), 
+                    query.collaborationRole, query.page - 1, query.pageSize, query.archived, 
+                    query.products, query.categories, query.partners
+                ),
+                // query for archived orders
+                this.bpeService.getProcessInstanceGroups(this.cookieService.get("company_id"), 
+                    query.collaborationRole, 0, 1, true, [], [], []
+                ),
+            ]).then(([response, archived]) => {
+                this.results = new DashboardOrdersQueryResults(
+                    response.processInstanceGroups,
+                    archived.processInstanceGroups.length > 0,
+                    response.size
+                )
+            });
+        }
+    }
+
+    private executeOrdersFiltersQuery(query: DashboardOrdersQuery): void {
         this.filterQueryStatus.submit();
         this.filtersLoading = true;
-        // TODO this should only be called if the filters actually change...
+
         this.bpeService
-            .getProcessInstanceGroupFilters(this.cookieService.get("company_id"), this.getCollaborationRole(), this.qp_archived, products, categories, parties)
-            .then(response => {
-                // populate the modified filter set with the passed parameters that are also included in the results
-                // so that the selected criteria would have a checkbox along with
-                this.modifiedFilterSet = new ProcessInstanceGroupFilter();
-                // products
-                if (products.length > 0) {
-                    for (let product of response.relatedProducts) {
-                        this.modifiedFilterSet.relatedProducts.push(product);
-                    }
+        .getProcessInstanceGroupFilters(this.cookieService.get("company_id"), query.collaborationRole, query.archived, query.products, query.categories, query.partners)
+        .then(response => {
+            // populate the modified filter set with the passed parameters that are also included in the results
+            // so that the selected criteria would have a checkbox along with
+            this.modifiedFilterSet = new ProcessInstanceGroupFilter();
+            // products
+            if (query.products.length > 0) {
+                for (let product of response.relatedProducts) {
+                    this.modifiedFilterSet.relatedProducts.push(product);
                 }
-                // categories
-                if (categories.length > 0) {
-                    for (let product of response.relatedProductCategories) {
-                        this.modifiedFilterSet.relatedProductCategories.push(product);
-                    }
+            }
+            // categories
+            if (query.categories.length > 0) {
+                for (let product of response.relatedProductCategories) {
+                    this.modifiedFilterSet.relatedProductCategories.push(product);
                 }
-                // partners
-                if (parties.length > 0) {
-                    for (let i = 0; i < response.tradingPartnerIDs.length; i++) {
-                        this.modifiedFilterSet.tradingPartnerIDs.push(response.tradingPartnerIDs[i]);
-                        this.modifiedFilterSet.tradingPartnerNames.push(response.tradingPartnerNames[i]);
-                    }
+            }
+            // partners
+            if (query.partners.length > 0) {
+                for (let i = 0; i < response.tradingPartnerIDs.length; i++) {
+                    this.modifiedFilterSet.tradingPartnerIDs.push(response.tradingPartnerIDs[i]);
+                    this.modifiedFilterSet.tradingPartnerNames.push(response.tradingPartnerNames[i]);
                 }
-                this.filterSet = response;
-                this.filterQueryStatus.callback("", true);
-                this.filtersLoading = false;
-            })
-            .catch(error => {
-                this.filtersLoading = false;
-                this.filterQueryStatus.error("Failed to get filters");
-            });
-    }
-
-    private getCollaborationRole(): CollaborationRole {
-        return this.qp_tab === TAB_PURCHASES ? "BUYER" : "SELLER";
-    }
-
-    onToggleArchivedClick() {
-        event.preventDefault();
-        this.qp_archived = !this.qp_archived
-        this.filterChangeHandler();
-    }
-
-    onTabClick(event: any) {
-        event.preventDefault();
-        this.qp_tab = event.target.id;
-        this.filterChangeHandler();
-    }
-
-    onCloseWelcomeTabClick(event: any) {
-        event.preventDefault();
-        event.stopImmediatePropagation();
-        this.showWelcomeTab = false;
-        if(this.qp_tab === TAB_WELCOME) {
-            // TODO actually select the relevant tab (sales if we got sales, purchases otherwise...)
-            this.qp_tab = TAB_PURCHASES
-            this.filterChangeHandler();
-        }
-    }
-
-    paginationHandler(removed: boolean = false): void {
-        let page = this.qp_page;
-        // if one thread is removed then check whether there are other threads in this page or not
-        if (removed && this.groups.length - 1 == 0 && this.qp_page != 1) {
-            page = page - 1;
-        }
-
-        let queryParams: any = {
-            pg: page,
-            tab: this.qp_tab,
-            arch: this.qp_archived,
-            prd: this.qp_prd,
-            cat: this.qp_cat,
-            prt: this.qp_prt,
-            t: Date.now()
-        };
-        this.filterSet = null;
-        this.router.navigate(["dashboard"], { queryParams: queryParams });
-    }
-
-    filterChangeHandler(): void {
-        let queryParams = this.populateQueryParamValue();
-        this.filterSet = null;
-        this.router.navigate(["dashboard"], { queryParams: queryParams });
-    }
-
-    populateQueryParamValue(): any {
-        let queryParams: any = {
-            pg: this.qp_page,
-            tab: this.qp_tab,
-            arch: this.qp_archived,
-            t: Date.now()
-        };
-
-        let paramVal: string = "";
-        // products
-        if (this.modifiedFilterSet.relatedProducts.length > 0) {
-            for (let selectedValue of this.modifiedFilterSet.relatedProducts) {
-                paramVal += selectedValue + ",";
             }
-            paramVal = paramVal.substring(0, paramVal.length - 1);
-            this.qp_prd = queryParams.prd = paramVal;
+            this.filterSet = response;
+            this.filterQueryStatus.callback("", true);
+            this.filtersLoading = false;
+        })
+        .catch(error => {
+            this.filtersLoading = false;
+            this.filterQueryStatus.error("Failed to get filters");
+            console.log("Error while getting the filters.", error)
+        });
+    }
+
+    private isOrdersQueryNeeded(query: DashboardOrdersQuery): boolean {
+        if(query.collaborationRole) {
+            // TODO
+        }
+        return true;
+    }
+
+    private isOrdersFiltersQueryNeeded(query: DashboardOrdersQuery): boolean {
+        // filterSet may be set to null to request a recompute of the filter sets.
+        if(!this.filterSet) {
+            return true;
         }
 
-        // categories
-        paramVal = "";
-        if (this.modifiedFilterSet.relatedProductCategories.length > 0) {
-            for (let selectedValue of this.modifiedFilterSet.relatedProductCategories) {
-                paramVal += selectedValue + ",";
-            }
-            paramVal = paramVal.substring(0, paramVal.length - 1);
-            this.qp_cat = queryParams.cat = paramVal;
-        }
+        console.log("isOrdersFiltersQueryNeeded", this.query, query, this.query.archived !== query.archived 
+        || this.query.collaborationRole !== query.collaborationRole)
 
-        // partners
-        paramVal = "";
-        if (this.modifiedFilterSet.tradingPartnerNames.length > 0) {
-            for (let selectedValue of this.modifiedFilterSet.tradingPartnerNames) {
-                // find the ID the selected partner by
-                // first finding its name in the original name list and then the corresponding id original id list
-                let originalIndex: number = this.filterSet.tradingPartnerNames.indexOf(selectedValue);
-                paramVal += this.filterSet.tradingPartnerIDs[originalIndex] + ",";
-            }
-            paramVal = paramVal.substring(0, paramVal.length - 1);
-            this.qp_prt = queryParams.prt = paramVal;
-        }
+        // Do not recompute the filters on filter changes.
+        return this.query.archived !== query.archived 
+            || this.query.collaborationRole !== query.collaborationRole;
+    }
 
-        return queryParams;
+    private computeOrderQueryFromQueryParams(): DashboardOrdersQuery {
+        return new DashboardOrdersQuery(
+            this.queryParameters.archived,
+            this.queryParameters.tab === TABS.PURCHASES ? "BUYER" : "SELLER",
+            this.queryParameters.pg,
+            this.parseArray(this.queryParameters.prd),
+            this.parseArray(this.queryParameters.cat),
+            this.parseArray(this.queryParameters.prt),
+            PAGE_SIZE,
+        )
+    }
+
+    private parseArray(param: string): string[] {
+        return param ? param.split(",") : []
     }
 }

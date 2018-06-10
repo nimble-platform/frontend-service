@@ -1,26 +1,24 @@
 <!-- Welcome jumbotron, no company -->
-<div class="row" *ngIf="!hasCompany">
+<div class="row" *ngIf="!user.hasCompany">
     <div class="col-12">
-        <div class="jumbotron">
-            <p>
-                <span i18n>Welcome to the</span> NIMBLE
-                <span i18n>platform,</span> {{fullName}}!
-            </p>
-            <i>
-                <small>Collaborative Network for Industry, Manufacturing, Business and Logistics in Europe.</small>
-            </i>
-        </div>
+        <h2>
+            <span i18n>Welcome to the</span> NIMBLE
+            <span i18n>platform,</span> {{user.fullName}}!
+        </h2>
+        <p>
+            <i>Collaborative Network for Industry, Manufacturing, Business and Logistics in Europe.</i>
+        </p>
     </div>
 </div>
 
-<div class="row" [ngClass]="{ 'space-before': !hasCompany }">
+<div class="row" [ngClass]="{ 'space-before': !user.hasCompany }">
     <div class="col-12">
         <h3 i18n>Dashboard</h3>
     </div>
 </div>
 
 <!-- Welcome jumbotron, no company -->
-<div class="row" *ngIf="!hasCompany">
+<div class="row" *ngIf="!user.hasCompany">
     <div class="col-12">
         <h4 class="space-before">Welcome to the Nimble Platform</h4>
         <p>You are not yet linked to a company.</p>
@@ -30,42 +28,41 @@
 </div>
 
 <!-- Welcome jumbotron, company waiting for approval -->
-<div class="row" *ngIf="roles.indexOf('initial_representative')!= -1 && roles.indexOf('legal_representative') == -1">
+<div class="row" *ngIf="user.roles.indexOf('initial_representative')!= -1 && user.roles.indexOf('legal_representative') == -1">
     <div class="col-12">
         <h4 class="space-before">Your company is now registered</h4>
         <p>TODO better text here...</p>
         <p>You can start publishing your catalogue.</p>
         <p>In order to execute business processes your company needs to be verified by an administrator - please stay tuned.</p>
         <p>If you are not being verified with 24h, please contact our support nimble-support@salzburgresearch.at.</p>
-
     </div>
 </div>
 
 <!-- Regular content -->
-<div class="space-before" *ngIf="roles.indexOf('legal_representative') != -1">
+<div class="space-before" *ngIf="user.roles.indexOf('legal_representative') != -1">
 
     <!-- Tabs -->
     <div class="row">
         <div class="col">
             <ul class="nav nav-tabs">
-                <ng-container *ngIf="showWelcomeTab">
+                <ng-container *ngIf="user.showWelcomeTab">
                     <li class="nav-item welcome-tab">
-                        <a href id="WELCOME" [ngClass]="{'nav-link': true, active: qp_tab === TAB_WELCOME}" (click)="onTabClick($event)" i18n>
+                        <a href id="WELCOME" [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.WELCOME}" (click)="onChangeTab($event)" i18n>
                             Welcome 
-                            <button type="button" class="close" aria-label="Close" (click)="onCloseWelcomeTabClick($event)">
+                            <button type="button" class="close" aria-label="Close" (click)="onCloseWelcomeTab($event)">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </a>
                     </li>
                 </ng-container>
                 <li class="nav-item">
-                    <a href id="PURCHASES" [ngClass]="{'nav-link': true, active: qp_tab === TAB_PURCHASES}" (click)="onTabClick($event)" i18n>Purchases</a>
+                    <a href id="PURCHASES" [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.PURCHASES}" (click)="onChangeTab($event)" i18n>Purchases</a>
                 </li>
                 <li class="nav-item">
-                    <a href id="SALES" [ngClass]="{'nav-link': true, active: qp_tab === TAB_SALES}" (click)="onTabClick($event)" i18n>Sales</a>
+                    <a href id="SALES" [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.SALES}" (click)="onChangeTab($event)" i18n>Sales</a>
                 </li>
                 <li class="nav-item">
-                    <a href id="CATALOGUE" [ngClass]="{'nav-link': true, active: qp_tab === TAB_CATALOGUE}" (click)="onTabClick($event)" i18n>Catalogue</a>
+                    <a href id="CATALOGUE" [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.CATALOGUE}" (click)="onChangeTab($event)" i18n>Catalogue</a>
                 </li>
             </ul>
         </div>
@@ -73,7 +70,7 @@
 
 
     <!-- Welcome tab -->
-    <div *ngIf="qp_tab === TAB_WELCOME" class="row">
+    <div *ngIf="queryParameters.tab === TABS.WELCOME" class="row">
         <div class="col-12">
             <h4 class="space-before">Welcome to the Nimble Platform</h4>
             <p>Looks like you are new here.</p>
@@ -84,23 +81,27 @@
     </div>
 
     <!-- Sales and Purchase tabs -->
-    <div *ngIf="qp_tab === TAB_SALES || qp_tab === TAB_PURCHASES" class="row">
+    <div *ngIf="queryParameters.tab === TABS.SALES || queryParameters.tab === TABS.PURCHASES" class="row">
         <div class="col-12">
             <!-- No data -->
-            <div class="row" *ngIf="groups.length === 0 && !qp_archived">
+            <div class="row" *ngIf="results.resultCount === 0 && !queryParameters.archived">
                 <div class="col-12">
                     <!-- Sales -->
-                    <ng-container *ngIf="qp_tab === TAB_SALES">
-                        <button class="btn btn-secondary float-right space-before" (click)="onToggleArchivedClick()">
-                            {{qp_archived ? "Back" : "Show Archived"}}
+                    <ng-container *ngIf="queryParameters.tab === TABS.SALES">
+                        <button class="btn btn-secondary float-right space-before" 
+                            (click)="onToggleArchived()" 
+                            [disabled]="!isToggleArchivedButtonEnabled()">
+                            {{getToggleArchivedButtonText()}}
                         </button>
                         <h4 class="space-before">No sales</h4>
                         <p>TODO: add text/button</p>
                     </ng-container>
                     <!-- Purchases -->
-                    <ng-container *ngIf="qp_tab === TAB_PURCHASES">
-                        <button class="btn btn-secondary float-right space-before" (click)="onToggleArchivedClick()">
-                            {{qp_archived ? "Back" : "Show Archived"}}
+                    <ng-container *ngIf="queryParameters.tab === TABS.PURCHASES">
+                        <button class="btn btn-secondary float-right space-before" 
+                            (click)="onToggleArchived()" 
+                            [disabled]="!isToggleArchivedButtonEnabled()">
+                            {{getToggleArchivedButtonText()}}
                         </button>
                         <h4 class="space-before">No purchases</h4>
                         <p>TODO: add text/button</p>
@@ -109,21 +110,23 @@
             </div>
 
             <!-- Data -->
-            <div class="row" *ngIf="groups.length > 0 || qp_archived">
+            <div class="row" *ngIf="results.resultCount > 0 || queryParameters.archived">
                 <div class="col-12">
                     <div class="row space-before">
                         <div class="col-5"></div>
                         <!-- Pagination Info -->
                         <div class="col-2 pagination justify-content-center">
-                            <ngb-pagination [collectionSize]="size" [pageSize]="pageSize" [(page)]="qp_page" 
-                                [maxSize]="limit" [boundaryLinks]="true" (pageChange)="paginationHandler()">
+                            <ngb-pagination [collectionSize]="results.resultCount" [pageSize]="query.pageSize" [(page)]="query.page" 
+                                [maxSize]="query.pageSize" [boundaryLinks]="true" (pageChange)="onPageChange()">
                             </ngb-pagination>
                         </div>
                         <div class="col-3"></div>
                         <!-- Show Archived Button -->
                         <div class="col-2">
-                            <button class="btn btn-secondary float-right" (click)="onToggleArchivedClick()">
-                                {{qp_archived ? "Back" : "Show Archived"}}
+                            <button class="btn btn-secondary float-right" 
+                                (click)="onToggleArchived()" 
+                                [disabled]="!isToggleArchivedButtonEnabled()">
+                                {{getToggleArchivedButtonText()}}
                             </button>
                         </div>
                     </div>
@@ -135,34 +138,40 @@
                                 [stringValues]="filterSet && filterSet.relatedProducts" 
                                 [selectedStringValues]="modifiedFilterSet && modifiedFilterSet.relatedProducts"
                                 [loading]="filtersLoading"
-                                (triggerCriteriaChanged)="filterChangeHandler()">
+                                (triggerCriteriaChanged)="onFilterChange()">
                             </facet>
                             <facet [title]="'Product category'" [dataType]="'string'" 
                                 [stringValues]="filterSet && filterSet.relatedProductCategories" 
                                 [selectedStringValues]="modifiedFilterSet && modifiedFilterSet.relatedProductCategories"
                                 [loading]="filtersLoading"
-                                (triggerCriteriaChanged)="filterChangeHandler()">
+                                (triggerCriteriaChanged)="onFilterChange()">
                             </facet>
                             <facet [title]="'Trading partner'" [dataType]="'string'" 
                                 [stringValues]="filterSet && filterSet.tradingPartnerNames" 
                                 [selectedStringValues]="modifiedFilterSet && modifiedFilterSet.tradingPartnerNames"
                                 [loading]="filtersLoading"
-                                (triggerCriteriaChanged)="filterChangeHandler()">
+                                (triggerCriteriaChanged)="onFilterChange()">
                             </facet>
                         </div>
                 
                         <!-- Results -->
-                        <div class="col-10">
-                            <thread-summary *ngFor="let processInstanceGroup of groups" [processInstanceGroup]="processInstanceGroup" (threadStateUpdated)="paginationHandler(true)">
+                        <div *ngIf="results.orders" class="col-10">
+                            <h4 *ngIf="results.orders.length === 0">No purchases</h4>
+                            <thread-summary *ngFor="let order of results.orders" [processInstanceGroup]="order" (threadStateUpdated)="onOrderRemovedFromView()">
                             </thread-summary>
+                        </div>
+
+                        <!-- Loading -->
+                        <div *ngIf="!results.orders" class="col-10">
+                            <p>Loading...</p>
                         </div>
                     </div>
 
                     <!-- Pagination Info -->
                     <div class="row ">
                         <div class="col pagination justify-content-center">
-                            <ngb-pagination [collectionSize]="size" [pageSize]="pageSize" [(page)]="qp_page" 
-                                [maxSize]="limit" [boundaryLinks]="true" (pageChange)="paginationHandler()">
+                            <ngb-pagination [collectionSize]="results.resultCount" [pageSize]="query.pageSize" [(page)]="query.page" 
+                                [maxSize]="query.pageSize" [boundaryLinks]="true" (pageChange)="onPageChange()">
                             </ngb-pagination>
                         </div>
                     </div>
@@ -172,7 +181,7 @@
     </div>
 
     <!-- Catalogue tab -->
-    <div *ngIf="qp_tab === TAB_CATALOGUE" class="row">
+    <div *ngIf="queryParameters.tab === TABS.CATALOGUE" class="row">
         <div class="col-12">
             <catalogue-view></catalogue-view>
         </div>

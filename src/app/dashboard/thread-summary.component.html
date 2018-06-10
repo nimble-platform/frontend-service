@@ -23,6 +23,15 @@
                 </div> -->
             </div>
         </div>
+        
+        <!-- Titles for the rows -->
+        <div class="row thread-entry-heading">
+                <div class="col-2"><strong>Customer</strong></div>
+                <div class="col-2"><strong>Type</strong></div>
+                <div class="col-2"><strong>Date</strong></div>
+                <div class="col-2"><strong>Note</strong></div>
+                <div class="col-4"><strong>Status</strong></div>
+            </div>
     
         <!-- Most recent event -->
         <thread-event *ngIf="lastEvent" [processInstanceGroup]="processInstanceGroup" [event]="lastEvent">

@@ -7,7 +7,7 @@ import {ActivityVariableParser} from "../bpe/bp-view/activity-variable-parser";
 import * as moment from "moment";
 import {CallStatus} from "../common/call-status";
 import {CookieService} from "ng2-cookies";
-import { ThreadEvent } from "./model/ThreadEvent";
+import { ThreadEvent } from "./model/thread-event";
 
 /**
  * Created by suat on 12-Mar-18.

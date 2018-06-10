@@ -3,7 +3,6 @@ import {Component, EventEmitter, Input, Output} from "@angular/core";
  * Created by suat on 28-Mar-18.
  */
 
-
 @Component({
     selector: "facet",
     templateUrl: "./facet-component.html",

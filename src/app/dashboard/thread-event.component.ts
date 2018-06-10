@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from "@angular/core";
 import { Router } from "@angular/router";
-import { ThreadEvent } from "./model/ThreadEvent";
+import { ThreadEvent } from "./model/thread-event";
 import { BPDataService } from "../bpe/bp-view/bp-data-service";
 import { ActivityVariableParser } from "../bpe/bp-view/activity-variable-parser";
 import { ProcessInstanceGroup } from "../bpe/model/process-instance-group";

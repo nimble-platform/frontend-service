@@ -1,13 +1,8 @@
 <div class="row thread-entry-row">
-    <div class="col-2"><small>Customer:</small><p>{{event.tradingPartner}}</p></div>
-    <div class="col-2"><small>Type:</small><p>{{event.presentableProcessType}}</p></div>
-    <div class="col-2"><small>Date:</small><p>{{event.startTime}}</p></div>
-    <!-- <div class="col-2">
-        <label class="clickable" (click)="navigateToSearchDetails()">
-            {{event.product.name}}
-        </label>
-    </div> -->
-    <div class="col-2"><small>Note:</small><p>{{event.note}}</p></div>
+    <div class="col-2"><p>{{event.tradingPartner}}</p></div>
+    <div class="col-2"><p>{{event.presentableProcessType}}</p></div>
+    <div class="col-2"><p>{{event.startTime}}</p></div>
+    <div class="col-2"><p>{{event.note}}</p></div>
     <div *ngIf="event.statusCode=='EXTERNALLY_TERMINATED'" class="col-4 alert-dark">
         <div>Cancelled</div>
         <button class="btn" (click)="openBpProcessView()">{{event.actionStatus}}</button>
