@@ -55,7 +55,7 @@
         </div>
     </div>
 </ng-template>
-<div class="container" [hidden]="!hiddenElement">
+<div [hidden]="!hiddenElement">
     <div class="row">
         <!--<pre>-->
         <!--<code>-->
@@ -100,7 +100,7 @@
 </div>
 
 
-<div class="container" style="margin-top: 20px" *ngIf="configSPQ" [hidden]="hiddenElement">
+<div style="margin-top: 20px" *ngIf="configSPQ" [hidden]="hiddenElement">
         <h4> Property Explorer for {{configSPQ.frozenConcept}}</h4>
         <div class="row">
             <div class="col-md-6">
@@ -154,7 +154,7 @@
         </div>
     <hr>
 </div>
-<div class="container" *ngIf="sparqlJSON.parameters.length">
+<div *ngIf="sparqlJSON.parameters.length">
     <div class="row" [hidden]="hiddenElement">
         <button class="btn btn-lg btn-success" (click)="genTable()">Obtain Results</button>
     </div>
