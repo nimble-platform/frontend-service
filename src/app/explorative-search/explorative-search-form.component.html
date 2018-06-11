@@ -4,7 +4,7 @@
     <h3>Explore</h3>
         <form class="space-before" (ngSubmit)="Search(model.q, language)" #exSearchForm="ngForm" novalidate>
             <div class="form-group row">
-          		<label for="searchTerm" class="col-2 col-form-label" i18n>Search</label>
+          		<label for="expSearch" class="col-2 col-form-label" i18n>Search</label>
           		<div class="col-10">
           			<div class="input-group">
           			  <input type="text" class="form-control" id="expSearch" required [(ngModel)]="model.q" name="expSearch" #q="ngModel" pattern=".{1,}" placeholder="Product / Service / Company">
