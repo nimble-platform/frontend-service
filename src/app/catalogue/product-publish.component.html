@@ -195,10 +195,10 @@
                 <!-- combobox for choosing the property value type -->
                 <div class="col">
                     <div class="row justify-content-end ml-2">
-                        <div>
-                            <span i18n>Value type:</span>
+                        <div class="form-group row mb-0 mr-0">
+                            <span class="col-form-label col-6" i18n>Value type:</span>
 
-                            <select #propertyValueType class="custom-select" (change)="onValueTypeChange($event)">
+                            <select #propertyValueType class="custom-select col-6" (change)="onValueTypeChange($event)">
                                 <option selected i18n>Text</option>
                                 <option i18n>Number</option>
                                 <option i18n>Image</option>
@@ -209,7 +209,7 @@
                         </div>
 
                         <button [disabled]="!customPropertyForm.form.valid || (newProperty.valueQualifier == 'BINARY' && newProperty.valueBinary.length == 0)"
-                                class="btn btn-success ml-1"
+                                class="btn btn-success ml-2"
                                 (click)="addCustomProperty()">
                             <span i18n>Add property</span>
                         </button>

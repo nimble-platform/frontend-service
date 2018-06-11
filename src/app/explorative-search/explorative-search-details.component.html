@@ -98,7 +98,7 @@
 <!--<div [hidden]="!(_warning_table_results)">-->
     <!--<div class="alert alert-warning space-before" role="alert">No Matches Found. Please try again with different Queries</div>-->
 <!--</div>-->
-<div class="container" [hidden]="!hiddenElement">
+<div [hidden]="!hiddenElement">
     <div class="row">
         <!--<pre>-->
             <!--<code>-->
@@ -155,7 +155,7 @@
 </div>
 <br>
 <br>
-<div class="container" *ngIf="tableJSON.parameters.length">
+<div *ngIf="tableJSON.parameters.length">
     <div class="row" [hidden]="hiddenElement">
         <button class="btn btn-lg btn-success" (click)="genTable()">Obtain Results</button>
     </div>
