@@ -36,7 +36,7 @@ export class ChannelDetailsComponent implements OnInit {
     }
 
     deleteChannel(): void {
-        const channelId = this.channelConfig.channelID;
+        const channelId = this.channelConfig["channelID"];
         this.dataChannelService.deleteChannel(channelId)
             .then( () => {
                 alert("Deleted Channel");
