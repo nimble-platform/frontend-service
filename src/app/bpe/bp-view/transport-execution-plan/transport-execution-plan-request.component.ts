@@ -15,6 +15,7 @@ import {CallStatus} from "../../../common/call-status";
 import {Order} from "../../../catalogue/model/publish/order";
 import {Router} from "@angular/router";
 import {TransportExecutionPlanRequest} from "../../../catalogue/model/publish/transport-execution-plan-request";
+import {PrecedingBPDataService} from "../preceding-bp-data-service";
 /**
  * Created by suat on 20-Sep-17.
  */
@@ -27,7 +28,7 @@ export class TransportExecutionPlanRequestComponent implements OnInit {
     @Input() transportExecutionPlanRequest:TransportExecutionPlanRequest;
 
     callStatus:CallStatus = new CallStatus();
-    // check whether 'Use Service' button is clicked
+    // check whether 'Send Plan Terms' button is clicked
     submitted:boolean = false;
     // used to get correct format for start and end dates
     startDate:any;
@@ -35,6 +36,7 @@ export class TransportExecutionPlanRequestComponent implements OnInit {
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
                 private userService: UserService,
+                private precedingBPDataService: PrecedingBPDataService,
                 private cookieService: CookieService,
                 private router:Router) {
     }
@@ -53,6 +55,10 @@ export class TransportExecutionPlanRequestComponent implements OnInit {
         this.submitted = true;
         this.callStatus.submit();
         let transportationExecutionPlanRequest:TransportExecutionPlanRequest = JSON.parse(JSON.stringify(this.bpDataService.transportExecutionPlanRequest));
+
+        // get addresses from the address cache
+        transportationExecutionPlanRequest.toLocation.address = this.precedingBPDataService.toAddress;
+        transportationExecutionPlanRequest.fromLocation.address = this.precedingBPDataService.fromAddress;
 
         // final check on the transportationExecutionPlanRequest
         transportationExecutionPlanRequest.mainTransportationService = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;

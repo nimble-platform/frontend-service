@@ -34,12 +34,17 @@
         <value-view *ngIf="bpDataService.processMetadata != null"
                     [presentationMode]="'view'"
                     [propName]="'Service Start Date'"
+                    [definition]="'The period within which the services referred to in the Transport Execution Plan Request must begin.'"
                     [(value)]="transportExecutionPlanRequest.serviceStartTimePeriod.startDate">
         </value-view>
 
         <ng-container *ngIf="bpDataService.processMetadata == null">
             <div class="input-group space-after">
-                <label class="col-3">Service Start Date</label>
+                <label class="col-3">Service Start Date
+                    <span class="label label-default" title="'The period within which the services referred to in the Transport Execution Plan Request must begin.'">
+                            &#9432;
+                    </span>
+                </label>
                 <input class="form-control" placeholder="YYYY-MM-DD" (dateSelect)="transportExecutionPlanRequest.serviceStartTimePeriod.startDate = getDate('Start')"
                        name="dp" [(ngModel)]="startDate" ngbDatepicker #d="ngbDatepicker" readonly>
                 <div class="input-group-append">
@@ -53,12 +58,17 @@
         <value-view *ngIf="bpDataService.processMetadata != null"
                     [presentationMode]="'view'"
                     [propName]="'Service End Date'"
+                    [definition]="'The period during which the services referred to in the Transport Execution Plan Request must be completed.'"
                     [(value)]="transportExecutionPlanRequest.serviceEndTimePeriod.endDate">
         </value-view>
 
         <ng-container *ngIf="bpDataService.processMetadata == null">
             <div class="input-group space-after">
-                <label class="col-3">Service End Date</label>
+                <label class="col-3">Service End Date
+                    <span class="label label-default" title="'The period during which the services referred to in the Transport Execution Plan Request must be completed.'">
+                            &#9432;
+                    </span>
+                </label>
                 <input class="form-control" placeholder="YYYY-MM-DD" (dateSelect)="transportExecutionPlanRequest.serviceEndTimePeriod.endDate = getDate('End')"
                        name="dp" [(ngModel)]="endDate" ngbDatepicker #d="ngbDatepicker" readonly>
                 <div class="input-group-append">
@@ -90,7 +100,7 @@
 
     <div class="d-flex justify-content-end">
         <button *ngIf="bpDataService.userRole == 'buyer' && bpDataService.processMetadata == null" [disabled]="submitted"
-                class="btn btn-success" (click)="sendTransportExecutionPlanRequest()">Use Service
+                class="btn btn-success" (click)="sendTransportExecutionPlanRequest()">Send Execution Plan Terms
         </button>
     </div>
 </ng-container>

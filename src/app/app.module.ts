@@ -24,6 +24,7 @@ import { UserService } from './user-mgmt/user.service';
 import { CredentialsService } from './user-mgmt/credentials.service';
 import { DataChannelService } from "./data-channel/data-channel.service";
 import { UnitService } from './common/unit-service';
+import {PrecedingBPDataService} from "./bpe/bp-view/preceding-bp-data-service";
 
 @NgModule({
     imports: [
@@ -53,7 +54,8 @@ import { UnitService } from './common/unit-service';
 		SearchContextService,
 		UserService,
 		CredentialsService,
-        UnitService
+        UnitService,
+        PrecedingBPDataService
     ],
     bootstrap: [
         AppComponent
