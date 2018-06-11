@@ -1,1 +1,24 @@
-<h1>Tracking and Tracing Component for NIMBLE Platform</h1>
+<div>
+    <h3>Track Your Product</h3>
+    <form class="space-before" (ngSubmit)="Search(model.q)" #trackForm="ngForm" novalidate>
+        <div class="form-group row">
+            <label class="col-2 col-form-label">Enter EPC Code</label>
+            <div class="col-10">
+                <div class="input-group">
+                    <input type="text"
+                           class="form-control" required [(ngModel)]="model.q"
+                           name="trackSearch" #q="ngModel" pattern=".{1,}"
+                           placeholder="SGTIN id">
+                    <div class="input-group-append">
+                        <button type="submit" class="btn btn-outline-secondary" [disabled]="!trackForm.form.valid">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div>
+    <pre>{{metaData | json}}</pre>
+</div>
