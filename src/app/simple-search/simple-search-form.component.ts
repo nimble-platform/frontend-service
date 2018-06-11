@@ -43,7 +43,7 @@ export class SimpleSearchFormComponent implements OnInit {
 		public router: Router
 	) {
 	}
-	
+
 	ngOnInit(): void {
 		this.route.queryParams.subscribe(params => {
 			let q = params['q'];
@@ -73,7 +73,7 @@ export class SimpleSearchFormComponent implements OnInit {
 				this.getCall(q,fq,p);
 		});
     }
-	
+
 	get(search: Search): void {
 		if(this.searchContext && this.searchContext == 'orderbp'){
             this.router.navigate(['/simple-search'], { queryParams : { q: search.q, fq:'item_commodity_classification%3A%22Transport Service%22', p: this.page, searchContext: this.searchContext } });
@@ -83,7 +83,7 @@ export class SimpleSearchFormComponent implements OnInit {
 		}
 
 	}
-	
+
 	getCall(q:string, fq:any, p:number) {
 		this.callback = false;
 		this.error_detc = false;
@@ -111,13 +111,15 @@ export class SimpleSearchFormComponent implements OnInit {
 								"selected":false
 							});
 							for (let facet_inner in res.facet_counts.facet_fields[facet]) {
-								this.facetObj[index].options.push({
-									"name":facet_inner,
-									"count":res.facet_counts.facet_fields[facet][facet_inner]
-								});
-								this.facetObj[index].total += res.facet_counts.facet_fields[facet][facet_inner];
-								if (this.checkFacet(this.facetObj[index].name,facet_inner))
-									this.facetObj[index].selected=true;
+								if (facet_inner != "") {
+									this.facetObj[index].options.push({
+										"name":facet_inner,
+										"count":res.facet_counts.facet_fields[facet][facet_inner]
+									});
+									this.facetObj[index].total += res.facet_counts.facet_fields[facet][facet_inner];
+									if (this.checkFacet(this.facetObj[index].name,facet_inner))
+										this.facetObj[index].selected=true;
+								}
 							}
 							this.facetObj[index].options.sort(function(a,b){
 								var a_c = a.name;
@@ -185,7 +187,7 @@ export class SimpleSearchFormComponent implements OnInit {
 			this.error_detc = true;
 		});
 	}
-	
+
 	onSubmit() {
 		/*
 		this.callback = false;
@@ -196,7 +198,7 @@ export class SimpleSearchFormComponent implements OnInit {
 		this.facetQuery = [];
 		this.get(this.objToSubmit);
 	}
-	
+
 	setFacet(outer:string, inner:string) {
 		var fq = outer+":\""+inner+"\"";
 		if (this.facetQuery.indexOf(fq) == -1)
@@ -205,7 +207,7 @@ export class SimpleSearchFormComponent implements OnInit {
 			this.facetQuery.splice(this.facetQuery.indexOf(fq), 1);
 		this.get(this.objToSubmit);
 	}
-	
+
 	checkFacet(outer:string, inner:string): boolean {
 		var match = false;
 		var fq = outer+":\""+inner+"\"";
@@ -213,7 +215,7 @@ export class SimpleSearchFormComponent implements OnInit {
 			match = true;
 		return match;
 	}
-	
+
 	isJson(str: string): boolean {
 		try {
 			JSON.parse(str);

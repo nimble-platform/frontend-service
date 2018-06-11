@@ -1,38 +1,29 @@
 <!-- Explorative Search Form HTML -->
 <!-- Search Bar -->
-<div class="container">
+<div>
     <h3>Explore</h3>
-        <form>
-            <div class="input-group form-group">
-                <div class="input-group-prepend">
-                <label for="expSearch" class="input-group-text">Find</label>
-                </div>
-                <input type="text"
-                       class="form-control"
-                       id="expSearch"
-                       required
-                       name="expSearch"
-                       placeholder="Company/Business/Product"
-                       #searchVal
-                >
-                <span>
-                <select [(ngModel)]="language"
-                        [ngModelOptions]="{standalone: true}"
-                        class="custom-select mb-2 mr-sm-2 mb-sm-0">
-                    <option *ngFor="let eachLang of availableLanguages['languages']"
-                            [ngValue]="eachLang">
-                        {{eachLang}}
-                    </option>
-                </select>
-                </span>
-                <span class="input-group-btn">
-			<button type="submit" class="btn btn-secondary"
-                    (click)="Search(searchVal.value, language)"
-            >
-				<i class="fa fa-search"></i>
-			</button>
-		</span>
-            </div>
+        <form class="space-before" (ngSubmit)="Search(model.q, language)" #exSearchForm="ngForm" novalidate>
+            <div class="form-group row">
+          		<label for="searchTerm" class="col-2 col-form-label" i18n>Search</label>
+          		<div class="col-10">
+          			<div class="input-group">
+          			  <input type="text" class="form-control" id="expSearch" required [(ngModel)]="model.q" name="expSearch" #q="ngModel" pattern=".{1,}" placeholder="Product / Service / Company">
+          			  <div class="input-group-append">
+                    <select [(ngModel)]="language"
+                            [ngModelOptions]="{standalone: true}"
+                            class="custom-select" style="border-radius:0;">
+                        <option *ngFor="let eachLang of availableLanguages['languages']"
+                                [ngValue]="eachLang">
+                            {{eachLang}}
+                        </option>
+                    </select>
+          					<button type="submit" class="btn btn-outline-secondary" [disabled]="!exSearchForm.form.valid">
+          						<i class="fa fa-search"></i>
+          					</button>
+          			  </div>
+          			</div>
+          		</div>
+          	</div>
         </form>
     <!-- Warnings and Errors Here! -->
     <div [hidden]="!_error_detected_kw">
@@ -48,7 +39,7 @@
     </div>
 </div>
 <!-- Search Keywords go here -->
-<div class="container" *ngIf="Output.length">
+<div *ngIf="Output.length">
     <div class="row">
         <div class="col-sm-2">
             <label class="col-form-label-lg"><b> Search History </b></label>
@@ -75,7 +66,7 @@
     </div>
 </div>
 <!-- Display of Content from server -->
-<div class="container" *ngIf="Output.length">
+<div *ngIf="Output.length">
     <div class="row">
         <div class="col-sm-2">
             <label class="col-form-label-lg"><b> Results Found </b></label>
@@ -104,7 +95,7 @@
     </div>
 </div>
 
-<div class="container">
+<div>
 <ngb-tabset (tabChange)="activeTab($event)">
     <ngb-tab title="Semantic Query" (click)="previousStateStore()" id="sqp" [disabled]="!SQPConfig">
         <ng-template ngbTabContent>

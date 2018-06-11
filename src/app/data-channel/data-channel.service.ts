@@ -55,6 +55,16 @@ export class DataChannelService {
             .then(res => Object.keys(res).length > 0)
     }
 
+    deleteChannel(channelID: string): Promise<any> {
+        const url = `${this.url}/channel/${channelID}`;
+        const token = 'Bearer ' + this.cookieService.get("bearer_token");
+        const headers = new Headers({'Authorization': token});
+        return this.http
+            .delete(url, {headers: headers, withCredentials: true})
+            .toPromise()
+            .catch(this.handleError);
+    }
+
     private handleError(error: any): Promise<any> {
         return Promise.reject(error.message || error);
     }

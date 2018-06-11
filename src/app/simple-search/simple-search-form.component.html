@@ -36,7 +36,7 @@
 				<div class="col-4">
 
 					<div *ngFor="let facet of facetObj">
-						<div class="card">
+						<div *ngIf="facet.total > 0" class="card">
 							<div class="card-header">
 								{{ facet.name }}
 							</div>
