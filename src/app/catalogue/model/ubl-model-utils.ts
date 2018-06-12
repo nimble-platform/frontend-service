@@ -26,7 +26,6 @@ import {RequestForQuotationLine} from "./publish/request-for-quotation-line";
 import {Delivery} from "./publish/delivery";
 import {QuotationLine} from "./publish/quotation-line";
 import {Dimension} from "./publish/dimension";
-import {Address} from "./publish/address";
 import {Country} from "./publish/country";
 import {DespatchLine} from "./publish/despatch-line";
 import {DespatchAdvice} from "./publish/despatch-advice";
@@ -42,12 +41,12 @@ import {Ppap} from "./publish/ppap";
 import {PpapResponse} from "./publish/ppap-response";
 import {Shipment} from "./publish/shipment";
 import {TransportExecutionPlanRequest} from "./publish/transport-execution-plan-request";
-import {TransportationService} from "./publish/transportation-service";
 import {TransportExecutionPlan} from "./publish/transport-execution-plan";
-import {Consignment} from "./publish/consignment";
 import {ItemInformationRequest} from "./publish/item-information-request";
 import {ItemInformationResponse} from "./publish/item-information-response";
-import {PaymentTerms} from './publish/payment-terms';
+import {PaymentTerms} from "./publish/payment-terms";
+import {Address} from "./publish/address";
+
 /**
  * Created by suat on 05-Jul-17.
  */
@@ -99,7 +98,7 @@ export class UBLModelUtils {
         // price
         let price: Price = this.createPrice(null);
         // item location quantity
-        let ilq: ItemLocationQuantity = new ItemLocationQuantity(price, null);
+        let ilq: ItemLocationQuantity = new ItemLocationQuantity(price, []);
         return ilq;
     }
 
@@ -205,8 +204,9 @@ export class UBLModelUtils {
 
         rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure = order.orderLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure;
         rfq.requestForQuotationLine[0].lineItem.deliveryTerms.deliveryLocation.address = order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address;
+        rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.totalTransportHandlingUnitQuantity = order.orderLine[0].lineItem.quantity;
+        rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.originAddress = order.orderLine[0].lineItem.item.manufacturerParty.postalAddress;
         rfq.requestForQuotationLine[0].lineItem.item.transportationServiceDetails = catalogueLine.goodsItem.item.transportationServiceDetails;
-
         rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.goodsItem[0].item.name = order.orderLine[0].lineItem.item.name;
         rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.totalTransportHandlingUnitQuantity = order.orderLine[0].lineItem.quantity;
 
@@ -245,6 +245,19 @@ export class UBLModelUtils {
         rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.transportHandlingUnit[0].measurementDimension.push(handlingUnitDimension);
         this.removeHjidFieldsFromObject(rfq);
 
+        return rfq;
+    }
+
+    public static createRequestForQuotationWithIir(iir: ItemInformationResponse, fromAddress: Address, toAddress: Address, orderMetadata: any): RequestForQuotation {
+        let rfq: RequestForQuotation = this.createRequestForQuotation();
+        rfq.requestForQuotationLine[0].lineItem.item = iir.item[0];
+        if(iir.item[0].transportationServiceDetails != null) {
+            rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.originAddress = fromAddress;
+            rfq.requestForQuotationLine[0].lineItem.deliveryTerms.deliveryLocation.address = toAddress;
+            rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.goodsItem[0].item.name = orderMetadata.content.orderLine[0].lineItem.item.name;
+            rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.totalTransportHandlingUnitQuantity = orderMetadata.content.orderLine[0].lineItem.quantity;
+        }
+        this.removeHjidFieldsFromObject(rfq);
         return rfq;
     }
 
@@ -297,21 +310,33 @@ export class UBLModelUtils {
         transportExecutionPlanRequest.id = this.generateUUID();
         transportExecutionPlanRequest.mainTransportationService = transportationServiceLine.goodsItem.item;
         transportExecutionPlanRequest.toLocation.address = order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address;
+        transportExecutionPlanRequest.fromLocation.address = order.orderLine[0].lineItem.item.manufacturerParty.postalAddress;
         transportExecutionPlanRequest.consignment[0].consolidatedShipment[0].goodsItem[0].item = order.orderLine[0].lineItem.item;
         this.removeHjidFieldsFromObject(transportExecutionPlanRequest);
         return transportExecutionPlanRequest
+    }
+
+    public static createTransportExecutionPlanRequestWithIir(iir: ItemInformationResponse, fromAddress: Address, toAddress:Address, orderMetadata: any): TransportExecutionPlanRequest {
+        let transportExecutionPlanRequest:TransportExecutionPlanRequest = new TransportExecutionPlanRequest();
+        transportExecutionPlanRequest.id = this.generateUUID();
+        transportExecutionPlanRequest.consignment[0].consolidatedShipment.push(new Shipment());
+        transportExecutionPlanRequest.mainTransportationService = iir.item[0];
+        transportExecutionPlanRequest.toLocation.address = toAddress;
+        transportExecutionPlanRequest.fromLocation.address = fromAddress;
+        transportExecutionPlanRequest.consignment[0].consolidatedShipment[0].goodsItem[0].item.name = orderMetadata.content.orderLine[0].lineItem.item.name;
+        this.removeHjidFieldsFromObject(transportExecutionPlanRequest);
+        return transportExecutionPlanRequest;
     }
 
     public static createTransportExecutionPlanRequestWithQuotation(quotation:Quotation): TransportExecutionPlanRequest {
         let transportExecutionPlanRequest:TransportExecutionPlanRequest = new TransportExecutionPlanRequest();
         transportExecutionPlanRequest.id = this.generateUUID();
         transportExecutionPlanRequest.mainTransportationService = quotation.quotationLine[0].lineItem.item;
+        transportExecutionPlanRequest.fromLocation.address = quotation.quotationLine[0].lineItem.delivery[0].shipment.originAddress;
         transportExecutionPlanRequest.toLocation.address = quotation.quotationLine[0].lineItem.deliveryTerms.deliveryLocation.address;
-        transportExecutionPlanRequest.consignment[0].grossWeightMeasure = quotation.quotationLine[0].lineItem.delivery[0].shipment.consignment[0].grossWeightMeasure;
+        transportExecutionPlanRequest.consignment[0].consolidatedShipment.push(quotation.quotationLine[0].lineItem.delivery[0].shipment);
         transportExecutionPlanRequest.consignment[0].grossVolumeMeasure = quotation.quotationLine[0].lineItem.delivery[0].shipment.consignment[0].grossVolumeMeasure;
-        let shipment = new Shipment();
-        shipment.goodsItem[0].item = quotation.quotationLine[0].lineItem.delivery[0].shipment.goodsItem[0].item;
-        transportExecutionPlanRequest.consignment[0].consolidatedShipment.push(shipment);
+        transportExecutionPlanRequest.consignment[0].grossWeightMeasure = quotation.quotationLine[0].lineItem.delivery[0].shipment.consignment[0].grossWeightMeasure;
         this.removeHjidFieldsFromObject(transportExecutionPlanRequest);
         return transportExecutionPlanRequest
     }
@@ -429,6 +454,17 @@ export class UBLModelUtils {
 
     public static createItemIdentification():ItemIdentification {
         return this.createItemIdentificationWithId(this.generateUUID());
+    }
+
+
+    public static mapAddress(address): Address {
+        let addr: Address = new Address();
+        addr.buildingNumber = address.buildingNumber;
+        addr.cityName = address.cityName;
+        addr.postalZone = address.postalCode;
+        addr.streetName = address.streetName;
+        addr.country = new Country(address.country);
+        return addr;
     }
 
     public static removeHjidFieldsFromObject(object:any):any {

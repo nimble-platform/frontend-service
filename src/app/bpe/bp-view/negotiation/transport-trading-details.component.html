@@ -55,17 +55,17 @@
 
     <!-- Start location -->
     <detailed-address-view [propName]="'From Location'"
-                   [fetchDefaultDeliveryAddress]="fetchDefaultDeliveryAddress"
+                   [fetchDefaultDeliveryAddress]="false"
                    [presentationMode]="presentationMode"
                    [deliveryAddress]="lineItem.delivery[0].shipment.originAddress">
     </detailed-address-view>
 
     <!-- Delivery Location -->
     <detailed-address-view [propName]="'To Location'"
-                   [fetchDefaultDeliveryAddress]="fetchDefaultDeliveryAddress"
+                   [fetchDefaultDeliveryAddress]="false"
                    [presentationMode]="presentationMode"
                    [deliveryAddress]="lineItem.deliveryTerms.deliveryLocation.address">
-    </detailed-address-view>,
+    </detailed-address-view>
 
     <!-- Special terms -->
     <value-view [presentationMode]="presentationMode"

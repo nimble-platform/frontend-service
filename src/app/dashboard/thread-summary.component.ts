@@ -5,11 +5,13 @@ import {BPDataService} from "../bpe/bp-view/bp-data-service";
 import {BPEService} from "../bpe/bpe.service";
 import {ActivityVariableParser} from "../bpe/bp-view/activity-variable-parser";
 import * as moment from "moment";
-import * as constants from "../constants";
 import {Item} from "../catalogue/model/publish/item";
 import {CallStatus} from "../common/call-status";
 import {CookieService} from "ng2-cookies";
 import {DataChannelService} from "../data-channel/data-channel.service";
+import {UserService} from "../user-mgmt/user.service";
+import {UBLModelUtils} from "../catalogue/model/ubl-model-utils";
+import {PrecedingBPDataService} from "../bpe/bp-view/preceding-bp-data-service";
 
 /**
  * Created by suat on 12-Mar-18.
@@ -35,8 +37,10 @@ export class ThreadSummaryComponent implements OnInit {
 
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
+                private userService: UserService,
                 private cookieService: CookieService,
                 private dataChannelService: DataChannelService,
+                private precedingBPDataService: PrecedingBPDataService,
                 private router: Router) {
     }
 
@@ -94,6 +98,7 @@ export class ThreadSummaryComponent implements OnInit {
                         this.processMetadata = [].concat(this.processMetadata);
                         if (this.aggregatedMetadataCount == this.processInstanceGroup.processInstanceIDs.length) {
                             this.processMetadataAggregated = true;
+                            this.sortProcesses();
                         }
                     });
                 });
@@ -101,6 +106,19 @@ export class ThreadSummaryComponent implements OnInit {
             .catch(error => {
                 console.error(error);
             });
+    }
+
+    sortProcesses() {
+      this.processMetadata.sort(function (a: any, b: any) {
+        var a_comp = moment(a.start_time);
+        var b_comp = moment(b.start_time);
+        if (a_comp.isBefore(b_comp))
+          return -1;
+        else if (b_comp.isBefore(a_comp))
+          return 1;
+        else
+          return 0;
+      });
     }
 
     getActionStatus(processType: string, response: any, buyer: boolean): string {
@@ -225,7 +243,30 @@ export class ThreadSummaryComponent implements OnInit {
                 pid: processMetadata.process_id
             }
         });
+        this.initializeAddressValues(processInstanceIndex);
+    }
 
+    initializeAddressValues(processMetadataIndex: number): void {
+        let processMetadata = this.processMetadata[processMetadataIndex];
+        // cache the address only if the the process is related to a logistics service
+        // and the current process is item information request
+        if(processMetadata != 'Item_Information_Request' && processMetadata.product.transportationServiceDetails == null) {
+            return;
+        }
+
+        // check preceeding processes until finding an order to find the initial customer's address
+        for(let i=processMetadataIndex-1; i>=0; i--) {
+            let metadata = this.processMetadata[i];
+            if(metadata.processType == 'Order') {
+                let userId = this.cookieService.get('user_id');
+                this.userService.getSettings(userId).then(settings => {
+                    this.precedingBPDataService.toAddress = JSON.parse(JSON.stringify(metadata.content.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address));
+                    this.precedingBPDataService.fromAddress = JSON.parse(JSON.stringify(UBLModelUtils.mapAddress(settings.address)));
+                    this.precedingBPDataService.orderMetadata = metadata;
+                });
+                break;
+            }
+        }
     }
 
     toggleExpanded(): void {

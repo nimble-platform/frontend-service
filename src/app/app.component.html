@@ -77,6 +77,19 @@
 					<i class="fa fa-building"></i> Company Members
 				</a>
 			</li>
+
+			<li ngbDropdown class="nav-item dropdown" *ngIf="checkRoles('pm')" routerLinkActive="active">
+				<a class="nav-link pointer" id="dropdownMenuPM" ngbDropdownToggle>
+					<i class="fa fa-chart-pie"></i> <span i18n>Platform Management</span>
+				</a>
+				<div class="dropdown-menu" aria-labelledby="dropdownMenuPM" ngbDropdownMenu>
+					<a class="dropdown-item" href="https://nimble-platform.uk-south.containers.mybluemix.net/dashboards/status" target="_blank">Health Report</a>
+					<a class="dropdown-item" href="http://nimble-platform.salzburgresearch.at:5602/app/kibana#/dashboard/5ad4bff0-119d-11e8-96a2-b11689429755" target="_blank">Activity Report</a>
+					<a class="dropdown-item" href="http://nimble-platform.salzburgresearch.at:5602/app/kibana#/dashboard/5f19a540-1250-11e8-96a2-b11689429755" target="_blank">Security Report</a>
+					<a class="dropdown-item" href="http://nimble-platform.salzburgresearch.at:5602/app/kibana#/dashboard/d0c4a3a0-1194-11e8-96a2-b11689429755" target="_blank">Log Analysis</a>
+				</div>
+			</li>
+
 		</ul>
 
 		<ul class="nav navbar-nav">

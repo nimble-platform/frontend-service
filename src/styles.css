@@ -177,9 +177,14 @@ textarea {
     opacity: 1 !important;
 }
 
-.dropdown-item.active, .dropdown-item:active {
-	color: #292b2c !important;
+.dropdown-item:hover {
+  color: #292b2c !important;
 	background-color: #ccc !important;
+}
+
+.dropdown-item.active, .dropdown-item:active {
+	color: #fff !important;
+	background-color: #a21c26 !important;
 }
 
 .dropdown-menu-right {

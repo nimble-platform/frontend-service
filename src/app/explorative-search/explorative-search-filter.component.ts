@@ -44,7 +44,7 @@ export class ExplorativeSearchFilterComponent implements OnChanges {
      * a new filter configuration to the child
      */
     ngOnChanges(): void {
-        // console.log('FilterConfig ', this.filterProperties['filterJSON']); // DEBUG Check
+        console.log('FilterConfig ', this.filterProperties['filterJSON']); // DEBUG Check
         this.result = [];
         this.finalSelectionJSON = {'root': this.filterProperties['fQueryRootUrl'], 'filter': []};
         if (this.filterProperties['filterJSON'] === {}) {
@@ -90,8 +90,6 @@ export class ExplorativeSearchFilterComponent implements OnChanges {
             this.finalSelectionJSON = {'root': this.filterProperties['fQueryRoot'],
                 'child': this.filterProperties['fQuery'], 'filter': []};
         }
-        this.filterSelectionUpdated.emit(this.finalSelectionJSON);
-        // console.log('FilterArea: finalSelectionJSON', this.finalSelectionJSON); // DEBUG CHECK
     }
 
     /**
@@ -133,17 +131,10 @@ export class ExplorativeSearchFilterComponent implements OnChanges {
      * of filter choices.
      * Try Output & EventEmitter here `maybe` to send back data to Parent (search-details.component)
      */
-    /*
     submitFilter(): void {
         // console.log(Number(this.groupSelectVal)); DEBUG
         // This needs to be changed according to Backend API
-        if (this.userSelections.length > 0) {
-            this.finalSelectionJSON = {'root': this.filterProperties['fQueryRoot'], 'filter': this.userSelections};
-        } else {
-            console.log('FilterArea: this.userSelections', this.userSelections);
-            this.finalSelectionJSON = {'root': this.filterProperties['fQueryRoot'], 'filter': []};
-        }
         this.filterSelectionUpdated.emit(this.finalSelectionJSON);
         console.log('FilterArea: finalSelectionJSON', this.finalSelectionJSON); // DEBUG CHECK
-    }*/
+    }
 }

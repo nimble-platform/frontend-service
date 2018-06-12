@@ -10,7 +10,7 @@ import { ExplorativeSearchComponent } from './explorative-search.component';
 import { ExplorativeSearchFormComponent } from './explorative-search-form.component';
 import { ExplorativeSearchDetailsComponent } from './explorative-search-details.component';
 import { ExplorativeSearchFilterComponent } from './explorative-search-filter.component';
-import {ExplorativeSearchSemanticComponent, NgbdModalContent} from "./explorative-search-semantic.component";
+import {ExplorativeSearchSemanticComponent} from './explorative-search-semantic.component';
 
 //import { ExplorativeSearchService } from './explorative-search.service';
 
@@ -29,20 +29,18 @@ import {ExplorativeSearchSemanticComponent, NgbdModalContent} from "./explorativ
         ExplorativeSearchFormComponent,
         ExplorativeSearchDetailsComponent,
         ExplorativeSearchFilterComponent,
-		ExplorativeSearchSemanticComponent,
-		NgbdModalContent
+		ExplorativeSearchSemanticComponent
 	],
 	exports: [
 		ExplorativeSearchComponent,
         ExplorativeSearchFormComponent,
         ExplorativeSearchDetailsComponent,
         ExplorativeSearchFilterComponent,
-		ExplorativeSearchSemanticComponent,
-		NgbdModalContent
+		ExplorativeSearchSemanticComponent
 	],
 	providers: [
 	],
-	entryComponents: [NgbdModalContent]
+	entryComponents: []
 })
 
 export class ExplorativeSearchModule {}

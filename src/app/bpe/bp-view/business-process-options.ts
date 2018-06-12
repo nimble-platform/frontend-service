@@ -104,10 +104,14 @@ export class BusinessProcessOptions implements OnInit {
                 this.bpDataService.initRfqWithTransportExecutionPlanRequest();
                 this.bpDataService.setBpOptionParameters(this.userRole, 'Negotiation','Transport Execution Plan');
             }
-            else{
+            else if(this.processName == "Item_Information_Request") {
+                this.bpDataService.initRfqWithIir();
+                this.bpDataService.setBpOptionParameters(this.userRole, 'Negotiation', "Item_Information_Request");
+            }
+            else {
                 this.bpDataService.resetBpData();
                 this.bpDataService.initRfq();
-                this.bpDataService.setBpOptionParameters(this.userRole, 'Negotiation',null);
+                this.bpDataService.setBpOptionParameters(this.userRole, 'Negotiation', null);
             }
         }
         else if(this.nextProcess == "Item Information Request"){
@@ -136,11 +140,9 @@ export class BusinessProcessOptions implements OnInit {
                 this.bpDataService.setBpOptionParameters(this.userRole,'Transport_Execution_Plan','Transport_Execution_Plan');
                 this.selectedTabChanged.next();
             }
-            else{
-                this.bpDataService.resetBpData();
-                this.bpDataService.initTransportExecutionPlanRequest();
-                this.bpDataService.setBpOptionParameters(this.userRole,'Transport_Execution_Plan',null);
-                this.selectedTabChanged.next();
+            else {
+                this.bpDataService.initTransportExecutionPlanRequestWithIir();
+                this.bpDataService.setBpOptionParameters(this.userRole, 'Transport_Execution_Plan', "Item_Information_Request");
             }
         }
         else if(this.nextProcess == "Initiate Transport Execution Plan"){

@@ -12,6 +12,7 @@ import {CallStatus} from "../../../common/call-status";
 import {UserService} from "../../../user-mgmt/user.service";
 import {BPEService} from "../../bpe.service";
 import {Router} from "@angular/router";
+import {PrecedingBPDataService} from "../preceding-bp-data-service";
 
 @Component({
     selector: 'request-for-quotation',

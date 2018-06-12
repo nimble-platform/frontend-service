@@ -2,3 +2,34 @@
     line-height: 2em;
     padding-right: 70px;
 }
+
+#message-format {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #E8E8E8;
+}
+
+.comment {
+    color: green;
+}
+
+.key {
+    color: red;
+}
+
+.inline-code {
+    background-color: #E8E8E8;
+}
+
+.interactions {
+    float: right;
+}
+
+h1 {
+    margin-top: 40px !important;
+    margin-bottom: 20px !important;
+}
+
+h4 {
+    margin-bottom: 10px;
+}

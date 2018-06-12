@@ -1,6 +1,6 @@
 <h1>Channel Details</h1>
 
-<table id="channel-details" class="table table-striped">
+<table id="channel-details" class="table table-striped table-bordered">
     <tr>
         <th><span i18n>Channel ID</span></th>
         <th><span i18n>Business Process</span></th>
@@ -22,9 +22,13 @@
     </tr>
 </table>
 
+<div class="interactions">
+    <button class="btn btn-danger" (click)="deleteChannel()">Delete</button>
+</div>
+
 <h1>Channel Messages</h1>
 
-<table id="channel-messages">
+<table id="channel-messages" class="table table-striped table-bordered">
     <tr>
         <th><span i18n>Machine ID</span></th>
         <th><span i18n>Time</span></th>
@@ -38,3 +42,29 @@
         </tr>
     </ng-container>
 </table>
+
+<h1>Channel Usage</h1>
+
+<h4>Kafka Brokers</h4>
+<ul>
+    <li>kafka01-prod02.messagehub.services.eu-gb.bluemix.net:9093</li>
+    <li>kafka02-prod02.messagehub.services.eu-gb.bluemix.net:9093</li>
+    <li>kafka03-prod02.messagehub.services.eu-gb.bluemix.net:9093</li>
+    <li>kafka04-prod02.messagehub.services.eu-gb.bluemix.net:9093</li>
+    <li>kafka05-prod02.messagehub.services.eu-gb.bluemix.net:9093</li>
+</ul>
+
+<h4>Message Format</h4>
+All messages must be sent as JSON to the Kafka topic <span class="inline-code">{{channelConfig.producerTopic}}</span> with the following format:
+<pre id="message-format">
+    &#123;
+        <span class="key">"header"</span>: &#123;
+            <span class="key">"channelId"</span>: "<span>{{channelConfig.channelID}}</span>",
+            <span class="key">"machineId"</span>: "machine_XY", <span class="comment">// identifier of machine</span>
+            <span class="key">"time"</span>: "13492739487234", <span class="comment">// unix timestamp in milliseconds</span>
+        &#125;,
+        <span class="key">"payload"</span>: &#123;
+            ... <span class="comment">// payload can be aribtrary</span>
+        &#125;
+    &#125;
+</pre>
