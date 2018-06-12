@@ -8,6 +8,8 @@ import { TrackingRoutingModule } from './tracking-routing.module';
 
 import { TrackingComponent } from './tracking.component';
 import { TrackingFormComponent } from './tracking-form.component';
+import {NgxGraphModule} from '@swimlane/ngx-graph';
+import {NgxChartsModule} from '@swimlane/ngx-charts';
 
 @NgModule({
     imports: [
@@ -17,6 +19,8 @@ import { TrackingFormComponent } from './tracking-form.component';
         ReactiveFormsModule,
         HttpModule,
         TrackingRoutingModule,
+        NgxGraphModule,
+        NgxChartsModule,
         NgbModule.forRoot()
     ],
     declarations: [
