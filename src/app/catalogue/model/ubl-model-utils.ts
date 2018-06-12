@@ -255,10 +255,6 @@ export class UBLModelUtils {
         if(iir.item[0].transportationServiceDetails != null) {
             rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.originAddress = fromAddress;
             rfq.requestForQuotationLine[0].lineItem.deliveryTerms.deliveryLocation.address = toAddress;
-
-            rfq.paymentMeans = orderMetadata.content.paymentMeans;
-            rfq.paymentTerms = orderMetadata.content.paymentTerms;
-
             rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.goodsItem[0].item.name = orderMetadata.content.orderLine[0].lineItem.item.name;
             rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.totalTransportHandlingUnitQuantity = orderMetadata.content.orderLine[0].lineItem.quantity;
         }

@@ -8,6 +8,7 @@ import {CallStatus} from "../../../common/call-status";
 import {BPEService} from "../../bpe.service";
 import {Router} from "@angular/router";
 import {RequestForQuotation} from "../../../catalogue/model/publish/request-for-quotation";
+import {TradingTerm} from '../../../catalogue/model/publish/trading-term';
 
 @Component({
     selector: 'quotation',
@@ -36,7 +37,34 @@ export class QuotationComponent implements OnInit {
 
     respondToRFQ() {
         this.submitted = true;
-        let vars: ProcessVariables = ModelUtils.createProcessVariables("Negotiation", this.bpDataService.requestForQuotation.buyerCustomerParty.party.id, this.bpDataService.requestForQuotation.sellerSupplierParty.party.id, this.bpDataService.quotation, this.bpDataService);
+
+        let quotation:Quotation = JSON.parse(JSON.stringify(this.bpDataService.quotation));
+        let selectedTradingTerms: TradingTerm[] = [];
+
+        for(let tradingTerm of this.bpDataService.quotation.paymentTerms.tradingTerms){
+            if(tradingTerm.id.indexOf("Values") != -1){
+                let addToList = true;
+                for(let value of tradingTerm.value){
+                    if(value == null){
+                        addToList = false;
+                        break;
+                    }
+                }
+                if(addToList){
+                    selectedTradingTerms.push(tradingTerm);
+                }
+            }
+            else{
+                if(tradingTerm.value[0] == 'true'){
+                    selectedTradingTerms.push(tradingTerm);
+                }
+            }
+        }
+
+        // set payment terms
+        quotation.paymentTerms.tradingTerms = selectedTradingTerms;
+
+        let vars: ProcessVariables = ModelUtils.createProcessVariables("Negotiation", this.bpDataService.requestForQuotation.buyerCustomerParty.party.id, this.bpDataService.requestForQuotation.sellerSupplierParty.party.id, quotation, this.bpDataService);
         let piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.bpDataService.processMetadata.process_id);
 
         this.callStatus.submit();
