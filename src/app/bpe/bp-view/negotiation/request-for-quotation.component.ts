@@ -13,6 +13,7 @@ import {UserService} from "../../../user-mgmt/user.service";
 import {BPEService} from "../../bpe.service";
 import {Router} from "@angular/router";
 import {PrecedingBPDataService} from "../preceding-bp-data-service";
+import {TradingTerm} from '../../../catalogue/model/publish/trading-term';
 
 @Component({
     selector: 'request-for-quotation',
@@ -40,6 +41,32 @@ export class RequestForQuotationComponent {
 
         // final check on the rfq
         rfq.requestForQuotationLine[0].lineItem.item = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;
+
+        let selectedTradingTerms: TradingTerm[] = [];
+
+        for(let tradingTerm of this.requestForQuotation.paymentTerms.tradingTerms){
+            if(tradingTerm.id.indexOf("Values") != -1){
+                let addToList = true;
+                for(let value of tradingTerm.value){
+                    if(value == null){
+                        addToList = false;
+                        break;
+                    }
+                }
+                if(addToList){
+                    selectedTradingTerms.push(tradingTerm);
+                }
+            }
+            else{
+                if(tradingTerm.value[0] == 'true'){
+                    selectedTradingTerms.push(tradingTerm);
+                }
+            }
+        }
+
+        // set payment terms
+        rfq.paymentTerms.tradingTerms = selectedTradingTerms;
+
         UBLModelUtils.removeHjidFieldsFromObject(rfq);
 
         //first initialize the seller and buyer parties.

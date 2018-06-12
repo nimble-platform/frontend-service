@@ -1,6 +1,8 @@
 <ng-container *ngIf="quotation">
     <ng-container *ngIf="bpDataService.getCatalogueLine().goodsItem.item.transportationServiceDetails == null">
         <negotiation-trading-details [lineItem]="quotation.quotationLine[0].lineItem"
+                                     [paymentTerms]="quotation.paymentTerms"
+                                     [paymentMeans]="quotation.paymentMeans"
                                      [fetchDefaultDeliveryAddress]="bpDataService.processMetadata == null && bpDataService.previousProcess == null"
                                      [presentationMode]="presentationMode">
         </negotiation-trading-details>
@@ -36,6 +38,8 @@
     <!-- negotiation parameters for transportation services -->
     <ng-container *ngIf="bpDataService.getCatalogueLine().goodsItem.item.transportationServiceDetails != null">
         <transport-trading-details [lineItem]="quotation.quotationLine[0].lineItem"
+                                   [paymentMeans]="quotation.paymentMeans"
+                                   [paymentTerms]="quotation.paymentTerms"
                                    [fetchDefaultDeliveryAddress]="bpDataService.processMetadata == null"
                                    [presentationMode]="presentationMode">
         </transport-trading-details>

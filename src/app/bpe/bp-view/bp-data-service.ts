@@ -275,6 +275,8 @@ export class BPDataService{
         this.modifiedCatalogueLines = JSON.parse(JSON.stringify(this.catalogueLines));
         this.order = UBLModelUtils.createOrder();
         this.order.orderLine[0].lineItem = copyQuotation.quotationLine[0].lineItem;
+        this.order.paymentMeans = copyQuotation.paymentMeans;
+        this.order.paymentTerms = copyQuotation.paymentTerms;
         this.setProcessType('Order');
     }
 
@@ -295,6 +297,8 @@ export class BPDataService{
         this.modifiedCatalogueLines = JSON.parse(JSON.stringify(this.catalogueLines));
         this.requestForQuotation = UBLModelUtils.createRequestForQuotation();
         this.requestForQuotation.requestForQuotationLine[0].lineItem = copyQuotation.quotationLine[0].lineItem;
+        this.requestForQuotation.paymentMeans = copyQuotation.paymentMeans;
+        this.requestForQuotation.paymentTerms = copyQuotation.paymentTerms;
     }
 
     initRfqWithOrder(){
@@ -303,6 +307,8 @@ export class BPDataService{
         this.modifiedCatalogueLines = JSON.parse(JSON.stringify(this.catalogueLines));
         this.requestForQuotation = UBLModelUtils.createRequestForQuotation();
         this.requestForQuotation.requestForQuotationLine[0].lineItem = copyOrder.orderLine[0].lineItem;
+        this.requestForQuotation.paymentTerms = copyOrder.paymentTerms;
+        this.requestForQuotation.paymentMeans = copyOrder.paymentMeans;
     }
 
     initRfqWithTransportExecutionPlanRequest() {
