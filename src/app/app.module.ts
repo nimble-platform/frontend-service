@@ -26,11 +26,13 @@ import { DataChannelService } from "./data-channel/data-channel.service";
 import { UnitService } from './common/unit-service';
 import {PrecedingBPDataService} from "./bpe/bp-view/preceding-bp-data-service";
 import { TrackingService } from './tracking/tracking.service';
+import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 
 @NgModule({
     imports: [
         BrowserModule,
         CommonModule,
+        BrowserAnimationsModule,
         FormsModule,
         HttpModule,
         AppRoutingModule,
