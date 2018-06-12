@@ -1,41 +1,4 @@
-<ng-container *ngIf="bpDataService.getCatalogueLine()">
-    <catalogue-line-header [catalogueLine]="bpDataService.getCatalogueLine()"
-                           [presentationMode]="presentationMode">
-    </catalogue-line-header>
+<h1>Business Process for: TODO</h1>
 
-    <div *ngIf="!singleMode"
-         class="d-flex justify-content-center">
-        <button class="btn btn-success col-4 m-3"
-                (click)="closeBpOptions()">Back to Product Details &nbsp; <i class="fa fa-angle-double-up" aria-hidden="true"></i>
-        </button>
-    </div>
-
-    <!-- The following block includes the bp options that can be initiated from scratch without any previous business history-->
-    <ul *ngIf="availableProcesses.length > 0 && !singleMode" class="nav nav-tabs">
-        <li *ngFor="let process of availableProcesses">
-            <a href [ngClass]="{'nav-link': true, active: selectedOption == process}"
-               (click)="bpDataService.setProcessType(process); $event.preventDefault();"
-               i18n
-            >{{process}}</a>
-        </li>
-    </ul>
-
-    <item-information-request-bp *ngIf="selectedOption == 'Item_Information_Request'"
-            [presentationMode]="presentationMode">
-    </item-information-request-bp>
-    <negotiation *ngIf="selectedOption == 'Negotiation'">
-    </negotiation>
-    <order-bp *ngIf="selectedOption == 'Order'">
-    </order-bp>
-    <fulfilment *ngIf="selectedOption == 'Fulfilment'">
-    </fulfilment>
-    <transport-execution-plan-bp *ngIf="selectedOption == 'Transport_Execution_Plan'">
-    </transport-execution-plan-bp>
-    <ppap *ngIf="selectedOption == 'Ppap'"
-            [presentationMode]="presentationMode">
-    </ppap>
-</ng-container>
-
-<call-status [callStatus]="getCatalogueLineStatus"
-             [large]="true">
-</call-status>
+<product-bp-steps [currentStep]="'NEGOTIATION'" [status]="'WAITING'">
+</product-bp-steps>
