@@ -9,7 +9,8 @@ const routes: Routes = [
 	{path: 'simple-search', loadChildren:'app/simple-search/simple-search.module#SimpleSearchModule'},
     {path: 'explore-search', loadChildren:'app/explorative-search/explorative-search.module#ExplorativeSearchModule'},
 	{path: 'bpe', loadChildren: 'app/bpe/bpe.module#BPEModule'},
-	{path: 'data-channel', loadChildren: 'app/data-channel/data-channel.module#DataChannelModule'}
+	{path: 'data-channel', loadChildren: 'app/data-channel/data-channel.module#DataChannelModule'},
+	{path: 'product-details', loadChildren: 'app/product-details/product-details.module#ProductDetailsModule'}
 ];
 
 @NgModule({

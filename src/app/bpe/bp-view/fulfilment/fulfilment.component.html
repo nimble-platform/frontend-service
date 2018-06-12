@@ -31,10 +31,10 @@
     </ul>
 </div>
 <div *ngIf="bpDataService.catalogueLines[0]">
-    <product-details *ngIf="selectedTab === 'Product Details'"
+    <catalogue-line-details *ngIf="selectedTab === 'Product Details'"
                      [catalogueLine]="bpDataService.catalogueLines[0]"
                      [presentationMode]="'singlevalue'">
-    </product-details>
+    </catalogue-line-details>
     <product-trading-details *ngIf="selectedTab === 'Product Trading & Delivery Terms'"
                              [catalogueLine]="bpDataService.catalogueLines[0]"
                              [presentationMode]="'singlevalue'">

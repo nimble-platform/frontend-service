@@ -1,0 +1,227 @@
+<div *ngIf="line" class="row product-details">
+    <div class="col-9">
+        <div class="row">
+            <div class="col-12">
+                <!-- Product Overview -->
+                <h1>{{item.name}}</h1>
+                <div class="row">
+                    <div class="col-4">
+                        <strong>Product by:</strong> {{item.manufacturerParty.name}}
+                    </div>
+                    <div class="col-8 d-flex">
+                        <!-- Categories -->
+                        <strong>Categories:</strong>
+                        <div *ngFor="let classification of getClassifications()" >
+                            <div class="bordered inline space-right">
+                                {{classification.itemClassificationCode.name}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        <!-- Images (image class used in catalogue-line-header.component.html) -->
+                        <img *ngIf="item.productImage.length == 0"
+                            class="img-max"
+                            src="assets/empty_img.png">
+                        <img *ngIf="item.productImage.length > 0"
+                            class="img-max"
+                            src="data:{{item.productImage[0].mimeCode}};base64,{{item.productImage[0].value}}"/>
+                        <div>
+                            <button (click)="onSelectImage(selectedImage - 1)">
+                                Previous
+                            </button>
+                            Selected image index: {{selectedImage}}
+                            <button (click)="onSelectImage(selectedImage + 1)">
+                                Next
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-8">
+                        <div>
+                            <!-- Description -->
+                            <strong>Description:</strong>
+                            <p>{{item.description || "No description prodived."}}</p>
+                        </div>
+                        <!-- Properties with multiple values to select from -->
+                        <div *ngFor="let property of getPropertiesWithListOfValues()">
+                            <strong>{{property.name}}: </strong>
+                            <span *ngFor="let val of property.value; let i = index">
+                                <button (click)="onTogglePropertyValue(property, i)" 
+                                    [ngClass]="{ 'value-selected': isPropertyValueSelected(property, i) }">
+                                    {{val}}
+                                </button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <!-- Product Tabs -->
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <a href id="DETAILS" class="nav-link"
+                            [ngClass]="{ active: selectedTab === 'DETAILS'}"
+                            (click)="onSelectTab($event)">
+                            Details
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href id="DELIVERY_TRADING" class="nav-link"
+                            [ngClass]="{ active: selectedTab === 'DELIVERY_TRADING'}"
+                            (click)="onSelectTab($event)">
+                            Delivery &amp; Trading
+                        </a>
+                    </li>
+                    <!-- Todo once certificates are supported
+                    <li class="nav-item">
+                        <a href id="CERTIFICATES" class="nav-link"
+                            [ngClass]="{ active: selectedTab === 'CERTIFICATES'}"
+                            (click)="onSelectTab($event)">
+                            Certificates
+                        </a>
+                    </li>
+                    -->
+                </ul>
+
+                <div *ngIf="selectedTab === 'DETAILS'">
+                    <div *ngFor="let property of getUniqueProperties()">
+                        <strong>{{property.name}}: </strong>
+                        {{property.value.join(", ")}}
+                        <!-- Next are the other attributes available on property: 
+                        <span>
+                            | <strong>valueQualifier: </strong>{{ property.valueQualifier }}
+                            | <strong>itemClassificationCode: </strong>{{ property.itemClassificationCode | json }}
+                            | <strong>uri: </strong>{{ property.uri }} 
+                        </span>
+                        -->
+                    </div>
+                </div>
+
+                <div *ngIf="selectedTab === 'DELIVERY_TRADING'">
+                    <h4>Price</h4>
+                    <div>
+                        <strong>Price: </strong> {{ line.requiredItemLocationQuantity.price.priceAmount.value }} {{ line.requiredItemLocationQuantity.price.priceAmount.currencyID }}
+                        for {{ line.requiredItemLocationQuantity.price.baseQuantity.value }} {{ line.requiredItemLocationQuantity.price.baseQuantity.unitCode }}
+                    </div>
+                    <div>
+                        <strong>Free Sample: </strong> {{ line.freeOfChargeIndicator }}
+                    </div>
+                    <h4>Delivery Terms</h4>
+                    <div>
+                        <strong>Incoterms: </strong> {{ goodsItem.deliveryTerms.incoterms }}
+                    </div>
+                    <div>
+                        <strong>Special Terms: </strong> {{ goodsItem.deliveryTerms.specialTerms }}
+                    </div>
+                    <div>
+                        <strong>Delivery Period: </strong> {{ goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure.value }}
+                        {{ goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure.unitCode }}
+                    </div>
+                    <!-- Seems that this value can no longer be set when publishing a product...
+                    <div>
+                        
+                        <strong>Territory Address: </strong> {{ goodsItem.deliveryTerms.deliveryLocation.address | json }}
+                    </div>
+                    -->
+                    <h4>Packaging</h4>
+                    <div>
+                        <strong>Packaging: </strong> {{ goodsItem.containingPackage.quantity.value }} {{ goodsItem.containingPackage.quantity.unitCode }}
+                        per {{ goodsItem.containingPackage.packagingTypeCode.value }}
+                    </div>
+                </div>
+
+                <!-- Todo once certificates are supported
+                <div *ngIf="selectedTab === 'CERTIFICATES'">
+                    Certificates tab
+                </div>
+                -->
+            </div>
+        </div>
+    </div>
+    <div class="col-3">
+        <!-- Order Workflow -->
+        <h2>Order</h2>
+        <div>
+            <strong>Delivery Period: </strong> {{ goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure.value }}
+            {{ goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure.unitCode }}
+        </div>
+        <div>
+            <strong>Price: </strong> {{ line.requiredItemLocationQuantity.price.priceAmount.value }} {{ line.requiredItemLocationQuantity.price.priceAmount.currencyID }}
+            for {{ line.requiredItemLocationQuantity.price.baseQuantity.value }} {{ line.requiredItemLocationQuantity.price.baseQuantity.unitCode }}
+        </div>
+        <div class="form-group row">
+            <label class="col-4"><strong>Quantity: </strong></label>
+            <input type="number" [(ngModel)]="options.quantity" class="form-control form-control-sm col-8" />
+            <input type="range" [(ngModel)]="options.quantity" class="form-control-range col-12" />
+        </div>
+        <div>
+            <strong>Total: {{getTotalPrice()}} {{ line.requiredItemLocationQuantity.price.priceAmount.currencyID }}</strong>
+        </div>
+        <div>
+            <button [disabled]="options.quantity < 1" class="btn btn-primary space-before w-100"
+                (click)="onFastTrackOrdering()">
+                Fast Track Ordering
+            </button>
+        </div>
+        <h3>Negotiation</h3>
+        <div class="form-group form-check">
+            <input type="checkbox" [(ngModel)]="options.negotiation.price" class="form-check-input" id="priceCb">
+            <label class="form-check-label" for="priceCb">Price</label>
+        </div>
+        <div class="form-group form-check">
+            <input type="checkbox" [(ngModel)]="options.negotiation.deliveryPeriod" class="form-check-input" id="deliveryPeriodCb">
+            <label class="form-check-label" for="deliveryPeriodCb">Delivery Period</label>
+        </div>
+        <div class="form-group form-check">
+            <input type="checkbox" [(ngModel)]="options.negotiation.waranty" class="form-check-input" id="warantyCb">
+            <label class="form-check-label" for="warantyCb">Waranty</label>
+        </div>
+        <div class="form-group form-check">
+            <input type="checkbox" [(ngModel)]="options.negotiation.incoterms" class="form-check-input" id="incotermsCb">
+            <label class="form-check-label" for="incotermsCb">Incoterms</label>
+        </div>
+        <div class="form-group form-check">
+            <input type="checkbox" [(ngModel)]="options.negotiation.paymentTerms" class="form-check-input" id="paymentTermsCb">
+            <label class="form-check-label" for="paymentTermsCb">Payment Terms</label>
+        </div>
+        <div class="form-group form-check">
+            <input type="checkbox" [(ngModel)]="options.negotiation.paymentMeans" class="form-check-input" id="paymentMeansCb">
+            <label class="form-check-label" for="paymentMeansCb">Payment Means</label>
+        </div>
+        <div>
+            <button [disabled]="!options.negotiation.isNegotiationAnyTerm()" class="btn btn-primary space-before w-100"
+            (click)="onNegotiate()">
+                Negotiate
+            </button>
+        </div>
+
+        <h3>Business Processes</h3>
+        <div>
+            <button class="btn btn-secondary space-before w-100" (click)="onRequestInformation()">
+                Request Information
+            </button>
+        </div>
+        <div>
+            <button class="btn btn-secondary space-before w-100" (click)="onNegotiateOtherTerms()">
+                Negotiate Other Terms
+            </button>
+        </div>
+        <div>
+            <button class="btn btn-secondary space-before w-100" (click)="onStartPpap()">
+                Start Ppap
+            </button>
+        </div>
+        <div>
+            <button class="btn btn-secondary space-before w-100" (click)="onPreviewTermsAndConditions()">
+                Preview Terms &amp; Conditions
+            </button>
+        </div>
+    </div>
+</div>
+
+<call-status [callStatus]="getProductStatus"
+             [large]="true">
+</call-status>
