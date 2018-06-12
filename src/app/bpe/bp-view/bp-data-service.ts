@@ -254,7 +254,7 @@ export class BPDataService{
         this.order = UBLModelUtils.createOrder();
         this.order.orderLine[0].lineItem = copyOrder.orderLine[0].lineItem;
         this.order.paymentMeans.paymentMeansCode.value = copyOrder.paymentMeans.paymentMeansCode.value;
-        this.order.paymentTerms.paymentConditions = copyOrder.paymentTerms.paymentConditions;
+        this.order.paymentTerms.tradingTerms = copyOrder.paymentTerms.tradingTerms;
         this.setProcessType('Order');
     }
 
