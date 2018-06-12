@@ -55,7 +55,7 @@
 	<div class="form-group row col-10 mx-auto">
 		<div class="col-12">
 			<input id="eula" type="checkbox" name="eula" required [(ngModel)]="eula_accepted" #eula="ngModel">
-			<span class="form-control d-inline" style="border:0;" [ngClass]="{'ng-invalid':!eula_accepted,'ng-valid required':eula_accepted}">
+			<span class="form-control d-inline border-0" [ngClass]="{'ng-invalid':!eula_accepted,'ng-valid required':eula_accepted}">
 				I agree to the <span class="clickable" (click)="open(eula)">End-User License Agreement (EULA)</span>
 			</span>
 		</div>
