@@ -1,6 +1,11 @@
 import { Component, OnInit, Input } from "@angular/core";
 
-type Step = "INFORMATION" | "PPAP" | "NEGOTIATION" | "ORDER" | "DONE";
+type Step = 
+    | "Order" 
+    | "Negotiation" 
+    | "Item_Information_Request"
+    | "Ppap"
+    | "Done"
 
 @Component({
     selector: "product-bp-steps",
@@ -45,15 +50,15 @@ export class ProductBpStepsComponent implements OnInit {
 
     private getStatusTextMarginLeft(): string {
         switch(this.currentStep) {
-            case "INFORMATION":
+            case "Item_Information_Request":
                 return "0%";
-            case "PPAP":
+            case "Ppap":
                 return "20%";
-            case "NEGOTIATION":
+            case "Negotiation":
                 return "40%";
-            case "ORDER":
+            case "Order":
                 return "60%";
-            case "DONE":
+            case "Done":
                 return "80%";
         }
     }
