@@ -34,11 +34,11 @@
         </li>
     </ul>
 
-    <product-details [hidden]="selectedTab !== 'Product Details'"
+    <catalogue-line-details [hidden]="selectedTab !== 'Product Details'"
                      [catalogueLine]="catalogueLine"
                      [presentationMode]="presentationMode"
                      [parentForm]="regularProductDetailsForm">
-    </product-details>
+    </catalogue-line-details>
     <product-trading-details [hidden]="selectedTab !== 'Product Trading & Delivery Terms'"
                              [parentForm]="regularProductDetailsForm"
                              [catalogueLine]="catalogueLine"

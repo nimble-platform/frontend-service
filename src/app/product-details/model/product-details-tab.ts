@@ -1,0 +1,1 @@
+export type ProductDetailsTab = "DETAILS" | "DELIVERY_TRADING" | "CERTIFICATES"

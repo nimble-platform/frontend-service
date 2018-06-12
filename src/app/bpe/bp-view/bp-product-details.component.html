@@ -1,8 +1,8 @@
 <ng-container *ngIf="catalogueLine.goodsItem.item.transportationServiceDetails == null">
-    <product-details *ngIf="selectedTab === 'Product Characteristics'"
+    <catalogue-line-details *ngIf="selectedTab === 'Product Characteristics'"
                      [catalogueLine]="catalogueLine"
                      [presentationMode]="presentationMode">
-    </product-details>
+    </catalogue-line-details>
     <product-trading-details *ngIf="selectedTab === 'Product Trading & Delivery Terms'"
                              [catalogueLine]="catalogueLine"
                              [presentationMode]="presentationMode">

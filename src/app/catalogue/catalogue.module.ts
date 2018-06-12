@@ -12,7 +12,7 @@ import {AdditionalItemPropertyComponent} from "./ubl-model-view/additional-item-
 import {CatalogueViewComponent} from "./ubl-model-view/catalogue/catalogue-view.component";
 import {CatalogueLinePanelComponent} from "./ubl-model-view/catalogue/catalogue-line-panel.component";
 import {CatalogueLineViewComponent} from "./ubl-model-view/catalogue-line/catalogue-line-view.component";
-import {ProductDetailsComponent} from "./ubl-model-view/catalogue-line/product-details.component";
+import {CatalogueLineDetailsComponent} from "./ubl-model-view/catalogue-line/catalogue-line-details.component";
 import {PropertyBlockPipe} from "./property-block-pipe";
 import {ItemPropertyDataSourcePipe} from "./item-property-data-source-pipe";
 import {QuantityViewComponent} from "./ubl-model-view/quantity-view.component";
@@ -52,7 +52,7 @@ import {DetailedAddressViewComponent} from "./ubl-model-view/detailed-address-vi
 		CatalogueViewComponent,
 		CatalogueLinePanelComponent,
 		CatalogueLineViewComponent,
-		ProductDetailsComponent,
+		CatalogueLineDetailsComponent,
 		QuantityViewComponent,
 		AmountViewComponent,
 		QuantityValueViewComponent,
@@ -77,7 +77,7 @@ import {DetailedAddressViewComponent} from "./ubl-model-view/detailed-address-vi
 		CatalogueViewComponent,
 		CatalogueLinePanelComponent,
 		CatalogueLineViewComponent,
-		ProductDetailsComponent,
+		CatalogueLineDetailsComponent,
 		QuantityViewComponent,
 		AmountViewComponent,
 		QuantityValueViewComponent,

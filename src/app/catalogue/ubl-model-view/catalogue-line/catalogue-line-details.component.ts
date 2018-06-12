@@ -5,14 +5,17 @@ import {PublishService} from "../../publish-and-aip.service";
 import {FormGroup} from "@angular/forms";
 
 @Component({
-    selector: 'product-details',
+    selector: 'catalogue-line-details',
     providers: [PropertyBlockPipe],
-    templateUrl: './product-details.component.html',
+    templateUrl: './catalogue-line-details.component.html',
 })
 
 // Component that displays category and custom properties inside the "product details" tab in CatalogueLin
 
-export class ProductDetailsComponent{
+/**
+ * Anthony 11.06.2018: this component is deprecated and will be replaced by the product details components/page.
+ */
+export class CatalogueLineDetailsComponent{
 
     PROPERTY_BLOCK_FIELD_NAME: string = "name";
     PROPERTY_BLOCK_FIELD_PROPERTIES = "properties";
