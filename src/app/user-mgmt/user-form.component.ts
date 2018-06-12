@@ -64,7 +64,7 @@ export class UserFormComponent implements OnInit {
             .then(res => {
                 this.response = res;
                 this.callback = true;
-                this.router.navigate(["/user-mgmt/login"]);
+                this.router.navigate(["/user-mgmt/login"], {queryParams: { pageRef: "registration" }});
             })
 			.catch(error => {
 				this.error_detc = true;
