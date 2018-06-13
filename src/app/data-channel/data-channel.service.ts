@@ -3,6 +3,7 @@ import {Headers, Http} from '@angular/http';
 import 'rxjs/add/operator/toPromise';
 import * as myGlobals from '../globals';
 import {CookieService} from 'ng2-cookies';
+import {Sensor} from './model/sensor';
 
 @Injectable()
 export class DataChannelService {
@@ -50,7 +51,40 @@ export class DataChannelService {
             .catch(this.handleError);
     }
 
-    isChannelAttached(processID: string): Promise<boolean> {
+    getAssociatedSensors(channelID: string): Promise<any> {
+        const url = `${this.url}/channel/${channelID}/sensors`;
+        const token = 'Bearer ' + this.cookieService.get("bearer_token");
+        const headers = new Headers({'Authorization': token});
+        return this.http
+            .get(url, {headers: headers, withCredentials: true})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+    }
+
+    addSensor(channelID: string, sensor: Sensor): Promise<any> {
+        const url = `${this.url}/channel/${channelID}/sensors`;
+        const token = 'Bearer ' + this.cookieService.get("bearer_token");
+        const headers = new Headers({'Authorization': token});
+        return this.http
+            .post(url, sensor, {headers: headers, withCredentials: true})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+    }
+
+    removeSensor(channelID: string, sensor: Sensor): Promise<any> {
+        const url = `${this.url}/channel/${channelID}/sensors/${sensor.id}`;
+        const token = 'Bearer ' + this.cookieService.get("bearer_token");
+        const headers = new Headers({'Authorization': token});
+        return this.http
+            .delete(url, {headers: headers, withCredentials: true})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+    }
+
+    isBusinessProcessAttached(processID: string): Promise<boolean> {
         return this.channelsForBusinessProcess(processID)
             .then(res => Object.keys(res).length > 0)
     }
