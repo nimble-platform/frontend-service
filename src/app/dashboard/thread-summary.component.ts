@@ -74,7 +74,7 @@ export class ThreadSummaryComponent implements OnInit {
                         let vTradingPartnerName = ActivityVariableParser.getTradingPartnerName(initialDoc, this.cookieService.get("company_id"));
 
                         if (vProcessType === 'Order') {
-                            this.dataChannelService.isChannelAttached(processInstanceId)
+                            this.dataChannelService.isBusinessProcessAttached(processInstanceId)
                                 .then(isChannelAttached => {
                                     this.showDataChannelButton = isChannelAttached;
                                 });

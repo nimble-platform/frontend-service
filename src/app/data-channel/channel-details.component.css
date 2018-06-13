@@ -33,3 +33,24 @@ h1 {
 h4 {
     margin-bottom: 10px;
 }
+
+#new-sensor p {
+    margin-top: 10px;
+    font-size: 0.8em;
+}
+
+.add-sensor-btn {
+    float: right;
+}
+
+.interaction-column {
+    width: 107px;
+}
+
+.remove-channel-btn {
+    float: right;
+}
+
+#add-sensor-form input {
+    margin-right: 10px;
+}
