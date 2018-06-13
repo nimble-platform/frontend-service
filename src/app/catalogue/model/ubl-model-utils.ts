@@ -182,7 +182,7 @@ export class UBLModelUtils {
         let price:Price = this.createPrice(null)
         let lineItem:LineItem = this.createLineItem(quantity, price, item);
         let requestForQuotationLine:RequestForQuotationLine = new RequestForQuotationLine(lineItem);
-        let rfq = new RequestForQuotation(this.generateUUID(), [""], false, null, null, new Delivery(), [requestForQuotationLine]);
+        let rfq = new RequestForQuotation(this.generateUUID(), [""], false, null, null, new Delivery(), [requestForQuotationLine],new PaymentTerms(),new PaymentMeans());
 
         // TODO remove this custom dimension addition once the dimension-view is improved to handle such cases
         let handlingUnitDimension:Dimension = new Dimension();
@@ -200,7 +200,7 @@ export class UBLModelUtils {
         let price:Price = this.createPrice(null);
         let lineItem:LineItem = this.createLineItem(quantity, price, item);
         let requestForQuotationLine:RequestForQuotationLine = new RequestForQuotationLine(lineItem);
-        let rfq = new RequestForQuotation(this.generateUUID(), [""], false, null, null, new Delivery(), [requestForQuotationLine]);
+        let rfq = new RequestForQuotation(this.generateUUID(), [""], false, null, null, new Delivery(), [requestForQuotationLine],new PaymentTerms(),new PaymentMeans());
 
         rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure = order.orderLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure;
         rfq.requestForQuotationLine[0].lineItem.deliveryTerms.deliveryLocation.address = order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address;
@@ -209,6 +209,33 @@ export class UBLModelUtils {
         rfq.requestForQuotationLine[0].lineItem.item.transportationServiceDetails = catalogueLine.goodsItem.item.transportationServiceDetails;
         rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.goodsItem[0].item.name = order.orderLine[0].lineItem.item.name;
         rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.totalTransportHandlingUnitQuantity = order.orderLine[0].lineItem.quantity;
+        rfq.paymentTerms = order.paymentTerms;
+        rfq.paymentMeans = order.paymentMeans;
+        // TODO remove this custom dimension addition once the dimension-view is improved to handle such cases
+        let handlingUnitDimension:Dimension = new Dimension();
+        handlingUnitDimension.attributeID = 'Handling Unit Length';
+        rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.transportHandlingUnit[0].measurementDimension.push(handlingUnitDimension);
+        handlingUnitDimension = new Dimension();
+        handlingUnitDimension.attributeID = 'Handling Unit Width';
+        rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.transportHandlingUnit[0].measurementDimension.push(handlingUnitDimension);
+        this.removeHjidFieldsFromObject(rfq);
+
+        return rfq;
+    }
+
+    public static createRequestForQuotationWithTransportExecutionPlanRequest(transportExecutionPlanRequest:TransportExecutionPlanRequest,catalogueLine:CatalogueLine):RequestForQuotation{
+        let quantity:Quantity = new Quantity(null, "", null);
+        let item:Item = this.createItem();
+        let price:Price = this.createPrice(null);
+        let lineItem:LineItem = this.createLineItem(quantity, price, item);
+        let requestForQuotationLine:RequestForQuotationLine = new RequestForQuotationLine(lineItem);
+        let rfq = new RequestForQuotation(this.generateUUID(), [""], false, null, null, new Delivery(), [requestForQuotationLine],new PaymentTerms(),new PaymentMeans());
+
+        rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.goodsItem[0].item.name = transportExecutionPlanRequest.consignment[0].consolidatedShipment[0].goodsItem[0].item.name;
+        rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.consignment[0].grossVolumeMeasure = transportExecutionPlanRequest.consignment[0].grossVolumeMeasure;
+        rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.consignment[0].grossWeightMeasure = transportExecutionPlanRequest.consignment[0].grossWeightMeasure;
+        rfq.requestForQuotationLine[0].lineItem.deliveryTerms.deliveryLocation.address = transportExecutionPlanRequest.toLocation.address;
+        rfq.requestForQuotationLine[0].lineItem.item.transportationServiceDetails = catalogueLine.goodsItem.item.transportationServiceDetails;
 
         // TODO remove this custom dimension addition once the dimension-view is improved to handle such cases
         let handlingUnitDimension:Dimension = new Dimension();
@@ -244,7 +271,7 @@ export class UBLModelUtils {
 
         let documentReference:DocumentReference = new DocumentReference(rfq.id);
 
-        let quotation = new Quotation(this.generateUUID(), [""], new Code(), new Code(), 1, false, documentReference, customerParty, supplierParty, [quotationLine]);
+        let quotation = new Quotation(this.generateUUID(), [""], new Code(), new Code(), 1, false, documentReference, customerParty, supplierParty, [quotationLine],rfq.paymentTerms,rfq.paymentMeans);
         return quotation;
     }
 
@@ -311,9 +338,16 @@ export class UBLModelUtils {
         transportExecutionPlanRequest.consignment[0].consolidatedShipment.push(quotation.quotationLine[0].lineItem.delivery[0].shipment);
         transportExecutionPlanRequest.consignment[0].grossVolumeMeasure = quotation.quotationLine[0].lineItem.delivery[0].shipment.consignment[0].grossVolumeMeasure;
         transportExecutionPlanRequest.consignment[0].grossWeightMeasure = quotation.quotationLine[0].lineItem.delivery[0].shipment.consignment[0].grossWeightMeasure;
-
         this.removeHjidFieldsFromObject(transportExecutionPlanRequest);
         return transportExecutionPlanRequest
+    }
+
+    public static createTransportExecutionPlanRequestWithTransportExecutionPlanRequest(transportExecutionPlanRequest:TransportExecutionPlanRequest): TransportExecutionPlanRequest{
+        let tep:TransportExecutionPlanRequest = new TransportExecutionPlanRequest();
+        tep = transportExecutionPlanRequest;
+        tep.id = this.generateUUID();
+        this.removeHjidFieldsFromObject(tep);
+        return tep;
     }
 
     public static createTransportExecutionPlan(transportExecutionPlanRequest:TransportExecutionPlanRequest):TransportExecutionPlan {

@@ -275,6 +275,8 @@ export class BPDataService{
         this.modifiedCatalogueLines = JSON.parse(JSON.stringify(this.catalogueLines));
         this.order = UBLModelUtils.createOrder();
         this.order.orderLine[0].lineItem = copyQuotation.quotationLine[0].lineItem;
+        this.order.paymentMeans = copyQuotation.paymentMeans;
+        this.order.paymentTerms = copyQuotation.paymentTerms;
         this.setProcessType('Order');
     }
 
@@ -284,6 +286,8 @@ export class BPDataService{
         this.modifiedCatalogueLines = JSON.parse(JSON.stringify(this.catalogueLines));
         this.order = UBLModelUtils.createOrder();
         this.order.orderLine[0].lineItem = copyOrder.orderLine[0].lineItem;
+        this.order.paymentMeans.paymentMeansCode.value = copyOrder.paymentMeans.paymentMeansCode.value;
+        this.order.paymentTerms.tradingTerms = copyOrder.paymentTerms.tradingTerms;
         this.setProcessType('Order');
     }
 
@@ -293,6 +297,25 @@ export class BPDataService{
         this.modifiedCatalogueLines = JSON.parse(JSON.stringify(this.catalogueLines));
         this.requestForQuotation = UBLModelUtils.createRequestForQuotation();
         this.requestForQuotation.requestForQuotationLine[0].lineItem = copyQuotation.quotationLine[0].lineItem;
+        this.requestForQuotation.paymentMeans = copyQuotation.paymentMeans;
+        this.requestForQuotation.paymentTerms = copyQuotation.paymentTerms;
+    }
+
+    initRfqWithOrder(){
+        let copyOrder:Order = JSON.parse(JSON.stringify(this.order));
+        this.resetBpData();
+        this.modifiedCatalogueLines = JSON.parse(JSON.stringify(this.catalogueLines));
+        this.requestForQuotation = UBLModelUtils.createRequestForQuotation();
+        this.requestForQuotation.requestForQuotationLine[0].lineItem = copyOrder.orderLine[0].lineItem;
+        this.requestForQuotation.paymentTerms = copyOrder.paymentTerms;
+        this.requestForQuotation.paymentMeans = copyOrder.paymentMeans;
+    }
+
+    initRfqWithTransportExecutionPlanRequest() {
+        let copyTransportExecutionPlanRequest:TransportExecutionPlanRequest = JSON.parse(JSON.stringify(this.transportExecutionPlanRequest));
+        this.resetBpData();
+        this.modifiedCatalogueLines = JSON.parse(JSON.stringify(this.catalogueLines));
+        this.requestForQuotation = UBLModelUtils.createRequestForQuotationWithTransportExecutionPlanRequest(copyTransportExecutionPlanRequest,this.modifiedCatalogueLines[0]);
     }
 
     initDespatchAdviceWithOrder() {
@@ -332,6 +355,13 @@ export class BPDataService{
         this.resetBpData();
         this.modifiedCatalogueLines = JSON.parse(JSON.stringify(this.catalogueLines));
         this.transportExecutionPlanRequest = UBLModelUtils.createTransportExecutionPlanRequestWithQuotation(copyQuotation);
+    }
+
+    initTransportExecutionPlanRequestWithTransportExecutionPlanRequest(){
+        let copyTransportExecutionPlanRequest:TransportExecutionPlanRequest = JSON.parse(JSON.stringify(this.transportExecutionPlanRequest));
+        this.resetBpData();
+        this.modifiedCatalogueLines = JSON.parse(JSON.stringify(this.catalogueLines));
+        this.transportExecutionPlanRequest = UBLModelUtils.createTransportExecutionPlanRequestWithTransportExecutionPlanRequest(copyTransportExecutionPlanRequest);
     }
 
     resetBpData():void {

@@ -16,6 +16,7 @@ import {Order} from "../../../catalogue/model/publish/order";
 import {Router} from "@angular/router";
 import {Contract} from "../../../catalogue/model/publish/contract";
 import {DataMonitoringClause} from "../../../catalogue/model/publish/data-monitoring-clause";
+import {TradingTerm} from '../../../catalogue/model/publish/trading-term';
 /**
  * Created by suat on 20-Sep-17.
  */
@@ -33,15 +34,6 @@ export class OrderComponent implements OnInit {
 
     presentationMode:string = this.bpDataService.processMetadata == null ? 'edit':'singlevalue';
     // dmsBtnClicked: boolean = false;
-    // order.paymentTerms
-    paymentTerms: {term: string, checked: boolean}[] = [];
-
-    // necessary fields for A/B NET X payment term
-    // A: discount percentage, B:the number of days the invoice must be paid within to receive the discount,
-    // X: an invoice is due X days after being received
-    discount:any = null;
-    withinDays:any = null;
-    dueDays:any  = null;
 
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
@@ -57,39 +49,6 @@ export class OrderComponent implements OnInit {
             this.bpeService.constructContractForProcess(this.bpDataService.precedingProcessId).then(contract => {
                 this.order.contract = [contract];
             });
-        }
-
-        this.setTerms();
-        // check selected payment terms
-        if(this.order.paymentTerms.paymentConditions){
-
-            for(let i = 0;i<this.order.paymentTerms.paymentConditions.length;i++){
-                let selectedTerm = this.order.paymentTerms.paymentConditions[i];
-
-                if(selectedTerm.indexOf("NET") != -1){
-                    // A/B NET X
-                    if(selectedTerm.indexOf("/") != -1){
-                        this.discount = selectedTerm.substring(0,selectedTerm.indexOf("/"));
-                        this.withinDays = selectedTerm.substring(selectedTerm.indexOf("/")+1,selectedTerm.indexOf(" "));
-                        this.dueDays = selectedTerm.substring(selectedTerm.indexOf("T")+2);
-                        this.paymentTerms[6].checked = true;
-                    }
-                    // NET X
-                    else{
-                        this.paymentTerms[1].term = selectedTerm.substring(4);
-                        this.paymentTerms[1].checked = true;
-                    }
-                }
-                // X MFI
-                else if(selectedTerm.indexOf("MFI") != -1){
-                    this.paymentTerms[5].term = selectedTerm.substring(0,selectedTerm.indexOf("MFI")-1);
-                    this.paymentTerms[5].checked = true;
-                }
-                else{
-                    let term = this.paymentTerms.find(o => o.term === selectedTerm);
-                    term.checked = true;
-                }
-            }
         }
     }
 
@@ -116,28 +75,30 @@ export class OrderComponent implements OnInit {
         // final check on the order
         order.orderLine[0].lineItem.item = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;
 
-        let selectedPaymentTerms: string[] = [];
-        for(let i = 0; i< this.paymentTerms.length ; i=i+1)
-        {
-            if(this.paymentTerms[i].checked)
-            {
-                if(i == 1){
-                    selectedPaymentTerms.push("NET " + this.paymentTerms[i].term);
-                }
-                else if(i == 5){
-                    selectedPaymentTerms.push(this.paymentTerms[i].term + " MFI");
-                }
-                else if(i == 6){
-                    selectedPaymentTerms.push(this.discount + "/" + this.withinDays + " NET "+ this.dueDays);
-                }
-                else{
-                    selectedPaymentTerms.push(this.paymentTerms[i].term);
-                }
+        let selectedTradingTerms: TradingTerm[] = [];
 
+        for(let tradingTerm of this.order.paymentTerms.tradingTerms){
+            if(tradingTerm.id.indexOf("Values") != -1){
+                let addToList = true;
+                for(let value of tradingTerm.value){
+                    if(value == null){
+                        addToList = false;
+                        break;
+                    }
+                }
+                if(addToList){
+                    selectedTradingTerms.push(tradingTerm);
+                }
+            }
+            else{
+                if(tradingTerm.value[0] == 'true'){
+                    selectedTradingTerms.push(tradingTerm);
+                }
             }
         }
+
         // set payment terms
-        order.paymentTerms.paymentConditions = selectedPaymentTerms;
+        order.paymentTerms.tradingTerms = selectedTradingTerms;
 
 
         UBLModelUtils.removeHjidFieldsFromObject(order);
@@ -164,46 +125,7 @@ export class OrderComponent implements OnInit {
                         this.submitted = false;
                         this.callStatus.error("Failed to send Order");
                     });
-
             });
         });
-    }
-
-    setTerms(){
-        this.paymentTerms = [
-            {term:'PIA',checked:false},{term:null,checked:false},{term:'EOM',checked:false},{term:'CND',checked:false},
-            {term:'CBS',checked:false},{term:null,checked:false},{term:null,checked:false},
-            {term:'COD',checked:false},{term:'CWO',checked:false},{term:'CIA',checked:false}
-        ];
-    }
-
-    disableCheckBox(termNumber){
-        // NET X
-        if(termNumber == 1){
-            if(this.paymentTerms[1].term == null){
-                this.paymentTerms[1].checked = false;
-            }
-            else{
-                this.paymentTerms[1].checked = true;
-            }
-        }
-        // X MFI
-        else if(termNumber == 5){
-            if(this.paymentTerms[5].term == null){
-                this.paymentTerms[5].checked = false;
-            }
-            else{
-                this.paymentTerms[5].checked = true;
-            }
-        }
-        // A/B NET X
-        else if(termNumber == 6){
-            if(this.discount == null || this.withinDays == null || this.dueDays == null){
-                this.paymentTerms[6].checked = false;
-            }
-            else{
-                this.paymentTerms[6].checked = true;
-            }
-        }
     }
 }
