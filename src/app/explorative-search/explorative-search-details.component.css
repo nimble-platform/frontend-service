@@ -50,6 +50,10 @@ svg text {
 }
 
 /*Column Highlighting*/
+
+svg {
+    margin-top: 100px;
+}
 table {
     overflow: hidden;
 }

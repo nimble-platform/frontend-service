@@ -31,6 +31,7 @@ import {PublishDeactivateGuardService} from "./publish-deactivate-guard.service"
 import {CategoryDeactivateGuardService} from "./category/category-deactivate-guard.service";
 import {QuantityValueViewComponent} from "./ubl-model-view/quantity-value-view.component";
 import {DetailedAddressViewComponent} from "./ubl-model-view/detailed-address-view.component";
+import {PaymentTermsView} from './ubl-model-view/payment-terms-view';
 //import { CategoryService } from './category/category.service';
 //import { CatalogueService } from './catalogue.service';
 //import { PublishService } from './publish-and-aip.service';
@@ -68,7 +69,8 @@ import {DetailedAddressViewComponent} from "./ubl-model-view/detailed-address-vi
 		ShipmentViewComponent,
 		PropertyBlockPipe,
 		ItemPropertyDataSourcePipe,
-        DetailedAddressViewComponent
+        DetailedAddressViewComponent,
+        PaymentTermsView
 	],
 	exports: [
 		CategorySearchComponent,
@@ -93,7 +95,8 @@ import {DetailedAddressViewComponent} from "./ubl-model-view/detailed-address-vi
 		ShipmentViewComponent,
 		PropertyBlockPipe,
 		ItemPropertyDataSourcePipe,
-        DetailedAddressViewComponent
+        DetailedAddressViewComponent,
+        PaymentTermsView
 	],
 	providers: [
 	    PublishDeactivateGuardService,
