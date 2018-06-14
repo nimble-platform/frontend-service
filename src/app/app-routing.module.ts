@@ -10,7 +10,7 @@ const routes: Routes = [
     {path: 'explore-search', loadChildren:'app/explorative-search/explorative-search.module#ExplorativeSearchModule'},
 	{path: 'bpe', loadChildren: 'app/bpe/bpe.module#BPEModule'},
 	{path: 'data-channel', loadChildren: 'app/data-channel/data-channel.module#DataChannelModule'},
-	{path: 'tracking', loadChildren: 'app/tracking/tracking.module#TrackingModule'}
+	{path: 'tnt', loadChildren: 'app/tnt/tnt.module#TnTModule'}
 ];
 
 @NgModule({

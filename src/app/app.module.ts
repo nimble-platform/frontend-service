@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { CommonModule } from '@angular/common';
@@ -24,9 +25,8 @@ import { UserService } from './user-mgmt/user.service';
 import { CredentialsService } from './user-mgmt/credentials.service';
 import { DataChannelService } from "./data-channel/data-channel.service";
 import { UnitService } from './common/unit-service';
-import {PrecedingBPDataService} from "./bpe/bp-view/preceding-bp-data-service";
-import { TrackingService } from './tracking/tracking.service';
-import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import { PrecedingBPDataService } from "./bpe/bp-view/preceding-bp-data-service";
+import { TnTService } from './tnt/tnt.service';
 
 @NgModule({
     imports: [
@@ -37,7 +37,7 @@ import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
         HttpModule,
         AppRoutingModule,
         ReactiveFormsModule,
-		AppCommonModule,
+		    AppCommonModule,
         NgbModule.forRoot()
     ],
     declarations: [
@@ -59,7 +59,7 @@ import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 		CredentialsService,
         UnitService,
         PrecedingBPDataService,
-        TrackingService
+        TnTService
     ],
     bootstrap: [
         AppComponent

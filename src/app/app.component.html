@@ -75,9 +75,9 @@
 
 			<!-- Tracking and Tracing Component UB Initial Version-->
 			<!-- This Will be adapted by the platform's core dev-team later -->
-			<li class="nav-item" routerLinkActive="active">
-				<a class="nav-link" routerLink="/tracking" routerLinkActive="active">
-					<i class="fa fa-truck dd-icon"></i> <span>Track-n-Trace</span>
+			<li class="nav-item" *ngIf="checkRoles('track')" routerLinkActive="active">
+				<a class="nav-link" routerLink="/tnt" routerLinkActive="active">
+					<i class="fa fa-truck"></i> <span>Track</span>
 				</a>
 			</li>
 
