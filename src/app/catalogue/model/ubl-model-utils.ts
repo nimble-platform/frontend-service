@@ -46,6 +46,7 @@ import {ItemInformationRequest} from "./publish/item-information-request";
 import {ItemInformationResponse} from "./publish/item-information-response";
 import {PaymentTerms} from "./publish/payment-terms";
 import {Address} from "./publish/address";
+import { NegotiationOptions } from "./publish/negotiation-options";
 
 /**
  * Created by suat on 05-Jul-17.
@@ -176,13 +177,14 @@ export class UBLModelUtils {
 
 
 
-    public static createRequestForQuotation():RequestForQuotation {
+    public static createRequestForQuotation(negotiationOptions: NegotiationOptions):RequestForQuotation {
         let quantity:Quantity = new Quantity(null, "", null);
         let item:Item = this.createItem();
         let price:Price = this.createPrice(null)
         let lineItem:LineItem = this.createLineItem(quantity, price, item);
         let requestForQuotationLine:RequestForQuotationLine = new RequestForQuotationLine(lineItem);
-        let rfq = new RequestForQuotation(this.generateUUID(), [""], false, null, null, new Delivery(), [requestForQuotationLine]);
+        let rfq = new RequestForQuotation(this.generateUUID(), [""], false, null, null, new Delivery(), 
+        [requestForQuotationLine], negotiationOptions);
 
         // TODO remove this custom dimension addition once the dimension-view is improved to handle such cases
         let handlingUnitDimension:Dimension = new Dimension();
@@ -200,7 +202,7 @@ export class UBLModelUtils {
         let price:Price = this.createPrice(null);
         let lineItem:LineItem = this.createLineItem(quantity, price, item);
         let requestForQuotationLine:RequestForQuotationLine = new RequestForQuotationLine(lineItem);
-        let rfq = new RequestForQuotation(this.generateUUID(), [""], false, null, null, new Delivery(), [requestForQuotationLine]);
+        let rfq = new RequestForQuotation(this.generateUUID(), [""], false, null, null, new Delivery(), [requestForQuotationLine], new NegotiationOptions());
 
         rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure = order.orderLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure;
         rfq.requestForQuotationLine[0].lineItem.deliveryTerms.deliveryLocation.address = order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address;
@@ -223,7 +225,7 @@ export class UBLModelUtils {
     }
 
     public static createRequestForQuotationWithIir(iir: ItemInformationResponse, fromAddress: Address, toAddress: Address, orderMetadata: any): RequestForQuotation {
-        let rfq: RequestForQuotation = this.createRequestForQuotation();
+        let rfq: RequestForQuotation = this.createRequestForQuotation(new NegotiationOptions());
         rfq.requestForQuotationLine[0].lineItem.item = iir.item[0];
         if(iir.item[0].transportationServiceDetails != null) {
             rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.originAddress = fromAddress;

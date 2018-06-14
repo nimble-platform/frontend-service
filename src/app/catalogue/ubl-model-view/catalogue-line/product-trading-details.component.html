@@ -42,7 +42,7 @@
                 </span>
         </label>
         <select class="form-control custom-select" [(ngModel)]="catalogueLine.goodsItem.deliveryTerms.incoterms">
-                <option *ngFor="let option of INCOTERMS" [value]="option.value">{{option.label}}</option>
+                <option *ngFor="let option of INCOTERMS" [value]="option">{{option}}</option>
         </select>
     </div>
 </ng-container>

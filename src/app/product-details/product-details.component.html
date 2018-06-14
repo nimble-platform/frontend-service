@@ -207,7 +207,7 @@
             <label class="form-check-label" for="paymentMeansCb">Payment Means</label>
         </div>
         <div>
-            <button [disabled]="!options.negotiation.isNegotiationAnyTerm()" class="btn btn-primary space-before w-100"
+            <button [disabled]="!options.negotiation.isNegotiatingAnyTerm()" class="btn btn-primary space-before w-100"
             (click)="onNegotiate()">
                 Negotiate
             </button>

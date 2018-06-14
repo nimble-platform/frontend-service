@@ -1,10 +1,10 @@
 import { BpSelectedProperties } from "./bp-selected-properties";
-import { BpNegotiationOptions } from "./bp-negotiation-options";
+import { NegotiationOptions } from "../../catalogue/model/publish/negotiation-options";
 
 export class BpWorkflowOptions {
     constructor(
         public selectedValues: BpSelectedProperties = {},
         public quantity: number = 1,
-        public negotiation: BpNegotiationOptions = new BpNegotiationOptions()
+        public negotiation: NegotiationOptions = new NegotiationOptions()
     ) {}
 }

@@ -1,9 +1,5 @@
 import { Component, EventEmitter, OnInit, Input, Output } from "@angular/core";
-
-export interface Option {
-    value: string;
-    label: string;
-}
+import { Quantity } from "../../../catalogue/model/publish/quantity";
 
 @Component({
     selector: "negotiation-request-input",
@@ -25,10 +21,14 @@ export class NegotiationRequestInputComponent implements OnInit {
     @Output() textChange = new EventEmitter<string>();
 
     // Set if the input should be a drop down list.
-    @Input() options?: Option[];
+    @Input() options?: string[];
     private selectedValue: string;
     @Output() selectedChange = new EventEmitter<string>();
 
+    // Set if the input is a quantity
+    @Input() quantity: Quantity;
+    @Input() quantityUnits?: string[];
+    
     constructor() {
 
     }

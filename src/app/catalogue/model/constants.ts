@@ -1,16 +1,14 @@
-import { Incoterms } from "./publish/incoterms";
-
-export const INCOTERMS: Incoterms[] = [
-    { label: "None", value: "" },
-    { label: "CIF (Cost, Insurance and Freight)", value: "CIF" },
-    { label: "CIP (Carriage and Insurance Paid to)", value: "CIP" },
-    { label: "CFR (Cost and Freight)", value: "CFR" },
-    { label: "CPT (Carriage paid to)", value: "CPT" },
-    { label: "DAT (Delivered at Terminal)", value: "DAT" },
-    { label: "DAP (Delivered at Place)", value: "DAP" },
-    { label: "DDP (Delivery Duty Paid)", value: "DDP" },
-    { label: "EXW (Ex Works)", value: "EXW" },
-    { label: "FAS (Free Alongside Ship)", value: "FAS" },
-    { label: "FCA (Free Carrier)", value: "FCA" },
-    { label: "FOB (Free on Board)", value: "FOB" }
+export const INCOTERMS: string[] = [
+    "",
+    "CIF (Cost, Insurance and Freight)",
+    "CIP (Carriage and Insurance Paid to)",
+    "CFR (Cost and Freight)",
+    "CPT (Carriage paid to)",
+    "DAT (Delivered at Terminal)",
+    "DAP (Delivered at Place)",
+    "DDP (Delivery Duty Paid)",
+    "EXW (Ex Works)",
+    "FAS (Free Alongside Ship)",
+    "FCA (Free Carrier)",
+    "FOB (Free on Board)"
 ];

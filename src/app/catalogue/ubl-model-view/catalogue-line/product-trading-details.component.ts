@@ -1,7 +1,6 @@
 import {Component, Input} from "@angular/core";
 import {CatalogueLine} from "../../model/publish/catalogue-line";
 import {FormGroup} from "@angular/forms";
-import { Incoterms } from "../../model/publish/incoterms";
 import { INCOTERMS } from "../../model/constants";
 
 @Component({
@@ -15,5 +14,5 @@ export class ProductTradingDetailsComponent {
     @Input() catalogueLine: CatalogueLine;
     @Input() parentForm: FormGroup;
 
-    private INCOTERMS: Incoterms[] = INCOTERMS;
+    private INCOTERMS: string[] = INCOTERMS;
 }
