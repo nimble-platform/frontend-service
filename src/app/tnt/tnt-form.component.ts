@@ -21,6 +21,7 @@ export class TnTFormComponent {
     public bpInfo = [];
     public hierarchialGraph = {nodes: [], links: []};
     debug = myGlobals.debug;
+    error_detc = false;
     hideButton = false;
     curve = shape.curveBundle.beta(1);
     gateInformation = [];
@@ -33,6 +34,7 @@ export class TnTFormComponent {
           console.log(code);
         this.tntBackend.getMetaData(code)
             .then(resp => {
+                this.error_detc = false;
                 this.metaData = resp;
                 if ('productionProcessTemplate' in this.metaData) {
                     // this.getBPInfo(resp['productionProcessTemplate']);
@@ -42,12 +44,16 @@ export class TnTFormComponent {
                 if ('eventUrl' in resp) {
                     this.getTableInfo(resp['eventUrl'], code);
                 }
-            });
+            })
+            .catch(error => {
+      				this.error_detc = true;
+      			});
     }
 
     getTableInfo(url, code) {
         this.tntBackend.getTrackingInfo(url, code)
-            .subscribe(resp_track => {
+            .subscribe((resp_track) => {
+                this.error_detc = false;
                 this.trackingInfo = resp_track.map(el => {
                     let _out = {
                         'eventTime': moment(el.eventTime.$date).utcOffset(el.eventTimeZoneOffset).toString(),
@@ -62,21 +68,29 @@ export class TnTFormComponent {
                     }
                     return _out;
                 });
-            });
+            },(err) => {
+      				this.error_detc = true;
+      			});
     }
 
     getBPInfo(url) {
         this.tntBackend.getBusinessProcessInfo(url)
-            .subscribe(res => {
+            .subscribe((res) => {
+                this.error_detc = false;
                 this.bpInfo = res;
-            })
+            },(err) => {
+      				this.error_detc = true;
+      			});
     }
 
     getAnalysis(code) {
         this.tntBackend.getAnalysisInfo(code)
-            .subscribe(res => {
+            .subscribe((res) => {
+                this.error_detc = false;
                 this.bpInfo = res;
-            });
+            },(err) => {
+      				this.error_detc = true;
+      			});
     }
 
     showGraph() {
@@ -108,16 +122,24 @@ export class TnTFormComponent {
           console.log(selectedNode);
         this.tntBackend.getGateInfo(this.metaData['masterUrl'], selectedNode.readPoint)
             .then(res => {
+                this.error_detc = false;
                 this.gateInformation = res;
                 if (this.debug)
                   console.log(this.gateInformation);
             })
+            .catch(error => {
+      				this.error_detc = true;
+      			});
     }
 
     getSST(sstDescp) {
         this.tntBackend.getSubSiteTypeInfo(this.metaData['masterUrl'], sstDescp)
             .then(res => {
+                this.error_detc = false;
                 this.sstInfo = res;
             })
+            .catch(error => {
+      				this.error_detc = true;
+      			});
     }
 }
