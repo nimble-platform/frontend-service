@@ -44,6 +44,17 @@
     </value-view>
 </div>
 
+<!-- applicable countries -->
+<div class="well">
+    <h6>Supported Countries</h6>
+    <address-view [presentationMode]="presentationMode"
+                  [propName]="'Applicable Countries'"
+                  [multiValue]="true"
+                  [definition]="'A reference to countries to which this service will apply'"
+                  [address]="catalogueLine.requiredItemLocationQuantity.applicableTerritoryAddress">
+    </address-view>
+</div>
+
 <!-- shipment stage -->
 <div class="well">
     <h6>Shipment Stage</h6>
