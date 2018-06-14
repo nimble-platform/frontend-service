@@ -42,18 +42,7 @@
                 </span>
         </label>
         <select class="form-control custom-select" [(ngModel)]="catalogueLine.goodsItem.deliveryTerms.incoterms">
-            <option></option>
-            <option>CIF (Cost, Insurance and Freight)</option>
-            <option>CIP (Carriage and Insurance Paid to)</option>
-            <option>CFR (Cost and Freight)</option>
-            <option>CPT (Carriage paid to)</option>
-            <option>DAT (Delivered at Terminal)</option>
-            <option>DAP (Delivered at Place)</option>
-            <option>DDP (Delivery Duty Paid)</option>
-            <option>EXW (Ex Works)</option>
-            <option>FAS (Free Alongside Ship)</option>
-            <option>FCA (Free Carrier)</option>
-            <option>FOB (Free on Board)</option>
+                <option *ngFor="let option of INCOTERMS" [value]="option.value">{{option.label}}</option>
         </select>
     </div>
 </ng-container>
