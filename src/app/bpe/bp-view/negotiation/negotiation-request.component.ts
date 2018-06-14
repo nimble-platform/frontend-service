@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from "@angular/core";
 import { CatalogueLine } from "../../../catalogue/model/publish/catalogue-line";
 import { BPDataService } from "../bp-data-service";
-import { INCOTERMS } from "../../../catalogue/model/constants";
+import { INCOTERMS, PAYMENT_MEANS } from "../../../catalogue/model/constants";
 import { RequestForQuotation } from "../../../catalogue/model/publish/request-for-quotation";
 import { RequestForQuotationLine } from "../../../catalogue/model/publish/request-for-quotation-line";
 
@@ -19,6 +19,7 @@ export class NegotiationRequestComponent implements OnInit {
     negotiatedPriceAmount: number = 0;
 
     INCOTERMS: string[] = INCOTERMS;
+    PAYMENT_MEANS: string[] = PAYMENT_MEANS;
 
     // TODO remove these
     deliveryText: string = "";
@@ -32,7 +33,6 @@ export class NegotiationRequestComponent implements OnInit {
         this.rfqLine = this.rfq.requestForQuotationLine[0];
         this.line = this.bpDataService.getCatalogueLine();
 
-        // this.rfqLine.lineItem.warrantyValidityPeriod.durationMeasure
         // this.line = this.bpDataService.getCatalogueLine();
         // this.options = this.bpDataService.workflowOptions;
         // this.bpDataService.requestForQuotation.dataMonitoringRequested

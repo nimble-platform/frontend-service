@@ -12,3 +12,10 @@ export const INCOTERMS: string[] = [
     "FCA (Free Carrier)",
     "FOB (Free on Board)"
 ];
+
+export const PAYMENT_MEANS: string[] = [
+    "Credit Card",
+    "ACH Transfer",
+    "Wire Transfer",
+    "Cash On Delivery"
+]

@@ -27,6 +27,7 @@ import { ProcessMetatada } from "./temp-process-metadata";
 import { BpUserRole } from "../model/bp-user-role";
 import { BpWorkflowOptions } from "../model/bp-workflow-options";
 import { NegotiationOptions } from "../../catalogue/model/publish/negotiation-options";
+import { PAYMENT_MEANS } from "../../catalogue/model/constants";
 
 /**
  * Created by suat on 20-Sep-17.

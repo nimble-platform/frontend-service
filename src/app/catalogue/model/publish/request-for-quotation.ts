@@ -13,6 +13,7 @@ export class RequestForQuotation {
 		public sellerSupplierParty:SupplierParty,
 		public delivery:Delivery,
 		public requestForQuotationLine:RequestForQuotationLine[],
-		public negotiationOptions: NegotiationOptions
+		public negotiationOptions: NegotiationOptions,
+		public paymentMeans?: string
 	) {  }
 }

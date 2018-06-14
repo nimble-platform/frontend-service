@@ -73,7 +73,7 @@
         </negotiation-request-input>
         <div class="input-spacer"></div>
         <negotiation-request-input label="Request Payment Means" [(cbModel)]="rfq.negotiationOptions.paymentMeans" 
-            id="paymentMeansCb" [(text)]="deliveryText">
+            id="paymentMeansCb" [options]="PAYMENT_MEANS" [(selected)]="rfq.paymentMeans">
         </negotiation-request-input>
     </div>
 </div>

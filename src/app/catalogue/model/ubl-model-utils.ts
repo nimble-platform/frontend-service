@@ -47,6 +47,7 @@ import {ItemInformationResponse} from "./publish/item-information-response";
 import {PaymentTerms} from "./publish/payment-terms";
 import {Address} from "./publish/address";
 import { NegotiationOptions } from "./publish/negotiation-options";
+import { PAYMENT_MEANS } from "./constants";
 
 /**
  * Created by suat on 05-Jul-17.
@@ -184,7 +185,7 @@ export class UBLModelUtils {
         let lineItem:LineItem = this.createLineItem(quantity, price, item);
         let requestForQuotationLine:RequestForQuotationLine = new RequestForQuotationLine(lineItem);
         let rfq = new RequestForQuotation(this.generateUUID(), [""], false, null, null, new Delivery(), 
-        [requestForQuotationLine], negotiationOptions);
+        [requestForQuotationLine], negotiationOptions, PAYMENT_MEANS[0]);
 
         // TODO remove this custom dimension addition once the dimension-view is improved to handle such cases
         let handlingUnitDimension:Dimension = new Dimension();
