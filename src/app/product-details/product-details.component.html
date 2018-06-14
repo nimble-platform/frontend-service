@@ -12,7 +12,7 @@
                         <!-- Categories -->
                         <strong>Categories:</strong>
                         <div *ngFor="let classification of getClassifications()" >
-                            <div class="bordered inline space-right">
+                            <div class="border border-dark rounded px-1 inline space-left">
                                 {{classification.itemClassificationCode.name}}
                             </div>
                         </div>
@@ -21,13 +21,20 @@
                 <div class="row">
                     <div class="col-4">
                         <!-- Images (image class used in catalogue-line-header.component.html) -->
-                        <img *ngIf="item.productImage.length == 0"
-                            class="img-max"
-                            src="assets/empty_img.png">
-                        <img *ngIf="item.productImage.length > 0"
-                            class="img-max"
-                            src="data:{{item.productImage[0].mimeCode}};base64,{{item.productImage[0].value}}"/>
-                        <div>
+                        <div id="carousel-large" class="carousel slide carousel-resize" data-ride="carousel">
+                            <div class="carousel-inner">
+                                <div class="carousel-item active carousel-active">
+                                    <img *ngIf="item.productImage.length == 0"
+                                        class="img-max"
+                                        src="assets/empty_img.png">
+                                    <img *ngIf="item.productImage.length > 0"
+                                        class="img-selected d-block active"
+                                        src="data:{{item.productImage[selectedImage].mimeCode}};base64,{{item.productImage[selectedImage].value}}"/>
+                        
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
                             <button (click)="onSelectImage(selectedImage - 1)">
                                 Previous
                             </button>
@@ -41,17 +48,21 @@
                         <div>
                             <!-- Description -->
                             <strong>Description:</strong>
-                            <p>{{item.description || "No description prodived."}}</p>
+                            <p>{{item.description || "No description provided."}}</p>
                         </div>
                         <!-- Properties with multiple values to select from -->
-                        <div *ngFor="let property of getPropertiesWithListOfValues()">
-                            <strong>{{property.name}}: </strong>
-                            <span *ngFor="let val of property.value; let i = index">
-                                <button (click)="onTogglePropertyValue(property, i)" 
-                                    [ngClass]="{ 'value-selected': isPropertyValueSelected(property, i) }">
+                        <div *ngFor="let property of getPropertiesWithListOfValues()" class="my-1 row">
+                            <div class="col-2">
+                                <strong>{{property.name}}: </strong>
+                            </div>
+                            <div class="col-10">
+                            <span *ngFor="let val of property.value; let i = index" class="btn-group-toggle" data-toggle="buttons">
+                                <button type="button" class="btn btn-outline-primary no-y-padding" (click)="onTogglePropertyValue(property, i)" 
+                                    [ngClass]="{ 'active': isPropertyValueSelected(property, i) }">
                                     {{val}}
                                 </button>
                             </span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -155,7 +166,11 @@
         <div class="form-group row">
             <label class="col-4"><strong>Quantity: </strong></label>
             <input type="number" [(ngModel)]="options.quantity" class="form-control form-control-sm col-8" />
-            <input type="range" [(ngModel)]="options.quantity" class="form-control-range col-12" />
+            <div class="col 10">
+                <input type="range" [(ngModel)]="options.quantity" class="form-control-range" min="0" 
+                [max]="getMaximumQuantity(line.requiredItemLocationQuantity.price.priceAmount.value)"
+                [step]="getSteps(line.requiredItemLocationQuantity.price.priceAmount.value)"/>
+            </div>
         </div>
         <div>
             <strong>Total: {{getTotalPrice()}} {{ line.requiredItemLocationQuantity.price.priceAmount.currencyID }}</strong>

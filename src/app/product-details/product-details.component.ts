@@ -32,6 +32,9 @@ export class ProductDetailsComponent implements OnInit {
     selectedTab: ProductDetailsTab = "DETAILS";
     selectedImage: number = 0;
 
+    // max price value for the quantity to be sold
+    maxValue: number = 100000;
+
     constructor(
         private bpDataService: BPDataService,
         private catalogueService: CatalogueService,
@@ -164,7 +167,7 @@ export class ProductDetailsComponent implements OnInit {
      * Internal methods
      */
 
-     private getUniquePropertiesWithFilter(filter: Predicate<ItemProperty>): ItemProperty[] {
+    private getUniquePropertiesWithFilter(filter: Predicate<ItemProperty>): ItemProperty[] {
         if(!this.item) {
             return [];
         }
@@ -185,9 +188,35 @@ export class ProductDetailsComponent implements OnInit {
         })
 
         return result.sort((p1, p2) => p1.name.localeCompare(p2.name));
-     }
+    }
 
-     private getKey(property: ItemProperty): string {
+    private getKey(property: ItemProperty): string {
          return property.name + "___" + property.valueQualifier;
-     }
+    }
+
+    private getMagnitude(value: number): number {
+        return Math.pow(10, Math.floor(Math.log10(value)));
+    }
+
+    private round5(value: number): number {
+        return Math.round(value / 5) * 5;
+    }
+
+    // rounds the first digit of a number to the nearest 5 or 10
+    private roundFirstDigit(value: number): number {
+        let roundedDigit = this.round5(value / this.getMagnitude(value));
+        if(roundedDigit == 0) {
+            roundedDigit = 1;
+        }
+        return roundedDigit;
+    }
+
+    private getMaximumQuantity(value: number): number {
+        let result = this.maxValue / value;
+        return this.roundFirstDigit(result) * this.getMagnitude(result);
+    }
+
+    private getSteps(value: number): number {
+        return this.getMaximumQuantity(value) / 100;
+    }
 }
