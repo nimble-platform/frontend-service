@@ -1,5 +1,6 @@
 import { Item } from "../../catalogue/model/publish/item";
 
+// TODO this should be removed once ux-updates is merged.
 export interface ProcessMetatada {
     processType: string;
     presentableProcessType: string;

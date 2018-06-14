@@ -1,5 +1,5 @@
 import { Component, OnInit, Predicate } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { CatalogueService } from "../catalogue/catalogue.service";
 import { CallStatus } from "../common/call-status";
 import { BPDataService } from "../bpe/bp-view/bp-data-service";
@@ -38,7 +38,8 @@ export class ProductDetailsComponent implements OnInit {
     constructor(
         private bpDataService: BPDataService,
         private catalogueService: CatalogueService,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        private router: Router,
     ) {
         // this.line.goodsItem.containingPackage.packagingTypeCode.name
     }
@@ -105,27 +106,37 @@ export class ProductDetailsComponent implements OnInit {
     }
 
     onFastTrackOrdering(): void {
-        console.log("FastTrackOrdering clicked!");
+        this.navigateToBusinessProcess("Order");
     }
 
     onNegotiate(): void {
-        console.log("Negotiate clicked!");
+        this.navigateToBusinessProcess("Negotiation");
     }
 
     onRequestInformation(): void {
-        console.log("RequestInformation clicked!");
+        this.navigateToBusinessProcess("Item_Information_Request");
     }
 
     onNegotiateOtherTerms(): void {
-        console.log("NegotiateOtherTerms clicked!");
+        this.navigateToBusinessProcess("Negotiation");
     }
 
     onStartPpap(): void {
-        console.log("StartPpap clicked!");
+        this.navigateToBusinessProcess("Ppap");
     }
 
     onPreviewTermsAndConditions(): void {
         console.log("PreviewTermsAndConditions clicked!");
+    }
+
+    private navigateToBusinessProcess(targetProcess: string): void {
+        this.bpDataService.setBpOptionParameters("buyer", targetProcess, null);
+        this.router.navigate(['bpe/bpe-exec'], {
+            queryParams: {
+                catalogueId: this.catalogueId,
+                id: this.id
+            }
+        });
     }
 
     /*

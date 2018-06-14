@@ -1,7 +1,7 @@
 <ng-container *ngIf="line">
     <h1>Order for: {{ line.goodsItem.item.name }}</h1>
 
-    <product-bp-steps [currentStep]="currentStep" [status]="'WAITING'" [statusText]="'Waiting for Reply'">
+    <product-bp-steps [currentStep]="currentStep" [status]="getStepsStatus()" [statusText]="getStepsStatusText()">
     </product-bp-steps>
     
     <item-information-request-bp *ngIf="currentStep === 'Item_Information_Request'">

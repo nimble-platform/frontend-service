@@ -1,3 +1,70 @@
-<div>
-    Negotiation Response.
+<div class="row title-row">
+    <div class="col-2"></div>
+    <div class="col-2"><h3>Original Terms</h3></div>
+    <div class="col-4"><h3>Customer Request</h3></div>
+    <div class="col-4"><h3>Your Response</h3></div>
+</div>
+
+<div class="row content-row bg-light">
+    <div class="col-2"><strong>Delivery Period:</strong></div>
+    <div class="col-2">2 weeks</div>
+    <div class="col-4"></div>
+    <div class="col-4"><select class="form-control form-control-sm" disabled></select></div>
+</div>
+
+<div class="row content-row">
+    <div class="col-2"><strong>Waranty:</strong></div>
+    <div class="col-2">None</div>
+    <div class="col-4">1 year (+15%)</div>
+    <div class="col-4"><select class="form-control form-control-sm"><option>1 year (+15%)</option></select></div>
+</div>
+
+<div class="row content-row bg-light">
+    <div class="col-2"><strong>Incoterms:</strong></div>
+    <div class="col-2">DDP</div>
+    <div class="col-4"></div>
+    <div class="col-4"><select class="form-control form-control-sm" disabled></select></div>
+</div>
+
+<div class="row content-row">
+    <div class="col-2"><strong>Payment Terms:</strong></div>
+    <div class="col-2">PIA</div>
+    <div class="col-4">EOM (-5%)</div>
+    <div class="col-4"><select class="form-control form-control-sm"><option>EOM (-5%)</option></select></div>
+</div>
+
+<div class="row content-row bg-light">
+    <div class="col-2"><strong>Payment Means:</strong></div>
+    <div class="col-2">Visa</div>
+    <div class="col-4">Cash</div>
+    <div class="col-4"><select class="form-control form-control-sm"><option>Cash</option></select></div>
+</div>
+
+<div class="row content-row">
+    <div class="col-2"><strong>Total Price:</strong></div>
+    <div class="col-2">299990 EUR</div>
+    <div class="col-4">329990 EUR</div>
+    <div class="col-4"><input class="form-control form-control-sm" value="329990 EUR"></div>
+</div>
+
+<div class="row content-row bg-light">
+    <div class="col-2"><strong>Note:</strong></div>
+    <div class="col-2"></div>
+    <div class="col-4"><textarea class="form-control" readonly rows="3"></textarea></div>
+    <div class="col-4"><textarea class="form-control" rows="3"></textarea></div>
+</div>
+
+<!-- Delivery Location -->
+<div class="row address-row">
+    <div class="col-12">
+        <h3>Delivery Address</h3>
+        <negotiation-address [address]="address">
+        </negotiation-address>
+    </div>
+</div>
+
+<div class="row actions-row">
+    <div class="col-8"></div>
+    <div class="col-2"><button class="btn btn-secondary action">Reject Offer</button></div>
+    <div class="col-2"><button class="btn btn-primary action">Accept Offer</button></div>
 </div>

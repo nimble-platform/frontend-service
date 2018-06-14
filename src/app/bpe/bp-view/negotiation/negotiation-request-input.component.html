@@ -1,12 +1,12 @@
 <div class="row">
-    <div class="col-5 form-group">
+    <div class="col-5">
         <input type="checkbox" class="form-check-input" [(ngModel)]="cbModel" [id]="id" [disabled]="disabled">
-        <label class="form-check-label" [for]="id">{{label}}:</label>
+        <label class="form-check-label" [for]="id"><strong>{{label}}:</strong></label>
     </div>
-    <div *ngIf="text !== undefined" class="col-7 form-group">
+    <div *ngIf="text !== undefined" class="col-7">
         <input type="text" class="form-control form-control-sm" [(ngModel)]="text" [disabled]="!cbModel || disabled" />
     </div>
-    <div *ngIf="options" class="col-7 form-group">
+    <div *ngIf="options" class="col-7">
         <select class="form-control form-control-sm" [disabled]="!cbModel || disabled">
             <option *ngFor="let option of options" [value]="option.value">{{option.label}}</option>
         </select>

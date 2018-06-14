@@ -15,7 +15,7 @@ import { Subscription } from "rxjs";
     styleUrls: ["./product-bp-options.component.css"]
 })
 export class ProductBpOptionsComponent implements OnInit, OnDestroy {
-    currentStep: string = "Negotiation";
+    currentStep: string;
     getCatalogueLineStatus: CallStatus = new CallStatus();
     processTypeSubs: Subscription;
 
@@ -31,14 +31,16 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
+        this.currentStep = this.bpDataService.getProcessType();
         this.processTypeSubs = this.bpDataService.processTypeObservable.subscribe(processType => {
             if (processType) {
                 this.currentStep = processType;
             }
+
+            console.log("Subscribed Step: " + processType);
         });
 
-        // TODO after ux-updates has been merged, this will contain the data necessary to display the proper step.
-        // console.log(this.bpDataService.processMetadata)
+        console.log("Step: " + this.currentStep);
 
         this.route.queryParams.subscribe(params => {
             const id = params["id"];
@@ -60,6 +62,31 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                     });
             }
         });
+    }
+
+    getStepsStatus(): "OPEN" | "WAITING" | "TODO" | "DONE" {
+        // TODO after the ux-updates branch has been merged, this will contain the data necessary to display the proper step.
+        // console.log(this.bpDataService.processMetadata)
+
+        if(!this.bpDataService.processMetadata) {
+            return "OPEN";
+        }
+
+        if(this.bpDataService.processMetadata.statusCode === "COMPLETED") {
+            return "DONE";
+        }
+        if(this.bpDataService.userRole === "buyer") {
+            return "WAITING";
+        } else {
+            return "TODO";
+        }
+    }
+
+    getStepsStatusText(): string {
+        if(this.bpDataService.processMetadata) {
+            return this.bpDataService.processMetadata.actionStatus;
+        }
+        return ""
     }
 
     ngOnDestroy(): void {

@@ -59,7 +59,7 @@ export class BPDataService{
     //////// variables used when navigating to bp options details page //////
     ////////////////////////////////////////////////////////////////////////////
     // setBpOptionParameters method must be used to set these values
-    processTypeSubject:BehaviorSubject<string> = new BehaviorSubject<string>('Item_Information_Request');
+    private processTypeSubject: BehaviorSubject<string> = new BehaviorSubject<string>('Item_Information_Request');
     processTypeObservable = this.processTypeSubject.asObservable();
     userRole: BpUserRole;
     processMetadata:ProcessMetatada;
@@ -365,6 +365,10 @@ export class BPDataService{
 
     setProcessType(processType:string): void {
         this.processTypeSubject.next(processType);
+    }
+
+    getProcessType(): string {
+        return this.processTypeSubject.getValue();
     }
 
     /********************************************************************************************

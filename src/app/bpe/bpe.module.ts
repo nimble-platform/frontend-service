@@ -42,6 +42,7 @@ import { ProductBpStepsComponent } from './bp-view/product-bp-steps.component';
 import { NegotiationRequestComponent } from './bp-view/negotiation/negotiation-request.component';
 import { NegotiationRequestInputComponent } from './bp-view/negotiation/negotiation-request-input.component';
 import { NegotiationResponseComponent } from './bp-view/negotiation/negotiation-response.component';
+import { NegotiationAddressComponent } from './bp-view/negotiation/negotiation-address.component';
 //import { BPEService } from './bpe.service';
 //import { BPService } from './bp.service';
 //import { BPDataService } from "./bp-view/bp-data-service";
@@ -88,7 +89,8 @@ import { NegotiationResponseComponent } from './bp-view/negotiation/negotiation-
 		ClauseComponent,
 		DataMonitoringClauseComponent,
 		DocumentClauseComponent,
-		PpapClauseComponent
+		PpapClauseComponent,
+		NegotiationAddressComponent
 	],
 	exports: [
 		BPConfigureComponent,

@@ -13,6 +13,7 @@ export interface Option {
 export class NegotiationRequestInputComponent implements OnInit {
 
     @Input() label: string;
+
     // see https://blog.angulartraining.com/tutorial-create-your-own-two-way-data-binding-in-angular-46487650ea82 for this trick
     private cbModelValue: boolean;
     @Output() cbModelChange = new EventEmitter<boolean>();

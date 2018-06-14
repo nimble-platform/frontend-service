@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from "@angular/core";
 import { CatalogueLine } from "../../../catalogue/model/publish/catalogue-line";
 import { BPDataService } from "../bp-data-service";
 import { BpWorkflowOptions } from "../../model/bp-workflow-options";
+import { Address } from "../../../catalogue/model/publish/address";
 
 @Component({
     selector: "negotiation-request",
@@ -14,6 +15,7 @@ export class NegotiationRequestComponent implements OnInit {
     // TODO change these...
     options: BpWorkflowOptions = new BpWorkflowOptions({}, 1000);
     deliveryText: string = "";
+    address: Address = new Address();
 
     constructor(public bpDataService: BPDataService) {
 

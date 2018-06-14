@@ -1,0 +1,20 @@
+.title-row {
+    padding: 0rem 0.3rem 0.3rem 0.3rem;
+    border-bottom: 1px solid gray;
+}
+
+.content-row {
+    padding: 0.3rem;
+}
+
+.content-row textarea {
+    resize: none;
+}
+
+.actions-row {
+    padding: 0.3rem;
+}
+
+.action {
+    width: 100%;
+}

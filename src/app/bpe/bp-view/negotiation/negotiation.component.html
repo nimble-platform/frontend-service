@@ -1,26 +1,6 @@
-<!-- Temporary stuff -->
-<div class="row">
-    <div class="col-12">
-        <ul class="nav nav-tabs mb-3">
-            <li class="nav-item pointer">
-                <a [ngClass]="{'nav-link': true, active: selectedTab === 'Request'}"
-                    (click)="selectedTab = 'Request'"
-                    i18n
-                >Request</a>
-            </li>
-            <li class="nav-item pointer">
-                <a [ngClass]="{'nav-link': true, active: selectedTab === 'Response'}"
-                    (click)="selectedTab = 'Response'"
-                    i18n
-                >Response</a>
-            </li>
-        </ul>
-    </div>
-</div>
-
 <ng-container *ngIf="bpDataService.catalogueLines[0]">
-    <negotiation-request *ngIf="selectedTab === 'Request'" [line]="line">
+    <negotiation-request *ngIf="!bpDataService.quotation" [line]="line">
     </negotiation-request>
-    <negotiation-response *ngIf="selectedTab === 'Response'">
+    <negotiation-response *ngIf="bpDataService.quotation">
     </negotiation-response>
 </ng-container>

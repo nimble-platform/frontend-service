@@ -11,7 +11,7 @@ import {CallStatus} from '../../common/call-status';
 
 export class DetailedAddressViewComponent implements OnInit{
     @Input() propName:string;
-    @Input() presentationMode:string;
+    @Input() presentationMode: "singlevalue" | "edit";
     @Input() deliveryAddress:Address;
     @Input() fetchDefaultDeliveryAddress:boolean;
 

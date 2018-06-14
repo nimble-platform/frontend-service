@@ -8,8 +8,7 @@ import { CatalogueLine } from "../../../catalogue/model/publish/catalogue-line";
 })
 
 export class NegotiationComponent implements OnInit {
-    // this is temporary
-    selectedTab: "Request" | "Response" = "Request";
+
     @Input() line: CatalogueLine;
 
     constructor(private bpDataService:BPDataService) {
@@ -18,8 +17,12 @@ export class NegotiationComponent implements OnInit {
     ngOnInit() {
 		if(this.bpDataService.requestForQuotation == null) {
 			this.bpDataService.initRfq();
-		}
+        }
         
+        console.log("quotation: ", this.bpDataService.quotation);
+
+        // this.bpDataService.quotation
+        // this.bpDataService.requestForQuotation
         // this.bpDataService.userRole = "Buyer" | "Seller"
 	}
 
