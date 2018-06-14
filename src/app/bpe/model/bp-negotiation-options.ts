@@ -1,5 +1,5 @@
 
-export class NegotiationOptions {
+export class BpNegotiationOptions {
     constructor(
         public price: boolean = false,
         public deliveryPeriod: boolean = false,

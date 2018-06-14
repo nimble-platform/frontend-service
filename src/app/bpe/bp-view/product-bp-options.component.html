@@ -1,4 +1,22 @@
-<h1>Business Process for: TODO</h1>
+<ng-container *ngIf="line">
+    <h1>Order for: {{ line.goodsItem.item.name }}</h1>
 
-<product-bp-steps [currentStep]="'NEGOTIATION'" [status]="'WAITING'">
-</product-bp-steps>
+    <product-bp-steps [currentStep]="currentStep" [status]="'WAITING'" [statusText]="'Waiting for Reply'">
+    </product-bp-steps>
+    
+    <item-information-request-bp *ngIf="currentStep === 'Item_Information_Request'">
+    </item-information-request-bp>
+    <negotiation *ngIf="currentStep === 'Negotiation'" [line]="line">
+    </negotiation>
+    <order-bp *ngIf="currentStep === 'Order'">
+    </order-bp>
+    <fulfilment *ngIf="currentStep === 'Fulfilment'">
+    </fulfilment>
+    <transport-execution-plan-bp *ngIf="currentStep === 'Transport_Execution_Plan'">
+    </transport-execution-plan-bp>
+    <ppap *ngIf="currentStep === 'Ppap'">
+    </ppap>
+</ng-container>
+
+<call-status [callStatus]="getCatalogueLineStatus"[large]="true">
+</call-status>

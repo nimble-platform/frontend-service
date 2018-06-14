@@ -1,13 +1,13 @@
 import {Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
-import {Quotation} from "../../../catalogue/model/publish/quotation";
-import {BPDataService} from "../bp-data-service";
-import {ProcessVariables} from "../../model/process-variables";
-import {ProcessInstanceInputMessage} from "../../model/process-instance-input-message";
-import {ModelUtils} from "../../model/model-utils";
-import {CallStatus} from "../../../common/call-status";
-import {BPEService} from "../../bpe.service";
+import {Quotation} from "../../../../catalogue/model/publish/quotation";
+import {BPDataService} from "../../bp-data-service";
+import {ProcessVariables} from "../../../model/process-variables";
+import {ProcessInstanceInputMessage} from "../../../model/process-instance-input-message";
+import {ModelUtils} from "../../../model/model-utils";
+import {CallStatus} from "../../../../common/call-status";
+import {BPEService} from "../../../bpe.service";
 import {Router} from "@angular/router";
-import {RequestForQuotation} from "../../../catalogue/model/publish/request-for-quotation";
+import {RequestForQuotation} from "../../../../catalogue/model/publish/request-for-quotation";
 
 @Component({
     selector: 'quotation',

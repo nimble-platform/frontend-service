@@ -290,7 +290,7 @@ export class DashboardComponent implements OnInit {
             });
     }
 
-    openBpProcessView(role: string, targetProcess:string, processMetadata: any) {
+    openBpProcessView(role: any, targetProcess:string, processMetadata: any) {
         if(targetProcess == null) {
             targetProcess = ActivityVariableParser.getProcessType(processMetadata.activityVariables);
         }

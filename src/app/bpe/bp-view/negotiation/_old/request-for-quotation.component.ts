@@ -1,18 +1,17 @@
 import {Component, Input} from "@angular/core";
-import {RequestForQuotation} from "../../../catalogue/model/publish/request-for-quotation";
-import {BPDataService} from "../bp-data-service";
-import {UBLModelUtils} from "../../../catalogue/model/ubl-model-utils";
-import {CustomerParty} from "../../../catalogue/model/publish/customer-party";
-import {SupplierParty} from "../../../catalogue/model/publish/supplier-party";
-import {ProcessVariables} from "../../model/process-variables";
-import {ProcessInstanceInputMessage} from "../../model/process-instance-input-message";
-import {ModelUtils} from "../../model/model-utils";
+import {RequestForQuotation} from "../../../../catalogue/model/publish/request-for-quotation";
+import {BPDataService} from "../../bp-data-service";
+import {UBLModelUtils} from "../../../../catalogue/model/ubl-model-utils";
+import {CustomerParty} from "../../../../catalogue/model/publish/customer-party";
+import {SupplierParty} from "../../../../catalogue/model/publish/supplier-party";
+import {ProcessVariables} from "../../../model/process-variables";
+import {ProcessInstanceInputMessage} from "../../../model/process-instance-input-message";
+import {ModelUtils} from "../../../model/model-utils";
 import {CookieService} from "ng2-cookies";
-import {CallStatus} from "../../../common/call-status";
-import {UserService} from "../../../user-mgmt/user.service";
-import {BPEService} from "../../bpe.service";
+import {CallStatus} from "../../../../common/call-status";
+import {UserService} from "../../../../user-mgmt/user.service";
+import {BPEService} from "../../../bpe.service";
 import {Router} from "@angular/router";
-import {PrecedingBPDataService} from "../preceding-bp-data-service";
 
 @Component({
     selector: 'request-for-quotation',

@@ -1,0 +1,57 @@
+<!-- Offer and Counter Offer -->
+<div class="row">
+    <div class="col-6">
+        <h3>Manufacturer's Terms</h3>
+        <div class="form-group">
+            <strong>Delivery Period:</strong>
+            {{ line.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure.value }} 
+            {{ line.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure.unitCode }}
+        </div>
+        <div class="form-group">
+            <strong>Waranty: </strong> {{ getManufacturerWaranty() }}
+        </div>
+        <div class="form-group">
+            <strong>Incoterms: </strong>
+            {{ line.goodsItem.deliveryTerms.incoterms }}
+        </div>
+        <div class="form-group">
+            <strong>Quantity: </strong>
+            <input type="number" [(ngModel)]="options.quantity" class="form-control form-control-sm" />
+            <input type="range" [(ngModel)]="options.quantity" class="form-control-range" />
+        </div>
+        <div class="form-group">
+            <strong>Price: </strong> 
+            {{ line.requiredItemLocationQuantity.price.priceAmount.value }} {{ line.requiredItemLocationQuantity.price.priceAmount.currencyID }} 
+            for {{ line.requiredItemLocationQuantity.price.baseQuantity.value }} {{ line.requiredItemLocationQuantity.price.baseQuantity.unitCode }}
+        </div>
+    </div>
+    <div class="col-6">
+        <h3>Counter Offer</h3>
+        <negotiation-request-input [label]="'Delivery Period'" [(cbModel)]="options.negotiation.deliveryPeriod"
+            [id]="deliveryCb" [(text)]="deliveryText">
+        </negotiation-request-input>
+        <negotiation-request-input [label]="'Waranty'" [(cbModel)]="options.negotiation.waranty"
+            [id]="warantyCb" [(text)]="deliveryText">
+        </negotiation-request-input>
+        <negotiation-request-input [label]="'Incoterms'" [(cbModel)]="options.negotiation.incoterms"
+            [id]="incotermsCb" [(text)]="deliveryText">
+        </negotiation-request-input>
+        <negotiation-request-input [label]="'Payment Terms'" [(cbModel)]="options.negotiation.paymentTerms"
+            [id]="paymentTermsCb" [(text)]="deliveryText">
+        </negotiation-request-input>
+        <negotiation-request-input [label]="'Payment Means'" [(cbModel)]="options.negotiation.paymentMeans"
+            [id]="paymentMeansCb" [(text)]="deliveryText">
+        </negotiation-request-input>
+        <negotiation-request-input [label]="'Price 2'" [(cbModel)]="options.negotiation.price"
+            [id]="priceCb" [(text)]="deliveryText">
+        </negotiation-request-input>
+    </div>
+</div>
+
+<!-- Delivery Location -->
+<div class="row">
+    <div class="col-12">
+        <h3>Delivery Location</h3>
+
+    </div>
+</div>

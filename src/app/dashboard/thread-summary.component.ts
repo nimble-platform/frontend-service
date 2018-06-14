@@ -221,7 +221,7 @@ export class ThreadSummaryComponent implements OnInit {
 
     navigateToSearchDetails(item: Item) {
         this.bpDataService.previousProcess = null;
-        this.router.navigate(['/simple-search/details'],
+        this.router.navigate(['/product-details'],
             {
                 queryParams: {
                     catalogueId: item.catalogueDocumentReference.id,
@@ -234,6 +234,8 @@ export class ThreadSummaryComponent implements OnInit {
     openBpProcessView(processInstanceIndex: number) {
         let processMetadata: any = this.processMetadata[processInstanceIndex];
         let role = ActivityVariableParser.getUserRole(processMetadata.activityVariables, this.processInstanceGroup.partyID);
+        // TODO this should be done in the bpe/bpe-exec route itself...
+        // Or at least in both places, otherwise we cannot bookmark the BP page (or have a nice development experience.......)
         this.bpDataService.setBpOptionParametersWithProcessMetadata(role, processMetadata.processType, processMetadata);
         this.bpDataService.setRelatedGroupId(this.processInstanceGroup.id);
         this.router.navigate(['bpe/bpe-exec'], {

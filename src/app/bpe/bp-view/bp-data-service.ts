@@ -24,6 +24,10 @@ import {ItemInformationResponse} from "../../catalogue/model/publish/item-inform
 import {CookieService} from "ng2-cookies";
 import {UserService} from "../../user-mgmt/user.service";
 import {PrecedingBPDataService} from "./preceding-bp-data-service";
+import { ProcessMetatada } from "./temp-process-metadata";
+import { BpUserRole } from "../model/bp-user-role";
+import { BpWorkflowOptions } from "../model/bp-workflow-options";
+
 /**
  * Created by suat on 20-Sep-17.
  */
@@ -57,9 +61,10 @@ export class BPDataService{
     // setBpOptionParameters method must be used to set these values
     processTypeSubject:BehaviorSubject<string> = new BehaviorSubject<string>('Item_Information_Request');
     processTypeObservable = this.processTypeSubject.asObservable();
-    userRole:string;
-    processMetadata:any;
+    userRole: BpUserRole;
+    processMetadata:ProcessMetatada;
     previousProcess:string;
+    workflowOptions: BpWorkflowOptions;
 
     // variable to keep the business process instance group related to the new process being initiated
     private relatedGroupId: string;
@@ -108,7 +113,7 @@ export class BPDataService{
         }
     }
 
-    setBpOptionParametersWithProcessMetadata(userRole:string, targetProcess:string, processMetadata:any):void {
+    setBpOptionParametersWithProcessMetadata(userRole: BpUserRole, targetProcess:string, processMetadata:any):void {
         this.resetBpData();
         this.setBpOptionParameters(userRole, targetProcess,null);
         this.processMetadata = processMetadata;
@@ -203,7 +208,7 @@ export class BPDataService{
         }
     }
 
-    setBpOptionParameters(userRole:string, targetProcess:string,previousProcess:string) {
+    setBpOptionParameters(userRole: BpUserRole, targetProcess:string,previousProcess:string) {
         this.previousProcess = previousProcess;
         this.setProcessType(targetProcess);
         this.userRole = userRole;

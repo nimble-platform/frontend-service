@@ -1,5 +1,6 @@
-import {Component, OnInit} from "@angular/core";
-import {BPDataService} from "../bp-data-service";
+import { Component, OnInit, Input } from "@angular/core";
+import { BPDataService } from "../bp-data-service";
+import { CatalogueLine } from "../../../catalogue/model/publish/catalogue-line";
 
 @Component({
     selector: 'negotiation',
@@ -7,8 +8,9 @@ import {BPDataService} from "../bp-data-service";
 })
 
 export class NegotiationComponent implements OnInit {
-    tabs:string[] = [];
-	selectedTab: string = "Request for Quotation Details";
+    // this is temporary
+    selectedTab: "Request" | "Response" = "Request";
+    @Input() line: CatalogueLine;
 
     constructor(private bpDataService:BPDataService) {
     }
@@ -17,15 +19,9 @@ export class NegotiationComponent implements OnInit {
 		if(this.bpDataService.requestForQuotation == null) {
 			this.bpDataService.initRfq();
 		}
-		this.populateTabs();
+        
+        // this.bpDataService.userRole = "Buyer" | "Seller"
 	}
 
-    populateTabs() {
-        if(this.bpDataService.getCatalogueLine().goodsItem.item.transportationServiceDetails == null) {
-            this.tabs.push('Product Characteristics');
-            this.tabs.push('Product Trading & Delivery Terms');
-        } else {
-            this.tabs.push('Service Characteristics');
-        }
-    }
+    
 }

@@ -5,6 +5,7 @@ import {RequestForQuotation} from "../../catalogue/model/publish/request-for-quo
 import {Ppap} from "../../catalogue/model/publish/ppap";
 import {TransportExecutionPlanRequest} from "../../catalogue/model/publish/transport-execution-plan-request";
 import {ItemInformationRequest} from "../../catalogue/model/publish/item-information-request";
+import { BpUserRole } from "../model/bp-user-role";
 /**
  * Created by suat on 24-Oct-17.
  */
@@ -119,7 +120,7 @@ export class ActivityVariableParser {
         }
     }
 
-    static getUserRole(activityVariables: any,partyId:any):string{
+    static getUserRole(activityVariables: any,partyId:any): BpUserRole {
         let initialDoc: any = ActivityVariableParser.getInitialDocument(activityVariables);
         let buyerId:any = ActivityVariableParser.getBuyerId(initialDoc);
         return buyerId == partyId ? 'buyer' : 'seller';

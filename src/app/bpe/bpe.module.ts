@@ -9,12 +9,10 @@ import { BPERoutingModule } from './bpe-routing.module';
 // ToDo: Get rid of these dependencies
 import { CatalogueModule } from '../catalogue/catalogue.module';
 
-import { NegotiationTradingDetailsComponent } from './bp-view/negotiation/negotiation-trading-details.component';
 import { BPConfigureComponent } from './bp-configure.component';
 import { BPsComponent } from './bps.component';
 import { BPDetailComponent } from './bp-detail.component';
 import { ProductBpOptionsComponent } from "./bp-view/product-bp-options.component";
-import { RequestForQuotationComponent } from "./bp-view/negotiation/request-for-quotation.component";
 import { OrderResponseComponent } from "./bp-view/order/order-response.component";
 import { OrderBpComponent } from "./bp-view/order/order-bp.component";
 import { OrderComponent } from "./bp-view/order/order.component";
@@ -22,7 +20,6 @@ import { FulfilmentComponent } from "./bp-view/fulfilment/fulfilment.component";
 import { DespatchAdviceComponent } from "./bp-view/fulfilment/despatch-advice.component";
 import { ReceiptAdviceComponent } from "./bp-view/fulfilment/receipt-advice.component";
 import { NegotiationComponent } from "./bp-view/negotiation/negotiation.component";
-import { QuotationComponent } from "./bp-view/negotiation/quotation.component";
 import { TransportExecutionPlanBpComponent } from "./bp-view/transport-execution-plan/transport-execution-plan-bp.component";
 import { TransportExecutionPlanRequestComponent } from "./bp-view/transport-execution-plan/transport-execution-plan-request.component";
 import { TransportExecutionPlanComponent } from "./bp-view/transport-execution-plan/transport-execution-plan.component";
@@ -41,8 +38,10 @@ import {ClauseComponent} from "./bp-view/contract/clause.component";
 import {DataMonitoringClauseComponent} from "./bp-view/contract/data-monitoring-clause.component";
 import {DocumentClauseComponent} from "./bp-view/contract/document-clause.component";
 import {PpapClauseComponent} from "./bp-view/contract/ppap-clause.component";
-import {TransportTradingDetailsComponent} from "./bp-view/negotiation/transport-trading-details.component";
 import { ProductBpStepsComponent } from './bp-view/product-bp-steps.component';
+import { NegotiationRequestComponent } from './bp-view/negotiation/negotiation-request.component';
+import { NegotiationRequestInputComponent } from './bp-view/negotiation/negotiation-request-input.component';
+import { NegotiationResponseComponent } from './bp-view/negotiation/negotiation-response.component';
 //import { BPEService } from './bpe.service';
 //import { BPService } from './bp.service';
 //import { BPDataService } from "./bp-view/bp-data-service";
@@ -59,14 +58,11 @@ import { ProductBpStepsComponent } from './bp-view/product-bp-steps.component';
 		NgbModule.forRoot()
 	],
 	declarations: [
-		NegotiationTradingDetailsComponent,
-		TransportTradingDetailsComponent,
 		BPConfigureComponent,
 		BPsComponent,
 		BPDetailComponent,
 		ProductBpOptionsComponent,
 		ProductBpStepsComponent,
-		RequestForQuotationComponent,
 		OrderResponseComponent,
 		OrderBpComponent,
 		OrderComponent,
@@ -74,7 +70,9 @@ import { ProductBpStepsComponent } from './bp-view/product-bp-steps.component';
 		DespatchAdviceComponent,
 		ReceiptAdviceComponent,
 		NegotiationComponent,
-		QuotationComponent,
+		NegotiationRequestComponent,
+		NegotiationRequestInputComponent,
+		NegotiationResponseComponent,
 		TransportExecutionPlanBpComponent,
 		TransportExecutionPlanRequestComponent,
 		TransportExecutionPlanComponent,
@@ -93,13 +91,10 @@ import { ProductBpStepsComponent } from './bp-view/product-bp-steps.component';
 		PpapClauseComponent
 	],
 	exports: [
-		NegotiationTradingDetailsComponent,
-		TransportTradingDetailsComponent,
 		BPConfigureComponent,
 		BPsComponent,
 		BPDetailComponent,
 		ProductBpOptionsComponent,
-		RequestForQuotationComponent,
 		OrderResponseComponent,
 		OrderBpComponent,
 		OrderComponent,
@@ -107,7 +102,6 @@ import { ProductBpStepsComponent } from './bp-view/product-bp-steps.component';
 		DespatchAdviceComponent,
 		ReceiptAdviceComponent,
 		NegotiationComponent,
-		QuotationComponent,
 		TransportExecutionPlanBpComponent,
 		TransportExecutionPlanRequestComponent,
 		TransportExecutionPlanComponent,
