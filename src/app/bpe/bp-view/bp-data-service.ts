@@ -216,7 +216,7 @@ export class BPDataService{
 
     // this method is supposed to be called when the user is about to initialize a business process via the
     // search details page
-    initRfq():void {
+    initRfq(): Promise<void> {
         this.modifiedCatalogueLines = JSON.parse(JSON.stringify(this.catalogueLines));
         this.requestForQuotation = UBLModelUtils.createRequestForQuotation();
         this.requestForQuotation.requestForQuotationLine[0].lineItem.item = this.modifiedCatalogueLines[0].goodsItem.item;
@@ -225,9 +225,14 @@ export class BPDataService{
         this.selectFirstValuesAmongAlternatives();
 
         let userId = this.cookieService.get('user_id');
-        this.userService.getSettings(userId).then(settings => {
+        return this.userService.getSettings(userId).then(settings => {
             this.requestForQuotation.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.value = settings.deliveryTerms.estimatedDeliveryTime;
             this.requestForQuotation.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.unitCode = 'days';
+            this.requestForQuotation.delivery.deliveryAddress.country.name = settings.address.country;
+            this.requestForQuotation.delivery.deliveryAddress.postalZone = settings.address.postalCode;
+            this.requestForQuotation.delivery.deliveryAddress.cityName = settings.address.cityName;
+            this.requestForQuotation.delivery.deliveryAddress.buildingNumber = settings.address.buildingNumber;
+            this.requestForQuotation.delivery.deliveryAddress.streetName = settings.address.streetName;
         });
     }
 

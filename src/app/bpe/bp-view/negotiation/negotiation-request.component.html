@@ -50,7 +50,7 @@
     </div>
     <div class="col-5">
         <negotiation-request-input label="Incoterms" [(cbModel)]="options.negotiation.incoterms" 
-            id="incotermsCb" [(text)]="deliveryText">
+            id="incotermsCb" [options]="INCOTERMS">
         </negotiation-request-input>
     </div>
 </div>
@@ -95,7 +95,7 @@
 <div class="row">
     <div class="col-12">
         <h3>Delivery Address</h3>
-        <negotiation-address [address]="address">
+        <negotiation-address [address]="bpDataService.requestForQuotation.delivery.deliveryAddress">
         </negotiation-address>
     </div>
 </div>

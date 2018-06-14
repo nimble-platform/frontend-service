@@ -2,7 +2,8 @@ import { Component, OnInit, Input } from "@angular/core";
 import { CatalogueLine } from "../../../catalogue/model/publish/catalogue-line";
 import { BPDataService } from "../bp-data-service";
 import { BpWorkflowOptions } from "../../model/bp-workflow-options";
-import { Address } from "../../../catalogue/model/publish/address";
+import { Incoterms } from "../../../catalogue/model/publish/incoterms";
+import { INCOTERMS } from "../../../catalogue/model/constants";
 
 @Component({
     selector: "negotiation-request",
@@ -12,10 +13,12 @@ import { Address } from "../../../catalogue/model/publish/address";
 export class NegotiationRequestComponent implements OnInit {
 
     @Input() line: CatalogueLine;
-    // TODO change these...
-    options: BpWorkflowOptions = new BpWorkflowOptions({}, 1000);
+
+    INCOTERMS: Incoterms[] = INCOTERMS;
+
+    // TODO remove these
     deliveryText: string = "";
-    address: Address = new Address();
+    options: BpWorkflowOptions = new BpWorkflowOptions({}, 1000);
 
     constructor(public bpDataService: BPDataService) {
 
@@ -24,6 +27,11 @@ export class NegotiationRequestComponent implements OnInit {
     ngOnInit() {
         // this.line = this.bpDataService.getCatalogueLine();
         // this.options = this.bpDataService.workflowOptions;
+
+        // this.bpDataService.requestForQuotation.dataMonitoringRequested
+
+
+        this.bpDataService.requestForQuotation.delivery.deliveryTerms.incoterms
     }
 
     /*

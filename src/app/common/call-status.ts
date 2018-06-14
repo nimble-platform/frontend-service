@@ -2,6 +2,7 @@
  * Created by suat on 29-Sep-17.
  */
 export class CallStatus {
+
     constructor(
         public fb_submitted = false,
         public fb_callback = false,
@@ -35,5 +36,9 @@ export class CallStatus {
         this.fb_submitted = false;
         this.fb_errordetc = false;
         this.fb_callback = false;
+    }
+
+    public isLoading(): boolean {
+        return this.fb_submitted;
     }
 }

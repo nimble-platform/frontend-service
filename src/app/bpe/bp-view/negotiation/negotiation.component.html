@@ -1,6 +1,10 @@
-<ng-container *ngIf="bpDataService.catalogueLines[0]">
+<ng-container *ngIf="bpDataService.catalogueLines[0] && !initCallStatus.isLoading()">
     <negotiation-request *ngIf="!bpDataService.quotation" [line]="line">
     </negotiation-request>
     <negotiation-response *ngIf="bpDataService.quotation">
     </negotiation-response>
 </ng-container>
+
+<call-status *ngIf="initCallStatus.isLoading()" [callStatus]="initCallStatus"
+             [large]="true">
+</call-status>
