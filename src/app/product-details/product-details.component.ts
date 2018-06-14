@@ -9,7 +9,7 @@ import { Item } from "../catalogue/model/publish/item";
 import { ProductDetailsTab } from "./model/product-details-tab";
 import { CommodityClassification } from "../catalogue/model/publish/commodity-classification";
 import { ItemProperty } from "../catalogue/model/publish/item-property";
-import { WorkflowOptions } from "./model/workflow-options";
+import { BpWorkflowOptions } from "../bpe/model/bp-workflow-options";
 
 @Component({
     selector: 'product-details',
@@ -23,7 +23,7 @@ export class ProductDetailsComponent implements OnInit {
     id: string;
     catalogueId: string;
 
-    options: WorkflowOptions = new WorkflowOptions();
+    options: BpWorkflowOptions = new BpWorkflowOptions();
 
     line?: CatalogueLine;
     goodsItem?: GoodsItem;
@@ -61,6 +61,7 @@ export class ProductDetailsComponent implements OnInit {
                     this.bpDataService.resetBpData();
                     this.bpDataService.setCatalogueLines([line]);
                     this.bpDataService.userRole = 'buyer';
+                    this.bpDataService.workflowOptions = this.options;
                     this.bpDataService.setRelatedGroupId(null);
                     this.getProductStatus.callback("Retrieved product details", true);
                 }).catch(error => {

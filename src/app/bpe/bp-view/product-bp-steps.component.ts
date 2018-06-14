@@ -5,7 +5,7 @@ type Step =
     | "Negotiation" 
     | "Item_Information_Request"
     | "Ppap"
-    | "Done"
+    | "Fulfilment"
 
 @Component({
     selector: "product-bp-steps",
@@ -58,7 +58,7 @@ export class ProductBpStepsComponent implements OnInit {
                 return "40%";
             case "Order":
                 return "60%";
-            case "Done":
+            case "Fulfilment":
                 return "80%";
         }
     }

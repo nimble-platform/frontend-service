@@ -7,11 +7,11 @@
     <ppap-clause [ppapResponse]="clauseDocument">
     </ppap-clause>
 </ng-container>
-<ng-container *ngIf="clause.type == 'NEGOTIATION' && clauseDocument != null">
+<!-- <ng-container *ngIf="clause.type == 'NEGOTIATION' && clauseDocument != null">
     <quotation [quotation]="clauseDocument"
                [parentElement]="'clause'"
                [presentationMode]="'singlevalue'"></quotation>
-</ng-container>
+</ng-container> -->
 <call-status [callStatus]="clauseDocumentRetrievalStatus"
              [large]="true">
 </call-status>
