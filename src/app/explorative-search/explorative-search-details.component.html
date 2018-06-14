@@ -1,103 +1,26 @@
 <!-- Explorative Search Details HTML -->
-<!--<div class="container">-->
-    <!--<div class="row">-->
-        <!--<div class="col-md-9">-->
-            <!--&lt;!&ndash; if there is no tableResult show the Diagram &ndash;&gt;-->
-
-            <!--&lt;!&ndash; <div *ngIf="!tableResult" class="displayArea" #myDiagramDiv></div> &ndash;&gt;-->
-            <!--<div [hidden]="!(_warning_selection)">-->
-                <!--<div class="alert alert-warning space-before">-->
-                    <!--<p>NO <kbd>CTRL</kbd> Button Pressed.If previous Selection were selected using Multiselect Feature, they will be-->
-                    <!--deleted.</p>-->
-                <!--</div>-->
-            <!--</div>-->
-            <!--<div [hidden]="hiddenElement" class="displayArea" #myDiagramDiv></div>-->
-            <!--<div [hidden]="!hiddenElement" style="height: 500px; overflow: auto;">-->
-                <!--<table >-->
-
-                    <!--<tr>-->
-                        <!--<th style="width:50%">Property</th>-->
-                        <!--<td style="width:50%;font-weight: bold">Value-->
-                            <!--<wbr/>-->
-                        <!--</td>-->
-                    <!--</tr>-->
-                    <!--<tr *ngFor="let column of sparqlSelectedOption?.columns; let i=index">-->
-
-                        <!--<th style="width:50%">{{column}}</th>-->
-                        <!--<td style="width:50%">{{sparqlSelectedOption?.rows[0][i]}}-->
-                            <!--<wbr/>-->
-                        <!--</td>-->
-                    <!--</tr>-->
-                <!--</table>-->
-            <!--</div>-->
-            <!--<div class="row">-->
-                <!--<div class="col-8">-->
-                    <!--<button [hidden]="!hiddenElement" class="btn btn-lg btn-warning" (click)="diagramAgain()">-->
-                        <!--Back-->
-                    <!--</button>-->
-                <!--</div>-->
-                <!--<div class="col-4 pull-right">-->
-                    <!--<button class="btn btn-lg btn-primary" (click)="negotiation()"-->
-                            <!--[disabled]="!negotiationEnable"-->
-                            <!--[hidden]="!hiddenElement">-->
-                        <!--Negotiation</button>-->
-                <!--</div>-->
-            <!--</div>-->
-            <!--<br>-->
-            <!--<br>-->
-            <!--&lt;!&ndash; temporary hack here-->
-                <!--Image is not rendered again on button click-->
-                <!--because tableResult still exists in class.-->
-            <!--&ndash;&gt;-->
-            <!--&lt;!&ndash; Show Table &ndash;&gt;-->
-            <!--<div *ngIf="tableResult && selectedProperties.length > 0" style="overflow: auto; height: 100px;">-->
-                <!--<table>-->
-                    <!--<tr>-->
-                        <!--<th *ngFor="let column of tableResult?.columns">{{column}}</th>-->
-                    <!--</tr>-->
-                    <!--<tr *ngFor="let row of tableResult?.rows; let i=index;">-->
-                        <!--<td *ngFor="let field of row"> {{field}}</td>-->
-                        <!--<td *ngIf="tableResult?.uuids">-->
-                            <!--<button class="btn btn-sm btn-success" (click)="getSparqlOptionalSelect(i)">-->
-                            <!--More</button></td>-->
-                    <!--</tr>-->
-                <!--</table>-->
-            <!--</div>-->
-            <!--&lt;!&ndash; End Table &ndash;&gt;-->
-        <!--</div>-->
-        <!--<div class="col-md-3">-->
-            <!--&lt;!&ndash; Child Component Explorative Search Filter&ndash;&gt;-->
-            <!--<div *ngIf="filterQuery" class="panel panel-default">-->
-                <!--<div class="panel-body" *ngIf="(filterConfig | json)!= '{}'">-->
-                    <!--&lt;!&ndash; pass all the variables of class to child-->
-                    <!--<search-filter [filterConfig]="filterJSON" [keyForConf]="filterQuery" [mainConceptName]="filterQueryRoot" [mainConceptUrl]="filterQueryRootUrl"-->
-                                   <!--[filterName]="nodeFilterName" (filterSelectionUpdated)="handleFilterSelectionUpdated($event)">-->
-                    <!--</search-filter>&ndash;&gt;-->
-                    <!--<search-filter *ngFor="let eachFilter of arrayPassedToChild" [filterProperties]="eachFilter"-->
-                                   <!--(filterSelectionUpdated)="handleFilterSelectionUpdated($event)">-->
-                    <!--</search-filter>-->
-                <!--</div>-->
-            <!--</div>-->
-        <!--</div>-->
-        <!--&lt;!&ndash; child component Search Filter ends here &ndash;&gt;-->
-    <!--</div>-->
-    <!--&lt;!&ndash; container for the Big Red Search Button &ndash;&gt;-->
-    <!--<div class="row">-->
-        <!--<div class="col-md-9"></div>-->
-        <!--&lt;!&ndash; will show up only when filterQuery Exists &ndash;&gt;-->
-        <!--<div class="col-md-3" *ngIf="filterQuery && selectedProperties.length > 0">-->
-            <!--<button class="btn btn-lg btn-danger" (click)="genTable()">Search</button>-->
-        <!--</div>-->
-    <!--</div>-->
-<!--</div>-->
-
-<!--<div [hidden]="!(_error_detected_getLogicalView || _error_detected_getProperties || _error_detected_getSPARQLSelect || _error_detected_getTableValues)">-->
-    <!--<div class="alert alert-danger space-before" role="alert">An error occured - please try again later</div>-->
-<!--</div>-->
-
-<!--<div [hidden]="!(_warning_table_results)">-->
-    <!--<div class="alert alert-warning space-before" role="alert">No Matches Found. Please try again with different Queries</div>-->
-<!--</div>-->
+<ngb-alert type="info" *ngIf="!introAlert" (close)="introAlert = true">
+    <div class="row">
+    <div class="col-md-2"><i class="fa fa-6x fa-info-circle"></i></div>
+    <div class="col-md-10">
+        <p>
+            <strong>Let Us Help You</strong>
+        </p>
+            <ul>
+                <li>Double Click on a Node to <strong>select</strong> that property.</li>
+                <li>Single Click on a Node to <strong>deselect</strong> that property.</li>
+                <li>Certain Properties may not have filters to display, nevertheless if selected they will be shown
+                    in your final selections.
+                </li>
+            </ul>
+    </div>
+    </div>
+</ngb-alert>
+<ngb-alert type="info" *ngIf="rerenderAlert" (close)="rerenderAlert = false">
+    <p>
+        <strong>The Graph has been updated! Your previous selections, if any are still selected.</strong>
+    </p>
+</ngb-alert>
 <div [hidden]="!hiddenElement">
     <div class="row">
         <!--<pre>-->
@@ -144,7 +67,7 @@
 <div class="cont-max" [hidden]="hiddenElement">
     <div class="row">
         <div class="col-md-10 align-center">
-            <svg width="1200" height="1000"></svg>
+            <svg width="1200" height="1200"></svg>
         </div>
         <div class="col-md-2">
             <search-filter *ngFor="let eachFilter of arrayPassedToChild" [filterProperties]="eachFilter"
@@ -162,6 +85,9 @@
     <br>
     <br>
     <div class="row" *ngIf="tableResult?.columns !== undefined">
+        <ngb-alert type="warning" *ngIf="emptySPARQLTable" (close)="emptySPARQLTable=false">
+            <p>We couldn't find any match for your selections. Maybe try with less or different selection.</p>
+        </ngb-alert>
         <div class="table-responsive">
             <table class="table table-sm table-bordered">
                 <caption>Available Results from NIMBLE</caption>

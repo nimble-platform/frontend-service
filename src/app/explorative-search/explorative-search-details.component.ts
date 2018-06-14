@@ -24,7 +24,7 @@ export class Leaf {
 
 
 export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChanges {
-    @Input() config: Object; // this comes from `explorative-search-form.component` (Parent)
+    @Input() config = {}; // this comes from `explorative-search-form.component` (Parent)
     @Input() lang: string; // language selection which comes from the Parent
     private hiddenElement = false; // to hide the graph or table
     /*Parameters that will be passed to `explorative-search-filter.component (Child)*/
@@ -49,6 +49,8 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
         language: '',
         propertySources: []
     };
+
+    private _backUpPaths = {};
     private _tableJSONPaths = []; // for storing Paths when the figure is rendered again..
     private collectionOfFiltersFromChildren: any[] = []; // filters from the Children Components
     private _optSelectJSON = {};
@@ -62,6 +64,9 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
     /*The API response from tableJSON will be stored in tableResult*/
     tableResult: any;
 
+    public introAlert = false;
+    public rerenderAlert = false;
+    public emptySPARQLTable = false;
     private _error_detected_getProperties = false;
     private _error_detected_getLogicalView = false;
     private _error_detected_getSPARQLSelect = false;
@@ -110,7 +115,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
     }
 
     /**
-     * AfterViewInit LifeCycle Hook for diagram initialization for GoJS
+     * AfterViewInit LifeCycle Hook for diagram initialization for d3js
      */
     ngAfterViewInit(): void {
         const self = this;
@@ -252,42 +257,88 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
             }, 1000);
         } else if (nodeInfo.depth > 1 && nodeInfo.data.objectPropertySource === '') {
             console.log('dataprop -> objectproperty dir -> root');
+            if (nodeInfo.parent.data.name.indexOf('/') > -1) {
+                let ancestors = nodeInfo.ancestors();
+                let rootNode = ancestors.pop();
+                // console.log('rerender');
+                this._backUpPaths['path'].push(
+                    {concept: encodeURIComponent(nodeInfo.parent.data.url),
+                        urlOfProperty: encodeURIComponent(nodeInfo.parent.data.objectPropertySource)
+                    });
+                this._backUpPaths['urlOfProperty'] = encodeURIComponent(nodeInfo.data.url);
+                console.log(this._backUpPaths);
+                _jsonForFilter.concept = encodeURIComponent(nodeInfo.parent.data.url);
+                _jsonForFilter.property = encodeURIComponent(nodeInfo.data.url);
+                jsonFilterForEachChild['fName'] = nodeInfo.data.name;
+                jsonFilterForEachChild['fQuery'] = nodeInfo.data.url;
+                jsonFilterForEachChild['fQueryRoot'] = nodeInfo.parent.data.name;
+                jsonFilterForEachChild['fQueryRootUrl'] = nodeInfo.parent.data.url;
+                // console.log(_jsonForFilter);
+                this.expSearch.getPropertyValues(_jsonForFilter)
+                    .then(res => {
+                        console.log(res, typeof(res));
+                        if (Object.keys(res).length !== 0) {
+                            this.filterJSON = res;
+                            jsonFilterForEachChild['filterJSON'] = this.filterJSON;
+                        }
+                    });
+                setTimeout(() => { // necessary for loading the checkboxes in Filter
+                    this.tableJSON['language'] = this.lang;
+                    this.arrayPassedToChild.push(jsonFilterForEachChild);
+                    // console.log(this.arrayPassedToChild);
+                    // pathForSparqlJson.path.push({'concept': _jsonForFilter.concept});
+                    // pathForSparqlJson.urlOfProperty = _jsonForFilter.property;
+                    this.tableJSON['parametersIncludingPath'].push(this._backUpPaths);
+                    this.tableJSON['concept'] = encodeURIComponent(rootNode.data.url);
+                    this.tableJSON['parameters'].push(nodeInfo.data.name);
+                    this.tableJSON['parametersURL'].push(encodeURIComponent(nodeInfo.data.url));
+                    this.tableJSON['propertySources'].push(nodeInfo.data.propertySource);
+                }, 1000);
+            } else {
+
+                let ancestors = nodeInfo.ancestors();
+                let rootNode = ancestors.pop();
+                console.log(rootNode.data);
+                pathForSparqlJson.path.push({concept: encodeURIComponent(rootNode.data.url)});
+                pathRec(ancestors);
+                console.log(pathForSparqlJson);
+                _jsonForFilter.concept = encodeURIComponent(nodeInfo.parent.data.url);
+                _jsonForFilter.property = encodeURIComponent(nodeInfo.data.url);
+                jsonFilterForEachChild['fName'] = nodeInfo.data.name;
+                jsonFilterForEachChild['fQuery'] = nodeInfo.data.url;
+                jsonFilterForEachChild['fQueryRoot'] = nodeInfo.parent.data.name;
+                jsonFilterForEachChild['fQueryRootUrl'] = nodeInfo.parent.data.url;
+                // console.log(_jsonForFilter);
+                this.expSearch.getPropertyValues(_jsonForFilter)
+                    .then(res => {
+                        console.log(res, typeof(res));
+                        if (Object.keys(res).length !== 0) {
+                            this.filterJSON = res;
+                            jsonFilterForEachChild['filterJSON'] = this.filterJSON;
+                        }
+                    });
+                setTimeout(() => { // necessary for loading the checkboxes in Filter
+                    this.tableJSON['language'] = this.lang;
+                    this.arrayPassedToChild.push(jsonFilterForEachChild);
+                    // console.log(this.arrayPassedToChild);
+                    // pathForSparqlJson.path.push({'concept': _jsonForFilter.concept});
+                    // pathForSparqlJson.urlOfProperty = _jsonForFilter.property;
+                    this.tableJSON['parametersIncludingPath'].push(pathForSparqlJson);
+                    this.tableJSON['concept'] = encodeURIComponent(rootNode.data.url);
+                    this.tableJSON['parameters'].push(nodeInfo.data.name);
+                    this.tableJSON['parametersURL'].push(encodeURIComponent(nodeInfo.data.url));
+                    this.tableJSON['propertySources'].push(nodeInfo.data.propertySource);
+                }, 1000);
+            }
+        } else if (nodeInfo.depth > 1 && nodeInfo.data.objectPropertySource !== '') {
+            console.log('objprop -> objprop -> root');
+            // console.log(nodeInfo.ancestors());
             let ancestors = nodeInfo.ancestors();
             let rootNode = ancestors.pop();
-            console.log(rootNode.data);
             pathForSparqlJson.path.push({concept: encodeURIComponent(rootNode.data.url)});
             pathRec(ancestors);
             console.log(pathForSparqlJson);
-            _jsonForFilter.concept = encodeURIComponent(nodeInfo.parent.data.url);
-            _jsonForFilter.property = encodeURIComponent(nodeInfo.data.url);
-            jsonFilterForEachChild['fName'] = nodeInfo.data.name;
-            jsonFilterForEachChild['fQuery'] = nodeInfo.data.url;
-            jsonFilterForEachChild['fQueryRoot'] = nodeInfo.parent.data.name;
-            jsonFilterForEachChild['fQueryRootUrl'] = nodeInfo.parent.data.url;
-            // console.log(_jsonForFilter);
-            this.expSearch.getPropertyValues(_jsonForFilter)
-                .then(res => {
-                    console.log(res, typeof(res));
-                    if (Object.keys(res).length !== 0) {
-                        this.filterJSON = res;
-                        jsonFilterForEachChild['filterJSON'] = this.filterJSON;
-                    }
-                });
-            setTimeout(() => { // necessary for loading the checkboxes in Filter
-                this.tableJSON['language'] = this.lang;
-                this.arrayPassedToChild.push(jsonFilterForEachChild);
-                // console.log(this.arrayPassedToChild);
-                // pathForSparqlJson.path.push({'concept': _jsonForFilter.concept});
-                // pathForSparqlJson.urlOfProperty = _jsonForFilter.property;
-                this.tableJSON['parametersIncludingPath'].push(pathForSparqlJson);
-                this.tableJSON['concept'] = encodeURIComponent(rootNode.data.url);
-                this.tableJSON['parameters'].push(nodeInfo.data.name);
-                this.tableJSON['parametersURL'].push(encodeURIComponent(nodeInfo.data.url));
-                this.tableJSON['propertySources'].push(nodeInfo.data.propertySource);
-            }, 1000);
-        } else if (nodeInfo.depth > 1 && nodeInfo.data.objectPropertySource !== '') {
-            console.log('objprop -> objprop -> root');
-            console.log(nodeInfo.ancestors());
+            this._backUpPaths = pathForSparqlJson;
             askExtension();
         }
 
@@ -321,6 +372,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                 self.ngAfterViewInit();
                 console.log(nodeInfo.parent.data.name + '/' + nodeInfo.data.name);
             }, 1000);
+            self.rerenderAlert = true;
         }
 
         function pathRec(ances) {
@@ -356,6 +408,9 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
         this.expSearch.getTableValues(this.tableJSON)
             .then(res => {
                 this.tableResult = res;
+                if (!this.tableResult['rows'].length) {
+                    this.emptySPARQLTable = true;
+                }
             });
     }
 

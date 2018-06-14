@@ -11,6 +11,41 @@
 </div>
 
 <div class="well">
+    <h5 class="mt-3 mb-3">Payment Means</h5>
+    <div *ngIf="presentationMode == 'edit'"
+         class="input-group form-group border-0">
+        <label class="col-3">Payment Means
+            <span class="label label-default" title="Expected means of payment">
+                    &#9432;
+            </span>
+        </label>
+        <select class="custom-select form-control" [(ngModel)]="paymentMeans.paymentMeansCode.value">
+            <option></option>
+            <option>Credit Card</option>
+            <option>ACH Transfer</option>
+            <option>Wire Transfer</option>
+            <option>Cash On Delivery</option>
+        </select>
+    </div>
+    <div *ngIf="presentationMode != 'edit'"
+         class="input-group form-group border-0">
+        <label class="col-3">Payment Means
+            <span class="label label-default" title="Expected means of payment">
+                    &#9432;
+            </span>
+        </label>
+        <input class="form-control"
+               type="text"
+               [(ngModel)]="paymentMeans.paymentMeansCode.value"
+               readonly>
+    </div>
+</div>
+
+<payment-terms-view [tradingTerms]="paymentTerms.tradingTerms"
+                    [presentationMode]="presentationMode">
+</payment-terms-view>
+
+<div class="well">
     <h5>Delivery Terms</h5>
 
     <!-- Incoterms -->
