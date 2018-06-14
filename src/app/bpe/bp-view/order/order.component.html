@@ -28,6 +28,7 @@
                 [propName]="'Total Price'"
                 [definition]="'Total price for the requested quantity'"
                 [value]="order.orderLine[0].lineItem.price.priceAmount.value * order.orderLine[0].lineItem.quantity.value / order.orderLine[0].lineItem.price.baseQuantity.value"
+                (onValueChanged)="updateTotalPrice($event, order.orderLine[0].lineItem.price.priceAmount.currencyID);"
                 [unitType]="'Currency'"
                 [unit]="order.orderLine[0].lineItem.price.priceAmount.currencyID">
         </quantity-value-view>

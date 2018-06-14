@@ -6,6 +6,7 @@ import {Address} from "./address";
 import {Period} from "./period";
 import {Contract} from "./contract";
 import {PaymentTerms} from './payment-terms';
+import {MonetaryTotal} from "./monetary-total";
 export class Order {
 	constructor(
 		public id:string = null,
@@ -17,6 +18,7 @@ export class Order {
 		public sellerSupplierParty:SupplierParty = null,
 		public paymentMeans:PaymentMeans = new PaymentMeans(),
 		public paymentTerms:PaymentTerms = new PaymentTerms(),
+		public anticipatedMonetaryTotal: MonetaryTotal = new MonetaryTotal(),
 		public orderLine:OrderLine[] = null
 	) {  }
 }

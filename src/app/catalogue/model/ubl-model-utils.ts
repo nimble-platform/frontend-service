@@ -46,6 +46,7 @@ import {ItemInformationRequest} from "./publish/item-information-request";
 import {ItemInformationResponse} from "./publish/item-information-response";
 import {PaymentTerms} from "./publish/payment-terms";
 import {Address} from "./publish/address";
+import {MonetaryTotal} from "./publish/monetary-total";
 
 /**
  * Created by suat on 05-Jul-17.
@@ -130,7 +131,7 @@ export class UBLModelUtils {
         let price: Price = this.createPrice(null);
         let lineItem:LineItem = this.createLineItem(quantity, price, item);
         let orderLine:OrderLine = new OrderLine(lineItem);
-        let order = new Order(this.generateUUID(), "", new Period(), new Address(), null, null, null, new PaymentMeans(),new PaymentTerms() ,[orderLine]);
+        let order = new Order(this.generateUUID(), "", new Period(), new Address(), null, null, null, new PaymentMeans(),new PaymentTerms(), new MonetaryTotal(), [orderLine]);
         return order;
     }
 
