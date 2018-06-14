@@ -96,13 +96,13 @@
 </div>
 
 <div>
-<ngb-tabset (tabChange)="activeTab($event)">
-    <ngb-tab title="Semantic Query" (click)="previousStateStore()" id="sqp" [disabled]="!SQPConfig">
+<ngb-tabset (tabChange)="activeTab($event)" [destroyOnHide]="true">
+    <ngb-tab title="Semantic Query" id="sqp" [disabled]="!SQPConfig">
         <ng-template ngbTabContent>
             <explore-search-semantic [configSPQ]="SQPConfig" [lang]="language"></explore-search-semantic>
         </ng-template>
     </ngb-tab>
-    <ngb-tab title="Graph Navigation" (click)="preserveStateRestore()" id="graphNav" [disabled]="!visData">
+    <ngb-tab title="Graph Navigation" id="graphNav" [disabled]="!visData">
         <ng-template ngbTabContent>
             <explore-search-details [config]="visData" [lang]="language"></explore-search-details>
             <div [hidden]="!_error_detected_query">

@@ -29,6 +29,12 @@
     <h4> {{filterProperties.fName}} Filter </h4>
 </div>
 <div class="card-body">
+    <ngb-alert type="info" [dismissible]="false">
+        <p><i class="fa fa-1x fa-info-circle"></i> Filter Values are Optional.
+        </p>
+        <p>If you do select a value do not forget
+            to press the <kbd>Apply Filter</kbd> button.</p>
+    </ngb-alert>
     <div *ngFor="let every of result">
         <!-- CheckBoxes for the Filter -->
         <label>

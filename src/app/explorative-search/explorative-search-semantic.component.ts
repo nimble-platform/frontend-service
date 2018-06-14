@@ -53,7 +53,9 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
 
     public sparqlSelectedOption = {};
     public hiddenElement = false;
+    public infoAlert = false;
     public updateInfoAlert = false;
+    public emptyFilterAlert = false;
 
     // Autocompletion Implementation from NG-BOOTSTRAP
     public search = (text$: Observable<string>) =>
@@ -104,6 +106,7 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
         this.sparqlJSON['language'] = this.lang;
         // get properties
         this.getPropertiesOfConcept(this.configSPQ);
+        this.infoAlert = true;
     }
 
     ngOnInit(): void {
@@ -155,6 +158,9 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
                 this.searchvalue.forEach(val => {
                     this.valuesAreNumeric = isNumeric(val);
                 });
+                if (!this.searchvalue.length) {
+                    this.emptyFilterAlert = true;
+                }
             });
         this.selectedProperty = inputJSON;
     }

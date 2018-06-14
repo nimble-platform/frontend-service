@@ -1,4 +1,21 @@
-
+<ngb-alert type="info" *ngIf="infoAlert" (close)="infoAlert = false">
+    <div class="row">
+        <div class="col-md-2">
+            <i class="fa fa-6x fa-info-circle"></i>
+        </div>
+        <div class="col-md-10">
+            <p>
+                <strong>Let Us Help You</strong>
+            </p>
+            <ul>
+                <li>You can click on any of the <strong>Properties/Reference</strong> below and obtain filter values</li>
+                <li>If you click on one of the <strong>References</strong> your Explorer
+                    will update with new properties for the selected reference.</li>
+                <li>You can use the <strong>Path</strong> below to go back to a previous Reference by simply clicking on it.</li>
+            </ul>
+        </div>
+    </div>
+</ngb-alert>
 <ol class="breadcrumb">
     <li class="breadcrumb-item active"
         *ngFor="let concept of conceptPaths; let i=index;">
@@ -146,6 +163,11 @@
                         </select>
                     </div>
                 </div>
+            </div>
+            <div class="col-md-4" *ngIf="emptyFilterAlert" >
+                <ngb-alert type="danger" (close)="emptyFilterAlert=false">
+                    <p> We couldn't find any filters for the selection.</p>
+                </ngb-alert>
             </div>
             <div class="col-md-4" *ngIf="searchvalue.length > 0">
                 <template [ngTemplateOutlet]="valuesTemplateRef" [ngTemplateOutletContext]="{$implicit: searchvalue}">
