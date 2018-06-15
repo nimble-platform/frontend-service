@@ -16,6 +16,7 @@ import {Order} from "../../../catalogue/model/publish/order";
 import {Router} from "@angular/router";
 import {Contract} from "../../../catalogue/model/publish/contract";
 import {DataMonitoringClause} from "../../../catalogue/model/publish/data-monitoring-clause";
+import { PAYMENT_MEANS } from "../../../catalogue/model/constants";
 /**
  * Created by suat on 20-Sep-17.
  */
@@ -42,6 +43,8 @@ export class OrderComponent implements OnInit {
     discount:any = null;
     withinDays:any = null;
     dueDays:any  = null;
+
+    PAYMENT_MEANS: string[] = PAYMENT_MEANS;
 
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,

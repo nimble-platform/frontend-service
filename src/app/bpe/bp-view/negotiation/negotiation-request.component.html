@@ -19,8 +19,8 @@
         {{ line.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure.unitCode }}
     </div>
     <div class="col-5">
-        <negotiation-request-input label="Request Delivery Period" [(cbModel)]="options.negotiation.deliveryPeriod" 
-            id="deliveryCb" [(text)]="deliveryText">
+        <negotiation-request-input label="Request Delivery Period" [(cbModel)]="rfq.negotiationOptions.deliveryPeriod" 
+            id="deliveryCb" [quantity]="rfqLine.lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure">
         </negotiation-request-input>
     </div>
 </div>
@@ -34,8 +34,8 @@
         {{ getManufacturerWaranty() }}
     </div>
     <div class="col-5">
-        <negotiation-request-input label="Request Waranty" [(cbModel)]="options.negotiation.waranty" 
-            id="warantyCb" [(text)]="deliveryText">
+        <negotiation-request-input label="Request Waranty" [(cbModel)]="rfq.negotiationOptions.waranty" 
+            id="warantyCb" [quantity]="rfqLine.lineItem.warrantyValidityPeriod.durationMeasure">
         </negotiation-request-input>
     </div>
 </div>
@@ -49,8 +49,8 @@
         {{ line.goodsItem.deliveryTerms.incoterms }}
     </div>
     <div class="col-5">
-        <negotiation-request-input label="Incoterms" [(cbModel)]="options.negotiation.incoterms" 
-            id="incotermsCb" [(text)]="deliveryText">
+        <negotiation-request-input label="Incoterms" [(cbModel)]="rfq.negotiationOptions.incoterms" 
+            id="incotermsCb" [options]="INCOTERMS" [(selected)]="rfqLine.lineItem.deliveryTerms.incoterms">
         </negotiation-request-input>
     </div>
 </div>
@@ -61,17 +61,19 @@
         <strong>Quantity:</strong>
     </div>
     <div class="col-5">
-        <input type="number" [(ngModel)]="options.quantity" class="form-control form-control-sm" />
+        <input type="number" [(ngModel)]="rfq.requestForQuotationLine[0].lineItem.quantity.value" 
+            class="form-control form-control-sm" />
         <div class="input-spacer"></div>
-        <input type="range" [(ngModel)]="options.quantity" class="form-control-range" />
+        <input type="range" [(ngModel)]="rfq.requestForQuotationLine[0].lineItem.quantity.value" 
+            class="form-control-range" />
     </div>
     <div class="col-5">
-        <negotiation-request-input label="Request Payment Terms" [(cbModel)]="options.negotiation.paymentTerms" 
+        <negotiation-request-input label="Request Payment Terms" [(cbModel)]="rfq.negotiationOptions.paymentTerms" 
             id="paymentTermsCb" [(text)]="deliveryText">
         </negotiation-request-input>
         <div class="input-spacer"></div>
-        <negotiation-request-input label="Request Payment Means" [(cbModel)]="options.negotiation.paymentMeans" 
-            id="paymentMeansCb" [(text)]="deliveryText">
+        <negotiation-request-input label="Request Payment Means" [(cbModel)]="rfq.negotiationOptions.paymentMeans" 
+            id="paymentMeansCb" [options]="PAYMENT_MEANS" [(selected)]="rfq.paymentMeans">
         </negotiation-request-input>
     </div>
 </div>
@@ -86,7 +88,7 @@
         for {{ line.requiredItemLocationQuantity.price.baseQuantity.value }} {{ line.requiredItemLocationQuantity.price.baseQuantity.unitCode }}
     </div>
     <div class="col-5">
-        <negotiation-request-input label="Request Price" [(cbModel)]="options.negotiation.price" id="priceCb" [(text)]="deliveryText">
+        <negotiation-request-input label="Request Price" [(cbModel)]="rfq.negotiationOptions.price" id="priceCb" [(text)]="deliveryText">
         </negotiation-request-input>
     </div>
 </div>
@@ -95,14 +97,15 @@
 <div class="row">
     <div class="col-12">
         <h3>Delivery Address</h3>
-        <negotiation-address [address]="address">
+        <negotiation-address [address]="bpDataService.requestForQuotation.delivery.deliveryAddress">
         </negotiation-address>
     </div>
 </div>
 
 <!-- Actions -->
 <div class="row actions-row">
-    <div class="col-8"></div>
+    <div class="col-6"></div>
+    <div class="col-2"><strong>Total Price: </strong> {{ rfqLine.lineItem.price.priceAmount.value }} {{ rfqLine.lineItem.price.priceAmount.currencyID }} </div>
     <div class="col-2"><button class="btn btn-secondary action">Back</button></div>
     <div class="col-2"><button class="btn btn-primary action">Send</button></div>
 </div>

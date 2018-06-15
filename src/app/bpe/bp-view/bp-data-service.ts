@@ -15,7 +15,6 @@ import {OrderResponseSimple} from "../../catalogue/model/publish/order-response-
 import {BehaviorSubject} from "rxjs/BehaviorSubject";
 import {Ppap} from "../../catalogue/model/publish/ppap";
 import {PpapResponse} from "../../catalogue/model/publish/ppap-response";
-import {OrderReference} from "../../catalogue/model/publish/order-reference";
 import {TransportExecutionPlanRequest} from "../../catalogue/model/publish/transport-execution-plan-request";
 import {TransportExecutionPlan} from "../../catalogue/model/publish/transport-execution-plan";
 import {SearchContextService} from "../../simple-search/search-context.service";
@@ -27,6 +26,8 @@ import {PrecedingBPDataService} from "./preceding-bp-data-service";
 import { ProcessMetatada } from "./temp-process-metadata";
 import { BpUserRole } from "../model/bp-user-role";
 import { BpWorkflowOptions } from "../model/bp-workflow-options";
+import { NegotiationOptions } from "../../catalogue/model/publish/negotiation-options";
+import { PAYMENT_MEANS } from "../../catalogue/model/constants";
 
 /**
  * Created by suat on 20-Sep-17.
@@ -216,18 +217,45 @@ export class BPDataService{
 
     // this method is supposed to be called when the user is about to initialize a business process via the
     // search details page
-    initRfq():void {
-        this.modifiedCatalogueLines = JSON.parse(JSON.stringify(this.catalogueLines));
-        this.requestForQuotation = UBLModelUtils.createRequestForQuotation();
-        this.requestForQuotation.requestForQuotationLine[0].lineItem.item = this.modifiedCatalogueLines[0].goodsItem.item;
-        this.requestForQuotation.requestForQuotationLine[0].lineItem.lineReference = [new LineReference(this.modifiedCatalogueLines[0].id)];
-        this.requestForQuotation.requestForQuotationLine[0].lineItem.price = this.modifiedCatalogueLines[0].requiredItemLocationQuantity.price;
-        this.selectFirstValuesAmongAlternatives();
+    initRfq(): Promise<void> {
+        const rfq = UBLModelUtils.createRequestForQuotation(
+            this.workflowOptions ? this.workflowOptions.negotiation : new NegotiationOptions()
+        );
+        this.requestForQuotation = rfq;
+
+        const line = this.catalogueLines[0];
+        const rfqLine = this.requestForQuotation.requestForQuotationLine[0];
+
+        
+        rfqLine.lineItem.item = this.copy(line.goodsItem.item);
+        rfqLine.lineItem.lineReference = [new LineReference(line.id)];
+        rfqLine.lineItem.price = this.copy(line.requiredItemLocationQuantity.price);
+        rfqLine.lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure = 
+            this.copy(line.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure);
+        rfqLine.lineItem.warrantyValidityPeriod = this.copy(line.warrantyValidityPeriod);
+        rfqLine.lineItem.deliveryTerms.incoterms = line.goodsItem.deliveryTerms.incoterms;
+
+        // TODO update
+        // this.selectFirstValuesAmongAlternatives();
+
+        if(this.workflowOptions) {
+            // quantity
+            rfqLine.lineItem.quantity.value = this.workflowOptions.quantity;
+            rfqLine.lineItem.quantity.unitCode = line.requiredItemLocationQuantity.price.baseQuantity.unitCode;
+        }
 
         let userId = this.cookieService.get('user_id');
-        this.userService.getSettings(userId).then(settings => {
-            this.requestForQuotation.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.value = settings.deliveryTerms.estimatedDeliveryTime;
-            this.requestForQuotation.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.unitCode = 'days';
+        return this.userService.getSettings(userId).then(settings => {
+            // Hum, this is strange: the user, on their profile, stores the delivery that they want for any item??!
+            // this.requestForQuotation.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.value = settings.deliveryTerms.estimatedDeliveryTime;
+            // this.requestForQuotation.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.unitCode = 'days';
+            
+            // we can't copy because those are 2 different types of addresses.
+            this.requestForQuotation.delivery.deliveryAddress.country.name = settings.address.country;
+            this.requestForQuotation.delivery.deliveryAddress.postalZone = settings.address.postalCode;
+            this.requestForQuotation.delivery.deliveryAddress.cityName = settings.address.cityName;
+            this.requestForQuotation.delivery.deliveryAddress.buildingNumber = settings.address.buildingNumber;
+            this.requestForQuotation.delivery.deliveryAddress.streetName = settings.address.streetName;
         });
     }
 
@@ -296,7 +324,7 @@ export class BPDataService{
         let copyQuotation:Quotation = JSON.parse(JSON.stringify(this.quotation));
         this.resetBpData();
         this.modifiedCatalogueLines = JSON.parse(JSON.stringify(this.catalogueLines));
-        this.requestForQuotation = UBLModelUtils.createRequestForQuotation();
+        this.requestForQuotation = UBLModelUtils.createRequestForQuotation(new NegotiationOptions());
         this.requestForQuotation.requestForQuotationLine[0].lineItem = copyQuotation.quotationLine[0].lineItem;
     }
 
@@ -337,6 +365,10 @@ export class BPDataService{
         this.resetBpData();
         this.modifiedCatalogueLines = JSON.parse(JSON.stringify(this.catalogueLines));
         this.transportExecutionPlanRequest = UBLModelUtils.createTransportExecutionPlanRequestWithQuotation(copyQuotation);
+    }
+
+    private copy<T>(value: T): T {
+        return JSON.parse(JSON.stringify(value));
     }
 
     resetBpData():void {

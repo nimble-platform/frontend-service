@@ -62,11 +62,7 @@
             </span>
             </label>
             <select class="custom-select form-control" [(ngModel)]="order.paymentMeans.paymentMeansCode.value">
-                <option></option>
-                <option>Credit Card</option>
-                <option>ACH Transfer</option>
-                <option>Wire Transfer</option>
-                <option>Cash On Delivery</option>
+                <option *ngFor="let option of PAYMENT_MEANS" [value]="option">{{ option }}</option>
             </select>
         </div>
         <div *ngIf="presentationMode != 'edit'"

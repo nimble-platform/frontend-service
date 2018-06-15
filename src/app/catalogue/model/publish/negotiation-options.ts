@@ -1,5 +1,5 @@
 
-export class BpNegotiationOptions {
+export class NegotiationOptions {
     constructor(
         public price: boolean = false,
         public deliveryPeriod: boolean = false,
@@ -9,7 +9,7 @@ export class BpNegotiationOptions {
         public paymentMeans: boolean = false
     ) {}
 
-    isNegotiationAnyTerm(): boolean {
+    isNegotiatingAnyTerm(): boolean {
         return this.price
             || this.deliveryPeriod
             || this.waranty
