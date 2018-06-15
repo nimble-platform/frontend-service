@@ -31,6 +31,8 @@ export class ProductDetailsComponent implements OnInit {
 
     selectedTab: ProductDetailsTab = "DETAILS";
     selectedImage: number = 0;
+    showNavigation: boolean = true;
+    showProcesses: boolean = true;
 
     // max price value for the quantity to be sold
     maxValue: number = 100000;
