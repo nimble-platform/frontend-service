@@ -1,9 +1,21 @@
-import { Component, OnInit, Input } from "@angular/core";
+import { Component, OnInit, Input, OnChanges } from "@angular/core";
 import { CatalogueLine } from "../../../catalogue/model/publish/catalogue-line";
 import { BPDataService } from "../bp-data-service";
-import { INCOTERMS, PAYMENT_MEANS } from "../../../catalogue/model/constants";
+import { INCOTERMS, PAYMENT_MEANS, PAYMENT_TERMS } from "../../../catalogue/model/constants";
 import { RequestForQuotation } from "../../../catalogue/model/publish/request-for-quotation";
 import { RequestForQuotationLine } from "../../../catalogue/model/publish/request-for-quotation-line";
+import { Location } from "@angular/common";
+import { CallStatus } from "../../../common/call-status";
+import { UBLModelUtils } from "../../../catalogue/model/ubl-model-utils";
+import { BPEService } from "../../bpe.service";
+import { UserService } from "../../../user-mgmt/user.service";
+import { CookieService } from "ng2-cookies";
+import { Router } from "@angular/router";
+import { CustomerParty } from "../../../catalogue/model/publish/customer-party";
+import { SupplierParty } from "../../../catalogue/model/publish/supplier-party";
+import { ProcessVariables } from "../../model/process-variables";
+import { ModelUtils } from "../../model/model-utils";
+import { ProcessInstanceInputMessage } from "../../model/process-instance-input-message";
 
 @Component({
     selector: "negotiation-request",
@@ -16,44 +28,197 @@ export class NegotiationRequestComponent implements OnInit {
     rfq: RequestForQuotation;
     rfqLine: RequestForQuotationLine;
 
-    negotiatedPriceAmount: number = 0;
+    negotiatedPriceValue: number;
+    totalPrice: number;
+
+    sendRequestCallStatus: CallStatus = new CallStatus();
 
     INCOTERMS: string[] = INCOTERMS;
     PAYMENT_MEANS: string[] = PAYMENT_MEANS;
+    PAYMENT_TERMS: string[] = PAYMENT_TERMS;
 
-    // TODO remove these
-    deliveryText: string = "";
+    // max price value for the quantity to be sold
+    maxValue: number = 100000;
 
-    constructor(public bpDataService: BPDataService) {
+    constructor(private bpDataService: BPDataService,
+                private bpeService:BPEService,
+                private userService:UserService,
+                private cookieService: CookieService,
+                private location: Location,
+                private router: Router) {
 
     }
 
     ngOnInit() {
         this.rfq = this.bpDataService.requestForQuotation;
+        if(!this.rfq.negotiationOptions) {
+
+        }
         this.rfqLine = this.rfq.requestForQuotationLine[0];
         this.line = this.bpDataService.getCatalogueLine();
-
-        // this.line = this.bpDataService.getCatalogueLine();
-        // this.options = this.bpDataService.workflowOptions;
-        // this.bpDataService.requestForQuotation.dataMonitoringRequested
-        // this.bpDataService.requestForQuotation.delivery.deliveryTerms.incoterms
+        this.totalPrice = this.getTotalPrice();
+        this.negotiatedPriceValue = this.totalPrice;
     }
 
     /*
-     * Getters for the template.
+     * Event handlers
      */
 
-     getManufacturerWaranty(): string {
+    onSendRequest(): void {
+        if(this.rfq.negotiationOptions.isNegotiatingAnyTerm()) {
+            // send request for quotation        
+            this.sendRequestCallStatus.submit();
+            const rfq: RequestForQuotation = this.copy(this.rfq);
+
+            // final check on the rfq
+            if(this.bpDataService.modifiedCatalogueLines) {
+                // still needed when initializing RFQ with BpDataService.initRfqWithIir() or BpDataService.initRfqWithQuotation()
+                // but this is a hack, the methods above should be fixed.
+                rfq.requestForQuotationLine[0].lineItem.item = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;
+            }
+            UBLModelUtils.removeHjidFieldsFromObject(rfq);
+
+            //first initialize the seller and buyer parties.
+            //once they are fetched continue with starting the ordering process
+            const sellerId: string = this.line.goodsItem.item.manufacturerParty.id;
+            const buyerId: string = this.cookieService.get("company_id");
+
+            this.userService.getParty(buyerId).then(buyerParty => {
+                rfq.buyerCustomerParty = new CustomerParty(buyerParty);
+
+                this.userService.getParty(sellerId).then(sellerParty => {
+                    rfq.sellerSupplierParty = new SupplierParty(sellerParty);
+                    const vars: ProcessVariables = ModelUtils.createProcessVariables("Negotiation", buyerId, sellerId, rfq, this.bpDataService);
+                    const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
+
+                    this.bpeService.startBusinessProcess(piim)
+                        .then(res => {
+                            this.sendRequestCallStatus.callback("Terms sent", true);
+                            this.router.navigate(['dashboard']);
+                        })
+                        .catch(error => {
+                            this.sendRequestCallStatus.error("Failed to sent Terms");
+                            console.log("Error while sending terms", error);
+                        });
+                });
+            });
+        } else {
+            // just go to order page
+        }
+    }
+
+    onBack(): void {
+        this.location.back();
+    }
+
+    /*
+     * Getters and setters for the template.
+     */
+
+     getManufacturerWarranty(): string {
         const duration = this.line.warrantyValidityPeriod.durationMeasure.value;
         if(duration <= 0) {
             return "None";
         }
         return duration + " " + this.line.warrantyValidityPeriod.durationMeasure.unitCode;
-     }
+    }
 
-    //  getTotalPrice(): number {
-    //     const price = this.line.requiredItemLocationQuantity.price;
-    //     const amount = Number(price.priceAmount.value);
-    //     return this.options.quantity * amount / price.baseQuantity.value;
-    // }
+    get requestedQuantity(): number {
+        return this.rfq.requestForQuotationLine[0].lineItem.quantity.value;
+    }
+
+    set requestedQuantity(quantity: number) {
+        this.recomputeTotalPrice();
+        this.rfq.requestForQuotationLine[0].lineItem.quantity.value = quantity;
+    }
+
+    get negotiatedPrice(): number {
+        return this.negotiatedPriceValue;
+    }
+
+    set negotiatedPrice(quantity: number) {
+        this.negotiatedPriceValue = quantity;
+        this.recomputeTotalPrice();
+    }
+
+    get negotiatePrice(): boolean {
+        return this.rfq.negotiationOptions.price;
+    }
+
+    set negotiatePrice(negotiate: boolean) {
+        this.rfq.negotiationOptions.price = negotiate;
+        this.recomputeTotalPrice();
+    }
+
+    getPriceSteps(): number {
+        return this.getMaximumQuantity() / 100;
+    }
+
+    getMaximumQuantity(): number {
+        const price = this.line.requiredItemLocationQuantity.price;
+        const amount = Number(price.priceAmount.value);
+        let result = this.maxValue / amount;
+        return this.roundFirstDigit(result) * this.getMagnitude(result);
+    }
+
+    isLoading(): boolean {
+        return this.sendRequestCallStatus.isLoading();
+    }
+
+    isReadOnly(): boolean {
+        return !!this.bpDataService.processMetadata;
+    }
+
+    isWaitingForReply(): boolean {
+        return this.bpDataService.processMetadata && this.bpDataService.processMetadata.processStatus === "Started";
+    }
+
+    /*
+     * Internal methods
+     */
+
+    private copy<T>(value: T): T {
+        return JSON.parse(JSON.stringify(value));
+    }
+
+    private recomputeTotalPrice(): void {
+        const price = this.getTotalPrice();
+        if(!this.negotiatePrice) {
+            this.negotiatedPriceValue = price;
+            this.totalPrice = price;
+        } else {
+            this.totalPrice = this.negotiatedPriceValue;
+        }
+    }
+
+    private getTotalPrice(): number {
+        const quantity = this.rfq.requestForQuotationLine[0].lineItem.quantity.value;
+        const price = this.line.requiredItemLocationQuantity.price;
+        const amount = Number(price.priceAmount.value);
+        const baseQuantity = price.baseQuantity.value || 1;
+        return quantity * amount / baseQuantity;
+    }
+
+    /*
+     * TODO: those methods are shared with the product details view.
+     * We should put them in some helper class, but where?!
+     */
+
+    private round5(value: number): number {
+        return Math.round(value / 5) * 5;
+    }
+
+    // rounds the first digit of a number to the nearest 5 or 10
+    private roundFirstDigit(value: number): number {
+        let roundedDigit = this.round5(value / this.getMagnitude(value));
+        if(roundedDigit == 0) {
+            roundedDigit = 1;
+        }
+        return roundedDigit;
+    }
+    
+    private getMagnitude(value: number): number {
+        return Math.pow(10, Math.floor(Math.log10(value)));
+    }
+
 }

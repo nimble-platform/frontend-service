@@ -27,7 +27,7 @@ import { ProcessMetatada } from "./temp-process-metadata";
 import { BpUserRole } from "../model/bp-user-role";
 import { BpWorkflowOptions } from "../model/bp-workflow-options";
 import { NegotiationOptions } from "../../catalogue/model/publish/negotiation-options";
-import { PAYMENT_MEANS } from "../../catalogue/model/constants";
+import { PAYMENT_MEANS, PAYMENT_TERMS } from "../../catalogue/model/constants";
 
 /**
  * Created by suat on 20-Sep-17.
@@ -125,6 +125,7 @@ export class BPDataService{
         let activityVariables = processMetadata.activityVariables;
         if(processType == 'Negotiation') {
             this.requestForQuotation = ActivityVariableParser.getInitialDocument(activityVariables).value;
+            this.initFetchedRfq();
 
             let quotationVariable = ActivityVariableParser.getResponse(activityVariables);
             if(quotationVariable == null) {
@@ -234,15 +235,13 @@ export class BPDataService{
             this.copy(line.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure);
         rfqLine.lineItem.warrantyValidityPeriod = this.copy(line.warrantyValidityPeriod);
         rfqLine.lineItem.deliveryTerms.incoterms = line.goodsItem.deliveryTerms.incoterms;
+        rfqLine.lineItem.quantity.unitCode = line.requiredItemLocationQuantity.price.baseQuantity.unitCode;
 
         // TODO update
         // this.selectFirstValuesAmongAlternatives();
-
-        if(this.workflowOptions) {
-            // quantity
-            rfqLine.lineItem.quantity.value = this.workflowOptions.quantity;
-            rfqLine.lineItem.quantity.unitCode = line.requiredItemLocationQuantity.price.baseQuantity.unitCode;
-        }
+        
+        // quantity
+        rfqLine.lineItem.quantity.value = this.workflowOptions ? this.workflowOptions.quantity : 1;
 
         let userId = this.cookieService.get('user_id');
         return this.userService.getSettings(userId).then(settings => {
@@ -268,6 +267,15 @@ export class BPDataService{
             this.precedingBPDataService.fromAddress,
             this.precedingBPDataService.toAddress,
             this.precedingBPDataService.orderMetadata);
+    }
+
+    private initFetchedRfq(): void {
+        const rfq = this.requestForQuotation;
+        if(!rfq.negotiationOptions) {
+            rfq.negotiationOptions = new NegotiationOptions();
+        }
+        rfq.paymentMeans = rfq.paymentMeans || PAYMENT_MEANS[0];
+        rfq.paymentTerms = rfq.paymentTerms || PAYMENT_TERMS[0];
     }
 
     initPpap(documents:string[]):void{

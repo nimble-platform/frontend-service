@@ -1,5 +1,6 @@
-import { Component, EventEmitter, OnInit, Input, Output } from "@angular/core";
+import { Component, EventEmitter, OnInit, Input, Output, OnChanges } from "@angular/core";
 import { Quantity } from "../../../catalogue/model/publish/quantity";
+import { UnitService } from "../../../common/unit-service";
 
 @Component({
     selector: "negotiation-request-input",
@@ -28,9 +29,26 @@ export class NegotiationRequestInputComponent implements OnInit {
     // Set if the input is a quantity
     @Input() quantity: Quantity;
     @Input() quantityUnits?: string[];
-    
-    constructor() {
+    @Input() quantityType?: string;
+    @Input() disableQuantityUnit?: boolean = false;
 
+    // Set if the input is a number
+    @Input() amountValue?: number;
+    @Output() amountChange = new EventEmitter<number>();
+    @Input() amountUnit?: string;
+    
+    constructor(private unitService: UnitService) {
+
+    }
+
+    ngOnInit() {
+        if(this.quantityType) {
+            this.quantityUnits = ["Loading..."];
+            this.unitService.getCachedUnitList(this.quantityType)
+            .then(units => {
+                this.quantityUnits = units;
+            })
+        }
     }
 
     @Input()
@@ -63,7 +81,13 @@ export class NegotiationRequestInputComponent implements OnInit {
         this.selectedChange.emit(selected);
     }
 
-    ngOnInit() {
+    @Input()
+    get amount(): number {
+        return this.amountValue;
     }
 
+    set amount(value: number) {
+        this.amountValue = value;
+        this.amountChange.emit(value);
+    }
 }

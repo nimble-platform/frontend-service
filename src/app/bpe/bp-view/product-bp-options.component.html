@@ -1,5 +1,5 @@
 <ng-container *ngIf="line">
-    <h1>Order for: {{ line.goodsItem.item.name }}</h1>
+    <h2>Order for: {{ line.goodsItem.item.name }}</h2>
 
     <product-bp-steps [currentStep]="currentStep" [status]="getStepsStatus()" [statusText]="getStepsStatusText()">
     </product-bp-steps>
