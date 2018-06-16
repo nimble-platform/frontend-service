@@ -10,8 +10,6 @@ import { CallStatus } from "../../../common/call-status";
 
 export class NegotiationComponent implements OnInit {
 
-    @Input() line: CatalogueLine;
-
     initCallStatus:CallStatus = new CallStatus();
 
     constructor(private bpDataService:BPDataService) {
@@ -29,11 +27,5 @@ export class NegotiationComponent implements OnInit {
                     console.log("Error while initializing request for quotation.", error);
                 });
         }
-        
-        // this.bpDataService.quotation
-        // this.bpDataService.requestForQuotation
-        // this.bpDataService.userRole = "Buyer" | "Seller"
 	}
-
-    
 }

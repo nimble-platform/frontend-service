@@ -1,5 +1,11 @@
 import { Component, OnInit } from "@angular/core";
-import { Address } from "../../../catalogue/model/publish/address";
+import { CatalogueLine } from "../../../catalogue/model/publish/catalogue-line";
+import { RequestForQuotation } from "../../../catalogue/model/publish/request-for-quotation";
+import { BPDataService } from "../bp-data-service";
+import { BPEService } from "../../bpe.service";
+import { Router } from "@angular/router";
+import { Quotation } from "../../../catalogue/model/publish/quotation";
+import { NegotiationModelWrapper } from "./negotiation-model-wrapper";
 
 @Component({
     selector: "negotiation-response",
@@ -8,11 +14,22 @@ import { Address } from "../../../catalogue/model/publish/address";
 })
 export class NegotiationResponseComponent implements OnInit {
 
-    address: Address = new Address();
+    
+    line: CatalogueLine;
+    rfq: RequestForQuotation;
+    quotation: Quotation;
+    wrapper: NegotiationModelWrapper;
 
-    constructor() { }
+    constructor(private bpeService: BPEService,
+                private bpDataService: BPDataService,
+                private router: Router) {
+        
+    }
 
     ngOnInit() {
-        
+        this.line = this.bpDataService.getCatalogueLine();
+        this.rfq = this.bpDataService.requestForQuotation;
+        this.quotation = this.bpDataService.quotation;
+        this.wrapper = new NegotiationModelWrapper(this.line, this.rfq, this.quotation);
     }
 }

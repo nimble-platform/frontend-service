@@ -238,14 +238,14 @@ export class UBLModelUtils {
         return rfq;
     }
 
-    public static createQuotation(rfq:RequestForQuotation):Quotation {
-        let quotationLine:QuotationLine = new QuotationLine(rfq.requestForQuotationLine[0].lineItem);
+    public static createQuotation(rfq: RequestForQuotation): Quotation {
+        let quotationLine: QuotationLine = new QuotationLine(UBLModelUtils.copy(rfq.requestForQuotationLine[0].lineItem));
         this.removeHjidFieldsFromObject(rfq.buyerCustomerParty);
         this.removeHjidFieldsFromObject(rfq.sellerSupplierParty);
-        let customerParty:CustomerParty = rfq.buyerCustomerParty;
-        let supplierParty:SupplierParty = rfq.sellerSupplierParty;
+        let customerParty: CustomerParty = rfq.buyerCustomerParty;
+        let supplierParty: SupplierParty = rfq.sellerSupplierParty;
 
-        let documentReference:DocumentReference = new DocumentReference(rfq.id);
+        let documentReference: DocumentReference = new DocumentReference(rfq.id);
 
         let quotation = new Quotation(this.generateUUID(), [""], new Code(), new Code(), 1, false, documentReference, customerParty, supplierParty, [quotationLine]);
         return quotation;
@@ -456,4 +456,8 @@ export class UBLModelUtils {
         });
         return uuid;
     };
+
+    public static copy<T>(value: T): T {
+        return JSON.parse(JSON.stringify(value));
+    }
 }

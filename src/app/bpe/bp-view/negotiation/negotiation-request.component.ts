@@ -16,6 +16,7 @@ import { SupplierParty } from "../../../catalogue/model/publish/supplier-party";
 import { ProcessVariables } from "../../model/process-variables";
 import { ModelUtils } from "../../model/model-utils";
 import { ProcessInstanceInputMessage } from "../../model/process-instance-input-message";
+import { NegotiationModelWrapper } from "./negotiation-model-wrapper";
 
 @Component({
     selector: "negotiation-request",
@@ -27,6 +28,7 @@ export class NegotiationRequestComponent implements OnInit {
     line: CatalogueLine;
     rfq: RequestForQuotation;
     rfqLine: RequestForQuotationLine;
+    wrapper: NegotiationModelWrapper;
 
     negotiatedPriceValue: number;
     totalPrice: number;
@@ -58,6 +60,7 @@ export class NegotiationRequestComponent implements OnInit {
         this.line = this.bpDataService.getCatalogueLine();
         this.totalPrice = this.getTotalPrice();
         this.negotiatedPriceValue = this.totalPrice;
+        this.wrapper = new NegotiationModelWrapper(this.line, this.rfq, null);
     }
 
     /*
@@ -114,14 +117,6 @@ export class NegotiationRequestComponent implements OnInit {
     /*
      * Getters and setters for the template.
      */
-
-     getManufacturerWarranty(): string {
-        const duration = this.line.warrantyValidityPeriod.durationMeasure.value;
-        if(duration <= 0) {
-            return "None";
-        }
-        return duration + " " + this.line.warrantyValidityPeriod.durationMeasure.unitCode;
-    }
 
     get requestedQuantity(): number {
         return this.rfq.requestForQuotationLine[0].lineItem.quantity.value;
@@ -189,6 +184,7 @@ export class NegotiationRequestComponent implements OnInit {
         } else {
             this.totalPrice = this.negotiatedPriceValue;
         }
+        this.rfqLine.lineItem.price.priceAmount.value = String(this.totalPrice);
     }
 
     private getTotalPrice(): number {

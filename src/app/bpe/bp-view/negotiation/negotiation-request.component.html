@@ -15,27 +15,27 @@
         <strong>Delivery Period:</strong>
     </div>
     <div class="col-5">
-        {{ line.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure.value }} 
-        {{ line.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure.unitCode }}
+        {{ wrapper.lineDeliveryPeriod.value }} 
+        {{ wrapper.lineDeliveryPeriod.unitCode }}
     </div>
     <div class="col-5">
         <negotiation-request-input label="Request Delivery Period" [(cbModel)]="rfq.negotiationOptions.deliveryPeriod" [disabled]="isLoading() || isReadOnly()"
-            id="deliveryCb" [quantity]="rfqLine.lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure" quantityType="time_quantity">
+            id="deliveryCb" [quantity]="wrapper.rfqDeliveryPeriod" quantityType="time_quantity">
         </negotiation-request-input>
     </div>
 </div>
 
-<!-- Waranty -->
+<!-- Warranty -->
 <div class="row content-row">
     <div class="col-2">
         <strong>Warranty:</strong>
     </div>
     <div class="col-5">
-        {{ getManufacturerWarranty() }}
+        {{ wrapper.lineWarrantyString }}
     </div>
     <div class="col-5">
-        <negotiation-request-input label="Request Waranty" [(cbModel)]="rfq.negotiationOptions.waranty" [disabled]="isLoading() || isReadOnly()"
-            id="warantyCb" [quantity]="rfqLine.lineItem.warrantyValidityPeriod.durationMeasure" quantityType="time_quantity">
+        <negotiation-request-input label="Request Warranty" [(cbModel)]="rfq.negotiationOptions.warranty" [disabled]="isLoading() || isReadOnly()"
+            id="warrantyCb" [quantity]="wrapper.rfqWarranty" quantityType="time_quantity">
         </negotiation-request-input>
     </div>
 </div>
@@ -46,11 +46,11 @@
         <strong>Request Incoterms:</strong>
     </div>
     <div class="col-5">
-        {{ line.goodsItem.deliveryTerms.incoterms }}
+        {{ wrapper.lineIncoterms }}
     </div>
     <div class="col-5">
         <negotiation-request-input label="Incoterms" [(cbModel)]="rfq.negotiationOptions.incoterms" [disabled]="isLoading() || isReadOnly()"
-            id="incotermsCb" [options]="INCOTERMS" [(selected)]="rfqLine.lineItem.deliveryTerms.incoterms">
+            id="incotermsCb" [options]="INCOTERMS" [(selected)]="wrapper.rfqIncoterms">
         </negotiation-request-input>
     </div>
 </div>
@@ -68,11 +68,11 @@
     </div>
     <div class="col-5">
         <negotiation-request-input label="Request Payment Terms" [(cbModel)]="rfq.negotiationOptions.paymentTerms" 
-            id="paymentTermsCb" [options]="PAYMENT_TERMS" [(selected)]="rfq.paymentTerms" [disabled]="isLoading() || isReadOnly()">
+            id="paymentTermsCb" [options]="PAYMENT_TERMS" [(selected)]="wrapper.rfqPaymentTerms" [disabled]="isLoading() || isReadOnly()">
         </negotiation-request-input>
         <div class="input-spacer"></div>
         <negotiation-request-input label="Request Payment Means" [(cbModel)]="rfq.negotiationOptions.paymentMeans" 
-            id="paymentMeansCb" [options]="PAYMENT_MEANS" [(selected)]="rfq.paymentMeans" [disabled]="isLoading() || isReadOnly()">
+            id="paymentMeansCb" [options]="PAYMENT_MEANS" [(selected)]="wrapper.rfqPaymentMeans" [disabled]="isLoading() || isReadOnly()">
         </negotiation-request-input>
     </div>
 </div>
@@ -83,12 +83,12 @@
         <strong>Price:</strong>
     </div>
     <div class="col-5">
-        {{ line.requiredItemLocationQuantity.price.priceAmount.value }} {{ line.requiredItemLocationQuantity.price.priceAmount.currencyID }} 
-        for {{ line.requiredItemLocationQuantity.price.baseQuantity.value }} {{ line.requiredItemLocationQuantity.price.baseQuantity.unitCode }}
+        {{ wrapper.linePrice.priceAmount.value }} {{ wrapper.linePrice.priceAmount.currencyID }} 
+        for {{ wrapper.linePrice.baseQuantity.value }} {{ wrapper.linePrice.baseQuantity.unitCode }}
     </div>
     <div class="col-5">
         <negotiation-request-input label="Request Price" [(cbModel)]="negotiatePrice" id="priceCb" [disabled]="isLoading() || isReadOnly()"
-            [(amount)]="negotiatedPrice" [amountUnit]="this.line.requiredItemLocationQuantity.price.priceAmount.currencyID">
+            [(amount)]="negotiatedPrice" [amountUnit]="wrapper.linePrice.priceAmount.currencyID">
         </negotiation-request-input>
     </div>
 </div>
@@ -97,7 +97,7 @@
 <div class="row">
     <div class="col-12">
         <h4>Delivery Address</h4>
-        <negotiation-address [address]="bpDataService.requestForQuotation.delivery.deliveryAddress" [disabled]="isLoading() || isReadOnly()">
+        <negotiation-address [address]="rfq.delivery.deliveryAddress" [disabled]="isLoading() || isReadOnly()">
         </negotiation-address>
     </div>
 </div>
@@ -105,7 +105,7 @@
 <!-- Actions -->
 <div *ngIf="!isWaitingForReply()" class="row actions-row">
     <div class="col-4 call-status-col"><call-status [callStatus]="sendRequestCallStatus"></call-status></div>
-    <div class="col-3 price-col">Total Price: {{ totalPrice }} {{ rfqLine.lineItem.price.priceAmount.currencyID }}</div>
+    <div class="col-3 price-col">Total Price: {{ totalPrice }} {{ wrapper.rfqPriceAmount.currencyID }}</div>
     <div class="col-2">
         <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
     </div>
@@ -118,7 +118,7 @@
 
 <div *ngIf="isWaitingForReply()" class="row actions-row">
     <div class="col-7"></div>
-    <div class="col-3 price-col">Requested Price: {{ totalPrice }} {{ rfqLine.lineItem.price.priceAmount.currencyID }}</div>
+    <div class="col-3 price-col">Requested Price: {{ totalPrice }} {{ wrapper.rfqPriceAmount.currencyID }}</div>
     <div class="col-2">
         <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
     </div>

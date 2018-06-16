@@ -7,37 +7,37 @@
 
 <div class="row content-row bg-light">
     <div class="col-2"><strong>Delivery Period:</strong></div>
-    <div class="col-2">2 weeks</div>
-    <div class="col-4"></div>
-    <div class="col-4"><select class="form-control form-control-sm" disabled></select></div>
+    <div class="col-2">{{ wrapper.lineDeliveryPeriodString }}</div>
+    <div class="col-4">{{ wrapper.rfqDeliveryPeriodStringIfNegotiating }}</div>
+    <div class="col-4">TODO</div>
 </div>
 
 <div class="row content-row">
     <div class="col-2"><strong>Waranty:</strong></div>
-    <div class="col-2">None</div>
-    <div class="col-4">1 year (+15%)</div>
-    <div class="col-4"><select class="form-control form-control-sm"><option>1 year (+15%)</option></select></div>
+    <div class="col-2">{{ wrapper.lineWarrantyString }}</div>
+    <div class="col-4">{{ wrapper.rfqWarrantyStringIfNegotiating }}</div>
+    <div class="col-4">TODO</div>
 </div>
 
 <div class="row content-row bg-light">
     <div class="col-2"><strong>Incoterms:</strong></div>
-    <div class="col-2">DDP</div>
-    <div class="col-4"></div>
-    <div class="col-4"><select class="form-control form-control-sm" disabled></select></div>
+    <div class="col-2">{{ wrapper.lineIncoterms }}</div>
+    <div class="col-4">{{ wrapper.rfqIncotermsIfNegotiating }}</div>
+    <div class="col-4">TODO</div>
 </div>
 
 <div class="row content-row">
     <div class="col-2"><strong>Payment Terms:</strong></div>
-    <div class="col-2">PIA</div>
-    <div class="col-4">EOM (-5%)</div>
-    <div class="col-4"><select class="form-control form-control-sm"><option>EOM (-5%)</option></select></div>
+    <div class="col-2">{{ wrapper.linePaymentTerms }}</div>
+    <div class="col-4">{{ wrapper.rfqPaymentTermsIfNegotiating }}</div>
+    <div class="col-4">TODO</div>
 </div>
 
 <div class="row content-row bg-light">
     <div class="col-2"><strong>Payment Means:</strong></div>
-    <div class="col-2">Visa</div>
-    <div class="col-4">Cash</div>
-    <div class="col-4"><select class="form-control form-control-sm"><option>Cash</option></select></div>
+    <div class="col-2">{{ wrapper.linePaymentMeans }}</div>
+    <div class="col-4">{{ wrapper.rfqPaymentMeansIfNegotiating }}</div>
+    <div class="col-4">TODO</div>
 </div>
 
 <div class="row content-row">
@@ -49,7 +49,7 @@
 
 <div class="row content-row bg-light">
     <div class="col-2"><strong>Note:</strong></div>
-    <div class="col-2"></div>
+    <div class="col-2">TODO</div>
     <div class="col-4"><textarea class="form-control" readonly rows="3"></textarea></div>
     <div class="col-4"><textarea class="form-control" rows="3"></textarea></div>
 </div>
@@ -58,7 +58,7 @@
 <div class="row address-row">
     <div class="col-12">
         <h3>Delivery Address</h3>
-        <negotiation-address [address]="address">
+        <negotiation-address [address]="rfq.delivery.deliveryAddress" disabled="true">
         </negotiation-address>
     </div>
 </div>
