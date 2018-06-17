@@ -33,7 +33,7 @@ export class NegotiationRequestComponent implements OnInit {
     negotiatedPriceValue: number;
     totalPrice: number;
 
-    sendRequestCallStatus: CallStatus = new CallStatus();
+    callStatus: CallStatus = new CallStatus();
 
     INCOTERMS: string[] = INCOTERMS;
     PAYMENT_MEANS: string[] = PAYMENT_MEANS;
@@ -58,7 +58,7 @@ export class NegotiationRequestComponent implements OnInit {
         }
         this.rfqLine = this.rfq.requestForQuotationLine[0];
         this.line = this.bpDataService.getCatalogueLine();
-        this.totalPrice = this.getTotalPrice();
+        this.totalPrice = this.wrapper.lineTotalPrice;
         this.negotiatedPriceValue = this.totalPrice;
         this.wrapper = new NegotiationModelWrapper(this.line, this.rfq, null);
     }
@@ -70,7 +70,7 @@ export class NegotiationRequestComponent implements OnInit {
     onSendRequest(): void {
         if(this.rfq.negotiationOptions.isNegotiatingAnyTerm()) {
             // send request for quotation        
-            this.sendRequestCallStatus.submit();
+            this.callStatus.submit();
             const rfq: RequestForQuotation = this.copy(this.rfq);
 
             // final check on the rfq
@@ -96,11 +96,11 @@ export class NegotiationRequestComponent implements OnInit {
 
                     this.bpeService.startBusinessProcess(piim)
                         .then(res => {
-                            this.sendRequestCallStatus.callback("Terms sent", true);
+                            this.callStatus.callback("Terms sent", true);
                             this.router.navigate(['dashboard']);
                         })
                         .catch(error => {
-                            this.sendRequestCallStatus.error("Failed to sent Terms");
+                            this.callStatus.error("Failed to sent Terms");
                             console.log("Error while sending terms", error);
                         });
                 });
@@ -157,7 +157,7 @@ export class NegotiationRequestComponent implements OnInit {
     }
 
     isLoading(): boolean {
-        return this.sendRequestCallStatus.isLoading();
+        return this.callStatus.isLoading();
     }
 
     isReadOnly(): boolean {
@@ -177,7 +177,7 @@ export class NegotiationRequestComponent implements OnInit {
     }
 
     private recomputeTotalPrice(): void {
-        const price = this.getTotalPrice();
+        const price = this.wrapper.lineTotalPrice;
         if(!this.negotiatePrice) {
             this.negotiatedPriceValue = price;
             this.totalPrice = price;
@@ -187,13 +187,7 @@ export class NegotiationRequestComponent implements OnInit {
         this.rfqLine.lineItem.price.priceAmount.value = String(this.totalPrice);
     }
 
-    private getTotalPrice(): number {
-        const quantity = this.rfq.requestForQuotationLine[0].lineItem.quantity.value;
-        const price = this.line.requiredItemLocationQuantity.price;
-        const amount = Number(price.priceAmount.value);
-        const baseQuantity = price.baseQuantity.value || 1;
-        return quantity * amount / baseQuantity;
-    }
+    
 
     /*
      * TODO: those methods are shared with the product details view.

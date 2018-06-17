@@ -22,8 +22,26 @@ export class NegotiationModelWrapper {
         return this.line.requiredItemLocationQuantity.price;
     }
 
+    public get lineTotalPrice(): number {
+        const quantity = this.rfq.requestForQuotationLine[0].lineItem.quantity.value;
+        const price = this.line.requiredItemLocationQuantity.price;
+        const amount = Number(price.priceAmount.value);
+        const baseQuantity = price.baseQuantity.value || 1;
+        return quantity * amount / baseQuantity;
+    }
+
+    public get lineTotalPriceString(): string {
+        const price = this.line.requiredItemLocationQuantity.price;
+        return this.lineTotalPrice + " " + price.priceAmount.currencyID;
+    }
+
     public get rfqPriceAmount(): Amount {
         return this.rfq.requestForQuotationLine[0].lineItem.price.priceAmount;
+    }
+
+    public get rfqTotalPriceStringIfNegotiating(): string {
+        const price = this.rfqPriceAmount;
+        return this.IfNegotiating(price.value + " " + price.currencyID, this.rfq.negotiationOptions.price);
     }
 
     public get quotationPriceAmount(): Amount {
@@ -74,7 +92,7 @@ export class NegotiationModelWrapper {
         return this.qtyToStringIfNegotiating(this.rfqWarranty, this.rfq.negotiationOptions.warranty);
     }
 
-    public get quotationWaranty(): Quantity {
+    public get quotationWarranty(): Quantity {
         return this.quotation.quotationLine[0].lineItem.warrantyValidityPeriod.durationMeasure;
     }
 
@@ -111,6 +129,10 @@ export class NegotiationModelWrapper {
         return this.rfq.paymentTerms;
     }
 
+    public get quotationPaymentTerms(): string {
+        return this.quotation.paymentTerms;
+    }
+
     public get rfqPaymentTermsIfNegotiating(): string {
         return this.IfNegotiating(this.rfqPaymentTerms, this.rfq.negotiationOptions.paymentTerms);
     }
@@ -122,6 +144,10 @@ export class NegotiationModelWrapper {
 
     public get rfqPaymentMeans(): string {
         return this.rfq.paymentMeans;
+    }
+
+    public get quotationPaymentMeans(): string {
+        return this.quotation.paymentMeans;
     }
 
     public get rfqPaymentMeansIfNegotiating(): string {

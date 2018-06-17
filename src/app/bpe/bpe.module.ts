@@ -43,6 +43,7 @@ import { NegotiationRequestComponent } from './bp-view/negotiation/negotiation-r
 import { NegotiationRequestInputComponent } from './bp-view/negotiation/negotiation-request-input.component';
 import { NegotiationResponseComponent } from './bp-view/negotiation/negotiation-response.component';
 import { NegotiationAddressComponent } from './bp-view/negotiation/negotiation-address.component';
+import { NegotiationResponseInputComponent } from './bp-view/negotiation/negotiation-response-input.component';
 //import { BPEService } from './bpe.service';
 //import { BPService } from './bp.service';
 //import { BPDataService } from "./bp-view/bp-data-service";
@@ -73,6 +74,7 @@ import { NegotiationAddressComponent } from './bp-view/negotiation/negotiation-a
 		NegotiationComponent,
 		NegotiationRequestComponent,
 		NegotiationRequestInputComponent,
+		NegotiationResponseInputComponent,
 		NegotiationResponseComponent,
 		TransportExecutionPlanBpComponent,
 		TransportExecutionPlanRequestComponent,

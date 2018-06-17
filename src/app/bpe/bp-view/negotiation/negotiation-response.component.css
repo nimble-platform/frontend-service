@@ -15,6 +15,12 @@
     padding: 0.3rem;
 }
 
+.actions-row .call-status-col {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
 .action {
     width: 100%;
 }

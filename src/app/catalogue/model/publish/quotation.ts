@@ -18,6 +18,8 @@ export class Quotation {
         public requestForQuotationDocumentReference:DocumentReference,
         public buyerCustomerParty:CustomerParty,
         public sellerSupplierParty:SupplierParty,
-        public quotationLine:QuotationLine[]
+        public quotationLine:QuotationLine[],
+        public paymentMeans?: string,
+		public paymentTerms?: string
     ) {  }
 }

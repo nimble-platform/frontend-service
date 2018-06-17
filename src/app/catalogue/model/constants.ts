@@ -19,7 +19,7 @@ export const PAYMENT_MEANS: string[] = [
     "Wire Transfer",
     "Cash On Delivery"
 ]
-// TODO: is this correct?!
+
 export const PAYMENT_TERMS: string[] = [
     "PIA (Payment in advance)",
     "EOM (End of month)",
@@ -30,3 +30,9 @@ export const PAYMENT_TERMS: string[] = [
     "CIA (Cash in advance)",
     "Other"
 ]
+
+export const NEGOTIATION_RESPONSES = {
+    ACCEPTED: "Accepted",
+    TERMS_UPDATED: "Terms Updated",
+    REJECTED: "Rejected"
+}
