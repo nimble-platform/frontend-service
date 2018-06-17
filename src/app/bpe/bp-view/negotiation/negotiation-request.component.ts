@@ -17,6 +17,7 @@ import { ProcessVariables } from "../../model/process-variables";
 import { ModelUtils } from "../../model/model-utils";
 import { ProcessInstanceInputMessage } from "../../model/process-instance-input-message";
 import { NegotiationModelWrapper } from "./negotiation-model-wrapper";
+import { NegotiationOptions } from "../../../catalogue/model/publish/negotiation-options";
 
 @Component({
     selector: "negotiation-request",
@@ -54,13 +55,13 @@ export class NegotiationRequestComponent implements OnInit {
     ngOnInit() {
         this.rfq = this.bpDataService.requestForQuotation;
         if(!this.rfq.negotiationOptions) {
-
+            this.rfq.negotiationOptions = new NegotiationOptions();
         }
         this.rfqLine = this.rfq.requestForQuotationLine[0];
         this.line = this.bpDataService.getCatalogueLine();
+        this.wrapper = new NegotiationModelWrapper(this.line, this.rfq, null);
         this.totalPrice = this.wrapper.lineTotalPrice;
         this.negotiatedPriceValue = this.totalPrice;
-        this.wrapper = new NegotiationModelWrapper(this.line, this.rfq, null);
     }
 
     /*
@@ -107,6 +108,7 @@ export class NegotiationRequestComponent implements OnInit {
             });
         } else {
             // just go to order page
+            this.bpDataService.initOrderWithRfq();
         }
     }
 
@@ -186,8 +188,6 @@ export class NegotiationRequestComponent implements OnInit {
         }
         this.rfqLine.lineItem.price.priceAmount.value = String(this.totalPrice);
     }
-
-    
 
     /*
      * TODO: those methods are shared with the product details view.

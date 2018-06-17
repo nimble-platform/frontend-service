@@ -245,10 +245,6 @@ export class BPDataService{
 
         let userId = this.cookieService.get('user_id');
         return this.userService.getSettings(userId).then(settings => {
-            // Hum, this is strange: the user, on their profile, stores the delivery that they want for any item??!
-            // this.requestForQuotation.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.value = settings.deliveryTerms.estimatedDeliveryTime;
-            // this.requestForQuotation.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.unitCode = 'days';
-            
             // we can't copy because those are 2 different types of addresses.
             this.requestForQuotation.delivery.deliveryAddress.country.name = settings.address.country;
             this.requestForQuotation.delivery.deliveryAddress.postalZone = settings.address.postalCode;
@@ -311,11 +307,20 @@ export class BPDataService{
     }
 
     initOrderWithQuotation() {
-        let copyQuotation:Quotation = JSON.parse(JSON.stringify(this.quotation));
+        let copyQuotation:Quotation = this.copy(this.quotation);
         this.resetBpData();
-        this.modifiedCatalogueLines = JSON.parse(JSON.stringify(this.catalogueLines));
+        this.modifiedCatalogueLines = this.copy(this.catalogueLines);
         this.order = UBLModelUtils.createOrder();
         this.order.orderLine[0].lineItem = copyQuotation.quotationLine[0].lineItem;
+        this.setProcessType('Order');
+    }
+
+    initOrderWithRfq() {
+        let copyRfq: RequestForQuotation = this.copy(this.requestForQuotation);
+        this.resetBpData();
+        this.modifiedCatalogueLines = this.copy(this.catalogueLines);
+        this.order = UBLModelUtils.createOrder();
+        this.order.orderLine[0].lineItem = copyRfq.requestForQuotationLine[0].lineItem;
         this.setProcessType('Order');
     }
 

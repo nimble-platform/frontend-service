@@ -36,3 +36,7 @@
 .input-spacer {
     margin-bottom: 0.6rem;
 }
+
+textarea {
+    resize: none;
+}

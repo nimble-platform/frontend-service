@@ -93,12 +93,31 @@
     </div>
 </div>
 
+<!-- Note -->
+<div class="row content-row">
+    <div class="col-2">
+        <strong>Note:</strong>
+    </div>
+    <div class="col-10">
+        <textarea class="form-control" [(ngModel)]="rfq.note[0]" rows="3" [disabled]="isLoading() || isReadOnly()"></textarea>
+    </div>
+</div>
+
 <!-- Delivery -->
 <div class="row">
     <div class="col-12">
         <h4>Delivery Address</h4>
         <negotiation-address [address]="rfq.delivery.deliveryAddress" [disabled]="isLoading() || isReadOnly()">
         </negotiation-address>
+    </div>
+</div>
+<div class="row">
+    <div class="col-2"></div>
+    <div class="col-10">
+        <input type="checkbox" [(ngModel)]="rfq.dataMonitoringRequested" [disabled]="isLoading() || isReadOnly()" >
+        <span class="form-control d-inline border-0">
+            <strong>Request data monitoring service</strong>
+        </span>
     </div>
 </div>
 
