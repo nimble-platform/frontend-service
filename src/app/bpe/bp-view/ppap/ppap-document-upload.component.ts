@@ -108,8 +108,8 @@ export class PpapDocumentUploadComponent{
         this.submitted = true;
         for(let i=0;i<this.binaryObjects.length;i++){
             for(let j=0;j<this.binaryObjects[i].documents.length;j++){
-                let attachment : Attachment = new Attachment(this.binaryObjects[i].documents[j],null,null);
-                let documentRef: DocumentReference = new DocumentReference(UBLModelUtils.generateUUID(),null,null,null,null,this.binaryObjects[i].documentName,null,null,null,attachment,null,null,null);
+                let attachment : Attachment = new Attachment(this.binaryObjects[i].documents[j]);
+                let documentRef: DocumentReference = new DocumentReference(UBLModelUtils.generateUUID(), this.binaryObjects[i].documentName, attachment);
                 this.ppapDocuments.push(documentRef);
             }
         }

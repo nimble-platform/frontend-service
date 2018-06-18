@@ -1,0 +1,124 @@
+<h1>Channel Details</h1>
+
+<table id="channel-details" class="table table-striped table-bordered">
+    <tr>
+        <th><span i18n>Channel ID</span></th>
+        <th><span i18n>Business Process</span></th>
+        <th><span i18n>Description</span></th>
+        <th><span i18n>Start Time</span></th>
+        <th><span i18n>End Time</span></th>
+        <th><span i18n>Producer Topic</span></th>
+        <th><span i18n>Consumer Topics</span></th>
+    </tr>
+    <tr>
+        <td>{{channelConfig.channelID}}</td>
+        <td>{{channelConfig.businessProcessID}}</td>
+        <td>{{channelConfig.description}}</td>
+        <td>{{channelConfig.startDateTime}}</td>
+        <td>{{channelConfig.endDateTime}}</td>
+        <td>{{channelConfig.producerTopic}}</td>
+        <td><span ng-repeat="topic in channelConfig.consumerTopics">{{topic}}</span>
+        </td>
+    </tr>
+</table>
+
+<div class="interactions">
+    <button class="btn btn-danger" (click)="deleteChannel()">Delete</button>
+</div>
+
+<h1>Associated Sensors</h1>
+
+<table id="channel-sensors" class="table table-striped table-bordered">
+    <tr>
+        <th><span i18n>Machine</span></th>
+        <th><span i18n>Sensor</span></th>
+        <th><span i18n>Description</span></th>
+        <th class="interaction-column"></th>
+    </tr>
+    <ng-container *ngFor="let sensor of channelSensors">
+        <tr>
+            <td>{{sensor.machine.name}}</td>
+            <td>{{sensor.name}}</td>
+            <td>{{sensor.description}}</td>
+            <td>
+                <button class="btn btn-warning remove-channel-btn"
+                        (click)="removeSensor(sensor)">Remove
+                </button>
+            </td>
+        </tr>
+    </ng-container>
+</table>
+
+
+<div class="form-group" id="new-sensor">
+    <h6 i18n>Add new sensor</h6>
+    <form id="add-sensor-form" #customPropertyForm="ngForm" class="d-flex">
+
+        <!-- machine name-->
+        <input name="machineName" class="form-control col-3"
+               [(ngModel)]="newSensor.machineName"
+               placeholder="name of machine" required/>
+
+        <!-- sensor name -->
+        <input name="sensorName" class="form-control col-3"
+               [(ngModel)]="newSensor.name"
+               placeholder="name of sensor" required/>
+
+        <!-- sensor description -->
+        <input name="sensorDescription" class="form-control col-3"
+               [(ngModel)]="newSensor.description"
+               placeholder="description"/>
+
+        <button [disabled]="!customPropertyForm.form.valid"
+                class="btn btn-success ml-2 add-sensor-btn"
+                (click)="addSensor()">
+            <span i18n>Add sensor</span>
+        </button>
+    </form>
+    <p>Names of sensors are unique. Entering the name of an existing sensor, will
+        associate it to this channel.</p>
+</div>
+
+
+<h1>Messages</h1>
+
+<table id="channel-messages" class="table table-striped table-bordered">
+    <tr>
+        <th><span i18n>Machine ID</span></th>
+        <th><span i18n>Time</span></th>
+        <th><span i18n>Payload</span></th>
+    </tr>
+    <ng-container *ngFor="let message of channelMessages">
+        <tr>
+            <td>{{message.header.machineId}}</td>
+            <td>{{message.header.time | date:'yyyy-MM-dd HH:mm:ss Z'}}</td>
+            <td>{{message.payload | json}}</td>
+        </tr>
+    </ng-container>
+</table>
+
+<h1>Usage</h1>
+
+<h4>Kafka Brokers</h4>
+<ul>
+    <li>kafka01-prod02.messagehub.services.eu-gb.bluemix.net:9093</li>
+    <li>kafka02-prod02.messagehub.services.eu-gb.bluemix.net:9093</li>
+    <li>kafka03-prod02.messagehub.services.eu-gb.bluemix.net:9093</li>
+    <li>kafka04-prod02.messagehub.services.eu-gb.bluemix.net:9093</li>
+    <li>kafka05-prod02.messagehub.services.eu-gb.bluemix.net:9093</li>
+</ul>
+
+<h4>Message Format</h4>
+All messages must be sent as JSON to the Kafka topic <span class="inline-code">{{channelConfig.producerTopic}}</span> with the following format:
+<pre id="message-format">
+    &#123;
+        <span class="key">"header"</span>: &#123;
+            <span class="key">"channelId"</span>: "<span>{{channelConfig.channelID}}</span>",
+            <span class="key">"machineId"</span>: "machine_XY", <span class="comment">// identifier of machine</span>
+            <span class="key">"time"</span>: "13492739487234", <span class="comment">// unix timestamp in milliseconds</span>
+        &#125;,
+        <span class="key">"payload"</span>: &#123;
+            ... <span class="comment">// payload can be aribtrary</span>
+        &#125;
+    &#125;
+</pre>

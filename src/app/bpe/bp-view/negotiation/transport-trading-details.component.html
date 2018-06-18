@@ -1,0 +1,111 @@
+<div class="well">
+    <h5 class="mb-3">Price</h5>
+
+    <!-- Price Amount -->
+    <amount-view [presentationMode]="presentationMode"
+                 [propName]="'Price Amount'"
+                 [definition]="'The price of the transport service for the specified terms'"
+                 [amount]="[lineItem.price.priceAmount]">
+    </amount-view>
+
+</div>
+
+<div class="well">
+    <h5 class="mt-3 mb-3">Payment Means</h5>
+    <div *ngIf="presentationMode == 'edit'"
+         class="input-group form-group border-0">
+        <label class="col-3">Payment Means
+            <span class="label label-default" title="Expected means of payment">
+                    &#9432;
+            </span>
+        </label>
+        <select class="custom-select form-control" [(ngModel)]="paymentMeans.paymentMeansCode.value">
+            <option></option>
+            <option>Credit Card</option>
+            <option>ACH Transfer</option>
+            <option>Wire Transfer</option>
+            <option>Cash On Delivery</option>
+        </select>
+    </div>
+    <div *ngIf="presentationMode != 'edit'"
+         class="input-group form-group border-0">
+        <label class="col-3">Payment Means
+            <span class="label label-default" title="Expected means of payment">
+                    &#9432;
+            </span>
+        </label>
+        <input class="form-control"
+               type="text"
+               [(ngModel)]="paymentMeans.paymentMeansCode.value"
+               readonly>
+    </div>
+</div>
+
+<payment-terms-view [tradingTerms]="paymentTerms.tradingTerms"
+                    [presentationMode]="presentationMode">
+</payment-terms-view>
+
+<div class="well">
+    <h5>Delivery Terms</h5>
+
+    <!-- Incoterms -->
+    <value-view *ngIf="presentationMode != 'edit'"
+                [presentationMode]="'view'"
+                [propName]="'Incoterms'"
+                [definition]="'A set of international rules for the interpretation of the most commonly used trade terms'"
+                [(value)]="lineItem.deliveryTerms.incoterms">
+    </value-view>
+
+    <ng-container *ngIf="presentationMode == 'edit'">
+        <div class="input-group form-group">
+            <label class="col-3">Incoterms
+                <span class="label label-default" title="A set of international rules for the interpretation of the most commonly used trade terms">
+                    &#9432;
+                </span>
+            </label>
+            <select class="form-control custom-select" [(ngModel)]="lineItem.deliveryTerms.incoterms">
+                <option></option>
+                <option>CIF (Cost, Insurance and Freight)</option>
+                <option>CIP (Carriage and Insurance Paid to)</option>
+                <option>CFR (Cost and Freight)</option>
+                <option>CPT (Carriage paid to)</option>
+                <option>DAT (Delivered at Terminal)</option>
+                <option>DAP (Delivered at Place)</option>
+                <option>DDP (Delivery Duty Paid)</option>
+                <option>EXW (Ex Works)</option>
+                <option>FAS (Free Alongside Ship)</option>
+                <option>FCA (Free Carrier)</option>
+                <option>FOB (Free on Board)</option>
+            </select>
+        </div>
+    </ng-container>
+
+    <!-- Request delivery period -->
+    <quantity-view [presentationMode]="presentationMode"
+                   [propName]="'Requested Delivery Period'"
+                   [type]="'time_quantity'"
+                   [definition]="'The period requested for delivery.It starts after the order confirmation.For example,Quantity:2,Unit:weeks'"
+                   [quantity]="[lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure]">
+    </quantity-view>
+
+    <!-- Start location -->
+    <detailed-address-view [propName]="'From Location'"
+                   [fetchDefaultDeliveryAddress]="false"
+                   [presentationMode]="presentationMode"
+                   [deliveryAddress]="lineItem.delivery[0].shipment.originAddress">
+    </detailed-address-view>
+
+    <!-- Delivery Location -->
+    <detailed-address-view [propName]="'To Location'"
+                   [fetchDefaultDeliveryAddress]="false"
+                   [presentationMode]="presentationMode"
+                   [deliveryAddress]="lineItem.deliveryTerms.deliveryLocation.address">
+    </detailed-address-view>
+
+    <!-- Special terms -->
+    <value-view [presentationMode]="presentationMode"
+                [propName]="'Special Terms'"
+                [definition]="'A description of any terms or conditions relating to the delivery items.For example,exceeding the delivery period entitles the buyer to terminate the agreement.'"
+                [(value)]="lineItem.deliveryTerms.specialTerms">
+    </value-view>
+</div>

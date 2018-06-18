@@ -8,12 +8,10 @@ export class Shipment {
     constructor(
         public handlingInstructions: string = null,
         public totalTransportHandlingUnitQuantity: Quantity = new Quantity(),
-        public insuranceValueAmount: Quantity = new Quantity(),
         public consignment: Consignment[] = [new Consignment()],
         public goodsItem:GoodsItem[] = [new GoodsItem()],
         public shipmentStage: ShipmentStage[] = [new ShipmentStage()],
         public transportHandlingUnit: TransportHandlingUnit[] = [new TransportHandlingUnit()],
-        public returnAddress: Address = new Address(),
         public originAddress: Address = new Address(),
     ) {  }
 }

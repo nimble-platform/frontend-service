@@ -1,0 +1,56 @@
+#channel-messages td {
+    line-height: 2em;
+    padding-right: 70px;
+}
+
+#message-format {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #E8E8E8;
+}
+
+.comment {
+    color: green;
+}
+
+.key {
+    color: red;
+}
+
+.inline-code {
+    background-color: #E8E8E8;
+}
+
+.interactions {
+    float: right;
+}
+
+h1 {
+    margin-top: 40px !important;
+    margin-bottom: 20px !important;
+}
+
+h4 {
+    margin-bottom: 10px;
+}
+
+#new-sensor p {
+    margin-top: 10px;
+    font-size: 0.8em;
+}
+
+.add-sensor-btn {
+    float: right;
+}
+
+.interaction-column {
+    width: 107px;
+}
+
+.remove-channel-btn {
+    float: right;
+}
+
+#add-sensor-form input {
+    margin-right: 10px;
+}

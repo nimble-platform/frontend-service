@@ -55,4 +55,12 @@
             <button class="btn btn-primary btn-xs" (click)="addNewValue()"><strong>+</strong></button>
         </span>
     </div>
+
+    <!-- empty address list -->
+    <ng-container *ngIf="address == null || address.length == 0">
+        <div>
+            <label>Add Applicable Country</label>
+            <i class="fa fa-plus-circle pointer" (click)="addFirstValue()"></i>
+        </div>
+    </ng-container>
 </ng-container>

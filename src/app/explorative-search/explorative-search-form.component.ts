@@ -14,6 +14,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ExplorativeSearchService } from './explorative-search.service';
 import { Explorative } from './model/explorative';
+import { Search } from './model/search';
 import {NgbTabChangeEvent} from '@ng-bootstrap/ng-bootstrap';
 
 /**
@@ -40,7 +41,7 @@ export class ExplorativeSearchFormComponent implements OnInit {
     public loading = false;
     cbInput = true;
     langInput = true;
-    language: string = 'en'; // default search in english
+    language = 'en'; // default search in english
     availableLanguages = {};
     // Use the stored data which might further
     // data visualization
@@ -58,6 +59,7 @@ export class ExplorativeSearchFormComponent implements OnInit {
     private conceptName = '';
     private conceptURL = '';
     private conceptSource = '';
+    model = new Search('');
     SQPConfig: Object;
 
     constructor(private expSearch: ExplorativeSearchService) {}

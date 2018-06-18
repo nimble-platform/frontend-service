@@ -77,7 +77,6 @@ export class ThreadSummaryComponent implements OnInit {
     private async fetchThreadEvent(processInstanceId: string): Promise<ThreadEvent> {
         const activityVariables = await this.bpeService.getProcessDetailsHistory(processInstanceId);
         const processType = ActivityVariableParser.getProcessType(activityVariables);
-
         const initialDoc: any = ActivityVariableParser.getInitialDocument(activityVariables);
         const response: any = ActivityVariableParser.getResponse(activityVariables);
         const userRole = ActivityVariableParser.getUserRole(activityVariables,this.processInstanceGroup.partyID)
@@ -301,6 +300,19 @@ export class ThreadSummaryComponent implements OnInit {
                 .catch(err => {
                     this.archiveCallStatus.error('Failed to delete thread permanently');
                 });
+        }
+    }
+
+    openDataChannelView(): void {
+        for (let process of this.processMetadata) {
+            if (process['processType'] === 'Order') {
+                this.dataChannelService.channelsForBusinessProcess(process['process_id'])
+                    .then(channels => {
+                        const channelId = channels[0].channelID;
+                        this.router.navigate([`/data-channel/details/${channelId}`]);
+                    })
+                // ToDo: handle error
+            }
         }
     }
 }

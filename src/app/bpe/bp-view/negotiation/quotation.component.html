@@ -1,39 +1,49 @@
 <ng-container *ngIf="quotation">
-    <trading-details [lineItem]="quotation.quotationLine[0].lineItem"
-                     [fetchDefaultDeliveryAddress]="bpDataService.processMetadata == null && bpDataService.previousProcess == null"
-                     [presentationMode]="presentationMode">
-    </trading-details>
+    <ng-container *ngIf="bpDataService.getCatalogueLine().goodsItem.item.transportationServiceDetails == null">
+        <negotiation-trading-details [lineItem]="quotation.quotationLine[0].lineItem"
+                                     [paymentTerms]="quotation.paymentTerms"
+                                     [paymentMeans]="quotation.paymentMeans"
+                                     [fetchDefaultDeliveryAddress]="bpDataService.processMetadata == null && bpDataService.previousProcess == null"
+                                     [presentationMode]="presentationMode">
+        </negotiation-trading-details>
 
-    <div *ngIf="bpDataService.getCatalogueLine().goodsItem.item.transportationServiceDetails == null"
-         class="well">
+        <div class="well">
+            <h5 class="mb-3">Data Monitoring Service</h5>
+            <ng-container *ngIf="bpDataService.processMetadata?.processStatus == 'Started' && requestForQuotation?.dataMonitoringRequested">
+                <label>The customer requested data monitoring service</label>
+                <hr>
+                <div class="input-group">
+                    <button class="btn btn-outline-warning col-3"
+                            (click)="quotation.dataMonitoringPromised = !quotation.dataMonitoringPromised">Promise service request &nbsp;
+                        <span class="label label-default"
+                              title="'Promise for provision of data monitoring service for the production process of the ordered product'">
+                            &#9432;
+                        </span>
+                    </button>
 
-        <h5 class="mb-3">Data Monitoring Service</h5>
-        <ng-container *ngIf="bpDataService.processMetadata?.processStatus == 'Started' && requestForQuotation?.dataMonitoringRequested">
-            <label>The customer requested data monitoring service</label>
-            <hr>
-            <div class="input-group">
-                <button class="btn btn-warning col-3"
-                        (click)="quotation.dataMonitoringPromised = !quotation.dataMonitoringPromised">Promise service request &nbsp;
-                    <span class="label label-default" title="'Promise for provision of data monitoring service for the production process of the ordered product'">
-                    &#9432;
-                </span>
-                </button>
+                    <input class="ml-3" type="checkbox"
+                           [(ngModel)]="quotation.dataMonitoringPromised">
+                </div>
+            </ng-container>
 
-                <input class="ml-3" type="checkbox"
-                       [(ngModel)]="quotation.dataMonitoringPromised">
-            </div>
-        </ng-container>
-
-        <boolean-view *ngIf="bpDataService.processMetadata?.processStatus == 'Completed' || parentElement == 'clause'"
-                      [presentationMode]="'singlevalue'"
-                      [propName]="'Service Promise Indicator'"
-                      [definition]="'Promise for provision of data monitoring service for the production process of the ordered product'"
-                      [value]="quotation.dataMonitoringPromised">
-        </boolean-view>
-    </div>
+            <boolean-view *ngIf="bpDataService.processMetadata?.processStatus == 'Completed' || parentElement == 'clause'"
+                          [presentationMode]="'singlevalue'"
+                          [propName]="'Service Promise Indicator'"
+                          [definition]="'Promise for provision of data monitoring service for the production process of the ordered product'"
+                          [value]="quotation.dataMonitoringPromised">
+            </boolean-view>
+        </div>
+    </ng-container>
 
     <!-- negotiation parameters for transportation services -->
     <ng-container *ngIf="bpDataService.getCatalogueLine().goodsItem.item.transportationServiceDetails != null">
+        <transport-trading-details [lineItem]="quotation.quotationLine[0].lineItem"
+                                   [paymentMeans]="quotation.paymentMeans"
+                                   [paymentTerms]="quotation.paymentTerms"
+                                   [fetchDefaultDeliveryAddress]="bpDataService.processMetadata == null"
+                                   [presentationMode]="presentationMode">
+        </transport-trading-details>
+
         <div class="well">
             <h6>Handling Unit Details</h6>
             <value-view [presentationMode]="presentationMode"

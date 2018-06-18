@@ -454,23 +454,6 @@ export class ProductPublishComponent {
         }
     }
 
-    //TODO update the method below so that the parameters are passed dynamically
-    private overallProductImageImage(event: any, wallTilesValue: string, floorTilesValue: string) {
-        let fileList: FileList = event.target.files;
-        if (fileList.length > 0) {
-            let itemConfigurationImageArray = this.catalogueLine.goodsItem.item.itemConfigurationImageArray;
-            let file: File = fileList[0];
-            let reader = new FileReader();
-
-            reader.onload = function (e: any) {
-                let base64String = reader.result.split(',').pop();
-                let binaryObject = new BinaryObject(base64String, file.type, file.name, "", "{wall: " + wallTilesValue + ", floor: " + floorTilesValue + "}");
-                itemConfigurationImageArray.push(binaryObject);
-            };
-            reader.readAsDataURL(file);
-        }
-    }
-
     private fileChange(event: any) {
         let fileList: FileList = event.target.files;
         if (fileList.length > 0) {

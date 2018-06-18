@@ -79,11 +79,13 @@ textarea {
     margin-right: 0.5rem;
 }
 
+/*
 .input-group-addon {
 	width: 12rem;
 	white-space: normal;
 	word-wrap: break-word;
 }
+*/
 
 .ng-valid[required], .ng-valid.required {
     border-right: 5px solid #42A948;
@@ -175,9 +177,20 @@ textarea {
     opacity: 1 !important;
 }
 
-.dropdown-item.active, .dropdown-item:active {
-	color: #292b2c !important;
+.dropdown-item:hover {
+  color: #292b2c !important;
 	background-color: #ccc !important;
+}
+
+.dropdown-item.active, .dropdown-item:active {
+	color: #fff !important;
+	background-color: #a21c26 !important;
+}
+
+.dropdown-menu-right {
+  right: 0 !important;
+  left: auto !important;
+  position: absolute !important;
 }
 
 ngb-pagination nav .pagination {
@@ -226,12 +239,9 @@ ngb-pagination nav .pagination .page-item.active .page-link {
 }
 
 .tooltip-icon {
-	width: 1rem;
-	height: 1rem;
 	position: absolute;
-	left: 10.5rem;
+	right: 0;
 	cursor: pointer;
-	margin-top: -0.2rem;
 }
 
 .text-std, .text-std:focus, .text-std:hover {

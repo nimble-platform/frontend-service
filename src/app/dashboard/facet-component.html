@@ -17,7 +17,7 @@
     <div *ngIf="noResults()">
         No results
     </div>
-    
+
     <!-- boolean data type -->
     <div *ngIf="dataType == 'boolean' && !loading" class="filter-option"
         (click)="booleanValue = !booleanValue; booleanValueChanged.next(booleanValue);">

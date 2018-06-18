@@ -35,7 +35,7 @@
             </div>
             <div (click)="addCategoryOnClick()"
                  style="display: inline-block;">
-                <img src="./assets/catalogue/add_button.png"/>
+                <i class="fa fa-plus-circle pointer"></i>
                 <span *ngIf="catalogueLine.goodsItem.item.commodityClassification.length == 0" i18n>Select a product category</span>
                 <span *ngIf="catalogueLine.goodsItem.item.commodityClassification.length > 0" i18n>Add another product category</span>
             </div>
@@ -51,7 +51,7 @@
             <div class="alert-success mb-0 mr-3 d-flex" role="alert">
                 <div class="d-flex p-2" style="align-items: center">
                     <span i18n>Product published!</span>
-                    <span class="ml-3" style="cursor:pointer"><strong>&times;</strong></span>
+                    <span class="ml-3 pointer"><strong>&times;</strong></span>
                 </div>
             </div>
         </div>
@@ -61,7 +61,7 @@
             <div class="alert-danger mb-0 mr-3 d-flex" role="alert">
                 <div class="d-flex p-2" style="align-items: center">
                     <span i18n>Fail to publish product!</span>
-                    <span class="ml-3" style="cursor:pointer"><strong>&times;</strong></span>
+                    <span class="ml-3 pointer"><strong>&times;</strong></span>
                 </div>
             </div>
         </div>
@@ -155,7 +155,7 @@
                      style="display: inline-block;">
                     <input #image type="file" (change)="imageChange($event)" multiple accept="image/*"
                            style="display: none">
-                    <img src="./assets/catalogue/add_button.png"/>
+                    <i class="fa fa-plus-circle pointer"></i>
                     <span i18n>Add image</span>
                 </div>
 
@@ -165,7 +165,7 @@
                      style="display: inline-block;">
                     <input #file type="file" (change)="fileChange($event)" multiple accept="file/*"
                            style="display: none">
-                    <img src="./assets/catalogue/add_button.png"/>
+                    <i class="fa fa-plus-circle pointer"></i>
                     <span i18n>Add file</span>
                 </div>
 
@@ -195,10 +195,10 @@
                 <!-- combobox for choosing the property value type -->
                 <div class="col">
                     <div class="row justify-content-end ml-2">
-                        <div>
-                            <span i18n>Value type:</span>
+                        <div class="form-group row mb-0 mr-0">
+                            <span class="col-form-label col-6" i18n>Value type:</span>
 
-                            <select #propertyValueType class="custom-select" (change)="onValueTypeChange($event)">
+                            <select #propertyValueType class="custom-select col-6" (change)="onValueTypeChange($event)">
                                 <option selected i18n>Text</option>
                                 <option i18n>Number</option>
                                 <option i18n>Image</option>
@@ -209,7 +209,7 @@
                         </div>
 
                         <button [disabled]="!customPropertyForm.form.valid || (newProperty.valueQualifier == 'BINARY' && newProperty.valueBinary.length == 0)"
-                                class="btn btn-success ml-1"
+                                class="btn btn-success ml-2"
                                 (click)="addCustomProperty()">
                             <span i18n>Add property</span>
                         </button>
@@ -306,7 +306,7 @@
             </div>
             <div (click)="addCategoryOnClick()"
                  style="display: inline-block;">
-                <img src="./assets/catalogue/add_button.png"/>
+                <i class="fa fa-plus-circle pointer"></i>
                 <span *ngIf="categoryService.selectedCategories.length == 0" i18n>Select a product category</span>
                 <span *ngIf="categoryService.selectedCategories.length > 0" i18n>Add another product category</span>
             </div>
@@ -325,7 +325,7 @@
                 <li>Replace mode: All previously published items are deleted; and only the new ones are added to the catalogue.</li>
             </ul>
         </label>
-        <select #uploadModeSelect class="col-3 btn btn-secondary align-self-start" style="text-align-last:center;" (change)="checkMode(uploadModeSelect.value)">
+        <select #uploadModeSelect class="col-3 btn btn-outline-secondary align-self-start" style="text-align-last:center;" (change)="checkMode(uploadModeSelect.value)">
             <option value="append">Append</option>
             <option value="replace">Replace</option>
         </select>

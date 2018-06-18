@@ -21,6 +21,9 @@ import {TransportExecutionPlan} from "../../catalogue/model/publish/transport-ex
 import {SearchContextService} from "../../simple-search/search-context.service";
 import {ItemInformationRequest} from "../../catalogue/model/publish/item-information-request";
 import {ItemInformationResponse} from "../../catalogue/model/publish/item-information-response";
+import {CookieService} from "ng2-cookies";
+import {UserService} from "../../user-mgmt/user.service";
+import {PrecedingBPDataService} from "./preceding-bp-data-service";
 /**
  * Created by suat on 20-Sep-17.
  */
@@ -62,7 +65,10 @@ export class BPDataService{
     private relatedGroupId: string;
     precedingProcessId: string;
 
-    constructor(public searchContextService: SearchContextService) {
+    constructor(private searchContextService: SearchContextService,
+                private precedingBPDataService: PrecedingBPDataService,
+                private userService: UserService,
+                private cookieService: CookieService) {
     }
 
     setCatalogueLines(catalogueLines: CatalogueLine[]): void {
@@ -210,7 +216,25 @@ export class BPDataService{
         this.requestForQuotation = UBLModelUtils.createRequestForQuotation();
         this.requestForQuotation.requestForQuotationLine[0].lineItem.item = this.modifiedCatalogueLines[0].goodsItem.item;
         this.requestForQuotation.requestForQuotationLine[0].lineItem.lineReference = [new LineReference(this.modifiedCatalogueLines[0].id)];
+        this.requestForQuotation.requestForQuotationLine[0].lineItem.price = this.modifiedCatalogueLines[0].requiredItemLocationQuantity.price;
         this.selectFirstValuesAmongAlternatives();
+
+        let userId = this.cookieService.get('user_id');
+        this.userService.getSettings(userId).then(settings => {
+            this.requestForQuotation.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.value = settings.deliveryTerms.estimatedDeliveryTime;
+            this.requestForQuotation.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.unitCode = 'days';
+        });
+    }
+
+    initRfqWithIir(): void {
+        let copyIir:ItemInformationResponse = JSON.parse(JSON.stringify(this.itemInformationResponse));
+        this.resetBpData();
+        this.modifiedCatalogueLines = JSON.parse(JSON.stringify(this.catalogueLines));
+        this.requestForQuotation = UBLModelUtils.createRequestForQuotationWithIir(
+            copyIir,
+            this.precedingBPDataService.fromAddress,
+            this.precedingBPDataService.toAddress,
+            this.precedingBPDataService.orderMetadata);
     }
 
     initPpap(documents:string[]):void{
@@ -228,7 +252,14 @@ export class BPDataService{
         this.order = UBLModelUtils.createOrder();
         this.order.orderLine[0].lineItem.item = this.modifiedCatalogueLines[0].goodsItem.item;
         this.order.orderLine[0].lineItem.lineReference = [new LineReference(this.modifiedCatalogueLines[0].id)];
+        this.order.orderLine[0].lineItem.price = this.modifiedCatalogueLines[0].requiredItemLocationQuantity.price;
         this.selectFirstValuesAmongAlternatives();
+
+        let userId = this.cookieService.get('user_id');
+        this.userService.getSettings(userId).then(settings => {
+            this.order.orderLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.value = settings.deliveryTerms.estimatedDeliveryTime;
+            this.order.orderLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.unitCode = 'days';
+        });
     }
 
     initItemInformationRequest():void {
@@ -244,6 +275,8 @@ export class BPDataService{
         this.modifiedCatalogueLines = JSON.parse(JSON.stringify(this.catalogueLines));
         this.order = UBLModelUtils.createOrder();
         this.order.orderLine[0].lineItem = copyQuotation.quotationLine[0].lineItem;
+        this.order.paymentMeans = copyQuotation.paymentMeans;
+        this.order.paymentTerms = copyQuotation.paymentTerms;
         this.setProcessType('Order');
     }
 
@@ -253,6 +286,8 @@ export class BPDataService{
         this.modifiedCatalogueLines = JSON.parse(JSON.stringify(this.catalogueLines));
         this.order = UBLModelUtils.createOrder();
         this.order.orderLine[0].lineItem = copyOrder.orderLine[0].lineItem;
+        this.order.paymentMeans.paymentMeansCode.value = copyOrder.paymentMeans.paymentMeansCode.value;
+        this.order.paymentTerms.tradingTerms = copyOrder.paymentTerms.tradingTerms;
         this.setProcessType('Order');
     }
 
@@ -262,6 +297,25 @@ export class BPDataService{
         this.modifiedCatalogueLines = JSON.parse(JSON.stringify(this.catalogueLines));
         this.requestForQuotation = UBLModelUtils.createRequestForQuotation();
         this.requestForQuotation.requestForQuotationLine[0].lineItem = copyQuotation.quotationLine[0].lineItem;
+        this.requestForQuotation.paymentMeans = copyQuotation.paymentMeans;
+        this.requestForQuotation.paymentTerms = copyQuotation.paymentTerms;
+    }
+
+    initRfqWithOrder(){
+        let copyOrder:Order = JSON.parse(JSON.stringify(this.order));
+        this.resetBpData();
+        this.modifiedCatalogueLines = JSON.parse(JSON.stringify(this.catalogueLines));
+        this.requestForQuotation = UBLModelUtils.createRequestForQuotation();
+        this.requestForQuotation.requestForQuotationLine[0].lineItem = copyOrder.orderLine[0].lineItem;
+        this.requestForQuotation.paymentTerms = copyOrder.paymentTerms;
+        this.requestForQuotation.paymentMeans = copyOrder.paymentMeans;
+    }
+
+    initRfqWithTransportExecutionPlanRequest() {
+        let copyTransportExecutionPlanRequest:TransportExecutionPlanRequest = JSON.parse(JSON.stringify(this.transportExecutionPlanRequest));
+        this.resetBpData();
+        this.modifiedCatalogueLines = JSON.parse(JSON.stringify(this.catalogueLines));
+        this.requestForQuotation = UBLModelUtils.createRequestForQuotationWithTransportExecutionPlanRequest(copyTransportExecutionPlanRequest,this.modifiedCatalogueLines[0]);
     }
 
     initDespatchAdviceWithOrder() {
@@ -289,11 +343,25 @@ export class BPDataService{
         this.selectFirstValuesAmongAlternatives();
     }
 
+    initTransportExecutionPlanRequestWithIir(): void {
+        let copyIir:ItemInformationResponse = JSON.parse(JSON.stringify(this.itemInformationResponse));
+        this.resetBpData();
+        this.modifiedCatalogueLines = JSON.parse(JSON.stringify(this.catalogueLines));
+        this.transportExecutionPlanRequest = UBLModelUtils.createTransportExecutionPlanRequestWithIir(copyIir, this.precedingBPDataService.fromAddress, this.precedingBPDataService.toAddress, this.precedingBPDataService.orderMetadata);
+    }
+
     initTransportExecutionPlanRequestWithQuotation() {
         let copyQuotation:Quotation = JSON.parse(JSON.stringify(this.quotation));
         this.resetBpData();
         this.modifiedCatalogueLines = JSON.parse(JSON.stringify(this.catalogueLines));
         this.transportExecutionPlanRequest = UBLModelUtils.createTransportExecutionPlanRequestWithQuotation(copyQuotation);
+    }
+
+    initTransportExecutionPlanRequestWithTransportExecutionPlanRequest(){
+        let copyTransportExecutionPlanRequest:TransportExecutionPlanRequest = JSON.parse(JSON.stringify(this.transportExecutionPlanRequest));
+        this.resetBpData();
+        this.modifiedCatalogueLines = JSON.parse(JSON.stringify(this.catalogueLines));
+        this.transportExecutionPlanRequest = UBLModelUtils.createTransportExecutionPlanRequestWithTransportExecutionPlanRequest(copyTransportExecutionPlanRequest);
     }
 
     resetBpData():void {

@@ -3,21 +3,34 @@
         <h5 class="mt-3 mb-3">Price/Requested Quantity</h5>
         <!-- Price Amount -->
         <amount-view [presentationMode]="presentationMode"
-                     [propName]="'Amount'"
+                     [propName]="'Price for Base Quantity'"
+                     [definition]="'The price of the product requested for the base quantity'"
                      [amount]="[order.orderLine[0].lineItem.price.priceAmount]">
         </amount-view>
 
         <!-- Price Base Quantity -->
         <quantity-view [presentationMode]="presentationMode"
                        [propName]="'Price Base Quantity'"
-                       [definition]="'The price of a product at a legally set quantity'"
+                       [propName]="'Base Quantity'"
+                       [definition]="'The base quantity for which a price is a specified.\nFor example, charging €5,00 for a base quantity of 1m2 indicates the total price of 3m2 product is charged with €15,00.\nExample:i.e.,Quantity:1,Unit:m2.'"
                        [quantity]="[order.orderLine[0].lineItem.price.baseQuantity]">
         </quantity-view>
 
         <quantity-view [propName]="'Requested Quantity'"
                        [quantity]="[order.orderLine[0].lineItem.quantity]"
+                       [definition]="'The requested quantity of the product'"
                        [presentationMode]="presentationMode">
         </quantity-view>
+
+        <!-- Total Price -->
+        <quantity-value-view
+                *ngIf="order.orderLine[0].lineItem.price.baseQuantity.unitCode == order.orderLine[0].lineItem.quantity.unitCode && order.orderLine[0].lineItem.price.baseQuantity.value"
+                [propName]="'Total Price'"
+                [definition]="'Total price for the requested quantity'"
+                [value]="order.orderLine[0].lineItem.price.priceAmount.value * order.orderLine[0].lineItem.quantity.value / order.orderLine[0].lineItem.price.baseQuantity.value"
+                [unitType]="'Currency'"
+                [unit]="order.orderLine[0].lineItem.price.priceAmount.currencyID">
+        </quantity-value-view>
     </div>
 
     <div class="well">
@@ -70,101 +83,9 @@
         </div>
     </div>
 
-    <div class="well">
-        <h5 class="mt-3 mb-3">Payment Terms</h5>
-        <div class="bordered mb-3" style='overflow: auto'>
-            <div style="width: 50%;float: left;padding: 1em">
-                <div>
-                    <input [(ngModel)]="paymentTerms[0].checked" type="checkbox"  [disabled]="presentationMode != 'edit'">
-                    <label >PIA
-                        <span class="label label-default" title="Payment in advance">
-                    &#9432;
-                    </span>
-                    </label>
-                </div>
-                <div>
-                    <input [(ngModel)]="paymentTerms[1].checked" type="checkbox" [disabled]="presentationMode != 'edit' || paymentTerms[1].term == null">
-                    <label>Net</label>
-                    <input [(ngModel)]="paymentTerms[1].term" class="bordered col-3" type="number" (change)="disableCheckBox(1)" style="height: 30px;background-color:#eceeef" [disabled]="presentationMode != 'edit'" placeholder="Number">
-                    <span class="label label-default" title="e.g.,NET 10,payment 10 days after invoice date">
-                    &#9432;
-                </span>
-                </div>
-                <div>
-                    <input [(ngModel)]="paymentTerms[2].checked" type="checkbox" [disabled]="presentationMode != 'edit'">
-                    <label>EOM
-                        <span class="label label-default" title="End of month">
-                    &#9432;
-                    </span>
-                    </label>
-                </div>
-                <div>
-                    <input [(ngModel)]="paymentTerms[3].checked" type="checkbox" [disabled]="presentationMode != 'edit'">
-                    <label>CND
-                        <span class="label label-default" title="Cash next delivery">
-                    &#9432;
-                    </span>
-                    </label>
-                </div>
-                <div>
-                    <input [(ngModel)]="paymentTerms[4].checked" type="checkbox" [disabled]="presentationMode != 'edit'">
-                    <label>CBS
-                        <span class="label label-default" title="Cash before shipment">
-                    &#9432;
-                    </span>
-                    </label>
-                </div>
-            </div>
-
-            <div style="width: 50%;float: right;padding: 1em">
-                <div>
-                    <input [(ngModel)]="paymentTerms[5].checked" type="checkbox"  [disabled]="presentationMode != 'edit' || paymentTerms[5].term == null">
-                    <input [(ngModel)]="paymentTerms[5].term" class="bordered col-3" type="number" (change)="disableCheckBox(5)" style="height: 30px;background-color:#eceeef" [disabled]="presentationMode != 'edit'" placeholder="Number">
-                    <label>MFI
-                        <span class="label label-default" title="e.g.,21 MFI,21st of the month following invoice date">
-                    &#9432;
-                    </span>
-                    </label>
-                </div>
-                <div>
-                    <input [(ngModel)]="paymentTerms[6].checked" type="checkbox"  [disabled]="presentationMode != 'edit' || discount == null || withinDays == null || dueDays == null">
-                    <input [(ngModel)]="discount" class="bordered col-3" type="number" style="height: 30px;background-color:#eceeef" (change)="disableCheckBox(6)" [disabled]="presentationMode != 'edit'" placeholder="Number">
-                    <span>/</span>
-                    <input [(ngModel)]="withinDays" class="bordered col-3" type="number" style="height: 30px;background-color:#eceeef" (change)="disableCheckBox(6)" [disabled]="presentationMode != 'edit'" placeholder="Number">
-                    <span> NET </span>
-                    <input [(ngModel)]="dueDays" class="bordered col-3" type="number" style="height: 30px;background-color:#eceeef" (change)="disableCheckBox(6)" [disabled]="presentationMode != 'edit'" placeholder="Number">
-                    <span class="label label-default" title="e.g.,1/10 NET 30,1% discount if payment received within 10 days otherwise payment 30 days after invoice date">
-                    &#9432;
-                </span>
-                </div>
-                <div>
-                    <input [(ngModel)]="paymentTerms[7].checked" type="checkbox" [disabled]="presentationMode != 'edit'">
-                    <label>COD
-                        <span class="label label-default" title="Cash on delivery">
-                    &#9432;
-                    </span>
-                    </label>
-                </div>
-                <div>
-                    <input [(ngModel)]="paymentTerms[8].checked" type="checkbox" [disabled]="presentationMode != 'edit'">
-                    <label>CWO
-                        <span class="label label-default" title="Cash with order">
-                    &#9432;
-                    </span>
-                    </label>
-                </div>
-                <div>
-                    <input [(ngModel)]="paymentTerms[9].checked" type="checkbox" [disabled]="presentationMode != 'edit'">
-                    <label>CIA
-                        <span class="label label-default" title="Cash in advance">
-                    &#9432;
-                    </span>
-                    </label>
-                </div>
-            </div>
-        </div>
-    </div>
-
+    <payment-terms-view [tradingTerms]="order.paymentTerms.tradingTerms"
+                        [presentationMode]="presentationMode">
+    </payment-terms-view>
 
     <!--<ng-container *ngIf="bpDataService.userRole == 'buyer' && bpDataService.processMetadata == null">-->
         <!--<hr>-->
@@ -178,7 +99,7 @@
             <!--</label>-->
             <!--<button type="button"-->
                     <!--class="col btn mr-2"-->
-                    <!--[ngClass]="{'btn-warning active': !dmsBtnClicked, 'alert-warning': dmsBtnClicked}"-->
+                    <!--[ngClass]="{'btn-outline-warning active': !dmsBtnClicked, 'alert-warning': dmsBtnClicked}"-->
                     <!--(click)="dmsBtnClicked = true; addDataMonitoringClause()"-->
                     <!--[disabled]="dmsBtnClicked">-->
                 <!--<span *ngIf="!dmsBtnClicked">Demand data monitoring service</span>-->
