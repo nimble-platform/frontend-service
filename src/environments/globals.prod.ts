@@ -68,6 +68,12 @@ export const referenceFromConcept = `${ub_base}/getReferencesFromAConcept`;
 export const sqpOrangeConcept = `${ub_base}/getPropertyValuesFromOrangeGroup`;
 
 
+// TnT Endpoints
+
+export const tntEndpoint = `${bpe_endpoint}/t-t/epc-details`;
+export const tntAnalysisEndpoint = 'https://falcon-dev2.ikap.biba.uni-bremen.de:8118/simpleTrackingAnalysis/';
+
+
 // Catalogue format variables
 
 export const product_name = "item_name";

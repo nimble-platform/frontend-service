@@ -72,6 +72,15 @@
 					<i class="fa fa-edit"></i> <span i18n>Register a Company</span>
 				</a>
 			</li>
+
+			<!-- Tracking and Tracing Component UB Initial Version-->
+			<!-- This Will be adapted by the platform's core dev-team later -->
+			<li class="nav-item" *ngIf="checkRoles('track')" routerLinkActive="active">
+				<a class="nav-link" routerLink="/tnt" routerLinkActive="active">
+					<i class="fa fa-truck"></i> <span>Track</span>
+				</a>
+			</li>
+
 			<li class="nav-item" *ngIf="checkRoles('comp')" routerLinkActive="active">
 				<a class="nav-link" routerLink="/user-mgmt/company-invitation">
 					<i class="fa fa-building"></i> Company Members
