@@ -16,11 +16,6 @@
                          [presentationMode]="'view'">
     </catalogue-line-view>
 
-    <product-bp-options *ngIf="bpOptionsActive"
-                        [singleMode]="false"
-                        [presentationMode]="'singlevalue'"
-                        (closeBpOptionsEvent)="bpOptionsActive = !bpOptionsActive">
-    </product-bp-options>
 </div>
 
 <call-status [callStatus]="getCatalogueLineStatus"
