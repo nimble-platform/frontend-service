@@ -4,7 +4,7 @@
     </call-status>
 </div>
 
-<div *ngIf="catalogue">
+<div *ngIf="catalogue && catalogue.catalogueLine.length > 0">
     <div *ngIf="catalogue.catalogueLine.length > 0">
         <div class="input-group form-group" style="background-color:#F2F2F2;padding-left: 25px;padding-top: 20px;padding-bottom: 20px;">
             <input  class="form-control col-3" type="text" [(ngModel)]="searchKey" (keyup)="search()" placeholder="Search ...">
@@ -49,6 +49,10 @@
             </div>
         </div>
 
+        <div *ngIf="catalogueLinesArray.length > 0" class="pagination justify-content-center space-before">
+            <ngb-pagination [(collectionSize)]="collectionSize" [(pageSize)]="pageSize" [(page)]="page" [maxSize]="5" [boundaryLinks]="true"></ngb-pagination>
+        </div>
+
         <div *ngFor="let catLine of catalogueLinesArray.slice((page-1)*pageSize,page*pageSize) " class="space-before">
             <div class="card pointer">
                 <div class="card-body">
@@ -70,7 +74,7 @@
                                 <p *ngIf="catLine.requiredItemLocationQuantity.price.priceAmount.value != null" style="word-break: break-all;word-wrap: break-word;white-space: pre-wrap">{{catLine.requiredItemLocationQuantity.price.priceAmount.value+" "+catLine.requiredItemLocationQuantity.price.priceAmount.currencyID}}</p>
                             </div>
                             <div class="col-2">
-                                <button type="button" class="btn btn-success space-after col" (click)="redirectToEdit(catLine)" style="display: block">Edit</button>
+                                <button type="button" class="btn btn-primary space-after col" (click)="redirectToEdit(catLine)" style="display: block">Edit</button>
                                 <button type="button" class="btn btn-danger col" (click)="deleteCatalogueLine(catLine); $event.stopPropagation();">Delete</button>
                             </div>
                         </div>
@@ -86,14 +90,15 @@
             <ngb-pagination [(collectionSize)]="collectionSize" [(pageSize)]="pageSize" [(page)]="page" [maxSize]="5" [boundaryLinks]="true"></ngb-pagination>
         </div>
     </div>
-    <h3 *ngIf="catalogue.catalogueLine.length <= 0">No published products.</h3>
-    <h5 *ngIf="catalogue.catalogueLine.length <= 0">
-        <span (click)="navigateToThePublishPage()" class="pointer">Publish new products</span>
-        <i class="fa fa-plus-circle pointer" (click)="navigateToThePublishPage()"></i>
-    </h5>
 </div>
 
-<call-status [callStatus]="getCatalogueStatus"
-                [large]="true">
+<div class="jumbotron" *ngIf="catalogue && catalogue.catalogueLine.length <= 0">
+        <h3>No published products.</h3>
+        <h5>
+            <span (click)="navigateToThePublishPage()" style="cursor: pointer;">Publish new products</span>
+            <img src="./assets/catalogue/add_button.png" (click)="navigateToThePublishPage()" style="cursor: pointer;"/>
+        </h5>
+</div>
 
+<call-status [callStatus]="getCatalogueStatus" [large]="true">
 </call-status>

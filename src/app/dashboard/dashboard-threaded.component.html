@@ -1,108 +1,200 @@
-<div class="row">
+<!-- Welcome jumbotron, no company -->
+<div class="row" *ngIf="!user.hasCompany">
     <div class="col-12">
-        <div *ngIf="!hasCompany&&!alert1Closed">
-            <p>
-                <ngb-alert type="info" (close)="alert1Closed=true">
-                    You are not yet linked to a company.<br/>
-                    You can register your company now.
-                </ngb-alert>
-            </p>
-        </div>
-        <p *ngIf="roles.indexOf('initial_representative')!=-1&&roles.indexOf('legal_representative')==-1&&!alert2Closed">
-            <ngb-alert type="info" (close)="alert2Closed=true">
-                Your company is now registered.<br/>
-                You can start publishing your catalogue.<br/>
-                In order to execute business processes your company needs to be verified by an administrator - please stay tuned.<br/>
-                If you are not being verified with 24h, please contact our support nimble-support@salzburgresearch.at.
-            </ngb-alert>
+        <h4 class="text-center">
+            <span i18n>Welcome to the</span> NIMBLE
+            <span i18n>platform,</span> {{user.fullName}}!
+        </h4>
+        <p class="text-center">
+            <i>Collaborative Network for Industry, Manufacturing, Business and Logistics in Europe.</i>
         </p>
-        <div class="nimble-col">
-            <span i18n>Welcome to the</span> NIMBLE <span i18n>platform,</span> {{fullName}}!<br/>
-            <i>
-                <small>Collaborative Network for Industry, Manufacturing, Business and Logistics in Europe.</small>
-            </i>
-        </div>
     </div>
 </div>
 
-<div class="row space-before">
+<div class="row" [ngClass]="{ 'space-before': !user.hasCompany }">
     <div class="col-12">
         <h3 i18n>Dashboard</h3>
     </div>
 </div>
 
-<div class="row space-before">
-    <div class="col">
-        <ul class="nav nav-tabs">
-            <li class="nav-item">
-                <a href id="salesTab"
-                   [ngClass]="{'nav-link': true, active: qp_collaborationRole == COLLABORATION_ROLE_SELLER}"
-                   (click)="onTabClick($event)"
-                   i18n
-                >Sales</a>
-            </li>
-
-            <li class="nav-item">
-                <a href id="purchasesTab"
-                   [ngClass]="{'nav-link': true, active: qp_collaborationRole == COLLABORATION_ROLE_BUYER}"
-                   (click)="onTabClick($event)"
-                   i18n
-                >Purchases</a>
-            </li>
-        </ul>
+<!-- Welcome jumbotron, no company -->
+<div class="row" *ngIf="!user.hasCompany">
+    <div class="col-12">
+        <p>You are not yet linked to a company.</p>
+        <p>You will not be able to make purchases or create a catalogue without a company.</p>
+        <p class="text-center"><a class="btn btn-primary btn-lg" href="#/user-mgmt/company-registration" role="button">Register a Company</a></p>
     </div>
 </div>
 
-<ng-container *ngIf="groups.length > 0">
-    <div class="row space-before">
-        <div class="col-3">
-            <span i18n>Showing results</span> {{ start }} - {{ end }} <span i18n>of</span> {{ size }}
+<!-- Welcome jumbotron, company waiting for approval -->
+<div class="row" *ngIf="user.roles.indexOf('initial_representative')!= -1 && user.roles.indexOf('legal_representative') == -1">
+    <div class="col-12 welcome-message">
+        <h4 class="space-before">Your company is now registered</h4>
+        <p>You can start publishing your catalogue.</p>
+        <p>In order to execute business processes your company needs to be verified by an administrator - please stay tuned.</p>
+        <p>If you are not being verified with 24h, please contact our support nimble-support@salzburgresearch.at.</p>
+    </div>
+</div>
+
+<!-- Regular content -->
+<div class="space-before" *ngIf="user.roles.indexOf('legal_representative') != -1">
+
+    <!-- Tabs -->
+    <div class="row">
+        <div class="col">
+            <ul class="nav nav-tabs">
+                <ng-container *ngIf="user.showWelcomeTab">
+                    <li class="nav-item welcome-tab">
+                        <a href id="WELCOME" [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.WELCOME}" (click)="onChangeTab($event)" i18n>
+                            Welcome 
+                            <button type="button" class="close" aria-label="Close" (click)="onCloseWelcomeTab($event)">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </a>
+                    </li>
+                </ng-container>
+                <li class="nav-item">
+                    <a href id="PURCHASES" [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.PURCHASES}" (click)="onChangeTab($event)" i18n>Purchases</a>
+                </li>
+                <li class="nav-item">
+                    <a href id="SALES" [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.SALES}" (click)="onChangeTab($event)" i18n>Sales</a>
+                </li>
+                <li class="nav-item">
+                    <a href id="CATALOGUE" [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.CATALOGUE}" (click)="onChangeTab($event)" i18n>Catalogue</a>
+                </li>
+            </ul>
         </div>
-        <div class="pagination col-9 justify-content-center ">
-            <ngb-pagination [(collectionSize)]="size" [(pageSize)]="pageSize" [(page)]="qp_page" [maxSize]="limit" [boundaryLinks]="false"
-                            (pageChange)="paginationHandler()"></ngb-pagination>
+    </div>
+
+
+    <!-- Welcome tab -->
+    <div *ngIf="queryParameters.tab === TABS.WELCOME" class="row">
+        <div class="col-12">
+            <h4 class="space-before">Welcome to the Nimble Platform</h4>
+            <p>
+                Looks like you are new here.<br/>
+                This is your dashboard, it shows:
+            </p>
+            <ul>
+                <li><strong>In the purchases tab:</strong> the history of all your purchases</li>
+                <li><strong>In the sales tab:</strong> the history of all your sales</li>
+                <li><strong>In the catalogue tab:</strong> the list of all your purchases</li>
+            </ul>
+            <div class="row text-center">
+                <div class="col-6">
+                    <p>If you are looking to buy Products</p>
+                    <a class="btn btn-primary btn-lg" href="#/simple-search" role="button">Search for Products</a>
+                </div>
+
+                <div class="col-6">
+                    <p>If you are looking to sell Products</p>
+                    <a class="btn btn-primary btn-lg" href="#/catalogue/categorysearch" role="button">Publish a Product</a>
+                </div>
+            </div>
         </div>
     </div>
-</ng-container>
 
-<div class="row"
-     [ngClass]="{'space-before' : groups.length == 0}">
+    <!-- Sales and Purchase tabs -->
+    <div *ngIf="queryParameters.tab === TABS.SALES || queryParameters.tab === TABS.PURCHASES" class="row">
+        <div class="col-12">
+            <!-- No data -->
+            <div class="row" *ngIf="results.resultCount === 0 && !queryParameters.archived">
+                <div class="col-12">
+                    <!-- Sales -->
+                    <ng-container *ngIf="queryParameters.tab === TABS.SALES">
+                        <button class="btn btn-secondary float-right space-before" 
+                            (click)="onToggleArchived()" 
+                            [disabled]="!isToggleArchivedButtonEnabled()">
+                            {{getToggleArchivedButtonText()}}
+                        </button>
+                        <h4 class="space-before text-center">You do not have any sales yet</h4>
+                        <p class="space-before">When a customer enquires about your published products, you will see the others here.</p>
+                    </ng-container>
+                    <!-- Purchases -->
+                    <ng-container *ngIf="queryParameters.tab === TABS.PURCHASES">
+                        <button class="btn btn-secondary float-right space-before" 
+                            (click)="onToggleArchived()" 
+                            [disabled]="!isToggleArchivedButtonEnabled()">
+                            {{getToggleArchivedButtonText()}}
+                        </button>
+                        <h4 class="space-before text-center">You have not bought anything yet</h4>
+                        <p class="space-before text-center">
+                            <a class="btn btn-primary btn-lg" href="#/simple-search" role="button">Search for Products</a>
+                        </p>
+                    </ng-container>
+                </div>
+            </div>
 
-    <div *ngIf="filterSet" class="col-2">
-        <facet [title]="'Archived'"
-               [dataType]="'boolean'"
-               [booleanValue]="qp_archived"
-               (booleanValueChanged)="qp_archived = $event;"
-               (triggerCriteriaChanged)="filterChangeHandler();">
-        </facet>
-        <facet [title]="'Product'"
-               [dataType]="'string'"
-               [stringValues]="filterSet.relatedProducts"
-               [selectedStringValues]="modifiedFilterSet.relatedProducts"
-               (triggerCriteriaChanged)="filterChangeHandler();">
-        </facet>
-        <facet [title]="'Product category'"
-               [dataType]="'string'"
-               [stringValues]="filterSet.relatedProductCategories"
-               [selectedStringValues]="modifiedFilterSet.relatedProductCategories"
-               (triggerCriteriaChanged)="filterChangeHandler();">
-        </facet>
-        <facet [title]="'Trading partner'"
-               [dataType]="'string'"
-               [stringValues]="filterSet.tradingPartnerNames"
-               [selectedStringValues]="modifiedFilterSet.tradingPartnerNames"
-               (triggerCriteriaChanged)="filterChangeHandler();">
-        </facet>
+            <!-- Data -->
+            <div class="row" *ngIf="results.resultCount > 0 || queryParameters.archived">
+                <div class="col-12">
+                    <div class="row space-before">
+                        <div class="col-5"></div>
+                        <!-- Pagination Info -->
+                        <div class="col-2 pagination justify-content-center">
+                            <ngb-pagination [collectionSize]="results.resultCount" [pageSize]="query.pageSize" [(page)]="query.page" 
+                                [maxSize]="query.pageSize" [boundaryLinks]="true" (pageChange)="onPageChange()">
+                            </ngb-pagination>
+                        </div>
+                        <div class="col-3"></div>
+                        <!-- Show Archived Button -->
+                        <div class="col-2">
+                            <button class="btn btn-secondary float-right" 
+                                (click)="onToggleArchived()" 
+                                [disabled]="!isToggleArchivedButtonEnabled()">
+                                {{getToggleArchivedButtonText()}}
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <!-- Filters -->
+                        <div class="col-2">
+                            <facet [title]="'Product'" [dataType]="'string'" 
+                                [stringValues]="filterSet && filterSet.relatedProducts" 
+                                [selectedStringValues]="modifiedFilterSet && modifiedFilterSet.relatedProducts"
+                                [loading]="filtersLoading"
+                                (triggerCriteriaChanged)="onFilterChange()">
+                            </facet>
+                            <facet [title]="'Product category'" [dataType]="'string'" 
+                                [stringValues]="filterSet && filterSet.relatedProductCategories" 
+                                [selectedStringValues]="modifiedFilterSet && modifiedFilterSet.relatedProductCategories"
+                                [loading]="filtersLoading"
+                                (triggerCriteriaChanged)="onFilterChange()">
+                            </facet>
+                            <facet [title]="'Trading partner'" [dataType]="'string'" 
+                                [stringValues]="filterSet && filterSet.tradingPartnerNames" 
+                                [selectedStringValues]="modifiedFilterSet && modifiedFilterSet.tradingPartnerNames"
+                                [loading]="filtersLoading"
+                                (triggerCriteriaChanged)="onFilterChange()">
+                            </facet>
+                        </div>
+                
+                        <!-- Results -->
+                        <div *ngIf="results.orders" class="col-10">
+                            <h4 *ngIf="results.orders.length === 0">No orders.</h4>
+                            <thread-summary *ngFor="let order of results.orders" [processInstanceGroup]="order" (threadStateUpdated)="onOrderRemovedFromView()">
+                            </thread-summary>
+                        </div>
+                    </div>
+
+                    <!-- Pagination Info -->
+                    <div class="row ">
+                        <div class="col pagination justify-content-center">
+                            <ngb-pagination [collectionSize]="results.resultCount" [pageSize]="query.pageSize" [(page)]="query.page" 
+                                [maxSize]="query.pageSize" [boundaryLinks]="true" (pageChange)="onPageChange()">
+                            </ngb-pagination>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <call-status *ngIf="!filterSet" class="col-2" [callStatus]="filterQueryStatus"></call-status>
 
-    <div *ngIf="groups.length == 0" class="space-after">
-        <span i18n>No data</span>
-    </div>
-    <div *ngIf="groups.length > 0" class="col-10">
-        <thread-summary *ngFor="let processInstanceGroup of groups"
-                        [processInstanceGroup]="processInstanceGroup"
-                        (threadStateUpdated)="paginationHandler(true)">
-        </thread-summary>
+    <!-- Catalogue tab -->
+    <div *ngIf="queryParameters.tab === TABS.CATALOGUE" class="row">
+        <div class="col-12">
+            <catalogue-view></catalogue-view>
+        </div>
     </div>
 </div>

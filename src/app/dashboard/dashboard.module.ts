@@ -10,6 +10,9 @@ import {DashboardComponent} from "./dashboard.component";
 import {DashboardThreadedComponent} from "./dashboard-threaded.component";
 import {ThreadSummaryComponent} from "./thread-summary.component";
 import {FacetComponent} from "./facet-component";
+import { DashboardPaginationComponent } from "./dashboard-pagination.component";
+import { CatalogueModule } from "../catalogue/catalogue.module";
+import { ThreadEventComponent } from "./thread-event.component";
 
 @NgModule({
 	imports: [
@@ -19,13 +22,16 @@ import {FacetComponent} from "./facet-component";
 		HttpModule,
 		ReactiveFormsModule,
 		DashboardRoutingModule,
+		CatalogueModule,
 		NgbModule.forRoot()
 	],
 	declarations: [
 		DashboardComponent,
 		DashboardThreadedComponent,
 		ThreadSummaryComponent,
-		FacetComponent
+		ThreadEventComponent,
+		FacetComponent,
+		DashboardPaginationComponent
 	],
 	exports: [
 		DashboardComponent,

@@ -118,9 +118,6 @@
 					<a *ngIf="checkRoles('comp')" class="dropdown-item" routerLink="/user-mgmt/company-settings" routerLinkActive="active">
 						<i class="fa fa-cog dd-icon"></i> Company Settings
 					</a>
-					<a *ngIf="checkRoles('catalogue')" class="dropdown-item" routerLink="/catalogue/catalogue" routerLinkActive="active">
-						<i class="fa fa-book-open dd-icon"></i> <span i18n>Catalogue</span>
-					</a>
 					<a class="dropdown-item" routerLink="/user-mgmt/logout">
 						<i class="fa fa-lock dd-icon"></i> <span i18n>Logout</span>
 					</a>
@@ -130,14 +127,14 @@
 	</div>
 </nav>
 
-<div *ngIf="!alertBetaClosed">
+<!-- <div *ngIf="!alertBetaClosed">
 	<p class="space-before">
 		<ngb-alert type="danger" (close)="alertBetaClosed=true">
 			This platform is in an early access / testing stage.<br/>
 			Downtimes and bugs have to be expected.
 		</ngb-alert>
 	</p>
-</div>
+</div> -->
 
 <div id="loading-bg" *ngIf="loading">
 	<div id="sk-loading-icon">

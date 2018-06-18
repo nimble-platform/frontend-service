@@ -5,12 +5,13 @@ import {RequestForQuotation} from "../../catalogue/model/publish/request-for-quo
 import {Ppap} from "../../catalogue/model/publish/ppap";
 import {TransportExecutionPlanRequest} from "../../catalogue/model/publish/transport-execution-plan-request";
 import {ItemInformationRequest} from "../../catalogue/model/publish/item-information-request";
+import { ProcessType } from "../model/process-type";
 /**
  * Created by suat on 24-Oct-17.
  */
 
 export class ActivityVariableParser {
-    static getProcessType(processVariables): string {
+    static getProcessType(processVariables): ProcessType {
         return processVariables[0]["processDefinitionKey"]
     }
 

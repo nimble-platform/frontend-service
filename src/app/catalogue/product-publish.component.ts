@@ -399,7 +399,7 @@ export class ProductPublishComponent {
                 // avoid category duplication
                 this.categoryService.resetSelectedCategories();
                 this.publishStateService.resetData();
-                this.router.navigate(['catalogue/catalogue']);
+                this.router.navigate(['dashboard'], { queryParams: { tab: "CATALOGUE" } });
 
                 this.submitted = false;
                 this.callback = true;
@@ -637,7 +637,7 @@ export class ProductPublishComponent {
                 catalogueService.uploadTemplate(userId, file, uploadMode).then(res => {
                         self.bulkPublishStatus.callback(null);
                         ProductPublishComponent.dialogBox = false;
-                        self.router.navigate(['catalogue/catalogue'], {queryParams: {forceUpdate: true}});
+                        self.router.navigate(['dashboard'], {queryParams: {forceUpdate: true, tab: "CATALOGUE"}});
                     },
                     error => {
                         self.bulkPublishStatus.error("Failed to upload the template:  " + error);
@@ -662,7 +662,7 @@ export class ProductPublishComponent {
                 catalogueService.uploadZipPackage(file).then(res => {
                         self.bulkPublishStatus.callback(null);
                         ProductPublishComponent.dialogBox = false;
-                        self.router.navigate(['catalogue/catalogue'], {queryParams: {forceUpdate: true}});
+                        self.router.navigate(['dashboard'], {queryParams: {forceUpdate: true, tab: "CATALOGUE"}});
                     },
                     error => {
                         self.bulkPublishStatus.error("Failed to upload the image package:  " + error);
