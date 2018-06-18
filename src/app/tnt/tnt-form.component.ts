@@ -29,8 +29,9 @@ export class TnTFormComponent {
     constructor(private tntBackend: TnTService) {}
 
     Search(code: string) {
-        if (this.debug)
-          console.log(code);
+        if (this.debug) {
+            console.log(code);
+        }
         this.tntBackend.getMetaData(code)
             .then(resp => {
                 this.metaData = resp;
@@ -104,13 +105,15 @@ export class TnTFormComponent {
 
     selectNode(ev) {
         let selectedNode = this.bpInfo.find(el => el.id === ev.id);
-        if (this.debug)
-          console.log(selectedNode);
+        if (this.debug) {
+            console.log(selectedNode);
+        }
         this.tntBackend.getGateInfo(this.metaData['masterUrl'], selectedNode.readPoint)
             .then(res => {
                 this.gateInformation = res;
-                if (this.debug)
-                  console.log(this.gateInformation);
+                if (this.debug) {
+                    console.log(this.gateInformation);
+                }
             })
     }
 
