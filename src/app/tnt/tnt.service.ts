@@ -38,7 +38,7 @@ export class TnTService {
     }
 
     getAnalysisInfo(code: string) {
-        return this.http.get(`${this.tntAnalysisEndpoint}${code}`)
+        return this.http.get(`${this.tntAnalysisEndpoint}/${code}`)
             .map(resp => resp.json());
     }
 

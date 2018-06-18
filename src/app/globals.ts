@@ -71,7 +71,7 @@ export const sqpOrangeConcept = `${ub_base}/getPropertyValuesFromOrangeGroup`;
 // TnT Endpoints
 
 export const tntEndpoint = `${bpe_endpoint}/t-t/epc-details`;
-export const tntAnalysisEndpoint = 'http://nimble-staging.salzburgresearch.at/tnt/simpleTrackingAnalysis/';
+export const tntAnalysisEndpoint = `${base_path}/tnt/simpleTrackingAnalysis`;
 
 
 // Catalogue format variables
