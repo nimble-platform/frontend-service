@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
+import { Http, URLSearchParams, Headers, RequestOptions } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import * as myGlobals from '../globals';
 
@@ -11,13 +11,24 @@ export class TnTService {
     constructor(private http: Http) {}
 
     getMetaData(epcCode: string): Promise<any> {
-        return this.http.get(`${this.tntEndpoint}?epc=${epcCode}`)
+        let header = new Headers();
+        header.append('Content-Type', 'application/json');
+        let params = new URLSearchParams();
+        params.append('epc', epcCode);
+        let reqOptions = new RequestOptions({headers: header, params: params});
+
+        return this.http.get(`${this.tntEndpoint}`, reqOptions)
             .toPromise()
             .then(resp => resp.json());
     }
 
     getTrackingInfo(url: string, code: string) {
-        return this.http.get(`${url}/${code}`)
+        let header = new Headers();
+        header.append('Content-Type', 'application/json');
+        let params = new URLSearchParams();
+        params.append('epc', code);
+        let reqOptions = new RequestOptions({headers: header, params: params});
+        return this.http.get(`${url}`, reqOptions)
             .map(resp => resp.json());
     }
 
@@ -32,13 +43,24 @@ export class TnTService {
     }
 
     getGateInfo(url: string, code: string): Promise<any> {
-        return this.http.get(`${url}/id/${code}`)
+        let header = new Headers();
+        header.append('Content-Type', 'application/json');
+        let params = new URLSearchParams();
+        params.append('id', code);
+        let reqOptions = new RequestOptions({headers: header, params: params});
+        return this.http.get(`${url}`, reqOptions)
             .toPromise()
             .then(resp => resp.json());
     }
 
     getSubSiteTypeInfo(url: string, code: string): Promise<any> {
-        return this.http.get(`${url}/type/urn:epcglobal:epcis:vtype:SubSiteType/id/${code}`)
+        let header = new Headers();
+        header.append('Content-Type', 'application/json');
+        let params = new URLSearchParams();
+        params.append('type', 'urn:epcglobal:epcis:vtype:SubSiteType');
+        params.append('id', code);
+        let reqOptions = new RequestOptions({headers: header, params: params});
+        return this.http.get(`${url}`, reqOptions)
             .toPromise()
             .then(resp => resp.json());
     }
