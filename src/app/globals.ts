@@ -71,7 +71,7 @@ export const sqpOrangeConcept = `${ub_base}/getPropertyValuesFromOrangeGroup`;
 // TnT Endpoints
 
 export const tntEndpoint = `${bpe_endpoint}/t-t/epc-details`;
-export const tntAnalysisEndpoint = 'http://falcon-dev2.ikap.biba.uni-bremen.de:8118/simpleTrackingAnalysis/';
+export const tntAnalysisEndpoint = 'http://nimble-staging.salzburgresearch.at/tnt/simpleTrackingAnalysis/';
 
 
 // Catalogue format variables
