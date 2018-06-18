@@ -4,7 +4,7 @@
         <div class="row">
             <div class="col-12 d-flex thread-entry-header">
                 <div *ngIf="!lastEvent" class="header-label mr-auto">Loading order...</div>
-                <div *ngIf="lastEvent" class="header-label mr-auto">Order for 
+                <div *ngIf="lastEvent" class="header-label mr-auto">Order for
                     <label class="clickable" (click)="navigateToSearchDetails()">
                         {{lastEvent.product.name}}
                     </label>
@@ -18,9 +18,12 @@
                 <div *ngIf="processInstanceGroup.archived" (click)="restoreGroup()" data-toggle="tooltip" data-placement="top" title="Restore">
                     <i class="fa fa-undo p-2" style="cursor: pointer" aria-hidden="true"></i>
                 </div>
+                <div *ngIf="showDataChannelButton" (click)="openDataChannelView()" data-toggle="tooltip" data-placement="top" title="Open Data Channel">
+                    <i class="fa fa-exchange-alt p-2 pointer" aria-hidden="true"></i>
+                </div>
             </div>
         </div>
-        
+
         <!-- Titles for the rows -->
         <div class="row thread-entry-heading">
                 <div class="col-2"><strong>Customer</strong></div>
@@ -29,18 +32,18 @@
                 <div class="col-2"><strong>Note</strong></div>
                 <div class="col-4"><strong>Status</strong></div>
             </div>
-    
+
         <!-- Most recent event -->
         <thread-event *ngIf="lastEvent" [processInstanceGroup]="processInstanceGroup" [event]="lastEvent">
         </thread-event>
-    
+
         <!-- Loading most recent event -->
         <div class="row" *ngIf="!lastEvent">
             <div class="col align-items-center">
                 <img src="assets/form_loader.gif"/>
             </div>
         </div>
-    
+
         <!-- History -->
         <ng-container *ngIf="historyExpanded && history">
             <ng-container *ngFor="let event of history">
@@ -48,14 +51,14 @@
                 </thread-event>
             </ng-container>
         </ng-container>
-    
+
         <!-- Loading history -->
         <div class="row" *ngIf="lastEvent && hasHistory && historyExpanded && !history">
             <div class="col align-items-center">
                 <img src="assets/form_loader.gif"/>
             </div>
         </div>
-        
+
         <!-- Toggle history -->
         <div class="row" *ngIf="lastEvent && hasHistory">
             <div class="col align-items-center clickable" (click)="toggleHistory()">

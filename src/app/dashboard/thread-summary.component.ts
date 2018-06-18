@@ -7,6 +7,7 @@ import {ActivityVariableParser} from "../bpe/bp-view/activity-variable-parser";
 import * as moment from "moment";
 import {CallStatus} from "../common/call-status";
 import {CookieService} from "ng2-cookies";
+import {DataChannelService} from "../data-channel/data-channel.service";
 import { ThreadEvent } from "./model/thread-event";
 import { ProcessType } from "../bpe/model/process-type";
 import { ThreadEventStatus } from "./model/thread-event-status";
@@ -35,9 +36,11 @@ export class ThreadSummaryComponent implements OnInit {
     // Utilities
     eventCount: number = 0
     archiveCallStatus: CallStatus = new CallStatus();
+    showDataChannelButton: boolean = false;
 
     constructor(private bpeService: BPEService,
                 private cookieService: CookieService,
+                private dataChannelService: DataChannelService,
                 private bpDataService: BPDataService,
                 private router: Router) {
     }
@@ -46,6 +49,7 @@ export class ThreadSummaryComponent implements OnInit {
         this.eventCount = this.processInstanceGroup.processInstanceIDs.length;
         this.hasHistory = this.eventCount > 1;
         this.fetchLastEvent();
+        this.checkDataChannel();
     }
 
     private fetchLastEvent(): void {
@@ -83,7 +87,7 @@ export class ThreadSummaryComponent implements OnInit {
         const processId = initialDoc.processInstanceId;
 
         const [lastActivity, processInstance] = await Promise.all([
-            this.bpeService.getLastActivityForProcessInstance(processId), 
+            this.bpeService.getLastActivityForProcessInstance(processId),
             this.bpeService.getProcessInstanceDetails(processId)]
         )
 
@@ -120,11 +124,11 @@ export class ThreadSummaryComponent implements OnInit {
         );
     }
 
-    private fillStatus(event: ThreadEvent, processState: "EXTERNALLY_TERMINATED" | "COMPLETED" | "ACTIVE", 
+    private fillStatus(event: ThreadEvent, processState: "EXTERNALLY_TERMINATED" | "COMPLETED" | "ACTIVE",
         processType: ProcessType, response: any, buyer: boolean): void {
 
         event.status = this.getStatus(processState, processType, response, buyer);
-        
+
         // messages if there is no response from the responder party
         if (response == null) {
             // messages for the buyer
@@ -237,7 +241,7 @@ export class ThreadSummaryComponent implements OnInit {
         }
     }
 
-    private getStatus(processState: "EXTERNALLY_TERMINATED" | "COMPLETED" | "ACTIVE", 
+    private getStatus(processState: "EXTERNALLY_TERMINATED" | "COMPLETED" | "ACTIVE",
             processType: ProcessType, response: any, buyer: boolean): ThreadEventStatus {
         switch(processState) {
             case "COMPLETED":
@@ -303,16 +307,34 @@ export class ThreadSummaryComponent implements OnInit {
         }
     }
 
+    checkDataChannel() {
+        for (let thread of this.processInstanceGroup.processInstanceIDs) {
+          this.fetchThreadEvent(thread).then(threadEvent => {
+              if(threadEvent.processType === 'Order') {
+                this.dataChannelService.isBusinessProcessAttached(threadEvent.processId)
+                  .then(isChannelAttached => {
+                    this.showDataChannelButton = isChannelAttached;
+                  });
+              }
+          }).catch(error => {
+              console.log("Error while fetching event.", error);
+          })
+        }
+    }
+
     openDataChannelView(): void {
-        for (let process of this.processMetadata) {
-            if (process['processType'] === 'Order') {
-                this.dataChannelService.channelsForBusinessProcess(process['process_id'])
+        for (let thread of this.processInstanceGroup.processInstanceIDs) {
+          this.fetchThreadEvent(thread).then(threadEvent => {
+              if(threadEvent.processType === 'Order') {
+                this.dataChannelService.channelsForBusinessProcess(threadEvent.processId)
                     .then(channels => {
                         const channelId = channels[0].channelID;
                         this.router.navigate([`/data-channel/details/${channelId}`]);
                     })
-                // ToDo: handle error
-            }
+              }
+          }).catch(error => {
+              console.log("Error while fetching event.", error);
+          })
         }
     }
 }
