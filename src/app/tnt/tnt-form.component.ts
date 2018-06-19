@@ -1,4 +1,4 @@
-import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, ViewChild, ViewEncapsulation, OnInit } from '@angular/core';
 import { Search } from './model/search';
 import { TnTService } from './tnt.service';
 import * as moment from 'moment';
@@ -22,12 +22,17 @@ export class TnTFormComponent {
     public hierarchialGraph = {nodes: [], links: []};
     debug = myGlobals.debug;
     error_detc = false;
+    updateInfo = false;
     hideButton = false;
     curve = shape.curveBundle.beta(1);
     gateInformation = [];
     sstInfo = [];
 
     constructor(private tntBackend: TnTService) {}
+
+    ngOnInit(): void {
+        this.updateInfo = true;
+    }
 
     Search(code: string) {
         if (this.debug) {
@@ -37,6 +42,7 @@ export class TnTFormComponent {
         this.tntBackend.getMetaData(code)
             .then(resp => {
                 this.error_detc = false;
+                this.updateInfo = false;
                 this.metaData = resp;
                 if ('productionProcessTemplate' in this.metaData) {
                     // this.getBPInfo(resp['productionProcessTemplate']);

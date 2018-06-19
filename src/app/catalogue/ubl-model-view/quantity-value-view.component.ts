@@ -1,9 +1,4 @@
-import {Component, Input, OnInit} from "@angular/core";
-import {Quantity} from "../model/publish/quantity";
-import {Subject} from "rxjs/Subject";
-import {Amount} from "../model/publish/amount";
-import {ChildForm} from "../child-form";
-import {AbstractControl, FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
+import {Component, EventEmitter, Input, Output} from "@angular/core";
 
 @Component({
     selector: 'quantity-value-view',
@@ -16,4 +11,13 @@ export class QuantityValueViewComponent {
     @Input() unitType: string;
     @Input() unit: string;
     @Input() definition: string;
+
+    @Output() onValueChanged: EventEmitter<number> = new EventEmitter<number>();
+
+    ngOnChanges(values) {
+        // emit the new value of the "value" field
+        if(values['value'] != null) {
+            this.onValueChanged.emit(values['value'].currentValue);
+        }
+    }
 }

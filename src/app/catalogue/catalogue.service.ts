@@ -75,7 +75,7 @@ export class CatalogueService {
     }
 
     addCatalogueLine(catalogueId:string,catalogueLineJson:string){
-        const url = this.baseUrl + `/catalogue/${catalogueId}/catalogueline/${catalogueId}`;
+        const url = this.baseUrl + `/catalogue/${catalogueId}/catalogueline`;
         return this.http
             .post(url,catalogueLineJson,{headers:this.headers})
             .toPromise()
