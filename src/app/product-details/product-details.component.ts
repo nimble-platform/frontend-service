@@ -31,6 +31,7 @@ export class ProductDetailsComponent implements OnInit {
 
     selectedTab: ProductDetailsTab = "DETAILS";
     selectedImage: number = 0;
+    toggleImageBorder: boolean = false;
     showNavigation: boolean = true;
     showProcesses: boolean = true;
 
