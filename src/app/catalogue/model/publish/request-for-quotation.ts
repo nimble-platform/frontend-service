@@ -3,8 +3,7 @@ import {SupplierParty} from "../../../catalogue/model/publish/supplier-party";
 import {RequestForQuotationLine} from "../../../catalogue/model/publish/request-for-quotation-line";
 import {Delivery} from "../../../catalogue/model/publish/delivery";
 import {DocumentReference} from "../../../catalogue/model/publish/document-reference";
-import {PaymentTerms} from './payment-terms';
-import {PaymentMeans} from './payment-means';
+import { NegotiationOptions } from "./negotiation-options";
 export class RequestForQuotation {
 	constructor(
 		public id:string,
@@ -14,7 +13,8 @@ export class RequestForQuotation {
 		public sellerSupplierParty:SupplierParty,
 		public delivery:Delivery,
 		public requestForQuotationLine:RequestForQuotationLine[],
-		public paymentTerms:PaymentTerms,
-		public paymentMeans:PaymentMeans
+		public negotiationOptions: NegotiationOptions,
+		public paymentMeans?: string,
+		public paymentTerms?: string
 	) {  }
 }

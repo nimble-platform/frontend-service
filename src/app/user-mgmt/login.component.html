@@ -1,2 +1,10 @@
-<h3 i18n>Login</h3>
+<div *ngIf="pageRef==='registration'">
+    <ngb-alert type="success" [dismissible]="false">
+        Account successfully registered! Please log in.
+    </ngb-alert>
+</div>    
+
+<div class="row col-10 mx-auto">
+    <h3 class="col-2" i18n>Login</h3>
+</div>
 <credentials-form></credentials-form>

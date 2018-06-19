@@ -469,7 +469,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
      * Routing within the platform to Negotiation process
      */
     negotiation(): void {
-        this.router.navigate(['/simple-search/details'],
+        this.router.navigate(['/product-details'],
             { queryParams: {catalogueId: this._negotiation_catalogue_id, id: this._negotiation_id} });
     }
 

@@ -21,7 +21,7 @@ export class Quotation {
         public buyerCustomerParty:CustomerParty,
         public sellerSupplierParty:SupplierParty,
         public quotationLine:QuotationLine[],
-        public paymentTerms:PaymentTerms,
-        public paymentMeans:PaymentMeans
+        public paymentMeans?: string,
+		    public paymentTerms?: string
     ) {  }
 }

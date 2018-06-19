@@ -1,41 +1,22 @@
-<ng-container *ngIf="bpDataService.getCatalogueLine()">
-    <catalogue-line-header [catalogueLine]="bpDataService.getCatalogueLine()"
-                           [presentationMode]="presentationMode">
-    </catalogue-line-header>
+<ng-container *ngIf="line">
+    <h2>Order for: {{ line.goodsItem.item.name }}</h2>
 
-    <div *ngIf="!singleMode"
-         class="d-flex justify-content-center">
-        <button class="btn btn-success col-4 m-3"
-                (click)="closeBpOptions()">Back to Product Details &nbsp; <i class="fa fa-angle-double-up" aria-hidden="true"></i>
-        </button>
-    </div>
-
-    <!-- The following block includes the bp options that can be initiated from scratch without any previous business history-->
-    <ul *ngIf="availableProcesses.length > 0 && !singleMode" class="nav nav-tabs">
-        <li *ngFor="let process of availableProcesses">
-            <a href [ngClass]="{'nav-link': true, active: selectedOption == process}"
-               (click)="bpDataService.setProcessType(process); $event.preventDefault();"
-               i18n
-            >{{process}}</a>
-        </li>
-    </ul>
-
-    <item-information-request-bp *ngIf="selectedOption == 'Item_Information_Request'"
-            [presentationMode]="presentationMode">
+    <product-bp-steps [currentStep]="currentStep" [status]="getStepsStatus()" [statusText]="getStepsStatusText()">
+    </product-bp-steps>
+    
+    <item-information-request-bp *ngIf="currentStep === 'Item_Information_Request'">
     </item-information-request-bp>
-    <negotiation *ngIf="selectedOption == 'Negotiation'">
+    <negotiation *ngIf="currentStep === 'Negotiation'">
     </negotiation>
-    <order-bp *ngIf="selectedOption == 'Order'">
+    <order-bp *ngIf="currentStep === 'Order'">
     </order-bp>
-    <fulfilment *ngIf="selectedOption == 'Fulfilment'">
+    <fulfilment *ngIf="currentStep === 'Fulfilment'">
     </fulfilment>
-    <transport-execution-plan-bp *ngIf="selectedOption == 'Transport_Execution_Plan'">
+    <transport-execution-plan-bp *ngIf="currentStep === 'Transport_Execution_Plan'">
     </transport-execution-plan-bp>
-    <ppap *ngIf="selectedOption == 'Ppap'"
-            [presentationMode]="presentationMode">
+    <ppap *ngIf="currentStep === 'Ppap'">
     </ppap>
 </ng-container>
 
-<call-status [callStatus]="getCatalogueLineStatus"
-             [large]="true">
+<call-status [callStatus]="getCatalogueLineStatus"[large]="true">
 </call-status>

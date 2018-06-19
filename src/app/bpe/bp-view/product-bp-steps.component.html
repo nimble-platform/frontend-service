@@ -1,0 +1,26 @@
+<div class="row">
+    <div class="col-12">
+        <div class="status-text" [ngStyle]="getStatusTextStyle()">
+            &nbsp;{{ statusText }}&nbsp;
+        </div>
+    </div>
+    <div class="col-12 space-before">
+        <div class="steps">
+            <div [ngClass]="getStepClasses('Item_Information_Request')">
+                <span>Request for Information</span>
+            </div>
+            <div [ngClass]="getStepClasses('Ppap')">
+                <span>Ppap</span>
+            </div>
+            <div [ngClass]="getStepClasses('Negotiation')">
+                <span>Negotiation</span>
+            </div>
+            <div [ngClass]="getStepClasses('Order')">
+                <span>Order</span>
+            </div>
+            <div [ngClass]="getStepClasses('Fulfilment')">
+                <span>Purchase Order Confirmed</span>
+            </div>
+        </div>
+    </div>
+</div>

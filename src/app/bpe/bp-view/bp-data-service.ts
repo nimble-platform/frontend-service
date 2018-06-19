@@ -15,7 +15,6 @@ import {OrderResponseSimple} from "../../catalogue/model/publish/order-response-
 import {BehaviorSubject} from "rxjs/BehaviorSubject";
 import {Ppap} from "../../catalogue/model/publish/ppap";
 import {PpapResponse} from "../../catalogue/model/publish/ppap-response";
-import {OrderReference} from "../../catalogue/model/publish/order-reference";
 import {TransportExecutionPlanRequest} from "../../catalogue/model/publish/transport-execution-plan-request";
 import {TransportExecutionPlan} from "../../catalogue/model/publish/transport-execution-plan";
 import {SearchContextService} from "../../simple-search/search-context.service";
@@ -24,6 +23,12 @@ import {ItemInformationResponse} from "../../catalogue/model/publish/item-inform
 import {CookieService} from "ng2-cookies";
 import {UserService} from "../../user-mgmt/user.service";
 import {PrecedingBPDataService} from "./preceding-bp-data-service";
+import { ProcessMetatada } from "./temp-process-metadata";
+import { BpUserRole } from "../model/bp-user-role";
+import { BpWorkflowOptions } from "../model/bp-workflow-options";
+import { NegotiationOptions } from "../../catalogue/model/publish/negotiation-options";
+import { PAYMENT_MEANS, PAYMENT_TERMS } from "../../catalogue/model/constants";
+
 /**
  * Created by suat on 20-Sep-17.
  */
@@ -55,11 +60,12 @@ export class BPDataService{
     //////// variables used when navigating to bp options details page //////
     ////////////////////////////////////////////////////////////////////////////
     // setBpOptionParameters method must be used to set these values
-    processTypeSubject:BehaviorSubject<string> = new BehaviorSubject<string>('Item_Information_Request');
+    private processTypeSubject: BehaviorSubject<string> = new BehaviorSubject<string>('Item_Information_Request');
     processTypeObservable = this.processTypeSubject.asObservable();
-    userRole:string;
-    processMetadata:any;
+    userRole: BpUserRole;
+    processMetadata:ProcessMetatada;
     previousProcess:string;
+    workflowOptions: BpWorkflowOptions;
 
     // variable to keep the business process instance group related to the new process being initiated
     private relatedGroupId: string;
@@ -108,7 +114,7 @@ export class BPDataService{
         }
     }
 
-    setBpOptionParametersWithProcessMetadata(userRole:string, targetProcess:string, processMetadata:any):void {
+    setBpOptionParametersWithProcessMetadata(userRole: BpUserRole, targetProcess:string, processMetadata:any):void {
         this.resetBpData();
         this.setBpOptionParameters(userRole, targetProcess,null);
         this.processMetadata = processMetadata;
@@ -119,12 +125,13 @@ export class BPDataService{
         let activityVariables = processMetadata.activityVariables;
         if(processType == 'Negotiation') {
             this.requestForQuotation = ActivityVariableParser.getInitialDocument(activityVariables).value;
+            this.initFetchedRfq();
 
             let quotationVariable = ActivityVariableParser.getResponse(activityVariables);
             if(quotationVariable == null) {
                 // initialize the quotation only if the user is in seller role
                 if(this.userRole == 'seller') {
-                    this.quotation = JSON.parse(JSON.stringify(UBLModelUtils.createQuotation(this.requestForQuotation)));
+                    this.quotation = this.copy(UBLModelUtils.createQuotation(this.requestForQuotation));
                 }
 
             } else {
@@ -203,7 +210,7 @@ export class BPDataService{
         }
     }
 
-    setBpOptionParameters(userRole:string, targetProcess:string,previousProcess:string) {
+    setBpOptionParameters(userRole: BpUserRole, targetProcess:string,previousProcess:string) {
         this.previousProcess = previousProcess;
         this.setProcessType(targetProcess);
         this.userRole = userRole;
@@ -211,18 +218,39 @@ export class BPDataService{
 
     // this method is supposed to be called when the user is about to initialize a business process via the
     // search details page
-    initRfq():void {
-        this.modifiedCatalogueLines = JSON.parse(JSON.stringify(this.catalogueLines));
-        this.requestForQuotation = UBLModelUtils.createRequestForQuotation();
-        this.requestForQuotation.requestForQuotationLine[0].lineItem.item = this.modifiedCatalogueLines[0].goodsItem.item;
-        this.requestForQuotation.requestForQuotationLine[0].lineItem.lineReference = [new LineReference(this.modifiedCatalogueLines[0].id)];
-        this.requestForQuotation.requestForQuotationLine[0].lineItem.price = this.modifiedCatalogueLines[0].requiredItemLocationQuantity.price;
-        this.selectFirstValuesAmongAlternatives();
+    initRfq(): Promise<void> {
+        const rfq = UBLModelUtils.createRequestForQuotation(
+            this.workflowOptions ? this.workflowOptions.negotiation : new NegotiationOptions()
+        );
+        this.requestForQuotation = rfq;
+
+        const line = this.catalogueLines[0];
+        const rfqLine = this.requestForQuotation.requestForQuotationLine[0];
+
+
+        rfqLine.lineItem.item = this.copy(line.goodsItem.item);
+        rfqLine.lineItem.lineReference = [new LineReference(line.id)];
+        rfqLine.lineItem.price = this.copy(line.requiredItemLocationQuantity.price);
+        rfqLine.lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure =
+            this.copy(line.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure);
+        rfqLine.lineItem.warrantyValidityPeriod = this.copy(line.warrantyValidityPeriod);
+        rfqLine.lineItem.deliveryTerms.incoterms = line.goodsItem.deliveryTerms.incoterms;
+        rfqLine.lineItem.quantity.unitCode = line.requiredItemLocationQuantity.price.baseQuantity.unitCode;
+
+        // TODO update
+        // this.selectFirstValuesAmongAlternatives();
+
+        // quantity
+        rfqLine.lineItem.quantity.value = this.workflowOptions ? this.workflowOptions.quantity : 1;
 
         let userId = this.cookieService.get('user_id');
-        this.userService.getSettings(userId).then(settings => {
-            this.requestForQuotation.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.value = settings.deliveryTerms.estimatedDeliveryTime;
-            this.requestForQuotation.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.unitCode = 'days';
+        return this.userService.getSettings(userId).then(settings => {
+            // we can't copy because those are 2 different types of addresses.
+            this.requestForQuotation.delivery.deliveryAddress.country.name = settings.address.country;
+            this.requestForQuotation.delivery.deliveryAddress.postalZone = settings.address.postalCode;
+            this.requestForQuotation.delivery.deliveryAddress.cityName = settings.address.cityName;
+            this.requestForQuotation.delivery.deliveryAddress.buildingNumber = settings.address.buildingNumber;
+            this.requestForQuotation.delivery.deliveryAddress.streetName = settings.address.streetName;
         });
     }
 
@@ -235,6 +263,15 @@ export class BPDataService{
             this.precedingBPDataService.fromAddress,
             this.precedingBPDataService.toAddress,
             this.precedingBPDataService.orderMetadata);
+    }
+
+    private initFetchedRfq(): void {
+        const rfq = this.requestForQuotation;
+        if(!rfq.negotiationOptions) {
+            rfq.negotiationOptions = new NegotiationOptions();
+        }
+        rfq.paymentMeans = rfq.paymentMeans || PAYMENT_MEANS[0];
+        rfq.paymentTerms = rfq.paymentTerms || PAYMENT_TERMS[0];
     }
 
     initPpap(documents:string[]):void{
@@ -270,13 +307,22 @@ export class BPDataService{
     }
 
     initOrderWithQuotation() {
-        let copyQuotation:Quotation = JSON.parse(JSON.stringify(this.quotation));
+        let copyQuotation:Quotation = this.copy(this.quotation);
         this.resetBpData();
-        this.modifiedCatalogueLines = JSON.parse(JSON.stringify(this.catalogueLines));
+        this.modifiedCatalogueLines = this.copy(this.catalogueLines);
         this.order = UBLModelUtils.createOrder();
         this.order.orderLine[0].lineItem = copyQuotation.quotationLine[0].lineItem;
         this.order.paymentMeans = copyQuotation.paymentMeans;
         this.order.paymentTerms = copyQuotation.paymentTerms;
+        this.setProcessType('Order');
+    }
+
+    initOrderWithRfq() {
+        let copyRfq: RequestForQuotation = this.copy(this.requestForQuotation);
+        this.resetBpData();
+        this.modifiedCatalogueLines = this.copy(this.catalogueLines);
+        this.order = UBLModelUtils.createOrder();
+        this.order.orderLine[0].lineItem = copyRfq.requestForQuotationLine[0].lineItem;
         this.setProcessType('Order');
     }
 
@@ -295,7 +341,7 @@ export class BPDataService{
         let copyQuotation:Quotation = JSON.parse(JSON.stringify(this.quotation));
         this.resetBpData();
         this.modifiedCatalogueLines = JSON.parse(JSON.stringify(this.catalogueLines));
-        this.requestForQuotation = UBLModelUtils.createRequestForQuotation();
+        this.requestForQuotation = UBLModelUtils.createRequestForQuotation(new NegotiationOptions());
         this.requestForQuotation.requestForQuotationLine[0].lineItem = copyQuotation.quotationLine[0].lineItem;
         this.requestForQuotation.paymentMeans = copyQuotation.paymentMeans;
         this.requestForQuotation.paymentTerms = copyQuotation.paymentTerms;
@@ -357,11 +403,16 @@ export class BPDataService{
         this.transportExecutionPlanRequest = UBLModelUtils.createTransportExecutionPlanRequestWithQuotation(copyQuotation);
     }
 
+
     initTransportExecutionPlanRequestWithTransportExecutionPlanRequest(){
         let copyTransportExecutionPlanRequest:TransportExecutionPlanRequest = JSON.parse(JSON.stringify(this.transportExecutionPlanRequest));
         this.resetBpData();
         this.modifiedCatalogueLines = JSON.parse(JSON.stringify(this.catalogueLines));
         this.transportExecutionPlanRequest = UBLModelUtils.createTransportExecutionPlanRequestWithTransportExecutionPlanRequest(copyTransportExecutionPlanRequest);
+    }
+
+    private copy<T>(value: T): T {
+        return JSON.parse(JSON.stringify(value));
     }
 
     resetBpData():void {
@@ -390,6 +441,10 @@ export class BPDataService{
 
     setProcessType(processType:string): void {
         this.processTypeSubject.next(processType);
+    }
+
+    getProcessType(): string {
+        return this.processTypeSubject.getValue();
     }
 
     /********************************************************************************************

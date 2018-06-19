@@ -1,0 +1,289 @@
+<div *ngIf="line" class="row product-details">
+        <div class="col-9">
+            <div class="row">
+                <div class="col-12">
+                    <!-- Product Overview -->
+                    <h1 class="py-2">{{item.name}}</h1>
+                    <div class="row">
+                        <div class="col-4">
+                            <strong>Product by:</strong> {{item.manufacturerParty.name}}
+                        </div>
+                        <div class="col-8 d-flex flex-wrap">
+                            <!-- Categories -->
+                            <strong>Categories:</strong>
+                            <div *ngFor="let classification of getClassifications()" >
+                                <div class="border border-dark rounded px-1 inline space-left">
+                                    {{classification.itemClassificationCode.name}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">
+                            <!-- Images (image class used in catalogue-line-header.component.html) -->
+                            <div id="carousel-large" class="carousel slide carousel-resize mt-2 mb-4" data-ride="carousel">
+                                <div class="carousel-inner">
+                                    <div class="carousel-item active carousel-active">
+                                        <img *ngIf="item.productImage.length == 0"
+                                            class="img-max"
+                                            src="assets/empty_img.png">
+                                        <img *ngIf="item.productImage.length > 0"
+                                            class="img-selected d-block active"
+                                            src="data:{{item.productImage[selectedImage].mimeCode}};base64,{{item.productImage[selectedImage].value}}"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div *ngIf="item.productImage.length > 1" class="d-flex justify-content-center">
+                                <div id="carousel-smaller" class="carousel slide carousel-inactive-resize inline">
+                                    <div class="inline border" [ngClass]="{'border-primary': selectedImage === 0}">
+                                        <img class="carousel-inactive"
+                                            (click)="onSelectImage(selectedImage - 1)"
+                                            src="data:{{item.productImage[0].mimeCode}};base64,{{item.productImage[0].value}}" />
+                                    </div>
+                                    <div class="inline border" [ngClass]="{'border-primary': selectedImage === 1}">
+                                        <img class="carousel-inactive"
+                                            (click)="onSelectImage(selectedImage + 1)"
+                                            src="data:{{item.productImage[1].mimeCode}};base64,{{item.productImage[1].value}}" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div *ngIf="item.productImage.length > 2">
+                                <button class="btn btn-secondary inline btn-carousel float-left"
+                                    (click)="onSelectImage(selectedImage - 1)">
+                                    <i class="fas fa-chevron-left fa-2x"></i>
+                                </button>
+                                <div id="carousel-smaller" class="carousel slide carousel-inactive-resize inline">
+                                    <div class="inline" *ngIf="item.productImage.length > 2">
+                                        <img class="carousel-inactive"
+                                            (click)="onSelectImage(selectedImage - 1)"
+                                            src="data:{{item.productImage[selectedImage].mimeCode}};base64,{{item.productImage[navigateImages(selectedImage - 1, item.productImage.length)].value}}" />
+                                    </div>
+                                    <div class="inline border border-primary">
+                                        <img class="carousel-inactive"
+                                            src="data:{{item.productImage[selectedImage].mimeCode}};base64,{{item.productImage[selectedImage].value}}" />
+                                    </div>
+                                    <div class="inline">
+                                        <img class="carousel-inactive"
+                                            (click)="onSelectImage(selectedImage + 1)"
+                                            src="data:{{item.productImage[selectedImage].mimeCode}};base64,{{item.productImage[navigateImages(selectedImage + 1, item.productImage.length)].value}}" />
+                                    </div>
+                                </div>
+                                <button class="btn btn-secondary inline btn-carousel float-right"
+                                    (click)="onSelectImage(selectedImage + 1)">
+                                    <i class="fas fa-chevron-right fa-2x"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-8 pt-4">
+                            <div>
+                                <!-- Description -->
+                                <strong>Description:</strong>
+                                <p>{{item.description || "No description provided."}}</p>
+                            </div>
+                            <!-- Properties with multiple values to select from -->
+                            <div *ngFor="let property of getPropertiesWithListOfValues()" class="my-1 row">
+                                <div class="col-2">
+                                    <strong>{{property.name}}: </strong>
+                                </div>
+                                <div class="col-10">
+                                <span *ngFor="let val of property.value; let i = index" class="btn-group-toggle" data-toggle="buttons">
+                                    <button type="button" class="btn btn-outline-primary no-y-padding" (click)="onTogglePropertyValue(property, i)" 
+                                        [ngClass]="{ 'active': isPropertyValueSelected(property, i) }">
+                                        {{val}}
+                                    </button>
+                                </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 pt-4">
+                    <!-- Product Tabs -->
+                    <div class="card">
+                        <div class="card-header">
+                            <ul class="nav nav-tabs card-header-tabs">
+                                <li class="nav-item">
+                                    <a href id="DETAILS" class="nav-link"
+                                        [ngClass]="{ active: selectedTab === 'DETAILS'}"
+                                        (click)="onSelectTab($event)">
+                                        Details
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href id="DELIVERY_TRADING" class="nav-link"
+                                        [ngClass]="{ active: selectedTab === 'DELIVERY_TRADING'}"
+                                        (click)="onSelectTab($event)">
+                                        Delivery &amp; Trading
+                                    </a>
+                                </li>
+                                <!-- Todo once certificates are supported
+                                <li class="nav-item">
+                                    <a href id="CERTIFICATES" class="nav-link"
+                                        [ngClass]="{ active: selectedTab === 'CERTIFICATES'}"
+                                        (click)="onSelectTab($event)">
+                                        Certificates
+                                    </a>
+                                </li>
+                                -->
+                            </ul>
+                        </div>
+                        <div *ngIf="selectedTab === 'DETAILS'" class="p-3">
+                            <h4 class="p-1">Product Details</h4>
+                            <div *ngFor="let property of getUniqueProperties()" class="p-1">
+                                <strong>{{property.name}}: </strong>
+                                {{property.value.join(", ")}}
+                                <!-- Next are the other attributes available on property: 
+                                <span>
+                                    | <strong>valueQualifier: </strong>{{ property.valueQualifier }}
+                                    | <strong>itemClassificationCode: </strong>{{ property.itemClassificationCode | json }}
+                                    | <strong>uri: </strong>{{ property.uri }} 
+                                </span>
+                                -->
+                            </div>
+                        </div>
+    
+                        <div *ngIf="selectedTab === 'DELIVERY_TRADING'" class="p-3">
+                            <h4 class="p-1">Price</h4>
+                            <div class="p-1">
+                                <strong>Price: </strong> {{ line.requiredItemLocationQuantity.price.priceAmount.value }} {{ line.requiredItemLocationQuantity.price.priceAmount.currencyID }}
+                                for {{ line.requiredItemLocationQuantity.price.baseQuantity.value }} {{ line.requiredItemLocationQuantity.price.baseQuantity.unitCode }}
+                            </div>
+                            <div class="p-1">
+                                <strong>Free Sample: </strong> {{ line.freeOfChargeIndicator }}
+                            </div>
+                            <h4 class="pt-2 p-1">Delivery Terms</h4>
+                            <div class="p-1">
+                                <strong>Incoterms: </strong> {{ goodsItem.deliveryTerms.incoterms }}
+                            </div>
+                            <div class="p-1">
+                                <strong>Special Terms: </strong> {{ goodsItem.deliveryTerms.specialTerms }}
+                            </div>
+                            <div class="p-1">
+                                <strong>Delivery Period: </strong> {{ goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure.value }}
+                                {{ goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure.unitCode }}
+                            </div>
+                            <!-- Seems that this value can no longer be set when publishing a product...
+                            <div>
+                                
+                                <strong>Territory Address: </strong> {{ goodsItem.deliveryTerms.deliveryLocation.address | json }}
+                            </div>
+                            -->
+                            <h4 class="pt-2 p-1">Packaging</h4>
+                            <div class="p-1">
+                                <strong>Packaging: </strong> {{ goodsItem.containingPackage.quantity.value }} {{ goodsItem.containingPackage.quantity.unitCode }}
+                                per {{ goodsItem.containingPackage.packagingTypeCode.value }}
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Todo once certificates are supported
+                    <div *ngIf="selectedTab === 'CERTIFICATES'">
+                        Certificates tab
+                    </div>
+                    -->
+                </div>
+            </div>
+        </div>
+        <div class="col-3">
+            <!-- Order Workflow -->
+            <div class="p-3 border border-dark border-bottom-0">
+                <h2 class="py-1">Order</h2>
+                <div>
+                    <strong>Delivery Period: </strong> {{ goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure.value }}
+                    {{ goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure.unitCode }}
+                </div>
+                <div>
+                    <strong>Price: </strong> {{ line.requiredItemLocationQuantity.price.priceAmount.value }} {{ line.requiredItemLocationQuantity.price.priceAmount.currencyID }}
+                    for {{ line.requiredItemLocationQuantity.price.baseQuantity.value }} {{ line.requiredItemLocationQuantity.price.baseQuantity.unitCode }}
+                </div>
+                <div class="form-inline">
+                    <label><strong class="pr-1">Quantity: </strong></label>
+                    <input type="number" [(ngModel)]="options.quantity" class="form-control form-control-sm px-1" />
+                </div>
+                <div class="py-2">
+                    <input type="range" [(ngModel)]="options.quantity" class="form-control-range" min="0" 
+                        [max]="getMaximumQuantity(line.requiredItemLocationQuantity.price.priceAmount.value)"
+                        [step]="getSteps(line.requiredItemLocationQuantity.price.priceAmount.value)"/>
+                </div>
+                <strong>Total: {{getTotalPrice()}} {{ line.requiredItemLocationQuantity.price.priceAmount.currencyID }}</strong>
+                <button [disabled]="options.quantity < 1" class="btn btn-primary space-before w-100 my-1"
+                    (click)="onFastTrackOrdering()">
+                    Fast Track Ordering
+                </button>
+            </div>
+            <div class="p-3 border border-dark border-bottom-0">
+                <div class="inline pb-2 w-100" (click)="showNavigation = !showNavigation">
+                    <h4 class="inline w-75">Negotiation</h4>
+                    <i class="fas fa-caret-down fa-lg pl-2 pt-2 align-text-top float-right" aria-hidden="true" *ngIf="showNavigation"></i>
+                    <i class="fas fa-caret-right fa-lg pl-2 pt-2 align-text-top float-right" aria-hidden="true" *ngIf="!showNavigation"></i>
+                </div>
+                <div *ngIf="showNavigation">
+                    <div class="form-group form-check">
+                        <input type="checkbox" [(ngModel)]="options.negotiation.price" class="form-check-input" id="priceCb">
+                        <label class="form-check-label" for="priceCb">Price</label>
+                    </div>
+                    <div class="form-group form-check">
+                        <input type="checkbox" [(ngModel)]="options.negotiation.deliveryPeriod" class="form-check-input" id="deliveryPeriodCb">
+                        <label class="form-check-label" for="deliveryPeriodCb">Delivery Period</label>
+                    </div>
+                    <div class="form-group form-check">
+                        <input type="checkbox" [(ngModel)]="options.negotiation.warranty" class="form-check-input" id="warrantyCb">
+                        <label class="form-check-label" for="warrantyCb">Warranty</label>
+                    </div>
+                    <div class="form-group form-check">
+                        <input type="checkbox" [(ngModel)]="options.negotiation.incoterms" class="form-check-input" id="incotermsCb">
+                        <label class="form-check-label" for="incotermsCb">Incoterms</label>
+                    </div>
+                    <div class="form-group form-check">
+                        <input type="checkbox" [(ngModel)]="options.negotiation.paymentTerms" class="form-check-input" id="paymentTermsCb">
+                        <label class="form-check-label" for="paymentTermsCb">Payment Terms</label>
+                    </div>
+                    <div class="form-group form-check">
+                        <input type="checkbox" [(ngModel)]="options.negotiation.paymentMeans" class="form-check-input" id="paymentMeansCb">
+                        <label class="form-check-label" for="paymentMeansCb">Payment Means</label>
+                    </div>
+                    <div>
+                    <button [disabled]="!options.negotiation.isNegotiatingAnyTerm()" class="btn btn-primary pt-2 w-100"
+                        (click)="onNegotiate()">
+                            Negotiate
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="p-3 border border-dark">
+                <div class="inline w-100" (click)="showProcesses = !showProcesses">
+                    <h4 class="py-1 inline w-75">Business Processes</h4>
+                    <i class="fas fa-caret-down fa-lg pl-2 pt-2 float-right" aria-hidden="true" *ngIf="showProcesses"></i>
+                    <i class="fas fa-caret-right fa-lg pl-2 pt-2 float-right" aria-hidden="true" *ngIf="!showProcesses"></i>
+                </div>
+                <div *ngIf="showProcesses">
+                    <div>
+                        <button class="btn btn-secondary space-before w-100" (click)="onRequestInformation()">
+                            Request Information
+                        </button>
+                    </div>
+                    <div>
+                        <button class="btn btn-secondary space-before w-100" (click)="onNegotiateOtherTerms()">
+                            Negotiate Other Terms
+                        </button>
+                    </div>
+                    <div>
+                        <button class="btn btn-secondary space-before w-100" (click)="onStartPpap()">
+                            Start Ppap
+                        </button>
+                    </div>
+                    <div>
+                        <button class="btn btn-secondary space-before w-100" (click)="onPreviewTermsAndConditions()">
+                            Preview Terms &amp; Conditions
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <call-status [callStatus]="getProductStatus"
+                 [large]="true">
+    </call-status>
+    

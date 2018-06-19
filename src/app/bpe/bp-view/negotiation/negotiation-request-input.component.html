@@ -1,0 +1,54 @@
+<div class="row">
+
+    <!-- Edit checkbox -->
+    <div class="col-5">
+        <input type="checkbox" class="form-check-input" [(ngModel)]="cbModel" [id]="id" 
+            [disabled]="disabled">
+        <label class="form-check-label" [for]="id"><strong>{{label}}:</strong></label>
+    </div>
+
+    <!-- Text -->
+    <div *ngIf="text !== undefined" class="col-7">
+        <input type="text" class="form-control form-control-sm" [(ngModel)]="text" 
+            [disabled]="!cbModel || disabled">
+    </div>
+
+    <!-- Options -->
+    <div *ngIf="options" class="col-7">
+        <select class="form-control form-control-sm" [(ngModel)]="selected"
+            [disabled]="!cbModel || disabled">
+            <option *ngFor="let option of options" [value]="option">{{option}}</option>
+        </select>
+    </div>
+
+    <!-- Quantity -->
+    <div *ngIf="quantity" class="col-4 col-quantity-value">
+        <input type="number" class="form-control form-control-sm" [(ngModel)]="quantity.value" 
+            [disabled]="!cbModel || disabled">
+    </div>
+    <div *ngIf="quantity && !quantityUnits" class="col-3 col-quantity-unit">
+        <input type="text" class="form-control form-control-sm" [(ngModel)]="quantity.unitCode" 
+            [disabled]="!cbModel || disabled || disableQuantityUnit">
+    </div>
+    <div *ngIf="quantity && quantityUnits" class="col-3 col-quantity-unit">
+        <select class="form-control form-control-sm" [(ngModel)]="quantity.unitCode"
+            [disabled]="!cbModel || disabled || disableQuantityUnit">
+            <option *ngFor="let option of quantityUnits" [value]="option">{{option}}</option>
+        </select>
+    </div>
+
+    <!-- Amount (no unit) -->
+    <div *ngIf="amount && !amountUnit" class="col-7">
+        <input type="number" class="form-control form-control-sm" [(ngModel)]="amount" 
+            [disabled]="!cbModel || disabled">
+    </div>
+
+    <!-- Amount (with unit) -->
+    <div *ngIf="amount && amountUnit" class="col-6 col-quantity-value">
+        <input type="number" class="form-control form-control-sm" [(ngModel)]="amount" 
+            [disabled]="!cbModel || disabled">
+    </div>
+    <div *ngIf="amount && amountUnit" class="col-1 col-quantity-unit">
+        {{ amountUnit }}
+    </div>
+</div>

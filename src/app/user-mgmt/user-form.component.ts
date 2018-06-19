@@ -4,6 +4,7 @@ import * as myGlobals from '../globals';
 import { UserRegistration } from './model/user-registration';
 import { ActivatedRoute } from "@angular/router";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { Router } from '@angular/router';
 //declare var jsSHA: any;
 
 @Component({
@@ -31,6 +32,7 @@ export class UserFormComponent implements OnInit {
 
     constructor(
         private userService: UserService,
+        private router: Router,
 		private modalService: NgbModal,
         public route: ActivatedRoute
     ) {}
@@ -62,6 +64,7 @@ export class UserFormComponent implements OnInit {
             .then(res => {
                 this.response = res;
                 this.callback = true;
+                this.router.navigate(["/user-mgmt/login"], {queryParams: { pageRef: "registration" }});
             })
 			.catch(error => {
 				this.error_detc = true;

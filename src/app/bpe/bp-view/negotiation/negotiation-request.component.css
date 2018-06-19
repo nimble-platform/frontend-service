@@ -1,0 +1,42 @@
+.title-row {
+    padding: 0rem 0.3rem 0.3rem 0.3rem;
+    border-bottom: 1px solid gray;
+}
+
+.content-row {
+    padding: 0.3rem;
+}
+
+.content-row textarea {
+    resize: none;
+}
+
+.actions-row {
+    padding: 0.3rem;
+}
+
+.actions-row .price-col {
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+    font-size: 1.6rem;
+    justify-content: flex-end;
+}
+
+.actions-row .call-status-col {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.action {
+    width: 100%;
+}
+
+.input-spacer {
+    margin-bottom: 0.6rem;
+}
+
+textarea {
+    resize: none;
+}

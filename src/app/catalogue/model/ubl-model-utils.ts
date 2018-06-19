@@ -47,6 +47,8 @@ import {ItemInformationResponse} from "./publish/item-information-response";
 import {PaymentTerms} from "./publish/payment-terms";
 import {Address} from "./publish/address";
 import {MonetaryTotal} from "./publish/monetary-total";
+import { NegotiationOptions } from "./publish/negotiation-options";
+import { PAYMENT_MEANS, PAYMENT_TERMS } from "./constants";
 
 /**
  * Created by suat on 05-Jul-17.
@@ -177,13 +179,14 @@ export class UBLModelUtils {
 
 
 
-    public static createRequestForQuotation():RequestForQuotation {
+    public static createRequestForQuotation(negotiationOptions: NegotiationOptions):RequestForQuotation {
         let quantity:Quantity = new Quantity(null, "", null);
         let item:Item = this.createItem();
         let price:Price = this.createPrice(null)
         let lineItem:LineItem = this.createLineItem(quantity, price, item);
         let requestForQuotationLine:RequestForQuotationLine = new RequestForQuotationLine(lineItem);
-        let rfq = new RequestForQuotation(this.generateUUID(), [""], false, null, null, new Delivery(), [requestForQuotationLine],new PaymentTerms(),new PaymentMeans());
+        let rfq = new RequestForQuotation(this.generateUUID(), [""], false, null, null, new Delivery(),
+        [requestForQuotationLine], negotiationOptions, PAYMENT_MEANS[0], PAYMENT_TERMS[0]);
 
         // TODO remove this custom dimension addition once the dimension-view is improved to handle such cases
         let handlingUnitDimension:Dimension = new Dimension();
@@ -201,7 +204,7 @@ export class UBLModelUtils {
         let price:Price = this.createPrice(null);
         let lineItem:LineItem = this.createLineItem(quantity, price, item);
         let requestForQuotationLine:RequestForQuotationLine = new RequestForQuotationLine(lineItem);
-        let rfq = new RequestForQuotation(this.generateUUID(), [""], false, null, null, new Delivery(), [requestForQuotationLine],new PaymentTerms(),new PaymentMeans());
+        let rfq = new RequestForQuotation(this.generateUUID(), [""], false, null, null, new Delivery(), [requestForQuotationLine], new NegotiationOptions());
 
         rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure = order.orderLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure;
         rfq.requestForQuotationLine[0].lineItem.deliveryTerms.deliveryLocation.address = order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address;
@@ -251,7 +254,7 @@ export class UBLModelUtils {
     }
 
     public static createRequestForQuotationWithIir(iir: ItemInformationResponse, fromAddress: Address, toAddress: Address, orderMetadata: any): RequestForQuotation {
-        let rfq: RequestForQuotation = this.createRequestForQuotation();
+        let rfq: RequestForQuotation = this.createRequestForQuotation(new NegotiationOptions());
         rfq.requestForQuotationLine[0].lineItem.item = iir.item[0];
         if(iir.item[0].transportationServiceDetails != null) {
             rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.originAddress = fromAddress;
@@ -263,14 +266,14 @@ export class UBLModelUtils {
         return rfq;
     }
 
-    public static createQuotation(rfq:RequestForQuotation):Quotation {
-        let quotationLine:QuotationLine = new QuotationLine(rfq.requestForQuotationLine[0].lineItem);
+    public static createQuotation(rfq: RequestForQuotation): Quotation {
+        let quotationLine: QuotationLine = new QuotationLine(UBLModelUtils.copy(rfq.requestForQuotationLine[0].lineItem));
         this.removeHjidFieldsFromObject(rfq.buyerCustomerParty);
         this.removeHjidFieldsFromObject(rfq.sellerSupplierParty);
-        let customerParty:CustomerParty = rfq.buyerCustomerParty;
-        let supplierParty:SupplierParty = rfq.sellerSupplierParty;
+        let customerParty: CustomerParty = rfq.buyerCustomerParty;
+        let supplierParty: SupplierParty = rfq.sellerSupplierParty;
 
-        let documentReference:DocumentReference = new DocumentReference(rfq.id);
+        let documentReference: DocumentReference = new DocumentReference(rfq.id);
 
         let quotation = new Quotation(this.generateUUID(), [""], new Code(), new Code(), 1, false, documentReference, customerParty, supplierParty, [quotationLine],rfq.paymentTerms,rfq.paymentMeans);
         return quotation;
@@ -488,4 +491,8 @@ export class UBLModelUtils {
         });
         return uuid;
     };
+
+    public static copy<T>(value: T): T {
+        return JSON.parse(JSON.stringify(value));
+    }
 }

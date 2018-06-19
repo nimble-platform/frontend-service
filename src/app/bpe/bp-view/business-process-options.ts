@@ -11,7 +11,7 @@ export class BusinessProcessOptions implements OnInit {
     @Input() processName:string;
     @Input() processId: string;
     @Input() transportationService:boolean;
-    @Input() userRole:string;
+    @Input() userRole:"buyer" | "seller";
     @Input() acceptedIndicator:boolean;
 
     @Output() searchTransportServiceProvider = new EventEmitter();
