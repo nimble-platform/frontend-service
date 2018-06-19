@@ -1,4 +1,4 @@
-import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, ViewChild, ViewEncapsulation, OnInit } from '@angular/core';
 import { Search } from './model/search';
 import { TnTService } from './tnt.service';
 import * as moment from 'moment';
@@ -22,6 +22,7 @@ export class TnTFormComponent {
     public hierarchialGraph = {nodes: [], links: []};
     debug = myGlobals.debug;
     error_detc = false;
+    updateInfo = false;
     hideButton = false;
     curve = shape.curveBundle.beta(1);
     gateInformation = [];
@@ -29,25 +30,41 @@ export class TnTFormComponent {
 
     constructor(private tntBackend: TnTService) {}
 
+    ngOnInit(): void {
+        this.updateInfo = true;
+    }
+
     Search(code: string) {
-        if (this.debug)
-          console.log(code);
+        if (this.debug) {
+            console.log(code);
+        }
+        this.clearData();
         this.tntBackend.getMetaData(code)
             .then(resp => {
                 this.error_detc = false;
+                this.updateInfo = false;
                 this.metaData = resp;
                 if ('productionProcessTemplate' in this.metaData) {
                     // this.getBPInfo(resp['productionProcessTemplate']);
                     this.getAnalysis(code);
-                    this.acc.toggle('tableInfo');
                 }
                 if ('eventUrl' in resp) {
                     this.getTableInfo(resp['eventUrl'], code);
                 }
             })
             .catch(error => {
-      				this.error_detc = true;
-      			});
+                this.error_detc = true;
+            });
+    }
+
+    clearData() {
+        this.metaData = {};
+        this.bpInfo = [];
+        this.trackingInfo = [];
+        this.hierarchialGraph = {nodes: [], links: []};
+        this.gateInformation = [];
+        this.sstInfo = [];
+        this.hideButton = false;
     }
 
     getTableInfo(url, code) {
@@ -68,9 +85,9 @@ export class TnTFormComponent {
                     }
                     return _out;
                 });
-            },(err) => {
-      				this.error_detc = true;
-      			});
+            }, (err) => {
+                this.error_detc = true;
+            });
     }
 
     getBPInfo(url) {
@@ -78,9 +95,9 @@ export class TnTFormComponent {
             .subscribe((res) => {
                 this.error_detc = false;
                 this.bpInfo = res;
-            },(err) => {
-      				this.error_detc = true;
-      			});
+            }, (err) => {
+                this.error_detc = true;
+            });
     }
 
     getAnalysis(code) {
@@ -88,9 +105,9 @@ export class TnTFormComponent {
             .subscribe((res) => {
                 this.error_detc = false;
                 this.bpInfo = res;
-            },(err) => {
-      				this.error_detc = true;
-      			});
+            }, (err) => {
+                this.error_detc = true;
+            });
     }
 
     showGraph() {
@@ -118,18 +135,20 @@ export class TnTFormComponent {
 
     selectNode(ev) {
         let selectedNode = this.bpInfo.find(el => el.id === ev.id);
-        if (this.debug)
-          console.log(selectedNode);
+        if (this.debug) {
+            console.log(selectedNode);
+        }
         this.tntBackend.getGateInfo(this.metaData['masterUrl'], selectedNode.readPoint)
             .then(res => {
                 this.error_detc = false;
                 this.gateInformation = res;
-                if (this.debug)
-                  console.log(this.gateInformation);
+                if (this.debug) {
+                    console.log(this.gateInformation);
+                }
             })
             .catch(error => {
-      				this.error_detc = true;
-      			});
+                this.error_detc = true;
+            });
     }
 
     getSST(sstDescp) {
@@ -139,7 +158,7 @@ export class TnTFormComponent {
                 this.sstInfo = res;
             })
             .catch(error => {
-      				this.error_detc = true;
-      			});
+                this.error_detc = true;
+            });
     }
 }
