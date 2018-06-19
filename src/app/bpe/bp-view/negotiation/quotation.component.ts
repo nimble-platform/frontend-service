@@ -65,7 +65,7 @@ export class QuotationComponent implements OnInit {
         quotation.paymentTerms.tradingTerms = selectedTradingTerms;
 
         let vars: ProcessVariables = ModelUtils.createProcessVariables("Negotiation", this.bpDataService.requestForQuotation.buyerCustomerParty.party.id, this.bpDataService.requestForQuotation.sellerSupplierParty.party.id, quotation, this.bpDataService);
-        let piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.bpDataService.processMetadata.process_id);
+        let piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.bpDataService.processMetadata.processId);
 
         this.callStatus.submit();
         this.bpeService.continueBusinessProcess(piim)

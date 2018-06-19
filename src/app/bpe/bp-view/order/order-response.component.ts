@@ -33,7 +33,7 @@ export class OrderResponseComponent {
         this.bpDataService.orderResponse.acceptedIndicator = acceptedIndicator;
 
         let vars: ProcessVariables = ModelUtils.createProcessVariables("Order", this.bpDataService.order.buyerCustomerParty.party.id, this.bpDataService.order.sellerSupplierParty.party.id, this.bpDataService.orderResponse, this.bpDataService);
-        let piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.bpDataService.processMetadata.process_id);
+        let piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.bpDataService.processMetadata.processId);
 
         this.callStatus.submit();
         this.bpeService.continueBusinessProcess(piim).then(

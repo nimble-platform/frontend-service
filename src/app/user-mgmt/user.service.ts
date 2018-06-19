@@ -25,6 +25,17 @@ export class UserService {
         private cookieService: CookieService
     ) { }
 
+    setWelcomeFlag(flag: boolean): Promise<any> {
+      const url = `${this.url}/set-welcome-info/${flag}`;
+      const token = 'Bearer '+this.cookieService.get("bearer_token");
+      const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
+      return this.http
+          .post(url, JSON.stringify({}), {headers: headers_token, withCredentials: true})
+          .toPromise()
+          .then(res => res.json())
+          .catch(this.handleError);
+    }
+
     registerUser(user: UserRegistration): Promise<any> {
         const url = `${this.url}/register/user`;
         return this.http
@@ -55,7 +66,7 @@ export class UserService {
             .then(res => res.json())
             .catch(this.handleError);
     }
-	
+
 	deleteInvite(email:string) {
 		var encodedMail = encodeURIComponent(email);
 		const url = `${this.url}/invitations?username=${encodedMail}`;

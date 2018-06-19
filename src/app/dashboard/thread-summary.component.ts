@@ -37,6 +37,7 @@ export class ThreadSummaryComponent implements OnInit {
     eventCount: number = 0
     archiveCallStatus: CallStatus = new CallStatus();
     showDataChannelButton: boolean = false;
+    channelLink = "";
 
     constructor(private bpeService: BPEService,
                 private cookieService: CookieService,
@@ -49,15 +50,14 @@ export class ThreadSummaryComponent implements OnInit {
         this.eventCount = this.processInstanceGroup.processInstanceIDs.length;
         this.hasHistory = this.eventCount > 1;
         this.fetchLastEvent();
-        this.checkDataChannel();
+        this.fetchHistory();
     }
 
     private fetchLastEvent(): void {
         this.fetchThreadEvent(this.processInstanceGroup.processInstanceIDs[this.eventCount - 1]).then(threadEvent => {
             this.lastEvent = threadEvent;
         }).catch(error => {
-            console.log("Error while fetching event.", error);
-        })
+        });
     }
 
     toggleHistory(): void {
@@ -74,8 +74,7 @@ export class ThreadSummaryComponent implements OnInit {
         Promise.all(ids.map(id => this.fetchThreadEvent(id))).then(events => {
             this.history = events.reverse()
         }).catch(error => {
-            console.log("Error while fetching history.", error);
-        })
+        });
     }
 
     private async fetchThreadEvent(processInstanceId: string): Promise<ThreadEvent> {
@@ -106,6 +105,8 @@ export class ThreadSummaryComponent implements OnInit {
         );
 
         this.fillStatus(event, processInstance.state, processType, response, userRole === "buyer");
+
+        this.checkDataChannel(event);
 
         return event;
     }
@@ -307,34 +308,17 @@ export class ThreadSummaryComponent implements OnInit {
         }
     }
 
-    checkDataChannel() {
-        for (let thread of this.processInstanceGroup.processInstanceIDs) {
-          this.fetchThreadEvent(thread).then(threadEvent => {
-              if(threadEvent.processType === 'Order') {
-                this.dataChannelService.isBusinessProcessAttached(threadEvent.processId)
-                  .then(isChannelAttached => {
-                    this.showDataChannelButton = isChannelAttached;
-                  });
+    checkDataChannel(event:ThreadEvent) {
+        if(event.processType === 'Order') {
+          this.dataChannelService.channelsForBusinessProcess(event.processId)
+            .then(channels => {
+              if (channels.length > 0) {
+                this.showDataChannelButton = true;
+                const channelId = channels[0].channelID;
+                this.channelLink = `/data-channel/details/${channelId}`
               }
-          }).catch(error => {
-              console.log("Error while fetching event.", error);
-          })
+            });
         }
     }
 
-    openDataChannelView(): void {
-        for (let thread of this.processInstanceGroup.processInstanceIDs) {
-          this.fetchThreadEvent(thread).then(threadEvent => {
-              if(threadEvent.processType === 'Order') {
-                this.dataChannelService.channelsForBusinessProcess(threadEvent.processId)
-                    .then(channels => {
-                        const channelId = channels[0].channelID;
-                        this.router.navigate([`/data-channel/details/${channelId}`]);
-                    })
-              }
-          }).catch(error => {
-              console.log("Error while fetching event.", error);
-          })
-        }
-    }
 }

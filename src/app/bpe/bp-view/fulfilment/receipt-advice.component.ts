@@ -30,7 +30,7 @@ export class ReceiptAdviceComponent {
     sendReceiptAdvice(): void {
         this.submitted = true;
         let vars: ProcessVariables = ModelUtils.createProcessVariables("Fulfilment", this.bpDataService.receiptAdvice.despatchSupplierParty.party.id, this.bpDataService.receiptAdvice.deliveryCustomerParty.party.id, this.bpDataService.receiptAdvice, this.bpDataService);
-        let piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.bpDataService.processMetadata.process_id);
+        let piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.bpDataService.processMetadata.processId);
 
         this.callStatus.submit();
         this.bpeService.continueBusinessProcess(piim).then(

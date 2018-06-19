@@ -95,8 +95,8 @@
 <div class="jumbotron" *ngIf="catalogue && catalogue.catalogueLine.length <= 0">
         <h3>No published products.</h3>
         <h5>
-            <span (click)="navigateToThePublishPage()" style="cursor: pointer;">Publish new products</span>
-            <img src="./assets/catalogue/add_button.png" (click)="navigateToThePublishPage()" style="cursor: pointer;"/>
+            <span (click)="navigateToThePublishPage()" class="pointer">Publish new products</span>
+            <i class="fa fa-plus-circle pointer" (click)="navigateToThePublishPage()"></i>
         </h5>
 </div>
 

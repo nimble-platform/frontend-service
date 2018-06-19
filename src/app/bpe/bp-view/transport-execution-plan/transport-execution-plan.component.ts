@@ -33,7 +33,7 @@ export class TransportExecutionPlanComponent {
     respondToTransportExecutionPlanRequest() {
         this.submitted = true;
         let vars: ProcessVariables = ModelUtils.createProcessVariables("Transport_Execution_Plan", this.bpDataService.transportExecutionPlan.transportUserParty.id, this.bpDataService.transportExecutionPlan.transportServiceProviderParty.id, this.bpDataService.transportExecutionPlan, this.bpDataService);
-        let piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.bpDataService.processMetadata.process_id);
+        let piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.bpDataService.processMetadata.processId);
 
         this.callStatus.submit();
         this.bpeService.continueBusinessProcess(piim).then(

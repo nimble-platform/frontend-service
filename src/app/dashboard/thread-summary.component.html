@@ -3,34 +3,34 @@
         <!-- Title bar -->
         <div class="row">
             <div class="col-12 d-flex thread-entry-header">
-                <div *ngIf="!lastEvent" class="header-label mr-auto">Loading order...</div>
-                <div *ngIf="lastEvent" class="header-label mr-auto">Order for
+                <div *ngIf="!lastEvent" class="header-label mr-auto">Loading...</div>
+                <div *ngIf="lastEvent" class="header-label mr-auto">
                     <label class="clickable" (click)="navigateToSearchDetails()">
                         {{lastEvent.product.name}}
-                    </label>
+                    </label> ({{lastEvent.tradingPartner}})
                 </div>
-                 <div *ngIf="!processInstanceGroup.archived" (click)="archiveGroup()" data-toggle="tooltip" data-placement="top" title="Archive">
-                    <i class="fa fa-archive p-2" style="cursor: pointer" aria-hidden="true"></i>
+                <div *ngIf="showDataChannelButton" data-toggle="tooltip" data-placement="top" title="Open Data Channel">
+                    <i class="fa fa-exchange-alt p-2 pointer" aria-hidden="true" [routerLink]="[channelLink]"></i>
+                </div>
+                <div *ngIf="!processInstanceGroup.archived" (click)="archiveGroup()" data-toggle="tooltip" data-placement="top" title="Archive">
+                    <i class="fa fa-archive p-2 pointer" aria-hidden="true"></i>
                 </div>
                 <div *ngIf="processInstanceGroup.archived" (click)="deleteGroup()" data-toggle="tooltip" data-placement="top" title="Delete Permanently">
-                    <i class="fa fa-trash-o p-2" style="cursor: pointer" aria-hidden="true"></i>
+                    <i class="fa fa-trash-alt p-2 pointer" aria-hidden="true"></i>
                 </div>
                 <div *ngIf="processInstanceGroup.archived" (click)="restoreGroup()" data-toggle="tooltip" data-placement="top" title="Restore">
-                    <i class="fa fa-undo p-2" style="cursor: pointer" aria-hidden="true"></i>
-                </div>
-                <div *ngIf="showDataChannelButton" (click)="openDataChannelView()" data-toggle="tooltip" data-placement="top" title="Open Data Channel">
-                    <i class="fa fa-exchange-alt p-2 pointer" aria-hidden="true"></i>
+                    <i class="fa fa-undo p-2 pointer" aria-hidden="true"></i>
                 </div>
             </div>
         </div>
 
         <!-- Titles for the rows -->
         <div class="row thread-entry-heading">
-                <div class="col-2"><strong>Customer</strong></div>
-                <div class="col-2"><strong>Type</strong></div>
-                <div class="col-2"><strong>Date</strong></div>
-                <div class="col-2"><strong>Note</strong></div>
-                <div class="col-4"><strong>Status</strong></div>
+                <!--<div class="col-2"><strong>Customer</strong></div>-->
+                <div class="col-3"><strong>Type</strong></div>
+                <div class="col-3"><strong>Date</strong></div>
+                <div class="col-3"><strong>Note</strong></div>
+                <div class="col-3"><strong>Status</strong></div>
             </div>
 
         <!-- Most recent event -->

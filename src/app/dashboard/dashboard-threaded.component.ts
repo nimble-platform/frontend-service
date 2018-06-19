@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { AppComponent } from "../app.component";
 import { CookieService } from "ng2-cookies";
 import { BPEService } from "../bpe/bpe.service";
+import { UserService } from '../user-mgmt/user.service';
 import { ActivatedRoute, Router, Params } from "@angular/router";
 import { TABS, PAGE_SIZE } from "./constants";
 import { ProcessInstanceGroupFilter } from "../bpe/model/process-instance-group-filter";
@@ -35,6 +36,7 @@ export class DashboardThreadedComponent implements OnInit {
     constructor(
         private cookieService: CookieService,
         private bpeService: BPEService,
+        private userService: UserService,
         private router: Router,
         private route: ActivatedRoute,
         private appComponent: AppComponent
@@ -58,8 +60,11 @@ export class DashboardThreadedComponent implements OnInit {
         event.preventDefault();
         event.stopImmediatePropagation();
         this.user.showWelcomeTab = false;
+        this.userService.setWelcomeFlag(false)
+        .then(res => {
+          this.cookieService.set("show_welcome","false");
+        });
         if(this.queryParameters.tab === TABS.WELCOME) {
-            // TODO actually select the relevant tab (sales if we got sales, purchases otherwise...)
             this.updateQueryParameters({ tab: TABS.PURCHASES })
         }
     }
@@ -69,11 +74,11 @@ export class DashboardThreadedComponent implements OnInit {
     }
 
     onPageChange(): void {
-        this.updateQueryParameters({ pg: this.queryParameters.pg });
+        this.updateQueryParameters({ pg: this.query.page });
     }
 
     onFilterChange(): void {
-        this.updateQueryParameters({ 
+        this.updateQueryParameters({
             prd: this.toString(this.modifiedFilterSet.relatedProducts),
             cat: this.toString(this.modifiedFilterSet.relatedProductCategories),
             prt: this.getSelectedPartners(this.modifiedFilterSet),
@@ -88,7 +93,7 @@ export class DashboardThreadedComponent implements OnInit {
             this.updateStateFromQueryParameters(this.queryParameters);
         }
     }
-    
+
     /*
      * Getters for the template
      */
@@ -109,7 +114,7 @@ export class DashboardThreadedComponent implements OnInit {
      */
 
     private toString(filters: string[]): string {
-        return filters.join(",")
+        return filters.join("_SEP_")
     }
 
     private getSelectedPartners(filter: ProcessInstanceGroupFilter): string {
@@ -117,13 +122,13 @@ export class DashboardThreadedComponent implements OnInit {
             // get the index in the original filter set
             const index = this.filterSet.tradingPartnerNames.indexOf(name)
             // get the ID corresponding to the index
-            return filter.tradingPartnerIDs[index]
-        }).join(",")
+            return this.filterSet.tradingPartnerIDs[index]
+        }).join("_SEP_")
     }
 
     /**
      * Sets the parameters in the URL, this in turns triggers `this.updateStateFromQueryParameters(params)`.
-     * 
+     *
      * @param params the updated parameters
      */
     private updateQueryParameters(params: Partial<DashboardQueryParameters>): void {
@@ -154,8 +159,7 @@ export class DashboardThreadedComponent implements OnInit {
             }
         }
 
-        // TODO uncomment this once the backend supports it
-        // this.user.showWelcomeTab = this.cookieService.get("welcome_tab_closed") !== "true"
+        this.user.showWelcomeTab = this.cookieService.get("show_welcome") === "true";
     }
 
     private updateStateFromQueryParameters(params: Params | DashboardQueryParameters): void {
@@ -204,7 +208,7 @@ export class DashboardThreadedComponent implements OnInit {
         } catch (e) {
             return 1;
         }
-        
+
     }
 
     private queryOrdersIfNeeded(): void {
@@ -223,8 +227,8 @@ export class DashboardThreadedComponent implements OnInit {
         if(query.archived) {
             // only one query needed
             this.bpeService
-            .getProcessInstanceGroups(this.cookieService.get("company_id"), 
-                query.collaborationRole, query.page - 1, query.pageSize, query.archived, 
+            .getProcessInstanceGroups(this.cookieService.get("company_id"),
+                query.collaborationRole, query.page - 1, query.pageSize, query.archived,
                 query.products, query.categories, query.partners)
             .then(response => {
                 this.results = new DashboardOrdersQueryResults(
@@ -237,12 +241,12 @@ export class DashboardThreadedComponent implements OnInit {
             // Needs to query for archived orders to know if the "Show Archived" button should be enabled
             Promise.all([
                 // regular query
-                this.bpeService.getProcessInstanceGroups(this.cookieService.get("company_id"), 
-                    query.collaborationRole, query.page - 1, query.pageSize, query.archived, 
+                this.bpeService.getProcessInstanceGroups(this.cookieService.get("company_id"),
+                    query.collaborationRole, query.page - 1, query.pageSize, query.archived,
                     query.products, query.categories, query.partners
                 ),
                 // query for archived orders
-                this.bpeService.getProcessInstanceGroups(this.cookieService.get("company_id"), 
+                this.bpeService.getProcessInstanceGroups(this.cookieService.get("company_id"),
                     query.collaborationRole, 0, 1, true, [], [], []
                 ),
             ]).then(([response, archived]) => {
@@ -291,7 +295,6 @@ export class DashboardThreadedComponent implements OnInit {
         .catch(error => {
             this.filtersLoading = false;
             this.filterQueryStatus.error("Failed to get filters");
-            console.log("Error while getting the filters.", error)
         });
     }
 
@@ -306,7 +309,7 @@ export class DashboardThreadedComponent implements OnInit {
         }
 
         // Do not recompute the filters on filter changes.
-        return this.query.archived !== query.archived 
+        return this.query.archived !== query.archived
             || this.query.collaborationRole !== query.collaborationRole;
     }
 
@@ -323,6 +326,6 @@ export class DashboardThreadedComponent implements OnInit {
     }
 
     private parseArray(param: string): string[] {
-        return param ? param.split(",") : []
+        return param ? param.split("_SEP_") : []
     }
 }

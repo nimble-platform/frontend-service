@@ -23,8 +23,11 @@
 }
 
 .welcome-tab a {
-    padding-right: 0.2rem;
+    padding-right: 0.5rem;
 }
-.welcome-tab a button {
-    margin-left: 0.8rem;
+
+.align-right {
+  position: absolute;
+  right: 0;
+  margin-right: 15px;
 }

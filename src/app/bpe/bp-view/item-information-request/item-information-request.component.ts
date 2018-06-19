@@ -82,7 +82,7 @@ export class ItemInformationRequestComponent {
             var byteArray = new Uint8Array(byteNumbers);
             byteArrays.push(byteArray);
         }
-		
+
         var blob = new Blob(byteArrays, {type: binaryObject.mimeCode});
 		var fileName = binaryObject.fileName;
 		saveAs(blob,fileName);
@@ -126,7 +126,7 @@ export class ItemInformationRequestComponent {
     sendInformationResponse() {
         this.submitted = true;
         let vars: ProcessVariables = ModelUtils.createProcessVariables("Item_Information_Request", this.bpDataService.itemInformationRequest.buyerCustomerParty.party.id, this.bpDataService.itemInformationRequest.sellerSupplierParty.party.id, this.bpDataService.itemInformationResponse, this.bpDataService);
-        let piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.bpDataService.processMetadata.process_id);
+        let piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.bpDataService.processMetadata.processID);
 
         this.callStatus.submit();
         this.bpeService.continueBusinessProcess(piim).then(
