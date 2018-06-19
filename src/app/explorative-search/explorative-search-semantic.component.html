@@ -150,14 +150,14 @@
                                 <option *ngFor="let eachVal of dataResults"
                                         [selected]="searchModel.translatedProperty===eachVal.translatedProperty"
                                         (click)="getPropertyValues(eachVal)">
-                                    <span>{{eachVal.translatedProperty}}</span>
+                                    {{eachVal.translatedProperty}}
                                 </option>
                             </optgroup>
                             <optgroup label="References">
                                 <option *ngFor="let eachVal of objResults; let i=index;"
                                         [selected]="searchModel.translatedProperty===eachVal.translatedProperty"
                                         (click)="getReferenceValues(eachVal, i)">
-                                    <span>{{eachVal.translatedProperty}}</span>
+                                    {{eachVal.translatedProperty}}
                                 </option>
                             </optgroup>
                         </select>
