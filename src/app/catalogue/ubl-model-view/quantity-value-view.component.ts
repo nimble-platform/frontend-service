@@ -12,7 +12,7 @@ export class QuantityValueViewComponent {
     @Input() unit: string;
     @Input() definition: string;
 
-    @Output() onValueChanged: EventEmitter = new EventEmitter();
+    @Output() onValueChanged: EventEmitter<number> = new EventEmitter<number>();
 
     ngOnChanges(values) {
         // emit the new value of the "value" field
