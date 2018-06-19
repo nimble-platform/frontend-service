@@ -103,6 +103,19 @@ export class ProductDetailsComponent implements OnInit {
         }
     }
 
+    navigateImages(index: number, length: number): number {
+        if(index < 0) {
+            return length - 1;
+        }
+        else if(index < length) {
+            return index;
+        }
+        // also works if productImage.length === 0
+        else if(index >= length) {
+            return 0;
+        }
+    }
+
     onTogglePropertyValue(property: ItemProperty, valueIndex: number): void {
         this.options.selectedValues[this.getKey(property)] = valueIndex;
     }
