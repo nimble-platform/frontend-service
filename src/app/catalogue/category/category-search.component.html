@@ -1,184 +1,115 @@
-<div *ngIf="!customCategoryPage && !treeView">
-    <h3 i18n>Choose product (or service) category</h3>
-
-        <!-- search by pressing enter! -->
-        <form #categorySearch="ngForm" (ngSubmit)="onSearchCategory()" class="space-before" novalidate>
-
-          <div class="form-group row">
-        		<label for="searchTerm" class="col-2 col-form-label" i18n>Search</label>
-        		<div class="col-10">
-        			<div class="input-group">
-                <input type="text" class="form-control" name="inputCtrl" [(ngModel)]="categoryKeyword" required pattern=".{1,}" placeholder="Product/Service Category"/>
-        			  <div class="input-group-append">
-        					<button type="submit" class="btn btn-outline-secondary" [disabled]="!categorySearch.form.valid">
-        						<i class="fa fa-search"></i>
-        					</button>
-        			  </div>
-        			</div>
-        		</div>
-        	</div>
-
-          <div [hidden]="callback || !submitted || error_detc" class="space-right">
-              <img class="space-before" src="assets/form_loader.gif"/>
-          </div>
-
-        </form>
-
-
-    <div class="d-flex justify-content-end space-before" *ngIf="callback && !submitted">
-        <div class="align-self-center space-right">
-            Could not find a proper category for your product?
-        </div>
-        <button class="btn btn-danger" (click)="customCategoryPage=true">Specify your own category</button>
+<div class="form-group row">
+    <div class="col-2">
+        <p>Selected Categories:</p>
     </div>
-
-    <div *ngIf="callback && !submitted && (!categories || categories.length == 0)" class="align-center space-before bordered">
-        <h4>No results found.</h4>
+    <div class="col-10">
+        <input>
+        <span *ngFor="let item of Categories"></span>
     </div>
-
-
-    <ul class="list-group mt-4" style="max-height: 500px; overflow-y: scroll;" *ngIf="callback && !submitted">
-        <li *ngFor="let category of categories"
-            class="list-group-item pointer"
-            style="padding: .25rem 1.25rem;"
-            (click)="getCategoryDetails(category)"
-            [style.background-color]="selectedCategory && category.code == selectedCategory.code ? 'green' : 'white'"
-        >
-          <div class="row">
-            <div class="col-2">{{category.taxonomyId}}</div>
-            <div class="col-9">{{category.preferredName}}</div>
-    <!--        <i class="fa fa-plus-circle pointer" (click)="selectCategory(category)"><i/> -->
-            <div class="col-1" style="text-align:right"><span *ngIf="category.taxonomyId == 'eClass'" class="fa fa-share-alt" aria-hidden="true" (click)="getCategoryTree(category)"></span></div>
-          </div>
-        </li>
-    </ul>
 </div>
 
-<div *ngIf="!customCategoryPage && treeView">
-    <h3 i18n>Choose product (or service) category</h3>
-
-      <!-- search by pressing enter! -->
-      <form #categorySearch="ngForm" (ngSubmit)="onSearchCategory()" class="space-before" novalidate>
-
-        <div class="form-group row">
-          <label for="searchTerm" class="col-2 col-form-label" i18n>Search</label>
-          <div class="col-10">
+<div class="form-group row d-flex">
+    <div class="col-8 inline">
+        <form #categorySearch="ngForm" (ngSubmit)="onSearchCategory()" novalidate>
+        <!-- TODO: All Categories Search Goes Here-->
             <div class="input-group">
-              <input type="text" class="form-control" name="inputCtrl" [(ngModel)]="categoryKeyword" required pattern=".{1,}" placeholder="Product/Service Category"/>
-              <div class="input-group-append">
-                <button type="submit" class="btn btn-outline-secondary" [disabled]="!categorySearch.form.valid">
-                  <i class="fa fa-search"></i>
-                </button>
-              </div>
+                <div ngbDropdown class="d-inline-block input-group-prepend">
+                    <button class="btn btn-secondary" type="button" id="allCategories" ngbDropdownToggle>
+                        All Categories
+                    </button>
+                    <div ngbDropdownMenu aria-labelledby="allCategories">
+                        <a class="dropdown-item" href="#">All Categories</a>
+                        <a class="dropdown-item" href="#">Recent Categories</a>
+                        <a class="dropdown-item" href="#">Relevant Categories</a>
+                    </div>
+                </div>
+        <!-- End TODO: All Categories Search -->
+                <input type="text" class="form-control" name="inputCtrl" [(ngModel)]="categoryKeyword" required pattern=".{1,}" placeholder="Search Category..."/>
+                <div class="input-group-append">
+                    <button type="submit" class="btn btn-outline-secondary" [disabled]="!categorySearch.form.valid">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </div>
             </div>
-          </div>
-        </div>
-
-        <div [hidden]="callback || !submitted || error_detc" class="space-right">
-            <img class="space-before" src="assets/form_loader.gif"/>
-        </div>
-
-      </form>
-
-    <div class="d-flex justify-content-end space-before" *ngIf="callback && !submitted">
-        <div class="align-self-center space-right">
-            Could not find a proper category for your product?
-        </div>
-        <button class="btn btn-danger" (click)="customCategoryPage=true">Specify your own category</button>
+        </form>
     </div>
-    <div *ngIf="parentCategories">
-        <p class="space-before">
-            <ngb-alert type="info" (close)="treeView=false;selectedCategoryWithDetails=null;parentCategories=null">
-                <span *ngFor="let parentCat of parentCategories.parents;let l=last">
-                    {{parentCat.preferredName}}
-                    <span *ngIf="!l">
-                         >>
-                    </span>
-                </span>
-            </ngb-alert>
-        </p>
-        <div class="d-flex bordered" style="height: 400px">
-            <div *ngFor="let categories of parentCategories.categories" class="col-3" style="overflow: hidden" onmouseover="this.style.overflow='auto'" onmouseout="this.style.overflow='hidden'">
-                <label *ngFor="let cat of categories" (click)="getCategoryTree(cat)"
-                       [style.font-weight]="selectedCategoriesWRTLevels.indexOf(cat.code)>-1 ? 'bold' : 'normal'"
-                       [style.color]="selectedCategoriesWRTLevels.indexOf(cat.code)>-1 ?'green' : 'black'"
-                       [style.text-decoration]="selectedCategoriesWRTLevels.indexOf(cat.code)>-1 ? 'underline' : 'none'"
-                       class="pointer" style="display: block;">{{cat.preferredName}}</label>
+
+    <div class="col-1">
+        <h5 class="pt-1 text-center">OR</h5>
+    </div>
+    <div class="col-3">
+        <!-- TODO: Return Highest Level Categories -->
+        <button class="btn btn-secondary w-100 inline">Browse Categories</button>
+    </div>
+</div>
+
+<div class="row mt-4 d-flex">
+    <div class="col-8 pr-0 pb-0 align-self-stretch">
+        <div class="border" style="min-height:70vh;">
+            <!-- TODO: If no search has been performed, return recent categories -->
+            <div *ngIf="!callback && !submitted" class="border-bottom p-2">
+                <h3>Recent Categories</h3>
+            </div>
+            <table class="table table-hover mb-0" style="max-height: 500px; overflow-y: scroll;">
+                <thead class="thead-light">
+                    <th scope="col">Classification</th>
+                    <th scope="col">Name</th>
+                    <th scope="col"></th>
+                </thead>
+                <tbody>
+                    <tr *ngIf="callback && !submitted && (!categories || categories.length == 0)">
+                        <td colspan="3">No results found.</td>
+                    </tr>
+                    <tr *ngFor="let category of categories"
+                        style="padding: .25rem 1.25rem;"
+                        (click)="getCategoryDetails(category)"
+                        [ngClass]="{'table-secondary': selectedCategory && category.code == selectedCategory.code}">
+                        <td>{{category.taxonomyId}}</td>
+                        <td>{{category.preferredName}}</td>
+                        <!-- <i class="fa fa-plus-circle pointer" (click)="selectCategory(category)"><i/> -->
+                        <td><span *ngIf="category.taxonomyId == 'eClass'" class="fa fa-share-alt" aria-hidden="true" (click)="getCategoryTree(category)"></span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-4 pl-0 align-self-stretch border border-left-0">
+        <div class="p-2" style="min-height:70vh;">
+            <h3>Details</h3>
+            <p *ngIf="!selectedCategoryWithDetails" class="align-self-center mt-4">Select a category to see its details.</p>
+            <div *ngIf="selectedCategoryWithDetails" class="pt-2">
+                <div *ngFor="let detail of iterateCategoryDetails(selectedCategoryWithDetails)" class="my-1 d-flex">
+                    <strong class="text-capitalize">{{detail}}: </strong>
+                </div>
+                <div *ngFor="let prop of selectedCategoryWithDetails.properties;let i = index;let l = last">
+                    <label *ngIf="i == 0" class="col-3" style="float: left"><b>Properties:</b></label>
+                    <label *ngIf="i<3 || showOtherProperties" class="col-3" style="padding: 0px" [ngClass]="{'offset-3' : i > 0} ">
+                        {{prop.preferredName}}
+                        <span *ngIf="prop.definition" class="label label-default" title="{{prop.definition}}">
+                                &#9432;
+                        </span>
+                    </label>
+            
+                    <label *ngIf="i<3 || showOtherProperties" class="align-self-start offset-3">
+                        {{prop.dataType}}
+                    </label>
+            
+                    <div class="d-flex justify-content-center" *ngIf="l == true && i > 3 && !showOtherProperties">
+                        <button class="space-after" style="background-color: transparent;border: none;outline: none" (click)="showOtherProperties = true" >
+                            &nbsp;&nbsp;<i class="fa fa-angle-double-down" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                    <div class="d-flex justify-content-center" *ngIf="l == true && showOtherProperties">
+                        <button class="space-after" style="background-color: transparent;border: none;outline: none" (click)="showOtherProperties = false">
+                            &nbsp;&nbsp;<i class="fa fa-angle-double-up" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<div *ngIf="!customCategoryPage && selectedCategoryWithDetails" class="bordered space-before">
-    <div class="d-flex" *ngIf="selectedCategoryWithDetails.preferredName">
-        <label class="col-3"><b>Name:</b></label><span>{{selectedCategoryWithDetails.preferredName}}</span>
-        <button class="btn btn-success ml-auto" (click)="selectCategory(selectedCategoryWithDetails)">Select</button>
-    </div>
-    <div *ngIf="selectedCategoryWithDetails.taxonomyId">
-        <label class="col-3"><b>TaxonomyId:</b></label>{{selectedCategoryWithDetails.taxonomyId}}
-    </div>
-    <div *ngIf="selectedCategoryWithDetails.code">
-        <label class="col-3"><b>Code:</b></label>{{selectedCategoryWithDetails.code}}
-    </div>
-    <div *ngIf="selectedCategoryWithDetails.level">
-        <label class="col-3"><b>Level:</b></label>{{selectedCategoryWithDetails.level}}
-    </div>
-    <div class="d-flex" *ngIf="selectedCategoryWithDetails.definition && selectedCategoryWithDetails.definition != 'no definition available'">
-        <label class="col-3" style="float: left"><b>Definition:</b></label>
-        <div>
-            {{selectedCategoryWithDetails.definition}}
-        </div>
-    </div>
-    <div class="d-flex" *ngIf="selectedCategoryWithDetails.note">
-        <label class="col-3"><b>Note:</b></label>{{selectedCategoryWithDetails.note}}
-    </div>
-    <div class="d-flex" *ngIf="selectedCategoryWithDetails.remark">
-        <label class="col-3" style="float: left"><b>Remark:</b></label>{{selectedCategoryWithDetails.remark}}
-    </div>
-
-    <div *ngFor="let prop of selectedCategoryWithDetails.properties;let i = index;let l = last">
-        <label *ngIf="i == 0" class="col-3" style="float: left"><b>Properties:</b></label>
-        <label *ngIf="i<3 || showOtherProperties" class="col-3" style="padding: 0px" [ngClass]="{'offset-3' : i > 0} ">
-            {{prop.preferredName}}
-            <span *ngIf="prop.definition" class="label label-default" title="{{prop.definition}}">
-                    &#9432;
-            </span>
-        </label>
-
-        <label *ngIf="i<3 || showOtherProperties" class="align-self-start offset-3">
-            {{prop.dataType}}
-        </label>
-
-        <div class="d-flex justify-content-center" *ngIf="l == true && i > 3 && !showOtherProperties">
-            <button class="space-after" style="background-color: transparent;border: none;outline: none" (click)="showOtherProperties = true" >
-                &nbsp;&nbsp;<i class="fa fa-angle-double-down" aria-hidden="true"></i>
-            </button>
-        </div>
-        <div class="d-flex justify-content-center" *ngIf="l == true && showOtherProperties">
-            <button class="space-after" style="background-color: transparent;border: none;outline: none" (click)="showOtherProperties = false">
-                &nbsp;&nbsp;<i class="fa fa-angle-double-up" aria-hidden="true"></i>
-            </button>
-        </div>
-    </div>
+<div [hidden]="callback || !submitted || error_detc" class="space-right">
+    <img class="space-before" src="assets/form_loader.gif"/>
 </div>
-
-<call-status [callStatus]="callStatus"
-             [large]="true">
-</call-status>
-
-<!-- custom category view -->
-<div *ngIf="customCategoryPage">
-    <form #customCategoryForm="ngForm" class="row justify-content-md-center align-items-center col-12 mt-3">
-        <i class="fa fa-reply space-right pointer" (click)="customCategoryPage = false;"></i>
-        <input name="inputCtrl" [(ngModel)]="customCategory" class="form-control space-right col-4" required>
-        <button class="btn btn-success" (click)="addCustomCategory(customCategory)" [disabled]="!customCategoryForm.form.valid">Continue Publishing</button>
-    </form>
-</div>
-
-<!--
-<div class="row col-12 justify-content-center">
-    <button class="btn btn-outline-warning mt-3" (click)="selectCategory(null)" i18n>Continue publishing without a
-        category
-    </button>
-</div>
--->

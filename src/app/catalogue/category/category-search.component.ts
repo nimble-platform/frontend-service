@@ -162,11 +162,6 @@ export class CategorySearchComponent implements OnInit {
         );
     }
 
-    private addCustomCategory(text: string): void{
-        this.categoryService.addSelectedCategory(new Category(text,text,null,null,null,null,null,[],[],'Custom',null));
-        this.navigateToPublishingPage();
-    }
-
     private navigateToPublishingPage():void {
         let userId = this.cookieService.get("user_id");
         this.catalogueService.getCatalogue(userId).then(catalogue => {
@@ -221,5 +216,10 @@ export class CategorySearchComponent implements OnInit {
             this.callStatus.error("Failed to retrieved details of the category")
             }
         );
+    }
+
+    iterateCategoryDetails(category){
+        console.log(Object.keys(category));
+        return Object.keys(category);
     }
 }
