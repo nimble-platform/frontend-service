@@ -161,7 +161,8 @@
                                 <option *ngFor="let eachVal of dataResults"
                                         [selected]="searchModel.translatedProperty===eachVal.translatedProperty"
                                         (click)="getPropertyValues(eachVal)"
-                                ><i class="fa fa-check fa-1x" [hidden]="!propSelection(eachVal.translatedProperty)"></i>{{eachVal.translatedProperty}}
+                                        [ngClass]="{'checkMark': propSelection(eachVal.translatedProperty)}"
+                                >{{eachVal.translatedProperty}}
                                 </option>
                             </optgroup>
                             <optgroup label="References">
@@ -213,7 +214,7 @@
                         (mouseenter)="showSelectionDel=true" (mouseleave)="showSelectionDel=false">
                         {{column}}
                         <span *ngIf="showSelectionDel">
-                            <i class="fa fa-minus-square" ngbTooltip="Remove {{column}}" (click)="removeSelection(column)"></i>
+                            <i class="fa fa-minus-square" ngbTooltip="Remove {{column}}"  placement="right" (click)="removeSelection(column)"></i>
                         </span>
                     </th>
                     <th>

@@ -17,3 +17,6 @@
     /*!*width: 100%;*!*/
     /*!*z-index: -1;*!*/
 /*!*}*!*/
+
+/*For Unicode Check mark which is compatible on all browsers*/
+.checkMark:before { content: "\2714" }
