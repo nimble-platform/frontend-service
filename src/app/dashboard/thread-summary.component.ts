@@ -1,16 +1,16 @@
-import {Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
-import {ProcessInstanceGroup} from "../bpe/model/process-instance-group";
-import {Router} from "@angular/router";
-import {BPDataService} from "../bpe/bp-view/bp-data-service";
-import {BPEService} from "../bpe/bpe.service";
-import {ActivityVariableParser} from "../bpe/bp-view/activity-variable-parser";
+import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import { ProcessInstanceGroup } from "../bpe/model/process-instance-group";
+import { Router } from "@angular/router";
+import { BPDataService } from "../bpe/bp-view/bp-data-service";
+import { BPEService } from "../bpe/bpe.service";
+import { ActivityVariableParser } from "../bpe/bp-view/activity-variable-parser";
 import * as moment from "moment";
-import {CallStatus} from "../common/call-status";
-import {CookieService} from "ng2-cookies";
-import {DataChannelService} from "../data-channel/data-channel.service";
-import { ThreadEventMetadata } from "./model/thread-event-metadata";
+import { CallStatus } from "../common/call-status";
+import { CookieService } from "ng2-cookies";
+import { DataChannelService } from "../data-channel/data-channel.service";
 import { ProcessType } from "../bpe/model/process-type";
-import { ThreadEventStatus } from "./model/thread-event-status";
+import { ThreadEventMetadata } from "../catalogue/model/publish/thread-event-metadata";
+import { ThreadEventStatus } from "../catalogue/model/publish/thread-event-status";
 
 /**
  * Created by suat on 12-Mar-18.

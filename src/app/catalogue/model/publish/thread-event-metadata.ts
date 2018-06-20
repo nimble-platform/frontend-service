@@ -1,9 +1,10 @@
 import { Item } from "./item";
 import { ThreadEventStatus } from "./thread-event-status";
+import { ProcessType } from "../../../bpe/model/process-type";
 
 export class ThreadEventMetadata {
     constructor(
-        public processType: string,
+        public processType: ProcessType,
         public presentableProcessType: string,
         public processId: string,
         public startTime: string,

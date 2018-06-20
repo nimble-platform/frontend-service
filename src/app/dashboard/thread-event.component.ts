@@ -1,9 +1,9 @@
 import { Component, OnInit, Input } from "@angular/core";
 import { Router } from "@angular/router";
-import { ThreadEventMetadata } from "./model/thread-event-metadata";
 import { BPDataService } from "../bpe/bp-view/bp-data-service";
 import { ActivityVariableParser } from "../bpe/bp-view/activity-variable-parser";
 import { ProcessInstanceGroup } from "../bpe/model/process-instance-group";
+import { ThreadEventMetadata } from "../catalogue/model/publish/thread-event-metadata";
 
 @Component({
     selector: "thread-event",
