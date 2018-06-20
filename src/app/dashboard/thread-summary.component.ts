@@ -111,6 +111,7 @@ export class ThreadSummaryComponent implements OnInit {
         return event;
     }
 
+    /*
     navigateToSearchDetails() {
         const item = this.lastEvent.product
         this.bpDataService.previousProcess = null;
@@ -123,6 +124,20 @@ export class ThreadSummaryComponent implements OnInit {
                 }
             }
         );
+    }
+    */
+
+    navigateToSearchDetails() {
+        const item = this.lastEvent.product;
+        this.bpDataService.previousProcess = null;
+        this.router.navigate(['/product-details'],
+            {
+                queryParams: {
+                    catalogueId: item.catalogueDocumentReference.id,
+                    id: item.manufacturersItemIdentification.id,
+                    showOptions: true
+                }
+            });
     }
 
     private fillStatus(event: ThreadEvent, processState: "EXTERNALLY_TERMINATED" | "COMPLETED" | "ACTIVE",
@@ -270,18 +285,7 @@ export class ThreadSummaryComponent implements OnInit {
         return bpStatus;
     }
 
-    navigateToSearchDetails(item: Item) {
-        this.bpDataService.previousProcess = null;
-        this.router.navigate(['/product-details'],
-            {
-                queryParams: {
-                    catalogueId: item.catalogueDocumentReference.id,
-                    id: item.manufacturersItemIdentification.id,
-                    showOptions: true
-                }
-            });
-    }
-
+    /*
     openBpProcessView(processInstanceIndex: number) {
         let processMetadata: any = this.processMetadata[processInstanceIndex];
         let role = ActivityVariableParser.getUserRole(processMetadata.activityVariables, this.processInstanceGroup.partyID);
@@ -325,7 +329,8 @@ export class ThreadSummaryComponent implements OnInit {
     toggleExpanded(): void {
         this.expanded = !this.expanded;
     }
-    
+    */
+
     archiveGroup(): void {
         this.archiveCallStatus.submit();
         this.bpeService.archiveProcessInstanceGroup(this.processInstanceGroup.id)

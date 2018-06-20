@@ -21,7 +21,7 @@ import { Quantity } from "../../../catalogue/model/publish/quantity";
 })
 export class NegotiationResponseComponent implements OnInit {
 
-    
+
     line: CatalogueLine;
     rfq: RequestForQuotation;
     quotation: Quotation;
@@ -39,7 +39,7 @@ export class NegotiationResponseComponent implements OnInit {
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
                 private router: Router) {
-        
+
     }
 
     ngOnInit() {
@@ -53,9 +53,9 @@ export class NegotiationResponseComponent implements OnInit {
 
 
         this.rfq.negotiationOptions.price = true
-        this.rfq.requestForQuotationLine[0].lineItem.price.priceAmount.value = "3000000";
+        this.rfq.requestForQuotationLine[0].lineItem.price.priceAmount.value = 3000000;
         this.rfq.requestForQuotationLine[0].lineItem.price.priceAmount.currencyID = "EUR";
-        this.quotation.quotationLine[0].lineItem.price.priceAmount.value = "3000000";
+        this.quotation.quotationLine[0].lineItem.price.priceAmount.value = 3000000;
         this.quotation.quotationLine[0].lineItem.price.priceAmount.currencyID = "EUR";
 
 
@@ -109,9 +109,9 @@ export class NegotiationResponseComponent implements OnInit {
             this.quotation.documentStatusCode.name = NEGOTIATION_RESPONSES.REJECTED;
         }
 
-        let vars: ProcessVariables = ModelUtils.createProcessVariables("Negotiation", this.bpDataService.requestForQuotation.buyerCustomerParty.party.id, 
+        let vars: ProcessVariables = ModelUtils.createProcessVariables("Negotiation", this.bpDataService.requestForQuotation.buyerCustomerParty.party.id,
             this.bpDataService.requestForQuotation.sellerSupplierParty.party.id, this.quotation, this.bpDataService);
-        let piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.bpDataService.processMetadata.process_id);
+        let piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.bpDataService.processMetadata.processId);
 
         this.callStatus.submit();
         this.bpeService.continueBusinessProcess(piim)
@@ -146,7 +146,7 @@ export class NegotiationResponseComponent implements OnInit {
 
     set quotationPrice(price: number) {
         this.quotationPriceValue = price;
-        this.wrapper.quotationPriceAmount.value = String(price);
+        this.wrapper.quotationPriceAmount.value = price;
     }
 
     /*

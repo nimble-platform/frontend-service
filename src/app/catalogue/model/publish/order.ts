@@ -16,8 +16,8 @@ export class Order {
 		public contract: Contract[] = null,
 		public buyerCustomerParty:CustomerParty = null,
 		public sellerSupplierParty:SupplierParty = null,
-		public paymentMeans:PaymentMeans = new PaymentMeans(),
-		public paymentTerms:PaymentTerms = new PaymentTerms(),
+		public paymentMeans?: string,
+		public paymentTerms?: string,
 		public anticipatedMonetaryTotal: MonetaryTotal = new MonetaryTotal(),
 		public orderLine:OrderLine[] = null
 	) {  }

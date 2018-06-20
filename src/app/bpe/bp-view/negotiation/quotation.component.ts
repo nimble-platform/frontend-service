@@ -39,6 +39,9 @@ export class QuotationComponent implements OnInit {
         this.submitted = true;
 
         let quotation:Quotation = JSON.parse(JSON.stringify(this.bpDataService.quotation));
+        quotation.paymentTerms = this.bpDataService.quotation.paymentTerms;
+
+        /*
         let selectedTradingTerms: TradingTerm[] = [];
 
         for(let tradingTerm of this.bpDataService.quotation.paymentTerms.tradingTerms){
@@ -63,6 +66,7 @@ export class QuotationComponent implements OnInit {
 
         // set payment terms
         quotation.paymentTerms.tradingTerms = selectedTradingTerms;
+        */
 
         let vars: ProcessVariables = ModelUtils.createProcessVariables("Negotiation", this.bpDataService.requestForQuotation.buyerCustomerParty.party.id, this.bpDataService.requestForQuotation.sellerSupplierParty.party.id, quotation, this.bpDataService);
         let piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.bpDataService.processMetadata.processId);

@@ -126,7 +126,7 @@ export class ItemInformationRequestComponent {
     sendInformationResponse() {
         this.submitted = true;
         let vars: ProcessVariables = ModelUtils.createProcessVariables("Item_Information_Request", this.bpDataService.itemInformationRequest.buyerCustomerParty.party.id, this.bpDataService.itemInformationRequest.sellerSupplierParty.party.id, this.bpDataService.itemInformationResponse, this.bpDataService);
-        let piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.bpDataService.processMetadata.processID);
+        let piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.bpDataService.processMetadata.processId);
 
         this.callStatus.submit();
         this.bpeService.continueBusinessProcess(piim).then(

@@ -332,8 +332,8 @@ export class BPDataService{
         this.modifiedCatalogueLines = JSON.parse(JSON.stringify(this.catalogueLines));
         this.order = UBLModelUtils.createOrder();
         this.order.orderLine[0].lineItem = copyOrder.orderLine[0].lineItem;
-        this.order.paymentMeans.paymentMeansCode.value = copyOrder.paymentMeans.paymentMeansCode.value;
-        this.order.paymentTerms.tradingTerms = copyOrder.paymentTerms.tradingTerms;
+        this.order.paymentMeans = copyOrder.paymentMeans;
+        this.order.paymentTerms = copyOrder.paymentTerms;
         this.setProcessType('Order');
     }
 
@@ -351,7 +351,7 @@ export class BPDataService{
         let copyOrder:Order = JSON.parse(JSON.stringify(this.order));
         this.resetBpData();
         this.modifiedCatalogueLines = JSON.parse(JSON.stringify(this.catalogueLines));
-        this.requestForQuotation = UBLModelUtils.createRequestForQuotation();
+        this.requestForQuotation = UBLModelUtils.createRequestForQuotation(new NegotiationOptions());
         this.requestForQuotation.requestForQuotationLine[0].lineItem = copyOrder.orderLine[0].lineItem;
         this.requestForQuotation.paymentTerms = copyOrder.paymentTerms;
         this.requestForQuotation.paymentMeans = copyOrder.paymentMeans;

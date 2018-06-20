@@ -4,7 +4,7 @@ import { Item } from "../../catalogue/model/publish/item";
 export interface ProcessMetatada {
     processType: string;
     presentableProcessType: string;
-    process_id: string;
+    processId: string;
     start_time: string;
     tradingPartner: string;
     product: Item;

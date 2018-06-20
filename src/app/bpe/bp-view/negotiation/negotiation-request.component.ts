@@ -70,7 +70,7 @@ export class NegotiationRequestComponent implements OnInit {
 
     onSendRequest(): void {
         if(this.rfq.negotiationOptions.isNegotiatingAnyTerm()) {
-            // send request for quotation        
+            // send request for quotation
             this.callStatus.submit();
             const rfq: RequestForQuotation = this.copy(this.rfq);
 
@@ -186,7 +186,7 @@ export class NegotiationRequestComponent implements OnInit {
         } else {
             this.totalPrice = this.negotiatedPriceValue;
         }
-        this.rfqLine.lineItem.price.priceAmount.value = String(this.totalPrice);
+        this.rfqLine.lineItem.price.priceAmount.value = this.totalPrice;
     }
 
     /*
@@ -206,7 +206,7 @@ export class NegotiationRequestComponent implements OnInit {
         }
         return roundedDigit;
     }
-    
+
     private getMagnitude(value: number): number {
         return Math.pow(10, Math.floor(Math.log10(value)));
     }

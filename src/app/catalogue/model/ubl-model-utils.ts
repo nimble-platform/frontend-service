@@ -133,7 +133,7 @@ export class UBLModelUtils {
         let price: Price = this.createPrice(null);
         let lineItem:LineItem = this.createLineItem(quantity, price, item);
         let orderLine:OrderLine = new OrderLine(lineItem);
-        let order = new Order(this.generateUUID(), "", new Period(), new Address(), null, null, null, new PaymentMeans(),new PaymentTerms(), new MonetaryTotal(), [orderLine]);
+        let order = new Order(this.generateUUID(), "", new Period(), new Address(), null, null, null, "", "", new MonetaryTotal(), [orderLine]);
         return order;
     }
 
@@ -233,7 +233,7 @@ export class UBLModelUtils {
         let price:Price = this.createPrice(null);
         let lineItem:LineItem = this.createLineItem(quantity, price, item);
         let requestForQuotationLine:RequestForQuotationLine = new RequestForQuotationLine(lineItem);
-        let rfq = new RequestForQuotation(this.generateUUID(), [""], false, null, null, new Delivery(), [requestForQuotationLine],new PaymentTerms(),new PaymentMeans());
+        let rfq = new RequestForQuotation(this.generateUUID(), [""], false, null, null, new Delivery(), [requestForQuotationLine], new NegotiationOptions(), "" , "");
 
         rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.goodsItem[0].item.name = transportExecutionPlanRequest.consignment[0].consolidatedShipment[0].goodsItem[0].item.name;
         rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.consignment[0].grossVolumeMeasure = transportExecutionPlanRequest.consignment[0].grossVolumeMeasure;

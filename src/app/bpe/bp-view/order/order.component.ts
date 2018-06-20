@@ -92,6 +92,9 @@ export class OrderComponent implements OnInit {
         // final check on the order
         order.orderLine[0].lineItem.item = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;
 
+        order.paymentTerms = this.order.paymentTerms;
+
+        /*
         let selectedTradingTerms: TradingTerm[] = [];
 
         for(let tradingTerm of this.order.paymentTerms.tradingTerms){
@@ -116,6 +119,7 @@ export class OrderComponent implements OnInit {
 
         // set payment terms
         order.paymentTerms.tradingTerms = selectedTradingTerms;
+        */
 
 
         UBLModelUtils.removeHjidFieldsFromObject(order);

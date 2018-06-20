@@ -42,6 +42,9 @@ export class RequestForQuotationComponent {
         // final check on the rfq
         rfq.requestForQuotationLine[0].lineItem.item = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;
 
+        rfq.paymentTerms = this.requestForQuotation.paymentTerms;
+
+        /*
         let selectedTradingTerms: TradingTerm[] = [];
 
         for(let tradingTerm of this.requestForQuotation.paymentTerms.tradingTerms){
@@ -66,6 +69,7 @@ export class RequestForQuotationComponent {
 
         // set payment terms
         rfq.paymentTerms.tradingTerms = selectedTradingTerms;
+        */
 
         UBLModelUtils.removeHjidFieldsFromObject(rfq);
 
