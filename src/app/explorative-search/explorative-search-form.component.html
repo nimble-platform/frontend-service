@@ -72,8 +72,8 @@
             <label class="col-form-label-lg"><b> Results Found </b></label>
         </div>
         <div class="col-sm-10">
-            <ul>
-                <li *ngFor="let eachOutput of Output; let outerIndex = index" style="margin-top: 5px">
+            <!--<ul>-->
+                <div *ngFor="let eachOutput of Output; let outerIndex = index" style="margin-top: 5px">
                     <div [hidden]="showParticularKeyword[outerIndex]">
                         <div class="btn-group" role="group" aria-label="available keywords"
                              *ngFor="let each of eachOutput.resp.conceptOverview; let innerIndex = index">
@@ -89,8 +89,8 @@
                                 {{showMore[outerIndex] ? 'Hide': 'Show'}} Options</button>
                         </div>
                     </div>
-                </li>
-            </ul>
+                </div>
+            <!--</ul>-->
         </div>
     </div>
 </div>
