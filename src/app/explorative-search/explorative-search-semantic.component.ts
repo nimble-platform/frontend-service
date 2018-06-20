@@ -58,6 +58,8 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
     public emptyFilterAlert = false;
     public showDeleteButton = false;
     public disableAddPropBtn = false;
+    public propertySelectionComplete = false;
+    public selectedPropertiesCB = [];
 
     // Autocompletion Implementation from NG-BOOTSTRAP
     public search = (text$: Observable<string>) =>
@@ -260,6 +262,7 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
 
             }
         }
+        this.propertySelectionComplete = true;
     }
 
     filtersSelected(filterValue, ev) {
@@ -328,7 +331,9 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
                 }
             }
         }
+        this.propertySelectionComplete = true;
     }
+
     removeManualFilter(minVal) {
         let filterIndexToRemove =
             this.sparqlJSON['filters'].findIndex(p => p.property === encodeURIComponent(this.selectedProperty['propertyURL']));
@@ -340,23 +345,33 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
     removeSelection(name) {
         if (this.tableResult['columns'].length === 1) {
             this.tableResult = {}; // reset the json
-        }
-        let indexToRemove = this.tableResult['columns'].findIndex(i => i === name);
-        if (indexToRemove > -1) {
-            this.tableResult['rows'].forEach(entry => {
-                entry.splice(indexToRemove, 1);
-            });
-            let removePropURL = this.sparqlJSON['parametersURL'][indexToRemove];
-            this.tableResult['columns'].splice(indexToRemove, 1);
-            // remove selection from SPARQL
-            this.sparqlJSON['parameters'].splice(indexToRemove, 1);
-            this.sparqlJSON['parametersURL'].splice(indexToRemove, 1);
-            this.sparqlJSON['parametersIncludingPath'].splice(indexToRemove, 1);
-            this.sparqlJSON['propertySources'].splice(indexToRemove, 1);
-            let filterIndexToRemove = this.sparqlJSON['filters'].findIndex(el => el.property === removePropURL);
-            if (filterIndexToRemove > -1) {
-                this.sparqlJSON['filters'].splice(filterIndexToRemove);
+        } else {
+            let indexToRemove = this.tableResult['columns'].findIndex(i => i === name);
+            if (indexToRemove > -1) {
+                this.tableResult['rows'].forEach(entry => {
+                    entry.splice(indexToRemove, 1);
+                });
+                let removePropURL = this.sparqlJSON['parametersURL'][indexToRemove];
+                this.tableResult['columns'].splice(indexToRemove, 1);
+                // remove selection from SPARQL
+                this.sparqlJSON['parameters'].splice(indexToRemove, 1);
+                this.sparqlJSON['parametersURL'].splice(indexToRemove, 1);
+                this.sparqlJSON['parametersIncludingPath'].splice(indexToRemove, 1);
+                this.sparqlJSON['propertySources'].splice(indexToRemove, 1);
+                let filterIndexToRemove = this.sparqlJSON['filters'].findIndex(el => el.property === removePropURL);
+                if (filterIndexToRemove > -1) {
+                    this.sparqlJSON['filters'].splice(filterIndexToRemove);
+                }
             }
+        }
+        this.propSelection(name);
+    }
+
+    propSelection(eachVal): boolean {
+        if (this.sparqlJSON['parameters'].findIndex(i => i === eachVal) > -1) {
+            return true;
+        } else {
+            return false;
         }
     }
 

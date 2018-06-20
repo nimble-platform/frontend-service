@@ -160,8 +160,8 @@
                             <optgroup label="Properties">
                                 <option *ngFor="let eachVal of dataResults"
                                         [selected]="searchModel.translatedProperty===eachVal.translatedProperty"
-                                        (click)="getPropertyValues(eachVal)">
-                                    {{eachVal.translatedProperty}}
+                                        (click)="getPropertyValues(eachVal)"
+                                ><i class="fa fa-check fa-1x" [hidden]="!propSelection(eachVal.translatedProperty)"></i>{{eachVal.translatedProperty}}
                                 </option>
                             </optgroup>
                             <optgroup label="References">
