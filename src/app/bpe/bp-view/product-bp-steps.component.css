@@ -73,11 +73,11 @@
 }
 
 /* Action to take */
-.steps .step.current.todo span::before {
+.steps .step.current.action_required span::before {
     border: 0.1rem solid #d30000;
     
 }
-.steps .step.current.todo span {
+.steps .step.current.action_required span {
     color: #d30000;
 }
 
@@ -99,6 +99,14 @@
     color: #007706;
 }
 
+/* Cancelled */
+.steps .step.current.cancelled span::before {
+    border: 0.1rem solid #363636;
+    
+}
+.steps .step.current.cancelled span {
+    color: #363636;
+}
 
 /** 
  * After the active step 

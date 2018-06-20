@@ -1,4 +1,5 @@
 import { Component, OnInit, Input } from "@angular/core";
+import { ProductBpStepStatus } from "./product-bp-step-status";
 
 type Step = 
     | "Order" 
@@ -15,7 +16,7 @@ type Step =
 export class ProductBpStepsComponent implements OnInit {
 
     @Input() currentStep: Step;
-    @Input() status: "OPEN" | "WAITING" | "TODO" | "DONE" = "OPEN";
+    @Input() status: ProductBpStepStatus;
     @Input() statusText: string = "";
     
     constructor(
@@ -69,10 +70,12 @@ export class ProductBpStepsComponent implements OnInit {
                 return "#000000";
             case "WAITING":
                 return "#c48601";
-            case "TODO":
+            case "ACTION_REQUIRED":
                 return "#d30000";
             case "DONE":
                 return "#007706";
+            case "CANCELLED":
+                return "#363636";
         }
     }
 }

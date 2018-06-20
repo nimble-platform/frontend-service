@@ -23,11 +23,12 @@ import {ItemInformationResponse} from "../../catalogue/model/publish/item-inform
 import {CookieService} from "ng2-cookies";
 import {UserService} from "../../user-mgmt/user.service";
 import {PrecedingBPDataService} from "./preceding-bp-data-service";
-import { ProcessMetatada } from "./temp-process-metadata";
 import { BpUserRole } from "../model/bp-user-role";
 import { BpWorkflowOptions } from "../model/bp-workflow-options";
 import { NegotiationOptions } from "../../catalogue/model/publish/negotiation-options";
 import { PAYMENT_MEANS, PAYMENT_TERMS } from "../../catalogue/model/constants";
+import { ThreadEventMetadata } from "../../catalogue/model/publish/thread-event-metadata";
+import { ProcessType } from "../model/process-type";
 
 /**
  * Created by suat on 20-Sep-17.
@@ -36,35 +37,35 @@ import { PAYMENT_MEANS, PAYMENT_TERMS } from "../../catalogue/model/constants";
 @Injectable()
 export class BPDataService{
     // original catalogue lines to initialize the business process data
-    private catalogueLines:CatalogueLine[] = [];
+    private catalogueLines: CatalogueLine[] = [];
     // catalogue line object that is kept updated based on user selections
-    modifiedCatalogueLines:CatalogueLine[] = [];
+    modifiedCatalogueLines: CatalogueLine[] = [];
     // variables to keep the products and product categories related to the active business process
     relatedProducts: string[];
     relatedProductCategories: string[];
 
-    requestForQuotation:RequestForQuotation;
-    quotation:Quotation;
-    order:Order;
-    ppap:Ppap;
-    ppapResponse:PpapResponse;
-    orderResponse:OrderResponseSimple;
-    despatchAdvice:DespatchAdvice;
-    receiptAdvice:ReceiptAdvice;
-    transportExecutionPlanRequest:TransportExecutionPlanRequest;
-    transportExecutionPlan:TransportExecutionPlan;
-    itemInformationRequest:ItemInformationRequest;
-    itemInformationResponse:ItemInformationResponse;
+    requestForQuotation: RequestForQuotation;
+    quotation: Quotation;
+    order: Order;
+    ppap: Ppap;
+    ppapResponse: PpapResponse;
+    orderResponse: OrderResponseSimple;
+    despatchAdvice: DespatchAdvice;
+    receiptAdvice: ReceiptAdvice;
+    transportExecutionPlanRequest: TransportExecutionPlanRequest;
+    transportExecutionPlan: TransportExecutionPlan;
+    itemInformationRequest: ItemInformationRequest;
+    itemInformationResponse: ItemInformationResponse;
 
     ////////////////////////////////////////////////////////////////////////////
     //////// variables used when navigating to bp options details page //////
     ////////////////////////////////////////////////////////////////////////////
     // setBpOptionParameters method must be used to set these values
-    private processTypeSubject: BehaviorSubject<string> = new BehaviorSubject<string>('Item_Information_Request');
+    private processTypeSubject: BehaviorSubject<ProcessType> = new BehaviorSubject<ProcessType>("Item_Information_Request");
     processTypeObservable = this.processTypeSubject.asObservable();
     userRole: BpUserRole;
-    processMetadata:ProcessMetatada;
-    previousProcess:string;
+    processMetadata: ThreadEventMetadata;
+    previousProcess: string;
     workflowOptions: BpWorkflowOptions;
 
     // variable to keep the business process instance group related to the new process being initiated
@@ -101,7 +102,7 @@ export class BPDataService{
         return this.relatedGroupId;
     }
 
-    setRelatedGroupId(id:string): void {
+    setRelatedGroupId(id: string): void {
         // If there is an active search context, we do not nullify the related group id.
         // For example, when the user is looking for a transport service provider, we should not reset the id
         if(id == null) {
@@ -114,14 +115,14 @@ export class BPDataService{
         }
     }
 
-    setBpOptionParametersWithProcessMetadata(userRole: BpUserRole, targetProcess:string, processMetadata:any):void {
+    setBpOptionParametersWithProcessMetadata(userRole: BpUserRole, targetProcess: ProcessType, processMetadata: ThreadEventMetadata): void {
         this.resetBpData();
-        this.setBpOptionParameters(userRole, targetProcess,null);
+        this.setBpOptionParameters(userRole, targetProcess, null);
         this.processMetadata = processMetadata;
         this.setBpMessages(this.processTypeSubject.getValue(), processMetadata);
     }
 
-    setBpMessages(processType:string, processMetadata:any) {
+    setBpMessages(processType: ProcessType, processMetadata: ThreadEventMetadata) {
         let activityVariables = processMetadata.activityVariables;
         if(processType == 'Negotiation') {
             this.requestForQuotation = ActivityVariableParser.getInitialDocument(activityVariables).value;
@@ -210,7 +211,7 @@ export class BPDataService{
         }
     }
 
-    setBpOptionParameters(userRole: BpUserRole, targetProcess:string,previousProcess:string) {
+    setBpOptionParameters(userRole: BpUserRole, targetProcess: ProcessType, previousProcess: ProcessType) {
         this.previousProcess = previousProcess;
         this.setProcessType(targetProcess);
         this.userRole = userRole;
@@ -439,7 +440,7 @@ export class BPDataService{
         //this.setBpMessages(this.searchContextService.associatedProcessType, this.searchContextService.associatedProcessMetadata);
     }
 
-    setProcessType(processType:string): void {
+    setProcessType(processType: ProcessType): void {
         this.processTypeSubject.next(processType);
     }
 

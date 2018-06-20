@@ -10,6 +10,7 @@ import { ProductDetailsTab } from "./model/product-details-tab";
 import { CommodityClassification } from "../catalogue/model/publish/commodity-classification";
 import { ItemProperty } from "../catalogue/model/publish/item-property";
 import { BpWorkflowOptions } from "../bpe/model/bp-workflow-options";
+import { ProcessType } from "../bpe/model/process-type";
 
 @Component({
     selector: 'product-details',
@@ -145,7 +146,7 @@ export class ProductDetailsComponent implements OnInit {
         console.log("PreviewTermsAndConditions clicked!");
     }
 
-    private navigateToBusinessProcess(targetProcess: string): void {
+    private navigateToBusinessProcess(targetProcess: ProcessType): void {
         this.bpDataService.resetBpData();
         this.bpDataService.setBpOptionParameters("buyer", targetProcess, null);
         this.router.navigate(['bpe/bpe-exec'], {

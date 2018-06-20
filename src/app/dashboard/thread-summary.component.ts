@@ -8,7 +8,7 @@ import * as moment from "moment";
 import {CallStatus} from "../common/call-status";
 import {CookieService} from "ng2-cookies";
 import {DataChannelService} from "../data-channel/data-channel.service";
-import { ThreadEvent } from "./model/thread-event";
+import { ThreadEventMetadata } from "./model/thread-event-metadata";
 import { ProcessType } from "../bpe/model/process-type";
 import { ThreadEventStatus } from "./model/thread-event-status";
 
@@ -26,11 +26,11 @@ export class ThreadSummaryComponent implements OnInit {
     @Output() threadStateUpdated = new EventEmitter();
 
     // Most recent event
-    lastEvent: ThreadEvent;
+    lastEvent: ThreadEventMetadata;
 
     // History of events
     hasHistory: boolean = false;
-    history: ThreadEvent[];
+    history: ThreadEventMetadata[];
     historyExpanded: boolean = false;
 
     // Utilities
@@ -77,7 +77,7 @@ export class ThreadSummaryComponent implements OnInit {
         });
     }
 
-    private async fetchThreadEvent(processInstanceId: string): Promise<ThreadEvent> {
+    private async fetchThreadEvent(processInstanceId: string): Promise<ThreadEventMetadata> {
         const activityVariables = await this.bpeService.getProcessDetailsHistory(processInstanceId);
         const processType = ActivityVariableParser.getProcessType(activityVariables);
         const initialDoc: any = ActivityVariableParser.getInitialDocument(activityVariables);
@@ -90,7 +90,7 @@ export class ThreadSummaryComponent implements OnInit {
             this.bpeService.getProcessInstanceDetails(processId)]
         )
 
-        const event: ThreadEvent = new ThreadEvent(
+        const event: ThreadEventMetadata = new ThreadEventMetadata(
             processType,
             processType.replace(/[_]/gi, " "),
             processId,
@@ -140,7 +140,7 @@ export class ThreadSummaryComponent implements OnInit {
             });
     }
 
-    private fillStatus(event: ThreadEvent, processState: "EXTERNALLY_TERMINATED" | "COMPLETED" | "ACTIVE",
+    private fillStatus(event: ThreadEventMetadata, processState: "EXTERNALLY_TERMINATED" | "COMPLETED" | "ACTIVE",
         processType: ProcessType, response: any, buyer: boolean): void {
 
         event.status = this.getStatus(processState, processType, response, buyer);
@@ -369,7 +369,7 @@ export class ThreadSummaryComponent implements OnInit {
         }
     }
 
-    checkDataChannel(event:ThreadEvent) {
+    checkDataChannel(event:ThreadEventMetadata) {
         if(event.processType === 'Order') {
           this.dataChannelService.channelsForBusinessProcess(event.processId)
             .then(channels => {

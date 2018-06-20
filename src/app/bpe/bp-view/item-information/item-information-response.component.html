@@ -1,0 +1,86 @@
+<div class="row">
+    <div class="col-3">
+        <strong><label for="customFile">Requested technical data sheet:</label></strong>
+    </div>
+    <div *ngIf="hasRequestFile()"class="col-9">
+        <a href class="btn-link" (click)="downloadTechnicalDataSheet(getRequestFile(), $event)">{{ getRequestFile().fileName }}</a>
+    </div>
+    <div *ngIf="!hasRequestFile()"class="col-9">
+        No file in the request.
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-3">
+        <strong><label for="customFile">Filled technical data sheet:</label></strong>
+    </div>
+    <div *ngIf="!isResponseSent()" class="col-9">
+        <file-input id="dataSheetFile" [disabled]="isLoading()" 
+            (onSelectFile)="selectItemSpecificationFile($event)">
+        </file-input>
+    </div>
+    <div *ngIf="isResponseSent() && hasResponseFile()" class="col-9">
+        <a href class="btn-link" (click)="downloadTechnicalDataSheet(getResponseFile(), $event)">{{ getResponseFile().fileName }}</a>
+    </div>
+    <div *ngIf="isResponseSent() && !hasResponseFile()" class="col-9">
+        No file in the response.
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-3">
+        <strong><label for="custNoteTextarea">Customer's note:</label></strong>
+    </div>
+    <div class="col-9">
+        <textarea id="custNoteTextarea" class="form-control note-textarea" 
+            rows="4" disabled [(ngModel)]="request.note[0]"></textarea>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-3">
+        <strong><label for="manNoteTextarea">Manufacturer's note:</label></strong>
+    </div>
+    <div class="col-9">
+        <textarea id="manNoteTextarea" class="form-control note-textarea" rows="4" 
+            [disabled]="isLoading() || isResponseSent()" [(ngModel)]="response.note[0]"></textarea>
+    </div>
+</div>
+
+<!-- Actions -->
+<div *ngIf="!isBuyer()" class="row actions-row">
+    <div class="col-4"></div>
+    <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+    <div class="col-2">
+        <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
+    </div>
+    <div *ngIf="!isResponseSent()" class="col-2">
+        <button class="btn btn-primary action" [disabled]="isLoading()" (click)="onSendResponse()">
+            Send Response
+        </button>
+    </div>
+    <div *ngIf="isResponseSent()" class="col-2">
+        <button class="btn btn-primary action" disabled>
+            Response Sent
+        </button>
+    </div>
+</div>
+
+<!-- Buyer only sees once the response has been sent -->
+<div *ngIf="isBuyer()" class="row actions-row">
+    <div class="col-2"></div>
+    <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+    <div class="col-2">
+        <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
+    </div>
+    <div class="col-2">
+        <button class="btn btn-primary action" [disabled]="isLoading()" (click)="onRestart()">
+            Ask something else
+        </button>
+    </div>
+    <div class="col-2">
+        <button class="btn btn-primary action" [disabled]="isLoading()" (click)="onNextStep()">
+            Go to Next Step
+        </button>
+    </div>
+</div>

@@ -4,8 +4,8 @@
     <product-bp-steps [currentStep]="currentStep" [status]="getStepsStatus()" [statusText]="getStepsStatusText()">
     </product-bp-steps>
     
-    <item-information-request-bp *ngIf="currentStep === 'Item_Information_Request'">
-    </item-information-request-bp>
+    <item-information *ngIf="currentStep === 'Item_Information_Request'">
+    </item-information>
     <negotiation *ngIf="currentStep === 'Negotiation'">
     </negotiation>
     <order-bp *ngIf="currentStep === 'Order'">

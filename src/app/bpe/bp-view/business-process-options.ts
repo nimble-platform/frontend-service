@@ -102,7 +102,7 @@ export class BusinessProcessOptions implements OnInit {
             }
             else if(this.processName == "Transport_Execution_Plan"){
                 this.bpDataService.initRfqWithTransportExecutionPlanRequest();
-                this.bpDataService.setBpOptionParameters(this.userRole, 'Negotiation','Transport Execution Plan');
+                this.bpDataService.setBpOptionParameters(this.userRole, 'Negotiation','Transport_Execution_Plan');
             }
             else if(this.processName == "Item_Information_Request") {
                 this.bpDataService.initRfqWithIir();

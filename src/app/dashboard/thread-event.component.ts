@@ -1,6 +1,6 @@
-import { Component, OnInit, Input, Output, EventEmitter } from "@angular/core";
+import { Component, OnInit, Input } from "@angular/core";
 import { Router } from "@angular/router";
-import { ThreadEvent } from "./model/thread-event";
+import { ThreadEventMetadata } from "./model/thread-event-metadata";
 import { BPDataService } from "../bpe/bp-view/bp-data-service";
 import { ActivityVariableParser } from "../bpe/bp-view/activity-variable-parser";
 import { ProcessInstanceGroup } from "../bpe/model/process-instance-group";
@@ -13,7 +13,7 @@ import { ProcessInstanceGroup } from "../bpe/model/process-instance-group";
 export class ThreadEventComponent implements OnInit {
 
     @Input() processInstanceGroup: ProcessInstanceGroup;
-    @Input() event: ThreadEvent;
+    @Input() event: ThreadEventMetadata;
 
     constructor(private bpDataService: BPDataService,
                 private router: Router) {

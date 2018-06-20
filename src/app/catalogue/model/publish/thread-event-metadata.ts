@@ -1,7 +1,7 @@
-import {Item} from "../../catalogue/model/publish/item";
+import { Item } from "./item";
 import { ThreadEventStatus } from "./thread-event-status";
 
-export class ThreadEvent {
+export class ThreadEventMetadata {
     constructor(
         public processType: string,
         public presentableProcessType: string,

@@ -24,8 +24,6 @@ import { TransportExecutionPlanBpComponent } from "./bp-view/transport-execution
 import { TransportExecutionPlanRequestComponent } from "./bp-view/transport-execution-plan/transport-execution-plan-request.component";
 import { TransportExecutionPlanComponent } from "./bp-view/transport-execution-plan/transport-execution-plan.component";
 import { BpProductDetailsComponent } from "./bp-view/bp-product-details.component";
-import { ItemInformationRequestBpComponent } from "./bp-view/item-information-request/item-information-request-bp.component";
-import { ItemInformationRequestComponent } from "./bp-view/item-information-request/item-information-request.component";
 import { PpapComponent} from "./bp-view/ppap/ppap.component";
 
 import { PpapDocumentSelectComponent} from "./bp-view/ppap/ppap-document-select.component";
@@ -44,6 +42,10 @@ import { NegotiationRequestInputComponent } from './bp-view/negotiation/negotiat
 import { NegotiationResponseComponent } from './bp-view/negotiation/negotiation-response.component';
 import { NegotiationAddressComponent } from './bp-view/negotiation/negotiation-address.component';
 import { NegotiationResponseInputComponent } from './bp-view/negotiation/negotiation-response-input.component';
+import { ItemInformationRequestComponent } from './bp-view/item-information/item-information-request.component';
+import { ItemInformationResponseComponent } from './bp-view/item-information/item-information-response.component';
+import { ItemInformationComponent } from './bp-view/item-information/item-information.component';
+import { FileInputComponent } from './bp-view/item-information/file-input.component';
 //import { BPEService } from './bpe.service';
 //import { BPService } from './bp.service';
 //import { BPDataService } from "./bp-view/bp-data-service";
@@ -71,6 +73,10 @@ import { NegotiationResponseInputComponent } from './bp-view/negotiation/negotia
 		FulfilmentComponent,
 		DespatchAdviceComponent,
 		ReceiptAdviceComponent,
+		ItemInformationRequestComponent,
+		ItemInformationResponseComponent,
+		ItemInformationComponent,
+		FileInputComponent,
 		NegotiationComponent,
 		NegotiationRequestComponent,
 		NegotiationRequestInputComponent,
@@ -80,8 +86,6 @@ import { NegotiationResponseInputComponent } from './bp-view/negotiation/negotia
 		TransportExecutionPlanRequestComponent,
 		TransportExecutionPlanComponent,
 		BpProductDetailsComponent,
-		ItemInformationRequestBpComponent,
-		ItemInformationRequestComponent,
         PpapComponent,
         PpapDocumentSelectComponent,
 		PpapDocumentUploadComponent,
@@ -110,8 +114,6 @@ import { NegotiationResponseInputComponent } from './bp-view/negotiation/negotia
 		TransportExecutionPlanRequestComponent,
 		TransportExecutionPlanComponent,
 		BpProductDetailsComponent,
-		ItemInformationRequestBpComponent,
-		ItemInformationRequestComponent,
         BusinessProcessOptions,
 		ContractComponent,
 		ClauseComponent,

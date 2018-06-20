@@ -17,6 +17,7 @@ import {OrderResponseSimple} from "../catalogue/model/publish/order-response-sim
 import {Order} from "../catalogue/model/publish/order";
 import {Item} from "../catalogue/model/publish/item";
 import * as moment from 'moment';
+import { ProcessType } from "../bpe/model/process-type";
 
 @Component({
     selector: 'nimble-dashboard',
@@ -290,7 +291,7 @@ export class DashboardComponent implements OnInit {
             });
     }
 
-    openBpProcessView(role: any, targetProcess:string, processMetadata: any) {
+    openBpProcessView(role: any, targetProcess: ProcessType, processMetadata: any) {
         if(targetProcess == null) {
             targetProcess = ActivityVariableParser.getProcessType(processMetadata.activityVariables);
         }

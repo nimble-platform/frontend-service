@@ -5,6 +5,7 @@ import { CatalogueService } from "../../catalogue/catalogue.service";
 import { CatalogueLine } from "../../catalogue/model/publish/catalogue-line";
 import { BPDataService } from "./bp-data-service";
 import { Subscription } from "rxjs";
+import { ProductBpStepStatus } from "./product-bp-step-status";
 
 /**
  * Created by suat on 20-Oct-17.
@@ -59,27 +60,13 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
         });
     }
 
-    getStepsStatus(): "OPEN" | "WAITING" | "TODO" | "DONE" {
-        // TODO after the ux-updates branch has been merged, this will contain the data necessary to display the proper step.
-        // console.log(this.bpDataService.processMetadata)
-
-        if(!this.bpDataService.processMetadata) {
-            return "OPEN";
-        }
-
-        if(this.bpDataService.processMetadata.statusCode === "COMPLETED") {
-            return "DONE";
-        }
-        if(this.bpDataService.userRole === "buyer") {
-            return "WAITING";
-        } else {
-            return "TODO";
-        }
+    getStepsStatus(): ProductBpStepStatus {
+        return this.bpDataService.processMetadata ? this.bpDataService.processMetadata.status : "OPEN"
     }
 
     getStepsStatusText(): string {
         if(this.bpDataService.processMetadata) {
-            return this.bpDataService.processMetadata.actionStatus;
+            return this.bpDataService.processMetadata.statusText;
         }
         return ""
     }
