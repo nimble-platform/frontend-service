@@ -8,27 +8,19 @@ import {ProcessInstanceInputMessage} from "../../model/process-instance-input-me
 import {ModelUtils} from "../../model/model-utils";
 import {CallStatus} from "../../../common/call-status";
 import {ActivatedRoute, Router} from "@angular/router";
-import {CatalogueService} from "../../../catalogue/catalogue.service";
 import {BinaryObject} from "../../../catalogue/model/publish/binary-object";
-import {ItemProperty} from "../../../catalogue/model/publish/item-property";
 import {UBLModelUtils} from "../../../catalogue/model/ubl-model-utils";
 import {DocumentReference} from "../../../catalogue/model/publish/document-reference";
 import {Attachment} from "../../../catalogue/model/publish/attachment";
 import {ActivityVariableParser} from "../activity-variable-parser";
+import { Location } from "@angular/common";
 
 @Component({
-    selector: 'ppap-document-upload',
-    templateUrl: './ppap-document-upload.component.html'
+    selector: "ppap-document-upload",
+    templateUrl: "./ppap-document-upload.component.html",
+    styleUrls: ["./ppap-document-upload.component.css"]
 })
-
-export class PpapDocumentUploadComponent{
-
-    constructor(public bpDataService: BPDataService,
-                public bpeService: BPEService,
-                public catalogueService:CatalogueService,
-                public route: ActivatedRoute,
-                private router:Router) {
-    }
+export class PpapDocumentUploadComponent {
 
     processid : any;
     ppap : Ppap;
@@ -43,6 +35,15 @@ export class PpapDocumentUploadComponent{
     callStatus:CallStatus = new CallStatus();
     // check whether 'Send Response' button is clicked
     submitted: boolean = false;
+
+    constructor(private bpDataService: BPDataService,
+        private bpeService: BPEService,
+        private route: ActivatedRoute,
+        private router: Router,
+        private location: Location) {
+    
+    }
+
     ngOnInit() {
         this.route.queryParams.subscribe(params =>{
             this.processid = params['pid'];
@@ -59,7 +60,7 @@ export class PpapDocumentUploadComponent{
         });
     }
 
-    private fileChange(event: any,documentName:string) {
+    fileChange(event: any,documentName:string) {
         let fileList: FileList = event.target.files;
         let binaryObjects: BinaryObject[] = [];
         if (fileList.length > 0) {
@@ -77,9 +78,11 @@ export class PpapDocumentUploadComponent{
         this.binaryObjects.push({documentName:documentName,documents:binaryObjects});
     }
 
+    onBack() {
+        this.location.back();
+    }
 
-
-    isSent(document):boolean{
+    isSent(document): boolean {
         for(var i=0;i<this.binaryObjects.length;i++){
             if(document == this.binaryObjects[i].documentName){
                 return true;
@@ -88,7 +91,7 @@ export class PpapDocumentUploadComponent{
         return false;
     }
 
-    remove(documentName,document): void{
+    remove(documentName,document): void {
         for(var i=0;i<this.binaryObjects.length;i++){
             if(documentName == this.binaryObjects[i].documentName){
                 for(var j=0;j<this.binaryObjects[i].documents.length;j++){
@@ -104,7 +107,7 @@ export class PpapDocumentUploadComponent{
         }
     }
 
-    responseToPpapRequest(acceptedIndicator: boolean){
+    responseToPpapRequest(acceptedIndicator: boolean) {
         this.submitted = true;
         for(let i=0;i<this.binaryObjects.length;i++){
             for(let j=0;j<this.binaryObjects[i].documents.length;j++){

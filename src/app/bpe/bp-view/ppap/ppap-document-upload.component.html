@@ -1,6 +1,6 @@
 <div class="row space-before">
     <div class="col-12">
-        <h4 class="space-after" i18n>Ppap Request</h4>
+        <h3 class="space-after" i18n>Ppap Request</h3>
         <hr>
         <div *ngIf="documents.length == 0">
             <h3>No File Requested</h3>
@@ -46,10 +46,28 @@
             [(value)]="noteToSend">
 </value-view>
 
-<div class="row justify-content-end">
-    <button class="btn btn-success col-4" (click)="responseToPpapRequest(true)" [disabled]="submitted">Send Response</button>
+<!-- Action buttons -->
+<div *ngIf="!isSent()" class="row actions-row">
+    <div class="col-4"></div>
+    <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+    <div class="col-2">
+        <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">Back</button>
+    </div>
+    <div class="col-2">
+        <button class="btn btn-primary action" [disabled]="isLoading()" (click)="responseToPpapRequest(true)">
+            Send Request
+        </button>
+    </div>
 </div>
 
-<call-status [callStatus]="callStatus"
-             [large]="true">
-</call-status>
+<div *ngIf="isSent()" class="row actions-row">
+    <div class="col-8"></div>
+    <div class="col-2">
+        <button class="btn btn-secondary action" (click)="onBack()">Back</button>
+    </div>
+    <div class="col-2">
+        <button class="btn btn-primary action" disabled>
+            Request Sent
+        </button>
+    </div>
+</div>

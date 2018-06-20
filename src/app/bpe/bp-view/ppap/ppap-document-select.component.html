@@ -25,7 +25,7 @@
         <label for="ppapLevelSelect"><strong>Select a PPAP level:</strong></label>
     </div>
     <div class="col-9">
-        <select [(ngModel)]="level" class="custom-select" (change)="computeSelectedDocuments()" [disabled]="isLoading() || isRequestSent()">
+        <select [(ngModel)]="level" id="ppapLevelSelect" class="custom-select" (change)="computeSelectedDocuments()" [disabled]="isLoading() || isRequestSent()">
             <option [ngValue]='0'>Level 1 - Part Submission Warrant (PSW) only submitted to the customer.</option>
             <option [ngValue]='1'>Level 2 – PSW with product samples and limited supporting data.</option>
             <option [ngValue]='2'>Level 3 – PSW with product samples and complete supporting data.</option>
@@ -48,6 +48,17 @@
     </div>
 </div>
 
+<!-- Note -->
+<!-- Ppap level select -->
+<div class="row form-group space-after">
+    <div class="col-3">
+        <label for="noteTextarea"><strong>Note:</strong></label>
+    </div>
+    <div class="col-9">
+        <textarea id="noteTextarea" class="form-control" rows="3" [(ngModel)]="ppap.note"></textarea>
+    </div>
+</div>
+    
 <!-- Action buttons -->
 <div *ngIf="!isRequestSent()" class="row actions-row">
     <div class="col-2"></div>
@@ -78,4 +89,3 @@
         </button>
     </div>
 </div>
-        
