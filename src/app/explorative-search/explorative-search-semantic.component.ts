@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, OnInit, ViewChild, TemplateRef} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, ViewChild} from '@angular/core';
 import { Router } from '@angular/router';
 import {ExplorativeSearchService} from './explorative-search.service';
 import { Observable } from 'rxjs';
@@ -56,10 +56,8 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
     public infoAlert = false;
     public updateInfoAlert = false;
     public emptyFilterAlert = false;
-    public showDeleteButton = false;
     public disableAddPropBtn = false;
     public propertySelectionComplete = false;
-    public selectedPropertiesCB = [];
 
     // Autocompletion Implementation from NG-BOOTSTRAP
     public search = (text$: Observable<string>) =>
@@ -218,7 +216,7 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
             let dummyJSON = this.configSPQ;
             dummyJSON['concept'] = con.url;
             dummyJSON['distanceToFrozenConcept'] = i;
-            console.log(dummyJSON);
+            // console.log(dummyJSON);
             this.getPropertiesOfConcept(dummyJSON);
         } else {
             let dummyJSON = this.configSPQ;
@@ -343,9 +341,6 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
     }
 
     removeSelection(name) {
-        if (this.tableResult['columns'].length === 1) {
-            this.tableResult = {}; // reset the json
-        } else {
             let indexToRemove = this.tableResult['columns'].findIndex(i => i === name);
             if (indexToRemove > -1) {
                 this.tableResult['rows'].forEach(entry => {
@@ -363,16 +358,12 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
                     this.sparqlJSON['filters'].splice(filterIndexToRemove);
                 }
             }
-        }
         this.propSelection(name);
     }
 
     propSelection(eachVal): boolean {
-        if (this.sparqlJSON['parameters'].findIndex(i => i === eachVal) > -1) {
-            return true;
-        } else {
-            return false;
-        }
+        // console.log(name);
+        return this.sparqlJSON['parameters'].findIndex(i => i === eachVal) > -1;
     }
 
     genTable() {
