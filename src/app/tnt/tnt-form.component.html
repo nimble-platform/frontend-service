@@ -24,6 +24,9 @@
             <em>An Error Occured</em> - Check Your EPC Code or Please Try Again Later.
         </div>
     </div>
+    <ngb-alert type="info" *ngIf="updateInfo" (close)="updateInfo = false">
+        <span><i class="fa fa-info"></i> Enter your Code and click on the Panels below for More Information.</span>
+    </ngb-alert>
 </div>
 <div>
     <ngb-accordion #acc="ngbAccordion">
@@ -70,6 +73,7 @@
                             [curve]="curve"
                             [draggingEnabled]="false"
                             [panningEnabled]="false"
+                            [enableZoom]="false"
                             (select)="selectNode($event)"
                             [view] = "[1000, 275]"
                     >

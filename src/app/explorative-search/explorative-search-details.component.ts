@@ -3,7 +3,7 @@ import * as d3 from 'd3';
 import { ExplorativeSearchService } from './explorative-search.service';
 import { Router } from '@angular/router';
 
-
+// Leaf class for Radial Tidy Tree
 export class Leaf {
     name: string;
     url: string;
@@ -34,13 +34,10 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
     filterQuery: string;
     private nodeFilterName: string;
     private filterJSON: Object;
-    /* To store selected properties*/
-    private selectedProperties: Array<string> = [];
-    private selectedNodeKeys: any[] = [];
-    private _nodeKeysBackup: any[] = [];
+    private mergedNodeName: string;
+
     /* SPARQL TABLE Variables */
     private sparqlSelectedOption: Object;
-    private _temp_path_Json = { urlOfProperty: '', path: []};
     private tableJSON: Object = {
         parametersIncludingPath: [],
         parameters: [],
@@ -49,17 +46,10 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
         language: '',
         propertySources: []
     };
-
     private _backUpPaths = {};
-    private _tableJSONPaths = []; // for storing Paths when the figure is rendered again..
-    private collectionOfFiltersFromChildren: any[] = []; // filters from the Children Components
-    private _optSelectJSON = {};
     private _negotiation_id;
     private _negotiation_catalogue_id;
     public negotiationEnable = false;
-
-    /*Final Data to be sent back to parent for processing.*/
-    finalSelectionJSON: Object;
 
     /*The API response from tableJSON will be stored in tableResult*/
     tableResult: any;
@@ -84,16 +74,14 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
     ngOnChanges(): void {
         if (!this.config) { return; }
         // console.log(this.config['viewStructure']); // DEBUG -CHECK
-        // recApproach.generateGraphRecApproach(this.config, this.myDiagram, this.$, 2);
         // Reset Selections for New Diagram.. Usually when the user clicks the button about the product..
-        this.selectedProperties = [];
         this.tableResult = {};
         this.filterJSON = {};
         this.filterQueryRoot = '';
         this.filterQueryRootUrl = '';
         this.filterQuery = '';
         this.nodeFilterName = '';
-        this.selectedNodeKeys = [];
+        this.mergedNodeName = '';
         // reset errors/warnings too since this is a fresh start.
         this._error_detected_getSPARQLSelect = false;
         this._error_detected_getTableValues = false;
@@ -101,6 +89,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
         this._error_detected_getLogicalView = false;
         this._warning_table_results = false;
         this._warning_selection = false;
+        this.rerenderAlert = false;
         this.arrayPassedToChild = [];
         this.tableJSON = {
             parametersIncludingPath: [],
@@ -129,11 +118,10 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
             .separation(function(a, b) { return (a.parent === b.parent ? 1 : 2) / a.depth; });
         const root = tree(d3.hierarchy(this.parse_node(this.config['viewStructure'])));
         this.root = root;
-        // root.children.forEach(collapse);
-        // update(root);
         const link = g.selectAll('.link')
             .data(root.links())
             .enter().append('path')
+            .attr('id', function(d) { return d['source']['data']['id']})
             .attr('class', 'link')
             .attr('d', <any>d3.linkRadial()
                 .angle(function(d) { return d['x']; })
@@ -142,6 +130,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
         const node = g.selectAll('.node')
             .data(root.descendants())
             .enter().append('g')
+            .attr('id', function(d) { return d['data']['id']})
             .attr('class', function(d) { return 'node' + (d.children ? ' node--internal' : ' node--leaf'); })
             .attr('transform', function(d) { return 'translate(' + radialPoint(d.x, d.y) + ')'; })
             .on('click', click)
@@ -149,15 +138,12 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
 
         node.append('circle')
             .attr('r', 5)
-            .style('fill', (d) => {
-                if (d.data['color'] === 'green') {
-                    return '#0f0';
-                } else {
-                    if (d.depth === 0) {
+            .style('fill', (d: any) => {
+                    if (d.depth === 0) { // make root grey for distinction
                         return '#999';
+                } else {
+                        return d.data.color;
                     }
-                    return '#f00';
-                }
             });
 
         node.append('text')
@@ -168,17 +154,29 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                 return 'rotate(' + (d.x < Math.PI ? d.x - Math.PI / 2 : d.x + Math.PI / 2) * 180 / Math.PI + ')'; })
             .text(function(d) { return d.data['name']; });
 
+        // If the graph is rerendered make sure to add Dashed Lines to from root to the merged Node
+        if (this.rerenderAlert) {
+            console.log(this.mergedNodeName);
+            link.style('stroke-dasharray', function(d) {
+                if (d['target']['data']['name'] === self.mergedNodeName) {
+                    return ('10,3');
+                } else {
+                    return undefined;
+                }
+            });
+        }
 
         function radialPoint(x, y) {
             return [(y = +y) * Math.cos(x -= Math.PI / 2), y * Math.sin(x)];
         }
-
+        /*
+        Single Click Event on the Radial Tidy Tree
+         */
 
         function click(d) {
             if (d.depth === 1 && d.data.objectPropertySource !== '') {
                 console.log('objectproperty directly connected to root');
                 console.log('do nothing');
-                console.log(d.id());
             } else {
                 d3.select(this).select('circle').transition()
                     .duration(1000)
@@ -186,14 +184,16 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                 self.removePropertyFilter(d);
             }
         }
-
+        /*
+        Double Click Event on the Radial Tidy Tree
+         */
         function dblclick(d) {
             if (d.depth === 1 && d.data.objectPropertySource !== '') {
                 console.log('objectproperty directly connected to root');
                 console.log('do nothing');
             } else {
-                // console.log(d.data, d.depth);
-                // console.log(d.parent);
+                // console.log(d.data); // DEBUG_Check
+                // console.log(d.parent); // DEBUG_Check
                 d3.select(this).select('circle').transition()
                     .duration(1000)
                     .attr('r', 16);
@@ -202,6 +202,10 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
         }
     }
 
+    /**
+     * Single Click on the Node to remove it from the Selections
+     * @param nodeToRemove
+     */
     removePropertyFilter(nodeToRemove) {
         console.log(nodeToRemove.data.url);
         let indexToRemove = this.arrayPassedToChild.findIndex(node => node.fName === nodeToRemove.data.name);
@@ -220,16 +224,24 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
 
     }
 
+    /**
+     * Double Click Event on node checks type of node and its state and performs operations respectively
+     * @param nodeInfo: D3 Information of the double-clicked node
+     */
+
     obtainProperties(nodeInfo: any) {
         const self = this;
-        let _jsonForFilter = {'concept': '', 'property': '', 'amountOfGroups': 3, 'language': this.lang};
+        let _jsonForFilter = {'concept': '', 'property': '', 'amountOfGroups': 3, 'language': this.lang,
+        'propertySource': ''};
         let jsonFilterForEachChild = {'fName': '', 'fQuery': '', 'fQueryRoot': '', 'fQueryRootUrl': ''};
         let pathForSparqlJson = {'urlOfProperty': '', path: []};
-        // console.log(nodeInfo);
-        if (nodeInfo.depth === 1 && nodeInfo.data.objectPropertySource === '') { // direct dataproperties to root
+        // console.log(nodeInfo); // DEBUG-Check
+        if (nodeInfo.depth === 1 && nodeInfo.data.objectPropertySource === '' && nodeInfo.data.color === 'green') {
+            //  CASE: 1 direct datatype properties to root
             console.log('dataproperty directly connected to the root');
             _jsonForFilter.concept = encodeURIComponent(nodeInfo.parent.data.url);
             _jsonForFilter.property = encodeURIComponent(nodeInfo.data.url);
+            _jsonForFilter.propertySource = nodeInfo.data.propertySource;
             jsonFilterForEachChild['fName'] = nodeInfo.data.name;
             jsonFilterForEachChild['fQuery'] = nodeInfo.data.url;
             jsonFilterForEachChild['fQueryRoot'] = nodeInfo.parent.data.name;
@@ -237,12 +249,13 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
             // console.log(_jsonForFilter);
             this.expSearch.getPropertyValues(_jsonForFilter)
                 .then(res => {
-                    console.log(res, typeof(res));
+                    // console.log(res, typeof(res));
                     if (Object.keys(res).length !== 0) {
                         this.filterJSON = res;
                         jsonFilterForEachChild['filterJSON'] = this.filterJSON;
                     }
                 });
+            // Pass information to render filter (semantic-filter.component)
             setTimeout(() => { // necessary for loading the checkboxes in Filter
                 this.tableJSON['language'] = this.lang;
                 this.arrayPassedToChild.push(jsonFilterForEachChild);
@@ -255,9 +268,11 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                 this.tableJSON['parametersURL'].push(encodeURIComponent(nodeInfo.data.url));
                 this.tableJSON['propertySources'].push(nodeInfo.data.propertySource);
             }, 1000);
-        } else if (nodeInfo.depth > 1 && nodeInfo.data.objectPropertySource === '') {
+        } else if (nodeInfo.depth > 1 && nodeInfo.data.objectPropertySource === '' && nodeInfo.data.color === 'green') {
+            // CASE: 2 Datatype Property to an Object Property clicked
             console.log('dataprop -> objectproperty dir -> root');
             if (nodeInfo.parent.data.name.indexOf('/') > -1) {
+                // Case: 2A if the immediate Parent node is rerendered to a merged node
                 let ancestors = nodeInfo.ancestors();
                 let rootNode = ancestors.pop();
                 // console.log('rerender');
@@ -266,9 +281,10 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                         urlOfProperty: encodeURIComponent(nodeInfo.parent.data.objectPropertySource)
                     });
                 this._backUpPaths['urlOfProperty'] = encodeURIComponent(nodeInfo.data.url);
-                console.log(this._backUpPaths);
+                // console.log(this._backUpPaths);
                 _jsonForFilter.concept = encodeURIComponent(nodeInfo.parent.data.url);
                 _jsonForFilter.property = encodeURIComponent(nodeInfo.data.url);
+                _jsonForFilter.propertySource = nodeInfo.data.propertySource;
                 jsonFilterForEachChild['fName'] = nodeInfo.data.name;
                 jsonFilterForEachChild['fQuery'] = nodeInfo.data.url;
                 jsonFilterForEachChild['fQueryRoot'] = nodeInfo.parent.data.name;
@@ -285,9 +301,6 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                 setTimeout(() => { // necessary for loading the checkboxes in Filter
                     this.tableJSON['language'] = this.lang;
                     this.arrayPassedToChild.push(jsonFilterForEachChild);
-                    // console.log(this.arrayPassedToChild);
-                    // pathForSparqlJson.path.push({'concept': _jsonForFilter.concept});
-                    // pathForSparqlJson.urlOfProperty = _jsonForFilter.property;
                     this.tableJSON['parametersIncludingPath'].push(this._backUpPaths);
                     this.tableJSON['concept'] = encodeURIComponent(rootNode.data.url);
                     this.tableJSON['parameters'].push(nodeInfo.data.name);
@@ -295,15 +308,15 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                     this.tableJSON['propertySources'].push(nodeInfo.data.propertySource);
                 }, 1000);
             } else {
-
+                // CASE: 2B Not a rerendered graph and has normal immediate parent
                 let ancestors = nodeInfo.ancestors();
                 let rootNode = ancestors.pop();
-                console.log(rootNode.data);
                 pathForSparqlJson.path.push({concept: encodeURIComponent(rootNode.data.url)});
                 pathRec(ancestors);
-                console.log(pathForSparqlJson);
+                // console.log(pathForSparqlJson); //DEBUG-Check
                 _jsonForFilter.concept = encodeURIComponent(nodeInfo.parent.data.url);
                 _jsonForFilter.property = encodeURIComponent(nodeInfo.data.url);
+                _jsonForFilter.propertySource = nodeInfo.data.propertySource;
                 jsonFilterForEachChild['fName'] = nodeInfo.data.name;
                 jsonFilterForEachChild['fQuery'] = nodeInfo.data.url;
                 jsonFilterForEachChild['fQueryRoot'] = nodeInfo.parent.data.name;
@@ -330,18 +343,22 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                     this.tableJSON['propertySources'].push(nodeInfo.data.propertySource);
                 }, 1000);
             }
-        } else if (nodeInfo.depth > 1 && nodeInfo.data.objectPropertySource !== '') {
+        } else if (nodeInfo.depth > 1 && nodeInfo.data.objectPropertySource !== '' && nodeInfo.data.color === 'red') {
+            // CASE 3: Need to rerender the graph and obtain a traversed property
             console.log('objprop -> objprop -> root');
             // console.log(nodeInfo.ancestors());
             let ancestors = nodeInfo.ancestors();
             let rootNode = ancestors.pop();
             pathForSparqlJson.path.push({concept: encodeURIComponent(rootNode.data.url)});
             pathRec(ancestors);
-            console.log(pathForSparqlJson);
+            // console.log(pathForSparqlJson); // Debug-Check
             this._backUpPaths = pathForSparqlJson;
             askExtension();
         }
 
+        /**
+         * Create a JSON Query to provide a rerendering of the diagram
+         */
         function askExtension() {
             let newJSON = {};
             newJSON['concept'] = nodeInfo.data.url;
@@ -361,7 +378,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
             self.tableJSON['parametersURL'].forEach(u => {
                 newJSON['currentSelections'].push([encodeURIComponent(u)]);
             });
-            console.log('newJSON', newJSON);
+            // console.log('newJSON', newJSON); // Debug-Check
             self.expSearch.getLogicalView(newJSON)
                 .then(res => {
                     // console.log(res['viewStructure']);
@@ -369,12 +386,15 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                 });
             setTimeout(() => {
                 d3.selectAll('svg > *').remove();
+                self.mergedNodeName = nodeInfo.parent.data.name + '/' + nodeInfo.data.name;
                 self.ngAfterViewInit();
-                console.log(nodeInfo.parent.data.name + '/' + nodeInfo.data.name);
+                // console.log(nodeInfo.parent.data.name + '/' + nodeInfo.data.name);
             }, 1000);
             self.rerenderAlert = true;
         }
-
+        /*
+        Recursion function to make SPARQL Paths for the JSON to be sent to the backend
+         */
         function pathRec(ances) {
             if (ances.length !== 1) {
                 let immediateParent = ances.pop();
@@ -388,12 +408,16 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
         }
     }
 
-    handleFilterSelectionUpdated(ev: any) {
-        console.log(ev);
+    /**
+     * Event from the `semantic-filter.component` child
+     * @param ev
+     */
+    handleFilterSelectionUpdated(ev: any): void {
+        // console.log(ev); // DEBUG-Check
         for (let eachFilterObtained of ev.filter) {
             let targetProperty = encodeURIComponent(eachFilterObtained.property);
             let indexForInsertion = this.tableJSON['parametersURL'].findIndex(ind => ind === targetProperty);
-            console.log('index', indexForInsertion);
+            // console.log('index', indexForInsertion);
             if (indexForInsertion > -1) {
                 this.tableJSON['filters'].splice(indexForInsertion, 0, {
                     'property': encodeURIComponent(eachFilterObtained['property']),
@@ -404,7 +428,10 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
         }
     }
 
-    genTable() {
+    /**
+     * Send the JSON Structure to be processed by SPARQL and obtain results
+     */
+    genTable(): void {
         this.expSearch.getTableValues(this.tableJSON)
             .then(res => {
                 this.tableResult = res;
@@ -414,22 +441,27 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
             });
     }
 
-    getSparqlOptionalSelect(indexUUID) {
-        console.log(indexUUID);
+    /**
+     * Get More information about the results obtained from SPARQL.
+     * @param indexUUID Index number of the row in which the 'More' button was pressed
+     */
+    getSparqlOptionalSelect(indexUUID): void {
+        // console.log(indexUUID); // DEBUG-Check
         let optSPARQLQuery = {uuid: encodeURIComponent(this.tableResult.uuids[indexUUID].trim()), 'language': this.lang};
-        console.log(optSPARQLQuery);
+        // console.log(optSPARQLQuery); // DEBUG-Check
         this.expSearch.getOptionalSelect(optSPARQLQuery)
             .then(res => {
                 this.sparqlSelectedOption = res;
                 if (this.sparqlSelectedOption['columns'].findIndex(i => i === 'id') >= 0 &&
                     this.sparqlSelectedOption['columns'].findIndex(j => j === 'catalogueId') >= 0) {
+                    // Check for ID and Catalogue ID. Enable Negotiation Button only if these two exist
                     console.log('Negotiation can exist');
                     this.negotiationEnable = true;
                     let index_id = this.sparqlSelectedOption['columns'].findIndex(i => i === 'id');
                     let index_catalogue = this.sparqlSelectedOption['columns'].findIndex(i => i === 'catalogueId');
                     this._negotiation_id = this.sparqlSelectedOption['rows'][0][index_id];
                     this._negotiation_catalogue_id = this.sparqlSelectedOption['rows'][0][index_catalogue];
-                    console.log(this._negotiation_catalogue_id, this._negotiation_id);
+                    // console.log(this._negotiation_catalogue_id, this._negotiation_id); // DEBUG-Check
                 } else {
                     this.negotiationEnable = false;
                 }
@@ -437,28 +469,39 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
         this.hiddenElement = true;
     }
 
+    /**
+     * Routing within the platform to Negotiation process
+     */
     negotiation(): void {
         this.router.navigate(['/simple-search/details'],
             { queryParams: {catalogueId: this._negotiation_catalogue_id, id: this._negotiation_id} });
     }
 
+    /**
+     * Recursion Method to flatten the incoming JSON Response from the Server
+     * @param jsonVal: usually the configuration from the parent component
+     * @returns {any} returns complete node for the rendering
+     */
     parse_node(jsonVal: any): any {
+        // create new leaf for the diagram
         let node = new Leaf();
+        // extraction of all essential information
         node.name = jsonVal.concept.translatedURL;
         node.url = jsonVal.concept.url;
         node.conceptSource = jsonVal.concept.conceptSource;
         node.objectPropertySource = jsonVal.objectPropertySource;
+        node.color = (jsonVal.objectPropertySource) ? 'red' : 'green';
 
-
-        // adding dataproperties
+        // adding datatype properties
         for (let datProp of jsonVal['dataproperties']) {
-            node.children.push({name: datProp['translatedURL'], url: datProp['url'],
+            node.children.push({
+                name: datProp['translatedURL'], url: datProp['url'],
                 color: 'green', conceptSource: datProp['conceptSource'], propertySource: datProp['propertySource'],
                 objectPropertySource: '',
                 children: []});
         }
 
-        // adding objectproperties
+        // adding object properties
         for (let objKey in jsonVal['objectproperties']) {
             if (jsonVal['objectproperties'].hasOwnProperty(objKey)) {
                 // recursion..
@@ -467,11 +510,15 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                 );
             }
         }
-        return {name: node.name,
+
+        // return the node configuration
+        return {
+            name: node.name,
             url: node.url, color: node.color,
             conceptSource: node.conceptSource,
             propertySource: node.propertySource,
             objectPropertySource: node.objectPropertySource,
-            children: node.children};
+            children: node.children
+        };
     }
 }

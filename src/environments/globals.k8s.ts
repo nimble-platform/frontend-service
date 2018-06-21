@@ -58,7 +58,7 @@ export const data_channel_endpoint=`${base_path}/data-channel`;
 export const languageEndPoint = `${ub_base}/getSupportedLanguages`;
 export const endpoint = `${ub_base}/detectMeaningLanguageSpecific`;
 export const logicalViewEndpoint = `${ub_base}/getLogicalView`;
-export const propertyEndPoint = `/getPropertyValuesDiscretised`;
+export const propertyEndPoint = `${ub_base}/getPropertyValuesDiscretised`;
 export const sparqlEndPoint = `${ub_base}/executeSPARQLSelect`;
 export const sparqlOptionalSelectEndPoint = `${ub_base}/executeSPARQLOptionalSelect`;
 export const spqButton = `${ub_base}/getSQPFromOrangeGroup`;
@@ -71,7 +71,7 @@ export const sqpOrangeConcept = `${ub_base}/getPropertyValuesFromOrangeGroup`;
 // TnT Endpoints
 
 export const tntEndpoint = `${bpe_endpoint}/t-t/epc-details`;
-export const tntAnalysisEndpoint = 'https://falcon-dev2.ikap.biba.uni-bremen.de:8118/simpleTrackingAnalysis/';
+export const tntAnalysisEndpoint = `${base_path}/tnt/simpleTrackingAnalysis`;
 
 
 // Catalogue format variables
