@@ -42,7 +42,7 @@ export class ValueInputComponent implements OnInit {
 
     // Set if the input is a file
     @Output() onSelectFile: EventEmitter<File> = new EventEmitter();
-    private file: File;
+    file: File;
     
     constructor(private unitService: UnitService) {
 
@@ -50,7 +50,9 @@ export class ValueInputComponent implements OnInit {
 
     ngOnInit() {
         this.placeholder = this.type === "file" ? "Choose a file..." : "Enter a value...";
-        this.valueClass = this.label ? "col-9" : "col-12";
+        if(!this.valueClass) {
+            this.valueClass = this.label ? "col-9" : "col-12";
+        }
 
         if(this.quantityType) {
             this.quantityUnits = ["Loading..."];

@@ -1,26 +1,19 @@
 import {Component, Input} from "@angular/core";
 import {BPDataService} from "../bp-data-service";
 import {BPEService} from "../../bpe.service";
-import {CatalogueService} from "../../../catalogue/catalogue.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {PpapResponse} from "../../../catalogue/model/publish/ppap-response";
 import {Ppap} from "../../../catalogue/model/publish/ppap";
 import {DocumentReference} from "../../../catalogue/model/publish/document-reference";
 import {ActivityVariableParser} from "../activity-variable-parser";
+import { Location } from "@angular/common";
 
 @Component({
-    selector: 'ppap-document-download',
-    templateUrl: './ppap-document-download.component.html'
+    selector: "ppap-document-download",
+    templateUrl: "./ppap-document-download.component.html",
+    styleUrls: ["./ppap-document-download.component.css"]
 })
-
 export class PpapDocumentDownloadComponent{
-
-    constructor(public bpDataService: BPDataService,
-                public bpeService: BPEService,
-                public catalogueService:CatalogueService,
-                public route: ActivatedRoute,
-                private router:Router) {
-    }
 
     processid : any;
 
@@ -32,6 +25,28 @@ export class PpapDocumentDownloadComponent{
     keys = [];
 
     requestedDocuments = [];
+
+    constructor(private bpDataService: BPDataService,
+                private bpeService: BPEService,
+                private route: ActivatedRoute,
+                private location: Location) {
+    }
+
+    isBuyer(): boolean {
+        return this.bpDataService.userRole === "buyer";
+    }
+
+    onBack() {
+        this.location.back();
+    }
+
+    onNextStep() {
+        this.bpDataService.resetBpData();
+        this.bpDataService.initRfq().then(() => {
+            this.bpDataService.setBpOptionParameters(this.bpDataService.userRole, "Negotiation", "Ppap");
+        })
+    }
+
     ngOnInit() {
         this.route.queryParams.subscribe(params =>{
             this.processid = params['pid'];

@@ -56,12 +56,12 @@
 
             <!-- File -->
             <div *ngSwitchCase="'file'" class="custom-file">
-                    <input type="file" class="custom-file-input" 
-                        (change)="onChooseFile($event)" [disabled]="disabled">
-                    <label class="custom-file-label" [ngClass]="getFileClasses()">
-                        {{ getFileName() }}
-                    </label>
-                </div>
+                <input type="file" class="custom-file-input" 
+                    (change)="onChooseFile($event)" [disabled]="disabled">
+                <label class="custom-file-label" [ngClass]="getFileClasses()">
+                    {{ getFileName() }}
+                </label>
+            </div>
         </ng-container>
     </div>
 

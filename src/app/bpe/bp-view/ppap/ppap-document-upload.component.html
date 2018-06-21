@@ -8,6 +8,16 @@
             <table class="table table-striped table-bordered">
                 <tr><th>Document</th><th i18n>Upload</th><th *ngIf="binaryObjects.length != 0">Files</th></tr>
                 <tr *ngFor="let document of documents" >
+                    <!-- <td>
+                        {{ document }}
+                    </td>
+                    <td class="custom-file">
+                        <input type="file" class="custom-file-input" multiple accept="file/*"
+                            (change)="fileChange($event,document)" [disabled]="isLoading() || isRequestSent()">
+                        <label class="custom-file-label" [ngClass]="{ 'no-file': isSent(document), disabled: isLoading() || isRequestSent() }">
+                            {{ isSent(document) ? document : "Choose a file..." }}
+                        </label>
+                    </td> -->
                     <td *ngIf="!isSent(document)">{{document}}</td>
                     <td *ngIf="isSent(document)" style="background-color: green;">{{document}}</td>
                     <td><div (click)="file.click()"
@@ -34,38 +44,20 @@
 </div>
 
 <hr>
-<!-- Request Note -->
-<div class="row form-group space-after">
-    <div class="col-2">
-        <label for="noteTextarea"><strong>Note:</strong></label>
-    </div>
-    <div class="col-10">
-        <textarea id="noteTextarea" class="form-control" rows="3" [(ngModel)]="ppap.note" [disabled]="isLoading() || isRequestSent()"></textarea>
-    </div>
-</div>
 
-<!-- Response Note -->
-<div class="row form-group space-after">
-    <div class="col-2">
-        <label for="noteTextarea"><strong>Note:</strong></label>
-    </div>
-    <div class="col-10">
-        <textarea id="noteTextarea" class="form-control" rows="3" [(ngModel)]="ppap.note" [disabled]="isLoading() || isRequestSent()"></textarea>
-    </div>
-</div>
+<!-- Request note -->
+<value-input class="form-group space-after" type="text" [(text)]="note" label="Request Note" labelClass="col-2" 
+    valueClass="col-10" disabled="true">
+</value-input>
 
-<value-view class="row"
-            [presentationMode]="'view'"
-            [propName]="'Note From Buyer'"
-            [(value)]="note"
-            >
-</value-view>
 <hr>
-<value-view class="row"
-            [presentationMode]="'edit'"
-            [propName]="'Note'"
-            [(value)]="noteToSend">
-</value-view>
+
+<!-- Response note -->
+<value-input class="form-group space-after" type="text" [(text)]="noteToSend" label="Response Note" labelClass="col-2" 
+    valueClass="col-10" [disabled]="isLoading() || isRequestSent()">
+</value-input>
+
+<hr>
 
 <!-- Action buttons -->
 <div *ngIf="!isSent()" class="row actions-row">

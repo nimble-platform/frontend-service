@@ -55,14 +55,9 @@
 <hr>
 
 <!-- Note -->
-<div class="row form-group space-after">
-    <div class="col-2">
-        <label for="noteTextarea"><strong>Note:</strong></label>
-    </div>
-    <div class="col-10">
-        <textarea id="noteTextarea" class="form-control" rows="3" [(ngModel)]="ppap.note" [disabled]="isLoading() || isRequestSent()"></textarea>
-    </div>
-</div>
+<value-input class="form-group space-after" type="text" [(text)]="ppap.note" label="Note" labelClass="col-2" 
+    valueClass="col-10" [disabled]="isLoading() || isRequestSent()">
+</value-input>
 
 <hr>
 

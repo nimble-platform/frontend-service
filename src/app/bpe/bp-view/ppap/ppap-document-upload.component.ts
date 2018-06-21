@@ -82,9 +82,9 @@ export class PpapDocumentUploadComponent {
         this.location.back();
     }
 
-    isSent(document): boolean {
-        for(var i=0;i<this.binaryObjects.length;i++){
-            if(document == this.binaryObjects[i].documentName){
+    isSent(document: string): boolean {
+        for(var i = 0; i < this.binaryObjects.length; i++){
+            if (document === this.binaryObjects[i].documentName){
                 return true;
             }
         }
@@ -93,6 +93,10 @@ export class PpapDocumentUploadComponent {
 
     isLoading(): boolean {
         return this.callStatus.fb_submitted;
+    }
+
+    isRequestSent(): boolean {
+        return false; // TODO
     }
 
     remove(documentName, document): void {

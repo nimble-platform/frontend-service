@@ -8,7 +8,7 @@
 
                     <td class="d-flex">{{document}}
 
-                        <button *ngIf="keys.indexOf(document) != -1" class="btn btn-success ml-auto"
+                        <button *ngIf="keys.indexOf(document) != -1" class="btn btn-primary ml-auto"
                                 (click)="downloadFile(document)">Download
                         </button>
                         <label *ngIf="keys.indexOf(document) == -1" class="ml-auto">No File Sent</label>
@@ -20,14 +20,37 @@
 </div>
 
 <hr>
-<value-view class="row"
-            [presentationMode]="'view'"
-            [propName]="'Note From Buyer'"
-            [(value)]="noteBuyer">
-</value-view>
-<value-view class="row"
-            [presentationMode]="'view'"
-            [propName]="'Note From Seller'"
-            [(value)]="note">
-</value-view>
 
+<!-- Request note -->
+<value-input class="form-group space-after" type="text" [(text)]="noteBuyer" label="Request Note" labelClass="col-2" 
+    valueClass="col-10" disabled="true">
+</value-input>
+
+<hr>
+
+<!-- Response note -->
+<value-input class="form-group space-after" type="text" [(text)]="note" label="Response Note" labelClass="col-2" 
+    valueClass="col-10" disabled>
+</value-input>
+
+<hr>
+
+<!-- Action buttons -->
+<div *ngIf="isBuyer()" class="row actions-row">
+    <div class="col-8"></div>
+    <div class="col-2">
+        <button class="btn btn-secondary action" (click)="onBack()">Back</button>
+    </div>
+    <div class="col-2">
+        <button class="btn btn-primary action" (click)="onNextStep()">
+            Next Step
+        </button>
+    </div>
+</div>
+
+<div *ngIf="!isBuyer()" class="row actions-row">
+    <div class="col-10"></div>
+    <div class="col-2">
+        <button class="btn btn-secondary action" (click)="onBack()">Back</button>
+    </div>
+</div>
