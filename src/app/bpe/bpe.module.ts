@@ -31,11 +31,11 @@ import { PpapDocumentUploadComponent} from "./bp-view/ppap/ppap-document-upload.
 import { PpapDocumentDownloadComponent} from "./bp-view/ppap/ppap-document-download.component";
 
 import { BusinessProcessOptions} from './bp-view/business-process-options';
-import {ContractComponent} from "./bp-view/contract/contract.component";
-import {ClauseComponent} from "./bp-view/contract/clause.component";
-import {DataMonitoringClauseComponent} from "./bp-view/contract/data-monitoring-clause.component";
-import {DocumentClauseComponent} from "./bp-view/contract/document-clause.component";
-import {PpapClauseComponent} from "./bp-view/contract/ppap-clause.component";
+import { ContractComponent } from "./bp-view/contract/contract.component";
+import { ClauseComponent } from "./bp-view/contract/clause.component";
+import { DataMonitoringClauseComponent } from "./bp-view/contract/data-monitoring-clause.component";
+import { DocumentClauseComponent } from "./bp-view/contract/document-clause.component";
+import { PpapClauseComponent } from "./bp-view/contract/ppap-clause.component";
 import { ProductBpStepsComponent } from './bp-view/product-bp-steps.component';
 import { NegotiationRequestComponent } from './bp-view/negotiation/negotiation-request.component';
 import { NegotiationRequestInputComponent } from './bp-view/negotiation/negotiation-request-input.component';
@@ -45,10 +45,7 @@ import { NegotiationResponseInputComponent } from './bp-view/negotiation/negotia
 import { ItemInformationRequestComponent } from './bp-view/item-information/item-information-request.component';
 import { ItemInformationResponseComponent } from './bp-view/item-information/item-information-response.component';
 import { ItemInformationComponent } from './bp-view/item-information/item-information.component';
-import { FileInputComponent } from './bp-view/item-information/file-input.component';
-//import { BPEService } from './bpe.service';
-//import { BPService } from './bp.service';
-//import { BPDataService } from "./bp-view/bp-data-service";
+
 
 @NgModule({
 	imports: [
@@ -76,7 +73,6 @@ import { FileInputComponent } from './bp-view/item-information/file-input.compon
 		ItemInformationRequestComponent,
 		ItemInformationResponseComponent,
 		ItemInformationComponent,
-		FileInputComponent,
 		NegotiationComponent,
 		NegotiationRequestComponent,
 		NegotiationRequestInputComponent,

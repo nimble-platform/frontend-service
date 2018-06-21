@@ -1,0 +1,30 @@
+.col-quantity-value {
+    padding-right: 0.1rem;
+}
+.col-quantity-unit {
+    padding-left: 0.1rem;
+    display: flex;
+    align-items: center;
+}
+
+.custom-file-label.no-file {
+    color: #bdbdbd;
+}
+
+.custom-file-label.disabled {
+    color: #495057;
+    background-color: #e9ecef;
+}
+
+.custom-file-label.disabled.no-file {
+    color: #9aa0a5;
+}
+
+.custom-file-label.disabled::after {
+    color: #495057;
+    background-color: #e9ecef;
+}
+
+textarea {
+    resize: none;
+}

@@ -44,7 +44,7 @@ export class ExplorativeSearchFilterComponent implements OnChanges {
      * a new filter configuration to the child
      */
     ngOnChanges(): void {
-        console.log('FilterConfig ', this.filterProperties['filterJSON']); // DEBUG Check
+        // console.log('FilterConfig ', this.filterProperties['filterJSON']); // DEBUG Check
         this.result = [];
         this.finalSelectionJSON = {'root': this.filterProperties['fQueryRootUrl'], 'filter': []};
         if (this.filterProperties['filterJSON'] === {}) {

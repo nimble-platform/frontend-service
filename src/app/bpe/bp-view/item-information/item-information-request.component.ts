@@ -54,7 +54,7 @@ export class ItemInformationRequestComponent implements OnInit {
     onSkip(): void {
         this.bpDataService.resetBpData();
         this.bpDataService.initPpap([]);
-        this.bpDataService.setBpOptionParameters(this.bpDataService.userRole, 'Ppap',null);
+        this.bpDataService.setBpOptionParameters(this.bpDataService.userRole, "Ppap", "Item_Information_Request");
     }
 
     onSendRequest(): void {

@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { CallStatusComponent } from "./call-status.component";
+import { ValueInputComponent } from './value-input.component';
 
 @NgModule({
 	imports: [
@@ -15,10 +16,12 @@ import { CallStatusComponent } from "./call-status.component";
 		NgbModule.forRoot()
 	],
 	declarations: [
-		CallStatusComponent
+		CallStatusComponent,
+		ValueInputComponent
 	],
 	exports: [
-		CallStatusComponent
+		CallStatusComponent,
+		ValueInputComponent
 	],
 	providers: [
 	]

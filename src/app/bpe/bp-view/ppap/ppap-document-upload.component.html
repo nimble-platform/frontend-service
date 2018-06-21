@@ -1,7 +1,6 @@
+
 <div class="row space-before">
     <div class="col-12">
-        <h4 class="space-after" i18n>Ppap Request</h4>
-        <hr>
         <div *ngIf="documents.length == 0">
             <h3>No File Requested</h3>
         </div>
@@ -33,11 +32,33 @@
         </div>
     </div>
 </div>
+
 <hr>
+<!-- Request Note -->
+<div class="row form-group space-after">
+    <div class="col-2">
+        <label for="noteTextarea"><strong>Note:</strong></label>
+    </div>
+    <div class="col-10">
+        <textarea id="noteTextarea" class="form-control" rows="3" [(ngModel)]="ppap.note" [disabled]="isLoading() || isRequestSent()"></textarea>
+    </div>
+</div>
+
+<!-- Response Note -->
+<div class="row form-group space-after">
+    <div class="col-2">
+        <label for="noteTextarea"><strong>Note:</strong></label>
+    </div>
+    <div class="col-10">
+        <textarea id="noteTextarea" class="form-control" rows="3" [(ngModel)]="ppap.note" [disabled]="isLoading() || isRequestSent()"></textarea>
+    </div>
+</div>
+
 <value-view class="row"
             [presentationMode]="'view'"
             [propName]="'Note From Buyer'"
-            [(value)]="note">
+            [(value)]="note"
+            >
 </value-view>
 <hr>
 <value-view class="row"
@@ -46,10 +67,28 @@
             [(value)]="noteToSend">
 </value-view>
 
-<div class="row justify-content-end">
-    <button class="btn btn-success col-4" (click)="responseToPpapRequest(true)" [disabled]="submitted">Send Response</button>
+<!-- Action buttons -->
+<div *ngIf="!isSent()" class="row actions-row">
+    <div class="col-4"></div>
+    <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+    <div class="col-2">
+        <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">Back</button>
+    </div>
+    <div class="col-2">
+        <button class="btn btn-primary action" [disabled]="isLoading()" (click)="responseToPpapRequest(true)">
+            Send Request
+        </button>
+    </div>
 </div>
 
-<call-status [callStatus]="callStatus"
-             [large]="true">
-</call-status>
+<div *ngIf="isSent()" class="row actions-row">
+    <div class="col-8"></div>
+    <div class="col-2">
+        <button class="btn btn-secondary action" (click)="onBack()">Back</button>
+    </div>
+    <div class="col-2">
+        <button class="btn btn-primary action" disabled>
+            Request Sent
+        </button>
+    </div>
+</div>

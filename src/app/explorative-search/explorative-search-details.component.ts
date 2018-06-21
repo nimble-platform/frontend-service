@@ -231,7 +231,8 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
 
     obtainProperties(nodeInfo: any) {
         const self = this;
-        let _jsonForFilter = {'concept': '', 'property': '', 'amountOfGroups': 3, 'language': this.lang};
+        let _jsonForFilter = {'concept': '', 'property': '', 'amountOfGroups': 3, 'language': this.lang,
+        'propertySource': ''};
         let jsonFilterForEachChild = {'fName': '', 'fQuery': '', 'fQueryRoot': '', 'fQueryRootUrl': ''};
         let pathForSparqlJson = {'urlOfProperty': '', path: []};
         // console.log(nodeInfo); // DEBUG-Check
@@ -240,6 +241,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
             console.log('dataproperty directly connected to the root');
             _jsonForFilter.concept = encodeURIComponent(nodeInfo.parent.data.url);
             _jsonForFilter.property = encodeURIComponent(nodeInfo.data.url);
+            _jsonForFilter.propertySource = nodeInfo.data.propertySource;
             jsonFilterForEachChild['fName'] = nodeInfo.data.name;
             jsonFilterForEachChild['fQuery'] = nodeInfo.data.url;
             jsonFilterForEachChild['fQueryRoot'] = nodeInfo.parent.data.name;
@@ -247,7 +249,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
             // console.log(_jsonForFilter);
             this.expSearch.getPropertyValues(_jsonForFilter)
                 .then(res => {
-                    console.log(res, typeof(res));
+                    // console.log(res, typeof(res));
                     if (Object.keys(res).length !== 0) {
                         this.filterJSON = res;
                         jsonFilterForEachChild['filterJSON'] = this.filterJSON;
@@ -279,9 +281,10 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                         urlOfProperty: encodeURIComponent(nodeInfo.parent.data.objectPropertySource)
                     });
                 this._backUpPaths['urlOfProperty'] = encodeURIComponent(nodeInfo.data.url);
-                console.log(this._backUpPaths);
+                // console.log(this._backUpPaths);
                 _jsonForFilter.concept = encodeURIComponent(nodeInfo.parent.data.url);
                 _jsonForFilter.property = encodeURIComponent(nodeInfo.data.url);
+                _jsonForFilter.propertySource = nodeInfo.data.propertySource;
                 jsonFilterForEachChild['fName'] = nodeInfo.data.name;
                 jsonFilterForEachChild['fQuery'] = nodeInfo.data.url;
                 jsonFilterForEachChild['fQueryRoot'] = nodeInfo.parent.data.name;
@@ -313,6 +316,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                 // console.log(pathForSparqlJson); //DEBUG-Check
                 _jsonForFilter.concept = encodeURIComponent(nodeInfo.parent.data.url);
                 _jsonForFilter.property = encodeURIComponent(nodeInfo.data.url);
+                _jsonForFilter.propertySource = nodeInfo.data.propertySource;
                 jsonFilterForEachChild['fName'] = nodeInfo.data.name;
                 jsonFilterForEachChild['fQuery'] = nodeInfo.data.url;
                 jsonFilterForEachChild['fQueryRoot'] = nodeInfo.parent.data.name;
@@ -413,7 +417,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
         for (let eachFilterObtained of ev.filter) {
             let targetProperty = encodeURIComponent(eachFilterObtained.property);
             let indexForInsertion = this.tableJSON['parametersURL'].findIndex(ind => ind === targetProperty);
-            console.log('index', indexForInsertion);
+            // console.log('index', indexForInsertion);
             if (indexForInsertion > -1) {
                 this.tableJSON['filters'].splice(indexForInsertion, 0, {
                     'property': encodeURIComponent(eachFilterObtained['property']),

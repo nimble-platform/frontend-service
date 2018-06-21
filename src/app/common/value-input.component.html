@@ -1,0 +1,91 @@
+<div class="row">
+    <div *ngIf="label" [class]="labelClass">
+        <label>
+            <strong>
+                {{ label }}
+                <span *ngIf="definition" class="label label-default" title="{{definition}}">
+                    &#9432;
+                </span>:
+        </strong>
+        </label>
+    </div>
+    <div [class]="valueClass" *ngIf="presentationMode === 'edit' && visible">
+        <ng-container [ngSwitch]="type">
+
+            <!-- Text -->
+            <textarea *ngSwitchCase="'text'" class="form-control" rows="3" [(ngModel)]="text" [disabled]="disabled">
+            </textarea>
+
+            <!-- Options -->
+            <select *ngSwitchCase="'options'" class="form-control form-control-sm" [(ngModel)]="selected" [disabled]="disabled">
+                <option *ngFor="let option of options" [value]="option">{{option}}</option>
+            </select>
+
+            <!-- Quantity -->
+            <div *ngSwitchCase="'quantity'" class="row">
+                <div class="col-7 col-quantity-value">
+                    <input type="number" class="form-control form-control-sm" [(ngModel)]="quantity.value" [disabled]="disabled">
+                </div>
+                <div *ngIf="!quantityUnits" class="col-5 col-quantity-unit">
+                    <input type="text" class="form-control form-control-sm" [(ngModel)]="quantity.unitCode" [disabled]="disabled || disableQuantityUnit">
+                </div>
+                <div *ngIf="quantityUnits" class="col-5 col-quantity-unit">
+                    <select class="form-control form-control-sm" [(ngModel)]="quantity.unitCode" [disabled]="disabled || disableQuantityUnit">
+                        <option *ngFor="let option of quantityUnits" [value]="option">{{option}}</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Amount -->
+            <ng-container *ngSwitchCase="'amount'">
+                <!-- No unit -->
+                <div *ngIf="!amountUnit">
+                    <input type="number" class="form-control form-control-sm" [(ngModel)]="amount" [disabled]="disabled">
+                </div>
+
+                <!-- With unit -->
+                <div *ngIf="amountUnit" class="row">
+                    <div class="col-10 col-quantity-value">
+                        <input type="number" class="form-control form-control-sm" [(ngModel)]="amount" [disabled]="disabled">
+                    </div>
+                    <div class="col-2 col-quantity-unit">
+                        {{ amountUnit }}
+                    </div>
+                </div>
+            </ng-container>
+
+            <!-- File -->
+            <div *ngSwitchCase="'file'" class="custom-file">
+                    <input type="file" class="custom-file-input" 
+                        (change)="onChooseFile($event)" [disabled]="disabled">
+                    <label class="custom-file-label" [ngClass]="getFileClasses()">
+                        {{ getFileName() }}
+                    </label>
+                </div>
+        </ng-container>
+    </div>
+
+    <div [class]="valueClass" *ngIf="presentationMode === 'view' && visible">
+        <ng-container [ngSwitch]="type">
+
+            <!-- Text -->
+            <p *ngSwitchCase="'text'">{{ text }}</p>
+
+            <!-- Options -->
+            <span *ngSwitchCase="'options'">{{ selected }}</span>
+
+            <!-- Quantity -->
+            <span *ngSwitchCase="'quantity'">{{ quantity.value }} {{ quantity.unitCode }}</span>
+
+            <!-- Amount -->
+            <span *ngSwitchCase="'amount'">
+                {{ amount }}<span *ngIf="amountUnit">{{ amountUnit }}</span>
+            </span>
+
+            <!-- File -->
+            <span *ngSwitchCase="'file'">
+                {{ file ? file.name : "" }}
+            </span>
+        </ng-container>
+    </div>
+</div>
