@@ -1,7 +1,9 @@
+
+<hr>
+
 <!-- Title and help text -->
 <div class="row">
     <div class="col-12">
-        <h3>Choose which elements of PPAP you want</h3>
         <h6 class="space-after">
             <b class="clickable" (click)="showDetails = !showDetails">What is Production Part Approval Process (PPAP)? </b>
         </h6>
@@ -19,12 +21,14 @@
     </div>
 </div>
 
+<hr>
+
 <!-- Ppap level select -->
 <div class="row form-group space-after">
-    <div class="col-3">
+    <div class="col-2">
         <label for="ppapLevelSelect"><strong>Select a PPAP level:</strong></label>
     </div>
-    <div class="col-9">
+    <div class="col-10">
         <select [(ngModel)]="level" id="ppapLevelSelect" class="custom-select" (change)="computeSelectedDocuments()" [disabled]="isLoading() || isRequestSent()">
             <option [ngValue]='0'>Level 1 - Part Submission Warrant (PSW) only submitted to the customer.</option>
             <option [ngValue]='1'>Level 2 – PSW with product samples and limited supporting data.</option>
@@ -48,17 +52,20 @@
     </div>
 </div>
 
+<hr>
+
 <!-- Note -->
-<!-- Ppap level select -->
 <div class="row form-group space-after">
-    <div class="col-3">
+    <div class="col-2">
         <label for="noteTextarea"><strong>Note:</strong></label>
     </div>
-    <div class="col-9">
-        <textarea id="noteTextarea" class="form-control" rows="3" [(ngModel)]="ppap.note"></textarea>
+    <div class="col-10">
+        <textarea id="noteTextarea" class="form-control" rows="3" [(ngModel)]="ppap.note" [disabled]="isLoading() || isRequestSent()"></textarea>
     </div>
 </div>
-    
+
+<hr>
+
 <!-- Action buttons -->
 <div *ngIf="!isRequestSent()" class="row actions-row">
     <div class="col-2"></div>
@@ -84,7 +91,7 @@
         <button class="btn btn-secondary action" (click)="onBack()">Back</button>
     </div>
     <div class="col-2">
-        <button class="btn btn-primary action" disabled (click)="onSendRequest()">
+        <button class="btn btn-primary action" disabled>
             Request Sent
         </button>
     </div>

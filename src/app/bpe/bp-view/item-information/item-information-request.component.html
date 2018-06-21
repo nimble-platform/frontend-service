@@ -3,9 +3,9 @@
         <strong><label for="customFile">Request filled technical data sheet:</label></strong>
     </div>
     <div class="col-9">
-        <file-input id="dataSheetFile" [disabled]="isLoading() || isRequestSent()" 
+        <value-input [disabled]="isLoading() || isRequestSent()" type="file"
             (onSelectFile)="selectItemSpecificationFile($event)">
-        </file-input>
+        </value-input>
     </div>
 </div>
 

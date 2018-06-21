@@ -91,7 +91,11 @@ export class PpapDocumentUploadComponent {
         return false;
     }
 
-    remove(documentName,document): void {
+    isLoading(): boolean {
+        return this.callStatus.fb_submitted;
+    }
+
+    remove(documentName, document): void {
         for(var i=0;i<this.binaryObjects.length;i++){
             if(documentName == this.binaryObjects[i].documentName){
                 for(var j=0;j<this.binaryObjects[i].documents.length;j++){
@@ -129,8 +133,6 @@ export class PpapDocumentUploadComponent {
         this.ppapResponse.note = this.noteToSend;
         let vars: ProcessVariables = ModelUtils.createProcessVariables("Ppap", this.ppap.buyerCustomerParty.party.id, this.ppap.sellerSupplierParty.party.id, this.ppapResponse, this.bpDataService);
         let piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.bpDataService.processMetadata.processId);
-
-
 
         this.callStatus.submit();
         this.bpeService.continueBusinessProcess(piim).then(
