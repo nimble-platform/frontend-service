@@ -33,7 +33,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div *ngIf="item.productImage.length > 1" class="d-flex justify-content-center">
+                            <div *ngIf="item.productImage.length > 1 && item.productImage.length <=2" class="d-flex justify-content-center">
                                 <div id="carousel-smaller" class="carousel slide carousel-inactive-resize inline">
                                     <div class="inline border" [ngClass]="{'border-primary': selectedImage === 0}">
                                         <img class="carousel-inactive"
