@@ -13,8 +13,6 @@ import { BPConfigureComponent } from './bp-configure.component';
 import { BPsComponent } from './bps.component';
 import { BPDetailComponent } from './bp-detail.component';
 import { ProductBpOptionsComponent } from "./bp-view/product-bp-options.component";
-import { OrderResponseComponent } from "./bp-view/order/order-response.component";
-import { OrderBpComponent } from "./bp-view/order/order-bp.component";
 import { OrderComponent } from "./bp-view/order/order.component";
 import { FulfilmentComponent } from "./bp-view/fulfilment/fulfilment.component";
 import { DespatchAdviceComponent } from "./bp-view/fulfilment/despatch-advice.component";
@@ -64,8 +62,6 @@ import { ItemInformationComponent } from './bp-view/item-information/item-inform
 		BPDetailComponent,
 		ProductBpOptionsComponent,
 		ProductBpStepsComponent,
-		OrderResponseComponent,
-		OrderBpComponent,
 		OrderComponent,
 		FulfilmentComponent,
 		DespatchAdviceComponent,
@@ -76,7 +72,6 @@ import { ItemInformationComponent } from './bp-view/item-information/item-inform
 		NegotiationComponent,
 		NegotiationRequestComponent,
 		NegotiationRequestInputComponent,
-		NegotiationResponseInputComponent,
 		NegotiationResponseComponent,
 		TransportExecutionPlanBpComponent,
 		TransportExecutionPlanRequestComponent,
@@ -99,8 +94,6 @@ import { ItemInformationComponent } from './bp-view/item-information/item-inform
 		BPsComponent,
 		BPDetailComponent,
 		ProductBpOptionsComponent,
-		OrderResponseComponent,
-		OrderBpComponent,
 		OrderComponent,
 		FulfilmentComponent,
 		DespatchAdviceComponent,

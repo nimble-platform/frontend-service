@@ -18,6 +18,7 @@ import { ModelUtils } from "../../model/model-utils";
 import { ProcessInstanceInputMessage } from "../../model/process-instance-input-message";
 import { NegotiationModelWrapper } from "./negotiation-model-wrapper";
 import { NegotiationOptions } from "../../../catalogue/model/publish/negotiation-options";
+import { ActionsRowSlot } from "../../../common/action-row-slot";
 
 @Component({
     selector: "negotiation-request",
@@ -169,6 +170,46 @@ export class NegotiationRequestComponent implements OnInit {
     isWaitingForReply(): boolean {
         return this.bpDataService.processMetadata && this.bpDataService.processMetadata.processStatus === "Started";
     }
+
+    // getActionsSlots(): ActionsRowSlot[] {
+    //     if(this.isWaitingForReply()) {
+    //         return [
+    //             {
+    //                 type: "text",
+    //                 slotClass: "col-7",
+    //                 text: ""
+    //             },
+    //             {
+    //                 type: "text",
+    //                 slotClass: "col-3",
+    //                 text: `Total Price: ${this.totalPrice} ${this.wrapper.rfqPriceAmount.currencyID}`
+    //             },
+    //             {
+    //                 type: "back",
+    //                 slotClass: "col-2"
+    //             }
+    //         ]
+    //     }
+    //     return [
+    //         {
+    //             type: "callStatus",
+    //             slotClass: "col-4"
+    //         },
+    //         {
+    //             type: "text",
+    //             slotClass: "col-3",
+    //             text: `Total Price: ${this.totalPrice} ${this.wrapper.rfqPriceAmount.currencyID}`
+    //         },
+    //         {
+    //             type: "back",
+    //             slotClass: "col-2"
+    //         },
+    //         {
+    //             type: "button",
+
+    //         }
+    //     ]
+    // }
 
     /*
      * Internal methods
