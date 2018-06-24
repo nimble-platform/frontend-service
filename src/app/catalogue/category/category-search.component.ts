@@ -12,10 +12,12 @@ import {PublishService} from "../publish-and-aip.service";
 import {ProductPublishComponent} from "../product-publish.component";
 import {UBLModelUtils} from "../model/ubl-model-utils";
 import {CallStatus} from '../../common/call-status';
+import {toUIString} from '../../common/utils';
 
 @Component({
     selector: 'category-search',
     templateUrl: './category-search.component.html',
+    styleUrls: ['./category-search.component.css']
 })
 
 export class CategorySearchComponent implements OnInit {
@@ -46,6 +48,7 @@ export class CategorySearchComponent implements OnInit {
     selectedCategory: Category = null;
     selectedCategoryWithDetails: Category = null;
     selectedCategoriesWRTLevels = [];
+    propertyNames: string[] = ["preferredName", "taxonomyId", "code", "level", "definition", "note", "remark"];
 
     showOtherProperties = null;
     callStatus: CallStatus = new CallStatus();
@@ -53,7 +56,7 @@ export class CategorySearchComponent implements OnInit {
     constructor(private router: Router,
                 private route: ActivatedRoute,
                 private cookieService: CookieService,
-                private categoryService: CategoryService,
+                public categoryService: CategoryService,
                 private catalogueService: CatalogueService,
                 private publishService:PublishService) {
     }
@@ -117,6 +120,10 @@ export class CategorySearchComponent implements OnInit {
         this.router.navigate(['/catalogue/categorysearch'], {queryParams: {pg: this.publishingGranularity, pageRef: this.pageRef, cat: this.categoryKeyword}});
     }
 
+    onTreeViewReturn(): void {
+        this.treeView = false;
+    }
+
     private getCategories(): void {
 
         this.callback = false;
@@ -135,9 +142,10 @@ export class CategorySearchComponent implements OnInit {
     }
 
     private selectCategory(category: Category): void {
-        if(this.selectedCategoryWithDetails && category && this.selectedCategoryWithDetails.id == category.id){
-            this.categoryService.addSelectedCategory(category);
-            this.navigateToPublishingPage();
+        // if no category is selected or if the selected category is already selected
+        // navigate to the publishing page directly
+        if (category == null || this.categoryService.selectedCategories.findIndex(c => c.id == category.id) > -1) {
+        //    this.navigateToPublishingPage();
             return;
         }
 
@@ -145,17 +153,21 @@ export class CategorySearchComponent implements OnInit {
         this.submitted = true;
         this.error_detc = false;
 
-        // if no category is selected or if the selected category is already selected
-        // navigate to the publishing page directly
-        if (category == null || this.categoryService.selectedCategories.findIndex(c => c.id == category.id) > -1) {
-            this.navigateToPublishingPage();
+        if(this.selectedCategoryWithDetails && category && this.selectedCategoryWithDetails.id == category.id){
+            this.categoryService.addSelectedCategory(category);
+            this.callback = true;
+            this.submitted = false;
+            //this.navigateToPublishingPage();
             return;
         }
 
         this.categoryService.getCategory(category)
             .then(category => {
                 this.categoryService.addSelectedCategory(category);
-                this.navigateToPublishingPage();
+                this.callback = true;
+                this.submitted = false;
+                return;
+                //this.navigateToPublishingPage();
             }).catch( () => {
                 this.error_detc = true;
             }
@@ -203,6 +215,9 @@ export class CategorySearchComponent implements OnInit {
     }
 
     getCategoryDetails(category){
+        this.callback = false;
+        this.submitted = true;
+        this.error_detc = false;
         this.selectedCategory = category;
         this.selectedCategoryWithDetails = null;
         this.callStatus.submit();
@@ -212,14 +227,20 @@ export class CategorySearchComponent implements OnInit {
             .then(category => {
                 this.callStatus.callback( "Retrieved details of the category",true);
                 this.selectedCategoryWithDetails = category;
+                this.callback = true;
+                this.submitted = false;
             }).catch( err => {
-            this.callStatus.error("Failed to retrieved details of the category")
+                this.callStatus.error("Failed to retrieved details of the category");
+                this.error_detc = true;
             }
         );
     }
 
-    iterateCategoryDetails(category){
-        console.log(Object.keys(category));
-        return Object.keys(category);
+    getCategoryProperty(propName): string {
+        return String(this.selectedCategoryWithDetails[propName]);
+    }
+
+    toUIString(dataType: string): string {
+        return toUIString(dataType);
     }
 }
