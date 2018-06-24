@@ -23,7 +23,7 @@ export class ReceiptAdviceComponent {
     // check 'Send Receipt Advice' button is clicked or not
     submitted:boolean = false;
     constructor(private bpeService: BPEService,
-                private bpDataService: BPDataService,
+                public bpDataService: BPDataService,
                 private router:Router) {
     }
 

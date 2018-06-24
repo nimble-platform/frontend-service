@@ -2,34 +2,44 @@
 <hr>
 
 <!-- Order summary -->
-<div class="row">
+<div class="row" *ngIf="order">
     <div class="col-4">
         <h2>Order Details</h2>
-        <value-input type="text" presentationMode="view" label="Delivery Period" text="2 weeks" labelClass="col-6" valueClass="col-6">
+        <value-input type="text" presentationMode="view" label="Delivery Period" 
+            [text]="getDeliveryPeriodText()" labelClass="col-6" valueClass="col-6">
         </value-input>
-        <value-input type="text" presentationMode="view" label="Warranty" text="none" labelClass="col-6" valueClass="col-6">
+        <value-input type="text" presentationMode="view" label="Warranty" 
+            [text]="getWarrantyPeriodText()" labelClass="col-6" valueClass="col-6">
         </value-input>
-        <value-input type="text" presentationMode="view" label="Incoterms" text="DDP" labelClass="col-6" valueClass="col-6">
+        <value-input type="text" presentationMode="view" label="Incoterms" 
+            [text]="getIncoterm()" labelClass="col-6" valueClass="col-6">
         </value-input>
     </div>
     <div class="col-4">
         <h2>Payment Details</h2>
-        <value-input type="text" presentationMode="view" label="Payment Means" text="Credit Card" labelClass="col-6" valueClass="col-6">
+        <value-input type="text" presentationMode="view" label="Payment Means" 
+            [text]="order.paymentMeans" labelClass="col-6" valueClass="col-6">
         </value-input>
-        <value-input type="text" presentationMode="view" label="Payment Terms" text="none" labelClass="col-6" valueClass="col-6">
+        <value-input type="text" presentationMode="view" label="Payment Terms" 
+            [text]="order.paymentTerms" labelClass="col-6" valueClass="col-6">
         </value-input>
     </div>
     <div class="col-4">
         <h2>Delivery Address</h2>
-        <value-input type="text" presentationMode="view" label="Street" text="Vorgartenstrasse" labelClass="col-6" valueClass="col-6">
+        <value-input type="text" presentationMode="view" label="Street" 
+            [text]="order.deliveryAddress.streetName" labelClass="col-6" valueClass="col-6">
         </value-input>
-        <value-input type="text" presentationMode="view" label="Building Number" text="87" labelClass="col-6" valueClass="col-6">
+        <value-input type="text" presentationMode="view" label="Building Number" 
+            [text]="order.deliveryAddress.buildingNumber" labelClass="col-6" valueClass="col-6">
         </value-input>
-        <value-input type="text" presentationMode="view" label="City" text="Vienna" labelClass="col-6" valueClass="col-6">
+        <value-input type="text" presentationMode="view" label="City" 
+            [text]="order.deliveryAddress.cityName" labelClass="col-6" valueClass="col-6">
         </value-input>
-        <value-input type="text" presentationMode="view" label="Postal Code" text="1200" labelClass="col-6" valueClass="col-6">
+        <value-input type="text" presentationMode="view" label="Postal Code" 
+            [text]="order.deliveryAddress.postalZone" labelClass="col-6" valueClass="col-6">
         </value-input>
-        <value-input type="text" presentationMode="view" label="Country" text="Austria" labelClass="col-6" valueClass="col-6">
+        <value-input type="text" presentationMode="view" label="Country" 
+            [text]="order.deliveryAddress.country.name" labelClass="col-6" valueClass="col-6">
         </value-input>
     </div>
 </div>
@@ -37,14 +47,23 @@
 <hr>
 
 <!-- Contract Preview -->
-<div class="row">
-    <button class="btn btn-primary">Preview Terms and Conditions</button>
+<div class="row" *ngIf="order">
+    <div class="col-12">
+        <button class="btn btn-primary show-preview-button" (click)="showPreview = !showPreview">
+            Preview Terms and Conditions
+            <i class="fas fa-caret-down fa-lg fa-fw pl-2 pt-2 float-right" aria-hidden="true" *ngIf="showPreview"></i>
+            <i class="fas fa-caret-right fa-lg fa-fw pl-2 pt-2 float-right" aria-hidden="true" *ngIf="!showPreview"></i>
+        </button>
+    </div>
+    <div class="col-12" *ngIf="showPreview">
+        Contract Preview.
+    </div>
 </div>
 
 <hr>
 
 <!-- Actions -->
-<div class="row actions-row">
+<div class="row actions-row" *ngIf="order">
     <div class="col-8 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
     <div class="col-2">
         <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">
@@ -57,3 +76,5 @@
         </button>
     </div>
 </div>
+
+<call-status [callStatus]="callStatus" [large]="true"></call-status>
