@@ -6,6 +6,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { CallStatusComponent } from "./call-status.component";
 import { ValueInputComponent } from './value-input.component';
+import { ActionsRowComponent } from './actions-row.component';
 
 @NgModule({
 	imports: [
@@ -17,11 +18,13 @@ import { ValueInputComponent } from './value-input.component';
 	],
 	declarations: [
 		CallStatusComponent,
-		ValueInputComponent
+		ValueInputComponent,
+		ActionsRowComponent
 	],
 	exports: [
 		CallStatusComponent,
-		ValueInputComponent
+		ValueInputComponent,
+		ActionsRowComponent
 	],
 	providers: [
 	]
