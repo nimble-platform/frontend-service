@@ -90,6 +90,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
         this._warning_table_results = false;
         this._warning_selection = false;
         this.rerenderAlert = false;
+        this.hiddenElement = false;
         this.arrayPassedToChild = [];
         this.tableJSON = {
             parametersIncludingPath: [],
@@ -99,6 +100,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
             language: '',
             propertySources: []
         };
+        this.sparqlSelectedOption = {};
         d3.selectAll('svg > *').remove();
         this.ngAfterViewInit();
     }
