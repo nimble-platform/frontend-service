@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Http, URLSearchParams, Headers, RequestOptions } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import * as myGlobals from '../globals';
+import 'rxjs/add/operator/map';
 
 @Injectable()
 export class TnTService {
