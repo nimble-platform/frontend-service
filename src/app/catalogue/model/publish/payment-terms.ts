@@ -1,4 +1,4 @@
-import {TradingTerm} from './trading-term';
+import { TradingTerm } from './trading-term';
 
 export class PaymentTerms {
     constructor(public paymentConditions:string[] = null,

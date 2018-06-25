@@ -18,10 +18,10 @@
     <div class="col-4">
         <h2>Payment Details</h2>
         <value-input type="text" presentationMode="view" label="Payment Means" 
-            [text]="order.paymentMeans" labelClass="col-6" valueClass="col-6">
+            [text]="getPaymentMeans()" labelClass="col-6" valueClass="col-6">
         </value-input>
         <value-input type="text" presentationMode="view" label="Payment Terms" 
-            [text]="order.paymentTerms" labelClass="col-6" valueClass="col-6">
+            [text]="paymentTermsWrapper.paymentTerm" labelClass="col-6" valueClass="col-6">
         </value-input>
     </div>
     <div class="col-4">
@@ -49,14 +49,16 @@
 <!-- Contract Preview -->
 <div class="row" *ngIf="order">
     <div class="col-12">
-        <button class="btn btn-primary show-preview-button" (click)="showPreview = !showPreview">
+        <button class="btn btn-primary show-preview-button" (click)="showPreview = !showPreview"
+            [disabled]="!order.contract || order.contract[0]?.clause.length === 0">
             Preview Terms and Conditions
             <i class="fas fa-caret-down fa-lg fa-fw pl-2 pt-2 float-right" aria-hidden="true" *ngIf="showPreview"></i>
             <i class="fas fa-caret-right fa-lg fa-fw pl-2 pt-2 float-right" aria-hidden="true" *ngIf="!showPreview"></i>
         </button>
     </div>
     <div class="col-12" *ngIf="showPreview">
-        Contract Preview.
+        <contract [contract]="order.contract[0]">
+        </contract>
     </div>
 </div>
 

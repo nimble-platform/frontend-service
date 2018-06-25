@@ -26,9 +26,12 @@ import {PrecedingBPDataService} from "./preceding-bp-data-service";
 import { BpUserRole } from "../model/bp-user-role";
 import { BpWorkflowOptions } from "../model/bp-workflow-options";
 import { NegotiationOptions } from "../../catalogue/model/publish/negotiation-options";
-import { PAYMENT_MEANS, PAYMENT_TERMS } from "../../catalogue/model/constants";
+import { PAYMENT_MEANS } from "../../catalogue/model/constants";
 import { ThreadEventMetadata } from "../../catalogue/model/publish/thread-event-metadata";
 import { ProcessType } from "../model/process-type";
+import { PaymentMeans } from "../../catalogue/model/publish/payment-means";
+import { Code } from "../../catalogue/model/publish/code";
+import { PaymentTerms } from "../../catalogue/model/publish/payment-terms";
 
 /**
  * Created by suat on 20-Sep-17.
@@ -271,8 +274,8 @@ export class BPDataService{
         if(!rfq.negotiationOptions) {
             rfq.negotiationOptions = new NegotiationOptions();
         }
-        rfq.paymentMeans = rfq.paymentMeans || PAYMENT_MEANS[0];
-        rfq.paymentTerms = rfq.paymentTerms || PAYMENT_TERMS[0];
+        rfq.paymentMeans = rfq.paymentMeans || new PaymentMeans(new Code(PAYMENT_MEANS[0], PAYMENT_MEANS[0]));
+        rfq.paymentTerms = rfq.paymentTerms || new PaymentTerms();
     }
 
     initPpap(documents:string[]):void{
@@ -317,7 +320,7 @@ export class BPDataService{
     }
 
     initOrderWithQuotation() {
-        let copyQuotation:Quotation = this.copy(this.quotation);
+        let copyQuotation: Quotation = this.copy(this.quotation);
         this.resetBpData();
         this.modifiedCatalogueLines = this.copy(this.catalogueLines);
         this.order = UBLModelUtils.createOrder();

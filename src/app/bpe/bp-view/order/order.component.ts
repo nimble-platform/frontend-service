@@ -3,6 +3,8 @@ import {Order} from "../../../catalogue/model/publish/order";
 import { CallStatus } from "../../../common/call-status";
 import { BPDataService } from "../bp-data-service";
 import { LineItem } from "../../../catalogue/model/publish/line-item";
+import { Location } from "@angular/common";
+import { PaymentTermsWrapper } from "../payment-terms-wrapper";
 
 /**
  * Created by suat on 20-Sep-17.
@@ -15,12 +17,14 @@ import { LineItem } from "../../../catalogue/model/publish/line-item";
 export class OrderComponent implements OnInit {
     
     order: Order;
+    paymentTermsWrapper: PaymentTermsWrapper;
 
     showPreview: boolean = false;
 
     callStatus: CallStatus = new CallStatus();
 
-    constructor(private bpDataService: BPDataService) {
+    constructor(private bpDataService: BPDataService,
+                private location: Location) {
 
     }
 
@@ -31,6 +35,7 @@ export class OrderComponent implements OnInit {
             this.bpDataService.initOrder().then(() => {
                 this.callStatus.callback("Order initialized", true);
                 this.order = this.bpDataService.order;
+                this.paymentTermsWrapper = new PaymentTermsWrapper(this.order.paymentTerms);
             }).catch(error => {
                 this.callStatus.error("Error while initializing order.");
                 console.log("Error while initializing order", error);
@@ -59,12 +64,16 @@ export class OrderComponent implements OnInit {
         return this.getLineItem().deliveryTerms.incoterms;
     }
 
+    getPaymentMeans(): string {
+        return this.order.paymentMeans.paymentMeansCode.name;
+    }
+
     getLineItem(): LineItem {
         return this.order.orderLine[0].lineItem;
     }
 
     onBack() {
-
+        this.location.back();
     }
 
     onOrder() {

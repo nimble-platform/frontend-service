@@ -48,7 +48,8 @@ import {PaymentTerms} from "./publish/payment-terms";
 import {Address} from "./publish/address";
 import {MonetaryTotal} from "./publish/monetary-total";
 import { NegotiationOptions } from "./publish/negotiation-options";
-import { PAYMENT_MEANS, PAYMENT_TERMS } from "./constants";
+import { PAYMENT_MEANS } from "./constants";
+import { TradingTerm } from "./publish/trading-term";
 
 /**
  * Created by suat on 05-Jul-17.
@@ -133,7 +134,8 @@ export class UBLModelUtils {
         let price: Price = this.createPrice(null);
         let lineItem:LineItem = this.createLineItem(quantity, price, item);
         let orderLine:OrderLine = new OrderLine(lineItem);
-        let order = new Order(this.generateUUID(), "", new Period(), new Address(), null, null, null, "", "", new MonetaryTotal(), [orderLine]);
+        let order = new Order(this.generateUUID(), "", new Period(), new Address(), null, null, null, 
+            this.getDefaultPaymentMeans(), this.getDefaultPaymentTerms(), new MonetaryTotal(), [orderLine]);
         return order;
     }
 
@@ -186,7 +188,7 @@ export class UBLModelUtils {
         let lineItem:LineItem = this.createLineItem(quantity, price, item);
         let requestForQuotationLine:RequestForQuotationLine = new RequestForQuotationLine(lineItem);
         let rfq = new RequestForQuotation(this.generateUUID(), [""], false, null, null, new Delivery(),
-        [requestForQuotationLine], negotiationOptions, PAYMENT_MEANS[0], PAYMENT_TERMS[0]);
+        [requestForQuotationLine], negotiationOptions, this.getDefaultPaymentMeans(), this.getDefaultPaymentTerms());
 
         // TODO remove this custom dimension addition once the dimension-view is improved to handle such cases
         let handlingUnitDimension:Dimension = new Dimension();
@@ -204,7 +206,8 @@ export class UBLModelUtils {
         let price:Price = this.createPrice(null);
         let lineItem:LineItem = this.createLineItem(quantity, price, item);
         let requestForQuotationLine:RequestForQuotationLine = new RequestForQuotationLine(lineItem);
-        let rfq = new RequestForQuotation(this.generateUUID(), [""], false, null, null, new Delivery(), [requestForQuotationLine], new NegotiationOptions());
+        let rfq = new RequestForQuotation(this.generateUUID(), [""], false, null, null, new Delivery(), 
+            [requestForQuotationLine], new NegotiationOptions(), this.getDefaultPaymentMeans(), this.getDefaultPaymentTerms());
 
         rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure = order.orderLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure;
         rfq.requestForQuotationLine[0].lineItem.deliveryTerms.deliveryLocation.address = order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address;
@@ -233,7 +236,8 @@ export class UBLModelUtils {
         let price:Price = this.createPrice(null);
         let lineItem:LineItem = this.createLineItem(quantity, price, item);
         let requestForQuotationLine:RequestForQuotationLine = new RequestForQuotationLine(lineItem);
-        let rfq = new RequestForQuotation(this.generateUUID(), [""], false, null, null, new Delivery(), [requestForQuotationLine], new NegotiationOptions(), "" , "");
+        let rfq = new RequestForQuotation(this.generateUUID(), [""], false, null, null, new Delivery(), 
+            [requestForQuotationLine], new NegotiationOptions(), this.getDefaultPaymentMeans(), this.getDefaultPaymentTerms());
 
         rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.goodsItem[0].item.name = transportExecutionPlanRequest.consignment[0].consolidatedShipment[0].goodsItem[0].item.name;
         rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.consignment[0].grossVolumeMeasure = transportExecutionPlanRequest.consignment[0].grossVolumeMeasure;
@@ -251,6 +255,31 @@ export class UBLModelUtils {
         this.removeHjidFieldsFromObject(rfq);
 
         return rfq;
+    }
+
+    public static getDefaultPaymentTerms(): PaymentTerms {
+        return new PaymentTerms([], [
+            new TradingTerm("Payment_In_Advance","Payment in advance","PIA",["false"]),
+            // new TradingTerm("Values_Net","e.g.,NET 10,payment 10 days after invoice date","Net %s",[null]),
+            new TradingTerm("End_of_month","End of month","EOM",["false"]),
+            new TradingTerm("Cash_next_delivery","Cash next delivery","CND",["false"]),
+            new TradingTerm("Cash_before_shipment","Cash before shipment","CBS",["false"]),
+            // new TradingTerm("Values_MFI","e.g.,21 MFI,21st of the month following invoice date","%s MFI", [null]),
+            // new TradingTerm("Values_/NET","e.g.,1/10 NET 30,1% discount if payment received within 10 days otherwise payment 30 days after invoice date","%s/%s NET %s",[null,null,null]),
+            new TradingTerm("Cash_on_delivery","Cash on delivery","COD",["false"]),
+            new TradingTerm("Cash_with_order","Cash with order","CWO",["false"]),
+            new TradingTerm("Cash_in_advance","Cash in advance","CIA",["false"]),
+        ]);
+    }
+
+    public static getDefaultPaymentTermsAsStrings(): string[] {
+        return this.getDefaultPaymentTerms().tradingTerms.map(term => {
+            return term.tradingTermFormat + " - " + term.description
+        })
+    }
+
+    private static getDefaultPaymentMeans(): PaymentMeans {
+        return new PaymentMeans(new Code(PAYMENT_MEANS[0], PAYMENT_MEANS[0]));
     }
 
     public static createRequestForQuotationWithIir(iir: ItemInformationResponse, fromAddress: Address, toAddress: Address, orderMetadata: any): RequestForQuotation {
@@ -275,7 +304,8 @@ export class UBLModelUtils {
 
         let documentReference: DocumentReference = new DocumentReference(rfq.id);
 
-        let quotation = new Quotation(this.generateUUID(), [""], new Code(), new Code(), 1, false, documentReference, customerParty, supplierParty, [quotationLine],rfq.paymentTerms,rfq.paymentMeans);
+        let quotation = new Quotation(this.generateUUID(), [""], new Code(), new Code(), 1, false, documentReference, 
+            customerParty, supplierParty, [quotationLine], rfq.paymentMeans, rfq.paymentTerms);
         return quotation;
     }
 

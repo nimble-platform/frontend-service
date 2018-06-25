@@ -1,7 +1,7 @@
-import { Component, OnInit, Input, OnChanges } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { CatalogueLine } from "../../../catalogue/model/publish/catalogue-line";
 import { BPDataService } from "../bp-data-service";
-import { INCOTERMS, PAYMENT_MEANS, PAYMENT_TERMS } from "../../../catalogue/model/constants";
+import { INCOTERMS, PAYMENT_MEANS } from "../../../catalogue/model/constants";
 import { RequestForQuotation } from "../../../catalogue/model/publish/request-for-quotation";
 import { RequestForQuotationLine } from "../../../catalogue/model/publish/request-for-quotation-line";
 import { Location } from "@angular/common";
@@ -18,7 +18,6 @@ import { ModelUtils } from "../../model/model-utils";
 import { ProcessInstanceInputMessage } from "../../model/process-instance-input-message";
 import { NegotiationModelWrapper } from "./negotiation-model-wrapper";
 import { NegotiationOptions } from "../../../catalogue/model/publish/negotiation-options";
-import { ActionsRowSlot } from "../../../common/action-row-slot";
 
 @Component({
     selector: "negotiation-request",
@@ -39,7 +38,6 @@ export class NegotiationRequestComponent implements OnInit {
 
     INCOTERMS: string[] = INCOTERMS;
     PAYMENT_MEANS: string[] = PAYMENT_MEANS;
-    PAYMENT_TERMS: string[] = PAYMENT_TERMS;
 
     // max price value for the quantity to be sold
     maxValue: number = 100000;
@@ -160,7 +158,7 @@ export class NegotiationRequestComponent implements OnInit {
     }
 
     isLoading(): boolean {
-        return this.callStatus.isLoading();
+        return this.callStatus.fb_submitted;
     }
 
     isReadOnly(): boolean {

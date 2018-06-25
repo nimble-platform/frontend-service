@@ -68,7 +68,7 @@
     </div>
     <div class="col-5">
         <negotiation-request-input label="Request Payment Terms" [(cbModel)]="rfq.negotiationOptions.paymentTerms" 
-            id="paymentTermsCb" [options]="PAYMENT_TERMS" [(selected)]="wrapper.rfqPaymentTerms" [disabled]="isLoading() || isReadOnly()">
+            id="paymentTermsCb" [options]="wrapper.rfqPaymentTerms.PAYMENT_TERMS" [(selected)]="wrapper.rfqPaymentTerms.paymentTerm" [disabled]="isLoading() || isReadOnly()">
         </negotiation-request-input>
         <div class="input-spacer"></div>
         <negotiation-request-input label="Request Payment Means" [(cbModel)]="rfq.negotiationOptions.paymentMeans" 
@@ -136,8 +136,8 @@
 </div>
 
 <div *ngIf="isWaitingForReply()" class="row actions-row">
-    <div class="col-7"></div>
-    <div class="col-3 price-col">Requested Price: {{ totalPrice }} {{ wrapper.rfqPriceAmount.currencyID }}</div>
+    <div class="col-6"></div>
+    <div class="col-4 price-col">Requested Price: {{ totalPrice }} {{ wrapper.rfqPriceAmount.currencyID }}</div>
     <div class="col-2">
         <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
     </div>

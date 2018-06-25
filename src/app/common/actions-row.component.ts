@@ -2,6 +2,10 @@ import { Component, Input } from "@angular/core";
 import { Location } from "@angular/common";
 import { ActionsRowSlot } from "./action-row-slot";
 
+/**
+ * Anthony: this component is to normalize all the actions (in particular in the business processes screens).
+ * At the moment, this is not used.
+ */
 @Component({
     selector: "actions-row",
     templateUrl: "./actions-row.component.html",

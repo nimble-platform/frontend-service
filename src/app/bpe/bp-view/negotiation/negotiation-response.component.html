@@ -46,7 +46,7 @@
     <div class="col-4">{{ wrapper.rfqPaymentTermsIfNegotiating }}</div>
     <div class="col-4">
         <value-input [visible]="rfq.negotiationOptions.paymentTerms" type="options"
-            [disabled]="isLoading() || isReadOnly()" [options]="PAYMENT_TERMS" [(selected)]="wrapper.quotationPaymentTerms">
+            [disabled]="isLoading() || isReadOnly()" [options]="wrapper.rfqPaymentTerms.PAYMENT_TERMS" [(selected)]="wrapper.quotationPaymentTerms.paymentTerm">
         </value-input>
     </div>
 </div>

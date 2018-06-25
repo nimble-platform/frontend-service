@@ -1,3 +1,5 @@
+import { TradingTerm } from "./publish/trading-term";
+
 export const INCOTERMS: string[] = [
     "",
     "CIF (Cost, Insurance and Freight)",
@@ -18,17 +20,6 @@ export const PAYMENT_MEANS: string[] = [
     "ACH Transfer",
     "Wire Transfer",
     "Cash On Delivery"
-]
-
-export const PAYMENT_TERMS: string[] = [
-    "PIA (Payment in advance)",
-    "EOM (End of month)",
-    "CND (Cash next delivery)",
-    "CBS (Cash before shipment)",
-    "COD (Cash on delivery)",
-    "CWO (Cash with order)",
-    "CIA (Cash in advance)",
-    "Other"
 ]
 
 export const NEGOTIATION_RESPONSES = {

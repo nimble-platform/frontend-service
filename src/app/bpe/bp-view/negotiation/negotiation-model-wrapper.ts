@@ -4,7 +4,9 @@ import { Quotation } from "../../../catalogue/model/publish/quotation";
 import { Price } from "../../../catalogue/model/publish/price";
 import { Amount } from "../../../catalogue/model/publish/amount";
 import { Quantity } from "../../../catalogue/model/publish/quantity";
-import { PAYMENT_TERMS, PAYMENT_MEANS } from "../../../catalogue/model/constants";
+import { PAYMENT_MEANS } from "../../../catalogue/model/constants";
+import { UBLModelUtils } from "../../../catalogue/model/ubl-model-utils";
+import { PaymentTermsWrapper } from "../payment-terms-wrapper";
 
 /**
  * Convenient getters (and some setters) for catalogue line, request for quotations and quotations.
@@ -12,10 +14,17 @@ import { PAYMENT_TERMS, PAYMENT_MEANS } from "../../../catalogue/model/constants
  */
 export class NegotiationModelWrapper {
 
+    public rfqPaymentTerms: PaymentTermsWrapper;
+    public quotationPaymentTerms: PaymentTermsWrapper;
+
     constructor(public line: CatalogueLine,
                 public rfq: RequestForQuotation,
                 public quotation: Quotation) {
-
+        
+        this.rfqPaymentTerms = new PaymentTermsWrapper(rfq.paymentTerms);
+        if(quotation) {
+            this.quotationPaymentTerms = new PaymentTermsWrapper(quotation.paymentTerms);
+        }
     }
 
     public get linePrice(): Price {
@@ -121,20 +130,11 @@ export class NegotiationModelWrapper {
     }
 
     public get linePaymentTerms(): string {
-        // TODO: no payment terms on the catalogue line!
-        return PAYMENT_TERMS[0];
-    }
-
-    public get rfqPaymentTerms(): string {
-        return this.rfq.paymentTerms;
-    }
-
-    public get quotationPaymentTerms(): string {
-        return this.quotation.paymentTerms;
+        return UBLModelUtils.getDefaultPaymentTermsAsStrings()[0];
     }
 
     public get rfqPaymentTermsIfNegotiating(): string {
-        return this.IfNegotiating(this.rfqPaymentTerms, this.rfq.negotiationOptions.paymentTerms);
+        return this.IfNegotiating(this.rfqPaymentTerms.paymentTerm, this.rfq.negotiationOptions.paymentTerms);
     }
 
     public get linePaymentMeans(): string {
@@ -143,11 +143,11 @@ export class NegotiationModelWrapper {
     }
 
     public get rfqPaymentMeans(): string {
-        return this.rfq.paymentMeans;
+        return this.rfq.paymentMeans.paymentMeansCode.name;
     }
 
     public get quotationPaymentMeans(): string {
-        return this.quotation.paymentMeans;
+        return this.quotation.paymentMeans.paymentMeansCode.name;
     }
 
     public get rfqPaymentMeansIfNegotiating(): string {
