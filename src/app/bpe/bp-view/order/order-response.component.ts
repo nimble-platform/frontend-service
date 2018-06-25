@@ -47,4 +47,22 @@ export class OrderResponseComponent {
             }
         );
     }
+
+    downloadContractBundle(){
+        this.bpeService.downloadContractBundle(this.order.id)
+            .then(result => {
+                    var link = document.createElement('a');
+                    link.id = 'downloadLink';
+                    link.href = window.URL.createObjectURL(result.content);
+                    link.download = result.fileName;
+
+                    document.body.appendChild(link);
+                    var downloadLink = document.getElementById('downloadLink');
+                    downloadLink.click();
+                    document.body.removeChild(downloadLink);
+
+                },
+                error => {
+                });
+    }
 }

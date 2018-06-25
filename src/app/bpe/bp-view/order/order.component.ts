@@ -17,6 +17,7 @@ import {Router} from "@angular/router";
 import {Contract} from "../../../catalogue/model/publish/contract";
 import {DataMonitoringClause} from "../../../catalogue/model/publish/data-monitoring-clause";
 import {TradingTerm} from '../../../catalogue/model/publish/trading-term';
+import {Party} from '../../../catalogue/model/publish/party';
 /**
  * Created by suat on 20-Sep-17.
  */
@@ -44,6 +45,10 @@ export class OrderComponent implements OnInit {
     withinDays:any = null;
     dueDays:any  = null;
 
+    orderTermsAndConditions = "";
+    buyerParty:Party;
+    sellerParty:Party;
+
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
                 private userService: UserService,
@@ -64,6 +69,18 @@ export class OrderComponent implements OnInit {
                 this.order.contract = [contract];
             });
         }
+
+        let sellerId:string = this.order.orderLine[0].lineItem.item.manufacturerParty.id;
+        let buyerId:string = this.cookieService.get("company_id");
+
+        this.userService.getParty(buyerId).then(buyerParty => {
+            this.buyerParty = buyerParty;
+            this.userService.getParty(sellerId).then(sellerParty => {
+                this.sellerParty = sellerParty;
+                this.generateOrderTermsAndConditionsAsText();
+            })
+        })
+
     }
 
     // addDataMonitoringClause(): void {
@@ -141,5 +158,11 @@ export class OrderComponent implements OnInit {
                     });
             });
         });
+    }
+
+    generateOrderTermsAndConditionsAsText(){
+        this.bpeService.generateOrderTermsAndConditionsAsText(this.order,this.buyerParty,this.sellerParty).then(result => {
+            this.orderTermsAndConditions = result;
+        })
     }
 }
