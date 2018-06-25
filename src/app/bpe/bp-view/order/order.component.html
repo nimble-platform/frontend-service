@@ -84,8 +84,19 @@
     </div>
 
     <payment-terms-view [tradingTerms]="order.paymentTerms.tradingTerms"
-                        [presentationMode]="presentationMode">
+                        [presentationMode]="presentationMode"
+                        (onSelectChange)="generateOrderTermsAndConditionsAsText()">
     </payment-terms-view>
+
+    <div class="well">
+        <h5 class="mt-3 mb-3">Order Terms and Conditions</h5>
+        <textarea class="form-control mb-2"
+                  rows="6"
+                  style="margin-left: 15px"
+                  [(ngModel)]="orderTermsAndConditions"
+                  readonly>
+        </textarea>
+    </div>
 
     <!--<ng-container *ngIf="bpDataService.userRole == 'buyer' && bpDataService.processMetadata == null">-->
         <!--<hr>-->

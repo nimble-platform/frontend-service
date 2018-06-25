@@ -21,6 +21,9 @@
                 Reject Order
             </button>
         </ng-container>
+        <ng-container *ngIf="bpDataService.processMetadata.processStatus == 'Completed' && bpDataService.orderResponse.acceptedIndicator">
+            <button class="btn btn-success" (click)="downloadContractBundle()">Download Contract Bundle</button>
+        </ng-container>
     </div>
 </ng-container>
 
