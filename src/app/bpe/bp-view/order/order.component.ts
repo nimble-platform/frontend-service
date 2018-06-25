@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from "@angular/core";
+import {ChangeDetectorRef, Component, Input, OnInit} from "@angular/core";
 import {CatalogueLine} from "../../../catalogue/model/publish/catalogue-line";
 import {BPDataService} from "../bp-data-service";
 import {BPEService} from "../../bpe.service";
@@ -34,7 +34,16 @@ export class OrderComponent implements OnInit {
     submitted:boolean = false;
 
     presentationMode:string = this.bpDataService.processMetadata == null ? 'edit':'singlevalue';
-    // dmsBtnClicked: boolean = false;
+
+    totalAmount: number = 0;
+    paymentTerms: {term: string, checked: boolean}[] = [];
+
+    // necessary fields for A/B NET X payment term
+    // A: discount percentage, B:the number of days the invoice must be paid within to receive the discount,
+    // X: an invoice is due X days after being received
+    discount:any = null;
+    withinDays:any = null;
+    dueDays:any  = null;
 
     orderTermsAndConditions = "";
     buyerParty:Party;
@@ -45,6 +54,11 @@ export class OrderComponent implements OnInit {
                 private userService: UserService,
                 private cookieService: CookieService,
                 private router:Router) {
+    }
+
+    updateTotalPrice(totalAmount: number, currency: string): void {
+        this.order.anticipatedMonetaryTotal.payableAmount.value = totalAmount;
+        this.order.anticipatedMonetaryTotal.payableAmount.currencyID = currency;
     }
 
     ngOnInit(): void {

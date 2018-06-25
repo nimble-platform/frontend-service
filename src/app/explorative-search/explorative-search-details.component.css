@@ -26,7 +26,7 @@
 }
 
 .node text {
-    font: 12px sans-serif;
+    font: 14px sans-serif;
 }
 
 .node--internal circle {
@@ -50,6 +50,10 @@ svg text {
 }
 
 /*Column Highlighting*/
+
+svg {
+    margin-top: 100px;
+}
 table {
     overflow: hidden;
 }

@@ -1,4 +1,21 @@
-
+<ngb-alert type="info" *ngIf="infoAlert" (close)="infoAlert = false">
+    <div class="row">
+        <div class="col-md-2">
+            <i class="fa fa-6x fa-info-circle"></i>
+        </div>
+        <div class="col-md-10">
+            <p>
+                <strong>Let Us Help You</strong>
+            </p>
+            <ul>
+                <li>You can click on any of the <strong>Properties/Reference</strong> below and obtain filter values</li>
+                <li>If you click on one of the <strong>References</strong> your Explorer
+                    will update with new properties for the selected reference.</li>
+                <li>You can use the <strong>Path</strong> below to go back to a previous Reference by simply clicking on it.</li>
+            </ul>
+        </div>
+    </div>
+</ngb-alert>
 <ol class="breadcrumb">
     <li class="breadcrumb-item active"
         *ngFor="let concept of conceptPaths; let i=index;">
@@ -18,6 +35,7 @@
             <div *ngFor="let eachVal of values">
                 <label>
                     <input type="checkbox"
+                           [disabled]="!disableManualFilters"
                            (change)="filtersSelected(eachVal, $event)"/>
                     <span><strong>{{eachVal}}</strong></span>
                 </label>
@@ -46,12 +64,22 @@
                            [disabled]="disableManualFilters"
                            #maxVal
                     >
+
                     <button class="btn btn-primary btn-sm"
                             [disabled]="disableManualFilters"
                             (click)="applyManualFilter(minVal.value, maxVal.value)"
                     >Apply</button>
+                    <button class="btn btn-danger btn-sm"
+                            [disabled]="disableManualFilters"
+                            (click)="removeManualFilter(minVal.value, maxVal.value)"
+                    >Remove</button>
                 </div>
             </div>
+        </div>
+        <div class="card-footer">
+            <button class="btn btn-primary" (click)="noFilterSelected()"
+                    [disabled]="disableAddPropBtn || !disableManualFilters"
+            >Add Property without Filters</button>
         </div>
     </div>
 </ng-template>
@@ -132,20 +160,26 @@
                             <optgroup label="Properties">
                                 <option *ngFor="let eachVal of dataResults"
                                         [selected]="searchModel.translatedProperty===eachVal.translatedProperty"
-                                        (click)="getPropertyValues(eachVal)">
-                                    <span>{{eachVal.translatedProperty}}</span>
+                                        (click)="getPropertyValues(eachVal)"
+                                        [ngClass]="{'checkMark': propSelection(eachVal.translatedProperty)}"
+                                >{{eachVal.translatedProperty}}
                                 </option>
                             </optgroup>
                             <optgroup label="References">
                                 <option *ngFor="let eachVal of objResults; let i=index;"
                                         [selected]="searchModel.translatedProperty===eachVal.translatedProperty"
                                         (click)="getReferenceValues(eachVal, i)">
-                                    <span>{{eachVal.translatedProperty}}</span>
+                                    {{eachVal.translatedProperty}}
                                 </option>
                             </optgroup>
                         </select>
                     </div>
                 </div>
+            </div>
+            <div class="col-md-4" *ngIf="emptyFilterAlert" >
+                <ngb-alert type="danger" (close)="emptyFilterAlert=false">
+                    <p> We couldn't find any filters for the selection.</p>
+                </ngb-alert>
             </div>
             <div class="col-md-4" *ngIf="searchvalue.length > 0">
                 <template [ngTemplateOutlet]="valuesTemplateRef" [ngTemplateOutletContext]="{$implicit: searchvalue}">
@@ -161,40 +195,52 @@
     <br>
     <br>
     <div class="row" *ngIf="tableResult?.columns !== undefined">
-        <div class="table-responsive">
+        <div class="alert alert-info" role="info">
+            <i class="fa fa-info-circle"></i> You can remove your selections by:
+            <ul>
+                <li>scrolling to the top of the table, click on the delete button.</li>
+                <li>Click on the <kbd>Obtain Results</kbd> button again to update your results.</li>
+            </ul>
+        </div>
+        <div class="table-responsive table-hover">
             <table class="table table-sm table-bordered">
                 <caption>Available Results from NIMBLE</caption>
                 <thead>
                 <tr>
                     <th>
-                        Properties
+                        Results
                     </th>
-                    <th *ngFor="let row of tableResult?.rows; let i=index" scope="col">
-                        Result #{{i+1}}
+                    <th *ngFor="let column of tableResult?.columns; let i=index" scope="col"
+                        (mouseenter)="showSelectionDel=true" (mouseleave)="showSelectionDel=false">
+                        {{column}}
+                        <span *ngIf="showSelectionDel">
+                            <i class="fa fa-minus-square" ngbTooltip="Remove {{column}}"  placement="right" (click)="removeSelection(column)"></i>
+                        </span>
+                    </th>
+                    <th>
+                        More
                     </th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr *ngFor="let column of tableResult?.columns; let cind=index">
-                    <th scope="row">{{column}}</th>
-                    <td *ngFor="let row of tableResult?.rows">{{row[cind]}}</td>
-                </tr>
-                <tr>
-                    <th>More Info.</th>
-                    <td scope="row" *ngFor="let uuid of tableResult?.uuids; let uuidIndex=index">
-                        <button class="btn btn-xs btn-outline-success"
-                                (click)="getSparqlOptionalSelect(uuidIndex)">
-                            More
-                        </button>
-                    </td>
-                </tr>
+                    <tr *ngFor="let row of tableResult?.rows; let i=index">
+                        <td>{{i+1}}</td>
+                        <td *ngFor="let field of row">{{field}}</td>
+                        <td *ngIf="tableResult?.uuids.length">
+                            <button class="btn btn-xs btn-outline-success"
+                                    (click)="getSparqlOptionalSelect(i)"
+                            >
+                            Further Info.
+                            </button>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>
 
     </div>
     <!--<pre>-->
-    <!--<code>{{tableJSON | json}}</code>-->
+    <!--<code>{{tableResult | json}}</code>-->
     <!--</pre>-->
 </div>
 
