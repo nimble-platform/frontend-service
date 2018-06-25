@@ -106,6 +106,7 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
         });
         this.sparqlJSON['concept'] = this.configSPQ['concept'];
         this.sparqlJSON['language'] = this.lang;
+        this.hiddenElement = false;
         // get properties
         this.getPropertiesOfConcept(this.configSPQ);
         this.infoAlert = true;
@@ -379,7 +380,7 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
     negotiation(): void {
         // console.log(this._negotation_catalogue_id, this._negotiation_id);
         // console.log(`/simple-search-details?catalogueId=${this._negotation_catalogue_id}&id=${this._negotiation_id}`);
-        this.router.navigate(['/simple-search-details'],
+        this.router.navigate(['/simple-search/details'],
             { queryParams: {catalogueId: this._negotiation_catalogue_id, id: this._negotiation_id} });
     }
 
