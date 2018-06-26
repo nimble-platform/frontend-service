@@ -7,6 +7,7 @@ import { Quantity } from "../../../catalogue/model/publish/quantity";
 import { PAYMENT_MEANS } from "../../../catalogue/model/constants";
 import { UBLModelUtils } from "../../../catalogue/model/ubl-model-utils";
 import { PaymentTermsWrapper } from "../payment-terms-wrapper";
+import { UblModelAccessors } from "../../../catalogue/model/ubl-model-accessors";
 
 /**
  * Convenient getters (and some setters) for catalogue line, request for quotations and quotations.
@@ -32,16 +33,17 @@ export class NegotiationModelWrapper {
     }
 
     public get lineTotalPrice(): number {
-        const quantity = this.rfq.requestForQuotationLine[0].lineItem.quantity.value;
-        const price = this.line.requiredItemLocationQuantity.price;
-        const amount = Number(price.priceAmount.value);
-        const baseQuantity = price.baseQuantity.value || 1;
-        return quantity * amount / baseQuantity;
+        return UblModelAccessors.getTotalPrice(
+            this.line.requiredItemLocationQuantity, 
+            this.rfq.requestForQuotationLine[0].lineItem.quantity.value
+        );
     }
 
     public get lineTotalPriceString(): string {
-        const price = this.line.requiredItemLocationQuantity.price;
-        return this.lineTotalPrice + " " + price.priceAmount.currencyID;
+        return UblModelAccessors.getTotalPriceString(
+            this.line.requiredItemLocationQuantity, 
+            this.rfq.requestForQuotationLine[0].lineItem.quantity.value
+        );
     }
 
     public get rfqPriceAmount(): Amount {
@@ -138,7 +140,6 @@ export class NegotiationModelWrapper {
     }
 
     public get linePaymentMeans(): string {
-        // TODO: no payment means on the catalogue line!
         return PAYMENT_MEANS[0];
     }
 
