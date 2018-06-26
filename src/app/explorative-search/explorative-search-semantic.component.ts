@@ -403,12 +403,12 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
         this.expSearch.getOptionalSelect(optSPARQLQuery)
             .then(res => {
                 this.sparqlSelectedOption = res;
-                if (this.sparqlSelectedOption['columns'].findIndex(i => i === 'id') >= 0 &&
-                    this.sparqlSelectedOption['columns'].findIndex(j => j === 'catalogueId') >= 0) {
+                if (this.sparqlSelectedOption['columns'].findIndex(i => i === 'ManufacturersItemIdentification') >= 0 &&
+                    this.sparqlSelectedOption['columns'].findIndex(j => j === 'CatalogueDocumentReference') >= 0) {
                     console.log('Negotiation can exist');
                     this.negotiationEnable = true;
-                    let index_id = this.sparqlSelectedOption['columns'].findIndex(i => i === 'id');
-                    let index_catalogue = this.sparqlSelectedOption['columns'].findIndex(i => i === 'catalogueId');
+                    let index_id = this.sparqlSelectedOption['columns'].findIndex(i => i === 'ManufacturersItemIdentification');
+                    let index_catalogue = this.sparqlSelectedOption['columns'].findIndex(i => i === 'CatalogueDocumentReference');
                     this._negotiation_id = this.sparqlSelectedOption['rows'][0][index_id];
                     this._negotiation_catalogue_id = this.sparqlSelectedOption['rows'][0][index_catalogue];
                     console.log(this._negotiation_catalogue_id, this._negotiation_id);
