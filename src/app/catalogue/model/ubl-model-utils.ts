@@ -278,7 +278,7 @@ export class UBLModelUtils {
         })
     }
 
-    private static getDefaultPaymentMeans(): PaymentMeans {
+    public static getDefaultPaymentMeans(): PaymentMeans {
         return new PaymentMeans(new Code(PAYMENT_MEANS[0], PAYMENT_MEANS[0]));
     }
 

@@ -132,37 +132,27 @@
                         <div *ngIf="selectedTab === 'DETAILS'" class="p-3">
                             <h4 class="p-1">Product Details</h4>
                             <div *ngFor="let property of getUniqueProperties()" class="p-1">
-                                <strong>{{property.name}}: </strong>
-                                {{property.value.join(", ")}}
-                                <!-- Next are the other attributes available on property: 
-                                <span>
-                                    | <strong>valueQualifier: </strong>{{ property.valueQualifier }}
-                                    | <strong>itemClassificationCode: </strong>{{ property.itemClassificationCode | json }}
-                                    | <strong>uri: </strong>{{ property.uri }} 
-                                </span>
-                                -->
+                                    <strong>{{ getPropertyName(property) }}: </strong> {{ property.value.join(", ") }}
                             </div>
                         </div>
     
                         <div *ngIf="selectedTab === 'DELIVERY_TRADING'" class="p-3">
                             <h4 class="p-1">Price</h4>
                             <div class="p-1">
-                                <strong>Price: </strong> {{ line.requiredItemLocationQuantity.price.priceAmount.value }} {{ line.requiredItemLocationQuantity.price.priceAmount.currencyID }}
-                                for {{ line.requiredItemLocationQuantity.price.baseQuantity.value }} {{ line.requiredItemLocationQuantity.price.baseQuantity.unitCode }}
+                                <strong>Price: </strong> {{ getPricePerItem() }}
                             </div>
                             <div class="p-1">
-                                <strong>Free Sample: </strong> {{ line.freeOfChargeIndicator }}
+                                <strong>Free Sample: </strong> {{ getFreeSample() }}
                             </div>
                             <h4 class="pt-2 p-1">Delivery Terms</h4>
                             <div class="p-1">
-                                <strong>Incoterms: </strong> {{ goodsItem.deliveryTerms.incoterms }}
+                                <strong>Incoterms: </strong> {{ getIncoterms() }}
                             </div>
                             <div class="p-1">
-                                <strong>Special Terms: </strong> {{ goodsItem.deliveryTerms.specialTerms }}
+                                <strong>Special Terms: </strong> {{ getSpecialTerms() }}
                             </div>
                             <div class="p-1">
-                                <strong>Delivery Period: </strong> {{ goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure.value }}
-                                {{ goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure.unitCode }}
+                                <strong>Delivery Period: </strong> {{ getDeliveryPeriod() }}
                             </div>
                             <!-- Seems that this value can no longer be set when publishing a product...
                             <div>
@@ -172,8 +162,7 @@
                             -->
                             <h4 class="pt-2 p-1">Packaging</h4>
                             <div class="p-1">
-                                <strong>Packaging: </strong> {{ goodsItem.containingPackage.quantity.value }} {{ goodsItem.containingPackage.quantity.unitCode }}
-                                per {{ goodsItem.containingPackage.packagingTypeCode.value }}
+                                <strong>Packaging: </strong> {{ getPackaging() }}
                             </div>
                         </div>
                     </div>
@@ -188,84 +177,134 @@
         <div class="col-3">
             <!-- Order Workflow -->
             <div class="p-3 border border-dark border-bottom-0">
-                <h2 class="py-1">Order</h2>
-                <div>
-                    <strong>Delivery Period: </strong> {{ goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure.value }}
-                    {{ goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure.unitCode }}
+
+                <h2 class="py-1">Negotiate & Order</h2>
+
+                <!-- Delivery Period -->
+                <div class="order-group">
+                    <label class="order-label">
+                        Delivery Period
+                    </label>
+                    <span class="order-value">
+                        {{ getDeliveryPeriod() }}
+                    </span>
                 </div>
-                <div>
-                    <strong>Price: </strong> {{ line.requiredItemLocationQuantity.price.priceAmount.value }} {{ line.requiredItemLocationQuantity.price.priceAmount.currencyID }}
-                    for {{ line.requiredItemLocationQuantity.price.baseQuantity.value }} {{ line.requiredItemLocationQuantity.price.baseQuantity.unitCode }}
+
+                <!-- Warranty Period -->
+                <div class="order-group">
+                    <label class="order-label">
+                        Warranty
+                    </label>
+                    <span class="order-value">
+                        {{ getWarrantyPeriod() }}
+                    </span>
                 </div>
-                <div class="form-inline">
-                    <label><strong class="pr-1">Quantity: </strong></label>
-                    <input type="number" [(ngModel)]="options.quantity" class="form-control form-control-sm px-1" />
+
+                <!-- Incoterms -->
+                <div class="order-group">
+                    <label class="order-label">
+                        Incoterms
+                    </label>
+                    <span class="order-value">
+                        {{ getIncoterms() }}
+                    </span>
                 </div>
-                <div class="py-2">
-                    <input type="range" [(ngModel)]="options.quantity" class="form-control-range" min="0" 
-                        [max]="getMaximumQuantity(line.requiredItemLocationQuantity.price.priceAmount.value)"
-                        [step]="getSteps(line.requiredItemLocationQuantity.price.priceAmount.value)"/>
+
+                <!-- Payment Terms -->
+                <div class="order-group">
+                    <label class="order-label">
+                        Payment Terms
+                    </label>
+                    <span class="order-value">
+                        {{ getPaymentTerms() }}
+                    </span>
                 </div>
-                <strong>Total: {{getTotalPrice()}} {{ line.requiredItemLocationQuantity.price.priceAmount.currencyID }}</strong>
-                <button [disabled]="options.quantity < 1" class="btn btn-primary space-before w-100 my-1"
-                    (click)="onFastTrackOrdering()">
-                    Fast Track Ordering
+
+                <!-- Payment Means -->
+                <div class="order-group">
+                    <label class="order-label">
+                        Payment Means
+                    </label>
+                    <span class="order-value">
+                        {{ getPaymentMeans() }}
+                    </span>
+                </div>
+
+                <!-- Price & Quantity -->
+                <ng-container *ngIf="hasPrice()">
+                    <div class="order-group">
+                        <label class="order-label">
+                            Price
+                        </label>
+                        <span class="order-value">
+                            {{ getPricePerItem() }}
+                        </span>
+                    </div>
+
+                    <hr>
+
+                    <div class="inline-order-group">
+                        <label class="order-label">
+                            Quantity:
+                        </label>
+                        <span class="order-qty-input">
+                            <input type="number" [(ngModel)]="options.quantity" class="form-control form-control-sm px-1" />
+                        </span>
+                        <span class="order-qty-range">
+                            <input type="range" [(ngModel)]="options.quantity" class="form-control-range" 
+                                min="1" [max]="getMaximumQuantity()" [step]="getSteps()" />
+                        </span>
+                    </div>
+                    <div class="inline-order-group">
+                        <label class="order-label order-price">
+                            Total Price: 
+                        </label>
+                        <span class="order-price-value">
+                            {{getTotalPrice()}} {{ line.requiredItemLocationQuantity.price.priceAmount.currencyID }}
+                        </span>
+                    </div>
+                </ng-container>
+
+                <!-- Request Price -->
+                <ng-container *ngIf="!hasPrice()">
+
+                    <hr>
+
+                    <div class="inline-order-group">
+                        <label class="order-label">
+                            Quantity:
+                        </label>
+                        <span class="order-qty-input">
+                            <input type="number" [(ngModel)]="options.quantity" class="form-control form-control-sm px-1" />
+                        </span>
+                    </div>
+                    <div class="inline-order-group">
+                        <label class="order-label order-price">
+                            Total Price: 
+                        </label>
+                        <span class="order-price-value">
+                            on demand
+                        </span>
+                    </div>
+                </ng-container>
+    
+                <!-- Action Button -->
+                <button class="btn btn-primary pt-2 w-100"
+                    (click)="onNegotiate()">
+                    <!-- {{ options.negotiation.isNegotiatingAnyTerm() ? "Negotiate" : "Order" }} -->
+                    Negotiate & Order
                 </button>
-            </div>
-            <div class="p-3 border border-dark border-bottom-0">
-                <div class="inline pb-2 w-100" (click)="showNavigation = !showNavigation">
-                    <h4 class="inline w-75">Negotiation</h4>
-                    <i class="fas fa-caret-down fa-lg pl-2 pt-2 align-text-top float-right" aria-hidden="true" *ngIf="showNavigation"></i>
-                    <i class="fas fa-caret-right fa-lg pl-2 pt-2 align-text-top float-right" aria-hidden="true" *ngIf="!showNavigation"></i>
-                </div>
-                <div *ngIf="showNavigation">
-                    <div class="form-group form-check">
-                        <input type="checkbox" [(ngModel)]="options.negotiation.price" class="form-check-input" id="priceCb">
-                        <label class="form-check-label" for="priceCb">Price</label>
-                    </div>
-                    <div class="form-group form-check">
-                        <input type="checkbox" [(ngModel)]="options.negotiation.deliveryPeriod" class="form-check-input" id="deliveryPeriodCb">
-                        <label class="form-check-label" for="deliveryPeriodCb">Delivery Period</label>
-                    </div>
-                    <div class="form-group form-check">
-                        <input type="checkbox" [(ngModel)]="options.negotiation.warranty" class="form-check-input" id="warrantyCb">
-                        <label class="form-check-label" for="warrantyCb">Warranty</label>
-                    </div>
-                    <div class="form-group form-check">
-                        <input type="checkbox" [(ngModel)]="options.negotiation.incoterms" class="form-check-input" id="incotermsCb">
-                        <label class="form-check-label" for="incotermsCb">Incoterms</label>
-                    </div>
-                    <div class="form-group form-check">
-                        <input type="checkbox" [(ngModel)]="options.negotiation.paymentTerms" class="form-check-input" id="paymentTermsCb">
-                        <label class="form-check-label" for="paymentTermsCb">Payment Terms</label>
-                    </div>
-                    <div class="form-group form-check">
-                        <input type="checkbox" [(ngModel)]="options.negotiation.paymentMeans" class="form-check-input" id="paymentMeansCb">
-                        <label class="form-check-label" for="paymentMeansCb">Payment Means</label>
-                    </div>
-                    <div>
-                    <button [disabled]="!options.negotiation.isNegotiatingAnyTerm()" class="btn btn-primary pt-2 w-100"
-                        (click)="onNegotiate()">
-                            Negotiate
-                        </button>
-                    </div>
-                </div>
             </div>
             <div class="p-3 border border-dark">
                 <div class="inline w-100" (click)="showProcesses = !showProcesses">
-                    <h4 class="py-1 inline w-75">Business Processes</h4>
-                    <i class="fas fa-caret-down fa-lg pl-2 pt-2 float-right" aria-hidden="true" *ngIf="showProcesses"></i>
-                    <i class="fas fa-caret-right fa-lg pl-2 pt-2 float-right" aria-hidden="true" *ngIf="!showProcesses"></i>
+                    <h4 class="py-1 inline w-75">Other Processes</h4>
+                    <i class="fas fa-chevron-up fa-lg toggle-processes" aria-hidden="true" *ngIf="showProcesses"></i>
+                    <i class="fas fa-chevron-down fa-lg toggle-processes" aria-hidden="true" *ngIf="!showProcesses"></i>
                 </div>
                 <div *ngIf="showProcesses">
                     <div>
                         <button class="btn btn-secondary space-before w-100" (click)="onRequestInformation()">
                             Request Information
-                        </button>
-                    </div>
-                    <div>
-                        <button class="btn btn-secondary space-before w-100" (click)="onNegotiateOtherTerms()">
-                            Negotiate Other Terms
                         </button>
                     </div>
                     <div>

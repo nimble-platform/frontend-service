@@ -11,6 +11,11 @@ import { CommodityClassification } from "../catalogue/model/publish/commodity-cl
 import { ItemProperty } from "../catalogue/model/publish/item-property";
 import { BpWorkflowOptions } from "../bpe/model/bp-workflow-options";
 import { ProcessType } from "../bpe/model/process-type";
+import { Quantity } from "../catalogue/model/publish/quantity";
+import { UblModelAccessors } from "../catalogue/model/ubl-model-accessors";
+import { PAYMENT_MEANS } from "../catalogue/model/constants";
+import { UBLModelUtils } from "../catalogue/model/ubl-model-utils";
+import { sanitizePropertyName } from "../common/utils";
 
 @Component({
     selector: 'product-details',
@@ -36,16 +41,11 @@ export class ProductDetailsComponent implements OnInit {
     showNavigation: boolean = true;
     showProcesses: boolean = true;
 
-    // max price value for the quantity to be sold
-    maxValue: number = 100000;
-
-    constructor(
-        private bpDataService: BPDataService,
-        private catalogueService: CatalogueService,
-        private route: ActivatedRoute,
-        private router: Router,
-    ) {
-        // this.line.goodsItem.containingPackage.packagingTypeCode.name
+    constructor(private bpDataService: BPDataService,
+                private catalogueService: CatalogueService,
+                private route: ActivatedRoute,
+                private router: Router) {
+        
     }
 
     ngOnInit() {
@@ -122,20 +122,12 @@ export class ProductDetailsComponent implements OnInit {
         this.options.selectedValues[this.getKey(property)] = valueIndex;
     }
 
-    onFastTrackOrdering(): void {
-        this.navigateToBusinessProcess("Order");
-    }
-
     onNegotiate(): void {
         this.navigateToBusinessProcess("Negotiation");
     }
 
     onRequestInformation(): void {
         this.navigateToBusinessProcess("Item_Information_Request");
-    }
-
-    onNegotiateOtherTerms(): void {
-        this.navigateToBusinessProcess("Negotiation");
     }
 
     onStartPpap(): void {
@@ -175,6 +167,10 @@ export class ProductDetailsComponent implements OnInit {
         return this.getUniquePropertiesWithFilter(prop => prop.value.join() !== "");
     }
 
+    getPropertyName(property: ItemProperty): string {
+        return sanitizePropertyName(property.name);
+    }
+
     getPropertiesWithListOfValues(): ItemProperty[] {
         return this.getUniquePropertiesWithFilter(prop => prop.value.length > 1);
     }
@@ -184,13 +180,62 @@ export class ProductDetailsComponent implements OnInit {
         return valueIndex === selected;
     }
 
+    getPricePerItem(): string {
+        return UblModelAccessors.getPricePerItemString(this.line.requiredItemLocationQuantity.price);
+    }
+
     getTotalPrice(): number {
-        if(!this.item) {
-            return 0;
+        return UblModelAccessors.getTotalPrice(this.line.requiredItemLocationQuantity, this.options.quantity);
+    }
+
+    hasPrice(): boolean {
+        return UblModelAccessors.hasPrice(this.line.requiredItemLocationQuantity);
+    }
+
+    getDeliveryPeriod(): string {
+        return UblModelAccessors.getPeriodString(this.goodsItem.deliveryTerms.estimatedDeliveryPeriod);
+    }
+
+    getWarrantyPeriod(): string {
+        return UblModelAccessors.getPeriodString(this.line.warrantyValidityPeriod);
+    }
+
+    getIncoterms(): string {
+        return this.goodsItem.deliveryTerms.incoterms || "None";
+    }
+
+    getPaymentTerms(): string {
+        return UBLModelUtils.getDefaultPaymentTermsAsStrings()[0];
+    }
+
+    getPaymentMeans(): string {
+        return PAYMENT_MEANS[0];
+    }
+
+    getFreeSample(): string {
+        return this.line.freeOfChargeIndicator ? "Yes" : "No";
+    }
+
+    getSpecialTerms(): string {
+        return this.goodsItem.deliveryTerms.specialTerms || "None";
+    }
+
+    getPackaging(): string {
+        const qty = this.goodsItem.containingPackage.quantity;
+        const type = this.goodsItem.containingPackage.packagingTypeCode;
+        if(!qty.value || !type.value) {
+            return "Not specified";
         }
-        const price = this.line.requiredItemLocationQuantity.price;
-        const amount = Number(price.priceAmount.value);
-        return this.options.quantity * amount / price.baseQuantity.value;
+
+        return `${qty.value} ${qty.unitCode} per ${type.value}`;
+    }
+
+    getMaximumQuantity(): number {
+        return UblModelAccessors.getMaximumQuantityForPrice(this.line.requiredItemLocationQuantity.price);
+    }
+
+    getSteps(value: number): number {
+        return UblModelAccessors.getStepForPrice(this.line.requiredItemLocationQuantity.price);
     }
 
     /*
@@ -224,29 +269,4 @@ export class ProductDetailsComponent implements OnInit {
          return property.name + "___" + property.valueQualifier;
     }
 
-    private getMagnitude(value: number): number {
-        return Math.pow(10, Math.floor(Math.log10(value)));
-    }
-
-    private round5(value: number): number {
-        return Math.round(value / 5) * 5;
-    }
-
-    // rounds the first digit of a number to the nearest 5 or 10
-    private roundFirstDigit(value: number): number {
-        let roundedDigit = this.round5(value / this.getMagnitude(value));
-        if(roundedDigit == 0) {
-            roundedDigit = 1;
-        }
-        return roundedDigit;
-    }
-
-    private getMaximumQuantity(value: number): number {
-        let result = this.maxValue / value;
-        return this.roundFirstDigit(result) * this.getMagnitude(result);
-    }
-
-    private getSteps(value: number): number {
-        return this.getMaximumQuantity(value) / 100;
-    }
 }
