@@ -1,8 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { BPDataService } from "../bp-data-service";
 import { BPEService } from "../../bpe.service";
-import { CookieService } from "ng2-cookies";
-import { UserService } from "../../../user-mgmt/user.service";
 import { CallStatus } from "../../../common/call-status";
 import { Router, ActivatedRoute } from "@angular/router";
 import { Location } from "@angular/common";
