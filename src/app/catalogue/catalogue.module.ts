@@ -32,6 +32,7 @@ import {CategoryDeactivateGuardService} from "./category/category-deactivate-gua
 import {QuantityValueViewComponent} from "./ubl-model-view/quantity-value-view.component";
 import {DetailedAddressViewComponent} from "./ubl-model-view/detailed-address-view.component";
 import {PaymentTermsView} from './ubl-model-view/payment-terms-view';
+import { CategoryTreeComponent } from "./category/category-tree.component";
 //import { CategoryService } from './category/category.service';
 //import { CatalogueService } from './catalogue.service';
 //import { PublishService } from './publish-and-aip.service';
@@ -48,6 +49,7 @@ import {PaymentTermsView} from './ubl-model-view/payment-terms-view';
 	],
 	declarations: [
 		CategorySearchComponent,
+		CategoryTreeComponent,
         ProductPublishComponent,
         AdditionalItemPropertyComponent,
 		CatalogueViewComponent,
