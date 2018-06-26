@@ -28,19 +28,15 @@ export class CategorySearchComponent implements OnInit {
     submitted: boolean = false;
     callback: boolean = false;
     error_detc: boolean = false;
+    navigating: boolean = false;
 
     // It checks whether user will return publishing page or not
     isReturnPublish: boolean = false;
     // It checks whether user is publishing or not
     inPublish: boolean = false;
 
-    // whether customCategoryPage is displayed or not
-    customCategoryPage: boolean = false;
-
     // keeps the query term
     categoryKeyword: string;
-    // custom category name
-    customCategory: string;
 
     treeView = false;
     parentCategories = null;
@@ -143,9 +139,8 @@ export class CategorySearchComponent implements OnInit {
 
     private selectCategory(category: Category): void {
         // if no category is selected or if the selected category is already selected
-        // navigate to the publishing page directly
+        // do nothing
         if (category == null || this.categoryService.selectedCategories.findIndex(c => c.id == category.id) > -1) {
-        //    this.navigateToPublishingPage();
             return;
         }
 
@@ -157,7 +152,6 @@ export class CategorySearchComponent implements OnInit {
             this.categoryService.addSelectedCategory(category);
             this.callback = true;
             this.submitted = false;
-            //this.navigateToPublishingPage();
             return;
         }
 
@@ -167,7 +161,6 @@ export class CategorySearchComponent implements OnInit {
                 this.callback = true;
                 this.submitted = false;
                 return;
-                //this.navigateToPublishingPage();
             }).catch( () => {
                 this.error_detc = true;
             }
@@ -175,6 +168,7 @@ export class CategorySearchComponent implements OnInit {
     }
 
     private navigateToPublishingPage():void {
+        this.navigating = true;
         let userId = this.cookieService.get("user_id");
         this.catalogueService.getCatalogue(userId).then(catalogue => {
             ProductPublishComponent.dialogBox = true;
@@ -182,8 +176,16 @@ export class CategorySearchComponent implements OnInit {
             this.isReturnPublish = true;
             this.router.navigate(['catalogue/publish'], {queryParams: {pg: this.publishingGranularity}});
         }).catch(() => {
+            this.navigating = false;
             this.error_detc = true;
         });
+    }
+
+    private removeCategory(category: Category): void {
+        let index = this.categoryService.selectedCategories.findIndex(c => c.id == category.id);
+        if (index > -1) {
+            this.categoryService.selectedCategories.splice(index, 1);
+        }
     }
 
     getCategoryTree(category){

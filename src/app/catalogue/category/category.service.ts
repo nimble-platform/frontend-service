@@ -45,13 +45,7 @@ export class CategoryService {
         customCategoryCodes = codes.filter(function (cat) {
            return cat.listID == 'Custom';
         });
-        // get custom categories
-        for(let cat of customCategoryCodes){
-            customCategories.push(new Category(null,cat.name,null,null,null,null,null,[],[],'Custom',null));
-        }
-
-        categories = customCategories;
-
+        
         // get non-custom categories
         codes = codes.filter(function (cat) {
            return cat.listID != 'Custom';
@@ -120,20 +114,10 @@ export class CategoryService {
     }
 
     addSelectedCategory(category: Category): void {
-        // custom categories
-        if(category != null && category.taxonomyId == 'Custom'){
-            // Only add if category is not null and doesn't exist in selected categories
-            if (this.selectedCategories.findIndex(c => c.preferredName == category.preferredName) == -1) {
-                this.selectedCategories.push(category);
-            }
+        // Only add if category is not null and doesn't exist in selected categories
+        if (category != null && this.selectedCategories.findIndex(c => c.id == category.id) == -1) {
+            this.selectedCategories.push(category);
         }
-        else{
-            // Only add if category is not null and doesn't exist in selected categories
-            if (category != null && this.selectedCategories.findIndex(c => c.id == category.id) == -1) {
-                this.selectedCategories.push(category);
-            }
-        }
-
     }
 
     resetSelectedCategories():void {
