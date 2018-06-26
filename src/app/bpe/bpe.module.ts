@@ -39,7 +39,6 @@ import { NegotiationRequestComponent } from './bp-view/negotiation/negotiation-r
 import { NegotiationRequestInputComponent } from './bp-view/negotiation/negotiation-request-input.component';
 import { NegotiationResponseComponent } from './bp-view/negotiation/negotiation-response.component';
 import { NegotiationAddressComponent } from './bp-view/negotiation/negotiation-address.component';
-import { NegotiationResponseInputComponent } from './bp-view/negotiation/negotiation-response-input.component';
 import { ItemInformationRequestComponent } from './bp-view/item-information/item-information-request.component';
 import { ItemInformationResponseComponent } from './bp-view/item-information/item-information-response.component';
 import { ItemInformationComponent } from './bp-view/item-information/item-information.component';

@@ -20,7 +20,6 @@ import { Quantity } from "../../../catalogue/model/publish/quantity";
 })
 export class NegotiationResponseComponent implements OnInit {
 
-
     line: CatalogueLine;
     rfq: RequestForQuotation;
     quotation: Quotation;
@@ -45,53 +44,7 @@ export class NegotiationResponseComponent implements OnInit {
         this.rfq = this.bpDataService.requestForQuotation;
         this.quotation = this.bpDataService.quotation;
         this.wrapper = new NegotiationModelWrapper(this.line, this.rfq, this.quotation);
-
-
-        // temp stuff to test
-
-        // this.rfq.negotiationOptions.price = true
-        // this.rfq.requestForQuotationLine[0].lineItem.price.priceAmount.value = 3000000;
-        // this.rfq.requestForQuotationLine[0].lineItem.price.priceAmount.currencyID = "EUR";
-        // this.quotation.quotationLine[0].lineItem.price.priceAmount.value = 3000000;
-        // this.quotation.quotationLine[0].lineItem.price.priceAmount.currencyID = "EUR";
-
-
-        // this.rfq.negotiationOptions.deliveryPeriod = true
-        // this.rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.value = 7;
-        // this.rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.unitCode = "working days";
-        // this.quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.value = 7;
-        // this.quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.unitCode = "working days";
-
-
-        // this.rfq.negotiationOptions.warranty = false
-        // this.rfq.requestForQuotationLine[0].lineItem.warrantyValidityPeriod.durationMeasure.value = 100
-        // this.rfq.requestForQuotationLine[0].lineItem.warrantyValidityPeriod.durationMeasure.unitCode = "weeks"
-        // this.quotation.quotationLine[0].lineItem.warrantyValidityPeriod.durationMeasure.value = 100
-        // this.quotation.quotationLine[0].lineItem.warrantyValidityPeriod.durationMeasure.unitCode = "weeks"
-
-
-        // this.rfq.negotiationOptions.incoterms = true
-        // this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms = "CFR (Cost and Freight)"
-        // this.quotation.quotationLine[0].lineItem.deliveryTerms.incoterms = "CFR (Cost and Freight)"
-
-
-        // this.rfq.negotiationOptions.paymentMeans = false
-        // this.rfq.paymentMeans = "Credit Card"
-        // this.quotation.paymentMeans = "Credit Card"
-
-
-        // this.rfq.negotiationOptions.paymentTerms = false
-        // this.rfq.paymentTerms = "PIA (Payment in advance)"
-        // this.quotation.paymentTerms = "PIA (Payment in advance)"
-
-        // this.rfq.delivery.deliveryAddress = new Address("Vienna", "1200", "10", "Vorgartenstrasse", {
-        //     name: "Austria"
-        // });
-
-        // TODO this should be before the temp stuff.
         this.quotationPriceValue = Number(this.wrapper.quotationPriceAmount.value || "0");
-
-        // bpDataService.userRole == "seller" || "buyer"
     }
 
     respondToQuotation(accepted: boolean) {
