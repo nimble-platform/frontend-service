@@ -1,4 +1,4 @@
-import {Component, Input} from "@angular/core";
+import {Component, Input, OnInit} from '@angular/core';
 import {Order} from "../../../catalogue/model/publish/order";
 import {OrderResponseSimple} from "../../../catalogue/model/publish/order-response-simple";
 import {BPDataService} from "../bp-data-service";
@@ -8,24 +8,69 @@ import {ProcessInstanceInputMessage} from "../../model/process-instance-input-me
 import {ModelUtils} from "../../model/model-utils";
 import {CallStatus} from "../../../common/call-status";
 import {Router} from "@angular/router";
+import {EpcService} from '../../../epc/epc-service';
+import {EpcCodes} from '../../../epc/model/epc-codes';
 /**
  * Created by suat on 20-Sep-17.
  */
 @Component({
     selector: 'order-response',
-    templateUrl: './order-response.component.html'
+    templateUrl: './order-response.component.html',
+    providers: [EpcService]
 })
 
-export class OrderResponseComponent {
+export class OrderResponseComponent implements OnInit{
     @Input() order:Order;
     @Input() orderResponse:OrderResponseSimple;
 
     callStatus:CallStatus = new CallStatus();
     // check whether 'Accept Order' button or 'Reject Order' button is clicked
     submitted: boolean = false;
+
+    epcCodes: EpcCodes = null;
+    epcCodesCallStatus:CallStatus = new CallStatus();
+
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
-                private router:Router) {
+                private router:Router,
+                private epcService: EpcService) {
+    }
+
+    ngOnInit() {
+        if(this.bpDataService.processMetadata.processStatus == 'Completed' && this.bpDataService.orderResponse.acceptedIndicator && this.bpDataService.userRole == 'seller'){
+            this.epcService.getEpcCodes(this.order.id).then(res => {
+                this.epcCodes = res;
+
+                if(this.epcCodes.codes.length == 0){
+                    this.epcCodes.codes.push("");
+                }
+
+            }).catch(error => {
+                if(error.status == 404){
+                    this.epcCodes = new EpcCodes(this.order.id,[""]);
+                }
+                else {
+                    console.error(error.message);
+                }
+            })
+        }
+    }
+
+    saveEpcCodes(){
+        this.epcCodesCallStatus.submit();
+        // remove empty codes
+        let selectedEpcCodes = [];
+        for(let code of this.epcCodes.codes){
+            if(code != null && code != ""){
+                selectedEpcCodes.push(code);
+            }
+        }
+        //
+        this.epcService.registerEpcCodes(new EpcCodes(this.order.id,selectedEpcCodes)).then(res => {
+            this.epcCodesCallStatus.callback("EPC Codes are saved.",true);
+        }).catch(error => {
+            this.epcCodesCallStatus.error("Failed to save EPC Codes.");
+        })
     }
 
     respondToOrder(acceptedIndicator: boolean) {
