@@ -31,14 +31,18 @@
     <div class="card">
         <div class="card-header">Available Values</div>
         <div class="card-body">
-            <p>Select One or More Values</p>
-            <div *ngFor="let eachVal of values">
-                <label>
-                    <input type="checkbox"
-                           [disabled]="!disableManualFilters"
-                           (change)="filtersSelected(eachVal, $event)"/>
-                    <span><strong>{{eachVal}}</strong></span>
-                </label>
+            <p>Select One or More Value</p>
+            <div style="overflow-y: scroll; height: 250px;">
+                <div *ngFor="let eachVal of values" class="custom-control custom-checkbox">
+                        <input type="checkbox"
+                               [disabled]="!disableManualFilters"
+                               (change)="filtersSelected(eachVal, $event)" class="custom-control-input"
+                               id="{{eachVal}}"
+                        />
+                    <label for="{{eachVal}}" class="custom-control-label">
+                        <span><strong>{{eachVal}}</strong></span>
+                    </label>
+                </div>
             </div>
             <hr>
             <div *ngIf="valuesAreNumeric">
@@ -181,7 +185,7 @@
                     <p> We couldn't find any filters for the selection.</p>
                 </ngb-alert>
             </div>
-            <div class="col-md-4" *ngIf="searchvalue.length > 0">
+            <div class="col-md-6" *ngIf="searchvalue.length > 0">
                 <template [ngTemplateOutlet]="valuesTemplateRef" [ngTemplateOutletContext]="{$implicit: searchvalue}">
                 </template>
             </div>
