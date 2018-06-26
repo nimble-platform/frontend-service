@@ -49,14 +49,14 @@
 </div>
 
 <div class="row mt-4 d-flex">
-    <div class="col-6 pr-0 pb-0">
+    <div class="col-7 pr-0 pb-0">
         <!-- Tree view deactivated -->
-        <div *ngIf="!treeView" class="border" style="min-height:70vh;">
+        <div *ngIf="!treeView" class="border" style="height:60vh; overflow-x: hidden; overflow-y: scroll;">
             <!-- TODO: If no search has been performed, return recent categories -->
             <div *ngIf="!callback && !submitted" class="border-bottom p-2">
                 <h3>Recent Categories</h3>
             </div>
-            <table class="table table-hover mb-0" style="max-height: 500px; overflow-y: scroll;">
+            <table class="table table-hover mb-0">
                 <thead class="thead-light">
                     <th scope="col">Classification</th>
                     <th scope="col">Name</th>
@@ -80,7 +80,7 @@
             </table>
         </div>
         <!-- Tree view activated -->
-        <div *ngIf="treeView" class="border" style="min-height:70vh;">
+        <div *ngIf="treeView" class="border" style="height:60vh; overflow-x: hidden; overflow-y: scroll;">
             <div class="row">
                 <div class="col-8 pr-0">
                     <div class="thead-light-equivalent">
@@ -104,7 +104,7 @@
                     </div>
                 </div>
             </div>
-            <table class="table table-hover mb-0" style="max-height: 500px; overflow-y: scroll;">
+            <table class="table table-hover mb-0">
                 <thead class="thead-light">
                     <th scope="col">Classification</th>
                     <th scope="col">Name</th>
@@ -128,35 +128,44 @@
             </table>
         </div>
     </div>
-    <div class="col-6 pl-0 align-self-stretch border">
-        <div class="p-2" style="min-height:70vh;">
-            <h3>Details</h3>
+    <div class="col-5 pl-0">
+        <div class="p-2 border" style="height:60vh; overflow-x: hidden; overflow-y: scroll;">
+            <div class="d-flex flex-row">
+                <h4 *ngIf="!selectedCategoryWithDetails">Details</h4>
+                <h4 *ngIf="selectedCategoryWithDetails">Details for {{selectedCategoryWithDetails["preferredName"]}}</h4>
+            </div>
             <p *ngIf="!selectedCategoryWithDetails" class="align-self-center mt-4">Select a category to see its details.</p>
             <div [hidden]="callback || !submitted || error_detc" class="space-right">
                 <img class="space-before" src="assets/form_loader.gif"/>
             </div>     
             <div *ngIf="selectedCategoryWithDetails" class="pt-2">
                 <div *ngFor="let propName of propertyNames" class="my-1">
-                    <value-input [visible]="selectedCategoryWithDetails[propName]" presentationMode="view" type="text" [label]="propName" labelClass="col-3 text-capitalize" valueClass="col-8" [text]="getCategoryProperty(propName)"></value-input>
+                    <value-input *ngIf="selectedCategoryWithDetails[propName]" [visible]="selectedCategoryWithDetails[propName]" presentationMode="view" type="text" [label]="propName" labelClass="col-12 text-capitalize" labelMainClass="mb-0" valueClass="col-12" valueTextClass="mb-1 pl-3" [text]="getCategoryProperty(propName)"></value-input>
+                </div>
+                <div class="row">
+                    <div class="col-12 mb-0" *ngIf="selectedCategoryWithDetails.properties">
+                        <label>
+                            <strong>Properties: </strong>
+                        </label>
+                    </div>
                 </div>
                 <div *ngFor="let prop of selectedCategoryWithDetails.properties;let i = index;let l = last">
                     <div class="row">
-                        <div class="col-3" *ngIf="i == 0">
+                        <div class="col-9">
                             <label>
-                                <strong>Properties: </strong>
-                            </label>
-                        </div>
-                        <div class="col-6 p-0" [ngClass]="{'offset-3' : i > 0} ">
-                            <label>
-                                {{prop.preferredName}}
-                                <span *ngIf="prop.definition" class="label label-default" title="{{prop.definition}}">
+                                <p class="text-capitalize pl-3 mb-1">
+                                    {{prop.preferredName}}
+                                    <span *ngIf="prop.definition" class="label label-default" title="{{prop.definition}}">
                                         &#9432;
-                                </span>
+                                    </span>
+                                </p>
                             </label>
                         </div>
-                        <div class="col-2 p-0">
+                        <div class="col-3">
                             <label>
-                                {{toUIString(prop.dataType)}}
+                                <p class="mb-1">
+                                    {{toUIString(prop.dataType)}}
+                                </p>
                             </label>
                         </div>
                     </div>

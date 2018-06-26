@@ -48,7 +48,7 @@ export class CategorySearchComponent implements OnInit {
     selectedCategory: Category = null;
     selectedCategoryWithDetails: Category = null;
     selectedCategoriesWRTLevels = [];
-    propertyNames: string[] = ["preferredName", "taxonomyId", "code", "level", "definition", "note", "remark"];
+    propertyNames: string[] = ["code", "taxonomyId", "level", "definition", "note", "remark"];
 
     showOtherProperties = null;
     callStatus: CallStatus = new CallStatus();
@@ -201,7 +201,6 @@ export class CategorySearchComponent implements OnInit {
                     for(let parent of this.parentCategories.parents){
                         this.selectedCategoriesWRTLevels.push(parent.code);
                     }
-
                     this.callStatus.callback( null);
                 }).catch( err => {
                     this.callStatus.error(null)

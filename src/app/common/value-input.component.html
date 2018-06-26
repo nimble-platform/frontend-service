@@ -1,11 +1,8 @@
 <div class="row">
     <div *ngIf="label" [class]="labelClass">
-        <label>
+        <label class="{{labelMainClass}}">
             <strong>
-                {{ label }}
-                <span *ngIf="definition" class="label label-default" title="{{definition}}">
-                    &#9432;
-                </span>:
+                {{ label }}<span *ngIf="definition" class="label label-default" title="{{definition}}">&#9432;</span>:
         </strong>
         </label>
     </div>
@@ -13,7 +10,7 @@
         <ng-container [ngSwitch]="type">
 
             <!-- Text -->
-            <textarea *ngSwitchCase="'text'" class="form-control" rows="3" [(ngModel)]="text" [disabled]="disabled">
+            <textarea *ngSwitchCase="'text'" class="form-control {{valueTextClass}}" rows="3" [(ngModel)]="text" [disabled]="disabled">
             </textarea>
 
             <!-- Options -->
@@ -69,7 +66,7 @@
         <ng-container [ngSwitch]="type">
 
             <!-- Text -->
-            <p *ngSwitchCase="'text'">{{ text }}</p>
+            <p *ngSwitchCase="'text'" class="{{valueTextClass}}">{{ text }}</p>
 
             <!-- Options -->
             <span *ngSwitchCase="'options'">{{ selected }}</span>

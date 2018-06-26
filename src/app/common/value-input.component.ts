@@ -17,11 +17,13 @@ export class ValueInputComponent implements OnInit {
     @Input() label: string;
     @Input() definition: string;
     @Input() labelClass: string = "col-3";
+    @Input() labelMainClass: string = "";
     @Input() valueClass: string; // set based on label
     @Input() placeholder: string;
     
     // Set if the input should be of type text.
     private textValue?: string;
+    @Input() valueTextClass: string = "";
     @Output() textChange = new EventEmitter<string>();
 
     // Set if the input should be a drop down list.
