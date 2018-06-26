@@ -284,7 +284,9 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
                     urlOfProperty: encodeURIComponent(this.selectedProperty['propertyURL']),
                     path: [{concept: this.configSPQ['concept']}]
                 };
-                this.sparqlJSON['parametersIncludingPath'].push(pathJSON);
+                if (this.sparqlJSON['parametersIncludingPath'].findIndex(i => i.urlOfProperty === pathJSON.urlOfProperty) === -1) {
+                    this.sparqlJSON['parametersIncludingPath'].push(pathJSON);
+                }
             } else {
                 let pathJSON = {urlOfProperty: encodeURIComponent(this.selectedProperty['propertyURL']), path: []};
                 this.conceptPaths.forEach(path => {
@@ -299,7 +301,9 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
                         pathJSON.path.push({concept: encodeURIComponent(path.url)});
                     }
                 });
-                this.sparqlJSON['parametersIncludingPath'].push(pathJSON);
+                if (this.sparqlJSON['parametersIncludingPath'].findIndex(i => i.urlOfProperty === pathJSON.urlOfProperty) === -1) {
+                    this.sparqlJSON['parametersIncludingPath'].push(pathJSON);
+                }
             }
             this.disableAddPropBtn = true;
 
