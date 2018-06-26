@@ -274,11 +274,19 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
                 this.sparqlJSON['parametersURL'].push(encodeURIComponent(this.selectedProperty['propertyURL']));
                 this.sparqlJSON['propertySources'].push(this.selectedProperty['propertySource']);
             }
-            this.sparqlJSON['filters'].push(
-                {
-                    property: encodeURIComponent(this.selectedProperty['propertyURL']),
-                    exactValue: filterValue
-                });
+            if (isNumeric(filterValue)) {
+                this.sparqlJSON['filters'].push(
+                    {
+                        property: encodeURIComponent(this.selectedProperty['propertyURL']),
+                        exactValue: filterValue
+                    });
+            } else {
+                this.sparqlJSON['filters'].push(
+                    {
+                        property: encodeURIComponent(this.selectedProperty['propertyURL']),
+                        exactValue: encodeURIComponent(filterValue)
+                    });
+            }
             if (this.conceptPaths.length === 1) {
                 let pathJSON = {
                     urlOfProperty: encodeURIComponent(this.selectedProperty['propertyURL']),
