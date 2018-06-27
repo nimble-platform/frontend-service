@@ -14,7 +14,7 @@ export class ProductDetailsTabsComponent implements OnInit {
     @Input() options: BpWorkflowOptions;
 
     @Input() showOverview: boolean = false;
-    @Input() readonly: boolean = false; // TODO use
+    @Input() readonly: boolean = false;
 
     selectedTab: ProductDetailsTab;
     

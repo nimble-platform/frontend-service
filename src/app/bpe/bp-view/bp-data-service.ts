@@ -32,7 +32,7 @@ import { ProcessType } from "../model/process-type";
 import { PaymentMeans } from "../../catalogue/model/publish/payment-means";
 import { Code } from "../../catalogue/model/publish/code";
 import { PaymentTerms } from "../../catalogue/model/publish/payment-terms";
-import { copy } from "../../common/utils";
+import { copy, getPropertyKey } from "../../common/utils";
 
 /**
  * Created by suat on 20-Sep-17.
@@ -126,7 +126,7 @@ export class BPDataService{
         this.setBpMessages(this.processTypeSubject.getValue(), processMetadata);
     }
 
-    setBpMessages(processType: ProcessType, processMetadata: ThreadEventMetadata) {
+    private setBpMessages(processType: ProcessType, processMetadata: ThreadEventMetadata) {
         let activityVariables = processMetadata.activityVariables;
         if(processType == 'Negotiation') {
             this.requestForQuotation = ActivityVariableParser.getInitialDocument(activityVariables).value;
@@ -232,7 +232,6 @@ export class BPDataService{
         const line = this.catalogueLines[0];
         const rfqLine = this.requestForQuotation.requestForQuotationLine[0];
 
-
         rfqLine.lineItem.item = copy(line.goodsItem.item);
         rfqLine.lineItem.lineReference = [new LineReference(line.id)];
         rfqLine.lineItem.price = copy(line.requiredItemLocationQuantity.price);
@@ -241,9 +240,7 @@ export class BPDataService{
         rfqLine.lineItem.warrantyValidityPeriod = copy(line.warrantyValidityPeriod);
         rfqLine.lineItem.deliveryTerms.incoterms = line.goodsItem.deliveryTerms.incoterms;
         rfqLine.lineItem.quantity.unitCode = line.requiredItemLocationQuantity.price.baseQuantity.unitCode;
-
-        // TODO update
-        // this.selectFirstValuesAmongAlternatives();
+        this.selectFirstValuesAmongAlternatives();
 
         // quantity
         rfqLine.lineItem.quantity.value = this.workflowOptions ? this.workflowOptions.quantity : 1;
@@ -285,32 +282,6 @@ export class BPDataService{
         this.ppap.lineItem.item = this.modifiedCatalogueLines[0].goodsItem.item;
         this.ppap.lineItem.lineReference = [new LineReference(this.modifiedCatalogueLines[0].id)];
         this.selectFirstValuesAmongAlternatives();
-    }
-
-    // this method is supposed to be called when the user is about to initialize a business process via the
-    // search details page
-    initOrder(): Promise<void> {
-        this.modifiedCatalogueLines = copy(this.catalogueLines);
-        this.order = UBLModelUtils.createOrder();
-        this.order.orderLine[0].lineItem.item = this.modifiedCatalogueLines[0].goodsItem.item;
-        this.order.orderLine[0].lineItem.lineReference = [new LineReference(this.modifiedCatalogueLines[0].id)];
-        this.order.orderLine[0].lineItem.price = this.modifiedCatalogueLines[0].requiredItemLocationQuantity.price;
-        this.selectFirstValuesAmongAlternatives();
-
-        let userId = this.cookieService.get('user_id');
-
-        return this.userService.getSettings(userId).then(settings => {
-            // Set the delivery period
-            this.order.orderLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.value = settings.deliveryTerms.estimatedDeliveryTime;
-            this.order.orderLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.unitCode = 'days';
-
-            // Set the address
-            this.order.deliveryAddress.country.name = settings.address.country;
-            this.order.deliveryAddress.postalZone = settings.address.postalCode;
-            this.order.deliveryAddress.cityName = settings.address.cityName;
-            this.order.deliveryAddress.buildingNumber = settings.address.buildingNumber;
-            this.order.deliveryAddress.streetName = settings.address.streetName;
-        });
     }
 
     initItemInformationRequest():void {
@@ -474,7 +445,7 @@ export class BPDataService{
     /**
      * Updates modified catalogue line's dimensions with only the first occurrences of the dimension attributes
      */
-    chooseAllDimensions():void {
+    private chooseAllDimensions(): void {
         let dimensions:Dimension[] = this.modifiedCatalogueLines[0].goodsItem.item.dimension;
         let finalDimensions:Dimension[] = [];
         let chosenAttributes:string[] = [];
@@ -489,26 +460,108 @@ export class BPDataService{
         this.modifiedCatalogueLines[0].goodsItem.item.dimension = finalDimensions;
     }
 
-    chooseFirstValuesOfItemProperties():void {
-        let item:Item = this.modifiedCatalogueLines[0].goodsItem.item;
+    private chooseFirstValuesOfItemProperties(): void {
+        let item: Item = this.modifiedCatalogueLines[0].goodsItem.item;
 
-        for(let prop of item.additionalItemProperty) {
-            if(prop.valueQualifier == 'STRING') {
-                if(prop.value.length > 1) {
-                    prop.value = [prop.value[0]];
-                }
-            } else if(prop.valueQualifier == 'REAL_MEASURE') {
-                if(prop.valueDecimal.length > 1) {
-                    prop.valueDecimal = [prop.valueDecimal[0]];
-                }
-            } else if(prop.valueQualifier == 'BOOLEAN') {
-                if(prop.value.length > 1) {
-                    prop.value = [prop.value[0]];
-                }
-            } else if(prop.valueQualifier == 'QUANTITY') {
-                if(prop.valueQuantity.length > 1) {
-                    prop.valueQuantity = [prop.valueQuantity[0]];
-                }
+        for(let i = 0; i < item.additionalItemProperty.length; i++) {
+            const prop = item.additionalItemProperty[i];
+
+            const key = getPropertyKey(prop);
+            const indexToSelect = this.workflowOptions ? this.workflowOptions.selectedValues[key] || 0 : 0;
+
+            switch(prop.valueQualifier) {
+                case "STRING":
+                    if(prop.value.length > 1) {
+                        prop.value = [prop.value[indexToSelect]];
+                    }
+                    break;
+                case "REAL_MEASURE":
+                    if(prop.valueDecimal.length > 1) {
+                        prop.valueDecimal = [prop.valueDecimal[indexToSelect]];
+                    }
+                    break;
+                case "BOOLEAN":
+                    if(prop.value.length > 1) {
+                        prop.value = [prop.value[indexToSelect]];
+                    }
+                    break;
+                case "QUANTITY":
+                    if(prop.valueQuantity.length > 1) {
+                        prop.valueQuantity = [prop.valueQuantity[0]];
+                    }
+                    break;
+            }
+        }
+    }
+
+    private getItemFromCurrentWorkflow(): Item {
+        switch(this.processTypeSubject.getValue()) {
+            case "Item_Information_Request":
+                return this.itemInformationRequest.itemInformationRequestLine[0].salesItem[0].item;
+            case "Ppap":
+                return this.ppap.lineItem.item;
+            case "Negotiation":
+                return this.requestForQuotation.requestForQuotationLine[0].lineItem.item;
+            case "Order":
+                return this.order.orderLine[0].lineItem.item;
+            case "Transport_Execution_Plan":
+                return null;
+            case "Fulfilment":
+                return this.despatchAdvice.despatchLine[0].item;
+        }
+    }
+
+    computeWorkflowOptions() {
+        this.workflowOptions = new BpWorkflowOptions();
+
+        // this item only contains the properties choosen by the user
+        const item = this.getItemFromCurrentWorkflow();
+
+        const line = this.catalogueLines[0];
+        if(!item || !line) {
+            return;
+        }
+        // this item contains all the properties.
+        const lineItem = line.goodsItem.item;
+
+        for(let i = 0; i < lineItem.additionalItemProperty.length;i++) {
+            const prop = lineItem.additionalItemProperty[i];
+            const key = getPropertyKey(prop);
+
+            const itemProp = item.additionalItemProperty[i];
+
+            switch(prop.valueQualifier) {
+                case "STRING":
+                case "BOOLEAN":
+                    if(prop.value.length > 1) {
+                        for(let valIndex = 0; valIndex < prop.value.length; valIndex++) {
+                            if(prop.value[valIndex] === itemProp.value[0]) {
+                                this.workflowOptions.selectedValues[key] = valIndex;
+                            }
+                        }
+                    }
+                    break;
+                case "REAL_MEASURE":
+                    if(prop.valueDecimal.length > 1) {
+                        if(prop.valueDecimal.length > 1) {
+                            for(let valIndex = 0; valIndex < prop.valueDecimal.length; valIndex++) {
+                                if(prop.valueDecimal[valIndex] === itemProp.valueDecimal[0]) {
+                                    this.workflowOptions.selectedValues[key] = valIndex;
+                                }
+                            }
+                        }
+                    }
+                    break;
+                case "QUANTITY":
+                    if(prop.valueQuantity.length > 1) {
+                        for(let valIndex = 0; valIndex < prop.valueQuantity.length; valIndex++) {
+                            if(prop.valueQuantity[valIndex].value === itemProp.valueQuantity[0].value 
+                                    && prop.valueQuantity[valIndex].unitCode === itemProp.valueQuantity[0].unitCode) {
+                                this.workflowOptions.selectedValues[key] = valIndex;
+                            }
+                        }
+                    }
+                    break;
             }
         }
     }

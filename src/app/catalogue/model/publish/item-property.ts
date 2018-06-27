@@ -4,6 +4,7 @@
 import {BinaryObject} from "./binary-object";
 import {Code} from "./code";
 import {Quantity} from "./quantity";
+import { PropertyValueQualifier } from "./property-value-qualifier";
 
 export class ItemProperty {
     constructor(
@@ -13,7 +14,7 @@ export class ItemProperty {
         public valueDecimal: number[],
         public valueQuantity:Quantity[],
         public valueBinary:BinaryObject[],
-        public valueQualifier: string,
+        public valueQualifier: PropertyValueQualifier,
         public itemClassificationCode: Code,
         public uri: string
     ) {  }

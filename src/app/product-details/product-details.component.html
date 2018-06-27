@@ -1,165 +1,164 @@
 <div *ngIf="line" class="row product-details">
-        <div class="col-9">
-            <div class="row">
-                <div class="col-12">
-                    <!-- Product Overview -->
-                    <h1 class="py-2">{{item.name}}</h1>
-                    <product-details-overview [wrapper]="wrapper" [options]="options">
-                    </product-details-overview>
-                </div>
+    <div class="col-9">
+        <div class="row">
+            <div class="col-12">
+                <!-- Product Overview -->
+                <h1 class="py-2">{{item.name}}</h1>
+                <product-details-overview [wrapper]="wrapper" [options]="options">
+                </product-details-overview>
             </div>
-            <product-details-tabs [wrapper]="wrapper">
-            </product-details-tabs>
         </div>
-        <div class="col-3">
-            <!-- Order Workflow -->
-            <div class="p-3 border border-dark border-bottom-0">
+        <product-details-tabs [wrapper]="wrapper">
+        </product-details-tabs>
+    </div>
+    <div class="col-3">
+        <!-- Order Workflow -->
+        <div class="p-3 border border-dark border-bottom-0">
 
-                <h2 class="py-1">Negotiate & Order</h2>
+            <h2 class="py-1">Negotiate & Order</h2>
 
-                <!-- Delivery Period -->
-                <div class="order-group">
-                    <label class="order-label">
-                        Delivery Period
-                    </label>
-                    <span class="order-value">
-                        {{ wrapper.getDeliveryPeriod() }}
-                    </span>
-                </div>
-
-                <!-- Warranty Period -->
-                <div class="order-group">
-                    <label class="order-label">
-                        Warranty
-                    </label>
-                    <span class="order-value">
-                        {{ wrapper.getWarrantyPeriod() }}
-                    </span>
-                </div>
-
-                <!-- Incoterms -->
-                <div class="order-group">
-                    <label class="order-label">
-                        Incoterms
-                    </label>
-                    <span class="order-value">
-                        {{ wrapper.getIncoterms() }}
-                    </span>
-                </div>
-
-                <!-- Payment Terms -->
-                <div class="order-group">
-                    <label class="order-label">
-                        Payment Terms
-                    </label>
-                    <span class="order-value">
-                        {{ wrapper.getPaymentTerms() }}
-                    </span>
-                </div>
-
-                <!-- Payment Means -->
-                <div class="order-group">
-                    <label class="order-label">
-                        Payment Means
-                    </label>
-                    <span class="order-value">
-                        {{ wrapper.getPaymentMeans() }}
-                    </span>
-                </div>
-
-                <!-- Price & Quantity -->
-                <ng-container *ngIf="hasPrice()">
-                    <div class="order-group">
-                        <label class="order-label">
-                            Price
-                        </label>
-                        <span class="order-value">
-                            {{ wrapper.getPricePerItem() }}
-                        </span>
-                    </div>
-
-                    <hr>
-
-                    <div class="inline-order-group">
-                        <label class="order-label">
-                            Quantity:
-                        </label>
-                        <span class="order-qty-input">
-                            <input type="number" [(ngModel)]="options.quantity" class="form-control form-control-sm px-1" />
-                        </span>
-                        <span class="order-qty-range">
-                            <input type="range" [(ngModel)]="options.quantity" class="form-control-range" 
-                                min="1" [max]="getMaximumQuantity()" [step]="getSteps()" />
-                        </span>
-                    </div>
-                    <div class="inline-order-group">
-                        <label class="order-label order-price">
-                            Total Price: 
-                        </label>
-                        <span class="order-price-value">
-                            {{getTotalPrice()}} {{ line.requiredItemLocationQuantity.price.priceAmount.currencyID }}
-                        </span>
-                    </div>
-                </ng-container>
-
-                <!-- Request Price -->
-                <ng-container *ngIf="!hasPrice()">
-
-                    <hr>
-
-                    <div class="inline-order-group">
-                        <label class="order-label">
-                            Quantity:
-                        </label>
-                        <span class="order-qty-input">
-                            <input type="number" [(ngModel)]="options.quantity" class="form-control form-control-sm px-1" />
-                        </span>
-                    </div>
-                    <div class="inline-order-group">
-                        <label class="order-label order-price">
-                            Total Price: 
-                        </label>
-                        <span class="order-price-value">
-                            on demand
-                        </span>
-                    </div>
-                </ng-container>
-    
-                <!-- Action Button -->
-                <button class="btn btn-primary pt-2 w-100"
-                    (click)="onNegotiate()">
-                    <!-- {{ options.negotiation.isNegotiatingAnyTerm() ? "Negotiate" : "Order" }} -->
-                    Negotiate & Order
-                </button>
+            <!-- Delivery Period -->
+            <div class="order-group">
+                <label class="order-label">
+                    Delivery Period
+                </label>
+                <span class="order-value">
+                    {{ wrapper.getDeliveryPeriod() }}
+                </span>
             </div>
-            <div class="p-3 border border-dark">
-                <div class="inline w-100" (click)="showProcesses = !showProcesses">
-                    <h4 class="py-1 inline w-75">Other Processes</h4>
-                    <i class="fas fa-chevron-up fa-lg toggle-processes" aria-hidden="true" *ngIf="showProcesses"></i>
-                    <i class="fas fa-chevron-down fa-lg toggle-processes" aria-hidden="true" *ngIf="!showProcesses"></i>
+
+            <!-- Warranty Period -->
+            <div class="order-group">
+                <label class="order-label">
+                    Warranty
+                </label>
+                <span class="order-value">
+                    {{ wrapper.getWarrantyPeriod() }}
+                </span>
+            </div>
+
+            <!-- Incoterms -->
+            <div class="order-group">
+                <label class="order-label">
+                    Incoterms
+                </label>
+                <span class="order-value">
+                    {{ wrapper.getIncoterms() }}
+                </span>
+            </div>
+
+            <!-- Payment Terms -->
+            <div class="order-group">
+                <label class="order-label">
+                    Payment Terms
+                </label>
+                <span class="order-value">
+                    {{ wrapper.getPaymentTerms() }}
+                </span>
+            </div>
+
+            <!-- Payment Means -->
+            <div class="order-group">
+                <label class="order-label">
+                    Payment Means
+                </label>
+                <span class="order-value">
+                    {{ wrapper.getPaymentMeans() }}
+                </span>
+            </div>
+
+            <!-- Price & Quantity -->
+            <ng-container *ngIf="hasPrice()">
+                <div class="order-group">
+                    <label class="order-label">
+                        Price
+                    </label>
+                    <span class="order-value">
+                        {{ wrapper.getPricePerItem() }}
+                    </span>
                 </div>
-                <div *ngIf="showProcesses">
-                    <div>
-                        <button class="btn btn-secondary space-before w-100" (click)="onRequestInformation()">
-                            Request Information
-                        </button>
-                    </div>
-                    <div>
-                        <button class="btn btn-secondary space-before w-100" (click)="onStartPpap()">
-                            Start Ppap
-                        </button>
-                    </div>
-                    <div>
-                        <button class="btn btn-secondary space-before w-100" (click)="onPreviewTermsAndConditions()">
-                            Preview Terms &amp; Conditions
-                        </button>
-                    </div>
+
+                <hr>
+
+                <div class="inline-order-group">
+                    <label class="order-label">
+                        Quantity:
+                    </label>
+                    <span class="order-qty-input">
+                        <input type="number" [(ngModel)]="options.quantity" class="form-control form-control-sm px-1" />
+                    </span>
+                    <span class="order-qty-range">
+                        <input type="range" [(ngModel)]="options.quantity" class="form-control-range" 
+                            min="1" [max]="getMaximumQuantity()" [step]="getSteps()" />
+                    </span>
+                </div>
+                <div class="inline-order-group">
+                    <label class="order-label order-price">
+                        Total Price: 
+                    </label>
+                    <span class="order-price-value">
+                        {{getTotalPrice()}} {{ line.requiredItemLocationQuantity.price.priceAmount.currencyID }}
+                    </span>
+                </div>
+            </ng-container>
+
+            <!-- Request Price -->
+            <ng-container *ngIf="!hasPrice()">
+
+                <hr>
+
+                <div class="inline-order-group">
+                    <label class="order-label">
+                        Quantity:
+                    </label>
+                    <span class="order-qty-input">
+                        <input type="number" [(ngModel)]="options.quantity" class="form-control form-control-sm px-1" />
+                    </span>
+                </div>
+                <div class="inline-order-group">
+                    <label class="order-label order-price">
+                        Total Price: 
+                    </label>
+                    <span class="order-price-value">
+                        on demand
+                    </span>
+                </div>
+            </ng-container>
+
+            <!-- Action Button -->
+            <button class="btn btn-primary pt-2 w-100"
+                (click)="onNegotiate()">
+                <!-- {{ options.negotiation.isNegotiatingAnyTerm() ? "Negotiate" : "Order" }} -->
+                Negotiate & Order
+            </button>
+        </div>
+        <div class="p-3 border border-dark">
+            <div class="inline w-100" (click)="showProcesses = !showProcesses">
+                <h4 class="py-1 inline w-75">Other Processes</h4>
+                <i class="fas fa-chevron-up fa-lg toggle-processes" aria-hidden="true" *ngIf="showProcesses"></i>
+                <i class="fas fa-chevron-down fa-lg toggle-processes" aria-hidden="true" *ngIf="!showProcesses"></i>
+            </div>
+            <div *ngIf="showProcesses">
+                <div>
+                    <button class="btn btn-secondary space-before w-100" (click)="onRequestInformation()">
+                        Request Information
+                    </button>
+                </div>
+                <div>
+                    <button class="btn btn-secondary space-before w-100" (click)="onStartPpap()">
+                        Start Ppap
+                    </button>
+                </div>
+                <div>
+                    <button class="btn btn-secondary space-before w-100" (click)="onPreviewTermsAndConditions()">
+                        Preview Terms &amp; Conditions
+                    </button>
                 </div>
             </div>
         </div>
     </div>
-    
-    <call-status [callStatus]="getProductStatus"
-                 [large]="true">
-    </call-status>
-    
+</div>
+
+<call-status [callStatus]="getProductStatus"
+                [large]="true">
+</call-status>

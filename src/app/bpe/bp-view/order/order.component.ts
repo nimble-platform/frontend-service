@@ -5,6 +5,7 @@ import { BPDataService } from "../bp-data-service";
 import { LineItem } from "../../../catalogue/model/publish/line-item";
 import { Location } from "@angular/common";
 import { PaymentTermsWrapper } from "../payment-terms-wrapper";
+import { Router } from "@angular/router";
 
 /**
  * Created by suat on 20-Sep-17.
@@ -24,22 +25,14 @@ export class OrderComponent implements OnInit {
     callStatus: CallStatus = new CallStatus();
 
     constructor(private bpDataService: BPDataService,
-                private location: Location) {
+                private location: Location,
+                private router: Router) {
 
     }
 
     ngOnInit(): void {
         if(this.bpDataService.order == null) {
-            // initiating a new business process from scratch
-            this.callStatus.submit();
-            this.bpDataService.initOrder().then(() => {
-                this.callStatus.callback("Order initialized", true);
-                this.order = this.bpDataService.order;
-                this.paymentTermsWrapper = new PaymentTermsWrapper(this.order.paymentTerms);
-            }).catch(error => {
-                this.callStatus.error("Error while initializing order.");
-                console.log("Error while initializing order", error);
-            })
+            this.router.navigate(['dashboard']);
         }
     }
 

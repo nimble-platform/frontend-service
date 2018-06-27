@@ -33,7 +33,7 @@
             <!-- Overview Tab -->
             <div *ngIf="selectedTab === 'OVERVIEW'" class="p-3">
                 <h4 class="p-1">Overview</h4>
-                <product-details-overview [wrapper]="wrapper" [options]="options">
+                <product-details-overview [wrapper]="wrapper" [options]="options" [readonly]="readonly">
                 </product-details-overview>
             </div>
 

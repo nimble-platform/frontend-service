@@ -4,7 +4,7 @@ import { ItemProperty } from "../catalogue/model/publish/item-property";
 import { UblModelAccessors } from "../catalogue/model/ubl-model-accessors";
 import { PAYMENT_MEANS } from "../catalogue/model/constants";
 import { UBLModelUtils } from "../catalogue/model/ubl-model-utils";
-import { sanitizePropertyName } from "../common/utils";
+import { sanitizePropertyName, getPropertyKey } from "../common/utils";
 
 /**
  * Wrapper class for Catalogue line.
@@ -74,10 +74,6 @@ export class ProductWrapper {
         return UblModelAccessors.getPricePerItemString(this.line.requiredItemLocationQuantity.price);
     }
 
-    getPropertyKey(property: ItemProperty): string {
-        return property.name + "___" + property.valueQualifier;
-    }
-
     getPropertyName(property: ItemProperty): string {
         return sanitizePropertyName(property.name);
     }
@@ -98,7 +94,7 @@ export class ProductWrapper {
                 return;
             }
 
-            const key = this.getPropertyKey(prop);
+            const key = getPropertyKey(prop);
             if(!duplicates[key]) {
                 result.push(prop);
             }

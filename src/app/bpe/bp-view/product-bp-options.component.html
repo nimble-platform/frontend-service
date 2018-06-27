@@ -5,7 +5,7 @@
         <i class="fas fa-chevron-down fa-sm toggle-product" aria-hidden="true" *ngIf="!productExpanded"></i>
     </h2>
 
-    <product-details-tabs *ngIf="productExpanded" [wrapper]="wrapper" [showOverview]="true" [options]="options" readonly>
+    <product-details-tabs *ngIf="productExpanded" [wrapper]="wrapper" [showOverview]="true" [options]="options" [readonly]="true">
     </product-details-tabs>
 
     <product-bp-steps [currentStep]="currentStep" [status]="getStepsStatus()" [statusText]="getStepsStatusText()">

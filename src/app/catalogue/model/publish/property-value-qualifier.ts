@@ -1,0 +1,1 @@
+export type PropertyValueQualifier = "REAL_MEASURE" | "BINARY" | "STRING" | "QUANTITY" | "BOOLEAN";

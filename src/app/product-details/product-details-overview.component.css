@@ -48,3 +48,9 @@
     display: flex;
     justify-content: center;
 }
+
+button.active:disabled {
+    color: #ffffff;
+    background-color: #007bff;
+    border-color: #007bff;
+}

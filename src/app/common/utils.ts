@@ -1,3 +1,5 @@
+import { ItemProperty } from "../catalogue/model/publish/item-property";
+
 const UI_NAMES: any = {
     STRING: "TEXT"
 }
@@ -19,4 +21,8 @@ export function sanitizePropertyName(name: string): string {
 
 export function copy<T = any>(object: T): T {
     return JSON.parse(JSON.stringify(object));
+}
+
+export function getPropertyKey(property: ItemProperty): string {
+    return property.name + "___" + property.valueQualifier;
 }

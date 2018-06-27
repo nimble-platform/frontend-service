@@ -58,6 +58,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                         this.wrapper = new ProductWrapper(line);
                         this.bpDataService.setCatalogueLines([line]);
                         this.getCatalogueLineStatus.callback("Retrieved product details", true);
+                        this.bpDataService.computeWorkflowOptions();
                         this.options = this.bpDataService.workflowOptions;
                     })
                     .catch(error => {

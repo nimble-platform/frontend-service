@@ -80,7 +80,7 @@
                 <div class="col-10">
                 <span *ngFor="let val of property.value; let i = index" class="btn-group-toggle" data-toggle="buttons">
                     <button type="button" class="btn btn-outline-primary no-y-padding" (click)="onTogglePropertyValue(property, i)" 
-                        [ngClass]="{ 'active': isPropertyValueSelected(property, i) }">
+                        [disabled]="readonly" [ngClass]="{ 'active': isPropertyValueSelected(property, i) }">
                         {{val}}
                     </button>
                 </span>

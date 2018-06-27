@@ -3,6 +3,7 @@ import { ProductWrapper } from "./product-wrapper";
 import { CommodityClassification } from "../catalogue/model/publish/commodity-classification";
 import { ItemProperty } from "../catalogue/model/publish/item-property";
 import { BpWorkflowOptions } from "../bpe/model/bp-workflow-options";
+import { getPropertyKey } from "../common/utils";
 
 @Component({
     selector: 'product-details-overview',
@@ -13,8 +14,10 @@ export class ProductDetailsOverviewComponent {
 
     @Input() wrapper: ProductWrapper;
     @Input() options: BpWorkflowOptions;
-    
+    @Input() readonly: boolean;
+
     selectedImage: number = 0;
+
     
     constructor() {
 
@@ -31,7 +34,9 @@ export class ProductDetailsOverviewComponent {
     }
 
     onTogglePropertyValue(property: ItemProperty, valueIndex: number): void {
-        this.options.selectedValues[this.wrapper.getPropertyKey(property)] = valueIndex;
+        if(this.options) {
+            this.options.selectedValues[getPropertyKey(property)] = valueIndex;
+        }
     }
 
     onSelectImage(index: number): void {
@@ -62,7 +67,7 @@ export class ProductDetailsOverviewComponent {
     }
 
     isPropertyValueSelected(property: ItemProperty, valueIndex: number): boolean {
-        const selected = this.options.selectedValues[this.wrapper.getPropertyKey(property)] || 0;
+        const selected = this.options.selectedValues[getPropertyKey(property)] || 0;
         return valueIndex === selected;
     }
 }
