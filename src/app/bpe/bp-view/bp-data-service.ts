@@ -32,6 +32,7 @@ import { ProcessType } from "../model/process-type";
 import { PaymentMeans } from "../../catalogue/model/publish/payment-means";
 import { Code } from "../../catalogue/model/publish/code";
 import { PaymentTerms } from "../../catalogue/model/publish/payment-terms";
+import { copy } from "../../common/utils";
 
 /**
  * Created by suat on 20-Sep-17.
@@ -135,7 +136,7 @@ export class BPDataService{
             if(quotationVariable == null) {
                 // initialize the quotation only if the user is in seller role
                 if(this.userRole == 'seller') {
-                    this.quotation = this.copy(UBLModelUtils.createQuotation(this.requestForQuotation));
+                    this.quotation = copy(UBLModelUtils.createQuotation(this.requestForQuotation));
                 }
 
             } else {
@@ -232,12 +233,12 @@ export class BPDataService{
         const rfqLine = this.requestForQuotation.requestForQuotationLine[0];
 
 
-        rfqLine.lineItem.item = this.copy(line.goodsItem.item);
+        rfqLine.lineItem.item = copy(line.goodsItem.item);
         rfqLine.lineItem.lineReference = [new LineReference(line.id)];
-        rfqLine.lineItem.price = this.copy(line.requiredItemLocationQuantity.price);
+        rfqLine.lineItem.price = copy(line.requiredItemLocationQuantity.price);
         rfqLine.lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure =
-            this.copy(line.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure);
-        rfqLine.lineItem.warrantyValidityPeriod = this.copy(line.warrantyValidityPeriod);
+            copy(line.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure);
+        rfqLine.lineItem.warrantyValidityPeriod = copy(line.warrantyValidityPeriod);
         rfqLine.lineItem.deliveryTerms.incoterms = line.goodsItem.deliveryTerms.incoterms;
         rfqLine.lineItem.quantity.unitCode = line.requiredItemLocationQuantity.price.baseQuantity.unitCode;
 
@@ -259,9 +260,9 @@ export class BPDataService{
     }
 
     initRfqWithIir(): void {
-        let copyIir:ItemInformationResponse = this.copy(this.itemInformationResponse);
+        let copyIir:ItemInformationResponse = copy(this.itemInformationResponse);
         this.resetBpData();
-        this.modifiedCatalogueLines = this.copy(this.catalogueLines);
+        this.modifiedCatalogueLines = copy(this.catalogueLines);
         this.requestForQuotation = UBLModelUtils.createRequestForQuotationWithIir(
             copyIir,
             this.precedingBPDataService.fromAddress,
@@ -279,7 +280,7 @@ export class BPDataService{
     }
 
     initPpap(documents:string[]):void{
-        this.modifiedCatalogueLines = this.copy(this.catalogueLines);
+        this.modifiedCatalogueLines = copy(this.catalogueLines);
         this.ppap = UBLModelUtils.createPpap(documents);
         this.ppap.lineItem.item = this.modifiedCatalogueLines[0].goodsItem.item;
         this.ppap.lineItem.lineReference = [new LineReference(this.modifiedCatalogueLines[0].id)];
@@ -289,7 +290,7 @@ export class BPDataService{
     // this method is supposed to be called when the user is about to initialize a business process via the
     // search details page
     initOrder(): Promise<void> {
-        this.modifiedCatalogueLines = this.copy(this.catalogueLines);
+        this.modifiedCatalogueLines = copy(this.catalogueLines);
         this.order = UBLModelUtils.createOrder();
         this.order.orderLine[0].lineItem.item = this.modifiedCatalogueLines[0].goodsItem.item;
         this.order.orderLine[0].lineItem.lineReference = [new LineReference(this.modifiedCatalogueLines[0].id)];
@@ -313,16 +314,16 @@ export class BPDataService{
     }
 
     initItemInformationRequest():void {
-        this.modifiedCatalogueLines = this.copy(this.catalogueLines);
+        this.modifiedCatalogueLines = copy(this.catalogueLines);
         this.itemInformationRequest = UBLModelUtils.createItemInformationRequest();
         this.itemInformationRequest.itemInformationRequestLine[0].salesItem[0].item = this.modifiedCatalogueLines[0].goodsItem.item;
         this.selectFirstValuesAmongAlternatives();
     }
 
     initOrderWithQuotation() {
-        let copyQuotation: Quotation = this.copy(this.quotation);
+        let copyQuotation: Quotation = copy(this.quotation);
         this.resetBpData();
-        this.modifiedCatalogueLines = this.copy(this.catalogueLines);
+        this.modifiedCatalogueLines = copy(this.catalogueLines);
         this.order = UBLModelUtils.createOrder();
         this.order.orderLine[0].lineItem = copyQuotation.quotationLine[0].lineItem;
         this.order.paymentMeans = copyQuotation.paymentMeans;
@@ -331,9 +332,9 @@ export class BPDataService{
     }
 
     initOrderWithRfq() {
-        let copyRfq: RequestForQuotation = this.copy(this.requestForQuotation);
+        let copyRfq: RequestForQuotation = copy(this.requestForQuotation);
         this.resetBpData();
-        this.modifiedCatalogueLines = this.copy(this.catalogueLines);
+        this.modifiedCatalogueLines = copy(this.catalogueLines);
         this.order = UBLModelUtils.createOrder();
         this.order.orderLine[0].lineItem = copyRfq.requestForQuotationLine[0].lineItem;
         this.order.paymentMeans = copyRfq.paymentMeans;
@@ -342,9 +343,9 @@ export class BPDataService{
     }
 
     initOrderWithExistingOrder(){
-        let copyOrder:Order = this.copy(this.order);
+        let copyOrder:Order = copy(this.order);
         this.resetBpData();
-        this.modifiedCatalogueLines = this.copy(this.catalogueLines);
+        this.modifiedCatalogueLines = copy(this.catalogueLines);
         this.order = UBLModelUtils.createOrder();
         this.order.orderLine[0].lineItem = copyOrder.orderLine[0].lineItem;
         this.order.paymentMeans = copyOrder.paymentMeans;
@@ -353,9 +354,9 @@ export class BPDataService{
     }
 
     initRfqWithQuotation() {
-        let copyQuotation:Quotation = this.copy(this.quotation);
+        let copyQuotation:Quotation = copy(this.quotation);
         this.resetBpData();
-        this.modifiedCatalogueLines = this.copy(this.catalogueLines);
+        this.modifiedCatalogueLines = copy(this.catalogueLines);
         this.requestForQuotation = UBLModelUtils.createRequestForQuotation(new NegotiationOptions());
         this.requestForQuotation.requestForQuotationLine[0].lineItem = copyQuotation.quotationLine[0].lineItem;
         this.requestForQuotation.paymentMeans = copyQuotation.paymentMeans;
@@ -363,9 +364,9 @@ export class BPDataService{
     }
 
     initRfqWithOrder(){
-        let copyOrder:Order = this.copy(this.order);
+        let copyOrder:Order = copy(this.order);
         this.resetBpData();
-        this.modifiedCatalogueLines = this.copy(this.catalogueLines);
+        this.modifiedCatalogueLines = copy(this.catalogueLines);
         this.requestForQuotation = UBLModelUtils.createRequestForQuotation(new NegotiationOptions());
         this.requestForQuotation.requestForQuotationLine[0].lineItem = copyOrder.orderLine[0].lineItem;
         this.requestForQuotation.paymentTerms = copyOrder.paymentTerms;
@@ -373,21 +374,21 @@ export class BPDataService{
     }
 
     initRfqWithTransportExecutionPlanRequest() {
-        let copyTransportExecutionPlanRequest:TransportExecutionPlanRequest = this.copy(this.transportExecutionPlanRequest);
+        let copyTransportExecutionPlanRequest:TransportExecutionPlanRequest = copy(this.transportExecutionPlanRequest);
         this.resetBpData();
-        this.modifiedCatalogueLines = this.copy(this.catalogueLines);
+        this.modifiedCatalogueLines = copy(this.catalogueLines);
         this.requestForQuotation = UBLModelUtils.createRequestForQuotationWithTransportExecutionPlanRequest(copyTransportExecutionPlanRequest,this.modifiedCatalogueLines[0]);
     }
 
     initDespatchAdviceWithOrder() {
-        let copyOrder:Order = this.copy(this.order);
+        let copyOrder:Order = copy(this.order);
         this.resetBpData();
-        this.modifiedCatalogueLines = this.copy(this.catalogueLines);
+        this.modifiedCatalogueLines = copy(this.catalogueLines);
         this.despatchAdvice = UBLModelUtils.createDespatchAdvice(copyOrder);
     }
 
     initTransportExecutionPlanRequest() {
-        this.modifiedCatalogueLines = this.copy(this.catalogueLines);
+        this.modifiedCatalogueLines = copy(this.catalogueLines);
         this.transportExecutionPlanRequest = UBLModelUtils.createTransportExecutionPlanRequest(this.modifiedCatalogueLines[0]);
         this.selectFirstValuesAmongAlternatives();
     }
@@ -395,39 +396,35 @@ export class BPDataService{
     initTransportExecutionPlanRequestWithOrder() {
         this.resetBpData();
         this.setBpMessages('Order', this.searchContextService.associatedProcessMetadata);
-        let copyOrder:Order = this.copy(this.order);
-        this.modifiedCatalogueLines = this.copy(this.catalogueLines);
+        let copyOrder:Order = copy(this.order);
+        this.modifiedCatalogueLines = copy(this.catalogueLines);
         this.transportExecutionPlanRequest = UBLModelUtils.createTransportExecutionPlanRequestWithOrder(copyOrder, this.modifiedCatalogueLines[0]);
 
-        this.requestForQuotation = UBLModelUtils.createRequestForQuotationWithOrder(this.copy(this.order),this.modifiedCatalogueLines[0]);
+        this.requestForQuotation = UBLModelUtils.createRequestForQuotationWithOrder(copy(this.order),this.modifiedCatalogueLines[0]);
 
         this.selectFirstValuesAmongAlternatives();
     }
 
     initTransportExecutionPlanRequestWithIir(): void {
-        let copyIir:ItemInformationResponse = this.copy(this.itemInformationResponse);
+        let copyIir:ItemInformationResponse = copy(this.itemInformationResponse);
         this.resetBpData();
-        this.modifiedCatalogueLines = this.copy(this.catalogueLines);
+        this.modifiedCatalogueLines = copy(this.catalogueLines);
         this.transportExecutionPlanRequest = UBLModelUtils.createTransportExecutionPlanRequestWithIir(copyIir, this.precedingBPDataService.fromAddress, this.precedingBPDataService.toAddress, this.precedingBPDataService.orderMetadata);
     }
 
     initTransportExecutionPlanRequestWithQuotation() {
-        let copyQuotation:Quotation = this.copy(this.quotation);
+        let copyQuotation:Quotation = copy(this.quotation);
         this.resetBpData();
-        this.modifiedCatalogueLines = this.copy(this.catalogueLines);
+        this.modifiedCatalogueLines = copy(this.catalogueLines);
         this.transportExecutionPlanRequest = UBLModelUtils.createTransportExecutionPlanRequestWithQuotation(copyQuotation);
     }
 
 
     initTransportExecutionPlanRequestWithTransportExecutionPlanRequest(){
-        let copyTransportExecutionPlanRequest:TransportExecutionPlanRequest = this.copy(this.transportExecutionPlanRequest);
+        let copyTransportExecutionPlanRequest:TransportExecutionPlanRequest = copy(this.transportExecutionPlanRequest);
         this.resetBpData();
-        this.modifiedCatalogueLines = this.copy(this.catalogueLines);
+        this.modifiedCatalogueLines = copy(this.catalogueLines);
         this.transportExecutionPlanRequest = UBLModelUtils.createTransportExecutionPlanRequestWithTransportExecutionPlanRequest(copyTransportExecutionPlanRequest);
-    }
-
-    private copy<T>(value: T): T {
-        return JSON.parse(JSON.stringify(value));
     }
 
     resetBpData():void {

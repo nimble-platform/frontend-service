@@ -6,6 +6,8 @@ import { CatalogueLine } from "../../catalogue/model/publish/catalogue-line";
 import { BPDataService } from "./bp-data-service";
 import { Subscription } from "rxjs";
 import { ProductBpStepStatus } from "./product-bp-step-status";
+import { ProductWrapper } from "../../product-details/product-wrapper";
+import { BpWorkflowOptions } from "../model/bp-workflow-options";
 
 /**
  * Created by suat on 20-Oct-17.
@@ -24,6 +26,10 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     catalogueId: string;
 
     line: CatalogueLine;
+    wrapper: ProductWrapper;
+    options: BpWorkflowOptions;
+
+    productExpanded: boolean = false;
 
     constructor(public bpDataService: BPDataService, 
                 public catalogueService: CatalogueService, 
@@ -49,8 +55,10 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                     .getCatalogueLine(catalogueId, id)
                     .then(line => {
                         this.line = line;
+                        this.wrapper = new ProductWrapper(line);
                         this.bpDataService.setCatalogueLines([line]);
                         this.getCatalogueLineStatus.callback("Retrieved product details", true);
+                        this.options = this.bpDataService.workflowOptions;
                     })
                     .catch(error => {
                         this.getCatalogueLineStatus.error("Failed to retrieve product details");

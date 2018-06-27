@@ -16,3 +16,7 @@ export function sanitizePropertyName(name: string): string {
     const result = name.replace(/([a-z])([A-Z])/g, '$1 $2');
     return result.substr(0, 1).toUpperCase() + result.substr(1);
 }
+
+export function copy<T = any>(object: T): T {
+    return JSON.parse(JSON.stringify(object));
+}

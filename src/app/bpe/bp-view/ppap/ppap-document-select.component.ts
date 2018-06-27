@@ -12,6 +12,7 @@ import {Ppap} from "../../../catalogue/model/publish/ppap";
 import {CallStatus} from "../../../common/call-status";
 import {ActivatedRoute, Router} from "@angular/router";
 import { Location } from "@angular/common";
+import { copy } from "../../../common/utils";
 
 type PpapLevels = [boolean, boolean, boolean, boolean, boolean]
 
@@ -58,6 +59,9 @@ export class PpapDocumentSelectComponent implements OnInit {
     /** The currently selected documents. */
     selectedDocuments: boolean[];
 
+    /** The note. */
+    note: string = "";
+
     /** Whether the definition of PPAP is visible or not. */
     showDetails = false;
 
@@ -79,6 +83,7 @@ export class PpapDocumentSelectComponent implements OnInit {
                 this.level = 0;
                 this.resetSelectedDocumens();
                 this.ppap = this.bpDataService.ppap;
+                this.note = this.ppap.note;
                 this.ppap.documentType.forEach(name => {
                     const index = this.DOCUMENTS.findIndex(doc => doc.name === name);
                     if(index >= 0) {
@@ -110,8 +115,9 @@ export class PpapDocumentSelectComponent implements OnInit {
 
     onSendRequest() {
         this.ppap = UBLModelUtils.createPpap([]);
+        this.ppap.note = this.note;
         this.ppap.documentType = this.DOCUMENTS.filter((_, i) => this.selectedDocuments[i]).map(doc => doc.name);
-        this.ppap.lineItem.item = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;
+        this.ppap.lineItem.item = copy(this.bpDataService.modifiedCatalogueLines[0].goodsItem.item);
         UBLModelUtils.removeHjidFieldsFromObject(this.ppap);
 
         let sellerId = this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty.id;

@@ -42,6 +42,7 @@ import { NegotiationAddressComponent } from './bp-view/negotiation/negotiation-a
 import { ItemInformationRequestComponent } from './bp-view/item-information/item-information-request.component';
 import { ItemInformationResponseComponent } from './bp-view/item-information/item-information-response.component';
 import { ItemInformationComponent } from './bp-view/item-information/item-information.component';
+import { ProductDetailsModule } from '../product-details/product-details.module';
 
 
 @NgModule({
@@ -53,6 +54,7 @@ import { ItemInformationComponent } from './bp-view/item-information/item-inform
 		ReactiveFormsModule,
 		BPERoutingModule,
 		CatalogueModule,
+		ProductDetailsModule,
 		NgbModule.forRoot()
 	],
 	declarations: [

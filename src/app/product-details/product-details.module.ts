@@ -6,6 +6,8 @@ import { HttpModule } from "@angular/http";
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
 import { ProductDetailsComponent } from "./product-details.component";
 import { ProductDetailsRoutingModule } from "./product-details-routing.module";
+import { ProductDetailsTabsComponent } from "./product-details-tabs.component";
+import { ProductDetailsOverviewComponent } from "./product-details-overview.component";
 
 @NgModule({
 	imports: [
@@ -18,10 +20,12 @@ import { ProductDetailsRoutingModule } from "./product-details-routing.module";
 		NgbModule.forRoot()
 	],
 	declarations: [
-		ProductDetailsComponent
+		ProductDetailsComponent,
+		ProductDetailsTabsComponent,
+		ProductDetailsOverviewComponent
 	],
 	exports: [
-		ProductDetailsComponent
+		ProductDetailsTabsComponent
 	],
 	providers: [
 	]

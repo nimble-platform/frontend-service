@@ -4,175 +4,12 @@
                 <div class="col-12">
                     <!-- Product Overview -->
                     <h1 class="py-2">{{item.name}}</h1>
-                    <div class="row">
-                        <div class="col-4">
-                            <strong>Product by:</strong> {{item.manufacturerParty.name}}
-                        </div>
-                        <div class="col-8 d-flex flex-wrap">
-                            <!-- Categories -->
-                            <strong>Categories:</strong>
-                            <div *ngFor="let classification of getClassifications()" >
-                                <div class="border border-dark rounded px-1 inline space-left">
-                                    {{classification.itemClassificationCode.name}}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-4">
-                            <!-- Images (image class used in catalogue-line-header.component.html) -->
-                            <div id="carousel-large" class="carousel slide carousel-resize mt-2 mb-4" data-ride="carousel">
-                                <div class="carousel-inner">
-                                    <div class="carousel-item active carousel-active">
-                                        <img *ngIf="item.productImage.length == 0"
-                                            class="img-max"
-                                            src="assets/empty_img.png">
-                                        <img *ngIf="item.productImage.length > 0"
-                                            class="img-selected d-block active"
-                                            src="data:{{item.productImage[selectedImage].mimeCode}};base64,{{item.productImage[selectedImage].value}}"/>
-                                    </div>
-                                </div>
-                            </div>
-                            <div *ngIf="item.productImage.length > 1 && item.productImage.length <=2" class="d-flex justify-content-center">
-                                <div id="carousel-smaller" class="carousel slide carousel-inactive-resize inline">
-                                    <div class="inline border" [ngClass]="{'border-primary': selectedImage === 0}">
-                                        <img class="carousel-inactive"
-                                            (click)="onSelectImage(selectedImage - 1)"
-                                            src="data:{{item.productImage[0].mimeCode}};base64,{{item.productImage[0].value}}" />
-                                    </div>
-                                    <div class="inline border" [ngClass]="{'border-primary': selectedImage === 1}">
-                                        <img class="carousel-inactive"
-                                            (click)="onSelectImage(selectedImage + 1)"
-                                            src="data:{{item.productImage[1].mimeCode}};base64,{{item.productImage[1].value}}" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div *ngIf="item.productImage.length > 2">
-                                <button class="btn btn-secondary inline btn-carousel float-left"
-                                    (click)="onSelectImage(selectedImage - 1)">
-                                    <i class="fas fa-chevron-left fa-2x"></i>
-                                </button>
-                                <div id="carousel-smaller" class="carousel slide carousel-inactive-resize inline">
-                                    <div class="inline" *ngIf="item.productImage.length > 2">
-                                        <img class="carousel-inactive"
-                                            (click)="onSelectImage(selectedImage - 1)"
-                                            src="data:{{item.productImage[selectedImage].mimeCode}};base64,{{item.productImage[navigateImages(selectedImage - 1, item.productImage.length)].value}}" />
-                                    </div>
-                                    <div class="inline border border-primary">
-                                        <img class="carousel-inactive"
-                                            src="data:{{item.productImage[selectedImage].mimeCode}};base64,{{item.productImage[selectedImage].value}}" />
-                                    </div>
-                                    <div class="inline">
-                                        <img class="carousel-inactive"
-                                            (click)="onSelectImage(selectedImage + 1)"
-                                            src="data:{{item.productImage[selectedImage].mimeCode}};base64,{{item.productImage[navigateImages(selectedImage + 1, item.productImage.length)].value}}" />
-                                    </div>
-                                </div>
-                                <button class="btn btn-secondary inline btn-carousel float-right"
-                                    (click)="onSelectImage(selectedImage + 1)">
-                                    <i class="fas fa-chevron-right fa-2x"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="col-8 pt-4">
-                            <div>
-                                <!-- Description -->
-                                <strong>Description:</strong>
-                                <p>{{item.description || "No description provided."}}</p>
-                            </div>
-                            <!-- Properties with multiple values to select from -->
-                            <div *ngFor="let property of getPropertiesWithListOfValues()" class="my-1 row">
-                                <div class="col-2">
-                                    <strong>{{property.name}}: </strong>
-                                </div>
-                                <div class="col-10">
-                                <span *ngFor="let val of property.value; let i = index" class="btn-group-toggle" data-toggle="buttons">
-                                    <button type="button" class="btn btn-outline-primary no-y-padding" (click)="onTogglePropertyValue(property, i)" 
-                                        [ngClass]="{ 'active': isPropertyValueSelected(property, i) }">
-                                        {{val}}
-                                    </button>
-                                </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <product-details-overview [wrapper]="wrapper" [options]="options">
+                    </product-details-overview>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-12 pt-4">
-                    <!-- Product Tabs -->
-                    <div class="card">
-                        <div class="card-header">
-                            <ul class="nav nav-tabs card-header-tabs">
-                                <li class="nav-item">
-                                    <a href id="DETAILS" class="nav-link"
-                                        [ngClass]="{ active: selectedTab === 'DETAILS'}"
-                                        (click)="onSelectTab($event)">
-                                        Details
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href id="DELIVERY_TRADING" class="nav-link"
-                                        [ngClass]="{ active: selectedTab === 'DELIVERY_TRADING'}"
-                                        (click)="onSelectTab($event)">
-                                        Delivery &amp; Trading
-                                    </a>
-                                </li>
-                                <!-- Todo once certificates are supported
-                                <li class="nav-item">
-                                    <a href id="CERTIFICATES" class="nav-link"
-                                        [ngClass]="{ active: selectedTab === 'CERTIFICATES'}"
-                                        (click)="onSelectTab($event)">
-                                        Certificates
-                                    </a>
-                                </li>
-                                -->
-                            </ul>
-                        </div>
-                        <div *ngIf="selectedTab === 'DETAILS'" class="p-3">
-                            <h4 class="p-1">Product Details</h4>
-                            <div *ngFor="let property of getUniqueProperties()" class="p-1">
-                                    <strong>{{ getPropertyName(property) }}: </strong> {{ property.value.join(", ") }}
-                            </div>
-                        </div>
-    
-                        <div *ngIf="selectedTab === 'DELIVERY_TRADING'" class="p-3">
-                            <h4 class="p-1">Price</h4>
-                            <div class="p-1">
-                                <strong>Price: </strong> {{ getPricePerItem() }}
-                            </div>
-                            <div class="p-1">
-                                <strong>Free Sample: </strong> {{ getFreeSample() }}
-                            </div>
-                            <h4 class="pt-2 p-1">Delivery Terms</h4>
-                            <div class="p-1">
-                                <strong>Incoterms: </strong> {{ getIncoterms() }}
-                            </div>
-                            <div class="p-1">
-                                <strong>Special Terms: </strong> {{ getSpecialTerms() }}
-                            </div>
-                            <div class="p-1">
-                                <strong>Delivery Period: </strong> {{ getDeliveryPeriod() }}
-                            </div>
-                            <!-- Seems that this value can no longer be set when publishing a product...
-                            <div>
-                                
-                                <strong>Territory Address: </strong> {{ goodsItem.deliveryTerms.deliveryLocation.address | json }}
-                            </div>
-                            -->
-                            <h4 class="pt-2 p-1">Packaging</h4>
-                            <div class="p-1">
-                                <strong>Packaging: </strong> {{ getPackaging() }}
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Todo once certificates are supported
-                    <div *ngIf="selectedTab === 'CERTIFICATES'">
-                        Certificates tab
-                    </div>
-                    -->
-                </div>
-            </div>
+            <product-details-tabs [wrapper]="wrapper">
+            </product-details-tabs>
         </div>
         <div class="col-3">
             <!-- Order Workflow -->
@@ -186,7 +23,7 @@
                         Delivery Period
                     </label>
                     <span class="order-value">
-                        {{ getDeliveryPeriod() }}
+                        {{ wrapper.getDeliveryPeriod() }}
                     </span>
                 </div>
 
@@ -196,7 +33,7 @@
                         Warranty
                     </label>
                     <span class="order-value">
-                        {{ getWarrantyPeriod() }}
+                        {{ wrapper.getWarrantyPeriod() }}
                     </span>
                 </div>
 
@@ -206,7 +43,7 @@
                         Incoterms
                     </label>
                     <span class="order-value">
-                        {{ getIncoterms() }}
+                        {{ wrapper.getIncoterms() }}
                     </span>
                 </div>
 
@@ -216,7 +53,7 @@
                         Payment Terms
                     </label>
                     <span class="order-value">
-                        {{ getPaymentTerms() }}
+                        {{ wrapper.getPaymentTerms() }}
                     </span>
                 </div>
 
@@ -226,7 +63,7 @@
                         Payment Means
                     </label>
                     <span class="order-value">
-                        {{ getPaymentMeans() }}
+                        {{ wrapper.getPaymentMeans() }}
                     </span>
                 </div>
 
@@ -237,7 +74,7 @@
                             Price
                         </label>
                         <span class="order-value">
-                            {{ getPricePerItem() }}
+                            {{ wrapper.getPricePerItem() }}
                         </span>
                     </div>
 

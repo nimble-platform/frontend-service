@@ -3,52 +3,6 @@
     margin-right: 0;
 }
 
-.btn.no-y-padding {
-    padding-top: 0;
-    padding-bottom: 0;
-}
-
-.img-selected {
-    object-fit: cover;
-    object-position: center;
-}
-
-.carousel-active {
-    display: flex;
-    width:300px;
-    height:300px;
-    overflow: hidden;
-    margin: 0 auto;
-    text-align: center;
-    justify-content: center;
-    align-items: center;
-}
-
-.carousel-resize {
-    min-width:100%;
-    max-width: none;
-    height:300px;
-    margin: 0 -100%;
-}
-
-.carousel-inactive {
-    width:80px;
-    height:80px;
-    overflow: hidden;
-    margin: 0 auto;
-    text-align: center;
-}
-
-.carousel-inactive-resize {
-    height:80px;
-}
-
-.btn-carousel {
-    height: 80px;
-    width: 30px;
-    padding: 2px;
-}
-
 .order-label {
     font-weight: bold;
     margin-bottom: 0rem;
