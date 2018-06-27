@@ -23,6 +23,12 @@
         <value-input type="text" presentationMode="view" label="Payment Terms" 
             [text]="paymentTermsWrapper.paymentTerm" labelClass="col-6" valueClass="col-6">
         </value-input>
+        <!-- <div>
+            <input type="checkbox" [(ngModel)]="order.contract" [disabled]="isLoading() || isReadOnly()" >
+            <span class="form-control d-inline border-0">
+                <strong>Request data monitoring service</strong>
+            </span>
+        </div> -->
     </div>
     <div class="col-4">
         <h2>Delivery Address</h2>

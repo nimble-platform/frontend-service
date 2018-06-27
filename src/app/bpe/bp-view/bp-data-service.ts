@@ -1,28 +1,28 @@
-import {CatalogueLine} from "../../catalogue/model/publish/catalogue-line";
-import {UBLModelUtils} from "../../catalogue/model/ubl-model-utils";
-import {LineReference} from "../../catalogue/model/publish/line-reference";
-import {Injectable} from "@angular/core";
-import {ItemProperty} from "../../catalogue/model/publish/item-property";
-import {Item} from "../../catalogue/model/publish/item";
-import {Dimension} from "../../catalogue/model/publish/dimension";
-import {ActivityVariableParser} from "./activity-variable-parser";
-import {DespatchAdvice} from "../../catalogue/model/publish/despatch-advice";
-import {ReceiptAdvice} from "../../catalogue/model/publish/receipt-advice";
-import {RequestForQuotation} from "../../catalogue/model/publish/request-for-quotation";
-import {Quotation} from "../../catalogue/model/publish/quotation";
-import {Order} from "../../catalogue/model/publish/order";
-import {OrderResponseSimple} from "../../catalogue/model/publish/order-response-simple";
-import {BehaviorSubject} from "rxjs/BehaviorSubject";
-import {Ppap} from "../../catalogue/model/publish/ppap";
-import {PpapResponse} from "../../catalogue/model/publish/ppap-response";
-import {TransportExecutionPlanRequest} from "../../catalogue/model/publish/transport-execution-plan-request";
-import {TransportExecutionPlan} from "../../catalogue/model/publish/transport-execution-plan";
-import {SearchContextService} from "../../simple-search/search-context.service";
-import {ItemInformationRequest} from "../../catalogue/model/publish/item-information-request";
-import {ItemInformationResponse} from "../../catalogue/model/publish/item-information-response";
-import {CookieService} from "ng2-cookies";
-import {UserService} from "../../user-mgmt/user.service";
-import {PrecedingBPDataService} from "./preceding-bp-data-service";
+import { CatalogueLine } from "../../catalogue/model/publish/catalogue-line";
+import { UBLModelUtils } from "../../catalogue/model/ubl-model-utils";
+import { LineReference } from "../../catalogue/model/publish/line-reference";
+import { Injectable } from "@angular/core";
+import { ItemProperty } from "../../catalogue/model/publish/item-property";
+import { Item } from "../../catalogue/model/publish/item";
+import { Dimension } from "../../catalogue/model/publish/dimension";
+import { ActivityVariableParser } from "./activity-variable-parser";
+import { DespatchAdvice } from "../../catalogue/model/publish/despatch-advice";
+import { ReceiptAdvice } from "../../catalogue/model/publish/receipt-advice";
+import { RequestForQuotation } from "../../catalogue/model/publish/request-for-quotation";
+import { Quotation } from "../../catalogue/model/publish/quotation";
+import { Order } from "../../catalogue/model/publish/order";
+import { OrderResponseSimple } from "../../catalogue/model/publish/order-response-simple";
+import { BehaviorSubject } from "rxjs/BehaviorSubject";
+import { Ppap } from "../../catalogue/model/publish/ppap";
+import { PpapResponse } from "../../catalogue/model/publish/ppap-response";
+import { TransportExecutionPlanRequest } from "../../catalogue/model/publish/transport-execution-plan-request";
+import { TransportExecutionPlan } from "../../catalogue/model/publish/transport-execution-plan";
+import { SearchContextService } from "../../simple-search/search-context.service";
+import { ItemInformationRequest } from "../../catalogue/model/publish/item-information-request";
+import { ItemInformationResponse } from "../../catalogue/model/publish/item-information-response";
+import { CookieService } from "ng2-cookies";
+import { UserService } from "../../user-mgmt/user.service";
+import { PrecedingBPDataService } from "./preceding-bp-data-service";
 import { BpUserRole } from "../model/bp-user-role";
 import { BpWorkflowOptions } from "../model/bp-workflow-options";
 import { NegotiationOptions } from "../../catalogue/model/publish/negotiation-options";
@@ -240,7 +240,7 @@ export class BPDataService{
         rfqLine.lineItem.warrantyValidityPeriod = copy(line.warrantyValidityPeriod);
         rfqLine.lineItem.deliveryTerms.incoterms = line.goodsItem.deliveryTerms.incoterms;
         rfqLine.lineItem.quantity.unitCode = line.requiredItemLocationQuantity.price.baseQuantity.unitCode;
-        this.selectFirstValuesAmongAlternatives();
+        this.selectFirstValuesAmongAlternatives(rfqLine.lineItem.item);
 
         // quantity
         rfqLine.lineItem.quantity.value = this.workflowOptions ? this.workflowOptions.quantity : 1;
@@ -281,14 +281,14 @@ export class BPDataService{
         this.ppap = UBLModelUtils.createPpap(documents);
         this.ppap.lineItem.item = this.modifiedCatalogueLines[0].goodsItem.item;
         this.ppap.lineItem.lineReference = [new LineReference(this.modifiedCatalogueLines[0].id)];
-        this.selectFirstValuesAmongAlternatives();
+        this.selectFirstValuesAmongAlternatives(this.modifiedCatalogueLines[0].goodsItem.item);
     }
 
     initItemInformationRequest():void {
         this.modifiedCatalogueLines = copy(this.catalogueLines);
         this.itemInformationRequest = UBLModelUtils.createItemInformationRequest();
         this.itemInformationRequest.itemInformationRequestLine[0].salesItem[0].item = this.modifiedCatalogueLines[0].goodsItem.item;
-        this.selectFirstValuesAmongAlternatives();
+        this.selectFirstValuesAmongAlternatives(this.modifiedCatalogueLines[0].goodsItem.item);
     }
 
     initOrderWithQuotation() {
@@ -310,6 +310,7 @@ export class BPDataService{
         this.order.orderLine[0].lineItem = copyRfq.requestForQuotationLine[0].lineItem;
         this.order.paymentMeans = copyRfq.paymentMeans;
         this.order.paymentTerms = copyRfq.paymentTerms;
+        this.order.deliveryAddress = copyRfq.delivery.deliveryAddress;
         this.setProcessType('Order');
     }
 
@@ -361,7 +362,7 @@ export class BPDataService{
     initTransportExecutionPlanRequest() {
         this.modifiedCatalogueLines = copy(this.catalogueLines);
         this.transportExecutionPlanRequest = UBLModelUtils.createTransportExecutionPlanRequest(this.modifiedCatalogueLines[0]);
-        this.selectFirstValuesAmongAlternatives();
+        this.selectFirstValuesAmongAlternatives(this.modifiedCatalogueLines[0].goodsItem.item);
     }
 
     initTransportExecutionPlanRequestWithOrder() {
@@ -373,7 +374,7 @@ export class BPDataService{
 
         this.requestForQuotation = UBLModelUtils.createRequestForQuotationWithOrder(copy(this.order),this.modifiedCatalogueLines[0]);
 
-        this.selectFirstValuesAmongAlternatives();
+        this.selectFirstValuesAmongAlternatives(this.modifiedCatalogueLines[0].goodsItem.item);
     }
 
     initTransportExecutionPlanRequestWithIir(): void {
@@ -437,16 +438,16 @@ export class BPDataService{
      * The modified objects reflect the user selections during the continuation of the process.
      ********************************************************************************************/
 
-    selectFirstValuesAmongAlternatives():void {
-        this.chooseAllDimensions();
-        this.chooseFirstValuesOfItemProperties();
+    selectFirstValuesAmongAlternatives(item: Item): void {
+        this.chooseAllDimensions(item);
+        this.chooseFirstValuesOfItemProperties(item);
     }
 
     /**
      * Updates modified catalogue line's dimensions with only the first occurrences of the dimension attributes
      */
-    private chooseAllDimensions(): void {
-        let dimensions:Dimension[] = this.modifiedCatalogueLines[0].goodsItem.item.dimension;
+    private chooseAllDimensions(item: Item): void {
+        let dimensions:Dimension[] = item.dimension;
         let finalDimensions:Dimension[] = [];
         let chosenAttributes:string[] = [];
 
@@ -457,12 +458,10 @@ export class BPDataService{
                 finalDimensions.push(dim);
             }
         }
-        this.modifiedCatalogueLines[0].goodsItem.item.dimension = finalDimensions;
+        item.dimension = finalDimensions;
     }
 
-    private chooseFirstValuesOfItemProperties(): void {
-        let item: Item = this.modifiedCatalogueLines[0].goodsItem.item;
-
+    private chooseFirstValuesOfItemProperties(item: Item): void {
         for(let i = 0; i < item.additionalItemProperty.length; i++) {
             const prop = item.additionalItemProperty[i];
 
@@ -512,56 +511,58 @@ export class BPDataService{
     }
 
     computeWorkflowOptions() {
-        this.workflowOptions = new BpWorkflowOptions();
+        if(!this.workflowOptions) {
+            this.workflowOptions = new BpWorkflowOptions();
 
-        // this item only contains the properties choosen by the user
-        const item = this.getItemFromCurrentWorkflow();
-
-        const line = this.catalogueLines[0];
-        if(!item || !line) {
-            return;
-        }
-        // this item contains all the properties.
-        const lineItem = line.goodsItem.item;
-
-        for(let i = 0; i < lineItem.additionalItemProperty.length;i++) {
-            const prop = lineItem.additionalItemProperty[i];
-            const key = getPropertyKey(prop);
-
-            const itemProp = item.additionalItemProperty[i];
-
-            switch(prop.valueQualifier) {
-                case "STRING":
-                case "BOOLEAN":
-                    if(prop.value.length > 1) {
-                        for(let valIndex = 0; valIndex < prop.value.length; valIndex++) {
-                            if(prop.value[valIndex] === itemProp.value[0]) {
-                                this.workflowOptions.selectedValues[key] = valIndex;
-                            }
-                        }
-                    }
-                    break;
-                case "REAL_MEASURE":
-                    if(prop.valueDecimal.length > 1) {
-                        if(prop.valueDecimal.length > 1) {
-                            for(let valIndex = 0; valIndex < prop.valueDecimal.length; valIndex++) {
-                                if(prop.valueDecimal[valIndex] === itemProp.valueDecimal[0]) {
+            // this item only contains the properties choosen by the user
+            const item = this.getItemFromCurrentWorkflow();
+    
+            const line = this.catalogueLines[0];
+            if(!item || !line) {
+                return;
+            }
+            // this item contains all the properties.
+            const lineItem = line.goodsItem.item;
+    
+            for(let i = 0; i < lineItem.additionalItemProperty.length;i++) {
+                const prop = lineItem.additionalItemProperty[i];
+                const key = getPropertyKey(prop);
+    
+                const itemProp = item.additionalItemProperty[i];
+    
+                switch(prop.valueQualifier) {
+                    case "STRING":
+                    case "BOOLEAN":
+                        if(prop.value.length > 1) {
+                            for(let valIndex = 0; valIndex < prop.value.length; valIndex++) {
+                                if(prop.value[valIndex] === itemProp.value[0]) {
                                     this.workflowOptions.selectedValues[key] = valIndex;
                                 }
                             }
                         }
-                    }
-                    break;
-                case "QUANTITY":
-                    if(prop.valueQuantity.length > 1) {
-                        for(let valIndex = 0; valIndex < prop.valueQuantity.length; valIndex++) {
-                            if(prop.valueQuantity[valIndex].value === itemProp.valueQuantity[0].value 
-                                    && prop.valueQuantity[valIndex].unitCode === itemProp.valueQuantity[0].unitCode) {
-                                this.workflowOptions.selectedValues[key] = valIndex;
+                        break;
+                    case "REAL_MEASURE":
+                        if(prop.valueDecimal.length > 1) {
+                            if(prop.valueDecimal.length > 1) {
+                                for(let valIndex = 0; valIndex < prop.valueDecimal.length; valIndex++) {
+                                    if(prop.valueDecimal[valIndex] === itemProp.valueDecimal[0]) {
+                                        this.workflowOptions.selectedValues[key] = valIndex;
+                                    }
+                                }
                             }
                         }
-                    }
-                    break;
+                        break;
+                    case "QUANTITY":
+                        if(prop.valueQuantity.length > 1) {
+                            for(let valIndex = 0; valIndex < prop.valueQuantity.length; valIndex++) {
+                                if(prop.valueQuantity[valIndex].value === itemProp.valueQuantity[0].value 
+                                        && prop.valueQuantity[valIndex].unitCode === itemProp.valueQuantity[0].unitCode) {
+                                    this.workflowOptions.selectedValues[key] = valIndex;
+                                }
+                            }
+                        }
+                        break;
+                }
             }
         }
     }
