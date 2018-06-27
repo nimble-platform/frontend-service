@@ -1,16 +1,21 @@
 <div class="form-group row">
-    <div class="col-9 d-flex align-items-stretch" style="overflow: auto;">
-        <p class="mt-1 pr-1 align-self-center">Selected Categories: </p>
-        <div *ngFor="let selectedCategory of categoryService.selectedCategories"
-        class="bordered d-flex space-right align-items-start" title="{{selectedCategory.taxonomyId}}">
-            <small class="p-1">{{selectedCategory.preferredName}}</small>
-            <!-- TODO: Cancel button -->
-        </div>
-        <div>
+    <div class="col-9 d-flex align-items-center">
+        <p class="mt-1 mb-0 mr-3 flex-shrink-0">Selected Categories: </p>
+        <div class="border w-100 h-100 align-self-start">
+            <div class="d-flex flex-wrap">
+                <div *ngFor="let selectedCategory of categoryService.selectedCategories"
+                class="bordered d-flex align-items-center mx-1 my-1" title="{{selectedCategory.taxonomyId}}">
+                    <small class="p-0">{{selectedCategory.preferredName}}</small>
+                    <i class="fa fa-times-circle pl-1 text-red" placement="right" (click)="removeCategory(selectedCategory)"></i>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="col-3">
-        <button class="btn btn-primary w-100 inline" (click)="navigateToPublishingPage()">Continue With Selected Categories</button>
+    <div class="col-3 align-self-center">
+        <button class="btn btn-primary w-100 inline" [disabled]="categoryService.selectedCategories.length === 0 || navigating" (click)="navigateToPublishingPage()">Continue With Selected Categories</button>
+        <div [hidden]="!navigating" class="space-right">
+            <img class="space-before" src="assets/form_loader.gif"/>
+        </div>    
     </div>
 </div>
 <hr>

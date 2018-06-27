@@ -492,35 +492,18 @@ export class ProductPublishComponent {
      * 3) remove the corresponding commodity classification from the item
      */
     categoryCancel(category:Category) {
-        // custom categories
-        if(category.taxonomyId == 'Custom'){
-            let index = this.categoryService.selectedCategories.findIndex(c => c.preferredName == category.preferredName);
-            if (index > -1) {
-                this.catalogueLine.goodsItem.item.additionalItemProperty = this.catalogueLine.goodsItem.item.additionalItemProperty.filter(function (el) {
-                    return el.itemClassificationCode.name != category.preferredName;
-                });
+        let index = this.categoryService.selectedCategories.findIndex(c => c.id == category.id);
+        if (index > -1) {
+            this.catalogueLine.goodsItem.item.additionalItemProperty = this.catalogueLine.goodsItem.item.additionalItemProperty.filter(function (el) {
+                return el.itemClassificationCode.value != category.id;
+            });
 
-                this.categoryService.selectedCategories.splice(index, 1);
-            }
-            let i = this.catalogueLine.goodsItem.item.commodityClassification.findIndex(c => c.itemClassificationCode.name == category.preferredName);
-            if (i > -1) {
-                this.catalogueLine.goodsItem.item.commodityClassification.splice(i, 1);
-            }
+            this.categoryService.selectedCategories.splice(index, 1);
         }
-        else{
-            let index = this.categoryService.selectedCategories.findIndex(c => c.id == category.id);
-            if (index > -1) {
-                this.catalogueLine.goodsItem.item.additionalItemProperty = this.catalogueLine.goodsItem.item.additionalItemProperty.filter(function (el) {
-                    return el.itemClassificationCode.value != category.id;
-                });
 
-                this.categoryService.selectedCategories.splice(index, 1);
-            }
-
-            let i = this.catalogueLine.goodsItem.item.commodityClassification.findIndex(c => c.itemClassificationCode.value == category.id);
-            if (i > -1) {
-                this.catalogueLine.goodsItem.item.commodityClassification.splice(i, 1);
-            }
+        let i = this.catalogueLine.goodsItem.item.commodityClassification.findIndex(c => c.itemClassificationCode.value == category.id);
+        if (i > -1) {
+            this.catalogueLine.goodsItem.item.commodityClassification.splice(i, 1);
         }
     }
 
@@ -714,21 +697,10 @@ export class ProductPublishComponent {
 
     private isNewCategory(category: Category): boolean {
         let newCategory: boolean = true;
-        // custom categories
-        if(category.taxonomyId == 'Custom'){
-            for (let commodityClassification of this.catalogueLine.goodsItem.item.commodityClassification) {
-                if (category.preferredName == commodityClassification.itemClassificationCode.name) {
-                    newCategory = false;
-                    break;
-                }
-            }
-        }
-        else{
-            for (let commodityClassification of this.catalogueLine.goodsItem.item.commodityClassification) {
-                if (category.id == commodityClassification.itemClassificationCode.value) {
-                    newCategory = false;
-                    break;
-                }
+        for (let commodityClassification of this.catalogueLine.goodsItem.item.commodityClassification) {
+            if (category.id == commodityClassification.itemClassificationCode.value) {
+                newCategory = false;
+                break;
             }
         }
         return newCategory;
