@@ -18,7 +18,8 @@
                   [certificates]="catalogueLine.goodsItem.item.certificate">
 </certificate-view>
 
-<h5 class="mt-3">
+<h5 class="mt-3" *ngIf="presentationMode == 'edit' || (catalogueLine.goodsItem.item.trackAndTraceDetails.masterURL || catalogueLine.goodsItem.item.trackAndTraceDetails.eventURL
+                || catalogueLine.goodsItem.item.trackAndTraceDetails.productionProcessTemplate)">
     <button type="button" class="btn btn-outline-primary" (click)="showTTDetails = !showTTDetails">
         Track And Trace Details
     </button>

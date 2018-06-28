@@ -38,22 +38,24 @@ export class OrderResponseComponent implements OnInit{
     }
 
     ngOnInit() {
-        if(this.bpDataService.processMetadata.processStatus == 'Completed' && this.bpDataService.orderResponse.acceptedIndicator && this.bpDataService.userRole == 'seller'){
-            this.epcService.getEpcCodes(this.order.id).then(res => {
-                this.epcCodes = res;
+        if(this.bpDataService.processMetadata.processStatus == 'Completed' && this.bpDataService.orderResponse.acceptedIndicator){
+            if(this.trackAndTraceDetailsExists()){
+                this.epcService.getEpcCodes(this.order.id).then(res => {
+                    this.epcCodes = res;
 
-                if(this.epcCodes.codes.length == 0){
-                    this.epcCodes.codes.push("");
-                }
+                    if(this.epcCodes.codes.length == 0){
+                        this.epcCodes.codes.push("");
+                    }
 
-            }).catch(error => {
-                if(error.status == 404){
-                    this.epcCodes = new EpcCodes(this.order.id,[""]);
-                }
-                else {
-                    console.error(error.message);
-                }
-            })
+                }).catch(error => {
+                    if(error.status == 404){
+                        this.epcCodes = new EpcCodes(this.order.id,[""]);
+                    }
+                    else {
+                        console.error(error.message);
+                    }
+                })
+            }
         }
     }
 
@@ -72,6 +74,16 @@ export class OrderResponseComponent implements OnInit{
         }).catch(error => {
             this.epcCodesCallStatus.error("Failed to save EPC Codes.");
         })
+    }
+
+    trackAndTraceDetailsExists(){
+        if(this.order.orderLine[0].lineItem.item.trackAndTraceDetails.masterURL || this.order.orderLine[0].lineItem.item.trackAndTraceDetails.eventURL
+                || this.order.orderLine[0].lineItem.item.trackAndTraceDetails.productionProcessTemplate){
+            return true;
+        }
+
+        this.epcCodes = null;
+        return false;
     }
 
     respondToOrder(acceptedIndicator: boolean) {
