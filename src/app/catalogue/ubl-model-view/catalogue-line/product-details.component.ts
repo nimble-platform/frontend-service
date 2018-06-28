@@ -25,6 +25,8 @@ export class ProductDetailsComponent{
     // keeping the collapsed state of property blocks. it is actually a reference to the actual kept in publish service
     propertyBlockCollapsedStates: Map<string, boolean> = new Map<string, boolean>();
 
+    showTTDetails = false;
+
     constructor(private publishService: PublishService) {
         this.propertyBlockCollapsedStates = this.publishService.getCollapsedStates();
     }

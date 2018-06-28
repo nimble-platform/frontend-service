@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import {Headers, Http} from '@angular/http';
-import * as myGlobals from '../globals';
+import * as myGlobals from '../../globals';
 import {CookieService} from 'ng2-cookies';
-import {EpcCodes} from './model/epc-codes';
+import {EpcCodes} from '../../data-channel/model/epc-codes';
 
 @Injectable()
 export class EpcService {

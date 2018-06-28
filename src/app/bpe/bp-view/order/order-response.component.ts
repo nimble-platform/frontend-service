@@ -8,8 +8,9 @@ import {ProcessInstanceInputMessage} from "../../model/process-instance-input-me
 import {ModelUtils} from "../../model/model-utils";
 import {CallStatus} from "../../../common/call-status";
 import {Router} from "@angular/router";
-import {EpcService} from '../../../epc/epc-service';
-import {EpcCodes} from '../../../epc/model/epc-codes';
+import {EpcCodes} from '../../../data-channel/model/epc-codes';
+import {EpcService} from '../epc-service';
+
 /**
  * Created by suat on 20-Sep-17.
  */

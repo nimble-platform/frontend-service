@@ -9,7 +9,7 @@ export class SimpleSearchService {
 	private headers = new Headers({'Content-Type': 'application/json'});
 	private url = myGlobals.simple_search_endpoint;
 	private facetMin = myGlobals.facet_min;
-	
+
 	product_name = myGlobals.product_name;
 	product_vendor_id = myGlobals.product_vendor_id;
 	product_vendor_name = myGlobals.product_vendor_name;
@@ -17,7 +17,9 @@ export class SimpleSearchService {
 	product_nonfilter_full = myGlobals.product_nonfilter_full;
 	product_nonfilter_regex = myGlobals.product_nonfilter_regex;
 	product_configurable = myGlobals.product_configurable;
-	
+	product_cat = myGlobals.product_cat;
+	product_cat_mix = myGlobals.product_cat_mix;
+
 	constructor(private http: Http) { }
 
 	getFields(): Promise<any> {
@@ -28,10 +30,10 @@ export class SimpleSearchService {
 		.then(res => res)
 		.catch(this.handleError);
 	}
-	
-	get(query: string, facets: [string], facetQueries: [string], page: number): Promise<any> {
+
+	get(query: string, facets: [string], facetQueries: [string], page: number, cat: string): Promise<any> {
 		var start = page*10-10;
-		const url = `${this.url}?q=${query}&start=${start}&facet=true&sort=score%20desc&rows=10&facet.sort=count&facet.limit=30&facet.mincount=${this.facetMin}&json.nl=map&wt=json`;
+		const url = `${this.url}?q=${query}&start=${start}&facet=true&sort=score%20desc&rows=10&facet.sort=count&facet.mincount=${this.facetMin}&json.nl=map&wt=json`;
 		var full_url = url + "";
 		for (let facet of facets) {
 			if (facet.length === 0 || !facet.trim()) {}
@@ -41,13 +43,17 @@ export class SimpleSearchService {
 		for (let facetQuery of facetQueries) {
 			full_url += "&fq="+encodeURIComponent(facetQuery);
 		}
+		if (cat != "") {
+			var add_url = `${this.product_cat}:"${cat}"`;
+			full_url += "&fq="+encodeURIComponent(add_url);
+		}
 		return this.http
 		.get(full_url, {headers: this.headers})
 		.toPromise()
 		.then(res => res.json())
 		.catch(this.handleError);
 	}
-	
+
 	getSingle(id: string): Promise<any> {
 		const url = `${this.url}?q=*&rows=1&wt=json&fq=item_id:${id}`;
 		return this.http
@@ -56,10 +62,10 @@ export class SimpleSearchService {
 		.then(res => res.json())
 		.catch(this.handleError);
 	}
-	
+
 	checkField(field:string): boolean {
 		var valid = true;
-		if (field == this.product_name || field == this.product_img || field == this.product_vendor_id)
+		if (field == this.product_name || field == this.product_img || field == this.product_vendor_id || field == this.product_cat || field == this.product_cat_mix)
 			valid = false;
 		for (let filter of this.product_nonfilter_full) {
 			if (field == filter)
@@ -75,9 +81,9 @@ export class SimpleSearchService {
 		}
 		return valid;
 	}
-	
+
 	private handleError(error: any): Promise<any> {
 		return Promise.reject(error.message || error);
 	}
-	
+
 }

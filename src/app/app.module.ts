@@ -27,7 +27,7 @@ import { DataChannelService } from "./data-channel/data-channel.service";
 import { UnitService } from './common/unit-service';
 import { PrecedingBPDataService } from "./bpe/bp-view/preceding-bp-data-service";
 import { TnTService } from './tnt/tnt.service';
-import { EpcService } from './epc/epc-service';
+import { EpcService } from './bpe/bp-view/epc-service';
 
 @NgModule({
     imports: [

@@ -18,6 +18,28 @@
 		<img class="space-before" src="assets/form_loader.gif"/>
 	</div>
 
+	<div [hidden]="callback">
+		<div class="card border-primary">
+			<div class="card-header text-white bg-primary">
+				Category
+			</div>
+			<div class="card-body">
+				<div *ngFor="let lvl0 of cat_levels[0]">
+					<span class="clickable" (click)="callCat(lvl0.name)">{{ lvl0.name }} ({{ lvl0.count }})</span>
+				</div>
+				<div *ngIf="cat_other_count>0">
+					<hr>
+					<span class="clickable" (click)="showOther=!showOther">Other ({{cat_other_count}}) <span *ngIf="!showOther"><i class="fa fa-angle-double-down"></i></span><span *ngIf="showOther"><i class="fa fa-angle-double-up"></i></span></span>
+				</div>
+				<div *ngIf="showOther">
+					<div *ngFor="let other of cat_other">
+						<span class="clickable" (click)="callCat(other.name)">&gt; {{ other.name }} ({{ other.count }})</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<div [hidden]="!callback">
 		<hr/>
 		<div [hidden]="size==0">
@@ -34,6 +56,71 @@
 			<div class="row">
 
 				<div class="col-4">
+
+					<div class="card border-primary">
+						<div class="card-header text-white bg-primary">
+							Category
+						</div>
+						<div class="card-body">
+							<div *ngIf="cat!=''" class="space-after">
+								<span class="clickable" (click)="setCat('')"><i>Reset category selection</i></span>
+							</div>
+							<div *ngIf="cat_level!=-1">
+								<div *ngFor="let lvl0 of cat_levels[0]">
+									<div *ngIf="cat==lvl0.name">
+										<span class="clickable" (click)="setCat(lvl0.name)"><b>{{ lvl0.name }} ({{ lvl0.count }})</b></span>
+									</div>
+									<div *ngIf="cat!=lvl0.name&&cat_level!=0">
+										<span class="clickable" (click)="setCat(lvl0.name)">{{ lvl0.name }} ({{ lvl0.count }})</span>
+									</div>
+								</div>
+							</div>
+							<div *ngIf="cat_level>=0">
+								<div *ngFor="let lvl1 of cat_levels[1]">
+									<div *ngIf="cat==lvl1.name">
+										<span class="clickable" (click)="setCat(lvl1.name)"><b>&gt; {{ lvl1.name }} ({{ lvl1.count }})</b></span>
+									</div>
+									<div *ngIf="cat!=lvl1.name&&cat_level!=1">
+										<span class="clickable" (click)="setCat(lvl1.name)">&gt; {{ lvl1.name }} ({{ lvl1.count }})</span>
+									</div>
+								</div>
+							</div>
+							<div *ngIf="cat_level>=1">
+								<div *ngFor="let lvl2 of cat_levels[2]">
+									<div *ngIf="cat==lvl2.name">
+										<span class="clickable" (click)="setCat(lvl2.name)"><b>&gt;&gt; {{ lvl2.name }} ({{ lvl2.count }})</b></span>
+									</div>
+									<div *ngIf="cat!=lvl2.name&&cat_level!=2">
+										<span class="clickable" (click)="setCat(lvl2.name)">&gt;&gt; {{ lvl2.name }} ({{ lvl2.count }})</span>
+									</div>
+								</div>
+							</div>
+							<div *ngIf="cat_level>=2">
+								<div *ngFor="let lvl3 of cat_levels[3]">
+									<div *ngIf="cat==lvl3.name">
+										<span class="clickable" (click)="setCat(lvl3.name)"><b>&gt;&gt;&gt; {{ lvl3.name }} ({{ lvl3.count }})</b></span>
+									</div>
+									<div *ngIf="cat!=lvl3.name&&cat_level!=3">
+										<span class="clickable" (click)="setCat(lvl3.name)">&gt;&gt;&gt; {{ lvl3.name }} ({{ lvl3.count }})</span>
+									</div>
+								</div>
+							</div>
+							<div *ngIf="cat_level<0 && cat_other_count>0">
+								<hr>
+								<span [ngClass]="{'clickable':cat_level==-2,'':cat_level>-2}" (click)="showOther=!showOther">Other ({{cat_other_count}}) <span *ngIf="cat_level==-2&&!showOther"><i class="fa fa-angle-double-down"></i></span><span *ngIf="cat_level==-2&&showOther"><i class="fa fa-angle-double-up"></i></span></span>
+							</div>
+							<div *ngIf="(showOther&&cat_level==-2)||cat_level==-1">
+								<div *ngFor="let other of cat_other">
+									<div *ngIf="cat==other.name">
+										<span class="clickable" (click)="setCat(other.name)"><b>&gt; {{ other.name }} ({{ other.count }})</b></span>
+									</div>
+									<div *ngIf="cat!=other.name&&cat_level!=-1">
+										<span class="clickable" (click)="setCat(other.name)">&gt; {{ other.name }} ({{ other.count }})</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
 
 					<div *ngFor="let facet of facetObj">
 						<div *ngIf="facet.total > 0" class="card">
