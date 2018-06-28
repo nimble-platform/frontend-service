@@ -8,6 +8,8 @@ import { Subscription } from "rxjs";
 import { ProductBpStepStatus } from "./product-bp-step-status";
 import { ProductWrapper } from "../../product-details/product-wrapper";
 import { BpWorkflowOptions } from "../model/bp-workflow-options";
+import { ProcessType } from "../model/process-type";
+import { ProductBpStep } from "./product-bp-step";
 
 /**
  * Created by suat on 20-Oct-17.
@@ -18,7 +20,8 @@ import { BpWorkflowOptions } from "../model/bp-workflow-options";
     styleUrls: ["./product-bp-options.component.css"]
 })
 export class ProductBpOptionsComponent implements OnInit, OnDestroy {
-    currentStep: string;
+    processType: ProcessType;
+    currentStep: ProductBpStep;
     callStatus: CallStatus = new CallStatus();
     processTypeSubs: Subscription;
 
@@ -40,7 +43,8 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.processTypeSubs = this.bpDataService.processTypeObservable.subscribe(processType => {
             if (processType) {
-                this.currentStep = processType;
+                this.processType = processType;
+                this.currentStep = this.getCurrentStep(processType);
             }
         });
 
@@ -72,6 +76,10 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
         });
     }
 
+    ngOnDestroy(): void {
+        this.processTypeSubs.unsubscribe();
+    }
+
     getStepsStatus(): ProductBpStepStatus {
         return this.bpDataService.processMetadata ? this.bpDataService.processMetadata.status : "OPEN"
     }
@@ -83,7 +91,25 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
         return ""
     }
 
-    ngOnDestroy(): void {
-        this.processTypeSubs.unsubscribe();
+    private getCurrentStep(processType: ProcessType): ProductBpStep {
+        switch(processType) {
+            case "Item_Information_Request":
+            case "Ppap":
+            case "Negotiation":
+            case "Fulfilment":
+                return processType;
+            case "Transport_Execution_Plan":
+                // return a dummy step
+                return "Item_Information_Request";
+            case "Order":
+                return this.isOrderDone() ? "OrderConfirmed" : "Order";
+        }
     }
+
+    private isOrderDone(): boolean {
+        return this.processType === "Order" 
+            && this.bpDataService.processMetadata 
+            && this.bpDataService.processMetadata.processStatus === "Completed";
+    }
+
 }

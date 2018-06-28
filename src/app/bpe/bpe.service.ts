@@ -245,6 +245,31 @@ export class BPEService {
             .catch(this.handleError);
 	}
 
+	downloadContractBundle(id: string): Promise<any> {
+        const url = `${this.url}/contracts/create-bundle?orderId=${id}`;
+        return new Promise<any>((resolve, reject) => {
+            let xhr = new XMLHttpRequest();
+
+            xhr.open('GET', url, true);
+            xhr.setRequestHeader('Accept', 'application/zip');
+            xhr.responseType = 'blob';
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+
+                        var contentType = 'application/zip';
+                        var blob = new Blob([xhr.response], {type: contentType});
+                        resolve({fileName: "Contract Bundle.zip", content: blob});
+                    } else {
+                        reject(xhr.status);
+                    }
+                }
+            }
+            xhr.send();
+        });
+    }
+
 	private stringtifyArray(values: any[]): string {
 		let paramVal: string = '';
 		for (let value of values) {

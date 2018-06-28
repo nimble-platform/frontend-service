@@ -64,46 +64,10 @@ export class OrderComponent implements OnInit {
         );
     }
 
-    isLoading(): boolean {
-        return this.callStatus.fb_submitted;
-    }
+    /*
+     * Event Handlers
+     */
 
-    isReadOnly(): boolean {
-        return this.bpDataService.processMetadata && this.bpDataService.processMetadata.processStatus === "Completed";
-    }
-
-    getQuantityText(): string {
-        return quantityToString(this.order.orderLine[0].lineItem.quantity);
-    }
-
-    getTotalPriceText(): string {
-        return this.priceWrapper.totalPriceString;
-    }
-
-    getDeliveryPeriodText(): string {
-        const qty = this.getLineItem().delivery[0].requestedDeliveryPeriod.durationMeasure;
-        return `${qty.value} ${qty.unitCode}`;
-    }
-
-    getWarrantyPeriodText(): string {
-        const warranty = this.getLineItem().warrantyValidityPeriod.durationMeasure;
-        if(!warranty || !warranty.unitCode || !warranty.value) {
-            return "None";
-        }
-        return `${warranty.value} ${warranty.unitCode}`;
-    }
-
-    getIncoterm(): string {
-        return this.getLineItem().deliveryTerms.incoterms;
-    }
-
-    getPaymentMeans(): string {
-        return this.order.paymentMeans.paymentMeansCode.name;
-    }
-
-    getLineItem(): LineItem {
-        return this.order.orderLine[0].lineItem;
-    }
 
     onBack() {
         this.location.back();
@@ -144,11 +108,111 @@ export class OrderComponent implements OnInit {
         });
     }
 
-    onAcceptOrder() {
+    onRespondToOrder(accepted: boolean): void {
+        this.bpDataService.orderResponse.acceptedIndicator = accepted;
 
+        let vars: ProcessVariables = ModelUtils.createProcessVariables(
+            "Order", 
+            this.bpDataService.order.buyerCustomerParty.party.id, 
+            this.bpDataService.order.sellerSupplierParty.party.id, 
+            this.bpDataService.orderResponse, 
+            this.bpDataService
+        );
+        let piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(
+            vars, 
+            this.bpDataService.processMetadata.processId
+        );
+
+        this.callStatus.submit();
+        this.bpeService.continueBusinessProcess(piim)
+            .then(res => {
+                this.callStatus.callback("Order Response placed", true);
+                this.router.navigate(['dashboard']);
+            }).catch(error => {
+                this.callStatus.error("Failed to send Order Response");
+                console.log("Failed to send Order Response", error);
+            });
     }
 
-    onRejectOrder() {
-        
+    onDownloadContact() {
+        this.callStatus.submit();
+        this.bpeService.downloadContractBundle(this.order.id)
+            .then(result => {
+                var link = document.createElement('a');
+                link.id = 'downloadLink';
+                link.href = window.URL.createObjectURL(result.content);
+                link.download = result.fileName;
+
+                document.body.appendChild(link);
+                var downloadLink = document.getElementById('downloadLink');
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
+                this.callStatus.callback("Bundle successfully downloaded.", true);
+            },
+            error => {
+                this.callStatus.error("Error while downloading bundle.");
+                console.log("Error while downloading bundle.", error);
+            });
+    }
+
+    onDispatchOrder() {
+        this.bpDataService.initDespatchAdviceWithOrder();
+        this.bpDataService.setBpOptionParameters(this.userRole, "Fulfilment", "Order");
+    }
+
+    /*
+     * Getters & Setters
+     */
+
+    isLoading(): boolean {
+        return this.callStatus.fb_submitted;
+    }
+
+    isOrderCompleted(): boolean {
+        return this.bpDataService.processMetadata && this.bpDataService.processMetadata.processStatus === "Completed";
+    }
+
+    isOrderRejected(): boolean {
+        return this.isOrderCompleted() && !this.bpDataService.orderResponse.acceptedIndicator;
+    }
+
+    isReadOnly(): boolean {
+        if(this.userRole === "buyer") {
+            return !!this.bpDataService.processMetadata;
+        }
+        return this.isOrderCompleted();
+    }
+
+    getQuantityText(): string {
+        return quantityToString(this.order.orderLine[0].lineItem.quantity);
+    }
+
+    getTotalPriceText(): string {
+        return this.priceWrapper.totalPriceString;
+    }
+
+    getDeliveryPeriodText(): string {
+        const qty = this.getLineItem().delivery[0].requestedDeliveryPeriod.durationMeasure;
+        return `${qty.value} ${qty.unitCode}`;
+    }
+
+    getWarrantyPeriodText(): string {
+        const warranty = this.getLineItem().warrantyValidityPeriod.durationMeasure;
+        if(!warranty || !warranty.unitCode || !warranty.value) {
+            return "None";
+        }
+        return `${warranty.value} ${warranty.unitCode}`;
+    }
+
+    getIncoterm(): string {
+        return this.getLineItem().deliveryTerms.incoterms;
+    }
+
+    getPaymentMeans(): string {
+        return this.order.paymentMeans.paymentMeansCode.name;
+    }
+
+    getLineItem(): LineItem {
+        return this.order.orderLine[0].lineItem;
     }
 }

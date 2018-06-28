@@ -1,29 +1,36 @@
 <ng-container *ngIf="line">
+    <!-- Title -->
     <h2 class="clickable" (click)="productExpanded = !productExpanded">
         Order for: {{ line.goodsItem.item.name }}
         <i class="fas fa-chevron-up fa-sm toggle-product" aria-hidden="true" *ngIf="productExpanded"></i>
         <i class="fas fa-chevron-down fa-sm toggle-product" aria-hidden="true" *ngIf="!productExpanded"></i>
     </h2>
 
-    <product-details-tabs *ngIf="productExpanded" [wrapper]="wrapper" [showOverview]="true" [options]="options" [readonly]="true">
+    <!-- Product Details Panel -->
+    <product-details-tabs *ngIf="productExpanded" [wrapper]="wrapper" [showOverview]="true" 
+        [options]="options" [readonly]="true">
     </product-details-tabs>
 
-    <product-bp-steps [currentStep]="currentStep" [status]="getStepsStatus()" [statusText]="getStepsStatusText()">
+    <!-- BP Steps -->
+    <product-bp-steps *ngIf="processType !== 'Transport_Execution_Plan'" [currentStep]="currentStep" 
+        [status]="getStepsStatus()" [statusText]="getStepsStatusText()">
     </product-bp-steps>
     
-    <item-information *ngIf="currentStep === 'Item_Information_Request'">
+    <!-- Order Content -->
+    <item-information *ngIf="processType === 'Item_Information_Request'">
     </item-information>
-    <negotiation *ngIf="currentStep === 'Negotiation'">
-    </negotiation>
-    <order *ngIf="currentStep === 'Order'">
-    </order>
-    <fulfilment *ngIf="currentStep === 'Fulfilment'">
-    </fulfilment>
-    <transport-execution-plan-bp *ngIf="currentStep === 'Transport_Execution_Plan'">
-    </transport-execution-plan-bp>
-    <ppap *ngIf="currentStep === 'Ppap'">
+    <ppap *ngIf="processType === 'Ppap'">
     </ppap>
+    <negotiation *ngIf="processType === 'Negotiation'">
+    </negotiation>
+    <order *ngIf="processType === 'Order'">
+    </order>
+    <fulfilment *ngIf="processType === 'Fulfilment'">
+    </fulfilment>
+    <transport-execution-plan-bp *ngIf="processType === 'Transport_Execution_Plan'">
+    </transport-execution-plan-bp>
 </ng-container>
 
+<!-- Loading Icon -->
 <call-status [callStatus]="callStatus" [large]="true">
 </call-status>
