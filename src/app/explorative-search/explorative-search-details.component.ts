@@ -211,7 +211,14 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
     removePropertyFilter(nodeToRemove) {
         console.log(nodeToRemove.data.url);
         let indexToRemove = this.arrayPassedToChild.findIndex(node => node.fName === nodeToRemove.data.name);
-        if (indexToRemove > -1) {
+        if (indexToRemove === 0) {
+            this.tableResult = {};
+            this.arrayPassedToChild.splice(indexToRemove, 1);
+            this.tableJSON['parametersIncludingPath'].splice(indexToRemove, 1);
+            this.tableJSON['parameters'].splice(indexToRemove, 1);
+            this.tableJSON['parametersURL'].splice(indexToRemove, 1);
+            this.tableJSON['propertySources'].splice(indexToRemove, 1);
+        } else if (indexToRemove > -1) {
             console.log('removing property', indexToRemove);
             this.arrayPassedToChild.splice(indexToRemove, 1);
             this.tableJSON['parametersIncludingPath'].splice(indexToRemove, 1);
