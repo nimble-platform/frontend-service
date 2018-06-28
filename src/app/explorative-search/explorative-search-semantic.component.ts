@@ -340,6 +340,12 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
                     };
                     this.sparqlJSON['parametersIncludingPath'].push(pathJSON);
                 }
+            } else if (!this.sparqlJSON['filters'].length) {
+                this.sparqlJSON['filters'].push({
+                    property: encodeURIComponent(this.selectedProperty['propertyURL']),
+                    min: min,
+                    max: max
+                });
             }
         }
         this.propertySelectionComplete = true;
@@ -355,7 +361,9 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
 
     removeSelection(name) {
             let indexToRemove = this.tableResult['columns'].findIndex(i => i === name);
-            if (indexToRemove > -1) {
+            if (indexToRemove === 0) {
+                this.tableResult = {};
+            } else if (indexToRemove > -1) {
                 this.tableResult['rows'].forEach(entry => {
                     entry.splice(indexToRemove, 1);
                 });
