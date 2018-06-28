@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-faded nimble-bg space-after">
+<nav class="navbar navbar-expand-lg navbar-dark nimble-bg space-after">
 	<a *ngIf="isLoggedIn" class="navbar-brand" routerLink="/dashboard" routerLinkActive="active">
 		<img id="nav-logo" src="./assets/nimble_logo_white.png" height="30" class="d-inline-block align-top" alt="">
 	</a>
@@ -150,7 +150,7 @@
 <ng-template #support let-d="dismiss">
 	<div class="modal-header">
 		<h4 class="modal-title">Help</h4>
-		<button type="button" class="close" aria-label="Close" (click)="d('')">
+		<button type="button" class="close" aria-label="Close">
 			<span aria-hidden="true">&times;</span>
 		</button>
 	</div>
@@ -161,8 +161,8 @@
 		We will get back to you within one business day.
 	</div>
 	<div class="modal-footer">
-		<a href="assets/user_manual.pdf" target="_blank" type="button" class="btn btn-primary" (click)="d('')">Open manual</a>
-		<a [href]="mailto" type="button" class="btn btn-primary" (click)="d('')">Contact support</a>
+		<a href="assets/user_manual.pdf" target="_blank" type="button" class="btn btn-primary">Open manual</a>
+		<a [href]="mailto" type="button" class="btn btn-primary">Contact support</a>
 	</div>
 </ng-template>
 <!--<div id="support-btn" (click)="open(support)"><img id="support-img" src="assets/support_white.png"/></div>-->

@@ -1,6 +1,7 @@
 body {
     margin: 0.6rem 0;
     background-color: #fefefe;
+    font-family: 'Montserrat', sans-serif;
 }
 
 button, .btn {
@@ -45,7 +46,7 @@ textarea {
 	width: 70px;
 	height: 70px;
 	border-radius: 35px;
-	background-color: #a21c26;
+	background-color: #b77563;
 	z-index: 9998;
 	cursor: pointer;
 }
@@ -58,11 +59,11 @@ textarea {
 }
 
 .nimble-bg {
-    background-color: #a21c26;
+    background-color: #b77563;
 }
 
 .nimble-col {
-	border: 2px solid #a21c26;
+	border: 2px solid #b77563;
 	border-radius: 0.25rem;
 	padding: 0.5rem;
 	text-align: center;
@@ -189,7 +190,7 @@ textarea {
 
 .dropdown-item.active, .dropdown-item:active {
 	color: #fff !important;
-	background-color: #a21c26 !important;
+	background-color: #b77563 !important;
 }
 
 .dropdown-menu-right {
@@ -205,12 +206,12 @@ ngb-pagination nav .pagination {
 }
 
 ngb-pagination nav .pagination .page-item .page-link {
-    color: #a21c26;
+    color: #b77563;
 }
 
 ngb-pagination nav .pagination .page-item.active .page-link {
-    background-color: #a21c26;
-    border-color: #a21c26;
+    background-color: #b77563;
+    border-color: #b77563;
     color: #fff;
 }
 
@@ -291,7 +292,7 @@ ngb-pagination nav .pagination .page-item.active .page-link {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: #a21c26;
+  background-color: #b77563;
   -webkit-animation: sk-foldCubeAngle 2.4s infinite linear both;
           animation: sk-foldCubeAngle 2.4s infinite linear both;
   -webkit-transform-origin: 100% 100%;

@@ -69,7 +69,7 @@ export class ProductBpStepsComponent implements OnInit {
             case "OPEN":
                 return "#000000";
             case "WAITING":
-                return "#c48601";
+                return "#be897b";
             case "ACTION_REQUIRED":
                 return "#d30000";
             case "DONE":

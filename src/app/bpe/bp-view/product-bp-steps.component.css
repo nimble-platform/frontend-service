@@ -27,7 +27,7 @@
  */
 
 .steps .step:not(:first-child)::before {
-    background: #007706;
+    background: #be897b;
     content: "";
     height: 0.2rem;
     left: -50%;
@@ -37,15 +37,15 @@
 }
 
 .steps .step span {
-    color: #007706;
+    color: #be897b;
     display: inline-block;
     padding: 20px 10px 0;
     text-decoration: none;
 }
 
 .steps .step span::before {
-    background: #007706;
-    border: 0.1rem solid #007706;
+    background: #be897b;
+    border: 0.1rem solid #be897b;
     border-radius: 50%;
     content: "";
     display: block;
@@ -92,11 +92,11 @@
 
 /* Reply sent/received */
 .steps .step.current.done span::before {
-    border: 0.1rem solid #007706;
+    border: 0.1rem solid #be897b;
     
 }
 .steps .step.current.done span {
-    color: #007706;
+    color: #be897b;
 }
 
 /* Cancelled */
