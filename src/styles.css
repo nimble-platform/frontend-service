@@ -13,6 +13,7 @@ button:disabled, .btn:disabled {
 
 textarea {
     min-height: 2.375rem;
+    resize: none;
 }
 
 textarea {
@@ -359,4 +360,31 @@ ngb-pagination nav .pagination .page-item.active .page-link {
     opacity: 0;
   }
 }
+
+/* ------------------- */
+
+/* Floating BP actions */
+
+.actions-row {
+    padding: 0.3rem;
+}
+
+.actions-row .price-col {
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+    font-size: 1.6rem;
+    justify-content: flex-end;
+}
+
+.actions-row .call-status-col {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.actions-row .action {
+    width: 100%;
+}
+
 /* ------------------- */
