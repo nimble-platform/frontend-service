@@ -12,7 +12,7 @@
         </div>
     </div>
     <div class="col-3 align-self-center">
-        <button class="btn btn-primary w-100 inline" [disabled]="categoryService.selectedCategories.length === 0 || navigating" (click)="navigateToPublishingPage()">Continue With Selected Categories</button>
+        <button class="btn btn-primary nimble-button-primary w-100 inline" [disabled]="categoryService.selectedCategories.length === 0 || navigating" (click)="navigateToPublishingPage()">Continue With Selected Categories</button>
         <div [hidden]="!navigating" class="space-right">
             <img class="space-before" src="assets/form_loader.gif"/>
         </div>    
@@ -25,7 +25,7 @@
         <!-- TODO: All Categories Search Goes Here-->
             <div class="input-group">
                 <div ngbDropdown class="d-inline-block input-group-prepend">
-                    <button class="btn btn-secondary" type="button" id="allCategories" ngbDropdownToggle>
+                    <button class="btn btn-secondary nimble-button-secondary" type="button" id="allCategories" ngbDropdownToggle>
                         All Categories
                     </button>
                     <div ngbDropdownMenu aria-labelledby="allCategories">
@@ -48,8 +48,7 @@
         <h5 class="pt-1 text-center">OR</h5>
     </div>
     <div class="col-5">
-        <!-- TODO: Return Highest Level Categories -->
-        <button class="btn btn-secondary w-100 inline">Browse Categories</button>
+        <button class="btn btn-secondary nimble-button-secondary w-100 inline" (click)="displayRootCategories('eClass')">Browse eClass Categories</button>
     </div>
 </div>
 
@@ -72,13 +71,12 @@
                         <td colspan="3">No results found.</td>
                     </tr>
                     <tr *ngFor="let category of categories"
-                        style="padding: .25rem 1.25rem;"
                         (click)="getCategoryDetails(category)"
                         [ngClass]="{'table-secondary': selectedCategory && category.code == selectedCategory.code}">
-                        <td>{{category.taxonomyId}}</td>
-                        <td>{{category.preferredName}}</td>
+                        <td class="py-2 px-3">{{category.taxonomyId}}</td>
+                        <td class="py-2 px-3">{{category.preferredName}}</td>
                         <td class="d-flex">
-                            <span *ngIf="category.taxonomyId == 'eClass'" class="fa fa-sitemap pr-2 align-left" aria-hidden="true" (click)="getCategoryTree(category)"></span><i class="fa fa-plus-circle pointer align-right" (click)="selectCategory(category)" style="color:green"></i>
+                            <span *ngIf="category.taxonomyId == 'eClass'" class="fa fa-sitemap pr-2 align-left icon-secondary" aria-hidden="true" (click)="getCategoryTree(category)"></span><i class="fa fa-plus-circle pointer align-right icon-primary" (click)="selectCategory(category)"></i>
                         </td>
                     </tr>
                 </tbody>
@@ -86,52 +84,27 @@
         </div>
         <!-- Tree view activated -->
         <div *ngIf="treeView" class="border" style="height:60vh; overflow-x: hidden; overflow-y: scroll;">
-            <div class="row">
-                <div class="col-8 pr-0">
-                    <div class="thead-light-equivalent">
-                        <p class="p-2 mb-0">All Categories</p>
+            <div style="background-color: #e9ecef; color:#495057;">
+                <div class="row border">
+                    <div class="col-8 pr-0">
+                        <div class="thead-light-equivalent">
+                            <p class="mb-0" style="padding: 0.75rem;">All Categories</p>
+                        </div>
                     </div>
-                </div>
-                <div class="col-4 pl-0">
-                    <div class="thead-light-equivalent">
-                        <button class="btn btn-secondary float-right my-1 mr-1" (click)="onTreeViewReturn()">Back to Search</button>
+                    <div class="col-4 pl-0">
+                        <div class="thead-light-equivalent">
+                            <button class="btn btn-secondary float-right my-1 mr-1" (click)="onTreeViewReturn()">Back to Search</button>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div *ngIf="parentCategories">
-                <div class="d-flex bordered" style="height: 400px">
-                    <div *ngFor="let categories of parentCategories.categories" class="col-3" style="overflow: hidden" onmouseover="this.style.overflow='auto'" onmouseout="this.style.overflow='hidden'">
-                        <label *ngFor="let cat of categories" (click)="getCategoryTree(cat)"
-                                [style.font-weight]="selectedCategoriesWRTLevels.indexOf(cat.code)>-1 ? 'bold' : 'normal'"
-                                [style.color]="selectedCategoriesWRTLevels.indexOf(cat.code)>-1 ?'green' : 'black'"
-                                [style.text-decoration]="selectedCategoriesWRTLevels.indexOf(cat.code)>-1 ? 'underline' : 'none'"
-                                class="pointer" style="display: block;">{{cat.preferredName}}</label>
+            <div *ngIf="rootCategories">
+                <div class="d-flex flex-column" style="height: 400px">
+                    <div *ngFor="let rootCategory of rootCategories">
+                        <category-tree [category]="rootCategory" (detailsEvent)="getCategoryDetails($event)" [selectedCategory]="selectedCategory" (categoryEvent)="selectCategory($event)"></category-tree>
                     </div>
                 </div>
-                <category-tree [categories]="[]"></category-tree>
             </div>
-            <table class="table table-hover mb-0">
-                <thead class="thead-light">
-                    <th scope="col">Classification</th>
-                    <th scope="col">Name</th>
-                    <th scope="col"></th>
-                </thead>
-                <tbody>
-                    <tr *ngIf="callback && !submitted && (!categories || categories.length == 0)">
-                        <td colspan="3">No results found.</td>
-                    </tr>
-                    <tr *ngFor="let category of categories"
-                        style="padding: .25rem 1.25rem;"
-                        (click)="getCategoryDetails(category)"
-                        [ngClass]="{'table-secondary': selectedCategory && category.code == selectedCategory.code}">
-                        <td>{{category.taxonomyId}}</td>
-                        <td>{{category.preferredName}}</td>
-                        <td class="d-flex">
-                            <span *ngIf="category.taxonomyId == 'eClass'" class="fa fa-sitemap pr-2 align-left" aria-hidden="true" (click)="getCategoryTree(category)"></span><i class="fa fa-plus-circle pointer align-right" (click)="selectCategory(category)" style="color:green"></i>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
         </div>
     </div>
     <div class="col-5 pl-0">
@@ -149,7 +122,7 @@
                     <value-input *ngIf="selectedCategoryWithDetails[propName]" [visible]="selectedCategoryWithDetails[propName]" presentationMode="view" type="text" [label]="propName" labelClass="col-12 text-capitalize" labelMainClass="mb-0" valueClass="col-12" valueTextClass="mb-1 pl-3" [text]="getCategoryProperty(propName)"></value-input>
                 </div>
                 <div class="row">
-                    <div class="col-12 mb-0" *ngIf="selectedCategoryWithDetails.properties">
+                    <div class="col-12 mb-0" *ngIf="selectedCategoryWithDetails.properties.length > 0">
                         <label>
                             <strong>Properties: </strong>
                         </label>

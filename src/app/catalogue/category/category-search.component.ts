@@ -13,6 +13,7 @@ import {ProductPublishComponent} from "../product-publish.component";
 import {UBLModelUtils} from "../model/ubl-model-utils";
 import {CallStatus} from '../../common/call-status';
 import {toUIString} from '../../common/utils';
+import {CategoryTreeComponent} from './category-tree.component';
 
 @Component({
     selector: 'category-search',
@@ -21,6 +22,8 @@ import {toUIString} from '../../common/utils';
 })
 
 export class CategorySearchComponent implements OnInit {
+    getCategoryStatus: CallStatus = new CallStatus();
+
     categories: Category[];
     pageRef: string = null;
     publishingGranularity: string;
@@ -40,11 +43,13 @@ export class CategorySearchComponent implements OnInit {
 
     treeView = false;
     parentCategories = null;
+    rootCategories: Category[];
 
     selectedCategory: Category = null;
     selectedCategoryWithDetails: Category = null;
     selectedCategoriesWRTLevels = [];
     propertyNames: string[] = ["code", "taxonomyId", "level", "definition", "note", "remark"];
+    taxonomyId: string;
 
     showOtherProperties = null;
     callStatus: CallStatus = new CallStatus();
@@ -118,6 +123,28 @@ export class CategorySearchComponent implements OnInit {
 
     onTreeViewReturn(): void {
         this.treeView = false;
+    }
+
+    getRootCategories(): any {
+        this.callback = false;
+        this.submitted = true;
+        this.error_detc = false;
+        this.getCategoryStatus.submit();
+        this.categoryService.getRootCategories(this.taxonomyId).then(rootCategories => {
+            this.rootCategories = rootCategories.sort((a,b) => (a.preferredName < b.preferredName) ? -1 : (a.preferredName > b.preferredName) ? 1 : 0);
+            this.getCategoryStatus.callback("Retrieved category details", true);
+            this.callback = true;
+            this.submitted = false;
+        }).catch(error => {
+            this.getCategoryStatus.error("Failed to retrieve category details");
+            this.error_detc = true;
+        });
+    }
+
+    displayRootCategories(taxonomyId): void {
+        this.treeView = true;
+        this.taxonomyId = taxonomyId;
+        this.getRootCategories();
     }
 
     private getCategories(): void {

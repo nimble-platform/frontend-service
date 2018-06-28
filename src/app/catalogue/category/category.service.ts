@@ -120,6 +120,28 @@ export class CategoryService {
         }
     }
 
+    getRootCategories(taxonomyId: string): Promise<Category[]>{
+        const url = `${this.baseUrl}/${taxonomyId}/root-categories`;
+        return this.http
+            .get(url, {headers: this.headers})
+            .toPromise()
+            .then(res => {
+                return res.json() as Category;
+            })
+            .catch(this.handleError);
+    }
+
+    getChildrenCategories(category: Category): Promise<Category[]>{
+        const url = `${this.baseUrl}/${category.taxonomyId}/${encodeURIComponent(category.id)}/children-categories`;
+        return this.http
+            .get(url, {headers: this.headers})
+            .toPromise()
+            .then(res => {
+                return res.json() as Category;
+            })
+            .catch(this.handleError);
+    }
+
     resetSelectedCategories():void {
         this.selectedCategories.length = 0;
     }
