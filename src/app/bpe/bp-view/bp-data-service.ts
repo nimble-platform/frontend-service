@@ -318,9 +318,14 @@ export class BPDataService{
         this.modifiedCatalogueLines = copy(this.catalogueLines);
         this.order = UBLModelUtils.createOrder();
         this.order.orderLine[0].lineItem = copyQuotation.quotationLine[0].lineItem;
+        this.order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address = copyRfq.delivery.deliveryAddress;
         this.order.paymentMeans = copyQuotation.paymentMeans;
         this.order.paymentTerms = copyQuotation.paymentTerms;
-        this.order.deliveryAddress = copyRfq.delivery.deliveryAddress;
+
+        this.order.anticipatedMonetaryTotal.payableAmount.currencyID = copyRfq.requestForQuotationLine[0].lineItem.price.priceAmount.currencyID;
+        
+        // this.order.anticipatedMonetaryTotal.payableAmount.value = copyQuotation.
+        
         this.setProcessType('Order');
     }
 
@@ -330,20 +335,10 @@ export class BPDataService{
         this.modifiedCatalogueLines = copy(this.catalogueLines);
         this.order = UBLModelUtils.createOrder();
         this.order.orderLine[0].lineItem = copyRfq.requestForQuotationLine[0].lineItem;
+        this.order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address = copyRfq.delivery.deliveryAddress;
         this.order.paymentMeans = copyRfq.paymentMeans;
         this.order.paymentTerms = copyRfq.paymentTerms;
-        this.order.deliveryAddress = copyRfq.delivery.deliveryAddress;
-        this.setProcessType('Order');
-    }
 
-    initOrderWithExistingOrder(){
-        let copyOrder:Order = copy(this.order);
-        this.resetBpData();
-        this.modifiedCatalogueLines = copy(this.catalogueLines);
-        this.order = UBLModelUtils.createOrder();
-        this.order.orderLine[0].lineItem = copyOrder.orderLine[0].lineItem;
-        this.order.paymentMeans = copyOrder.paymentMeans;
-        this.order.paymentTerms = copyOrder.paymentTerms;
         this.setProcessType('Order');
     }
 
@@ -359,7 +354,7 @@ export class BPDataService{
         this.requestForQuotation.delivery = copyRfq.delivery;
     }
 
-    initRfqWithOrder(){
+    initRfqWithOrder() {
         let copyOrder:Order = copy(this.order);
         this.resetBpData();
         this.modifiedCatalogueLines = copy(this.catalogueLines);

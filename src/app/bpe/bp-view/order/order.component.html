@@ -14,6 +14,12 @@
         <value-input type="text" presentationMode="view" label="Incoterms" 
             [text]="getIncoterm()" labelClass="col-6" valueClass="col-6">
         </value-input>
+        <value-input type="text" presentationMode="view" label="Quantity"
+            [text]="getQuantityText()" labelClass="col-6" valueClass="col-6">
+        </value-input>
+        <value-input type="text" presentationMode="view" label="Total Price"
+            [text]="getTotalPriceText()" labelClass="col-6" valueClass="col-6">
+        </value-input>
     </div>
     <div class="col-4">
         <h2>Payment Details</h2>
@@ -33,22 +39,27 @@
     <div class="col-4">
         <h2>Delivery Address</h2>
         <value-input type="text" presentationMode="view" label="Street" 
-            [text]="order.deliveryAddress.streetName" labelClass="col-6" valueClass="col-6">
+            [text]="order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address.streetName" labelClass="col-6" valueClass="col-6">
         </value-input>
         <value-input type="text" presentationMode="view" label="Building Number" 
-            [text]="order.deliveryAddress.buildingNumber" labelClass="col-6" valueClass="col-6">
+            [text]="order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address.buildingNumber" labelClass="col-6" valueClass="col-6">
         </value-input>
         <value-input type="text" presentationMode="view" label="City" 
-            [text]="order.deliveryAddress.cityName" labelClass="col-6" valueClass="col-6">
+            [text]="order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address.cityName" labelClass="col-6" valueClass="col-6">
         </value-input>
         <value-input type="text" presentationMode="view" label="Postal Code" 
-            [text]="order.deliveryAddress.postalZone" labelClass="col-6" valueClass="col-6">
+            [text]="order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address.postalZone" labelClass="col-6" valueClass="col-6">
         </value-input>
         <value-input type="text" presentationMode="view" label="Country" 
-            [text]="order.deliveryAddress.country.name" labelClass="col-6" valueClass="col-6">
+            [text]="order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address.country.name" labelClass="col-6" valueClass="col-6">
         </value-input>
     </div>
 </div>
+
+<hr>
+
+Note (customer)
+Note (producer)
 
 <hr>
 
@@ -71,7 +82,7 @@
 <hr>
 
 <!-- Actions -->
-<div class="row actions-row" *ngIf="order">
+<div class="row actions-row" *ngIf="order && userRole === 'buyer'">
     <div class="col-8 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
     <div class="col-2">
         <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">
@@ -85,4 +96,21 @@
     </div>
 </div>
 
-<call-status [callStatus]="callStatus" [large]="true"></call-status>
+<div class="row actions-row" *ngIf="order && userRole === 'seller'">
+    <div class="col-6 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+    <div class="col-2">
+        <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">
+            Back
+        </button>
+    </div>
+    <div class="col-2">
+        <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onRejectOrder()">
+            Reject
+        </button>
+    </div>
+    <div class="col-2">
+        <button class="btn btn-primary action" [disabled]="isLoading()" (click)="onAcceptOrder()">
+            Accept
+        </button>
+    </div>
+</div>

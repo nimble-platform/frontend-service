@@ -19,7 +19,7 @@ import { BpWorkflowOptions } from "../model/bp-workflow-options";
 })
 export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     currentStep: string;
-    getCatalogueLineStatus: CallStatus = new CallStatus();
+    callStatus: CallStatus = new CallStatus();
     processTypeSubs: Subscription;
 
     id: string;
@@ -50,19 +50,22 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
             this.bpDataService.precedingProcessId = params["pid"];
 
             if (this.id !== id || this.catalogueId !== catalogueId) {
-                this.getCatalogueLineStatus.submit();
+                this.id = id;
+                this.catalogueId = catalogueId;
+
+                this.callStatus.submit();
                 this.catalogueService
                     .getCatalogueLine(catalogueId, id)
                     .then(line => {
                         this.line = line;
                         this.wrapper = new ProductWrapper(line);
                         this.bpDataService.setCatalogueLines([line]);
-                        this.getCatalogueLineStatus.callback("Retrieved product details", true);
+                        this.callStatus.callback("Retrieved product details", true);
                         this.bpDataService.computeWorkflowOptions();
                         this.options = this.bpDataService.workflowOptions;
                     })
                     .catch(error => {
-                        this.getCatalogueLineStatus.error("Failed to retrieve product details");
+                        this.callStatus.error("Failed to retrieve product details");
                         console.log("Error while fetching catalogue", error);
                     });
             }

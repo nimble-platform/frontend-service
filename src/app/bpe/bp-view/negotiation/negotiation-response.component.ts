@@ -28,9 +28,6 @@ export class NegotiationResponseComponent implements OnInit {
     wrapper: NegotiationModelWrapper;
     userRole: BpUserRole;
 
-    // needed because the price is an Amount, which has a value: string.
-    private quotationPriceValue: number;
-
     INCOTERMS: string[] = INCOTERMS;
     PAYMENT_MEANS: string[] = PAYMENT_MEANS;
 
@@ -49,7 +46,6 @@ export class NegotiationResponseComponent implements OnInit {
         this.bpDataService.computeRfqNegotiationOptionsIfNeeded();
         this.quotation = this.bpDataService.quotation;
         this.wrapper = new NegotiationModelWrapper(this.line, this.rfq, this.quotation);
-        this.quotationPriceValue = Number(this.wrapper.quotationPriceAmount.value || "0");
         this.userRole = this.bpDataService.userRole;
     }
 
@@ -89,7 +85,6 @@ export class NegotiationResponseComponent implements OnInit {
     }
 
     onRequestNewQuotation() {
-        console.log("here!");
         this.bpDataService.initRfqWithQuotation();
         this.bpDataService.setBpOptionParameters("buyer", "Negotiation", "Negotiation");
     }
@@ -112,12 +107,11 @@ export class NegotiationResponseComponent implements OnInit {
     }
 
     get quotationPrice(): number {
-        return this.quotationPriceValue;
+        return this.wrapper.quotationPriceWrapper.totalPrice;
     }
 
     set quotationPrice(price: number) {
-        this.quotationPriceValue = price;
-        this.wrapper.quotationPriceAmount.value = price;
+        this.wrapper.quotationPriceWrapper.totalPrice = price;
     }
 
     /*
@@ -125,6 +119,7 @@ export class NegotiationResponseComponent implements OnInit {
      */
 
     private hasUpdatedTerms(): boolean {
+        // TODO update this
         if(this.rfq.negotiationOptions.deliveryPeriod) {
             const rfq = this.wrapper.rfqDeliveryPeriod;
             const quotation = this.wrapper.quotationDeliveryPeriod;
@@ -148,7 +143,7 @@ export class NegotiationResponseComponent implements OnInit {
             }
         }
         if(this.rfq.negotiationOptions.price) {
-            if(this.wrapper.rfqPriceAmount.value !== this.wrapper.quotationPriceAmount.value) {
+            if(this.wrapper.rfqPriceWrapper.totalPriceString !== this.wrapper.quotationPriceWrapper.totalPriceString) {
                 return true;
             }
         }

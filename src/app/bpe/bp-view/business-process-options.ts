@@ -123,13 +123,7 @@ export class BusinessProcessOptions implements OnInit {
             if(this.processName == "Negotiation"){
                 this.bpDataService.initOrderWithQuotation();
                 this.bpDataService.setBpOptionParameters(this.userRole,'Order',"Negotiation");
-            }
-            else if(this.processName == 'Order'){
-                this.bpDataService.initOrderWithExistingOrder();
-                this.bpDataService.setBpOptionParameters(this.userRole,'Order',"Order");
-                this.selectedTabChanged.next();
-            }
-            else{
+            }else{
                 this.bpDataService.resetBpData();
                 this.bpDataService.setBpOptionParameters(this.userRole,'Order',null);
             }

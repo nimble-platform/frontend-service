@@ -1,10 +1,10 @@
 import { CatalogueLine } from "../catalogue/model/publish/catalogue-line";
 import { Predicate } from "@angular/core";
 import { ItemProperty } from "../catalogue/model/publish/item-property";
-import { UblModelAccessors } from "../catalogue/model/ubl-model-accessors";
 import { PAYMENT_MEANS } from "../catalogue/model/constants";
 import { UBLModelUtils } from "../catalogue/model/ubl-model-utils";
-import { sanitizePropertyName, getPropertyKey } from "../common/utils";
+import { sanitizePropertyName, getPropertyKey, periodToString } from "../common/utils";
+import { PriceWrapper } from "../bpe/bp-view/price-wrapper";
 
 /**
  * Wrapper class for Catalogue line.
@@ -12,8 +12,10 @@ import { sanitizePropertyName, getPropertyKey } from "../common/utils";
  */
 export class ProductWrapper {
 
-    constructor(public line: CatalogueLine) {
+    private priceWrapper: PriceWrapper;
 
+    constructor(public line: CatalogueLine) {
+        this.priceWrapper = new PriceWrapper(line.requiredItemLocationQuantity.price);
     }
 
     get goodsItem() {
@@ -47,11 +49,11 @@ export class ProductWrapper {
     }
 
     getDeliveryPeriod(): string {
-        return UblModelAccessors.getPeriodString(this.goodsItem.deliveryTerms.estimatedDeliveryPeriod);
+        return periodToString(this.goodsItem.deliveryTerms.estimatedDeliveryPeriod);
     }
 
     getWarrantyPeriod(): string {
-        return UblModelAccessors.getPeriodString(this.line.warrantyValidityPeriod);
+        return periodToString(this.line.warrantyValidityPeriod);
     }
 
     getIncoterms(): string {
@@ -71,7 +73,7 @@ export class ProductWrapper {
     }
 
     getPricePerItem(): string {
-        return UblModelAccessors.getPricePerItemString(this.line.requiredItemLocationQuantity.price);
+        return this.priceWrapper.pricePerItemString;
     }
 
     getPropertyName(property: ItemProperty): string {

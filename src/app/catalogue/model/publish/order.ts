@@ -12,6 +12,8 @@ export class Order {
         public id: string = null,
         public note: string = null,
         public requestedDeliveryPeriod: Period = new Period(),
+        // DO NOT USE, this is not saved in the back end...
+        // use order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address instead.
         public deliveryAddress: Address = new Address(),
         public contract: Contract[] = null,
         public buyerCustomerParty: CustomerParty = null,

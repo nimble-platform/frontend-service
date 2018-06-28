@@ -12,6 +12,10 @@ import {CookieService} from "ng2-cookies";
 import {Contract} from "../catalogue/model/publish/contract";
 import {Clause} from "../catalogue/model/publish/clause";
 import { CollaborationRole } from "./model/collaboration-role";
+import { PpapResponse } from '../catalogue/model/publish/ppap-response';
+import { Ppap } from '../catalogue/model/publish/ppap';
+import { ItemInformationResponse } from '../catalogue/model/publish/item-information-response';
+import { ItemInformationRequest } from '../catalogue/model/publish/item-information-request';
 
 @Injectable()
 export class BPEService {
@@ -134,6 +138,16 @@ export class BPEService {
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
+	}
+
+	getPpapRequest(ppapResponse: PpapResponse): Promise<Ppap> {
+		return this.getDocumentJsonContent(ppapResponse.ppapDocumentReference.id)
+			.then(response => JSON.parse(response))
+	}
+
+	getItemInformationRequest(itemInformationResponse: ItemInformationResponse): Promise<ItemInformationRequest> {
+		return this.getDocumentJsonContent(itemInformationResponse.itemInformationRequestDocumentReference.id)
+			.then(response => JSON.parse(response))
 	}
 
 	getDocumentJsonContent(documentId:string):Promise<string> {

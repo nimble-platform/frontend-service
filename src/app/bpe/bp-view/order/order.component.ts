@@ -1,12 +1,12 @@
-import {ChangeDetectorRef, Component, Input, OnInit} from "@angular/core";
-import {Order} from "../../../catalogue/model/publish/order";
+import { Component, OnInit } from "@angular/core";
+import { Order } from "../../../catalogue/model/publish/order";
 import { CallStatus } from "../../../common/call-status";
 import { BPDataService } from "../bp-data-service";
 import { LineItem } from "../../../catalogue/model/publish/line-item";
 import { Location } from "@angular/common";
 import { PaymentTermsWrapper } from "../payment-terms-wrapper";
 import { Router } from "@angular/router";
-import { copy } from "../../../common/utils";
+import { copy, quantityToString } from "../../../common/utils";
 import { UBLModelUtils } from "../../../catalogue/model/ubl-model-utils";
 import { UserService } from "../../../user-mgmt/user.service";
 import { CookieService } from "ng2-cookies";
@@ -16,6 +16,10 @@ import { ProcessVariables } from "../../model/process-variables";
 import { ModelUtils } from "../../model/model-utils";
 import { ProcessInstanceInputMessage } from "../../model/process-instance-input-message";
 import { BPEService } from "../../bpe.service";
+import { BpUserRole } from "../../model/bp-user-role";
+import { OrderResponseSimple } from "../../../catalogue/model/publish/order-response-simple";
+import { PriceWrapper } from "../price-wrapper";
+import { Price } from "../../../catalogue/model/publish/price";
 
 /**
  * Created by suat on 20-Sep-17.
@@ -28,7 +32,10 @@ import { BPEService } from "../../bpe.service";
 export class OrderComponent implements OnInit {
     
     order: Order;
+    orderResponse: OrderResponseSimple;
     paymentTermsWrapper: PaymentTermsWrapper;
+    priceWrapper: PriceWrapper;
+    userRole: BpUserRole;
 
     showPreview: boolean = false;
 
@@ -49,14 +56,28 @@ export class OrderComponent implements OnInit {
         }
         this.order = this.bpDataService.order;
         this.paymentTermsWrapper = new PaymentTermsWrapper(this.order.paymentTerms);
+        this.userRole = this.bpDataService.userRole;
+        this.orderResponse = this.bpDataService.orderResponse;
+        this.priceWrapper = new PriceWrapper(
+            this.order.orderLine[0].lineItem.price,
+            this.order.orderLine[0].lineItem.quantity
+        );
     }
 
     isLoading(): boolean {
-        return false;
+        return this.callStatus.fb_submitted;
     }
 
     isReadOnly(): boolean {
-        return false;
+        return this.bpDataService.processMetadata && this.bpDataService.processMetadata.processStatus === "Completed";
+    }
+
+    getQuantityText(): string {
+        return quantityToString(this.order.orderLine[0].lineItem.quantity);
+    }
+
+    getTotalPriceText(): string {
+        return this.priceWrapper.totalPriceString;
     }
 
     getDeliveryPeriodText(): string {
@@ -95,6 +116,8 @@ export class OrderComponent implements OnInit {
         // final check on the order
         order.orderLine[0].lineItem.item = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;
         UBLModelUtils.removeHjidFieldsFromObject(order);
+        order.anticipatedMonetaryTotal.payableAmount.value = this.priceWrapper.totalPrice;
+        order.anticipatedMonetaryTotal.payableAmount.currencyID = this.priceWrapper.currency;
     
         //first initialize the seller and buyer parties.
         //once they are fetched continue with starting the ordering process
@@ -119,5 +142,13 @@ export class OrderComponent implements OnInit {
                     });
             });
         });
+    }
+
+    onAcceptOrder() {
+
+    }
+
+    onRejectOrder() {
+        
     }
 }

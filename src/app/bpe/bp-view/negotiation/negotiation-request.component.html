@@ -83,12 +83,11 @@
         <strong>Price:</strong>
     </div>
     <div class="col-5">
-        {{ wrapper.linePrice.priceAmount.value }} {{ wrapper.linePrice.priceAmount.currencyID }} 
-        for {{ wrapper.linePrice.baseQuantity.value }} {{ wrapper.linePrice.baseQuantity.unitCode }}
+        {{ wrapper.linePricePerItemString }}
     </div>
     <div class="col-5">
         <negotiation-request-input label="Request Price" [(cbModel)]="negotiatePrice" id="priceCb" [disabled]="isLoading() || isReadOnly()"
-            [(amount)]="negotiatedPrice" [amountUnit]="wrapper.linePrice.priceAmount.currencyID">
+            [(amount)]="negotiatedPrice" [amountUnit]="wrapper.linePriceWrapper.currency">
         </negotiation-request-input>
     </div>
 </div>
@@ -124,7 +123,7 @@
 <!-- Actions -->
 <div *ngIf="!isWaitingForReply()" class="row actions-row">
     <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
-    <div class="col-3 price-col">Total Price: {{ totalPrice }} {{ wrapper.rfqPriceAmount.currencyID }}</div>
+    <div class="col-3 price-col">Total Price: {{ wrapper.rfqTotalPriceString }}</div>
     <div class="col-2">
         <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
     </div>
@@ -137,7 +136,7 @@
 
 <div *ngIf="isWaitingForReply()" class="row actions-row">
     <div class="col-6"></div>
-    <div class="col-4 price-col">Requested Price: {{ totalPrice }} {{ wrapper.rfqPriceAmount.currencyID }}</div>
+    <div class="col-4 price-col">Requested Price: {{ wrapper.rfqTotalPriceString }}</div>
     <div class="col-2">
         <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
     </div>

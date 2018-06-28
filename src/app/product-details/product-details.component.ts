@@ -4,13 +4,12 @@ import { CatalogueService } from "../catalogue/catalogue.service";
 import { CallStatus } from "../common/call-status";
 import { BPDataService } from "../bpe/bp-view/bp-data-service";
 import { CatalogueLine } from "../catalogue/model/publish/catalogue-line";
-import { CommodityClassification } from "../catalogue/model/publish/commodity-classification";
-import { ItemProperty } from "../catalogue/model/publish/item-property";
 import { BpWorkflowOptions } from "../bpe/model/bp-workflow-options";
 import { ProcessType } from "../bpe/model/process-type";
-import { UblModelAccessors } from "../catalogue/model/ubl-model-accessors";
 import { ProductWrapper } from "./product-wrapper";
 import { Item } from "../catalogue/model/publish/item";
+import { PriceWrapper } from "../bpe/bp-view/price-wrapper";
+import { getMaximumQuantityForPrice, getStepForPrice } from "../common/utils";
 
 @Component({
     selector: 'product-details',
@@ -29,6 +28,7 @@ export class ProductDetailsComponent implements OnInit {
     line?: CatalogueLine;
     item?: Item;
     wrapper?: ProductWrapper;
+    priceWrapper?: PriceWrapper;
 
     toggleImageBorder: boolean = false;
     showNavigation: boolean = true;
@@ -56,6 +56,7 @@ export class ProductDetailsComponent implements OnInit {
                     this.line = line;
                     this.item = line.goodsItem.item;
                     this.wrapper = new ProductWrapper(line);
+                    this.priceWrapper = new PriceWrapper(this.line.requiredItemLocationQuantity.price);
                     this.bpDataService.resetBpData();
                     this.bpDataService.setCatalogueLines([line]);
                     this.bpDataService.userRole = 'buyer';
@@ -109,19 +110,20 @@ export class ProductDetailsComponent implements OnInit {
      */
 
     getTotalPrice(): number {
-        return UblModelAccessors.getTotalPrice(this.line.requiredItemLocationQuantity, this.options.quantity);
+        this.priceWrapper.quantity.value = this.options.quantity;
+        return this.priceWrapper.totalPrice;
     }
 
     hasPrice(): boolean {
-        return UblModelAccessors.hasPrice(this.line.requiredItemLocationQuantity);
+        return this.priceWrapper.hasPrice();
     }
 
     getMaximumQuantity(): number {
-        return UblModelAccessors.getMaximumQuantityForPrice(this.line.requiredItemLocationQuantity.price);
+        return getMaximumQuantityForPrice(this.priceWrapper.price);
     }
 
     getSteps(): number {
-        return UblModelAccessors.getStepForPrice(this.line.requiredItemLocationQuantity.price);
+        return getStepForPrice(this.priceWrapper.price);
     }
 
 }

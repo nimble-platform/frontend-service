@@ -7,7 +7,8 @@ import { Quantity } from "../../../catalogue/model/publish/quantity";
 import { PAYMENT_MEANS } from "../../../catalogue/model/constants";
 import { UBLModelUtils } from "../../../catalogue/model/ubl-model-utils";
 import { PaymentTermsWrapper } from "../payment-terms-wrapper";
-import { UblModelAccessors } from "../../../catalogue/model/ubl-model-accessors";
+import { quantityToString, durationToString } from "../../../common/utils";
+import { PriceWrapper } from "../price-wrapper";
 
 /**
  * Convenient getters (and some setters) for catalogue line, request for quotations and quotations.
@@ -17,6 +18,9 @@ export class NegotiationModelWrapper {
 
     public rfqPaymentTerms: PaymentTermsWrapper;
     public quotationPaymentTerms: PaymentTermsWrapper;
+    public linePriceWrapper: PriceWrapper;
+    public rfqPriceWrapper: PriceWrapper;
+    public quotationPriceWrapper: PriceWrapper;
 
     constructor(public line: CatalogueLine,
                 public rfq: RequestForQuotation,
@@ -26,38 +30,50 @@ export class NegotiationModelWrapper {
         if(quotation) {
             this.quotationPaymentTerms = new PaymentTermsWrapper(quotation.paymentTerms);
         }
+
+        this.linePriceWrapper = new PriceWrapper(
+            line.requiredItemLocationQuantity.price,
+            rfq.requestForQuotationLine[0].lineItem.quantity
+        );
+        this.rfqPriceWrapper = new PriceWrapper(
+            rfq.requestForQuotationLine[0].lineItem.price,
+            rfq.requestForQuotationLine[0].lineItem.quantity
+        )
+        if(quotation) {
+            this.quotationPriceWrapper = new PriceWrapper(
+                quotation.quotationLine[0].lineItem.price,
+                quotation.quotationLine[0].lineItem.quantity
+            );
+        }
     }
 
-    public get linePrice(): Price {
-        return this.line.requiredItemLocationQuantity.price;
+    public get linePricePerItemString(): string {
+        return this.linePriceWrapper.pricePerItemString;
     }
 
     public get lineTotalPrice(): number {
-        return UblModelAccessors.getTotalPrice(
-            this.line.requiredItemLocationQuantity, 
-            this.rfq.requestForQuotationLine[0].lineItem.quantity.value
-        );
+        return this.linePriceWrapper.totalPrice;
     }
 
     public get lineTotalPriceString(): string {
-        return UblModelAccessors.getTotalPriceString(
-            this.line.requiredItemLocationQuantity, 
-            this.rfq.requestForQuotationLine[0].lineItem.quantity.value
-        );
+        return this.linePriceWrapper.totalPriceString;
     }
 
-    public get rfqPriceAmount(): Amount {
-        return this.rfq.requestForQuotationLine[0].lineItem.price.priceAmount;
+
+    public get rfqPricePerItemString(): string {
+        return this.rfqPriceWrapper.pricePerItemString;
+    }
+
+    public get rfqTotalPrice(): number {
+        return this.rfqPriceWrapper.totalPrice;
     }
 
     public get rfqTotalPriceString(): string {
-        const price = this.rfqPriceAmount;
-        return price.value + " " + price.currencyID;
+        return this.rfqPriceWrapper.totalPriceString;
     }
 
     public get rfqTotalPriceStringIfNegotiating(): string {
-        const price = this.rfqPriceAmount;
-        return this.IfNegotiating(price.value + " " + price.currencyID, this.rfq.negotiationOptions.price);
+        return this.IfNegotiating(this.rfqPriceWrapper.totalPriceString, this.rfq.negotiationOptions.price);
     }
 
     public get quotationPriceAmount(): Amount {
@@ -77,7 +93,7 @@ export class NegotiationModelWrapper {
     }
 
     public get lineDeliveryPeriodString(): string {
-        return this.qtyToString(this.lineDeliveryPeriod);
+        return quantityToString(this.lineDeliveryPeriod);
     }
 
     public get rfqDeliveryPeriod(): Quantity {
@@ -85,7 +101,7 @@ export class NegotiationModelWrapper {
     }
 
     public get rfqDeliveryPeriodString(): string {
-        return this.qtyToString(this.rfqDeliveryPeriod);
+        return quantityToString(this.rfqDeliveryPeriod);
     }
 
     public get rfqDeliveryPeriodStringIfNegotiating(): string {
@@ -101,7 +117,7 @@ export class NegotiationModelWrapper {
     }
 
     public get lineWarrantyString(): string {
-        return this.warrantyToString(this.lineWarranty);
+        return durationToString(this.lineWarranty);
     }
 
     public get rfqWarranty(): Quantity {
@@ -109,7 +125,7 @@ export class NegotiationModelWrapper {
     }
 
     public get rfqWarrantyString(): string {
-        return this.qtyToString(this.rfqWarranty);
+        return durationToString(this.rfqWarranty);
     }
 
     public get rfqWarrantyStringIfNegotiating(): string {
@@ -120,14 +136,6 @@ export class NegotiationModelWrapper {
         return this.quotation.quotationLine[0].lineItem.warrantyValidityPeriod.durationMeasure;
     }
 
-    private warrantyToString(warranty: Quantity): string {
-        if(!warranty || warranty.value <= 0) {
-            return "None";
-        }
-        const warrantyStr = this.qtyToString(warranty);
-        return warrantyStr === "" ? "None" : warrantyStr;
-    }
-
     public get lineIncoterms(): string {
         return this.line.goodsItem.deliveryTerms.incoterms;
     }
@@ -136,12 +144,20 @@ export class NegotiationModelWrapper {
         return this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms;
     }
 
+    public set rfqIncoterms(incoterms: string) {
+        this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms = incoterms;
+    }
+
     public get rfqIncotermsIfNegotiating(): string {
         return this.IfNegotiating(this.rfqIncoterms, this.rfq.negotiationOptions.incoterms);
     }
 
     public get quotationIncoterms(): string {
         return this.quotation.quotationLine[0].lineItem.deliveryTerms.incoterms;
+    }
+
+    public set quotationIncoterms(incoterms: string) {
+        this.quotation.quotationLine[0].lineItem.deliveryTerms.incoterms = incoterms;
     }
 
     public get linePaymentTerms(): string {
@@ -164,16 +180,20 @@ export class NegotiationModelWrapper {
         return this.rfq.paymentMeans.paymentMeansCode.name;
     }
 
+    public set rfqPaymentMeans(paymentMeans: string) {
+        this.rfq.paymentMeans.paymentMeansCode.name = paymentMeans;
+    }
+
     public get quotationPaymentMeans(): string {
         return this.quotation.paymentMeans.paymentMeansCode.name;
     }
 
-    public get rfqPaymentMeansIfNegotiating(): string {
-        return this.IfNegotiating(this.rfqPaymentMeans, this.rfq.negotiationOptions.paymentMeans);
+    public set quotationPaymentMeans(paymentMeans: string) {
+        this.quotation.paymentMeans.paymentMeansCode.name = paymentMeans;
     }
 
-    private qtyToString(qty: Quantity): string {
-        return `${qty.value} ${qty.unitCode}`;
+    public get rfqPaymentMeansIfNegotiating(): string {
+        return this.IfNegotiating(this.rfqPaymentMeans, this.rfq.negotiationOptions.paymentMeans);
     }
 
     private qtyToStringIfNegotiating(qty: Quantity, negotiating: boolean): string {
@@ -181,7 +201,7 @@ export class NegotiationModelWrapper {
             return "";
         }
 
-        return this.qtyToString(qty);
+        return quantityToString(qty);
     }
 
     private IfNegotiating(value: string, negotiating: boolean): string {
