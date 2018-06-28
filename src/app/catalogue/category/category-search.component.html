@@ -73,10 +73,10 @@
                     <tr *ngFor="let category of categories"
                         (click)="getCategoryDetails(category)"
                         [ngClass]="{'table-secondary': selectedCategory && category.code == selectedCategory.code}">
-                        <td class="py-2 px-3">{{category.taxonomyId}}</td>
+                        <td class="py-2 px-3 font-weight-light">{{category.taxonomyId}}</td>
                         <td class="py-2 px-3">{{category.preferredName}}</td>
                         <td class="d-flex">
-                            <span *ngIf="category.taxonomyId == 'eClass'" class="fa fa-sitemap pr-2 align-left icon-secondary" aria-hidden="true" (click)="getCategoryTree(category)"></span><i class="fa fa-plus-circle pointer align-right icon-primary" (click)="selectCategory(category)"></i>
+                            <span class="fa fa-fw mr-1 align-left icon-secondary" [ngClass]="{'fa-sitemap': category.taxonomyId == 'eClass'}" aria-hidden="true" (click)="getCategoryTree(category)"></span><i class="fa fa-fw fa-plus-circle pointer align-right icon-primary" (click)="selectCategory(category)"></i>
                         </td>
                     </tr>
                 </tbody>
@@ -93,7 +93,7 @@
                     </div>
                     <div class="col-4 pl-0">
                         <div class="thead-light-equivalent">
-                            <button class="btn btn-secondary float-right my-1 mr-1" (click)="onTreeViewReturn()">Back to Search</button>
+                            <button class="btn btn-secondary nimble-button-secondary float-right my-1 mr-1" (click)="onTreeViewReturn()">Back to Search</button>
                         </div>
                     </div>
                 </div>
@@ -130,7 +130,7 @@
                 </div>
                 <div *ngFor="let prop of selectedCategoryWithDetails.properties;let i = index;let l = last">
                     <div class="row">
-                        <div class="col-9">
+                        <div class="col-8">
                             <label>
                                 <p class="text-capitalize pl-3 mb-1">
                                     {{prop.preferredName}}
@@ -140,9 +140,9 @@
                                 </p>
                             </label>
                         </div>
-                        <div class="col-3">
+                        <div class="col-4">
                             <label>
-                                <p class="mb-1">
+                                <p class="mb-1 font-weight-light">
                                     {{toUIString(prop.dataType)}}
                                 </p>
                             </label>

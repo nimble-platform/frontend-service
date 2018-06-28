@@ -141,7 +141,7 @@ export class CategorySearchComponent implements OnInit {
         });
     }
 
-    displayRootCategories(taxonomyId): void {
+    displayRootCategories(taxonomyId: string): void {
         this.treeView = true;
         this.taxonomyId = taxonomyId;
         this.getRootCategories();
@@ -215,7 +215,7 @@ export class CategorySearchComponent implements OnInit {
         }
     }
 
-    getCategoryTree(category){
+    getCategoryTree(category: Category){
         this.selectedCategoryWithDetails = null;
         this.treeView = true;
         this.callStatus.submit();
@@ -223,8 +223,9 @@ export class CategorySearchComponent implements OnInit {
 
             this.categoryService.getCategory(category)
                 .then(category => {
+                    this.taxonomyId = category.taxonomyId;
+                    this.getRootCategories();
                     this.selectedCategoryWithDetails = category;
-
                     this.parentCategories = categories; // parents categories
                     this.selectedCategoriesWRTLevels = [];
                     for(let parent of this.parentCategories.parents){
@@ -242,7 +243,7 @@ export class CategorySearchComponent implements OnInit {
             );
     }
 
-    getCategoryDetails(category){
+    getCategoryDetails(category: Category) {
         this.callback = false;
         this.submitted = true;
         this.error_detc = false;
