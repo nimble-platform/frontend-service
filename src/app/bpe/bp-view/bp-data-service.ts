@@ -313,17 +313,19 @@ export class BPDataService{
 
     initOrderWithQuotation() {
         let copyQuotation: Quotation = copy(this.quotation);
+        let copyRfq = copy(this.requestForQuotation);
         this.resetBpData();
         this.modifiedCatalogueLines = copy(this.catalogueLines);
         this.order = UBLModelUtils.createOrder();
         this.order.orderLine[0].lineItem = copyQuotation.quotationLine[0].lineItem;
         this.order.paymentMeans = copyQuotation.paymentMeans;
         this.order.paymentTerms = copyQuotation.paymentTerms;
+        this.order.deliveryAddress = copyRfq.delivery.deliveryAddress;
         this.setProcessType('Order');
     }
 
     initOrderWithRfq() {
-        let copyRfq: RequestForQuotation = copy(this.requestForQuotation);
+        let copyRfq = copy(this.requestForQuotation);
         this.resetBpData();
         this.modifiedCatalogueLines = copy(this.catalogueLines);
         this.order = UBLModelUtils.createOrder();
@@ -346,13 +348,15 @@ export class BPDataService{
     }
 
     initRfqWithQuotation() {
-        let copyQuotation:Quotation = copy(this.quotation);
+        const copyQuotation = copy(this.quotation);
+        const copyRfq = copy(this.requestForQuotation);
         this.resetBpData();
         this.modifiedCatalogueLines = copy(this.catalogueLines);
         this.requestForQuotation = UBLModelUtils.createRequestForQuotation(new NegotiationOptions());
         this.requestForQuotation.requestForQuotationLine[0].lineItem = copyQuotation.quotationLine[0].lineItem;
         this.requestForQuotation.paymentMeans = copyQuotation.paymentMeans;
         this.requestForQuotation.paymentTerms = copyQuotation.paymentTerms;
+        this.requestForQuotation.delivery = copyRfq.delivery;
     }
 
     initRfqWithOrder(){

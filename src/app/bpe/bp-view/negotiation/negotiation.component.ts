@@ -14,11 +14,7 @@ export class NegotiationComponent implements OnInit {
 
     initCallStatus:CallStatus = new CallStatus();
 
-    line: CatalogueLine;
-    userRole: BpUserRole;
-    quotation: Quotation;
-
-    constructor(private bpDataService: BPDataService) {
+    constructor(public bpDataService: BPDataService) {
     }
 
     ngOnInit() {
@@ -27,18 +23,11 @@ export class NegotiationComponent implements OnInit {
             this.bpDataService.initRfq()
                 .then(() => {
                     this.initCallStatus.callback("Request for Quotation Initialized.");
-                    this.line = this.bpDataService.getCatalogueLine();
-                    this.userRole = this.bpDataService.userRole;
-                    this.quotation = this.bpDataService.quotation;
                 })
                 .catch(error => {
                     this.initCallStatus.error("Error while initializing request for quotation.");
                     console.log("Error while initializing request for quotation.", error);
                 });
-        } else {
-            this.line = this.bpDataService.getCatalogueLine();
-            this.userRole = this.bpDataService.userRole;
-            this.quotation = this.bpDataService.quotation;
         }
     }
     

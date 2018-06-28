@@ -89,11 +89,14 @@ export class NegotiationResponseComponent implements OnInit {
     }
 
     onRequestNewQuotation() {
-        // TODO
+        console.log("here!");
+        this.bpDataService.initRfqWithQuotation();
+        this.bpDataService.setBpOptionParameters("buyer", "Negotiation", "Negotiation");
     }
 
     onAcceptAndOrder() {
-        // TODO
+        this.bpDataService.initOrderWithQuotation();
+        this.bpDataService.setBpOptionParameters("buyer", "Order", "Negotiation");
     }
 
     /*
