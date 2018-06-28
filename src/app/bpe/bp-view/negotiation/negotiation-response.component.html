@@ -81,7 +81,7 @@
     <div class="col-4">
         <value-input [visible]="rfq.negotiationOptions.price" type="amount"
             [disabled]="isLoading() || isReadOnly()" [(amount)]="quotationPrice"
-            [amountUnit]="wrapper.linePrice.priceAmount.currencyID">
+            [amountUnit]="wrapper.linePriceWrapper.currency">
         </value-input>
     </div>
 </div>
@@ -109,7 +109,7 @@
 </div>
 
 <!-- Actions -->
-<div class="row actions-row" *ngIf="userRole === 'seller'">
+<div class="row actions-row" *ngIf="userRole === 'seller' && !isReadOnly()">
     <div class="col-6 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
     <div class="col-2">
         <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
@@ -123,6 +123,13 @@
         <button class="btn btn-primary action" [disabled]="isLoading()" (click)="onRespondToQuotation(true)">
             Accept Offer
         </button>
+    </div>
+</div>
+
+<div class="row actions-row" *ngIf="userRole === 'seller' && isReadOnly()">
+    <div class="col-10 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+    <div class="col-2">
+        <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
     </div>
 </div>
 

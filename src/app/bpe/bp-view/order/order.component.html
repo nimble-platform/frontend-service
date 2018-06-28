@@ -14,6 +14,12 @@
         <value-input type="text" presentationMode="view" label="Incoterms" 
             [text]="getIncoterm()" labelClass="col-6" valueClass="col-6">
         </value-input>
+        <value-input type="text" presentationMode="view" label="Quantity"
+            [text]="getQuantityText()" labelClass="col-6" valueClass="col-6">
+        </value-input>
+        <value-input type="text" presentationMode="view" label="Total Price"
+            [text]="getTotalPriceText()" labelClass="col-6" valueClass="col-6">
+        </value-input>
     </div>
     <div class="col-4">
         <h2>Payment Details</h2>
@@ -33,22 +39,32 @@
     <div class="col-4">
         <h2>Delivery Address</h2>
         <value-input type="text" presentationMode="view" label="Street" 
-            [text]="order.deliveryAddress.streetName" labelClass="col-6" valueClass="col-6">
+            [text]="order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address.streetName" labelClass="col-6" valueClass="col-6">
         </value-input>
         <value-input type="text" presentationMode="view" label="Building Number" 
-            [text]="order.deliveryAddress.buildingNumber" labelClass="col-6" valueClass="col-6">
+            [text]="order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address.buildingNumber" labelClass="col-6" valueClass="col-6">
         </value-input>
         <value-input type="text" presentationMode="view" label="City" 
-            [text]="order.deliveryAddress.cityName" labelClass="col-6" valueClass="col-6">
+            [text]="order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address.cityName" labelClass="col-6" valueClass="col-6">
         </value-input>
         <value-input type="text" presentationMode="view" label="Postal Code" 
-            [text]="order.deliveryAddress.postalZone" labelClass="col-6" valueClass="col-6">
+            [text]="order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address.postalZone" labelClass="col-6" valueClass="col-6">
         </value-input>
         <value-input type="text" presentationMode="view" label="Country" 
-            [text]="order.deliveryAddress.country.name" labelClass="col-6" valueClass="col-6">
+            [text]="order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address.country.name" labelClass="col-6" valueClass="col-6">
         </value-input>
     </div>
 </div>
+
+<hr>
+
+<value-input type="text" presentationMode="edit" [disabled]="isReadOnly() || userRole === 'seller'"
+    label="Note" [text]="order.note" labelClass="col-2" valueClass="col-10">
+</value-input>
+
+<value-input type="text" presentationMode="edit" *ngIf="orderResponse" [disabled]="isReadOnly()"
+    label="Producer Node" [text]="orderResponse.note" labelClass="col-2" valueClass="col-10" rowClass="space-before">
+</value-input>
 
 <hr>
 
@@ -71,18 +87,81 @@
 <hr>
 
 <!-- Actions -->
-<div class="row actions-row" *ngIf="order">
-    <div class="col-8 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
-    <div class="col-2">
-        <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">
-            Back
-        </button>
+<ng-container *ngIf="userRole === 'buyer'">
+    <div class="row actions-row" *ngIf="!isReadOnly()">
+        <div class="col-8 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+        <div class="col-2">
+            <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">
+                Back
+            </button>
+        </div>
+        <div class="col-2">
+            <button class="btn btn-primary action" [disabled]="isLoading()" (click)="onOrder()">
+                Order
+            </button>
+        </div>
     </div>
-    <div class="col-2">
-        <button class="btn btn-primary action" [disabled]="isLoading()" (click)="onOrder()">
-            Order
-        </button>
-    </div>
-</div>
 
-<call-status [callStatus]="callStatus" [large]="true"></call-status>
+    <div class="row actions-row" *ngIf="isReadOnly() && !isOrderCompleted()">
+        <div class="col-10 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+        <div class="col-2">
+            <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">
+                Back
+            </button>
+        </div>
+    </div>
+
+    <div class="row actions-row" *ngIf="isReadOnly() && isOrderCompleted()">
+        <div class="col-7 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+        <div class="col-2">
+            <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">
+                Back
+            </button>
+        </div>
+        <div class="col-3">
+            <button class="btn btn-primary action" [disabled]="isLoading() || isOrderRejected()" (click)="onDownloadContact()">
+                Download Contract
+            </button>
+        </div>
+    </div>
+</ng-container>
+
+<ng-container *ngIf="userRole === 'seller'">
+    <div class="row actions-row" *ngIf="!isOrderCompleted()">
+        <div class="col-6 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+        <div class="col-2">
+            <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">
+                Back
+            </button>
+        </div>
+        <div class="col-2">
+            <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onRespondToOrder(false)">
+                Reject
+            </button>
+        </div>
+        <div class="col-2">
+            <button class="btn btn-primary action" [disabled]="isLoading()" (click)="onRespondToOrder(true)">
+                Accept
+            </button>
+        </div>
+    </div>
+    
+    <div class="row actions-row" *ngIf="isOrderCompleted()">
+        <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+        <div class="col-2">
+            <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">
+                Back
+            </button>
+        </div>
+        <div class="col-3">
+            <button class="btn btn-secondary action" [disabled]="isLoading() || isOrderRejected()" (click)="onDownloadContact()">
+                Download Contract
+            </button>
+        </div>
+        <div class="col-3">
+            <button class="btn btn-primary action" [disabled]="isLoading() || isOrderRejected()" (click)="onDispatchOrder()">
+                Dispatch Order 
+            </button>
+        </div>
+    </div>
+</ng-container>

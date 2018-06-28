@@ -1,12 +1,6 @@
 import { Component, OnInit, Input } from "@angular/core";
 import { ProductBpStepStatus } from "./product-bp-step-status";
-
-type Step = 
-    | "Order" 
-    | "Negotiation" 
-    | "Item_Information_Request"
-    | "Ppap"
-    | "Fulfilment"
+import { ProductBpStep } from "./product-bp-step";
 
 @Component({
     selector: "product-bp-steps",
@@ -15,7 +9,7 @@ type Step =
 })
 export class ProductBpStepsComponent implements OnInit {
 
-    @Input() currentStep: Step;
+    @Input() currentStep: ProductBpStep;
     @Input() status: ProductBpStepStatus;
     @Input() statusText: string = "";
     
@@ -34,7 +28,7 @@ export class ProductBpStepsComponent implements OnInit {
         };
     }
 
-    getStepClasses(step: Step): any {
+    getStepClasses(step: ProductBpStep): any {
         if(step === this.currentStep) {
             const result: any = {
                 step: true,
@@ -54,13 +48,15 @@ export class ProductBpStepsComponent implements OnInit {
             case "Item_Information_Request":
                 return "0%";
             case "Ppap":
-                return "20%";
+                return "17%";
             case "Negotiation":
-                return "40%";
+                return "33%";
             case "Order":
-                return "60%";
+                return "50%";
+            case "OrderConfirmed":
+                return "67%";
             case "Fulfilment":
-                return "80%";
+                return "83%";
         }
     }
 

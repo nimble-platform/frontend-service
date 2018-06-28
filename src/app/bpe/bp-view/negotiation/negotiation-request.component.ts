@@ -17,7 +17,7 @@ import { ProcessVariables } from "../../model/process-variables";
 import { ModelUtils } from "../../model/model-utils";
 import { ProcessInstanceInputMessage } from "../../model/process-instance-input-message";
 import { NegotiationModelWrapper } from "./negotiation-model-wrapper";
-import { NegotiationOptions } from "../../../catalogue/model/publish/negotiation-options";
+import { getMaximumQuantityForPrice, getStepForPrice, copy } from "../../../common/utils";
 
 @Component({
     selector: "negotiation-request",
@@ -52,14 +52,12 @@ export class NegotiationRequestComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.bpDataService.computeRfqNegotiationOptionsIfNeeded();
         this.rfq = this.bpDataService.requestForQuotation;
-        if(!this.rfq.negotiationOptions) {
-            this.rfq.negotiationOptions = new NegotiationOptions();
-        }
         this.rfqLine = this.rfq.requestForQuotationLine[0];
         this.line = this.bpDataService.getCatalogueLine();
         this.wrapper = new NegotiationModelWrapper(this.line, this.rfq, null);
-        this.totalPrice = this.wrapper.lineTotalPrice;
+        this.totalPrice = this.wrapper.rfqTotalPrice;
         this.negotiatedPriceValue = this.totalPrice;
     }
 
@@ -71,7 +69,7 @@ export class NegotiationRequestComponent implements OnInit {
         if(this.isNegotiatingAnyTerm()) {
             // send request for quotation
             this.callStatus.submit();
-            const rfq: RequestForQuotation = this.copy(this.rfq);
+            const rfq: RequestForQuotation = copy(this.rfq);
 
             // final check on the rfq
             if(this.bpDataService.modifiedCatalogueLines) {
@@ -108,6 +106,7 @@ export class NegotiationRequestComponent implements OnInit {
         } else {
             // just go to order page
             this.bpDataService.initOrderWithRfq();
+            this.bpDataService.setBpOptionParameters("buyer", "Order", "Negotiation");
         }
     }
 
@@ -157,14 +156,11 @@ export class NegotiationRequestComponent implements OnInit {
     }
 
     getPriceSteps(): number {
-        return this.getMaximumQuantity() / 100;
+        return getStepForPrice(this.line.requiredItemLocationQuantity.price);
     }
 
     getMaximumQuantity(): number {
-        const price = this.line.requiredItemLocationQuantity.price;
-        const amount = Number(price.priceAmount.value);
-        let result = this.maxValue / amount;
-        return this.roundFirstDigit(result) * this.getMagnitude(result);
+        return getMaximumQuantityForPrice(this.line.requiredItemLocationQuantity.price);
     }
 
     isLoading(): boolean {
@@ -179,85 +175,18 @@ export class NegotiationRequestComponent implements OnInit {
         return this.bpDataService.processMetadata && this.bpDataService.processMetadata.processStatus === "Started";
     }
 
-    // getActionsSlots(): ActionsRowSlot[] {
-    //     if(this.isWaitingForReply()) {
-    //         return [
-    //             {
-    //                 type: "text",
-    //                 slotClass: "col-7",
-    //                 text: ""
-    //             },
-    //             {
-    //                 type: "text",
-    //                 slotClass: "col-3",
-    //                 text: `Total Price: ${this.totalPrice} ${this.wrapper.rfqPriceAmount.currencyID}`
-    //             },
-    //             {
-    //                 type: "back",
-    //                 slotClass: "col-2"
-    //             }
-    //         ]
-    //     }
-    //     return [
-    //         {
-    //             type: "callStatus",
-    //             slotClass: "col-4"
-    //         },
-    //         {
-    //             type: "text",
-    //             slotClass: "col-3",
-    //             text: `Total Price: ${this.totalPrice} ${this.wrapper.rfqPriceAmount.currencyID}`
-    //         },
-    //         {
-    //             type: "back",
-    //             slotClass: "col-2"
-    //         },
-    //         {
-    //             type: "button",
-
-    //         }
-    //     ]
-    // }
-
     /*
      * Internal methods
      */
 
-    private copy<T>(value: T): T {
-        return JSON.parse(JSON.stringify(value));
-    }
-
     private recomputeTotalPrice(): void {
-        const price = this.wrapper.lineTotalPrice;
         if(!this.negotiatePrice) {
+            const price = this.wrapper.lineTotalPrice;
             this.negotiatedPriceValue = price;
             this.totalPrice = price;
         } else {
             this.totalPrice = this.negotiatedPriceValue;
         }
-        this.rfqLine.lineItem.price.priceAmount.value = this.totalPrice;
+        this.wrapper.rfqPriceWrapper.totalPrice = this.totalPrice;
     }
-
-    /*
-     * TODO: those methods are shared with the product details view.
-     * We should put them in some helper class, but where?!
-     */
-
-    private round5(value: number): number {
-        return Math.round(value / 5) * 5;
-    }
-
-    // rounds the first digit of a number to the nearest 5 or 10
-    private roundFirstDigit(value: number): number {
-        let roundedDigit = this.round5(value / this.getMagnitude(value));
-        if(roundedDigit == 0) {
-            roundedDigit = 1;
-        }
-        return roundedDigit;
-    }
-
-    private getMagnitude(value: number): number {
-        return Math.pow(10, Math.floor(Math.log10(value)));
-    }
-
 }

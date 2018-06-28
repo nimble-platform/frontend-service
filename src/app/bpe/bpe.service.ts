@@ -12,6 +12,10 @@ import {CookieService} from "ng2-cookies";
 import {Contract} from "../catalogue/model/publish/contract";
 import {Clause} from "../catalogue/model/publish/clause";
 import { CollaborationRole } from "./model/collaboration-role";
+import { PpapResponse } from '../catalogue/model/publish/ppap-response';
+import { Ppap } from '../catalogue/model/publish/ppap';
+import { ItemInformationResponse } from '../catalogue/model/publish/item-information-response';
+import { ItemInformationRequest } from '../catalogue/model/publish/item-information-request';
 
 @Injectable()
 export class BPEService {
@@ -136,6 +140,16 @@ export class BPEService {
             .catch(this.handleError);
 	}
 
+	getPpapRequest(ppapResponse: PpapResponse): Promise<Ppap> {
+		return this.getDocumentJsonContent(ppapResponse.ppapDocumentReference.id)
+			.then(response => JSON.parse(response))
+	}
+
+	getItemInformationRequest(itemInformationResponse: ItemInformationResponse): Promise<ItemInformationRequest> {
+		return this.getDocumentJsonContent(itemInformationResponse.itemInformationRequestDocumentReference.id)
+			.then(response => JSON.parse(response))
+	}
+
 	getDocumentJsonContent(documentId:string):Promise<string> {
 		const url = `${this.url}/document/json/${documentId}`;
 		return this.http
@@ -230,6 +244,31 @@ export class BPEService {
             .then(res => res.json())
             .catch(this.handleError);
 	}
+
+	downloadContractBundle(id: string): Promise<any> {
+        const url = `${this.url}/contracts/create-bundle?orderId=${id}`;
+        return new Promise<any>((resolve, reject) => {
+            let xhr = new XMLHttpRequest();
+
+            xhr.open('GET', url, true);
+            xhr.setRequestHeader('Accept', 'application/zip');
+            xhr.responseType = 'blob';
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+
+                        var contentType = 'application/zip';
+                        var blob = new Blob([xhr.response], {type: contentType});
+                        resolve({fileName: "Contract Bundle.zip", content: blob});
+                    } else {
+                        reject(xhr.status);
+                    }
+                }
+            }
+            xhr.send();
+        });
+    }
 
 	private stringtifyArray(values: any[]): string {
 		let paramVal: string = '';

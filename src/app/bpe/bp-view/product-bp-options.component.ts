@@ -8,6 +8,8 @@ import { Subscription } from "rxjs";
 import { ProductBpStepStatus } from "./product-bp-step-status";
 import { ProductWrapper } from "../../product-details/product-wrapper";
 import { BpWorkflowOptions } from "../model/bp-workflow-options";
+import { ProcessType } from "../model/process-type";
+import { ProductBpStep } from "./product-bp-step";
 
 /**
  * Created by suat on 20-Oct-17.
@@ -18,8 +20,9 @@ import { BpWorkflowOptions } from "../model/bp-workflow-options";
     styleUrls: ["./product-bp-options.component.css"]
 })
 export class ProductBpOptionsComponent implements OnInit, OnDestroy {
-    currentStep: string;
-    getCatalogueLineStatus: CallStatus = new CallStatus();
+    processType: ProcessType;
+    currentStep: ProductBpStep;
+    callStatus: CallStatus = new CallStatus();
     processTypeSubs: Subscription;
 
     id: string;
@@ -40,7 +43,8 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.processTypeSubs = this.bpDataService.processTypeObservable.subscribe(processType => {
             if (processType) {
-                this.currentStep = processType;
+                this.processType = processType;
+                this.currentStep = this.getCurrentStep(processType);
             }
         });
 
@@ -50,23 +54,30 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
             this.bpDataService.precedingProcessId = params["pid"];
 
             if (this.id !== id || this.catalogueId !== catalogueId) {
-                this.getCatalogueLineStatus.submit();
+                this.id = id;
+                this.catalogueId = catalogueId;
+
+                this.callStatus.submit();
                 this.catalogueService
                     .getCatalogueLine(catalogueId, id)
                     .then(line => {
                         this.line = line;
                         this.wrapper = new ProductWrapper(line);
                         this.bpDataService.setCatalogueLines([line]);
-                        this.getCatalogueLineStatus.callback("Retrieved product details", true);
+                        this.callStatus.callback("Retrieved product details", true);
                         this.bpDataService.computeWorkflowOptions();
                         this.options = this.bpDataService.workflowOptions;
                     })
                     .catch(error => {
-                        this.getCatalogueLineStatus.error("Failed to retrieve product details");
+                        this.callStatus.error("Failed to retrieve product details");
                         console.log("Error while fetching catalogue", error);
                     });
             }
         });
+    }
+
+    ngOnDestroy(): void {
+        this.processTypeSubs.unsubscribe();
     }
 
     getStepsStatus(): ProductBpStepStatus {
@@ -80,7 +91,25 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
         return ""
     }
 
-    ngOnDestroy(): void {
-        this.processTypeSubs.unsubscribe();
+    private getCurrentStep(processType: ProcessType): ProductBpStep {
+        switch(processType) {
+            case "Item_Information_Request":
+            case "Ppap":
+            case "Negotiation":
+            case "Fulfilment":
+                return processType;
+            case "Transport_Execution_Plan":
+                // return a dummy step
+                return "Item_Information_Request";
+            case "Order":
+                return this.isOrderDone() ? "OrderConfirmed" : "Order";
+        }
     }
+
+    private isOrderDone(): boolean {
+        return this.processType === "Order" 
+            && this.bpDataService.processMetadata 
+            && this.bpDataService.processMetadata.processStatus === "Completed";
+    }
+
 }
