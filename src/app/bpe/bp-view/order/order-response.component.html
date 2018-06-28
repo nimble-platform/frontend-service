@@ -12,13 +12,13 @@
         </value-view>
     </div>
 
-    <div class="well" *ngIf="bpDataService.processMetadata.processStatus == 'Completed' && bpDataService.orderResponse.acceptedIndicator && bpDataService.userRole == 'seller' && epcCodes">
+    <div class="well" *ngIf="bpDataService.processMetadata.processStatus == 'Completed' && bpDataService.orderResponse.acceptedIndicator && epcCodes">
         <h5>EPC Codes</h5>
-        <value-array-view [presentationMode]="'edit'"
+        <value-array-view [presentationMode]="bpDataService.userRole == 'seller' ? 'edit' : 'view'"
                           [propName]="'EPC Codes'"
                           [values]="epcCodes.codes"></value-array-view>
 
-        <ng-container>
+        <ng-container *ngIf="bpDataService.userRole == 'seller'">
             <div class="d-flex justify-content-end">
                 <button class="btn btn-success" (click)="saveEpcCodes()">Save</button>
             </div>
