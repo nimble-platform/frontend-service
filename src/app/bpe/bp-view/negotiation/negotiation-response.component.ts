@@ -12,6 +12,8 @@ import { ProcessVariables } from "../../model/process-variables";
 import { ProcessInstanceInputMessage } from "../../model/process-instance-input-message";
 import { CallStatus } from "../../../common/call-status";
 import { Quantity } from "../../../catalogue/model/publish/quantity";
+import { BpUserRole } from "../../model/bp-user-role";
+import { Location } from "@angular/common";
 
 @Component({
     selector: "negotiation-response",
@@ -24,6 +26,7 @@ export class NegotiationResponseComponent implements OnInit {
     rfq: RequestForQuotation;
     quotation: Quotation;
     wrapper: NegotiationModelWrapper;
+    userRole: BpUserRole;
 
     // needed because the price is an Amount, which has a value: string.
     private quotationPriceValue: number;
@@ -35,6 +38,7 @@ export class NegotiationResponseComponent implements OnInit {
 
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
+                private location: Location,
                 private router: Router) {
 
     }
@@ -42,12 +46,18 @@ export class NegotiationResponseComponent implements OnInit {
     ngOnInit() {
         this.line = this.bpDataService.getCatalogueLine();
         this.rfq = this.bpDataService.requestForQuotation;
+        this.bpDataService.computeRfqNegotiationOptionsIfNeeded();
         this.quotation = this.bpDataService.quotation;
         this.wrapper = new NegotiationModelWrapper(this.line, this.rfq, this.quotation);
         this.quotationPriceValue = Number(this.wrapper.quotationPriceAmount.value || "0");
+        this.userRole = this.bpDataService.userRole;
     }
 
-    respondToQuotation(accepted: boolean) {
+    onBack(): void {
+        this.location.back();
+    }
+
+    onRespondToQuotation(accepted: boolean) {
 
         if(accepted) {
             if(this.hasUpdatedTerms()) {
@@ -78,6 +88,18 @@ export class NegotiationResponseComponent implements OnInit {
             );
     }
 
+    onRequestNewQuotation() {
+        // TODO
+    }
+
+    onAcceptAndOrder() {
+        // TODO
+    }
+
+    /*
+     * Getters and Setters
+     */
+
     isLoading(): boolean {
         return false;
     }
@@ -85,10 +107,6 @@ export class NegotiationResponseComponent implements OnInit {
     isReadOnly(): boolean {
         return this.bpDataService.processMetadata == null || this.bpDataService.processMetadata.processStatus !== 'Started';
     }
-
-    /*
-     * Getters and Setters
-     */
 
     get quotationPrice(): number {
         return this.quotationPriceValue;

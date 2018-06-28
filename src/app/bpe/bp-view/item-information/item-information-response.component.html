@@ -1,4 +1,4 @@
-<div class="row">
+<div class="row space-before">
     <div class="col-3">
         <strong><label for="customFile">Requested technical data sheet:</label></strong>
     </div>
@@ -27,6 +27,8 @@
     </div>
 </div>
 
+<hr>
+
 <div class="row">
     <div class="col-3">
         <strong><label for="custNoteTextarea">Customer's note:</label></strong>
@@ -46,6 +48,8 @@
             [disabled]="isLoading() || isResponseSent()" [(ngModel)]="response.note[0]"></textarea>
     </div>
 </div>
+
+<hr>
 
 <!-- Actions -->
 <div *ngIf="!isBuyer()" class="row actions-row">

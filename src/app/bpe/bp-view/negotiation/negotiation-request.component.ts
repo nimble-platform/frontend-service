@@ -68,7 +68,7 @@ export class NegotiationRequestComponent implements OnInit {
      */
 
     onSendRequest(): void {
-        if(this.rfq.negotiationOptions.isNegotiatingAnyTerm()) {
+        if(this.isNegotiatingAnyTerm()) {
             // send request for quotation
             this.callStatus.submit();
             const rfq: RequestForQuotation = this.copy(this.rfq);
@@ -118,6 +118,16 @@ export class NegotiationRequestComponent implements OnInit {
     /*
      * Getters and setters for the template.
      */
+
+    isNegotiatingAnyTerm(): boolean {
+        return this.rfq.negotiationOptions.price
+            || this.rfq.negotiationOptions.deliveryPeriod
+            || this.rfq.negotiationOptions.warranty
+            || this.rfq.negotiationOptions.incoterms
+            || this.rfq.negotiationOptions.paymentTerms
+            || this.rfq.negotiationOptions.paymentMeans
+            || this.rfq.dataMonitoringRequested;
+    }
 
     get requestedQuantity(): number {
         return this.rfq.requestForQuotationLine[0].lineItem.quantity.value;

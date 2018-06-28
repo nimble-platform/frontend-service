@@ -50,6 +50,11 @@ export class NegotiationModelWrapper {
         return this.rfq.requestForQuotationLine[0].lineItem.price.priceAmount;
     }
 
+    public get rfqTotalPriceString(): string {
+        const price = this.rfqPriceAmount;
+        return price.value + " " + price.currencyID;
+    }
+
     public get rfqTotalPriceStringIfNegotiating(): string {
         const price = this.rfqPriceAmount;
         return this.IfNegotiating(price.value + " " + price.currencyID, this.rfq.negotiationOptions.price);
@@ -79,6 +84,10 @@ export class NegotiationModelWrapper {
         return this.rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure;
     }
 
+    public get rfqDeliveryPeriodString(): string {
+        return this.qtyToString(this.rfqDeliveryPeriod);
+    }
+
     public get rfqDeliveryPeriodStringIfNegotiating(): string {
         return this.qtyToStringIfNegotiating(this.rfqDeliveryPeriod, this.rfq.negotiationOptions.deliveryPeriod);
     }
@@ -97,6 +106,10 @@ export class NegotiationModelWrapper {
 
     public get rfqWarranty(): Quantity {
         return this.rfq.requestForQuotationLine[0].lineItem.warrantyValidityPeriod.durationMeasure;
+    }
+
+    public get rfqWarrantyString(): string {
+        return this.qtyToString(this.rfqWarranty);
     }
 
     public get rfqWarrantyStringIfNegotiating(): string {
@@ -133,6 +146,10 @@ export class NegotiationModelWrapper {
 
     public get linePaymentTerms(): string {
         return UBLModelUtils.getDefaultPaymentTermsAsStrings()[0];
+    }
+
+    public get rfqPaymentTermsToString(): string {
+        return this.rfqPaymentTerms.paymentTerm;
     }
 
     public get rfqPaymentTermsIfNegotiating(): string {

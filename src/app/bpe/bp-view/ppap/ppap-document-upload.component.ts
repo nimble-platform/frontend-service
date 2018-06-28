@@ -31,7 +31,7 @@ export class PpapDocumentUploadComponent {
     ppapDocuments : DocumentReference[] = [];
     note: any;
     noteToSend : any;
-    binaryObjects: any[] = [];
+    binaryObjects: { documentName: string, documents: BinaryObject[] }[] = [];
     callStatus:CallStatus = new CallStatus();
     // check whether 'Send Response' button is clicked
     submitted: boolean = false;
@@ -91,12 +91,13 @@ export class PpapDocumentUploadComponent {
         return false;
     }
 
+
     isLoading(): boolean {
         return this.callStatus.fb_submitted;
     }
 
-    isRequestSent(): boolean {
-        return false; // TODO
+    areAllDocumentsUploaded(): boolean {
+        return this.ppap.documentType.length === this.binaryObjects.length;
     }
 
     remove(documentName, document): void {

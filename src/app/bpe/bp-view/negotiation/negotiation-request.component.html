@@ -130,7 +130,7 @@
     </div>
     <div class="col-3">
         <button class="btn btn-primary action" [disabled]="isLoading()" (click)="onSendRequest()">
-            {{ rfq.negotiationOptions.isNegotiatingAnyTerm() ? "Send Request" : "Continue With Manufacturer's Terms" }}
+            {{ isNegotiatingAnyTerm() ? "Send Request" : "Continue With Manufacturer's Terms" }}
         </button>
     </div>
 </div>

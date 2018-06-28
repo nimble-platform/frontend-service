@@ -31,7 +31,7 @@
                     <div *ngFor="let object of binaryObjects">
                         <div *ngFor="let doc of object.documents">
                             <td *ngIf="document == object.documentName" style="border: none">{{doc.fileName}}
-                                <button  style="align: right" class="btn btn-xs btn-danger" (click)="remove(document,doc)"
+                                <button class="btn btn-xs btn-danger" (click)="remove(document,doc)"
                                 >&times;
                                 </button>
                             </td>
@@ -46,41 +46,28 @@
 <hr>
 
 <!-- Request note -->
-<value-input class="form-group space-after" type="text" [(text)]="note" label="Request Note" labelClass="col-2" 
+<value-input rowClass="space-after" type="text" [(text)]="note" label="Request Note" labelClass="col-2" 
     valueClass="col-10" disabled="true">
 </value-input>
 
-<hr>
-
 <!-- Response note -->
-<value-input class="form-group space-after" type="text" [(text)]="noteToSend" label="Response Note" labelClass="col-2" 
-    valueClass="col-10" [disabled]="isLoading() || isRequestSent()">
+<value-input type="text" [(text)]="noteToSend" label="Response Note" labelClass="col-2" 
+    valueClass="col-10" [disabled]="isLoading()">
 </value-input>
 
 <hr>
 
 <!-- Action buttons -->
-<div *ngIf="!isSent()" class="row actions-row">
+<div class="row actions-row">
     <div class="col-4"></div>
     <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
     <div class="col-2">
         <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">Back</button>
     </div>
     <div class="col-2">
-        <button class="btn btn-primary action" [disabled]="isLoading()" (click)="responseToPpapRequest(true)">
-            Send Request
-        </button>
-    </div>
-</div>
-
-<div *ngIf="isSent()" class="row actions-row">
-    <div class="col-8"></div>
-    <div class="col-2">
-        <button class="btn btn-secondary action" (click)="onBack()">Back</button>
-    </div>
-    <div class="col-2">
-        <button class="btn btn-primary action" disabled>
-            Request Sent
+        <button class="btn btn-primary action" [disabled]="isLoading() || !areAllDocumentsUploaded()" 
+            (click)="responseToPpapRequest(true)">
+            Send Response
         </button>
     </div>
 </div>

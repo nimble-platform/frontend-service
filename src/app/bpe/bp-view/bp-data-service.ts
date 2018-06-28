@@ -33,6 +33,8 @@ import { PaymentMeans } from "../../catalogue/model/publish/payment-means";
 import { Code } from "../../catalogue/model/publish/code";
 import { PaymentTerms } from "../../catalogue/model/publish/payment-terms";
 import { copy, getPropertyKey } from "../../common/utils";
+import { ProductWrapper } from "../../product-details/product-wrapper";
+import { NegotiationModelWrapper } from "./negotiation/negotiation-model-wrapper";
 
 /**
  * Created by suat on 20-Sep-17.
@@ -264,16 +266,34 @@ export class BPDataService{
             copyIir,
             this.precedingBPDataService.fromAddress,
             this.precedingBPDataService.toAddress,
-            this.precedingBPDataService.orderMetadata);
+            this.precedingBPDataService.orderMetadata
+        );
     }
 
     private initFetchedRfq(): void {
         const rfq = this.requestForQuotation;
-        if(!rfq.negotiationOptions) {
-            rfq.negotiationOptions = new NegotiationOptions();
+        if(this.catalogueLines.length > 0 && this.catalogueLines[0]) {
+            this.computeRfqNegotiationOptionsIfNeeded();
         }
         rfq.paymentMeans = rfq.paymentMeans || new PaymentMeans(new Code(PAYMENT_MEANS[0], PAYMENT_MEANS[0]));
         rfq.paymentTerms = rfq.paymentTerms || new PaymentTerms();
+    }
+
+    computeRfqNegotiationOptionsIfNeeded() {
+        const rfq = this.requestForQuotation;
+        if(!rfq.negotiationOptions) {
+            rfq.negotiationOptions = new NegotiationOptions();
+            
+            const line = this.catalogueLines[0];
+            const wrapper = new NegotiationModelWrapper(line, rfq, null);
+
+            rfq.negotiationOptions.deliveryPeriod = wrapper.lineDeliveryPeriodString !== wrapper.rfqDeliveryPeriodString;
+            rfq.negotiationOptions.incoterms = wrapper.lineIncoterms !== wrapper.rfqIncoterms;
+            rfq.negotiationOptions.paymentMeans = wrapper.linePaymentMeans !== wrapper.rfqPaymentMeans;
+            rfq.negotiationOptions.paymentTerms = wrapper.linePaymentTerms !== wrapper.rfqPaymentTermsToString;
+            rfq.negotiationOptions.price = wrapper.lineTotalPriceString !== wrapper.rfqTotalPriceString;
+            rfq.negotiationOptions.warranty = wrapper.lineWarrantyString !== wrapper.rfqWarrantyString;
+        }
     }
 
     initPpap(documents:string[]):void{

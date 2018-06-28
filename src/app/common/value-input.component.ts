@@ -18,6 +18,7 @@ export class ValueInputComponent implements OnInit {
     @Input() definition: string;
     @Input() labelClass: string = "col-3";
     @Input() labelMainClass: string = "";
+    @Input() rowClass: string = "";
     @Input() valueClass: string; // set based on label
     @Input() placeholder: string;
     

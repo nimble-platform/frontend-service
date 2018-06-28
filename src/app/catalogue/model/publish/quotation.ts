@@ -1,7 +1,7 @@
-import { CustomerParty } from "../../../catalogue/model/publish/customer-party";
-import { SupplierParty } from "../../../catalogue/model/publish/supplier-party";
-import { QuotationLine } from "../../../catalogue/model/publish/quotation-line";
-import { DocumentReference } from "../../../catalogue/model/publish/document-reference";
+import { CustomerParty } from "./customer-party";
+import { SupplierParty } from "./supplier-party";
+import { QuotationLine } from "./quotation-line";
+import { DocumentReference } from "./document-reference";
 import { Code } from "./code";
 import { PaymentTerms } from "./payment-terms";
 import { PaymentMeans } from "./payment-means";

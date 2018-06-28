@@ -57,12 +57,24 @@
     <div class="col-4">{{ wrapper.rfqPaymentMeansIfNegotiating }}</div>
     <div class="col-4">
         <value-input [visible]="rfq.negotiationOptions.paymentMeans" type="options"
-            [disabled]="isLoading() || isReadOnly()" [options]="PAYMENT_MEANS" [(selected)]="wrapper.quotationPaymentMeans">
+            [disabled]="isLoading() || isReadOnly()" [options]="PAYMENT_MEANS" 
+            [(selected)]="wrapper.quotationPaymentMeans">
         </value-input>
     </div>
 </div>
 
 <div class="row content-row">
+    <div class="col-2"><strong>Data monitoring service requested:</strong></div>
+    <div class="col-2"></div>
+    <div class="col-4">{{ rfq.dataMonitoringRequested ? "Yes" : "" }}</div>
+    <div class="col-4" *ngIf="rfq.dataMonitoringRequested">
+            <input type="checkbox" [(ngModel)]="quotation.dataMonitoringPromised" 
+                [disabled]="isLoading() || isReadOnly()">
+            <label>Promise data monitoring service</label>
+    </div>
+</div>
+
+<div class="row content-row bg-light">
     <div class="col-2"><strong>Total Price:</strong></div>
     <div class="col-2">{{ wrapper.lineTotalPriceString }}</div>
     <div class="col-4">{{ wrapper.rfqTotalPriceStringIfNegotiating }}</div>
@@ -74,7 +86,7 @@
     </div>
 </div>
 
-<div class="row content-row bg-light">
+<div class="row content-row">
     <div class="col-2"><strong>Note:</strong></div>
     <div class="col-2"></div>
     <div class="col-4">
@@ -97,16 +109,36 @@
 </div>
 
 <!-- Actions -->
-<div class="row actions-row">
-    <div class="col-8 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+<div class="row actions-row" *ngIf="userRole === 'seller'">
+    <div class="col-6 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
     <div class="col-2">
-        <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="respondToQuotation(false)">
+        <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
+    </div>
+    <div class="col-2">
+        <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onRespondToQuotation(false)">
             Reject Offer
         </button>
     </div>
     <div class="col-2">
-        <button class="btn btn-primary action" [disabled]="isLoading()" (click)="respondToQuotation(true)">
+        <button class="btn btn-primary action" [disabled]="isLoading()" (click)="onRespondToQuotation(true)">
             Accept Offer
+        </button>
+    </div>
+</div>
+
+<div class="row actions-row" *ngIf="userRole === 'buyer'">
+    <div class="col-6 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+    <div class="col-2">
+        <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
+    </div>
+    <div class="col-2">
+        <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onRequestNewQuotation()">
+            Request new Quotation
+        </button>
+    </div>
+    <div class="col-2">
+        <button class="btn btn-primary action" [disabled]="isLoading()" (click)="onAcceptAndOrder()">
+            Accept & Order
         </button>
     </div>
 </div>

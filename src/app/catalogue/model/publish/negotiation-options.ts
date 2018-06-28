@@ -9,12 +9,4 @@ export class NegotiationOptions {
         public paymentMeans: boolean = false
     ) {}
 
-    isNegotiatingAnyTerm(): boolean {
-        return this.price
-            || this.deliveryPeriod
-            || this.warranty
-            || this.incoterms
-            || this.paymentTerms
-            || this.paymentMeans;
-    }
 }

@@ -1,19 +1,20 @@
-import {CustomerParty} from "../../../catalogue/model/publish/customer-party";
-import {SupplierParty} from "../../../catalogue/model/publish/supplier-party";
-import {RequestForQuotationLine} from "../../../catalogue/model/publish/request-for-quotation-line";
-import {Delivery} from "../../../catalogue/model/publish/delivery";
+import { CustomerParty } from "./customer-party";
+import { SupplierParty } from "./supplier-party";
+import { RequestForQuotationLine } from "./request-for-quotation-line";
+import { Delivery } from "./delivery";
 import { NegotiationOptions } from "./negotiation-options";
 import { PaymentTerms } from "./payment-terms";
 import { PaymentMeans } from "./payment-means";
+
 export class RequestForQuotation {
 	constructor(
-		public id:string,
+		public id: string,
 		public note: string[],
 		public dataMonitoringRequested: boolean,
-		public buyerCustomerParty:CustomerParty,
-		public sellerSupplierParty:SupplierParty,
-		public delivery:Delivery,
-		public requestForQuotationLine:RequestForQuotationLine[],
+		public buyerCustomerParty: CustomerParty,
+		public sellerSupplierParty: SupplierParty,
+		public delivery: Delivery,
+		public requestForQuotationLine: RequestForQuotationLine[],
 		public negotiationOptions: NegotiationOptions,
 		public paymentMeans: PaymentMeans,
 		public paymentTerms: PaymentTerms
