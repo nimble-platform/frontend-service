@@ -17,7 +17,7 @@
     </value-view>
 
     <div>
-        <div class="row justify-content-end">
+        <div class="align-right">
             <button *ngIf="bpDataService.userRole == 'buyer' && bpDataService.processMetadata.processStatus != 'Completed'" class="btn btn-success" [disabled]="submitted"
                     (click)="sendReceiptAdvice()">Send Receipt Advice
             </button>
