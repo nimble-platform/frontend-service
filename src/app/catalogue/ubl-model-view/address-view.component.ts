@@ -1,4 +1,4 @@
-import {Component, Input} from "@angular/core";
+import {Component, EventEmitter, Input, Output} from "@angular/core";
 import {Address} from "../model/publish/address";
 import {UBLModelUtils} from "../model/ubl-model-utils";
 /**
@@ -16,7 +16,8 @@ export class AddressViewComponent {
     @Input() presentationMode: string;
     @Input() multiValue: boolean = false;
     @Input() definition: string = null;
-
+    @Output() onInitialAddressChange: EventEmitter<string> = new EventEmitter<string>();
+    initialValue: string;
 
     addFirstValue(): void {
         this.address.push(new Address());
@@ -29,6 +30,11 @@ export class AddressViewComponent {
 
     removeValue(index:number):void {
         this.address.splice(index, 1);
+    }
+
+    initialValueChange() {
+        console.log("ng model change");
+        this.onInitialAddressChange.emit(this.initialValue);
     }
 
 }

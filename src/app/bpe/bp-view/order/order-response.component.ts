@@ -77,8 +77,10 @@ export class OrderResponseComponent implements OnInit{
     }
 
     trackAndTraceDetailsExists(){
-        if(this.order.orderLine[0].lineItem.item.trackAndTraceDetails.masterURL || this.order.orderLine[0].lineItem.item.trackAndTraceDetails.eventURL
-                || this.order.orderLine[0].lineItem.item.trackAndTraceDetails.productionProcessTemplate){
+        if (this.order.orderLine[0].lineItem.item.trackAndTraceDetails != null &&
+            (this.order.orderLine[0].lineItem.item.trackAndTraceDetails.masterURL ||
+            this.order.orderLine[0].lineItem.item.trackAndTraceDetails.eventURL ||
+            this.order.orderLine[0].lineItem.item.trackAndTraceDetails.productionProcessTemplate)) {
             return true;
         }
 
