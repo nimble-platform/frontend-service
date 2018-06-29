@@ -2,23 +2,23 @@
  * Created by suat on 17-May-17.
  */
 
-import {Component, ElementRef, ViewChild} from "@angular/core";
-import {CategoryService} from "./category/category.service";
-import {ItemProperty} from "./model/publish/item-property";
-import {BinaryObject} from "./model/publish/binary-object";
-import {CatalogueService} from "./catalogue.service";
-import {Category} from "./model/category/category";
-import {CatalogueLine} from "./model/publish/catalogue-line";
-import {CookieService} from "ng2-cookies";
-import {UBLModelUtils} from "./model/ubl-model-utils";
-import {ActivatedRoute, Params, Router} from "@angular/router";
-import {Code} from "./model/publish/code";
-import {PublishService} from "./publish-and-aip.service";
-import {UserService} from "../user-mgmt/user.service";
-import {ItemPropertyDataSourcePipe} from "./item-property-data-source-pipe";
-import {Quantity} from "./model/publish/quantity";
-import {CallStatus} from "../common/call-status";
-import {FormGroup} from "@angular/forms";
+import { Component, ElementRef, ViewChild } from "@angular/core";
+import { CategoryService } from "../category/category.service";
+import { ItemProperty } from "../model/publish/item-property";
+import { BinaryObject } from "../model/publish/binary-object";
+import { CatalogueService } from "../catalogue.service";
+import { Category } from "../model/category/category";
+import { CatalogueLine } from "../model/publish/catalogue-line";
+import { CookieService } from "ng2-cookies";
+import { UBLModelUtils } from "../model/ubl-model-utils";
+import { ActivatedRoute, Params, Router } from "@angular/router";
+import { Code } from "../model/publish/code";
+import { PublishService } from "../publish-and-aip.service";
+import { UserService } from "../../user-mgmt/user.service";
+import { ItemPropertyDataSourcePipe } from "../item-property-data-source-pipe";
+import { Quantity } from "../model/publish/quantity";
+import { CallStatus } from "../../common/call-status";
+import { FormGroup } from "@angular/forms";
 import 'file-saver';
 
 const uploadModalityKey: string = "UploadModality";
