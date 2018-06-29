@@ -14,7 +14,7 @@ export class TnTService {
                 private cookieService: CookieService) {}
 
     getMetaData(epcCode: string): Promise<any> {
-        const token = 'Bearer '+ this.cookieService.get("bearer_token");
+        const token = 'Bearer ' + this.cookieService.get('bearer_token');
         let header = new Headers();
         header.append('Content-Type', 'application/json');
         header.append('Authorization', token);
@@ -43,7 +43,12 @@ export class TnTService {
     }
 
     getAnalysisInfo(code: string) {
-        return this.http.get(`${this.tntAnalysisEndpoint}/${code}`)
+        const token = 'Bearer ' + this.cookieService.get('bearer_token');
+        let header = new Headers();
+        header.append('Content-Type', 'application/json');
+        header.append('Authorization', token);
+        let reqOptions = new RequestOptions({headers: header});
+        return this.http.get(`${this.tntAnalysisEndpoint}/${code}`, reqOptions)
             .map(resp => resp.json());
     }
 
