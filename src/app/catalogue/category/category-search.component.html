@@ -28,10 +28,9 @@
                     <button class="btn btn-secondary nimble-button-secondary" type="button" id="allCategories" ngbDropdownToggle>
                         All Categories
                     </button>
+                    <!-- TODO: Requires a service change -->
                     <div ngbDropdownMenu aria-labelledby="allCategories">
-                        <a class="dropdown-item" href="#">All Categories</a>
-                        <a class="dropdown-item" href="#">Recent Categories</a>
-                        <a class="dropdown-item" href="#">Relevant Categories</a>
+                        <a class="dropdown-item">All Categories</a>
                     </div>
                 </div>
         <!-- End TODO: All Categories Search -->
@@ -76,7 +75,8 @@
                         <td class="py-2 px-3 font-weight-light">{{category.taxonomyId}}</td>
                         <td class="py-2 px-3">{{category.preferredName}}</td>
                         <td class="d-flex">
-                            <span class="fa fa-fw mr-1 align-left icon-secondary" [ngClass]="{'fa-sitemap': category.taxonomyId == 'eClass'}" aria-hidden="true" (click)="getCategoryTree(category)"></span><i class="fa fa-fw fa-plus-circle pointer align-right icon-primary" (click)="selectCategory(category)"></i>
+                            <span class="fa fa-fw mr-1 align-left icon-secondary" [ngClass]="{'fa-sitemap': category.taxonomyId == 'eClass'}" aria-hidden="true" (click)="getCategoryTree(category)"></span>
+                            <i class="fa fa-fw fa-plus-circle pointer align-right icon-primary" (click)="selectCategory(category)"></i>
                         </td>
                     </tr>
                 </tbody>
@@ -101,7 +101,7 @@
             <div *ngIf="rootCategories">
                 <div class="d-flex flex-column" style="height: 400px">
                     <div *ngFor="let rootCategory of rootCategories">
-                        <category-tree [category]="rootCategory" (detailsEvent)="getCategoryDetails($event)" [selectedCategory]="selectedCategory" (categoryEvent)="selectCategory($event)"></category-tree>
+                        <category-tree [category]="rootCategory" [parentCategories]="parentCategories" (detailsEvent)="getCategoryDetails($event)" [selectedCategory]="selectedCategory" (categoryEvent)="selectCategory($event)"></category-tree>
                     </div>
                 </div>
             </div>

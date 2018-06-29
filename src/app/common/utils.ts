@@ -2,6 +2,7 @@ import { ItemProperty } from "../catalogue/model/publish/item-property";
 import { Quantity } from "../catalogue/model/publish/quantity";
 import { Period } from "../catalogue/model/publish/period";
 import { Price } from "../catalogue/model/publish/price";
+import { Category } from "../catalogue/model/category/category";
 
 const UI_NAMES: any = {
     STRING: "TEXT"
@@ -91,4 +92,8 @@ const CURRENCIES_STRING_VALUES: CurrenciesStringValues = {
 
 export function currencyToString(currencyId: string): string {
     return CURRENCIES_STRING_VALUES[currencyId] || currencyId;
+}
+
+export function sortCategories(categories: Category[]): Category[] {
+    return categories.sort((a,b) => (a.preferredName.localeCompare(b.preferredName)));
 }

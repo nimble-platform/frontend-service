@@ -6,6 +6,7 @@ import {Http, Headers} from '@angular/http';
 import {Category} from "../model/category/category";
 import * as myGlobals from '../../globals';
 import {Code} from "../model/publish/code";
+import { ParentCategories } from '../model/category/parent-categories';
 
 @Injectable()
 export class CategoryService {
@@ -102,13 +103,13 @@ export class CategoryService {
             .catch(this.handleError);
     }
 
-    getParentCategories(category: Category): Promise<Category>{
+    getParentCategories(category: Category): Promise<ParentCategories>{
         const url = `${this.baseUrl}/` + category.taxonomyId + "/" + encodeURIComponent(category.id)+"/tree";
         return this.http
             .get(url, {headers: this.headers})
             .toPromise()
             .then(res => {
-                return res.json() as Category;
+                return res.json() as ParentCategories;
             })
             .catch(this.handleError);
     }
