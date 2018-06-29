@@ -50,6 +50,7 @@ import {MonetaryTotal} from "./publish/monetary-total";
 import { NegotiationOptions } from "./publish/negotiation-options";
 import { PAYMENT_MEANS } from "./constants";
 import { TradingTerm } from "./publish/trading-term";
+import { copy } from "../../common/utils";
 
 /**
  * Created by suat on 05-Jul-17.
@@ -296,7 +297,7 @@ export class UBLModelUtils {
     }
 
     public static createQuotation(rfq: RequestForQuotation): Quotation {
-        let quotationLine: QuotationLine = new QuotationLine(UBLModelUtils.copy(rfq.requestForQuotationLine[0].lineItem));
+        let quotationLine: QuotationLine = new QuotationLine(copy(rfq.requestForQuotationLine[0].lineItem));
         this.removeHjidFieldsFromObject(rfq.buyerCustomerParty);
         this.removeHjidFieldsFromObject(rfq.sellerSupplierParty);
         let customerParty: CustomerParty = rfq.buyerCustomerParty;
@@ -322,11 +323,13 @@ export class UBLModelUtils {
     public static createReceiptAdvice(despatchAdvice:DespatchAdvice):ReceiptAdvice {
         let receiptAdvice:ReceiptAdvice = new ReceiptAdvice();
         receiptAdvice.id = this.generateUUID();
-        receiptAdvice.orderReference = [JSON.parse(JSON.stringify(despatchAdvice.orderReference))];
+        receiptAdvice.orderReference = [copy(despatchAdvice.orderReference[0])];
         receiptAdvice.despatchDocumentReference = [new DocumentReference(despatchAdvice.id)];
         receiptAdvice.deliveryCustomerParty = despatchAdvice.deliveryCustomerParty;
         receiptAdvice.despatchSupplierParty = despatchAdvice.despatchSupplierParty;
-        receiptAdvice.receiptLine = [new ReceiptLine(new Quantity(), [], despatchAdvice.despatchLine[0].item)];
+        receiptAdvice.receiptLine = [
+            new ReceiptLine(new Quantity(0, despatchAdvice.despatchLine[0].deliveredQuantity.unitCode), 
+                [], despatchAdvice.despatchLine[0].item)];
         return receiptAdvice;
     }
 
@@ -522,7 +525,4 @@ export class UBLModelUtils {
         return uuid;
     };
 
-    public static copy<T>(value: T): T {
-        return JSON.parse(JSON.stringify(value));
-    }
 }

@@ -1,47 +1,82 @@
-import {Component, Input} from "@angular/core";
-import {ReceiptAdvice} from "../../../catalogue/model/publish/receipt-advice";
-import {CallStatus} from "../../../common/call-status";
-import {UBLModelUtils} from "../../../catalogue/model/ubl-model-utils";
-import {BPEService} from "../../bpe.service";
-import {BPDataService} from "../bp-data-service";
-import {Router} from "@angular/router";
-import {ProcessVariables} from "../../model/process-variables";
-import {ModelUtils} from "../../model/model-utils";
-import {ProcessInstanceInputMessage} from "../../model/process-instance-input-message";
+import { Component, OnInit } from "@angular/core";
+import { ReceiptAdvice } from "../../../catalogue/model/publish/receipt-advice";
+import { CallStatus } from "../../../common/call-status";
+import { BPEService } from "../../bpe.service";
+import { BPDataService } from "../bp-data-service";
+import { Router } from "@angular/router";
+import { ProcessVariables } from "../../model/process-variables";
+import { ModelUtils } from "../../model/model-utils";
+import { ProcessInstanceInputMessage } from "../../model/process-instance-input-message";
+import { BpUserRole } from "../../model/bp-user-role";
+import { Location } from "@angular/common";
+import { DespatchAdvice } from "../../../catalogue/model/publish/despatch-advice";
+
 /**
  * Created by suat on 20-Sep-17.
  */
 @Component({
-    selector: 'receipt-advice',
-    templateUrl: './receipt-advice.component.html'
+    selector: "receipt-advice",
+    templateUrl: "./receipt-advice.component.html"
 })
+export class ReceiptAdviceComponent implements OnInit {
 
-export class ReceiptAdviceComponent {
-    @Input() receiptAdvice:ReceiptAdvice;
+    dispatchAdvice: DespatchAdvice;
+    receiptAdvice: ReceiptAdvice;
+    userRole: BpUserRole;
 
-    callStatus:CallStatus = new CallStatus();
-    // check 'Send Receipt Advice' button is clicked or not
-    submitted:boolean = false;
+    callStatus: CallStatus = new CallStatus();
+
     constructor(private bpeService: BPEService,
-                public bpDataService: BPDataService,
+                private bpDataService: BPDataService,
+                private location: Location,
                 private router:Router) {
     }
 
-    sendReceiptAdvice(): void {
-        this.submitted = true;
-        let vars: ProcessVariables = ModelUtils.createProcessVariables("Fulfilment", this.bpDataService.receiptAdvice.despatchSupplierParty.party.id, this.bpDataService.receiptAdvice.deliveryCustomerParty.party.id, this.bpDataService.receiptAdvice, this.bpDataService);
-        let piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.bpDataService.processMetadata.processId);
+    ngOnInit() {
+        this.receiptAdvice = this.bpDataService.receiptAdvice;
+        this.dispatchAdvice = this.bpDataService.despatchAdvice;
+        this.userRole = this.bpDataService.userRole;
+    }
+
+    /*
+     * Event Handlers
+     */
+
+    onBack(): void {
+        this.location.back();
+    }
+
+    onSendReceiptAdvice(): void {
+        const vars: ProcessVariables = ModelUtils.createProcessVariables(
+            "Fulfilment", 
+            this.bpDataService.receiptAdvice.despatchSupplierParty.party.id, 
+            this.bpDataService.receiptAdvice.deliveryCustomerParty.party.id, 
+            this.bpDataService.receiptAdvice, 
+            this.bpDataService
+        );
+        const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(
+            vars, this.bpDataService.processMetadata.processId);
 
         this.callStatus.submit();
-        this.bpeService.continueBusinessProcess(piim).then(
-            res => {
+        this.bpeService.continueBusinessProcess(piim)
+            .then(res => {
                 this.callStatus.callback("Receipt Advice sent", true);
                 this.router.navigate(['dashboard']);
-            }
-        ).catch(error => {
-                this.submitted = false;
-                this.callStatus.error("Failed to send Receipt Advice")
-            }
-        );
+            }).catch(error => {
+                this.callStatus.error("Failed to send Receipt Advice");
+                console.log("Failed to send Receipt Advice", error);
+            });
+    }
+
+    /*
+     * Getters & Setters
+     */
+
+    isLoading(): boolean {
+        return this.callStatus.fb_submitted;
+    }
+
+    isReadOnly(): boolean {
+        return this.userRole === "seller" || this.bpDataService.processMetadata.processStatus == "Completed";
     }
 }

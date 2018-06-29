@@ -376,6 +376,7 @@ export class BPDataService{
         this.resetBpData();
         this.modifiedCatalogueLines = copy(this.catalogueLines);
         this.despatchAdvice = UBLModelUtils.createDespatchAdvice(copyOrder);
+        this.despatchAdvice.despatchLine[0].deliveredQuantity.unitCode = copyOrder.orderLine[0].lineItem.quantity.unitCode;
     }
 
     initTransportExecutionPlanRequest() {

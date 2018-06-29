@@ -1,0 +1,34 @@
+<ng-container *ngIf="dispatchAdvice">
+    <!-- Dispatched Quantity -->
+    <value-input type="quantity" [disabled]="isLoading() || isReadOnly()" [disableQuantityUnit]="true"
+        label="Dispatched Quantity" [quantity]="dispatchAdvice.despatchLine[0].deliveredQuantity" 
+        rowClass="space-before">
+    </value-input>
+    
+    <hr>
+
+    <!-- Shipment -->
+    <shipment-input [shipment]="dispatchAdvice.despatchLine[0].shipment[0]" [disabled]="isLoading() || isReadOnly()">
+    </shipment-input>
+
+    <hr>
+
+    <!-- Note -->
+    <value-input type="text" label="Note" rowClass="space-before"
+        [disabled]="isLoading() || isReadOnly()" [(text)]="dispatchAdvice.note[0]">
+    </value-input>
+
+
+    <!-- Actions -->
+    <div class="row actions-row">
+        <div class="col-8 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+        <div class="col-2">
+            <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">Back</button>
+        </div>
+        <div class="col-2">
+            <button class="btn btn-primary action" [disabled]="isLoading() || isReadOnly()" (click)="onSendDispatchAdvice()">
+                {{ isReadOnly() ? "Advice Sent" : "Send advice" }}
+            </button>
+        </div>
+    </div>
+</ng-container>

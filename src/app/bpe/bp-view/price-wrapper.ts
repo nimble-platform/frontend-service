@@ -1,5 +1,6 @@
 import { Price } from "../../catalogue/model/publish/price";
 import { Quantity } from "../../catalogue/model/publish/quantity";
+import { currencyToString } from "../../common/utils";
 
 /**
  * Wrapper around a price and a quantity, contains convenience methods to get the total price, 
@@ -45,13 +46,13 @@ export class PriceWrapper {
         }
 
         if(baseQuantity === 1) {
-            return `${this.roundPrice(amount.value)} ${amount.currencyID} per ${qty.unitCode}`
+            return `${this.roundPrice(amount.value)} ${currencyToString(amount.currencyID)} per ${qty.unitCode}`
         }
-        return `${this.roundPrice(amount.value)} ${amount.currencyID} for ${baseQuantity} ${qty.unitCode}`
+        return `${this.roundPrice(amount.value)} ${currencyToString(amount.currencyID)} for ${baseQuantity} ${qty.unitCode}`
     }
 
     get currency(): string {
-        return this.price.priceAmount.currencyID;
+        return currencyToString(this.price.priceAmount.currencyID);
     }
     
     hasPrice(): boolean {

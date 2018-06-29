@@ -1,30 +1,57 @@
-<ng-container *ngIf="bpDataService.receiptAdvice">
-    <quantity-view [propName]="'Rejected Quantity'"
-                   [definition]="'The quantity rejected'"
-                   [quantity]="[receiptAdvice.receiptLine[0].rejectedQuantity]"
-                   [presentationMode]="bpDataService.userRole == 'seller' || bpDataService.processMetadata.processStatus == 'Completed' ? 'singlevalue' : 'edit'">
-    </quantity-view>
+<ng-container *ngIf="receiptAdvice">
 
-    <value-view [presentationMode]="bpDataService.userRole == 'seller' || bpDataService.processMetadata.processStatus == 'Completed' ? 'singlevalue' : 'edit'"
-                [propName]="'Reject Reason'"
-                [definition]="'The reason for a rejection'"
-                [(value)]="receiptAdvice.receiptLine[0].rejectReason[0]">
-    </value-view>
+    <!-- Dispatched Quantity -->
+    <value-input type="quantity" [disabled]="true" [disableQuantityUnit]="true"
+        label="Dispatched Quantity" [quantity]="dispatchAdvice.despatchLine[0].deliveredQuantity" 
+        rowClass="space-before">
+    </value-input>
+    
+    <hr>
 
-    <value-view [presentationMode]="bpDataService.userRole == 'seller' || bpDataService.processMetadata.processStatus == 'Completed' ? 'singlevalue' : 'edit'"
-                [propName]="'Note'"
-                [(value)]="receiptAdvice.note[0]">
-    </value-view>
+    <!-- Shipment -->
+    <shipment-input [shipment]="dispatchAdvice.despatchLine[0].shipment[0]" [disabled]="true">
+    </shipment-input>
 
-    <div>
-        <div class="row justify-content-end">
-            <button *ngIf="bpDataService.userRole == 'buyer' && bpDataService.processMetadata.processStatus != 'Completed'" class="btn btn-success" [disabled]="submitted"
-                    (click)="sendReceiptAdvice()">Send Receipt Advice
+    <hr>
+
+    <!-- Rejected Quantity -->
+    <value-input type="quantity" [disabled]="isLoading() || isReadOnly()" [disableQuantityUnit]="true"
+        label="Rejected Quantity" [quantity]="receiptAdvice.receiptLine[0].rejectedQuantity" 
+        rowClass="space-before">
+    </value-input>
+
+    <value-input type="text" label="Reject Reason" rowClass="space-before"
+        [disabled]="isLoading() || isReadOnly()" [(text)]="receiptAdvice.receiptLine[0].rejectReason[0]">
+    </value-input>
+
+    <hr>
+
+    <!-- Note -->
+    <value-input type="text" label="Note" rowClass="space-before"
+        [disabled]="true" [(text)]="dispatchAdvice.note[0]">
+    </value-input>
+
+    <value-input type="text" label="Buyer's Note" rowClass="space-before"
+        [disabled]="isLoading() || isReadOnly()" [(text)]="receiptAdvice.note[0]">
+    </value-input>
+
+    <!-- Actions -->
+    <div class="row actions-row" *ngIf="userRole === 'buyer'">
+        <div class="col-8 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+        <div class="col-2">
+            <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">Back</button>
+        </div>
+        <div class="col-2">
+            <button class="btn btn-primary action" [disabled]="isLoading() || isReadOnly()" (click)="onSendReceiptAdvice()">
+                {{ isReadOnly() ? "Advice Sent" : "Send advice" }}
             </button>
         </div>
     </div>
-</ng-container>
 
-<call-status [callStatus]="callStatus"
-             [large]="true">
-</call-status>
+    <div class="row actions-row" *ngIf="userRole === 'seller'">
+        <div class="col-10 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+        <div class="col-2">
+            <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">Back</button>
+        </div>
+    </div>
+</ng-container>

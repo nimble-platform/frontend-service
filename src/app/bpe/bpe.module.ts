@@ -15,7 +15,6 @@ import { BPDetailComponent } from './bp-detail.component';
 import { ProductBpOptionsComponent } from "./bp-view/product-bp-options.component";
 import { OrderComponent } from "./bp-view/order/order.component";
 import { FulfilmentComponent } from "./bp-view/fulfilment/fulfilment.component";
-import { DespatchAdviceComponent } from "./bp-view/fulfilment/despatch-advice.component";
 import { ReceiptAdviceComponent } from "./bp-view/fulfilment/receipt-advice.component";
 import { NegotiationComponent } from "./bp-view/negotiation/negotiation.component";
 import { TransportExecutionPlanBpComponent } from "./bp-view/transport-execution-plan/transport-execution-plan-bp.component";
@@ -43,6 +42,8 @@ import { ItemInformationRequestComponent } from './bp-view/item-information/item
 import { ItemInformationResponseComponent } from './bp-view/item-information/item-information-response.component';
 import { ItemInformationComponent } from './bp-view/item-information/item-information.component';
 import { ProductDetailsModule } from '../product-details/product-details.module';
+import { DispatchAdviceComponent } from './bp-view/fulfilment/dispatch-advice.component';
+import { ShipmentInputComponent } from './bp-view/fulfilment/shipment-input.component';
 
 
 @NgModule({
@@ -65,7 +66,7 @@ import { ProductDetailsModule } from '../product-details/product-details.module'
 		ProductBpStepsComponent,
 		OrderComponent,
 		FulfilmentComponent,
-		DespatchAdviceComponent,
+		DispatchAdviceComponent,
 		ReceiptAdviceComponent,
 		ItemInformationRequestComponent,
 		ItemInformationResponseComponent,
@@ -88,7 +89,8 @@ import { ProductDetailsModule } from '../product-details/product-details.module'
 		DataMonitoringClauseComponent,
 		DocumentClauseComponent,
 		PpapClauseComponent,
-		NegotiationAddressComponent
+		NegotiationAddressComponent,
+		ShipmentInputComponent
 	],
 	exports: [
 		BPConfigureComponent,
@@ -97,7 +99,6 @@ import { ProductDetailsModule } from '../product-details/product-details.module'
 		ProductBpOptionsComponent,
 		OrderComponent,
 		FulfilmentComponent,
-		DespatchAdviceComponent,
 		ReceiptAdviceComponent,
 		NegotiationComponent,
 		TransportExecutionPlanBpComponent,

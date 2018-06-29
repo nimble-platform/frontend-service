@@ -78,3 +78,17 @@ function roundFirstDigit(value: number): number {
     }
     return roundedDigit;
 }
+
+interface CurrenciesStringValues {
+    [currencyId: string]: string
+}
+
+const CURRENCIES_STRING_VALUES: CurrenciesStringValues = {
+    EUR: "€",
+    USD: "$",
+    GBP: "₤"
+}
+
+export function currencyToString(currencyId: string): string {
+    return CURRENCIES_STRING_VALUES[currencyId] || currencyId;
+}

@@ -2,8 +2,9 @@
     <div *ngIf="label" [class]="labelClass">
         <label class="{{labelMainClass}}">
             <strong>
-                {{ label }}<span *ngIf="definition" class="label label-default" title="{{definition}}">&#9432;</span>:
-        </strong>
+                {{ label }}:
+            </strong>
+            <span *ngIf="definition" class="definition" title="{{definition}}">&#9432;</span>
         </label>
     </div>
     <div [class]="valueClass" *ngIf="presentationMode === 'edit' && visible">

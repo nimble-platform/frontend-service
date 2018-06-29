@@ -1,0 +1,11 @@
+<value-input type="text" label="Handling Instructions" definition="The handling required for this shipment"
+    [disabled]="disabled" [presentationMode]="presentationMode" [(text)]="shipment.handlingInstructions">
+</value-input>
+
+<value-input type="text" label="Carrier Party" definition="The party carrying the goods" rowClass="space-before"
+    [disabled]="disabled" [presentationMode]="presentationMode" [(text)]="shipment.shipmentStage[0].carrierParty.name">
+</value-input>
+
+<value-input type="text" label="Carrier Party Contact" definition="The primary contact for carrier party" rowClass="space-before"
+    [disabled]="disabled" [presentationMode]="presentationMode" [(text)]="shipment.shipmentStage[0].carrierParty.contact.telephone">
+</value-input>
