@@ -14,6 +14,8 @@ import {UBLModelUtils} from "../model/ubl-model-utils";
 import {CallStatus} from '../../common/call-status';
 import {toUIString} from '../../common/utils';
 import {CategoryTreeComponent} from './category-tree.component';
+import { ParentCategories } from "../model/category/parent-categories";
+import { sortCategories } from "../../common/utils";
 
 @Component({
     selector: 'category-search',
@@ -42,7 +44,7 @@ export class CategorySearchComponent implements OnInit {
     categoryKeyword: string;
 
     treeView = false;
-    parentCategories = null;
+    parentCategories: ParentCategories = null;
     rootCategories: Category[];
 
     selectedCategory: Category = null;
@@ -131,7 +133,7 @@ export class CategorySearchComponent implements OnInit {
         this.error_detc = false;
         this.getCategoryStatus.submit();
         this.categoryService.getRootCategories(this.taxonomyId).then(rootCategories => {
-            this.rootCategories = rootCategories.sort((a,b) => (a.preferredName < b.preferredName) ? -1 : (a.preferredName > b.preferredName) ? 1 : 0);
+            this.rootCategories = sortCategories(rootCategories);
             this.getCategoryStatus.callback("Retrieved category details", true);
             this.callback = true;
             this.submitted = false;
@@ -218,19 +220,21 @@ export class CategorySearchComponent implements OnInit {
     getCategoryTree(category: Category){
         this.selectedCategoryWithDetails = null;
         this.treeView = true;
+        this.taxonomyId = category.taxonomyId;
         this.callStatus.submit();
         this.categoryService.getParentCategories(category).then(categories => {
 
             this.categoryService.getCategory(category)
                 .then(category => {
-                    this.taxonomyId = category.taxonomyId;
-                    this.getRootCategories();
+                    this.rootCategories = sortCategories(categories.categories[0]);
                     this.selectedCategoryWithDetails = category;
+                    this.selectedCategory = category;
                     this.parentCategories = categories; // parents categories
                     this.selectedCategoriesWRTLevels = [];
                     for(let parent of this.parentCategories.parents){
                         this.selectedCategoriesWRTLevels.push(parent.code);
                     }
+
                     this.callStatus.callback( null);
                 }).catch( err => {
                     this.callStatus.error(null)

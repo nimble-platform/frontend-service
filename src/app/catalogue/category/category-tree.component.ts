@@ -2,6 +2,8 @@ import {Component, OnInit, Input, EventEmitter, Output} from "@angular/core";
 import { Category } from "../model/category/category";
 import {CategoryService} from "./category.service";
 import { CallStatus } from "../../common/call-status";
+import { ParentCategories } from "../model/category/parent-categories";
+import { sortCategories } from "../../common/utils";
 
 @Component({
     selector: 'category-tree',
@@ -17,6 +19,7 @@ export class CategoryTreeComponent implements OnInit {
     childrenCategories: Category[];
     taxonomyId: string;
     @Input() level: number = 1;
+    private _parentCategories: ParentCategories;
 
     getCategoryStatus: CallStatus = new CallStatus;
 
@@ -27,6 +30,19 @@ export class CategoryTreeComponent implements OnInit {
     }
 
     ngOnInit() {
+    }
+
+    @Input() set parentCategories(parentCategories: ParentCategories) {
+        console.log(parentCategories, this.level, this.category);
+        this._parentCategories = parentCategories;
+        if(parentCategories && this.category.code === parentCategories.parents[this.level - 1].code && this.level < parentCategories.parents.length) {
+            this.expanded = true;
+            this.childrenCategories = sortCategories(parentCategories.categories[this.level])
+        }
+    }
+
+    get parentCategories(): ParentCategories {
+        return this._parentCategories;
     }
 
     toggleExpanded(event: Event) {
@@ -41,11 +57,11 @@ export class CategoryTreeComponent implements OnInit {
         this.getCategoryStatus.submit();
         this.categoryService.getChildrenCategories(this.category)
             .then(categories => {
-                this.childrenCategories = categories.sort((a,b) => (a.preferredName < b.preferredName) ? -1 : (a.preferredName > b.preferredName) ? 1 : 0);
-                this.getCategoryStatus.callback("...", true);
+                this.childrenCategories = sortCategories(categories);
+                this.getCategoryStatus.callback("Category tree created", true);
             })
             .catch(error => {
-                this.getCategoryStatus.error("...");
+                this.getCategoryStatus.error("Error creating category tree");
             });
     }
 
