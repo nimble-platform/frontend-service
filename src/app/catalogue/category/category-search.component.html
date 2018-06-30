@@ -47,9 +47,7 @@
                         <td class="py-2 px-3">{{category.preferredName}}</td>
                         <td></td>
                         <td class="d-flex">
-                            <span class="fa fa-fw mr-1 align-left icon-secondary" [ngClass]="{'fa-sitemap': category.taxonomyId == 'eClass'}" aria-hidden="true" (click)="getCategoryTree(category)"></span>
-                            <i *ngIf="findCategoryInArray(selectedCategories, category) === -1" class="fa fa-fw fa-plus-circle pointer align-right icon-primary" (click)="selectCategory(category)"></i>
-                            <i *ngIf="findCategoryInArray(selectedCategories, category) > -1" class="fa fa-fw fa-minus-circle pointer align-right icon-red" (click)="removeCategory(category)"></i>
+                            <span class="fa fa-fw mr-1 icon-secondary" [ngClass]="{'fa-sitemap': category.taxonomyId == 'eClass'}" aria-hidden="true" (click)="getCategoryTree(category)"></span>
                         </td>
                     </tr>
                 </tbody>
@@ -74,18 +72,21 @@
             <div *ngIf="rootCategories">
                 <div class="d-flex flex-column" style="height: 400px">
                     <div *ngFor="let rootCategory of rootCategories">
-                        <category-tree [category]="rootCategory" [parentCategories]="parentCategories" (detailsEvent)="getCategoryDetails($event)" [selectedCategory]="selectedCategory" (selectCategoryEvent)="selectCategory($event)" (removeCategoryEvent)="removeCategory($event)" [selectedCategories]="selectedCategories"></category-tree>
+                        <category-tree [category]="rootCategory" [parentCategories]="parentCategories" (detailsEvent)="getCategoryDetails($event)" [selectedCategory]="selectedCategory" [selectedCategories]="selectedCategories"></category-tree>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="col-5 pl-0" [ngClass]="{'disabled-section': !selectedCategoryWithDetails}">
+    <div class="col-5 pl-0" [ngClass]="{'disabled-section': !selectedCategoryWithDetails && (callback || !submitted || error_detc)}">
         <div class="border" style="height:55vh; overflow-x: hidden; overflow-y: scroll;">
             <div class="d-flex flex-row fixed p-2" [ngClass]="{'fixed-header': selectedCategoryWithDetails}">
                 <h4 class="font-weight-bold" *ngIf="!selectedCategoryWithDetails">Details</h4>
-                <h4 class="font-weight-bold" *ngIf="selectedCategoryWithDetails">Details for {{selectedCategoryWithDetails["preferredName"]}}</h4>
-                <button *ngIf="selectedCategoryWithDetails" class="btn btn-primary nimble-button-primary ml-auto align-self-start" (click)="selectCategory(selectedCategoryWithDetails)" [disabled]="findCategoryInArray(selectedCategories, selectedCategoryWithDetails) > -1">Add Category</button>
+                <h4 class="font-weight-bold mr-auto" *ngIf="selectedCategoryWithDetails">Details for {{selectedCategoryWithDetails["preferredName"]}}</h4>
+                <div *ngIf="selectedCategoryWithDetails">
+                    <button *ngIf="findCategoryInArray(selectedCategories, selectedCategoryWithDetails) === -1" class="btn btn-primary nimble-button-primary align-self-start" (click)="selectCategory(selectedCategoryWithDetails)">Add Category</button>
+                    <button *ngIf="findCategoryInArray(selectedCategories, selectedCategoryWithDetails) > -1" class="btn btn-danger align-self-start" (click)="removeCategory(selectedCategoryWithDetails)">Remove Category</button>
+                </div>
             </div>
             <p *ngIf="!selectedCategoryWithDetails" [hidden]="!(callback || !submitted || error_detc)" class="align-self-center p-2 mt-4">Click on a category to see its details.</p>
             <div [hidden]="callback || !submitted || error_detc" class="space-right p-2">
@@ -131,7 +132,8 @@
 <div class="form-group row">
     <div class="col-9 d-flex align-items-center">
         <p class="mt-1 mb-0 mr-3 flex-shrink-0">Selected Categories: </p>
-        <div class="border w-100 h-100 align-self-start">
+        <p class="mt-1 mb-0 mr-3 flex-shrink-0" *ngIf="categoryService.selectedCategories.length === 0">None. Please add a category above to proceed.</p>
+        <div class="w-100 h-100 align-self-start">
             <div class="d-flex flex-wrap">
                 <div *ngFor="let selectedCategory of categoryService.selectedCategories"
                 class="bordered d-flex align-items-center mx-1 my-1" title="{{selectedCategory.taxonomyId}}">

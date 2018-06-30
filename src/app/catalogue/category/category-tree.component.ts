@@ -25,8 +25,6 @@ export class CategoryTreeComponent implements OnInit {
     getCategoryStatus: CallStatus = new CallStatus;
 
     @Output() detailsEvent: EventEmitter<Category> = new EventEmitter();
-    @Output() selectCategoryEvent: EventEmitter<Category> = new EventEmitter();
-    @Output() removeCategoryEvent: EventEmitter<Category> = new EventEmitter();
 
     constructor(public categoryService: CategoryService) {
     }
@@ -73,14 +71,6 @@ export class CategoryTreeComponent implements OnInit {
 
     showDetails(category: Category = this.category): void {
         this.detailsEvent.emit(category);
-    }
-
-    selectCategory(category: Category = this.category): void {
-        this.selectCategoryEvent.emit(category);
-    }
-
-    removeCategory(category: Category = this.category): void {
-        this.removeCategoryEvent.emit(category);
     }
 
     isSelected(): boolean {
