@@ -18,13 +18,15 @@ export class CategoryTreeComponent implements OnInit {
     expanded: boolean = false;
     childrenCategories: Category[];
     taxonomyId: string;
+    @Input() selectedCategories: Category[];
     @Input() level: number = 1;
     private _parentCategories: ParentCategories;
 
     getCategoryStatus: CallStatus = new CallStatus;
 
     @Output() detailsEvent: EventEmitter<Category> = new EventEmitter();
-    @Output() categoryEvent: EventEmitter<Category> = new EventEmitter();
+    @Output() selectCategoryEvent: EventEmitter<Category> = new EventEmitter();
+    @Output() removeCategoryEvent: EventEmitter<Category> = new EventEmitter();
 
     constructor(public categoryService: CategoryService) {
     }
@@ -74,11 +76,22 @@ export class CategoryTreeComponent implements OnInit {
     }
 
     selectCategory(category: Category = this.category): void {
-        this.categoryEvent.emit(category);
+        this.selectCategoryEvent.emit(category);
+    }
+
+    removeCategory(category: Category = this.category): void {
+        this.removeCategoryEvent.emit(category);
     }
 
     isSelected(): boolean {
-        return this.category.code === this.selectedCategory.code;
+        if(this.selectedCategory != null) {
+            return this.category.code === this.selectedCategory.code;
+        }
+        return false;
+    }
+
+    isInSelectedCategories(): boolean {
+        return this.selectedCategories.findIndex(c => c.id == this.category.id) >-1;
     }
 
     getToggleIcon(): string {

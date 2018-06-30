@@ -1,7 +1,7 @@
 <h1 class="pb-3">Publish Product</h1>
 
 <div class="form-group row d-flex">
-    <div class="col-9 inline">
+    <div class="col-12 inline">
         <form #categorySearch="ngForm" (ngSubmit)="onSearchCategory()" novalidate>
         <!-- TODO: All Categories Search Goes Here-->
             <div class="input-group">
@@ -24,24 +24,17 @@
             </div>
         </form>
     </div>
-    <div class="col-3">
-        <button class="btn btn-secondary nimble-button-secondary w-100 inline" (click)="displayRootCategories('eClass')">Browse eClass Categories</button>
-    </div>
 </div>
 
 <div class="row mt-4 d-flex">
     <div class="col-7 pr-0 pb-0">
         <!-- Tree view deactivated -->
         <div *ngIf="!treeView" class="border" style="height:55vh; overflow-x: hidden; overflow-y: scroll;">
-            <!-- TODO: If no search has been performed, return recent categories -->
-            <div *ngIf="!callback && !submitted" class="border-bottom p-2">
-                <h3>Recent Categories</h3>
-            </div>
             <table class="table table-hover mb-0">
                 <thead class="thead-light fixed">
                     <th scope="col" style="color: #000;">Classification</th>
                     <th scope="col" style="color: #000;">Name</th>
-                    <th scope="col"></th>
+                    <th scope="col" colspan="2"><button class="btn btn-secondary nimble-button-secondary" (click)="toggleTreeView()">Browse</button></th>
                 </thead>
                 <tbody>
                     <tr *ngIf="callback && !submitted && (!categories || categories.length == 0)">
@@ -52,9 +45,11 @@
                         [ngClass]="{'table-secondary': selectedCategory && category.code == selectedCategory.code}">
                         <td class="py-2 px-3 font-weight-light">{{category.taxonomyId}}</td>
                         <td class="py-2 px-3">{{category.preferredName}}</td>
+                        <td></td>
                         <td class="d-flex">
                             <span class="fa fa-fw mr-1 align-left icon-secondary" [ngClass]="{'fa-sitemap': category.taxonomyId == 'eClass'}" aria-hidden="true" (click)="getCategoryTree(category)"></span>
-                            <i class="fa fa-fw fa-plus-circle pointer align-right icon-primary" (click)="selectCategory(category)"></i>
+                            <i *ngIf="findCategoryInArray(selectedCategories, category) === -1" class="fa fa-fw fa-plus-circle pointer align-right icon-primary" (click)="selectCategory(category)"></i>
+                            <i *ngIf="findCategoryInArray(selectedCategories, category) > -1" class="fa fa-fw fa-minus-circle pointer align-right icon-red" (click)="removeCategory(category)"></i>
                         </td>
                     </tr>
                 </tbody>
@@ -71,7 +66,7 @@
                     </div>
                     <div class="col-4 pl-0">
                         <div class="thead-light-equivalent">
-                            <button class="btn btn-secondary nimble-button-secondary float-right my-1 mr-1" (click)="onTreeViewReturn()">Back to Search</button>
+                            <button *ngIf="categories" class="btn btn-secondary nimble-button-secondary float-right my-1 mr-1" (click)="toggleTreeView()">Back to Search Results</button>
                         </div>
                     </div>
                 </div>
@@ -79,20 +74,20 @@
             <div *ngIf="rootCategories">
                 <div class="d-flex flex-column" style="height: 400px">
                     <div *ngFor="let rootCategory of rootCategories">
-                        <category-tree [category]="rootCategory" [parentCategories]="parentCategories" (detailsEvent)="getCategoryDetails($event)" [selectedCategory]="selectedCategory" (categoryEvent)="selectCategory($event)"></category-tree>
+                        <category-tree [category]="rootCategory" [parentCategories]="parentCategories" (detailsEvent)="getCategoryDetails($event)" [selectedCategory]="selectedCategory" (selectCategoryEvent)="selectCategory($event)" (removeCategoryEvent)="removeCategory($event)" [selectedCategories]="selectedCategories"></category-tree>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="col-5 pl-0">
+    <div class="col-5 pl-0" [ngClass]="{'disabled-section': !selectedCategoryWithDetails}">
         <div class="border" style="height:55vh; overflow-x: hidden; overflow-y: scroll;">
-            <div class="d-flex flex-row fixed p-2" style="background-color: #fff;">
+            <div class="d-flex flex-row fixed p-2" [ngClass]="{'fixed-header': selectedCategoryWithDetails}">
                 <h4 class="font-weight-bold" *ngIf="!selectedCategoryWithDetails">Details</h4>
                 <h4 class="font-weight-bold" *ngIf="selectedCategoryWithDetails">Details for {{selectedCategoryWithDetails["preferredName"]}}</h4>
-                <button *ngIf="selectedCategoryWithDetails" class="btn btn-primary nimble-button-primary ml-auto align-self-start" (click)="selectCategory(selectedCategoryWithDetails)">Select Category</button>
+                <button *ngIf="selectedCategoryWithDetails" class="btn btn-primary nimble-button-primary ml-auto align-self-start" (click)="selectCategory(selectedCategoryWithDetails)" [disabled]="findCategoryInArray(selectedCategories, selectedCategoryWithDetails) > -1">Add Category</button>
             </div>
-            <p *ngIf="!selectedCategoryWithDetails" [hidden]="!(callback || !submitted || error_detc)" class="align-self-center p-2 mt-4">Select a category to see its details.</p>
+            <p *ngIf="!selectedCategoryWithDetails" [hidden]="!(callback || !submitted || error_detc)" class="align-self-center p-2 mt-4">Click on a category to see its details.</p>
             <div [hidden]="callback || !submitted || error_detc" class="space-right p-2">
                 <img class="space-before" src="assets/form_loader.gif"/>
             </div>     
