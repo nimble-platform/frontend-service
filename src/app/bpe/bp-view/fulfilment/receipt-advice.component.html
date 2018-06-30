@@ -1,10 +1,10 @@
 <ng-container *ngIf="receiptAdvice">
 
     <!-- Dispatched Quantity -->
-    <value-input type="quantity" [disabled]="true" [disableQuantityUnit]="true"
+    <quantity-input [disabled]="true" [disableQuantityUnit]="true"
         label="Dispatched Quantity" [quantity]="dispatchAdvice.despatchLine[0].deliveredQuantity" 
         rowClass="space-before">
-    </value-input>
+    </quantity-input>
     
     <hr>
 
@@ -15,25 +15,25 @@
     <hr>
 
     <!-- Rejected Quantity -->
-    <value-input type="quantity" [disabled]="isLoading() || isReadOnly()" [disableQuantityUnit]="true"
+    <quantity-input [disabled]="isLoading() || isReadOnly()" [disableQuantityUnit]="true"
         label="Rejected Quantity" [quantity]="receiptAdvice.receiptLine[0].rejectedQuantity" 
         rowClass="space-before">
-    </value-input>
+    </quantity-input>
 
-    <value-input type="text" label="Reject Reason" rowClass="space-before"
+    <text-input label="Reject Reason" rowClass="space-before"
         [disabled]="isLoading() || isReadOnly()" [(text)]="receiptAdvice.receiptLine[0].rejectReason[0]">
-    </value-input>
+    </text-input>
 
     <hr>
 
     <!-- Note -->
-    <value-input type="text" label="Note" rowClass="space-before"
+    <text-input label="Note" rowClass="space-before"
         [disabled]="true" [(text)]="dispatchAdvice.note[0]">
-    </value-input>
+    </text-input>
 
-    <value-input type="text" label="Buyer's Note" rowClass="space-before"
+    <text-input label="Buyer's Note" rowClass="space-before"
         [disabled]="isLoading() || isReadOnly()" [(text)]="receiptAdvice.note[0]">
-    </value-input>
+    </text-input>
 
     <!-- Actions -->
     <div class="row actions-row" *ngIf="userRole === 'buyer'">

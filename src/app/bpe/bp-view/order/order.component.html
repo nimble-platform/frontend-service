@@ -5,66 +5,60 @@
 <div class="row" *ngIf="order">
     <div class="col-4">
         <h2>Order Details</h2>
-        <value-input type="text" presentationMode="view" label="Delivery Period" 
+        <text-input presentationMode="view" label="Delivery Period" 
             [text]="getDeliveryPeriodText()" labelClass="col-6" valueClass="col-6">
-        </value-input>
-        <value-input type="text" presentationMode="view" label="Warranty" 
+        </text-input>
+        <text-input presentationMode="view" label="Warranty" 
             [text]="getWarrantyPeriodText()" labelClass="col-6" valueClass="col-6">
-        </value-input>
-        <value-input type="text" presentationMode="view" label="Incoterms" 
+        </text-input>
+        <text-input presentationMode="view" label="Incoterms" 
             [text]="getIncoterm()" labelClass="col-6" valueClass="col-6">
-        </value-input>
-        <value-input type="text" presentationMode="view" label="Quantity"
+        </text-input>
+        <text-input presentationMode="view" label="Quantity"
             [text]="getQuantityText()" labelClass="col-6" valueClass="col-6">
-        </value-input>
-        <value-input type="text" presentationMode="view" label="Total Price"
+        </text-input>
+        <text-input presentationMode="view" label="Total Price"
             [text]="getTotalPriceText()" labelClass="col-6" valueClass="col-6">
-        </value-input>
+        </text-input>
     </div>
     <div class="col-4">
         <h2>Payment Details</h2>
-        <value-input type="text" presentationMode="view" label="Payment Means" 
+        <text-input presentationMode="view" label="Payment Means" 
             [text]="getPaymentMeans()" labelClass="col-6" valueClass="col-6">
-        </value-input>
-        <value-input type="text" presentationMode="view" label="Payment Terms" 
+        </text-input>
+        <text-input presentationMode="view" label="Payment Terms" 
             [text]="paymentTermsWrapper.paymentTerm" labelClass="col-6" valueClass="col-6">
-        </value-input>
-        <!-- <div>
-            <input type="checkbox" [(ngModel)]="order.contract" [disabled]="isLoading() || isReadOnly()" >
-            <span class="form-control d-inline border-0">
-                <strong>Request data monitoring service</strong>
-            </span>
-        </div> -->
+        </text-input>
     </div>
     <div class="col-4">
         <h2>Delivery Address</h2>
-        <value-input type="text" presentationMode="view" label="Street" 
+        <text-input presentationMode="view" label="Street" 
             [text]="order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address.streetName" labelClass="col-6" valueClass="col-6">
-        </value-input>
-        <value-input type="text" presentationMode="view" label="Building Number" 
+        </text-input>
+        <text-input presentationMode="view" label="Building Number" 
             [text]="order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address.buildingNumber" labelClass="col-6" valueClass="col-6">
-        </value-input>
-        <value-input type="text" presentationMode="view" label="City" 
+        </text-input>
+        <text-input presentationMode="view" label="City" 
             [text]="order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address.cityName" labelClass="col-6" valueClass="col-6">
-        </value-input>
-        <value-input type="text" presentationMode="view" label="Postal Code" 
+        </text-input>
+        <text-input presentationMode="view" label="Postal Code" 
             [text]="order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address.postalZone" labelClass="col-6" valueClass="col-6">
-        </value-input>
-        <value-input type="text" presentationMode="view" label="Country" 
+        </text-input>
+        <text-input presentationMode="view" label="Country" 
             [text]="order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address.country.name" labelClass="col-6" valueClass="col-6">
-        </value-input>
+        </text-input>
     </div>
 </div>
 
 <hr>
 
-<value-input type="text" presentationMode="edit" [disabled]="isReadOnly() || userRole === 'seller'"
+<text-input presentationMode="edit" [disabled]="isReadOnly() || userRole === 'seller'"
     label="Note" [text]="order.note" labelClass="col-2" valueClass="col-10">
-</value-input>
+</text-input>
 
-<value-input type="text" presentationMode="edit" *ngIf="orderResponse" [disabled]="isReadOnly()"
+<text-input presentationMode="edit" *ngIf="orderResponse" [disabled]="isReadOnly()"
     label="Producer Node" [text]="orderResponse.note" labelClass="col-2" valueClass="col-10" rowClass="space-before">
-</value-input>
+</text-input>
 
 <hr>
 

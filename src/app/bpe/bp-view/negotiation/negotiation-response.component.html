@@ -10,10 +10,10 @@
     <div class="col-2">{{ wrapper.lineDeliveryPeriodString }}</div>
     <div class="col-4">{{ wrapper.rfqDeliveryPeriodStringIfNegotiating }}</div>
     <div class="col-4">
-        <value-input [visible]="rfq.negotiationOptions.deliveryPeriod" type="quantity"
+        <quantity-input [visible]="rfq.negotiationOptions.deliveryPeriod"
             [disabled]="isLoading() || isReadOnly()" [quantity]="wrapper.quotationDeliveryPeriod" 
             quantityType="time_quantity">
-        </value-input>
+        </quantity-input>
     </div>
 </div>
 
@@ -22,10 +22,10 @@
     <div class="col-2">{{ wrapper.lineWarrantyString }}</div>
     <div class="col-4">{{ wrapper.rfqWarrantyStringIfNegotiating }}</div>
     <div class="col-4">
-        <value-input [visible]="rfq.negotiationOptions.warranty" type="quantity"
+        <quantity-input [visible]="rfq.negotiationOptions.warranty"
             [disabled]="isLoading() || isReadOnly()" [quantity]="wrapper.quotationWarranty" 
             quantityType="time_quantity">
-        </value-input>
+        </quantity-input>
     </div>
 </div>
 
@@ -34,9 +34,9 @@
     <div class="col-2">{{ wrapper.lineIncoterms }}</div>
     <div class="col-4">{{ wrapper.rfqIncotermsIfNegotiating }}</div>
     <div class="col-4">
-        <value-input [visible]="rfq.negotiationOptions.incoterms" type="options"
+        <options-input [visible]="rfq.negotiationOptions.incoterms"
             [disabled]="isLoading() || isReadOnly()" [options]="INCOTERMS" [(selected)]="wrapper.quotationIncoterms">
-        </value-input>
+        </options-input>
     </div>
 </div>
 
@@ -45,9 +45,9 @@
     <div class="col-2">{{ wrapper.linePaymentTerms }}</div>
     <div class="col-4">{{ wrapper.rfqPaymentTermsIfNegotiating }}</div>
     <div class="col-4">
-        <value-input [visible]="rfq.negotiationOptions.paymentTerms" type="options"
+        <options-input [visible]="rfq.negotiationOptions.paymentTerms"
             [disabled]="isLoading() || isReadOnly()" [options]="wrapper.rfqPaymentTerms.PAYMENT_TERMS" [(selected)]="wrapper.quotationPaymentTerms.paymentTerm">
-        </value-input>
+        </options-input>
     </div>
 </div>
 
@@ -56,10 +56,10 @@
     <div class="col-2">{{ wrapper.linePaymentMeans }}</div>
     <div class="col-4">{{ wrapper.rfqPaymentMeansIfNegotiating }}</div>
     <div class="col-4">
-        <value-input [visible]="rfq.negotiationOptions.paymentMeans" type="options"
+        <options-input [visible]="rfq.negotiationOptions.paymentMeans"
             [disabled]="isLoading() || isReadOnly()" [options]="PAYMENT_MEANS" 
             [(selected)]="wrapper.quotationPaymentMeans">
-        </value-input>
+        </options-input>
     </div>
 </div>
 
@@ -68,9 +68,9 @@
     <div class="col-2"></div>
     <div class="col-4">{{ rfq.dataMonitoringRequested ? "Yes" : "" }}</div>
     <div class="col-4" *ngIf="rfq.dataMonitoringRequested">
-            <input type="checkbox" [(ngModel)]="quotation.dataMonitoringPromised" 
-                [disabled]="isLoading() || isReadOnly()">
-            <label>Guarantee data monitoring service</label>
+        <input type="checkbox" [(ngModel)]="quotation.dataMonitoringPromised" 
+            [disabled]="isLoading() || isReadOnly()">
+        <label>Guarantee data monitoring service</label>
     </div>
 </div>
 
@@ -79,10 +79,10 @@
     <div class="col-2">{{ wrapper.lineTotalPriceString }}</div>
     <div class="col-4">{{ wrapper.rfqTotalPriceStringIfNegotiating }}</div>
     <div class="col-4">
-        <value-input [visible]="rfq.negotiationOptions.price" type="amount"
+        <amount-input [visible]="rfq.negotiationOptions.price"
             [disabled]="isLoading() || isReadOnly()" [(amount)]="quotationPrice"
             [amountUnit]="wrapper.linePriceWrapper.currency">
-        </value-input>
+        </amount-input>
     </div>
 </div>
 
@@ -90,12 +90,12 @@
     <div class="col-2"><strong>Note:</strong></div>
     <div class="col-2"></div>
     <div class="col-4">
-        <value-input type="text" disabled [text]="rfq.note[0]">
-        </value-input>
+        <text-input disabled [text]="rfq.note[0]">
+        </text-input>
     </div>
     <div class="col-4">
-        <value-input type="text" [disabled]="isLoading() || isReadOnly()" [text]="quotation.note[0]">
-        </value-input>
+        <text-input [disabled]="isLoading() || isReadOnly()" [text]="quotation.note[0]">
+        </text-input>
     </div>
 </div>
 

@@ -15,9 +15,8 @@
         <strong><label for="customFile">Filled technical data sheet:</label></strong>
     </div>
     <div *ngIf="!isResponseSent()" class="col-9">
-        <value-input [disabled]="isLoading()" type="file"
-            (onSelectFile)="selectItemSpecificationFile($event)">
-        </value-input>
+        <file-input [disabled]="isLoading()" (onSelectFile)="selectItemSpecificationFile($event)">
+        </file-input>
     </div>
     <div *ngIf="isResponseSent() && hasResponseFile()" class="col-9">
         <a href class="btn-link" (click)="downloadTechnicalDataSheet(getResponseFile(), $event)">{{ getResponseFile().fileName }}</a>

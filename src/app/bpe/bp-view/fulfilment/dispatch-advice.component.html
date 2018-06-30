@@ -1,9 +1,9 @@
 <ng-container *ngIf="dispatchAdvice">
     <!-- Dispatched Quantity -->
-    <value-input type="quantity" [disabled]="isLoading() || isReadOnly()" [disableQuantityUnit]="true"
+    <quantity-input [disabled]="isLoading() || isReadOnly()" [disableQuantityUnit]="true"
         label="Dispatched Quantity" [quantity]="dispatchAdvice.despatchLine[0].deliveredQuantity" 
         rowClass="space-before">
-    </value-input>
+    </quantity-input>
     
     <hr>
 
@@ -14,9 +14,9 @@
     <hr>
 
     <!-- Note -->
-    <value-input type="text" label="Note" rowClass="space-before"
+    <text-input label="Note" rowClass="space-before"
         [disabled]="isLoading() || isReadOnly()" [(text)]="dispatchAdvice.note[0]">
-    </value-input>
+    </text-input>
 
 
     <!-- Actions -->

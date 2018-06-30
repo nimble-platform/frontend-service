@@ -7,6 +7,11 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { CallStatusComponent } from "./call-status.component";
 import { ValueInputComponent } from './value-input.component';
 import { ActionsRowComponent } from './actions-row.component';
+import { TextInputComponent } from './text-input.component';
+import { OptionsInputComponent } from './options-input.component';
+import { QuantityInputComponent } from './quantity-input.component';
+import { AmountInputComponent } from './amount-input.component';
+import { FileInputComponent } from './file-input.component';
 
 @NgModule({
 	imports: [
@@ -19,11 +24,21 @@ import { ActionsRowComponent } from './actions-row.component';
 	declarations: [
 		CallStatusComponent,
 		ValueInputComponent,
+		TextInputComponent,
+		OptionsInputComponent,
+		QuantityInputComponent,
+		AmountInputComponent,
+		FileInputComponent,
 		ActionsRowComponent
 	],
 	exports: [
 		CallStatusComponent,
 		ValueInputComponent,
+		TextInputComponent,
+		OptionsInputComponent,
+		QuantityInputComponent,
+		AmountInputComponent,
+		FileInputComponent,
 		ActionsRowComponent
 	],
 	providers: [

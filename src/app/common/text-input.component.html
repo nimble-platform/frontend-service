@@ -1,0 +1,23 @@
+<div class="row {{ rowClass }}">
+    <div *ngIf="label" [class]="labelClass">
+        <label class="{{labelMainClass}}">
+            <strong>
+                {{ label }}:
+            </strong>
+            <span *ngIf="definition" class="definition" title="{{definition}}">&#9432;</span>
+        </label>
+    </div>
+
+    <div [class]="valueClass" *ngIf="presentationMode === 'edit' && visible && rows > 1">
+        <textarea class="form-control {{valueTextClass}}" [rows]="rows" [(ngModel)]="text" [disabled]="disabled">
+        </textarea>
+    </div>
+
+    <div [class]="valueClass" *ngIf="presentationMode === 'edit' && visible && rows === 1">
+        <input type="text" class="form-control {{valueTextClass}}" [(ngModel)]="text" [disabled]="disabled">
+    </div>
+
+    <div [class]="valueClass" *ngIf="presentationMode === 'view' && visible">
+        <p class="{{valueTextClass}}">{{ text }}</p>
+    </div>
+</div>
