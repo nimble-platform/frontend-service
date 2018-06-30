@@ -97,3 +97,7 @@ export function currencyToString(currencyId: string): string {
 export function sortCategories(categories: Category[]): Category[] {
     return categories.sort((a,b) => (a.preferredName.localeCompare(b.preferredName)));
 }
+
+export function scrollToDiv(divId: string): void {
+    document.getElementById(divId).scrollIntoView();
+}

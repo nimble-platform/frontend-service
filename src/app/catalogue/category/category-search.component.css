@@ -32,3 +32,9 @@
 .icon-secondary {
     color: #a1a1a1;
 }
+
+.fixed {
+    position:sticky;
+    z-index: 999;
+    top:0;
+}

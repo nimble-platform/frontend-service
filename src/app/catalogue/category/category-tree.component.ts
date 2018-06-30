@@ -3,7 +3,7 @@ import { Category } from "../model/category/category";
 import {CategoryService} from "./category.service";
 import { CallStatus } from "../../common/call-status";
 import { ParentCategories } from "../model/category/parent-categories";
-import { sortCategories } from "../../common/utils";
+import { sortCategories, scrollToDiv } from "../../common/utils";
 
 @Component({
     selector: 'category-tree',
@@ -33,12 +33,16 @@ export class CategoryTreeComponent implements OnInit {
     }
 
     @Input() set parentCategories(parentCategories: ParentCategories) {
-        console.log(parentCategories, this.level, this.category);
         this._parentCategories = parentCategories;
         if(parentCategories && this.category.code === parentCategories.parents[this.level - 1].code && this.level < parentCategories.parents.length) {
             this.expanded = true;
             this.childrenCategories = sortCategories(parentCategories.categories[this.level])
-        }
+        } 
+        setTimeout((()=>{
+            if(parentCategories && this.category.code === parentCategories.parents[this.level - 1].code && this.level === parentCategories.parents.length) {
+            scrollToDiv(this.category.code);
+            }
+        }), 0)
     }
 
     get parentCategories(): ParentCategories {
@@ -74,7 +78,7 @@ export class CategoryTreeComponent implements OnInit {
     }
 
     isSelected(): boolean {
-        return this.category === this.selectedCategory;
+        return this.category.code === this.selectedCategory.code;
     }
 
     getToggleIcon(): string {

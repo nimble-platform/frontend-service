@@ -234,7 +234,6 @@ export class CategorySearchComponent implements OnInit {
                     for(let parent of this.parentCategories.parents){
                         this.selectedCategoriesWRTLevels.push(parent.code);
                     }
-
                     this.callStatus.callback( null);
                 }).catch( err => {
                     this.callStatus.error(null)

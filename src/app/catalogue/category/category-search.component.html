@@ -1,31 +1,12 @@
-<div class="form-group row">
-    <div class="col-9 d-flex align-items-center">
-        <p class="mt-1 mb-0 mr-3 flex-shrink-0">Selected Categories: </p>
-        <div class="border w-100 h-100 align-self-start">
-            <div class="d-flex flex-wrap">
-                <div *ngFor="let selectedCategory of categoryService.selectedCategories"
-                class="bordered d-flex align-items-center mx-1 my-1" title="{{selectedCategory.taxonomyId}}">
-                    <small class="p-0">{{selectedCategory.preferredName}}</small>
-                    <i class="fa fa-times-circle pl-1 text-red" placement="right" (click)="removeCategory(selectedCategory)"></i>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-3 align-self-center">
-        <button class="btn btn-primary nimble-button-primary w-100 inline" [disabled]="categoryService.selectedCategories.length === 0 || navigating" (click)="navigateToPublishingPage()">Continue With Selected Categories</button>
-        <div [hidden]="!navigating" class="space-right">
-            <img class="space-before" src="assets/form_loader.gif"/>
-        </div>    
-    </div>
-</div>
-<hr>
+<h1 class="pb-3">Publish Product</h1>
+
 <div class="form-group row d-flex">
-    <div class="col-6 inline">
+    <div class="col-9 inline">
         <form #categorySearch="ngForm" (ngSubmit)="onSearchCategory()" novalidate>
         <!-- TODO: All Categories Search Goes Here-->
             <div class="input-group">
                 <div ngbDropdown class="d-inline-block input-group-prepend">
-                    <button class="btn btn-secondary nimble-button-secondary" type="button" id="allCategories" ngbDropdownToggle>
+                    <button class="btn btn-outline-dark" type="button" id="allCategories" ngbDropdownToggle>
                         All Categories
                     </button>
                     <!-- TODO: Requires a service change -->
@@ -34,19 +15,16 @@
                     </div>
                 </div>
         <!-- End TODO: All Categories Search -->
-                <input type="text" class="form-control" name="inputCtrl" [(ngModel)]="categoryKeyword" required pattern=".{1,}" placeholder="Search Category..."/>
+                <input type="text" class="form-control" name="inputCtrl" [(ngModel)]="categoryKeyword" placeholder="Search Category..."/>
                 <div class="input-group-append">
-                    <button type="submit" class="btn btn-outline-secondary" [disabled]="!categorySearch.form.valid">
-                        <i class="fa fa-search"></i>
+                    <button type="submit" class="btn btn-primary nimble-button-primary" [disabled]="!categorySearch.form.valid">
+                        <i class="fa fa-search"></i> Search Categories
                     </button>
                 </div>
             </div>
         </form>
     </div>
-    <div class="col-1">
-        <h5 class="pt-1 text-center">OR</h5>
-    </div>
-    <div class="col-5">
+    <div class="col-3">
         <button class="btn btn-secondary nimble-button-secondary w-100 inline" (click)="displayRootCategories('eClass')">Browse eClass Categories</button>
     </div>
 </div>
@@ -54,15 +32,15 @@
 <div class="row mt-4 d-flex">
     <div class="col-7 pr-0 pb-0">
         <!-- Tree view deactivated -->
-        <div *ngIf="!treeView" class="border" style="height:60vh; overflow-x: hidden; overflow-y: scroll;">
+        <div *ngIf="!treeView" class="border" style="height:55vh; overflow-x: hidden; overflow-y: scroll;">
             <!-- TODO: If no search has been performed, return recent categories -->
             <div *ngIf="!callback && !submitted" class="border-bottom p-2">
                 <h3>Recent Categories</h3>
             </div>
             <table class="table table-hover mb-0">
-                <thead class="thead-light">
-                    <th scope="col">Classification</th>
-                    <th scope="col">Name</th>
+                <thead class="thead-light fixed">
+                    <th scope="col" style="color: #000;">Classification</th>
+                    <th scope="col" style="color: #000;">Name</th>
                     <th scope="col"></th>
                 </thead>
                 <tbody>
@@ -83,8 +61,8 @@
             </table>
         </div>
         <!-- Tree view activated -->
-        <div *ngIf="treeView" class="border" style="height:60vh; overflow-x: hidden; overflow-y: scroll;">
-            <div style="background-color: #e9ecef; color:#495057;">
+        <div *ngIf="treeView" class="border" style="height:55vh; overflow-x: hidden; overflow-y: scroll;">
+            <div style="background-color: #e9ecef;">
                 <div class="row border">
                     <div class="col-8 pr-0">
                         <div class="thead-light-equivalent">
@@ -108,16 +86,17 @@
         </div>
     </div>
     <div class="col-5 pl-0">
-        <div class="p-2 border" style="height:60vh; overflow-x: hidden; overflow-y: scroll;">
-            <div class="d-flex flex-row">
-                <h4 *ngIf="!selectedCategoryWithDetails">Details</h4>
-                <h4 *ngIf="selectedCategoryWithDetails">Details for {{selectedCategoryWithDetails["preferredName"]}}</h4>
+        <div class="border" style="height:55vh; overflow-x: hidden; overflow-y: scroll;">
+            <div class="d-flex flex-row fixed p-2" style="background-color: #fff;">
+                <h4 class="font-weight-bold" *ngIf="!selectedCategoryWithDetails">Details</h4>
+                <h4 class="font-weight-bold" *ngIf="selectedCategoryWithDetails">Details for {{selectedCategoryWithDetails["preferredName"]}}</h4>
+                <button *ngIf="selectedCategoryWithDetails" class="btn btn-primary nimble-button-primary ml-auto align-self-start" (click)="selectCategory(selectedCategoryWithDetails)">Select Category</button>
             </div>
-            <p *ngIf="!selectedCategoryWithDetails" class="align-self-center mt-4">Select a category to see its details.</p>
-            <div [hidden]="callback || !submitted || error_detc" class="space-right">
+            <p *ngIf="!selectedCategoryWithDetails" [hidden]="!(callback || !submitted || error_detc)" class="align-self-center p-2 mt-4">Select a category to see its details.</p>
+            <div [hidden]="callback || !submitted || error_detc" class="space-right p-2">
                 <img class="space-before" src="assets/form_loader.gif"/>
             </div>     
-            <div *ngIf="selectedCategoryWithDetails" class="pt-2">
+            <div *ngIf="selectedCategoryWithDetails" class="p-2 mt-2">
                 <div *ngFor="let propName of propertyNames" class="my-1">
                     <value-input *ngIf="selectedCategoryWithDetails[propName]" [visible]="selectedCategoryWithDetails[propName]" presentationMode="view" type="text" [label]="propName" labelClass="col-12 text-capitalize" labelMainClass="mb-0" valueClass="col-12" valueTextClass="mb-1 pl-3" [text]="getCategoryProperty(propName)"></value-input>
                 </div>
@@ -151,5 +130,26 @@
                 </div>
             </div>
         </div>
+    </div>
+</div>
+<hr>
+<div class="form-group row">
+    <div class="col-9 d-flex align-items-center">
+        <p class="mt-1 mb-0 mr-3 flex-shrink-0">Selected Categories: </p>
+        <div class="border w-100 h-100 align-self-start">
+            <div class="d-flex flex-wrap">
+                <div *ngFor="let selectedCategory of categoryService.selectedCategories"
+                class="bordered d-flex align-items-center mx-1 my-1" title="{{selectedCategory.taxonomyId}}">
+                    <small class="p-0">{{selectedCategory.preferredName}}</small>
+                    <i class="fa fa-times-circle pl-1 text-red" placement="right" (click)="removeCategory(selectedCategory)"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-3 align-self-center">
+        <button class="btn btn-primary nimble-button-primary w-100 inline" [disabled]="categoryService.selectedCategories.length === 0 || navigating" (click)="navigateToPublishingPage()">Continue With Selected Categories</button>
+        <div [hidden]="!navigating" class="space-right">
+            <img class="space-before" src="assets/form_loader.gif"/>
+        </div>    
     </div>
 </div>
