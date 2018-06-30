@@ -98,7 +98,7 @@
             </div>     
             <div *ngIf="selectedCategoryWithDetails" class="p-2 mt-2">
                 <div *ngFor="let propName of propertyNames" class="my-1">
-                    <value-input *ngIf="selectedCategoryWithDetails[propName]" [visible]="selectedCategoryWithDetails[propName]" presentationMode="view" type="text" [label]="propName" labelClass="col-12 text-capitalize" labelMainClass="mb-0" valueClass="col-12" valueTextClass="mb-1 pl-3" [text]="getCategoryProperty(propName)"></value-input>
+                    <text-input *ngIf="selectedCategoryWithDetails[propName]" [visible]="selectedCategoryWithDetails[propName]" presentationMode="view" [label]="propName" labelClass="col-12 text-capitalize" labelMainClass="mb-0" valueClass="col-12" valueTextClass="mb-1 pl-3" [text]="getCategoryProperty(propName)"></text-input>
                 </div>
                 <div class="row">
                     <div class="col-12 mb-0" *ngIf="selectedCategoryWithDetails.properties.length > 0">
