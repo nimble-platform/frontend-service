@@ -46,14 +46,14 @@
 <hr>
 
 <!-- Request note -->
-<value-input rowClass="space-after" type="text" [(text)]="note" label="Request Note" labelClass="col-2" 
+<text-input rowClass="space-after" [(text)]="note" label="Request Note" labelClass="col-2" 
     valueClass="col-10" disabled="true">
-</value-input>
+</text-input>
 
 <!-- Response note -->
-<value-input type="text" [(text)]="noteToSend" label="Response Note" labelClass="col-2" 
+<text-input [(text)]="noteToSend" label="Response Note" labelClass="col-2" 
     valueClass="col-10" [disabled]="isLoading()">
-</value-input>
+</text-input>
 
 <hr>
 
