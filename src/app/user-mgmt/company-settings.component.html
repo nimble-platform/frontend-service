@@ -52,7 +52,7 @@
 	<payment-means-form [group]="settingsForm.controls.paymentMeans"></payment-means-form>
 
     <div>
-        <button class="btn btn-success" type="submit" [disabled]="!settingsForm.valid||!settingsForm.dirty||isSubmitting">
+        <button class="btn btn-primary" type="submit" [disabled]="!settingsForm.valid||!settingsForm.dirty||isSubmitting">
             <span>Save</span>
         </button>
 		<div [hidden]="!isSubmitting" class="space-before">

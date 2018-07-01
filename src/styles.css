@@ -12,6 +12,53 @@ button:disabled, .btn:disabled {
     cursor: not-allowed !important;
 }
 
+/*
+Overwrite default values for Bootstrap buttons.
+*/
+.btn.btn-primary {
+    color: #fff;
+    border-color: #2980b9;
+    background-color: #2980b9;
+}
+.btn.btn-primary:hover {
+    color: #fff;
+    background-color: #3090ce;
+    border-color: #3090ce;
+}
+.btn.btn-primary:focus {
+    box-shadow: 0 0 0 .2rem rgba(4, 80, 146, 0.58);
+}
+.btn.btn-primary:not(:disabled):not(.disabled):active {
+    color: #fff;
+    background-color: #258cd1;
+    border-color: #258cd1;
+}
+.btn.btn-primary:disabled {
+    background-color: #909191;
+    border-color: #909191;
+}
+.btn.btn-secondary {
+    color: #fff;
+    background-color: #464646;
+    border-color: #464646;
+}
+.btn.btn-secondary:hover {
+    background-color: #5c5b5b;
+}
+.btn.btn-secondary:active {
+    color: #fff;
+    background-color: #545b62;
+    border-color: #4e555b;
+}
+.btn.btn-danger {
+    background-color: #b93829;
+    border-color: #b93829;
+}
+.btn.btn-danger:hover {
+    background-color: #de1a04;
+    border-color: #d51904;
+}
+
 textarea {
     min-height: 2.375rem;
     resize: none;
@@ -83,6 +130,18 @@ textarea {
 
 .space-right {
     margin-right: 0.5rem !important;
+}
+
+.icon-primary {
+    color: #2980b9;
+}
+
+.icon-secondary {
+    color: #a1a1a1;
+}
+
+.icon-red {
+    color: #b93829;
 }
 
 /*
@@ -183,6 +242,10 @@ textarea {
     opacity: 1 !important;
 }
 
+.nav-link.active {
+    font-weight: 500;
+}
+
 .dropdown-item:hover {
   color: #292b2c !important;
 	background-color: #ccc !important;
@@ -199,19 +262,20 @@ textarea {
   position: absolute !important;
 }
 
-ngb-pagination nav .pagination {
+ngb-pagination nav.pagination {
     margin-bottom: 0 !important;
     -moz-box-pack: end;
     justify-content: flex-end;
 }
 
-ngb-pagination nav .pagination .page-item .page-link {
-    color: #b77563;
+ngb-pagination nav.pagination, .page-item, .page-link {
+    background-color: #fff;
+    color: #000;
 }
 
-ngb-pagination nav .pagination .page-item.active .page-link {
-    background-color: #b77563;
+ngb-pagination .page-item.active .page-link {
     border-color: #b77563;
+    background-color: #b77563;
     color: #fff;
 }
 

@@ -43,7 +43,7 @@
 	</div>
 	-->
 
-	<button type="submit" class="btn btn-success" [disabled]="!inviteForm.form.valid||!rolesSelected" i18n>Submit</button>
+	<button type="submit" class="btn btn-primary" [disabled]="!inviteForm.form.valid||!rolesSelected" i18n>Submit</button>
 
 	<div [hidden]="callback || error_detc || !submitted">
 		<img class="space-before" src="assets/form_loader.gif" />
@@ -127,7 +127,7 @@
 		</div>
 	</div>
 	<div class="modal-footer">
-		<button class="btn btn-success" [disabled]="!rolesChangeSelected" (click)="changeRoles();d('');">Save</button>
+		<button class="btn btn-primary" [disabled]="!rolesChangeSelected" (click)="changeRoles();d('');">Save</button>
 	</div>
 </ng-template>
 
