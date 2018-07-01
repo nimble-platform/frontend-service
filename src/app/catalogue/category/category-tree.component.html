@@ -1,6 +1,8 @@
 <div>
-    <div [id]="category.code" class="border-bottom py-2 hover-row" [style.padding-left.rem]="(level * 0.75)" (click)="showDetails();" [ngClass]="{'selected-row': isSelected()}"><i (click)="toggleExpanded($event)" class="fa fa-fw" [ngClass]="getToggleIcon()"></i> {{ category.preferredName }}<i class="fa fa-plus-circle pointer float-right icon-primary pr-3 pt-1" (click)="selectCategory();"></i></div>
+    <div [id]="category.code" class="border-bottom py-2 hover-row d-flex" [style.padding-left.rem]="(level * 0.75)" (click)="showDetails();" [ngClass]="{'selected-row': isSelected()}">
+        <i (click)="toggleExpanded($event)" class="fa fa-fw" [ngClass]="getToggleIcon()"></i> {{ category.preferredName }}
+    </div>
     <ul *ngIf="expanded && childrenCategories" class="list-unstyled mb-0">
-        <li *ngFor="let childCategory of childrenCategories"><category-tree [category]="childCategory" [parentCategories]="parentCategories" (detailsEvent)="showDetails($event)" [level]="level + 1" [selectedCategory]="selectedCategory" (categoryEvent)="selectCategory($event)"></category-tree></li>
+        <li *ngFor="let childCategory of childrenCategories"><category-tree [category]="childCategory" [parentCategories]="parentCategories" (detailsEvent)="showDetails($event)" [level]="level + 1" [selectedCategory]="selectedCategory"></category-tree></li>
     </ul>
 </div>

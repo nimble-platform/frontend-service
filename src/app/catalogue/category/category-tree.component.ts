@@ -18,13 +18,13 @@ export class CategoryTreeComponent implements OnInit {
     expanded: boolean = false;
     childrenCategories: Category[];
     taxonomyId: string;
+    @Input() selectedCategories: Category[];
     @Input() level: number = 1;
     private _parentCategories: ParentCategories;
 
     getCategoryStatus: CallStatus = new CallStatus;
 
     @Output() detailsEvent: EventEmitter<Category> = new EventEmitter();
-    @Output() categoryEvent: EventEmitter<Category> = new EventEmitter();
 
     constructor(public categoryService: CategoryService) {
     }
@@ -73,12 +73,15 @@ export class CategoryTreeComponent implements OnInit {
         this.detailsEvent.emit(category);
     }
 
-    selectCategory(category: Category = this.category): void {
-        this.categoryEvent.emit(category);
+    isSelected(): boolean {
+        if(this.selectedCategory != null) {
+            return this.category.code === this.selectedCategory.code;
+        }
+        return false;
     }
 
-    isSelected(): boolean {
-        return this.category.code === this.selectedCategory.code;
+    isInSelectedCategories(): boolean {
+        return this.selectedCategories.findIndex(c => c.id == this.category.id) >-1;
     }
 
     getToggleIcon(): string {

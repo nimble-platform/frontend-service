@@ -33,8 +33,21 @@
     color: #a1a1a1;
 }
 
+.icon-red {
+    color: #b93829;
+}
+
 .fixed {
     position:sticky;
     z-index: 999;
     top:0;
+}
+
+.fixed-header {
+    background-color: #fff;
+}
+
+.disabled-section {
+    background-color: #e9ecef;
+    color: #A9A9A9;
 }

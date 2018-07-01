@@ -43,15 +43,16 @@ export class CategorySearchComponent implements OnInit {
     // keeps the query term
     categoryKeyword: string;
 
-    treeView = false;
+    treeView: boolean = true;
     parentCategories: ParentCategories = null;
     rootCategories: Category[];
 
     selectedCategory: Category = null;
+    selectedCategories: Category[] = [];
     selectedCategoryWithDetails: Category = null;
     selectedCategoriesWRTLevels = [];
     propertyNames: string[] = ["code", "taxonomyId", "level", "definition", "note", "remark"];
-    taxonomyId: string;
+    taxonomyId: string = "eClass";
 
     showOtherProperties = null;
     callStatus: CallStatus = new CallStatus();
@@ -103,6 +104,7 @@ export class CategorySearchComponent implements OnInit {
                 this.getCategories();
             }
         });
+        this.getRootCategories();
     }
 
     canDeactivate():boolean{
@@ -123,8 +125,8 @@ export class CategorySearchComponent implements OnInit {
         this.router.navigate(['/catalogue/categorysearch'], {queryParams: {pg: this.publishingGranularity, pageRef: this.pageRef, cat: this.categoryKeyword}});
     }
 
-    onTreeViewReturn(): void {
-        this.treeView = false;
+    toggleTreeView(): void {
+        this.treeView = !this.treeView;
     }
 
     getRootCategories(): any {
@@ -169,7 +171,7 @@ export class CategorySearchComponent implements OnInit {
     private selectCategory(category: Category): void {
         // if no category is selected or if the selected category is already selected
         // do nothing
-        if (category == null || this.categoryService.selectedCategories.findIndex(c => c.id == category.id) > -1) {
+        if (category == null || this.findCategoryInArray(this.categoryService.selectedCategories, category) > -1) {
             return;
         }
 
@@ -179,6 +181,7 @@ export class CategorySearchComponent implements OnInit {
 
         if(this.selectedCategoryWithDetails && category && this.selectedCategoryWithDetails.id == category.id){
             this.categoryService.addSelectedCategory(category);
+            this.selectedCategories.push(category);
             this.callback = true;
             this.submitted = false;
             return;
@@ -187,6 +190,7 @@ export class CategorySearchComponent implements OnInit {
         this.categoryService.getCategory(category)
             .then(category => {
                 this.categoryService.addSelectedCategory(category);
+                this.selectedCategories.push(category);
                 this.callback = true;
                 this.submitted = false;
                 return;
@@ -211,9 +215,13 @@ export class CategorySearchComponent implements OnInit {
     }
 
     private removeCategory(category: Category): void {
-        let index = this.categoryService.selectedCategories.findIndex(c => c.id == category.id);
+        let index = this.findCategoryInArray(this.categoryService.selectedCategories, category);
         if (index > -1) {
             this.categoryService.selectedCategories.splice(index, 1);
+            let searchIndex = this.findCategoryInArray(this.selectedCategories, category);
+            if(searchIndex > -1) {
+                this.selectedCategories.splice(searchIndex, 1);
+            }
         }
     }
 
@@ -274,5 +282,9 @@ export class CategorySearchComponent implements OnInit {
 
     toUIString(dataType: string): string {
         return toUIString(dataType);
+    }
+
+    private findCategoryInArray(categoryArray: Category[], category: Category): number {
+        return categoryArray.findIndex(c => c.id == category.id);
     }
 }
