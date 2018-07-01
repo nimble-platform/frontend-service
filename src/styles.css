@@ -1,4 +1,4 @@
-body {
+html, body {
     margin: 0.6rem 0;
     background-color: #fefefe;
     font-family: 'Montserrat', sans-serif;
@@ -58,7 +58,12 @@ Overwrite default values for Bootstrap buttons.
     background-color: #de1a04;
     border-color: #d51904;
 }
-
+a.nav-link {
+    color: #2980b9;
+}
+a.nav-link:hover {
+    color: #002e60;
+}
 textarea {
     min-height: 2.375rem;
     resize: none;
@@ -260,6 +265,10 @@ textarea {
   right: 0 !important;
   left: auto !important;
   position: absolute !important;
+}
+
+.flex-1 {
+    flex: 1;
 }
 
 ngb-pagination nav.pagination {
