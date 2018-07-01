@@ -5,7 +5,6 @@ import { CommonModule } from '@angular/common';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { CallStatusComponent } from "./call-status.component";
-import { ValueInputComponent } from './value-input.component';
 import { ActionsRowComponent } from './actions-row.component';
 import { TextInputComponent } from './text-input.component';
 import { OptionsInputComponent } from './options-input.component';
@@ -23,7 +22,6 @@ import { FileInputComponent } from './file-input.component';
 	],
 	declarations: [
 		CallStatusComponent,
-		ValueInputComponent,
 		TextInputComponent,
 		OptionsInputComponent,
 		QuantityInputComponent,
@@ -33,7 +31,6 @@ import { FileInputComponent } from './file-input.component';
 	],
 	exports: [
 		CallStatusComponent,
-		ValueInputComponent,
 		TextInputComponent,
 		OptionsInputComponent,
 		QuantityInputComponent,
