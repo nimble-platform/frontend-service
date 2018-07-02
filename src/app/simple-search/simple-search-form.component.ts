@@ -85,8 +85,16 @@ export class SimpleSearchFormComponent implements OnInit {
 			}
 			if (q)
 				this.getCall(q,fq,p,cat);
-			else
+			else {
+				this.callback = false;
+				this.error_detc = false;
+				this.submitted = false;
+		    this.model.q='';
+				this.objToSubmit.q='';
+				this.facetQuery=fq;
+				this.page=p;
 				this.getCatTree();
+			}
 		});
     }
 
