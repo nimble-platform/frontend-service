@@ -37,33 +37,6 @@
 
     <!-- negotiation parameters for transportation services -->
     <ng-container *ngIf="bpDataService.getCatalogueLine().goodsItem.item.transportationServiceDetails != null">
-        <transport-trading-details [lineItem]="quotation.quotationLine[0].lineItem"
-                                   [paymentMeans]="quotation.paymentMeans"
-                                   [paymentTerms]="quotation.paymentTerms"
-                                   [fetchDefaultDeliveryAddress]="bpDataService.processMetadata == null"
-                                   [presentationMode]="presentationMode">
-        </transport-trading-details>
-
-        <div class="well">
-            <h6>Handling Unit Details</h6>
-            <value-view [presentationMode]="presentationMode"
-                        [propName]="'Transport Handling Unit'"
-                        [definition]="'The transport handling unit used'"
-                        [(value)]="quotation.quotationLine[0].lineItem.delivery[0].shipment.transportHandlingUnit[0].transportHandlingUnitTypeCode.name">
-
-            </value-view>
-
-            <quantity-view [presentationMode]="presentationMode"
-                           [propName]="quotation.quotationLine[0].lineItem.delivery[0].shipment.transportHandlingUnit[0].measurementDimension[0].attributeID"
-                           [quantity]="[quotation.quotationLine[0].lineItem.delivery[0].shipment.transportHandlingUnit[0].measurementDimension[0].measure]">
-            </quantity-view>
-
-            <quantity-view [presentationMode]="presentationMode"
-                           [propName]="quotation.quotationLine[0].lineItem.delivery[0].shipment.transportHandlingUnit[0].measurementDimension[1].attributeID"
-                           [quantity]="[quotation.quotationLine[0].lineItem.delivery[0].shipment.transportHandlingUnit[0].measurementDimension[1].measure]">
-            </quantity-view>
-        </div>
-
         <div class="well">
             <h6>Consolidated Shipment</h6>
             <value-view [presentationMode]="presentationMode"
@@ -92,6 +65,13 @@
                            [quantity]="[quotation.quotationLine[0].lineItem.delivery[0].shipment.consignment[0].grossWeightMeasure]">
             </quantity-view>
         </div>
+
+        <transport-trading-details [lineItem]="quotation.quotationLine[0].lineItem"
+                                   [paymentMeans]="quotation.paymentMeans"
+                                   [paymentTerms]="quotation.paymentTerms"
+                                   [fetchDefaultDeliveryAddress]="bpDataService.processMetadata == null"
+                                   [presentationMode]="presentationMode">
+        </transport-trading-details>
     </ng-container>
 
     <hr>
