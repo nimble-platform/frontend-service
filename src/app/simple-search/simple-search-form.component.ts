@@ -99,10 +99,15 @@ export class SimpleSearchFormComponent implements OnInit {
     }
 
 	get(search: Search): void {
-		if(this.searchContext && this.searchContext == 'orderbp'){
-			this.setCat("Transport Service");
-		}
-  	this.router.navigate(['/simple-search'], { queryParams : { q: search.q, fq: encodeURIComponent(this.facetQuery.join('_SEP_')), p: this.page, searchContext: this.searchContext, cat: this.cat } });
+		this.router.navigate(['/simple-search'], {
+			queryParams: {
+				q: search.q,
+				fq: encodeURIComponent(this.facetQuery.join('_SEP_')),
+				p: this.page,
+				searchContext: this.searchContext,
+				cat: this.cat
+			}
+		});
 	}
 
 	getCatTree(): void {
