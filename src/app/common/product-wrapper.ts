@@ -30,8 +30,12 @@ export class ProductWrapper {
         return this.getUniquePropertiesWithFilter(prop => prop.value.length > 1);
     }
 
-    getUniqueProperties(): ItemProperty[] {
+    getUniquePropertiesWithValue(): ItemProperty[] {
         return this.getUniquePropertiesWithFilter(prop => prop.value.join() !== "");
+    }
+
+    getAllUniqueProperties(): ItemProperty[] {
+        return this.getUniquePropertiesWithFilter(() => true);
     }
 
     getPackaging(): string {
@@ -102,7 +106,7 @@ export class ProductWrapper {
             }
 
             duplicates[key] = true;
-        })
+        });
 
         return result.sort((p1, p2) => p1.name.localeCompare(p2.name));
     }

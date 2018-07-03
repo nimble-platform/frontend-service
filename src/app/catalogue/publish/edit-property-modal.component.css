@@ -1,0 +1,16 @@
+.value-container {
+    display: flex;
+    margin-bottom: 0.3rem;
+}
+
+.add-value-button {
+    width: 100%;
+}
+
+.btn-remove-value {
+    margin-left: 0.3rem;
+}
+
+.value-input {
+    flex: 1 0 auto;
+}

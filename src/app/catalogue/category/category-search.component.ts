@@ -12,10 +12,12 @@ import {PublishService} from "../publish-and-aip.service";
 import {ProductPublishComponent} from "../product-publish.component";
 import {UBLModelUtils} from "../model/ubl-model-utils";
 import {CallStatus} from '../../common/call-status';
-import {toUIString} from '../../common/utils';
+import {sanitizeDataTypeName} from '../../common/utils';
 import {CategoryTreeComponent} from './category-tree.component';
 import { ParentCategories } from "../model/category/parent-categories";
 import { sortCategories } from "../../common/utils";
+import { PropertyValueQualifier } from "../model/publish/property-value-qualifier";
+import { Property } from "../model/category/property";
 
 @Component({
     selector: 'category-search',
@@ -280,8 +282,8 @@ export class CategorySearchComponent implements OnInit {
         return String(this.selectedCategoryWithDetails[propName]);
     }
 
-    toUIString(dataType: string): string {
-        return toUIString(dataType);
+    getPropertyType(property: Property): string {
+        return sanitizeDataTypeName(property.dataType);
     }
 
     private findCategoryInArray(categoryArray: Category[], category: Category): number {

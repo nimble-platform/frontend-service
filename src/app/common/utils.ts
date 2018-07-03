@@ -3,12 +3,14 @@ import { Quantity } from "../catalogue/model/publish/quantity";
 import { Period } from "../catalogue/model/publish/period";
 import { Price } from "../catalogue/model/publish/price";
 import { Category } from "../catalogue/model/category/category";
+import { Property } from "../catalogue/model/category/property";
+import { PropertyValueQualifier } from "../catalogue/model/publish/property-value-qualifier";
 
 const UI_NAMES: any = {
     STRING: "TEXT"
 }
 
-export function toUIString(dataType: string): string {
+export function sanitizeDataTypeName(dataType: PropertyValueQualifier): string {
     if(UI_NAMES[dataType]) {
         return UI_NAMES[dataType]
     }
@@ -27,8 +29,16 @@ export function copy<T = any>(object: T): T {
     return JSON.parse(JSON.stringify(object));
 }
 
-export function getPropertyKey(property: ItemProperty): string {
-    return property.name + "___" + property.valueQualifier;
+function isItemProperty(property: any): property is ItemProperty {
+    return !!property.name; // preferredName for Property
+}
+
+export function getPropertyKey(property: Property | ItemProperty): string {
+    if(isItemProperty(property)) {
+        return property.name + "___" + property.valueQualifier;
+    }
+    // Property
+    return property.preferredName + "___" + property.dataType;
 }
 
 export function quantityToString(quantity: Quantity): string {
@@ -85,9 +95,9 @@ interface CurrenciesStringValues {
 }
 
 const CURRENCIES_STRING_VALUES: CurrenciesStringValues = {
-    EUR: "€",
-    USD: "$",
-    GBP: "₤"
+    // EUR: "€", // disabled for now
+    // USD: "$",
+    // GBP: "₤"
 }
 
 export function currencyToString(currencyId: string): string {
@@ -95,7 +105,11 @@ export function currencyToString(currencyId: string): string {
 }
 
 export function sortCategories(categories: Category[]): Category[] {
-    return categories.sort((a,b) => (a.preferredName.localeCompare(b.preferredName)));
+    return categories.sort((a, b) => a.preferredName.localeCompare(b.preferredName));
+}
+
+export function sortProperties(properties: Property[]): Property[] {
+    return properties.sort((a, b) => a.preferredName.localeCompare(b.preferredName));
 }
 
 export function scrollToDiv(divId: string): void {

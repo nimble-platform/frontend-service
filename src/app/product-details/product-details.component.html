@@ -89,7 +89,7 @@
                     </span>
                     <span class="order-qty-range">
                         <input type="range" [(ngModel)]="options.quantity" class="form-control-range" 
-                            min="1" [max]="getMaximumQuantity()" [step]="getSteps()" />
+                            min="0" [max]="getMaximumQuantity()" [step]="getSteps()" />
                     </span>
                 </div>
                 <div class="inline-order-group">
@@ -127,7 +127,7 @@
 
             <!-- Action Button -->
             <button class="btn btn-primary pt-2 w-100"
-                (click)="onNegotiate()">
+                (click)="onNegotiate()" [disabled]="options.quantity <= 0">
                 Negotiate & Order
             </button>
         </div>
@@ -146,11 +146,6 @@
                 <div>
                     <button class="btn btn-secondary space-before w-100" (click)="onStartPpap()">
                         Start Ppap
-                    </button>
-                </div>
-                <div>
-                    <button class="btn btn-secondary space-before w-100" (click)="onPreviewTermsAndConditions()">
-                        Preview Terms &amp; Conditions
                     </button>
                 </div>
             </div>

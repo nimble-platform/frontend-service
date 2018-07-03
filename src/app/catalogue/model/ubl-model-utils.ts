@@ -56,6 +56,7 @@ import { copy } from "../../common/utils";
  * Created by suat on 05-Jul-17.
  */
 export class UBLModelUtils {
+
     /**
      * Create a property based on the given property and category parameters.
      *
@@ -71,26 +72,17 @@ export class UBLModelUtils {
      * @returns {ItemProperty}
      */
     public static createAdditionalItemProperty(property: Property, category: Category): ItemProperty {
-        let taxonomyId: string;
-        let code: Code;
+        const code: Code = category 
+            ? new Code(category.id, category.preferredName, category.categoryUri, category.taxonomyId, null) 
+            : new Code(null, null, null, "Custom", null);
 
-        if (category !== null) {
-            code = new Code(category.id, category.preferredName, category.categoryUri, category.taxonomyId, null);
-        }
-        else {
-            code = new Code(null, null, null, "Custom", null);
-        }
-
-        let aip: ItemProperty;
         if (property == null) {
-            aip = new ItemProperty(this.generateUUID(), "", [], [], [], new Array<BinaryObject>(), "STRING", code, null);
-        } else {
-            let valueQualifier = property.dataType;
-            let number;
-            let quantity:Quantity = this.createQuantity();
-            aip = new ItemProperty(property.id, property.preferredName, [''], [number], [quantity], new Array<BinaryObject>(), valueQualifier, code, property.uri);
+            return new ItemProperty(this.generateUUID(), "", [], [], [], 
+                new Array<BinaryObject>(), "STRING", code, null);
         }
-        return aip;
+        return new ItemProperty(property.id, property.preferredName, 
+            property.dataType === "BOOLEAN" ? ["false"] : [], [], [], 
+            new Array<BinaryObject>(), property.dataType, code, property.uri);
     }
 
     public static createCommodityClassification(category: Category): CommodityClassification {

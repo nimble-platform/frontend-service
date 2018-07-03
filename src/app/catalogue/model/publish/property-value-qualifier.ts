@@ -1,1 +1,9 @@
-export type PropertyValueQualifier = "REAL_MEASURE" | "BINARY" | "STRING" | "QUANTITY" | "BOOLEAN";
+export type PropertyValueQualifier = 
+ | "REAL_MEASURE" 
+ | "INT" 
+ | "DOUBLE" 
+ | "NUMBER" 
+ | "BINARY" 
+ | "STRING" 
+ | "QUANTITY" 
+ | "BOOLEAN";

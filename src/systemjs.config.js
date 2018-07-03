@@ -45,7 +45,8 @@
 			'd3-timer': 'npm:d3-timer/build',
 			'd3-time': 'npm:d3-time/build',
 			'd3-path': 'npm:d3-path/build',
-			'd3-ease': 'npm:d3-ease/build'
+			'd3-ease': 'npm:d3-ease/build',
+			'lunr': 'npm:lunr/lunr.js'
 		},
 		packages: {
 			app: {

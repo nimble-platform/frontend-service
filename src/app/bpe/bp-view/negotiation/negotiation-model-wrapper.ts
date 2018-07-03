@@ -1,13 +1,12 @@
 import { CatalogueLine } from "../../../catalogue/model/publish/catalogue-line";
 import { RequestForQuotation } from "../../../catalogue/model/publish/request-for-quotation";
 import { Quotation } from "../../../catalogue/model/publish/quotation";
-import { Price } from "../../../catalogue/model/publish/price";
 import { Amount } from "../../../catalogue/model/publish/amount";
 import { Quantity } from "../../../catalogue/model/publish/quantity";
 import { PAYMENT_MEANS } from "../../../catalogue/model/constants";
 import { UBLModelUtils } from "../../../catalogue/model/ubl-model-utils";
 import { PaymentTermsWrapper } from "../payment-terms-wrapper";
-import { quantityToString, durationToString } from "../../../common/utils";
+import { quantityToString, durationToString, periodToString } from "../../../common/utils";
 import { PriceWrapper } from "../price-wrapper";
 import { Address } from "../../../catalogue/model/publish/address";
 
@@ -94,7 +93,7 @@ export class NegotiationModelWrapper {
     }
 
     public get lineDeliveryPeriodString(): string {
-        return quantityToString(this.lineDeliveryPeriod);
+        return durationToString(this.lineDeliveryPeriod);
     }
 
     public get rfqDeliveryPeriod(): Quantity {
@@ -102,11 +101,11 @@ export class NegotiationModelWrapper {
     }
 
     public get rfqDeliveryPeriodString(): string {
-        return quantityToString(this.rfqDeliveryPeriod);
+        return durationToString(this.rfqDeliveryPeriod);
     }
 
     public get rfqDeliveryPeriodStringIfNegotiating(): string {
-        return this.qtyToStringIfNegotiating(this.rfqDeliveryPeriod, this.rfq.negotiationOptions.deliveryPeriod);
+        return this.durationToStringIfNegotiating(this.rfqDeliveryPeriod, this.rfq.negotiationOptions.deliveryPeriod);
     }
 
     public get quotationDeliveryPeriod(): Quantity {
@@ -130,7 +129,7 @@ export class NegotiationModelWrapper {
     }
 
     public get rfqWarrantyStringIfNegotiating(): string {
-        return this.qtyToStringIfNegotiating(this.rfqWarranty, this.rfq.negotiationOptions.warranty);
+        return this.durationToStringIfNegotiating(this.rfqWarranty, this.rfq.negotiationOptions.warranty);
     }
 
     public get quotationWarranty(): Quantity {
@@ -201,12 +200,12 @@ export class NegotiationModelWrapper {
         return this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.deliveryLocation.address;
     }
 
-    private qtyToStringIfNegotiating(qty: Quantity, negotiating: boolean): string {
+    private durationToStringIfNegotiating(qty: Quantity, negotiating: boolean): string {
         if(!negotiating) {
             return "";
         }
 
-        return quantityToString(qty);
+        return durationToString(qty);
     }
 
     private IfNegotiating(value: string, negotiating: boolean): string {
