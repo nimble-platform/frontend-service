@@ -4,7 +4,7 @@
     <h3>Explore</h3>
         <form class="space-before" (ngSubmit)="Search(model.q, language)" #exSearchForm="ngForm" novalidate>
             <div class="form-group row">
-          		<label for="searchTerm" class="col-2 col-form-label" i18n>Search</label>
+          		<label for="expSearch" class="col-2 col-form-label" i18n>Search</label>
           		<div class="col-10">
           			<div class="input-group">
           			  <input type="text" class="form-control" id="expSearch" required [(ngModel)]="model.q" name="expSearch" #q="ngModel" pattern=".{1,}" placeholder="Product / Service / Company">
@@ -96,13 +96,13 @@
 </div>
 
 <div>
-<ngb-tabset (tabChange)="activeTab($event)">
-    <ngb-tab title="Semantic Query" (click)="previousStateStore()" id="sqp" [disabled]="!SQPConfig">
+<ngb-tabset (tabChange)="activeTab($event)" [destroyOnHide]="true">
+    <ngb-tab title="Semantic Query" id="sqp" [disabled]="!SQPConfig">
         <ng-template ngbTabContent>
             <explore-search-semantic [configSPQ]="SQPConfig" [lang]="language"></explore-search-semantic>
         </ng-template>
     </ngb-tab>
-    <ngb-tab title="Graph Navigation" (click)="preserveStateRestore()" id="graphNav" [disabled]="!visData">
+    <ngb-tab title="Graph Navigation" id="graphNav" [disabled]="!visData">
         <ng-template ngbTabContent>
             <explore-search-details [config]="visData" [lang]="language"></explore-search-details>
             <div [hidden]="!_error_detected_query">

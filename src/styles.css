@@ -3,8 +3,12 @@ body {
     background-color: #fefefe;
 }
 
-button {
+button, .btn {
     cursor: pointer;
+}
+
+button:disabled, .btn:disabled {
+    cursor: not-allowed !important;
 }
 
 textarea {
@@ -24,7 +28,7 @@ textarea {
 }
 
 #loading-bg {
-	position:absolute;
+	position:fixed;
 	left:0;
 	top:0;
 	height:100%;
@@ -64,19 +68,19 @@ textarea {
 }
 
 .space-before {
-    margin-top: 1rem;
+    margin-top: 1rem !important;
 }
 
 .space-after {
-    margin-bottom: 1rem;
+    margin-bottom: 1rem !important;
 }
 
 .space-left {
-    margin-left: 0.5rem;
+    margin-left: 0.5rem !important;
 }
 
 .space-right {
-    margin-right: 0.5rem;
+    margin-right: 0.5rem !important;
 }
 
 /*

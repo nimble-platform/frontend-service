@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { CommonModule } from '@angular/common';
@@ -24,17 +25,19 @@ import { UserService } from './user-mgmt/user.service';
 import { CredentialsService } from './user-mgmt/credentials.service';
 import { DataChannelService } from "./data-channel/data-channel.service";
 import { UnitService } from './common/unit-service';
-import {PrecedingBPDataService} from "./bpe/bp-view/preceding-bp-data-service";
+import { PrecedingBPDataService } from "./bpe/bp-view/preceding-bp-data-service";
+import { TnTService } from './tnt/tnt.service';
 
 @NgModule({
     imports: [
         BrowserModule,
         CommonModule,
+        BrowserAnimationsModule,
         FormsModule,
         HttpModule,
         AppRoutingModule,
         ReactiveFormsModule,
-		AppCommonModule,
+		    AppCommonModule,
         NgbModule.forRoot()
     ],
     declarations: [
@@ -55,7 +58,8 @@ import {PrecedingBPDataService} from "./bpe/bp-view/preceding-bp-data-service";
 		UserService,
 		CredentialsService,
         UnitService,
-        PrecedingBPDataService
+        PrecedingBPDataService,
+        TnTService
     ],
     bootstrap: [
         AppComponent

@@ -235,6 +235,10 @@ export class AppComponent implements OnInit {
 				if (all_rights || purch || sales)
 					this.allowed = true;
 				break;
+      case "track":
+        if (all_rights || sales || purch || monitor)
+          this.allowed = true;
+        break;
 			case "comp":
 				if (all_rights)
 					this.allowed = true;

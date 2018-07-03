@@ -96,11 +96,19 @@ export class BusinessProcessOptions implements OnInit {
             this.selectedTabChanged.next();
         }
         else if(this.nextProcess == "Negotiation"){
-            if(this.processName == "Item_Information_Request") {
+            if(this.processName == "Order"){
+                this.bpDataService.initRfqWithOrder();
+                this.bpDataService.setBpOptionParameters(this.userRole, 'Negotiation','Order');
+            }
+            else if(this.processName == "Transport_Execution_Plan"){
+                this.bpDataService.initRfqWithTransportExecutionPlanRequest();
+                this.bpDataService.setBpOptionParameters(this.userRole, 'Negotiation','Transport Execution Plan');
+            }
+            else if(this.processName == "Item_Information_Request") {
                 this.bpDataService.initRfqWithIir();
                 this.bpDataService.setBpOptionParameters(this.userRole, 'Negotiation', "Item_Information_Request");
-
-            } else {
+            }
+            else {
                 this.bpDataService.resetBpData();
                 this.bpDataService.initRfq();
                 this.bpDataService.setBpOptionParameters(this.userRole, 'Negotiation', null);
@@ -127,15 +135,14 @@ export class BusinessProcessOptions implements OnInit {
             }
         }
         else if(this.nextProcess == "Transport Execution Plan"){
-            if(this.processName == "Item_Information_Request") {
+            if(this.processName == 'Transport_Execution_Plan'){
+                this.bpDataService.initTransportExecutionPlanRequestWithTransportExecutionPlanRequest();
+                this.bpDataService.setBpOptionParameters(this.userRole,'Transport_Execution_Plan','Transport_Execution_Plan');
+                this.selectedTabChanged.next();
+            }
+            else {
                 this.bpDataService.initTransportExecutionPlanRequestWithIir();
                 this.bpDataService.setBpOptionParameters(this.userRole, 'Transport_Execution_Plan', "Item_Information_Request");
-
-            } else {
-                this.bpDataService.resetBpData();
-                this.bpDataService.initTransportExecutionPlanRequest();
-                this.bpDataService.setBpOptionParameters(this.userRole, 'Transport_Execution_Plan', null);
-                this.selectedTabChanged.next();
             }
         }
         else if(this.nextProcess == "Initiate Transport Execution Plan"){

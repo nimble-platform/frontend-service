@@ -37,14 +37,13 @@
 				</a>
 			</li>
 
-			<!--
 			<li class="nav-item" routerLinkActive="active">
 				<a class="nav-link" routerLink="/simple-search">
 					<i class="fa fa-search"></i> <span i18n>Search</span>
 				</a>
 			</li>
-			-->
 
+			<!--
 			<li ngbDropdown class="nav-item dropdown" routerLinkActive="active">
 				<a class="nav-link pointer" id="dropdownMenuSearch" ngbDropdownToggle>
 					<i class="fa fa-search"></i> <span i18n>Search</span>
@@ -58,6 +57,7 @@
 					</a>
 				</div>
 			</li>
+			-->
 
 			<!--
 			<li class="nav-item" *ngIf="debug||roles.indexOf('legal_representative')!=-1" routerLinkActive="active">
@@ -72,6 +72,15 @@
 					<i class="fa fa-edit"></i> <span i18n>Register a Company</span>
 				</a>
 			</li>
+
+			<!-- Tracking and Tracing Component UB Initial Version-->
+			<!-- This Will be adapted by the platform's core dev-team later -->
+			<li class="nav-item" *ngIf="checkRoles('track')" routerLinkActive="active">
+				<a class="nav-link" routerLink="/tnt" routerLinkActive="active">
+					<i class="fa fa-truck"></i> <span>Track</span>
+				</a>
+			</li>
+
 			<li class="nav-item" *ngIf="checkRoles('comp')" routerLinkActive="active">
 				<a class="nav-link" routerLink="/user-mgmt/company-invitation">
 					<i class="fa fa-building"></i> Company Members
