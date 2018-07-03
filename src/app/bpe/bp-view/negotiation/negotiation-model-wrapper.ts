@@ -9,6 +9,7 @@ import { UBLModelUtils } from "../../../catalogue/model/ubl-model-utils";
 import { PaymentTermsWrapper } from "../payment-terms-wrapper";
 import { quantityToString, durationToString } from "../../../common/utils";
 import { PriceWrapper } from "../price-wrapper";
+import { Address } from "../../../catalogue/model/publish/address";
 
 /**
  * Convenient getters (and some setters) for catalogue line, request for quotations and quotations.
@@ -177,23 +178,27 @@ export class NegotiationModelWrapper {
     }
 
     public get rfqPaymentMeans(): string {
-        return this.rfq.paymentMeans.paymentMeansCode.name;
+        return this.rfq.paymentMeans.paymentMeansCode.value;
     }
 
     public set rfqPaymentMeans(paymentMeans: string) {
-        this.rfq.paymentMeans.paymentMeansCode.name = paymentMeans;
+        this.rfq.paymentMeans.paymentMeansCode.value = paymentMeans;
     }
 
     public get quotationPaymentMeans(): string {
-        return this.quotation.paymentMeans.paymentMeansCode.name;
+        return this.quotation.paymentMeans.paymentMeansCode.value;
     }
 
     public set quotationPaymentMeans(paymentMeans: string) {
-        this.quotation.paymentMeans.paymentMeansCode.name = paymentMeans;
+        this.quotation.paymentMeans.paymentMeansCode.value = paymentMeans;
     }
 
     public get rfqPaymentMeansIfNegotiating(): string {
         return this.IfNegotiating(this.rfqPaymentMeans, this.rfq.negotiationOptions.paymentMeans);
+    }
+
+    public get rfqDeliveryAddress(): Address {
+        return this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.deliveryLocation.address;
     }
 
     private qtyToStringIfNegotiating(qty: Quantity, negotiating: boolean): string {

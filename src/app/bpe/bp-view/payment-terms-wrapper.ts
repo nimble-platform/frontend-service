@@ -8,7 +8,8 @@ export class PaymentTermsWrapper {
     private selectedPaymentTerm: number = 0;
 
     constructor(private paymentTerms: PaymentTerms) {
-
+        const index = paymentTerms.tradingTerms.findIndex(term => term.value[0] == "true");
+        this.selectedPaymentTerm = index;
     }
 
     get paymentTerm(): string {

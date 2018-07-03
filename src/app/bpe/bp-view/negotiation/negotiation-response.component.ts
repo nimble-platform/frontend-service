@@ -119,7 +119,6 @@ export class NegotiationResponseComponent implements OnInit {
      */
 
     private hasUpdatedTerms(): boolean {
-        // TODO update this
         if(this.rfq.negotiationOptions.deliveryPeriod) {
             const rfq = this.wrapper.rfqDeliveryPeriod;
             const quotation = this.wrapper.quotationDeliveryPeriod;
