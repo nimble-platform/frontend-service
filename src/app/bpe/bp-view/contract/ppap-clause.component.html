@@ -8,7 +8,7 @@
                     </tr>
                     <tr *ngFor="let document of ppapResponse.requestedDocument">
                         <td class="d-flex">{{document.documentType}}
-                            <button class="btn btn-success ml-auto"
+                            <button class="btn btn-primary ml-auto"
                                     (click)="downloadFile(document)">Download
                             </button>
                         </td>

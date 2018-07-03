@@ -3,40 +3,6 @@
     font-weight: 700;
 }
 
-.nimble-button-secondary {
-    background-color: #464646;
-}
-
-.nimble-button-secondary:hover {
-    background-color: #5c5b5b;
-}
-
-.nimble-button-primary {
-    border-color: #2980b9;
-    background-color: #2980b9;
-}
-
-.nimble-button-primary:hover {
-    background-color: #3090ce;
-}
-
-.nimble-button-primary:disabled {
-    background-color: #909191;
-    border-color: #909191;
-}
-
-.icon-primary {
-    color: #2980b9;
-}
-
-.icon-secondary {
-    color: #a1a1a1;
-}
-
-.icon-red {
-    color: #b93829;
-}
-
 .fixed {
     position:sticky;
     z-index: 999;

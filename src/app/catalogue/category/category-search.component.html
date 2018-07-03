@@ -17,7 +17,7 @@
         <!-- End TODO: All Categories Search -->
                 <input type="text" class="form-control" name="inputCtrl" [(ngModel)]="categoryKeyword" placeholder="Search Category..."/>
                 <div class="input-group-append">
-                    <button type="submit" class="btn btn-primary nimble-button-primary" [disabled]="!categorySearch.form.valid">
+                    <button type="submit" class="btn btn-primary" [disabled]="!categorySearch.form.valid">
                         <i class="fa fa-search"></i> Search Categories
                     </button>
                 </div>
@@ -34,7 +34,7 @@
                 <thead class="thead-light fixed">
                     <th scope="col" style="color: #000;">Classification</th>
                     <th scope="col" style="color: #000;">Name</th>
-                    <th scope="col" colspan="2"><button class="btn btn-secondary nimble-button-secondary" (click)="toggleTreeView()">Browse</button></th>
+                    <th scope="col" colspan="2" class="p-0"><button class="btn btn-secondary mb-1" (click)="toggleTreeView()">Browse</button></th>
                 </thead>
                 <tbody>
                     <tr *ngIf="callback && !submitted && (!categories || categories.length == 0)">
@@ -55,7 +55,7 @@
         </div>
         <!-- Tree view activated -->
         <div *ngIf="treeView" class="border" style="height:55vh; overflow-x: hidden; overflow-y: scroll;">
-            <div style="background-color: #e9ecef;">
+            <div class="fixed" style="background-color: #e9ecef;">
                 <div class="row border">
                     <div class="col-8 pr-0">
                         <div class="thead-light-equivalent">
@@ -64,7 +64,7 @@
                     </div>
                     <div class="col-4 pl-0">
                         <div class="thead-light-equivalent">
-                            <button *ngIf="categories" class="btn btn-secondary nimble-button-secondary float-right my-1 mr-1" (click)="toggleTreeView()">Back to Search Results</button>
+                            <button *ngIf="categories" class="btn btn-secondary float-right my-1 mr-1" (click)="toggleTreeView()">Back to Search Results</button>
                         </div>
                     </div>
                 </div>
@@ -84,7 +84,7 @@
                 <h4 class="font-weight-bold" *ngIf="!selectedCategoryWithDetails">Details</h4>
                 <h4 class="font-weight-bold mr-auto" *ngIf="selectedCategoryWithDetails">Details for {{selectedCategoryWithDetails["preferredName"]}}</h4>
                 <div *ngIf="selectedCategoryWithDetails">
-                    <button *ngIf="findCategoryInArray(selectedCategories, selectedCategoryWithDetails) === -1" class="btn btn-primary nimble-button-primary align-self-start" (click)="selectCategory(selectedCategoryWithDetails)">Add Category</button>
+                    <button *ngIf="findCategoryInArray(selectedCategories, selectedCategoryWithDetails) === -1" class="btn btn-primary align-self-start" (click)="selectCategory(selectedCategoryWithDetails)">Add Category</button>
                     <button *ngIf="findCategoryInArray(selectedCategories, selectedCategoryWithDetails) > -1" class="btn btn-danger align-self-start" (click)="removeCategory(selectedCategoryWithDetails)">Remove Category</button>
                 </div>
             </div>
@@ -144,7 +144,7 @@
         </div>
     </div>
     <div class="col-3 align-self-center">
-        <button class="btn btn-primary nimble-button-primary w-100 inline" [disabled]="categoryService.selectedCategories.length === 0 || navigating" (click)="navigateToPublishingPage()">Continue With Selected Categories</button>
+        <button class="btn btn-primary w-100 inline" [disabled]="categoryService.selectedCategories.length === 0 || navigating" (click)="navigateToPublishingPage()">Continue With Selected Categories</button>
         <div [hidden]="!navigating" class="space-right">
             <img class="space-before" src="assets/form_loader.gif"/>
         </div>    

@@ -86,8 +86,10 @@
                             [disabled]="!isToggleArchivedButtonEnabled()">
                             {{getToggleArchivedButtonText()}}
                         </button>
-                        <h4 class="space-before text-center">You do not have any sales yet</h4>
-                        <p class="space-before text-center">When a customer enquires about your published products, you will see it here.</p>
+                        <div style="margin-top: 20vh">
+                            <h4 class="space-before text-center">You do not have any sales yet</h4>
+                            <p class="space-before text-center">When a customer enquires about your published products, you will see it here.</p>
+                        </div>
                     </ng-container>
                     <!-- Purchases -->
                     <ng-container *ngIf="queryParameters.tab === TABS.PURCHASES">
@@ -96,10 +98,12 @@
                             [disabled]="!isToggleArchivedButtonEnabled()">
                             {{getToggleArchivedButtonText()}}
                         </button>
-                        <h4 class="space-before text-center">You have not bought anything yet</h4>
-                        <p class="space-before text-center">
-                            <a class="btn btn-primary btn-lg" href="#/simple-search" role="button">Search for Products</a>
-                        </p>
+                        <div style="margin-top: 20vh">
+                            <h4 class="space-before text-center">You have not bought anything yet</h4>
+                            <p class="space-before text-center">
+                                <a class="btn btn-primary btn-lg" href="#/simple-search" role="button">Search for Products</a>
+                            </p>
+                        </div>
                     </ng-container>
                 </div>
             </div>

@@ -29,7 +29,7 @@
 	</div>
 	<address-form [group]="registrationForm.controls.address"></address-form>
 	<div>
-		<button class="btn btn-success" type="submit" [disabled]="!registrationForm.valid||isSubmitting">
+		<button class="btn btn-primary" type="submit" [disabled]="!registrationForm.valid||isSubmitting">
 			<span>Register</span>
 		</button>
 		<div [hidden]="!isSubmitting" class="space-before">
