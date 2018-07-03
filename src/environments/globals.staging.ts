@@ -9,7 +9,7 @@ export const debug = false;
 
 export const base_path = "http://nimble-staging.salzburgresearch.at";
 export const ub_base = "http://nimble-staging.salzburgresearch.at/search";
-export const simple_search_endpoint="http://nimble-staging.salzburgresearch.at/marmotta/solr/catalogue2/select";
+export const simple_search_endpoint="http://nimble-staging.salzburgresearch.at/marmotta/solr/catalogue2";
 export const pw_reset_link = "http://nimble-staging.salzburgresearch.at:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
 
 
@@ -17,7 +17,7 @@ export const pw_reset_link = "http://nimble-staging.salzburgresearch.at:8080/aut
 
 // export const base_path = "https://nimble-platform.salzburgresearch.at/nimble";
 // export const ub_path = "https://nimble-platform.salzburgresearch.at/ub-search";
-// export const simple_search_endpoint="https://nimble-platform.salzburgresearch.at/marmotta/solr/catalogue2/select";
+// export const simple_search_endpoint="https://nimble-platform.salzburgresearch.at/marmotta/solr/catalogue2";
 // export const pw_reset_link = "https://nimble-platform.salzburgresearch.at:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
 
 
@@ -25,7 +25,7 @@ export const pw_reset_link = "http://nimble-staging.salzburgresearch.at:8080/aut
 
 // export const base_path = "https://nimble.salzburgresearch.at";
 // export const ub_base = "https://hydra2.ikap.biba.uni-bremen.de:8443";
-// export const simple_search_endpoint="https://nimble-platform.salzburgresearch.at/marmotta/solr/catalogue2/select";
+// export const simple_search_endpoint="https://nimble-platform.salzburgresearch.at/marmotta/solr/catalogue2";
 // export const pw_reset_link = "https://nimble-platform.salzburgresearch.at:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
 
 
@@ -33,7 +33,7 @@ export const pw_reset_link = "http://nimble-staging.salzburgresearch.at:8080/aut
 
 // export const base_path = "http://nimble.uk-south.containers.mybluemix.net";
 // export const ub_base = "https://hydra2.ikap.biba.uni-bremen.de:8443";
-// export const simple_search_endpoint="https://nimble-platform.salzburgresearch.at/marmotta/solr/catalogue2/select";
+// export const simple_search_endpoint="https://nimble-platform.salzburgresearch.at/marmotta/solr/catalogue2";
 // export const pw_reset_link = "https://nimble-platform.salzburgresearch.at:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
 
 
@@ -41,7 +41,7 @@ export const pw_reset_link = "http://nimble-staging.salzburgresearch.at:8080/aut
 
 // export const base_path = "http://localhost:443";
 // export const ub_path = "http://localhost:8090";
-// export const simple_search_endpoint="http://nimble-staging.salzburgresearch.at/marmotta/solr/catalogue2/select";
+// export const simple_search_endpoint="http://nimble-staging.salzburgresearch.at/marmotta/solr/catalogue2";
 // export const pw_reset_link = "http://nimble-staging.salzburgresearch.at:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
 
 
@@ -82,7 +82,7 @@ export const product_vendor_name = "item_manufacturer_name";
 export const product_img = "item_image";
 export const product_cat = "item_commodity_classification";
 export const product_cat_mix = "item_commodity_classification_mix";
-export const product_nonfilter_full = ["id","_version_","item_description","item_price","item_price_currency","item_commodity_classification_code","item_commodity_classification_uri"];
+export const product_nonfilter_full = ["id","_version_","item_description","item_price","item_price_currency","item_commodity_classification_code","item_commodity_classification_uri","item_properties"];
 export const product_nonfilter_regex = ["lmf.","_id"];
 export const product_configurable = [];
 export const product_default = {};

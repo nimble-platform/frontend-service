@@ -4,6 +4,8 @@ import { SimpleSearchService } from './simple-search.service';
 import { Router, ActivatedRoute} from "@angular/router";
 import * as myGlobals from '../globals';
 import {SearchContextService} from "./search-context.service";
+import { Observable } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, switchMap, catchError } from 'rxjs/operators';
 
 @Component({
 	selector: 'simple-search-form',
@@ -35,6 +37,7 @@ export class SimpleSearchFormComponent implements OnInit {
 	cat_levels = [];
 	cat_other = [];
 	cat_other_count = 0;
+	suggestions = [];
 	searchContext = null;
 	model = new Search('');
 	objToSubmit = new Search('');
@@ -109,6 +112,15 @@ export class SimpleSearchFormComponent implements OnInit {
 			}
 		});
 	}
+
+	getSuggestions = (text$: Observable<string>) =>
+    text$.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      switchMap(term =>
+        this.simpleSearchService.getSuggestions(term,this.facetQuery,this.cat)
+      )
+    );
 
 	getCatTree(): void {
 		this.simpleSearchService.get("*",[this.product_cat_mix],[""],1,"")
@@ -314,14 +326,14 @@ export class SimpleSearchFormComponent implements OnInit {
 		this.submitted = true;
 		*/
 		this.objToSubmit = JSON.parse(JSON.stringify(this.model));
-		this.facetQuery = [];
+		//this.facetQuery = [];
 		this.get(this.objToSubmit);
 	}
 
 	callCat(name:string) {
 		this.model.q="*";
 		this.objToSubmit = JSON.parse(JSON.stringify(this.model));
-		this.facetQuery = [];
+		//this.facetQuery = [];
 		this.cat = name;
 		this.get(this.objToSubmit);
 	}
@@ -337,6 +349,11 @@ export class SimpleSearchFormComponent implements OnInit {
 
 	setCat(name:string) {
 		this.cat = name;
+		this.get(this.objToSubmit);
+	}
+
+	resetFilter() {
+		this.facetQuery = [];
 		this.get(this.objToSubmit);
 	}
 
