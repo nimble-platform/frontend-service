@@ -67,9 +67,6 @@ export class SimpleSearchService {
 
 	getSuggestions(query:string, facetQueries: [string], cat: string) {
 		query = query.replace(/[!'()]/g, '');
-		if (query === '') {
-			return ([""]);
-		}
 		const url = `${this.url}/suggest?q=${query}&wt=json`;
 		var full_url = url + "";
 		for (let facetQuery of facetQueries) {
@@ -83,18 +80,20 @@ export class SimpleSearchService {
 		.get(full_url, {headers: this.headers})
 		.pipe(
 			map(response =>
-				this.getSuggestionArray(response)
+				this.getSuggestionArray(response,query)
 			)
 		);
 	}
 
-	getSuggestionArray(res:any): string[] {
-		res = JSON.parse(res._body);
+	getSuggestionArray(res:any, q:string): string[] {
 		var suggestions=[];
-		if (res && res.suggestions && res.suggestions.suggestion_facets && res.suggestions.suggestion_facets[this.product_name]) {
-			for (let sug in res.suggestions.suggestion_facets[this.product_name]) {
-				if (suggestions.length<10)
-				suggestions.push(sug);
+		if (q.length >= 2) {
+			res = JSON.parse(res._body);
+			if (res && res.suggestions && res.suggestions.suggestion_facets && res.suggestions.suggestion_facets[this.product_name]) {
+				for (let sug in res.suggestions.suggestion_facets[this.product_name]) {
+					if (suggestions.length<10)
+					suggestions.push(sug);
+				}
 			}
 		}
 		return suggestions;

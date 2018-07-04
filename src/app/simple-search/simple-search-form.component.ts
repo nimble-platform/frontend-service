@@ -117,8 +117,8 @@ export class SimpleSearchFormComponent implements OnInit {
     text$.pipe(
       debounceTime(200),
       distinctUntilChanged(),
-      switchMap(term => term.length < 2 ? [""]
-        : this.simpleSearchService.getSuggestions(term,this.facetQuery,this.cat)
+      switchMap(term =>
+        this.simpleSearchService.getSuggestions(term,this.facetQuery,this.cat)
       )
     );
 
