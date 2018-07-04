@@ -76,4 +76,11 @@ div.add-image input {
 .value-pill {
     margin: 0.25rem 0.25rem 0.25rem 0;
     height: 2.6rem;
+    flex-basis: 5rem;
+    display: flex;
+    justify-content: space-between;
+}
+
+.boolean-value-input {
+    margin: 1.2rem 0 0 0.2rem;
 }

@@ -1,7 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef } from "@angular/core";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import * as lunr from "lunr";
-import { ItemPropertyDataSourcePipe } from "../item-property-data-source-pipe";
 import { PublishService } from "../publish-and-aip.service";
 import { PublishMode } from "../model/publish/publish-mode";
 import { CatalogueLine } from "../model/publish/catalogue-line";
@@ -23,21 +22,10 @@ import { Property } from "../model/category/property";
 import { ProductWrapper } from "../../common/product-wrapper";
 import { EditPropertyModalComponent } from "./edit-property-modal.component";
 import { Location } from "@angular/common";
-
-interface SelectedProperty {
-    properties: Property[];
-    categories: Category[];
-    selected: boolean;
-    lunrSearchId: string;
-    key: string; // the ref for lunr
-
-    // from Property, used for the lunr search
-    preferredName: string;
-    shortName: string;
-}
+import { SelectedProperty } from "../model/publish/selected-property";
 
 interface SelectedProperties {
-    [key: string]: SelectedProperty
+    [key: string]: SelectedProperty;
 }
 
 interface SelectedPropertiesUpdate {
@@ -50,7 +38,6 @@ interface CategoryProperties {
 
 @Component({
     selector: "product-publish",
-    providers: [ ItemPropertyDataSourcePipe ],
     templateUrl: "./product-publish.component.html",
     styleUrls: ["./product-publish.component.css"]
 })
@@ -83,16 +70,13 @@ export class ProductPublishComponent implements OnInit {
     @ViewChild(EditPropertyModalComponent)
     private editPropertyModal: EditPropertyModalComponent;
 
-
     /*
      * Values for Bulk only
      */
 
-
     /*
      * Values not checked yet
      */
-
 
     @ViewChild('propertyValueType') propertyValueType: ElementRef;
 
@@ -303,7 +287,7 @@ export class ProductPublishComponent implements OnInit {
     }
 
     getProductProperties(): ItemProperty[] {
-        return this.productWrapper.getAllUniqueProperties();;
+        return this.productWrapper.getAllUniqueProperties();
     }
 
     getPrettyName(property: ItemProperty): string {
@@ -346,9 +330,9 @@ export class ProductPublishComponent implements OnInit {
     }
 
     onEditProperty(property: ItemProperty) {
-        this.editPropertyModal.open(property);
+        const key = getPropertyKey(property);
+        this.editPropertyModal.open(property, this.selectedProperties[key]);
     }
-
 
     showCategoriesModal(categoriesModal: any, event: Event) {
         event.preventDefault();

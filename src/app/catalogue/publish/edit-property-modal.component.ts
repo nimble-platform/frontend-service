@@ -3,6 +3,7 @@ import { ItemProperty } from "../model/publish/item-property";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { sanitizePropertyName, copy } from "../../common/utils";
 import { Quantity } from "../model/publish/quantity";
+import { SelectedProperty } from "../model/publish/selected-property";
 
 @Component({
     selector: "edit-property-modal",
@@ -12,6 +13,7 @@ import { Quantity } from "../model/publish/quantity";
 export class EditPropertyModalComponent implements OnInit {
 
     property: ItemProperty;
+    selectedProperty: SelectedProperty;
     
     @ViewChild("modal") modal: ElementRef;
 
@@ -22,7 +24,8 @@ export class EditPropertyModalComponent implements OnInit {
 
     }
 
-    open(property: ItemProperty) {
+    open(property: ItemProperty, selectedProperty: SelectedProperty) {
+        this.selectedProperty = selectedProperty;
         this.property = copy(property);
         this.modalService.open(this.modal).result.then(() => {
             // on OK, update the property with the values
@@ -31,6 +34,19 @@ export class EditPropertyModalComponent implements OnInit {
             property.valueDecimal = this.property.valueDecimal;
             property.valueQuantity = this.property.valueQuantity;
         })
+    }
+
+    getDefinition(): string {
+        if(!this.selectedProperty) {
+            return "No definition."
+        }
+        for(const prop of this.selectedProperty.properties) {
+            if(prop.definition && prop.definition !== "") {
+                return prop.definition;
+            }
+        }
+
+        return "No definition."
     }
 
     getPrettyName(): string {

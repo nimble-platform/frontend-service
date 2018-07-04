@@ -7,7 +7,7 @@
         </div>
         <div class="modal-body">
             <div class="container-fluid">
-                <text-input label="Definition" text="TODO" presentationMode="view">
+                <text-input label="Definition" [text]="getDefinition()" presentationMode="view">
                 </text-input>
                 <text-input label="Data Type" text="{{ property.valueQualifier }}" presentationMode="view">
                 </text-input>
@@ -17,32 +17,32 @@
                     </div>
                     <div class="col-9">
                         <ng-container *ngFor="let value of getValues(); let i = index">
-                            <div [ngSwitch]="property.valueQualifier" class="value-container">
+                            <div [ngSwitch]="property.valueQualifier" class="row value-container">
+                                <div class="{{ i === 0 ? 'col-12' : 'col-9' }}">
+                                    <ng-container *ngSwitchCase="'BINARY'">
+                                        TODO: BINARY
+                                    </ng-container>
+    
+                                    <quantity-input *ngSwitchCase="'QUANTITY'" [quantity]="property.valueQuantity[i]" 
+                                        rowClass="quantity-input">
+                                    </quantity-input>
 
-                                <ng-container *ngSwitchCase="'BINARY'">
-                                    TODO: BINARY
-                                </ng-container>
-
-                                <input *ngSwitchCase="'BOOLEAN'" type="checkbox"
-                                    [checked]="property.value[0] == 'true'"
-                                    (change)="property.value[0] == 'true ' ? newProperty.value[0] = 'false' : newProperty.value[0] = 'true'">
-
-                                <quantity-input *ngSwitchCase="'QUANTITY'" [quantity]="property.valueQuantity[i]" 
-                                    rowClass="">
-                                </quantity-input>
-
-                                <!-- Do not use [(ngModel)]="...", as each change removes focus from the element... -->
-                                <input *ngSwitchCase="'STRING'" type="text" class="value-input"
-                                    [ngModel]="property.value[i]" (change)="setValue(i, $event)">
-                                
-                                <!-- Do not use [(ngModel)]="...", as each change removes focus from the element... -->
-                                <input *ngSwitchDefault type="number" class="value-input"
-                                    [ngModel]="property.valueDecimal[i]" (change)="setValueDecimal(i, $event)">
-                            
-                                <button class="btn btn-danger btn-remove-value" *ngIf="i > 0"
-                                    (click)="onRemoveValue(i)">
-                                    Remove
-                                </button>
+                                    <!-- Do not use [(ngModel)]="...", as each change removes focus from the element... -->
+                                    <input *ngSwitchCase="'STRING'" type="text" 
+                                        class="form-control form-control-sm value-input"
+                                        [ngModel]="property.value[i]" (change)="setValue(i, $event)">
+                                    
+                                    <!-- Do not use [(ngModel)]="...", as each change removes focus from the element... -->
+                                    <input *ngSwitchDefault type="number"
+                                    class="form-control form-control-sm value-input"
+                                        [ngModel]="property.valueDecimal[i]" (change)="setValueDecimal(i, $event)">          
+                                </div>
+                                <div *ngIf="i > 0" class="col-3">
+                                    <button class="btn btn-danger btn-remove-value btn-sm"
+                                        (click)="onRemoveValue(i)">
+                                        Remove
+                                    </button>  
+                                </div>
                             </div>
                         </ng-container>
                         <button class="btn btn-primary add-value-button" (click)="onAddValue()"

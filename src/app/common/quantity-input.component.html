@@ -15,7 +15,7 @@
                 </div>
                 <div *ngIf="!quantityUnits" class="col-5 col-quantity-unit">
                     <input type="text" class="form-control form-control-sm" [(ngModel)]="quantity.unitCode" 
-                        [disabled]="disabled || disableQuantityUnit" [placeholder]="placeholder">
+                        [disabled]="disabled || disableQuantityUnit" [placeholder]="unitPlaceholder">
                 </div>
                 <div *ngIf="quantityUnits" class="col-5 col-quantity-unit">
                     <select class="form-control form-control-sm" [(ngModel)]="quantity.unitCode" [disabled]="disabled || disableQuantityUnit">

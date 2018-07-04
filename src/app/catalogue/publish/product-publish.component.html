@@ -174,12 +174,14 @@
                     <strong>{{ getPrettyName(prop) }}: </strong>
                 </div>
                 <div class="col-9 object-list">
-                    <input type="checkbox" *ngIf="prop.valueQualifier === 'BOOLEAN'">
+                    <input type="checkbox" class="form-check-input boolean-value-input"
+                        [checked]="prop.value[0] == 'true'" *ngIf="prop.valueQualifier === 'BOOLEAN'"
+                        (change)="prop.value[0] == 'true ' ? prop.value[0] = 'false' : prop.value[0] = 'true'">
                     <ng-container *ngIf="prop.valueQualifier !== 'BOOLEAN'">
                         <div *ngFor="let value of getValuesAsString(prop); let i = index"
                             class="bordered value-pill" title="{{ value }}">
                             <span>{{ value }}</span>
-                            <i class="fa fa-times-circle pl-1" placement="right" (click)="onRemoveValue(prop, i)"></i>
+                            <i class="fa fa-times-circle mt-1" placement="right" (click)="onRemoveValue(prop, i)"></i>
                         </div>
                         <button class="btn btn-outline-primary btn-add-category" (click)="onEditProperty(prop)">Edit Value(s)</button>
                     </ng-container>
