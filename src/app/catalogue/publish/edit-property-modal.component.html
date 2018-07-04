@@ -27,7 +27,8 @@
                                     [checked]="property.value[0] == 'true'"
                                     (change)="property.value[0] == 'true ' ? newProperty.value[0] = 'false' : newProperty.value[0] = 'true'">
 
-                                <quantity-input *ngSwitchCase="'QUANTITY'" quantity="property.valueQuantity[valueIndex]">
+                                <quantity-input *ngSwitchCase="'QUANTITY'" [quantity]="property.valueQuantity[i]" 
+                                    rowClass="">
                                 </quantity-input>
 
                                 <!-- Do not use [(ngModel)]="...", as each change removes focus from the element... -->

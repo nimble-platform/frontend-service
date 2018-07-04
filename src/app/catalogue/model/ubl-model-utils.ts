@@ -48,7 +48,7 @@ import {PaymentTerms} from "./publish/payment-terms";
 import {Address} from "./publish/address";
 import {MonetaryTotal} from "./publish/monetary-total";
 import { NegotiationOptions } from "./publish/negotiation-options";
-import { PAYMENT_MEANS } from "./constants";
+import { PAYMENT_MEANS, CURRENCIES } from "./constants";
 import { TradingTerm } from "./publish/trading-term";
 import { copy } from "../../common/utils";
 
@@ -93,7 +93,7 @@ export class UBLModelUtils {
 
     public static createItemLocationQuantity(amount: string): ItemLocationQuantity {
         // price
-        let price: Price = this.createPrice(null);
+        let price: Price = this.createPrice();
         // item location quantity
         let ilq: ItemLocationQuantity = new ItemLocationQuantity(price, []);
         return ilq;
@@ -118,13 +118,17 @@ export class UBLModelUtils {
         let ilq = this.createItemLocationQuantity("");
 
         let catalogueLine = new CatalogueLine(uuid, null, null, false, this.createPeriod(), [], ilq, goodsItem);
+
+        // extra initialization
+        catalogueLine.goodsItem.containingPackage.quantity.unitCode = "item(s)";
+
         return catalogueLine;
     }
 
     public static createOrder():Order {
         let quantity:Quantity = new Quantity(null, "", null);
         let item:Item = this.createItem();
-        let price: Price = this.createPrice(null);
+        let price: Price = this.createPrice();
         let lineItem:LineItem = this.createLineItem(quantity, price, item);
         let orderLine:OrderLine = new OrderLine(lineItem);
         let order = new Order(this.generateUUID(), "", new Period(), new Address(), null, null, null, 
@@ -145,7 +149,7 @@ export class UBLModelUtils {
     public static createPpap(documents:String[]):Ppap {
         let quantity:Quantity = new Quantity(null, "", null);
         let item:Item = this.createItem();
-        let price: Price = this.createPrice(null);
+        let price: Price = this.createPrice();
         let lineItem:LineItem = this.createLineItem(quantity, price, item);
         let ppap = new Ppap(this.generateUUID(), "",documents, null, null, lineItem);
         return ppap;
@@ -177,7 +181,7 @@ export class UBLModelUtils {
     public static createRequestForQuotation(negotiationOptions: NegotiationOptions):RequestForQuotation {
         let quantity:Quantity = new Quantity(null, "", null);
         let item:Item = this.createItem();
-        let price:Price = this.createPrice(null)
+        let price:Price = this.createPrice()
         let lineItem:LineItem = this.createLineItem(quantity, price, item);
         let requestForQuotationLine:RequestForQuotationLine = new RequestForQuotationLine(lineItem);
         let rfq = new RequestForQuotation(this.generateUUID(), [""], false, null, null, new Delivery(),
@@ -196,7 +200,7 @@ export class UBLModelUtils {
     public static createRequestForQuotationWithOrder(order:Order,catalogueLine:CatalogueLine):RequestForQuotation{
         let quantity:Quantity = new Quantity(null, "", null);
         let item:Item = this.createItem();
-        let price:Price = this.createPrice(null);
+        let price:Price = this.createPrice();
         let lineItem:LineItem = this.createLineItem(quantity, price, item);
         let requestForQuotationLine:RequestForQuotationLine = new RequestForQuotationLine(lineItem);
         let rfq = new RequestForQuotation(this.generateUUID(), [""], false, null, null, new Delivery(), 
@@ -226,7 +230,7 @@ export class UBLModelUtils {
     public static createRequestForQuotationWithTransportExecutionPlanRequest(transportExecutionPlanRequest:TransportExecutionPlanRequest,catalogueLine:CatalogueLine):RequestForQuotation{
         let quantity:Quantity = new Quantity(null, "", null);
         let item:Item = this.createItem();
-        let price:Price = this.createPrice(null);
+        let price:Price = this.createPrice();
         let lineItem:LineItem = this.createLineItem(quantity, price, item);
         let requestForQuotationLine:RequestForQuotationLine = new RequestForQuotationLine(lineItem);
         let rfq = new RequestForQuotation(this.generateUUID(), [""], false, null, null, new Delivery(), 
@@ -426,12 +430,8 @@ export class UBLModelUtils {
         return new Package(this.createQuantity(), new Code(), null);
     }
 
-    public static createPrice(amount: string): Price {
-        // create amount
-        if(amount == null) {
-            amount = "";
-        }
-        let amountObj: Amount = this.createAmountWithCurrency("");
+    public static createPrice(): Price {
+        let amountObj: Amount = this.createAmountWithCurrency(CURRENCIES[0]);
         let quantity: Quantity = this.createQuantity();
         let price: Price = new Price(amountObj, quantity);
         return price;
@@ -462,11 +462,11 @@ export class UBLModelUtils {
     }
 
     public static createQuantity():Quantity {
-        return this.createQuantityWithUnit(null);
+        return this.createQuantityWithUnit("item(s)");
     }
 
     public static createQuantityWithUnit(unit:string):Quantity {
-        return new Quantity(null, unit, null);
+        return new Quantity(1, unit, null);
     }
 
     public static createAmount():Amount{
@@ -475,7 +475,7 @@ export class UBLModelUtils {
     }
 
     public static createAmountWithCurrency(currency:string):Amount {
-        return new Amount(null, currency);
+        return new Amount(0, currency);
     }
 
     public static createItemIdentificationWithId(id:string):ItemIdentification {

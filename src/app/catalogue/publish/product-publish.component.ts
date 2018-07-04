@@ -73,14 +73,14 @@ export class ProductPublishComponent implements OnInit {
     catalogueLine: CatalogueLine = null;
     productWrapper: ProductWrapper = null;
     selectedTabSinglePublish: "DETAILS" | "DELIVERY_TRADING" = "DETAILS";
-    categoryModalPropertyKeyword: string = "";
     private selectedProperties: SelectedProperties = {};
     private categoryProperties: CategoryProperties = {};
     private lunrIndex: lunr.Index;
     private currentLunrSearchId: string;
     private selectedPropertiesUpdates: SelectedPropertiesUpdate = {};
     selectedProperty: ItemProperty;
-    @ViewChild(EditPropertyModalComponent) 
+    categoryModalPropertyKeyword: string = "";
+    @ViewChild(EditPropertyModalComponent)
     private editPropertyModal: EditPropertyModalComponent;
 
 
@@ -157,40 +157,6 @@ export class ProductPublishComponent implements OnInit {
      * Event Handlers
      */
 
-    showCategoriesModal(categoriesModal: any, event: Event) {
-        event.preventDefault();
-        this.categoryModalPropertyKeyword = "";
-        this.modalService.open(categoriesModal).result.then(() => {
-            let properties = this.catalogueLine.goodsItem.item.additionalItemProperty;
-
-            Object.keys(this.selectedPropertiesUpdates).forEach(key => {
-                const selected = this.selectedPropertiesUpdates[key];
-                const property = this.selectedProperties[key];
-
-                if(selected) {
-                    // add property if not there
-                    for(let i = 0; i < property.properties.length; i++) {
-                        const prop = property.properties[i];
-                        const category = property.categories[i];
-
-                        properties.push(UBLModelUtils.createAdditionalItemProperty(prop, category));
-                    }
-                } else {
-                    // remove property if there
-                    properties = properties.filter(value => {
-                        const propKey = getPropertyKey(value);
-                        return propKey !== key;
-                    });
-                    this.catalogueLine.goodsItem.item.additionalItemProperty = properties;
-                }
-            });
-            this.selectedPropertiesUpdates = {};
-        })
-        .catch(() => {
-            this.selectedPropertiesUpdates = {};
-        })
-    }
-
     onSelectTab(event: any) {
         event.preventDefault();
         if(event.target.id === "singleUpload") {
@@ -262,20 +228,17 @@ export class ProductPublishComponent implements OnInit {
     }
 
     onPublish() {
-       // TODO
-       throw new Error("TODO");
+        if (this.publishStateService.publishMode === "create") {
+            // publish new product
+            this.publishProduct();
+        } else {
+            // update existing product
+            this.saveEditedProduct();
+        }
     }
-
-    /**
-     * Getters and Setters
-     */
 
     isLoading(): boolean {
         return this.publishStatus.fb_submitted;
-    }
-
-    getProductProperties(): ItemProperty[] {
-        return this.productWrapper.getAllUniqueProperties();;
     }
 
     hasSelectedProperties(): boolean {
@@ -290,10 +253,6 @@ export class ProductPublishComponent implements OnInit {
         return this.categoryProperties[code];
     }
 
-    getPrettyName(property: ItemProperty): string {
-        return sanitizePropertyName(property.name);
-    }
-
     isCategoryPropertySelected(category: Category, property: Property): boolean {
         const key = getPropertyKey(property);
         const selectedProp = this.selectedProperties[key];
@@ -302,6 +261,53 @@ export class ProductPublishComponent implements OnInit {
 
     getPropertyType(property: Property): string {
         return sanitizeDataTypeName(property.dataType);
+    }
+
+    private recomputeSelectedProperties() {
+        const oldSelectedProps = this.selectedProperties;
+        this.selectedProperties = {};
+        const newSelectedProps = this.selectedProperties;
+
+        for(const category of this.selectedCategories) {
+            for(const property of category.properties) {
+                const key = getPropertyKey(property);
+                if(!this.selectedProperties[key]) {
+                    const oldProp = oldSelectedProps[key];
+                    this.selectedProperties[key] = {
+                        categories: [],
+                        properties: [],
+                        lunrSearchId: null,
+                        key,
+                        selected: oldProp && oldProp.selected,
+                        preferredName: property.preferredName,
+                        shortName: property.shortName
+                    };
+                }
+
+                const newProp = this.selectedProperties[key];
+                newProp.properties.push(property);
+                newProp.categories.push(category);
+            }
+        }
+
+        this.lunrIndex = lunr(function() {
+            this.field("preferredName");
+            this.field("shortName");
+            this.ref("key");
+
+            Object.keys(newSelectedProps).forEach(key => {
+                this.add(newSelectedProps[key]);
+            })
+        });
+
+    }
+
+    getProductProperties(): ItemProperty[] {
+        return this.productWrapper.getAllUniqueProperties();;
+    }
+
+    getPrettyName(property: ItemProperty): string {
+        return sanitizePropertyName(property.name);
     }
 
     getValuesAsString(property: ItemProperty): string[] {
@@ -343,6 +349,41 @@ export class ProductPublishComponent implements OnInit {
         this.editPropertyModal.open(property);
     }
 
+
+    showCategoriesModal(categoriesModal: any, event: Event) {
+        event.preventDefault();
+        this.categoryModalPropertyKeyword = "";
+        this.modalService.open(categoriesModal).result.then(() => {
+            let properties = this.catalogueLine.goodsItem.item.additionalItemProperty;
+
+            Object.keys(this.selectedPropertiesUpdates).forEach(key => {
+                const selected = this.selectedPropertiesUpdates[key];
+                const property = this.selectedProperties[key];
+
+                if(selected) {
+                    // add property if not there
+                    for(let i = 0; i < property.properties.length; i++) {
+                        const prop = property.properties[i];
+                        const category = property.categories[i];
+
+                        properties.push(UBLModelUtils.createAdditionalItemProperty(prop, category));
+                    }
+                } else {
+                    // remove property if there
+                    properties = properties.filter(value => {
+                        const propKey = getPropertyKey(value);
+                        return propKey !== key;
+                    });
+                    this.catalogueLine.goodsItem.item.additionalItemProperty = properties;
+                }
+            });
+            this.selectedPropertiesUpdates = {};
+        })
+        .catch(() => {
+            this.selectedPropertiesUpdates = {};
+        })
+    }
+
     onToggleCategoryPropertySelected(category: Category, property: Property) {
         const key = getPropertyKey(property);
         const selectedProp = this.selectedProperties[key];
@@ -364,45 +405,6 @@ export class ProductPublishComponent implements OnInit {
 
         const key = getPropertyKey(property);
         return this.selectedProperties[key].lunrSearchId === this.currentLunrSearchId;
-    }
-
-    private recomputeSelectedProperties() {
-        const oldSelectedProps = this.selectedProperties;
-        this.selectedProperties = {};
-        const newSelectedProps = this.selectedProperties;
-
-        for(const category of this.selectedCategories) {
-            for(const property of category.properties) {
-                const key = getPropertyKey(property);
-                if(!this.selectedProperties[key]) {
-                    const oldProp = oldSelectedProps[key];
-                    this.selectedProperties[key] = {
-                        categories: [],
-                        properties: [],
-                        lunrSearchId: null,
-                        key,
-                        selected: oldProp && oldProp.selected,
-                        preferredName: property.preferredName,
-                        shortName: property.shortName
-                    };
-                }
-
-                const newProp = this.selectedProperties[key];
-                newProp.properties.push(property);
-                newProp.categories.push(category);
-            }
-        }
-
-        this.lunrIndex = lunr(function() {
-            this.field("preferredName");
-            this.field("shortName");
-            this.ref("key");
-
-            Object.keys(newSelectedProps).forEach(key => {
-                this.add(newSelectedProps[key]);
-            })
-        });
-
     }
 
     /*
@@ -637,7 +639,7 @@ export class ProductPublishComponent implements OnInit {
 
         // Make deep copy of catalogue line so we can remove empty fields without disturbing UI model
         // This is required because there is no redirect after publish action
-        let catalogueLineCopy: CatalogueLine = JSON.parse(JSON.stringify(catalogueLine));
+        let catalogueLineCopy: CatalogueLine = copy(catalogueLine);
 
         // splice out properties that are unfilled
         let properties: ItemProperty[] = catalogueLineCopy.goodsItem.item.additionalItemProperty;

@@ -80,7 +80,7 @@
         </button>
     </div>
     
-    <call-status [callStatus]="bulkPublishStatus" [large]="true">
+    <call-status [callStatus]="publishStatus" [large]="true">
     </call-status>
 </div>
 
@@ -170,15 +170,15 @@
     <div class="row space-before" *ngIf="selectedTabSinglePublish === 'DETAILS'">
         <div class="col-12">
             <div class="row" *ngFor="let prop of getProductProperties()">
-                <div class="col-2">
+                <div class="col-3">
                     <strong>{{ getPrettyName(prop) }}: </strong>
                 </div>
-                <div class="col-10 object-list">
+                <div class="col-9 object-list">
                     <input type="checkbox" *ngIf="prop.valueQualifier === 'BOOLEAN'">
                     <ng-container *ngIf="prop.valueQualifier !== 'BOOLEAN'">
                         <div *ngFor="let value of getValuesAsString(prop); let i = index"
-                            class="bordered my-1 ml-1" title="{{ value }}">
-                            <small class="p-0">{{ value }}</small>
+                            class="bordered value-pill" title="{{ value }}">
+                            <span>{{ value }}</span>
                             <i class="fa fa-times-circle pl-1" placement="right" (click)="onRemoveValue(prop, i)"></i>
                         </div>
                         <button class="btn btn-outline-primary btn-add-category" (click)="onEditProperty(prop)">Edit Value(s)</button>
@@ -193,19 +193,20 @@
             </div>
             <div *ngIf="hasSelectedProperties()">
                 <a href class="btn btn-link" (click)="showCategoriesModal(categoriesModal, $event)">Add more properties.</a>
-            </div>
+            </div>                    
         </div>
     </div>
 
     <!-- Delivery & Trading Tab -->
     <div class="row space-before" *ngIf="selectedTabSinglePublish === 'DELIVERY_TRADING'">
         <div class="col-12">
-            Delivery & Trading
+            <product-delivery-trading [catalogueLine]="catalogueLine" [disabled]="isLoading()">
+            </product-delivery-trading>
         </div>
     </div>
 
-    
-    <div class="row actions-row" *ngIf="!isReadOnly()">
+    <!-- Actions -->
+    <div class="row actions-row">
         <div class="col-7 call-status-col"><call-status [callStatus]="publishStatus"></call-status></div>
         <div class="col-2">
             <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">
@@ -214,7 +215,7 @@
         </div>
         <div class="col-3">
             <button class="btn btn-primary action" [disabled]="isLoading()" (click)="onPublish()">
-                Publish / Save
+                {{ publishStateService.publishMode === "create" ? "Publish" : "Save"  }}
             </button>
         </div>
     </div>
@@ -260,7 +261,7 @@
             <button type="button" class="btn btn-primary" (click)="c('ok')">OK</button>
         </div>
     </ng-template>
-
+    
     <!-- Edit Property Value(s) Modal -->
     <edit-property-modal >
     </edit-property-modal>

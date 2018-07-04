@@ -34,7 +34,6 @@
 }
 
 .add-image .delete-image {
-    color: red;
     cursor: pointer;
     position: absolute;
     right: 0.2rem;
@@ -72,4 +71,9 @@ div.add-image input {
     margin: 0;
     left: 0;
     top: 0;
+}
+
+.value-pill {
+    margin: 0.25rem 0.25rem 0.25rem 0;
+    height: 2.6rem;
 }
