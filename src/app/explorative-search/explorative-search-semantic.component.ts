@@ -360,20 +360,24 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
     }
 
     removeSelection(name) {
-            let indexToRemove = this.tableResult['columns'].findIndex(i => i === name);
-            if (indexToRemove === 0) {
-                this.tableResult = {};
-            } else if (indexToRemove > -1) {
+
+        let tableIndexToRemove = this.tableResult['columns'].findIndex(i => i === name);
+        let propIndexToRemove = this.sparqlJSON['parameters'].findIndex(i => i === name);
+            if (tableIndexToRemove === 0 && this.tableResult['columns'].length === 1) {
+                this.tableResult['uuids'] = [];
+            }
+            if (propIndexToRemove > -1) {
                 this.tableResult['rows'].forEach(entry => {
-                    entry.splice(indexToRemove, 1);
+                    entry.splice(tableIndexToRemove, 1);
                 });
-                let removePropURL = this.sparqlJSON['parametersURL'][indexToRemove];
-                this.tableResult['columns'].splice(indexToRemove, 1);
+                this.tableResult['columns'].splice(tableIndexToRemove, 1);
+
                 // remove selection from SPARQL
-                this.sparqlJSON['parameters'].splice(indexToRemove, 1);
-                this.sparqlJSON['parametersURL'].splice(indexToRemove, 1);
-                this.sparqlJSON['parametersIncludingPath'].splice(indexToRemove, 1);
-                this.sparqlJSON['propertySources'].splice(indexToRemove, 1);
+                this.sparqlJSON['parameters'].splice(propIndexToRemove, 1);
+                let removePropURL = this.sparqlJSON['parameters'][propIndexToRemove];
+                this.sparqlJSON['parametersURL'].splice(propIndexToRemove, 1);
+                this.sparqlJSON['parametersIncludingPath'].splice(propIndexToRemove, 1);
+                this.sparqlJSON['propertySources'].splice(propIndexToRemove, 1);
                 let filterIndexToRemove = this.sparqlJSON['filters'].findIndex(el => el.property === removePropURL);
                 if (filterIndexToRemove > -1) {
                     this.sparqlJSON['filters'].splice(filterIndexToRemove);
@@ -407,7 +411,7 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
     getSparqlOptionalSelect(indexUUID) {
         console.log(indexUUID);
         let optSPARQLQuery = {uuid: encodeURIComponent(this.tableResult.uuids[indexUUID].trim()), 'language': this.lang};
-        console.log(optSPARQLQuery);
+        // console.log(optSPARQLQuery);
         this.expSearch.getOptionalSelect(optSPARQLQuery)
             .then(res => {
                 this.sparqlSelectedOption = res;
