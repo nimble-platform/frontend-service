@@ -1,0 +1,62 @@
+<!-- Price -->
+<div class="row">
+    <div class="col-3">
+        <strong>Price: </strong>
+    </div>
+    <div class="col-3">
+        <input type="number" class="form-control form-control-sm"
+            [(ngModel)]="catalogueLine.requiredItemLocationQuantity.price.priceAmount.value">
+    </div>
+    <div class="col-1">
+        <select class="form-control form-control-sm"
+            [(ngModel)]="catalogueLine.requiredItemLocationQuantity.price.priceAmount.currencyID">
+            <option *ngFor="let currency of currencies" [value]="currency">
+                {{ currency }}
+            </option>
+        </select>
+    </div>
+    <div class="col-5">
+        <quantity-input label="per" labelClass="col-1" valueClass="col-11"
+            [quantity]="catalogueLine.requiredItemLocationQuantity.price.baseQuantity">
+        </quantity-input>            
+    </div>
+</div>
+
+<!-- Free Sample -->
+<div class="row space-before">
+    <div class="col-3">
+        <strong>Free Sample: </strong>
+    </div>
+    <div class="col-9">
+        <input type="checkbox" [(ngModel)]="catalogueLine.freeOfChargeIndicator">
+    </div>
+</div>
+
+<hr>
+
+<!-- Incoterms -->
+<options-input label="Incoterms" [disabled]="disabled" rowClass="space-before"
+    [options]="INCOTERMS" [(selected)]="catalogueLine.goodsItem.deliveryTerms.incoterms">
+</options-input>
+
+<!-- Delivery Period -->
+<quantity-input label="Delivery Period" [disabled]="disabled" quantityType="time_quantity" rowClass="space-before"
+    [quantity]="catalogueLine.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure">
+</quantity-input>
+
+<!-- Special Terms -->
+<text-input label="Special Terms" [disabled]="disabled" rowClass="space-before"
+    [(text)]="catalogueLine.goodsItem.deliveryTerms.specialTerms">
+</text-input>
+
+<hr>
+
+<!-- Packaging Quantity -->
+<quantity-input label="Quantity Per Package" [disabled]="disabled" rowClass="space-before"
+    [quantity]="catalogueLine.goodsItem.containingPackage.quantity">
+</quantity-input>
+
+<!-- Packaging Type -->
+<text-input label="Packaging Type" [disabled]="disabled" rowClass="space-before" [rows]="1"
+    valueTextClass="form-control-sm" [(text)]="catalogueLine.goodsItem.containingPackage.packagingTypeCode.value">
+</text-input>

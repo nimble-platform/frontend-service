@@ -53,11 +53,11 @@
 <hr>
 
 <text-input presentationMode="edit" [disabled]="isReadOnly() || userRole === 'seller'"
-    label="Note" [text]="order.note" labelClass="col-2" valueClass="col-10">
+    label="Note" [(text)]="order.note" labelClass="col-2" valueClass="col-10">
 </text-input>
 
 <text-input presentationMode="edit" *ngIf="orderResponse" [disabled]="isReadOnly()"
-    label="Producer Node" [text]="orderResponse.note" labelClass="col-2" valueClass="col-10" rowClass="space-before">
+    label="Producer Node" [(text)]="orderResponse.note" labelClass="col-2" valueClass="col-10" rowClass="space-before">
 </text-input>
 
 <hr>

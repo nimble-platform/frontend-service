@@ -6,7 +6,7 @@ import { BPDataService } from "../bpe/bp-view/bp-data-service";
 import { CatalogueLine } from "../catalogue/model/publish/catalogue-line";
 import { BpWorkflowOptions } from "../bpe/model/bp-workflow-options";
 import { ProcessType } from "../bpe/model/process-type";
-import { ProductWrapper } from "./product-wrapper";
+import { ProductWrapper } from "../common/product-wrapper";
 import { Item } from "../catalogue/model/publish/item";
 import { PriceWrapper } from "../bpe/bp-view/price-wrapper";
 import { getMaximumQuantityForPrice, getStepForPrice } from "../common/utils";
@@ -88,10 +88,6 @@ export class ProductDetailsComponent implements OnInit {
 
     onStartPpap(): void {
         this.navigateToBusinessProcess("Ppap");
-    }
-
-    onPreviewTermsAndConditions(): void {
-        console.log("PreviewTermsAndConditions clicked!");
     }
 
     private navigateToBusinessProcess(targetProcess: ProcessType): void {

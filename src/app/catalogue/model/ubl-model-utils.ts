@@ -48,7 +48,7 @@ import {PaymentTerms} from "./publish/payment-terms";
 import {Address} from "./publish/address";
 import {MonetaryTotal} from "./publish/monetary-total";
 import { NegotiationOptions } from "./publish/negotiation-options";
-import { PAYMENT_MEANS } from "./constants";
+import { PAYMENT_MEANS, CURRENCIES } from "./constants";
 import { TradingTerm } from "./publish/trading-term";
 import { copy } from "../../common/utils";
 
@@ -56,6 +56,7 @@ import { copy } from "../../common/utils";
  * Created by suat on 05-Jul-17.
  */
 export class UBLModelUtils {
+
     /**
      * Create a property based on the given property and category parameters.
      *
@@ -71,26 +72,17 @@ export class UBLModelUtils {
      * @returns {ItemProperty}
      */
     public static createAdditionalItemProperty(property: Property, category: Category): ItemProperty {
-        let taxonomyId: string;
-        let code: Code;
+        const code: Code = category 
+            ? new Code(category.id, category.preferredName, category.categoryUri, category.taxonomyId, null) 
+            : new Code(null, null, null, "Custom", null);
 
-        if (category !== null) {
-            code = new Code(category.id, category.preferredName, category.categoryUri, category.taxonomyId, null);
-        }
-        else {
-            code = new Code(null, null, null, "Custom", null);
-        }
-
-        let aip: ItemProperty;
         if (property == null) {
-            aip = new ItemProperty(this.generateUUID(), "", [], [], [], new Array<BinaryObject>(), "STRING", code, null);
-        } else {
-            let valueQualifier = property.dataType;
-            let number;
-            let quantity:Quantity = this.createQuantity();
-            aip = new ItemProperty(property.id, property.preferredName, [''], [number], [quantity], new Array<BinaryObject>(), valueQualifier, code, property.uri);
+            return new ItemProperty(this.generateUUID(), "", [], [], [], 
+                new Array<BinaryObject>(), "STRING", code, null);
         }
-        return aip;
+        return new ItemProperty(property.id, property.preferredName, 
+            property.dataType === "BOOLEAN" ? ["false"] : [], [], [], 
+            new Array<BinaryObject>(), property.dataType, code, property.uri);
     }
 
     public static createCommodityClassification(category: Category): CommodityClassification {
@@ -101,7 +93,7 @@ export class UBLModelUtils {
 
     public static createItemLocationQuantity(amount: string): ItemLocationQuantity {
         // price
-        let price: Price = this.createPrice(null);
+        let price: Price = this.createPrice();
         // item location quantity
         let ilq: ItemLocationQuantity = new ItemLocationQuantity(price, []);
         return ilq;
@@ -126,13 +118,17 @@ export class UBLModelUtils {
         let ilq = this.createItemLocationQuantity("");
 
         let catalogueLine = new CatalogueLine(uuid, null, null, false, this.createPeriod(), [], ilq, goodsItem);
+
+        // extra initialization
+        catalogueLine.goodsItem.containingPackage.quantity.unitCode = "item(s)";
+
         return catalogueLine;
     }
 
     public static createOrder():Order {
         let quantity:Quantity = new Quantity(null, "", null);
         let item:Item = this.createItem();
-        let price: Price = this.createPrice(null);
+        let price: Price = this.createPrice();
         let lineItem:LineItem = this.createLineItem(quantity, price, item);
         let orderLine:OrderLine = new OrderLine(lineItem);
         let order = new Order(this.generateUUID(), "", new Period(), new Address(), null, null, null, 
@@ -153,7 +149,7 @@ export class UBLModelUtils {
     public static createPpap(documents:String[]):Ppap {
         let quantity:Quantity = new Quantity(null, "", null);
         let item:Item = this.createItem();
-        let price: Price = this.createPrice(null);
+        let price: Price = this.createPrice();
         let lineItem:LineItem = this.createLineItem(quantity, price, item);
         let ppap = new Ppap(this.generateUUID(), "",documents, null, null, lineItem);
         return ppap;
@@ -185,7 +181,7 @@ export class UBLModelUtils {
     public static createRequestForQuotation(negotiationOptions: NegotiationOptions):RequestForQuotation {
         let quantity:Quantity = new Quantity(null, "", null);
         let item:Item = this.createItem();
-        let price:Price = this.createPrice(null)
+        let price:Price = this.createPrice()
         let lineItem:LineItem = this.createLineItem(quantity, price, item);
         let requestForQuotationLine:RequestForQuotationLine = new RequestForQuotationLine(lineItem);
         let rfq = new RequestForQuotation(this.generateUUID(), [""], false, null, null, new Delivery(),
@@ -204,7 +200,7 @@ export class UBLModelUtils {
     public static createRequestForQuotationWithOrder(order:Order,catalogueLine:CatalogueLine):RequestForQuotation{
         let quantity:Quantity = new Quantity(null, "", null);
         let item:Item = this.createItem();
-        let price:Price = this.createPrice(null);
+        let price:Price = this.createPrice();
         let lineItem:LineItem = this.createLineItem(quantity, price, item);
         let requestForQuotationLine:RequestForQuotationLine = new RequestForQuotationLine(lineItem);
         let rfq = new RequestForQuotation(this.generateUUID(), [""], false, null, null, new Delivery(), 
@@ -234,7 +230,7 @@ export class UBLModelUtils {
     public static createRequestForQuotationWithTransportExecutionPlanRequest(transportExecutionPlanRequest:TransportExecutionPlanRequest,catalogueLine:CatalogueLine):RequestForQuotation{
         let quantity:Quantity = new Quantity(null, "", null);
         let item:Item = this.createItem();
-        let price:Price = this.createPrice(null);
+        let price:Price = this.createPrice();
         let lineItem:LineItem = this.createLineItem(quantity, price, item);
         let requestForQuotationLine:RequestForQuotationLine = new RequestForQuotationLine(lineItem);
         let rfq = new RequestForQuotation(this.generateUUID(), [""], false, null, null, new Delivery(), 
@@ -434,12 +430,8 @@ export class UBLModelUtils {
         return new Package(this.createQuantity(), new Code(), null);
     }
 
-    public static createPrice(amount: string): Price {
-        // create amount
-        if(amount == null) {
-            amount = "";
-        }
-        let amountObj: Amount = this.createAmountWithCurrency("");
+    public static createPrice(): Price {
+        let amountObj: Amount = this.createAmountWithCurrency(CURRENCIES[0]);
         let quantity: Quantity = this.createQuantity();
         let price: Price = new Price(amountObj, quantity);
         return price;
@@ -470,11 +462,11 @@ export class UBLModelUtils {
     }
 
     public static createQuantity():Quantity {
-        return this.createQuantityWithUnit(null);
+        return this.createQuantityWithUnit("item(s)");
     }
 
     public static createQuantityWithUnit(unit:string):Quantity {
-        return new Quantity(null, unit, null);
+        return new Quantity(1, unit, null);
     }
 
     public static createAmount():Amount{
@@ -483,7 +475,7 @@ export class UBLModelUtils {
     }
 
     public static createAmountWithCurrency(currency:string):Amount {
-        return new Amount(null, currency);
+        return new Amount(0, currency);
     }
 
     public static createItemIdentificationWithId(id:string):ItemIdentification {

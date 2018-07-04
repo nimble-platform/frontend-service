@@ -1,5 +1,5 @@
 import { Component, Input } from "@angular/core";
-import { ProductWrapper } from "./product-wrapper";
+import { ProductWrapper } from "../common/product-wrapper";
 import { CommodityClassification } from "../catalogue/model/publish/commodity-classification";
 import { ItemProperty } from "../catalogue/model/publish/item-property";
 import { BpWorkflowOptions } from "../bpe/model/bp-workflow-options";

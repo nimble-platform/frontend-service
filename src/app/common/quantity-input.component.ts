@@ -21,6 +21,7 @@ export class QuantityInputComponent implements OnInit {
     @Input() rowClass: string = "";
     @Input() valueClass: string; // set based on label
     @Input() placeholder: string = "Enter value here...";
+    @Input() unitPlaceholder: string = "Unit";
     
     @Input() quantity: Quantity;
     @Input() quantityUnits?: string[];

@@ -1,0 +1,1 @@
+export type PublishMode = "create" | "edit"

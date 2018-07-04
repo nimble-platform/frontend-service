@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { ProductDetailsTab } from "./model/product-details-tab";
-import { ProductWrapper } from "./product-wrapper";
+import { ProductWrapper } from "../common/product-wrapper";
 import { BpWorkflowOptions } from "../bpe/model/bp-workflow-options";
 
 @Component({

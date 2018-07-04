@@ -7,6 +7,7 @@ import {Category} from "../model/category/category";
 import * as myGlobals from '../../globals';
 import {Code} from "../model/publish/code";
 import { ParentCategories } from '../model/category/parent-categories';
+import { sortCategories } from '../../common/utils';
 
 @Injectable()
 export class CategoryService {
@@ -118,6 +119,7 @@ export class CategoryService {
         // Only add if category is not null and doesn't exist in selected categories
         if (category != null && this.selectedCategories.findIndex(c => c.id == category.id) == -1) {
             this.selectedCategories.push(category);
+            sortCategories(this.selectedCategories);
         }
     }
 
@@ -144,7 +146,7 @@ export class CategoryService {
     }
 
     resetSelectedCategories():void {
-        this.selectedCategories.length = 0;
+        this.selectedCategories.splice(0, this.selectedCategories.length);
     }
 
     resetData():void {

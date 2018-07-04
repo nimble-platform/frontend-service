@@ -1,0 +1,60 @@
+<ng-template #modal let-c="close" let-d="dismiss">
+        <div class="modal-header">
+            <h5 class="modal-title" id="modal-basic-title">{{ getPrettyName() }}</h5>
+            <button type="button" class="close" aria-label="Close" (click)="d('cross')">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="container-fluid">
+                <text-input label="Definition" [text]="getDefinition()" presentationMode="view">
+                </text-input>
+                <text-input label="Data Type" text="{{ property.valueQualifier }}" presentationMode="view">
+                </text-input>
+                <div class="row">
+                    <div class="col-3">
+                        <strong>Value(s):</strong>
+                    </div>
+                    <div class="col-9">
+                        <ng-container *ngFor="let value of getValues(); let i = index">
+                            <div [ngSwitch]="property.valueQualifier" class="row value-container">
+                                <div class="{{ i === 0 ? 'col-12' : 'col-9' }}">
+                                    <ng-container *ngSwitchCase="'BINARY'">
+                                        TODO: BINARY
+                                    </ng-container>
+    
+                                    <quantity-input *ngSwitchCase="'QUANTITY'" [quantity]="property.valueQuantity[i]" 
+                                        rowClass="quantity-input">
+                                    </quantity-input>
+
+                                    <!-- Do not use [(ngModel)]="...", as each change removes focus from the element... -->
+                                    <input *ngSwitchCase="'STRING'" type="text" 
+                                        class="form-control form-control-sm value-input"
+                                        [ngModel]="property.value[i]" (change)="setValue(i, $event)">
+                                    
+                                    <!-- Do not use [(ngModel)]="...", as each change removes focus from the element... -->
+                                    <input *ngSwitchDefault type="number"
+                                    class="form-control form-control-sm value-input"
+                                        [ngModel]="property.valueDecimal[i]" (change)="setValueDecimal(i, $event)">          
+                                </div>
+                                <div *ngIf="i > 0" class="col-3">
+                                    <button class="btn btn-danger btn-remove-value btn-sm"
+                                        (click)="onRemoveValue(i)">
+                                        Remove
+                                    </button>  
+                                </div>
+                            </div>
+                        </ng-container>
+                        <button class="btn btn-primary add-value-button" (click)="onAddValue()"
+                            *ngIf="property.valueQualifier !== 'BOOLEAN'">
+                            Add Value
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="d('cancel')">Cancel</button>
+            <button type="button" class="btn btn-primary" (click)="c('ok')">OK</button>
+        </div>
+    </ng-template>

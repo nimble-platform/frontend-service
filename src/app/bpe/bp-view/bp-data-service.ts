@@ -33,7 +33,6 @@ import { PaymentMeans } from "../../catalogue/model/publish/payment-means";
 import { Code } from "../../catalogue/model/publish/code";
 import { PaymentTerms } from "../../catalogue/model/publish/payment-terms";
 import { copy, getPropertyKey } from "../../common/utils";
-import { ProductWrapper } from "../../product-details/product-wrapper";
 import { NegotiationModelWrapper } from "./negotiation/negotiation-model-wrapper";
 
 /**
@@ -250,11 +249,13 @@ export class BPDataService{
         let userId = this.cookieService.get('user_id');
         return this.userService.getSettings(userId).then(settings => {
             // we can't copy because those are 2 different types of addresses.
-            this.requestForQuotation.delivery.deliveryAddress.country.name = settings.address.country;
-            this.requestForQuotation.delivery.deliveryAddress.postalZone = settings.address.postalCode;
-            this.requestForQuotation.delivery.deliveryAddress.cityName = settings.address.cityName;
-            this.requestForQuotation.delivery.deliveryAddress.buildingNumber = settings.address.buildingNumber;
-            this.requestForQuotation.delivery.deliveryAddress.streetName = settings.address.streetName;
+            const lineItem = this.requestForQuotation.requestForQuotationLine[0].lineItem;
+            const address = lineItem.deliveryTerms.deliveryLocation.address;
+            address.country.name = settings.address.country;
+            address.postalZone = settings.address.postalCode;
+            address.cityName = settings.address.cityName;
+            address.buildingNumber = settings.address.buildingNumber;
+            address.streetName = settings.address.streetName;
         });
     }
 
@@ -318,7 +319,8 @@ export class BPDataService{
         this.modifiedCatalogueLines = copy(this.catalogueLines);
         this.order = UBLModelUtils.createOrder();
         this.order.orderLine[0].lineItem = copyQuotation.quotationLine[0].lineItem;
-        this.order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address = copyRfq.delivery.deliveryAddress;
+        const copyLineItem = copyRfq.requestForQuotationLine[0].lineItem;
+        this.order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address = copyLineItem.deliveryTerms.deliveryLocation.address;
         this.order.paymentMeans = copyQuotation.paymentMeans;
         this.order.paymentTerms = copyQuotation.paymentTerms;
 
@@ -335,7 +337,8 @@ export class BPDataService{
         this.modifiedCatalogueLines = copy(this.catalogueLines);
         this.order = UBLModelUtils.createOrder();
         this.order.orderLine[0].lineItem = copyRfq.requestForQuotationLine[0].lineItem;
-        this.order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address = copyRfq.delivery.deliveryAddress;
+        const copyLineItem = copyRfq.requestForQuotationLine[0].lineItem;
+        this.order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address = copyLineItem.deliveryTerms.deliveryLocation.address;
         this.order.paymentMeans = copyRfq.paymentMeans;
         this.order.paymentTerms = copyRfq.paymentTerms;
 

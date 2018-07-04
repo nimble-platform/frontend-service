@@ -6,7 +6,7 @@ import { CatalogueLine } from "../../catalogue/model/publish/catalogue-line";
 import { BPDataService } from "./bp-data-service";
 import { Subscription } from "rxjs";
 import { ProductBpStepStatus } from "./product-bp-step-status";
-import { ProductWrapper } from "../../product-details/product-wrapper";
+import { ProductWrapper } from "../../common/product-wrapper";
 import { BpWorkflowOptions } from "../model/bp-workflow-options";
 import { ProcessType } from "../model/process-type";
 import { ProductBpStep } from "./product-bp-step";

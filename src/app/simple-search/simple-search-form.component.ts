@@ -4,6 +4,8 @@ import { SimpleSearchService } from './simple-search.service';
 import { Router, ActivatedRoute} from "@angular/router";
 import * as myGlobals from '../globals';
 import {SearchContextService} from "./search-context.service";
+import { Observable } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, switchMap, catchError } from 'rxjs/operators';
 
 @Component({
 	selector: 'simple-search-form',
@@ -19,14 +21,23 @@ export class SimpleSearchFormComponent implements OnInit {
 	product_img = myGlobals.product_img;
 	product_nonfilter_full = myGlobals.product_nonfilter_full;
 	product_nonfilter_regex = myGlobals.product_nonfilter_regex;
+	product_cat = myGlobals.product_cat;
+	product_cat_mix = myGlobals.product_cat_mix;
 
 	submitted = false;
 	callback = false;
 	error_detc = false;
+	showOther = false;
 	size = 0;
 	page = 1;
 	start = 0;
 	end = 0;
+	cat = "";
+	cat_level = -2;
+	cat_levels = [];
+	cat_other = [];
+	cat_other_count = 0;
+	suggestions = [];
 	searchContext = null;
 	model = new Search('');
 	objToSubmit = new Search('');
@@ -49,6 +60,7 @@ export class SimpleSearchFormComponent implements OnInit {
 			let q = params['q'];
 			let fq = params['fq'];
 			let p = params['p'];
+			let cat = params['cat'];
 			if(p){
 				this.noP = false;
 			}
@@ -64,45 +76,164 @@ export class SimpleSearchFormComponent implements OnInit {
 			}
 			else
 				p = 1;
+			if (cat) {
+				this.cat = cat;
+			}
+			else
+				this.cat = "";
 			if (searchContext == null) {
 				this.searchContextService.clearSearchContext();
 			} else {
 				this.searchContext = searchContext;
 			}
 			if (q)
-				this.getCall(q,fq,p);
+				this.getCall(q,fq,p,cat);
+			else {
+				this.callback = false;
+				this.error_detc = false;
+				this.submitted = false;
+		    this.model.q='';
+				this.objToSubmit.q='';
+				this.facetQuery=fq;
+				this.page=p;
+				this.getCatTree();
+			}
 		});
     }
 
 	get(search: Search): void {
-		if(this.searchContext && this.searchContext == 'orderbp'){
-            this.router.navigate(['/simple-search'], { queryParams : { q: search.q, fq:'item_commodity_classification%3A%22Transport Service%22', p: this.page, searchContext: this.searchContext } });
-		}
-		else{
-            this.router.navigate(['/simple-search'], { queryParams : { q: search.q, fq: encodeURIComponent(this.facetQuery.join('_SEP_')), p: this.page, searchContext: this.searchContext } });
-		}
-
+		this.router.navigate(['/simple-search'], {
+			queryParams: {
+				q: search.q,
+				fq: encodeURIComponent(this.facetQuery.join('_SEP_')),
+				p: this.page,
+				searchContext: this.searchContext,
+				cat: this.cat
+			}
+		});
 	}
 
-	getCall(q:string, fq:any, p:number) {
+	getSuggestions = (text$: Observable<string>) =>
+    text$.pipe(
+      debounceTime(200),
+      distinctUntilChanged(),
+      switchMap(term =>
+        this.simpleSearchService.getSuggestions(term,this.facetQuery,this.cat)
+      )
+    );
+
+	getCatTree(): void {
+		this.simpleSearchService.get("*",[this.product_cat_mix],[""],1,"")
+		.then(res => {
+			for (let facet in res.facet_counts.facet_fields) {
+				if (facet == this.product_cat_mix) {
+					this.buildCatTree(res.facet_counts.facet_fields[facet]);
+				}
+			}
+		});
+	}
+
+	buildCatTree(mix: any): void {
+		this.cat_levels = [[],[],[],[]];
+		this.cat_other = [];
+		this.cat_other_count = 0;
+		for (let facet_inner in mix) {
+			var count = mix[facet_inner];
+			var split_idx = facet_inner.lastIndexOf(":");
+			var ontology = facet_inner.substr(0,split_idx);
+			var name = facet_inner.substr(split_idx+1);
+			if (ontology.indexOf("http://www.nimble-project.org/resource/eclass/") == -1) {
+				this.cat_other.push({"name":name,"count":count});
+				this.cat_other_count += count;
+			}
+			else {
+				var eclass_idx = parseInt(ontology.split("http://www.nimble-project.org/resource/eclass/")[1]);
+				if (eclass_idx%1000000==0) {
+					this.cat_levels[0].push({"name":name,"count":count});
+				}
+				else if(eclass_idx%10000==0) {
+					this.cat_levels[1].push({"name":name,"count":count});
+				}
+				else if(eclass_idx%100==0) {
+					this.cat_levels[2].push({"name":name,"count":count});
+				}
+				else {
+					this.cat_levels[3].push({"name":name,"count":count});
+				}
+			}
+		}
+		for (var i=0; i<4; i++) {
+			this.cat_levels[i].sort(function(a,b){
+				var a_c = a.name;
+				var b_c = b.name;
+				return a_c.localeCompare(b_c);
+			});
+			this.cat_levels[i].sort(function(a,b){
+				return b.count-a.count;
+			});
+		}
+		this.cat_other.sort(function(a,b){
+			var a_c = a.name;
+			var b_c = b.name;
+			return a_c.localeCompare(b_c);
+		});
+		this.cat_other.sort(function(a,b){
+			return b.count-a.count;
+		});
+		this.cat_level = this.getCatLevel(this.cat);
+	}
+
+	getCatLevel(name:string): number {
+		var level = -2;
+		if (name != "")
+			level = -1;
+		for (var i=0; i<this.cat_levels[0].length; i++) {
+			var comp = this.cat_levels[0][i].name;
+			if (comp.localeCompare(name) == 0) {
+				level = 0;
+			}
+		}
+		for (var i=0; i<this.cat_levels[1].length; i++) {
+			var comp = this.cat_levels[1][i].name;
+			if (comp.localeCompare(name) == 0) {
+				level = 1;
+			}
+		}
+		for (var i=0; i<this.cat_levels[2].length; i++) {
+			var comp = this.cat_levels[2][i].name;
+			if (comp.localeCompare(name) == 0) {
+				level = 2;
+			}
+		}
+		for (var i=0; i<this.cat_levels[3].length; i++) {
+			var comp = this.cat_levels[3][i].name;
+			if (comp.localeCompare(name) == 0) {
+				level = 3;
+			}
+		}
+		return level;
+	}
+
+	getCall(q:string, fq:any, p:number, cat:string) {
 		this.callback = false;
 		this.error_detc = false;
 		this.submitted = true;
-		if(this.searchContext && this.searchContext == 'orderbp' && !this.noP){
-            this.model.q=q;
-		}
+    this.model.q=q;
 		this.objToSubmit.q=q;
 		this.facetQuery=fq;
 		this.page=p;
 		this.simpleSearchService.getFields()
 		.then(res => {
-			this.simpleSearchService.get(q,res._body.split(","),fq,p)
+			this.simpleSearchService.get(q,res._body.split(","),fq,p,cat)
 			.then(res => {
 				this.facetObj = [];
 				this.temp = [];
 				var index = 0;
 				for (let facet in res.facet_counts.facet_fields) {
 					if (JSON.stringify(res.facet_counts.facet_fields[facet]) != "{}") {
+						if (facet == this.product_cat_mix) {
+							this.buildCatTree(res.facet_counts.facet_fields[facet]);
+						}
 						if (this.simpleSearchService.checkField(facet)) {
 							this.facetObj.push({
 								"name":facet,
@@ -195,7 +326,15 @@ export class SimpleSearchFormComponent implements OnInit {
 		this.submitted = true;
 		*/
 		this.objToSubmit = JSON.parse(JSON.stringify(this.model));
-		this.facetQuery = [];
+		//this.facetQuery = [];
+		this.get(this.objToSubmit);
+	}
+
+	callCat(name:string) {
+		this.model.q="*";
+		this.objToSubmit = JSON.parse(JSON.stringify(this.model));
+		//this.facetQuery = [];
+		this.cat = name;
 		this.get(this.objToSubmit);
 	}
 
@@ -205,6 +344,16 @@ export class SimpleSearchFormComponent implements OnInit {
 			this.facetQuery.push(fq);
 		else
 			this.facetQuery.splice(this.facetQuery.indexOf(fq), 1);
+		this.get(this.objToSubmit);
+	}
+
+	setCat(name:string) {
+		this.cat = name;
+		this.get(this.objToSubmit);
+	}
+
+	resetFilter() {
+		this.facetQuery = [];
 		this.get(this.objToSubmit);
 	}
 

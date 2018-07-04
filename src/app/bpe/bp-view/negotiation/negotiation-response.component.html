@@ -79,8 +79,7 @@
     <div class="col-3">{{ wrapper.lineTotalPriceString }}</div>
     <div class="col-3">{{ wrapper.rfqTotalPriceStringIfNegotiating }}</div>
     <div class="col-3">
-        <amount-input [visible]="rfq.negotiationOptions.price"
-            [disabled]="isLoading() || isReadOnly()" [(amount)]="quotationPrice"
+        <amount-input [disabled]="isLoading() || isReadOnly()" [(amount)]="quotationPrice"
             [amountUnit]="wrapper.linePriceWrapper.currency">
         </amount-input>
     </div>
@@ -105,7 +104,7 @@
 <div class="row address-row">
     <div class="col-12">
         <h3>Delivery Address</h3>
-        <negotiation-address [address]="rfq.delivery.deliveryAddress" disabled="true">
+        <negotiation-address [address]="wrapper.rfqDeliveryAddress" disabled="true">
         </negotiation-address>
     </div>
 </div>

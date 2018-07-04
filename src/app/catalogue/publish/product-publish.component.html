@@ -1,9 +1,9 @@
 <!-- Topmost navigation bar -->
-<ul class="nav nav-tabs" *ngIf="publishStateService.publishMode != 'edit'">
+<ul class="nav nav-tabs" *ngIf="publishMode !== 'edit'">
     <li class="nav-item">
         <a href id="singleUpload"
-           [ngClass]="{'nav-link': true, active: publishingGranularity == 'single'}"
-           (click)="onTabClick($event)"
+           [ngClass]="{'nav-link': true, active: publishingGranularity === 'single'}"
+           (click)="onSelectTab($event)"
            i18n
         >Upload Single Product</a>
     </li>
@@ -11,310 +11,33 @@
     <li class="nav-item">
         <a href id="bulkUpload"
            [ngClass]="{'nav-link': true, active: publishingGranularity == 'bulk'}"
-           (click)="onTabClick($event)"
+           (click)="onSelectTab($event)"
            i18n
         >Upload Multiple Products</a>
     </li>
 </ul>
 
-<!-- Single product publishing -->
-<div *ngIf="catalogueLine && publishingGranularity == 'single'" class="mt-3">
-
-    <!-- Top row: selected category, feedback messages, etc. -->
-    <div class="d-flex justify-content-end">
-
-        <div class="mr-auto">
-            <!-- category related elements -->
-            <h6 *ngIf="catalogueLine.goodsItem.item.commodityClassification.length > 0"
-                style="display: inline-block;"
-                i18n>Selected category:</h6>
-            <div *ngFor="let selectedCategory of categoryService.selectedCategories"
-                    class="bordered inline space-right">
-                {{selectedCategory.preferredName}}
-                <button class="btn btn-sm btn-danger" (click)="categoryCancel(selectedCategory)">&times;</button>
-            </div>
-            <div (click)="addCategoryOnClick()"
-                 style="display: inline-block;">
-                <i class="fa fa-plus-circle pointer"></i>
-                <span *ngIf="catalogueLine.goodsItem.item.commodityClassification.length == 0" i18n>Select a product category</span>
-                <span *ngIf="catalogueLine.goodsItem.item.commodityClassification.length > 0" i18n>Add another product category</span>
-            </div>
-        </div>
-
-        <!-- feedbacks elements for publish and edit operations -->
-        <div [hidden]="error_detc || callback || !submitted" class="pr-3">
-            <img src="assets/form_loader.gif"/>
-        </div>
-        <div [hidden]="!(callback && !error_detc)"
-             #successAlert (click)="successAlert.hidden=true;"
-             [style]="!(callback && !error_detc) ? '' : 'display: flex'">
-            <div class="alert-success mb-0 mr-3 d-flex" role="alert">
-                <div class="d-flex p-2" style="align-items: center">
-                    <span i18n>Product published!</span>
-                    <span class="ml-3 pointer"><strong>&times;</strong></span>
-                </div>
-            </div>
-        </div>
-        <div [hidden]="!(callback && error_detc)"
-             #errorAlert (click)="errorAlert.hidden=true"
-             [style]="hidden ? '' : 'display: flex'">
-            <div class="alert-danger mb-0 mr-3 d-flex" role="alert">
-                <div class="d-flex p-2" style="align-items: center">
-                    <span i18n>Fail to publish product!</span>
-                    <span class="ml-3 pointer"><strong>&times;</strong></span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Publish / edit buttons -->
-        <button *ngIf="publishStateService.publishMode == 'create'"
-                type="submit"
-                class="btn btn-success"
-                (click)="publishProduct()"
-                [disabled]="submitted == true || !publishForm.valid">
-            <span i18n>Publish Product</span>
-        </button>
-        <button *ngIf="publishStateService.publishMode == 'edit' &&
-                       (productCategoryRetrievalStatus.fb_submitted == false ||
-                        productCategoryRetrievalStatus.fb_submitted == true && productCategoryRetrievalStatus.fb_callback == true)"
-                class="btn btn-success btn-xs"
-                (click)="editProduct()"
-                [disabled]="submitted == true || !publishForm.valid">
-            <span i18n>Save Changes</span>
-        </button>
-    </div>
-
-    <div class="alert alert-danger space-before" role="alert" *ngIf="sameIdError">
-        <strong>Product Identifier Conflict!</strong><br>
-        You already have a product with product identifier : {{erroneousID}}
-    </div>
-
-    <hr>
-
-    <!-- Form header row -->
-    <form [formGroup]="publishForm" class="space-before">
-
-        <!-- product properties -->
-        <catalogue-line-view [parentForm]="publishForm"
-                             [catalogueLine]="catalogueLine"
-                             [presentationMode]="'edit'">
-        </catalogue-line-view>
-
-        <!-- loader for retrieval of the details of the product categories -->
-        <call-status [callStatus]="productCategoryRetrievalStatus">
-        </call-status>
-
-        <!-- new property block -->
-        <hr class="mt-5">
-        <div class="form-group">
-            <h6 i18n>Add custom property</h6>
-            <form #customPropertyForm="ngForm" class="d-flex">
-
-                <!-- property name -->
-                <input name="propertyName"
-                       class="form-control col-3"
-                       [(ngModel)]="newProperty.name"
-                       placeholder="Property Name"
-                       required/>
-
-                <!-- property value -->
-                <input *ngIf="propertyValueType.options.selectedIndex == 0"
-                       name="propertyValue"
-                       class="form-control col ml-2"
-                       [(ngModel)]="newProperty.value[0]"
-                       placeholder="Property Value"
-                       required/>
-                <input *ngIf="propertyValueType.options.selectedIndex == 1"
-                       type="number"
-                       name="propertyValue"
-                       class="form-control col ml-2"
-                       [(ngModel)]="newProperty.valueDecimal[0]"
-                       placeholder="Property Value"
-                       required/>
-
-                <!-- remove value button -->
-                <span *ngIf="(newProperty.valueQualifier == 'STRING' && newProperty.value.length > 1)
-                             || (newProperty.valueQualifier == 'REAL_MEASURE' && newProperty.valueDecimal.length > 1)">
-                    <button class="btn btn-xs btn-danger"
-                            (click)="removeValueFromProperty(0); $event.stopPropagation()">
-                        &times;
-                    </button>
-                </span>
-
-                <!-- add additional value button -->
-                <span *ngIf="(newProperty.valueQualifier == 'STRING' && newProperty.value.length == 1)
-                             || (newProperty.valueQualifier == 'REAL_MEASURE' && newProperty.valueDecimal.length == 1)">
-                    <button class="btn btn-info btn-xs"
-                            (click)="addValueToProperty()"
-                    ><strong>+</strong></button>
-                </span>
-
-                <!-- add image button -->
-                <div *ngIf="propertyValueType.options.selectedIndex == 2" (click)="image.click()"
-                     class="col-4"
-                     style="display: inline-block;">
-                    <input #image type="file" (change)="imageChange($event)" multiple accept="image/*"
-                           style="display: none">
-                    <i class="fa fa-plus-circle pointer"></i>
-                    <span i18n>Add image</span>
-                </div>
-
-                <!-- add file button -->
-                <div *ngIf="propertyValueType.options.selectedIndex == 3" (click)="file.click()"
-                     class="col-4"
-                     style="display: inline-block;">
-                    <input #file type="file" (change)="fileChange($event)" multiple accept="file/*"
-                           style="display: none">
-                    <i class="fa fa-plus-circle pointer"></i>
-                    <span i18n>Add file</span>
-                </div>
-
-                <ng-container *ngIf="propertyValueType.options.selectedIndex == 4">
-                    <input type="number" name="propertyValue"
-                           class="form-control col-3 ml-2"
-                           [(ngModel)]="quantity.value"
-                           placeholder="Property Value"
-                           required/>
-                    <label class="col-1" class="ml-3 mr-3">Unit: </label>
-                    <input type="text" name="unit"
-                           class="form-control col-1 ml-2"
-                           [(ngModel)]="quantity.unitCode"
-                           placeholder="Unit"
-                           required/>
-                </ng-container>
-
-                <div *ngIf="propertyValueType.options.selectedIndex == 5" class="col-4"
-                     style="display: inline-block;">
-
-                    <input type="checkbox"
-                           [checked]="newProperty.value[0] == 'true'"
-                           (change)="newProperty.value[0] == 'true ' ? newProperty.value[0] = 'false' : newProperty.value[0] = 'true'"
-                           >
-
-                </div>
-                <!-- combobox for choosing the property value type -->
-                <div class="col">
-                    <div class="row justify-content-end ml-2">
-                        <div class="form-group row mb-0 mr-0">
-                            <span class="col-form-label col-6" i18n>Value type:</span>
-
-                            <select #propertyValueType class="custom-select col-6" (change)="onValueTypeChange($event)">
-                                <option selected i18n>Text</option>
-                                <option i18n>Number</option>
-                                <option i18n>Image</option>
-                                <option i18n>File</option>
-                                <option i18n>Quantity</option>
-                                <option i18n>Boolean</option>
-                            </select>
-                        </div>
-
-                        <button [disabled]="!customPropertyForm.form.valid || (newProperty.valueQualifier == 'BINARY' && newProperty.valueBinary.length == 0)"
-                                class="btn btn-success ml-2"
-                                (click)="addCustomProperty()">
-                            <span i18n>Add property</span>
-                        </button>
-                    </div>
-                </div>
-            </form>
-            <p></p>
-
-            <!-- additonal values -->
-            <!-- additional values are drawn here as the top row contains
-            `value type selection button` and `add property buttons` in addition to the first value associated to the new property -->
-            <div *ngFor="let val of newProperty.valueQualifier | itemPropertyDataSourcePipe : newProperty; let i = index; trackBy : trackByIndex">
-                <div *ngIf="i > 0" class="input-group form-group">
-                    <label class="col-3 control-label"></label>
-                    <input *ngIf="newProperty.valueQualifier=='STRING'"
-                            type="text" class="form-control col ml-2"
-                           [(ngModel)]="newProperty.value[i]"
-                           [ngModelOptions]="{standalone: true}"
-                    >
-                    <input *ngIf="newProperty.valueQualifier=='REAL_MEASURE'"
-                           type="text" class="form-control col ml-2"
-                           [(ngModel)]="newProperty.valueDecimal[i]"
-                           [ngModelOptions]="{standalone: true}"
-                    >
-                    <!-- remove value button -->
-                    <button *ngIf="newProperty.valueQualifier != 'BINARY'"
-                            class="btn btn-xs btn-danger"
-                            (click)="removeValueFromProperty(i); $event.stopPropagation()">&times;
-                    </button>
-
-                    <!-- add value button -->
-                    <span *ngIf="(newProperty.valueQualifier == 'STRING' && i == this.newProperty.value.length - 1) ||
-                                 (newProperty.valueQualifier == 'REAL_MEASURE' && i == this.newProperty.valueDecimal.length - 1)">
-                        <button class="btn btn-primary btn-xs"
-                                (click)="addValueToProperty()"
-                        ><strong>+</strong></button>
-                    </span>
-
-                    <!--<div class="col">
-                        <div class="row justify-content-end ml-2">
-                        </div>
-                    </div>-->
-                </div>
-            </div>
-
-            <!-- selected images or files -->
-            <div *ngIf="newProperty != null && newProperty.valueBinary.length > 0 && newProperty.valueQualifier == 'BINARY'"
-                 class="offset-3 mt-3">
-                <ul class="list-group">
-                    <li *ngFor="let afile of newProperty.valueBinary"
-                        class="list-group-item pb-2 border-0">
-
-                        <!-- selected files -->
-                        <div *ngIf="afile.mimeCode.split('/')[0]!='image'">
-                            {{afile.fileName}}
-                            <span style="display:inline-block; width: 20px;"></span>
-                            <span><button class="btn btn-xs" style="background-color: white; color: #0d6cd8"
-                                          (click)="imageCancel(afile.fileName);"
-                            >&times;</button></span>
-                        </div>
-
-                        <!-- selected images -->
-                        <div *ngIf="afile.mimeCode.split('/')[0]=='image'">
-                            <img class="mr-2"
-                                 src="data:{{afile.mimeCode}};base64,{{afile.value}}"
-                                 height="100"
-                            />
-                            <div style="display: inline-block;">
-                            </div>
-                            <span><button class="btn btn-xs" style="background-color: white; color: #0d6cd8"
-                                          (click)="imageCancel(afile.fileName);"
-                            >&times;</button></span>
-
-                        </div>
-                    </li>
-                </ul>
-            </div>
-            <!-- end of selected images or files -->
-        </div>
-        <!-- end of new property -->
-    </form>
-</div>
-
-<!-- Bulk product publishing -->
-<div *ngIf="publishingGranularity == 'bulk'">
+<div *ngIf="publishingGranularity === 'bulk'">
     <div class="d-flex justify-content-end mt-3 mb-3">
         <div class="mr-auto">
-            <h6 *ngIf="categoryService.selectedCategories.length > 0" style="display: inline-block;"
+            <h6 *ngIf="selectedCategories.length > 0" style="display: inline-block;"
                 i18n>Selected category:</h6>
-			<div *ngFor="let selectedCategory of categoryService.selectedCategories"
+            <div *ngFor="let selectedCategory of selectedCategories"
                     class="bordered inline space-right">
                 {{selectedCategory.preferredName}}
-                <button class="btn btn-sm btn-danger" (click)="categoryCancel(selectedCategory)">&times;</button>
+                <button class="btn btn-sm" (click)="onRemoveCategory(selectedCategory)">&times;</button>
             </div>
-            <div (click)="addCategoryOnClick()"
-                 style="display: inline-block;">
+            <div (click)="onAddCategory()"
+                    style="display: inline-block;">
                 <i class="fa fa-plus-circle pointer"></i>
-                <span *ngIf="categoryService.selectedCategories.length == 0" i18n>Select a product category</span>
-                <span *ngIf="categoryService.selectedCategories.length > 0" i18n>Add another product category</span>
+                <span *ngIf="selectedCategories.length == 0" i18n>Select a product category</span>
+                <span *ngIf="selectedCategories.length > 0" i18n>Add another product category</span>
             </div>
         </div>
     </div>
     <div class="d-flex mt-3 mb-4">
         <label class="col-9">1. Download the product category template</label>
-        <button class="btn btn-success col-3"
+        <button class="btn btn-secondary col-3"
                 (click)="downloadTemplate()">Download template
         </button>
     </div>
@@ -334,9 +57,9 @@
         <label class="col-9">3. Upload the template after filling it with your products' information
         </label>
         <input #template type="file" (change)="uploadTemplate($event, uploadModeSelect.value)"
-               accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-               style="display: none">
-        <button class="btn btn-success col-3"
+                accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                style="display: none">
+        <button class="btn btn-secondary col-3"
                 (click)="template.click()">Upload template
         </button>
     </div>
@@ -344,19 +67,204 @@
         <label class="col-9">4. Upload a "zip package" including product images. Each image must be suffixed with the identifier of the product. For example: pid1.imageFile.jpg, pid1.imageFile2.png, etc.
         </label>
         <input #imagePackage type="file" (change)="uploadImagePackage($event)"
-               accept="application/zip"
-               style="display: none">
-        <button class="btn btn-success col-3 align-self-start"
+                accept="application/zip"
+                style="display: none">
+        <button class="btn btn-secondary col-3 align-self-start"
                 (click)="imagePackage.click()">Upload Image Package
         </button>
     </div>
     <div class="d-flex mt-4 mb-3">
         <label class="col-9">Download an example filled in template</label>
-        <button class="btn btn-success col-3"
+        <button class="btn btn-secondary col-3"
                 (click)="downloadExampleTemplate()">Download example template
         </button>
     </div>
-    <call-status [callStatus]="bulkPublishStatus"
-            [large]="true">
+    
+    <call-status [callStatus]="publishStatus" [large]="true">
     </call-status>
 </div>
+
+<ng-container *ngIf="publishingGranularity === 'single' && catalogueLine">
+    <!-- Selected Categories -->
+    <div class="row space-before">
+        <div class="col-2 category-list-label">
+            <strong>Categories: </strong>
+        </div>
+        <div class="col-10 object-list">
+            <div *ngFor="let selectedCategory of selectedCategories"
+                class="bordered my-1 ml-1" title="{{selectedCategory.taxonomyId}}">
+                <small class="p-0">{{selectedCategory.preferredName}}</small>
+                <i class="fa fa-times-circle pl-1" placement="right" (click)="onRemoveCategory(selectedCategory)"></i>
+            </div>
+            <button class="btn btn-outline-primary btn-add-category" (click)="onAddCategory()">Add Category</button>
+        </div>
+    </div>
+
+    <hr>
+
+    <!-- Image, Name & Description -->
+    <div class="row space-before">
+        <!-- Image -->
+        <div class="col-3 product-image">
+            <img *ngIf="catalogueLine.goodsItem.item.productImage.length == 0"
+                class="img-max"
+                src="assets/empty_img.png">
+            <img *ngIf="catalogueLine.goodsItem.item.productImage.length > 0"
+                class="img-selected d-block active"
+                src="data:{{catalogueLine.goodsItem.item.productImage[0].mimeCode}};base64,{{catalogueLine.goodsItem.item.productImage[0].value}}"/>
+        </div>
+
+        <div class="col-9">
+            <!-- Name -->
+            <text-input label="Product Name" [(text)]="catalogueLine.goodsItem.item.name" [rows]="1">
+            </text-input>
+            
+            <!-- Description -->
+            <text-input label="Product Description" [(text)]="catalogueLine.goodsItem.item.description" [rows]="6" rowClass="space-before">
+            </text-input>
+    
+            <!-- product ID -->
+            <div class="col-12"><small class="float-right">Product Id: {{ catalogueLine.goodsItem.item.manufacturersItemIdentification.id }}</small></div>
+        </div>
+    </div>
+
+    <!-- Add Images -->
+    <div class="row space-before">
+        <div class="col-12 d-flex">
+            <div *ngFor="let image of catalogueLine.goodsItem.item.productImage; let i = index" class="add-image">
+                <img class="image-small img-thumbnail" src="data:{{image.mimeCode}};base64,{{image.value}}" />
+                <i class="fa fa-times-circle delete-image" (click)="onRemoveImage(i)"></i>
+            </div>
+            <div class="add-image btn btn-outline-primary">
+                <span>Add Image</span>
+                <input type="file" (change)="onAddImage($event)"/>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <!-- Tabs -->
+    <div class="row space-before">
+        <div class="col-12">
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a href id="DETAILS" class="nav-link"
+                        [ngClass]="{ active: selectedTabSinglePublish === 'DETAILS'}"
+                        (click)="onSelectTabSinglePublish($event)">
+                        Product Details
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href id="DELIVERY_TRADING" class="nav-link"
+                        [ngClass]="{ active: selectedTabSinglePublish === 'DELIVERY_TRADING'}"
+                        (click)="onSelectTabSinglePublish($event)">
+                        Delivery &amp; Trading
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Product Details Tab -->
+    <div class="row space-before" *ngIf="selectedTabSinglePublish === 'DETAILS'">
+        <div class="col-12">
+            <div class="row" *ngFor="let prop of getProductProperties()">
+                <div class="col-3">
+                    <strong>{{ getPrettyName(prop) }}: </strong>
+                </div>
+                <div class="col-9 object-list">
+                    <input type="checkbox" class="form-check-input boolean-value-input"
+                        [checked]="prop.value[0] == 'true'" *ngIf="prop.valueQualifier === 'BOOLEAN'"
+                        (change)="prop.value[0] == 'true ' ? prop.value[0] = 'false' : prop.value[0] = 'true'">
+                    <ng-container *ngIf="prop.valueQualifier !== 'BOOLEAN'">
+                        <div *ngFor="let value of getValuesAsString(prop); let i = index"
+                            class="bordered value-pill" title="{{ value }}">
+                            <span>{{ value }}</span>
+                            <i class="fa fa-times-circle mt-1" placement="right" (click)="onRemoveValue(prop, i)"></i>
+                        </div>
+                        <button class="btn btn-outline-primary btn-add-category" (click)="onEditProperty(prop)">Edit Value(s)</button>
+                    </ng-container>
+                </div>
+            </div>
+            <div *ngIf="!hasSelectedProperties()">
+                No selected properties.
+                <a href class="btn btn-link" (click)="showCategoriesModal(categoriesModal, $event)">
+                    Select properties to set a value for.
+                </a>
+            </div>
+            <div *ngIf="hasSelectedProperties()">
+                <a href class="btn btn-link" (click)="showCategoriesModal(categoriesModal, $event)">Add more properties.</a>
+            </div>                    
+        </div>
+    </div>
+
+    <!-- Delivery & Trading Tab -->
+    <div class="row space-before" *ngIf="selectedTabSinglePublish === 'DELIVERY_TRADING'">
+        <div class="col-12">
+            <product-delivery-trading [catalogueLine]="catalogueLine" [disabled]="isLoading()">
+            </product-delivery-trading>
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="row actions-row">
+        <div class="col-7 call-status-col"><call-status [callStatus]="publishStatus"></call-status></div>
+        <div class="col-2">
+            <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">
+                Back
+            </button>
+        </div>
+        <div class="col-3">
+            <button class="btn btn-primary action" [disabled]="isLoading()" (click)="onPublish()">
+                {{ publishStateService.publishMode === "create" ? "Publish" : "Save"  }}
+            </button>
+        </div>
+    </div>
+
+    <!-- Category's Attributes Modal -->
+    <ng-template #categoriesModal let-c="close" let-d="dismiss">
+        <div class="modal-header">
+            <h5 class="modal-title" id="modal-basic-title">Please select the attributes to be displayed from each category</h5>
+            <button type="button" class="close" aria-label="Close" (click)="d('cross')">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="form-group">
+                            <input type="text" class="form-control" name="inputCtrl" [(ngModel)]="categoryModalPropertyKeyword"
+                                placeholder="Filter Properties..." (input)="onFilterPropertiesInCategoryModal()"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-category" *ngFor="let category of selectedCategories; let i = index">
+                    <hr *ngIf="i > 0">
+                    <h5>{{ category.preferredName }}</h5>
+                    <div class="row">
+                        <ng-container *ngFor="let property of getCategoryProperties(category)">
+                            <div class="col-6 form-check modal-category-property" *ngIf="isPropertyFilteredIn(property)">
+                                <input type="checkbox" class="form-check-input" [ngModel]="isCategoryPropertySelected(category, property)" 
+                                    (change)="onToggleCategoryPropertySelected(category, property)">
+                                <label class="form-check-label">{{ property.preferredName }} ({{ getPropertyType(property) }})</label>
+                            </div>
+                        </ng-container>
+                    </div>
+                </div>
+                <div *ngIf="selectedCategories.length === 0">
+                    No categories.
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="d('cancel')">Cancel</button>
+            <button type="button" class="btn btn-primary" (click)="c('ok')">OK</button>
+        </div>
+    </ng-template>
+    
+    <!-- Edit Property Value(s) Modal -->
+    <edit-property-modal >
+    </edit-property-modal>
+</ng-container>

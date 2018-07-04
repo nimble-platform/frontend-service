@@ -33,6 +33,8 @@ import { QuantityValueViewComponent } from "./ubl-model-view/quantity-value-view
 import { DetailedAddressViewComponent } from "./ubl-model-view/detailed-address-view.component";
 import { PaymentTermsView } from "./ubl-model-view/payment-terms-view";
 import { CategoryTreeComponent } from "./category/category-tree.component";
+import { EditPropertyModalComponent } from "./publish/edit-property-modal.component";
+import { ProductDeliveryTradingComponent } from "./publish/product-delivery-trading.component";
 
 @NgModule({
 	imports: [CommonModule, 
@@ -47,6 +49,8 @@ import { CategoryTreeComponent } from "./category/category-tree.component";
         CategorySearchComponent,
         CategoryTreeComponent,
         ProductPublishComponent,
+        EditPropertyModalComponent,
+        ProductDeliveryTradingComponent,
         AdditionalItemPropertyComponent,
         CatalogueViewComponent,
         CatalogueLinePanelComponent,

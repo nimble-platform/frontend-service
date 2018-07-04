@@ -1,5 +1,3 @@
-import { TradingTerm } from "./publish/trading-term";
-
 export const INCOTERMS: string[] = [
     "",
     "CIF (Cost, Insurance and Freight)",
@@ -27,3 +25,8 @@ export const NEGOTIATION_RESPONSES = {
     TERMS_UPDATED: "Terms Updated",
     REJECTED: "Rejected"
 }
+
+export const CURRENCIES = [
+    "EUR",
+    "USD"
+]

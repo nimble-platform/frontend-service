@@ -54,6 +54,7 @@ export class OrderComponent implements OnInit {
         if(this.bpDataService.order == null) {
             this.router.navigate(['dashboard']);
         }
+        
         this.order = this.bpDataService.order;
         this.paymentTermsWrapper = new PaymentTermsWrapper(this.order.paymentTerms);
         this.userRole = this.bpDataService.userRole;
@@ -62,6 +63,14 @@ export class OrderComponent implements OnInit {
             this.order.orderLine[0].lineItem.price,
             this.order.orderLine[0].lineItem.quantity
         );
+
+        // null check is for checking whether a new order is initialized
+        // preceding process id check is for checking whether there is any preceding process before the order
+        if(this.order.contract == null && this.bpDataService.precedingProcessId != null) {
+            this.bpeService.constructContractForProcess(this.bpDataService.precedingProcessId).then(contract => {
+                this.order.contract = [contract];
+            });
+        }
     }
 
     /*
