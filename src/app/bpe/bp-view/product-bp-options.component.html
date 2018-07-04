@@ -1,10 +1,12 @@
 <ng-container *ngIf="line">
     <!-- Title -->
-    <h2 class="clickable" (click)="productExpanded = !productExpanded">
+    <h1>
         Order for: {{ line.goodsItem.item.name }}
-        <i class="fas fa-chevron-up fa-sm toggle-product" aria-hidden="true" *ngIf="productExpanded"></i>
-        <i class="fas fa-chevron-down fa-sm toggle-product" aria-hidden="true" *ngIf="!productExpanded"></i>
-    </h2>
+        <button class="btn btn-outline-dark" (click)="productExpanded = !productExpanded">
+            <i class="fas fa-chevron-up fa-fw fa-lg mt-2" aria-hidden="true" *ngIf="productExpanded"></i>
+            <i class="fas fa-chevron-down fa-fw fa-lg mt-2" aria-hidden="true" *ngIf="!productExpanded"></i>
+        </button>
+    </h1>
 
     <!-- Product Details Panel -->
     <product-details-tabs *ngIf="productExpanded" [wrapper]="wrapper" [showOverview]="true" 

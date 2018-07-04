@@ -19,7 +19,7 @@ import { BPEService } from "../../bpe.service";
 import { BpUserRole } from "../../model/bp-user-role";
 import { OrderResponseSimple } from "../../../catalogue/model/publish/order-response-simple";
 import { PriceWrapper } from "../price-wrapper";
-import { Price } from "../../../catalogue/model/publish/price";
+import { Party } from "../../../catalogue/model/publish/party";
 
 /**
  * Created by suat on 20-Sep-17.
@@ -38,8 +38,13 @@ export class OrderComponent implements OnInit {
     userRole: BpUserRole;
 
     showPreview: boolean = false;
+    termsAndConditions: string;
+
+    buyerParty: Party;
+    sellerParty: Party;
 
     callStatus: CallStatus = new CallStatus();
+    fetchTermsAndConditionsStatus: CallStatus = new CallStatus();
 
     constructor(private bpDataService: BPDataService,
                 private userService: UserService,
@@ -71,12 +76,39 @@ export class OrderComponent implements OnInit {
                 this.order.contract = [contract];
             });
         }
+
+        const sellerId: string = this.order.orderLine[0].lineItem.item.manufacturerParty.id;
+        const buyerId: string = this.cookieService.get("company_id");
+
+        // fetch both parties in parallel.
+        Promise.all([
+            this.userService.getParty(buyerId),
+            this.userService.getParty(sellerId)
+        ]).then(([buyerParty, sellerParty]) => {
+            this.buyerParty = buyerParty;
+            this.sellerParty = sellerParty;
+        });
     }
 
     /*
      * Event Handlers
      */
 
+    onPreviewTermsAndConditions() {
+        this.showPreview = !this.showPreview;
+
+        if(this.showPreview && !this.termsAndConditions) {
+            this.fetchTermsAndConditionsStatus.submit();
+            this.bpeService.generateOrderTermsAndConditionsAsText(this.order, this.buyerParty, this.sellerParty)
+            .then(text => {
+                this.fetchTermsAndConditionsStatus.callback("Successfully fetched terms and conditions", true);
+                this.termsAndConditions = text;
+            }).catch(error => {
+                this.fetchTermsAndConditionsStatus.error("Error while fetching terms and conditions");
+                console.log("Error while fetching terms and conditions", error);
+            });
+        }
+    }
 
     onBack() {
         this.location.back();

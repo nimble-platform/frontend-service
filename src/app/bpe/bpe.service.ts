@@ -16,6 +16,8 @@ import { PpapResponse } from '../catalogue/model/publish/ppap-response';
 import { Ppap } from '../catalogue/model/publish/ppap';
 import { ItemInformationResponse } from '../catalogue/model/publish/item-information-response';
 import { ItemInformationRequest } from '../catalogue/model/publish/item-information-request';
+import { Order } from '../catalogue/model/publish/order';
+import { TradingTerm } from '../catalogue/model/publish/trading-term';
 
 @Injectable()
 export class BPEService {
@@ -166,13 +168,13 @@ export class BPEService {
 
 		let url:string = `${this.url}/group/filters?partyID=${partyId}&collaborationRole=${collaborationRole}&archived=${archived}`;
 		if(products.length > 0) {
-			url += '&relatedProducts=' + this.stringtifyArray(products);
+			url += '&relatedProducts=' + this.stringifyArray(products);
 		}
 		if(categories.length > 0) {
-			url += '&relatedProductCategories=' + this.stringtifyArray(categories);
+			url += '&relatedProductCategories=' + this.stringifyArray(categories);
 		}
 		if(partners.length > 0) {
-			url += '&tradingPartnerIDs=' + this.stringtifyArray(partners);
+			url += '&tradingPartnerIDs=' + this.stringifyArray(partners);
 		}
 		return this.http
             .get(url, {headers: headers})
@@ -185,13 +187,13 @@ export class BPEService {
 		let offset:number = page * limit;
 		let url:string = `${this.url}/group?partyID=${partyId}&collaborationRole=${collaborationRole}&offset=${offset}&limit=${limit}&archived=${archived}`;
 		if(products.length > 0) {
-			url += '&relatedProducts=' + this.stringtifyArray(products);
+			url += '&relatedProducts=' + this.stringifyArray(products);
 		}
 		if(categories.length > 0) {
-			url += '&relatedProductCategories=' + this.stringtifyArray(categories);
+			url += '&relatedProductCategories=' + this.stringifyArray(categories);
 		}
 		if(partners.length > 0) {
-			url += '&tradingPartnerIDs=' + this.stringtifyArray(partners);
+			url += '&tradingPartnerIDs=' + this.stringifyArray(partners);
 		}
 		return this.http
             .get(url, {headers: this.headers})
@@ -270,7 +272,41 @@ export class BPEService {
         });
     }
 
-	private stringtifyArray(values: any[]): string {
+    generateOrderTermsAndConditionsAsText(order: Order, buyerParty, sellerParty): Promise<string> {
+        const url = `${this.url}/contracts/create-terms?orderId=${order.id}&sellerParty=${JSON.stringify(sellerParty)}&buyerParty=${JSON.stringify(buyerParty)}&incoterms=${order.orderLine[0].lineItem.deliveryTerms.incoterms == null ? "" :order.orderLine[0].lineItem.deliveryTerms.incoterms}&tradingTerms=${encodeURIComponent(JSON.stringify(this.getSelectedTradingTerms(order.paymentTerms.tradingTerms)))}`;
+        return this.http
+            .get(url, {headers: this.headers})
+            .toPromise()
+            .then(res => res.text())
+            .catch(this.handleError);
+	}
+
+	private  getSelectedTradingTerms(tradingTerms): TradingTerm[] {
+        let selectedTradingTerms: TradingTerm[] = [];
+
+        for(let tradingTerm of tradingTerms){
+            if(tradingTerm.id.indexOf("Values") != -1){
+                let addToList = true;
+                for(let value of tradingTerm.value){
+                    if(value == null){
+                        addToList = false;
+                        break;
+                    }
+                }
+                if(addToList){
+                    selectedTradingTerms.push(tradingTerm);
+                }
+            }
+            else{
+                if(tradingTerm.value[0] == 'true'){
+                    selectedTradingTerms.push(tradingTerm);
+                }
+            }
+        }
+        return selectedTradingTerms;
+	}
+
+	private stringifyArray(values: any[]): string {
 		let paramVal: string = '';
 		for (let value of values) {
 			paramVal += value + ',';

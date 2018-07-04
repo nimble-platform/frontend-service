@@ -65,16 +65,20 @@
 <!-- Contract Preview -->
 <div class="row" *ngIf="order">
     <div class="col-12">
-        <button class="btn btn-primary show-preview-button" (click)="showPreview = !showPreview"
-            [disabled]="!order.contract || order.contract[0]?.clause.length === 0">
-            Preview Terms and Conditions
-            <i class="fas fa-caret-down fa-lg fa-fw pl-2 pt-2 float-right" aria-hidden="true" *ngIf="showPreview"></i>
-            <i class="fas fa-caret-right fa-lg fa-fw pl-2 pt-2 float-right" aria-hidden="true" *ngIf="!showPreview"></i>
-        </button>
+        <h2>
+            Terms and Conditions
+            <button class="btn btn-outline-dark" (click)="onPreviewTermsAndConditions()"
+                [disabled]="!order.contract || order.contract[0]?.clause.length === 0">
+                <i class="fas fa-chevron-up fa-fw fa-lg mt-2" aria-hidden="true" *ngIf="showPreview"></i>
+                <i class="fas fa-chevron-down fa-fw fa-lg mt-2" aria-hidden="true" *ngIf="!showPreview"></i>
+            </button>
+        </h2>
     </div>
-    <div class="col-12" *ngIf="showPreview">
-        <contract [contract]="order.contract[0]">
-        </contract>
+    <call-status [callStatus]="fetchTermsAndConditionsStatus"></call-status>
+    <div class="col-12" *ngIf="showPreview && termsAndConditions">
+        <textarea rows="12" class="form-control" [disabled]="true">{{ termsAndConditions }}</textarea>
+        <!-- <contract [contract]="order.contract[0]">
+        </contract> -->
     </div>
 </div>
 

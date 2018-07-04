@@ -88,7 +88,8 @@ export class ItemInformationResponseComponent implements OnInit {
         this.router.navigate(['bpe/bpe-exec'], {
             queryParams: {
                 catalogueId: params.catalogueId,
-                id: params.id
+                id: params.id,
+                pid: params.pid
             }
         });
     }

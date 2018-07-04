@@ -67,10 +67,14 @@
     <div class="col-2"><strong>Data monitoring service requested:</strong></div>
     <div class="col-2"></div>
     <div class="col-4">{{ rfq.dataMonitoringRequested ? "Yes" : "" }}</div>
-    <div class="col-4" *ngIf="rfq.dataMonitoringRequested">
+    <div class="col-4" *ngIf="rfq.dataMonitoringRequested && !isReadOnly()">
         <input type="checkbox" [(ngModel)]="quotation.dataMonitoringPromised" 
-            [disabled]="isLoading() || isReadOnly()">
-        <label>Guarantee data monitoring service</label>
+            [disabled]="isLoading()">
+        <label>Provide data monitoring service</label>
+    </div>
+    <div class="col-4" *ngIf="rfq.dataMonitoringRequested && isReadOnly()">
+        <label *ngIf="quotation.dataMonitoringPromised">Data monitoring service confirmed.</label>
+        <label *ngIf="!quotation.dataMonitoringPromised">Data monitoring service <strong>not provided</strong>.</label>
     </div>
 </div>
 

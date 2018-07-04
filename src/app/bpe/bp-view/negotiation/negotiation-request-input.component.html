@@ -22,15 +22,15 @@
     </div>
 
     <!-- Quantity -->
-    <div *ngIf="quantity" class="col-4 col-quantity-value">
+    <div *ngIf="quantity !== undefined" class="col-4 col-quantity-value">
         <input type="number" class="form-control form-control-sm" [(ngModel)]="quantity.value" 
             [disabled]="!cbModel || disabled">
     </div>
-    <div *ngIf="quantity && !quantityUnits" class="col-3 col-quantity-unit">
+    <div *ngIf="quantity !== undefined && !quantityUnits" class="col-3 col-quantity-unit">
         <input type="text" class="form-control form-control-sm" [(ngModel)]="quantity.unitCode" 
             [disabled]="!cbModel || disabled || disableQuantityUnit">
     </div>
-    <div *ngIf="quantity && quantityUnits" class="col-3 col-quantity-unit">
+    <div *ngIf="quantity !== undefined && quantityUnits" class="col-3 col-quantity-unit">
         <select class="form-control form-control-sm" [(ngModel)]="quantity.unitCode"
             [disabled]="!cbModel || disabled || disableQuantityUnit">
             <option *ngFor="let option of quantityUnits" [value]="option">{{option}}</option>
