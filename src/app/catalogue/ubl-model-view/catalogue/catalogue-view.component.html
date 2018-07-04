@@ -37,6 +37,12 @@
                             <button class="dropdown-item" (click)="imagePackage.click()">
                                 Upload Image Package
                             </button>
+                            <input #template type="file" (change)="uploadTemplate($event)"
+                                   accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                                   style="display: none">
+                            <button class="dropdown-item" (click)="template.click()">
+                                Upload Template
+                            </button>
                             <button class="dropdown-item" (click)="navigateToThePublishPage()">
                                 Publish New Product/Service
                             </button>
