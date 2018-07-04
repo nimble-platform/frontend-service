@@ -4,23 +4,23 @@
     <div class="col-3"><p>{{event.startTime}}</p></div>
     <div class="col-3"><p>{{event.note}}</p></div>
     <div *ngIf="event.status === 'CANCELLED'" class="col-3 alert-dark">
-        <div><strong>Cancelled</strong></div>
-        <div>{{event.statusText}}</div>
+        <div class="pt-1"><strong>Cancelled</strong></div>
+        <div class="py-1">{{event.statusText}}</div>
         <button class="btn btn-secondary" (click)="openBpProcessView()">{{event.actionText}}</button>
     </div>
     <div *ngIf="event.status === 'DONE'" class="col-3 alert-success">
-        <div><strong>Completed</strong></div>
-        <div>{{event.statusText}}</div>
+        <div class="pt-1"><strong>Completed</strong></div>
+        <div class="py-1">{{event.statusText}}</div>
         <button class="btn btn-secondary" (click)="openBpProcessView()">{{event.actionText}}</button>
     </div>
     <div *ngIf="event.status === 'WAITING'" class="col-3 alert-warning">
-        <div><strong>In Progress</strong></div>
-        <div>{{event.statusText}}</div>
+        <div class="pt-1"><strong>In Progress</strong></div>
+        <div class="py-1">{{event.statusText}}</div>
         <button class="btn btn-secondary" (click)="openBpProcessView()">{{event.actionText}}</button>
     </div>
     <div *ngIf="event.status === 'ACTION_REQUIRED'" class="col-3 alert-danger">
-        <div><strong>In Progress</strong></div>
-        <div>{{event.statusText}}</div>
+        <div class="pt-1"><strong>In Progress</strong></div>
+        <div class="py-1">{{event.statusText}}</div>
         <button class="btn btn-primary" (click)="openBpProcessView()">{{event.actionText}}</button>
     </div>
 </div>

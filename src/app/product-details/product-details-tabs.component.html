@@ -1,42 +1,49 @@
-<div class="row">
+<div class="row border-bottom mb-3">
     <div class="col-12 pt-4">
         <!-- Product Tabs -->
-        <div class="card">
-            <div class="card-header">
-                <ul class="nav nav-tabs card-header-tabs">
-                    <ng-container *ngIf="showOverview">
-                        <li class="nav-item">
-                            <a href id="OVERVIEW" class="nav-link"
-                                [ngClass]="{ active: selectedTab === 'OVERVIEW'}"
-                                (click)="onSelectTab($event)">
-                                Overview
-                            </a>
-                        </li>
-                    </ng-container>
-                    <li class="nav-item">
-                        <a href id="DETAILS" class="nav-link"
-                            [ngClass]="{ active: selectedTab === 'DETAILS'}"
-                            (click)="onSelectTab($event)">
-                            Product Details
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href id="DELIVERY_TRADING" class="nav-link"
-                            [ngClass]="{ active: selectedTab === 'DELIVERY_TRADING'}"
-                            (click)="onSelectTab($event)">
-                            Delivery &amp; Trading
-                        </a>
-                    </li>
-                </ul>
-            </div>
+        <ul class="nav nav-tabs">
+            <ng-container *ngIf="showOverview">
+                <li class="nav-item">
+                    <a href id="OVERVIEW" class="nav-link"
+                        [ngClass]="{ active: selectedTab === 'OVERVIEW'}"
+                        (click)="onSelectTab($event)">
+                        Overview
+                    </a>
+                </li>
+            </ng-container>
+            <li class="nav-item">
+                <a href id="DETAILS" class="nav-link"
+                    [ngClass]="{ active: selectedTab === 'DETAILS'}"
+                    (click)="onSelectTab($event)">
+                    Product Details
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href id="DELIVERY_TRADING" class="nav-link"
+                    [ngClass]="{ active: selectedTab === 'DELIVERY_TRADING'}"
+                    (click)="onSelectTab($event)">
+                    Delivery &amp; Trading
+                </a>
+            </li>
+        </ul>
+    </div>
 
-            <!-- Overview Tab -->
-            <div *ngIf="selectedTab === 'OVERVIEW'" class="p-3">
-                <h4 class="p-1">Overview</h4>
-                <product-details-overview [wrapper]="wrapper" [options]="options" [readonly]="readonly">
-                </product-details-overview>
-            </div>
+    <!-- Overview Tab -->
+    <div *ngIf="selectedTab === 'OVERVIEW'" class="p-3">
+        <h4 class="p-1">Overview</h4>
+        <product-details-overview [wrapper]="wrapper" [options]="options" [readonly]="readonly">
+        </product-details-overview>
+    </div>
 
+<<<<<<< HEAD
+    <!-- Product Details Tab -->
+    <div *ngIf="selectedTab === 'DETAILS'" class="p-3">
+        <h4 class="p-1">Product Details</h4>
+        <div *ngFor="let property of wrapper.getUniqueProperties()" class="p-1">
+                <strong>{{ wrapper.getPropertyName(property) }}: </strong> {{ property.value.join(", ") }}
+        </div>
+    </div>
+=======
             <!-- Product Details Tab -->
             <div *ngIf="selectedTab === 'DETAILS'" class="p-3">
                 <h4 class="p-1">Product Details</h4>
@@ -44,31 +51,30 @@
                         <strong>{{ wrapper.getPropertyName(property) }}: </strong> {{ property.value.join(", ") }}
                 </div>
             </div>
+>>>>>>> 52470fcaeeb7e9816e6f0979280614d30b8c9fe8
 
-            <!-- Delivery & Trading Tab -->
-            <div *ngIf="selectedTab === 'DELIVERY_TRADING'" class="p-3">
-                <h4 class="p-1">Price</h4>
-                <div class="p-1">
-                    <strong>Price: </strong> {{ wrapper.getPricePerItem() }}
-                </div>
-                <div class="p-1">
-                    <strong>Free Sample: </strong> {{ wrapper.getFreeSample() }}
-                </div>
-                <h4 class="pt-2 p-1">Delivery Terms</h4>
-                <div class="p-1">
-                    <strong>Incoterms: </strong> {{ wrapper.getIncoterms() }}
-                </div>
-                <div class="p-1">
-                    <strong>Special Terms: </strong> {{ wrapper.getSpecialTerms() }}
-                </div>
-                <div class="p-1">
-                    <strong>Delivery Period: </strong> {{ wrapper.getDeliveryPeriod() }}
-                </div>
-                <h4 class="pt-2 p-1">Packaging</h4>
-                <div class="p-1">
-                    <strong>Packaging: </strong> {{ wrapper.getPackaging() }}
-                </div>
-            </div>
+    <!-- Delivery & Trading Tab -->
+    <div *ngIf="selectedTab === 'DELIVERY_TRADING'" class="p-3">
+        <h4 class="p-1">Price</h4>
+        <div class="p-1">
+            <strong>Price: </strong> {{ wrapper.getPricePerItem() }}
+        </div>
+        <div class="p-1">
+            <strong>Free Sample: </strong> {{ wrapper.getFreeSample() }}
+        </div>
+        <h4 class="pt-2 p-1">Delivery Terms</h4>
+        <div class="p-1">
+            <strong>Incoterms: </strong> {{ wrapper.getIncoterms() }}
+        </div>
+        <div class="p-1">
+            <strong>Special Terms: </strong> {{ wrapper.getSpecialTerms() }}
+        </div>
+        <div class="p-1">
+            <strong>Delivery Period: </strong> {{ wrapper.getDeliveryPeriod() }}
+        </div>
+        <h4 class="pt-2 p-1">Packaging</h4>
+        <div class="p-1">
+            <strong>Packaging: </strong> {{ wrapper.getPackaging() }}
         </div>
     </div>
 </div>
