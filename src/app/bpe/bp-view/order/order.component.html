@@ -65,11 +65,11 @@
 <!-- Contract Preview -->
 <div class="row" *ngIf="order">
     <div class="col-12">
-        <button class="btn btn-primary show-preview-button" (click)="showPreview = !showPreview"
+        <button class="btn btn-primary show-preview-button d-flex" (click)="showPreview = !showPreview"
             [disabled]="!order.contract || order.contract[0]?.clause.length === 0">
             Preview Terms and Conditions
-            <i class="fas fa-caret-down fa-lg fa-fw pl-2 pt-2 float-right" aria-hidden="true" *ngIf="showPreview"></i>
-            <i class="fas fa-caret-right fa-lg fa-fw pl-2 pt-2 float-right" aria-hidden="true" *ngIf="!showPreview"></i>
+            <i class="fas fa-caret-down fa-lg fa-fw pl-2 align-self-center" aria-hidden="true" *ngIf="showPreview"></i>
+            <i class="fas fa-caret-right fa-lg fa-fw pl-2 align-self-center" aria-hidden="true" *ngIf="!showPreview"></i>
         </button>
     </div>
     <div class="col-12" *ngIf="showPreview">

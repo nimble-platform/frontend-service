@@ -6,7 +6,7 @@
             <!-- Categories -->
             <strong>Categories:</strong>
             <div *ngFor="let classification of getClassifications()" >
-                <div class="border border-dark rounded px-1 inline space-left">
+                <div class="rounded px-1 inline space-left" style="color:#919191; border:1px solid #919191;">
                     {{classification.itemClassificationCode.name}}
                 </div>
             </div>

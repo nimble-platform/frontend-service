@@ -24,7 +24,7 @@ export class ProductBpStepsComponent implements OnInit {
     getStatusTextStyle(): any {
         return { 
             "margin-left": this.getStatusTextMarginLeft(), 
-            "color": this.getStatusTextColor() 
+            "color": this.getStatusTextColor()
         };
     }
 

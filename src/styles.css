@@ -20,44 +20,75 @@ Overwrite default values for Bootstrap buttons.
     border-color: #2980b9;
     background-color: #2980b9;
 }
+
 .btn.btn-primary:hover {
     color: #fff;
     background-color: #3090ce;
     border-color: #3090ce;
 }
+
 .btn.btn-primary:focus {
     box-shadow: 0 0 0 .2rem rgba(4, 80, 146, 0.58);
 }
+
 .btn.btn-primary:not(:disabled):not(.disabled):active {
     color: #fff;
     background-color: #258cd1;
     border-color: #258cd1;
 }
+
 .btn.btn-primary:disabled {
     background-color: #909191;
     border-color: #909191;
 }
+
 .btn.btn-secondary {
     color: #fff;
     background-color: #464646;
     border-color: #464646;
 }
+
 .btn.btn-secondary:hover {
     background-color: #5c5b5b;
 }
+
 .btn.btn-secondary:active {
     color: #fff;
     background-color: #545b62;
     border-color: #4e555b;
 }
+
 .btn.btn-danger {
     background-color: #b93829;
     border-color: #b93829;
 }
+
 .btn.btn-danger:hover {
     background-color: #de1a04;
     border-color: #d51904;
 }
+
+.btn.btn-outline-primary {
+    color: #2980b9;
+    background-color: transparent;
+    background-image: none;
+    border-color: #2980b9;
+}
+
+.btn.btn-outline-primary:hover {
+    color: #fff;
+    background-color: #258cd1;
+    border-color: #258cd1;
+}
+
+.btn.btn-outline-primary:not(:disabled):not(.disabled).active,
+.btn.btn-outline-primary:not(:disabled):not(.disabled):active,
+.btn.btn-outline-primary:active {
+    color: #fff;
+    background-color: #258cd1;
+    border-color: #258cd1;
+}
+
 a.nav-link {
     color: #2980b9;
 }
@@ -147,6 +178,14 @@ textarea {
 
 .icon-red {
     color: #b93829;
+}
+
+.font-weight-500 {
+    font-weight: 500;
+}
+
+.font-weight-600 {
+    font-weight: 600;
 }
 
 /*
