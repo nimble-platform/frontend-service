@@ -93,20 +93,20 @@
                 <caption>Available Results from NIMBLE</caption>
               <thead>
                 <tr>
-                    <th>
-                        Result
-                    </th>
+                    <!--<th>-->
+                        <!--Result-->
+                    <!--</th>-->
                     <th *ngFor="let column of tableResult?.columns; let i=index" scope="col">
                         {{column}}
                     </th>
-                    <th>
+                    <th *ngIf="tableResult?.uuids.length">
                         More
                     </th>
                 </tr>
               </thead>
                 <tbody>
                 <tr *ngFor="let row of tableResult?.rows; let i=index">
-                    <td>{{i+1}}</td>
+                    <!--<td>{{i+1}}</td>-->
                     <td *ngFor="let field of row">{{field}}</td>
                     <td *ngIf="tableResult?.uuids.length">
                         <button class="btn btn-xs btn-outline-success"
