@@ -68,7 +68,7 @@ export class SimpleSearchService {
 	getSuggestions(query:string, facetQueries: [string], cat: string) {
 		query = query.replace(/[!'()]/g, '');
 		if (query === '') {
-			return ([]);
+			return ([""]);
 		}
 		const url = `${this.url}/suggest?q=${query}&wt=json`;
 		var full_url = url + "";
