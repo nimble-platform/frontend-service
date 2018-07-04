@@ -35,23 +35,13 @@
         </product-details-overview>
     </div>
 
-<<<<<<< HEAD
     <!-- Product Details Tab -->
     <div *ngIf="selectedTab === 'DETAILS'" class="p-3">
         <h4 class="p-1">Product Details</h4>
-        <div *ngFor="let property of wrapper.getUniqueProperties()" class="p-1">
+        <div *ngFor="let property of wrapper.getUniquePropertiesWithValue()" class="p-1">
                 <strong>{{ wrapper.getPropertyName(property) }}: </strong> {{ property.value.join(", ") }}
         </div>
     </div>
-=======
-            <!-- Product Details Tab -->
-            <div *ngIf="selectedTab === 'DETAILS'" class="p-3">
-                <h4 class="p-1">Product Details</h4>
-                <div *ngFor="let property of wrapper.getUniquePropertiesWithValue()" class="p-1">
-                        <strong>{{ wrapper.getPropertyName(property) }}: </strong> {{ property.value.join(", ") }}
-                </div>
-            </div>
->>>>>>> 52470fcaeeb7e9816e6f0979280614d30b8c9fe8
 
     <!-- Delivery & Trading Tab -->
     <div *ngIf="selectedTab === 'DELIVERY_TRADING'" class="p-3">
