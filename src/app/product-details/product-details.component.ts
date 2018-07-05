@@ -10,6 +10,7 @@ import { ProductWrapper } from "../common/product-wrapper";
 import { Item } from "../catalogue/model/publish/item";
 import { PriceWrapper } from "../bpe/bp-view/price-wrapper";
 import { getMaximumQuantityForPrice, getStepForPrice } from "../common/utils";
+import { AppComponent } from "../app.component";
 
 @Component({
     selector: 'product-details',
@@ -37,7 +38,8 @@ export class ProductDetailsComponent implements OnInit {
     constructor(private bpDataService: BPDataService,
                 private catalogueService: CatalogueService,
                 private route: ActivatedRoute,
-                private router: Router) {
+                private router: Router,
+                public appComponent: AppComponent) {
         
     }
 

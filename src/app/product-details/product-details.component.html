@@ -13,7 +13,7 @@
     </div>
     <div class="col-3">
         <!-- Order Workflow -->
-        <div class="p-3 border border-dark border-bottom-0">
+        <div class="p-3 border border-dark">
 
             <h2 class="py-1">Negotiate & Order</h2>
 
@@ -127,11 +127,11 @@
 
             <!-- Action Button -->
             <button class="btn btn-primary pt-2 w-100"
-                (click)="onNegotiate()" [disabled]="hasPrice() && options.quantity<1">
+                (click)="onNegotiate()" [disabled]="!this.appComponent.checkRoles('bp') || options.quantity <= 0">
                 Negotiate & Order
             </button>
         </div>
-        <div class="p-3 border border-dark">
+        <div *ngIf="this.appComponent.checkRoles('bp')" class="p-3 border border-dark border-top-0">
             <div class="inline w-100" (click)="showProcesses = !showProcesses">
                 <h4 class="py-1 inline w-75">Other Processes</h4>
                 <i class="fas fa-chevron-up fa-lg toggle-processes" aria-hidden="true" *ngIf="showProcesses"></i>
