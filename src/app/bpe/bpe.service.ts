@@ -142,17 +142,11 @@ export class BPEService {
             .catch(this.handleError);
 	}
 
-	getPpapRequest(ppapResponse: PpapResponse): Promise<Ppap> {
-		return this.getDocumentJsonContent(ppapResponse.ppapDocumentReference.id)
-			.then(response => JSON.parse(response))
-	}
-
 	getItemInformationRequest(itemInformationResponse: ItemInformationResponse): Promise<ItemInformationRequest> {
-		return this.getDocumentJsonContent(itemInformationResponse.itemInformationRequestDocumentReference.id)
-			.then(response => JSON.parse(response))
+		return this.getDocumentJsonContent(itemInformationResponse.itemInformationRequestDocumentReference.id);
 	}
 
-	getDocumentJsonContent(documentId:string):Promise<string> {
+	getDocumentJsonContent(documentId:string):Promise<any> {
 		const url = `${this.url}/document/json/${documentId}`;
 		return this.http
             .get(url, {headers: this.headers})

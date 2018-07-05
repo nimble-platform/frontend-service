@@ -1,6 +1,4 @@
 
-<hr>
-
 <!-- Order summary -->
 <div class="row" *ngIf="order">
     <div class="col-4">
@@ -76,9 +74,10 @@
     </div>
     <call-status [callStatus]="fetchTermsAndConditionsStatus"></call-status>
     <div class="col-12" *ngIf="showPreview && termsAndConditions">
+        <h4>General terms and conditions</h4>
         <textarea rows="12" class="form-control" [disabled]="true">{{ termsAndConditions }}</textarea>
-        <!-- <contract [contract]="order.contract[0]">
-        </contract> -->
+        <contract [contract]="order.contract[0]">
+        </contract>
     </div>
 </div>
 

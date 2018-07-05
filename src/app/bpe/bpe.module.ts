@@ -30,8 +30,6 @@ import { PpapDocumentDownloadComponent} from "./bp-view/ppap/ppap-document-downl
 import { BusinessProcessOptions} from './bp-view/business-process-options';
 import { ContractComponent } from "./bp-view/contract/contract.component";
 import { ClauseComponent } from "./bp-view/contract/clause.component";
-import { DataMonitoringClauseComponent } from "./bp-view/contract/data-monitoring-clause.component";
-import { DocumentClauseComponent } from "./bp-view/contract/document-clause.component";
 import { PpapClauseComponent } from "./bp-view/contract/ppap-clause.component";
 import { ProductBpStepsComponent } from './bp-view/product-bp-steps.component';
 import { NegotiationRequestComponent } from './bp-view/negotiation/negotiation-request.component';
@@ -86,8 +84,6 @@ import { ShipmentInputComponent } from './bp-view/fulfilment/shipment-input.comp
         BusinessProcessOptions,
 		ContractComponent,
 		ClauseComponent,
-		DataMonitoringClauseComponent,
-		DocumentClauseComponent,
 		PpapClauseComponent,
 		NegotiationAddressComponent,
 		ShipmentInputComponent
@@ -108,8 +104,6 @@ import { ShipmentInputComponent } from './bp-view/fulfilment/shipment-input.comp
         BusinessProcessOptions,
 		ContractComponent,
 		ClauseComponent,
-		DataMonitoringClauseComponent,
-		DocumentClauseComponent,
 		PpapClauseComponent
 	],
 	providers: [

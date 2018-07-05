@@ -20,6 +20,8 @@ import { BpUserRole } from "../../model/bp-user-role";
 import { OrderResponseSimple } from "../../../catalogue/model/publish/order-response-simple";
 import { PriceWrapper } from "../price-wrapper";
 import { Party } from "../../../catalogue/model/publish/party";
+import { DocumentClause } from "../../../catalogue/model/publish/document-clause";
+import { Quotation } from "../../../catalogue/model/publish/quotation";
 
 /**
  * Created by suat on 20-Sep-17.
@@ -42,6 +44,8 @@ export class OrderComponent implements OnInit {
 
     buyerParty: Party;
     sellerParty: Party;
+
+    dataMonitoringDemanded: boolean;
 
     callStatus: CallStatus = new CallStatus();
     fetchTermsAndConditionsStatus: CallStatus = new CallStatus();
@@ -80,13 +84,15 @@ export class OrderComponent implements OnInit {
         const sellerId: string = this.order.orderLine[0].lineItem.item.manufacturerParty.id;
         const buyerId: string = this.cookieService.get("company_id");
 
-        // fetch both parties in parallel.
+        // fetch all needed data
         Promise.all([
             this.userService.getParty(buyerId),
-            this.userService.getParty(sellerId)
-        ]).then(([buyerParty, sellerParty]) => {
+            this.userService.getParty(sellerId),
+            this.isDataMonitoringDemanded(),
+        ]).then(([buyerParty, sellerParty, dataMonitoringDemanded]) => {
             this.buyerParty = buyerParty;
             this.sellerParty = sellerParty;
+            this.dataMonitoringDemanded = dataMonitoringDemanded;
         });
     }
 
@@ -255,5 +261,31 @@ export class OrderComponent implements OnInit {
 
     getLineItem(): LineItem {
         return this.order.orderLine[0].lineItem;
+    }
+
+    /*
+     * 
+     */
+
+    private isDataMonitoringDemanded(): Promise<boolean> {
+        let docClause = null;
+ 
+        if (this.order.contract && this.order.contract.length > 0) {
+            for (let clause of this.order.contract[0].clause) {
+                if (clause.type === "NEGOTIATION") {
+                    docClause = clause as DocumentClause;
+                    break;
+                }
+            }
+        }
+ 
+        if (docClause) {
+            this.bpeService.getDocumentJsonContent(docClause.clauseDocumentRef.id).then(result => {
+                const q: Quotation = result as Quotation;
+                return q.dataMonitoringPromised;
+            })
+        }
+
+        return Promise.resolve(false);
     }
 }

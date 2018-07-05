@@ -1,21 +1,23 @@
-<div (click)="toggleVisible()"
-     class="d-flex pointer">
-    <span class="mr-auto font-weight-bold">
-        {{clause.type}}
-    </span>
-    <i *ngIf="!visible" class="fa fa-chevron-down " aria-hidden="true"></i>
-    <i *ngIf="visible" class="fa fa-chevron-up" aria-hidden="true"></i>
-</div>
-<ng-container *ngIf="visible">
-    <hr>
-    <ng-container *ngIf="clause.type == 'DATA_MONITORING'">
-        <data-monitoring-clause [clause]="clause">
-
-        </data-monitoring-clause>
+<h4 class="space-before">
+    {{ getClauseName() }}
+    <button class="btn btn-outline-dark btn-sm" (click)="toggleExpanded()">
+        <i class="fas fa-chevron-up fa-fw fa-lg mt-2" aria-hidden="true" *ngIf="expanded"></i>
+        <i class="fas fa-chevron-down fa-fw fa-lg mt-2" aria-hidden="true" *ngIf="!expanded"></i>
+    </button>
+</h4>
+<ng-container *ngIf="expanded">
+    <!-- Item Information Request -->
+    <ng-container *ngIf="clause.type == 'ITEM_DETAILS' && itemInformationRequest">
+        <item-information-response [request]="itemInformationRequest" [response]="clauseDocument" [readonly]="true">
+        </item-information-response>
     </ng-container>
-    <ng-container *ngIf="clause.type != 'DATA_MONITORING'">
-        <document-clause [clause]="clause">
-
-        </document-clause>
-    </ng-container>
+    
+    <!-- Ppap clause -->
+    <ppap-clause *ngIf="clause.type == 'PPAP'" [ppapResponse]="clauseDocument">
+    </ppap-clause>
+    
+    <!-- Loading icon -->
+    <call-status [callStatus]="clauseDocumentRetrievalStatus"
+                 [large]="true">
+    </call-status>
 </ng-container>

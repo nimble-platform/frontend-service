@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, Input } from "@angular/core";
 import { BPDataService } from "../bp-data-service";
 import { BPEService } from "../../bpe.service";
 import { CallStatus } from "../../../common/call-status";
@@ -23,8 +23,9 @@ export class ItemInformationResponseComponent implements OnInit {
 
     callStatus: CallStatus = new CallStatus();
 
-    request: ItemInformationRequest;
-    response: ItemInformationResponse;
+    @Input() request: ItemInformationRequest;
+    @Input() response: ItemInformationResponse;
+    @Input() readonly: boolean = false;
 
     constructor(private bpeService: BPEService, 
                 private bpDataService: BPDataService,
@@ -35,8 +36,12 @@ export class ItemInformationResponseComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.request = this.bpDataService.itemInformationRequest;
-        this.response = this.bpDataService.itemInformationResponse;
+        if (!this.request) {
+            this.request = this.bpDataService.itemInformationRequest;
+        }
+        if (!this.response) {
+            this.response = this.bpDataService.itemInformationResponse;
+        }
     }
 
     /*
@@ -141,7 +146,9 @@ export class ItemInformationResponseComponent implements OnInit {
      */
 
     isResponseSent(): boolean {
-        return this.bpDataService.processMetadata && this.bpDataService.processMetadata.processStatus === "Completed";
+        return this.readonly || 
+            (   this.bpDataService.processMetadata 
+             && this.bpDataService.processMetadata.processStatus === "Completed");
     }
 
     getResponseFile(): BinaryObject | null {

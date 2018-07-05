@@ -15,9 +15,9 @@ import { Location } from "@angular/common";
 })
 export class PpapDocumentDownloadComponent{
 
-    processid : any;
+    @Input() ppapResponse: PpapResponse;
+    @Input() ppap: Ppap;
 
-    ppapResponse : PpapResponse = null;
     ppapDocuments : DocumentReference[] = [];
     note: any;
     noteBuyer: any;
@@ -30,6 +30,44 @@ export class PpapDocumentDownloadComponent{
                 private bpeService: BPEService,
                 private route: ActivatedRoute,
                 private location: Location) {
+    }
+
+    ngOnInit() {
+        if(!this.ppapResponse) {
+            this.route.queryParams.subscribe(params =>{
+                const processid = params['pid'];
+    
+                this.bpeService.getProcessDetailsHistory(processid).then(task => {
+                    this.ppap = ActivityVariableParser.getInitialDocument(task).value as Ppap;
+                    this.ppapResponse = ActivityVariableParser.getResponse(task).value as PpapResponse;
+                    this.initFromPpap();
+                });
+            });
+        } else {
+            if(!this.ppap) {
+                throw new Error("ppap must be set if ppapResponse is set.");
+            }
+            this.initFromPpap();
+        }
+
+    }
+    
+    private initFromPpap() {
+        this.noteBuyer = this.ppap.note;
+        this.ppapDocuments = this.ppapResponse.requestedDocument;
+
+        for(let i=0;i<this.ppapDocuments.length;i++){
+            if(!(this.ppapDocuments[i].documentType in this.documents)){
+                this.documents[this.ppapDocuments[i].documentType]=[this.ppapDocuments[i].attachment.embeddedDocumentBinaryObject];
+            }
+            else{
+                this.documents[this.ppapDocuments[i].documentType].push(this.ppapDocuments[i].attachment.embeddedDocumentBinaryObject);
+            }
+        }
+        this.note = this.ppapResponse.note;
+        this.keys = Object.keys(this.documents);
+
+        this.requestedDocuments = this.ppap.documentType;
     }
 
     isBuyer(): boolean {
@@ -45,33 +83,6 @@ export class PpapDocumentDownloadComponent{
         this.bpDataService.initRfq().then(() => {
             this.bpDataService.setBpOptionParameters(this.bpDataService.userRole, "Negotiation", "Ppap");
         })
-    }
-
-    ngOnInit() {
-        this.route.queryParams.subscribe(params =>{
-            this.processid = params['pid'];
-
-            this.bpeService.getProcessDetailsHistory(this.processid).then(task => {
-                let ppap = ActivityVariableParser.getInitialDocument(task).value as Ppap;
-                this.noteBuyer = ppap.note;
-                this.ppapResponse = ActivityVariableParser.getResponse(task).value as PpapResponse;
-                this.ppapDocuments = this.ppapResponse.requestedDocument;
-
-                for(let i=0;i<this.ppapDocuments.length;i++){
-                    if(!(this.ppapDocuments[i].documentType in this.documents)){
-                        this.documents[this.ppapDocuments[i].documentType]=[this.ppapDocuments[i].attachment.embeddedDocumentBinaryObject];
-                    }
-                    else{
-                        this.documents[this.ppapDocuments[i].documentType].push(this.ppapDocuments[i].attachment.embeddedDocumentBinaryObject);
-                    }
-                }
-                this.note = this.ppapResponse.note;
-                this.keys = Object.keys(this.documents);
-
-                this.requestedDocuments = ppap.documentType;
-            });
-        });
-
     }
 
     downloadFile(key) :void {

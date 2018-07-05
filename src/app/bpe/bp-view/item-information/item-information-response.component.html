@@ -51,7 +51,7 @@
 <hr>
 
 <!-- Actions -->
-<div *ngIf="!isBuyer()" class="row actions-row">
+<div *ngIf="!isBuyer() && !readonly" class="row actions-row">
     <div class="col-4"></div>
     <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
     <div class="col-2">
@@ -70,19 +70,19 @@
 </div>
 
 <!-- Buyer only sees once the response has been sent -->
-<div *ngIf="isBuyer()" class="row actions-row">
+<div *ngIf="isBuyer() && !readonly" class="row actions-row">
     <div class="col-2"></div>
     <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
     <div class="col-2">
-        <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
+        <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">Back</button>
     </div>
     <div class="col-2">
-        <button class="btn btn-primary action" [disabled]="isLoading()" (click)="onRestart()">
-            Ask something else
+        <button class="btn btn-primary action" [disabled]="isLoading() || readonly" (click)="onRestart()">
+            Ask Something Else
         </button>
     </div>
     <div class="col-2">
-        <button class="btn btn-primary action" [disabled]="isLoading()" (click)="onNextStep()">
+        <button class="btn btn-primary action" [disabled]="isLoading() || readonly" (click)="onNextStep()">
             Go to Next Step
         </button>
     </div>
