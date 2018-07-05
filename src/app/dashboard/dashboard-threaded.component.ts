@@ -39,7 +39,7 @@ export class DashboardThreadedComponent implements OnInit {
         private userService: UserService,
         private router: Router,
         private route: ActivatedRoute,
-        private appComponent: AppComponent
+        public appComponent: AppComponent
     ) {}
 
     ngOnInit() {

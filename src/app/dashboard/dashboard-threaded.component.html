@@ -36,13 +36,13 @@
                     </li>
                 </ng-container>
                 <li class="nav-item">
-                    <a href id="PURCHASES" [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.PURCHASES}" (click)="onChangeTab($event)" i18n>Purchases</a>
+                    <a href id="PURCHASES" *ngIf="this.appComponent.checkRoles('purchases')"  [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.PURCHASES}" (click)="onChangeTab($event)" i18n>Purchases</a>
                 </li>
                 <li class="nav-item">
-                    <a href id="SALES" [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.SALES}" (click)="onChangeTab($event)" i18n>Sales</a>
+                    <a href id="SALES" *ngIf="this.appComponent.checkRoles('sales')" [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.SALES}" (click)="onChangeTab($event)" i18n>Sales</a>
                 </li>
                 <li class="nav-item">
-                    <a href id="CATALOGUE" [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.CATALOGUE}" (click)="onChangeTab($event)" i18n>Catalogue</a>
+                    <a href id="CATALOGUE" *ngIf="this.appComponent.checkRoles('catalogue')" [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.CATALOGUE}" (click)="onChangeTab($event)" i18n>Catalogue</a>
                 </li>
             </ul>
         </div>
