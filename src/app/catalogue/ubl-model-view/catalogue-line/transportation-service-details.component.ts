@@ -1,16 +1,11 @@
 import {Component, Input, OnInit} from "@angular/core";
-import { CatalogueLine } from "../../model/publish/catalogue-line";
-import {ItemProperty} from "../../model/publish/item-property";
-import {Property} from "../../model/category/property";
-import {Code} from "../../model/publish/code";
-import {Quantity} from "../../model/publish/quantity";
-import {Dimension} from "../../model/publish/dimension";
-import {BPDataService} from "../../../bpe/bp-view/bp-data-service";
+import {CatalogueLine} from "../../model/publish/catalogue-line";
 import {UBLModelUtils} from "../../model/ubl-model-utils";
 import {PropertyBlockPipe} from "../../property-block-pipe";
 import {PublishService} from "../../publish-and-aip.service";
 import {TransportationService} from "../../model/publish/transportation-service";
 import {FormGroup} from "@angular/forms";
+import {Address} from "../../model/publish/address";
 
 @Component({
     selector: 'transportation-service-details',
@@ -41,6 +36,12 @@ export class TransportationServiceDetails implements OnInit{
         if(this.catalogueLine.goodsItem.item.transportationServiceDetails == null) {
             this.catalogueLine.goodsItem.item.transportationServiceDetails = new TransportationService();
         }
+    }
+
+    addInitialCountry(value: string): void {
+        let address:Address = UBLModelUtils.createAddress();
+        address.country.name = value;
+        this.catalogueLine.requiredItemLocationQuantity.applicableTerritoryAddress = [address];
     }
 
     toggleCollapsed(blockName:string):void {

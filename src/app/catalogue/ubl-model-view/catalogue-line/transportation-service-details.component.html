@@ -46,12 +46,13 @@
 
 <!-- applicable countries -->
 <div class="well">
-    <h6>Supported Countries</h6>
+    <h6>Applicable Countries</h6>
     <address-view [presentationMode]="presentationMode"
-                  [propName]="'Applicable Countries'"
+                  [propName]="'Countries'"
                   [multiValue]="true"
                   [definition]="'A reference to countries to which this service will apply'"
-                  [address]="catalogueLine.requiredItemLocationQuantity.applicableTerritoryAddress">
+                  [address]="catalogueLine.requiredItemLocationQuantity.applicableTerritoryAddress"
+                  (onInitialAddressChange)="addInitialCountry($event)">
     </address-view>
 </div>
 

@@ -25,7 +25,9 @@
 
         <shipment-view [showCarrierPartyDetails]="bpDataService?.userRole != 'buyer'"
                        [shipment]="transportExecutionPlanRequest.consignment[0].consolidatedShipment[0]"
-                       [presentationMode]="bpDataService.processMetadata == null ? 'edit' : 'view'">
+                       [presentationMode]="bpDataService.processMetadata == null ? 'edit' : 'view'"
+                       [date]="endDate"
+                       [showDate]="false">
         </shipment-view>
     </div>
 

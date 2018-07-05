@@ -106,6 +106,7 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
         });
         this.sparqlJSON['concept'] = this.configSPQ['concept'];
         this.sparqlJSON['language'] = this.lang;
+        this.hiddenElement = false;
         // get properties
         this.getPropertiesOfConcept(this.configSPQ);
         this.infoAlert = true;
@@ -273,17 +274,27 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
                 this.sparqlJSON['parametersURL'].push(encodeURIComponent(this.selectedProperty['propertyURL']));
                 this.sparqlJSON['propertySources'].push(this.selectedProperty['propertySource']);
             }
-            this.sparqlJSON['filters'].push(
-                {
-                    property: encodeURIComponent(this.selectedProperty['propertyURL']),
-                    exactValue: filterValue
-                });
+            if (isNumeric(filterValue)) {
+                this.sparqlJSON['filters'].push(
+                    {
+                        property: encodeURIComponent(this.selectedProperty['propertyURL']),
+                        exactValue: filterValue
+                    });
+            } else {
+                this.sparqlJSON['filters'].push(
+                    {
+                        property: encodeURIComponent(this.selectedProperty['propertyURL']),
+                        exactValue: encodeURIComponent(filterValue)
+                    });
+            }
             if (this.conceptPaths.length === 1) {
                 let pathJSON = {
                     urlOfProperty: encodeURIComponent(this.selectedProperty['propertyURL']),
                     path: [{concept: this.configSPQ['concept']}]
                 };
-                this.sparqlJSON['parametersIncludingPath'].push(pathJSON);
+                if (this.sparqlJSON['parametersIncludingPath'].findIndex(i => i.urlOfProperty === pathJSON.urlOfProperty) === -1) {
+                    this.sparqlJSON['parametersIncludingPath'].push(pathJSON);
+                }
             } else {
                 let pathJSON = {urlOfProperty: encodeURIComponent(this.selectedProperty['propertyURL']), path: []};
                 this.conceptPaths.forEach(path => {
@@ -298,7 +309,9 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
                         pathJSON.path.push({concept: encodeURIComponent(path.url)});
                     }
                 });
-                this.sparqlJSON['parametersIncludingPath'].push(pathJSON);
+                if (this.sparqlJSON['parametersIncludingPath'].findIndex(i => i.urlOfProperty === pathJSON.urlOfProperty) === -1) {
+                    this.sparqlJSON['parametersIncludingPath'].push(pathJSON);
+                }
             }
             this.disableAddPropBtn = true;
 
@@ -327,6 +340,12 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
                     };
                     this.sparqlJSON['parametersIncludingPath'].push(pathJSON);
                 }
+            } else if (!this.sparqlJSON['filters'].length) {
+                this.sparqlJSON['filters'].push({
+                    property: encodeURIComponent(this.selectedProperty['propertyURL']),
+                    min: min,
+                    max: max
+                });
             }
         }
         this.propertySelectionComplete = true;
@@ -341,18 +360,24 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
     }
 
     removeSelection(name) {
-            let indexToRemove = this.tableResult['columns'].findIndex(i => i === name);
-            if (indexToRemove > -1) {
+
+        let tableIndexToRemove = this.tableResult['columns'].findIndex(i => i === name);
+        let propIndexToRemove = this.sparqlJSON['parameters'].findIndex(i => i === name);
+            if (tableIndexToRemove === 0 && this.tableResult['columns'].length === 1) {
+                this.tableResult['uuids'] = [];
+            }
+            if (propIndexToRemove > -1) {
                 this.tableResult['rows'].forEach(entry => {
-                    entry.splice(indexToRemove, 1);
+                    entry.splice(tableIndexToRemove, 1);
                 });
-                let removePropURL = this.sparqlJSON['parametersURL'][indexToRemove];
-                this.tableResult['columns'].splice(indexToRemove, 1);
+                this.tableResult['columns'].splice(tableIndexToRemove, 1);
+
                 // remove selection from SPARQL
-                this.sparqlJSON['parameters'].splice(indexToRemove, 1);
-                this.sparqlJSON['parametersURL'].splice(indexToRemove, 1);
-                this.sparqlJSON['parametersIncludingPath'].splice(indexToRemove, 1);
-                this.sparqlJSON['propertySources'].splice(indexToRemove, 1);
+                this.sparqlJSON['parameters'].splice(propIndexToRemove, 1);
+                let removePropURL = this.sparqlJSON['parameters'][propIndexToRemove];
+                this.sparqlJSON['parametersURL'].splice(propIndexToRemove, 1);
+                this.sparqlJSON['parametersIncludingPath'].splice(propIndexToRemove, 1);
+                this.sparqlJSON['propertySources'].splice(propIndexToRemove, 1);
                 let filterIndexToRemove = this.sparqlJSON['filters'].findIndex(el => el.property === removePropURL);
                 if (filterIndexToRemove > -1) {
                     this.sparqlJSON['filters'].splice(filterIndexToRemove);
@@ -379,23 +404,23 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
     negotiation(): void {
         // console.log(this._negotation_catalogue_id, this._negotiation_id);
         // console.log(`/simple-search-details?catalogueId=${this._negotation_catalogue_id}&id=${this._negotiation_id}`);
-        this.router.navigate(['/simple-search-details'],
+        this.router.navigate(['/simple-search/details'],
             { queryParams: {catalogueId: this._negotiation_catalogue_id, id: this._negotiation_id} });
     }
 
     getSparqlOptionalSelect(indexUUID) {
         console.log(indexUUID);
         let optSPARQLQuery = {uuid: encodeURIComponent(this.tableResult.uuids[indexUUID].trim()), 'language': this.lang};
-        console.log(optSPARQLQuery);
+        // console.log(optSPARQLQuery);
         this.expSearch.getOptionalSelect(optSPARQLQuery)
             .then(res => {
                 this.sparqlSelectedOption = res;
-                if (this.sparqlSelectedOption['columns'].findIndex(i => i === 'id') >= 0 &&
-                    this.sparqlSelectedOption['columns'].findIndex(j => j === 'catalogueId') >= 0) {
+                if (this.sparqlSelectedOption['columns'].findIndex(i => i === 'ManufacturersItemIdentification') >= 0 &&
+                    this.sparqlSelectedOption['columns'].findIndex(j => j === 'CatalogueDocumentReference') >= 0) {
                     console.log('Negotiation can exist');
                     this.negotiationEnable = true;
-                    let index_id = this.sparqlSelectedOption['columns'].findIndex(i => i === 'id');
-                    let index_catalogue = this.sparqlSelectedOption['columns'].findIndex(i => i === 'catalogueId');
+                    let index_id = this.sparqlSelectedOption['columns'].findIndex(i => i === 'ManufacturersItemIdentification');
+                    let index_catalogue = this.sparqlSelectedOption['columns'].findIndex(i => i === 'CatalogueDocumentReference');
                     this._negotiation_id = this.sparqlSelectedOption['rows'][0][index_id];
                     this._negotiation_catalogue_id = this.sparqlSelectedOption['rows'][0][index_catalogue];
                     console.log(this._negotiation_catalogue_id, this._negotiation_id);

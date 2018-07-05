@@ -42,6 +42,6 @@ export class OrderBpComponent implements OnInit {
         this.searchContextService.associatedProcessType = 'Order';
         this.searchContextService.associatedProcessMetadata = this.bpDataService.processMetadata;
         this.bpDataService.setBpOptionParameters('buyer', 'Transport_Execution_Plan',"Order");
-        this.router.navigate(['simple-search'], {queryParams: {searchContext: 'orderbp',q:'*',fq:'item_commodity_classification%3A%22Transport Service%22'}});
+        this.router.navigate(['simple-search'], {queryParams: {searchContext: 'orderbp', q:'*', cat:'Transport service'}});
     }
 }

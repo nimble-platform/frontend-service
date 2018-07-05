@@ -3,6 +3,7 @@ import {CatalogueLine} from "../../model/publish/catalogue-line";
 import {PropertyBlockPipe} from "../../property-block-pipe";
 import {PublishService} from "../../publish-and-aip.service";
 import {FormGroup} from "@angular/forms";
+import {TrackAndTraceDetails} from "../../model/publish/track-and-trace-details";
 
 @Component({
     selector: 'product-details',
@@ -25,8 +26,17 @@ export class ProductDetailsComponent{
     // keeping the collapsed state of property blocks. it is actually a reference to the actual kept in publish service
     propertyBlockCollapsedStates: Map<string, boolean> = new Map<string, boolean>();
 
+    showTTDetails = false;
+
     constructor(private publishService: PublishService) {
         this.propertyBlockCollapsedStates = this.publishService.getCollapsedStates();
+    }
+
+    toggleTrackAndTraceDetailsCollapsed(): void {
+        this.showTTDetails = !this.showTTDetails;
+        if(this.catalogueLine.goodsItem.item.trackAndTraceDetails == null) {
+            this.catalogueLine.goodsItem.item.trackAndTraceDetails = new TrackAndTraceDetails();
+        }
     }
 
     toggleCollapsed(blockName:string):void {

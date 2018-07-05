@@ -99,7 +99,7 @@ export class UBLModelUtils {
         // price
         let price: Price = this.createPrice(null);
         // item location quantity
-        let ilq: ItemLocationQuantity = new ItemLocationQuantity(price, []);
+        let ilq: ItemLocationQuantity = new ItemLocationQuantity(price, [new Address()]);
         return ilq;
     }
 

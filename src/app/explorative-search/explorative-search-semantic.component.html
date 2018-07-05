@@ -12,6 +12,7 @@
                 <li>If you click on one of the <strong>References</strong> your Explorer
                     will update with new properties for the selected reference.</li>
                 <li>You can use the <strong>Path</strong> below to go back to a previous Reference by simply clicking on it.</li>
+                <!--<li><strong>Work In Progress:</strong> Logical operation <em>OR</em> is currently under development</li>-->
             </ul>
         </div>
     </div>
@@ -31,14 +32,18 @@
     <div class="card">
         <div class="card-header">Available Values</div>
         <div class="card-body">
-            <p>Select One or More Values</p>
-            <div *ngFor="let eachVal of values">
-                <label>
-                    <input type="checkbox"
-                           [disabled]="!disableManualFilters"
-                           (change)="filtersSelected(eachVal, $event)"/>
-                    <span><strong>{{eachVal}}</strong></span>
-                </label>
+            <p>Select One or More Value</p>
+            <div style="overflow-y: scroll; height: 250px;">
+                <div *ngFor="let eachVal of values" class="custom-control custom-checkbox">
+                        <input type="checkbox"
+                               [disabled]="!disableManualFilters"
+                               (change)="filtersSelected(eachVal, $event)" class="custom-control-input"
+                               id="{{eachVal}}"
+                        />
+                    <label for="{{eachVal}}" class="custom-control-label">
+                        <span><strong>{{eachVal}}</strong></span>
+                    </label>
+                </div>
             </div>
             <hr>
             <div *ngIf="valuesAreNumeric">
@@ -118,11 +123,11 @@
     </div>
     <div class="row" style="margin-top: 15px">
         <div class="col-md-6">
-            <button class="btn btn-outline-primary" (click)="hiddenElement=!hiddenElement">Back to Explorer</button>
+            <button class="btn btn-primary" (click)="hiddenElement=!hiddenElement">Back to Explorer</button>
         </div>
         <div class="col-md-6">
-            <button class="btn btn-outline-warning" [disabled]="!negotiationEnable" (click)="negotiation()">
-                Negotiate</button>
+            <button class="btn btn-warning" [disabled]="!negotiationEnable" (click)="negotiation()">
+                Initiate Business Process</button>
         </div>
     </div>
 </div>
@@ -181,7 +186,7 @@
                     <p> We couldn't find any filters for the selection.</p>
                 </ngb-alert>
             </div>
-            <div class="col-md-4" *ngIf="searchvalue.length > 0">
+            <div class="col-md-6" *ngIf="searchvalue.length > 0">
                 <template [ngTemplateOutlet]="valuesTemplateRef" [ngTemplateOutletContext]="{$implicit: searchvalue}">
                 </template>
             </div>
@@ -198,7 +203,7 @@
         <div class="alert alert-info" role="info">
             <i class="fa fa-info-circle"></i> You can remove your selections by:
             <ul>
-                <li>scrolling to the top of the table, click on the delete button.</li>
+                <li>scrolling to the top of the table below, click on the delete button.</li>
                 <li>Click on the <kbd>Obtain Results</kbd> button again to update your results.</li>
             </ul>
         </div>
@@ -207,9 +212,9 @@
                 <caption>Available Results from NIMBLE</caption>
                 <thead>
                 <tr>
-                    <th>
-                        Results
-                    </th>
+                    <!--<th>-->
+                        <!--Results-->
+                    <!--</th>-->
                     <th *ngFor="let column of tableResult?.columns; let i=index" scope="col"
                         (mouseenter)="showSelectionDel=true" (mouseleave)="showSelectionDel=false">
                         {{column}}
@@ -217,14 +222,14 @@
                             <i class="fa fa-minus-square" ngbTooltip="Remove {{column}}"  placement="right" (click)="removeSelection(column)"></i>
                         </span>
                     </th>
-                    <th>
+                    <th *ngIf="tableResult?.uuids.length">
                         More
                     </th>
                 </tr>
                 </thead>
                 <tbody>
                     <tr *ngFor="let row of tableResult?.rows; let i=index">
-                        <td>{{i+1}}</td>
+                        <!--<td>{{i+1}}</td>-->
                         <td *ngFor="let field of row">{{field}}</td>
                         <td *ngIf="tableResult?.uuids.length">
                             <button class="btn btn-xs btn-outline-success"
@@ -237,13 +242,12 @@
                 </tbody>
             </table>
         </div>
-
-    </div>
-    <!--<pre>-->
-    <!--<code>{{tableResult | json}}</code>-->
-    <!--</pre>-->
 </div>
 
+</div>
+<!--<pre>-->
+    <!--<code>{{tableResult | json}}</code>-->
+<!--</pre>-->
 <!--<div class="container">-->
 <!--<pre>-->
 <!--<code>-->

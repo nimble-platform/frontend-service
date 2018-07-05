@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {TradingTerm} from '../model/publish/trading-term';
 
 @Component({
@@ -8,6 +8,8 @@ import {TradingTerm} from '../model/publish/trading-term';
 export class PaymentTermsView implements OnInit{
     @Input() tradingTerms: TradingTerm[];
     @Input() presentationMode:string;
+
+    @Output() onSelectChange = new EventEmitter();
     initialTradingTerms: TradingTerm[] = [];
 
     ngOnInit(){

@@ -11,6 +11,8 @@ import {ProcessInstanceGroupFilter} from "./model/process-instance-group-filter"
 import {CookieService} from "ng2-cookies";
 import {Contract} from "../catalogue/model/publish/contract";
 import {Clause} from "../catalogue/model/publish/clause";
+import {TradingTerm} from '../catalogue/model/publish/trading-term';
+import {Order} from '../catalogue/model/publish/order';
 
 @Injectable()
 export class BPEService {
@@ -230,6 +232,40 @@ export class BPEService {
             .catch(this.handleError);
 	}
 
+    downloadContractBundle(id){
+        const url = `${this.url}/contracts/create-bundle?orderId=${id}`;
+        return new Promise<any>((resolve, reject) => {
+            let xhr = new XMLHttpRequest();
+
+            xhr.open('GET', url, true);
+            xhr.setRequestHeader('Accept', 'application/zip');
+            xhr.responseType = 'blob';
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+
+                        var contentType = 'application/zip';
+                        var blob = new Blob([xhr.response], {type: contentType});
+                        resolve({fileName: "Contract Bundle.zip", content: blob});
+                    } else {
+                        reject(xhr.status);
+                    }
+                }
+            }
+            xhr.send();
+        });
+    }
+
+    generateOrderTermsAndConditionsAsText(order: Order,buyerParty,sellerParty){
+        const url = `${this.url}/contracts/create-terms?orderId=${order.id}&sellerParty=${JSON.stringify(sellerParty)}&buyerParty=${JSON.stringify(buyerParty)}&incoterms=${order.orderLine[0].lineItem.deliveryTerms.incoterms == null ? "" :order.orderLine[0].lineItem.deliveryTerms.incoterms}&tradingTerms=${encodeURIComponent(JSON.stringify(this.getSelectedTradingTerms(order.paymentTerms.tradingTerms)))}`;
+        return this.http
+            .get(url, {headers: this.headers})
+            .toPromise()
+            .then(res => res.text())
+            .catch(this.handleError);
+	}
+
 	private stringtifyArray(values: any[]): string {
 		let paramVal: string = '';
 		for (let value of values) {
@@ -237,6 +273,31 @@ export class BPEService {
 		}
 		paramVal = paramVal.substring(0, paramVal.length-1);
 		return paramVal;
+	}
+
+	private  getSelectedTradingTerms(tradingTerms){
+        let selectedTradingTerms: TradingTerm[] = [];
+
+        for(let tradingTerm of tradingTerms){
+            if(tradingTerm.id.indexOf("Values") != -1){
+                let addToList = true;
+                for(let value of tradingTerm.value){
+                    if(value == null){
+                        addToList = false;
+                        break;
+                    }
+                }
+                if(addToList){
+                    selectedTradingTerms.push(tradingTerm);
+                }
+            }
+            else{
+                if(tradingTerm.value[0] == 'true'){
+                    selectedTradingTerms.push(tradingTerm);
+                }
+            }
+        }
+        return selectedTradingTerms;
 	}
 
 	private handleError(error: any): Promise<any> {

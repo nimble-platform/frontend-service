@@ -4,7 +4,7 @@
         <div style="width: 50%;float: left;padding: 1em">
             <div>
                 <input [checked]="get('Payment_In_Advance').value[0] == 'true'" type="checkbox"  [disabled]="presentationMode != 'edit'"
-                       (change)="get('Payment_In_Advance').value[0] == 'true' ? get('Payment_In_Advance').value[0]='false' : get('Payment_In_Advance').value[0]='true'" >
+                       (change)="get('Payment_In_Advance').value[0] == 'true' ? get('Payment_In_Advance').value[0]='false' : get('Payment_In_Advance').value[0]='true';onSelectChange.emit()" >
                 <label>PIA
                     <span class="label label-default" title="Payment in advance">
                     &#9432;
@@ -12,17 +12,17 @@
                 </label>
             </div>
             <div>
-                <input [checked]="get('Values_Net').value[0]" (change)="get('Values_Net').value[0]=null"
+                <input [checked]="get('Values_Net').value[0]" (change)="get('Values_Net').value[0]=null;onSelectChange.emit()"
                        type="checkbox" [disabled]="presentationMode != 'edit' || !get('Values_Net').value[0]">
                 <label>Net</label>
-                <input [(ngModel)]="get('Values_Net').value[0]" class="bordered col-3" type="number" style="height: 30px;background-color:#eceeef" [disabled]="presentationMode != 'edit'" placeholder="Number">
+                <input [(ngModel)]="get('Values_Net').value[0]" class="bordered col-3" type="number" style="height: 30px;background-color:#eceeef" [disabled]="presentationMode != 'edit'" placeholder="Number" (change)="onSelectChange.emit()">
                 <span class="label label-default" title="e.g.,NET 10,payment 10 days after invoice date">
                     &#9432;
                 </span>
             </div>
             <div>
                 <input [checked]="get('End_of_month').value[0] == 'true'" type="checkbox" [disabled]="presentationMode != 'edit'"
-                       (change)="get('End_of_month').value[0] == 'true' ? get('End_of_month').value[0]='false' : get('End_of_month').value[0]='true'">
+                       (change)="get('End_of_month').value[0] == 'true' ? get('End_of_month').value[0]='false' : get('End_of_month').value[0]='true';onSelectChange.emit()">
                 <label>EOM
                     <span class="label label-default" title="End of month">
                     &#9432;
@@ -31,7 +31,7 @@
             </div>
             <div>
                 <input [checked]="get('Cash_next_delivery').value[0] == 'true'" type="checkbox" [disabled]="presentationMode != 'edit'"
-                       (change)="get('Cash_next_delivery').value[0] == 'true' ? get('Cash_next_delivery').value[0]='false' : get('Cash_next_delivery').value[0]='true'">
+                       (change)="get('Cash_next_delivery').value[0] == 'true' ? get('Cash_next_delivery').value[0]='false' : get('Cash_next_delivery').value[0]='true';onSelectChange.emit()">
                 <label>CND
                     <span class="label label-default" title="Cash next delivery">
                     &#9432;
@@ -40,7 +40,7 @@
             </div>
             <div>
                 <input [checked]="get('Cash_before_shipment').value[0] == 'true'" type="checkbox" [disabled]="presentationMode != 'edit'"
-                       (change)="get('Cash_before_shipment').value[0] == 'true' ? get('Cash_before_shipment').value[0]='false' : get('Cash_before_shipment').value[0]='true'">
+                       (change)="get('Cash_before_shipment').value[0] == 'true' ? get('Cash_before_shipment').value[0]='false' : get('Cash_before_shipment').value[0]='true';onSelectChange.emit()">
                 <label>CBS
                     <span class="label label-default" title="Cash before shipment">
                     &#9432;
@@ -51,9 +51,9 @@
 
         <div style="width: 50%;float: right;padding: 1em">
             <div>
-                <input [checked]="get('Values_MFI').value[0]" (change)="get('Values_MFI').value[0]=null"
+                <input [checked]="get('Values_MFI').value[0]" (change)="get('Values_MFI').value[0]=null;onSelectChange.emit()"
                        type="checkbox"  [disabled]="presentationMode != 'edit' || !get('Values_MFI').value[0]">
-                <input [(ngModel)]="get('Values_MFI').value[0]" class="bordered col-3" type="number" style="height: 30px;background-color:#eceeef" [disabled]="presentationMode != 'edit'" placeholder="Number">
+                <input [(ngModel)]="get('Values_MFI').value[0]" class="bordered col-3" type="number" style="height: 30px;background-color:#eceeef" [disabled]="presentationMode != 'edit'" placeholder="Number" (change)="onSelectChange.emit()">
                 <label>MFI
                     <span class="label label-default" title="e.g.,21 MFI,21st of the month following invoice date">
                     &#9432;
@@ -63,19 +63,19 @@
             <div>
                 <input [checked]="get('Values_/NET').value[0] && get('Values_/NET').value[1] && get('Values_/NET').value[2]" type="checkbox"
                        [disabled]="presentationMode != 'edit' || !get('Values_/NET').value[0] || !get('Values_/NET').value[1] || !get('Values_/NET').value[2]"
-                       (change)="get('Values_/NET').value[0]=null;get('Values_/NET').value[1]=null;get('Values_/NET').value[2]=null">
-                <input [(ngModel)]="get('Values_/NET').value[0]" class="bordered col-3" type="number" style="height: 30px;background-color:#eceeef" [disabled]="presentationMode != 'edit'" placeholder="Number">
+                       (change)="get('Values_/NET').value[0]=null;get('Values_/NET').value[1]=null;get('Values_/NET').value[2]=null;onSelectChange.emit()">
+                <input [(ngModel)]="get('Values_/NET').value[0]" class="bordered col-3" type="number" style="height: 30px;background-color:#eceeef" [disabled]="presentationMode != 'edit'" placeholder="Number" (change)="onSelectChange.emit()">
                 <span>/</span>
-                <input [(ngModel)]="get('Values_/NET').value[1]" class="bordered col-3" type="number" style="height: 30px;background-color:#eceeef" [disabled]="presentationMode != 'edit'" placeholder="Number">
+                <input [(ngModel)]="get('Values_/NET').value[1]" class="bordered col-3" type="number" style="height: 30px;background-color:#eceeef" [disabled]="presentationMode != 'edit'" placeholder="Number" (change)="onSelectChange.emit()">
                 <span> NET </span>
-                <input [(ngModel)]="get('Values_/NET').value[2]" class="bordered col-3" type="number" style="height: 30px;background-color:#eceeef" [disabled]="presentationMode != 'edit'" placeholder="Number">
+                <input [(ngModel)]="get('Values_/NET').value[2]" class="bordered col-3" type="number" style="height: 30px;background-color:#eceeef" [disabled]="presentationMode != 'edit'" placeholder="Number" (change)="onSelectChange.emit()">
                 <span class="label label-default" title="e.g.,1/10 NET 30,1% discount if payment received within 10 days otherwise payment 30 days after invoice date">
                     &#9432;
                 </span>
             </div>
             <div>
                 <input [checked]="get('Cash_on_delivery').value[0] == 'true'" type="checkbox" [disabled]="presentationMode != 'edit'"
-                       (change)="get('Cash_on_delivery').value[0] == 'true' ? get('Cash_on_delivery').value[0]='false' : get('Cash_on_delivery').value[0]='true'">
+                       (change)="get('Cash_on_delivery').value[0] == 'true' ? get('Cash_on_delivery').value[0]='false' : get('Cash_on_delivery').value[0]='true';onSelectChange.emit()">
                 <label>COD
                     <span class="label label-default" title="Cash on delivery">
                     &#9432;
@@ -84,7 +84,7 @@
             </div>
             <div>
                 <input [checked]="get('Cash_with_order').value[0] == 'true'" type="checkbox" [disabled]="presentationMode != 'edit'"
-                       (change)="get('Cash_with_order').value[0] == 'true' ? get('Cash_with_order').value[0]='false' : get('Cash_with_order').value[0]='true'">
+                       (change)="get('Cash_with_order').value[0] == 'true' ? get('Cash_with_order').value[0]='false' : get('Cash_with_order').value[0]='true';onSelectChange.emit()">
                 <label>CWO
                     <span class="label label-default" title="Cash with order">
                     &#9432;
@@ -93,7 +93,7 @@
             </div>
             <div>
                 <input [checked]="get('Cash_in_advance').value[0] == 'true'" type="checkbox" [disabled]="presentationMode != 'edit'"
-                       (change)="get('Cash_in_advance').value[0] == 'true' ? get('Cash_in_advance').value[0]='false' : get('Cash_in_advance').value[0]='true'">
+                       (change)="get('Cash_in_advance').value[0] == 'true' ? get('Cash_in_advance').value[0]='false' : get('Cash_in_advance').value[0]='true';onSelectChange.emit()">
                 <label>CIA
                     <span class="label label-default" title="Cash in advance">
                     &#9432;

@@ -58,9 +58,16 @@
 
     <!-- empty address list -->
     <ng-container *ngIf="address == null || address.length == 0">
-        <div>
-            <label>Add Applicable Country</label>
-            <i class="fa fa-plus-circle pointer" (click)="addFirstValue()"></i>
+        <div class="input-group form-group">
+            <label class="col-3 control-label">{{propName}}
+                <span *ngIf="definition" class="label label-default" title="{{definition}}">
+                        &#9432;
+                </span>
+            </label>
+            <input type="text" class="form-control "
+                   [(ngModel)]="initialValue"
+                   (ngModelChange)="initialValueChange($event)"
+                   [ngClass]="{'offset-3' : i > 0} ">
         </div>
     </ng-container>
 </ng-container>

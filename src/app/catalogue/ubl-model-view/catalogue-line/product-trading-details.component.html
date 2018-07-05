@@ -70,10 +70,11 @@
 <!-- Applicable territory -->
 <ng-container *ngIf="catalogueLine.requiredItemLocationQuantity.applicableTerritoryAddress">
     <address-view [presentationMode]="presentationMode"
-                  [propName]="'Applicable Territory Address'"
+                  [propName]="'Applicable Countries'"
                   [multiValue]="true"
                   [definition]="'A reference to a territory (region, country, city, etc.) to which the product will apply'"
-                  [address]="catalogueLine.requiredItemLocationQuantity.applicableTerritoryAddress">
+                  [address]="catalogueLine.requiredItemLocationQuantity.applicableTerritoryAddress"
+                  (onInitialAddressChange)="addInitialCountry($event)">
     </address-view>
 </ng-container>
 

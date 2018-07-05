@@ -27,6 +27,7 @@ export class TnTFormComponent {
     curve = shape.curveBundle.beta(1);
     gateInformation = [];
     sstInfo = [];
+    falsecode = '';
 
     constructor(private tntBackend: TnTService) {}
 
@@ -47,17 +48,28 @@ export class TnTFormComponent {
                 if ('productionProcessTemplate' in this.metaData) {
                     // this.getBPInfo(resp['productionProcessTemplate']);
                     this.getAnalysis(code);
+                    if (!(this.acc.activeIds.findIndex(tab => tab === 'bProcessVis') > -1)) {
+                        this.acc.toggle('bProcessVis');
+                    }
                 }
                 if ('eventUrl' in resp) {
                     this.getTableInfo(resp['eventUrl'], code);
+                    if (!(this.acc.activeIds.findIndex(tab => tab === 'tableInfo') > -1)) {
+                        this.acc.toggle('tableInfo');
+                    }
                 }
             })
             .catch(error => {
+                if (error.status === 404) {
+                    // console.log(error);
+                    this.falsecode = error._body;
+                }
                 this.error_detc = true;
             });
     }
 
     clearData() {
+        this.falsecode = '';
         this.metaData = {};
         this.bpInfo = [];
         this.trackingInfo = [];
