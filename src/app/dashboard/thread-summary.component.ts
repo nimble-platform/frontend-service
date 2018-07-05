@@ -118,8 +118,7 @@ export class ThreadSummaryComponent implements OnInit {
             {
                 queryParams: {
                     catalogueId: item.catalogueDocumentReference.id,
-                    id: item.manufacturersItemIdentification.id,
-                    showOptions: true
+                    id: item.manufacturersItemIdentification.id
                 }
             });
     }

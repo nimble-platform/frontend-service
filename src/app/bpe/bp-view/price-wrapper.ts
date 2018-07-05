@@ -85,7 +85,6 @@ export class PriceWrapper {
     }
 
     get unitCode(): string {
-        console.log("Getting currency for price", this.price);
         return this.currency;
     }
 

@@ -3,7 +3,7 @@ import { Predicate } from "@angular/core";
 import { ItemProperty } from "../catalogue/model/publish/item-property";
 import { PAYMENT_MEANS } from "../catalogue/model/constants";
 import { UBLModelUtils } from "../catalogue/model/ubl-model-utils";
-import { sanitizePropertyName, getPropertyKey, periodToString } from "../common/utils";
+import { sanitizePropertyName, getPropertyKey, periodToString, isCustomProperty } from "../common/utils";
 import { PriceWrapper } from "../bpe/bp-view/price-wrapper";
 
 /**
@@ -101,7 +101,7 @@ export class ProductWrapper {
             }
 
             const key = getPropertyKey(prop);
-            if(!duplicates[key]) {
+            if(!duplicates[key] || isCustomProperty(prop)) {
                 result.push(prop);
             }
 

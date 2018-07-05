@@ -5,6 +5,7 @@ import { Price } from "../catalogue/model/publish/price";
 import { Category } from "../catalogue/model/category/category";
 import { Property } from "../catalogue/model/category/property";
 import { PropertyValueQualifier } from "../catalogue/model/publish/property-value-qualifier";
+import { CUSTOM_PROPERTY_LIST_ID } from "../catalogue/model/constants";
 
 const UI_NAMES: any = {
     STRING: "TEXT"
@@ -19,7 +20,7 @@ export function sanitizeDataTypeName(dataType: PropertyValueQualifier): string {
 
 export function sanitizePropertyName(name: string): string {
     if(!name || name.length === 0) {
-        return "";
+        return "(no name)";
     }
     const result = name.replace(/([a-z])([A-Z])/g, '$1 $2');
     return result.substr(0, 1).toUpperCase() + result.substr(1);
@@ -49,7 +50,10 @@ export function durationToString(duration: Quantity): string {
     if(duration.value > 0) {
         return quantityToString(duration);
     }
-    return "None";
+    if(duration.value === 0) {
+        return "None";
+    }
+    return "Not defined";
 }
 
 export function periodToString(period: Period): string {
@@ -114,4 +118,8 @@ export function sortProperties(properties: Property[]): Property[] {
 
 export function scrollToDiv(divId: string): void {
     document.getElementById(divId).scrollIntoView();
+}
+
+export function isCustomProperty(property: ItemProperty): boolean {
+    return property && property.itemClassificationCode.listID === CUSTOM_PROPERTY_LIST_ID;
 }

@@ -96,10 +96,6 @@ export class PpapDocumentUploadComponent {
         return this.callStatus.fb_submitted;
     }
 
-    areAllDocumentsUploaded(): boolean {
-        return this.ppap.documentType.length === this.binaryObjects.length;
-    }
-
     remove(documentName, document): void {
         for(var i=0;i<this.binaryObjects.length;i++){
             if(documentName == this.binaryObjects[i].documentName){

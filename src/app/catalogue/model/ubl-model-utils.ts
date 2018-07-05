@@ -442,9 +442,8 @@ export class UBLModelUtils {
         return deliveryTerms;
     }
 
-    public static createPeriod():Period {
-        let period:Period = new Period(null, null, null, null, this.createQuantity(), null);
-        return period;
+    public static createPeriod(): Period {
+        return new Period(null, null, null, null, this.createQuantity(null, "Working days"), null);
     }
 
     public static createDimension(attributeId:string, unitCode:string):Dimension {
@@ -461,12 +460,8 @@ export class UBLModelUtils {
         return new Country(null);
     }
 
-    public static createQuantity():Quantity {
-        return this.createQuantityWithUnit("item(s)");
-    }
-
-    public static createQuantityWithUnit(unit:string):Quantity {
-        return new Quantity(1, unit, null);
+    public static createQuantity(value: number = 1, unit: string = "item(s)"):Quantity {
+        return new Quantity(value, unit, null);
     }
 
     public static createAmount():Amount{

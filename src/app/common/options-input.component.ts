@@ -1,5 +1,10 @@
 import { Component, EventEmitter, OnInit, Input, Output } from "@angular/core";
 
+export interface Option {
+    name: string
+    value: string
+}
+
 @Component({
     selector: "options-input",
     templateUrl: "./options-input.component.html",
@@ -18,7 +23,7 @@ export class OptionsInputComponent implements OnInit {
     @Input() rowClass: string = "";
     @Input() valueClass: string; // set based on label
     
-    @Input() options: string[];
+    @Input() options: Array<string | Option>;
     private selectedValue: string;
     @Output() selectedChange = new EventEmitter<string>();
 
@@ -42,4 +47,11 @@ export class OptionsInputComponent implements OnInit {
         this.selectedChange.emit(selected);
     }
 
+    getValue(option: Option | string): string {
+        return typeof option === "string" ? option : option.value;
+    }
+
+    getName(option: Option | string): string {
+        return typeof option === "string" ? option : option.name;
+    }
 }

@@ -1,9 +1,10 @@
 import { Component, OnInit, Input, ViewChild, ElementRef } from "@angular/core";
 import { ItemProperty } from "../model/publish/item-property";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { sanitizePropertyName, copy } from "../../common/utils";
+import { sanitizePropertyName, copy, isCustomProperty } from "../../common/utils";
 import { Quantity } from "../model/publish/quantity";
 import { SelectedProperty } from "../model/publish/selected-property";
+import { PROPERTY_TYPES } from "../model/constants";
 
 @Component({
     selector: "edit-property-modal",
@@ -16,6 +17,8 @@ export class EditPropertyModalComponent implements OnInit {
     selectedProperty: SelectedProperty;
     
     @ViewChild("modal") modal: ElementRef;
+
+    PROPERTY_TYPES = PROPERTY_TYPES;
 
     constructor(private modalService: NgbModal) {
     }
@@ -33,6 +36,11 @@ export class EditPropertyModalComponent implements OnInit {
             property.valueBinary = this.property.valueBinary;
             property.valueDecimal = this.property.valueDecimal;
             property.valueQuantity = this.property.valueQuantity;
+
+            if(isCustomProperty(property)) {
+                property.name = this.property.name;
+                property.valueQualifier = this.property.valueQualifier;
+            }
         })
     }
 
@@ -49,8 +57,12 @@ export class EditPropertyModalComponent implements OnInit {
         return "No definition."
     }
 
-    getPrettyName(): string {
+    get prettyName(): string {
         return sanitizePropertyName(this.property.name);
+    }
+
+    set prettyName(name: string) {
+        this.property.name = name;
     }
 
     getValues(): any[] {
@@ -68,6 +80,10 @@ export class EditPropertyModalComponent implements OnInit {
             case "BOOLEAN":
                 return this.property.value;
         }
+    }
+
+    getPropertyPresentationMode(): "edit" | "view" {
+        return isCustomProperty(this.property) ? "edit" : "view";
     }
 
     onAddValue() {
