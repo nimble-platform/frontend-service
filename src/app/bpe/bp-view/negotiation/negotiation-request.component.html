@@ -12,7 +12,7 @@
 <!-- Delivery Period -->
 <div class="row content-row bg-light">
     <div class="col-2">
-        <strong>Delivery Period:</strong>
+        <strong class="font-weight-500">Delivery Period:</strong>
     </div>
     <div class="col-5">
         {{ wrapper.lineDeliveryPeriod.value }} 
@@ -28,7 +28,7 @@
 <!-- Warranty -->
 <div class="row content-row">
     <div class="col-2">
-        <strong>Warranty:</strong>
+        <strong class="font-weight-500">Warranty:</strong>
     </div>
     <div class="col-5">
         {{ wrapper.lineWarrantyString }}
@@ -43,7 +43,7 @@
 <!-- Incoterms -->
 <div class="row content-row bg-light">
     <div class="col-2">
-        <strong>Request Incoterms:</strong>
+        <strong class="font-weight-500">Request Incoterms:</strong>
     </div>
     <div class="col-5">
         {{ wrapper.lineIncoterms }}
@@ -58,21 +58,24 @@
 <!-- Quantity -->
 <div class="row content-row">
     <div class="col-2">
-        <strong>Quantity:</strong>
+        <strong class="font-weight-500">Quantity:</strong>
     </div>
     <div class="col-5">
-        <input type="number" [(ngModel)]="requestedQuantity" class="form-control form-control-sm" [disabled]="isLoading() || isReadOnly()" />
+        <input type="number" [(ngModel)]="requestedQuantity" class="form-control form-control-sm" 
+            [disabled]="isLoading() || isReadOnly()" />
         <div class="input-spacer"></div>
         <input type="range" [(ngModel)]="requestedQuantity" class="form-control-range" 
             [max]="getMaximumQuantity()" [step]="getPriceSteps()" [disabled]="isLoading() || isReadOnly()"/>
     </div>
     <div class="col-5">
         <negotiation-request-input label="Request Payment Terms" [(cbModel)]="rfq.negotiationOptions.paymentTerms" 
-            id="paymentTermsCb" [options]="wrapper.rfqPaymentTerms.PAYMENT_TERMS" [(selected)]="wrapper.rfqPaymentTerms.paymentTerm" [disabled]="isLoading() || isReadOnly()">
+            id="paymentTermsCb" [options]="wrapper.rfqPaymentTerms.PAYMENT_TERMS" 
+            [(selected)]="wrapper.rfqPaymentTerms.paymentTerm" [disabled]="isLoading() || isReadOnly()">
         </negotiation-request-input>
         <div class="input-spacer"></div>
         <negotiation-request-input label="Request Payment Means" [(cbModel)]="rfq.negotiationOptions.paymentMeans" 
-            id="paymentMeansCb" [options]="PAYMENT_MEANS" [(selected)]="wrapper.rfqPaymentMeans" [disabled]="isLoading() || isReadOnly()">
+            id="paymentMeansCb" [options]="PAYMENT_MEANS" [(selected)]="wrapper.rfqPaymentMeans" 
+            [disabled]="isLoading() || isReadOnly()">
         </negotiation-request-input>
     </div>
 </div>
@@ -80,14 +83,15 @@
 <!-- Price -->
 <div class="row content-row bg-light">
     <div class="col-2">
-        <strong>Price:</strong>
+        <strong class="font-weight-500">Price:</strong>
     </div>
     <div class="col-5">
         {{ wrapper.linePricePerItemString }}
     </div>
     <div class="col-5">
-        <negotiation-request-input label="Request Price" [(cbModel)]="negotiatePrice" id="priceCb" [disabled]="isLoading() || isReadOnly()"
-            [(amount)]="negotiatedPrice" [amountUnit]="wrapper.linePriceWrapper.currency">
+        <negotiation-request-input label="Request Price" [(cbModel)]="negotiatePrice" id="priceCb" 
+            [disabled]="isLoading() || isReadOnly()" [(quantity)]="wrapper.rfqPriceWrapper" 
+            [quantityUnits]="CURRENCIES" [cbDisabled]="!lineHasPrice" [disableQuantityUnit]="lineHasPrice">
         </negotiation-request-input>
     </div>
 </div>
@@ -95,7 +99,7 @@
 <!-- Note -->
 <div class="row content-row">
     <div class="col-2">
-        <strong>Note:</strong>
+        <strong class="font-weight-500">Note:</strong>
     </div>
     <div class="col-10">
         <textarea class="form-control" [(ngModel)]="rfq.note[0]" rows="3" [disabled]="isLoading() || isReadOnly()"></textarea>
@@ -117,7 +121,7 @@
     <div class="col-10">
         <input type="checkbox" [(ngModel)]="rfq.dataMonitoringRequested" [disabled]="isLoading() || isReadOnly()" >
         <span class="form-control d-inline border-0">
-            <strong>Request data monitoring service</strong>
+            <strong class="font-weight-500">Request data monitoring service</strong>
         </span>
     </div>
 </div>

@@ -5,8 +5,12 @@ import { currencyToString } from "../../common/utils";
 /**
  * Wrapper around a price and a quantity, contains convenience methods to get the total price, 
  * price per item and their string representations.
+ * 
+ * This class can also be substituted for a Quantity.
  */
 export class PriceWrapper {
+    /** hjid field from Quantity class */
+    hjid: string = null;
 
     constructor(public price: Price,
                 public quantity: Quantity = new Quantity(1, price.baseQuantity.unitCode)) {
@@ -55,11 +59,37 @@ export class PriceWrapper {
         return currencyToString(this.price.priceAmount.currencyID);
     }
     
+    set currency(currency: string) {
+        this.price.priceAmount.currencyID = currency;
+    }
+    
     hasPrice(): boolean {
-        return !!this.price.priceAmount.value;
+        // != here gives "not null or undefined", which is the behaviour we want.
+        return this.price.priceAmount.value != null;
     }
 
     private roundPrice(value: number): number {
         return Math.round(value * 100) / 100;
+    }
+
+    /**
+     * Getters/Setters for quantity
+     */
+
+    get value(): number {
+        return this.totalPrice;
+    }
+
+    set value(value: number) {
+        this.totalPrice = value;
+    }
+
+    get unitCode(): string {
+        console.log("Getting currency for price", this.price);
+        return this.currency;
+    }
+
+    set unitCode(unitCode: string) {
+        this.currency = unitCode;
     }
 }

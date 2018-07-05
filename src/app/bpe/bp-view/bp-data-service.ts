@@ -34,6 +34,8 @@ import { Code } from "../../catalogue/model/publish/code";
 import { PaymentTerms } from "../../catalogue/model/publish/payment-terms";
 import { copy, getPropertyKey } from "../../common/utils";
 import { NegotiationModelWrapper } from "./negotiation/negotiation-model-wrapper";
+import { PriceWrapper } from "./price-wrapper";
+import { Price } from "../../catalogue/model/publish/price";
 
 /**
  * Created by suat on 20-Sep-17.
@@ -235,7 +237,12 @@ export class BPDataService{
 
         rfqLine.lineItem.item = copy(line.goodsItem.item);
         rfqLine.lineItem.lineReference = [new LineReference(line.id)];
-        rfqLine.lineItem.price = copy(line.requiredItemLocationQuantity.price);
+        const linePriceWrapper = new PriceWrapper(line.requiredItemLocationQuantity.price);
+        if(linePriceWrapper.hasPrice()) {
+            rfqLine.lineItem.price = copy(line.requiredItemLocationQuantity.price);
+        } else {
+            rfqLine.lineItem.price.priceAmount.value = 1;
+        }
         rfqLine.lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure =
             copy(line.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure);
         rfqLine.lineItem.warrantyValidityPeriod = copy(line.warrantyValidityPeriod);
@@ -355,6 +362,7 @@ export class BPDataService{
         this.requestForQuotation.paymentMeans = copyQuotation.paymentMeans;
         this.requestForQuotation.paymentTerms = copyQuotation.paymentTerms;
         this.requestForQuotation.delivery = copyRfq.delivery;
+        this.requestForQuotation.dataMonitoringRequested = copyRfq.dataMonitoringRequested;
     }
 
     initRfqWithOrder() {
@@ -544,9 +552,17 @@ export class BPDataService{
             if(!item || !line) {
                 return;
             }
+
+            // negotiate the price if no price on the line
+            const priceWrapper = new PriceWrapper(line.requiredItemLocationQuantity.price);
+            if(!priceWrapper.hasPrice()) {
+                this.workflowOptions.negotiation.price = true;
+            }
+
             // this item contains all the properties.
             const lineItem = line.goodsItem.item;
     
+            // set the selected property values
             for(let i = 0; i < lineItem.additionalItemProperty.length;i++) {
                 const prop = lineItem.additionalItemProperty[i];
                 const key = getPropertyKey(prop);

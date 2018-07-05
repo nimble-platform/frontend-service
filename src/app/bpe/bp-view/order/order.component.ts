@@ -49,6 +49,7 @@ export class OrderComponent implements OnInit {
 
     callStatus: CallStatus = new CallStatus();
     fetchTermsAndConditionsStatus: CallStatus = new CallStatus();
+    fetchDataMonitoringStatus: CallStatus = new CallStatus();
 
     constructor(private bpDataService: BPDataService,
                 private userService: UserService,
@@ -78,6 +79,10 @@ export class OrderComponent implements OnInit {
         if(this.order.contract == null && this.bpDataService.precedingProcessId != null) {
             this.bpeService.constructContractForProcess(this.bpDataService.precedingProcessId).then(contract => {
                 this.order.contract = [contract];
+
+                return this.isDataMonitoringDemanded();
+            }).then(dataMonitoringDemanded => {
+                this.dataMonitoringDemanded = dataMonitoringDemanded;
             });
         }
 
@@ -280,9 +285,15 @@ export class OrderComponent implements OnInit {
         }
  
         if (docClause) {
-            this.bpeService.getDocumentJsonContent(docClause.clauseDocumentRef.id).then(result => {
+            this.fetchDataMonitoringStatus.submit();
+            return this.bpeService.getDocumentJsonContent(docClause.clauseDocumentRef.id).then(result => {
+                this.fetchDataMonitoringStatus.callback("Successfully fetched data monitoring service", true);
                 const q: Quotation = result as Quotation;
                 return q.dataMonitoringPromised;
+            })
+            .catch(error => {
+                this.fetchDataMonitoringStatus.error("Error while fetching data monitoring service");
+                throw error;
             })
         }
 

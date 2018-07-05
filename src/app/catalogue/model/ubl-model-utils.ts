@@ -181,7 +181,7 @@ export class UBLModelUtils {
     public static createRequestForQuotation(negotiationOptions: NegotiationOptions):RequestForQuotation {
         let quantity:Quantity = new Quantity(null, "", null);
         let item:Item = this.createItem();
-        let price:Price = this.createPrice()
+        let price:Price = this.createPrice();
         let lineItem:LineItem = this.createLineItem(quantity, price, item);
         let requestForQuotationLine:RequestForQuotationLine = new RequestForQuotationLine(lineItem);
         let rfq = new RequestForQuotation(this.generateUUID(), [""], false, null, null, new Delivery(),

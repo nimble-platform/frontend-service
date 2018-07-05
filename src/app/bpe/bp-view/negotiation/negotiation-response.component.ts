@@ -6,7 +6,7 @@ import { BPEService } from "../../bpe.service";
 import { Router } from "@angular/router";
 import { Quotation } from "../../../catalogue/model/publish/quotation";
 import { NegotiationModelWrapper } from "./negotiation-model-wrapper";
-import { INCOTERMS, PAYMENT_MEANS, NEGOTIATION_RESPONSES } from "../../../catalogue/model/constants";
+import { INCOTERMS, PAYMENT_MEANS, NEGOTIATION_RESPONSES, CURRENCIES } from "../../../catalogue/model/constants";
 import { ModelUtils } from "../../model/model-utils";
 import { ProcessVariables } from "../../model/process-variables";
 import { ProcessInstanceInputMessage } from "../../model/process-instance-input-message";
@@ -30,6 +30,7 @@ export class NegotiationResponseComponent implements OnInit {
 
     INCOTERMS: string[] = INCOTERMS;
     PAYMENT_MEANS: string[] = PAYMENT_MEANS;
+    CURRENCIES: string[] = CURRENCIES;
 
     callStatus: CallStatus = new CallStatus();
 

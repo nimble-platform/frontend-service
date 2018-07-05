@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { CatalogueLine } from "../../../catalogue/model/publish/catalogue-line";
 import { BPDataService } from "../bp-data-service";
-import { INCOTERMS, PAYMENT_MEANS } from "../../../catalogue/model/constants";
+import { INCOTERMS, PAYMENT_MEANS, CURRENCIES } from "../../../catalogue/model/constants";
 import { RequestForQuotation } from "../../../catalogue/model/publish/request-for-quotation";
 import { RequestForQuotationLine } from "../../../catalogue/model/publish/request-for-quotation-line";
 import { Location } from "@angular/common";
@@ -38,9 +38,7 @@ export class NegotiationRequestComponent implements OnInit {
 
     INCOTERMS: string[] = INCOTERMS;
     PAYMENT_MEANS: string[] = PAYMENT_MEANS;
-
-    // max price value for the quantity to be sold
-    maxValue: number = 100000;
+    CURRENCIES: string[] = CURRENCIES;
 
     constructor(private bpDataService: BPDataService,
                 private bpeService:BPEService,
@@ -59,6 +57,10 @@ export class NegotiationRequestComponent implements OnInit {
         this.wrapper = new NegotiationModelWrapper(this.line, this.rfq, null);
         this.totalPrice = this.wrapper.rfqTotalPrice;
         this.negotiatedPriceValue = this.totalPrice;
+
+        if(!this.lineHasPrice) {
+            this.rfq.negotiationOptions.price = true;
+        }
     }
 
     /*
@@ -126,6 +128,10 @@ export class NegotiationRequestComponent implements OnInit {
             || this.rfq.negotiationOptions.paymentTerms
             || this.rfq.negotiationOptions.paymentMeans
             || this.rfq.dataMonitoringRequested;
+    }
+
+    get lineHasPrice(): boolean {
+        return this.wrapper.linePriceWrapper.hasPrice();
     }
 
     get requestedQuantity(): number {

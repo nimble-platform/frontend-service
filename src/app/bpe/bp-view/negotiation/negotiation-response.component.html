@@ -72,7 +72,7 @@
     </div>
     <div class="col-3" *ngIf="rfq.dataMonitoringRequested && isReadOnly()">
         <label *ngIf="quotation.dataMonitoringPromised">Data monitoring service confirmed.</label>
-        <label *ngIf="!quotation.dataMonitoringPromised">Data monitoring service <strong>not provided</strong>.</label>
+        <label *ngIf="!quotation.dataMonitoringPromised">Data monitoring service <strong class="font-weight-500">not provided</strong>.</label>
     </div>
 </div>
 
@@ -81,9 +81,10 @@
     <div class="col-3">{{ wrapper.lineTotalPriceString }}</div>
     <div class="col-3">{{ wrapper.rfqTotalPriceStringIfNegotiating }}</div>
     <div class="col-3">
-        <amount-input [disabled]="isLoading()" [(amount)]="quotationPrice"
-            [amountUnit]="wrapper.linePriceWrapper.currency" [presentationMode]="getPresentationMode()">
-        </amount-input>
+        <quantity-input [presentationMode]="getPresentationMode()" [disabled]="isLoading()" 
+            [quantity]="wrapper.quotationPriceWrapper" [quantityUnits]="CURRENCIES" 
+            [disableQuantityUnit]="wrapper.linePriceWrapper.hasPrice()">
+        </quantity-input>
     </div>
 </div>
 
@@ -137,11 +138,11 @@
 </div>
 
 <div class="row actions-row" *ngIf="userRole === 'buyer'">
-    <div class="col-6 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+    <div class="col-5 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
     <div class="col-2">
         <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
     </div>
-    <div class="col-2">
+    <div class="col-3">
         <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onRequestNewQuotation()">
             Request new Quotation
         </button>

@@ -14,6 +14,7 @@ export class NegotiationRequestInputComponent implements OnInit {
     // see https://blog.angulartraining.com/tutorial-create-your-own-two-way-data-binding-in-angular-46487650ea82 for this trick
     private cbModelValue: boolean;
     @Output() cbModelChange = new EventEmitter<boolean>();
+    @Input() cbDisabled: boolean = false;
     @Input() disabled: boolean = false;
     @Input() id: string;
     

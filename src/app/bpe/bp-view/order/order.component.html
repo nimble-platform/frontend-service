@@ -24,6 +24,7 @@
             </div>
             <div class="col-6">
                 {{ dataMonitoringDemanded ? "yes" : "" }}
+                <call-status [callStatus]="fetchDataMonitoringStatus"></call-status>
             </div>
         </div>
     </div>

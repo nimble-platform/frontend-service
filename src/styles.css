@@ -12,6 +12,10 @@ button:disabled, .btn:disabled {
     cursor: not-allowed !important;
 }
 
+strong {
+    font-weight: 500;
+}
+
 /*
 Overwrite default values for Bootstrap buttons.
 */
