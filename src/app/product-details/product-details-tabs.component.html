@@ -38,7 +38,10 @@
     <!-- Product Details Tab -->
     <div *ngIf="selectedTab === 'DETAILS'" class="p-3">
         <h3 class="p-1">Product Details</h3>
-        <div class="row ml-0">
+        <div class="row mx-auto">
+        <div *ngIf="wrapper.getUniquePropertiesWithValue().length === 0">
+            <p class="p-1">This product does not seem to have any details.</p>
+        </div>
         <div *ngFor="let property of wrapper.getUniquePropertiesWithValue()" class="p-1 col-6">
             <strong>{{ wrapper.getPropertyName(property) }}: </strong> {{ property.value.join(", ") }}
         </div>

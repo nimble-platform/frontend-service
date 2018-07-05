@@ -14,6 +14,10 @@
     align-items: center;
 }
 
+.empty-carousel {
+    height: 128px !important;
+}
+
 .carousel-resize {
     min-width:100%;
     max-width: none;

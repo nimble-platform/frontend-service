@@ -15,9 +15,9 @@
     <div class="row">
         <div class="col-4">
             <!-- Images (image class used in catalogue-line-header.component.html) -->
-            <div id="carousel-large" class="carousel slide carousel-resize mt-2 mb-4" data-ride="carousel">
+            <div id="carousel-large" class="carousel slide carousel-resize mt-2 mb-4" data-ride="carousel" [ngClass]="{'empty-carousel': wrapper.item.productImage.length === 0}">
                 <div class="carousel-inner">
-                    <div class="carousel-item active carousel-active">
+                    <div class="carousel-item active carousel-active" [ngClass]="{'empty-carousel': wrapper.item.productImage.length === 0}">
                         <img *ngIf="wrapper.item.productImage.length === 0"
                             class="img-max"
                             src="assets/empty_img.png">
@@ -73,17 +73,15 @@
                 <p>{{wrapper.item.description || "No description provided."}}</p>
             </div>
             <!-- Properties with multiple values to select from -->
-            <div *ngFor="let property of wrapper.getPropertiesWithListOfValues()" class="my-1 row">
-                <div class="col-2">
+            <div class="d-flex flex-column">
+                <div *ngFor="let property of wrapper.getPropertiesWithListOfValues()" class="my-1">
                     <strong>{{property.name}}: </strong>
-                </div>
-                <div class="col-10">
-                <span *ngFor="let val of property.value; let i = index" class="btn-group-toggle" data-toggle="buttons">
-                    <button type="button" class="btn btn-outline-primary no-y-padding" (click)="onTogglePropertyValue(property, i)" 
-                        [disabled]="readonly" [ngClass]="{ 'active': isPropertyValueSelected(property, i) }">
-                        {{val}}
-                    </button>
-                </span>
+                    <span *ngFor="let val of property.value; let i = index" class="btn-group-toggle" data-toggle="buttons">
+                        <button type="button" class="btn btn-outline-primary no-y-padding" (click)="onTogglePropertyValue(property, i)" 
+                            [disabled]="readonly" [ngClass]="{ 'active': isPropertyValueSelected(property, i) }">
+                            {{val}}
+                        </button>
+                    </span>
                 </div>
             </div>
         </div>
