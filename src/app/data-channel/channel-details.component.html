@@ -23,7 +23,7 @@
 </table>
 
 <div class="interactions">
-    <button class="btn btn-danger" (click)="deleteChannel()">Delete</button>
+    <button class="btn btn-danger" (click)="deleteChannel()">Close Channel</button>
 </div>
 
 <h1>Associated Sensors</h1>
@@ -70,7 +70,7 @@
                placeholder="description"/>
 
         <button [disabled]="!customPropertyForm.form.valid"
-                class="btn btn-primary ml-2 add-sensor-btn"
+                class="btn btn-success ml-2 add-sensor-btn"
                 (click)="addSensor()">
             <span i18n>Add sensor</span>
         </button>
@@ -97,7 +97,7 @@
     </ng-container>
 </table>
 
-<h1>Usage</h1>
+<h1>Integration Details</h1>
 
 <h4>Kafka Brokers</h4>
 <ul>
@@ -114,6 +114,7 @@ All messages must be sent as JSON to the Kafka topic <span class="inline-code">{
     &#123;
         <span class="key">"header"</span>: &#123;
             <span class="key">"channelId"</span>: "<span>{{channelConfig.channelID}}</span>",
+            <span class="key">"producerCompanyId"</span>: {{channelConfig.producerCompanyID}},
             <span class="key">"machineId"</span>: "machine_XY", <span class="comment">// identifier of machine</span>
             <span class="key">"time"</span>: "13492739487234", <span class="comment">// unix timestamp in milliseconds</span>
         &#125;,
