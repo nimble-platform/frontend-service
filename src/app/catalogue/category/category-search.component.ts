@@ -9,7 +9,7 @@ import {CategoryService} from "./category.service";
 import {CookieService} from "ng2-cookies";
 import {CatalogueService} from "../catalogue.service";
 import {PublishService} from "../publish-and-aip.service";
-import {ProductPublishComponent} from "../product-publish.component";
+import {ProductPublishComponent} from "../publish/product-publish.component";
 import {UBLModelUtils} from "../model/ubl-model-utils";
 import {CallStatus} from '../../common/call-status';
 import {sanitizeDataTypeName} from '../../common/utils';
