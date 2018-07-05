@@ -90,6 +90,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
         this._warning_table_results = false;
         this._warning_selection = false;
         this.rerenderAlert = false;
+        this.hiddenElement = false;
         this.arrayPassedToChild = [];
         this.tableJSON = {
             parametersIncludingPath: [],
@@ -99,6 +100,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
             language: '',
             propertySources: []
         };
+        this.sparqlSelectedOption = {};
         d3.selectAll('svg > *').remove();
         this.ngAfterViewInit();
     }
@@ -209,7 +211,14 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
     removePropertyFilter(nodeToRemove) {
         console.log(nodeToRemove.data.url);
         let indexToRemove = this.arrayPassedToChild.findIndex(node => node.fName === nodeToRemove.data.name);
-        if (indexToRemove > -1) {
+        if (indexToRemove === 0) {
+            this.tableResult = {};
+            this.arrayPassedToChild.splice(indexToRemove, 1);
+            this.tableJSON['parametersIncludingPath'].splice(indexToRemove, 1);
+            this.tableJSON['parameters'].splice(indexToRemove, 1);
+            this.tableJSON['parametersURL'].splice(indexToRemove, 1);
+            this.tableJSON['propertySources'].splice(indexToRemove, 1);
+        } else if (indexToRemove > -1) {
             console.log('removing property', indexToRemove);
             this.arrayPassedToChild.splice(indexToRemove, 1);
             this.tableJSON['parametersIncludingPath'].splice(indexToRemove, 1);
@@ -452,13 +461,13 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
         this.expSearch.getOptionalSelect(optSPARQLQuery)
             .then(res => {
                 this.sparqlSelectedOption = res;
-                if (this.sparqlSelectedOption['columns'].findIndex(i => i === 'id') >= 0 &&
-                    this.sparqlSelectedOption['columns'].findIndex(j => j === 'catalogueId') >= 0) {
+                if (this.sparqlSelectedOption['columns'].findIndex(i => i === 'ManufacturersItemIdentification') >= 0 &&
+                    this.sparqlSelectedOption['columns'].findIndex(j => j === 'CatalogueDocumentReference') >= 0) {
                     // Check for ID and Catalogue ID. Enable Negotiation Button only if these two exist
                     console.log('Negotiation can exist');
                     this.negotiationEnable = true;
-                    let index_id = this.sparqlSelectedOption['columns'].findIndex(i => i === 'id');
-                    let index_catalogue = this.sparqlSelectedOption['columns'].findIndex(i => i === 'catalogueId');
+                    let index_id = this.sparqlSelectedOption['columns'].findIndex(i => i === 'ManufacturersItemIdentification');
+                    let index_catalogue = this.sparqlSelectedOption['columns'].findIndex(i => i === 'CatalogueDocumentReference');
                     this._negotiation_id = this.sparqlSelectedOption['rows'][0][index_id];
                     this._negotiation_catalogue_id = this.sparqlSelectedOption['rows'][0][index_catalogue];
                     // console.log(this._negotiation_catalogue_id, this._negotiation_id); // DEBUG-Check

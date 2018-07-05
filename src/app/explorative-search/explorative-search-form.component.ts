@@ -90,6 +90,7 @@ export class ExplorativeSearchFormComponent implements OnInit {
 
         // Let the Service do its fetching of data from server
         // console.log(lang)
+        this.loading = true;
         this.expSearch.searchData(inputVal, this.language)
                 .then(res => {
                     // push the data in to List
@@ -102,10 +103,12 @@ export class ExplorativeSearchFormComponent implements OnInit {
                         this._warning_kw = true;
                     }
                     this._error_detected_kw = false;
+                    this.loading = false;
                 })
             .catch(error => {
                 console.log(error);
                 this._error_detected_kw = true;
+                this.loading = false;
             });
         // console.log('OUTPUT', this.Output);
     }
