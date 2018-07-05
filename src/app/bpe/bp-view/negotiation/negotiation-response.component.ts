@@ -102,6 +102,10 @@ export class NegotiationResponseComponent implements OnInit {
         return false;
     }
 
+    getPresentationMode(): "edit" | "view" {
+        return this.isReadOnly() ? "view" : "edit";
+    }
+
     isReadOnly(): boolean {
         return this.bpDataService.processMetadata == null || this.bpDataService.processMetadata.processStatus !== 'Started';
     }

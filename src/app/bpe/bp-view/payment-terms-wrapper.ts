@@ -5,11 +5,11 @@ export class PaymentTermsWrapper {
 
     public PAYMENT_TERMS: string[] = UBLModelUtils.getDefaultPaymentTermsAsStrings();
 
-    private selectedPaymentTerm: number = 0;
+    private selectedPaymentTerm: number;
 
     constructor(private paymentTerms: PaymentTerms) {
         const index = paymentTerms.tradingTerms.findIndex(term => term.value[0] == "true");
-        this.selectedPaymentTerm = index;
+        this.selectedPaymentTerm = index < 0 ? 0 : index;
     }
 
     get paymentTerm(): string {

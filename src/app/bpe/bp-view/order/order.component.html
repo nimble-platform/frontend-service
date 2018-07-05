@@ -18,6 +18,14 @@
         <text-input presentationMode="view" label="Total Price"
             [text]="getTotalPriceText()" labelClass="col-6" valueClass="col-6">
         </text-input>
+        <div class="row">
+            <div class="col-6">
+                <strong>Data Monitoring Service:</strong>
+            </div>
+            <div class="col-6">
+                {{ dataMonitoringDemanded ? "yes" : "" }}
+            </div>
+        </div>
     </div>
     <div class="col-4">
         <h2>Payment Details</h2>

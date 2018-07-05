@@ -10,9 +10,8 @@
     <div class="col-3">{{ wrapper.lineDeliveryPeriodString }}</div>
     <div class="col-3">{{ wrapper.rfqDeliveryPeriodStringIfNegotiating }}</div>
     <div class="col-3">
-        <quantity-input [visible]="rfq.negotiationOptions.deliveryPeriod"
-            [disabled]="isLoading() || isReadOnly()" [quantity]="wrapper.quotationDeliveryPeriod" 
-            quantityType="time_quantity">
+        <quantity-input [visible]="rfq.negotiationOptions.deliveryPeriod" [presentationMode]="getPresentationMode()"
+            [disabled]="isLoading()" [quantity]="wrapper.quotationDeliveryPeriod" quantityType="time_quantity">
         </quantity-input>
     </div>
 </div>
@@ -22,9 +21,8 @@
     <div class="col-3">{{ wrapper.lineWarrantyString }}</div>
     <div class="col-3">{{ wrapper.rfqWarrantyStringIfNegotiating }}</div>
     <div class="col-3">
-        <quantity-input [visible]="rfq.negotiationOptions.warranty"
-            [disabled]="isLoading() || isReadOnly()" [quantity]="wrapper.quotationWarranty" 
-            quantityType="time_quantity">
+        <quantity-input [visible]="rfq.negotiationOptions.warranty" [presentationMode]="getPresentationMode()"
+            [disabled]="isLoading()" [quantity]="wrapper.quotationWarranty" quantityType="time_quantity">
         </quantity-input>
     </div>
 </div>
@@ -34,8 +32,8 @@
     <div class="col-3">{{ wrapper.lineIncoterms }}</div>
     <div class="col-3">{{ wrapper.rfqIncotermsIfNegotiating }}</div>
     <div class="col-3">
-        <options-input [visible]="rfq.negotiationOptions.incoterms"
-            [disabled]="isLoading() || isReadOnly()" [options]="INCOTERMS" [(selected)]="wrapper.quotationIncoterms">
+        <options-input [visible]="rfq.negotiationOptions.incoterms" [presentationMode]="getPresentationMode()"
+            [disabled]="isLoading()" [options]="INCOTERMS" [(selected)]="wrapper.quotationIncoterms">
         </options-input>
     </div>
 </div>
@@ -45,8 +43,9 @@
     <div class="col-3">{{ wrapper.linePaymentTerms }}</div>
     <div class="col-3">{{ wrapper.rfqPaymentTermsIfNegotiating }}</div>
     <div class="col-3">
-        <options-input [visible]="rfq.negotiationOptions.paymentTerms"
-            [disabled]="isLoading() || isReadOnly()" [options]="wrapper.rfqPaymentTerms.PAYMENT_TERMS" [(selected)]="wrapper.quotationPaymentTerms.paymentTerm">
+        <options-input [visible]="rfq.negotiationOptions.paymentTerms" [presentationMode]="getPresentationMode()"
+            [disabled]="isLoading()" [options]="wrapper.rfqPaymentTerms.PAYMENT_TERMS" 
+            [(selected)]="wrapper.quotationPaymentTerms.paymentTerm">
         </options-input>
     </div>
 </div>
@@ -56,23 +55,22 @@
     <div class="col-3">{{ wrapper.linePaymentMeans }}</div>
     <div class="col-3">{{ wrapper.rfqPaymentMeansIfNegotiating }}</div>
     <div class="col-3">
-        <options-input [visible]="rfq.negotiationOptions.paymentMeans"
-            [disabled]="isLoading() || isReadOnly()" [options]="PAYMENT_MEANS" 
-            [(selected)]="wrapper.quotationPaymentMeans">
+        <options-input [visible]="rfq.negotiationOptions.paymentMeans" [presentationMode]="getPresentationMode()"
+            [disabled]="isLoading()" [options]="PAYMENT_MEANS" [(selected)]="wrapper.quotationPaymentMeans">
         </options-input>
     </div>
 </div>
 
 <div class="row content-row">
-    <div class="col-2"><strong class="font-weight-500">Data monitoring service requested:</strong></div>
-    <div class="col-2"></div>
-    <div class="col-4">{{ rfq.dataMonitoringRequested ? "Yes" : "" }}</div>
-    <div class="col-4" *ngIf="rfq.dataMonitoringRequested && !isReadOnly()">
+    <div class="col-3"><strong class="font-weight-500">Data monitoring service requested:</strong></div>
+    <div class="col-3"></div>
+    <div class="col-3">{{ rfq.dataMonitoringRequested ? "Yes" : "" }}</div>
+    <div class="col-3" *ngIf="rfq.dataMonitoringRequested && !isReadOnly()">
         <input type="checkbox" [(ngModel)]="quotation.dataMonitoringPromised" 
             [disabled]="isLoading()">
         <label>Provide data monitoring service</label>
     </div>
-    <div class="col-4" *ngIf="rfq.dataMonitoringRequested && isReadOnly()">
+    <div class="col-3" *ngIf="rfq.dataMonitoringRequested && isReadOnly()">
         <label *ngIf="quotation.dataMonitoringPromised">Data monitoring service confirmed.</label>
         <label *ngIf="!quotation.dataMonitoringPromised">Data monitoring service <strong>not provided</strong>.</label>
     </div>
@@ -83,8 +81,8 @@
     <div class="col-3">{{ wrapper.lineTotalPriceString }}</div>
     <div class="col-3">{{ wrapper.rfqTotalPriceStringIfNegotiating }}</div>
     <div class="col-3">
-        <amount-input [disabled]="isLoading() || isReadOnly()" [(amount)]="quotationPrice"
-            [amountUnit]="wrapper.linePriceWrapper.currency">
+        <amount-input [disabled]="isLoading()" [(amount)]="quotationPrice"
+            [amountUnit]="wrapper.linePriceWrapper.currency" [presentationMode]="getPresentationMode()">
         </amount-input>
     </div>
 </div>
