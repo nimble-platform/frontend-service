@@ -13,6 +13,7 @@ import { DocumentReference } from "../../../catalogue/model/publish/document-ref
 import { BinaryObject } from "../../../catalogue/model/publish/binary-object";
 import { Attachment } from "../../../catalogue/model/publish/attachment";
 import { ProcessType } from "../../model/process-type";
+import { PresentationMode } from "../../../catalogue/model/publish/presentation-mode";
 
 @Component({
     selector: "item-information-response",
@@ -27,6 +28,9 @@ export class ItemInformationResponseComponent implements OnInit {
     @Input() response: ItemInformationResponse;
     @Input() readonly: boolean = false;
 
+    requestFiles: BinaryObject[] = [];
+    responseFiles: BinaryObject[] = [];
+
     constructor(private bpeService: BPEService, 
                 private bpDataService: BPDataService,
                 private location: Location,
@@ -39,8 +43,15 @@ export class ItemInformationResponseComponent implements OnInit {
         if (!this.request) {
             this.request = this.bpDataService.itemInformationRequest;
         }
+        if(this.request) {
+            const documents = this.request.itemInformationRequestLine[0].salesItem[0].item.itemSpecificationDocumentReference;
+            this.requestFiles = documents.map(doc => doc.attachment.embeddedDocumentBinaryObject);
+        }
         if (!this.response) {
             this.response = this.bpDataService.itemInformationResponse;
+        }
+        if(this.response) {
+            this.responseFiles = this.getResponseDocuments().map(doc => doc.attachment.embeddedDocumentBinaryObject);
         }
     }
 
@@ -99,46 +110,22 @@ export class ItemInformationResponseComponent implements OnInit {
         });
     }
 
-    selectItemSpecificationFile(file: File): void {
-        if (file) {
-            const reader = new FileReader();
-
-            reader.onload = () => {
-                const base64String = reader.result.split(',').pop();
-                const binaryObject = new BinaryObject(base64String, file.type, file.name, "", "");
-                const document: DocumentReference = new DocumentReference();
-                const attachment: Attachment = new Attachment();
-                attachment.embeddedDocumentBinaryObject = binaryObject;
-                document.attachment = attachment;
-                this.response.item[0].itemSpecificationDocumentReference.push(document);
-            };
-            reader.readAsDataURL(file);
-        }
+    onSelectItemSpecificationFile(binaryObject: BinaryObject): void {
+        const document: DocumentReference = new DocumentReference();
+        const attachment: Attachment = new Attachment();
+        attachment.embeddedDocumentBinaryObject = binaryObject;
+        document.attachment = attachment;
+        this.response.item[0].itemSpecificationDocumentReference.push(document);
     }
 
-    downloadTechnicalDataSheet(binaryObject: BinaryObject, event: Event): void {
-        event.preventDefault();
+    onUnselectItemSpecificationFile(binaryObject: BinaryObject): void {
+        const index = this.response.item[0].itemSpecificationDocumentReference.findIndex(doc => {
+            return doc.attachment.embeddedDocumentBinaryObject === binaryObject;
+        });
 
-        var b64Data = binaryObject.value;
-        var sliceSize = 512;
-        b64Data = b64Data.replace(/^[^,]+,/, '');
-        b64Data = b64Data.replace(/\s/g, '');
-        var byteCharacters = window.atob(b64Data);
-        var byteArrays = [];
-
-        for (var offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-            var slice = byteCharacters.slice(offset, offset + sliceSize);
-            var byteNumbers = new Array(slice.length);
-            for (var i = 0; i < slice.length; i++) {
-                byteNumbers[i] = slice.charCodeAt(i);
-            }
-            var byteArray = new Uint8Array(byteNumbers);
-            byteArrays.push(byteArray);
+        if(index >= 0) {
+            this.response.item[0].itemSpecificationDocumentReference.splice(index, 1);
         }
-		
-        var blob = new Blob(byteArrays, {type: binaryObject.mimeCode});
-		var fileName = binaryObject.fileName;
-		saveAs(blob,fileName);
     }
 
     /*
@@ -149,6 +136,10 @@ export class ItemInformationResponseComponent implements OnInit {
         return this.readonly || 
             (   this.bpDataService.processMetadata 
              && this.bpDataService.processMetadata.processStatus === "Completed");
+    }
+
+    getPresentationMode(): PresentationMode {
+        return this.isResponseSent() ? "view" : "edit";
     }
 
     getResponseFile(): BinaryObject | null {

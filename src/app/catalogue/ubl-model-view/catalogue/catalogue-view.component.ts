@@ -16,8 +16,8 @@ import {CategoryService} from "../../category/category.service";
 
 export class CatalogueViewComponent implements OnInit {
 
-    private getCatalogueStatus = new CallStatus();
-    private callStatus = new CallStatus();
+    getCatalogueStatus = new CallStatus();
+    callStatus = new CallStatus();
 
     constructor(private cookieService: CookieService,
                 private catalogueService: CatalogueService,

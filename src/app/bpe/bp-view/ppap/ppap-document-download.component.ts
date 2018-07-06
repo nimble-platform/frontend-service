@@ -7,6 +7,7 @@ import {Ppap} from "../../../catalogue/model/publish/ppap";
 import {DocumentReference} from "../../../catalogue/model/publish/document-reference";
 import {ActivityVariableParser} from "../activity-variable-parser";
 import { Location } from "@angular/common";
+import { BinaryObject } from "../../../catalogue/model/publish/binary-object";
 
 @Component({
     selector: "ppap-document-download",
@@ -86,7 +87,7 @@ export class PpapDocumentDownloadComponent{
     }
 
     downloadFile(key) :void {
-        var binaryObjects = this.documents[key];
+        const binaryObjects: BinaryObject[] = this.documents[key];
         for(var j=0;j<binaryObjects.length;j++){
             var binaryString = window.atob(binaryObjects[j].value);
             var binaryLen = binaryString.length;
