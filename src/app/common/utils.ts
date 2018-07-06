@@ -123,3 +123,20 @@ export function scrollToDiv(divId: string): void {
 export function isCustomProperty(property: ItemProperty): boolean {
     return property && property.itemClassificationCode.listID === CUSTOM_PROPERTY_LIST_ID;
 }
+
+export function getPropertyValues(property: ItemProperty): any[] {
+    switch(property.valueQualifier) {
+        case "INT":
+        case "DOUBLE":
+        case "NUMBER":
+        case "REAL_MEASURE":
+            return property.valueDecimal;
+        case "BINARY":
+            return property.valueBinary;
+        case "QUANTITY":
+            return property.valueQuantity;
+        case "STRING":
+        case "BOOLEAN":
+            return property.value;
+    }
+}

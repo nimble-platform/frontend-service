@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, ViewChild, ElementRef } from "@angular/core";
 import { ItemProperty } from "../model/publish/item-property";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { sanitizePropertyName, copy, isCustomProperty } from "../../common/utils";
+import { sanitizePropertyName, copy, isCustomProperty, getPropertyValues } from "../../common/utils";
 import { Quantity } from "../model/publish/quantity";
 import { SelectedProperty } from "../model/publish/selected-property";
 import { PROPERTY_TYPES } from "../model/constants";
@@ -66,20 +66,7 @@ export class EditPropertyModalComponent implements OnInit {
     }
 
     getValues(): any[] {
-        switch(this.property.valueQualifier) {
-            case "INT":
-            case "DOUBLE":
-            case "NUMBER":
-            case "REAL_MEASURE":
-                return this.property.valueDecimal;
-            case "BINARY":
-                return this.property.valueBinary;
-            case "QUANTITY":
-                return this.property.valueQuantity;
-            case "STRING":
-            case "BOOLEAN":
-                return this.property.value;
-        }
+        return getPropertyValues(this.property);
     }
 
     getPropertyPresentationMode(): "edit" | "view" {

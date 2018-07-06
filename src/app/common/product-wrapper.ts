@@ -3,7 +3,7 @@ import { Predicate } from "@angular/core";
 import { ItemProperty } from "../catalogue/model/publish/item-property";
 import { PAYMENT_MEANS } from "../catalogue/model/constants";
 import { UBLModelUtils } from "../catalogue/model/ubl-model-utils";
-import { sanitizePropertyName, getPropertyKey, periodToString, isCustomProperty } from "../common/utils";
+import { sanitizePropertyName, getPropertyKey, periodToString, isCustomProperty, getPropertyValues } from "../common/utils";
 import { PriceWrapper } from "../bpe/bp-view/price-wrapper";
 
 /**
@@ -27,11 +27,11 @@ export class ProductWrapper {
     }
 
     getPropertiesWithListOfValues(): ItemProperty[] {
-        return this.getUniquePropertiesWithFilter(prop => prop.value.length > 1);
+        return this.getUniquePropertiesWithFilter(prop => getPropertyValues(prop).length > 1);
     }
 
     getUniquePropertiesWithValue(): ItemProperty[] {
-        return this.getUniquePropertiesWithFilter(prop => prop.value.join() !== "");
+        return this.getUniquePropertiesWithFilter(prop => getPropertyValues(prop).length > 0);
     }
 
     getAllUniqueProperties(): ItemProperty[] {
