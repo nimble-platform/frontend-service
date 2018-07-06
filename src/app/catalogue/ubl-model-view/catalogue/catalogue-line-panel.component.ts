@@ -4,6 +4,7 @@ import {CatalogueService} from "../../catalogue.service";
 import {Router} from "@angular/router";
 import {PublishService} from "../../publish-and-aip.service";
 import {CategoryService} from "../../category/category.service";
+import { ProductWrapper } from "../../../common/product-wrapper";
 
 @Component({
     selector: 'catalogue-line-panel',
@@ -19,10 +20,16 @@ export class CatalogueLinePanelComponent {
     @Input() show = false;
     @Output() showChange = new EventEmitter<boolean>();
 
+    productWrapper: ProductWrapper;
+    
     constructor(private catalogueService: CatalogueService,
                 private categoryService: CategoryService,
                 private publishService: PublishService,
                 private router: Router) {
+    }
+
+    ngOnInit() {
+        this.productWrapper = new ProductWrapper(this.catalogueLine);
     }
 
     redirectToEdit() {
