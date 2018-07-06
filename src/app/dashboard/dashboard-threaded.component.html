@@ -60,14 +60,18 @@
                 <li><strong>Catalogue:</strong> the list of all your published products</li>
             </ul>
             <div class="row text-center">
-                <div class="col-6">
+                <div *ngIf="this.appComponent.checkRoles('sales')" class="col-6">
                     <p>If you are looking to <b>buy</b> products</p>
                     <a class="btn btn-primary btn-lg" href="#/simple-search" role="button">Search for Products</a>
                 </div>
 
-                <div class="col-6">
+                <div *ngIf="this.appComponent.checkRoles('purchases')" class="col-6">
                     <p>If you are looking to <b>sell</b> Products</p>
                     <a class="btn btn-primary btn-lg" href="#/catalogue/categorysearch" role="button">Publish a Product</a>
+                </div>
+
+                <div *ngIf="!this.appComponent.checkRoles('purchases') && !this.appComponent.checkRoles('sales')" class="col-12">
+                    <p>Please refer to the company manager or a legal representative to get permission to purchase or sell products in the NIMBLE Platform.</p>
                 </div>
             </div>
         </div>
