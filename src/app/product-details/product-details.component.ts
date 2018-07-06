@@ -124,4 +124,10 @@ export class ProductDetailsComponent implements OnInit {
         return getStepForPrice(this.priceWrapper.price);
     }
 
+    getQuantityUnit(): string {
+        if(!this.line) {
+            return "";
+        }
+        return this.line.requiredItemLocationQuantity.price.baseQuantity.unitCode || "";
+    }
 }

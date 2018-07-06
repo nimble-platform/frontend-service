@@ -21,20 +21,22 @@
     font-size: 1.4rem;
     font-weight: bold;
 }
+
 .order-price-value {
     font-size: 1.4rem;
     font-weight: bold;
     margin-left: 0.4rem;
 }
+
 .inline-order-group {
     display: flex;
-    flex-wrap: wrap;
     margin-bottom: 0.4rem;
 }
 
 .order-qty-input {
     flex: 1 1 auto;
     padding-left: 0.4rem;
+    display: flex;
 }
 
 .order-qty-range {
