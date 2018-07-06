@@ -35,6 +35,7 @@ import { PaymentTermsView } from "./ubl-model-view/payment-terms-view";
 import { CategoryTreeComponent } from "./category/category-tree.component";
 import { EditPropertyModalComponent } from "./publish/edit-property-modal.component";
 import { ProductDeliveryTradingComponent } from "./publish/product-delivery-trading.component";
+import { ProductDetailsModule } from "../product-details/product-details.module";
 
 @NgModule({
 	imports: [CommonModule, 
@@ -42,7 +43,8 @@ import { ProductDeliveryTradingComponent } from "./publish/product-delivery-trad
 		FormsModule, 
 		ReactiveFormsModule, 
 		HttpModule, 
-		CatalogueRoutingModule, 
+        CatalogueRoutingModule, 
+        ProductDetailsModule,
 		NgbModule.forRoot()
 	],
     declarations: [
