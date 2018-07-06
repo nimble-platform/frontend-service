@@ -470,7 +470,7 @@ export class UBLModelUtils {
     }
 
     public static createAmountWithCurrency(currency:string):Amount {
-        return new Amount(0, currency);
+        return new Amount(null, currency);
     }
 
     public static createItemIdentificationWithId(id:string):ItemIdentification {
