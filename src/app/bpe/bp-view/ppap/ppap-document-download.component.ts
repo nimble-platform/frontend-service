@@ -9,6 +9,10 @@ import {ActivityVariableParser} from "../activity-variable-parser";
 import { Location } from "@angular/common";
 import { BinaryObject } from "../../../catalogue/model/publish/binary-object";
 
+interface UploadedDocuments {
+    [doc: string]: BinaryObject[];
+}
+
 @Component({
     selector: "ppap-document-download",
     templateUrl: "./ppap-document-download.component.html",
@@ -22,7 +26,7 @@ export class PpapDocumentDownloadComponent{
     ppapDocuments : DocumentReference[] = [];
     note: any;
     noteBuyer: any;
-    documents = [];
+    documents: UploadedDocuments = {};
     keys = [];
 
     requestedDocuments = [];
@@ -57,12 +61,15 @@ export class PpapDocumentDownloadComponent{
         this.noteBuyer = this.ppap.note;
         this.ppapDocuments = this.ppapResponse.requestedDocument;
 
-        for(let i=0;i<this.ppapDocuments.length;i++){
-            if(!(this.ppapDocuments[i].documentType in this.documents)){
-                this.documents[this.ppapDocuments[i].documentType]=[this.ppapDocuments[i].attachment.embeddedDocumentBinaryObject];
-            }
-            else{
-                this.documents[this.ppapDocuments[i].documentType].push(this.ppapDocuments[i].attachment.embeddedDocumentBinaryObject);
+        for (let i=0; i < this.ppapDocuments.length; i++) {
+            if (!(this.ppapDocuments[i].documentType in this.documents)) {
+                this.documents[this.ppapDocuments[i].documentType] = [
+                    this.ppapDocuments[i].attachment.embeddedDocumentBinaryObject
+                ];
+            } else {
+                this.documents[this.ppapDocuments[i].documentType].push(
+                    this.ppapDocuments[i].attachment.embeddedDocumentBinaryObject
+                );
             }
         }
         this.note = this.ppapResponse.note;

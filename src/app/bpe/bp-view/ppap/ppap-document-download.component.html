@@ -1,25 +1,15 @@
 <div class="row space-before">
     <div class="col-12">
         <h4 class="space-after" i18n>Ppap Response</h4>
-        <div *ngIf="ppapDocuments.length > 0">
-            <table class="table table-striped table-bordered">
-                <tr><th>Document</th></tr>
-                <tr *ngFor="let document of requestedDocuments">
-
-                    <td class="d-flex">{{document}}
-
-                        <button *ngIf="keys.indexOf(document) != -1" class="btn btn-primary ml-auto"
-                                (click)="downloadFile(document)">Download
-                        </button>
-                        <label *ngIf="keys.indexOf(document) == -1" class="ml-auto">No File Sent</label>
-                    </td>
-                </tr>
-            </table>
+        <div *ngFor="let document of requestedDocuments" class="space-before">
+            <file-input label="{{ document }}" accept="file/*" [multiple]="true" 
+                presentationMode="view" [binaryObjects]="documents[document] || []">
+            </file-input>
+            
+            <hr>
         </div>
     </div>
 </div>
-
-<hr>
 
 <!-- Request note -->
 <text-input class="form-group space-after" [(text)]="noteBuyer" label="Request Note" labelClass="col-2" 

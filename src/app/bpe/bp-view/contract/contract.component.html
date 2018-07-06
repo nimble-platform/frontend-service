@@ -1,6 +1,8 @@
 <ng-container *ngIf="contract">
     <ng-container *ngFor="let clause of contract.clause">
-        <clause [clause]="clause">
-        </clause>
+        <ng-container *ngIf="clause.type === 'ITEM_DETAILS' || clause.type === 'PPAP'">
+            <clause [clause]="clause">
+            </clause>
+        </ng-container>
     </ng-container>
 </ng-container>
