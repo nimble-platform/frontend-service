@@ -78,9 +78,10 @@ div.add-image input {
 }
 
 .value-pill {
-    margin: 0.25rem 0.25rem 0.25rem 0;
+    margin: 0.25rem 0.25rem 0.25rem 0.25rem;
     height: 2.6rem;
-    flex-basis: 5rem;
+    flex-basis: auto;
+    min-width: 50px;
     display: flex;
     justify-content: space-between;
 }

@@ -180,7 +180,7 @@
                     <ng-container *ngIf="prop.valueQualifier !== 'BOOLEAN'">
                         <div *ngFor="let value of getValuesAsString(prop); let i = index"
                             class="bordered value-pill" title="{{ value }}">
-                            <span>{{ value }}</span>
+                            <span class="mr-1">{{ value }}</span>
                             <i class="fa fa-times-circle mt-1" placement="right" (click)="onRemoveValue(prop, i)"></i>
                         </div>
                         <button class="btn btn-outline-primary btn-add-category" (click)="onEditProperty(prop)">Edit Value(s)</button>
