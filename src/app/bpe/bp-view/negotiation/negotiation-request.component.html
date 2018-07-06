@@ -35,7 +35,7 @@
     </div>
     <div class="col-5">
         <negotiation-request-input label="Request Warranty" [(cbModel)]="rfq.negotiationOptions.warranty" [disabled]="isLoading() || isReadOnly()"
-            id="warrantyCb" [quantity]="wrapper.rfqWarranty" quantityType="time_quantity">
+            id="warrantyCb" [quantity]="wrapper.rfqWarranty" quantityType="warranty_period">
         </negotiation-request-input>
     </div>
 </div>
@@ -61,8 +61,11 @@
         <strong class="font-weight-500">Quantity:</strong>
     </div>
     <div class="col-5">
-        <input type="number" [(ngModel)]="requestedQuantity" class="form-control form-control-sm" 
-            [disabled]="isLoading() || isReadOnly()" />
+        <div class="d-flex">
+            <input type="number" [(ngModel)]="requestedQuantity" class="form-control form-control-sm" 
+                [disabled]="isLoading() || isReadOnly()" />
+            <span class="ml-2" *ngIf="getQuantityUnit() !== ''">{{ getQuantityUnit() }}</span>
+        </div>
         <div class="input-spacer"></div>
         <input type="range" [(ngModel)]="requestedQuantity" class="form-control-range" 
             [max]="getMaximumQuantity()" [step]="getPriceSteps()" [disabled]="isLoading() || isReadOnly()"/>
@@ -95,6 +98,8 @@
         </negotiation-request-input>
     </div>
 </div>
+
+<hr>
 
 <!-- Note -->
 <div class="row content-row">

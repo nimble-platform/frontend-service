@@ -22,7 +22,7 @@
     <div class="col-3">{{ wrapper.rfqWarrantyStringIfNegotiating }}</div>
     <div class="col-3">
         <quantity-input [visible]="rfq.negotiationOptions.warranty" [presentationMode]="getPresentationMode()"
-            [disabled]="isLoading()" [quantity]="wrapper.quotationWarranty" quantityType="time_quantity">
+            [disabled]="isLoading()" [quantity]="wrapper.quotationWarranty" quantityType="warranty_period">
         </quantity-input>
     </div>
 </div>
@@ -96,7 +96,7 @@
         </text-input>
     </div>
     <div class="col-3">
-        <text-input [disabled]="isLoading() || isReadOnly()" [text]="quotation.note[0]">
+        <text-input [disabled]="isLoading() || isReadOnly()" [(text)]="quotation.note[0]">
         </text-input>
     </div>
 </div>

@@ -1,3 +1,5 @@
+import { Option } from "../../common/options-input.component";
+
 export const INCOTERMS: string[] = [
     "",
     "CIF (Cost, Insurance and Freight)",
@@ -29,4 +31,15 @@ export const NEGOTIATION_RESPONSES = {
 export const CURRENCIES = [
     "EUR",
     "USD"
+]
+
+export const CUSTOM_PROPERTY_LIST_ID = "Custom";
+
+export const PROPERTY_TYPES: Option[] = [
+    { name: "Text", value: "STRING" },
+    { name: "Number", value: "REAL_MEASURE" },
+    { name: "Image", value: "BINARY" },
+    { name: "File", value: "BINARY" },
+    { name: "Quantity", value: "QUANTITY" },
+    { name: "Boolean", value: "BOOLEAN" },
 ]

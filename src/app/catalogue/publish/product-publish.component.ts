@@ -17,7 +17,7 @@ import { CookieService } from "ng2-cookies";
 import { Category } from "../model/category/category";
 import { BinaryObject } from "../model/publish/binary-object";
 import { Code } from "../model/publish/code";
-import { getPropertyKey, sortCategories, sortProperties, sanitizeDataTypeName, sanitizePropertyName, copy } from "../../common/utils";
+import { getPropertyKey, sortCategories, sortProperties, sanitizeDataTypeName, sanitizePropertyName, copy, isCustomProperty } from "../../common/utils";
 import { Property } from "../model/category/property";
 import { ProductWrapper } from "../../common/product-wrapper";
 import { EditPropertyModalComponent } from "./edit-property-modal.component";
@@ -69,6 +69,7 @@ export class ProductPublishComponent implements OnInit {
     categoryModalPropertyKeyword: string = "";
     @ViewChild(EditPropertyModalComponent)
     private editPropertyModal: EditPropertyModalComponent;
+    customProperties: any[] = [];
 
     /*
      * Values for Bulk only
@@ -84,7 +85,7 @@ export class ProductPublishComponent implements OnInit {
     private newProperty: ItemProperty = UBLModelUtils.createAdditionalItemProperty(null, null);
     // form model to be provided as root model to the inner components used in publishing
     publishForm: FormGroup = new FormGroup({});
-    
+
     submitted = false;
     callback = false;
     error_detc = false;
@@ -92,19 +93,19 @@ export class ProductPublishComponent implements OnInit {
     sameIdError = false;
     // the value of the erroneousID
     erroneousID = "";
-    
+
     json = JSON;
-    
+
     productCategoryRetrievalStatus: CallStatus = new CallStatus();
-    
+
     // used to add a new property which has a unit
     private quantity = new Quantity(null, null);
-    
+
     // check whether dialogBox is necessary or not during navigation
     public static dialogBox = true;
     // check whether changing publish-mode to 'create' is necessary or not
     changePublishModeCreate: boolean = false;
-    
+
     constructor(public categoryService: CategoryService,
                 private catalogueService: CatalogueService,
                 public publishStateService: PublishService,
@@ -118,7 +119,7 @@ export class ProductPublishComponent implements OnInit {
 
     ngOnInit() {
         this.selectedCategories = this.categoryService.selectedCategories;
-        
+
         const userId = this.cookieService.get("user_id");
         this.userService.getUserParty(userId).then(party => {
             this.catalogueService.getCatalogue(userId).then(catalogue => {
@@ -192,7 +193,6 @@ export class ProductPublishComponent implements OnInit {
             });
 
             this.categoryService.selectedCategories.splice(index, 1);
-            // TODO maybe do something a bit smarter here?
             this.recomputeSelectedProperties();
         }
 
@@ -202,9 +202,39 @@ export class ProductPublishComponent implements OnInit {
         }
     }
 
-    onAddCategory(): void {
+    onAddCategory(event?: Event, dismissModal?: any): void {
+        if(event) {
+            event.preventDefault();
+        }
+        if(dismissModal) {
+            dismissModal("add category");
+        }
         ProductPublishComponent.dialogBox = false;
         this.router.navigate(['catalogue/categorysearch'], { queryParams: { pageRef: "publish", pg: this.publishingGranularity }});
+    }
+
+    onAddCustomProperty(event: Event, dismissModal: any) {
+        event.preventDefault();
+        dismissModal("add property")
+
+        const property = UBLModelUtils.createAdditionalItemProperty(null, null);
+        this.catalogueLine.goodsItem.item.additionalItemProperty.push(property);
+        this.editPropertyModal.open(property, null);
+    }
+
+    onRemoveProperty(property: ItemProperty) {
+        const properties = this.catalogueLine.goodsItem.item.additionalItemProperty;
+        if(isCustomProperty(property)) {
+            const index = properties.indexOf(property);
+            if(index >= 0) {
+                properties.splice(index, 1);
+            }
+        } else {
+            const key = getPropertyKey(property);
+            this.catalogueLine.goodsItem.item.additionalItemProperty = properties.filter(prop => {
+                return key !== getPropertyKey(prop);
+            })
+        }
     }
 
     onBack() {
@@ -229,6 +259,10 @@ export class ProductPublishComponent implements OnInit {
         return this.catalogueLine.goodsItem.item.additionalItemProperty.length > 0;
     }
 
+    isCustomProperty(property: ItemProperty): boolean {
+        return isCustomProperty(property);
+    }
+
     getCategoryProperties(category: Category): Property[] {
         const code = category.code;
         if(!this.categoryProperties[code]) {
@@ -245,6 +279,11 @@ export class ProductPublishComponent implements OnInit {
 
     getPropertyType(property: Property): string {
         return sanitizeDataTypeName(property.dataType);
+    }
+
+    isValidCatalogueLine(): boolean {
+        // must have a name
+        return this.catalogueLine.goodsItem.item.name !== "";
     }
 
     private recomputeSelectedProperties() {
@@ -394,7 +433,7 @@ export class ProductPublishComponent implements OnInit {
     /*
      * Other Stuff
      */
-    
+
     canDeactivate(): boolean {
         if(this.changePublishModeCreate) {
             this.publishStateService.publishMode = 'create';
@@ -453,6 +492,8 @@ export class ProductPublishComponent implements OnInit {
                                 }
                             }
                         }
+
+                        this.recomputeSelectedProperties();
 
                         this.productCategoryRetrievalStatus.callback('Retrieved product categories', true);
                     }).catch(err =>
@@ -579,14 +620,15 @@ export class ProductPublishComponent implements OnInit {
         this.submitted = true;
 
         // remove unused properties from catalogueLine
-        let splicedCatalogueLine: CatalogueLine = this.removeEmptyProperties(this.catalogueLine);
+        const splicedCatalogueLine: CatalogueLine = this.removeEmptyProperties(this.catalogueLine);
         // nullify the transportation service details if a regular product is being published
         this.checkProductNature(splicedCatalogueLine);
 
         // Replace original line in the catalogue with the edited version
-        let indexOfOriginalLine = this.catalogueService.catalogue.catalogueLine.findIndex(line => line.id === this.catalogueLine.id);
-        let originalLine = this.catalogueService.catalogue.catalogueLine[indexOfOriginalLine];
+        const indexOfOriginalLine = this.catalogueService.catalogue.catalogueLine.findIndex(line => line.id === this.catalogueLine.id);
+        const originalLine = this.catalogueService.catalogue.catalogueLine[indexOfOriginalLine];
         this.catalogueService.catalogue.catalogueLine[indexOfOriginalLine] = splicedCatalogueLine;
+        this.catalogueLine = splicedCatalogueLine
 
         if (this.catalogueService.catalogue.uuid == null) {
             this.catalogueService.postCatalogue(this.catalogueService.catalogue)
@@ -674,13 +716,29 @@ export class ProductPublishComponent implements OnInit {
         this.userService.getUserParty(userId).then(party => {
             this.catalogueService.getCatalogueForceUpdate(userId, true).then(catalogue => {
                 this.catalogueService.catalogue = catalogue;
+                const line = this.catalogueLine;
                 this.catalogueLine = UBLModelUtils.createCatalogueLine(catalogue.uuid, party)
                 this.catalogueService.draftCatalogueLine = this.catalogueLine;
 
                 // avoid category duplication
                 this.categoryService.resetSelectedCategories();
                 this.publishStateService.resetData();
-                this.router.navigate(['dashboard'], { queryParams: { tab: "CATALOGUE" } });
+
+                if (line.goodsItem.item.catalogueDocumentReference.id && line.goodsItem.item.manufacturersItemIdentification.id) {
+                  this.router.navigate(['product-details'], {
+                      queryParams: {
+                          catalogueId: line.goodsItem.item.catalogueDocumentReference.id,
+                          id: line.goodsItem.item.manufacturersItemIdentification.id
+                      }
+                  });
+                }
+                else {
+                  this.router.navigate(['dashboard'], {
+                      queryParams: {
+                          tab: "CATALOGUE"
+                      }
+                  });
+                }
 
                 this.submitted = false;
                 this.callback = true;

@@ -130,7 +130,7 @@
 </div>
 <hr>
 <div class="form-group row">
-    <div class="col-9 d-flex align-items-center">
+    <div *ngIf="this.appComponent.checkRoles('catalogue')" class="col-9 d-flex align-items-center">
         <p class="mt-1 mb-0 mr-3 flex-shrink-0">Selected Categories: </p>
         <p class="mt-1 mb-0 mr-3 flex-shrink-0" *ngIf="categoryService.selectedCategories.length === 0">None. Please add a category above to proceed.</p>
         <div class="w-100 h-100 align-self-start">
@@ -143,8 +143,11 @@
             </div>
         </div>
     </div>
+    <div *ngIf="!this.appComponent.checkRoles('catalogue')" class="col-9 d-flex align-items-center">
+        <p class="mt-1 mb-0 mr-3">You do not have permission to publish any products to your company catalogue.</p>
+    </div>
     <div class="col-3 align-self-center">
-        <button class="btn btn-primary w-100 inline" [disabled]="categoryService.selectedCategories.length === 0 || navigating" (click)="navigateToPublishingPage()">Continue With Selected Categories</button>
+        <button class="btn btn-primary w-100 inline" [disabled]="categoryService.selectedCategories.length === 0 || navigating ||  !this.appComponent.checkRoles('catalogue')" (click)="navigateToPublishingPage()">Continue With Selected Categories</button>
         <div [hidden]="!navigating" class="space-right">
             <img class="space-before" src="assets/form_loader.gif"/>
         </div>    

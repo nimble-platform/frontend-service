@@ -34,6 +34,13 @@
 
 <hr>
 
+<!-- Warranty -->
+<quantity-input label="Warranty Period" [disabled]="disabled" quantityType="warranty_period" rowClass="space-before"
+    [quantity]="catalogueLine.warrantyValidityPeriod.durationMeasure">
+</quantity-input>
+
+<hr>
+
 <!-- Incoterms -->
 <options-input label="Incoterms" [disabled]="disabled" rowClass="space-before"
     [options]="INCOTERMS" [(selected)]="catalogueLine.goodsItem.deliveryTerms.incoterms">

@@ -67,6 +67,9 @@ export class ProductDetailsOverviewComponent {
     }
 
     isPropertyValueSelected(property: ItemProperty, valueIndex: number): boolean {
+        if(!this.options) {
+            return false;
+        }
         const selected = this.options.selectedValues[getPropertyKey(property)] || 0;
         return valueIndex === selected;
     }

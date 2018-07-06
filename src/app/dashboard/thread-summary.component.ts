@@ -49,30 +49,20 @@ export class ThreadSummaryComponent implements OnInit {
     ngOnInit(): void {
         this.eventCount = this.processInstanceGroup.processInstanceIDs.length;
         this.hasHistory = this.eventCount > 1;
-        this.fetchLastEvent();
-        this.fetchHistory();
-    }
-
-    private fetchLastEvent(): void {
-        this.fetchThreadEvent(this.processInstanceGroup.processInstanceIDs[this.eventCount - 1]).then(threadEvent => {
-            this.lastEvent = threadEvent;
-        }).catch(error => {
-        });
+        this.fetchEvents();
     }
 
     toggleHistory(): void {
         this.historyExpanded = !this.historyExpanded;
-        if(this.historyExpanded && !this.history) {
-            this.fetchHistory();
-        }
     }
 
-    private fetchHistory(): void {
-        const ids = this.processInstanceGroup.processInstanceIDs.slice(0, this.eventCount - 1)
-
-        // inline function to avoid binding fetchThreadEvent
+    private fetchEvents(): void {
+        const ids = this.processInstanceGroup.processInstanceIDs;
         Promise.all(ids.map(id => this.fetchThreadEvent(id))).then(events => {
-            this.history = events.reverse()
+            events.sort((a,b) => moment(a.startTime).diff(moment(b.startTime)));
+            events = events.reverse();
+            this.history = events.slice(1, events.length);
+            this.lastEvent = events[0];
         }).catch(error => {
         });
     }
@@ -118,8 +108,7 @@ export class ThreadSummaryComponent implements OnInit {
             {
                 queryParams: {
                     catalogueId: item.catalogueDocumentReference.id,
-                    id: item.manufacturersItemIdentification.id,
-                    showOptions: true
+                    id: item.manufacturersItemIdentification.id
                 }
             });
     }

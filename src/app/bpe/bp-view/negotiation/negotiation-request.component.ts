@@ -169,6 +169,13 @@ export class NegotiationRequestComponent implements OnInit {
         return getMaximumQuantityForPrice(this.line.requiredItemLocationQuantity.price);
     }
 
+    getQuantityUnit(): string {
+        if(!this.line) {
+            return "";
+        }
+        return this.line.requiredItemLocationQuantity.price.baseQuantity.unitCode || "";
+    }
+    
     isLoading(): boolean {
         return this.callStatus.fb_submitted;
     }

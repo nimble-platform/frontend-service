@@ -9,7 +9,7 @@
     </div>
     <div [class]="valueClass" *ngIf="presentationMode === 'edit' && visible">
         <select class="form-control form-control-sm" [(ngModel)]="selected" [disabled]="disabled">
-            <option *ngFor="let option of options" [value]="option">{{option}}</option>
+            <option *ngFor="let option of options" [value]="getValue(option)">{{ getName(option) }}</option>
         </select>
     </div>
 

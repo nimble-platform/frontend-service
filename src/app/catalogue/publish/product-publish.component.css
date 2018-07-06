@@ -25,6 +25,10 @@
     margin: 0.25rem 0 0 0.25rem;
 }
 
+.btn-remove-property {
+    width: 100%;
+}
+
 .image-small {
     width:80px;
     height:80px;
@@ -74,13 +78,14 @@ div.add-image input {
 }
 
 .value-pill {
-    margin: 0.25rem 0.25rem 0.25rem 0;
+    margin: 0.25rem 0.25rem 0.25rem 0.25rem;
     height: 2.6rem;
-    flex-basis: 5rem;
+    flex-basis: auto;
+    min-width: 50px;
     display: flex;
     justify-content: space-between;
 }
 
 .boolean-value-input {
-    margin: 1.2rem 0 0 0.2rem;
+    margin: 1rem 0 0 0.1rem;
 }

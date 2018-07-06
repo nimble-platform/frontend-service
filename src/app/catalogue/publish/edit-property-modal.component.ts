@@ -1,9 +1,10 @@
 import { Component, OnInit, Input, ViewChild, ElementRef } from "@angular/core";
 import { ItemProperty } from "../model/publish/item-property";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { sanitizePropertyName, copy } from "../../common/utils";
+import { sanitizePropertyName, copy, isCustomProperty, getPropertyValues } from "../../common/utils";
 import { Quantity } from "../model/publish/quantity";
 import { SelectedProperty } from "../model/publish/selected-property";
+import { PROPERTY_TYPES } from "../model/constants";
 
 @Component({
     selector: "edit-property-modal",
@@ -17,6 +18,8 @@ export class EditPropertyModalComponent implements OnInit {
     
     @ViewChild("modal") modal: ElementRef;
 
+    PROPERTY_TYPES = PROPERTY_TYPES;
+
     constructor(private modalService: NgbModal) {
     }
 
@@ -27,13 +30,31 @@ export class EditPropertyModalComponent implements OnInit {
     open(property: ItemProperty, selectedProperty: SelectedProperty) {
         this.selectedProperty = selectedProperty;
         this.property = copy(property);
+        this.addEmptyValuesToProperty();
         this.modalService.open(this.modal).result.then(() => {
             // on OK, update the property with the values
             property.value = this.property.value;
             property.valueBinary = this.property.valueBinary;
             property.valueDecimal = this.property.valueDecimal;
             property.valueQuantity = this.property.valueQuantity;
+
+            if(isCustomProperty(property)) {
+                property.name = this.property.name;
+                property.valueQualifier = this.property.valueQualifier;
+            }
         })
+    }
+
+    addEmptyValuesToProperty() {
+        if(this.property.value.length === 0) {
+            this.property.value.push("");
+        }
+        if(this.property.valueDecimal.length === 0) {
+            this.property.valueDecimal.push(0);
+        }
+        if(this.property.valueQuantity.length === 0) {
+            this.property.valueQuantity.push(new Quantity());
+        }
     }
 
     getDefinition(): string {
@@ -49,25 +70,20 @@ export class EditPropertyModalComponent implements OnInit {
         return "No definition."
     }
 
-    getPrettyName(): string {
+    get prettyName(): string {
         return sanitizePropertyName(this.property.name);
     }
 
+    set prettyName(name: string) {
+        this.property.name = name;
+    }
+
     getValues(): any[] {
-        switch(this.property.valueQualifier) {
-            case "INT":
-            case "DOUBLE":
-            case "NUMBER":
-            case "REAL_MEASURE":
-                return this.property.valueDecimal;
-            case "BINARY":
-                return this.property.valueBinary;
-            case "QUANTITY":
-                return this.property.valueQuantity;
-            case "STRING":
-            case "BOOLEAN":
-                return this.property.value;
-        }
+        return getPropertyValues(this.property);
+    }
+
+    getPropertyPresentationMode(): "edit" | "view" {
+        return isCustomProperty(this.property) ? "edit" : "view";
     }
 
     onAddValue() {

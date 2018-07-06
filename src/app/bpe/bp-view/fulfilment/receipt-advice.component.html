@@ -1,7 +1,7 @@
 <ng-container *ngIf="receiptAdvice">
 
     <!-- Dispatched Quantity -->
-    <quantity-input [disabled]="true" [disableQuantityUnit]="true"
+    <quantity-input presentationMode="view" [disableQuantityUnit]="true"
         label="Dispatched Quantity" [quantity]="dispatchAdvice.despatchLine[0].deliveredQuantity" 
         rowClass="space-before">
     </quantity-input>
@@ -9,7 +9,7 @@
     <hr>
 
     <!-- Shipment -->
-    <shipment-input [shipment]="dispatchAdvice.despatchLine[0].shipment[0]" [disabled]="true">
+    <shipment-input [shipment]="dispatchAdvice.despatchLine[0].shipment[0]" presentationMode="view">
     </shipment-input>
 
     <hr>

@@ -60,22 +60,26 @@ export class PpapDocumentUploadComponent {
         });
     }
 
-    fileChange(event: any,documentName:string) {
-        let fileList: FileList = event.target.files;
-        let binaryObjects: BinaryObject[] = [];
-        if (fileList.length > 0) {
-            for (let i = 0; i < fileList.length; i++) {
-                let file: File = fileList[i];
-                let reader = new FileReader();
-                reader.onload = function (e: any) {
-                    let base64String = reader.result.split(',').pop();
-                    let binaryObject = new BinaryObject(base64String, file.type, file.name, "", "");
-                    binaryObjects.push(binaryObject);
-                };
-                reader.readAsDataURL(file);
-            }
+    onSelectFile(documentName: string, binaryObject: BinaryObject) {
+        let document = this.binaryObjects.find(obj => obj.documentName === documentName);
+        if(!document) {
+            document = { documentName, documents: [] };
+            this.binaryObjects.push(document);
         }
-        this.binaryObjects.push({documentName:documentName,documents:binaryObjects});
+
+        document.documents.push(binaryObject);
+    }
+
+    onClearFile(documentName: string, binaryObject: BinaryObject) {
+        const document = this.binaryObjects.find(obj => obj.documentName === documentName);
+        if(!document) {
+            return
+        }
+
+        const index = document.documents.indexOf(binaryObject);
+        if(index >= 0) {
+            document.documents.splice(index, 1);
+        }
     }
 
     onBack() {
@@ -91,29 +95,8 @@ export class PpapDocumentUploadComponent {
         return false;
     }
 
-
     isLoading(): boolean {
         return this.callStatus.fb_submitted;
-    }
-
-    areAllDocumentsUploaded(): boolean {
-        return this.ppap.documentType.length === this.binaryObjects.length;
-    }
-
-    remove(documentName, document): void {
-        for(var i=0;i<this.binaryObjects.length;i++){
-            if(documentName == this.binaryObjects[i].documentName){
-                for(var j=0;j<this.binaryObjects[i].documents.length;j++){
-                    if(this.binaryObjects[i].documents[j] == document){
-                        this.binaryObjects[i].documents.splice(j, 1);
-                        if(this.binaryObjects[i].documents.length == 0){
-                            this.binaryObjects.splice(i,1);
-                        }
-                        return;
-                    }
-                }
-            }
-        }
     }
 
     responseToPpapRequest(acceptedIndicator: boolean) {

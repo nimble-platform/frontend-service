@@ -18,6 +18,7 @@ import { ParentCategories } from "../model/category/parent-categories";
 import { sortCategories } from "../../common/utils";
 import { PropertyValueQualifier } from "../model/publish/property-value-qualifier";
 import { Property } from "../model/category/property";
+import { AppComponent } from "../../app.component";
 
 @Component({
     selector: 'category-search',
@@ -64,7 +65,8 @@ export class CategorySearchComponent implements OnInit {
                 private cookieService: CookieService,
                 public categoryService: CategoryService,
                 private catalogueService: CatalogueService,
-                private publishService:PublishService) {
+                private publishService:PublishService,
+                public appComponent: AppComponent) {
     }
 
 
