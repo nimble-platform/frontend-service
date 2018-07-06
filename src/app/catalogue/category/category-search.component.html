@@ -147,7 +147,7 @@
         <p class="mt-1 mb-0 mr-3">You do not have permission to publish any products to your company catalogue.</p>
     </div>
     <div class="col-3 align-self-center">
-        <button class="btn btn-primary w-100 inline" [disabled]="categoryService.selectedCategories.length === 0 || navigating ||  this.appComponent.checkRoles('catalogue')" (click)="navigateToPublishingPage()">Continue With Selected Categories</button>
+        <button class="btn btn-primary w-100 inline" [disabled]="categoryService.selectedCategories.length === 0 || navigating ||  !this.appComponent.checkRoles('catalogue')" (click)="navigateToPublishingPage()">Continue With Selected Categories</button>
         <div [hidden]="!navigating" class="space-right">
             <img class="space-before" src="assets/form_loader.gif"/>
         </div>    
