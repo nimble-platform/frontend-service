@@ -37,7 +37,7 @@ export class CategoryService {
 
         let customCategoryCodes: Code[] = [];
         let customCategories: Category[] = [];
-        let categories:Category[];
+        let categories:Category[] = [];
 
         // remove default category
         codes = codes.filter(function (cat) {
@@ -47,7 +47,7 @@ export class CategoryService {
         customCategoryCodes = codes.filter(function (cat) {
            return cat.listID == 'Custom';
         });
-        
+
         // get non-custom categories
         codes = codes.filter(function (cat) {
            return cat.listID != 'Custom';
