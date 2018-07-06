@@ -261,7 +261,7 @@
                         <hr>
                     </div>
                     <div class="col-12">
-                        No property matching your search? 
+                        No property matching your search? <br>
                         <a href class="btn-link" (click)="onAddCategory($event, d)">Add more categories to this product</a>
                         or
                         <a href class="btn-link" (click)="onAddCustomProperty($event, d)">Create a custom property</a>.
@@ -269,7 +269,7 @@
                 </div>
                 <div *ngIf="selectedCategories.length === 0" class="row">
                     <div class="col-12">
-                        No categories to pick properties from. 
+                        No categories to pick properties from. <br>
                         <a href class="btn-link" (click)="onAddCategory($event, d)">Add more categories to this product.</a>
                         or
                         <a href class="btn-link" (click)="onAddCustomProperty($event, d)">Create a custom property</a>.

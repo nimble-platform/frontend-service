@@ -30,6 +30,7 @@ export class EditPropertyModalComponent implements OnInit {
     open(property: ItemProperty, selectedProperty: SelectedProperty) {
         this.selectedProperty = selectedProperty;
         this.property = copy(property);
+        this.addEmptyValuesToProperty();
         this.modalService.open(this.modal).result.then(() => {
             // on OK, update the property with the values
             property.value = this.property.value;
@@ -42,6 +43,18 @@ export class EditPropertyModalComponent implements OnInit {
                 property.valueQualifier = this.property.valueQualifier;
             }
         })
+    }
+
+    addEmptyValuesToProperty() {
+        if(this.property.value.length === 0) {
+            this.property.value.push("");
+        }
+        if(this.property.valueDecimal.length === 0) {
+            this.property.valueDecimal.push(0);
+        }
+        if(this.property.valueQuantity.length === 0) {
+            this.property.valueQuantity.push(new Quantity());
+        }
     }
 
     getDefinition(): string {
