@@ -60,7 +60,8 @@ export class ThreadSummaryComponent implements OnInit {
         const ids = this.processInstanceGroup.processInstanceIDs;
         Promise.all(ids.map(id => this.fetchThreadEvent(id))).then(events => {
             events.sort((a,b) => moment(a.startTime).diff(moment(b.startTime)));
-            this.history = events.reverse();
+            events = events.reverse();
+            this.history = events.slice(1, events.length);
             this.lastEvent = events[0];
         }).catch(error => {
         });
