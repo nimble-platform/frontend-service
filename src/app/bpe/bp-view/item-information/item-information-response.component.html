@@ -2,27 +2,21 @@
     <div class="col-3">
         <strong><label for="customFile">Requested technical data sheet:</label></strong>
     </div>
-    <div *ngIf="hasRequestFile()"class="col-9">
-        <a href class="btn-link" (click)="downloadTechnicalDataSheet(getRequestFile(), $event)">{{ getRequestFile().fileName }}</a>
-    </div>
-    <div *ngIf="!hasRequestFile()"class="col-9">
-        No file in the request.
+    <div class="col-9">
+        <file-input [disabled]="isLoading()" [multiple]="true"
+            presentationMode="view" [binaryObjects]="requestFiles">
+        </file-input>    
     </div>
 </div>
 
-<div class="row">
+<div class="row space-before">
     <div class="col-3">
-        <strong><label for="customFile">Filled technical data sheet:</label></strong>
+        <strong><label for="customFile">Filled technical data sheet(s):</label></strong>
     </div>
-    <div *ngIf="!isResponseSent()" class="col-9">
-        <file-input [disabled]="isLoading()" (onSelectFile)="selectItemSpecificationFile($event)">
+    <div class="col-9">
+        <file-input [disabled]="isLoading()" [multiple]="true" [binaryObjects]="responseFiles" [presentationMode]="getPresentationMode()"
+            (onSelectFile)="onSelectItemSpecificationFile($event)" (onClearFile)="onUnselectItemSpecificationFile($event)">
         </file-input>
-    </div>
-    <div *ngIf="isResponseSent() && hasResponseFile()" class="col-9">
-        <a href class="btn-link" (click)="downloadTechnicalDataSheet(getResponseFile(), $event)">{{ getResponseFile().fileName }}</a>
-    </div>
-    <div *ngIf="isResponseSent() && !hasResponseFile()" class="col-9">
-        No file in the response.
     </div>
 </div>
 

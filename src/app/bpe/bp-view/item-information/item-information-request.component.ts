@@ -16,6 +16,8 @@ import { SupplierParty } from "../../../catalogue/model/publish/supplier-party";
 import { ProcessVariables } from "../../model/process-variables";
 import { ModelUtils } from "../../model/model-utils";
 import { ProcessInstanceInputMessage } from "../../model/process-instance-input-message";
+import { copy } from "../../../common/utils";
+import { PresentationMode } from "../../../catalogue/model/publish/presentation-mode";
 /**
  * Created by suat on 19-Nov-17.
  */
@@ -29,6 +31,7 @@ export class ItemInformationRequestComponent implements OnInit {
     callStatus: CallStatus = new CallStatus();
 
     request: ItemInformationRequest;
+    files: BinaryObject[]
 
     constructor(private bpeService: BPEService, 
                 private bpDataService: BPDataService, 
@@ -41,6 +44,8 @@ export class ItemInformationRequestComponent implements OnInit {
 
     ngOnInit() {
         this.request = this.bpDataService.itemInformationRequest;
+        const documents = this.request.itemInformationRequestLine[0].salesItem[0].item.itemSpecificationDocumentReference;
+        this.files = documents.map(doc => doc.attachment.embeddedDocumentBinaryObject);
     }
 
     onBack(): void {
@@ -51,6 +56,10 @@ export class ItemInformationRequestComponent implements OnInit {
         return !!this.bpDataService.processMetadata;
     }
 
+    getPresentationMode(): PresentationMode {
+        return this.isRequestSent() ? "view" : "edit";
+    }
+
     onSkip(): void {
         this.bpDataService.resetBpData();
         this.bpDataService.initPpap([]);
@@ -59,7 +68,7 @@ export class ItemInformationRequestComponent implements OnInit {
 
     onSendRequest(): void {
         this.callStatus.submit();
-        let itemInformationRequest: ItemInformationRequest = JSON.parse(JSON.stringify(this.bpDataService.itemInformationRequest));
+        let itemInformationRequest: ItemInformationRequest = copy(this.bpDataService.itemInformationRequest);
 
         // final check on the order
         itemInformationRequest.itemInformationRequestLine[0].salesItem[0].item = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;
@@ -91,21 +100,20 @@ export class ItemInformationRequestComponent implements OnInit {
         });
     }
 
-    selectItemSpecificationFile(file: File): void {
-        const documentReferenceArray = this.getRequestDocuments();
-        if (file) {
-            const reader = new FileReader();
+    onSelectItemSpecificationFile(binaryObject: BinaryObject): void {
+        const documents = this.getRequestDocuments();
+        const document: DocumentReference = new DocumentReference();
+        const attachment: Attachment = new Attachment();
+        attachment.embeddedDocumentBinaryObject = binaryObject;
+        document.attachment = attachment;
+        documents.push(document);
+    }
 
-            reader.onload = function () {
-                const base64String = reader.result.split(',').pop();
-                const binaryObject = new BinaryObject(base64String, file.type, file.name, "", "");
-                const document: DocumentReference = new DocumentReference();
-                const attachment: Attachment = new Attachment();
-                attachment.embeddedDocumentBinaryObject = binaryObject;
-                document.attachment = attachment;
-                documentReferenceArray.push(document);
-            };
-            reader.readAsDataURL(file);
+    onUnselectItemSpecificationFile(binaryObject: BinaryObject): void {
+        const documents = this.getRequestDocuments();
+        const index = documents.findIndex(doc => doc.attachment.embeddedDocumentBinaryObject === binaryObject);
+        if(index >= 0) {
+            documents.splice(index, 1);
         }
     }
 

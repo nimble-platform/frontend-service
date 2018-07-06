@@ -1,10 +1,11 @@
 <div class="row space-before">
     <div class="col-3">
-        <strong class="font-weight-500"><label for="customFile">Request filled technical data sheet:</label></strong>
+        <strong class="font-weight-500"><label for="customFile">Requested filled technical data sheet(s):</label></strong>
     </div>
     <div class="col-9">
-        <file-input [disabled]="isLoading() || isRequestSent()"
-            (onSelectFile)="selectItemSpecificationFile($event)">
+        <file-input [disabled]="isLoading() || isRequestSent()" [multiple]="true" [presentationMode]="getPresentationMode()"
+            (onSelectFile)="onSelectItemSpecificationFile($event)" [binaryObjects]="files"
+            (onClearFile)="onUnselectItemSpecificationFile($event)">
         </file-input>
     </div>
 </div>

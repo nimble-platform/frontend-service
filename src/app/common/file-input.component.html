@@ -1,26 +1,28 @@
 <div class="row {{ rowClass }}">
-        <div *ngIf="label" [class]="labelClass">
-            <label class="{{labelMainClass}}">
-                <strong>
-                    {{ label }}:
-                </strong>
-                <span *ngIf="definition" class="definition" title="{{definition}}">&#9432;</span>
+    <div *ngIf="label" [class]="labelClass">
+        <label class="{{labelMainClass}}">
+            <strong>
+                {{ label }}:
+            </strong>
+            <span *ngIf="definition" class="definition" title="{{definition}}">&#9432;</span>
+        </label>
+    </div>
+    <div [class]="valueClass" *ngIf="visible">
+        <div *ngFor="let file of binaryObjects; let i = index" class="file-link-row">
+            <a href class="btn-link" (click)="onDownloadFile(file, $event)">{{ file.fileName }}</a>
+            <button class="btn btn-danger btn-sm" (click)="onRemoveFile(i)" *ngIf="presentationMode === 'edit'">
+                Remove
+            </button>
+        </div>
+        <div class="custom-file" *ngIf="isShowingInput()">
+            <input type="file" class="custom-file-input" [accept]="accept"
+                (change)="onChooseFile($event)" [disabled]="disabled">
+            <label class="custom-file-label" [ngClass]="getFileClasses()">
+                {{ placeholder }}
             </label>
         </div>
-        <div [class]="valueClass" *ngIf="presentationMode === 'edit' && visible">
-            <div class="custom-file">
-                <input type="file" class="custom-file-input" 
-                    (change)="onChooseFile($event)" [disabled]="disabled">
-                <label class="custom-file-label" [ngClass]="getFileClasses()">
-                    {{ getFileName() }}
-                </label>
-            </div>
-        </div>
-    
-        <div [class]="valueClass" *ngIf="presentationMode === 'view' && visible">
-            <span>
-                {{ file ? file.name : "" }}
-            </span>
+        <div *ngIf="presentationMode === 'view' && binaryObjects.length === 0">
+            No file.
         </div>
     </div>
-    
+</div>
