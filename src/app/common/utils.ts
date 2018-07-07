@@ -140,3 +140,20 @@ export function getPropertyValues(property: ItemProperty): any[] {
             return property.value;
     }
 }
+
+export function getPropertyValuesAsStrings(property: ItemProperty): string[] {
+    switch(property.valueQualifier) {
+        case "INT":
+        case "DOUBLE":
+        case "NUMBER":
+        case "REAL_MEASURE":
+            return property.valueDecimal.map(num => String(num));
+        case "BINARY":
+            return property.valueBinary.map(bin => bin.fileName);
+        case "QUANTITY":
+            return property.valueQuantity.map(qty => `${qty.value} ${qty.unitCode}`);
+        case "STRING":
+        case "BOOLEAN":
+            return property.value;
+    }
+}

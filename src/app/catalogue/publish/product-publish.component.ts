@@ -17,7 +17,7 @@ import { CookieService } from "ng2-cookies";
 import { Category } from "../model/category/category";
 import { BinaryObject } from "../model/publish/binary-object";
 import { Code } from "../model/publish/code";
-import { getPropertyKey, sortCategories, sortProperties, sanitizeDataTypeName, sanitizePropertyName, copy, isCustomProperty } from "../../common/utils";
+import { getPropertyKey, sortCategories, sortProperties, sanitizeDataTypeName, sanitizePropertyName, copy, isCustomProperty, getPropertyValuesAsStrings } from "../../common/utils";
 import { Property } from "../model/category/property";
 import { ProductWrapper } from "../../common/product-wrapper";
 import { EditPropertyModalComponent } from "./edit-property-modal.component";
@@ -334,19 +334,7 @@ export class ProductPublishComponent implements OnInit {
     }
 
     getValuesAsString(property: ItemProperty): string[] {
-        switch(property.valueQualifier) {
-            case "INT":
-            case "DOUBLE":
-            case "NUMBER":
-            case "REAL_MEASURE":
-                return property.valueDecimal.map(num => String(num));
-            case "BINARY":
-                return property.valueBinary.map(bin => bin.fileName);
-            case "QUANTITY":
-                return property.valueQuantity.map(qty => `${qty.value} ${qty.unitCode}`);
-            case "STRING":
-                return property.value;
-        }
+        return getPropertyValuesAsStrings(property);
     }
 
     onRemoveValue(property: ItemProperty, index: number) {

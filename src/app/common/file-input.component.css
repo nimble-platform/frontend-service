@@ -27,3 +27,7 @@ label .definition {
     margin-bottom: 0.5rem;
     line-height: 1.95rem;
 }
+
+.file-link-row-sm .file-link-row {
+    line-height: 1.5rem;
+}
