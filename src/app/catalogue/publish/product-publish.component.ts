@@ -85,7 +85,7 @@ export class ProductPublishComponent implements OnInit {
     private newProperty: ItemProperty = UBLModelUtils.createAdditionalItemProperty(null, null);
     // form model to be provided as root model to the inner components used in publishing
     publishForm: FormGroup = new FormGroup({});
-    
+
     submitted = false;
     callback = false;
     error_detc = false;
@@ -93,19 +93,19 @@ export class ProductPublishComponent implements OnInit {
     sameIdError = false;
     // the value of the erroneousID
     erroneousID = "";
-    
+
     json = JSON;
-    
+
     productCategoryRetrievalStatus: CallStatus = new CallStatus();
-    
+
     // used to add a new property which has a unit
     private quantity = new Quantity(null, null);
-    
+
     // check whether dialogBox is necessary or not during navigation
     public static dialogBox = true;
     // check whether changing publish-mode to 'create' is necessary or not
     changePublishModeCreate: boolean = false;
-    
+
     constructor(public categoryService: CategoryService,
                 private catalogueService: CatalogueService,
                 public publishStateService: PublishService,
@@ -119,7 +119,7 @@ export class ProductPublishComponent implements OnInit {
 
     ngOnInit() {
         this.selectedCategories = this.categoryService.selectedCategories;
-        
+
         const userId = this.cookieService.get("user_id");
         this.userService.getUserParty(userId).then(party => {
             this.catalogueService.getCatalogue(userId).then(catalogue => {
@@ -421,7 +421,7 @@ export class ProductPublishComponent implements OnInit {
     /*
      * Other Stuff
      */
-    
+
     canDeactivate(): boolean {
         if(this.changePublishModeCreate) {
             this.publishStateService.publishMode = 'create';
@@ -480,6 +480,8 @@ export class ProductPublishComponent implements OnInit {
                                 }
                             }
                         }
+
+                        this.recomputeSelectedProperties();
 
                         this.productCategoryRetrievalStatus.callback('Retrieved product categories', true);
                     }).catch(err =>
@@ -710,12 +712,21 @@ export class ProductPublishComponent implements OnInit {
                 this.categoryService.resetSelectedCategories();
                 this.publishStateService.resetData();
 
-                this.router.navigate(['product-details'], { 
-                    queryParams: {
-                        catalogueId: line.goodsItem.item.catalogueDocumentReference.id,
-                        id: line.goodsItem.item.manufacturersItemIdentification.id
-                    }
-                });
+                if (line.goodsItem.item.catalogueDocumentReference.id && line.goodsItem.item.manufacturersItemIdentification.id) {
+                  this.router.navigate(['product-details'], {
+                      queryParams: {
+                          catalogueId: line.goodsItem.item.catalogueDocumentReference.id,
+                          id: line.goodsItem.item.manufacturersItemIdentification.id
+                      }
+                  });
+                }
+                else {
+                  this.router.navigate(['dashboard'], {
+                      queryParams: {
+                          tab: "CATALOGUE"
+                      }
+                  });
+                }
 
                 this.submitted = false;
                 this.callback = true;
