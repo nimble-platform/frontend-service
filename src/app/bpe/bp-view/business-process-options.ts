@@ -144,8 +144,8 @@ export class BusinessProcessOptions implements OnInit {
             this.bpDataService.setBpOptionParameters(this.userRole,'Transport_Execution_Plan',"Negotiation");
         }
         else if(this.nextProcess == "Initiate Despatch Advice"){
-            this.bpDataService.initDespatchAdviceWithOrder();
-            this.bpDataService.setBpOptionParameters(this.userRole, 'Fulfilment',"Order");
+        //    this.bpDataService.initDespatchAdviceWithOrder();
+        //    this.bpDataService.setBpOptionParameters(this.userRole, 'Fulfilment',"Order");
         }
         else if(this.nextProcess == "Search Transport Service Provider"){
             this.selectedTabChanged.next();

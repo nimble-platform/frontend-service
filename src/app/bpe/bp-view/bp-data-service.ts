@@ -36,6 +36,7 @@ import { copy, getPropertyKey } from "../../common/utils";
 import { NegotiationModelWrapper } from "./negotiation/negotiation-model-wrapper";
 import { PriceWrapper } from "./price-wrapper";
 import { Price } from "../../catalogue/model/publish/price";
+import {Quantity} from "../../catalogue/model/publish/quantity";
 
 /**
  * Created by suat on 20-Sep-17.
@@ -382,12 +383,22 @@ export class BPDataService{
         this.requestForQuotation = UBLModelUtils.createRequestForQuotationWithTransportExecutionPlanRequest(copyTransportExecutionPlanRequest,this.modifiedCatalogueLines[0]);
     }
 
-    initDespatchAdviceWithOrder() {
+    initDespatchAdvice(handlingInst:string,carrierName:string,carrierContact:string,deliveredQuantity:Quantity) {
         let copyOrder:Order = copy(this.order);
         this.resetBpData();
         this.modifiedCatalogueLines = copy(this.catalogueLines);
         this.despatchAdvice = UBLModelUtils.createDespatchAdvice(copyOrder);
-        this.despatchAdvice.despatchLine[0].deliveredQuantity.unitCode = copyOrder.orderLine[0].lineItem.quantity.unitCode;
+        if(deliveredQuantity.unitCode == null){
+            this.despatchAdvice.despatchLine[0].deliveredQuantity.unitCode = copyOrder.orderLine[0].lineItem.quantity.unitCode;
+        }
+        else {
+            this.despatchAdvice.despatchLine[0].deliveredQuantity.unitCode = deliveredQuantity.unitCode;
+        }
+
+        this.despatchAdvice.despatchLine[0].deliveredQuantity.value = deliveredQuantity.value;
+        this.despatchAdvice.despatchLine[0].shipment[0].handlingInstructions = handlingInst;
+        this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage[0].carrierParty.name = carrierName;
+        this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage[0].carrierParty.contact.telephone = carrierContact;
     }
 
     initTransportExecutionPlanRequest() {

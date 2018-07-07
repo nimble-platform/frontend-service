@@ -115,6 +115,15 @@ export class BPEService {
 		.catch(this.handleError);
 	}
 
+	getProcessInstanceGroup(groupId: string){
+		let url:string = `${this.url}/group/${groupId}`;
+		return this.http
+            .get(url, {headers: this.headers})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+	}
+
 	getProcessDetailsHistory(id: string): Promise<any> {
 		const url = `${this.url}/rest/engine/default/history/variable-instance?processInstanceIdIn=${id}`;
 		return this.http
