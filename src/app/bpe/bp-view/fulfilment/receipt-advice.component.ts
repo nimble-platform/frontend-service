@@ -16,7 +16,8 @@ import { DespatchAdvice } from "../../../catalogue/model/publish/despatch-advice
  */
 @Component({
     selector: "receipt-advice",
-    templateUrl: "./receipt-advice.component.html"
+    templateUrl: "./receipt-advice.component.html",
+    styleUrls: ["./receipt-advice.component.css"]
 })
 export class ReceiptAdviceComponent implements OnInit {
 
