@@ -3,7 +3,7 @@ import { ProductWrapper } from "../common/product-wrapper";
 import { CommodityClassification } from "../catalogue/model/publish/commodity-classification";
 import { ItemProperty } from "../catalogue/model/publish/item-property";
 import { BpWorkflowOptions } from "../bpe/model/bp-workflow-options";
-import { getPropertyKey } from "../common/utils";
+import { getPropertyKey, getPropertyValuesAsStrings } from "../common/utils";
 
 @Component({
     selector: 'product-details-overview',
@@ -72,5 +72,9 @@ export class ProductDetailsOverviewComponent {
         }
         const selected = this.options.selectedValues[getPropertyKey(property)] || 0;
         return valueIndex === selected;
+    }
+
+    getValuesAsString(property: ItemProperty): string[] {
+        return getPropertyValuesAsStrings(property);
     }
 }

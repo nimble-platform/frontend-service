@@ -1,4 +1,4 @@
-<div class="row {{ rowClass }}">
+<div class="row {{ rowClass }} {{ small ? 'file-link-row-sm' : '' }}">
     <div *ngIf="label" [class]="labelClass">
         <label class="{{labelMainClass}}">
             <strong>

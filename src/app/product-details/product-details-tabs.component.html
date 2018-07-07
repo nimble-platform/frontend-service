@@ -29,21 +29,27 @@
     </div>
 
     <!-- Overview Tab -->
-    <div *ngIf="selectedTab === 'OVERVIEW'" class="p-3">
+    <div *ngIf="selectedTab === 'OVERVIEW'" class="p-3 col-12">
         <h3 class="p-1">Overview</h3>
         <product-details-overview [wrapper]="wrapper" [options]="options" [readonly]="readonly">
         </product-details-overview>
     </div>
 
     <!-- Product Details Tab -->
-    <div *ngIf="selectedTab === 'DETAILS'" class="p-3">
+    <div *ngIf="selectedTab === 'DETAILS'" class="p-3 col-12">
         <h3 class="p-1">Product Details</h3>
         <div class="row mx-auto">
         <div *ngIf="wrapper.getUniquePropertiesWithValue().length === 0">
             <p class="p-1">This product does not seem to have any details.</p>
         </div>
-        <div *ngFor="let property of wrapper.getUniquePropertiesWithValue()" class="p-1 col-6">
-            <strong>{{ wrapper.getPropertyName(property) }}: </strong> {{ property.value.join(", ") }}
+        <div *ngFor="let property of wrapper.getUniquePropertiesWithValue()" class="p-1 col-6 d-flex">
+            <strong>{{ wrapper.getPropertyName(property) }}: </strong> 
+            <span *ngIf="property.valueQualifier !== 'BINARY'" class="ml-2">
+                {{ getValuesAsString(property).join(", ") }}
+            </span>
+            <ng-container *ngIf="property.valueQualifier === 'BINARY'">
+                <file-input presentationMode="view" [binaryObjects]="property.valueBinary" [multiple]="true" rowClass="ml-2" [small]="true"></file-input>
+            </ng-container>
         </div>
     </div>
     </div>

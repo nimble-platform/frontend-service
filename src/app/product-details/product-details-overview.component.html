@@ -76,7 +76,7 @@
             <div class="d-flex flex-column">
                 <div *ngFor="let property of wrapper.getPropertiesWithListOfValues()" class="my-1">
                     <strong>{{property.name}}: </strong>
-                    <span *ngFor="let val of property.value; let i = index" class="btn-group-toggle" data-toggle="buttons">
+                    <span *ngFor="let val of getValuesAsString(property); let i = index" class="btn-group-toggle" data-toggle="buttons">
                         <button type="button" class="btn btn-outline-primary no-y-padding" (click)="onTogglePropertyValue(property, i)" 
                             [disabled]="readonly" [ngClass]="{ 'active': isPropertyValueSelected(property, i) }">
                             {{val}}

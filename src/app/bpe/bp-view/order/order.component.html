@@ -1,71 +1,120 @@
+<ng-container *ngIf="order">
+    <div class="row title-row">
+        <div class="col-6"><h4>Order Details</h4></div>
+        <div class="col-6"><h4>Delivery Details</h4></div>
+    </div>
 
-<!-- Order summary -->
-<div class="row" *ngIf="order">
-    <div class="col-4">
-        <h2>Order Details</h2>
-        <text-input presentationMode="view" label="Delivery Period" 
-            [text]="getDeliveryPeriodText()" labelClass="col-6" valueClass="col-6">
-        </text-input>
-        <text-input presentationMode="view" label="Warranty" 
-            [text]="getWarrantyPeriodText()" labelClass="col-6" valueClass="col-6">
-        </text-input>
-        <text-input presentationMode="view" label="Incoterms" 
-            [text]="getIncoterm()" labelClass="col-6" valueClass="col-6">
-        </text-input>
-        <text-input presentationMode="view" label="Quantity"
-            [text]="getQuantityText()" labelClass="col-6" valueClass="col-6">
-        </text-input>
-        <text-input presentationMode="view" label="Total Price"
-            [text]="getTotalPriceText()" labelClass="col-6" valueClass="col-6">
-        </text-input>
-        <div class="row">
-            <div class="col-6">
-                <strong>Data Monitoring Service:</strong>
-            </div>
-            <div class="col-6">
-                {{ dataMonitoringDemanded ? "yes" : "" }}
-                <call-status [callStatus]="fetchDataMonitoringStatus"></call-status>
-            </div>
+    <div class="row content-row">
+        <div class="col-6">
+            <text-input presentationMode="view" label="Warranty" 
+                [text]="getWarrantyPeriodText()" labelClass="col-4" valueClass="col-8">
+            </text-input>
+        </div>
+        <div class="col-6">
+            <text-input presentationMode="view" label="Delivery Period" 
+                [text]="getDeliveryPeriodText()" labelClass="col-4" valueClass="col-8">
+            </text-input>
         </div>
     </div>
-    <div class="col-4">
-        <h2>Payment Details</h2>
-        <text-input presentationMode="view" label="Payment Means" 
-            [text]="getPaymentMeans()" labelClass="col-6" valueClass="col-6">
-        </text-input>
-        <text-input presentationMode="view" label="Payment Terms" 
-            [text]="paymentTermsWrapper.paymentTerm" labelClass="col-6" valueClass="col-6">
-        </text-input>
+
+    <div class="row content-row">
+        <div class="col-6">
+            <text-input presentationMode="view" label="Incoterms" 
+                [text]="getIncoterm()" labelClass="col-4" valueClass="col-8">
+            </text-input>
+        </div>
+        <div class="col-6">
+            <text-input presentationMode="view" label="Street" 
+                [text]="address.streetName" labelClass="col-4" valueClass="col-8">
+            </text-input>
+        </div>
     </div>
-    <div class="col-4">
-        <h2>Delivery Address</h2>
-        <text-input presentationMode="view" label="Street" 
-            [text]="order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address.streetName" labelClass="col-6" valueClass="col-6">
-        </text-input>
-        <text-input presentationMode="view" label="Building Number" 
-            [text]="order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address.buildingNumber" labelClass="col-6" valueClass="col-6">
-        </text-input>
-        <text-input presentationMode="view" label="City" 
-            [text]="order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address.cityName" labelClass="col-6" valueClass="col-6">
-        </text-input>
-        <text-input presentationMode="view" label="Postal Code" 
-            [text]="order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address.postalZone" labelClass="col-6" valueClass="col-6">
-        </text-input>
-        <text-input presentationMode="view" label="Country" 
-            [text]="order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address.country.name" labelClass="col-6" valueClass="col-6">
-        </text-input>
+
+    <div class="row content-row">
+        <div class="col-6">
+            <text-input presentationMode="view" label="Quantity"
+                [text]="getQuantityText()" labelClass="col-4" valueClass="col-8">
+            </text-input>
+        </div>
+        <div class="col-6">
+            <text-input presentationMode="view" label="Building Number" 
+                [text]="address.buildingNumber" labelClass="col-4" valueClass="col-8">
+            </text-input>
+        </div>
     </div>
-</div>
+
+    <div class="row content-row">
+        <div class="col-6">
+            <text-input presentationMode="view" label="Total Price"
+                [text]="getTotalPriceText()" labelClass="col-4" valueClass="col-8">
+            </text-input>
+        </div>
+        <div class="col-6">
+            <text-input presentationMode="view" label="City" 
+                [text]="address.cityName" labelClass="col-4" valueClass="col-8">
+            </text-input>
+        </div>
+    </div>
+
+    <div class="row content-row">
+        <div class="col-6">
+            <div class="row">
+                <div class="col-4">
+                    <strong>Data Monitoring Service:</strong>
+                </div>
+                <div class="col-8">
+                    {{ dataMonitoringDemanded ? "Yes" : "No" }}
+                    <call-status [callStatus]="fetchDataMonitoringStatus"></call-status>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <text-input presentationMode="view" label="Postal Code" 
+                [text]="address.postalZone" labelClass="col-4" valueClass="col-8">
+            </text-input>
+        </div>
+    </div>
+
+    <div class="row content-row">
+        <div class="col-6">
+            <text-input presentationMode="view" label="Payment Means" 
+                [text]="getPaymentMeans()" labelClass="col-4" valueClass="col-8">
+            </text-input>
+        </div>
+        <div class="col-6">
+            <text-input presentationMode="view" label="Country" 
+                [text]="address.country.name" labelClass="col-4" valueClass="col-8">
+            </text-input>
+        </div>
+    </div>
+
+    <div class="row content-row">
+        <div class="col-6">
+            <text-input presentationMode="view" label="Payment Terms" 
+                [text]="paymentTermsWrapper.paymentTerm" labelClass="col-4" valueClass="col-8">
+            </text-input>
+        </div>
+        <div class="col-6">
+            <!-- Nothing for now -->
+        </div>
+    </div>
+
+</ng-container>
 
 <hr>
 
-<text-input presentationMode="edit" [disabled]="isReadOnly() || userRole === 'seller'"
-    label="Note" [(text)]="order.note" labelClass="col-2" valueClass="col-10">
-</text-input>
-
-<text-input presentationMode="edit" *ngIf="orderResponse" [disabled]="isReadOnly()"
-    label="Producer Note" [(text)]="orderResponse.note" labelClass="col-2" valueClass="col-10" rowClass="space-before">
-</text-input>
+<div class="row content-row" *ngIf="order">
+    <div class="col-6">
+        <text-input presentationMode="edit" [disabled]="isReadOnly() || userRole === 'seller'"
+            label="Customer's Note" [(text)]="order.note" labelClass="col-4" valueClass="col-8">
+        </text-input>
+    </div>
+    <div class="col-6">
+        <text-input presentationMode="edit" *ngIf="orderResponse" [disabled]="isReadOnly()"
+            label="Supplier's Note" [(text)]="orderResponse.note" labelClass="col-4" valueClass="col-8">
+        </text-input>
+    </div>
+</div>
 
 <hr>
 

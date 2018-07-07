@@ -22,12 +22,13 @@ import { PriceWrapper } from "../price-wrapper";
 import { Party } from "../../../catalogue/model/publish/party";
 import { DocumentClause } from "../../../catalogue/model/publish/document-clause";
 import { Quotation } from "../../../catalogue/model/publish/quotation";
-import {ProcessInstanceGroup} from '../../model/process-instance-group';
-import {ActivityVariableParser} from '../activity-variable-parser';
-import {TransportExecutionPlanRequest} from '../../../catalogue/model/publish/transport-execution-plan-request';
-import {RequestForQuotation} from '../../../catalogue/model/publish/request-for-quotation';
-import {Quantity} from '../../../catalogue/model/publish/quantity';
-import {TransportExecutionPlan} from "../../../catalogue/model/publish/transport-execution-plan";
+import { ProcessInstanceGroup } from '../../model/process-instance-group';
+import { ActivityVariableParser } from '../activity-variable-parser';
+import { TransportExecutionPlanRequest } from '../../../catalogue/model/publish/transport-execution-plan-request';
+import { RequestForQuotation } from '../../../catalogue/model/publish/request-for-quotation';
+import { Quantity } from '../../../catalogue/model/publish/quantity';
+import { TransportExecutionPlan } from "../../../catalogue/model/publish/transport-execution-plan";
+import { Address } from "../../../catalogue/model/publish/address";
 
 /**
  * Created by suat on 20-Sep-17.
@@ -40,6 +41,7 @@ import {TransportExecutionPlan} from "../../../catalogue/model/publish/transport
 export class OrderComponent implements OnInit {
     
     order: Order;
+    address: Address
     orderResponse: OrderResponseSimple;
     paymentTermsWrapper: PaymentTermsWrapper;
     priceWrapper: PriceWrapper;
@@ -72,6 +74,7 @@ export class OrderComponent implements OnInit {
         }
         
         this.order = this.bpDataService.order;
+        this.address = this.order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address;
         this.paymentTermsWrapper = new PaymentTermsWrapper(this.order.paymentTerms);
         this.userRole = this.bpDataService.userRole;
         this.orderResponse = this.bpDataService.orderResponse;
