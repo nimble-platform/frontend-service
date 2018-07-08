@@ -23,7 +23,6 @@ import { ProductWrapper } from "../../common/product-wrapper";
 import { EditPropertyModalComponent } from "./edit-property-modal.component";
 import { Location } from "@angular/common";
 import { SelectedProperty } from "../model/publish/selected-property";
-import { ConsoleReporter } from "jasmine";
 
 interface SelectedProperties {
     [key: string]: SelectedProperty;
@@ -713,7 +712,7 @@ export class ProductPublishComponent implements OnInit {
                 this.router.navigate(['dashboard'], {
                     queryParams: {
                         tab: "CATALOGUE",
-                        
+
                     }
                 });
 
