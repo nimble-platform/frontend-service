@@ -156,6 +156,13 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a href id="PRICE" class="nav-link"
+                        [ngClass]="{ active: selectedTabSinglePublish === 'PRICE'}"
+                        (click)="onSelectTabSinglePublish($event)">
+                        Price
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a href id="DELIVERY_TRADING" class="nav-link"
                         [ngClass]="{ active: selectedTabSinglePublish === 'DELIVERY_TRADING'}"
                         (click)="onSelectTabSinglePublish($event)">
@@ -199,6 +206,14 @@
             <div *ngIf="hasSelectedProperties()">
                 <a href class="btn-link" (click)="showCategoriesModal(categoriesModal, $event)">Add more properties from product's categories.</a>
             </div>                    
+        </div>
+    </div>
+
+    <!-- Price Tab -->
+    <div class="row space-before" *ngIf="selectedTabSinglePublish === 'PRICE'">
+        <div class="col-12">
+            <product-price-tab [catalogueLine]="catalogueLine" [disabled]="isLoading()">
+            </product-price-tab>
         </div>
     </div>
 
