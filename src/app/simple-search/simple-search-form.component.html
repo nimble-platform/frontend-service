@@ -19,8 +19,8 @@
 	</div>
 
 	<div *ngIf="(cat_levels.length>0 && (cat_levels[0].length>0 || cat_levels[1].length>0 || cat_levels[2].length>0 || cat_levels[3].length>0)) || cat_other.length>0" [hidden]="submitted">
-		<div class="card border-primary">
-			<div class="card-header text-white bg-primary">
+		<div class="card border-primary-nimble">
+			<div class="card-header text-white bg-primary-nimble">
 				Category
 			</div>
 			<div class="card-body">
@@ -115,8 +115,8 @@
 						<span class="clickable" (click)="setCat('')"><i>Reset category selection</i></span>
 					</div>
 
-					<div class="card border-primary mb-3">
-						<div class="card-header text-white bg-primary">
+					<div class="card border-primary-nimble mb-3">
+						<div class="card-header text-white bg-primary-nimble">
 							Category
 						</div>
 						<div class="card-body">
@@ -226,7 +226,7 @@
 											<small *ngIf="result.item_description">{{result.item_description}}</small>
 										</div>
 										<div class="col-2 align-right">
-											<span class="badge badge-primary" *ngIf="result.item_price">{{result.item_price}} {{result.item_price_currency}}</span>
+											<span class="badge badge-primary-nimble" *ngIf="result.item_price">{{result.item_price}} {{result.item_price_currency}}</span>
 											<span class="badge badge-warning" *ngIf="!result.item_price">Upon request</span>
 										</div>
 									</div>

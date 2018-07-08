@@ -12,3 +12,16 @@
 .pagination {
 	margin-bottom: 0 !important;
 }
+
+.bg-primary-nimble {
+	background-color: #b77563;
+}
+
+.border-primary-nimble {
+	border-color: #b77563;
+}
+
+.badge-primary-nimble {
+	background-color: #b77563;
+	color: #fff;
+}
