@@ -494,6 +494,15 @@ ngb-pagination .page-item.active .page-link {
     justify-content: flex-end;
 }
 
+.actions-row .price-col-negotiate {
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    font-size: 1.4rem;
+    justify-content: flex-start;
+    margin-left: 0.75rem;
+}
+
 .actions-row .call-status-col {
     display: flex;
     align-items: center;

@@ -5,6 +5,7 @@ export class ShipmentStage {
     constructor(
         public transportModeCode:Code = new Code(),
         public carrierParty: Party = new Party(),
-        public transportMeans:TransportMeans = new TransportMeans()
+        public transportMeans:TransportMeans = new TransportMeans(),
+        public estimatedDeliveryDate:string = null
     ) {  }
 }
