@@ -1,12 +1,16 @@
 <ng-container *ngIf="line">
     <!-- Title -->
-    <h1>
-        Order for: {{ line.goodsItem.item.name }}
-        <button class="btn btn-outline-dark" (click)="productExpanded = !productExpanded">
-            <i class="fas fa-chevron-up fa-fw fa-lg mt-2" aria-hidden="true" *ngIf="productExpanded"></i>
-            <i class="fas fa-chevron-down fa-fw fa-lg mt-2" aria-hidden="true" *ngIf="!productExpanded"></i>
+    <h2 class="nimble-title">
+        Order for:
+    </h2> 
+    <h2>{{ line.goodsItem.item.name }}
+        <button class="btn btn-outline-dark inline ml-2" (click)="productExpanded = !productExpanded">
+            <i class="fas fa-chevron-up fa-fw inline" aria-hidden="true" *ngIf="productExpanded"></i>
+            <i class="fas fa-chevron-down fa-fw inline" aria-hidden="true" *ngIf="!productExpanded"></i>
+            <span class="inline" *ngIf="!productExpanded"><small>Show Details</small></span>
+            <span class="inline" *ngIf="productExpanded"><small>Hide Details</small></span>
         </button>
-    </h1>
+    </h2>
 
     <!-- Product Details Panel -->
     <product-details-tabs *ngIf="productExpanded" [wrapper]="wrapper" [showOverview]="true" 

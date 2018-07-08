@@ -4,8 +4,8 @@
 
 <form [hidden]="loading" [formGroup]="settingsForm" novalidate (ngSubmit)="save(settingsForm)">
 
-	<h3 class="space-after">Company Data</h3>
-	<button class="btn btn-primary space-after" type="button" (click)="changeData(changeModal)">
+	<p class="space-after nimble-title">Company Data</p>
+	<button class="btn btn-primary mt-2 mb-4" type="button" (click)="changeData(changeModal)">
 		<span>Request Company Data Change</span>
 	</button>
 	<div class="form-group row">

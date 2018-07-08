@@ -1,7 +1,19 @@
 html, body {
-    margin: 0.6rem 0;
-    background-color: #fefefe;
+    background-image: url('assets/background_All.jpg');
+    background-size: 100%;
+    background-repeat: no-repeat;
     font-family: 'Montserrat', sans-serif;
+    min-height: 100vh;
+}
+
+.container-fluid {
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+.nimble-title {
+    font-weight: 700;
+    font-size: 2rem;
 }
 
 button, .btn {

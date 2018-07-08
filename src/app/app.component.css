@@ -10,7 +10,9 @@
 #wrapper {
 	max-width: 1400px;
 	margin: 0 auto;
-	min-height: 75vh;
+	min-height: 80vh;
+	padding-left: 15px;
+	padding-right: 15px;
 }
 
 .dd-icon {
