@@ -55,27 +55,35 @@
     </div>
 </div>
 
-<!-- Quantity -->
+<!-- Payment Terms -->
 <div class="row content-row">
     <div class="col-2">
-        <strong class="font-weight-500">Quantity:</strong>
+        <strong class="font-weight-500">Payment Terms:</strong>
     </div>
     <div class="col-5">
         <div class="d-flex">
-            <input type="number" [(ngModel)]="requestedQuantity" class="form-control form-control-sm" 
-                [disabled]="isLoading() || isReadOnly()" />
-            <span class="ml-2" *ngIf="getQuantityUnit() !== ''">{{ getQuantityUnit() }}</span>
+            {{ wrapper.linePaymentTerms }}
         </div>
-        <div class="input-spacer"></div>
-        <input type="range" [(ngModel)]="requestedQuantity" class="form-control-range" 
-            [max]="getMaximumQuantity()" [step]="getPriceSteps()" [disabled]="isLoading() || isReadOnly()"/>
     </div>
     <div class="col-5">
         <negotiation-request-input label="Request Payment Terms" [(cbModel)]="rfq.negotiationOptions.paymentTerms" 
             id="paymentTermsCb" [options]="wrapper.rfqPaymentTerms.PAYMENT_TERMS" 
             [(selected)]="wrapper.rfqPaymentTerms.paymentTerm" [disabled]="isLoading() || isReadOnly()">
         </negotiation-request-input>
-        <div class="input-spacer"></div>
+    </div>
+</div>
+
+<!-- Payment Means -->
+<div class="row content-row bg-light">
+    <div class="col-2">
+        <strong class="font-weight-500">Payment Means:</strong>
+    </div>
+    <div class="col-5">
+        <div class="d-flex">
+            {{ wrapper.linePaymentMeans }}
+        </div>
+    </div>
+    <div class="col-5">
         <negotiation-request-input label="Request Payment Means" [(cbModel)]="rfq.negotiationOptions.paymentMeans" 
             id="paymentMeansCb" [options]="PAYMENT_MEANS" [(selected)]="wrapper.rfqPaymentMeans" 
             [disabled]="isLoading() || isReadOnly()">
@@ -84,7 +92,7 @@
 </div>
 
 <!-- Price -->
-<div class="row content-row bg-light">
+<div class="row content-row">
     <div class="col-2">
         <strong class="font-weight-500">Price:</strong>
     </div>
@@ -92,21 +100,36 @@
         {{ wrapper.linePricePerItemString }}
     </div>
     <div class="col-5">
-        <negotiation-request-input label="Request Price" [(cbModel)]="negotiatePrice" id="priceCb" 
+        <negotiation-request-input label="Request Total Price" [(cbModel)]="negotiatePrice" id="priceCb" 
             [disabled]="isLoading() || isReadOnly()" [(quantity)]="wrapper.rfqPriceWrapper" 
             [quantityUnits]="CURRENCIES" [cbDisabled]="!lineHasPrice" [disableQuantityUnit]="lineHasPrice">
         </negotiation-request-input>
     </div>
 </div>
 
-<hr>
+<!-- Quantity -->
+<div class="row content-row bg-light">
+    <div class="col-2">
+        <strong class="font-weight-500">Quantity:</strong>
+    </div>
+    <div class="col-5"></div>
+    <div class="col-5 mt-1">
+        <div class="d-flex">
+            <input type="number" [(ngModel)]="requestedQuantity" class="form-control form-control-sm w-75" 
+                [disabled]="isLoading() || isReadOnly()" />
+            <span class="ml-2" *ngIf="getQuantityUnit() !== ''">{{ getQuantityUnit() }}</span>
+        </div>
+    </div>
+</div>
 
 <!-- Note -->
 <div class="row content-row">
     <div class="col-2">
-        <strong class="font-weight-500">Customer's Note:</strong>
+        <strong class="font-weight-500">Note:</strong>
     </div>
-    <div class="col-10">
+    <div class="col-5">
+    </div>
+    <div class="col-5">
         <textarea class="form-control" [(ngModel)]="rfq.note[0]" rows="3" [disabled]="isLoading() || isReadOnly()"></textarea>
     </div>
 </div>
@@ -146,9 +169,9 @@
 </div>
 
 <div *ngIf="isWaitingForReply()" class="row actions-row">
-    <div class="col-6"></div>
-    <div class="col-4 price-col">Requested Price: {{ wrapper.rfqTotalPriceString }}</div>
-    <div class="col-2">
+        <div class="col-6"></div>
+        <div class="col-4 price-col">Requested Price: {{ wrapper.rfqTotalPriceString }}</div>
+        <div class="col-2">
         <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
     </div>
 </div>
