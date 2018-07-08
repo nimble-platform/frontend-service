@@ -1,39 +1,55 @@
 <ng-container *ngIf="receiptAdvice">
 
-    <!-- Dispatched Quantity -->
-    <quantity-input presentationMode="view" [disableQuantityUnit]="true"
-        label="Dispatched Quantity" [quantity]="dispatchAdvice.despatchLine[0].deliveredQuantity" 
-        rowClass="space-before">
-    </quantity-input>
-    
-    <hr>
+    <div class="row title-row">
+        <div class="col-6"><h4>Dispatch Advice</h4></div>
+        <div class="col-6"><h4>Receipt Advice</h4></div>
+    </div>
 
-    <!-- Shipment -->
-    <shipment-input [shipment]="dispatchAdvice.despatchLine[0].shipment[0]" presentationMode="view">
-    </shipment-input>
+    <div class="row content-row bg-light">
+        <div class="col-6">
+            <!-- Dispatched Quantity -->
+            <quantity-input presentationMode="view" [disableQuantityUnit]="true"
+                label="Dispatched Quantity" [quantity]="dispatchAdvice.despatchLine[0].deliveredQuantity">
+            </quantity-input>
+        </div>
+        <div class="col-6">
+            <!-- Rejected Quantity -->
+            <quantity-input [disabled]="isLoading() || isReadOnly()" [disableQuantityUnit]="true"
+                label="Rejected Quantity" [quantity]="receiptAdvice.receiptLine[0].rejectedQuantity">
+            </quantity-input>
+        </div>
+    </div>
 
-    <hr>
 
-    <!-- Rejected Quantity -->
-    <quantity-input [disabled]="isLoading() || isReadOnly()" [disableQuantityUnit]="true"
-        label="Rejected Quantity" [quantity]="receiptAdvice.receiptLine[0].rejectedQuantity" 
-        rowClass="space-before">
-    </quantity-input>
+    <div class="row content-row">
+        <div class="col-6">
+            <!-- Shipment -->
+            <shipment-input [shipment]="dispatchAdvice.despatchLine[0].shipment[0]" presentationMode="view">
+            </shipment-input>
+        </div>
+        <div class="col-6">
+            <!-- Reject Reason -->
+            <text-input label="Reject Reason" [disabled]="isLoading() || isReadOnly()" 
+                [(text)]="receiptAdvice.receiptLine[0].rejectReason[0]" rows="6">
+            </text-input>
+        </div>
+    </div>
 
-    <text-input label="Reject Reason" rowClass="space-before"
-        [disabled]="isLoading() || isReadOnly()" [(text)]="receiptAdvice.receiptLine[0].rejectReason[0]">
-    </text-input>
 
-    <hr>
+    <!-- Notes -->
+    <div class="row content-row bg-light">
+        <div class="col-6">
+            <!-- Dispatch Advice Note -->
+            <text-input label="Supplier's Note" [disabled]="true" [(text)]="dispatchAdvice.note[0]">
+            </text-input>
+        </div>
+        <div class="col-6">
+            <!-- Receipt Advice Note -->
+            <text-input label="Customer's Note" [disabled]="isLoading() || isReadOnly()" [(text)]="receiptAdvice.note[0]">
+            </text-input>
+        </div>
+    </div>
 
-    <!-- Note -->
-    <text-input label="Note" rowClass="space-before"
-        [disabled]="true" [(text)]="dispatchAdvice.note[0]">
-    </text-input>
-
-    <text-input label="Buyer's Note" rowClass="space-before"
-        [disabled]="isLoading() || isReadOnly()" [(text)]="receiptAdvice.note[0]">
-    </text-input>
 
     <!-- Actions -->
     <div class="row actions-row" *ngIf="userRole === 'buyer'">

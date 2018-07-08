@@ -22,6 +22,13 @@ import { PriceWrapper } from "../price-wrapper";
 import { Party } from "../../../catalogue/model/publish/party";
 import { DocumentClause } from "../../../catalogue/model/publish/document-clause";
 import { Quotation } from "../../../catalogue/model/publish/quotation";
+import { ProcessInstanceGroup } from '../../model/process-instance-group';
+import { ActivityVariableParser } from '../activity-variable-parser';
+import { TransportExecutionPlanRequest } from '../../../catalogue/model/publish/transport-execution-plan-request';
+import { RequestForQuotation } from '../../../catalogue/model/publish/request-for-quotation';
+import { Quantity } from '../../../catalogue/model/publish/quantity';
+import { TransportExecutionPlan } from "../../../catalogue/model/publish/transport-execution-plan";
+import { Address } from "../../../catalogue/model/publish/address";
 
 /**
  * Created by suat on 20-Sep-17.
@@ -34,6 +41,7 @@ import { Quotation } from "../../../catalogue/model/publish/quotation";
 export class OrderComponent implements OnInit {
     
     order: Order;
+    address: Address
     orderResponse: OrderResponseSimple;
     paymentTermsWrapper: PaymentTermsWrapper;
     priceWrapper: PriceWrapper;
@@ -66,6 +74,7 @@ export class OrderComponent implements OnInit {
         }
         
         this.order = this.bpDataService.order;
+        this.address = this.order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address;
         this.paymentTermsWrapper = new PaymentTermsWrapper(this.order.paymentTerms);
         this.userRole = this.bpDataService.userRole;
         this.orderResponse = this.bpDataService.orderResponse;
@@ -207,8 +216,74 @@ export class OrderComponent implements OnInit {
             });
     }
 
-    onDispatchOrder() {
-        this.bpDataService.initDespatchAdviceWithOrder();
+    async onDispatchOrder() {
+        const processInstanceGroup = await this.bpeService.getProcessInstanceGroup(this.bpDataService.getRelatedGroupId()) as ProcessInstanceGroup;
+        let details = [];
+        for(let id of processInstanceGroup.processInstanceIDs){
+            details.push(await Promise.all([
+                this.bpeService.getLastActivityForProcessInstance(id),
+                this.bpeService.getProcessDetailsHistory(id)]
+            ));
+        }
+        details = details.sort(function(a,b){
+            let a_comp = a[0].startTime;
+            let b_comp = b[0].startTime;
+            return b_comp.localeCompare(a_comp);
+        });
+
+        let tepExists = false;
+        let negoExists = false;
+
+        // values are needed to find the correct negotiation
+        let catalogueDocRef = "";
+        let manuItemId = "";
+        // values are needed for despatch advice
+        let handlingInst = null;
+        let carrierName = null;
+        let carrierContact = null;
+        let deliveredQuantity:Quantity = new Quantity();
+
+        for(let processDetails of details){
+            const processType = ActivityVariableParser.getProcessType(processDetails[1]);
+            const initialDoc: any = ActivityVariableParser.getInitialDocument(processDetails[1]);
+            const response: any = ActivityVariableParser.getResponse(processDetails[1]);
+
+            if(!tepExists && processType == "Transport_Execution_Plan"){
+                let res = response.value as TransportExecutionPlan;
+                if(res.documentStatusCode.name == "Accepted"){
+                    tepExists = true;
+
+                    let tep = initialDoc.value as TransportExecutionPlanRequest;
+
+                    handlingInst = tep.consignment[0].consolidatedShipment[0].handlingInstructions;
+                    carrierName = tep.transportServiceProviderParty.name;
+                    if(tep.transportServiceProviderParty.contact){
+                        carrierContact = tep.transportServiceProviderParty.contact.telephone;
+                    }
+
+                    catalogueDocRef = tep.mainTransportationService.catalogueDocumentReference.id;
+                    manuItemId = tep.mainTransportationService.manufacturersItemIdentification.id;
+                }
+            }
+            if(!negoExists && processType == "Negotiation"){
+                let res = response.value as Quotation;
+                let nego = initialDoc.value as RequestForQuotation;
+                // check whether this negotiation is correct one or not
+                if(res.documentStatusCode.name == "Accepted" &&
+                   nego.requestForQuotationLine[0].lineItem.item.manufacturersItemIdentification.id == manuItemId &&
+                   nego.requestForQuotationLine[0].lineItem.item.catalogueDocumentReference.id == catalogueDocRef){
+                    negoExists = true;
+
+                    deliveredQuantity.value = nego.requestForQuotationLine[0].lineItem.delivery[0].shipment.totalTransportHandlingUnitQuantity.value;
+                    deliveredQuantity.unitCode = nego.requestForQuotationLine[0].lineItem.delivery[0].shipment.totalTransportHandlingUnitQuantity.unitCode;
+                }
+            }
+            if(tepExists && negoExists){
+                break;
+            }
+        }
+
+        this.bpDataService.initDespatchAdvice(handlingInst,carrierName,carrierContact,deliveredQuantity);
         this.bpDataService.setBpOptionParameters(this.userRole, "Fulfilment", "Order");
     }
 
