@@ -36,6 +36,7 @@ import { CategoryTreeComponent } from "./category/category-tree.component";
 import { EditPropertyModalComponent } from "./publish/edit-property-modal.component";
 import { ProductDeliveryTradingComponent } from "./publish/product-delivery-trading.component";
 import { ProductDetailsModule } from "../product-details/product-details.module";
+import { ProductPriceTabComponent } from "./publish/product-price-tab.component";
 
 @NgModule({
 	imports: [CommonModule, 
@@ -53,6 +54,7 @@ import { ProductDetailsModule } from "../product-details/product-details.module"
         ProductPublishComponent,
         EditPropertyModalComponent,
         ProductDeliveryTradingComponent,
+        ProductPriceTabComponent,
         AdditionalItemPropertyComponent,
         CatalogueViewComponent,
         CatalogueLinePanelComponent,

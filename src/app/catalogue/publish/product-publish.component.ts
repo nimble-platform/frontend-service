@@ -59,7 +59,7 @@ export class ProductPublishComponent implements OnInit {
 
     catalogueLine: CatalogueLine = null;
     productWrapper: ProductWrapper = null;
-    selectedTabSinglePublish: "DETAILS" | "DELIVERY_TRADING" = "DETAILS";
+    selectedTabSinglePublish: "DETAILS" | "DELIVERY_TRADING" | "PRICE" = "DETAILS";
     private selectedProperties: SelectedProperties = {};
     private categoryProperties: CategoryProperties = {};
     private lunrIndex: lunr.Index;
@@ -72,11 +72,7 @@ export class ProductPublishComponent implements OnInit {
     customProperties: any[] = [];
 
     /*
-     * Values for Bulk only
-     */
-
-    /*
-     * Values not checked yet
+     * Other Values
      */
 
     @ViewChild('propertyValueType') propertyValueType: ElementRef;
