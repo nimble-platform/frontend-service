@@ -23,6 +23,7 @@ import { ProductWrapper } from "../../common/product-wrapper";
 import { EditPropertyModalComponent } from "./edit-property-modal.component";
 import { Location } from "@angular/common";
 import { SelectedProperty } from "../model/publish/selected-property";
+import { ConsoleReporter } from "jasmine";
 
 interface SelectedProperties {
     [key: string]: SelectedProperty;
@@ -694,7 +695,6 @@ export class ProductPublishComponent implements OnInit {
     private onSuccessfulPublish(): void {
         // since every changes is saved,we do not need a dialog box
         ProductPublishComponent.dialogBox = false;
-        this.publishStatus.callback("Successfully Submitted", true);
 
         let userId = this.cookieService.get("user_id");
         this.userService.getUserParty(userId).then(party => {
@@ -708,26 +708,27 @@ export class ProductPublishComponent implements OnInit {
                 this.categoryService.resetSelectedCategories();
                 this.publishStateService.resetData();
 
-                if (line.goodsItem.item.catalogueDocumentReference.id && line.goodsItem.item.manufacturersItemIdentification.id) {
-                  this.router.navigate(['product-details'], {
-                      queryParams: {
-                          catalogueId: line.goodsItem.item.catalogueDocumentReference.id,
-                          id: line.goodsItem.item.manufacturersItemIdentification.id
-                      }
-                  });
-                }
-                else {
-                  this.router.navigate(['dashboard'], {
-                      queryParams: {
-                          tab: "CATALOGUE"
-                      }
-                  });
-                }
+                this.publishStatus.callback("Successfully Submitted", true);
+
+                this.router.navigate(['dashboard'], {
+                    queryParams: {
+                        tab: "CATALOGUE",
+                        
+                    }
+                });
 
                 this.submitted = false;
                 this.callback = true;
                 this.error_detc = false;
+            })
+            .catch(error => {
+                this.publishStatus.error("Error while publishing product");
+                console.log("Error while publishing product", error);
             });
+        })
+        .catch(error => {
+            this.publishStatus.error("Error while publishing product");
+            console.log("Error while publishing product", error);
         });
     }
 

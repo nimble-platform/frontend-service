@@ -80,6 +80,7 @@ export class CatalogueViewComponent implements OnInit {
         let len = this.catalogue.catalogueLine.length;
         this.collectionSize = len;
         this.catalogueLinesArray = this.catalogue.catalogueLine;
+        this.catalogueLinesArray.reverse();
         this.catalogueLinesWRTTypes = this.catalogueLinesArray;
         let i = 0;
         this.typeOfProducts = [];
