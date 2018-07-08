@@ -79,8 +79,7 @@ export class CatalogueViewComponent implements OnInit {
     init (): void {
         let len = this.catalogue.catalogueLine.length;
         this.collectionSize = len;
-        this.catalogueLinesArray = this.catalogue.catalogueLine;
-        this.catalogueLinesArray.reverse();
+        this.catalogueLinesArray = [...this.catalogue.catalogueLine].reverse();
         this.catalogueLinesWRTTypes = this.catalogueLinesArray;
         let i = 0;
         this.typeOfProducts = [];
@@ -157,10 +156,9 @@ export class CatalogueViewComponent implements OnInit {
         this.searchKey = "";
         this.catalogueLinesWRTTypes = [];
 
-        if(this.selectedType == "All"){
-            this.catalogueLinesWRTTypes = this.catalogue.catalogueLine;
-        }
-        else{
+        if (this.selectedType == "All") {
+            this.catalogueLinesWRTTypes = [...this.catalogue.catalogueLine].reverse();
+        } else {
             let i = 0;
             let len = this.catalogue.catalogueLine.length;
             for(;i<len;i++){
@@ -168,7 +166,7 @@ export class CatalogueViewComponent implements OnInit {
                 let lenOfCom = this.catalogue.catalogueLine[i].goodsItem.item.commodityClassification.length;
                 for(;j<lenOfCom;j++){
                     if(!(this.catalogue.catalogueLine[i].goodsItem.item.commodityClassification[j].itemClassificationCode.name.localeCompare(this.selectedType))){
-                        this.catalogueLinesWRTTypes.push(this.catalogue.catalogueLine[i]);
+                        this.catalogueLinesWRTTypes.unshift(this.catalogue.catalogueLine[i]);
                         break;
                     }
                 }

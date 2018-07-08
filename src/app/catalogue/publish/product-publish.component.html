@@ -96,7 +96,10 @@
                 <small class="p-0">{{selectedCategory.preferredName}}</small>
                 <i class="fa fa-times-circle pl-1" placement="right" (click)="onRemoveCategory(selectedCategory)"></i>
             </div>
-            <button class="btn btn-outline-primary btn-add-category" (click)="onAddCategory()">Add Category</button>
+            <button class="btn btn-outline-primary btn-add-category" 
+                (click)="onAddCategory()" [disabled]="isLoading()">
+                Add Category
+            </button>
         </div>
     </div>
 
