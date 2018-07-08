@@ -5,6 +5,13 @@
                 [(value)]="shipment.handlingInstructions">
     </value-view>
 
+    <value-view *ngIf="presentationMode == 'view'"
+                [presentationMode]="'view'"
+                [propName]="'Estimated Delivery Date'"
+                [definition]="'The estimated date of delivery in this plan between the start and date of the service.'"
+                [(value)]="shipment.shipmentStage[0].estimatedDeliveryDate">
+    </value-view>
+
     <ng-container *ngIf="presentationMode != 'view'">
         <div class="input-group space-after" [hidden]="!showDate">
             <label class="col-3">Estimated Delivery Date
