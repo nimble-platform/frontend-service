@@ -383,7 +383,7 @@ export class BPDataService{
         this.requestForQuotation = UBLModelUtils.createRequestForQuotationWithTransportExecutionPlanRequest(copyTransportExecutionPlanRequest,this.modifiedCatalogueLines[0]);
     }
 
-    initDespatchAdvice(handlingInst:string,carrierName:string,carrierContact:string,deliveredQuantity:Quantity) {
+    initDespatchAdvice(handlingInst:string,carrierName:string,carrierContact:string,deliveredQuantity:Quantity,endDate:string) {
         let copyOrder:Order = copy(this.order);
         this.resetBpData();
         this.modifiedCatalogueLines = copy(this.catalogueLines);
@@ -399,6 +399,7 @@ export class BPDataService{
         this.despatchAdvice.despatchLine[0].shipment[0].handlingInstructions = handlingInst;
         this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage[0].carrierParty.name = carrierName;
         this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage[0].carrierParty.contact.telephone = carrierContact;
+        this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage[0].estimatedDeliveryDate = endDate;
     }
 
     initTransportExecutionPlanRequest() {
