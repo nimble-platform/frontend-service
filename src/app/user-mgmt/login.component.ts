@@ -12,7 +12,7 @@ export class LoginComponent implements OnInit {
 	constructor(
 		private route: ActivatedRoute,
 		private renderer: Renderer2) {
-			this.renderer.setStyle(document.body, "background-image", "url('../assets/Background_Login_1.jpg')");
+			this.renderer.setStyle(document.body, "background-image", "url('assets/bg_login.jpg')");
 		}
 
 	ngOnInit() {
@@ -24,6 +24,6 @@ export class LoginComponent implements OnInit {
 	}
 
 	ngOnDestroy() {
-		this.renderer.setStyle(document.body, "background-image", "url('../assets/background_All.jpg')");
+		this.renderer.setStyle(document.body, "background-image", "url('assets/bg_global.jpg')");
 	}
 }
