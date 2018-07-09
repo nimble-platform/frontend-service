@@ -85,7 +85,7 @@ export class TnTFormComponent {
                 this.error_detc = false;
                 this.trackingInfo = resp_track.map(el => {
                     let _out = {
-                        'eventTime': moment(el.eventTime.$date).utcOffset(el.eventTimeZoneOffset).toString(),
+                        'eventTime': moment(Number(el.eventTime.$numberLong)),
                         'bizStep': el.bizStep.split(':').pop(),
                         'action': el.action,
                         'readPoint': el.readPoint.id.split(':').pop(),

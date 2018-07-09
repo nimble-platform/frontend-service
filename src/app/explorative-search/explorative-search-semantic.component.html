@@ -186,6 +186,12 @@
                     <p> We couldn't find any filters for the selection.</p>
                 </ngb-alert>
             </div>
+            <div class="col-md-4" *ngIf="loadingFilter">
+                <div class="align-center">
+                    <p>Loading Filter</p>
+                    <i class="fa fa-spin fa-spinner fa-6x"></i>
+                </div>
+            </div>
             <div class="col-md-6" *ngIf="searchvalue.length > 0">
                 <template [ngTemplateOutlet]="valuesTemplateRef" [ngTemplateOutletContext]="{$implicit: searchvalue}">
                 </template>
@@ -212,9 +218,9 @@
                 <caption>Available Results from NIMBLE</caption>
                 <thead>
                 <tr>
-                    <th>
-                        Results
-                    </th>
+                    <!--<th>-->
+                        <!--Results-->
+                    <!--</th>-->
                     <th *ngFor="let column of tableResult?.columns; let i=index" scope="col"
                         (mouseenter)="showSelectionDel=true" (mouseleave)="showSelectionDel=false">
                         {{column}}
@@ -222,14 +228,14 @@
                             <i class="fa fa-minus-square" ngbTooltip="Remove {{column}}"  placement="right" (click)="removeSelection(column)"></i>
                         </span>
                     </th>
-                    <th>
+                    <th *ngIf="tableResult?.uuids.length">
                         More
                     </th>
                 </tr>
                 </thead>
                 <tbody>
                     <tr *ngFor="let row of tableResult?.rows; let i=index">
-                        <td>{{i+1}}</td>
+                        <!--<td>{{i+1}}</td>-->
                         <td *ngFor="let field of row">{{field}}</td>
                         <td *ngIf="tableResult?.uuids.length">
                             <button class="btn btn-xs btn-outline-success"
@@ -242,13 +248,12 @@
                 </tbody>
             </table>
         </div>
-
-    </div>
-    <!--<pre>-->
-    <!--<code>{{tableResult | json}}</code>-->
-    <!--</pre>-->
 </div>
 
+</div>
+<!--<pre>-->
+    <!--<code>{{tableResult | json}}</code>-->
+<!--</pre>-->
 <!--<div class="container">-->
 <!--<pre>-->
 <!--<code>-->

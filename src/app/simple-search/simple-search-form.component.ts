@@ -115,7 +115,7 @@ export class SimpleSearchFormComponent implements OnInit {
 
 	getSuggestions = (text$: Observable<string>) =>
     text$.pipe(
-      debounceTime(300),
+      debounceTime(200),
       distinctUntilChanged(),
       switchMap(term =>
         this.simpleSearchService.getSuggestions(term,this.facetQuery,this.cat)
