@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from "@angular/core";
+import { Component, OnInit, OnDestroy, Renderer2 } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { CallStatus } from "../../common/call-status";
 import { CatalogueService } from "../../catalogue/catalogue.service";
@@ -36,9 +36,10 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
 
     constructor(public bpDataService: BPDataService, 
                 public catalogueService: CatalogueService, 
-                public route: ActivatedRoute) {
-        
-    }
+                public route: ActivatedRoute,
+                private renderer: Renderer2) {
+                    this.renderer.setStyle(document.body, "background-image", "none");
+                }
 
     ngOnInit() {
         this.processTypeSubs = this.bpDataService.processTypeObservable.subscribe(processType => {
@@ -78,6 +79,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
 
     ngOnDestroy(): void {
         this.processTypeSubs.unsubscribe();
+        this.renderer.setStyle(document.body, "background-image", "url('assets/bg_global.jpg')");
     }
 
     getStepsStatus(): ProductBpStepStatus {

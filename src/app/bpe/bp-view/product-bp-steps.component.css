@@ -68,6 +68,10 @@
     border: 0.1rem solid #000000;
 }
 
+.steps .step.current {
+    font-size: 1.2rem;
+}
+
 .steps .step.current span {
     color: #000000;
     font-weight: 600;
