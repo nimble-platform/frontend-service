@@ -34,9 +34,8 @@ import { Code } from "../../catalogue/model/publish/code";
 import { PaymentTerms } from "../../catalogue/model/publish/payment-terms";
 import { copy, getPropertyKey } from "../../common/utils";
 import { NegotiationModelWrapper } from "./negotiation/negotiation-model-wrapper";
-import { PriceWrapper } from "./price-wrapper";
-import { Price } from "../../catalogue/model/publish/price";
-import {Quantity} from "../../catalogue/model/publish/quantity";
+import { PriceWrapper } from "../../common/price-wrapper";
+import { Quantity } from "../../catalogue/model/publish/quantity";
 
 /**
  * Created by suat on 20-Sep-17.

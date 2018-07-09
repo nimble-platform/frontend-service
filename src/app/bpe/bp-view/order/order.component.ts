@@ -18,7 +18,7 @@ import { ProcessInstanceInputMessage } from "../../model/process-instance-input-
 import { BPEService } from "../../bpe.service";
 import { BpUserRole } from "../../model/bp-user-role";
 import { OrderResponseSimple } from "../../../catalogue/model/publish/order-response-simple";
-import { PriceWrapper } from "../price-wrapper";
+import { PriceWrapper } from "../../../common/price-wrapper";
 import { Party } from "../../../catalogue/model/publish/party";
 import { DocumentClause } from "../../../catalogue/model/publish/document-clause";
 import { Quotation } from "../../../catalogue/model/publish/quotation";

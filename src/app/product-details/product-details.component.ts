@@ -8,7 +8,7 @@ import { BpWorkflowOptions } from "../bpe/model/bp-workflow-options";
 import { ProcessType } from "../bpe/model/process-type";
 import { ProductWrapper } from "../common/product-wrapper";
 import { Item } from "../catalogue/model/publish/item";
-import { PriceWrapper } from "../bpe/bp-view/price-wrapper";
+import { PriceWrapper } from "../common/price-wrapper";
 import { getMaximumQuantityForPrice, getStepForPrice } from "../common/utils";
 import { AppComponent } from "../app.component";
 

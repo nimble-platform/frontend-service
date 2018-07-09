@@ -3,8 +3,8 @@ import { Predicate } from "@angular/core";
 import { ItemProperty } from "../catalogue/model/publish/item-property";
 import { PAYMENT_MEANS } from "../catalogue/model/constants";
 import { UBLModelUtils } from "../catalogue/model/ubl-model-utils";
-import { sanitizePropertyName, getPropertyKey, periodToString, isCustomProperty, getPropertyValues } from "../common/utils";
-import { PriceWrapper } from "../bpe/bp-view/price-wrapper";
+import { sanitizePropertyName, getPropertyKey, periodToString, isCustomProperty, getPropertyValues } from "./utils";
+import { PriceWrapper } from "./price-wrapper";
 
 /**
  * Wrapper class for Catalogue line.

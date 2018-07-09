@@ -100,8 +100,8 @@
         {{ wrapper.linePricePerItemString }}
     </div>
     <div class="col-5">
-        <negotiation-request-input label="Request Total Price" [(cbModel)]="negotiatePrice" id="priceCb" 
-            [disabled]="isLoading() || isReadOnly()" [(quantity)]="wrapper.rfqPriceWrapper" 
+        <negotiation-request-input label="Request Item Price" [(cbModel)]="negotiatePrice" id="priceCb" 
+            [disabled]="isLoading() || isReadOnly()" [quantity]="wrapper.rfqPriceWrapper.itemPrice" 
             [quantityUnits]="CURRENCIES" [cbDisabled]="!lineHasPrice" [disableQuantityUnit]="lineHasPrice">
         </negotiation-request-input>
     </div>

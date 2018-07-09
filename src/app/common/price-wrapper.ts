@@ -1,6 +1,7 @@
-import { Price } from "../../catalogue/model/publish/price";
-import { Quantity } from "../../catalogue/model/publish/quantity";
-import { currencyToString } from "../../common/utils";
+import { Price } from "../catalogue/model/publish/price";
+import { Quantity } from "../catalogue/model/publish/quantity";
+import { currencyToString } from "./utils";
+import { ItemPriceWrapper } from "./item-price-wrapper";
 
 /**
  * Wrapper around a price and a quantity, contains convenience methods to get the total price, 
@@ -12,9 +13,11 @@ export class PriceWrapper {
     /** hjid field from Quantity class */
     hjid: string = null;
 
+    itemPrice: ItemPriceWrapper;
+
     constructor(public price: Price,
                 public quantity: Quantity = new Quantity(1, price.baseQuantity.unitCode)) {
-
+        this.itemPrice = new ItemPriceWrapper(price);
     }
 
     get totalPrice(): number {

@@ -1,5 +1,5 @@
-import { SupplierParty } from "../../../catalogue/model/publish/supplier-party";
-import { CustomerParty } from "../../../catalogue/model/publish/customer-party";
+import { SupplierParty } from "./supplier-party";
+import { CustomerParty } from "./customer-party";
 import { OrderReference } from "./order-reference";
 
 export class OrderResponseSimple {

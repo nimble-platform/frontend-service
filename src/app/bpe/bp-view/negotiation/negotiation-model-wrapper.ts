@@ -6,8 +6,8 @@ import { Quantity } from "../../../catalogue/model/publish/quantity";
 import { PAYMENT_MEANS } from "../../../catalogue/model/constants";
 import { UBLModelUtils } from "../../../catalogue/model/ubl-model-utils";
 import { PaymentTermsWrapper } from "../payment-terms-wrapper";
-import { quantityToString, durationToString, periodToString } from "../../../common/utils";
-import { PriceWrapper } from "../price-wrapper";
+import { durationToString } from "../../../common/utils";
+import { PriceWrapper } from "../../../common/price-wrapper";
 import { Address } from "../../../catalogue/model/publish/address";
 
 /**

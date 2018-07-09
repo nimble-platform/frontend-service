@@ -139,18 +139,18 @@ export class NegotiationRequestComponent implements OnInit {
     }
 
     set requestedQuantity(quantity: number) {
-        this.recomputeTotalPrice();
+        // this.recomputeTotalPrice();
         this.rfq.requestForQuotationLine[0].lineItem.quantity.value = quantity;
     }
 
-    get negotiatedPrice(): number {
-        return this.negotiatedPriceValue;
-    }
+    // get negotiatedPrice(): number {
+    //     return this.negotiatedPriceValue;
+    // }
 
-    set negotiatedPrice(quantity: number) {
-        this.negotiatedPriceValue = quantity;
-        this.recomputeTotalPrice();
-    }
+    // set negotiatedPrice(quantity: number) {
+    //     this.negotiatedPriceValue = quantity;
+    //     this.recomputeTotalPrice();
+    // }
 
     get negotiatePrice(): boolean {
         return this.rfq.negotiationOptions.price;
@@ -158,7 +158,9 @@ export class NegotiationRequestComponent implements OnInit {
 
     set negotiatePrice(negotiate: boolean) {
         this.rfq.negotiationOptions.price = negotiate;
-        this.recomputeTotalPrice();
+        if(!negotiate) {
+            this.wrapper.rfqPriceWrapper.itemPrice.value = this.wrapper.linePriceWrapper.itemPrice.value;
+        }
     }
 
     getPriceSteps(): number {
@@ -192,14 +194,14 @@ export class NegotiationRequestComponent implements OnInit {
      * Internal methods
      */
 
-    private recomputeTotalPrice(): void {
-        if(!this.negotiatePrice) {
-            const price = this.wrapper.lineTotalPrice;
-            this.negotiatedPriceValue = price;
-            this.totalPrice = price;
-        } else {
-            this.totalPrice = this.negotiatedPriceValue;
-        }
-        this.wrapper.rfqPriceWrapper.totalPrice = this.totalPrice;
-    }
+    // private recomputeTotalPrice(): void {
+    //     if(!this.negotiatePrice) {
+    //         const price = this.wrapper.lineTotalPrice;
+    //         this.negotiatedPriceValue = price;
+    //         this.totalPrice = price;
+    //     } else {
+    //         this.totalPrice = this.negotiatedPriceValue;
+    //     }
+    //     this.wrapper.rfqPriceWrapper.totalPrice = this.totalPrice;
+    // }
 }
