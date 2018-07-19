@@ -89,7 +89,7 @@
         <detailed-address-view [propName]="'To Location'"
                        [presentationMode]="bpDataService.processMetadata == null ? 'edit' : 'singlevalue'"
                        [deliveryAddress]="transportExecutionPlanRequest.toLocation.address"
-                       [fetchDefaultDeliveryAddress]="bpDataService.processMetadata == null && bpDataService.previousProcess == null">
+                       [fetchDefaultDeliveryAddress]="bpDataService.processMetadata == null && bpDataService.previousProcess == null && !precedingBPDataService.orderMetadata">
         </detailed-address-view>
     </div>
 

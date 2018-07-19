@@ -6,6 +6,7 @@ import * as myGlobals from "../globals";
 import {CatalogueService} from "../catalogue/catalogue.service";
 import {CallStatus} from "../common/call-status";
 import {BPDataService} from "../bpe/bp-view/bp-data-service";
+import {PrecedingBPDataService} from '../bpe/bp-view/preceding-bp-data-service';
 
 @Component({
 	selector: 'simple-search-details',
@@ -26,7 +27,8 @@ export class SimpleSearchDetailsComponent implements OnInit {
 		public bpDataService: BPDataService,
 		public route: ActivatedRoute,
 		public cookieService: CookieService,
-		public appComponent: AppComponent
+		public appComponent: AppComponent,
+		public precedingBPDataService: PrecedingBPDataService
 	) {
 	}
 
@@ -39,6 +41,7 @@ export class SimpleSearchDetailsComponent implements OnInit {
 
             //this.bpDataService.catalogueLine = null;
 			this.catalogueService.getCatalogueLine(catalogueId, id).then(line => {
+				this.precedingBPDataService.reset();
 				this.bpDataService.resetBpData();
 				this.bpDataService.setCatalogueLines([line]);
 				this.bpDataService.userRole = 'buyer';

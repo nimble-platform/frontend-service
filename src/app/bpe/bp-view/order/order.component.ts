@@ -18,6 +18,7 @@ import {Contract} from "../../../catalogue/model/publish/contract";
 import {DataMonitoringClause} from "../../../catalogue/model/publish/data-monitoring-clause";
 import {TradingTerm} from '../../../catalogue/model/publish/trading-term';
 import {Party} from '../../../catalogue/model/publish/party';
+import {PrecedingBPDataService} from '../preceding-bp-data-service';
 /**
  * Created by suat on 20-Sep-17.
  */
@@ -53,6 +54,7 @@ export class OrderComponent implements OnInit {
                 private bpDataService: BPDataService,
                 private userService: UserService,
                 private cookieService: CookieService,
+                private precedingBPDataService: PrecedingBPDataService,
                 private router:Router) {
     }
 

@@ -49,7 +49,7 @@
         <detailed-address-view  [propName]="'Delivery Location'"
                         [presentationMode]="presentationMode"
                         [deliveryAddress]="order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address"
-                        [fetchDefaultDeliveryAddress]="bpDataService.processMetadata == null && bpDataService.previousProcess == null">
+                        [fetchDefaultDeliveryAddress]="bpDataService.processMetadata == null && bpDataService.previousProcess == null && !precedingBPDataService.orderMetadata">
         </detailed-address-view>
     </div>
 

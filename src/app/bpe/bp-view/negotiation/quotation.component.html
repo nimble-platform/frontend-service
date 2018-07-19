@@ -3,7 +3,7 @@
         <negotiation-trading-details [lineItem]="quotation.quotationLine[0].lineItem"
                                      [paymentTerms]="quotation.paymentTerms"
                                      [paymentMeans]="quotation.paymentMeans"
-                                     [fetchDefaultDeliveryAddress]="bpDataService.processMetadata == null && bpDataService.previousProcess == null"
+                                     [fetchDefaultDeliveryAddress]="bpDataService.processMetadata == null && bpDataService.previousProcess == null && !precedingBPDataService.orderMetadata"
                                      [presentationMode]="presentationMode">
         </negotiation-trading-details>
 

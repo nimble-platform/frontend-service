@@ -31,6 +31,7 @@ export class RequestForQuotationComponent {
                 public bpDataService:BPDataService,
                 private userService:UserService,
                 private cookieService: CookieService,
+                private precedingBPDataService: PrecedingBPDataService,
                 private router: Router) {
     }
 

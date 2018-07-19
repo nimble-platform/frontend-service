@@ -9,6 +9,7 @@ import {BPEService} from "../../bpe.service";
 import {Router} from "@angular/router";
 import {RequestForQuotation} from "../../../catalogue/model/publish/request-for-quotation";
 import {TradingTerm} from '../../../catalogue/model/publish/trading-term';
+import {PrecedingBPDataService} from '../preceding-bp-data-service';
 
 @Component({
     selector: 'quotation',
@@ -28,6 +29,7 @@ export class QuotationComponent implements OnInit {
 
     constructor(private bpeService: BPEService,
                 public bpDataService: BPDataService,
+                private precedingBPDataService: PrecedingBPDataService,
                 private router: Router) {
     }
 
