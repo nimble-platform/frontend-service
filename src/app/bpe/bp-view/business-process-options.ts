@@ -106,7 +106,7 @@ export class BusinessProcessOptions implements OnInit {
             }
             else if(this.processName == "Item_Information_Request") {
                 this.bpDataService.initRfqWithIir();
-                this.bpDataService.setBpOptionParameters(this.userRole, 'Negotiation', "Item_Information_Request");
+                this.bpDataService.setBpOptionParameters(this.userRole, 'Negotiation', null);
             }
             else {
                 this.bpDataService.resetBpData();
@@ -142,7 +142,7 @@ export class BusinessProcessOptions implements OnInit {
             }
             else {
                 this.bpDataService.initTransportExecutionPlanRequestWithIir();
-                this.bpDataService.setBpOptionParameters(this.userRole, 'Transport_Execution_Plan', "Item_Information_Request");
+                this.bpDataService.setBpOptionParameters(this.userRole, 'Transport_Execution_Plan', null);
             }
         }
         else if(this.nextProcess == "Initiate Transport Execution Plan"){

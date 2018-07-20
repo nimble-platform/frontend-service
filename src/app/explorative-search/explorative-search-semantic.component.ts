@@ -56,6 +56,7 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
     public infoAlert = false;
     public updateInfoAlert = false;
     public emptyFilterAlert = false;
+    public loadingFilter = false;
     public disableAddPropBtn = false;
     public propertySelectionComplete = false;
 
@@ -148,13 +149,14 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
 
     getPropertyValues(inputJSON) {
         // console.log(inputJSON);
+        this.loadingFilter = true;
+        this.searchvalue = [];
         let dummyJSON = {'conceptURL': this.configSPQ['concept'],
             'propertyURL': encodeURIComponent(inputJSON.propertyURL),
             'propertySource': inputJSON.propertySource};
         this.expSearch.searchForPropertyValues(dummyJSON)
             .then(res => {
                 this.valueResults = res;
-                this.searchvalue = [];
                 this.emptyFilterAlert = false;
                 this.disableManualFilters = true;
                 this.disableAddPropBtn = false;
@@ -164,6 +166,7 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
                 this.searchvalue.forEach(val => {
                     this.valuesAreNumeric = isNumeric(val);
                 });
+                this.loadingFilter = false;
                 if (!this.searchvalue.length) {
                     this.emptyFilterAlert = true;
                 }

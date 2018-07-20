@@ -221,6 +221,30 @@ export class CatalogueViewComponent implements OnInit {
         }
     }
 
+    private uploadTemplate(event: any): void {
+        this.callStatus.submit();
+        let catalogueService = this.catalogueService;
+        let userId: string = this.cookieService.get("user_id");
+        let fileList: FileList = event.target.files;
+        if (fileList.length > 0) {
+            let file: File = fileList[0];
+            let self = this;
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                // reset the target value so that the same file could be chosen more than once
+                event.target.value = "";
+                catalogueService.uploadTemplate(userId, file, "append").then(res => {
+                        self.callStatus.callback(null);
+                        self.router.navigate(['catalogue/catalogue'], {queryParams: {forceUpdate: true, t: Date.now()}});
+                    },
+                    error => {
+                        self.callStatus.error("Failed to upload the template:  " + error);
+                    });
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
     private navigateToThePublishPage(){
         this.router.navigate(['/catalogue/categorysearch']);
     }

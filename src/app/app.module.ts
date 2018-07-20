@@ -28,6 +28,7 @@ import { UnitService } from './common/unit-service';
 import { PrecedingBPDataService } from "./bpe/bp-view/preceding-bp-data-service";
 import { TnTService } from './tnt/tnt.service';
 import { EpcService } from './bpe/bp-view/epc-service';
+import { AnalyticsService } from './analytics/analytics.service';
 
 @NgModule({
     imports: [
@@ -61,7 +62,8 @@ import { EpcService } from './bpe/bp-view/epc-service';
         UnitService,
         PrecedingBPDataService,
         TnTService,
-        EpcService
+        EpcService,
+        AnalyticsService
     ],
     bootstrap: [
         AppComponent

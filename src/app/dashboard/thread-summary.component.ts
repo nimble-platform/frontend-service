@@ -221,6 +221,7 @@ export class ThreadSummaryComponent implements OnInit {
 
     navigateToSearchDetails(item: Item) {
         this.bpDataService.previousProcess = null;
+        this.precedingBPDataService.reset();
         this.router.navigate(['/simple-search/details'],
             {
                 queryParams: {
@@ -246,15 +247,16 @@ export class ThreadSummaryComponent implements OnInit {
         this.initializeAddressValues(processInstanceIndex);
     }
 
-    initializeAddressValues(processMetadataIndex: number): void {
+    initializeAddressValues(processMetadataIndex: number): void{
+        this.precedingBPDataService.reset();
         let processMetadata = this.processMetadata[processMetadataIndex];
         // cache the address only if the the process is related to a logistics service
         // and the current process is item information request
-        if(processMetadata != 'Item_Information_Request' && processMetadata.product.transportationServiceDetails == null) {
+        if(processMetadata.processType != 'Item_Information_Request' && processMetadata.product.transportationServiceDetails == null) {
             return;
         }
 
-        // check preceeding processes until finding an order to find the initial customer's address
+        // check preceding processes until finding an order to find the initial customer's address
         for(let i=processMetadataIndex-1; i>=0; i--) {
             let metadata = this.processMetadata[i];
             if(metadata.processType == 'Order') {

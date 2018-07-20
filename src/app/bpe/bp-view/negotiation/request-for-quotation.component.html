@@ -4,7 +4,7 @@
         <negotiation-trading-details [lineItem]="requestForQuotation.requestForQuotationLine[0].lineItem"
                                      [paymentMeans]="requestForQuotation.paymentMeans"
                                      [paymentTerms]="requestForQuotation.paymentTerms"
-                                     [fetchDefaultDeliveryAddress]="bpDataService.processMetadata == null && bpDataService.previousProcess == null"
+                                     [fetchDefaultDeliveryAddress]="bpDataService.processMetadata == null && bpDataService.previousProcess == null && !precedingBPDataService.orderMetadata"
                                      [presentationMode]="bpDataService.processMetadata == null ? 'edit' : 'singlevalue'">
         </negotiation-trading-details>
 

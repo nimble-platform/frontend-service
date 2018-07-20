@@ -56,10 +56,6 @@ export class TransportExecutionPlanRequestComponent implements OnInit {
         this.callStatus.submit();
         let transportationExecutionPlanRequest:TransportExecutionPlanRequest = JSON.parse(JSON.stringify(this.bpDataService.transportExecutionPlanRequest));
 
-        // get addresses from the address cache
-        transportationExecutionPlanRequest.toLocation.address = this.precedingBPDataService.toAddress;
-        transportationExecutionPlanRequest.fromLocation.address = this.precedingBPDataService.fromAddress;
-
         // final check on the transportationExecutionPlanRequest
         transportationExecutionPlanRequest.mainTransportationService = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;
         UBLModelUtils.removeHjidFieldsFromObject(transportationExecutionPlanRequest);
