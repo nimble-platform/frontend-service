@@ -71,8 +71,15 @@
             </div>
             <div *ngIf="rootCategories">
                 <div class="d-flex flex-column" style="height: 400px">
-                    <div *ngFor="let rootCategory of rootCategories">
-                        <category-tree [category]="rootCategory" [parentCategories]="parentCategories" (detailsEvent)="getCategoryDetails($event)" [selectedCategory]="selectedCategory" [selectedCategories]="selectedCategories"></category-tree>
+                    <div *ngIf="showLogisticsCategories" class="mb-3">
+                        <h4 class="p-2">Logistics Categories</h4>
+                        <category-tree [category]="eClassLogisticsCategory" [border]="false" [parentCategories]="parentCategories" (detailsEvent)="getCategoryDetails($event)" [selectedCategory]="selectedCategory" [selectedCategories]="selectedCategories"></category-tree>
+                    </div>
+                    <div *ngIf="showProductCategories">
+                        <h4 class="p-2">Product Categories</h4>
+                        <div *ngFor="let rootCategory of rootCategories">
+                            <category-tree [category]="rootCategory" [parentCategories]="parentCategories" (detailsEvent)="getCategoryDetails($event)" [selectedCategory]="selectedCategory" [selectedCategories]="selectedCategories"></category-tree>
+                        </div>
                     </div>
                 </div>
             </div>
