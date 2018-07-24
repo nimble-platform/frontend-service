@@ -105,7 +105,7 @@ export class CategoryService {
     }
 
     getParentCategories(category: Category): Promise<ParentCategories>{
-        const url = `${this.baseUrl}/` + category.taxonomyId + "/" + encodeURIComponent(category.id)+"/tree";
+        const url = `${this.baseUrl}/tree?taxonomyId=${category.taxonomyId}&categoryId=${encodeURIComponent(category.id)}`;
         return this.http
             .get(url, {headers: this.headers})
             .toPromise()
@@ -135,7 +135,7 @@ export class CategoryService {
     }
 
     getChildrenCategories(category: Category): Promise<Category[]>{
-        const url = `${this.baseUrl}/${category.taxonomyId}/${encodeURIComponent(category.id)}/children-categories`;
+        const url = `${this.baseUrl}/children-categories?taxonomyId=${category.taxonomyId}&categoryId=${encodeURIComponent(category.id)}`;
         return this.http
             .get(url, {headers: this.headers})
             .toPromise()
