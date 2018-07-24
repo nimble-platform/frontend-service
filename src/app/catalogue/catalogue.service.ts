@@ -9,6 +9,7 @@ import { UserService } from "../user-mgmt/user.service";
 import { CatalogueLine } from "./model/publish/catalogue-line";
 import { Category } from "./model/category/category";
 import { BehaviorSubject } from "rxjs/BehaviorSubject";
+import {CookieService} from "ng2-cookies";
 
 @Injectable()
 export class CatalogueService {
@@ -24,7 +25,8 @@ export class CatalogueService {
     editModeObs = this.editMode.asObservable();
 
     constructor(private http: Http,
-                private userService: UserService) {
+                private userService: UserService,
+                private cookieService: CookieService) {
     }
 
     getCatalogueForceUpdate(userId: string, forceUpdate:boolean): Promise<Catalogue> {
@@ -176,6 +178,8 @@ export class CatalogueService {
     }
 
     uploadTemplate(userId: string, template: File, uploadMode:string): Promise<any> {
+        const token = 'Bearer '+this.cookieService.get("bearer_token");
+
         return this.userService.getUserParty(userId).then(party => {
             const url = this.baseUrl + `/catalogue/template/upload?partyId=${party.id}&partyName=${party.name}&uploadMode=${uploadMode}`;
             return new Promise<any>((resolve, reject) => {
@@ -195,6 +199,7 @@ export class CatalogueService {
                 };
 
                 xhr.open('POST', url, true);
+                xhr.setRequestHeader('Authorization', token);
                 xhr.send(formData);
             });
         });
