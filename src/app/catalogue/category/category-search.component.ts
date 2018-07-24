@@ -300,7 +300,8 @@ export class CategorySearchComponent implements OnInit {
     }
 
     addLogistics(category: Category): void {
-        if(category.code.startsWith("14")) {
+        if(category.code.startsWith(this.logisticsCodes[0]) ||
+            category.code.startsWith(this.logisticsCodes[1])) {
           this.showProductCategories = false;
         } else {
             this.showLogisticsCategories = false;
@@ -309,7 +310,8 @@ export class CategorySearchComponent implements OnInit {
 
     removeLogistics(category: Category): void {
         if(this.selectedCategories.length === 0) {
-            if(category.code.startsWith("14")) {
+            if(category.code.startsWith(this.logisticsCodes[0]) ||
+                category.code.startsWith(this.logisticsCodes[1])) {
                 this.showProductCategories = true;
             }
             else {
