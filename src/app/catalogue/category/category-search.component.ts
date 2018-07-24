@@ -57,6 +57,11 @@ export class CategorySearchComponent implements OnInit {
     propertyNames: string[] = ["code", "taxonomyId", "level", "definition", "note", "remark"];
     taxonomyId: string = "eClass";
 
+    showLogisticsCategories: boolean = true;
+    showProductCategories: boolean = true;
+    eClassLogisticsCategory: Category = null;
+    logisticsCodes: string[] = ["14", "Logistics"]
+
     showOtherProperties = null;
     callStatus: CallStatus = new CallStatus();
 
@@ -141,6 +146,9 @@ export class CategorySearchComponent implements OnInit {
         this.categoryService.getRootCategories(this.taxonomyId).then(rootCategories => {
             this.rootCategories = sortCategories(rootCategories);
             this.getCategoryStatus.callback("Retrieved category details", true);
+            this.eClassLogisticsCategory = this.rootCategories.find(c=> c.code==="14000000");
+            let searchIndex = this.findCategoryInArray(this.rootCategories, this.eClassLogisticsCategory);
+            this.rootCategories.splice(searchIndex, 1);
             this.callback = true;
             this.submitted = false;
         }).catch(error => {
@@ -186,6 +194,7 @@ export class CategorySearchComponent implements OnInit {
         if(this.selectedCategoryWithDetails && category && this.selectedCategoryWithDetails.id == category.id){
             this.categoryService.addSelectedCategory(category);
             this.selectedCategories.push(category);
+            this.addLogistics(category);
             this.callback = true;
             this.submitted = false;
             return;
@@ -195,6 +204,7 @@ export class CategorySearchComponent implements OnInit {
             .then(category => {
                 this.categoryService.addSelectedCategory(category);
                 this.selectedCategories.push(category);
+                this.addLogistics(category);
                 this.callback = true;
                 this.submitted = false;
                 return;
@@ -226,6 +236,7 @@ export class CategorySearchComponent implements OnInit {
             if(searchIndex > -1) {
                 this.selectedCategories.splice(searchIndex, 1);
             }
+            this.removeLogistics(category);
         }
     }
 
@@ -286,6 +297,25 @@ export class CategorySearchComponent implements OnInit {
 
     getPropertyType(property: Property): string {
         return sanitizeDataTypeName(property.dataType);
+    }
+
+    addLogistics(category: Category): void {
+        if(category.code.startsWith("14")) {
+          this.showProductCategories = false;
+        } else {
+            this.showLogisticsCategories = false;
+        }
+    }
+
+    removeLogistics(category: Category): void {
+        if(this.selectedCategories.length === 0) {
+            if(category.code.startsWith("14")) {
+                this.showProductCategories = true;
+            }
+            else {
+                this.showLogisticsCategories = true;
+            }
+        }
     }
 
     private findCategoryInArray(categoryArray: Category[], category: Category): number {

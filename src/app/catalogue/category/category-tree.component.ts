@@ -18,6 +18,7 @@ export class CategoryTreeComponent implements OnInit {
     expanded: boolean = false;
     childrenCategories: Category[];
     taxonomyId: string;
+    @Input() border: boolean = true;
     @Input() selectedCategories: Category[];
     @Input() level: number = 1;
     private _parentCategories: ParentCategories;

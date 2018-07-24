@@ -1,5 +1,5 @@
 <div>
-    <div [id]="category.code" class="border-bottom py-2 hover-row d-flex" [style.padding-left.rem]="(level * 0.75)" (click)="showDetails();" [ngClass]="{'selected-row': isSelected()}">
+    <div [id]="category.code" class="py-2 hover-row d-flex" [style.padding-left.rem]="(level * 0.75)" (click)="showDetails();" [ngClass]="{'selected-row': isSelected(), 'border-bottom': border}">
         <i (click)="toggleExpanded($event)" class="fa fa-fw" [ngClass]="getToggleIcon()"></i> {{ category.preferredName }}
     </div>
     <ul *ngIf="expanded && childrenCategories" class="list-unstyled mb-0">
