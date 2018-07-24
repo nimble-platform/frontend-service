@@ -1,0 +1,18 @@
+<div class="row {{ rowClass }}">
+    <div *ngIf="label" [class]="labelClass">
+        <label class="{{labelMainClass}}">
+            <strong>
+                {{ label }}:
+            </strong>
+            <span *ngIf="definition" class="definition" title="{{definition}}">&#9432;</span>
+        </label>
+    </div>
+
+    <div [class]="valueClass" *ngIf="presentationMode === 'edit' && visible">
+        <input type="date" class="form-control {{valueDateClass}}" [ngModel]="date" [disabled]="disabled">
+    </div>
+
+    <div [class]="valueClass" *ngIf="presentationMode === 'view' && visible">
+        <p class="{{valueDateClass}}">{{ date }}</p>
+    </div>
+</div>

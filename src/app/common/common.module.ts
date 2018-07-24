@@ -5,12 +5,13 @@ import { CommonModule } from '@angular/common';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { CallStatusComponent } from "./call-status.component";
-import { ActionsRowComponent } from './actions-row.component';
 import { TextInputComponent } from './text-input.component';
 import { OptionsInputComponent } from './options-input.component';
 import { QuantityInputComponent } from './quantity-input.component';
 import { AmountInputComponent } from './amount-input.component';
 import { FileInputComponent } from './file-input.component';
+import { DateInputComponent } from './date-input.component';
+import { AddressInputComponent } from './address-input.component';
 
 @NgModule({
 	imports: [
@@ -27,7 +28,8 @@ import { FileInputComponent } from './file-input.component';
 		QuantityInputComponent,
 		AmountInputComponent,
 		FileInputComponent,
-		ActionsRowComponent
+		DateInputComponent,
+		AddressInputComponent
 	],
 	exports: [
 		CallStatusComponent,
@@ -36,7 +38,8 @@ import { FileInputComponent } from './file-input.component';
 		QuantityInputComponent,
 		AmountInputComponent,
 		FileInputComponent,
-		ActionsRowComponent
+		DateInputComponent,
+		AddressInputComponent
 	],
 	providers: [
 	]

@@ -43,3 +43,5 @@ export const PROPERTY_TYPES: Option[] = [
     { name: "Quantity", value: "QUANTITY" },
     { name: "Boolean", value: "BOOLEAN" },
 ]
+
+export const TRANSPORT_SERVICE_CATEGORY_NAME = "Transport service"
