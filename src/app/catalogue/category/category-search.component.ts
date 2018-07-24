@@ -57,8 +57,7 @@ export class CategorySearchComponent implements OnInit {
     propertyNames: string[] = ["code", "taxonomyId", "level", "definition", "note", "remark"];
     taxonomyId: string = "eClass";
 
-    showLogisticsCategories: boolean = true;
-    showProductCategories: boolean = true;
+    showBothCategories: boolean = true;
     eClassLogisticsCategory: Category = null;
     logisticsCodes: string[] = ["14", "Logistics"]
 
@@ -302,22 +301,26 @@ export class CategorySearchComponent implements OnInit {
     addLogistics(category: Category): void {
         if(category.code.startsWith(this.logisticsCodes[0]) ||
             category.code.startsWith(this.logisticsCodes[1])) {
-          this.showProductCategories = false;
+            this.showBothCategories = false;
+            this.publishService.isLogisticsProduct = true;
         } else {
-            this.showLogisticsCategories = false;
+            this.showBothCategories = false;
+            this.publishService.isLogisticsProduct = false;
         }
     }
 
     removeLogistics(category: Category): void {
         if(this.selectedCategories.length === 0) {
+            this.showBothCategories = true;
             if(category.code.startsWith(this.logisticsCodes[0]) ||
                 category.code.startsWith(this.logisticsCodes[1])) {
-                this.showProductCategories = true;
-            }
-            else {
-                this.showLogisticsCategories = true;
+                    this.publishService.isLogisticsProduct = false
             }
         }
+    }
+
+    isLogistics(): boolean {
+        return this.publishService.isLogisticsProduct;
     }
 
     private findCategoryInArray(categoryArray: Category[], category: Category): number {
