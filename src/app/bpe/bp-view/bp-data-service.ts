@@ -92,7 +92,7 @@ export class BPDataService{
 
         for(let line of catalogueLines) {
             this.catalogueLines.push(line);
-            this.relatedProducts.push(line.goodsItem.item.name);
+            this.relatedProducts.push(line.goodsItem.item.name[0].value);
             for(let category of line.goodsItem.item.commodityClassification) {
                 if(this.relatedProductCategories.indexOf(category.itemClassificationCode.name) == -1) {
                     this.relatedProductCategories.push(category.itemClassificationCode.name);
@@ -258,7 +258,7 @@ export class BPDataService{
             // we can't copy because those are 2 different types of addresses.
             const lineItem = this.requestForQuotation.requestForQuotationLine[0].lineItem;
             const address = lineItem.deliveryTerms.deliveryLocation.address;
-            address.country.name = settings.address.country;
+            address.country.name.value = settings.address.country;
             address.postalZone = settings.address.postalCode;
             address.cityName = settings.address.cityName;
             address.buildingNumber = settings.address.buildingNumber;
@@ -395,8 +395,8 @@ export class BPDataService{
         }
 
         this.despatchAdvice.despatchLine[0].deliveredQuantity.value = deliveredQuantity.value;
-        this.despatchAdvice.despatchLine[0].shipment[0].handlingInstructions = handlingInst;
-        this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage[0].carrierParty.name = carrierName;
+        this.despatchAdvice.despatchLine[0].shipment[0].handlingInstructions[0].value = handlingInst;
+        this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage[0].carrierParty.name.value = carrierName;
         this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage[0].carrierParty.contact.telephone = carrierContact;
         this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage[0].estimatedDeliveryDate = endDate;
     }
@@ -619,16 +619,16 @@ export class BPDataService{
 
     updateItemProperty(itemProperty:ItemProperty):void {
         if(itemProperty.valueQualifier == 'STRING') {
-            let index = this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty.findIndex(item => item.name == itemProperty.name);
+            let index = this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty.findIndex(item => item.name.value == itemProperty.name.value);
             this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty[index].value[0] = itemProperty.value[0];
         } else if(itemProperty.valueQualifier == 'REAL_MEASURE') {
-            let index = this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty.findIndex(item => item.name == itemProperty.name);
+            let index = this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty.findIndex(item => item.name.value == itemProperty.name.value);
             this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty[index].valueDecimal[0] = itemProperty.valueDecimal[0];
         } else if(itemProperty.valueQualifier == 'BOOLEAN') {
-            let index = this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty.findIndex(item => item.name == itemProperty.name);
+            let index = this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty.findIndex(item => item.name.value == itemProperty.name.value);
             this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty[index].value[0] = itemProperty.value[0];
         } else if(itemProperty.valueQualifier == 'QUANTITY') {
-            let index = this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty.findIndex(item => item.name == itemProperty.name);
+            let index = this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty.findIndex(item => item.name.value == itemProperty.name.value);
             this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty[index].valueQuantity[0] = itemProperty.valueQuantity[0];
         }
     }

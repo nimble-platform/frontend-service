@@ -5,7 +5,7 @@
         <value-view [presentationMode]="bpDataService.processMetadata == null ? 'edit' : 'singlevalue'"
                     [propName]="'Goods Item'"
                     [definition]="'A goods item included in this shipment'"
-                    [(value)]="transportExecutionPlanRequest.consignment[0].consolidatedShipment[0].goodsItem[0].item.name">
+                    [(value)]="transportExecutionPlanRequest.consignment[0].consolidatedShipment[0].goodsItem[0].item.name[0].value">
 
         </value-view>
 

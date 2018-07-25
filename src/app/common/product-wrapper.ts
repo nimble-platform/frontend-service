@@ -49,7 +49,7 @@ export class ProductWrapper {
     }
 
     getSpecialTerms(): string {
-        return this.goodsItem.deliveryTerms.specialTerms || "None";
+        return this.goodsItem.deliveryTerms.specialTerms[0].value || "None";
     }
 
     getDeliveryPeriod(): string {
@@ -81,7 +81,7 @@ export class ProductWrapper {
     }
 
     getPropertyName(property: ItemProperty): string {
-        return sanitizePropertyName(property.name);
+        return sanitizePropertyName(property.name.value);
     }
 
     /*
@@ -108,7 +108,7 @@ export class ProductWrapper {
             duplicates[key] = true;
         });
 
-        return result.sort((p1, p2) => p1.name.localeCompare(p2.name));
+        return result.sort((p1, p2) => p1.name.value.localeCompare(p2.name.value));
     }
 
 }

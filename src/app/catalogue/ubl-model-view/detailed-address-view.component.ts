@@ -34,7 +34,7 @@ export class DetailedAddressViewComponent implements OnInit{
             this.getDefaultDeliveryLocation.submit();
             let userId = this.cookieService.get('user_id');
             this.userService.getSettings(userId).then(settings => {
-                this.deliveryAddress.country.name = settings.address.country;
+                this.deliveryAddress.country.name.value = settings.address.country;
                 this.deliveryAddress.postalZone = settings.address.postalCode;
                 this.deliveryAddress.cityName = settings.address.cityName;
                 this.deliveryAddress.buildingNumber = settings.address.buildingNumber;

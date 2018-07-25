@@ -5,7 +5,7 @@
             <div *ngIf="i == 0"
                  class="col-3 control-label pointer"
                  (click)="openPropertyDetails()">
-                {{additionalItemProperty.name}}&#9432;
+                {{additionalItemProperty.name.value}}&#9432;
             </div>
 
             <!-- string value associated to the property -->
@@ -37,7 +37,7 @@
             <span *ngIf="presentationMode == 'edit' && ((additionalItemProperty.valueQualifier == 'STRING' && i == this.additionalItemProperty.value.length - 1) ||
                           (additionalItemProperty.valueQualifier == 'REAL_MEASURE' && i == this.additionalItemProperty.valueDecimal.length - 1))">
                 <button class="btn btn-primary btn-xs"
-                        (click)="addValueToProperty(additionalItemProperty.name)"
+                        (click)="addValueToProperty(additionalItemProperty.name.value)"
                 ><strong>+</strong></button>
             </span>
         </div>
@@ -51,7 +51,7 @@
             <!-- name of the property is shown once near the first value associated to it -->
             <div class="col-3 control-label cursor"
                  (click)="openPropertyDetails()">
-                {{additionalItemProperty.name}}&#9432;
+                {{additionalItemProperty.name.value}}&#9432;
             </div>
             <select *ngIf="additionalItemProperty.value.length > 1"
                     class="custom-select"
@@ -70,7 +70,7 @@
             <!-- name of the property is shown once near the first value associated to it -->
             <div class="col-3 control-label pointer"
                  (click)="openPropertyDetails()">
-                {{additionalItemProperty.name}}&#9432;
+                {{additionalItemProperty.name.value}}&#9432;
             </div>
             <select *ngIf="additionalItemProperty.valueDecimal.length > 1"
                     class="custom-select"
@@ -88,7 +88,7 @@
 
 <ng-container *ngIf="additionalItemProperty.valueQualifier == 'QUANTITY'">
     <quantity-view [presentationMode]="presentationMode"
-                   [propName]="additionalItemProperty.name"
+                   [propName]="additionalItemProperty.name.value"
                    [quantity]="additionalItemProperty.valueQuantity"
                    [multiValue]="true"
                    [parentForm]="parentForm"
@@ -102,7 +102,7 @@
     <!-- name of the property is shown once near the first value associated to it -->
     <div class="col-3 control-label pointer"
          (click)="openPropertyDetails()">
-        {{additionalItemProperty.name}}&#9432;
+        {{additionalItemProperty.name.value}}&#9432;
     </div>
 
     <input type="checkbox" class="space-right"
@@ -111,13 +111,13 @@
            [disabled]="presentationMode != 'edit'">
 
     <span *ngIf="presentationMode == 'edit' && customProperty"><button class="btn btn-xs btn-danger"
-                                                     (click)="deleteCustomProperty(additionalItemProperty.name); $event.stopPropagation()"
+                                                     (click)="deleteCustomProperty(additionalItemProperty.name.value); $event.stopPropagation()"
     >&times;</button></span>
 </div>
 
 <!-- renders the binary content -->
 <div *ngIf="additionalItemProperty.valueQualifier=='BINARY'" class="input-group form-group">
-    <label class="col-3 control-label">{{additionalItemProperty.name}}</label>
+    <label class="col-3 control-label">{{additionalItemProperty.name.value}}</label>
     <div style="display: inline-block">
         <div *ngFor="let file of additionalItemProperty.valueBinary"
              style="display: inline-block">
@@ -141,7 +141,7 @@
         </div>
 
         <span *ngIf="presentationMode == 'edit'"><button class="btn btn-xs btn-danger"
-                                                         (click)="deleteCustomProperty(additionalItemProperty.name); $event.stopPropagation()"
+                                                         (click)="deleteCustomProperty(additionalItemProperty.name.value); $event.stopPropagation()"
         >&times;</button></span>
     </div>
 </div>

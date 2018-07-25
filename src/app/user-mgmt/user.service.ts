@@ -10,6 +10,7 @@ import { CompanyInvitation } from './model/company-invitation';
 import {UBLModelUtils} from "../catalogue/model/ubl-model-utils";
 import { CookieService } from 'ng2-cookies';
 import { UserRole } from './model/user-role';
+import {Text} from "../catalogue/model/publish/text";
 
 @Injectable()
 export class UserService {
@@ -99,6 +100,12 @@ export class UserService {
             .toPromise()
             .then(res => {
                 let party:Party = res.json();
+
+                // TODO: Remove the following block. It is just inserted for test purposes
+                let name = new Text('canCompany');
+                party.name = name;
+                /////
+
                 UBLModelUtils.removeHjidFieldsFromObject(party);
                 return Promise.resolve(party);
             })

@@ -47,49 +47,49 @@ export class ActivityVariableParser {
         if (processType == "Order") {
             let order: Order = initialDocument.value as Order;
             if(order.buyerCustomerParty.party.id == partyId) {
-                return order.sellerSupplierParty.party.name;
+                return order.sellerSupplierParty.party.name.value;
             } else {
-                return order.buyerCustomerParty.party.name;
+                return order.buyerCustomerParty.party.name.value;
             }
 
         } else if(processType == "Ppap"){
             let ppap: Ppap = initialDocument.value as Ppap;
             if(ppap.buyerCustomerParty.party.id == partyId) {
-                return ppap.sellerSupplierParty.party.name;
+                return ppap.sellerSupplierParty.party.name.value;
             } else {
-                return ppap.buyerCustomerParty.party.name;
+                return ppap.buyerCustomerParty.party.name.value;
             }
 
         } else if (processType == "Negotiation") {
             let rfq: RequestForQuotation = initialDocument.value as RequestForQuotation;
             if(rfq.buyerCustomerParty.party.id == partyId) {
-                return rfq.sellerSupplierParty.party.name;
+                return rfq.sellerSupplierParty.party.name.value;
             } else {
-                return rfq.buyerCustomerParty.party.name;
+                return rfq.buyerCustomerParty.party.name.value;
             }
 
         } else if (processType == "Fulfilment") {
             let despatchAdvice: DespatchAdvice = initialDocument.value as DespatchAdvice;
             if(despatchAdvice.despatchSupplierParty.party.id == partyId) {
-                return despatchAdvice.deliveryCustomerParty.party.name;
+                return despatchAdvice.deliveryCustomerParty.party.name.value;
             } else {
-                return despatchAdvice.despatchSupplierParty.party.name;
+                return despatchAdvice.despatchSupplierParty.party.name.value;
             }
 
         } else if(processType == "Transport_Execution_Plan") {
             let tepr: TransportExecutionPlanRequest = initialDocument.value as TransportExecutionPlanRequest;
             if(tepr.transportUserParty.id == partyId) {
-                return tepr.transportServiceProviderParty.name;
+                return tepr.transportServiceProviderParty.name.value;
             } else {
-                return tepr.transportUserParty.name;
+                return tepr.transportUserParty.name.value;
             }
 
         } else if(processType == 'Item_Information_Request') {
             let itemInformationRequest: ItemInformationRequest = initialDocument.value as ItemInformationRequest;
             if(itemInformationRequest.buyerCustomerParty.party.id == partyId) {
-                return itemInformationRequest.sellerSupplierParty.party.name;
+                return itemInformationRequest.sellerSupplierParty.party.name.value;
             } else {
-                return itemInformationRequest.buyerCustomerParty.party.name;
+                return itemInformationRequest.buyerCustomerParty.party.name.value;
             }
         }
     }
@@ -158,26 +158,26 @@ export class ActivityVariableParser {
         let processType: string = initialDocument.processDefinitionKey;
         if (processType == "Order") {
             let order: Order = initialDocument.value as Order;
-            return order.orderLine[0].lineItem.item.name;
+            return order.orderLine[0].lineItem.item.name[0].value;
 
         } else if(processType == "Ppap"){
             let ppap:Ppap = initialDocument.value() as Ppap;
-            return ppap.lineItem.item.name;
+            return ppap.lineItem.item.name[0].value;
         } else if (processType == "Negotiation") {
             let rfq: RequestForQuotation = initialDocument.value as RequestForQuotation;
-            return rfq.requestForQuotationLine[0].lineItem.item.name;
+            return rfq.requestForQuotationLine[0].lineItem.item.name[0].value;
 
         } else if (processType == "Fulfilment") {
             let despatchAdvice: DespatchAdvice = initialDocument.value as DespatchAdvice;
-            return despatchAdvice.despatchLine[0].item.name;
+            return despatchAdvice.despatchLine[0].item.name[0].value;
 
         } else if(processType == "Transport_Execution_Plan") {
             let tepr: TransportExecutionPlanRequest = initialDocument.value as TransportExecutionPlanRequest;
-            return tepr.mainTransportationService.name;
+            return tepr.mainTransportationService.name[0].value;
 
         } else if(processType == 'Item_Information_Request') {
             let itemInformationRequest: ItemInformationRequest = initialDocument.value as ItemInformationRequest;
-            return itemInformationRequest.itemInformationRequestLine[0].salesItem[0].item.name;
+            return itemInformationRequest.itemInformationRequestLine[0].salesItem[0].item.name[0].value;
         }
     }
 

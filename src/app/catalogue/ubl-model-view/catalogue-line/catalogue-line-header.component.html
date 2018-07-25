@@ -25,20 +25,20 @@
                     [propName]="'Product Name'"
                     [parentForm]="parentForm"
                     [mandatory]="true"
-                    [(value)]="catalogueLine.goodsItem.item.name">
+                    [(value)]="catalogueLine.goodsItem.item.name[0].value">
         </value-view>
         <value-view *ngIf="presentationMode == 'edit'" [presentationMode]="'edit'"
                     [propName]="'Product Description'"
-                    [(value)]="catalogueLine.goodsItem.item.description"
+                    [(value)]="catalogueLine.goodsItem.item.description[0].value"
                     [largeInput]="true">
         </value-view>
-        <textarea *ngIf="presentationMode != 'edit' && catalogueLine.goodsItem.item.description" class="form-control mb-2"
+        <textarea *ngIf="presentationMode != 'edit' && catalogueLine.goodsItem.item.description[0].value" class="form-control mb-2"
                   rows="3"
                   style="margin-left: 15px"
-                  [(ngModel)]="catalogueLine.goodsItem.item.description"
+                  [(ngModel)]="catalogueLine.goodsItem.item.description[0].value"
                   readonly>
         </textarea>
-        <label class="col-4 mb-2" *ngIf="presentationMode != 'edit' && !catalogueLine.goodsItem.item.description">
+        <label class="col-4 mb-2" *ngIf="presentationMode != 'edit' && !catalogueLine.goodsItem.item.description[0].value">
             <i>No available description</i>
         </label>
         <div *ngIf="catalogueLine.goodsItem.item.commodityClassification.length > 1" class="d-flex flex-wrap">

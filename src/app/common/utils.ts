@@ -31,12 +31,12 @@ export function copy<T = any>(object: T): T {
 }
 
 function isItemProperty(property: any): property is ItemProperty {
-    return !!property.name; // preferredName for Property
+    return !!property.name.value; // preferredName for Property
 }
 
 export function getPropertyKey(property: Property | ItemProperty): string {
     if(isItemProperty(property)) {
-        return property.name + "___" + property.valueQualifier;
+        return property.name.value + "___" + property.valueQualifier;
     }
     // Property
     return property.preferredName + "___" + property.dataType;

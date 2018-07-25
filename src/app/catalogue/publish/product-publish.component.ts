@@ -23,6 +23,7 @@ import { ProductWrapper } from "../../common/product-wrapper";
 import { EditPropertyModalComponent } from "./edit-property-modal.component";
 import { Location } from "@angular/common";
 import { SelectedProperty } from "../model/publish/selected-property";
+import {Text} from "../model/publish/text";
 
 interface SelectedProperties {
     [key: string]: SelectedProperty;
@@ -279,8 +280,46 @@ export class ProductPublishComponent implements OnInit {
 
     isValidCatalogueLine(): boolean {
         // must have a name
-        return this.catalogueLine.goodsItem.item.name !== "";
+        return this.catalogueLine.goodsItem.item.name[0] && this.catalogueLine.goodsItem.item.name[0].value !== "";
     }
+
+    // TEST
+    private newItemName: any = {};
+    private newItemDescription: any = {};
+    private languages: Array<string> = ["en", "es", "de", "tr", "it"];
+
+    addItemNameValue() {
+        let nameText = new Text(this.newItemName.value, this.newItemName.languageID);
+
+        this.catalogueLine.goodsItem.item.name.push(nameText);
+
+        this.newItemName = {};
+
+        // console.log(" $$$ Item: ", this.catalogueLine.goodsItem.item);
+    }
+
+    deleteItemNameValue(index) {
+        this.catalogueLine.goodsItem.item.name.splice(index, 1);
+
+        // console.log(" $$$ Item: ", this.catalogueLine.goodsItem.item);
+    }
+
+    addItemDescriptionValue() {
+        let descriptionText = new Text(this.newItemDescription.value, this.newItemDescription.languageID);
+
+        this.catalogueLine.goodsItem.item.description.push(descriptionText);
+
+        this.newItemDescription = {};
+
+        // console.log(" $$$ Item: ", this.catalogueLine.goodsItem.item);
+    }
+
+    deleteItemDescriptionValue(index) {
+        this.catalogueLine.goodsItem.item.description.splice(index, 1);
+
+        // console.log(" $$$ Item: ", this.catalogueLine.goodsItem.item);
+    }
+    //////
 
     private recomputeSelectedProperties() {
         const oldSelectedProps = this.selectedProperties;
@@ -326,7 +365,7 @@ export class ProductPublishComponent implements OnInit {
     }
 
     getPrettyName(property: ItemProperty): string {
-        return sanitizePropertyName(property.name);
+        return sanitizePropertyName(property.name.value);
     }
 
     getValuesAsString(property: ItemProperty): string[] {

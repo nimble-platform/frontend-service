@@ -39,7 +39,7 @@ export class EditPropertyModalComponent implements OnInit {
             property.valueQuantity = this.property.valueQuantity;
 
             if(isCustomProperty(property)) {
-                property.name = this.property.name;
+                property.name.value = this.property.name.value;
                 property.valueQualifier = this.property.valueQualifier;
             }
         })
@@ -71,11 +71,11 @@ export class EditPropertyModalComponent implements OnInit {
     }
 
     get prettyName(): string {
-        return sanitizePropertyName(this.property.name);
+        return sanitizePropertyName(this.property.name.value);
     }
 
     set prettyName(name: string) {
-        this.property.name = name;
+        this.property.name.value = name;
     }
 
     getValues(): any[] {

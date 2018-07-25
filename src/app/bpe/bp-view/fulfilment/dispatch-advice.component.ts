@@ -86,7 +86,7 @@ export class DispatchAdviceComponent implements OnInit {
                     let tep = initialDoc.value as TransportExecutionPlanRequest;
 
                     handlingInst = tep.consignment[0].consolidatedShipment[0].handlingInstructions;
-                    carrierName = tep.transportServiceProviderParty.name;
+                    carrierName = tep.transportServiceProviderParty.name.value;
                     endDate = tep.serviceEndTimePeriod.endDate;
                     if(tep.transportServiceProviderParty.contact){
                         carrierContact = tep.transportServiceProviderParty.contact.telephone;

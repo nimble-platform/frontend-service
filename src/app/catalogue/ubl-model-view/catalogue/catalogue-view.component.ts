@@ -187,8 +187,8 @@ export class CatalogueViewComponent implements OnInit {
         let i = 0;
         let len = this.catalogueLinesWRTTypes.length;
         for(;i<len;i++){
-            if(RE.test(this.catalogueLinesWRTTypes[i].goodsItem.item.name+" "+
-                    this.catalogueLinesWRTTypes[i].goodsItem.item.description)) {
+            if(RE.test(this.catalogueLinesWRTTypes[i].goodsItem.item.name[0].value+" "+
+                    this.catalogueLinesWRTTypes[i].goodsItem.item.description[0].value)) {
                 answer.push(this.catalogueLinesWRTTypes[i]);
             }
         }

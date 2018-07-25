@@ -1,6 +1,6 @@
 <div class="row">
         <div class="col-4">
-            <strong>Product by:</strong> {{wrapper.item.manufacturerParty.name}}
+            <strong>Product by:</strong> {{wrapper.item.manufacturerParty.name.value}}
         </div>
         <div class="col-8 d-flex flex-wrap">
             <!-- Categories -->
@@ -70,12 +70,12 @@
             <div>
                 <!-- Description -->
                 <strong>Description:</strong>
-                <p>{{wrapper.item.description || "No description provided."}}</p>
+                <p>{{wrapper.item.description[0].value || "No description provided."}}</p>
             </div>
             <!-- Properties with multiple values to select from -->
             <div class="d-flex flex-column">
                 <div *ngFor="let property of wrapper.getPropertiesWithListOfValues()" class="my-1">
-                    <strong>{{property.name}}: </strong>
+                    <strong>{{property.name.value}}: </strong>
                     <span *ngFor="let val of getValuesAsString(property); let i = index" class="btn-group-toggle" data-toggle="buttons">
                         <button type="button" class="btn btn-outline-primary no-y-padding" (click)="onTogglePropertyValue(property, i)" 
                             [disabled]="readonly" [ngClass]="{ 'active': isPropertyValueSelected(property, i) }">

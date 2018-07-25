@@ -15,10 +15,49 @@
     [quantity]="catalogueLine.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure">
 </quantity-input>
 
+<br/>
 <!-- Special Terms -->
-<text-input label="Special Terms" [disabled]="disabled" rowClass="space-before"
+<!-- text-input label="Special Terms" [disabled]="disabled" rowClass="space-before"
     [(text)]="catalogueLine.goodsItem.deliveryTerms.specialTerms">
-</text-input>
+</text-input-->
+
+<table class="table table-striped table-bordered">
+    <thead>
+    <tr>
+        <th width="80%">Special Terms</th>
+        <th width="10%">Language</th>
+        <th width="10%"></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let spacialTerms of catalogueLine.goodsItem.deliveryTerms.specialTerms; let i = index">
+        <td>
+            <input [(ngModel)]="spacialTerms.value" class="form-control" type="text" name="{{spacialTerms.value}}" />
+        </td>
+        <td>
+            <select [(ngModel)]="spacialTerms.languageID" class="form-control" type="text" name="{{spacialTerms.languageID}}">
+                <option *ngFor='let language of languages' [value]="language" [selected]="language === spacialTerms.languageID">{{language}}</option>
+            </select>
+        </td>
+        <td>
+            <button class="btn btn-default"  type="button" (click)="deleteSpecialTerms(i)">Delete</button>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <input class="form-control" type="text" id="newSpecialTermsName" [(ngModel)]="newSpecialTerms.value" name="newSpecialTermsName" />
+        </td>
+        <td>
+            <select class="form-control" id="newSpecialTermsLanguage" [(ngModel)]="newSpecialTerms.languageID" name="newSpecialTermsLanguage">
+                <option *ngFor='let language of languages' [value]="language">{{language}}</option>
+            </select>
+        </td>
+        <td>
+            <button class="btn btn-default" type="button" (click)="addSpecialTerms()">Add</button>
+        </td>
+    </tr>
+    </tbody>
+</table>
 
 <hr>
 

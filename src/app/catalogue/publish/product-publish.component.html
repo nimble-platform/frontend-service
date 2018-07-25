@@ -118,16 +118,94 @@
         </div>
 
         <div class="col-9">
-            <!-- Name -->
-            <text-input label="Product Name" [(text)]="catalogueLine.goodsItem.item.name" [rows]="1">
+
+            <!-- text-input label="Product Name" [(text)]="catalogueLine.goodsItem.item.name" [rows]="1">
             </text-input>
             
-            <!-- Description -->
+
             <text-input label="Product Description" [(text)]="catalogueLine.goodsItem.item.description" [rows]="6" rowClass="space-before">
-            </text-input>
+            </text-input -->
     
             <!-- product ID -->
             <div class="col-12"><small class="float-right">Product Id: {{ catalogueLine.goodsItem.item.manufacturersItemIdentification.id }}</small></div>
+
+            <table class="table table-striped table-bordered">
+                <thead>
+                <tr>
+                    <th width="80%">Product Name</th>
+                    <th width="10%">Language</th>
+                    <th width="10%"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let itemName of catalogueLine.goodsItem.item.name; let i = index">
+                    <td>
+                        <input [(ngModel)]="itemName.value" class="form-control" type="text" name="{{itemName.value}}" />
+                    </td>
+                    <td>
+                        <select [(ngModel)]="itemName.languageID" class="form-control" type="text" name="{{itemName.languageID}}">
+                            <option *ngFor='let language of languages' [value]="language" [selected]="language === itemName.languageID">{{language}}</option>
+                        </select>
+                    </td>
+                    <td>
+                        <button class="btn btn-default"  type="button" (click)="deleteItemNameValue(i)">Delete</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input class="form-control" type="text" id="newItemName" [(ngModel)]="newItemName.value" name="newItemName" />
+                    </td>
+                    <td>
+                        <select class="form-control" id="newItemNameLanguage" [(ngModel)]="newItemName.languageID" name="newItemNameLanguage">
+                            <option *ngFor='let language of languages' [value]="language">{{language}}</option>
+                        </select>
+                    </td>
+                    <td>
+                        <button class="btn btn-default" type="button" (click)="addItemNameValue()">Add</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <table class="table table-striped table-bordered">
+                <thead>
+                <tr>
+                    <th width="80%">Product Description</th>
+                    <th width="10%">Language</th>
+                    <th width="10%"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let itemDescription of catalogueLine.goodsItem.item.description; let i = index">
+                    <td>
+                        <text-input [(text)]="itemDescription.value" [rows]="2">
+                        </text-input>
+                    </td>
+                    <td>
+                        <select [(ngModel)]="itemDescription.languageID" class="form-control" type="text" name="{{itemDescription.languageID}}">
+                            <option *ngFor='let language of languages' [value]="language" [selected]="language === itemDescription.languageID">{{language}}</option>
+                        </select>
+                    </td>
+                    <td>
+                        <button class="btn btn-default"  type="button" (click)="deleteItemDescriptionValue(i)">Delete</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <text-input [(text)]="newItemDescription.value" [rows]="3">
+                        </text-input>
+                    </td>
+                    <td>
+                        <select class="form-control" id="newItemDescriptionLanguage" [(ngModel)]="newItemDescription.languageID" name="newItemDescriptionLanguage">
+                            <option *ngFor='let language of languages' [value]="language">{{language}}</option>
+                        </select>
+                    </td>
+                    <td>
+                        <button class="btn btn-default" type="button" (click)="addItemDescriptionValue()">Add</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
         </div>
     </div>
 

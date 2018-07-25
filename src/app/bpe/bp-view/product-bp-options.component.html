@@ -3,7 +3,7 @@
     <h2 class="nimble-title">
         Order for:
     </h2> 
-    <h2>{{ line.goodsItem.item.name }}
+    <h2>{{ line.goodsItem.item.name[0].value }}
         <button class="btn btn-outline-dark inline ml-2" (click)="productExpanded = !productExpanded">
             <i class="fas fa-chevron-up fa-fw inline" aria-hidden="true" *ngIf="productExpanded"></i>
             <i class="fas fa-chevron-down fa-fw inline" aria-hidden="true" *ngIf="!productExpanded"></i>

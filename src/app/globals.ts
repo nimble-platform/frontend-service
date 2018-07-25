@@ -48,8 +48,8 @@ export const pw_reset_link = "http://nimble-staging.salzburgresearch.at:8080/aut
 // Service endpoints
 
 export const user_mgmt_endpoint=`${base_path}/identity`;
-export const catalogue_endpoint=`${base_path}/catalog`;
-export const bpe_endpoint=`${base_path}/business-process`;
+export const catalogue_endpoint=`http://localhost:8095`;
+export const bpe_endpoint=`http://localhost:8081`;
 export const data_channel_endpoint=`${base_path}/data-channel`;
 export const data_aggregation_endpoint=`${base_path}/data-aggregation`;
 

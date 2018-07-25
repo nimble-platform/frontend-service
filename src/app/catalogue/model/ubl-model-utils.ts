@@ -51,6 +51,7 @@ import { NegotiationOptions } from "./publish/negotiation-options";
 import { PAYMENT_MEANS, CURRENCIES } from "./constants";
 import { TradingTerm } from "./publish/trading-term";
 import { copy } from "../../common/utils";
+import {Text} from "./publish/text";
 
 /**
  * Created by suat on 05-Jul-17.
@@ -77,10 +78,10 @@ export class UBLModelUtils {
             : new Code(null, null, null, "Custom", null);
 
         if (property == null) {
-            return new ItemProperty(this.generateUUID(), "", [], [], [], 
+            return new ItemProperty(this.generateUUID(), new Text(""), [], [], [],
                 new Array<BinaryObject>(), "STRING", code, null);
         }
-        return new ItemProperty(property.id, property.preferredName, 
+        return new ItemProperty(property.id, new Text(property.preferredName),
             property.dataType === "BOOLEAN" ? ["false"] : [], [], [], 
             new Array<BinaryObject>(), property.dataType, code, property.uri);
     }
@@ -109,7 +110,7 @@ export class UBLModelUtils {
 
         // create item
         let uuid:string = this.generateUUID();
-        let item = new Item("", "", [], [], additionalItemProperties, providerParty, this.createItemIdentificationWithId(uuid), docRef, [], [], [], null);
+        let item = new Item([], [], [], [], additionalItemProperties, providerParty, this.createItemIdentificationWithId(uuid), docRef, [], [], [], null);
 
         // create goods item
         let goodsItem = new GoodsItem(uuid, item, this.createPackage(), this.createDeliveryTerms());
@@ -256,16 +257,16 @@ export class UBLModelUtils {
 
     public static getDefaultPaymentTerms(): PaymentTerms {
         return new PaymentTerms([], [
-            new TradingTerm("Payment_In_Advance","Payment in advance","PIA",["false"]),
+            new TradingTerm("Payment_In_Advance",[new Text("Payment in advance")],"PIA",["false"]),
             // new TradingTerm("Values_Net","e.g.,NET 10,payment 10 days after invoice date","Net %s",[null]),
-            new TradingTerm("End_of_month","End of month","EOM",["false"]),
-            new TradingTerm("Cash_next_delivery","Cash next delivery","CND",["false"]),
-            new TradingTerm("Cash_before_shipment","Cash before shipment","CBS",["false"]),
+            new TradingTerm("End_of_month",[new Text("End of month")],"EOM",["false"]),
+            new TradingTerm("Cash_next_delivery",[new Text("Cash next delivery")],"CND",["false"]),
+            new TradingTerm("Cash_before_shipment",[new Text("Cash before shipment")],"CBS",["false"]),
             // new TradingTerm("Values_MFI","e.g.,21 MFI,21st of the month following invoice date","%s MFI", [null]),
             // new TradingTerm("Values_/NET","e.g.,1/10 NET 30,1% discount if payment received within 10 days otherwise payment 30 days after invoice date","%s/%s NET %s",[null,null,null]),
-            new TradingTerm("Cash_on_delivery","Cash on delivery","COD",["false"]),
-            new TradingTerm("Cash_with_order","Cash with order","CWO",["false"]),
-            new TradingTerm("Cash_in_advance","Cash in advance","CIA",["false"]),
+            new TradingTerm("Cash_on_delivery",[new Text("Cash on delivery")],"COD",["false"]),
+            new TradingTerm("Cash_with_order",[new Text("Cash with order")],"CWO",["false"]),
+            new TradingTerm("Cash_in_advance",[new Text("Cash in advance")],"CIA",["false"]),
         ]);
     }
 
@@ -418,7 +419,7 @@ export class UBLModelUtils {
     }
 
     public static createItem():Item {
-        let item = new Item("", "", [], [], [], null, this.createItemIdentification(), null, [], [], [], null);
+        let item = new Item([], [], [], [], [], null, this.createItemIdentification(), null, [], [], [], null);
         return item;
     }
 

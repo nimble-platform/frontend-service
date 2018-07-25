@@ -82,7 +82,7 @@ export class AdditionalItemPropertyComponent implements OnInit, OnDestroy {
 
         // if the property no longer has a value, delete it
         if (dataSource.length == 0) {
-            this.deleteCustomProperty(this.additionalItemProperty.name);
+            this.deleteCustomProperty(this.additionalItemProperty.name.value);
         }
     }
 
@@ -91,7 +91,7 @@ export class AdditionalItemPropertyComponent implements OnInit, OnDestroy {
      */
     deleteCustomProperty(inputVal: string) {
         let draftCatalogueLine = this.catalogueService.draftCatalogueLine;
-        let indexCatalogue = draftCatalogueLine.goodsItem.item.additionalItemProperty.findIndex(p => p.name == inputVal);
+        let indexCatalogue = draftCatalogueLine.goodsItem.item.additionalItemProperty.findIndex(p => p.name.value == inputVal);
         draftCatalogueLine.goodsItem.item.additionalItemProperty.splice(indexCatalogue, 1);
         draftCatalogueLine.goodsItem.item.additionalItemProperty = [].concat(draftCatalogueLine.goodsItem.item.additionalItemProperty);
     }
@@ -124,7 +124,7 @@ export class AdditionalItemPropertyComponent implements OnInit, OnDestroy {
         let firstValue = this.additionalItemProperty.valueQuantity[0];
         this.additionalItemProperty.valueQuantity[0] = this.additionalItemProperty.valueQuantity[event.target.selectedIndex];
         this.additionalItemProperty.valueQuantity[event.target.selectedIndex] = firstValue;
-        let index = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty.findIndex(item => item.name == this.additionalItemProperty.name);
+        let index = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty.findIndex(item => item.name.value == this.additionalItemProperty.name.value);
         this.bpDataService.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty[index].valueQuantity[0] = this.additionalItemProperty.valueQuantity[0];
     }
 
