@@ -23,6 +23,7 @@ import { ProductWrapper } from "../../common/product-wrapper";
 import { EditPropertyModalComponent } from "./edit-property-modal.component";
 import { Location } from "@angular/common";
 import { SelectedProperty } from "../model/publish/selected-property";
+type ProductType = "product" | "transportation";
 
 interface SelectedProperties {
     [key: string]: SelectedProperty;
@@ -52,6 +53,8 @@ export class ProductPublishComponent implements OnInit {
     selectedCategories: Category[];
     publishingGranularity: "single" | "bulk" = "single";
     publishStatus: CallStatus = new CallStatus();
+    productType: ProductType;
+    isLogistics: boolean;
 
     /*
      * Values for Single only
@@ -115,7 +118,6 @@ export class ProductPublishComponent implements OnInit {
 
     ngOnInit() {
         this.selectedCategories = this.categoryService.selectedCategories;
-
         const userId = this.cookieService.get("user_id");
         this.userService.getUserParty(userId).then(party => {
             this.catalogueService.getCatalogue(userId).then(catalogue => {
@@ -125,12 +127,14 @@ export class ProductPublishComponent implements OnInit {
         });
 
         this.route.queryParams.subscribe((params: Params) => {
-
             // handle publishing granularity: single, bulk, null
             this.publishingGranularity = params['pg'];
             if(this.publishingGranularity == null) {
                 this.publishingGranularity = 'single';
             }
+            //set product type
+            this.productType = params["productType"] === "transportation" ? "transportation" : "product";
+            this.isLogistics = (this.productType === "transportation");
         });
     }
 
@@ -206,7 +210,7 @@ export class ProductPublishComponent implements OnInit {
             dismissModal("add category");
         }
         ProductPublishComponent.dialogBox = false;
-        this.router.navigate(['catalogue/categorysearch'], { queryParams: { pageRef: "publish", pg: this.publishingGranularity }});
+        this.router.navigate(['catalogue/categorysearch'], { queryParams: { pageRef: "publish", pg: this.publishingGranularity, productType: this.productType }});
     }
 
     onAddCustomProperty(event: Event, dismissModal: any) {

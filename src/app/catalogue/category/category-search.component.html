@@ -1,4 +1,9 @@
-<p class="pb-3 nimble-title">Publish Product</p>
+<div *ngIf="isLogistics">
+    <p class="pb-3 nimble-title">Publish Logistics Product</p> 
+</div>
+<div *ngIf="!isLogistics">
+    <p class="pb-3 nimble-title">Publish Product</p>
+</div>
 <p>All published products must belong to at least one category, which will describe the product and help customers find your offering.</p>
 <div class="form-group row d-flex">
     <div class="col-12 inline">
@@ -34,7 +39,7 @@
                 <thead class="thead-light fixed">
                     <th scope="col" style="color: #000;">Classification</th>
                     <th scope="col" style="color: #000;">Name</th>
-                    <th scope="col" colspan="2" class="p-0"><button class="btn btn-secondary mb-1" (click)="toggleTreeView()">Browse</button></th>
+                    <th scope="col" colspan="2" class="p-0 text-right"><button class="btn btn-secondary mb-1" (click)="toggleTreeView()">Browse</button></th>
                 </thead>
                 <tbody>
                     <tr *ngIf="callback && !submitted && (!categories || categories.length == 0)">
@@ -70,12 +75,12 @@
                 </div>
             </div>
             <div *ngIf="rootCategories">
-                <div class="d-flex flex-column" style="height: 400px">
-                    <div *ngIf="showBothCategories || isLogistics()" class="mb-3">
+                <div class="d-flex flex-column" style="height: 100px">
+                    <div *ngIf="isLogistics" class="mb-3">
                         <h4 class="p-2">Logistics Categories</h4>
                         <category-tree [category]="eClassLogisticsCategory" [border]="false" [parentCategories]="parentCategories" (detailsEvent)="getCategoryDetails($event)" [selectedCategory]="selectedCategory" [selectedCategories]="selectedCategories"></category-tree>
                     </div>
-                    <div *ngIf="showBothCategories || !isLogistics()">
+                    <div *ngIf="!isLogistics">
                         <h4 class="p-2">Product Categories</h4>
                         <div *ngFor="let rootCategory of rootCategories">
                             <category-tree [category]="rootCategory" [parentCategories]="parentCategories" (detailsEvent)="getCategoryDetails($event)" [selectedCategory]="selectedCategory" [selectedCategories]="selectedCategories"></category-tree>

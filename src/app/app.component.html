@@ -31,10 +31,18 @@
 					<i class="fa fa-list-ul"></i> <span i18n>Dashboard</span>
 				</a>
 			</li>
-			<li class="nav-item" *ngIf="checkRoles('catalogue')" routerLinkActive="active">
-				<a class="nav-link" [routerLink]="['/catalogue/categorysearch']" [queryParams]="{pageRef: 'menu'}">
+			<li ngbDropdown class="nav-item dropdown" *ngIf="checkRoles('catalogue')" routerLinkActive="active">
+				<a class="nav-link pointer" id="dropdownMenuPublish" ngbDropdownToggle>
 					<i class="fa fa-arrow-up"></i> <span i18n>Publish</span>
 				</a>
+				<div class="dropdown-menu" aria-labelledby="dropdownMenuPublish" ngbDropdownMenu>
+					<a class="dropdown-item" [routerLink]="['/catalogue/categorysearch']" [queryParams]="{pageRef: 'menu', productType: 'product'}" routerLinkActive="active">
+						<i class="fa fa-shopping-cart dd-icon"></i> Product
+					</a>
+					<a class="dropdown-item" [routerLink]="['/catalogue/categorysearch']" [queryParams]="{pageRef: 'menu', productType: 'transportation'}" routerLinkActive="active">
+						<i class="fa fa-truck dd-icon"></i> Logistics Service
+					</a>
+				</div>
 			</li>
 
 			<!--

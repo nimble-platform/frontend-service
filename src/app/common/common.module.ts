@@ -12,6 +12,7 @@ import { AmountInputComponent } from './amount-input.component';
 import { FileInputComponent } from './file-input.component';
 import { DateInputComponent } from './date-input.component';
 import { AddressInputComponent } from './address-input.component';
+import { BooleanInputComponent } from './boolean-input.component';
 
 @NgModule({
 	imports: [
@@ -29,7 +30,8 @@ import { AddressInputComponent } from './address-input.component';
 		AmountInputComponent,
 		FileInputComponent,
 		DateInputComponent,
-		AddressInputComponent
+		AddressInputComponent,
+		BooleanInputComponent
 	],
 	exports: [
 		CallStatusComponent,
@@ -39,7 +41,8 @@ import { AddressInputComponent } from './address-input.component';
 		AmountInputComponent,
 		FileInputComponent,
 		DateInputComponent,
-		AddressInputComponent
+		AddressInputComponent,
+		BooleanInputComponent
 	],
 	providers: [
 	]

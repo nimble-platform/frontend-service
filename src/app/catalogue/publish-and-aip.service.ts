@@ -7,7 +7,6 @@ export class PublishService {
     publishingStarted: boolean = false;
     publishedProductNature: string = "Regular product"; // or Transportation service
     propertyBlockCollapsedStates: Map<string, boolean> = new Map<string, boolean>();
-    isLogisticsProduct: boolean;
 
     getCollapsedStates(): any {
         return this.propertyBlockCollapsedStates;

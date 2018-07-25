@@ -19,6 +19,7 @@ import { sortCategories } from "../../common/utils";
 import { PropertyValueQualifier } from "../model/publish/property-value-qualifier";
 import { Property } from "../model/category/property";
 import { AppComponent } from "../../app.component";
+type ProductType = "product" | "transportation";
 
 @Component({
     selector: 'category-search',
@@ -57,12 +58,12 @@ export class CategorySearchComponent implements OnInit {
     propertyNames: string[] = ["code", "taxonomyId", "level", "definition", "note", "remark"];
     taxonomyId: string = "eClass";
 
-    showBothCategories: boolean = true;
+    isLogistics: boolean;
     eClassLogisticsCategory: Category = null;
-    logisticsCodes: string[] = ["14", "Logistics"]
 
     showOtherProperties = null;
     callStatus: CallStatus = new CallStatus();
+    productType: ProductType;
 
     constructor(private router: Router,
                 private route: ActivatedRoute,
@@ -79,6 +80,10 @@ export class CategorySearchComponent implements OnInit {
 
             // current page regs considered: menu, publish, null
             this.pageRef = params['pageRef'];
+
+            //set product type
+            this.productType = params["productType"] === "transportation" ? "transportation" : "product";
+            this.isLogistics = (this.productType === "transportation");
 
             // This part is necessary since only the params has changes,canDeactivate method will not be called.
             if(this.inPublish == true && this.pageRef == 'menu'){
@@ -168,6 +173,7 @@ export class CategorySearchComponent implements OnInit {
         this.submitted = true;
         this.error_detc = false;
 
+        // TODO: add second parameter to specify if search is for logistics
         this.categoryService.getCategoriesByName(this.categoryKeyword)
             .then(categories => {
                 this.categories = categories;
@@ -193,7 +199,6 @@ export class CategorySearchComponent implements OnInit {
         if(this.selectedCategoryWithDetails && category && this.selectedCategoryWithDetails.id == category.id){
             this.categoryService.addSelectedCategory(category);
             this.selectedCategories.push(category);
-            this.addLogistics(category);
             this.callback = true;
             this.submitted = false;
             return;
@@ -203,7 +208,6 @@ export class CategorySearchComponent implements OnInit {
             .then(category => {
                 this.categoryService.addSelectedCategory(category);
                 this.selectedCategories.push(category);
-                this.addLogistics(category);
                 this.callback = true;
                 this.submitted = false;
                 return;
@@ -220,7 +224,7 @@ export class CategorySearchComponent implements OnInit {
             ProductPublishComponent.dialogBox = true;
             // set isReturnPublish in order not to show confirmation popup
             this.isReturnPublish = true;
-            this.router.navigate(['catalogue/publish'], {queryParams: {pg: this.publishingGranularity}});
+            this.router.navigate(['catalogue/publish'], {queryParams: {pg: this.publishingGranularity, productType: this.productType}});
         }).catch(() => {
             this.navigating = false;
             this.error_detc = true;
@@ -235,7 +239,6 @@ export class CategorySearchComponent implements OnInit {
             if(searchIndex > -1) {
                 this.selectedCategories.splice(searchIndex, 1);
             }
-            this.removeLogistics(category);
         }
     }
 
@@ -296,31 +299,6 @@ export class CategorySearchComponent implements OnInit {
 
     getPropertyType(property: Property): string {
         return sanitizeDataTypeName(property.dataType);
-    }
-
-    addLogistics(category: Category): void {
-        if(category.code.startsWith(this.logisticsCodes[0]) ||
-            category.code.startsWith(this.logisticsCodes[1])) {
-            this.showBothCategories = false;
-            this.publishService.isLogisticsProduct = true;
-        } else {
-            this.showBothCategories = false;
-            this.publishService.isLogisticsProduct = false;
-        }
-    }
-
-    removeLogistics(category: Category): void {
-        if(this.selectedCategories.length === 0) {
-            this.showBothCategories = true;
-            if(category.code.startsWith(this.logisticsCodes[0]) ||
-                category.code.startsWith(this.logisticsCodes[1])) {
-                    this.publishService.isLogisticsProduct = false
-            }
-        }
-    }
-
-    isLogistics(): boolean {
-        return this.publishService.isLogisticsProduct;
     }
 
     private findCategoryInArray(categoryArray: Category[], category: Category): number {
