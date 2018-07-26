@@ -135,7 +135,7 @@ export class CategorySearchComponent implements OnInit {
         this.parentCategories = null;
         this.selectedCategoryWithDetails=null;
         this.treeView = false;
-        this.router.navigate(['/catalogue/categorysearch'], {queryParams: {pg: this.publishingGranularity, pageRef: this.pageRef, cat: this.categoryKeyword}});
+        this.router.navigate(['/catalogue/categorysearch'], {queryParams: {pg: this.publishingGranularity, pageRef: this.pageRef, cat: this.categoryKeyword, productType: this.productType}});
     }
 
     toggleTreeView(): void {
@@ -173,8 +173,7 @@ export class CategorySearchComponent implements OnInit {
         this.submitted = true;
         this.error_detc = false;
 
-        // TODO: add second parameter to specify if search is for logistics
-        this.categoryService.getCategoriesByName(this.categoryKeyword)
+        this.categoryService.getCategoriesByName(this.categoryKeyword, this.isLogistics)
             .then(categories => {
                 this.categories = categories;
                 this.callback = true;
