@@ -1,0 +1,61 @@
+<!-- view and singlevalue mode -->
+<div *ngIf="presentationMode == 'view' || presentationMode == 'singlevalue'" class="row {{ rowClass }}">
+    <div *ngIf="label" [class]="labelClass">
+        <label class="{{labelMainClass}}">
+            <strong>
+                {{ label }}:
+            </strong>
+            <span *ngIf="definition" class="definition" title="{{definition}}">&#9432;</span>
+        </label>
+    </div>
+    <select *ngIf="address.length > 1"
+            class="custom-select">
+        <option *ngFor="let value of address">{{value.country.name}}</option>
+    </select>
+
+    <input *ngIf="address.length == 1"
+            class="form-control"
+            type="text"
+            [(ngModel)]="address[0].country.name"
+            readonly>
+
+    <input *ngIf="address.length == 0"
+            class="form-control"
+            type="text"
+            readonly>
+
+    <!--<label>City</label>
+    <select *ngIf="address.length > 0"
+            class="custom-select">
+        <option *ngFor="let value of address">{{value.cityName}}</option>
+    </select>-->
+</div>
+    
+<!-- edit mode -->
+<div *ngIf="presentationMode == 'edit'">
+    <div *ngFor="let addr of address; let i = index;" class="row {{ rowClass }}">
+        <div *ngIf="label" [class]="labelClass">
+            <label *ngIf="i < 1" class="{{labelMainClass}}">
+                <strong>
+                    {{ label }}:
+                </strong>
+                <span *ngIf="definition" class="definition" title="{{definition}}">&#9432;</span>
+            </label>
+        </div>
+        <div [class]="valueClass" class="input-group" *ngIf="presentationMode === 'edit'">
+            <input type="text" class="form-control {{valueTextClass}}"
+                    [(ngModel)]="addr.country.name">
+
+            <!-- remove value button -->
+            <span *ngIf="address.length > 1 && multiValue">
+                <button class="btn btn-xs btn-danger" (click)="removeValue(i)">&times;
+                </button>
+            </span>
+
+            <!-- add value button -->
+            <span *ngIf="i == address.length - 1 && multiValue">
+                <button class="btn btn-primary btn-xs" (click)="addNewValue()"><strong>+</strong></button>
+            </span>
+        </div>
+    </div>
+</div>
