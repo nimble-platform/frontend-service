@@ -6,6 +6,7 @@ import { Category } from "../catalogue/model/category/category";
 import { Property } from "../catalogue/model/category/property";
 import { PropertyValueQualifier } from "../catalogue/model/publish/property-value-qualifier";
 import { CUSTOM_PROPERTY_LIST_ID } from "../catalogue/model/constants";
+import { CatalogueLine } from "../catalogue/model/publish/catalogue-line";
 
 const UI_NAMES: any = {
     STRING: "TEXT"
@@ -156,4 +157,8 @@ export function getPropertyValuesAsStrings(property: ItemProperty): string[] {
         case "BOOLEAN":
             return property.value;
     }
+}
+
+export function isTransportService(product: CatalogueLine): boolean {
+    return product && !!product.goodsItem.item.transportationServiceDetails;
 }
