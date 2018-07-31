@@ -5,6 +5,7 @@ import {Router} from "@angular/router";
 import {PublishService} from "../../publish-and-aip.service";
 import {CategoryService} from "../../category/category.service";
 import { ProductWrapper } from "../../../common/product-wrapper";
+import {Item} from '../../model/publish/item';
 
 @Component({
     selector: 'catalogue-line-panel',
@@ -22,8 +23,8 @@ export class CatalogueLinePanelComponent {
 
     productWrapper: ProductWrapper;
 
-    defaultLanguage : string = "en";
-    
+    public defaultLanguage : string = "en";
+
     constructor(private catalogueService: CatalogueService,
                 private categoryService: CategoryService,
                 private publishService: PublishService,
@@ -32,6 +33,16 @@ export class CatalogueLinePanelComponent {
 
     ngOnInit() {
         this.productWrapper = new ProductWrapper(this.catalogueLine);
+    }
+
+    public selectDescription(item: Item) {
+        for (let pName of item.description) {
+            if(pName.languageID === this.defaultLanguage) {
+                return pName.value;
+            }
+        }
+
+        return item.description[0].value;
     }
 
     redirectToEdit() {

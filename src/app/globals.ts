@@ -9,7 +9,7 @@ export const debug = false;
 
 export const base_path = "http://nimble-staging.salzburgresearch.at";
 export const ub_base = "http://nimble-staging.salzburgresearch.at/search";
-export const simple_search_endpoint="http://nimble-staging.salzburgresearch.at/marmotta/solr/catalogue2";
+export const simple_search_endpoint="http://nimble-staging.salzburgresearch.at/marmotta/solr/catalogue_multilang";
 export const pw_reset_link = "http://nimble-staging.salzburgresearch.at:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
 
 
