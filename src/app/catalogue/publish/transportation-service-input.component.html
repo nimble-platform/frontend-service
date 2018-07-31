@@ -31,6 +31,13 @@
 </text-input>
 <hr>
 <h5 class="my-2">Applicable Countries</h5>
+<multi-address-input [presentationMode]="presentationMode"
+[label]="'Applicable Countries'"
+[multiValue]="true"
+[definition]="'A reference to countries to which this service will apply'"
+[address]="catalogueLine.requiredItemLocationQuantity.applicableTerritoryAddress"
+valueTextClass="form-control-sm" valueClass="col-9 input-group" rowClass="my-3">
+</multi-address-input>
 <hr>
 <h5 class="my-2">Shipment Stage</h5>
 <text-input [label]="'Transportation Mode'"

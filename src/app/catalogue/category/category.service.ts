@@ -19,8 +19,8 @@ export class CategoryService {
     constructor(private http: Http) {
     }
 
-    getCategoriesByName(keywords: string): Promise<Category[]> {
-        const url = `${this.baseUrl}?categoryNames=${keywords}`;
+    getCategoriesByName(keywords: string, isLogistics: boolean): Promise<Category[]> {
+        const url = `${this.baseUrl}?categoryNames=${keywords}&forLogistics=${isLogistics}`;
         return this.http
             .get(url, {headers: this.headers})
             .toPromise()
