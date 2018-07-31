@@ -50,7 +50,7 @@ import {MonetaryTotal} from "./publish/monetary-total";
 import { NegotiationOptions } from "./publish/negotiation-options";
 import { PAYMENT_MEANS, CURRENCIES } from "./constants";
 import { TradingTerm } from "./publish/trading-term";
-import { copy } from "../../common/utils";
+import {copy, selectPreferredName} from '../../common/utils';
 import {Text} from "./publish/text";
 
 /**
@@ -58,6 +58,7 @@ import {Text} from "./publish/text";
  */
 export class UBLModelUtils {
 
+    static defaultLanguage = "en";
     /**
      * Create a property based on the given property and category parameters.
      *
@@ -74,20 +75,20 @@ export class UBLModelUtils {
      */
     public static createAdditionalItemProperty(property: Property, category: Category): ItemProperty {
         const code: Code = category 
-            ? new Code(category.id, category.preferredName, category.categoryUri, category.taxonomyId, null) 
+            ? new Code(category.id, selectPreferredName(category), category.categoryUri, category.taxonomyId, null)
             : new Code(null, null, null, "Custom", null);
 
         if (property == null) {
             return new ItemProperty(this.generateUUID(), new Text(""), [], [], [],
                 new Array<BinaryObject>(), "STRING", code, null);
         }
-        return new ItemProperty(property.id, new Text(property.preferredName),
+        return new ItemProperty(property.id, new Text(selectPreferredName(property), this.defaultLanguage),
             property.dataType === "BOOLEAN" ? ["false"] : [], [], [], 
             new Array<BinaryObject>(), property.dataType, code, property.uri);
     }
 
     public static createCommodityClassification(category: Category): CommodityClassification {
-        let code: Code = new Code(category.id, category.preferredName, category.categoryUri, category.taxonomyId, null);
+        let code: Code = new Code(category.id, selectPreferredName(category), category.categoryUri, category.taxonomyId, null);
         let commodityClassification = new CommodityClassification(code, null, null, "");
         return commodityClassification;
     }

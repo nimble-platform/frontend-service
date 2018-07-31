@@ -6,6 +6,7 @@ import {CallStatus} from "../../../common/call-status";
 import {ActivatedRoute, Params, Router} from "@angular/router";
 import {PublishService} from "../../publish-and-aip.service";
 import {CategoryService} from "../../category/category.service";
+import {Item} from '../../model/publish/item';
 
 @Component({
     selector: 'catalogue-view',
@@ -46,6 +47,8 @@ export class CatalogueViewComponent implements OnInit {
     // default
     pageSize = 10;
 
+    public defaultLanguage : string = "en";
+
     // check whether catalogue-line-panel should be displayed for a specific catalogue line
     catalogueLineView = {};
 
@@ -59,6 +62,26 @@ export class CatalogueViewComponent implements OnInit {
             forceUpdate = params['forceUpdate'] == "true";
             this.requestCatalogue(forceUpdate);
         });
+    }
+
+    public selectName(item: Item) {
+        for (let pName of item.name) {
+            if(pName.languageID === this.defaultLanguage) {
+                return pName.value;
+            }
+        }
+
+        return item.name[0].value;
+    }
+
+    public selectDescription(item: Item) {
+        for (let pName of item.description) {
+            if(pName.languageID === this.defaultLanguage) {
+                return pName.value;
+            }
+        }
+
+        return item.description[0].value;
     }
 
     public requestCatalogue(forceUpdate:boolean): void {
@@ -187,8 +210,8 @@ export class CatalogueViewComponent implements OnInit {
         let i = 0;
         let len = this.catalogueLinesWRTTypes.length;
         for(;i<len;i++){
-            if(RE.test(this.catalogueLinesWRTTypes[i].goodsItem.item.name[0].value+" "+
-                    this.catalogueLinesWRTTypes[i].goodsItem.item.description[0].value)) {
+            if(RE.test(this.selectName(this.catalogueLinesWRTTypes[i].goodsItem.item)+" "+
+                    this.selectDescription(this.catalogueLinesWRTTypes[i].goodsItem.item))) {
                 answer.push(this.catalogueLinesWRTTypes[i]);
             }
         }

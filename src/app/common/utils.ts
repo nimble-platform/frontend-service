@@ -34,12 +34,23 @@ function isItemProperty(property: any): property is ItemProperty {
     return !!property.name.value; // preferredName for Property
 }
 
+export function selectPreferredName (cp: Category | Property) {
+    let defaultLanguage = "en";
+    for (let pName of cp.preferredName) {
+        if(pName.languageID === defaultLanguage) {
+            return pName.value;
+        }
+    }
+
+    return this.preferredName[0].value;
+}
+
 export function getPropertyKey(property: Property | ItemProperty): string {
     if(isItemProperty(property)) {
         return property.name.value + "___" + property.valueQualifier;
     }
-    // Property
-    return property.preferredName + "___" + property.dataType;
+
+    return selectPreferredName(property) + "___" + property.dataType;
 }
 
 export function quantityToString(quantity: Quantity): string {
@@ -109,11 +120,13 @@ export function currencyToString(currencyId: string): string {
 }
 
 export function sortCategories(categories: Category[]): Category[] {
-    return categories.sort((a, b) => a.preferredName.localeCompare(b.preferredName));
+    let defaultLanguage = "en";
+    return categories.sort((a, b) => selectPreferredName(a).localeCompare(selectPreferredName(b)));
 }
 
 export function sortProperties(properties: Property[]): Property[] {
-    return properties.sort((a, b) => a.preferredName.localeCompare(b.preferredName));
+    let defaultLanguage = "en";
+    return properties.sort((a, b) => selectPreferredName(a).localeCompare(selectPreferredName(b)));
 }
 
 export function scrollToDiv(divId: string): void {

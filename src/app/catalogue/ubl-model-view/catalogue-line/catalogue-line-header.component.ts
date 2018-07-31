@@ -2,6 +2,7 @@ import {Component, Input, ViewChild} from "@angular/core";
 import {CatalogueLine} from "../../model/publish/catalogue-line";
 import {FormGroup, NgForm} from "@angular/forms";
 import {BinaryObject} from "../../model/publish/binary-object";
+import {Item} from '../../model/publish/item';
 /**
  * Created by suat on 24-Oct-17.
  */
@@ -25,12 +26,34 @@ export class CatalogueLineHeaderComponent {
     // after first three custom properties,check whether the rest is visible or not
     showOtherCustomProperties = false;
 
+    public defaultLanguage: string = "en";
+
     toggleCollapsed(blockName:string):void {
         this.propertyBlockCollapsedStates.set(blockName, !this.propertyBlockCollapsedStates.get(blockName));
     }
 
     trackByIndex(index: any, item: any) {
         return index;
+    }
+
+    public selectName(item: Item) {
+        for (let pName of item.name) {
+            if(pName.languageID === this.defaultLanguage) {
+                return pName.value;
+            }
+        }
+
+        return item.name[0].value;
+    }
+
+    public selectDescription(item: Item) {
+        for (let pName of item.description) {
+            if(pName.languageID === this.defaultLanguage) {
+                return pName.value;
+            }
+        }
+
+        return item.description[0].value;
     }
 
     private addImage(event: any) {

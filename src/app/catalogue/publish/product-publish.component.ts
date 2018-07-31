@@ -17,7 +17,17 @@ import { CookieService } from "ng2-cookies";
 import { Category } from "../model/category/category";
 import { BinaryObject } from "../model/publish/binary-object";
 import { Code } from "../model/publish/code";
-import { getPropertyKey, sortCategories, sortProperties, sanitizeDataTypeName, sanitizePropertyName, copy, isCustomProperty, getPropertyValuesAsStrings } from "../../common/utils";
+import {
+    getPropertyKey,
+    sortCategories,
+    sortProperties,
+    sanitizeDataTypeName,
+    sanitizePropertyName,
+    copy,
+    isCustomProperty,
+    getPropertyValuesAsStrings,
+    selectPreferredName
+} from '../../common/utils';
 import { Property } from "../model/category/property";
 import { ProductWrapper } from "../../common/product-wrapper";
 import { EditPropertyModalComponent } from "./edit-property-modal.component";
@@ -133,6 +143,10 @@ export class ProductPublishComponent implements OnInit {
                 this.publishingGranularity = 'single';
             }
         });
+    }
+
+    getPreferredName(cp: Category | Property) {
+        return selectPreferredName(cp);
     }
 
     /*

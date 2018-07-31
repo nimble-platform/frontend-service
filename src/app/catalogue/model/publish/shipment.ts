@@ -16,4 +16,14 @@ export class Shipment {
         public transportHandlingUnit: TransportHandlingUnit[] = [new TransportHandlingUnit()],
         public originAddress: Address = new Address(),
     ) {  }
+
+    selectHandlingInstructions(languageID: string): string {
+        for (let pName of this.handlingInstructions) {
+            if(pName.languageID === languageID) {
+                return pName.value;
+            }
+        }
+
+        return this.handlingInstructions[0].value;
+    }
 }

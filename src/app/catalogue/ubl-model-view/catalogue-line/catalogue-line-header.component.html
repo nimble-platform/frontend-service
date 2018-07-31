@@ -25,17 +25,17 @@
                     [propName]="'Product Name'"
                     [parentForm]="parentForm"
                     [mandatory]="true"
-                    [(value)]="catalogueLine.goodsItem.item.name[0].value">
+                    (value)="selectName(catalogueLine.goodsItem.item)">
         </value-view>
         <value-view *ngIf="presentationMode == 'edit'" [presentationMode]="'edit'"
                     [propName]="'Product Description'"
-                    [(value)]="catalogueLine.goodsItem.item.description[0].value"
+                    (value)="selectDescription(catalogueLine.goodsItem.item)"
                     [largeInput]="true">
         </value-view>
-        <textarea *ngIf="presentationMode != 'edit' && catalogueLine.goodsItem.item.description[0].value" class="form-control mb-2"
+        <textarea *ngIf="presentationMode != 'edit' && selectDescription(catalogueLine.goodsItem.item)" class="form-control mb-2"
                   rows="3"
                   style="margin-left: 15px"
-                  [(ngModel)]="catalogueLine.goodsItem.item.description[0].value"
+                  [ngModel]="selectDescription(catalogueLine.goodsItem.item)"
                   readonly>
         </textarea>
         <label class="col-4 mb-2" *ngIf="presentationMode != 'edit' && !catalogueLine.goodsItem.item.description[0].value">

@@ -16,4 +16,14 @@ export class DeliveryTerms {
         public deliveryLocation:Location = new Location(),
         public hjid: string = null
     ) {  }
+
+    selectSpecialTerms(languageID: string): string {
+        for (let pName of this.specialTerms) {
+            if(pName.languageID === languageID) {
+                return pName.value;
+            }
+        }
+
+        return this.specialTerms[0].value;
+    }
 }

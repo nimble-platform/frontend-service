@@ -24,7 +24,7 @@
                 i18n>Selected category:</h6>
             <div *ngFor="let selectedCategory of selectedCategories"
                     class="bordered inline space-right">
-                {{selectedCategory.preferredName}}
+                {{getPreferredName(selectedCategory)}}
                 <button class="btn btn-sm" (click)="onRemoveCategory(selectedCategory)">&times;</button>
             </div>
             <div (click)="onAddCategory()"
@@ -93,7 +93,7 @@
         <div class="col-10 object-list">
             <div *ngFor="let selectedCategory of selectedCategories"
                 class="bordered my-1 ml-1" title="{{selectedCategory.taxonomyId}}">
-                <small class="p-0">{{selectedCategory.preferredName}}</small>
+                <small class="p-0">{{getPreferredName(selectedCategory)}}</small>
                 <i class="fa fa-times-circle pl-1" placement="right" (click)="onRemoveCategory(selectedCategory)"></i>
             </div>
             <button class="btn btn-outline-primary btn-add-category" 
@@ -341,7 +341,7 @@
                 </div>
                 <div class="modal-category" *ngFor="let category of selectedCategories; let i = index">
                     <hr *ngIf="i > 0">
-                    <h5>{{ category.preferredName }}</h5>
+                    <h5>{{ getPreferredName(category) }}</h5>
                     <div class="row">
                         <ng-container *ngFor="let property of getCategoryProperties(category)">
                             <div class="col-6 form-check modal-category-property" *ngIf="isPropertyFilteredIn(property)">

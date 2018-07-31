@@ -31,7 +31,7 @@ export class CategoryService {
     }
 
     getCategoriesByIds(codes: Code[]): Promise<Category[]> {
-        if(!codes) {
+        if (!codes) {
             return Promise.resolve([]);
         }
 

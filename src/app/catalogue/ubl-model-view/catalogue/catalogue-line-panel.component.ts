@@ -21,6 +21,8 @@ export class CatalogueLinePanelComponent {
     @Output() showChange = new EventEmitter<boolean>();
 
     productWrapper: ProductWrapper;
+
+    defaultLanguage : string = "en";
     
     constructor(private catalogueService: CatalogueService,
                 private categoryService: CategoryService,

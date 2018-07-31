@@ -12,7 +12,7 @@ import {PublishService} from "../publish-and-aip.service";
 import {ProductPublishComponent} from "../publish/product-publish.component";
 import {UBLModelUtils} from "../model/ubl-model-utils";
 import {CallStatus} from '../../common/call-status';
-import {sanitizeDataTypeName} from '../../common/utils';
+import {sanitizeDataTypeName, selectPreferredName} from '../../common/utils';
 import {CategoryTreeComponent} from './category-tree.component';
 import { ParentCategories } from "../model/category/parent-categories";
 import { sortCategories } from "../../common/utils";
@@ -109,6 +109,10 @@ export class CategorySearchComponent implements OnInit {
             }
         });
         this.getRootCategories();
+    }
+
+    getPreferredName(cp: Category | Property) {
+        return selectPreferredName(cp);
     }
 
     canDeactivate():boolean{
