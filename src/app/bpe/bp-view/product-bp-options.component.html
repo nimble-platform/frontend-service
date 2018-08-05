@@ -18,25 +18,27 @@
     </product-details-tabs>
 
     <!-- BP Steps -->
-    <product-bp-steps *ngIf="processType !== 'Transport_Execution_Plan'" [currentStep]="currentStep" 
-        [status]="getStepsStatus()" [statusText]="getStepsStatusText()">
+    <product-bp-steps [currentStep]="currentStep" [status]="getStepsStatus()" 
+        [statusText]="getStepsStatusText()" [displayMode]="stepsDisplayMode">
     </product-bp-steps>
 
     <hr>
     
     <!-- Order Content -->
-    <item-information *ngIf="processType === 'Item_Information_Request'">
+    <item-information *ngIf="currentStep === 'Item_Information_Request' || currentStep === 'Transport_Information_Request'">
     </item-information>
-    <ppap *ngIf="processType === 'Ppap'">
+    <ppap *ngIf="currentStep === 'Ppap'">
     </ppap>
-    <negotiation *ngIf="processType === 'Negotiation'">
+    <negotiation *ngIf="currentStep === 'Negotiation'">
     </negotiation>
-    <order *ngIf="processType === 'Order'">
+    <transport-negotiation *ngIf="currentStep === 'Transport_Negotiation'">
+    </transport-negotiation>
+    <order *ngIf="currentStep === 'Order' || currentStep === 'Order_Confirmed'">
     </order>
-    <fulfilment *ngIf="processType === 'Fulfilment'">
+    <transport-execution-plan *ngIf="currentStep === 'Transport_Order' || currentStep === 'Transport_Order_Confirmed'">
+    </transport-execution-plan>
+    <fulfilment *ngIf="currentStep === 'Fulfilment'">
     </fulfilment>
-    <transport-execution-plan-bp *ngIf="processType === 'Transport_Execution_Plan'">
-    </transport-execution-plan-bp>
 </ng-container>
 
 <!-- Loading Icon -->

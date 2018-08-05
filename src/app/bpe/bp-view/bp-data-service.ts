@@ -266,6 +266,27 @@ export class BPDataService{
         });
     }
 
+    initRfqForTransportationWithOrder(): Promise<void> {
+        this.setBpMessages('Order', this.searchContextService.associatedProcessMetadata);
+
+        this.requestForQuotation = UBLModelUtils.createRequestForQuotationWithOrder(
+            copy(this.order),
+            copy(this.catalogueLines[0])
+        );
+
+        let userId = this.cookieService.get('user_id');
+        return this.userService.getSettings(userId).then(settings => {
+            // we can't copy because those are 2 different types of addresses.
+            const lineItem = this.requestForQuotation.requestForQuotationLine[0].lineItem;
+            const address = lineItem.deliveryTerms.deliveryLocation.address;
+            address.country.name = settings.address.country;
+            address.postalZone = settings.address.postalCode;
+            address.cityName = settings.address.cityName;
+            address.buildingNumber = settings.address.buildingNumber;
+            address.streetName = settings.address.streetName;
+        });
+    }
+
     initRfqWithIir(): void {
         let copyIir:ItemInformationResponse = copy(this.itemInformationResponse);
         this.resetBpData();

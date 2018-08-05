@@ -17,10 +17,6 @@
     background-color: #e9ecef;
 }
 
-label .definition {
-    margin-left: 0.4rem;
-}
-
 .file-link-row {
     display: flex;
     justify-content: space-between;

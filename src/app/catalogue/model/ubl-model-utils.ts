@@ -256,7 +256,7 @@ export class UBLModelUtils {
 
     public static getDefaultPaymentTerms(): PaymentTerms {
         return new PaymentTerms([], [
-            new TradingTerm("Payment_In_Advance","Payment in advance","PIA",["false"]),
+            new TradingTerm("Payment_In_Advance","Payment in advance","PIA",["true"]),
             // new TradingTerm("Values_Net","e.g.,NET 10,payment 10 days after invoice date","Net %s",[null]),
             new TradingTerm("End_of_month","End of month","EOM",["false"]),
             new TradingTerm("Cash_next_delivery","Cash next delivery","CND",["false"]),

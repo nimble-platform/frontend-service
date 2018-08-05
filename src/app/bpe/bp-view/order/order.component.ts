@@ -23,6 +23,7 @@ import { Party } from "../../../catalogue/model/publish/party";
 import { DocumentClause } from "../../../catalogue/model/publish/document-clause";
 import { Quotation } from "../../../catalogue/model/publish/quotation";
 import { Address } from "../../../catalogue/model/publish/address";
+import { SearchContextService } from "../../../simple-search/search-context.service";
 
 /**
  * Created by suat on 20-Sep-17.
@@ -57,6 +58,7 @@ export class OrderComponent implements OnInit {
                 private userService: UserService,
                 private bpeService: BPEService,
                 private cookieService: CookieService,
+                private searchContextService: SearchContextService,
                 private location: Location,
                 private router: Router) {
 
@@ -212,6 +214,20 @@ export class OrderComponent implements OnInit {
 
     onDispatchOrder() {
         this.bpDataService.setBpOptionParameters(this.userRole, "Fulfilment", "Order");
+    }
+
+    onSearchTransportService() {
+        this.searchContextService.targetPartyRole = 'Transport Service Provider';
+        this.searchContextService.associatedProcessType = 'Order';
+        this.searchContextService.associatedProcessMetadata = this.bpDataService.processMetadata;
+        this.bpDataService.setBpOptionParameters('buyer', 'Transport_Execution_Plan',"Order");
+        this.router.navigate(['simple-search'], {
+            queryParams: {
+                searchContext: 'orderbp', 
+                q:'*', 
+                cat:'Transport service'
+            }
+        });
     }
 
     /*

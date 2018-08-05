@@ -1,109 +1,98 @@
-<ng-container *ngIf="bpDataService.transportExecutionPlanRequest">
+<!-- Consolidated Shipment -->
+<div class="row">
+    <div class="col-12">
+        <h4>Consolidated Shipment</h4>
 
-    <div class="well">
-        <h6>Consolidated Shipment</h6>
-        <value-view [presentationMode]="bpDataService.processMetadata == null ? 'edit' : 'singlevalue'"
-                    [propName]="'Goods Item'"
-                    [definition]="'A goods item included in this shipment'"
-                    [(value)]="transportExecutionPlanRequest.consignment[0].consolidatedShipment[0].goodsItem[0].item.name">
+        <!-- Goods Item -->
+        <text-input presentationMode="view" label="Goods Item" definition="The goods item included in this shipment"
+            [(text)]="request.consignment[0].consolidatedShipment[0].goodsItem[0].item.name" labelClass="col-2" valueClass="col-10">
+        </text-input>
 
-        </value-view>
+        <!-- Gross Volume -->
+        <quantity-input label="Gross Volume" definition="The total volume of the goods in this shipment, including packaging, e.g.: Quantity: 78, Unit: L"
+            [quantity]="request.consignment[0].grossVolumeMeasure" quantityType="volume_quantity" labelClass="col-2" valueClass="col-10">
+        </quantity-input>
 
-        <quantity-view [presentationMode]="bpDataService.processMetadata == null ? 'edit' : 'singlevalue'"
-                       [propName]="'Gross Volume Measure'"
-                       [type]="'volume_quantity'"
-                       [definition]="'The total volume of the goods in this shipment, including packaging,e.g.,Quantity:78,Unit:MTQ'"
-                       [quantity]="[transportExecutionPlanRequest.consignment[0].grossVolumeMeasure]">
-        </quantity-view>
+        <!-- Gross Weight -->
+        <quantity-input label="Gross Weight" definition="The total gross weight of a shipment; the weight of the goods plus packaging plus transport equipment,e.g. Quantity: 12, Unit: kg"
+            [quantity]="request.consignment[0].grossWeightMeasure" quantityType="weight_quantity" rowClass="space-before" labelClass="col-2" valueClass="col-10">
+        </quantity-input>
 
-        <quantity-view [presentationMode]="bpDataService.processMetadata == null ? 'edit' : 'singlevalue'"
-                       [propName]="'Gross Weight Measure'"
-                       [type]="'weight_quantity'"
-                       [definition]="'The total gross weight of a shipment; the weight of the goods plus packaging plus transport equipment,e.g.,Quantity:12,Unit:KGM'"
-                       [quantity]="[transportExecutionPlanRequest.consignment[0].grossWeightMeasure]">
-        </quantity-view>
-
-        <shipment-view [showCarrierPartyDetails]="bpDataService?.userRole != 'buyer'"
-                       [shipment]="transportExecutionPlanRequest.consignment[0].consolidatedShipment[0]"
-                       [presentationMode]="bpDataService.processMetadata == null ? 'edit' : 'view'">
-        </shipment-view>
+        <!-- Handling Instructions -->
+        <!-- TODO change with <shipment-input> -->
+        <text-input label="Handling Instructions" definition="The handling required for this shipment"
+            [(text)]="request.consignment[0].consolidatedShipment[0].handlingInstructions" rowClass="space-before" labelClass="col-2" valueClass="col-10">
+        </text-input>
     </div>
+</div>
 
-    <div class="well">
-        <h6>Execution Plan</h6>
-        <value-view *ngIf="bpDataService.processMetadata != null"
-                    [presentationMode]="'view'"
-                    [propName]="'Service Start Date'"
-                    [definition]="'The period within which the services referred to in the Transport Execution Plan Request must begin.'"
-                    [(value)]="transportExecutionPlanRequest.serviceStartTimePeriod.startDate">
-        </value-view>
+<hr>
 
-        <ng-container *ngIf="bpDataService.processMetadata == null">
-            <div class="input-group space-after">
-                <label class="col-3">Service Start Date
-                    <span class="label label-default" title="'The period within which the services referred to in the Transport Execution Plan Request must begin.'">
-                            &#9432;
-                    </span>
-                </label>
-                <input class="form-control" placeholder="YYYY-MM-DD" (dateSelect)="transportExecutionPlanRequest.serviceStartTimePeriod.startDate = getDate('Start')"
-                       name="dp" [(ngModel)]="startDate" ngbDatepicker #d="ngbDatepicker" readonly>
-                <div class="input-group-append">
-                    <button class="btn btn-outline-secondary" (click)="d.toggle()" type="button">
-                        <i class="fa fa-calendar-alt pointer" style="width: 1.2rem; height: 1rem;"></i>
-                    </button>
-                </div>
-            </div>
-        </ng-container>
+<!-- Dates -->
+<div class="row">
+    <div class="col-12">
+        <h4>Pick-up Dates</h4>
+        <!-- Service Start Date -->
+        <date-input label="Minimum Date" definition="The period within which the services referred to in the Transport Execution Plan Request must begin."
+            [(date)]="request.serviceStartTimePeriod.startDate" rowClass="space-before" labelClass="col-2" valueClass="col-10">
+        </date-input>
 
-        <value-view *ngIf="bpDataService.processMetadata != null"
-                    [presentationMode]="'view'"
-                    [propName]="'Service End Date'"
-                    [definition]="'The period during which the services referred to in the Transport Execution Plan Request must be completed.'"
-                    [(value)]="transportExecutionPlanRequest.serviceEndTimePeriod.endDate">
-        </value-view>
-
-        <ng-container *ngIf="bpDataService.processMetadata == null">
-            <div class="input-group space-after">
-                <label class="col-3">Service End Date
-                    <span class="label label-default" title="'The period during which the services referred to in the Transport Execution Plan Request must be completed.'">
-                            &#9432;
-                    </span>
-                </label>
-                <input class="form-control" placeholder="YYYY-MM-DD" (dateSelect)="transportExecutionPlanRequest.serviceEndTimePeriod.endDate = getDate('End')"
-                       name="dp" [(ngModel)]="endDate" ngbDatepicker #d="ngbDatepicker" readonly>
-                <div class="input-group-append">
-                    <button class="btn btn-outline-secondary" (click)="d.toggle()" type="button">
-                        <i class="fa fa-calendar-alt pointer" style="width: 1.2rem; height: 1rem;"></i>
-                    </button>
-                </div>
-            </div>
-        </ng-container>
-
-        <detailed-address-view [propName]="'From Location'"
-                       [presentationMode]="bpDataService.processMetadata == null ? 'edit' : 'singlevalue'"
-                       [deliveryAddress]="transportExecutionPlanRequest.fromLocation.address"
-                       [fetchDefaultDeliveryAddress]="false">
-        </detailed-address-view>
-        <detailed-address-view [propName]="'To Location'"
-                       [presentationMode]="bpDataService.processMetadata == null ? 'edit' : 'singlevalue'"
-                       [deliveryAddress]="transportExecutionPlanRequest.toLocation.address"
-                       [fetchDefaultDeliveryAddress]="bpDataService.processMetadata == null && bpDataService.previousProcess == null">
-        </detailed-address-view>
+        <!-- Service End Date -->
+        <date-input label="Maximum Date" definition="The period during which the services referred to in the Transport Execution Plan Request must be completed."
+        [(date)]="request.serviceStartTimePeriod.endDate" rowClass="space-before" labelClass="col-2" valueClass="col-10">
+        </date-input>
     </div>
+</div>
 
-    <ng-container *ngIf="transportExecutionPlanRequest.transportContract && transportExecutionPlanRequest.transportContract?.clause.length > 0">
-        <contract [contract]="transportExecutionPlanRequest.transportContract">
+<hr>
 
-        </contract>
-    </ng-container>
+<!-- Origin Address -->
+<div class="row">
+    <div class="col-12">
+        <h4>Origin</h4>
+        <address-input [address]="request.fromLocation.address">
+        </address-input>
+    </div>
+</div>
 
+<hr>
 
-    <div class="d-flex justify-content-end">
-        <button *ngIf="bpDataService.userRole == 'buyer' && bpDataService.processMetadata == null" [disabled]="submitted"
-                class="btn btn-primary" (click)="sendTransportExecutionPlanRequest()">Send Execution Plan Terms
+<!-- To Address -->
+<div class="row">
+    <div class="col-12">
+        <h4>Destination</h4>
+        <address-input [address]="request.toLocation.address">
+        </address-input>
+    </div>
+</div>
+
+<hr>
+
+<!-- Note -->
+<text-input label="Request Note" [(text)]="request.note" labelClass="col-2" valueClass="col-10">
+</text-input>
+
+<hr>
+
+<!-- Contract -->
+<h4>Contract</h4>
+<ng-container *ngIf="request.transportContract && request.transportContract?.clause.length > 0">
+    <contract [contract]="request.transportContract">
+    </contract>
+</ng-container>
+
+<hr>
+
+<!-- Actions -->
+<div class="row actions-row">
+    <div class="col-3">TODO remove if submitted</div>
+    <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+    <div class="col-2">
+        <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">Back</button>
+    </div>
+    <div class="col-3">
+        <button class="btn btn-primary action" [disabled]="isLoading()" (click)="onSendRequest()">
+            Send Execution Plan Terms
         </button>
     </div>
-</ng-container>
-<call-status [callStatus]="callStatus"
-             [large]="true">
-</call-status>
+</div>

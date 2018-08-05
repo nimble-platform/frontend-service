@@ -139,18 +139,8 @@ export class NegotiationRequestComponent implements OnInit {
     }
 
     set requestedQuantity(quantity: number) {
-        // this.recomputeTotalPrice();
         this.rfq.requestForQuotationLine[0].lineItem.quantity.value = quantity;
     }
-
-    // get negotiatedPrice(): number {
-    //     return this.negotiatedPriceValue;
-    // }
-
-    // set negotiatedPrice(quantity: number) {
-    //     this.negotiatedPriceValue = quantity;
-    //     this.recomputeTotalPrice();
-    // }
 
     get negotiatePrice(): boolean {
         return this.rfq.negotiationOptions.price;
@@ -189,19 +179,4 @@ export class NegotiationRequestComponent implements OnInit {
     isWaitingForReply(): boolean {
         return this.bpDataService.processMetadata && this.bpDataService.processMetadata.processStatus === "Started";
     }
-
-    /*
-     * Internal methods
-     */
-
-    // private recomputeTotalPrice(): void {
-    //     if(!this.negotiatePrice) {
-    //         const price = this.wrapper.lineTotalPrice;
-    //         this.negotiatedPriceValue = price;
-    //         this.totalPrice = price;
-    //     } else {
-    //         this.totalPrice = this.negotiatedPriceValue;
-    //     }
-    //     this.wrapper.rfqPriceWrapper.totalPrice = this.totalPrice;
-    // }
 }

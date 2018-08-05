@@ -202,20 +202,25 @@
     </div>
     
     <div class="row actions-row" *ngIf="isOrderCompleted()">
-        <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+        <div class="col-3 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
         <div class="col-2">
             <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">
                 Back
             </button>
         </div>
-        <div class="col-3">
+        <div class="col-2">
             <button class="btn btn-secondary action" [disabled]="isLoading() || isOrderRejected()" (click)="onDownloadContact()">
                 Download Contract
             </button>
         </div>
         <div class="col-3">
+            <button class="btn btn-primary action" [disabled]="isLoading() || isOrderRejected()" (click)="onSearchTransportService()">
+                Search for Transport Service Provider
+            </button>
+        </div>
+        <div class="col-2">
             <button class="btn btn-primary action" [disabled]="isLoading() || isOrderRejected()" (click)="onDispatchOrder()">
-                Dispatch Order 
+                Dispatch Order
             </button>
         </div>
     </div>

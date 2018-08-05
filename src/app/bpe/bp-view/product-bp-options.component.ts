@@ -10,6 +10,8 @@ import { ProductWrapper } from "../../common/product-wrapper";
 import { BpWorkflowOptions } from "../model/bp-workflow-options";
 import { ProcessType } from "../model/process-type";
 import { ProductBpStep } from "./product-bp-step";
+import { ProductBpStepsDisplay } from "./product-bp-steps-display";
+import { isTransportService } from "../../common/utils";
 
 /**
  * Created by suat on 20-Oct-17.
@@ -22,6 +24,7 @@ import { ProductBpStep } from "./product-bp-step";
 export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     processType: ProcessType;
     currentStep: ProductBpStep;
+    stepsDisplayMode: ProductBpStepsDisplay;
     callStatus: CallStatus = new CallStatus();
     processTypeSubs: Subscription;
 
@@ -38,14 +41,15 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                 public catalogueService: CatalogueService, 
                 public route: ActivatedRoute,
                 private renderer: Renderer2) {
-                    this.renderer.setStyle(document.body, "background-image", "none");
-                }
+        this.renderer.setStyle(document.body, "background-image", "none");
+    }
 
     ngOnInit() {
         this.processTypeSubs = this.bpDataService.processTypeObservable.subscribe(processType => {
             if (processType) {
                 this.processType = processType;
                 this.currentStep = this.getCurrentStep(processType);
+                this.stepsDisplayMode = this.getStepsDisplayMode();
             }
         });
 
@@ -68,6 +72,10 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                         this.callStatus.callback("Retrieved product details", true);
                         this.bpDataService.computeWorkflowOptions();
                         this.options = this.bpDataService.workflowOptions;
+                        if(this.processType) {
+                            this.currentStep = this.getCurrentStep(this.processType);
+                        }
+                        this.stepsDisplayMode = this.getStepsDisplayMode();
                     })
                     .catch(error => {
                         this.callStatus.error("Failed to retrieve product details");
@@ -93,18 +101,45 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
         return ""
     }
 
+    private getStepsDisplayMode(): ProductBpStepsDisplay {
+        if(isTransportService(this.line)) {
+            if(this.bpDataService.userRole === "seller") {
+                return "Transport";
+            } else {
+                // TODO check if there is an actual item attached to the order...
+                return "Transport_After_Order";
+            }
+        } else {
+            if(this.bpDataService.userRole === "seller") {
+                return "Order_Before_Transport";
+            } else {
+                return "Order";
+            }
+        }
+    }
+
     private getCurrentStep(processType: ProcessType): ProductBpStep {
         switch(processType) {
             case "Item_Information_Request":
+                if(isTransportService(this.line)) {
+                    return "Transport_Information_Request";
+                } else {
+                    return "Item_Information_Request";
+                }
             case "Ppap":
+                return "Ppap";
             case "Negotiation":
+                if(isTransportService(this.line)) {
+                    return "Transport_Negotiation";
+                } else {
+                    return "Negotiation";
+                }
             case "Fulfilment":
-                return processType;
+                return "Fulfilment";
             case "Transport_Execution_Plan":
-                // return a dummy step
-                return "Item_Information_Request";
+                return this.isOrderDone() ? "Transport_Order_Confirmed" : "Transport_Order";
             case "Order":
-                return this.isOrderDone() ? "OrderConfirmed" : "Order";
+                return this.isOrderDone() ? "Order_Confirmed" : "Order";
         }
     }
 
