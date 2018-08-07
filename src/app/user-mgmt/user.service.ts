@@ -134,7 +134,7 @@ export class UserService {
                 .toPromise()
                 .then(response => response.json() as CompanySettings)
                 .catch(this.handleError)
-        });
+        })
     }
 
     getUserRoles(): Promise<UserRole[]> {
@@ -179,6 +179,41 @@ export class UserService {
         });
     }
 
+    saveCert(file: File, name: string, type: string): Promise<any> {
+      const url = `${this.url}/company-settings/certificate?name=${name}&type=${type}`;
+      const token = 'Bearer '+this.cookieService.get("bearer_token");
+      const headers_token = new Headers({'Authorization': token});
+      const form_data: FormData = new FormData();
+      form_data.append('file', file);
+      return this.http
+          .post(url, form_data, {headers: headers_token, withCredentials: true})
+          .toPromise()
+          .then(response => response.json())
+          .catch(this.handleError)
+    }
+
+    downloadCert(id: string): Promise<any> {
+      const url = `${this.url}/company-settings/certificate/${id}`;
+      const token = 'Bearer '+this.cookieService.get("bearer_token");
+      const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
+      return this.http
+          .get(url, {headers: headers_token, withCredentials: true})
+          .toPromise()
+          .then(response => response.json())
+          .catch(this.handleError)
+    }
+
+    deleteCert(id: string): Promise<any> {
+      const url = `${this.url}/company-settings/certificate/${id}`;
+      const token = 'Bearer '+this.cookieService.get("bearer_token");
+      const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
+      return this.http
+          .delete(url, {headers: headers_token, withCredentials: true})
+          .toPromise()
+          .then(response => response.json())
+          .catch(this.handleError)
+    }
+
     getCompanyNegotiationSettings(): Promise<CompanyNegotiationSettings> {
         const url = `${this.url}/company-settings/negotiation`;
         const token = 'Bearer ' + this.cookieService.get("bearer_token");
@@ -191,7 +226,6 @@ export class UserService {
             })
             .catch(this.handleError);
     }
-
     private sanitizeSettings(settings: CompanyNegotiationSettings): CompanyNegotiationSettings {
         if(settings.deliveryPeriodUnits.length === 0) {
             settings.deliveryPeriodUnits.push("day(s)");
@@ -205,10 +239,8 @@ export class UserService {
             settings.warrantyPeriodUnits.push("year(s)");
             settings.warrantyPeriodRanges.push({ start: 0, end: 2 });
         }
-
         return settings;
     }
-
     putCompanyNegotiationSettings(settings: CompanyNegotiationSettings): Promise<any> {
         const url = `${this.url}/company-settings/negotiation`;
         const token = 'Bearer '+this.cookieService.get("bearer_token");
