@@ -314,7 +314,7 @@ export class BPDataService{
             rfq.negotiationOptions = new NegotiationOptions();
             
             const line = this.catalogueLines[0];
-            const wrapper = new NegotiationModelWrapper(line, rfq, null);
+            const wrapper = new NegotiationModelWrapper(line, rfq, null, null);
 
             rfq.negotiationOptions.deliveryPeriod = wrapper.lineDeliveryPeriodString !== wrapper.rfqDeliveryPeriodString;
             rfq.negotiationOptions.incoterms = wrapper.lineIncoterms !== wrapper.rfqIncoterms;

@@ -3,7 +3,7 @@ import { UBLModelUtils } from "../../catalogue/model/ubl-model-utils";
 
 export class PaymentTermsWrapper {
 
-    public PAYMENT_TERMS: string[] = UBLModelUtils.getDefaultPaymentTermsAsStrings();
+    private PAYMENT_TERMS: string[] = UBLModelUtils.getDefaultPaymentTermsAsStrings();
 
     private selectedPaymentTerm: number;
 

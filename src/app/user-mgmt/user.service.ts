@@ -179,8 +179,12 @@ export class UserService {
         });
     }
 
-    getCompanyNegotiationSettings(): Promise<CompanyNegotiationSettings> {
-        const url = `${this.url}/company-settings/negotiation`;
+    getCompanyNegotiationSettingsForUser(userId: string): Promise<CompanyNegotiationSettings> {
+        return this.getUserParty(userId).then(party => this.getCompanyNegotiationSettingsForParty(party.id));
+    }
+
+    getCompanyNegotiationSettingsForParty(partyId: string): Promise<CompanyNegotiationSettings> {
+        const url = `${this.url}/company-settings/negotiation/${partyId}`;
         const token = 'Bearer ' + this.cookieService.get("bearer_token");
         const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
         return this.http

@@ -1,7 +1,7 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, Input } from "@angular/core";
 import { CatalogueLine } from "../../../catalogue/model/publish/catalogue-line";
 import { BPDataService } from "../bp-data-service";
-import { INCOTERMS, PAYMENT_MEANS, CURRENCIES } from "../../../catalogue/model/constants";
+import { CURRENCIES } from "../../../catalogue/model/constants";
 import { RequestForQuotation } from "../../../catalogue/model/publish/request-for-quotation";
 import { RequestForQuotationLine } from "../../../catalogue/model/publish/request-for-quotation-line";
 import { Location } from "@angular/common";
@@ -18,6 +18,7 @@ import { ModelUtils } from "../../model/model-utils";
 import { ProcessInstanceInputMessage } from "../../model/process-instance-input-message";
 import { NegotiationModelWrapper } from "./negotiation-model-wrapper";
 import { getMaximumQuantityForPrice, getStepForPrice, copy } from "../../../common/utils";
+import { CompanyNegotiationSettings } from "../../../user-mgmt/model/company-negotiation-settings";
 
 @Component({
     selector: "negotiation-request",
@@ -25,6 +26,8 @@ import { getMaximumQuantityForPrice, getStepForPrice, copy } from "../../../comm
     styleUrls: ["./negotiation-request.component.css"],
 })
 export class NegotiationRequestComponent implements OnInit {
+
+    @Input() companyNegotiationSettings: CompanyNegotiationSettings;
 
     line: CatalogueLine;
     rfq: RequestForQuotation;
@@ -36,8 +39,6 @@ export class NegotiationRequestComponent implements OnInit {
 
     callStatus: CallStatus = new CallStatus();
 
-    INCOTERMS: string[] = INCOTERMS;
-    PAYMENT_MEANS: string[] = PAYMENT_MEANS;
     CURRENCIES: string[] = CURRENCIES;
 
     constructor(private bpDataService: BPDataService,
@@ -54,7 +55,7 @@ export class NegotiationRequestComponent implements OnInit {
         this.rfq = this.bpDataService.requestForQuotation;
         this.rfqLine = this.rfq.requestForQuotationLine[0];
         this.line = this.bpDataService.getCatalogueLine();
-        this.wrapper = new NegotiationModelWrapper(this.line, this.rfq, null);
+        this.wrapper = new NegotiationModelWrapper(this.line, this.rfq, null, this.companyNegotiationSettings);
         this.totalPrice = this.wrapper.rfqTotalPrice;
         this.negotiatedPriceValue = this.totalPrice;
 

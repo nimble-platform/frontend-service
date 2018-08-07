@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { CookieService } from 'ng2-cookies';
 import { UserService } from './user.service';
 import { PAYMENT_MEANS, INCOTERMS } from '../catalogue/model/constants';
 import { UBLModelUtils } from '../catalogue/model/ubl-model-utils';
@@ -31,13 +32,15 @@ export class CompanyNegotiationSettingsComponent implements OnInit {
     paymentMeans: SelectedTerms;
     incoterms: SelectedTerms;
 
-    constructor(private userService: UserService) {
+    constructor(private userService: UserService,
+                private cookieService: CookieService) {
 
     }
 
     ngOnInit() {
         this.initCallStatus.submit();
-        this.userService.getCompanyNegotiationSettings()
+        const userId = this.cookieService.get('user_id')
+        this.userService.getCompanyNegotiationSettingsForUser(userId)
             .then(settings => {
                 this.initCallStatus.callback("Done fetching company negotiation settings", true);
 

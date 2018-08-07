@@ -33,7 +33,7 @@
     <div class="col-3">{{ wrapper.rfqIncotermsIfNegotiating }}</div>
     <div class="col-3">
         <options-input [visible]="rfq.negotiationOptions.incoterms" [presentationMode]="getPresentationMode()"
-            [disabled]="isLoading()" [options]="INCOTERMS" [(selected)]="wrapper.quotationIncoterms">
+            [disabled]="isLoading()" [options]="companyNegotiationSettings.incoterms" [(selected)]="wrapper.quotationIncoterms">
         </options-input>
     </div>
 </div>
@@ -44,7 +44,7 @@
     <div class="col-3">{{ wrapper.rfqPaymentTermsIfNegotiating }}</div>
     <div class="col-3">
         <options-input [visible]="rfq.negotiationOptions.paymentTerms" [presentationMode]="getPresentationMode()"
-            [disabled]="isLoading()" [options]="wrapper.rfqPaymentTerms.PAYMENT_TERMS" 
+            [disabled]="isLoading()" [options]="companyNegotiationSettings.paymentTerms" 
             [(selected)]="wrapper.quotationPaymentTerms.paymentTerm">
         </options-input>
     </div>
@@ -56,7 +56,7 @@
     <div class="col-3">{{ wrapper.rfqPaymentMeansIfNegotiating }}</div>
     <div class="col-3">
         <options-input [visible]="rfq.negotiationOptions.paymentMeans" [presentationMode]="getPresentationMode()"
-            [disabled]="isLoading()" [options]="PAYMENT_MEANS" [(selected)]="wrapper.quotationPaymentMeans">
+            [disabled]="isLoading()" [options]="companyNegotiationSettings.paymentMeans" [(selected)]="wrapper.quotationPaymentMeans">
         </options-input>
     </div>
 </div>

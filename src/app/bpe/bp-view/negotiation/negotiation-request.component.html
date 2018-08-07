@@ -17,6 +17,7 @@
     <div class="col-5">
         {{ wrapper.lineDeliveryPeriod.value }} 
         {{ wrapper.lineDeliveryPeriod.unitCode }}
+        
     </div>
     <div class="col-5">
         <negotiation-request-input label="Request Delivery Period" [(cbModel)]="rfq.negotiationOptions.deliveryPeriod" [disabled]="isLoading() || isReadOnly()"
@@ -50,7 +51,7 @@
     </div>
     <div class="col-5">
         <negotiation-request-input label="Incoterms" [(cbModel)]="rfq.negotiationOptions.incoterms" [disabled]="isLoading() || isReadOnly()"
-            id="incotermsCb" [options]="INCOTERMS" [(selected)]="wrapper.rfqIncoterms">
+            id="incotermsCb" [options]="companyNegotiationSettings.incoterms" [(selected)]="wrapper.rfqIncoterms">
         </negotiation-request-input>
     </div>
 </div>
@@ -67,7 +68,7 @@
     </div>
     <div class="col-5">
         <negotiation-request-input label="Request Payment Terms" [(cbModel)]="rfq.negotiationOptions.paymentTerms" 
-            id="paymentTermsCb" [options]="wrapper.rfqPaymentTerms.PAYMENT_TERMS" 
+            id="paymentTermsCb" [options]="companyNegotiationSettings.paymentTerms" 
             [(selected)]="wrapper.rfqPaymentTerms.paymentTerm" [disabled]="isLoading() || isReadOnly()">
         </negotiation-request-input>
     </div>
@@ -85,7 +86,7 @@
     </div>
     <div class="col-5">
         <negotiation-request-input label="Request Payment Means" [(cbModel)]="rfq.negotiationOptions.paymentMeans" 
-            id="paymentMeansCb" [options]="PAYMENT_MEANS" [(selected)]="wrapper.rfqPaymentMeans" 
+            id="paymentMeansCb" [options]="companyNegotiationSettings.paymentMeans" [(selected)]="wrapper.rfqPaymentMeans" 
             [disabled]="isLoading() || isReadOnly()">
         </negotiation-request-input>
     </div>
