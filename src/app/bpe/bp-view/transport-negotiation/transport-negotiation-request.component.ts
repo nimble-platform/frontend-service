@@ -42,7 +42,7 @@ export class TransportNegotiationRequestComponent implements OnInit {
                 private userService:UserService,
                 private location: Location,
                 private router: Router) {
-        
+
     }
 
     ngOnInit() {
