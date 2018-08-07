@@ -8,7 +8,7 @@ import { UBLModelUtils } from "../../../catalogue/model/ubl-model-utils";
 import { PriceWrapper } from "../../../common/price-wrapper";
 import { copy } from "../../../common/utils";
 import { PaymentTermsWrapper } from "../payment-terms-wrapper";
-import { CookieService } from "../../../../../node_modules/ng2-cookies";
+import { CookieService } from "ng2-cookies";
 import { UserService } from "../../../user-mgmt/user.service";
 import { CustomerParty } from "../../../catalogue/model/publish/customer-party";
 import { SupplierParty } from "../../../catalogue/model/publish/supplier-party";
@@ -16,7 +16,7 @@ import { ProcessVariables } from "../../model/process-variables";
 import { ModelUtils } from "../../model/model-utils";
 import { ProcessInstanceInputMessage } from "../../model/process-instance-input-message";
 import { BPEService } from "../../bpe.service";
-import { Router } from "../../../../../node_modules/@angular/router";
+import { Router } from "@angular/router";
 
 @Component({
     selector: "transport-negotiation-request",
@@ -42,7 +42,7 @@ export class TransportNegotiationRequestComponent implements OnInit {
                 private userService:UserService,
                 private location: Location,
                 private router: Router) {
-        
+
     }
 
     ngOnInit() {
