@@ -1,67 +1,92 @@
-<div [hidden]="!loading">
-	<img src="assets/form_loader.gif"/>
+<!-- Tabs -->
+<div class="col-12 pt-4">
+	<ul class="nav nav-tabs">
+		<li class="nav-item">
+			<a href id="COMPANY_DATA" class="nav-link" [ngClass]="{ active: selectedTab === 'COMPANY_DATA'}" (click)="onSelectTab($event)">
+				Company Data
+			</a>
+		</li>
+		<li class="nav-item">
+			<a href id="NEGOTIATION_SETTINGS" class="nav-link" [ngClass]="{ active: selectedTab === 'NEGOTIATION_SETTINGS'}" (click)="onSelectTab($event)">
+				Negotiation Settings
+			</a>
+		</li>
+	</ul>
 </div>
 
-<form [hidden]="loading" [formGroup]="settingsForm" novalidate (ngSubmit)="save(settingsForm)">
-
-	<p class="space-after nimble-title">Company Data</p>
-	<button class="btn btn-primary mt-2 mb-4" type="button" (click)="changeData(changeModal)">
-		<span>Request Company Data Change</span>
-	</button>
-	<div class="form-group row">
-		<label class="col-2 col-form-label">Legal Name</label>
-		<div class="col-10">
-			<input type="text" class="form-control" [formControl]="settingsForm.controls['name']" readonly>
-		</div>
+<!-- Company Data -->
+<ng-container *ngIf="selectedTab === 'COMPANY_DATA'">
+	<!-- Loading -->
+	<div [hidden]="!loading">
+		<img src="assets/form_loader.gif"/>
 	</div>
-	<div class="form-group row">
-		<label class="col-2 col-form-label">VAT Number</label>
-		<div class="col-10">
-			<input type="text" class="form-control" [formControl]="settingsForm.controls['vatNumber']" readonly>
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-2 col-form-label">
-			<span>Verification Info</span>
-			<span class="tooltip-icon" (click)="showVerificationTT(tooltip)"><i class="fa fa-question-circle"></i></span>
-		</label>
-		<div class="col-10">
-			<input type="text" class="form-control" [formControl]="settingsForm.controls['verificationInformation']" readonly>
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-2 col-form-label">Website</label>
-		<div class="col-10">
-			<input type="text" class="form-control" [formControl]="settingsForm.controls['website']" readonly>
-		</div>
-	</div>
-	<address-form [group]="settingsForm.controls.address"></address-form>
 
-	<h3 class="space-after">Delivery Terms</h3>
-	<div class="form-group row">
-		<span class="col-2 col-form-label">
-			<input type="checkbox" [(ngModel)]="aM" [ngModelOptions]="{standalone:true}" (change)="settingsForm.controls['name'].markAsDirty();changeFlag();">
-		</span>
-		<div class="col-10">
-			<span class="form-control inline">Deliver to company address</span>
+	<!-- Form -->
+	<form [hidden]="loading" [formGroup]="settingsForm" novalidate (ngSubmit)="save(settingsForm)">
+		<button class="btn btn-primary mb-4 space-before" type="button" (click)="changeData(changeModal)">
+			<span>Request Company Data Change</span>
+		</button>
+		<div class="form-group row">
+			<label class="col-2 col-form-label">Legal Name</label>
+			<div class="col-10">
+				<input type="text" class="form-control" [formControl]="settingsForm.controls['name']" readonly>
+			</div>
 		</div>
-	</div>
-	<delivery-terms-form [group]="settingsForm.controls.deliveryTerms"></delivery-terms-form>
-
-	<h3 class="space-after">Payment Terms</h3>
-	<payment-means-form [group]="settingsForm.controls.paymentMeans"></payment-means-form>
-
-    <div>
-        <button class="btn btn-primary" type="submit" [disabled]="!settingsForm.valid||!settingsForm.dirty||isSubmitting">
-            <span>Save</span>
-        </button>
-		<div [hidden]="!isSubmitting" class="space-before">
-			<img src="assets/form_loader.gif"/>
+		<div class="form-group row">
+			<label class="col-2 col-form-label">VAT Number</label>
+			<div class="col-10">
+				<input type="text" class="form-control" [formControl]="settingsForm.controls['vatNumber']" readonly>
+			</div>
 		</div>
-    </div>
+		<div class="form-group row">
+			<label class="col-2 col-form-label">
+				<span>Verification Info</span>
+				<span class="tooltip-icon" (click)="showVerificationTT(tooltip)"><i class="fa fa-question-circle"></i></span>
+			</label>
+			<div class="col-10">
+				<input type="text" class="form-control" [formControl]="settingsForm.controls['verificationInformation']" readonly>
+			</div>
+		</div>
+		<div class="form-group row">
+			<label class="col-2 col-form-label">Website</label>
+			<div class="col-10">
+				<input type="text" class="form-control" [formControl]="settingsForm.controls['website']" readonly>
+			</div>
+		</div>
+		<address-form [group]="settingsForm.controls.address"></address-form>
+	
+		<h3 class="space-after">Delivery Terms</h3>
+		<div class="form-group row">
+			<span class="col-2 col-form-label">
+				<input type="checkbox" [(ngModel)]="aM" [ngModelOptions]="{standalone:true}" (change)="settingsForm.controls['name'].markAsDirty();changeFlag();">
+			</span>
+			<div class="col-10">
+				<span class="form-control inline">Deliver to company address</span>
+			</div>
+		</div>
+		<delivery-terms-form [group]="settingsForm.controls.deliveryTerms"></delivery-terms-form>
 
-</form>
+	    <div class="row actions-row space-before">
+			<div class="col-10"></div>
+			<div class="col-2">
+				<button class="btn btn-primary action" type="submit" [disabled]="!settingsForm.valid||!settingsForm.dirty||isSubmitting">
+					<span>Save</span>
+				</button>
+				<div [hidden]="!isSubmitting" class="space-before">
+					<img src="assets/form_loader.gif"/>
+				</div>
+			</div>
+		</div>  
+	</form>
+</ng-container>
 
+<!-- Negotiation Settings, hidden to avoid reloading -->
+<div [hidden]="selectedTab !== 'NEGOTIATION_SETTINGS'">
+	<company-negotiation-settings>
+	</company-negotiation-settings>
+</div>
+
+<!-- Modals -->
 <ng-template #changeModal let-d="dismiss">
 	<div class="modal-header">
 		<h4 class="modal-title">Request Company Data Change</h4>

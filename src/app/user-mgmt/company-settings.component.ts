@@ -24,6 +24,8 @@ export class CompanySettingsComponent implements OnInit {
 	public mailto = "";
 	tooltipHTML = "";
 
+	selectedTab: "COMPANY_DATA" | "NEGOTIATION_SETTINGS" = "COMPANY_DATA";
+
     constructor(private _fb: FormBuilder,
 				private appComponent: AppComponent,
                 private cookieService: CookieService,
@@ -175,4 +177,8 @@ export class CompanySettingsComponent implements OnInit {
 		this.modalService.open(content);
 	}
 	
+	onSelectTab(event: any) {
+        event.preventDefault();
+        this.selectedTab = event.target.id;
+	}
 }

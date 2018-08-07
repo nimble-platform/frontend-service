@@ -10,6 +10,7 @@ import { CompanyInvitation } from './model/company-invitation';
 import {UBLModelUtils} from "../catalogue/model/ubl-model-utils";
 import { CookieService } from 'ng2-cookies';
 import { UserRole } from './model/user-role';
+import { CompanyNegotiationSettings } from './model/company-negotiation-settings';
 
 @Injectable()
 export class UserService {
@@ -176,6 +177,47 @@ export class UserService {
                 .then(response => response.json())
                 .catch(this.handleError)
         });
+    }
+
+    getCompanyNegotiationSettings(): Promise<CompanyNegotiationSettings> {
+        const url = `${this.url}/company-settings/negotiation`;
+        const token = 'Bearer ' + this.cookieService.get("bearer_token");
+        const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
+        return this.http
+            .get(url, { headers: headers_token, withCredentials: true })
+            .toPromise()
+            .then(res => {
+                return this.sanitizeSettings(res.json());
+            })
+            .catch(this.handleError);
+    }
+
+    private sanitizeSettings(settings: CompanyNegotiationSettings): CompanyNegotiationSettings {
+        if(settings.deliveryPeriodUnits.length === 0) {
+            settings.deliveryPeriodUnits.push("day(s)");
+            settings.deliveryPeriodRanges.push({ start: 1, end: 56 });
+            settings.deliveryPeriodUnits.push("week(s)");
+            settings.deliveryPeriodRanges.push({ start: 0, end: 8 });
+        }
+        if(settings.warrantyPeriodRanges.length === 0) {
+            settings.warrantyPeriodUnits.push("month(s)");
+            settings.warrantyPeriodRanges.push({ start: 0, end: 24 });
+            settings.warrantyPeriodUnits.push("year(s)");
+            settings.warrantyPeriodRanges.push({ start: 0, end: 2 });
+        }
+
+        return settings;
+    }
+
+    putCompanyNegotiationSettings(settings: CompanyNegotiationSettings): Promise<any> {
+        const url = `${this.url}/company-settings/negotiation`;
+        const token = 'Bearer '+this.cookieService.get("bearer_token");
+        const headers_token = new Headers({ 'Content-Type': 'application/json', 'Authorization': token });
+        return this.http
+            .put(url, settings, {headers: headers_token, withCredentials: true})
+            .toPromise()
+            .then(response => response.json())
+            .catch(this.handleError)
     }
 
     resetData():void {
