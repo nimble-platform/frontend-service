@@ -179,6 +179,23 @@ export class UserService {
         });
     }
 
+    getPrefCat(userId: string): Promise<any> {
+      return this.getSettings(userId).then(settings => settings.preferredProductCategories);
+    }
+
+    togglePrefCat(userId: string, cat: string): Promise<any> {
+      return this.getSettings(userId).then(settings => {
+        var pref_cat = settings.preferredProductCategories;
+        var cat_idx = pref_cat.indexOf(cat);
+        if (cat_idx == -1)
+          pref_cat.push(cat);
+        else
+          pref_cat.splice(cat_idx,1);
+        settings.preferredProductCategories = pref_cat;
+        return this.putSettings(settings,userId).then(response => response.preferredProductCategories)
+      });
+    }
+
     saveCert(file: File, name: string, type: string): Promise<any> {
       const url = `${this.url}/company-settings/certificate?name=${name}&type=${type}`;
       const token = 'Bearer '+this.cookieService.get("bearer_token");
@@ -192,15 +209,9 @@ export class UserService {
           .catch(this.handleError)
     }
 
-    downloadCert(id: string): Promise<any> {
+    downloadCert(id: string) {
       const url = `${this.url}/company-settings/certificate/${id}`;
-      const token = 'Bearer '+this.cookieService.get("bearer_token");
-      const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
-      return this.http
-          .get(url, {headers: headers_token, withCredentials: true})
-          .toPromise()
-          .then(response => response.json())
-          .catch(this.handleError)
+      window.open(url,"_blank");
     }
 
     deleteCert(id: string): Promise<any> {

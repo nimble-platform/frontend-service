@@ -1,5 +1,5 @@
 <div *ngIf="isLogistics">
-    <p class="pb-3 nimble-title">Publish Logistics Product</p> 
+    <p class="pb-3 nimble-title">Publish Logistics Product</p>
 </div>
 <div *ngIf="!isLogistics">
     <p class="pb-3 nimble-title">Publish Product</p>
@@ -98,12 +98,15 @@
                 <div *ngIf="selectedCategoryWithDetails">
                     <button *ngIf="findCategoryInArray(selectedCategories, selectedCategoryWithDetails) === -1" class="btn btn-primary align-self-start" (click)="selectCategory(selectedCategoryWithDetails)">Add Category</button>
                     <button *ngIf="findCategoryInArray(selectedCategories, selectedCategoryWithDetails) > -1" class="btn btn-danger align-self-start" (click)="removeCategory(selectedCategoryWithDetails)">Remove Category</button>
+                    <br/>
+                    <button *ngIf="!findPrefCat(selectedCategoryWithDetails)" class="btn btn-primary mt-1 align-self-start" (click)="addCat(selectedCategoryWithDetails)">Add Favorite</button>
+                    <button *ngIf="findPrefCat(selectedCategoryWithDetails)" class="btn btn-danger mt-1 align-self-start" (click)="removeCat(selectedCategoryWithDetails)">Remove Favorite</button>
                 </div>
             </div>
             <p *ngIf="!selectedCategoryWithDetails" [hidden]="!(callback || !submitted || error_detc)" class="align-self-center p-2 mt-4">Click on a category to see its details.</p>
             <div [hidden]="callback || !submitted || error_detc" class="space-right p-2">
                 <img class="space-before" src="assets/form_loader.gif"/>
-            </div>     
+            </div>
             <div *ngIf="selectedCategoryWithDetails" class="p-2 mt-2">
                 <div *ngFor="let propName of propertyNames" class="my-1">
                     <text-input *ngIf="selectedCategoryWithDetails[propName]" [visible]="selectedCategoryWithDetails[propName]" presentationMode="view" [label]="propName" labelClass="col-12 text-capitalize" labelMainClass="mb-0" valueClass="col-12" valueTextClass="mb-1 pl-3" [text]="getCategoryProperty(propName)"></text-input>
@@ -162,6 +165,6 @@
         <button class="btn btn-primary w-100 inline" [disabled]="categoryService.selectedCategories.length === 0 || navigating ||  !this.appComponent.checkRoles('catalogue')" (click)="navigateToPublishingPage()">Continue With Selected Categories</button>
         <div [hidden]="!navigating" class="space-right">
             <img class="space-before" src="assets/form_loader.gif"/>
-        </div>    
+        </div>
     </div>
 </div>

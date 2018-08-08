@@ -7,6 +7,7 @@ import {ActivatedRoute, Params, Router} from "@angular/router";
 import {Category} from "../model/category/category";
 import {CategoryService} from "./category.service";
 import {CookieService} from "ng2-cookies";
+import {UserService} from "../../user-mgmt/user.service";
 import {CatalogueService} from "../catalogue.service";
 import {PublishService} from "../publish-and-aip.service";
 import {ProductPublishComponent} from "../publish/product-publish.component";
@@ -57,6 +58,7 @@ export class CategorySearchComponent implements OnInit {
     selectedCategoriesWRTLevels = [];
     propertyNames: string[] = ["code", "taxonomyId", "level", "definition", "note", "remark"];
     taxonomyId: string = "eClass";
+    prefCats: string[] = [];
 
     isLogistics: boolean;
     eClassLogisticsCategory: Category = null;
@@ -68,6 +70,7 @@ export class CategorySearchComponent implements OnInit {
     constructor(private router: Router,
                 private route: ActivatedRoute,
                 private cookieService: CookieService,
+                private userService: UserService,
                 public categoryService: CategoryService,
                 private catalogueService: CatalogueService,
                 private publishService:PublishService,
@@ -118,6 +121,40 @@ export class CategorySearchComponent implements OnInit {
             }
         });
         this.getRootCategories();
+        this.getPrefCat();
+    }
+
+    getPrefCat() {
+      let userId = this.cookieService.get('user_id');
+      this.userService.getPrefCat(userId).then(res => {
+        this.prefCats = res;
+      });
+    }
+
+    findPrefCat(cat:Category):boolean {
+      var cat_str = cat.id+"::"+cat.taxonomyId+"::"+cat.preferredName;
+      var found = false;
+      if (this.prefCats.indexOf(cat_str) != -1)
+        found = true;
+      return found;
+    }
+
+    removeCat(cat:Category) {
+      if (confirm("Are you sure that you want to remove this category from your favorites?")) {
+        var cat_str = cat.id+"::"+cat.taxonomyId+"::"+cat.preferredName;
+        let userId = this.cookieService.get('user_id');
+        this.userService.togglePrefCat(userId,cat_str).then(res => {
+          this.prefCats = res;
+        });
+      }
+    }
+
+    addCat(cat:Category) {
+      var cat_str = cat.id+"::"+cat.taxonomyId+"::"+cat.preferredName;
+      let userId = this.cookieService.get('user_id');
+      this.userService.togglePrefCat(userId,cat_str).then(res => {
+        this.prefCats = res;
+      });
     }
 
     canDeactivate():boolean{

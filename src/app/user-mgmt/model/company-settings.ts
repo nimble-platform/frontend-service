@@ -13,6 +13,7 @@ export class CompanySettings {
         public address: Address,
         //public paymentMeans: PaymentMeans[],
         public deliveryTerms: DeliveryTerms[],
-        public certificates: Certificate[]
+        public certificates: Certificate[],
+        public preferredProductCategories: string[]
     ) {  }
 }
