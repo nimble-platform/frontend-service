@@ -18,23 +18,26 @@
 </ul>
 
 <div *ngIf="publishingGranularity === 'bulk'">
-    <div class="d-flex justify-content-end mt-3 mb-3">
-        <div class="mr-auto">
-            <h6 *ngIf="selectedCategories.length > 0" style="display: inline-block;"
-                i18n>Selected category:</h6>
+    <!-- Selected Categories -->
+    <div class="row space-before">
+        <div class="col-2 category-list-label">
+            <strong *ngIf="!isProductCategoriesLoading()">Categories: </strong>
+            <strong class="mr-2" *ngIf="isProductCategoriesLoading()">Fetching Categories </strong>
+            <call-status [callStatus]="productCategoryRetrievalStatus"></call-status>
+        </div>
+        <div class="col-10 object-list">
             <div *ngFor="let selectedCategory of selectedCategories"
-                    class="bordered inline space-right">
-                {{selectedCategory.preferredName}}
-                <button class="btn btn-sm" (click)="onRemoveCategory(selectedCategory)">&times;</button>
+                 class="bordered my-1 ml-1" title="{{selectedCategory.taxonomyId}}">
+                <small class="p-0">{{selectedCategory.preferredName}}</small>
+                <i class="fa fa-times-circle pl-1" placement="right" (click)="onRemoveCategory(selectedCategory)"></i>
             </div>
-            <div (click)="onAddCategory()"
-                    style="display: inline-block;">
-                <i class="fa fa-plus-circle pointer"></i>
-                <span *ngIf="selectedCategories.length == 0" i18n>Select a product category</span>
-                <span *ngIf="selectedCategories.length > 0" i18n>Add another product category</span>
-            </div>
+            <button class="btn btn-outline-primary btn-add-category"
+                    (click)="onAddCategory()" [disabled]="isLoading()">
+                Add Category
+            </button>
         </div>
     </div>
+
     <div class="d-flex mt-3 mb-4">
         <label class="col-9">1. Download the product category template</label>
         <button class="btn btn-secondary col-3"
@@ -88,7 +91,9 @@
     <!-- Selected Categories -->
     <div class="row space-before">
         <div class="col-2 category-list-label">
-            <strong>Categories: </strong>
+            <strong *ngIf="!isProductCategoriesLoading()">Categories: </strong>
+            <strong class="mr-2" *ngIf="isProductCategoriesLoading()">Fetching Categories </strong>
+            <call-status [callStatus]="productCategoryRetrievalStatus"></call-status>
         </div>
         <div class="col-10 object-list">
             <div *ngFor="let selectedCategory of selectedCategories"
