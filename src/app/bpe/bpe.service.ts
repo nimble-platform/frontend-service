@@ -80,11 +80,11 @@ export class BPEService {
 	}
 	
 	cancelBusinessProcess(id: string): Promise<any> {
-		const url = `${this.url}/rest/engine/default/process-instance/${id}`;
+		const url = `${this.url}/processInstance?processInstanceId=${id}`;
 		return this.http
 		.delete(url, {headers: this.headers})
 		.toPromise()
-		.then(res => res.json())
+		.then(res => res.text())
 		.catch(this.handleError);
 	}
 

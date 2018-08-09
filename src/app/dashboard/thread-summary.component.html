@@ -34,7 +34,7 @@
             </div>
 
         <!-- Most recent event -->
-        <thread-event *ngIf="lastEvent" [processInstanceGroup]="processInstanceGroup" [event]="lastEvent">
+        <thread-event *ngIf="lastEvent" [processInstanceGroup]="processInstanceGroup" [event]="lastEvent" (processCancelled)="threadStateUpdated.next()">
         </thread-event>
 
         <!-- Loading most recent event -->
@@ -47,7 +47,7 @@
         <!-- History -->
         <ng-container *ngIf="historyExpanded && history">
             <ng-container *ngFor="let event of history">
-                <thread-event [processInstanceGroup]="processInstanceGroup" [event]="event">
+                <thread-event [processInstanceGroup]="processInstanceGroup" [event]="event" (processCancelled)="threadStateUpdated.next()">
                 </thread-event>
             </ng-container>
         </ng-container>
