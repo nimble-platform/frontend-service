@@ -180,4 +180,21 @@ export class NegotiationRequestComponent implements OnInit {
     isWaitingForReply(): boolean {
         return this.bpDataService.processMetadata && this.bpDataService.processMetadata.processStatus === "Started";
     }
+
+    getDeliveryPeriodText(): string {
+        const unit = this.wrapper.rfqDeliveryPeriod.unitCode;
+        return ` (minimum: ${0} ${unit}, maximum: ${0} ${unit})`;
+    }
+
+    getDeliveryPeriodStyle(): string {
+        return ""
+    }
+
+    getWarrantyPeriodText(): string {
+        return "";
+    }
+
+    getWarrantyPeriodStyle(): string {
+        return ""
+    }
 }

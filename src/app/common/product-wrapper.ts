@@ -5,6 +5,7 @@ import { PAYMENT_MEANS } from "../catalogue/model/constants";
 import { UBLModelUtils } from "../catalogue/model/ubl-model-utils";
 import { sanitizePropertyName, getPropertyKey, periodToString, isCustomProperty, getPropertyValues, isTransportService } from "./utils";
 import { PriceWrapper } from "./price-wrapper";
+import { CompanyNegotiationSettings } from "../user-mgmt/model/company-negotiation-settings";
 
 /**
  * Wrapper class for Catalogue line.
@@ -14,7 +15,8 @@ export class ProductWrapper {
 
     private priceWrapper: PriceWrapper;
 
-    constructor(public line: CatalogueLine) {
+    constructor(public line: CatalogueLine, 
+                public negotiationSettings: CompanyNegotiationSettings) {
         this.priceWrapper = new PriceWrapper(line.requiredItemLocationQuantity.price);
     }
 
@@ -65,11 +67,11 @@ export class ProductWrapper {
     }
 
     getPaymentTerms(): string {
-        return UBLModelUtils.getDefaultPaymentTermsAsStrings()[0];
+        return this.negotiationSettings.paymentTerms[0];
     }
 
     getPaymentMeans(): string {
-        return PAYMENT_MEANS[0];
+        return this.negotiationSettings.paymentMeans[0];
     }
 
     getFreeSample(): string {

@@ -17,11 +17,13 @@
     <div class="col-5">
         {{ wrapper.lineDeliveryPeriod.value }} 
         {{ wrapper.lineDeliveryPeriod.unitCode }}
-        
+        <span [style]="getDeliveryPeriodStyle()">
+            {{ getDeliveryPeriodText() }}
+        </span>
     </div>
     <div class="col-5">
         <negotiation-request-input label="Request Delivery Period" [(cbModel)]="rfq.negotiationOptions.deliveryPeriod" [disabled]="isLoading() || isReadOnly()"
-            id="deliveryCb" [quantity]="wrapper.rfqDeliveryPeriod" quantityType="time_quantity">
+            id="deliveryCb" [quantity]="wrapper.rfqDeliveryPeriod" [quantityUnits]="companyNegotiationSettings.deliveryPeriodUnits">
         </negotiation-request-input>
     </div>
 </div>
@@ -33,10 +35,13 @@
     </div>
     <div class="col-5">
         {{ wrapper.lineWarrantyString }}
+        <span [style]="getWarrantyPeriodStyle()">
+            {{ getWarrantyPeriodText() }}
+        </span>
     </div>
     <div class="col-5">
         <negotiation-request-input label="Request Warranty" [(cbModel)]="rfq.negotiationOptions.warranty" [disabled]="isLoading() || isReadOnly()"
-            id="warrantyCb" [quantity]="wrapper.rfqWarranty" quantityType="warranty_period">
+            id="warrantyCb" [quantity]="wrapper.rfqWarranty" [quantityUnits]="companyNegotiationSettings.warrantyPeriodUnits">
         </negotiation-request-input>
     </div>
 </div>

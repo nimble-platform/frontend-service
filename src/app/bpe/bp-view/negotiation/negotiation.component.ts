@@ -19,19 +19,15 @@ export class NegotiationComponent implements OnInit {
     }
 
     ngOnInit() {
-        const promises: Promise<any>[] = [
-            this.userService.getCompanyNegotiationSettingsForParty(
-                this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty.id
-            )
-        ];
-        if(this.bpDataService.requestForQuotation == null) {
-            promises.push(this.bpDataService.initRfq())
-        }
-
         this.initCallStatus.submit();
-        Promise.all(promises)
-            .then(([settings, _]) => {
+        this.userService.getCompanyNegotiationSettingsForParty(
+            this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty.id
+        )
+            .then(settings => {
                 this.companyNegotiationSettings = settings;
+                return this.bpDataService.initRfq(settings);
+            })
+            .then(() => {
                 this.initCallStatus.callback("Request for Quotation Initialized.");
             })
             .catch(error => {

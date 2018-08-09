@@ -9,10 +9,9 @@ export class CompanySettings {
     		public vatNumber: string,
     		public verificationInformation: string,
     		public website: string,
-        public ppapCompatibilityLevel: number,
-        public address: Address,
-        //public paymentMeans: PaymentMeans[],
-        public deliveryTerms: DeliveryTerms[],
-        public certificates: Certificate[]
+            public ppapCompatibilityLevel: number,
+            public address: Address,
+            public deliveryTerms: DeliveryTerms[],
+            public certificates: Certificate[]
     ) {  }
 }

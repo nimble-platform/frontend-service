@@ -23,6 +23,7 @@ import { ProductWrapper } from "../../common/product-wrapper";
 import { EditPropertyModalComponent } from "./edit-property-modal.component";
 import { Location } from "@angular/common";
 import { SelectedProperty } from "../model/publish/selected-property";
+import { CompanyNegotiationSettings } from "../../user-mgmt/model/company-negotiation-settings";
 type ProductType = "product" | "transportation";
 
 interface SelectedProperties {
@@ -452,7 +453,7 @@ export class ProductPublishComponent implements OnInit {
                 this.router.navigate(['catalogue/publish']);
                 return;
             }
-            this.productWrapper = new ProductWrapper(this.catalogueLine);
+            this.productWrapper = new ProductWrapper(this.catalogueLine, new CompanyNegotiationSettings());
 
             // Get categories of item to edit
             if(this.publishStateService.publishingStarted == false) {
@@ -507,7 +508,7 @@ export class ProductPublishComponent implements OnInit {
             } else {
                 this.catalogueLine = this.catalogueService.draftCatalogueLine;
             }
-            this.productWrapper = new ProductWrapper(this.catalogueLine);
+            this.productWrapper = new ProductWrapper(this.catalogueLine, new CompanyNegotiationSettings());
 
             for (let category of this.categoryService.selectedCategories) {
                 let newCategory = this.isNewCategory(category);

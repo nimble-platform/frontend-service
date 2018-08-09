@@ -36,6 +36,7 @@ import { copy, getPropertyKey } from "../../common/utils";
 import { NegotiationModelWrapper } from "./negotiation/negotiation-model-wrapper";
 import { PriceWrapper } from "../../common/price-wrapper";
 import { Quantity } from "../../catalogue/model/publish/quantity";
+import { CompanyNegotiationSettings } from "../../user-mgmt/model/company-negotiation-settings";
 
 /**
  * Created by suat on 20-Sep-17.
@@ -50,6 +51,8 @@ export class BPDataService{
     // variables to keep the products and product categories related to the active business process
     relatedProducts: string[];
     relatedProductCategories: string[];
+    // the negotiation settings for the producers of the catalogue lines
+    private negotiationSettings: CompanyNegotiationSettings[] = [];
 
     requestForQuotation: RequestForQuotation;
     quotation: Quotation;
@@ -85,10 +88,11 @@ export class BPDataService{
                 private cookieService: CookieService) {
     }
 
-    setCatalogueLines(catalogueLines: CatalogueLine[]): void {
+    setCatalogueLines(catalogueLines: CatalogueLine[], negotiationSettings: CompanyNegotiationSettings[]): void {
         this.catalogueLines = [];
         this.relatedProducts = [];
         this.relatedProductCategories = [];
+        this.negotiationSettings = negotiationSettings;
 
         for(let line of catalogueLines) {
             this.catalogueLines.push(line);
@@ -226,9 +230,10 @@ export class BPDataService{
 
     // this method is supposed to be called when the user is about to initialize a business process via the
     // search details page
-    initRfq(): Promise<void> {
+    initRfq(settings: CompanyNegotiationSettings): Promise<void> {
         const rfq = UBLModelUtils.createRequestForQuotation(
-            this.workflowOptions ? this.workflowOptions.negotiation : new NegotiationOptions()
+            this.workflowOptions ? this.workflowOptions.negotiation : new NegotiationOptions(),
+            settings
         );
         this.requestForQuotation = rfq;
 

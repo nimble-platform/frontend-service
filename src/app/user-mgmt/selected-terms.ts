@@ -25,7 +25,7 @@ export class SelectedTerms {
 
 
     isSelected(term: string): boolean {
-        return !!this.selectedMap[term];
+        return this.selectedMap[term] || false;
     }
 
     toggle(term: string) {
@@ -35,9 +35,11 @@ export class SelectedTerms {
         // re-add the selected terms. This is done this way to make sure the order of
         // selectedTerms is preserved.
         this.allTerms.forEach(existing => {
-            if(this.isSelected(term)) {
+            if(this.isSelected(existing)) {
                 this.selectedTerms.push(existing);
             }
         });
+
+        console.log(this.selectedTerms)
     }
 }

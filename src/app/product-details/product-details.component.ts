@@ -11,6 +11,7 @@ import { Item } from "../catalogue/model/publish/item";
 import { PriceWrapper } from "../common/price-wrapper";
 import { getMaximumQuantityForPrice, getStepForPrice } from "../common/utils";
 import { AppComponent } from "../app.component";
+import { UserService } from "../user-mgmt/user.service";
 
 @Component({
     selector: 'product-details',
@@ -37,6 +38,7 @@ export class ProductDetailsComponent implements OnInit {
 
     constructor(private bpDataService: BPDataService,
                 private catalogueService: CatalogueService,
+                private userService: UserService,
                 private route: ActivatedRoute,
                 private router: Router,
                 public appComponent: AppComponent) {
@@ -44,7 +46,7 @@ export class ProductDetailsComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.bpDataService.setCatalogueLines([]);
+        this.bpDataService.setCatalogueLines([], []);
         this.getProductStatus.submit();
 		this.route.queryParams.subscribe(params => {
 			let id = params['id'];
@@ -54,24 +56,29 @@ export class ProductDetailsComponent implements OnInit {
                 this.id = id;
                 this.catalogueId = catalogueId;
 
-                this.catalogueService.getCatalogueLine(catalogueId, id).then(line => {
-                    this.line = line;
-                    this.item = line.goodsItem.item;
-                    this.wrapper = new ProductWrapper(line);
-                    this.priceWrapper = new PriceWrapper(this.line.requiredItemLocationQuantity.price);
-                    this.bpDataService.resetBpData();
-                    this.bpDataService.setCatalogueLines([line]);
-                    this.bpDataService.userRole = 'buyer';
-                    this.bpDataService.workflowOptions = this.options;
-                    this.bpDataService.setRelatedGroupId(null);
-                    this.getProductStatus.callback("Retrieved product details", true);
-                }).catch(error => {
-                    this.getProductStatus.error("Failed to retrieve product details");
-                    console.log("Error while retrieving product", error);
+                this.catalogueService.getCatalogueLine(catalogueId, id)
+                    .then(line => {
+                        this.line = line;
+                        this.item = line.goodsItem.item;
+                        return this.userService.getCompanyNegotiationSettingsForProduct(line)
+                    })
+                    .then(settings => {
+                        this.wrapper = new ProductWrapper(this.line, settings);
+                        this.priceWrapper = new PriceWrapper(this.line.requiredItemLocationQuantity.price);
+                        this.bpDataService.resetBpData();
+                        this.bpDataService.setCatalogueLines([this.line], [settings]);
+                        this.bpDataService.userRole = 'buyer';
+                        this.bpDataService.workflowOptions = this.options;
+                        this.bpDataService.setRelatedGroupId(null);
+                        this.getProductStatus.callback("Retrieved product details", true);
+                    })
+                    .catch(error => {
+                        this.getProductStatus.error("Failed to retrieve product details");
+                        console.log("Error while retrieving product", error);
 
-                    this.line = null;
-                    this.wrapper = null;
-                });
+                        this.line = null;
+                        this.wrapper = null;
+                    });
             }
 		});
     }
