@@ -7,6 +7,8 @@ import {ActivatedRoute, Params, Router} from "@angular/router";
 import {PublishService} from "../../publish-and-aip.service";
 import {CategoryService} from "../../category/category.service";
 import {Item} from '../../model/publish/item';
+import {selectDescription, selectName} from '../../../common/utils';
+import {ItemProperty} from '../../model/publish/item-property';
 
 @Component({
     selector: 'catalogue-view',
@@ -47,8 +49,6 @@ export class CatalogueViewComponent implements OnInit {
     // default
     pageSize = 10;
 
-    public defaultLanguage : string = "en";
-
     // check whether catalogue-line-panel should be displayed for a specific catalogue line
     catalogueLineView = {};
 
@@ -64,24 +64,12 @@ export class CatalogueViewComponent implements OnInit {
         });
     }
 
-    public selectName(item: Item) {
-        for (let pName of item.name) {
-            if(pName.languageID === this.defaultLanguage) {
-                return pName.value;
-            }
-        }
-
-        return item.name[0].value;
+    selectName (ip: ItemProperty | Item) {
+        return selectName(ip);
     }
 
-    public selectDescription(item: Item) {
-        for (let pName of item.description) {
-            if(pName.languageID === this.defaultLanguage) {
-                return pName.value;
-            }
-        }
-
-        return item.description[0].value;
+    selectDescription (item:  Item) {
+        return selectDescription(item);
     }
 
     public requestCatalogue(forceUpdate:boolean): void {
@@ -210,8 +198,8 @@ export class CatalogueViewComponent implements OnInit {
         let i = 0;
         let len = this.catalogueLinesWRTTypes.length;
         for(;i<len;i++){
-            if(RE.test(this.selectName(this.catalogueLinesWRTTypes[i].goodsItem.item)+" "+
-                    this.selectDescription(this.catalogueLinesWRTTypes[i].goodsItem.item))) {
+            if(RE.test(selectName(this.catalogueLinesWRTTypes[i].goodsItem.item)+" "+
+                    selectDescription(this.catalogueLinesWRTTypes[i].goodsItem.item))) {
                 answer.push(this.catalogueLinesWRTTypes[i]);
             }
         }

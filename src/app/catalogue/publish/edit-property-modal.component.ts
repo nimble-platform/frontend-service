@@ -1,10 +1,12 @@
 import { Component, OnInit, Input, ViewChild, ElementRef } from "@angular/core";
 import { ItemProperty } from "../model/publish/item-property";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { sanitizePropertyName, copy, isCustomProperty, getPropertyValues } from "../../common/utils";
+import {sanitizePropertyName, copy, isCustomProperty, getPropertyValues, createText, selectName} from '../../common/utils';
 import { Quantity } from "../model/publish/quantity";
 import { SelectedProperty } from "../model/publish/selected-property";
 import { PROPERTY_TYPES } from "../model/constants";
+import {Item} from '../model/publish/item';
+import {Text} from '../model/publish/text';
 
 @Component({
     selector: "edit-property-modal",
@@ -39,7 +41,7 @@ export class EditPropertyModalComponent implements OnInit {
             property.valueQuantity = this.property.valueQuantity;
 
             if(isCustomProperty(property)) {
-                property.name.value = this.property.name.value;
+                property.name = this.property.name;
                 property.valueQualifier = this.property.valueQualifier;
             }
         })
@@ -47,7 +49,7 @@ export class EditPropertyModalComponent implements OnInit {
 
     addEmptyValuesToProperty() {
         if(this.property.value.length === 0) {
-            this.property.value.push("");
+            this.property.value.push(createText(''));
         }
         if(this.property.valueDecimal.length === 0) {
             this.property.valueDecimal.push(0);
@@ -55,6 +57,10 @@ export class EditPropertyModalComponent implements OnInit {
         if(this.property.valueQuantity.length === 0) {
             this.property.valueQuantity.push(new Quantity());
         }
+    }
+
+    selectName (ip: ItemProperty | Item) {
+        return selectName(ip);
     }
 
     getDefinition(): string {
@@ -71,19 +77,58 @@ export class EditPropertyModalComponent implements OnInit {
     }
 
     get prettyName(): string {
-        return sanitizePropertyName(this.property.name.value);
+        // console.log(' Pretty name: ', sanitizePropertyName(selectName(this.property)));
+        return sanitizePropertyName(selectName(this.property));
     }
 
     set prettyName(name: string) {
-        this.property.name.value = name;
+        // console.log(' Property: ', this.property);
+        this.property.name.push(createText(name));
     }
 
     getValues(): any[] {
-        return getPropertyValues(this.property);
+        let values = getPropertyValues(this.property);
+        // console.log(' Property Values: ', values);
+        return values;
+    }
+
+    getNames(): any[] {
+        return this.property.name;
     }
 
     getPropertyPresentationMode(): "edit" | "view" {
         return isCustomProperty(this.property) ? "edit" : "view";
+    }
+
+    // TEST
+    private newPvalue: any = {};
+    private languages: Array<string> = ["en", "es", "de", "tr", "it"];
+
+    addPropertyValue() {
+        let propertyValueText = new Text(this.newPvalue.value, this.newPvalue.languageID);
+
+        this.property.value.push(propertyValueText);
+
+        this.newPvalue = {};
+    }
+
+    deletePropertyValue(index) {
+        this.property.value.splice(index, 1);
+    }
+
+    // TEST
+    private newPname: any = {};
+
+    addPropertyName() {
+        let propertyNameText = new Text(this.newPname.value, this.newPname.languageID);
+
+        this.property.name.push(propertyNameText);
+
+        this.newPname = {};
+    }
+
+    deletePropertyName(index) {
+        this.property.name.splice(index, 1);
     }
 
     onAddValue() {
@@ -98,7 +143,7 @@ export class EditPropertyModalComponent implements OnInit {
                 this.property.valueQuantity.push(new Quantity(0, ""));
                 break;
             case "STRING":
-                this.property.value.push("");
+                this.property.value.push(createText(''));
                 break;
             default:
                 // BINARY and BOOLEAN: nothing
@@ -125,7 +170,7 @@ export class EditPropertyModalComponent implements OnInit {
     }
 
     setValue(i: number, event: any) {
-        this.property.value[i] = event.target.value;
+        this.property.value[i].value = event.target.value;
     }
 
     setValueDecimal(i: number, event: any) {

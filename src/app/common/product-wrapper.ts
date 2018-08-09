@@ -3,7 +3,7 @@ import { Predicate } from "@angular/core";
 import { ItemProperty } from "../catalogue/model/publish/item-property";
 import { PAYMENT_MEANS } from "../catalogue/model/constants";
 import { UBLModelUtils } from "../catalogue/model/ubl-model-utils";
-import { sanitizePropertyName, getPropertyKey, periodToString, isCustomProperty, getPropertyValues } from "./utils";
+import {sanitizePropertyName, getPropertyKey, periodToString, isCustomProperty, getPropertyValues, selectName} from './utils';
 import { PriceWrapper } from "./price-wrapper";
 
 /**
@@ -81,7 +81,7 @@ export class ProductWrapper {
     }
 
     getPropertyName(property: ItemProperty): string {
-        return sanitizePropertyName(property.name.value);
+        return sanitizePropertyName(selectName(property));
     }
 
     /*
@@ -108,7 +108,7 @@ export class ProductWrapper {
             duplicates[key] = true;
         });
 
-        return result.sort((p1, p2) => p1.name.value.localeCompare(p2.name.value));
+        return result.sort((p1, p2) => selectName(p1).localeCompare(selectName(p2)));
     }
 
 }

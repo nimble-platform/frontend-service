@@ -124,6 +124,11 @@ export class UserService {
             .toPromise()
             .then(res => {
                 this.userParty = res.json()[0];
+                // TODO: Remove the following block. It is just inserted for test purposes
+                let name = new Text('canCompany');
+                this.userParty.name = name;
+                this.userParty.postalAddress.country.name = new Text('turkey');
+                /////
                 UBLModelUtils.removeHjidFieldsFromObject(this.userParty);
                 return Promise.resolve(this.userParty);
             })

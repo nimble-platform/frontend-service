@@ -32,7 +32,7 @@ import { ProcessType } from "../model/process-type";
 import { PaymentMeans } from "../../catalogue/model/publish/payment-means";
 import { Code } from "../../catalogue/model/publish/code";
 import { PaymentTerms } from "../../catalogue/model/publish/payment-terms";
-import { copy, getPropertyKey } from "../../common/utils";
+import {copy, getPropertyKey, selectName} from '../../common/utils';
 import { NegotiationModelWrapper } from "./negotiation/negotiation-model-wrapper";
 import { PriceWrapper } from "../../common/price-wrapper";
 import { Quantity } from "../../catalogue/model/publish/quantity";
@@ -585,7 +585,7 @@ export class BPDataService{
                     case "BOOLEAN":
                         if(prop.value.length > 1) {
                             for(let valIndex = 0; valIndex < prop.value.length; valIndex++) {
-                                if(prop.value[valIndex] === itemProp.value[0]) {
+                                if(prop.value[valIndex].value === itemProp.value[0].value) {
                                     this.workflowOptions.selectedValues[key] = valIndex;
                                 }
                             }
@@ -619,16 +619,16 @@ export class BPDataService{
 
     updateItemProperty(itemProperty:ItemProperty):void {
         if(itemProperty.valueQualifier == 'STRING') {
-            let index = this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty.findIndex(item => item.name.value == itemProperty.name.value);
+            let index = this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty.findIndex(item => selectName(item) == selectName(itemProperty));
             this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty[index].value[0] = itemProperty.value[0];
         } else if(itemProperty.valueQualifier == 'REAL_MEASURE') {
-            let index = this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty.findIndex(item => item.name.value == itemProperty.name.value);
+            let index = this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty.findIndex(item => selectName(item) == selectName(itemProperty));
             this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty[index].valueDecimal[0] = itemProperty.valueDecimal[0];
         } else if(itemProperty.valueQualifier == 'BOOLEAN') {
-            let index = this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty.findIndex(item => item.name.value == itemProperty.name.value);
+            let index = this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty.findIndex(item => selectName(item) == selectName(itemProperty));
             this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty[index].value[0] = itemProperty.value[0];
         } else if(itemProperty.valueQualifier == 'QUANTITY') {
-            let index = this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty.findIndex(item => item.name.value == itemProperty.name.value);
+            let index = this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty.findIndex(item => selectName(item) == selectName(itemProperty));
             this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty[index].valueQuantity[0] = itemProperty.valueQuantity[0];
         }
     }

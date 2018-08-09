@@ -111,7 +111,7 @@ export class CategorySearchComponent implements OnInit {
         this.getRootCategories();
     }
 
-    getPreferredName(cp: Category | Property) {
+    selectPreferredName(cp: Category | Property) {
         return selectPreferredName(cp);
     }
 

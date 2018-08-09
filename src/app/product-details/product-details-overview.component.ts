@@ -3,7 +3,8 @@ import { ProductWrapper } from "../common/product-wrapper";
 import { CommodityClassification } from "../catalogue/model/publish/commodity-classification";
 import { ItemProperty } from "../catalogue/model/publish/item-property";
 import { BpWorkflowOptions } from "../bpe/model/bp-workflow-options";
-import { getPropertyKey, getPropertyValuesAsStrings } from "../common/utils";
+import {getPropertyKey, getPropertyValuesAsStrings, selectName} from '../common/utils';
+import {Item} from '../catalogue/model/publish/item';
 
 @Component({
     selector: 'product-details-overview',
@@ -37,6 +38,10 @@ export class ProductDetailsOverviewComponent {
         if(this.options) {
             this.options.selectedValues[getPropertyKey(property)] = valueIndex;
         }
+    }
+
+    selectName (ip: ItemProperty | Item) {
+        return selectName(ip);
     }
 
     onSelectImage(index: number): void {

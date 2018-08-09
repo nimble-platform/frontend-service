@@ -50,7 +50,7 @@ import {MonetaryTotal} from "./publish/monetary-total";
 import { NegotiationOptions } from "./publish/negotiation-options";
 import { PAYMENT_MEANS, CURRENCIES } from "./constants";
 import { TradingTerm } from "./publish/trading-term";
-import {copy, selectPreferredName} from '../../common/utils';
+import {copy, createText, selectPreferredName} from '../../common/utils';
 import {Text} from "./publish/text";
 
 /**
@@ -58,7 +58,6 @@ import {Text} from "./publish/text";
  */
 export class UBLModelUtils {
 
-    static defaultLanguage = "en";
     /**
      * Create a property based on the given property and category parameters.
      *
@@ -79,12 +78,16 @@ export class UBLModelUtils {
             : new Code(null, null, null, "Custom", null);
 
         if (property == null) {
-            return new ItemProperty(this.generateUUID(), new Text(""), [], [], [],
+            return new ItemProperty(this.generateUUID(), [], [], [], [],
                 new Array<BinaryObject>(), "STRING", code, null);
         }
-        return new ItemProperty(property.id, new Text(selectPreferredName(property), this.defaultLanguage),
-            property.dataType === "BOOLEAN" ? ["false"] : [], [], [], 
+
+        let itemProperty = new ItemProperty(property.id, [],
+            property.dataType === "BOOLEAN" ? [ new Text("false", "en" ) ] : [], [], [],
             new Array<BinaryObject>(), property.dataType, code, property.uri);
+
+        itemProperty.name.push(createText(selectPreferredName(property)));
+        return itemProperty;
     }
 
     public static createCommodityClassification(category: Category): CommodityClassification {

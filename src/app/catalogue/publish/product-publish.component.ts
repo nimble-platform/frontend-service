@@ -26,7 +26,7 @@ import {
     copy,
     isCustomProperty,
     getPropertyValuesAsStrings,
-    selectPreferredName
+    selectPreferredName, selectName, createText
 } from '../../common/utils';
 import { Property } from "../model/category/property";
 import { ProductWrapper } from "../../common/product-wrapper";
@@ -145,7 +145,7 @@ export class ProductPublishComponent implements OnInit {
         });
     }
 
-    getPreferredName(cp: Category | Property) {
+    selectPreferredName(cp: Category | Property) {
         return selectPreferredName(cp);
     }
 
@@ -379,7 +379,7 @@ export class ProductPublishComponent implements OnInit {
     }
 
     getPrettyName(property: ItemProperty): string {
-        return sanitizePropertyName(property.name.value);
+        return sanitizePropertyName(selectName(property));
     }
 
     getValuesAsString(property: ItemProperty): string[] {
@@ -731,7 +731,7 @@ export class ProductPublishComponent implements OnInit {
                 }
 
             } else {
-                if (property.value.length == 0 || property.value[0] == '') {
+                if (property.value.length == 0 || property.value[0].value == '') {
                     propertiesToBeSpliced.push(property);
                 }
             }
@@ -868,9 +868,9 @@ export class ProductPublishComponent implements OnInit {
      */
     private addCustomProperty(): void {
         if (this.newProperty.valueQualifier == "BOOLEAN"){
-            let filledValues: string[] = [];
+            let filledValues: Text[] = [];
             for (let val of this.newProperty.value) {
-                if (val != "") {
+                if (val.value != "") {
                     filledValues.push(val);
                 }
             }
@@ -887,9 +887,9 @@ export class ProductPublishComponent implements OnInit {
         }
         // remove empty/undefined values and keep only the the data array relevant to the value qualifier
         else if (this.newProperty.valueQualifier == "STRING") {
-            let filledValues: string[] = [];
+            let filledValues: Text[] = [];
             for (let val of this.newProperty.value) {
-                if (val != "") {
+                if (val.value != "") {
                     filledValues.push(val);
                 }
             }
@@ -1038,7 +1038,8 @@ export class ProductPublishComponent implements OnInit {
 
     addValueToProperty() {
         if (this.newProperty.valueQualifier == 'STRING') {
-            this.newProperty.value.push('');
+            let text = createText('');
+            this.newProperty.value.push(text);
         } else if (this.newProperty.valueQualifier == 'REAL_MEASURE') {
             let newNumber: number;
             this.newProperty.valueDecimal.push(newNumber);

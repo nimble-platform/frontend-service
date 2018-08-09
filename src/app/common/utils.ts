@@ -6,6 +6,8 @@ import { Category } from "../catalogue/model/category/category";
 import { Property } from "../catalogue/model/category/property";
 import { PropertyValueQualifier } from "../catalogue/model/publish/property-value-qualifier";
 import { CUSTOM_PROPERTY_LIST_ID } from "../catalogue/model/constants";
+import {Item} from '../catalogue/model/publish/item';
+import {Text} from '../catalogue/model/publish/text';
 
 const UI_NAMES: any = {
     STRING: "TEXT"
@@ -31,25 +33,81 @@ export function copy<T = any>(object: T): T {
 }
 
 function isItemProperty(property: any): property is ItemProperty {
-    return !!property.name.value; // preferredName for Property
+    return !!property.name; // preferredName for Property
 }
 
 export function selectPreferredName (cp: Category | Property) {
-    let defaultLanguage = "en";
+    let language = "en";
     for (let pName of cp.preferredName) {
-        if(pName.languageID === defaultLanguage) {
+        if(pName.languageID === language) {
             return pName.value;
         }
     }
 
-    return this.preferredName[0].value;
+    return cp.preferredName[0].value;
+}
+
+export function selectName (ip: ItemProperty | Item) {
+    let language = "en";
+    for (let pName of ip.name) {
+        if(pName.languageID === language) {
+            return pName.value;
+        }
+    }
+
+    if (ip.name.length === 0)
+        return '';
+
+    return ip.name[0].value;
+}
+
+export function createText (value: string): Text {
+    let language = "en";
+    return new Text(value, language);
+}
+
+export function selectDescription (item:  Item) {
+    let language = "en";
+    for (let pName of item.description) {
+        if(pName.languageID === language) {
+            return pName.value;
+        }
+    }
+
+    return item.description[0].value;
+}
+
+export function selectItemPropertyValuesAsText (ip: ItemProperty, language: string): Text[] {
+    if (language === null)
+        language = "en";
+    let result : Text[] = [];
+    for (let pValue of ip.value) {
+        if(pValue.languageID === language) {
+            result.push(pValue);
+        }
+    }
+
+    return result;
+}
+
+export function selectItemPropertyValuesAsString (ip: ItemProperty, language: string): string[] {
+    if (language === null)
+        language = "en";
+    let result : string[] = [];
+    for (let pValue of ip.value) {
+        if(pValue.languageID === language) {
+            result.push(pValue.value);
+        }
+    }
+
+    return result;
 }
 
 export function getPropertyKey(property: Property | ItemProperty): string {
     if(isItemProperty(property)) {
-        return property.name.value + "___" + property.valueQualifier;
+        return selectName(property) + "___" + property.valueQualifier;
     }
-
+    //console.log(' Property: ', property);
     return selectPreferredName(property) + "___" + property.dataType;
 }
 
@@ -120,12 +178,12 @@ export function currencyToString(currencyId: string): string {
 }
 
 export function sortCategories(categories: Category[]): Category[] {
-    let defaultLanguage = "en";
+    let language = "en";
     return categories.sort((a, b) => selectPreferredName(a).localeCompare(selectPreferredName(b)));
 }
 
 export function sortProperties(properties: Property[]): Property[] {
-    let defaultLanguage = "en";
+    let language = "en";
     return properties.sort((a, b) => selectPreferredName(a).localeCompare(selectPreferredName(b)));
 }
 
@@ -166,7 +224,14 @@ export function getPropertyValuesAsStrings(property: ItemProperty): string[] {
         case "QUANTITY":
             return property.valueQuantity.map(qty => `${qty.value} ${qty.unitCode}`);
         case "STRING":
+            if (property.value.length === 0)
+                return [''];
+            else
+                return [property.value[0].value];
         case "BOOLEAN":
-            return property.value;
+            if (property.value.length === 0)
+                return ['false'];
+            else
+                return [property.value[0].value];
     }
 }

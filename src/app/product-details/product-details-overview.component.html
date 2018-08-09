@@ -75,7 +75,7 @@
             <!-- Properties with multiple values to select from -->
             <div class="d-flex flex-column">
                 <div *ngFor="let property of wrapper.getPropertiesWithListOfValues()" class="my-1">
-                    <strong>{{property.name.value}}: </strong>
+                    <strong>{{selectName(property)}}: </strong>
                     <span *ngFor="let val of getValuesAsString(property); let i = index" class="btn-group-toggle" data-toggle="buttons">
                         <button type="button" class="btn btn-outline-primary no-y-padding" (click)="onTogglePropertyValue(property, i)" 
                             [disabled]="readonly" [ngClass]="{ 'active': isPropertyValueSelected(property, i) }">

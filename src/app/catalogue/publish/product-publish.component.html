@@ -24,7 +24,7 @@
                 i18n>Selected category:</h6>
             <div *ngFor="let selectedCategory of selectedCategories"
                     class="bordered inline space-right">
-                {{getPreferredName(selectedCategory)}}
+                {{selectPreferredName(selectedCategory)}}
                 <button class="btn btn-sm" (click)="onRemoveCategory(selectedCategory)">&times;</button>
             </div>
             <div (click)="onAddCategory()"
@@ -93,7 +93,7 @@
         <div class="col-10 object-list">
             <div *ngFor="let selectedCategory of selectedCategories"
                 class="bordered my-1 ml-1" title="{{selectedCategory.taxonomyId}}">
-                <small class="p-0">{{getPreferredName(selectedCategory)}}</small>
+                <small class="p-0">{{selectPreferredName(selectedCategory)}}</small>
                 <i class="fa fa-times-circle pl-1" placement="right" (click)="onRemoveCategory(selectedCategory)"></i>
             </div>
             <button class="btn btn-outline-primary btn-add-category" 
@@ -263,8 +263,8 @@
                 </div>
                 <div class="col-8 object-list">
                     <input type="checkbox" class="form-check-input boolean-value-input"
-                        [checked]="prop.value[0] == 'true'" *ngIf="prop.valueQualifier === 'BOOLEAN'"
-                        (change)="prop.value[0] == 'true ' ? prop.value[0] = 'false' : prop.value[0] = 'true'">
+                        [checked]="prop.value[0].value == 'true'" *ngIf="prop.valueQualifier === 'BOOLEAN'"
+                        (change)="prop.value[0].value == 'true ' ? prop.value[0].value = 'false' : prop.value[0].value = 'true'">
                     <ng-container *ngIf="prop.valueQualifier !== 'BOOLEAN'">
                         <div *ngFor="let value of getValuesAsString(prop); let i = index"
                             class="bordered value-pill" title="{{ value }}">
@@ -341,13 +341,13 @@
                 </div>
                 <div class="modal-category" *ngFor="let category of selectedCategories; let i = index">
                     <hr *ngIf="i > 0">
-                    <h5>{{ getPreferredName(category) }}</h5>
+                    <h5>{{ selectPreferredName(category) }}</h5>
                     <div class="row">
                         <ng-container *ngFor="let property of getCategoryProperties(category)">
                             <div class="col-6 form-check modal-category-property" *ngIf="isPropertyFilteredIn(property)">
                                 <input type="checkbox" class="form-check-input" [ngModel]="isCategoryPropertySelected(category, property)" 
                                     (change)="onToggleCategoryPropertySelected(category, property)">
-                                <label class="form-check-label">{{ property.preferredName }} ({{ getPropertyType(property) }})</label>
+                                <label class="form-check-label">{{ property.preferredName[0].value }} ({{ getPropertyType(property) }})</label>
                             </div>
                         </ng-container>
                     </div>

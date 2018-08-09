@@ -33,6 +33,10 @@ export class CategoryTreeComponent implements OnInit {
     ngOnInit() {
     }
 
+    selectPreferredName(cp: Category) {
+        return selectPreferredName(cp);
+    }
+
     @Input() set parentCategories(parentCategories: ParentCategories) {
         this._parentCategories = parentCategories;
         if(parentCategories && this.category.code === parentCategories.parents[this.level - 1].code && this.level < parentCategories.parents.length) {
@@ -44,10 +48,6 @@ export class CategoryTreeComponent implements OnInit {
             scrollToDiv(this.category.code);
             }
         }), 0)
-    }
-
-    getPreferredName(cp: Category | Property) {
-        return selectPreferredName(cp);
     }
 
     get parentCategories(): ParentCategories {
