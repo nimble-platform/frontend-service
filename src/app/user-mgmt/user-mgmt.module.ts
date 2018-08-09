@@ -17,6 +17,7 @@ import { PaymentMeansForm } from './subforms/payment-means.component';
 import { CompanySettingsComponent } from './company-settings.component';
 import { CompanyRegistrationComponent } from './company-registration.component';
 import { CompanyInvitationComponent } from './company-invitation.component';
+import { CompanyNegotiationSettingsComponent } from './company-negotiation-settings.component';
 
 //import { UserService } from './user.service';
 //import { CredentialsService } from './credentials.service';
@@ -42,7 +43,8 @@ import { CompanyInvitationComponent } from './company-invitation.component';
         PaymentMeansForm,
         CompanySettingsComponent,
 		CompanyRegistrationComponent,
-		CompanyInvitationComponent
+		CompanyInvitationComponent,
+		CompanyNegotiationSettingsComponent
 	],
 	exports: [
 		LoginComponent,

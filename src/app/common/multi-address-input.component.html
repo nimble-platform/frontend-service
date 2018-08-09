@@ -1,12 +1,8 @@
 <!-- view and singlevalue mode -->
 <div *ngIf="presentationMode == 'view' || presentationMode == 'singlevalue'" class="row {{ rowClass }}">
     <div *ngIf="label" [class]="labelClass">
-        <label class="{{labelMainClass}}">
-            <strong>
-                {{ label }}:
-            </strong>
-            <span *ngIf="definition" class="definition" title="{{definition}}">&#9432;</span>
-        </label>
+        <input-label [class]="labelMainClass" [label]="label" [definition]="definition">
+        </input-label>
     </div>
     <select *ngIf="address.length > 1"
             class="custom-select">

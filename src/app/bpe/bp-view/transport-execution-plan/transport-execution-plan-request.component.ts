@@ -1,64 +1,56 @@
-import {Component, Input, OnInit} from "@angular/core";
-import {CatalogueLine} from "../../../catalogue/model/publish/catalogue-line";
-import {BPDataService} from "../bp-data-service";
-import {BPEService} from "../../bpe.service";
-import {UBLModelUtils} from "../../../catalogue/model/ubl-model-utils";
-import {CookieService} from "ng2-cookies";
-import * as myGlobals from '../../../globals';
-import {CustomerParty} from "../../../catalogue/model/publish/customer-party";
-import {SupplierParty} from "../../../catalogue/model/publish/supplier-party";
-import {ProcessVariables} from "../../model/process-variables";
-import {ModelUtils} from "../../model/model-utils";
-import {ProcessInstanceInputMessage} from "../../model/process-instance-input-message";
-import {UserService} from "../../../user-mgmt/user.service";
-import {CallStatus} from "../../../common/call-status";
-import {Order} from "../../../catalogue/model/publish/order";
-import {Router} from "@angular/router";
-import {TransportExecutionPlanRequest} from "../../../catalogue/model/publish/transport-execution-plan-request";
-import {PrecedingBPDataService} from "../preceding-bp-data-service";
+import { Component, OnInit } from "@angular/core";
+import { Location } from "@angular/common";
+import { Router } from "@angular/router";
+import { CookieService } from "ng2-cookies";
+import { BPDataService } from "../bp-data-service";
+import { BPEService } from "../../bpe.service";
+import { CallStatus } from "../../../common/call-status";
+import { TransportExecutionPlanRequest } from "../../../catalogue/model/publish/transport-execution-plan-request";
+import { copy } from "../../../common/utils";
+import { UBLModelUtils } from "../../../catalogue/model/ubl-model-utils";
+import { ProcessVariables } from "../../model/process-variables";
+import { ProcessInstanceInputMessage } from "../../model/process-instance-input-message";
+import { UserService } from "../../../user-mgmt/user.service";
+import { ModelUtils } from "../../model/model-utils";
+
 /**
  * Created by suat on 20-Sep-17.
  */
 @Component({
-    selector: 'transport-execution-plan-request',
-    templateUrl: './transport-execution-plan-request.component.html'
+    selector: "transport-execution-plan-request",
+    templateUrl: "./transport-execution-plan-request.component.html",
+    styleUrls: ["./transport-execution-plan-request.component.css"]
 })
-
 export class TransportExecutionPlanRequestComponent implements OnInit {
-    @Input() transportExecutionPlanRequest:TransportExecutionPlanRequest;
 
-    callStatus:CallStatus = new CallStatus();
-    // check whether 'Send Plan Terms' button is clicked
-    submitted:boolean = false;
-    // used to get correct format for start and end dates
-    startDate:any;
-    endDate:any;
+    request: TransportExecutionPlanRequest;
+
+    callStatus: CallStatus = new CallStatus();
+
     constructor(private bpeService: BPEService,
-                private bpDataService: BPDataService,
-                private userService: UserService,
-                private precedingBPDataService: PrecedingBPDataService,
+                private bpDataService: BPDataService, 
                 private cookieService: CookieService,
-                private router:Router) {
+                private userService: UserService,
+                private router: Router,
+                private location: Location) {
+        
     }
 
-    ngOnInit(): void {
-        // TODO instead of checking the transport contract whether it is null or not,
-        // pass a query parameter for indicating initiation of a new process
-        if(this.transportExecutionPlanRequest.transportContract == null && this.bpDataService.precedingProcessId != null) {
-            this.bpeService.constructContractForProcess(this.bpDataService.precedingProcessId).then(contract => {
-                this.transportExecutionPlanRequest.transportContract = contract;
-            });
-        }
+    ngOnInit() {
+        this.request = this.bpDataService.transportExecutionPlanRequest;
     }
 
-    sendTransportExecutionPlanRequest() {
-        this.submitted = true;
+    isLoading(): boolean {
+        return false;
+    }
+
+    onBack(): void {
+        this.location.back();
+    }
+
+    onSendRequest(): void {
         this.callStatus.submit();
-        let transportationExecutionPlanRequest:TransportExecutionPlanRequest = JSON.parse(JSON.stringify(this.bpDataService.transportExecutionPlanRequest));
-
-        // get addresses from the address cache
-        transportationExecutionPlanRequest.toLocation.address = this.precedingBPDataService.toAddress;
-        transportationExecutionPlanRequest.fromLocation.address = this.precedingBPDataService.fromAddress;
+        let transportationExecutionPlanRequest: TransportExecutionPlanRequest = copy(this.bpDataService.transportExecutionPlanRequest);
 
         // final check on the transportationExecutionPlanRequest
         transportationExecutionPlanRequest.mainTransportationService = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;
@@ -66,36 +58,27 @@ export class TransportExecutionPlanRequestComponent implements OnInit {
 
         //first initialize the seller and buyer parties.
         //once they are fetched continue with starting the ordering process
-        let sellerId:string = this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty.id;
-        let buyerId:string = this.cookieService.get("company_id");
+        const sellerId: string = this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty.id;
+        const buyerId: string = this.cookieService.get("company_id");
 
         this.userService.getParty(buyerId).then(buyerParty => {
             transportationExecutionPlanRequest.transportUserParty = buyerParty;
 
             this.userService.getParty(sellerId).then(sellerParty => {
                 transportationExecutionPlanRequest.transportServiceProviderParty = sellerParty;
-                let vars:ProcessVariables = ModelUtils.createProcessVariables("Transport_Execution_Plan", buyerId, sellerId, transportationExecutionPlanRequest, this.bpDataService);
-                let piim:ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
+                const vars: ProcessVariables = ModelUtils.createProcessVariables("Transport_Execution_Plan", buyerId, sellerId, transportationExecutionPlanRequest, this.bpDataService);
+                const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
 
                 this.bpeService.startBusinessProcess(piim)
-                    .then(res => {
+                    .then(() => {
                         this.callStatus.callback("Transport Execution Plan sent", true);
                         this.router.navigate(['dashboard']);
                     })
                     .catch(error => {
-                        this.submitted = false;
                         this.callStatus.error("Failed to send Transport Execution Plan");
+                        console.log("Failed to send Transport Execution Plan", error)
                     });
             });
         });
-    }
-
-
-
-    getDate(type:string):string{
-        if(type == "Start"){
-            return this.startDate.year+"-"+this.startDate.month+"-"+this.startDate.day;
-        }
-        return this.endDate.year+"-"+this.endDate.month+"-"+this.endDate.day;
     }
 }

@@ -1,0 +1,16 @@
+<div class="row space-before">
+    <div class="col-12">
+        <h4>Pick-up Address</h4>
+        <address-input [address]="lineItem.delivery[0].shipment.originAddress" [disabled]="disabled">
+        </address-input>
+    </div>
+</div>
+
+<!-- Destination Address -->
+<div class="row">
+    <div class="col-12">
+        <h4>Drop-off Address</h4>
+        <address-input [address]="lineItem.deliveryTerms.deliveryLocation.address"[disabled]="disabled">
+        </address-input>
+    </div>
+</div>

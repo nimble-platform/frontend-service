@@ -14,6 +14,7 @@ import { DateInputComponent } from './date-input.component';
 import { AddressInputComponent } from './address-input.component';
 import { BooleanInputComponent } from './boolean-input.component';
 import { MultiAddressInputComponent } from './multi-address-input.component';
+import { InputLabelComponent } from './input-label.component';
 
 @NgModule({
 	imports: [
@@ -33,7 +34,8 @@ import { MultiAddressInputComponent } from './multi-address-input.component';
 		DateInputComponent,
 		AddressInputComponent,
 		BooleanInputComponent,
-		MultiAddressInputComponent
+		MultiAddressInputComponent,
+		InputLabelComponent
 	],
 	exports: [
 		CallStatusComponent,
@@ -45,7 +47,8 @@ import { MultiAddressInputComponent } from './multi-address-input.component';
 		DateInputComponent,
 		AddressInputComponent,
 		BooleanInputComponent,
-		MultiAddressInputComponent
+		MultiAddressInputComponent,
+		InputLabelComponent
 	],
 	providers: [
 	]
