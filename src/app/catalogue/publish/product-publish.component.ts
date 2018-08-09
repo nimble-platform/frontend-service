@@ -24,6 +24,13 @@ import { EditPropertyModalComponent } from "./edit-property-modal.component";
 import { Location } from "@angular/common";
 import { SelectedProperty } from "../model/publish/selected-property";
 import { CompanyNegotiationSettings } from "../../user-mgmt/model/company-negotiation-settings";
+import { Observable } from "rxjs/Observable";
+import { Subject } from "rxjs/Subject";
+import 'rxjs/add/observable/fromPromise'
+import 'rxjs/add/observable/interval';
+import 'rxjs/add/operator/takeUntil';
+
+
 type ProductType = "product" | "transportation";
 
 interface SelectedProperties {
@@ -54,8 +61,10 @@ export class ProductPublishComponent implements OnInit {
     selectedCategories: Category[];
     publishingGranularity: "single" | "bulk" = "single";
     publishStatus: CallStatus = new CallStatus();
+    productCategoryRetrievalStatus: CallStatus = new CallStatus();
     productType: ProductType;
     isLogistics: boolean;
+    ngUnsubscribe: Subject<void> = new Subject<void>();
 
     /*
      * Values for Single only
@@ -96,8 +105,6 @@ export class ProductPublishComponent implements OnInit {
 
     json = JSON;
 
-    productCategoryRetrievalStatus: CallStatus = new CallStatus();
-
     // used to add a new property which has a unit
     private quantity = new Quantity(null, null);
 
@@ -137,6 +144,10 @@ export class ProductPublishComponent implements OnInit {
             this.productType = params["productType"] === "transportation" ? "transportation" : "product";
             this.isLogistics = (this.productType === "transportation");
         });
+    }
+
+    ngOnDestroy() {
+        this.ngUnsubscribe.next()
     }
 
     /*
@@ -253,7 +264,11 @@ export class ProductPublishComponent implements OnInit {
     }
 
     isLoading(): boolean {
-        return this.publishStatus.fb_submitted;
+        return (this.publishStatus.fb_submitted || this.isProductCategoriesLoading());
+    }
+
+    isProductCategoriesLoading(): boolean {
+        return this.productCategoryRetrievalStatus.fb_submitted;
     }
 
     hasSelectedProperties(): boolean {
@@ -465,29 +480,32 @@ export class ProductPublishComponent implements OnInit {
                 if (classificationCodes.length > 0) {
                     // temporarily store publishing started variable as it will be used inside the following callback
                     this.productCategoryRetrievalStatus.submit();
-                    this.categoryService.getCategoriesByIds(classificationCodes).then((categories: Category[]) => {
-                        // upon navigating from the catalogue view, classification codes are set as selected categories
+                    Observable.fromPromise(this.categoryService.getCategoriesByIds(classificationCodes))
+                        .takeUntil(this.ngUnsubscribe)
+                        .catch(err => {
+                            this.productCategoryRetrievalStatus.error('Failed to get product categories')
+                            return Observable.throw(err);
+                        })
+                        .subscribe((categories: Category[]) => {
+                            // upon navigating from the catalogue view, classification codes are set as selected categories
+                            for (let category of categories) {
+                                this.categoryService.selectedCategories.push(category);
+                            }
+                            sortCategories(this.categoryService.selectedCategories);
 
-                        for (let category of categories) {
-                            this.categoryService.selectedCategories.push(category);
-                        }
-                        sortCategories(this.categoryService.selectedCategories);
-
-                        if (this.categoryService.selectedCategories != []) {
-                            for (let category of this.categoryService.selectedCategories) {
-                                let newCategory = this.isNewCategory(category);
-                                if (newCategory) {
-                                    this.updateItemWithNewCategory(category);
+                            if (this.categoryService.selectedCategories != []) {
+                                for (let category of this.categoryService.selectedCategories) {
+                                    let newCategory = this.isNewCategory(category);
+                                    if (newCategory) {
+                                        this.updateItemWithNewCategory(category);
+                                    }
                                 }
                             }
-                        }
 
-                        this.recomputeSelectedProperties();
-
-                        this.productCategoryRetrievalStatus.callback('Retrieved product categories', true);
-                    }).catch(err =>
-                        this.productCategoryRetrievalStatus.error('Failed to get product categories')
-                    );
+                            this.recomputeSelectedProperties();
+                            this.ngUnsubscribe.complete();
+                            this.productCategoryRetrievalStatus.callback('Retrieved product categories', true);
+                        });
                 }
 
             } else {
@@ -808,7 +826,6 @@ export class ProductPublishComponent implements OnInit {
 
         let index = binaryObjects.findIndex(img => img.fileName === fileName);
 
-        console.log(index);
         if (index > -1) {
             binaryObjects.splice(index, 1);
         }

@@ -22,6 +22,7 @@ export class CompanySettingsComponent implements OnInit {
 	public aM = false;
 	public mailto = "";
   public certificates = [];
+  public prefCats = [];
   public ppapTypes =  [
     "",
     "Design Documentation",
@@ -68,6 +69,7 @@ export class CompanySettingsComponent implements OnInit {
       });
   		this.aM = false;
       this.certificates = [];
+      this.prefCats = [];
       this.ppapTypes.sort();
   		AddressSubForm.setDisabled(this.settingsForm.controls['address'],true);
       this.initForm();
@@ -106,13 +108,7 @@ export class CompanySettingsComponent implements OnInit {
   }
 
   downloadCertificate(id: string) {
-    this.userService.downloadCert(id)
-    .then(response => {
-
-    })
-    .catch(error => {
-
-    });
+    this.userService.downloadCert(id);
   }
 
   removeCertificate(id: string) {
@@ -123,6 +119,16 @@ export class CompanySettingsComponent implements OnInit {
       })
       .catch(error => {
           this.ngOnInit();
+      });
+    }
+  }
+
+  removeCat(cat:string) {
+    if (confirm("Are you sure that you want to remove this category from your favorites?")) {
+      let userId = this.cookieService.get('user_id');
+      this.userService.togglePrefCat(userId, cat).then(res => {
+        this.prefCats = res;
+        this.prefCats.sort((a,b) => a.split("::")[2].localeCompare(b.split("::")[2]));
       });
     }
   }
@@ -142,6 +148,8 @@ export class CompanySettingsComponent implements OnInit {
         this.certificates = settings.certificates;
         this.certificates.sort((a,b) => a.name.localeCompare(b.name));
         this.certificates.sort((a,b) => a.type.localeCompare(b.type));
+        this.prefCats = settings.preferredProductCategories;
+        this.prefCats.sort((a,b) => a.split("::")[2].localeCompare(b.split("::")[2]));
         AddressSubForm.update(this.settingsForm.controls['address'], settings.address);
         //PaymentMeansForm.update(this.settingsForm.controls['paymentMeans']['controls'][0], settings.paymentMeans[0]);
         DeliveryTermsSubForm.update(this.settingsForm.controls['deliveryTerms']['controls'][0], settings.deliveryTerms[0]);

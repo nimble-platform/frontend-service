@@ -7,6 +7,7 @@ import {ActivatedRoute, Params, Router} from "@angular/router";
 import {Category} from "../model/category/category";
 import {CategoryService} from "./category.service";
 import {CookieService} from "ng2-cookies";
+import {UserService} from "../../user-mgmt/user.service";
 import {CatalogueService} from "../catalogue.service";
 import {PublishService} from "../publish-and-aip.service";
 import {ProductPublishComponent} from "../publish/product-publish.component";
@@ -57,6 +58,7 @@ export class CategorySearchComponent implements OnInit {
     selectedCategoriesWRTLevels = [];
     propertyNames: string[] = ["code", "taxonomyId", "level", "definition", "note", "remark"];
     taxonomyId: string = "eClass";
+    prefCats: string[] = [];
 
     isLogistics: boolean;
     eClassLogisticsCategory: Category = null;
@@ -65,9 +67,12 @@ export class CategorySearchComponent implements OnInit {
     callStatus: CallStatus = new CallStatus();
     productType: ProductType;
 
+    favSelected: boolean;
+
     constructor(private router: Router,
                 private route: ActivatedRoute,
                 private cookieService: CookieService,
+                private userService: UserService,
                 public categoryService: CategoryService,
                 private catalogueService: CatalogueService,
                 private publishService:PublishService,
@@ -100,10 +105,15 @@ export class CategorySearchComponent implements OnInit {
             if(this.pageRef == null || this.pageRef == 'menu') {
                 // reset categories
                 this.categoryService.resetSelectedCategories();
+                this.selectedCategory = null;
+                this.selectedCategoryWithDetails = null;
                 // reset draft catalogue line
                 this.publishService.publishingStarted = false;
                 this.publishService.publishMode = 'create';
             }
+
+            this.prefCats = [];
+            this.getPrefCat();
 
             // publishing granularity: single, bulk, null
             this.publishingGranularity = params['pg'];
@@ -118,6 +128,57 @@ export class CategorySearchComponent implements OnInit {
             }
         });
         this.getRootCategories();
+    }
+
+    getPrefCat() {
+      let userId = this.cookieService.get('user_id');
+      this.userService.getPrefCat(userId).then(res => {
+        var prefCats_tmp = [];
+        for (var i=0; i<res.length; i++) {
+          if (res[i].split("::")[3] == this.productType)
+            prefCats_tmp.push(res[i]);
+        }
+        prefCats_tmp.sort((a,b) => a.split("::")[2].localeCompare(b.split("::")[2]));
+        this.prefCats = prefCats_tmp;
+      });
+    }
+
+    findPrefCat(cat:Category):boolean {
+      var cat_str = cat.id+"::"+cat.taxonomyId+"::"+cat.preferredName+"::"+this.productType;
+      var found = false;
+      if (this.prefCats.indexOf(cat_str) != -1)
+        found = true;
+      return found;
+    }
+
+    removeCat(cat:Category) {
+      if (confirm("Are you sure that you want to remove this category from your favorites?")) {
+        var cat_str = cat.id+"::"+cat.taxonomyId+"::"+cat.preferredName+"::"+this.productType;
+        let userId = this.cookieService.get('user_id');
+        this.userService.togglePrefCat(userId,cat_str).then(res => {
+          var prefCats_tmp = [];
+          for (var i=0; i<res.length; i++) {
+            if (res[i].split("::")[3] == this.productType)
+              prefCats_tmp.push(res[i]);
+          }
+          prefCats_tmp.sort((a,b) => a.split("::")[2].localeCompare(b.split("::")[2]));
+          this.prefCats = prefCats_tmp;
+        });
+      }
+    }
+
+    addCat(cat:Category) {
+      var cat_str = cat.id+"::"+cat.taxonomyId+"::"+cat.preferredName+"::"+this.productType;
+      let userId = this.cookieService.get('user_id');
+      this.userService.togglePrefCat(userId,cat_str).then(res => {
+        var prefCats_tmp = [];
+        for (var i=0; i<res.length; i++) {
+          if (res[i].split("::")[3] == this.productType)
+            prefCats_tmp.push(res[i]);
+        }
+        prefCats_tmp.sort((a,b) => a.split("::")[2].localeCompare(b.split("::")[2]));
+        this.prefCats = prefCats_tmp;
+      });
     }
 
     canDeactivate():boolean{
@@ -270,7 +331,33 @@ export class CategorySearchComponent implements OnInit {
             );
     }
 
-    getCategoryDetails(category: Category) {
+    showPrefDetails(cat: string) {
+      var cat_split = cat.split("::");
+      var catFull: Category = {
+        "id": cat_split[0],
+        "preferredName": cat_split[2],
+        "code": "",
+        "level": 0,
+        "definition": "",
+        "note": "",
+        "remark": "",
+        "properties": [],
+        "keywords": [],
+        "taxonomyId": cat_split[1],
+        "categoryUri": ""
+      }
+      this.getCategoryDetails(catFull,true);
+    }
+
+    isPrefSelected(cat:string): boolean {
+      if(this.selectedCategory != null && this.favSelected == true) {
+          return cat.split("::")[0] === this.selectedCategory.id;
+      }
+      return false;
+    }
+
+    getCategoryDetails(category: Category,fav:boolean) {
+        this.favSelected = fav;
         this.callback = false;
         this.submitted = true;
         this.error_detc = false;
