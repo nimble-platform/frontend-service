@@ -46,7 +46,7 @@
                         <td colspan="3">No results found.</td>
                     </tr>
                     <tr *ngFor="let category of categories"
-                        (click)="getCategoryDetails(category)"
+                        (click)="getCategoryDetails(category,false)"
                         [ngClass]="{'table-secondary': selectedCategory && category.code == selectedCategory.code}">
                         <td class="py-2 px-3 font-weight-light">{{category.taxonomyId}}</td>
                         <td class="py-2 px-3">{{category.preferredName}}</td>
@@ -76,14 +76,20 @@
             </div>
             <div *ngIf="rootCategories">
                 <div class="d-flex flex-column" style="height: 100px">
+                    <div *ngIf="prefCats.length>0" class="mb-3">
+                      <h4 class="p-2">Favorite Categories</h4>
+                      <div *ngFor="let prefCat of prefCats" class="py-2 hover-row d-flex border-bottom" style="padding-left:0.75rem" [ngClass]="{'selected-row': isPrefSelected(prefCat)}" (click)="showPrefDetails(prefCat);">
+                          {{prefCat.split("::")[2]}}
+                      </div>
+                    </div>
                     <div *ngIf="isLogistics" class="mb-3">
                         <h4 class="p-2">Logistics Categories</h4>
-                        <category-tree [category]="eClassLogisticsCategory" [border]="false" [parentCategories]="parentCategories" (detailsEvent)="getCategoryDetails($event)" [selectedCategory]="selectedCategory" [selectedCategories]="selectedCategories"></category-tree>
+                        <category-tree [category]="eClassLogisticsCategory" [border]="false" [parentCategories]="parentCategories" (detailsEvent)="getCategoryDetails($event,false)" [selectedCategory]="selectedCategory" [selectedCategories]="selectedCategories"></category-tree>
                     </div>
                     <div *ngIf="!isLogistics">
                         <h4 class="p-2">Product Categories</h4>
                         <div *ngFor="let rootCategory of rootCategories">
-                            <category-tree [category]="rootCategory" [parentCategories]="parentCategories" (detailsEvent)="getCategoryDetails($event)" [selectedCategory]="selectedCategory" [selectedCategories]="selectedCategories"></category-tree>
+                            <category-tree [category]="rootCategory" [parentCategories]="parentCategories" (detailsEvent)="getCategoryDetails($event,false)" [selectedCategory]="selectedCategory" [selectedCategories]="selectedCategories"></category-tree>
                         </div>
                     </div>
                 </div>
@@ -96,11 +102,11 @@
                 <h4 class="font-weight-bold" *ngIf="!selectedCategoryWithDetails">Details</h4>
                 <h4 class="font-weight-bold mr-auto" *ngIf="selectedCategoryWithDetails">Details for {{selectedCategoryWithDetails["preferredName"]}}</h4>
                 <div *ngIf="selectedCategoryWithDetails">
-                    <button *ngIf="findCategoryInArray(selectedCategories, selectedCategoryWithDetails) === -1" class="btn btn-primary align-self-start" (click)="selectCategory(selectedCategoryWithDetails)">Add Category</button>
-                    <button *ngIf="findCategoryInArray(selectedCategories, selectedCategoryWithDetails) > -1" class="btn btn-danger align-self-start" (click)="removeCategory(selectedCategoryWithDetails)">Remove Category</button>
+                    <button *ngIf="findCategoryInArray(selectedCategories, selectedCategoryWithDetails) === -1" class="btn btn-primary float-right" (click)="selectCategory(selectedCategoryWithDetails)">Add Category</button>
+                    <button *ngIf="findCategoryInArray(selectedCategories, selectedCategoryWithDetails) > -1" class="btn btn-danger float-right" (click)="removeCategory(selectedCategoryWithDetails)">Remove Category</button>
                     <br/>
-                    <button *ngIf="!findPrefCat(selectedCategoryWithDetails)" class="btn btn-primary mt-1 align-self-start" (click)="addCat(selectedCategoryWithDetails)">Add Favorite</button>
-                    <button *ngIf="findPrefCat(selectedCategoryWithDetails)" class="btn btn-danger mt-1 align-self-start" (click)="removeCat(selectedCategoryWithDetails)">Remove Favorite</button>
+                    <button *ngIf="!findPrefCat(selectedCategoryWithDetails)" class="btn btn-primary mt-1 float-right" (click)="addCat(selectedCategoryWithDetails)">Add Favorite</button>
+                    <button *ngIf="findPrefCat(selectedCategoryWithDetails)" class="btn btn-danger mt-1 float-right" (click)="removeCat(selectedCategoryWithDetails)">Remove Favorite</button>
                 </div>
             </div>
             <p *ngIf="!selectedCategoryWithDetails" [hidden]="!(callback || !submitted || error_detc)" class="align-self-center p-2 mt-4">Click on a category to see its details.</p>
