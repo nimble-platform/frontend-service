@@ -15,7 +15,7 @@ export class ThreadEventComponent implements OnInit {
 
     @Input() processInstanceGroup: ProcessInstanceGroup;
     @Input() event: ThreadEventMetadata;
-    @Output() processCancelled: EventEmitter = new EventEmitter();
+    @Output() processCancelled = new EventEmitter();
 
     constructor(private bpDataService: BPDataService,
                 private bpeService: BPEService,
