@@ -155,6 +155,12 @@
                                 [loading]="filtersLoading"
                                 (triggerCriteriaChanged)="onFilterChange()">
                             </facet>
+                            <facet [title]="'Status'" [dataType]="'string'"
+                                   [stringValues]="filterSet && filterSet.status"
+                                   [selectedStringValues]="modifiedFilterSet && modifiedFilterSet.status"
+                                   [loading]="filtersLoading"
+                                   (triggerCriteriaChanged)="onFilterChange()">
+                            </facet>
                         </div>
 
                         <!-- Results -->

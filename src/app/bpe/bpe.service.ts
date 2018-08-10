@@ -164,7 +164,7 @@ export class BPEService {
             .catch(this.handleError);
 	}
 
-	getProcessInstanceGroupFilters(partyId:string, collaborationRole: CollaborationRole, archived: boolean, products: string[], categories: string[], partners: string[]): Promise<ProcessInstanceGroupFilter> {
+	getProcessInstanceGroupFilters(partyId:string, collaborationRole: CollaborationRole, archived: boolean, products: string[], categories: string[], partners: string[],status: string[]): Promise<ProcessInstanceGroupFilter> {
 		const token = 'Bearer '+this.cookieService.get("bearer_token");
 		let headers = new Headers({'Accept': 'application/json','Authorization': token});
 		this.headers.keys().forEach(header => headers.append(header, this.headers.get(header)));
@@ -179,6 +179,9 @@ export class BPEService {
 		if(partners.length > 0) {
 			url += '&tradingPartnerIDs=' + this.stringifyArray(partners);
 		}
+		if(status.length > 0){
+			url += '&status='+this.stringifyArray(status);
+		}
 		return this.http
             .get(url, {headers: headers})
             .toPromise()
@@ -186,7 +189,7 @@ export class BPEService {
             .catch(this.handleError);
 	}
 
-	getProcessInstanceGroups(partyId:string, collaborationRole: CollaborationRole, page: number, limit: number, archived: boolean, products: string[], categories: string[], partners: string[]): Promise<ProcessInstanceGroupResponse> {
+	getProcessInstanceGroups(partyId:string, collaborationRole: CollaborationRole, page: number, limit: number, archived: boolean, products: string[], categories: string[], partners: string[], status: string[]): Promise<ProcessInstanceGroupResponse> {
 		let offset:number = page * limit;
 		let url:string = `${this.url}/group?partyID=${partyId}&collaborationRole=${collaborationRole}&offset=${offset}&limit=${limit}&archived=${archived}`;
 		if(products.length > 0) {
@@ -198,6 +201,9 @@ export class BPEService {
 		if(partners.length > 0) {
 			url += '&tradingPartnerIDs=' + this.stringifyArray(partners);
 		}
+		if(status.length > 0){
+		    url += '&status='+this.stringifyArray(status);
+        }
 		return this.http
             .get(url, {headers: this.headers})
             .toPromise()

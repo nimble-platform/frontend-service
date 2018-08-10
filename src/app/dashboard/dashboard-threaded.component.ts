@@ -81,6 +81,7 @@ export class DashboardThreadedComponent implements OnInit {
         this.updateQueryParameters({
             prd: this.toString(this.modifiedFilterSet.relatedProducts),
             cat: this.toString(this.modifiedFilterSet.relatedProductCategories),
+            sts: this.toString(this.modifiedFilterSet.status),
             prt: this.getSelectedPartners(this.modifiedFilterSet),
          })
     }
@@ -169,7 +170,8 @@ export class DashboardThreadedComponent implements OnInit {
             this.sanitizePage(params["pg"]),    // page
             params["prd"],                      // products
             params["cat"],                      // categories
-            params["prt"]                       // partners
+            params["prt"],                      // partners
+            params["sts"]                       // status
         )
 
         switch(this.queryParameters.tab) {
@@ -229,7 +231,7 @@ export class DashboardThreadedComponent implements OnInit {
             this.bpeService
             .getProcessInstanceGroups(this.cookieService.get("company_id"),
                 query.collaborationRole, query.page - 1, query.pageSize, query.archived,
-                query.products, query.categories, query.partners)
+                query.products, query.categories, query.partners,query.status)
             .then(response => {
                 this.results = new DashboardOrdersQueryResults(
                     response.processInstanceGroups,
@@ -243,11 +245,11 @@ export class DashboardThreadedComponent implements OnInit {
                 // regular query
                 this.bpeService.getProcessInstanceGroups(this.cookieService.get("company_id"),
                     query.collaborationRole, query.page - 1, query.pageSize, query.archived,
-                    query.products, query.categories, query.partners
+                    query.products, query.categories, query.partners,query.status
                 ),
                 // query for archived orders
                 this.bpeService.getProcessInstanceGroups(this.cookieService.get("company_id"),
-                    query.collaborationRole, 0, 1, true, [], [], []
+                    query.collaborationRole, 0, 1, true, [], [], [],[]
                 ),
             ]).then(([response, archived]) => {
                 this.results = new DashboardOrdersQueryResults(
@@ -264,7 +266,7 @@ export class DashboardThreadedComponent implements OnInit {
         this.filtersLoading = true;
 
         this.bpeService
-        .getProcessInstanceGroupFilters(this.cookieService.get("company_id"), query.collaborationRole, query.archived, query.products, query.categories, query.partners)
+        .getProcessInstanceGroupFilters(this.cookieService.get("company_id"), query.collaborationRole, query.archived, query.products, query.categories, query.partners, query.status)
         .then(response => {
             // populate the modified filter set with the passed parameters that are also included in the results
             // so that the selected criteria would have a checkbox along with
@@ -273,6 +275,12 @@ export class DashboardThreadedComponent implements OnInit {
             if (query.products.length > 0) {
                 for (let product of response.relatedProducts) {
                     this.modifiedFilterSet.relatedProducts.push(product);
+                }
+            }
+            // status
+            if (query.status.length > 0 ){
+                for(let status of response.status){
+                    this.modifiedFilterSet.status.push(status);
                 }
             }
             // categories
@@ -321,6 +329,7 @@ export class DashboardThreadedComponent implements OnInit {
             this.parseArray(this.queryParameters.prd),
             this.parseArray(this.queryParameters.cat),
             this.parseArray(this.queryParameters.prt),
+            this.parseArray(this.queryParameters.sts),
             PAGE_SIZE,
         )
     }
