@@ -25,7 +25,7 @@ export class SelectedTerms {
 
 
     isSelected(term: string): boolean {
-        return this.selectedMap[term] || false;
+        return this.selectedMap[term] || term == "";
     }
 
     toggle(term: string) {
@@ -39,7 +39,5 @@ export class SelectedTerms {
                 this.selectedTerms.push(existing);
             }
         });
-
-        console.log(this.selectedTerms)
     }
 }

@@ -48,7 +48,7 @@ export class CompanyNegotiationSettingsComponent implements OnInit {
                 this.paymentTerms = new SelectedTerms(settings.paymentTerms, this.PAYMENT_TERMS);
                 this.paymentMeans = new SelectedTerms(settings.paymentMeans, PAYMENT_MEANS);
                 // first incoterm is "" (option for no incoterm)
-                this.incoterms = new SelectedTerms(settings.incoterms, INCOTERMS.filter((_, i) => i > 0));
+                this.incoterms = new SelectedTerms(settings.incoterms, INCOTERMS);
 
                 this.originalSettings = copy(settings);
                 this.settings = settings;
