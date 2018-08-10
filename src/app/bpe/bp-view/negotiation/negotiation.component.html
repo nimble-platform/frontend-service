@@ -1,9 +1,7 @@
 <ng-container *ngIf="!isLoading() && bpDataService.getCatalogueLine()">
-    <negotiation-request *ngIf="!bpDataService.quotation && bpDataService.userRole === 'buyer'" 
-        [companyNegotiationSettings]="companyNegotiationSettings">
+    <negotiation-request *ngIf="!bpDataService.quotation && bpDataService.userRole === 'buyer'">
     </negotiation-request>
-    <negotiation-response *ngIf="bpDataService.quotation"
-        [companyNegotiationSettings]="companyNegotiationSettings">
+    <negotiation-response *ngIf="bpDataService.quotation">
     </negotiation-response>
 </ng-container>
 

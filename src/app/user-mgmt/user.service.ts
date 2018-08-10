@@ -245,6 +245,7 @@ export class UserService {
             })
             .catch(this.handleError);
     }
+
     private sanitizeSettings(settings: CompanyNegotiationSettings): CompanyNegotiationSettings {
         if(settings.deliveryPeriodUnits.length === 0) {
             settings.deliveryPeriodUnits.push("day(s)");

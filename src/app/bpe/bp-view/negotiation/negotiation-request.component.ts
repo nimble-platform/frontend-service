@@ -19,6 +19,8 @@ import { ProcessInstanceInputMessage } from "../../model/process-instance-input-
 import { NegotiationModelWrapper } from "./negotiation-model-wrapper";
 import { getMaximumQuantityForPrice, getStepForPrice, copy } from "../../../common/utils";
 import { CompanyNegotiationSettings } from "../../../user-mgmt/model/company-negotiation-settings";
+import { PeriodRange } from "../../../user-mgmt/model/period-range";
+import { Quantity } from "../../../catalogue/model/publish/quantity";
 
 @Component({
     selector: "negotiation-request",
@@ -26,8 +28,6 @@ import { CompanyNegotiationSettings } from "../../../user-mgmt/model/company-neg
     styleUrls: ["./negotiation-request.component.css"],
 })
 export class NegotiationRequestComponent implements OnInit {
-
-    @Input() companyNegotiationSettings: CompanyNegotiationSettings;
 
     line: CatalogueLine;
     rfq: RequestForQuotation;
@@ -55,7 +55,7 @@ export class NegotiationRequestComponent implements OnInit {
         this.rfq = this.bpDataService.requestForQuotation;
         this.rfqLine = this.rfq.requestForQuotationLine[0];
         this.line = this.bpDataService.getCatalogueLine();
-        this.wrapper = new NegotiationModelWrapper(this.line, this.rfq, null, this.companyNegotiationSettings);
+        this.wrapper = new NegotiationModelWrapper(this.line, this.rfq, null, this.bpDataService.getCompanyNegotiationSettings());
         this.totalPrice = this.wrapper.rfqTotalPrice;
         this.negotiatedPriceValue = this.totalPrice;
 
@@ -177,24 +177,91 @@ export class NegotiationRequestComponent implements OnInit {
         return !!this.bpDataService.processMetadata;
     }
 
+    isFormValid(): boolean {
+        return this.isDeliveryPeriodValid() && this.isWarrantyPeriodValid() && this.isPriceValid();
+    }
+
     isWaitingForReply(): boolean {
         return this.bpDataService.processMetadata && this.bpDataService.processMetadata.processStatus === "Started";
     }
 
+    isPriceValid(): boolean {
+        return this.wrapper.rfqPriceWrapper.value > 0;
+    }
+
     getDeliveryPeriodText(): string {
-        const unit = this.wrapper.rfqDeliveryPeriod.unitCode;
-        return ` (minimum: ${0} ${unit}, maximum: ${0} ${unit})`;
-    }
+        const range = this.getDeliveryPeriodRange();
 
-    getDeliveryPeriodStyle(): string {
-        return ""
-    }
-
-    getWarrantyPeriodText(): string {
+        if(range) {
+            const unit = this.wrapper.rfqDeliveryPeriod.unitCode;
+            return ` (minimum: ${range.start} ${unit}, maximum: ${range.end} ${unit})`;
+        }
+        
         return "";
     }
 
-    getWarrantyPeriodStyle(): string {
-        return ""
+    getDeliveryPeriodStyle(): any {
+        const result: any = {}
+
+        if(!this.isDeliveryPeriodValid()) {
+            result["color"] = "red";
+        }
+
+        return result;
+    }
+
+    isDeliveryPeriodValid(): boolean {
+        const range = this.getDeliveryPeriodRange();
+        return !range || this.isPeriodValid(this.wrapper.rfqDeliveryPeriod.value, range);
+    }
+
+    private getDeliveryPeriodRange(): PeriodRange | null {
+        const unit = this.wrapper.rfqDeliveryPeriod.unitCode;
+        const settings = this.wrapper.settings;
+
+        const index = settings.deliveryPeriodUnits.indexOf(unit);
+        return index >= 0 ? settings.deliveryPeriodRanges[index] : null;
+    }
+
+    getWarrantyPeriodText(): string {
+        const range = this.getWarrantyPeriodRange();
+
+        if(range) {
+            const unit = this.wrapper.rfqWarranty.unitCode;
+            return ` (minimum: ${range.start} ${unit}, maximum: ${range.end} ${unit})`;
+        }
+        
+        return "";
+    }
+
+    getWarrantyPeriodStyle(): any {
+        const result: any = {}
+
+        if(!this.isWarrantyPeriodValid()) {
+            result["color"] = "red";
+        }
+
+        return result;
+    }
+
+    isWarrantyPeriodValid(): boolean {
+        const range = this.getWarrantyPeriodRange();
+        return !range || this.isPeriodValid(this.wrapper.rfqWarranty.value, range);
+    }
+
+    private getWarrantyPeriodRange(): PeriodRange | null {
+        const unit = this.wrapper.rfqWarranty.unitCode;
+        const settings = this.wrapper.settings;
+
+        const index = settings.warrantyPeriodUnits.indexOf(unit);
+        return index >= 0 ? settings.warrantyPeriodRanges[index] : null;
+    }
+
+    private isPeriodValid(value: number, range: PeriodRange): boolean {
+        if(typeof value !== "number") {
+            return true;
+        }
+
+        return value >= range.start && value <= range.end;
     }
 }

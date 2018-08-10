@@ -109,6 +109,10 @@ export class BPDataService{
         return this.catalogueLines[0];
     }
 
+    getCompanyNegotiationSettings(): CompanyNegotiationSettings {
+        return this.negotiationSettings[0];
+    }
+
     getRelatedGroupId(): string {
         return this.relatedGroupId;
     }

@@ -17,13 +17,13 @@
     <div class="col-5">
         {{ wrapper.lineDeliveryPeriod.value }} 
         {{ wrapper.lineDeliveryPeriod.unitCode }}
-        <span [style]="getDeliveryPeriodStyle()">
+        <span [ngStyle]="getDeliveryPeriodStyle()">
             {{ getDeliveryPeriodText() }}
         </span>
     </div>
     <div class="col-5">
         <negotiation-request-input label="Request Delivery Period" [(cbModel)]="rfq.negotiationOptions.deliveryPeriod" [disabled]="isLoading() || isReadOnly()"
-            id="deliveryCb" [quantity]="wrapper.rfqDeliveryPeriod" [quantityUnits]="companyNegotiationSettings.deliveryPeriodUnits">
+            id="deliveryCb" [quantity]="wrapper.rfqDeliveryPeriod" [quantityUnits]="wrapper.settings.deliveryPeriodUnits" [invalid]="!isDeliveryPeriodValid()">
         </negotiation-request-input>
     </div>
 </div>
@@ -35,13 +35,13 @@
     </div>
     <div class="col-5">
         {{ wrapper.lineWarrantyString }}
-        <span [style]="getWarrantyPeriodStyle()">
+        <span [ngStyle]="getWarrantyPeriodStyle()">
             {{ getWarrantyPeriodText() }}
         </span>
     </div>
     <div class="col-5">
         <negotiation-request-input label="Request Warranty" [(cbModel)]="rfq.negotiationOptions.warranty" [disabled]="isLoading() || isReadOnly()"
-            id="warrantyCb" [quantity]="wrapper.rfqWarranty" [quantityUnits]="companyNegotiationSettings.warrantyPeriodUnits">
+            id="warrantyCb" [quantity]="wrapper.rfqWarranty" [quantityUnits]="wrapper.settings.warrantyPeriodUnits" [invalid]="!isWarrantyPeriodValid()">
         </negotiation-request-input>
     </div>
 </div>
@@ -56,7 +56,7 @@
     </div>
     <div class="col-5">
         <negotiation-request-input label="Incoterms" [(cbModel)]="rfq.negotiationOptions.incoterms" [disabled]="isLoading() || isReadOnly()"
-            id="incotermsCb" [options]="companyNegotiationSettings.incoterms" [(selected)]="wrapper.rfqIncoterms">
+            id="incotermsCb" [options]="wrapper.settings.incoterms" [(selected)]="wrapper.rfqIncoterms">
         </negotiation-request-input>
     </div>
 </div>
@@ -73,7 +73,7 @@
     </div>
     <div class="col-5">
         <negotiation-request-input label="Request Payment Terms" [(cbModel)]="rfq.negotiationOptions.paymentTerms" 
-            id="paymentTermsCb" [options]="companyNegotiationSettings.paymentTerms" 
+            id="paymentTermsCb" [options]="wrapper.settings.paymentTerms" 
             [(selected)]="wrapper.rfqPaymentTerms.paymentTerm" [disabled]="isLoading() || isReadOnly()">
         </negotiation-request-input>
     </div>
@@ -91,7 +91,7 @@
     </div>
     <div class="col-5">
         <negotiation-request-input label="Request Payment Means" [(cbModel)]="rfq.negotiationOptions.paymentMeans" 
-            id="paymentMeansCb" [options]="companyNegotiationSettings.paymentMeans" [(selected)]="wrapper.rfqPaymentMeans" 
+            id="paymentMeansCb" [options]="wrapper.settings.paymentMeans" [(selected)]="wrapper.rfqPaymentMeans" 
             [disabled]="isLoading() || isReadOnly()">
         </negotiation-request-input>
     </div>
@@ -108,7 +108,7 @@
     <div class="col-5">
         <negotiation-request-input label="Request Item Price" [(cbModel)]="negotiatePrice" id="priceCb" 
             [disabled]="isLoading() || isReadOnly()" [quantity]="wrapper.rfqPriceWrapper.itemPrice" 
-            [quantityUnits]="CURRENCIES" [cbDisabled]="!lineHasPrice" [disableQuantityUnit]="lineHasPrice">
+            [quantityUnits]="CURRENCIES" [cbDisabled]="!lineHasPrice" [disableQuantityUnit]="lineHasPrice" [invalid]="!isPriceValid()">
         </negotiation-request-input>
     </div>
 </div>
@@ -168,7 +168,7 @@
         <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
     </div>
     <div class="col-3">
-        <button class="btn btn-primary action" [disabled]="isLoading()" (click)="onSendRequest()">
+        <button class="btn btn-primary action" [disabled]="isLoading() || !isFormValid()" (click)="onSendRequest()">
             {{ isNegotiatingAnyTerm() ? "Send Request" : "Continue With Manufacturer's Terms" }}
         </button>
     </div>
