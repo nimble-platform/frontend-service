@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { CookieService } from 'ng2-cookies';
 import { UserService } from './user.service';
 import { PAYMENT_MEANS, INCOTERMS } from '../catalogue/model/constants';
@@ -10,10 +10,11 @@ import { copy, deepEquals } from '../common/utils';
 
 @Component({
     selector: 'company-negotiation-settings',
-    templateUrl: './company-negotiation-settings.component.html',
-    styleUrls: ['./company-negotiation-settings.component.css']
+    templateUrl: './company-negotiation-settings.component.html'
 })
 export class CompanyNegotiationSettingsComponent implements OnInit {
+
+    @Input() presentationMode: "edit" | "view" = "edit";
 
 	PAYMENT_MEANS_LEFT = PAYMENT_MEANS.filter((_, i) => i % 2 === 0);
 	PAYMENT_MEANS_RIGHT = PAYMENT_MEANS.filter((_, i) => i % 2 === 1);
@@ -48,7 +49,7 @@ export class CompanyNegotiationSettingsComponent implements OnInit {
                 this.paymentTerms = new SelectedTerms(settings.paymentTerms, this.PAYMENT_TERMS);
                 this.paymentMeans = new SelectedTerms(settings.paymentMeans, PAYMENT_MEANS);
                 // first incoterm is "" (option for no incoterm)
-                this.incoterms = new SelectedTerms(settings.incoterms, INCOTERMS.filter((_, i) => i > 0));
+                this.incoterms = new SelectedTerms(settings.incoterms, INCOTERMS);
 
                 this.originalSettings = copy(settings);
                 this.settings = settings;
@@ -78,5 +79,9 @@ export class CompanyNegotiationSettingsComponent implements OnInit {
 
     isDirty(): boolean {
         return !deepEquals(this.settings, this.originalSettings);
+    }
+
+    isDisabled(): boolean {
+        return this.presentationMode === "view";
     }
 }

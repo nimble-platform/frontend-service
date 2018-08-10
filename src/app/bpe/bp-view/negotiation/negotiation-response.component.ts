@@ -8,7 +8,6 @@ import { Router } from "@angular/router";
 import { Quotation } from "../../../catalogue/model/publish/quotation";
 import { NegotiationModelWrapper } from "./negotiation-model-wrapper";
 import { NEGOTIATION_RESPONSES, CURRENCIES } from "../../../catalogue/model/constants";
-import { CompanyNegotiationSettings } from "../../../user-mgmt/model/company-negotiation-settings";
 import { ModelUtils } from "../../model/model-utils";
 import { ProcessVariables } from "../../model/process-variables";
 import { ProcessInstanceInputMessage } from "../../model/process-instance-input-message";
@@ -22,8 +21,6 @@ import { BpUserRole } from "../../model/bp-user-role";
     styleUrls: ["./negotiation-response.component.css"],
 })
 export class NegotiationResponseComponent implements OnInit {
-
-    @Input() companyNegotiationSettings: CompanyNegotiationSettings;
 
     line: CatalogueLine;
     rfq: RequestForQuotation;
@@ -47,7 +44,7 @@ export class NegotiationResponseComponent implements OnInit {
         this.rfq = this.bpDataService.requestForQuotation;
         this.bpDataService.computeRfqNegotiationOptionsIfNeeded();
         this.quotation = this.bpDataService.quotation;
-        this.wrapper = new NegotiationModelWrapper(this.line, this.rfq, this.quotation, this.companyNegotiationSettings);
+        this.wrapper = new NegotiationModelWrapper(this.line, this.rfq, this.quotation, this.bpDataService.getCompanyNegotiationSettings());
         this.userRole = this.bpDataService.userRole;
     }
 

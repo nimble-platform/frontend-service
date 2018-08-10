@@ -48,10 +48,11 @@ import {PaymentTerms} from "./publish/payment-terms";
 import {Address} from "./publish/address";
 import {MonetaryTotal} from "./publish/monetary-total";
 import { NegotiationOptions } from "./publish/negotiation-options";
-import { PAYMENT_MEANS, CURRENCIES, INCOTERMS } from "./constants";
+import { CURRENCIES } from "./constants";
 import { TradingTerm } from "./publish/trading-term";
 import { copy } from "../../common/utils";
 import { CompanyNegotiationSettings } from "../../user-mgmt/model/company-negotiation-settings";
+import { headersToString } from "../../../../node_modules/@types/selenium-webdriver/http";
 
 /**
  * Created by suat on 05-Jul-17.
@@ -100,7 +101,8 @@ export class UBLModelUtils {
         return ilq;
     }
 
-    public static createCatalogueLine(catalogueUuid:string, providerParty: Party): CatalogueLine {
+    public static createCatalogueLine(catalogueUuid:string, providerParty: Party, 
+        settings: CompanyNegotiationSettings): CatalogueLine {
         // create additional item properties
         const additionalItemProperties = new Array<ItemProperty>();
 
@@ -113,12 +115,13 @@ export class UBLModelUtils {
         const item = new Item("", "", [], [], additionalItemProperties, providerParty, this.createItemIdentificationWithId(uuid), docRef, [], [], [], null);
 
         // create goods item
-        const goodsItem = new GoodsItem(uuid, item, this.createPackage(), this.createDeliveryTerms());
+        const goodsItem = new GoodsItem(uuid, item, this.createPackage(), 
+            this.createDeliveryTerms(null, settings.deliveryPeriodUnits[0]));
 
         // create required item location quantity
         const ilq = this.createItemLocationQuantity("");
-
-        const catalogueLine = new CatalogueLine(uuid, null, null, false, this.createPeriod(), [], ilq, goodsItem);
+        const catalogueLine = new CatalogueLine(uuid, null, null, false, 
+            this.createPeriod(settings.warrantyPeriodRanges[0].start, settings.warrantyPeriodUnits[0]), [], ilq, goodsItem);
 
         // extra initialization
         catalogueLine.goodsItem.containingPackage.quantity.unitCode = "item(s)";
@@ -449,13 +452,14 @@ export class UBLModelUtils {
         return price;
     }
 
-    public static createDeliveryTerms():DeliveryTerms {
-        const deliveryTerms = new DeliveryTerms(null, this.createPeriod(), null, null, this.createAmount(), new Location(), null);
+    private static createDeliveryTerms(value: number = null, unit: string = "day(s)"): DeliveryTerms {
+        const deliveryTerms = new DeliveryTerms(null, this.createPeriod(value, unit), 
+            null, null, this.createAmount(), new Location(), null);
         return deliveryTerms;
     }
 
-    public static createPeriod(): Period {
-        return new Period(null, null, null, null, this.createQuantity(null, "Working days"), null);
+    private static createPeriod(value: number = null, unit: string = "day(s)"): Period {
+        return new Period(null, null, null, null, this.createQuantity(value, unit), null);
     }
 
     public static createDimension(attributeId:string, unitCode:string):Dimension {

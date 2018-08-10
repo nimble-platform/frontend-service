@@ -59,12 +59,12 @@ export class ProductPublishComponent implements OnInit {
 
     publishMode: PublishMode;
     selectedCategories: Category[];
-    publishingGranularity: "single" | "bulk" = "single";
     publishStatus: CallStatus = new CallStatus();
+    publishingGranularity: "single" | "bulk" = "single";
     productCategoryRetrievalStatus: CallStatus = new CallStatus();
+    ngUnsubscribe: Subject<void> = new Subject<void>();
     productType: ProductType;
     isLogistics: boolean;
-    ngUnsubscribe: Subject<void> = new Subject<void>();
 
     /*
      * Values for Single only
@@ -72,6 +72,7 @@ export class ProductPublishComponent implements OnInit {
 
     catalogueLine: CatalogueLine = null;
     productWrapper: ProductWrapper = null;
+    companyNegotiationSettings: CompanyNegotiationSettings;
     selectedTabSinglePublish: "DETAILS" | "DELIVERY_TRADING" | "PRICE" = "DETAILS";
     private selectedProperties: SelectedProperties = {};
     private categoryProperties: CategoryProperties = {};
@@ -128,10 +129,15 @@ export class ProductPublishComponent implements OnInit {
         this.selectedCategories = this.categoryService.selectedCategories;
         const userId = this.cookieService.get("user_id");
         this.userService.getUserParty(userId).then(party => {
-            this.catalogueService.getCatalogue(userId).then(catalogue => {
-                this.initView(party, catalogue);
-                this.publishStateService.publishingStarted = true;
-            });
+            return Promise.all([
+                Promise.resolve(party),
+                this.catalogueService.getCatalogue(userId),
+                this.userService.getCompanyNegotiationSettingsForParty(party.id)
+            ])
+        })
+        .then(([party, catalogue, settings]) => {
+            this.initView(party, catalogue, settings);
+            this.publishStateService.publishingStarted = true;
         });
 
         this.route.queryParams.subscribe((params: Params) => {
@@ -455,7 +461,8 @@ export class ProductPublishComponent implements OnInit {
         return true;
     }
 
-    private initView(userParty, userCatalogue): void {
+    private initView(userParty, userCatalogue, settings): void {
+        this.companyNegotiationSettings = settings;
         this.catalogueService.setEditMode(true);
         this.publishStateService.resetData();
         // Following "if" block is executed when redirected by an "edit" button
@@ -463,12 +470,12 @@ export class ProductPublishComponent implements OnInit {
         let publishMode = this.publishStateService.publishMode;
         if (publishMode == 'edit') {
             this.catalogueLine = this.catalogueService.draftCatalogueLine;
-            if (this.catalogueLine == null) {
+            if (this.catalogueLine == null) { 
                 this.publishStateService.publishMode = 'create';
                 this.router.navigate(['catalogue/publish']);
                 return;
             }
-            this.productWrapper = new ProductWrapper(this.catalogueLine, new CompanyNegotiationSettings());
+            this.productWrapper = new ProductWrapper(this.catalogueLine, settings);
 
             // Get categories of item to edit
             if(this.publishStateService.publishingStarted == false) {
@@ -521,12 +528,12 @@ export class ProductPublishComponent implements OnInit {
             // new publishing is the first entry to the publishing page
             // i.e. publishing from scratch
             if (this.publishStateService.publishingStarted == false) {
-                    this.catalogueLine = UBLModelUtils.createCatalogueLine(userCatalogue.uuid, userParty);
+                    this.catalogueLine = UBLModelUtils.createCatalogueLine(userCatalogue.uuid, userParty, settings);
                     this.catalogueService.draftCatalogueLine = this.catalogueLine;
             } else {
                 this.catalogueLine = this.catalogueService.draftCatalogueLine;
             }
-            this.productWrapper = new ProductWrapper(this.catalogueLine, new CompanyNegotiationSettings());
+            this.productWrapper = new ProductWrapper(this.catalogueLine, settings);
 
             for (let category of this.categoryService.selectedCategories) {
                 let newCategory = this.isNewCategory(category);
@@ -723,7 +730,8 @@ export class ProductPublishComponent implements OnInit {
             this.catalogueService.getCatalogueForceUpdate(userId, true).then(catalogue => {
                 this.catalogueService.catalogue = catalogue;
                 const line = this.catalogueLine;
-                this.catalogueLine = UBLModelUtils.createCatalogueLine(catalogue.uuid, party)
+                this.catalogueLine = UBLModelUtils.createCatalogueLine(catalogue.uuid, 
+                    party, this.companyNegotiationSettings);
                 this.catalogueService.draftCatalogueLine = this.catalogueLine;
 
                 // avoid category duplication

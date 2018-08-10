@@ -234,7 +234,6 @@ export class UserService {
     }
 
     getCompanyNegotiationSettingsForParty(partyId: string): Promise<CompanyNegotiationSettings> {
-        console.log("Getting settings for party: ", partyId);
         const url = `${this.url}/company-settings/negotiation/${partyId}`;
         const token = 'Bearer ' + this.cookieService.get("bearer_token");
         const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
@@ -246,6 +245,7 @@ export class UserService {
             })
             .catch(this.handleError);
     }
+
     private sanitizeSettings(settings: CompanyNegotiationSettings): CompanyNegotiationSettings {
         if(settings.deliveryPeriodUnits.length === 0) {
             settings.deliveryPeriodUnits.push("day(s)");
@@ -270,7 +270,6 @@ export class UserService {
             settings.warrantyPeriodRanges.pop();
         }
 
-        console.log(settings);
         return settings;
     }
 

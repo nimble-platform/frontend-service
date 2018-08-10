@@ -10,6 +10,7 @@ import { CatalogueLine } from "./model/publish/catalogue-line";
 import { Category } from "./model/category/category";
 import { BehaviorSubject } from "rxjs/BehaviorSubject";
 import {CookieService} from "ng2-cookies";
+import { copy } from "../common/utils";
 
 @Injectable()
 export class CatalogueService {
@@ -251,7 +252,7 @@ export class CatalogueService {
     // Editing functionality
     editCatalogueLine(catalogueLine: CatalogueLine) {
         // Deep copy to guard original catalogueLine model
-        this.draftCatalogueLine = JSON.parse(JSON.stringify(catalogueLine));
+        this.draftCatalogueLine = copy(catalogueLine);
         // save reference to original
         this.originalCatalogueLine = catalogueLine;
     }
