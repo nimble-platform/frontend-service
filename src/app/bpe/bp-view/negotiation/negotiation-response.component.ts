@@ -1,4 +1,5 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, Input } from "@angular/core";
+import { Location } from "@angular/common";
 import { CatalogueLine } from "../../../catalogue/model/publish/catalogue-line";
 import { RequestForQuotation } from "../../../catalogue/model/publish/request-for-quotation";
 import { BPDataService } from "../bp-data-service";
@@ -6,14 +7,13 @@ import { BPEService } from "../../bpe.service";
 import { Router } from "@angular/router";
 import { Quotation } from "../../../catalogue/model/publish/quotation";
 import { NegotiationModelWrapper } from "./negotiation-model-wrapper";
-import { INCOTERMS, PAYMENT_MEANS, NEGOTIATION_RESPONSES, CURRENCIES } from "../../../catalogue/model/constants";
+import { NEGOTIATION_RESPONSES, CURRENCIES } from "../../../catalogue/model/constants";
 import { ModelUtils } from "../../model/model-utils";
 import { ProcessVariables } from "../../model/process-variables";
 import { ProcessInstanceInputMessage } from "../../model/process-instance-input-message";
 import { CallStatus } from "../../../common/call-status";
 import { Quantity } from "../../../catalogue/model/publish/quantity";
 import { BpUserRole } from "../../model/bp-user-role";
-import { Location } from "@angular/common";
 
 @Component({
     selector: "negotiation-response",
@@ -28,8 +28,6 @@ export class NegotiationResponseComponent implements OnInit {
     wrapper: NegotiationModelWrapper;
     userRole: BpUserRole;
 
-    INCOTERMS: string[] = INCOTERMS;
-    PAYMENT_MEANS: string[] = PAYMENT_MEANS;
     CURRENCIES: string[] = CURRENCIES;
 
     callStatus: CallStatus = new CallStatus();
@@ -46,7 +44,7 @@ export class NegotiationResponseComponent implements OnInit {
         this.rfq = this.bpDataService.requestForQuotation;
         this.bpDataService.computeRfqNegotiationOptionsIfNeeded();
         this.quotation = this.bpDataService.quotation;
-        this.wrapper = new NegotiationModelWrapper(this.line, this.rfq, this.quotation);
+        this.wrapper = new NegotiationModelWrapper(this.line, this.rfq, this.quotation, this.bpDataService.getCompanyNegotiationSettings());
         this.userRole = this.bpDataService.userRole;
     }
 

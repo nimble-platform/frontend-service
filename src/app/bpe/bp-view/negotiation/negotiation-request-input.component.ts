@@ -16,6 +16,7 @@ export class NegotiationRequestInputComponent implements OnInit {
     @Output() cbModelChange = new EventEmitter<boolean>();
     @Input() cbDisabled: boolean = false;
     @Input() disabled: boolean = false;
+    @Input() invalid: boolean = false;
     @Input() id: string;
     
     // Set if the input should be of type text.
@@ -90,5 +91,9 @@ export class NegotiationRequestInputComponent implements OnInit {
     set amount(value: number) {
         this.amountValue = value;
         this.amountChange.emit(value);
+    }
+
+    get formControlClass(): string {
+        return this.invalid ? "ng-invalid" : "ng-valid";
     }
 }

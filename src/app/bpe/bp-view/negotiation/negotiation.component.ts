@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from "@angular/core";
 import { BPDataService } from "../bp-data-service";
 import { CallStatus } from "../../../common/call-status";
+import { CompanyNegotiationSettings } from "../../../user-mgmt/model/company-negotiation-settings";
 
 @Component({
     selector: 'negotiation',
@@ -8,15 +9,17 @@ import { CallStatus } from "../../../common/call-status";
 })
 export class NegotiationComponent implements OnInit {
 
-    initCallStatus:CallStatus = new CallStatus();
+    initCallStatus: CallStatus = new CallStatus();
+
+    companyNegotiationSettings: CompanyNegotiationSettings;
 
     constructor(public bpDataService: BPDataService) {
     }
 
     ngOnInit() {
-		if(this.bpDataService.requestForQuotation == null) {
+        if(this.bpDataService.requestForQuotation == null) {
             this.initCallStatus.submit();
-            this.bpDataService.initRfq()
+            this.bpDataService.initRfq(this.bpDataService.getCompanyNegotiationSettings())
                 .then(() => {
                     this.initCallStatus.callback("Request for Quotation Initialized.");
                 })
@@ -26,7 +29,7 @@ export class NegotiationComponent implements OnInit {
                 });
         }
     }
-    
+
     isLoading(): boolean {
         return this.initCallStatus.fb_submitted;
     }

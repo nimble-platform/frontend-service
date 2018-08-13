@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { AppComponent } from "../app.component";
-import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { DeliveryTermsSubForm } from './subforms/delivery-terms.component';
 import { UserService } from './user.service';
 import { CookieService } from 'ng2-cookies';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AddressSubForm } from './subforms/address.component';
-import { PaymentMeansForm } from './subforms/payment-means.component';
 import * as myGlobals from '../globals';
 
 @Component({
@@ -14,7 +13,6 @@ import * as myGlobals from '../globals';
     templateUrl: './company-settings.component.html',
     styleUrls: ['./company-settings.component.css']
 })
-
 export class CompanySettingsComponent implements OnInit {
 
 	public loading = true;

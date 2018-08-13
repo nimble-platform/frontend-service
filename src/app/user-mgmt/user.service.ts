@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Headers, Http } from '@angular/http';
+import { CookieService } from 'ng2-cookies';
 import 'rxjs/add/operator/toPromise';
 import * as myGlobals from '../globals';
 import {Party} from "../catalogue/model/publish/party";
@@ -8,9 +9,9 @@ import { UserRegistration } from './model/user-registration';
 import { CompanyRegistration } from './model/company-registration';
 import { CompanyInvitation } from './model/company-invitation';
 import {UBLModelUtils} from "../catalogue/model/ubl-model-utils";
-import { CookieService } from 'ng2-cookies';
 import { UserRole } from './model/user-role';
 import { CompanyNegotiationSettings } from './model/company-negotiation-settings';
+import { CatalogueLine } from '../catalogue/model/publish/catalogue-line';
 
 @Injectable()
 export class UserService {
@@ -19,7 +20,6 @@ export class UserService {
     private url = myGlobals.user_mgmt_endpoint;
 
     userParty: Party;
-
 
     constructor(
         private http: Http,
@@ -225,8 +225,16 @@ export class UserService {
           .catch(this.handleError)
     }
 
-    getCompanyNegotiationSettings(): Promise<CompanyNegotiationSettings> {
-        const url = `${this.url}/company-settings/negotiation`;
+    getCompanyNegotiationSettingsForUser(userId: string): Promise<CompanyNegotiationSettings> {
+        return this.getUserParty(userId).then(party => this.getCompanyNegotiationSettingsForParty(party.id));
+    }
+
+    getCompanyNegotiationSettingsForProduct(line: CatalogueLine): Promise<CompanyNegotiationSettings> {
+        return this.getCompanyNegotiationSettingsForParty(line.goodsItem.item.manufacturerParty.id);
+    }
+
+    getCompanyNegotiationSettingsForParty(partyId: string): Promise<CompanyNegotiationSettings> {
+        const url = `${this.url}/company-settings/negotiation/${partyId}`;
         const token = 'Bearer ' + this.cookieService.get("bearer_token");
         const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
         return this.http
@@ -237,29 +245,42 @@ export class UserService {
             })
             .catch(this.handleError);
     }
+
     private sanitizeSettings(settings: CompanyNegotiationSettings): CompanyNegotiationSettings {
         if(settings.deliveryPeriodUnits.length === 0) {
             settings.deliveryPeriodUnits.push("day(s)");
-            settings.deliveryPeriodRanges.push({ start: 1, end: 56 });
             settings.deliveryPeriodUnits.push("week(s)");
+        }
+        if(settings.deliveryPeriodRanges.length === 0) {
+            settings.deliveryPeriodRanges.push({ start: 1, end: 56 });
             settings.deliveryPeriodRanges.push({ start: 0, end: 8 });
+        }
+        while(settings.deliveryPeriodRanges.length > 2) {
+            settings.deliveryPeriodRanges.pop();
         }
         if(settings.warrantyPeriodRanges.length === 0) {
             settings.warrantyPeriodUnits.push("month(s)");
-            settings.warrantyPeriodRanges.push({ start: 0, end: 24 });
             settings.warrantyPeriodUnits.push("year(s)");
+        }
+        if(settings.warrantyPeriodRanges.length === 0) {
+            settings.warrantyPeriodRanges.push({ start: 0, end: 24 });
             settings.warrantyPeriodRanges.push({ start: 0, end: 2 });
         }
+        while(settings.warrantyPeriodRanges.length > 2) {
+            settings.warrantyPeriodRanges.pop();
+        }
+
         return settings;
     }
-    putCompanyNegotiationSettings(settings: CompanyNegotiationSettings): Promise<any> {
+
+    putCompanyNegotiationSettings(settings: CompanyNegotiationSettings): Promise<void> {
         const url = `${this.url}/company-settings/negotiation`;
         const token = 'Bearer '+this.cookieService.get("bearer_token");
         const headers_token = new Headers({ 'Content-Type': 'application/json', 'Authorization': token });
         return this.http
             .put(url, settings, {headers: headers_token, withCredentials: true})
             .toPromise()
-            .then(response => response.json())
+            .then(() => {})
             .catch(this.handleError)
     }
 

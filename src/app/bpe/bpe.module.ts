@@ -26,7 +26,6 @@ import { PpapDocumentSelectComponent } from "./bp-view/ppap/ppap-document-select
 import { PpapDocumentUploadComponent } from "./bp-view/ppap/ppap-document-upload.component";
 import { PpapDocumentDownloadComponent } from "./bp-view/ppap/ppap-document-download.component";
 
-import { BusinessProcessOptions } from "./bp-view/business-process-options";
 import { ContractComponent } from "./bp-view/contract/contract.component";
 import { ClauseComponent } from "./bp-view/contract/clause.component";
 import { PpapClauseComponent } from "./bp-view/contract/ppap-clause.component";
@@ -89,7 +88,6 @@ import { TransportNegotiationAddressComponent } from "./bp-view/transport-negoti
         PpapDocumentSelectComponent,
         PpapDocumentUploadComponent,
         PpapDocumentDownloadComponent,
-        BusinessProcessOptions,
         ContractComponent,
         ClauseComponent,
         PpapClauseComponent,
@@ -107,7 +105,6 @@ import { TransportNegotiationAddressComponent } from "./bp-view/transport-negoti
         TransportExecutionPlanRequestComponent,
         TransportExecutionPlanComponent,
         BpProductDetailsComponent,
-        BusinessProcessOptions,
         ContractComponent,
         ClauseComponent,
         PpapClauseComponent

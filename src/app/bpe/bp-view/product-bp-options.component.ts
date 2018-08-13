@@ -12,6 +12,7 @@ import { ProcessType } from "../model/process-type";
 import { ProductBpStep } from "./product-bp-step";
 import { ProductBpStepsDisplay } from "./product-bp-steps-display";
 import { isTransportService } from "../../common/utils";
+import { UserService } from "../../user-mgmt/user.service";
 
 /**
  * Created by suat on 20-Oct-17.
@@ -39,6 +40,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
 
     constructor(public bpDataService: BPDataService, 
                 public catalogueService: CatalogueService, 
+                public userService: UserService,
                 public route: ActivatedRoute,
                 private renderer: Renderer2) {
         this.renderer.setStyle(document.body, "background-image", "none");
@@ -67,8 +69,11 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                     .getCatalogueLine(catalogueId, id)
                     .then(line => {
                         this.line = line;
-                        this.wrapper = new ProductWrapper(line);
-                        this.bpDataService.setCatalogueLines([line]);
+                        return this.userService.getCompanyNegotiationSettingsForProduct(line)
+                    })
+                    .then(settings => {
+                        this.wrapper = new ProductWrapper(this.line, settings);
+                        this.bpDataService.setCatalogueLines([this.line], [settings]);
                         this.callStatus.callback("Retrieved product details", true);
                         this.bpDataService.computeWorkflowOptions();
                         this.options = this.bpDataService.workflowOptions;

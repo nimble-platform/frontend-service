@@ -5,6 +5,7 @@ import {Router} from "@angular/router";
 import {PublishService} from "../../publish-and-aip.service";
 import {CategoryService} from "../../category/category.service";
 import { ProductWrapper } from "../../../common/product-wrapper";
+import { CompanyNegotiationSettings } from "../../../user-mgmt/model/company-negotiation-settings";
 
 @Component({
     selector: 'catalogue-line-panel',
@@ -29,7 +30,7 @@ export class CatalogueLinePanelComponent {
     }
 
     ngOnInit() {
-        this.productWrapper = new ProductWrapper(this.catalogueLine);
+        this.productWrapper = new ProductWrapper(this.catalogueLine, new CompanyNegotiationSettings());
     }
 
     redirectToEdit() {
