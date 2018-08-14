@@ -152,8 +152,10 @@ export class CompanySettingsComponent implements OnInit {
         this.prefCats.sort((a,b) => a.split("::")[2].localeCompare(b.split("::")[2]));
         AddressSubForm.update(this.settingsForm.controls['address'], settings.address);
         //PaymentMeansForm.update(this.settingsForm.controls['paymentMeans']['controls'][0], settings.paymentMeans[0]);
-        DeliveryTermsSubForm.update(this.settingsForm.controls['deliveryTerms']['controls'][0], settings.deliveryTerms[0]);
-
+        if (settings.deliveryTerms.length > 0)
+          DeliveryTermsSubForm.update(this.settingsForm.controls['deliveryTerms']['controls'][0], settings.deliveryTerms[0]);
+        else
+          this.copyAddress();
 			  this.checkAddressMatch();
       });
   }
