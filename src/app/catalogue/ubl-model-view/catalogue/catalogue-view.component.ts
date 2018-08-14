@@ -6,6 +6,7 @@ import {CallStatus} from "../../../common/call-status";
 import {ActivatedRoute, Params, Router} from "@angular/router";
 import {PublishService} from "../../publish-and-aip.service";
 import {CategoryService} from "../../category/category.service";
+import { isTransportService } from "../../../common/utils";
 
 @Component({
     selector: 'catalogue-view',
@@ -123,7 +124,9 @@ export class CatalogueViewComponent implements OnInit {
         this.publishService.publishMode = 'edit';
         this.publishService.publishingStarted = false;
         this.categoryService.resetSelectedCategories();
-        this.router.navigate(['catalogue/publish'], {queryParams: {pg: "single"}});
+        this.router.navigate(['catalogue/publish'], {queryParams: {
+            pg: "single", 
+            productType: isTransportService(catalogueLine) ? "transportation" : "product"}});
     }
 
     deleteCatalogueLine(catalogueLine): void {

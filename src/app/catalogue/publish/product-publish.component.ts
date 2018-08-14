@@ -149,6 +149,11 @@ export class ProductPublishComponent implements OnInit {
             //set product type
             this.productType = params["productType"] === "transportation" ? "transportation" : "product";
             this.isLogistics = (this.productType === "transportation");
+            if(this.isLogistics) {
+                this.publishStateService.publishedProductNature = 'Transportation service';
+            } else {
+                this.publishStateService.publishedProductNature = 'Regular product';
+            }
         });
     }
 
