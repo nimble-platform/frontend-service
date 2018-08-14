@@ -15,6 +15,7 @@ import { copy, deepEquals } from '../common/utils';
 export class CompanyNegotiationSettingsComponent implements OnInit {
 
     @Input() presentationMode: "edit" | "view" = "edit";
+    @Input() settings: CompanyNegotiationSettings = null;
 
 	PAYMENT_MEANS_LEFT = PAYMENT_MEANS.filter((_, i) => i % 2 === 0);
 	PAYMENT_MEANS_RIGHT = PAYMENT_MEANS.filter((_, i) => i % 2 === 1);
@@ -28,7 +29,6 @@ export class CompanyNegotiationSettingsComponent implements OnInit {
     callStatus: CallStatus = new CallStatus();
 
     originalSettings: CompanyNegotiationSettings;
-    settings: CompanyNegotiationSettings;
     paymentTerms: SelectedTerms;
     paymentMeans: SelectedTerms;
     incoterms: SelectedTerms;
@@ -39,25 +39,34 @@ export class CompanyNegotiationSettingsComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.initCallStatus.submit();
-        const userId = this.cookieService.get('user_id')
-        this.userService.getCompanyNegotiationSettingsForUser(userId)
-            .then(settings => {
-                this.initCallStatus.callback("Done fetching company negotiation settings", true);
-
-                // selected terms may change the passed terms at initialization
-                this.paymentTerms = new SelectedTerms(settings.paymentTerms, this.PAYMENT_TERMS);
-                this.paymentMeans = new SelectedTerms(settings.paymentMeans, PAYMENT_MEANS);
-                // first incoterm is "" (option for no incoterm)
-                this.incoterms = new SelectedTerms(settings.incoterms, INCOTERMS);
-
-                this.originalSettings = copy(settings);
-                this.settings = settings;
-            })
-            .catch(error => {
-                this.initCallStatus.error("Error while fetching company negotiation settings.");
-                console.log("Error while fetching company negotiation settings.", error);
-            });
+        if(this.settings) {
+            // selected terms may change the passed terms at initialization
+            this.paymentTerms = new SelectedTerms(this.settings.paymentTerms, this.PAYMENT_TERMS);
+            this.paymentMeans = new SelectedTerms(this.settings.paymentMeans, PAYMENT_MEANS);
+            // first incoterm is "" (option for no incoterm)
+            this.incoterms = new SelectedTerms(this.settings.incoterms, INCOTERMS);
+        } else {
+            // fetch the settings for the company of the user
+            this.initCallStatus.submit();
+            const userId = this.cookieService.get('user_id')
+            this.userService.getCompanyNegotiationSettingsForUser(userId)
+                .then(settings => {
+                    this.initCallStatus.callback("Done fetching company negotiation settings", true);
+    
+                    // selected terms may change the passed terms at initialization
+                    this.paymentTerms = new SelectedTerms(settings.paymentTerms, this.PAYMENT_TERMS);
+                    this.paymentMeans = new SelectedTerms(settings.paymentMeans, PAYMENT_MEANS);
+                    // first incoterm is "" (option for no incoterm)
+                    this.incoterms = new SelectedTerms(settings.incoterms, INCOTERMS);
+    
+                    this.originalSettings = copy(settings);
+                    this.settings = settings;
+                })
+                .catch(error => {
+                    this.initCallStatus.error("Error while fetching company negotiation settings.");
+                    console.log("Error while fetching company negotiation settings.", error);
+                });
+        }
     }
 
     onSave() {
