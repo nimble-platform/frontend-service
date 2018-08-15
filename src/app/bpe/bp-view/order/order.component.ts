@@ -50,7 +50,8 @@ export class OrderComponent implements OnInit {
 
     dataMonitoringDemanded: boolean;
 
-    callStatus: CallStatus = new CallStatus();
+    initCallStatus: CallStatus = new CallStatus();
+    submitCallStatus: CallStatus = new CallStatus();
     fetchTermsAndConditionsStatus: CallStatus = new CallStatus();
     fetchDataMonitoringStatus: CallStatus = new CallStatus();
 
@@ -81,29 +82,46 @@ export class OrderComponent implements OnInit {
 
         // null check is for checking whether a new order is initialized
         // preceding process id check is for checking whether there is any preceding process before the order
-        if(this.order.contract == null && this.bpDataService.precedingProcessId != null) {
-            this.bpeService.constructContractForProcess(this.bpDataService.precedingProcessId).then(contract => {
-                this.order.contract = [contract];
-
-                return this.isDataMonitoringDemanded();
-            }).then(dataMonitoringDemanded => {
-                this.dataMonitoringDemanded = dataMonitoringDemanded;
-            });
-        }
 
         const sellerId: string = this.order.orderLine[0].lineItem.item.manufacturerParty.id;
         const buyerId: string = this.cookieService.get("company_id");
-
-        // fetch all needed data
-        Promise.all([
-            this.userService.getParty(buyerId),
-            this.userService.getParty(sellerId),
-            this.isDataMonitoringDemanded(),
-        ]).then(([buyerParty, sellerParty, dataMonitoringDemanded]) => {
-            this.buyerParty = buyerParty;
-            this.sellerParty = sellerParty;
-            this.dataMonitoringDemanded = dataMonitoringDemanded;
-        });
+        this.initCallStatus.submit();
+        if(this.order.contract == null && this.bpDataService.precedingProcessId != null) {
+            Promise.all([
+                this.bpeService.constructContractForProcess(this.bpDataService.precedingProcessId),
+                this.userService.getParty(buyerId),
+                this.userService.getParty(sellerId),
+                this.isDataMonitoringDemanded(),
+            ])
+            .then(([contract, buyerParty, sellerParty, dataMonitoringDemanded]) => {
+                this.buyerParty = buyerParty;
+                this.sellerParty = sellerParty;
+                this.dataMonitoringDemanded = dataMonitoringDemanded;
+                this.order.contract = [contract];
+                return this.isDataMonitoringDemanded();
+            })
+            .then(dataMonitoringDemanded => {
+                this.dataMonitoringDemanded = dataMonitoringDemanded;
+                this.initCallStatus.callback("Initialized", true);
+            })
+            .catch(error => {
+                this.initCallStatus.error("Error while initializing", error);
+            });
+        } else {
+            Promise.all([
+                this.userService.getParty(buyerId),
+                this.userService.getParty(sellerId),
+                this.isDataMonitoringDemanded(),
+            ]).then(([buyerParty, sellerParty, dataMonitoringDemanded]) => {
+                this.buyerParty = buyerParty;
+                this.sellerParty = sellerParty;
+                this.dataMonitoringDemanded = dataMonitoringDemanded;
+                this.initCallStatus.callback("Initialized", true);
+            })
+            .catch(error => {
+                this.initCallStatus.error("Error while initializing", error);
+            });
+        }
     }
 
     /*
@@ -130,8 +148,8 @@ export class OrderComponent implements OnInit {
     }
 
     onOrder() {
-        this.callStatus.submit();
-        let order = copy(this.bpDataService.order);
+        this.submitCallStatus.submit();
+        const order = copy(this.bpDataService.order);
 
         // final check on the order
         order.orderLine[0].lineItem.item = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;
@@ -141,26 +159,22 @@ export class OrderComponent implements OnInit {
     
         //first initialize the seller and buyer parties.
         //once they are fetched continue with starting the ordering process
-        let sellerId: string = this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty.id;
-        let buyerId: string = this.cookieService.get("company_id");
-        this.userService.getParty(buyerId).then(buyerParty => {
-            order.buyerCustomerParty = new CustomerParty(buyerParty);
+        const buyerId: string = this.cookieService.get("company_id");
+        order.buyerCustomerParty = new CustomerParty(this.buyerParty);
 
-            this.userService.getParty(sellerId).then(sellerParty => {
-                order.sellerSupplierParty = new SupplierParty(sellerParty);
+        const sellerId: string = this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty.id;
+        order.sellerSupplierParty = new SupplierParty(this.sellerParty);
 
-                let vars:ProcessVariables = ModelUtils.createProcessVariables("Order", buyerId, sellerId, order, this.bpDataService);
-                let piim:ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
+        const vars: ProcessVariables = ModelUtils.createProcessVariables("Order", buyerId, sellerId, order, this.bpDataService);
+        const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
 
-                this.bpeService.startBusinessProcess(piim)
-                    .then(res => {
-                        this.callStatus.callback("Order placed", true);
-                        this.router.navigate(['dashboard']);
-                    }).catch(error => {
-                        this.callStatus.error("Failed to send Order", error);
-                    });
+        this.bpeService.startBusinessProcess(piim)
+            .then(res => {
+                this.submitCallStatus.callback("Order placed", true);
+                this.router.navigate(['dashboard']);
+            }).catch(error => {
+                this.submitCallStatus.error("Failed to send Order", error);
             });
-        });
     }
 
     onRespondToOrder(accepted: boolean): void {
@@ -178,33 +192,33 @@ export class OrderComponent implements OnInit {
             this.bpDataService.processMetadata.processId
         );
 
-        this.callStatus.submit();
+        this.submitCallStatus.submit();
         this.bpeService.continueBusinessProcess(piim)
             .then(res => {
-                this.callStatus.callback("Order Response placed", true);
+                this.submitCallStatus.callback("Order Response placed", true);
                 this.router.navigate(['dashboard']);
             }).catch(error => {
-                this.callStatus.error("Failed to send Order Response", error);
+                this.submitCallStatus.error("Failed to send Order Response", error);
             });
     }
 
     onDownloadContact() {
-        this.callStatus.submit();
+        this.submitCallStatus.submit();
         this.bpeService.downloadContractBundle(this.order.id)
             .then(result => {
-                var link = document.createElement('a');
+                const link = document.createElement('a');
                 link.id = 'downloadLink';
                 link.href = window.URL.createObjectURL(result.content);
                 link.download = result.fileName;
 
                 document.body.appendChild(link);
-                var downloadLink = document.getElementById('downloadLink');
+                const downloadLink = document.getElementById('downloadLink');
                 downloadLink.click();
                 document.body.removeChild(downloadLink);
-                this.callStatus.callback("Bundle successfully downloaded.", true);
+                this.submitCallStatus.callback("Bundle successfully downloaded.", true);
             },
             error => {
-                this.callStatus.error("Error while downloading bundle.", error);
+                this.submitCallStatus.error("Error while downloading bundle.", error);
             });
     }
 
@@ -230,8 +244,12 @@ export class OrderComponent implements OnInit {
      * Getters & Setters
      */
 
+    isReady(): boolean {
+        return !this.initCallStatus.isDisplayed() && !!this.order;
+    }
+
     isLoading(): boolean {
-        return this.callStatus.fb_submitted;
+        return this.submitCallStatus.fb_submitted;
     }
 
     isOrderCompleted(): boolean {

@@ -1,4 +1,6 @@
-<ng-container *ngIf="order">
+<call-status [callStatus]="initCallStatus"></call-status>
+
+<ng-container *ngIf="isReady()">
     <div class="row title-row">
         <div class="col-6"><h4>Order Details</h4></div>
         <div class="col-6"><h4>Delivery Details</h4></div>
@@ -63,7 +65,7 @@
                     <strong>Data Monitoring Service:</strong>
                 </div>
                 <div class="col-8">
-                    {{ dataMonitoringDemanded ? "Yes" : "No" }}
+                    <span *ngIf="!fetchDataMonitoringStatus.isDisplayed()">{{ dataMonitoringDemanded ? "Yes" : "No" }}</span>
                     <call-status [callStatus]="fetchDataMonitoringStatus"></call-status>
                 </div>
             </div>
@@ -103,7 +105,7 @@
 
 <hr>
 
-<div class="row content-row" *ngIf="order">
+<div class="row content-row" *ngIf="isReady()">
     <div class="col-6">
         <text-input presentationMode="edit" [disabled]="isReadOnly() || userRole === 'seller'"
             label="Customer's Note" [(text)]="order.note" labelClass="col-4" valueClass="col-8">
@@ -119,7 +121,7 @@
 <hr>
 
 <!-- Contract Preview -->
-<div class="row" *ngIf="order">
+<div class="row" *ngIf="isReady()">
     <div class="col-12">
         <h2>
             Terms and Conditions
@@ -142,9 +144,9 @@
 <hr>
 
 <!-- Actions -->
-<ng-container *ngIf="userRole === 'buyer'">
+<ng-container *ngIf="userRole === 'buyer' && isReady()">
     <div class="row actions-row" *ngIf="!isReadOnly()">
-        <div class="col-8 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+        <div class="col-8 call-status-col"><call-status [callStatus]="submitCallStatus"></call-status></div>
         <div class="col-2">
             <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">
                 Back
@@ -158,7 +160,7 @@
     </div>
 
     <div class="row actions-row" *ngIf="isReadOnly() && !isOrderCompleted()">
-        <div class="col-10 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+        <div class="col-10 call-status-col"><call-status [callStatus]="submitCallStatus"></call-status></div>
         <div class="col-2">
             <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">
                 Back
@@ -167,7 +169,7 @@
     </div>
 
     <div class="row actions-row" *ngIf="isReadOnly() && isOrderCompleted()">
-        <div class="col-7 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+        <div class="col-7 call-status-col"><call-status [callStatus]="submitCallStatus"></call-status></div>
         <div class="col-2">
             <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">
                 Back
@@ -181,9 +183,9 @@
     </div>
 </ng-container>
 
-<ng-container *ngIf="userRole === 'seller'">
+<ng-container *ngIf="userRole === 'seller' && isReady()">
     <div class="row actions-row" *ngIf="!isOrderCompleted()">
-        <div class="col-6 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+        <div class="col-6 call-status-col"><call-status [callStatus]="submitCallStatus"></call-status></div>
         <div class="col-2">
             <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">
                 Back
@@ -202,7 +204,7 @@
     </div>
     
     <div class="row actions-row" *ngIf="isOrderCompleted()">
-        <div class="col-3 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+        <div class="col-3 call-status-col"><call-status [callStatus]="submitCallStatus"></call-status></div>
         <div class="col-2">
             <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">
                 Back

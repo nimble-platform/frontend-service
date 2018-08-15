@@ -87,23 +87,25 @@ export class NegotiationRequestComponent implements OnInit {
             const sellerId: string = this.line.goodsItem.item.manufacturerParty.id;
             const buyerId: string = this.cookieService.get("company_id");
 
-            this.userService.getParty(buyerId).then(buyerParty => {
+           Promise.all([
+                this.userService.getParty(buyerId),
+                this.userService.getParty(sellerId)
+            ])
+            .then(([buyerParty, sellerParty]) => {
                 rfq.buyerCustomerParty = new CustomerParty(buyerParty);
+                rfq.sellerSupplierParty = new SupplierParty(sellerParty);
 
-                this.userService.getParty(sellerId).then(sellerParty => {
-                    rfq.sellerSupplierParty = new SupplierParty(sellerParty);
-                    const vars: ProcessVariables = ModelUtils.createProcessVariables("Negotiation", buyerId, sellerId, rfq, this.bpDataService);
-                    const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
+                const vars: ProcessVariables = ModelUtils.createProcessVariables("Negotiation", buyerId, sellerId, rfq, this.bpDataService);
+                const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
 
-                    this.bpeService.startBusinessProcess(piim)
-                        .then(res => {
-                            this.callStatus.callback("Terms sent", true);
-                            this.router.navigate(['dashboard']);
-                        })
-                        .catch(error => {
-                            this.callStatus.error("Failed to sent Terms", error);
-                        });
-                });
+                return this.bpeService.startBusinessProcess(piim)
+            })
+            .then(() => {
+                this.callStatus.callback("Terms sent", true);
+                this.router.navigate(['dashboard']);
+            })
+            .catch(error => {
+                this.callStatus.error("Failed to send Terms", error);
             });
         } else {
             // just go to order page

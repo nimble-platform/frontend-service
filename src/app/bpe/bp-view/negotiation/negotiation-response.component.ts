@@ -70,16 +70,13 @@ export class NegotiationResponseComponent implements OnInit {
 
         this.callStatus.submit();
         this.bpeService.continueBusinessProcess(piim)
-            .then(
-                res => {
-                    this.callStatus.callback("Quotation sent", true);
-                    this.router.navigate(['dashboard']);
-                }
-            )
+            .then(res => {
+                this.callStatus.callback("Quotation sent", true);
+                this.router.navigate(['dashboard']);
+            })
             .catch(error => {
-                    this.callStatus.error("Failed to send quotation", error);
-                }
-            );
+                this.callStatus.error("Failed to send quotation", error);
+            });
     }
 
     onRequestNewQuotation() {

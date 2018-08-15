@@ -68,7 +68,7 @@ export class ItemInformationRequestComponent implements OnInit {
 
     onSendRequest(): void {
         this.callStatus.submit();
-        let itemInformationRequest: ItemInformationRequest = copy(this.bpDataService.itemInformationRequest);
+        const itemInformationRequest: ItemInformationRequest = copy(this.bpDataService.itemInformationRequest);
 
         // final check on the order
         itemInformationRequest.itemInformationRequestLine[0].salesItem[0].item = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;
@@ -76,26 +76,29 @@ export class ItemInformationRequestComponent implements OnInit {
 
         //first initialize the seller and buyer parties.
         //once they are fetched continue with starting the ordering process
-        let sellerId: string = this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty.id;
-        let buyerId: string = this.cookieService.get("company_id");
+        const sellerId: string = this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty.id;
+        const buyerId: string = this.cookieService.get("company_id");
 
-        this.userService.getParty(buyerId).then(buyerParty => {
+        Promise.all([
+            this.userService.getParty(buyerId),
+            this.userService.getParty(sellerId)
+        ])
+        .then(([buyerParty, sellerParty]) => {
             itemInformationRequest.buyerCustomerParty = new CustomerParty(buyerParty);
+            itemInformationRequest.sellerSupplierParty = new SupplierParty(sellerParty);
 
-            this.userService.getParty(sellerId).then(sellerParty => {
-                itemInformationRequest.sellerSupplierParty = new SupplierParty(sellerParty);
-                let vars: ProcessVariables = ModelUtils.createProcessVariables("Item_Information_Request", buyerId, sellerId, itemInformationRequest, this.bpDataService);
-                let piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
+            const vars: ProcessVariables = ModelUtils.createProcessVariables(
+                "Item_Information_Request", buyerId, sellerId, itemInformationRequest, this.bpDataService);
+            const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
 
-                this.bpeService.startBusinessProcess(piim)
-                .then(() => {
-                    this.callStatus.callback("Item Information Request sent", true);
-                    this.router.navigate(['dashboard']);
-                })
-                .catch(error => {
-                    this.callStatus.error("Failed to send Item Information Request", error);
-                });
-            });
+            return this.bpeService.startBusinessProcess(piim)
+        })
+        .then(() => {
+            this.callStatus.callback("Item Information Request sent", true);
+            this.router.navigate(['dashboard']);
+        })
+        .catch(error => {
+            this.callStatus.error("Failed to send Item Information Request", error);
         });
     }
 
