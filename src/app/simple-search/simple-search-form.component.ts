@@ -5,7 +5,9 @@ import { Router, ActivatedRoute} from "@angular/router";
 import * as myGlobals from '../globals';
 import {SearchContextService} from "./search-context.service";
 import { Observable } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map, switchMap, catchError } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
+import { copy } from '../common/utils';
+import { CallStatus } from '../common/call-status';
 
 @Component({
 	selector: 'simple-search-form',
@@ -24,9 +26,10 @@ export class SimpleSearchFormComponent implements OnInit {
 	product_cat = myGlobals.product_cat;
 	product_cat_mix = myGlobals.product_cat_mix;
 
-	submitted = false;
+	categoriesCallStatus: CallStatus = new CallStatus();
+	searchCallStatus: CallStatus = new CallStatus();
+	searchDone = false;
 	callback = false;
-	error_detc = false;
 	showOther = false;
 	size = 0;
 	page = 1;
@@ -90,9 +93,9 @@ export class SimpleSearchFormComponent implements OnInit {
 				this.getCall(q,fq,p,cat);
 			else {
 				this.callback = false;
-				this.error_detc = false;
-				this.submitted = false;
-		    this.model.q='';
+				this.searchDone = false;
+				this.searchCallStatus.reset();
+		    	this.model.q='';
 				this.objToSubmit.q='';
 				this.facetQuery=fq;
 				this.page=p;
@@ -122,7 +125,8 @@ export class SimpleSearchFormComponent implements OnInit {
       )
     );
 
-	getCatTree(): void {
+	private getCatTree(): void {
+		this.categoriesCallStatus.submit();
 		this.simpleSearchService.get("*",[this.product_cat_mix],[""],1,"")
 		.then(res => {
 			for (let facet in res.facet_counts.facet_fields) {
@@ -130,10 +134,14 @@ export class SimpleSearchFormComponent implements OnInit {
 					this.buildCatTree(res.facet_counts.facet_fields[facet]);
 				}
 			}
+			this.categoriesCallStatus.callback("Categories loaded.", true);
+		})
+		.catch(error => {
+			this.categoriesCallStatus.error("Error while loading category tree.", error);
 		});
 	}
 
-	buildCatTree(mix: any): void {
+	private buildCatTree(mix: any): void {
 		this.cat_levels = [[],[],[],[]];
 		this.cat_other = [];
 		this.cat_other_count = 0;
@@ -183,7 +191,7 @@ export class SimpleSearchFormComponent implements OnInit {
 		this.cat_level = this.getCatLevel(this.cat);
 	}
 
-	getCatLevel(name:string): number {
+	private getCatLevel(name:string): number {
 		var level = -2;
 		if (name != "")
 			level = -1;
@@ -214,14 +222,13 @@ export class SimpleSearchFormComponent implements OnInit {
 		return level;
 	}
 
-	getCall(q:string, fq:any, p:number, cat:string) {
-		this.callback = false;
-		this.error_detc = false;
-		this.submitted = true;
-    this.model.q=q;
+	private getCall(q:string, fq:any, p:number, cat:string) {
+		this.searchDone = true;
+    	this.model.q=q;
 		this.objToSubmit.q=q;
 		this.facetQuery=fq;
 		this.page=p;
+		this.searchCallStatus.submit();
 		this.simpleSearchService.getFields()
 		.then(res => {
 			this.simpleSearchService.get(q,res._body.split(","),fq,p,cat)
@@ -302,38 +309,31 @@ export class SimpleSearchFormComponent implements OnInit {
 					}
 				}
 				*/
-				this.response = JSON.parse(JSON.stringify(this.temp));
+				this.response = copy(this.temp);
 				this.size = res.response.numFound;
 				this.page = p;
 				this.start = this.page*10-10+1;
 				this.end = this.start+res.response.docs.length-1;
 				this.callback = true;
-				this.error_detc = false;
+				this.searchCallStatus.callback("Search done.", true);
 			})
 			.catch(error => {
-				this.error_detc = true;
+				this.searchCallStatus.error("Error while running search.", error);
 			});
 		})
 		.catch(error => {
-			this.error_detc = true;
+			this.searchCallStatus.error("Error while running search.", error);
 		});
 	}
 
 	onSubmit() {
-		/*
-		this.callback = false;
-		this.error_detc = false;
-		this.submitted = true;
-		*/
-		this.objToSubmit = JSON.parse(JSON.stringify(this.model));
-		//this.facetQuery = [];
+		this.objToSubmit = copy(this.model);
 		this.get(this.objToSubmit);
 	}
 
 	callCat(name:string) {
 		this.model.q="*";
-		this.objToSubmit = JSON.parse(JSON.stringify(this.model));
-		//this.facetQuery = [];
+		this.objToSubmit = copy(this.model);
 		this.cat = name;
 		this.get(this.objToSubmit);
 	}

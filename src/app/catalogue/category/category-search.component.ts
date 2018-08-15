@@ -319,16 +319,15 @@ export class CategorySearchComponent implements OnInit {
                     for(let parent of this.parentCategories.parents){
                         this.selectedCategoriesWRTLevels.push(parent.code);
                     }
-                    this.callStatus.callback( null);
+                    this.callStatus.callback(null);
                 }).catch( err => {
-                    this.callStatus.error(null)
+                    this.callStatus.error("Error while fetching category.", err);
                 }
             );
-
         })
-            .catch(res=>
-                this.callStatus.error(null)
-            );
+        .catch(err => {
+            this.callStatus.error("Error while fetching parrent category.", err);
+        });
     }
 
     showPrefDetails(cat: string) {

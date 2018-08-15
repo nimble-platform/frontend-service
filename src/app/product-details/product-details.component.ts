@@ -47,7 +47,6 @@ export class ProductDetailsComponent implements OnInit {
 
     ngOnInit() {
         this.bpDataService.setCatalogueLines([], []);
-        this.getProductStatus.submit();
 		this.route.queryParams.subscribe(params => {
 			let id = params['id'];
             let catalogueId = params['catalogueId'];
@@ -56,6 +55,7 @@ export class ProductDetailsComponent implements OnInit {
                 this.id = id;
                 this.catalogueId = catalogueId;
 
+                this.getProductStatus.submit();
                 this.catalogueService.getCatalogueLine(catalogueId, id)
                     .then(line => {
                         this.line = line;
@@ -73,8 +73,7 @@ export class ProductDetailsComponent implements OnInit {
                         this.getProductStatus.callback("Retrieved product details", true);
                     })
                     .catch(error => {
-                        this.getProductStatus.error("Failed to retrieve product details");
-                        console.log("Error while retrieving product", error);
+                        this.getProductStatus.error("Failed to retrieve product details", error);
 
                         this.line = null;
                         this.wrapper = null;

@@ -84,6 +84,7 @@ export class ProductPublishComponent implements OnInit {
     @ViewChild(EditPropertyModalComponent)
     private editPropertyModal: EditPropertyModalComponent;
     customProperties: any[] = [];
+    callStatus: CallStatus = new CallStatus();
 
     /*
      * Other Values
@@ -128,6 +129,7 @@ export class ProductPublishComponent implements OnInit {
     ngOnInit() {
         this.selectedCategories = this.categoryService.selectedCategories;
         const userId = this.cookieService.get("user_id");
+        this.callStatus.submit();
         this.userService.getUserParty(userId).then(party => {
             return Promise.all([
                 Promise.resolve(party),
@@ -138,6 +140,10 @@ export class ProductPublishComponent implements OnInit {
         .then(([party, catalogue, settings]) => {
             this.initView(party, catalogue, settings);
             this.publishStateService.publishingStarted = true;
+            this.callStatus.callback("Successfully initialized.", true);
+        })
+        .catch(error => {
+            this.callStatus.error("Error while initializing the publish view.", error);
         });
 
         this.route.queryParams.subscribe((params: Params) => {
@@ -189,7 +195,7 @@ export class ProductPublishComponent implements OnInit {
                 let reader = new FileReader();
 
                 reader.onload = function (e: any) {
-                    let base64String = reader.result.split(',').pop();
+                    let base64String = (reader.result as string).split(',').pop();
                     let binaryObject = new BinaryObject(base64String, file.type, file.name, "", "");
                     images.push(binaryObject);
                 };
@@ -649,6 +655,7 @@ export class ProductPublishComponent implements OnInit {
         this.catalogueService.catalogue.catalogueLine[indexOfOriginalLine] = splicedCatalogueLine;
         this.catalogueLine = splicedCatalogueLine
 
+        this.publishStatus.submit();
         if (this.catalogueService.catalogue.uuid == null) {
             this.catalogueService.postCatalogue(this.catalogueService.catalogue)
                 .then(() => this.onSuccessfulPublish())
@@ -757,13 +764,11 @@ export class ProductPublishComponent implements OnInit {
                 this.error_detc = false;
             })
             .catch(error => {
-                this.publishStatus.error("Error while publishing product");
-                console.log("Error while publishing product", error);
+                this.publishStatus.error("Error while publishing product", error);
             });
         })
         .catch(error => {
-            this.publishStatus.error("Error while publishing product");
-            console.log("Error while publishing product", error);
+            this.publishStatus.error("Error while publishing product", error);
         });
     }
 
@@ -805,7 +810,7 @@ export class ProductPublishComponent implements OnInit {
                 let reader = new FileReader();
 
                 reader.onload = function (e: any) {
-                    let base64String = reader.result.split(',').pop();
+                    let base64String = (reader.result as string).split(',').pop();
                     let binaryObject = new BinaryObject(base64String, file.type, file.name, "", "");
                     binaryObjects.push(binaryObject);
                 };
@@ -824,7 +829,7 @@ export class ProductPublishComponent implements OnInit {
                 let reader = new FileReader();
 
                 reader.onload = function (e: any) {
-                    let base64String = reader.result.split(',').pop();
+                    let base64String = (reader.result as string).split(',').pop();
                     let binaryObject = new BinaryObject(base64String, file.type, file.name, "", "");
                     binaryObjects.push(binaryObject);
                 };

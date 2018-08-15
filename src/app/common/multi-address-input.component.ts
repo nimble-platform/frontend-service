@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Input, Output } from "@angular/core";
+import { Component, OnInit, Input } from "@angular/core";
 import { Address } from "../catalogue/model/publish/address";
 import { UBLModelUtils } from "../catalogue/model/ubl-model-utils";
 

@@ -24,12 +24,12 @@ export class DashboardThreadedComponent implements OnInit {
     filterSet: ProcessInstanceGroupFilter;
     modifiedFilterSet: ProcessInstanceGroupFilter = new ProcessInstanceGroupFilter();
     filterQueryStatus: CallStatus = new CallStatus();
-    filtersLoading: boolean = false;
 
     queryParameters: DashboardQueryParameters = new DashboardQueryParameters();
 
     query: DashboardOrdersQuery = new DashboardOrdersQuery();
     results: DashboardOrdersQueryResults = new DashboardOrdersQueryResults();
+    queryStatus: CallStatus = new CallStatus();
 
     TABS = TABS;
 
@@ -224,9 +224,20 @@ export class DashboardThreadedComponent implements OnInit {
     }
 
     private executeOrdersQuery(query: DashboardOrdersQuery): void {
+        this.queryStatus.submit();
+        this.getOrdersQuery(query)
+        .then(() =>{
+            this.queryStatus.callback("Successfully fetched orders", true);
+        })
+        .catch(error => {
+            this.queryStatus.error("Error while fetching orders.", error);
+        });
+    }
+
+    private getOrdersQuery(query: DashboardOrdersQuery): Promise<void> {
         if(query.archived) {
             // only one query needed
-            this.bpeService
+            return this.bpeService
             .getProcessInstanceGroups(this.cookieService.get("company_id"),
                 query.collaborationRole, query.page - 1, query.pageSize, query.archived,
                 query.products, query.categories, query.partners)
@@ -239,7 +250,7 @@ export class DashboardThreadedComponent implements OnInit {
             });
         } else {
             // Needs to query for archived orders to know if the "Show Archived" button should be enabled
-            Promise.all([
+            return Promise.all([
                 // regular query
                 this.bpeService.getProcessInstanceGroups(this.cookieService.get("company_id"),
                     query.collaborationRole, query.page - 1, query.pageSize, query.archived,
@@ -259,9 +270,12 @@ export class DashboardThreadedComponent implements OnInit {
         }
     }
 
+    areOrdersLoading(): boolean {
+        return this.queryStatus.fb_submitted;
+    }
+
     private executeOrdersFiltersQuery(query: DashboardOrdersQuery): void {
         this.filterQueryStatus.submit();
-        this.filtersLoading = true;
 
         this.bpeService
         .getProcessInstanceGroupFilters(this.cookieService.get("company_id"), query.collaborationRole, query.archived, query.products, query.categories, query.partners)
@@ -289,13 +303,15 @@ export class DashboardThreadedComponent implements OnInit {
                 }
             }
             this.filterSet = response;
-            this.filterQueryStatus.callback("", true);
-            this.filtersLoading = false;
+            this.filterQueryStatus.callback("Successfully fetched filters", true);
         })
         .catch(error => {
-            this.filtersLoading = false;
-            this.filterQueryStatus.error("Failed to get filters");
+            this.filterQueryStatus.error("Failed to get filters", error);
         });
+    }
+
+    areFiltersLoading(): boolean {
+        return this.filterQueryStatus.fb_submitted;
     }
 
     private isOrdersQueryNeeded(query: DashboardOrdersQuery): boolean {

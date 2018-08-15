@@ -1,6 +1,4 @@
 import { Component, EventEmitter, OnInit, Input, Output } from "@angular/core";
-import { Quantity } from "../catalogue/model/publish/quantity";
-import { UnitService } from "./unit-service";
 
 @Component({
     selector: "amount-input",

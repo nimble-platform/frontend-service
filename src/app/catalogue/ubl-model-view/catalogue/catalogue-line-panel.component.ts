@@ -6,6 +6,7 @@ import {PublishService} from "../../publish-and-aip.service";
 import {CategoryService} from "../../category/category.service";
 import { ProductWrapper } from "../../../common/product-wrapper";
 import { CompanyNegotiationSettings } from "../../../user-mgmt/model/company-negotiation-settings";
+import { CallStatus } from "../../../common/call-status";
 
 @Component({
     selector: 'catalogue-line-panel',
@@ -22,6 +23,8 @@ export class CatalogueLinePanelComponent {
     @Output() showChange = new EventEmitter<boolean>();
 
     productWrapper: ProductWrapper;
+
+    deleteCallStatus: CallStatus = new CallStatus();
     
     constructor(private catalogueService: CatalogueService,
                 private categoryService: CategoryService,
@@ -43,7 +46,14 @@ export class CatalogueLinePanelComponent {
 
     deleteCatalogueLine(): void {
 		if (confirm("Are you sure that you want to delete this catalogue item?")) {
-			this.catalogueService.deleteCatalogueLine(this.catalogueService.catalogue.uuid, this.catalogueLine.id);
+            this.deleteCallStatus.submit();
+            this.catalogueService.deleteCatalogueLine(this.catalogueService.catalogue.uuid, this.catalogueLine.id)
+            .then(() => {
+                this.deleteCallStatus.callback("Successfully deleted catalogue line.");
+            })
+            .catch(error => {
+                this.deleteCallStatus.error("Error while deleting catalogue line.", error);
+            });
 		}
     }
 }
