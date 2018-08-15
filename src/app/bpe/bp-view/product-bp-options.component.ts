@@ -83,8 +83,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                         this.stepsDisplayMode = this.getStepsDisplayMode();
                     })
                     .catch(error => {
-                        this.callStatus.error("Failed to retrieve product details");
-                        console.log("Error while fetching catalogue", error);
+                        this.callStatus.error("Failed to retrieve product details", error);
                     });
             }
         });

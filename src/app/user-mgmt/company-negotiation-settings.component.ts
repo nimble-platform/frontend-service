@@ -63,8 +63,7 @@ export class CompanyNegotiationSettingsComponent implements OnInit {
                     this.settings = settings;
                 })
                 .catch(error => {
-                    this.initCallStatus.error("Error while fetching company negotiation settings.");
-                    console.log("Error while fetching company negotiation settings.", error);
+                    this.initCallStatus.error("Error while fetching company negotiation settings.", error);
                 });
         }
     }
@@ -77,8 +76,7 @@ export class CompanyNegotiationSettingsComponent implements OnInit {
                 this.originalSettings = copy(this.settings);
             })
             .catch(error => {
-                this.callStatus.error("Error while saving company negotiation settings.");
-                console.log("Error while saving company negotiation settings.", error);
+                this.callStatus.error("Error while saving company negotiation settings.", error);
             });
     }
 

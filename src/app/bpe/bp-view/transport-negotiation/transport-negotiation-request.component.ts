@@ -101,8 +101,7 @@ export class TransportNegotiationRequestComponent implements OnInit {
                         this.router.navigate(['dashboard']);
                     })
                     .catch(error => {
-                        this.callStatus.error("Failed to sent Terms");
-                        console.log("Error while sending terms", error);
+                        this.callStatus.error("Failed to sent Terms", error);
                     });
             });
         });

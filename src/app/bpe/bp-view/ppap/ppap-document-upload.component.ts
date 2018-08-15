@@ -130,7 +130,7 @@ export class PpapDocumentUploadComponent {
             }
         ).catch(error => {
                 this.submitted = false;
-                error => this.callStatus.error("Failed to send Ppap Response")
+                error => this.callStatus.error("Failed to send Ppap Response", error)
             }
         );
 

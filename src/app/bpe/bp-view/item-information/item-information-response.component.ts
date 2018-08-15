@@ -78,8 +78,7 @@ export class ItemInformationResponseComponent implements OnInit {
             this.callStatus.callback("Information Response sent", true);
             this.router.navigate(['dashboard']);
         }).catch(error => {
-            this.callStatus.error("Failed to send Information Response");
-            console.log("Error while sending information response", error);
+            this.callStatus.error("Failed to send Information Response", error);
         });
     }
 

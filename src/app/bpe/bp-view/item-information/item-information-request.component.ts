@@ -93,8 +93,7 @@ export class ItemInformationRequestComponent implements OnInit {
                     this.router.navigate(['dashboard']);
                 })
                 .catch(error => {
-                    this.callStatus.error("Failed to send Item Information Request");
-                    console.log("Error while sending information request", error);
+                    this.callStatus.error("Failed to send Item Information Request", error);
                 });
             });
         });

@@ -53,7 +53,7 @@
             <ngb-pagination [(collectionSize)]="collectionSize" [(pageSize)]="pageSize" [(page)]="page" [maxSize]="5" [boundaryLinks]="true"></ngb-pagination>
         </div>
 
-        <div *ngFor="let catLine of catalogueLinesArray.slice((page-1)*pageSize,page*pageSize) " class="space-before">
+        <div *ngFor="let catLine of catalogueLinesArray.slice((page-1)*pageSize,page*pageSize); let i = index" class="space-before">
             <div class="card pointer">
                 <div class="card-body">
                     <div class="row" *ngIf="!catalogueLineView[catLine.id]" (click)="catalogueLineView[catLine.id]=true">
@@ -69,13 +69,22 @@
                         </div>
                         <div class="col-10 d-flex justify-content-between">
                             <div class="col-8">
-                                <p style="word-break: break-all;word-wrap: break-word;white-space: pre-wrap;"><b>{{catLine.goodsItem.item.name}}</b></p>
+                                <p style="word-break: break-all;word-wrap: break-word;white-space: pre-wrap;">
+                                    <strong>{{catLine.goodsItem.item.name}}  <i class="fas fa-external-link-alt btn-light" (click)="openCatalogueLinePage(catLine)"></i></strong>
+                                </p>
                                 <p style="word-break: break-all;word-wrap: break-word;white-space: pre-wrap">{{catLine.goodsItem.item.description}}</p>
                                 <p *ngIf="catLine.requiredItemLocationQuantity.price.priceAmount.value != null" style="word-break: break-all;word-wrap: break-word;white-space: pre-wrap">{{catLine.requiredItemLocationQuantity.price.priceAmount.value+" "+catLine.requiredItemLocationQuantity.price.priceAmount.currencyID}}</p>
                             </div>
                             <div class="col-2">
-                                <button type="button" class="btn btn-primary space-after col" (click)="redirectToEdit(catLine)" style="display: block">Edit</button>
-                                <button type="button" class="btn btn-danger col" (click)="deleteCatalogueLine(catLine); $event.stopPropagation();">Delete</button>
+                                <button type="button" class="btn btn-primary space-after col"
+                                        (click)="redirectToEdit(catLine)" style="display: block">
+                                    Edit
+                                </button>
+                                <button type="button" class="btn btn-danger col" [disabled]="getDeleteStatus(i).isLoading()"
+                                        (click)="deleteCatalogueLine(catLine, i); $event.stopPropagation();">
+                                    Delete
+                                </button>
+                                <call-status [callStatus]="getDeleteStatus(i)"></call-status>
                             </div>
                         </div>
                     </div>
@@ -93,11 +102,11 @@
 </div>
 
 <div class="jumbotron" *ngIf="catalogue && catalogue.catalogueLine.length <= 0">
-        <h3>No published products.</h3>
-        <h5>
-            <span (click)="navigateToThePublishPage()" class="pointer">Publish new products</span>
-            <i class="fa fa-plus-circle pointer" (click)="navigateToThePublishPage()"></i>
-        </h5>
+    <h3>No published products.</h3>
+    <h5>
+        <span (click)="navigateToThePublishPage()" class="pointer">Publish new products</span>
+        <i class="fa fa-plus-circle pointer" (click)="navigateToThePublishPage()"></i>
+    </h5>
 </div>
 
 <call-status [callStatus]="getCatalogueStatus" [large]="true">

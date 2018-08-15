@@ -24,8 +24,7 @@ export class NegotiationComponent implements OnInit {
                     this.initCallStatus.callback("Request for Quotation Initialized.");
                 })
                 .catch(error => {
-                    this.initCallStatus.error("Error while initializing request for quotation.");
-                    console.log("Error while initializing request for quotation.", error);
+                    this.initCallStatus.error("Error while initializing request for quotation.", error);
                 });
         }
     }

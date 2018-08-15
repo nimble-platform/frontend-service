@@ -25,7 +25,7 @@ export class CallStatus {
         this.fb_autoCloseOnCallBack = autoClose;
     }
 
-    public error(msg: string, error?: Error) {
+    public error(msg: string, error?: any) {
         this.fb_message = msg;
         this.fb_submitted = false;
         this.fb_errordetc = true;

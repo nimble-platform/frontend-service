@@ -120,8 +120,7 @@ export class OrderComponent implements OnInit {
                 this.fetchTermsAndConditionsStatus.callback("Successfully fetched terms and conditions", true);
                 this.termsAndConditions = text;
             }).catch(error => {
-                this.fetchTermsAndConditionsStatus.error("Error while fetching terms and conditions");
-                console.log("Error while fetching terms and conditions", error);
+                this.fetchTermsAndConditionsStatus.error("Error while fetching terms and conditions", error);
             });
         }
     }
@@ -158,8 +157,7 @@ export class OrderComponent implements OnInit {
                         this.callStatus.callback("Order placed", true);
                         this.router.navigate(['dashboard']);
                     }).catch(error => {
-                        this.callStatus.error("Failed to send Order");
-                        console.log("Error while sending order", error)
+                        this.callStatus.error("Failed to send Order", error);
                     });
             });
         });
@@ -186,8 +184,7 @@ export class OrderComponent implements OnInit {
                 this.callStatus.callback("Order Response placed", true);
                 this.router.navigate(['dashboard']);
             }).catch(error => {
-                this.callStatus.error("Failed to send Order Response");
-                console.log("Failed to send Order Response", error);
+                this.callStatus.error("Failed to send Order Response", error);
             });
     }
 
@@ -207,8 +204,7 @@ export class OrderComponent implements OnInit {
                 this.callStatus.callback("Bundle successfully downloaded.", true);
             },
             error => {
-                this.callStatus.error("Error while downloading bundle.");
-                console.log("Error while downloading bundle.", error);
+                this.callStatus.error("Error while downloading bundle.", error);
             });
     }
 
@@ -310,7 +306,7 @@ export class OrderComponent implements OnInit {
                 return q.dataMonitoringPromised;
             })
             .catch(error => {
-                this.fetchDataMonitoringStatus.error("Error while fetching data monitoring service");
+                this.fetchDataMonitoringStatus.error("Error while fetching data monitoring service", error);
                 throw error;
             })
         }

@@ -270,7 +270,7 @@ export class ThreadSummaryComponent implements OnInit {
                 this.threadStateUpdated.next();
             })
             .catch(err => {
-                this.archiveCallStatus.error('Failed to archive thread');
+                this.archiveCallStatus.error('Failed to archive thread', err);
             });
     }
 
@@ -282,7 +282,7 @@ export class ThreadSummaryComponent implements OnInit {
                 this.threadStateUpdated.next();
             })
             .catch(err => {
-                this.archiveCallStatus.error('Failed to restore thread');
+                this.archiveCallStatus.error('Failed to restore thread', err);
             });
     }
 
@@ -295,7 +295,7 @@ export class ThreadSummaryComponent implements OnInit {
                     this.threadStateUpdated.next();
                 })
                 .catch(err => {
-                    this.archiveCallStatus.error('Failed to delete thread permanently');
+                    this.archiveCallStatus.error('Failed to delete thread permanently', err);
                 });
         }
     }

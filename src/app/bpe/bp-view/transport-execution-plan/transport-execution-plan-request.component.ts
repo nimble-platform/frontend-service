@@ -75,8 +75,7 @@ export class TransportExecutionPlanRequestComponent implements OnInit {
                         this.router.navigate(['dashboard']);
                     })
                     .catch(error => {
-                        this.callStatus.error("Failed to send Transport Execution Plan");
-                        console.log("Failed to send Transport Execution Plan", error)
+                        this.callStatus.error("Failed to send Transport Execution Plan", error);
                     });
             });
         });

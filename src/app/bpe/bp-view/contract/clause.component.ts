@@ -36,15 +36,13 @@ export class ClauseComponent implements OnInit {
                         this.clauseDocumentRetrievalStatus.callback("Successfully retrieved item information request", true);
                     })
                     .catch(error => {
-                        this.clauseDocumentRetrievalStatus.error("Failed to retrieve item information request");
-                        console.log("Failed to retrieve item information request", error);
+                        this.clauseDocumentRetrievalStatus.error("Failed to retrieve item information request", error);
                     })
                 } else {
                     this.clauseDocumentRetrievalStatus.callback("Successfully retrieved clause document details", true);
                 }
             }).catch(error => {
-                this.clauseDocumentRetrievalStatus.error("Failed to retrieve clause document details");
-                console.log("Failed to retrieve item information request", error);
+                this.clauseDocumentRetrievalStatus.error("Failed to retrieve clause document details", error);
             });
         }
     }

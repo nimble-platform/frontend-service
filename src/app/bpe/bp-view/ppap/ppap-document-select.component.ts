@@ -138,8 +138,7 @@ export class PpapDocumentSelectComponent implements OnInit {
                         this.router.navigate(["dashboard"]);
                     })
                     .catch(error => {
-                        this.callStatus.error("Failed to send Ppap request");
-                        console.log("Error while sending Ppap request", error);
+                        this.callStatus.error("Failed to send Ppap request", error);
                     });
             });
         });

@@ -66,7 +66,7 @@ export class CategoryTreeComponent implements OnInit {
                 this.getCategoryStatus.callback("Category tree created", true);
             })
             .catch(error => {
-                this.getCategoryStatus.error("Error creating category tree");
+                this.getCategoryStatus.error("Error creating category tree", error);
             });
     }
 

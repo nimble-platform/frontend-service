@@ -77,8 +77,7 @@ export class NegotiationResponseComponent implements OnInit {
                 }
             )
             .catch(error => {
-                    this.callStatus.error("Failed to send quotation");
-                    console.log("Error while sending response", error);
+                    this.callStatus.error("Failed to send quotation", error);
                 }
             );
     }

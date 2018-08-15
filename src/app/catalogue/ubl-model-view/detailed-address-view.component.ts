@@ -40,8 +40,8 @@ export class DetailedAddressViewComponent implements OnInit{
                 this.deliveryAddress.buildingNumber = settings.address.buildingNumber;
                 this.deliveryAddress.streetName = settings.address.streetName;
                 this.getDefaultDeliveryLocation.callback("Retrieved default delivery location", true);
-            }).catch(error=>{
-                this.getDefaultDeliveryLocation.error("Failed to retrieve default delivery location");
+            }).catch(error => {
+                this.getDefaultDeliveryLocation.error("Failed to retrieve default delivery location", error);
             });
         }
         else{

@@ -64,8 +64,7 @@ export class ReceiptAdviceComponent implements OnInit {
                 this.callStatus.callback("Receipt Advice sent", true);
                 this.router.navigate(['dashboard']);
             }).catch(error => {
-                this.callStatus.error("Failed to send Receipt Advice");
-                console.log("Failed to send Receipt Advice", error);
+                this.callStatus.error("Failed to send Receipt Advice", error);
             });
     }
 
