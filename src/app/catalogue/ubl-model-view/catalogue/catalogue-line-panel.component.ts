@@ -7,6 +7,7 @@ import {CategoryService} from "../../category/category.service";
 import { ProductWrapper } from "../../../common/product-wrapper";
 import { CompanyNegotiationSettings } from "../../../user-mgmt/model/company-negotiation-settings";
 import { CallStatus } from "../../../common/call-status";
+import { isTransportService } from "../../../common/utils";
 
 @Component({
     selector: 'catalogue-line-panel',
@@ -41,7 +42,9 @@ export class CatalogueLinePanelComponent {
         this.publishService.publishMode = 'edit';
         this.publishService.publishingStarted = false;
         this.categoryService.resetSelectedCategories();
-        this.router.navigate(['catalogue/publish'], {queryParams: {pg: "single"}});
+        this.router.navigate(['catalogue/publish'], {queryParams: {
+            pg: "single",
+            productType: isTransportService(this.catalogueLine) ? "transportation" : "product"}});
     }
 
     deleteCatalogueLine(): void {

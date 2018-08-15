@@ -257,13 +257,13 @@
                 </ul>
             </div>
         </div>
-        <div class="row space-before" *ngIf="selectedTabSinglePublish === 'DETAILS'">
+        <div class="row space-before" [hidden]="selectedTabSinglePublish !== 'DETAILS'">
             <div class="col-12">
                 <transportation-service-input [catalogueLine]="catalogueLine" presentationMode="edit">
                 </transportation-service-input>
             </div>
         </div>
-        <div class="row space-before" *ngIf="selectedTabSinglePublish === 'PRICE'">
+        <div class="row space-before"[hidden]="selectedTabSinglePublish !== 'PRICE'">
             <div class="col-12">
                 <div class="row" *ngFor="let prop of getProductProperties()">
                     <div class="col-3">

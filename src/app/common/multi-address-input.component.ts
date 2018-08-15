@@ -30,7 +30,9 @@ export class MultiAddressInputComponent implements OnInit {
     ) { }
 
     ngOnInit() {
-        this.address.push(new Address());
+        if(this.address.length === 0) {
+            this.address.push(new Address());
+        }
         if(!this.valueClass) {
             this.valueClass = this.label ? "col-9" : "col-12";
         }
