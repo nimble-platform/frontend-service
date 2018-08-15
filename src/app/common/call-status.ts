@@ -49,4 +49,8 @@ export class CallStatus {
     public isDisplayed(): boolean {
         return this.fb_submitted || this.fb_errordetc || (this.fb_callback && !this.fb_autoCloseOnCallBack);
     }
+
+    public isError(): boolean {
+        return this.fb_errordetc;
+    }
 }
