@@ -1,4 +1,5 @@
 <form (ngSubmit)="onSubmit()" class="space-before" #userForm="ngForm" novalidate>
+	<!-- Email -->
 	<div class="form-group row col-10 mx-auto">
 		<label for="email" class="col-3 col-form-label font-weight-bold" i18n>E-Mail</label>
 		<div class="col-9">
@@ -6,6 +7,8 @@
 			<div *ngIf="!email.valid && email.touched"><small class="text-danger">Please enter a valid e-mail address.</small></div>
 		</div>
 	</div>
+
+	<!-- Password -->
 	<div class="form-group row col-10 mx-auto">
 		<label for="password" class="col-3 col-form-label font-weight-bold" i18n>Password</label>
 		<div class="col-9">
@@ -13,6 +16,8 @@
 			<div *ngIf="!password.valid && password.touched"><small class="text-danger">Please enter a password with six or more characters.</small></div>
 		</div>
 	</div>
+
+	<!-- Password (repeat) -->
 	<div class="form-group row col-10 mx-auto">
 		<label for="password2" class="col-3 col-form-label font-weight-bold">Password (repeat)</label>
 		<div class="col-9">
@@ -20,6 +25,8 @@
 			<div *ngIf="!password2.valid && password2.touched"><small class="text-danger">Passwords don't match.</small></div>
 		</div>
 	</div>
+
+	<!-- First Name -->
 	<div class="form-group row col-10 mx-auto">
 		<label for="firstname" class="col-3 col-form-label font-weight-bold" i18n>First Name</label>
 		<div class="col-9">
@@ -27,6 +34,8 @@
 			<div *ngIf="!firstname.valid && firstname.touched"><small class="text-danger">Please enter your first name.</small></div>
 		</div>
 	</div>
+
+	<!-- Last Name -->
 	<div class="form-group row col-10 mx-auto">
 		<label for="lastname" class="col-3 col-form-label font-weight-bold" i18n>Last Name</label>
 		<div class="col-9">
@@ -34,24 +43,32 @@
 			<div *ngIf="!lastname.valid && lastname.touched"><small class="text-danger">Please enter your last name.</small></div>
 		</div>
 	</div>
+
+	<!-- Date of Birth -->
 	<div class="form-group row col-10 mx-auto">
 		<label for="dateOfBirth" class="col-3 col-form-label font-weight-bold" i18n>Date Of Birth (Optional)</label>
 		<div class="col-9">
 			<input type="date" class="form-control" id="dateOfBirth" [(ngModel)]="model.user.dateOfBirth" name="dateOfBirth" #dateOfBirth="ngModel">
 		</div>
 	</div>
+
+	<!-- Place of Birth -->
 	<div class="form-group row col-10 mx-auto">
 		<label for="placeOfBirth" class="col-3 col-form-label font-weight-bold" i18n>Place Of Birth (Optional)</label>
 		<div class="col-9">
 			<input type="text" class="form-control" id="placeOfBirth" [(ngModel)]="model.user.placeOfBirth" name="placeOfBirth" #placeOfBirth="ngModel">
 		</div>
 	</div>
+
+	<!-- Phone Number -->
 	<div class="form-group row col-10 mx-auto">
 		<label for="phoneNumber" class="col-3 col-form-label font-weight-bold" i18n>Phone Number (Optional)</label>
 		<div class="col-9">
 			<input type="tel" class="form-control" id="phoneNumber" [(ngModel)]="model.user.phoneNumber" name="phoneNumber" #phoneNumber="ngModel">
 		</div>
 	</div>
+
+	<!-- EULA -->
 	<div class="form-group row col-10 mx-auto">
 		<div class="col-12">
 			<input id="eula" type="checkbox" name="eula" required [(ngModel)]="eula_accepted" #eula="ngModel">
@@ -60,25 +77,20 @@
 			</span>
 		</div>
 	</div>
-	<div class="row col-10 mx-auto">
-		<div class="col-12">
-			<button type="submit" class="btn btn-primary" [disabled]="!userForm.form.valid||!passwords_matching" i18n>Submit</button>
+
+	<!-- Submit -->
+	<div class="row col-12 actions-row">
+		<div class="col-9 call-status-col">
+			<call-status [callStatus]="submitCallStatus"></call-status>
 		</div>
-	</div>
-	<!--
-	<button type="button" class="btn btn-outline-secondary space-left" (click)="userForm.reset();reset()" [hidden]="userForm.form.pristine" i18n>Reset</button>
-	-->
-
-	<div [hidden]="error_detc || callback || !submitted">
-		<img class="space-before" src="assets/form_loader.gif"/>
-	</div>
-
-	<div [hidden]="!callback || error_detc">
-		<div class="alert alert-success space-before" role="alert" i18n>Registration successful</div>
-	</div>
-
-	<div [hidden]="!error_detc">
-		<div class="alert alert-danger space-before" role="alert">Registration failed - please make sure your account is not yet registered and try again later</div>
+		<!--
+		<div class="col-2">
+			<button type="button" class="btn btn-outline-secondary action" (click)="userForm.reset();reset()" [hidden]="userForm.form.pristine" i18n>Reset</button>
+		</div>
+		-->
+		<div class="col-2">
+			<button type="submit" class="btn btn-primary action" [disabled]="!userForm.form.valid || !passwords_matching || submitCallStatus.isLoading()" i18n>Submit</button>
+		</div>
 	</div>
 
 	<div *ngIf="debug">

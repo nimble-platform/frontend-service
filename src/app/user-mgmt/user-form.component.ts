@@ -5,6 +5,7 @@ import { UserRegistration } from './model/user-registration';
 import { ActivatedRoute } from "@angular/router";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { Router } from '@angular/router';
+import { CallStatus } from '../common/call-status';
 //declare var jsSHA: any;
 
 @Component({
@@ -18,9 +19,6 @@ export class UserFormComponent implements OnInit {
     pw_val_class = "ng-valid";
     passwords_matching = false;
     email_preset = false;
-    submitted = false;
-    callback = false;
-	error_detc = false;
 	eula_accepted = false;
     debug = myGlobals.debug;
     /* ToDo: Hackathon only BEGIN */
@@ -29,6 +27,8 @@ export class UserFormComponent implements OnInit {
     /* ToDo: Hackathon only END */
     response: any;
     shaObj: any;
+
+    submitCallStatus: CallStatus = new CallStatus();
 
     constructor(
         private userService: UserService,
@@ -60,22 +60,20 @@ export class UserFormComponent implements OnInit {
     post(userRegistration: UserRegistration): void {
         userRegistration.credentials.username = userRegistration.user.email;
         userRegistration.user.username = userRegistration.user.email;
+        this.submitCallStatus.submit();
         this.userService.registerUser(userRegistration)
             .then(res => {
                 this.response = res;
-                this.callback = true;
+                this.submitCallStatus.callback("Registration Successful!");
                 this.router.navigate(["/user-mgmt/login"], {queryParams: { pageRef: "registration" }});
             })
 			.catch(error => {
-				this.error_detc = true;
-                console.error(error);
+				this.submitCallStatus.error("Registration failed - please make sure your account is not yet registered and try again later", error);
             });
     }
 
     reset() {
-        this.submitted = false;
-        this.callback = false;
-		this.error_detc = false;
+        this.submitCallStatus.reset();
         /* ToDo: Hackathon only BEGIN */
         this.model = UserRegistration.initEmpty();
         this.objToSubmit = UserRegistration.initEmpty();
@@ -105,7 +103,6 @@ export class UserFormComponent implements OnInit {
         this.objToSubmit.credentials.password = this.shaObj.getHash("HEX");
         */
         // this.objToSubmit.dateOfBirth = new Date(this.model.dateOfBirth).toISOString(); // ToDo: add again to model
-        this.submitted = true;
         this.post(this.objToSubmit);
     }
 	

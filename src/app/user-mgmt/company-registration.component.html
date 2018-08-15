@@ -1,17 +1,23 @@
 <form class="company-settings-form" [formGroup]="registrationForm" novalidate (ngSubmit)="save(registrationForm)">
 	<h3 class="space-after">Company Registration</h3>
+
+	<!-- Legal Name -->
 	<div class="form-group row">
 		<label class="col-2 col-form-label">Legal Name</label>
 		<div class="col-10">
 			<input type="text" class="form-control" name="companyName" [formControl]="registrationForm.controls['name']" required>
 		</div>
 	</div>
+
+	<!-- VAT Number -->
 	<div class="form-group row">
 		<label class="col-2 col-form-label">VAT Number</label>
 		<div class="col-10">
 			<input type="text" class="form-control" [formControl]="registrationForm.controls['vatNumber']" required>
 		</div>
 	</div>
+
+	<!-- Verification Info -->
 	<div class="form-group row">
 		<label class="col-2 col-form-label">
 			<span>Verification Info</span>
@@ -21,21 +27,27 @@
 			<input type="text" class="form-control" [formControl]="registrationForm.controls['verificationInformation']">
 		</div>
 	</div>
+
+	<!-- Website -->
 	<div class="form-group row">
 		<label class="col-2 col-form-label">Website</label>
 		<div class="col-10">
 			<input type="text" class="form-control" [formControl]="registrationForm.controls['website']">
 		</div>
 	</div>
+
+	<!-- Address -->
 	<address-form [group]="registrationForm.controls.address"></address-form>
-	<div>
-		<button class="btn btn-primary" type="submit" [disabled]="!registrationForm.valid||isSubmitting">
-			<span>Register</span>
-		</button>
-		<div [hidden]="!isSubmitting" class="space-before">
-			<img src="assets/form_loader.gif"/>
+
+	<!-- Submit -->
+	<div class="row actions-row">
+		<div class="col-10 call-status-col">
+			<call-status [callStatus]="submitCallStatus" [large]="true"></call-status>
 		</div>
-    </div>
+		<div class="col-2">
+			<button class="btn btn-primary action" type="submit" [disabled]="!registrationForm.valid || submitCallStatus.isLoading()">Register</button>
+		</div>
+	</div>
 </form>
 
 <ng-template #tooltip let-d="dismiss">
