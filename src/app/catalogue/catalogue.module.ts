@@ -60,6 +60,8 @@ import { ProductPriceTabComponent } from "./publish/product-price-tab.component"
         CatalogueLinePanelComponent,
         CatalogueLineViewComponent,
         CatalogueLineDetailsComponent,
+        ProductCertificatesTabComponent,
+        ProductTrackAndTraceTabComponent,
         QuantityViewComponent,
         AmountViewComponent,
         QuantityValueViewComponent,

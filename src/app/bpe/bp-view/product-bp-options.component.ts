@@ -77,8 +77,8 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
 
                         this.hasReferenceProduct = this.hasReferencedCatalogueLine(line);
 
-                        console.log("Has reference: " + this.hasReferenceProduct);
-                        console.log("Line: ", line);
+                        // console.log("Has reference: " + this.hasReferenceProduct);
+                        // console.log("Line: ", line);
 
                         return Promise.all([
                             this.getReferencedCatalogueLine(line),
@@ -86,7 +86,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                         ]);
                     })
                     .then(([line, settings]) => {
-                        console.log("Referenced line", line);
+                        // console.log("Referenced line", line);
                         if(line) {
                             this.serviceLine = this.line;
                             this.serviceWrapper = new ProductWrapper(this.serviceLine, settings);

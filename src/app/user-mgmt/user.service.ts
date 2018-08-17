@@ -132,7 +132,11 @@ export class UserService {
             return this.http
                 .get(url, {headers: headers_token, withCredentials: true})
                 .toPromise()
-                .then(response => response.json() as CompanySettings)
+                .then(response => {
+                    const result = response.json() as CompanySettings;
+                    this.sanitizeNegotiationSettings(result.negotiationSettings);
+                    return result;
+                })
                 .catch(this.handleError)
         })
     }
@@ -241,12 +245,12 @@ export class UserService {
             .get(url, { headers: headers_token, withCredentials: true })
             .toPromise()
             .then(res => {
-                return this.sanitizeSettings(res.json());
+                return this.sanitizeNegotiationSettings(res.json());
             })
             .catch(this.handleError);
     }
 
-    private sanitizeSettings(settings: CompanyNegotiationSettings): CompanyNegotiationSettings {
+    private sanitizeNegotiationSettings(settings: CompanyNegotiationSettings): CompanyNegotiationSettings {
         if(settings.deliveryPeriodUnits.length === 0) {
             settings.deliveryPeriodUnits.push("day(s)");
             settings.deliveryPeriodUnits.push("week(s)");
