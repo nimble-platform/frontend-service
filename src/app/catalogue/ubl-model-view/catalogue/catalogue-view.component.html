@@ -69,11 +69,11 @@
                         </div>
                         <div class="col-10 d-flex justify-content-between">
                             <div class="col-8">
-                                <p style="word-break: break-all;word-wrap: break-word;white-space: pre-wrap;">
+                                <p style="word-break: break-all;word-wrap: break-word;">
                                     <strong>{{catLine.goodsItem.item.name}}  <i class="fas fa-external-link-alt btn-light" (click)="openCatalogueLinePage(catLine)"></i></strong>
                                 </p>
-                                <p style="word-break: break-all;word-wrap: break-word;white-space: pre-wrap">{{catLine.goodsItem.item.description}}</p>
-                                <p *ngIf="catLine.requiredItemLocationQuantity.price.priceAmount.value != null" style="word-break: break-all;word-wrap: break-word;white-space: pre-wrap">{{catLine.requiredItemLocationQuantity.price.priceAmount.value+" "+catLine.requiredItemLocationQuantity.price.priceAmount.currencyID}}</p>
+                                <p style="word-break: break-all;word-wrap: break-word;">{{catLine.goodsItem.item.description}}</p>
+                                <p *ngIf="catLine.requiredItemLocationQuantity.price.priceAmount.value != null" style="word-break: break-all;word-wrap: break-word;">{{catLine.requiredItemLocationQuantity.price.priceAmount.value+" "+catLine.requiredItemLocationQuantity.price.priceAmount.currencyID}}</p>
                             </div>
                             <div class="col-2">
                                 <button type="button" class="btn btn-primary space-after col"
