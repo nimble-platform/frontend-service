@@ -37,6 +37,8 @@ import { EditPropertyModalComponent } from "./publish/edit-property-modal.compon
 import { ProductDeliveryTradingComponent } from "./publish/product-delivery-trading.component";
 import { ProductDetailsModule } from "../product-details/product-details.module";
 import { ProductPriceTabComponent } from "./publish/product-price-tab.component";
+import { ProductCertificatesTabComponent } from "./publish/product-certificates-tab.component";
+import { ProductTrackAndTraceTabComponent } from "./publish/product-track-and-trace-tab.component";
 
 @NgModule({
 	imports: [CommonModule, 
