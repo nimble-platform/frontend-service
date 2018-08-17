@@ -64,6 +64,7 @@ export class CatalogueService {
     }
 
     getCatalogueLine(catalogueId:string, lineId:string):Promise<CatalogueLine> {
+        console.log("CatalogueId " + catalogueId + " lineId " + lineId);
         let url = this.baseUrl + `/catalogue/${catalogueId}/catalogueline/${lineId}`;
         return this.http
             .get(url, {headers: this.headers})

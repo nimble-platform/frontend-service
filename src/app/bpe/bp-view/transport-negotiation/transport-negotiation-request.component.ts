@@ -84,26 +84,28 @@ export class TransportNegotiationRequestComponent implements OnInit {
 
         //first initialize the seller and buyer parties.
         //once they are fetched continue with starting the ordering process
-        let sellerId:string = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item.manufacturerParty.id;
-        let buyerId:string = this.cookieService.get("company_id");
+        const sellerId: string = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item.manufacturerParty.id;
+        const buyerId: string = this.cookieService.get("company_id");
 
-        this.userService.getParty(buyerId).then(buyerParty => {
+        Promise.all([
+            this.userService.getParty(buyerId),
+            this.userService.getParty(sellerId)
+        ])
+        .then(([buyerParty, sellerParty]) => {
             rfq.buyerCustomerParty = new CustomerParty(buyerParty);
+            rfq.sellerSupplierParty = new SupplierParty(sellerParty);
 
-            this.userService.getParty(sellerId).then(sellerParty => {
-                rfq.sellerSupplierParty = new SupplierParty(sellerParty);
-                let vars:ProcessVariables = ModelUtils.createProcessVariables("Negotiation", buyerId, sellerId, rfq, this.bpDataService);
-                let piim:ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
+            const vars: ProcessVariables = ModelUtils.createProcessVariables("Negotiation", buyerId, sellerId, rfq, this.bpDataService);
+            const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
 
-                this.bpeService.startBusinessProcess(piim)
-                    .then(res => {
-                        this.callStatus.callback("Terms sent", true);
-                        this.router.navigate(['dashboard']);
-                    })
-                    .catch(error => {
-                        this.callStatus.error("Failed to sent Terms", error);
-                    });
-            });
+            return this.bpeService.startBusinessProcess(piim);
+        })
+        .then(() => {
+            this.callStatus.callback("Terms sent", true);
+            this.router.navigate(['dashboard']);
+        })
+        .catch(error => {
+            this.callStatus.error("Failed to send Terms", error);
         });
     }
 }

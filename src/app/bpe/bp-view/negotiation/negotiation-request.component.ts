@@ -18,9 +18,7 @@ import { ModelUtils } from "../../model/model-utils";
 import { ProcessInstanceInputMessage } from "../../model/process-instance-input-message";
 import { NegotiationModelWrapper } from "./negotiation-model-wrapper";
 import { getMaximumQuantityForPrice, getStepForPrice, copy } from "../../../common/utils";
-import { CompanyNegotiationSettings } from "../../../user-mgmt/model/company-negotiation-settings";
 import { PeriodRange } from "../../../user-mgmt/model/period-range";
-import { Quantity } from "../../../catalogue/model/publish/quantity";
 
 @Component({
     selector: "negotiation-request",
@@ -98,7 +96,7 @@ export class NegotiationRequestComponent implements OnInit {
                 const vars: ProcessVariables = ModelUtils.createProcessVariables("Negotiation", buyerId, sellerId, rfq, this.bpDataService);
                 const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
 
-                return this.bpeService.startBusinessProcess(piim)
+                return this.bpeService.startBusinessProcess(piim);
             })
             .then(() => {
                 this.callStatus.callback("Terms sent", true);

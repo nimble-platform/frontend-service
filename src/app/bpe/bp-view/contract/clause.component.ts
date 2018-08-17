@@ -5,6 +5,7 @@ import { CallStatus } from "../../../common/call-status";
 import { BPEService } from "../../bpe.service";
 import { DocumentClause } from "../../../catalogue/model/publish/document-clause";
 import { ItemInformationResponse } from "../../../catalogue/model/publish/item-information-response";
+import { RequestForQuotation } from "../../../catalogue/model/publish/request-for-quotation";
 
 @Component({
     selector: 'clause',
@@ -15,6 +16,7 @@ export class ClauseComponent implements OnInit {
 
     clauseDocument = null;
     itemInformationRequest: ItemInformationRequest;
+    rfq: RequestForQuotation;
     clauseDocumentRetrievalStatus: CallStatus = new CallStatus();
 
     expanded: boolean = false;
@@ -38,6 +40,16 @@ export class ClauseComponent implements OnInit {
                     .catch(error => {
                         this.clauseDocumentRetrievalStatus.error("Failed to retrieve item information request", error);
                     })
+                } else if(this.clause.type === "NEGOTIATION") {
+                    // fetch the itm information request as well
+                    this.bpeService.getRequestForQuotation(result)
+                    .then(request => {
+                        this.rfq = request;
+                        this.clauseDocumentRetrievalStatus.callback("Successfully retrieved request for quotation", true);
+                    })
+                    .catch(error => {
+                        this.clauseDocumentRetrievalStatus.error("Failed to retrieve request for quotation", error);
+                    })
                 } else {
                     this.clauseDocumentRetrievalStatus.callback("Successfully retrieved clause document details", true);
                 }
@@ -57,6 +69,8 @@ export class ClauseComponent implements OnInit {
                 return "Ppap";
             case "ITEM_DETAILS":
                 return "Request for Informations";
+            case "NEGOTIATION":
+                return "Negotiation";
             default:
                 return this.clause.type;
         }

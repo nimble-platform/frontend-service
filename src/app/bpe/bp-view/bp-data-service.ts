@@ -363,8 +363,6 @@ export class BPDataService{
 
         this.order.anticipatedMonetaryTotal.payableAmount.currencyID = copyRfq.requestForQuotationLine[0].lineItem.price.priceAmount.currencyID;
         
-        // this.order.anticipatedMonetaryTotal.payableAmount.value = copyQuotation.
-        
         this.setProcessType('Order');
     }
 

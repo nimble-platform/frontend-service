@@ -13,6 +13,7 @@ import { ProductBpStep } from "./product-bp-step";
 import { ProductBpStepsDisplay } from "./product-bp-steps-display";
 import { isTransportService } from "../../common/utils";
 import { UserService } from "../../user-mgmt/user.service";
+import { CompanyNegotiationSettings } from "../../user-mgmt/model/company-negotiation-settings";
 
 /**
  * Created by suat on 20-Oct-17.
@@ -36,7 +37,11 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     wrapper: ProductWrapper;
     options: BpWorkflowOptions;
 
+    serviceLine?: CatalogueLine;
+    serviceWrapper?: ProductWrapper;
+
     productExpanded: boolean = false;
+    hasReferenceProduct: boolean = false;
 
     constructor(public bpDataService: BPDataService, 
                 public catalogueService: CatalogueService, 
@@ -69,18 +74,34 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                     .getCatalogueLine(catalogueId, id)
                     .then(line => {
                         this.line = line;
-                        return this.userService.getCompanyNegotiationSettingsForProduct(line)
+
+                        this.hasReferenceProduct = this.hasReferencedCatalogueLine(line);
+
+                        console.log("Has reference: " + this.hasReferenceProduct);
+                        console.log("Line: ", line);
+
+                        return Promise.all([
+                            this.getReferencedCatalogueLine(line),
+                            this.userService.getCompanyNegotiationSettingsForProduct(line)
+                        ]);
+                    })
+                    .then(([line, settings]) => {
+                        console.log("Referenced line", line);
+                        if(line) {
+                            this.serviceLine = this.line;
+                            this.serviceWrapper = new ProductWrapper(this.serviceLine, settings);
+                            this.line = line;
+                            return this.userService.getCompanyNegotiationSettingsForProduct(line);
+                        }
+
+                        this.initWithCatalogueLine(this.line, settings);
+                        return null;
                     })
                     .then(settings => {
-                        this.wrapper = new ProductWrapper(this.line, settings);
-                        this.bpDataService.setCatalogueLines([this.line], [settings]);
-                        this.callStatus.callback("Retrieved product details", true);
-                        this.bpDataService.computeWorkflowOptions();
-                        this.options = this.bpDataService.workflowOptions;
-                        if(this.processType) {
-                            this.currentStep = this.getCurrentStep(this.processType);
+                        if(settings) {
+                            this.initWithCatalogueLine(this.line, settings);
                         }
-                        this.stepsDisplayMode = this.getStepsDisplayMode();
+                        this.callStatus.callback("Retrieved product details", true);
                     })
                     .catch(error => {
                         this.callStatus.error("Failed to retrieve product details", error);
@@ -92,6 +113,37 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     ngOnDestroy(): void {
         this.processTypeSubs.unsubscribe();
         this.renderer.setStyle(document.body, "background-image", "url('assets/bg_global.jpg')");
+    }
+
+    private initWithCatalogueLine(line: CatalogueLine, settings: CompanyNegotiationSettings) {
+        this.wrapper = new ProductWrapper(this.line, settings);
+        this.bpDataService.setCatalogueLines([this.line], [settings]);
+        this.bpDataService.computeWorkflowOptions();
+        this.options = this.bpDataService.workflowOptions;
+        if(this.processType) {
+            this.currentStep = this.getCurrentStep(this.processType);
+        }
+        this.stepsDisplayMode = this.getStepsDisplayMode();
+    }
+
+    private getReferencedCatalogueLine(line: CatalogueLine): Promise<CatalogueLine> {
+        if(!this.hasReferencedCatalogueLine(line)) {
+            return Promise.resolve(null);
+        }
+
+        const item = line.goodsItem.item;
+        const catalogueId = item.catalogueDocumentReference.id;
+        const lineId = item.manufacturersItemIdentification.id;
+
+        return this.catalogueService.getCatalogueLine(catalogueId, lineId)
+    }
+
+    private hasReferencedCatalogueLine(line: CatalogueLine): boolean {
+        const item = line.goodsItem.item;
+        const catalogueId = item.catalogueDocumentReference ? item.catalogueDocumentReference.id : null;
+        const lineId = item.manufacturersItemIdentification ? item.manufacturersItemIdentification.id : null;
+
+        return !!catalogueId && !!lineId;
     }
 
     getStepsStatus(): ProductBpStepStatus {
@@ -143,12 +195,16 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
             case "Transport_Execution_Plan":
                 return this.isOrderDone() ? "Transport_Order_Confirmed" : "Transport_Order";
             case "Order":
-                return this.isOrderDone() ? "Order_Confirmed" : "Order";
+                if(isTransportService(this.line)) {
+                    return this.isOrderDone() ? "Transport_Order_Confirmed" : "Transport_Order";
+                } else {
+                    return this.isOrderDone() ? "Order_Confirmed" : "Order";
+                }
         }
     }
 
     private isOrderDone(): boolean {
-        return this.processType === "Order" 
+        return (this.processType === "Order" || this.processType === "Transport_Execution_Plan")
             && this.bpDataService.processMetadata 
             && this.bpDataService.processMetadata.processStatus === "Completed";
     }
