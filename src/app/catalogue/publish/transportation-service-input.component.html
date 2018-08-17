@@ -15,12 +15,12 @@
 </text-input>
 <quantity-input [label]="'Total Capacity'" 
   [definition]="'The total capacity or volume available in this transportation service,e.g.,Quantity:50,Unit:MTQ'" 
-  [quantity]="[catalogueLine.goodsItem.item.transportationServiceDetails.totalCapacityDimension.measure]"
+  [quantity]="catalogueLine.goodsItem.item.transportationServiceDetails.totalCapacityDimension.measure"
   rowClass="my-3" valueTextClass="form-control-sm">
 </quantity-input>
 <quantity-input [label]="'Estimated Duration'" 
   [definition]="'The estimated duration of this transportation service,e.g.,Quantity:3,Unit:weeks'"
-  [quantity]="[catalogueLine.goodsItem.item.transportationServiceDetails.estimatedDurationPeriod.durationMeasure]"
+  [quantity]="catalogueLine.goodsItem.item.transportationServiceDetails.estimatedDurationPeriod.durationMeasure"
   [quantityType]="'time_quantity'"
   rowClass="my-3" valueTextClass="form-control-sm">
 </quantity-input>
@@ -62,15 +62,14 @@ valueTextClass="form-control-sm" valueClass="col-9 input-group" rowClass="my-3">
             [(text)]="catalogueLine.goodsItem.item.transportationServiceDetails.shipmentStage[0].transportMeans.transportEquipment[0].transportEquipmentTypeCode.name"
             [rows]="1" rowClass="my-3" valueTextClass="form-control-sm">
 </text-input>
-<text-input [label]="'Equipment Humidity Percent'"
+<amount-input [label]="'Equipment Humidity Percent'"
             [definition]="'The percent humidity within this piece of transport equipment'"
-            [(text)]="catalogueLine.goodsItem.item.transportationServiceDetails.shipmentStage[0].transportMeans.transportEquipment[0].humidityPercent"
-            [rows]="1" rowClass="my-3" valueTextClass="form-control-sm">
-</text-input>
+            [(amount)]="catalogueLine.goodsItem.item.transportationServiceDetails.shipmentStage[0].transportMeans.transportEquipment[0].humidityPercent"
+            rowClass="my-3" valueTextClass="form-control-sm">
+</amount-input>
 <boolean-input [label]="'Refrigerator Indicator'"
               [definition]="'An indicator that this piece of transport equipment is refrigerated (true) or not (false)'"
-              [(value)]="catalogueLine.goodsItem.item.transportationServiceDetails.shipmentStage[0].transportMeans.transportEquipment[0].refrigeratorIndicator"
-              (valueChanged)="catalogueLine.goodsItem.item.transportationServiceDetails.shipmentStage[0].transportMeans.transportEquipment[0].refrigeratorIndicator = $event"
+              [(value)]="catalogueLine.goodsItem.item.transportationServiceDetails.shipmentStage[0].transportMeans.transportEquipment[0].refrigeratedIndicator"
               rowClass="my-3" valueTextClass="form-control-sm">
 </boolean-input>
 <text-input [label]="'Equipment Characteristics'"
@@ -86,6 +85,6 @@ valueTextClass="form-control-sm" valueClass="col-9 input-group" rowClass="my-3">
 </text-input>
 <quantity-input [label]="'Value Measure'"
                 [definition]="'A value measurement for the environmental emission'"
-                [quantity]="[catalogueLine.goodsItem.item.transportationServiceDetails.environmentalEmission[0].valueMeasure]"
+                [quantity]="catalogueLine.goodsItem.item.transportationServiceDetails.environmentalEmission[0].valueMeasure"
                 rowClass="my-3" valueTextClass="form-control-sm">
 </quantity-input>
