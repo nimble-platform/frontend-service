@@ -22,7 +22,7 @@
         </div>
     
         <div [class]="valueClass" *ngIf="presentationMode === 'view' && visible">
-            <span>{{ quantityToString() }}</span>
+            <span [class]="valueTextClass">{{ quantityToString() }}</span>
         </div>
     </div>
     

@@ -19,6 +19,8 @@ export class ProductDetailsTabsComponent implements OnInit {
     @Input() readonly: boolean = false;
 
     selectedTab: ProductDetailsTab;
+
+    isLogistics: boolean = false;
     
     constructor() {
 
@@ -26,6 +28,7 @@ export class ProductDetailsTabsComponent implements OnInit {
 
     ngOnInit() {
         this.selectedTab = this.showOverview ? "OVERVIEW" : "DETAILS";
+        this.isLogistics = this.wrapper.getLogisticsStatus();
     }
 
     onSelectTab(event: any): void {

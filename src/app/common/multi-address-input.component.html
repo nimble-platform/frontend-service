@@ -4,10 +4,12 @@
         <input-label [class]="labelMainClass" [label]="label" [definition]="definition">
         </input-label>
     </div>
-    <select *ngIf="address.length > 1"
-            class="custom-select">
-        <option *ngFor="let value of address">{{value.country.name}}</option>
-    </select>
+    <div [class]="valueClass">
+        <select *ngIf="address.length > 1"
+                class="custom-select">
+            <option *ngFor="let value of address">{{value.country.name}}</option>
+        </select>
+    </div>
 
     <input *ngIf="address.length == 1"
             class="form-control"

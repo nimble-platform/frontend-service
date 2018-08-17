@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from "@angular/core";
-import { CatalogueLine } from "../model/publish/catalogue-line";
-import { TransportationService } from "../model/publish/transportation-service";
+import { CatalogueLine } from "../catalogue/model/publish/catalogue-line";
+import { TransportationService } from "../catalogue/model/publish/transportation-service";
 
 @Component({
     selector: "transportation-service-input",

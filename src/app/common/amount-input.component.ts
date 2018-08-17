@@ -18,6 +18,7 @@ export class AmountInputComponent implements OnInit {
     @Input() rowClass: string = "";
     @Input() valueClass: string; // set based on label
     @Input() placeholder: string = "Enter a value...";
+    @Input() valueTextClass: string = "";
     
     private amountValue: number;
     @Output() amountChange = new EventEmitter<number>();

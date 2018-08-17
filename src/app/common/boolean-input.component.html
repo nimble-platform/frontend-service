@@ -3,9 +3,10 @@
         <input-label [class]="labelMainClass" [label]="label" [definition]="definition">
         </input-label>
   </div>
-  <div [class]="valueClass" *ngIf="presentationMode === 'edit' && visible">
+  <div [class]="valueClass">
       <input type="checkbox"
           [(ngModel)]="value"
+          class="mx-2"
           [disabled]="presentationMode != 'edit'">
   </div>
 </div>

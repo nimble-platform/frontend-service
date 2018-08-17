@@ -37,7 +37,6 @@ import { EditPropertyModalComponent } from "./publish/edit-property-modal.compon
 import { ProductDeliveryTradingComponent } from "./publish/product-delivery-trading.component";
 import { ProductDetailsModule } from "../product-details/product-details.module";
 import { ProductPriceTabComponent } from "./publish/product-price-tab.component";
-import { TransportationServiceInput } from "./publish/transportation-service-input.component";
 
 @NgModule({
 	imports: [CommonModule, 
@@ -77,8 +76,7 @@ import { TransportationServiceInput } from "./publish/transportation-service-inp
         PropertyBlockPipe,
         ItemPropertyDataSourcePipe,
         DetailedAddressViewComponent,
-        PaymentTermsView,
-        TransportationServiceInput
+        PaymentTermsView
     ],
     exports: [
         CategorySearchComponent,

@@ -20,9 +20,16 @@
             </li>
             <li class="nav-item">
                 <a href id="DELIVERY_TRADING" class="nav-link"
+                    *ngIf="isLogistics === false"
                     [ngClass]="{ active: selectedTab === 'DELIVERY_TRADING'}"
                     (click)="onSelectTab($event)">
                     Delivery &amp; Trading
+                </a>
+                <a href id="DELIVERY_TRADING" class="nav-link"
+                    *ngIf="isLogistics === true"
+                    [ngClass]="{ active: selectedTab === 'DELIVERY_TRADING'}"
+                    (click)="onSelectTab($event)">
+                    Transportation Service Details
                 </a>
             </li>
         </ul>
@@ -56,7 +63,7 @@
 
     <!-- Delivery & Trading Tab -->
     <div *ngIf="selectedTab === 'DELIVERY_TRADING'" class="p-3 col-12">
-        <div class="d-flex">
+        <div class="d-flex" *ngIf="isLogistics === false">
             <div style="flex-grow:1;">
                 <h3 class="p-1">Price</h3>
                 <div class="p-1">
@@ -84,6 +91,10 @@
                     <strong>Packaging: </strong> {{ wrapper.getPackaging() }}
                 </div>
             </div>
+        </div>
+        <div *ngIf="isLogistics === true">
+            <transportation-service-input [catalogueLine]="wrapper.line" presentationMode="view">
+            </transportation-service-input>
         </div>
     </div>
 </div>
