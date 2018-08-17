@@ -9,7 +9,7 @@ import { ProcessType } from "../bpe/model/process-type";
 import { ProductWrapper } from "../common/product-wrapper";
 import { Item } from "../catalogue/model/publish/item";
 import { PriceWrapper } from "../common/price-wrapper";
-import { getMaximumQuantityForPrice, getStepForPrice } from "../common/utils";
+import { getMaximumQuantityForPrice, getStepForPrice, isTransportService } from "../common/utils";
 import { AppComponent } from "../app.component";
 import { UserService } from "../user-mgmt/user.service";
 
@@ -35,6 +35,7 @@ export class ProductDetailsComponent implements OnInit {
     toggleImageBorder: boolean = false;
     showNavigation: boolean = true;
     showProcesses: boolean = true;
+    isLogistics: boolean = false;
 
     constructor(private bpDataService: BPDataService,
                 private catalogueService: CatalogueService,
@@ -60,6 +61,7 @@ export class ProductDetailsComponent implements OnInit {
                     .then(line => {
                         this.line = line;
                         this.item = line.goodsItem.item;
+                        this.isLogistics = isTransportService(this.line);
                         return this.userService.getCompanyNegotiationSettingsForProduct(line)
                     })
                     .then(settings => {

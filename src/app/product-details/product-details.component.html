@@ -12,8 +12,8 @@
         </product-details-tabs>
     </div>
     <div class="col-3">
-        <!-- Order Workflow -->
-        <div class="p-3 border border-dark">
+        <!-- Order Workflow For Product -->
+        <div *ngIf="isLogistics === false" class="p-3 border border-dark">
 
             <h2 class="py-1">Negotiate & Order</h2>
 
@@ -135,6 +135,56 @@
                 Negotiate & Order
             </button>
         </div>
+
+        <!-- Order Workflow For Logistics -->
+        <div *ngIf="isLogistics === true" class="p-3 border border-dark">
+
+            <h2 class="py-1">Negotiate & Order</h2>
+
+            <!-- Payment Terms -->
+            <div class="order-group">
+                <label class="order-label">
+                    Payment Terms
+                </label>
+                <span class="order-value">
+                    {{ wrapper.getPaymentTerms() }}
+                </span>
+            </div>
+
+            <!-- Payment Means -->
+            <div class="order-group">
+                <label class="order-label">
+                    Payment Means
+                </label>
+                <span class="order-value">
+                    {{ wrapper.getPaymentMeans() }}
+                </span>
+            </div>
+            <hr>
+            <div class="inline-order-group">
+                <label class="order-label">
+                    Quantity:
+                </label>
+                <span class="order-qty-input">
+                    <input type="number" [(ngModel)]="options.quantity" class="form-control form-control-sm px-1 w-50" />
+                    <span *ngIf="getQuantityUnit() !== ''" class="ml-2">{{ getQuantityUnit() }}</span>
+                </span>
+            </div>
+            <div class="inline-order-group">
+                <label class="order-label order-price">
+                    Total Price: 
+                </label>
+                <span class="order-price-value">
+                    on demand
+                </span>
+            </div>
+
+            <!-- Action Button -->
+            <button class="btn btn-primary pt-2 w-100"
+                (click)="onNegotiate()" [disabled]="!this.appComponent.checkRoles('bp') || options.quantity <= 0">
+                Negotiate & Order
+            </button>
+        </div>
         <div *ngIf="this.appComponent.checkRoles('bp')" class="p-3 border border-dark border-top-0">
             <div class="inline w-100" (click)="showProcesses = !showProcesses">
                 <h4 class="py-1 inline w-75">Other Processes</h4>
@@ -148,7 +198,7 @@
                     </button>
                 </div>
                 <div>
-                    <button class="btn btn-secondary space-before w-100" (click)="onStartPpap()">
+                    <button *ngIf="isLogistics === false" class="btn btn-secondary space-before w-100" (click)="onStartPpap()">
                         Start Ppap
                     </button>
                 </div>
