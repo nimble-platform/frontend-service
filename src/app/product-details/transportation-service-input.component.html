@@ -1,90 +1,90 @@
-<h5 class="my-2">Transportation Service Details</h5>
+<h5 [class]="titleClass">Transportation Service Details</h5>
 <text-input [label]="'Service Type'" [presentationMode]="presentationMode"
   [definition]="'The type of service provided,e.g.,port-to-port'"
   [(text)]="catalogueLine.goodsItem.item.transportationServiceDetails.transportServiceCode.name"
-  [rows]="1" rowClass="my-3" valueTextClass="form-control-sm">
+  [rows]="1" [rowClass]="spacingClass" [valueTextClass]="valueTextClass">
 </text-input>
 <text-input [label]="'Supported Product Nature'" [presentationMode]="presentationMode"
   [(text)]="catalogueLine.goodsItem.item.transportationServiceDetails.supportedCommodityClassification[0].natureCode.name"
-  [rows]="1" rowClass="my-3" valueTextClass="form-control-sm">
+  [rows]="1" [rowClass]="spacingClass" [valueTextClass]="valueTextClass">
 </text-input>
 <text-input [label]="'Supported Cargo Type'" [presentationMode]="presentationMode"
   [definition]="'The type of cargo,e.g.,large freight containers or palletized'"
   [(text)]="catalogueLine.goodsItem.item.transportationServiceDetails.supportedCommodityClassification[0].cargoTypeCode.name"
-  [rows]="1" rowClass="my-3" valueTextClass="form-control-sm">
+  [rows]="1" [rowClass]="spacingClass" [valueTextClass]="valueTextClass">
 </text-input>
 <quantity-input [label]="'Total Capacity'" [presentationMode]="presentationMode"
   [definition]="'The total capacity or volume available in this transportation service,e.g.,Quantity:50,Unit:MTQ'" 
   [quantity]="catalogueLine.goodsItem.item.transportationServiceDetails.totalCapacityDimension.measure"
-  rowClass="my-3" valueTextClass="form-control-sm">
+  [rowClass]="spacingClass" [valueTextClass]="valueTextClass">
 </quantity-input>
 <quantity-input [label]="'Estimated Duration'" [presentationMode]="presentationMode"
   [definition]="'The estimated duration of this transportation service,e.g.,Quantity:3,Unit:weeks'"
   [quantity]="catalogueLine.goodsItem.item.transportationServiceDetails.estimatedDurationPeriod.durationMeasure"
   [quantityType]="'time_quantity'"
-  rowClass="my-3" valueTextClass="form-control-sm">
+  [rowClass]="spacingClass" [valueTextClass]="valueTextClass">
 </quantity-input>
 <text-input [label]="'Scheduled Days'" [presentationMode]="presentationMode"
   [definition]="'Which days of the week this transport service is operational'"
   [(text)]="catalogueLine.goodsItem.item.transportationServiceDetails.scheduledServiceFrequency[0].weekDayCode.name"
-  [rows]="1" rowClass="my-3" valueTextClass="form-control-sm">
+  [rows]="1" [rowClass]="spacingClass" [valueTextClass]="valueTextClass">
 </text-input>
 <hr>
-<h5 class="my-2">Applicable Countries</h5>
+<h5 [class]="titleClass">Applicable Countries</h5>
 <multi-address-input [presentationMode]="presentationMode"
             [label]="'Applicable Countries'"
             [multiValue]="true"
             [definition]="'A reference to countries to which this service will apply'"
             [address]="catalogueLine.requiredItemLocationQuantity.applicableTerritoryAddress"
-            valueTextClass="form-control-sm" valueClass="col-9 input-group" rowClass="my-3">
+            [valueTextClass]="valueTextClass" valueClass="col-9 input-group" [rowClass]="spacingClass">
 </multi-address-input>
 <hr>
-<h5 class="my-2">Shipment Stage</h5>
+<h5 [class]="titleClass">Shipment Stage</h5>
 <text-input [label]="'Transportation Mode'" [presentationMode]="presentationMode"
             [definition]="'The method of transport used for this shipment stage,e.g.,road,air or rail'"
             [(text)]="catalogueLine.goodsItem.item.transportationServiceDetails.shipmentStage[0].transportModeCode.name"
-            [rows]="1" rowClass="my-3" valueTextClass="form-control-sm">
+            [rows]="1" [rowClass]="spacingClass" [valueTextClass]="valueTextClass">
 </text-input>
 <text-input [label]="'Carrier Party'" [presentationMode]="presentationMode"
             [definition]="'The party carrying the goods'"
             [(text)]="catalogueLine.goodsItem.item.transportationServiceDetails.shipmentStage[0].carrierParty.name"
-            [rows]="1" rowClass="my-3" valueTextClass="form-control-sm">
+            [rows]="1" [rowClass]="spacingClass" [valueTextClass]="valueTextClass">
 </text-input>
 <hr>
-<h5 class="my-2">Transport Means / Equipment</h5>
+<h5 [class]="titleClass">Transport Means / Equipment</h5>
 <text-input [label]="'Transport Means'" [presentationMode]="presentationMode"
             [definition]="'Transport means associated with this piece of transport equipment,e.g.,automobiles, airplanes or trains'"
             [(text)]="catalogueLine.goodsItem.item.transportationServiceDetails.shipmentStage[0].transportMeans.transportMeansTypeCode.name"
-            [rows]="1" rowClass="my-3" valueTextClass="form-control-sm">
+            [rows]="1" [rowClass]="spacingClass" [valueTextClass]="valueTextClass">
 </text-input>
 <text-input [label]="'Associated Equipment'" [presentationMode]="presentationMode"
             [definition]="'A piece of transport equipment used in this transportation service'"
             [(text)]="catalogueLine.goodsItem.item.transportationServiceDetails.shipmentStage[0].transportMeans.transportEquipment[0].transportEquipmentTypeCode.name"
-            [rows]="1" rowClass="my-3" valueTextClass="form-control-sm">
+            [rows]="1" [rowClass]="spacingClass" [valueTextClass]="valueTextClass">
 </text-input>
 <amount-input [label]="'Equipment Humidity Percent'" [presentationMode]="presentationMode"
             [definition]="'The percent humidity within this piece of transport equipment'"
             [(amount)]="catalogueLine.goodsItem.item.transportationServiceDetails.shipmentStage[0].transportMeans.transportEquipment[0].humidityPercent"
-            rowClass="my-3" valueTextClass="form-control-sm">
+            [rowClass]="spacingClass" [valueTextClass]="valueTextClass">
 </amount-input>
 <boolean-input [label]="'Refrigerator Indicator'" [presentationMode]="presentationMode"
               [definition]="'An indicator that this piece of transport equipment is refrigerated (true) or not (false)'"
               [(value)]="catalogueLine.goodsItem.item.transportationServiceDetails.shipmentStage[0].transportMeans.transportEquipment[0].refrigeratedIndicator"
-              rowClass="my-3" valueTextClass="form-control-sm">
+              [rowClass]="spacingClass" [valueTextClass]="valueTextClass">
 </boolean-input>
 <text-input [label]="'Equipment Characteristics'" [presentationMode]="presentationMode"
             [definition]="'Characteristics of this piece of transport equipment'"
             [(text)]="catalogueLine.goodsItem.item.transportationServiceDetails.shipmentStage[0].transportMeans.transportEquipment[0].characteristics"
-            [rows]="1" rowClass="my-3" valueTextClass="form-control-sm">
+            [rows]="1" [rowClass]="spacingClass" [valueTextClass]="valueTextClass">
 </text-input>
 <hr>
-<h5 class="my-2">Environmental Emission</h5>
+<h5 [class]="titleClass">Environmental Emission</h5>
 <text-input [label]="'Emission Type'" [presentationMode]="presentationMode"
             [(text)]="catalogueLine.goodsItem.item.transportationServiceDetails.environmentalEmission[0].environmentalEmissionTypeCode.name"
-            [rows]="1" rowClass="my-3" valueTextClass="form-control-sm">
+            [rows]="1" [rowClass]="spacingClass" [valueTextClass]="valueTextClass">
 </text-input>
 <quantity-input [label]="'Value Measure'" [presentationMode]="presentationMode"
                 [definition]="'A value measurement for the environmental emission'"
                 [quantity]="catalogueLine.goodsItem.item.transportationServiceDetails.environmentalEmission[0].valueMeasure"
-                rowClass="my-3" valueTextClass="form-control-sm">
+                [rowClass]="spacingClass" [valueTextClass]="valueTextClass">
 </quantity-input>

@@ -17,6 +17,7 @@ export class BooleanInputComponent implements OnInit {
     @Input() labelMainClass: string = "";
     @Input() rowClass: string = "";
     @Input() valueClass: string; // set based on label
+    @Input() valueTextClass: string = "";
     
     private booleanValue: boolean;
     @Output() valueChange = new EventEmitter<boolean>();
