@@ -16,7 +16,7 @@ import { SupplierParty } from "../../../catalogue/model/publish/supplier-party";
 import { ProcessVariables } from "../../model/process-variables";
 import { ModelUtils } from "../../model/model-utils";
 import { ProcessInstanceInputMessage } from "../../model/process-instance-input-message";
-import { copy } from "../../../common/utils";
+import { copy, isTransportService } from "../../../common/utils";
 import { PresentationMode } from "../../../catalogue/model/publish/presentation-mode";
 /**
  * Created by suat on 19-Nov-17.
@@ -62,8 +62,15 @@ export class ItemInformationRequestComponent implements OnInit {
 
     onSkip(): void {
         this.bpDataService.resetBpData();
-        this.bpDataService.initPpap([]);
-        this.bpDataService.setBpOptionParameters(this.bpDataService.userRole, "Ppap", "Item_Information_Request");
+        if(isTransportService(this.bpDataService.getCatalogueLine()) || !this.bpDataService.getCompanySettings().ppapCompatibilityLevel) {
+            // skip ppap
+            this.bpDataService.initRfq(this.bpDataService.getCompanySettings().negotiationSettings).then(() => {
+                this.bpDataService.setBpOptionParameters(this.bpDataService.userRole, "Negotiation", "Ppap");
+            });
+        } else {
+            this.bpDataService.initPpap([]);
+            this.bpDataService.setBpOptionParameters(this.bpDataService.userRole, "Ppap", "Item_Information_Request");
+        }
     }
 
     onSendRequest(): void {

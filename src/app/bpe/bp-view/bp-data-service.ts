@@ -37,6 +37,7 @@ import { NegotiationModelWrapper } from "./negotiation/negotiation-model-wrapper
 import { PriceWrapper } from "../../common/price-wrapper";
 import { Quantity } from "../../catalogue/model/publish/quantity";
 import { CompanyNegotiationSettings } from "../../user-mgmt/model/company-negotiation-settings";
+import { CompanySettings } from "../../user-mgmt/model/company-settings";
 
 /**
  * Created by suat on 20-Sep-17.
@@ -52,7 +53,7 @@ export class BPDataService{
     relatedProducts: string[];
     relatedProductCategories: string[];
     // the negotiation settings for the producers of the catalogue lines
-    private negotiationSettings: CompanyNegotiationSettings[] = [];
+    private companySettings: CompanySettings[] = [];
 
     requestForQuotation: RequestForQuotation;
     quotation: Quotation;
@@ -88,11 +89,11 @@ export class BPDataService{
                 private cookieService: CookieService) {
     }
 
-    setCatalogueLines(catalogueLines: CatalogueLine[], negotiationSettings: CompanyNegotiationSettings[]): void {
+    setCatalogueLines(catalogueLines: CatalogueLine[], settings: CompanySettings[]): void {
         this.catalogueLines = [];
         this.relatedProducts = [];
         this.relatedProductCategories = [];
-        this.negotiationSettings = negotiationSettings;
+        this.companySettings = settings;
 
         for(let line of catalogueLines) {
             this.catalogueLines.push(line);
@@ -109,8 +110,8 @@ export class BPDataService{
         return this.catalogueLines[0];
     }
 
-    getCompanyNegotiationSettings(): CompanyNegotiationSettings {
-        return this.negotiationSettings[0];
+    getCompanySettings(): CompanySettings {
+        return this.companySettings[0];
     }
 
     getRelatedGroupId(): string {
@@ -263,7 +264,7 @@ export class BPDataService{
         rfqLine.lineItem.quantity.value = this.workflowOptions ? this.workflowOptions.quantity : 1;
 
         let userId = this.cookieService.get('user_id');
-        return this.userService.getSettings(userId).then(settings => {
+        return this.userService.getSettingsForUser(userId).then(settings => {
             // we can't copy because those are 2 different types of addresses.
             const lineItem = this.requestForQuotation.requestForQuotationLine[0].lineItem;
             const address = lineItem.deliveryTerms.deliveryLocation.address;
@@ -284,7 +285,7 @@ export class BPDataService{
         );
 
         let userId = this.cookieService.get('user_id');
-        return this.userService.getSettings(userId).then(settings => {
+        return this.userService.getSettingsForUser(userId).then(settings => {
             // we can't copy because those are 2 different types of addresses.
             const lineItem = this.requestForQuotation.requestForQuotationLine[0].lineItem;
             const address = lineItem.deliveryTerms.deliveryLocation.address;

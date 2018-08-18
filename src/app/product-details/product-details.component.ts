@@ -1,4 +1,4 @@
-import { Component, OnInit, Predicate } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { CatalogueService } from "../catalogue/catalogue.service";
 import { CallStatus } from "../common/call-status";
@@ -12,6 +12,7 @@ import { PriceWrapper } from "../common/price-wrapper";
 import { getMaximumQuantityForPrice, getStepForPrice, isTransportService } from "../common/utils";
 import { AppComponent } from "../app.component";
 import { UserService } from "../user-mgmt/user.service";
+import { CompanySettings } from "../user-mgmt/model/company-settings";
 
 @Component({
     selector: 'product-details',
@@ -30,6 +31,7 @@ export class ProductDetailsComponent implements OnInit {
     line?: CatalogueLine;
     item?: Item;
     wrapper?: ProductWrapper;
+    settings?: CompanySettings;
     priceWrapper?: PriceWrapper;
 
     toggleImageBorder: boolean = false;
@@ -62,10 +64,11 @@ export class ProductDetailsComponent implements OnInit {
                         this.line = line;
                         this.item = line.goodsItem.item;
                         this.isLogistics = isTransportService(this.line);
-                        return this.userService.getCompanyNegotiationSettingsForProduct(line)
+                        return this.userService.getSettingsForProduct(line)
                     })
                     .then(settings => {
-                        this.wrapper = new ProductWrapper(this.line, settings);
+                        this.settings = settings;
+                        this.wrapper = new ProductWrapper(this.line, settings.negotiationSettings);
                         this.priceWrapper = new PriceWrapper(this.line.requiredItemLocationQuantity.price);
                         this.bpDataService.resetBpData();
                         this.bpDataService.setCatalogueLines([this.line], [settings]);
@@ -137,5 +140,9 @@ export class ProductDetailsComponent implements OnInit {
             return "";
         }
         return this.line.requiredItemLocationQuantity.price.baseQuantity.unitCode || "";
+    }
+
+    isPpapAvailable(): boolean {
+        return this.settings && !!this.settings.ppapCompatibilityLevel;
     }
 }

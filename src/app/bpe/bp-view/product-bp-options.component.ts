@@ -14,6 +14,7 @@ import { ProductBpStepsDisplay } from "./product-bp-steps-display";
 import { isTransportService } from "../../common/utils";
 import { UserService } from "../../user-mgmt/user.service";
 import { CompanyNegotiationSettings } from "../../user-mgmt/model/company-negotiation-settings";
+import { CompanySettings } from "../../user-mgmt/model/company-settings";
 
 /**
  * Created by suat on 20-Oct-17.
@@ -82,16 +83,16 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
 
                         return Promise.all([
                             this.getReferencedCatalogueLine(line),
-                            this.userService.getCompanyNegotiationSettingsForProduct(line)
+                            this.userService.getSettingsForProduct(line)
                         ]);
                     })
                     .then(([line, settings]) => {
                         // console.log("Referenced line", line);
                         if(line) {
                             this.serviceLine = this.line;
-                            this.serviceWrapper = new ProductWrapper(this.serviceLine, settings);
+                            this.serviceWrapper = new ProductWrapper(this.serviceLine, settings.negotiationSettings);
                             this.line = line;
-                            return this.userService.getCompanyNegotiationSettingsForProduct(line);
+                            return this.userService.getSettingsForProduct(line);
                         }
 
                         this.initWithCatalogueLine(this.line, settings);
@@ -115,8 +116,8 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
         this.renderer.setStyle(document.body, "background-image", "url('assets/bg_global.jpg')");
     }
 
-    private initWithCatalogueLine(line: CatalogueLine, settings: CompanyNegotiationSettings) {
-        this.wrapper = new ProductWrapper(this.line, settings);
+    private initWithCatalogueLine(line: CatalogueLine, settings: CompanySettings) {
+        this.wrapper = new ProductWrapper(this.line, settings.negotiationSettings);
         this.bpDataService.setCatalogueLines([this.line], [settings]);
         this.bpDataService.computeWorkflowOptions();
         this.options = this.bpDataService.workflowOptions;

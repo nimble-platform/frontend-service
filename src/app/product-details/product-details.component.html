@@ -197,8 +197,8 @@
                         Request Information
                     </button>
                 </div>
-                <div>
-                    <button *ngIf="isLogistics === false" class="btn btn-secondary space-before w-100" (click)="onStartPpap()">
+                <div *ngIf="isPpapAvailable() && !isLogistics">
+                    <button class="btn btn-secondary space-before w-100" (click)="onStartPpap()">
                         Start Ppap
                     </button>
                 </div>
