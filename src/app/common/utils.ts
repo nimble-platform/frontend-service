@@ -44,7 +44,10 @@ export function getPropertyKey(property: Property | ItemProperty): string {
 }
 
 export function quantityToString(quantity: Quantity): string {
-    return `${quantity.value} ${quantity.unitCode}`;
+    if(quantity.value) {
+        return `${quantity.value} ${quantity.unitCode}`;
+    }
+    return "";
 }
 
 export function durationToString(duration: Quantity): string {
