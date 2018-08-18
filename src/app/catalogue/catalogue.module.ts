@@ -39,6 +39,7 @@ import { ProductDetailsModule } from "../product-details/product-details.module"
 import { ProductPriceTabComponent } from "./publish/product-price-tab.component";
 import { ProductCertificatesTabComponent } from "./publish/product-certificates-tab.component";
 import { ProductTrackAndTraceTabComponent } from "./publish/product-track-and-trace-tab.component";
+import { UserMgmtModule } from "../user-mgmt/user-mgmt.module";
 
 @NgModule({
 	imports: [CommonModule, 
@@ -48,6 +49,7 @@ import { ProductTrackAndTraceTabComponent } from "./publish/product-track-and-tr
 		HttpModule, 
         CatalogueRoutingModule, 
         ProductDetailsModule,
+        UserMgmtModule,
 		NgbModule.forRoot()
 	],
     declarations: [

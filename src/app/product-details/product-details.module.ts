@@ -9,6 +9,7 @@ import { ProductDetailsRoutingModule } from "./product-details-routing.module";
 import { ProductDetailsTabsComponent } from "./product-details-tabs.component";
 import { ProductDetailsOverviewComponent } from "./product-details-overview.component";
 import { TransportationServiceInput } from "./transportation-service-input.component";
+import { ProductDetailsCertificatesComponent } from "./product-details-certificates.component";
 
 @NgModule({
 	imports: [
@@ -24,6 +25,7 @@ import { TransportationServiceInput } from "./transportation-service-input.compo
 		ProductDetailsComponent,
 		ProductDetailsTabsComponent,
 		ProductDetailsOverviewComponent,
+		ProductDetailsCertificatesComponent,
 		TransportationServiceInput
 	],
 	exports: [

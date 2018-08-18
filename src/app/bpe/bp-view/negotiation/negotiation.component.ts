@@ -19,7 +19,7 @@ export class NegotiationComponent implements OnInit {
     ngOnInit() {
         if(this.bpDataService.requestForQuotation == null) {
             this.initCallStatus.submit();
-            this.bpDataService.initRfq(this.bpDataService.getCompanyNegotiationSettings())
+            this.bpDataService.initRfq(this.bpDataService.getCompanySettings().negotiationSettings)
                 .then(() => {
                     this.initCallStatus.callback("Request for Quotation Initialized.");
                 })

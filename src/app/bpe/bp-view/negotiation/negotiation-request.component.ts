@@ -53,7 +53,7 @@ export class NegotiationRequestComponent implements OnInit {
         this.rfq = this.bpDataService.requestForQuotation;
         this.rfqLine = this.rfq.requestForQuotationLine[0];
         this.line = this.bpDataService.getCatalogueLine();
-        this.wrapper = new NegotiationModelWrapper(this.line, this.rfq, null, this.bpDataService.getCompanyNegotiationSettings());
+        this.wrapper = new NegotiationModelWrapper(this.line, this.rfq, null, this.bpDataService.getCompanySettings().negotiationSettings);
         this.totalPrice = this.wrapper.rfqTotalPrice;
         this.negotiatedPriceValue = this.totalPrice;
 

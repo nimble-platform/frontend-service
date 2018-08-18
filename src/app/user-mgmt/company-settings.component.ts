@@ -154,7 +154,7 @@ export class CompanySettingsComponent implements OnInit {
     private initForm() {
         this.initCallStatus.submit();
         let userId = this.cookieService.get("user_id");
-        this.userService.getSettings(userId).then(settings => {
+        this.userService.getSettingsForUser(userId).then(settings => {
             if (myGlobals.debug) console.log("Fetched settings: " + JSON.stringify(settings));
 
             // update forms
