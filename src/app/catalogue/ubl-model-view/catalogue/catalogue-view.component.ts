@@ -9,6 +9,8 @@ import {CategoryService} from "../../category/category.service";
 import { isTransportService } from "../../../common/utils";
 import { CatalogueLine } from "../../model/publish/catalogue-line";
 import { BPDataService } from "../../../bpe/bp-view/bp-data-service";
+import { UserService } from "../../../user-mgmt/user.service";
+import { CompanySettings } from "../../../user-mgmt/model/company-settings";
 
 @Component({
     selector: 'catalogue-view',
@@ -20,6 +22,7 @@ import { BPDataService } from "../../../bpe/bp-view/bp-data-service";
 export class CatalogueViewComponent implements OnInit {
 
     catalogue: Catalogue;
+    settings: CompanySettings;
 
     // available catalogue lines with respect to the selected category
     catalogueLinesWRTTypes: any = [];
@@ -52,6 +55,7 @@ export class CatalogueViewComponent implements OnInit {
                 private catalogueService: CatalogueService,
                 private categoryService: CategoryService,
                 private bpDataService: BPDataService,
+                private userService: UserService,
                 private route: ActivatedRoute,
                 private router: Router) {
         
@@ -70,11 +74,16 @@ export class CatalogueViewComponent implements OnInit {
         }
     }
 
-    public requestCatalogue(forceUpdate:boolean): void {
+    private requestCatalogue(forceUpdate:boolean): void {
         this.getCatalogueStatus.submit();
-        let userId = this.cookieService.get("user_id");
-        this.catalogueService.getCatalogueForceUpdate(userId, forceUpdate).then(catalogue => {
+        const userId = this.cookieService.get("user_id");
+        Promise.all([
+            this.catalogueService.getCatalogueForceUpdate(userId, forceUpdate),
+            this.getCompanySettings(userId)
+        ])
+            .then(([catalogue, settings]) => {
                 this.catalogue = catalogue;
+                this.settings = settings;
                 this.getCatalogueStatus.callback(null);
                 this.init();
             },
@@ -84,7 +93,15 @@ export class CatalogueViewComponent implements OnInit {
         )
     }
 
-    init (): void {
+    private getCompanySettings(userId: string): Promise<CompanySettings> {
+        if(this.settings) {
+            return Promise.resolve(this.settings);
+        }
+
+        return this.userService.getSettingsForUser(userId);
+    }
+
+    private init(): void {
         let len = this.catalogue.catalogueLine.length;
         this.collectionSize = len;
         this.catalogueLinesArray = [...this.catalogue.catalogueLine].reverse();

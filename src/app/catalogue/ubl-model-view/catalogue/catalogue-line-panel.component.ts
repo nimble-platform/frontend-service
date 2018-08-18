@@ -8,6 +8,7 @@ import { ProductWrapper } from "../../../common/product-wrapper";
 import { CompanyNegotiationSettings } from "../../../user-mgmt/model/company-negotiation-settings";
 import { CallStatus } from "../../../common/call-status";
 import { isTransportService } from "../../../common/utils";
+import { CompanySettings } from "../../../user-mgmt/model/company-settings";
 
 @Component({
     selector: 'catalogue-line-panel',
@@ -17,6 +18,7 @@ import { isTransportService } from "../../../common/utils";
 export class CatalogueLinePanelComponent {
 
     @Input() catalogueLine: CatalogueLine;
+    @Input() settings: CompanySettings;
     @Input() presentationMode: string;
 
     // check whether catalogue-line-panel should be displayed

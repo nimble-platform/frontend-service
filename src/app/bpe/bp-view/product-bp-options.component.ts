@@ -37,6 +37,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     line: CatalogueLine;
     wrapper: ProductWrapper;
     options: BpWorkflowOptions;
+    settings: CompanySettings;
 
     serviceLine?: CatalogueLine;
     serviceWrapper?: ProductWrapper;
@@ -117,8 +118,9 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     }
 
     private initWithCatalogueLine(line: CatalogueLine, settings: CompanySettings) {
-        this.wrapper = new ProductWrapper(this.line, settings.negotiationSettings);
-        this.bpDataService.setCatalogueLines([this.line], [settings]);
+        this.wrapper = new ProductWrapper(line, settings.negotiationSettings);
+        this.bpDataService.setCatalogueLines([line], [settings]);
+        this.settings = settings;
         this.bpDataService.computeWorkflowOptions();
         this.options = this.bpDataService.workflowOptions;
         if(this.processType) {

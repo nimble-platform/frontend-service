@@ -32,6 +32,13 @@
                     Transportation Service Details
                 </a>
             </li>
+            <li class="nav-item">
+                <a href id="CERTIFICATES" class="nav-link"
+                    [ngClass]="{ active: selectedTab === 'CERTIFICATES'}"
+                    (click)="onSelectTab($event)">
+                    Certificates
+                </a>
+            </li>
         </ul>
     </div>
 
@@ -96,5 +103,10 @@
             <transportation-service-input [catalogueLine]="wrapper.line" presentationMode="view">
             </transportation-service-input>
         </div>
+    </div>
+
+    <div *ngIf="selectedTab === 'CERTIFICATES'" class="p-3 col-12">
+        <product-details-certificates [wrapper]="wrapper" [settings]="settings">
+        </product-details-certificates>
     </div>
 </div>

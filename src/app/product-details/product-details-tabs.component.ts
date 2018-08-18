@@ -4,6 +4,7 @@ import { ProductWrapper } from "../common/product-wrapper";
 import { BpWorkflowOptions } from "../bpe/model/bp-workflow-options";
 import { ItemProperty } from "../catalogue/model/publish/item-property";
 import { getPropertyValuesAsStrings } from "../common/utils";
+import { CompanySettings } from "../user-mgmt/model/company-settings";
 
 @Component({
     selector: 'product-details-tabs',
@@ -14,6 +15,7 @@ export class ProductDetailsTabsComponent implements OnInit {
 
     @Input() wrapper: ProductWrapper;
     @Input() options: BpWorkflowOptions;
+    @Input() settings: CompanySettings;
 
     @Input() showOverview: boolean = false;
     @Input() readonly: boolean = false;
