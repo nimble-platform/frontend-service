@@ -24,6 +24,8 @@ import { DocumentClause } from "../../../catalogue/model/publish/document-clause
 import { Quotation } from "../../../catalogue/model/publish/quotation";
 import { Address } from "../../../catalogue/model/publish/address";
 import { SearchContextService } from "../../../simple-search/search-context.service";
+import { EpcCodes } from "../../../data-channel/model/epc-codes";
+import { EpcService } from "../epc-service";
 
 /**
  * Created by suat on 20-Sep-17.
@@ -50,6 +52,11 @@ export class OrderComponent implements OnInit {
 
     dataMonitoringDemanded: boolean;
 
+    epcCodes: EpcCodes;
+    savedEpcCodes: EpcCodes;
+    initEpcCodesCallStatus: CallStatus = new CallStatus();
+    saveEpcCodesCallStatus: CallStatus = new CallStatus();
+
     initCallStatus: CallStatus = new CallStatus();
     submitCallStatus: CallStatus = new CallStatus();
     fetchTermsAndConditionsStatus: CallStatus = new CallStatus();
@@ -60,6 +67,7 @@ export class OrderComponent implements OnInit {
                 private bpeService: BPEService,
                 private cookieService: CookieService,
                 private searchContextService: SearchContextService,
+                private epcService: EpcService,
                 private location: Location,
                 private router: Router) {
 
@@ -122,6 +130,12 @@ export class OrderComponent implements OnInit {
                 this.initCallStatus.error("Error while initializing", error);
             });
         }
+
+        this.initializeEPCCodes();
+    }
+
+    trackByFn(index: any) {
+        return index;
     }
 
     /*
@@ -240,9 +254,67 @@ export class OrderComponent implements OnInit {
         });
     }
 
+    onDeleteEpcCode(i: number) {
+
+    }
+
+    onSaveEpcCodes() {
+        this.saveEpcCodesCallStatus.submit();
+        // remove empty codes
+        const selectedEpcCodes = [];
+        for(const code of this.epcCodes.codes) {
+            if(code) {
+                selectedEpcCodes.push(code);
+            }
+        }
+        
+        const codes = new EpcCodes(this.order.id, selectedEpcCodes);
+
+        this.epcService.registerEpcCodes(codes)
+            .then(() => {
+                this.savedEpcCodes = codes;
+                this.saveEpcCodesCallStatus.callback("EPC Codes are saved.", true);
+            }).catch(error => {
+                this.saveEpcCodesCallStatus.error("Failed to save EPC Codes.", error);
+            });
+    }
+
+    onAddEpcCode() {
+        this.epcCodes.codes.push("");
+    }
+
+    areEpcCodesDirty(): boolean {
+        if(!this.epcCodes || !this.savedEpcCodes) {
+            return false;
+        }
+
+        const codes = this.epcCodes.codes;
+        const saved = this.savedEpcCodes.codes;
+
+        if(codes.length !== saved.length) {
+            return true;
+        }
+
+        for(let i = 0; i < saved.length; i++) {
+            if(codes[i] !== saved[i]) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     /*
      * Getters & Setters
      */
+
+    isBuyer(): boolean {
+        return this.userRole === "buyer";
+    }
+
+    isSeller(): boolean {
+        return this.userRole === "seller";
+    }
 
     isReady(): boolean {
         return !this.initCallStatus.isDisplayed() && !!this.order;
@@ -300,9 +372,44 @@ export class OrderComponent implements OnInit {
         return this.order.orderLine[0].lineItem;
     }
 
+    trackAndTraceDetailsExists(): boolean {
+        const tnt = this.order.orderLine[0].lineItem.item.trackAndTraceDetails
+        if (tnt && (tnt.masterURL || tnt.eventURL || tnt.productionProcessTemplate)) {
+            return true;
+        }
+
+        return false;
+    }
+
     /*
      * 
      */
+
+    private initializeEPCCodes() {
+        if(this.bpDataService.processMetadata
+            && this.bpDataService.processMetadata.processStatus == 'Completed' 
+            && this.bpDataService.orderResponse
+            && this.bpDataService.orderResponse.acceptedIndicator
+            && this.trackAndTraceDetailsExists()) {
+            this.initEpcCodesCallStatus.submit();
+            this.epcService.getEpcCodes(this.order.id).then(res => {
+                this.epcCodes = res;
+                if(this.epcCodes.codes.length == 0){
+                    this.epcCodes.codes.push("");
+                }
+                this.savedEpcCodes = copy(this.epcCodes);
+                this.initEpcCodesCallStatus.callback("EPC Codes initialized", true);
+            }).catch(error => {
+                if(error.status && error.status == 404) {
+                    this.epcCodes = new EpcCodes(this.order.id,[""]);
+                    this.savedEpcCodes = new EpcCodes(this.order.id,[""]);
+                    this.initEpcCodesCallStatus.callback("EPC Codes initialized", true);
+                } else {
+                    this.initEpcCodesCallStatus.error("Error while initializing EPC Codes", error);
+                }
+            })
+        }
+    }
 
     private isDataMonitoringDemanded(): Promise<boolean> {
         let docClause = null;

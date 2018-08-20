@@ -160,16 +160,6 @@
                     {{ wrapper.getPaymentMeans() }}
                 </span>
             </div>
-            <hr>
-            <div class="inline-order-group">
-                <label class="order-label">
-                    Quantity:
-                </label>
-                <span class="order-qty-input">
-                    <input type="number" [(ngModel)]="options.quantity" class="form-control form-control-sm px-1 w-50" />
-                    <span *ngIf="getQuantityUnit() !== ''" class="ml-2">{{ getQuantityUnit() }}</span>
-                </span>
-            </div>
             <div class="inline-order-group">
                 <label class="order-label order-price">
                     Total Price: 

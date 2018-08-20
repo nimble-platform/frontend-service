@@ -103,11 +103,14 @@
 
 </ng-container>
 
+
 <hr>
 
+
+<!-- Notes -->
 <div class="row content-row" *ngIf="isReady()">
     <div class="col-6">
-        <text-input presentationMode="edit" [disabled]="isReadOnly() || userRole === 'seller'"
+        <text-input presentationMode="edit" [disabled]="isReadOnly() || isSeller()"
             label="Customer's Note" [(text)]="order.note" labelClass="col-4" valueClass="col-8">
         </text-input>
     </div>
@@ -118,7 +121,9 @@
     </div>
 </div>
 
+
 <hr>
+
 
 <!-- Contract Preview -->
 <div class="row" *ngIf="isReady()">
@@ -141,10 +146,56 @@
     </div>
 </div>
 
+
+<!-- EPC Codes -->
+<ng-container *ngIf="isReady() && isOrderCompleted() && trackAndTraceDetailsExists()">
+
+    <hr>
+
+    <h2>EPC Codes</h2>
+
+    <call-status [callStatus]="initEpcCodesCallStatus"></call-status>
+
+    <ng-container *ngIf="epcCodes">
+        <!--List of codes -->
+        <div class="row" *ngFor="let code of epcCodes.codes; let i = index; trackBy:trackByFn">
+            <div class="{{ isSeller() ? 'col-10' : 'col-12' }}">
+                <input type="text" class="form-control" [(ngModel)]="epcCodes.codes[i]" [disabled]="isBuyer()">
+            </div>
+            <div class="col-2" *ngIf="isSeller() && i > 0">
+                <button class="btn btn-danger btn-sm w-100" (click)="onDeleteEpcCode(i)">Delete</button>
+            </div>
+        </div>
+
+        <!-- Add code -->
+        <div class="row" *ngIf="isSeller()">
+            <div class="col-10"></div>
+            <div class="col-2">
+                <button class="btn btn-success btn-sm w-100" (click)="onAddEpcCode()">Add</button>
+            </div>
+        </div>
+
+        <!-- Save -->
+        <div class="row" *ngIf="isSeller()">
+            <div class="col-10 d-flex justify-content-end">
+                <span class="align-self-center">
+                    <call-status [callStatus]="saveEpcCodesCallStatus"></call-status>
+                </span>
+            </div>
+            <div class="col-2">
+                <button class="btn btn-primary btn-sm w-100 save-epc-btn" [disabled]="!areEpcCodesDirty()" 
+                    (click)="onSaveEpcCodes()">Save</button>
+            </div>
+        </div>
+    </ng-container>
+</ng-container>
+    
+
 <hr>
 
+
 <!-- Actions -->
-<ng-container *ngIf="userRole === 'buyer' && isReady()">
+<ng-container *ngIf="isBuyer() && isReady()">
     <div class="row actions-row" *ngIf="!isReadOnly()">
         <div class="col-8 call-status-col"><call-status [callStatus]="submitCallStatus"></call-status></div>
         <div class="col-2">
@@ -183,7 +234,7 @@
     </div>
 </ng-container>
 
-<ng-container *ngIf="userRole === 'seller' && isReady()">
+<ng-container *ngIf="isSeller() && isReady()">
     <div class="row actions-row" *ngIf="!isOrderCompleted()">
         <div class="col-6 call-status-col"><call-status [callStatus]="submitCallStatus"></call-status></div>
         <div class="col-2">
