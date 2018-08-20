@@ -1,6 +1,4 @@
 import { Component, EventEmitter, OnInit, Input, Output } from "@angular/core";
-import { Quantity } from "../catalogue/model/publish/quantity";
-import { UnitService } from "./unit-service";
 
 @Component({
     selector: "boolean-input",
@@ -19,9 +17,10 @@ export class BooleanInputComponent implements OnInit {
     @Input() labelMainClass: string = "";
     @Input() rowClass: string = "";
     @Input() valueClass: string; // set based on label
+    @Input() valueTextClass: string = "";
     
     private booleanValue: boolean;
-    @Output() booleanChange = new EventEmitter<boolean>();
+    @Output() valueChange = new EventEmitter<boolean>();
 
     constructor() {
 
@@ -40,6 +39,6 @@ export class BooleanInputComponent implements OnInit {
 
     set value(value: boolean) {
         this.booleanValue = value;
-        this.booleanChange.emit(value);
+        this.valueChange.emit(value);
     }
 }

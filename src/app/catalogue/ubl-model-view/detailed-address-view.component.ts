@@ -33,15 +33,15 @@ export class DetailedAddressViewComponent implements OnInit{
         {
             this.getDefaultDeliveryLocation.submit();
             let userId = this.cookieService.get('user_id');
-            this.userService.getSettings(userId).then(settings => {
+            this.userService.getSettingsForUser(userId).then(settings => {
                 this.deliveryAddress.country.name = settings.address.country;
                 this.deliveryAddress.postalZone = settings.address.postalCode;
                 this.deliveryAddress.cityName = settings.address.cityName;
                 this.deliveryAddress.buildingNumber = settings.address.buildingNumber;
                 this.deliveryAddress.streetName = settings.address.streetName;
                 this.getDefaultDeliveryLocation.callback("Retrieved default delivery location", true);
-            }).catch(error=>{
-                this.getDefaultDeliveryLocation.error("Failed to retrieve default delivery location");
+            }).catch(error => {
+                this.getDefaultDeliveryLocation.error("Failed to retrieve default delivery location", error);
             });
         }
         else{

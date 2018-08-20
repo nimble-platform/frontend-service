@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, Input } from "@angular/core";
 import { Router } from "@angular/router";
 import { Location } from "@angular/common";
 import { BPDataService } from "../bp-data-service";
@@ -22,14 +22,16 @@ import { BPEService } from "../../bpe.service";
 })
 export class TransportNegotiationResponseComponent implements OnInit {
 
-    rfq: RequestForQuotation;
+    @Input() rfq: RequestForQuotation;
     rfqPrice: PriceWrapper;
     rfqPaymentTerms: PaymentTermsWrapper;
 
-    quotation: Quotation;
+    @Input() quotation: Quotation;
     quotationPrice: PriceWrapper;
     quotationPaymentTerms: PaymentTermsWrapper;
     
+    @Input() readonly: boolean = false;
+
     selectedTab: string = "OVERVIEW";
     userRole: BpUserRole;
 
@@ -48,11 +50,15 @@ export class TransportNegotiationResponseComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.rfq = this.bpDataService.requestForQuotation;
+        if(!this.rfq) {
+            this.rfq = this.bpDataService.requestForQuotation;
+        }
         this.rfqPrice = new PriceWrapper(this.rfq.requestForQuotationLine[0].lineItem.price);
         this.rfqPaymentTerms = new PaymentTermsWrapper(this.rfq.paymentTerms);
 
-        this.quotation = this.bpDataService.quotation;
+        if(!this.quotation) {
+            this.quotation = this.bpDataService.quotation;
+        }
         this.quotationPrice = new PriceWrapper(this.quotation.quotationLine[0].lineItem.price);
         this.quotationPaymentTerms = new PaymentTermsWrapper(this.quotation.paymentTerms);
 
@@ -60,7 +66,7 @@ export class TransportNegotiationResponseComponent implements OnInit {
     }
 
     isDisabled(): boolean {
-        return this.isResponseSent() || this.isLoading();
+        return this.isResponseSent() || this.isLoading() || this.readonly;
     }
 
     isLoading(): boolean {
@@ -72,12 +78,12 @@ export class TransportNegotiationResponseComponent implements OnInit {
         this.selectedTab = event.target.id;
     }
 
-    isResponseSent(): boolean {
-        return false;
+    isReadOnly(): boolean {
+        return this.isResponseSent() || this.isLoading();
     }
 
-    isReadOnly(): boolean {
-        return this.bpDataService.processMetadata == null || this.bpDataService.processMetadata.processStatus !== 'Started';
+    isResponseSent(): boolean {
+        return this.bpDataService.processMetadata && this.bpDataService.processMetadata.processStatus !== 'Started';
     }
 
     onBack(): void {
@@ -86,11 +92,7 @@ export class TransportNegotiationResponseComponent implements OnInit {
 
     onRespondToQuotation(accepted: boolean): void {
         if(accepted) {
-            if(this.hasUpdatedTerms()) {
-                this.quotation.documentStatusCode.name = NEGOTIATION_RESPONSES.TERMS_UPDATED;
-            } else {
-                this.quotation.documentStatusCode.name = NEGOTIATION_RESPONSES.ACCEPTED;
-            }
+            this.quotation.documentStatusCode.name = NEGOTIATION_RESPONSES.TERMS_UPDATED;
         } else {
             this.quotation.documentStatusCode.name = NEGOTIATION_RESPONSES.REJECTED;
         }
@@ -101,17 +103,13 @@ export class TransportNegotiationResponseComponent implements OnInit {
 
         this.callStatus.submit();
         this.bpeService.continueBusinessProcess(piim)
-            .then(
-                res => {
-                    this.callStatus.callback("Quotation sent", true);
-                    this.router.navigate(['dashboard']);
-                }
-            )
+            .then(res => {
+                this.callStatus.callback("Quotation sent", true);
+                this.router.navigate(['dashboard']);
+            })
             .catch(error => {
-                    this.callStatus.error("Failed to send quotation");
-                    console.log("Error while sending response", error);
-                }
-            );
+                this.callStatus.error("Failed to send quotation", error);
+            });
     }
 
     onRequestNewQuotation() {
@@ -120,49 +118,7 @@ export class TransportNegotiationResponseComponent implements OnInit {
     }
 
     onAcceptAndOrder() {
-        this.bpDataService.initOrderWithQuotation();
-        this.bpDataService.setBpOptionParameters("buyer", "Order", "Negotiation");
+        this.bpDataService.initTransportExecutionPlanRequestWithQuotation();
+        this.bpDataService.setBpOptionParameters(this.userRole,'Transport_Execution_Plan',"Negotiation");
     }
-
-    private hasUpdatedTerms(): boolean {
-        // TODO
-
-        // if(this.rfq.negotiationOptions.deliveryPeriod) {
-        //     const rfq = this.wrapper.rfqDeliveryPeriod;
-        //     const quotation = this.wrapper.quotationDeliveryPeriod;
-        //     if(!this.qtyEquals(rfq, quotation)) {
-        //         return true;
-        //     }
-        // }
-        // if(this.rfq.negotiationOptions.incoterms) {
-        //     if(this.wrapper.rfqIncoterms !== this.wrapper.quotationIncoterms) {
-        //         return true;
-        //     }
-        // }
-        // if(this.rfq.negotiationOptions.paymentMeans) {
-        //     if(this.wrapper.rfqPaymentMeans !== this.wrapper.quotationPaymentMeans) {
-        //         return true;
-        //     }
-        // }
-        // if(this.rfq.negotiationOptions.paymentTerms) {
-        //     if(this.wrapper.rfqPaymentTerms !== this.wrapper.quotationPaymentTerms) {
-        //         return true;
-        //     }
-        // }
-        // if(this.rfq.negotiationOptions.price) {
-        //     if(this.wrapper.rfqPriceWrapper.totalPriceString !== this.wrapper.quotationPriceWrapper.totalPriceString) {
-        //         return true;
-        //     }
-        // }
-        // if(this.rfq.negotiationOptions.warranty) {
-        //     const rfq = this.wrapper.rfqWarranty;
-        //     const quotation = this.wrapper.quotationWarranty;
-        //     if(!this.qtyEquals(rfq, quotation)) {
-        //         return true;
-        //     }
-        // }
-        
-        return false;
-    }
-
 }

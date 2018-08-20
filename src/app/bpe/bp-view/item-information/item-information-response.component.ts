@@ -14,6 +14,7 @@ import { BinaryObject } from "../../../catalogue/model/publish/binary-object";
 import { Attachment } from "../../../catalogue/model/publish/attachment";
 import { ProcessType } from "../../model/process-type";
 import { PresentationMode } from "../../../catalogue/model/publish/presentation-mode";
+import { isTransportService } from "../../../common/utils";
 
 @Component({
     selector: "item-information-response",
@@ -78,8 +79,7 @@ export class ItemInformationResponseComponent implements OnInit {
             this.callStatus.callback("Information Response sent", true);
             this.router.navigate(['dashboard']);
         }).catch(error => {
-            this.callStatus.error("Failed to send Information Response");
-            console.log("Error while sending information response", error);
+            this.callStatus.error("Failed to send Information Response", error);
         });
     }
 
@@ -88,7 +88,11 @@ export class ItemInformationResponseComponent implements OnInit {
     }
 
     onNextStep(): void {
-        this.navigateToBusinessProcess("Ppap");
+        if(isTransportService(this.bpDataService.getCatalogueLine()) || !this.bpDataService.getCompanySettings().ppapCompatibilityLevel) {
+            this.navigateToBusinessProcess("Negotiation");
+        } else {
+            this.navigateToBusinessProcess("Ppap");
+        }
     }
 
     private navigateToBusinessProcess(targetProcess: ProcessType): void {

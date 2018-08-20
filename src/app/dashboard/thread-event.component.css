@@ -16,4 +16,5 @@
 
 .thread-entry-row button {
     margin-bottom: 0.5rem;
+    white-space: normal;
 }

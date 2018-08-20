@@ -149,8 +149,7 @@ export class DispatchAdviceComponent implements OnInit {
                 this.router.navigate(['dashboard']);
             })
             .catch(error => {
-                this.callStatus.error("Failed to send Dispatch Advice");
-                console.log("Failed to send Dispatch Advice", error);
+                this.callStatus.error("Failed to send Dispatch Advice", error);
             });
     }
 

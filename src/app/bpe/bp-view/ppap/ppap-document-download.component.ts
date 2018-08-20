@@ -39,7 +39,7 @@ export class PpapDocumentDownloadComponent{
 
     ngOnInit() {
         if(!this.ppapResponse) {
-            this.route.queryParams.subscribe(params =>{
+            this.route.queryParams.subscribe(params => {
                 const processid = params['pid'];
     
                 this.bpeService.getProcessDetailsHistory(processid).then(task => {
@@ -61,7 +61,7 @@ export class PpapDocumentDownloadComponent{
         this.noteBuyer = this.ppap.note;
         this.ppapDocuments = this.ppapResponse.requestedDocument;
 
-        for (let i=0; i < this.ppapDocuments.length; i++) {
+        for (let i = 0; i < this.ppapDocuments.length; i++) {
             if (!(this.ppapDocuments[i].documentType in this.documents)) {
                 this.documents[this.ppapDocuments[i].documentType] = [
                     this.ppapDocuments[i].attachment.embeddedDocumentBinaryObject
@@ -95,18 +95,17 @@ export class PpapDocumentDownloadComponent{
 
     downloadFile(key) :void {
         const binaryObjects: BinaryObject[] = this.documents[key];
-        for(var j=0;j<binaryObjects.length;j++){
-            var binaryString = window.atob(binaryObjects[j].value);
-            var binaryLen = binaryString.length;
-            var bytes = new Uint8Array(binaryLen);
-            for (var i = 0; i < binaryLen; i++) {
-                var ascii = binaryString.charCodeAt(i);
-                bytes[i] = ascii;
+        for(let j=0; j < binaryObjects.length; j++) {
+            const binaryString = window.atob(binaryObjects[j].value);
+            const binaryLen = binaryString.length;
+            const bytes = new Uint8Array(binaryLen);
+            for (let i = 0; i < binaryLen; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
             }
-            var a = document.createElement("a");
+            const a = document.createElement("a");
             document.body.appendChild(a);
-            var blob = new Blob([bytes], {type:binaryObjects[j].mimeCode});
-            var url = window.URL.createObjectURL(blob);
+            const blob = new Blob([bytes], {type:binaryObjects[j].mimeCode});
+            const url = window.URL.createObjectURL(blob);
             a.href = url;
             a.download = binaryObjects[j].fileName;
             a.click();

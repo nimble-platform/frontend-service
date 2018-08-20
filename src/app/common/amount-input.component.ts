@@ -1,6 +1,4 @@
 import { Component, EventEmitter, OnInit, Input, Output } from "@angular/core";
-import { Quantity } from "../catalogue/model/publish/quantity";
-import { UnitService } from "./unit-service";
 
 @Component({
     selector: "amount-input",
@@ -20,6 +18,7 @@ export class AmountInputComponent implements OnInit {
     @Input() rowClass: string = "";
     @Input() valueClass: string; // set based on label
     @Input() placeholder: string = "Enter a value...";
+    @Input() valueTextClass: string = "";
     
     private amountValue: number;
     @Output() amountChange = new EventEmitter<number>();

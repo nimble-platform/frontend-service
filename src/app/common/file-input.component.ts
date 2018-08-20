@@ -1,5 +1,4 @@
 import { Component, EventEmitter, OnInit, Input, Output } from "@angular/core";
-import { writeFile } from "fs";
 import { BinaryObject } from "../catalogue/model/publish/binary-object";
 
 @Component({
@@ -49,7 +48,7 @@ export class FileInputComponent implements OnInit {
             const reader = new FileReader();
             const self = this;
             reader.onload = function () {
-                const base64String = reader.result.split(',').pop();
+                const base64String = (reader.result as string).split(',').pop();
                 const binaryObject = new BinaryObject(base64String, file.type, file.name, "", "");
                 self.binaryObjects.push(binaryObject);
                 self.onSelectFile.emit(binaryObject);

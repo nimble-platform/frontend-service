@@ -4,21 +4,9 @@
         <input-label [class]="labelMainClass" [label]="label" [definition]="definition">
         </input-label>
     </div>
-    <select *ngIf="address.length > 1"
-            class="custom-select">
-        <option *ngFor="let value of address">{{value.country.name}}</option>
-    </select>
-
-    <input *ngIf="address.length == 1"
-            class="form-control"
-            type="text"
-            [(ngModel)]="address[0].country.name"
-            readonly>
-
-    <input *ngIf="address.length == 0"
-            class="form-control"
-            type="text"
-            readonly>
+    <div [class]="valueClass">
+        <div *ngFor="let value of address; last as isLast" [class]="valueTextClass">{{value.country.name}}<span [hidden]="isLast">,&nbsp;</span></div>
+    </div>
 
     <!--<label>City</label>
     <select *ngIf="address.length > 0"

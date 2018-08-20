@@ -36,6 +36,7 @@ export class ThreadSummaryComponent implements OnInit {
     // Utilities
     eventCount: number = 0
     archiveCallStatus: CallStatus = new CallStatus();
+    fetchCallStatus: CallStatus = new CallStatus();
     showDataChannelButton: boolean = false;
     channelLink = "";
 
@@ -57,13 +58,16 @@ export class ThreadSummaryComponent implements OnInit {
     }
 
     private fetchEvents(): void {
+        this.fetchCallStatus.submit();
         const ids = this.processInstanceGroup.processInstanceIDs;
         Promise.all(ids.map(id => this.fetchThreadEvent(id))).then(events => {
             events.sort((a,b) => moment(a.startTime).diff(moment(b.startTime)));
             events = events.reverse();
             this.history = events.slice(1, events.length);
             this.lastEvent = events[0];
+            this.fetchCallStatus.callback("Successfully fetched events.", true);
         }).catch(error => {
+            this.fetchCallStatus.error("Error while fetching thread.", error);
         });
     }
 
@@ -266,7 +270,7 @@ export class ThreadSummaryComponent implements OnInit {
                 this.threadStateUpdated.next();
             })
             .catch(err => {
-                this.archiveCallStatus.error('Failed to archive thread');
+                this.archiveCallStatus.error('Failed to archive thread', err);
             });
     }
 
@@ -278,7 +282,7 @@ export class ThreadSummaryComponent implements OnInit {
                 this.threadStateUpdated.next();
             })
             .catch(err => {
-                this.archiveCallStatus.error('Failed to restore thread');
+                this.archiveCallStatus.error('Failed to restore thread', err);
             });
     }
 
@@ -291,7 +295,7 @@ export class ThreadSummaryComponent implements OnInit {
                     this.threadStateUpdated.next();
                 })
                 .catch(err => {
-                    this.archiveCallStatus.error('Failed to delete thread permanently');
+                    this.archiveCallStatus.error('Failed to delete thread permanently', err);
                 });
         }
     }

@@ -92,8 +92,8 @@
     <boolean-view [presentationMode]="presentationMode"
                   [propName]="'Refrigerator Indicator'"
                   [definition]="'An indicator that this piece of transport equipment is refrigerated (true) or not (false)'"
-                  [(value)]="catalogueLine.goodsItem.item.transportationServiceDetails.shipmentStage[0].transportMeans.transportEquipment[0].refrigeratorIndicator"
-                  (valueChanged)="catalogueLine.goodsItem.item.transportationServiceDetails.shipmentStage[0].transportMeans.transportEquipment[0].refrigeratorIndicator = $event">
+                  [(value)]="catalogueLine.goodsItem.item.transportationServiceDetails.shipmentStage[0].transportMeans.transportEquipment[0].refrigeratedIndicator"
+                  (valueChanged)="catalogueLine.goodsItem.item.transportationServiceDetails.shipmentStage[0].transportMeans.transportEquipment[0].refrigeratedIndicator = $event">
     </boolean-view>
     <value-view [presentationMode]="presentationMode"
                 [propName]="'Equipment Characteristics'"

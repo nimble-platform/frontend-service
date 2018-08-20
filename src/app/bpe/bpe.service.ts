@@ -18,6 +18,8 @@ import { ItemInformationResponse } from '../catalogue/model/publish/item-informa
 import { ItemInformationRequest } from '../catalogue/model/publish/item-information-request';
 import { Order } from '../catalogue/model/publish/order';
 import { TradingTerm } from '../catalogue/model/publish/trading-term';
+import { Quotation } from '../catalogue/model/publish/quotation';
+import { RequestForQuotation } from '../catalogue/model/publish/request-for-quotation';
 
 @Injectable()
 export class BPEService {
@@ -153,6 +155,10 @@ export class BPEService {
 
 	getItemInformationRequest(itemInformationResponse: ItemInformationResponse): Promise<ItemInformationRequest> {
 		return this.getDocumentJsonContent(itemInformationResponse.itemInformationRequestDocumentReference.id);
+	}
+
+	getRequestForQuotation(quotation: Quotation): Promise<RequestForQuotation> {
+		return this.getDocumentJsonContent(quotation.requestForQuotationDocumentReference.id);
 	}
 
 	getDocumentJsonContent(documentId:string):Promise<any> {

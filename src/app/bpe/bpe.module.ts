@@ -17,7 +17,6 @@ import { OrderComponent } from "./bp-view/order/order.component";
 import { FulfilmentComponent } from "./bp-view/fulfilment/fulfilment.component";
 import { ReceiptAdviceComponent } from "./bp-view/fulfilment/receipt-advice.component";
 import { NegotiationComponent } from "./bp-view/negotiation/negotiation.component";
-import { TransportExecutionPlanRequestComponent } from "./bp-view/transport-execution-plan/transport-execution-plan-request.component";
 import { TransportExecutionPlanComponent } from "./bp-view/transport-execution-plan/transport-execution-plan.component";
 import { BpProductDetailsComponent } from "./bp-view/bp-product-details.component";
 import { PpapComponent } from "./bp-view/ppap/ppap.component";
@@ -39,7 +38,6 @@ import { ItemInformationComponent } from "./bp-view/item-information/item-inform
 import { ProductDetailsModule } from "../product-details/product-details.module";
 import { DispatchAdviceComponent } from "./bp-view/fulfilment/dispatch-advice.component";
 import { ShipmentInputComponent } from "./bp-view/fulfilment/shipment-input.component";
-import { TransportExecutionPlanResponseComponent } from "./bp-view/transport-execution-plan/transport-execution-plan-response.component";
 import { TransportNegotiationRequestComponent } from "./bp-view/transport-negotiation/transport-negotiation-request.component";
 import { TransportNegotiationComponent } from "./bp-view/transport-negotiation/transport-negotiation.component";
 import { TransportNegotiationResponseComponent } from "./bp-view/transport-negotiation/transport-negotiation-response.component";
@@ -75,8 +73,6 @@ import { TransportNegotiationAddressComponent } from "./bp-view/transport-negoti
         NegotiationRequestComponent,
         NegotiationRequestInputComponent,
         NegotiationResponseComponent,
-        TransportExecutionPlanRequestComponent,
-        TransportExecutionPlanResponseComponent,
         TransportExecutionPlanComponent,
         TransportNegotiationRequestComponent,
         TransportNegotiationResponseComponent,
@@ -102,7 +98,6 @@ import { TransportNegotiationAddressComponent } from "./bp-view/transport-negoti
         FulfilmentComponent,
         ReceiptAdviceComponent,
         NegotiationComponent,
-        TransportExecutionPlanRequestComponent,
         TransportExecutionPlanComponent,
         BpProductDetailsComponent,
         ContractComponent,

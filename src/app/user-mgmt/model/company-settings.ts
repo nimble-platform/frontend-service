@@ -1,6 +1,7 @@
 import { Address } from './address';
 import { DeliveryTerms } from './delivery-terms';
 import { Certificate } from './certificate';
+import { CompanyNegotiationSettings } from './company-negotiation-settings';
 
 export class CompanySettings {
     constructor(
@@ -12,6 +13,7 @@ export class CompanySettings {
             public address: Address,
             public deliveryTerms: DeliveryTerms[],
             public certificates: Certificate[],
-            public preferredProductCategories: string[]
+            public preferredProductCategories: string[],
+            public negotiationSettings: CompanyNegotiationSettings,
     ) {  }
 }

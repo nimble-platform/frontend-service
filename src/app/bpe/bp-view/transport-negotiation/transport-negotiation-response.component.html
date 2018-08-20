@@ -198,11 +198,11 @@
             </input-label>
         </div>
         <div class="col-5">
-            <date-input [(date)]="rfq.delivery.requestedDeliveryPeriod.endDate">
+            <date-input [disabled]="true" [(date)]="rfq.delivery.requestedDeliveryPeriod.endDate">
             </date-input>
         </div>
         <div class="col-5">
-            <date-input [(date)]="quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.endDate">
+            <date-input [disabled]="isDisabled()" [(date)]="quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.endDate">
             </date-input>
         </div>
     </div>
@@ -250,14 +250,14 @@
     </div>
 </div>
 
-<div class="row actions-row" *ngIf="userRole === 'seller' && isReadOnly()">
+<div class="row actions-row" *ngIf="userRole === 'seller' && isReadOnly() && !readonly">
     <div class="col-10 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
     <div class="col-2">
         <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
     </div>
 </div>
 
-<div class="row actions-row" *ngIf="userRole === 'buyer'">
+<div class="row actions-row" *ngIf="userRole === 'buyer' && !readonly">
     <div class="col-5 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
     <div class="col-2">
         <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>

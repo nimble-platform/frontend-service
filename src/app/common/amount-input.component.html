@@ -21,7 +21,7 @@
         </div>
     
         <div [class]="valueClass" *ngIf="presentationMode === 'view' && visible">
-            <span>
+            <span [class]="valueTextClass">
                 {{ amount }} <span *ngIf="amountUnit">{{ amountUnit }}</span>
             </span>
         </div>

@@ -44,7 +44,8 @@ export class NegotiationResponseComponent implements OnInit {
         this.rfq = this.bpDataService.requestForQuotation;
         this.bpDataService.computeRfqNegotiationOptionsIfNeeded();
         this.quotation = this.bpDataService.quotation;
-        this.wrapper = new NegotiationModelWrapper(this.line, this.rfq, this.quotation, this.bpDataService.getCompanyNegotiationSettings());
+        this.wrapper = new NegotiationModelWrapper(this.line, this.rfq, this.quotation, 
+            this.bpDataService.getCompanySettings().negotiationSettings);
         this.userRole = this.bpDataService.userRole;
     }
 
@@ -70,17 +71,13 @@ export class NegotiationResponseComponent implements OnInit {
 
         this.callStatus.submit();
         this.bpeService.continueBusinessProcess(piim)
-            .then(
-                res => {
-                    this.callStatus.callback("Quotation sent", true);
-                    this.router.navigate(['dashboard']);
-                }
-            )
+            .then(res => {
+                this.callStatus.callback("Quotation sent", true);
+                this.router.navigate(['dashboard']);
+            })
             .catch(error => {
-                    this.callStatus.error("Failed to send quotation");
-                    console.log("Error while sending response", error);
-                }
-            );
+                this.callStatus.error("Failed to send quotation", error);
+            });
     }
 
     onRequestNewQuotation() {

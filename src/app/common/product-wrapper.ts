@@ -86,6 +86,10 @@ export class ProductWrapper {
         return sanitizePropertyName(property.name);
     }
 
+    getLogisticsStatus(): boolean {
+        return isTransportService(this.line);
+    }
+
     /*
      * Private methods
      */

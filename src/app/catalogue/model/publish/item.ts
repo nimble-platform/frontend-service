@@ -11,6 +11,7 @@ import { Certificate } from "./certificate";
 import { Dimension } from "./dimension";
 import { DocumentReference } from "./document-reference";
 import { TransportationService } from "./transportation-service";
+import { TrackAndTraceDetails } from "./track-and-trace-details";
 
 export class Item {
     constructor(
@@ -25,6 +26,7 @@ export class Item {
         public commodityClassification: CommodityClassification[] = [],
         public certificate: Certificate[] = [],
         public dimension: Dimension[] = [],
-        public transportationServiceDetails = new TransportationService()
+        public transportationServiceDetails = new TransportationService(),
+        public trackAndTraceDetails: TrackAndTraceDetails = new TrackAndTraceDetails()
     ) {}
 }

@@ -113,26 +113,22 @@ export class PpapDocumentUploadComponent {
         this.ppapResponse = UBLModelUtils.createPpapResponse(this.ppap,acceptedIndicator);
         if(this.ppapDocuments.length == 0){
             this.ppapResponse.requestedDocument = [];
-        }
-        else{
+        } else {
             this.ppapResponse.requestedDocument = this.ppapDocuments;
         }
 
         this.ppapResponse.note = this.noteToSend;
-        let vars: ProcessVariables = ModelUtils.createProcessVariables("Ppap", this.ppap.buyerCustomerParty.party.id, this.ppap.sellerSupplierParty.party.id, this.ppapResponse, this.bpDataService);
-        let piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.bpDataService.processMetadata.processId);
+        const vars: ProcessVariables = ModelUtils.createProcessVariables("Ppap", this.ppap.buyerCustomerParty.party.id, this.ppap.sellerSupplierParty.party.id, this.ppapResponse, this.bpDataService);
+        const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.bpDataService.processMetadata.processId);
 
         this.callStatus.submit();
-        this.bpeService.continueBusinessProcess(piim).then(
-            res => {
-                this.callStatus.callback("Ppap Response placed", true);
-                this.router.navigate(['dashboard']);
-            }
-        ).catch(error => {
-                this.submitted = false;
-                error => this.callStatus.error("Failed to send Ppap Response")
-            }
-        );
+        this.bpeService.continueBusinessProcess(piim).then(res => {
+            this.callStatus.callback("Ppap Response placed", true);
+            this.router.navigate(['dashboard']);
+        }).catch(error => {
+            this.submitted = false;
+            error => this.callStatus.error("Failed to send Ppap Response", error)
+        });
 
     }
 }

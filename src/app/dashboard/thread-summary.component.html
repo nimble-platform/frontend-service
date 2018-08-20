@@ -39,9 +39,7 @@
 
         <!-- Loading most recent event -->
         <div class="row" *ngIf="!lastEvent">
-            <div class="col align-items-center">
-                <img src="assets/form_loader.gif"/>
-            </div>
+            <call-status [callStatus]="fetchCallStatus" [large]="true"></call-status>
         </div>
 
         <!-- History -->
@@ -51,13 +49,6 @@
                 </thread-event>
             </ng-container>
         </ng-container>
-
-        <!-- Loading history -->
-        <div class="row" *ngIf="lastEvent && hasHistory && historyExpanded && !history">
-            <div class="col align-items-center">
-                <img src="assets/form_loader.gif"/>
-            </div>
-        </div>
 
         <!-- Toggle history -->
         <div class="row" *ngIf="lastEvent && hasHistory">

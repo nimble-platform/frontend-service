@@ -17,7 +17,7 @@ export class CallStatus {
         this.fb_callback = false;
     }
 
-    public callback(msg:string, autoClose:boolean = false) {
+    public callback(msg: string, autoClose: boolean = false) {
         this.fb_message = msg;
         this.fb_submitted = false;
         this.fb_errordetc = false;
@@ -25,11 +25,15 @@ export class CallStatus {
         this.fb_autoCloseOnCallBack = autoClose;
     }
 
-    public error(msg:string) {
+    public error(msg: string, error?: any) {
         this.fb_message = msg;
         this.fb_submitted = false;
         this.fb_errordetc = true;
         this.fb_callback = false;
+
+        if(error) {
+            console.error(msg, error);
+        }
     }
 
     public reset() {
@@ -40,5 +44,13 @@ export class CallStatus {
 
     public isLoading(): boolean {
         return this.fb_submitted;
+    }
+
+    public isDisplayed(): boolean {
+        return this.fb_submitted || this.fb_errordetc || (this.fb_callback && !this.fb_autoCloseOnCallBack);
+    }
+
+    public isError(): boolean {
+        return this.fb_errordetc;
     }
 }

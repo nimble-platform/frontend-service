@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Input, Output } from "@angular/core";
+import { Component, OnInit, Input } from "@angular/core";
 import { Address } from "../catalogue/model/publish/address";
 import { UBLModelUtils } from "../catalogue/model/ubl-model-utils";
 
@@ -30,7 +30,9 @@ export class MultiAddressInputComponent implements OnInit {
     ) { }
 
     ngOnInit() {
-        this.address.push(new Address());
+        if(this.address.length === 0) {
+            this.address.push(new Address());
+        }
         if(!this.valueClass) {
             this.valueClass = this.label ? "col-9" : "col-12";
         }

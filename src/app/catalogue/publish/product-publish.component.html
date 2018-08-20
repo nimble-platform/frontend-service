@@ -153,7 +153,7 @@
     <hr>
 
     <!-- Tabs for Product -->
-    <div *ngIf="!isLogistics">
+    <ng-container *ngIf="!isLogistics">
         <div class="row space-before">
             <div class="col-12">
                 <ul class="nav nav-tabs">
@@ -178,12 +178,26 @@
                             Delivery &amp; Trading
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a href id="CERTIFICATES" class="nav-link"
+                            [ngClass]="{ active: selectedTabSinglePublish === 'CERTIFICATES'}"
+                            (click)="onSelectTabSinglePublish($event)">
+                            Certificates
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href id="TRACK_TRACE" class="nav-link"
+                            [ngClass]="{ active: selectedTabSinglePublish === 'TRACK_TRACE'}"
+                            (click)="onSelectTabSinglePublish($event)">
+                            Track &amp; Trace
+                        </a>
+                    </li>
                 </ul>
             </div>
         </div>
 
         <!-- Product Details Tab -->
-        <div class="row space-before" *ngIf="selectedTabSinglePublish === 'DETAILS'">
+        <div class="row space-before details-tab" *ngIf="selectedTabSinglePublish === 'DETAILS'">
             <div class="col-12">
                 <div class="row" *ngFor="let prop of getProductProperties()">
                     <div class="col-3">
@@ -219,7 +233,7 @@
         </div>
 
         <!-- Price Tab -->
-        <div class="row space-before" *ngIf="selectedTabSinglePublish === 'PRICE'">
+        <div class="row space-before details-tab" *ngIf="selectedTabSinglePublish === 'PRICE'">
             <div class="col-12">
                 <product-price-tab [catalogueLine]="catalogueLine" [disabled]="isLoading()">
                 </product-price-tab>
@@ -227,13 +241,29 @@
         </div>
 
         <!-- Delivery & Trading Tab -->
-        <div class="row space-before" *ngIf="selectedTabSinglePublish === 'DELIVERY_TRADING'">
+        <div class="row space-before details-tab" *ngIf="selectedTabSinglePublish === 'DELIVERY_TRADING'">
             <div class="col-12">
                 <product-delivery-trading [wrapper]="productWrapper" [disabled]="isLoading()">
                 </product-delivery-trading>
             </div>
         </div>
-    </div>
+
+        <!-- Certificates -->
+        <div class="row space-before details-tab" *ngIf="selectedTabSinglePublish === 'CERTIFICATES'">
+            <div class="col-12">
+                <product-certificates-tab [catalogueLine]="catalogueLine" [disabled]="isLoading()">
+                </product-certificates-tab>
+            </div>
+        </div>
+
+        <!-- Track and Trace -->
+        <div class="row space-before details-tab" *ngIf="selectedTabSinglePublish === 'TRACK_TRACE'">
+            <div class="col-12">
+                <product-track-and-trace-tab [catalogueLine]="catalogueLine" [disabled]="isLoading()">
+                </product-track-and-trace-tab>
+            </div>
+        </div>
+    </ng-container>
 
     <!-- Logistics tabs -->
     <div *ngIf="isLogistics">
@@ -257,13 +287,13 @@
                 </ul>
             </div>
         </div>
-        <div class="row space-before" *ngIf="selectedTabSinglePublish === 'DETAILS'">
+        <div class="row space-before" [hidden]="selectedTabSinglePublish !== 'DETAILS'">
             <div class="col-12">
                 <transportation-service-input [catalogueLine]="catalogueLine" presentationMode="edit">
                 </transportation-service-input>
             </div>
         </div>
-        <div class="row space-before" *ngIf="selectedTabSinglePublish === 'PRICE'">
+        <div class="row space-before"[hidden]="selectedTabSinglePublish !== 'PRICE'">
             <div class="col-12">
                 <div class="row" *ngFor="let prop of getProductProperties()">
                     <div class="col-3">
@@ -377,3 +407,5 @@
     <edit-property-modal >
     </edit-property-modal>
 </ng-container>
+
+<call-status [callStatus]="callStatus" [large]="true"></call-status>

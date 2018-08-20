@@ -5,6 +5,8 @@ import { UserService } from './user.service';
 import { CookieService } from 'ng2-cookies';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import * as myGlobals from '../globals';
+import { CallStatus } from '../common/call-status';
+import { copy } from '../common/utils';
 
 @Component({
     selector: 'company-invitation',
@@ -23,11 +25,11 @@ export class CompanyInvitationComponent implements OnInit {
 	userRoles = [];
 	rolesSelected = false;
 	rolesChangeSelected = true;
-	submitted = false;
-    callback = false;
-	callback2 = false;
-	callback3 = false;
-	error_detc = false;
+
+	rolesCallStatus: CallStatus = new CallStatus();
+	submitCallStatus: CallStatus = new CallStatus();
+	membersCallStatus: CallStatus = new CallStatus();
+	membersFetched: boolean = false;
 
     constructor(
         private cookieService: CookieService,
@@ -58,22 +60,23 @@ export class CompanyInvitationComponent implements OnInit {
 	
 	loadInvites() {
 		this.invPending = [];
-		this.callback2 = false;
+		this.membersCallStatus.submit();
+		this.membersFetched = false;
 		this.userService.getInviteList()
             .then(response => {
                 this.invPending = response;
-				this.callback2 = true;
+				this.membersCallStatus.callback("Successfully loading invites", true);
+				this.membersFetched = true;
             })
 			.catch(error => {
 				this.invPending = [];
-				this.callback2 = true;
-                console.error('An error occurred', error); // for demo purposes only
+				this.membersCallStatus.error("Error while loading invites", error);
             });
 	}
 	
 	loadRoles() {
 		this.userRoles = [];
-		this.callback3 = false;
+		this.rolesCallStatus.submit();
 		this.userService.getUserRoles()
             .then(response => {
 				response.sort(function(a,b){
@@ -82,12 +85,11 @@ export class CompanyInvitationComponent implements OnInit {
 					return a_comp.localeCompare(b_comp);
 				});
                 this.userRoles = response;
-				this.callback3 = true;
+				this.rolesCallStatus.callback("Successfully fetched roles.", true);
             })
 			.catch(error => {
 				this.userRoles = [];
-				this.callback3 = true;
-                console.error('An error occurred', error); // for demo purposes only
+				this.rolesCallStatus.error("Error while fetching roles.", error);
             });
 	}
 	
@@ -126,7 +128,7 @@ export class CompanyInvitationComponent implements OnInit {
 	
 	editRole(inv) {
 		if (this.isJson(JSON.stringify(inv))) {
-			this.invToChange = JSON.parse(JSON.stringify(inv));
+			this.invToChange = copy(inv);
 		}
 	}
 	
@@ -167,24 +169,21 @@ export class CompanyInvitationComponent implements OnInit {
 		let companyInvitation: CompanyInvitation = new CompanyInvitation(companyId, this.invEmail, this.invRoles);
 		if (myGlobals.debug)
 			console.log(`Sending invitation ${JSON.stringify(companyInvitation)}`);
-		this.submitted = true;
-		this.callback = false;
-		this.error_detc = false;
+		this.submitCallStatus.submit();
 		this.userService.inviteCompany(companyInvitation)
             .then(response => {
-                this.submitted = false;
-				this.callback = true;
-				this.error_detc = false;
+                this.submitCallStatus.callback("Invitation sent");
 				this.loadInvites();
             })
 			.catch(error => {
-                console.error('An error occurred', error); // for demo purposes only
-				if (error.status == 400)
-					this.error_detc = true;
+				this.submitCallStatus.error(
+					error.status === 400 ? "User already invited" : "Error while inviting user",
+					error
+				);
             });
     }
 	
-	isJson(str: string): boolean {
+	private isJson(str: string): boolean {
         try {
             JSON.parse(str);
         } catch (e) {

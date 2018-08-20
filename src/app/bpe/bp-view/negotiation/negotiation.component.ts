@@ -19,13 +19,12 @@ export class NegotiationComponent implements OnInit {
     ngOnInit() {
         if(this.bpDataService.requestForQuotation == null) {
             this.initCallStatus.submit();
-            this.bpDataService.initRfq(this.bpDataService.getCompanyNegotiationSettings())
+            this.bpDataService.initRfq(this.bpDataService.getCompanySettings().negotiationSettings)
                 .then(() => {
                     this.initCallStatus.callback("Request for Quotation Initialized.");
                 })
                 .catch(error => {
-                    this.initCallStatus.error("Error while initializing request for quotation.");
-                    console.log("Error while initializing request for quotation.", error);
+                    this.initCallStatus.error("Error while initializing request for quotation.", error);
                 });
         }
     }

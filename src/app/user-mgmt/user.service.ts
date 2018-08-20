@@ -124,17 +124,33 @@ export class UserService {
             .catch(this.handleError);
     }
 
-    getSettings(userId: string): Promise<CompanySettings> {
-        return this.getUserParty(userId).then(party => {
-            const url = `${this.url}/company-settings/${party.id}`;
-            const token = 'Bearer '+this.cookieService.get("bearer_token");
-            const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
-            return this.http
-                .get(url, {headers: headers_token, withCredentials: true})
-                .toPromise()
-                .then(response => response.json() as CompanySettings)
-                .catch(this.handleError)
+    getSettingsForProduct(line: CatalogueLine): Promise<CompanySettings> {
+        return this.getSettingsForParty(line.goodsItem.item.manufacturerParty.id);
+    }
+
+    getSettingsForUser(userId: string): Promise<CompanySettings> {
+        return this.getUserParty(userId).then(party => this.getSettingsForParty(party.id));
+    }
+
+    getSettingsForParty(partyId: string): Promise<CompanySettings> {
+        return Promise.all([
+            this.getSettingsPromise(partyId),
+            this.getCompanyNegotiationSettingsForParty(partyId)
+        ]).then(([settings, negotiationSettings]) => {
+            settings.negotiationSettings = negotiationSettings;
+            return settings;
         })
+    }
+
+    private getSettingsPromise(partyId: string): Promise<CompanySettings> {
+        const url = `${this.url}/company-settings/${partyId}`;
+        const token = 'Bearer '+this.cookieService.get("bearer_token");
+        const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
+        return this.http
+            .get(url, {headers: headers_token, withCredentials: true})
+            .toPromise()
+            .then(response => response.json() as CompanySettings)
+            .catch(this.handleError)
     }
 
     getUserRoles(): Promise<UserRole[]> {
@@ -166,7 +182,9 @@ export class UserService {
             .catch(this.handleError);
 	}
 
-    putSettings(settings: CompanySettings, userId: string): Promise<any> {
+    putSettings(rawSettings: CompanySettings, userId: string): Promise<any> {
+        const settings = { ...rawSettings };
+        delete settings.negotiationSettings;
         return this.getUserParty(userId).then(party => {
             const url = `${this.url}/company-settings/${party.id}`;
             const token = 'Bearer '+this.cookieService.get("bearer_token");
@@ -180,11 +198,11 @@ export class UserService {
     }
 
     getPrefCat(userId: string): Promise<any> {
-      return this.getSettings(userId).then(settings => settings.preferredProductCategories);
+      return this.getSettingsForUser(userId).then(settings => settings.preferredProductCategories);
     }
 
     togglePrefCat(userId: string, cat: string): Promise<any> {
-      return this.getSettings(userId).then(settings => {
+      return this.getSettingsForUser(userId).then(settings => {
         var pref_cat = settings.preferredProductCategories;
         var cat_idx = pref_cat.indexOf(cat);
         if (cat_idx == -1)
@@ -241,12 +259,12 @@ export class UserService {
             .get(url, { headers: headers_token, withCredentials: true })
             .toPromise()
             .then(res => {
-                return this.sanitizeSettings(res.json());
+                return this.sanitizeNegotiationSettings(res.json());
             })
             .catch(this.handleError);
     }
 
-    private sanitizeSettings(settings: CompanyNegotiationSettings): CompanyNegotiationSettings {
+    private sanitizeNegotiationSettings(settings: CompanyNegotiationSettings): CompanyNegotiationSettings {
         if(settings.deliveryPeriodUnits.length === 0) {
             settings.deliveryPeriodUnits.push("day(s)");
             settings.deliveryPeriodUnits.push("week(s)");

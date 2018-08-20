@@ -108,9 +108,9 @@ export class PpapDocumentSelectComponent implements OnInit {
 
     onSkip() {
         this.bpDataService.resetBpData();
-        this.bpDataService.initRfq(null).then(() => {
+        this.bpDataService.initRfq(this.bpDataService.getCompanySettings().negotiationSettings).then(() => {
             this.bpDataService.setBpOptionParameters(this.bpDataService.userRole, "Negotiation", "Ppap");
-        })
+        });
     }
 
     onSendRequest() {
@@ -138,10 +138,15 @@ export class PpapDocumentSelectComponent implements OnInit {
                         this.router.navigate(["dashboard"]);
                     })
                     .catch(error => {
-                        this.callStatus.error("Failed to send Ppap request");
-                        console.log("Error while sending Ppap request", error);
+                        this.callStatus.error("Failed to send Ppap request", error);
                     });
+            })
+            .catch(error => {
+                this.callStatus.error("Failed to send Ppap request", error);
             });
+        })
+        .catch(error => {
+            this.callStatus.error("Failed to send Ppap request", error);
         });
     }
 

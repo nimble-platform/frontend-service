@@ -13,83 +13,88 @@
 		</div>
 	</div>
 
+	<call-status [callStatus]="searchCallStatus" [large]="true"></call-status>
+
 	<div [hidden]="error_detc || callback || !submitted">
 		<img class="space-before" src="assets/form_loader.gif"/>
 	</div>
 
-	<div *ngIf="(cat_levels.length>0 && (cat_levels[0].length>0 || cat_levels[1].length>0 || cat_levels[2].length>0 || cat_levels[3].length>0)) || cat_other.length>0" [hidden]="submitted">
+	<div [hidden]="searchDone">
 		<div class="card border-primary-nimble">
 			<div class="card-header text-white bg-primary-nimble">
-				Category
+				Categories
 			</div>
 			<div class="card-body">
-				<div *ngFor="let lvl0 of cat_levels[0]; let idx = index;">
-					<div *ngIf="idx%4==0" class="row">
-						<div *ngIf="idx<cat_levels[0].length" class="card col mr-3 ml-3 pl-0 pr-0 pointer" [ngClass]="{'mb-3':idx+4<cat_levels[0].length}" (click)="callCat(cat_levels[0][idx].name)">
-						  <div class="card-body p-2 text-center">
-						    <h6 class="card-title clickable">{{ cat_levels[0][idx].name }}</h6>
-						    <h6 class="card-subtitle text-muted font-italic">{{ cat_levels[0][idx].count }} products</h6>
-							</div>
-						</div>
-						<div *ngIf="idx+1<cat_levels[0].length" class="card col mr-3 ml-3 pl-0 pr-0 pointer" [ngClass]="{'mb-3':idx+4<cat_levels[0].length}" (click)="callCat(cat_levels[0][idx+1].name)">
-						  <div class="card-body p-2 text-center">
-						    <h6 class="card-title clickable">{{ cat_levels[0][idx+1].name }}</h6>
-						    <h6 class="card-subtitle text-muted font-italic">{{ cat_levels[0][idx+1].count }} products</h6>
-							</div>
-						</div>
-						<div *ngIf="idx+2<cat_levels[0].length" class="card col mr-3 ml-3 pl-0 pr-0 pointer" [ngClass]="{'mb-3':idx+4<cat_levels[0].length}" (click)="callCat(cat_levels[0][idx+2].name)">
-						  <div class="card-body p-2 text-center">
-						    <h6 class="card-title clickable">{{ cat_levels[0][idx+2].name }}</h6>
-						    <h6 class="card-subtitle text-muted font-italic">{{ cat_levels[0][idx+2].count }} products</h6>
-							</div>
-						</div>
-						<div *ngIf="idx+3<cat_levels[0].length" class="card col mr-3 ml-3 pl-0 pr-0 pointer" [ngClass]="{'mb-3':idx+4<cat_levels[0].length}" (click)="callCat(cat_levels[0][idx+3].name)">
-						  <div class="card-body p-2 text-center">
-						    <h6 class="card-title clickable">{{ cat_levels[0][idx+3].name }}</h6>
-						    <h6 class="card-subtitle text-muted font-italic">{{ cat_levels[0][idx+3].count }} products</h6>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div *ngIf="cat_other_count>0">
-					<hr>
-					<div class="row">
-						<div class="col text-center">
-							<button class="btn btn-secondary" *ngIf="!showOther" (click)="showOther=!showOther">Show other categories ({{cat_other_count}} products) <i class="fa fa-angle-double-down"></i></button>
-							<button class="btn btn-secondary mb-3" *ngIf="showOther" (click)="showOther=!showOther">Hide other categories ({{cat_other_count}} products) <i class="fa fa-angle-double-up"></i></button>
-						</div>
-					</div>
-				</div>
-				<div *ngIf="showOther">
-					<div *ngFor="let other of cat_other; let idx = index;">
+				<call-status [callStatus]="categoriesCallStatus" [large]="true"></call-status>
+				<ng-container *ngIf="(cat_levels.length>0 && (cat_levels[0].length>0 || cat_levels[1].length>0 || cat_levels[2].length>0 || cat_levels[3].length>0)) || cat_other.length>0" >
+					<div *ngFor="let lvl0 of cat_levels[0]; let idx = index;">
 						<div *ngIf="idx%4==0" class="row">
-							<div *ngIf="idx<cat_other.length" class="card col mr-3 ml-3 pl-0 pr-0 pointer" [ngClass]="{'mb-3':idx+4<cat_other.length}" (click)="callCat(cat_other[idx].name)">
-							  <div class="card-body p-2 text-center">
-							    <h6 class="card-title clickable">{{ cat_other[idx].name }}</h6>
-							    <h6 class="card-subtitle text-muted font-italic">{{ cat_other[idx].count }} products</h6>
+							<div *ngIf="idx<cat_levels[0].length" class="card col mr-3 ml-3 pl-0 pr-0 pointer" [ngClass]="{'mb-3':idx+4<cat_levels[0].length}" (click)="callCat(cat_levels[0][idx].name)">
+								<div class="card-body p-2 text-center">
+								<h6 class="card-title clickable">{{ cat_levels[0][idx].name }}</h6>
+								<h6 class="card-subtitle text-muted font-italic">{{ cat_levels[0][idx].count }} products</h6>
 								</div>
 							</div>
-							<div *ngIf="idx+1<cat_other.length" class="card col mr-3 ml-3 pl-0 pr-0 pointer" [ngClass]="{'mb-3':idx+4<cat_other.length}" (click)="callCat(cat_other[idx+1].name)">
-							  <div class="card-body p-2 text-center">
-							    <h6 class="card-title clickable">{{ cat_other[idx+1].name }}</h6>
-							    <h6 class="card-subtitle text-muted font-italic">{{ cat_other[idx+1].count }} products</h6>
+							<div *ngIf="idx+1<cat_levels[0].length" class="card col mr-3 ml-3 pl-0 pr-0 pointer" [ngClass]="{'mb-3':idx+4<cat_levels[0].length}" (click)="callCat(cat_levels[0][idx+1].name)">
+								<div class="card-body p-2 text-center">
+								<h6 class="card-title clickable">{{ cat_levels[0][idx+1].name }}</h6>
+								<h6 class="card-subtitle text-muted font-italic">{{ cat_levels[0][idx+1].count }} products</h6>
 								</div>
 							</div>
-							<div *ngIf="idx+2<cat_other.length" class="card col mr-3 ml-3 pl-0 pr-0 pointer" [ngClass]="{'mb-3':idx+4<cat_other.length}" (click)="callCat(cat_other[idx+2].name)">
-							  <div class="card-body p-2 text-center">
-							    <h6 class="card-title clickable">{{ cat_other[idx+2].name }}</h6>
-							    <h6 class="card-subtitle text-muted font-italic">{{ cat_other[idx+2].count }} products</h6>
+							<div *ngIf="idx+2<cat_levels[0].length" class="card col mr-3 ml-3 pl-0 pr-0 pointer" [ngClass]="{'mb-3':idx+4<cat_levels[0].length}" (click)="callCat(cat_levels[0][idx+2].name)">
+								<div class="card-body p-2 text-center">
+								<h6 class="card-title clickable">{{ cat_levels[0][idx+2].name }}</h6>
+								<h6 class="card-subtitle text-muted font-italic">{{ cat_levels[0][idx+2].count }} products</h6>
 								</div>
 							</div>
-							<div *ngIf="idx+3<cat_other.length" class="card col mr-3 ml-3 pl-0 pr-0 pointer" [ngClass]="{'mb-3':idx+4<cat_other.length}" (click)="callCat(cat_other[idx+3].name)">
-							  <div class="card-body p-2 text-center">
-							    <h6 class="card-title clickable">{{ cat_other[idx+3].name }}</h6>
-							    <h6 class="card-subtitle text-muted font-italic">{{ cat_other[idx+3].count }} products</h6>
+							<div *ngIf="idx+3<cat_levels[0].length" class="card col mr-3 ml-3 pl-0 pr-0 pointer" [ngClass]="{'mb-3':idx+4<cat_levels[0].length}" (click)="callCat(cat_levels[0][idx+3].name)">
+								<div class="card-body p-2 text-center">
+								<h6 class="card-title clickable">{{ cat_levels[0][idx+3].name }}</h6>
+								<h6 class="card-subtitle text-muted font-italic">{{ cat_levels[0][idx+3].count }} products</h6>
 								</div>
 							</div>
 						</div>
 					</div>
-				</div>
+					<div *ngIf="showOther" class="space-before">
+						<div *ngFor="let other of cat_other; let idx = index;">
+							<div *ngIf="idx%4==0" class="row">
+								<div *ngIf="idx<cat_other.length" class="card col mr-3 ml-3 pl-0 pr-0 pointer" [ngClass]="{'mb-3':idx+4<cat_other.length}" (click)="callCat(cat_other[idx].name)">
+									<div class="card-body p-2 text-center">
+									<h6 class="card-title clickable">{{ cat_other[idx].name }}</h6>
+									<h6 class="card-subtitle text-muted font-italic">{{ cat_other[idx].count }} products</h6>
+									</div>
+								</div>
+								<div *ngIf="idx+1<cat_other.length" class="card col mr-3 ml-3 pl-0 pr-0 pointer" [ngClass]="{'mb-3':idx+4<cat_other.length}" (click)="callCat(cat_other[idx+1].name)">
+									<div class="card-body p-2 text-center">
+									<h6 class="card-title clickable">{{ cat_other[idx+1].name }}</h6>
+									<h6 class="card-subtitle text-muted font-italic">{{ cat_other[idx+1].count }} products</h6>
+									</div>
+								</div>
+								<div *ngIf="idx+2<cat_other.length" class="card col mr-3 ml-3 pl-0 pr-0 pointer" [ngClass]="{'mb-3':idx+4<cat_other.length}" (click)="callCat(cat_other[idx+2].name)">
+									<div class="card-body p-2 text-center">
+									<h6 class="card-title clickable">{{ cat_other[idx+2].name }}</h6>
+									<h6 class="card-subtitle text-muted font-italic">{{ cat_other[idx+2].count }} products</h6>
+									</div>
+								</div>
+								<div *ngIf="idx+3<cat_other.length" class="card col mr-3 ml-3 pl-0 pr-0 pointer" [ngClass]="{'mb-3':idx+4<cat_other.length}" (click)="callCat(cat_other[idx+3].name)">
+									<div class="card-body p-2 text-center">
+									<h6 class="card-title clickable">{{ cat_other[idx+3].name }}</h6>
+									<h6 class="card-subtitle text-muted font-italic">{{ cat_other[idx+3].count }} products</h6>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div *ngIf="cat_other_count>0">
+						<hr>
+						<div class="row">
+							<div class="col text-center">
+								<button class="btn btn-secondary" *ngIf="!showOther" (click)="showOther=!showOther">Show other categories ({{cat_other_count}} products) <i class="fa fa-angle-double-down"></i></button>
+								<button class="btn btn-secondary mb-3" *ngIf="showOther" (click)="showOther=!showOther">Hide other categories ({{cat_other_count}} products) <i class="fa fa-angle-double-up"></i></button>
+							</div>
+						</div>
+					</div>
+				</ng-container>
 			</div>
 		</div>
 	</div>

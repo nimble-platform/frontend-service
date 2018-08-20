@@ -18,9 +18,7 @@ import { ModelUtils } from "../../model/model-utils";
 import { ProcessInstanceInputMessage } from "../../model/process-instance-input-message";
 import { NegotiationModelWrapper } from "./negotiation-model-wrapper";
 import { getMaximumQuantityForPrice, getStepForPrice, copy } from "../../../common/utils";
-import { CompanyNegotiationSettings } from "../../../user-mgmt/model/company-negotiation-settings";
 import { PeriodRange } from "../../../user-mgmt/model/period-range";
-import { Quantity } from "../../../catalogue/model/publish/quantity";
 
 @Component({
     selector: "negotiation-request",
@@ -55,7 +53,7 @@ export class NegotiationRequestComponent implements OnInit {
         this.rfq = this.bpDataService.requestForQuotation;
         this.rfqLine = this.rfq.requestForQuotationLine[0];
         this.line = this.bpDataService.getCatalogueLine();
-        this.wrapper = new NegotiationModelWrapper(this.line, this.rfq, null, this.bpDataService.getCompanyNegotiationSettings());
+        this.wrapper = new NegotiationModelWrapper(this.line, this.rfq, null, this.bpDataService.getCompanySettings().negotiationSettings);
         this.totalPrice = this.wrapper.rfqTotalPrice;
         this.negotiatedPriceValue = this.totalPrice;
 
@@ -87,24 +85,25 @@ export class NegotiationRequestComponent implements OnInit {
             const sellerId: string = this.line.goodsItem.item.manufacturerParty.id;
             const buyerId: string = this.cookieService.get("company_id");
 
-            this.userService.getParty(buyerId).then(buyerParty => {
+           Promise.all([
+                this.userService.getParty(buyerId),
+                this.userService.getParty(sellerId)
+            ])
+            .then(([buyerParty, sellerParty]) => {
                 rfq.buyerCustomerParty = new CustomerParty(buyerParty);
+                rfq.sellerSupplierParty = new SupplierParty(sellerParty);
 
-                this.userService.getParty(sellerId).then(sellerParty => {
-                    rfq.sellerSupplierParty = new SupplierParty(sellerParty);
-                    const vars: ProcessVariables = ModelUtils.createProcessVariables("Negotiation", buyerId, sellerId, rfq, this.bpDataService);
-                    const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
+                const vars: ProcessVariables = ModelUtils.createProcessVariables("Negotiation", buyerId, sellerId, rfq, this.bpDataService);
+                const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
 
-                    this.bpeService.startBusinessProcess(piim)
-                        .then(res => {
-                            this.callStatus.callback("Terms sent", true);
-                            this.router.navigate(['dashboard']);
-                        })
-                        .catch(error => {
-                            this.callStatus.error("Failed to sent Terms");
-                            console.log("Error while sending terms", error);
-                        });
-                });
+                return this.bpeService.startBusinessProcess(piim);
+            })
+            .then(() => {
+                this.callStatus.callback("Terms sent", true);
+                this.router.navigate(['dashboard']);
+            })
+            .catch(error => {
+                this.callStatus.error("Failed to send Terms", error);
             });
         } else {
             // just go to order page

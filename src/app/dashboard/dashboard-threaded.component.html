@@ -81,7 +81,7 @@
     <div *ngIf="queryParameters.tab === TABS.SALES || queryParameters.tab === TABS.PURCHASES" class="row">
         <div class="col-12">
             <!-- No data -->
-            <div class="row" *ngIf="results.resultCount === 0 && !queryParameters.archived">
+            <div class="row" *ngIf="results.resultCount === 0 && !queryParameters.archived && !areOrdersLoading()">
                 <div class="col-12">
                     <!-- Sales -->
                     <ng-container *ngIf="queryParameters.tab === TABS.SALES">
@@ -140,19 +140,19 @@
                             <facet [title]="'Product'" [dataType]="'string'"
                                 [stringValues]="filterSet && filterSet.relatedProducts"
                                 [selectedStringValues]="modifiedFilterSet && modifiedFilterSet.relatedProducts"
-                                [loading]="filtersLoading"
+                                [loading]="areFiltersLoading()"
                                 (triggerCriteriaChanged)="onFilterChange()">
                             </facet>
                             <facet [title]="'Product category'" [dataType]="'string'"
                                 [stringValues]="filterSet && filterSet.relatedProductCategories"
                                 [selectedStringValues]="modifiedFilterSet && modifiedFilterSet.relatedProductCategories"
-                                [loading]="filtersLoading"
+                                [loading]="areFiltersLoading()"
                                 (triggerCriteriaChanged)="onFilterChange()">
                             </facet>
                             <facet [title]="'Trading partner'" [dataType]="'string'"
                                 [stringValues]="filterSet && filterSet.tradingPartnerNames"
                                 [selectedStringValues]="modifiedFilterSet && modifiedFilterSet.tradingPartnerNames"
-                                [loading]="filtersLoading"
+                                [loading]="areFiltersLoading()"
                                 (triggerCriteriaChanged)="onFilterChange()">
                             </facet>
                             <facet [title]="'Status'" [dataType]="'string'"
@@ -181,6 +181,9 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Loading -->
+            <call-status [callStatus]="queryStatus" [large]="true"></call-status>
         </div>
     </div>
 
