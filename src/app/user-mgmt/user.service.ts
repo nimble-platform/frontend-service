@@ -133,17 +133,23 @@ export class UserService {
     }
 
     getSettingsForParty(partyId: string): Promise<CompanySettings> {
+        return Promise.all([
+            this.getSettingsPromise(partyId),
+            this.getCompanyNegotiationSettingsForParty(partyId)
+        ]).then(([settings, negotiationSettings]) => {
+            settings.negotiationSettings = negotiationSettings;
+            return settings;
+        })
+    }
+
+    private getSettingsPromise(partyId: string): Promise<CompanySettings> {
         const url = `${this.url}/company-settings/${partyId}`;
         const token = 'Bearer '+this.cookieService.get("bearer_token");
         const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
         return this.http
             .get(url, {headers: headers_token, withCredentials: true})
             .toPromise()
-            .then(response => {
-                const result = response.json() as CompanySettings;
-                this.sanitizeNegotiationSettings(result.negotiationSettings);
-                return result;
-            })
+            .then(response => response.json() as CompanySettings)
             .catch(this.handleError)
     }
 
@@ -176,7 +182,9 @@ export class UserService {
             .catch(this.handleError);
 	}
 
-    putSettings(settings: CompanySettings, userId: string): Promise<any> {
+    putSettings(rawSettings: CompanySettings, userId: string): Promise<any> {
+        const settings = { ...rawSettings };
+        delete settings.negotiationSettings;
         return this.getUserParty(userId).then(party => {
             const url = `${this.url}/company-settings/${party.id}`;
             const token = 'Bearer '+this.cookieService.get("bearer_token");
