@@ -46,6 +46,8 @@ export class CompanySettingsComponent implements OnInit {
     public certFile = null;
     tooltipHTML = "";
     selectedTab: "COMPANY_DATA" | "NEGOTIATION_SETTINGS" = "COMPANY_DATA";
+    setAddress: boolean = false;
+    newAddress: FormGroup;
 
     initCallStatus: CallStatus = new CallStatus();
     saveCallStatus: CallStatus = new CallStatus();
@@ -88,6 +90,13 @@ export class CompanySettingsComponent implements OnInit {
         });
         this.certFile = null;
         this.modalService.open(content);
+    }
+
+    addDeliveryTerms() {
+        this.setAddress = !this.setAddress;
+        this.newAddress = DeliveryTermsSubForm.generateForm(this._fb);
+        //this.newAddress.generateForm(this._fb);
+        //this.settingsForm.controls.deliveryTerms.controls.append();
     }
 
     setCertFile(event: any) {

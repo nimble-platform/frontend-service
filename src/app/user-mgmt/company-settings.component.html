@@ -71,17 +71,30 @@
 
 		<h3 class="space-after">Delivery Terms</h3>
 
-		<!-- Deliver to company address -->
+		<!-- Add new address -->
 		<div class="form-group row">
-			<span class="col-2 col-form-label">
-				<input type="checkbox" [(ngModel)]="aM" [ngModelOptions]="{standalone:true}" (change)="settingsForm.controls['name'].markAsDirty();changeFlag();">
-			</span>
-			<div class="col-10">
-				<span class="form-control inline">Deliver to company address</span>
+			<div class="col-2 col-form-label">
+				<button class="btn btn-primary w-100" [ngClass]="{ 'btn-danger': setAddress === true}" type="button" (click)="addDeliveryTerms()">
+					<span *ngIf="!setAddress">Add New Address</span>
+					<span *ngIf="setAddress">Cancel</span>
+				</button>
 			</div>
 		</div>
-		<delivery-terms-form [group]="settingsForm.controls.deliveryTerms.controls[0]"></delivery-terms-form>
 
+		<div *ngIf="setAddress">
+				<delivery-terms-form [group]="newAddress.controls[0]"></delivery-terms-form>
+		</div>
+
+		<!-- Deliver to company address
+		<div class="form-group row">
+			<span class="col-12 col-form-label">
+				<input type="checkbox" [(ngModel)]="aM" [ngModelOptions]="{standalone:true}" (change)="settingsForm.controls['name'].markAsDirty();changeFlag();">
+				<span class="border-0 form-control d-inline">Deliver to company address</span>
+			</span>
+		</div>
+		<delivery-terms-form [group]="settingsForm.controls.deliveryTerms.controls[0]"></delivery-terms-form>
+		-->
+		
 		<!--
 		<h3 class="space-after">Payment Terms</h3>
 		<payment-means-form [group]="settingsForm.controls.paymentMeans.controls[0]"></payment-means-form>
