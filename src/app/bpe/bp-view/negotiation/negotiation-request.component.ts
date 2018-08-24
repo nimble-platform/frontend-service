@@ -19,6 +19,8 @@ import { ProcessInstanceInputMessage } from "../../model/process-instance-input-
 import { NegotiationModelWrapper } from "./negotiation-model-wrapper";
 import { getMaximumQuantityForPrice, getStepForPrice, copy } from "../../../common/utils";
 import { PeriodRange } from "../../../user-mgmt/model/period-range";
+import { Option } from "../../../common/options-input.component";
+import { addressToString } from "../../../user-mgmt/utils";
 
 @Component({
     selector: "negotiation-request",
@@ -38,6 +40,8 @@ export class NegotiationRequestComponent implements OnInit {
     callStatus: CallStatus = new CallStatus();
 
     CURRENCIES: string[] = CURRENCIES;
+
+    selectedAddressValue = "";
 
     constructor(private bpDataService: BPDataService,
                 private bpeService:BPEService,
@@ -151,6 +155,33 @@ export class NegotiationRequestComponent implements OnInit {
         if(!negotiate) {
             this.wrapper.rfqPriceWrapper.itemPrice.value = this.wrapper.linePriceWrapper.itemPrice.value;
         }
+    }
+
+    get selectedAddress(): string {
+        return this.selectedAddressValue;
+    }
+
+    set selectedAddress(addressStr: string) {
+        this.selectedAddressValue = addressStr;
+
+        if(addressStr !== "") {
+            const index = Number(addressStr);
+            const address = this.bpDataService.getCompanySettings().deliveryTerms[index].deliveryAddress;
+            const rfqAddress = this.wrapper.rfqDeliveryAddress;
+            rfqAddress.buildingNumber = address.buildingNumber;
+            rfqAddress.cityName = address.cityName;
+            rfqAddress.country.name = address.country;
+            rfqAddress.postalZone = address.postalCode;
+            rfqAddress.streetName = address.streetName;
+        }
+    }
+
+    get addressOptions(): Option[] {
+        return [
+            { name: "No", value: "" }
+        ].concat(this.bpDataService.getCompanySettings().deliveryTerms.map((term, i) => {
+            return { name: addressToString(term.deliveryAddress), value: String(i) };
+        }));
     }
 
     getPriceSteps(): number {

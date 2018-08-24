@@ -77,9 +77,10 @@ export class CompanyCertificatesSettingsComponent implements OnInit {
             this.certificatesCallStatus[index].submit();
             this.userService
                 .deleteCert(id)
-                .then(response => {
+                .then(() => {
                     this.certificatesCallStatus[index].callback("Succesfully deleted certificate", true);
-                    this.onSaveEvent.emit();
+                    this.settings.certificates.splice(index, 1);
+                    this.ngOnInit();
                 })
                 .catch(error => {
                     this.certificatesCallStatus[index].error("Error while delefing certificate", error);
@@ -105,6 +106,7 @@ export class CompanyCertificatesSettingsComponent implements OnInit {
         this.userService.putSettings(this.settings, userId)
             .then(() => {
                 this.savePpapLevelCallStatus.callback("Ppap level saved.", true);
+                this.onSaveEvent.emit();
             })
             .catch(error => {
                 this.savePpapLevelCallStatus.error("Error while saving Ppap level.", error);
