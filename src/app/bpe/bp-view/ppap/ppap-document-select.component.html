@@ -26,7 +26,7 @@
 <!-- Ppap level select -->
 <div class="row form-group space-after">
     <div class="col-2">
-        <label for="ppapLevelSelect"><strong>Select a PPAP level:</strong></label>
+        <label for="ppapLevelSelect" class="mt-2"><strong>Select a PPAP level:</strong></label>
     </div>
     <div class="col-10">
         <select [(ngModel)]="level" id="ppapLevelSelect" class="custom-select" (change)="computeSelectedDocuments()" [disabled]="isLoading() || isRequestSent()">
@@ -41,25 +41,19 @@
 
 <!-- Document checkboxes -->
 <div class="row space-after">
-    <div class="col-1"></div>
-    <div class="col-11">
-        <div class="row">
-            <div class="col-6" *ngFor="let doc of DOCUMENTS; index as i">
-                <div class="row">
-                    <div class="col-10 form-check">
-                        <input class="form-check-input" type="checkbox" [(ngModel)]="selectedDocuments[i]" [disabled]="isLoading() || isRequestSent()">
-                        <label class="form-check-label">{{ doc.name }}</label>
-                    </div>
-                    <div class="col-2">
-                        <button *ngIf="isDocumentAvailable(doc.name)" 
-                            class="btn btn-primary btn-sm" (click)="onDownload(doc.name)">
-                            Download
-                        </button>
-                    </div>
-                </div>
-            </div>
+    <ng-container *ngFor="let doc of DOCUMENTS; index as i">
+        <div class="col-4 form-check mt-1">
+            <input class="form-check-input" type="checkbox" [(ngModel)]="selectedDocuments[i]" [disabled]="isLoading() || isRequestSent()">
+            <label class="form-check-label">{{ doc.name }}</label>
         </div>
-    </div>
+        <div class="col-1 mt-1">
+            <button *ngIf="isDocumentAvailable(doc.name)" 
+                class="btn btn-secondary btn-sm" (click)="onDownload(doc.name)">
+                Download
+            </button>
+        </div>
+        <div class="col-1"></div>
+    </ng-container>
 </div>
 
 <hr>
@@ -84,7 +78,7 @@
         </button>
     </div>
     <div class="col-2">
-        <button class="btn btn-primary action" [disabled]="isLoading()" (click)="onSendRequest()">
+        <button class="btn btn-primary action" [disabled]="isLoading() || areAllDocumentsAvailable()" (click)="onSendRequest()">
             Send Request
         </button>
     </div>

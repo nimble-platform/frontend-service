@@ -103,6 +103,19 @@ export class PpapDocumentSelectComponent implements OnInit {
         return this.callStatus.fb_submitted;
     }
 
+    areAllDocumentsAvailable(): boolean {
+        for(let i = 0; i < this.selectedDocuments.length; i++) {
+            if(this.selectedDocuments[i]) {
+                const name = this.DOCUMENTS[i].name;
+                if(!this.isDocumentAvailable(name)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
     isDocumentAvailable(name: string): boolean {
         return !!this.getCertificate(name);
     }
@@ -182,5 +195,4 @@ export class PpapDocumentSelectComponent implements OnInit {
     private computeSelectedDocuments() {
         this.selectedDocuments = this.DOCUMENTS.map(doc => doc.levels[this.level]);
     }
-
 }
