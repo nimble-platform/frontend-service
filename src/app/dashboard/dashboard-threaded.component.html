@@ -158,7 +158,7 @@
                             <facet [title]="'Status'" [dataType]="'string'"
                                    [stringValues]="filterSet && filterSet.status"
                                    [selectedStringValues]="modifiedFilterSet && modifiedFilterSet.status"
-                                   [loading]="filtersLoading"
+                                   [loading]="areFiltersLoading()"
                                    (triggerCriteriaChanged)="onFilterChange()">
                             </facet>
                         </div>
