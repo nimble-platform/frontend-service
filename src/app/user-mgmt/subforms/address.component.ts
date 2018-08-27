@@ -28,7 +28,7 @@ export class AddressSubForm {
         };
 	}
 	
-    public static update(addressForm, address: Address) {
+    public static update(addressForm: FormGroup, address: Address): FormGroup {
         if (address) {
             addressForm.controls.streetName.setValue(address.streetName);
             addressForm.controls.buildingNumber.setValue(address.buildingNumber);
@@ -36,6 +36,7 @@ export class AddressSubForm {
             addressForm.controls.postalCode.setValue(address.postalCode);
             addressForm.controls.country.setValue(address.country);
         }
+        return addressForm;
     }
 
     public static generateForm(builder: FormBuilder) {

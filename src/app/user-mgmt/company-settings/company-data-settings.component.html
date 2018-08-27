@@ -1,0 +1,72 @@
+<!-- Legal Name -->
+<text-input label="Legal Name" [disabled]="true" [rows]="1" [text]="settings.name"
+    labelClass="col-2" valueClass="col-10" rowClass="space-before">
+</text-input>
+
+<!-- VAT Number -->
+<text-input label="VAT Number" [disabled]="true" [rows]="1" [text]="settings.vatNumber"
+    labelClass="col-2" valueClass="col-10" rowClass="space-before">
+</text-input>
+
+<!-- Verification Info -->
+<div class="form-group row space-before">
+    <label class="col-2 col-form-label">
+        <strong>Verification Info</strong>
+        <span class="tooltip-icon" (click)="showVerificationTT(tooltip)"><i class="fa fa-question-circle"></i></span>
+    </label>
+    <div class="col-10">
+        <input type="text" class="form-control" [ngModel]="settings.verificationInformation" readonly>
+    </div>
+</div>
+
+<!-- Website -->
+<text-input label="Website" [disabled]="true" [rows]="1" [text]="settings.website"
+    labelClass="col-2" valueClass="col-10" rowClass="space-before">
+</text-input>
+
+<hr>
+
+<!-- Address -->
+<h4>Address</h4>
+<address-input [address]="settings.address" [disabled]="true"></address-input>
+
+<!-- Request change button -->
+<div class="row actions-row pr-0 space-before">
+    <div class="col-9 call-status-col"></div>
+    <div class="col-3">
+        <button class="btn btn-primary action" type="button" (click)="changeData(changeModal)">
+            <span>Request Company Data Change</span>
+        </button>
+    </div>
+</div>
+
+<!-- Change Modal -->
+<ng-template #changeModal let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title">Request Company Data Change</h4>
+        <button type="button" class="close" aria-label="Close" (click)="d('')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        Any change to your company data has to be validated and processed by a platform administrator.<br/><br/>
+        When you press "Open mail template" a partially prefilled mail template will open in the mail client of your choice.<br/><br/>
+        We will process change requests within one business day.
+    </div>
+    <div class="modal-footer">
+        <a [href]="mailto" type="button" class="btn btn-primary" (click)="d('')">Open mail template</a>
+    </div>
+</ng-template>
+
+<!-- Tooltip modal -->
+<ng-template #tooltip let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title">Tooltip</h4>
+        <button type="button" class="close" aria-label="Close" (click)="d('')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body" [innerHTML]="tooltipHTML">
+    </div>
+</ng-template>
+    

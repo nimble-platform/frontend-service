@@ -13,6 +13,7 @@ import {CallStatus} from "../../../common/call-status";
 import {ActivatedRoute, Router} from "@angular/router";
 import { Location } from "@angular/common";
 import { copy } from "../../../common/utils";
+import { Certificate } from "../../../user-mgmt/model/certificate";
 
 type PpapLevels = [boolean, boolean, boolean, boolean, boolean]
 
@@ -102,6 +103,43 @@ export class PpapDocumentSelectComponent implements OnInit {
         return this.callStatus.fb_submitted;
     }
 
+    areAllDocumentsAvailable(): boolean {
+        for(let i = 0; i < this.selectedDocuments.length; i++) {
+            if(this.selectedDocuments[i]) {
+                const name = this.DOCUMENTS[i].name;
+                if(!this.isDocumentAvailable(name)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    isDocumentAvailable(name: string): boolean {
+        return !!this.getCertificate(name);
+    }
+
+    onDownload(name: string): void {
+        const certificate = this.getCertificate(name);
+        if(!certificate) {
+            return;
+        }
+        this.userService.downloadCert(certificate.id);
+    }
+
+    private getCertificate(name: string): Certificate | null {
+        const settings = this.bpDataService.getCompanySettings();
+
+        for(const certificate of settings.certificates) {
+            if(certificate.type === name) {
+                return certificate;
+            }
+        }
+
+        return null;
+    }
+
     onBack() {
         this.location.back();
     }
@@ -157,5 +195,4 @@ export class PpapDocumentSelectComponent implements OnInit {
     private computeSelectedDocuments() {
         this.selectedDocuments = this.DOCUMENTS.map(doc => doc.levels[this.level]);
     }
-
 }

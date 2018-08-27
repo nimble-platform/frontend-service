@@ -10,6 +10,6 @@
     </div>
 
     <div [class]="valueClass" *ngIf="presentationMode === 'view' && visible">
-        <span>{{ selected }}</span>
+        <span>{{ getName(selected) }}</span>
     </div>
 </div>

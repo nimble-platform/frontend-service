@@ -14,13 +14,14 @@ import { CredentialsFormComponent } from './credentials-form.component';
 import { AddressSubForm } from './subforms/address.component';
 import { DeliveryTermsSubForm } from './subforms/delivery-terms.component';
 import { PaymentMeansForm } from './subforms/payment-means.component';
-import { CompanySettingsComponent } from './company-settings.component';
 import { CompanyRegistrationComponent } from './company-registration.component';
 import { CompanyInvitationComponent } from './company-invitation.component';
-import { CompanyNegotiationSettingsComponent } from './company-negotiation-settings.component';
-
-//import { UserService } from './user.service';
-//import { CredentialsService } from './credentials.service';
+import { CompanySettingsComponent } from './company-settings/company-settings.component';
+import { CompanyNegotiationSettingsComponent } from './company-settings/company-negotiation-settings.component';
+import { CompanyCertificatesSettingsComponent } from './company-settings/company-certificates-settings.component';
+import { CompanyDataSettingsComponent } from './company-settings/company-data-settings.component';
+import { CompanyDeliveryTermsComponent } from './company-settings/company-delivery-terms.component';
+import { CompanyCategoriesSettingsComponent } from './company-settings/company-categories-settings.component';
 
 @NgModule({
 	imports: [
@@ -44,7 +45,11 @@ import { CompanyNegotiationSettingsComponent } from './company-negotiation-setti
         CompanySettingsComponent,
 		CompanyRegistrationComponent,
 		CompanyInvitationComponent,
-		CompanyNegotiationSettingsComponent
+		CompanyNegotiationSettingsComponent,
+		CompanyCertificatesSettingsComponent,
+		CompanyDataSettingsComponent,
+		CompanyDeliveryTermsComponent,
+		CompanyCategoriesSettingsComponent
 	],
 	exports: [
 		LoginComponent,
@@ -55,7 +60,6 @@ import { CompanyNegotiationSettingsComponent } from './company-negotiation-setti
 		AddressSubForm,
         DeliveryTermsSubForm,
         PaymentMeansForm,
-        CompanySettingsComponent,
 		CompanyRegistrationComponent,
 		CompanyInvitationComponent
 	],

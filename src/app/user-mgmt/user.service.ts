@@ -214,7 +214,7 @@ export class UserService {
       });
     }
 
-    saveCert(file: File, name: string, type: string): Promise<any> {
+    saveCert(file: File, name: string, type: string): Promise<void> {
       const url = `${this.url}/company-settings/certificate?name=${name}&type=${type}`;
       const token = 'Bearer '+this.cookieService.get("bearer_token");
       const headers_token = new Headers({'Authorization': token});
@@ -223,7 +223,7 @@ export class UserService {
       return this.http
           .post(url, form_data, {headers: headers_token, withCredentials: true})
           .toPromise()
-          .then(response => response.json())
+          .then(() => {})
           .catch(this.handleError)
     }
 
@@ -232,14 +232,14 @@ export class UserService {
       window.open(url,"_blank");
     }
 
-    deleteCert(id: string): Promise<any> {
+    deleteCert(id: string): Promise<void> {
       const url = `${this.url}/company-settings/certificate/${id}`;
       const token = 'Bearer '+this.cookieService.get("bearer_token");
       const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
       return this.http
           .delete(url, {headers: headers_token, withCredentials: true})
           .toPromise()
-          .then(response => response.json())
+          .then(() => {})
           .catch(this.handleError)
     }
 

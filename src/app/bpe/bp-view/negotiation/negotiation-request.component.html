@@ -146,7 +146,12 @@
 <div class="row">
     <div class="col-12">
         <h4>Delivery Address</h4>
-        <address-input [address]="wrapper.rfqDeliveryAddress" [disabled]="isLoading() || isReadOnly()">
+        
+        <options-input label="Use Existing Address" [(selected)]="selectedAddress" [options]="addressOptions"
+            rowClass="mb-1" labelClass="col-2" valueClass="col-10">
+        </options-input>
+
+        <address-input [address]="wrapper.rfqDeliveryAddress" [disabled]="isLoading() || isReadOnly() || selectedAddressValue !== ''">
         </address-input>
     </div>
 </div>
