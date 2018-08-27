@@ -7,6 +7,7 @@ import { RegistrationComponent } from "./registration.component";
 import { CompanyRegistrationComponent } from "./company-registration.component";
 import { CompanyInvitationComponent } from "./company-invitation.component";
 import { CompanySettingsComponent } from "./company-settings/company-settings.component";
+import { CompanyDetailsComponent } from "./company-details.component";
 
 const routes: Routes = [
     { path: "login", component: LoginComponent },
@@ -14,7 +15,8 @@ const routes: Routes = [
     { path: "registration", component: RegistrationComponent },
     { path: "company-registration", component: CompanyRegistrationComponent },
     { path: "company-invitation", component: CompanyInvitationComponent },
-    { path: "company-settings", component: CompanySettingsComponent }
+    { path: "company-settings", component: CompanySettingsComponent },
+    { path: "company-details", component: CompanyDetailsComponent }
 ];
 
 @NgModule({
