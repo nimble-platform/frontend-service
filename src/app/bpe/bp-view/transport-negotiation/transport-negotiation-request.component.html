@@ -107,9 +107,14 @@
     <div class="col-2">
         <button class="btn btn-secondary action" [disabled]="isDisabled()" (click)="onBack()">Back</button>
     </div>
-    <div class="col-3">
+    <div class="col-3" *ngIf="!bpDataService.updatingProcess">
         <button class="btn btn-primary action" [disabled]="isDisabled()" (click)="onSendRequest()">
             Send Request
+        </button>
+    </div>
+    <div class="col-3" *ngIf="bpDataService.updatingProcess">
+        <button class="btn btn-primary action"  (click)="onUpdateRequest()">
+            Update Request
         </button>
     </div>
 </div>

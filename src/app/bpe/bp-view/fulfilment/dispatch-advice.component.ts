@@ -153,6 +153,22 @@ export class DispatchAdviceComponent implements OnInit {
             });
     }
 
+    onUpdateDispatchAdvice():void {
+        this.callStatus.submit();
+
+        let dispatchAdvice: DespatchAdvice = copy(this.bpDataService.despatchAdvice);
+        UBLModelUtils.removeHjidFieldsFromObject(dispatchAdvice);
+
+        this.bpeService.updateBusinessProcess(JSON.stringify(dispatchAdvice),"DESPATCHADVICE",this.bpDataService.processMetadata.processId)
+            .then(() => {
+                this.callStatus.callback("Dispatch Advice updated", true);
+                this.router.navigate(['dashboard']);
+            })
+            .catch(error => {
+                this.callStatus.error("Failed to update Dispatch Advice", error);
+            });
+    }
+
     /*
      * Getters & Setters
      */
@@ -162,6 +178,6 @@ export class DispatchAdviceComponent implements OnInit {
     }
 
     isReadOnly(): boolean {
-        return !!this.bpDataService.processMetadata;
+        return !!this.bpDataService.processMetadata && !this.bpDataService.updatingProcess;
     }
 }

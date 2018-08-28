@@ -181,8 +181,10 @@ export class UBLModelUtils {
         return ppapResponse;
     }
 
-    public static createRequestForQuotation(negotiationOptions: NegotiationOptions, 
-            settings: CompanyNegotiationSettings = new CompanyNegotiationSettings()): RequestForQuotation {
+    public static createRequestForQuotation(negotiationOptions: NegotiationOptions, settings: CompanyNegotiationSettings): RequestForQuotation {
+        if(settings == null){
+            settings = new CompanyNegotiationSettings();
+        }
         const quantity: Quantity = new Quantity(null, "", null);
         const item: Item = this.createItem();
         const price: Price = this.createPrice();
@@ -295,7 +297,7 @@ export class UBLModelUtils {
     }
 
     public static createRequestForQuotationWithIir(iir: ItemInformationResponse, fromAddress: Address, toAddress: Address, orderMetadata: any): RequestForQuotation {
-        const rfq: RequestForQuotation = this.createRequestForQuotation(new NegotiationOptions());
+        const rfq: RequestForQuotation = this.createRequestForQuotation(new NegotiationOptions(), null);
         rfq.requestForQuotationLine[0].lineItem.item = iir.item[0];
         if(iir.item[0].transportationServiceDetails != null) {
             rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.originAddress = fromAddress;

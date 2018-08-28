@@ -69,7 +69,7 @@ export class TransportExecutionPlanComponent implements OnInit {
     }
 
     isStarted(): boolean {
-        return this.bpDataService.processMetadata && this.bpDataService.processMetadata.processStatus === "Started";
+        return this.bpDataService.processMetadata && !this.bpDataService.updatingProcess && this.bpDataService.processMetadata.processStatus === "Started";
     }
 
     isFinished(): boolean {
@@ -121,6 +121,21 @@ export class TransportExecutionPlanComponent implements OnInit {
         .catch(error => {
             this.callStatus.error("Failed to send Transport Execution Plan", error);
         });
+    }
+
+    onUpdateRequest(): void {
+        this.callStatus.submit();
+        const transportationExecutionPlanRequest: TransportExecutionPlanRequest = copy(this.bpDataService.transportExecutionPlanRequest);
+        UBLModelUtils.removeHjidFieldsFromObject(transportationExecutionPlanRequest);
+
+        this.bpeService.updateBusinessProcess(JSON.stringify(transportationExecutionPlanRequest),"TRANSPORTEXECUTIONPLANREQUEST",this.bpDataService.processMetadata.processId)
+            .then(() => {
+                this.callStatus.callback("Item Information Request updated", true);
+                this.router.navigate(['dashboard']);
+            })
+            .catch(error => {
+                this.callStatus.error("Failed to update Item Information Request", error);
+            });
     }
 
     onSendResponse(accepted: boolean) {

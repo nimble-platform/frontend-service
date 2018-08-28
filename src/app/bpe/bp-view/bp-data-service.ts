@@ -76,6 +76,7 @@ export class BPDataService{
     processTypeObservable = this.processTypeSubject.asObservable();
     userRole: BpUserRole;
     processMetadata: ThreadEventMetadata;
+    updatingProcess: boolean = false;
     previousProcess: string;
     workflowOptions: BpWorkflowOptions;
 
@@ -131,10 +132,11 @@ export class BPDataService{
         }
     }
 
-    setBpOptionParametersWithProcessMetadata(userRole: BpUserRole, targetProcess: ProcessType, processMetadata: ThreadEventMetadata): void {
+    setBpOptionParametersWithProcessMetadata(userRole: BpUserRole, targetProcess: ProcessType, processMetadata: ThreadEventMetadata,updatingProcess: boolean): void {
         this.resetBpData();
         this.setBpOptionParameters(userRole, targetProcess, null);
         this.processMetadata = processMetadata;
+        this.updatingProcess = updatingProcess;
         this.setBpMessages(this.processTypeSubject.getValue(), processMetadata);
     }
 
@@ -322,16 +324,19 @@ export class BPDataService{
         const rfq = this.requestForQuotation;
         if(!rfq.negotiationOptions) {
             rfq.negotiationOptions = new NegotiationOptions();
-            
-            const line = this.catalogueLines[0];
-            const wrapper = new NegotiationModelWrapper(line, rfq, null, null);
 
-            rfq.negotiationOptions.deliveryPeriod = wrapper.lineDeliveryPeriodString !== wrapper.rfqDeliveryPeriodString;
-            rfq.negotiationOptions.incoterms = wrapper.lineIncoterms !== wrapper.rfqIncoterms;
-            rfq.negotiationOptions.paymentMeans = wrapper.linePaymentMeans !== wrapper.rfqPaymentMeans;
-            rfq.negotiationOptions.paymentTerms = wrapper.linePaymentTerms !== wrapper.rfqPaymentTermsToString;
-            rfq.negotiationOptions.price = wrapper.lineTotalPriceString !== wrapper.rfqTotalPriceString;
-            rfq.negotiationOptions.warranty = wrapper.lineWarrantyString !== wrapper.rfqWarrantyString;
+            this.userService.getCompanyNegotiationSettingsForParty(rfq.sellerSupplierParty.party.id).then(res => {
+                let settings: CompanyNegotiationSettings= res as CompanyNegotiationSettings;
+                const line = this.catalogueLines[0];
+                const wrapper = new NegotiationModelWrapper(line, rfq, null, settings);
+
+                rfq.negotiationOptions.deliveryPeriod = wrapper.lineDeliveryPeriodString !== wrapper.rfqDeliveryPeriodString;
+                rfq.negotiationOptions.incoterms = wrapper.lineIncoterms !== wrapper.rfqIncoterms;
+                rfq.negotiationOptions.paymentMeans = wrapper.linePaymentMeans !== wrapper.rfqPaymentMeans;
+                rfq.negotiationOptions.paymentTerms = wrapper.linePaymentTerms !== wrapper.rfqPaymentTermsToString;
+                rfq.negotiationOptions.price = wrapper.lineTotalPriceString !== wrapper.rfqTotalPriceString;
+                rfq.negotiationOptions.warranty = wrapper.lineWarrantyString !== wrapper.rfqWarrantyString;
+            });
         }
     }
 
@@ -386,7 +391,7 @@ export class BPDataService{
         const copyRfq = copy(this.requestForQuotation);
         this.resetBpData();
         this.modifiedCatalogueLines = copy(this.catalogueLines);
-        this.requestForQuotation = UBLModelUtils.createRequestForQuotation(new NegotiationOptions());
+        this.requestForQuotation = UBLModelUtils.createRequestForQuotation(new NegotiationOptions(),null);
         this.requestForQuotation.requestForQuotationLine[0].lineItem = copyQuotation.quotationLine[0].lineItem;
         this.requestForQuotation.paymentMeans = copyQuotation.paymentMeans;
         this.requestForQuotation.paymentTerms = copyQuotation.paymentTerms;
@@ -398,7 +403,7 @@ export class BPDataService{
         let copyOrder:Order = copy(this.order);
         this.resetBpData();
         this.modifiedCatalogueLines = copy(this.catalogueLines);
-        this.requestForQuotation = UBLModelUtils.createRequestForQuotation(new NegotiationOptions());
+        this.requestForQuotation = UBLModelUtils.createRequestForQuotation(new NegotiationOptions(),null);
         this.requestForQuotation.requestForQuotationLine[0].lineItem = copyOrder.orderLine[0].lineItem;
         this.requestForQuotation.paymentTerms = copyOrder.paymentTerms;
         this.requestForQuotation.paymentMeans = copyOrder.paymentMeans;
@@ -475,6 +480,7 @@ export class BPDataService{
             this.setProcessType(null);
             this.previousProcess = null;
         }
+        this.updatingProcess = false;
         this.processMetadata = null;
         this.modifiedCatalogueLines = null;
         this.requestForQuotation = null;

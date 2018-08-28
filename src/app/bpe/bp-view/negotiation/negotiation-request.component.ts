@@ -116,6 +116,21 @@ export class NegotiationRequestComponent implements OnInit {
         }
     }
 
+    onUpdateRequest(): void {
+        this.callStatus.submit();
+        const rfq: RequestForQuotation = copy(this.rfq);
+        UBLModelUtils.removeHjidFieldsFromObject(rfq);
+
+        this.bpeService.updateBusinessProcess(JSON.stringify(rfq),"REQUESTFORQUOTATION",this.bpDataService.processMetadata.processId)
+            .then(() => {
+                this.callStatus.callback("Terms updated", true);
+                this.router.navigate(['dashboard']);
+            })
+            .catch(error => {
+                this.callStatus.error("Failed to update Terms", error);
+            });
+    }
+
     onBack(): void {
         this.location.back();
     }
@@ -204,7 +219,7 @@ export class NegotiationRequestComponent implements OnInit {
     }
 
     isReadOnly(): boolean {
-        return !!this.bpDataService.processMetadata;
+        return !!this.bpDataService.processMetadata && !this.bpDataService.updatingProcess;
     }
 
     isFormValid(): boolean {
@@ -212,7 +227,7 @@ export class NegotiationRequestComponent implements OnInit {
     }
 
     isWaitingForReply(): boolean {
-        return this.bpDataService.processMetadata && this.bpDataService.processMetadata.processStatus === "Started";
+        return this.bpDataService.processMetadata && !this.bpDataService.updatingProcess && this.bpDataService.processMetadata.processStatus === "Started";
     }
 
     isPriceValid(): boolean {

@@ -96,7 +96,7 @@ export class PpapDocumentSelectComponent implements OnInit {
     }
 
     isRequestSent(): boolean {
-        return !!this.bpDataService.processMetadata;
+        return !!this.bpDataService.processMetadata && !this.bpDataService.updatingProcess;
     }
 
     isLoading(): boolean {
@@ -186,6 +186,25 @@ export class PpapDocumentSelectComponent implements OnInit {
         .catch(error => {
             this.callStatus.error("Failed to send Ppap request", error);
         });
+    }
+
+    onUpdateRequest(): void {
+        this.callStatus.submit();
+
+        const ppap: Ppap = copy(this.bpDataService.ppap);
+
+        ppap.note = this.note;
+        ppap.documentType = this.DOCUMENTS.filter((_, i) => this.selectedDocuments[i]).map(doc => doc.name);
+        UBLModelUtils.removeHjidFieldsFromObject(this.ppap);
+
+        this.bpeService.updateBusinessProcess(JSON.stringify(ppap),"PPAPREQUEST",this.bpDataService.processMetadata.processId)
+            .then(() => {
+                this.callStatus.callback("Ppap request updated", true);
+                this.router.navigate(['dashboard']);
+            })
+            .catch(error => {
+                this.callStatus.error("Failed to update Ppap request", error);
+            });
     }
 
     private resetSelectedDocumens() {

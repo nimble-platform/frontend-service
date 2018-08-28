@@ -113,8 +113,11 @@
         <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">Back</button>
     </div>
     <div class="col-3">
-        <button class="btn btn-primary action" [disabled]="isLoading()" (click)="onSendRequest()">
+        <button *ngIf="!bpDataService.updatingProcess" class="btn btn-primary action" [disabled]="isLoading()" (click)="onSendRequest()">
             Send Execution Plan Terms
+        </button>
+        <button *ngIf="bpDataService.updatingProcess"class="btn btn-primary action" [disabled]="isLoading()" (click)="onUpdateRequest()">
+            Update Execution Plan Terms
         </button>
     </div>
 </div>

@@ -21,7 +21,7 @@
 
     <!-- Product Details Panel -->
     <product-details-tabs *ngIf="productExpanded" [wrapper]="wrapper" [showOverview]="true" 
-        [settings]="settings" [options]="options" [readonly]="true">
+        [settings]="settings" [options]="options" [readonly]="isReadOnly()">
     </product-details-tabs>
 
     <!-- BP Steps -->

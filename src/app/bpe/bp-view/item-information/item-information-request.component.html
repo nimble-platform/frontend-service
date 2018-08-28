@@ -33,13 +33,16 @@
         <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
     </div>
     <div class="col-2">
-        <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onSkip()">
+        <button *ngIf="!bpDataService.updatingProcess" class="btn btn-secondary action" [disabled]="isLoading()" (click)="onSkip()">
             Skip
         </button>
     </div>
     <div class="col-2">
-        <button class="btn btn-primary action" [disabled]="isLoading()" (click)="onSendRequest()">
+        <button *ngIf="!bpDataService.updatingProcess" class="btn btn-primary action" [disabled]="isLoading()" (click)="onSendRequest()">
             Send Request
+        </button>
+        <button *ngIf="bpDataService.updatingProcess" class="btn btn-primary action" [disabled]="isLoading()" (click)="onUpdateRequest()">
+            Update Request
         </button>
     </div>
 </div>

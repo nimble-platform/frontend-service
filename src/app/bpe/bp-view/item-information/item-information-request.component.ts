@@ -53,7 +53,7 @@ export class ItemInformationRequestComponent implements OnInit {
     }
 
     isRequestSent() {
-        return !!this.bpDataService.processMetadata;
+        return !!this.bpDataService.processMetadata && !this.bpDataService.updatingProcess;
     }
 
     getPresentationMode(): PresentationMode {
@@ -107,6 +107,21 @@ export class ItemInformationRequestComponent implements OnInit {
         .catch(error => {
             this.callStatus.error("Failed to send Item Information Request", error);
         });
+    }
+
+    onUpdateRequest(): void {
+        this.callStatus.submit();
+        const itemInformationRequest: ItemInformationRequest = copy(this.bpDataService.itemInformationRequest);
+        UBLModelUtils.removeHjidFieldsFromObject(itemInformationRequest);
+
+        this.bpeService.updateBusinessProcess(JSON.stringify(itemInformationRequest),"ITEMINFORMATIONREQUEST",this.bpDataService.processMetadata.processId)
+            .then(() => {
+                this.callStatus.callback("Item Information Request updated", true);
+                this.router.navigate(['dashboard']);
+            })
+            .catch(error => {
+                this.callStatus.error("Failed to update Item Information Request", error);
+            });
     }
 
     onSelectItemSpecificationFile(binaryObject: BinaryObject): void {

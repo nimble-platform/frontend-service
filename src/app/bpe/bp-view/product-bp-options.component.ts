@@ -212,4 +212,8 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
             && this.bpDataService.processMetadata.processStatus === "Completed";
     }
 
+    isReadOnly(): boolean {
+        return !this.bpDataService.updatingProcess || this.bpDataService.getProcessType() == 'Fulfilment' || this.bpDataService.getProcessType() == 'Transport_Execution_Plan';
+    }
+
 }

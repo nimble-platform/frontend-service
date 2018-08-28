@@ -26,9 +26,9 @@ export class ThreadEventComponent implements OnInit {
 
     }
 
-    openBpProcessView() {
+    openBpProcessView(updateProcess:boolean) {
         let role = ActivityVariableParser.getUserRole(this.event.activityVariables,this.processInstanceGroup.partyID);
-        this.bpDataService.setBpOptionParametersWithProcessMetadata(role, this.event.processType, this.event);
+        this.bpDataService.setBpOptionParametersWithProcessMetadata(role, this.event.processType, this.event, updateProcess);
         this.bpDataService.setRelatedGroupId(this.processInstanceGroup.id);
         this.router.navigate(['bpe/bpe-exec'], {
             queryParams: {

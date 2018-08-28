@@ -191,6 +191,21 @@ export class OrderComponent implements OnInit {
             });
     }
 
+    onOrderUpdate() {
+        this.submitCallStatus.submit();
+        const order = copy(this.bpDataService.order);
+        UBLModelUtils.removeHjidFieldsFromObject(order);
+
+        this.bpeService.updateBusinessProcess(JSON.stringify(this.order),"ORDER",this.bpDataService.processMetadata.processId)
+            .then(() => {
+                this.submitCallStatus.callback("Order updated", true);
+                this.router.navigate(['dashboard']);
+            })
+            .catch(error => {
+                this.submitCallStatus.error("Failed to update Order", error);
+            });
+    }
+
     onRespondToOrder(accepted: boolean): void {
         this.bpDataService.orderResponse.acceptedIndicator = accepted;
 
@@ -334,7 +349,7 @@ export class OrderComponent implements OnInit {
 
     isReadOnly(): boolean {
         if(this.userRole === "buyer") {
-            return !!this.bpDataService.processMetadata;
+            return !!this.bpDataService.processMetadata && !this.bpDataService.updatingProcess;
         }
         return this.isOrderCompleted();
     }

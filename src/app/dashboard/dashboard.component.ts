@@ -295,7 +295,7 @@ export class DashboardComponent implements OnInit {
         if(targetProcess == null) {
             targetProcess = ActivityVariableParser.getProcessType(processMetadata.activityVariables);
         }
-        this.bpDataService.setBpOptionParametersWithProcessMetadata(role, targetProcess, processMetadata);
+        this.bpDataService.setBpOptionParametersWithProcessMetadata(role, targetProcess, processMetadata,false);
         this.router.navigate(['bpe/bpe-exec'], {
             queryParams: {
                 catalogueId: processMetadata.product.catalogueDocumentReference.id,

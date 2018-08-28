@@ -56,7 +56,7 @@ export class TransportNegotiationRequestComponent implements OnInit {
     }
 
     isWaitingForReply(): boolean {
-        return !!this.bpDataService.processMetadata;
+        return !!this.bpDataService.processMetadata && !this.bpDataService.updatingProcess;
     }
 
     onSelectTab(event: any): void {
@@ -73,18 +73,24 @@ export class TransportNegotiationRequestComponent implements OnInit {
         this.callStatus.submit();
         let rfq: RequestForQuotation = copy(this.bpDataService.requestForQuotation);
 
+        let sellerId: string;
+
         // final check on the rfq
         if(this.bpDataService.modifiedCatalogueLines) {
             // still needed when initializing RFQ with BpDataService.initRfqWithIir() or BpDataService.initRfqWithQuotation()
             // but this is a hack, the methods above should be fixed.
             rfq.requestForQuotationLine[0].lineItem.item = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;
+
+            sellerId = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item.manufacturerParty.id;
+        }
+        else {
+            sellerId = this.bpDataService.requestForQuotation.requestForQuotationLine[0].lineItem.item.manufacturerParty.id;
         }
 
         UBLModelUtils.removeHjidFieldsFromObject(rfq);
 
         //first initialize the seller and buyer parties.
         //once they are fetched continue with starting the ordering process
-        const sellerId: string = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item.manufacturerParty.id;
         const buyerId: string = this.cookieService.get("company_id");
 
         Promise.all([
@@ -107,5 +113,27 @@ export class TransportNegotiationRequestComponent implements OnInit {
         .catch(error => {
             this.callStatus.error("Failed to send Terms", error);
         });
+    }
+
+    onUpdateRequest(): void {
+        this.callStatus.submit();
+        let rfq: RequestForQuotation = copy(this.bpDataService.requestForQuotation);
+        // final check on the rfq
+        if(this.bpDataService.modifiedCatalogueLines) {
+            // still needed when initializing RFQ with BpDataService.initRfqWithIir() or BpDataService.initRfqWithQuotation()
+            // but this is a hack, the methods above should be fixed.
+            rfq.requestForQuotationLine[0].lineItem.item = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;
+        }
+
+        UBLModelUtils.removeHjidFieldsFromObject(rfq);
+
+        this.bpeService.updateBusinessProcess(JSON.stringify(rfq),"REQUESTFORQUOTATION",this.bpDataService.processMetadata.processId)
+            .then(() => {
+                this.callStatus.callback("Terms updated", true);
+                this.router.navigate(['dashboard']);
+            })
+            .catch(error => {
+                this.callStatus.error("Failed to update Terms", error);
+            });
     }
 }

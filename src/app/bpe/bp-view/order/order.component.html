@@ -204,8 +204,11 @@
             </button>
         </div>
         <div class="col-2">
-            <button class="btn btn-primary action" [disabled]="isLoading()" (click)="onOrder()">
+            <button *ngIf="!bpDataService.updatingProcess" class="btn btn-primary action" [disabled]="isLoading()" (click)="onOrder()">
                 Order
+            </button>
+            <button *ngIf="bpDataService.updatingProcess" class="btn btn-primary action" [disabled]="isLoading()" (click)="onOrderUpdate()">
+                Update Order
             </button>
         </div>
     </div>

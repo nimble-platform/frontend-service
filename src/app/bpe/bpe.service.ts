@@ -90,6 +90,15 @@ export class BPEService {
 		.catch(this.handleError);
 	}
 
+	updateBusinessProcess(content: string, processID: string, processInstanceID: string): Promise<any> {
+        const url = `${this.url}/processInstance?processID=${processID}&processInstanceID=${processInstanceID}`;
+        return this.http
+            .put(url, content,{headers: this.headers})
+            .toPromise()
+            .then(res => res.text())
+            .catch(this.handleError);
+	}
+
 	getProcessDetails(id: string): Promise<any> {
 		const url = `${this.url}/rest/engine/default/variable-instance?processInstanceIdIn=${id}`;
 		return this.http
