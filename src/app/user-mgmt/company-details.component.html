@@ -1,0 +1,40 @@
+<div class="row">
+    <div class="col-12">
+        <p class="nimble-title">Company Details</p>
+    </div>
+</div>
+
+<div *ngIf="details" class="row">
+  <div class="col-6">
+    <h4><p>Company Data</p></h4>
+    <text-input presentationMode="view" label="Legal Name"
+        [text]="details.name" labelClass="col-4" valueClass="col-8">
+    </text-input>
+    <text-input presentationMode="view" label="VAT Number"
+        [text]="details.vatNumber" labelClass="col-4" valueClass="col-8">
+    </text-input>
+    <text-input presentationMode="view" label="Website"
+        [text]="details.website" labelClass="col-4" valueClass="col-8">
+    </text-input>
+  </div>
+  <div class="col-6">
+    <h4><p>Address</p></h4>
+    <text-input presentationMode="view" label="Street"
+        [text]="details.address.streetName" labelClass="col-4" valueClass="col-8">
+    </text-input>
+    <text-input presentationMode="view" label="Building Number"
+        [text]="details.address.buildingNumber" labelClass="col-4" valueClass="col-8">
+    </text-input>
+    <text-input presentationMode="view" label="City"
+        [text]="details.address.cityName" labelClass="col-4" valueClass="col-8">
+    </text-input>
+    <text-input presentationMode="view" label="Postal Code"
+        [text]="details.address.postalCode" labelClass="col-4" valueClass="col-8">
+    </text-input>
+    <text-input presentationMode="view" label="Country"
+        [text]="details.address.country" labelClass="col-4" valueClass="col-8">
+    </text-input>
+  </div>
+</div>
+
+<call-status [callStatus]="initCallStatus" [large]="true"></call-status>

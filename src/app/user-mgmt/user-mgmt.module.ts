@@ -22,6 +22,7 @@ import { CompanyCertificatesSettingsComponent } from './company-settings/company
 import { CompanyDataSettingsComponent } from './company-settings/company-data-settings.component';
 import { CompanyDeliveryTermsComponent } from './company-settings/company-delivery-terms.component';
 import { CompanyCategoriesSettingsComponent } from './company-settings/company-categories-settings.component';
+import { CompanyDetailsComponent } from './company-details.component';
 
 @NgModule({
 	imports: [
@@ -49,7 +50,8 @@ import { CompanyCategoriesSettingsComponent } from './company-settings/company-c
 		CompanyCertificatesSettingsComponent,
 		CompanyDataSettingsComponent,
 		CompanyDeliveryTermsComponent,
-		CompanyCategoriesSettingsComponent
+		CompanyCategoriesSettingsComponent,
+		CompanyDetailsComponent
 	],
 	exports: [
 		LoginComponent,
@@ -61,7 +63,8 @@ import { CompanyCategoriesSettingsComponent } from './company-settings/company-c
         DeliveryTermsSubForm,
         PaymentMeansForm,
 		CompanyRegistrationComponent,
-		CompanyInvitationComponent
+		CompanyInvitationComponent,
+		CompanyDetailsComponent
 	],
 	providers: [
 	]
