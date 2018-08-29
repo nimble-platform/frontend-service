@@ -6,7 +6,7 @@
                 Order for:
             </h2> 
             <h2>{{ line.goodsItem.item.name }}
-                <button class="btn btn-outline-dark inline ml-2" (click)="productExpanded = !productExpanded">
+                <button class="btn btn-outline-dark inline ml-2" (click)="onToggleProductExpanded()">
                     <i class="fas fa-chevron-up fa-fw inline" aria-hidden="true" *ngIf="productExpanded"></i>
                     <i class="fas fa-chevron-down fa-fw inline" aria-hidden="true" *ngIf="!productExpanded"></i>
                     <span class="inline" *ngIf="!productExpanded"><small>Show Details</small></span>
@@ -14,14 +14,30 @@
                 </button>
             </h2>
         </div>
-        <div class="col-6">
+        <div *ngIf="serviceLine" class="col-6">
             <!-- Transport Service Title -->
+            <h2 class="nimble-title">
+                Transport service:
+            </h2> 
+            <h2>{{ serviceLine.goodsItem.item.name }}
+                <button class="btn btn-outline-dark inline ml-2" (click)="onToggleServiceExpanded()">
+                    <i class="fas fa-chevron-up fa-fw inline" aria-hidden="true" *ngIf="serviceExpanded"></i>
+                    <i class="fas fa-chevron-down fa-fw inline" aria-hidden="true" *ngIf="!serviceExpanded"></i>
+                    <span class="inline" *ngIf="!serviceExpanded"><small>Show Details</small></span>
+                    <span class="inline" *ngIf="serviceExpanded"><small>Hide Details</small></span>
+                </button>
+            </h2>
         </div>            
     </div>
 
     <!-- Product Details Panel -->
     <product-details-tabs *ngIf="productExpanded" [wrapper]="wrapper" [showOverview]="true" 
-        [settings]="settings" [options]="options" [readonly]="isReadOnly()">
+        [settings]="settings" [options]="options" [readonly]="true">
+    </product-details-tabs>
+
+    <!-- Service Details Panel -->
+    <product-details-tabs *ngIf="serviceExpanded" [wrapper]="serviceWrapper" [showOverview]="true" 
+        [settings]="settings" [options]="options" [readonly]="true">
     </product-details-tabs>
 
     <!-- BP Steps -->
