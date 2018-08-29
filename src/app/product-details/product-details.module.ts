@@ -10,6 +10,7 @@ import { ProductDetailsTabsComponent } from "./product-details-tabs.component";
 import { ProductDetailsOverviewComponent } from "./product-details-overview.component";
 import { TransportationServiceInput } from "./transportation-service-input.component";
 import { ProductDetailsCertificatesComponent } from "./product-details-certificates.component";
+import { UserMgmtModule } from "../user-mgmt/user-mgmt.module";
 
 @NgModule({
 	imports: [
@@ -18,7 +19,8 @@ import { ProductDetailsCertificatesComponent } from "./product-details-certifica
 		FormsModule,
 		HttpModule,
         ReactiveFormsModule,
-        ProductDetailsRoutingModule,
+		ProductDetailsRoutingModule,
+		UserMgmtModule,
 		NgbModule.forRoot()
 	],
 	declarations: [

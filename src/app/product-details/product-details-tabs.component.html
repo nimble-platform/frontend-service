@@ -39,6 +39,13 @@
                     Certificates
                 </a>
             </li>
+            <li class="nav-item">
+                <a href id="COMPANY" class="nav-link"
+                    [ngClass]="{ active: selectedTab === 'COMPANY'}"
+                    (click)="onSelectTab($event)">
+                    Company Details
+                </a>
+            </li>
         </ul>
     </div>
 
@@ -105,8 +112,15 @@
         </div>
     </div>
 
+    <!-- Certificates Tab -->
     <div *ngIf="selectedTab === 'CERTIFICATES'" class="p-3 col-12">
         <product-details-certificates [wrapper]="wrapper" [settings]="settings">
         </product-details-certificates>
+    </div>
+
+    <!-- Company Details Tab -->
+    <div *ngIf="selectedTab === 'COMPANY'" class="p-3 col-12">
+        <company-details [details]="settings" [hideTitle]="true">
+        </company-details>
     </div>
 </div>

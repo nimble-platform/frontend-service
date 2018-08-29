@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, Input } from "@angular/core";
 import { UserService } from "./user.service";
 import { ActivatedRoute} from "@angular/router";
 import { CookieService } from "ng2-cookies";
@@ -12,7 +12,8 @@ import { CompanySettings } from "./model/company-settings";
 })
 export class CompanyDetailsComponent implements OnInit {
 
-    details: CompanySettings;
+	@Input() details: CompanySettings = null;
+	@Input() hideTitle: boolean = false;
     initCallStatus: CallStatus = new CallStatus();
 
     constructor(private cookieService: CookieService,
@@ -21,23 +22,24 @@ export class CompanyDetailsComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.initCallStatus.submit();
-    		this.route.queryParams.subscribe(params => {
-    			let id = params['id'];
-    			if (id) {
-    				this.userService.getSettingsForParty(id).then(details => {
-    					if (myGlobals.debug) {
-    						console.log("Fetched details: " + JSON.stringify(details));
-    					}
-    					this.details = details;
-    					this.initCallStatus.callback("Details successfully fetched", true);
-    				})
-    				.catch(error => {
-              this.details = null;
-    					this.initCallStatus.error("Error while fetching company details", error);
-    				});
-    			}
-    		});
+		if(!this.details) {
+			this.initCallStatus.submit();
+			this.route.queryParams.subscribe(params => {
+				const id = params['id'];
+				if (id) {
+					this.userService.getSettingsForParty(id).then(details => {
+						if (myGlobals.debug) {
+							console.log("Fetched details: " + JSON.stringify(details));
+						}
+						this.details = details;
+						this.initCallStatus.callback("Details successfully fetched", true);
+					})
+					.catch(error => {
+						this.initCallStatus.error("Error while fetching company details", error);
+					});
+				}
+			});
+		}
     }
 
 }
