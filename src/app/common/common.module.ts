@@ -8,7 +8,7 @@ import { CallStatusComponent } from "./call-status.component";
 import { TextInputComponent } from './text-input.component';
 import { OptionsInputComponent } from './options-input.component';
 import { QuantityInputComponent } from './quantity-input.component';
-import { AmountInputComponent } from './amount-input.component';
+import { PlainAmountInputComponent } from './plain-amount-input.component';
 import { FileInputComponent } from './file-input.component';
 import { DateInputComponent } from './date-input.component';
 import { AddressInputComponent } from './address-input.component';
@@ -29,7 +29,7 @@ import { InputLabelComponent } from './input-label.component';
 		TextInputComponent,
 		OptionsInputComponent,
 		QuantityInputComponent,
-		AmountInputComponent,
+		PlainAmountInputComponent,
 		FileInputComponent,
 		DateInputComponent,
 		AddressInputComponent,
@@ -42,7 +42,7 @@ import { InputLabelComponent } from './input-label.component';
 		TextInputComponent,
 		OptionsInputComponent,
 		QuantityInputComponent,
-		AmountInputComponent,
+		PlainAmountInputComponent,
 		FileInputComponent,
 		DateInputComponent,
 		AddressInputComponent,

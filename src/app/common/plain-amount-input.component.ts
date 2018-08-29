@@ -1,11 +1,11 @@
 import { Component, EventEmitter, OnInit, Input, Output } from "@angular/core";
 
 @Component({
-    selector: "amount-input",
-    templateUrl: "./amount-input.component.html",
-    styleUrls: ["./amount-input.component.css"],
+    selector: "plain-amount-input",
+    templateUrl: "./plain-amount-input.component.html",
+    styleUrls: ["./plain-amount-input.component.css"],
 })
-export class AmountInputComponent implements OnInit {
+export class PlainAmountInputComponent implements OnInit {
 
     @Input() visible: boolean = true;
     @Input() disabled: boolean = false;

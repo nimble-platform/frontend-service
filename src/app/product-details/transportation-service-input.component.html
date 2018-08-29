@@ -62,11 +62,11 @@
             [(text)]="catalogueLine.goodsItem.item.transportationServiceDetails.shipmentStage[0].transportMeans.transportEquipment[0].transportEquipmentTypeCode.name"
             [rows]="1" [rowClass]="spacingClass" [valueTextClass]="valueTextClass">
 </text-input>
-<amount-input [label]="'Equipment Humidity Percent'" [presentationMode]="presentationMode"
-            [definition]="'The percent humidity within this piece of transport equipment'"
-            [(amount)]="catalogueLine.goodsItem.item.transportationServiceDetails.shipmentStage[0].transportMeans.transportEquipment[0].humidityPercent"
-            [rowClass]="spacingClass" [valueTextClass]="valueTextClass">
-</amount-input>
+<plain-amount-input [label]="'Equipment Humidity Percent'" [presentationMode]="presentationMode"
+                    [definition]="'The percent humidity within this piece of transport equipment'"
+                    [(amount)]="catalogueLine.goodsItem.item.transportationServiceDetails.shipmentStage[0].transportMeans.transportEquipment[0].humidityPercent"
+                    [rowClass]="spacingClass" [valueTextClass]="valueTextClass">
+</plain-amount-input>
 <boolean-input [label]="'Refrigerator Indicator'" [presentationMode]="presentationMode"
               [definition]="'An indicator that this piece of transport equipment is refrigerated (true) or not (false)'"
               [(value)]="catalogueLine.goodsItem.item.transportationServiceDetails.shipmentStage[0].transportMeans.transportEquipment[0].refrigeratedIndicator"
