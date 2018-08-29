@@ -201,6 +201,10 @@ export class UserService {
       return this.getSettingsForUser(userId).then(settings => settings.preferredProductCategories);
     }
 
+    getRecCat(userId: string): Promise<any> {
+      return this.getSettingsForUser(userId).then(settings => settings.recentlyUsedProductCategories);
+    }
+
     togglePrefCat(userId: string, cat: string): Promise<any> {
       return this.getSettingsForUser(userId).then(settings => {
         var pref_cat = settings.preferredProductCategories;
@@ -211,6 +215,35 @@ export class UserService {
           pref_cat.splice(cat_idx,1);
         settings.preferredProductCategories = pref_cat;
         return this.putSettings(settings,userId).then(response => response.preferredProductCategories)
+      });
+    }
+
+    addRecCat(userId: string, cat: string[]): Promise<any> {
+      return this.getSettingsForUser(userId).then(settings => {
+        var rec_cat = settings.recentlyUsedProductCategories;
+        for (var i=0; i<cat.length; i++) {
+          var cat_idx = rec_cat.indexOf(cat[i]);
+          if (cat_idx == -1)
+            rec_cat.push(cat[i]);
+        }
+        if (rec_cat.length>10) {
+          rec_cat.sort((a, b) => b.split("::")[2].localeCompare(a.split("::")[2]));
+          rec_cat.sort((a, b) => a.split("::")[4].localeCompare(b.split("::")[4]));
+          rec_cat.splice(0,rec_cat.length-10);
+        }
+        settings.recentlyUsedProductCategories = rec_cat;
+        return this.putSettings(settings,userId).then(response => response.recentlyUsedProductCategories)
+      });
+    }
+
+    removeRecCat(userId: string, cat: string): Promise<any> {
+      return this.getSettingsForUser(userId).then(settings => {
+        var rec_cat = settings.recentlyUsedProductCategories;
+        var cat_idx = rec_cat.indexOf(cat);
+        if (cat_idx != -1)
+          rec_cat.splice(cat_idx,1);
+        settings.recentlyUsedProductCategories = rec_cat;
+        return this.putSettings(settings,userId).then(response => response.recentlyUsedProductCategories)
       });
     }
 

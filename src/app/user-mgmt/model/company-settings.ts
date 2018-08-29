@@ -14,6 +14,7 @@ export class CompanySettings {
             public deliveryTerms: DeliveryTerms[],
             public certificates: Certificate[],
             public preferredProductCategories: string[],
+            public recentlyUsedProductCategories: string[],
             public negotiationSettings: CompanyNegotiationSettings,
     ) {  }
 }
