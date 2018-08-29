@@ -86,13 +86,13 @@
         <input-label *ngIf="i === 0" label="Shortest" definition="The shortest possible delivery period that may be requested by a customer"></input-label>
     </div>
     <div class="col-4">
-        <amount-input [(amount)]="negotiationSettings.deliveryPeriodRanges[i].start" [amountUnit]="unit" [presentationMode]="presentationMode"></amount-input>
+        <plain-amount-input [(amount)]="negotiationSettings.deliveryPeriodRanges[i].start" [amountUnit]="unit" [presentationMode]="presentationMode"></plain-amount-input>
     </div>
     <div class="col-2">
         <input-label *ngIf="i === 0" label="Longest" definition="The longest possible delivery period that may be requested by a customer"></input-label>
     </div>
     <div class="col-4">
-        <amount-input [(amount)]="negotiationSettings.deliveryPeriodRanges[i].end" [amountUnit]="unit" [presentationMode]="presentationMode"></amount-input>
+        <plain-amount-input [(amount)]="negotiationSettings.deliveryPeriodRanges[i].end" [amountUnit]="unit" [presentationMode]="presentationMode"></plain-amount-input>
     </div>
 </div>
 
@@ -110,13 +110,13 @@
         <input-label *ngIf="i === 0" label="Shortest" definition="The shortest possible warranty period that may be requested by a customer"></input-label>
     </div>
     <div class="col-4">
-        <amount-input [(amount)]="negotiationSettings.warrantyPeriodRanges[i].start" [amountUnit]="unit" [presentationMode]="presentationMode"></amount-input>
+        <plain-amount-input [(amount)]="negotiationSettings.warrantyPeriodRanges[i].start" [amountUnit]="unit" [presentationMode]="presentationMode"></plain-amount-input>
     </div>
     <div class="col-2">
         <input-label *ngIf="i === 0" label="Longest" definition="The longest possible warranty period that may be requested by a customer"></input-label>
     </div>
     <div class="col-4">
-        <amount-input [(amount)]="negotiationSettings.warrantyPeriodRanges[i].end" [amountUnit]="unit" [presentationMode]="presentationMode"></amount-input>
+        <plain-amount-input [(amount)]="negotiationSettings.warrantyPeriodRanges[i].end" [amountUnit]="unit" [presentationMode]="presentationMode"></plain-amount-input>
     </div>
 </div>
 
