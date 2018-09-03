@@ -66,3 +66,19 @@ export const PPAP_CERTIFICATES = [
     "Records of Material / Performance Tests",
     "Sample Production Parts"
 ];
+
+export const PRICE_OPTIONS = {
+    ORDERED_QUANTITY: 'Ordered Quantity',
+    PRODUCT_PROPERTY: 'Product Property',
+    DELIVERY_PERIOD: 'Delivery Period',
+    INCOTERM: 'Incoterm',
+    PAYMENT_MEAN: 'Payment Mean',
+    DELIVERY_LOCATION: 'Delivery Location'
+};
+
+export const DISCOUNT_TARGETS = {
+    TOTAL_PRICE: 'Total Price',
+    PER_ITEM: 'Per Item'
+};
+
+export const DISCOUNT_UNITS = CURRENCIES.concat(['%']);

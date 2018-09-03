@@ -1,15 +1,15 @@
 <!-- Price -->
 <div class="row">
     <div class="col-3">
-        <strong>Price: </strong>
+        <strong>Default Price: </strong>
     </div>
     <div class="col-3">
         <input type="number" class="form-control form-control-sm"
-            [(ngModel)]="catalogueLine.requiredItemLocationQuantity.price.priceAmount.value">
+               [(ngModel)]="catalogueLine.requiredItemLocationQuantity.price.priceAmount.value">
     </div>
     <div class="col-1">
         <select class="form-control form-control-sm"
-            [(ngModel)]="catalogueLine.requiredItemLocationQuantity.price.priceAmount.currencyID">
+                [(ngModel)]="catalogueLine.requiredItemLocationQuantity.price.priceAmount.currencyID">
             <option *ngFor="let currency of CURRENCIES" [value]="currency">
                 {{ currency }}
             </option>
@@ -17,8 +17,8 @@
     </div>
     <div class="col-5">
         <quantity-input label="per" labelClass="col-1" valueClass="col-11"
-            [quantity]="catalogueLine.requiredItemLocationQuantity.price.baseQuantity">
-        </quantity-input>            
+                        [quantity]="catalogueLine.requiredItemLocationQuantity.price.baseQuantity">
+        </quantity-input>
     </div>
 </div>
 
@@ -31,3 +31,66 @@
         <input type="checkbox" [(ngModel)]="catalogueLine.freeOfChargeIndicator">
     </div>
 </div>
+
+<hr>
+
+<!-- add price option -->
+<div class="row">
+    <div class="col-3">
+        <label>Add discount/charge on</label>
+    </div>
+    <div class="col-2">
+        <select class="form-control">
+            <option *ngFor="let option of object.keys(priceOptions)" [value]="option">{{priceOptions[option]}}</option>
+        </select>
+    </div>
+    <button class="btn btn-primary" (click)="addPriceOption(priceOptions.ORDERED_QUANTITY)">
+        Add
+    </button>
+    <!--<div class="col-1">-->
+        <!--<i class="fa fa-plus-circle pointer" (click)="addPriceOption(priceOptions.ORDERED_QUANTITY)"></i>-->
+    <!--</div>-->
+</div>
+
+<!-- quantity related options -->
+<ng-container *ngIf="(catalogueLine.priceOption | priceOptionCountPipe : priceOptions.ORDERED_QUANTITY) > 0">
+    <input-label class="space-before"
+                 [label]="'Price options on ordered quantities'"
+                 [definition]="'Specified quantities are the minimum amounts required for the indicated discount to be applicable'">
+    </input-label>
+    <div *ngFor="let priceOption of (catalogueLine.priceOption | priceOptionPipe : priceOptions.ORDERED_QUANTITY); let i = index;">
+        <div class="row price-option-row">
+            <div class="col-5">
+                <quantity-input [label]="i == 0 ? 'Minimum Order Quantity' : ''"
+                                [labelClass]="i == 0 ? 'col-5' : 'invisible'"
+                                [valueClass]="i == 0 ? 'col-7' : 'offset-5 col'"
+                                [quantity]="priceOption.option.minimumOrderQuantity">
+                </quantity-input>
+            </div>
+            <div class="col">
+                <div class="d-flex justify-content-center">
+                    <div>
+                        <label>Discount on </label>
+                    </div>
+                    <div class="ml-2">
+                        <select class="form-control" #discountTargetSelect>
+                            <option *ngFor="let option of object.keys(discountTargets)" [value]="discountTargets[option]">{{discountTargets[option]}}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3">
+                <amount-input [placeholder]="'Discount amount'"
+                              [amountCurrencies]="discountUnits"
+                              [amount]="discountTargetSelect.value == discountTargets.TOTAL_PRICE ? priceOption.option.itemLocationQuantity.allowanceCharge.amount : priceOption.option.itemLocationQuantity.allowanceCharge.perUnitAmount">
+                </amount-input>
+            </div>
+            <div class="col-1">
+                <button class="btn btn-danger" (click)="removePriceOption(priceOption.index, priceOptions.ORDERED_QUANTITY)">
+                    Remove
+                </button>
+            </div>
+        </div>
+    </div>
+    <button (click)="printPriceOption()">Print price option</button>
+</ng-container>

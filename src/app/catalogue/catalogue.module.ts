@@ -40,6 +40,8 @@ import { ProductPriceTabComponent } from "./publish/product-price-tab.component"
 import { ProductCertificatesTabComponent } from "./publish/product-certificates-tab.component";
 import { ProductTrackAndTraceTabComponent } from "./publish/product-track-and-trace-tab.component";
 import { UserMgmtModule } from "../user-mgmt/user-mgmt.module";
+import {PriceOptionCountPipe} from "./publish/price-option-count.pipe";
+import {PriceOptionPipe} from "./publish/price-option.pipe";
 
 @NgModule({
 	imports: [CommonModule, 
@@ -82,7 +84,9 @@ import { UserMgmtModule } from "../user-mgmt/user-mgmt.module";
         PropertyBlockPipe,
         ItemPropertyDataSourcePipe,
         DetailedAddressViewComponent,
-        PaymentTermsView
+        PaymentTermsView,
+        PriceOptionCountPipe,
+        PriceOptionPipe
     ],
     exports: [
         CategorySearchComponent,

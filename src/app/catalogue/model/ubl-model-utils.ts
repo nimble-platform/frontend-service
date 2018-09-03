@@ -97,7 +97,7 @@ export class UBLModelUtils {
         // price
         const price: Price = this.createPrice();
         // item location quantity
-        const ilq: ItemLocationQuantity = new ItemLocationQuantity(price, []);
+        const ilq: ItemLocationQuantity = new ItemLocationQuantity(price, [], null);
         return ilq;
     }
 
@@ -120,8 +120,8 @@ export class UBLModelUtils {
 
         // create required item location quantity
         const ilq = this.createItemLocationQuantity("");
-        const catalogueLine = new CatalogueLine(uuid, null, null, false, 
-            this.createPeriod(settings.warrantyPeriodRanges[0].start, settings.warrantyPeriodUnits[0]), [], ilq, goodsItem);
+        const catalogueLine = new CatalogueLine(uuid, false,
+            this.createPeriod(settings.warrantyPeriodRanges[0].start, settings.warrantyPeriodUnits[0]), [], ilq, [], goodsItem);
 
         // extra initialization
         catalogueLine.goodsItem.containingPackage.quantity.unitCode = "item(s)";
@@ -263,7 +263,7 @@ export class UBLModelUtils {
     }
 
     private static getDefaultPaymentTerms(settings?: CompanyNegotiationSettings): PaymentTerms {
-        const terms = new PaymentTerms([], [
+        const terms = new PaymentTerms([
             new TradingTerm("Payment_In_Advance","Payment in advance","PIA",["false"]),
             new TradingTerm("End_of_month","End of month","EOM",["false"]),
             new TradingTerm("Cash_next_delivery","Cash next delivery","CND",["false"]),
