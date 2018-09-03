@@ -49,18 +49,18 @@
                     <tr *ngIf="!getCategoriesStatus.isDisplayed() && (!categories || categories.length == 0)">
                         <td colspan="3">No results found.</td>
                     </tr>
-                    <ng-template *ngIf="categories">
+                    <ng-container *ngIf="!getCategoriesStatus.isDisplayed() && categories">
                         <tr *ngFor="let category of categories"
                             (click)="getCategoryDetails(category,false)"
                             [ngClass]="{'table-secondary': selectedCategory && category.code == selectedCategory.code}">
                             <td class="py-2 px-3 font-weight-light">{{category.taxonomyId}}</td>
                             <td class="py-2 px-3">{{category.preferredName}}</td>
                             <td></td>
-                            <td class="d-flex">
+                            <td class="py-2 px-3">
                                 <span class="fa fa-fw mr-1 icon-secondary" [ngClass]="{'fa-sitemap': category.taxonomyId == 'eClass'}" aria-hidden="true" (click)="getCategoryTree(category)"></span>
                             </td>
                         </tr>
-                    </ng-template>
+                    </ng-container>
                 </tbody>
             </table>
         </div>
