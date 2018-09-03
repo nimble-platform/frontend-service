@@ -15,6 +15,9 @@ import { Property } from "../model/category/property";
 import { AppComponent } from "../../app.component";
 
 type ProductType = "product" | "transportation";
+type SelectedTab = "TREE"
+    | "FAVORITE"
+    | "RECENT";
 
 @Component({
     selector: "category-search",
@@ -23,9 +26,13 @@ type ProductType = "product" | "transportation";
 })
 export class CategorySearchComponent implements OnInit {
 
+    selectedTab: SelectedTab = "TREE";
+
     getCategoriesStatus: CallStatus = new CallStatus();
     favoriteCategoriesStatus: CallStatus = new CallStatus();
+    recentCategoriesStatus: CallStatus = new CallStatus();
     addFavoriteCategoryStatus: CallStatus = new CallStatus();
+    addRecentCategoryStatus: CallStatus = new CallStatus();
     getCategoryDetailsStatus: CallStatus = new CallStatus();
     navigateToPublishStatus: CallStatus = new CallStatus();
 
@@ -52,6 +59,7 @@ export class CategorySearchComponent implements OnInit {
     propertyNames: string[] = ["code", "taxonomyId", "level", "definition", "note", "remark"];
     taxonomyId: string = "eClass";
     prefCats: string[] = [];
+    recCats: string[] = [];
 
     isLogistics: boolean;
     eClassLogisticsCategory: Category = null;
@@ -106,6 +114,9 @@ export class CategorySearchComponent implements OnInit {
             // get the favorite categories
             this.getFavoriteCategories();
 
+            // get the recently used categories
+            this.getRecentCategories();
+
             // publishing granularity: single, bulk, null
             this.publishingGranularity = params["pg"];
             if (this.pageRef == null) {
@@ -119,6 +130,11 @@ export class CategorySearchComponent implements OnInit {
             }
         });
         this.getRootCategories();
+    }
+
+    onSelectTab(event: any) {
+        event.preventDefault();
+        this.selectedTab = event.target.id;
     }
 
     private getFavoriteCategories() {
@@ -137,6 +153,24 @@ export class CategorySearchComponent implements OnInit {
         .catch(error => {
             this.favoriteCategoriesStatus.error("Error while fetching favorite categories.", error);
         });
+    }
+
+    private getRecentCategories() {
+      this.recCats = [];
+      this.recentCategoriesStatus.submit();
+      let userId = this.cookieService.get("user_id");
+      this.userService.getRecCat(userId).then(res => {
+          var recCats_tmp = [];
+          for (var i = 0; i < res.length; i++) {
+              if (res[i].split("::")[3] == this.productType) recCats_tmp.push(res[i]);
+          }
+          recCats_tmp.sort((a, b) => a.split("::")[2].localeCompare(b.split("::")[2]));
+          this.recCats = recCats_tmp;
+          this.recentCategoriesStatus.callback("Succesfully fetched recent categories", true);
+      })
+      .catch(error => {
+          this.recentCategoriesStatus.error("Error while fetching favorite categories.", error);
+      });
     }
 
     findPrefCat(cat: Category): boolean {
@@ -182,6 +216,29 @@ export class CategorySearchComponent implements OnInit {
         });
     }
 
+    addRecentCategories(cat: Category[]) {
+      this.addRecentCategoryStatus.submit();
+      var recCatPost = [];
+      var timeStamp = new Date().getTime();
+      for (var i=0; i<cat.length; i++) {
+        const cat_str = cat[i].id + "::" + cat[i].taxonomyId + "::" + cat[i].preferredName + "::" + this.productType + "::" + timeStamp;
+        recCatPost.push(cat_str);
+      }
+      const userId = this.cookieService.get("user_id");
+      this.userService.addRecCat(userId, recCatPost).then(res => {
+        var recCats_tmp = [];
+        for (var i = 0; i < res.length; i++) {
+            if (res[i].split("::")[3] == this.productType) recCats_tmp.push(res[i]);
+        }
+        recCats_tmp.sort((a, b) => a.split("::")[2].localeCompare(b.split("::")[2]));
+        this.recCats = recCats_tmp;
+        this.addRecentCategoryStatus.callback("Categories added to recently used", true);
+      })
+      .catch(error => {
+          this.addRecentCategoryStatus.error("Error while adding categories to recently used", error);
+      });
+    }
+
     canDeactivate(): boolean {
         this.inPublish = false;
         if (this.pageRef == "publish" && this.isReturnPublish == false) {
@@ -196,13 +253,13 @@ export class CategorySearchComponent implements OnInit {
         this.parentCategories = null;
         this.selectedCategoryWithDetails = null;
         this.treeView = false;
-        this.router.navigate(["/catalogue/categorysearch"], { 
-            queryParams: { 
-                pg: this.publishingGranularity, 
-                pageRef: this.pageRef, 
-                cat: this.categoryKeyword, 
-                productType: this.productType 
-            } 
+        this.router.navigate(["/catalogue/categorysearch"], {
+            queryParams: {
+                pg: this.publishingGranularity,
+                pageRef: this.pageRef,
+                cat: this.categoryKeyword,
+                productType: this.productType
+            }
         });
     }
 
@@ -272,6 +329,7 @@ export class CategorySearchComponent implements OnInit {
     }
 
     navigateToPublishingPage(): void {
+        this.addRecentCategories(this.selectedCategories);
         this.navigateToPublishStatus.submit();
         let userId = this.cookieService.get("user_id");
         this.catalogueService
@@ -318,7 +376,7 @@ export class CategorySearchComponent implements OnInit {
             });
     }
 
-    showPrefDetails(cat: string) {
+    showAdDetails(cat: string) {
         var cat_split = cat.split("::");
         var catFull: Category = {
             id: cat_split[0],
@@ -336,7 +394,7 @@ export class CategorySearchComponent implements OnInit {
         this.getCategoryDetails(catFull, true);
     }
 
-    isPrefSelected(cat: string): boolean {
+    isAdSelected(cat: string): boolean {
         if (this.selectedCategory != null && this.favSelected == true) {
             return cat.split("::")[0] === this.selectedCategory.id;
         }
