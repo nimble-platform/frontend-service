@@ -1,11 +1,12 @@
 import {Component, OnInit, Input} from "@angular/core";
 import {CatalogueLine} from "../model/publish/catalogue-line";
 import {CURRENCIES, DISCOUNT_TARGETS, DISCOUNT_UNITS, PRICE_OPTIONS} from "../model/constants";
-import {PriceOptionCountPipe} from "./price-option-count.pipe";
+import {PriceOptionCountPipe} from "./price-option/price-option-count.pipe";
 import {PriceOption} from "../model/publish/price-option";
 import {Quantity} from "../model/publish/quantity";
-import {PriceOptionPipe} from "./price-option.pipe";
+import {PriceOptionPipe} from "./price-option/price-option.pipe";
 import {AllowanceCharge} from "../model/publish/allowance-charge";
+import {Amount} from "../model/publish/amount";
 
 @Component({
     selector: "product-price-tab",
@@ -21,8 +22,6 @@ export class ProductPriceTabComponent implements OnInit {
     // TODO: later, get these from a service?
     CURRENCIES = CURRENCIES;
     priceOptions = PRICE_OPTIONS;
-    discountTargets = DISCOUNT_TARGETS;
-    discountUnits = DISCOUNT_UNITS;
     object = Object;
 
     constructor() {
@@ -46,11 +45,7 @@ export class ProductPriceTabComponent implements OnInit {
         this.catalogueLine.priceOption = [].concat(this.catalogueLine.priceOption);
     }
 
-    changeDiscountTarget(discountTarget: string, allowanceCharge: AllowanceCharge): void {
-        if(discountTarget == DISCOUNT_TARGETS.PER_ITEM) {
-            
-        } else {
-
-        }
+    printPriceOptions(): void {
+        console.log(this.catalogueLine.priceOption);
     }
 }

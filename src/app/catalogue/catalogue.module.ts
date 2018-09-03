@@ -40,8 +40,9 @@ import { ProductPriceTabComponent } from "./publish/product-price-tab.component"
 import { ProductCertificatesTabComponent } from "./publish/product-certificates-tab.component";
 import { ProductTrackAndTraceTabComponent } from "./publish/product-track-and-trace-tab.component";
 import { UserMgmtModule } from "../user-mgmt/user-mgmt.module";
-import {PriceOptionCountPipe} from "./publish/price-option-count.pipe";
-import {PriceOptionPipe} from "./publish/price-option.pipe";
+import {PriceOptionCountPipe} from "./publish/price-option/price-option-count.pipe";
+import {PriceOptionPipe} from "./publish/price-option/price-option.pipe";
+import {QuantityPriceOptionComponent} from "./publish/price-option/quantity-price-option.component";
 
 @NgModule({
 	imports: [CommonModule, 
@@ -86,7 +87,8 @@ import {PriceOptionPipe} from "./publish/price-option.pipe";
         DetailedAddressViewComponent,
         PaymentTermsView,
         PriceOptionCountPipe,
-        PriceOptionPipe
+        PriceOptionPipe,
+        QuantityPriceOptionComponent
     ],
     exports: [
         CategorySearchComponent,
@@ -111,7 +113,8 @@ import {PriceOptionPipe} from "./publish/price-option.pipe";
         PropertyBlockPipe,
         ItemPropertyDataSourcePipe,
         DetailedAddressViewComponent,
-        PaymentTermsView
+        PaymentTermsView,
+        QuantityPriceOptionComponent
     ],
     providers: [PublishDeactivateGuardService, CategoryDeactivateGuardService]
 })

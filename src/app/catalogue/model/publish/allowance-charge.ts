@@ -5,7 +5,6 @@ import {Amount} from "./amount";
  */
 export class AllowanceCharge {
     constructor(
-        public multiplierFactorNumeric: number = null,
         public amount: Amount = new Amount(),
         public perUnitAmount: Amount = new Amount()
     ) {  }

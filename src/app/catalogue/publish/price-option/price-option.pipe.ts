@@ -1,6 +1,6 @@
-import {PRICE_OPTIONS} from "../model/constants";
+import {PRICE_OPTIONS} from "../../model/constants";
 import {Pipe, PipeTransform} from "@angular/core";
-import {PriceOption} from "../model/publish/price-option";
+import {PriceOption} from "../../model/publish/price-option";
 /**
  * Created by suat on 28-Aug-18.
  */
@@ -9,6 +9,7 @@ import {PriceOption} from "../model/publish/price-option";
 export class PriceOptionPipe implements PipeTransform {
     /**
      * Returns the subset of price options specified by the price option category
+     * in the form of {option: optionObject, index: index}
      */
     transform(allPriceOptions: PriceOption[], priceOptionCategory: string): any[] {
         let priceOptionsWithIndices: any[] = [];

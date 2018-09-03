@@ -78,7 +78,7 @@ export const PRICE_OPTIONS = {
 
 export const DISCOUNT_TARGETS = {
     TOTAL_PRICE: 'Total Price',
-    PER_ITEM: 'Per Item'
+    PER_UNIT: 'Per Unit'
 };
 
 export const DISCOUNT_UNITS = CURRENCIES.concat(['%']);
