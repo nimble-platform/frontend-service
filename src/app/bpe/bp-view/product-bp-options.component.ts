@@ -13,10 +13,11 @@ import { ProductBpStep } from "./product-bp-step";
 import { ProductBpStepsDisplay } from "./product-bp-steps-display";
 import { isTransportService } from "../../common/utils";
 import { UserService } from "../../user-mgmt/user.service";
-import { CompanyNegotiationSettings } from "../../user-mgmt/model/company-negotiation-settings";
 import { CompanySettings } from "../../user-mgmt/model/company-settings";
 import { BPEService } from "../bpe.service";
 import { Order } from "../../catalogue/model/publish/order";
+import { SearchContextService } from "../../simple-search/search-context.service";
+import { CookieService } from "ng2-cookies";
 
 /**
  * Created by suat on 20-Oct-17.
@@ -50,9 +51,11 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
 
     constructor(public bpDataService: BPDataService, 
                 public catalogueService: CatalogueService, 
+                private searchContextService: SearchContextService,
                 public userService: UserService,
                 public bpeService: BPEService,
                 public route: ActivatedRoute,
+                private cookieService: CookieService,
                 private renderer: Renderer2) {
         this.renderer.setStyle(document.body, "background-image", "none");
     }
@@ -76,13 +79,16 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                 this.catalogueId = catalogueId;
 
                 this.callStatus.submit();
-
+                const userId = this.cookieService.get("user_id");
                 Promise.all([
                     this.catalogueService.getCatalogueLine(catalogueId, id),
-                    this.getOriginalOrder()
-                ]).then(([line, order]) => {
+                    this.getOriginalOrder(),
+                    this.userService.getSettingsForUser(userId)
+                ]).then(([line, order, ownCompanySettings]) => {
                     this.line = line;
                     this.originalOrder = order;
+                    this.bpDataService.productOrder = order;
+                    this.bpDataService.currentUserSettings = ownCompanySettings;
 
                     return Promise.all([
                         this.getReferencedCatalogueLine(line, order),
@@ -151,12 +157,15 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     }
 
     private getOriginalOrder(): Promise<Order | null> {
-        if(!this.bpDataService.processMetadata) {
-            return Promise.resolve(null);
+        if(this.searchContextService.associatedProcessMetadata) {
+            const processId = this.searchContextService.associatedProcessMetadata.processId;
+            return this.bpeService.getOriginalOrderForProcess(processId)
         }
-
-        const processId = this.bpDataService.processMetadata.processId;
-        return this.bpeService.getOriginalOrderForProcess(processId)
+        if(this.bpDataService.processMetadata) {
+            const processId = this.bpDataService.processMetadata.processId;
+            return this.bpeService.getOriginalOrderForProcess(processId);
+        }
+        return Promise.resolve(null);
     }
 
     private initWithCatalogueLine(line: CatalogueLine, settings: CompanySettings) {

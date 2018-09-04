@@ -114,7 +114,7 @@ export class DispatchAdviceComponent implements OnInit {
             }
         }
 
-        this.bpDataService.initDespatchAdvice(handlingInst,carrierName,carrierContact,deliveredQuantity,endDate);
+        this.bpDataService.initDispatchAdvice(handlingInst,carrierName,carrierContact,deliveredQuantity,endDate);
 
         this.dispatchAdvice = this.bpDataService.despatchAdvice;
 

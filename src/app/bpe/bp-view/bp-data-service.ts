@@ -52,8 +52,10 @@ export class BPDataService{
     // variables to keep the products and product categories related to the active business process
     relatedProducts: string[];
     relatedProductCategories: string[];
-    // the negotiation settings for the producers of the catalogue lines
+    // the company settings for the producers of the catalogue lines
     private companySettings: CompanySettings[] = [];
+    // the company settings of the current user
+    currentUserSettings: CompanySettings;
 
     requestForQuotation: RequestForQuotation;
     quotation: Quotation;
@@ -67,6 +69,8 @@ export class BPDataService{
     transportExecutionPlan: TransportExecutionPlan;
     itemInformationRequest: ItemInformationRequest;
     itemInformationResponse: ItemInformationResponse;
+    /** Set for logistics service, when following an order for a physical product. */
+    productOrder: Order;
 
     ////////////////////////////////////////////////////////////////////////////
     //////// variables used when navigating to bp options details page //////
@@ -416,7 +420,7 @@ export class BPDataService{
         this.requestForQuotation = UBLModelUtils.createRequestForQuotationWithTransportExecutionPlanRequest(copyTransportExecutionPlanRequest,this.modifiedCatalogueLines[0]);
     }
 
-    initDespatchAdvice(handlingInst:string,carrierName:string,carrierContact:string,deliveredQuantity:Quantity,endDate:string) {
+    initDispatchAdvice(handlingInst: string, carrierName: string, carrierContact: string, deliveredQuantity: Quantity, endDate: string) {
         let copyOrder:Order = copy(this.order);
         this.resetBpData();
         this.modifiedCatalogueLines = copy(this.catalogueLines);
@@ -433,6 +437,13 @@ export class BPDataService{
         this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage[0].carrierParty.name = carrierName;
         this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage[0].carrierParty.contact.telephone = carrierContact;
         this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage[0].estimatedDeliveryDate = endDate;
+    }
+
+    initDispatchAdviceWithOrder() {
+        let copyOrder: Order = copy(this.productOrder);
+        this.resetBpData();
+        this.modifiedCatalogueLines = copy(this.catalogueLines);
+        this.despatchAdvice = UBLModelUtils.createDespatchAdvice(copyOrder);
     }
 
     initTransportExecutionPlanRequest() {
