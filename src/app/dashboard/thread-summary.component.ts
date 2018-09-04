@@ -25,7 +25,8 @@ export class ThreadSummaryComponent implements OnInit {
     @Input() processInstanceGroup: ProcessInstanceGroup;
     @Output() threadStateUpdated = new EventEmitter();
 
-    // Most recent event
+
+    titleEvent: ThreadEventMetadata;
     lastEvent: ThreadEventMetadata;
 
     // History of events
@@ -65,6 +66,7 @@ export class ThreadSummaryComponent implements OnInit {
             events = events.reverse();
             this.history = events.slice(1, events.length);
             this.lastEvent = events[0];
+            this.computeTitleEvent();
             this.fetchCallStatus.callback("Successfully fetched events.", true);
         }).catch(error => {
             this.fetchCallStatus.error("Error while fetching thread.", error);
@@ -106,7 +108,7 @@ export class ThreadSummaryComponent implements OnInit {
     }
 
     navigateToSearchDetails() {
-        const item = this.lastEvent.product;
+        const item = this.titleEvent.product;
         this.bpDataService.previousProcess = null;
         this.router.navigate(['/product-details'],
             {
@@ -260,6 +262,21 @@ export class ThreadSummaryComponent implements OnInit {
             bpStatus = "Completed";
         }
         return bpStatus;
+    }
+
+    private computeTitleEvent() {
+        this.titleEvent = this.lastEvent;
+        // if the event is a transportation service, go through the history and check the last event that is not (if any)
+        if(this.lastEvent.product.transportationServiceDetails) {
+            // history ordered from new to old
+            for(let i = this.history.length - 1; i >= 0; i--) {
+                const event = this.history[i]
+                if(!event.product.transportationServiceDetails) {
+                    // if not a transport, this is relevant, doing it in the for loop makes sure the LAST non-transport event is the relevant one.
+                    this.titleEvent = event;
+                }
+            }
+        }
     }
 
     archiveGroup(): void {
