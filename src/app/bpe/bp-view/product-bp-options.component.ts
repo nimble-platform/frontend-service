@@ -45,6 +45,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     originalOrder?: Order;
     serviceLine?: CatalogueLine;
     serviceWrapper?: ProductWrapper;
+    serviceSettings?: CompanySettings;
 
     productExpanded: boolean = false;
     serviceExpanded: boolean = false;
@@ -99,11 +100,12 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                     // set the product line to be the first fetched line, either service or product.
                     this.bpDataService.setCatalogueLines([this.line], [settings]);
                     this.bpDataService.computeWorkflowOptions();
-
+                    
                     // there is an order that references another product -> the line is a service and the referencedLine is the original product
                     if(referencedLine) {
                         this.serviceLine = this.line;
                         this.serviceWrapper = new ProductWrapper(this.serviceLine, settings.negotiationSettings);
+                        this.serviceSettings = settings;
                         this.line = referencedLine;
                         return this.userService.getSettingsForProduct(referencedLine);
                     }
