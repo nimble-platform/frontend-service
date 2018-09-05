@@ -29,6 +29,8 @@ export class ThreadSummaryComponent implements OnInit {
     titleEvent: ThreadEventMetadata;
     lastEvent: ThreadEventMetadata;
 
+    lastEventPartnerID = null;
+
     // History of events
     hasHistory: boolean = false;
     history: ThreadEventMetadata[];
@@ -104,6 +106,13 @@ export class ThreadSummaryComponent implements OnInit {
 
         this.checkDataChannel(event);
 
+        if (userRole === "buyer") {
+          this.lastEventPartnerID = ActivityVariableParser.getProductFromProcessData(initialDoc).manufacturerParty.id;
+        }
+        else {
+          this.lastEventPartnerID = ActivityVariableParser.getBuyerId(initialDoc);
+        }
+
         return event;
     }
 
@@ -117,6 +126,14 @@ export class ThreadSummaryComponent implements OnInit {
                     id: item.manufacturersItemIdentification.id
                 }
             });
+    }
+
+    navigateToCompanyDetails() {
+      this.router.navigate(['/user-mgmt/company-details'], {
+        queryParams: {
+            id: this.lastEventPartnerID
+        }
+      });
     }
 
     private fillStatus(event: ThreadEventMetadata, processState: "EXTERNALLY_TERMINATED" | "COMPLETED" | "ACTIVE",
