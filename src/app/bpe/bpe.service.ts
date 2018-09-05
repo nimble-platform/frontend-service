@@ -302,7 +302,7 @@ export class BPEService {
             .get(url, { headers })
             .toPromise()
             .then(res => res.json() || null)
-            .catch(this.handleError);
+            .catch(() => null);
 	}
 
 	private getAuthorizedHeaders(): Headers {

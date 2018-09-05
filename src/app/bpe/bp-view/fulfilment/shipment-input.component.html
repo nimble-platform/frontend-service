@@ -8,26 +8,10 @@
 
 </text-input>
 
-<div *ngIf="!disabled && presentationMode == 'edit'" class="row space-before" [hidden]="!showDate">
-    <div class="col-3"><strong>Estimated Delivery Date</strong>
-        <span class="label label-default" title="'The estimated date of delivery in this plan between the start and date of the service.'">
-                        &#9432;
-        </span>
-    </div>
-    <div class="col-9">
-        <div class="row">
-            <div class="col-11">
-                <input class="form-control" placeholder="YYYY-MM-DD" (dateSelect)="shipment.shipmentStage[0].estimatedDeliveryDate = getEstimatedDeliveryDate()"
-                       name="dp" [(ngModel)]="date" ngbDatepicker #d="ngbDatepicker" readonly>
-            </div>
-            <div class="col-1" style="padding-left:0.1rem">
-                <button class="btn btn-outline-secondary" (click)="d.toggle()" type="button">
-                    <i class="fa fa-calendar-alt pointer" style="width: 1.2rem; height: 1rem;"></i>
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
+<date-input *ngIf="!disabled && presentationMode == 'edit'" [presentationMode]="presentationMode"
+    label="Estimated Delivery Date" definition="The estimated date of delivery in this plan between the start and date of the service."
+    [(date)]="shipment.shipmentStage[0].estimatedDeliveryDate" rowClass="space-before" [disabled]="disabled">
+</date-input>
 
 <text-input label="Carrier Party" definition="The party carrying the goods" rowClass="space-before"
     [disabled]="disabled" [presentationMode]="presentationMode" [(text)]="shipment.shipmentStage[0].carrierParty.name">

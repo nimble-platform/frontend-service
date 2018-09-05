@@ -96,8 +96,12 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                     ])
                 })
                 .then(([referencedLine, settings]) => {
+                    // set the product line to be the first fetched line, either service or product.
+                    this.bpDataService.setCatalogueLines([this.line], [settings]);
+                    this.bpDataService.computeWorkflowOptions();
+
+                    // there is an order that references another product -> the line is a service and the referencedLine is the original product
                     if(referencedLine) {
-                        // there is an order that references another product -> the line is a service and the referencedLine is the original product
                         this.serviceLine = this.line;
                         this.serviceWrapper = new ProductWrapper(this.serviceLine, settings.negotiationSettings);
                         this.line = referencedLine;
@@ -157,6 +161,9 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     }
 
     private getOriginalOrder(): Promise<Order | null> {
+        if(this.bpDataService.userRole === "seller") {
+            return Promise.resolve(null);
+        }
         if(this.searchContextService.associatedProcessMetadata) {
             const processId = this.searchContextService.associatedProcessMetadata.processId;
             return this.bpeService.getOriginalOrderForProcess(processId)
@@ -170,9 +177,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
 
     private initWithCatalogueLine(line: CatalogueLine, settings: CompanySettings) {
         this.wrapper = new ProductWrapper(line, settings.negotiationSettings);
-        this.bpDataService.setCatalogueLines([line], [settings]);
         this.settings = settings;
-        this.bpDataService.computeWorkflowOptions();
         this.options = this.bpDataService.workflowOptions;
         if(this.processType) {
             this.currentStep = this.getCurrentStep(this.processType);
@@ -183,7 +188,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     private getCurrentStep(processType: ProcessType): ProductBpStep {
         switch(processType) {
             case "Item_Information_Request":
-                if(isTransportService(this.line)) {
+                if(this.isTransportService()) {
                     return "Transport_Information_Request";
                 } else {
                     return "Item_Information_Request";
@@ -191,7 +196,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
             case "Ppap":
                 return "Ppap";
             case "Negotiation":
-                if(isTransportService(this.line)) {
+                if(this.isTransportService()) {
                     return "Transport_Negotiation";
                 } else {
                     return "Negotiation";
@@ -201,7 +206,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
             case "Transport_Execution_Plan":
                 return this.isOrderDone() ? "Transport_Order_Confirmed" : "Transport_Order";
             case "Order":
-                if(isTransportService(this.line)) {
+                if(this.isTransportService()) {
                     return this.isOrderDone() ? "Transport_Order_Confirmed" : "Transport_Order";
                 } else {
                     return this.isOrderDone() ? "Order_Confirmed" : "Order";
@@ -209,8 +214,12 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
         }
     }
 
+    private isTransportService(): boolean {
+        return !!this.serviceLine || isTransportService(this.line);
+    }
+
     private getStepsDisplayMode(): ProductBpStepsDisplay {
-        if(this.serviceLine) {
+        if(this.isTransportService()) {
             if(this.bpDataService.userRole === "seller") {
                 // The service provider only sees transport steps
                 return "Transport";

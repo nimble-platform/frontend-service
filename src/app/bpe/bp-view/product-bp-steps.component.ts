@@ -20,10 +20,7 @@ export class ProductBpStepsComponent implements OnInit {
     }
 
     ngOnInit() {
-        console.log("Current Step: " + this.currentStep)
-        console.log("Status: " + this.status)
-        console.log("Status Text: " + this.statusText)
-        console.log("Display Mode: " + this.displayMode)
+
     }
 
     getStatusTextStyle(): any {

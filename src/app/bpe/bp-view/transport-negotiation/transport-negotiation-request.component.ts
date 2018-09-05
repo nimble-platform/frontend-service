@@ -28,6 +28,7 @@ export class TransportNegotiationRequestComponent implements OnInit {
     selectedTab: string = "OVERVIEW";
     rfqPrice: PriceWrapper;
     rfqPaymentTerms: PaymentTermsWrapper;
+    updatingProcess: boolean;
 
     callStatus: CallStatus = new CallStatus();
 
@@ -49,6 +50,7 @@ export class TransportNegotiationRequestComponent implements OnInit {
         this.rfq = this.bpDataService.requestForQuotation;
         this.rfqPrice = new PriceWrapper(this.rfq.requestForQuotationLine[0].lineItem.price);
         this.rfqPaymentTerms = new PaymentTermsWrapper(this.rfq.paymentTerms);
+        this.updatingProcess = this.bpDataService.updatingProcess;
     }
 
     isDisabled(): boolean {
@@ -84,7 +86,7 @@ export class TransportNegotiationRequestComponent implements OnInit {
             sellerId = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item.manufacturerParty.id;
         }
         else {
-            sellerId = this.bpDataService.requestForQuotation.requestForQuotationLine[0].lineItem.item.manufacturerParty.id;
+            sellerId = this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty.id;
         }
 
         UBLModelUtils.removeHjidFieldsFromObject(rfq);

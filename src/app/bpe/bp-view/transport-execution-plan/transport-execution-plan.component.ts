@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { CookieService } from "ng2-cookies";
 import { Location } from "@angular/common";
-import { Router } from "@angular/router";
+import { Router, ActivatedRoute } from "@angular/router";
 import { BPDataService } from "../bp-data-service";
 import { CallStatus } from "../../../common/call-status";
 import { SearchContextService } from "../../../simple-search/search-context.service";
@@ -38,7 +38,8 @@ export class TransportExecutionPlanComponent implements OnInit {
                 private userService: UserService,
                 private bpeService: BPEService,
                 private location: Location,
-                private router: Router) {
+                private router: Router,
+                private route: ActivatedRoute) {
         
     }
 
@@ -165,6 +166,15 @@ export class TransportExecutionPlanComponent implements OnInit {
 
     onDispatchAdvice() {
         this.bpDataService.initDispatchAdviceWithOrder();
-        this.bpDataService.setBpOptionParameters(this.userRole, "Fulfilment", "Order");
+        this.bpDataService.setBpOptionParameters("seller", "Fulfilment", "Order");
+
+        const params = this.route.snapshot.queryParams;
+        this.router.navigate(['bpe/bpe-exec'], {
+            queryParams: {
+                catalogueId: params.catalogueId,
+                id: params.id,
+                pid: params.pid
+            }
+        });
     }
 }

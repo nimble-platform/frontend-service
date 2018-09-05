@@ -18,8 +18,9 @@ export class DateInputComponent implements OnInit {
     @Input() valueClass: string; // set based on label
     @Input() placeholder: string = "Enter a value...";
     
-    private dateValue: string;
     @Input() valueDateClass: string = "";
+    
+    private dateValue: string;
     @Output() dateChange = new EventEmitter<string>();
 
     constructor() {

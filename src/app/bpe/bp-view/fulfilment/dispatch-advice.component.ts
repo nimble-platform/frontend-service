@@ -36,7 +36,7 @@ export class DispatchAdviceComponent implements OnInit {
     }
 
     ngOnInit() {
-        if(this.bpDataService.despatchAdvice == null){
+        if(this.bpDataService.despatchAdvice == null) {
             this.initDispatchAdvice();
         }
         else{
@@ -44,7 +44,7 @@ export class DispatchAdviceComponent implements OnInit {
         }
     }
 
-    async initDispatchAdvice(){
+    async initDispatchAdvice() {
         this.initiatingDispatchAdvice.submit();
         const processInstanceGroup = await this.bpeService.getProcessInstanceGroup(this.bpDataService.getRelatedGroupId()) as ProcessInstanceGroup;
         let details = [];
@@ -114,11 +114,11 @@ export class DispatchAdviceComponent implements OnInit {
             }
         }
 
-        this.bpDataService.initDispatchAdvice(handlingInst,carrierName,carrierContact,deliveredQuantity,endDate);
+        this.bpDataService.initDispatchAdvice(handlingInst,carrierName,carrierContact, deliveredQuantity, endDate);
 
         this.dispatchAdvice = this.bpDataService.despatchAdvice;
 
-        this.initiatingDispatchAdvice.callback("Dispatch Advice initiated",true);
+        this.initiatingDispatchAdvice.callback("Dispatch Advice initiated", true);
     }
 
     /*
@@ -130,7 +130,7 @@ export class DispatchAdviceComponent implements OnInit {
     }
 
     onSendDispatchAdvice(): void {
-        let dispatchAdvice: DespatchAdvice = copy(this.bpDataService.despatchAdvice);
+        let dispatchAdvice: DespatchAdvice = copy(this.dispatchAdvice);
         UBLModelUtils.removeHjidFieldsFromObject(dispatchAdvice);
 
         let vars: ProcessVariables = ModelUtils.createProcessVariables(

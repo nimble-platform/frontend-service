@@ -440,16 +440,26 @@ export class BPDataService{
     }
 
     initDispatchAdviceWithOrder() {
-        let copyOrder: Order = copy(this.productOrder);
+        const copyOrder: Order = copy(this.productOrder);
         this.resetBpData();
         this.modifiedCatalogueLines = copy(this.catalogueLines);
         this.despatchAdvice = UBLModelUtils.createDespatchAdvice(copyOrder);
+
+        const quantity = copyOrder.orderLine[0].lineItem.quantity;
+        this.despatchAdvice.despatchLine[0].deliveredQuantity.unitCode = quantity.unitCode;
+        this.despatchAdvice.despatchLine[0].deliveredQuantity.value = quantity.value;
     }
 
     initTransportExecutionPlanRequest() {
         this.modifiedCatalogueLines = copy(this.catalogueLines);
         this.transportExecutionPlanRequest = UBLModelUtils.createTransportExecutionPlanRequest(this.modifiedCatalogueLines[0]);
         this.selectFirstValuesAmongAlternatives(this.modifiedCatalogueLines[0].goodsItem.item);
+
+        if(this.quotation) {
+            const quotationPeriod = this.quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod;
+            this.transportExecutionPlanRequest.serviceStartTimePeriod.startDate = quotationPeriod.startDate;
+            this.transportExecutionPlanRequest.serviceStartTimePeriod.endDate = quotationPeriod.endDate;
+        }
     }
 
     initTransportExecutionPlanRequestWithOrder() {

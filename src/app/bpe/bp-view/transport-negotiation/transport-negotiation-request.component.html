@@ -72,23 +72,23 @@
         <!-- Delivery Period -->
         <quantity-input label="Delivery Period" definition="The period requested for delivery. It starts after the order confirmation.For example, Quantity: 2, Unit: weeks"
             [quantity]="rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure" quantityType="time_quantity"
-            labelClass="col-2" valueClass="col-10">
+            labelClass="col-2" valueClass="col-10" [disabled]="isDisabled()" >
         </quantity-input>
 
         <!-- Service Start Date -->
         <date-input label="Earliest Pick-Up Date" definition="The period within which the services referred to in the Transport Execution Plan Request must begin."
-            [(date)]="rfq.delivery.requestedDeliveryPeriod.startDate" rowClass="space-before" labelClass="col-2" valueClass="col-10">
+            [(date)]="rfq.delivery.requestedDeliveryPeriod.startDate" rowClass="space-before" labelClass="col-2" valueClass="col-10" [disabled]="isDisabled()" >
         </date-input>
 
         <!-- Service End Date -->
         <date-input label="Latest Pick-Up Date" definition="The period during which the services referred to in the Transport Execution Plan Request must be completed."
-            [(date)]="rfq.delivery.requestedDeliveryPeriod.endDate" rowClass="space-before" labelClass="col-2" valueClass="col-10">
+            [(date)]="rfq.delivery.requestedDeliveryPeriod.endDate" rowClass="space-before" labelClass="col-2" valueClass="col-10" [disabled]="isDisabled()" >
         </date-input>
 
         <hr>
 
         <!-- Note -->
-        <text-input label="Note" [(text)]="rfq.note[0]" labelClass="col-2" valueClass="col-10">
+        <text-input label="Note" [(text)]="rfq.note[0]" labelClass="col-2" valueClass="col-10" [disabled]="isDisabled()" >
         </text-input>
 
     </div>
@@ -107,12 +107,12 @@
     <div class="col-2">
         <button class="btn btn-secondary action" [disabled]="isDisabled()" (click)="onBack()">Back</button>
     </div>
-    <div class="col-3" *ngIf="!bpDataService.updatingProcess">
+    <div class="col-3" *ngIf="!updatingProcess">
         <button class="btn btn-primary action" [disabled]="isDisabled()" (click)="onSendRequest()">
             Send Request
         </button>
     </div>
-    <div class="col-3" *ngIf="bpDataService.updatingProcess">
+    <div class="col-3" *ngIf="updatingProcess">
         <button class="btn btn-primary action"  (click)="onUpdateRequest()">
             Update Request
         </button>

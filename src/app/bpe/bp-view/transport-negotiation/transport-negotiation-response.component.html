@@ -182,7 +182,7 @@
             </input-label>
         </div>
         <div class="col-5">
-            <date-input [disabled]="true" [(date)]="rfq.delivery.requestedDeliveryPeriod.startDate">
+            <date-input [disabled]="true" [date]="rfq.delivery.requestedDeliveryPeriod.startDate">
             </date-input>
         </div>
         <div class="col-5">
@@ -198,7 +198,7 @@
             </input-label>
         </div>
         <div class="col-5">
-            <date-input [disabled]="true" [(date)]="rfq.delivery.requestedDeliveryPeriod.endDate">
+            <date-input [disabled]="true" [date]="rfq.delivery.requestedDeliveryPeriod.endDate">
             </date-input>
         </div>
         <div class="col-5">
@@ -216,13 +216,11 @@
             </input-label>
         </div>
         <div class="col-5">
-            <text-input [(text)]="rfq.requestForQuotationLine[0].lineItem.deliveryTerms.specialTerms" 
-                [disabled]="true">
+            <text-input [text]="rfq.note[0]" [disabled]="true">
             </text-input>
         </div>
         <div class="col-5">
-            <text-input [(text)]="quotation.quotationLine[0].lineItem.deliveryTerms.specialTerms" 
-                [disabled]="isDisabled()">
+            <text-input [(text)]="quotation.note[0]" [disabled]="isDisabled()">
             </text-input>
         </div>
     </div>

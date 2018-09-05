@@ -11,6 +11,7 @@ import { DataChannelService } from "../data-channel/data-channel.service";
 import { ProcessType } from "../bpe/model/process-type";
 import { ThreadEventMetadata } from "../catalogue/model/publish/thread-event-metadata";
 import { ThreadEventStatus } from "../catalogue/model/publish/thread-event-status";
+import { SearchContextService } from "../simple-search/search-context.service";
 
 /**
  * Created by suat on 12-Mar-18.
@@ -46,6 +47,7 @@ export class ThreadSummaryComponent implements OnInit {
     constructor(private bpeService: BPEService,
                 private cookieService: CookieService,
                 private dataChannelService: DataChannelService,
+                private searchContextService: SearchContextService,
                 private bpDataService: BPDataService,
                 private router: Router) {
     }
@@ -119,6 +121,9 @@ export class ThreadSummaryComponent implements OnInit {
     navigateToSearchDetails() {
         const item = this.titleEvent.product;
         this.bpDataService.previousProcess = null;
+        this.searchContextService.associatedProcessMetadata = null;
+        this.searchContextService.associatedProcessType = null;
+        this.searchContextService.targetPartyRole = null;
         this.router.navigate(['/product-details'],
             {
                 queryParams: {
