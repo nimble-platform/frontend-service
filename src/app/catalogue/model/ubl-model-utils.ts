@@ -205,8 +205,8 @@ export class UBLModelUtils {
 
     public static createRequestForQuotationWithOrder(order: Order, catalogueLine: CatalogueLine):RequestForQuotation{
         const quantity: Quantity = new Quantity(null, "", null);
-        const item: Item = this.createItem();
-        const price: Price = this.createPrice();
+        const item: Item = catalogueLine.goodsItem.item;
+        const price: Price = catalogueLine.requiredItemLocationQuantity.price;
         const lineItem: LineItem = this.createLineItem(quantity, price, item);
         const requestForQuotationLine: RequestForQuotationLine = new RequestForQuotationLine(lineItem);
         const rfq = new RequestForQuotation(this.generateUUID(), [""], false, null, null, new Delivery(), 
@@ -512,6 +512,10 @@ export class UBLModelUtils {
 
     public static removeHjidFieldsFromObject(object:any):any {
         delete object.hjid;
+        delete object.startDateItem;
+        delete object.startTimeItem;
+        delete object.endDateItem;
+        delete object.endTimeItem;
         for (const field in object) {
             if(object.hasOwnProperty(field) && object[field] != null && typeof(object[field]) === 'object') {
                 this.removeHjidFieldsFromObject(object[field]);

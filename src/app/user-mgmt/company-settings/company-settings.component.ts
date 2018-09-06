@@ -29,7 +29,7 @@ export class CompanySettingsComponent implements OnInit {
 
     ngOnInit() {
         this.initCallStatus.submit();
-        let userId = this.cookieService.get("user_id");
+        const userId = this.cookieService.get("user_id");
         this.userService.getSettingsForUser(userId).then(settings => {
             if (myGlobals.debug) {
                 console.log("Fetched settings: " + JSON.stringify(settings));

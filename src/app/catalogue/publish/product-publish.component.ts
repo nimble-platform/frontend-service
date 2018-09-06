@@ -193,15 +193,21 @@ export class ProductPublishComponent implements OnInit {
 
             for (let i = 0; i < fileList.length; i++) {
                 let file: File = fileList[i];
-                let reader = new FileReader();
+                const filesize = parseInt(((file.size/1024)/1024).toFixed(4));
+                if (filesize < 2) {
+                  let reader = new FileReader();
 
-                reader.onload = function (e: any) {
-                    let base64String = (reader.result as string).split(',').pop();
-                    let binaryObject = new BinaryObject(base64String, file.type, file.name, "", "");
-                    images.push(binaryObject);
-                };
-                reader.readAsDataURL(file);
-            }
+                  reader.onload = function (e: any) {
+                      let base64String = (reader.result as string).split(',').pop();
+                      let binaryObject = new BinaryObject(base64String, file.type, file.name, "", "");
+                      images.push(binaryObject);
+                  };
+                  reader.readAsDataURL(file);
+                }
+                else {
+                  alert("Maximum allowed filesize: 2 MB");
+                }
+            }          
         }
     }
 
@@ -482,7 +488,7 @@ export class ProductPublishComponent implements OnInit {
         let publishMode = this.publishStateService.publishMode;
         if (publishMode == 'edit') {
             this.catalogueLine = this.catalogueService.draftCatalogueLine;
-            if (this.catalogueLine == null) { 
+            if (this.catalogueLine == null) {
                 this.publishStateService.publishMode = 'create';
                 this.router.navigate(['catalogue/publish']);
                 return;
@@ -743,7 +749,7 @@ export class ProductPublishComponent implements OnInit {
             this.catalogueService.getCatalogueForceUpdate(userId, true).then(catalogue => {
                 this.catalogueService.catalogue = catalogue;
                 const line = this.catalogueLine;
-                this.catalogueLine = UBLModelUtils.createCatalogueLine(catalogue.uuid, 
+                this.catalogueLine = UBLModelUtils.createCatalogueLine(catalogue.uuid,
                     party, this.companyNegotiationSettings);
                 this.catalogueService.draftCatalogueLine = this.catalogueLine;
 

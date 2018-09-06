@@ -8,6 +8,7 @@ import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { copy } from '../common/utils';
 import { CallStatus } from '../common/call-status';
+import { CURRENCIES } from "../catalogue/model/constants";
 
 @Component({
 	selector: 'simple-search-form',
@@ -21,10 +22,25 @@ export class SimpleSearchFormComponent implements OnInit {
 	product_vendor_id = myGlobals.product_vendor_id;
 	product_vendor_name = myGlobals.product_vendor_name;
 	product_img = myGlobals.product_img;
+	product_price = myGlobals.product_price;
+	product_currency = myGlobals.product_currency;
+	product_filter_prod = myGlobals.product_filter_prod;
+	product_filter_comp = myGlobals.product_filter_comp;
+	product_filter_mappings = myGlobals.product_filter_mappings;
 	product_nonfilter_full = myGlobals.product_nonfilter_full;
 	product_nonfilter_regex = myGlobals.product_nonfilter_regex;
 	product_cat = myGlobals.product_cat;
 	product_cat_mix = myGlobals.product_cat_mix;
+
+	CURRENCIES = CURRENCIES;
+	selectedCurrency: any = "EUR";
+	selectedPriceMin: any;
+	selectedPriceMax: any;
+
+	showCatSection = true;
+	showProductSection = false;
+	showCompSection = false;
+	showOtherSection = false;
 
 	categoriesCallStatus: CallStatus = new CallStatus();
 	searchCallStatus: CallStatus = new CallStatus();
@@ -249,7 +265,7 @@ export class SimpleSearchFormComponent implements OnInit {
 								"selected":false
 							});
 							for (let facet_inner in res.facet_counts.facet_fields[facet]) {
-								if (facet_inner != "") {
+								if (facet_inner != "" && facet_inner.indexOf("urn:oasis:names:specification:ubl:schema:xsd") == -1) {
 									this.facetObj[index].options.push({
 										"name":facet_inner,
 										"count":res.facet_counts.facet_fields[facet][facet_inner]
@@ -338,6 +354,101 @@ export class SimpleSearchFormComponent implements OnInit {
 		this.get(this.objToSubmit);
 	}
 
+	getName(name:string) {
+		var ret = name;
+		if (this.product_filter_mappings[name]) {
+			ret = this.product_filter_mappings[name];
+		}
+		return ret;
+	}
+
+	checkPriceFilter() {
+		var check = false;
+		if (this.selectedCurrency && this.selectedPriceMin && this.selectedPriceMax) {
+			if (this.selectedPriceMin < this.selectedPriceMax) {
+				check = true;
+			}
+		}
+		return check;
+	}
+
+	setPriceFilter() {
+		this.clearFacet(this.product_currency);
+		this.clearFacet(this.product_price);
+		this.setFacetWithoutQuery(this.product_currency,this.selectedCurrency);
+		this.setRangeWithoutQuery(this.product_price,this.selectedPriceMin,this.selectedPriceMax);
+		this.get(this.objToSubmit);
+	}
+
+	checkProdCat(name:string) {
+		var found = false;
+		if (this.product_filter_prod.indexOf(name) != -1) {
+			found = true;
+		}
+		return found;
+	}
+
+	checkProdCatCount() {
+		var count = 0;
+		if (this.facetObj) {
+			for (var i=0; i<this.facetObj.length; i++) {
+				if (this.checkProdCat(this.facetObj[i].name)) {
+					count++;
+				}
+			}
+		}
+		return count;
+	}
+
+	checkCompCat(name:string) {
+		var found = false;
+		if (this.product_filter_comp.indexOf(name) != -1) {
+			found = true;
+		}
+		return found;
+	}
+
+	checkCompCatCount() {
+		var count = 0;
+		if (this.facetObj) {
+			for (var i=0; i<this.facetObj.length; i++) {
+				if (this.checkCompCat(this.facetObj[i].name)) {
+					count++;
+				}
+			}
+		}
+		return count;
+	}
+
+	checkOtherCat(name:string) {
+		return (!this.checkProdCat(name) && !this.checkCompCat(name));
+	}
+
+	checkOtherCatCount() {
+		var count = 0;
+		if (this.facetObj) {
+			for (var i=0; i<this.facetObj.length; i++) {
+				if (this.checkOtherCat(this.facetObj[i].name)) {
+					count++;
+				}
+			}
+		}
+		return count;
+	}
+
+	clearFacet(outer:string) {
+		var idx = -1;
+		for (var i=0; i<this.facetQuery.length; i++) {
+			var comp = this.facetQuery[i].split(":")[0];
+			if (comp.localeCompare(outer) == 0) {
+				idx = i;
+			}
+		}
+		if (idx >= 0) {
+			this.facetQuery.splice(idx, 1);
+		}
+	}
+
 	setFacet(outer:string, inner:string) {
 		var fq = outer+":\""+inner+"\"";
 		if (this.facetQuery.indexOf(fq) == -1)
@@ -347,6 +458,16 @@ export class SimpleSearchFormComponent implements OnInit {
 		this.get(this.objToSubmit);
 	}
 
+	setFacetWithoutQuery(outer:string, inner:string) {
+		var fq = outer+":\""+inner+"\"";
+		this.facetQuery.push(fq);
+	}
+
+	setRangeWithoutQuery(outer:string, min:number, max:number) {
+		var fq = outer+":["+min+" TO "+max+"]";
+		this.facetQuery.push(fq);
+	}
+
 	setCat(name:string) {
 		this.cat = name;
 		this.get(this.objToSubmit);
@@ -354,6 +475,9 @@ export class SimpleSearchFormComponent implements OnInit {
 
 	resetFilter() {
 		this.facetQuery = [];
+		this.selectedCurrency = "EUR";
+		this.selectedPriceMin = null;
+		this.selectedPriceMax = null;
 		this.get(this.objToSubmit);
 	}
 

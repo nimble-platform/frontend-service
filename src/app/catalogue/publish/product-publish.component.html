@@ -82,7 +82,7 @@
                 (click)="downloadExampleTemplate()">Download example template
         </button>
     </div>
-    
+
     <call-status [callStatus]="publishStatus" [large]="true">
     </call-status>
 </div>
@@ -101,7 +101,7 @@
                 <small class="p-0">{{selectedCategory.preferredName}}</small>
                 <i class="fa fa-times-circle pl-1" placement="right" (click)="onRemoveCategory(selectedCategory)"></i>
             </div>
-            <button class="btn btn-outline-primary btn-add-category" 
+            <button class="btn btn-outline-primary btn-add-category"
                 (click)="onAddCategory()" [disabled]="isLoading()">
                 Add Category
             </button>
@@ -124,13 +124,13 @@
 
         <div class="col-9">
             <!-- Name -->
-            <text-input label="Product Name" [(text)]="catalogueLine.goodsItem.item.name" [rows]="1">
+            <text-input label="Product Name" [(text)]="catalogueLine.goodsItem.item.name" [rows]="1" [maxLength]="2047">
             </text-input>
-            
+
             <!-- Description -->
-            <text-input label="Product Description" [(text)]="catalogueLine.goodsItem.item.description" [rows]="6" rowClass="space-before">
+            <text-input label="Product Description" [(text)]="catalogueLine.goodsItem.item.description" [rows]="6" [maxLength]="2047" rowClass="space-before">
             </text-input>
-    
+
             <!-- product ID -->
             <div class="col-12"><small class="float-right">Product Id: {{ catalogueLine.goodsItem.item.manufacturersItemIdentification.id }}</small></div>
         </div>
@@ -228,7 +228,7 @@
                 </div>
                 <div *ngIf="hasSelectedProperties()">
                     <a href class="btn-link" (click)="showCategoriesModal(categoriesModal, $event)">Add more properties from product's categories.</a>
-                </div>                    
+                </div>
             </div>
         </div>
 
@@ -324,7 +324,7 @@
                 </div>
                 <div *ngIf="hasSelectedProperties()">
                     <a href class="btn-link" (click)="showCategoriesModal(categoriesModal, $event)">Add more properties from product's categories.</a>
-                </div>                    
+                </div>
             </div>
         </div>
     </div>
@@ -349,7 +349,7 @@
     <ng-template #categoriesModal let-c="close" let-d="dismiss">
         <div class="modal-header">
             <h5 class="modal-title" id="modal-basic-title">Please select the attributes to be displayed from each category</h5>
-            <button type="button" class="close" aria-label="Close" (click)="d('cross')">
+            <button type="button" class="close" aria-label="Close" (click)="d('')">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
@@ -369,7 +369,7 @@
                     <div class="row">
                         <ng-container *ngFor="let property of getCategoryProperties(category)">
                             <div class="col-6 form-check modal-category-property" *ngIf="isPropertyFilteredIn(property)">
-                                <input type="checkbox" class="form-check-input" [ngModel]="isCategoryPropertySelected(category, property)" 
+                                <input type="checkbox" class="form-check-input" [ngModel]="isCategoryPropertySelected(category, property)"
                                     (change)="onToggleCategoryPropertySelected(category, property)">
                                 <label class="form-check-label">{{ property.preferredName }} ({{ getPropertyType(property) }})</label>
                             </div>
@@ -398,11 +398,11 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" (click)="d('cancel')">Cancel</button>
-            <button type="button" class="btn btn-primary" (click)="c('ok')">OK</button>
+            <button type="button" class="btn btn-secondary" (click)="d('')">Cancel</button>
+            <button type="button" class="btn btn-primary" (click)="d('')">OK</button>
         </div>
     </ng-template>
-    
+
     <!-- Edit Property Value(s) Modal -->
     <edit-property-modal >
     </edit-property-modal>

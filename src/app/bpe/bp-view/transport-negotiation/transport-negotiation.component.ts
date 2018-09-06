@@ -1,7 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { BPDataService } from "../bp-data-service";
 import { CallStatus } from "../../../common/call-status";
-import { thresholdFreedmanDiaconis } from "d3";
 import { SearchContextService } from "../../../simple-search/search-context.service";
 
 @Component({
@@ -35,7 +34,7 @@ export class TransportNegotiationComponent implements OnInit {
         }
         return this.bpDataService.initRfq(null);
     }
-    
+
     isLoading(): boolean {
         return this.initCallStatus.fb_submitted;
     }

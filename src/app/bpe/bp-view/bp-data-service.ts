@@ -52,8 +52,10 @@ export class BPDataService{
     // variables to keep the products and product categories related to the active business process
     relatedProducts: string[];
     relatedProductCategories: string[];
-    // the negotiation settings for the producers of the catalogue lines
+    // the company settings for the producers of the catalogue lines
     private companySettings: CompanySettings[] = [];
+    // the company settings of the current user
+    currentUserSettings: CompanySettings;
 
     requestForQuotation: RequestForQuotation;
     quotation: Quotation;
@@ -67,6 +69,8 @@ export class BPDataService{
     transportExecutionPlan: TransportExecutionPlan;
     itemInformationRequest: ItemInformationRequest;
     itemInformationResponse: ItemInformationResponse;
+    /** Set for logistics service, when following an order for a physical product. */
+    productOrder: Order;
 
     ////////////////////////////////////////////////////////////////////////////
     //////// variables used when navigating to bp options details page //////
@@ -416,7 +420,7 @@ export class BPDataService{
         this.requestForQuotation = UBLModelUtils.createRequestForQuotationWithTransportExecutionPlanRequest(copyTransportExecutionPlanRequest,this.modifiedCatalogueLines[0]);
     }
 
-    initDespatchAdvice(handlingInst:string,carrierName:string,carrierContact:string,deliveredQuantity:Quantity,endDate:string) {
+    initDispatchAdvice(handlingInst: string, carrierName: string, carrierContact: string, deliveredQuantity: Quantity, endDate: string) {
         let copyOrder:Order = copy(this.order);
         this.resetBpData();
         this.modifiedCatalogueLines = copy(this.catalogueLines);
@@ -435,10 +439,27 @@ export class BPDataService{
         this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage[0].estimatedDeliveryDate = endDate;
     }
 
+    initDispatchAdviceWithOrder() {
+        const copyOrder: Order = copy(this.productOrder);
+        this.resetBpData();
+        this.modifiedCatalogueLines = copy(this.catalogueLines);
+        this.despatchAdvice = UBLModelUtils.createDespatchAdvice(copyOrder);
+
+        const quantity = copyOrder.orderLine[0].lineItem.quantity;
+        this.despatchAdvice.despatchLine[0].deliveredQuantity.unitCode = quantity.unitCode;
+        this.despatchAdvice.despatchLine[0].deliveredQuantity.value = quantity.value;
+    }
+
     initTransportExecutionPlanRequest() {
         this.modifiedCatalogueLines = copy(this.catalogueLines);
         this.transportExecutionPlanRequest = UBLModelUtils.createTransportExecutionPlanRequest(this.modifiedCatalogueLines[0]);
         this.selectFirstValuesAmongAlternatives(this.modifiedCatalogueLines[0].goodsItem.item);
+
+        if(this.quotation) {
+            const quotationPeriod = this.quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod;
+            this.transportExecutionPlanRequest.serviceStartTimePeriod.startDate = quotationPeriod.startDate;
+            this.transportExecutionPlanRequest.serviceStartTimePeriod.endDate = quotationPeriod.endDate;
+        }
     }
 
     initTransportExecutionPlanRequestWithOrder() {

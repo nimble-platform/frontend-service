@@ -194,7 +194,7 @@ export class NegotiationRequestComponent implements OnInit {
     get addressOptions(): Option[] {
         return [
             { name: "No", value: "" }
-        ].concat(this.bpDataService.getCompanySettings().deliveryTerms.map((term, i) => {
+        ].concat(this.bpDataService.currentUserSettings.deliveryTerms.map((term, i) => {
             return { name: addressToString(term.deliveryAddress), value: String(i) };
         }));
     }

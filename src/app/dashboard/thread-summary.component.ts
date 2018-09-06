@@ -11,6 +11,7 @@ import { DataChannelService } from "../data-channel/data-channel.service";
 import { ProcessType } from "../bpe/model/process-type";
 import { ThreadEventMetadata } from "../catalogue/model/publish/thread-event-metadata";
 import { ThreadEventStatus } from "../catalogue/model/publish/thread-event-status";
+import { SearchContextService } from "../simple-search/search-context.service";
 
 /**
  * Created by suat on 12-Mar-18.
@@ -25,8 +26,11 @@ export class ThreadSummaryComponent implements OnInit {
     @Input() processInstanceGroup: ProcessInstanceGroup;
     @Output() threadStateUpdated = new EventEmitter();
 
-    // Most recent event
+
+    titleEvent: ThreadEventMetadata;
     lastEvent: ThreadEventMetadata;
+
+    lastEventPartnerID = null;
 
     // History of events
     hasHistory: boolean = false;
@@ -43,6 +47,7 @@ export class ThreadSummaryComponent implements OnInit {
     constructor(private bpeService: BPEService,
                 private cookieService: CookieService,
                 private dataChannelService: DataChannelService,
+                private searchContextService: SearchContextService,
                 private bpDataService: BPDataService,
                 private router: Router) {
     }
@@ -65,6 +70,7 @@ export class ThreadSummaryComponent implements OnInit {
             events = events.reverse();
             this.history = events.slice(1, events.length);
             this.lastEvent = events[0];
+            this.computeTitleEvent();
             this.fetchCallStatus.callback("Successfully fetched events.", true);
         }).catch(error => {
             this.fetchCallStatus.error("Error while fetching thread.", error);
@@ -102,12 +108,22 @@ export class ThreadSummaryComponent implements OnInit {
 
         this.checkDataChannel(event);
 
+        if (userRole === "buyer") {
+          this.lastEventPartnerID = ActivityVariableParser.getProductFromProcessData(initialDoc).manufacturerParty.id;
+        }
+        else {
+          this.lastEventPartnerID = ActivityVariableParser.getBuyerId(initialDoc);
+        }
+
         return event;
     }
 
     navigateToSearchDetails() {
-        const item = this.lastEvent.product;
+        const item = this.titleEvent.product;
         this.bpDataService.previousProcess = null;
+        this.searchContextService.associatedProcessMetadata = null;
+        this.searchContextService.associatedProcessType = null;
+        this.searchContextService.targetPartyRole = null;
         this.router.navigate(['/product-details'],
             {
                 queryParams: {
@@ -115,6 +131,14 @@ export class ThreadSummaryComponent implements OnInit {
                     id: item.manufacturersItemIdentification.id
                 }
             });
+    }
+
+    navigateToCompanyDetails() {
+      this.router.navigate(['/user-mgmt/company-details'], {
+        queryParams: {
+            id: this.lastEventPartnerID
+        }
+      });
     }
 
     private fillStatus(event: ThreadEventMetadata, processState: "EXTERNALLY_TERMINATED" | "COMPLETED" | "ACTIVE",
@@ -260,6 +284,21 @@ export class ThreadSummaryComponent implements OnInit {
             bpStatus = "Completed";
         }
         return bpStatus;
+    }
+
+    private computeTitleEvent() {
+        this.titleEvent = this.lastEvent;
+        // if the event is a transportation service, go through the history and check the last event that is not (if any)
+        if(this.lastEvent.product.transportationServiceDetails) {
+            // history ordered from new to old
+            for(let i = this.history.length - 1; i >= 0; i--) {
+                const event = this.history[i]
+                if(!event.product.transportationServiceDetails) {
+                    // if not a transport, this is relevant, doing it in the for loop makes sure the LAST non-transport event is the relevant one.
+                    this.titleEvent = event;
+                }
+            }
+        }
     }
 
     archiveGroup(): void {

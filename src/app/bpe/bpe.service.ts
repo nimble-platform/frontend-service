@@ -287,7 +287,7 @@ export class BPEService {
     }
 
     generateOrderTermsAndConditionsAsText(order: Order, buyerParty, sellerParty): Promise<string> {
-        const url = `${this.url}/contracts/create-terms?orderId=${order.id}&sellerParty=${JSON.stringify(sellerParty)}&buyerParty=${JSON.stringify(buyerParty)}&incoterms=${order.orderLine[0].lineItem.deliveryTerms.incoterms == null ? "" :order.orderLine[0].lineItem.deliveryTerms.incoterms}&tradingTerms=${encodeURIComponent(JSON.stringify(this.getSelectedTradingTerms(order.paymentTerms.tradingTerms)))}`;
+        const url = `${this.url}/contracts/create-terms?orderId=${order.id}&sellerParty=${encodeURIComponent(JSON.stringify(sellerParty))}&buyerParty=${encodeURIComponent(JSON.stringify(buyerParty))}&incoterms=${order.orderLine[0].lineItem.deliveryTerms.incoterms == null ? "" :order.orderLine[0].lineItem.deliveryTerms.incoterms}&tradingTerms=${encodeURIComponent(JSON.stringify(this.getSelectedTradingTerms(order.paymentTerms.tradingTerms)))}`;
         return this.http
             .get(url, {headers: this.headers})
             .toPromise()
@@ -302,7 +302,7 @@ export class BPEService {
             .get(url, { headers })
             .toPromise()
             .then(res => res.json() || null)
-            .catch(this.handleError);
+            .catch(() => null);
 	}
 
 	private getAuthorizedHeaders(): Headers {

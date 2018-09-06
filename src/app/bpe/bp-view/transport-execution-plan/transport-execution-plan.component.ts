@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { CookieService } from "ng2-cookies";
 import { Location } from "@angular/common";
-import { Router } from "@angular/router";
+import { Router, ActivatedRoute } from "@angular/router";
 import { BPDataService } from "../bp-data-service";
 import { CallStatus } from "../../../common/call-status";
 import { SearchContextService } from "../../../simple-search/search-context.service";
@@ -15,6 +15,7 @@ import { ProcessInstanceInputMessage } from "../../model/process-instance-input-
 import { TransportExecutionPlan } from "../../../catalogue/model/publish/transport-execution-plan";
 import { BpUserRole } from "../../model/bp-user-role";
 import { copy } from "../../../common/utils";
+import { Order } from "../../../catalogue/model/publish/order";
 
 @Component({
     selector: "transport-execution-plan",
@@ -25,6 +26,8 @@ export class TransportExecutionPlanComponent implements OnInit {
     request: TransportExecutionPlanRequest;
     response: TransportExecutionPlan;
     userRole: BpUserRole;
+    productOrder?: Order;
+    updatingProcess: boolean;
 
     contractCallStatus: CallStatus = new CallStatus();
     callStatus: CallStatus = new CallStatus();
@@ -35,7 +38,8 @@ export class TransportExecutionPlanComponent implements OnInit {
                 private userService: UserService,
                 private bpeService: BPEService,
                 private location: Location,
-                private router: Router) {
+                private router: Router,
+                private route: ActivatedRoute) {
         
     }
 
@@ -50,7 +54,9 @@ export class TransportExecutionPlanComponent implements OnInit {
 
         this.request = this.bpDataService.transportExecutionPlanRequest;
         this.response = this.bpDataService.transportExecutionPlan;
+        this.productOrder = this.bpDataService.productOrder;
         this.userRole = this.bpDataService.userRole;
+        this.updatingProcess = this.bpDataService.updatingProcess;
 
         if(this.request.transportContract == null && this.bpDataService.precedingProcessId != null) {
             this.contractCallStatus.submit();
@@ -96,8 +102,8 @@ export class TransportExecutionPlanComponent implements OnInit {
         transportationExecutionPlanRequest.mainTransportationService = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;
         UBLModelUtils.removeHjidFieldsFromObject(transportationExecutionPlanRequest);
 
-        //first initialize the seller and buyer parties.
-        //once they are fetched continue with starting the ordering process
+        // first initialize the seller and buyer parties.
+        // once they are fetched continue with starting the ordering process
         const sellerId: string = this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty.id;
         const buyerId: string = this.cookieService.get("company_id");
 
@@ -152,17 +158,23 @@ export class TransportExecutionPlanComponent implements OnInit {
         this.bpeService.continueBusinessProcess(piim)
             .then(res => {
                 this.callStatus.callback("Transport Execution Plan sent", true);
-                this.router.navigate(['dashboard']);
+                this.router.navigate(["dashboard"]);
             }).catch(error => {
-                this.callStatus.error("Failed to send Transport Execution Plan")
+                this.callStatus.error("Failed to send Transport Execution Plan", error);
             });
     }
 
     onDispatchAdvice() {
-        // TODO
-        // this.bpDataService.initDespatchAdvice();
-        // this.bpDataService.setBpOptionParameters(this.userRole, 'Fulfilment',"Order");
-        this.callStatus.submit();
-        this.callStatus.error("Not implemented yet.");
+        this.bpDataService.initDispatchAdviceWithOrder();
+        this.bpDataService.setBpOptionParameters("seller", "Fulfilment", "Order");
+
+        const params = this.route.snapshot.queryParams;
+        this.router.navigate(['bpe/bpe-exec'], {
+            queryParams: {
+                catalogueId: params.catalogueId,
+                id: params.id,
+                pid: params.pid
+            }
+        });
     }
 }

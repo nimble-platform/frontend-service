@@ -6,11 +6,9 @@ import {AppCommonModule} from "../common/common.module";
 import {NgbModule} from "@ng-bootstrap/ng-bootstrap";
 import {DashboardRoutingModule} from "./dashboard-routing.module";
 
-import {DashboardComponent} from "./dashboard.component";
 import {DashboardThreadedComponent} from "./dashboard-threaded.component";
 import {ThreadSummaryComponent} from "./thread-summary.component";
 import {FacetComponent} from "./facet-component";
-import { DashboardPaginationComponent } from "./dashboard-pagination.component";
 import { CatalogueModule } from "../catalogue/catalogue.module";
 import { ThreadEventComponent } from "./thread-event.component";
 
@@ -26,15 +24,12 @@ import { ThreadEventComponent } from "./thread-event.component";
 		NgbModule.forRoot()
 	],
 	declarations: [
-		DashboardComponent,
 		DashboardThreadedComponent,
 		ThreadSummaryComponent,
 		ThreadEventComponent,
-		FacetComponent,
-		DashboardPaginationComponent
+		FacetComponent
 	],
 	exports: [
-		DashboardComponent,
 		DashboardThreadedComponent,
 		ThreadSummaryComponent,
 		FacetComponent
