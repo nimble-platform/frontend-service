@@ -24,7 +24,7 @@ export class PriceOptionPipe implements PipeTransform {
         } else if (priceOptionCategory === PRICE_OPTIONS.PRODUCT_PROPERTY) {
             for (let i:number = 0; i<allPriceOptions.length; i++) {
                 let priceOption:PriceOption = allPriceOptions[i];
-                if (priceOption.itemProperty.length > 0) {
+                if (priceOption.itemProperty != null) {
                     priceOptionsWithIndices.push({option: priceOption, index: i});
                 }
             }

@@ -35,7 +35,11 @@ export class ProductPriceTabComponent implements OnInit {
         let priceOption: PriceOption = new PriceOption();
         if (priceOptionCategory == PRICE_OPTIONS.ORDERED_QUANTITY) {
             priceOption.minimumOrderQuantity = new Quantity(this.catalogueLine.requiredItemLocationQuantity.price.baseQuantity.value, this.catalogueLine.requiredItemLocationQuantity.price.baseQuantity.unitCode);
+
+        } else if(priceOptionCategory == PRICE_OPTIONS.PRODUCT_PROPERTY) {
+            priceOption.itemProperty = [];
         }
+
         this.catalogueLine.priceOption.push(priceOption);
         this.catalogueLine.priceOption = [].concat(this.catalogueLine.priceOption);
     }

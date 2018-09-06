@@ -43,6 +43,8 @@ import { UserMgmtModule } from "../user-mgmt/user-mgmt.module";
 import {PriceOptionCountPipe} from "./publish/price-option/price-option-count.pipe";
 import {PriceOptionPipe} from "./publish/price-option/price-option.pipe";
 import {QuantityPriceOptionComponent} from "./publish/price-option/quantity-price-option.component";
+import {ItemPropertyPriceOptionComponent} from "./publish/price-option/item-property-price-option.component";
+import {DiscountTargetComponent} from "./publish/price-option/discount-target.component";
 
 @NgModule({
 	imports: [CommonModule, 
@@ -88,7 +90,9 @@ import {QuantityPriceOptionComponent} from "./publish/price-option/quantity-pric
         PaymentTermsView,
         PriceOptionCountPipe,
         PriceOptionPipe,
-        QuantityPriceOptionComponent
+        QuantityPriceOptionComponent,
+        ItemPropertyPriceOptionComponent,
+        DiscountTargetComponent
     ],
     exports: [
         CategorySearchComponent,
@@ -114,7 +118,9 @@ import {QuantityPriceOptionComponent} from "./publish/price-option/quantity-pric
         ItemPropertyDataSourcePipe,
         DetailedAddressViewComponent,
         PaymentTermsView,
-        QuantityPriceOptionComponent
+        QuantityPriceOptionComponent,
+        ItemPropertyPriceOptionComponent,
+        DiscountTargetComponent
     ],
     providers: [PublishDeactivateGuardService, CategoryDeactivateGuardService]
 })

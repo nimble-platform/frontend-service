@@ -21,7 +21,7 @@ export class PriceOptionCountPipe implements PipeTransform {
 
         } else if(priceOptionCategory === PRICE_OPTIONS.PRODUCT_PROPERTY) {
             for(let priceOption of priceOptions) {
-                if(priceOption.itemProperty.length > 0) {
+                if(priceOption.itemProperty != null)  {
                     count++;
                 }
             }
