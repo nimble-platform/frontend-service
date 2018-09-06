@@ -64,6 +64,7 @@
                             <npmVersion>5.6.0</npmVersion>
                         </configuration>
                     </execution>
+					<!--
 					<execution>
                         <id>npm update</id>
                         <phase>compile</phase>
@@ -74,6 +75,7 @@
                             <arguments>update</arguments>
                         </configuration>
                     </execution>
+					-->
                     <execution>
                         <id>npm install</id>
                         <phase>compile</phase>
@@ -163,7 +165,6 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <!-- @Oliver: We may remove this line, due to time reasons. This behaviour can also be achieved by 'mvn clean'-->
                             <overwrite>true</overwrite>
                             <outputDirectory>${project.build.directory}/${finalName}/node_modules</outputDirectory>
                             <resources>
@@ -207,6 +208,18 @@
                     </execution>
                 </executions>
             </plugin>
+			
+			<plugin>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>3.1.0</version>
+				<configuration>
+				  <filesets>
+					<fileset>
+					  <directory>${project.basedir}/node_modules</directory>
+					</fileset>
+				  </filesets>
+				</configuration>
+			 </plugin>
 
         </plugins>
 
