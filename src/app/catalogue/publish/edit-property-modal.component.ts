@@ -15,7 +15,7 @@ export class EditPropertyModalComponent implements OnInit {
 
     property: ItemProperty;
     selectedProperty: SelectedProperty;
-    
+
     @ViewChild("modal") modal: ElementRef;
 
     PROPERTY_TYPES = PROPERTY_TYPES;
@@ -42,7 +42,9 @@ export class EditPropertyModalComponent implements OnInit {
                 property.name = this.property.name;
                 property.valueQualifier = this.property.valueQualifier;
             }
-        })
+        }, () => {
+
+        });
     }
 
     addEmptyValuesToProperty() {

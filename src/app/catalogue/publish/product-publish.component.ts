@@ -206,7 +206,7 @@ export class ProductPublishComponent implements OnInit {
                 else {
                   alert("Maximum allowed filesize: 2 MB");
                 }
-            }          
+            }
         }
     }
 
@@ -428,10 +428,9 @@ export class ProductPublishComponent implements OnInit {
                 }
             });
             this.selectedPropertiesUpdates = {};
-        })
-        .catch(() => {
+        }, () => {
             this.selectedPropertiesUpdates = {};
-        })
+        });
     }
 
     onToggleCategoryPropertySelected(category: Category, property: Property) {
