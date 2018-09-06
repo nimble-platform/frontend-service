@@ -39,6 +39,12 @@ export class DateInputComponent implements OnInit {
     }
 
     set date(date: string) {
+        if(date){
+            let index = date.indexOf("T");
+            if (index != -1){
+                date = date.substring(0,date.indexOf("T"));
+            }
+        }
         this.dateValue = date;
         this.dateChange.emit(date);
     }

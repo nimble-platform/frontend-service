@@ -512,6 +512,10 @@ export class UBLModelUtils {
 
     public static removeHjidFieldsFromObject(object:any):any {
         delete object.hjid;
+        delete object.startDateItem;
+        delete object.startTimeItem;
+        delete object.endDateItem;
+        delete object.endTimeItem;
         for (const field in object) {
             if(object.hasOwnProperty(field) && object[field] != null && typeof(object[field]) === 'object') {
                 this.removeHjidFieldsFromObject(object[field]);
