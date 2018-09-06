@@ -1,0 +1,193 @@
+<!-- Titles -->
+<div class="row title-row">
+    <div class="col-2"></div>
+    <div class="col-5">
+        <h4>Manufacturer's Terms</h4>
+    </div>
+    <div class="col-5">
+        <h4>Counter Offer</h4>
+    </div>
+</div>
+
+<!-- Delivery Period -->
+<div class="row content-row bg-light">
+    <div class="col-2">
+        <strong class="font-weight-500">Delivery Period:</strong>
+    </div>
+    <div class="col-5">
+        {{ wrapper.lineDeliveryPeriod.value }} 
+        {{ wrapper.lineDeliveryPeriod.unitCode }}
+        <span [ngStyle]="getDeliveryPeriodStyle()">
+            {{ getDeliveryPeriodText() }}
+        </span>
+    </div>
+    <div class="col-5">
+        <negotiation-request-input label="Request Delivery Period" [(cbModel)]="rfq.negotiationOptions.deliveryPeriod" [disabled]="isLoading() || isReadOnly()"
+            id="deliveryCb" [quantity]="wrapper.rfqDeliveryPeriod" [quantityUnits]="wrapper.settings.deliveryPeriodUnits" [invalid]="!isDeliveryPeriodValid()">
+        </negotiation-request-input>
+    </div>
+</div>
+
+<!-- Warranty -->
+<div class="row content-row">
+    <div class="col-2">
+        <strong class="font-weight-500">Warranty:</strong>
+    </div>
+    <div class="col-5">
+        {{ wrapper.lineWarrantyString }}
+        <span [ngStyle]="getWarrantyPeriodStyle()">
+            {{ getWarrantyPeriodText() }}
+        </span>
+    </div>
+    <div class="col-5">
+        <negotiation-request-input label="Request Warranty" [(cbModel)]="rfq.negotiationOptions.warranty" [disabled]="isLoading() || isReadOnly()"
+            id="warrantyCb" [quantity]="wrapper.rfqWarranty" [quantityUnits]="wrapper.settings.warrantyPeriodUnits" [invalid]="!isWarrantyPeriodValid()">
+        </negotiation-request-input>
+    </div>
+</div>
+
+<!-- Incoterms -->
+<div class="row content-row bg-light">
+    <div class="col-2">
+        <strong class="font-weight-500">Request Incoterms:</strong>
+    </div>
+    <div class="col-5">
+        {{ wrapper.lineIncoterms }}
+    </div>
+    <div class="col-5">
+        <negotiation-request-input label="Incoterms" [(cbModel)]="rfq.negotiationOptions.incoterms" [disabled]="isLoading() || isReadOnly()"
+            id="incotermsCb" [options]="wrapper.settings.incoterms" [(selected)]="wrapper.rfqIncoterms">
+        </negotiation-request-input>
+    </div>
+</div>
+
+<!-- Payment Terms -->
+<div class="row content-row">
+    <div class="col-2">
+        <strong class="font-weight-500">Payment Terms:</strong>
+    </div>
+    <div class="col-5">
+        <div class="d-flex">
+            {{ wrapper.linePaymentTerms }}
+        </div>
+    </div>
+    <div class="col-5">
+        <negotiation-request-input label="Request Payment Terms" [(cbModel)]="rfq.negotiationOptions.paymentTerms" 
+            id="paymentTermsCb" [options]="wrapper.settings.paymentTerms" 
+            [(selected)]="wrapper.rfqPaymentTerms.paymentTerm" [disabled]="isLoading() || isReadOnly()">
+        </negotiation-request-input>
+    </div>
+</div>
+
+<!-- Payment Means -->
+<div class="row content-row bg-light">
+    <div class="col-2">
+        <strong class="font-weight-500">Payment Means:</strong>
+    </div>
+    <div class="col-5">
+        <div class="d-flex">
+            {{ wrapper.linePaymentMeans }}
+        </div>
+    </div>
+    <div class="col-5">
+        <negotiation-request-input label="Request Payment Means" [(cbModel)]="rfq.negotiationOptions.paymentMeans" 
+            id="paymentMeansCb" [options]="wrapper.settings.paymentMeans" [(selected)]="wrapper.rfqPaymentMeans" 
+            [disabled]="isLoading() || isReadOnly()">
+        </negotiation-request-input>
+    </div>
+</div>
+
+<!-- Price -->
+<div class="row content-row">
+    <div class="col-2">
+        <strong class="font-weight-500">Price:</strong>
+    </div>
+    <div class="col-5">
+        {{ wrapper.linePricePerItemString }}
+    </div>
+    <div class="col-5">
+        <negotiation-request-input label="Request Item Price" [(cbModel)]="negotiatePrice" id="priceCb" 
+            [disabled]="isLoading() || isReadOnly()" [quantity]="wrapper.rfqPriceWrapper.itemPrice" 
+            [quantityUnits]="CURRENCIES" [cbDisabled]="!lineHasPrice" [disableQuantityUnit]="lineHasPrice" [invalid]="!isPriceValid()">
+        </negotiation-request-input>
+    </div>
+</div>
+
+<!-- Quantity -->
+<div class="row content-row bg-light">
+    <div class="col-2">
+        <strong class="font-weight-500">Quantity:</strong>
+    </div>
+    <div class="col-5"></div>
+    <div class="col-5 mt-1">
+        <div class="d-flex">
+            <input type="number" [(ngModel)]="requestedQuantity" class="form-control form-control-sm w-75" 
+                [disabled]="isLoading() || isReadOnly()" />
+            <span class="ml-2" *ngIf="getQuantityUnit() !== ''">{{ getQuantityUnit() }}</span>
+        </div>
+    </div>
+</div>
+
+<!-- Note -->
+<div class="row content-row">
+    <div class="col-2">
+        <strong class="font-weight-500">Note:</strong>
+    </div>
+    <div class="col-5">
+    </div>
+    <div class="col-5">
+        <textarea class="form-control" [(ngModel)]="rfq.note[0]" rows="3" [disabled]="isLoading() || isReadOnly()"></textarea>
+    </div>
+</div>
+
+<hr>
+
+<!-- Delivery -->
+<div class="row">
+    <div class="col-12">
+        <h4>Delivery Address</h4>
+        
+        <options-input label="Use Existing Address" [(selected)]="selectedAddress" [options]="addressOptions"
+            rowClass="mb-1" labelClass="col-2" valueClass="col-10">
+        </options-input>
+
+        <address-input [address]="wrapper.rfqDeliveryAddress" [disabled]="isLoading() || isReadOnly() || selectedAddressValue !== ''">
+        </address-input>
+    </div>
+</div>
+<div class="row">
+    <div class="col-2"></div>
+    <div class="col-10">
+        <input type="checkbox" [(ngModel)]="rfq.dataMonitoringRequested" [disabled]="isLoading() || isReadOnly()" >
+        <span class="form-control d-inline border-0">
+            <strong class="font-weight-500">Request data monitoring service</strong>
+        </span>
+    </div>
+</div>
+
+<!-- Actions -->
+<div *ngIf="!isWaitingForReply()" class="row actions-row">
+    <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+    <div class="col-3 price-col">Total Price: {{ wrapper.rfqTotalPriceString }}</div>
+    <div class="col-2">
+        <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
+    </div>
+    <div class="col-3" *ngIf="!bpDataService.updatingProcess">
+        <button class="btn btn-primary action" [disabled]="isLoading() || !isFormValid()" (click)="onSendRequest()">
+            {{ isNegotiatingAnyTerm() ? "Send Request" : "Continue With Manufacturer's Terms" }}
+        </button>
+    </div>
+    <div class="col-3" *ngIf="bpDataService.updatingProcess">
+        <button class="btn btn-primary action" [disabled]="isLoading() || !isFormValid()" (click)="onUpdateRequest()">
+            Update Request
+        </button>
+    </div>
+</div>
+
+<div *ngIf="isWaitingForReply()" class="row actions-row">
+        <div class="col-6"></div>
+        <div class="col-4 price-col">Requested Price: {{ wrapper.rfqTotalPriceString }}</div>
+        <div class="col-2">
+        <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
+    </div>
+</div>

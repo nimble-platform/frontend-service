@@ -1,10 +1,8 @@
 <h3>Platform Analytics</h3>
 
-<div [hidden]="!loading">
-  <img class="space-before" src="assets/form_loader.gif"/>
-</div>
+<call-status [callStatus]="callStatus" [large]="true"></call-status>
 
-<div [hidden]="loading" class="space-before">
+<div [hidden]="isLoading()" class="space-before">
 
   <div class="row justify-content-center">
     <div class="card col-3">

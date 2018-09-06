@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-faded nimble-bg space-after">
+<nav class="navbar navbar-expand-lg navbar-dark nimble-bg space-after">
 	<a *ngIf="isLoggedIn" class="navbar-brand" routerLink="/dashboard" routerLinkActive="active">
 		<img id="nav-logo" src="./assets/nimble_logo_white.png" height="30" class="d-inline-block align-top" alt="">
 	</a>
@@ -31,10 +31,18 @@
 					<i class="fa fa-list-ul"></i> <span i18n>Dashboard</span>
 				</a>
 			</li>
-			<li class="nav-item" *ngIf="checkRoles('catalogue')" routerLinkActive="active">
-				<a class="nav-link" [routerLink]="['/catalogue/categorysearch']" [queryParams]="{pageRef: 'menu'}">
+			<li ngbDropdown class="nav-item dropdown" *ngIf="checkRoles('catalogue')" routerLinkActive="active">
+				<a class="nav-link pointer" id="dropdownMenuPublish" ngbDropdownToggle>
 					<i class="fa fa-arrow-up"></i> <span i18n>Publish</span>
 				</a>
+				<div class="dropdown-menu" aria-labelledby="dropdownMenuPublish" ngbDropdownMenu>
+					<a class="dropdown-item" [routerLink]="['/catalogue/categorysearch']" [queryParams]="{pageRef: 'menu', productType: 'product'}" routerLinkActive="active">
+						<i class="fa fa-shopping-cart dd-icon"></i> Product
+					</a>
+					<a class="dropdown-item" [routerLink]="['/catalogue/categorysearch']" [queryParams]="{pageRef: 'menu', productType: 'transportation'}" routerLinkActive="active">
+						<i class="fa fa-truck dd-icon"></i> Logistics Service
+					</a>
+				</div>
 			</li>
 
 			<!--
@@ -129,9 +137,6 @@
 					<a *ngIf="checkRoles('comp')" class="dropdown-item" routerLink="/user-mgmt/company-settings" routerLinkActive="active">
 						<i class="fa fa-cog dd-icon"></i> Company Settings
 					</a>
-					<a *ngIf="checkRoles('catalogue')" class="dropdown-item" routerLink="/catalogue/catalogue" routerLinkActive="active">
-						<i class="fa fa-book-open dd-icon"></i> <span i18n>Catalogue</span>
-					</a>
 					<a class="dropdown-item" routerLink="/user-mgmt/logout">
 						<i class="fa fa-lock dd-icon"></i> <span i18n>Logout</span>
 					</a>
@@ -141,14 +146,14 @@
 	</div>
 </nav>
 
-<div *ngIf="!alertBetaClosed">
+<!-- <div *ngIf="!alertBetaClosed">
 	<p class="space-before">
 		<ngb-alert type="danger" (close)="alertBetaClosed=true">
 			This platform is in an early access / testing stage.<br/>
 			Downtimes and bugs have to be expected.
 		</ngb-alert>
 	</p>
-</div>
+</div> -->
 
 <div id="loading-bg" *ngIf="loading">
 	<div id="sk-loading-icon">

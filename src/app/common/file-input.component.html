@@ -1,0 +1,24 @@
+<div class="row {{ rowClass }} {{ small ? 'file-link-row-sm' : '' }}">
+    <div *ngIf="label" [class]="labelClass">
+        <input-label [class]="labelMainClass" [label]="label" [definition]="definition">
+        </input-label>
+    </div>
+    <div [class]="valueClass" *ngIf="visible">
+        <div *ngFor="let file of binaryObjects; let i = index" class="file-link-row">
+            <a href class="btn-link" (click)="onDownloadFile(file, $event)">{{ file.fileName }}</a>
+            <button class="btn btn-danger btn-sm" (click)="onRemoveFile(i)" *ngIf="presentationMode === 'edit'">
+                Remove
+            </button>
+        </div>
+        <div class="custom-file" *ngIf="isShowingInput()">
+            <input type="file" class="custom-file-input" [accept]="accept"
+                (change)="onChooseFile($event)" [disabled]="disabled">
+            <label class="custom-file-label" [ngClass]="getFileClasses()">
+                {{ placeholder }}
+            </label>
+        </div>
+        <div *ngIf="presentationMode === 'view' && binaryObjects.length === 0">
+            No file.
+        </div>
+    </div>
+</div>

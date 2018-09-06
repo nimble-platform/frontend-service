@@ -1,0 +1,1 @@
+export type ThreadEventStatus = "CANCELLED" | "DONE" | "ACTION_REQUIRED" | "WAITING";

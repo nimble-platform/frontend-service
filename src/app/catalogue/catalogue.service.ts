@@ -1,23 +1,21 @@
 /**
  * Created by suat on 17-May-17.
  */
-import {Injectable} from "@angular/core";
-import {Headers, Http} from "@angular/http";
-import * as myGlobals from "../globals";
-import {GoodsItem} from "./model/publish/goods-item";
-import {Catalogue} from "./model/publish/catalogue";
-import {UserService} from "../user-mgmt/user.service";
-import {CatalogueLine} from "./model/publish/catalogue-line";
-import {Category} from "./model/category/category";
-import {Observable} from "rxjs/Observable";
-import {UBLModelUtils} from "./model/ubl-model-utils";
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import { Injectable } from "@angular/core";
+import { Headers, Http } from "@angular/http";
+import { catalogue_endpoint } from "../globals";
+import { Catalogue } from "./model/publish/catalogue";
+import { UserService } from "../user-mgmt/user.service";
+import { CatalogueLine } from "./model/publish/catalogue-line";
+import { Category } from "./model/category/category";
+import { BehaviorSubject } from "rxjs/BehaviorSubject";
 import {CookieService} from "ng2-cookies";
+import { copy } from "../common/utils";
 
 @Injectable()
 export class CatalogueService {
-    private headers = new Headers({'Content-Type': 'application/json', 'Accept': 'application/json'});
-    private baseUrl = myGlobals.catalogue_endpoint;
+    private headers = new Headers({ 'Content-Type': 'application/json', 'Accept': 'application/json' });
+    private baseUrl = catalogue_endpoint;
 
     catalogue: Catalogue;
     draftCatalogueLine: CatalogueLine;
@@ -66,7 +64,7 @@ export class CatalogueService {
     }
 
     getCatalogueLine(catalogueId:string, lineId:string):Promise<CatalogueLine> {
-        let url = this.baseUrl + `/catalogue/${catalogueId}/catalogueline/${lineId}`;
+        const url = this.baseUrl + `/catalogue/${catalogueId}/catalogueline/${lineId}`;
         return this.http
             .get(url, {headers: this.headers})
             .toPromise()
@@ -254,7 +252,7 @@ export class CatalogueService {
     // Editing functionality
     editCatalogueLine(catalogueLine: CatalogueLine) {
         // Deep copy to guard original catalogueLine model
-        this.draftCatalogueLine = JSON.parse(JSON.stringify(catalogueLine));
+        this.draftCatalogueLine = copy(catalogueLine);
         // save reference to original
         this.originalCatalogueLine = catalogueLine;
     }

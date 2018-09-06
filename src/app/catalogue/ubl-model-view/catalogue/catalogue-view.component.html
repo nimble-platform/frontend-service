@@ -4,7 +4,7 @@
     </call-status>
 </div>
 
-<div *ngIf="catalogue">
+<div *ngIf="catalogue && catalogue.catalogueLine.length > 0">
     <div *ngIf="catalogue.catalogueLine.length > 0">
         <div class="input-group form-group" style="background-color:#F2F2F2;padding-left: 25px;padding-top: 20px;padding-bottom: 20px;">
             <input  class="form-control col-3" type="text" [(ngModel)]="searchKey" (keyup)="search()" placeholder="Search ...">
@@ -37,12 +37,6 @@
                             <button class="dropdown-item" (click)="imagePackage.click()">
                                 Upload Image Package
                             </button>
-                            <input #template type="file" (change)="uploadTemplate($event)"
-                                   accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                                   style="display: none">
-                            <button class="dropdown-item" (click)="template.click()">
-                                Upload Template
-                            </button>
                             <button class="dropdown-item" (click)="navigateToThePublishPage()">
                                 Publish New Product/Service
                             </button>
@@ -55,7 +49,11 @@
             </div>
         </div>
 
-        <div *ngFor="let catLine of catalogueLinesArray.slice((page-1)*pageSize,page*pageSize) " class="space-before">
+        <div *ngIf="catalogueLinesArray.length > 0" class="pagination justify-content-center space-before">
+            <ngb-pagination [(collectionSize)]="collectionSize" [(pageSize)]="pageSize" [(page)]="page" [maxSize]="5" [boundaryLinks]="true"></ngb-pagination>
+        </div>
+
+        <div *ngFor="let catLine of catalogueLinesArray.slice((page-1)*pageSize,page*pageSize); let i = index" class="space-before">
             <div class="card pointer">
                 <div class="card-body">
                     <div class="row" *ngIf="!catalogueLineView[catLine.id]" (click)="catalogueLineView[catLine.id]=true">
@@ -71,17 +69,27 @@
                         </div>
                         <div class="col-10 d-flex justify-content-between">
                             <div class="col-8">
-                                <p style="word-break: break-all;word-wrap: break-word;white-space: pre-wrap;"><b>{{catLine.goodsItem.item.name}}</b></p>
-                                <p style="word-break: break-all;word-wrap: break-word;white-space: pre-wrap">{{catLine.goodsItem.item.description}}</p>
-                                <p *ngIf="catLine.requiredItemLocationQuantity.price.priceAmount.value != null" style="word-break: break-all;word-wrap: break-word;white-space: pre-wrap">{{catLine.requiredItemLocationQuantity.price.priceAmount.value+" "+catLine.requiredItemLocationQuantity.price.priceAmount.currencyID}}</p>
+                                <p style="word-break: break-all;word-wrap: break-word;">
+                                    <strong>{{catLine.goodsItem.item.name}}  <i class="fas fa-external-link-alt btn-light" (click)="openCatalogueLinePage(catLine)"></i></strong>
+                                </p>
+                                <p style="word-break: break-all;word-wrap: break-word;">{{catLine.goodsItem.item.description}}</p>
+                                <p *ngIf="catLine.requiredItemLocationQuantity.price.priceAmount.value != null" style="word-break: break-all;word-wrap: break-word;">{{catLine.requiredItemLocationQuantity.price.priceAmount.value+" "+catLine.requiredItemLocationQuantity.price.priceAmount.currencyID}}</p>
                             </div>
                             <div class="col-2">
-                                <button type="button" class="btn btn-success space-after col" (click)="redirectToEdit(catLine)" style="display: block">Edit</button>
-                                <button type="button" class="btn btn-danger col" (click)="deleteCatalogueLine(catLine); $event.stopPropagation();">Delete</button>
+                                <button type="button" class="btn btn-primary space-after col"
+                                        (click)="redirectToEdit(catLine)" style="display: block">
+                                    Edit
+                                </button>
+                                <button type="button" class="btn btn-danger col" [disabled]="getDeleteStatus(i).isLoading()"
+                                        (click)="deleteCatalogueLine(catLine, i); $event.stopPropagation();">
+                                    Delete
+                                </button>
+                                <call-status [callStatus]="getDeleteStatus(i)"></call-status>
                             </div>
                         </div>
                     </div>
                     <catalogue-line-panel [catalogueLine]="catLine"
+                                          [settings]="settings"
                                           [presentationMode]="'view'"
                                           [(show)]="catalogueLineView[catLine.id]">
                     </catalogue-line-panel>
@@ -92,14 +100,15 @@
             <ngb-pagination [(collectionSize)]="collectionSize" [(pageSize)]="pageSize" [(page)]="page" [maxSize]="5" [boundaryLinks]="true"></ngb-pagination>
         </div>
     </div>
-    <h3 *ngIf="catalogue.catalogueLine.length <= 0">No published products.</h3>
-    <h5 *ngIf="catalogue.catalogueLine.length <= 0">
+</div>
+
+<div class="jumbotron" *ngIf="catalogue && catalogue.catalogueLine.length <= 0">
+    <h3>No published products.</h3>
+    <h5>
         <span (click)="navigateToThePublishPage()" class="pointer">Publish new products</span>
         <i class="fa fa-plus-circle pointer" (click)="navigateToThePublishPage()"></i>
     </h5>
 </div>
 
-<call-status [callStatus]="getCatalogueStatus"
-                [large]="true">
-
+<call-status [callStatus]="getCatalogueStatus" [large]="true">
 </call-status>

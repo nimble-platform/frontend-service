@@ -187,10 +187,10 @@
                 </ngb-alert>
             </div>
             <div class="col-md-4" *ngIf="loadingFilter">
-                <div class="align-center">
-                    <p>Loading Filter</p>
-                    <i class="fa fa-spin fa-spinner fa-6x"></i>
-                </div>
+              <div class="align-center">
+                <p>Loading Filter</p>
+                <i class="fa fa-spin fa-spinner fa-6x"></i>
+              </div>
             </div>
             <div class="col-md-6" *ngIf="searchvalue.length > 0">
                 <template [ngTemplateOutlet]="valuesTemplateRef" [ngTemplateOutletContext]="{$implicit: searchvalue}">

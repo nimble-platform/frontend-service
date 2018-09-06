@@ -1,0 +1,69 @@
+<!-- Title -->
+<div class="row">
+    <div class="col-12">
+        <p class="nimble-title" i18n>Company Settings</p>
+    </div>
+</div>
+
+<!-- Tabs -->
+<div>
+	<ul class="nav nav-tabs">
+		<li class="nav-item">
+			<a href id="COMPANY_DATA" class="nav-link" [ngClass]="{ active: selectedTab === 'COMPANY_DATA'}" (click)="onSelectTab($event)">
+				Company Data
+			</a>
+		</li>
+		<li class="nav-item">
+			<a href id="NEGOTIATION_SETTINGS" class="nav-link" [ngClass]="{ active: selectedTab === 'NEGOTIATION_SETTINGS'}" (click)="onSelectTab($event)">
+				Negotiation Settings
+			</a>
+		</li>
+		<li class="nav-item">
+			<a href id="DELIVERY_TERMS" class="nav-link" [ngClass]="{ active: selectedTab === 'DELIVERY_TERMS'}" (click)="onSelectTab($event)">
+				Delivery Terms
+			</a>
+		</li>
+		<li class="nav-item">
+			<a href id="CERTIFICATES" class="nav-link" [ngClass]="{ active: selectedTab === 'CERTIFICATES'}" (click)="onSelectTab($event)">
+				Certificates
+			</a>
+		</li>
+		<li class="nav-item">
+			<a href id="CATEGORIES" class="nav-link" [ngClass]="{ active: selectedTab === 'CATEGORIES'}" (click)="onSelectTab($event)">
+				Catalogue Categories
+			</a>
+		</li>
+	</ul>
+</div>
+
+<call-status [callStatus]="initCallStatus" [large]="true"></call-status>
+
+<!-- Company Data, hidden to avoid reloading  -->
+<div *ngIf="settings" [hidden]="selectedTab !== 'COMPANY_DATA'">
+	<company-data-settings [settings]="settings">
+	</company-data-settings>
+</div>
+
+<!-- Negotiation Settings, hidden to avoid reloading -->
+<div *ngIf="settings" [hidden]="selectedTab !== 'NEGOTIATION_SETTINGS'">
+	<company-negotiation-settings [settings]="settings">
+	</company-negotiation-settings>
+</div>
+
+<!-- Delivery Terms, hidden to avoid reloading -->
+<div *ngIf="settings" [hidden]="selectedTab !== 'DELIVERY_TERMS'">
+	<company-delivery-terms [settings]="settings" (onSaveEvent)="onSettingsUpdated()">
+	</company-delivery-terms>
+</div>
+
+<!-- Company Certificates, hidden to avoid reloading -->
+<div *ngIf="settings" [hidden]="selectedTab !== 'CERTIFICATES'">
+	<company-certificates-settings [settings]="settings" (onSaveEvent)="onSettingsUpdated()">
+	</company-certificates-settings>
+</div>
+
+<!-- Company Favourite Categories, hidden to avoid reloading -->
+<div *ngIf="settings" [hidden]="selectedTab !== 'CATEGORIES'">
+	<company-categories-settings [settings]="settings">
+	</company-categories-settings>
+</div>

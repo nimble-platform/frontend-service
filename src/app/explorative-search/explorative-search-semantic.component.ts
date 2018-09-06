@@ -55,8 +55,8 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
     public hiddenElement = false;
     public infoAlert = false;
     public updateInfoAlert = false;
-    public emptyFilterAlert = false;
     public loadingFilter = false;
+    public emptyFilterAlert = false;
     public disableAddPropBtn = false;
     public propertySelectionComplete = false;
 
@@ -405,9 +405,8 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
      * Negotaition rerouting
      */
     negotiation(): void {
-        // console.log(this._negotation_catalogue_id, this._negotiation_id);
-        // console.log(`/simple-search-details?catalogueId=${this._negotation_catalogue_id}&id=${this._negotiation_id}`);
-        this.router.navigate(['/simple-search/details'],
+        // console.log(this._negotiation_catalogue_id, this._negotiation_id)
+        this.router.navigate(['/product-details'],
             { queryParams: {catalogueId: this._negotiation_catalogue_id, id: this._negotiation_id} });
     }
 

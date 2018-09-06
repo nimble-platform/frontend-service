@@ -1,0 +1,7 @@
+.hover-row:hover {
+    background-color: rgba(0,0,0,.075);
+}
+
+.selected-row {
+    background-color: #d6d8db !important;
+}

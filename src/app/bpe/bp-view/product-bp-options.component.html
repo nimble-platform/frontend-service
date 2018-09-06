@@ -1,41 +1,69 @@
-<ng-container *ngIf="bpDataService.getCatalogueLine()">
-    <catalogue-line-header [catalogueLine]="bpDataService.getCatalogueLine()"
-                           [presentationMode]="presentationMode">
-    </catalogue-line-header>
-
-    <div *ngIf="!singleMode"
-         class="d-flex justify-content-center">
-        <button class="btn btn-success col-4 m-3"
-                (click)="closeBpOptions()">Back to Product Details &nbsp; <i class="fa fa-angle-double-up" aria-hidden="true"></i>
-        </button>
+<ng-container *ngIf="wrapper">
+    <div class="row">
+        <div class="col-6">
+            <!-- Title -->
+            <h2 class="nimble-title">
+                Order for:
+            </h2> 
+            <h2>{{ line.goodsItem.item.name }}
+                <button class="btn btn-outline-dark inline ml-2" (click)="onToggleProductExpanded()">
+                    <i class="fas fa-chevron-up fa-fw inline" aria-hidden="true" *ngIf="productExpanded"></i>
+                    <i class="fas fa-chevron-down fa-fw inline" aria-hidden="true" *ngIf="!productExpanded"></i>
+                    <span class="inline" *ngIf="!productExpanded"><small>Show Details</small></span>
+                    <span class="inline" *ngIf="productExpanded"><small>Hide Details</small></span>
+                </button>
+            </h2>
+        </div>
+        <div *ngIf="serviceLine" class="col-6 title-right">
+            <!-- Transport Service Title -->
+            <h2 class="nimble-title">
+                Transport service:
+            </h2> 
+            <h2>{{ serviceLine.goodsItem.item.name }}
+                <button class="btn btn-outline-dark inline ml-2" (click)="onToggleServiceExpanded()">
+                    <i class="fas fa-chevron-up fa-fw inline" aria-hidden="true" *ngIf="serviceExpanded"></i>
+                    <i class="fas fa-chevron-down fa-fw inline" aria-hidden="true" *ngIf="!serviceExpanded"></i>
+                    <span class="inline" *ngIf="!serviceExpanded"><small>Show Details</small></span>
+                    <span class="inline" *ngIf="serviceExpanded"><small>Hide Details</small></span>
+                </button>
+            </h2>
+        </div>            
     </div>
 
-    <!-- The following block includes the bp options that can be initiated from scratch without any previous business history-->
-    <ul *ngIf="availableProcesses.length > 0 && !singleMode" class="nav nav-tabs">
-        <li *ngFor="let process of availableProcesses">
-            <a href [ngClass]="{'nav-link': true, active: selectedOption == process}"
-               (click)="bpDataService.setProcessType(process); $event.preventDefault();"
-               i18n
-            >{{process}}</a>
-        </li>
-    </ul>
+    <!-- Product Details Panel -->
+    <product-details-tabs *ngIf="productExpanded" [wrapper]="wrapper" [showOverview]="true" 
+        [settings]="settings" [options]="options" [readonly]="true">
+    </product-details-tabs>
 
-    <item-information-request-bp *ngIf="selectedOption == 'Item_Information_Request'"
-            [presentationMode]="presentationMode">
-    </item-information-request-bp>
-    <negotiation *ngIf="selectedOption == 'Negotiation'">
-    </negotiation>
-    <order-bp *ngIf="selectedOption == 'Order'">
-    </order-bp>
-    <fulfilment *ngIf="selectedOption == 'Fulfilment'">
-    </fulfilment>
-    <transport-execution-plan-bp *ngIf="selectedOption == 'Transport_Execution_Plan'">
-    </transport-execution-plan-bp>
-    <ppap *ngIf="selectedOption == 'Ppap'"
-            [presentationMode]="presentationMode">
+    <!-- Service Details Panel -->
+    <product-details-tabs *ngIf="serviceExpanded" [wrapper]="serviceWrapper" [showOverview]="true" 
+        [settings]="serviceSettings" [options]="options" [readonly]="true">
+    </product-details-tabs>
+
+    <!-- BP Steps -->
+    <product-bp-steps [currentStep]="currentStep" [status]="getStepsStatus()" 
+        [statusText]="getStepsStatusText()" [displayMode]="stepsDisplayMode">
+    </product-bp-steps>
+
+    <hr>
+    
+    <!-- Order Content -->
+    <item-information *ngIf="currentStep === 'Item_Information_Request' || currentStep === 'Transport_Information_Request'">
+    </item-information>
+    <ppap *ngIf="currentStep === 'Ppap'">
     </ppap>
+    <negotiation *ngIf="currentStep === 'Negotiation'">
+    </negotiation>
+    <transport-negotiation *ngIf="currentStep === 'Transport_Negotiation'">
+    </transport-negotiation>
+    <order *ngIf="currentStep === 'Order' || currentStep === 'Order_Confirmed'">
+    </order>
+    <transport-execution-plan *ngIf="currentStep === 'Transport_Order' || currentStep === 'Transport_Order_Confirmed'">
+    </transport-execution-plan>
+    <fulfilment *ngIf="currentStep === 'Fulfilment'">
+    </fulfilment>
 </ng-container>
 
-<call-status [callStatus]="getCatalogueLineStatus"
-             [large]="true">
+<!-- Loading Icon -->
+<call-status [callStatus]="callStatus" [large]="true">
 </call-status>

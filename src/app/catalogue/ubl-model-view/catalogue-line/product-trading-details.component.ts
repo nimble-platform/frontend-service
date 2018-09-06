@@ -1,8 +1,7 @@
-import {Component, Input} from "@angular/core";
-import {CatalogueLine} from "../../model/publish/catalogue-line";
-import {FormGroup} from "@angular/forms";
-import {Address} from "../../model/publish/address";
-import {UBLModelUtils} from "../../model/ubl-model-utils";
+import { Component, Input } from "@angular/core";
+import { CatalogueLine } from "../../model/publish/catalogue-line";
+import { FormGroup } from "@angular/forms";
+import { INCOTERMS } from "../../model/constants";
 
 @Component({
     selector: 'product-trading-details',
@@ -15,10 +14,5 @@ export class ProductTradingDetailsComponent {
     @Input() catalogueLine: CatalogueLine;
     @Input() parentForm: FormGroup;
 
-    addInitialCountry(value: string): void {
-        let address:Address = UBLModelUtils.createAddress();
-        address.country.name = value;
-        this.catalogueLine.requiredItemLocationQuantity.applicableTerritoryAddress = [address];
-        console.log("address added: " + value);
-    }
+    INCOTERMS: string[] = INCOTERMS;
 }

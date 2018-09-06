@@ -46,13 +46,12 @@
 
 <!-- applicable countries -->
 <div class="well">
-    <h6>Applicable Countries</h6>
+    <h6>Supported Countries</h6>
     <address-view [presentationMode]="presentationMode"
-                  [propName]="'Countries'"
+                  [propName]="'Applicable Countries'"
                   [multiValue]="true"
                   [definition]="'A reference to countries to which this service will apply'"
-                  [address]="catalogueLine.requiredItemLocationQuantity.applicableTerritoryAddress"
-                  (onInitialAddressChange)="addInitialCountry($event)">
+                  [address]="catalogueLine.requiredItemLocationQuantity.applicableTerritoryAddress">
     </address-view>
 </div>
 
@@ -93,8 +92,8 @@
     <boolean-view [presentationMode]="presentationMode"
                   [propName]="'Refrigerator Indicator'"
                   [definition]="'An indicator that this piece of transport equipment is refrigerated (true) or not (false)'"
-                  [(value)]="catalogueLine.goodsItem.item.transportationServiceDetails.shipmentStage[0].transportMeans.transportEquipment[0].refrigeratorIndicator"
-                  (valueChanged)="catalogueLine.goodsItem.item.transportationServiceDetails.shipmentStage[0].transportMeans.transportEquipment[0].refrigeratorIndicator = $event">
+                  [(value)]="catalogueLine.goodsItem.item.transportationServiceDetails.shipmentStage[0].transportMeans.transportEquipment[0].refrigeratedIndicator"
+                  (valueChanged)="catalogueLine.goodsItem.item.transportationServiceDetails.shipmentStage[0].transportMeans.transportEquipment[0].refrigeratedIndicator = $event">
     </boolean-view>
     <value-view [presentationMode]="presentationMode"
                 [propName]="'Equipment Characteristics'"

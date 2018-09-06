@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
 import { AppComponent } from '../app.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import * as myGlobals from '../globals';
+import { CallStatus } from '../common/call-status';
 
 @Component({
     selector: 'company-registration',
@@ -18,7 +19,7 @@ import * as myGlobals from '../globals';
 export class CompanyRegistrationComponent implements OnInit {
 
     public registrationForm: FormGroup;
-    public isSubmitting = false;
+    submitCallStatus: CallStatus = new CallStatus();
 	tooltipHTML = "";
 
     constructor(private _fb: FormBuilder,
@@ -50,13 +51,11 @@ export class CompanyRegistrationComponent implements OnInit {
 		if (myGlobals.debug)
 			console.log(`Registering company ${JSON.stringify(companyRegistration)}`);
 
-        this.isSubmitting = true;
+        this.submitCallStatus.submit();
         this.userService.registerCompany(companyRegistration)
             .then(response => {
 				if (myGlobals.debug)
 					console.log(`Saved Company Settings for user ${userId}. Response: ${JSON.stringify(response)}`);
-
-                this.isSubmitting = false;
 
 				this.cookieService.set('bearer_token',response.accessToken);
 				
@@ -65,11 +64,12 @@ export class CompanyRegistrationComponent implements OnInit {
                     this.cookieService.set("active_company_name", response['name']);
                 }
 
-				this.appComponent.checkLogin("/dashboard");
+                this.appComponent.checkLogin("/dashboard");
+                
+                this.submitCallStatus.callback("Registration submitted", true);
             })
             .catch(error => {
-                console.error('An error occurred', error); // for demo purposes only
-                this.isSubmitting = false;
+                this.submitCallStatus.error("Error while submitting company", error);
             });
 
         return false;

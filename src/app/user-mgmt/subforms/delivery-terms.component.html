@@ -1,23 +1,16 @@
 <div class="delivery-terms-form" [formGroup]="deliveryTermsForm">
-	<div class="form-group row d-none">
-		<span class="col-2 col-form-label">
-			<input type="checkbox" [(ngModel)]="deliveryTermsForm.aM" [ngModelOptions]="{standalone:true}">
-		</span>
-		<div class="col-10">
-			<span class="form-control inline">Deliver to company address</span>
-		</div>
-	</div>
+	
 	<div [ngClass]="{'d-none':deliveryTermsForm.aM,'':!deliveryTermsForm.aM}">
-	    <address-form [group]="deliveryTermsForm.controls.deliveryAddress"></address-form>
+	    <address-form [group]="deliveryTermsForm.controls['deliveryAddress']"></address-form>
     </div>
 	<div class="form-group row">
-		<label class="col-2 col-form-label">Terms</label>
+		<strong class="col-2 col-form-label">Special Terms:</strong>
 		<div class="col-10">
 			<input type="text" class="form-control" formControlName="specialTerms">
 		</div>
 	</div>
 	<div class="form-group row">
-		<label class="col-2 col-form-label">Delivery time (days)</label>
+		<strong class="col-2 col-form-label">Delivery time (days):</strong>
 		<div class="col-10">
 			<input type="number" class="form-control" formControlName="estimatedDeliveryTime">
 		</div>

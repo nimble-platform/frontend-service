@@ -1,0 +1,12 @@
+.title-row {
+    padding: 0rem 0.3rem 0.3rem 0.3rem;
+    border-bottom: 1px solid gray;
+}
+
+.content-row {
+    padding: 0.3rem;
+}
+
+.input-spacer {
+    margin-bottom: 0.6rem;
+}

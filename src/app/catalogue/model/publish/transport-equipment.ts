@@ -7,7 +7,7 @@ export class TransportEquipment {
     constructor(
         public transportEquipmentTypeCode:Code = new Code(),
         public humidityPercent:number = null,
-        public refrigeratorIndicator:boolean = null,
+        public refrigeratedIndicator:boolean = false,
         public characteristics:string = null
     ) { }
 }

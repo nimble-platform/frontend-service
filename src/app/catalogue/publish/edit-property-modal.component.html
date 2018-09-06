@@ -1,0 +1,66 @@
+<ng-template #modal let-c="close" let-d="dismiss">
+        <div class="modal-header">
+            <h5 class="modal-title" id="modal-basic-title">{{ prettyName }}</h5>
+            <button type="button" class="close" aria-label="Close" (click)="d('')">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="container-fluid">
+                <text-input label="Name" [(text)]="prettyName" [maxLength]="255" [presentationMode]="getPropertyPresentationMode()"
+                    [rows]="1" valueTextClass="form-control-sm">
+                </text-input>
+                <text-input label="Definition" [text]="getDefinition()" [maxLength]="255" presentationMode="view" rowClass="space-before">
+                </text-input>
+                <options-input label="Data Type" [presentationMode]="getPropertyPresentationMode()"
+                    [options]="PROPERTY_TYPES" [(selected)]="property.valueQualifier" rowClass="space-before">
+                </options-input>
+                <div class="row space-before">
+                    <div class="col-3">
+                        <strong>Value(s):</strong>
+                    </div>
+                    <div class="col-9">
+                        <file-input *ngIf="property.valueQualifier === 'BINARY'" [binaryObjects]="property.valueBinary"
+                            [multiple]="true" [maxSize]=2>
+                        </file-input>
+                        <ng-container *ngFor="let value of getValues(); let i = index">
+                            <div [ngSwitch]="property.valueQualifier" class="row value-container">
+                                <div class="{{ i === 0 ? 'col-12' : 'col-9' }}">
+
+                                    <quantity-input *ngSwitchCase="'QUANTITY'" [quantity]="property.valueQuantity[i]"
+                                        rowClass="quantity-input">
+                                    </quantity-input>
+
+                                    <!-- Do not use [(ngModel)]="...", as each change removes focus from the element... -->
+                                    <input *ngSwitchCase="'STRING'" type="text" maxlength="255"
+                                        class="form-control form-control-sm value-input"
+                                        [ngModel]="property.value[i]" (change)="setValue(i, $event)">
+
+                                    <!-- Do not use [(ngModel)]="...", as each change removes focus from the element... -->
+                                    <ng-container *ngSwitchDefault>
+                                            <input *ngIf="property.valueQualifier !== 'BINARY'" type="number"
+                                            class="form-control form-control-sm value-input"
+                                                [ngModel]="property.valueDecimal[i]" (change)="setValueDecimal(i, $event)">
+                                    </ng-container>
+                                </div>
+                                <div *ngIf="i > 0 && property.valueQualifier !== 'BINARY'" class="col-3">
+                                    <button class="btn btn-danger btn-remove-value btn-sm"
+                                        (click)="onRemoveValue(i)">
+                                        Remove
+                                    </button>
+                                </div>
+                            </div>
+                        </ng-container>
+                        <button class="btn btn-primary add-value-button" (click)="onAddValue()"
+                            *ngIf="property.valueQualifier !== 'BOOLEAN' && property.valueQualifier !== 'BINARY'">
+                            Add Value
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="d('')">Cancel</button>
+            <button type="button" class="btn btn-primary" (click)="d('')" [disabled]="prettyName === ''">OK</button>
+        </div>
+    </ng-template>

@@ -4,6 +4,7 @@
 import {Unit} from "./unit";
 import {KeywordSynonym} from "./keyword-synonym";
 import {Value} from "./value";
+import { PropertyValueQualifier } from "../publish/property-value-qualifier";
 
 export class Property {
     constructor(
@@ -17,7 +18,7 @@ export class Property {
         public unit: Unit,
         public iecCategory: string,
         public attributeType: string,
-        public dataType: string,
+        public dataType: PropertyValueQualifier,
         public synonyms: KeywordSynonym[],
         public values: Value[],
         public uri: string

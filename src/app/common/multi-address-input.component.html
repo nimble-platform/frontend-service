@@ -1,0 +1,45 @@
+<!-- view and singlevalue mode -->
+<div *ngIf="presentationMode == 'view' || presentationMode == 'singlevalue'" class="row {{ rowClass }}">
+    <div *ngIf="label" [class]="labelClass">
+        <input-label [class]="labelMainClass" [label]="label" [definition]="definition">
+        </input-label>
+    </div>
+    <div [class]="valueClass">
+        <div *ngFor="let value of address; last as isLast" [class]="valueTextClass">{{value.country.name}}<span [hidden]="isLast">,&nbsp;</span></div>
+    </div>
+
+    <!--<label>City</label>
+    <select *ngIf="address.length > 0"
+            class="custom-select">
+        <option *ngFor="let value of address">{{value.cityName}}</option>
+    </select>-->
+</div>
+    
+<!-- edit mode -->
+<div *ngIf="presentationMode == 'edit'">
+    <div *ngFor="let addr of address; let i = index;" class="row {{ rowClass }}">
+        <div *ngIf="label" [class]="labelClass">
+            <label *ngIf="i < 1" class="{{labelMainClass}}">
+                <strong>
+                    {{ label }}:
+                </strong>
+                <span *ngIf="definition" class="definition" title="{{definition}}">&#9432;</span>
+            </label>
+        </div>
+        <div [class]="valueClass" class="input-group" *ngIf="presentationMode === 'edit'">
+            <input type="text" class="form-control {{valueTextClass}}"
+                    [(ngModel)]="addr.country.name">
+
+            <!-- remove value button -->
+            <span *ngIf="address.length > 1 && multiValue">
+                <button class="btn btn-xs btn-danger" (click)="removeValue(i)">&times;
+                </button>
+            </span>
+
+            <!-- add value button -->
+            <span *ngIf="i == address.length - 1 && multiValue">
+                <button class="btn btn-primary btn-xs" (click)="addNewValue()"><strong>+</strong></button>
+            </span>
+        </div>
+    </div>
+</div>

@@ -1,6 +1,19 @@
-body {
-    margin: 0.6rem 0;
-    background-color: #fefefe;
+html, body {
+    background-image: url('assets/bg_global.jpg');
+    background-size: 100%;
+    background-repeat: no-repeat;
+    font-family: 'Montserrat', sans-serif;
+    min-height: 100vh;
+}
+
+.container-fluid {
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+.nimble-title {
+    font-weight: 700;
+    font-size: 2rem;
 }
 
 button, .btn {
@@ -11,8 +24,96 @@ button:disabled, .btn:disabled {
     cursor: not-allowed !important;
 }
 
+strong {
+    font-weight: 500;
+}
+
+/*
+Overwrite default values for Bootstrap buttons.
+*/
+.btn.btn-primary {
+    color: #fff;
+    border-color: #2980b9;
+    background-color: #2980b9;
+}
+
+.btn.btn-primary:hover {
+    color: #fff;
+    background-color: #3090ce;
+    border-color: #3090ce;
+}
+
+.btn.btn-primary:focus {
+    box-shadow: 0 0 0 .2rem rgba(4, 80, 146, 0.58);
+}
+
+.btn.btn-primary:not(:disabled):not(.disabled):active {
+    color: #fff;
+    background-color: #258cd1;
+    border-color: #258cd1;
+}
+
+.btn.btn-primary:disabled {
+    background-color: #909191;
+    border-color: #909191;
+}
+
+.btn.btn-secondary {
+    color: #fff;
+    background-color: #464646;
+    border-color: #464646;
+}
+
+.btn.btn-secondary:hover {
+    background-color: #5c5b5b;
+}
+
+.btn.btn-secondary:active {
+    color: #fff;
+    background-color: #545b62;
+    border-color: #4e555b;
+}
+
+.btn.btn-danger {
+    background-color: #b93829;
+    border-color: #b93829;
+}
+
+.btn.btn-danger:hover {
+    background-color: #de1a04;
+    border-color: #d51904;
+}
+
+.btn.btn-outline-primary {
+    color: #2980b9;
+    background-color: transparent;
+    background-image: none;
+    border-color: #2980b9;
+}
+
+.btn.btn-outline-primary:hover {
+    color: #fff;
+    background-color: #258cd1;
+    border-color: #258cd1;
+}
+
+.btn.btn-outline-primary:not(:disabled):not(.disabled).active,
+.btn.btn-outline-primary:not(:disabled):not(.disabled):active,
+.btn.btn-outline-primary:active {
+    color: #fff;
+    background-color: #258cd1;
+    border-color: #258cd1;
+}
+
+a.nav-link {
+    color: #2980b9;
+}
+a.nav-link:hover {
+    color: #002e60;
+}
 textarea {
     min-height: 2.375rem;
+    resize: none;
 }
 
 textarea {
@@ -44,7 +145,7 @@ textarea {
 	width: 70px;
 	height: 70px;
 	border-radius: 35px;
-	background-color: #a21c26;
+	background-color: #b77563;
 	z-index: 9998;
 	cursor: pointer;
 }
@@ -57,11 +158,11 @@ textarea {
 }
 
 .nimble-bg {
-    background-color: #a21c26;
+    background-color: #b77563;
 }
 
 .nimble-col {
-	border: 2px solid #a21c26;
+	border: 2px solid #b77563;
 	border-radius: 0.25rem;
 	padding: 0.5rem;
 	text-align: center;
@@ -81,6 +182,26 @@ textarea {
 
 .space-right {
     margin-right: 0.5rem !important;
+}
+
+.icon-primary {
+    color: #2980b9;
+}
+
+.icon-secondary {
+    color: #a1a1a1;
+}
+
+.icon-red {
+    color: #b93829;
+}
+
+.font-weight-500 {
+    font-weight: 500;
+}
+
+.font-weight-600 {
+    font-weight: 600;
 }
 
 /*
@@ -181,6 +302,10 @@ textarea {
     opacity: 1 !important;
 }
 
+.nav-link.active {
+    font-weight: 500;
+}
+
 .dropdown-item:hover {
   color: #292b2c !important;
 	background-color: #ccc !important;
@@ -188,7 +313,7 @@ textarea {
 
 .dropdown-item.active, .dropdown-item:active {
 	color: #fff !important;
-	background-color: #a21c26 !important;
+	background-color: #b77563 !important;
 }
 
 .dropdown-menu-right {
@@ -197,19 +322,24 @@ textarea {
   position: absolute !important;
 }
 
-ngb-pagination nav .pagination {
+.flex-1 {
+    flex: 1;
+}
+
+ngb-pagination nav.pagination {
     margin-bottom: 0 !important;
     -moz-box-pack: end;
     justify-content: flex-end;
 }
 
-ngb-pagination nav .pagination .page-item .page-link {
-    color: #a21c26;
+ngb-pagination nav.pagination, .page-item, .page-link {
+    background-color: #fff;
+    color: #000;
 }
 
-ngb-pagination nav .pagination .page-item.active .page-link {
-    background-color: #a21c26;
-    border-color: #a21c26;
+ngb-pagination .page-item.active .page-link {
+    border-color: #b77563;
+    background-color: #b77563;
     color: #fff;
 }
 
@@ -290,7 +420,7 @@ ngb-pagination nav .pagination .page-item.active .page-link {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: #a21c26;
+  background-color: #b77563;
   -webkit-animation: sk-foldCubeAngle 2.4s infinite linear both;
           animation: sk-foldCubeAngle 2.4s infinite linear both;
   -webkit-transform-origin: 100% 100%;
@@ -359,4 +489,42 @@ ngb-pagination nav .pagination .page-item.active .page-link {
     opacity: 0;
   }
 }
+
+/* ------------------- */
+
+/* Floating BP actions */
+
+.actions-row {
+    padding: 0.3rem;
+}
+
+.actions-row .price-col {
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+    font-size: 1.6rem;
+    justify-content: flex-end;
+}
+
+.actions-row .price-col-negotiate {
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    font-size: 1.4rem;
+    justify-content: flex-start;
+    margin-left: 0.75rem;
+}
+
+.actions-row .call-status-col {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.actions-row .action {
+    width: 100%;
+    height: 100%;
+    white-space: normal;
+}
+
 /* ------------------- */

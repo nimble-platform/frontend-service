@@ -1,0 +1,29 @@
+
+.custom-file-label.no-file {
+    color: #bdbdbd;
+}
+
+.custom-file-label.disabled {
+    color: #495057;
+    background-color: #e9ecef;
+}
+
+.custom-file-label.disabled.no-file {
+    color: #9aa0a5;
+}
+
+.custom-file-label.disabled::after {
+    color: #495057;
+    background-color: #e9ecef;
+}
+
+.file-link-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    line-height: 1.95rem;
+}
+
+.file-link-row-sm .file-link-row {
+    line-height: 1.5rem;
+}

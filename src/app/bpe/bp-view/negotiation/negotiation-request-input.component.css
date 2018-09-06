@@ -1,0 +1,8 @@
+.col-quantity-value {
+    padding-right: 0.1rem;
+}
+.col-quantity-unit {
+    padding-left: 0.1rem;
+    display: flex;
+    align-items: center;
+}

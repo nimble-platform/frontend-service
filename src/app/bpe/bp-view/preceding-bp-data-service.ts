@@ -14,10 +14,4 @@ export class PrecedingBPDataService{
     fromAddress: Address;
     // last order process metadata between buyer and seller
     orderMetadata: any;
-
-    reset(){
-        this.toAddress = null;
-        this.fromAddress = null;
-        this.orderMetadata = null;
-    }
 }

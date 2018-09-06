@@ -11,8 +11,7 @@ export class ShipmentViewComponent {
     @Input() presentationMode: string;
     @Input() showCarrierPartyDetails: boolean = true;
     // used to get correct format for the estimatedDeliveryDate of shipment
-    @Input() date:any;
-    @Input() showDate: boolean = true;
+    date:any;
 
     getEstimatedDeliveryDate():string{
         return this.date.year+"-"+this.date.month+"-"+this.date.day;

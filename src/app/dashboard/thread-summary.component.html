@@ -1,92 +1,61 @@
-<div class="space-after thread-entry">
-    <div class="row thread-entry-row">
-        <div class="col d-flex justify-content-end align-items-center">
-            <div class="mr-auto p-2">{{processInstanceGroup.id}}</div>
-            <div *ngIf="!processInstanceGroup.archived" (click)="archiveGroup()" data-toggle="tooltip" data-placement="top" title="Archive">
-                <i class="fa fa-archive p-2 pointer" aria-hidden="true"></i>
+<div class="row space-after thread-entry">
+    <div class="col-12">
+        <!-- Title bar -->
+        <div class="row">
+            <div class="col-12 d-flex thread-entry-header">
+                <div *ngIf="!titleEvent" class="header-label mr-auto">Loading...</div>
+                <div *ngIf="titleEvent" class="header-label mr-auto">
+                    <span class="clickable" (click)="navigateToSearchDetails()">{{titleEvent.product.name}}</span> (Trading partner: <span class="clickable" (click)="navigateToCompanyDetails()">{{titleEvent.tradingPartner}}</span>)
+                </div>
+                <div *ngIf="showDataChannelButton" data-toggle="tooltip" data-placement="top" title="Open Data Channel">
+                    <i class="fa fa-exchange-alt p-2 pointer" aria-hidden="true" [routerLink]="[channelLink]"></i>
+                </div>
+                <div *ngIf="!processInstanceGroup.archived" (click)="archiveGroup()" data-toggle="tooltip" data-placement="top" title="Archive">
+                    <i class="fa fa-archive p-2 pointer" aria-hidden="true"></i>
+                </div>
+                <div *ngIf="processInstanceGroup.archived" (click)="deleteGroup()" data-toggle="tooltip" data-placement="top" title="Delete Permanently">
+                    <i class="fa fa-trash-alt p-2 pointer" aria-hidden="true"></i>
+                </div>
+                <div *ngIf="processInstanceGroup.archived" (click)="restoreGroup()" data-toggle="tooltip" data-placement="top" title="Restore">
+                    <i class="fa fa-undo p-2 pointer" aria-hidden="true"></i>
+                </div>
             </div>
-            <div *ngIf="processInstanceGroup.archived" (click)="deleteGroup()" data-toggle="tooltip" data-placement="top" title="Delete Permanently">
-                <i class="fa fa-trash-alt p-2 pointer" aria-hidden="true"></i>
+        </div>
+
+        <!-- Titles for the rows -->
+        <div class="row thread-entry-heading">
+                <!--<div class="col-2"><strong>Customer</strong></div>-->
+                <div class="col-3"><strong>Type</strong></div>
+                <div class="col-3"><strong>Date</strong></div>
+                <div class="col-3"><strong>Note</strong></div>
+                <div class="col-3"><strong>Status</strong></div>
             </div>
-            <div *ngIf="processInstanceGroup.archived" (click)="restoreGroup()" data-toggle="tooltip" data-placement="top" title="Restore">
-                <i class="fa fa-undo p-2 pointer" aria-hidden="true"></i>
-            </div>
-            <div *ngIf="showDataChannelButton" (click)="openDataChannelView()" data-toggle="tooltip" data-placement="top" title="Open Data Channel">
-                <i class="fa fa-exchange-alt p-2 pointer" aria-hidden="true"></i>
-            </div>
-            <div *ngIf="expanded" (click)="toggleExpanded()" data-toggle="tooltip" data-placement="top" title="Hide Intermediate Activities">
-                <i class="fa fa-compress p-2 pointer" aria-hidden="true"></i>
+
+        <!-- Most recent event -->
+        <thread-event *ngIf="lastEvent" [processInstanceGroup]="processInstanceGroup" [event]="lastEvent" (processCancelled)="threadStateUpdated.next()">
+        </thread-event>
+
+        <!-- Loading most recent event -->
+        <div class="row" *ngIf="!lastEvent">
+            <call-status [callStatus]="fetchCallStatus" [large]="true"></call-status>
+        </div>
+
+        <!-- History -->
+        <ng-container *ngIf="historyExpanded && history">
+            <ng-container *ngFor="let event of history">
+                <thread-event [processInstanceGroup]="processInstanceGroup" [event]="event" (processCancelled)="threadStateUpdated.next()">
+                </thread-event>
+            </ng-container>
+        </ng-container>
+
+        <!-- Toggle history -->
+        <div class="row" *ngIf="lastEvent && hasHistory">
+            <div class="col align-items-center clickable" (click)="toggleHistory()">
+                {{ historyExpanded ? "Hide" : "Show" }} previous step(s)
             </div>
         </div>
     </div>
-
-    <ng-container *ngIf="processMetadataAggregated">
-        <!--<ng-container *ngFor="let singleMetadata of processMetadata; let i = index">-->
-        <ng-container *ngIf="!expanded">
-            <ng-container *ngFor="let singleMetadata of processMetadata; let i = index">
-                <div *ngIf="i == 0 || i == lastIndex" class="row thread-entry-row">
-                    <div class="col-2">{{singleMetadata.presentableProcessType}}</div>
-                    <div class="col-2">{{singleMetadata.start_time}}</div>
-                    <div class="col-2">
-                        <label class="clickable" (click)="navigateToSearchDetails(singleMetadata.product)">
-                            {{singleMetadata.product.name}}
-                        </label>
-                    </div>
-                    <div class="col-1">{{singleMetadata.tradingPartner}}</div>
-                    <div class="col-2">{{singleMetadata.note}}</div>
-                    <div *ngIf="singleMetadata.statusCode=='EXTERNALLY_TERMINATED'" class="col-3 alert-danger">
-                        <div>Cancelled</div>
-                        <div class="clickable"
-                             (click)="openBpProcessView(i)">{{singleMetadata.actionStatus}}</div>
-                    </div>
-                    <div *ngIf="singleMetadata.statusCode=='COMPLETED'" class="col-3 alert-success">
-                        <div>Completed</div>
-                        <div class="clickable"
-                             (click)="openBpProcessView(i)">{{singleMetadata.actionStatus}}</div>
-                    </div>
-                    <div *ngIf="singleMetadata.statusCode=='ACTIVE'" class="col-3 alert-warning">
-                        <div>In Progress</div>
-                        <div class="clickable"
-                             (click)="openBpProcessView(i)">{{singleMetadata.actionStatus}}</div>
-                    </div>
-                </div>
-                <div *ngIf="!(i == 0 || i == lastIndex) && i == 1" class="row thread-entry-row justify-content-center pointer">
-                    <div><div class="btn alert-info" (click)="toggleExpanded()">See Intermediate Activities</div></div>
-                </div>
-            </ng-container>
-        </ng-container>
-        <ng-container *ngIf="expanded">
-            <ng-container *ngFor="let singleMetadata of processMetadata; let i = index">
-                <div class="row thread-entry-row">
-                    <div class="col-2">{{singleMetadata.presentableProcessType}}</div>
-                    <div class="col-2">{{singleMetadata.start_time}}</div>
-                    <div class="col-2">
-                        <label class="clickable" (click)="navigateToSearchDetails(singleMetadata.product)">
-                            {{singleMetadata.product.name}}
-                        </label>
-                    </div>
-                    <div class="col-1">{{singleMetadata.tradingPartner}}</div>
-                    <div class="col-2">{{singleMetadata.note}}</div>
-                    <div *ngIf="singleMetadata.statusCode=='EXTERNALLY_TERMINATED'" class="col-3 alert-danger">
-                        <div>Cancelled</div>
-                        <div class="clickable"
-                              (click)="openBpProcessView(i)">{{singleMetadata.actionStatus}}</div>
-                    </div>
-                    <div *ngIf="singleMetadata.statusCode=='COMPLETED'" class="col-3 alert-success">
-                        <div>Completed</div>
-                        <div class="clickable"
-                           (click)="openBpProcessView(i)">{{singleMetadata.actionStatus}}</div>
-                    </div>
-                    <div *ngIf="singleMetadata.statusCode=='ACTIVE'" class="col-3 alert-warning">
-                        <div>In Progress</div>
-                        <div class="clickable"
-                           (click)="openBpProcessView(i)">{{singleMetadata.actionStatus}}</div>
-                    </div>
-                </div>
-            </ng-container>
-        </ng-container>
-    </ng-container>
 </div>
-<call-status [callStatus]="archiveCallStatus"
-             [large]="true">
+
+<call-status [callStatus]="archiveCallStatus" [large]="true">
 </call-status>

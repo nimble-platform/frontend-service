@@ -1,0 +1,22 @@
+<text-input label="Handling Instructions" definition="The handling required for this shipment" labelClass="col-2" valueClass="col-10"
+    [disabled]="disabled" [presentationMode]="presentationMode" [(text)]="shipment.handlingInstructions">
+</text-input>
+
+<text-input *ngIf="disabled || presentationMode == 'view'" label="Estimated Delivery Date" rowClass="space-before" labelClass="col-2" valueClass="col-10"
+            [disabled]="disabled" [presentationMode]="presentationMode" [(text)]="shipment.shipmentStage[0].estimatedDeliveryDate"
+            definition="The estimated date of delivery in this plan between the start and date of the service.">
+
+</text-input>
+
+<date-input *ngIf="!disabled && presentationMode == 'edit'" [presentationMode]="presentationMode" labelClass="col-2" valueClass="col-10"
+    label="Estimated Delivery Date" definition="The estimated date of delivery in this plan between the start and date of the service."
+    [(date)]="shipment.shipmentStage[0].estimatedDeliveryDate" rowClass="space-before" [disabled]="disabled">
+</date-input>
+
+<text-input label="Carrier Party" definition="The party carrying the goods" rowClass="space-before" labelClass="col-2" valueClass="col-10"
+    [disabled]="disabled" [presentationMode]="presentationMode" [(text)]="shipment.shipmentStage[0].carrierParty.name">
+</text-input>
+
+<text-input label="Carrier Party Contact" definition="The primary contact for carrier party" rowClass="space-before" labelClass="col-2" valueClass="col-10"
+    [disabled]="disabled" [presentationMode]="presentationMode" [(text)]="shipment.shipmentStage[0].carrierParty.contact.telephone">
+</text-input>

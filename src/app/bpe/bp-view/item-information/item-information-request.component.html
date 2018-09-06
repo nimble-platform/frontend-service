@@ -1,0 +1,60 @@
+<div class="row space-before">
+    <div class="col-3">
+        <strong class="font-weight-500"><label for="customFile">Requested filled technical data sheet(s):</label></strong>
+    </div>
+    <div class="col-9">
+        <file-input [disabled]="isLoading() || isRequestSent()" [multiple]="true" [presentationMode]="getPresentationMode()"
+            (onSelectFile)="onSelectItemSpecificationFile($event)" [binaryObjects]="files"
+            (onClearFile)="onUnselectItemSpecificationFile($event)">
+        </file-input>
+    </div>
+</div>
+
+<hr>
+
+<div class="row">
+    <div class="col-3">
+        <strong class="font-weight-500"><label for="noteTextarea">Note:</label></strong>
+    </div>
+    <div class="col-9">
+        <textarea id="noteTextarea" class="form-control note-textarea" rows="4" 
+            [disabled]="isLoading() || isRequestSent()" [(ngModel)]="request.note[0]">
+        </textarea>
+    </div>
+</div>
+
+<hr>
+
+<!-- Actions -->
+<div *ngIf="!isRequestSent()" class="row actions-row">
+    <div class="col-2"></div>
+    <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+    <div class="col-2">
+        <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
+    </div>
+    <div class="col-2">
+        <button *ngIf="!bpDataService.updatingProcess" class="btn btn-secondary action" [disabled]="isLoading()" (click)="onSkip()">
+            Skip
+        </button>
+    </div>
+    <div class="col-2">
+        <button *ngIf="!bpDataService.updatingProcess" class="btn btn-primary action" [disabled]="isLoading()" (click)="onSendRequest()">
+            Send Request
+        </button>
+        <button *ngIf="bpDataService.updatingProcess" class="btn btn-primary action" [disabled]="isLoading()" (click)="onUpdateRequest()">
+            Update Request
+        </button>
+    </div>
+</div>
+
+<div *ngIf="isRequestSent()" class="row actions-row">
+    <div class="col-8"></div>
+    <div class="col-2">
+        <button class="btn btn-secondary action" (click)="onBack()">Back</button>
+    </div>
+    <div class="col-2">
+        <button class="btn btn-primary action" disabled="true">
+            Request Sent
+        </button>
+    </div>
+</div>

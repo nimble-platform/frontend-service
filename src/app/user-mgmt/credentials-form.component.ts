@@ -4,6 +4,8 @@ import { Credentials } from './model/credentials';
 import { CredentialsService } from './credentials.service';
 import * as myGlobals from '../globals';
 import { CookieService } from 'ng2-cookies';
+import { CallStatus } from '../common/call-status';
+import { copy } from '../common/utils';
 //declare var jsSHA: any;
 
 @Component({
@@ -14,15 +16,14 @@ import { CookieService } from 'ng2-cookies';
 
 export class CredentialsFormComponent implements OnInit {
 
-	submitted = false;
-	callback = false;
-	error_detc = false;
 	debug = myGlobals.debug;
 	pwLink = myGlobals.pw_reset_link;
 	model = new Credentials('','');
 	objToSubmit = new Credentials('','');
 	response: any;
 	shaObj: any;
+
+	submitCallStatus: CallStatus = new CallStatus();
 
 	constructor(
 		private credentialsService: CredentialsService,
@@ -37,6 +38,7 @@ export class CredentialsFormComponent implements OnInit {
 	}
 
 	post(credentials: Credentials): void {
+		this.submitCallStatus.submit();
 		this.credentialsService.post(credentials)
 		.then(res => {
 			if (myGlobals.debug)
@@ -52,11 +54,14 @@ export class CredentialsFormComponent implements OnInit {
 				this.cookieService.set("active_company_name",res.companyName);
 			else
 				this.cookieService.set("active_company_name",null);
+			if (res.showWelcomeInfo)
+				this.cookieService.set("show_welcome","true");
+			else
+				this.cookieService.set("show_welcome","false");
 			this.cookieService.set("user_fullname",res.firstname+" "+res.lastname);
 			this.cookieService.set("user_email",res.email);
 			this.cookieService.set("bearer_token",res.accessToken);
-			this.callback = true;
-			this.error_detc = false;
+			this.submitCallStatus.callback("Login Successful");
 			this.appComponent.checkLogin("/dashboard");
 		})
 		.catch(error => {
@@ -65,9 +70,10 @@ export class CredentialsFormComponent implements OnInit {
 			this.cookieService.delete("user_fullname");
 			this.cookieService.delete("user_email");
 			this.cookieService.delete("active_company_name");
+			this.cookieService.delete("show_welcome");
 			this.cookieService.delete("bearer_token");
 			this.appComponent.checkLogin("");
-			this.error_detc = true;
+			this.submitCallStatus.error("Invalid email or password", error);
 		});
 	}
 
@@ -105,21 +111,18 @@ export class CredentialsFormComponent implements OnInit {
 	}
 
 	reset() {
-		this.submitted = false;
-		this.callback = false;
-		this.error_detc = false;
+		this.submitCallStatus.reset();
 		this.model = new Credentials('','');
 		this.objToSubmit = new Credentials('','');
 	}
 
 	onSubmit() {
-		this.objToSubmit = JSON.parse(JSON.stringify(this.model));
+		this.objToSubmit = copy(this.model);
 		/*
 		this.shaObj = new jsSHA("SHA-256", "TEXT");
 		this.shaObj.update(this.model.password);
         this.objToSubmit.password = this.shaObj.getHash("HEX");
 		*/
-		this.submitted = true;
 		this.post(this.objToSubmit);
 	}
 

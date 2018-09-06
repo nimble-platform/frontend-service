@@ -6,6 +6,6 @@ export class ShipmentStage {
         public transportModeCode:Code = new Code(),
         public carrierParty: Party = new Party(),
         public transportMeans:TransportMeans = new TransportMeans(),
-        public estimatedDeliveryDate: string = null
+        public estimatedDeliveryDate:string = null
     ) {  }
 }
