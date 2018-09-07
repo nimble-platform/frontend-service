@@ -17,7 +17,7 @@
         <strong class="font-weight-500"><label for="noteTextarea">Note:</label></strong>
     </div>
     <div class="col-9">
-        <textarea id="noteTextarea" class="form-control note-textarea" rows="4" 
+        <textarea id="noteTextarea" class="form-control note-textarea" rows="4"
             [disabled]="isLoading() || isRequestSent()" [(ngModel)]="request.note[0]">
         </textarea>
     </div>
@@ -28,12 +28,13 @@
 <!-- Actions -->
 <div *ngIf="!isRequestSent()" class="row actions-row">
     <div class="col-2"></div>
-    <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+    <div *ngIf="!bpDataService.updatingProcess" class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+    <div *ngIf="bpDataService.updatingProcess" class="col-6 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
     <div class="col-2">
         <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
     </div>
-    <div class="col-2">
-        <button *ngIf="!bpDataService.updatingProcess" class="btn btn-secondary action" [disabled]="isLoading()" (click)="onSkip()">
+    <div *ngIf="!bpDataService.updatingProcess" class="col-2">
+        <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onSkip()">
             Skip
         </button>
     </div>

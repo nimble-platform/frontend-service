@@ -47,7 +47,7 @@
             <label class="form-check-label">{{ doc.name }}</label>
         </div>
         <div class="col-1 mt-1">
-            <button *ngIf="isDocumentAvailable(doc.name)" 
+            <button *ngIf="isDocumentAvailable(doc.name)"
                 class="btn btn-secondary btn-sm" (click)="onDownload(doc.name)">
                 Download
             </button>
@@ -59,7 +59,7 @@
 <hr>
 
 <!-- Note -->
-<text-input class="form-group space-after" [(text)]="note" label="Note" labelClass="col-2" 
+<text-input class="form-group space-after" [(text)]="note" label="Note" labelClass="col-2"
     valueClass="col-10" [disabled]="isLoading() || isRequestSent()">
 </text-input>
 
@@ -68,12 +68,13 @@
 <!-- Action buttons -->
 <div *ngIf="!isRequestSent()" class="row actions-row">
     <div class="col-2"></div>
-    <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+    <div *ngIf="!bpDataService.updatingProcess" class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+    <div *ngIf="bpDataService.updatingProcess" class="col-6 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
     <div class="col-2">
         <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">Back</button>
     </div>
-    <div class="col-2">
-        <button *ngIf="!bpDataService.updatingProcess" class="btn btn-secondary action" [disabled]="isLoading()" (click)="onSkip()">
+    <div *ngIf="!bpDataService.updatingProcess" class="col-2">
+        <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onSkip()">
             Skip
         </button>
     </div>
