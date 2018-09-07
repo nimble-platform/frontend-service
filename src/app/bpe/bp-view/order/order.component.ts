@@ -62,7 +62,7 @@ export class OrderComponent implements OnInit {
     fetchTermsAndConditionsStatus: CallStatus = new CallStatus();
     fetchDataMonitoringStatus: CallStatus = new CallStatus();
 
-    constructor(private bpDataService: BPDataService,
+    constructor(public bpDataService: BPDataService,
                 private userService: UserService,
                 private bpeService: BPEService,
                 private cookieService: CookieService,

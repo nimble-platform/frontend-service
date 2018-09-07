@@ -13,11 +13,8 @@
     <h3 class="space-before">Product Certificates</h3>
     
     <div *ngFor="let certificate of wrapper.line.goodsItem.item.certificate" class="row mt-1">
-        <div class="col-10">
+        <div class="col-12">
             {{ certificate.certificateType }}
-        </div>
-        <div class="col-2">
-            <button class="btn btn-primary btn-sm w-100" [disabled]="true">Download</button>
         </div>
     </div>
 </div>

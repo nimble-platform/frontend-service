@@ -101,50 +101,50 @@
         </div>
     </div>
 
+
+
+    <hr>
+
+
+    <!-- Notes -->
+    <div class="row content-row" *ngIf="isReady()">
+        <div class="col-6">
+            <text-input presentationMode="edit" [disabled]="isReadOnly() || isSeller()"
+                label="Customer's Note" [(text)]="order.note" labelClass="col-4" valueClass="col-8">
+            </text-input>
+        </div>
+        <div class="col-6">
+            <text-input presentationMode="edit" *ngIf="orderResponse" [disabled]="isReadOnly()"
+                label="Supplier's Note" [(text)]="orderResponse.note" labelClass="col-4" valueClass="col-8">
+            </text-input>
+        </div>
+    </div>
+    
+    
+    <hr>
+    
+    
+    <!-- Contract Preview -->
+    <div class="row" *ngIf="isReady()">
+        <div class="col-12">
+            <h2>
+                Terms and Conditions
+                <button class="btn btn-outline-dark" (click)="onPreviewTermsAndConditions()"
+                    [disabled]="!order.contract || order.contract[0]?.clause.length === 0">
+                    <i class="fas fa-chevron-up fa-fw fa-lg mt-2" aria-hidden="true" *ngIf="showPreview"></i>
+                    <i class="fas fa-chevron-down fa-fw fa-lg mt-2" aria-hidden="true" *ngIf="!showPreview"></i>
+                </button>
+            </h2>
+        </div>
+        <call-status [callStatus]="fetchTermsAndConditionsStatus"></call-status>
+        <div class="col-12" *ngIf="showPreview && termsAndConditions">
+            <h4>General terms and conditions</h4>
+            <textarea rows="12" class="form-control" [disabled]="true">{{ termsAndConditions }}</textarea>
+            <contract [contract]="order.contract[0]">
+            </contract>
+        </div>
+    </div>
 </ng-container>
-
-
-<hr>
-
-
-<!-- Notes -->
-<div class="row content-row" *ngIf="isReady()">
-    <div class="col-6">
-        <text-input presentationMode="edit" [disabled]="isReadOnly() || isSeller()"
-            label="Customer's Note" [(text)]="order.note" labelClass="col-4" valueClass="col-8">
-        </text-input>
-    </div>
-    <div class="col-6">
-        <text-input presentationMode="edit" *ngIf="orderResponse" [disabled]="isReadOnly()"
-            label="Supplier's Note" [(text)]="orderResponse.note" labelClass="col-4" valueClass="col-8">
-        </text-input>
-    </div>
-</div>
-
-
-<hr>
-
-
-<!-- Contract Preview -->
-<div class="row" *ngIf="isReady()">
-    <div class="col-12">
-        <h2>
-            Terms and Conditions
-            <button class="btn btn-outline-dark" (click)="onPreviewTermsAndConditions()"
-                [disabled]="!order.contract || order.contract[0]?.clause.length === 0">
-                <i class="fas fa-chevron-up fa-fw fa-lg mt-2" aria-hidden="true" *ngIf="showPreview"></i>
-                <i class="fas fa-chevron-down fa-fw fa-lg mt-2" aria-hidden="true" *ngIf="!showPreview"></i>
-            </button>
-        </h2>
-    </div>
-    <call-status [callStatus]="fetchTermsAndConditionsStatus"></call-status>
-    <div class="col-12" *ngIf="showPreview && termsAndConditions">
-        <h4>General terms and conditions</h4>
-        <textarea rows="12" class="form-control" [disabled]="true">{{ termsAndConditions }}</textarea>
-        <contract [contract]="order.contract[0]">
-        </contract>
-    </div>
-</div>
 
 
 <!-- EPC Codes -->
@@ -189,13 +189,12 @@
         </div>
     </ng-container>
 </ng-container>
-    
-
-<hr>
-
 
 <!-- Actions -->
 <ng-container *ngIf="isBuyer() && isReady()">
+    
+    <hr>
+    
     <div class="row actions-row" *ngIf="!isReadOnly()">
         <div class="col-8 call-status-col"><call-status [callStatus]="submitCallStatus"></call-status></div>
         <div class="col-2">

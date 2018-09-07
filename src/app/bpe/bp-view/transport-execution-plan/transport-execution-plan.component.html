@@ -11,23 +11,25 @@
         <!-- Quantity -->
         <quantity-input label="Quantity" definition="The quantity to transport." [disabled]="isRequestDisabled()"
             [quantity]="request.consignment[0].consolidatedShipment[0].totalTransportHandlingUnitQuantity" 
-            labelClass="col-2" valueClass="col-10">
+            labelClass="col-2" valueClass="col-10" [presentationMode]="getRequestPresentationMode()">
         </quantity-input>
 
         <!-- Gross Volume -->
         <quantity-input label="Gross Volume" definition="The total volume of the goods in this shipment, including packaging, e.g.: Quantity: 78, Unit: L"
             [quantity]="request.consignment[0].grossVolumeMeasure" quantityType="volume_quantity" 
-            rowClass="space-before" labelClass="col-2" valueClass="col-10" [disabled]="isRequestDisabled()">
+            rowClass="space-before" labelClass="col-2" valueClass="col-10" [disabled]="isRequestDisabled()" [presentationMode]="getRequestPresentationMode()">
         </quantity-input>
 
         <!-- Gross Weight -->
         <quantity-input label="Gross Weight" definition="The total gross weight of a shipment; the weight of the goods plus packaging plus transport equipment,e.g. Quantity: 12, Unit: kg"
-            [quantity]="request.consignment[0].grossWeightMeasure" quantityType="weight_quantity" rowClass="space-before" labelClass="col-2" valueClass="col-10" [disabled]="isRequestDisabled()">
+            [quantity]="request.consignment[0].grossWeightMeasure" quantityType="weight_quantity" rowClass="space-before" 
+            labelClass="col-2" valueClass="col-10" [disabled]="isRequestDisabled()" [presentationMode]="getRequestPresentationMode()">
         </quantity-input>
 
         <!-- Handling Instructions -->
         <text-input label="Handling Instructions" definition="The handling required for this shipment" [disabled]="isRequestDisabled()"
-            [(text)]="request.consignment[0].consolidatedShipment[0].handlingInstructions" rowClass="space-before" labelClass="col-2" valueClass="col-10">
+            [(text)]="request.consignment[0].consolidatedShipment[0].handlingInstructions" 
+            rowClass="space-before" labelClass="col-2" valueClass="col-10" [presentationMode]="getRequestPresentationMode()">
         </text-input>
     </div>
 </div>
@@ -42,12 +44,12 @@
         <h3>Pick-up Dates</h3>
         <!-- Service Start Date -->
         <date-input label="Minimum Date" definition="The period within which the services referred to in the Transport Execution Plan Request must begin."
-            [(date)]="request.serviceStartTimePeriod.startDate" rowClass="space-before" labelClass="col-2" valueClass="col-10" [disabled]="isRequestDisabled()">
+            [(date)]="request.serviceStartTimePeriod.startDate" rowClass="space-before" labelClass="col-2" valueClass="col-10" [disabled]="isRequestDisabled()" [presentationMode]="getRequestPresentationMode()">
         </date-input>
 
         <!-- Service End Date -->
         <date-input label="Maximum Date" definition="The period during which the services referred to in the Transport Execution Plan Request must be completed."
-        [(date)]="request.serviceStartTimePeriod.endDate" rowClass="space-before" labelClass="col-2" valueClass="col-10" [disabled]="isRequestDisabled()">
+        [(date)]="request.serviceStartTimePeriod.endDate" rowClass="space-before" labelClass="col-2" valueClass="col-10" [disabled]="isRequestDisabled()" [presentationMode]="getRequestPresentationMode()">
         </date-input>
     </div>
 </div>

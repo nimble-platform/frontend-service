@@ -68,7 +68,7 @@ export class ClauseComponent implements OnInit {
             case "PPAP":
                 return "Ppap";
             case "ITEM_DETAILS":
-                return "Request for Informations";
+                return "Request for Information";
             case "NEGOTIATION":
                 return "Negotiation";
             default:

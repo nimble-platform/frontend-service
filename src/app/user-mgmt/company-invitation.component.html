@@ -16,7 +16,7 @@
 		</label>
 		<div class="col-10">
 			<div class="form-control" [ngClass]="{'ng-valid required':rolesSelected,'ng-invalid':!rolesSelected}">
-				<call-status [callStatus]="rolesCallStatus" [large]="true"></call-status>
+				<call-status [callStatus]="rolesCallStatus"></call-status>
 				<div *ngFor="let role of userRoles">
 					<input [id]="role.identifier" type="checkbox" [value]="role.identifier" class="form-check-input" [disabled]="checkDisable(role.identifier)" (change)="setRoles(role.identifier)">
 					<label class="form-check-label" [for]="role.identifier">{{role.name}}</label>

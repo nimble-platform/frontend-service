@@ -16,6 +16,7 @@ import { TransportExecutionPlan } from "../../../catalogue/model/publish/transpo
 import { BpUserRole } from "../../model/bp-user-role";
 import { copy } from "../../../common/utils";
 import { Order } from "../../../catalogue/model/publish/order";
+import { PresentationMode } from "../../../catalogue/model/publish/presentation-mode";
 
 @Component({
     selector: "transport-execution-plan",
@@ -84,6 +85,10 @@ export class TransportExecutionPlanComponent implements OnInit {
 
     isRequestDisabled(): boolean {
         return this.isLoading() || this.isStarted() || this.isFinished();
+    }
+
+    getRequestPresentationMode(): PresentationMode {
+        return this.isFinished() ? "view" : "edit";
     }
 
     isResponseDisabled(): boolean {
