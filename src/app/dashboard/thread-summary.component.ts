@@ -208,11 +208,17 @@ export class ThreadSummaryComponent implements OnInit {
             switch(processType) {
                 case "Order":
                     if (response.value.acceptedIndicator) {
-                        event.statusText = "Order approved";
+                        if(buyer) {
+                            event.statusText = "Waiting for Dispatch Advice";
+                            event.actionText = "See Order";
+                        } else {
+                            event.statusText = "Order approved";
+                            event.actionText = "Send Dispatch Advice";
+                        }
                     } else {
                         event.statusText = "Order declined";
+                        event.actionText = "See Order";
                     }
-                    event.actionText = "See Order";
                     break;
                 case "Negotiation":
                     if (buyer) {
@@ -262,6 +268,9 @@ export class ThreadSummaryComponent implements OnInit {
             processType: ProcessType, response: any, buyer: boolean): ThreadEventStatus {
         switch(processState) {
             case "COMPLETED":
+                if(processType === "Order") {
+                    return buyer ? "WAITING" : "ACTION_REQUIRED";
+                }
                 return "DONE";
             case "EXTERNALLY_TERMINATED":
                 return "CANCELLED";
