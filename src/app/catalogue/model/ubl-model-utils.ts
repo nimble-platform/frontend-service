@@ -262,7 +262,7 @@ export class UBLModelUtils {
         return rfq;
     }
 
-    private static getDefaultPaymentTerms(settings?: CompanyNegotiationSettings): PaymentTerms {
+    public static getDefaultPaymentTerms(settings?: CompanyNegotiationSettings): PaymentTerms {
         const terms = new PaymentTerms([], [
             new TradingTerm("Payment_In_Advance","Payment in advance","PIA",["false"]),
             new TradingTerm("End_of_month","End of month","EOM",["false"]),

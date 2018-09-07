@@ -141,16 +141,9 @@ export class CatalogueViewComponent implements OnInit {
 		}
     }
 
-    openCatalogueLinePage(catalogueLine: CatalogueLine) {
-        const item = catalogueLine.goodsItem.item;
+    onOpenCatalogueLine(e: Event) {
         this.bpDataService.previousProcess = null;
-        this.router.navigate(['/product-details'], {
-            queryParams: {
-                catalogueId: item.catalogueDocumentReference.id,
-                id: item.manufacturersItemIdentification.id
-            },
-
-        });
+        e.stopImmediatePropagation();
     }
 
     redirectToEdit(catalogueLine) {

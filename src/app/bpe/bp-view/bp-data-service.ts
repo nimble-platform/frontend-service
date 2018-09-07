@@ -282,15 +282,13 @@ export class BPDataService{
         });
     }
 
-    initRfqForTransportationWithOrder(): Promise<void> {
-        this.setBpMessages('Order', this.searchContextService.associatedProcessMetadata);
-
+    initRfqForTransportationWithOrder(order: Order): Promise<void> {
         this.requestForQuotation = UBLModelUtils.createRequestForQuotationWithOrder(
-            copy(this.order),
+            copy(order),
             copy(this.catalogueLines[0])
         );
 
-        let userId = this.cookieService.get('user_id');
+        const userId = this.cookieService.get('user_id');
         return this.userService.getSettingsForUser(userId).then(settings => {
             // we can't copy because those are 2 different types of addresses.
             const lineItem = this.requestForQuotation.requestForQuotationLine[0].lineItem;
@@ -301,6 +299,11 @@ export class BPDataService{
             address.buildingNumber = settings.address.buildingNumber;
             address.streetName = settings.address.streetName;
         });
+    }
+
+    initRfqForTransportationWithTheadMetadata(thread: ThreadEventMetadata): Promise<void> {
+        this.setBpMessages('Order', thread);
+        return this.initRfqForTransportationWithOrder(this.order);
     }
 
     initRfqWithIir(): void {

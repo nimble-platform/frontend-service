@@ -12,6 +12,7 @@ import {UBLModelUtils} from "../catalogue/model/ubl-model-utils";
 import { UserRole } from './model/user-role';
 import { CompanyNegotiationSettings } from './model/company-negotiation-settings';
 import { CatalogueLine } from '../catalogue/model/publish/catalogue-line';
+import { INCOTERMS, PAYMENT_MEANS } from '../catalogue/model/constants';
 
 @Injectable()
 export class UserService {
@@ -125,7 +126,12 @@ export class UserService {
     }
 
     getSettingsForProduct(line: CatalogueLine): Promise<CompanySettings> {
-        return this.getSettingsForParty(line.goodsItem.item.manufacturerParty.id);
+        console.log("Getting settings for product: " + line.goodsItem.item.manufacturerParty.id);
+        return this.getSettingsForParty(line.goodsItem.item.manufacturerParty.id)
+        .then(settings => {
+            console.log("Settings", settings);
+            return settings;
+        })
     }
 
     getSettingsForUser(userId: string): Promise<CompanySettings> {
@@ -328,6 +334,16 @@ export class UserService {
         }
         while(settings.warrantyPeriodRanges.length > 2) {
             settings.warrantyPeriodRanges.pop();
+        }
+
+        if(settings.incoterms.length === 0) {
+            settings.incoterms.push(...INCOTERMS);
+        }
+        if(settings.paymentMeans.length === 0) {
+            settings.paymentMeans.push(...PAYMENT_MEANS);
+        }
+        if(settings.paymentTerms.length === 0) {
+            settings.paymentTerms.push(...UBLModelUtils.getDefaultPaymentTermsAsStrings());
         }
 
         return settings;

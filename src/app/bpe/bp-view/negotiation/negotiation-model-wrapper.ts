@@ -3,8 +3,6 @@ import { RequestForQuotation } from "../../../catalogue/model/publish/request-fo
 import { Quotation } from "../../../catalogue/model/publish/quotation";
 import { Amount } from "../../../catalogue/model/publish/amount";
 import { Quantity } from "../../../catalogue/model/publish/quantity";
-import { PAYMENT_MEANS } from "../../../catalogue/model/constants";
-import { UBLModelUtils } from "../../../catalogue/model/ubl-model-utils";
 import { PaymentTermsWrapper } from "../payment-terms-wrapper";
 import { durationToString } from "../../../common/utils";
 import { PriceWrapper } from "../../../common/price-wrapper";

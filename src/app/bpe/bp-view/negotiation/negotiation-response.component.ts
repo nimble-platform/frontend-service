@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { Location } from "@angular/common";
 import { CatalogueLine } from "../../../catalogue/model/publish/catalogue-line";
 import { RequestForQuotation } from "../../../catalogue/model/publish/request-for-quotation";
