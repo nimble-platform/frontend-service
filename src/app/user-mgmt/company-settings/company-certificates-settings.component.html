@@ -30,6 +30,8 @@
 <!-- Certificates -->
 <h3 class="space-after">Certificates</h3>
 
+<call-status [callStatus]="certificatesCallStatus"></call-status>
+
 <div class="form-group row">
     <div class="col-12">
         <table class="table table-striped table-bordered mb-0 mt-2" style="table-layout: fixed; width: 100%;">
@@ -44,9 +46,8 @@
                 <td>{{certificate.type}}</td>
                 <td>{{certificate.name}}</td>
                 <td>
-                    <button class="btn btn-primary btn-sm" [disabled]="certificatesCallStatus[i].isLoading()" (click)="onDownloadCertificate(certificate.id)">Download</button>
-                    <button class="btn btn-danger btn-sm ml-1" [disabled]="certificatesCallStatus[i].isLoading()" (click)="onRemoveCertificate(certificate.id, i)">Delete</button>
-                    <call-status [callStatus]="certificatesCallStatus[i]"></call-status>
+                    <button class="btn btn-primary btn-sm" [disabled]="certificatesCallStatus.isLoading()" (click)="onDownloadCertificate(certificate.id)">Download</button>
+                    <button class="btn btn-danger btn-sm ml-1" [disabled]="certificatesCallStatus.isLoading()" (click)="onRemoveCertificate(certificate.id, i)">Delete</button>
                 </td>
             </tr>
         </table>
@@ -103,4 +104,3 @@
         </div>
     </form>
 </ng-template>
-    

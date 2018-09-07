@@ -372,11 +372,31 @@ export class SimpleSearchFormComponent implements OnInit {
 		return check;
 	}
 
+	checkPriceFacet() {
+		var found = false;
+		for (var i=0; i<this.facetQuery.length; i++) {
+			var comp = this.facetQuery[i].split(":")[0];
+			if (comp.localeCompare(this.product_currency) == 0 || comp.localeCompare(this.product_price) == 0) {
+				found = true;
+			}
+		}
+		return found;
+	}
+
 	setPriceFilter() {
 		this.clearFacet(this.product_currency);
 		this.clearFacet(this.product_price);
 		this.setFacetWithoutQuery(this.product_currency,this.selectedCurrency);
 		this.setRangeWithoutQuery(this.product_price,this.selectedPriceMin,this.selectedPriceMax);
+		this.get(this.objToSubmit);
+	}
+
+	resetPriceFilter() {
+		this.selectedCurrency = "EUR";
+		this.selectedPriceMin = null;
+		this.selectedPriceMax = null;
+		this.clearFacet(this.product_currency);
+		this.clearFacet(this.product_price);
 		this.get(this.objToSubmit);
 	}
 
@@ -389,7 +409,7 @@ export class SimpleSearchFormComponent implements OnInit {
 	}
 
 	checkProdCatCount() {
-		var count = 0;
+		var count = 1;
 		if (this.facetObj) {
 			for (var i=0; i<this.facetObj.length; i++) {
 				if (this.checkProdCat(this.facetObj[i].name)) {

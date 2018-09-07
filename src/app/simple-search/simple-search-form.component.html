@@ -3,7 +3,7 @@
 	<div class="form-group row">
 		<div class="col-12">
 			<div class="input-group">
-			  <input type="text" class="form-control" id="searchTerm" required [(ngModel)]="model.q" [ngbTypeahead]="getSuggestions" name="searchTerm" #q="ngModel" pattern=".{1,}" placeholder="Product / Service / Company">
+			  <input type="text" class="form-control" id="searchTerm" required [(ngModel)]="model.q" [ngbTypeahead]="getSuggestions" [focusFirst]=false name="searchTerm" #q="ngModel" pattern=".{1,}" placeholder="Product / Service / Company">
 			  <div class="input-group-append">
 					<button type="submit" class="btn btn-outline-secondary" [disabled]="!simpleSearchForm.form.valid">
 						<i class="fa fa-search"></i>
@@ -101,13 +101,15 @@
 
 	<div [hidden]="!callback">
 		<hr/>
-		<div [hidden]="size==0">
-
+		<div>
 			<div class="row space-after">
-				<div class="col-6">
+				<div *ngIf="size==0" class="col-12">
+					<span i18n>No search results</span>
+				</div>
+				<div *ngIf="size>0" class="col-6">
 					<span i18n>Showing results</span> {{ start }} - {{ end }} <span i18n>of</span> {{ size }}
 				</div>
-				<div class="col-6">
+				<div *ngIf="size>0" class="col-6">
 					<ngb-pagination [(collectionSize)]="size" [(page)]="page" [maxSize]="5" [boundaryLinks]="true" (pageChange)="get(objToSubmit)"></ngb-pagination>
 				</div>
 			</div>
@@ -195,7 +197,7 @@
 					<div *ngIf="checkProdCatCount()>0">
 
 						<div class="pointer" (click)="showProdSection=!showProdSection">
-							<h5>Product Filters <span *ngIf="!showProdSection"><i class="fa fa-angle-double-down"></i></span><span *ngIf="showProdSection"><i class="fa fa-angle-double-up"></i></span></h5>
+							<h5>Product / Service Filters <span *ngIf="!showProdSection"><i class="fa fa-angle-double-down"></i></span><span *ngIf="showProdSection"><i class="fa fa-angle-double-up"></i></span></h5>
 						</div>
 
 						<div *ngIf="showProdSection">
@@ -223,6 +225,7 @@
 											</div>
 									</div>
 									<button class="btn btn-primary" (click)="setPriceFilter()" [disabled]="!checkPriceFilter()">Apply</button>
+									<button class="btn btn-secondary ml-2" (click)="resetPriceFilter()" [hidden]="!checkPriceFacet()">Reset</button>
 								</div>
 							</div>
 							<div *ngFor="let facet of facetObj">
@@ -251,7 +254,7 @@
 					<div *ngIf="checkCompCatCount()>0">
 
 						<div class="pointer" (click)="showCompSection=!showCompSection">
-							<h5>Manufacturer Filters <span *ngIf="!showCompSection"><i class="fa fa-angle-double-down"></i></span><span *ngIf="showCompSection"><i class="fa fa-angle-double-up"></i></span></h5>
+							<h5>Product / Service Vendor Filters <span *ngIf="!showCompSection"><i class="fa fa-angle-double-down"></i></span><span *ngIf="showCompSection"><i class="fa fa-angle-double-up"></i></span></h5>
 						</div>
 
 						<div *ngIf="showCompSection">
@@ -310,6 +313,10 @@
 
 				<div class="col-8">
 
+					<div *ngIf="size==0">
+						<span i18n>No search results</span>
+					</div>
+
 					<div *ngFor="let result of response">
 						<div *ngIf="result.item_id != null" class="card pointer mb-3">
 							<a class="text-std" [routerLink]="['/product-details']" [queryParams]="{catalogueId: result.item_catalogue_id[0], id: result.item_id[0]}">
@@ -346,9 +353,6 @@
 
 			</div>
 
-		</div>
-		<div [hidden]="size>0">
-			<span i18n>No search results</span>
 		</div>
 	</div>
 

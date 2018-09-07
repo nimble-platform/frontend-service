@@ -90,14 +90,14 @@ export const product_filter_comp = ["item_manufacturer_name","item_manufacturer_
 export const product_filter_mappings = {
   "item_price": "Price",
   "item_currency": "Currency",
-  "item_free_of_charge_indicator": "Free of charge",
-  "item_certificate": "Product certificate",
-  "item_applicable_countries": "Applicable countries",
-  "item_manufacturer_name": "Manufacturer name",
-  "item_manufacturer_origin": "Manufacturer origin",
-  "manufacturer_certificate": "Manufacturer certificate",
-  "manufacturer_ppap_compliance_level": "PPAP compliance level",
-  "manufacturer_ppap_document": "PPAP document"
+  "item_free_of_charge_indicator": "Free of Charge",
+  "item_certificate": "Product / Service Certificate",
+  "item_applicable_countries": "Destination Country",
+  "item_manufacturer_name": "Vendor Name",
+  "item_manufacturer_origin": "Vendor Origin",
+  "manufacturer_certificate": "Vendor Certificate",
+  "manufacturer_ppap_compliance_level": "PPAP Compliance Level",
+  "manufacturer_ppap_document": "PPAP Document"
 };
 export const product_nonfilter_full = ["id","_version_","item_description","item_price","item_price_currency","item_commodity_classification_code","item_commodity_classification_uri","item_properties"];
 export const product_nonfilter_regex = ["lmf.","_id"];

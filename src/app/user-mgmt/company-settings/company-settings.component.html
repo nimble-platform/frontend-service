@@ -58,7 +58,7 @@
 
 <!-- Company Certificates, hidden to avoid reloading -->
 <div *ngIf="settings" [hidden]="selectedTab !== 'CERTIFICATES'">
-	<company-certificates-settings [settings]="settings" (onSaveEvent)="onSettingsUpdated()">
+	<company-certificates-settings [settings]="settings" [certificates]="certificates" [ppapLevel]="ppapLevel" (onSaveEvent)="onSettingsUpdated()">
 	</company-certificates-settings>
 </div>
 
