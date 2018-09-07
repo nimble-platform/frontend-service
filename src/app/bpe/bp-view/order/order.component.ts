@@ -36,7 +36,7 @@ import { EpcService } from "../epc-service";
     styleUrls: ["./order.component.css"]
 })
 export class OrderComponent implements OnInit {
-    
+
     order: Order;
     address: Address
     orderResponse: OrderResponseSimple;
@@ -77,7 +77,7 @@ export class OrderComponent implements OnInit {
         if(this.bpDataService.order == null) {
             this.router.navigate(['dashboard']);
         }
-        
+
         this.order = this.bpDataService.order;
         this.address = this.order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address;
         this.paymentTermsWrapper = new PaymentTermsWrapper(this.order.paymentTerms);
@@ -170,7 +170,7 @@ export class OrderComponent implements OnInit {
         UBLModelUtils.removeHjidFieldsFromObject(order);
         order.anticipatedMonetaryTotal.payableAmount.value = this.priceWrapper.totalPrice;
         order.anticipatedMonetaryTotal.payableAmount.currencyID = this.priceWrapper.currency;
-    
+
         //first initialize the seller and buyer parties.
         //once they are fetched continue with starting the ordering process
         const buyerId: string = this.cookieService.get("company_id");
@@ -210,14 +210,14 @@ export class OrderComponent implements OnInit {
         this.bpDataService.orderResponse.acceptedIndicator = accepted;
 
         let vars: ProcessVariables = ModelUtils.createProcessVariables(
-            "Order", 
-            this.bpDataService.order.buyerCustomerParty.party.id, 
-            this.bpDataService.order.sellerSupplierParty.party.id, 
-            this.bpDataService.orderResponse, 
+            "Order",
+            this.bpDataService.order.buyerCustomerParty.party.id,
+            this.bpDataService.order.sellerSupplierParty.party.id,
+            this.bpDataService.orderResponse,
             this.bpDataService
         );
         let piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(
-            vars, 
+            vars,
             this.bpDataService.processMetadata.processId
         );
 
@@ -262,15 +262,15 @@ export class OrderComponent implements OnInit {
         this.bpDataService.setBpOptionParameters('buyer', 'Transport_Execution_Plan',"Order");
         this.router.navigate(['simple-search'], {
             queryParams: {
-                searchContext: 'orderbp', 
-                q:'*', 
+                searchContext: 'orderbp',
+                q:'*',
                 cat:'Transport service'
             }
         });
     }
 
     onDeleteEpcCode(i: number) {
-
+        this.epcCodes.codes.splice(i, 1);
     }
 
     onSaveEpcCodes() {
@@ -282,7 +282,7 @@ export class OrderComponent implements OnInit {
                 selectedEpcCodes.push(code);
             }
         }
-        
+
         const codes = new EpcCodes(this.order.id, selectedEpcCodes);
 
         this.epcService.registerEpcCodes(codes)
@@ -397,12 +397,12 @@ export class OrderComponent implements OnInit {
     }
 
     /*
-     * 
+     *
      */
 
     private initializeEPCCodes() {
         if(this.bpDataService.processMetadata
-            && this.bpDataService.processMetadata.processStatus == 'Completed' 
+            && this.bpDataService.processMetadata.processStatus == 'Completed'
             && this.bpDataService.orderResponse
             && this.bpDataService.orderResponse.acceptedIndicator
             && this.trackAndTraceDetailsExists()) {
@@ -412,6 +412,7 @@ export class OrderComponent implements OnInit {
                 if(this.epcCodes.codes.length == 0){
                     this.epcCodes.codes.push("");
                 }
+                this.epcCodes.codes.sort();
                 this.savedEpcCodes = copy(this.epcCodes);
                 this.initEpcCodesCallStatus.callback("EPC Codes initialized", true);
             }).catch(error => {
@@ -428,7 +429,7 @@ export class OrderComponent implements OnInit {
 
     private isDataMonitoringDemanded(): Promise<boolean> {
         let docClause = null;
- 
+
         if (this.order.contract && this.order.contract.length > 0) {
             for (let clause of this.order.contract[0].clause) {
                 if (clause.type === "NEGOTIATION") {
@@ -437,7 +438,7 @@ export class OrderComponent implements OnInit {
                 }
             }
         }
- 
+
         if (docClause) {
             this.fetchDataMonitoringStatus.submit();
             return this.bpeService.getDocumentJsonContent(docClause.clauseDocumentRef.id).then(result => {

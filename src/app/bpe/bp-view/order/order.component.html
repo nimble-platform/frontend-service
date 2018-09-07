@@ -8,12 +8,12 @@
 
     <div class="row content-row">
         <div class="col-6">
-            <text-input presentationMode="view" label="Warranty" 
+            <text-input presentationMode="view" label="Warranty"
                 [text]="getWarrantyPeriodText()" labelClass="col-4" valueClass="col-8">
             </text-input>
         </div>
         <div class="col-6">
-            <text-input presentationMode="view" label="Delivery Period" 
+            <text-input presentationMode="view" label="Delivery Period"
                 [text]="getDeliveryPeriodText()" labelClass="col-4" valueClass="col-8">
             </text-input>
         </div>
@@ -21,12 +21,12 @@
 
     <div class="row content-row">
         <div class="col-6">
-            <text-input presentationMode="view" label="Incoterms" 
+            <text-input presentationMode="view" label="Incoterms"
                 [text]="getIncoterm()" labelClass="col-4" valueClass="col-8">
             </text-input>
         </div>
         <div class="col-6">
-            <text-input presentationMode="view" label="Street" 
+            <text-input presentationMode="view" label="Street"
                 [text]="address.streetName" labelClass="col-4" valueClass="col-8">
             </text-input>
         </div>
@@ -39,7 +39,7 @@
             </text-input>
         </div>
         <div class="col-6">
-            <text-input presentationMode="view" label="Building Number" 
+            <text-input presentationMode="view" label="Building Number"
                 [text]="address.buildingNumber" labelClass="col-4" valueClass="col-8">
             </text-input>
         </div>
@@ -52,7 +52,7 @@
             </text-input>
         </div>
         <div class="col-6">
-            <text-input presentationMode="view" label="City" 
+            <text-input presentationMode="view" label="City"
                 [text]="address.cityName" labelClass="col-4" valueClass="col-8">
             </text-input>
         </div>
@@ -71,7 +71,7 @@
             </div>
         </div>
         <div class="col-6">
-            <text-input presentationMode="view" label="Postal Code" 
+            <text-input presentationMode="view" label="Postal Code"
                 [text]="address.postalZone" labelClass="col-4" valueClass="col-8">
             </text-input>
         </div>
@@ -79,12 +79,12 @@
 
     <div class="row content-row">
         <div class="col-6">
-            <text-input presentationMode="view" label="Payment Means" 
+            <text-input presentationMode="view" label="Payment Means"
                 [text]="getPaymentMeans()" labelClass="col-4" valueClass="col-8">
             </text-input>
         </div>
         <div class="col-6">
-            <text-input presentationMode="view" label="Country" 
+            <text-input presentationMode="view" label="Country"
                 [text]="address.country.name" labelClass="col-4" valueClass="col-8">
             </text-input>
         </div>
@@ -92,7 +92,7 @@
 
     <div class="row content-row">
         <div class="col-6">
-            <text-input presentationMode="view" label="Payment Terms" 
+            <text-input presentationMode="view" label="Payment Terms"
                 [text]="paymentTermsWrapper.paymentTerm" labelClass="col-4" valueClass="col-8">
             </text-input>
         </div>
@@ -119,11 +119,11 @@
             </text-input>
         </div>
     </div>
-    
-    
+
+
     <hr>
-    
-    
+
+
     <!-- Contract Preview -->
     <div class="row" *ngIf="isReady()">
         <div class="col-12">
@@ -157,44 +157,60 @@
     <call-status [callStatus]="initEpcCodesCallStatus"></call-status>
 
     <ng-container *ngIf="epcCodes">
-        <!--List of codes -->
-        <div class="row" *ngFor="let code of epcCodes.codes; let i = index; trackBy:trackByFn">
-            <div class="{{ isSeller() ? 'col-10' : 'col-12' }}">
-                <input type="text" class="form-control" [(ngModel)]="epcCodes.codes[i]" [disabled]="isBuyer()">
+
+        <div class="row">
+
+          <!--List of codes -->
+          <div class="{{ isSeller() ? 'col-9' : 'col-12' }}">
+              <div class="row mb-1" *ngFor="let code of epcCodes.codes; let i = index; trackBy:trackByFn">
+                <div class="{{ isSeller() ? 'col-9' : 'col-12' }}">
+                    <input type="text" class="form-control" [(ngModel)]="epcCodes.codes[i]" [disabled]="isBuyer()">
+                </div>
+                <div class="col-3" *ngIf="isSeller() && i > 0">
+                    <button class="btn btn-danger w-100" (click)="onDeleteEpcCode(i)">Delete</button>
+                </div>
+              </div>
+          </div>
+
+          <div *ngIf="isSeller()" class="col-1"></div>
+
+          <div *ngIf="isSeller()" class="col-2">
+
+            <!-- Add code -->
+            <div class="row">
+                <div class="col-12">
+                    <button class="btn btn-success w-100" (click)="onAddEpcCode()">Add</button>
+                </div>
             </div>
-            <div class="col-2" *ngIf="isSeller() && i > 0">
-                <button class="btn btn-danger btn-sm w-100" (click)="onDeleteEpcCode(i)">Delete</button>
+
+            <!-- Save -->
+            <div class="row">
+                <div class="col-12">
+                    <button class="btn btn-primary w-100 save-epc-btn" [disabled]="!areEpcCodesDirty()"
+                        (click)="onSaveEpcCodes()">Save</button>
+                </div>
             </div>
+
+            <div class="row">
+              <div class="col-12 d-flex justify-content-end">
+                  <span class="align-self-center">
+                      <call-status [callStatus]="saveEpcCodesCallStatus"></call-status>
+                  </span>
+              </div>
+            </div>
+
+          </div>
+
         </div>
 
-        <!-- Add code -->
-        <div class="row" *ngIf="isSeller()">
-            <div class="col-10"></div>
-            <div class="col-2">
-                <button class="btn btn-success btn-sm w-100" (click)="onAddEpcCode()">Add</button>
-            </div>
-        </div>
-
-        <!-- Save -->
-        <div class="row" *ngIf="isSeller()">
-            <div class="col-10 d-flex justify-content-end">
-                <span class="align-self-center">
-                    <call-status [callStatus]="saveEpcCodesCallStatus"></call-status>
-                </span>
-            </div>
-            <div class="col-2">
-                <button class="btn btn-primary btn-sm w-100 save-epc-btn" [disabled]="!areEpcCodesDirty()" 
-                    (click)="onSaveEpcCodes()">Save</button>
-            </div>
-        </div>
     </ng-container>
 </ng-container>
 
 <!-- Actions -->
 <ng-container *ngIf="isBuyer() && isReady()">
-    
+
     <hr>
-    
+
     <div class="row actions-row" *ngIf="!isReadOnly()">
         <div class="col-8 call-status-col"><call-status [callStatus]="submitCallStatus"></call-status></div>
         <div class="col-2">
@@ -237,6 +253,9 @@
 </ng-container>
 
 <ng-container *ngIf="isSeller() && isReady()">
+
+    <hr>
+
     <div class="row actions-row" *ngIf="!isOrderCompleted()">
         <div class="col-6 call-status-col"><call-status [callStatus]="submitCallStatus"></call-status></div>
         <div class="col-2">
@@ -255,7 +274,7 @@
             </button>
         </div>
     </div>
-    
+
     <div class="row actions-row" *ngIf="isOrderCompleted()">
         <div class="col-3 call-status-col"><call-status [callStatus]="submitCallStatus"></call-status></div>
         <div class="col-2">
