@@ -26,6 +26,7 @@ import { Address } from "../../../catalogue/model/publish/address";
 import { SearchContextService } from "../../../simple-search/search-context.service";
 import { EpcCodes } from "../../../data-channel/model/epc-codes";
 import { EpcService } from "../epc-service";
+import {DocumentService} from "../document-service";
 
 /**
  * Created by suat on 20-Sep-17.
@@ -69,7 +70,8 @@ export class OrderComponent implements OnInit {
                 private searchContextService: SearchContextService,
                 private epcService: EpcService,
                 private location: Location,
-                private router: Router) {
+                private router: Router,
+                private documentService: DocumentService) {
 
     }
 
@@ -441,7 +443,7 @@ export class OrderComponent implements OnInit {
 
         if (docClause) {
             this.fetchDataMonitoringStatus.submit();
-            return this.bpeService.getDocumentJsonContent(docClause.clauseDocumentRef.id).then(result => {
+            return this.documentService.getDocumentJsonContent(docClause.clauseDocumentRef.id).then(result => {
                 this.fetchDataMonitoringStatus.callback("Successfully fetched data monitoring service", true);
                 const q: Quotation = result as Quotation;
                 return q.dataMonitoringPromised;
