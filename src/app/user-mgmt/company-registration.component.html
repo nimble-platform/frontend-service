@@ -3,7 +3,9 @@
 
 	<!-- Legal Name -->
 	<div class="form-group row">
-		<label class="col-2 col-form-label">Legal Name</label>
+		<label class="col-2 col-form-label">
+			<strong>Legal Name:</strong>
+		</label>
 		<div class="col-10">
 			<input type="text" class="form-control" name="companyName" [formControl]="registrationForm.controls['name']" required>
 		</div>
@@ -11,7 +13,9 @@
 
 	<!-- VAT Number -->
 	<div class="form-group row">
-		<label class="col-2 col-form-label">VAT Number</label>
+		<label class="col-2 col-form-label">
+			<strong>VAT Number:</strong>
+		</label>
 		<div class="col-10">
 			<input type="text" class="form-control" [formControl]="registrationForm.controls['vatNumber']" required>
 		</div>
@@ -20,7 +24,9 @@
 	<!-- Verification Info -->
 	<div class="form-group row">
 		<label class="col-2 col-form-label">
-			<span>Verification Info</span>
+			<span>
+				<strong>Verification Info:</strong>
+			</span>
 			<span class="tooltip-icon" (click)="showVerificationTT(tooltip)"><i class="fa fa-question-circle"></i></span>
 		</label>
 		<div class="col-10">
@@ -30,7 +36,9 @@
 
 	<!-- Website -->
 	<div class="form-group row">
-		<label class="col-2 col-form-label">Website</label>
+		<label class="col-2 col-form-label">
+			<strong>Website:</strong>
+		</label>
 		<div class="col-10">
 			<input type="text" class="form-control" [formControl]="registrationForm.controls['website']">
 		</div>
