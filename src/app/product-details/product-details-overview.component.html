@@ -1,0 +1,88 @@
+<div class="row">
+        <div class="col-4">
+            <strong>Product by:</strong> {{wrapper.item.manufacturerParty.name}}
+        </div>
+        <div class="col-8 d-flex flex-wrap">
+            <!-- Categories -->
+            <strong>Categories:</strong>
+            <div *ngFor="let classification of getClassifications()" >
+                <div class="rounded px-1 inline space-left" style="color:#919191; border:1px solid #919191;">
+                    {{classification.itemClassificationCode.name}}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-4">
+            <!-- Images (image class used in catalogue-line-header.component.html) -->
+            <div id="carousel-large" class="carousel slide carousel-resize mt-2 mb-4" data-ride="carousel" [ngClass]="{'empty-carousel': wrapper.item.productImage.length === 0}">
+                <div class="carousel-inner">
+                    <div class="carousel-item active carousel-active" [ngClass]="{'empty-carousel': wrapper.item.productImage.length === 0}">
+                        <img *ngIf="wrapper.item.productImage.length === 0"
+                            class="img-max"
+                            src="assets/empty_img.png">
+                        <img *ngIf="wrapper.item.productImage.length > 0"
+                            class="img-selected d-block active"
+                            src="data:{{wrapper.item.productImage[selectedImage].mimeCode}};base64,{{wrapper.item.productImage[selectedImage].value}}"/>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="wrapper.item.productImage.length > 1 && wrapper.item.productImage.length <=2" class="d-flex justify-content-center">
+                <div id="carousel-smaller" class="carousel slide carousel-inactive-resize inline">
+                    <div class="inline border" [ngClass]="{'border-primary': selectedImage === 0}">
+                        <img class="carousel-inactive"
+                            (click)="onSelectImage(selectedImage - 1)"
+                            src="data:{{wrapper.item.productImage[0].mimeCode}};base64,{{wrapper.item.productImage[0].value}}" />
+                    </div>
+                    <div class="inline border" [ngClass]="{'border-primary': selectedImage === 1}">
+                        <img class="carousel-inactive"
+                            (click)="onSelectImage(selectedImage + 1)"
+                            src="data:{{wrapper.item.productImage[1].mimeCode}};base64,{{wrapper.item.productImage[1].value}}" />
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="wrapper.item.productImage.length > 2" class="carousel-buttons">
+                <button class="btn btn-secondary inline btn-carousel mr-1"
+                    (click)="onSelectImage(selectedImage - 1)">
+                    <i class="fas fa-chevron-left fa-2x"></i>
+                </button>
+                <div class="inline" *ngIf="wrapper.item.productImage.length > 2">
+                    <img class="carousel-inactive"
+                        (click)="onSelectImage(selectedImage - 1)"
+                        src="data:{{wrapper.item.productImage[selectedImage].mimeCode}};base64,{{wrapper.item.productImage[navigateImages(selectedImage - 1, wrapper.item.productImage.length)].value}}" />
+                </div>
+                <div class="inline border border-primary">
+                    <img class="carousel-inactive"
+                        src="data:{{wrapper.item.productImage[selectedImage].mimeCode}};base64,{{wrapper.item.productImage[selectedImage].value}}" />
+                </div>
+                <div class="inline">
+                    <img class="carousel-inactive"
+                        (click)="onSelectImage(selectedImage + 1)"
+                        src="data:{{wrapper.item.productImage[selectedImage].mimeCode}};base64,{{wrapper.item.productImage[navigateImages(selectedImage + 1, wrapper.item.productImage.length)].value}}" />
+                </div>
+                <button class="btn btn-secondary inline btn-carousel ml-1"
+                    (click)="onSelectImage(selectedImage + 1)">
+                    <i class="fas fa-chevron-right fa-2x"></i>
+                </button>
+            </div>
+        </div>
+        <div class="col-8 pt-4">
+            <div>
+                <!-- Description -->
+                <strong>Description:</strong>
+                <p>{{wrapper.item.description || "No description provided."}}</p>
+            </div>
+            <!-- Properties with multiple values to select from -->
+            <div class="d-flex flex-column">
+                <div *ngFor="let property of wrapper.getPropertiesWithListOfValues()" class="my-1">
+                    <strong>{{property.name}}: </strong>
+                    <span *ngFor="let val of getValuesAsString(property); let i = index" class="btn-group-toggle" data-toggle="buttons">
+                        <button type="button" class="btn btn-outline-primary no-y-padding" (click)="onTogglePropertyValue(property, i)" 
+                            [disabled]="readonly" [ngClass]="{ 'active': isPropertyValueSelected(property, i) }">
+                            {{val}}
+                        </button>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>

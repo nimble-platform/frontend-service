@@ -1,0 +1,20 @@
+<div class="p-1">
+    <h3>Company Certificates</h3>
+
+    <div *ngFor="let certificate of settings.certificates" class="row mt-1">
+        <div class="col-10">
+            {{ certificate.name }} (type: {{ certificate.type }})
+        </div>
+        <div class="col-2">
+            <button class="btn btn-primary btn-sm w-100" (click)="downloadCertificate(certificate.id)">Download</button>
+        </div>
+    </div>
+    
+    <h3 class="space-before">Product Certificates</h3>
+    
+    <div *ngFor="let certificate of wrapper.line.goodsItem.item.certificate" class="row mt-1">
+        <div class="col-12">
+            {{ certificate.certificateType }}
+        </div>
+    </div>
+</div>

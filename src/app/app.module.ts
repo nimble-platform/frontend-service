@@ -27,8 +27,8 @@ import { DataChannelService } from "./data-channel/data-channel.service";
 import { UnitService } from './common/unit-service';
 import { PrecedingBPDataService } from "./bpe/bp-view/preceding-bp-data-service";
 import { TnTService } from './tnt/tnt.service';
-import { EpcService } from './bpe/bp-view/epc-service';
 import { AnalyticsService } from './analytics/analytics.service';
+import { EpcService } from './bpe/bp-view/epc-service';
 
 @NgModule({
     imports: [
@@ -62,8 +62,8 @@ import { AnalyticsService } from './analytics/analytics.service';
         UnitService,
         PrecedingBPDataService,
         TnTService,
-        EpcService,
-        AnalyticsService
+        AnalyticsService,
+        EpcService
     ],
     bootstrap: [
         AppComponent

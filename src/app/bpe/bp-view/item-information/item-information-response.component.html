@@ -1,0 +1,82 @@
+<div class="row space-before">
+    <div class="col-3">
+        <strong><label for="customFile">Requested technical data sheet:</label></strong>
+    </div>
+    <div class="col-9">
+        <file-input [multiple]="true" presentationMode="view" [binaryObjects]="requestFiles">
+        </file-input>    
+    </div>
+</div>
+
+<div class="row space-before">
+    <div class="col-3">
+        <strong><label for="customFile">Filled technical data sheet(s):</label></strong>
+    </div>
+    <div class="col-9">
+        <file-input [disabled]="isLoading()" [multiple]="true" [binaryObjects]="responseFiles" [presentationMode]="getPresentationMode()"
+            (onSelectFile)="onSelectItemSpecificationFile($event)" (onClearFile)="onUnselectItemSpecificationFile($event)">
+        </file-input>
+    </div>
+</div>
+
+<hr>
+
+<div class="row">
+    <div class="col-3">
+        <strong><label for="custNoteTextarea">Customer's note:</label></strong>
+    </div>
+    <div class="col-9">
+        <textarea id="custNoteTextarea" class="form-control note-textarea" 
+            rows="4" disabled [(ngModel)]="request.note[0]"></textarea>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-3">
+        <strong><label for="manNoteTextarea">Manufacturer's note:</label></strong>
+    </div>
+    <div class="col-9">
+        <textarea id="manNoteTextarea" class="form-control note-textarea" rows="4" 
+            [disabled]="isLoading() || isResponseSent()" [(ngModel)]="response.note[0]"></textarea>
+    </div>
+</div>
+
+<hr>
+
+<!-- Actions -->
+<div *ngIf="!isBuyer() && !readonly" class="row actions-row">
+    <div class="col-4"></div>
+    <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+    <div class="col-2">
+        <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
+    </div>
+    <div *ngIf="!isResponseSent()" class="col-2">
+        <button class="btn btn-primary action" [disabled]="isLoading()" (click)="onSendResponse()">
+            Send Response
+        </button>
+    </div>
+    <div *ngIf="isResponseSent()" class="col-2">
+        <button class="btn btn-primary action" disabled>
+            Response Sent
+        </button>
+    </div>
+</div>
+
+<!-- Buyer only sees once the response has been sent -->
+<div *ngIf="isBuyer() && !readonly" class="row actions-row">
+    <div class="col-2"></div>
+    <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+    <div class="col-2">
+        <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">Back</button>
+    </div>
+    <div class="col-2">
+        <button class="btn btn-primary action" [disabled]="isLoading() || readonly" (click)="onRestart()">
+            Ask Something Else
+        </button>
+    </div>
+    <div class="col-2">
+        <button class="btn btn-primary action" [disabled]="isLoading() || readonly" (click)="onNextStep()">
+            Go to Next Step
+        </button>
+    </div>
+</div>

@@ -1,0 +1,154 @@
+.status-text {
+    width: 17%;
+    text-align: center;
+    font-weight: bold;
+}
+
+.status-text.four-steps {
+    width: 25%;
+}
+
+.steps {
+    display: flex;
+    display: -ms-flexbox;
+    -ms-flex-wrap: nowrap;
+    flex-wrap: nowrap;
+    margin: 0.2rem 0;
+    width: 100%;
+}
+
+.steps .step {
+    -ms-flex: 1 1 0;
+    flex: 1 1 0;
+    margin-top: 0;
+    min-height: 1rem;
+    position: relative;
+    text-align: center;
+}
+
+/** 
+ * Before the active step 
+ */
+
+.steps .step:not(:first-child)::before {
+    background: #007706;
+    content: "";
+    height: 0.2rem;
+    left: -50%;
+    position: absolute;
+    top: 0.4rem;
+    width: 100%;
+}
+
+.steps .step span {
+    color: #007706;
+    display: inline-block;
+    padding: 20px 10px 0;
+    text-decoration: none;
+}
+
+.steps .step span::before {
+    background: #007706;
+    border: 0.1rem solid #007706;
+    border-radius: 50%;
+    content: "";
+    display: block;
+    height: 0.6rem;
+    left: 50%;
+    position: absolute;
+    top: 0.2rem;
+    transform: translateX(-50%);
+    width: 0.6rem;
+    z-index: 1;
+}
+
+/** 
+ * The current step 
+ */
+
+/* General */
+.steps .step.current span::before {
+    background: #ffffff;
+    border: 0.1rem solid #000000;
+}
+
+.steps .step.current {
+    font-size: 1.2rem;
+}
+
+.steps .step.current span {
+    color: #000000;
+    font-weight: 600;
+}
+
+/* Action to take */
+.steps .step.current.action_required span::before {
+    border: 0.1rem solid #d30000;
+    
+}
+.steps .step.current.action_required span {
+    color: #d30000;
+}
+
+/* Waiting for reply */
+.steps .step.current.waiting span::before {
+    border: 0.1rem solid #c48601;
+    
+}
+.steps .step.current.waiting span {
+    color: #c48601;
+}
+
+/* Reply sent/received */
+.steps .step.current.done span::before {
+    border: 0.1rem solid #007706;
+    
+}
+.steps .step.current.done span {
+    color: #007706;
+}
+
+/* Cancelled */
+.steps .step.current.cancelled span::before {
+    border: 0.1rem solid #363636;
+    
+}
+.steps .step.current.cancelled span {
+    color: #363636;
+}
+
+/** 
+ * After the active step 
+ */
+
+.steps .step.current ~ .step::before {
+    background: #b3b3b3;
+}
+
+.steps .step.current ~ .step span::before {
+    background: #b3b3b3;
+    border: 0.1rem solid #ffffff;
+}
+
+.steps .step.current ~ .step span {
+    color: #b3b3b3;
+}
+
+.expand-steps-div {
+    position: absolute;
+    top: 0;
+    width: 2%;
+    height: 1.5rem;
+    padding: 0;
+    color: #007706;
+    background: #ffffff;
+    text-align: center;
+}
+
+.expand-transport {
+    right: 16%;
+}
+
+.expand-order {
+    left: 16%;
+}

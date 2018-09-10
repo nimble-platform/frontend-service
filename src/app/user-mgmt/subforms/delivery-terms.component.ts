@@ -12,27 +12,21 @@ import { Address } from '../model/address';
 })
 export class DeliveryTermsSubForm {
 
-    @Input('group')
-    public deliveryTermsForm: FormGroup;
-	public aM = false;
-	
-	public static setMatch(deliveryTermsForm, flag) {
-		deliveryTermsForm.aM = flag;
-	}
-	
-	public static setSame(deliveryTermsForm, address: Address) {
+    @Input('group') deliveryTermsForm: FormGroup;
+
+	public static setAddress(deliveryTermsForm, address: Address) {
 		AddressSubForm.update(deliveryTermsForm.controls.deliveryAddress, address);
-		deliveryTermsForm.aM = true;
 	}
 	
 	public static getAddress(deliveryTermsForm): Address {
 		return AddressSubForm.get(deliveryTermsForm.controls.deliveryAddress)
 	}
 	
-    public static update(deliveryTermsForm, deliveryTerms: DeliveryTerms) {
+    public static update(deliveryTermsForm: FormGroup, deliveryTerms: DeliveryTerms): FormGroup {
         deliveryTermsForm.controls.specialTerms.setValue(deliveryTerms.specialTerms);
-        AddressSubForm.update(deliveryTermsForm.controls.deliveryAddress, deliveryTerms.deliveryAddress);
+        AddressSubForm.update(deliveryTermsForm.controls["deliveryAddress"] as FormGroup, deliveryTerms.deliveryAddress);
         deliveryTermsForm.controls.estimatedDeliveryTime.setValue(deliveryTerms.estimatedDeliveryTime);
+        return deliveryTermsForm;
     }
 
     public static generateForm(builder: FormBuilder) {

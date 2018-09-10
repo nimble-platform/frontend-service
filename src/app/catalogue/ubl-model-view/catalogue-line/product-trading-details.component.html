@@ -42,18 +42,7 @@
                 </span>
         </label>
         <select class="form-control custom-select" [(ngModel)]="catalogueLine.goodsItem.deliveryTerms.incoterms">
-            <option></option>
-            <option>CIF (Cost, Insurance and Freight)</option>
-            <option>CIP (Carriage and Insurance Paid to)</option>
-            <option>CFR (Cost and Freight)</option>
-            <option>CPT (Carriage paid to)</option>
-            <option>DAT (Delivered at Terminal)</option>
-            <option>DAP (Delivered at Place)</option>
-            <option>DDP (Delivery Duty Paid)</option>
-            <option>EXW (Ex Works)</option>
-            <option>FAS (Free Alongside Ship)</option>
-            <option>FCA (Free Carrier)</option>
-            <option>FOB (Free on Board)</option>
+                <option *ngFor="let option of INCOTERMS" [value]="option">{{option}}</option>
         </select>
     </div>
 </ng-container>
@@ -70,11 +59,10 @@
 <!-- Applicable territory -->
 <ng-container *ngIf="catalogueLine.requiredItemLocationQuantity.applicableTerritoryAddress">
     <address-view [presentationMode]="presentationMode"
-                  [propName]="'Applicable Countries'"
+                  [propName]="'Applicable Territory Address'"
                   [multiValue]="true"
                   [definition]="'A reference to a territory (region, country, city, etc.) to which the product will apply'"
-                  [address]="catalogueLine.requiredItemLocationQuantity.applicableTerritoryAddress"
-                  (onInitialAddressChange)="addInitialCountry($event)">
+                  [address]="catalogueLine.requiredItemLocationQuantity.applicableTerritoryAddress">
     </address-view>
 </ng-container>
 

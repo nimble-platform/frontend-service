@@ -1,0 +1,11 @@
+.facet {
+    margin-bottom: .75rem;
+}
+
+.facet .filter-option {
+    cursor: pointer;
+}
+
+.facet .card-header {
+    padding: .25rem .5rem;
+}

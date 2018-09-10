@@ -6,6 +6,11 @@ import {CallStatus} from "../../../common/call-status";
 import {ActivatedRoute, Params, Router} from "@angular/router";
 import {PublishService} from "../../publish-and-aip.service";
 import {CategoryService} from "../../category/category.service";
+import { isTransportService } from "../../../common/utils";
+import { CatalogueLine } from "../../model/publish/catalogue-line";
+import { BPDataService } from "../../../bpe/bp-view/bp-data-service";
+import { UserService } from "../../../user-mgmt/user.service";
+import { CompanySettings } from "../../../user-mgmt/model/company-settings";
 
 @Component({
     selector: 'catalogue-view',
@@ -16,18 +21,8 @@ import {CategoryService} from "../../category/category.service";
 
 export class CatalogueViewComponent implements OnInit {
 
-    private getCatalogueStatus = new CallStatus();
-    private callStatus = new CallStatus();
-
-    constructor(private cookieService: CookieService,
-                private catalogueService: CatalogueService,
-                private route: ActivatedRoute,
-                private publishService: PublishService,
-                private categoryService: CategoryService,
-                private router: Router) {
-    }
-
     catalogue: Catalogue;
+    settings: CompanySettings;
 
     // available catalogue lines with respect to the selected category
     catalogueLinesWRTTypes: any = [];
@@ -51,35 +46,65 @@ export class CatalogueViewComponent implements OnInit {
 
     sortOption = null;
 
+    getCatalogueStatus = new CallStatus();
+    callStatus = new CallStatus();
+    deleteStatuses: CallStatus[] = []
+
+    constructor(private cookieService: CookieService,
+                private publishService: PublishService,
+                private catalogueService: CatalogueService,
+                private categoryService: CategoryService,
+                private bpDataService: BPDataService,
+                private userService: UserService,
+                private route: ActivatedRoute,
+                private router: Router) {
+        
+    }
+
     ngOnInit() {
         this.catalogueService.setEditMode(false);
 
-        let forceUpdate:boolean = false;
         this.route.queryParams.subscribe((params: Params) => {
-            forceUpdate = params['forceUpdate'] == "true";
+            const forceUpdate = params['forceUpdate'] === "true";
             this.requestCatalogue(forceUpdate);
         });
+
+        for(let i = 0; i < this.pageSize; i++) {
+            this.deleteStatuses.push(new CallStatus());
+        }
     }
 
-    public requestCatalogue(forceUpdate:boolean): void {
+    private requestCatalogue(forceUpdate:boolean): void {
         this.getCatalogueStatus.submit();
-        let userId = this.cookieService.get("user_id");
-        this.catalogueService.getCatalogueForceUpdate(userId, forceUpdate).then(catalogue => {
+        const userId = this.cookieService.get("user_id");
+        Promise.all([
+            this.catalogueService.getCatalogueForceUpdate(userId, forceUpdate),
+            this.getCompanySettings(userId)
+        ])
+            .then(([catalogue, settings]) => {
                 this.catalogue = catalogue;
+                this.settings = settings;
                 this.getCatalogueStatus.callback(null);
-
                 this.init();
             },
             error => {
-                this.getCatalogueStatus.error("Failed to get catalogue");
+                this.getCatalogueStatus.error("Failed to get catalogue", error);
             }
         )
     }
 
-    init (): void {
+    private getCompanySettings(userId: string): Promise<CompanySettings> {
+        if(this.settings) {
+            return Promise.resolve(this.settings);
+        }
+
+        return this.userService.getSettingsForUser(userId);
+    }
+
+    private init(): void {
         let len = this.catalogue.catalogueLine.length;
         this.collectionSize = len;
-        this.catalogueLinesArray = this.catalogue.catalogueLine;
+        this.catalogueLinesArray = [...this.catalogue.catalogueLine].reverse();
         this.catalogueLinesWRTTypes = this.catalogueLinesArray;
         let i = 0;
         this.typeOfProducts = [];
@@ -100,7 +125,7 @@ export class CatalogueViewComponent implements OnInit {
         }
     }
 
-    public onDeleteCatalogue(): void {
+    onDeleteCatalogue(): void {
 		if (confirm("Are you sure that you want to delete your entire catalogue?")) {
 			this.callStatus.submit();
 
@@ -108,14 +133,17 @@ export class CatalogueViewComponent implements OnInit {
 					this.catalogueService.catalogue = null;
 					this.callStatus.reset();
 					this.requestCatalogue(false);
-					/*this.fb_get_catalogue_callback = true;
-					 this.fb_get_catalogue_submitted = false;*/
 				},
 				error => {
-					this.callStatus.error("Failed to delete catalogue");
+					this.callStatus.error("Failed to delete catalogue", error);
 				}
 			);
 		}
+    }
+
+    onOpenCatalogueLine(e: Event) {
+        this.bpDataService.previousProcess = null;
+        e.stopImmediatePropagation();
     }
 
     redirectToEdit(catalogueLine) {
@@ -123,14 +151,23 @@ export class CatalogueViewComponent implements OnInit {
         this.publishService.publishMode = 'edit';
         this.publishService.publishingStarted = false;
         this.categoryService.resetSelectedCategories();
-        this.router.navigate(['catalogue/publish'], {queryParams: {pg: "single"}});
+        this.router.navigate(['catalogue/publish'], {queryParams: {
+            pg: "single", 
+            productType: isTransportService(catalogueLine) ? "transportation" : "product"}});
     }
 
-    deleteCatalogueLine(catalogueLine): void {
+    deleteCatalogueLine(catalogueLine, i: number): void {
         if (confirm("Are you sure that you want to delete this catalogue item?")) {
-            this.catalogueService.deleteCatalogueLine(this.catalogueService.catalogue.uuid, catalogueLine.id).then(res => {
-                this.init();
-            });
+            const status = this.getDeleteStatus(i);
+            status.submit();
+            this.catalogueService.deleteCatalogueLine(this.catalogueService.catalogue.uuid, catalogueLine.id)
+                .then(res => {
+                    this.init();
+                    status.callback("Catalogue line deleted", true);
+                })
+                .catch(error => {
+                    status.error("Error while deleting catalogue line");
+                });
         }
     }
 
@@ -156,10 +193,9 @@ export class CatalogueViewComponent implements OnInit {
         this.searchKey = "";
         this.catalogueLinesWRTTypes = [];
 
-        if(this.selectedType == "All"){
-            this.catalogueLinesWRTTypes = this.catalogue.catalogueLine;
-        }
-        else{
+        if (this.selectedType == "All") {
+            this.catalogueLinesWRTTypes = [...this.catalogue.catalogueLine].reverse();
+        } else {
             let i = 0;
             let len = this.catalogue.catalogueLine.length;
             for(;i<len;i++){
@@ -167,7 +203,7 @@ export class CatalogueViewComponent implements OnInit {
                 let lenOfCom = this.catalogue.catalogueLine[i].goodsItem.item.commodityClassification.length;
                 for(;j<lenOfCom;j++){
                     if(!(this.catalogue.catalogueLine[i].goodsItem.item.commodityClassification[j].itemClassificationCode.name.localeCompare(this.selectedType))){
-                        this.catalogueLinesWRTTypes.push(this.catalogue.catalogueLine[i]);
+                        this.catalogueLinesWRTTypes.unshift(this.catalogue.catalogueLine[i]);
                         break;
                     }
                 }
@@ -198,7 +234,11 @@ export class CatalogueViewComponent implements OnInit {
         this.collectionSize = this.catalogueLinesArray.length;
     }
 
-    private uploadImagePackage(event: any): void {
+    getDeleteStatus(index: number): CallStatus {
+        return this.deleteStatuses[index % this.pageSize];
+    }
+
+    uploadImagePackage(event: any): void {
         this.callStatus.submit();
         let catalogueService = this.catalogueService;
         let fileList: FileList = event.target.files;
@@ -211,41 +251,17 @@ export class CatalogueViewComponent implements OnInit {
                 event.target.value = "";
                 catalogueService.uploadZipPackage(file).then(res => {
                         self.callStatus.callback(null);
-                        self.router.navigate(['catalogue/catalogue'], {queryParams: {forceUpdate: true, t: Date.now()}});
+                        self.router.navigate(['dashboard'], {queryParams: {forceUpdate: true, tab: "CATALOGUE"}});
                     },
                     error => {
-                        self.callStatus.error("Failed to upload the image package:  " + error);
+                        self.callStatus.error("Failed to upload the image package:  " + error, error);
                     });
             };
             reader.readAsDataURL(file);
         }
     }
 
-    private uploadTemplate(event: any): void {
-        this.callStatus.submit();
-        let catalogueService = this.catalogueService;
-        let userId: string = this.cookieService.get("user_id");
-        let fileList: FileList = event.target.files;
-        if (fileList.length > 0) {
-            let file: File = fileList[0];
-            let self = this;
-            var reader = new FileReader();
-            reader.onload = function (e) {
-                // reset the target value so that the same file could be chosen more than once
-                event.target.value = "";
-                catalogueService.uploadTemplate(userId, file, "append").then(res => {
-                        self.callStatus.callback(null);
-                        self.router.navigate(['catalogue/catalogue'], {queryParams: {forceUpdate: true, t: Date.now()}});
-                    },
-                    error => {
-                        self.callStatus.error("Failed to upload the template:  " + error);
-                    });
-            };
-            reader.readAsDataURL(file);
-        }
-    }
-
-    private navigateToThePublishPage(){
+    navigateToThePublishPage(){
         this.router.navigate(['/catalogue/categorysearch']);
     }
 }

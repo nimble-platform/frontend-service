@@ -1,32 +1,163 @@
-<ng-container *ngIf="transportExecutionPlan">
+<!-- Consolidated Shipment -->
+<div class="row">
+    <div class="col-12">
+        <h3>Consolidated Shipment</h3>
 
-    <div class="input-group form-group">
-        <label class="col-3 control-label">Response</label>
-        <select class="custom-select" [disabled]="bpDataService.processMetadata.processStatus == 'Completed'"
-                [(ngModel)]="transportExecutionPlan.documentStatusCode.name">
-            <option>Accepted</option>
-            <option>Rejected</option>
-        </select>
+        <!-- Goods Item -->
+        <text-input presentationMode="view" label="Goods Item" definition="The goods item included in this shipment" [disabled]="isRequestDisabled()"
+            [(text)]="request.consignment[0].consolidatedShipment[0].goodsItem[0].item.name" labelClass="col-2" valueClass="col-10">
+        </text-input>
+
+        <!-- Quantity -->
+        <quantity-input label="Quantity" definition="The quantity to transport." [disabled]="isRequestDisabled()"
+            [quantity]="request.consignment[0].consolidatedShipment[0].totalTransportHandlingUnitQuantity" 
+            labelClass="col-2" valueClass="col-10" presentationMode="view">
+        </quantity-input>
+
+        <!-- Gross Volume -->
+        <quantity-input label="Gross Volume" definition="The total volume of the goods in this shipment, including packaging, e.g.: Quantity: 78, Unit: L"
+            [quantity]="request.consignment[0].grossVolumeMeasure" quantityType="volume_quantity" 
+            rowClass="space-before" labelClass="col-2" valueClass="col-10" presentationMode="view">
+        </quantity-input>
+
+        <!-- Gross Weight -->
+        <quantity-input label="Gross Weight" definition="The total gross weight of a shipment; the weight of the goods plus packaging plus transport equipment,e.g. Quantity: 12, Unit: kg"
+            [quantity]="request.consignment[0].grossWeightMeasure" quantityType="weight_quantity" rowClass="space-before" 
+            labelClass="col-2" valueClass="col-10" presentationMode="view">
+        </quantity-input>
+
+        <!-- Handling Instructions -->
+        <text-input label="Handling Instructions" definition="The handling required for this shipment"
+            [(text)]="request.consignment[0].consolidatedShipment[0].handlingInstructions" 
+            rowClass="space-before" labelClass="col-2" valueClass="col-10" presentationMode="view">
+        </text-input>
     </div>
+</div>
 
-    <value-view [presentationMode]="bpDataService.processMetadata.processStatus == 'Completed' ? 'singlevalue' : 'edit'"
-                [propName]="'Response Reason'"
-                [(value)]="transportExecutionPlan.documentStatusReasonCode.name">
-    </value-view>
 
-    <value-view [presentationMode]="bpDataService.processMetadata.processStatus == 'Completed' ? 'singlevalue' : 'edit'"
-                [propName]="'Note'"
-                [(value)]="transportExecutionPlan.note[0]">
-    </value-view>
+<hr>
 
-    <div class="d-flex justify-content-end">
-        <ng-container *ngIf="bpDataService.processMetadata.processStatus != 'Completed'">
-            <button *ngIf="bpDataService.userRole == 'seller'" class="btn btn-success" [disabled]="submitted"
-                    (click)="respondToTransportExecutionPlanRequest()">Respond to Execution Plan
-            </button>
-        </ng-container>
+
+<!-- Dates -->
+<div class="row">
+    <div class="col-12">
+        <h3>Pick-up Dates</h3>
+        <!-- Service Start Date -->
+        <date-input label="Minimum Date" definition="The period within which the services referred to in the Transport Execution Plan Request must begin."
+            [(date)]="request.serviceStartTimePeriod.startDate" rowClass="space-before" labelClass="col-2" valueClass="col-10" presentationMode="view">
+        </date-input>
+
+        <!-- Service End Date -->
+        <date-input label="Maximum Date" definition="The period during which the services referred to in the Transport Execution Plan Request must be completed."
+        [(date)]="request.serviceStartTimePeriod.endDate" rowClass="space-before" labelClass="col-2" valueClass="col-10" presentationMode="view">
+        </date-input>
     </div>
+</div>
+
+
+<hr>
+
+
+<!-- Origin Address -->
+<div class="row">
+    <div class="col-12">
+        <h3>Origin</h3>
+        <address-input [address]="request.fromLocation.address" presentationMode="view">
+        </address-input>
+    </div>
+</div>
+
+
+<hr>
+
+
+<!-- To Address -->
+<div class="row">
+    <div class="col-12">
+        <h3>Destination</h3>
+        <address-input [address]="request.toLocation.address" presentationMode="view">
+        </address-input>
+    </div>
+</div>
+
+
+<hr>
+
+
+<!-- Note -->
+<h3>Notes</h3>
+<text-input label="Request Note" [(text)]="request.note" 
+    labelClass="col-2" valueClass="col-10" [disabled]="isRequestDisabled()">
+</text-input>
+<text-input label="Response Note" *ngIf="response" [(text)]="response.note" 
+    labelClass="col-2" valueClass="col-10" rowClass="space-before" [disabled]="isResponseDisabled()">
+</text-input>
+
+
+<!-- Contract -->
+<ng-container *ngIf="request.transportContract?.clause || contractCallStatus.isDisplayed()">
+    <hr>
+    <h3>Contract</h3>
+    <call-status [callStatus]="contractCallStatus"></call-status>
+    <contract *ngIf="request.transportContract" [contract]="request.transportContract" [showQuotation]="true">
+    </contract>
 </ng-container>
-<call-status [callStatus]="callStatus"
-             [large]="true">
-</call-status>
+
+
+<hr>
+
+
+<!-- Actions -->
+<div class="row actions-row" *ngIf="userRole === 'buyer' && !isStarted() && !isFinished()">
+    <div class="col-3"></div>
+    <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+    <div class="col-2">
+        <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">Back</button>
+    </div>
+    <div class="col-3">
+        <button *ngIf="!updatingProcess" class="btn btn-primary action" [disabled]="isLoading()" (click)="onSendRequest()">
+            Send Execution Plan Terms
+        </button>
+        <button *ngIf="updatingProcess"class="btn btn-primary action" [disabled]="isLoading()" (click)="onUpdateRequest()">
+            Update Execution Plan Terms
+        </button>
+    </div>
+</div>
+
+<div class="row actions-row" *ngIf="userRole === 'buyer' && isFinished()">
+    <div class="{{productOrder ? 'col-3' : 'col-6'}}"></div>
+    <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+    <div class="col-2">
+        <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">Back</button>
+    </div>
+    <div *ngIf="productOrder" class="col-3">
+        <button class="btn btn-primary action" [disabled]="isLoading()" (click)="onDispatchAdvice()">
+            Dispatch Order
+        </button>
+    </div>
+</div>
+
+<div class="row actions-row" *ngIf="userRole === 'seller' && !isFinished()">
+    <div class="col-6 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+    <div class="col-2">
+        <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">Back</button>
+    </div>
+    <div class="col-2">
+        <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onSendResponse(false)">
+            Reject
+        </button>
+    </div>
+    <div class="col-2">
+        <button class="btn btn-primary action" [disabled]="isLoading()" (click)="onSendResponse(true)">
+            Accept
+        </button>
+    </div>
+</div>
+
+<div class="row actions-row" *ngIf="(userRole === 'buyer' && isStarted()) || (userRole === 'seller' && isFinished())">
+    <div class="col-6"></div>
+    <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+    <div class="col-2">
+        <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">Back</button>
+    </div>
+</div>

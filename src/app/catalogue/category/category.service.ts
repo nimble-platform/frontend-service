@@ -6,6 +6,8 @@ import {Http, Headers} from '@angular/http';
 import {Category} from "../model/category/category";
 import * as myGlobals from '../../globals';
 import {Code} from "../model/publish/code";
+import { ParentCategories } from '../model/category/parent-categories';
+import { sortCategories } from '../../common/utils';
 
 @Injectable()
 export class CategoryService {
@@ -17,8 +19,8 @@ export class CategoryService {
     constructor(private http: Http) {
     }
 
-    getCategoriesByName(keywords: string): Promise<Category[]> {
-        const url = `${this.baseUrl}?categoryNames=${keywords}`;
+    getCategoriesByName(keywords: string, isLogistics: boolean): Promise<Category[]> {
+        const url = `${this.baseUrl}?categoryNames=${keywords}&forLogistics=${isLogistics}`;
         return this.http
             .get(url, {headers: this.headers})
             .toPromise()
@@ -35,7 +37,7 @@ export class CategoryService {
 
         let customCategoryCodes: Code[] = [];
         let customCategories: Category[] = [];
-        let categories:Category[];
+        let categories:Category[] = [];
 
         // remove default category
         codes = codes.filter(function (cat) {
@@ -45,12 +47,6 @@ export class CategoryService {
         customCategoryCodes = codes.filter(function (cat) {
            return cat.listID == 'Custom';
         });
-        // get custom categories
-        for(let cat of customCategoryCodes){
-            customCategories.push(new Category(null,cat.name,null,null,null,null,null,[],[],'Custom',null));
-        }
-
-        categories = customCategories;
 
         // get non-custom categories
         codes = codes.filter(function (cat) {
@@ -108,8 +104,27 @@ export class CategoryService {
             .catch(this.handleError);
     }
 
-    getParentCategories(category: Category): Promise<Category>{
+    getParentCategories(category: Category): Promise<ParentCategories>{
         const url = `${this.baseUrl}/tree?taxonomyId=${category.taxonomyId}&categoryId=${encodeURIComponent(category.id)}`;
+        return this.http
+            .get(url, {headers: this.headers})
+            .toPromise()
+            .then(res => {
+                return res.json() as ParentCategories;
+            })
+            .catch(this.handleError);
+    }
+
+    addSelectedCategory(category: Category): void {
+        // Only add if category is not null and doesn't exist in selected categories
+        if (category != null && this.selectedCategories.findIndex(c => c.id == category.id) == -1) {
+            this.selectedCategories.push(category);
+            sortCategories(this.selectedCategories);
+        }
+    }
+
+    getRootCategories(taxonomyId: string): Promise<Category[]>{
+        const url = `${this.baseUrl}/${taxonomyId}/root-categories`;
         return this.http
             .get(url, {headers: this.headers})
             .toPromise()
@@ -119,25 +134,19 @@ export class CategoryService {
             .catch(this.handleError);
     }
 
-    addSelectedCategory(category: Category): void {
-        // custom categories
-        if(category != null && category.taxonomyId == 'Custom'){
-            // Only add if category is not null and doesn't exist in selected categories
-            if (this.selectedCategories.findIndex(c => c.preferredName == category.preferredName) == -1) {
-                this.selectedCategories.push(category);
-            }
-        }
-        else{
-            // Only add if category is not null and doesn't exist in selected categories
-            if (category != null && this.selectedCategories.findIndex(c => c.id == category.id) == -1) {
-                this.selectedCategories.push(category);
-            }
-        }
-
+    getChildrenCategories(category: Category): Promise<Category[]>{
+        const url = `${this.baseUrl}/children-categories?taxonomyId=${category.taxonomyId}&categoryId=${encodeURIComponent(category.id)}`;
+        return this.http
+            .get(url, {headers: this.headers})
+            .toPromise()
+            .then(res => {
+                return res.json() as Category;
+            })
+            .catch(this.handleError);
     }
 
     resetSelectedCategories():void {
-        this.selectedCategories.length = 0;
+        this.selectedCategories.splice(0, this.selectedCategories.length);
     }
 
     resetData():void {

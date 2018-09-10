@@ -2,26 +2,23 @@
  * Created by suat on 12-May-17.
  */
 
-import {ItemProperty} from "./item-property";
-import {Party} from "./party";
-import {BinaryObject} from "./binary-object";
-import {CommodityClassification} from "./commodity-classification";
-import {ItemIdentification} from "./item-identification";
-import {Country} from "./country";
-import {Certificate} from "./certificate";
-import {Dimension} from "./dimension";
-import {Period} from "./period";
-import {DocumentReference} from "./document-reference";
-import {TransportationService} from "./transportation-service";
-import {TransportationServiceDetails} from "../../ubl-model-view/catalogue-line/transportation-service-details.component";
-import {TrackAndTraceDetails} from './track-and-trace-details';
+import { ItemProperty } from "./item-property";
+import { Party } from "./party";
+import { BinaryObject } from "./binary-object";
+import { CommodityClassification } from "./commodity-classification";
+import { ItemIdentification } from "./item-identification";
+import { Certificate } from "./certificate";
+import { Dimension } from "./dimension";
+import { DocumentReference } from "./document-reference";
+import { TransportationService } from "./transportation-service";
+import { TrackAndTraceDetails } from "./track-and-trace-details";
 
 export class Item {
     constructor(
         public name: string = null,
         public description: string = null,
-        public itemSpecificationDocumentReference:DocumentReference[] = [],
-        public productImage:BinaryObject[] = [],
+        public itemSpecificationDocumentReference: DocumentReference[] = [],
+        public productImage: BinaryObject[] = [],
         public additionalItemProperty: ItemProperty[] = [],
         public manufacturerParty: Party = new Party(),
         public manufacturersItemIdentification: ItemIdentification = new ItemIdentification(),
@@ -31,5 +28,5 @@ export class Item {
         public dimension: Dimension[] = [],
         public transportationServiceDetails = new TransportationService(),
         public trackAndTraceDetails: TrackAndTraceDetails = new TrackAndTraceDetails()
-    ) {  }
+    ) {}
 }

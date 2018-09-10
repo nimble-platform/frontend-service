@@ -1,0 +1,27 @@
+.thead-light-equivalent {
+    vertical-align: bottom;
+    font-weight: 700;
+}
+
+.fixed {
+    position:sticky;
+    z-index: 999;
+    top:0;
+}
+
+.fixed-header {
+    background-color: #fff;
+}
+
+.disabled-section {
+    background-color: #e9ecef;
+    color: #A9A9A9;
+}
+
+.hover-row:hover {
+    background-color: rgba(0,0,0,.075);
+}
+
+.selected-row {
+    background-color: #d6d8db !important;
+}

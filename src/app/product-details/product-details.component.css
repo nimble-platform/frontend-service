@@ -1,0 +1,50 @@
+.product-details {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.order-label {
+    font-weight: bold;
+    margin-bottom: 0rem;
+}
+
+.order-group {
+    margin-bottom: 0.5rem;
+}
+
+.order-value {
+    margin-left: 2rem;
+    display: block;
+}
+
+.order-price {
+    font-size: 1.4rem;
+    font-weight: bold;
+}
+
+.order-price-value {
+    font-size: 1.4rem;
+    font-weight: bold;
+    margin-left: 0.4rem;
+}
+
+.inline-order-group {
+    display: flex;
+    margin-bottom: 0.4rem;
+}
+
+.order-qty-input {
+    flex: 1 1 auto;
+    padding-left: 0.4rem;
+    display: flex;
+}
+
+.order-qty-range {
+    flex: 1 0 100%;
+    margin-top: 0.4rem;
+}
+
+.toggle-processes {
+    float: right;
+    margin-top: 0.9rem;
+}

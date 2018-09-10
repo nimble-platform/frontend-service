@@ -1,0 +1,19 @@
+<div *ngFor="let certificate of catalogueLine.goodsItem.item.certificate; let i = index" class="row actions-row">
+    <div class="col-2">
+        <input-label *ngIf="i === 0" label="Certificates"></input-label>
+    </div>
+    <div class="col-8">
+        <text-input [(text)]="certificate.certificateType" [rows]="1" [disabled]="disabled">
+        </text-input>
+    </div>
+    <div class="col-2">
+        <button class="btn btn-danger w-100" [disabled]="disabled" (click)="onDelete(i)">Delete</button>
+    </div>
+</div>
+
+<div class="row actions-row">
+    <div class="col-10"></div>
+    <div class="col-2">
+        <button class="btn btn-primary w-100" [disabled]="disabled" (click)="onAddCertificate()">Add Certificate</button>
+    </div>
+</div>

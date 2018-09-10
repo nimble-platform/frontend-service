@@ -1,0 +1,11 @@
+export type ProductBpStep = 
+    | "Item_Information_Request" 
+    | "Ppap"
+    | "Negotiation"
+    | "Order" 
+    | "Order_Confirmed"
+    | "Transport_Information_Request"
+    | "Transport_Negotiation"
+    | "Transport_Order"
+    | "Transport_Order_Confirmed"
+    | "Fulfilment"

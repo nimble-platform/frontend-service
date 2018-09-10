@@ -1,31 +1,35 @@
-import {Component, OnInit} from "@angular/core";
-import {BPDataService} from "../bp-data-service";
+import { Component, OnInit, Input } from "@angular/core";
+import { BPDataService } from "../bp-data-service";
+import { CallStatus } from "../../../common/call-status";
+import { CompanyNegotiationSettings } from "../../../user-mgmt/model/company-negotiation-settings";
 
 @Component({
     selector: 'negotiation',
     templateUrl: './negotiation.component.html'
 })
-
 export class NegotiationComponent implements OnInit {
-    tabs:string[] = [];
-	selectedTab: string = "Request for Quotation Details";
 
-    constructor(private bpDataService:BPDataService) {
+    initCallStatus: CallStatus = new CallStatus();
+
+    companyNegotiationSettings: CompanyNegotiationSettings;
+
+    constructor(public bpDataService: BPDataService) {
     }
 
     ngOnInit() {
-		if(this.bpDataService.requestForQuotation == null) {
-			this.bpDataService.initRfq();
-		}
-		this.populateTabs();
-	}
-
-    populateTabs() {
-        if(this.bpDataService.getCatalogueLine().goodsItem.item.transportationServiceDetails == null) {
-            this.tabs.push('Product Characteristics');
-            this.tabs.push('Product Trading & Delivery Terms');
-        } else {
-            this.tabs.push('Service Characteristics');
+        if(this.bpDataService.requestForQuotation == null) {
+            this.initCallStatus.submit();
+            this.bpDataService.initRfq(this.bpDataService.getCompanySettings().negotiationSettings)
+                .then(() => {
+                    this.initCallStatus.callback("Request for Quotation Initialized.");
+                })
+                .catch(error => {
+                    this.initCallStatus.error("Error while initializing request for quotation.", error);
+                });
         }
+    }
+
+    isLoading(): boolean {
+        return this.initCallStatus.fb_submitted;
     }
 }

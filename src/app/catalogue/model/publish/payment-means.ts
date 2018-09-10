@@ -1,6 +1,4 @@
-import {Country} from "./country";
-import {Code} from "./code";
-import {FinancialAccount} from "./financial-account";
+import { Code } from "./code";
 
 export class PaymentMeans {
     constructor(public paymentMeansCode: Code = new Code()) {

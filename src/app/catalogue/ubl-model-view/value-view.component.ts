@@ -10,13 +10,15 @@ import {ChildForm} from "../child-form";
 })
 
 export class ValueViewComponent extends ChildForm implements OnInit {
-    @Input() presentationMode: string;
+    @Input() presentationMode: "singlevalue" | "edit";
     @Input() propName: string;
-    @Input() mandatory:boolean = false;
+    @Input() mandatory: boolean = false;
     @Input() largeInput: boolean = false;
     // the definition of the property
     @Input() definition: string = null;
     control:FormControl;
+
+    json=JSON
 
     valueObj;
     @Output() valueChange = new EventEmitter();
@@ -30,7 +32,7 @@ export class ValueViewComponent extends ChildForm implements OnInit {
         this.valueObj = val;
         this.valueChange.emit(this.valueObj);
     }
-    json=JSON
+
     constructor() {
         super();
     }
