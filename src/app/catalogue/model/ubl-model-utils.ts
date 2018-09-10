@@ -388,6 +388,8 @@ export class UBLModelUtils {
         transportExecutionPlanRequest.consignment[0].consolidatedShipment.push(quotation.quotationLine[0].lineItem.delivery[0].shipment);
         transportExecutionPlanRequest.consignment[0].grossVolumeMeasure = quotation.quotationLine[0].lineItem.delivery[0].shipment.consignment[0].grossVolumeMeasure;
         transportExecutionPlanRequest.consignment[0].grossWeightMeasure = quotation.quotationLine[0].lineItem.delivery[0].shipment.consignment[0].grossWeightMeasure;
+        transportExecutionPlanRequest.serviceStartTimePeriod.startDate = quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.startDate;
+        transportExecutionPlanRequest.serviceStartTimePeriod.endDate = quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.endDate;
         this.removeHjidFieldsFromObject(transportExecutionPlanRequest);
         return transportExecutionPlanRequest
     }
