@@ -597,17 +597,17 @@ export class BPDataService{
     private getItemFromCurrentWorkflow(): Item {
         switch(this.processTypeSubject.getValue()) {
             case "Item_Information_Request":
-                return this.itemInformationRequest.itemInformationRequestLine[0].salesItem[0].item;
+                return this.itemInformationRequest ? this.itemInformationRequest.itemInformationRequestLine[0].salesItem[0].item : null;
             case "Ppap":
-                return this.ppap.lineItem.item;
+                return this.ppap ? this.ppap.lineItem.item : null;
             case "Negotiation":
-                return this.requestForQuotation.requestForQuotationLine[0].lineItem.item;
+                return this.requestForQuotation ? this.requestForQuotation.requestForQuotationLine[0].lineItem.item : null;
             case "Order":
-                return this.order.orderLine[0].lineItem.item;
+                return this.order ? this.order.orderLine[0].lineItem.item : null;
             case "Transport_Execution_Plan":
                 return null;
             case "Fulfilment":
-                return this.despatchAdvice.despatchLine[0].item;
+                return this.despatchAdvice ? this.despatchAdvice.despatchLine[0].item : null;
         }
     }
 
