@@ -200,6 +200,7 @@ export class OrderComponent implements OnInit {
 
         this.bpeService.updateBusinessProcess(JSON.stringify(this.order),"ORDER",this.bpDataService.processMetadata.processId)
             .then(() => {
+                this.documentService.updateCachedDocument(order.id,order);
                 this.submitCallStatus.callback("Order updated", true);
                 this.router.navigate(['dashboard']);
             })

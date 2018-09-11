@@ -17,6 +17,7 @@ import { BpUserRole } from "../../model/bp-user-role";
 import { copy } from "../../../common/utils";
 import { Order } from "../../../catalogue/model/publish/order";
 import { PresentationMode } from "../../../catalogue/model/publish/presentation-mode";
+import {DocumentService} from '../document-service';
 
 @Component({
     selector: "transport-execution-plan",
@@ -40,6 +41,7 @@ export class TransportExecutionPlanComponent implements OnInit {
                 private bpeService: BPEService,
                 private location: Location,
                 private router: Router,
+                private documentService: DocumentService,
                 private route: ActivatedRoute) {
         
     }
@@ -47,12 +49,20 @@ export class TransportExecutionPlanComponent implements OnInit {
     ngOnInit() {
         if(!this.bpDataService.transportExecutionPlanRequest) {
             if(this.searchContextService.associatedProcessMetadata != null) {
-                this.bpDataService.initTransportExecutionPlanRequestWithOrder();
+                this.bpDataService.initTransportExecutionPlanRequestWithOrder().then(response => {
+                    this.init();
+                });
             } else {
                 this.bpDataService.initTransportExecutionPlanRequest();
+                this.init();
             }
         }
+        else {
+            this.init();
+        }
+    }
 
+    init(){
         this.request = this.bpDataService.transportExecutionPlanRequest;
         this.response = this.bpDataService.transportExecutionPlan;
         this.productOrder = this.bpDataService.productOrder;
@@ -65,9 +75,9 @@ export class TransportExecutionPlanComponent implements OnInit {
                 this.request.transportContract = contract;
                 this.contractCallStatus.callback("Contract constructed", true);
             })
-            .catch(error => {
-                this.contractCallStatus.error("Error while getting contract.", error);
-            });
+                .catch(error => {
+                    this.contractCallStatus.error("Error while getting contract.", error);
+                });
         }
     }
 
@@ -141,6 +151,7 @@ export class TransportExecutionPlanComponent implements OnInit {
 
         this.bpeService.updateBusinessProcess(JSON.stringify(transportationExecutionPlanRequest),"TRANSPORTEXECUTIONPLANREQUEST",this.bpDataService.processMetadata.processId)
             .then(() => {
+                this.documentService.updateCachedDocument(transportationExecutionPlanRequest.id,transportationExecutionPlanRequest);
                 this.callStatus.callback("Item Information Request updated", true);
                 this.router.navigate(['dashboard']);
             })

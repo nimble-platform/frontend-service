@@ -12,6 +12,7 @@ import { ProcessType } from "../bpe/model/process-type";
 import { ThreadEventMetadata } from "../catalogue/model/publish/thread-event-metadata";
 import { ThreadEventStatus } from "../catalogue/model/publish/thread-event-status";
 import { SearchContextService } from "../simple-search/search-context.service";
+import {DocumentService} from "../bpe/bp-view/document-service";
 
 /**
  * Created by suat on 12-Mar-18.
@@ -49,7 +50,8 @@ export class ThreadSummaryComponent implements OnInit {
                 private dataChannelService: DataChannelService,
                 private searchContextService: SearchContextService,
                 private bpDataService: BPDataService,
-                private router: Router) {
+                private router: Router,
+                private documentService: DocumentService) {
     }
 
     ngOnInit(): void {
@@ -80,10 +82,10 @@ export class ThreadSummaryComponent implements OnInit {
     private async fetchThreadEvent(processInstanceId: string): Promise<ThreadEventMetadata> {
         const activityVariables = await this.bpeService.getProcessDetailsHistory(processInstanceId);
         const processType = ActivityVariableParser.getProcessType(activityVariables);
-        const initialDoc: any = ActivityVariableParser.getInitialDocument(activityVariables);
-        const response: any = ActivityVariableParser.getResponse(activityVariables);
-        const userRole = ActivityVariableParser.getUserRole(activityVariables,this.processInstanceGroup.partyID)
-        const processId = initialDoc.processInstanceId;
+        const initialDoc: any = await this.documentService.getInitialDocument(activityVariables);
+        const response: any = await this.documentService.getResponseDocument(activityVariables);
+        const userRole = await this.documentService.getUserRole(activityVariables,this.processInstanceGroup.partyID)
+        const processId = ActivityVariableParser.getProcessInstanceID(activityVariables);
 
         const [lastActivity, processInstance] = await Promise.all([
             this.bpeService.getLastActivityForProcessInstance(processId),
@@ -95,11 +97,11 @@ export class ThreadSummaryComponent implements OnInit {
             processType.replace(/[_]/gi, " "),
             processId,
             moment(lastActivity.startTime + "Z", 'YYYY-MM-DDTHH:mm:ssZ').format("YYYY-MM-DD HH:mm"),
-            ActivityVariableParser.getTradingPartnerName(initialDoc, this.cookieService.get("company_id")),
-            ActivityVariableParser.getProductFromProcessData(initialDoc),
-            ActivityVariableParser.getNoteFromProcessData(initialDoc),
+            ActivityVariableParser.getTradingPartnerName(initialDoc, this.cookieService.get("company_id"),processType),
+            ActivityVariableParser.getProductFromProcessData(initialDoc,processType),
+            ActivityVariableParser.getNoteFromProcessData(initialDoc,processType),
             this.getBPStatus(response),
-            initialDoc.value,
+            initialDoc,
             activityVariables,
             userRole === "buyer"
         );
@@ -109,10 +111,10 @@ export class ThreadSummaryComponent implements OnInit {
         this.checkDataChannel(event);
 
         if (userRole === "buyer") {
-          this.lastEventPartnerID = ActivityVariableParser.getProductFromProcessData(initialDoc).manufacturerParty.id;
+            this.lastEventPartnerID = ActivityVariableParser.getProductFromProcessData(initialDoc,processType).manufacturerParty.id;
         }
         else {
-          this.lastEventPartnerID = ActivityVariableParser.getBuyerId(initialDoc);
+            this.lastEventPartnerID = ActivityVariableParser.getBuyerId(initialDoc,processType);
         }
 
         return event;
@@ -134,15 +136,15 @@ export class ThreadSummaryComponent implements OnInit {
     }
 
     navigateToCompanyDetails() {
-      this.router.navigate(['/user-mgmt/company-details'], {
-        queryParams: {
-            id: this.lastEventPartnerID
-        }
-      });
+        this.router.navigate(['/user-mgmt/company-details'], {
+            queryParams: {
+                id: this.lastEventPartnerID
+            }
+        });
     }
 
     private fillStatus(event: ThreadEventMetadata, processState: "EXTERNALLY_TERMINATED" | "COMPLETED" | "ACTIVE",
-        processType: ProcessType, response: any, buyer: boolean): void {
+                       processType: ProcessType, response: any, buyer: boolean): void {
 
         event.status = this.getStatus(processState, processType, response, buyer);
 
@@ -207,7 +209,7 @@ export class ThreadSummaryComponent implements OnInit {
         } else {
             switch(processType) {
                 case "Order":
-                    if (response.value.acceptedIndicator) {
+                    if (response.acceptedIndicator) {
                         if(buyer) {
                             event.statusText = "Waiting for Dispatch Advice";
                             event.actionText = "See Order";
@@ -237,7 +239,7 @@ export class ThreadSummaryComponent implements OnInit {
                     event.actionText = "See Receipt Advice";
                     break;
                 case "Ppap":
-                    if (response.value.acceptedIndicator) {
+                    if (response.acceptedIndicator) {
                         event.statusText = "Ppap approved";
                     } else {
                         event.statusText = "Ppap declined";
@@ -265,7 +267,7 @@ export class ThreadSummaryComponent implements OnInit {
     }
 
     private getStatus(processState: "EXTERNALLY_TERMINATED" | "COMPLETED" | "ACTIVE",
-            processType: ProcessType, response: any, buyer: boolean): ThreadEventStatus {
+                      processType: ProcessType, response: any, buyer: boolean): ThreadEventStatus {
         switch(processState) {
             case "COMPLETED":
                 if(processType === "Order") {
@@ -350,15 +352,16 @@ export class ThreadSummaryComponent implements OnInit {
 
     checkDataChannel(event:ThreadEventMetadata) {
         if(event.processType === 'Order') {
-          this.dataChannelService.channelsForBusinessProcess(event.processId)
-            .then(channels => {
-              if (channels.length > 0) {
-                this.showDataChannelButton = true;
-                const channelId = channels[0].channelID;
-                this.channelLink = `/data-channel/details/${channelId}`
-              }
-            });
+            this.dataChannelService.channelsForBusinessProcess(event.processId)
+                .then(channels => {
+                    if (channels.length > 0) {
+                        this.showDataChannelButton = true;
+                        const channelId = channels[0].channelID;
+                        this.channelLink = `/data-channel/details/${channelId}`
+                    }
+                });
         }
     }
 
 }
+

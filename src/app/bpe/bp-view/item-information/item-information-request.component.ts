@@ -18,6 +18,7 @@ import { ModelUtils } from "../../model/model-utils";
 import { ProcessInstanceInputMessage } from "../../model/process-instance-input-message";
 import { copy, isTransportService } from "../../../common/utils";
 import { PresentationMode } from "../../../catalogue/model/publish/presentation-mode";
+import {DocumentService} from '../document-service';
 /**
  * Created by suat on 19-Nov-17.
  */
@@ -38,6 +39,7 @@ export class ItemInformationRequestComponent implements OnInit {
                 private userService: UserService, 
                 private cookieService: CookieService, 
                 private location: Location,
+                private documentService: DocumentService,
                 private router: Router) {
         
     }
@@ -116,6 +118,7 @@ export class ItemInformationRequestComponent implements OnInit {
 
         this.bpeService.updateBusinessProcess(JSON.stringify(itemInformationRequest),"ITEMINFORMATIONREQUEST",this.bpDataService.processMetadata.processId)
             .then(() => {
+                this.documentService.updateCachedDocument(itemInformationRequest.id,itemInformationRequest);
                 this.callStatus.callback("Item Information Request updated", true);
                 this.router.navigate(['dashboard']);
             })
