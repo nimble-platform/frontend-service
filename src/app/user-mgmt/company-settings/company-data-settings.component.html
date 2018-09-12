@@ -11,7 +11,7 @@
 <!-- Verification Info -->
 <div class="form-group row space-before">
     <label class="col-2 col-form-label">
-        <strong>Verification Info</strong>
+        <strong>Verification Info:</strong>
         <span class="tooltip-icon" (click)="showVerificationTT(tooltip)"><i class="fa fa-question-circle"></i></span>
     </label>
     <div class="col-10">
@@ -28,7 +28,7 @@
 
 <!-- Address -->
 <h4>Address</h4>
-<address-input [address]="settings.address" [disabled]="true"></address-input>
+<address-input-simple [address]="settings.address" [disabled]=true></address-input-simple>
 
 <!-- Request change button -->
 <div class="row actions-row pr-0 space-before">
@@ -69,4 +69,3 @@
     <div class="modal-body" [innerHTML]="tooltipHTML">
     </div>
 </ng-template>
-    
