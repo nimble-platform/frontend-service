@@ -90,7 +90,7 @@ export const product_filter_comp = ["item_manufacturer_name","item_manufacturer_
 export const product_filter_mappings = {
   "item_price": "Price",
   "item_currency": "Currency",
-  "item_free_of_charge_indicator": "Free of Charge",
+  "item_free_of_charge_indicator": "Free Sample",
   "item_certificate": "Product / Service Certificate",
   "item_applicable_countries": "Destination Country",
   "item_manufacturer_name": "Vendor Name",
