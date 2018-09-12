@@ -41,14 +41,14 @@
 <!-- Dates -->
 <div class="row">
     <div class="col-12">
-        <h3>Pick-up Dates</h3>
+        <h3>Shipment Dates</h3>
         <!-- Service Start Date -->
-        <date-input label="Minimum Date" definition="The period within which the services referred to in the Transport Execution Plan Request must begin."
+        <date-input label="Pick-Up Date" definition="The period within which the services referred to in the Transport Execution Plan Request must begin."
             [(date)]="request.serviceStartTimePeriod.startDate" rowClass="space-before" labelClass="col-2" valueClass="col-10" presentationMode="view">
         </date-input>
 
         <!-- Service End Date -->
-        <date-input label="Maximum Date" definition="The period during which the services referred to in the Transport Execution Plan Request must be completed."
+        <date-input label="Drop-Off Date" definition="The period during which the services referred to in the Transport Execution Plan Request must be completed."
         [(date)]="request.serviceStartTimePeriod.endDate" rowClass="space-before" labelClass="col-2" valueClass="col-10" presentationMode="view">
         </date-input>
     </div>

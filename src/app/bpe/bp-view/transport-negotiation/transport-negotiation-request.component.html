@@ -76,12 +76,12 @@
         </quantity-input>
 
         <!-- Service Start Date -->
-        <date-input label="Earliest Pick-Up Date" definition="The period within which the services referred to in the Transport Execution Plan Request must begin."
+        <date-input label="Pick-Up Date" definition="The period within which the services referred to in the Transport Execution Plan Request must begin."
             [(date)]="rfq.delivery.requestedDeliveryPeriod.startDate" rowClass="space-before" labelClass="col-2" valueClass="col-10" [disabled]="isDisabled()" >
         </date-input>
 
         <!-- Service End Date -->
-        <date-input label="Latest Pick-Up Date" definition="The period during which the services referred to in the Transport Execution Plan Request must be completed."
+        <date-input label="Drop-Off Date" definition="The period during which the services referred to in the Transport Execution Plan Request must be completed."
             [(date)]="rfq.delivery.requestedDeliveryPeriod.endDate" rowClass="space-before" labelClass="col-2" valueClass="col-10" [disabled]="isDisabled()" >
         </date-input>
 
