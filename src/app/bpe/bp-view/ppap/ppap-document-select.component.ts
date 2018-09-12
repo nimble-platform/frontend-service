@@ -14,6 +14,7 @@ import {ActivatedRoute, Router} from "@angular/router";
 import { Location } from "@angular/common";
 import { copy } from "../../../common/utils";
 import { Certificate } from "../../../user-mgmt/model/certificate";
+import {DocumentService} from '../document-service';
 
 type PpapLevels = [boolean, boolean, boolean, boolean, boolean]
 
@@ -72,6 +73,7 @@ export class PpapDocumentSelectComponent implements OnInit {
                 private cookieService: CookieService,
                 private route: ActivatedRoute,
                 private router: Router,
+                private documentService: DocumentService,
                 private location: Location) {
         
     }
@@ -199,6 +201,7 @@ export class PpapDocumentSelectComponent implements OnInit {
 
         this.bpeService.updateBusinessProcess(JSON.stringify(ppap),"PPAPREQUEST",this.bpDataService.processMetadata.processId)
             .then(() => {
+                this.documentService.updateCachedDocument(ppap.id,ppap);
                 this.callStatus.callback("Ppap request updated", true);
                 this.router.navigate(['dashboard']);
             })

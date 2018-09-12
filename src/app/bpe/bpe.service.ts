@@ -151,24 +151,7 @@ export class BPEService {
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
-	}
-
-	getItemInformationRequest(itemInformationResponse: ItemInformationResponse): Promise<ItemInformationRequest> {
-		return this.getDocumentJsonContent(itemInformationResponse.itemInformationRequestDocumentReference.id);
-	}
-
-	getRequestForQuotation(quotation: Quotation): Promise<RequestForQuotation> {
-		return this.getDocumentJsonContent(quotation.requestForQuotationDocumentReference.id);
-	}
-
-	getDocumentJsonContent(documentId:string):Promise<any> {
-		const url = `${this.url}/document/json/${documentId}`;
-		return this.http
-            .get(url, {headers: this.headers})
-            .toPromise()
-            .then(res => res.json())
-            .catch(this.handleError);
-	}
+    }
 
 	getProcessInstanceGroupFilters(partyId:string, collaborationRole: CollaborationRole, archived: boolean, products: string[], 
 		categories: string[], partners: string[],status: string[]): Promise<ProcessInstanceGroupFilter> {

@@ -12,8 +12,8 @@ import {BinaryObject} from "../../../catalogue/model/publish/binary-object";
 import {UBLModelUtils} from "../../../catalogue/model/ubl-model-utils";
 import {DocumentReference} from "../../../catalogue/model/publish/document-reference";
 import {Attachment} from "../../../catalogue/model/publish/attachment";
-import {ActivityVariableParser} from "../activity-variable-parser";
 import { Location } from "@angular/common";
+import {DocumentService} from "../document-service";
 
 @Component({
     selector: "ppap-document-upload",
@@ -37,11 +37,12 @@ export class PpapDocumentUploadComponent {
     submitted: boolean = false;
 
     constructor(private bpDataService: BPDataService,
-        private bpeService: BPEService,
-        private route: ActivatedRoute,
-        private router: Router,
-        private location: Location) {
-    
+                private bpeService: BPEService,
+                private route: ActivatedRoute,
+                private router: Router,
+                private location: Location,
+                private documentService: DocumentService) {
+
     }
 
     ngOnInit() {
@@ -49,13 +50,15 @@ export class PpapDocumentUploadComponent {
             this.processid = params['pid'];
 
             this.bpeService.getProcessDetailsHistory(this.processid).then(task => {
-                this.ppap = ActivityVariableParser.getInitialDocument(task).value as Ppap;
-                let i = 0;
-                this.documents = [];
-                for(;i<this.ppap.documentType.length;i++){
-                    this.documents.push(this.ppap.documentType[i]);
-                }
-                this.note = this.ppap.note;
+                this.documentService.getInitialDocument(task).then(initialDocument => {
+                    this.ppap = initialDocument as Ppap;
+                    let i = 0;
+                    this.documents = [];
+                    for(;i<this.ppap.documentType.length;i++){
+                        this.documents.push(this.ppap.documentType[i]);
+                    }
+                    this.note = this.ppap.note;
+                });
             });
         });
     }
