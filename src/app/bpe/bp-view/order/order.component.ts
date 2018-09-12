@@ -198,7 +198,7 @@ export class OrderComponent implements OnInit {
         const order = copy(this.bpDataService.order);
         UBLModelUtils.removeHjidFieldsFromObject(order);
 
-        this.bpeService.updateBusinessProcess(JSON.stringify(this.order),"ORDER",this.bpDataService.processMetadata.processId)
+        this.bpeService.updateBusinessProcess(JSON.stringify(order),"ORDER",this.bpDataService.processMetadata.processId)
             .then(() => {
                 this.documentService.updateCachedDocument(order.id,order);
                 this.submitCallStatus.callback("Order updated", true);
