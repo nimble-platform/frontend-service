@@ -64,7 +64,7 @@ export class PpapDocumentDownloadComponent{
     }
     
     private initFromPpap() {
-        this.noteBuyer = this.ppap.note;
+        this.noteBuyer = this.ppap.note[0];
         this.ppapDocuments = this.ppapResponse.requestedDocument;
 
         for (let i = 0; i < this.ppapDocuments.length; i++) {
@@ -78,7 +78,7 @@ export class PpapDocumentDownloadComponent{
                 );
             }
         }
-        this.note = this.ppapResponse.note;
+        this.note = this.ppapResponse.note[0];
         this.keys = Object.keys(this.documents);
 
         this.requestedDocuments = this.ppap.documentType;

@@ -86,7 +86,7 @@ export class PpapDocumentSelectComponent implements OnInit {
                 this.level = 0;
                 this.resetSelectedDocumens();
                 this.ppap = this.bpDataService.ppap;
-                this.note = this.ppap.note;
+                this.note = this.ppap.note[0];
                 this.ppap.documentType.forEach(name => {
                     const index = this.DOCUMENTS.findIndex(doc => doc.name === name);
                     if(index >= 0) {
@@ -155,7 +155,7 @@ export class PpapDocumentSelectComponent implements OnInit {
 
     onSendRequest() {
         this.ppap = UBLModelUtils.createPpap([]);
-        this.ppap.note = this.note;
+        this.ppap.note[0] = this.note;
         this.ppap.documentType = this.DOCUMENTS.filter((_, i) => this.selectedDocuments[i]).map(doc => doc.name);
         this.ppap.lineItem.item = copy(this.bpDataService.modifiedCatalogueLines[0].goodsItem.item);
         UBLModelUtils.removeHjidFieldsFromObject(this.ppap);
@@ -195,7 +195,7 @@ export class PpapDocumentSelectComponent implements OnInit {
 
         const ppap: Ppap = copy(this.bpDataService.ppap);
 
-        ppap.note = this.note;
+        ppap.note[0] = this.note;
         ppap.documentType = this.DOCUMENTS.filter((_, i) => this.selectedDocuments[i]).map(doc => doc.name);
         UBLModelUtils.removeHjidFieldsFromObject(ppap);
 

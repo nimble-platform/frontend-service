@@ -156,11 +156,11 @@ export class ActivityVariableParser {
     static getNoteFromProcessData(initialDocument: any, processType: string): string {
         if (processType == "Order") {
             let order: Order = initialDocument as Order;
-            return order.note;
+            return order.note[0];
 
         } else if(processType == "Ppap"){
             let ppap: Ppap = initialDocument as Ppap;
-            return ppap.note;
+            return ppap.note[0];
         } else if (processType == "Negotiation") {
             let rfq: RequestForQuotation = initialDocument as RequestForQuotation;
             return rfq.note[0];

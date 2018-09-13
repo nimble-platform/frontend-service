@@ -59,7 +59,7 @@ export class PpapDocumentUploadComponent {
                     for(;i<this.ppap.documentType.length;i++){
                         this.documents.push(this.ppap.documentType[i]);
                     }
-                    this.note = this.ppap.note;
+                    this.note = this.ppap.note[0];
                 });
             });
         });
@@ -122,7 +122,7 @@ export class PpapDocumentUploadComponent {
             this.ppapResponse.requestedDocument = this.ppapDocuments;
         }
 
-        this.ppapResponse.note = this.noteToSend;
+        this.ppapResponse.note[0] = this.noteToSend;
         const vars: ProcessVariables = ModelUtils.createProcessVariables("Ppap", this.ppap.buyerCustomerParty.party.id, this.ppap.sellerSupplierParty.party.id, this.cookieService.get("user_id"),this.ppapResponse, this.bpDataService);
         const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.bpDataService.processMetadata.processId);
 

@@ -4,7 +4,7 @@ import {DocumentReference} from "./document-reference";
 export class PpapResponse{
     constructor(
         public id: string = null,
-        public note:string = null,
+        public note:string[] = [],
         public rejectionNote: string = null,
         public acceptedIndicator: boolean = null,
         public buyerCustomerParty:CustomerParty = null,
