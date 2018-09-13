@@ -42,7 +42,7 @@
         <div class="progress-bar bg-warning" role="progressbar" [ngStyle]="{'width':yellow_perc_str}" [attr.aria-valuenow]="yellow_perc" aria-valuemin="0" aria-valuemax="100"></div>
         <div class="progress-bar bg-danger" role="progressbar" [ngStyle]="{'width':red_perc_str}" [attr.aria-valuenow]="red_perc" aria-valuemin="0" aria-valuemax="100"></div>
       </div>
-      <div class="space-before text-center">
+      <div *ngIf="bp_count>0" class="space-before text-center">
         <span class="badge badge-pill badge-success">{{green_perc_str}} Approved</span>
         <span class="badge badge-pill badge-warning">{{yellow_perc_str}} Waiting</span>
         <span class="badge badge-pill badge-danger">{{red_perc_str}} Rejected</span>
@@ -68,7 +68,7 @@
         <div class="progress-bar bg-warning" role="progressbar" [ngStyle]="{'width':trade_yellow_perc_str}" [attr.aria-valuenow]="trade_yellow_perc" aria-valuemin="0" aria-valuemax="100"></div>
         <div class="progress-bar bg-danger" role="progressbar" [ngStyle]="{'width':trade_red_perc_str}" [attr.aria-valuenow]="trade_red_perc" aria-valuemin="0" aria-valuemax="100"></div>
       </div>
-      <div class="space-before text-center">
+      <div *ngIf="trade_count>0" class="space-before text-center">
         <span class="badge badge-pill badge-success">{{trade_green_perc_str}} Approved</span>
         <span class="badge badge-pill badge-warning">{{trade_yellow_perc_str}} Waiting</span>
         <span class="badge badge-pill badge-danger">{{trade_red_perc_str}} Rejected</span>
