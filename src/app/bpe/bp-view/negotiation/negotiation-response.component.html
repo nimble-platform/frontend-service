@@ -1,0 +1,155 @@
+<div class="row title-row">
+    <div class="col-3"></div>
+    <div class="col-3"><h3 class="font-weight-600">Original Terms</h3></div>
+    <div class="col-3"><h3 class="font-weight-600">Customer Request</h3></div>
+    <div class="col-3"><h3 class="font-weight-600">Producer Response</h3></div>
+</div>
+
+<div class="row content-row bg-light">
+    <div class="col-3"><strong class="font-weight-500">Delivery Period:</strong></div>
+    <div class="col-3">{{ wrapper.lineDeliveryPeriodString }}</div>
+    <div class="col-3">{{ wrapper.rfqDeliveryPeriodStringIfNegotiating }}</div>
+    <div class="col-3">
+        <quantity-input [visible]="rfq.negotiationOptions.deliveryPeriod" [presentationMode]="getPresentationMode()"
+            [disabled]="isLoading()" [quantity]="wrapper.quotationDeliveryPeriod" quantityType="time_quantity">
+        </quantity-input>
+    </div>
+</div>
+
+<div class="row content-row">
+    <div class="col-3"><strong class="font-weight-500">Warranty:</strong></div>
+    <div class="col-3">{{ wrapper.lineWarrantyString }}</div>
+    <div class="col-3">{{ wrapper.rfqWarrantyStringIfNegotiating }}</div>
+    <div class="col-3">
+        <quantity-input [visible]="rfq.negotiationOptions.warranty" [presentationMode]="getPresentationMode()"
+            [disabled]="isLoading()" [quantity]="wrapper.quotationWarranty" quantityType="warranty_period">
+        </quantity-input>
+    </div>
+</div>
+
+<div class="row content-row bg-light">
+    <div class="col-3"><strong class="font-weight-500">Incoterms:</strong></div>
+    <div class="col-3">{{ wrapper.lineIncoterms }}</div>
+    <div class="col-3">{{ wrapper.rfqIncotermsIfNegotiating }}</div>
+    <div class="col-3">
+        <options-input [visible]="rfq.negotiationOptions.incoterms" [presentationMode]="getPresentationMode()"
+            [disabled]="isLoading()" [options]="wrapper.settings.incoterms" [(selected)]="wrapper.quotationIncoterms">
+        </options-input>
+    </div>
+</div>
+
+<div class="row content-row">
+    <div class="col-3"><strong class="font-weight-500">Payment Terms:</strong></div>
+    <div class="col-3">{{ wrapper.linePaymentTerms }}</div>
+    <div class="col-3">{{ wrapper.rfqPaymentTermsIfNegotiating }}</div>
+    <div class="col-3">
+        <options-input [visible]="rfq.negotiationOptions.paymentTerms" [presentationMode]="getPresentationMode()"
+            [disabled]="isLoading()" [options]="wrapper.settings.paymentTerms" 
+            [(selected)]="wrapper.quotationPaymentTerms.paymentTerm">
+        </options-input>
+    </div>
+</div>
+
+<div class="row content-row bg-light">
+    <div class="col-3"><strong class="font-weight-500">Payment Means:</strong></div>
+    <div class="col-3">{{ wrapper.linePaymentMeans }}</div>
+    <div class="col-3">{{ wrapper.rfqPaymentMeansIfNegotiating }}</div>
+    <div class="col-3">
+        <options-input [visible]="rfq.negotiationOptions.paymentMeans" [presentationMode]="getPresentationMode()"
+            [disabled]="isLoading()" [options]="wrapper.settings.paymentMeans" [(selected)]="wrapper.quotationPaymentMeans">
+        </options-input>
+    </div>
+</div>
+
+<div class="row content-row">
+    <div class="col-3"><strong class="font-weight-500">Data monitoring service requested:</strong></div>
+    <div class="col-3"></div>
+    <div class="col-3">{{ rfq.dataMonitoringRequested ? "Yes" : "" }}</div>
+    <div class="col-3" *ngIf="rfq.dataMonitoringRequested && !isReadOnly()">
+        <input type="checkbox" [(ngModel)]="quotation.dataMonitoringPromised" 
+            [disabled]="isLoading()">
+        <label>Provide data monitoring service</label>
+    </div>
+    <div class="col-3" *ngIf="rfq.dataMonitoringRequested && isReadOnly()">
+        <label *ngIf="quotation.dataMonitoringPromised">Data monitoring service confirmed.</label>
+        <label *ngIf="!quotation.dataMonitoringPromised">Data monitoring service <strong class="font-weight-500">not provided</strong>.</label>
+    </div>
+</div>
+
+<div class="row content-row bg-light">
+    <div class="col-3"><strong class="font-weight-500">Total Price:</strong></div>
+    <div class="col-3">{{ wrapper.lineTotalPriceString }}</div>
+    <div class="col-3">{{ wrapper.rfqTotalPriceStringIfNegotiating }}</div>
+    <div class="col-3">
+        <quantity-input [presentationMode]="getPresentationMode()" [disabled]="isLoading()" 
+            [quantity]="wrapper.quotationPriceWrapper" [quantityUnits]="CURRENCIES" 
+            [disableQuantityUnit]="wrapper.linePriceWrapper.hasPrice()">
+        </quantity-input>
+    </div>
+</div>
+
+<div class="row content-row">
+    <div class="col-3"><strong class="font-weight-500">Note:</strong></div>
+    <div class="col-3"></div>
+    <div class="col-3">
+        <text-input disabled [text]="rfq.note[0]">
+        </text-input>
+    </div>
+    <div class="col-3">
+        <text-input [disabled]="isLoading() || isReadOnly()" [(text)]="quotation.note[0]">
+        </text-input>
+    </div>
+</div>
+
+<hr>
+
+<!-- Delivery Location -->
+<div class="row address-row">
+    <div class="col-12">
+        <h3>Delivery Address</h3>
+        <address-input [address]="wrapper.rfqDeliveryAddress" disabled="true">
+        </address-input>
+    </div>
+</div>
+
+<!-- Actions -->
+<div class="row actions-row" *ngIf="userRole === 'seller' && !isReadOnly()">
+    <div class="col-6 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+    <div class="col-2">
+        <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
+    </div>
+    <div class="col-2">
+        <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onRespondToQuotation(false)">
+            Reject Offer
+        </button>
+    </div>
+    <div class="col-2">
+        <button class="btn btn-primary action" [disabled]="isLoading()" (click)="onRespondToQuotation(true)">
+            Accept Offer
+        </button>
+    </div>
+</div>
+
+<div class="row actions-row" *ngIf="userRole === 'seller' && isReadOnly()">
+    <div class="col-10 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+    <div class="col-2">
+        <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
+    </div>
+</div>
+
+<div class="row actions-row" *ngIf="userRole === 'buyer'">
+    <div class="col-5 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+    <div class="col-2">
+        <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
+    </div>
+    <div class="col-3">
+        <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onRequestNewQuotation()">
+            Request new Quotation
+        </button>
+    </div>
+    <div class="col-2">
+        <button class="btn btn-primary action" [disabled]="isLoading()" (click)="onAcceptAndOrder()">
+            Accept & Order
+        </button>
+    </div>
+</div>

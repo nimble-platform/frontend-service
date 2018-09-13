@@ -1,0 +1,15 @@
+<div class="row {{ rowClass }}">
+    <div *ngIf="label" [class]="labelClass">
+        <input-label [class]="labelMainClass" [label]="label" [definition]="definition">
+        </input-label>
+    </div>
+    <div [class]="valueClass" *ngIf="presentationMode === 'edit' && visible">
+        <select class="form-control form-control-sm" [(ngModel)]="selected" [disabled]="disabled">
+            <option *ngFor="let option of options" [value]="getValue(option)">{{ getName(option) }}</option>
+        </select>
+    </div>
+
+    <div [class]="valueClass" *ngIf="presentationMode === 'view' && visible">
+        <span>{{ getName(selected) }}</span>
+    </div>
+</div>

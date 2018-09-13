@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Headers, Http } from '@angular/http';
+import { CookieService } from 'ng2-cookies';
 import 'rxjs/add/operator/toPromise';
 import * as myGlobals from '../globals';
 import {Party} from "../catalogue/model/publish/party";
@@ -8,8 +9,10 @@ import { UserRegistration } from './model/user-registration';
 import { CompanyRegistration } from './model/company-registration';
 import { CompanyInvitation } from './model/company-invitation';
 import {UBLModelUtils} from "../catalogue/model/ubl-model-utils";
-import { CookieService } from 'ng2-cookies';
 import { UserRole } from './model/user-role';
+import { CompanyNegotiationSettings } from './model/company-negotiation-settings';
+import { CatalogueLine } from '../catalogue/model/publish/catalogue-line';
+import { INCOTERMS, PAYMENT_MEANS } from '../catalogue/model/constants';
 
 @Injectable()
 export class UserService {
@@ -19,11 +22,21 @@ export class UserService {
 
     userParty: Party;
 
-
     constructor(
         private http: Http,
         private cookieService: CookieService
     ) { }
+
+    setWelcomeFlag(flag: boolean): Promise<any> {
+      const url = `${this.url}/set-welcome-info/${flag}`;
+      const token = 'Bearer '+this.cookieService.get("bearer_token");
+      const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
+      return this.http
+          .post(url, JSON.stringify({}), {headers: headers_token, withCredentials: true})
+          .toPromise()
+          .then(res => res.json())
+          .catch(this.handleError);
+    }
 
     registerUser(user: UserRegistration): Promise<any> {
         const url = `${this.url}/register/user`;
@@ -55,7 +68,7 @@ export class UserService {
             .then(res => res.json())
             .catch(this.handleError);
     }
-	
+
 	deleteInvite(email:string) {
 		var encodedMail = encodeURIComponent(email);
 		const url = `${this.url}/invitations?username=${encodedMail}`;
@@ -112,17 +125,38 @@ export class UserService {
             .catch(this.handleError);
     }
 
-    getSettings(userId: string): Promise<CompanySettings> {
-        return this.getUserParty(userId).then(party => {
-            const url = `${this.url}/company-settings/${party.id}`;
-            const token = 'Bearer '+this.cookieService.get("bearer_token");
-            const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
-            return this.http
-                .get(url, {headers: headers_token, withCredentials: true})
-                .toPromise()
-                .then(response => response.json() as CompanySettings)
-                .catch(this.handleError)
-        });
+    getSettingsForProduct(line: CatalogueLine): Promise<CompanySettings> {
+        console.log("Getting settings for product: " + line.goodsItem.item.manufacturerParty.id);
+        return this.getSettingsForParty(line.goodsItem.item.manufacturerParty.id)
+        .then(settings => {
+            console.log("Settings", settings);
+            return settings;
+        })
+    }
+
+    getSettingsForUser(userId: string): Promise<CompanySettings> {
+        return this.getUserParty(userId).then(party => this.getSettingsForParty(party.id));
+    }
+
+    getSettingsForParty(partyId: string): Promise<CompanySettings> {
+        return Promise.all([
+            this.getSettingsPromise(partyId),
+            this.getCompanyNegotiationSettingsForParty(partyId)
+        ]).then(([settings, negotiationSettings]) => {
+            settings.negotiationSettings = negotiationSettings;
+            return settings;
+        })
+    }
+
+    private getSettingsPromise(partyId: string): Promise<CompanySettings> {
+        const url = `${this.url}/company-settings/${partyId}`;
+        const token = 'Bearer '+this.cookieService.get("bearer_token");
+        const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
+        return this.http
+            .get(url, {headers: headers_token, withCredentials: true})
+            .toPromise()
+            .then(response => response.json() as CompanySettings)
+            .catch(this.handleError)
     }
 
     getUserRoles(): Promise<UserRole[]> {
@@ -154,7 +188,9 @@ export class UserService {
             .catch(this.handleError);
 	}
 
-    putSettings(settings: CompanySettings, userId: string): Promise<any> {
+    putSettings(rawSettings: CompanySettings, userId: string): Promise<any> {
+        const settings = { ...rawSettings };
+        delete settings.negotiationSettings;
         return this.getUserParty(userId).then(party => {
             const url = `${this.url}/company-settings/${party.id}`;
             const token = 'Bearer '+this.cookieService.get("bearer_token");
@@ -165,6 +201,163 @@ export class UserService {
                 .then(response => response.json())
                 .catch(this.handleError)
         });
+    }
+
+    getPrefCat(userId: string): Promise<any> {
+      return this.getSettingsForUser(userId).then(settings => settings.preferredProductCategories);
+    }
+
+    getRecCat(userId: string): Promise<any> {
+      return this.getSettingsForUser(userId).then(settings => settings.recentlyUsedProductCategories);
+    }
+
+    togglePrefCat(userId: string, cat: string): Promise<any> {
+      return this.getSettingsForUser(userId).then(settings => {
+        var pref_cat = settings.preferredProductCategories;
+        var cat_idx = pref_cat.indexOf(cat);
+        if (cat_idx == -1)
+          pref_cat.push(cat);
+        else
+          pref_cat.splice(cat_idx,1);
+        settings.preferredProductCategories = pref_cat;
+        return this.putSettings(settings,userId).then(response => response.preferredProductCategories)
+      });
+    }
+
+    addRecCat(userId: string, cat: string[]): Promise<any> {
+      return this.getSettingsForUser(userId).then(settings => {
+        var rec_cat = settings.recentlyUsedProductCategories;
+        var rec_cat_comp = rec_cat.slice();
+        for (var i=0; i<rec_cat_comp.length; i++) {
+          var rec_cat_comp_arr = rec_cat_comp[i].split("::");
+          rec_cat_comp[i] = rec_cat_comp_arr[0] + "::" + rec_cat_comp_arr[1] + "::" + rec_cat_comp_arr[2] + "::" + rec_cat_comp_arr[3];
+        }
+        for (var i=0; i<cat.length; i++) {
+          var cat_arr = cat[i].split("::");
+          var cat_comp = cat_arr[0] + "::" + cat_arr[1] + "::" + cat_arr[2] + "::" + cat_arr[3];
+          var cat_idx = rec_cat_comp.indexOf(cat_comp);
+          if (cat_idx == -1)
+            rec_cat.push(cat[i]);
+          else
+            rec_cat[cat_idx]=cat[i];
+        }
+        if (rec_cat.length>10) {
+          rec_cat.sort((a, b) => b.split("::")[2].localeCompare(a.split("::")[2]));
+          rec_cat.sort((a, b) => a.split("::")[4].localeCompare(b.split("::")[4]));
+          rec_cat.splice(0,rec_cat.length-10);
+        }
+        settings.recentlyUsedProductCategories = rec_cat;
+        return this.putSettings(settings,userId).then(response => response.recentlyUsedProductCategories)
+      });
+    }
+
+    removeRecCat(userId: string, cat: string): Promise<any> {
+      return this.getSettingsForUser(userId).then(settings => {
+        var rec_cat = settings.recentlyUsedProductCategories;
+        var cat_idx = rec_cat.indexOf(cat);
+        if (cat_idx != -1)
+          rec_cat.splice(cat_idx,1);
+        settings.recentlyUsedProductCategories = rec_cat;
+        return this.putSettings(settings,userId).then(response => response.recentlyUsedProductCategories)
+      });
+    }
+
+    saveCert(file: File, name: string, type: string): Promise<void> {
+      const url = `${this.url}/company-settings/certificate?name=${name}&type=${type}`;
+      const token = 'Bearer '+this.cookieService.get("bearer_token");
+      const headers_token = new Headers({'Authorization': token});
+      const form_data: FormData = new FormData();
+      form_data.append('file', file);
+      return this.http
+          .post(url, form_data, {headers: headers_token, withCredentials: true})
+          .toPromise()
+          .then(() => {})
+          .catch(this.handleError)
+    }
+
+    downloadCert(id: string) {
+      const url = `${this.url}/company-settings/certificate/${id}`;
+      window.open(url,"_blank");
+    }
+
+    deleteCert(id: string): Promise<void> {
+      const url = `${this.url}/company-settings/certificate/${id}`;
+      const token = 'Bearer '+this.cookieService.get("bearer_token");
+      const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
+      return this.http
+          .delete(url, {headers: headers_token, withCredentials: true})
+          .toPromise()
+          .then(() => {})
+          .catch(this.handleError)
+    }
+
+    getCompanyNegotiationSettingsForUser(userId: string): Promise<CompanyNegotiationSettings> {
+        return this.getUserParty(userId).then(party => this.getCompanyNegotiationSettingsForParty(party.id));
+    }
+
+    getCompanyNegotiationSettingsForProduct(line: CatalogueLine): Promise<CompanyNegotiationSettings> {
+        return this.getCompanyNegotiationSettingsForParty(line.goodsItem.item.manufacturerParty.id);
+    }
+
+    getCompanyNegotiationSettingsForParty(partyId: string): Promise<CompanyNegotiationSettings> {
+        const url = `${this.url}/company-settings/negotiation/${partyId}`;
+        const token = 'Bearer ' + this.cookieService.get("bearer_token");
+        const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
+        return this.http
+            .get(url, { headers: headers_token, withCredentials: true })
+            .toPromise()
+            .then(res => {
+                return this.sanitizeNegotiationSettings(res.json());
+            })
+            .catch(this.handleError);
+    }
+
+    private sanitizeNegotiationSettings(settings: CompanyNegotiationSettings): CompanyNegotiationSettings {
+        if(settings.deliveryPeriodUnits.length === 0) {
+            settings.deliveryPeriodUnits.push("day(s)");
+            settings.deliveryPeriodUnits.push("week(s)");
+        }
+        if(settings.deliveryPeriodRanges.length === 0) {
+            settings.deliveryPeriodRanges.push({ start: 1, end: 56 });
+            settings.deliveryPeriodRanges.push({ start: 0, end: 8 });
+        }
+        while(settings.deliveryPeriodRanges.length > 2) {
+            settings.deliveryPeriodRanges.pop();
+        }
+        if(settings.warrantyPeriodRanges.length === 0) {
+            settings.warrantyPeriodUnits.push("month(s)");
+            settings.warrantyPeriodUnits.push("year(s)");
+        }
+        if(settings.warrantyPeriodRanges.length === 0) {
+            settings.warrantyPeriodRanges.push({ start: 0, end: 24 });
+            settings.warrantyPeriodRanges.push({ start: 0, end: 2 });
+        }
+        while(settings.warrantyPeriodRanges.length > 2) {
+            settings.warrantyPeriodRanges.pop();
+        }
+
+        if(settings.incoterms.length === 0) {
+            settings.incoterms.push(...INCOTERMS);
+        }
+        if(settings.paymentMeans.length === 0) {
+            settings.paymentMeans.push(...PAYMENT_MEANS);
+        }
+        if(settings.paymentTerms.length === 0) {
+            settings.paymentTerms.push(...UBLModelUtils.getDefaultPaymentTermsAsStrings());
+        }
+
+        return settings;
+    }
+
+    putCompanyNegotiationSettings(settings: CompanyNegotiationSettings): Promise<void> {
+        const url = `${this.url}/company-settings/negotiation`;
+        const token = 'Bearer '+this.cookieService.get("bearer_token");
+        const headers_token = new Headers({ 'Content-Type': 'application/json', 'Authorization': token });
+        return this.http
+            .put(url, settings, {headers: headers_token, withCredentials: true})
+            .toPromise()
+            .then(() => {})
+            .catch(this.handleError)
     }
 
     resetData():void {

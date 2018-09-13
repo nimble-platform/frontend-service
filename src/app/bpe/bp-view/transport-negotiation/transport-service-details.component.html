@@ -1,0 +1,51 @@
+<div class="row space-before">
+    <div class="col-12">
+        <h4>Transport Service Details</h4>
+
+        <!-- Goods Item -->
+        <text-input presentationMode="view" label="Goods Item" definition="The goods item included in this shipment"
+            [(text)]="shipment.goodsItem[0].item.name" [disabled]="disabled" labelClass="col-2" valueClass="col-10" rowClass="space-before">
+        </text-input>
+
+        <!-- Quantity -->
+        <quantity-input label="Quantity" definition="The quantity to transport."
+            [quantity]="shipment.totalTransportHandlingUnitQuantity" [disabled]="disabled" 
+            labelClass="col-2" valueClass="col-10">
+        </quantity-input>
+
+        <!-- Gross Volume -->
+        <quantity-input label="Gross Volume" definition="The total volume of the goods in this shipment, including packaging, e.g.: Quantity: 78, Unit: L"
+            [quantity]="shipment.consignment[0].grossVolumeMeasure" [disabled]="disabled" rowClass="space-before" 
+            quantityType="volume_quantity" labelClass="col-2" valueClass="col-10">
+        </quantity-input>
+
+        <!-- Gross Weight -->
+        <quantity-input label="Gross Weight" definition="The total gross weight of a shipment; the weight of the goods plus packaging plus transport equipment,e.g. Quantity: 12, Unit: kg"
+            [quantity]="shipment.consignment[0].grossWeightMeasure" [disabled]="disabled" 
+            quantityType="weight_quantity" rowClass="space-before" labelClass="col-2" valueClass="col-10">
+        </quantity-input>
+
+
+        <hr>
+
+
+        <!-- Transport Handling Unit -->
+        <text-input label="Transport Handling Unit" description="The transport handling unit used" [rows]="1"
+            [(text)]="shipment.transportHandlingUnit[0].transportHandlingUnitTypeCode.name" [disabled]="disabled" 
+            rowClass="space-before" labelClass="col-2" valueClass="col-10">
+        </text-input>
+
+        <!-- Dimension 1 -->
+        <quantity-input [label]="shipment.transportHandlingUnit[0].measurementDimension[0].attributeID"
+            [quantity]="shipment.transportHandlingUnit[0].measurementDimension[0].measure" [disabled]="disabled" 
+            quantityType="length_quantity" rowClass="space-before" labelClass="col-2" valueClass="col-10">
+        </quantity-input>
+
+        <!-- Dimension 2 -->
+        <quantity-input [label]="shipment.transportHandlingUnit[0].measurementDimension[1].attributeID"
+            [quantity]="shipment.transportHandlingUnit[0].measurementDimension[1].measure" [disabled]="disabled" 
+            quantityType="length_quantity" rowClass="space-before" labelClass="col-2" valueClass="col-10">
+        </quantity-input>
+
+    </div>
+</div>

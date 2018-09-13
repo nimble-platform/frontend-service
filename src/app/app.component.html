@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-faded nimble-bg space-after">
+<nav class="navbar navbar-expand-lg navbar-dark nimble-bg space-after">
 	<a *ngIf="isLoggedIn" class="navbar-brand" routerLink="/dashboard" routerLinkActive="active">
 		<img id="nav-logo" src="./assets/nimble_logo_white.png" height="30" class="d-inline-block align-top" alt="">
 	</a>
@@ -31,19 +31,28 @@
 					<i class="fa fa-list-ul"></i> <span i18n>Dashboard</span>
 				</a>
 			</li>
-			<li class="nav-item" *ngIf="checkRoles('catalogue')" routerLinkActive="active">
-				<a class="nav-link" [routerLink]="['/catalogue/categorysearch']" [queryParams]="{pageRef: 'menu'}">
+			<li ngbDropdown class="nav-item dropdown" *ngIf="checkRoles('catalogue')" routerLinkActive="active">
+				<a class="nav-link pointer" id="dropdownMenuPublish" ngbDropdownToggle>
 					<i class="fa fa-arrow-up"></i> <span i18n>Publish</span>
 				</a>
+				<div class="dropdown-menu" aria-labelledby="dropdownMenuPublish" ngbDropdownMenu>
+					<a class="dropdown-item" [routerLink]="['/catalogue/categorysearch']" [queryParams]="{pageRef: 'menu', productType: 'product'}" routerLinkActive="active">
+						<i class="fa fa-shopping-cart dd-icon"></i> Product
+					</a>
+					<a class="dropdown-item" [routerLink]="['/catalogue/categorysearch']" [queryParams]="{pageRef: 'menu', productType: 'transportation'}" routerLinkActive="active">
+						<i class="fa fa-truck dd-icon"></i> Logistics Service
+					</a>
+				</div>
 			</li>
 
+			<!--
 			<li class="nav-item" routerLinkActive="active">
 				<a class="nav-link" routerLink="/simple-search">
 					<i class="fa fa-search"></i> <span i18n>Search</span>
 				</a>
 			</li>
+			-->
 
-			<!--
 			<li ngbDropdown class="nav-item dropdown" routerLinkActive="active">
 				<a class="nav-link pointer" id="dropdownMenuSearch" ngbDropdownToggle>
 					<i class="fa fa-search"></i> <span i18n>Search</span>
@@ -57,7 +66,6 @@
 					</a>
 				</div>
 			</li>
-			-->
 
 			<!--
 			<li class="nav-item" *ngIf="debug||roles.indexOf('legal_representative')!=-1" routerLinkActive="active">
@@ -92,10 +100,21 @@
 					<i class="fa fa-chart-pie"></i> <span i18n>Platform Management</span>
 				</a>
 				<div class="dropdown-menu" aria-labelledby="dropdownMenuPM" ngbDropdownMenu>
-					<a class="dropdown-item" href="https://nimble-platform.uk-south.containers.mybluemix.net/dashboards/status" target="_blank">Health Report</a>
-					<a class="dropdown-item" href="http://nimble-platform.salzburgresearch.at:5602/app/kibana#/dashboard/5ad4bff0-119d-11e8-96a2-b11689429755" target="_blank">Activity Report</a>
-					<a class="dropdown-item" href="http://nimble-platform.salzburgresearch.at:5602/app/kibana#/dashboard/5f19a540-1250-11e8-96a2-b11689429755" target="_blank">Security Report</a>
-					<a class="dropdown-item" href="http://nimble-platform.salzburgresearch.at:5602/app/kibana#/dashboard/d0c4a3a0-1194-11e8-96a2-b11689429755" target="_blank">Log Analysis</a>
+					<a class="dropdown-item" routerLink="/analytics/platform" routerLinkActive="active">
+						<i class="fa fa-chart-area dd-icon"></i> Platform Analytics
+					</a>
+					<a class="dropdown-item" href="https://nimble-platform.uk-south.containers.mybluemix.net/dashboards/status" target="_blank">
+						<i class="fa fa-briefcase-medical dd-icon"></i> Health Report
+					</a>
+					<a class="dropdown-item" href="http://nimble-platform.salzburgresearch.at:5602/app/kibana#/dashboard/5ad4bff0-119d-11e8-96a2-b11689429755" target="_blank">
+						<i class="fa fa-clock dd-icon"></i> Activity Report
+					</a>
+					<a class="dropdown-item" href="http://nimble-platform.salzburgresearch.at:5602/app/kibana#/dashboard/5f19a540-1250-11e8-96a2-b11689429755" target="_blank">
+						<i class="fa fa-user-lock dd-icon"></i> Security Report
+					</a>
+					<a class="dropdown-item" href="http://nimble-platform.salzburgresearch.at:5602/app/kibana#/dashboard/d0c4a3a0-1194-11e8-96a2-b11689429755" target="_blank">
+						<i class="fa fa-file-alt dd-icon"></i> Log Analysis
+					</a>
 				</div>
 			</li>
 
@@ -118,9 +137,6 @@
 					<a *ngIf="checkRoles('comp')" class="dropdown-item" routerLink="/user-mgmt/company-settings" routerLinkActive="active">
 						<i class="fa fa-cog dd-icon"></i> Company Settings
 					</a>
-					<a *ngIf="checkRoles('catalogue')" class="dropdown-item" routerLink="/catalogue/catalogue" routerLinkActive="active">
-						<i class="fa fa-book-open dd-icon"></i> <span i18n>Catalogue</span>
-					</a>
 					<a class="dropdown-item" routerLink="/user-mgmt/logout">
 						<i class="fa fa-lock dd-icon"></i> <span i18n>Logout</span>
 					</a>
@@ -130,14 +146,14 @@
 	</div>
 </nav>
 
-<div *ngIf="!alertBetaClosed">
+<!-- <div *ngIf="!alertBetaClosed">
 	<p class="space-before">
 		<ngb-alert type="danger" (close)="alertBetaClosed=true">
 			This platform is in an early access / testing stage.<br/>
 			Downtimes and bugs have to be expected.
 		</ngb-alert>
 	</p>
-</div>
+</div> -->
 
 <div id="loading-bg" *ngIf="loading">
 	<div id="sk-loading-icon">
@@ -164,8 +180,8 @@
 		We will get back to you within one business day.
 	</div>
 	<div class="modal-footer">
-		<a href="assets/user_manual.pdf" target="_blank" type="button" class="btn btn-primary" (click)="d('')">Open manual</a>
-		<a [href]="mailto" type="button" class="btn btn-primary" (click)="d('')">Contact support</a>
+		<a href="assets/user_manual.pdf" target="_blank" role="button" class="btn btn-primary" (click)="d('')">Open manual</a>
+		<a [href]="mailto" role="button" class="btn btn-primary" (click)="d('')">Contact support</a>
 	</div>
 </ng-template>
 <!--<div id="support-btn" (click)="open(support)"><img id="support-img" src="assets/support_white.png"/></div>-->

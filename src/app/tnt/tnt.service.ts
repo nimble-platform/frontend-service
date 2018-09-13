@@ -2,17 +2,22 @@ import { Injectable } from '@angular/core';
 import { Http, URLSearchParams, Headers, RequestOptions } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import * as myGlobals from '../globals';
+import 'rxjs/add/operator/map';
+import {CookieService} from 'ng2-cookies';
 
 @Injectable()
 export class TnTService {
     // Version 1.0 for Backend..
     private tntEndpoint = myGlobals.tntEndpoint;
     private tntAnalysisEndpoint = myGlobals.tntAnalysisEndpoint;
-    constructor(private http: Http) {}
+    constructor(private http: Http,
+                private cookieService: CookieService) {}
 
     getMetaData(epcCode: string): Promise<any> {
+        const token = 'Bearer ' + this.cookieService.get('bearer_token');
         let header = new Headers();
         header.append('Content-Type', 'application/json');
+        header.append('Authorization', token);
         let params = new URLSearchParams();
         params.append('epc', epcCode);
         let reqOptions = new RequestOptions({headers: header, params: params});
@@ -38,7 +43,12 @@ export class TnTService {
     }
 
     getAnalysisInfo(code: string) {
-        return this.http.get(`${this.tntAnalysisEndpoint}/${code}`)
+        const token = 'Bearer ' + this.cookieService.get('bearer_token');
+        let header = new Headers();
+        header.append('Content-Type', 'application/json');
+        header.append('Authorization', token);
+        let reqOptions = new RequestOptions({headers: header});
+        return this.http.get(`${this.tntAnalysisEndpoint}/${code}`, reqOptions)
             .map(resp => resp.json());
     }
 

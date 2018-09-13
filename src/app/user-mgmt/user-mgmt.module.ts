@@ -14,12 +14,15 @@ import { CredentialsFormComponent } from './credentials-form.component';
 import { AddressSubForm } from './subforms/address.component';
 import { DeliveryTermsSubForm } from './subforms/delivery-terms.component';
 import { PaymentMeansForm } from './subforms/payment-means.component';
-import { CompanySettingsComponent } from './company-settings.component';
 import { CompanyRegistrationComponent } from './company-registration.component';
 import { CompanyInvitationComponent } from './company-invitation.component';
-
-//import { UserService } from './user.service';
-//import { CredentialsService } from './credentials.service';
+import { CompanySettingsComponent } from './company-settings/company-settings.component';
+import { CompanyNegotiationSettingsComponent } from './company-settings/company-negotiation-settings.component';
+import { CompanyCertificatesSettingsComponent } from './company-settings/company-certificates-settings.component';
+import { CompanyDataSettingsComponent } from './company-settings/company-data-settings.component';
+import { CompanyDeliveryTermsComponent } from './company-settings/company-delivery-terms.component';
+import { CompanyCategoriesSettingsComponent } from './company-settings/company-categories-settings.component';
+import { CompanyDetailsComponent } from './company-details.component';
 
 @NgModule({
 	imports: [
@@ -42,7 +45,13 @@ import { CompanyInvitationComponent } from './company-invitation.component';
         PaymentMeansForm,
         CompanySettingsComponent,
 		CompanyRegistrationComponent,
-		CompanyInvitationComponent
+		CompanyInvitationComponent,
+		CompanyNegotiationSettingsComponent,
+		CompanyCertificatesSettingsComponent,
+		CompanyDataSettingsComponent,
+		CompanyDeliveryTermsComponent,
+		CompanyCategoriesSettingsComponent,
+		CompanyDetailsComponent
 	],
 	exports: [
 		LoginComponent,
@@ -53,9 +62,9 @@ import { CompanyInvitationComponent } from './company-invitation.component';
 		AddressSubForm,
         DeliveryTermsSubForm,
         PaymentMeansForm,
-        CompanySettingsComponent,
 		CompanyRegistrationComponent,
-		CompanyInvitationComponent
+		CompanyInvitationComponent,
+		CompanyDetailsComponent
 	],
 	providers: [
 	]

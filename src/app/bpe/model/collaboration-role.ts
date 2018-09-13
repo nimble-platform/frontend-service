@@ -1,0 +1,1 @@
+export type CollaborationRole = "BUYER" | "SELLER"

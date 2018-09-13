@@ -1,0 +1,83 @@
+<div class="row mt-5 mb-3">
+    <div class="col-12">
+        <div class="status-text {{ displayMode === 'Transport' ? 'four-steps' : '' }}" [ngStyle]="getStatusTextStyle()">
+            &nbsp;{{ statusText }}&nbsp;
+        </div>
+    </div>
+
+    <!-- Order Steps -->
+    <div *ngIf="displayMode === 'Order' || displayMode === 'Order_Before_Transport'" class="col-12">
+        <div class="steps">
+            <div [ngClass]="getStepClasses('Item_Information_Request')">
+                <span>Request for Information</span>
+            </div>
+            <div [ngClass]="getStepClasses('Ppap')">
+                <span>Ppap</span>
+            </div>
+            <div [ngClass]="getStepClasses('Negotiation')">
+                <span>Negotiation</span>
+            </div>
+            <div [ngClass]="getStepClasses('Order')">
+                <span>Order Preview</span>
+            </div>
+            <div [ngClass]="getStepClasses('Order_Confirmed')">
+                <span>Order Confirmed</span>
+            </div>
+            <div [ngClass]="getStepClasses('Fulfilment')">
+                <span>Order Dispatched</span>
+            </div>
+        </div>
+        <div *ngIf="displayMode === 'Order_Before_Transport'" class="expand-steps-div expand-transport">
+            <i class="fas fa-ellipsis-h"></i>
+        </div>
+    </div>
+
+    <!-- Transport Steps -->
+    <div *ngIf="displayMode === 'Transport'" class="col-12">
+        <div class="steps">
+            <div [ngClass]="getStepClasses('Transport_Information_Request')">
+                <span>Transport Service Information Request</span>
+            </div>
+            <div [ngClass]="getStepClasses('Transport_Negotiation')">
+                <span>Transport Service Negotiation</span>
+            </div>
+            <div [ngClass]="getStepClasses('Transport_Order')">
+                <span>Transport Service Preview</span>
+            </div>
+            <div [ngClass]="getStepClasses('Transport_Order_Confirmed')">
+                <span>Transport Service Confirmed</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transport + Order Steps -->
+    <div *ngIf="displayMode === 'Transport_After_Order'" class="col-12">
+        <div class="steps">
+            <div [ngClass]="getStepClasses('Item_Information_Request')">
+                <span>Order Started</span>
+            </div>
+            <!-- Removed to have 6 steps, let's see if we keep it like this... -->
+            <!-- <div [ngClass]="getStepClasses('Order_Confirmed')">
+                <span>Order Confirmed</span>
+            </div> -->
+            <div [ngClass]="getStepClasses('Transport_Information_Request')">
+                <span>Transport Service Information Request</span>
+            </div>
+            <div [ngClass]="getStepClasses('Transport_Negotiation')">
+                <span>Transport Service Negotiation</span>
+            </div>
+            <div [ngClass]="getStepClasses('Transport_Order')">
+                <span>Transport Service Review</span>
+            </div>
+            <div [ngClass]="getStepClasses('Transport_Order_Confirmed')">
+                <span>Transport Service Confirmed</span>
+            </div>
+            <div [ngClass]="getStepClasses('Fulfilment')">
+                <span>Order Dispatched</span>
+            </div>
+        </div>
+        <div class="expand-steps-div expand-order">
+            <i class="fas fa-ellipsis-h"></i>
+        </div>
+    </div>
+</div>

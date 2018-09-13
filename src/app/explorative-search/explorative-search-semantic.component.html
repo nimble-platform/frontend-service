@@ -12,6 +12,7 @@
                 <li>If you click on one of the <strong>References</strong> your Explorer
                     will update with new properties for the selected reference.</li>
                 <li>You can use the <strong>Path</strong> below to go back to a previous Reference by simply clicking on it.</li>
+                <!--<li><strong>Work In Progress:</strong> Logical operation <em>OR</em> is currently under development</li>-->
             </ul>
         </div>
     </div>
@@ -31,13 +32,18 @@
     <div class="card">
         <div class="card-header">Available Values</div>
         <div class="card-body">
-            <p>Select One or More Values</p>
-            <div *ngFor="let eachVal of values">
-                <label>
-                    <input type="checkbox"
-                           (change)="filtersSelected(eachVal, $event)"/>
-                    <span><strong>{{eachVal}}</strong></span>
-                </label>
+            <p>Select One or More Value</p>
+            <div style="overflow-y: scroll; height: 250px;">
+                <div *ngFor="let eachVal of values" class="custom-control custom-checkbox">
+                        <input type="checkbox"
+                               [disabled]="!disableManualFilters"
+                               (change)="filtersSelected(eachVal, $event)" class="custom-control-input"
+                               id="{{eachVal}}"
+                        />
+                    <label for="{{eachVal}}" class="custom-control-label">
+                        <span><strong>{{eachVal}}</strong></span>
+                    </label>
+                </div>
             </div>
             <hr>
             <div *ngIf="valuesAreNumeric">
@@ -63,12 +69,22 @@
                            [disabled]="disableManualFilters"
                            #maxVal
                     >
+
                     <button class="btn btn-primary btn-sm"
                             [disabled]="disableManualFilters"
                             (click)="applyManualFilter(minVal.value, maxVal.value)"
                     >Apply</button>
+                    <button class="btn btn-danger btn-sm"
+                            [disabled]="disableManualFilters"
+                            (click)="removeManualFilter(minVal.value, maxVal.value)"
+                    >Remove</button>
                 </div>
             </div>
+        </div>
+        <div class="card-footer">
+            <button class="btn btn-primary" (click)="noFilterSelected()"
+                    [disabled]="disableAddPropBtn || !disableManualFilters"
+            >Add Property without Filters</button>
         </div>
     </div>
 </ng-template>
@@ -107,11 +123,11 @@
     </div>
     <div class="row" style="margin-top: 15px">
         <div class="col-md-6">
-            <button class="btn btn-outline-primary" (click)="hiddenElement=!hiddenElement">Back to Explorer</button>
+            <button class="btn btn-primary" (click)="hiddenElement=!hiddenElement">Back to Explorer</button>
         </div>
         <div class="col-md-6">
-            <button class="btn btn-outline-warning" [disabled]="!negotiationEnable" (click)="negotiation()">
-                Negotiate</button>
+            <button class="btn btn-warning" [disabled]="!negotiationEnable" (click)="negotiation()">
+                Initiate Business Process</button>
         </div>
     </div>
 </div>
@@ -149,8 +165,9 @@
                             <optgroup label="Properties">
                                 <option *ngFor="let eachVal of dataResults"
                                         [selected]="searchModel.translatedProperty===eachVal.translatedProperty"
-                                        (click)="getPropertyValues(eachVal)">
-                                    {{eachVal.translatedProperty}}
+                                        (click)="getPropertyValues(eachVal)"
+                                        [ngClass]="{'checkMark': propSelection(eachVal.translatedProperty)}"
+                                >{{eachVal.translatedProperty}}
                                 </option>
                             </optgroup>
                             <optgroup label="References">
@@ -169,7 +186,13 @@
                     <p> We couldn't find any filters for the selection.</p>
                 </ngb-alert>
             </div>
-            <div class="col-md-4" *ngIf="searchvalue.length > 0">
+            <div class="col-md-4" *ngIf="loadingFilter">
+              <div class="align-center">
+                <p>Loading Filter</p>
+                <i class="fa fa-spin fa-spinner fa-6x"></i>
+              </div>
+            </div>
+            <div class="col-md-6" *ngIf="searchvalue.length > 0">
                 <template [ngTemplateOutlet]="valuesTemplateRef" [ngTemplateOutletContext]="{$implicit: searchvalue}">
                 </template>
             </div>
@@ -183,43 +206,54 @@
     <br>
     <br>
     <div class="row" *ngIf="tableResult?.columns !== undefined">
-        <div class="table-responsive">
+        <div class="alert alert-info" role="info">
+            <i class="fa fa-info-circle"></i> You can remove your selections by:
+            <ul>
+                <li>scrolling to the top of the table below, click on the delete button.</li>
+                <li>Click on the <kbd>Obtain Results</kbd> button again to update your results.</li>
+            </ul>
+        </div>
+        <div class="table-responsive table-hover">
             <table class="table table-sm table-bordered">
                 <caption>Available Results from NIMBLE</caption>
                 <thead>
                 <tr>
-                    <th>
-                        Properties
+                    <!--<th>-->
+                        <!--Results-->
+                    <!--</th>-->
+                    <th *ngFor="let column of tableResult?.columns; let i=index" scope="col"
+                        (mouseenter)="showSelectionDel=true" (mouseleave)="showSelectionDel=false">
+                        {{column}}
+                        <span *ngIf="showSelectionDel">
+                            <i class="fa fa-minus-square" ngbTooltip="Remove {{column}}"  placement="right" (click)="removeSelection(column)"></i>
+                        </span>
                     </th>
-                    <th *ngFor="let row of tableResult?.rows; let i=index" scope="col">
-                        Result #{{i+1}}
+                    <th *ngIf="tableResult?.uuids.length">
+                        More
                     </th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr *ngFor="let column of tableResult?.columns; let cind=index">
-                    <th scope="row">{{column}}</th>
-                    <td *ngFor="let row of tableResult?.rows">{{row[cind]}}</td>
-                </tr>
-                <tr>
-                    <th>More Info.</th>
-                    <td scope="row" *ngFor="let uuid of tableResult?.uuids; let uuidIndex=index">
-                        <button class="btn btn-xs btn-outline-success"
-                                (click)="getSparqlOptionalSelect(uuidIndex)">
-                            More
-                        </button>
-                    </td>
-                </tr>
+                    <tr *ngFor="let row of tableResult?.rows; let i=index">
+                        <!--<td>{{i+1}}</td>-->
+                        <td *ngFor="let field of row">{{field}}</td>
+                        <td *ngIf="tableResult?.uuids.length">
+                            <button class="btn btn-xs btn-outline-success"
+                                    (click)="getSparqlOptionalSelect(i)"
+                            >
+                            Further Info.
+                            </button>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>
-
-    </div>
-    <!--<pre>-->
-    <!--<code>{{tableJSON | json}}</code>-->
-    <!--</pre>-->
 </div>
 
+</div>
+<!--<pre>-->
+    <!--<code>{{tableResult | json}}</code>-->
+<!--</pre>-->
 <!--<div class="container">-->
 <!--<pre>-->
 <!--<code>-->

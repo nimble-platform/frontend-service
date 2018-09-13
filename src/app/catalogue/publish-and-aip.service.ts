@@ -1,17 +1,18 @@
 import {Injectable} from "@angular/core";
+import { PublishMode } from "./model/publish/publish-mode";
 
 @Injectable()
 export class PublishService {
-    publishMode:string = 'create'; // or can be edit
-    publishingStarted:boolean = false;
-    publishedProductNature: string = 'Regular product'; // or Transportation service
-    propertyBlockCollapsedStates:Map<string, boolean> = new Map<string, boolean>();
+    publishMode: PublishMode = "create";
+    publishingStarted: boolean = false;
+    publishedProductNature: string = "Regular product"; // or Transportation service
+    propertyBlockCollapsedStates: Map<string, boolean> = new Map<string, boolean>();
 
-    getCollapsedStates():any {
+    getCollapsedStates(): any {
         return this.propertyBlockCollapsedStates;
     }
 
-    getCollapsedState(blockName:string):boolean {
+    getCollapsedState(blockName: string): boolean {
         if(this.propertyBlockCollapsedStates.has(blockName)) {
             return this.propertyBlockCollapsedStates.get(blockName);
         } else {
@@ -20,7 +21,7 @@ export class PublishService {
         }
     }
 
-    resetData():void {
+    resetData(): void {
         this.propertyBlockCollapsedStates = new Map<string, boolean>();
     }
 }

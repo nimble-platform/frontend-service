@@ -56,11 +56,11 @@
     </div>
     <div class="row" style="margin-top: 15px">
         <div class="col-md-6">
-            <button class="btn btn-outline-primary" (click)="hiddenElement=!hiddenElement">Back to Graph</button>
+            <button class="btn btn-primary" (click)="hiddenElement=!hiddenElement">Back to Graph</button>
         </div>
         <div class="col-md-6">
-            <button class="btn btn-outline-warning" [disabled]="!negotiationEnable" (click)="negotiation()">
-                Negotiate</button>
+            <button class="btn btn-warning" [disabled]="!negotiationEnable" (click)="negotiation()">
+                Initiate Business Process</button>
         </div>
     </div>
 </div>
@@ -88,38 +88,42 @@
         <ngb-alert type="warning" *ngIf="emptySPARQLTable" (close)="emptySPARQLTable=false">
             <p>We couldn't find any match for your selections. Maybe try with less or different selection.</p>
         </ngb-alert>
-        <div class="table-responsive">
+        <div class="table-responsive table-hover">
             <table class="table table-sm table-bordered">
                 <caption>Available Results from NIMBLE</caption>
               <thead>
                 <tr>
-                    <th>
-                        Properties
+                    <!--<th>-->
+                        <!--Result-->
+                    <!--</th>-->
+                    <th *ngFor="let column of tableResult?.columns; let i=index" scope="col">
+                        {{column}}
                     </th>
-                    <th *ngFor="let row of tableResult?.rows; let i=index" scope="col">
-                        Result #{{i+1}}
+                    <th *ngIf="tableResult?.uuids.length">
+                        More
                     </th>
                 </tr>
               </thead>
                 <tbody>
-                    <tr *ngFor="let column of tableResult?.columns; let cind=index">
-                        <th scope="row">{{column}}</th>
-                        <td *ngFor="let row of tableResult?.rows">{{row[cind]}}</td>
-                    </tr>
-                    <tr>
-                        <th>More Info.</th>
-                        <td scope="row" *ngFor="let uuid of tableResult?.uuids; let uuidIndex=index">
-                            <button class="btn btn-xs btn-outline-success"
-                                    (click)="getSparqlOptionalSelect(uuidIndex)">
-                                More
-                            </button>
-                        </td>
-                    </tr>
+                <tr *ngFor="let row of tableResult?.rows; let i=index">
+                    <!--<td>{{i+1}}</td>-->
+                    <td *ngFor="let field of row">{{field}}</td>
+                    <td *ngIf="tableResult?.uuids.length">
+                        <button class="btn btn-xs btn-outline-success"
+                                (click)="getSparqlOptionalSelect(i)"
+                        >
+                            Further Info.
+                        </button>
+                    </td>
+                </tr>
                 </tbody>
             </table>
         </div>
     </div>
-    <!--<pre>-->
-        <!--<code>{{tableJSON | json}}</code>-->
-    <!--</pre>-->
 </div>
+<!--<pre>-->
+        <!--<code>{{tableJSON | json}}</code>-->
+<!--</pre>-->
+<!--<pre>-->
+    <!--<code>{{tableResult | json}}</code>-->
+<!--</pre>-->

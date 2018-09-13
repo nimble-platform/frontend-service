@@ -1,145 +1,460 @@
-import {ChangeDetectorRef, Component, Input, OnInit} from "@angular/core";
-import {CatalogueLine} from "../../../catalogue/model/publish/catalogue-line";
-import {BPDataService} from "../bp-data-service";
-import {BPEService} from "../../bpe.service";
-import {UBLModelUtils} from "../../../catalogue/model/ubl-model-utils";
-import {CookieService} from "ng2-cookies";
-import * as myGlobals from '../../../globals';
-import {CustomerParty} from "../../../catalogue/model/publish/customer-party";
-import {SupplierParty} from "../../../catalogue/model/publish/supplier-party";
-import {ProcessVariables} from "../../model/process-variables";
-import {ModelUtils} from "../../model/model-utils";
-import {ProcessInstanceInputMessage} from "../../model/process-instance-input-message";
-import {UserService} from "../../../user-mgmt/user.service";
-import {CallStatus} from "../../../common/call-status";
-import {Order} from "../../../catalogue/model/publish/order";
-import {Router} from "@angular/router";
-import {Contract} from "../../../catalogue/model/publish/contract";
-import {DataMonitoringClause} from "../../../catalogue/model/publish/data-monitoring-clause";
-import {TradingTerm} from '../../../catalogue/model/publish/trading-term';
+import { Component, OnInit } from "@angular/core";
+import { Order } from "../../../catalogue/model/publish/order";
+import { CallStatus } from "../../../common/call-status";
+import { BPDataService } from "../bp-data-service";
+import { LineItem } from "../../../catalogue/model/publish/line-item";
+import { Location } from "@angular/common";
+import { PaymentTermsWrapper } from "../payment-terms-wrapper";
+import { Router } from "@angular/router";
+import { copy, quantityToString } from "../../../common/utils";
+import { UBLModelUtils } from "../../../catalogue/model/ubl-model-utils";
+import { UserService } from "../../../user-mgmt/user.service";
+import { CookieService } from "ng2-cookies";
+import { CustomerParty } from "../../../catalogue/model/publish/customer-party";
+import { SupplierParty } from "../../../catalogue/model/publish/supplier-party";
+import { ProcessVariables } from "../../model/process-variables";
+import { ModelUtils } from "../../model/model-utils";
+import { ProcessInstanceInputMessage } from "../../model/process-instance-input-message";
+import { BPEService } from "../../bpe.service";
+import { BpUserRole } from "../../model/bp-user-role";
+import { OrderResponseSimple } from "../../../catalogue/model/publish/order-response-simple";
+import { PriceWrapper } from "../../../common/price-wrapper";
+import { Party } from "../../../catalogue/model/publish/party";
+import { DocumentClause } from "../../../catalogue/model/publish/document-clause";
+import { Quotation } from "../../../catalogue/model/publish/quotation";
+import { Address } from "../../../catalogue/model/publish/address";
+import { SearchContextService } from "../../../simple-search/search-context.service";
+import { EpcCodes } from "../../../data-channel/model/epc-codes";
+import { EpcService } from "../epc-service";
+import {DocumentService} from "../document-service";
+
 /**
  * Created by suat on 20-Sep-17.
  */
 @Component({
-    selector: 'order',
-    templateUrl: './order.component.html'
+    selector: "order",
+    templateUrl: "./order.component.html",
+    styleUrls: ["./order.component.css"]
 })
-
 export class OrderComponent implements OnInit {
-    @Input() order:Order;
 
-    callStatus:CallStatus = new CallStatus();
-    // check whether 'Send Order' button is clicked or not
-    submitted:boolean = false;
+    order: Order;
+    address: Address
+    orderResponse: OrderResponseSimple;
+    paymentTermsWrapper: PaymentTermsWrapper;
+    priceWrapper: PriceWrapper;
+    userRole: BpUserRole;
 
-    presentationMode:string = this.bpDataService.processMetadata == null ? 'edit':'singlevalue';
+    showPreview: boolean = false;
+    termsAndConditions: string;
 
-    totalAmount: number = 0;
-    paymentTerms: {term: string, checked: boolean}[] = [];
+    buyerParty: Party;
+    sellerParty: Party;
 
-    // necessary fields for A/B NET X payment term
-    // A: discount percentage, B:the number of days the invoice must be paid within to receive the discount,
-    // X: an invoice is due X days after being received
-    discount:any = null;
-    withinDays:any = null;
-    dueDays:any  = null;
+    dataMonitoringDemanded: boolean;
 
-    constructor(private bpeService: BPEService,
-                private bpDataService: BPDataService,
+    epcCodes: EpcCodes;
+    savedEpcCodes: EpcCodes;
+    initEpcCodesCallStatus: CallStatus = new CallStatus();
+    saveEpcCodesCallStatus: CallStatus = new CallStatus();
+
+    initCallStatus: CallStatus = new CallStatus();
+    submitCallStatus: CallStatus = new CallStatus();
+    fetchTermsAndConditionsStatus: CallStatus = new CallStatus();
+    fetchDataMonitoringStatus: CallStatus = new CallStatus();
+
+    constructor(public bpDataService: BPDataService,
                 private userService: UserService,
+                private bpeService: BPEService,
                 private cookieService: CookieService,
-                private router:Router) {
-    }
+                private searchContextService: SearchContextService,
+                private epcService: EpcService,
+                private location: Location,
+                private router: Router,
+                private documentService: DocumentService) {
 
-    updateTotalPrice(totalAmount: number, currency: string): void {
-        this.order.anticipatedMonetaryTotal.payableAmount.value = totalAmount;
-        this.order.anticipatedMonetaryTotal.payableAmount.currencyID = currency;
     }
 
     ngOnInit(): void {
+        if(this.bpDataService.order == null) {
+            this.router.navigate(['dashboard']);
+        }
+
+        this.order = this.bpDataService.order;
+        this.address = this.order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address;
+        this.paymentTermsWrapper = new PaymentTermsWrapper(this.order.paymentTerms);
+        this.userRole = this.bpDataService.userRole;
+        this.orderResponse = this.bpDataService.orderResponse;
+        this.priceWrapper = new PriceWrapper(
+            this.order.orderLine[0].lineItem.price,
+            this.order.orderLine[0].lineItem.quantity
+        );
+
         // null check is for checking whether a new order is initialized
         // preceding process id check is for checking whether there is any preceding process before the order
+
+        const sellerId: string = this.order.orderLine[0].lineItem.item.manufacturerParty.id;
+        const buyerId: string = this.cookieService.get("company_id");
+        this.initCallStatus.submit();
         if(this.order.contract == null && this.bpDataService.precedingProcessId != null) {
-            this.bpeService.constructContractForProcess(this.bpDataService.precedingProcessId).then(contract => {
+            Promise.all([
+                this.bpeService.constructContractForProcess(this.bpDataService.precedingProcessId),
+                this.userService.getParty(buyerId),
+                this.userService.getParty(sellerId),
+                this.isDataMonitoringDemanded(),
+            ])
+            .then(([contract, buyerParty, sellerParty, dataMonitoringDemanded]) => {
+                this.buyerParty = buyerParty;
+                this.sellerParty = sellerParty;
+                this.dataMonitoringDemanded = dataMonitoringDemanded;
                 this.order.contract = [contract];
+                return this.isDataMonitoringDemanded();
+            })
+            .then(dataMonitoringDemanded => {
+                this.dataMonitoringDemanded = dataMonitoringDemanded;
+                this.initCallStatus.callback("Initialized", true);
+            })
+            .catch(error => {
+                this.initCallStatus.error("Error while initializing", error);
+            });
+        } else {
+            Promise.all([
+                this.userService.getParty(buyerId),
+                this.userService.getParty(sellerId),
+                this.isDataMonitoringDemanded(),
+            ]).then(([buyerParty, sellerParty, dataMonitoringDemanded]) => {
+                this.buyerParty = buyerParty;
+                this.sellerParty = sellerParty;
+                this.dataMonitoringDemanded = dataMonitoringDemanded;
+                this.initCallStatus.callback("Initialized", true);
+            })
+            .catch(error => {
+                this.initCallStatus.error("Error while initializing", error);
+            });
+        }
+
+        this.initializeEPCCodes();
+    }
+
+    trackByFn(index: any) {
+        return index;
+    }
+
+    /*
+     * Event Handlers
+     */
+
+    onPreviewTermsAndConditions() {
+        this.showPreview = !this.showPreview;
+
+        if(this.showPreview && !this.termsAndConditions) {
+            this.fetchTermsAndConditionsStatus.submit();
+            this.bpeService.generateOrderTermsAndConditionsAsText(this.order, this.buyerParty, this.sellerParty)
+            .then(text => {
+                this.fetchTermsAndConditionsStatus.callback("Successfully fetched terms and conditions", true);
+                this.termsAndConditions = text;
+            }).catch(error => {
+                this.fetchTermsAndConditionsStatus.error("Error while fetching terms and conditions", error);
             });
         }
     }
 
-    // addDataMonitoringClause(): void {
-    //     if(this.order.contract == null) {
-    //         this.order.contract = [new Contract()];
-    //     }
-    //
-    //     let dmClause: DataMonitoringClause = new DataMonitoringClause();
-    //     dmClause.id = UBLModelUtils.generateUUID();
-    //     dmClause.type = 'DATA_MONITORING';
-    //     this.order.contract[0].clause.push(dmClause);
-    // }
-    //
-    // removeDataMonitoringClause(): void {
-    //     this.order.contract[0].clause.pop();
-    // }
+    onBack() {
+        this.location.back();
+    }
 
-    sendOrder() {
-        this.submitted = true;
-        this.callStatus.submit();
-        let order = JSON.parse(JSON.stringify(this.bpDataService.order));
+    onOrder() {
+        this.submitCallStatus.submit();
+        const order = copy(this.bpDataService.order);
 
         // final check on the order
         order.orderLine[0].lineItem.item = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;
+        UBLModelUtils.removeHjidFieldsFromObject(order);
+        order.anticipatedMonetaryTotal.payableAmount.value = this.priceWrapper.totalPrice;
+        order.anticipatedMonetaryTotal.payableAmount.currencyID = this.priceWrapper.currency;
 
-        let selectedTradingTerms: TradingTerm[] = [];
+        //first initialize the seller and buyer parties.
+        //once they are fetched continue with starting the ordering process
+        const buyerId: string = this.cookieService.get("company_id");
+        order.buyerCustomerParty = new CustomerParty(this.buyerParty);
 
-        for(let tradingTerm of this.order.paymentTerms.tradingTerms){
-            if(tradingTerm.id.indexOf("Values") != -1){
-                let addToList = true;
-                for(let value of tradingTerm.value){
-                    if(value == null){
-                        addToList = false;
-                        break;
-                    }
-                }
-                if(addToList){
-                    selectedTradingTerms.push(tradingTerm);
-                }
+        const sellerId: string = this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty.id;
+        order.sellerSupplierParty = new SupplierParty(this.sellerParty);
+
+        const vars: ProcessVariables = ModelUtils.createProcessVariables("Order", buyerId, sellerId, order, this.bpDataService);
+        const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
+
+        this.bpeService.startBusinessProcess(piim)
+            .then(res => {
+                this.submitCallStatus.callback("Order placed", true);
+                this.router.navigate(['dashboard']);
+            }).catch(error => {
+                this.submitCallStatus.error("Failed to send Order", error);
+            });
+    }
+
+    onOrderUpdate() {
+        this.submitCallStatus.submit();
+        const order = copy(this.bpDataService.order);
+        UBLModelUtils.removeHjidFieldsFromObject(order);
+
+        this.bpeService.updateBusinessProcess(JSON.stringify(order),"ORDER",this.bpDataService.processMetadata.processId)
+            .then(() => {
+                this.documentService.updateCachedDocument(order.id,order);
+                this.submitCallStatus.callback("Order updated", true);
+                this.router.navigate(['dashboard']);
+            })
+            .catch(error => {
+                this.submitCallStatus.error("Failed to update Order", error);
+            });
+    }
+
+    onRespondToOrder(accepted: boolean): void {
+        this.bpDataService.orderResponse.acceptedIndicator = accepted;
+
+        let vars: ProcessVariables = ModelUtils.createProcessVariables(
+            "Order",
+            this.bpDataService.order.buyerCustomerParty.party.id,
+            this.bpDataService.order.sellerSupplierParty.party.id,
+            this.bpDataService.orderResponse,
+            this.bpDataService
+        );
+        let piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(
+            vars,
+            this.bpDataService.processMetadata.processId
+        );
+
+        this.submitCallStatus.submit();
+        this.bpeService.continueBusinessProcess(piim)
+            .then(res => {
+                this.submitCallStatus.callback("Order Response placed", true);
+                this.router.navigate(['dashboard']);
+            }).catch(error => {
+                this.submitCallStatus.error("Failed to send Order Response", error);
+            });
+    }
+
+    onDownloadContact() {
+        this.submitCallStatus.submit();
+        this.bpeService.downloadContractBundle(this.order.id)
+            .then(result => {
+                const link = document.createElement('a');
+                link.id = 'downloadLink';
+                link.href = window.URL.createObjectURL(result.content);
+                link.download = result.fileName;
+
+                document.body.appendChild(link);
+                const downloadLink = document.getElementById('downloadLink');
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
+                this.submitCallStatus.callback("Bundle successfully downloaded.", true);
+            },
+            error => {
+                this.submitCallStatus.error("Error while downloading bundle.", error);
+            });
+    }
+
+    onDispatchOrder() {
+        this.bpDataService.setBpOptionParameters(this.userRole, "Fulfilment", "Order");
+    }
+
+    onSearchTransportService() {
+        this.searchContextService.targetPartyRole = 'Transport Service Provider';
+        this.searchContextService.associatedProcessType = 'Order';
+        this.searchContextService.associatedProcessMetadata = this.bpDataService.processMetadata;
+        this.bpDataService.setBpOptionParameters('buyer', 'Transport_Execution_Plan',"Order");
+        this.router.navigate(['simple-search'], {
+            queryParams: {
+                searchContext: 'orderbp',
+                q:'*',
+                cat:'Transport service'
             }
-            else{
-                if(tradingTerm.value[0] == 'true'){
-                    selectedTradingTerms.push(tradingTerm);
+        });
+    }
+
+    onDeleteEpcCode(i: number) {
+        this.epcCodes.codes.splice(i, 1);
+    }
+
+    onSaveEpcCodes() {
+        this.saveEpcCodesCallStatus.submit();
+        // remove empty codes
+        const selectedEpcCodes = [];
+        for(const code of this.epcCodes.codes) {
+            if(code) {
+                selectedEpcCodes.push(code);
+            }
+        }
+
+        const codes = new EpcCodes(this.order.id, selectedEpcCodes);
+
+        this.epcService.registerEpcCodes(codes)
+            .then(() => {
+                this.savedEpcCodes = codes;
+                this.saveEpcCodesCallStatus.callback("EPC Codes are saved.", true);
+            }).catch(error => {
+                this.saveEpcCodesCallStatus.error("Failed to save EPC Codes.", error);
+            });
+    }
+
+    onAddEpcCode() {
+        this.epcCodes.codes.push("");
+    }
+
+    areEpcCodesDirty(): boolean {
+        if(!this.epcCodes || !this.savedEpcCodes) {
+            return false;
+        }
+
+        const codes = this.epcCodes.codes;
+        const saved = this.savedEpcCodes.codes;
+
+        if(codes.length !== saved.length) {
+            return true;
+        }
+
+        for(let i = 0; i < saved.length; i++) {
+            if(codes[i] !== saved[i]) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /*
+     * Getters & Setters
+     */
+
+    isBuyer(): boolean {
+        return this.userRole === "buyer";
+    }
+
+    isSeller(): boolean {
+        return this.userRole === "seller";
+    }
+
+    isReady(): boolean {
+        return !this.initCallStatus.isDisplayed() && !!this.order;
+    }
+
+    isLoading(): boolean {
+        return this.submitCallStatus.fb_submitted;
+    }
+
+    isOrderCompleted(): boolean {
+        return this.bpDataService.processMetadata && this.bpDataService.processMetadata.processStatus === "Completed";
+    }
+
+    isOrderRejected(): boolean {
+        return this.isOrderCompleted() && !this.bpDataService.orderResponse.acceptedIndicator;
+    }
+
+    isReadOnly(): boolean {
+        if(this.userRole === "buyer") {
+            return !!this.bpDataService.processMetadata && !this.bpDataService.updatingProcess;
+        }
+        return this.isOrderCompleted();
+    }
+
+    getQuantityText(): string {
+        return quantityToString(this.order.orderLine[0].lineItem.quantity);
+    }
+
+    getTotalPriceText(): string {
+        return this.priceWrapper.totalPriceString;
+    }
+
+    getDeliveryPeriodText(): string {
+        const qty = this.getLineItem().delivery[0].requestedDeliveryPeriod.durationMeasure;
+        return `${qty.value} ${qty.unitCode}`;
+    }
+
+    getWarrantyPeriodText(): string {
+        const warranty = this.getLineItem().warrantyValidityPeriod.durationMeasure;
+        if(!warranty || !warranty.unitCode || !warranty.value) {
+            return "None";
+        }
+        return `${warranty.value} ${warranty.unitCode}`;
+    }
+
+    getIncoterm(): string {
+        return this.getLineItem().deliveryTerms.incoterms;
+    }
+
+    getPaymentMeans(): string {
+        return this.order.paymentMeans.paymentMeansCode.name;
+    }
+
+    getLineItem(): LineItem {
+        return this.order.orderLine[0].lineItem;
+    }
+
+    trackAndTraceDetailsExists(): boolean {
+        const tnt = this.order.orderLine[0].lineItem.item.trackAndTraceDetails
+        if (tnt && (tnt.masterURL || tnt.eventURL || tnt.productionProcessTemplate)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /*
+     *
+     */
+
+    private initializeEPCCodes() {
+        if(this.bpDataService.processMetadata
+            && this.bpDataService.processMetadata.processStatus == 'Completed'
+            && this.bpDataService.orderResponse
+            && this.bpDataService.orderResponse.acceptedIndicator
+            && this.trackAndTraceDetailsExists()) {
+            this.initEpcCodesCallStatus.submit();
+            this.epcService.getEpcCodes(this.order.id).then(res => {
+                this.epcCodes = res;
+                if(this.epcCodes.codes.length == 0){
+                    this.epcCodes.codes.push("");
+                }
+                this.epcCodes.codes.sort();
+                this.savedEpcCodes = copy(this.epcCodes);
+                this.initEpcCodesCallStatus.callback("EPC Codes initialized", true);
+            }).catch(error => {
+                if(error.status && error.status == 404) {
+                    this.epcCodes = new EpcCodes(this.order.id,[""]);
+                    this.savedEpcCodes = new EpcCodes(this.order.id,[""]);
+                    this.initEpcCodesCallStatus.callback("EPC Codes initialized", true);
+                } else {
+                    this.initEpcCodesCallStatus.error("Error while initializing EPC Codes", error);
+                }
+            })
+        }
+    }
+
+    private isDataMonitoringDemanded(): Promise<boolean> {
+        let docClause = null;
+
+        if (this.order.contract && this.order.contract.length > 0) {
+            for (let clause of this.order.contract[0].clause) {
+                if (clause.type === "NEGOTIATION") {
+                    docClause = clause as DocumentClause;
+                    break;
                 }
             }
         }
 
-        // set payment terms
-        order.paymentTerms.tradingTerms = selectedTradingTerms;
+        if (docClause) {
+            this.fetchDataMonitoringStatus.submit();
+            return this.documentService.getDocumentJsonContent(docClause.clauseDocumentRef.id).then(result => {
+                this.fetchDataMonitoringStatus.callback("Successfully fetched data monitoring service", true);
+                const q: Quotation = result as Quotation;
+                return q.dataMonitoringPromised;
+            })
+            .catch(error => {
+                this.fetchDataMonitoringStatus.error("Error while fetching data monitoring service", error);
+                throw error;
+            })
+        }
 
-
-        UBLModelUtils.removeHjidFieldsFromObject(order);
-
-        //first initialize the seller and buyer parties.
-        //once they are fetched continue with starting the ordering process
-        let sellerId:string = this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty.id;
-        let buyerId:string = this.cookieService.get("company_id");
-        this.userService.getParty(buyerId).then(buyerParty => {
-            order.buyerCustomerParty = new CustomerParty(buyerParty);
-
-            this.userService.getParty(sellerId).then(sellerParty => {
-                order.sellerSupplierParty = new SupplierParty(sellerParty);
-
-                let vars:ProcessVariables = ModelUtils.createProcessVariables("Order", buyerId, sellerId, order, this.bpDataService);
-                let piim:ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
-
-                this.bpeService.startBusinessProcess(piim)
-                    .then(res => {
-                            this.callStatus.callback("Order placed", true);
-                            this.router.navigate(['dashboard']);
-
-                    }).catch(error => {
-                        this.submitted = false;
-                        this.callStatus.error("Failed to send Order");
-                    });
-            });
-        });
+        return Promise.resolve(false);
     }
 }

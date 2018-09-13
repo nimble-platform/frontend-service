@@ -1,7 +1,17 @@
 <!-- Explorative Search Form HTML -->
 <!-- Search Bar -->
+<div id="loading-bg" *ngIf="loading">
+    <div id="sk-loading-icon">
+        <div class="sk-folding-cube">
+            <div class="sk-cube1 sk-cube"></div>
+            <div class="sk-cube2 sk-cube"></div>
+            <div class="sk-cube4 sk-cube"></div>
+            <div class="sk-cube3 sk-cube"></div>
+        </div>
+    </div>
+</div>
 <div>
-    <h3>Explore</h3>
+    <p class="nimble-title">Explore</p>
         <form class="space-before" (ngSubmit)="Search(model.q, language)" #exSearchForm="ngForm" novalidate>
             <div class="form-group row">
           		<label for="expSearch" class="col-2 col-form-label" i18n>Search</label>
@@ -72,8 +82,8 @@
             <label class="col-form-label-lg"><b> Results Found </b></label>
         </div>
         <div class="col-sm-10">
-            <ul>
-                <li *ngFor="let eachOutput of Output; let outerIndex = index" style="margin-top: 5px">
+            <!--<ul>-->
+                <div *ngFor="let eachOutput of Output; let outerIndex = index" style="margin-top: 5px; margin-bottom: 5px;">
                     <div [hidden]="showParticularKeyword[outerIndex]">
                         <div class="btn-group" role="group" aria-label="available keywords"
                              *ngFor="let each of eachOutput.resp.conceptOverview; let innerIndex = index">
@@ -89,8 +99,8 @@
                                 {{showMore[outerIndex] ? 'Hide': 'Show'}} Options</button>
                         </div>
                     </div>
-                </li>
-            </ul>
+                </div>
+            <!--</ul>-->
         </div>
     </div>
 </div>

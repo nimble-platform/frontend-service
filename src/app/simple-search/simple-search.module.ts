@@ -11,11 +11,7 @@ import { CatalogueModule } from '../catalogue/catalogue.module';
 import { BPEModule } from '../bpe/bpe.module';
 
 import { SimpleSearchComponent } from './simple-search.component';
-import { SimpleSearchDetailsComponent } from './simple-search-details.component';
 import { SimpleSearchFormComponent } from './simple-search-form.component';
-
-//import { SimpleSearchService } from './simple-search.service';
-//import { SearchContextService } from "./search-context.service";
 
 @NgModule({
 	imports: [
@@ -31,12 +27,10 @@ import { SimpleSearchFormComponent } from './simple-search-form.component';
 	],
 	declarations: [
 		SimpleSearchComponent,
-		SimpleSearchDetailsComponent,
 		SimpleSearchFormComponent
 	],
 	exports: [
 		SimpleSearchComponent,
-		SimpleSearchDetailsComponent,
 		SimpleSearchFormComponent
 	],
 	providers: [

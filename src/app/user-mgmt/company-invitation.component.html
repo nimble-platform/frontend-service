@@ -1,4 +1,4 @@
-<h3>Send Invitation</h3>
+<p class="nimble-title">Send Invitation</p>
 
 <form (ngSubmit)="onSubmit()" class="space-before" #inviteForm="ngForm" novalidate>
 	<div class="form-group row">
@@ -16,9 +16,7 @@
 		</label>
 		<div class="col-10">
 			<div class="form-control" [ngClass]="{'ng-valid required':rolesSelected,'ng-invalid':!rolesSelected}">
-				<span [hidden]="callback3">
-					<img src="assets/form_loader.gif" />
-				</span>
+				<call-status [callStatus]="rolesCallStatus"></call-status>
 				<div *ngFor="let role of userRoles">
 					<input [id]="role.identifier" type="checkbox" [value]="role.identifier" class="form-check-input" [disabled]="checkDisable(role.identifier)" (change)="setRoles(role.identifier)">
 					<label class="form-check-label" [for]="role.identifier">{{role.name}}</label>
@@ -43,18 +41,14 @@
 	</div>
 	-->
 
-	<button type="submit" class="btn btn-success" [disabled]="!inviteForm.form.valid||!rolesSelected" i18n>Submit</button>
-
-	<div [hidden]="callback || error_detc || !submitted">
-		<img class="space-before" src="assets/form_loader.gif" />
-	</div>
-
-	<div [hidden]="!callback">
-		<div class="alert alert-success space-before" role="alert">Invitation successful</div>
-	</div>
-
-	<div [hidden]="!error_detc">
-		<div class="alert alert-danger space-before" role="alert">User already invited</div>
+	<!-- Submit action -->
+	<div class="row actions-row">
+		<div class="col-10 call-status-col">
+			<call-status [callStatus]="submitCallStatus" [large]="true"></call-status>
+		</div>
+		<div class="col-2">
+			<button type="submit" class="btn btn-primary action" [disabled]="!inviteForm.form.valid || !rolesSelected || submitCallStatus.isLoading()" i18n>Submit</button>
+		</div>
 	</div>
 
 </form>
@@ -69,12 +63,12 @@
 			<th>Assigned Roles</th>
 			<th>Options</th>
 		</tr>
-		<tr [hidden]="callback2">
+		<tr *ngIf="membersCallStatus.isDisplayed() ">
 			<td colspan="4">
-				<img src="assets/form_loader.gif" />
+				<call-status [callStatus]="membersCallStatus" [large]="true"></call-status>
 			</td>
 		</tr>
-		<tr [hidden]="!callback2 || invPending.length > 0">
+		<tr [hidden]="!membersFetched || invPending.length > 0">
 			<td colspan="4">No data</td>
 		</tr>
 		<tr *ngFor="let inv of invPending">
@@ -127,7 +121,7 @@
 		</div>
 	</div>
 	<div class="modal-footer">
-		<button class="btn btn-success" [disabled]="!rolesChangeSelected" (click)="changeRoles();d('');">Save</button>
+		<button class="btn btn-primary" [disabled]="!rolesChangeSelected" (click)="changeRoles();d('');">Save</button>
 	</div>
 </ng-template>
 

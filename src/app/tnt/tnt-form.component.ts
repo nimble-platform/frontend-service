@@ -2,7 +2,7 @@ import { Component, ViewChild, ViewEncapsulation, OnInit } from '@angular/core';
 import { Search } from './model/search';
 import { TnTService } from './tnt.service';
 import * as moment from 'moment';
-import * as shape from 'd3-shape';
+import * as d3 from 'd3';
 import * as myGlobals from '../globals';
 
 @Component({
@@ -24,9 +24,10 @@ export class TnTFormComponent {
     error_detc = false;
     updateInfo = false;
     hideButton = false;
-    curve = shape.curveBundle.beta(1);
+    curve = d3.curveBundle.beta(1);
     gateInformation = [];
     sstInfo = [];
+    falsecode = '';
 
     constructor(private tntBackend: TnTService) {}
 
@@ -47,17 +48,28 @@ export class TnTFormComponent {
                 if ('productionProcessTemplate' in this.metaData) {
                     // this.getBPInfo(resp['productionProcessTemplate']);
                     this.getAnalysis(code);
+                    if (!(this.acc.activeIds.findIndex(tab => tab === 'bProcessVis') > -1)) {
+                        this.acc.toggle('bProcessVis');
+                    }
                 }
                 if ('eventUrl' in resp) {
                     this.getTableInfo(resp['eventUrl'], code);
+                    if (!(this.acc.activeIds.findIndex(tab => tab === 'tableInfo') > -1)) {
+                        this.acc.toggle('tableInfo');
+                    }
                 }
             })
             .catch(error => {
+                if (error.status === 404) {
+                    // console.log(error);
+                    this.falsecode = error._body;
+                }
                 this.error_detc = true;
             });
     }
 
     clearData() {
+        this.falsecode = '';
         this.metaData = {};
         this.bpInfo = [];
         this.trackingInfo = [];
@@ -73,7 +85,7 @@ export class TnTFormComponent {
                 this.error_detc = false;
                 this.trackingInfo = resp_track.map(el => {
                     let _out = {
-                        'eventTime': moment(el.eventTime.$date).utcOffset(el.eventTimeZoneOffset).toString(),
+                        'eventTime': moment(Number(el.eventTime.$numberLong)),
                         'bizStep': el.bizStep.split(':').pop(),
                         'action': el.action,
                         'readPoint': el.readPoint.id.split(':').pop(),

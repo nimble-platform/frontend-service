@@ -2,7 +2,7 @@
     <div *ngIf="presentationMode == 'edit'"
          class="input-group form-group border-0"
          [formGroup]="parentForm">
-        <label class="col-3">{{propName}}
+        <label class="col-3"><strong>{{ propName }}</strong>
             <span *ngIf="definition" class="label label-default" title="{{definition}}">
                     &#9432;
             </span>
@@ -14,7 +14,7 @@
     </div>
     <div *ngIf="presentationMode != 'edit'"
          class="input-group form-group border-0">
-        <label class="col-3">{{propName}}
+        <label class="col-3"><strong>{{ propName }}</strong>
             <span *ngIf="definition" class="label label-default" title="{{definition}}">
                     &#9432;
             </span>
@@ -30,7 +30,7 @@
     <div *ngIf="presentationMode == 'edit'"
          class="input-group form-group border-0"
          [formGroup]="parentForm">
-        <label class="col-3">{{propName}}
+        <label class="col-3"><strong>{{ propName }}</strong>
             <span *ngIf="definition" class="label label-default" title="{{definition}}">
                     &#9432;
             </span>
@@ -43,7 +43,7 @@
     </div>
     <div *ngIf="presentationMode != 'edit'"
          class="input-group form-group border-0">
-        <label class="col-3">{{propName}}
+        <label class="col-3"><strong>{{ propName }}</strong>
             <span *ngIf="definition" class="label label-default" title="{{definition}}">
                     &#9432;
             </span>

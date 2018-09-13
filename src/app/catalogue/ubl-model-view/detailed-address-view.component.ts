@@ -4,6 +4,11 @@ import {CookieService} from 'ng2-cookies';
 import {UserService} from '../../user-mgmt/user.service';
 import {CallStatus} from '../../common/call-status';
 
+/*
+ * Anthony 14/06/2018: this class should be removed (no longer used) once the 
+ * business process payment details is redone.
+ */
+
 @Component({
     selector: 'detailed-address-view',
     templateUrl: './detailed-address-view.component.html'
@@ -11,7 +16,7 @@ import {CallStatus} from '../../common/call-status';
 
 export class DetailedAddressViewComponent implements OnInit{
     @Input() propName:string;
-    @Input() presentationMode:string;
+    @Input() presentationMode: "singlevalue" | "edit";
     @Input() deliveryAddress:Address;
     @Input() fetchDefaultDeliveryAddress:boolean;
 
@@ -28,15 +33,15 @@ export class DetailedAddressViewComponent implements OnInit{
         {
             this.getDefaultDeliveryLocation.submit();
             let userId = this.cookieService.get('user_id');
-            this.userService.getSettings(userId).then(settings => {
+            this.userService.getSettingsForUser(userId).then(settings => {
                 this.deliveryAddress.country.name = settings.address.country;
                 this.deliveryAddress.postalZone = settings.address.postalCode;
                 this.deliveryAddress.cityName = settings.address.cityName;
                 this.deliveryAddress.buildingNumber = settings.address.buildingNumber;
                 this.deliveryAddress.streetName = settings.address.streetName;
                 this.getDefaultDeliveryLocation.callback("Retrieved default delivery location", true);
-            }).catch(error=>{
-                this.getDefaultDeliveryLocation.error("Failed to retrieve default delivery location");
+            }).catch(error => {
+                this.getDefaultDeliveryLocation.error("Failed to retrieve default delivery location", error);
             });
         }
         else{
