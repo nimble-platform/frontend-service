@@ -86,10 +86,10 @@
 
     <!-- Note -->
     <h3>Notes</h3>
-    <text-input label="Request Note" [(text)]="request.note"
+    <text-input label="Request Note" [(text)]="request.note[0]"
                 labelClass="col-2" valueClass="col-10" [disabled]="isRequestDisabled()">
     </text-input>
-    <text-input label="Response Note" *ngIf="response" [(text)]="response.note"
+    <text-input label="Response Note" *ngIf="response" [(text)]="response.note[0]"
                 labelClass="col-2" valueClass="col-10" rowClass="space-before" [disabled]="isResponseDisabled()">
     </text-input>
 
