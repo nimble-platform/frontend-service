@@ -16,7 +16,7 @@ export const debug = false;
 // Base path variables - SRFG productive
 
 // export const base_path = "https://nimble-platform.salzburgresearch.at/nimble";
-// export const ub_path = "https://nimble-platform.salzburgresearch.at/ub-search";
+// export const ub_base = "https://nimble-platform.salzburgresearch.at/ub-search";
 // export const simple_search_endpoint="https://nimble-platform.salzburgresearch.at/marmotta/solr/catalogue2";
 // export const pw_reset_link = "https://nimble-platform.salzburgresearch.at:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
 
