@@ -18,6 +18,7 @@ import { Quantity } from '../../../catalogue/model/publish/quantity';
 import { TransportExecutionPlan } from "../../../catalogue/model/publish/transport-execution-plan";
 import { Quotation } from "../../../catalogue/model/publish/quotation";
 import {DocumentService} from "../document-service";
+import {CookieService} from 'ng2-cookies';
 
 @Component({
     selector: 'dispatch-advice',
@@ -34,6 +35,7 @@ export class DispatchAdviceComponent implements OnInit {
                 private bpDataService: BPDataService,
                 private location: Location,
                 private router: Router,
+                private cookieService: CookieService,
                 private documentService: DocumentService) {
     }
 
@@ -137,7 +139,8 @@ export class DispatchAdviceComponent implements OnInit {
         let vars: ProcessVariables = ModelUtils.createProcessVariables(
             "Fulfilment", 
             dispatchAdvice.despatchSupplierParty.party.id, 
-            dispatchAdvice.deliveryCustomerParty.party.id, 
+            dispatchAdvice.deliveryCustomerParty.party.id,
+            this.cookieService.get("user_id"),
             dispatchAdvice, 
             this.bpDataService
         );

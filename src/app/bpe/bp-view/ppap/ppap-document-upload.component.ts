@@ -14,6 +14,7 @@ import {DocumentReference} from "../../../catalogue/model/publish/document-refer
 import {Attachment} from "../../../catalogue/model/publish/attachment";
 import { Location } from "@angular/common";
 import {DocumentService} from "../document-service";
+import {CookieService} from 'ng2-cookies';
 
 @Component({
     selector: "ppap-document-upload",
@@ -41,6 +42,7 @@ export class PpapDocumentUploadComponent {
                 private route: ActivatedRoute,
                 private router: Router,
                 private location: Location,
+                private cookieService: CookieService,
                 private documentService: DocumentService) {
 
     }
@@ -121,7 +123,7 @@ export class PpapDocumentUploadComponent {
         }
 
         this.ppapResponse.note = this.noteToSend;
-        const vars: ProcessVariables = ModelUtils.createProcessVariables("Ppap", this.ppap.buyerCustomerParty.party.id, this.ppap.sellerSupplierParty.party.id, this.ppapResponse, this.bpDataService);
+        const vars: ProcessVariables = ModelUtils.createProcessVariables("Ppap", this.ppap.buyerCustomerParty.party.id, this.ppap.sellerSupplierParty.party.id, this.cookieService.get("user_id"),this.ppapResponse, this.bpDataService);
         const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.bpDataService.processMetadata.processId);
 
         this.callStatus.submit();

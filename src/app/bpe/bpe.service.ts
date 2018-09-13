@@ -82,7 +82,7 @@ export class BPEService {
 	}
 
 	updateBusinessProcess(content: string, processID: string, processInstanceID: string): Promise<any> {
-        const url = `${this.url}/processInstance?processID=${processID}&processInstanceID=${processInstanceID}`;
+        const url = `${this.url}/processInstance?processID=${processID}&processInstanceID=${processInstanceID}&creatorUserID=${this.cookieService.get("user_id")}`;
         return this.http
             .put(url, content,{headers: this.headers})
             .toPromise()

@@ -99,7 +99,7 @@ export class NegotiationRequestComponent implements OnInit {
                 rfq.buyerCustomerParty = new CustomerParty(buyerParty);
                 rfq.sellerSupplierParty = new SupplierParty(sellerParty);
 
-                const vars: ProcessVariables = ModelUtils.createProcessVariables("Negotiation", buyerId, sellerId, rfq, this.bpDataService);
+                const vars: ProcessVariables = ModelUtils.createProcessVariables("Negotiation", buyerId, sellerId,this.cookieService.get("user_id"), rfq, this.bpDataService);
                 const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
 
                 return this.bpeService.startBusinessProcess(piim);

@@ -97,7 +97,7 @@ export class ItemInformationRequestComponent implements OnInit {
             itemInformationRequest.sellerSupplierParty = new SupplierParty(sellerParty);
 
             const vars: ProcessVariables = ModelUtils.createProcessVariables(
-                "Item_Information_Request", buyerId, sellerId, itemInformationRequest, this.bpDataService);
+                "Item_Information_Request", buyerId, sellerId,this.cookieService.get("user_id"), itemInformationRequest, this.bpDataService);
             const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
 
             return this.bpeService.startBusinessProcess(piim)

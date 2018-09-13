@@ -181,7 +181,7 @@ export class OrderComponent implements OnInit {
         const sellerId: string = this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty.id;
         order.sellerSupplierParty = new SupplierParty(this.sellerParty);
 
-        const vars: ProcessVariables = ModelUtils.createProcessVariables("Order", buyerId, sellerId, order, this.bpDataService);
+        const vars: ProcessVariables = ModelUtils.createProcessVariables("Order", buyerId, sellerId,this.cookieService.get("user_id"), order, this.bpDataService);
         const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
 
         this.bpeService.startBusinessProcess(piim)
@@ -216,6 +216,7 @@ export class OrderComponent implements OnInit {
             "Order",
             this.bpDataService.order.buyerCustomerParty.party.id,
             this.bpDataService.order.sellerSupplierParty.party.id,
+            this.cookieService.get("user_id"),
             this.bpDataService.orderResponse,
             this.bpDataService
         );

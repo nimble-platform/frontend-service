@@ -169,7 +169,7 @@ export class PpapDocumentSelectComponent implements OnInit {
 
             this.userService.getParty(sellerId).then(sellerParty => {
                 this.ppap.sellerSupplierParty = new SupplierParty(sellerParty);
-                let vars = ModelUtils.createProcessVariables("Ppap", buyerId, sellerId, this.ppap, this.bpDataService);
+                let vars = ModelUtils.createProcessVariables("Ppap", buyerId, sellerId,this.cookieService.get("user_id"), this.ppap, this.bpDataService);
                 let piim = new ProcessInstanceInputMessage(vars, "");
                 this.bpeService
                     .startBusinessProcess(piim)
