@@ -14,15 +14,21 @@
 
 <hr>
 
-<!-- Request note -->
-<text-input rowClass="space-after" [(text)]="note" label="Request Note" labelClass="col-2" 
-    valueClass="col-10" disabled="true">
-</text-input>
-
-<!-- Response note -->
-<text-input [(text)]="noteToSend" label="Response Note" labelClass="col-2" 
-    valueClass="col-10" [disabled]="isLoading()">
-</text-input>
+<div class="row">
+    <div class="col-3">
+        <strong class="font-weight-500"><label>Request Notes:</label></strong>
+    </div>
+    <div class="col-9">
+        <note-view [notes]="notes"></note-view>
+    </div>
+</div>
+<div class="row">
+    <div class="col-3">
+        <strong class="font-weight-500"><label>Response Notes:</label></strong>
+    </div>
+    <note-view [notes]="notesToSend"
+               [readonly]="isLoading()"></note-view>
+</div>
 
 <hr>
 

@@ -11,15 +11,22 @@
     </div>
 </div>
 
-<!-- Request note -->
-<text-input class="form-group space-after" [(text)]="noteBuyer" label="Request Note" labelClass="col-2" 
-    valueClass="col-10" disabled="true">
-</text-input>
-
-<!-- Response note -->
-<text-input class="form-group space-after" [(text)]="note" label="Response Note" labelClass="col-2" 
-    valueClass="col-10" rowClass="space-before" disabled>
-</text-input>
+<div class="row">
+    <div class="col-3">
+        <strong class="font-weight-500"><label>Request Notes:</label></strong>
+    </div>
+    <div class="col-9">
+        <note-view [notes]="notesBuyer"></note-view>
+    </div>
+</div>
+<div class="row">
+    <div class="col-3">
+        <strong class="font-weight-500"><label>Request Notes:</label></strong>
+    </div>
+    <div class="col-9">
+        <note-view [notes]="notes"></note-view>
+    </div>
+</div>
 
 <hr>
 

@@ -4,7 +4,7 @@ import {CustomerParty} from "./customer-party";
 export class Ppap{
     constructor(
         public id:string = null,
-        public note: string[] = [],
+        public note: string[] = [''],
         public documentType:String[] = null,
         public buyerCustomerParty:CustomerParty = null,
         public sellerSupplierParty:SupplierParty = null,

@@ -10,7 +10,7 @@ import { MonetaryTotal } from "./monetary-total";
 export class Order {
     constructor(
         public id: string = null,
-        public note: string[] = [],
+        public note: string[] = [''],
         public requestedDeliveryPeriod: Period = new Period(),
         // DO NOT USE, this is not saved in the back end...
         // use order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address instead.

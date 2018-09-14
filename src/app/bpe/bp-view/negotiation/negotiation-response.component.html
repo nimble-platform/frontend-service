@@ -92,12 +92,11 @@
     <div class="col-3"><strong class="font-weight-500">Note:</strong></div>
     <div class="col-3"></div>
     <div class="col-3">
-        <text-input disabled [text]="rfq.note[0]">
-        </text-input>
+        <note-view [notes]="rfq.note"></note-view>
     </div>
     <div class="col-3">
-        <text-input [disabled]="isLoading() || isReadOnly()" [(text)]="quotation.note[0]">
-        </text-input>
+        <note-view [notes]="quotation.note"
+                   [readonly]="isLoading() || isReadOnly()"></note-view>
     </div>
 </div>
 

@@ -1,0 +1,18 @@
+<ng-container *ngFor="let note of notes;let i=index;">
+    <div class="row">
+        <div class="{{ i === 0 || readonly ? 'col-12' : 'col-9' }} space-after">
+                <textarea  class="form-control note-textarea" rows="3"
+                           [disabled]="readonly" [ngModel]="notes[i]" (change)="setNote(i, $event)">
+                </textarea>
+        </div>
+        <div *ngIf="!readonly && i > 0 " class="col-3">
+            <button class="btn btn-danger btn-remove-value btn-sm"
+                    (click)="onRemoveNote(i)">
+                Remove
+            </button>
+        </div>
+    </div>
+</ng-container>
+<button *ngIf="!readonly" class="btn btn-primary add-value-button" (click)="onAddNote()">
+    Add Note
+</button>

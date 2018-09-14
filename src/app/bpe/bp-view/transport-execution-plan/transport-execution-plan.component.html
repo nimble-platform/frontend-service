@@ -86,13 +86,24 @@
 
     <!-- Note -->
     <h3>Notes</h3>
-    <text-input label="Request Note" [(text)]="request.note[0]"
-                labelClass="col-2" valueClass="col-10" [disabled]="isRequestDisabled()">
-    </text-input>
-    <text-input label="Response Note" *ngIf="response" [(text)]="response.note[0]"
-                labelClass="col-2" valueClass="col-10" rowClass="space-before" [disabled]="isResponseDisabled()">
-    </text-input>
-
+    <div class="row">
+        <div class="col-2">
+            <strong class="font-weight-500"><label>Request Notes:</label></strong>
+        </div>
+        <div class="col-10">
+            <note-view [notes]="request.note"
+                       [readonly]="isRequestDisabled()"></note-view>
+        </div>
+    </div>
+    <div *ngIf="response" class="row">
+        <div class="col-2">
+            <strong class="font-weight-500"><label>Response Notes:</label></strong>
+        </div>
+        <div class="col-10">
+            <note-view [notes]="response.note"
+                       [readonly]="isResponseDisabled()"></note-view>
+        </div>
+    </div>
 
     <!-- Contract -->
     <ng-container *ngIf="request.transportContract?.clause || contractCallStatus.isDisplayed()">

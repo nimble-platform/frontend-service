@@ -12,7 +12,7 @@ import {SupplierParty} from "./supplier-party";
 export class DespatchAdvice {
     constructor(
         public id:string = null,
-        public note:string[] = [],
+        public note:string[] = [''],
         public orderReference:OrderReference[] = [],
         public deliveryCustomerParty:CustomerParty = null,
         public despatchSupplierParty:SupplierParty = null,

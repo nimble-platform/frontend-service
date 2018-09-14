@@ -136,7 +136,8 @@
     <div class="col-5">
     </div>
     <div class="col-5">
-        <textarea class="form-control" [(ngModel)]="rfq.note[0]" rows="3" [disabled]="isLoading() || isReadOnly()"></textarea>
+        <note-view [notes]="rfq.note"
+                    [readonly]="isLoading() || isReadOnly()"></note-view>
     </div>
 </div>
 

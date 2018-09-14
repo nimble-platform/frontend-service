@@ -39,14 +39,26 @@
     <!-- Notes -->
     <div class="row content-row bg-light">
         <div class="col-6">
-            <!-- Dispatch Advice Note -->
-            <text-input label="Supplier's Note" [disabled]="true" [(text)]="dispatchAdvice.note[0]">
-            </text-input>
+            <div class="row">
+                <div class="col-4">
+                    Supplier's Note
+                </div>
+                <div class="col-8">
+                    <note-view [notes]="dispatchAdvice.note"
+                               [readonly]="true"></note-view>
+                </div>
+            </div>
         </div>
         <div class="col-6">
-            <!-- Receipt Advice Note -->
-            <text-input label="Customer's Note" [disabled]="isLoading() || isReadOnly()" [(text)]="receiptAdvice.note[0]">
-            </text-input>
+            <div class="row">
+                <div class="col-4">
+                    Customer's Note
+                </div>
+                <div class="col-8">
+                    <note-view [notes]="receiptAdvice.note"
+                               [readonly]="isLoading() || isReadOnly()"></note-view>
+                </div>
+            </div>
         </div>
     </div>
 

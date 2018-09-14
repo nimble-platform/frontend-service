@@ -212,18 +212,18 @@
     <!-- Note -->
     <div class="row space-before">
         <div class="col-2">
-            <input-label label="Note">
+            <input-label label="Notes">
             </input-label>
         </div>
         <div class="col-5">
-            <text-input [text]="rfq.note[0]" [disabled]="true">
-            </text-input>
+            <note-view [notes]="rfq.note"></note-view>
         </div>
         <div class="col-5">
-            <text-input [(text)]="quotation.note[0]" [disabled]="isDisabled()">
-            </text-input>
+            <note-view [notes]="quotation.note"
+                       [readonly]="isDisabled()"></note-view>
         </div>
     </div>
+
 </ng-container>
 
 

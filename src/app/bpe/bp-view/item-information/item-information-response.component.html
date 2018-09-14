@@ -23,22 +23,18 @@
 
 <div class="row">
     <div class="col-3">
-        <strong><label for="custNoteTextarea">Customer's note:</label></strong>
+        <strong class="font-weight-500"><label>Customer's note:</label></strong>
     </div>
     <div class="col-9">
-        <textarea id="custNoteTextarea" class="form-control note-textarea" 
-            rows="4" disabled [(ngModel)]="request.note[0]"></textarea>
+        <note-view [notes]="request.note"></note-view>
     </div>
 </div>
-
 <div class="row">
     <div class="col-3">
-        <strong><label for="manNoteTextarea">Manufacturer's note:</label></strong>
+        <strong class="font-weight-500"><label>Manufacturer's note:</label></strong>
     </div>
-    <div class="col-9">
-        <textarea id="manNoteTextarea" class="form-control note-textarea" rows="4" 
-            [disabled]="isLoading() || isResponseSent()" [(ngModel)]="response.note[0]"></textarea>
-    </div>
+    <note-view [notes]="response.note"
+               [readonly]="isLoading() || isResponseSent()"></note-view>
 </div>
 
 <hr>

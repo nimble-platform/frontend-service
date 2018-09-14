@@ -24,8 +24,8 @@ export class PpapDocumentDownloadComponent{
     @Input() ppap: Ppap;
 
     ppapDocuments : DocumentReference[] = [];
-    note: any;
-    noteBuyer: any;
+    notes: string[];
+    notesBuyer: string[];
     documents: UploadedDocuments = {};
     keys = [];
 
@@ -64,7 +64,7 @@ export class PpapDocumentDownloadComponent{
     }
     
     private initFromPpap() {
-        this.noteBuyer = this.ppap.note[0];
+        this.notesBuyer = this.ppap.note;
         this.ppapDocuments = this.ppapResponse.requestedDocument;
 
         for (let i = 0; i < this.ppapDocuments.length; i++) {
@@ -78,7 +78,7 @@ export class PpapDocumentDownloadComponent{
                 );
             }
         }
-        this.note = this.ppapResponse.note[0];
+        this.notes = this.ppapResponse.note;
         this.keys = Object.keys(this.documents);
 
         this.requestedDocuments = this.ppap.documentType;

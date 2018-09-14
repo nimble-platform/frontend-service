@@ -9,7 +9,7 @@ import { PaymentMeans } from "./payment-means";
 export class RequestForQuotation {
 	constructor(
 		public id: string,
-		public note: string[],
+		public note: string[] = [''],
 		public dataMonitoringRequested: boolean,
 		public buyerCustomerParty: CustomerParty,
 		public sellerSupplierParty: SupplierParty,
