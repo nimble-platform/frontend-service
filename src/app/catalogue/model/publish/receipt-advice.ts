@@ -19,6 +19,7 @@ export class ReceiptAdvice {
         public despatchDocumentReference:DocumentReference[] = null,
         public deliveryCustomerParty:CustomerParty = null,
         public despatchSupplierParty:SupplierParty = null,
-        public receiptLine:ReceiptLine[] = null
+        public receiptLine:ReceiptLine[] = null,
+        public additionalDocumentReference:DocumentReference[] = []
     ) {  }
 }

@@ -10,7 +10,8 @@ export class PpapResponse{
         public buyerCustomerParty:CustomerParty = null,
         public sellerSupplierParty:SupplierParty = null,
         public requestedDocument:DocumentReference[] = null,
-        public ppapDocumentReference:DocumentReference = null
+        public ppapDocumentReference:DocumentReference = null,
+        public additionalDocumentReference:DocumentReference[] = []
     )
     {}
 }

@@ -15,6 +15,7 @@ export class TransportExecutionPlan {
                 public documentStatusReasonCode: Code = new Code(),
                 public transportUserParty:Party = new Party(),
                 public transportServiceProviderParty:Party= new Party(),
-                public transportExecutionPlanRequestDocumentReference: DocumentReference = new DocumentReference()) {
+                public transportExecutionPlanRequestDocumentReference: DocumentReference = new DocumentReference(),
+                public additionalDocumentReference:DocumentReference[] = []) {
     }
 }

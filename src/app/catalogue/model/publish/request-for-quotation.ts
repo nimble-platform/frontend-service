@@ -5,6 +5,7 @@ import { Delivery } from "./delivery";
 import { NegotiationOptions } from "./negotiation-options";
 import { PaymentTerms } from "./payment-terms";
 import { PaymentMeans } from "./payment-means";
+import {DocumentReference} from './document-reference';
 
 export class RequestForQuotation {
 	constructor(
@@ -17,6 +18,7 @@ export class RequestForQuotation {
 		public requestForQuotationLine: RequestForQuotationLine[],
 		public negotiationOptions: NegotiationOptions,
 		public paymentMeans: PaymentMeans,
-		public paymentTerms: PaymentTerms
+		public paymentTerms: PaymentTerms,
+        public additionalDocumentReference:DocumentReference[] = []
 	) {  }
 }
