@@ -87,17 +87,12 @@
 
         <hr>
 
-        <!-- Note -->
-        <div class="row">
-            <div class="col-2">
-                <strong class="font-weight-500"><label>Notes:</label></strong>
-            </div>
-            <div class="col-10">
-                <note-view [notes]="rfq.note"
-                           [readonly]="isDisabled()"></note-view>
-            </div>
-        </div>
-
+        <!--Notes-->
+        <note-view [notes]="rfq.note"
+                   [label]="'Notes'"
+                   [firstCol]="'col-2'"
+                   [lastCol]="'col-10'"
+                   [readonly]="isDisabled()"></note-view>
     </div>
 </div>
 

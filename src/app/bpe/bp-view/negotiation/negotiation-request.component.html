@@ -128,18 +128,13 @@
     </div>
 </div>
 
-<!-- Note -->
-<div class="row content-row">
-    <div class="col-2">
-        <strong class="font-weight-500">Note:</strong>
-    </div>
-    <div class="col-5">
-    </div>
-    <div class="col-5">
-        <note-view [notes]="rfq.note"
-                    [readonly]="isLoading() || isReadOnly()"></note-view>
-    </div>
-</div>
+<!--Notes-->
+<note-view [notes]="rfq.note"
+           [label]="'Notes'"
+           [firstCol]="'col-2'"
+           [secondCol]="'col-5'"
+           [lastCol]="'col-5'"
+           [readonly]="isLoading() || isReadOnly()"></note-view>
 
 <hr>
 

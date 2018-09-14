@@ -11,22 +11,11 @@
     </div>
 </div>
 
-<div class="row">
-    <div class="col-3">
-        <strong class="font-weight-500"><label>Request Notes:</label></strong>
-    </div>
-    <div class="col-9">
-        <note-view [notes]="notesBuyer"></note-view>
-    </div>
-</div>
-<div class="row">
-    <div class="col-3">
-        <strong class="font-weight-500"><label>Request Notes:</label></strong>
-    </div>
-    <div class="col-9">
-        <note-view [notes]="notes"></note-view>
-    </div>
-</div>
+<!--Notes-->
+<note-view [notes]="notesBuyer"
+           [label]="'Request Notes'"></note-view>
+<note-view [notes]="notes"
+           [label]="'Response Notes'"></note-view>
 
 <hr>
 

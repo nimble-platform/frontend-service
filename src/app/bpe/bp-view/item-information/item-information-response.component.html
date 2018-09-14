@@ -21,23 +21,12 @@
 
 <hr>
 
-<div class="row">
-    <div class="col-3">
-        <strong class="font-weight-500"><label>Customer's note:</label></strong>
-    </div>
-    <div class="col-9">
-        <note-view [notes]="request.note"></note-view>
-    </div>
-</div>
-<div class="row">
-    <div class="col-3">
-        <strong class="font-weight-500"><label>Manufacturer's note:</label></strong>
-    </div>
-    <div class="col-9">
-        <note-view [notes]="response.note"
-                   [readonly]="isLoading() || isResponseSent()"></note-view>
-    </div>
-</div>
+<!--Notes-->
+<note-view [notes]="request.note"
+           [label]="'Customer\'s note'"></note-view>
+<note-view [notes]="response.note"
+           [label]="'Manufacturer\'s note'"
+           [readonly]="isLoading() || isResponseSent()"></note-view>
 
 <hr>
 

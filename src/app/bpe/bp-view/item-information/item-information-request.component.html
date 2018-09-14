@@ -12,15 +12,10 @@
 
 <hr>
 
-<div class="row">
-    <div class="col-3">
-        <strong class="font-weight-500"><label>Notes:</label></strong>
-    </div>
-    <div class="col-9">
-        <note-view [notes]="request.note"
-                   [readonly]="isLoading() || isRequestSent()"></note-view>
-    </div>
-</div>
+<!--Notes-->
+<note-view [notes]="request.note"
+           [label]="'Notes'"
+           [readonly]="isLoading() || isRequestSent()"></note-view>
 
 <hr>
 

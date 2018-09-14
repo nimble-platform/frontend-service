@@ -209,20 +209,14 @@
     
     <hr>
 
-    <!-- Note -->
-    <div class="row space-before">
-        <div class="col-2">
-            <input-label label="Notes">
-            </input-label>
-        </div>
-        <div class="col-5">
-            <note-view [notes]="rfq.note"></note-view>
-        </div>
-        <div class="col-5">
-            <note-view [notes]="quotation.note"
-                       [readonly]="isDisabled()"></note-view>
-        </div>
-    </div>
+    <!--Notes-->
+    <note-view [notes]="quotation.note"
+               [requestNotes]="rfq.note"
+               [label]="'Notes'"
+               [firstCol]="'col-2'"
+               [thirdCol]="'col-5'"
+               [lastCol]="'col-5'"
+               [readonly]="isDisabled()"></note-view>
 
 </ng-container>
 

@@ -84,27 +84,19 @@
     <hr>
 
 
-    <!-- Note -->
+    <!--Notes-->
     <h3>Notes</h3>
-    <div class="row">
-        <div class="col-2">
-            <strong class="font-weight-500"><label>Request Notes:</label></strong>
-        </div>
-        <div class="col-10">
-            <note-view [notes]="request.note"
-                       [readonly]="isRequestDisabled()"></note-view>
-        </div>
-    </div>
-    <div *ngIf="response" class="row">
-        <div class="col-2">
-            <strong class="font-weight-500"><label>Response Notes:</label></strong>
-        </div>
-        <div class="col-10">
-            <note-view [notes]="response.note"
-                       [readonly]="isResponseDisabled()"></note-view>
-        </div>
-    </div>
-
+    <note-view [notes]="request.note"
+               [firstCol]="'col-2'"
+               [lastCol]="'col-10'"
+               [readonly]="isRequestDisabled()"
+               [label]="'Request Notes'"></note-view>
+    <note-view *ngIf="response"
+               [notes]="response.note"
+               [firstCol]="'col-2'"
+               [lastCol]="'col-10'"
+               [label]="'Response Notes'"
+               [readonly]="isResponseDisabled()"></note-view>
     <!-- Contract -->
     <ng-container *ngIf="request.transportContract?.clause || contractCallStatus.isDisplayed()">
         <hr>

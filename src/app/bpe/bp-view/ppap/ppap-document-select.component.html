@@ -58,16 +58,10 @@
 
 <hr>
 
-<div class="row">
-    <div class="col-3">
-        <strong class="font-weight-500"><label>Notes:</label></strong>
-    </div>
-    <div class="col-9">
-        <note-view [notes]="notes"
-                   [readonly]="isLoading() || isRequestSent()"></note-view>
-        <hr>
-    </div>
-</div>
+<!--Notes-->
+<note-view [notes]="notes"
+           [label]="'Notes'"
+           [readonly]="isLoading() || isRequestSent()"></note-view>
 
 
 

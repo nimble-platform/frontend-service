@@ -87,19 +87,15 @@
         </quantity-input>
     </div>
 </div>
-
-<div class="row content-row">
-    <div class="col-3"><strong class="font-weight-500">Note:</strong></div>
-    <div class="col-3"></div>
-    <div class="col-3">
-        <note-view [notes]="rfq.note"></note-view>
-    </div>
-    <div class="col-3">
-        <note-view [notes]="quotation.note"
-                   [readonly]="isLoading() || isReadOnly()"></note-view>
-    </div>
-</div>
-
+<!--Notes-->
+<note-view [notes]="quotation.note"
+           [requestNotes]="rfq.note"
+           [label]="'Notes'"
+           [firstCol]="'col-3'"
+           [secondCol]="'col-3'"
+           [thirdCol]="'col-3'"
+           [lastCol]="'col-3'"
+           [readonly]="isLoading() || isReadOnly()"></note-view>
 <hr>
 
 <!-- Delivery Location -->

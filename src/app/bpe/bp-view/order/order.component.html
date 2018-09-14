@@ -109,26 +109,19 @@
     <!-- Notes -->
     <div class="row content-row" *ngIf="isReady()">
         <div class="col-6">
-            <div class="row">
-                <div class="col-4">
-                    Customer's Note
-                </div>
-                <div class="col-8">
-                    <note-view [notes]="order.note"
-                               [readonly]="isReadOnly() || isSeller()"></note-view>
-                </div>
-            </div>
+            <note-view [notes]="order.note"
+                       [label]="'Customer\'s Note'"
+                       [firstCol]="'col-4'"
+                       [lastCol]="'col-8'"
+                       [readonly]="isReadOnly() || isSeller()"></note-view>
         </div>
         <div class="col-6">
-            <div *ngIf="orderResponse" class="row">
-                <div class="col-4">
-                    Supplier's Note
-                </div>
-                <div class="col-8">
-                    <note-view [notes]="orderResponse.note"
-                               [readonly]="isReadOnly()"></note-view>
-                </div>
-            </div>
+            <note-view *ngIf="orderResponse"
+                       [notes]="orderResponse.note"
+                       [label]="'Supplier\'s Note'"
+                       [firstCol]="'col-4'"
+                       [lastCol]="'col-8'"
+                       [readonly]="isReadOnly()"></note-view>
         </div>
     </div>
 

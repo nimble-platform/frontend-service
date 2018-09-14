@@ -14,21 +14,12 @@
 
 <hr>
 
-<div class="row">
-    <div class="col-3">
-        <strong class="font-weight-500"><label>Request Notes:</label></strong>
-    </div>
-    <div class="col-9">
-        <note-view [notes]="notes"></note-view>
-    </div>
-</div>
-<div class="row">
-    <div class="col-3">
-        <strong class="font-weight-500"><label>Response Notes:</label></strong>
-    </div>
-    <note-view [notes]="notesToSend"
-               [readonly]="isLoading()"></note-view>
-</div>
+<!--Notes-->
+<note-view [notes]="notes"
+           [label]="'Request Notes'"></note-view>
+<note-view [notes]="notesToSend"
+           [label]="'Response Notes'"
+           [readonly]="isLoading()"></note-view>
 
 <hr>
 
