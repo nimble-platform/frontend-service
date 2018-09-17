@@ -217,6 +217,8 @@ export class CatalogueService {
                 if (xhr.readyState === 4) {
                     if (xhr.status === 200) {
                         resolve(xhr.response);
+                    } else if(xhr.status === 400) {
+                        reject(xhr.response);
                     } else {
                         reject(JSON.parse(xhr.response).message);
                     }
