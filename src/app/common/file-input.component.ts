@@ -23,7 +23,7 @@ export class FileInputComponent implements OnInit {
 
     @Input() accept: string = "*/*";
     @Input() multiple: boolean = false;
-    @Input() maxSize: number = 10;
+    @Input() maxSize: number = 1;
 
     @Output() onSelectFile: EventEmitter<BinaryObject> = new EventEmitter();
     @Output() onClearFile: EventEmitter<BinaryObject> = new EventEmitter();

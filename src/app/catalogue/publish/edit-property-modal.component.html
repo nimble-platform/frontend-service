@@ -21,7 +21,7 @@
                     </div>
                     <div class="col-9">
                         <file-input *ngIf="property.valueQualifier === 'BINARY'" [binaryObjects]="property.valueBinary"
-                            [multiple]="true" [maxSize]=2>
+                            [multiple]="true" [maxSize]=1>
                         </file-input>
                         <ng-container *ngFor="let value of getValues(); let i = index">
                             <div [ngSwitch]="property.valueQualifier" class="row value-container">
