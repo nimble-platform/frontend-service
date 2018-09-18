@@ -15,12 +15,12 @@
 
     <!--Notes-->
     <h5>Notes and Additional Files</h5>
-    <note-view [notes]="dispatchAdvice.note"
+    <note-file-view [notes]="dispatchAdvice.note"
                [documents]="dispatchAdvice.additionalDocumentReference"
                [label]="'Notes'"
                [firstCol]="'col-2'"
                [lastCol]="'col-10'"
-               [readonly]="isLoading() || isReadOnly()"></note-view>
+               [readonly]="isLoading() || isReadOnly()"></note-file-view>
 
     <!-- Actions -->
     <div class="row actions-row">

@@ -110,21 +110,21 @@
     <h5>Notes and Additional Files</h5>
     <div class="row content-row" *ngIf="isReady()">
         <div class="col-6">
-            <note-view [notes]="order.note"
+            <note-file-view [notes]="order.note"
                        [label]="'Customer\'s Note'"
                        [documents]="order.additionalDocumentReference"
                        [firstCol]="'col-4'"
                        [lastCol]="'col-8'"
-                       [readonly]="isReadOnly() || isSeller()"></note-view>
+                       [readonly]="isReadOnly() || isSeller()"></note-file-view>
         </div>
         <div class="col-6">
-            <note-view *ngIf="orderResponse"
+            <note-file-view *ngIf="orderResponse"
                        [notes]="orderResponse.note"
                        [documents]="orderResponse.additionalDocumentReference"
                        [label]="'Supplier\'s Note'"
                        [firstCol]="'col-4'"
                        [lastCol]="'col-8'"
-                       [readonly]="isReadOnly()"></note-view>
+                       [readonly]="isReadOnly()"></note-file-view>
         </div>
     </div>
 

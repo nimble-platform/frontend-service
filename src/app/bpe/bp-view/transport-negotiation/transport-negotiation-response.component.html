@@ -211,7 +211,7 @@
 
     <!--Notes-->
     <h5>Notes and Additional Files</h5>
-    <note-view [notes]="quotation.note"
+    <note-file-view [notes]="quotation.note"
                [requestNotes]="rfq.note"
                [documents]="quotation.additionalDocumentReference"
                [requestDocuments]="rfq.additionalDocumentReference"
@@ -219,7 +219,7 @@
                [firstCol]="'col-2'"
                [thirdCol]="'col-5'"
                [lastCol]="'col-5'"
-               [readonly]="isDisabled()"></note-view>
+               [readonly]="isDisabled()"></note-file-view>
 
 </ng-container>
 

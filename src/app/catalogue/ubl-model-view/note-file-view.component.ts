@@ -4,10 +4,10 @@ import {DocumentReference} from '../model/publish/document-reference';
 import {BinaryObject} from '../../../../target/frontend-service/app/catalogue/model/publish/binary-object';
 
 @Component({
-    selector: 'note-view',
-    templateUrl: './note-view.component.html'
+    selector: 'note-file-view',
+    templateUrl: './note-file-view.component.html'
 })
-export class NoteViewComponent implements OnInit{
+export class NoteFileViewComponent implements OnInit{
 
     @Input() notes:string[];
     @Input() requestNotes:string[]; // special case for negotiation response

@@ -130,13 +130,13 @@
 
 <!--Notes-->
 <h5>Notes and Additional Files</h5>
-<note-view [notes]="rfq.note"
+<note-file-view [notes]="rfq.note"
            [documents]="rfq.additionalDocumentReference"
            [label]="'Notes'"
            [firstCol]="'col-2'"
            [secondCol]="'col-5'"
            [lastCol]="'col-5'"
-           [readonly]="isLoading() || isReadOnly()"></note-view>
+           [readonly]="isLoading() || isReadOnly()"></note-file-view>
 
 <hr>
 

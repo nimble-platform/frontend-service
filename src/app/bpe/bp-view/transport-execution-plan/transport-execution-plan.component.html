@@ -86,19 +86,19 @@
 
     <!--Notes-->
     <h5>Notes and Additional Files</h5>
-    <note-view [notes]="request.note"
+    <note-file-view [notes]="request.note"
                [documents]="request.additionalDocumentReference"
                [firstCol]="'col-2'"
                [lastCol]="'col-10'"
                [readonly]="isRequestDisabled()"
-               [label]="'Request Notes'"></note-view>
-    <note-view *ngIf="response"
+               [label]="'Request Notes'"></note-file-view>
+    <note-file-view *ngIf="response"
                [documents]="response.additionalDocumentReference"
                [notes]="response.note"
                [firstCol]="'col-2'"
                [lastCol]="'col-10'"
                [label]="'Response Notes'"
-               [readonly]="isResponseDisabled()"></note-view>
+               [readonly]="isResponseDisabled()"></note-file-view>
     <!-- Contract -->
     <ng-container *ngIf="request.transportContract?.clause || contractCallStatus.isDisplayed()">
         <hr>

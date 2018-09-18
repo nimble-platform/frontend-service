@@ -89,7 +89,7 @@
 </div>
 <!--Notes-->
 <h5>Notes and Additional Files</h5>
-<note-view [notes]="quotation.note"
+<note-file-view [notes]="quotation.note"
            [requestNotes]="rfq.note"
            [documents]="quotation.additionalDocumentReference"
            [requestDocuments]="rfq.additionalDocumentReference"
@@ -98,7 +98,7 @@
            [secondCol]="'col-3'"
            [thirdCol]="'col-3'"
            [lastCol]="'col-3'"
-           [readonly]="isLoading() || isReadOnly()"></note-view>
+           [readonly]="isLoading() || isReadOnly()"></note-file-view>
 <hr>
 
 <!-- Delivery Location -->
