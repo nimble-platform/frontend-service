@@ -13,8 +13,10 @@
 <hr>
 
 <!--Notes-->
+<h5>Notes and Additional Files</h5>
 <note-view [notes]="request.note"
            [label]="'Notes'"
+           [documents]="request.additionalDocumentReference"
            [readonly]="isLoading() || isRequestSent()"></note-view>
 
 <hr>

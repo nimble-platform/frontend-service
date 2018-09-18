@@ -1,40 +1,46 @@
-<div class="row space-before">
-    <div class="col-12">
-        <h4 class="space-after" i18n>Ppap Response</h4>
-        <div *ngFor="let document of requestedDocuments" class="space-before">
-            <file-input label="{{ document }}" accept="file/*" [multiple]="true" 
-                presentationMode="view" [binaryObjects]="documents[document] || []">
-            </file-input>
-            
-            <hr>
+<div *ngIf="ppap && ppapResponse">
+    <div class="row space-before">
+        <div class="col-12">
+            <h4 class="space-after" i18n>Ppap Response</h4>
+            <div *ngFor="let document of requestedDocuments" class="space-before">
+                <file-input label="{{ document }}" accept="file/*" [multiple]="true"
+                            presentationMode="view" [binaryObjects]="documents[document] || []">
+                </file-input>
+
+                <hr>
+            </div>
         </div>
     </div>
-</div>
 
-<!--Notes-->
-<note-view [notes]="notesBuyer"
-           [label]="'Request Notes'"></note-view>
-<note-view [notes]="notes"
-           [label]="'Response Notes'"></note-view>
+    <!--Notes-->
+    <h5>Notes and Additional Files</h5>
+    <note-view [notes]="notesBuyer"
+               [documents]="additionalDocumentsBuyer"
+               [label]="'Request Notes'"></note-view>
+    <note-view [notes]="notes"
+               [documents]="additionalDocuments"
+               [label]="'Response Notes'"></note-view>
 
-<hr>
+    <hr>
 
-<!-- Action buttons -->
-<div *ngIf="isBuyer()" class="row actions-row">
-    <div class="col-8"></div>
-    <div class="col-2">
-        <button class="btn btn-secondary action" (click)="onBack()">Back</button>
+    <!-- Action buttons -->
+    <div *ngIf="isBuyer()" class="row actions-row">
+        <div class="col-8"></div>
+        <div class="col-2">
+            <button class="btn btn-secondary action" (click)="onBack()">Back</button>
+        </div>
+        <div class="col-2">
+            <button class="btn btn-primary action" (click)="onNextStep()">
+                Next Step
+            </button>
+        </div>
     </div>
-    <div class="col-2">
-        <button class="btn btn-primary action" (click)="onNextStep()">
-            Next Step
-        </button>
-    </div>
-</div>
 
-<div *ngIf="!isBuyer()" class="row actions-row">
-    <div class="col-10"></div>
-    <div class="col-2">
-        <button class="btn btn-secondary action" (click)="onBack()">Back</button>
+    <div *ngIf="!isBuyer()" class="row actions-row">
+        <div class="col-10"></div>
+        <div class="col-2">
+            <button class="btn btn-secondary action" (click)="onBack()">Back</button>
+        </div>
     </div>
+
 </div>

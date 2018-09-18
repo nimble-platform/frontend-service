@@ -15,6 +15,7 @@ import { Location } from "@angular/common";
 import { copy } from "../../../common/utils";
 import { Certificate } from "../../../user-mgmt/model/certificate";
 import {DocumentService} from '../document-service';
+import {DocumentReference} from '../../../catalogue/model/publish/document-reference';
 
 type PpapLevels = [boolean, boolean, boolean, boolean, boolean]
 
@@ -63,6 +64,8 @@ export class PpapDocumentSelectComponent implements OnInit {
 
     /** The note. */
     notes: string[] = [''];
+    /** The currently selected additional documents*/
+    additionalDocuments: DocumentReference[] = [];
 
     /** Whether the definition of PPAP is visible or not. */
     showDetails = false;
@@ -87,6 +90,7 @@ export class PpapDocumentSelectComponent implements OnInit {
                 this.resetSelectedDocumens();
                 this.ppap = this.bpDataService.ppap;
                 this.notes = this.ppap.note;
+                this.additionalDocuments = this.ppap.additionalDocumentReference;
                 this.ppap.documentType.forEach(name => {
                     const index = this.DOCUMENTS.findIndex(doc => doc.name === name);
                     if(index >= 0) {
@@ -156,6 +160,7 @@ export class PpapDocumentSelectComponent implements OnInit {
     onSendRequest() {
         this.ppap = UBLModelUtils.createPpap([]);
         this.ppap.note = this.notes;
+        this.ppap.additionalDocumentReference = this.additionalDocuments;
         this.ppap.documentType = this.DOCUMENTS.filter((_, i) => this.selectedDocuments[i]).map(doc => doc.name);
         this.ppap.lineItem.item = copy(this.bpDataService.modifiedCatalogueLines[0].goodsItem.item);
         UBLModelUtils.removeHjidFieldsFromObject(this.ppap);
@@ -196,6 +201,7 @@ export class PpapDocumentSelectComponent implements OnInit {
         const ppap: Ppap = copy(this.bpDataService.ppap);
 
         ppap.note = this.notes;
+        ppap.additionalDocumentReference = this.additionalDocuments;
         ppap.documentType = this.DOCUMENTS.filter((_, i) => this.selectedDocuments[i]).map(doc => doc.name);
         UBLModelUtils.removeHjidFieldsFromObject(ppap);
 

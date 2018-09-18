@@ -107,10 +107,12 @@
 
 
     <!-- Notes -->
+    <h5>Notes and Additional Files</h5>
     <div class="row content-row" *ngIf="isReady()">
         <div class="col-6">
             <note-view [notes]="order.note"
                        [label]="'Customer\'s Note'"
+                       [documents]="order.additionalDocumentReference"
                        [firstCol]="'col-4'"
                        [lastCol]="'col-8'"
                        [readonly]="isReadOnly() || isSeller()"></note-view>
@@ -118,6 +120,7 @@
         <div class="col-6">
             <note-view *ngIf="orderResponse"
                        [notes]="orderResponse.note"
+                       [documents]="orderResponse.additionalDocumentReference"
                        [label]="'Supplier\'s Note'"
                        [firstCol]="'col-4'"
                        [lastCol]="'col-8'"

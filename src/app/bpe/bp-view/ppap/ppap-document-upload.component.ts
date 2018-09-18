@@ -32,6 +32,8 @@ export class PpapDocumentUploadComponent {
     ppapDocuments : DocumentReference[] = [];
     notes: string[];
     notesToSend : string[] = [''];
+    additionalDocuments: DocumentReference[];
+    additionalDocumentsToSend: DocumentReference[] = [];
     binaryObjects: { documentName: string, documents: BinaryObject[] }[] = [];
     callStatus:CallStatus = new CallStatus();
     // check whether 'Send Response' button is clicked
@@ -60,6 +62,7 @@ export class PpapDocumentUploadComponent {
                         this.documents.push(this.ppap.documentType[i]);
                     }
                     this.notes = this.ppap.note;
+                    this.additionalDocuments = this.ppap.additionalDocumentReference;
                 });
             });
         });
@@ -123,6 +126,7 @@ export class PpapDocumentUploadComponent {
         }
 
         this.ppapResponse.note = this.notesToSend;
+        this.ppapResponse.additionalDocumentReference = this.additionalDocumentsToSend;
         const vars: ProcessVariables = ModelUtils.createProcessVariables("Ppap", this.ppap.buyerCustomerParty.party.id, this.ppap.sellerSupplierParty.party.id, this.cookieService.get("user_id"),this.ppapResponse, this.bpDataService);
         const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.bpDataService.processMetadata.processId);
 

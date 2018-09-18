@@ -210,8 +210,11 @@
     <hr>
 
     <!--Notes-->
+    <h5>Notes and Additional Files</h5>
     <note-view [notes]="quotation.note"
                [requestNotes]="rfq.note"
+               [documents]="quotation.additionalDocumentReference"
+               [requestDocuments]="rfq.additionalDocumentReference"
                [label]="'Notes'"
                [firstCol]="'col-2'"
                [thirdCol]="'col-5'"

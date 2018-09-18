@@ -85,13 +85,15 @@
 
 
     <!--Notes-->
-    <h3>Notes</h3>
+    <h5>Notes and Additional Files</h5>
     <note-view [notes]="request.note"
+               [documents]="request.additionalDocumentReference"
                [firstCol]="'col-2'"
                [lastCol]="'col-10'"
                [readonly]="isRequestDisabled()"
                [label]="'Request Notes'"></note-view>
     <note-view *ngIf="response"
+               [documents]="response.additionalDocumentReference"
                [notes]="response.note"
                [firstCol]="'col-2'"
                [lastCol]="'col-10'"

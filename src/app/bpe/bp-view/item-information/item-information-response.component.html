@@ -22,9 +22,13 @@
 <hr>
 
 <!--Notes-->
+<h5>Notes and Additional Files</h5>
 <note-view [notes]="request.note"
+           [documents]="request.additionalDocumentReference"
            [label]="'Customer\'s note'"></note-view>
+<hr>
 <note-view [notes]="response.note"
+           [documents]="response.additionalDocumentReference"
            [label]="'Manufacturer\'s note'"
            [readonly]="isLoading() || isResponseSent()"></note-view>
 

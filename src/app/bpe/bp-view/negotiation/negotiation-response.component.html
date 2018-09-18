@@ -88,8 +88,11 @@
     </div>
 </div>
 <!--Notes-->
+<h5>Notes and Additional Files</h5>
 <note-view [notes]="quotation.note"
            [requestNotes]="rfq.note"
+           [documents]="quotation.additionalDocumentReference"
+           [requestDocuments]="rfq.additionalDocumentReference"
            [label]="'Notes'"
            [firstCol]="'col-3'"
            [secondCol]="'col-3'"

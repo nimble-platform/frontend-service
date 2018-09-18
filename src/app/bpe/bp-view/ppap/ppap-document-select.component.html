@@ -59,7 +59,9 @@
 <hr>
 
 <!--Notes-->
+<h5>Notes and Additional Files</h5>
 <note-view [notes]="notes"
+           [documents]="additionalDocuments"
            [label]="'Notes'"
            [readonly]="isLoading() || isRequestSent()"></note-view>
 
