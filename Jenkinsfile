@@ -21,24 +21,6 @@ node('nimble-jenkins-slave') {
         stage('Deploy') {
             sh 'ssh staging "cd /srv/nimble-staging/ && ./run-staging.sh restart-single frontend-service"'
         }
-    } else if (env.BRANCH_NAME == 'staging-v2') {
-
-        stage('Build Application') {
-            sh 'mvn clean install -Denv=staging'
-        }
-
-        stage('Build Docker') {
-            sh 'docker build -t nimbleplatform/frontend-service:staging-v2 ./target'
-        }
-
-        stage('Push Docker') {
-            sh 'docker push nimbleplatform/frontend-service:staging-v2'
-        }
-
-        stage('Deploy') {
-            sh 'ssh staging "cd /srv/nimble-staging/ && ./run-staging.sh restart-single frontend-service-v2"'
-        }
-
     } else if (env.BRANCH_NAME == 'master') {
 
         stage('Build Application') {
