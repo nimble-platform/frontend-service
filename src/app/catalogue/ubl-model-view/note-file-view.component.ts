@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Attachment} from '../model/publish/attachment';
 import {DocumentReference} from '../model/publish/document-reference';
-import {BinaryObject} from '../../../../target/frontend-service/app/catalogue/model/publish/binary-object';
+import {BinaryObject} from '../model/publish/binary-object';
 
 @Component({
     selector: 'note-file-view',
