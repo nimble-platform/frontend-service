@@ -26,6 +26,7 @@ import { Address } from "../../../catalogue/model/publish/address";
 import { SearchContextService } from "../../../simple-search/search-context.service";
 import { EpcCodes } from "../../../data-channel/model/epc-codes";
 import { EpcService } from "../epc-service";
+import {DocumentService} from "../document-service";
 
 /**
  * Created by suat on 20-Sep-17.
@@ -69,7 +70,8 @@ export class OrderComponent implements OnInit {
                 private searchContextService: SearchContextService,
                 private epcService: EpcService,
                 private location: Location,
-                private router: Router) {
+                private router: Router,
+                private documentService: DocumentService) {
 
     }
 
@@ -179,7 +181,7 @@ export class OrderComponent implements OnInit {
         const sellerId: string = this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty.id;
         order.sellerSupplierParty = new SupplierParty(this.sellerParty);
 
-        const vars: ProcessVariables = ModelUtils.createProcessVariables("Order", buyerId, sellerId, order, this.bpDataService);
+        const vars: ProcessVariables = ModelUtils.createProcessVariables("Order", buyerId, sellerId,this.cookieService.get("user_id"), order, this.bpDataService);
         const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
 
         this.bpeService.startBusinessProcess(piim)
@@ -196,8 +198,9 @@ export class OrderComponent implements OnInit {
         const order = copy(this.bpDataService.order);
         UBLModelUtils.removeHjidFieldsFromObject(order);
 
-        this.bpeService.updateBusinessProcess(JSON.stringify(this.order),"ORDER",this.bpDataService.processMetadata.processId)
+        this.bpeService.updateBusinessProcess(JSON.stringify(order),"ORDER",this.bpDataService.processMetadata.processId)
             .then(() => {
+                this.documentService.updateCachedDocument(order.id,order);
                 this.submitCallStatus.callback("Order updated", true);
                 this.router.navigate(['dashboard']);
             })
@@ -213,6 +216,7 @@ export class OrderComponent implements OnInit {
             "Order",
             this.bpDataService.order.buyerCustomerParty.party.id,
             this.bpDataService.order.sellerSupplierParty.party.id,
+            this.cookieService.get("user_id"),
             this.bpDataService.orderResponse,
             this.bpDataService
         );
@@ -441,7 +445,7 @@ export class OrderComponent implements OnInit {
 
         if (docClause) {
             this.fetchDataMonitoringStatus.submit();
-            return this.bpeService.getDocumentJsonContent(docClause.clauseDocumentRef.id).then(result => {
+            return this.documentService.getDocumentJsonContent(docClause.clauseDocumentRef.id).then(result => {
                 this.fetchDataMonitoringStatus.callback("Successfully fetched data monitoring service", true);
                 const q: Quotation = result as Quotation;
                 return q.dataMonitoringPromised;

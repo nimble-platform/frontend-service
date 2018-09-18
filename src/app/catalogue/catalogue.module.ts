@@ -40,6 +40,7 @@ import { ProductPriceTabComponent } from "./publish/product-price-tab.component"
 import { ProductCertificatesTabComponent } from "./publish/product-certificates-tab.component";
 import { ProductTrackAndTraceTabComponent } from "./publish/product-track-and-trace-tab.component";
 import { UserMgmtModule } from "../user-mgmt/user-mgmt.module";
+import {NoteFileViewComponent} from './ubl-model-view/note-file-view.component';
 
 @NgModule({
 	imports: [CommonModule, 
@@ -82,7 +83,8 @@ import { UserMgmtModule } from "../user-mgmt/user-mgmt.module";
         PropertyBlockPipe,
         ItemPropertyDataSourcePipe,
         DetailedAddressViewComponent,
-        PaymentTermsView
+        PaymentTermsView,
+        NoteFileViewComponent
     ],
     exports: [
         CategorySearchComponent,
@@ -107,7 +109,8 @@ import { UserMgmtModule } from "../user-mgmt/user-mgmt.module";
         PropertyBlockPipe,
         ItemPropertyDataSourcePipe,
         DetailedAddressViewComponent,
-        PaymentTermsView
+        PaymentTermsView,
+        NoteFileViewComponent
     ],
     providers: [PublishDeactivateGuardService, CategoryDeactivateGuardService]
 })

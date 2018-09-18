@@ -178,7 +178,7 @@
     <!-- Service Start Date -->
     <div class="row space-before">
         <div class="col-2">
-            <input-label label="Earliest Pick-Up Date" definition="The period within which the services referred to in the Transport Execution Plan Request must begin.">
+            <input-label label="Pick-Up Date" definition="The period within which the services referred to in the Transport Execution Plan Request must begin.">
             </input-label>
         </div>
         <div class="col-5">
@@ -194,7 +194,7 @@
     <!-- Service End Date -->
     <div class="row space-before">
         <div class="col-2">
-            <input-label label="Latest Pick-Up Date" definition="The period during which the services referred to in the Transport Execution Plan Request must be completed.">
+            <input-label label="Drop-Off Date" definition="The period during which the services referred to in the Transport Execution Plan Request must be completed.">
             </input-label>
         </div>
         <div class="col-5">
@@ -209,21 +209,18 @@
     
     <hr>
 
-    <!-- Note -->
-    <div class="row space-before">
-        <div class="col-2">
-            <input-label label="Note">
-            </input-label>
-        </div>
-        <div class="col-5">
-            <text-input [text]="rfq.note[0]" [disabled]="true">
-            </text-input>
-        </div>
-        <div class="col-5">
-            <text-input [(text)]="quotation.note[0]" [disabled]="isDisabled()">
-            </text-input>
-        </div>
-    </div>
+    <!--Notes-->
+    <h5>Notes and Additional Files</h5>
+    <note-file-view [notes]="quotation.note"
+               [requestNotes]="rfq.note"
+               [documents]="quotation.additionalDocumentReference"
+               [requestDocuments]="rfq.additionalDocumentReference"
+               [label]="'Notes'"
+               [firstCol]="'col-2'"
+               [thirdCol]="'col-5'"
+               [lastCol]="'col-5'"
+               [readonly]="isDisabled()"></note-file-view>
+
 </ng-container>
 
 

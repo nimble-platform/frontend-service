@@ -21,6 +21,7 @@ import { getMaximumQuantityForPrice, getStepForPrice, copy } from "../../../comm
 import { PeriodRange } from "../../../user-mgmt/model/period-range";
 import { Option } from "../../../common/options-input.component";
 import { addressToString } from "../../../user-mgmt/utils";
+import {DocumentService} from '../document-service';
 
 @Component({
     selector: "negotiation-request",
@@ -48,6 +49,7 @@ export class NegotiationRequestComponent implements OnInit {
                 private userService:UserService,
                 private cookieService: CookieService,
                 private location: Location,
+                private documentService: DocumentService,
                 private router: Router) {
 
     }
@@ -97,7 +99,7 @@ export class NegotiationRequestComponent implements OnInit {
                 rfq.buyerCustomerParty = new CustomerParty(buyerParty);
                 rfq.sellerSupplierParty = new SupplierParty(sellerParty);
 
-                const vars: ProcessVariables = ModelUtils.createProcessVariables("Negotiation", buyerId, sellerId, rfq, this.bpDataService);
+                const vars: ProcessVariables = ModelUtils.createProcessVariables("Negotiation", buyerId, sellerId,this.cookieService.get("user_id"), rfq, this.bpDataService);
                 const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
 
                 return this.bpeService.startBusinessProcess(piim);
@@ -123,6 +125,7 @@ export class NegotiationRequestComponent implements OnInit {
 
         this.bpeService.updateBusinessProcess(JSON.stringify(rfq),"REQUESTFORQUOTATION",this.bpDataService.processMetadata.processId)
             .then(() => {
+                this.documentService.updateCachedDocument(rfq.id,rfq);
                 this.callStatus.callback("Terms updated", true);
                 this.router.navigate(['dashboard']);
             })

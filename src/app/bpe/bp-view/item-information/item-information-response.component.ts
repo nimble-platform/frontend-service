@@ -15,6 +15,7 @@ import { Attachment } from "../../../catalogue/model/publish/attachment";
 import { ProcessType } from "../../model/process-type";
 import { PresentationMode } from "../../../catalogue/model/publish/presentation-mode";
 import { isTransportService } from "../../../common/utils";
+import {CookieService} from 'ng2-cookies';
 
 @Component({
     selector: "item-information-response",
@@ -36,6 +37,7 @@ export class ItemInformationResponseComponent implements OnInit {
                 private bpDataService: BPDataService,
                 private location: Location,
                 private router: Router,
+                private cookieService: CookieService,
                 private route: ActivatedRoute) {
         
     }
@@ -68,7 +70,8 @@ export class ItemInformationResponseComponent implements OnInit {
         const vars: ProcessVariables = ModelUtils.createProcessVariables(
             "Item_Information_Request", 
             this.bpDataService.itemInformationRequest.buyerCustomerParty.party.id, 
-            this.bpDataService.itemInformationRequest.sellerSupplierParty.party.id, 
+            this.bpDataService.itemInformationRequest.sellerSupplierParty.party.id,
+            this.cookieService.get("user_id"),
             this.bpDataService.itemInformationResponse, 
             this.bpDataService
         );

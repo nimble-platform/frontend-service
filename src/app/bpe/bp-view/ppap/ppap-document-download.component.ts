@@ -5,9 +5,9 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {PpapResponse} from "../../../catalogue/model/publish/ppap-response";
 import {Ppap} from "../../../catalogue/model/publish/ppap";
 import {DocumentReference} from "../../../catalogue/model/publish/document-reference";
-import {ActivityVariableParser} from "../activity-variable-parser";
 import { Location } from "@angular/common";
 import { BinaryObject } from "../../../catalogue/model/publish/binary-object";
+import {DocumentService} from "../document-service";
 
 interface UploadedDocuments {
     [doc: string]: BinaryObject[];
@@ -24,8 +24,10 @@ export class PpapDocumentDownloadComponent{
     @Input() ppap: Ppap;
 
     ppapDocuments : DocumentReference[] = [];
-    note: any;
-    noteBuyer: any;
+    notes: string[];
+    notesBuyer: string[];
+    additionalDocuments:DocumentReference[];
+    additionalDocumentsBuyer:DocumentReference[];
     documents: UploadedDocuments = {};
     keys = [];
 
@@ -34,7 +36,8 @@ export class PpapDocumentDownloadComponent{
     constructor(private bpDataService: BPDataService,
                 private bpeService: BPEService,
                 private route: ActivatedRoute,
-                private location: Location) {
+                private location: Location,
+                private documentService: DocumentService) {
     }
 
     ngOnInit() {
@@ -43,9 +46,14 @@ export class PpapDocumentDownloadComponent{
                 const processid = params['pid'];
     
                 this.bpeService.getProcessDetailsHistory(processid).then(task => {
-                    this.ppap = ActivityVariableParser.getInitialDocument(task).value as Ppap;
-                    this.ppapResponse = ActivityVariableParser.getResponse(task).value as PpapResponse;
-                    this.initFromPpap();
+                    return Promise.all([
+                        this.documentService.getInitialDocument(task),
+                        this.documentService.getResponseDocument(task)
+                    ]).then(([initialDocument, responseDocument]) => {
+                        this.ppap = initialDocument as Ppap;
+                        this.ppapResponse = responseDocument as PpapResponse;
+                        this.initFromPpap();
+                    });
                 });
             });
         } else {
@@ -58,7 +66,8 @@ export class PpapDocumentDownloadComponent{
     }
     
     private initFromPpap() {
-        this.noteBuyer = this.ppap.note;
+        this.notesBuyer = this.ppap.note;
+        this.additionalDocumentsBuyer = this.ppap.additionalDocumentReference;
         this.ppapDocuments = this.ppapResponse.requestedDocument;
 
         for (let i = 0; i < this.ppapDocuments.length; i++) {
@@ -72,7 +81,8 @@ export class PpapDocumentDownloadComponent{
                 );
             }
         }
-        this.note = this.ppapResponse.note;
+        this.notes = this.ppapResponse.note;
+        this.additionalDocuments = this.ppapResponse.additionalDocumentReference;
         this.keys = Object.keys(this.documents);
 
         this.requestedDocuments = this.ppap.documentType;
@@ -113,3 +123,4 @@ export class PpapDocumentDownloadComponent{
         }
     }
 }
+

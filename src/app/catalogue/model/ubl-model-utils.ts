@@ -137,7 +137,7 @@ export class UBLModelUtils {
         const orderLine: OrderLine = new OrderLine(lineItem);
         const settings = new CompanyNegotiationSettings();
 
-        return new Order(this.generateUUID(), "", new Period(), new Address(), null, null, null, 
+        return new Order(this.generateUUID(), [''], new Period(), new Address(), null, null, null,
         this.getDefaultPaymentMeans(settings), this.getDefaultPaymentTerms(settings), new MonetaryTotal(), [orderLine]);
     }
 
@@ -147,7 +147,7 @@ export class UBLModelUtils {
         this.removeHjidFieldsFromObject(order.sellerSupplierParty);
         const customerParty:CustomerParty = order.buyerCustomerParty;
         const supplierParty:SupplierParty = order.sellerSupplierParty;
-        const orderResponseSimple:OrderResponseSimple = new OrderResponseSimple(this.generateUUID(), "", "", acceptedIndicator, orderReference, supplierParty, customerParty);
+        const orderResponseSimple:OrderResponseSimple = new OrderResponseSimple(this.generateUUID(), [''], "", acceptedIndicator, orderReference, supplierParty, customerParty);
         return orderResponseSimple;
     }
 
@@ -156,7 +156,7 @@ export class UBLModelUtils {
         const item:Item = this.createItem();
         const price: Price = this.createPrice();
         const lineItem:LineItem = this.createLineItem(quantity, price, item);
-        const ppap = new Ppap(this.generateUUID(), "",documents, null, null, lineItem);
+        const ppap = new Ppap(this.generateUUID(), [''],documents, null, null, lineItem);
         return ppap;
     }
 
@@ -388,6 +388,8 @@ export class UBLModelUtils {
         transportExecutionPlanRequest.consignment[0].consolidatedShipment.push(quotation.quotationLine[0].lineItem.delivery[0].shipment);
         transportExecutionPlanRequest.consignment[0].grossVolumeMeasure = quotation.quotationLine[0].lineItem.delivery[0].shipment.consignment[0].grossVolumeMeasure;
         transportExecutionPlanRequest.consignment[0].grossWeightMeasure = quotation.quotationLine[0].lineItem.delivery[0].shipment.consignment[0].grossWeightMeasure;
+        transportExecutionPlanRequest.serviceStartTimePeriod.startDate = quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.startDate;
+        transportExecutionPlanRequest.serviceStartTimePeriod.endDate = quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.endDate;
         this.removeHjidFieldsFromObject(transportExecutionPlanRequest);
         return transportExecutionPlanRequest
     }
@@ -516,6 +518,7 @@ export class UBLModelUtils {
         delete object.startTimeItem;
         delete object.endDateItem;
         delete object.endTimeItem;
+        delete object.estimatedDeliveryDateItem;
         for (const field in object) {
             if(object.hasOwnProperty(field) && object[field] != null && typeof(object[field]) === 'object') {
                 this.removeHjidFieldsFromObject(object[field]);
