@@ -425,7 +425,7 @@ export class UBLModelUtils {
         itemInformationResponse.item[0] = JSON.parse(JSON.stringify(itemInformationRequest.itemInformationRequestLine[0].salesItem[0].item));
         itemInformationResponse.item[0].itemSpecificationDocumentReference = [];
         itemInformationResponse.sellerSupplierParty = itemInformationRequest.sellerSupplierParty;
-        itemInformationResponse.buyerCustomerParty = itemInformationResponse.buyerCustomerParty;
+        itemInformationResponse.buyerCustomerParty = itemInformationRequest.buyerCustomerParty;
         this.removeHjidFieldsFromObject(itemInformationResponse);
         return itemInformationResponse;
     }
