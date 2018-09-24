@@ -38,6 +38,7 @@ import { Quantity } from "../../catalogue/model/publish/quantity";
 import { CompanyNegotiationSettings } from "../../user-mgmt/model/company-negotiation-settings";
 import { CompanySettings } from "../../user-mgmt/model/company-settings";
 import {DocumentService} from "./document-service";
+import {ShipmentStage} from "../../catalogue/model/publish/shipment-stage";
 
 /**
  * Created by suat on 20-Sep-17.
@@ -427,6 +428,7 @@ export class BPDataService{
 
         this.despatchAdvice.despatchLine[0].deliveredQuantity.value = deliveredQuantity.value;
         this.despatchAdvice.despatchLine[0].shipment[0].handlingInstructions = handlingInst;
+        this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage.push(new ShipmentStage());
         this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage[0].carrierParty.name = carrierName;
         this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage[0].carrierParty.contact.telephone = carrierContact;
         this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage[0].estimatedDeliveryDate = endDate;

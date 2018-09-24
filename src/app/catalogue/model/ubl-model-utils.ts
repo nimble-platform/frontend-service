@@ -53,6 +53,7 @@ import { TradingTerm } from "./publish/trading-term";
 import { copy } from "../../common/utils";
 import { CompanyNegotiationSettings } from "../../user-mgmt/model/company-negotiation-settings";
 import { headersToString } from "../../../../node_modules/@types/selenium-webdriver/http";
+import {ShipmentStage} from "./publish/shipment-stage";
 
 /**
  * Created by suat on 05-Jul-17.
@@ -328,6 +329,7 @@ export class UBLModelUtils {
         despatchAdvice.id = this.generateUUID();
         despatchAdvice.orderReference = [UBLModelUtils.createOrderReference(order.id)];
         despatchAdvice.despatchLine = [new DespatchLine(new Quantity(), order.orderLine[0].lineItem.item, [new Shipment()])];
+        despatchAdvice.despatchLine[0].shipment[0].shipmentStage.push(new ShipmentStage());
         despatchAdvice.despatchSupplierParty = order.sellerSupplierParty;
         despatchAdvice.deliveryCustomerParty = order.buyerCustomerParty;
         return despatchAdvice
