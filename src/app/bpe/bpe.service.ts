@@ -91,33 +91,6 @@ export class BPEService {
             .catch(this.handleError);
 	}
 
-	getProcessDetails(id: string): Promise<any> {
-		const url = `${this.url}/rest/engine/default/variable-instance?processInstanceIdIn=${id}`;
-		return this.http
-		.get(url, {headers: this.headers})
-		.toPromise()
-		.then(res => res.json())
-		.catch(this.handleError);
-	}
-
-	getInitiatorHistory(id: string): Promise<any> {
-		const url = `${this.url}/rest/engine/default/history/task?processVariables=initiatorID_eq_${id}&sortBy=startTime&sortOrder=desc&maxResults=20`;
-		return this.http
-		.get(url, {headers: this.headers})
-		.toPromise()
-		.then(res => res.json())
-		.catch(this.handleError);
-	}
-
-	getRecipientHistory(id: string): Promise<any> {
-		const url = `${this.url}/rest/engine/default/history/task?processVariables=responderID_eq_${id}&sortBy=startTime&sortOrder=desc&maxResults=20`;
-		return this.http
-		.get(url, {headers: this.headers})
-		.toPromise()
-		.then(res => res.json())
-		.catch(this.handleError);
-	}
-
 	getProcessInstanceGroup(groupId: string){
 		let url:string = `${this.url}/group/${groupId}`;
 		return this.http
