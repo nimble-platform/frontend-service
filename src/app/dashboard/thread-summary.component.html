@@ -19,6 +19,9 @@
                 <div *ngIf="processInstanceGroup.archived" (click)="restoreGroup()" data-toggle="tooltip" data-placement="top" title="Restore">
                     <i class="fa fa-undo p-2 pointer" aria-hidden="true"></i>
                 </div>
+                <div (click)="cancelCollaboration()" data-toggle="tooltip" data-placement="top" title="Cancel the collaboration">
+                    <i class="fa fa-times p-2 pointer" aria-hidden="true"></i>
+                </div>
             </div>
         </div>
 

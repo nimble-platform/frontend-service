@@ -3,6 +3,7 @@
  */
 export class ProcessInstanceGroup {
     constructor(public id: string = "",
+                public status:string,
                 public partyID: string = "",
                 public processInstanceIDs: string[],
                 public archived: boolean = false,

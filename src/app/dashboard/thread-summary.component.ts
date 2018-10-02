@@ -363,5 +363,18 @@ export class ThreadSummaryComponent implements OnInit {
         }
     }
 
+    cancelCollaboration(){
+        if (confirm("Are you sure that you want to cancel this collaboration?")) {
+            this.archiveCallStatus.submit();
+            this.bpeService.cancelCollaboration(this.processInstanceGroup.id)
+                .then(() => {
+                    this.archiveCallStatus.callback("Cancelled collaboration successfully");
+                    this.threadStateUpdated.next();
+                })
+                .catch(err => {
+                    this.archiveCallStatus.error("Failed to cancel collaboration",err);
+                });
+        }
+    }
 }
 

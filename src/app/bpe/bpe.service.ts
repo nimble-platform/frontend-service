@@ -82,6 +82,16 @@ export class BPEService {
 		.catch(this.handleError);
 	}
 
+    cancelCollaboration(groupId: string): Promise<any> {
+        let headers = this.getAuthorizedHeaders();
+        const url = `${this.url}/collaboration?groupID=${groupId}`;
+        return this.http
+            .delete(url, {headers: headers})
+            .toPromise()
+            .then(res => res.text())
+            .catch(this.handleError);
+    }
+
 	updateBusinessProcess(content: string, processID: string, processInstanceID: string): Promise<any> {
         const url = `${this.url}/processInstance?processID=${processID}&processInstanceID=${processInstanceID}&creatorUserID=${this.cookieService.get("user_id")}`;
         return this.http
