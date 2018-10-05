@@ -84,9 +84,9 @@ export class BPEService {
 
     cancelCollaboration(groupId: string): Promise<any> {
         let headers = this.getAuthorizedHeaders();
-        const url = `${this.url}/collaboration?groupID=${groupId}`;
+        const url = `${this.url}/group/${groupId}/cancel`;
         return this.http
-            .delete(url, {headers: headers})
+            .post(url, null, {headers: headers})
             .toPromise()
             .then(res => res.text())
             .catch(this.handleError);
