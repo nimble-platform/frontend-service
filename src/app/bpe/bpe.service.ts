@@ -74,9 +74,9 @@ export class BPEService {
 	
 	cancelBusinessProcess(id: string): Promise<any> {
 	    let headers = this.getAuthorizedHeaders();
-		const url = `${this.url}/processInstance?processInstanceId=${id}`;
+		const url = `${this.url}/processInstance/${id}/cancel`;
 		return this.http
-		.delete(url, {headers: headers})
+		.post(url, null, {headers: headers})
 		.toPromise()
 		.then(res => res.text())
 		.catch(this.handleError);
