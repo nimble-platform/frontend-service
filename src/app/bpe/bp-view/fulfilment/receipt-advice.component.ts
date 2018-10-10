@@ -10,6 +10,7 @@ import { ProcessInstanceInputMessage } from "../../model/process-instance-input-
 import { BpUserRole } from "../../model/bp-user-role";
 import { Location } from "@angular/common";
 import { DespatchAdvice } from "../../../catalogue/model/publish/despatch-advice";
+import {CookieService} from 'ng2-cookies';
 
 /**
  * Created by suat on 20-Sep-17.
@@ -30,6 +31,7 @@ export class ReceiptAdviceComponent implements OnInit {
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
                 private location: Location,
+                private cookieService: CookieService,
                 private router:Router) {
     }
 
@@ -51,7 +53,8 @@ export class ReceiptAdviceComponent implements OnInit {
         const vars: ProcessVariables = ModelUtils.createProcessVariables(
             "Fulfilment", 
             this.bpDataService.receiptAdvice.despatchSupplierParty.party.id, 
-            this.bpDataService.receiptAdvice.deliveryCustomerParty.party.id, 
+            this.bpDataService.receiptAdvice.deliveryCustomerParty.party.id,
+            this.cookieService.get("user_id"),
             this.bpDataService.receiptAdvice, 
             this.bpDataService
         );
@@ -64,8 +67,7 @@ export class ReceiptAdviceComponent implements OnInit {
                 this.callStatus.callback("Receipt Advice sent", true);
                 this.router.navigate(['dashboard']);
             }).catch(error => {
-                this.callStatus.error("Failed to send Receipt Advice");
-                console.log("Failed to send Receipt Advice", error);
+                this.callStatus.error("Failed to send Receipt Advice", error);
             });
     }
 

@@ -7,4 +7,5 @@ import {Contract} from "../../../catalogue/model/publish/contract";
 })
 export class ContractComponent {
     @Input() contract: Contract = null;
+    @Input() showQuotation: boolean = false;
 }

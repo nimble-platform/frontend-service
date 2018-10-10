@@ -16,8 +16,9 @@ import { SupplierParty } from "../../../catalogue/model/publish/supplier-party";
 import { ProcessVariables } from "../../model/process-variables";
 import { ModelUtils } from "../../model/model-utils";
 import { ProcessInstanceInputMessage } from "../../model/process-instance-input-message";
-import { copy } from "../../../common/utils";
+import { copy, isTransportService } from "../../../common/utils";
 import { PresentationMode } from "../../../catalogue/model/publish/presentation-mode";
+import {DocumentService} from '../document-service';
 /**
  * Created by suat on 19-Nov-17.
  */
@@ -38,6 +39,7 @@ export class ItemInformationRequestComponent implements OnInit {
                 private userService: UserService, 
                 private cookieService: CookieService, 
                 private location: Location,
+                private documentService: DocumentService,
                 private router: Router) {
         
     }
@@ -53,7 +55,7 @@ export class ItemInformationRequestComponent implements OnInit {
     }
 
     isRequestSent() {
-        return !!this.bpDataService.processMetadata;
+        return !!this.bpDataService.processMetadata && !this.bpDataService.updatingProcess;
     }
 
     getPresentationMode(): PresentationMode {
@@ -62,13 +64,20 @@ export class ItemInformationRequestComponent implements OnInit {
 
     onSkip(): void {
         this.bpDataService.resetBpData();
-        this.bpDataService.initPpap([]);
-        this.bpDataService.setBpOptionParameters(this.bpDataService.userRole, "Ppap", "Item_Information_Request");
+        if(isTransportService(this.bpDataService.getCatalogueLine()) || !this.bpDataService.getCompanySettings().ppapCompatibilityLevel) {
+            // skip ppap
+            this.bpDataService.initRfq(this.bpDataService.getCompanySettings().negotiationSettings).then(() => {
+                this.bpDataService.setBpOptionParameters(this.bpDataService.userRole, "Negotiation", "Ppap");
+            });
+        } else {
+            this.bpDataService.initPpap([]);
+            this.bpDataService.setBpOptionParameters(this.bpDataService.userRole, "Ppap", "Item_Information_Request");
+        }
     }
 
     onSendRequest(): void {
         this.callStatus.submit();
-        let itemInformationRequest: ItemInformationRequest = copy(this.bpDataService.itemInformationRequest);
+        const itemInformationRequest: ItemInformationRequest = copy(this.bpDataService.itemInformationRequest);
 
         // final check on the order
         itemInformationRequest.itemInformationRequestLine[0].salesItem[0].item = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;
@@ -76,28 +85,46 @@ export class ItemInformationRequestComponent implements OnInit {
 
         //first initialize the seller and buyer parties.
         //once they are fetched continue with starting the ordering process
-        let sellerId: string = this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty.id;
-        let buyerId: string = this.cookieService.get("company_id");
+        const sellerId: string = this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty.id;
+        const buyerId: string = this.cookieService.get("company_id");
 
-        this.userService.getParty(buyerId).then(buyerParty => {
+        Promise.all([
+            this.userService.getParty(buyerId),
+            this.userService.getParty(sellerId)
+        ])
+        .then(([buyerParty, sellerParty]) => {
             itemInformationRequest.buyerCustomerParty = new CustomerParty(buyerParty);
+            itemInformationRequest.sellerSupplierParty = new SupplierParty(sellerParty);
 
-            this.userService.getParty(sellerId).then(sellerParty => {
-                itemInformationRequest.sellerSupplierParty = new SupplierParty(sellerParty);
-                let vars: ProcessVariables = ModelUtils.createProcessVariables("Item_Information_Request", buyerId, sellerId, itemInformationRequest, this.bpDataService);
-                let piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
+            const vars: ProcessVariables = ModelUtils.createProcessVariables(
+                "Item_Information_Request", buyerId, sellerId,this.cookieService.get("user_id"), itemInformationRequest, this.bpDataService);
+            const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
 
-                this.bpeService.startBusinessProcess(piim)
-                .then(() => {
-                    this.callStatus.callback("Item Information Request sent", true);
-                    this.router.navigate(['dashboard']);
-                })
-                .catch(error => {
-                    this.callStatus.error("Failed to send Item Information Request");
-                    console.log("Error while sending information request", error);
-                });
-            });
+            return this.bpeService.startBusinessProcess(piim)
+        })
+        .then(() => {
+            this.callStatus.callback("Item Information Request sent", true);
+            this.router.navigate(['dashboard']);
+        })
+        .catch(error => {
+            this.callStatus.error("Failed to send Item Information Request", error);
         });
+    }
+
+    onUpdateRequest(): void {
+        this.callStatus.submit();
+        const itemInformationRequest: ItemInformationRequest = copy(this.bpDataService.itemInformationRequest);
+        UBLModelUtils.removeHjidFieldsFromObject(itemInformationRequest);
+
+        this.bpeService.updateBusinessProcess(JSON.stringify(itemInformationRequest),"ITEMINFORMATIONREQUEST",this.bpDataService.processMetadata.processId)
+            .then(() => {
+                this.documentService.updateCachedDocument(itemInformationRequest.id,itemInformationRequest);
+                this.callStatus.callback("Item Information Request updated", true);
+                this.router.navigate(['dashboard']);
+            })
+            .catch(error => {
+                this.callStatus.error("Failed to update Item Information Request", error);
+            });
     }
 
     onSelectItemSpecificationFile(binaryObject: BinaryObject): void {

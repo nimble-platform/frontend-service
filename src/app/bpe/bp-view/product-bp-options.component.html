@@ -1,42 +1,67 @@
-<ng-container *ngIf="line">
-    <!-- Title -->
-    <h2 class="nimble-title">
-        Order for:
-    </h2> 
-    <h2>{{ line.goodsItem.item.name[0].value }}
-        <button class="btn btn-outline-dark inline ml-2" (click)="productExpanded = !productExpanded">
-            <i class="fas fa-chevron-up fa-fw inline" aria-hidden="true" *ngIf="productExpanded"></i>
-            <i class="fas fa-chevron-down fa-fw inline" aria-hidden="true" *ngIf="!productExpanded"></i>
-            <span class="inline" *ngIf="!productExpanded"><small>Show Details</small></span>
-            <span class="inline" *ngIf="productExpanded"><small>Hide Details</small></span>
-        </button>
-    </h2>
+<ng-container *ngIf="wrapper">
+    <div class="row">
+        <div class="col-6">
+            <!-- Title -->
+            <h2 class="nimble-title">
+                Order for:
+            </h2>
+            <h2>{{ line.goodsItem.item.name[0].value }}
+                <button class="btn btn-outline-dark inline ml-2" (click)="onToggleProductExpanded()">
+                    <i class="fas fa-chevron-up fa-fw inline" aria-hidden="true" *ngIf="productExpanded"></i>
+                    <i class="fas fa-chevron-down fa-fw inline" aria-hidden="true" *ngIf="!productExpanded"></i>
+                    <span class="inline" *ngIf="!productExpanded"><small>Show Details</small></span>
+                    <span class="inline" *ngIf="productExpanded"><small>Hide Details</small></span>
+                </button>
+            </h2>
+        </div>
+        <div *ngIf="serviceLine" class="col-6 title-right">
+            <!-- Transport Service Title -->
+            <h2 class="nimble-title">
+                Transport service:
+            </h2>
+            <h2>{{ serviceLine.goodsItem.item.name[0].value }}
+                <button class="btn btn-outline-dark inline ml-2" (click)="onToggleServiceExpanded()">
+                    <i class="fas fa-chevron-up fa-fw inline" aria-hidden="true" *ngIf="serviceExpanded"></i>
+                    <i class="fas fa-chevron-down fa-fw inline" aria-hidden="true" *ngIf="!serviceExpanded"></i>
+                    <span class="inline" *ngIf="!serviceExpanded"><small>Show Details</small></span>
+                    <span class="inline" *ngIf="serviceExpanded"><small>Hide Details</small></span>
+                </button>
+            </h2>
+        </div>
+    </div>
 
     <!-- Product Details Panel -->
     <product-details-tabs *ngIf="productExpanded" [wrapper]="wrapper" [showOverview]="true" 
-        [options]="options" [readonly]="true">
+        [settings]="settings" [options]="options" [readonly]="true">
+    </product-details-tabs>
+
+    <!-- Service Details Panel -->
+    <product-details-tabs *ngIf="serviceExpanded" [wrapper]="serviceWrapper" [showOverview]="true"
+        [settings]="serviceSettings" [options]="options" [readonly]="true">
     </product-details-tabs>
 
     <!-- BP Steps -->
-    <product-bp-steps *ngIf="processType !== 'Transport_Execution_Plan'" [currentStep]="currentStep" 
-        [status]="getStepsStatus()" [statusText]="getStepsStatusText()">
+    <product-bp-steps [currentStep]="currentStep" [status]="getStepsStatus()"
+        [statusText]="getStepsStatusText()" [displayMode]="stepsDisplayMode">
     </product-bp-steps>
 
     <hr>
     
     <!-- Order Content -->
-    <item-information *ngIf="processType === 'Item_Information_Request'">
+    <item-information *ngIf="currentStep === 'Item_Information_Request' || currentStep === 'Transport_Information_Request'">
     </item-information>
-    <ppap *ngIf="processType === 'Ppap'">
+    <ppap *ngIf="currentStep === 'Ppap'">
     </ppap>
-    <negotiation *ngIf="processType === 'Negotiation'">
+    <negotiation *ngIf="currentStep === 'Negotiation'">
     </negotiation>
-    <order *ngIf="processType === 'Order'">
+    <transport-negotiation *ngIf="currentStep === 'Transport_Negotiation'">
+    </transport-negotiation>
+    <order *ngIf="currentStep === 'Order' || currentStep === 'Order_Confirmed'">
     </order>
-    <fulfilment *ngIf="processType === 'Fulfilment'">
+    <transport-execution-plan *ngIf="currentStep === 'Transport_Order' || currentStep === 'Transport_Order_Confirmed'">
+    </transport-execution-plan>
+    <fulfilment *ngIf="currentStep === 'Fulfilment'">
     </fulfilment>
-    <transport-execution-plan-bp *ngIf="processType === 'Transport_Execution_Plan'">
-    </transport-execution-plan-bp>
 </ng-container>
 
 <!-- Loading Icon -->

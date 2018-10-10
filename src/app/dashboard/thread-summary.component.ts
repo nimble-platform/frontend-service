@@ -11,6 +11,8 @@ import { DataChannelService } from "../data-channel/data-channel.service";
 import { ProcessType } from "../bpe/model/process-type";
 import { ThreadEventMetadata } from "../catalogue/model/publish/thread-event-metadata";
 import { ThreadEventStatus } from "../catalogue/model/publish/thread-event-status";
+import { SearchContextService } from "../simple-search/search-context.service";
+import {DocumentService} from "../bpe/bp-view/document-service";
 
 /**
  * Created by suat on 12-Mar-18.
@@ -25,8 +27,11 @@ export class ThreadSummaryComponent implements OnInit {
     @Input() processInstanceGroup: ProcessInstanceGroup;
     @Output() threadStateUpdated = new EventEmitter();
 
-    // Most recent event
+
+    titleEvent: ThreadEventMetadata;
     lastEvent: ThreadEventMetadata;
+
+    lastEventPartnerID = null;
 
     // History of events
     hasHistory: boolean = false;
@@ -36,14 +41,17 @@ export class ThreadSummaryComponent implements OnInit {
     // Utilities
     eventCount: number = 0
     archiveCallStatus: CallStatus = new CallStatus();
+    fetchCallStatus: CallStatus = new CallStatus();
     showDataChannelButton: boolean = false;
     channelLink = "";
 
     constructor(private bpeService: BPEService,
                 private cookieService: CookieService,
                 private dataChannelService: DataChannelService,
+                private searchContextService: SearchContextService,
                 private bpDataService: BPDataService,
-                private router: Router) {
+                private router: Router,
+                private documentService: DocumentService) {
     }
 
     ngOnInit(): void {
@@ -57,23 +65,27 @@ export class ThreadSummaryComponent implements OnInit {
     }
 
     private fetchEvents(): void {
+        this.fetchCallStatus.submit();
         const ids = this.processInstanceGroup.processInstanceIDs;
         Promise.all(ids.map(id => this.fetchThreadEvent(id))).then(events => {
             events.sort((a,b) => moment(a.startTime).diff(moment(b.startTime)));
             events = events.reverse();
             this.history = events.slice(1, events.length);
             this.lastEvent = events[0];
+            this.computeTitleEvent();
+            this.fetchCallStatus.callback("Successfully fetched events.", true);
         }).catch(error => {
+            this.fetchCallStatus.error("Error while fetching thread.", error);
         });
     }
 
     private async fetchThreadEvent(processInstanceId: string): Promise<ThreadEventMetadata> {
         const activityVariables = await this.bpeService.getProcessDetailsHistory(processInstanceId);
         const processType = ActivityVariableParser.getProcessType(activityVariables);
-        const initialDoc: any = ActivityVariableParser.getInitialDocument(activityVariables);
-        const response: any = ActivityVariableParser.getResponse(activityVariables);
-        const userRole = ActivityVariableParser.getUserRole(activityVariables,this.processInstanceGroup.partyID)
-        const processId = initialDoc.processInstanceId;
+        const initialDoc: any = await this.documentService.getInitialDocument(activityVariables);
+        const response: any = await this.documentService.getResponseDocument(activityVariables);
+        const userRole = await this.documentService.getUserRole(activityVariables,this.processInstanceGroup.partyID)
+        const processId = ActivityVariableParser.getProcessInstanceID(activityVariables);
 
         const [lastActivity, processInstance] = await Promise.all([
             this.bpeService.getLastActivityForProcessInstance(processId),
@@ -85,11 +97,11 @@ export class ThreadSummaryComponent implements OnInit {
             processType.replace(/[_]/gi, " "),
             processId,
             moment(lastActivity.startTime + "Z", 'YYYY-MM-DDTHH:mm:ssZ').format("YYYY-MM-DD HH:mm"),
-            ActivityVariableParser.getTradingPartnerName(initialDoc, this.cookieService.get("company_id")),
-            ActivityVariableParser.getProductFromProcessData(initialDoc),
-            ActivityVariableParser.getNoteFromProcessData(initialDoc),
+            ActivityVariableParser.getTradingPartnerName(initialDoc, this.cookieService.get("company_id"),processType),
+            ActivityVariableParser.getProductFromProcessData(initialDoc,processType),
+            ActivityVariableParser.getNoteFromProcessData(initialDoc,processType),
             this.getBPStatus(response),
-            initialDoc.value,
+            initialDoc,
             activityVariables,
             userRole === "buyer"
         );
@@ -98,12 +110,22 @@ export class ThreadSummaryComponent implements OnInit {
 
         this.checkDataChannel(event);
 
+        if (userRole === "buyer") {
+            this.lastEventPartnerID = ActivityVariableParser.getProductFromProcessData(initialDoc,processType).manufacturerParty.id;
+        }
+        else {
+            this.lastEventPartnerID = ActivityVariableParser.getBuyerId(initialDoc,processType);
+        }
+
         return event;
     }
 
     navigateToSearchDetails() {
-        const item = this.lastEvent.product;
+        const item = this.titleEvent.product;
         this.bpDataService.previousProcess = null;
+        this.searchContextService.associatedProcessMetadata = null;
+        this.searchContextService.associatedProcessType = null;
+        this.searchContextService.targetPartyRole = null;
         this.router.navigate(['/product-details'],
             {
                 queryParams: {
@@ -113,8 +135,16 @@ export class ThreadSummaryComponent implements OnInit {
             });
     }
 
+    navigateToCompanyDetails() {
+        this.router.navigate(['/user-mgmt/company-details'], {
+            queryParams: {
+                id: this.lastEventPartnerID
+            }
+        });
+    }
+
     private fillStatus(event: ThreadEventMetadata, processState: "EXTERNALLY_TERMINATED" | "COMPLETED" | "ACTIVE",
-        processType: ProcessType, response: any, buyer: boolean): void {
+                       processType: ProcessType, response: any, buyer: boolean): void {
 
         event.status = this.getStatus(processState, processType, response, buyer);
 
@@ -179,12 +209,18 @@ export class ThreadSummaryComponent implements OnInit {
         } else {
             switch(processType) {
                 case "Order":
-                    if (response.value.acceptedIndicator) {
-                        event.statusText = "Order approved";
+                    if (response.acceptedIndicator) {
+                        if(buyer) {
+                            event.statusText = "Waiting for Dispatch Advice";
+                            event.actionText = "See Order";
+                        } else {
+                            event.statusText = "Order approved";
+                            event.actionText = "Send Dispatch Advice";
+                        }
                     } else {
                         event.statusText = "Order declined";
+                        event.actionText = "See Order";
                     }
-                    event.actionText = "See Order";
                     break;
                 case "Negotiation":
                     if (buyer) {
@@ -203,7 +239,7 @@ export class ThreadSummaryComponent implements OnInit {
                     event.actionText = "See Receipt Advice";
                     break;
                 case "Ppap":
-                    if (response.value.acceptedIndicator) {
+                    if (response.acceptedIndicator) {
                         event.statusText = "Ppap approved";
                     } else {
                         event.statusText = "Ppap declined";
@@ -231,9 +267,12 @@ export class ThreadSummaryComponent implements OnInit {
     }
 
     private getStatus(processState: "EXTERNALLY_TERMINATED" | "COMPLETED" | "ACTIVE",
-            processType: ProcessType, response: any, buyer: boolean): ThreadEventStatus {
+                      processType: ProcessType, response: any, buyer: boolean): ThreadEventStatus {
         switch(processState) {
             case "COMPLETED":
+                if(processType === "Order") {
+                    return buyer ? "WAITING" : "ACTION_REQUIRED";
+                }
                 return "DONE";
             case "EXTERNALLY_TERMINATED":
                 return "CANCELLED";
@@ -258,6 +297,21 @@ export class ThreadSummaryComponent implements OnInit {
         return bpStatus;
     }
 
+    private computeTitleEvent() {
+        this.titleEvent = this.lastEvent;
+        // if the event is a transportation service, go through the history and check the last event that is not (if any)
+        if(this.lastEvent.product.transportationServiceDetails) {
+            // history ordered from new to old
+            for(let i = this.history.length - 1; i >= 0; i--) {
+                const event = this.history[i]
+                if(!event.product.transportationServiceDetails) {
+                    // if not a transport, this is relevant, doing it in the for loop makes sure the LAST non-transport event is the relevant one.
+                    this.titleEvent = event;
+                }
+            }
+        }
+    }
+
     archiveGroup(): void {
         this.archiveCallStatus.submit();
         this.bpeService.archiveProcessInstanceGroup(this.processInstanceGroup.id)
@@ -266,7 +320,7 @@ export class ThreadSummaryComponent implements OnInit {
                 this.threadStateUpdated.next();
             })
             .catch(err => {
-                this.archiveCallStatus.error('Failed to archive thread');
+                this.archiveCallStatus.error('Failed to archive thread', err);
             });
     }
 
@@ -278,7 +332,7 @@ export class ThreadSummaryComponent implements OnInit {
                 this.threadStateUpdated.next();
             })
             .catch(err => {
-                this.archiveCallStatus.error('Failed to restore thread');
+                this.archiveCallStatus.error('Failed to restore thread', err);
             });
     }
 
@@ -291,22 +345,36 @@ export class ThreadSummaryComponent implements OnInit {
                     this.threadStateUpdated.next();
                 })
                 .catch(err => {
-                    this.archiveCallStatus.error('Failed to delete thread permanently');
+                    this.archiveCallStatus.error('Failed to delete thread permanently', err);
                 });
         }
     }
 
     checkDataChannel(event:ThreadEventMetadata) {
         if(event.processType === 'Order') {
-          this.dataChannelService.channelsForBusinessProcess(event.processId)
-            .then(channels => {
-              if (channels.length > 0) {
-                this.showDataChannelButton = true;
-                const channelId = channels[0].channelID;
-                this.channelLink = `/data-channel/details/${channelId}`
-              }
-            });
+            this.dataChannelService.channelsForBusinessProcess(event.processId)
+                .then(channels => {
+                    if (channels.length > 0) {
+                        this.showDataChannelButton = true;
+                        const channelId = channels[0].channelID;
+                        this.channelLink = `/data-channel/details/${channelId}`
+                    }
+                });
         }
     }
 
+    cancelCollaboration(){
+        if (confirm("Are you sure that you want to cancel this collaboration?")) {
+            this.archiveCallStatus.submit();
+            this.bpeService.cancelCollaboration(this.processInstanceGroup.id)
+                .then(() => {
+                    this.archiveCallStatus.callback("Cancelled collaboration successfully");
+                    this.threadStateUpdated.next();
+                })
+                .catch(err => {
+                    this.archiveCallStatus.error("Failed to cancel collaboration",err);
+                });
+        }
+    }
 }
+

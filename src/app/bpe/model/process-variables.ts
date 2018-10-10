@@ -9,6 +9,7 @@ export class ProcessVariables {
                 public initiatorID: string,
                 public responderID: string,
                 public contentUUID: string,
+                public creatorUserID: string,
                 public relatedProducts: string[],
                 public relatedProductCategories: string[],
                 public content: string) {

@@ -33,7 +33,7 @@
     <div class="col-3">{{ wrapper.rfqIncotermsIfNegotiating }}</div>
     <div class="col-3">
         <options-input [visible]="rfq.negotiationOptions.incoterms" [presentationMode]="getPresentationMode()"
-            [disabled]="isLoading()" [options]="INCOTERMS" [(selected)]="wrapper.quotationIncoterms">
+            [disabled]="isLoading()" [options]="wrapper.settings.incoterms" [(selected)]="wrapper.quotationIncoterms">
         </options-input>
     </div>
 </div>
@@ -44,7 +44,7 @@
     <div class="col-3">{{ wrapper.rfqPaymentTermsIfNegotiating }}</div>
     <div class="col-3">
         <options-input [visible]="rfq.negotiationOptions.paymentTerms" [presentationMode]="getPresentationMode()"
-            [disabled]="isLoading()" [options]="wrapper.rfqPaymentTerms.PAYMENT_TERMS" 
+            [disabled]="isLoading()" [options]="wrapper.settings.paymentTerms" 
             [(selected)]="wrapper.quotationPaymentTerms.paymentTerm">
         </options-input>
     </div>
@@ -56,7 +56,7 @@
     <div class="col-3">{{ wrapper.rfqPaymentMeansIfNegotiating }}</div>
     <div class="col-3">
         <options-input [visible]="rfq.negotiationOptions.paymentMeans" [presentationMode]="getPresentationMode()"
-            [disabled]="isLoading()" [options]="PAYMENT_MEANS" [(selected)]="wrapper.quotationPaymentMeans">
+            [disabled]="isLoading()" [options]="wrapper.settings.paymentMeans" [(selected)]="wrapper.quotationPaymentMeans">
         </options-input>
     </div>
 </div>
@@ -87,28 +87,26 @@
         </quantity-input>
     </div>
 </div>
-
-<div class="row content-row">
-    <div class="col-3"><strong class="font-weight-500">Note:</strong></div>
-    <div class="col-3"></div>
-    <div class="col-3">
-        <text-input disabled [text]="rfq.note[0]">
-        </text-input>
-    </div>
-    <div class="col-3">
-        <text-input [disabled]="isLoading() || isReadOnly()" [(text)]="quotation.note[0]">
-        </text-input>
-    </div>
-</div>
-
+<!--Notes-->
+<h5>Notes and Additional Files</h5>
+<note-file-view [notes]="quotation.note"
+           [requestNotes]="rfq.note"
+           [documents]="quotation.additionalDocumentReference"
+           [requestDocuments]="rfq.additionalDocumentReference"
+           [label]="'Notes'"
+           [firstCol]="'col-3'"
+           [secondCol]="'col-3'"
+           [thirdCol]="'col-3'"
+           [lastCol]="'col-3'"
+           [readonly]="isLoading() || isReadOnly()"></note-file-view>
 <hr>
 
 <!-- Delivery Location -->
 <div class="row address-row">
     <div class="col-12">
         <h3>Delivery Address</h3>
-        <negotiation-address [address]="wrapper.rfqDeliveryAddress" disabled="true">
-        </negotiation-address>
+        <address-input [address]="wrapper.rfqDeliveryAddress" disabled="true">
+        </address-input>
     </div>
 </div>
 

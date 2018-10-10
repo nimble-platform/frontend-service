@@ -25,7 +25,7 @@ export class TransportationServiceDetails implements OnInit{
     PROPERTY_BLOCK_FIELD_PROPERTIES = "properties";
     PROPERTY_BLOCK_FIELD_PROPERTY_DETAILS = "propertyDetails";
 
-    @Input() presentationMode: string
+    @Input() presentationMode: string;
     @Input() catalogueLine: CatalogueLine;
     @Input() parentForm: FormGroup;
 

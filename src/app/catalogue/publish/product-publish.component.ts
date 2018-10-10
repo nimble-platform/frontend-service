@@ -33,6 +33,15 @@ import { ProductWrapper } from "../../common/product-wrapper";
 import { EditPropertyModalComponent } from "./edit-property-modal.component";
 import { Location } from "@angular/common";
 import { SelectedProperty } from "../model/publish/selected-property";
+import { CompanyNegotiationSettings } from "../../user-mgmt/model/company-negotiation-settings";
+import { Observable } from "rxjs/Observable";
+import { Subject } from "rxjs/Subject";
+import 'rxjs/add/observable/fromPromise'
+import 'rxjs/add/observable/interval';
+import 'rxjs/add/operator/takeUntil';
+
+
+type ProductType = "product" | "transportation";
 import {Text} from "../model/publish/text";
 
 interface SelectedProperties {
@@ -61,8 +70,12 @@ export class ProductPublishComponent implements OnInit {
 
     publishMode: PublishMode;
     selectedCategories: Category[];
-    publishingGranularity: "single" | "bulk" = "single";
     publishStatus: CallStatus = new CallStatus();
+    publishingGranularity: "single" | "bulk" = "single";
+    productCategoryRetrievalStatus: CallStatus = new CallStatus();
+    ngUnsubscribe: Subject<void> = new Subject<void>();
+    productType: ProductType;
+    isLogistics: boolean;
 
     /*
      * Values for Single only
@@ -70,7 +83,8 @@ export class ProductPublishComponent implements OnInit {
 
     catalogueLine: CatalogueLine = null;
     productWrapper: ProductWrapper = null;
-    selectedTabSinglePublish: "DETAILS" | "DELIVERY_TRADING" | "PRICE" = "DETAILS";
+    companyNegotiationSettings: CompanyNegotiationSettings;
+    selectedTabSinglePublish: "DETAILS" | "DELIVERY_TRADING" | "PRICE" | "CERTIFICATES" | "TRACK_TRACE" = "DETAILS";
     private selectedProperties: SelectedProperties = {};
     private categoryProperties: CategoryProperties = {};
     private lunrIndex: lunr.Index;
@@ -81,6 +95,7 @@ export class ProductPublishComponent implements OnInit {
     @ViewChild(EditPropertyModalComponent)
     private editPropertyModal: EditPropertyModalComponent;
     customProperties: any[] = [];
+    callStatus: CallStatus = new CallStatus();
 
     /*
      * Other Values
@@ -103,8 +118,6 @@ export class ProductPublishComponent implements OnInit {
 
     json = JSON;
 
-    productCategoryRetrievalStatus: CallStatus = new CallStatus();
-
     // used to add a new property which has a unit
     private quantity = new Quantity(null, null);
 
@@ -126,23 +139,43 @@ export class ProductPublishComponent implements OnInit {
 
     ngOnInit() {
         this.selectedCategories = this.categoryService.selectedCategories;
-
         const userId = this.cookieService.get("user_id");
+        this.callStatus.submit();
         this.userService.getUserParty(userId).then(party => {
-            this.catalogueService.getCatalogue(userId).then(catalogue => {
-                this.initView(party, catalogue);
-                this.publishStateService.publishingStarted = true;
-            });
+            return Promise.all([
+                Promise.resolve(party),
+                this.catalogueService.getCatalogue(userId),
+                this.userService.getCompanyNegotiationSettingsForParty(party.id)
+            ])
+        })
+        .then(([party, catalogue, settings]) => {
+            this.initView(party, catalogue, settings);
+            this.publishStateService.publishingStarted = true;
+            this.callStatus.callback("Successfully initialized.", true);
+        })
+        .catch(error => {
+            this.callStatus.error("Error while initializing the publish view.", error);
         });
 
         this.route.queryParams.subscribe((params: Params) => {
-
             // handle publishing granularity: single, bulk, null
             this.publishingGranularity = params['pg'];
             if(this.publishingGranularity == null) {
                 this.publishingGranularity = 'single';
             }
+            //set product type
+            this.productType = params["productType"] === "transportation" ? "transportation" : "product";
+            this.isLogistics = (this.productType === "transportation");
+            if(this.isLogistics) {
+                this.publishStateService.publishedProductNature = 'Transportation service';
+            } else {
+                this.publishStateService.publishedProductNature = 'Regular product';
+            }
         });
+    }
+
+    ngOnDestroy() {
+        this.ngUnsubscribe.next()
     }
 
     selectPreferredName(cp: Category | Property) {
@@ -174,14 +207,20 @@ export class ProductPublishComponent implements OnInit {
 
             for (let i = 0; i < fileList.length; i++) {
                 let file: File = fileList[i];
-                let reader = new FileReader();
+                const filesize = parseInt(((file.size/1024)/1024).toFixed(4));
+                if (filesize < 1) {
+                  let reader = new FileReader();
 
-                reader.onload = function (e: any) {
-                    let base64String = reader.result.split(',').pop();
-                    let binaryObject = new BinaryObject(base64String, file.type, file.name, "", "");
-                    images.push(binaryObject);
-                };
-                reader.readAsDataURL(file);
+                  reader.onload = function (e: any) {
+                      let base64String = (reader.result as string).split(',').pop();
+                      let binaryObject = new BinaryObject(base64String, file.type, file.name, "", "");
+                      images.push(binaryObject);
+                  };
+                  reader.readAsDataURL(file);
+                }
+                else {
+                  alert("Maximum allowed filesize: 1 MB");
+                }
             }
         }
     }
@@ -221,7 +260,7 @@ export class ProductPublishComponent implements OnInit {
             dismissModal("add category");
         }
         ProductPublishComponent.dialogBox = false;
-        this.router.navigate(['catalogue/categorysearch'], { queryParams: { pageRef: "publish", pg: this.publishingGranularity }});
+        this.router.navigate(['catalogue/categorysearch'], { queryParams: { pageRef: "publish", pg: this.publishingGranularity, productType: this.productType }});
     }
 
     onAddCustomProperty(event: Event, dismissModal: any) {
@@ -263,7 +302,11 @@ export class ProductPublishComponent implements OnInit {
     }
 
     isLoading(): boolean {
-        return this.publishStatus.fb_submitted;
+        return (this.publishStatus.fb_submitted || this.isProductCategoriesLoading());
+    }
+
+    isProductCategoriesLoading(): boolean {
+        return this.productCategoryRetrievalStatus.fb_submitted;
     }
 
     hasSelectedProperties(): boolean {
@@ -438,10 +481,9 @@ export class ProductPublishComponent implements OnInit {
                 }
             });
             this.selectedPropertiesUpdates = {};
-        })
-        .catch(() => {
+        }, () => {
             this.selectedPropertiesUpdates = {};
-        })
+        });
     }
 
     onToggleCategoryPropertySelected(category: Category, property: Property) {
@@ -488,7 +530,8 @@ export class ProductPublishComponent implements OnInit {
         return true;
     }
 
-    private initView(userParty, userCatalogue): void {
+    private initView(userParty, userCatalogue, settings): void {
+        this.companyNegotiationSettings = settings;
         this.catalogueService.setEditMode(true);
         this.publishStateService.resetData();
         // Following "if" block is executed when redirected by an "edit" button
@@ -501,7 +544,7 @@ export class ProductPublishComponent implements OnInit {
                 this.router.navigate(['catalogue/publish']);
                 return;
             }
-            this.productWrapper = new ProductWrapper(this.catalogueLine);
+            this.productWrapper = new ProductWrapper(this.catalogueLine, settings);
 
             // Get categories of item to edit
             if(this.publishStateService.publishingStarted == false) {
@@ -513,29 +556,32 @@ export class ProductPublishComponent implements OnInit {
                 if (classificationCodes.length > 0) {
                     // temporarily store publishing started variable as it will be used inside the following callback
                     this.productCategoryRetrievalStatus.submit();
-                    this.categoryService.getCategoriesByIds(classificationCodes).then((categories: Category[]) => {
-                        // upon navigating from the catalogue view, classification codes are set as selected categories
+                    Observable.fromPromise(this.categoryService.getCategoriesByIds(classificationCodes))
+                        .takeUntil(this.ngUnsubscribe)
+                        .catch(err => {
+                            this.productCategoryRetrievalStatus.error('Failed to get product categories')
+                            return Observable.throw(err);
+                        })
+                        .subscribe((categories: Category[]) => {
+                            // upon navigating from the catalogue view, classification codes are set as selected categories
+                            for (let category of categories) {
+                                this.categoryService.selectedCategories.push(category);
+                            }
+                            sortCategories(this.categoryService.selectedCategories);
 
-                        for (let category of categories) {
-                            this.categoryService.selectedCategories.push(category);
-                        }
-                        sortCategories(this.categoryService.selectedCategories);
-
-                        if (this.categoryService.selectedCategories != []) {
-                            for (let category of this.categoryService.selectedCategories) {
-                                let newCategory = this.isNewCategory(category);
-                                if (newCategory) {
-                                    this.updateItemWithNewCategory(category);
+                            if (this.categoryService.selectedCategories != []) {
+                                for (let category of this.categoryService.selectedCategories) {
+                                    let newCategory = this.isNewCategory(category);
+                                    if (newCategory) {
+                                        this.updateItemWithNewCategory(category);
+                                    }
                                 }
                             }
-                        }
 
-                        this.recomputeSelectedProperties();
-
-                        this.productCategoryRetrievalStatus.callback('Retrieved product categories', true);
-                    }).catch(err =>
-                        this.productCategoryRetrievalStatus.error('Failed to get product categories')
-                    );
+                            this.recomputeSelectedProperties();
+                            this.ngUnsubscribe.complete();
+                            this.productCategoryRetrievalStatus.callback('Retrieved product categories', true);
+                        });
                 }
 
             } else {
@@ -551,12 +597,12 @@ export class ProductPublishComponent implements OnInit {
             // new publishing is the first entry to the publishing page
             // i.e. publishing from scratch
             if (this.publishStateService.publishingStarted == false) {
-                    this.catalogueLine = UBLModelUtils.createCatalogueLine(userCatalogue.uuid, userParty);
+                    this.catalogueLine = UBLModelUtils.createCatalogueLine(userCatalogue.uuid, userParty, settings);
                     this.catalogueService.draftCatalogueLine = this.catalogueLine;
             } else {
                 this.catalogueLine = this.catalogueService.draftCatalogueLine;
             }
-            this.productWrapper = new ProductWrapper(this.catalogueLine);
+            this.productWrapper = new ProductWrapper(this.catalogueLine, settings);
 
             for (let category of this.categoryService.selectedCategories) {
                 let newCategory = this.isNewCategory(category);
@@ -667,6 +713,7 @@ export class ProductPublishComponent implements OnInit {
         this.catalogueService.catalogue.catalogueLine[indexOfOriginalLine] = splicedCatalogueLine;
         this.catalogueLine = splicedCatalogueLine
 
+        this.publishStatus.submit();
         if (this.catalogueService.catalogue.uuid == null) {
             this.catalogueService.postCatalogue(this.catalogueService.catalogue)
                 .then(() => this.onSuccessfulPublish())
@@ -753,7 +800,8 @@ export class ProductPublishComponent implements OnInit {
             this.catalogueService.getCatalogueForceUpdate(userId, true).then(catalogue => {
                 this.catalogueService.catalogue = catalogue;
                 const line = this.catalogueLine;
-                this.catalogueLine = UBLModelUtils.createCatalogueLine(catalogue.uuid, party)
+                this.catalogueLine = UBLModelUtils.createCatalogueLine(catalogue.uuid,
+                    party, this.companyNegotiationSettings);
                 this.catalogueService.draftCatalogueLine = this.catalogueLine;
 
                 // avoid category duplication
@@ -774,13 +822,11 @@ export class ProductPublishComponent implements OnInit {
                 this.error_detc = false;
             })
             .catch(error => {
-                this.publishStatus.error("Error while publishing product");
-                console.log("Error while publishing product", error);
+                this.publishStatus.error("Error while publishing product", error);
             });
         })
         .catch(error => {
-            this.publishStatus.error("Error while publishing product");
-            console.log("Error while publishing product", error);
+            this.publishStatus.error("Error while publishing product", error);
         });
     }
 
@@ -822,7 +868,7 @@ export class ProductPublishComponent implements OnInit {
                 let reader = new FileReader();
 
                 reader.onload = function (e: any) {
-                    let base64String = reader.result.split(',').pop();
+                    let base64String = (reader.result as string).split(',').pop();
                     let binaryObject = new BinaryObject(base64String, file.type, file.name, "", "");
                     binaryObjects.push(binaryObject);
                 };
@@ -841,7 +887,7 @@ export class ProductPublishComponent implements OnInit {
                 let reader = new FileReader();
 
                 reader.onload = function (e: any) {
-                    let base64String = reader.result.split(',').pop();
+                    let base64String = (reader.result as string).split(',').pop();
                     let binaryObject = new BinaryObject(base64String, file.type, file.name, "", "");
                     binaryObjects.push(binaryObject);
                 };
@@ -856,7 +902,6 @@ export class ProductPublishComponent implements OnInit {
 
         let index = binaryObjects.findIndex(img => img.fileName === fileName);
 
-        console.log(index);
         if (index > -1) {
             binaryObjects.splice(index, 1);
         }

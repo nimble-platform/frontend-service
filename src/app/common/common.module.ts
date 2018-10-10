@@ -5,12 +5,17 @@ import { CommonModule } from '@angular/common';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { CallStatusComponent } from "./call-status.component";
-import { ActionsRowComponent } from './actions-row.component';
 import { TextInputComponent } from './text-input.component';
 import { OptionsInputComponent } from './options-input.component';
 import { QuantityInputComponent } from './quantity-input.component';
-import { AmountInputComponent } from './amount-input.component';
+import { PlainAmountInputComponent } from './plain-amount-input.component';
 import { FileInputComponent } from './file-input.component';
+import { DateInputComponent } from './date-input.component';
+import { AddressInputComponent } from './address-input.component';
+import { AddressInputSimpleComponent } from './address-input-simple.component';
+import { BooleanInputComponent } from './boolean-input.component';
+import { MultiAddressInputComponent } from './multi-address-input.component';
+import { InputLabelComponent } from './input-label.component';
 
 @NgModule({
 	imports: [
@@ -25,18 +30,28 @@ import { FileInputComponent } from './file-input.component';
 		TextInputComponent,
 		OptionsInputComponent,
 		QuantityInputComponent,
-		AmountInputComponent,
+		PlainAmountInputComponent,
 		FileInputComponent,
-		ActionsRowComponent
+		DateInputComponent,
+		AddressInputComponent,
+		AddressInputSimpleComponent,
+		BooleanInputComponent,
+		MultiAddressInputComponent,
+		InputLabelComponent
 	],
 	exports: [
 		CallStatusComponent,
 		TextInputComponent,
 		OptionsInputComponent,
 		QuantityInputComponent,
-		AmountInputComponent,
+		PlainAmountInputComponent,
 		FileInputComponent,
-		ActionsRowComponent
+		DateInputComponent,
+		AddressInputComponent,
+		AddressInputSimpleComponent,
+		BooleanInputComponent,
+		MultiAddressInputComponent,
+		InputLabelComponent
 	],
 	providers: [
 	]

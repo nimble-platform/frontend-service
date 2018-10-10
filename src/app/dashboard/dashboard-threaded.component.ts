@@ -24,12 +24,12 @@ export class DashboardThreadedComponent implements OnInit {
     filterSet: ProcessInstanceGroupFilter;
     modifiedFilterSet: ProcessInstanceGroupFilter = new ProcessInstanceGroupFilter();
     filterQueryStatus: CallStatus = new CallStatus();
-    filtersLoading: boolean = false;
 
     queryParameters: DashboardQueryParameters = new DashboardQueryParameters();
 
     query: DashboardOrdersQuery = new DashboardOrdersQuery();
     results: DashboardOrdersQueryResults = new DashboardOrdersQueryResults();
+    queryStatus: CallStatus = new CallStatus();
 
     TABS = TABS;
 
@@ -81,6 +81,7 @@ export class DashboardThreadedComponent implements OnInit {
         this.updateQueryParameters({
             prd: this.toString(this.modifiedFilterSet.relatedProducts),
             cat: this.toString(this.modifiedFilterSet.relatedProductCategories),
+            sts: this.toString(this.modifiedFilterSet.status),
             prt: this.getSelectedPartners(this.modifiedFilterSet),
          })
     }
@@ -169,7 +170,8 @@ export class DashboardThreadedComponent implements OnInit {
             this.sanitizePage(params["pg"]),    // page
             params["prd"],                      // products
             params["cat"],                      // categories
-            params["prt"]                       // partners
+            params["prt"],                      // partners
+            params["sts"]                       // status
         )
 
         switch(this.queryParameters.tab) {
@@ -224,12 +226,23 @@ export class DashboardThreadedComponent implements OnInit {
     }
 
     private executeOrdersQuery(query: DashboardOrdersQuery): void {
+        this.queryStatus.submit();
+        this.getOrdersQuery(query)
+        .then(() =>{
+            this.queryStatus.callback("Successfully fetched orders", true);
+        })
+        .catch(error => {
+            this.queryStatus.error("Error while fetching orders.", error);
+        });
+    }
+
+    private getOrdersQuery(query: DashboardOrdersQuery): Promise<void> {
         if(query.archived) {
             // only one query needed
-            this.bpeService
+            return this.bpeService
             .getProcessInstanceGroups(this.cookieService.get("company_id"),
                 query.collaborationRole, query.page - 1, query.pageSize, query.archived,
-                query.products, query.categories, query.partners)
+                query.products, query.categories, query.partners,query.status)
             .then(response => {
                 this.results = new DashboardOrdersQueryResults(
                     response.processInstanceGroups,
@@ -239,15 +252,15 @@ export class DashboardThreadedComponent implements OnInit {
             });
         } else {
             // Needs to query for archived orders to know if the "Show Archived" button should be enabled
-            Promise.all([
+            return Promise.all([
                 // regular query
                 this.bpeService.getProcessInstanceGroups(this.cookieService.get("company_id"),
                     query.collaborationRole, query.page - 1, query.pageSize, query.archived,
-                    query.products, query.categories, query.partners
+                    query.products, query.categories, query.partners,query.status
                 ),
                 // query for archived orders
                 this.bpeService.getProcessInstanceGroups(this.cookieService.get("company_id"),
-                    query.collaborationRole, 0, 1, true, [], [], []
+                    query.collaborationRole, 0, 1, true, [], [], [],[]
                 ),
             ]).then(([response, archived]) => {
                 this.results = new DashboardOrdersQueryResults(
@@ -259,12 +272,15 @@ export class DashboardThreadedComponent implements OnInit {
         }
     }
 
+    areOrdersLoading(): boolean {
+        return this.queryStatus.fb_submitted;
+    }
+
     private executeOrdersFiltersQuery(query: DashboardOrdersQuery): void {
         this.filterQueryStatus.submit();
-        this.filtersLoading = true;
 
         this.bpeService
-        .getProcessInstanceGroupFilters(this.cookieService.get("company_id"), query.collaborationRole, query.archived, query.products, query.categories, query.partners)
+        .getProcessInstanceGroupFilters(this.cookieService.get("company_id"), query.collaborationRole, query.archived, query.products, query.categories, query.partners, query.status)
         .then(response => {
             // populate the modified filter set with the passed parameters that are also included in the results
             // so that the selected criteria would have a checkbox along with
@@ -273,6 +289,12 @@ export class DashboardThreadedComponent implements OnInit {
             if (query.products.length > 0) {
                 for (let product of response.relatedProducts) {
                     this.modifiedFilterSet.relatedProducts.push(product);
+                }
+            }
+            // status
+            if (query.status.length > 0 ){
+                for(let status of response.status){
+                    this.modifiedFilterSet.status.push(status);
                 }
             }
             // categories
@@ -289,13 +311,15 @@ export class DashboardThreadedComponent implements OnInit {
                 }
             }
             this.filterSet = response;
-            this.filterQueryStatus.callback("", true);
-            this.filtersLoading = false;
+            this.filterQueryStatus.callback("Successfully fetched filters", true);
         })
         .catch(error => {
-            this.filtersLoading = false;
-            this.filterQueryStatus.error("Failed to get filters");
+            this.filterQueryStatus.error("Failed to get filters", error);
         });
+    }
+
+    areFiltersLoading(): boolean {
+        return this.filterQueryStatus.fb_submitted;
     }
 
     private isOrdersQueryNeeded(query: DashboardOrdersQuery): boolean {
@@ -321,6 +345,7 @@ export class DashboardThreadedComponent implements OnInit {
             this.parseArray(this.queryParameters.prd),
             this.parseArray(this.queryParameters.cat),
             this.parseArray(this.queryParameters.prt),
+            this.parseArray(this.queryParameters.sts),
             PAGE_SIZE,
         )
     }

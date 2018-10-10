@@ -1,0 +1,106 @@
+
+<!-- Ppap -->
+<!-- <h3 class="space-after space-before">PPAP</h3> -->
+
+<div class="form-group row space-before">
+    <strong class="col-2 col-form-label">Ppap Compatibility Level:</strong>
+    <div class="col-10">
+        <select class="form-control" [(ngModel)]="ppapLevel">
+            <option [value]="0">-</option>
+            <option [value]="1">Level 1</option>
+            <option [value]="2">Level 2</option>
+            <option [value]="3">Level 3</option>
+            <option [value]="4">Level 4</option>
+            <option [value]="5">Level 5</option>
+        </select>
+    </div>
+</div>
+
+<div class="row actions-row">
+    <div class="col-10 call-status-col"><call-status [callStatus]="savePpapLevelCallStatus"></call-status></div>
+    <div class="col-2">
+        <button class="btn btn-primary action" type="button" [disabled]="!isPpapLevelDirty()" (click)="onSavePpapLevel()">
+            Save
+        </button>
+    </div>
+</div>
+
+<hr>
+
+<!-- Certificates -->
+<h3 class="space-after">Certificates</h3>
+
+<call-status [callStatus]="certificatesCallStatus"></call-status>
+
+<div class="form-group row">
+    <div class="col-12">
+        <table class="table table-striped table-bordered mb-0 mt-2" style="table-layout: fixed; width: 100%;">
+            <colgroup>
+                <col style="width: 150%;">
+                <col style="width: 150%;">
+                <col style="width: auto;">
+            </colgroup>
+            <tr><th>Certificate Type</th><th>Certificate Name</th><th class="col-3">Actions</th></tr>
+            <tr *ngIf="certificates.length==0"><td colspan="3">No data</td></tr>
+            <tr *ngFor="let certificate of certificates; let i = index">
+                <td>{{certificate.type}}</td>
+                <td>{{certificate.name}}</td>
+                <td>
+                    <button class="btn btn-primary btn-sm" [disabled]="certificatesCallStatus.isLoading()" (click)="onDownloadCertificate(certificate.id)">Download</button>
+                    <button class="btn btn-danger btn-sm ml-1" [disabled]="certificatesCallStatus.isLoading()" (click)="onRemoveCertificate(certificate.id, i)">Delete</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<div class="row actions-row">
+    <div class="col-10"></div>
+    <div class="col-2">
+        <button class="btn btn-primary action" type="button" (click)="onAddCertificate(addCertModal)">
+            <span>Add Certificate</span>
+        </button>
+    </div>
+</div>
+
+<!-- Certificates Modal -->
+
+<!-- Modals -->
+<ng-template #addCertModal let-d="dismiss">
+    <form [formGroup]="addCertForm" novalidate>
+        <div class="modal-header">
+            <h4 class="modal-title">Add Certificate</h4>
+            <button type="button" class="close" aria-label="Close" (click)="d('')">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+                <div class="form-group row">
+                    <label class="col-2 col-form-label">File</label>
+                    <div class="col-10">
+                        <input type="file" class="form-control" [formControl]="addCertForm.controls['file']" (change)="onSetCertificateFile($event)" required>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-2 col-form-label">Type</label>
+                    <div class="col-10">
+                        <select class="form-control" [formControl]="addCertForm.controls['type']" required>
+                            <option *ngFor="let ppapType of ppapTypes">{{ppapType}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-2 col-form-label">Name</label>
+                    <div class="col-10">
+                        <input type="text" class="form-control" [formControl]="addCertForm.controls['name']" required>
+                    </div>
+                </div>
+        </div>
+        <div class="modal-footer">
+            <call-status [callStatus]="saveCertCallStatus"></call-status>
+            <button class="btn btn-primary save-cert-btn" [disabled]="!addCertForm.valid" (click)="onSaveCertificate(addCertForm, d);">
+                    <span>Save</span>
+            </button>
+        </div>
+    </form>
+</ng-template>

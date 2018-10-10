@@ -1,0 +1,270 @@
+<!-- Tabs -->
+<div class="col-12 pt-4">
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a href id="OVERVIEW" class="nav-link"
+                [ngClass]="{ active: selectedTab === 'OVERVIEW'}"
+                (click)="onSelectTab($event)">
+                Transport Service Details
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href id="ADDRESS" class="nav-link"
+                [ngClass]="{ active: selectedTab === 'ADDRESS'}"
+                (click)="onSelectTab($event)">
+                Pick-up & Drop-off
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href id="NEGOTIATION" class="nav-link"
+                [ngClass]="{ active: selectedTab === 'NEGOTIATION'}"
+                (click)="onSelectTab($event)">
+                Negotiable Terms
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+<!-- Transport Service Details -->
+<ng-container *ngIf="selectedTab === 'OVERVIEW'">
+    <transport-service-details [rfq]="rfq" [disabled]="true">
+    </transport-service-details>
+</ng-container>
+
+
+<!-- Address Tab -->
+<ng-container *ngIf="selectedTab === 'ADDRESS'">
+    <transport-negotiation-address [lineItem]="rfq.requestForQuotationLine[0].lineItem" [disabled]="true">
+    </transport-negotiation-address>
+</ng-container>
+    
+
+<!-- Negotiable Terms Tab -->
+<ng-container *ngIf="selectedTab === 'NEGOTIATION'">
+    <div  class="row space-before title-row">
+        <div class="col-2">
+            <h5 class="space-before">Term</h5>
+        </div>
+        <div class="col-5">
+            <h5 class="space-before">Request</h5>
+        </div>
+        <div class="col-5">
+            <h5 class="space-before">Response</h5>
+        </div>
+    </div>
+
+    <!-- Price -->
+    <div class="row space-before">
+        <div class="col-2">
+            <input-label label="Price">
+            </input-label>
+        </div>
+        <div class="col-5">
+            <quantity-input [disabled]="true" 
+                [quantity]="rfqPrice" 
+                [quantityUnits]="CURRENCIES">
+            </quantity-input>
+        </div>
+        <div class="col-5">
+            <quantity-input [disabled]="isDisabled()" 
+                [quantity]="quotationPrice" 
+                [quantityUnits]="CURRENCIES">
+            </quantity-input>
+        </div>
+    </div>
+
+    <!-- Payment Means -->
+    <div class="row space-before">
+        <div class="col-2">
+            <input-label label="Payment Means" description="Expected means of payment">
+            </input-label>
+        </div>
+        <div class="col-5">
+            <options-input [disabled]="true" 
+                [(selected)]="rfq.paymentMeans.paymentMeansCode.value" 
+                [options]="PAYMENT_MEANS">
+            </options-input>
+        </div>
+        <div class="col-5">
+            <options-input [disabled]="isDisabled()" 
+                [(selected)]="quotation.paymentMeans.paymentMeansCode.value" 
+                [options]="PAYMENT_MEANS">
+            </options-input>
+        </div>
+    </div>
+
+    <!-- Payment Terms -->
+    <div class="row space-before">
+        <div class="col-2">
+            <input-label label="Payment Terms" description="Expected terms of payment">
+            </input-label>
+        </div>
+        <div class="col-5">
+            <options-input [disabled]="true" 
+                [(selected)]="rfqPaymentTerms.paymentTerm" 
+                [options]="PAYMENT_TERMS">
+            </options-input>
+        </div>
+        <div class="col-5">
+            <options-input [disabled]="isDisabled()" 
+                [(selected)]="quotationPaymentTerms.paymentTerm" 
+                [options]="PAYMENT_TERMS">
+            </options-input>
+        </div>
+    </div>
+
+    <!-- Incoterms -->
+    <div class="row space-before">
+        <div class="col-2">
+            <input-label label="Incoterms" description="A set of international rules for the interpretation of the most commonly used trade terms">
+            </input-label>
+        </div>
+        <div class="col-5">
+            <options-input [disabled]="true" 
+                [(selected)]="rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms" 
+                [options]="INCOTERMS">
+            </options-input>
+        </div>
+        <div class="col-5">
+            <options-input [disabled]="isDisabled()" 
+                [(selected)]="quotation.quotationLine[0].lineItem.deliveryTerms.incoterms" 
+                [options]="INCOTERMS">
+            </options-input>
+        </div>
+    </div>
+
+    <!-- Special Terms -->
+    <div class="row space-before">
+        <div class="col-2">
+            <input-label label="Special Terms" description="A description of any terms or conditions relating to the delivery items.For example,exceeding the delivery period entitles the buyer to terminate the agreement.">
+            </input-label>
+        </div>
+        <div class="col-5">
+            <text-input [(text)]="rfq.requestForQuotationLine[0].lineItem.deliveryTerms.specialTerms" 
+                [disabled]="true">
+            </text-input>
+        </div>
+        <div class="col-5">
+            <text-input [(text)]="quotation.quotationLine[0].lineItem.deliveryTerms.specialTerms" 
+                [disabled]="isDisabled()">
+            </text-input>
+        </div>
+    </div>
+
+
+    <hr>
+
+    <!-- Delivery Period -->
+    <div class="row space-before">
+        <div class="col-2">
+            <input-label label="Delivery Period" definition="The period requested for delivery. It starts after the order confirmation.For example, Quantity: 2, Unit: weeks">
+            </input-label>
+        </div>
+        <div class="col-5">
+            <quantity-input [disabled]="true" 
+                [quantity]="rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure" 
+                quantityType="time_quantity">
+            </quantity-input>
+        </div>
+        <div class="col-5">
+            <quantity-input [disabled]="isDisabled()" 
+                [quantity]="quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure"
+                quantityType="time_quantity">
+            </quantity-input>
+        </div>
+    </div>
+
+    <!-- Service Start Date -->
+    <div class="row space-before">
+        <div class="col-2">
+            <input-label label="Pick-Up Date" definition="The period within which the services referred to in the Transport Execution Plan Request must begin.">
+            </input-label>
+        </div>
+        <div class="col-5">
+            <date-input [disabled]="true" [date]="rfq.delivery.requestedDeliveryPeriod.startDate">
+            </date-input>
+        </div>
+        <div class="col-5">
+            <date-input [disabled]="isDisabled()" [(date)]="quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.startDate">
+            </date-input>
+        </div>
+    </div>
+
+    <!-- Service End Date -->
+    <div class="row space-before">
+        <div class="col-2">
+            <input-label label="Drop-Off Date" definition="The period during which the services referred to in the Transport Execution Plan Request must be completed.">
+            </input-label>
+        </div>
+        <div class="col-5">
+            <date-input [disabled]="true" [date]="rfq.delivery.requestedDeliveryPeriod.endDate">
+            </date-input>
+        </div>
+        <div class="col-5">
+            <date-input [disabled]="isDisabled()" [(date)]="quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.endDate">
+            </date-input>
+        </div>
+    </div>
+    
+    <hr>
+
+    <!--Notes-->
+    <h5>Notes and Additional Files</h5>
+    <note-file-view [notes]="quotation.note"
+               [requestNotes]="rfq.note"
+               [documents]="quotation.additionalDocumentReference"
+               [requestDocuments]="rfq.additionalDocumentReference"
+               [label]="'Notes'"
+               [firstCol]="'col-2'"
+               [thirdCol]="'col-5'"
+               [lastCol]="'col-5'"
+               [readonly]="isDisabled()"></note-file-view>
+
+</ng-container>
+
+
+<hr>
+
+
+<!-- Actions -->
+<div class="row actions-row" *ngIf="userRole === 'seller' && !isReadOnly()">
+    <div class="col-6 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+    <div class="col-2">
+        <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">Back</button>
+    </div>
+    <div class="col-2">
+        <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onRespondToQuotation(false)">
+            Reject Offer
+        </button>
+    </div>
+    <div class="col-2">
+        <button class="btn btn-primary action" [disabled]="isLoading()" (click)="onRespondToQuotation(true)">
+            Accept Offer
+        </button>
+    </div>
+</div>
+
+<div class="row actions-row" *ngIf="userRole === 'seller' && isReadOnly() && !readonly">
+    <div class="col-10 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+    <div class="col-2">
+        <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
+    </div>
+</div>
+
+<div class="row actions-row" *ngIf="userRole === 'buyer' && !readonly">
+    <div class="col-5 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+    <div class="col-2">
+        <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
+    </div>
+    <div class="col-3">
+        <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onRequestNewQuotation()">
+            Request new Quotation
+        </button>
+    </div>
+    <div class="col-2">
+        <button class="btn btn-primary action" [disabled]="isLoading()" (click)="onAcceptAndOrder()">
+            Accept & Order
+        </button>
+    </div>
+</div>

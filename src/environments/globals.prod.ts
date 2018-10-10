@@ -40,7 +40,7 @@ export const pw_reset_link = "https://nimble-platform.salzburgresearch.at:8080/a
 // Base path variables - Local development via service discovery
 
 // export const base_path = "http://localhost:443";
-// export const ub_path = "http://localhost:8090";
+// export const ub_base = "http://localhost:8090";
 // export const simple_search_endpoint="http://nimble-staging.salzburgresearch.at/marmotta/solr/catalogue2";
 // export const pw_reset_link = "http://nimble-staging.salzburgresearch.at:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
 
@@ -81,8 +81,24 @@ export const product_name = "item_name";
 export const product_vendor_id = "item_manufacturer_id";
 export const product_vendor_name = "item_manufacturer_name";
 export const product_img = "item_image";
+export const product_price = "item_price";
+export const product_currency = "item_price_currency";
 export const product_cat = "item_commodity_classification";
 export const product_cat_mix = "item_commodity_classification_mix";
+export const product_filter_prod = ["item_free_of_charge_indicator","item_certificate","item_applicable_countries"];
+export const product_filter_comp = ["item_manufacturer_name","item_manufacturer_origin","manufacturer_certificate","manufacturer_ppap_compliance_level","manufacturer_ppap_document"];
+export const product_filter_mappings = {
+  "item_price": "Price",
+  "item_currency": "Currency",
+  "item_free_of_charge_indicator": "Free Sample",
+  "item_certificate": "Product / Service Certificate",
+  "item_applicable_countries": "Destination Country",
+  "item_manufacturer_name": "Vendor Name",
+  "item_manufacturer_origin": "Vendor Origin",
+  "manufacturer_certificate": "Vendor Certificate",
+  "manufacturer_ppap_compliance_level": "PPAP Compliance Level",
+  "manufacturer_ppap_document": "PPAP Document"
+};
 export const product_nonfilter_full = ["id","_version_","item_description","item_price","item_price_currency","item_commodity_classification_code","item_commodity_classification_uri","item_properties"];
 export const product_nonfilter_regex = ["lmf.","_id"];
 export const product_configurable = [];

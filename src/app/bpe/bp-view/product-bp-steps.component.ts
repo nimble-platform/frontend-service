@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from "@angular/core";
 import { ProductBpStepStatus } from "./product-bp-step-status";
 import { ProductBpStep } from "./product-bp-step";
+import { ProductBpStepsDisplay } from "./product-bp-steps-display";
 
 @Component({
     selector: "product-bp-steps",
@@ -11,11 +12,12 @@ export class ProductBpStepsComponent implements OnInit {
 
     @Input() currentStep: ProductBpStep;
     @Input() status: ProductBpStepStatus;
+    @Input() displayMode: ProductBpStepsDisplay;
     @Input() statusText: string = "";
     
-    constructor(
-
-    ) { }
+    constructor() {
+        
+    }
 
     ngOnInit() {
 
@@ -44,19 +46,40 @@ export class ProductBpStepsComponent implements OnInit {
     }
 
     private getStatusTextMarginLeft(): string {
+        if(this.displayMode === "Transport") {
+            switch(this.currentStep) {
+                case "Transport_Information_Request":
+                case "Item_Information_Request":
+                    return "0%";
+                case "Transport_Negotiation":
+                    return "25%";
+                case "Transport_Order":
+                    return "50%";
+                case "Transport_Order_Confirmed":
+                    return "75%";
+                default:
+                    throw new Error("Unexpected step for displayMode 'Transport': " + this.currentStep);
+            }
+        }
         switch(this.currentStep) {
             case "Item_Information_Request":
                 return "0%";
             case "Ppap":
+            case "Transport_Information_Request":
                 return "17%";
             case "Negotiation":
+            case "Transport_Negotiation":
                 return "33%";
             case "Order":
+            case "Transport_Order":
                 return "50%";
-            case "OrderConfirmed":
+            case "Order_Confirmed":
+            case "Transport_Order_Confirmed":
                 return "67%";
             case "Fulfilment":
                 return "83%";
+            default:
+                throw new Error("Unexpected step for displayMode 'Transport': " + this.currentStep);
         }
     }
 

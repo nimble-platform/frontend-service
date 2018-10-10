@@ -49,7 +49,7 @@
                 </div>
                 <text-input label="Definition" [text]="getDefinition()" presentationMode="view" rowClass="space-before">
                 </text-input>
-                <options-input label="Data Type" [presentationMode]="getPropertyPresentationMode()" 
+                <options-input label="Data Type" [presentationMode]="getPropertyPresentationMode()"
                     [options]="PROPERTY_TYPES" [(selected)]="property.valueQualifier" rowClass="space-before">
                 </options-input>
                 <div class="row space-before">
@@ -58,7 +58,7 @@
                     </div>
                     <div class="col-9">
                         <file-input *ngIf="property.valueQualifier === 'BINARY'" [binaryObjects]="property.valueBinary"
-                            [multiple]="true">
+                            [multiple]="true" [maxSize]=1>
                         </file-input>
                         <table *ngIf="property.valueQualifier === 'STRING'" class="table table-striped table-bordered">
                             <tbody>
@@ -94,7 +94,7 @@
                             <div *ngIf="property.valueQualifier !== 'STRING'" [ngSwitch]="property.valueQualifier" class="row value-container">
                                 <div class="{{ i === 0 ? 'col-12' : 'col-9' }}">
 
-                                    <quantity-input *ngSwitchCase="'QUANTITY'" [quantity]="property.valueQuantity[i]" 
+                                    <quantity-input *ngSwitchCase="'QUANTITY'" [quantity]="property.valueQuantity[i]"
                                         rowClass="quantity-input">
                                     </quantity-input>
 
@@ -107,14 +107,14 @@
                                     <ng-container *ngSwitchDefault>
                                             <input *ngIf="property.valueQualifier !== 'BINARY'" type="number"
                                             class="form-control form-control-sm value-input"
-                                                [ngModel]="property.valueDecimal[i]" (change)="setValueDecimal(i, $event)">        
+                                                [ngModel]="property.valueDecimal[i]" (change)="setValueDecimal(i, $event)">
                                     </ng-container>
                                 </div>
                                 <div *ngIf="i > 0 && property.valueQualifier !== 'BINARY'" class="col-3">
                                     <button class="btn btn-danger btn-remove-value btn-sm"
                                         (click)="onRemoveValue(i)">
                                         Remove
-                                    </button>  
+                                    </button>
                                 </div>
                             </div>
                         </ng-container>

@@ -8,6 +8,7 @@ import { PropertyValueQualifier } from "../catalogue/model/publish/property-valu
 import { CUSTOM_PROPERTY_LIST_ID } from "../catalogue/model/constants";
 import {Item} from '../catalogue/model/publish/item';
 import {Text} from '../catalogue/model/publish/text';
+import { CatalogueLine } from "../catalogue/model/publish/catalogue-line";
 
 const UI_NAMES: any = {
     STRING: "TEXT"
@@ -112,7 +113,10 @@ export function getPropertyKey(property: Property | ItemProperty): string {
 }
 
 export function quantityToString(quantity: Quantity): string {
-    return `${quantity.value} ${quantity.unitCode}`;
+    if(quantity.value) {
+        return `${quantity.value} ${quantity.unitCode}`;
+    }
+    return "";
 }
 
 export function durationToString(duration: Quantity): string {
@@ -234,4 +238,54 @@ export function getPropertyValuesAsStrings(property: ItemProperty): string[] {
             else
                 return [property.value[0].value];
     }
+}
+
+export function isTransportService(product: CatalogueLine): boolean {
+    return product && !!product.goodsItem.item.transportationServiceDetails;
+}
+
+export function deepEquals(obj1: any, obj2: any): boolean {
+    if(obj1 === obj2) {
+        return true;
+    }
+
+    // simple cases should be compared with obj1 === obj2
+    // let's consider functions immutable here...
+    if(typeof obj1 !== "object") {
+        return false;
+    }
+
+    // array case
+    if(Array.isArray(obj1)) {
+        if(!Array.isArray(obj2)) {
+            return false;
+        }
+
+        if(obj1.length !== obj2.length) {
+            return false;
+        }
+
+        for(let i = 0; i < obj1.length; i++) {
+            if(!deepEquals(obj1[i], obj2[i])) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    const keys1 = Object.keys(obj1);
+    const keys2 = Object.keys(obj2);
+    if(keys1.length !== keys2.length) {
+        return false;
+    }
+
+    for(let i = 0; i < keys1.length; i++) {
+        // obj2[keys1[i]] is NOT a mistake, keys may be ordered differently...
+        if(!deepEquals(obj1[keys1[i]], obj2[keys1[i]])) {
+            return false;
+        }
+    }
+
+    return true;
 }

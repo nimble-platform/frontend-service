@@ -30,7 +30,8 @@ export const NEGOTIATION_RESPONSES = {
 
 export const CURRENCIES = [
     "EUR",
-    "USD"
+    "USD",
+    "SEK"
 ]
 
 export const CUSTOM_PROPERTY_LIST_ID = "Custom";
@@ -43,3 +44,26 @@ export const PROPERTY_TYPES: Option[] = [
     { name: "Quantity", value: "QUANTITY" },
     { name: "Boolean", value: "BOOLEAN" },
 ]
+
+export const TRANSPORT_SERVICE_CATEGORY_NAME = "Transport service"
+
+export const PPAP_CERTIFICATES = [
+    "Appearance Approval Report",
+    "Checking Aids",
+    "Control Plan",
+    "Customer Engineering Approval",
+    "Customer Specific Requirements",
+    "Design Documentation",
+    "Design Failure Mode and Effects Analysis",
+    "Dimensional Results",
+    "Engineering Change Documentation",
+    "Initial Process Studies",
+    "Master Sample",
+    "Measurement System Analysis Studies",
+    "Part Submission Warrant",
+    "Process Failure Mode and Effects Analysis",
+    "Process Flow Diagram",
+    "Qualified Laboratory Documentation",
+    "Records of Material / Performance Tests",
+    "Sample Production Parts"
+];

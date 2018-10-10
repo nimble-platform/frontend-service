@@ -37,6 +37,10 @@ import { EditPropertyModalComponent } from "./publish/edit-property-modal.compon
 import { ProductDeliveryTradingComponent } from "./publish/product-delivery-trading.component";
 import { ProductDetailsModule } from "../product-details/product-details.module";
 import { ProductPriceTabComponent } from "./publish/product-price-tab.component";
+import { ProductCertificatesTabComponent } from "./publish/product-certificates-tab.component";
+import { ProductTrackAndTraceTabComponent } from "./publish/product-track-and-trace-tab.component";
+import { UserMgmtModule } from "../user-mgmt/user-mgmt.module";
+import {NoteFileViewComponent} from './ubl-model-view/note-file-view.component';
 
 @NgModule({
 	imports: [CommonModule, 
@@ -46,6 +50,7 @@ import { ProductPriceTabComponent } from "./publish/product-price-tab.component"
 		HttpModule, 
         CatalogueRoutingModule, 
         ProductDetailsModule,
+        UserMgmtModule,
 		NgbModule.forRoot()
 	],
     declarations: [
@@ -60,6 +65,8 @@ import { ProductPriceTabComponent } from "./publish/product-price-tab.component"
         CatalogueLinePanelComponent,
         CatalogueLineViewComponent,
         CatalogueLineDetailsComponent,
+        ProductCertificatesTabComponent,
+        ProductTrackAndTraceTabComponent,
         QuantityViewComponent,
         AmountViewComponent,
         QuantityValueViewComponent,
@@ -76,7 +83,8 @@ import { ProductPriceTabComponent } from "./publish/product-price-tab.component"
         PropertyBlockPipe,
         ItemPropertyDataSourcePipe,
         DetailedAddressViewComponent,
-        PaymentTermsView
+        PaymentTermsView,
+        NoteFileViewComponent
     ],
     exports: [
         CategorySearchComponent,
@@ -101,7 +109,8 @@ import { ProductPriceTabComponent } from "./publish/product-price-tab.component"
         PropertyBlockPipe,
         ItemPropertyDataSourcePipe,
         DetailedAddressViewComponent,
-        PaymentTermsView
+        PaymentTermsView,
+        NoteFileViewComponent
     ],
     providers: [PublishDeactivateGuardService, CategoryDeactivateGuardService]
 })

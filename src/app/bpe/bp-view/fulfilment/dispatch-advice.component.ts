@@ -17,6 +17,8 @@ import { RequestForQuotation } from '../../../catalogue/model/publish/request-fo
 import { Quantity } from '../../../catalogue/model/publish/quantity';
 import { TransportExecutionPlan } from "../../../catalogue/model/publish/transport-execution-plan";
 import { Quotation } from "../../../catalogue/model/publish/quotation";
+import {DocumentService} from "../document-service";
+import {CookieService} from 'ng2-cookies';
 
 @Component({
     selector: 'dispatch-advice',
@@ -32,11 +34,13 @@ export class DispatchAdviceComponent implements OnInit {
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
                 private location: Location,
-                private router: Router) {
+                private router: Router,
+                private cookieService: CookieService,
+                private documentService: DocumentService) {
     }
 
     ngOnInit() {
-        if(this.bpDataService.despatchAdvice == null){
+        if(this.bpDataService.despatchAdvice == null) {
             this.initDispatchAdvice();
         }
         else{
@@ -44,7 +48,7 @@ export class DispatchAdviceComponent implements OnInit {
         }
     }
 
-    async initDispatchAdvice(){
+    async initDispatchAdvice() {
         this.initiatingDispatchAdvice.submit();
         const processInstanceGroup = await this.bpeService.getProcessInstanceGroup(this.bpDataService.getRelatedGroupId()) as ProcessInstanceGroup;
         let details = [];
@@ -75,15 +79,14 @@ export class DispatchAdviceComponent implements OnInit {
 
         for(let processDetails of details){
             const processType = ActivityVariableParser.getProcessType(processDetails[1]);
-            const initialDoc: any = ActivityVariableParser.getInitialDocument(processDetails[1]);
-            const response: any = ActivityVariableParser.getResponse(processDetails[1]);
-
+            const initialDoc: any = await this.documentService.getInitialDocument(processDetails[1]);
+            const response: any = await this.documentService.getResponseDocument(processDetails[1]);
             if(!tepExists && processType == "Transport_Execution_Plan"){
-                let res = response.value as TransportExecutionPlan;
+                let res = response as TransportExecutionPlan;
                 if(res.documentStatusCode.name == "Accepted"){
                     tepExists = true;
 
-                    let tep = initialDoc.value as TransportExecutionPlanRequest;
+                    let tep = initialDoc as TransportExecutionPlanRequest;
 
                     handlingInst = tep.consignment[0].consolidatedShipment[0].handlingInstructions;
                     carrierName = tep.transportServiceProviderParty.name.value;
@@ -97,8 +100,8 @@ export class DispatchAdviceComponent implements OnInit {
                 }
             }
             if(!negoExists && processType == "Negotiation"){
-                let res = response.value as Quotation;
-                let nego = initialDoc.value as RequestForQuotation;
+                let res = response as Quotation;
+                let nego = initialDoc as RequestForQuotation;
                 // check whether this negotiation is correct one or not
                 if(res.documentStatusCode.name == "Accepted" &&
                     nego.requestForQuotationLine[0].lineItem.item.manufacturersItemIdentification.id == manuItemId &&
@@ -114,11 +117,11 @@ export class DispatchAdviceComponent implements OnInit {
             }
         }
 
-        this.bpDataService.initDespatchAdvice(handlingInst,carrierName,carrierContact,deliveredQuantity,endDate);
+        this.bpDataService.initDispatchAdvice(handlingInst,carrierName,carrierContact, deliveredQuantity, endDate);
 
         this.dispatchAdvice = this.bpDataService.despatchAdvice;
 
-        this.initiatingDispatchAdvice.callback("Dispatch Advice initiated",true);
+        this.initiatingDispatchAdvice.callback("Dispatch Advice initiated", true);
     }
 
     /*
@@ -130,13 +133,14 @@ export class DispatchAdviceComponent implements OnInit {
     }
 
     onSendDispatchAdvice(): void {
-        let dispatchAdvice: DespatchAdvice = copy(this.bpDataService.despatchAdvice);
+        let dispatchAdvice: DespatchAdvice = copy(this.dispatchAdvice);
         UBLModelUtils.removeHjidFieldsFromObject(dispatchAdvice);
 
         let vars: ProcessVariables = ModelUtils.createProcessVariables(
             "Fulfilment", 
             dispatchAdvice.despatchSupplierParty.party.id, 
-            dispatchAdvice.deliveryCustomerParty.party.id, 
+            dispatchAdvice.deliveryCustomerParty.party.id,
+            this.cookieService.get("user_id"),
             dispatchAdvice, 
             this.bpDataService
         );
@@ -149,8 +153,24 @@ export class DispatchAdviceComponent implements OnInit {
                 this.router.navigate(['dashboard']);
             })
             .catch(error => {
-                this.callStatus.error("Failed to send Dispatch Advice");
-                console.log("Failed to send Dispatch Advice", error);
+                this.callStatus.error("Failed to send Dispatch Advice", error);
+            });
+    }
+
+    onUpdateDispatchAdvice():void {
+        this.callStatus.submit();
+
+        let dispatchAdvice: DespatchAdvice = copy(this.bpDataService.despatchAdvice);
+        UBLModelUtils.removeHjidFieldsFromObject(dispatchAdvice);
+
+        this.bpeService.updateBusinessProcess(JSON.stringify(dispatchAdvice),"DESPATCHADVICE",this.bpDataService.processMetadata.processId)
+            .then(() => {
+                this.documentService.updateCachedDocument(dispatchAdvice.id,dispatchAdvice);
+                this.callStatus.callback("Dispatch Advice updated", true);
+                this.router.navigate(['dashboard']);
+            })
+            .catch(error => {
+                this.callStatus.error("Failed to update Dispatch Advice", error);
             });
     }
 
@@ -163,6 +183,6 @@ export class DispatchAdviceComponent implements OnInit {
     }
 
     isReadOnly(): boolean {
-        return !!this.bpDataService.processMetadata;
+        return !!this.bpDataService.processMetadata && !this.bpDataService.updatingProcess;
     }
 }

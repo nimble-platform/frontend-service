@@ -1,4 +1,4 @@
-import { Component, OnInit, Predicate } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { CatalogueService } from "../catalogue/catalogue.service";
 import { CallStatus } from "../common/call-status";
@@ -9,8 +9,10 @@ import { ProcessType } from "../bpe/model/process-type";
 import { ProductWrapper } from "../common/product-wrapper";
 import { Item } from "../catalogue/model/publish/item";
 import { PriceWrapper } from "../common/price-wrapper";
-import { getMaximumQuantityForPrice, getStepForPrice } from "../common/utils";
+import { getMaximumQuantityForPrice, getStepForPrice, isTransportService } from "../common/utils";
 import { AppComponent } from "../app.component";
+import { UserService } from "../user-mgmt/user.service";
+import { CompanySettings } from "../user-mgmt/model/company-settings";
 
 @Component({
     selector: 'product-details',
@@ -29,14 +31,17 @@ export class ProductDetailsComponent implements OnInit {
     line?: CatalogueLine;
     item?: Item;
     wrapper?: ProductWrapper;
+    settings?: CompanySettings;
     priceWrapper?: PriceWrapper;
 
     toggleImageBorder: boolean = false;
     showNavigation: boolean = true;
     showProcesses: boolean = true;
+    isLogistics: boolean = false;
 
     constructor(private bpDataService: BPDataService,
                 private catalogueService: CatalogueService,
+                private userService: UserService,
                 private route: ActivatedRoute,
                 private router: Router,
                 public appComponent: AppComponent) {
@@ -44,8 +49,7 @@ export class ProductDetailsComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.bpDataService.setCatalogueLines([]);
-        this.getProductStatus.submit();
+        this.bpDataService.setCatalogueLines([], []);
 		this.route.queryParams.subscribe(params => {
 			let id = params['id'];
             let catalogueId = params['catalogueId'];
@@ -54,24 +58,31 @@ export class ProductDetailsComponent implements OnInit {
                 this.id = id;
                 this.catalogueId = catalogueId;
 
-                this.catalogueService.getCatalogueLine(catalogueId, id).then(line => {
-                    this.line = line;
-                    this.item = line.goodsItem.item;
-                    this.wrapper = new ProductWrapper(line);
-                    this.priceWrapper = new PriceWrapper(this.line.requiredItemLocationQuantity.price);
-                    this.bpDataService.resetBpData();
-                    this.bpDataService.setCatalogueLines([line]);
-                    this.bpDataService.userRole = 'buyer';
-                    this.bpDataService.workflowOptions = this.options;
-                    this.bpDataService.setRelatedGroupId(null);
-                    this.getProductStatus.callback("Retrieved product details", true);
-                }).catch(error => {
-                    this.getProductStatus.error("Failed to retrieve product details");
-                    console.log("Error while retrieving product", error);
+                this.getProductStatus.submit();
+                this.catalogueService.getCatalogueLine(catalogueId, id)
+                    .then(line => {
+                        this.line = line;
+                        this.item = line.goodsItem.item;
+                        this.isLogistics = isTransportService(this.line);
+                        return this.userService.getSettingsForProduct(line)
+                    })
+                    .then(settings => {
+                        this.settings = settings;
+                        this.wrapper = new ProductWrapper(this.line, settings.negotiationSettings);
+                        this.priceWrapper = new PriceWrapper(this.line.requiredItemLocationQuantity.price);
+                        this.bpDataService.resetBpData();
+                        this.bpDataService.setCatalogueLines([this.line], [settings]);
+                        this.bpDataService.userRole = 'buyer';
+                        this.bpDataService.workflowOptions = this.options;
+                        this.bpDataService.setRelatedGroupId(null);
+                        this.getProductStatus.callback("Retrieved product details", true);
+                    })
+                    .catch(error => {
+                        this.getProductStatus.error("Failed to retrieve product details", error);
 
-                    this.line = null;
-                    this.wrapper = null;
-                });
+                        this.line = null;
+                        this.wrapper = null;
+                    });
             }
 		});
     }
@@ -129,5 +140,9 @@ export class ProductDetailsComponent implements OnInit {
             return "";
         }
         return this.line.requiredItemLocationQuantity.price.baseQuantity.unitCode || "";
+    }
+
+    isPpapAvailable(): boolean {
+        return this.settings && !!this.settings.ppapCompatibilityLevel;
     }
 }

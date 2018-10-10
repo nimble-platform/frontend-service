@@ -1,0 +1,129 @@
+<!-- Title -->
+<!-- <div class="row space-before">
+    <div class="col-12">
+        <h3>Negotiation Settings</h3>
+    </div>
+</div> -->
+
+<!-- Payment Terms -->
+<div class="row space-before">
+    <div class="col-2">
+        <input-label label="Available Payment Terms"></input-label>
+    </div>
+    <div class="col-5">
+        <div *ngFor="let term of PAYMENT_TERMS_LEFT; let i = index" class="form-check">
+            <input class="form-check-input" type="checkbox" [disabled]="isDisabled()"
+                [checked]="paymentTerms.isSelected(term)" (change)="paymentTerms.toggle(term)">
+            <label class="form-check-label">{{ term }}</label>
+        </div>
+    </div>
+    <div class="col-5">
+        <div *ngFor="let term of PAYMENT_TERMS_RIGHT; let i = index" class="form-check">
+            <input class="form-check-input" type="checkbox" [disabled]="isDisabled()"
+                [checked]="paymentTerms.isSelected(term)" (change)="paymentTerms.toggle(term)">
+            <label class="form-check-label">{{ term }}</label>
+        </div>
+    </div>
+</div>
+
+<hr>
+
+<!-- Payment Means -->
+<div class="row space-before">
+    <div class="col-2">
+        <input-label label="Available Payment Means"></input-label>
+    </div>
+    <div class="col-5">
+        <div *ngFor="let mean of PAYMENT_MEANS_LEFT; let i = index" class="form-check">
+            <input class="form-check-input" type="checkbox" [disabled]="isDisabled()"
+                [checked]="paymentMeans.isSelected(mean)" (change)="paymentMeans.toggle(mean)">
+            <label class="form-check-label">{{ mean }}</label>
+        </div>
+    </div>
+    <div class="col-5">
+        <div *ngFor="let mean of PAYMENT_MEANS_RIGHT; let i = index" class="form-check">
+            <input class="form-check-input" type="checkbox" [disabled]="isDisabled()"
+                [checked]="paymentMeans.isSelected(mean)" (change)="paymentMeans.toggle(mean)">
+            <label class="form-check-label">{{ mean }}</label>
+        </div>
+    </div>
+</div>
+
+<hr>
+
+<!-- Incoterms -->
+<div class="row space-before">
+    <div class="col-2">
+        <input-label label="Available Incoterms"></input-label>
+    </div>
+    <div class="col-5">
+        <div *ngFor="let term of INCOTERMS_LEFT; let i = index" class="form-check">
+            <input class="form-check-input" type="checkbox" [disabled]="isDisabled()"
+                [checked]="incoterms.isSelected(term)" (change)="incoterms.toggle(term)">
+            <label class="form-check-label">{{ term }}</label>
+        </div>
+    </div>
+    <div class="col-5">
+        <div *ngFor="let term of INCOTERMS_RIGHT; let i = index" class="form-check">
+            <input class="form-check-input" type="checkbox" [disabled]="isDisabled()"
+                [checked]="incoterms.isSelected(term)" (change)="incoterms.toggle(term)">
+            <label class="form-check-label">{{ term }}</label>
+        </div>
+    </div>
+</div>
+
+<hr>
+
+<!-- Delivery Period -->
+<div class="row space-before">
+    <div class="col-12">
+        <h4>Delivery Period</h4>
+    </div>
+</div>
+
+<div *ngFor="let unit of negotiationSettings.deliveryPeriodUnits; let i = index" class="row space-before">
+    <div class="col-2">
+        <input-label *ngIf="i === 0" label="Shortest" definition="The shortest possible delivery period that may be requested by a customer"></input-label>
+    </div>
+    <div class="col-4">
+        <plain-amount-input [(amount)]="negotiationSettings.deliveryPeriodRanges[i].start" [amountUnit]="unit" [presentationMode]="presentationMode"></plain-amount-input>
+    </div>
+    <div class="col-2">
+        <input-label *ngIf="i === 0" label="Longest" definition="The longest possible delivery period that may be requested by a customer"></input-label>
+    </div>
+    <div class="col-4">
+        <plain-amount-input [(amount)]="negotiationSettings.deliveryPeriodRanges[i].end" [amountUnit]="unit" [presentationMode]="presentationMode"></plain-amount-input>
+    </div>
+</div>
+
+<hr>
+
+<!-- Warranty Period -->
+<div class="row space-before">
+    <div class="col-12">
+        <h4>Warranty Period</h4>
+    </div>
+</div>
+
+<div *ngFor="let unit of negotiationSettings.warrantyPeriodUnits; let i = index" class="row space-before">
+    <div class="col-2">
+        <input-label *ngIf="i === 0" label="Shortest" definition="The shortest possible warranty period that may be requested by a customer"></input-label>
+    </div>
+    <div class="col-4">
+        <plain-amount-input [(amount)]="negotiationSettings.warrantyPeriodRanges[i].start" [amountUnit]="unit" [presentationMode]="presentationMode"></plain-amount-input>
+    </div>
+    <div class="col-2">
+        <input-label *ngIf="i === 0" label="Longest" definition="The longest possible warranty period that may be requested by a customer"></input-label>
+    </div>
+    <div class="col-4">
+        <plain-amount-input [(amount)]="negotiationSettings.warrantyPeriodRanges[i].end" [amountUnit]="unit" [presentationMode]="presentationMode"></plain-amount-input>
+    </div>
+</div>
+
+<!-- Actions -->
+<div class="row actions-row space-before">
+    <div class="col-10 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+    <div class="col-2">
+        <button class="btn btn-primary action" [disabled]="isLoading() || !isDirty()" (click)="onSave()">Save</button>
+    </div>
+</div>

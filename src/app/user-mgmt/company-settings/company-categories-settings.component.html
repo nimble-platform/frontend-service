@@ -1,0 +1,62 @@
+<!-- Favorite Categories -->
+<h3 class="space-before space-after">Favorite Categories</h3>
+<div class="form-group row space-before">
+    <div class="col-12">
+        <table class="table table-striped table-bordered mb-0 mt-2" style="table-layout: fixed; width: 100%;">
+            <colgroup>
+                <col style="width: 150%;">
+                <col style="width: 150%;">
+                <col style="width: auto;">
+            </colgroup>
+            <tr><th>Name</th><th>Classification</th><th class="col-3">Actions</th></tr>
+            <tr *ngIf="prefCats.length==0"><td colspan="3">No favorite categories</td></tr>
+            <tr *ngFor="let prefCat of prefCats; let i = index">
+                <td>{{prefCat.split("::")[2]}}</td>
+                <td>{{prefCat.split("::")[1]}}</td>
+                <td>
+                    <button class="btn btn-danger btn-sm" (click)="removePrefCat(prefCat, i)">Delete</button>
+                    <call-status [callStatus]="prefCategoriesCallStatus[i]"></call-status>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<!-- Recent Categories -->
+<h3 class="space-after">Recently Used Categories</h3>
+<div class="form-group row space-before">
+    <div class="col-12">
+        <table class="table table-striped table-bordered mb-0 mt-2" style="table-layout: fixed; width: 100%;">
+            <colgroup>
+                <col style="width: 150%;">
+                <col style="width: 150%;">
+                <col style="width: auto;">
+            </colgroup>
+            <tr><th>Name</th><th>Classification</th><th class="col-3">Actions</th></tr>
+            <tr *ngIf="recCats.length==0"><td colspan="3">No recently used categories</td></tr>
+            <tr *ngFor="let recCat of recCats; let i = index">
+                <td>{{recCat.split("::")[2]}}</td>
+                <td>{{recCat.split("::")[1]}}</td>
+                <td>
+                    <button class="btn btn-danger btn-sm" (click)="removeRecCat(recCat, i)">Delete</button>
+                    <call-status [callStatus]="recCategoriesCallStatus[i]"></call-status>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<!-- Actions -->
+<div class="row actions-row">
+    <div class="col-6"></div>
+    <div class="col-3">
+        <a class="btn btn-primary action" [routerLink]="['/catalogue/categorysearch']" [queryParams]="{pageRef: 'menu', productType: 'product'}">
+            Add Product Category
+        </a>
+    </div>
+    <div class="col-3">
+        <a class="btn btn-primary action" [routerLink]="['/catalogue/categorysearch']" [queryParams]="{pageRef: 'menu', productType: 'transportation'}">
+            Add Logistics Service Category
+        </a>
+    </div>
+</div>

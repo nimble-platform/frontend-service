@@ -13,6 +13,9 @@ import {CallStatus} from "../../../common/call-status";
 import {ActivatedRoute, Router} from "@angular/router";
 import { Location } from "@angular/common";
 import { copy } from "../../../common/utils";
+import { Certificate } from "../../../user-mgmt/model/certificate";
+import {DocumentService} from '../document-service';
+import {DocumentReference} from '../../../catalogue/model/publish/document-reference';
 
 type PpapLevels = [boolean, boolean, boolean, boolean, boolean]
 
@@ -60,7 +63,9 @@ export class PpapDocumentSelectComponent implements OnInit {
     selectedDocuments: boolean[];
 
     /** The note. */
-    note: string = "";
+    notes: string[] = [''];
+    /** The currently selected additional documents*/
+    additionalDocuments: DocumentReference[] = [];
 
     /** Whether the definition of PPAP is visible or not. */
     showDetails = false;
@@ -71,6 +76,7 @@ export class PpapDocumentSelectComponent implements OnInit {
                 private cookieService: CookieService,
                 private route: ActivatedRoute,
                 private router: Router,
+                private documentService: DocumentService,
                 private location: Location) {
         
     }
@@ -83,7 +89,8 @@ export class PpapDocumentSelectComponent implements OnInit {
                 this.level = 0;
                 this.resetSelectedDocumens();
                 this.ppap = this.bpDataService.ppap;
-                this.note = this.ppap.note;
+                this.notes = this.ppap.note;
+                this.additionalDocuments = this.ppap.additionalDocumentReference;
                 this.ppap.documentType.forEach(name => {
                     const index = this.DOCUMENTS.findIndex(doc => doc.name === name);
                     if(index >= 0) {
@@ -95,11 +102,48 @@ export class PpapDocumentSelectComponent implements OnInit {
     }
 
     isRequestSent(): boolean {
-        return !!this.bpDataService.processMetadata;
+        return !!this.bpDataService.processMetadata && !this.bpDataService.updatingProcess;
     }
 
     isLoading(): boolean {
         return this.callStatus.fb_submitted;
+    }
+
+    areAllDocumentsAvailable(): boolean {
+        for(let i = 0; i < this.selectedDocuments.length; i++) {
+            if(this.selectedDocuments[i]) {
+                const name = this.DOCUMENTS[i].name;
+                if(!this.isDocumentAvailable(name)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    isDocumentAvailable(name: string): boolean {
+        return !!this.getCertificate(name);
+    }
+
+    onDownload(name: string): void {
+        const certificate = this.getCertificate(name);
+        if(!certificate) {
+            return;
+        }
+        this.userService.downloadCert(certificate.id);
+    }
+
+    private getCertificate(name: string): Certificate | null {
+        const settings = this.bpDataService.getCompanySettings();
+
+        for(const certificate of settings.certificates) {
+            if(certificate.type === name) {
+                return certificate;
+            }
+        }
+
+        return null;
     }
 
     onBack() {
@@ -108,14 +152,15 @@ export class PpapDocumentSelectComponent implements OnInit {
 
     onSkip() {
         this.bpDataService.resetBpData();
-        this.bpDataService.initRfq().then(() => {
+        this.bpDataService.initRfq(this.bpDataService.getCompanySettings().negotiationSettings).then(() => {
             this.bpDataService.setBpOptionParameters(this.bpDataService.userRole, "Negotiation", "Ppap");
-        })
+        });
     }
 
     onSendRequest() {
         this.ppap = UBLModelUtils.createPpap([]);
-        this.ppap.note = this.note;
+        this.ppap.note = this.notes;
+        this.ppap.additionalDocumentReference = this.additionalDocuments;
         this.ppap.documentType = this.DOCUMENTS.filter((_, i) => this.selectedDocuments[i]).map(doc => doc.name);
         this.ppap.lineItem.item = copy(this.bpDataService.modifiedCatalogueLines[0].goodsItem.item);
         UBLModelUtils.removeHjidFieldsFromObject(this.ppap);
@@ -129,7 +174,7 @@ export class PpapDocumentSelectComponent implements OnInit {
 
             this.userService.getParty(sellerId).then(sellerParty => {
                 this.ppap.sellerSupplierParty = new SupplierParty(sellerParty);
-                let vars = ModelUtils.createProcessVariables("Ppap", buyerId, sellerId, this.ppap, this.bpDataService);
+                let vars = ModelUtils.createProcessVariables("Ppap", buyerId, sellerId,this.cookieService.get("user_id"), this.ppap, this.bpDataService);
                 let piim = new ProcessInstanceInputMessage(vars, "");
                 this.bpeService
                     .startBusinessProcess(piim)
@@ -138,11 +183,37 @@ export class PpapDocumentSelectComponent implements OnInit {
                         this.router.navigate(["dashboard"]);
                     })
                     .catch(error => {
-                        this.callStatus.error("Failed to send Ppap request");
-                        console.log("Error while sending Ppap request", error);
+                        this.callStatus.error("Failed to send Ppap request", error);
                     });
+            })
+            .catch(error => {
+                this.callStatus.error("Failed to send Ppap request", error);
             });
+        })
+        .catch(error => {
+            this.callStatus.error("Failed to send Ppap request", error);
         });
+    }
+
+    onUpdateRequest(): void {
+        this.callStatus.submit();
+
+        const ppap: Ppap = copy(this.bpDataService.ppap);
+
+        ppap.note = this.notes;
+        ppap.additionalDocumentReference = this.additionalDocuments;
+        ppap.documentType = this.DOCUMENTS.filter((_, i) => this.selectedDocuments[i]).map(doc => doc.name);
+        UBLModelUtils.removeHjidFieldsFromObject(ppap);
+
+        this.bpeService.updateBusinessProcess(JSON.stringify(ppap),"PPAPREQUEST",this.bpDataService.processMetadata.processId)
+            .then(() => {
+                this.documentService.updateCachedDocument(ppap.id,ppap);
+                this.callStatus.callback("Ppap request updated", true);
+                this.router.navigate(['dashboard']);
+            })
+            .catch(error => {
+                this.callStatus.error("Failed to update Ppap request", error);
+            });
     }
 
     private resetSelectedDocumens() {
@@ -152,5 +223,4 @@ export class PpapDocumentSelectComponent implements OnInit {
     private computeSelectedDocuments() {
         this.selectedDocuments = this.DOCUMENTS.map(doc => doc.levels[this.level]);
     }
-
 }

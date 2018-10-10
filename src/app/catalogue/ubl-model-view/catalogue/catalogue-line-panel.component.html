@@ -6,9 +6,11 @@
         <ng-container *ngIf="presentationMode == 'view'">
             <div class="mr-1"><button type="button" class="btn btn-danger" (click)="deleteCatalogueLine()">Delete</button></div>
             <div ><button type="button" class="btn btn-primary" (click)="redirectToEdit()">Edit</button></div>
+            <call-status [callStatus]="deleteCallStatus" [large]="true"></call-status>
         </ng-container>
     </div>
 
     <product-details-tabs [wrapper]="productWrapper" [showOverview]="true" 
-        [options]="" [readonly]="true"></product-details-tabs>
+        [settings]="settings" [options]="" [readonly]="true">
+    </product-details-tabs>
 </div>

@@ -8,6 +8,7 @@ export class DashboardOrdersQuery {
         public products: string[] = [],
         public categories: string[] = [],
         public partners: string[] = [],
+        public status: string[] = [],
         public pageSize: number = PAGE_SIZE
     ) {}
 }

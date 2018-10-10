@@ -4,6 +4,10 @@
     font-weight: bold;
 }
 
+.status-text.four-steps {
+    width: 25%;
+}
+
 .steps {
     display: flex;
     display: -ms-flexbox;
@@ -128,4 +132,23 @@
 
 .steps .step.current ~ .step span {
     color: #b3b3b3;
+}
+
+.expand-steps-div {
+    position: absolute;
+    top: 0;
+    width: 2%;
+    height: 1.5rem;
+    padding: 0;
+    color: #007706;
+    background: #ffffff;
+    text-align: center;
+}
+
+.expand-transport {
+    right: 16%;
+}
+
+.expand-order {
+    left: 16%;
 }

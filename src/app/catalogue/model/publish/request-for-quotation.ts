@@ -5,11 +5,12 @@ import { Delivery } from "./delivery";
 import { NegotiationOptions } from "./negotiation-options";
 import { PaymentTerms } from "./payment-terms";
 import { PaymentMeans } from "./payment-means";
+import {DocumentReference} from './document-reference';
 
 export class RequestForQuotation {
 	constructor(
 		public id: string,
-		public note: string[],
+		public note: string[] = [''],
 		public dataMonitoringRequested: boolean,
 		public buyerCustomerParty: CustomerParty,
 		public sellerSupplierParty: SupplierParty,
@@ -17,6 +18,7 @@ export class RequestForQuotation {
 		public requestForQuotationLine: RequestForQuotationLine[],
 		public negotiationOptions: NegotiationOptions,
 		public paymentMeans: PaymentMeans,
-		public paymentTerms: PaymentTerms
+		public paymentTerms: PaymentTerms,
+        public additionalDocumentReference:DocumentReference[] = []
 	) {  }
 }

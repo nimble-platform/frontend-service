@@ -4,7 +4,6 @@ import 'rxjs/add/operator/toPromise';
 import * as myGlobals from '../globals';
 import {ProcessInstanceInputMessage} from "./model/process-instance-input-message";
 import {ProcessInstance} from "./model/process-instance";
-import {ProcessInstanceGroup} from "./model/process-instance-group";
 import {BPDataService} from "./bp-view/bp-data-service";
 import {ProcessInstanceGroupResponse} from "./model/process-instance-group-response";
 import {ProcessInstanceGroupFilter} from "./model/process-instance-group-filter";
@@ -12,12 +11,12 @@ import {CookieService} from "ng2-cookies";
 import {Contract} from "../catalogue/model/publish/contract";
 import {Clause} from "../catalogue/model/publish/clause";
 import { CollaborationRole } from "./model/collaboration-role";
-import { PpapResponse } from '../catalogue/model/publish/ppap-response';
-import { Ppap } from '../catalogue/model/publish/ppap';
 import { ItemInformationResponse } from '../catalogue/model/publish/item-information-response';
 import { ItemInformationRequest } from '../catalogue/model/publish/item-information-request';
 import { Order } from '../catalogue/model/publish/order';
 import { TradingTerm } from '../catalogue/model/publish/trading-term';
+import { Quotation } from '../catalogue/model/publish/quotation';
+import { RequestForQuotation } from '../catalogue/model/publish/request-for-quotation';
 
 @Injectable()
 export class BPEService {
@@ -30,10 +29,7 @@ export class BPEService {
 				private cookieService: CookieService) { }
 
 	startBusinessProcess(piim:ProcessInstanceInputMessage):Promise<ProcessInstance> {
-		const token = 'Bearer '+this.cookieService.get("bearer_token");
-		let headers = new Headers({'Accept': 'application/json','Authorization': token});
-		this.headers.keys().forEach(header => headers.append(header, this.headers.get(header)));
-
+		const headers = this.getAuthorizedHeaders();
 		let url = `${this.url}/start`;
 		if(this.bpDataService.getRelatedGroupId() != null) {
 			url += '?gid=' + this.bpDataService.getRelatedGroupId();
@@ -59,10 +55,7 @@ export class BPEService {
 	}
 
 	continueBusinessProcess(piim:ProcessInstanceInputMessage):Promise<ProcessInstance> {
-		const token = 'Bearer '+this.cookieService.get("bearer_token");
-		let headers = new Headers({'Accept': 'application/json','Authorization': token});
-		this.headers.keys().forEach(header => headers.append(header, this.headers.get(header)));
-
+		const headers = this.getAuthorizedHeaders();
 		let url = `${this.url}/continue`;
 		if(this.bpDataService.getRelatedGroupId() != null) {
 			url += '?gid=' + this.bpDataService.getRelatedGroupId();
@@ -80,39 +73,32 @@ export class BPEService {
 	}
 	
 	cancelBusinessProcess(id: string): Promise<any> {
-		const url = `${this.url}/rest/engine/default/process-instance/${id}`;
+	    let headers = this.getAuthorizedHeaders();
+		const url = `${this.url}/processInstance?processInstanceId=${id}`;
 		return this.http
-		.delete(url, {headers: this.headers})
+		.delete(url, {headers: headers})
 		.toPromise()
-		.then(res => res.json())
+		.then(res => res.text())
 		.catch(this.handleError);
 	}
 
-	getProcessDetails(id: string): Promise<any> {
-		const url = `${this.url}/rest/engine/default/variable-instance?processInstanceIdIn=${id}`;
-		return this.http
-		.get(url, {headers: this.headers})
-		.toPromise()
-		.then(res => res.json())
-		.catch(this.handleError);
-	}
+    cancelCollaboration(groupId: string): Promise<any> {
+        let headers = this.getAuthorizedHeaders();
+        const url = `${this.url}/collaboration?groupID=${groupId}`;
+        return this.http
+            .delete(url, {headers: headers})
+            .toPromise()
+            .then(res => res.text())
+            .catch(this.handleError);
+    }
 
-	getInitiatorHistory(id: string): Promise<any> {
-		const url = `${this.url}/rest/engine/default/history/task?processVariables=initiatorID_eq_${id}&sortBy=startTime&sortOrder=desc&maxResults=20`;
-		return this.http
-		.get(url, {headers: this.headers})
-		.toPromise()
-		.then(res => res.json())
-		.catch(this.handleError);
-	}
-
-	getRecipientHistory(id: string): Promise<any> {
-		const url = `${this.url}/rest/engine/default/history/task?processVariables=responderID_eq_${id}&sortBy=startTime&sortOrder=desc&maxResults=20`;
-		return this.http
-		.get(url, {headers: this.headers})
-		.toPromise()
-		.then(res => res.json())
-		.catch(this.handleError);
+	updateBusinessProcess(content: string, processID: string, processInstanceID: string): Promise<any> {
+        const url = `${this.url}/processInstance?processID=${processID}&processInstanceID=${processInstanceID}&creatorUserID=${this.cookieService.get("user_id")}`;
+        return this.http
+            .put(url, content,{headers: this.headers})
+            .toPromise()
+            .then(res => res.text())
+            .catch(this.handleError);
 	}
 
 	getProcessInstanceGroup(groupId: string){
@@ -149,27 +135,13 @@ export class BPEService {
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
-	}
+    }
 
-	getItemInformationRequest(itemInformationResponse: ItemInformationResponse): Promise<ItemInformationRequest> {
-		return this.getDocumentJsonContent(itemInformationResponse.itemInformationRequestDocumentReference.id);
-	}
+	getProcessInstanceGroupFilters(partyId:string, collaborationRole: CollaborationRole, archived: boolean, products: string[], 
+		categories: string[], partners: string[],status: string[]): Promise<ProcessInstanceGroupFilter> {
+		const headers = this.getAuthorizedHeaders();
 
-	getDocumentJsonContent(documentId:string):Promise<any> {
-		const url = `${this.url}/document/json/${documentId}`;
-		return this.http
-            .get(url, {headers: this.headers})
-            .toPromise()
-            .then(res => res.json())
-            .catch(this.handleError);
-	}
-
-	getProcessInstanceGroupFilters(partyId:string, collaborationRole: CollaborationRole, archived: boolean, products: string[], categories: string[], partners: string[]): Promise<ProcessInstanceGroupFilter> {
-		const token = 'Bearer '+this.cookieService.get("bearer_token");
-		let headers = new Headers({'Accept': 'application/json','Authorization': token});
-		this.headers.keys().forEach(header => headers.append(header, this.headers.get(header)));
-
-		let url:string = `${this.url}/group/filters?partyID=${partyId}&collaborationRole=${collaborationRole}&archived=${archived}`;
+		let url: string = `${this.url}/group/filters?partyID=${partyId}&collaborationRole=${collaborationRole}&archived=${archived}`;
 		if(products.length > 0) {
 			url += '&relatedProducts=' + this.stringifyArray(products);
 		}
@@ -179,6 +151,9 @@ export class BPEService {
 		if(partners.length > 0) {
 			url += '&tradingPartnerIDs=' + this.stringifyArray(partners);
 		}
+		if(status.length > 0){
+			url += '&status='+this.stringifyArray(status);
+		}
 		return this.http
             .get(url, {headers: headers})
             .toPromise()
@@ -186,7 +161,7 @@ export class BPEService {
             .catch(this.handleError);
 	}
 
-	getProcessInstanceGroups(partyId:string, collaborationRole: CollaborationRole, page: number, limit: number, archived: boolean, products: string[], categories: string[], partners: string[]): Promise<ProcessInstanceGroupResponse> {
+	getProcessInstanceGroups(partyId:string, collaborationRole: CollaborationRole, page: number, limit: number, archived: boolean, products: string[], categories: string[], partners: string[], status: string[]): Promise<ProcessInstanceGroupResponse> {
 		let offset:number = page * limit;
 		let url:string = `${this.url}/group?partyID=${partyId}&collaborationRole=${collaborationRole}&offset=${offset}&limit=${limit}&archived=${archived}`;
 		if(products.length > 0) {
@@ -198,6 +173,9 @@ export class BPEService {
 		if(partners.length > 0) {
 			url += '&tradingPartnerIDs=' + this.stringifyArray(partners);
 		}
+		if(status.length > 0){
+		    url += '&status='+this.stringifyArray(status);
+        }
 		return this.http
             .get(url, {headers: this.headers})
             .toPromise()
@@ -276,12 +254,29 @@ export class BPEService {
     }
 
     generateOrderTermsAndConditionsAsText(order: Order, buyerParty, sellerParty): Promise<string> {
-        const url = `${this.url}/contracts/create-terms?orderId=${order.id}&sellerParty=${JSON.stringify(sellerParty)}&buyerParty=${JSON.stringify(buyerParty)}&incoterms=${order.orderLine[0].lineItem.deliveryTerms.incoterms == null ? "" :order.orderLine[0].lineItem.deliveryTerms.incoterms}&tradingTerms=${encodeURIComponent(JSON.stringify(this.getSelectedTradingTerms(order.paymentTerms.tradingTerms)))}`;
+        const url = `${this.url}/contracts/create-terms?orderId=${order.id}&sellerParty=${encodeURIComponent(JSON.stringify(sellerParty))}&buyerParty=${encodeURIComponent(JSON.stringify(buyerParty))}&incoterms=${order.orderLine[0].lineItem.deliveryTerms.incoterms == null ? "" :order.orderLine[0].lineItem.deliveryTerms.incoterms}&tradingTerms=${encodeURIComponent(JSON.stringify(this.getSelectedTradingTerms(order.paymentTerms.tradingTerms)))}`;
         return this.http
             .get(url, {headers: this.headers})
             .toPromise()
             .then(res => res.text())
             .catch(this.handleError);
+	}
+
+	getOriginalOrderForProcess(processId: string): Promise<Order | null> {
+		const headers = this.getAuthorizedHeaders();
+		const url = `${this.url}/group/order-process?processInstanceId=${processId}`;
+		return this.http
+            .get(url, { headers })
+            .toPromise()
+            .then(res => res.json() || null)
+            .catch(() => null);
+	}
+
+	private getAuthorizedHeaders(): Headers {
+		const token = 'Bearer '+this.cookieService.get("bearer_token");
+		const headers = new Headers({'Accept': 'application/json','Authorization': token});
+		this.headers.keys().forEach(header => headers.append(header, this.headers.get(header)));
+		return headers;
 	}
 
 	private  getSelectedTradingTerms(tradingTerms): TradingTerm[] {

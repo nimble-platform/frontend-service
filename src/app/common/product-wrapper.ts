@@ -3,8 +3,9 @@ import { Predicate } from "@angular/core";
 import { ItemProperty } from "../catalogue/model/publish/item-property";
 import { PAYMENT_MEANS } from "../catalogue/model/constants";
 import { UBLModelUtils } from "../catalogue/model/ubl-model-utils";
-import {sanitizePropertyName, getPropertyKey, periodToString, isCustomProperty, getPropertyValues, selectName} from './utils';
+import { sanitizePropertyName, getPropertyKey, periodToString, isCustomProperty, getPropertyValues, isTransportService, selectName } from "./utils";
 import { PriceWrapper } from "./price-wrapper";
+import { CompanyNegotiationSettings } from "../user-mgmt/model/company-negotiation-settings";
 
 /**
  * Wrapper class for Catalogue line.
@@ -14,7 +15,8 @@ export class ProductWrapper {
 
     private priceWrapper: PriceWrapper;
 
-    constructor(public line: CatalogueLine) {
+    constructor(public line: CatalogueLine,
+                public negotiationSettings: CompanyNegotiationSettings) {
         this.priceWrapper = new PriceWrapper(line.requiredItemLocationQuantity.price);
     }
 
@@ -65,11 +67,11 @@ export class ProductWrapper {
     }
 
     getPaymentTerms(): string {
-        return UBLModelUtils.getDefaultPaymentTermsAsStrings()[0];
+        return this.negotiationSettings.paymentTerms[0];
     }
 
     getPaymentMeans(): string {
-        return PAYMENT_MEANS[0];
+        return this.negotiationSettings.paymentMeans[0];
     }
 
     getFreeSample(): string {
@@ -82,6 +84,10 @@ export class ProductWrapper {
 
     getPropertyName(property: ItemProperty): string {
         return sanitizePropertyName(selectName(property));
+    }
+
+    getLogisticsStatus(): boolean {
+        return isTransportService(this.line);
     }
 
     /*

@@ -2,7 +2,7 @@ import { Component, ViewChild, ViewEncapsulation, OnInit } from '@angular/core';
 import { Search } from './model/search';
 import { TnTService } from './tnt.service';
 import * as moment from 'moment';
-import * as shape from 'd3-shape';
+import * as d3 from 'd3';
 import * as myGlobals from '../globals';
 
 @Component({
@@ -24,7 +24,7 @@ export class TnTFormComponent {
     error_detc = false;
     updateInfo = false;
     hideButton = false;
-    curve = shape.curveBundle.beta(1);
+    curve = d3.curveBundle.beta(1);
     gateInformation = [];
     sstInfo = [];
     falsecode = '';

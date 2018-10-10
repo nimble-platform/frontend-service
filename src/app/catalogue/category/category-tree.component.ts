@@ -19,6 +19,7 @@ export class CategoryTreeComponent implements OnInit {
     expanded: boolean = false;
     childrenCategories: Category[];
     taxonomyId: string;
+    @Input() border: boolean = true;
     @Input() selectedCategories: Category[];
     @Input() level: number = 1;
     private _parentCategories: ParentCategories;
@@ -70,7 +71,7 @@ export class CategoryTreeComponent implements OnInit {
                 this.getCategoryStatus.callback("Category tree created", true);
             })
             .catch(error => {
-                this.getCategoryStatus.error("Error creating category tree");
+                this.getCategoryStatus.error("Error creating category tree", error);
             });
     }
 

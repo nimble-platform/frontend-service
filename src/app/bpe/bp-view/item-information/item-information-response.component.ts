@@ -14,6 +14,8 @@ import { BinaryObject } from "../../../catalogue/model/publish/binary-object";
 import { Attachment } from "../../../catalogue/model/publish/attachment";
 import { ProcessType } from "../../model/process-type";
 import { PresentationMode } from "../../../catalogue/model/publish/presentation-mode";
+import { isTransportService } from "../../../common/utils";
+import {CookieService} from 'ng2-cookies';
 
 @Component({
     selector: "item-information-response",
@@ -35,6 +37,7 @@ export class ItemInformationResponseComponent implements OnInit {
                 private bpDataService: BPDataService,
                 private location: Location,
                 private router: Router,
+                private cookieService: CookieService,
                 private route: ActivatedRoute) {
         
     }
@@ -67,7 +70,8 @@ export class ItemInformationResponseComponent implements OnInit {
         const vars: ProcessVariables = ModelUtils.createProcessVariables(
             "Item_Information_Request", 
             this.bpDataService.itemInformationRequest.buyerCustomerParty.party.id, 
-            this.bpDataService.itemInformationRequest.sellerSupplierParty.party.id, 
+            this.bpDataService.itemInformationRequest.sellerSupplierParty.party.id,
+            this.cookieService.get("user_id"),
             this.bpDataService.itemInformationResponse, 
             this.bpDataService
         );
@@ -78,8 +82,7 @@ export class ItemInformationResponseComponent implements OnInit {
             this.callStatus.callback("Information Response sent", true);
             this.router.navigate(['dashboard']);
         }).catch(error => {
-            this.callStatus.error("Failed to send Information Response");
-            console.log("Error while sending information response", error);
+            this.callStatus.error("Failed to send Information Response", error);
         });
     }
 
@@ -88,7 +91,11 @@ export class ItemInformationResponseComponent implements OnInit {
     }
 
     onNextStep(): void {
-        this.navigateToBusinessProcess("Ppap");
+        if(isTransportService(this.bpDataService.getCatalogueLine()) || !this.bpDataService.getCompanySettings().ppapCompatibilityLevel) {
+            this.navigateToBusinessProcess("Negotiation");
+        } else {
+            this.navigateToBusinessProcess("Ppap");
+        }
     }
 
     private navigateToBusinessProcess(targetProcess: ProcessType): void {

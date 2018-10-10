@@ -11,5 +11,6 @@ export class DashboardQueryParameters {
         public prd: string = "",
         public cat: string = "",
         public prt: string = "",
+        public sts: string = ""
     ) {  }
 }

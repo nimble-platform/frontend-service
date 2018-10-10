@@ -11,22 +11,29 @@ export class ShipmentInputComponent implements OnInit{
     @Input() presentationMode: "edit" | "view" = "edit";
     @Input() disabled: boolean = false;
     // used to get correct format for the estimatedDeliveryDate of shipment
-    date:any;
-    showDate: boolean = true;
+    date:any = null;
 
     constructor() {
 
     }
 
     ngOnInit(){
+        this.setEstimatedDeliveryDate();
+    }
+
+    setEstimatedDeliveryDate(){
         if(this.shipment.shipmentStage[0].estimatedDeliveryDate){
             const dateParts = this.shipment.shipmentStage[0].estimatedDeliveryDate.trim().split('-');
             let index = dateParts[2].indexOf('T');
-            this.date = {year: Number(dateParts[0]),month:Number(dateParts[1]),day:Number(dateParts[2].substring(0,index))};
+            if(index == -1){
+                this.date = dateParts[1] + "/" + dateParts[2] + "/" + dateParts[0];
+            }
+            else {
+                this.date = dateParts[1] + "/" + dateParts[2].substring(0,index) + "/" + dateParts[0];
+            }
         }
-    }
-
-    getEstimatedDeliveryDate():string{
-        return this.date.year+"-"+this.date.month+"-"+this.date.day;
+        else {
+            this.date = null;
+        }
     }
 }

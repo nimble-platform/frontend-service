@@ -12,34 +12,34 @@
 
 <hr>
 
-<div class="row">
-    <div class="col-3">
-        <strong class="font-weight-500"><label for="noteTextarea">Note:</label></strong>
-    </div>
-    <div class="col-9">
-        <textarea id="noteTextarea" class="form-control note-textarea" rows="4" 
-            [disabled]="isLoading() || isRequestSent()" [(ngModel)]="request.note[0]">
-        </textarea>
-    </div>
-</div>
+<!--Notes-->
+<h5>Notes and Additional Files</h5>
+<note-file-view [notes]="request.note"
+           [label]="'Notes'"
+           [documents]="request.additionalDocumentReference"
+           [readonly]="isLoading() || isRequestSent()"></note-file-view>
 
 <hr>
 
 <!-- Actions -->
 <div *ngIf="!isRequestSent()" class="row actions-row">
     <div class="col-2"></div>
-    <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+    <div *ngIf="!bpDataService.updatingProcess" class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+    <div *ngIf="bpDataService.updatingProcess" class="col-6 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
     <div class="col-2">
         <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
     </div>
-    <div class="col-2">
+    <div *ngIf="!bpDataService.updatingProcess" class="col-2">
         <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onSkip()">
             Skip
         </button>
     </div>
     <div class="col-2">
-        <button class="btn btn-primary action" [disabled]="isLoading()" (click)="onSendRequest()">
+        <button *ngIf="!bpDataService.updatingProcess" class="btn btn-primary action" [disabled]="isLoading()" (click)="onSendRequest()">
             Send Request
+        </button>
+        <button *ngIf="bpDataService.updatingProcess" class="btn btn-primary action" [disabled]="isLoading()" (click)="onUpdateRequest()">
+            Update Request
         </button>
     </div>
 </div>

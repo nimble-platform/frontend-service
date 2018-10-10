@@ -10,6 +10,7 @@ import { CatalogueLine } from "./model/publish/catalogue-line";
 import { Category } from "./model/category/category";
 import { BehaviorSubject } from "rxjs/BehaviorSubject";
 import {CookieService} from "ng2-cookies";
+import { copy } from "../common/utils";
 
 @Injectable()
 export class CatalogueService {
@@ -63,7 +64,7 @@ export class CatalogueService {
     }
 
     getCatalogueLine(catalogueId:string, lineId:string):Promise<CatalogueLine> {
-        let url = this.baseUrl + `/catalogue/${catalogueId}/catalogueline/${lineId}`;
+        const url = this.baseUrl + `/catalogue/${catalogueId}/catalogueline/${lineId}`;
         return this.http
             .get(url, {headers: this.headers})
             .toPromise()
@@ -216,6 +217,8 @@ export class CatalogueService {
                 if (xhr.readyState === 4) {
                     if (xhr.status === 200) {
                         resolve(xhr.response);
+                    } else if(xhr.status === 400) {
+                        reject(xhr.response);
                     } else {
                         reject(JSON.parse(xhr.response).message);
                     }
@@ -251,7 +254,7 @@ export class CatalogueService {
     // Editing functionality
     editCatalogueLine(catalogueLine: CatalogueLine) {
         // Deep copy to guard original catalogueLine model
-        this.draftCatalogueLine = JSON.parse(JSON.stringify(catalogueLine));
+        this.draftCatalogueLine = copy(catalogueLine);
         // save reference to original
         this.originalCatalogueLine = catalogueLine;
     }

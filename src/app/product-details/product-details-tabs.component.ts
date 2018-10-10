@@ -4,6 +4,7 @@ import { ProductWrapper } from "../common/product-wrapper";
 import { BpWorkflowOptions } from "../bpe/model/bp-workflow-options";
 import { ItemProperty } from "../catalogue/model/publish/item-property";
 import { getPropertyValuesAsStrings } from "../common/utils";
+import { CompanySettings } from "../user-mgmt/model/company-settings";
 
 @Component({
     selector: 'product-details-tabs',
@@ -14,11 +15,14 @@ export class ProductDetailsTabsComponent implements OnInit {
 
     @Input() wrapper: ProductWrapper;
     @Input() options: BpWorkflowOptions;
+    @Input() settings: CompanySettings;
 
     @Input() showOverview: boolean = false;
     @Input() readonly: boolean = false;
 
     selectedTab: ProductDetailsTab;
+
+    isLogistics: boolean = false;
     
     constructor() {
 
@@ -26,6 +30,7 @@ export class ProductDetailsTabsComponent implements OnInit {
 
     ngOnInit() {
         this.selectedTab = this.showOverview ? "OVERVIEW" : "DETAILS";
+        this.isLogistics = this.wrapper.getLogisticsStatus();
     }
 
     onSelectTab(event: any): void {

@@ -7,6 +7,7 @@ export class ProcessInstanceGroupFilter {
                 public tradingPartnerNames: string[] = [],
                 public relatedProducts: string[] = [],
                 public relatedProductCategories: string[] = [],
+                public status: string[] = [],
                 public startDate: string = "",
                 public endDate: string = "") {
     }

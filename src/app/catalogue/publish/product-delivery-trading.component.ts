@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from "@angular/core";
 import { CatalogueLine } from "../model/publish/catalogue-line";
 import { INCOTERMS } from "../model/constants";
+import { ProductWrapper } from "../../common/product-wrapper";
 import {Text} from "../model/publish/text";
 
 @Component({
@@ -10,7 +11,7 @@ import {Text} from "../model/publish/text";
 })
 export class ProductDeliveryTradingComponent implements OnInit {
 
-    @Input() catalogueLine: CatalogueLine;
+    @Input() wrapper: ProductWrapper;
     @Input() disabled: boolean
 
     INCOTERMS = INCOTERMS;
@@ -28,21 +29,21 @@ export class ProductDeliveryTradingComponent implements OnInit {
     addSpecialTerms() {
         let specialTermsText = new Text(this.newSpecialTerms.value, this.newSpecialTerms.languageID);
 
-        if (this.catalogueLine.goodsItem.deliveryTerms.specialTerms === null) {
-            this.catalogueLine.goodsItem.deliveryTerms.specialTerms = [];
+        if (this.wrapper.line.goodsItem.deliveryTerms.specialTerms === null) {
+            this.wrapper.line.goodsItem.deliveryTerms.specialTerms = [];
         }
 
-        this.catalogueLine.goodsItem.deliveryTerms.specialTerms.push(specialTermsText);
+        this.wrapper.line.goodsItem.deliveryTerms.specialTerms.push(specialTermsText);
 
         this.newSpecialTerms = {};
 
-        console.log(" $$$ Item: ", this.catalogueLine.goodsItem);
+        console.log(" $$$ Item: ", this.wrapper.line.goodsItem);
     }
 
     deleteSpecialTerms(index) {
-        this.catalogueLine.goodsItem.deliveryTerms.specialTerms.splice(index, 1);
+        this.wrapper.line.goodsItem.deliveryTerms.specialTerms.splice(index, 1);
 
-        console.log(" $$$ Item: ", this.catalogueLine.goodsItem);
+        console.log(" $$$ Item: ", this.wrapper.line.goodsItem);
     }
     //////
 }

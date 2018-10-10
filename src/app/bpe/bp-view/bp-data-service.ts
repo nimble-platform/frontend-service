@@ -5,7 +5,6 @@ import { Injectable } from "@angular/core";
 import { ItemProperty } from "../../catalogue/model/publish/item-property";
 import { Item } from "../../catalogue/model/publish/item";
 import { Dimension } from "../../catalogue/model/publish/dimension";
-import { ActivityVariableParser } from "./activity-variable-parser";
 import { DespatchAdvice } from "../../catalogue/model/publish/despatch-advice";
 import { ReceiptAdvice } from "../../catalogue/model/publish/receipt-advice";
 import { RequestForQuotation } from "../../catalogue/model/publish/request-for-quotation";
@@ -36,6 +35,10 @@ import {copy, getPropertyKey, selectName} from '../../common/utils';
 import { NegotiationModelWrapper } from "./negotiation/negotiation-model-wrapper";
 import { PriceWrapper } from "../../common/price-wrapper";
 import { Quantity } from "../../catalogue/model/publish/quantity";
+import { CompanyNegotiationSettings } from "../../user-mgmt/model/company-negotiation-settings";
+import { CompanySettings } from "../../user-mgmt/model/company-settings";
+import {DocumentService} from "./document-service";
+import {ShipmentStage} from "../../catalogue/model/publish/shipment-stage";
 
 /**
  * Created by suat on 20-Sep-17.
@@ -50,6 +53,10 @@ export class BPDataService{
     // variables to keep the products and product categories related to the active business process
     relatedProducts: string[];
     relatedProductCategories: string[];
+    // the company settings for the producers of the catalogue lines
+    private companySettings: CompanySettings[] = [];
+    // the company settings of the current user
+    currentUserSettings: CompanySettings;
 
     requestForQuotation: RequestForQuotation;
     quotation: Quotation;
@@ -63,6 +70,8 @@ export class BPDataService{
     transportExecutionPlan: TransportExecutionPlan;
     itemInformationRequest: ItemInformationRequest;
     itemInformationResponse: ItemInformationResponse;
+    /** Set for logistics service, when following an order for a physical product. */
+    productOrder: Order;
 
     ////////////////////////////////////////////////////////////////////////////
     //////// variables used when navigating to bp options details page //////
@@ -72,6 +81,7 @@ export class BPDataService{
     processTypeObservable = this.processTypeSubject.asObservable();
     userRole: BpUserRole;
     processMetadata: ThreadEventMetadata;
+    updatingProcess: boolean = false;
     previousProcess: string;
     workflowOptions: BpWorkflowOptions;
 
@@ -82,13 +92,15 @@ export class BPDataService{
     constructor(private searchContextService: SearchContextService,
                 private precedingBPDataService: PrecedingBPDataService,
                 private userService: UserService,
-                private cookieService: CookieService) {
+                private cookieService: CookieService,
+                private documentService: DocumentService) {
     }
 
-    setCatalogueLines(catalogueLines: CatalogueLine[]): void {
+    setCatalogueLines(catalogueLines: CatalogueLine[], settings: CompanySettings[]): void {
         this.catalogueLines = [];
         this.relatedProducts = [];
         this.relatedProductCategories = [];
+        this.companySettings = settings;
 
         for(let line of catalogueLines) {
             this.catalogueLines.push(line);
@@ -103,6 +115,10 @@ export class BPDataService{
 
     getCatalogueLine(): CatalogueLine {
         return this.catalogueLines[0];
+    }
+
+    getCompanySettings(): CompanySettings {
+        return this.companySettings[0];
     }
 
     getRelatedGroupId(): string {
@@ -122,20 +138,21 @@ export class BPDataService{
         }
     }
 
-    setBpOptionParametersWithProcessMetadata(userRole: BpUserRole, targetProcess: ProcessType, processMetadata: ThreadEventMetadata): void {
+    setBpOptionParametersWithProcessMetadata(userRole: BpUserRole, targetProcess: ProcessType, processMetadata: ThreadEventMetadata,updatingProcess: boolean): void {
         this.resetBpData();
         this.setBpOptionParameters(userRole, targetProcess, null);
         this.processMetadata = processMetadata;
+        this.updatingProcess = updatingProcess;
         this.setBpMessages(this.processTypeSubject.getValue(), processMetadata);
     }
 
-    private setBpMessages(processType: ProcessType, processMetadata: ThreadEventMetadata) {
+    private async setBpMessages(processType: ProcessType, processMetadata: ThreadEventMetadata) {
         let activityVariables = processMetadata.activityVariables;
         if(processType == 'Negotiation') {
-            this.requestForQuotation = ActivityVariableParser.getInitialDocument(activityVariables).value;
+            this.requestForQuotation = await this.documentService.getInitialDocument(activityVariables);
             this.initFetchedRfq();
 
-            let quotationVariable = ActivityVariableParser.getResponse(activityVariables);
+            let quotationVariable = await this.documentService.getResponseDocument(activityVariables);
             if(quotationVariable == null) {
                 // initialize the quotation only if the user is in seller role
                 if(this.userRole == 'seller') {
@@ -143,15 +160,15 @@ export class BPDataService{
                 }
 
             } else {
-                this.quotation = quotationVariable.value;
+                this.quotation = quotationVariable;
                 this.order = UBLModelUtils.createOrder();
                 this.order.orderLine[0].lineItem = this.quotation.quotationLine[0].lineItem;
             }
 
         } else if(processType == 'Order') {
-            this.order = ActivityVariableParser.getInitialDocument(activityVariables).value;
+            this.order = await this.documentService.getInitialDocument(activityVariables);
 
-            let orderResponseVariable = ActivityVariableParser.getResponse(activityVariables);
+            let orderResponseVariable = await this.documentService.getResponseDocument(activityVariables);
             if(orderResponseVariable == null) {
                 // initialize the order response only if the user is in seller role
                 if(this.userRole == 'seller') {
@@ -159,27 +176,27 @@ export class BPDataService{
                 }
 
             } else {
-                this.orderResponse = orderResponseVariable.value;
+                this.orderResponse = orderResponseVariable;
             }
 
 
         } else if(processType == 'Ppap'){
-          this.ppap = ActivityVariableParser.getInitialDocument(activityVariables).value;
+            this.ppap = await this.documentService.getInitialDocument(activityVariables);
 
-          let ppapResponseVariable = ActivityVariableParser.getResponse(activityVariables);
-          if(ppapResponseVariable == null) {
-              if (this.userRole == 'seller') {
-                  this.ppapResponse = UBLModelUtils.createPpapResponse(this.ppap, true);
-              }
-          }
-              else{
-                  this.ppapResponse = ppapResponseVariable.value;
-              }
+            let ppapResponseVariable = await this.documentService.getResponseDocument(activityVariables);
+            if(ppapResponseVariable == null) {
+                if (this.userRole == 'seller') {
+                    this.ppapResponse = UBLModelUtils.createPpapResponse(this.ppap, true);
+                }
+            }
+            else{
+                this.ppapResponse = ppapResponseVariable;
+            }
 
         } else if(processType == 'Fulfilment') {
-            this.despatchAdvice = ActivityVariableParser.getInitialDocument(activityVariables).value;
+            this.despatchAdvice = await this.documentService.getInitialDocument(activityVariables);
 
-            let receiptAdviceVariable = ActivityVariableParser.getResponse(activityVariables);
+            let receiptAdviceVariable = await this.documentService.getResponseDocument(activityVariables);
             if(receiptAdviceVariable == null) {
                 // initialize the quotation only if the user is in seller role
                 if(this.userRole == 'buyer') {
@@ -187,33 +204,33 @@ export class BPDataService{
                 }
 
             } else {
-                this.receiptAdvice = receiptAdviceVariable.value;
+                this.receiptAdvice = receiptAdviceVariable;
             }
 
         } else if(processType == 'Transport_Execution_Plan') {
-            this.transportExecutionPlanRequest = ActivityVariableParser.getInitialDocument(activityVariables).value;
+            this.transportExecutionPlanRequest = await this.documentService.getInitialDocument(activityVariables);
 
-            let transportExecutionPlanVariable = ActivityVariableParser.getResponse(activityVariables);
+            let transportExecutionPlanVariable = await this.documentService.getResponseDocument(activityVariables);
             if(transportExecutionPlanVariable == null) {
                 if(this.userRole == 'seller') {
                     this.transportExecutionPlan = UBLModelUtils.createTransportExecutionPlan(this.transportExecutionPlanRequest);
                 }
 
             } else {
-                this.transportExecutionPlan = transportExecutionPlanVariable.value;
+                this.transportExecutionPlan = transportExecutionPlanVariable;
             }
 
         } else if(processType == 'Item_Information_Request') {
-            this.itemInformationRequest = ActivityVariableParser.getInitialDocument(activityVariables).value;
+            this.itemInformationRequest = await this.documentService.getInitialDocument(activityVariables);
 
-            let itemInformationResponseVariable = ActivityVariableParser.getResponse(activityVariables);
+            let itemInformationResponseVariable = await this.documentService.getResponseDocument(activityVariables);
             if(itemInformationResponseVariable == null) {
                 if(this.userRole == 'seller') {
                     this.itemInformationResponse = UBLModelUtils.createItemInformationResponse(this.itemInformationRequest);
                 }
 
             } else {
-                this.itemInformationResponse = itemInformationResponseVariable.value;
+                this.itemInformationResponse = itemInformationResponseVariable;
             }
         }
     }
@@ -226,9 +243,10 @@ export class BPDataService{
 
     // this method is supposed to be called when the user is about to initialize a business process via the
     // search details page
-    initRfq(): Promise<void> {
+    initRfq(settings: CompanyNegotiationSettings): Promise<void> {
         const rfq = UBLModelUtils.createRequestForQuotation(
-            this.workflowOptions ? this.workflowOptions.negotiation : new NegotiationOptions()
+            this.workflowOptions ? this.workflowOptions.negotiation : new NegotiationOptions(),
+            settings
         );
         this.requestForQuotation = rfq;
 
@@ -254,7 +272,7 @@ export class BPDataService{
         rfqLine.lineItem.quantity.value = this.workflowOptions ? this.workflowOptions.quantity : 1;
 
         let userId = this.cookieService.get('user_id');
-        return this.userService.getSettings(userId).then(settings => {
+        return this.userService.getSettingsForUser(userId).then(settings => {
             // we can't copy because those are 2 different types of addresses.
             const lineItem = this.requestForQuotation.requestForQuotationLine[0].lineItem;
             const address = lineItem.deliveryTerms.deliveryLocation.address;
@@ -264,6 +282,19 @@ export class BPDataService{
             address.buildingNumber = settings.address.buildingNumber;
             address.streetName = settings.address.streetName;
         });
+    }
+
+    initRfqForTransportationWithOrder(order: Order): Promise<void> {
+        this.requestForQuotation = UBLModelUtils.createRequestForQuotationWithOrder(
+            copy(order),
+            copy(this.catalogueLines[0])
+        );
+        return Promise.resolve();
+    }
+
+    async initRfqForTransportationWithTheadMetadata(thread: ThreadEventMetadata): Promise<void> {
+        await this.setBpMessages('Order', thread);
+        return this.initRfqForTransportationWithOrder(this.order);
     }
 
     initRfqWithIir(): void {
@@ -291,16 +322,19 @@ export class BPDataService{
         const rfq = this.requestForQuotation;
         if(!rfq.negotiationOptions) {
             rfq.negotiationOptions = new NegotiationOptions();
-            
-            const line = this.catalogueLines[0];
-            const wrapper = new NegotiationModelWrapper(line, rfq, null);
 
-            rfq.negotiationOptions.deliveryPeriod = wrapper.lineDeliveryPeriodString !== wrapper.rfqDeliveryPeriodString;
-            rfq.negotiationOptions.incoterms = wrapper.lineIncoterms !== wrapper.rfqIncoterms;
-            rfq.negotiationOptions.paymentMeans = wrapper.linePaymentMeans !== wrapper.rfqPaymentMeans;
-            rfq.negotiationOptions.paymentTerms = wrapper.linePaymentTerms !== wrapper.rfqPaymentTermsToString;
-            rfq.negotiationOptions.price = wrapper.lineTotalPriceString !== wrapper.rfqTotalPriceString;
-            rfq.negotiationOptions.warranty = wrapper.lineWarrantyString !== wrapper.rfqWarrantyString;
+            this.userService.getCompanyNegotiationSettingsForParty(rfq.sellerSupplierParty.party.id).then(res => {
+                let settings: CompanyNegotiationSettings= res as CompanyNegotiationSettings;
+                const line = this.catalogueLines[0];
+                const wrapper = new NegotiationModelWrapper(line, rfq, null, settings);
+
+                rfq.negotiationOptions.deliveryPeriod = wrapper.lineDeliveryPeriodString !== wrapper.rfqDeliveryPeriodString;
+                rfq.negotiationOptions.incoterms = wrapper.lineIncoterms !== wrapper.rfqIncoterms;
+                rfq.negotiationOptions.paymentMeans = wrapper.linePaymentMeans !== wrapper.rfqPaymentMeans;
+                rfq.negotiationOptions.paymentTerms = wrapper.linePaymentTerms !== wrapper.rfqPaymentTermsToString;
+                rfq.negotiationOptions.price = wrapper.lineTotalPriceString !== wrapper.rfqTotalPriceString;
+                rfq.negotiationOptions.warranty = wrapper.lineWarrantyString !== wrapper.rfqWarrantyString;
+            });
         }
     }
 
@@ -332,9 +366,7 @@ export class BPDataService{
         this.order.paymentTerms = copyQuotation.paymentTerms;
 
         this.order.anticipatedMonetaryTotal.payableAmount.currencyID = copyRfq.requestForQuotationLine[0].lineItem.price.priceAmount.currencyID;
-        
-        // this.order.anticipatedMonetaryTotal.payableAmount.value = copyQuotation.
-        
+
         this.setProcessType('Order');
     }
 
@@ -357,7 +389,7 @@ export class BPDataService{
         const copyRfq = copy(this.requestForQuotation);
         this.resetBpData();
         this.modifiedCatalogueLines = copy(this.catalogueLines);
-        this.requestForQuotation = UBLModelUtils.createRequestForQuotation(new NegotiationOptions());
+        this.requestForQuotation = UBLModelUtils.createRequestForQuotation(new NegotiationOptions(),null);
         this.requestForQuotation.requestForQuotationLine[0].lineItem = copyQuotation.quotationLine[0].lineItem;
         this.requestForQuotation.paymentMeans = copyQuotation.paymentMeans;
         this.requestForQuotation.paymentTerms = copyQuotation.paymentTerms;
@@ -369,7 +401,7 @@ export class BPDataService{
         let copyOrder:Order = copy(this.order);
         this.resetBpData();
         this.modifiedCatalogueLines = copy(this.catalogueLines);
-        this.requestForQuotation = UBLModelUtils.createRequestForQuotation(new NegotiationOptions());
+        this.requestForQuotation = UBLModelUtils.createRequestForQuotation(new NegotiationOptions(),null);
         this.requestForQuotation.requestForQuotationLine[0].lineItem = copyOrder.orderLine[0].lineItem;
         this.requestForQuotation.paymentTerms = copyOrder.paymentTerms;
         this.requestForQuotation.paymentMeans = copyOrder.paymentMeans;
@@ -382,7 +414,7 @@ export class BPDataService{
         this.requestForQuotation = UBLModelUtils.createRequestForQuotationWithTransportExecutionPlanRequest(copyTransportExecutionPlanRequest,this.modifiedCatalogueLines[0]);
     }
 
-    initDespatchAdvice(handlingInst:string,carrierName:string,carrierContact:string,deliveredQuantity:Quantity,endDate:string) {
+    initDispatchAdvice(handlingInst: string, carrierName: string, carrierContact: string, deliveredQuantity: Quantity, endDate: string) {
         let copyOrder:Order = copy(this.order);
         this.resetBpData();
         this.modifiedCatalogueLines = copy(this.catalogueLines);
@@ -396,20 +428,38 @@ export class BPDataService{
 
         this.despatchAdvice.despatchLine[0].deliveredQuantity.value = deliveredQuantity.value;
         this.despatchAdvice.despatchLine[0].shipment[0].handlingInstructions[0].value = handlingInst;
+        this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage.push(new ShipmentStage());
         this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage[0].carrierParty.name.value = carrierName;
         this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage[0].carrierParty.contact.telephone = carrierContact;
         this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage[0].estimatedDeliveryDate = endDate;
+    }
+
+    initDispatchAdviceWithOrder() {
+        const copyOrder: Order = copy(this.productOrder);
+        this.resetBpData();
+        this.modifiedCatalogueLines = copy(this.catalogueLines);
+        this.despatchAdvice = UBLModelUtils.createDespatchAdvice(copyOrder);
+
+        const quantity = copyOrder.orderLine[0].lineItem.quantity;
+        this.despatchAdvice.despatchLine[0].deliveredQuantity.unitCode = quantity.unitCode;
+        this.despatchAdvice.despatchLine[0].deliveredQuantity.value = quantity.value;
     }
 
     initTransportExecutionPlanRequest() {
         this.modifiedCatalogueLines = copy(this.catalogueLines);
         this.transportExecutionPlanRequest = UBLModelUtils.createTransportExecutionPlanRequest(this.modifiedCatalogueLines[0]);
         this.selectFirstValuesAmongAlternatives(this.modifiedCatalogueLines[0].goodsItem.item);
+
+        if(this.quotation) {
+            const quotationPeriod = this.quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod;
+            this.transportExecutionPlanRequest.serviceStartTimePeriod.startDate = quotationPeriod.startDate;
+            this.transportExecutionPlanRequest.serviceStartTimePeriod.endDate = quotationPeriod.endDate;
+        }
     }
 
-    initTransportExecutionPlanRequestWithOrder() {
+    async initTransportExecutionPlanRequestWithOrder() {
         this.resetBpData();
-        this.setBpMessages('Order', this.searchContextService.associatedProcessMetadata);
+        await this.setBpMessages('Order', this.searchContextService.associatedProcessMetadata);
         let copyOrder:Order = copy(this.order);
         this.modifiedCatalogueLines = copy(this.catalogueLines);
         this.transportExecutionPlanRequest = UBLModelUtils.createTransportExecutionPlanRequestWithOrder(copyOrder, this.modifiedCatalogueLines[0]);
@@ -446,6 +496,7 @@ export class BPDataService{
             this.setProcessType(null);
             this.previousProcess = null;
         }
+        this.updatingProcess = false;
         this.processMetadata = null;
         this.modifiedCatalogueLines = null;
         this.requestForQuotation = null;
@@ -538,17 +589,17 @@ export class BPDataService{
     private getItemFromCurrentWorkflow(): Item {
         switch(this.processTypeSubject.getValue()) {
             case "Item_Information_Request":
-                return this.itemInformationRequest.itemInformationRequestLine[0].salesItem[0].item;
+                return this.itemInformationRequest ? this.itemInformationRequest.itemInformationRequestLine[0].salesItem[0].item : null;
             case "Ppap":
-                return this.ppap.lineItem.item;
+                return this.ppap ? this.ppap.lineItem.item : null;
             case "Negotiation":
-                return this.requestForQuotation.requestForQuotationLine[0].lineItem.item;
+                return this.requestForQuotation ? this.requestForQuotation.requestForQuotationLine[0].lineItem.item : null;
             case "Order":
-                return this.order.orderLine[0].lineItem.item;
+                return this.order ? this.order.orderLine[0].lineItem.item : null;
             case "Transport_Execution_Plan":
                 return null;
             case "Fulfilment":
-                return this.despatchAdvice.despatchLine[0].item;
+                return this.despatchAdvice ? this.despatchAdvice.despatchLine[0].item : null;
         }
     }
 
@@ -572,14 +623,14 @@ export class BPDataService{
 
             // this item contains all the properties.
             const lineItem = line.goodsItem.item;
-    
+
             // set the selected property values
             for(let i = 0; i < lineItem.additionalItemProperty.length;i++) {
                 const prop = lineItem.additionalItemProperty[i];
                 const key = getPropertyKey(prop);
-    
+
                 const itemProp = item.additionalItemProperty[i];
-    
+
                 switch(prop.valueQualifier) {
                     case "STRING":
                     case "BOOLEAN":
@@ -605,8 +656,8 @@ export class BPDataService{
                     case "QUANTITY":
                         if(prop.valueQuantity.length > 1) {
                             for(let valIndex = 0; valIndex < prop.valueQuantity.length; valIndex++) {
-                                if(prop.valueQuantity[valIndex].value === itemProp.valueQuantity[0].value 
-                                        && prop.valueQuantity[valIndex].unitCode === itemProp.valueQuantity[0].unitCode) {
+                                if(prop.valueQuantity[valIndex].value === itemProp.valueQuantity[0].value
+                                    && prop.valueQuantity[valIndex].unitCode === itemProp.valueQuantity[0].unitCode) {
                                     this.workflowOptions.selectedValues[key] = valIndex;
                                 }
                             }
@@ -654,3 +705,4 @@ export class BPDataService{
         this.modifiedCatalogueLines[0].goodsItem.item.dimension = dimensions;
     }
 }
+

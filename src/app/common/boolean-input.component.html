@@ -1,0 +1,15 @@
+<div class="row {{ rowClass }}">
+  <div *ngIf="label" [class]="labelClass">
+        <input-label [class]="labelMainClass" [label]="label" [definition]="definition">
+        </input-label>
+  </div>
+  <div [class]="valueClass">
+      <input type="checkbox"
+          [(ngModel)]="value"
+          *ngIf="presentationMode === 'edit'">
+      <div *ngIf="presentationMode != 'edit'">
+        <p [class]="valueTextClass" *ngIf="value === true">Yes</p>
+        <p [class]="valueTextClass" *ngIf="value === false">No</p>
+      </div>
+  </div>
+</div>

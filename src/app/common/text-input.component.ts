@@ -18,11 +18,12 @@ export class TextInputComponent implements OnInit {
     @Input() rowClass: string = "";
     @Input() valueClass: string; // set based on label
     @Input() placeholder: string = "Enter a value...";
-    
+
     private textValue: string;
     @Input() valueTextClass: string = "";
     @Output() textChange = new EventEmitter<string>();
     @Input() rows: number = 3;
+    @Input() maxLength: string = "255";
 
     constructor() {
 
