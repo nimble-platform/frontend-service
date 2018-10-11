@@ -175,7 +175,7 @@ export class CategorySearchComponent implements OnInit {
     }
 
     findPrefCat(cat: Category): boolean {
-        var cat_str = cat.id + "::" + cat.taxonomyId + "::" + cat.preferredName + "::" + this.productType;
+        var cat_str = cat.id + "::" + cat.taxonomyId + "::" + selectPreferredName(cat) + "::" + this.productType;
         var found = false;
         if (this.prefCats.indexOf(cat_str) != -1) found = true;
         return found;
@@ -183,7 +183,7 @@ export class CategorySearchComponent implements OnInit {
 
     removeCategoryFromFavorites(cat: Category) {
         this.addFavoriteCategoryStatus.submit();
-        const cat_str = cat.id + "::" + cat.taxonomyId + "::" + cat.preferredName + "::" + this.productType;
+        const cat_str = cat.id + "::" + cat.taxonomyId + "::" + selectPreferredName(cat) + "::" + this.productType;
         const userId = this.cookieService.get("user_id");
         this.userService.togglePrefCat(userId, cat_str).then(res => {
             const prefCats_tmp = [];
@@ -201,7 +201,7 @@ export class CategorySearchComponent implements OnInit {
 
     addCategoryToFavorites(cat: Category) {
         this.addFavoriteCategoryStatus.submit();
-        const cat_str = cat.id + "::" + cat.taxonomyId + "::" + cat.preferredName + "::" + this.productType;
+        const cat_str = cat.id + "::" + cat.taxonomyId + "::" + selectPreferredName(cat) + "::" + this.productType;
         const userId = this.cookieService.get("user_id");
         this.userService.togglePrefCat(userId, cat_str).then(res => {
             const prefCats_tmp = [];
@@ -222,7 +222,7 @@ export class CategorySearchComponent implements OnInit {
       var recCatPost = [];
       var timeStamp = new Date().getTime();
       for (var i=0; i<cat.length; i++) {
-        const cat_str = cat[i].id + "::" + cat[i].taxonomyId + "::" + cat[i].preferredName + "::" + this.productType + "::" + timeStamp;
+        const cat_str = cat[i].id + "::" + cat[i].taxonomyId + "::" + selectPreferredName(cat[i]) + "::" + this.productType + "::" + timeStamp;
         recCatPost.push(cat_str);
       }
       const userId = this.cookieService.get("user_id");

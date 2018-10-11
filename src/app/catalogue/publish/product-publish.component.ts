@@ -118,6 +118,8 @@ export class ProductPublishComponent implements OnInit {
 
     json = JSON;
 
+    // the language of template
+    templateLanguage = "en";
     // used to add a new property which has a unit
     private quantity = new Quantity(null, null);
 
@@ -987,7 +989,7 @@ export class ProductPublishComponent implements OnInit {
 
         let userId: string = this.cookieService.get("user_id");
         var reader = new FileReader();
-        this.catalogueService.downloadTemplate(userId, this.categoryService.selectedCategories)
+        this.catalogueService.downloadTemplate(userId, this.categoryService.selectedCategories,this.templateLanguage)
             .then(result => {
                     var link = document.createElement('a');
                     link.id = 'downloadLink';

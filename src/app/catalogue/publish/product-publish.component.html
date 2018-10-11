@@ -40,7 +40,10 @@
 
     <div class="d-flex mt-3 mb-4">
         <label class="col-9">1. Download the product category template</label>
-        <button class="btn btn-secondary col-3"
+        <select [(ngModel)]="templateLanguage" class="form-control col-1" type="text" style="margin-right: 1px">
+            <option *ngFor='let language of languages' [value]="language" [selected]="templateLanguage === language">{{language}}</option>
+        </select>
+        <button class="btn btn-secondary col-2"
                 (click)="downloadTemplate()">Download template
         </button>
     </div>
@@ -130,9 +133,6 @@
 
             <text-input label="Product Description" [(text)]="catalogueLine.goodsItem.item.description" [rows]="6" rowClass="space-before">
             </text-input -->
-    
-            <!-- product ID -->
-            <div class="col-12"><small class="float-right">Product Id: {{ catalogueLine.goodsItem.item.manufacturersItemIdentification.id }}</small></div>
 
             <table class="table table-striped table-bordered">
                 <thead>
@@ -210,7 +210,8 @@
                 </tr>
                 </tbody>
             </table>
-
+            <!-- product ID -->
+            <div class="col-12"><small class="float-right">Product Id: {{ catalogueLine.goodsItem.item.manufacturersItemIdentification.id }}</small></div>
         </div>
     </div>
 

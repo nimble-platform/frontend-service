@@ -68,6 +68,9 @@ export function createText (value: string): Text {
 }
 
 export function selectDescription (item:  Item) {
+    if(item.description.length == 0){
+        return null;
+    }
     let language = "en";
     for (let pName of item.description) {
         if(pName.languageID === language) {

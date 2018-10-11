@@ -117,7 +117,7 @@ export class CatalogueService {
             .catch(this.handleError);
     }
 
-    downloadTemplate(userId:string, categories: Category[]): Promise<any> {
+    downloadTemplate(userId:string, categories: Category[],templateLanguage:string): Promise<any> {
         let taxonomyIds:string = "", categoryIds:string = "";
         for(let category of categories) {
             categoryIds += category.id + ",";
@@ -127,7 +127,7 @@ export class CatalogueService {
         taxonomyIds = taxonomyIds.substr(0, taxonomyIds.length-1);
 
         return this.userService.getUserParty(userId).then(party => {
-            const url = this.baseUrl + `/catalogue/template?partyId=${party.id}&partyName=${party.name.value}&categoryIds=${encodeURIComponent(categoryIds)}&taxonomyIds=${encodeURIComponent(taxonomyIds)}`;
+            const url = this.baseUrl + `/catalogue/template?partyId=${party.id}&partyName=${party.name.value}&categoryIds=${encodeURIComponent(categoryIds)}&taxonomyIds=${encodeURIComponent(taxonomyIds)}&templateLanguage=${templateLanguage}`;
             return new Promise<any>((resolve, reject) => {
 
                 let xhr = new XMLHttpRequest();
