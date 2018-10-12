@@ -31,14 +31,17 @@ export class ProductPriceTabComponent implements OnInit {
         // nothing for now
     }
 
-    addPriceOption(priceOptionCategory: string): void {
+    addPriceOption(priceOptionType: any): void {
         let priceOption: PriceOption = new PriceOption();
-        if (priceOptionCategory == PRICE_OPTIONS.ORDERED_QUANTITY) {
+
+        priceOption.type = priceOptionType;
+
+        if (priceOptionType == PRICE_OPTIONS.ORDERED_QUANTITY.type) {
             priceOption.minimumOrderQuantity = new Quantity(this.catalogueLine.requiredItemLocationQuantity.price.baseQuantity.value, this.catalogueLine.requiredItemLocationQuantity.price.baseQuantity.unitCode);
 
-        } else if(priceOptionCategory == PRICE_OPTIONS.PRODUCT_PROPERTY) {
+        } else if(priceOptionType == PRICE_OPTIONS.PRODUCT_PROPERTY.type) {
             priceOption.itemProperty = [];
-        } else if(priceOptionCategory == PRICE_OPTIONS.INCOTERM){
+        } else if(priceOptionType == PRICE_OPTIONS.INCOTERM.type){
             priceOption.incoTerms = [];
         }
 

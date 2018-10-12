@@ -1,4 +1,3 @@
-import {PRICE_OPTIONS} from "../../model/constants";
 import {Pipe, PipeTransform} from "@angular/core";
 import {PriceOption} from "../../model/publish/price-option";
 /**
@@ -10,48 +9,11 @@ export class PriceOptionCountPipe implements PipeTransform {
     /**
      * Returns the count of price options specified by the price option category
      */
-    transform(priceOptions: PriceOption[], priceOptionCategory: string): number {
+    transform(priceOptions: PriceOption[], priceOptionType: number): number {
         let count: number = 0;
-        if(priceOptionCategory === PRICE_OPTIONS.ORDERED_QUANTITY) {
-            for(let priceOption of priceOptions) {
-                if(priceOption.minimumOrderQuantity) {
-                    count++;
-                }
-            }
-
-        } else if(priceOptionCategory === PRICE_OPTIONS.PRODUCT_PROPERTY) {
-            for(let priceOption of priceOptions) {
-                if(priceOption.itemProperty != null)  {
-                    count++;
-                }
-            }
-
-        } else if(priceOptionCategory === PRICE_OPTIONS.DELIVERY_PERIOD) {
-            for(let priceOption of priceOptions) {
-                if(priceOption.estimatedDeliveryPeriod) {
-                    count++;
-                }
-            }
-
-        } else if(priceOptionCategory === PRICE_OPTIONS.INCOTERM) {
-            for(let priceOption of priceOptions) {
-                if(priceOption.incoTerms) {
-                    count++;
-                }
-            }
-
-        } else if(priceOptionCategory === PRICE_OPTIONS.PAYMENT_MEAN) {
-            for(let priceOption of priceOptions) {
-                if(priceOption.paymentMeans.length > 0) {
-                    count++;
-                }
-            }
-
-        } else if(priceOptionCategory === PRICE_OPTIONS.DELIVERY_LOCATION) {
-            for(let priceOption of priceOptions) {
-                if(priceOption.itemLocationQuantity.applicableTerritoryAddress.length > 0) {
-                    count++;
-                }
+        for(let option of priceOptions){
+            if(option.type == priceOptionType){
+                count++;
             }
         }
         return count;
