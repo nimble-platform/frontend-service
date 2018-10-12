@@ -40,7 +40,7 @@ export class PriceOptionPipe implements PipeTransform {
         } else if (priceOptionCategory === PRICE_OPTIONS.INCOTERM) {
             for (let i:number = 0; i<allPriceOptions.length; i++) {
                 let priceOption:PriceOption = allPriceOptions[i];
-                if (priceOption.incoTerms.length > 0) {
+                if (priceOption.incoTerms) {
                     priceOptionsWithIndices.push({option: priceOption, index: i});
                 }
             }

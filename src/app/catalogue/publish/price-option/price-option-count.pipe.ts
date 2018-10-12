@@ -35,7 +35,7 @@ export class PriceOptionCountPipe implements PipeTransform {
 
         } else if(priceOptionCategory === PRICE_OPTIONS.INCOTERM) {
             for(let priceOption of priceOptions) {
-                if(priceOption.incoTerms.length > 0) {
+                if(priceOption.incoTerms) {
                     count++;
                 }
             }

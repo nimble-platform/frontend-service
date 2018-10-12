@@ -38,6 +38,8 @@ export class ProductPriceTabComponent implements OnInit {
 
         } else if(priceOptionCategory == PRICE_OPTIONS.PRODUCT_PROPERTY) {
             priceOption.itemProperty = [];
+        } else if(priceOptionCategory == PRICE_OPTIONS.INCOTERM){
+            priceOption.incoTerms = [];
         }
 
         this.catalogueLine.priceOption.push(priceOption);
