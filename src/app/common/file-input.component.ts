@@ -23,14 +23,15 @@ export class FileInputComponent implements OnInit {
 
     @Input() accept: string = "*/*";
     @Input() multiple: boolean = false;
-    
+    @Input() maxSize: number = 1;
+
     @Output() onSelectFile: EventEmitter<BinaryObject> = new EventEmitter();
     @Output() onClearFile: EventEmitter<BinaryObject> = new EventEmitter();
-    
+
     @Input() binaryObjects: BinaryObject[] = [];
-    
+
     constructor() {
-        
+
     }
 
     ngOnInit() {
@@ -45,15 +46,21 @@ export class FileInputComponent implements OnInit {
         // reset the input
         event.target.value = "";
         if(file) {
-            const reader = new FileReader();
-            const self = this;
-            reader.onload = function () {
-                const base64String = (reader.result as string).split(',').pop();
-                const binaryObject = new BinaryObject(base64String, file.type, file.name, "", "");
-                self.binaryObjects.push(binaryObject);
-                self.onSelectFile.emit(binaryObject);
-            };
-            reader.readAsDataURL(file);
+            const filesize = parseInt(((file.size/1024)/1024).toFixed(4));
+            if (filesize < this.maxSize) {
+              const reader = new FileReader();
+              const self = this;
+              reader.onload = function () {
+                  const base64String = (reader.result as string).split(',').pop();
+                  const binaryObject = new BinaryObject(base64String, file.type, file.name, "", "");
+                  self.binaryObjects.push(binaryObject);
+                  self.onSelectFile.emit(binaryObject);
+              };
+              reader.readAsDataURL(file);
+            }
+            else {
+              alert("Maximum allowed filesize: "+this.maxSize+" MB");
+            }
         }
     }
 

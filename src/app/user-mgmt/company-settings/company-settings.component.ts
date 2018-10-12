@@ -5,9 +5,9 @@ import * as myGlobals from "../../globals";
 import { CallStatus } from "../../common/call-status";
 import { CompanySettings } from "../model/company-settings";
 
-type SelectedTab = "COMPANY_DATA" 
-    | "NEGOTIATION_SETTINGS" 
-    | "DELIVERY_TERMS" 
+type SelectedTab = "COMPANY_DATA"
+    | "NEGOTIATION_SETTINGS"
+    | "DELIVERY_TERMS"
     | "CERTIFICATES"
     | "CATEGORIES";
 
@@ -19,23 +19,32 @@ type SelectedTab = "COMPANY_DATA"
 export class CompanySettingsComponent implements OnInit {
 
     settings: CompanySettings;
+    certificates: any;
+    ppapLevel: any;
     selectedTab: SelectedTab = "COMPANY_DATA";
     initCallStatus: CallStatus = new CallStatus();
 
     constructor(private cookieService: CookieService,
                 private userService: UserService) {
-        
+
     }
 
     ngOnInit() {
         this.initCallStatus.submit();
-        let userId = this.cookieService.get("user_id");
+        const userId = this.cookieService.get("user_id");
         this.userService.getSettingsForUser(userId).then(settings => {
             if (myGlobals.debug) {
                 console.log("Fetched settings: " + JSON.stringify(settings));
             }
 
             this.settings = settings;
+            this.certificates = this.settings.certificates;
+            if (this.settings.ppapCompatibilityLevel && this.settings.ppapCompatibilityLevel>0)
+              this.ppapLevel = this.settings.ppapCompatibilityLevel;
+            else
+              this.ppapLevel = 0;
+            this.certificates.sort((a, b) => a.name.localeCompare(b.name));
+            this.certificates.sort((a, b) => a.type.localeCompare(b.type));
             this.initCallStatus.callback("Settings successfully fetched", true);
         })
         .catch(error => {

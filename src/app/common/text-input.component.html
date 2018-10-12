@@ -5,12 +5,12 @@
     </div>
 
     <div [class]="valueClass" *ngIf="presentationMode === 'edit' && visible && rows > 1">
-        <textarea class="form-control {{valueTextClass}}" [rows]="rows" [(ngModel)]="text" [disabled]="disabled">
+        <textarea class="form-control {{valueTextClass}}" [rows]="rows" [(ngModel)]="text" [disabled]="disabled" [maxlength]="maxLength">
         </textarea>
     </div>
 
     <div [class]="valueClass" *ngIf="presentationMode === 'edit' && visible && rows === 1">
-        <input type="text" class="form-control {{valueTextClass}}" [(ngModel)]="text" [disabled]="disabled">
+        <input type="text" class="form-control {{valueTextClass}}" [(ngModel)]="text" [disabled]="disabled" [maxlength]="maxLength">
     </div>
 
     <div [class]="valueClass" *ngIf="presentationMode === 'view' && visible">

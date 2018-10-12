@@ -49,6 +49,7 @@ export class ProductBpStepsComponent implements OnInit {
         if(this.displayMode === "Transport") {
             switch(this.currentStep) {
                 case "Transport_Information_Request":
+                case "Item_Information_Request":
                     return "0%";
                 case "Transport_Negotiation":
                     return "25%";
@@ -77,6 +78,8 @@ export class ProductBpStepsComponent implements OnInit {
                 return "67%";
             case "Fulfilment":
                 return "83%";
+            default:
+                throw new Error("Unexpected step for displayMode 'Transport': " + this.currentStep);
         }
     }
 

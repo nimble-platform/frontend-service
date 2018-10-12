@@ -10,7 +10,7 @@ export class Shipment {
         public totalTransportHandlingUnitQuantity: Quantity = new Quantity(),
         public consignment: Consignment[] = [new Consignment()],
         public goodsItem:GoodsItem[] = [new GoodsItem()],
-        public shipmentStage: ShipmentStage[] = [new ShipmentStage()],
+        public shipmentStage: ShipmentStage[] = [],
         public transportHandlingUnit: TransportHandlingUnit[] = [new TransportHandlingUnit()],
         public originAddress: Address = new Address(),
     ) {  }

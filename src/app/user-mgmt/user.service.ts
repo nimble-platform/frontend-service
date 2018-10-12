@@ -12,6 +12,7 @@ import {UBLModelUtils} from "../catalogue/model/ubl-model-utils";
 import { UserRole } from './model/user-role';
 import { CompanyNegotiationSettings } from './model/company-negotiation-settings';
 import { CatalogueLine } from '../catalogue/model/publish/catalogue-line';
+import { INCOTERMS, PAYMENT_MEANS } from '../catalogue/model/constants';
 
 @Injectable()
 export class UserService {
@@ -125,7 +126,12 @@ export class UserService {
     }
 
     getSettingsForProduct(line: CatalogueLine): Promise<CompanySettings> {
-        return this.getSettingsForParty(line.goodsItem.item.manufacturerParty.id);
+        console.log("Getting settings for product: " + line.goodsItem.item.manufacturerParty.id);
+        return this.getSettingsForParty(line.goodsItem.item.manufacturerParty.id)
+        .then(settings => {
+            console.log("Settings", settings);
+            return settings;
+        })
     }
 
     getSettingsForUser(userId: string): Promise<CompanySettings> {
@@ -221,10 +227,19 @@ export class UserService {
     addRecCat(userId: string, cat: string[]): Promise<any> {
       return this.getSettingsForUser(userId).then(settings => {
         var rec_cat = settings.recentlyUsedProductCategories;
+        var rec_cat_comp = rec_cat.slice();
+        for (var i=0; i<rec_cat_comp.length; i++) {
+          var rec_cat_comp_arr = rec_cat_comp[i].split("::");
+          rec_cat_comp[i] = rec_cat_comp_arr[0] + "::" + rec_cat_comp_arr[1] + "::" + rec_cat_comp_arr[2] + "::" + rec_cat_comp_arr[3];
+        }
         for (var i=0; i<cat.length; i++) {
-          var cat_idx = rec_cat.indexOf(cat[i]);
+          var cat_arr = cat[i].split("::");
+          var cat_comp = cat_arr[0] + "::" + cat_arr[1] + "::" + cat_arr[2] + "::" + cat_arr[3];
+          var cat_idx = rec_cat_comp.indexOf(cat_comp);
           if (cat_idx == -1)
             rec_cat.push(cat[i]);
+          else
+            rec_cat[cat_idx]=cat[i];
         }
         if (rec_cat.length>10) {
           rec_cat.sort((a, b) => b.split("::")[2].localeCompare(a.split("::")[2]));
@@ -319,6 +334,16 @@ export class UserService {
         }
         while(settings.warrantyPeriodRanges.length > 2) {
             settings.warrantyPeriodRanges.pop();
+        }
+
+        if(settings.incoterms.length === 0) {
+            settings.incoterms.push(...INCOTERMS);
+        }
+        if(settings.paymentMeans.length === 0) {
+            settings.paymentMeans.push(...PAYMENT_MEANS);
+        }
+        if(settings.paymentTerms.length === 0) {
+            settings.paymentTerms.push(...UBLModelUtils.getDefaultPaymentTermsAsStrings());
         }
 
         return settings;

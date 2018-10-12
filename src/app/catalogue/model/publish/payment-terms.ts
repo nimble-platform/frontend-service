@@ -1,6 +1,7 @@
 import { TradingTerm } from './trading-term';
 
 export class PaymentTerms {
-    constructor(public tradingTerms: TradingTerm[] = []) {
+    constructor(public paymentConditions:string[] = null,
+                public tradingTerms: TradingTerm[] = []) {
     }
 }

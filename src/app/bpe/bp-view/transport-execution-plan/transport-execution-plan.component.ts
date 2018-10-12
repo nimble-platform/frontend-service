@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { CookieService } from "ng2-cookies";
 import { Location } from "@angular/common";
-import { Router } from "@angular/router";
+import { Router, ActivatedRoute } from "@angular/router";
 import { BPDataService } from "../bp-data-service";
 import { CallStatus } from "../../../common/call-status";
 import { SearchContextService } from "../../../simple-search/search-context.service";
@@ -15,6 +15,9 @@ import { ProcessInstanceInputMessage } from "../../model/process-instance-input-
 import { TransportExecutionPlan } from "../../../catalogue/model/publish/transport-execution-plan";
 import { BpUserRole } from "../../model/bp-user-role";
 import { copy } from "../../../common/utils";
+import { Order } from "../../../catalogue/model/publish/order";
+import { PresentationMode } from "../../../catalogue/model/publish/presentation-mode";
+import {DocumentService} from '../document-service';
 
 @Component({
     selector: "transport-execution-plan",
@@ -25,6 +28,8 @@ export class TransportExecutionPlanComponent implements OnInit {
     request: TransportExecutionPlanRequest;
     response: TransportExecutionPlan;
     userRole: BpUserRole;
+    productOrder?: Order;
+    updatingProcess: boolean;
 
     contractCallStatus: CallStatus = new CallStatus();
     callStatus: CallStatus = new CallStatus();
@@ -35,22 +40,34 @@ export class TransportExecutionPlanComponent implements OnInit {
                 private userService: UserService,
                 private bpeService: BPEService,
                 private location: Location,
-                private router: Router) {
+                private router: Router,
+                private documentService: DocumentService,
+                private route: ActivatedRoute) {
         
     }
 
     ngOnInit() {
         if(!this.bpDataService.transportExecutionPlanRequest) {
             if(this.searchContextService.associatedProcessMetadata != null) {
-                this.bpDataService.initTransportExecutionPlanRequestWithOrder();
+                this.bpDataService.initTransportExecutionPlanRequestWithOrder().then(response => {
+                    this.init();
+                });
             } else {
                 this.bpDataService.initTransportExecutionPlanRequest();
+                this.init();
             }
         }
+        else {
+            this.init();
+        }
+    }
 
+    init(){
         this.request = this.bpDataService.transportExecutionPlanRequest;
         this.response = this.bpDataService.transportExecutionPlan;
+        this.productOrder = this.bpDataService.productOrder;
         this.userRole = this.bpDataService.userRole;
+        this.updatingProcess = this.bpDataService.updatingProcess;
 
         if(this.request.transportContract == null && this.bpDataService.precedingProcessId != null) {
             this.contractCallStatus.submit();
@@ -58,9 +75,9 @@ export class TransportExecutionPlanComponent implements OnInit {
                 this.request.transportContract = contract;
                 this.contractCallStatus.callback("Contract constructed", true);
             })
-            .catch(error => {
-                this.contractCallStatus.error("Error while getting contract.", error);
-            });
+                .catch(error => {
+                    this.contractCallStatus.error("Error while getting contract.", error);
+                });
         }
     }
 
@@ -80,6 +97,10 @@ export class TransportExecutionPlanComponent implements OnInit {
         return this.isLoading() || this.isStarted() || this.isFinished();
     }
 
+    getRequestPresentationMode(): PresentationMode {
+        return this.isFinished() ? "view" : "edit";
+    }
+
     isResponseDisabled(): boolean {
         return this.isLoading() || this.isFinished();
     }
@@ -96,8 +117,8 @@ export class TransportExecutionPlanComponent implements OnInit {
         transportationExecutionPlanRequest.mainTransportationService = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;
         UBLModelUtils.removeHjidFieldsFromObject(transportationExecutionPlanRequest);
 
-        //first initialize the seller and buyer parties.
-        //once they are fetched continue with starting the ordering process
+        // first initialize the seller and buyer parties.
+        // once they are fetched continue with starting the ordering process
         const sellerId: string = this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty.id;
         const buyerId: string = this.cookieService.get("company_id");
 
@@ -109,7 +130,7 @@ export class TransportExecutionPlanComponent implements OnInit {
             transportationExecutionPlanRequest.transportUserParty = buyerParty;
             transportationExecutionPlanRequest.transportServiceProviderParty = sellerParty;
 
-            const vars: ProcessVariables = ModelUtils.createProcessVariables("Transport_Execution_Plan", buyerId, sellerId, transportationExecutionPlanRequest, this.bpDataService);
+            const vars: ProcessVariables = ModelUtils.createProcessVariables("Transport_Execution_Plan", buyerId, sellerId,this.cookieService.get("user_id"), transportationExecutionPlanRequest, this.bpDataService);
             const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
 
             return this.bpeService.startBusinessProcess(piim);
@@ -130,6 +151,7 @@ export class TransportExecutionPlanComponent implements OnInit {
 
         this.bpeService.updateBusinessProcess(JSON.stringify(transportationExecutionPlanRequest),"TRANSPORTEXECUTIONPLANREQUEST",this.bpDataService.processMetadata.processId)
             .then(() => {
+                this.documentService.updateCachedDocument(transportationExecutionPlanRequest.id,transportationExecutionPlanRequest);
                 this.callStatus.callback("Item Information Request updated", true);
                 this.router.navigate(['dashboard']);
             })
@@ -143,7 +165,8 @@ export class TransportExecutionPlanComponent implements OnInit {
 
         const vars: ProcessVariables = ModelUtils.createProcessVariables("Transport_Execution_Plan", 
             this.bpDataService.transportExecutionPlan.transportUserParty.id, 
-            this.bpDataService.transportExecutionPlan.transportServiceProviderParty.id, 
+            this.bpDataService.transportExecutionPlan.transportServiceProviderParty.id,
+            this.cookieService.get("user_id"),
             this.bpDataService.transportExecutionPlan, this.bpDataService);
         const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, 
             this.bpDataService.processMetadata.processId);
@@ -152,17 +175,23 @@ export class TransportExecutionPlanComponent implements OnInit {
         this.bpeService.continueBusinessProcess(piim)
             .then(res => {
                 this.callStatus.callback("Transport Execution Plan sent", true);
-                this.router.navigate(['dashboard']);
+                this.router.navigate(["dashboard"]);
             }).catch(error => {
-                this.callStatus.error("Failed to send Transport Execution Plan")
+                this.callStatus.error("Failed to send Transport Execution Plan", error);
             });
     }
 
     onDispatchAdvice() {
-        // TODO
-        // this.bpDataService.initDespatchAdvice();
-        // this.bpDataService.setBpOptionParameters(this.userRole, 'Fulfilment',"Order");
-        this.callStatus.submit();
-        this.callStatus.error("Not implemented yet.");
+        this.bpDataService.initDispatchAdviceWithOrder();
+        this.bpDataService.setBpOptionParameters("seller", "Fulfilment", "Order");
+
+        const params = this.route.snapshot.queryParams;
+        this.router.navigate(['bpe/bpe-exec'], {
+            queryParams: {
+                catalogueId: params.catalogueId,
+                id: params.id,
+                pid: params.pid
+            }
+        });
     }
 }

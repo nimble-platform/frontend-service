@@ -1,7 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { BPDataService } from "../bp-data-service";
 import { CallStatus } from "../../../common/call-status";
-import { thresholdFreedmanDiaconis } from "d3";
 import { SearchContextService } from "../../../simple-search/search-context.service";
 
 @Component({
@@ -29,13 +28,15 @@ export class TransportNegotiationComponent implements OnInit {
         }
     }
 
-    initRfq(): Promise<void> {
-        if(this.searchContextService.associatedProcessMetadata != null) {
-            return this.bpDataService.initRfqForTransportationWithOrder();
+    async initRfq(): Promise<void> {
+        if(this.searchContextService.associatedProcessMetadata) {
+            return await this.bpDataService.initRfqForTransportationWithTheadMetadata(this.searchContextService.associatedProcessMetadata);
+        } else if(this.bpDataService.productOrder) {
+            return this.bpDataService.initRfqForTransportationWithOrder(this.bpDataService.productOrder);
         }
         return this.bpDataService.initRfq(null);
     }
-    
+
     isLoading(): boolean {
         return this.initCallStatus.fb_submitted;
     }

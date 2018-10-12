@@ -73,48 +73,32 @@ export class BPEService {
 	}
 	
 	cancelBusinessProcess(id: string): Promise<any> {
-		const url = `${this.url}/processInstance?processInstanceId=${id}`;
+	    let headers = this.getAuthorizedHeaders();
+		const url = `${this.url}/processInstance/${id}/cancel`;
 		return this.http
-		.delete(url, {headers: this.headers})
+		.post(url, null, {headers: headers})
 		.toPromise()
 		.then(res => res.text())
 		.catch(this.handleError);
 	}
 
+    cancelCollaboration(groupId: string): Promise<any> {
+        let headers = this.getAuthorizedHeaders();
+        const url = `${this.url}/group/${groupId}/cancel`;
+        return this.http
+            .post(url, null, {headers: headers})
+            .toPromise()
+            .then(res => res.text())
+            .catch(this.handleError);
+    }
+
 	updateBusinessProcess(content: string, processID: string, processInstanceID: string): Promise<any> {
-        const url = `${this.url}/processInstance?processID=${processID}&processInstanceID=${processInstanceID}`;
+        const url = `${this.url}/processInstance?processID=${processID}&processInstanceID=${processInstanceID}&creatorUserID=${this.cookieService.get("user_id")}`;
         return this.http
             .put(url, content,{headers: this.headers})
             .toPromise()
             .then(res => res.text())
             .catch(this.handleError);
-	}
-
-	getProcessDetails(id: string): Promise<any> {
-		const url = `${this.url}/rest/engine/default/variable-instance?processInstanceIdIn=${id}`;
-		return this.http
-		.get(url, {headers: this.headers})
-		.toPromise()
-		.then(res => res.json())
-		.catch(this.handleError);
-	}
-
-	getInitiatorHistory(id: string): Promise<any> {
-		const url = `${this.url}/rest/engine/default/history/task?processVariables=initiatorID_eq_${id}&sortBy=startTime&sortOrder=desc&maxResults=20`;
-		return this.http
-		.get(url, {headers: this.headers})
-		.toPromise()
-		.then(res => res.json())
-		.catch(this.handleError);
-	}
-
-	getRecipientHistory(id: string): Promise<any> {
-		const url = `${this.url}/rest/engine/default/history/task?processVariables=responderID_eq_${id}&sortBy=startTime&sortOrder=desc&maxResults=20`;
-		return this.http
-		.get(url, {headers: this.headers})
-		.toPromise()
-		.then(res => res.json())
-		.catch(this.handleError);
 	}
 
 	getProcessInstanceGroup(groupId: string){
@@ -151,24 +135,7 @@ export class BPEService {
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
-	}
-
-	getItemInformationRequest(itemInformationResponse: ItemInformationResponse): Promise<ItemInformationRequest> {
-		return this.getDocumentJsonContent(itemInformationResponse.itemInformationRequestDocumentReference.id);
-	}
-
-	getRequestForQuotation(quotation: Quotation): Promise<RequestForQuotation> {
-		return this.getDocumentJsonContent(quotation.requestForQuotationDocumentReference.id);
-	}
-
-	getDocumentJsonContent(documentId:string):Promise<any> {
-		const url = `${this.url}/document/json/${documentId}`;
-		return this.http
-            .get(url, {headers: this.headers})
-            .toPromise()
-            .then(res => res.json())
-            .catch(this.handleError);
-	}
+    }
 
 	getProcessInstanceGroupFilters(partyId:string, collaborationRole: CollaborationRole, archived: boolean, products: string[], 
 		categories: string[], partners: string[],status: string[]): Promise<ProcessInstanceGroupFilter> {
@@ -287,7 +254,7 @@ export class BPEService {
     }
 
     generateOrderTermsAndConditionsAsText(order: Order, buyerParty, sellerParty): Promise<string> {
-        const url = `${this.url}/contracts/create-terms?orderId=${order.id}&sellerParty=${JSON.stringify(sellerParty)}&buyerParty=${JSON.stringify(buyerParty)}&incoterms=${order.orderLine[0].lineItem.deliveryTerms.incoterms == null ? "" :order.orderLine[0].lineItem.deliveryTerms.incoterms}&tradingTerms=${encodeURIComponent(JSON.stringify(this.getSelectedTradingTerms(order.paymentTerms.tradingTerms)))}`;
+        const url = `${this.url}/contracts/create-terms?orderId=${order.id}&sellerParty=${encodeURIComponent(JSON.stringify(sellerParty))}&buyerParty=${encodeURIComponent(JSON.stringify(buyerParty))}&incoterms=${order.orderLine[0].lineItem.deliveryTerms.incoterms == null ? "" :order.orderLine[0].lineItem.deliveryTerms.incoterms}&tradingTerms=${encodeURIComponent(JSON.stringify(this.getSelectedTradingTerms(order.paymentTerms.tradingTerms)))}`;
         return this.http
             .get(url, {headers: this.headers})
             .toPromise()
@@ -302,7 +269,7 @@ export class BPEService {
             .get(url, { headers })
             .toPromise()
             .then(res => res.json() || null)
-            .catch(this.handleError);
+            .catch(() => null);
 	}
 
 	private getAuthorizedHeaders(): Headers {

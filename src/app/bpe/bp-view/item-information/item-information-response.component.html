@@ -21,25 +21,16 @@
 
 <hr>
 
-<div class="row">
-    <div class="col-3">
-        <strong><label for="custNoteTextarea">Customer's note:</label></strong>
-    </div>
-    <div class="col-9">
-        <textarea id="custNoteTextarea" class="form-control note-textarea" 
-            rows="4" disabled [(ngModel)]="request.note[0]"></textarea>
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-3">
-        <strong><label for="manNoteTextarea">Manufacturer's note:</label></strong>
-    </div>
-    <div class="col-9">
-        <textarea id="manNoteTextarea" class="form-control note-textarea" rows="4" 
-            [disabled]="isLoading() || isResponseSent()" [(ngModel)]="response.note[0]"></textarea>
-    </div>
-</div>
+<!--Notes-->
+<h5>Notes and Additional Files</h5>
+<note-file-view [notes]="request.note"
+           [documents]="request.additionalDocumentReference"
+           [label]="'Customer\'s note'"></note-file-view>
+<hr>
+<note-file-view [notes]="response.note"
+           [documents]="response.additionalDocumentReference"
+           [label]="'Manufacturer\'s note'"
+           [readonly]="isLoading() || isResponseSent()"></note-file-view>
 
 <hr>
 

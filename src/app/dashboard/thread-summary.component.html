@@ -3,11 +3,9 @@
         <!-- Title bar -->
         <div class="row">
             <div class="col-12 d-flex thread-entry-header">
-                <div *ngIf="!lastEvent" class="header-label mr-auto">Loading...</div>
-                <div *ngIf="lastEvent" class="header-label mr-auto">
-                    <label class="clickable" (click)="navigateToSearchDetails()">
-                        {{lastEvent.product.name}}
-                    </label> ({{lastEvent.tradingPartner}})
+                <div *ngIf="!titleEvent" class="header-label mr-auto">Loading...</div>
+                <div *ngIf="titleEvent" class="header-label mr-auto">
+                    <span class="clickable" (click)="navigateToSearchDetails()">{{titleEvent.product.name}}</span> (Trading partner: <span class="clickable" (click)="navigateToCompanyDetails()">{{titleEvent.tradingPartner}}</span>)
                 </div>
                 <div *ngIf="showDataChannelButton" data-toggle="tooltip" data-placement="top" title="Open Data Channel">
                     <i class="fa fa-exchange-alt p-2 pointer" aria-hidden="true" [routerLink]="[channelLink]"></i>
@@ -20,6 +18,9 @@
                 </div>
                 <div *ngIf="processInstanceGroup.archived" (click)="restoreGroup()" data-toggle="tooltip" data-placement="top" title="Restore">
                     <i class="fa fa-undo p-2 pointer" aria-hidden="true"></i>
+                </div>
+                <div (click)="cancelCollaboration()" data-toggle="tooltip" data-placement="top" title="Cancel the collaboration">
+                    <i class="fa fa-times p-2 pointer" aria-hidden="true"></i>
                 </div>
             </div>
         </div>

@@ -30,7 +30,8 @@ export const NEGOTIATION_RESPONSES = {
 
 export const CURRENCIES = [
     "EUR",
-    "USD"
+    "USD",
+    "SEK"
 ]
 
 export const CUSTOM_PROPERTY_LIST_ID = "Custom";

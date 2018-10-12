@@ -4,6 +4,7 @@ import {Consignment} from "./consignment";
 import {Location} from "./location";
 import {Item} from "./item";
 import {Contract} from "./contract";
+import {DocumentReference} from './document-reference';
 /**
  * Created by suat on 10-Nov-17.
  */
@@ -19,6 +20,7 @@ export class TransportExecutionPlanRequest {
         public serviceEndTimePeriod:Period = new Period(),
         public fromLocation:Location = new Location(),
         public toLocation:Location = new Location(),
-        public consignment:Consignment[] = [new Consignment()]
+        public consignment:Consignment[] = [new Consignment()],
+        public additionalDocumentReference:DocumentReference[] = []
     ) {  }
 }

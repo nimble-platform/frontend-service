@@ -21,31 +21,42 @@
 			'file-saver': 'npm:file-saver',
 			'moment': 'npm:moment',
 			'd3': 'npm:d3/dist',
-			'@swimlane/ngx-graph': 'npm:@swimlane/ngx-graph/release/index.js',
-            '@swimlane/ngx-charts': 'npm:@swimlane/ngx-charts/release/index.js',
-			'@angular/animations': 'npm:@angular/animations/bundles/animations.umd.js',
-            '@angular/animations/browser': 'npm:@angular/animations/bundles/animations-browser.umd.js',
-            '@angular/platform-browser/animations': 'npm:@angular/platform-browser/bundles/platform-browser-animations.umd.js',
-			'd3-array': 'npm:d3-array/build',
-			'd3-brush': 'npm:d3-brush/build',
-            'd3-color': 'npm:d3-color/build',
-            'd3-force': 'npm:d3-force/build',
-			'd3-format': 'npm:d3-format/build',
-            'd3-hierarchy': 'npm:d3-hierarchy/dist',
-            'd3-interpolate': 'npm:d3-interpolate/build',
-			'd3-scale': 'npm:d3-scale/dist',
+			'd3-array': 'npm:d3-array/dist',
+			'd3-axis': 'npm:d3-axis/dist',
+			'd3-brush': 'npm:d3-brush/dist',
+			'd3-chord': 'npm:d3-chord/dist',
+			'd3-collection': 'npm:d3-collection/dist',
+			'd3-color': 'npm:d3-color/dist',
+			'd3-contour': 'npm:d3-contour/dist',
+			'd3-dispatch': 'npm:d3-dispatch/dist',
+			'd3-drag': 'npm:d3-drag/dist',
+			'd3-dsv': 'npm:d3-dsv/dist',
+			'd3-ease': 'npm:d3-ease/dist',
+			'd3-fetch': 'npm:d3-fetch/dist',
+			'd3-force': 'npm:d3-force/dist',
+			'd3-format': 'npm:d3-format/dist',
+			'd3-geo': 'npm:d3-geo/dist',
+			'd3-hierarchy': 'npm:d3-hierarchy/dist',
+			'd3-interpolate': 'npm:d3-interpolate/dist',
+			'd3-path': 'npm:d3-path/dist',
+			'd3-polygon': 'npm:d3-polygon/dist',
+			'd3-quadtree': 'npm:d3-quadtree/dist',
+			'd3-random': 'npm:d3-random/dist',
+			'd3-scale': 'npm:d3-scale/build',
+			'd3-scale-chromatic': 'npm:d3-scale-chromatic/dist',
 			'd3-selection': 'npm:d3-selection/dist',
-			'd3-shape': 'npm:d3-shape/build',
-			'd3-time-format': 'npm:d3-time-format/build',
-			'd3-dispatch': 'npm:d3-dispatch/build',
-			'd3-drag': 'npm:d3-drag/build',
-			'd3-transition': 'npm:d3-transition/build',
-			'd3-quadtree': 'npm:d3-quadtree/build',
-			'd3-collection': 'npm:d3-collection/build',
-			'd3-timer': 'npm:d3-timer/build',
-			'd3-time': 'npm:d3-time/build',
-			'd3-path': 'npm:d3-path/build',
-			'd3-ease': 'npm:d3-ease/build',
+			'd3-shape': 'npm:d3-shape/dist',
+			'd3-time': 'npm:d3-time/dist',
+			'd3-time-format': 'npm:d3-time-format/dist',
+			'd3-timer': 'npm:d3-timer/dist',
+			'd3-transition': 'npm:d3-transition/dist',
+			'd3-voronoi': 'npm:d3-voronoi/dist',
+			'd3-zoom': 'npm:d3-zoom/dist',
+			'@swimlane/ngx-graph': 'npm:@swimlane/ngx-graph/release/index.js',
+			'@swimlane/ngx-charts': 'npm:@swimlane/ngx-charts/release/index.js',
+			'@angular/animations': 'npm:@angular/animations/bundles/animations.umd.js',
+			'@angular/animations/browser': 'npm:@angular/animations/bundles/animations-browser.umd.js',
+			'@angular/platform-browser/animations': 'npm:@angular/platform-browser/bundles/platform-browser-animations.umd.js',
 			'lunr': 'npm:lunr/lunr.js'
 		},
 		packages: {
@@ -75,86 +86,130 @@
 				main: 'd3.js',
 				defaultExtension: 'js'
 			},
-            'd3-array': {
+      'd3-array': {
 				main: 'd3-array.js',
-                defaultExtension: 'js'
-            },
+        defaultExtension: 'js'
+      },
+			'd3-axis': {
+				main: 'd3-axis.js',
+        defaultExtension: 'js'
+      },
 			'd3-brush': {
 				main: 'd3-brush.js',
-				defaultExtension: 'js'
-			},
+        defaultExtension: 'js'
+      },
+			'd3-chord': {
+				main: 'd3-chord.js',
+        defaultExtension: 'js'
+      },
+			'd3-collection': {
+				main: 'd3-collection.js',
+        defaultExtension: 'js'
+      },
 			'd3-color': {
 				main: 'd3-color.js',
-				defaultExtension: 'js'
-			},
-            'd3-force': {
+        defaultExtension: 'js'
+      },
+			'd3-contour': {
+				main: 'd3-contour.js',
+        defaultExtension: 'js'
+      },
+			'd3-dispatch': {
+				main: 'd3-dispatch.js',
+        defaultExtension: 'js'
+      },
+			'd3-drag': {
+				main: 'd3-drag.js',
+        defaultExtension: 'js'
+      },
+			'd3-dsv': {
+				main: 'd3-dsv.js',
+        defaultExtension: 'js'
+      },
+			'd3-ease': {
+				main: 'd3-ease.js',
+        defaultExtension: 'js'
+      },
+			'd3-fetch': {
+				main: 'd3-fetch.js',
+        defaultExtension: 'js'
+      },
+			'd3-force': {
 				main: 'd3-force.js',
-                defaultExtension: 'js'
-            },
-            'd3-format': {
+        defaultExtension: 'js'
+      },
+			'd3-format': {
 				main: 'd3-format.js',
-                defaultExtension: 'js'
-            },
-            'd3-hierarchy': {
-				main: 'd3-hierarchy',
-                defaultExtension: 'js'
-            },
-            'd3-interpolate': {
+        defaultExtension: 'js'
+      },
+			'd3-geo': {
+				main: 'd3-geo.js',
+        defaultExtension: 'js'
+      },
+			'd3-hierarchy': {
+				main: 'd3-hierarchy.js',
+        defaultExtension: 'js'
+      },
+			'd3-interpolate': {
 				main: 'd3-interpolate.js',
-                defaultExtension: 'js'
-            },
-            'd3-scale': {
+        defaultExtension: 'js'
+      },
+			'd3-path': {
+				main: 'd3-path.js',
+        defaultExtension: 'js'
+      },
+			'd3-polygon': {
+				main: 'd3-polygon.js',
+        defaultExtension: 'js'
+      },
+			'd3-quadtree': {
+				main: 'd3-quadtree.js',
+        defaultExtension: 'js'
+      },
+			'd3-random': {
+				main: 'd3-random.js',
+        defaultExtension: 'js'
+      },
+			'd3-scale': {
 				main: 'd3-scale.js',
-                defaultExtension: 'js'
-            },
-            'd3-selection': {
+        defaultExtension: 'js'
+      },
+			'd3-scale-chromatic': {
+				main: 'd3-scale-chromatic.js',
+        defaultExtension: 'js'
+      },
+			'd3-selection': {
 				main: 'd3-selection.js',
-                defaultExtension: 'js'
-            },
-            'd3-shape': {
+        defaultExtension: 'js'
+      },
+			'd3-shape': {
 				main: 'd3-shape.js',
-                defaultExtension: 'js'
-            },
+        defaultExtension: 'js'
+      },
+			'd3-time': {
+				main: 'd3-time.js',
+        defaultExtension: 'js'
+      },
 			'd3-time-format': {
 				main: 'd3-time-format.js',
-				defaultExtension: 'js'
-			},
-            'd3-dispatch': {
-                main: 'd3-dispatch.js',
-                defaultExtension: 'js'
-            },
-            'd3-drag': {
-                main: 'd3-drag.js',
-                defaultExtension: 'js'
-            },
+        defaultExtension: 'js'
+      },
+			'd3-timer': {
+				main: 'd3-timer.js',
+        defaultExtension: 'js'
+      },
 			'd3-transition': {
 				main: 'd3-transition.js',
-				defaultExtension: 'js'
-			},
-            'd3-quadtree': {
-                main: 'd3-quadtree.js',
-                defaultExtension: 'js'
-            },
-            'd3-collection': {
-                main: 'd3-collection.js',
-                defaultExtension: 'js'
-            },
-            'd3-timer': {
-                main: 'd3-timer.js',
-                defaultExtension: 'js'
-            },
-            'd3-time': {
-                main: 'd3-time.js',
-                defaultExtension: 'js'
-            },
-            'd3-path': {
-                main: 'd3-path.js',
-                defaultExtension: 'js'
-            },
-            'd3-ease': {
-                main: 'd3-ease.js',
-                defaultExtension: 'js'
-            },
+        defaultExtension: 'js'
+      },
+			'd3-voronoi': {
+				main: 'd3-voronoi.js',
+        defaultExtension: 'js'
+      },
+			'd3-zoom': {
+				main: 'd3-zoom.js',
+        defaultExtension: 'js'
+      }
 		}
 	});
 })(this);

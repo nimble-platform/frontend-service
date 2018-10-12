@@ -2,7 +2,7 @@
     <!-- Dispatched Quantity -->
     <quantity-input [disabled]="isLoading() || isReadOnly()" [disableQuantityUnit]="true"
         label="Dispatched Quantity" [quantity]="dispatchAdvice.despatchLine[0].deliveredQuantity" 
-        rowClass="space-before">
+        rowClass="space-before" labelClass="col-2" valueClass="col-10">
     </quantity-input>
     
     <hr>
@@ -13,11 +13,14 @@
 
     <hr>
 
-    <!-- Note -->
-    <text-input label="Note" rowClass="space-before"
-        [disabled]="isLoading() || isReadOnly()" [(text)]="dispatchAdvice.note[0]">
-    </text-input>
-
+    <!--Notes-->
+    <h5>Notes and Additional Files</h5>
+    <note-file-view [notes]="dispatchAdvice.note"
+               [documents]="dispatchAdvice.additionalDocumentReference"
+               [label]="'Notes'"
+               [firstCol]="'col-2'"
+               [lastCol]="'col-10'"
+               [readonly]="isLoading() || isReadOnly()"></note-file-view>
 
     <!-- Actions -->
     <div class="row actions-row">

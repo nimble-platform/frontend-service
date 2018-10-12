@@ -18,8 +18,9 @@ export class DateInputComponent implements OnInit {
     @Input() valueClass: string; // set based on label
     @Input() placeholder: string = "Enter a value...";
     
-    private dateValue: string;
     @Input() valueDateClass: string = "";
+    
+    private dateValue: string;
     @Output() dateChange = new EventEmitter<string>();
 
     constructor() {
@@ -38,6 +39,12 @@ export class DateInputComponent implements OnInit {
     }
 
     set date(date: string) {
+        if(date){
+            let index = date.indexOf("T");
+            if (index != -1){
+                date = date.substring(0,date.indexOf("T"));
+            }
+        }
         this.dateValue = date;
         this.dateChange.emit(date);
     }
