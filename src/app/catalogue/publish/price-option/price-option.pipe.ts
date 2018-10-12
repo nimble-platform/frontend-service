@@ -14,7 +14,7 @@ export class PriceOptionPipe implements PipeTransform {
         let priceOptionsWithIndices: any[] = [];
         for(let i:number = 0; i<allPriceOptions.length;i++){
             let option = allPriceOptions[i];
-            if(option.type == priceOptionType){
+            if(option.typeID == priceOptionType){
                 priceOptionsWithIndices.push({option: option,index:i});
             }
         }

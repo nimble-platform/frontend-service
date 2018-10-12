@@ -12,7 +12,7 @@ export class PriceOptionCountPipe implements PipeTransform {
     transform(priceOptions: PriceOption[], priceOptionType: number): number {
         let count: number = 0;
         for(let option of priceOptions){
-            if(option.type == priceOptionType){
+            if(option.typeID == priceOptionType){
                 count++;
             }
         }

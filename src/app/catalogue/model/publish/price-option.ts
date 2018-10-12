@@ -7,7 +7,7 @@ import {Quantity} from "./quantity";
 
 export class PriceOption {
     constructor(
-        public type: number = null,
+        public typeID: number = null,
         public incoTerms: string[] = null,
         public minimumOrderQuantity: Quantity = null,
         public estimatedDeliveryPeriod: Period= null,

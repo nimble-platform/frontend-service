@@ -44,20 +44,20 @@
             <option *ngFor="let option of object.keys(priceOptions)" [value]="option">{{priceOptions[option].text}}</option>
         </select>
     </div>
-    <button class="btn btn-primary btn-sm" (click)="addPriceOption(priceOptions[priceOptionSelect.value].type)">
+    <button class="btn btn-primary btn-sm" (click)="addPriceOption(priceOptions[priceOptionSelect.value].typeID)">
         Add
     </button>
 </div>
 
 <!-- quantity related options -->
-<ng-container *ngIf="(catalogueLine.priceOption | priceOptionCountPipe : priceOptions.ORDERED_QUANTITY.type) > 0">
+<ng-container *ngIf="(catalogueLine.priceOption | priceOptionCountPipe : priceOptions.ORDERED_QUANTITY.typeID) > 0">
     <div class="card space-after">
         <div class="card-header">
             <strong>Price options on ordered quantities</strong>
             <span title="'Specified quantities are the minimum amounts required for the indicated discount to be applicable'">&#9432;</span>
         </div>
         <div class="card-body">
-            <div *ngFor="let priceOption of (catalogueLine.priceOption | priceOptionPipe : priceOptions.ORDERED_QUANTITY.type)">
+            <div *ngFor="let priceOption of (catalogueLine.priceOption | priceOptionPipe : priceOptions.ORDERED_QUANTITY.typeID)">
                 <div class="row price-option-row">
                     <quantity-price-option class="col-11"
                                            [priceOption]="priceOption.option">
@@ -76,14 +76,14 @@
 
 <!-- item property related options -->
 <ng-container
-        *ngIf="(catalogueLine.priceOption | priceOptionCountPipe : priceOptions.PRODUCT_PROPERTY.type) > 0 && catalogueLine.goodsItem.item.additionalItemProperty.length > 0">
+        *ngIf="(catalogueLine.priceOption | priceOptionCountPipe : priceOptions.PRODUCT_PROPERTY.typeID) > 0 && catalogueLine.goodsItem.item.additionalItemProperty.length > 0">
     <div class="card space-after">
         <div class="card-header">
             <strong>Product property based price options</strong>
             <span title="'Different prices could be specified based on different values of product properties'">&#9432;</span>
         </div>
         <div class="card-body">
-            <div *ngFor="let priceOption of (catalogueLine.priceOption | priceOptionPipe : priceOptions.PRODUCT_PROPERTY.type); let i = index;">
+            <div *ngFor="let priceOption of (catalogueLine.priceOption | priceOptionPipe : priceOptions.PRODUCT_PROPERTY.typeID); let i = index;">
                 <div class="row price-option-row">
                     <item-property-price-option class="col-11"
                                                 [catalogueLine]="catalogueLine"
@@ -104,14 +104,14 @@
 
 <!-- incoterms related options -->
 <ng-container
-        *ngIf="(catalogueLine.priceOption | priceOptionCountPipe : priceOptions.INCOTERM.type) > 0">
+        *ngIf="(catalogueLine.priceOption | priceOptionCountPipe : priceOptions.INCOTERM.typeID) > 0">
     <div class="card space-after">
         <div class="card-header">
             <strong>Incoterms based price options</strong>
             <span title="'Different prices could be specified based on different values of incoterm'">&#9432;</span>
         </div>
         <div class="card-body">
-            <div *ngFor="let priceOption of (catalogueLine.priceOption | priceOptionPipe : priceOptions.INCOTERM.type); let i = index;">
+            <div *ngFor="let priceOption of (catalogueLine.priceOption | priceOptionPipe : priceOptions.INCOTERM.typeID); let i = index;">
                 <div class="row price-option-row">
                     <incoterms-price-option class="col-11"
                                             [catalogueLine]="catalogueLine"

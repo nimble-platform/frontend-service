@@ -69,12 +69,12 @@ export const PPAP_CERTIFICATES = [
 ];
 
 export const PRICE_OPTIONS = {
-    ORDERED_QUANTITY: {text:'Ordered Quantity',type:1},
-    PRODUCT_PROPERTY: {text:'Product Property',type:2},
-    DELIVERY_PERIOD: {text:'Delivery Period',type:4},
-    INCOTERM: {text:'Incoterm',type:8},
-    PAYMENT_MEAN: {text:'Payment Mean',type:16},
-    DELIVERY_LOCATION: {text:'Delivery Location',type:32}
+    ORDERED_QUANTITY: {text:'Ordered Quantity',typeID:1},
+    PRODUCT_PROPERTY: {text:'Product Property',typeID:2},
+    DELIVERY_PERIOD: {text:'Delivery Period',typeID:4},
+    INCOTERM: {text:'Incoterm',typeID:8},
+    PAYMENT_MEAN: {text:'Payment Mean',typeID:16},
+    DELIVERY_LOCATION: {text:'Delivery Location',typeID:32}
 };
 
 export const DISCOUNT_TARGETS = {
