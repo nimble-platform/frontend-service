@@ -1,4 +1,5 @@
-<div class="row">
+<!--incoterms related options-->
+<div *ngIf="priceOption.typeID == priceOptions.INCOTERM.typeID" class="row">
     <div class="col-6">
         <div class="row">
             <div class="col-5">
@@ -12,4 +13,19 @@
         </div>
     </div>
 </div>
+
+<!--payment means related options-->
+<div *ngIf="priceOption.typeID == priceOptions.PAYMENT_MEAN.typeID" class="row">
+    <div class="col-6">
+        <div class="row">
+            <div class="col-5">
+                <input-label [label]="'Payment Mean'"></input-label>
+            </div>
+            <div class="col-7">
+                <input class="form-control form-control-sm" type="text" [(ngModel)]="priceOption.paymentMeans[0]">
+            </div>
+        </div>
+    </div>
+</div>
+
 <discount-target [priceOption]="priceOption"></discount-target>

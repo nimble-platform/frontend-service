@@ -43,6 +43,8 @@ export class ProductPriceTabComponent implements OnInit {
             priceOption.itemProperty = [];
         } else if(priceOptionType == PRICE_OPTIONS.INCOTERM.typeID){
             priceOption.incoTerms = [];
+        } else if(priceOptionType == PRICE_OPTIONS.PAYMENT_MEAN.typeID){
+            priceOption.paymentMeans = [];
         }
 
         this.catalogueLine.priceOption.push(priceOption);
