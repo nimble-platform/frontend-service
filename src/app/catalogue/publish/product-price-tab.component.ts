@@ -43,7 +43,7 @@ export class ProductPriceTabComponent implements OnInit {
         } else if(priceOptionType == PRICE_OPTIONS.PRODUCT_PROPERTY.typeID) {
             priceOption.itemProperty = [];
         } else if(priceOptionType == PRICE_OPTIONS.INCOTERM.typeID){
-            priceOption.incoTerms = [];
+            priceOption.incoterms = [];
         } else if(priceOptionType == PRICE_OPTIONS.PAYMENT_MEAN.typeID){
             priceOption.paymentMeans = [];
         } else if(priceOptionType == PRICE_OPTIONS.DELIVERY_LOCATION.typeID){

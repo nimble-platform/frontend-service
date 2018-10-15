@@ -6,7 +6,7 @@
                 <input-label [label]="'Incoterm'"></input-label>
             </div>
             <div class="col-7">
-                <select class="form-control form-control-sm" [(ngModel)]="priceOption.incoTerms[0]">
+                <select class="form-control form-control-sm" [(ngModel)]="priceOption.incoterms[0]">
                     <option *ngFor="let option of INCOTERMS" [value]="option">{{option}}</option>
                 </select>
             </div>
