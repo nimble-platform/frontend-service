@@ -42,4 +42,16 @@
     </div>
 </div>
 
+
+<!--delivery period related options-->
+<div *ngIf="priceOption.typeID == priceOptions.DELIVERY_PERIOD.typeID">
+    <div class="row">
+        <quantity-input class="col-6" [label]="'Delivery Period'"
+                        [labelClass]="'col-5'"
+                        [valueClass]="'col-7'"
+                        [quantity]="priceOption.estimatedDeliveryPeriod.durationMeasure">
+        </quantity-input>
+    </div>
+</div>
+
 <discount-target [priceOption]="priceOption"></discount-target>

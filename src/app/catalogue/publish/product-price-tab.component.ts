@@ -7,6 +7,7 @@ import {Quantity} from "../model/publish/quantity";
 import {PriceOptionPipe} from "./price-option/price-option.pipe";
 import {AllowanceCharge} from "../model/publish/allowance-charge";
 import {Amount} from "../model/publish/amount";
+import {Period} from '../model/publish/period';
 
 @Component({
     selector: "product-price-tab",
@@ -45,8 +46,10 @@ export class ProductPriceTabComponent implements OnInit {
             priceOption.incoTerms = [];
         } else if(priceOptionType == PRICE_OPTIONS.PAYMENT_MEAN.typeID){
             priceOption.paymentMeans = [];
-        } else if(priceOptionType == PRICE_OPTIONS.DELIVERY_LOCATION){
+        } else if(priceOptionType == PRICE_OPTIONS.DELIVERY_LOCATION.typeID){
             priceOption.itemLocationQuantity.applicableTerritoryAddress = [];
+        } else if(priceOptionType == PRICE_OPTIONS.DELIVERY_PERIOD.typeID){
+            priceOption.estimatedDeliveryPeriod = new Period();
         }
 
         this.catalogueLine.priceOption.push(priceOption);
