@@ -10,6 +10,6 @@ import {AllowanceCharge} from "./allowance-charge";
 export class ItemLocationQuantity {
     constructor(public price: Price = new Price(),
                 public applicableTerritoryAddress: Address[] = [],
-                public allowanceCharge: AllowanceCharge = new AllowanceCharge()) {
+                public allowanceCharge: AllowanceCharge[] = [new AllowanceCharge()]) {
     }
 }

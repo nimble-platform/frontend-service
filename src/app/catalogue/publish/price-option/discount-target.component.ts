@@ -23,16 +23,16 @@ export class DiscountTargetComponent implements OnInit {
 
     ngOnInit() {
         // if the discount target is already set, we should set the selected discount target properly
-        if(this.priceOption.itemLocationQuantity.allowanceCharge.perUnitAmount == null) {
+        if(this.priceOption.itemLocationQuantity.allowanceCharge[0].perUnitAmount == null) {
             this.selectedDiscountTarget = DISCOUNT_TARGETS.TOTAL_PRICE;
-            this.amount = this.priceOption.itemLocationQuantity.allowanceCharge.amount;
+            this.amount = this.priceOption.itemLocationQuantity.allowanceCharge[0].amount;
 
-        } else if(this.priceOption.itemLocationQuantity.allowanceCharge.amount == null) {
+        } else if(this.priceOption.itemLocationQuantity.allowanceCharge[0].amount == null) {
             this.selectedDiscountTarget = DISCOUNT_TARGETS.PER_UNIT;
-            this.amount = this.priceOption.itemLocationQuantity.allowanceCharge.perUnitAmount;
+            this.amount = this.priceOption.itemLocationQuantity.allowanceCharge[0].perUnitAmount;
 
         } else {
-            this.amount = this.priceOption.itemLocationQuantity.allowanceCharge.amount;
+            this.amount = this.priceOption.itemLocationQuantity.allowanceCharge[0].amount;
         }
     }
 
