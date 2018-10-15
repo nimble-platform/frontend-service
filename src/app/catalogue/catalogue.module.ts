@@ -46,7 +46,7 @@ import {PriceOptionPipe} from "./publish/price-option/price-option.pipe";
 import {QuantityPriceOptionComponent} from "./publish/price-option/quantity-price-option.component";
 import {ItemPropertyPriceOptionComponent} from "./publish/price-option/item-property-price-option.component";
 import {DiscountTargetComponent} from "./publish/price-option/discount-target.component";
-import {IncotermsPriceOptionComponent} from './publish/price-option/incoterms-price-option.component';
+import {PriceOptionViewComponent} from './publish/price-option/price-option-view.component';
 
 @NgModule({
 	imports: [CommonModule, 
@@ -97,7 +97,7 @@ import {IncotermsPriceOptionComponent} from './publish/price-option/incoterms-pr
         QuantityPriceOptionComponent,
         ItemPropertyPriceOptionComponent,
         DiscountTargetComponent,
-        IncotermsPriceOptionComponent
+        PriceOptionViewComponent
     ],
     exports: [
         CategorySearchComponent,
@@ -128,7 +128,7 @@ import {IncotermsPriceOptionComponent} from './publish/price-option/incoterms-pr
         DiscountTargetComponent,
         PaymentTermsView,
         NoteFileViewComponent,
-        IncotermsPriceOptionComponent
+        PriceOptionViewComponent
     ],
     providers: [PublishDeactivateGuardService, CategoryDeactivateGuardService]
 })

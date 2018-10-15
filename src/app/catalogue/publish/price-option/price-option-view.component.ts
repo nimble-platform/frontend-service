@@ -4,10 +4,10 @@ import {CatalogueLine} from '../../model/publish/catalogue-line';
 import { INCOTERMS } from '../../model/constants';
 
 @Component({
-    selector: "incoterms-price-option",
-    templateUrl: "./incoterms-price-option-component.html"
+    selector: "price-option-view",
+    templateUrl: "./price-option-view-component.html"
 })
-export class IncotermsPriceOptionComponent {
+export class PriceOptionViewComponent {
     @Input() catalogueLine: CatalogueLine;
     @Input() priceOption: PriceOption;
 
