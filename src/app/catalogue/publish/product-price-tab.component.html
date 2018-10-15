@@ -155,3 +155,30 @@
         </div>
     </div>
 </ng-container>
+
+<!--delivery location related options-->
+<ng-container
+        *ngIf="(catalogueLine.priceOption | priceOptionCountPipe : priceOptions.DELIVERY_LOCATION.typeID) > 0">
+    <div class="card space-after">
+        <div class="card-header">
+            <strong>Delivery location based price options</strong>
+            <span title="'Different prices could be specified based on different values of delivery location'">&#9432;</span>
+        </div>
+        <div class="card-body">
+            <div *ngFor="let priceOption of (catalogueLine.priceOption | priceOptionPipe : priceOptions.DELIVERY_LOCATION.typeID); let i = index;">
+                <div class="row price-option-row">
+                    <price-option-view class="col-11"
+                                       [catalogueLine]="catalogueLine"
+                                       [priceOption]="priceOption.option">
+                    </price-option-view>
+                    <div class="col-1">
+                        <button class="btn btn-danger btn-sm" (click)="removePriceOption(priceOption.index, priceOptions.DELIVERY_LOCATION)">
+                            Remove
+                        </button>
+                    </div>
+                </div>
+                <hr>
+            </div>
+        </div>
+    </div>
+</ng-container>
