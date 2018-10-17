@@ -23,7 +23,7 @@ export class ItemPropertyPriceOptionComponent {
 
     selectProperty(itemPropertyId: string): void {
         // ignore if the property is already selected
-        let copyProperty: ItemProperty = this.priceOption.itemProperty.find(property => itemPropertyId == property.id);
+        let copyProperty: ItemProperty = this.priceOption.additionalItemProperty.find(property => itemPropertyId == property.id);
         if(copyProperty != null) {
             return;
         }
@@ -35,8 +35,8 @@ export class ItemPropertyPriceOptionComponent {
         copyProperty.valueDecimal = [];
         copyProperty.valueQuantity = [];
 
-        this.priceOption.itemProperty.push(copyProperty);
-        this.priceOption.itemProperty = [].concat(this.priceOption.itemProperty);
+        this.priceOption.additionalItemProperty.push(copyProperty);
+        this.priceOption.additionalItemProperty = [].concat(this.priceOption.additionalItemProperty);
     }
 
     getOriginalValuesOfProperty(copyProperty): string[] {
@@ -63,12 +63,12 @@ export class ItemPropertyPriceOptionComponent {
                 index !== -1 ? copyProperty.value.splice(index, 1) : copyProperty.value.push(value);
             }
         }
-        this.priceOption.itemProperty = [].concat(this.priceOption.itemProperty);
+        this.priceOption.additionalItemProperty = [].concat(this.priceOption.additionalItemProperty);
     }
 
     removeOption(index: number): void {
-        this.priceOption.itemProperty.splice(index, 1);
-        this.priceOption.itemProperty = [].concat(this.priceOption.itemProperty);
+        this.priceOption.additionalItemProperty.splice(index, 1);
+        this.priceOption.additionalItemProperty = [].concat(this.priceOption.additionalItemProperty);
     }
 
     getCheckedStatus(value: any, copyProperty: ItemProperty): boolean {

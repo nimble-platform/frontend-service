@@ -10,7 +10,7 @@ export class PriceOption {
         public typeID: number = null,
         public incoterms: string[] = null,
         public estimatedDeliveryPeriod: Period= null,
-        public itemProperty: ItemProperty[] = null,
+        public additionalItemProperty: ItemProperty[] = null,
         public paymentMeans: PaymentMeans[] = null,
         public paymentTerms: PaymentTerms = null,
         public itemLocationQuantity:ItemLocationQuantity = new ItemLocationQuantity()

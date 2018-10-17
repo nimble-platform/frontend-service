@@ -41,7 +41,7 @@ export class ProductPriceTabComponent implements OnInit {
             priceOption.itemLocationQuantity.minimumQuantity = new Quantity(this.catalogueLine.requiredItemLocationQuantity.price.baseQuantity.value, this.catalogueLine.requiredItemLocationQuantity.price.baseQuantity.unitCode);
 
         } else if(priceOptionType == PRICE_OPTIONS.PRODUCT_PROPERTY.typeID) {
-            priceOption.itemProperty = [];
+            priceOption.additionalItemProperty = [];
         } else if(priceOptionType == PRICE_OPTIONS.INCOTERM.typeID){
             priceOption.incoterms = [];
         } else if(priceOptionType == PRICE_OPTIONS.PAYMENT_MEAN.typeID){
