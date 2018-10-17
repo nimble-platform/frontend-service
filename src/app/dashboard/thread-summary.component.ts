@@ -45,6 +45,9 @@ export class ThreadSummaryComponent implements OnInit {
     showDataChannelButton: boolean = false;
     channelLink = "";
 
+    // this is always true unless an approved order is present in this process group or the collaboration is already cancelled
+    showCancelCollaborationButton = true;
+
     constructor(private bpeService: BPEService,
                 private cookieService: CookieService,
                 private dataChannelService: DataChannelService,
@@ -55,6 +58,9 @@ export class ThreadSummaryComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        if(this.processInstanceGroup.status == "CANCELLED"){
+            this.showCancelCollaborationButton = false;
+        }
         this.eventCount = this.processInstanceGroup.processInstanceIDs.length;
         this.hasHistory = this.eventCount > 1;
         this.fetchEvents();
@@ -210,6 +216,8 @@ export class ThreadSummaryComponent implements OnInit {
             switch(processType) {
                 case "Order":
                     if (response.acceptedIndicator) {
+                        // since the order is approved, do not show the button
+                        this.showCancelCollaborationButton = false;
                         if(buyer) {
                             event.statusText = "Waiting for Dispatch Advice";
                             event.actionText = "See Order";
@@ -247,6 +255,9 @@ export class ThreadSummaryComponent implements OnInit {
                     event.actionText = "See Ppap Response";
                     break;
                 case "Transport_Execution_Plan":
+                    if(response.documentStatusCode.name == "Accepted"){
+                        this.showCancelCollaborationButton = false;
+                    }
                     if (buyer) {
                         event.statusText = "Transport Execution Plan received"
                     } else {
