@@ -8,6 +8,8 @@ import {PriceOptionPipe} from "./price-option/price-option.pipe";
 import {AllowanceCharge} from "../model/publish/allowance-charge";
 import {Amount} from "../model/publish/amount";
 import {Period} from '../model/publish/period';
+import {PaymentMeans} from '../../user-mgmt/model/payment-means';
+import {Address} from '../model/publish/address';
 
 @Component({
     selector: "product-price-tab",
@@ -45,9 +47,9 @@ export class ProductPriceTabComponent implements OnInit {
         } else if(priceOptionType == PRICE_OPTIONS.INCOTERM.typeID){
             priceOption.incoterms = [];
         } else if(priceOptionType == PRICE_OPTIONS.PAYMENT_MEAN.typeID){
-            priceOption.paymentMeans = [];
+            priceOption.paymentMeans = [new PaymentMeans("")];
         } else if(priceOptionType == PRICE_OPTIONS.DELIVERY_LOCATION.typeID){
-            priceOption.itemLocationQuantity.applicableTerritoryAddress = [];
+            priceOption.itemLocationQuantity.applicableTerritoryAddress = [new Address()];
         } else if(priceOptionType == PRICE_OPTIONS.DELIVERY_PERIOD.typeID){
             priceOption.estimatedDeliveryPeriod = new Period();
         }

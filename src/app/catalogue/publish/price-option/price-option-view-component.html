@@ -22,7 +22,7 @@
                 <input-label [label]="'Payment Mean'"></input-label>
             </div>
             <div class="col-7">
-                <input class="form-control form-control-sm" type="text" [(ngModel)]="priceOption.paymentMeans[0]">
+                <input class="form-control form-control-sm" type="text" [(ngModel)]="priceOption.paymentMeans[0].instructionNote">
             </div>
         </div>
     </div>
@@ -36,7 +36,7 @@
                 <input-label [label]="'Delivery Location'"></input-label>
             </div>
             <div class="col-7">
-                <input class="form-control form-control-sm" type="text" [(ngModel)]="priceOption.itemLocationQuantity.applicableTerritoryAddress[0]">
+                <input class="form-control form-control-sm" type="text" [(ngModel)]="priceOption.itemLocationQuantity.applicableTerritoryAddress[0].country.name">
             </div>
         </div>
     </div>
