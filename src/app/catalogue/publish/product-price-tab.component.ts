@@ -10,6 +10,7 @@ import {Amount} from "../model/publish/amount";
 import {Period} from '../model/publish/period';
 import {PaymentMeans} from '../../user-mgmt/model/payment-means';
 import {Address} from '../model/publish/address';
+import {CompanyNegotiationSettings} from '../../user-mgmt/model/company-negotiation-settings';
 
 @Component({
     selector: "product-price-tab",
@@ -20,6 +21,7 @@ import {Address} from '../model/publish/address';
 export class ProductPriceTabComponent implements OnInit {
 
     @Input() catalogueLine: CatalogueLine;
+    @Input() companyNegotiationSettings:CompanyNegotiationSettings;
     @Input() disabled: boolean
 
     // TODO: later, get these from a service?

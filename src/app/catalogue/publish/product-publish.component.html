@@ -235,7 +235,7 @@
         <!-- Price Tab -->
         <div class="row space-before details-tab" *ngIf="selectedTabSinglePublish === 'PRICE'">
             <div class="col-12">
-                <product-price-tab [catalogueLine]="catalogueLine" [disabled]="isLoading()">
+                <product-price-tab [catalogueLine]="catalogueLine" [disabled]="isLoading()" [companyNegotiationSettings]="companyNegotiationSettings">
                 </product-price-tab>
             </div>
         </div>

@@ -1,7 +1,7 @@
 import {Component, Input} from '@angular/core';
 import {PriceOption} from '../../model/publish/price-option';
 import {CatalogueLine} from '../../model/publish/catalogue-line';
-import { INCOTERMS, PRICE_OPTIONS } from '../../model/constants';
+import { PRICE_OPTIONS } from '../../model/constants';
 
 @Component({
     selector: "price-option-view",
@@ -11,6 +11,9 @@ export class PriceOptionViewComponent {
     @Input() catalogueLine: CatalogueLine;
     @Input() priceOption: PriceOption;
 
-    INCOTERMS: string[] = INCOTERMS;
+    @Input() incoterms: string[] = [];
+    @Input() paymentMeans: string[] = [];
+    @Input() deliveryPeriodUnits: string[] = [];
+
     priceOptions = PRICE_OPTIONS;
 }

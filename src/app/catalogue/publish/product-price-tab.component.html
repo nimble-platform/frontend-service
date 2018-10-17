@@ -115,7 +115,8 @@
                 <div class="row price-option-row">
                     <price-option-view class="col-11"
                                             [catalogueLine]="catalogueLine"
-                                            [priceOption]="priceOption.option">
+                                            [priceOption]="priceOption.option"
+                                            [incoterms]="companyNegotiationSettings.incoterms">
                     </price-option-view>
                     <div class="col-1">
                         <button class="btn btn-danger btn-sm" (click)="removePriceOption(priceOption.index, priceOptions.INCOTERM)">
@@ -142,7 +143,8 @@
                 <div class="row price-option-row">
                     <price-option-view class="col-11"
                                        [catalogueLine]="catalogueLine"
-                                       [priceOption]="priceOption.option">
+                                       [priceOption]="priceOption.option"
+                                       [paymentMeans]="companyNegotiationSettings.paymentMeans">
                     </price-option-view>
                     <div class="col-1">
                         <button class="btn btn-danger btn-sm" (click)="removePriceOption(priceOption.index, priceOptions.PAYMENT_MEAN)">
@@ -196,7 +198,8 @@
                 <div class="row price-option-row">
                     <price-option-view class="col-11"
                                        [catalogueLine]="catalogueLine"
-                                       [priceOption]="priceOption.option">
+                                       [priceOption]="priceOption.option"
+                                       [deliveryPeriodUnits]="companyNegotiationSettings.deliveryPeriodUnits">
                     </price-option-view>
                     <div class="col-1">
                         <button class="btn btn-danger btn-sm" (click)="removePriceOption(priceOption.index, priceOptions.DELIVERY_PERIOD)">

@@ -7,7 +7,7 @@
             </div>
             <div class="col-7">
                 <select class="form-control form-control-sm" [(ngModel)]="priceOption.incoterms[0]">
-                    <option *ngFor="let option of INCOTERMS" [value]="option">{{option}}</option>
+                    <option *ngFor="let option of incoterms" [value]="option">{{option}}</option>
                 </select>
             </div>
         </div>
@@ -22,7 +22,9 @@
                 <input-label [label]="'Payment Mean'"></input-label>
             </div>
             <div class="col-7">
-                <input class="form-control form-control-sm" type="text" [(ngModel)]="priceOption.paymentMeans[0].instructionNote">
+                <select class="form-control form-control-sm" [(ngModel)]="priceOption.paymentMeans[0].instructionNote">
+                    <option *ngFor="let option of paymentMeans" [value]="option">{{option}}</option>
+                </select>
             </div>
         </div>
     </div>
@@ -49,7 +51,8 @@
         <quantity-input class="col-6" [label]="'Delivery Period'"
                         [labelClass]="'col-5'"
                         [valueClass]="'col-7'"
-                        [quantity]="priceOption.estimatedDeliveryPeriod.durationMeasure">
+                        [quantity]="priceOption.estimatedDeliveryPeriod.durationMeasure"
+                        [quantityUnits]="deliveryPeriodUnits">
         </quantity-input>
     </div>
 </div>
