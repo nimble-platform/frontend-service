@@ -38,7 +38,7 @@ export class ProductPriceTabComponent implements OnInit {
         priceOption.typeID = priceOptionType;
 
         if (priceOptionType == PRICE_OPTIONS.ORDERED_QUANTITY.typeID) {
-            priceOption.minimumOrderQuantity = new Quantity(this.catalogueLine.requiredItemLocationQuantity.price.baseQuantity.value, this.catalogueLine.requiredItemLocationQuantity.price.baseQuantity.unitCode);
+            priceOption.itemLocationQuantity.minimumQuantity = new Quantity(this.catalogueLine.requiredItemLocationQuantity.price.baseQuantity.value, this.catalogueLine.requiredItemLocationQuantity.price.baseQuantity.unitCode);
 
         } else if(priceOptionType == PRICE_OPTIONS.PRODUCT_PROPERTY.typeID) {
             priceOption.itemProperty = [];

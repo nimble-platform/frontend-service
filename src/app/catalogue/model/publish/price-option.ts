@@ -9,7 +9,6 @@ export class PriceOption {
     constructor(
         public typeID: number = null,
         public incoterms: string[] = null,
-        public minimumOrderQuantity: Quantity = null,
         public estimatedDeliveryPeriod: Period= null,
         public itemProperty: ItemProperty[] = null,
         public paymentMeans: PaymentMeans[] = null,

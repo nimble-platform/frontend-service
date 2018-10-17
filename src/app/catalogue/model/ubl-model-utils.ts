@@ -98,7 +98,7 @@ export class UBLModelUtils {
         // price
         const price: Price = this.createPrice();
         // item location quantity
-        const ilq: ItemLocationQuantity = new ItemLocationQuantity(price, [], []);
+        const ilq: ItemLocationQuantity = new ItemLocationQuantity(price, [], [],null);
         return ilq;
     }
 
