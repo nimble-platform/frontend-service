@@ -9,7 +9,7 @@
     </div>
     <div class="col-1">
         <select class="form-control form-control-sm"
-                [(ngModel)]="catalogueLine.requiredItemLocationQuantity.price.priceAmount.currencyID">
+                [(ngModel)]="catalogueLine.requiredItemLocationQuantity.price.priceAmount.currencyID" (click)="updateDiscountUnits()">
             <option *ngFor="let currency of CURRENCIES" [value]="currency">
                 {{ currency }}
             </option>
@@ -60,7 +60,8 @@
             <div *ngFor="let priceOption of (catalogueLine.priceOption | priceOptionPipe : priceOptions.ORDERED_QUANTITY.typeID)">
                 <div class="row price-option-row">
                     <quantity-price-option class="col-11"
-                                           [priceOption]="priceOption.option">
+                                           [priceOption]="priceOption.option"
+                                           [discountUnits]="discountUnits">
                     </quantity-price-option>
                     <div class="col-1">
                         <button class="btn btn-danger btn-sm" (click)="removePriceOption(priceOption.index, priceOptions.ORDERED_QUANTITY)">
@@ -88,6 +89,7 @@
                     <item-property-price-option class="col-11"
                                                 [catalogueLine]="catalogueLine"
                                                 [priceOption]="priceOption.option"
+                                                [discountUnits]="discountUnits"
                                                 [index]="i">
                     </item-property-price-option>
                     <div class="col-1">
@@ -116,6 +118,7 @@
                     <price-option-view class="col-11"
                                             [catalogueLine]="catalogueLine"
                                             [priceOption]="priceOption.option"
+                                            [discountUnits]="discountUnits"
                                             [incoterms]="companyNegotiationSettings.incoterms">
                     </price-option-view>
                     <div class="col-1">
@@ -144,6 +147,7 @@
                     <price-option-view class="col-11"
                                        [catalogueLine]="catalogueLine"
                                        [priceOption]="priceOption.option"
+                                       [discountUnits]="discountUnits"
                                        [paymentMeans]="companyNegotiationSettings.paymentMeans">
                     </price-option-view>
                     <div class="col-1">
@@ -171,6 +175,7 @@
                 <div class="row price-option-row">
                     <price-option-view class="col-11"
                                        [catalogueLine]="catalogueLine"
+                                       [discountUnits]="discountUnits"
                                        [priceOption]="priceOption.option">
                     </price-option-view>
                     <div class="col-1">
@@ -199,6 +204,7 @@
                     <price-option-view class="col-11"
                                        [catalogueLine]="catalogueLine"
                                        [priceOption]="priceOption.option"
+                                       [discountUnits]="discountUnits"
                                        [deliveryPeriodUnits]="companyNegotiationSettings.deliveryPeriodUnits">
                     </price-option-view>
                     <div class="col-1">

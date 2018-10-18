@@ -19,6 +19,7 @@ export class ItemPropertyPriceOptionComponent {
     @Input() catalogueLine: CatalogueLine;
     @Input() priceOption: PriceOption;
     @Input() index: number;
+    @Input() discountUnits;
     sanitizePropertyName = sanitizePropertyName;
 
     selectProperty(itemPropertyId: string): void {

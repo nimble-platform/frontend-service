@@ -15,5 +15,7 @@ export class PriceOptionViewComponent {
     @Input() paymentMeans: string[] = [];
     @Input() deliveryPeriodUnits: string[] = [];
 
+    @Input() discountUnits;
+
     priceOptions = PRICE_OPTIONS;
 }

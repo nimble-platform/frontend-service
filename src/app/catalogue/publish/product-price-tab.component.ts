@@ -1,12 +1,10 @@
 import {Component, OnInit, Input} from "@angular/core";
 import {CatalogueLine} from "../model/publish/catalogue-line";
-import {CURRENCIES, DISCOUNT_TARGETS, DISCOUNT_UNITS, PRICE_OPTIONS} from "../model/constants";
+import {CURRENCIES,PRICE_OPTIONS} from "../model/constants";
 import {PriceOptionCountPipe} from "./price-option/price-option-count.pipe";
 import {PriceOption} from "../model/publish/price-option";
 import {Quantity} from "../model/publish/quantity";
 import {PriceOptionPipe} from "./price-option/price-option.pipe";
-import {AllowanceCharge} from "../model/publish/allowance-charge";
-import {Amount} from "../model/publish/amount";
 import {Period} from '../model/publish/period';
 import {PaymentMeans} from '../../user-mgmt/model/payment-means';
 import {Address} from '../model/publish/address';
@@ -29,11 +27,13 @@ export class ProductPriceTabComponent implements OnInit {
     priceOptions = PRICE_OPTIONS;
     object = Object;
 
+    discountUnits = [];
+
     constructor() {
     }
 
     ngOnInit() {
-        // nothing for now
+        this.updateDiscountUnits();
     }
 
     addPriceOption(priceOptionType: any): void {
@@ -58,6 +58,8 @@ export class ProductPriceTabComponent implements OnInit {
 
         this.catalogueLine.priceOption.push(priceOption);
         this.catalogueLine.priceOption = [].concat(this.catalogueLine.priceOption);
+        // update discount unit list
+        this.updateDiscountUnits();
     }
 
     removePriceOption(index: number): void {
@@ -67,5 +69,9 @@ export class ProductPriceTabComponent implements OnInit {
 
     printPriceOptions(): void {
         console.log(this.catalogueLine.priceOption);
+    }
+
+    updateDiscountUnits(){
+        this.discountUnits = [].concat([this.catalogueLine.requiredItemLocationQuantity.price.priceAmount.currencyID,"%"]);
     }
 }

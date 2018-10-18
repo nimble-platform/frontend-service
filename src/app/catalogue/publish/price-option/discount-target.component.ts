@@ -13,12 +13,12 @@ import {Amount} from "../../model/publish/amount";
 export class DiscountTargetComponent implements OnInit {
 
     @Input() priceOption: PriceOption;
+    @Input() discountUnits;
 
     selectedDiscountTarget: string = DISCOUNT_TARGETS.TOTAL_PRICE;
     amount: Amount;
 
     discountTargets = DISCOUNT_TARGETS;
-    discountUnits = DISCOUNT_UNITS;
     object = Object;
 
     ngOnInit() {

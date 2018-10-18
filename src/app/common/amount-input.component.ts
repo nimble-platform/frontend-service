@@ -34,6 +34,9 @@ export class AmountInputComponent implements OnInit {
     }
 
     ngOnInit() {
+        // use the first currency value as default
+        this.amount.currencyID = this.amountCurrencies[0];
+
         if(!this.valueClass) {
             this.valueClass = this.label ? "col-9" : "col-12";
         }
