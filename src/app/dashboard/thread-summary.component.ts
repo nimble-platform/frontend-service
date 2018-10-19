@@ -81,11 +81,13 @@ export class ThreadSummaryComponent implements OnInit {
 
     private async fetchThreadEvent(processInstanceId: string): Promise<ThreadEventMetadata> {
         const activityVariables = await this.bpeService.getProcessDetailsHistory(processInstanceId);
+        //const ratingStatus = await this.bpeService.
         const processType = ActivityVariableParser.getProcessType(activityVariables);
         const initialDoc: any = await this.documentService.getInitialDocument(activityVariables);
         const response: any = await this.documentService.getResponseDocument(activityVariables);
-        const userRole = await this.documentService.getUserRole(activityVariables,this.processInstanceGroup.partyID)
+        const userRole = await this.documentService.getUserRole(activityVariables,this.processInstanceGroup.partyID);
         const processId = ActivityVariableParser.getProcessInstanceID(activityVariables);
+        const isRated: boolean = await this.bpeService.ratingExists(processInstanceId, this.processInstanceGroup.partyID);
 
         const [lastActivity, processInstance] = await Promise.all([
             this.bpeService.getLastActivityForProcessInstance(processId),
@@ -103,7 +105,8 @@ export class ThreadSummaryComponent implements OnInit {
             this.getBPStatus(response),
             initialDoc,
             activityVariables,
-            userRole === "buyer"
+            userRole === "buyer",
+            isRated
         );
 
         this.fillStatus(event, processInstance.state, processType, response, userRole === "buyer");

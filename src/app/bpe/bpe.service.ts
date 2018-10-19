@@ -137,6 +137,22 @@ export class BPEService {
             .catch(this.handleError);
     }
 
+    ratingExists(processInstanceId: string, partyId: string): Promise<boolean> {
+		const token = 'Bearer '+this.cookieService.get("bearer_token");
+		const headers = new Headers({'Accept': 'text/plain','Authorization': token});
+		let url: string = `${this.url}/processInstance/${processInstanceId}/isRated?partyId=${partyId}`;
+		return this.http
+            .get(url, {headers: headers})
+            .toPromise()
+            .then(res => {
+            	console.log(res.text());
+				console.log(res.json());
+            	res.text();
+
+            })
+            .catch(this.handleError);
+	}
+
 	getProcessInstanceGroupFilters(partyId:string, collaborationRole: CollaborationRole, archived: boolean, products: string[], 
 		categories: string[], partners: string[],status: string[]): Promise<ProcessInstanceGroupFilter> {
 		const headers = this.getAuthorizedHeaders();
