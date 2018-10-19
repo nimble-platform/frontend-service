@@ -17,6 +17,8 @@ import { Order } from '../catalogue/model/publish/order';
 import { TradingTerm } from '../catalogue/model/publish/trading-term';
 import { Quotation } from '../catalogue/model/publish/quotation';
 import { RequestForQuotation } from '../catalogue/model/publish/request-for-quotation';
+import { EvidenceSupplied } from '../catalogue/model/publish/evidence-supplied';
+import { Comment } from '../catalogue/model/publish/comment';
 
 @Injectable()
 export class BPEService {
@@ -71,7 +73,7 @@ export class BPEService {
 			})
             .catch(this.handleError);
 	}
-	
+
 	cancelBusinessProcess(id: string): Promise<any> {
 	    let headers = this.getAuthorizedHeaders();
 		const url = `${this.url}/processInstance/${id}/cancel`;
@@ -137,23 +139,7 @@ export class BPEService {
             .catch(this.handleError);
     }
 
-    ratingExists(processInstanceId: string, partyId: string): Promise<boolean> {
-		const token = 'Bearer '+this.cookieService.get("bearer_token");
-		const headers = new Headers({'Accept': 'text/plain','Authorization': token});
-		let url: string = `${this.url}/processInstance/${processInstanceId}/isRated?partyId=${partyId}`;
-		return this.http
-            .get(url, {headers: headers})
-            .toPromise()
-            .then(res => {
-            	console.log(res.text());
-				console.log(res.json());
-            	res.text();
-
-            })
-            .catch(this.handleError);
-	}
-
-	getProcessInstanceGroupFilters(partyId:string, collaborationRole: CollaborationRole, archived: boolean, products: string[], 
+	getProcessInstanceGroupFilters(partyId:string, collaborationRole: CollaborationRole, archived: boolean, products: string[],
 		categories: string[], partners: string[],status: string[]): Promise<ProcessInstanceGroupFilter> {
 		const headers = this.getAuthorizedHeaders();
 
@@ -286,6 +272,47 @@ export class BPEService {
             .toPromise()
             .then(res => res.json() || null)
             .catch(() => null);
+	}
+
+	getRatings(partyId: string): Promise<any> {
+		const headers = this.getAuthorizedHeaders();
+		const url = `${this.url}/ratingsAndReviews?partyID=${partyId}`;
+		return this.http
+            .get(url, {headers: headers})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+	}
+
+	getRatingsSummary(partyId: string): Promise<any> {
+		const headers = this.getAuthorizedHeaders();
+		const url = `${this.url}/ratingsSummary?partyID=${partyId}`;
+		return this.http
+            .get(url, {headers: headers})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+	}
+
+	postRatings(partyId: string, processInstanceId: string, ratings: EvidenceSupplied[], reviews: Comment[]): Promise<any> {
+		const headers = this.getAuthorizedHeaders();
+		const url = `${this.url}/ratingsAndReviews?partyID=${partyId}&processInstanceID=${processInstanceId}&ratings=${encodeURIComponent(JSON.stringify(ratings))}&reviews=${encodeURIComponent(JSON.stringify(reviews))}`;
+		return this.http
+            .post(url, null, {headers: headers})
+            .toPromise()
+            .then(res => res)
+            .catch(this.handleError);
+	}
+
+	ratingExists(processInstanceId: string, partyId: string): Promise<any> {
+		const token = 'Bearer '+this.cookieService.get("bearer_token");
+		const headers = new Headers({'Accept': 'text/plain','Authorization': token});
+		let url: string = `${this.url}/processInstance/${processInstanceId}/isRated?partyId=${partyId}`;
+		return this.http
+            .get(url, {headers: headers})
+            .toPromise()
+            .then(res => res.text())
+            .catch(this.handleError);
 	}
 
 	private getAuthorizedHeaders(): Headers {

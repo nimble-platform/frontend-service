@@ -46,6 +46,13 @@
                     Company Details
                 </a>
             </li>
+            <li class="nav-item">
+                <a href id="RATING" class="nav-link"
+                    [ngClass]="{ active: selectedTab === 'RATING'}"
+                    (click)="onSelectTab($event)">
+                    Company Ratings
+                </a>
+            </li>
         </ul>
     </div>
 
@@ -64,7 +71,7 @@
             <p class="p-1">This product does not seem to have any details.</p>
         </div>
         <div *ngFor="let property of wrapper.getUniquePropertiesWithValue()" class="p-1 col-6 d-flex">
-            <strong>{{ wrapper.getPropertyName(property) }}: </strong> 
+            <strong>{{ wrapper.getPropertyName(property) }}: </strong>
             <span *ngIf="property.valueQualifier !== 'BINARY'" class="ml-2">
                 {{ getValuesAsString(property).join(", ") }}
             </span>
@@ -123,4 +130,11 @@
         <company-details [details]="settings" [hideTitle]="true">
         </company-details>
     </div>
+
+    <!-- Company Ratings Tab -->
+    <div *ngIf="selectedTab === 'RATING'" class="p-3 col-12">
+        <company-rating [id]="settings.companyID" [hideTitle]="true">
+        </company-rating>
+    </div>
+
 </div>

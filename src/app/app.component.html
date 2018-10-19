@@ -134,8 +134,11 @@
 					<i class="fa fa-user"></i> {{fullName}}
 				</a>
 				<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuUser" ngbDropdownMenu>
-					<a *ngIf="checkRoles('comp')" class="dropdown-item" routerLink="/user-mgmt/company-settings" routerLinkActive="active">
+					<a *ngIf="checkRoles('comp-settings')" class="dropdown-item" routerLink="/user-mgmt/company-settings" routerLinkActive="active">
 						<i class="fa fa-cog dd-icon"></i> Company Settings
+					</a>
+					<a *ngIf="companyID" class="dropdown-item" routerLink="/user-mgmt/company-rating" routerLinkActive="active">
+						<i class="fa fa-star dd-icon"></i> Company Ratings
 					</a>
 					<a class="dropdown-item" routerLink="/user-mgmt/logout">
 						<i class="fa fa-lock dd-icon"></i> <span i18n>Logout</span>

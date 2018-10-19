@@ -65,7 +65,12 @@ export class DashboardThreadedComponent implements OnInit {
           this.cookieService.set("show_welcome","false");
         });
         if(this.queryParameters.tab === TABS.WELCOME) {
-            this.updateQueryParameters({ tab: TABS.PURCHASES })
+            if (this.appComponent.checkRoles('purchases'))
+              this.updateQueryParameters({ tab: TABS.PURCHASES });
+            else if (this.appComponent.checkRoles('sales'))
+              this.updateQueryParameters({ tab: TABS.SALES });
+            else
+              this.updateQueryParameters({ tab: TABS.CATALOGUE });
         }
     }
 

@@ -276,11 +276,11 @@ export class BPDataService{
             // we can't copy because those are 2 different types of addresses.
             const lineItem = this.requestForQuotation.requestForQuotationLine[0].lineItem;
             const address = lineItem.deliveryTerms.deliveryLocation.address;
-            address.country.name = settings.address.country;
-            address.postalZone = settings.address.postalCode;
-            address.cityName = settings.address.cityName;
-            address.buildingNumber = settings.address.buildingNumber;
-            address.streetName = settings.address.streetName;
+            address.country.name = settings.details.address.country;
+            address.postalZone = settings.details.address.postalCode;
+            address.cityName = settings.details.address.cityName;
+            address.buildingNumber = settings.details.address.buildingNumber;
+            address.streetName = settings.details.address.streetName;
         });
     }
 
@@ -366,7 +366,7 @@ export class BPDataService{
         this.order.paymentTerms = copyQuotation.paymentTerms;
 
         this.order.anticipatedMonetaryTotal.payableAmount.currencyID = copyRfq.requestForQuotationLine[0].lineItem.price.priceAmount.currencyID;
-        
+
         this.setProcessType('Order');
     }
 
@@ -609,7 +609,7 @@ export class BPDataService{
 
             // this item only contains the properties choosen by the user
             const item = this.getItemFromCurrentWorkflow();
-    
+
             const line = this.catalogueLines[0];
             if(!item || !line) {
                 return;
@@ -705,4 +705,3 @@ export class BPDataService{
         this.modifiedCatalogueLines[0].goodsItem.item.dimension = dimensions;
     }
 }
-
