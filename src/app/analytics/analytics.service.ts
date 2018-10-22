@@ -10,6 +10,7 @@ export class AnalyticsService {
     private headers = new Headers({'Content-Type': 'application/json'});
     private url_da = myGlobals.data_aggregation_endpoint;
     private url_bpe = `${myGlobals.bpe_endpoint}/statistics`;
+    private url_trust = myGlobals.trust_service_endpoint;
 
     constructor(
         private http: Http,
@@ -41,6 +42,28 @@ export class AnalyticsService {
   		.get(url, {headers: this.headers})
   		.toPromise()
   		.then(res => res.json())
+  		.catch(this.handleError);
+    }
+
+    getTrustPolicy(): Promise<any> {
+      const url = `${this.url_trust}/policy/global`;
+      const token = 'Bearer '+this.cookieService.get("bearer_token");
+      const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
+      return this.http
+  		.get(url, {headers: headers_token, withCredentials: true})
+  		.toPromise()
+  		.then(res => res.json())
+  		.catch(this.handleError);
+    }
+
+    setTrustPolicy(policy:any): Promise<any> {
+      const url = `${this.url_trust}/policy/global/update`;
+      const token = 'Bearer '+this.cookieService.get("bearer_token");
+      const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
+      return this.http
+  		.post(url, JSON.stringify(policy), {headers: headers_token, withCredentials: true})
+  		.toPromise()
+  		.then(res => res)
   		.catch(this.handleError);
     }
 
