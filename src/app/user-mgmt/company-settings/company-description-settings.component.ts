@@ -51,7 +51,6 @@ export class CompanyDescriptionSettingsComponent implements OnInit {
       if (this.socialMediaList.length == 0)
         this.socialMediaList = [""];
       this.compEvents = this.settings.description.events;
-      this.normalizeDates();
       this.sortCompEvent();
     }
 
@@ -74,8 +73,8 @@ export class CompanyDescriptionSettingsComponent implements OnInit {
     onSaveEventEntry(model: FormGroup, close: any) {
         const fields = model.getRawValue();
         let newEvent = new CompanyEvent(
-          new Date(this.compEventFromDate).toISOString(),
-          new Date(this.compEventToDate).toISOString(),
+          moment(this.compEventFromDate).format("YYYY-MM-DD"),
+          moment(this.compEventToDate).format("YYYY-MM-DD"),
           fields.description,
           fields.name,
           fields.place
@@ -84,13 +83,6 @@ export class CompanyDescriptionSettingsComponent implements OnInit {
         this.sortCompEvent();
         close();
         this.flagCompEventsChanged();
-    }
-
-    normalizeDates() {
-      for (var i=0; i<this.compEvents.length; i++) {
-        this.compEvents[i].dateFrom = new Date(this.compEvents[i].dateFrom).toISOString();
-        this.compEvents[i].dateTo = new Date(this.compEvents[i].dateTo).toISOString();
-      }
     }
 
     sortCompEvent() {
@@ -115,10 +107,6 @@ export class CompanyDescriptionSettingsComponent implements OnInit {
 
     flagCompEventsChanged() {
       this.compEventsChanged = true;
-    }
-
-    formatDate(date:string) {
-      return moment(date).format("YYYY-MM-DD");
     }
 
     trackFn(index,item) {
