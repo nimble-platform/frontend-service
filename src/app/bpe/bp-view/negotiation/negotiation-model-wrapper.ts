@@ -132,6 +132,8 @@ export class NegotiationModelWrapper {
     }
 
     public get quotationDeliveryPeriod(): Quantity {
+        // update quotation delivery period to calculate price correctly
+        this.quotationPriceWrapper.deliveryPeriod = this.quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure;
         return this.quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure;
     }
 
@@ -176,6 +178,8 @@ export class NegotiationModelWrapper {
     }
 
     public get quotationIncoterms(): string {
+        // update quotation incoterm to calculate price correctly
+        this.quotationPriceWrapper.incoterm = this.quotation.quotationLine[0].lineItem.deliveryTerms.incoterms;
         return this.quotation.quotationLine[0].lineItem.deliveryTerms.incoterms;
     }
 
@@ -208,6 +212,8 @@ export class NegotiationModelWrapper {
     }
 
     public get quotationPaymentMeans(): string {
+        // update quotation payment means to calculate price correctly
+        this.quotationPriceWrapper.paymentMeans = this.quotation.paymentMeans.paymentMeansCode.value;
         return this.quotation.paymentMeans.paymentMeansCode.value;
     }
 
