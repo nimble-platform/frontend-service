@@ -470,6 +470,7 @@ export class ThreadSummaryComponent implements OnInit {
             .then(() => {
                 this.saveCallStatusRating.callback("Rating saved", true);
                 close();
+                this.showRateCollaborationButton = false;
                 this.fetchEvents();
             })
             .catch(error => {
@@ -488,6 +489,7 @@ export class ThreadSummaryComponent implements OnInit {
             .then(() => {
                 this.saveCallStatusRating.callback("Rating saved", true);
                 close();
+                this.showRateCollaborationButton = false;
                 this.fetchEvents();
             })
             .catch(error => {
