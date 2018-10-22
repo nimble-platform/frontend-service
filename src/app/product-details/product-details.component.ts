@@ -13,6 +13,7 @@ import { getMaximumQuantityForPrice, getStepForPrice, isTransportService } from 
 import { AppComponent } from "../app.component";
 import { UserService } from "../user-mgmt/user.service";
 import { CompanySettings } from "../user-mgmt/model/company-settings";
+import {Quantity} from '../catalogue/model/publish/quantity';
 
 @Component({
     selector: 'product-details',
@@ -69,7 +70,7 @@ export class ProductDetailsComponent implements OnInit {
                     .then(settings => {
                         this.settings = settings;
                         this.wrapper = new ProductWrapper(this.line, settings.negotiationSettings);
-                        this.priceWrapper = new PriceWrapper(this.line.requiredItemLocationQuantity.price);
+                        this.priceWrapper = new PriceWrapper(this.line.requiredItemLocationQuantity.price,new Quantity(1, this.line.requiredItemLocationQuantity.price.baseQuantity.unitCode),this.line.priceOption);
                         this.bpDataService.resetBpData();
                         this.bpDataService.setCatalogueLines([this.line], [settings]);
                         this.bpDataService.userRole = 'buyer';
@@ -119,7 +120,12 @@ export class ProductDetailsComponent implements OnInit {
      */
 
     getTotalPrice(): number {
+        // get selected properties
+        let copyItem = JSON.parse(JSON.stringify(this.item));
+        this.bpDataService.selectFirstValuesAmongAlternatives(copyItem);
+
         this.priceWrapper.quantity.value = this.options.quantity;
+        this.priceWrapper.additionalItemProperties = copyItem.additionalItemProperty;
         return this.priceWrapper.totalPrice;
     }
 

@@ -33,16 +33,25 @@ export class NegotiationModelWrapper {
 
         this.linePriceWrapper = new PriceWrapper(
             line.requiredItemLocationQuantity.price,
-            rfq.requestForQuotationLine[0].lineItem.quantity
+            rfq.requestForQuotationLine[0].lineItem.quantity,
+            line.priceOption,
+            rfq.requestForQuotationLine[0].lineItem.item.additionalItemProperty
         );
         this.rfqPriceWrapper = new PriceWrapper(
             rfq.requestForQuotationLine[0].lineItem.price,
-            rfq.requestForQuotationLine[0].lineItem.quantity
+            rfq.requestForQuotationLine[0].lineItem.quantity,
+            line.priceOption,
+            rfq.requestForQuotationLine[0].lineItem.item.additionalItemProperty
         )
         if(quotation) {
             this.quotationPriceWrapper = new PriceWrapper(
                 quotation.quotationLine[0].lineItem.price,
-                quotation.quotationLine[0].lineItem.quantity
+                quotation.quotationLine[0].lineItem.quantity,
+                line.priceOption,
+                rfq.requestForQuotationLine[0].lineItem.item.additionalItemProperty,
+                rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms,
+                rfq.paymentMeans.paymentMeansCode.value,
+                rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure
             );
         }
     }
@@ -56,9 +65,15 @@ export class NegotiationModelWrapper {
     }
 
     public get lineTotalPriceString(): string {
+        this.updateLinePriceWrapperFields();
         return this.linePriceWrapper.totalPriceString;
     }
 
+    private updateLinePriceWrapperFields(){
+        this.linePriceWrapper.incoterm = this.rfq.negotiationOptions.incoterms ? this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms : null;
+        this.linePriceWrapper.paymentMeans = this.rfq.negotiationOptions.paymentMeans ? this.rfq.paymentMeans.paymentMeansCode.value : null;
+        this.linePriceWrapper.deliveryPeriod = this.rfq.negotiationOptions.deliveryPeriod ? this.rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure: null;
+    }
 
     public get rfqPricePerItemString(): string {
         return this.rfqPriceWrapper.pricePerItemString;
@@ -69,11 +84,19 @@ export class NegotiationModelWrapper {
     }
 
     public get rfqTotalPriceString(): string {
+        this.updateRFQPriceWrapperFields()
         return this.rfqPriceWrapper.totalPriceString;
     }
 
     public get rfqTotalPriceStringIfNegotiating(): string {
+        this.updateRFQPriceWrapperFields();
         return this.IfNegotiating(this.rfqPriceWrapper.totalPriceString, this.rfq.negotiationOptions.price);
+    }
+
+    private updateRFQPriceWrapperFields(){
+        this.rfqPriceWrapper.incoterm = this.rfq.negotiationOptions.incoterms ? this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms : null;
+        this.rfqPriceWrapper.paymentMeans = this.rfq.negotiationOptions.paymentMeans ? this.rfq.paymentMeans.paymentMeansCode.value : null;
+        this.rfqPriceWrapper.deliveryPeriod = this.rfq.negotiationOptions.deliveryPeriod ? this.rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure: null;
     }
 
     public get quotationPriceAmount(): Amount {
