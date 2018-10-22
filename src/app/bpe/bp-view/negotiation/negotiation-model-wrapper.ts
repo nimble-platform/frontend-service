@@ -51,7 +51,8 @@ export class NegotiationModelWrapper {
                 rfq.requestForQuotationLine[0].lineItem.item.additionalItemProperty,
                 rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms,
                 rfq.paymentMeans.paymentMeansCode.value,
-                rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure
+                rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure,
+                rfq.requestForQuotationLine[0].lineItem.deliveryTerms.deliveryLocation.address
             );
         }
     }
@@ -73,6 +74,7 @@ export class NegotiationModelWrapper {
         this.linePriceWrapper.incoterm = this.rfq.negotiationOptions.incoterms ? this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms : null;
         this.linePriceWrapper.paymentMeans = this.rfq.negotiationOptions.paymentMeans ? this.rfq.paymentMeans.paymentMeansCode.value : null;
         this.linePriceWrapper.deliveryPeriod = this.rfq.negotiationOptions.deliveryPeriod ? this.rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure: null;
+        this.linePriceWrapper.deliveryLocation = this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.deliveryLocation.address;
     }
 
     public get rfqPricePerItemString(): string {
@@ -97,6 +99,7 @@ export class NegotiationModelWrapper {
         this.rfqPriceWrapper.incoterm = this.rfq.negotiationOptions.incoterms ? this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms : null;
         this.rfqPriceWrapper.paymentMeans = this.rfq.negotiationOptions.paymentMeans ? this.rfq.paymentMeans.paymentMeansCode.value : null;
         this.rfqPriceWrapper.deliveryPeriod = this.rfq.negotiationOptions.deliveryPeriod ? this.rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure: null;
+        this.rfqPriceWrapper.deliveryLocation = this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.deliveryLocation.address;
     }
 
     public get quotationPriceAmount(): Amount {

@@ -32,15 +32,11 @@
 
 <!--delivery location related options-->
 <div *ngIf="priceOption.typeID == priceOptions.DELIVERY_LOCATION.typeID" class="row">
-    <div class="col-6">
-        <div class="row">
-            <div class="col-5">
-                <input-label [label]="'Delivery Location'"></input-label>
-            </div>
-            <div class="col-7">
-                <input class="form-control form-control-sm" type="text" [(ngModel)]="priceOption.itemLocationQuantity.applicableTerritoryAddress[0].country.name">
-            </div>
+    <div class="row">
+        <div class="col-2">
+            <input-label [label]="'Delivery Location'"></input-label>
         </div>
+        <address-input class="col-10" [address]="priceOption.itemLocationQuantity.applicableTerritoryAddress[0]"></address-input>
     </div>
 </div>
 

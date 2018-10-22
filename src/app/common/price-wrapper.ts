@@ -5,6 +5,7 @@ import { ItemPriceWrapper } from "./item-price-wrapper";
 import {PriceOption} from '../catalogue/model/publish/price-option';
 import {PRICE_OPTIONS} from '../catalogue/model/constants';
 import {ItemProperty} from '../catalogue/model/publish/item-property';
+import {Address} from '../catalogue/model/publish/address';
 
 /**
  * Wrapper around a price and a quantity, contains convenience methods to get the total price, 
@@ -24,7 +25,8 @@ export class PriceWrapper {
                 public additionalItemProperties:ItemProperty[] = [],
                 public incoterm:string = null,
                 public paymentMeans:string = null,
-                public deliveryPeriod: Quantity = null) {
+                public deliveryPeriod: Quantity = null,
+                public deliveryLocation: Address = null) {
         this.itemPrice = new ItemPriceWrapper(price);
     }
 
@@ -67,7 +69,31 @@ export class PriceWrapper {
                     }
                 }
             }
-            // TODO: check for delivery location
+            else if(priceOption.typeID == PRICE_OPTIONS.DELIVERY_LOCATION.typeID && this.deliveryLocation){
+                // check whether addresses are the same or not
+                let checkStreetName = priceOption.itemLocationQuantity.applicableTerritoryAddress[0].streetName != "";
+                let checkBuildingNumber = priceOption.itemLocationQuantity.applicableTerritoryAddress[0].buildingNumber != "";
+                let checkPostalZone = priceOption.itemLocationQuantity.applicableTerritoryAddress[0].postalZone != "";
+                let checkCityName = priceOption.itemLocationQuantity.applicableTerritoryAddress[0].cityName != "";
+                let checkCountryName = priceOption.itemLocationQuantity.applicableTerritoryAddress[0].country && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].country.name != "";
+                if(checkStreetName && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].streetName.toLocaleLowerCase() != this.deliveryLocation.streetName.toLocaleLowerCase()){
+                    continue;
+                }
+                if(checkBuildingNumber && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].buildingNumber != this.deliveryLocation.buildingNumber){
+                    continue;
+                }
+                if(checkPostalZone && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].postalZone != this.deliveryLocation.postalZone){
+                    continue;
+                }
+                if(checkCityName && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].cityName.toLocaleLowerCase() != this.deliveryLocation.cityName.toLocaleLowerCase()){
+                    continue;
+                }
+                if(checkCountryName && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].country.name.toLocaleLowerCase() != this.deliveryLocation.country.name.toLocaleLowerCase()){
+                    continue;
+                }
+                // the delivery location satisfies all conditions
+                totalDiscount += this.calculateDiscountAmount(priceOption,totalPrice);
+            }
         }
 
         return totalPrice-totalDiscount;
