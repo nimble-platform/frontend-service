@@ -470,8 +470,7 @@ export class ThreadSummaryComponent implements OnInit {
             .then(() => {
                 this.saveCallStatusRating.callback("Rating saved", true);
                 close();
-                // ToDo: Uncomment this as soon as the ratings influence the processInstanceGroup
-                //this.threadStateUpdated.next();
+                this.fetchEvents();
             })
             .catch(error => {
                 this.saveCallStatusRating.error("Error while saving rating", error);
@@ -489,8 +488,7 @@ export class ThreadSummaryComponent implements OnInit {
             .then(() => {
                 this.saveCallStatusRating.callback("Rating saved", true);
                 close();
-                // ToDo: Uncomment this as soon as the ratings influence the processInstanceGroup
-                //this.threadStateUpdated.next();
+                this.fetchEvents();
             })
             .catch(error => {
                 this.saveCallStatusRating.error("Error while saving rating", error);
