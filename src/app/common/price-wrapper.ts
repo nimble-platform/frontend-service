@@ -158,7 +158,7 @@ export class PriceWrapper {
         }
         // per unit
         else if(priceOption.itemLocationQuantity.allowanceCharge[0].perUnitAmount.value){
-            // TODO: calculate discount for per price option
+            discount += priceOption.itemLocationQuantity.allowanceCharge[0].perUnitAmount.value * this.quantity.value;
         }
 
         return discount;
