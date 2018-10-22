@@ -312,6 +312,9 @@ export class UBLModelUtils {
 
     public static createQuotation(rfq: RequestForQuotation): Quotation {
         const quotationLine: QuotationLine = new QuotationLine(copy(rfq.requestForQuotationLine[0].lineItem));
+        // set start and end dates
+        quotationLine.lineItem.delivery[0].requestedDeliveryPeriod.startDate = rfq.delivery.requestedDeliveryPeriod.startDate;
+        quotationLine.lineItem.delivery[0].requestedDeliveryPeriod.endDate = rfq.delivery.requestedDeliveryPeriod.endDate;
         this.removeHjidFieldsFromObject(rfq.buyerCustomerParty);
         this.removeHjidFieldsFromObject(rfq.sellerSupplierParty);
         const customerParty: CustomerParty = rfq.buyerCustomerParty;
