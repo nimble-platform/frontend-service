@@ -1,0 +1,21 @@
+.star {
+  position: relative;
+  display: inline-block;
+  color: #b0c4de;
+	font-size: 130%;
+}
+
+.star-b {
+	font-size: 170% !important;
+}
+
+.full {
+  color: #1e90ff;
+}
+
+.half {
+  position: absolute;
+  display: inline-block;
+  overflow: hidden;
+  color: #1e90ff;
+}

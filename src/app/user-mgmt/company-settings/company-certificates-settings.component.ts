@@ -19,7 +19,7 @@ export class CompanyCertificatesSettingsComponent implements OnInit {
 
     @Output() onSaveEvent: EventEmitter<void> = new EventEmitter();
 
-    ppapTypes: string[] = [""].concat(PPAP_CERTIFICATES);
+    ppapTypes: string[] = PPAP_CERTIFICATES;
     savePpapLevelCallStatus: CallStatus = new CallStatus();
 
     certFile = null;
@@ -39,13 +39,14 @@ export class CompanyCertificatesSettingsComponent implements OnInit {
     }
 
     isPpapLevelDirty(): boolean {
-        return this.settings.ppapCompatibilityLevel !== this.ppapLevel;
+        return this.settings.tradeDetails.ppapCompatibilityLevel !== this.ppapLevel;
     }
 
     onAddCertificate(content) {
         this.addCertForm = this._fb.group({
             file: [""],
             name: [""],
+            description: [""],
             type: [""]
         });
         this.certFile = null;
@@ -56,7 +57,7 @@ export class CompanyCertificatesSettingsComponent implements OnInit {
         this.saveCertCallStatus.submit();
         const fields = model.getRawValue();
         this.userService
-            .saveCert(this.certFile, encodeURIComponent(fields.name), encodeURIComponent(fields.type))
+            .saveCert(this.certFile, encodeURIComponent(fields.name), encodeURIComponent(fields.description), encodeURIComponent(fields.type))
             .then(() => {
                 close();
                 this.saveCertCallStatus.callback("Certificate saved", true);
@@ -95,7 +96,7 @@ export class CompanyCertificatesSettingsComponent implements OnInit {
     onSavePpapLevel(): void {
         this.savePpapLevelCallStatus.submit();
 
-        this.settings.ppapCompatibilityLevel = this.ppapLevel;
+        this.settings.tradeDetails.ppapCompatibilityLevel = this.ppapLevel;
         const userId = this.cookieService.get("user_id");
         this.userService.putSettings(this.settings, userId)
             .then(() => {

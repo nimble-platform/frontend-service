@@ -1,0 +1,86 @@
+<p class="nimble-title">Trust Policy Configuration</p>
+
+<call-status [callStatus]="callStatus" [large]="true"></call-status>
+
+<div [hidden]="isLoading()" class="space-before">
+
+  <div *ngIf="policy && policy.trustAttributes && policy.trustAttributes.length>0">
+
+    <div *ngIf="!alertClosed">
+  		<p>
+  			<ngb-alert type="info" (close)="alertClosed=true">
+  				Valid syntax for expression:<br/>
+          - greater or equal than &#123;number&#125;<br/>
+          - lower or equal than &#123;number&#125;<br/>
+          - between &#123;number&#125; &#123;number&#125;<br/><br/>
+          Formats:<br/>
+          - Time values are entered in seconds<br/>
+          - Ratings range between 0 and 5<br/>
+          - Completeness ranges between 0 and 1
+  			</ngb-alert>
+  		</p>
+  	</div>
+
+    <div *ngFor="let pol of policy.trustAttributes; let i=index">
+      <div class="row">
+
+        <div class="col-4">
+          <h5>{{pol.attributeType.name}}</h5>
+        </div>
+
+        <div class="col-8">
+          <div class="form-group row">
+        		<label class="col-2 col-form-label">
+        			<strong>Weight</strong>
+        		</label>
+        		<div class="col-9">
+              <input type="range" class="form-control" min="0" max="1" step="0.1" [(ngModel)]="policy.trustAttributes[i].weight"/>
+        		</div>
+            <label class="col-1 col-form-label align-right">
+              {{pol.weight}}
+            </label>
+        	</div>
+          <div class="form-group row">
+        		<label class="col-2 col-form-label">
+        			<strong>Expression</strong>
+        		</label>
+        		<div class="col-10">
+              <input type="text" class="form-control" [(ngModel)]="policy.trustAttributes[i].expression"/>
+        		</div>
+        	</div>
+        </div>
+
+      </div>
+
+      <hr>
+
+    </div>
+
+    <div class="row">
+
+      <div class="col-4">
+        <h5>Recalculate Scores?</h5>
+      </div>
+
+      <div class="col-8">
+        <input type="checkbox" [(ngModel)]="policy.recalculateScoresWhenUpdated"/>
+      </div>
+
+    </div>
+
+    <hr>
+
+    <div class="row actions-row pr-0 space-before">
+        <div class="col-10 call-status-col">
+            <call-status [callStatus]="saveCallStatus"></call-status>
+        </div>
+        <div class="col-2">
+            <button class="btn btn-primary action" [disabled]="policyUnchanged() || saveCallStatus.isLoading()" (click)="saveTrustPolicy()">
+                Save
+            </button>
+        </div>
+    </div>
+
+  </div>
+
+</div>

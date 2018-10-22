@@ -14,7 +14,7 @@ import { Address } from "../model/address";
     templateUrl: "./company-delivery-terms.component.html"
 })
 export class CompanyDeliveryTermsComponent implements OnInit {
-    
+
     @Input() settings: CompanySettings;
 
     settingsForm: FormGroup;
@@ -31,16 +31,10 @@ export class CompanyDeliveryTermsComponent implements OnInit {
 
     ngOnInit() {
         this.settingsForm = this._fb.group({
-            name: [this.settings.name],
-            vatNumber: [this.settings.vatNumber],
-            verificationInformation: [this.settings.verificationInformation],
-            website: [this.settings.website],
-            ppapCompatibilityLevel: [this.settings.ppapCompatibilityLevel],
-            address: AddressSubForm.update(AddressSubForm.generateForm(this._fb), this.settings.address),
             deliveryTerms: this._fb.array(
-                this.settings.deliveryTerms.map(term =>
+                this.settings.tradeDetails.deliveryTerms.map(term =>
                     DeliveryTermsSubForm.update(
-                        DeliveryTermsSubForm.generateForm(this._fb), 
+                        DeliveryTermsSubForm.generateForm(this._fb),
                         term
                     )
                 )
@@ -56,25 +50,23 @@ export class CompanyDeliveryTermsComponent implements OnInit {
     onSetToCompanyAddress(index: number) {
         const allTerms = this.getDeliveryTerms();
         const term = allTerms.get([index]);
-
-        DeliveryTermsSubForm.setAddress(term, this.settings.address);
+        DeliveryTermsSubForm.setAddress(term, this.settings.details.address);
+        this.settingsForm.markAsDirty();
     }
 
     onDeleteDeliveryTerms(index: number) {
         const terms = this.getDeliveryTerms();
         terms.removeAt(index);
+        this.settingsForm.markAsDirty();
     }
 
     onSave(model: FormGroup) {
-        if (myGlobals.debug) {
-            console.log(`Changing company ${JSON.stringify(model.getRawValue())}`);
-        }
-
         // update settings
         this.saveCallStatus.submit();
+        this.settings.tradeDetails.deliveryTerms = model.getRawValue()['deliveryTerms'];
         let userId = this.cookieService.get("user_id");
         this.userService
-            .putSettings(model.getRawValue(), userId)
+            .putSettings(this.settings, userId)
             .then(response => {
                 if (myGlobals.debug) {
                     console.log(`Saved Company Settings for user ${userId}. Response: ${response}`);

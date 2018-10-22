@@ -21,11 +21,17 @@ export class SimpleSearchFormComponent implements OnInit {
 	product_name = myGlobals.product_name;
 	product_vendor_id = myGlobals.product_vendor_id;
 	product_vendor_name = myGlobals.product_vendor_name;
+	product_vendor_rating = myGlobals.product_vendor_rating;
+	product_vendor_rating_seller = myGlobals.product_vendor_rating_seller;
+	product_vendor_rating_fulfillment = myGlobals.product_vendor_rating_fulfillment;
+	product_vendor_rating_delivery = myGlobals.product_vendor_rating_delivery;
+	product_vendor_trust = myGlobals.product_vendor_trust;
 	product_img = myGlobals.product_img;
 	product_price = myGlobals.product_price;
 	product_currency = myGlobals.product_currency;
 	product_filter_prod = myGlobals.product_filter_prod;
 	product_filter_comp = myGlobals.product_filter_comp;
+	product_filter_trust = myGlobals.product_filter_trust;
 	product_filter_mappings = myGlobals.product_filter_mappings;
 	product_nonfilter_full = myGlobals.product_nonfilter_full;
 	product_nonfilter_regex = myGlobals.product_nonfilter_regex;
@@ -37,9 +43,16 @@ export class SimpleSearchFormComponent implements OnInit {
 	selectedPriceMin: any;
 	selectedPriceMax: any;
 
+	ratingOverall = 0;
+	ratingSeller = 0;
+	ratingFulfillment = 0;
+	ratingDelivery = 0;
+	ratingTrust = 0;
+
 	showCatSection = true;
 	showProductSection = false;
 	showCompSection = false;
+	showTrustSection = false;
 	showOtherSection = false;
 
 	categoriesCallStatus: CallStatus = new CallStatus();
@@ -344,6 +357,7 @@ export class SimpleSearchFormComponent implements OnInit {
 
 	onSubmit() {
 		this.objToSubmit = copy(this.model);
+		this.page = 1;
 		this.get(this.objToSubmit);
 	}
 
@@ -372,11 +386,29 @@ export class SimpleSearchFormComponent implements OnInit {
 		return check;
 	}
 
+	checkTrustFilter() {
+		var check = false;
+		if (this.ratingOverall > 0 || this.ratingSeller > 0 || this.ratingFulfillment > 0 || this.ratingDelivery > 0 || this.ratingTrust > 0)
+			check = true;
+		return check;
+	}
+
 	checkPriceFacet() {
 		var found = false;
 		for (var i=0; i<this.facetQuery.length; i++) {
 			var comp = this.facetQuery[i].split(":")[0];
 			if (comp.localeCompare(this.product_currency) == 0 || comp.localeCompare(this.product_price) == 0) {
+				found = true;
+			}
+		}
+		return found;
+	}
+
+	checkTrustFacet() {
+		var found = false;
+		for (var i=0; i<this.facetQuery.length; i++) {
+			var comp = this.facetQuery[i].split(":")[0];
+			if (comp.localeCompare(this.product_vendor_rating) == 0 || comp.localeCompare(this.product_vendor_rating_seller) == 0 || comp.localeCompare(this.product_vendor_rating_fulfillment) == 0 || comp.localeCompare(this.product_vendor_rating_delivery) == 0 || comp.localeCompare(this.product_vendor_trust) == 0) {
 				found = true;
 			}
 		}
@@ -391,12 +423,45 @@ export class SimpleSearchFormComponent implements OnInit {
 		this.get(this.objToSubmit);
 	}
 
+	setTrustFilter() {
+		this.clearFacet(this.product_vendor_rating);
+		this.clearFacet(this.product_vendor_rating_seller);
+		this.clearFacet(this.product_vendor_rating_fulfillment);
+		this.clearFacet(this.product_vendor_rating_delivery);
+		this.clearFacet(this.product_vendor_trust);
+		if (this.ratingOverall > 0)
+			this.setRangeWithoutQuery(this.product_vendor_rating,this.ratingOverall,5);
+		if (this.ratingSeller > 0)
+			this.setRangeWithoutQuery(this.product_vendor_rating_seller,this.ratingSeller,5);
+		if (this.ratingFulfillment > 0)
+			this.setRangeWithoutQuery(this.product_vendor_rating_fulfillment,this.ratingFulfillment,5);
+		if (this.ratingDelivery > 0)
+			this.setRangeWithoutQuery(this.product_vendor_rating_delivery,this.ratingDelivery,5);
+		if (this.ratingTrust > 0)
+			this.setRangeWithoutQuery(this.product_vendor_trust,(this.ratingTrust/5),1);
+		this.get(this.objToSubmit);
+	}
+
 	resetPriceFilter() {
 		this.selectedCurrency = "EUR";
 		this.selectedPriceMin = null;
 		this.selectedPriceMax = null;
 		this.clearFacet(this.product_currency);
 		this.clearFacet(this.product_price);
+		this.get(this.objToSubmit);
+	}
+
+	resetTrustFilter() {
+		this.ratingOverall = 0;
+		this.ratingSeller = 0;
+		this.ratingFulfillment = 0;
+		this.ratingDelivery = 0;
+		this.ratingTrust = 0;
+		this.clearFacet(this.product_vendor_rating);
+		this.clearFacet(this.product_vendor_rating_seller);
+		this.clearFacet(this.product_vendor_rating_fulfillment);
+		this.clearFacet(this.product_vendor_rating_delivery);
+		this.clearFacet(this.product_vendor_trust);
 		this.get(this.objToSubmit);
 	}
 
@@ -440,8 +505,28 @@ export class SimpleSearchFormComponent implements OnInit {
 		return count;
 	}
 
+	checkTrustCat(name:string) {
+		var found = false;
+		if (this.product_filter_trust.indexOf(name) != -1) {
+			found = true;
+		}
+		return found;
+	}
+
+	checkTrustCatCount() {
+		var count = 0;
+		if (this.facetObj) {
+			for (var i=0; i<this.facetObj.length; i++) {
+				if (this.checkTrustCat(this.facetObj[i].name)) {
+					count++;
+				}
+			}
+		}
+		return count;
+	}
+
 	checkOtherCat(name:string) {
-		return (!this.checkProdCat(name) && !this.checkCompCat(name));
+		return (!this.checkProdCat(name) && !this.checkCompCat(name) && !this.checkTrustCat(name));
 	}
 
 	checkOtherCatCount() {
@@ -498,6 +583,11 @@ export class SimpleSearchFormComponent implements OnInit {
 		this.selectedCurrency = "EUR";
 		this.selectedPriceMin = null;
 		this.selectedPriceMax = null;
+		this.ratingOverall = 0;
+		this.ratingSeller = 0;
+		this.ratingFulfillment = 0;
+		this.ratingDelivery = 0;
+		this.ratingTrust = 0;
 		this.get(this.objToSubmit);
 	}
 
@@ -507,6 +597,19 @@ export class SimpleSearchFormComponent implements OnInit {
 		if (this.facetQuery.indexOf(fq) != -1)
 			match = true;
 		return match;
+	}
+
+	checkNaN(rating:any): boolean {
+		var nan = false;
+		if (isNaN(parseFloat(rating)))
+			nan = true;
+		return nan;
+	}
+
+	calcRating(rating:any,multiplier:number): number {
+		var result = parseFloat(rating)*multiplier;
+		var rounded = Math.round(result*10)/10;
+		return rounded;
 	}
 
 	isJson(str: string): boolean {

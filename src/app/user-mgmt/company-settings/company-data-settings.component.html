@@ -1,11 +1,11 @@
 <!-- Legal Name -->
-<text-input label="Legal Name" [disabled]="true" [rows]="1" [text]="settings.name"
-    labelClass="col-2" valueClass="col-10" rowClass="space-before">
+<text-input label="Legal Name" [disabled]="true" [rows]="1" [text]="settings.details.companyLegalName"
+    labelClass="col-2" labelMainClass="col-form-label" valueClass="col-10" rowClass="space-before">
 </text-input>
 
 <!-- VAT Number -->
-<text-input label="VAT Number" [disabled]="true" [rows]="1" [text]="settings.vatNumber"
-    labelClass="col-2" valueClass="col-10" rowClass="space-before">
+<text-input label="VAT Number" [disabled]="true" [rows]="1" [text]="settings.details.vatNumber"
+    labelClass="col-2" labelMainClass="col-form-label" valueClass="col-10" rowClass="space-before">
 </text-input>
 
 <!-- Verification Info -->
@@ -15,20 +15,35 @@
         <span class="tooltip-icon" (click)="showVerificationTT(tooltip)"><i class="fa fa-question-circle"></i></span>
     </label>
     <div class="col-10">
-        <input type="text" class="form-control" [ngModel]="settings.verificationInformation" readonly>
+        <input type="text" class="form-control" [ngModel]="settings.details.verificationInformation" readonly>
     </div>
 </div>
 
-<!-- Website -->
-<text-input label="Website" [disabled]="true" [rows]="1" [text]="settings.website"
-    labelClass="col-2" valueClass="col-10" rowClass="space-before">
+<!-- Business Type -->
+<text-input label="Business Type" [disabled]="true" [rows]="1" [text]="settings.details.businessType"
+    labelClass="col-2" labelMainClass="col-form-label" valueClass="col-10" rowClass="space-before">
+</text-input>
+
+<!-- Business Keywords -->
+<text-input label="Business Keywords" [disabled]="true" [rows]="1" [text]="settings.details.businessKeywords[0]"
+    labelClass="col-2" labelMainClass="col-form-label" valueClass="col-10" rowClass="space-before">
+</text-input>
+
+<!-- Industry Sectors -->
+<text-input label="Industry Sectors" [disabled]="true" [rows]="1" [text]="settings.details.industrySectors[0]"
+    labelClass="col-2" labelMainClass="col-form-label" valueClass="col-10" rowClass="space-before">
+</text-input>
+
+<!-- Year of Company Registration -->
+<text-input label="Year of Comp. Reg." [disabled]="true" [rows]="1" [text]="settings.details.yearOfCompanyRegistration"
+    labelClass="col-2" labelMainClass="col-form-label" valueClass="col-10" rowClass="space-before">
 </text-input>
 
 <hr>
 
 <!-- Address -->
 <h4>Address</h4>
-<address-input-simple [address]="settings.address" [disabled]=true></address-input-simple>
+<address-input-simple [address]="settings.details.address" [disabled]=true></address-input-simple>
 
 <!-- Request change button -->
 <div class="row actions-row pr-0 space-before">
@@ -54,7 +69,7 @@
         We will process change requests within one business day.
     </div>
     <div class="modal-footer">
-        <a [href]="mailto" type="button" class="btn btn-primary" (click)="d('')">Open mail template</a>
+        <a [href]="mailto" role="button" class="btn btn-primary" (click)="d('')">Open mail template</a>
     </div>
 </ng-template>
 

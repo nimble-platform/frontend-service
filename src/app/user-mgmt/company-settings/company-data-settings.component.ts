@@ -8,7 +8,7 @@ import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
     templateUrl: "./company-data-settings.component.html"
 })
 export class CompanyDataSettingsComponent implements OnInit {
-    
+
     @Input() settings: CompanySettings;
 
     mailto: string;
@@ -20,7 +20,7 @@ export class CompanyDataSettingsComponent implements OnInit {
     }
 
     ngOnInit() {
-        
+
     }
 
     changeData(content) {
@@ -32,23 +32,29 @@ export class CompanyDataSettingsComponent implements OnInit {
         body += "I would like to change my company data to the following:";
         body += "\n\n";
         body += "Legal Name:\n";
-        body += this.settings.name + "\n\n";
+        body += this.settings.details.companyLegalName + "\n\n";
         body += "VAT Number:\n";
-        body += this.settings.vatNumber + "\n\n";
+        body += this.settings.details.vatNumber + "\n\n";
         body += "Verification Info:\n";
-        body += this.settings.verificationInformation + "\n\n";
-        body += "Website:\n";
-        body += this.settings.website + "\n\n";
+        body += this.settings.details.verificationInformation + "\n\n";
+        body += "Business Type (Manufacturer, Logistics Provider, Service Provider, Other):\n";
+        body += this.settings.details.businessType + "\n\n";
+        body += "Business Keywords:\n";
+        body += this.settings.details.businessKeywords[0] + "\n\n";
+        body += "Industry Sectors:\n";
+        body += this.settings.details.industrySectors[0] + "\n\n";
+        body += "Year of Comp. Reg.:\n";
+        body += this.settings.details.yearOfCompanyRegistration + "\n\n";
         body += "Street:\n";
-        body += this.settings.address.streetName + "\n\n";
+        body += this.settings.details.address.streetName + "\n\n";
         body += "Building Number:\n";
-        body += this.settings.address.buildingNumber + "\n\n";
+        body += this.settings.details.address.buildingNumber + "\n\n";
         body += "City:\n";
-        body += this.settings.address.cityName + "\n\n";
+        body += this.settings.details.address.cityName + "\n\n";
         body += "Postal Code:\n";
-        body += this.settings.address.postalCode + "\n\n";
+        body += this.settings.details.address.postalCode + "\n\n";
         body += "Country:\n";
-        body += this.settings.address.country;
+        body += this.settings.details.address.country;
         body += "\n\n\n";
         body += "Best regards,";
         body += "\n\n";
