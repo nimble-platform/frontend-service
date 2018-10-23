@@ -46,7 +46,7 @@ export class TnTFormComponent {
                 this.updateInfo = false;
                 this.metaData = resp;
                 if ('productionProcessTemplate' in this.metaData) {
-                    // this.getBPInfo(resp['productionProcessTemplate']);
+                    this.getBPInfo(resp['productionProcessTemplate']);
                     this.getAnalysis(code);
                     if (!(this.acc.activeIds.findIndex(tab => tab === 'bProcessVis') > -1)) {
                         this.acc.toggle('bProcessVis');
@@ -103,6 +103,9 @@ export class TnTFormComponent {
     }
 
     getBPInfo(url) {
+        if (this.debug) {
+            console.log(url);
+        }
         this.tntBackend.getBusinessProcessInfo(url)
             .subscribe((res) => {
                 this.error_detc = false;
@@ -116,7 +119,9 @@ export class TnTFormComponent {
         this.tntBackend.getAnalysisInfo(code)
             .subscribe((res) => {
                 this.error_detc = false;
-                this.bpInfo = res;
+                if (res.length) {
+                    this.bpInfo = res;
+                }
             }, (err) => {
                 this.error_detc = true;
             });
@@ -124,7 +129,7 @@ export class TnTFormComponent {
 
     showGraph() {
         this.bpInfo.forEach((step) => {
-            if (step['estimatedEventTime'] === null) {
+            if (step['estimatedEventTime'] === null || !('estimatedEventTime' in step)) {
                 this.hierarchialGraph.nodes.push({
                     id: step.id,
                     label: step.bizStep.split(':').pop(),
@@ -148,6 +153,7 @@ export class TnTFormComponent {
     selectNode(ev) {
         let selectedNode = this.bpInfo.find(el => el.id === ev.id);
         if (this.debug) {
+            console.log(this.bpInfo);
             console.log(selectedNode);
         }
         this.tntBackend.getGateInfo(this.metaData['masterUrl'], selectedNode.readPoint)
