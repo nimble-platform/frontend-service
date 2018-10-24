@@ -147,7 +147,7 @@ export class ThreadSummaryComponent implements OnInit {
         );
 
         this.fillStatus(event, processInstance.state, processType, response, userRole === "buyer");
-
+        this.setCancelCollaborationButtonStatus(processType,response);
         this.checkDataChannel(event);
 
         /*
@@ -252,8 +252,6 @@ export class ThreadSummaryComponent implements OnInit {
             switch(processType) {
                 case "Order":
                     if (response.acceptedIndicator) {
-                        // since the order is approved, do not show the button
-                        this.showCancelCollaborationButton = false;
                         if(buyer) {
                             event.statusText = "Waiting for Dispatch Advice";
                             event.actionText = "See Order";
@@ -292,9 +290,6 @@ export class ThreadSummaryComponent implements OnInit {
                     event.actionText = "See Ppap Response";
                     break;
                 case "Transport_Execution_Plan":
-                    if(response.documentStatusCode.name == "Accepted"){
-                        this.showCancelCollaborationButton = false;
-                    }
                     if (buyer) {
                         event.statusText = "Transport Execution Plan received"
                     } else {
@@ -425,6 +420,21 @@ export class ThreadSummaryComponent implements OnInit {
                 .catch(err => {
                     this.archiveCallStatus.error("Failed to cancel collaboration",err);
                 });
+        }
+    }
+
+    setCancelCollaborationButtonStatus(processType: ProcessType, response: any){
+        switch(processType) {
+            case "Order":
+                if (response && response.acceptedIndicator) {
+                    // since the order is approved, do not show the button
+                    this.showCancelCollaborationButton = false;
+                }
+                break;
+            case "Transport_Execution_Plan":
+                if (response && response.documentStatusCode.name == "Accepted") {
+                    this.showCancelCollaborationButton = false;
+                }
         }
     }
 
