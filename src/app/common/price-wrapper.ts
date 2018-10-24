@@ -18,6 +18,13 @@ export class PriceWrapper {
     hjid: string = null;
 
     itemPrice: ItemPriceWrapper;
+    // quotation total price
+    // this field is used to calculate quotation response price correctly
+    quotationPrice: ItemPriceWrapper;
+    // these fields are used to check whether we need to update quotation price or not
+    quotationIncotermUpdated = false;
+    quotationDeliveryPeriodUpdated = false;
+    quotationPaymentMeansUpdated = false;
 
     constructor(public price: Price,
                 public quantity: Quantity = new Quantity(1, price.baseQuantity.unitCode),
@@ -26,11 +33,21 @@ export class PriceWrapper {
                 public incoterm:string = null,
                 public paymentMeans:string = null,
                 public deliveryPeriod: Quantity = null,
-                public deliveryLocation: Address = null) {
+                public deliveryLocation: Address = null,
+                public quotationLinePrice: Price = null) {
         this.itemPrice = new ItemPriceWrapper(price);
+        this.quotationPrice = new ItemPriceWrapper(this.quotationLinePrice);
     }
 
     get totalPrice(): number {
+        // if this PriceWrapper has a quotation price but we do not need to update it, simply return.
+        if(this.quotationPrice.price && !this.quotationIncotermUpdated && !this.quotationPaymentMeansUpdated && !this.quotationDeliveryPeriodUpdated){
+            if(!this.quotationHasPrice()){
+                return 0;
+            }
+            return this.quotationPrice.price.priceAmount.value;
+        }
+
         if(!this.hasPrice()) {
             return 0;
         }
@@ -95,7 +112,14 @@ export class PriceWrapper {
                 totalDiscount += this.calculateDiscountAmount(priceOption,totalPrice);
             }
         }
+        // if PriceWrapper has a quotation price, then we have to update it with the calculated total price
+        if(this.quotationPrice.price){
+            this.quotationPrice.price.priceAmount.value = totalPrice-totalDiscount;
 
+            this.quotationDeliveryPeriodUpdated = false;
+            this.quotationIncotermUpdated = false;
+            this.quotationPaymentMeansUpdated = false;
+        }
         return totalPrice-totalDiscount;
     }
 
@@ -140,12 +164,17 @@ export class PriceWrapper {
         return this.price.priceAmount.value != null;
     }
 
+    quotationHasPrice() :boolean{
+         return this.quotationPrice.price.priceAmount.value != null;
+    }
+
     private roundPrice(value: number): number {
         return Math.round(value * 100) / 100;
     }
 
     /**
      * Getters/Setters for quantity
+     * These are used to set or get quotation price
      */
 
     get value(): number {
@@ -153,15 +182,15 @@ export class PriceWrapper {
     }
 
     set value(value: number) {
-        this.totalPrice = value;
+        this.quotationPrice.price.priceAmount.value = value;
     }
 
     get unitCode(): string {
-        return this.currency;
+        return this.quotationPrice.price.priceAmount.currencyID;
     }
 
     set unitCode(unitCode: string) {
-        this.currency = unitCode;
+        this.quotationPrice.price.priceAmount.currencyID = unitCode;
     }
 
     /**

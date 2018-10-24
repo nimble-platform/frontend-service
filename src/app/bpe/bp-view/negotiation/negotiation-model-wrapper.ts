@@ -45,15 +45,27 @@ export class NegotiationModelWrapper {
         )
         if(quotation) {
             this.quotationPriceWrapper = new PriceWrapper(
-                quotation.quotationLine[0].lineItem.price,
+                line.requiredItemLocationQuantity.price,
                 quotation.quotationLine[0].lineItem.quantity,
                 line.priceOption,
                 rfq.requestForQuotationLine[0].lineItem.item.additionalItemProperty,
                 rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms,
                 rfq.paymentMeans.paymentMeansCode.value,
                 rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure,
-                rfq.requestForQuotationLine[0].lineItem.deliveryTerms.deliveryLocation.address
+                rfq.requestForQuotationLine[0].lineItem.deliveryTerms.deliveryLocation.address,
+                quotation.quotationLine[0].lineItem.price
             );
+            // initialize the quotation price properly
+            if(this.rfqTotalPriceStringIfNegotiating != ""){
+                this.quotationPriceWrapper.quotationPrice.price.priceAmount.value =  this.rfqPriceWrapper.totalPrice;
+                this.quotationPriceWrapper.quotationPrice.price.priceAmount.currencyID = this.rfqPriceWrapper.currency;
+            }
+            else{
+                let priceString:string = this.lineTotalPriceString;
+                let spaceIndex = priceString.indexOf(" ");
+                this.quotationPriceWrapper.quotationPrice.price.priceAmount.value =  Number(priceString.substring(0,spaceIndex));
+                this.quotationPriceWrapper.quotationPrice.price.priceAmount.currencyID = priceString.substring(spaceIndex+1);
+            }
         }
     }
 
@@ -73,7 +85,7 @@ export class NegotiationModelWrapper {
     private updateLinePriceWrapperFields(){
         this.linePriceWrapper.incoterm = this.rfq.negotiationOptions.incoterms ? this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms : null;
         this.linePriceWrapper.paymentMeans = this.rfq.negotiationOptions.paymentMeans ? this.rfq.paymentMeans.paymentMeansCode.value : null;
-        this.linePriceWrapper.deliveryPeriod = this.rfq.negotiationOptions.deliveryPeriod ? this.rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure: null;
+        this.linePriceWrapper.deliveryPeriod = this.rfq.negotiationOptions.deliveryPeriod ? JSON.parse(JSON.stringify(this.rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure)): null;
         this.linePriceWrapper.deliveryLocation = this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.deliveryLocation.address;
     }
 
@@ -98,7 +110,7 @@ export class NegotiationModelWrapper {
     private updateRFQPriceWrapperFields(){
         this.rfqPriceWrapper.incoterm = this.rfq.negotiationOptions.incoterms ? this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms : null;
         this.rfqPriceWrapper.paymentMeans = this.rfq.negotiationOptions.paymentMeans ? this.rfq.paymentMeans.paymentMeansCode.value : null;
-        this.rfqPriceWrapper.deliveryPeriod = this.rfq.negotiationOptions.deliveryPeriod ? this.rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure: null;
+        this.rfqPriceWrapper.deliveryPeriod = this.rfq.negotiationOptions.deliveryPeriod ? JSON.parse(JSON.stringify(this.rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure)): null;
         this.rfqPriceWrapper.deliveryLocation = this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.deliveryLocation.address;
     }
 
@@ -136,7 +148,14 @@ export class NegotiationModelWrapper {
 
     public get quotationDeliveryPeriod(): Quantity {
         // update quotation delivery period to calculate price correctly
-        this.quotationPriceWrapper.deliveryPeriod = this.quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure;
+        if(this.quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.value && (
+            this.quotationPriceWrapper.deliveryPeriod.value != this.quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.value ||
+            this.quotationPriceWrapper.deliveryPeriod.unitCode != this.quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.unitCode)){
+
+            this.quotationPriceWrapper.deliveryPeriod = JSON.parse(JSON.stringify(this.quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure));
+            // make this field true so that quotation price will be updated
+            this.quotationPriceWrapper.quotationDeliveryPeriodUpdated = true;
+        }
         return this.quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure;
     }
 
@@ -181,8 +200,13 @@ export class NegotiationModelWrapper {
     }
 
     public get quotationIncoterms(): string {
-        // update quotation incoterm to calculate price correctly
-        this.quotationPriceWrapper.incoterm = this.quotation.quotationLine[0].lineItem.deliveryTerms.incoterms;
+        if(this.quotationPriceWrapper.incoterm != this.quotation.quotationLine[0].lineItem.deliveryTerms.incoterms){
+            // update quotation incoterm to calculate price correctly
+            this.quotationPriceWrapper.incoterm = this.quotation.quotationLine[0].lineItem.deliveryTerms.incoterms;
+            // make this field true so that quotation price will be updated
+            this.quotationPriceWrapper.quotationIncotermUpdated = true;
+        }
+
         return this.quotation.quotationLine[0].lineItem.deliveryTerms.incoterms;
     }
 
@@ -216,7 +240,11 @@ export class NegotiationModelWrapper {
 
     public get quotationPaymentMeans(): string {
         // update quotation payment means to calculate price correctly
-        this.quotationPriceWrapper.paymentMeans = this.quotation.paymentMeans.paymentMeansCode.value;
+        if(this.quotationPriceWrapper.paymentMeans !=  this.quotation.paymentMeans.paymentMeansCode.value){
+            this.quotationPriceWrapper.paymentMeans = this.quotation.paymentMeans.paymentMeansCode.value;
+            // make this field true so that quotation price will be updated
+            this.quotationPriceWrapper.quotationPaymentMeansUpdated = true;
+        }
         return this.quotation.paymentMeans.paymentMeansCode.value;
     }
 
