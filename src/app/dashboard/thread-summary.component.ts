@@ -314,7 +314,7 @@ export class ThreadSummaryComponent implements OnInit {
         switch(processState) {
             case "COMPLETED":
                 if(processType === "Order") {
-                    return buyer ? "WAITING" : "ACTION_REQUIRED";
+                    return buyer ? "DONE" : "ACTION_REQUIRED";
                 }
                 return "DONE";
             case "EXTERNALLY_TERMINATED":
