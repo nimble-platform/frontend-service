@@ -21,8 +21,10 @@ export class CompanyDescriptionSettingsComponent implements OnInit {
     @Input() settings: CompanySettings;
     descriptionForm: FormGroup;
     socialMediaList = [""];
+    externalResources = [""];
     compEvents:CompanyEvent[] = [];
     socialMediaListChanged = false;
+    externalResourcesChanged = false;
     compEventsChanged = false;
     imgEndpoint = myGlobals.user_mgmt_endpoint+"/company-settings/image/";
     addEventForm: FormGroup;
@@ -47,6 +49,9 @@ export class CompanyDescriptionSettingsComponent implements OnInit {
           companyStatement: this.settings.description.companyStatement,
           website: this.settings.description.website
       });
+      this.externalResources = this.settings.description.externalResources;
+      if (this.externalResources.length == 0)
+        this.externalResources = [""];
       this.socialMediaList = this.settings.description.socialMediaList;
       if (this.socialMediaList.length == 0)
         this.socialMediaList = [""];
@@ -57,6 +62,11 @@ export class CompanyDescriptionSettingsComponent implements OnInit {
     addSocialMediaEntry() {
       this.socialMediaList.push("");
       this.flagSocialMediaChanged();
+    }
+
+    addExternalResourceEntry() {
+      this.externalResources.push("");
+      this.flagExternalResourcesChanged();
     }
 
     addCompEventEntry(content) {
@@ -96,6 +106,13 @@ export class CompanyDescriptionSettingsComponent implements OnInit {
       this.flagSocialMediaChanged();
     }
 
+    removeExternalResourceEntry(index:number){
+      this.externalResources.splice(index,1);
+      if (this.externalResources.length == 0)
+        this.externalResources = [""];
+      this.flagExternalResourcesChanged();
+    }
+
     removeCompEventEntry(index:number) {
       this.compEvents.splice(index,1);
       this.flagCompEventsChanged();
@@ -103,6 +120,10 @@ export class CompanyDescriptionSettingsComponent implements OnInit {
 
     flagSocialMediaChanged() {
       this.socialMediaListChanged = true;
+    }
+
+    flagExternalResourcesChanged() {
+      this.externalResourcesChanged = true;
     }
 
     flagCompEventsChanged() {
@@ -175,6 +196,7 @@ export class CompanyDescriptionSettingsComponent implements OnInit {
         this.settings.description.companyStatement =  model.getRawValue()['companyStatement'];
         this.settings.description.website = model.getRawValue()['website'];
         this.settings.description.socialMediaList = this.socialMediaList;
+        this.settings.description.externalResources = this.externalResources;
         this.settings.description.events = this.compEvents;
         let userId = this.cookieService.get("user_id");
         this.userService
@@ -185,6 +207,7 @@ export class CompanyDescriptionSettingsComponent implements OnInit {
                 }
                 this.saveCallStatus.callback("Successfully saved", true);
                 this.socialMediaListChanged = false;
+                this.externalResourcesChanged = false;
                 this.compEventsChanged = false;
                 this.descriptionForm.markAsPristine();
                 this.onSaveEvent.emit();
