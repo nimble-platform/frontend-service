@@ -39,6 +39,25 @@
   </div>
 </div>
 
+<!-- Link (External Resource) List -->
+<div class="form-group row">
+  <label class="col-2 col-form-label">
+    <strong>Links:</strong>
+  </label>
+  <div class="col-10">
+    <ng-container *ngFor="let extEntry of externalResources; let i = index; trackBy:trackFn">
+      <div class="row mb-1">
+        <div class="col-10">
+          <input type="text" class="form-control" [(ngModel)]="externalResources[i]" (input)="flagExternalResourcesChanged()">
+        </div>
+        <div class="col-2 align-right">
+          <button class="btn btn-danger" (click)="removeExternalResourceEntry(i)">Delete</button>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</div>
+
 <!-- Event List -->
 <div class="form-group row">
   <label class="col-2 col-form-label">
@@ -70,7 +89,7 @@
 </div>
 
 <div class="row actions-row pr-0 space-before">
-    <div class="col-6 call-status-col">
+    <div class="col-4 call-status-col">
         <call-status [callStatus]="saveCallStatus"></call-status>
     </div>
     <div class="col-2">
@@ -79,12 +98,17 @@
         </button>
     </div>
     <div class="col-2">
+        <button class="btn btn-secondary action" [disabled]="saveCallStatus.isLoading()" (click)="addExternalResourceEntry()">
+            Add Link
+        </button>
+    </div>
+    <div class="col-2">
         <button class="btn btn-secondary action" [disabled]="saveCallStatus.isLoading()" (click)="addCompEventEntry(addEventModal)">
             Add Event
         </button>
     </div>
     <div class="col-2">
-        <button class="btn btn-primary action" [disabled]="!descriptionForm.valid || (!descriptionForm.dirty && !socialMediaListChanged && !compEventsChanged) || saveCallStatus.isLoading()" (click)="onSave(descriptionForm)">
+        <button class="btn btn-primary action" [disabled]="!descriptionForm.valid || (!descriptionForm.dirty && !socialMediaListChanged && !externalResourcesChanged && !compEventsChanged) || saveCallStatus.isLoading()" (click)="onSave(descriptionForm)">
             Save
         </button>
     </div>

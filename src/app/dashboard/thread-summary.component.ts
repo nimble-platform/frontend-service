@@ -97,6 +97,8 @@ export class ThreadSummaryComponent implements OnInit {
             events = events.reverse();
             this.history = events.slice(1, events.length);
             this.lastEvent = events[0];
+            // Update History in order to remove pending orders
+            this.updateHistory(this.history);
             if (!this.lastEvent.isRated) {
               if (this.lastEvent.statusText == "Receipt Advice sent" || this.processInstanceGroup.status == "CANCELLED") {
                 this.showRateCollaborationButton = true;
@@ -183,6 +185,17 @@ export class ThreadSummaryComponent implements OnInit {
                 id: this.lastEventPartnerID
             }
         });
+    }
+
+    private updateHistory(events: ThreadEventMetadata[]) {
+      for (let event of events) {
+        if (event.processType == "Order" && event.status != "DONE" && event.processStatus == "Completed") {
+          event.status = "DONE";
+          if (event.statusText != "Order declined")
+            event.statusText = "Order approved";
+          event.actionText = "See Order";
+        }
+      }
     }
 
     private fillStatus(event: ThreadEventMetadata, processState: "EXTERNALLY_TERMINATED" | "COMPLETED" | "ACTIVE",

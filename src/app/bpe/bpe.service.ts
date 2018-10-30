@@ -121,6 +121,33 @@ export class BPEService {
 		.catch(this.handleError);
 	}
 
+	getActionRequiredCounter(companyId: string): Promise<any> {
+			return Promise.all([
+					this.getActionRequiredBuyer(companyId),
+					this.getActionRequiredSeller(companyId)
+			]).then(([buyer, seller]) => {
+					return {"buyer":buyer,"seller":seller};
+			})
+	}
+
+	getActionRequiredBuyer(companyId: string): Promise<any> {
+		const url = `${this.url}/statistics/total-number/business-process/action-required?archived=false&role=buyer&companyId=${companyId}`;
+		return this.http
+            .get(url, {headers: this.headers})
+            .toPromise()
+            .then(res => res.text())
+            .catch(this.handleError);
+	}
+
+	getActionRequiredSeller(companyId: string): Promise<any> {
+		const url = `${this.url}/statistics/total-number/business-process/action-required?archived=false&role=seller&companyId=${companyId}`;
+		return this.http
+            .get(url, {headers: this.headers})
+            .toPromise()
+            .then(res => res.text())
+            .catch(this.handleError);
+	}
+
 	getLastActivityForProcessInstance(processInstanceId: string): Promise<any> {
 		const url = `${this.url}/rest/engine/default/history/activity-instance?processInstanceId=${processInstanceId}&sortBy=startTime&sortOrder=desc&maxResults=1`;
 		return this.http

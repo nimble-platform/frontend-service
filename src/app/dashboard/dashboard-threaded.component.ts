@@ -33,6 +33,9 @@ export class DashboardThreadedComponent implements OnInit {
 
     TABS = TABS;
 
+    buyerCounter = 0;
+    sellerCounter = 0;
+
     constructor(
         private cookieService: CookieService,
         private bpeService: BPEService,
@@ -43,7 +46,8 @@ export class DashboardThreadedComponent implements OnInit {
     ) {}
 
     ngOnInit() {
-        this.computeUserFromCookies()
+        this.computeUserFromCookies();
+        this.getTabCounters();
         this.route.queryParams.subscribe(params => this.updateStateFromQueryParameters(params));
     }
 
@@ -98,6 +102,7 @@ export class DashboardThreadedComponent implements OnInit {
         } else {
             this.updateStateFromQueryParameters(this.queryParameters);
         }
+        this.getTabCounters();
     }
 
     /*
@@ -166,6 +171,18 @@ export class DashboardThreadedComponent implements OnInit {
         }
 
         this.user.showWelcomeTab = this.cookieService.get("show_welcome") === "true";
+
+    }
+
+    private getTabCounters() {
+      this.buyerCounter = 0;
+      this.sellerCounter = 0;
+      this.bpeService
+      .getActionRequiredCounter(this.cookieService.get("company_id"))
+      .then(response => {
+          this.buyerCounter = parseInt(response.buyer);
+          this.sellerCounter = parseInt(response.seller);
+      });
     }
 
     private updateStateFromQueryParameters(params: Params | DashboardQueryParameters): void {
@@ -187,6 +204,7 @@ export class DashboardThreadedComponent implements OnInit {
             default:
                 // nothing
         }
+
     }
 
     private sanitizeTab(tab: string): string {
