@@ -72,6 +72,7 @@ export class NegotiationModelWrapper {
         return this.linePriceWrapper.totalPriceString;
     }
 
+    // before calculating total price for line, we have to update linePriceWrapper fields so that it can calculate discount amount correctly
     private updateLinePriceWrapperFields(){
         this.linePriceWrapper.incoterm = this.rfq.negotiationOptions.incoterms ? this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms : null;
         this.linePriceWrapper.paymentMeans = this.rfq.negotiationOptions.paymentMeans ? this.rfq.paymentMeans.paymentMeansCode.value : null;
@@ -97,6 +98,7 @@ export class NegotiationModelWrapper {
         return this.IfNegotiating(this.rfqPriceWrapper.totalPriceString, this.rfq.negotiationOptions.price);
     }
 
+    // before calculating total price for rfq, we have to update rfqPriceWrapper fields so that it can calculate discount amount correctly
     private updateRFQPriceWrapperFields(){
         this.rfqPriceWrapper.incoterm = this.rfq.negotiationOptions.incoterms ? this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms : null;
         this.rfqPriceWrapper.paymentMeans = this.rfq.negotiationOptions.paymentMeans ? this.rfq.paymentMeans.paymentMeansCode.value : null;
@@ -190,8 +192,8 @@ export class NegotiationModelWrapper {
     }
 
     public get quotationIncoterms(): string {
+        // update quotation incoterm to calculate price correctly
         if(this.quotationPriceWrapper.incoterm != this.quotation.quotationLine[0].lineItem.deliveryTerms.incoterms){
-            // update quotation incoterm to calculate price correctly
             this.quotationPriceWrapper.incoterm = this.quotation.quotationLine[0].lineItem.deliveryTerms.incoterms;
             // make this field true so that quotation price will be updated
             this.quotationPriceWrapper.quotationIncotermUpdated = true;
@@ -229,7 +231,7 @@ export class NegotiationModelWrapper {
     }
 
     public get quotationPaymentMeans(): string {
-        // update quotation payment means to calculate price correctly
+        // update quotation payment means to calculate quotation price correctly
         if(this.quotationPriceWrapper.paymentMeans !=  this.quotation.paymentMeans.paymentMeansCode.value){
             this.quotationPriceWrapper.paymentMeans = this.quotation.paymentMeans.paymentMeansCode.value;
             // make this field true so that quotation price will be updated

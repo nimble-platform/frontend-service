@@ -166,24 +166,21 @@ export class NegotiationRequestComponent implements OnInit {
     }
 
     get negotiatePrice(): boolean {
-        if(this.rfq.negotiationOptions.price){
-            this.wrapper.linePriceWrapper.removeDiscountAmount = false;
-            this.wrapper.rfqPriceWrapper.removeDiscountAmount = false;
-        }
-        else {
-            this.wrapper.linePriceWrapper.removeDiscountAmount = true;
-            this.wrapper.rfqPriceWrapper.removeDiscountAmount = true;
-
-            this.wrapper.linePriceWrapper.itemPrice.price.priceAmount.value =this.line.requiredItemLocationQuantity.price.priceAmount.value;
-            this.wrapper.linePriceWrapper.itemPrice.price.priceAmount.currencyID = this.line.requiredItemLocationQuantity.price.priceAmount.currencyID;
-
-            this.wrapper.rfqPriceWrapper.itemPrice.price.priceAmount.value = this.line.requiredItemLocationQuantity.price.priceAmount.value;
-            this.wrapper.rfqPriceWrapper.itemPrice.price.priceAmount.currencyID = this.line.requiredItemLocationQuantity.price.priceAmount.currencyID;
-        }
+        this.setRemoveDiscountAmount(this.rfq.negotiationOptions.price);
         return this.rfq.negotiationOptions.price;
     }
 
     set negotiatePrice(negotiate: boolean) {
+        this.setRemoveDiscountAmount(negotiate);
+        this.rfq.negotiationOptions.price = negotiate;
+        if(!negotiate) {
+            this.wrapper.rfqPriceWrapper.itemPrice.value = this.wrapper.linePriceWrapper.itemPrice.value;
+        }
+    }
+
+    // it is used to set wrappers' removeDiscountAmount field while negotiating price
+    private setRemoveDiscountAmount(negotiate: boolean){
+        // if they negotiate price, then set removeDiscountAmount to false so that prices for wrappers will not be affected by total discount
         if(negotiate){
             this.wrapper.linePriceWrapper.removeDiscountAmount = false;
             this.wrapper.rfqPriceWrapper.removeDiscountAmount = false;
@@ -197,11 +194,6 @@ export class NegotiationRequestComponent implements OnInit {
 
             this.wrapper.rfqPriceWrapper.itemPrice.price.priceAmount.value = this.line.requiredItemLocationQuantity.price.priceAmount.value;
             this.wrapper.rfqPriceWrapper.itemPrice.price.priceAmount.currencyID = this.line.requiredItemLocationQuantity.price.priceAmount.currencyID;
-        }
-
-        this.rfq.negotiationOptions.price = negotiate;
-        if(!negotiate) {
-            this.wrapper.rfqPriceWrapper.itemPrice.value = this.wrapper.linePriceWrapper.itemPrice.value;
         }
     }
 

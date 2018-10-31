@@ -25,7 +25,7 @@ export class PriceWrapper {
     quotationIncotermUpdated = true;
     quotationDeliveryPeriodUpdated = true;
     quotationPaymentMeansUpdated = true;
-
+    // this presentation mode is used to calculate total price for quotation
     presentationMode:string = 'edit';
 
     constructor(public price: Price,
@@ -184,6 +184,7 @@ export class PriceWrapper {
      */
 
     get value(): number {
+        // if presentation mode is edit, then we have to calculate total price
         if(this.presentationMode == 'edit'){
             return this.totalPrice;
         }
