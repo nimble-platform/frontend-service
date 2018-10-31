@@ -55,17 +55,6 @@ export class NegotiationModelWrapper {
                 rfq.requestForQuotationLine[0].lineItem.deliveryTerms.deliveryLocation.address,
                 quotation.quotationLine[0].lineItem.price
             );
-            // initialize the quotation price properly
-            if(this.rfqTotalPriceStringIfNegotiating != ""){
-                this.quotationPriceWrapper.quotationPrice.price.priceAmount.value =  this.rfqPriceWrapper.totalPrice;
-                this.quotationPriceWrapper.quotationPrice.price.priceAmount.currencyID = this.rfqPriceWrapper.currency;
-            }
-            else{
-                let priceString:string = this.lineTotalPriceString;
-                let spaceIndex = priceString.indexOf(" ");
-                this.quotationPriceWrapper.quotationPrice.price.priceAmount.value =  Number(priceString.substring(0,spaceIndex));
-                this.quotationPriceWrapper.quotationPrice.price.priceAmount.currencyID = priceString.substring(spaceIndex+1);
-            }
         }
     }
 

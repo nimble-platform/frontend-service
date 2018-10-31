@@ -22,9 +22,9 @@ export class PriceWrapper {
     // this field is used to calculate quotation response price correctly
     quotationPrice: ItemPriceWrapper;
     // these fields are used to check whether we need to update quotation price or not
-    quotationIncotermUpdated = false;
-    quotationDeliveryPeriodUpdated = false;
-    quotationPaymentMeansUpdated = false;
+    quotationIncotermUpdated = true;
+    quotationDeliveryPeriodUpdated = true;
+    quotationPaymentMeansUpdated = true;
 
     constructor(public price: Price,
                 public quantity: Quantity = new Quantity(1, price.baseQuantity.unitCode),
@@ -46,7 +46,7 @@ export class PriceWrapper {
             if(!this.quotationHasPrice()){
                 return 0;
             }
-            return this.quotationPrice.price.priceAmount.value;
+            return this.quotationPrice.price.priceAmount.value * this.quantity.value;
         }
 
         if(!this.hasPrice()) {
@@ -118,7 +118,7 @@ export class PriceWrapper {
         }
         // if PriceWrapper has a quotation price, then we have to update it with the calculated total price
         if(this.quotationPrice.price){
-            this.quotationPrice.price.priceAmount.value = totalPrice-totalDiscount;
+            this.quotationPrice.price.priceAmount.value = (totalPrice-totalDiscount)/this.quantity.value;
 
             this.quotationDeliveryPeriodUpdated = false;
             this.quotationIncotermUpdated = false;
@@ -186,7 +186,7 @@ export class PriceWrapper {
     }
 
     set value(value: number) {
-        this.quotationPrice.price.priceAmount.value = value;
+        this.quotationPrice.price.priceAmount.value = value/this.quantity.value;
     }
 
     get unitCode(): string {
