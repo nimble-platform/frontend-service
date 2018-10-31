@@ -50,6 +50,7 @@ export class NegotiationResponseComponent implements OnInit {
             this.bpDataService.getCompanySettings().negotiationSettings);
 
         this.wrapper.rfqPriceWrapper.removeDiscountAmount = false;
+        this.wrapper.quotationPriceWrapper.presentationMode = this.getPresentationMode();
 
         this.userRole = this.bpDataService.userRole;
     }

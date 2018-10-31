@@ -26,6 +26,8 @@ export class PriceWrapper {
     quotationDeliveryPeriodUpdated = true;
     quotationPaymentMeansUpdated = true;
 
+    presentationMode:string = 'edit';
+
     constructor(public price: Price,
                 public quantity: Quantity = new Quantity(1, price.baseQuantity.unitCode),
                 public priceOptions:PriceOption[] = [],
@@ -182,7 +184,11 @@ export class PriceWrapper {
      */
 
     get value(): number {
-        return this.totalPrice;
+        if(this.presentationMode == 'edit'){
+            return this.totalPrice;
+        }
+        return this.quotationPrice.price.priceAmount.value*this.quantity.value;
+
     }
 
     set value(value: number) {
