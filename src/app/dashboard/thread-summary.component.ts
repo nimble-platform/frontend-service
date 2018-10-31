@@ -97,6 +97,8 @@ export class ThreadSummaryComponent implements OnInit {
             events = events.reverse();
             this.history = events.slice(1, events.length);
             this.lastEvent = events[0];
+            // Update History in order to remove pending orders
+            this.updateHistory(this.history);
             if (!this.lastEvent.isRated) {
               if (this.lastEvent.statusText == "Receipt Advice sent" || this.processInstanceGroup.status == "CANCELLED") {
                 this.showRateCollaborationButton = true;
@@ -147,7 +149,7 @@ export class ThreadSummaryComponent implements OnInit {
         );
 
         this.fillStatus(event, processInstance.state, processType, response, userRole === "buyer");
-
+        this.setCancelCollaborationButtonStatus(processType,response);
         this.checkDataChannel(event);
 
         /*
@@ -183,6 +185,17 @@ export class ThreadSummaryComponent implements OnInit {
                 id: this.lastEventPartnerID
             }
         });
+    }
+
+    private updateHistory(events: ThreadEventMetadata[]) {
+      for (let event of events) {
+        if (event.processType == "Order" && event.status != "DONE" && event.processStatus == "Completed") {
+          event.status = "DONE";
+          if (event.statusText != "Order declined")
+            event.statusText = "Order approved";
+          event.actionText = "See Order";
+        }
+      }
     }
 
     private fillStatus(event: ThreadEventMetadata, processState: "EXTERNALLY_TERMINATED" | "COMPLETED" | "ACTIVE",
@@ -252,8 +265,6 @@ export class ThreadSummaryComponent implements OnInit {
             switch(processType) {
                 case "Order":
                     if (response.acceptedIndicator) {
-                        // since the order is approved, do not show the button
-                        this.showCancelCollaborationButton = false;
                         if(buyer) {
                             event.statusText = "Waiting for Dispatch Advice";
                             event.actionText = "See Order";
@@ -292,9 +303,6 @@ export class ThreadSummaryComponent implements OnInit {
                     event.actionText = "See Ppap Response";
                     break;
                 case "Transport_Execution_Plan":
-                    if(response.documentStatusCode.name == "Accepted"){
-                        this.showCancelCollaborationButton = false;
-                    }
                     if (buyer) {
                         event.statusText = "Transport Execution Plan received"
                     } else {
@@ -319,7 +327,7 @@ export class ThreadSummaryComponent implements OnInit {
         switch(processState) {
             case "COMPLETED":
                 if(processType === "Order") {
-                    return buyer ? "WAITING" : "ACTION_REQUIRED";
+                     return buyer ? "WAITING" : "ACTION_REQUIRED";
                 }
                 return "DONE";
             case "EXTERNALLY_TERMINATED":
@@ -428,6 +436,21 @@ export class ThreadSummaryComponent implements OnInit {
         }
     }
 
+    setCancelCollaborationButtonStatus(processType: ProcessType, response: any){
+        switch(processType) {
+            case "Order":
+                if (response && response.acceptedIndicator) {
+                    // since the order is approved, do not show the button
+                    this.showCancelCollaborationButton = false;
+                }
+                break;
+            case "Transport_Execution_Plan":
+                if (response && response.documentStatusCode.name == "Accepted") {
+                    this.showCancelCollaborationButton = false;
+                }
+        }
+    }
+
     rateCollaboration(success,cancel) {
       if(this.processInstanceGroup.status == "CANCELLED") {
         this.rateCollaborationCancelled(cancel);
@@ -470,6 +493,7 @@ export class ThreadSummaryComponent implements OnInit {
             .then(() => {
                 this.saveCallStatusRating.callback("Rating saved", true);
                 close();
+                this.showRateCollaborationButton = false;
                 this.fetchEvents();
             })
             .catch(error => {
@@ -488,6 +512,7 @@ export class ThreadSummaryComponent implements OnInit {
             .then(() => {
                 this.saveCallStatusRating.callback("Rating saved", true);
                 close();
+                this.showRateCollaborationButton = false;
                 this.fetchEvents();
             })
             .catch(error => {
