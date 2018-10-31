@@ -70,6 +70,7 @@ export class NegotiationModelWrapper {
     }
 
     public get linePricePerItemString(): string {
+        this.updateLinePriceWrapperFields();
         return this.linePriceWrapper.pricePerItemString;
     }
 
@@ -149,8 +150,8 @@ export class NegotiationModelWrapper {
     public get quotationDeliveryPeriod(): Quantity {
         // update quotation delivery period to calculate price correctly
         if(this.quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.value && (
-            this.quotationPriceWrapper.deliveryPeriod.value != this.quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.value ||
-            this.quotationPriceWrapper.deliveryPeriod.unitCode != this.quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.unitCode)){
+                this.quotationPriceWrapper.deliveryPeriod.value != this.quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.value ||
+                this.quotationPriceWrapper.deliveryPeriod.unitCode != this.quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.unitCode)){
 
             this.quotationPriceWrapper.deliveryPeriod = JSON.parse(JSON.stringify(this.quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure));
             // make this field true so that quotation price will be updated

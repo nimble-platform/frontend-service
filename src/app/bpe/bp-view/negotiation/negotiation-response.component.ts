@@ -46,8 +46,11 @@ export class NegotiationResponseComponent implements OnInit {
         this.rfq = this.bpDataService.requestForQuotation;
         this.bpDataService.computeRfqNegotiationOptionsIfNeeded();
         this.quotation = this.bpDataService.quotation;
-        this.wrapper = new NegotiationModelWrapper(this.line, this.rfq, this.quotation, 
+        this.wrapper = new NegotiationModelWrapper(this.line, this.rfq, this.quotation,
             this.bpDataService.getCompanySettings().negotiationSettings);
+
+        this.wrapper.rfqPriceWrapper.removeDiscountAmount = false;
+
         this.userRole = this.bpDataService.userRole;
     }
 

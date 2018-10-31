@@ -8,9 +8,9 @@ import {ItemProperty} from '../catalogue/model/publish/item-property';
 import {Address} from '../catalogue/model/publish/address';
 
 /**
- * Wrapper around a price and a quantity, contains convenience methods to get the total price, 
+ * Wrapper around a price and a quantity, contains convenience methods to get the total price,
  * price per item and their string representations.
- * 
+ *
  * This class can also be substituted for a Quantity.
  */
 export class PriceWrapper {
@@ -34,7 +34,8 @@ export class PriceWrapper {
                 public paymentMeans:string = null,
                 public deliveryPeriod: Quantity = null,
                 public deliveryLocation: Address = null,
-                public quotationLinePrice: Price = null) {
+                public quotationLinePrice: Price = null,
+                public removeDiscountAmount: boolean = true) {
         this.itemPrice = new ItemPriceWrapper(price);
         this.quotationPrice = new ItemPriceWrapper(this.quotationLinePrice);
     }
@@ -58,58 +59,61 @@ export class PriceWrapper {
 
         let totalDiscount:number = 0;
 
-        // check for price options
-        for(let priceOption of this.priceOptions){
-            // check for incoterms
-            if(this.incoterm && priceOption.typeID == PRICE_OPTIONS.INCOTERM.typeID && priceOption.incoterms.indexOf(this.incoterm) != -1){
-                totalDiscount += this.calculateDiscountAmount(priceOption,totalPrice);
-            }
-            // check for paymentMeans
-            else if(this.paymentMeans && priceOption.typeID == PRICE_OPTIONS.PAYMENT_MEAN.typeID && priceOption.paymentMeans[0].instructionNote == this.paymentMeans){
-                totalDiscount += this.calculateDiscountAmount(priceOption,totalPrice);
-            }
-            // check for minimum order quantity
-            else if(priceOption.typeID == PRICE_OPTIONS.ORDERED_QUANTITY.typeID && priceOption.itemLocationQuantity.minimumQuantity.unitCode == this.quantity.unitCode
+        // if removeDiscountAmount is true, then calculate totalDiscount value, otherwise totalDiscount is 0
+        if(this.removeDiscountAmount){
+            // check for price options
+            for(let priceOption of this.priceOptions){
+                // check for incoterms
+                if(this.incoterm && priceOption.typeID == PRICE_OPTIONS.INCOTERM.typeID && priceOption.incoterms.indexOf(this.incoterm) != -1){
+                    totalDiscount += this.calculateDiscountAmount(priceOption,totalPrice);
+                }
+                // check for paymentMeans
+                else if(this.paymentMeans && priceOption.typeID == PRICE_OPTIONS.PAYMENT_MEAN.typeID && priceOption.paymentMeans[0].instructionNote == this.paymentMeans){
+                    totalDiscount += this.calculateDiscountAmount(priceOption,totalPrice);
+                }
+                // check for minimum order quantity
+                else if(priceOption.typeID == PRICE_OPTIONS.ORDERED_QUANTITY.typeID && priceOption.itemLocationQuantity.minimumQuantity.unitCode == this.quantity.unitCode
                     && this.quantity.value >= priceOption.itemLocationQuantity.minimumQuantity.value){
-                totalDiscount += this.calculateDiscountAmount(priceOption,totalPrice);
-            }
-            // check for delivery period
-            else if(this.deliveryPeriod && priceOption.typeID == PRICE_OPTIONS.DELIVERY_PERIOD.typeID && priceOption.estimatedDeliveryPeriod.durationMeasure.unitCode == this.deliveryPeriod.unitCode
+                    totalDiscount += this.calculateDiscountAmount(priceOption,totalPrice);
+                }
+                // check for delivery period
+                else if(this.deliveryPeriod && priceOption.typeID == PRICE_OPTIONS.DELIVERY_PERIOD.typeID && priceOption.estimatedDeliveryPeriod.durationMeasure.unitCode == this.deliveryPeriod.unitCode
                     && priceOption.estimatedDeliveryPeriod.durationMeasure.value == this.deliveryPeriod.value){
-                totalDiscount += this.calculateDiscountAmount(priceOption,totalPrice);
-            }
-            // check for additional item properties
-            else if(this.additionalItemProperties.length > 0 && priceOption.typeID == PRICE_OPTIONS.PRODUCT_PROPERTY.typeID){
-                for(let property of this.additionalItemProperties){
-                    if(property.id == priceOption.additionalItemProperty[0].id && priceOption.additionalItemProperty[0].value.indexOf(property.value[0]) != -1){
-                        totalDiscount += this.calculateDiscountAmount(priceOption,totalPrice);
+                    totalDiscount += this.calculateDiscountAmount(priceOption,totalPrice);
+                }
+                // check for additional item properties
+                else if(this.additionalItemProperties.length > 0 && priceOption.typeID == PRICE_OPTIONS.PRODUCT_PROPERTY.typeID){
+                    for(let property of this.additionalItemProperties){
+                        if(property.id == priceOption.additionalItemProperty[0].id && priceOption.additionalItemProperty[0].value.indexOf(property.value[0]) != -1){
+                            totalDiscount += this.calculateDiscountAmount(priceOption,totalPrice);
+                        }
                     }
                 }
-            }
-            else if(priceOption.typeID == PRICE_OPTIONS.DELIVERY_LOCATION.typeID && this.deliveryLocation){
-                // check whether addresses are the same or not
-                let checkStreetName = priceOption.itemLocationQuantity.applicableTerritoryAddress[0].streetName != "";
-                let checkBuildingNumber = priceOption.itemLocationQuantity.applicableTerritoryAddress[0].buildingNumber != "";
-                let checkPostalZone = priceOption.itemLocationQuantity.applicableTerritoryAddress[0].postalZone != "";
-                let checkCityName = priceOption.itemLocationQuantity.applicableTerritoryAddress[0].cityName != "";
-                let checkCountryName = priceOption.itemLocationQuantity.applicableTerritoryAddress[0].country && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].country.name != "";
-                if(checkStreetName && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].streetName.toLocaleLowerCase() != this.deliveryLocation.streetName.toLocaleLowerCase()){
-                    continue;
+                else if(priceOption.typeID == PRICE_OPTIONS.DELIVERY_LOCATION.typeID && this.deliveryLocation){
+                    // check whether addresses are the same or not
+                    let checkStreetName = priceOption.itemLocationQuantity.applicableTerritoryAddress[0].streetName != "";
+                    let checkBuildingNumber = priceOption.itemLocationQuantity.applicableTerritoryAddress[0].buildingNumber != "";
+                    let checkPostalZone = priceOption.itemLocationQuantity.applicableTerritoryAddress[0].postalZone != "";
+                    let checkCityName = priceOption.itemLocationQuantity.applicableTerritoryAddress[0].cityName != "";
+                    let checkCountryName = priceOption.itemLocationQuantity.applicableTerritoryAddress[0].country && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].country.name != "";
+                    if(checkStreetName && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].streetName.toLocaleLowerCase() != this.deliveryLocation.streetName.toLocaleLowerCase()){
+                        continue;
+                    }
+                    if(checkBuildingNumber && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].buildingNumber != this.deliveryLocation.buildingNumber){
+                        continue;
+                    }
+                    if(checkPostalZone && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].postalZone != this.deliveryLocation.postalZone){
+                        continue;
+                    }
+                    if(checkCityName && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].cityName.toLocaleLowerCase() != this.deliveryLocation.cityName.toLocaleLowerCase()){
+                        continue;
+                    }
+                    if(checkCountryName && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].country.name.toLocaleLowerCase() != this.deliveryLocation.country.name.toLocaleLowerCase()){
+                        continue;
+                    }
+                    // the delivery location satisfies all conditions
+                    totalDiscount += this.calculateDiscountAmount(priceOption,totalPrice);
                 }
-                if(checkBuildingNumber && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].buildingNumber != this.deliveryLocation.buildingNumber){
-                    continue;
-                }
-                if(checkPostalZone && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].postalZone != this.deliveryLocation.postalZone){
-                    continue;
-                }
-                if(checkCityName && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].cityName.toLocaleLowerCase() != this.deliveryLocation.cityName.toLocaleLowerCase()){
-                    continue;
-                }
-                if(checkCountryName && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].country.name.toLocaleLowerCase() != this.deliveryLocation.country.name.toLocaleLowerCase()){
-                    continue;
-                }
-                // the delivery location satisfies all conditions
-                totalDiscount += this.calculateDiscountAmount(priceOption,totalPrice);
             }
         }
         // if PriceWrapper has a quotation price, then we have to update it with the calculated total price
@@ -120,6 +124,7 @@ export class PriceWrapper {
             this.quotationIncotermUpdated = false;
             this.quotationPaymentMeansUpdated = false;
         }
+
         return totalPrice-totalDiscount;
     }
 
@@ -137,18 +142,17 @@ export class PriceWrapper {
     }
 
     get pricePerItemString(): string {
-        const amount = this.price.priceAmount;
-        const qty = this.price.baseQuantity
-        const baseQuantity = qty.value || 1;
+        const totalPrice = this.totalPrice;
+        const qty = this.quantity;
 
-        if(!amount.value || !qty.value) {
+        if(totalPrice == 0 || !qty.value) {
             return "On demand";
         }
 
-        if(baseQuantity === 1) {
-            return `${this.roundPrice(amount.value)} ${currencyToString(amount.currencyID)} per ${qty.unitCode}`
+        if(this.price.baseQuantity.value === 1) {
+            return `${this.roundPrice(totalPrice/qty.value)} ${currencyToString(this.price.priceAmount.currencyID)} per ${this.price.baseQuantity.unitCode}`
         }
-        return `${this.roundPrice(amount.value)} ${currencyToString(amount.currencyID)} for ${baseQuantity} ${qty.unitCode}`
+        return `${this.roundPrice(totalPrice/qty.value)} ${currencyToString(this.price.priceAmount.currencyID)} for ${this.price.baseQuantity.value} ${this.price.baseQuantity.unitCode}`
     }
 
     get currency(): string {

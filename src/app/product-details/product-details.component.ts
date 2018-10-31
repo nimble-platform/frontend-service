@@ -69,8 +69,8 @@ export class ProductDetailsComponent implements OnInit {
                     })
                     .then(settings => {
                         this.settings = settings;
-                        this.wrapper = new ProductWrapper(this.line, settings.negotiationSettings);
                         this.priceWrapper = new PriceWrapper(this.line.requiredItemLocationQuantity.price,new Quantity(1, this.line.requiredItemLocationQuantity.price.baseQuantity.unitCode),this.line.priceOption);
+                        this.wrapper = new ProductWrapper(this.line, settings.negotiationSettings,this.priceWrapper.quantity);
                         this.bpDataService.resetBpData();
                         this.bpDataService.setCatalogueLines([this.line], [settings]);
                         this.bpDataService.userRole = 'buyer';
