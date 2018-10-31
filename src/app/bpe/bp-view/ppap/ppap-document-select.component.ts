@@ -15,6 +15,7 @@ import { Location } from "@angular/common";
 import { copy } from "../../../common/utils";
 import { Certificate } from "../../../user-mgmt/model/certificate";
 import {DocumentService} from '../document-service';
+import {DocumentReference} from '../../../catalogue/model/publish/document-reference';
 
 type PpapLevels = [boolean, boolean, boolean, boolean, boolean]
 
@@ -62,7 +63,9 @@ export class PpapDocumentSelectComponent implements OnInit {
     selectedDocuments: boolean[];
 
     /** The note. */
-    note: string = "";
+    notes: string[] = [''];
+    /** The currently selected additional documents*/
+    additionalDocuments: DocumentReference[] = [];
 
     /** Whether the definition of PPAP is visible or not. */
     showDetails = false;
@@ -86,7 +89,8 @@ export class PpapDocumentSelectComponent implements OnInit {
                 this.level = 0;
                 this.resetSelectedDocumens();
                 this.ppap = this.bpDataService.ppap;
-                this.note = this.ppap.note;
+                this.notes = this.ppap.note;
+                this.additionalDocuments = this.ppap.additionalDocumentReference;
                 this.ppap.documentType.forEach(name => {
                     const index = this.DOCUMENTS.findIndex(doc => doc.name === name);
                     if(index >= 0) {
@@ -155,7 +159,8 @@ export class PpapDocumentSelectComponent implements OnInit {
 
     onSendRequest() {
         this.ppap = UBLModelUtils.createPpap([]);
-        this.ppap.note = this.note;
+        this.ppap.note = this.notes;
+        this.ppap.additionalDocumentReference = this.additionalDocuments;
         this.ppap.documentType = this.DOCUMENTS.filter((_, i) => this.selectedDocuments[i]).map(doc => doc.name);
         this.ppap.lineItem.item = copy(this.bpDataService.modifiedCatalogueLines[0].goodsItem.item);
         UBLModelUtils.removeHjidFieldsFromObject(this.ppap);
@@ -169,7 +174,7 @@ export class PpapDocumentSelectComponent implements OnInit {
 
             this.userService.getParty(sellerId).then(sellerParty => {
                 this.ppap.sellerSupplierParty = new SupplierParty(sellerParty);
-                let vars = ModelUtils.createProcessVariables("Ppap", buyerId, sellerId, this.ppap, this.bpDataService);
+                let vars = ModelUtils.createProcessVariables("Ppap", buyerId, sellerId,this.cookieService.get("user_id"), this.ppap, this.bpDataService);
                 let piim = new ProcessInstanceInputMessage(vars, "");
                 this.bpeService
                     .startBusinessProcess(piim)
@@ -195,7 +200,8 @@ export class PpapDocumentSelectComponent implements OnInit {
 
         const ppap: Ppap = copy(this.bpDataService.ppap);
 
-        ppap.note = this.note;
+        ppap.note = this.notes;
+        ppap.additionalDocumentReference = this.additionalDocuments;
         ppap.documentType = this.DOCUMENTS.filter((_, i) => this.selectedDocuments[i]).map(doc => doc.name);
         UBLModelUtils.removeHjidFieldsFromObject(ppap);
 

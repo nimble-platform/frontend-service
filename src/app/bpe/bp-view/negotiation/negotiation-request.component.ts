@@ -99,7 +99,7 @@ export class NegotiationRequestComponent implements OnInit {
                 rfq.buyerCustomerParty = new CustomerParty(buyerParty);
                 rfq.sellerSupplierParty = new SupplierParty(sellerParty);
 
-                const vars: ProcessVariables = ModelUtils.createProcessVariables("Negotiation", buyerId, sellerId, rfq, this.bpDataService);
+                const vars: ProcessVariables = ModelUtils.createProcessVariables("Negotiation", buyerId, sellerId,this.cookieService.get("user_id"), rfq, this.bpDataService);
                 const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
 
                 return this.bpeService.startBusinessProcess(piim);
@@ -184,7 +184,7 @@ export class NegotiationRequestComponent implements OnInit {
 
         if(addressStr !== "") {
             const index = Number(addressStr);
-            const address = this.bpDataService.getCompanySettings().deliveryTerms[index].deliveryAddress;
+            const address = this.bpDataService.getCompanySettings().tradeDetails.deliveryTerms[index].deliveryAddress;
             const rfqAddress = this.wrapper.rfqDeliveryAddress;
             rfqAddress.buildingNumber = address.buildingNumber;
             rfqAddress.cityName = address.cityName;
@@ -195,11 +195,21 @@ export class NegotiationRequestComponent implements OnInit {
     }
 
     get addressOptions(): Option[] {
-        return [
-            { name: "No", value: "" }
-        ].concat(this.bpDataService.currentUserSettings.deliveryTerms.map((term, i) => {
-            return { name: addressToString(term.deliveryAddress), value: String(i) };
-        }));
+        const deliveryTerms = this.bpDataService.getCompanySettings().tradeDetails.deliveryTerms;
+        var ret = [];
+        if (deliveryTerms.length == 0 || !deliveryTerms[0].deliveryAddress || !deliveryTerms[0].deliveryAddress.streetName) {
+          ret = [
+              { name: "No", value: "" }
+          ];
+        }
+        else {
+          ret = [
+              { name: "No", value: "" }
+          ].concat(deliveryTerms.map((term, i) => {
+              return { name: addressToString(term.deliveryAddress), value: String(i) };
+          }));
+        }
+        return ret;
     }
 
     getPriceSteps(): number {
@@ -216,7 +226,7 @@ export class NegotiationRequestComponent implements OnInit {
         }
         return this.line.requiredItemLocationQuantity.price.baseQuantity.unitCode || "";
     }
-    
+
     isLoading(): boolean {
         return this.callStatus.fb_submitted;
     }
@@ -244,7 +254,7 @@ export class NegotiationRequestComponent implements OnInit {
             const unit = this.wrapper.rfqDeliveryPeriod.unitCode;
             return ` (minimum: ${range.start} ${unit}, maximum: ${range.end} ${unit})`;
         }
-        
+
         return "";
     }
 
@@ -278,7 +288,7 @@ export class NegotiationRequestComponent implements OnInit {
             const unit = this.wrapper.rfqWarranty.unitCode;
             return ` (minimum: ${range.start} ${unit}, maximum: ${range.end} ${unit})`;
         }
-        
+
         return "";
     }
 

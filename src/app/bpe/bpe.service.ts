@@ -17,6 +17,8 @@ import { Order } from '../catalogue/model/publish/order';
 import { TradingTerm } from '../catalogue/model/publish/trading-term';
 import { Quotation } from '../catalogue/model/publish/quotation';
 import { RequestForQuotation } from '../catalogue/model/publish/request-for-quotation';
+import { EvidenceSupplied } from '../catalogue/model/publish/evidence-supplied';
+import { Comment } from '../catalogue/model/publish/comment';
 
 @Injectable()
 export class BPEService {
@@ -71,50 +73,34 @@ export class BPEService {
 			})
             .catch(this.handleError);
 	}
-	
+
 	cancelBusinessProcess(id: string): Promise<any> {
-		const url = `${this.url}/processInstance?processInstanceId=${id}`;
+	    let headers = this.getAuthorizedHeaders();
+		const url = `${this.url}/processInstance/${id}/cancel`;
 		return this.http
-		.delete(url, {headers: this.headers})
+		.post(url, null, {headers: headers})
 		.toPromise()
 		.then(res => res.text())
 		.catch(this.handleError);
 	}
 
+    cancelCollaboration(groupId: string): Promise<any> {
+        let headers = this.getAuthorizedHeaders();
+        const url = `${this.url}/group/${groupId}/cancel`;
+        return this.http
+            .post(url, null, {headers: headers})
+            .toPromise()
+            .then(res => res.text())
+            .catch(this.handleError);
+    }
+
 	updateBusinessProcess(content: string, processID: string, processInstanceID: string): Promise<any> {
-        const url = `${this.url}/processInstance?processID=${processID}&processInstanceID=${processInstanceID}`;
+        const url = `${this.url}/processInstance?processID=${processID}&processInstanceID=${processInstanceID}&creatorUserID=${this.cookieService.get("user_id")}`;
         return this.http
             .put(url, content,{headers: this.headers})
             .toPromise()
             .then(res => res.text())
             .catch(this.handleError);
-	}
-
-	getProcessDetails(id: string): Promise<any> {
-		const url = `${this.url}/rest/engine/default/variable-instance?processInstanceIdIn=${id}`;
-		return this.http
-		.get(url, {headers: this.headers})
-		.toPromise()
-		.then(res => res.json())
-		.catch(this.handleError);
-	}
-
-	getInitiatorHistory(id: string): Promise<any> {
-		const url = `${this.url}/rest/engine/default/history/task?processVariables=initiatorID_eq_${id}&sortBy=startTime&sortOrder=desc&maxResults=20`;
-		return this.http
-		.get(url, {headers: this.headers})
-		.toPromise()
-		.then(res => res.json())
-		.catch(this.handleError);
-	}
-
-	getRecipientHistory(id: string): Promise<any> {
-		const url = `${this.url}/rest/engine/default/history/task?processVariables=responderID_eq_${id}&sortBy=startTime&sortOrder=desc&maxResults=20`;
-		return this.http
-		.get(url, {headers: this.headers})
-		.toPromise()
-		.then(res => res.json())
-		.catch(this.handleError);
 	}
 
 	getProcessInstanceGroup(groupId: string){
@@ -135,6 +121,33 @@ export class BPEService {
 		.catch(this.handleError);
 	}
 
+	getActionRequiredCounter(companyId: string): Promise<any> {
+			return Promise.all([
+					this.getActionRequiredBuyer(companyId),
+					this.getActionRequiredSeller(companyId)
+			]).then(([buyer, seller]) => {
+					return {"buyer":buyer,"seller":seller};
+			})
+	}
+
+	getActionRequiredBuyer(companyId: string): Promise<any> {
+		const url = `${this.url}/statistics/total-number/business-process/action-required?archived=false&role=buyer&companyId=${companyId}`;
+		return this.http
+            .get(url, {headers: this.headers})
+            .toPromise()
+            .then(res => res.text())
+            .catch(this.handleError);
+	}
+
+	getActionRequiredSeller(companyId: string): Promise<any> {
+		const url = `${this.url}/statistics/total-number/business-process/action-required?archived=false&role=seller&companyId=${companyId}`;
+		return this.http
+            .get(url, {headers: this.headers})
+            .toPromise()
+            .then(res => res.text())
+            .catch(this.handleError);
+	}
+
 	getLastActivityForProcessInstance(processInstanceId: string): Promise<any> {
 		const url = `${this.url}/rest/engine/default/history/activity-instance?processInstanceId=${processInstanceId}&sortBy=startTime&sortOrder=desc&maxResults=1`;
 		return this.http
@@ -153,7 +166,7 @@ export class BPEService {
             .catch(this.handleError);
     }
 
-	getProcessInstanceGroupFilters(partyId:string, collaborationRole: CollaborationRole, archived: boolean, products: string[], 
+	getProcessInstanceGroupFilters(partyId:string, collaborationRole: CollaborationRole, archived: boolean, products: string[],
 		categories: string[], partners: string[],status: string[]): Promise<ProcessInstanceGroupFilter> {
 		const headers = this.getAuthorizedHeaders();
 
@@ -286,6 +299,47 @@ export class BPEService {
             .toPromise()
             .then(res => res.json() || null)
             .catch(() => null);
+	}
+
+	getRatings(partyId: string): Promise<any> {
+		const headers = this.getAuthorizedHeaders();
+		const url = `${this.url}/ratingsAndReviews?partyID=${partyId}`;
+		return this.http
+            .get(url, {headers: headers})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+	}
+
+	getRatingsSummary(partyId: string): Promise<any> {
+		const headers = this.getAuthorizedHeaders();
+		const url = `${this.url}/ratingsSummary?partyID=${partyId}`;
+		return this.http
+            .get(url, {headers: headers})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+	}
+
+	postRatings(partyId: string, processInstanceId: string, ratings: EvidenceSupplied[], reviews: Comment[]): Promise<any> {
+		const headers = this.getAuthorizedHeaders();
+		const url = `${this.url}/ratingsAndReviews?partyID=${partyId}&processInstanceID=${processInstanceId}&ratings=${encodeURIComponent(JSON.stringify(ratings))}&reviews=${encodeURIComponent(JSON.stringify(reviews))}`;
+		return this.http
+            .post(url, null, {headers: headers})
+            .toPromise()
+            .then(res => res)
+            .catch(this.handleError);
+	}
+
+	ratingExists(processInstanceId: string, partyId: string): Promise<any> {
+		const token = 'Bearer '+this.cookieService.get("bearer_token");
+		const headers = new Headers({'Accept': 'text/plain','Authorization': token});
+		let url: string = `${this.url}/processInstance/${processInstanceId}/isRated?partyId=${partyId}`;
+		return this.http
+            .get(url, {headers: headers})
+            .toPromise()
+            .then(res => res.text())
+            .catch(this.handleError);
 	}
 
 	private getAuthorizedHeaders(): Headers {

@@ -7,6 +7,7 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {AnalyticsRoutingModule} from './analytics-routing.module';
 import {PlatformAnalyticsComponent} from "./platform-analytics.component";
 import {CompanyAnalyticsComponent} from "./company-analytics.component";
+import {TrustPolicyComponent} from "./trust-policy.component";
 
 @NgModule({
     imports: [
@@ -20,11 +21,13 @@ import {CompanyAnalyticsComponent} from "./company-analytics.component";
     ],
     declarations: [
         PlatformAnalyticsComponent,
-		    CompanyAnalyticsComponent
+		    CompanyAnalyticsComponent,
+        TrustPolicyComponent
     ],
     exports: [
         PlatformAnalyticsComponent,
-		    CompanyAnalyticsComponent
+		    CompanyAnalyticsComponent,
+        TrustPolicyComponent
     ],
     providers: []
 })

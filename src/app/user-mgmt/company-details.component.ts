@@ -3,6 +3,7 @@ import { UserService } from "./user.service";
 import { ActivatedRoute} from "@angular/router";
 import { CookieService } from "ng2-cookies";
 import * as myGlobals from "../globals";
+import * as moment from "moment";
 import { CallStatus } from "../common/call-status";
 import { CompanySettings } from "./model/company-settings";
 
@@ -40,6 +41,10 @@ export class CompanyDetailsComponent implements OnInit {
 				}
 			});
 		}
+    }
+
+    formatDate(date:string) {
+      return moment(date).format("YYYY-MM-DD");
     }
 
 }

@@ -3,7 +3,7 @@
 <!-- <h3 class="space-after space-before">PPAP</h3> -->
 
 <div class="form-group row space-before">
-    <strong class="col-2 col-form-label">Ppap Compatibility Level:</strong>
+    <strong class="col-2 col-form-label">PPAP Comp. Level:</strong>
     <div class="col-10">
         <select class="form-control" [(ngModel)]="ppapLevel">
             <option [value]="0">-</option>
@@ -28,7 +28,7 @@
 <hr>
 
 <!-- Certificates -->
-<h3 class="space-after">Certificates</h3>
+<h4 class="space-after">Certificates</h4>
 
 <call-status [callStatus]="certificatesCallStatus"></call-status>
 
@@ -38,13 +38,15 @@
             <colgroup>
                 <col style="width: 150%;">
                 <col style="width: 150%;">
+                <col style="width: 150%;">
                 <col style="width: auto;">
             </colgroup>
-            <tr><th>Certificate Type</th><th>Certificate Name</th><th class="col-3">Actions</th></tr>
-            <tr *ngIf="certificates.length==0"><td colspan="3">No data</td></tr>
+            <tr><th>Certificate Type</th><th>Certificate Name</th><th>Certificate Description</th><th class="col-3">Actions</th></tr>
+            <tr *ngIf="certificates.length==0"><td colspan="4">No data</td></tr>
             <tr *ngFor="let certificate of certificates; let i = index">
                 <td>{{certificate.type}}</td>
                 <td>{{certificate.name}}</td>
+                <td>{{certificate.description}}</td>
                 <td>
                     <button class="btn btn-primary btn-sm" [disabled]="certificatesCallStatus.isLoading()" (click)="onDownloadCertificate(certificate.id)">Download</button>
                     <button class="btn btn-danger btn-sm ml-1" [disabled]="certificatesCallStatus.isLoading()" (click)="onRemoveCertificate(certificate.id, i)">Delete</button>
@@ -85,6 +87,8 @@
                     <label class="col-2 col-form-label">Type</label>
                     <div class="col-10">
                         <select class="form-control" [formControl]="addCertForm.controls['type']" required>
+                            <option></option>
+                            <option>Other (Non-PPAP)</option>
                             <option *ngFor="let ppapType of ppapTypes">{{ppapType}}</option>
                         </select>
                     </div>
@@ -95,10 +99,16 @@
                         <input type="text" class="form-control" [formControl]="addCertForm.controls['name']" required>
                     </div>
                 </div>
+                <div class="form-group row">
+                    <label class="col-2 col-form-label">Description</label>
+                    <div class="col-10">
+                        <input type="text" class="form-control" [formControl]="addCertForm.controls['description']" required>
+                    </div>
+                </div>
         </div>
         <div class="modal-footer">
             <call-status [callStatus]="saveCertCallStatus"></call-status>
-            <button class="btn btn-primary save-cert-btn" [disabled]="!addCertForm.valid" (click)="onSaveCertificate(addCertForm, d);">
+            <button type="button" class="btn btn-primary save-cert-btn" [disabled]="!addCertForm.valid || saveCertCallStatus.isLoading()" (click)="onSaveCertificate(addCertForm, d);">
                     <span>Save</span>
             </button>
         </div>

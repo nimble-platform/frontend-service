@@ -128,17 +128,15 @@
     </div>
 </div>
 
-<!-- Note -->
-<div class="row content-row">
-    <div class="col-2">
-        <strong class="font-weight-500">Note:</strong>
-    </div>
-    <div class="col-5">
-    </div>
-    <div class="col-5">
-        <textarea class="form-control" [(ngModel)]="rfq.note[0]" rows="3" [disabled]="isLoading() || isReadOnly()"></textarea>
-    </div>
-</div>
+<!--Notes-->
+<h5>Notes and Additional Files</h5>
+<note-file-view [notes]="rfq.note"
+           [documents]="rfq.additionalDocumentReference"
+           [label]="'Notes'"
+           [firstCol]="'col-2'"
+           [secondCol]="'col-5'"
+           [lastCol]="'col-5'"
+           [readonly]="isLoading() || isReadOnly()"></note-file-view>
 
 <hr>
 

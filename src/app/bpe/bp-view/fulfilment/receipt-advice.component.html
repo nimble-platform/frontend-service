@@ -37,16 +37,22 @@
 
 
     <!-- Notes -->
+    <h5>Notes and Additional Files</h5>
     <div class="row content-row bg-light">
         <div class="col-6">
-            <!-- Dispatch Advice Note -->
-            <text-input label="Supplier's Note" [disabled]="true" [(text)]="dispatchAdvice.note[0]">
-            </text-input>
+            <note-file-view [notes]="dispatchAdvice.note"
+                       [documents]="dispatchAdvice.additionalDocumentReference"
+                       [firstCol]="'col-4'"
+                       [lastCol]="'col-8'"
+                       [label]="'Supplier\'s Note'"></note-file-view>
         </div>
         <div class="col-6">
-            <!-- Receipt Advice Note -->
-            <text-input label="Customer's Note" [disabled]="isLoading() || isReadOnly()" [(text)]="receiptAdvice.note[0]">
-            </text-input>
+            <note-file-view [notes]="receiptAdvice.note"
+                       [documents]="receiptAdvice.additionalDocumentReference"
+                       [firstCol]="'col-4'"
+                       [lastCol]="'col-8'"
+                       [readonly]="isLoading() || isReadOnly()"
+                       [label]="'Customer\'s Note'"></note-file-view>
         </div>
     </div>
 

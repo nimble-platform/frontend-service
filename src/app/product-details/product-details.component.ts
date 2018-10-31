@@ -45,7 +45,7 @@ export class ProductDetailsComponent implements OnInit {
                 private route: ActivatedRoute,
                 private router: Router,
                 public appComponent: AppComponent) {
-        
+
     }
 
     ngOnInit() {
@@ -53,7 +53,7 @@ export class ProductDetailsComponent implements OnInit {
 		this.route.queryParams.subscribe(params => {
 			let id = params['id'];
             let catalogueId = params['catalogueId'];
-            
+
             if(id !== this.id || catalogueId !== this.catalogueId) {
                 this.id = id;
                 this.catalogueId = catalogueId;
@@ -143,6 +143,6 @@ export class ProductDetailsComponent implements OnInit {
     }
 
     isPpapAvailable(): boolean {
-        return this.settings && !!this.settings.ppapCompatibilityLevel;
+        return this.settings && !!this.settings.tradeDetails.ppapCompatibilityLevel;
     }
 }

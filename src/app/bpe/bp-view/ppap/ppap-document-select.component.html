@@ -58,12 +58,14 @@
 
 <hr>
 
-<!-- Note -->
-<text-input class="form-group space-after" [(text)]="note" label="Note" labelClass="col-2"
-    valueClass="col-10" [disabled]="isLoading() || isRequestSent()">
-</text-input>
+<!--Notes-->
+<h5>Notes and Additional Files</h5>
+<note-file-view [notes]="notes"
+           [documents]="additionalDocuments"
+           [label]="'Notes'"
+           [readonly]="isLoading() || isRequestSent()"></note-file-view>
 
-<hr>
+
 
 <!-- Action buttons -->
 <div *ngIf="!isRequestSent()" class="row actions-row">

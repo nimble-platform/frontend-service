@@ -130,7 +130,7 @@ export class TransportExecutionPlanComponent implements OnInit {
             transportationExecutionPlanRequest.transportUserParty = buyerParty;
             transportationExecutionPlanRequest.transportServiceProviderParty = sellerParty;
 
-            const vars: ProcessVariables = ModelUtils.createProcessVariables("Transport_Execution_Plan", buyerId, sellerId, transportationExecutionPlanRequest, this.bpDataService);
+            const vars: ProcessVariables = ModelUtils.createProcessVariables("Transport_Execution_Plan", buyerId, sellerId,this.cookieService.get("user_id"), transportationExecutionPlanRequest, this.bpDataService);
             const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
 
             return this.bpeService.startBusinessProcess(piim);
@@ -165,7 +165,8 @@ export class TransportExecutionPlanComponent implements OnInit {
 
         const vars: ProcessVariables = ModelUtils.createProcessVariables("Transport_Execution_Plan", 
             this.bpDataService.transportExecutionPlan.transportUserParty.id, 
-            this.bpDataService.transportExecutionPlan.transportServiceProviderParty.id, 
+            this.bpDataService.transportExecutionPlan.transportServiceProviderParty.id,
+            this.cookieService.get("user_id"),
             this.bpDataService.transportExecutionPlan, this.bpDataService);
         const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, 
             this.bpDataService.processMetadata.processId);

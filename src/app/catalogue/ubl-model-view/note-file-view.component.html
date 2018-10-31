@@ -1,0 +1,58 @@
+<div class="row">
+    <div [class]="firstCol">
+        <strong class="font-weight-500"><label>{{label}}:</label></strong>
+    </div>
+    <div *ngIf="secondCol" [class]="secondCol">
+    </div>
+    <!--Special case for negotiation request-->
+    <div *ngIf="thirdCol" [class]="thirdCol">
+        <ng-container *ngFor="let note of requestNotes;let i=index;">
+            <div class="row">
+                <div class="col-12 space-after">
+                <textarea  class="form-control note-textarea" rows="3"
+                           [disabled]="true" [ngModel]="requestNotes[i]">
+                </textarea>
+                </div>
+            </div>
+        </ng-container>
+    </div>
+    <div [class]="lastCol">
+        <ng-container *ngFor="let note of notes;let i=index;">
+            <div class="row">
+                <div class="{{ i === 0 || readonly ? 'col-12' : (thirdCol ? 'col-8' : 'col-9') }} space-after">
+                <textarea  class="form-control note-textarea" rows="3"
+                           [disabled]="readonly" [ngModel]="notes[i]" (change)="setNote(i, $event)">
+                </textarea>
+                </div>
+                <div *ngIf="!readonly && i > 0 " class="col-3">
+                    <button class="btn btn-danger btn-remove-value float-right"
+                            (click)="onRemoveNote(i)">
+                        Remove
+                    </button>
+                </div>
+            </div>
+        </ng-container>
+        <button *ngIf="!readonly" class="btn btn-primary add-value-button" (click)="onAddNote()">
+            Add Note
+        </button>
+    </div>
+</div>
+
+<div class="row space-before">
+    <div [class]="firstCol">
+        <strong class="font-weight-500"><label>Additional Files:</label></strong>
+    </div>
+    <div *ngIf="secondCol" [class]="secondCol">
+    </div>
+    <!--Special case for negotiation request-->
+    <div *ngIf="thirdCol" [class]="thirdCol">
+        <file-input [disabled]="true" [multiple]="true" [presentationMode]="'view'" [binaryObjects]="requestFiles">
+        </file-input>
+    </div>
+    <div [class]="lastCol">
+        <file-input [disabled]="readonly" [multiple]="true" [presentationMode]="readonly ? 'view' : 'edit'"
+                    (onSelectFile)="onSelectFile($event)" [binaryObjects]="files"
+                    (onClearFile)="onUnSelectFile($event)">
+        </file-input>
+    </div>
+</div>

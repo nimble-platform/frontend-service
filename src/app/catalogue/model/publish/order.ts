@@ -7,10 +7,11 @@ import { Period } from "./period";
 import { Contract } from "./contract";
 import { PaymentTerms } from "./payment-terms";
 import { MonetaryTotal } from "./monetary-total";
+import {DocumentReference} from './document-reference';
 export class Order {
     constructor(
         public id: string = null,
-        public note: string = null,
+        public note: string[] = [''],
         public requestedDeliveryPeriod: Period = new Period(),
         // DO NOT USE, this is not saved in the back end...
         // use order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address instead.
@@ -21,6 +22,7 @@ export class Order {
         public paymentMeans: PaymentMeans = new PaymentMeans(),
         public paymentTerms: PaymentTerms = new PaymentTerms(),
         public anticipatedMonetaryTotal: MonetaryTotal = new MonetaryTotal(),
-        public orderLine: OrderLine[] = null
+        public orderLine: OrderLine[] = null,
+        public additionalDocumentReference:DocumentReference[] = []
     ) {}
 }

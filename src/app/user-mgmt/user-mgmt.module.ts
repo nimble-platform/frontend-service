@@ -17,12 +17,14 @@ import { PaymentMeansForm } from './subforms/payment-means.component';
 import { CompanyRegistrationComponent } from './company-registration.component';
 import { CompanyInvitationComponent } from './company-invitation.component';
 import { CompanySettingsComponent } from './company-settings/company-settings.component';
+import { CompanyDescriptionSettingsComponent } from './company-settings/company-description-settings.component';
 import { CompanyNegotiationSettingsComponent } from './company-settings/company-negotiation-settings.component';
 import { CompanyCertificatesSettingsComponent } from './company-settings/company-certificates-settings.component';
 import { CompanyDataSettingsComponent } from './company-settings/company-data-settings.component';
 import { CompanyDeliveryTermsComponent } from './company-settings/company-delivery-terms.component';
 import { CompanyCategoriesSettingsComponent } from './company-settings/company-categories-settings.component';
 import { CompanyDetailsComponent } from './company-details.component';
+import { CompanyRatingComponent } from './company-rating.component';
 
 @NgModule({
 	imports: [
@@ -44,6 +46,7 @@ import { CompanyDetailsComponent } from './company-details.component';
         DeliveryTermsSubForm,
         PaymentMeansForm,
         CompanySettingsComponent,
+				CompanyDescriptionSettingsComponent,
 		CompanyRegistrationComponent,
 		CompanyInvitationComponent,
 		CompanyNegotiationSettingsComponent,
@@ -51,7 +54,8 @@ import { CompanyDetailsComponent } from './company-details.component';
 		CompanyDataSettingsComponent,
 		CompanyDeliveryTermsComponent,
 		CompanyCategoriesSettingsComponent,
-		CompanyDetailsComponent
+		CompanyDetailsComponent,
+		CompanyRatingComponent
 	],
 	exports: [
 		LoginComponent,
@@ -64,7 +68,8 @@ import { CompanyDetailsComponent } from './company-details.component';
         PaymentMeansForm,
 		CompanyRegistrationComponent,
 		CompanyInvitationComponent,
-		CompanyDetailsComponent
+		CompanyDetailsComponent,
+		CompanyRatingComponent
 	],
 	providers: [
 	]

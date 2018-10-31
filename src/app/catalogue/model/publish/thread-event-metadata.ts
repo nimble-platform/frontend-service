@@ -15,6 +15,7 @@ export class ThreadEventMetadata {
         public content: any,
         public activityVariables: any,
         public buyer: boolean,
+        public isRated: boolean,
         public status?: ThreadEventStatus,
         public statusText?: string,
         public actionText?: string,

@@ -14,11 +14,12 @@ import {CustomerParty} from "./customer-party";
 export class ReceiptAdvice {
     constructor(
         public id: string = null,
-        public note:string[] = [],
+        public note:string[] = [""],
         public orderReference:OrderReference[] = null,
         public despatchDocumentReference:DocumentReference[] = null,
         public deliveryCustomerParty:CustomerParty = null,
         public despatchSupplierParty:SupplierParty = null,
-        public receiptLine:ReceiptLine[] = null
+        public receiptLine:ReceiptLine[] = null,
+        public additionalDocumentReference:DocumentReference[] = []
     ) {  }
 }

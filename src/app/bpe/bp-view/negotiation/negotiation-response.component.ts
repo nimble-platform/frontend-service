@@ -14,6 +14,7 @@ import { ProcessInstanceInputMessage } from "../../model/process-instance-input-
 import { CallStatus } from "../../../common/call-status";
 import { Quantity } from "../../../catalogue/model/publish/quantity";
 import { BpUserRole } from "../../model/bp-user-role";
+import {CookieService} from 'ng2-cookies';
 
 @Component({
     selector: "negotiation-response",
@@ -35,6 +36,7 @@ export class NegotiationResponseComponent implements OnInit {
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
                 private location: Location,
+                private cookieService: CookieService,
                 private router: Router) {
 
     }
@@ -66,7 +68,7 @@ export class NegotiationResponseComponent implements OnInit {
         }
 
         const vars: ProcessVariables = ModelUtils.createProcessVariables("Negotiation", this.bpDataService.requestForQuotation.buyerCustomerParty.party.id,
-            this.bpDataService.requestForQuotation.sellerSupplierParty.party.id, this.quotation, this.bpDataService);
+            this.bpDataService.requestForQuotation.sellerSupplierParty.party.id,this.cookieService.get("user_id"), this.quotation, this.bpDataService);
         const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.bpDataService.processMetadata.processId);
 
         this.callStatus.submit();

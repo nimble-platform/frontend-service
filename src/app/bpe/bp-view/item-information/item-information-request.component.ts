@@ -34,14 +34,14 @@ export class ItemInformationRequestComponent implements OnInit {
     request: ItemInformationRequest;
     files: BinaryObject[]
 
-    constructor(private bpeService: BPEService, 
-                private bpDataService: BPDataService, 
-                private userService: UserService, 
-                private cookieService: CookieService, 
+    constructor(private bpeService: BPEService,
+                private bpDataService: BPDataService,
+                private userService: UserService,
+                private cookieService: CookieService,
                 private location: Location,
                 private documentService: DocumentService,
                 private router: Router) {
-        
+
     }
 
     ngOnInit() {
@@ -64,7 +64,7 @@ export class ItemInformationRequestComponent implements OnInit {
 
     onSkip(): void {
         this.bpDataService.resetBpData();
-        if(isTransportService(this.bpDataService.getCatalogueLine()) || !this.bpDataService.getCompanySettings().ppapCompatibilityLevel) {
+        if(isTransportService(this.bpDataService.getCatalogueLine()) || !this.bpDataService.getCompanySettings().tradeDetails.ppapCompatibilityLevel) {
             // skip ppap
             this.bpDataService.initRfq(this.bpDataService.getCompanySettings().negotiationSettings).then(() => {
                 this.bpDataService.setBpOptionParameters(this.bpDataService.userRole, "Negotiation", "Ppap");
@@ -97,7 +97,7 @@ export class ItemInformationRequestComponent implements OnInit {
             itemInformationRequest.sellerSupplierParty = new SupplierParty(sellerParty);
 
             const vars: ProcessVariables = ModelUtils.createProcessVariables(
-                "Item_Information_Request", buyerId, sellerId, itemInformationRequest, this.bpDataService);
+                "Item_Information_Request", buyerId, sellerId,this.cookieService.get("user_id"), itemInformationRequest, this.bpDataService);
             const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
 
             return this.bpeService.startBusinessProcess(piim)

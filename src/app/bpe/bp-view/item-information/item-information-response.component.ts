@@ -15,6 +15,7 @@ import { Attachment } from "../../../catalogue/model/publish/attachment";
 import { ProcessType } from "../../model/process-type";
 import { PresentationMode } from "../../../catalogue/model/publish/presentation-mode";
 import { isTransportService } from "../../../common/utils";
+import {CookieService} from 'ng2-cookies';
 
 @Component({
     selector: "item-information-response",
@@ -32,12 +33,13 @@ export class ItemInformationResponseComponent implements OnInit {
     requestFiles: BinaryObject[] = [];
     responseFiles: BinaryObject[] = [];
 
-    constructor(private bpeService: BPEService, 
+    constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
                 private location: Location,
                 private router: Router,
+                private cookieService: CookieService,
                 private route: ActivatedRoute) {
-        
+
     }
 
     ngOnInit() {
@@ -66,10 +68,11 @@ export class ItemInformationResponseComponent implements OnInit {
 
     onSendResponse(): void {
         const vars: ProcessVariables = ModelUtils.createProcessVariables(
-            "Item_Information_Request", 
-            this.bpDataService.itemInformationRequest.buyerCustomerParty.party.id, 
-            this.bpDataService.itemInformationRequest.sellerSupplierParty.party.id, 
-            this.bpDataService.itemInformationResponse, 
+            "Item_Information_Request",
+            this.bpDataService.itemInformationRequest.buyerCustomerParty.party.id,
+            this.bpDataService.itemInformationRequest.sellerSupplierParty.party.id,
+            this.cookieService.get("user_id"),
+            this.bpDataService.itemInformationResponse,
             this.bpDataService
         );
         const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.bpDataService.processMetadata.processId);
@@ -88,7 +91,7 @@ export class ItemInformationResponseComponent implements OnInit {
     }
 
     onNextStep(): void {
-        if(isTransportService(this.bpDataService.getCatalogueLine()) || !this.bpDataService.getCompanySettings().ppapCompatibilityLevel) {
+        if(isTransportService(this.bpDataService.getCatalogueLine()) || !this.bpDataService.getCompanySettings().tradeDetails.ppapCompatibilityLevel) {
             this.navigateToBusinessProcess("Negotiation");
         } else {
             this.navigateToBusinessProcess("Ppap");
@@ -103,7 +106,7 @@ export class ItemInformationResponseComponent implements OnInit {
             this.bpDataService.resetBpData();
             this.bpDataService.initItemInformationRequest();
         }
-        
+
         const params = this.route.snapshot.queryParams;
         this.router.navigate(['bpe/bpe-exec'], {
             queryParams: {
@@ -137,8 +140,8 @@ export class ItemInformationResponseComponent implements OnInit {
      */
 
     isResponseSent(): boolean {
-        return this.readonly || 
-            (   this.bpDataService.processMetadata 
+        return this.readonly ||
+            (   this.bpDataService.processMetadata
              && this.bpDataService.processMetadata.processStatus === "Completed");
     }
 
