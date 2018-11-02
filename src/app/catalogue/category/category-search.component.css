@@ -25,3 +25,16 @@
 .selected-row {
     background-color: #d6d8db !important;
 }
+
+.taxonomy {
+    padding: 0.20rem;
+}
+
+.taxonomyDiv {
+    padding-right: 0px;
+}
+
+.noLogisticCategory {
+    padding-top: 0.30rem;
+    padding-left: 0.20rem;
+}

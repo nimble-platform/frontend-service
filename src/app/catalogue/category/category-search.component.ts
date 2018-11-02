@@ -58,6 +58,7 @@ export class CategorySearchComponent implements OnInit {
     selectedCategoriesWRTLevels = [];
     propertyNames: string[] = ["code", "taxonomyId", "level", "definition", "note", "remark"];
     taxonomyId: string = "eClass";
+    taxonomyIDs: string[];
     prefCats: string[] = [];
     recCats: string[] = [];
 
@@ -129,7 +130,11 @@ export class CategorySearchComponent implements OnInit {
                 this.getCategories();
             }
         });
-        this.getRootCategories();
+        // get available taxonomy ids
+        this.categoryService.getAvailableTaxonomies().then(taxonomyIDs => {
+            this.taxonomyIDs = taxonomyIDs;
+            this.getRootCategories();
+        })
     }
 
     onSelectTab(event: any) {
@@ -275,8 +280,10 @@ export class CategorySearchComponent implements OnInit {
                 this.rootCategories = sortCategories(rootCategories);
                 this.getCategoriesStatus.callback("Retrieved category details", true);
                 this.eClassLogisticsCategory = this.rootCategories.find(c => c.code === "14000000");
-                let searchIndex = this.findCategoryInArray(this.rootCategories, this.eClassLogisticsCategory);
-                this.rootCategories.splice(searchIndex, 1);
+                if(this.taxonomyId == "eClass"){
+                    let searchIndex = this.findCategoryInArray(this.rootCategories, this.eClassLogisticsCategory);
+                    this.rootCategories.splice(searchIndex, 1);
+                }
             })
             .catch(error => {
                 this.getCategoriesStatus.error("Failed to retrieve category details", error);
@@ -429,5 +436,12 @@ export class CategorySearchComponent implements OnInit {
 
     private findCategoryInArray(categoryArray: Category[], category: Category): number {
         return categoryArray.findIndex(c => c.id == category.id);
+    }
+
+    private changeTaxonomyId(taxonomyId){
+        this.taxonomyId = taxonomyId;
+        if(this.selectedTab == "TREE"){
+            this.getRootCategories();
+        }
     }
 }

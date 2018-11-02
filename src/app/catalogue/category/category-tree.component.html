@@ -3,6 +3,6 @@
         <i (click)="toggleExpanded($event)" class="fa fa-fw" [ngClass]="getToggleIcon()"></i> {{ category.preferredName }} <call-status [callStatus]="getCategoryStatus"></call-status>
     </div>
     <ul *ngIf="expanded && childrenCategories" class="list-unstyled mb-0">
-        <li *ngFor="let childCategory of childrenCategories"><category-tree [category]="childCategory" [parentCategories]="parentCategories" (detailsEvent)="showDetails($event)" [level]="level + 1" [selectedCategory]="selectedCategory"></category-tree></li>
+        <li *ngFor="let childCategory of childrenCategories"><category-tree [category]="childCategory" [numberOfSteps]="numberOfSteps-1" [parentCategories]="parentCategories" (detailsEvent)="showDetails($event)" [level]="level + 1" [selectedCategory]="selectedCategory"></category-tree></li>
     </ul>
 </div>

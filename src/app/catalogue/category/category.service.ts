@@ -145,6 +145,17 @@ export class CategoryService {
             .catch(this.handleError);
     }
 
+    getAvailableTaxonomies(){
+        const url = `${this.baseUrl}/taxonomies`;
+        return this.http
+            .get(url, {headers: this.headers})
+            .toPromise()
+            .then(res => {
+                return res.json();
+            })
+            .catch(this.handleError);
+    }
+
     resetSelectedCategories():void {
         this.selectedCategories.splice(0, this.selectedCategories.length);
     }
