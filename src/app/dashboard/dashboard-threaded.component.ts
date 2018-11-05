@@ -268,8 +268,8 @@ export class DashboardThreadedComponent implements OnInit {
                 query.products, query.categories, query.partners,query.status)
             .then(response => {
                 this.results = new DashboardOrdersQueryResults(
-                    response.processInstanceGroups,
-                    response.processInstanceGroups.length > 0,
+                    response.collaborationGroups,
+                    response.collaborationGroups.length > 0,
                     response.size
                 )
             });
@@ -287,8 +287,8 @@ export class DashboardThreadedComponent implements OnInit {
                 ),
             ]).then(([response, archived]) => {
                 this.results = new DashboardOrdersQueryResults(
-                    response.processInstanceGroups,
-                    archived.processInstanceGroups.length > 0,
+                    response.collaborationGroups,
+                    archived.collaborationGroups.length > 0,
                     response.size
                 )
             });

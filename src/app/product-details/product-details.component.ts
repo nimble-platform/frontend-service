@@ -75,6 +75,7 @@ export class ProductDetailsComponent implements OnInit {
                         this.bpDataService.userRole = 'buyer';
                         this.bpDataService.workflowOptions = this.options;
                         this.bpDataService.setRelatedGroupId(null);
+                        this.bpDataService.setCollaborationGroupId(null);
                         this.getProductStatus.callback("Retrieved product details", true);
                     })
                     .catch(error => {

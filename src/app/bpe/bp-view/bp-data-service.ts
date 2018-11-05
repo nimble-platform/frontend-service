@@ -87,6 +87,7 @@ export class BPDataService{
 
     // variable to keep the business process instance group related to the new process being initiated
     private relatedGroupId: string;
+    private collaborationGroupId: string;
     precedingProcessId: string;
 
     constructor(private searchContextService: SearchContextService,
@@ -126,15 +127,27 @@ export class BPDataService{
     }
 
     setRelatedGroupId(id: string): void {
-        // If there is an active search context, we do not nullify the related group id.
-        // For example, when the user is looking for a transport service provider, we should not reset the id
         if(id == null) {
             if(this.searchContextService.associatedProcessType == null) {
-                this.relatedGroupId = null;
                 this.precedingProcessId = null;
             }
+            this.relatedGroupId = null;
         } else {
             this.relatedGroupId = id;
+        }
+    }
+
+    getCollaborationId(): string{
+        return this.collaborationGroupId;
+    }
+
+    setCollaborationGroupId(id: string): void{
+        if(id == null) {
+            if(this.searchContextService.associatedProcessType == null) {
+                this.collaborationGroupId = null;
+            }
+        } else {
+            this.collaborationGroupId = id;
         }
     }
 

@@ -14,6 +14,7 @@ import {DocumentService} from "../bpe/bp-view/document-service";
 export class ThreadEventComponent implements OnInit {
 
     @Input() processInstanceGroup: ProcessInstanceGroup;
+    @Input() collaborationGroupId: string;
     @Input() event: ThreadEventMetadata;
     @Output() processCancelled = new EventEmitter();
 
@@ -31,6 +32,7 @@ export class ThreadEventComponent implements OnInit {
         let role = await this.documentService.getUserRole(this.event.activityVariables,this.processInstanceGroup.partyID);
         this.bpDataService.setBpOptionParametersWithProcessMetadata(role, this.event.processType, this.event, updateProcess);
         this.bpDataService.setRelatedGroupId(this.processInstanceGroup.id);
+        this.bpDataService.setCollaborationGroupId(this.collaborationGroupId);
         this.router.navigate(['bpe/bpe-exec'], {
             queryParams: {
                 catalogueId: this.event.product.catalogueDocumentReference.id,

@@ -166,8 +166,18 @@
                         <!-- Results -->
                         <div *ngIf="results.orders" class="col-10">
                             <h4 *ngIf="results.orders.length === 0">No orders.</h4>
-                            <thread-summary *ngFor="let order of results.orders" [processInstanceGroup]="order" (threadStateUpdated)="onOrderRemovedFromView()">
-                            </thread-summary>
+                            <div *ngFor="let order of results.orders" class="bordered space-after">
+                                <div class="row">
+                                    <div class="col-12 d-flex">
+                                        <div class="header-label mr-auto">
+                                            <span>Collaboration</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr>
+                                <thread-summary *ngFor="let group of order.associatedProcessInstanceGroups" [processInstanceGroup]="group" [collaborationGroupId]="order.id" (threadStateUpdated)="onOrderRemovedFromView()">
+                                </thread-summary>
+                            </div>
                         </div>
                     </div>
 

@@ -29,6 +29,7 @@ import { Code } from "../catalogue/model/publish/code";
 export class ThreadSummaryComponent implements OnInit {
 
     @Input() processInstanceGroup: ProcessInstanceGroup;
+    @Input() collaborationGroupId: string;
     @Output() threadStateUpdated = new EventEmitter();
 
 
