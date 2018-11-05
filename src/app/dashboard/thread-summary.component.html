@@ -2,7 +2,7 @@
     <div class="col-12">
         <!-- Title bar -->
         <div class="row">
-            <div class="col-12 d-flex thread-entry-header">
+            <div class="col-12 d-flex thread-entry-header" (click)="expanded = !expanded">
                 <div *ngIf="!titleEvent" class="header-label mr-auto">Loading...</div>
                 <div *ngIf="titleEvent" class="header-label mr-auto">
                     <span class="clickable" (click)="navigateToSearchDetails()">{{titleEvent.product.name}}</span> (Trading partner: <span class="clickable" (click)="navigateToCompanyDetails()">{{titleEvent.tradingPartner}}</span>) <span *ngIf="processInstanceGroup.status == 'CANCELLED'"><i>- Collaboration cancelled</i></span>
@@ -28,8 +28,9 @@
             </div>
         </div>
 
-        <!-- Titles for the rows -->
-        <div class="row thread-entry-heading">
+        <div *ngIf="expanded">
+            <!-- Titles for the rows -->
+            <div class="row thread-entry-heading">
                 <!--<div class="col-2"><strong>Customer</strong></div>-->
                 <div class="col-3"><strong>Type</strong></div>
                 <div class="col-3"><strong>Date</strong></div>
@@ -37,27 +38,28 @@
                 <div class="col-3"><strong>Status</strong></div>
             </div>
 
-        <!-- Most recent event -->
-        <thread-event *ngIf="lastEvent" [processInstanceGroup]="processInstanceGroup" [collaborationGroupId]="collaborationGroupId" [event]="lastEvent" (processCancelled)="threadStateUpdated.next()">
-        </thread-event>
+            <!-- Most recent event -->
+            <thread-event *ngIf="lastEvent" [processInstanceGroup]="processInstanceGroup" [collaborationGroupId]="collaborationGroupId" [event]="lastEvent" (processCancelled)="threadStateUpdated.next()">
+            </thread-event>
 
-        <!-- Loading most recent event -->
-        <div class="row" *ngIf="!lastEvent">
-            <call-status [callStatus]="fetchCallStatus" [large]="true"></call-status>
-        </div>
+            <!-- Loading most recent event -->
+            <div class="row" *ngIf="!lastEvent">
+                <call-status [callStatus]="fetchCallStatus" [large]="true"></call-status>
+            </div>
 
-        <!-- History -->
-        <ng-container *ngIf="historyExpanded && history">
-            <ng-container *ngFor="let event of history">
-                <thread-event [processInstanceGroup]="processInstanceGroup" [event]="event" [collaborationGroupId]="collaborationGroupId" (processCancelled)="threadStateUpdated.next()">
-                </thread-event>
+            <!-- History -->
+            <ng-container *ngIf="historyExpanded && history">
+                <ng-container *ngFor="let event of history">
+                    <thread-event [processInstanceGroup]="processInstanceGroup" [event]="event" [collaborationGroupId]="collaborationGroupId" (processCancelled)="threadStateUpdated.next()">
+                    </thread-event>
+                </ng-container>
             </ng-container>
-        </ng-container>
 
-        <!-- Toggle history -->
-        <div class="row" *ngIf="lastEvent && hasHistory">
-            <div class="col align-items-center clickable" (click)="toggleHistory()">
-                {{ historyExpanded ? "Hide" : "Show" }} previous step(s)
+            <!-- Toggle history -->
+            <div class="row" *ngIf="lastEvent && hasHistory">
+                <div class="col align-items-center clickable" (click)="toggleHistory()">
+                    {{ historyExpanded ? "Hide" : "Show" }} previous step(s)
+                </div>
             </div>
         </div>
     </div>
