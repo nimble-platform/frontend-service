@@ -5,7 +5,7 @@ import * as myGlobals from '../globals';
 import {ProcessInstanceInputMessage} from "./model/process-instance-input-message";
 import {ProcessInstance} from "./model/process-instance";
 import {BPDataService} from "./bp-view/bp-data-service";
-import {ProcessInstanceGroupResponse} from "./model/process-instance-group-response";
+import {CollaborationGroupResponse} from "./model/process-instance-group-response";
 import {ProcessInstanceGroupFilter} from "./model/process-instance-group-filter";
 import {CookieService} from "ng2-cookies";
 import {Contract} from "../catalogue/model/publish/contract";
@@ -199,7 +199,7 @@ export class BPEService {
             .catch(this.handleError);
 	}
 
-	getProcessInstanceGroups(partyId:string, collaborationRole: CollaborationRole, page: number, limit: number, archived: boolean, products: string[], categories: string[], partners: string[], status: string[]): Promise<ProcessInstanceGroupResponse> {
+	getProcessInstanceGroups(partyId:string, collaborationRole: CollaborationRole, page: number, limit: number, archived: boolean, products: string[], categories: string[], partners: string[], status: string[]): Promise<CollaborationGroupResponse> {
 		let offset:number = page * limit;
 		let url:string = `${this.url}/group?partyID=${partyId}&collaborationRole=${collaborationRole}&offset=${offset}&limit=${limit}&archived=${archived}`;
 		if(products.length > 0) {
