@@ -130,7 +130,6 @@ export class BPDataService{
     setRelatedGroupId(id: string): void {
         if(id == null) {
             if(this.searchContextService.associatedProcessType) {
-                this.precedingProcessId = this.searchContextService.associatedProcessMetadata.processId;
                 this.precedingGroupId = this.relatedGroupId;
             }
             else {

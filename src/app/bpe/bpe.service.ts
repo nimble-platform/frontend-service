@@ -19,6 +19,7 @@ import { Quotation } from '../catalogue/model/publish/quotation';
 import { RequestForQuotation } from '../catalogue/model/publish/request-for-quotation';
 import { EvidenceSupplied } from '../catalogue/model/publish/evidence-supplied';
 import { Comment } from '../catalogue/model/publish/comment';
+import {SearchContextService} from '../simple-search/search-context.service';
 
 @Injectable()
 export class BPEService {
@@ -28,6 +29,7 @@ export class BPEService {
 
 	constructor(private http: Http,
 				private bpDataService:BPDataService,
+                private searchContextService: SearchContextService,
 				private cookieService: CookieService) { }
 
 	startBusinessProcess(piim:ProcessInstanceInputMessage):Promise<ProcessInstance> {
@@ -62,6 +64,11 @@ export class BPEService {
 				url += '?';
 			}
 			url += 'precedingGid=' + this.bpDataService.precedingGroupId;
+
+			// if we have a precedingGroupId,then we need also a precedingProcessId
+			if(this.bpDataService.precedingProcessId == null){
+                url += '&precedingPid=' + this.searchContextService.associatedProcessMetadata.processId;
+            }
 		}
 		return this.http
             .post(url, JSON.stringify(piim), {headers: headers})
