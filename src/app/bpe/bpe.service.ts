@@ -54,6 +54,15 @@ export class BPEService {
             url += 'collaborationGID=' + this.bpDataService.getCollaborationId()
 		}
 
+		if(this.bpDataService.precedingGroupId != null){
+			if(this.bpDataService.getRelatedGroupId() != null || this.bpDataService.precedingProcessId != null || this.bpDataService.getCollaborationId() != null){
+				url += '&';
+			}
+			else {
+				url += '?';
+			}
+			url += 'precedingGid=' + this.bpDataService.precedingGroupId;
+		}
 		return this.http
             .post(url, JSON.stringify(piim), {headers: headers})
             .toPromise()
