@@ -103,7 +103,7 @@ export class ThreadSummaryComponent implements OnInit {
             // Update History in order to remove pending orders
             this.updateHistory(this.history);
             if (!this.lastEvent.isRated) {
-              if (this.lastEvent.statusText == "Receipt Advice sent" || this.processInstanceGroup.status == "CANCELLED") {
+              if (this.lastEvent.statusText == "Receipt Advice sent" || this.lastEvent.statusText == "Transport Execution Plan received" || this.processInstanceGroup.status == "CANCELLED") {
                 this.showRateCollaborationButton = true;
               }
             }
