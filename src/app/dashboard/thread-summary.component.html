@@ -10,14 +10,8 @@
                 <div *ngIf="titleEvent && showDataChannelButton" data-toggle="tooltip" data-placement="top" title="Open Data Channel">
                     <i class="fa fa-exchange-alt p-2 pointer" aria-hidden="true" [routerLink]="[channelLink]"></i>
                 </div>
-                <div *ngIf="titleEvent && !processInstanceGroup.archived" (click)="archiveGroup()" data-toggle="tooltip" data-placement="top" title="Archive">
-                    <i class="fa fa-archive p-2 pointer" aria-hidden="true"></i>
-                </div>
                 <div *ngIf="titleEvent && processInstanceGroup.archived" (click)="deleteGroup()" data-toggle="tooltip" data-placement="top" title="Delete Permanently">
                     <i class="fa fa-trash-alt p-2 pointer" aria-hidden="true"></i>
-                </div>
-                <div *ngIf="titleEvent && processInstanceGroup.archived" (click)="restoreGroup()" data-toggle="tooltip" data-placement="top" title="Restore">
-                    <i class="fa fa-undo p-2 pointer" aria-hidden="true"></i>
                 </div>
                 <div *ngIf="titleEvent && showRateCollaborationButton" (click)="rateCollaboration(addSuccessRatingModal,addCancelRatingModal)" data-toggle="tooltip" data-placement="top" title="Rate this collaboration">
                     <i class="fa fa-star p-2 pointer" aria-hidden="true"></i>

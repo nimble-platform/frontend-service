@@ -172,6 +172,12 @@
                                         <div class="header-label mr-auto">
                                             <span>Collaboration</span>
                                         </div>
+                                        <div *ngIf="!order.archived" (click)="archiveGroup(order.id)" data-toggle="tooltip" data-placement="top" title="Archive">
+                                            <i class="fa fa-archive p-2 pointer" aria-hidden="true"></i>
+                                        </div>
+                                        <div *ngIf="order.archived" (click)="restoreGroup(order.id)" data-toggle="tooltip" data-placement="top" title="Restore">
+                                            <i class="fa fa-undo p-2 pointer" aria-hidden="true"></i>
+                                        </div>
                                     </div>
                                 </div>
                                 <hr>

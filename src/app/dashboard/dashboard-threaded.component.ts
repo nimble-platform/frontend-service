@@ -376,4 +376,24 @@ export class DashboardThreadedComponent implements OnInit {
     private parseArray(param: string): string[] {
         return param ? param.split("_SEP_") : []
     }
+
+    archiveGroup(id: string): void {
+        this.bpeService.archiveCollaborationGroup(id)
+            .then(() => {
+               this.onOrderRemovedFromView();
+            })
+            .catch(err => {
+                console.error("Failed to archive collaboration group");
+            });
+    }
+
+    restoreGroup(id: string): void {
+        this.bpeService.restoreCollaborationGroup(id)
+            .then(() => {
+                this.onOrderRemovedFromView();
+            })
+            .catch(err => {
+                console.error("Failed to restore collaboration group");
+            });
+    }
 }

@@ -255,6 +255,24 @@ export class BPEService {
             .catch(this.handleError);
 	}
 
+	archiveCollaborationGroup(groupId: string){
+        const url = `${this.url}/group/collaboration/${groupId}/archive`;
+        return this.http
+            .post(url, null)
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+	}
+
+    restoreCollaborationGroup(groupId: string) {
+    const url = `${this.url}/group/collaboration/${groupId}/restore`;
+    return this.http
+        .post(url, null)
+        .toPromise()
+        .then(res => res.json())
+        .catch(this.handleError);
+}
+
 	restoreProcessInstanceGroup(groupId: string) {
 		const url = `${this.url}/group/${groupId}/restore`;
 		return this.http

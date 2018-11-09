@@ -371,30 +371,6 @@ export class ThreadSummaryComponent implements OnInit {
         }
     }
 
-    archiveGroup(): void {
-        this.archiveCallStatus.submit();
-        this.bpeService.archiveProcessInstanceGroup(this.processInstanceGroup.id)
-            .then(() => {
-                this.archiveCallStatus.callback('Thread archived successfully');
-                this.threadStateUpdated.next();
-            })
-            .catch(err => {
-                this.archiveCallStatus.error('Failed to archive thread', err);
-            });
-    }
-
-    restoreGroup(): void {
-        this.archiveCallStatus.submit();
-        this.bpeService.restoreProcessInstanceGroup(this.processInstanceGroup.id)
-            .then(() => {
-                this.archiveCallStatus.callback('Thread restored successfully');
-                this.threadStateUpdated.next();
-            })
-            .catch(err => {
-                this.archiveCallStatus.error('Failed to restore thread', err);
-            });
-    }
-
     deleteGroup(): void {
         if (confirm("Are you sure that you want to delete this business process thread?")) {
             this.archiveCallStatus.submit();
