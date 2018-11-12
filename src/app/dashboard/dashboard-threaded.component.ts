@@ -383,7 +383,7 @@ export class DashboardThreadedComponent implements OnInit {
                this.onOrderRemovedFromView();
             })
             .catch(err => {
-                console.error("Failed to archive collaboration group");
+                console.error("Failed to archive collaboration group",err);
             });
     }
 
@@ -393,7 +393,19 @@ export class DashboardThreadedComponent implements OnInit {
                 this.onOrderRemovedFromView();
             })
             .catch(err => {
-                console.error("Failed to restore collaboration group");
+                console.error("Failed to restore collaboration group",err);
             });
+    }
+
+    deleteGroup(id: string): void {
+        if (confirm("Are you sure that you want to delete this collaboration group?")) {
+            this.bpeService.deleteCollaborationGroup(id)
+                .then(() => {
+                    this.onOrderRemovedFromView();
+                })
+                .catch(err => {
+                    console.error("Failed to delete the collaboration group",err);
+                });
+        }
     }
 }

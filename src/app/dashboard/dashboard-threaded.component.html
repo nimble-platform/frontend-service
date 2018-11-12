@@ -178,6 +178,9 @@
                                         <div *ngIf="order.archived" (click)="restoreGroup(order.id)" data-toggle="tooltip" data-placement="top" title="Restore">
                                             <i class="fa fa-undo p-2 pointer" aria-hidden="true"></i>
                                         </div>
+                                        <div *ngIf="order.archived" (click)="deleteGroup(order.id)" data-toggle="tooltip" data-placement="top" title="Delete Permanently">
+                                            <i class="fa fa-trash-alt p-2 pointer" aria-hidden="true"></i>
+                                        </div>
                                     </div>
                                 </div>
                                 <hr>

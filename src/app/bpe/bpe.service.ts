@@ -246,6 +246,15 @@ export class BPEService {
             .catch(this.handleError);
 	}
 
+    deleteCollaborationGroup(groupId: string) {
+        const url = `${this.url}/group/collaboration/${groupId}`;
+        return this.http
+            .delete(url)
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+    }
+
 	archiveProcessInstanceGroup(groupId: string) {
 		const url = `${this.url}/group/${groupId}/archive`;
 		return this.http
