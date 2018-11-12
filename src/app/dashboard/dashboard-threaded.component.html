@@ -181,8 +181,11 @@
                                     </div>
                                 </div>
                                 <hr>
-                                <thread-summary *ngFor="let group of order.associatedProcessInstanceGroups" [processInstanceGroup]="group" [collaborationGroupId]="order.id" (threadStateUpdated)="onOrderRemovedFromView()">
-                                </thread-summary>
+                                <div *ngFor="let group of order.associatedProcessInstanceGroups">
+                                    <!--If Purchases tab is selected, show groups whose collaboration role is Buyer-->
+                                    <thread-summary *ngIf="queryParameters.tab == TABS.SALES || (queryParameters.tab == TABS.PURCHASES && group.collaborationRole == 'BUYER')" [processInstanceGroup]="group" [collaborationGroupId]="order.id" (threadStateUpdated)="onOrderRemovedFromView()">
+                                    </thread-summary>
+                                </div>
                             </div>
                         </div>
                     </div>
