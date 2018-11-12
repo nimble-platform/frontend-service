@@ -87,6 +87,14 @@ export class BPEService {
 		if(this.bpDataService.getRelatedGroupId() != null) {
 			url += '?gid=' + this.bpDataService.getRelatedGroupId();
 		}
+		if(this.bpDataService.getCollaborationId() != null){
+			if(this.bpDataService.getRelatedGroupId() != null){
+				url += '&collaborationGID=' + this.bpDataService.getCollaborationId();
+			}
+			else {
+				url += '?collaborationGID=' + this.bpDataService.getCollaborationId();
+			}
+		}
 
 		return this.http
             .post(url, JSON.stringify(piim), {headers: headers})
