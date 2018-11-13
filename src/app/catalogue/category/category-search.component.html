@@ -113,34 +113,32 @@
 
                     <!-- Favorite Categories -->
                     <div *ngIf="selectedTab === 'FAVORITE'">
-                      <div *ngIf="prefCats.length > 0 || favoriteCategoriesStatus.isDisplayed()">
+                      <call-status [callStatus]="favoriteCategoriesStatus"></call-status>
+                      <div *ngIf="prefCats.length > 0 && !favoriteCategoriesStatus.isDisplayed()">
                         <!--<h4 class="p-2">Favorite Categories</h4>-->
-                        <call-status [callStatus]="favoriteCategoriesStatus"></call-status>
                         <div *ngFor="let prefCat of prefCats" class="py-2 hover-row d-flex border-bottom" style="padding-left:0.75rem"
                               [ngClass]="{'selected-row': isAdSelected(prefCat)}" (click)="showAdDetails(prefCat);">
                             {{prefCat.split("::")[2]}}
                         </div>
                       </div>
-                      <div *ngIf="prefCats.length == 0">
+                      <div *ngIf="prefCats.length == 0 && !favoriteCategoriesStatus.isDisplayed()">
                         <!--<h4 class="p-2">Favorite Categories</h4>-->
-                        <call-status [callStatus]="favoriteCategoriesStatus"></call-status>
                         <div class="py-2 d-flex" style="padding-left:0.75rem">No favorite categories</div>
                       </div>
                     </div>
 
                     <!-- Recent Categories -->
                     <div *ngIf="selectedTab === 'RECENT'">
-                      <div *ngIf="recCats.length > 0 || recentCategoriesStatus.isDisplayed()">
+                      <call-status [callStatus]="recentCategoriesStatus"></call-status>
+                      <div *ngIf="recCats.length > 0 && !recentCategoriesStatus.isDisplayed()">
                         <!--<h4 class="p-2">Recently Used Categories</h4>-->
-                        <call-status [callStatus]="recentCategoriesStatus"></call-status>
                         <div *ngFor="let recCat of recCats" class="py-2 hover-row d-flex border-bottom" style="padding-left:0.75rem"
                               [ngClass]="{'selected-row': isAdSelected(recCat)}" (click)="showAdDetails(recCat);">
                             {{recCat.split("::")[2]}}
                         </div>
                       </div>
-                      <div *ngIf="recCats.length == 0">
+                      <div *ngIf="recCats.length == 0 && !recentCategoriesStatus.isDisplayed()">
                         <!--<h4 class="p-2">Recently Used Categories</h4>-->
-                        <call-status [callStatus]="recentCategoriesStatus"></call-status>
                         <div class="py-2 d-flex" style="padding-left:0.75rem">No recently used categories</div>
                       </div>
                     </div>
@@ -148,10 +146,11 @@
                     <!-- Tree view (all categories) -->
                     <div *ngIf="selectedTab === 'TREE'">
 
+                      <call-status [callStatus]="getCategoriesStatus"></call-status>
+
                       <!-- Logistic Service Categories -->
                       <div *ngIf="isLogistics">
                           <!--<h4 class="p-2">Logistics Categories</h4>-->
-                          <call-status [callStatus]="getCategoriesStatus"></call-status>
                           <ng-container *ngIf="eClassLogisticsCategory && !getCategoriesStatus.isDisplayed()">
                               <category-tree [category]="eClassLogisticsCategory" [border]="false" [parentCategories]="parentCategories"
                                   (detailsEvent)="getCategoryDetails($event,false)" [selectedCategory]="selectedCategory"
@@ -162,7 +161,6 @@
                       <!-- Product Categories -->
                       <div *ngIf="!isLogistics">
                           <!--<h4 class="p-2">Product Categories</h4>-->
-                          <call-status [callStatus]="getCategoriesStatus"></call-status>
                           <ng-container *ngIf="rootCategories && !getCategoriesStatus.isDisplayed()">
                               <div *ngFor="let rootCategory of rootCategories">
                                   <category-tree [category]="rootCategory" [parentCategories]="parentCategories"
