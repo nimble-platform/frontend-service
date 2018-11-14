@@ -39,5 +39,9 @@ node('nimble-jenkins-slave') {
             sh 'docker tag nimbleplatform/frontend-service:latest nimbleplatform/frontend-service:$VERSION'
             sh 'docker push nimbleplatform/frontend-service:$VERSION'
         }
+
+        stage('Deploy') {
+            sh 'ssh nimble "cd /data/deployment_setup/prod/ && sudo ./run-prod.sh restart-single frontend-service"'
+        }
     }
 }
