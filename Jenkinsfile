@@ -38,5 +38,18 @@ node('nimble-jenkins-slave') {
         stage('Deploy') {
             sh 'ssh nimble "cd /data/deployment_setup/prod/ && sudo ./run-prod.sh restart-single frontend-service"'
         }
+    } else if (env.BRANCH_NAME == 'fmp') {
+
+        stage('Build Application') {
+            sh 'mvn clean install -Denv=fmp'
+        }
+
+        stage('Build Docker') {
+            sh 'docker build -t nimbleplatform/frontend-service ./target'
+        }
+
+        stage('Push Docker') {
+            sh 'docker push nimbleplatform/frontend-service:fmp'
+        }
     }
 }
