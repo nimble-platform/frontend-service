@@ -6,7 +6,7 @@
 
     <groupId>eu.nimble.core.frontend</groupId>
     <artifactId>frontend-service</artifactId>
-    <version>1.0</version>
+    <version>5.0.0</version>
     <name>Frontend Services for the NIMBLE platform</name>
     <packaging>war</packaging>
 
