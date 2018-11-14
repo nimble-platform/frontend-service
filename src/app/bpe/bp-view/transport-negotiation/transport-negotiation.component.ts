@@ -28,9 +28,11 @@ export class TransportNegotiationComponent implements OnInit {
         }
     }
 
-    initRfq(): Promise<void> {
-        if(this.searchContextService.associatedProcessMetadata != null) {
-            return this.bpDataService.initRfqForTransportationWithOrder();
+    async initRfq(): Promise<void> {
+        if(this.searchContextService.associatedProcessMetadata) {
+            return await this.bpDataService.initRfqForTransportationWithTheadMetadata(this.searchContextService.associatedProcessMetadata);
+        } else if(this.bpDataService.productOrder) {
+            return this.bpDataService.initRfqForTransportationWithOrder(this.bpDataService.productOrder);
         }
         return this.bpDataService.initRfq(null);
     }

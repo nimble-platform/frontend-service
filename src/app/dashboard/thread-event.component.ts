@@ -1,10 +1,10 @@
 import {Component, OnInit, Input, Output, EventEmitter} from "@angular/core";
 import { Router } from "@angular/router";
 import { BPDataService } from "../bpe/bp-view/bp-data-service";
-import { ActivityVariableParser } from "../bpe/bp-view/activity-variable-parser";
 import { ProcessInstanceGroup } from "../bpe/model/process-instance-group";
 import { ThreadEventMetadata } from "../catalogue/model/publish/thread-event-metadata";
 import {BPEService} from "../bpe/bpe.service";
+import {DocumentService} from "../bpe/bp-view/document-service";
 
 @Component({
     selector: "thread-event",
@@ -19,15 +19,16 @@ export class ThreadEventComponent implements OnInit {
 
     constructor(private bpDataService: BPDataService,
                 private bpeService: BPEService,
-                private router: Router) {
+                private router: Router,
+                private documentService: DocumentService) {
     }
 
     ngOnInit() {
 
     }
 
-    openBpProcessView(updateProcess:boolean) {
-        let role = ActivityVariableParser.getUserRole(this.event.activityVariables,this.processInstanceGroup.partyID);
+    async openBpProcessView(updateProcess:boolean) {
+        let role = await this.documentService.getUserRole(this.event.activityVariables,this.processInstanceGroup.partyID);
         this.bpDataService.setBpOptionParametersWithProcessMetadata(role, this.event.processType, this.event, updateProcess);
         this.bpDataService.setRelatedGroupId(this.processInstanceGroup.id);
         this.router.navigate(['bpe/bpe-exec'], {

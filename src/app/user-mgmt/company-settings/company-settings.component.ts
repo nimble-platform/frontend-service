@@ -5,9 +5,10 @@ import * as myGlobals from "../../globals";
 import { CallStatus } from "../../common/call-status";
 import { CompanySettings } from "../model/company-settings";
 
-type SelectedTab = "COMPANY_DATA" 
-    | "NEGOTIATION_SETTINGS" 
-    | "DELIVERY_TERMS" 
+type SelectedTab = "COMPANY_DATA"
+    | "COMPANY_DESCRIPTION"
+    | "NEGOTIATION_SETTINGS"
+    | "DELIVERY_TERMS"
     | "CERTIFICATES"
     | "CATEGORIES";
 
@@ -19,12 +20,16 @@ type SelectedTab = "COMPANY_DATA"
 export class CompanySettingsComponent implements OnInit {
 
     settings: CompanySettings;
+    certificates: any;
+    ppapLevel: any;
     selectedTab: SelectedTab = "COMPANY_DATA";
     initCallStatus: CallStatus = new CallStatus();
+    profile_completeness: number = 0;
+    profile_completeness_str: string = "0%";
 
     constructor(private cookieService: CookieService,
                 private userService: UserService) {
-        
+
     }
 
     ngOnInit() {
@@ -34,8 +39,32 @@ export class CompanySettingsComponent implements OnInit {
             if (myGlobals.debug) {
                 console.log("Fetched settings: " + JSON.stringify(settings));
             }
-
+            this.userService.getProfileCompleteness(settings.companyID).then(completeness => {
+                this.profile_completeness = 0;
+                this.profile_completeness_str = "0%";
+                if (completeness.qualityIndicator && completeness.qualityIndicator.length>0) {
+                  for (var indicator of completeness.qualityIndicator) {
+                    if (indicator.qualityParameter == "PROFILE_COMPLETENESS") {
+                      if (indicator.quantity && indicator.quantity.value) {
+                        this.profile_completeness = indicator.quantity.value;
+                        this.profile_completeness_str = Math.round(indicator.quantity.value*100)+"%";
+                      }
+                    }
+                  }
+                }
+                this.initCallStatus.callback("Profile completeness successfully fetched", true);
+            })
+            .catch(error => {
+                this.initCallStatus.error("Error while fetching profile completeness", error);
+            });
             this.settings = settings;
+            this.certificates = this.settings.certificates;
+            if (this.settings.tradeDetails.ppapCompatibilityLevel && this.settings.tradeDetails.ppapCompatibilityLevel>0)
+              this.ppapLevel = this.settings.tradeDetails.ppapCompatibilityLevel;
+            else
+              this.ppapLevel = 0;
+            this.certificates.sort((a, b) => a.name.localeCompare(b.name));
+            this.certificates.sort((a, b) => a.type.localeCompare(b.type));
             this.initCallStatus.callback("Settings successfully fetched", true);
         })
         .catch(error => {

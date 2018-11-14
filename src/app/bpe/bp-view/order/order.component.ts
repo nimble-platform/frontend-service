@@ -26,6 +26,7 @@ import { Address } from "../../../catalogue/model/publish/address";
 import { SearchContextService } from "../../../simple-search/search-context.service";
 import { EpcCodes } from "../../../data-channel/model/epc-codes";
 import { EpcService } from "../epc-service";
+import {DocumentService} from "../document-service";
 
 /**
  * Created by suat on 20-Sep-17.
@@ -36,7 +37,7 @@ import { EpcService } from "../epc-service";
     styleUrls: ["./order.component.css"]
 })
 export class OrderComponent implements OnInit {
-    
+
     order: Order;
     address: Address
     orderResponse: OrderResponseSimple;
@@ -62,14 +63,15 @@ export class OrderComponent implements OnInit {
     fetchTermsAndConditionsStatus: CallStatus = new CallStatus();
     fetchDataMonitoringStatus: CallStatus = new CallStatus();
 
-    constructor(private bpDataService: BPDataService,
+    constructor(public bpDataService: BPDataService,
                 private userService: UserService,
                 private bpeService: BPEService,
                 private cookieService: CookieService,
                 private searchContextService: SearchContextService,
                 private epcService: EpcService,
                 private location: Location,
-                private router: Router) {
+                private router: Router,
+                private documentService: DocumentService) {
 
     }
 
@@ -77,7 +79,7 @@ export class OrderComponent implements OnInit {
         if(this.bpDataService.order == null) {
             this.router.navigate(['dashboard']);
         }
-        
+
         this.order = this.bpDataService.order;
         this.address = this.order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address;
         this.paymentTermsWrapper = new PaymentTermsWrapper(this.order.paymentTerms);
@@ -170,7 +172,7 @@ export class OrderComponent implements OnInit {
         UBLModelUtils.removeHjidFieldsFromObject(order);
         order.anticipatedMonetaryTotal.payableAmount.value = this.priceWrapper.totalPrice;
         order.anticipatedMonetaryTotal.payableAmount.currencyID = this.priceWrapper.currency;
-    
+
         //first initialize the seller and buyer parties.
         //once they are fetched continue with starting the ordering process
         const buyerId: string = this.cookieService.get("company_id");
@@ -179,7 +181,7 @@ export class OrderComponent implements OnInit {
         const sellerId: string = this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty.id;
         order.sellerSupplierParty = new SupplierParty(this.sellerParty);
 
-        const vars: ProcessVariables = ModelUtils.createProcessVariables("Order", buyerId, sellerId, order, this.bpDataService);
+        const vars: ProcessVariables = ModelUtils.createProcessVariables("Order", buyerId, sellerId,this.cookieService.get("user_id"), order, this.bpDataService);
         const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
 
         this.bpeService.startBusinessProcess(piim)
@@ -196,8 +198,9 @@ export class OrderComponent implements OnInit {
         const order = copy(this.bpDataService.order);
         UBLModelUtils.removeHjidFieldsFromObject(order);
 
-        this.bpeService.updateBusinessProcess(JSON.stringify(this.order),"ORDER",this.bpDataService.processMetadata.processId)
+        this.bpeService.updateBusinessProcess(JSON.stringify(order),"ORDER",this.bpDataService.processMetadata.processId)
             .then(() => {
+                this.documentService.updateCachedDocument(order.id,order);
                 this.submitCallStatus.callback("Order updated", true);
                 this.router.navigate(['dashboard']);
             })
@@ -210,14 +213,15 @@ export class OrderComponent implements OnInit {
         this.bpDataService.orderResponse.acceptedIndicator = accepted;
 
         let vars: ProcessVariables = ModelUtils.createProcessVariables(
-            "Order", 
-            this.bpDataService.order.buyerCustomerParty.party.id, 
-            this.bpDataService.order.sellerSupplierParty.party.id, 
-            this.bpDataService.orderResponse, 
+            "Order",
+            this.bpDataService.order.buyerCustomerParty.party.id,
+            this.bpDataService.order.sellerSupplierParty.party.id,
+            this.cookieService.get("user_id"),
+            this.bpDataService.orderResponse,
             this.bpDataService
         );
         let piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(
-            vars, 
+            vars,
             this.bpDataService.processMetadata.processId
         );
 
@@ -262,15 +266,15 @@ export class OrderComponent implements OnInit {
         this.bpDataService.setBpOptionParameters('buyer', 'Transport_Execution_Plan',"Order");
         this.router.navigate(['simple-search'], {
             queryParams: {
-                searchContext: 'orderbp', 
-                q:'*', 
+                searchContext: 'orderbp',
+                q:'*',
                 cat:'Transport service'
             }
         });
     }
 
     onDeleteEpcCode(i: number) {
-
+        this.epcCodes.codes.splice(i, 1);
     }
 
     onSaveEpcCodes() {
@@ -282,7 +286,7 @@ export class OrderComponent implements OnInit {
                 selectedEpcCodes.push(code);
             }
         }
-        
+
         const codes = new EpcCodes(this.order.id, selectedEpcCodes);
 
         this.epcService.registerEpcCodes(codes)
@@ -397,12 +401,12 @@ export class OrderComponent implements OnInit {
     }
 
     /*
-     * 
+     *
      */
 
     private initializeEPCCodes() {
         if(this.bpDataService.processMetadata
-            && this.bpDataService.processMetadata.processStatus == 'Completed' 
+            && this.bpDataService.processMetadata.processStatus == 'Completed'
             && this.bpDataService.orderResponse
             && this.bpDataService.orderResponse.acceptedIndicator
             && this.trackAndTraceDetailsExists()) {
@@ -412,6 +416,7 @@ export class OrderComponent implements OnInit {
                 if(this.epcCodes.codes.length == 0){
                     this.epcCodes.codes.push("");
                 }
+                this.epcCodes.codes.sort();
                 this.savedEpcCodes = copy(this.epcCodes);
                 this.initEpcCodesCallStatus.callback("EPC Codes initialized", true);
             }).catch(error => {
@@ -428,7 +433,7 @@ export class OrderComponent implements OnInit {
 
     private isDataMonitoringDemanded(): Promise<boolean> {
         let docClause = null;
- 
+
         if (this.order.contract && this.order.contract.length > 0) {
             for (let clause of this.order.contract[0].clause) {
                 if (clause.type === "NEGOTIATION") {
@@ -437,10 +442,10 @@ export class OrderComponent implements OnInit {
                 }
             }
         }
- 
+
         if (docClause) {
             this.fetchDataMonitoringStatus.submit();
-            return this.bpeService.getDocumentJsonContent(docClause.clauseDocumentRef.id).then(result => {
+            return this.documentService.getDocumentJsonContent(docClause.clauseDocumentRef.id).then(result => {
                 this.fetchDataMonitoringStatus.callback("Successfully fetched data monitoring service", true);
                 const q: Quotation = result as Quotation;
                 return q.dataMonitoringPromised;

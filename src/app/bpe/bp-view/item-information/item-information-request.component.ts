@@ -18,6 +18,7 @@ import { ModelUtils } from "../../model/model-utils";
 import { ProcessInstanceInputMessage } from "../../model/process-instance-input-message";
 import { copy, isTransportService } from "../../../common/utils";
 import { PresentationMode } from "../../../catalogue/model/publish/presentation-mode";
+import {DocumentService} from '../document-service';
 /**
  * Created by suat on 19-Nov-17.
  */
@@ -33,13 +34,14 @@ export class ItemInformationRequestComponent implements OnInit {
     request: ItemInformationRequest;
     files: BinaryObject[]
 
-    constructor(private bpeService: BPEService, 
-                private bpDataService: BPDataService, 
-                private userService: UserService, 
-                private cookieService: CookieService, 
+    constructor(private bpeService: BPEService,
+                private bpDataService: BPDataService,
+                private userService: UserService,
+                private cookieService: CookieService,
                 private location: Location,
+                private documentService: DocumentService,
                 private router: Router) {
-        
+
     }
 
     ngOnInit() {
@@ -62,7 +64,7 @@ export class ItemInformationRequestComponent implements OnInit {
 
     onSkip(): void {
         this.bpDataService.resetBpData();
-        if(isTransportService(this.bpDataService.getCatalogueLine()) || !this.bpDataService.getCompanySettings().ppapCompatibilityLevel) {
+        if(isTransportService(this.bpDataService.getCatalogueLine()) || !this.bpDataService.getCompanySettings().tradeDetails.ppapCompatibilityLevel) {
             // skip ppap
             this.bpDataService.initRfq(this.bpDataService.getCompanySettings().negotiationSettings).then(() => {
                 this.bpDataService.setBpOptionParameters(this.bpDataService.userRole, "Negotiation", "Ppap");
@@ -95,7 +97,7 @@ export class ItemInformationRequestComponent implements OnInit {
             itemInformationRequest.sellerSupplierParty = new SupplierParty(sellerParty);
 
             const vars: ProcessVariables = ModelUtils.createProcessVariables(
-                "Item_Information_Request", buyerId, sellerId, itemInformationRequest, this.bpDataService);
+                "Item_Information_Request", buyerId, sellerId,this.cookieService.get("user_id"), itemInformationRequest, this.bpDataService);
             const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
 
             return this.bpeService.startBusinessProcess(piim)
@@ -116,6 +118,7 @@ export class ItemInformationRequestComponent implements OnInit {
 
         this.bpeService.updateBusinessProcess(JSON.stringify(itemInformationRequest),"ITEMINFORMATIONREQUEST",this.bpDataService.processMetadata.processId)
             .then(() => {
+                this.documentService.updateCachedDocument(itemInformationRequest.id,itemInformationRequest);
                 this.callStatus.callback("Item Information Request updated", true);
                 this.router.navigate(['dashboard']);
             })

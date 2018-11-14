@@ -21,6 +21,8 @@ import { getMaximumQuantityForPrice, getStepForPrice, copy } from "../../../comm
 import { PeriodRange } from "../../../user-mgmt/model/period-range";
 import { Option } from "../../../common/options-input.component";
 import { addressToString } from "../../../user-mgmt/utils";
+import {DocumentService} from '../document-service';
+import {Price} from '../../../catalogue/model/publish/price';
 
 @Component({
     selector: "negotiation-request",
@@ -48,6 +50,7 @@ export class NegotiationRequestComponent implements OnInit {
                 private userService:UserService,
                 private cookieService: CookieService,
                 private location: Location,
+                private documentService: DocumentService,
                 private router: Router) {
 
     }
@@ -97,7 +100,7 @@ export class NegotiationRequestComponent implements OnInit {
                 rfq.buyerCustomerParty = new CustomerParty(buyerParty);
                 rfq.sellerSupplierParty = new SupplierParty(sellerParty);
 
-                const vars: ProcessVariables = ModelUtils.createProcessVariables("Negotiation", buyerId, sellerId, rfq, this.bpDataService);
+                const vars: ProcessVariables = ModelUtils.createProcessVariables("Negotiation", buyerId, sellerId,this.cookieService.get("user_id"), rfq, this.bpDataService);
                 const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
 
                 return this.bpeService.startBusinessProcess(piim);
@@ -123,6 +126,7 @@ export class NegotiationRequestComponent implements OnInit {
 
         this.bpeService.updateBusinessProcess(JSON.stringify(rfq),"REQUESTFORQUOTATION",this.bpDataService.processMetadata.processId)
             .then(() => {
+                this.documentService.updateCachedDocument(rfq.id,rfq);
                 this.callStatus.callback("Terms updated", true);
                 this.router.navigate(['dashboard']);
             })
@@ -162,13 +166,34 @@ export class NegotiationRequestComponent implements OnInit {
     }
 
     get negotiatePrice(): boolean {
+        this.setRemoveDiscountAmount(this.rfq.negotiationOptions.price);
         return this.rfq.negotiationOptions.price;
     }
 
     set negotiatePrice(negotiate: boolean) {
+        this.setRemoveDiscountAmount(negotiate);
         this.rfq.negotiationOptions.price = negotiate;
         if(!negotiate) {
             this.wrapper.rfqPriceWrapper.itemPrice.value = this.wrapper.linePriceWrapper.itemPrice.value;
+        }
+    }
+
+    // it is used to set wrappers' removeDiscountAmount field while negotiating price
+    private setRemoveDiscountAmount(negotiate: boolean){
+        // if they negotiate price, then set removeDiscountAmount to false so that prices for wrappers will not be affected by total discount
+        if(negotiate){
+            this.wrapper.linePriceWrapper.removeDiscountAmount = false;
+            this.wrapper.rfqPriceWrapper.removeDiscountAmount = false;
+        }
+        else {
+            this.wrapper.linePriceWrapper.removeDiscountAmount = true;
+            this.wrapper.rfqPriceWrapper.removeDiscountAmount = true;
+
+            this.wrapper.linePriceWrapper.itemPrice.price.priceAmount.value =this.line.requiredItemLocationQuantity.price.priceAmount.value;
+            this.wrapper.linePriceWrapper.itemPrice.price.priceAmount.currencyID = this.line.requiredItemLocationQuantity.price.priceAmount.currencyID;
+
+            this.wrapper.rfqPriceWrapper.itemPrice.price.priceAmount.value = this.line.requiredItemLocationQuantity.price.priceAmount.value;
+            this.wrapper.rfqPriceWrapper.itemPrice.price.priceAmount.currencyID = this.line.requiredItemLocationQuantity.price.priceAmount.currencyID;
         }
     }
 
@@ -181,7 +206,7 @@ export class NegotiationRequestComponent implements OnInit {
 
         if(addressStr !== "") {
             const index = Number(addressStr);
-            const address = this.bpDataService.getCompanySettings().deliveryTerms[index].deliveryAddress;
+            const address = this.bpDataService.getCompanySettings().tradeDetails.deliveryTerms[index].deliveryAddress;
             const rfqAddress = this.wrapper.rfqDeliveryAddress;
             rfqAddress.buildingNumber = address.buildingNumber;
             rfqAddress.cityName = address.cityName;
@@ -192,11 +217,21 @@ export class NegotiationRequestComponent implements OnInit {
     }
 
     get addressOptions(): Option[] {
-        return [
-            { name: "No", value: "" }
-        ].concat(this.bpDataService.currentUserSettings.deliveryTerms.map((term, i) => {
-            return { name: addressToString(term.deliveryAddress), value: String(i) };
-        }));
+        const deliveryTerms = this.bpDataService.getCompanySettings().tradeDetails.deliveryTerms;
+        var ret = [];
+        if (deliveryTerms.length == 0 || !deliveryTerms[0].deliveryAddress || !deliveryTerms[0].deliveryAddress.streetName) {
+            ret = [
+                { name: "No", value: "" }
+            ];
+        }
+        else {
+            ret = [
+                { name: "No", value: "" }
+            ].concat(deliveryTerms.map((term, i) => {
+                return { name: addressToString(term.deliveryAddress), value: String(i) };
+            }));
+        }
+        return ret;
     }
 
     getPriceSteps(): number {
@@ -213,7 +248,7 @@ export class NegotiationRequestComponent implements OnInit {
         }
         return this.line.requiredItemLocationQuantity.price.baseQuantity.unitCode || "";
     }
-    
+
     isLoading(): boolean {
         return this.callStatus.fb_submitted;
     }
@@ -241,7 +276,7 @@ export class NegotiationRequestComponent implements OnInit {
             const unit = this.wrapper.rfqDeliveryPeriod.unitCode;
             return ` (minimum: ${range.start} ${unit}, maximum: ${range.end} ${unit})`;
         }
-        
+
         return "";
     }
 
@@ -275,7 +310,7 @@ export class NegotiationRequestComponent implements OnInit {
             const unit = this.wrapper.rfqWarranty.unitCode;
             return ` (minimum: ${range.start} ${unit}, maximum: ${range.end} ${unit})`;
         }
-        
+
         return "";
     }
 

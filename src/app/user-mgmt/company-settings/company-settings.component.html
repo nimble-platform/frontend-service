@@ -5,6 +5,22 @@
     </div>
 </div>
 
+<!-- Profile Completess Progress Bar -->
+<div class="row">
+  <div class="col-2">
+    <strong>Profile Completeness:</strong>
+  </div>
+  <div class="col-10">
+    <div class="progress" style="height:1.5rem">
+      <div class="progress-bar" role="progressbar" [ngStyle]="{'width':profile_completeness_str}" [attr.aria-valuenow]="profile_completeness" aria-valuemin="0" aria-valuemax="1">
+        <span *ngIf="profile_completeness>0">{{profile_completeness_str}}</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr/>
+
 <!-- Tabs -->
 <div>
 	<ul class="nav nav-tabs">
@@ -13,14 +29,19 @@
 				Company Data
 			</a>
 		</li>
+    <li class="nav-item">
+			<a href id="COMPANY_DESCRIPTION" class="nav-link" [ngClass]="{ active: selectedTab === 'COMPANY_DESCRIPTION'}" (click)="onSelectTab($event)">
+				Company Description
+			</a>
+		</li>
 		<li class="nav-item">
 			<a href id="NEGOTIATION_SETTINGS" class="nav-link" [ngClass]="{ active: selectedTab === 'NEGOTIATION_SETTINGS'}" (click)="onSelectTab($event)">
-				Negotiation Settings
+				Trade Details
 			</a>
 		</li>
 		<li class="nav-item">
 			<a href id="DELIVERY_TERMS" class="nav-link" [ngClass]="{ active: selectedTab === 'DELIVERY_TERMS'}" (click)="onSelectTab($event)">
-				Delivery Terms
+				Delivery Details
 			</a>
 		</li>
 		<li class="nav-item">
@@ -44,6 +65,12 @@
 	</company-data-settings>
 </div>
 
+<!-- Company Description, hidden to avoid reloading  -->
+<div *ngIf="settings" [hidden]="selectedTab !== 'COMPANY_DESCRIPTION'">
+	<company-description-settings [settings]="settings" (onSaveEvent)="onSettingsUpdated()">
+	</company-description-settings>
+</div>
+
 <!-- Negotiation Settings, hidden to avoid reloading -->
 <div *ngIf="settings" [hidden]="selectedTab !== 'NEGOTIATION_SETTINGS'">
 	<company-negotiation-settings [settings]="settings">
@@ -58,7 +85,7 @@
 
 <!-- Company Certificates, hidden to avoid reloading -->
 <div *ngIf="settings" [hidden]="selectedTab !== 'CERTIFICATES'">
-	<company-certificates-settings [settings]="settings" (onSaveEvent)="onSettingsUpdated()">
+	<company-certificates-settings [settings]="settings" [certificates]="certificates" [ppapLevel]="ppapLevel" (onSaveEvent)="onSettingsUpdated()">
 	</company-certificates-settings>
 </div>
 

@@ -12,45 +12,41 @@ import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
     templateUrl: "./company-certificates-settings.component.html"
 })
 export class CompanyCertificatesSettingsComponent implements OnInit {
-    
+
     @Input() settings: CompanySettings;
+    @Input() certificates: any;
+    @Input() ppapLevel: any;
 
     @Output() onSaveEvent: EventEmitter<void> = new EventEmitter();
 
-    ppapTypes: string[] = [""].concat(PPAP_CERTIFICATES);
-    ppapLevel: number = 0;
+    ppapTypes: string[] = PPAP_CERTIFICATES;
     savePpapLevelCallStatus: CallStatus = new CallStatus();
 
     certFile = null;
     addCertForm: FormGroup;
-    certificates = [];
     saveCertCallStatus: CallStatus = new CallStatus();
-    certificatesCallStatus: CallStatus[] = [];
+    certificatesCallStatus: CallStatus = new CallStatus();
 
     constructor(private _fb: FormBuilder,
                 private userService: UserService,
-                private modalService: NgbModal, 
+                private modalService: NgbModal,
                 private cookieService: CookieService) {
 
     }
 
     ngOnInit() {
-        this.ppapLevel = this.settings.ppapCompatibilityLevel;
 
-        this.certificates = this.settings.certificates;
-        this.certificates.sort((a, b) => a.name.localeCompare(b.name));
-        this.certificates.sort((a, b) => a.type.localeCompare(b.type));
-        this.certificatesCallStatus = this.certificates.map(() => new CallStatus());
     }
 
     isPpapLevelDirty(): boolean {
-        return this.settings.ppapCompatibilityLevel !== this.ppapLevel;
+        return this.settings.tradeDetails.ppapCompatibilityLevel !== this.ppapLevel;
     }
 
     onAddCertificate(content) {
         this.addCertForm = this._fb.group({
             file: [""],
             name: [""],
+            description: [""],
             type: [""]
         });
         this.certFile = null;
@@ -61,11 +57,11 @@ export class CompanyCertificatesSettingsComponent implements OnInit {
         this.saveCertCallStatus.submit();
         const fields = model.getRawValue();
         this.userService
-            .saveCert(this.certFile, encodeURIComponent(fields.name), encodeURIComponent(fields.type))
+            .saveCert(this.certFile, encodeURIComponent(fields.name), encodeURIComponent(fields.description), encodeURIComponent(fields.type))
             .then(() => {
                 close();
                 this.saveCertCallStatus.callback("Certificate saved", true);
-                this.ngOnInit();
+                this.onSaveEvent.emit();
             })
             .catch(error => {
                 this.saveCertCallStatus.error("Error while saving cerficate", error);
@@ -74,16 +70,15 @@ export class CompanyCertificatesSettingsComponent implements OnInit {
 
     onRemoveCertificate(id: string, index: number) {
         if (confirm("Are you sure that you want to delete this certificate?")) {
-            this.certificatesCallStatus[index].submit();
+            this.certificatesCallStatus.submit();
             this.userService
                 .deleteCert(id)
                 .then(() => {
-                    this.certificatesCallStatus[index].callback("Succesfully deleted certificate", true);
-                    this.settings.certificates.splice(index, 1);
-                    this.ngOnInit();
+                    this.certificatesCallStatus.callback("Succesfully deleted certificate", true);
+                    this.onSaveEvent.emit();
                 })
                 .catch(error => {
-                    this.certificatesCallStatus[index].error("Error while delefing certificate", error);
+                    this.certificatesCallStatus.error("Error while deleting certificate", error);
                 });
         }
     }
@@ -101,7 +96,7 @@ export class CompanyCertificatesSettingsComponent implements OnInit {
     onSavePpapLevel(): void {
         this.savePpapLevelCallStatus.submit();
 
-        this.settings.ppapCompatibilityLevel = this.ppapLevel;
+        this.settings.tradeDetails.ppapCompatibilityLevel = this.ppapLevel;
         const userId = this.cookieService.get("user_id");
         this.userService.putSettings(this.settings, userId)
             .then(() => {

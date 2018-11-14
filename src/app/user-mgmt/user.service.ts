@@ -12,6 +12,7 @@ import {UBLModelUtils} from "../catalogue/model/ubl-model-utils";
 import { UserRole } from './model/user-role';
 import { CompanyNegotiationSettings } from './model/company-negotiation-settings';
 import { CatalogueLine } from '../catalogue/model/publish/catalogue-line';
+import { INCOTERMS, PAYMENT_MEANS } from '../catalogue/model/constants';
 
 @Injectable()
 export class UserService {
@@ -33,7 +34,7 @@ export class UserService {
       return this.http
           .post(url, JSON.stringify({}), {headers: headers_token, withCredentials: true})
           .toPromise()
-          .then(res => res.json())
+          .then(res => res)
           .catch(this.handleError);
     }
 
@@ -125,7 +126,12 @@ export class UserService {
     }
 
     getSettingsForProduct(line: CatalogueLine): Promise<CompanySettings> {
-        return this.getSettingsForParty(line.goodsItem.item.manufacturerParty.id);
+        console.log("Getting settings for product: " + line.goodsItem.item.manufacturerParty.id);
+        return this.getSettingsForParty(line.goodsItem.item.manufacturerParty.id)
+        .then(settings => {
+            console.log("Settings", settings);
+            return settings;
+        })
     }
 
     getSettingsForUser(userId: string): Promise<CompanySettings> {
@@ -140,6 +146,17 @@ export class UserService {
             settings.negotiationSettings = negotiationSettings;
             return settings;
         })
+    }
+
+    getProfileCompleteness(partyId: string): Promise<any> {
+      const url = `${this.url}/company-settings/${partyId}/completeness`;
+      const token = 'Bearer '+this.cookieService.get("bearer_token");
+      const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
+      return this.http
+          .get(url, {headers: headers_token, withCredentials: true})
+          .toPromise()
+          .then(response => response.json())
+          .catch(this.handleError)
     }
 
     private getSettingsPromise(partyId: string): Promise<CompanySettings> {
@@ -256,14 +273,38 @@ export class UserService {
       });
     }
 
-    saveCert(file: File, name: string, type: string): Promise<void> {
-      const url = `${this.url}/company-settings/certificate?name=${name}&type=${type}`;
+    saveCert(file: File, name: string, description: string, type: string): Promise<void> {
+      const url = `${this.url}/company-settings/certificate?name=${name}&description=${description}&type=${type}`;
       const token = 'Bearer '+this.cookieService.get("bearer_token");
       const headers_token = new Headers({'Authorization': token});
       const form_data: FormData = new FormData();
       form_data.append('file', file);
       return this.http
           .post(url, form_data, {headers: headers_token, withCredentials: true})
+          .toPromise()
+          .then(() => {})
+          .catch(this.handleError)
+    }
+
+    saveImage(file: File, isLogo: boolean): Promise<void> {
+      const url = `${this.url}/company-settings/image?isLogo=${isLogo}`;
+      const token = 'Bearer '+this.cookieService.get("bearer_token");
+      const headers_token = new Headers({'Authorization': token});
+      const form_data: FormData = new FormData();
+      form_data.append('file', file);
+      return this.http
+          .post(url, form_data, {headers: headers_token, withCredentials: true})
+          .toPromise()
+          .then(() => {})
+          .catch(this.handleError)
+    }
+
+    deleteImage(id: string): Promise<void> {
+      const url = `${this.url}/company-settings/image/${id}`;
+      const token = 'Bearer '+this.cookieService.get("bearer_token");
+      const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
+      return this.http
+          .delete(url, {headers: headers_token, withCredentials: true})
           .toPromise()
           .then(() => {})
           .catch(this.handleError)
@@ -328,6 +369,16 @@ export class UserService {
         }
         while(settings.warrantyPeriodRanges.length > 2) {
             settings.warrantyPeriodRanges.pop();
+        }
+
+        if(settings.incoterms.length === 0) {
+            settings.incoterms.push(...INCOTERMS);
+        }
+        if(settings.paymentMeans.length === 0) {
+            settings.paymentMeans.push(...PAYMENT_MEANS);
+        }
+        if(settings.paymentTerms.length === 0) {
+            settings.paymentTerms.push(...UBLModelUtils.getDefaultPaymentTermsAsStrings());
         }
 
         return settings;

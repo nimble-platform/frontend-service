@@ -12,8 +12,9 @@ import {BinaryObject} from "../../../catalogue/model/publish/binary-object";
 import {UBLModelUtils} from "../../../catalogue/model/ubl-model-utils";
 import {DocumentReference} from "../../../catalogue/model/publish/document-reference";
 import {Attachment} from "../../../catalogue/model/publish/attachment";
-import {ActivityVariableParser} from "../activity-variable-parser";
 import { Location } from "@angular/common";
+import {DocumentService} from "../document-service";
+import {CookieService} from 'ng2-cookies';
 
 @Component({
     selector: "ppap-document-upload",
@@ -29,19 +30,23 @@ export class PpapDocumentUploadComponent {
     ppapResponse : PpapResponse = null;
 
     ppapDocuments : DocumentReference[] = [];
-    note: any;
-    noteToSend : any;
+    notes: string[];
+    notesToSend : string[] = [''];
+    additionalDocuments: DocumentReference[];
+    additionalDocumentsToSend: DocumentReference[] = [];
     binaryObjects: { documentName: string, documents: BinaryObject[] }[] = [];
     callStatus:CallStatus = new CallStatus();
     // check whether 'Send Response' button is clicked
     submitted: boolean = false;
 
     constructor(private bpDataService: BPDataService,
-        private bpeService: BPEService,
-        private route: ActivatedRoute,
-        private router: Router,
-        private location: Location) {
-    
+                private bpeService: BPEService,
+                private route: ActivatedRoute,
+                private router: Router,
+                private location: Location,
+                private cookieService: CookieService,
+                private documentService: DocumentService) {
+
     }
 
     ngOnInit() {
@@ -49,13 +54,16 @@ export class PpapDocumentUploadComponent {
             this.processid = params['pid'];
 
             this.bpeService.getProcessDetailsHistory(this.processid).then(task => {
-                this.ppap = ActivityVariableParser.getInitialDocument(task).value as Ppap;
-                let i = 0;
-                this.documents = [];
-                for(;i<this.ppap.documentType.length;i++){
-                    this.documents.push(this.ppap.documentType[i]);
-                }
-                this.note = this.ppap.note;
+                this.documentService.getInitialDocument(task).then(initialDocument => {
+                    this.ppap = initialDocument as Ppap;
+                    let i = 0;
+                    this.documents = [];
+                    for(;i<this.ppap.documentType.length;i++){
+                        this.documents.push(this.ppap.documentType[i]);
+                    }
+                    this.notes = this.ppap.note;
+                    this.additionalDocuments = this.ppap.additionalDocumentReference;
+                });
             });
         });
     }
@@ -117,8 +125,9 @@ export class PpapDocumentUploadComponent {
             this.ppapResponse.requestedDocument = this.ppapDocuments;
         }
 
-        this.ppapResponse.note = this.noteToSend;
-        const vars: ProcessVariables = ModelUtils.createProcessVariables("Ppap", this.ppap.buyerCustomerParty.party.id, this.ppap.sellerSupplierParty.party.id, this.ppapResponse, this.bpDataService);
+        this.ppapResponse.note = this.notesToSend;
+        this.ppapResponse.additionalDocumentReference = this.additionalDocumentsToSend;
+        const vars: ProcessVariables = ModelUtils.createProcessVariables("Ppap", this.ppap.buyerCustomerParty.party.id, this.ppap.sellerSupplierParty.party.id, this.cookieService.get("user_id"),this.ppapResponse, this.bpDataService);
         const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.bpDataService.processMetadata.processId);
 
         this.callStatus.submit();

@@ -12,6 +12,11 @@ import { ProcessType } from "../bpe/model/process-type";
 import { ThreadEventMetadata } from "../catalogue/model/publish/thread-event-metadata";
 import { ThreadEventStatus } from "../catalogue/model/publish/thread-event-status";
 import { SearchContextService } from "../simple-search/search-context.service";
+import {DocumentService} from "../bpe/bp-view/document-service";
+import { EvidenceSupplied } from "../catalogue/model/publish/evidence-supplied";
+import { Comment } from "../catalogue/model/publish/comment";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { Code } from "../catalogue/model/publish/code";
 
 /**
  * Created by suat on 12-Mar-18.
@@ -41,18 +46,40 @@ export class ThreadSummaryComponent implements OnInit {
     eventCount: number = 0
     archiveCallStatus: CallStatus = new CallStatus();
     fetchCallStatus: CallStatus = new CallStatus();
+    saveCallStatusRating: CallStatus = new CallStatus();
     showDataChannelButton: boolean = false;
     channelLink = "";
+    compRating: any = {
+      "QualityOfTheNegotiationProcess": 0,
+      "QualityOfTheOrderingProcess": 0,
+      "ResponseTime": 0,
+      "ProductListingAccuracy": 0,
+      "ConformanceToOtherAgreedTerms": 0,
+      "DeliveryAndPackaging": 0
+    };
+    compComment: any = [];
+
+    // this is always true unless an approved order is present in this process group or the collaboration is already cancelled
+    showCancelCollaborationButton = true;
+
+    // this is always false unless the collaboration was cancelled or fully completed (buyer side only)
+    showRateCollaborationButton = false;
 
     constructor(private bpeService: BPEService,
                 private cookieService: CookieService,
                 private dataChannelService: DataChannelService,
                 private searchContextService: SearchContextService,
                 private bpDataService: BPDataService,
-                private router: Router) {
+                private router: Router,
+                private modalService: NgbModal,
+                private documentService: DocumentService) {
     }
 
     ngOnInit(): void {
+        if(this.processInstanceGroup.status == "CANCELLED"){
+            this.showCancelCollaborationButton = false;
+            //this.showRateCollaborationButton = true;
+        }
         this.eventCount = this.processInstanceGroup.processInstanceIDs.length;
         this.hasHistory = this.eventCount > 1;
         this.fetchEvents();
@@ -70,6 +97,13 @@ export class ThreadSummaryComponent implements OnInit {
             events = events.reverse();
             this.history = events.slice(1, events.length);
             this.lastEvent = events[0];
+            // Update History in order to remove pending orders
+            this.updateHistory(this.history);
+            if (!this.lastEvent.isRated) {
+              if (this.lastEvent.statusText == "Receipt Advice sent" || this.processInstanceGroup.status == "CANCELLED") {
+                this.showRateCollaborationButton = true;
+              }
+            }
             this.computeTitleEvent();
             this.fetchCallStatus.callback("Successfully fetched events.", true);
         }).catch(error => {
@@ -80,40 +114,52 @@ export class ThreadSummaryComponent implements OnInit {
     private async fetchThreadEvent(processInstanceId: string): Promise<ThreadEventMetadata> {
         const activityVariables = await this.bpeService.getProcessDetailsHistory(processInstanceId);
         const processType = ActivityVariableParser.getProcessType(activityVariables);
-        const initialDoc: any = ActivityVariableParser.getInitialDocument(activityVariables);
-        const response: any = ActivityVariableParser.getResponse(activityVariables);
-        const userRole = ActivityVariableParser.getUserRole(activityVariables,this.processInstanceGroup.partyID)
-        const processId = initialDoc.processInstanceId;
+        const initialDoc: any = await this.documentService.getInitialDocument(activityVariables);
+        const response: any = await this.documentService.getResponseDocument(activityVariables);
+        const userRole = await this.documentService.getUserRole(activityVariables,this.processInstanceGroup.partyID);
+        const processId = ActivityVariableParser.getProcessInstanceID(activityVariables);
 
         const [lastActivity, processInstance] = await Promise.all([
             this.bpeService.getLastActivityForProcessInstance(processId),
             this.bpeService.getProcessInstanceDetails(processId)]
         )
 
+        if (userRole === "buyer") {
+            this.lastEventPartnerID = ActivityVariableParser.getProductFromProcessData(initialDoc,processType).manufacturerParty.id;
+        }
+        else {
+            this.lastEventPartnerID = ActivityVariableParser.getBuyerId(initialDoc,processType);
+        }
+
+        const isRated = await this.bpeService.ratingExists(processInstanceId, this.lastEventPartnerID);
+
         const event: ThreadEventMetadata = new ThreadEventMetadata(
             processType,
             processType.replace(/[_]/gi, " "),
             processId,
             moment(lastActivity.startTime + "Z", 'YYYY-MM-DDTHH:mm:ssZ').format("YYYY-MM-DD HH:mm"),
-            ActivityVariableParser.getTradingPartnerName(initialDoc, this.cookieService.get("company_id")),
-            ActivityVariableParser.getProductFromProcessData(initialDoc),
-            ActivityVariableParser.getNoteFromProcessData(initialDoc),
+            ActivityVariableParser.getTradingPartnerName(initialDoc, this.cookieService.get("company_id"),processType),
+            ActivityVariableParser.getProductFromProcessData(initialDoc,processType),
+            ActivityVariableParser.getNoteFromProcessData(initialDoc,processType),
             this.getBPStatus(response),
-            initialDoc.value,
+            initialDoc,
             activityVariables,
-            userRole === "buyer"
+            userRole === "buyer",
+            isRated === "true"
         );
 
         this.fillStatus(event, processInstance.state, processType, response, userRole === "buyer");
-
+        this.setCancelCollaborationButtonStatus(processType,response);
         this.checkDataChannel(event);
 
+        /*
         if (userRole === "buyer") {
-          this.lastEventPartnerID = ActivityVariableParser.getProductFromProcessData(initialDoc).manufacturerParty.id;
+            this.lastEventPartnerID = ActivityVariableParser.getProductFromProcessData(initialDoc,processType).manufacturerParty.id;
         }
         else {
-          this.lastEventPartnerID = ActivityVariableParser.getBuyerId(initialDoc);
+            this.lastEventPartnerID = ActivityVariableParser.getBuyerId(initialDoc,processType);
         }
+        */
 
         return event;
     }
@@ -134,15 +180,26 @@ export class ThreadSummaryComponent implements OnInit {
     }
 
     navigateToCompanyDetails() {
-      this.router.navigate(['/user-mgmt/company-details'], {
-        queryParams: {
-            id: this.lastEventPartnerID
+        this.router.navigate(['/user-mgmt/company-details'], {
+            queryParams: {
+                id: this.lastEventPartnerID
+            }
+        });
+    }
+
+    private updateHistory(events: ThreadEventMetadata[]) {
+      for (let event of events) {
+        if (event.processType == "Order" && event.status != "DONE" && event.processStatus == "Completed") {
+          event.status = "DONE";
+          if (event.statusText != "Order declined")
+            event.statusText = "Order approved";
+          event.actionText = "See Order";
         }
-      });
+      }
     }
 
     private fillStatus(event: ThreadEventMetadata, processState: "EXTERNALLY_TERMINATED" | "COMPLETED" | "ACTIVE",
-        processType: ProcessType, response: any, buyer: boolean): void {
+                       processType: ProcessType, response: any, buyer: boolean): void {
 
         event.status = this.getStatus(processState, processType, response, buyer);
 
@@ -207,12 +264,18 @@ export class ThreadSummaryComponent implements OnInit {
         } else {
             switch(processType) {
                 case "Order":
-                    if (response.value.acceptedIndicator) {
-                        event.statusText = "Order approved";
+                    if (response.acceptedIndicator) {
+                        if(buyer) {
+                            event.statusText = "Waiting for Dispatch Advice";
+                            event.actionText = "See Order";
+                        } else {
+                            event.statusText = "Order approved";
+                            event.actionText = "Send Dispatch Advice";
+                        }
                     } else {
                         event.statusText = "Order declined";
+                        event.actionText = "See Order";
                     }
-                    event.actionText = "See Order";
                     break;
                 case "Negotiation":
                     if (buyer) {
@@ -225,13 +288,14 @@ export class ThreadSummaryComponent implements OnInit {
                 case "Fulfilment":
                     if (buyer) {
                         event.statusText = "Receipt Advice sent";
+                        //this.showRateCollaborationButton = true;
                     } else {
                         event.statusText = "Receipt Advice received";
                     }
                     event.actionText = "See Receipt Advice";
                     break;
                 case "Ppap":
-                    if (response.value.acceptedIndicator) {
+                    if (response.acceptedIndicator) {
                         event.statusText = "Ppap approved";
                     } else {
                         event.statusText = "Ppap declined";
@@ -259,9 +323,12 @@ export class ThreadSummaryComponent implements OnInit {
     }
 
     private getStatus(processState: "EXTERNALLY_TERMINATED" | "COMPLETED" | "ACTIVE",
-            processType: ProcessType, response: any, buyer: boolean): ThreadEventStatus {
+                      processType: ProcessType, response: any, buyer: boolean): ThreadEventStatus {
         switch(processState) {
             case "COMPLETED":
+                if(processType === "Order") {
+                     return buyer ? "WAITING" : "ACTION_REQUIRED";
+                }
                 return "DONE";
             case "EXTERNALLY_TERMINATED":
                 return "CANCELLED";
@@ -341,15 +408,129 @@ export class ThreadSummaryComponent implements OnInit {
 
     checkDataChannel(event:ThreadEventMetadata) {
         if(event.processType === 'Order') {
-          this.dataChannelService.channelsForBusinessProcess(event.processId)
-            .then(channels => {
-              if (channels.length > 0) {
-                this.showDataChannelButton = true;
-                const channelId = channels[0].channelID;
-                this.channelLink = `/data-channel/details/${channelId}`
-              }
-            });
+            this.dataChannelService.channelsForBusinessProcess(event.processId)
+                .then(channels => {
+                    if (channels.length > 0) {
+                        this.showDataChannelButton = true;
+                        const channelId = channels[0].channelID;
+                        this.channelLink = `/data-channel/details/${channelId}`
+                    }
+                })
+                .catch(err => {
+                    this.showDataChannelButton = false;
+                });
         }
+    }
+
+    cancelCollaboration(){
+        if (confirm("Are you sure that you want to cancel this collaboration?")) {
+            this.archiveCallStatus.submit();
+            this.bpeService.cancelCollaboration(this.processInstanceGroup.id)
+                .then(() => {
+                    this.archiveCallStatus.callback("Cancelled collaboration successfully");
+                    this.threadStateUpdated.next();
+                })
+                .catch(err => {
+                    this.archiveCallStatus.error("Failed to cancel collaboration",err);
+                });
+        }
+    }
+
+    setCancelCollaborationButtonStatus(processType: ProcessType, response: any){
+        switch(processType) {
+            case "Order":
+                if (response && response.acceptedIndicator) {
+                    // since the order is approved, do not show the button
+                    this.showCancelCollaborationButton = false;
+                }
+                break;
+            case "Transport_Execution_Plan":
+                if (response && response.documentStatusCode.name == "Accepted") {
+                    this.showCancelCollaborationButton = false;
+                }
+        }
+    }
+
+    rateCollaboration(success,cancel) {
+      if(this.processInstanceGroup.status == "CANCELLED") {
+        this.rateCollaborationCancelled(cancel);
+      }
+      else {
+        this.rateCollaborationSuccess(success);
+      }
+    }
+
+    rateCollaborationSuccess(content) {
+      this.compRating = {
+        "QualityOfTheNegotiationProcess": 0,
+        "QualityOfTheOrderingProcess": 0,
+        "ResponseTime": 0,
+        "ProductListingAccuracy": 0,
+        "ConformanceToOtherAgreedTerms": 0,
+        "DeliveryAndPackaging": 0
+      };
+      this.compComment = "";
+      this.modalService.open(content);
+    }
+
+    rateCollaborationCancelled(content) {
+      this.compComment = "";
+      this.modalService.open(content);
+    }
+
+    onSaveSuccessRating(close: any) {
+        let ratings: EvidenceSupplied[] = [];
+        let reviews: Comment[] = [];
+        for (var key in this.compRating) {
+          var evidence = new EvidenceSupplied(key,this.compRating[key]);
+          ratings.push(evidence);
+        }
+        var comm = new Comment(this.compComment,new Code("","","","",""));
+        reviews.push(comm);
+        this.saveCallStatusRating.submit();
+        this.bpeService
+            .postRatings(this.lastEventPartnerID, this.lastEvent.processId, ratings, reviews)
+            .then(() => {
+                this.saveCallStatusRating.callback("Rating saved", true);
+                close();
+                this.showRateCollaborationButton = false;
+                this.fetchEvents();
+            })
+            .catch(error => {
+                this.saveCallStatusRating.error("Error while saving rating", error);
+            });
+    }
+
+    onSaveCancelRating(close: any) {
+        let ratings: EvidenceSupplied[] = [];
+        let reviews: Comment[] = [];
+        var comm = new Comment("",new Code(this.compComment,"","","",""));
+        reviews.push(comm);
+        this.saveCallStatusRating.submit();
+        this.bpeService
+            .postRatings(this.lastEventPartnerID, this.lastEvent.processId, ratings, reviews)
+            .then(() => {
+                this.saveCallStatusRating.callback("Rating saved", true);
+                close();
+                this.showRateCollaborationButton = false;
+                this.fetchEvents();
+            })
+            .catch(error => {
+                this.saveCallStatusRating.error("Error while saving rating", error);
+            });
+    }
+
+    checkCompRating(): boolean {
+      var filled = true;
+      for (var key in this.compRating) {
+        if (this.compRating[key] == 0)
+          filled = false;
+      }
+      return !filled;
+    }
+
+    checkCompComment(): boolean {
+      return this.compComment == "";
     }
 
 }

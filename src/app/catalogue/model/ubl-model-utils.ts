@@ -53,6 +53,7 @@ import { TradingTerm } from "./publish/trading-term";
 import { copy } from "../../common/utils";
 import { CompanyNegotiationSettings } from "../../user-mgmt/model/company-negotiation-settings";
 import { headersToString } from "../../../../node_modules/@types/selenium-webdriver/http";
+import {ShipmentStage} from "./publish/shipment-stage";
 
 /**
  * Created by suat on 05-Jul-17.
@@ -97,7 +98,7 @@ export class UBLModelUtils {
         // price
         const price: Price = this.createPrice();
         // item location quantity
-        const ilq: ItemLocationQuantity = new ItemLocationQuantity(price, [], null);
+        const ilq: ItemLocationQuantity = new ItemLocationQuantity(price, [], [],null);
         return ilq;
     }
 
@@ -120,8 +121,8 @@ export class UBLModelUtils {
 
         // create required item location quantity
         const ilq = this.createItemLocationQuantity("");
-        const catalogueLine = new CatalogueLine(uuid, false,
-            this.createPeriod(settings.warrantyPeriodRanges[0].start, settings.warrantyPeriodUnits[0]), [], ilq, [], goodsItem);
+        const catalogueLine = new CatalogueLine(uuid, null, null, false, 
+            this.createPeriod(settings.warrantyPeriodRanges[0].start, settings.warrantyPeriodUnits[0]), [], ilq,[], goodsItem);
 
         // extra initialization
         catalogueLine.goodsItem.containingPackage.quantity.unitCode = "item(s)";
@@ -137,7 +138,7 @@ export class UBLModelUtils {
         const orderLine: OrderLine = new OrderLine(lineItem);
         const settings = new CompanyNegotiationSettings();
 
-        return new Order(this.generateUUID(), "", new Period(), new Address(), null, null, null, 
+        return new Order(this.generateUUID(), [''], new Period(), new Address(), null, null, null,
         this.getDefaultPaymentMeans(settings), this.getDefaultPaymentTerms(settings), new MonetaryTotal(), [orderLine]);
     }
 
@@ -147,7 +148,7 @@ export class UBLModelUtils {
         this.removeHjidFieldsFromObject(order.sellerSupplierParty);
         const customerParty:CustomerParty = order.buyerCustomerParty;
         const supplierParty:SupplierParty = order.sellerSupplierParty;
-        const orderResponseSimple:OrderResponseSimple = new OrderResponseSimple(this.generateUUID(), "", "", acceptedIndicator, orderReference, supplierParty, customerParty);
+        const orderResponseSimple:OrderResponseSimple = new OrderResponseSimple(this.generateUUID(), [''], "", acceptedIndicator, orderReference, supplierParty, customerParty);
         return orderResponseSimple;
     }
 
@@ -156,7 +157,7 @@ export class UBLModelUtils {
         const item:Item = this.createItem();
         const price: Price = this.createPrice();
         const lineItem:LineItem = this.createLineItem(quantity, price, item);
-        const ppap = new Ppap(this.generateUUID(), "",documents, null, null, lineItem);
+        const ppap = new Ppap(this.generateUUID(), [''],documents, null, null, lineItem);
         return ppap;
     }
 
@@ -262,8 +263,8 @@ export class UBLModelUtils {
         return rfq;
     }
 
-    private static getDefaultPaymentTerms(settings?: CompanyNegotiationSettings): PaymentTerms {
-        const terms = new PaymentTerms([
+    public static getDefaultPaymentTerms(settings?: CompanyNegotiationSettings): PaymentTerms {
+        const terms = new PaymentTerms([], [
             new TradingTerm("Payment_In_Advance","Payment in advance","PIA",["false"]),
             new TradingTerm("End_of_month","End of month","EOM",["false"]),
             new TradingTerm("Cash_next_delivery","Cash next delivery","CND",["false"]),
@@ -311,6 +312,9 @@ export class UBLModelUtils {
 
     public static createQuotation(rfq: RequestForQuotation): Quotation {
         const quotationLine: QuotationLine = new QuotationLine(copy(rfq.requestForQuotationLine[0].lineItem));
+        // set start and end dates
+        quotationLine.lineItem.delivery[0].requestedDeliveryPeriod.startDate = rfq.delivery.requestedDeliveryPeriod.startDate;
+        quotationLine.lineItem.delivery[0].requestedDeliveryPeriod.endDate = rfq.delivery.requestedDeliveryPeriod.endDate;
         this.removeHjidFieldsFromObject(rfq.buyerCustomerParty);
         this.removeHjidFieldsFromObject(rfq.sellerSupplierParty);
         const customerParty: CustomerParty = rfq.buyerCustomerParty;
@@ -328,6 +332,7 @@ export class UBLModelUtils {
         despatchAdvice.id = this.generateUUID();
         despatchAdvice.orderReference = [UBLModelUtils.createOrderReference(order.id)];
         despatchAdvice.despatchLine = [new DespatchLine(new Quantity(), order.orderLine[0].lineItem.item, [new Shipment()])];
+        despatchAdvice.despatchLine[0].shipment[0].shipmentStage.push(new ShipmentStage());
         despatchAdvice.despatchSupplierParty = order.sellerSupplierParty;
         despatchAdvice.deliveryCustomerParty = order.buyerCustomerParty;
         return despatchAdvice
@@ -388,6 +393,8 @@ export class UBLModelUtils {
         transportExecutionPlanRequest.consignment[0].consolidatedShipment.push(quotation.quotationLine[0].lineItem.delivery[0].shipment);
         transportExecutionPlanRequest.consignment[0].grossVolumeMeasure = quotation.quotationLine[0].lineItem.delivery[0].shipment.consignment[0].grossVolumeMeasure;
         transportExecutionPlanRequest.consignment[0].grossWeightMeasure = quotation.quotationLine[0].lineItem.delivery[0].shipment.consignment[0].grossWeightMeasure;
+        transportExecutionPlanRequest.serviceStartTimePeriod.startDate = quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.startDate;
+        transportExecutionPlanRequest.serviceStartTimePeriod.endDate = quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.endDate;
         this.removeHjidFieldsFromObject(transportExecutionPlanRequest);
         return transportExecutionPlanRequest
     }
@@ -423,7 +430,7 @@ export class UBLModelUtils {
         itemInformationResponse.item[0] = JSON.parse(JSON.stringify(itemInformationRequest.itemInformationRequestLine[0].salesItem[0].item));
         itemInformationResponse.item[0].itemSpecificationDocumentReference = [];
         itemInformationResponse.sellerSupplierParty = itemInformationRequest.sellerSupplierParty;
-        itemInformationResponse.buyerCustomerParty = itemInformationResponse.buyerCustomerParty;
+        itemInformationResponse.buyerCustomerParty = itemInformationRequest.buyerCustomerParty;
         this.removeHjidFieldsFromObject(itemInformationResponse);
         return itemInformationResponse;
     }
@@ -516,6 +523,7 @@ export class UBLModelUtils {
         delete object.startTimeItem;
         delete object.endDateItem;
         delete object.endTimeItem;
+        delete object.estimatedDeliveryDateItem;
         for (const field in object) {
             if(object.hasOwnProperty(field) && object[field] != null && typeof(object[field]) === 'object') {
                 this.removeHjidFieldsFromObject(object[field]);

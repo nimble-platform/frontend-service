@@ -6,6 +6,7 @@ import { UBLModelUtils } from "../catalogue/model/ubl-model-utils";
 import { sanitizePropertyName, getPropertyKey, periodToString, isCustomProperty, getPropertyValues, isTransportService } from "./utils";
 import { PriceWrapper } from "./price-wrapper";
 import { CompanyNegotiationSettings } from "../user-mgmt/model/company-negotiation-settings";
+import {Quantity} from '../catalogue/model/publish/quantity';
 
 /**
  * Wrapper class for Catalogue line.
@@ -15,9 +16,10 @@ export class ProductWrapper {
 
     private priceWrapper: PriceWrapper;
 
-    constructor(public line: CatalogueLine, 
-                public negotiationSettings: CompanyNegotiationSettings) {
-        this.priceWrapper = new PriceWrapper(line.requiredItemLocationQuantity.price);
+    constructor(public line: CatalogueLine,
+                public negotiationSettings: CompanyNegotiationSettings,
+                public quantity: Quantity = null) {
+        this.priceWrapper = new PriceWrapper(line.requiredItemLocationQuantity.price,this.quantity,this.line.priceOption);
     }
 
     get goodsItem() {

@@ -100,6 +100,9 @@
 					<i class="fa fa-chart-pie"></i> <span i18n>Platform Management</span>
 				</a>
 				<div class="dropdown-menu" aria-labelledby="dropdownMenuPM" ngbDropdownMenu>
+					<a class="dropdown-item" routerLink="/analytics/trust" routerLinkActive="active">
+						<i class="fa fa-sliders-h dd-icon"></i> Trust Policy Configuration
+					</a>
 					<a class="dropdown-item" routerLink="/analytics/platform" routerLinkActive="active">
 						<i class="fa fa-chart-area dd-icon"></i> Platform Analytics
 					</a>
@@ -134,8 +137,11 @@
 					<i class="fa fa-user"></i> {{fullName}}
 				</a>
 				<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuUser" ngbDropdownMenu>
-					<a *ngIf="checkRoles('comp')" class="dropdown-item" routerLink="/user-mgmt/company-settings" routerLinkActive="active">
+					<a *ngIf="checkRoles('comp-settings')" class="dropdown-item" routerLink="/user-mgmt/company-settings" routerLinkActive="active">
 						<i class="fa fa-cog dd-icon"></i> Company Settings
+					</a>
+					<a *ngIf="companyID" class="dropdown-item" routerLink="/user-mgmt/company-rating" routerLinkActive="active">
+						<i class="fa fa-star dd-icon"></i> Company Ratings
 					</a>
 					<a class="dropdown-item" routerLink="/user-mgmt/logout">
 						<i class="fa fa-lock dd-icon"></i> <span i18n>Logout</span>
@@ -180,8 +186,8 @@
 		We will get back to you within one business day.
 	</div>
 	<div class="modal-footer">
-		<a href="assets/user_manual.pdf" target="_blank" type="button" class="btn btn-primary" (click)="d('')">Open manual</a>
-		<a [href]="mailto" type="button" class="btn btn-primary" (click)="d('')">Contact support</a>
+		<a href="assets/user_manual.pdf" target="_blank" role="button" class="btn btn-primary" (click)="d('')">Open manual</a>
+		<a [href]="mailto" role="button" class="btn btn-primary" (click)="d('')">Contact support</a>
 	</div>
 </ng-template>
 <!--<div id="support-btn" (click)="open(support)"><img id="support-img" src="assets/support_white.png"/></div>-->

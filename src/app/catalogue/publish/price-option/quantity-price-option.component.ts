@@ -12,4 +12,5 @@ import {Amount} from "../../model/publish/amount";
 })
 export class QuantityPriceOptionComponent {
     @Input() priceOption: PriceOption;
+    @Input() discountUnits;
 }

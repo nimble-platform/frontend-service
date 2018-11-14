@@ -235,7 +235,7 @@
         <!-- Price Tab -->
         <div class="row space-before details-tab" *ngIf="selectedTabSinglePublish === 'PRICE'">
             <div class="col-12">
-                <product-price-tab [catalogueLine]="catalogueLine" [disabled]="isLoading()">
+                <product-price-tab [catalogueLine]="catalogueLine" [disabled]="isLoading()" [companyNegotiationSettings]="companyNegotiationSettings">
                 </product-price-tab>
             </div>
         </div>
@@ -349,7 +349,7 @@
     <ng-template #categoriesModal let-c="close" let-d="dismiss">
         <div class="modal-header">
             <h5 class="modal-title" id="modal-basic-title">Please select the attributes to be displayed from each category</h5>
-            <button type="button" class="close" aria-label="Close" (click)="d('')">
+            <button type="button" class="close" aria-label="Close" (click)="d('cross')">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
@@ -398,8 +398,8 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" (click)="d('')">Cancel</button>
-            <button type="button" class="btn btn-primary" (click)="d('')">OK</button>
+            <button type="button" class="btn btn-secondary" (click)="d('cancel')">Cancel</button>
+            <button type="button" class="btn btn-primary" (click)="c('ok')">OK</button>
         </div>
     </ng-template>
 

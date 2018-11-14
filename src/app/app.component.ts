@@ -243,6 +243,10 @@ export class AppComponent implements OnInit {
 				if (all_rights)
 					this.allowed = true;
 				break;
+      case "comp-settings":
+        if (all_rights || initial)
+          this.allowed = true;
+        break;
       case "pm":
         if (manager)
           this.allowed = true;

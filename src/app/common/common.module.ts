@@ -12,6 +12,7 @@ import { PlainAmountInputComponent } from './plain-amount-input.component';
 import { FileInputComponent } from './file-input.component';
 import { DateInputComponent } from './date-input.component';
 import { AddressInputComponent } from './address-input.component';
+import { AddressInputSimpleComponent } from './address-input-simple.component';
 import { BooleanInputComponent } from './boolean-input.component';
 import { MultiAddressInputComponent } from './multi-address-input.component';
 import { InputLabelComponent } from './input-label.component';
@@ -34,6 +35,7 @@ import {AmountInputComponent} from "./amount-input.component";
 		FileInputComponent,
 		DateInputComponent,
 		AddressInputComponent,
+		AddressInputSimpleComponent,
 		BooleanInputComponent,
 		MultiAddressInputComponent,
 		InputLabelComponent,
@@ -48,6 +50,7 @@ import {AmountInputComponent} from "./amount-input.component";
 		FileInputComponent,
 		DateInputComponent,
 		AddressInputComponent,
+		AddressInputSimpleComponent,
 		BooleanInputComponent,
 		MultiAddressInputComponent,
 		InputLabelComponent,

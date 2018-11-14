@@ -17,7 +17,7 @@
                 </div>
                 <div class="ml-3 mr-3">
                     <select class="form-control form-control-sm" #discountTargetSelect
-                            (change)="changeDiscountTarget(discountTargetSelect.value, priceOption.itemLocationQuantity.allowanceCharge)"
+                            (change)="changeDiscountTarget(discountTargetSelect.value, priceOption.itemLocationQuantity.allowanceCharge[0])"
                             [(ngModel)]="selectedDiscountTarget">
                         <option *ngFor="let option of object.keys(discountTargets)" [value]="discountTargets[option]">{{discountTargets[option]}}</option>
                     </select>

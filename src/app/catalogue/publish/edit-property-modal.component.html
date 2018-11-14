@@ -1,7 +1,7 @@
 <ng-template #modal let-c="close" let-d="dismiss">
         <div class="modal-header">
             <h5 class="modal-title" id="modal-basic-title">{{ prettyName }}</h5>
-            <button type="button" class="close" aria-label="Close" (click)="d('')">
+            <button type="button" class="close" aria-label="Close" (click)="d('cross')">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
@@ -21,7 +21,7 @@
                     </div>
                     <div class="col-9">
                         <file-input *ngIf="property.valueQualifier === 'BINARY'" [binaryObjects]="property.valueBinary"
-                            [multiple]="true" [maxSize]=2>
+                            [multiple]="true" [maxSize]=1>
                         </file-input>
                         <ng-container *ngFor="let value of getValues(); let i = index">
                             <div [ngSwitch]="property.valueQualifier" class="row value-container">
@@ -60,7 +60,7 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" (click)="d('')">Cancel</button>
-            <button type="button" class="btn btn-primary" (click)="d('')" [disabled]="prettyName === ''">OK</button>
+            <button type="button" class="btn btn-secondary" (click)="d('cancel')">Cancel</button>
+            <button type="button" class="btn btn-primary" (click)="c('ok')" [disabled]="prettyName === ''">OK</button>
         </div>
     </ng-template>

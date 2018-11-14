@@ -3,7 +3,7 @@
 	<div class="form-group row">
 		<div class="col-12">
 			<div class="input-group">
-			  <input type="text" class="form-control" id="searchTerm" required [(ngModel)]="model.q" [ngbTypeahead]="getSuggestions" name="searchTerm" #q="ngModel" pattern=".{1,}" placeholder="Product / Service / Company">
+			  <input type="text" class="form-control" id="searchTerm" required [(ngModel)]="model.q" [ngbTypeahead]="getSuggestions" [focusFirst]=false name="searchTerm" #q="ngModel" pattern=".{1,}" placeholder="Product / Service / Company">
 			  <div class="input-group-append">
 					<button type="submit" class="btn btn-outline-secondary" [disabled]="!simpleSearchForm.form.valid">
 						<i class="fa fa-search"></i>
@@ -101,13 +101,15 @@
 
 	<div [hidden]="!callback">
 		<hr/>
-		<div [hidden]="size==0">
-
+		<div>
 			<div class="row space-after">
-				<div class="col-6">
+				<div *ngIf="size==0" class="col-12">
+					<span i18n>No search results</span>
+				</div>
+				<div *ngIf="size>0" class="col-6">
 					<span i18n>Showing results</span> {{ start }} - {{ end }} <span i18n>of</span> {{ size }}
 				</div>
-				<div class="col-6">
+				<div *ngIf="size>0" class="col-6">
 					<ngb-pagination [(collectionSize)]="size" [(page)]="page" [maxSize]="5" [boundaryLinks]="true" (pageChange)="get(objToSubmit)"></ngb-pagination>
 				</div>
 			</div>
@@ -122,121 +124,69 @@
 						</div>
 					</div>
 
-					<div class="pointer" (click)="showCatSection=!showCatSection">
-						<h5>Categories <span *ngIf="!showCatSection"><i class="fa fa-angle-double-down"></i></span><span *ngIf="showCatSection"><i class="fa fa-angle-double-up"></i></span></h5>
-					</div>
+					<div *ngIf="size>0">
 
-					<div *ngIf="showCatSection">
-						<div class="card border-primary-nimble mb-3">
-							<div class="card-header text-white bg-primary-nimble">
-								Category
-							</div>
-							<div class="card-body">
-								<div *ngIf="cat_level!=-1">
-									<div *ngFor="let lvl0 of cat_levels[0]">
-										<div *ngIf="cat==lvl0.name">
-											<span class="clickable" (click)="setCat(lvl0.name)"><b>{{ lvl0.name }} ({{ lvl0.count }})</b></span>
-										</div>
-										<div *ngIf="cat!=lvl0.name&&cat_level!=0">
-											<span class="clickable" (click)="setCat(lvl0.name)">{{ lvl0.name }} ({{ lvl0.count }})</span>
-										</div>
-									</div>
-								</div>
-								<div *ngIf="cat_level>=0">
-									<div *ngFor="let lvl1 of cat_levels[1]">
-										<div *ngIf="cat==lvl1.name">
-											<span class="clickable" (click)="setCat(lvl1.name)"><b>&gt; {{ lvl1.name }} ({{ lvl1.count }})</b></span>
-										</div>
-										<div *ngIf="cat!=lvl1.name&&cat_level!=1">
-											<span class="clickable" (click)="setCat(lvl1.name)">&gt; {{ lvl1.name }} ({{ lvl1.count }})</span>
-										</div>
-									</div>
-								</div>
-								<div *ngIf="cat_level>=1">
-									<div *ngFor="let lvl2 of cat_levels[2]">
-										<div *ngIf="cat==lvl2.name">
-											<span class="clickable" (click)="setCat(lvl2.name)"><b>&gt;&gt; {{ lvl2.name }} ({{ lvl2.count }})</b></span>
-										</div>
-										<div *ngIf="cat!=lvl2.name&&cat_level!=2">
-											<span class="clickable" (click)="setCat(lvl2.name)">&gt;&gt; {{ lvl2.name }} ({{ lvl2.count }})</span>
-										</div>
-									</div>
-								</div>
-								<div *ngIf="cat_level>=2">
-									<div *ngFor="let lvl3 of cat_levels[3]">
-										<div *ngIf="cat==lvl3.name">
-											<span class="clickable" (click)="setCat(lvl3.name)"><b>&gt;&gt;&gt; {{ lvl3.name }} ({{ lvl3.count }})</b></span>
-										</div>
-										<div *ngIf="cat!=lvl3.name&&cat_level!=3">
-											<span class="clickable" (click)="setCat(lvl3.name)">&gt;&gt;&gt; {{ lvl3.name }} ({{ lvl3.count }})</span>
-										</div>
-									</div>
-								</div>
-								<div *ngIf="cat_level<0 && cat_other_count>0">
-									<hr>
-									<span [ngClass]="{'clickable':cat_level==-2,'':cat_level>-2}" (click)="showOther=!showOther">Other ({{cat_other_count}}) <span *ngIf="cat_level==-2&&!showOther"><i class="fa fa-angle-double-down"></i></span><span *ngIf="cat_level==-2&&showOther"><i class="fa fa-angle-double-up"></i></span></span>
-								</div>
-								<div *ngIf="(showOther&&cat_level==-2)||cat_level==-1">
-									<div *ngFor="let other of cat_other">
-										<div *ngIf="cat==other.name">
-											<span class="clickable" (click)="setCat(other.name)"><b>&gt; {{ other.name }} ({{ other.count }})</b></span>
-										</div>
-										<div *ngIf="cat!=other.name&&cat_level!=-1">
-											<span class="clickable" (click)="setCat(other.name)">&gt; {{ other.name }} ({{ other.count }})</span>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-
-					<hr/>
-
-					<div *ngIf="checkProdCatCount()>0">
-
-						<div class="pointer" (click)="showProdSection=!showProdSection">
-							<h5>Product Filters <span *ngIf="!showProdSection"><i class="fa fa-angle-double-down"></i></span><span *ngIf="showProdSection"><i class="fa fa-angle-double-up"></i></span></h5>
+						<div class="pointer" (click)="showCatSection=!showCatSection">
+							<h5>Categories <span *ngIf="!showCatSection"><i class="fa fa-angle-double-down"></i></span><span *ngIf="showCatSection"><i class="fa fa-angle-double-up"></i></span></h5>
 						</div>
 
-						<div *ngIf="showProdSection">
-							<div class="card mb-3">
-								<div class="card-header">
-									Price
+						<div *ngIf="showCatSection">
+							<div class="card border-primary-nimble mb-3">
+								<div class="card-header text-white bg-primary-nimble">
+									Category
 								</div>
 								<div class="card-body">
-									<div class="row mb-2">
-											<div class="col-4">
-												<input class="form-control form-control-sm" [(ngModel)]="selectedPriceMin" [ngModelOptions]="{standalone: true}" type="number">
+									<div *ngIf="cat_level!=-1">
+										<div *ngFor="let lvl0 of cat_levels[0]">
+											<div *ngIf="cat==lvl0.name">
+												<span class="clickable" (click)="setCat(lvl0.name)"><b>{{ lvl0.name }}</b></span> ({{ lvl0.count }})
 											</div>
-											<div class="col-1">
-												-
+											<div *ngIf="cat!=lvl0.name&&cat_level!=0">
+												<span class="clickable" (click)="setCat(lvl0.name)">{{ lvl0.name }}</span> ({{ lvl0.count }})
 											</div>
-											<div class="col-4">
-												<input class="form-control form-control-sm" [(ngModel)]="selectedPriceMax" [ngModelOptions]="{standalone: true}" type="number">
-											</div>
-											<div class="col-3">
-												<select class="form-control form-control-sm" [(ngModel)]="selectedCurrency" [ngModelOptions]="{standalone: true}">
-								            <option *ngFor="let currency of CURRENCIES" [value]="currency">
-								                {{ currency }}
-								            </option>
-								        </select>
-											</div>
+										</div>
 									</div>
-									<button class="btn btn-primary" (click)="setPriceFilter()" [disabled]="!checkPriceFilter()">Apply</button>
-								</div>
-							</div>
-							<div *ngFor="let facet of facetObj">
-								<div *ngIf="facet.total > 0 && checkProdCat(facet.name)" class="card mb-3">
-									<div class="card-header">
-										{{ getName(facet.name) }}
-									</div>
-									<div class="card-body">
-										<div *ngFor="let facetInner of facet.options">
-											<div *ngIf="!checkFacet(facet.name,facetInner.name)">
-												<span class="clickable" (click)="setFacet(facet.name,facetInner.name)">{{ facetInner.name }}</span> ({{ facetInner.count }})
+									<div *ngIf="cat_level>=0">
+										<div *ngFor="let lvl1 of cat_levels[1]">
+											<div *ngIf="cat==lvl1.name">
+												<span class="clickable" (click)="setCat(lvl1.name)"><b>&gt; {{ lvl1.name }}</b></span> ({{ lvl1.count }})
 											</div>
-											<div *ngIf="checkFacet(facet.name,facetInner.name)">
-												<span class="clickable" (click)="setFacet(facet.name,facetInner.name)"><b>{{ facetInner.name }}</b></span> ({{ facetInner.count }})
+											<div *ngIf="cat!=lvl1.name&&cat_level!=1">
+												<span class="clickable" (click)="setCat(lvl1.name)">&gt; {{ lvl1.name }}</span> ({{ lvl1.count }})
+											</div>
+										</div>
+									</div>
+									<div *ngIf="cat_level>=1">
+										<div *ngFor="let lvl2 of cat_levels[2]">
+											<div *ngIf="cat==lvl2.name">
+												<span class="clickable" (click)="setCat(lvl2.name)"><b>&gt;&gt; {{ lvl2.name }}</b></span> ({{ lvl2.count }})
+											</div>
+											<div *ngIf="cat!=lvl2.name&&cat_level!=2">
+												<span class="clickable" (click)="setCat(lvl2.name)">&gt;&gt; {{ lvl2.name }}</span> ({{ lvl2.count }})
+											</div>
+										</div>
+									</div>
+									<div *ngIf="cat_level>=2">
+										<div *ngFor="let lvl3 of cat_levels[3]">
+											<div *ngIf="cat==lvl3.name">
+												<span class="clickable" (click)="setCat(lvl3.name)"><b>&gt;&gt;&gt; {{ lvl3.name }}</b></span> ({{ lvl3.count }})
+											</div>
+											<div *ngIf="cat!=lvl3.name&&cat_level!=3">
+												<span class="clickable" (click)="setCat(lvl3.name)">&gt;&gt;&gt; {{ lvl3.name }}</span> ({{ lvl3.count }})
+											</div>
+										</div>
+									</div>
+									<div *ngIf="cat_level<0 && cat_other_count>0">
+										<hr>
+										<span [ngClass]="{'clickable':cat_level==-2,'':cat_level>-2}" (click)="showOther=!showOther">Other</span><span class="pointer" (click)="showOther=!showOther"> ({{cat_other_count}}) <span *ngIf="cat_level==-2&&!showOther"><i class="fa fa-angle-double-down"></i></span><span *ngIf="cat_level==-2&&showOther"><i class="fa fa-angle-double-up"></i></span></span>
+									</div>
+									<div *ngIf="(showOther&&cat_level==-2)||cat_level==-1">
+										<div *ngFor="let other of cat_other">
+											<div *ngIf="cat==other.name">
+												<span class="clickable" (click)="setCat(other.name)"><b>&gt; {{ other.name }}</b></span> ({{ other.count }})
+											</div>
+											<div *ngIf="cat!=other.name&&cat_level!=-1">
+												<span class="clickable" (click)="setCat(other.name)">&gt; {{ other.name }}</span> ({{ other.count }})
 											</div>
 										</div>
 									</div>
@@ -246,62 +196,194 @@
 
 						<hr/>
 
-					</div>
+						<div *ngIf="checkProdCatCount()>0">
 
-					<div *ngIf="checkCompCatCount()>0">
+							<div class="pointer" (click)="showProdSection=!showProdSection">
+								<h5>Product / Service Filters <span *ngIf="!showProdSection"><i class="fa fa-angle-double-down"></i></span><span *ngIf="showProdSection"><i class="fa fa-angle-double-up"></i></span></h5>
+							</div>
 
-						<div class="pointer" (click)="showCompSection=!showCompSection">
-							<h5>Manufacturer Filters <span *ngIf="!showCompSection"><i class="fa fa-angle-double-down"></i></span><span *ngIf="showCompSection"><i class="fa fa-angle-double-up"></i></span></h5>
-						</div>
-
-						<div *ngIf="showCompSection">
-							<div *ngFor="let facet of facetObj">
-								<div *ngIf="facet.total > 0 && checkCompCat(facet.name)" class="card mb-3">
+							<div *ngIf="showProdSection">
+								<div class="card mb-3">
 									<div class="card-header">
-										{{ getName(facet.name) }}
+										{{ getName(product_price) }}
 									</div>
 									<div class="card-body">
-										<div *ngFor="let facetInner of facet.options">
-											<div *ngIf="!checkFacet(facet.name,facetInner.name)">
-												<span class="clickable" (click)="setFacet(facet.name,facetInner.name)">{{ facetInner.name }}</span> ({{ facetInner.count }})
-											</div>
-											<div *ngIf="checkFacet(facet.name,facetInner.name)">
-												<span class="clickable" (click)="setFacet(facet.name,facetInner.name)"><b>{{ facetInner.name }}</b></span> ({{ facetInner.count }})
+										<div class="row mb-2">
+												<div class="col-4">
+													<input class="form-control form-control-sm" [(ngModel)]="selectedPriceMin" [ngModelOptions]="{standalone: true}" type="number">
+												</div>
+												<div class="col-1">
+													-
+												</div>
+												<div class="col-4">
+													<input class="form-control form-control-sm" [(ngModel)]="selectedPriceMax" [ngModelOptions]="{standalone: true}" type="number">
+												</div>
+												<div class="col-3">
+													<select class="form-control form-control-sm" [(ngModel)]="selectedCurrency" [ngModelOptions]="{standalone: true}">
+									            <option *ngFor="let currency of CURRENCIES" [value]="currency">
+									                {{ currency }}
+									            </option>
+									        </select>
+												</div>
+										</div>
+										<button class="btn btn-primary" (click)="setPriceFilter()" [disabled]="!checkPriceFilter()">Apply</button>
+										<button class="btn btn-secondary ml-2" (click)="resetPriceFilter()" [hidden]="!checkPriceFacet()">Reset</button>
+									</div>
+								</div>
+								<div *ngFor="let facet of facetObj">
+									<div *ngIf="facet.total > 0 && checkProdCat(facet.name)" class="card mb-3">
+										<div class="card-header">
+											{{ getName(facet.name) }}
+										</div>
+										<div class="card-body">
+											<div *ngFor="let facetInner of facet.options">
+												<div *ngIf="!checkFacet(facet.name,facetInner.name)">
+													<span class="clickable" (click)="setFacet(facet.name,facetInner.name)">{{ facetInner.name }}</span> ({{ facetInner.count }})
+												</div>
+												<div *ngIf="checkFacet(facet.name,facetInner.name)">
+													<span class="clickable" (click)="setFacet(facet.name,facetInner.name)"><b>{{ facetInner.name }}</b></span> ({{ facetInner.count }})
+												</div>
 											</div>
 										</div>
 									</div>
 								</div>
 							</div>
+
+							<hr/>
+
 						</div>
 
-						<hr/>
+						<div *ngIf="checkCompCatCount()>0">
 
-					</div>
+							<div class="pointer" (click)="showCompSection=!showCompSection">
+								<h5>Product / Service Vendor Filters <span *ngIf="!showCompSection"><i class="fa fa-angle-double-down"></i></span><span *ngIf="showCompSection"><i class="fa fa-angle-double-up"></i></span></h5>
+							</div>
 
-					<div *ngIf="checkOtherCatCount()>0">
-
-						<div class="pointer" (click)="showOtherSection=!showOtherSection">
-							<h5>Other Filters <span *ngIf="!showOtherSection"><i class="fa fa-angle-double-down"></i></span><span *ngIf="showOtherSection"><i class="fa fa-angle-double-up"></i></span></h5>
-						</div>
-
-						<div *ngIf="showOtherSection">
-							<div *ngFor="let facet of facetObj">
-								<div *ngIf="facet.total > 0 && checkOtherCat(facet.name)" class="card mb-3">
-									<div class="card-header">
-										{{ facet.name }}
-									</div>
-									<div class="card-body">
-										<div *ngFor="let facetInner of facet.options">
-											<div *ngIf="!checkFacet(facet.name,facetInner.name)">
-												<span class="clickable" (click)="setFacet(facet.name,facetInner.name)">{{ facetInner.name }}</span> ({{ facetInner.count }})
-											</div>
-											<div *ngIf="checkFacet(facet.name,facetInner.name)">
-												<span class="clickable" (click)="setFacet(facet.name,facetInner.name)"><b>{{ facetInner.name }}</b></span> ({{ facetInner.count }})
+							<div *ngIf="showCompSection">
+								<div *ngFor="let facet of facetObj">
+									<div *ngIf="facet.total > 0 && checkCompCat(facet.name)" class="card mb-3">
+										<div class="card-header">
+											{{ getName(facet.name) }}
+										</div>
+										<div class="card-body">
+											<div *ngFor="let facetInner of facet.options">
+												<div *ngIf="!checkFacet(facet.name,facetInner.name)">
+													<span class="clickable" (click)="setFacet(facet.name,facetInner.name)">{{ facetInner.name }}</span> ({{ facetInner.count }})
+												</div>
+												<div *ngIf="checkFacet(facet.name,facetInner.name)">
+													<span class="clickable" (click)="setFacet(facet.name,facetInner.name)"><b>{{ facetInner.name }}</b></span> ({{ facetInner.count }})
+												</div>
 											</div>
 										</div>
 									</div>
 								</div>
 							</div>
+
+							<hr/>
+
+						</div>
+
+						<div *ngIf="checkTrustCatCount()>0">
+
+							<div class="pointer" (click)="showTrustSection=!showTrustSection">
+								<h5>Rating / Trust Filters <span *ngIf="!showTrustSection"><i class="fa fa-angle-double-down"></i></span><span *ngIf="showTrustSection"><i class="fa fa-angle-double-up"></i></span></h5>
+							</div>
+
+							<div *ngIf="showTrustSection">
+								<div class="card mb-3">
+									<div class="card-header">
+										Rating / Trust
+									</div>
+									<div class="card-body">
+										<div class="mb-2">
+											<div class="mb-2">
+												{{ getName(product_vendor_rating) }}<br/>
+												<ngb-rating [(rate)]="ratingOverall" max="5">
+													<ng-template let-fill="fill">
+														<span class="star star-b" [class.full]="fill === 100">
+															<span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+														</span>
+													</ng-template>
+												</ngb-rating>
+											</div>
+											<div class="mb-2">
+												{{ getName(product_vendor_rating_seller) }}<br/>
+												<ngb-rating [(rate)]="ratingSeller" max="5">
+													<ng-template let-fill="fill">
+														<span class="star star-b" [class.full]="fill === 100">
+															<span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+														</span>
+													</ng-template>
+												</ngb-rating>
+											</div>
+											<div class="mb-2">
+												{{ getName(product_vendor_rating_fulfillment) }}<br/>
+												<ngb-rating [(rate)]="ratingFulfillment" max="5">
+													<ng-template let-fill="fill">
+														<span class="star star-b" [class.full]="fill === 100">
+															<span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+														</span>
+													</ng-template>
+												</ngb-rating>
+											</div>
+											<div class="mb-2">
+												{{ getName(product_vendor_rating_delivery) }}<br/>
+												<ngb-rating [(rate)]="ratingDelivery" max="5">
+													<ng-template let-fill="fill">
+														<span class="star star-b" [class.full]="fill === 100">
+															<span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+														</span>
+													</ng-template>
+												</ngb-rating>
+											</div>
+											<div class="mb-2">
+												{{ getName(product_vendor_trust) }}<br/>
+												<ngb-rating [(rate)]="ratingTrust" max="5">
+													<ng-template let-fill="fill">
+														<span class="heart heart-b" [class.full-heart]="fill === 100">
+															<span class="half-heart" [style.width.%]="fill">&#10084;</span>&#10084;
+														</span>
+													</ng-template>
+												</ngb-rating>
+											</div>
+										</div>
+										<button class="btn btn-primary" (click)="setTrustFilter()" [disabled]="!checkTrustFilter()">Apply</button>
+										<button class="btn btn-secondary ml-2" (click)="resetTrustFilter()" [hidden]="!checkTrustFacet()">Reset</button>
+									</div>
+								</div>
+
+							</div>
+
+							<hr/>
+
+						</div>
+
+						<div *ngIf="checkOtherCatCount()>0">
+
+							<div class="pointer" (click)="showOtherSection=!showOtherSection">
+								<h5>Other Filters <span *ngIf="!showOtherSection"><i class="fa fa-angle-double-down"></i></span><span *ngIf="showOtherSection"><i class="fa fa-angle-double-up"></i></span></h5>
+							</div>
+
+							<div *ngIf="showOtherSection">
+								<div *ngFor="let facet of facetObj">
+									<div *ngIf="facet.total > 0 && checkOtherCat(facet.name)" class="card mb-3">
+										<div class="card-header">
+											{{ facet.name }}
+										</div>
+										<div class="card-body">
+											<div *ngFor="let facetInner of facet.options">
+												<div *ngIf="!checkFacet(facet.name,facetInner.name)">
+													<span class="clickable" (click)="setFacet(facet.name,facetInner.name)">{{ facetInner.name }}</span> ({{ facetInner.count }})
+												</div>
+												<div *ngIf="checkFacet(facet.name,facetInner.name)">
+													<span class="clickable" (click)="setFacet(facet.name,facetInner.name)"><b>{{ facetInner.name }}</b></span> ({{ facetInner.count }})
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
 						</div>
 
 					</div>
@@ -327,14 +409,52 @@
 											{{result[product_img]}}
 											-->
 										</div>
-										<div class="col-8">
+										<div class="col-6">
 											<b>{{ result[product_name] }}</b><br/>
-											<i>{{ result[product_vendor_name] }}</i><br/>
 											<small *ngIf="result.item_description">{{result.item_description}}</small>
+										</div>
+										<div class="col-2">
+											<i>{{ result[product_vendor_name] }}</i>
+											<div *ngIf="!checkNaN(result[product_vendor_rating])">
+												<ngb-rating [rate]="calcRating(result[product_vendor_rating],1)" [readonly]="true" max="5" title="{{getName(product_vendor_rating)}}:&#10;{{calcRating(result[product_vendor_rating],1)}} out of 5&#10;&#10;{{getName(product_vendor_rating_seller)}}:&#10;{{calcRating(result[product_vendor_rating_seller],1)}} out of 5&#10;&#10;{{getName(product_vendor_rating_fulfillment)}}:&#10;{{calcRating(result[product_vendor_rating_fulfillment],1)}} out of 5&#10;&#10;{{getName(product_vendor_rating_delivery)}}:&#10;{{calcRating(result[product_vendor_rating_delivery],1)}} out of 5">
+													<ng-template let-fill="fill">
+													  <span class="star" [class.full]="fill === 100">
+													    <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+													  </span>
+													</ng-template>
+												</ngb-rating>
+											</div>
+											<div *ngIf="checkNaN(result[product_vendor_rating])">
+												<ngb-rating [rate]="0" [readonly]="true" max="5" title="Unrated">
+													<ng-template let-fill="fill">
+													  <span class="star" [class.full]="fill === 100">
+													    <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+													  </span>
+													</ng-template>
+												</ngb-rating>
+											</div>
+											<div *ngIf="!checkNaN(result[product_vendor_trust])">
+												<ngb-rating [rate]="calcRating(result[product_vendor_trust],5)" [readonly]="true" max="5" title="{{getName(product_vendor_trust)}}:&#10;{{calcRating(result[product_vendor_trust],5)}} out of 5">
+													<ng-template let-fill="fill">
+													  <span class="heart" [class.full-heart]="fill === 100">
+													    <span class="half-heart" [style.width.%]="fill">&#10084;</span>&#10084;
+													  </span>
+													</ng-template>
+												</ngb-rating>
+											</div>
+											<div *ngIf="checkNaN(result[product_vendor_trust])">
+												<ngb-rating [rate]="0" [readonly]="true" max="5" title="Unrated">
+													<ng-template let-fill="fill">
+													  <span class="heart" [class.full-heart]="fill === 100">
+													    <span class="half-heart" [style.width.%]="fill">&#10084;</span>&#10084;
+													  </span>
+													</ng-template>
+												</ngb-rating>
+											</div>
 										</div>
 										<div class="col-2 align-right">
 											<span class="badge badge-primary-nimble" *ngIf="result.item_price">{{result.item_price}} {{result.item_price_currency}}</span>
-											<span class="badge badge-warning" *ngIf="!result.item_price">Upon request</span>
+											<span class="badge badge-warning" *ngIf="!result.item_price">Upon request</span><br/>
 										</div>
 									</div>
 								</div>
@@ -346,9 +466,6 @@
 
 			</div>
 
-		</div>
-		<div [hidden]="size>0">
-			<span i18n>No search results</span>
 		</div>
 	</div>
 

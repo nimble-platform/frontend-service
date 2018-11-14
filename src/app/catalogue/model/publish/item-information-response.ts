@@ -10,6 +10,7 @@ export class ItemInformationResponse {
 		public itemInformationRequestDocumentReference:DocumentReference = new DocumentReference(),
 		public buyerCustomerParty:CustomerParty = new CustomerParty(),
 		public sellerSupplierParty:SupplierParty = new SupplierParty(),
-		public item:Item[] = [new Item()]
+		public item:Item[] = [new Item()],
+        public additionalDocumentReference:DocumentReference[] = []
 	) {  }
 }

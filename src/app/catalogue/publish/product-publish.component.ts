@@ -194,7 +194,7 @@ export class ProductPublishComponent implements OnInit {
             for (let i = 0; i < fileList.length; i++) {
                 let file: File = fileList[i];
                 const filesize = parseInt(((file.size/1024)/1024).toFixed(4));
-                if (filesize < 2) {
+                if (filesize < 1) {
                   let reader = new FileReader();
 
                   reader.onload = function (e: any) {
@@ -205,9 +205,9 @@ export class ProductPublishComponent implements OnInit {
                   reader.readAsDataURL(file);
                 }
                 else {
-                  alert("Maximum allowed filesize: 2 MB");
+                  alert("Maximum allowed filesize: 1 MB");
                 }
-            }          
+            }
         }
     }
 
@@ -429,10 +429,9 @@ export class ProductPublishComponent implements OnInit {
                 }
             });
             this.selectedPropertiesUpdates = {};
-        })
-        .catch(() => {
+        }, () => {
             this.selectedPropertiesUpdates = {};
-        })
+        });
     }
 
     onToggleCategoryPropertySelected(category: Category, property: Property) {

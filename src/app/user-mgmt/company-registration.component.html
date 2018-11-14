@@ -1,9 +1,22 @@
 <form class="company-settings-form" [formGroup]="registrationForm" novalidate (ngSubmit)="save(registrationForm)">
+
+	<div *ngIf="!alertClosed">
+		<p class="space-before">
+			<ngb-alert type="info" (close)="alertClosed=true">
+				During this first step of the company registration we ask you to provide your most vital company data in order to get started.<br/>
+				After submitting your registration you will be taken to your company settings where you can provide even more information.<br/>
+				<strong>Beware: </strong>Data submitted in this step can only be changed after re-validation by a platform manager.
+			</ngb-alert>
+		</p>
+	</div>
+
 	<h3 class="space-after">Company Registration</h3>
 
 	<!-- Legal Name -->
 	<div class="form-group row">
-		<label class="col-2 col-form-label">Legal Name</label>
+		<label class="col-2 col-form-label">
+			<strong>Legal Name:</strong>
+		</label>
 		<div class="col-10">
 			<input type="text" class="form-control" name="companyName" [formControl]="registrationForm.controls['name']" required>
 		</div>
@@ -11,7 +24,9 @@
 
 	<!-- VAT Number -->
 	<div class="form-group row">
-		<label class="col-2 col-form-label">VAT Number</label>
+		<label class="col-2 col-form-label">
+			<strong>VAT Number:</strong>
+		</label>
 		<div class="col-10">
 			<input type="text" class="form-control" [formControl]="registrationForm.controls['vatNumber']" required>
 		</div>
@@ -20,7 +35,9 @@
 	<!-- Verification Info -->
 	<div class="form-group row">
 		<label class="col-2 col-form-label">
-			<span>Verification Info</span>
+			<span>
+				<strong>Verification Info:</strong>
+			</span>
 			<span class="tooltip-icon" (click)="showVerificationTT(tooltip)"><i class="fa fa-question-circle"></i></span>
 		</label>
 		<div class="col-10">
@@ -28,11 +45,48 @@
 		</div>
 	</div>
 
-	<!-- Website -->
+	<!-- Business Type -->
 	<div class="form-group row">
-		<label class="col-2 col-form-label">Website</label>
+		<label class="col-2 col-form-label">
+			<strong>Business Type:</strong>
+		</label>
 		<div class="col-10">
-			<input type="text" class="form-control" [formControl]="registrationForm.controls['website']">
+			<select class="form-control" [formControl]="registrationForm.controls['businessType']" required>
+				<option>Manufacturer</option>
+				<option>Logistics Provider</option>
+				<option>Service Provider</option>
+				<option>Other</option>
+			</select>
+		</div>
+	</div>
+
+	<!-- Business Keywords -->
+	<div class="form-group row">
+		<label class="col-2 col-form-label">
+			<strong>Business Keywords:</strong>
+		</label>
+		<div class="col-10">
+			<input type="text" class="form-control" [formControl]="registrationForm.controls['businessKeywords']" required>
+		</div>
+	</div>
+
+	<!-- Industry Sectors -->
+	<div class="form-group row">
+		<label class="col-2 col-form-label">
+			<strong>Industry Sectors:</strong>
+		</label>
+		<div class="col-10">
+			<input type="text" class="form-control" [formControl]="registrationForm.controls['industrySectors']" required>
+		</div>
+	</div>
+
+	<!-- Year of Comp. Reg. -->
+	<div class="form-group row">
+		<label class="col-2 col-form-label">
+			<strong>Year of Comp. Reg.:</strong>
+		</label>
+		<div class="col-10">
+			<input type="number" class="form-control" [formControl]="registrationForm.controls['yearOfReg']" required>
 		</div>
 	</div>
 
