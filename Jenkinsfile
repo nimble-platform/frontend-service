@@ -39,4 +39,5 @@ node('nimble-jenkins-slave') {
             sh 'docker tag nimbleplatform/frontend-service:latest nimbleplatform/frontend-service:$VERSION'
             sh 'docker push nimbleplatform/frontend-service:$VERSION'
         }
+    }
 }
