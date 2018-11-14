@@ -7,18 +7,18 @@ export const debug = false;
 
 // Base path variables - SRFG staging
 
-export const base_path = "http://nimble-staging.salzburgresearch.at";
-export const ub_base = "http://nimble-staging.salzburgresearch.at/search";
-export const simple_search_endpoint="http://nimble-staging.salzburgresearch.at/marmotta/solr/catalogue2";
-export const pw_reset_link = "http://nimble-staging.salzburgresearch.at:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
+// export const base_path = "http://nimble-staging.salzburgresearch.at";
+// export const ub_base = "http://nimble-staging.salzburgresearch.at/search";
+// export const simple_search_endpoint="http://nimble-staging.salzburgresearch.at/marmotta/solr/catalogue2";
+// export const pw_reset_link = "http://nimble-staging.salzburgresearch.at:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
 
 
 // Base path variables - SRFG productive
 
-// export const base_path = "https://nimble-platform.salzburgresearch.at/nimble";
-// export const ub_base = "https://nimble-platform.salzburgresearch.at/ub-search";
-// export const simple_search_endpoint="https://nimble-platform.salzburgresearch.at/marmotta/solr/catalogue2";
-// export const pw_reset_link = "https://nimble-platform.salzburgresearch.at:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
+export const base_path = "https://nimble-platform.salzburgresearch.at/nimble";
+export const ub_base = "https://nimble-platform.salzburgresearch.at/ub-search";
+export const simple_search_endpoint="https://nimble-platform.salzburgresearch.at/marmotta/solr/catalogue2";
+export const pw_reset_link = "https://nimble-platform.salzburgresearch.at:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
 
 
 // Base path variables - SRFG K8S

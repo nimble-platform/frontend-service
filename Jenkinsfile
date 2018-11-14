@@ -32,12 +32,7 @@ node('nimble-jenkins-slave') {
         }
 
         stage('Push Docker') {
-
             sh 'docker push nimbleplatform/frontend-service:latest'
-
-            sh 'export VERSION=$(./deploy.sh print-version)'
-            sh 'docker tag nimbleplatform/frontend-service:latest nimbleplatform/frontend-service:$VERSION'
-            sh 'docker push nimbleplatform/frontend-service:$VERSION'
         }
 
         stage('Deploy') {
