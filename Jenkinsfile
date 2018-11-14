@@ -23,32 +23,31 @@ node('nimble-jenkins-slave') {
         }
     } else if (env.BRANCH_NAME == 'master') {
 
-        stage('Build Application') {
+        stage('Build Application - MVP') {
             sh 'mvn clean install -Denv=prod'
         }
 
-        stage('Build Docker') {
+        stage('Build Docker - MVP') {
             sh 'docker build -t nimbleplatform/frontend-service ./target'
         }
 
-        stage('Push Docker') {
+        stage('Push Docker - MVP') {
             sh 'docker push nimbleplatform/frontend-service:latest'
         }
 
-        stage('Deploy') {
+        stage('Deploy - MVP') {
             sh 'ssh nimble "cd /data/deployment_setup/prod/ && sudo ./run-prod.sh restart-single frontend-service"'
         }
-    } else if (env.BRANCH_NAME == 'fmp') {
 
-        stage('Build Application') {
+        stage('Build Application - FMP') {
             sh 'mvn clean install -Denv=fmp'
         }
 
-        stage('Build Docker') {
+        stage('Build Docker - FMP') {
             sh 'docker build -t nimbleplatform/frontend-service:fmp ./target'
         }
 
-        stage('Push Docker') {
+        stage('Push Docker - FMP') {
             sh 'docker push nimbleplatform/frontend-service:fmp'
         }
     }
