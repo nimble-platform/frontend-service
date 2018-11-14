@@ -45,7 +45,7 @@ node('nimble-jenkins-slave') {
         }
 
         stage('Build Docker') {
-            sh 'docker build -t nimbleplatform/frontend-service ./target'
+            sh 'docker build -t nimbleplatform/frontend-service:fmp ./target'
         }
 
         stage('Push Docker') {
