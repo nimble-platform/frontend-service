@@ -119,7 +119,7 @@ export class ProductDetailsComponent implements OnInit {
      * Getters For Template
      */
 
-    getPricePerItem(): number {
+    getPricePerItem(): string {
         this.updatePriceWrapperOnUserSelections();
         return this.priceWrapper.pricePerItemString;
     }
