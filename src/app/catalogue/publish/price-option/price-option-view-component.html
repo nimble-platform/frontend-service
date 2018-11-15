@@ -1,0 +1,56 @@
+<!--incoterms related options-->
+<div *ngIf="priceOption.typeID == priceOptions.INCOTERM.typeID" class="row">
+    <div class="col-6">
+        <div class="row">
+            <div class="col-5">
+                <input-label [label]="'Incoterm'"></input-label>
+            </div>
+            <div class="col-7">
+                <select class="form-control form-control-sm" [(ngModel)]="priceOption.incoterms[0]">
+                    <option *ngFor="let option of incoterms" [value]="option">{{option}}</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--payment means related options-->
+<div *ngIf="priceOption.typeID == priceOptions.PAYMENT_MEAN.typeID" class="row">
+    <div class="col-6">
+        <div class="row">
+            <div class="col-5">
+                <input-label [label]="'Payment Mean'"></input-label>
+            </div>
+            <div class="col-7">
+                <select class="form-control form-control-sm" [(ngModel)]="priceOption.paymentMeans[0].instructionNote">
+                    <option *ngFor="let option of paymentMeans" [value]="option">{{option}}</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--delivery location related options-->
+<div *ngIf="priceOption.typeID == priceOptions.DELIVERY_LOCATION.typeID" class="row">
+    <div class="row">
+        <div class="col-2">
+            <input-label [label]="'Delivery Location'"></input-label>
+        </div>
+        <address-input class="col-10" [address]="priceOption.itemLocationQuantity.applicableTerritoryAddress[0]"></address-input>
+    </div>
+</div>
+
+
+<!--delivery period related options-->
+<div *ngIf="priceOption.typeID == priceOptions.DELIVERY_PERIOD.typeID">
+    <div class="row">
+        <quantity-input class="col-6" [label]="'Delivery Period'"
+                        [labelClass]="'col-5'"
+                        [valueClass]="'col-7'"
+                        [quantity]="priceOption.estimatedDeliveryPeriod.durationMeasure"
+                        [quantityUnits]="deliveryPeriodUnits">
+        </quantity-input>
+    </div>
+</div>
+
+<discount-target [priceOption]="priceOption" [discountUnits]="discountUnits"></discount-target>

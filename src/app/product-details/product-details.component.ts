@@ -13,6 +13,7 @@ import { getMaximumQuantityForPrice, getStepForPrice, isTransportService } from 
 import { AppComponent } from "../app.component";
 import { UserService } from "../user-mgmt/user.service";
 import { CompanySettings } from "../user-mgmt/model/company-settings";
+import {Quantity} from '../catalogue/model/publish/quantity';
 
 @Component({
     selector: 'product-details',
@@ -68,8 +69,8 @@ export class ProductDetailsComponent implements OnInit {
                     })
                     .then(settings => {
                         this.settings = settings;
-                        this.wrapper = new ProductWrapper(this.line, settings.negotiationSettings);
-                        this.priceWrapper = new PriceWrapper(this.line.requiredItemLocationQuantity.price);
+                        this.priceWrapper = new PriceWrapper(this.line.requiredItemLocationQuantity.price,new Quantity(1, this.line.requiredItemLocationQuantity.price.baseQuantity.unitCode),this.line.priceOption);
+                        this.wrapper = new ProductWrapper(this.line, settings.negotiationSettings,this.priceWrapper.quantity);
                         this.bpDataService.resetBpData();
                         this.bpDataService.setCatalogueLines([this.line], [settings]);
                         this.bpDataService.userRole = 'buyer';
@@ -118,8 +119,13 @@ export class ProductDetailsComponent implements OnInit {
      * Getters For Template
      */
 
+    getPricePerItem(): string {
+        this.updatePriceWrapperOnUserSelections();
+        return this.priceWrapper.pricePerItemString;
+    }
+
     getTotalPrice(): number {
-        this.priceWrapper.quantity.value = this.options.quantity;
+        this.updatePriceWrapperOnUserSelections();
         return this.priceWrapper.totalPrice;
     }
 
@@ -144,5 +150,12 @@ export class ProductDetailsComponent implements OnInit {
 
     isPpapAvailable(): boolean {
         return this.settings && !!this.settings.tradeDetails.ppapCompatibilityLevel;
+    }
+
+    private updatePriceWrapperOnUserSelections() {
+        let copyItem = JSON.parse(JSON.stringify(this.item));
+        this.bpDataService.selectFirstValuesAmongAlternatives(copyItem);
+        this.priceWrapper.additionalItemProperties = copyItem.additionalItemProperty;
+        this.priceWrapper.quantity.value = this.options.quantity;
     }
 }

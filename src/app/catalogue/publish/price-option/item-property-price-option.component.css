@@ -1,0 +1,21 @@
+.object-list {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.value-pill {
+    margin: 0.25rem 0.25rem 0.25rem 0.25rem;
+    height: 2.0rem;
+    flex-basis: auto;
+    min-width: 50px;
+    display: flex;
+    justify-content: space-between;
+    cursor: pointer;
+}
+
+.value-pill label {
+    margin: 0;
+}
+.value-pill * {
+    cursor: pointer !important;
+}
