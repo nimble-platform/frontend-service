@@ -60,6 +60,8 @@ export class PriceWrapper {
         let totalPrice = this.roundPrice(this.quantity.value * amount / baseQuantity);
 
         let totalDiscount:number = 0;
+        let totalMinimumOrderQuantityDiscount = 0;
+        let totalDeliveryPeriodDiscount = 0;
 
         // if removeDiscountAmount is true, then calculate totalDiscount value, otherwise totalDiscount is 0
         if(this.removeDiscountAmount){
@@ -76,16 +78,28 @@ export class PriceWrapper {
                 // check for minimum order quantity
                 else if(priceOption.typeID == PRICE_OPTIONS.ORDERED_QUANTITY.typeID && priceOption.itemLocationQuantity.minimumQuantity.unitCode == this.quantity.unitCode
                     && this.quantity.value >= priceOption.itemLocationQuantity.minimumQuantity.value){
-                    totalDiscount += this.calculateDiscountAmount(priceOption,totalPrice);
+                    let qDiscount = this.calculateDiscountAmount(priceOption,totalPrice);
+                    if(qDiscount > totalMinimumOrderQuantityDiscount) {
+                        totalMinimumOrderQuantityDiscount = qDiscount;
+                    }
                 }
                 // check for delivery period
-                else if(this.deliveryPeriod && priceOption.typeID == PRICE_OPTIONS.DELIVERY_PERIOD.typeID && priceOption.estimatedDeliveryPeriod.durationMeasure.unitCode == this.deliveryPeriod.unitCode
-                    && priceOption.estimatedDeliveryPeriod.durationMeasure.value == this.deliveryPeriod.value){
-                    totalDiscount += this.calculateDiscountAmount(priceOption,totalPrice);
+                else if (this.deliveryPeriod && priceOption.typeID == PRICE_OPTIONS.DELIVERY_PERIOD.typeID &&
+                    priceOption.estimatedDeliveryPeriod.durationMeasure.unitCode == this.deliveryPeriod.unitCode &&
+                    priceOption.estimatedDeliveryPeriod.durationMeasure.value <= this.deliveryPeriod.value) {
+
+                    let dpDiscount = this.calculateDiscountAmount(priceOption, totalPrice);
+                    if (dpDiscount > totalMinimumOrderQuantityDiscount) {
+                        totalDeliveryPeriodDiscount = dpDiscount;
+                    }
                 }
                 // check for additional item properties
                 else if(this.additionalItemProperties.length > 0 && priceOption.typeID == PRICE_OPTIONS.PRODUCT_PROPERTY.typeID){
                     for(let property of this.additionalItemProperties){
+                        // check if a property is already selected for this discount option
+                        if(priceOption.additionalItemProperty.length == 0) {
+                            continue;
+                        }
                         if(property.id == priceOption.additionalItemProperty[0].id && priceOption.additionalItemProperty[0].value.indexOf(property.value[0]) != -1){
                             totalDiscount += this.calculateDiscountAmount(priceOption,totalPrice);
                         }
@@ -118,6 +132,11 @@ export class PriceWrapper {
                 }
             }
         }
+
+        // add the individual discounts
+        totalDiscount += totalMinimumOrderQuantityDiscount;
+        totalDiscount += totalDeliveryPeriodDiscount;
+
         // if PriceWrapper has a quotation price, then we have to update it with the calculated total price
         if(this.quotationPrice.price){
             this.quotationPrice.price.priceAmount.value = (totalPrice-totalDiscount)/this.quantity.value;

@@ -119,13 +119,13 @@ export class ProductDetailsComponent implements OnInit {
      * Getters For Template
      */
 
-    getTotalPrice(): number {
-        // get selected properties
-        let copyItem = JSON.parse(JSON.stringify(this.item));
-        this.bpDataService.selectFirstValuesAmongAlternatives(copyItem);
+    getPricePerItem(): number {
+        this.updatePriceWrapperOnUserSelections();
+        return this.priceWrapper.pricePerItemString;
+    }
 
-        this.priceWrapper.quantity.value = this.options.quantity;
-        this.priceWrapper.additionalItemProperties = copyItem.additionalItemProperty;
+    getTotalPrice(): number {
+        this.updatePriceWrapperOnUserSelections();
         return this.priceWrapper.totalPrice;
     }
 
@@ -150,5 +150,12 @@ export class ProductDetailsComponent implements OnInit {
 
     isPpapAvailable(): boolean {
         return this.settings && !!this.settings.tradeDetails.ppapCompatibilityLevel;
+    }
+
+    private updatePriceWrapperOnUserSelections() {
+        let copyItem = JSON.parse(JSON.stringify(this.item));
+        this.bpDataService.selectFirstValuesAmongAlternatives(copyItem);
+        this.priceWrapper.additionalItemProperties = copyItem.additionalItemProperty;
+        this.priceWrapper.quantity.value = this.options.quantity;
     }
 }
