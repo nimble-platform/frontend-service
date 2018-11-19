@@ -50,5 +50,9 @@ node('nimble-jenkins-slave') {
         stage('Push Docker - FMP') {
             sh 'docker push nimbleplatform/frontend-service:fmp'
         }
+
+        stage('Deploy - FMP') {
+            sh 'ssh fmp-prod "cd /srv/nimble-fmp/ && ./run-fmp-prod.sh restart-single frontend-service"'
+        }
     }
 }
