@@ -69,7 +69,13 @@
         <div *ngIf="treeView" class="border" style="height:55vh; overflow-x: hidden; overflow-y: scroll;">
             <div class="fixed" style="background-color: #e9ecef;">
                 <div class="row border">
-                    <div *ngIf="selectedTab == 'TREE'" class="col-4 taxonomyDiv" >
+                    <div class="pr-0 col-3">
+                        <div class="thead-light-equivalent">
+                            <p *ngIf="selectedTab == 'TREE'" class="mb-0" style="padding: 0.50rem;text-align: center">Categories For</p>
+                            <p *ngIf="selectedTab != 'TREE'" class="mb-0" style="padding: 0.50rem;text-align: center">Categories</p>
+                        </div>
+                    </div>
+                    <div *ngIf="selectedTab == 'TREE'" class="col-5 taxonomyDiv" >
                         <div ngbDropdown class="thead-light-equivalent taxonomy">
                             <button class="col-12 btn btn-outline-dark" type="button" id="taxonomy" ngbDropdownToggle>
                                 {{taxonomyId}}
@@ -79,12 +85,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="pr-0" [ngClass]="selectedTab == 'TREE' ? 'col-4' :'col-8'">
-                        <div class="thead-light-equivalent">
-                            <p class="mb-0" style="padding: 0.50rem;">Categories</p>
-                        </div>
-                    </div>
-                    <div class="col-4 pl-0">
+                    <div class="pl-0" [ngClass]="selectedTab == 'TREE' ? 'col-4' :'col-9'">
                         <div class="thead-light-equivalent">
                             <button *ngIf="categories" class="btn btn-secondary float-right my-1 mr-1" (click)="toggleTreeView()">Back to Search Results</button>
                         </div>
