@@ -254,6 +254,15 @@ export class BPEService {
             .catch(this.handleError);
 	}
 
+	updateCollaborationGroupName(groupId:string,groupName:string){
+        const url = `${this.url}/group/collaboration/${groupId}?groupName=${groupName}`;
+        return this.http
+            .patch(url,null)
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+    }
+
     deleteCollaborationGroup(groupId: string) {
         const url = `${this.url}/group/collaboration/${groupId}`;
         return this.http

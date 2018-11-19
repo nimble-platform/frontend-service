@@ -36,6 +36,10 @@ export class DashboardThreadedComponent implements OnInit {
     buyerCounter = 0;
     sellerCounter = 0;
 
+    // this contains status-name pairs of collaboration groups
+    // if status is true, that means we are changing collaboration group name
+    updatingCollaborationGroupName = [];
+
     constructor(
         private cookieService: CookieService,
         private bpeService: BPEService,
@@ -272,6 +276,7 @@ export class DashboardThreadedComponent implements OnInit {
                     response.collaborationGroups.length > 0,
                     response.size
                 )
+                this.createUpdatingCollaborationGroupNameArray()
             });
         } else {
             // Needs to query for archived orders to know if the "Show Archived" button should be enabled
@@ -291,7 +296,15 @@ export class DashboardThreadedComponent implements OnInit {
                     archived.collaborationGroups.length > 0,
                     response.size
                 )
+                this.createUpdatingCollaborationGroupNameArray()
             });
+        }
+    }
+
+    private createUpdatingCollaborationGroupNameArray(){
+        this.updatingCollaborationGroupName = [];
+        for(let order of this.results.orders){
+            this.updatingCollaborationGroupName.push({status:false,name:order.name})
         }
     }
 
@@ -375,6 +388,24 @@ export class DashboardThreadedComponent implements OnInit {
 
     private parseArray(param: string): string[] {
         return param ? param.split("_SEP_") : []
+    }
+
+    changeCollaborationGroupNameStatus(index:number,status:boolean){
+        // if status is true,then we will change the name of the group.
+        if(status){
+            this.updatingCollaborationGroupName[index].name = this.results.orders[index].name;
+        }
+        this.updatingCollaborationGroupName[index].status = status;
+    }
+
+    updateCollaborationGroupName(id:string,name:string){
+        this.bpeService.updateCollaborationGroupName(id,name)
+            .then(() => {
+                this.onOrderRemovedFromView();
+            })
+            .catch(err => {
+                console.error("Failed to update collaboration group name",err);
+            });
     }
 
     archiveGroup(id: string): void {

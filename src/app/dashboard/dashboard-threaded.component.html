@@ -166,11 +166,21 @@
                         <!-- Results -->
                         <div *ngIf="results.orders" class="col-10">
                             <h4 *ngIf="results.orders.length === 0">No orders.</h4>
-                            <div *ngFor="let order of results.orders" class="bordered space-after">
+                            <div *ngFor="let order of results.orders;let i=index" class="bordered space-after">
                                 <div class="row">
                                     <div class="col-12 d-flex">
-                                        <div class="header-label mr-auto">
-                                            <h5>{{order.name}}</h5>
+                                        <div class="header-label mr-auto d-flex">
+                                            <h5 *ngIf="updatingCollaborationGroupName[i].status == false">{{order.name}}</h5>
+                                            <input *ngIf="updatingCollaborationGroupName[i].status == true" type="text" class="form-control" name="inputCtrl" [(ngModel)]="updatingCollaborationGroupName[i].name" [disabled]=""/>
+                                            <div *ngIf="updatingCollaborationGroupName[i].status == true" (click)="updateCollaborationGroupName(order.id,updatingCollaborationGroupName[i].name)" data-toggle="tooltip" data-placement="top" title="Save">
+                                                <i class="fa fa-check p-2 pointer" aria-hidden="true"></i>
+                                            </div>
+                                            <div *ngIf="updatingCollaborationGroupName[i].status == true" (click)="changeCollaborationGroupNameStatus(i,false)" data-toggle="tooltip" data-placement="top" title="Cancel">
+                                                <i class="fa fa-times p-2 pointer" aria-hidden="true"></i>
+                                            </div>
+                                        </div>
+                                        <div data-toggle="tooltip" (click)="changeCollaborationGroupNameStatus(i,true)" data-placement="top" title="Change group name">
+                                            <i class="fa fa-pencil-alt p-2 pointer" aria-hidden="true"></i>
                                         </div>
                                         <div *ngIf="!order.archived" (click)="archiveGroup(order.id)" data-toggle="tooltip" data-placement="top" title="Archive">
                                             <i class="fa fa-archive p-2 pointer" aria-hidden="true"></i>
