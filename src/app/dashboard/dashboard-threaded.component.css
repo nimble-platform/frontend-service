@@ -43,4 +43,5 @@
     padding-right: 23px;
     padding-left: 0px;
     background: rgba(0,0,0,.05);
+    background-clip: content-box;
 }
