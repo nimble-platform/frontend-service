@@ -170,7 +170,8 @@
                                 <div class="row">
                                     <div class="col-12 d-flex">
                                         <div class="header-label mr-auto d-flex">
-                                            <h5 *ngIf="updatingCollaborationGroupName[i].status == false">{{order.name}}</h5>
+                                            <h5 *ngIf="updatingCollaborationGroupName[i].status == false && (order.name != null || order.name != '')">{{order.name}}</h5>
+                                            <h5 *ngIf="updatingCollaborationGroupName[i].status == false && (order.name == null || order.name == '')">{{updatingCollaborationGroupName[i].defaultName}}</h5>
                                             <input *ngIf="updatingCollaborationGroupName[i].status == true" type="text" class="form-control" name="inputCtrl" [(ngModel)]="updatingCollaborationGroupName[i].name" [disabled]=""/>
                                             <div *ngIf="updatingCollaborationGroupName[i].status == true" (click)="updateCollaborationGroupName(order.id,updatingCollaborationGroupName[i].name)" data-toggle="tooltip" data-placement="top" title="Save">
                                                 <i class="fa fa-check p-2 pointer" aria-hidden="true"></i>

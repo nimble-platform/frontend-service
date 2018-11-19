@@ -11,6 +11,7 @@ import { DashboardOrdersQuery } from "./model/dashboard-orders-query";
 import { DashboardOrdersQueryResults } from "./model/dashboard-orders-query-results";
 import { DashboardQueryParameters } from "./model/dashboard-query-parameters";
 import { DashboardUser } from "./model/dashboard-user";
+import {CollaborationGroup} from '../bpe/model/collaboration-group';
 
 @Component({
     selector: "dashboard-threaded",
@@ -36,8 +37,9 @@ export class DashboardThreadedComponent implements OnInit {
     buyerCounter = 0;
     sellerCounter = 0;
 
-    // this contains status-name pairs of collaboration groups
+    // this contains status-name-defaultName information of collaboration groups
     // if status is true, that means we are changing collaboration group name
+    // defaultName is used if the collaboration group does not have any name assigned.
     updatingCollaborationGroupName = [];
 
     constructor(
@@ -304,8 +306,21 @@ export class DashboardThreadedComponent implements OnInit {
     private createUpdatingCollaborationGroupNameArray(){
         this.updatingCollaborationGroupName = [];
         for(let order of this.results.orders){
-            this.updatingCollaborationGroupName.push({status:false,name:order.name})
+            this.updatingCollaborationGroupName.push({status:false,name:order.name,defaultName:this.getDefaultCollaborationNames(order)})
         }
+    }
+
+    private getDefaultCollaborationNames(collaborationGroup:CollaborationGroup):string{
+        let defaultName = "Activities on ";
+        for(let i = 0 ; i < collaborationGroup.associatedProcessInstanceGroups.length ; i++){
+            if(i == collaborationGroup.associatedProcessInstanceGroups.length-1){
+                defaultName += collaborationGroup.associatedProcessInstanceGroups[i].name;
+            }
+            else {
+                defaultName += collaborationGroup.associatedProcessInstanceGroups[i].name+", ";
+            }
+        }
+        return defaultName;
     }
 
     areOrdersLoading(): boolean {
