@@ -1,7 +1,7 @@
 .thread-entry {
     border: 1px solid rgba(0, 0, 0, 0.15) !important;
     border-radius: 0.25rem !important;
-    margin: 0;
+    margin: -8px;
 }
 
 .thread-entry .col-12 {

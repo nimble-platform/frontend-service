@@ -168,10 +168,10 @@
                             <h4 *ngIf="results.orders.length === 0">No orders.</h4>
                             <div *ngFor="let order of results.orders;let i=index" class="bordered space-after">
                                 <div class="row">
-                                    <div class="col-12 d-flex">
+                                    <div class="col-12 d-flex collaboration-group-header">
                                         <div class="header-label mr-auto d-flex">
-                                            <h5 *ngIf="updatingCollaborationGroupName[i].status == false && (order.name != null || order.name != '')">{{order.name}}</h5>
-                                            <h5 *ngIf="updatingCollaborationGroupName[i].status == false && (order.name == null || order.name == '')">{{updatingCollaborationGroupName[i].defaultName}}</h5>
+                                            <h5 *ngIf="updatingCollaborationGroupName[i].status == false && (order.name != null || order.name != '')" style="text-decoration: underline">{{order.name}}</h5>
+                                            <h5 *ngIf="updatingCollaborationGroupName[i].status == false && (order.name == null || order.name == '')" style="text-decoration: underline">{{updatingCollaborationGroupName[i].defaultName}}</h5>
                                             <input *ngIf="updatingCollaborationGroupName[i].status == true" type="text" class="form-control" name="inputCtrl" [(ngModel)]="updatingCollaborationGroupName[i].name" [disabled]=""/>
                                             <div *ngIf="updatingCollaborationGroupName[i].status == true" (click)="updateCollaborationGroupName(order.id,updatingCollaborationGroupName[i].name)" data-toggle="tooltip" data-placement="top" title="Save">
                                                 <i class="fa fa-check p-2 pointer" aria-hidden="true"></i>
@@ -194,11 +194,13 @@
                                         </div>
                                     </div>
                                 </div>
-                                <hr>
-                                <div *ngFor="let group of order.associatedProcessInstanceGroups">
-                                    <!--If Purchases tab is selected, show groups whose collaboration role is Buyer-->
-                                    <thread-summary *ngIf="queryParameters.tab == TABS.SALES || (queryParameters.tab == TABS.PURCHASES && group.collaborationRole == 'BUYER')" [processInstanceGroup]="group" [collaborationGroupId]="order.id" (threadStateUpdated)="onOrderRemovedFromView()">
-                                    </thread-summary>
+                                <hr class="collaboration-hr">
+                                <div *ngFor="let group of order.associatedProcessInstanceGroups;let i=index">
+                                    <div [ngClass]="i != order.associatedProcessInstanceGroups.length-1 ? 'space-after' : null">
+                                        <!--If Purchases tab is selected, show groups whose collaboration role is Buyer-->
+                                        <thread-summary *ngIf="queryParameters.tab == TABS.SALES || (queryParameters.tab == TABS.PURCHASES && group.collaborationRole == 'BUYER')" [processInstanceGroup]="group" [collaborationGroupId]="order.id" (threadStateUpdated)="onOrderRemovedFromView()">
+                                        </thread-summary>
+                                    </div>
                                 </div>
                             </div>
                         </div>
