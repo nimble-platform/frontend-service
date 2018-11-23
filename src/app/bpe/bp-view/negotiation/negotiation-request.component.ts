@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from "@angular/core";
+import {Component, OnInit, Input, ViewChild} from '@angular/core';
 import { CatalogueLine } from "../../../catalogue/model/publish/catalogue-line";
 import { BPDataService } from "../bp-data-service";
 import { CURRENCIES } from "../../../catalogue/model/constants";
@@ -22,7 +22,7 @@ import { PeriodRange } from "../../../user-mgmt/model/period-range";
 import { Option } from "../../../common/options-input.component";
 import { addressToString } from "../../../user-mgmt/utils";
 import {DocumentService} from '../document-service';
-import {Price} from '../../../catalogue/model/publish/price';
+import {DiscountModalComponent} from '../../../product-details/discount-modal.component';
 
 @Component({
     selector: "negotiation-request",
@@ -44,6 +44,9 @@ export class NegotiationRequestComponent implements OnInit {
     CURRENCIES: string[] = CURRENCIES;
 
     selectedAddressValue = "";
+
+    @ViewChild(DiscountModalComponent)
+    private discountModal: DiscountModalComponent;
 
     constructor(private bpDataService: BPDataService,
                 private bpeService:BPEService,
@@ -343,5 +346,9 @@ export class NegotiationRequestComponent implements OnInit {
         }
 
         return value >= range.start && value <= range.end;
+    }
+
+    private openDiscountModal(): void{
+        this.discountModal.open(this.wrapper.linePriceWrapper.appliedDiscounts,this.wrapper.linePriceWrapper.price.priceAmount.currencyID);
     }
 }

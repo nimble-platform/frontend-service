@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import {Component, OnInit, ViewChild} from '@angular/core';
 import { ActivatedRoute, Router } from "@angular/router";
 import { CatalogueService } from "../catalogue/catalogue.service";
 import { CallStatus } from "../common/call-status";
@@ -14,6 +14,7 @@ import { AppComponent } from "../app.component";
 import { UserService } from "../user-mgmt/user.service";
 import { CompanySettings } from "../user-mgmt/model/company-settings";
 import {Quantity} from '../catalogue/model/publish/quantity';
+import {DiscountModalComponent} from './discount-modal.component';
 
 @Component({
     selector: 'product-details',
@@ -39,6 +40,9 @@ export class ProductDetailsComponent implements OnInit {
     showNavigation: boolean = true;
     showProcesses: boolean = true;
     isLogistics: boolean = false;
+
+    @ViewChild(DiscountModalComponent)
+    private discountModal: DiscountModalComponent;
 
     constructor(private bpDataService: BPDataService,
                 private catalogueService: CatalogueService,
@@ -157,5 +161,9 @@ export class ProductDetailsComponent implements OnInit {
         this.bpDataService.selectFirstValuesAmongAlternatives(copyItem);
         this.priceWrapper.additionalItemProperties = copyItem.additionalItemProperty;
         this.priceWrapper.quantity.value = this.options.quantity;
+    }
+
+    private openDiscountModal(): void{
+        this.discountModal.open(this.priceWrapper.appliedDiscounts,this.priceWrapper.price.priceAmount.currencyID);
     }
 }

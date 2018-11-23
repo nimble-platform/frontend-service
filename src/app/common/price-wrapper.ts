@@ -27,6 +27,8 @@ export class PriceWrapper {
     quotationPaymentMeansUpdated = true;
     // this presentation mode is used to calculate total price for quotation
     presentationMode:string = 'edit';
+    // this field is used to create discount-modal view
+    appliedDiscounts: PriceOption[] = [];
 
     constructor(public price: Price,
                 public quantity: Quantity = new Quantity(1, price.baseQuantity.unitCode),
@@ -61,7 +63,12 @@ export class PriceWrapper {
 
         let totalDiscount:number = 0;
         let totalMinimumOrderQuantityDiscount = 0;
+        let minimumOrderQuantityPriceOption:PriceOption = null;
         let totalDeliveryPeriodDiscount = 0;
+        let deliveryPeriodPriceOption:PriceOption = null;
+
+        // reset appliedDiscounts
+        this.appliedDiscounts = [];
 
         // if removeDiscountAmount is true, then calculate totalDiscount value, otherwise totalDiscount is 0
         if(this.removeDiscountAmount){
@@ -69,11 +76,18 @@ export class PriceWrapper {
             for(let priceOption of this.priceOptions){
                 // check for incoterms
                 if(this.incoterm && priceOption.typeID == PRICE_OPTIONS.INCOTERM.typeID && priceOption.incoterms.indexOf(this.incoterm) != -1){
-                    totalDiscount += this.calculateDiscountAmount(priceOption,totalPrice);
+                    priceOption.discount = this.calculateDiscountAmount(priceOption,totalPrice);
+                    totalDiscount += priceOption.discount;
+                    // add this discount to appliedDiscounts list
+
+                    this.appliedDiscounts.push(priceOption);
                 }
                 // check for paymentMeans
                 else if(this.paymentMeans && priceOption.typeID == PRICE_OPTIONS.PAYMENT_MEAN.typeID && priceOption.paymentMeans[0].instructionNote == this.paymentMeans){
-                    totalDiscount += this.calculateDiscountAmount(priceOption,totalPrice);
+                    priceOption.discount = this.calculateDiscountAmount(priceOption,totalPrice);
+                    totalDiscount += priceOption.discount;
+                    // add this discount to appliedDiscounts list
+                    this.appliedDiscounts.push(priceOption);
                 }
                 // check for minimum order quantity
                 else if(priceOption.typeID == PRICE_OPTIONS.ORDERED_QUANTITY.typeID && priceOption.itemLocationQuantity.minimumQuantity.unitCode == this.quantity.unitCode
@@ -81,6 +95,7 @@ export class PriceWrapper {
                     let qDiscount = this.calculateDiscountAmount(priceOption,totalPrice);
                     if(qDiscount > totalMinimumOrderQuantityDiscount) {
                         totalMinimumOrderQuantityDiscount = qDiscount;
+                        minimumOrderQuantityPriceOption = priceOption;
                     }
                 }
                 // check for delivery period
@@ -91,6 +106,7 @@ export class PriceWrapper {
                     let dpDiscount = this.calculateDiscountAmount(priceOption, totalPrice);
                     if (dpDiscount > totalMinimumOrderQuantityDiscount) {
                         totalDeliveryPeriodDiscount = dpDiscount;
+                        deliveryPeriodPriceOption = priceOption;
                     }
                 }
                 // check for additional item properties
@@ -101,7 +117,10 @@ export class PriceWrapper {
                             continue;
                         }
                         if(property.id == priceOption.additionalItemProperty[0].id && priceOption.additionalItemProperty[0].value.indexOf(property.value[0]) != -1){
-                            totalDiscount += this.calculateDiscountAmount(priceOption,totalPrice);
+                            priceOption.discount = this.calculateDiscountAmount(priceOption,totalPrice);
+                            totalDiscount += priceOption.discount;
+                            // add this discount to appliedDiscounts list
+                            this.appliedDiscounts.push(priceOption);
                         }
                     }
                 }
@@ -128,7 +147,10 @@ export class PriceWrapper {
                         continue;
                     }
                     // the delivery location satisfies all conditions
-                    totalDiscount += this.calculateDiscountAmount(priceOption,totalPrice);
+                    priceOption.discount = this.calculateDiscountAmount(priceOption,totalPrice);
+                    totalDiscount += priceOption.discount;
+                    // add this discount to appliedDiscounts list
+                    this.appliedDiscounts.push(priceOption);
                 }
             }
         }
@@ -136,6 +158,15 @@ export class PriceWrapper {
         // add the individual discounts
         totalDiscount += totalMinimumOrderQuantityDiscount;
         totalDiscount += totalDeliveryPeriodDiscount;
+
+        if(minimumOrderQuantityPriceOption != null){
+            minimumOrderQuantityPriceOption.discount = totalMinimumOrderQuantityDiscount;
+            this.appliedDiscounts.push(minimumOrderQuantityPriceOption);
+        }
+        if(deliveryPeriodPriceOption != null){
+            deliveryPeriodPriceOption.discount = totalDeliveryPeriodDiscount;
+            this.appliedDiscounts.push(deliveryPeriodPriceOption);
+        }
 
         // if PriceWrapper has a quotation price, then we have to update it with the calculated total price
         if(this.quotationPrice.price){
@@ -212,6 +243,8 @@ export class PriceWrapper {
     }
 
     set value(value: number) {
+        // reset appliedDiscounts to make UI part of negotiation response consistent
+        this.appliedDiscounts = [];
         this.quotationPrice.price.priceAmount.value = value/this.quantity.value;
     }
 

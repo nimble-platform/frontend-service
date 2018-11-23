@@ -69,13 +69,16 @@
 
             <!-- Price & Quantity -->
             <ng-container *ngIf="hasPrice()">
-                <div class="order-group">
+                <div class="order-group d-flex">
                     <label class="order-label">
                         Price
                     </label>
                     <span class="order-value">
                         {{ getPricePerItem() }}
                     </span>
+                    <div *ngIf="priceWrapper.appliedDiscounts.length > 0" class="space-left" data-toggle="tooltip" data-placement="top" (click)="openDiscountModal()"  title="Applied Discounts/Charges" style="cursor: pointer">
+                        <i class="fa fa-search" aria-hidden="true"></i>
+                    </div>
                 </div>
 
                 <hr>
@@ -196,6 +199,8 @@
         </div>
     </div>
 </div>
+
+<discount-modal></discount-modal>
 
 <call-status [callStatus]="getProductStatus"
                 [large]="true">

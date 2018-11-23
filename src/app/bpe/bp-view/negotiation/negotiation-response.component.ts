@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import {Component, OnInit, ViewChild} from '@angular/core';
 import { Location } from "@angular/common";
 import { CatalogueLine } from "../../../catalogue/model/publish/catalogue-line";
 import { RequestForQuotation } from "../../../catalogue/model/publish/request-for-quotation";
@@ -15,6 +15,7 @@ import { CallStatus } from "../../../common/call-status";
 import { Quantity } from "../../../catalogue/model/publish/quantity";
 import { BpUserRole } from "../../model/bp-user-role";
 import {CookieService} from 'ng2-cookies';
+import {DiscountModalComponent} from '../../../product-details/discount-modal.component';
 
 @Component({
     selector: "negotiation-response",
@@ -32,6 +33,9 @@ export class NegotiationResponseComponent implements OnInit {
     CURRENCIES: string[] = CURRENCIES;
 
     callStatus: CallStatus = new CallStatus();
+
+    @ViewChild(DiscountModalComponent)
+    private discountModal: DiscountModalComponent;
 
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
@@ -168,4 +172,7 @@ export class NegotiationResponseComponent implements OnInit {
         return qty1.value === qty2.value && qty1.unitCode === qty2.unitCode;
     }
 
+    private openDiscountModal(): void{
+        this.discountModal.open(this.wrapper.quotationPriceWrapper.appliedDiscounts,this.wrapper.quotationPriceWrapper.price.priceAmount.currencyID);
+    }
 }

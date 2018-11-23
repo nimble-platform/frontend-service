@@ -80,11 +80,14 @@
     <div class="col-3"><strong class="font-weight-500">Total Price:</strong></div>
     <div class="col-3">{{ wrapper.lineTotalPriceString }}</div>
     <div class="col-3">{{ wrapper.rfqTotalPriceStringIfNegotiating }}</div>
-    <div class="col-3">
+    <div class="col-3" [ngClass]="wrapper.quotationPriceWrapper.appliedDiscounts.length > 0 ? 'd-flex' : null">
         <quantity-input [presentationMode]="getPresentationMode()" [disabled]="isLoading()" 
             [quantity]="wrapper.quotationPriceWrapper" [quantityUnits]="CURRENCIES" 
             [disableQuantityUnit]="wrapper.linePriceWrapper.hasPrice()">
         </quantity-input>
+        <div *ngIf="wrapper.quotationPriceWrapper.appliedDiscounts.length > 0" class="space-left" data-toggle="tooltip" data-placement="top" (click)="openDiscountModal()"  title="Applied Discounts/Charges" style="cursor: pointer">
+            <i class="fa fa-search" aria-hidden="true"></i>
+        </div>
     </div>
 </div>
 <!--Notes-->
@@ -151,3 +154,4 @@
         </button>
     </div>
 </div>
+<discount-modal></discount-modal>
