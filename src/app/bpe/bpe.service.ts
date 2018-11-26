@@ -282,10 +282,14 @@ export class BPEService {
         });
     }
 
-    generateOrderTermsAndConditionsAsText(order: Order, buyerParty, sellerParty): Promise<string> {
-        const url = `${this.url}/contracts/create-terms?orderId=${order.id}&sellerParty=${encodeURIComponent(JSON.stringify(sellerParty))}&buyerParty=${encodeURIComponent(JSON.stringify(buyerParty))}&incoterms=${order.orderLine[0].lineItem.deliveryTerms.incoterms == null ? "" :order.orderLine[0].lineItem.deliveryTerms.incoterms}&tradingTerms=${encodeURIComponent(JSON.stringify(this.getSelectedTradingTerms(order.paymentTerms.tradingTerms)))}`;
+    generateOrderTermsAndConditionsAsText(order: Order, buyerPartyId, sellerPartyId): Promise<string> {
+        const token = 'Bearer '+this.cookieService.get("bearer_token");
+        const headers = new Headers({'Authorization': token});
+        this.headers.keys().forEach(header => headers.append(header, this.headers.get(header)));
+
+        const url = `${this.url}/contracts/create-terms?orderId=${order.id}&sellerPartyId=${sellerPartyId}&buyerPartyId=${buyerPartyId}&incoterms=${order.orderLine[0].lineItem.deliveryTerms.incoterms == null ? "" :order.orderLine[0].lineItem.deliveryTerms.incoterms}&tradingTerms=${encodeURIComponent(JSON.stringify(this.getSelectedTradingTerms(order.paymentTerms.tradingTerms)))}`;
         return this.http
-            .get(url, {headers: this.headers})
+            .get(url, {headers: headers})
             .toPromise()
             .then(res => res.text())
             .catch(this.handleError);
