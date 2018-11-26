@@ -121,7 +121,6 @@ export class NegotiationRequestComponent implements OnInit {
     onUpdateRequest(): void {
         this.callStatus.submit();
         const rfq: RequestForQuotation = copy(this.rfq);
-        UBLModelUtils.removeHjidFieldsFromObject(rfq);
 
         this.bpeService.updateBusinessProcess(JSON.stringify(rfq),"REQUESTFORQUOTATION",this.bpDataService.processMetadata.processId)
             .then(() => {

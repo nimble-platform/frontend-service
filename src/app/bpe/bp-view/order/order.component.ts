@@ -196,7 +196,6 @@ export class OrderComponent implements OnInit {
     onOrderUpdate() {
         this.submitCallStatus.submit();
         const order = copy(this.bpDataService.order);
-        UBLModelUtils.removeHjidFieldsFromObject(order);
 
         this.bpeService.updateBusinessProcess(JSON.stringify(order),"ORDER",this.bpDataService.processMetadata.processId)
             .then(() => {
