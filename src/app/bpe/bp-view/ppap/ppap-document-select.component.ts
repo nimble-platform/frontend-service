@@ -203,7 +203,6 @@ export class PpapDocumentSelectComponent implements OnInit {
         ppap.note = this.notes;
         ppap.additionalDocumentReference = this.additionalDocuments;
         ppap.documentType = this.DOCUMENTS.filter((_, i) => this.selectedDocuments[i]).map(doc => doc.name);
-        UBLModelUtils.removeHjidFieldsFromObject(ppap);
 
         this.bpeService.updateBusinessProcess(JSON.stringify(ppap),"PPAPREQUEST",this.bpDataService.processMetadata.processId)
             .then(() => {
