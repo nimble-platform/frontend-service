@@ -50,7 +50,7 @@ export class TransportNegotiationRequestComponent implements OnInit {
     ngOnInit() {
         this.rfq = this.bpDataService.requestForQuotation;
         this.rfqPrice = new PriceWrapper(this.rfq.requestForQuotationLine[0].lineItem.price);
-        this.rfqPrice.quotationPrice = new ItemPriceWrapper(this.rfq.requestForQuotationLine[0].lineItem.price);
+        this.rfqPrice.quantityPrice = new ItemPriceWrapper(this.rfq.requestForQuotationLine[0].lineItem.price);
         this.rfqPaymentTerms = new PaymentTermsWrapper(this.rfq.paymentTerms);
         this.updatingProcess = this.bpDataService.updatingProcess;
     }

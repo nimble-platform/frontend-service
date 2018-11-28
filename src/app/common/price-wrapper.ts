@@ -18,9 +18,8 @@ export class PriceWrapper {
     hjid: string = null;
 
     itemPrice: ItemPriceWrapper;
-    // quotation total price
-    // this field is used to calculate quotation response price correctly
-    quotationPrice: ItemPriceWrapper;
+    // the item price wrapper which is used when we pass this price wrapper as quantity to QuantityInputComponent
+    quantityPrice: ItemPriceWrapper;
     // these fields are used to check whether we need to update quotation price or not
     quotationIncotermUpdated = true;
     quotationDeliveryPeriodUpdated = true;
@@ -41,16 +40,16 @@ export class PriceWrapper {
                 public quotationLinePrice: Price = null,
                 public removeDiscountAmount: boolean = true) {
         this.itemPrice = new ItemPriceWrapper(price);
-        this.quotationPrice = new ItemPriceWrapper(this.quotationLinePrice);
+        this.quantityPrice = new ItemPriceWrapper(this.quotationLinePrice);
     }
 
     get totalPrice(): number {
         // if this PriceWrapper has a quotation price but we do not need to update it, simply return.
-        if(this.quotationPrice.price && !this.quotationIncotermUpdated && !this.quotationPaymentMeansUpdated && !this.quotationDeliveryPeriodUpdated){
+        if(this.quantityPrice.price && !this.quotationIncotermUpdated && !this.quotationPaymentMeansUpdated && !this.quotationDeliveryPeriodUpdated){
             if(!this.quotationHasPrice()){
                 return 0;
             }
-            return this.quotationPrice.price.priceAmount.value * this.quantity.value;
+            return this.quantityPrice.price.priceAmount.value * this.quantity.value;
         }
 
         if(!this.hasPrice()) {
@@ -169,8 +168,8 @@ export class PriceWrapper {
         }
 
         // if PriceWrapper has a quotation price, then we have to update it with the calculated total price
-        if(this.quotationPrice.price){
-            this.quotationPrice.price.priceAmount.value = (totalPrice-totalDiscount)/this.quantity.value;
+        if(this.quantityPrice.price){
+            this.quantityPrice.price.priceAmount.value = (totalPrice-totalDiscount)/this.quantity.value;
 
             this.quotationDeliveryPeriodUpdated = false;
             this.quotationIncotermUpdated = false;
@@ -221,7 +220,7 @@ export class PriceWrapper {
     }
 
     quotationHasPrice() :boolean{
-         return this.quotationPrice.price.priceAmount.value != null;
+         return this.quantityPrice.price.priceAmount.value != null;
     }
 
     private roundPrice(value: number): number {
@@ -230,7 +229,6 @@ export class PriceWrapper {
 
     /**
      * Getters/Setters for quantity
-     * These are used to set or get quotation price
      */
 
     get value(): number {
@@ -238,22 +236,22 @@ export class PriceWrapper {
         if(this.presentationMode == 'edit'){
             return this.totalPrice;
         }
-        return this.quotationPrice.price.priceAmount.value*this.quantity.value;
+        return this.quantityPrice.price.priceAmount.value*this.quantity.value;
 
     }
 
     set value(value: number) {
         // reset appliedDiscounts to make UI part of negotiation response consistent
         this.appliedDiscounts = [];
-        this.quotationPrice.price.priceAmount.value = value/this.quantity.value;
+        this.quantityPrice.price.priceAmount.value = value/this.quantity.value;
     }
 
     get unitCode(): string {
-        return this.quotationPrice.price.priceAmount.currencyID;
+        return this.quantityPrice.price.priceAmount.currencyID;
     }
 
     set unitCode(unitCode: string) {
-        this.quotationPrice.price.priceAmount.currencyID = unitCode;
+        this.quantityPrice.price.priceAmount.currencyID = unitCode;
     }
 
     /**
