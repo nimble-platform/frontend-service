@@ -17,6 +17,7 @@ import { ProcessVariables } from "../../model/process-variables";
 import { ModelUtils } from "../../model/model-utils";
 import { ProcessInstanceInputMessage } from "../../model/process-instance-input-message";
 import { BPEService } from "../../bpe.service";
+import {ItemPriceWrapper} from '../../../common/item-price-wrapper';
 
 @Component({
     selector: "transport-negotiation-request",
@@ -49,6 +50,7 @@ export class TransportNegotiationRequestComponent implements OnInit {
     ngOnInit() {
         this.rfq = this.bpDataService.requestForQuotation;
         this.rfqPrice = new PriceWrapper(this.rfq.requestForQuotationLine[0].lineItem.price);
+        this.rfqPrice.quotationPrice = new ItemPriceWrapper(this.rfq.requestForQuotationLine[0].lineItem.price);
         this.rfqPaymentTerms = new PaymentTermsWrapper(this.rfq.paymentTerms);
         this.updatingProcess = this.bpDataService.updatingProcess;
     }
