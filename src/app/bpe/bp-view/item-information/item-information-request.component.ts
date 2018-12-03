@@ -114,7 +114,6 @@ export class ItemInformationRequestComponent implements OnInit {
     onUpdateRequest(): void {
         this.callStatus.submit();
         const itemInformationRequest: ItemInformationRequest = copy(this.bpDataService.itemInformationRequest);
-        UBLModelUtils.removeHjidFieldsFromObject(itemInformationRequest);
 
         this.bpeService.updateBusinessProcess(JSON.stringify(itemInformationRequest),"ITEMINFORMATIONREQUEST",this.bpDataService.processMetadata.processId)
             .then(() => {

@@ -7,6 +7,7 @@ import { Property } from "../catalogue/model/category/property";
 import { PropertyValueQualifier } from "../catalogue/model/publish/property-value-qualifier";
 import { CUSTOM_PROPERTY_LIST_ID } from "../catalogue/model/constants";
 import { CatalogueLine } from "../catalogue/model/publish/catalogue-line";
+import {Amount} from "../catalogue/model/publish/amount";
 
 const UI_NAMES: any = {
     STRING: "TEXT"
@@ -46,6 +47,13 @@ export function getPropertyKey(property: Property | ItemProperty): string {
 export function quantityToString(quantity: Quantity): string {
     if(quantity.value) {
         return `${quantity.value} ${quantity.unitCode}`;
+    }
+    return "";
+}
+
+export function amountToString(amount: Amount): string {
+    if(amount.value) {
+        return `${amount.value} ${amount.currencyID}`;
     }
     return "";
 }

@@ -41,6 +41,12 @@ import { ProductCertificatesTabComponent } from "./publish/product-certificates-
 import { ProductTrackAndTraceTabComponent } from "./publish/product-track-and-trace-tab.component";
 import { UserMgmtModule } from "../user-mgmt/user-mgmt.module";
 import {NoteFileViewComponent} from './ubl-model-view/note-file-view.component';
+import {PriceOptionCountPipe} from "./publish/price-option/price-option-count.pipe";
+import {PriceOptionPipe} from "./publish/price-option/price-option.pipe";
+import {QuantityPriceOptionComponent} from "./publish/price-option/quantity-price-option.component";
+import {ItemPropertyPriceOptionComponent} from "./publish/price-option/item-property-price-option.component";
+import {DiscountTargetComponent} from "./publish/price-option/discount-target.component";
+import {PriceOptionViewComponent} from './publish/price-option/price-option-view.component';
 
 @NgModule({
 	imports: [CommonModule, 
@@ -84,7 +90,14 @@ import {NoteFileViewComponent} from './ubl-model-view/note-file-view.component';
         ItemPropertyDataSourcePipe,
         DetailedAddressViewComponent,
         PaymentTermsView,
-        NoteFileViewComponent
+        NoteFileViewComponent,
+        PaymentTermsView,
+        PriceOptionCountPipe,
+        PriceOptionPipe,
+        QuantityPriceOptionComponent,
+        ItemPropertyPriceOptionComponent,
+        DiscountTargetComponent,
+        PriceOptionViewComponent
     ],
     exports: [
         CategorySearchComponent,
@@ -110,7 +123,12 @@ import {NoteFileViewComponent} from './ubl-model-view/note-file-view.component';
         ItemPropertyDataSourcePipe,
         DetailedAddressViewComponent,
         PaymentTermsView,
-        NoteFileViewComponent
+        QuantityPriceOptionComponent,
+        ItemPropertyPriceOptionComponent,
+        DiscountTargetComponent,
+        PaymentTermsView,
+        NoteFileViewComponent,
+        PriceOptionViewComponent
     ],
     providers: [PublishDeactivateGuardService, CategoryDeactivateGuardService]
 })

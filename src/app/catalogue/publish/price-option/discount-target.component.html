@@ -1,0 +1,30 @@
+<div class=" mt-2 row d-flex align-items-center">
+    <div class="col-6">
+        <amount-input [label]="'Discount Amount'"
+                      [labelClass]="'col-5'"
+                      [placeholder]="'Discount amount'"
+                      [amountCurrencies]="discountUnits"
+                      [amount]="amount"
+                      [valueClass]="'col-7'">
+        </amount-input>
+    </div>
+
+    <ng-container *ngIf="amount.currencyID !== '%'">
+        <div class="col-3">
+            <div class="d-flex align-items-center">
+                <div>
+                    <label> on </label>
+                </div>
+                <div class="ml-3 mr-3">
+                    <select class="form-control form-control-sm" #discountTargetSelect
+                            (change)="changeDiscountTarget(discountTargetSelect.value, priceOption.itemLocationQuantity.allowanceCharge[0])"
+                            [(ngModel)]="selectedDiscountTarget">
+                        <option *ngFor="let option of object.keys(discountTargets)" [value]="discountTargets[option]">{{discountTargets[option]}}</option>
+                    </select>
+                </div>
+                <span class="definition"
+                      title="The discount/charge is applied on the total price for the total price option. Otherwise, per unit indicates the base quantity of the order. For example, if the order quantity is 10 units then the discount/charge is applied to each unit'; if the order quantity is 10 tons then the discount/charge is applied to each ton">&#9432;</span>
+            </div>
+        </div>
+    </ng-container>
+</div>

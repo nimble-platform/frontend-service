@@ -15,6 +15,7 @@ import { ModelUtils } from "../../model/model-utils";
 import { ProcessInstanceInputMessage } from "../../model/process-instance-input-message";
 import { BPEService } from "../../bpe.service";
 import {CookieService} from 'ng2-cookies';
+import {ItemPriceWrapper} from '../../../common/item-price-wrapper';
 
 @Component({
     selector: "transport-negotiation-response",
@@ -56,12 +57,14 @@ export class TransportNegotiationResponseComponent implements OnInit {
             this.rfq = this.bpDataService.requestForQuotation;
         }
         this.rfqPrice = new PriceWrapper(this.rfq.requestForQuotationLine[0].lineItem.price);
+        this.rfqPrice.quantityPrice = new ItemPriceWrapper(this.rfq.requestForQuotationLine[0].lineItem.price);
         this.rfqPaymentTerms = new PaymentTermsWrapper(this.rfq.paymentTerms);
 
         if(!this.quotation) {
             this.quotation = this.bpDataService.quotation;
         }
         this.quotationPrice = new PriceWrapper(this.quotation.quotationLine[0].lineItem.price);
+        this.quotationPrice.quantityPrice = new ItemPriceWrapper(this.quotation.quotationLine[0].lineItem.price);
         this.quotationPaymentTerms = new PaymentTermsWrapper(this.quotation.paymentTerms);
 
         this.userRole = this.bpDataService.userRole;

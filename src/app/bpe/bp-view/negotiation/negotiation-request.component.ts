@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from "@angular/core";
+import {Component, OnInit, Input, ViewChild} from '@angular/core';
 import { CatalogueLine } from "../../../catalogue/model/publish/catalogue-line";
 import { BPDataService } from "../bp-data-service";
 import { CURRENCIES } from "../../../catalogue/model/constants";
@@ -22,6 +22,7 @@ import { PeriodRange } from "../../../user-mgmt/model/period-range";
 import { Option } from "../../../common/options-input.component";
 import { addressToString } from "../../../user-mgmt/utils";
 import {DocumentService} from '../document-service';
+import {DiscountModalComponent} from '../../../product-details/discount-modal.component';
 
 @Component({
     selector: "negotiation-request",
@@ -43,6 +44,9 @@ export class NegotiationRequestComponent implements OnInit {
     CURRENCIES: string[] = CURRENCIES;
 
     selectedAddressValue = "";
+
+    @ViewChild(DiscountModalComponent)
+    private discountModal: DiscountModalComponent;
 
     constructor(private bpDataService: BPDataService,
                 private bpeService:BPEService,
@@ -121,7 +125,6 @@ export class NegotiationRequestComponent implements OnInit {
     onUpdateRequest(): void {
         this.callStatus.submit();
         const rfq: RequestForQuotation = copy(this.rfq);
-        UBLModelUtils.removeHjidFieldsFromObject(rfq);
 
         this.bpeService.updateBusinessProcess(JSON.stringify(rfq),"REQUESTFORQUOTATION",this.bpDataService.processMetadata.processId)
             .then(() => {
@@ -165,13 +168,34 @@ export class NegotiationRequestComponent implements OnInit {
     }
 
     get negotiatePrice(): boolean {
+        this.setRemoveDiscountAmount(this.rfq.negotiationOptions.price);
         return this.rfq.negotiationOptions.price;
     }
 
     set negotiatePrice(negotiate: boolean) {
+        this.setRemoveDiscountAmount(negotiate);
         this.rfq.negotiationOptions.price = negotiate;
         if(!negotiate) {
             this.wrapper.rfqPriceWrapper.itemPrice.value = this.wrapper.linePriceWrapper.itemPrice.value;
+        }
+    }
+
+    // it is used to set wrappers' removeDiscountAmount field while negotiating price
+    private setRemoveDiscountAmount(negotiate: boolean){
+        // if they negotiate price, then set removeDiscountAmount to false so that prices for wrappers will not be affected by total discount
+        if(negotiate){
+            this.wrapper.linePriceWrapper.removeDiscountAmount = false;
+            this.wrapper.rfqPriceWrapper.removeDiscountAmount = false;
+        }
+        else {
+            this.wrapper.linePriceWrapper.removeDiscountAmount = true;
+            this.wrapper.rfqPriceWrapper.removeDiscountAmount = true;
+
+            this.wrapper.linePriceWrapper.itemPrice.price.priceAmount.value =this.line.requiredItemLocationQuantity.price.priceAmount.value;
+            this.wrapper.linePriceWrapper.itemPrice.price.priceAmount.currencyID = this.line.requiredItemLocationQuantity.price.priceAmount.currencyID;
+
+            this.wrapper.rfqPriceWrapper.itemPrice.price.priceAmount.value = this.line.requiredItemLocationQuantity.price.priceAmount.value;
+            this.wrapper.rfqPriceWrapper.itemPrice.price.priceAmount.currencyID = this.line.requiredItemLocationQuantity.price.priceAmount.currencyID;
         }
     }
 
@@ -198,16 +222,16 @@ export class NegotiationRequestComponent implements OnInit {
         const deliveryTerms = this.bpDataService.getCompanySettings().tradeDetails.deliveryTerms;
         var ret = [];
         if (deliveryTerms.length == 0 || !deliveryTerms[0].deliveryAddress || !deliveryTerms[0].deliveryAddress.streetName) {
-          ret = [
-              { name: "No", value: "" }
-          ];
+            ret = [
+                { name: "No", value: "" }
+            ];
         }
         else {
-          ret = [
-              { name: "No", value: "" }
-          ].concat(deliveryTerms.map((term, i) => {
-              return { name: addressToString(term.deliveryAddress), value: String(i) };
-          }));
+            ret = [
+                { name: "No", value: "" }
+            ].concat(deliveryTerms.map((term, i) => {
+                return { name: addressToString(term.deliveryAddress), value: String(i) };
+            }));
         }
         return ret;
     }
@@ -321,5 +345,9 @@ export class NegotiationRequestComponent implements OnInit {
         }
 
         return value >= range.start && value <= range.end;
+    }
+
+    private openDiscountModal(): void{
+        this.discountModal.open(this.wrapper.linePriceWrapper.appliedDiscounts,this.wrapper.linePriceWrapper.price.priceAmount.currencyID);
     }
 }
