@@ -12,6 +12,7 @@ import { sanitizeDataTypeName } from "../../common/utils";
 import { ParentCategories } from "../model/category/parent-categories";
 import { sortCategories } from "../../common/utils";
 import { Property } from "../model/category/property";
+import * as myGlobals from '../../globals';
 import { AppComponent } from "../../app.component";
 
 type ProductType = "product" | "transportation";
@@ -57,7 +58,7 @@ export class CategorySearchComponent implements OnInit {
     selectedCategoryWithDetails: Category = null;
     selectedCategoriesWRTLevels = [];
     propertyNames: string[] = ["code", "taxonomyId", "level", "definition", "note", "remark"];
-    taxonomyId: string = "eClass";
+    taxonomyId: string = myGlobals.config.standardTaxonomy;
     taxonomyIDs: string[];
     prefCats: string[] = [];
     recCats: string[] = [];

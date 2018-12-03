@@ -1,5 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { AppComponent } from '../app.component';
+import { Credentials } from './model/credentials';
+import { CredentialsService } from './credentials.service';
 import { UserService } from './user.service';
+import { CookieService } from 'ng2-cookies';
 import * as myGlobals from '../globals';
 import { UserRegistration } from './model/user-registration';
 import { ActivatedRoute } from "@angular/router";
@@ -34,6 +38,9 @@ export class UserFormComponent implements OnInit {
         private userService: UserService,
         private router: Router,
 		private modalService: NgbModal,
+    private credentialsService: CredentialsService,
+		private cookieService: CookieService,
+		private appComponent: AppComponent,
         public route: ActivatedRoute
     ) {}
 
@@ -65,7 +72,8 @@ export class UserFormComponent implements OnInit {
             .then(res => {
                 this.response = res;
                 this.submitCallStatus.callback("Registration Successful!");
-                this.router.navigate(["/user-mgmt/login"], {queryParams: { pageRef: "registration" }});
+                //this.router.navigate(["/user-mgmt/login"], {queryParams: { pageRef: "registration" }});
+                this.login(userRegistration.credentials);
             })
 			.catch(error => {
 				this.submitCallStatus.error("Registration failed - please make sure your account is not yet registered and try again later", error);
@@ -105,7 +113,50 @@ export class UserFormComponent implements OnInit {
         // this.objToSubmit.dateOfBirth = new Date(this.model.dateOfBirth).toISOString(); // ToDo: add again to model
         this.post(this.objToSubmit);
     }
-	
+
+    login(credentials: Credentials): void {
+  		this.submitCallStatus.submit();
+  		this.credentialsService.post(credentials)
+  		.then(res => {
+  			if (myGlobals.debug)
+  				console.log(`User logged in . Response: ${JSON.stringify(res)}`);
+
+  			this.response = res;
+  			this.cookieService.set("user_id",res.userID);
+  			if (res.companyID)
+  				this.cookieService.set("company_id",res.companyID);
+  			else
+  				this.cookieService.set("company_id",null);
+  			if (res.companyName)
+  				this.cookieService.set("active_company_name",res.companyName);
+  			else
+  				this.cookieService.set("active_company_name",null);
+  			if (res.showWelcomeInfo)
+  				this.cookieService.set("show_welcome","true");
+  			else
+  				this.cookieService.set("show_welcome","false");
+  			this.cookieService.set("user_fullname",res.firstname+" "+res.lastname);
+  			this.cookieService.set("user_email",res.email);
+  			this.cookieService.set("bearer_token",res.accessToken);
+  			this.submitCallStatus.callback("Login Successful");
+        if (!res.companyID && myGlobals.config.companyRegistrationRequired)
+          this.appComponent.checkLogin("/user-mgmt/company-registration");
+        else
+  			   this.appComponent.checkLogin("/dashboard");
+  		})
+  		.catch(error => {
+  			this.cookieService.delete("user_id");
+  			this.cookieService.delete("company_id");
+  			this.cookieService.delete("user_fullname");
+  			this.cookieService.delete("user_email");
+  			this.cookieService.delete("active_company_name");
+  			this.cookieService.delete("show_welcome");
+  			this.cookieService.delete("bearer_token");
+  			this.appComponent.checkLogin("/user-mgmt/login");
+  			this.submitCallStatus.error("Invalid email or password", error);
+  		});
+  	}
+
 	open(content) {
 		this.modalService.open(content);
 	}

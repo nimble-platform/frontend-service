@@ -14,13 +14,13 @@
 <!-- Welcome jumbotron, company waiting for approval -->
 <div *ngIf="user.roles.indexOf('initial_representative')!= -1 && user.roles.indexOf('legal_representative') == -1" class="jumbotron space-after">
   <b>Your company is now registered</b><br/>
-  You can start publishing your catalogue.<br/>
+  <span *ngIf="!config.companyRegistrationRequired">You can start publishing your catalogue.<br/></span>
   In order to execute business processes your company needs to be verified by an administrator - please stay tuned.<br/>
   If you are not being verified with 24h, please contact our support <a href="mailto:nimble-support@salzburgresearch.at">nimble-support@salzburgresearch.at</a>.
 </div>
 
 <!-- Regular content -->
-<div *ngIf="user.hasCompany">
+<div *ngIf="user.hasCompany && (this.appComponent.checkRoles('purchases') || this.appComponent.checkRoles('sales') || this.appComponent.checkRoles('catalogue'))">
     <!-- Tabs -->
     <div class="row">
         <div class="col">

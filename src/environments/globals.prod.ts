@@ -76,6 +76,16 @@ export const tntEndpoint = `${bpe_endpoint}/t-t/epc-details`;
 export const tntAnalysisEndpoint = `${base_path}/tnt/simpleTrackingAnalysis`;
 
 
+// Platform Configuration
+
+export const config = {
+  "companyRegistrationRequired": false,
+  "showTrack": true,
+  "showExplorative": true,
+  "standardTaxonomy": "eClass"
+};
+
+
 // Catalogue format variables
 
 export const product_name = "item_name";

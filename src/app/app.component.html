@@ -1,5 +1,8 @@
 <nav class="navbar navbar-expand-lg navbar-dark nimble-bg space-after">
-	<a *ngIf="isLoggedIn" class="navbar-brand" routerLink="/dashboard" routerLinkActive="active">
+	<a *ngIf="isLoggedIn && (checkRoles('comp_req') || checkRoles('wait_comp'))" class="navbar-brand" routerLink="/dashboard" routerLinkActive="active">
+		<img id="nav-logo" src="./assets/nimble_logo_white.png" height="30" class="d-inline-block align-top" alt="">
+	</a>
+	<a *ngIf="isLoggedIn && (!checkRoles('comp_req') && !checkRoles('wait_comp'))" class="navbar-brand" routerLink="/user-mgmt/company-registration" routerLinkActive="active">
 		<img id="nav-logo" src="./assets/nimble_logo_white.png" height="30" class="d-inline-block align-top" alt="">
 	</a>
 	<a *ngIf="!isLoggedIn" class="navbar-brand" routerLink="/user-mgmt/login" routerLinkActive="active">
@@ -26,7 +29,7 @@
 			</li>
 		</ul>
 		<ul *ngIf="isLoggedIn" class="nav navbar-nav mr-auto">
-			<li class="nav-item" routerLinkActive="active">
+			<li class="nav-item" *ngIf="checkRoles('comp_req') || checkRoles('wait_comp')" routerLinkActive="active">
 				<a class="nav-link" routerLink="/dashboard">
 					<i class="fa fa-list-ul"></i> <span i18n>Dashboard</span>
 				</a>
@@ -45,15 +48,13 @@
 				</div>
 			</li>
 
-			<!--
-			<li class="nav-item" routerLinkActive="active">
+			<li class="nav-item" *ngIf="!config.showExplorative && checkRoles('comp_req')" routerLinkActive="active">
 				<a class="nav-link" routerLink="/simple-search">
 					<i class="fa fa-search"></i> <span i18n>Search</span>
 				</a>
 			</li>
-			-->
 
-			<li ngbDropdown class="nav-item dropdown" routerLinkActive="active">
+			<li ngbDropdown class="nav-item dropdown" *ngIf="config.showExplorative && checkRoles('comp_req')" routerLinkActive="active">
 				<a class="nav-link pointer" id="dropdownMenuSearch" ngbDropdownToggle>
 					<i class="fa fa-search"></i> <span i18n>Search</span>
 				</a>
@@ -83,7 +84,7 @@
 
 			<!-- Tracking and Tracing Component UB Initial Version-->
 			<!-- This Will be adapted by the platform's core dev-team later -->
-			<li class="nav-item" *ngIf="checkRoles('track')" routerLinkActive="active">
+			<li class="nav-item" *ngIf="config.showTrack && checkRoles('track')" routerLinkActive="active">
 				<a class="nav-link" routerLink="/tnt" routerLinkActive="active">
 					<i class="fa fa-truck"></i> <span>Track</span>
 				</a>
@@ -140,7 +141,7 @@
 					<a *ngIf="checkRoles('comp-settings')" class="dropdown-item" routerLink="/user-mgmt/company-settings" routerLinkActive="active">
 						<i class="fa fa-cog dd-icon"></i> Company Settings
 					</a>
-					<a *ngIf="companyID" class="dropdown-item" routerLink="/user-mgmt/company-rating" routerLinkActive="active">
+					<a *ngIf="checkRoles('comp-ratings')" class="dropdown-item" routerLink="/user-mgmt/company-rating" routerLinkActive="active">
 						<i class="fa fa-star dd-icon"></i> Company Ratings
 					</a>
 					<a class="dropdown-item" routerLink="/user-mgmt/logout">
