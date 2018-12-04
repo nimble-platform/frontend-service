@@ -33,8 +33,12 @@ export class CredentialsFormComponent implements OnInit {
 
 	ngOnInit() {
 		this.getVersions();
-		if (this.cookieService.get("user_id"))
-			this.appComponent.checkLogin("/dashboard");
+		if (this.cookieService.get("user_id")) {
+			if (!this.appComponent.checkRoles("comp_req") && !this.appComponent.checkRoles('wait_comp'))
+				this.appComponent.checkLogin("/user-mgmt/company-registration");
+			else
+				this.appComponent.checkLogin("/dashboard");
+		}
 	}
 
 	post(credentials: Credentials): void {
@@ -62,7 +66,10 @@ export class CredentialsFormComponent implements OnInit {
 			this.cookieService.set("user_email",res.email);
 			this.cookieService.set("bearer_token",res.accessToken);
 			this.submitCallStatus.callback("Login Successful");
-			this.appComponent.checkLogin("/dashboard");
+			if (!res.companyID && myGlobals.config.companyRegistrationRequired)
+				this.appComponent.checkLogin("/user-mgmt/company-registration");
+			else
+				 this.appComponent.checkLogin("/dashboard");
 		})
 		.catch(error => {
 			this.cookieService.delete("user_id");

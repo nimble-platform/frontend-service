@@ -11,6 +11,7 @@ import { DashboardOrdersQuery } from "./model/dashboard-orders-query";
 import { DashboardOrdersQueryResults } from "./model/dashboard-orders-query-results";
 import { DashboardQueryParameters } from "./model/dashboard-query-parameters";
 import { DashboardUser } from "./model/dashboard-user";
+import * as myGlobals from '../globals';
 import {CollaborationGroup} from '../bpe/model/collaboration-group';
 
 @Component({
@@ -41,6 +42,8 @@ export class DashboardThreadedComponent implements OnInit {
     // if status is true, that means we are changing collaboration group name
     // defaultName is used if the collaboration group does not have any name assigned.
     updatingCollaborationGroupName = [];
+
+    public config = myGlobals.config;
 
     constructor(
         private cookieService: CookieService,
