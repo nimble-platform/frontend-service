@@ -14,7 +14,7 @@ import { CompanyNegotiationSettings } from './model/company-negotiation-settings
 import { CatalogueLine } from '../catalogue/model/publish/catalogue-line';
 import { INCOTERMS, PAYMENT_MEANS } from '../catalogue/model/constants';
 import { Person } from '../catalogue/model/publish/person';
-import { ResetPasswordCredentials } from './model/reset-password';
+import { ResetPasswordCredentials } from './model/reset-password-credentials';
 
 @Injectable()
 export class UserService {
