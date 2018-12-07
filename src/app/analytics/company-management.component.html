@@ -1,0 +1,77 @@
+<p class="nimble-title">Company Management</p>
+
+<h4>Registered Companies
+    <span *ngIf="registeredCompaniesPage">(Total {{ registeredCompaniesPage.totalElements }})</span>
+</h4>
+
+<call-status [callStatus]="registeredCompaniesCallStatus" [large]="true"></call-status>
+
+<div [hidden]="registeredCompaniesPage == null">
+    <div *ngIf="registeredCompaniesPage" class="mt-5">
+        <table class="table table-striped table-bordered">
+            <tr>
+                <th><span i18n>ID</span></th>
+                <th><span i18n>Legal Name</span></th>
+                <th><span i18n>Address</span></th>
+            </tr>
+            <ng-container *ngFor="let company of registeredCompaniesPage.content">
+                <tr>
+                    <td>{{ company.hjid }}</td>
+                    <td>{{ company.name }}</td>
+                    <td>{{ company.postalAddress.streetName }} {{ company.postalAddress.buildingNumber }}, {{
+                        company.postalAddress.cityName }} {{ company.postalAddress.postalZone }}
+                    </td>
+                </tr>
+            </ng-container>
+        </table>
+        <ngb-pagination class="d-flex justify-content-center"
+                        [collectionSize]="registeredCompaniesPage.totalElements"
+                        [pageSize]="registeredCompaniesPage.size"
+                        [page]="registeredCompaniesPage.number"
+                        [maxSize]="registeredCompaniesPage.size"
+                        [boundaryLinks]="false"
+                        (pageChange)="onRegisteredCompaniesPageChange($event)">
+        </ngb-pagination>
+    </div>
+</div>
+
+<h4>Unverified Companies
+    <span *ngIf="unverifiedCompaniesPage">(Total {{ unverifiedCompaniesPage.totalElements }})</span>
+</h4>
+
+<call-status [callStatus]="unverifiedCompaniesCallStatus" [large]="true"></call-status>
+
+<div *ngIf="unverifiedCompaniesPage">
+    <table class="table table-striped table-bordered">
+        <tr>
+            <th><span i18n>ID</span></th>
+            <th><span i18n>Legal Name</span></th>
+            <th><span i18n>Address</span></th>
+            <th><span i18n>Initial Represenatative</span></th>
+            <th></th>
+        </tr>
+        <ng-container *ngFor="let company of unverifiedCompaniesPage.content">
+            <tr>
+                <td>{{ company.hjid }}</td>
+                <td>{{ company.name }}</td>
+                <td>{{ company.postalAddress.streetName }} {{ company.postalAddress.buildingNumber }}, {{
+                    company.postalAddress.cityName }} {{ company.postalAddress.postalZone }}
+                </td>
+                <td>{{ company.person[0].firstName }} {{ company.person[0].familyName }}</td>
+                <td>
+                    <button class="btn btn-success" (click)="verifyCompany(company)">
+                        Verify
+                    </button>
+                </td>
+            </tr>
+        </ng-container>
+    </table>
+    <ngb-pagination class="d-flex justify-content-center"
+                    [collectionSize]="unverifiedCompaniesPage.totalElements"
+                    [pageSize]="unverifiedCompaniesPage.size"
+                    [page]="unverifiedCompaniesPage.number"
+                    [maxSize]="unverifiedCompaniesPage.size"
+                    [boundaryLinks]="false"
+                    (pageChange)="onUnverifiedPageChange($event)">
+    </ngb-pagination>
+</div>

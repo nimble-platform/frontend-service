@@ -13,6 +13,8 @@ import { UserRole } from './model/user-role';
 import { CompanyNegotiationSettings } from './model/company-negotiation-settings';
 import { CatalogueLine } from '../catalogue/model/publish/catalogue-line';
 import { INCOTERMS, PAYMENT_MEANS } from '../catalogue/model/constants';
+import { Person } from '../catalogue/model/publish/person';
+import { ResetPasswordCredentials } from './model/reset-password-credentials';
 
 @Injectable()
 export class UserService {
@@ -107,6 +109,17 @@ export class UserService {
             .catch(this.handleError);
     }
 
+    getPerson(personId:string):Promise<Person> {
+        const url = `${this.url}/person/${personId}`;
+        const token = 'Bearer '+this.cookieService.get("bearer_token");
+        const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
+        return this.http
+            .get(url, {headers: headers_token, withCredentials: true})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+    }
+
     getUserParty(userId: string): Promise<Party> {
         if(this.userParty != null) {
             return Promise.resolve(this.userParty);
@@ -168,6 +181,17 @@ export class UserService {
             .toPromise()
             .then(response => response.json() as CompanySettings)
             .catch(this.handleError)
+    }
+
+    resetPassword(credentials: ResetPasswordCredentials): Promise<any> {
+        const url = `${this.url}/reset-password`;
+        const token = 'Bearer '+this.cookieService.get("bearer_token");
+        const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
+        return this.http
+            .post(url, JSON.stringify(credentials), {headers: headers_token, withCredentials: true})
+            .toPromise()
+            .then(res => res)
+            .catch(this.handleError);
     }
 
     getUserRoles(): Promise<UserRole[]> {

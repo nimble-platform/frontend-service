@@ -146,9 +146,27 @@
             <div class="add-image btn btn-outline-primary">
                 <span>Add Image</span>
                 <input type="file" (change)="onAddImage($event)"/>
+                <i class="fa fa-question-circle delete-image" (click)="onClickImageRecommendations(imageRecommendationModal)"></i>
             </div>
         </div>
     </div>
+
+    <!-- Image recommendations Modal -->
+    <ng-template #imageRecommendationModal let-d="dismiss">
+        <div class="modal-header">
+            <h4 class="modal-title">Product image recommendations</h4>
+            <button type="button" class="close" aria-label="Close" (click)="d('')">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <ul>
+                <li>Product images must be files with one of the "png", "jpg" or "gif" formats.</li>
+                <li>Although not mandatory, square or squarish images are recommended for better visibility.</li>
+                <li>Images exceeding 1 MB in size are not permitted.</li>
+            </ul>
+        </div>
+    </ng-template>
 
     <hr>
 

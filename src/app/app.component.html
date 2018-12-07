@@ -101,6 +101,9 @@
 					<i class="fa fa-chart-pie"></i> <span i18n>Platform Management</span>
 				</a>
 				<div class="dropdown-menu" aria-labelledby="dropdownMenuPM" ngbDropdownMenu>
+					<a class="dropdown-item" routerLink="/analytics/management" routerLinkActive="active">
+						<i class="fa fa-user-tie dd-icon"></i> Company Management
+					</a>
 					<a class="dropdown-item" routerLink="/analytics/trust" routerLinkActive="active">
 						<i class="fa fa-sliders-h dd-icon"></i> Trust Policy Configuration
 					</a>
@@ -143,6 +146,9 @@
 					</a>
 					<a *ngIf="checkRoles('comp-ratings')" class="dropdown-item" routerLink="/user-mgmt/company-rating" routerLinkActive="active">
 						<i class="fa fa-star dd-icon"></i> Company Ratings
+					</a>
+					<a class="dropdown-item" routerLink="/user-mgmt/user-profile" routerLinkActive="active">
+						<i class="fa fa-user-tie dd-icon"></i> User Profile
 					</a>
 					<a class="dropdown-item" routerLink="/user-mgmt/logout">
 						<i class="fa fa-lock dd-icon"></i> <span i18n>Logout</span>

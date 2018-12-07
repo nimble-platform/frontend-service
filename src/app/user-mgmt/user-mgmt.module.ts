@@ -25,6 +25,7 @@ import { CompanyDeliveryTermsComponent } from './company-settings/company-delive
 import { CompanyCategoriesSettingsComponent } from './company-settings/company-categories-settings.component';
 import { CompanyDetailsComponent } from './company-details.component';
 import { CompanyRatingComponent } from './company-rating.component';
+import { UserProfileComponent } from './user-profile.component';
 
 @NgModule({
 	imports: [
@@ -46,7 +47,7 @@ import { CompanyRatingComponent } from './company-rating.component';
         DeliveryTermsSubForm,
         PaymentMeansForm,
         CompanySettingsComponent,
-				CompanyDescriptionSettingsComponent,
+		CompanyDescriptionSettingsComponent,
 		CompanyRegistrationComponent,
 		CompanyInvitationComponent,
 		CompanyNegotiationSettingsComponent,
@@ -55,7 +56,8 @@ import { CompanyRatingComponent } from './company-rating.component';
 		CompanyDeliveryTermsComponent,
 		CompanyCategoriesSettingsComponent,
 		CompanyDetailsComponent,
-		CompanyRatingComponent
+		CompanyRatingComponent,
+		UserProfileComponent
 	],
 	exports: [
 		LoginComponent,
@@ -69,7 +71,8 @@ import { CompanyRatingComponent } from './company-rating.component';
 		CompanyRegistrationComponent,
 		CompanyInvitationComponent,
 		CompanyDetailsComponent,
-		CompanyRatingComponent
+		CompanyRatingComponent,
+		UserProfileComponent
 	],
 	providers: [
 	]

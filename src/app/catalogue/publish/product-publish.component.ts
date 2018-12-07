@@ -215,6 +215,10 @@ export class ProductPublishComponent implements OnInit {
         this.catalogueLine.goodsItem.item.productImage.splice(index, 1);
     }
 
+    onClickImageRecommendations(content): void {
+        this.modalService.open(content);
+    }
+
     /**
      * deselect a category
      * 1) remove the property from additional item properties
