@@ -102,8 +102,11 @@
     <div class="col-2">
         <strong class="font-weight-500">Price:</strong>
     </div>
-    <div class="col-5">
+    <div class="col-5 d-flex">
         {{ wrapper.linePricePerItemString }}
+        <div *ngIf="wrapper.linePriceWrapper.appliedDiscounts.length > 0 && !isReadOnly()" class="space-left" data-toggle="tooltip" data-placement="top" (click)="openDiscountModal()"  title="Applied Discounts/Charges" style="cursor: pointer">
+            <i class="fa fa-search" aria-hidden="true"></i>
+        </div>
     </div>
     <div class="col-5">
         <negotiation-request-input label="Request Item Price" [(cbModel)]="negotiatePrice" id="priceCb" 
@@ -189,3 +192,5 @@
         <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
     </div>
 </div>
+
+<discount-modal></discount-modal>

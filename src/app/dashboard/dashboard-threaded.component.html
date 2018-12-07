@@ -14,13 +14,13 @@
 <!-- Welcome jumbotron, company waiting for approval -->
 <div *ngIf="user.roles.indexOf('initial_representative')!= -1 && user.roles.indexOf('legal_representative') == -1" class="jumbotron space-after">
   <b>Your company is now registered</b><br/>
-  You can start publishing your catalogue.<br/>
+  <span *ngIf="!config.companyRegistrationRequired">You can start publishing your catalogue.<br/></span>
   In order to execute business processes your company needs to be verified by an administrator - please stay tuned.<br/>
   If you are not being verified with 24h, please contact our support <a href="mailto:nimble-support@salzburgresearch.at">nimble-support@salzburgresearch.at</a>.
 </div>
 
 <!-- Regular content -->
-<div *ngIf="user.hasCompany">
+<div *ngIf="user.hasCompany && (this.appComponent.checkRoles('purchases') || this.appComponent.checkRoles('sales') || this.appComponent.checkRoles('catalogue'))">
     <!-- Tabs -->
     <div class="row">
         <div class="col">
@@ -36,10 +36,10 @@
                     </li>
                 </ng-container>
                 <li class="nav-item">
-                    <a href id="PURCHASES" *ngIf="this.appComponent.checkRoles('purchases')"  [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.PURCHASES}" (click)="onChangeTab($event)" i18n>Purchases</a>
+                    <a href id="PURCHASES" *ngIf="this.appComponent.checkRoles('purchases')"  [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.PURCHASES}" (click)="onChangeTab($event)" i18n>Purchases <span *ngIf="buyerCounter>0" class="badge badge-pill badge-danger ml-1">{{buyerCounter}}</span></a>
                 </li>
                 <li class="nav-item">
-                    <a href id="SALES" *ngIf="this.appComponent.checkRoles('sales')" [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.SALES}" (click)="onChangeTab($event)" i18n>Sales</a>
+                    <a href id="SALES" *ngIf="this.appComponent.checkRoles('sales')" [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.SALES}" (click)="onChangeTab($event)" i18n>Sales <span *ngIf="sellerCounter>0" class="badge badge-pill badge-danger ml-1">{{sellerCounter}}</span></a>
                 </li>
                 <li class="nav-item">
                     <a href id="CATALOGUE" *ngIf="this.appComponent.checkRoles('catalogue')" [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.CATALOGUE}" (click)="onChangeTab($event)" i18n>Catalogue</a>
@@ -166,8 +166,43 @@
                         <!-- Results -->
                         <div *ngIf="results.orders" class="col-10">
                             <h4 *ngIf="results.orders.length === 0">No orders.</h4>
-                            <thread-summary *ngFor="let order of results.orders" [processInstanceGroup]="order" (threadStateUpdated)="onOrderRemovedFromView()">
-                            </thread-summary>
+                            <div *ngFor="let order of results.orders;let i=index" class="bordered space-after">
+                                <div class="row">
+                                    <div class="col-12 d-flex collaboration-group-header">
+                                        <div class="header-label mr-auto d-flex">
+                                            <h5 *ngIf="updatingCollaborationGroupName[i].status == false && (order.name != null || order.name != '')">{{order.name}}</h5>
+                                            <h5 *ngIf="updatingCollaborationGroupName[i].status == false && (order.name == null || order.name == '')">{{updatingCollaborationGroupName[i].defaultName}}</h5>
+                                            <input *ngIf="updatingCollaborationGroupName[i].status == true" type="text" class="form-control" name="inputCtrl" [(ngModel)]="updatingCollaborationGroupName[i].name" [disabled]=""/>
+                                            <div *ngIf="updatingCollaborationGroupName[i].status == true" (click)="updateCollaborationGroupName(order.id,updatingCollaborationGroupName[i].name)" data-toggle="tooltip" data-placement="top" title="Save">
+                                                <i class="fa fa-check p-2 pointer" aria-hidden="true"></i>
+                                            </div>
+                                            <div *ngIf="updatingCollaborationGroupName[i].status == true" (click)="changeCollaborationGroupNameStatus(i,false)" data-toggle="tooltip" data-placement="top" title="Cancel">
+                                                <i class="fa fa-times p-2 pointer" aria-hidden="true"></i>
+                                            </div>
+                                        </div>
+                                        <div data-toggle="tooltip" (click)="changeCollaborationGroupNameStatus(i,true)" data-placement="top" title="Change group name">
+                                            <i class="fa fa-pencil-alt p-2 pointer" aria-hidden="true"></i>
+                                        </div>
+                                        <div *ngIf="!order.archived" (click)="archiveGroup(order.id)" data-toggle="tooltip" data-placement="top" title="Archive">
+                                            <i class="fa fa-archive p-2 pointer" aria-hidden="true"></i>
+                                        </div>
+                                        <div *ngIf="order.archived" (click)="restoreGroup(order.id)" data-toggle="tooltip" data-placement="top" title="Restore">
+                                            <i class="fa fa-undo p-2 pointer" aria-hidden="true"></i>
+                                        </div>
+                                        <div *ngIf="order.archived" (click)="deleteGroup(order.id)" data-toggle="tooltip" data-placement="top" title="Delete Permanently">
+                                            <i class="fa fa-trash-alt p-2 pointer" aria-hidden="true"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr class="collaboration-hr">
+                                <div *ngFor="let group of order.associatedProcessInstanceGroups;let i=index">
+                                    <div [ngClass]="i != order.associatedProcessInstanceGroups.length-1 ? 'space-after' : null">
+                                        <!--If Purchases tab is selected, show groups whose collaboration role is Buyer-->
+                                        <thread-summary *ngIf="queryParameters.tab == TABS.SALES || (queryParameters.tab == TABS.PURCHASES && group.collaborationRole == 'BUYER')" [processInstanceGroup]="group" [collaborationGroupId]="order.id" (threadStateUpdated)="onOrderRemovedFromView()">
+                                        </thread-summary>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 

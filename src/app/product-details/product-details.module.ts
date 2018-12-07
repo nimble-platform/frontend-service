@@ -11,6 +11,7 @@ import { ProductDetailsOverviewComponent } from "./product-details-overview.comp
 import { TransportationServiceInput } from "./transportation-service-input.component";
 import { ProductDetailsCertificatesComponent } from "./product-details-certificates.component";
 import { UserMgmtModule } from "../user-mgmt/user-mgmt.module";
+import {DiscountModalComponent} from './discount-modal.component';
 
 @NgModule({
 	imports: [
@@ -28,11 +29,13 @@ import { UserMgmtModule } from "../user-mgmt/user-mgmt.module";
 		ProductDetailsTabsComponent,
 		ProductDetailsOverviewComponent,
 		ProductDetailsCertificatesComponent,
-		TransportationServiceInput
+		TransportationServiceInput,
+        DiscountModalComponent
 	],
 	exports: [
 		ProductDetailsTabsComponent,
-		TransportationServiceInput
+		TransportationServiceInput,
+		DiscountModalComponent
 	],
 	providers: [
 	]

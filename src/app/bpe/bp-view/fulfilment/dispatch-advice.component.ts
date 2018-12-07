@@ -161,7 +161,6 @@ export class DispatchAdviceComponent implements OnInit {
         this.callStatus.submit();
 
         let dispatchAdvice: DespatchAdvice = copy(this.bpDataService.despatchAdvice);
-        UBLModelUtils.removeHjidFieldsFromObject(dispatchAdvice);
 
         this.bpeService.updateBusinessProcess(JSON.stringify(dispatchAdvice),"DESPATCHADVICE",this.bpDataService.processMetadata.processId)
             .then(() => {

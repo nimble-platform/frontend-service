@@ -1,32 +1,31 @@
-<div class="row space-after thread-entry">
+<div class="row thread-entry">
     <div class="col-12">
         <!-- Title bar -->
         <div class="row">
-            <div class="col-12 d-flex thread-entry-header">
+            <div class="col-12 d-flex thread-entry-header" (click)="expanded = !expanded">
                 <div *ngIf="!titleEvent" class="header-label mr-auto">Loading...</div>
                 <div *ngIf="titleEvent" class="header-label mr-auto">
-                    <span class="clickable" (click)="navigateToSearchDetails()">{{titleEvent.product.name}}</span> (Trading partner: <span class="clickable" (click)="navigateToCompanyDetails()">{{titleEvent.tradingPartner}}</span>)
+                    <span class="clickable" (click)="navigateToSearchDetails()">{{titleEvent.product.name}}</span> (Trading partner: <span class="clickable" (click)="navigateToCompanyDetails()">{{titleEvent.tradingPartner}}</span>) <span *ngIf="processInstanceGroup.status == 'CANCELLED'"><i>- Collaboration cancelled</i></span>
+                    <span *ngIf="processInstanceGroup.status != 'CANCELLED'" class="space-left"><i>{{titleEvent.statusText}}</i></span>
                 </div>
-                <div *ngIf="showDataChannelButton" data-toggle="tooltip" data-placement="top" title="Open Data Channel">
+                <div *ngIf="titleEvent && showDataChannelButton" data-toggle="tooltip" data-placement="top" title="Open Data Channel">
                     <i class="fa fa-exchange-alt p-2 pointer" aria-hidden="true" [routerLink]="[channelLink]"></i>
                 </div>
-                <div *ngIf="!processInstanceGroup.archived" (click)="archiveGroup()" data-toggle="tooltip" data-placement="top" title="Archive">
-                    <i class="fa fa-archive p-2 pointer" aria-hidden="true"></i>
-                </div>
-                <div *ngIf="processInstanceGroup.archived" (click)="deleteGroup()" data-toggle="tooltip" data-placement="top" title="Delete Permanently">
+                <div *ngIf="titleEvent && processInstanceGroup.archived" (click)="deleteGroup()" data-toggle="tooltip" data-placement="top" title="Delete Permanently">
                     <i class="fa fa-trash-alt p-2 pointer" aria-hidden="true"></i>
                 </div>
-                <div *ngIf="processInstanceGroup.archived" (click)="restoreGroup()" data-toggle="tooltip" data-placement="top" title="Restore">
-                    <i class="fa fa-undo p-2 pointer" aria-hidden="true"></i>
+                <div *ngIf="titleEvent && showRateCollaborationButton" (click)="rateCollaboration(addSuccessRatingModal,addCancelRatingModal)" data-toggle="tooltip" data-placement="top" title="Rate this collaboration">
+                    <i class="fa fa-star p-2 pointer" aria-hidden="true"></i>
                 </div>
-                <div (click)="cancelCollaboration()" data-toggle="tooltip" data-placement="top" title="Cancel the collaboration">
+                <div *ngIf="titleEvent && showCancelCollaborationButton" (click)="cancelCollaboration()" data-toggle="tooltip" data-placement="top" title="Cancel the collaboration">
                     <i class="fa fa-times p-2 pointer" aria-hidden="true"></i>
                 </div>
             </div>
         </div>
 
-        <!-- Titles for the rows -->
-        <div class="row thread-entry-heading">
+        <div *ngIf="expanded">
+            <!-- Titles for the rows -->
+            <div class="row thread-entry-heading">
                 <!--<div class="col-2"><strong>Customer</strong></div>-->
                 <div class="col-3"><strong>Type</strong></div>
                 <div class="col-3"><strong>Date</strong></div>
@@ -34,31 +33,168 @@
                 <div class="col-3"><strong>Status</strong></div>
             </div>
 
-        <!-- Most recent event -->
-        <thread-event *ngIf="lastEvent" [processInstanceGroup]="processInstanceGroup" [event]="lastEvent" (processCancelled)="threadStateUpdated.next()">
-        </thread-event>
+            <!-- Most recent event -->
+            <thread-event *ngIf="lastEvent" [processInstanceGroup]="processInstanceGroup" [collaborationGroupId]="collaborationGroupId" [event]="lastEvent" (processCancelled)="threadStateUpdated.next()">
+            </thread-event>
 
-        <!-- Loading most recent event -->
-        <div class="row" *ngIf="!lastEvent">
-            <call-status [callStatus]="fetchCallStatus" [large]="true"></call-status>
-        </div>
+            <!-- Loading most recent event -->
+            <div class="row" *ngIf="!lastEvent">
+                <call-status [callStatus]="fetchCallStatus" [large]="true"></call-status>
+            </div>
 
-        <!-- History -->
-        <ng-container *ngIf="historyExpanded && history">
-            <ng-container *ngFor="let event of history">
-                <thread-event [processInstanceGroup]="processInstanceGroup" [event]="event" (processCancelled)="threadStateUpdated.next()">
-                </thread-event>
+            <!-- History -->
+            <ng-container *ngIf="historyExpanded && history">
+                <ng-container *ngFor="let event of history">
+                    <thread-event [processInstanceGroup]="processInstanceGroup" [event]="event" [collaborationGroupId]="collaborationGroupId" (processCancelled)="threadStateUpdated.next()">
+                    </thread-event>
+                </ng-container>
             </ng-container>
-        </ng-container>
 
-        <!-- Toggle history -->
-        <div class="row" *ngIf="lastEvent && hasHistory">
-            <div class="col align-items-center clickable" (click)="toggleHistory()">
-                {{ historyExpanded ? "Hide" : "Show" }} previous step(s)
+            <!-- Toggle history -->
+            <div class="row" *ngIf="lastEvent && hasHistory">
+                <div class="col align-items-center clickable" (click)="toggleHistory()">
+                    {{ historyExpanded ? "Hide" : "Show" }} previous step(s)
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Rating Success Modal -->
+<ng-template #addSuccessRatingModal let-d="dismiss">
+    <form novalidate>
+        <div class="modal-header">
+            <h4 class="modal-title">Rate Collaboration</h4>
+            <button type="button" class="close" aria-label="Close" (click)="d('')">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group row">
+            <label class="col-6 col-form-label">Quality of Negotiation Process</label>
+              <div class="col-6 align-right">
+                <ngb-rating [(rate)]="compRating.QualityOfTheNegotiationProcess" max="5">
+                  <ng-template let-fill="fill">
+                    <span class="star star-b" [class.full]="fill === 100">
+                      <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+                    </span>
+                  </ng-template>
+                </ngb-rating>
+              </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-6 col-form-label">Quality of Ordering Process</label>
+              <div class="col-6 align-right">
+                <ngb-rating [(rate)]="compRating.QualityOfTheOrderingProcess" max="5">
+                  <ng-template let-fill="fill">
+                    <span class="star star-b" [class.full]="fill === 100">
+                      <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+                    </span>
+                  </ng-template>
+                </ngb-rating>
+              </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-6 col-form-label">Response Time</label>
+              <div class="col-6 align-right">
+                <ngb-rating [(rate)]="compRating.ResponseTime" max="5">
+                  <ng-template let-fill="fill">
+                    <span class="star star-b" [class.full]="fill === 100">
+                      <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+                    </span>
+                  </ng-template>
+                </ngb-rating>
+              </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-6 col-form-label">Listing Accuracy</label>
+              <div class="col-6 align-right">
+                <ngb-rating [(rate)]="compRating.ProductListingAccuracy" max="5">
+                  <ng-template let-fill="fill">
+                    <span class="star star-b" [class.full]="fill === 100">
+                      <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+                    </span>
+                  </ng-template>
+                </ngb-rating>
+              </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-6 col-form-label">Conformance to Contractual Terms</label>
+              <div class="col-6 align-right">
+                <ngb-rating [(rate)]="compRating.ConformanceToOtherAgreedTerms" max="5">
+                  <ng-template let-fill="fill">
+                    <span class="star star-b" [class.full]="fill === 100">
+                      <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+                    </span>
+                  </ng-template>
+                </ngb-rating>
+              </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-6 col-form-label">Delivery & Packaging</label>
+              <div class="col-6 align-right">
+                <ngb-rating [(rate)]="compRating.DeliveryAndPackaging" max="5">
+                  <ng-template let-fill="fill">
+                    <span class="star star-b" [class.full]="fill === 100">
+                      <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+                    </span>
+                  </ng-template>
+                </ngb-rating>
+              </div>
+          </div>
+          <hr>
+          <div class="form-group row">
+              <label class="col-2 col-form-label">
+                <strong>Comment:</strong>
+              </label>
+              <div class="col-10">
+                  <input type="text" class="form-control" [(ngModel)]="compComment" name="compCommentSuccess">
+              </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+            <call-status [callStatus]="saveCallStatusRating"></call-status>
+            <button type="button" class="btn btn-primary save-cert-btn" [disabled]="saveCallStatusRating.isLoading() || checkCompRating()" (click)="onSaveSuccessRating(d);">
+                <span>Save</span>
+            </button>
+        </div>
+    </form>
+</ng-template>
+
+<!-- Rating Cancel Modal -->
+<ng-template #addCancelRatingModal let-d="dismiss">
+    <form novalidate>
+        <div class="modal-header">
+            <h4 class="modal-title">Cancellation Reasons</h4>
+            <button type="button" class="close" aria-label="Close" (click)="d('')">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group row">
+              <label class="col-2 col-form-label">
+                <strong>Reason:</strong>
+              </label>
+              <div class="col-10">
+                  <select class="form-control" [(ngModel)]="compComment" name="compCommentCancel">
+                    <option></option>
+                    <option>Slow Response Time</option>
+                    <option>Suspicious Company Information</option>
+                    <option>Undervalued Offer</option>
+                    <option>Rejected Delivery Terms</option>
+                    <option>Other</option>
+                  </select>
+              </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+            <call-status [callStatus]="saveCallStatusRating"></call-status>
+            <button type="button" class="btn btn-primary save-cert-btn" [disabled]="saveCallStatusRating.isLoading() || checkCompComment()" (click)="onSaveCancelRating(d);">
+                <span>Save</span>
+            </button>
+        </div>
+    </form>
+</ng-template>
 
 <call-status [callStatus]="archiveCallStatus" [large]="true">
 </call-status>

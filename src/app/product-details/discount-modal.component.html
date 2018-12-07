@@ -1,0 +1,169 @@
+<ng-template #modal let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h5 class="modal-title" id="modal-basic-title">Discounts/Charges applied:</h5>
+        <button type="button" class="close" aria-label="Close" (click)="d('cross')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div *ngIf="orderedQuantityDiscounts.length > 0" class="space-after">
+            <h5>{{PRICE_OPTIONS.ORDERED_QUANTITY.text}}</h5>
+            <div class="discount-hr"></div>
+            <div *ngFor="let option of orderedQuantityDiscounts" class="row">
+                <div class="col-3">{{option.itemLocationQuantity.minimumQuantity.value}} {{option.itemLocationQuantity.minimumQuantity.unitCode}}</div>
+                <div class="col-6">
+                    <!--total price-->
+                    <span *ngIf="option.itemLocationQuantity.allowanceCharge[0].amount && option.itemLocationQuantity.allowanceCharge[0].amount.currencyID != '%'">
+                        {{getAbsValue(option.itemLocationQuantity.allowanceCharge[0].amount.value)}} {{option.itemLocationQuantity.allowanceCharge[0].amount.currencyID}} on total price
+                    </span>
+                    <!--percentage-->
+                    <span *ngIf="option.itemLocationQuantity.allowanceCharge[0].amount && option.itemLocationQuantity.allowanceCharge[0].amount.currencyID == '%'">
+                        {{getAbsValue(option.itemLocationQuantity.allowanceCharge[0].amount.value)}} {{ option.itemLocationQuantity.allowanceCharge[0].amount.currencyID}}
+                    </span>
+                    <!--percentage-->
+                    <span *ngIf="!option.itemLocationQuantity.allowanceCharge[0].amount && option.itemLocationQuantity.allowanceCharge[0].perUnitAmount.value && option.itemLocationQuantity.allowanceCharge[0].perUnitAmount.currencyID">
+                        {{getAbsValue(option.itemLocationQuantity.allowanceCharge[0].perUnitAmount.value)}} {{ option.itemLocationQuantity.allowanceCharge[0].perUnitAmount.currencyID}} on per unit
+                    </span>
+                </div>
+                <div class="col-3">
+                    {{getAbsValue(option.discount)}} {{currencyId}} <span *ngIf="option.discount >= 0">(Discount)</span> <span *ngIf="option.discount < 0">(Charge)</span>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="productPropertyDiscounts.length > 0" class="space-after" >
+            <h5>{{PRICE_OPTIONS.PRODUCT_PROPERTY.text}}</h5>
+            <div class="discount-hr"></div>
+            <div *ngFor="let option of productPropertyDiscounts" class="row">
+                <div class="col-3">{{option.additionalItemProperty[0].name}}:
+                    <span *ngIf="option.additionalItemProperty[0].value.length > 0">{{option.additionalItemProperty[0].value[0]}}</span>
+                    <span *ngIf="option.additionalItemProperty[0].valueBinary.length > 0">{{option.additionalItemProperty[0].valueBinary[0]}}</span>
+                    <span *ngIf="option.additionalItemProperty[0].valueDecimal.length > 0">{{option.additionalItemProperty[0].valueDecimal[0]}}</span>
+                    <span *ngIf="option.additionalItemProperty[0].valueQuantity.length > 0">{{option.additionalItemProperty[0].valueQuantity[0]}}</span>
+                </div>
+                <div class="col-6">
+                    <!--total price-->
+                    <span *ngIf="option.itemLocationQuantity.allowanceCharge[0].amount && option.itemLocationQuantity.allowanceCharge[0].amount.currencyID != '%'">
+                        {{getAbsValue(option.itemLocationQuantity.allowanceCharge[0].amount.value)}} {{option.itemLocationQuantity.allowanceCharge[0].amount.currencyID}} on total price
+                    </span>
+                    <!--percentage-->
+                    <span *ngIf="option.itemLocationQuantity.allowanceCharge[0].amount && option.itemLocationQuantity.allowanceCharge[0].amount.currencyID == '%'">
+                        {{getAbsValue(option.itemLocationQuantity.allowanceCharge[0].amount.value)}} {{ option.itemLocationQuantity.allowanceCharge[0].amount.currencyID}}
+                    </span>
+                    <!--percentage-->
+                    <span *ngIf="!option.itemLocationQuantity.allowanceCharge[0].amount && option.itemLocationQuantity.allowanceCharge[0].perUnitAmount.value && option.itemLocationQuantity.allowanceCharge[0].perUnitAmount.currencyID">
+                        {{getAbsValue(option.itemLocationQuantity.allowanceCharge[0].perUnitAmount.value)}} {{ option.itemLocationQuantity.allowanceCharge[0].perUnitAmount.currencyID}} on per unit
+                    </span>
+                </div>
+                <div class="col-3">
+                    {{getAbsValue(option.discount)}} {{currencyId}} <span *ngIf="option.discount >= 0">(Discount)</span> <span *ngIf="option.discount < 0">(Charge)</span>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="deliveryPeriodDiscounts.length > 0" class="space-after">
+           <h5>{{PRICE_OPTIONS.DELIVERY_PERIOD.text}}</h5>
+            <div class="discount-hr"></div>
+            <div *ngFor="let option of deliveryPeriodDiscounts" class="row">
+                <div class="col-3">{{option.estimatedDeliveryPeriod.durationMeasure.value}} {{option.estimatedDeliveryPeriod.durationMeasure.unitCode}}</div>
+                <div class="col-6">
+                    <!--total price-->
+                    <span *ngIf="option.itemLocationQuantity.allowanceCharge[0].amount && option.itemLocationQuantity.allowanceCharge[0].amount.currencyID != '%'">
+                        {{getAbsValue(option.itemLocationQuantity.allowanceCharge[0].amount.value)}} {{option.itemLocationQuantity.allowanceCharge[0].amount.currencyID}} on total price
+                    </span>
+                    <!--percentage-->
+                    <span *ngIf="option.itemLocationQuantity.allowanceCharge[0].amount && option.itemLocationQuantity.allowanceCharge[0].amount.currencyID == '%'">
+                        {{getAbsValue(option.itemLocationQuantity.allowanceCharge[0].amount.value)}} {{ option.itemLocationQuantity.allowanceCharge[0].amount.currencyID}}
+                    </span>
+                    <!--percentage-->
+                    <span *ngIf="!option.itemLocationQuantity.allowanceCharge[0].amount && option.itemLocationQuantity.allowanceCharge[0].perUnitAmount.value && option.itemLocationQuantity.allowanceCharge[0].perUnitAmount.currencyID">
+                        {{getAbsValue(option.itemLocationQuantity.allowanceCharge[0].perUnitAmount.value)}} {{ option.itemLocationQuantity.allowanceCharge[0].perUnitAmount.currencyID}} on per unit
+                    </span>
+                </div>
+                <div class="col-3">
+                    {{getAbsValue(option.discount)}} {{currencyId}} <span *ngIf="option.discount >= 0">(Discount)</span> <span *ngIf="option.discount < 0">(Charge)</span>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="incotermDiscounts.length > 0" class="space-after">
+            <h5>{{PRICE_OPTIONS.INCOTERM.text}}</h5>
+            <div class="discount-hr"></div>
+            <div *ngFor="let option of incotermDiscounts" class="row">
+                <div class="col-3">{{option.incoterms[0]}}</div>
+                <div class="col-6">
+                    <!--total price-->
+                    <span *ngIf="option.itemLocationQuantity.allowanceCharge[0].amount && option.itemLocationQuantity.allowanceCharge[0].amount.currencyID != '%'">
+                        {{getAbsValue(option.itemLocationQuantity.allowanceCharge[0].amount.value)}} {{option.itemLocationQuantity.allowanceCharge[0].amount.currencyID}} on total price
+                    </span>
+                    <!--percentage-->
+                    <span *ngIf="option.itemLocationQuantity.allowanceCharge[0].amount && option.itemLocationQuantity.allowanceCharge[0].amount.currencyID == '%'">
+                        {{getAbsValue(option.itemLocationQuantity.allowanceCharge[0].amount.value)}} {{ option.itemLocationQuantity.allowanceCharge[0].amount.currencyID}}
+                    </span>
+                    <!--percentage-->
+                    <span *ngIf="!option.itemLocationQuantity.allowanceCharge[0].amount && option.itemLocationQuantity.allowanceCharge[0].perUnitAmount.value && option.itemLocationQuantity.allowanceCharge[0].perUnitAmount.currencyID">
+                        {{getAbsValue(option.itemLocationQuantity.allowanceCharge[0].perUnitAmount.value)}} {{ option.itemLocationQuantity.allowanceCharge[0].perUnitAmount.currencyID}} on per unit
+                    </span>
+                </div>
+                <div class="col-3">
+                    {{getAbsValue(option.discount)}} {{currencyId}} <span *ngIf="option.discount >= 0">(Discount)</span> <span *ngIf="option.discount < 0">(Charge)</span>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="paymentMeanDiscounts.length > 0" class="space-after">
+            <h5>{{PRICE_OPTIONS.PAYMENT_MEAN.text}}</h5>
+            <div class="discount-hr"></div>
+            <div *ngFor="let option of paymentMeanDiscounts" class="row">
+                <div class="col-3">{{option.paymentMeans[0].instructionNote}}</div>
+                <div class="col-6">
+                    <!--total price-->
+                    <span *ngIf="option.itemLocationQuantity.allowanceCharge[0].amount && option.itemLocationQuantity.allowanceCharge[0].amount.currencyID != '%'">
+                        {{getAbsValue(option.itemLocationQuantity.allowanceCharge[0].amount.value)}} {{option.itemLocationQuantity.allowanceCharge[0].amount.currencyID}} on total price
+                    </span>
+                    <!--percentage-->
+                    <span *ngIf="option.itemLocationQuantity.allowanceCharge[0].amount && option.itemLocationQuantity.allowanceCharge[0].amount.currencyID == '%'">
+                        {{getAbsValue(option.itemLocationQuantity.allowanceCharge[0].amount.value)}} {{ option.itemLocationQuantity.allowanceCharge[0].amount.currencyID}}
+                    </span>
+                    <!--percentage-->
+                    <span *ngIf="!option.itemLocationQuantity.allowanceCharge[0].amount && option.itemLocationQuantity.allowanceCharge[0].perUnitAmount.value && option.itemLocationQuantity.allowanceCharge[0].perUnitAmount.currencyID">
+                        {{getAbsValue(option.itemLocationQuantity.allowanceCharge[0].perUnitAmount.value)}} {{ option.itemLocationQuantity.allowanceCharge[0].perUnitAmount.currencyID}} on per unit
+                    </span>
+                </div>
+                <div class="col-3">
+                    {{getAbsValue(option.discount)}} {{currencyId}} <span *ngIf="option.discount >= 0">(Discount)</span> <span *ngIf="option.discount < 0">(Charge)</span>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="deliveryLocationDiscount.length > 0" class="space-after">
+            <h5>{{PRICE_OPTIONS.DELIVERY_LOCATION.text}}</h5>
+            <div class="discount-hr"></div>
+            <div *ngFor="let option of deliveryLocationDiscount" class="row">
+                <div class="col-3" *ngIf="option.itemLocationQuantity.applicableTerritoryAddress[0].buildingNumber != ''">Building Number:{{option.itemLocationQuantity.applicableTerritoryAddress[0].buildingNumber}}</div>
+                <div class="col-3" *ngIf="option.itemLocationQuantity.applicableTerritoryAddress[0].cityName != ''">City Name:{{option.itemLocationQuantity.applicableTerritoryAddress[0].cityName}}</div>
+                <div class="col-3" *ngIf="option.itemLocationQuantity.applicableTerritoryAddress[0].postalZone != ''">Postal Zone:{{option.itemLocationQuantity.applicableTerritoryAddress[0].postalZone}}</div>
+                <div class="col-3" *ngIf="option.itemLocationQuantity.applicableTerritoryAddress[0].streetName != ''">Street Name:{{option.itemLocationQuantity.applicableTerritoryAddress[0].streetName}}</div>
+                <div class="col-3" *ngIf="option.itemLocationQuantity.applicableTerritoryAddress[0].country && option.itemLocationQuantity.applicableTerritoryAddress[0].country.name != ''">Country:{{option.itemLocationQuantity.applicableTerritoryAddress[0].country.name}}</div>
+                <div class="col-6">
+                    <!--total price-->
+                    <span *ngIf="option.itemLocationQuantity.allowanceCharge[0].amount && option.itemLocationQuantity.allowanceCharge[0].amount.currencyID != '%'">
+                        {{getAbsValue(option.itemLocationQuantity.allowanceCharge[0].amount.value)}} {{option.itemLocationQuantity.allowanceCharge[0].amount.currencyID}} on total price
+                    </span>
+                    <!--percentage-->
+                    <span *ngIf="option.itemLocationQuantity.allowanceCharge[0].amount && option.itemLocationQuantity.allowanceCharge[0].amount.currencyID == '%'">
+                        {{getAbsValue(option.itemLocationQuantity.allowanceCharge[0].amount.value)}} {{ option.itemLocationQuantity.allowanceCharge[0].amount.currencyID}}
+                    </span>
+                    <!--percentage-->
+                    <span *ngIf="!option.itemLocationQuantity.allowanceCharge[0].amount && option.itemLocationQuantity.allowanceCharge[0].perUnitAmount.value && option.itemLocationQuantity.allowanceCharge[0].perUnitAmount.currencyID">
+                        {{getAbsValue(option.itemLocationQuantity.allowanceCharge[0].perUnitAmount.value)}} {{ option.itemLocationQuantity.allowanceCharge[0].perUnitAmount.currencyID}} on per unit
+                    </span>
+                </div>
+                <div class="col-3">
+                    {{getAbsValue(option.discount)}} {{currencyId}} <span *ngIf="option.discount >= 0">(Discount)</span> <span *ngIf="option.discount < 0">(Charge)</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <h5 *ngIf="totalDiscount >= 0" class="col-9">Total Discount:</h5>
+        <h5 *ngIf="totalDiscount < 0" class="col-9">Total Charge:</h5>
+        <div class="col-2" style="padding-left: 30px">{{getAbsValue(totalDiscount)}} {{currencyId}}</div>
+        <button type="button" class="btn btn-primary col-1" (click)="c('ok')">OK</button>
+    </div>
+</ng-template>

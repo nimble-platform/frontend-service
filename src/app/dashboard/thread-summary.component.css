@@ -1,7 +1,7 @@
 .thread-entry {
     border: 1px solid rgba(0, 0, 0, 0.15) !important;
     border-radius: 0.25rem !important;
-    margin: 0;
+    margin: -8px;
 }
 
 .thread-entry .col-12 {
@@ -17,6 +17,7 @@
     margin: 0;
     border-bottom: 1px solid rgba(0, 0, 0, 0.15) !important;
     background: rgba(0,0,0,.05);
+    cursor: pointer;
 }
 .thread-entry-header .header-label {
     margin-top: 0.2rem;
@@ -29,4 +30,26 @@
 
 .thread-entry-heading {
     border-bottom: 1px solid rgba(0, 0, 0, 0.15) !important;
+}
+
+.star {
+  position: relative;
+  display: inline-block;
+  color: #b0c4de;
+	font-size: 130%;
+}
+
+.star-b {
+	font-size: 170% !important;
+}
+
+.full {
+  color: #1e90ff;
+}
+
+.half {
+  position: absolute;
+  display: inline-block;
+  overflow: hidden;
+  color: #1e90ff;
 }

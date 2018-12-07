@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import {Component, OnInit, ViewChild} from '@angular/core';
 import { Location } from "@angular/common";
 import { CatalogueLine } from "../../../catalogue/model/publish/catalogue-line";
 import { RequestForQuotation } from "../../../catalogue/model/publish/request-for-quotation";
@@ -15,6 +15,7 @@ import { CallStatus } from "../../../common/call-status";
 import { Quantity } from "../../../catalogue/model/publish/quantity";
 import { BpUserRole } from "../../model/bp-user-role";
 import {CookieService} from 'ng2-cookies';
+import {DiscountModalComponent} from '../../../product-details/discount-modal.component';
 
 @Component({
     selector: "negotiation-response",
@@ -33,6 +34,9 @@ export class NegotiationResponseComponent implements OnInit {
 
     callStatus: CallStatus = new CallStatus();
 
+    @ViewChild(DiscountModalComponent)
+    private discountModal: DiscountModalComponent;
+
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
                 private location: Location,
@@ -46,8 +50,14 @@ export class NegotiationResponseComponent implements OnInit {
         this.rfq = this.bpDataService.requestForQuotation;
         this.bpDataService.computeRfqNegotiationOptionsIfNeeded();
         this.quotation = this.bpDataService.quotation;
-        this.wrapper = new NegotiationModelWrapper(this.line, this.rfq, this.quotation, 
+        this.wrapper = new NegotiationModelWrapper(this.line, this.rfq, this.quotation,
             this.bpDataService.getCompanySettings().negotiationSettings);
+
+        // we set removeDiscountAmount to false so that total price of rfq will not be changed
+        this.wrapper.rfqPriceWrapper.removeDiscountAmount = false;
+        // we set quotationPriceWrapper's presentationMode to be sure that the total price of quotation response will not be changed
+        this.wrapper.quotationPriceWrapper.presentationMode = this.getPresentationMode();
+
         this.userRole = this.bpDataService.userRole;
     }
 
@@ -162,4 +172,7 @@ export class NegotiationResponseComponent implements OnInit {
         return qty1.value === qty2.value && qty1.unitCode === qty2.unitCode;
     }
 
+    private openDiscountModal(): void{
+        this.discountModal.open(this.wrapper.quotationPriceWrapper.appliedDiscounts,this.wrapper.quotationPriceWrapper.price.priceAmount.currencyID);
+    }
 }

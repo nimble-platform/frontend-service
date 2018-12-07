@@ -11,6 +11,8 @@ import { DashboardOrdersQuery } from "./model/dashboard-orders-query";
 import { DashboardOrdersQueryResults } from "./model/dashboard-orders-query-results";
 import { DashboardQueryParameters } from "./model/dashboard-query-parameters";
 import { DashboardUser } from "./model/dashboard-user";
+import * as myGlobals from '../globals';
+import {CollaborationGroup} from '../bpe/model/collaboration-group';
 
 @Component({
     selector: "dashboard-threaded",
@@ -33,6 +35,16 @@ export class DashboardThreadedComponent implements OnInit {
 
     TABS = TABS;
 
+    buyerCounter = 0;
+    sellerCounter = 0;
+
+    // this contains status-name-defaultName information of collaboration groups
+    // if status is true, that means we are changing collaboration group name
+    // defaultName is used if the collaboration group does not have any name assigned.
+    updatingCollaborationGroupName = [];
+
+    public config = myGlobals.config;
+
     constructor(
         private cookieService: CookieService,
         private bpeService: BPEService,
@@ -43,7 +55,8 @@ export class DashboardThreadedComponent implements OnInit {
     ) {}
 
     ngOnInit() {
-        this.computeUserFromCookies()
+        this.computeUserFromCookies();
+        this.getTabCounters();
         this.route.queryParams.subscribe(params => this.updateStateFromQueryParameters(params));
     }
 
@@ -65,7 +78,12 @@ export class DashboardThreadedComponent implements OnInit {
           this.cookieService.set("show_welcome","false");
         });
         if(this.queryParameters.tab === TABS.WELCOME) {
-            this.updateQueryParameters({ tab: TABS.PURCHASES })
+            if (this.appComponent.checkRoles('purchases'))
+              this.updateQueryParameters({ tab: TABS.PURCHASES });
+            else if (this.appComponent.checkRoles('sales'))
+              this.updateQueryParameters({ tab: TABS.SALES });
+            else
+              this.updateQueryParameters({ tab: TABS.CATALOGUE });
         }
     }
 
@@ -93,6 +111,7 @@ export class DashboardThreadedComponent implements OnInit {
         } else {
             this.updateStateFromQueryParameters(this.queryParameters);
         }
+        this.getTabCounters();
     }
 
     /*
@@ -161,6 +180,18 @@ export class DashboardThreadedComponent implements OnInit {
         }
 
         this.user.showWelcomeTab = this.cookieService.get("show_welcome") === "true";
+
+    }
+
+    private getTabCounters() {
+      this.buyerCounter = 0;
+      this.sellerCounter = 0;
+      this.bpeService
+      .getActionRequiredCounter(this.cookieService.get("company_id"))
+      .then(response => {
+          this.buyerCounter = parseInt(response.buyer);
+          this.sellerCounter = parseInt(response.seller);
+      });
     }
 
     private updateStateFromQueryParameters(params: Params | DashboardQueryParameters): void {
@@ -182,6 +213,7 @@ export class DashboardThreadedComponent implements OnInit {
             default:
                 // nothing
         }
+
     }
 
     private sanitizeTab(tab: string): string {
@@ -245,10 +277,11 @@ export class DashboardThreadedComponent implements OnInit {
                 query.products, query.categories, query.partners,query.status)
             .then(response => {
                 this.results = new DashboardOrdersQueryResults(
-                    response.processInstanceGroups,
-                    response.processInstanceGroups.length > 0,
+                    response.collaborationGroups,
+                    response.collaborationGroups.length > 0,
                     response.size
                 )
+                this.createUpdatingCollaborationGroupNameArray()
             });
         } else {
             // Needs to query for archived orders to know if the "Show Archived" button should be enabled
@@ -264,12 +297,33 @@ export class DashboardThreadedComponent implements OnInit {
                 ),
             ]).then(([response, archived]) => {
                 this.results = new DashboardOrdersQueryResults(
-                    response.processInstanceGroups,
-                    archived.processInstanceGroups.length > 0,
+                    response.collaborationGroups,
+                    archived.collaborationGroups.length > 0,
                     response.size
                 )
+                this.createUpdatingCollaborationGroupNameArray()
             });
         }
+    }
+
+    private createUpdatingCollaborationGroupNameArray(){
+        this.updatingCollaborationGroupName = [];
+        for(let order of this.results.orders){
+            this.updatingCollaborationGroupName.push({status:false,name:order.name,defaultName:this.getDefaultCollaborationNames(order)})
+        }
+    }
+
+    private getDefaultCollaborationNames(collaborationGroup:CollaborationGroup):string{
+        let defaultName = "Activities on ";
+        for(let i = 0 ; i < collaborationGroup.associatedProcessInstanceGroups.length ; i++){
+            if(i == collaborationGroup.associatedProcessInstanceGroups.length-1){
+                defaultName += collaborationGroup.associatedProcessInstanceGroups[i].name;
+            }
+            else {
+                defaultName += collaborationGroup.associatedProcessInstanceGroups[i].name+", ";
+            }
+        }
+        return defaultName;
     }
 
     areOrdersLoading(): boolean {
@@ -352,5 +406,55 @@ export class DashboardThreadedComponent implements OnInit {
 
     private parseArray(param: string): string[] {
         return param ? param.split("_SEP_") : []
+    }
+
+    changeCollaborationGroupNameStatus(index:number,status:boolean){
+        // if status is true,then we will change the name of the group.
+        if(status){
+            this.updatingCollaborationGroupName[index].name = this.results.orders[index].name;
+        }
+        this.updatingCollaborationGroupName[index].status = status;
+    }
+
+    updateCollaborationGroupName(id:string,name:string){
+        this.bpeService.updateCollaborationGroupName(id,name)
+            .then(() => {
+                this.onOrderRemovedFromView();
+            })
+            .catch(err => {
+                console.error("Failed to update collaboration group name",err);
+            });
+    }
+
+    archiveGroup(id: string): void {
+        this.bpeService.archiveCollaborationGroup(id)
+            .then(() => {
+               this.onOrderRemovedFromView();
+            })
+            .catch(err => {
+                console.error("Failed to archive collaboration group",err);
+            });
+    }
+
+    restoreGroup(id: string): void {
+        this.bpeService.restoreCollaborationGroup(id)
+            .then(() => {
+                this.onOrderRemovedFromView();
+            })
+            .catch(err => {
+                console.error("Failed to restore collaboration group",err);
+            });
+    }
+
+    deleteGroup(id: string): void {
+        if (confirm("Are you sure that you want to delete this collaboration group?")) {
+            this.bpeService.deleteCollaborationGroup(id)
+                .then(() => {
+                    this.onOrderRemovedFromView();
+                })
+                .catch(err => {
+                    console.error("Failed to delete the collaboration group",err);
+                });
+        }
     }
 }

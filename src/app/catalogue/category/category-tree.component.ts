@@ -22,6 +22,9 @@ export class CategoryTreeComponent implements OnInit {
     @Input() border: boolean = true;
     @Input() selectedCategories: Category[];
     @Input() level: number = 1;
+    // this is the required number of steps to create category tree at the beginning
+    // it is necessary to create correct category tree for FurnitureOntology categories
+    @Input() numberOfSteps: number;
     private _parentCategories: ParentCategories;
 
     getCategoryStatus: CallStatus = new CallStatus;
@@ -39,16 +42,18 @@ export class CategoryTreeComponent implements OnInit {
     }
 
     @Input() set parentCategories(parentCategories: ParentCategories) {
-        this._parentCategories = parentCategories;
-        if(parentCategories && this.category.code === parentCategories.parents[this.level - 1].code && this.level < parentCategories.parents.length) {
-            this.expanded = true;
-            this.childrenCategories = sortCategories(parentCategories.categories[this.level])
-        } 
-        setTimeout((()=>{
-            if(parentCategories && this.category.code === parentCategories.parents[this.level - 1].code && this.level === parentCategories.parents.length) {
-            scrollToDiv(this.category.code);
+        if(this.category.taxonomyId == "eClass" || (this.category.taxonomyId == "FurnitureOntology" && this.numberOfSteps > -1)){
+            this._parentCategories = parentCategories;
+            if(parentCategories && this.category.code === parentCategories.parents[this.level - 1].code && this.level < parentCategories.parents.length) {
+                this.expanded = true;
+                this.childrenCategories = sortCategories(parentCategories.categories[this.level])
             }
-        }), 0)
+            setTimeout((()=>{
+                if(parentCategories && this.category.code === parentCategories.parents[this.level - 1].code && this.level === parentCategories.parents.length) {
+                    scrollToDiv(this.category.code);
+                }
+            }), 0)
+        }
     }
 
     get parentCategories(): ParentCategories {

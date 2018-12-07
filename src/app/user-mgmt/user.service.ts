@@ -13,7 +13,8 @@ import { UserRole } from './model/user-role';
 import { CompanyNegotiationSettings } from './model/company-negotiation-settings';
 import { CatalogueLine } from '../catalogue/model/publish/catalogue-line';
 import { INCOTERMS, PAYMENT_MEANS } from '../catalogue/model/constants';
-import {Text} from "../catalogue/model/publish/text";
+import { Person } from '../catalogue/model/publish/person';
+import { ResetPasswordCredentials } from './model/reset-password-credentials';
 
 @Injectable()
 export class UserService {
@@ -35,7 +36,7 @@ export class UserService {
       return this.http
           .post(url, JSON.stringify({}), {headers: headers_token, withCredentials: true})
           .toPromise()
-          .then(res => res.json())
+          .then(res => res)
           .catch(this.handleError);
     }
 
@@ -108,6 +109,17 @@ export class UserService {
             .catch(this.handleError);
     }
 
+    getPerson(personId:string):Promise<Person> {
+        const url = `${this.url}/person/${personId}`;
+        const token = 'Bearer '+this.cookieService.get("bearer_token");
+        const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
+        return this.http
+            .get(url, {headers: headers_token, withCredentials: true})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+    }
+
     getUserParty(userId: string): Promise<Party> {
         if(this.userParty != null) {
             return Promise.resolve(this.userParty);
@@ -149,6 +161,17 @@ export class UserService {
         })
     }
 
+    getProfileCompleteness(partyId: string): Promise<any> {
+      const url = `${this.url}/company-settings/${partyId}/completeness`;
+      const token = 'Bearer '+this.cookieService.get("bearer_token");
+      const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
+      return this.http
+          .get(url, {headers: headers_token, withCredentials: true})
+          .toPromise()
+          .then(response => response.json())
+          .catch(this.handleError)
+    }
+
     private getSettingsPromise(partyId: string): Promise<CompanySettings> {
         const url = `${this.url}/company-settings/${partyId}`;
         const token = 'Bearer '+this.cookieService.get("bearer_token");
@@ -158,6 +181,17 @@ export class UserService {
             .toPromise()
             .then(response => response.json() as CompanySettings)
             .catch(this.handleError)
+    }
+
+    resetPassword(credentials: ResetPasswordCredentials): Promise<any> {
+        const url = `${this.url}/reset-password`;
+        const token = 'Bearer '+this.cookieService.get("bearer_token");
+        const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
+        return this.http
+            .post(url, JSON.stringify(credentials), {headers: headers_token, withCredentials: true})
+            .toPromise()
+            .then(res => res)
+            .catch(this.handleError);
     }
 
     getUserRoles(): Promise<UserRole[]> {
@@ -263,14 +297,38 @@ export class UserService {
       });
     }
 
-    saveCert(file: File, name: string, type: string): Promise<void> {
-      const url = `${this.url}/company-settings/certificate?name=${name}&type=${type}`;
+    saveCert(file: File, name: string, description: string, type: string): Promise<void> {
+      const url = `${this.url}/company-settings/certificate?name=${name}&description=${description}&type=${type}`;
       const token = 'Bearer '+this.cookieService.get("bearer_token");
       const headers_token = new Headers({'Authorization': token});
       const form_data: FormData = new FormData();
       form_data.append('file', file);
       return this.http
           .post(url, form_data, {headers: headers_token, withCredentials: true})
+          .toPromise()
+          .then(() => {})
+          .catch(this.handleError)
+    }
+
+    saveImage(file: File, isLogo: boolean): Promise<void> {
+      const url = `${this.url}/company-settings/image?isLogo=${isLogo}`;
+      const token = 'Bearer '+this.cookieService.get("bearer_token");
+      const headers_token = new Headers({'Authorization': token});
+      const form_data: FormData = new FormData();
+      form_data.append('file', file);
+      return this.http
+          .post(url, form_data, {headers: headers_token, withCredentials: true})
+          .toPromise()
+          .then(() => {})
+          .catch(this.handleError)
+    }
+
+    deleteImage(id: string): Promise<void> {
+      const url = `${this.url}/company-settings/image/${id}`;
+      const token = 'Bearer '+this.cookieService.get("bearer_token");
+      const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
+      return this.http
+          .delete(url, {headers: headers_token, withCredentials: true})
           .toPromise()
           .then(() => {})
           .catch(this.handleError)

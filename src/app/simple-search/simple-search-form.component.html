@@ -205,7 +205,7 @@
 							<div *ngIf="showProdSection">
 								<div class="card mb-3">
 									<div class="card-header">
-										Price
+										{{ getName(product_price) }}
 									</div>
 									<div class="card-body">
 										<div class="row mb-2">
@@ -283,6 +283,81 @@
 
 						</div>
 
+						<div *ngIf="checkTrustCatCount()>0">
+
+							<div class="pointer" (click)="showTrustSection=!showTrustSection">
+								<h5>Rating / Trust Filters <span *ngIf="!showTrustSection"><i class="fa fa-angle-double-down"></i></span><span *ngIf="showTrustSection"><i class="fa fa-angle-double-up"></i></span></h5>
+							</div>
+
+							<div *ngIf="showTrustSection">
+								<div class="card mb-3">
+									<div class="card-header">
+										Rating / Trust
+									</div>
+									<div class="card-body">
+										<div class="mb-2">
+											<div class="mb-2">
+												{{ getName(product_vendor_rating) }}<br/>
+												<ngb-rating [(rate)]="ratingOverall" max="5">
+													<ng-template let-fill="fill">
+														<span class="star star-b" [class.full]="fill === 100">
+															<span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+														</span>
+													</ng-template>
+												</ngb-rating>
+											</div>
+											<div class="mb-2">
+												{{ getName(product_vendor_rating_seller) }}<br/>
+												<ngb-rating [(rate)]="ratingSeller" max="5">
+													<ng-template let-fill="fill">
+														<span class="star star-b" [class.full]="fill === 100">
+															<span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+														</span>
+													</ng-template>
+												</ngb-rating>
+											</div>
+											<div class="mb-2">
+												{{ getName(product_vendor_rating_fulfillment) }}<br/>
+												<ngb-rating [(rate)]="ratingFulfillment" max="5">
+													<ng-template let-fill="fill">
+														<span class="star star-b" [class.full]="fill === 100">
+															<span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+														</span>
+													</ng-template>
+												</ngb-rating>
+											</div>
+											<div class="mb-2">
+												{{ getName(product_vendor_rating_delivery) }}<br/>
+												<ngb-rating [(rate)]="ratingDelivery" max="5">
+													<ng-template let-fill="fill">
+														<span class="star star-b" [class.full]="fill === 100">
+															<span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+														</span>
+													</ng-template>
+												</ngb-rating>
+											</div>
+											<div class="mb-2">
+												{{ getName(product_vendor_trust) }}<br/>
+												<ngb-rating [(rate)]="ratingTrust" max="5">
+													<ng-template let-fill="fill">
+														<span class="heart heart-b" [class.full-heart]="fill === 100">
+															<span class="half-heart" [style.width.%]="fill">&#10084;</span>&#10084;
+														</span>
+													</ng-template>
+												</ngb-rating>
+											</div>
+										</div>
+										<button class="btn btn-primary" (click)="setTrustFilter()" [disabled]="!checkTrustFilter()">Apply</button>
+										<button class="btn btn-secondary ml-2" (click)="resetTrustFilter()" [hidden]="!checkTrustFacet()">Reset</button>
+									</div>
+								</div>
+
+							</div>
+
+							<hr/>
+
+						</div>
+
 						<div *ngIf="checkOtherCatCount()>0">
 
 							<div class="pointer" (click)="showOtherSection=!showOtherSection">
@@ -334,14 +409,52 @@
 											{{result[product_img]}}
 											-->
 										</div>
-										<div class="col-8">
+										<div class="col-6">
 											<b>{{ result[product_name] }}</b><br/>
-											<i>{{ result[product_vendor_name] }}</i><br/>
 											<small *ngIf="result.item_description">{{result.item_description}}</small>
+										</div>
+										<div class="col-2">
+											<i>{{ result[product_vendor_name] }}</i>
+											<div *ngIf="!checkNaN(result[product_vendor_rating])">
+												<ngb-rating [rate]="calcRating(result[product_vendor_rating],1)" [readonly]="true" max="5" title="{{getName(product_vendor_rating)}}:&#10;{{calcRating(result[product_vendor_rating],1)}} out of 5&#10;&#10;{{getName(product_vendor_rating_seller)}}:&#10;{{calcRating(result[product_vendor_rating_seller],1)}} out of 5&#10;&#10;{{getName(product_vendor_rating_fulfillment)}}:&#10;{{calcRating(result[product_vendor_rating_fulfillment],1)}} out of 5&#10;&#10;{{getName(product_vendor_rating_delivery)}}:&#10;{{calcRating(result[product_vendor_rating_delivery],1)}} out of 5">
+													<ng-template let-fill="fill">
+													  <span class="star" [class.full]="fill === 100">
+													    <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+													  </span>
+													</ng-template>
+												</ngb-rating>
+											</div>
+											<div *ngIf="checkNaN(result[product_vendor_rating])">
+												<ngb-rating [rate]="0" [readonly]="true" max="5" title="Unrated">
+													<ng-template let-fill="fill">
+													  <span class="star" [class.full]="fill === 100">
+													    <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+													  </span>
+													</ng-template>
+												</ngb-rating>
+											</div>
+											<div *ngIf="!checkNaN(result[product_vendor_trust])">
+												<ngb-rating [rate]="calcRating(result[product_vendor_trust],5)" [readonly]="true" max="5" title="{{getName(product_vendor_trust)}}:&#10;{{calcRating(result[product_vendor_trust],5)}} out of 5">
+													<ng-template let-fill="fill">
+													  <span class="heart" [class.full-heart]="fill === 100">
+													    <span class="half-heart" [style.width.%]="fill">&#10084;</span>&#10084;
+													  </span>
+													</ng-template>
+												</ngb-rating>
+											</div>
+											<div *ngIf="checkNaN(result[product_vendor_trust])">
+												<ngb-rating [rate]="0" [readonly]="true" max="5" title="Unrated">
+													<ng-template let-fill="fill">
+													  <span class="heart" [class.full-heart]="fill === 100">
+													    <span class="half-heart" [style.width.%]="fill">&#10084;</span>&#10084;
+													  </span>
+													</ng-template>
+												</ngb-rating>
+											</div>
 										</div>
 										<div class="col-2 align-right">
 											<span class="badge badge-primary-nimble" *ngIf="result.item_price">{{result.item_price}} {{result.item_price_currency}}</span>
-											<span class="badge badge-warning" *ngIf="!result.item_price">Upon request</span>
+											<span class="badge badge-warning" *ngIf="!result.item_price">Upon request</span><br/>
 										</div>
 									</div>
 								</div>

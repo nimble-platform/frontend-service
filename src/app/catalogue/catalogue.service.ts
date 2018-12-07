@@ -11,6 +11,7 @@ import { Category } from "./model/category/category";
 import { BehaviorSubject } from "rxjs/BehaviorSubject";
 import {CookieService} from "ng2-cookies";
 import { copy } from "../common/utils";
+import {BinaryObject} from './model/publish/binary-object';
 
 @Injectable()
 export class CatalogueService {
@@ -240,6 +241,24 @@ export class CatalogueService {
                 this.catalogue.catalogueLine.splice(deletedLineIndex, 1)
             })
             .catch(this.handleError);
+    }
+
+    downloadFile(uri:string){
+        const url = this.baseUrl + `/binary-content?uri=${encodeURIComponent(uri)}`;
+        return this.http
+            .get(url, {headers: this.getAuthorizedHeaders()})
+            .toPromise()
+            .then(res => {
+                return res.json() as BinaryObject;
+            })
+            .catch(this.handleError);
+    }
+
+    private getAuthorizedHeaders(): Headers {
+        const token = 'Bearer '+this.cookieService.get("bearer_token");
+        const headers = new Headers({'Authorization': token});
+        this.headers.keys().forEach(header => headers.append(header, this.headers.get(header)));
+        return headers;
     }
 
     resetData(): void {

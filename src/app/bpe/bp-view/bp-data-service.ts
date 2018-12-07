@@ -87,6 +87,8 @@ export class BPDataService{
 
     // variable to keep the business process instance group related to the new process being initiated
     private relatedGroupId: string;
+    private collaborationGroupId: string;
+    precedingGroupId: string;
     precedingProcessId: string;
 
     constructor(private searchContextService: SearchContextService,
@@ -126,15 +128,31 @@ export class BPDataService{
     }
 
     setRelatedGroupId(id: string): void {
-        // If there is an active search context, we do not nullify the related group id.
-        // For example, when the user is looking for a transport service provider, we should not reset the id
         if(id == null) {
-            if(this.searchContextService.associatedProcessType == null) {
-                this.relatedGroupId = null;
-                this.precedingProcessId = null;
+            if(this.searchContextService.associatedProcessType) {
+                this.precedingGroupId = this.relatedGroupId;
             }
+            else {
+                this.precedingGroupId = null;
+            }
+            this.relatedGroupId = null;
         } else {
             this.relatedGroupId = id;
+            this.precedingGroupId = null;
+        }
+    }
+
+    getCollaborationId(): string{
+        return this.collaborationGroupId;
+    }
+
+    setCollaborationGroupId(id: string): void{
+        if(id == null) {
+            if(this.searchContextService.associatedProcessType == null) {
+                this.collaborationGroupId = null;
+            }
+        } else {
+            this.collaborationGroupId = id;
         }
     }
 
@@ -276,11 +294,11 @@ export class BPDataService{
             // we can't copy because those are 2 different types of addresses.
             const lineItem = this.requestForQuotation.requestForQuotationLine[0].lineItem;
             const address = lineItem.deliveryTerms.deliveryLocation.address;
-            address.country.name.value = settings.address.country;
-            address.postalZone = settings.address.postalCode;
-            address.cityName = settings.address.cityName;
-            address.buildingNumber = settings.address.buildingNumber;
-            address.streetName = settings.address.streetName;
+            address.country.name.value = settings.details.address.country;
+            address.postalZone = settings.details.address.postalCode;
+            address.cityName = settings.details.address.cityName;
+            address.buildingNumber = settings.details.address.buildingNumber;
+            address.streetName = settings.details.address.streetName;
         });
     }
 
@@ -609,7 +627,7 @@ export class BPDataService{
 
             // this item only contains the properties choosen by the user
             const item = this.getItemFromCurrentWorkflow();
-    
+
             const line = this.catalogueLines[0];
             if(!item || !line) {
                 return;

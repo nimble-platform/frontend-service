@@ -103,7 +103,7 @@ export class UBLModelUtils {
         // price
         const price: Price = this.createPrice();
         // item location quantity
-        const ilq: ItemLocationQuantity = new ItemLocationQuantity(price, []);
+        const ilq: ItemLocationQuantity = new ItemLocationQuantity(price, [], [],null);
         return ilq;
     }
 
@@ -126,8 +126,8 @@ export class UBLModelUtils {
 
         // create required item location quantity
         const ilq = this.createItemLocationQuantity("");
-        const catalogueLine = new CatalogueLine(uuid, null, null, false,
-            this.createPeriod(settings.warrantyPeriodRanges[0].start, settings.warrantyPeriodUnits[0]), [], ilq, goodsItem);
+        const catalogueLine = new CatalogueLine(uuid, null, null, false, 
+            this.createPeriod(settings.warrantyPeriodRanges[0].start, settings.warrantyPeriodUnits[0]), [], ilq,[], goodsItem);
 
         // extra initialization
         catalogueLine.goodsItem.containingPackage.quantity.unitCode = "item(s)";
@@ -320,6 +320,9 @@ export class UBLModelUtils {
 
     public static createQuotation(rfq: RequestForQuotation): Quotation {
         const quotationLine: QuotationLine = new QuotationLine(copy(rfq.requestForQuotationLine[0].lineItem));
+        // set start and end dates
+        quotationLine.lineItem.delivery[0].requestedDeliveryPeriod.startDate = rfq.delivery.requestedDeliveryPeriod.startDate;
+        quotationLine.lineItem.delivery[0].requestedDeliveryPeriod.endDate = rfq.delivery.requestedDeliveryPeriod.endDate;
         this.removeHjidFieldsFromObject(rfq.buyerCustomerParty);
         this.removeHjidFieldsFromObject(rfq.sellerSupplierParty);
         const customerParty: CustomerParty = rfq.buyerCustomerParty;

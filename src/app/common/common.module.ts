@@ -16,6 +16,7 @@ import { AddressInputSimpleComponent } from './address-input-simple.component';
 import { BooleanInputComponent } from './boolean-input.component';
 import { MultiAddressInputComponent } from './multi-address-input.component';
 import { InputLabelComponent } from './input-label.component';
+import {AmountInputComponent} from "./amount-input.component";
 
 @NgModule({
 	imports: [
@@ -37,7 +38,8 @@ import { InputLabelComponent } from './input-label.component';
 		AddressInputSimpleComponent,
 		BooleanInputComponent,
 		MultiAddressInputComponent,
-		InputLabelComponent
+		InputLabelComponent,
+		AmountInputComponent
 	],
 	exports: [
 		CallStatusComponent,
@@ -51,7 +53,8 @@ import { InputLabelComponent } from './input-label.component';
 		AddressInputSimpleComponent,
 		BooleanInputComponent,
 		MultiAddressInputComponent,
-		InputLabelComponent
+		InputLabelComponent,
+		AmountInputComponent
 	],
 	providers: [
 	]

@@ -34,14 +34,14 @@ export class ItemInformationRequestComponent implements OnInit {
     request: ItemInformationRequest;
     files: BinaryObject[]
 
-    constructor(private bpeService: BPEService, 
-                private bpDataService: BPDataService, 
-                private userService: UserService, 
-                private cookieService: CookieService, 
+    constructor(private bpeService: BPEService,
+                private bpDataService: BPDataService,
+                private userService: UserService,
+                private cookieService: CookieService,
                 private location: Location,
                 private documentService: DocumentService,
                 private router: Router) {
-        
+
     }
 
     ngOnInit() {
@@ -64,7 +64,7 @@ export class ItemInformationRequestComponent implements OnInit {
 
     onSkip(): void {
         this.bpDataService.resetBpData();
-        if(isTransportService(this.bpDataService.getCatalogueLine()) || !this.bpDataService.getCompanySettings().ppapCompatibilityLevel) {
+        if(isTransportService(this.bpDataService.getCatalogueLine()) || !this.bpDataService.getCompanySettings().tradeDetails.ppapCompatibilityLevel) {
             // skip ppap
             this.bpDataService.initRfq(this.bpDataService.getCompanySettings().negotiationSettings).then(() => {
                 this.bpDataService.setBpOptionParameters(this.bpDataService.userRole, "Negotiation", "Ppap");
@@ -114,7 +114,6 @@ export class ItemInformationRequestComponent implements OnInit {
     onUpdateRequest(): void {
         this.callStatus.submit();
         const itemInformationRequest: ItemInformationRequest = copy(this.bpDataService.itemInformationRequest);
-        UBLModelUtils.removeHjidFieldsFromObject(itemInformationRequest);
 
         this.bpeService.updateBusinessProcess(JSON.stringify(itemInformationRequest),"ITEMINFORMATIONREQUEST",this.bpDataService.processMetadata.processId)
             .then(() => {

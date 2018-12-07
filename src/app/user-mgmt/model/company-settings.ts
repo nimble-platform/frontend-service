@@ -1,20 +1,18 @@
-import { Address } from './address';
-import { DeliveryTerms } from './delivery-terms';
 import { Certificate } from './certificate';
+import { CompanyDescription } from './company-description';
+import { CompanyDetails } from './company-details';
+import { CompanyTradeDetails } from './company-trade-details';
 import { CompanyNegotiationSettings } from './company-negotiation-settings';
 
 export class CompanySettings {
     constructor(
-        public name: string,
-    		public vatNumber: string,
-    		public verificationInformation: string,
-    		public website: string,
-            public ppapCompatibilityLevel: number,
-            public address: Address,
-            public deliveryTerms: DeliveryTerms[],
-            public certificates: Certificate[],
-            public preferredProductCategories: string[],
-            public recentlyUsedProductCategories: string[],
-            public negotiationSettings: CompanyNegotiationSettings,
+        public certificates: Certificate[],
+        public companyID: string,
+        public description: CompanyDescription,
+        public details: CompanyDetails,
+        public preferredProductCategories: string[],
+        public recentlyUsedProductCategories: string[],
+        public tradeDetails: CompanyTradeDetails,
+        public negotiationSettings: CompanyNegotiationSettings
     ) {  }
 }

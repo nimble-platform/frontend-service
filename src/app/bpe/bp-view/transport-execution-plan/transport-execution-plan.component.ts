@@ -147,7 +147,6 @@ export class TransportExecutionPlanComponent implements OnInit {
     onUpdateRequest(): void {
         this.callStatus.submit();
         const transportationExecutionPlanRequest: TransportExecutionPlanRequest = copy(this.bpDataService.transportExecutionPlanRequest);
-        UBLModelUtils.removeHjidFieldsFromObject(transportationExecutionPlanRequest);
 
         this.bpeService.updateBusinessProcess(JSON.stringify(transportationExecutionPlanRequest),"TRANSPORTEXECUTIONPLANREQUEST",this.bpDataService.processMetadata.processId)
             .then(() => {

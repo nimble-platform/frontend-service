@@ -8,6 +8,8 @@ import { CompanyRegistrationComponent } from "./company-registration.component";
 import { CompanyInvitationComponent } from "./company-invitation.component";
 import { CompanySettingsComponent } from "./company-settings/company-settings.component";
 import { CompanyDetailsComponent } from "./company-details.component";
+import { CompanyRatingComponent } from './company-rating.component';
+import { UserProfileComponent } from './user-profile.component';
 
 const routes: Routes = [
     { path: "login", component: LoginComponent },
@@ -16,7 +18,9 @@ const routes: Routes = [
     { path: "company-registration", component: CompanyRegistrationComponent },
     { path: "company-invitation", component: CompanyInvitationComponent },
     { path: "company-settings", component: CompanySettingsComponent },
-    { path: "company-details", component: CompanyDetailsComponent }
+    { path: "company-details", component: CompanyDetailsComponent },
+    { path: "company-rating", component: CompanyRatingComponent },
+    { path: "user-profile", component: UserProfileComponent }
 ];
 
 @NgModule({
