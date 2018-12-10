@@ -8,22 +8,6 @@ node('nimble-jenkins-slave') {
 
     if (env.BRANCH_NAME == 'staging') {
 
-        stage('Build Application - MVP') {
-            sh 'mvn clean install -Denv=staging'
-        }
-
-        stage('Build Docker - MVP') {
-            sh 'docker build -t nimbleplatform/frontend-service:staging ./target'
-        }
-
-        stage('Push Docker - MVP') {
-            sh 'docker push nimbleplatform/frontend-service:staging'
-        }
-
-        stage('Deploy - MVP') {
-            sh 'ssh staging "cd /srv/nimble-staging/ && ./run-staging.sh restart-single frontend-service"'
-        }
-		
 		stage('Build Application - FMP') {
             sh 'mvn clean install -Denv=fmp-staging'
         }
@@ -39,7 +23,22 @@ node('nimble-jenkins-slave') {
         stage('Deploy - FMP') {
             sh 'ssh staging "cd /srv/nimble-staging/ && ./run-staging.sh restart-single frontend-service-fmp"'
         }
-		
+
+        stage('Build Application - MVP') {
+            sh 'mvn clean install -Denv=staging'
+        }
+
+        stage('Build Docker - MVP') {
+            sh 'docker build -t nimbleplatform/frontend-service:staging ./target'
+        }
+
+        stage('Push Docker - MVP') {
+            sh 'docker push nimbleplatform/frontend-service:staging'
+        }
+
+        stage('Deploy - MVP') {
+            sh 'ssh staging "cd /srv/nimble-staging/ && ./run-staging.sh restart-single frontend-service"'
+        }
     } else if (env.BRANCH_NAME == 'master') {
 
         stage('Build Application - MVP') {
