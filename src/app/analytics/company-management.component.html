@@ -47,7 +47,7 @@
             <th><span i18n>ID</span></th>
             <th><span i18n>Legal Name</span></th>
             <th><span i18n>Address</span></th>
-            <th><span i18n>Initial Represenatative</span></th>
+            <th><span i18n>Initial Representative</span></th>
             <th></th>
         </tr>
         <ng-container *ngFor="let company of unverifiedCompaniesPage.content">
@@ -57,7 +57,13 @@
                 <td>{{ company.postalAddress.streetName }} {{ company.postalAddress.buildingNumber }}, {{
                     company.postalAddress.cityName }} {{ company.postalAddress.postalZone }}
                 </td>
-                <td>{{ company.person[0].firstName }} {{ company.person[0].familyName }}</td>
+                <td>{{ company.person[0].firstName }} {{ company.person[0].familyName }}
+                    <br/>
+                    <span *ngIf="company.person[0].contact && company.person[0].contact.electronicMail; else elseBlock">
+                    <a href="mailto:{{ company.person[0].contact.electronicMail }}">
+                        {{ company.person[0].contact.electronicMail }}
+                    </a>
+                    </span>
                 <td>
                     <button class="btn btn-success" (click)="verifyCompany(company)">
                         Verify
