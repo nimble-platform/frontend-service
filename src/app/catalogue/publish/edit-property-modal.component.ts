@@ -7,6 +7,7 @@ import { SelectedProperty } from "../model/publish/selected-property";
 import { PROPERTY_TYPES } from "../model/constants";
 import {Item} from '../model/publish/item';
 import {Text} from '../model/publish/text';
+import {LANGUAGES, DEFAULT_LANGUAGE} from '../model/constants';
 
 @Component({
     selector: "edit-property-modal",
@@ -50,9 +51,9 @@ export class EditPropertyModalComponent implements OnInit {
     }
 
     addEmptyValuesToProperty() {
-        if(this.property.value.length === 0) {
-            this.property.value.push(createText(''));
-        }
+        // if(this.property.value.length === 0) {
+        //     this.property.value.push(createText(''));
+        // }
         if(this.property.valueDecimal.length === 0) {
             this.property.valueDecimal.push(0);
         }
@@ -103,15 +104,15 @@ export class EditPropertyModalComponent implements OnInit {
     }
 
     // TEST
-    private newPvalue: any = {};
-    private languages: Array<string> = ["en", "es", "de", "tr", "it"];
+    private newPvalue: Text = new Text(null,DEFAULT_LANGUAGE());
+    private languages: Array<string> = LANGUAGES;
 
     addPropertyValue() {
         let propertyValueText = new Text(this.newPvalue.value, this.newPvalue.languageID);
 
         this.property.value.push(propertyValueText);
 
-        this.newPvalue = {};
+        this.newPvalue = new Text(null,DEFAULT_LANGUAGE());
     }
 
     deletePropertyValue(index) {
@@ -119,14 +120,14 @@ export class EditPropertyModalComponent implements OnInit {
     }
 
     // TEST
-    private newPname: any = {};
+    private newPname: Text = new Text(null,DEFAULT_LANGUAGE());
 
     addPropertyName() {
         let propertyNameText = new Text(this.newPname.value, this.newPname.languageID);
 
         this.property.name.push(propertyNameText);
 
-        this.newPname = {};
+        this.newPname = new Text(null,DEFAULT_LANGUAGE());
     }
 
     deletePropertyName(index) {

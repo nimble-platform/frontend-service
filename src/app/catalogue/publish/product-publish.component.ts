@@ -39,7 +39,7 @@ import { Subject } from "rxjs/Subject";
 import 'rxjs/add/observable/fromPromise'
 import 'rxjs/add/observable/interval';
 import 'rxjs/add/operator/takeUntil';
-import {Catalogue} from "../model/publish/catalogue";
+import {LANGUAGES, DEFAULT_LANGUAGE} from '../model/constants';
 
 
 type ProductType = "product" | "transportation";
@@ -348,16 +348,16 @@ export class ProductPublishComponent implements OnInit {
     }
 
     // TEST
-    private newItemName: any = {};
-    private newItemDescription: any = {};
-    private languages: Array<string> = ["en", "es", "de", "tr", "it"];
+    private newItemName: Text = new Text(null,DEFAULT_LANGUAGE());
+    private newItemDescription: Text = new Text(null,DEFAULT_LANGUAGE());
+    private languages: Array<string> = LANGUAGES;
 
     addItemNameValue() {
         let nameText = new Text(this.newItemName.value, this.newItemName.languageID);
 
         this.catalogueLine.goodsItem.item.name.push(nameText);
 
-        this.newItemName = {};
+        this.newItemName = new Text(null,DEFAULT_LANGUAGE());
 
         // console.log(" $$$ Item: ", this.catalogueLine.goodsItem.item);
     }
@@ -373,7 +373,7 @@ export class ProductPublishComponent implements OnInit {
 
         this.catalogueLine.goodsItem.item.description.push(descriptionText);
 
-        this.newItemDescription = {};
+        this.newItemDescription = new Text(null,DEFAULT_LANGUAGE());
 
         // console.log(" $$$ Item: ", this.catalogueLine.goodsItem.item);
     }
