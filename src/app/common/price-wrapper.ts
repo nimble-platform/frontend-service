@@ -129,7 +129,7 @@ export class PriceWrapper {
                     let checkBuildingNumber = priceOption.itemLocationQuantity.applicableTerritoryAddress[0].buildingNumber != "";
                     let checkPostalZone = priceOption.itemLocationQuantity.applicableTerritoryAddress[0].postalZone != "";
                     let checkCityName = priceOption.itemLocationQuantity.applicableTerritoryAddress[0].cityName != "";
-                    let checkCountryName = priceOption.itemLocationQuantity.applicableTerritoryAddress[0].country && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].country.name != "";
+                    let checkCountryName = priceOption.itemLocationQuantity.applicableTerritoryAddress[0].country && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].country.name.value != "";
                     if(checkStreetName && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].streetName.toLocaleLowerCase() != this.deliveryLocation.streetName.toLocaleLowerCase()){
                         continue;
                     }
@@ -142,7 +142,7 @@ export class PriceWrapper {
                     if(checkCityName && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].cityName.toLocaleLowerCase() != this.deliveryLocation.cityName.toLocaleLowerCase()){
                         continue;
                     }
-                    if(checkCountryName && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].country.name.toLocaleLowerCase() != this.deliveryLocation.country.name.toLocaleLowerCase()){
+                    if(checkCountryName && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].country.name.value.toLocaleLowerCase() != this.deliveryLocation.country.name.value.toLocaleLowerCase()){
                         continue;
                     }
                     // the delivery location satisfies all conditions
