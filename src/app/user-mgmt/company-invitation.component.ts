@@ -62,7 +62,7 @@ export class CompanyInvitationComponent implements OnInit {
 		this.invPending = [];
 		this.membersCallStatus.submit();
 		this.membersFetched = false;
-		this.userService.getInviteList()
+		this.userService.getCompanyMemberList()
             .then(response => {
                 this.invPending = response;
 				this.membersCallStatus.callback("Successfully loading invites", true);

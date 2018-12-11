@@ -60,8 +60,8 @@ export class UserService {
             .catch(this.handleError);
     }
 
-    getInviteList() {
-        const url = `${this.url}/invitations`;
+    getCompanyMemberList() {
+        const url = `${this.url}/company_members`;
         const token = 'Bearer '+this.cookieService.get("bearer_token");
         const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
         return this.http
