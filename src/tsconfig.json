@@ -10,6 +10,6 @@
 		"noImplicitAny": false,
 		"suppressImplicitAnyIndexErrors": true
 	},
-	"include": ["./app/**/*"],
+	"include": ["./app/**/*", "./environments/*"],
 	"exclude": [ "test.ts", "../node_modules" ]
 }
