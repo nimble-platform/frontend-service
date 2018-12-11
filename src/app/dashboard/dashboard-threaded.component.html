@@ -60,7 +60,7 @@
                 <li><strong>Catalogue:</strong> the list of all your published products</li>
             </ul>
             <div class="row text-center">
-                <div *ngIf="this.appComponent.checkRoles('sales')" class="col-6">
+                <div *ngIf="this.appComponent.checkRoles('sales') || this.appComponent.checkRoles('purchases')" class="col-6">
                     <p>If you are looking to <b>buy</b> products</p>
                     <a class="btn btn-primary btn-lg" href="#/simple-search" role="button">Search for Products</a>
                 </div>
