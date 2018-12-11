@@ -39,10 +39,10 @@ export const debug = false;
 
 // Base path variables - Local development via service discovery
 
-export const base_path = "http://localhost:443";
+export const base_path = "http://localhost";
 export const ub_base = "http://localhost:8090";
-export const simple_search_endpoint="http://nimble-staging.salzburgresearch.at/marmotta/solr/catalogue2";
-export const pw_reset_link = "http://nimble-staging.salzburgresearch.at:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
+export const simple_search_endpoint="http://localhost:8082/solr/catalogue2";
+export const pw_reset_link = "http://localhost:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
 
 
 // Service endpoints
