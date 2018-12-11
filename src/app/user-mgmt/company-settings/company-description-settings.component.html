@@ -1,10 +1,10 @@
 <!-- Company Statement -->
 <div class="form-group row space-before">
   <label class="col-2 col-form-label">
-    <strong>Company Statement:</strong>
+    <strong>Company Description:</strong>
   </label>
   <div class="col-10">
-    <textarea class="form-control" rows="3" [formControl]="descriptionForm.controls['companyStatement']">
+    <textarea maxlength="255" class="form-control" rows="3" [formControl]="descriptionForm.controls['companyStatement']">
     </textarea>
   </div>
 </div>
@@ -42,7 +42,7 @@
 <!-- Link (External Resource) List -->
 <div class="form-group row">
   <label class="col-2 col-form-label">
-    <strong>Links:</strong>
+    <strong>Other Links:</strong>
   </label>
   <div class="col-10">
     <ng-container *ngFor="let extEntry of externalResources; let i = index; trackBy:trackFn">
@@ -99,7 +99,7 @@
     </div>
     <div class="col-2">
         <button class="btn btn-secondary action" [disabled]="saveCallStatus.isLoading()" (click)="addExternalResourceEntry()">
-            Add Link
+            Add Other Link
         </button>
     </div>
     <div class="col-2">

@@ -121,7 +121,7 @@ export class ExplorativeSearchFilterComponent implements OnChanges {
                 this._error_detected_slider = false;
             })
             .catch(error => {
-                console.log(error);
+                //console.log(error);
                 this._error_detected_slider = true;
             });
     }
@@ -135,6 +135,6 @@ export class ExplorativeSearchFilterComponent implements OnChanges {
         // console.log(Number(this.groupSelectVal)); DEBUG
         // This needs to be changed according to Backend API
         this.filterSelectionUpdated.emit(this.finalSelectionJSON);
-        console.log('FilterArea: finalSelectionJSON', this.finalSelectionJSON); // DEBUG CHECK
+        //console.log('FilterArea: finalSelectionJSON', this.finalSelectionJSON); // DEBUG CHECK
     }
 }

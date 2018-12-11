@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from "@angular/core";
 import { CompanySettings } from "../model/company-settings";
 import { AppComponent } from "../../app.component";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import * as myGlobals from '../../globals';
 
 @Component({
     selector: "company-data-settings",
@@ -13,6 +14,7 @@ export class CompanyDataSettingsComponent implements OnInit {
 
     mailto: string;
     tooltipHTML: string;
+    config = myGlobals.config;
 
     constructor(private appComponent: AppComponent,
                 private modalService: NgbModal) {

@@ -158,7 +158,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
 
         // If the graph is rerendered make sure to add Dashed Lines to from root to the merged Node
         if (this.rerenderAlert) {
-            console.log(this.mergedNodeName);
+            //console.log(this.mergedNodeName);
             link.style('stroke-dasharray', function(d) {
                 if (d['target']['data']['name'] === self.mergedNodeName) {
                     return ('10,3');
@@ -177,8 +177,8 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
 
         function click(d) {
             if (d.depth === 1 && d.data.objectPropertySource !== '') {
-                console.log('objectproperty directly connected to root');
-                console.log('do nothing');
+                //console.log('objectproperty directly connected to root');
+                //console.log('do nothing');
             } else {
                 d3.select(this).select('circle').transition()
                     .duration(1000)
@@ -191,8 +191,8 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
          */
         function dblclick(d) {
             if (d.depth === 1 && d.data.objectPropertySource !== '') {
-                console.log('objectproperty directly connected to root');
-                console.log('do nothing');
+                //console.log('objectproperty directly connected to root');
+                //console.log('do nothing');
             } else {
                 // console.log(d.data); // DEBUG_Check
                 // console.log(d.parent); // DEBUG_Check
@@ -209,7 +209,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
      * @param nodeToRemove
      */
     removePropertyFilter(nodeToRemove) {
-        console.log(nodeToRemove.data.url);
+        //console.log(nodeToRemove.data.url);
         let indexToRemove = this.arrayPassedToChild.findIndex(node => node.fName === nodeToRemove.data.name);
         if (indexToRemove === 0) {
             this.tableResult = {};
@@ -219,7 +219,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
             this.tableJSON['parametersURL'].splice(indexToRemove, 1);
             this.tableJSON['propertySources'].splice(indexToRemove, 1);
         } else if (indexToRemove > -1) {
-            console.log('removing property', indexToRemove);
+            //console.log('removing property', indexToRemove);
             this.arrayPassedToChild.splice(indexToRemove, 1);
             this.tableJSON['parametersIncludingPath'].splice(indexToRemove, 1);
             this.tableJSON['parameters'].splice(indexToRemove, 1);
@@ -247,7 +247,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
         // console.log(nodeInfo); // DEBUG-Check
         if (nodeInfo.depth === 1 && nodeInfo.data.objectPropertySource === '' && nodeInfo.data.color === 'green') {
             //  CASE: 1 direct datatype properties to root
-            console.log('dataproperty directly connected to the root');
+            //console.log('dataproperty directly connected to the root');
             _jsonForFilter.concept = encodeURIComponent(nodeInfo.parent.data.url);
             _jsonForFilter.property = encodeURIComponent(nodeInfo.data.url);
             _jsonForFilter.propertySource = nodeInfo.data.propertySource;
@@ -279,7 +279,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
             }, 1000);
         } else if (nodeInfo.depth > 1 && nodeInfo.data.objectPropertySource === '' && nodeInfo.data.color === 'green') {
             // CASE: 2 Datatype Property to an Object Property clicked
-            console.log('dataprop -> objectproperty dir -> root');
+            //console.log('dataprop -> objectproperty dir -> root');
             if (nodeInfo.parent.data.name.indexOf('/') > -1) {
                 // Case: 2A if the immediate Parent node is rerendered to a merged node
                 let ancestors = nodeInfo.ancestors();
@@ -301,7 +301,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                 // console.log(_jsonForFilter);
                 this.expSearch.getPropertyValues(_jsonForFilter)
                     .then(res => {
-                        console.log(res, typeof(res));
+                        //console.log(res, typeof(res));
                         if (Object.keys(res).length !== 0) {
                             this.filterJSON = res;
                             jsonFilterForEachChild['filterJSON'] = this.filterJSON;
@@ -333,7 +333,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                 // console.log(_jsonForFilter);
                 this.expSearch.getPropertyValues(_jsonForFilter)
                     .then(res => {
-                        console.log(res, typeof(res));
+                        //console.log(res, typeof(res));
                         if (Object.keys(res).length !== 0) {
                             this.filterJSON = res;
                             jsonFilterForEachChild['filterJSON'] = this.filterJSON;
@@ -354,7 +354,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
             }
         } else if (nodeInfo.depth > 1 && nodeInfo.data.objectPropertySource !== '' && nodeInfo.data.color === 'red') {
             // CASE 3: Need to rerender the graph and obtain a traversed property
-            console.log('objprop -> objprop -> root');
+            //console.log('objprop -> objprop -> root');
             // console.log(nodeInfo.ancestors());
             let ancestors = nodeInfo.ancestors();
             let rootNode = ancestors.pop();
@@ -464,7 +464,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                 if (this.sparqlSelectedOption['columns'].findIndex(i => i === 'ManufacturersItemIdentification') >= 0 &&
                     this.sparqlSelectedOption['columns'].findIndex(j => j === 'CatalogueDocumentReference') >= 0) {
                     // Check for ID and Catalogue ID. Enable Negotiation Button only if these two exist
-                    console.log('Negotiation can exist');
+                    //console.log('Negotiation can exist');
                     this.negotiationEnable = true;
                     let index_id = this.sparqlSelectedOption['columns'].findIndex(i => i === 'ManufacturersItemIdentification');
                     let index_catalogue = this.sparqlSelectedOption['columns'].findIndex(i => i === 'CatalogueDocumentReference');

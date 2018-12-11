@@ -1,12 +1,12 @@
-<div class="row thread-entry">
+<div class="row thread-entry m-0">
     <div class="col-12">
         <!-- Title bar -->
         <div class="row">
-            <div class="col-12 d-flex thread-entry-header" (click)="expanded = !expanded">
+            <div class="col-12 d-flex thread-entry-header">
+            <!--<div class="col-12 d-flex thread-entry-header" (click)="expanded = !expanded">-->
                 <div *ngIf="!titleEvent" class="header-label mr-auto">Loading...</div>
                 <div *ngIf="titleEvent" class="header-label mr-auto">
-                    <span class="clickable" (click)="navigateToSearchDetails()">{{titleEvent.product.name}}</span> (Trading partner: <span class="clickable" (click)="navigateToCompanyDetails()">{{titleEvent.tradingPartner}}</span>) <span *ngIf="processInstanceGroup.status == 'CANCELLED'"><i>- Collaboration cancelled</i></span>
-                    <span *ngIf="processInstanceGroup.status != 'CANCELLED'" class="space-left"><i>{{titleEvent.statusText}}</i></span>
+                    <span class="clickable" (click)="navigateToSearchDetails()">{{titleEvent.product.name}}</span> (Trading partner: <span class="clickable" (click)="navigateToCompanyDetails()">{{titleEvent.tradingPartner}}</span>) <span *ngIf="processInstanceGroup.status == 'CANCELLED'"><i>- Collaboration cancelled</i></span> <span *ngIf="processInstanceGroup.status != 'CANCELLED'"><i>- {{titleEvent.statusText}}</i></span>
                 </div>
                 <div *ngIf="titleEvent && showDataChannelButton" data-toggle="tooltip" data-placement="top" title="Open Data Channel">
                     <i class="fa fa-exchange-alt p-2 pointer" aria-hidden="true" [routerLink]="[channelLink]"></i>

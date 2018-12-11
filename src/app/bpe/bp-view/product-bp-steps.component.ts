@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from "@angular/core";
 import { ProductBpStepStatus } from "./product-bp-step-status";
 import { ProductBpStep } from "./product-bp-step";
 import { ProductBpStepsDisplay } from "./product-bp-steps-display";
+import * as myGlobals from '../../globals';
 
 @Component({
     selector: "product-bp-steps",
@@ -14,18 +15,22 @@ export class ProductBpStepsComponent implements OnInit {
     @Input() status: ProductBpStepStatus;
     @Input() displayMode: ProductBpStepsDisplay;
     @Input() statusText: string = "";
-    
+
+    config = myGlobals.config;
+    steps = ["0%","17%","33%","50%","67%","83%"];
+
     constructor() {
-        
+
     }
 
     ngOnInit() {
-
+      if (!this.config.showPPAP)
+        this.steps = ["0%","0%","20%","40%","60%","80%"];
     }
 
     getStatusTextStyle(): any {
-        return { 
-            "margin-left": this.getStatusTextMarginLeft(), 
+        return {
+            "margin-left": this.getStatusTextMarginLeft(),
             "color": this.getStatusTextColor()
         };
     }
@@ -36,7 +41,7 @@ export class ProductBpStepsComponent implements OnInit {
                 step: true,
                 current: true
             };
-            
+
             result[this.status.toLowerCase()] = true;
 
             return result;
@@ -61,25 +66,41 @@ export class ProductBpStepsComponent implements OnInit {
                     throw new Error("Unexpected step for displayMode 'Transport': " + this.currentStep);
             }
         }
-        switch(this.currentStep) {
-            case "Item_Information_Request":
-                return "0%";
-            case "Ppap":
-            case "Transport_Information_Request":
-                return "17%";
-            case "Negotiation":
-            case "Transport_Negotiation":
-                return "33%";
-            case "Order":
-            case "Transport_Order":
-                return "50%";
-            case "Order_Confirmed":
-            case "Transport_Order_Confirmed":
-                return "67%";
-            case "Fulfilment":
-                return "83%";
-            default:
-                throw new Error("Unexpected step for displayMode 'Transport': " + this.currentStep);
+        else if (this.displayMode === "Transport_After_Order") {
+          switch(this.currentStep) {
+              case "Item_Information_Request":
+                  return "0%";
+              case "Transport_Information_Request":
+                  return "17%";
+              case "Transport_Negotiation":
+                  return "33%";
+              case "Transport_Order":
+                  return "50%";
+              case "Transport_Order_Confirmed":
+                  return "67%";
+              case "Fulfilment":
+                  return "83%";
+              default:
+                  throw new Error("Unexpected step for displayMode 'Transport_After_Order': " + this.currentStep);
+          }
+        }
+        else {
+          switch(this.currentStep) {
+              case "Item_Information_Request":
+                  return this.steps[0];
+              case "Ppap":
+                  return this.steps[1];
+              case "Negotiation":
+                  return this.steps[2];
+              case "Order":
+                  return this.steps[3];
+              case "Order_Confirmed":
+                  return this.steps[4];
+              case "Fulfilment":
+                  return this.steps[5];
+              default:
+                  throw new Error("Unexpected step for displayMode 'Order': " + this.currentStep);
+          }
         }
     }
 

@@ -196,13 +196,13 @@ export class DashboardThreadedComponent implements OnInit {
 
     private updateStateFromQueryParameters(params: Params | DashboardQueryParameters): void {
         this.queryParameters = new DashboardQueryParameters(
-            this.sanitizeTab(params["tab"]),    // tab
-            params["arch"] === "true",          // archived
-            this.sanitizePage(params["pg"]),    // page
-            params["prd"],                      // products
-            params["cat"],                      // categories
-            params["prt"],                      // partners
-            params["sts"]                       // status
+            this.sanitizeTab(params["tab"]),                        // tab
+            params["arch"] === "true" || params["arch"] === true,   // archived
+            this.sanitizePage(params["pg"]),                        // page
+            params["prd"],                                          // products
+            params["cat"],                                          // categories
+            params["prt"],                                          // partners
+            params["sts"]                                           // status
         )
 
         switch(this.queryParameters.tab) {

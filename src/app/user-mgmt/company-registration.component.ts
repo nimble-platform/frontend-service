@@ -22,6 +22,7 @@ export class CompanyRegistrationComponent implements OnInit {
 
     public alertClosed = false;
     public registrationForm: FormGroup;
+    config = myGlobals.config;
     submitCallStatus: CallStatus = new CallStatus();
 	   tooltipHTML = "";
 

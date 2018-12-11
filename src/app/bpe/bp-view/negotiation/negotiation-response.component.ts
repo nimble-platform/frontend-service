@@ -130,7 +130,7 @@ export class NegotiationResponseComponent implements OnInit {
      * Internal Methods
      */
 
-    private hasUpdatedTerms(): boolean {
+    hasUpdatedTerms(): boolean {
         if(this.rfq.negotiationOptions.deliveryPeriod) {
             const rfq = this.wrapper.rfqDeliveryPeriod;
             const quotation = this.wrapper.quotationDeliveryPeriod;

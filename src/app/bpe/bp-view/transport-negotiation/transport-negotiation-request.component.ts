@@ -77,7 +77,7 @@ export class TransportNegotiationRequestComponent implements OnInit {
         this.callStatus.submit();
         let rfq: RequestForQuotation = copy(this.bpDataService.requestForQuotation);
 
-        console.log(rfq);
+        //console.log(rfq);
 
         let sellerId: string;
 

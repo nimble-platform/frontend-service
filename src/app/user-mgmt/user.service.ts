@@ -139,10 +139,10 @@ export class UserService {
     }
 
     getSettingsForProduct(line: CatalogueLine): Promise<CompanySettings> {
-        console.log("Getting settings for product: " + line.goodsItem.item.manufacturerParty.id);
+        //console.log("Getting settings for product: " + line.goodsItem.item.manufacturerParty.id);
         return this.getSettingsForParty(line.goodsItem.item.manufacturerParty.id)
         .then(settings => {
-            console.log("Settings", settings);
+            //console.log("Settings", settings);
             return settings;
         })
     }

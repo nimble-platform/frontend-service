@@ -30,6 +30,7 @@ import 'rxjs/add/observable/fromPromise'
 import 'rxjs/add/observable/interval';
 import 'rxjs/add/operator/takeUntil';
 import {Catalogue} from "../model/publish/catalogue";
+import * as myGlobals from '../../globals';
 
 
 type ProductType = "product" | "transportation";
@@ -105,6 +106,8 @@ export class ProductPublishComponent implements OnInit {
     sameIdError = false;
     // the value of the erroneousID
     erroneousID = "";
+
+    config = myGlobals.config;
 
     json = JSON;
 

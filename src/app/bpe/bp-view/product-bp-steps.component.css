@@ -8,6 +8,10 @@
     width: 25%;
 }
 
+.status-text.five-steps {
+    width: 20%;
+}
+
 .steps {
     display: flex;
     display: -ms-flexbox;
@@ -26,8 +30,8 @@
     text-align: center;
 }
 
-/** 
- * Before the active step 
+/**
+ * Before the active step
  */
 
 .steps .step:not(:first-child)::before {
@@ -62,8 +66,8 @@
     z-index: 1;
 }
 
-/** 
- * The current step 
+/**
+ * The current step
  */
 
 /* General */
@@ -84,7 +88,7 @@
 /* Action to take */
 .steps .step.current.action_required span::before {
     border: 0.1rem solid #d30000;
-    
+
 }
 .steps .step.current.action_required span {
     color: #d30000;
@@ -93,7 +97,7 @@
 /* Waiting for reply */
 .steps .step.current.waiting span::before {
     border: 0.1rem solid #c48601;
-    
+
 }
 .steps .step.current.waiting span {
     color: #c48601;
@@ -102,7 +106,7 @@
 /* Reply sent/received */
 .steps .step.current.done span::before {
     border: 0.1rem solid #007706;
-    
+
 }
 .steps .step.current.done span {
     color: #007706;
@@ -111,14 +115,14 @@
 /* Cancelled */
 .steps .step.current.cancelled span::before {
     border: 0.1rem solid #363636;
-    
+
 }
 .steps .step.current.cancelled span {
     color: #363636;
 }
 
-/** 
- * After the active step 
+/**
+ * After the active step
  */
 
 .steps .step.current ~ .step::before {

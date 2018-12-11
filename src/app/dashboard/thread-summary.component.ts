@@ -66,7 +66,7 @@ export class ThreadSummaryComponent implements OnInit {
     // this is always false unless the collaboration was cancelled or fully completed (buyer side only)
     showRateCollaborationButton = false;
 
-    expanded: boolean = false;
+    expanded: boolean = true;
 
     constructor(private bpeService: BPEService,
                 private cookieService: CookieService,

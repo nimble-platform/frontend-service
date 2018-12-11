@@ -1,12 +1,12 @@
 <nav class="navbar navbar-expand-lg navbar-dark nimble-bg space-after">
 	<a *ngIf="isLoggedIn && (checkRoles('comp_req') || checkRoles('wait_comp'))" class="navbar-brand" routerLink="/dashboard" routerLinkActive="active">
-		<img id="nav-logo" src="./assets/nimble_logo_white.png" height="30" class="d-inline-block align-top" alt="">
+		<img id="nav-logo" [src]="config.logoPath" height="30" class="d-inline-block align-top" alt="">
 	</a>
 	<a *ngIf="isLoggedIn && (!checkRoles('comp_req') && !checkRoles('wait_comp'))" class="navbar-brand" routerLink="/user-mgmt/company-registration" routerLinkActive="active">
-		<img id="nav-logo" src="./assets/nimble_logo_white.png" height="30" class="d-inline-block align-top" alt="">
+		<img id="nav-logo" [src]="config.logoPath" height="30" class="d-inline-block align-top" alt="">
 	</a>
 	<a *ngIf="!isLoggedIn" class="navbar-brand" routerLink="/user-mgmt/login" routerLinkActive="active">
-		<img id="nav-logo" src="./assets/nimble_logo_white.png" height="30" class="d-inline-block align-top" alt="">
+		<img id="nav-logo" [src]="config.logoPath" height="30" class="d-inline-block align-top" alt="">
 	</a>
 	<button class="navbar-toggler" type="button" (click)="isCollapsed = !isCollapsed" aria-controls="navbarNavAltMarkup" [attr.aria-expanded]="!isCollapsed">
 		<span class="navbar-toggler-icon">
@@ -40,7 +40,7 @@
 				</a>
 				<div class="dropdown-menu" aria-labelledby="dropdownMenuPublish" ngbDropdownMenu>
 					<a class="dropdown-item" [routerLink]="['/catalogue/categorysearch']" [queryParams]="{pageRef: 'menu', productType: 'product'}" routerLinkActive="active">
-						<i class="fa fa-shopping-cart dd-icon"></i> Product
+						<i class="fa fa-shopping-cart dd-icon"></i> Product / Service
 					</a>
 					<a class="dropdown-item" [routerLink]="['/catalogue/categorysearch']" [queryParams]="{pageRef: 'menu', productType: 'transportation'}" routerLinkActive="active">
 						<i class="fa fa-truck dd-icon"></i> Logistics Service
@@ -90,7 +90,7 @@
 				</a>
 			</li>
 
-			<li class="nav-item" *ngIf="checkRoles('comp')" routerLinkActive="active">
+			<li class="nav-item" *ngIf="checkRoles('comp') || (!checkRoles('reg_comp') && config.showCompanyMembers)" routerLinkActive="active">
 				<a class="nav-link" routerLink="/user-mgmt/company-invitation">
 					<i class="fa fa-building"></i> Company Members
 				</a>

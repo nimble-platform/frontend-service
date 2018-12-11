@@ -9,7 +9,7 @@
 </text-input>
 
 <!-- Verification Info -->
-<div class="form-group row space-before">
+<div *ngIf="config.showVerification" class="form-group row space-before">
     <label class="col-2 col-form-label">
         <strong>Verification Info:</strong>
         <span class="tooltip-icon" (click)="showVerificationTT(tooltip)"><i class="fa fa-question-circle"></i></span>

@@ -1,10 +1,10 @@
 <div *ngIf="isLogistics">
-    <p class="pb-3 nimble-title">Publish Logistics Product</p>
+    <p class="pb-3 nimble-title">Publish Logistics Service</p>
 </div>
 <div *ngIf="!isLogistics">
-    <p class="pb-3 nimble-title">Publish Product</p>
+    <p class="pb-3 nimble-title">Publish Product / Service</p>
 </div>
-<p>All published products must belong to at least one category, which will describe the product and help customers find your offering.</p>
+<p>All published products / services must belong to at least one category, which will describe the product / service and help customers find your offering.</p>
 <div class="form-group row d-flex">
     <div class="col-12 inline">
         <form #categorySearch="ngForm" (ngSubmit)="onSearchCategory()" novalidate>
@@ -101,12 +101,12 @@
                     <ul class="nav nav-tabs pt-2 pl-1 pr-1">
                       <li *ngIf="!isLogistics" class="nav-item">
                         <a href id="TREE" class="nav-link" [ngClass]="{ active: selectedTab === 'TREE'}" (click)="onSelectTab($event)">
-                          All (Product)
+                          All
                         </a>
                       </li>
                       <li *ngIf="isLogistics" class="nav-item">
                         <a href id="TREE" class="nav-link" [ngClass]="{ active: selectedTab === 'TREE'}" (click)="onSelectTab($event)">
-                          All (Logistics)
+                          All
                         </a>
                       </li>
                       <li class="nav-item">
@@ -269,7 +269,7 @@
 <!-- Actions: no permission -->
 <div *ngIf="!this.appComponent.checkRoles('catalogue')" class="form-group row">
     <div class="col-12 d-flex align-items-center">
-        <p class="mt-1 mb-0 mr-3">You do not have permission to publish any products to your company catalogue.</p>
+        <p class="mt-1 mb-0 mr-3">You do not have permission to publish any products / services to your company catalogue.</p>
     </div>
 </div>
 

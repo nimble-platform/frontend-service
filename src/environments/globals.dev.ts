@@ -80,9 +80,44 @@ export const tntAnalysisEndpoint = `${base_path}/tnt/simpleTrackingAnalysis`;
 
 export const config = {
   "companyRegistrationRequired": false,
-  "showTrack": true,
+  "logoPath": "./assets/logo_mvp.png",
+  "showCompanyMembers": false,
   "showExplorative": true,
-  "standardTaxonomy": "eClass"
+  "showPPAP": true,
+  "showTrack": true,
+  "showTrade": true,
+  "showVerification": true,
+  "standardTaxonomy": "eClass",
+  "supportedCertificates": [
+      "Appearance Approval Report",
+      "Checking Aids",
+      "Control Plan",
+      "Customer Engineering Approval",
+      "Customer Specific Requirements",
+      "Design Documentation",
+      "Design Failure Mode and Effects Analysis",
+      "Dimensional Results",
+      "Engineering Change Documentation",
+      "Initial Process Studies",
+      "Master Sample",
+      "Measurement System Analysis Studies",
+      "Part Submission Warrant",
+      "Process Failure Mode and Effects Analysis",
+      "Process Flow Diagram",
+      "Qualified Laboratory Documentation",
+      "Records of Material / Performance Tests",
+      "Sample Production Parts",
+      "Other"
+  ],
+  "supportedRoles": [
+      "company_admin",
+      "external_representative",
+      "legal_representative",
+      "monitor",
+      "publisher",
+      "purchaser",
+      "sales_officer"
+  ]
 };
 
 

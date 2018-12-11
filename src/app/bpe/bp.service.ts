@@ -47,7 +47,7 @@ export class BPService {
     }
 
     create(bp: BP): Observable<BP> {
-        console.log(' Sending business process: ', bp);
+        //console.log(' Sending business process: ', bp);
         return this.http
             .post(this.bpsUrl, JSON.stringify(bp), this.options)
             .map((res: Response) => res.json())
@@ -69,7 +69,7 @@ export class BPService {
     }
 
     updateConfiguration(configuration: ProcessConfiguration): Observable<ProcessConfiguration> {
-        console.log(' Sending configurations: ', configuration);
+        //console.log(' Sending configurations: ', configuration);
 
         return this.http
             .put(this.configurationUrl, JSON.stringify(configuration), this.options)
@@ -85,4 +85,3 @@ export class BPService {
         return Observable.throw(errorMsg);
     }
 }
-

@@ -12,23 +12,23 @@
             <h5>Details</h5>
             <table class="table">
                 <tr>
-                    <th><span i18n>Firstname</span></th>
+                    <th><span i18n>First Name</span></th>
                     <td>{{ userProfile.firstName}}</td>
                 </tr>
                 <tr>
-                    <th><span i18n>Familyname</span></th>
+                    <th><span i18n>Last Name</span></th>
                     <td>{{ userProfile.familyName}}</td>
                 </tr>
                 <tr>
-                    <th><span i18n>Email</span></th>
+                    <th><span i18n>E-Mail</span></th>
                     <td>{{ userProfile.contact.electronicMail}}</td>
                 </tr>
                 <tr>
-                    <th><span i18n>Telephone</span></th>
+                    <th><span i18n>Phone Number</span></th>
                     <td>{{ userProfile.contact.telephone}}</td>
                 </tr>
                 <tr>
-                    <th><span i18n>UserId</span></th>
+                    <th><span i18n>ID</span></th>
                     <td>{{ userProfile.id}}</td>
                 </tr>
             </table>
@@ -41,14 +41,14 @@
                 <div class="form-group row">
                     <div class="col-12">
                         <input type="password" class="form-control" id="oldPassword" required
-                               [(ngModel)]="changePasswordCredentials.oldPassword" [ngClass]="pw_val_class"
+                               [(ngModel)]="changePasswordCredentials.oldPassword"
                                name="oldPassword" placeholder="Old password" pattern=".{6,}">
                     </div>
                 </div>
                 <div class="form-group row">
                     <div class="col-12">
                         <input type="password" class="form-control" id="newPassword" required
-                               [(ngModel)]="changePasswordCredentials.newPassword" [ngClass]="pw_val_class"
+                               [(ngModel)]="changePasswordCredentials.newPassword"
                                name="newPassword" placeholder="New password" pattern=".{6,}" (input)="validatePasswords()">
                     </div>
                 </div>
@@ -56,7 +56,7 @@
                     <div class="col-12">
                         <input type="password" class="form-control" id="newPasswordRepeated" required
                                [(ngModel)]="newPasswordRepeated" [ngClass]="pw_val_class"
-                               name="newPasswordRepeated" placeholder="Re-enter new password" pattern=".{6,}"
+                               name="newPasswordRepeated" placeholder="New password (repeat)" pattern=".{6,}"
                                (input)="validatePasswords()">
                     </div>
                 </div>

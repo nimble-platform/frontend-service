@@ -38,7 +38,7 @@
                                 Upload Image Package
                             </button>
                             <button class="dropdown-item" (click)="navigateToThePublishPage()">
-                                Publish New Product/Service
+                                Publish New Product / Service
                             </button>
                             <button class="dropdown-item" (click)="onDeleteCatalogue()">
                                 Delete Catalogue
@@ -70,7 +70,7 @@
                         <div class="col-10 d-flex justify-content-between">
                             <div class="col-8">
                                 <p style="word-break: break-all;word-wrap: break-word;">
-                                    <strong>{{catLine.goodsItem.item.name}}  
+                                    <strong>{{catLine.goodsItem.item.name}}
                                         <a class="text-std" [routerLink]="['/product-details']" [queryParams]="{catalogueId: catLine.goodsItem.item.catalogueDocumentReference.id, id: catLine.goodsItem.item.manufacturersItemIdentification.id}" (click)="onOpenCatalogueLine($event)" target="_blank">
                                             <i class="fas fa-external-link-alt btn-light"></i>
                                         </a>
@@ -107,9 +107,9 @@
 </div>
 
 <div class="jumbotron" *ngIf="catalogue && catalogue.catalogueLine.length <= 0">
-    <h3>No published products.</h3>
+    <h3>No published products / services.</h3>
     <h5>
-        <span (click)="navigateToThePublishPage()" class="pointer">Publish new products</span>
+        <span (click)="navigateToThePublishPage()" class="pointer">Publish new products / services</span>
         <i class="fa fa-plus-circle pointer" (click)="navigateToThePublishPage()"></i>
     </h5>
 </div>

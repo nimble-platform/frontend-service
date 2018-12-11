@@ -57,21 +57,22 @@
             <ul>
                 <li><strong>Purchases:</strong> the history of all your purchases</li>
                 <li><strong>Sales:</strong> the history of all your sales</li>
-                <li><strong>Catalogue:</strong> the list of all your published products</li>
+                <li><strong>Catalogue:</strong> the list of all your published products / services</li>
             </ul>
             <div class="row text-center">
-                <div *ngIf="this.appComponent.checkRoles('sales') || this.appComponent.checkRoles('purchases')" class="col-6">
-                    <p>If you are looking to <b>buy</b> products</p>
-                    <a class="btn btn-primary btn-lg" href="#/simple-search" role="button">Search for Products</a>
+                <div *ngIf="this.appComponent.checkRoles('purchases')" class="col-6">
+                    <p>If you are looking to <b>buy</b> Products / Services</p>
+                    <a class="btn btn-primary btn-lg" href="#/simple-search" role="button">Search for Products / Services</a>
                 </div>
 
-                <div *ngIf="this.appComponent.checkRoles('purchases')" class="col-6">
-                    <p>If you are looking to <b>sell</b> Products</p>
-                    <a class="btn btn-primary btn-lg" href="#/catalogue/categorysearch" role="button">Publish a Product</a>
+                <div *ngIf="this.appComponent.checkRoles('sales')" class="col-6">
+                    <p>If you are looking to <b>sell</b> Products / Services</p>
+                    <a *ngIf="this.appComponent.checkRoles('catalogue')" class="btn btn-primary btn-lg" href="#/catalogue/categorysearch" role="button">Publish a Product / Service</a>
+					<p *ngIf="!this.appComponent.checkRoles('catalogue')">Please refer to the company manager or a legal representative to get permission to publish products / services in the NIMBLE Platform.</p>
                 </div>
 
                 <div *ngIf="!this.appComponent.checkRoles('purchases') && !this.appComponent.checkRoles('sales')" class="col-12">
-                    <p>Please refer to the company manager or a legal representative to get permission to purchase or sell products in the NIMBLE Platform.</p>
+                    <p>Please refer to the company manager or a legal representative to get permission to purchase or sell products / services in the NIMBLE Platform.</p>
                 </div>
             </div>
         </div>
@@ -92,7 +93,7 @@
                         </button>
                         <div style="margin-top: 20vh">
                             <h4 class="space-before text-center">You do not have any sales yet</h4>
-                            <p class="space-before text-center">When a customer enquires about your published products, you will see it here.</p>
+                            <p class="space-before text-center">When a customer enquires about your published products / services, you will see it here.</p>
                         </div>
                     </ng-container>
                     <!-- Purchases -->
@@ -105,7 +106,7 @@
                         <div style="margin-top: 20vh">
                             <h4 class="space-before text-center">You have not bought anything yet</h4>
                             <p class="space-before text-center">
-                                <a class="btn btn-primary btn-lg" href="#/simple-search" role="button">Search for Products</a>
+                                <a class="btn btn-primary btn-lg" href="#/simple-search" role="button">Search for Products / Services</a>
                             </p>
                         </div>
                     </ng-container>
@@ -137,19 +138,19 @@
                     <div class="row">
                         <!-- Filters -->
                         <div class="col-2">
-                            <facet [title]="'Product'" [dataType]="'string'"
+                            <facet [title]="'Product / Service'" [dataType]="'string'"
                                 [stringValues]="filterSet && filterSet.relatedProducts"
                                 [selectedStringValues]="modifiedFilterSet && modifiedFilterSet.relatedProducts"
                                 [loading]="areFiltersLoading()"
                                 (triggerCriteriaChanged)="onFilterChange()">
                             </facet>
-                            <facet [title]="'Product category'" [dataType]="'string'"
+                            <facet [title]="'Category'" [dataType]="'string'"
                                 [stringValues]="filterSet && filterSet.relatedProductCategories"
                                 [selectedStringValues]="modifiedFilterSet && modifiedFilterSet.relatedProductCategories"
                                 [loading]="areFiltersLoading()"
                                 (triggerCriteriaChanged)="onFilterChange()">
                             </facet>
-                            <facet [title]="'Trading partner'" [dataType]="'string'"
+                            <facet [title]="'Trading Partner'" [dataType]="'string'"
                                 [stringValues]="filterSet && filterSet.tradingPartnerNames"
                                 [selectedStringValues]="modifiedFilterSet && modifiedFilterSet.tradingPartnerNames"
                                 [loading]="areFiltersLoading()"

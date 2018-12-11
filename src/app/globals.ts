@@ -39,10 +39,10 @@ export const pw_reset_link = "http://nimble-staging.salzburgresearch.at:8080/aut
 
 // Base path variables - Local development via service discovery
 
-// export const base_path = "http://localhost:443";
+// export const base_path = "http://localhost";
 // export const ub_base = "http://localhost:8090";
-// export const simple_search_endpoint="http://nimble-staging.salzburgresearch.at/marmotta/solr/catalogue2";
-// export const pw_reset_link = "http://nimble-staging.salzburgresearch.at:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
+// export const simple_search_endpoint="http://localhost:8082/solr/catalogue2";
+// export const pw_reset_link = "http://localhost:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
 
 
 // Service endpoints
@@ -80,9 +80,44 @@ export const tntAnalysisEndpoint = `${base_path}/tnt/simpleTrackingAnalysis`;
 
 export const config = {
   "companyRegistrationRequired": false,
-  "showTrack": true,
+  "logoPath": "./assets/logo_mvp.png",
+  "showCompanyMembers": false,
   "showExplorative": true,
-  "standardTaxonomy": "eClass"
+  "showPPAP": true,
+  "showTrack": true,
+  "showTrade": true,
+  "showVerification": true,
+  "standardTaxonomy": "eClass",
+  "supportedCertificates": [
+      "Appearance Approval Report",
+      "Checking Aids",
+      "Control Plan",
+      "Customer Engineering Approval",
+      "Customer Specific Requirements",
+      "Design Documentation",
+      "Design Failure Mode and Effects Analysis",
+      "Dimensional Results",
+      "Engineering Change Documentation",
+      "Initial Process Studies",
+      "Master Sample",
+      "Measurement System Analysis Studies",
+      "Part Submission Warrant",
+      "Process Failure Mode and Effects Analysis",
+      "Process Flow Diagram",
+      "Qualified Laboratory Documentation",
+      "Records of Material / Performance Tests",
+      "Sample Production Parts",
+      "Other"
+  ],
+  "supportedRoles": [
+      "company_admin",
+      "external_representative",
+      "legal_representative",
+      "monitor",
+      "publisher",
+      "purchaser",
+      "sales_officer"
+  ]
 };
 
 

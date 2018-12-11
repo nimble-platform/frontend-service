@@ -44,7 +44,7 @@
     <div class="col-3">{{ wrapper.rfqPaymentTermsIfNegotiating }}</div>
     <div class="col-3">
         <options-input [visible]="rfq.negotiationOptions.paymentTerms" [presentationMode]="getPresentationMode()"
-            [disabled]="isLoading()" [options]="wrapper.settings.paymentTerms" 
+            [disabled]="isLoading()" [options]="wrapper.settings.paymentTerms"
             [(selected)]="wrapper.quotationPaymentTerms.paymentTerm">
         </options-input>
     </div>
@@ -66,7 +66,7 @@
     <div class="col-3"></div>
     <div class="col-3">{{ rfq.dataMonitoringRequested ? "Yes" : "" }}</div>
     <div class="col-3" *ngIf="rfq.dataMonitoringRequested && !isReadOnly()">
-        <input type="checkbox" [(ngModel)]="quotation.dataMonitoringPromised" 
+        <input type="checkbox" [(ngModel)]="quotation.dataMonitoringPromised"
             [disabled]="isLoading()">
         <label>Provide data monitoring service</label>
     </div>
@@ -81,8 +81,8 @@
     <div class="col-3">{{ wrapper.lineTotalPriceString }}</div>
     <div class="col-3">{{ wrapper.rfqTotalPriceStringIfNegotiating }}</div>
     <div class="col-3" [ngClass]="wrapper.quotationPriceWrapper.appliedDiscounts.length > 0 ? 'd-flex' : null">
-        <quantity-input [presentationMode]="getPresentationMode()" [disabled]="isLoading()" 
-            [quantity]="wrapper.quotationPriceWrapper" [quantityUnits]="CURRENCIES" 
+        <quantity-input [presentationMode]="getPresentationMode()" [disabled]="isLoading()"
+            [quantity]="wrapper.quotationPriceWrapper" [quantityUnits]="CURRENCIES"
             [disableQuantityUnit]="wrapper.linePriceWrapper.hasPrice()">
         </quantity-input>
         <div *ngIf="wrapper.quotationPriceWrapper.appliedDiscounts.length > 0" class="space-left" data-toggle="tooltip" data-placement="top" (click)="openDiscountModal()"  title="Applied Discounts/Charges" style="cursor: pointer">
@@ -125,8 +125,11 @@
         </button>
     </div>
     <div class="col-2">
-        <button class="btn btn-primary action" [disabled]="isLoading()" (click)="onRespondToQuotation(true)">
+        <button *ngIf="!hasUpdatedTerms()" class="btn btn-primary action" [disabled]="isLoading()" (click)="onRespondToQuotation(true)">
             Accept Offer
+        </button>
+        <button *ngIf="hasUpdatedTerms()" class="btn btn-primary action" [disabled]="isLoading()" (click)="onRespondToQuotation(true)">
+            Submit Response
         </button>
     </div>
 </div>

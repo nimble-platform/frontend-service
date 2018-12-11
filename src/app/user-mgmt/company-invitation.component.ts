@@ -23,6 +23,7 @@ export class CompanyInvitationComponent implements OnInit {
 	invToChange = "";
 	tooltipHTML = "";
 	userRoles = [];
+  config = myGlobals.config;
 	rolesSelected = false;
 	rolesChangeSelected = true;
 
@@ -37,18 +38,18 @@ export class CompanyInvitationComponent implements OnInit {
 		private appComponent: AppComponent,
 		private modalService: NgbModal
 	) {}
-	
+
 	ngOnInit() {
 		this.loadInvites();
 		this.loadRoles();
 		if (this.cookieService.get('user_email'))
 			this.myEmail = decodeURIComponent(this.cookieService.get('user_email'));
     }
-	
+
 	checkMail(mail) {
 		return (mail.localeCompare(this.myEmail) == 0);
 	}
-	
+
 	checkDisable(role) {
 		var disable = false;
 		if (role == "external_representative" || role == "legal_representative") {
@@ -57,7 +58,7 @@ export class CompanyInvitationComponent implements OnInit {
 		}
 		return disable;
 	}
-	
+
 	loadInvites() {
 		this.invPending = [];
 		this.membersCallStatus.submit();
@@ -73,26 +74,29 @@ export class CompanyInvitationComponent implements OnInit {
 				this.membersCallStatus.error("Error while loading invites", error);
             });
 	}
-	
+
 	loadRoles() {
 		this.userRoles = [];
 		this.rolesCallStatus.submit();
 		this.userService.getUserRoles()
-            .then(response => {
+      .then(response => {
 				response.sort(function(a,b){
 					var a_comp = a.name;
 					var b_comp = b.name;
 					return a_comp.localeCompare(b_comp);
 				});
-                this.userRoles = response;
+        for (var role of response) {
+          if (this.config.supportedRoles.indexOf(role.identifier) != -1)
+            this.userRoles.push(role);
+        }
 				this.rolesCallStatus.callback("Successfully fetched roles.", true);
-            })
+      })
 			.catch(error => {
 				this.userRoles = [];
 				this.rolesCallStatus.error("Error while fetching roles.", error);
-            });
+      });
 	}
-	
+
 	setRoles(id) {
 		if (this.invRoles.indexOf(id) == -1)
 			this.invRoles.push(id);
@@ -103,7 +107,7 @@ export class CompanyInvitationComponent implements OnInit {
 		else
 			this.rolesSelected = false;
 	}
-	
+
 	setChangeRoles(id) {
 		if (this.invToChange["roleIDs"].indexOf(id) == -1)
 			this.invToChange["roleIDs"].push(id);
@@ -114,7 +118,7 @@ export class CompanyInvitationComponent implements OnInit {
 		else
 			this.rolesChangeSelected = false;
 	}
-	
+
 	changeRoles() {
 		this.userService.setRoles(this.invToChange["email"],this.invToChange["roleIDs"])
 			.then(response => {
@@ -125,17 +129,17 @@ export class CompanyInvitationComponent implements OnInit {
 				this.loadInvites();
             });
 	}
-	
+
 	editRole(inv) {
 		if (this.isJson(JSON.stringify(inv))) {
 			this.invToChange = copy(inv);
 		}
 	}
-	
+
 	openModal(content) {
 		this.modalService.open(content);
 	}
-	
+
 	deleteInvite(inv) {
 		if (confirm("Are you sure that you want to remove this user from your company?")) {
 			this.userService.deleteInvite(inv["email"])
@@ -148,18 +152,24 @@ export class CompanyInvitationComponent implements OnInit {
 				});
 		}
 	}
-	
+
 	showRoleTT(content) {
 		var tooltip = "";
 		tooltip += "<table class='table table-striped table-bordered'>";
 		tooltip += "<tr><th>Role</th><th>Permissions</th></tr>";
-		tooltip += "<tr><td>Company Admin</td><td>A member of the company that got all rights on the NIMBLE platform (except for assigning external/legal representatives)</td></tr>";
-		tooltip += "<tr><td>External Representative</td><td>Somebody from outside the company that got all rights connected to the company on the NIMBLE platform (except for assigning external/legal representatives)</td></tr>";
-		tooltip += "<tr><td>Legal Representative</td><td>The legally liable representative of your company. Usually a single person. Has got all rights on the NIMBLE platform</td></tr>";
-		tooltip += "<tr><td>Monitor</td><td>Can observe sales, purchases and relevant business data on the NIMBLE platform without executing the associated business processes</td></tr>";
-		tooltip += "<tr><td>Publisher</td><td>Can publish and maintain the catalogues of the company</td></tr>";
-		tooltip += "<tr><td>Purchaser</td><td>Can observe purchases on the NIMBLE platform and execute the associated business processes</td></tr>";
-		tooltip += "<tr><td>Sales Offices</td><td>Can observe sales on the NIMBLE platform and execute the associated business processes</td></tr>";
+    if (this.config.supportedRoles.indexOf("company_admin") != -1)
+		  tooltip += "<tr><td>Company Admin</td><td>A member of the company that got all rights on the NIMBLE platform (except for assigning external/legal representatives)</td></tr>";
+    if (this.config.supportedRoles.indexOf("external_representative") != -1)
+      tooltip += "<tr><td>External Representative</td><td>Somebody from outside the company that got all rights connected to the company on the NIMBLE platform (except for assigning external/legal representatives)</td></tr>";
+    tooltip += "<tr><td>Legal Representative</td><td>The legally liable representative of your company. Usually a single person. Has got all rights on the NIMBLE platform</td></tr>";
+    if (this.config.supportedRoles.indexOf("monitor") != -1)
+      tooltip += "<tr><td>Monitor</td><td>Can observe sales, purchases and relevant business data on the NIMBLE platform without executing the associated business processes</td></tr>";
+    if (this.config.supportedRoles.indexOf("publisher") != -1)
+      tooltip += "<tr><td>Publisher</td><td>Can publish and maintain the catalogues of the company</td></tr>";
+    if (this.config.supportedRoles.indexOf("purchaser") != -1)
+      tooltip += "<tr><td>Purchaser</td><td>Can observe purchases on the NIMBLE platform and execute the associated business processes</td></tr>";
+    if (this.config.supportedRoles.indexOf("sales_officer") != -1)
+		  tooltip += "<tr><td>Sales Offices</td><td>Can observe sales on the NIMBLE platform and execute the associated business processes</td></tr>";
 		this.tooltipHTML = tooltip;
 		this.modalService.open(content);
 	}
@@ -182,7 +192,7 @@ export class CompanyInvitationComponent implements OnInit {
 				);
             });
     }
-	
+
 	private isJson(str: string): boolean {
         try {
             JSON.parse(str);
@@ -191,5 +201,5 @@ export class CompanyInvitationComponent implements OnInit {
         }
         return true;
     }
-	
+
 }

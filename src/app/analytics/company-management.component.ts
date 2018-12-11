@@ -41,7 +41,6 @@ export class CompanyManagementComponent implements OnInit {
     onRegisteredCompaniesPageChange(newPage): void {
         this.registeredCompaniesCallStatus.submit();
         if (newPage && newPage !== this.registeredCompaniesPage.number) {
-            console.log(`Updating RegisteredCompaniesPage to ${newPage}`);
             this.updateRegisteredCompanies(newPage);
         }
     }
@@ -61,22 +60,22 @@ export class CompanyManagementComponent implements OnInit {
     }
 
     verifyCompany(company): void {
-
-        this.unverifiedCompaniesCallStatus.submit();
-        this.analyticsService.verifyCompany(company.hjid)
-            .then(res => {
-                this.unverifiedCompaniesPage.content = this.unverifiedCompaniesPage.content.filter(c => c.hjid !== company.hjid);
-                this.updateUnverifiedCompanies(this.unverifiedCompaniesPage.number);
-            })
-            .catch(error => {
-                this.unverifiedCompaniesCallStatus.error("Error while verifing company", error);
-            });
+        if (confirm("Are you sure that you want to verify this company?")) {
+          this.unverifiedCompaniesCallStatus.submit();
+          this.analyticsService.verifyCompany(company.hjid)
+              .then(res => {
+                  this.unverifiedCompaniesPage.content = this.unverifiedCompaniesPage.content.filter(c => c.hjid !== company.hjid);
+                  this.updateUnverifiedCompanies(this.unverifiedCompaniesPage.number);
+              })
+              .catch(error => {
+                  this.unverifiedCompaniesCallStatus.error("Error while verifing company", error);
+              });
+        }
     }
 
     onUnverifiedPageChange(newPage): void {
         this.unverifiedCompaniesCallStatus.submit();
         if (newPage && newPage !== this.unverifiedCompaniesPage.number) {
-            console.log(`Updating UnverifiedCompaniesPage to ${newPage}`);
             this.updateUnverifiedCompanies(newPage);
         }
     }

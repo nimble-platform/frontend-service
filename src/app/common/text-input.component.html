@@ -1,4 +1,4 @@
-<div class="row {{ rowClass }}">
+<div class="row {{ rowClass }}" [hidden]="presentationMode === 'view' && visible && (!text || text == '')">
     <div *ngIf="label" [class]="labelClass">
         <input-label [class]="labelMainClass" [label]="label" [definition]="definition">
         </input-label>
