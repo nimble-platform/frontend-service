@@ -48,8 +48,9 @@ export class CompanyRegistrationComponent implements OnInit {
     }
 
     save(model: FormGroup) {
-
-
+        var sectorString = model.getRawValue()['industrySectors'];
+        if (Array.isArray(sectorString))
+          sectorString = sectorString.join(", ");
         // create company registration DTO
         let userId = this.cookieService.get('user_id');
         let companyRegistration: CompanyRegistration = new CompanyRegistration(
@@ -64,7 +65,7 @@ export class CompanyRegistrationComponent implements OnInit {
                 [model.getRawValue()['businessKeywords']],
                 model.getRawValue()['businessType'],
                 model.getRawValue()['name'],
-                [model.getRawValue()['industrySectors']],
+                [sectorString],
                 model.getRawValue()['vatNumber'],
                 model.getRawValue()['verificationInformation'],
                 model.getRawValue()['yearOfReg']

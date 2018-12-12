@@ -66,7 +66,7 @@ export class ThreadSummaryComponent implements OnInit {
     // this is always false unless the collaboration was cancelled or fully completed (buyer side only)
     showRateCollaborationButton = false;
 
-    expanded: boolean = true;
+    expanded: boolean = false;
 
     constructor(private bpeService: BPEService,
                 private cookieService: CookieService,
@@ -90,6 +90,20 @@ export class ThreadSummaryComponent implements OnInit {
 
     toggleHistory(): void {
         this.historyExpanded = !this.historyExpanded;
+    }
+
+    async openBpProcessView() {
+        let role = await this.documentService.getUserRole(this.titleEvent.activityVariables,this.processInstanceGroup.partyID);
+        this.bpDataService.setBpOptionParametersWithProcessMetadata(role, this.titleEvent.processType, this.titleEvent, false);
+        this.bpDataService.setRelatedGroupId(this.processInstanceGroup.id);
+        this.bpDataService.setCollaborationGroupId(this.collaborationGroupId);
+        this.router.navigate(['bpe/bpe-exec'], {
+            queryParams: {
+                catalogueId: this.titleEvent.product.catalogueDocumentReference.id,
+                id: this.titleEvent.product.manufacturersItemIdentification.id,
+                pid: this.titleEvent.processId
+            }
+        });
     }
 
     private fetchEvents(): void {

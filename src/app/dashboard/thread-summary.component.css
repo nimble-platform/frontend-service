@@ -17,11 +17,11 @@
     margin: 0;
     border-bottom: 1px solid rgba(0, 0, 0, 0.15) !important;
     background: rgba(0,0,0,.05);
-    cursor: pointer;
+    /*cursor: pointer;*/
 }
 .thread-entry-header .header-label {
     margin-top: 0.2rem;
-    margin-left: 0.5rem;
+    margin-bottom: 0.2rem;
 }
 .thread-entry-header .header-label label {
     margin-bottom: 0;
@@ -30,6 +30,10 @@
 
 .thread-entry-heading {
     border-bottom: 1px solid rgba(0, 0, 0, 0.15) !important;
+}
+
+.inline {
+  display:inline-block;
 }
 
 .star {

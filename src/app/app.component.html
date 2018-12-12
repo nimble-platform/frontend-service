@@ -90,7 +90,7 @@
 				</a>
 			</li>
 
-			<li class="nav-item" *ngIf="checkRoles('comp') || (!checkRoles('reg_comp') && config.showCompanyMembers)" routerLinkActive="active">
+			<li class="nav-item" *ngIf="checkRoles('comp') || (checkRoles('comp_req') && config.showCompanyMembers)" routerLinkActive="active">
 				<a class="nav-link" routerLink="/user-mgmt/company-invitation">
 					<i class="fa fa-building"></i> Company Members
 				</a>

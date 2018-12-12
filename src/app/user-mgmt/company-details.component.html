@@ -7,7 +7,7 @@
 <div *ngIf="details" class="row">
   <div class="col-6">
     <h4><p>Company Data</p></h4>
-    <text-input presentationMode="view" label="Legal Name"
+    <text-input presentationMode="view" label="Company Name"
         [text]="details.details.companyLegalName" labelClass="col-4" valueClass="col-8">
     </text-input>
     <text-input presentationMode="view" label="VAT Number"
@@ -16,13 +16,13 @@
     <text-input presentationMode="view" label="Business Type"
         [text]="details.details.businessType" labelClass="col-4" valueClass="col-8">
     </text-input>
+    <text-input presentationMode="view" label="Activity Sectors"
+        [text]="details.details.industrySectors[0]" labelClass="col-4" valueClass="col-8">
+    </text-input>
     <text-input presentationMode="view" label="Business Keywords"
         [text]="details.details.businessKeywords[0]" labelClass="col-4" valueClass="col-8">
     </text-input>
-    <text-input presentationMode="view" label="Industry Sectors"
-        [text]="details.details.industrySectors[0]" labelClass="col-4" valueClass="col-8">
-    </text-input>
-    <text-input presentationMode="view" label="Year of Comp. Reg."
+    <text-input presentationMode="view" label="Year of Foundation"
         [text]="details.details.yearOfCompanyRegistration" labelClass="col-4" valueClass="col-8">
     </text-input>
     <text-input presentationMode="view" label="Company Description"

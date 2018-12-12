@@ -88,6 +88,20 @@ export const config = {
   "showTrade": true,
   "showVerification": true,
   "standardTaxonomy": "eClass",
+  "supportedActivitySectors": {
+  	"": [],
+  	"Logistics Provider": [],
+  	"Manufacturer": [],
+  	"Service Provider": [],
+  	"Other": []
+  },
+  "supportedBusinessTypes": [
+  	"",
+  	"Logistics Provider",
+  	"Manufacturer",
+  	"Service Provider",
+  	"Other"
+  ],
   "supportedCertificates": [
       "Appearance Approval Report",
       "Checking Aids",

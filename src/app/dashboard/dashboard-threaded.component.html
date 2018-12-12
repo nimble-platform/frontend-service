@@ -169,7 +169,7 @@
                             <h4 *ngIf="results.orders.length === 0">No orders.</h4>
                             <div *ngFor="let order of results.orders;let i=index" class="bordered space-after">
                                 <div class="row">
-                                    <div class="col-12 d-flex collaboration-group-header">
+                                    <div class="col-11 d-flex collaboration-group-header">
                                         <div class="header-label mr-auto d-flex">
                                             <h5 *ngIf="updatingCollaborationGroupName[i].status == false && (order.name != null || order.name != '')">{{order.name}}</h5>
                                             <h5 *ngIf="updatingCollaborationGroupName[i].status == false && (order.name == null || order.name == '')">{{updatingCollaborationGroupName[i].defaultName}}</h5>
@@ -181,17 +181,19 @@
                                                 <i class="fa fa-times p-2 pointer" aria-hidden="true"></i>
                                             </div>
                                         </div>
-                                        <div data-toggle="tooltip" (click)="changeCollaborationGroupNameStatus(i,true)" data-placement="top" title="Change group name">
-                                            <i class="fa fa-pencil-alt p-2 pointer" aria-hidden="true"></i>
+                                    </div>
+                                    <div class="col-1 align-right pl-2 pr-1">
+                                        <div data-toggle="tooltip" class="inline" (click)="changeCollaborationGroupNameStatus(i,true)" data-placement="top" title="Change group name">
+                                            <i class="fa fa-pencil-alt p-1 pointer" aria-hidden="true"></i>
                                         </div>
-                                        <div *ngIf="!order.archived" (click)="archiveGroup(order.id)" data-toggle="tooltip" data-placement="top" title="Archive">
-                                            <i class="fa fa-archive p-2 pointer" aria-hidden="true"></i>
+                                        <div *ngIf="!order.archived" class="inline" (click)="archiveGroup(order.id)" data-toggle="tooltip" data-placement="top" title="Archive">
+                                            <i class="fa fa-archive p-1 pointer" aria-hidden="true"></i>
                                         </div>
-                                        <div *ngIf="order.archived" (click)="restoreGroup(order.id)" data-toggle="tooltip" data-placement="top" title="Restore">
-                                            <i class="fa fa-undo p-2 pointer" aria-hidden="true"></i>
+                                        <div *ngIf="order.archived" class="inline" (click)="restoreGroup(order.id)" data-toggle="tooltip" data-placement="top" title="Restore">
+                                            <i class="fa fa-undo p-1 pointer" aria-hidden="true"></i>
                                         </div>
-                                        <div *ngIf="order.archived" (click)="deleteGroup(order.id)" data-toggle="tooltip" data-placement="top" title="Delete Permanently">
-                                            <i class="fa fa-trash-alt p-2 pointer" aria-hidden="true"></i>
+                                        <div *ngIf="order.archived" class="inline" (click)="deleteGroup(order.id)" data-toggle="tooltip" data-placement="top" title="Delete Permanently">
+                                            <i class="fa fa-trash-alt p-1 pointer" aria-hidden="true"></i>
                                         </div>
                                     </div>
                                 </div>
