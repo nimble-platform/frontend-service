@@ -81,6 +81,12 @@ export const tntAnalysisEndpoint = `${base_path}/tnt/simpleTrackingAnalysis`;
 export const config = {
   "companyRegistrationRequired": false,
   "logoPath": "./assets/logo_mvp.png",
+  "requiredAgreements": [
+    {
+      "title":"End-User License Agreement (EULA)",
+      "src":"./assets/eula.pdf"
+    }
+  ],
   "showCompanyMembers": false,
   "showExplorative": true,
   "showPPAP": true,

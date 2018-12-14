@@ -81,6 +81,16 @@ export const tntAnalysisEndpoint = `${base_path}/tnt/simpleTrackingAnalysis`;
 export const config = {
   "companyRegistrationRequired": true,
   "logoPath": "./assets/logo_fmp.png",
+  "requiredAgreements": [
+    {
+      "title":"Privacy Policy",
+      "src":"./assets/privacy_policy.pdf"
+    },
+    {
+      "title":"Terms of Service (ToS)",
+      "src":"./assets/tos.pdf"
+    }
+  ],
   "showCompanyMembers": true,
   "showExplorative": false,
   "showPPAP": false,
