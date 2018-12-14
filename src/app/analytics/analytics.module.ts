@@ -9,6 +9,7 @@ import {PlatformAnalyticsComponent} from "./platform-analytics.component";
 import {CompanyAnalyticsComponent} from "./company-analytics.component";
 import {TrustPolicyComponent} from "./trust-policy.component";
 import {CompanyManagementComponent} from './company-management.component';
+import {PlatformInfoComponent} from './platform-info.component';
 
 @NgModule({
     imports: [
@@ -24,13 +25,15 @@ import {CompanyManagementComponent} from './company-management.component';
         PlatformAnalyticsComponent,
         CompanyAnalyticsComponent,
         TrustPolicyComponent,
-        CompanyManagementComponent
+        CompanyManagementComponent,
+        PlatformInfoComponent
     ],
     exports: [
         PlatformAnalyticsComponent,
         CompanyAnalyticsComponent,
         TrustPolicyComponent,
-        CompanyManagementComponent
+        CompanyManagementComponent,
+        PlatformInfoComponent
     ],
     providers: []
 })

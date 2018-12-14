@@ -140,7 +140,7 @@ export class AppComponent implements OnInit {
 			if (this.debug)
 				console.log("Loading route "+link);
 			if (!this.cookieService.get("user_id")) {
-				if (link != "/" && link != "/user-mgmt/login" && link != "/user-mgmt/registration")
+				if (link != "/" && link != "/user-mgmt/login" && link != "/user-mgmt/registration" && link != "/analytics/info")
 					this.router.navigate(["/user-mgmt/login"]);
 			}
 		}

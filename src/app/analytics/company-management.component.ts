@@ -22,7 +22,7 @@ export class CompanyManagementComponent implements OnInit {
         this.registeredCompaniesCallStatus.submit();
         this.unverifiedCompaniesCallStatus.submit();
         this.updateUnverifiedCompanies(1);
-        this.updateRegisteredCompanies(1);
+        this.updateRegisteredCompanies(0);
     }
 
     updateRegisteredCompanies(requestedPage: number): void {
@@ -31,7 +31,6 @@ export class CompanyManagementComponent implements OnInit {
             .then(res => {
                 this.registeredCompaniesCallStatus.callback("Successfully loaded registered companies", true);
                 this.registeredCompaniesPage = res;
-
             })
             .catch(error => {
                 this.registeredCompaniesCallStatus.error("Error while loading registered companies page", error);
@@ -40,8 +39,8 @@ export class CompanyManagementComponent implements OnInit {
 
     onRegisteredCompaniesPageChange(newPage): void {
         this.registeredCompaniesCallStatus.submit();
-        if (newPage && newPage !== this.registeredCompaniesPage.number) {
-            this.updateRegisteredCompanies(newPage);
+        if (newPage && newPage !== (this.registeredCompaniesPage.number+1)) {
+            this.updateRegisteredCompanies(newPage-1);
         }
     }
 
