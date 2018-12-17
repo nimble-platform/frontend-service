@@ -9,6 +9,7 @@ import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { copy } from '../common/utils';
 import { CallStatus } from '../common/call-status';
 import { CURRENCIES } from "../catalogue/model/constants";
+import { DEFAULT_LANGUAGE} from '../catalogue/model/constants';
 
 @Component({
 	selector: 'simple-search-form',
@@ -251,115 +252,172 @@ export class SimpleSearchFormComponent implements OnInit {
 		return level;
 	}
 
-	private getCall(q:string, fq:any, p:number, cat:string) {
-		this.searchDone = true;
-    	this.model.q=q;
-		this.objToSubmit.q=q;
-		this.facetQuery=fq;
-		this.page=p;
-		this.searchCallStatus.submit();
-		this.simpleSearchService.getFields()
-		.then(res => {
-			this.simpleSearchService.get(q,res._body.split(","),fq,p,cat)
-			.then(res => {
-				this.facetObj = [];
-				this.temp = [];
-				var index = 0;
-				for (let facet in res.facet_counts.facet_fields) {
-					if (JSON.stringify(res.facet_counts.facet_fields[facet]) != "{}") {
-						if (facet == this.product_cat_mix) {
-							this.buildCatTree(res.facet_counts.facet_fields[facet]);
-						}
-						if (this.simpleSearchService.checkField(facet)) {
-							this.facetObj.push({
-								"name":facet,
-								"options":[],
-								"total":0,
-								"selected":false
-							});
-							for (let facet_inner in res.facet_counts.facet_fields[facet]) {
-								if (facet_inner != "" && facet_inner.indexOf("urn:oasis:names:specification:ubl:schema:xsd") == -1) {
-									this.facetObj[index].options.push({
-										"name":facet_inner,
-										"count":res.facet_counts.facet_fields[facet][facet_inner]
-									});
-									this.facetObj[index].total += res.facet_counts.facet_fields[facet][facet_inner];
-									if (this.checkFacet(this.facetObj[index].name,facet_inner))
-										this.facetObj[index].selected=true;
-								}
-							}
-							this.facetObj[index].options.sort(function(a,b){
-								var a_c = a.name;
-								var b_c = b.name;
-								return a_c.localeCompare(b_c);
-							});
-							this.facetObj[index].options.sort(function(a,b){
-								return b.count-a.count;
-							});
-							index++;
-							this.facetObj.sort(function(a,b){
-								var a_c = a.name;
-								var b_c = b.name;
-								return a_c.localeCompare(b_c);
-							});
-							this.facetObj.sort(function(a,b){
-								return b.total-a.total;
-							});
-							this.facetObj.sort(function(a,b){
-								var ret = 0;
-								if (a.selected && !b.selected)
-									ret = -1;
-								else if (!a.selected && b.selected)
-									ret = 1;
-								return ret;
-							});
-						}
-					}
-				}
-				this.temp = res.response.docs;
-				for (let doc in this.temp) {
-					if (this.temp[doc][this.product_img]) {
-						var img = this.temp[doc][this.product_img];
-						if (Array.isArray(img)) {
-							this.temp[doc][this.product_img] = img[0];
-						}
-					}
-				}
-				/*
-				for (let doc in this.temp) {
-					if (this.isJson(this.temp[doc][this.product_img])) {
-						var json = JSON.parse(this.temp[doc][this.product_img]);
-						var img = "";
-						if (json.length > 1)
-							img = "data:"+JSON.parse(this.temp[doc][this.product_img][0])[0].mimeCode+";base64,"+JSON.parse(this.temp[doc][this.product_img][0])[0].value;
-						else
-							img = "data:"+this.temp[doc][this.product_img].mimeCode+";base64,"+this.temp[doc][this.product_img].value;
-						this.temp[doc][this.product_img] = img;
-					}
-				}
-				*/
-				this.response = copy(this.temp);
-				this.size = res.response.numFound;
-				this.page = p;
-				this.start = this.page*10-10+1;
-				this.end = this.start+res.response.docs.length-1;
-				this.callback = true;
-				this.searchCallStatus.callback("Search done.", true);
-			})
-			.catch(error => {
-				this.searchCallStatus.error("Error while running search.", error);
-			});
-		})
-		.catch(error => {
-			this.searchCallStatus.error("Error while running search.", error);
-		});
-	}
+    private getCall(q:string, fq:any, p:number, cat:string) {
+        this.searchDone = true;
+        this.model.q=q;
+        this.objToSubmit.q=q;
+        this.facetQuery=fq;
+        this.page=p;
+        this.searchCallStatus.submit();
+        this.simpleSearchService.getFields()
+            .then(res => {
+                this.simpleSearchService.getPropertyLabels(res._body.split(",")).then(propertyLabelsRes => {
+                    this.simpleSearchService.get(q,res._body.split(","),fq,p,cat)
+                        .then(res => {
+                            let propertyLabels = propertyLabelsRes.response.docs;
+                            this.facetObj = [];
+                            this.temp = [];
+                            var index = 0;
+                            for (let facet in res.facet_counts.facet_fields) {
+                                if (JSON.stringify(res.facet_counts.facet_fields[facet]) != "{}") {
+                                    if (facet == this.product_cat_mix) {
+                                        this.buildCatTree(res.facet_counts.facet_fields[facet]);
+                                    }
+                                    if (this.simpleSearchService.checkField(facet)) {
+                                        this.facetObj.push({
+                                            "name":facet,
+                                            "realName":this.getFacetRealName(facet,propertyLabels),
+                                            "options":[],
+                                            "total":0,
+                                            "selected":false
+                                        });
 
-	onSubmit() {
-		this.objToSubmit = copy(this.model);
-		this.page = 1;
-		this.get(this.objToSubmit);
-	}
+                                        // check whether we have specific labels for the default language settings
+                                        let label = null;
+                                        let facet_innerLabel = null;
+                                        let facet_innerCount = null;
+                                        for (let facet_inner in res.facet_counts.facet_fields[facet]) {
+                                            let index = facet_inner.lastIndexOf(":"+DEFAULT_LANGUAGE());
+                                            if (index != -1) {
+                                                label = facet_inner.substring(0,index);
+                                                facet_innerLabel = facet_inner;
+                                                facet_innerCount = res.facet_counts.facet_fields[facet][facet_inner];
+                                            }
+                                        }
+
+                                        if(label == null){
+                                            for (let facet_inner in res.facet_counts.facet_fields[facet]) {
+
+                                                if (facet_inner != "" && facet_inner != ":" && facet_inner != ' ' && facet_inner.indexOf("urn:oasis:names:specification:ubl:schema:xsd") == -1) {
+                                                    this.facetObj[index].options.push({
+                                                        "name":facet_inner,
+                                                        "realName":facet_inner,
+                                                        "count":res.facet_counts.facet_fields[facet][facet_inner]
+                                                    });
+                                                    this.facetObj[index].total += res.facet_counts.facet_fields[facet][facet_inner];
+                                                    if (this.checkFacet(this.facetObj[index].name,facet_inner))
+                                                        this.facetObj[index].selected=true;
+                                                }
+                                            }
+                                        }
+                                        else {
+                                            this.facetObj[index].options.push({
+                                                "name":facet_innerLabel,
+                                                "realName":label,
+                                                "count":facet_innerCount
+                                            });
+                                            this.facetObj[index].total += res.facet_counts.facet_fields[facet][facet_innerLabel];
+                                            if (this.checkFacet(this.facetObj[index].name,facet_innerLabel))
+                                                this.facetObj[index].selected=true;
+                                        }
+
+                                        this.facetObj[index].options.sort(function(a,b){
+                                            var a_c = a.name;
+                                            var b_c = b.name;
+                                            return a_c.localeCompare(b_c);
+                                        });
+                                        this.facetObj[index].options.sort(function(a,b){
+                                            return b.count-a.count;
+                                        });
+                                        index++;
+                                        this.facetObj.sort(function(a,b){
+                                            var a_c = a.name;
+                                            var b_c = b.name;
+                                            return a_c.localeCompare(b_c);
+                                        });
+                                        this.facetObj.sort(function(a,b){
+                                            return b.total-a.total;
+                                        });
+                                        this.facetObj.sort(function(a,b){
+                                            var ret = 0;
+                                            if (a.selected && !b.selected)
+                                                ret = -1;
+                                            else if (!a.selected && b.selected)
+                                                ret = 1;
+                                            return ret;
+                                        });
+                                    }
+                                }
+                            }
+                            this.temp = res.response.docs;
+                            for (let doc in this.temp) {
+                                if (this.temp[doc][this.product_img]) {
+                                    var img = this.temp[doc][this.product_img];
+                                    if (Array.isArray(img)) {
+                                        this.temp[doc][this.product_img] = img[0];
+                                    }
+                                }
+                            }
+                            /*
+                            for (let doc in this.temp) {
+                                if (this.isJson(this.temp[doc][this.product_img])) {
+                                    var jso/n = JSON.parse(this.temp[doc][this.product_img]);
+                                    var img = "";
+                                    if (json.length > 1)
+                                        img = "data:"+JSON.parse(this.temp[doc][this.product_img][0])[0].mimeCode+";base64,"+JSON.parse(this.temp[doc][this.product_img][0])[0].value;
+                                    else
+                                        img = "data:"+this.temp[doc][this.product_img].mimeCode+";base64,"+this.temp[doc][this.product_img].value;
+                                    this.temp[doc][this.product_img] = img;
+                                }
+                            }
+                            */
+                            this.response = copy(this.temp);
+                            this.size = res.response.numFound;
+                            this.page = p;
+                            this.start = this.page*10-10+1;
+                            this.end = this.start+res.response.docs.length-1;
+                            this.callback = true;
+                            this.searchCallStatus.callback("Search done.", true);
+                        })
+                        .catch(error => {
+                            this.searchCallStatus.error("Error while running search.", error);
+                        });
+                })
+                    .catch(error => {
+                        this.searchCallStatus.error("Failed to get property labels",error);
+                    })
+
+            })
+            .catch(error => {
+                this.searchCallStatus.error("Error while running search.", error);
+            });
+    }
+
+    getFacetRealName(name:string,properties){
+        for(let property of properties){
+            if(property["idxField"].indexOf(name) != -1){
+                // get label key
+                let objectFields = Object.keys(property);
+
+                if(objectFields.length < 2){
+                    // we do not have a specific label for this facet
+                    break;
+                }
+
+                objectFields.splice(objectFields.indexOf("idxField"),1);
+                let labelField = objectFields[0];
+                return property[labelField][0];
+            }
+        }
+
+        return name;
+    }
+
+    onSubmit() {
+        this.objToSubmit = copy(this.model);
+        this.page = 1;
+        this.get(this.objToSubmit);
+    }
 
 	callCat(name:string) {
 		this.model.q="*";

@@ -3,13 +3,15 @@ import { Headers, Http } from '@angular/http';
 import 'rxjs/add/operator/toPromise';
 import * as myGlobals from '../globals';
 import { map } from 'rxjs/operators';
+import { DEFAULT_LANGUAGE} from '../catalogue/model/constants';
 
 @Injectable()
 export class SimpleSearchService {
 
-	private headers = new Headers({'Content-Type': 'application/json'});
-	private url = myGlobals.simple_search_endpoint;
-	private facetMin = myGlobals.facet_min;
+    private headers = new Headers({'Content-Type': 'application/json'});
+    private url = myGlobals.simple_search_endpoint;
+    private urlProperty = myGlobals.simple_search_properties_endpoint;
+    private facetMin = myGlobals.facet_min;
 
 	product_name = myGlobals.product_name;
 	product_vendor_id = myGlobals.product_vendor_id;
@@ -23,14 +25,40 @@ export class SimpleSearchService {
 
 	constructor(private http: Http) { }
 
-	getFields(): Promise<any> {
-		const url = `${this.url}/select?q=*:*&rows=0&wt=csv`;
-		return this.http
-		.get(url, {headers: this.headers})
-		.toPromise()
-		.then(res => res)
-		.catch(this.handleError);
-	}
+    getPropertyLabels(facets:[string]){
+        let url = `${this.urlProperty}/select`;
+        let size = facets.length;
+        if(size > 0){
+        	url += "?q=idxField:(";
+            for(let i = 0; i < size ; i++){
+                if(size - 1 == i){
+                    url += facets[i]+")&";
+                }
+                else {
+                    url += facets[i] + " OR ";
+                }
+            }
+		}
+		else {
+        	url += "?";
+		}
+        url += "fl=label_" + DEFAULT_LANGUAGE() +",idxField";
+        url += "&json.nl=map&wt=json&rows="+facets.length;
+        return this.http
+            .get(url, {headers: this.headers})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+    }
+
+    getFields(): Promise<any> {
+        const url = `${this.url}/select?q=*:*&rows=0&wt=csv`;
+        return this.http
+            .get(url, {headers: this.headers})
+            .toPromise()
+            .then(res => res)
+            .catch(this.handleError);
+    }
 
 	get(query: string, facets: [string], facetQueries: [string], page: number, cat: string): Promise<any> {
 		query = query.replace(/[!'()]/g, '');

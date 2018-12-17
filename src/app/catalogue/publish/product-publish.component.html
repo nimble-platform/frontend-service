@@ -303,7 +303,7 @@
                     <div class="col-8 object-list">
                         <input type="checkbox" class="form-check-input boolean-value-input"
                             [checked]="prop.value[0].value == 'true'" *ngIf="prop.valueQualifier === 'BOOLEAN'"
-                            (change)="prop.value[0].value == 'true ' ? prop.value[0].value = 'false' : prop.value[0].value = 'true'">
+                            (change)="prop.value[0].value == 'true' ? prop.value[0].value = 'false' : prop.value[0].value = 'true'">
                         <ng-container *ngIf="prop.valueQualifier !== 'BOOLEAN'">
                             <div *ngFor="let value of getValuesAsString(prop); let i = index"
                                 class="bordered value-pill" title="{{ value }}">

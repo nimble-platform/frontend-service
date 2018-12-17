@@ -36,7 +36,11 @@ export class EditPropertyModalComponent implements OnInit {
         this.addEmptyValuesToProperty();
         this.modalService.open(this.modal).result.then(() => {
             // on OK, update the property with the values
-            property.value = this.property.value;
+            if(this.property.valueQualifier == "BOOLEAN"){
+                property.value = [createText("false")];
+            }else {
+                property.value = this.property.value;
+            }
             property.valueBinary = this.property.valueBinary;
             property.valueDecimal = this.property.valueDecimal;
             property.valueQuantity = this.property.valueQuantity;
