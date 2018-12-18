@@ -162,7 +162,7 @@ export class DashboardThreadedComponent implements OnInit {
         )
 
         if (this.cookieService.get("user_id") && this.cookieService.get("company_id")) {
-            this.user.hasCompany = this.cookieService.get("active_company_name") && this.cookieService.get("active_company_name") !== "null"
+            this.user.hasCompany = this.cookieService.get("company_id") !== "null"
         } else {
             this.appComponent.checkLogin("/user-mgmt/login");
         }

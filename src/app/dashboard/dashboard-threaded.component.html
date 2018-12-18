@@ -16,7 +16,7 @@
   <b>Your company is now registered</b><br/>
   <span *ngIf="!config.companyRegistrationRequired">You can start publishing your catalogue.<br/></span>
   In order to execute business processes your company needs to be verified by an administrator - please stay tuned.<br/>
-  If you are not being verified with 24h, please contact our support <a href="mailto:nimble-support@salzburgresearch.at">nimble-support@salzburgresearch.at</a>.
+  If you are not being verified with 24h, please contact our support <a href="mailto:{{config.supportMail}}">{{config.supportMail}}</a>.
 </div>
 
 <!-- Regular content -->

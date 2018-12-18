@@ -191,7 +191,8 @@ export const config = {
       "publisher",
       "purchaser",
       "sales_officer"
-  ]
+  ],
+  "supportMail": "nimbleFMP@aidimme.es"
 };
 
 

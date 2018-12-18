@@ -137,7 +137,8 @@ export const config = {
       "publisher",
       "purchaser",
       "sales_officer"
-  ]
+  ],
+  "supportMail": "nimble-support@salzburgresearch.at"
 };
 
 

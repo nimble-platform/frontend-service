@@ -112,4 +112,19 @@ export class CompanyRegistrationComponent implements OnInit {
 		this.modalService.open(content);
 	}
 
+  showSectorTT(content) {
+    var tooltip = "";
+		tooltip += "Hold down the Ctrl key in order to select multiple sectors";
+		this.tooltipHTML = tooltip;
+		this.modalService.open(content);
+  }
+
+  showKeywordsTT(content) {
+    var tooltip = "";
+		tooltip += "List some keywords that represent your business. Those will be used to improve the visibility of your company on the platform.<br/><br/>";
+    tooltip += "e.g.: Design, Bathroom Manufacturing, Home Accessories";
+		this.tooltipHTML = tooltip;
+		this.modalService.open(content);
+  }
+
 }

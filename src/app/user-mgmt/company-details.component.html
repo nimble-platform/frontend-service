@@ -34,7 +34,7 @@
   </div>
   <div class="col-6 border-left">
     <h4><p>Address</p></h4>
-    <text-input presentationMode="view" label="Street"
+    <text-input presentationMode="view" label="Street Name"
         [text]="details.details.address.streetName" labelClass="col-4" valueClass="col-8">
     </text-input>
     <text-input presentationMode="view" label="Building Number"
@@ -93,7 +93,7 @@
             <td>{{formatDate(ev.dateFrom)}} - {{formatDate(ev.dateTo)}}</td>
             <td>{{ev.name}}</td>
             <td>{{ev.description}}</td>
-            <td>{{ev.place.streetName}}<span *ngIf="ev.place.buildingNumber"> / {{ev.place.buildingNumber}}</span><br/>{{ev.place.postalCode}} {{ev.place.cityName}}<br/>{{ev.place.country}}</td>
+            <td>{{ev.place.streetName}}<span *ngIf="ev.place.buildingNumber"> {{ev.place.buildingNumber}}</span><br/>{{ev.place.postalCode}} {{ev.place.cityName}}<br/>{{ev.place.country}}</td>
         </tr>
     </table>
     <hr>

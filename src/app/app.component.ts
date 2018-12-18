@@ -21,7 +21,7 @@ export class AppComponent implements OnInit {
 	public activeCompanyName = null;
 	public eMail = "";
 	public userID = "";
-	public companyID = "";
+	public companyID = null;
 	public roles = [];
 	public debug = myGlobals.debug;
   public config = myGlobals.config;
@@ -102,7 +102,7 @@ export class AppComponent implements OnInit {
   }
 
 	public open(content) {
-		this.mailto = "mailto:nimble-support@salzburgresearch.at";
+		this.mailto = "mailto:"+this.config.supportMail;
 		var subject = "NIMBLE Support Request (UserID: "+this.userID+", Timestamp: "+new Date().toISOString()+")";
 		this.mailto += "?subject="+encodeURIComponent(subject);
 		var body = "Dear NIMBLE support team,";
@@ -197,9 +197,11 @@ export class AppComponent implements OnInit {
 		this.allowed = false;
 		if (this.cookieService.get("company_id") != 'null') {
 			this.activeCompanyName = this.cookieService.get("active_company_name");
+      this.companyID = this.cookieService.get("company_id");
 		}
 		else {
 			this.activeCompanyName = null;
+      this.companyID = null;
 		}
     const compReq = myGlobals.config.companyRegistrationRequired;
 		const admin = this.roles.indexOf("company_admin") != -1;
@@ -214,11 +216,11 @@ export class AppComponent implements OnInit {
 		const all_rights = admin || external || legal;
 		switch (func) {
       case "comp_req":
-        if (!compReq || (this.activeCompanyName && (legal || !initial)))
+        if (!compReq || (this.companyID && (legal || !initial)))
           this.allowed = true;
         break;
 			case "reg_comp":
-				if (!this.activeCompanyName)
+				if (!this.companyID)
 					this.allowed = true;
 				break;
 			case "wait_comp":
@@ -254,7 +256,7 @@ export class AppComponent implements OnInit {
           this.allowed = true;
         break;
       case "comp-ratings":
-        if (this.activeCompanyName && (legal || !initial))
+        if (this.companyID && (legal || !initial))
           this.allowed = true;
         break;
       case "pm":
