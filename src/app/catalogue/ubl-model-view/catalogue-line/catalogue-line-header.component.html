@@ -15,20 +15,20 @@
     </div>
     <div class="col-10">
         <value-view *ngIf="presentationMode == 'edit'" [presentationMode]="'edit'"
-                    [propName]="'Product Identifier'"
+                    [propName]="'ID'"
                     [parentForm]="parentForm"
                     [mandatory]="true"
                     [(value)]="catalogueLine.goodsItem.item.manufacturersItemIdentification.id"
                     [(value)]="catalogueLine.id">
         </value-view>
         <value-view *ngIf="presentationMode == 'edit'" [presentationMode]="'edit'"
-                    [propName]="'Product Name'"
+                    [propName]="'Name'"
                     [parentForm]="parentForm"
                     [mandatory]="true"
                     [(value)]="catalogueLine.goodsItem.item.name">
         </value-view>
         <value-view *ngIf="presentationMode == 'edit'" [presentationMode]="'edit'"
-                    [propName]="'Product Description'"
+                    [propName]="'Description'"
                     [(value)]="catalogueLine.goodsItem.item.description"
                     [largeInput]="true">
         </value-view>
@@ -42,7 +42,7 @@
             <i>No available description</i>
         </label>
         <div *ngIf="catalogueLine.goodsItem.item.commodityClassification.length > 1" class="d-flex flex-wrap">
-            <label class="col-3 control-label">Product Types</label>
+            <label class="col-3 control-label">Product / Service Types</label>
             <div *ngFor="let classification of catalogueLine.goodsItem.item.commodityClassification" >
 				<div *ngIf="classification.itemClassificationCode.listID != 'Default'" class="bordered inline space-right">
                     {{classification.itemClassificationCode.name}}

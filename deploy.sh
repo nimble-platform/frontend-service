@@ -28,7 +28,6 @@
 
         docker push nimbleplatform/frontend-service:latest
 
-
     elif [ "$1" == "print-version" ]; then
 
         mvn org.apache.maven.plugins:maven-help-plugin:2.1.1:evaluate -Dexpression=project.version | grep -v '\['

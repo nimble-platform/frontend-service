@@ -29,6 +29,8 @@ import { Subject } from "rxjs/Subject";
 import 'rxjs/add/observable/fromPromise'
 import 'rxjs/add/observable/interval';
 import 'rxjs/add/operator/takeUntil';
+import {Catalogue} from "../model/publish/catalogue";
+import * as myGlobals from '../../globals';
 
 
 type ProductType = "product" | "transportation";
@@ -104,6 +106,8 @@ export class ProductPublishComponent implements OnInit {
     sameIdError = false;
     // the value of the erroneousID
     erroneousID = "";
+
+    config = myGlobals.config;
 
     json = JSON;
 
@@ -212,6 +216,10 @@ export class ProductPublishComponent implements OnInit {
 
     onRemoveImage(index: number): void {
         this.catalogueLine.goodsItem.item.productImage.splice(index, 1);
+    }
+
+    onClickImageRecommendations(content): void {
+        this.modalService.open(content);
     }
 
     /**

@@ -1,3 +1,6 @@
 node_modules
 src
 node
+frontend-service
+maven-archiver
+tomcat

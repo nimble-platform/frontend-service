@@ -1,57 +1,61 @@
-<p class="nimble-title">Send Invitation</p>
+<div *ngIf="appComponent.checkRoles('comp')">
 
-<form (ngSubmit)="onSubmit()" class="space-before" #inviteForm="ngForm" novalidate>
-	<div class="form-group row">
-		<label for="email" class="col-2 col-form-label" i18n>E-Mail</label>
-		<div class="col-10">
-			<input type="email" class="form-control" id="email" required [(ngModel)]="invEmail" name="email" #email="ngModel" pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9._-]+\.[a-z]{2,3}$"
-			 i18n-placeholder placeholder="e.g. user@domain.com">
-		 </div>
-	</div>
+	<p class="nimble-title">Send Invitation</p>
 
-	<div class="form-group row">
-		<label class="col-2 col-form-label">
-			<span i18n>Roles</span>
-			<span class="tooltip-icon" (click)="showRoleTT(tooltip)"><i class="fa fa-question-circle"></i></span>
-		</label>
-		<div class="col-10">
-			<div class="form-control" [ngClass]="{'ng-valid required':rolesSelected,'ng-invalid':!rolesSelected}">
-				<call-status [callStatus]="rolesCallStatus"></call-status>
-				<div *ngFor="let role of userRoles">
-					<input [id]="role.identifier" type="checkbox" [value]="role.identifier" class="form-check-input" [disabled]="checkDisable(role.identifier)" (change)="setRoles(role.identifier)">
-					<label class="form-check-label" [for]="role.identifier">{{role.name}}</label>
+	<form (ngSubmit)="onSubmit()" class="space-before" #inviteForm="ngForm" novalidate>
+		<div class="form-group row">
+			<label for="email" class="col-2 col-form-label" i18n>E-Mail</label>
+			<div class="col-10">
+				<input type="email" class="form-control" id="email" required [(ngModel)]="invEmail" name="email" #email="ngModel" pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9._-]+\.[a-z]{2,3}$"
+				 i18n-placeholder placeholder="e.g. user@domain.com">
+			 </div>
+		</div>
+
+		<div class="form-group row">
+			<label class="col-2 col-form-label">
+				<span i18n>Roles</span>
+				<span class="tooltip-icon" (click)="showRoleTT(tooltip)"><i class="fa fa-question-circle"></i></span>
+			</label>
+			<div class="col-10">
+				<div class="form-control" [ngClass]="{'ng-valid required':rolesSelected,'ng-invalid':!rolesSelected}">
+					<call-status [callStatus]="rolesCallStatus"></call-status>
+					<div *ngFor="let role of userRoles">
+						<input [id]="role.identifier" type="checkbox" [value]="role.identifier" class="form-check-input" [disabled]="checkDisable(role.identifier)" (change)="setRoles(role.identifier)">
+						<label class="form-check-label" [for]="role.identifier">{{role.name}}</label>
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
 
-	<!--
-	<div class="row roles-header">
-		<div class="col-md-12 mb-12">
-			<h4>Roles:</h4>
+		<!--
+		<div class="row roles-header">
+			<div class="col-md-12 mb-12">
+				<h4>Roles:</h4>
+			</div>
 		</div>
-	</div>
 
-	<div class="row roles-header">
-		<div class="col-md-12 mb-12">
-			<select id="roles" multiple="multiple" size="5" [(ngModel)]="invRoles" [ngModelOptions]="{standalone: true}">
-				<option *ngFor="let role of userRoles" [value]="role.identifier">{{role.name}}</option>
-			</select>
+		<div class="row roles-header">
+			<div class="col-md-12 mb-12">
+				<select id="roles" multiple="multiple" size="5" [(ngModel)]="invRoles" [ngModelOptions]="{standalone: true}">
+					<option *ngFor="let role of userRoles" [value]="role.identifier">{{role.name}}</option>
+				</select>
+			</div>
 		</div>
-	</div>
-	-->
+		-->
 
-	<!-- Submit action -->
-	<div class="row actions-row">
-		<div class="col-10 call-status-col">
-			<call-status [callStatus]="submitCallStatus" [large]="true"></call-status>
+		<!-- Submit action -->
+		<div class="row actions-row">
+			<div class="col-10 call-status-col">
+				<call-status [callStatus]="submitCallStatus" [large]="true"></call-status>
+			</div>
+			<div class="col-2">
+				<button type="submit" class="btn btn-primary action" [disabled]="!inviteForm.form.valid || !rolesSelected || submitCallStatus.isLoading()" i18n>Submit</button>
+			</div>
 		</div>
-		<div class="col-2">
-			<button type="submit" class="btn btn-primary action" [disabled]="!inviteForm.form.valid || !rolesSelected || submitCallStatus.isLoading()" i18n>Submit</button>
-		</div>
-	</div>
 
-</form>
+	</form>
+
+</div>
 
 <h3 class="space-before">Company Members</h3>
 
@@ -61,7 +65,7 @@
 			<th>E-mail</th>
 			<th>Status</th>
 			<th>Assigned Roles</th>
-			<th>Options</th>
+			<th *ngIf="appComponent.checkRoles('comp')">Options</th>
 		</tr>
 		<tr *ngIf="membersCallStatus.isDisplayed() ">
 			<td colspan="4">
@@ -82,9 +86,9 @@
 					<div *ngIf="inv.roleIDs.indexOf(role.identifier)!=-1">{{role.name}}</div>
 				</span>
 			</td>
-			<td>
+			<td *ngIf="appComponent.checkRoles('comp')">
 				<button *ngIf="!inv.pending&&!checkMail(inv.email)" class="btn btn-primary btn-sm" (click)="editRole(inv);openModal(role);">Edit</button>
-				<button *ngIf="!inv.pending&&!checkMail(inv.email)&&appComponent.checkRoles('legal')" class="btn btn-danger btn-sm" (click)="deleteInvite(inv)">Delete</button>
+				<button *ngIf="!inv.pending&&!checkMail(inv.email)&&appComponent.checkRoles('legal')" class="btn btn-danger btn-sm ml-2" (click)="deleteInvite(inv)">Delete</button>
 			</td>
 		</tr>
 	</table>

@@ -181,12 +181,12 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
         let newConcept = '';
         this.expSearch.getReferencesFromConcept(dummyJSON)
             .then(res => {
-                console.log(res);
+                //console.log(res);
                 this.referenceResults = res['allAvailableReferences'][index];
                 this.refResultsRange = this.referenceResults['range'];
                 jsonforProperties['concept'] = encodeURIComponent(this.refResultsRange[0]['original']);
                 jsonforProperties['distanceToFrozenConcept'] += 1;
-                console.log(jsonforProperties);
+                //console.log(jsonforProperties);
                 this.expSearch.searchForProperty(jsonforProperties)
                     .then((resp) => {
                             // console.log(res); // DEBUG
@@ -215,7 +215,7 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
     }
 
     check(con, i) {
-        console.log(i);
+        //console.log(i);
         if (i === 0) {
             let dummyJSON = this.configSPQ;
             dummyJSON['concept'] = con.url;
@@ -226,7 +226,7 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
             let dummyJSON = this.configSPQ;
             dummyJSON['concept'] = encodeURIComponent(con.url);
             dummyJSON['distanceToFrozenConcept'] = i;
-            console.log(dummyJSON);
+            //console.log(dummyJSON);
             this.getPropertiesOfConcept(dummyJSON);
         }
         this.conceptPaths.length = i + 1;
@@ -235,7 +235,7 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
 
     noFilterSelected() {
         if (this.sparqlJSON['parameters'].findIndex(name => name === this.selectedProperty['translatedProperty']) > -1) {
-            console.log('already exists');
+            //console.log('already exists');
         } else {
             this.sparqlJSON['parameters'].push(this.selectedProperty['translatedProperty']);
             this.sparqlJSON['parametersURL'].push(encodeURIComponent(this.selectedProperty['propertyURL']));
@@ -271,7 +271,7 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
         if (ev.target.checked) {
             // console.log(this.configSPQ);
             if (this.sparqlJSON['parameters'].findIndex(name => name === this.selectedProperty['translatedProperty']) > -1) {
-                console.log('already exists');
+                //console.log('already exists');
             } else {
                 this.sparqlJSON['parameters'].push(this.selectedProperty['translatedProperty']);
                 this.sparqlJSON['parametersURL'].push(encodeURIComponent(this.selectedProperty['propertyURL']));
@@ -411,7 +411,7 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
     }
 
     getSparqlOptionalSelect(indexUUID) {
-        console.log(indexUUID);
+        //console.log(indexUUID);
         let optSPARQLQuery = {uuid: encodeURIComponent(this.tableResult.uuids[indexUUID].trim()), 'language': this.lang};
         // console.log(optSPARQLQuery);
         this.expSearch.getOptionalSelect(optSPARQLQuery)
@@ -419,13 +419,13 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
                 this.sparqlSelectedOption = res;
                 if (this.sparqlSelectedOption['columns'].findIndex(i => i === 'ManufacturersItemIdentification') >= 0 &&
                     this.sparqlSelectedOption['columns'].findIndex(j => j === 'CatalogueDocumentReference') >= 0) {
-                    console.log('Negotiation can exist');
+                    //console.log('Negotiation can exist');
                     this.negotiationEnable = true;
                     let index_id = this.sparqlSelectedOption['columns'].findIndex(i => i === 'ManufacturersItemIdentification');
                     let index_catalogue = this.sparqlSelectedOption['columns'].findIndex(i => i === 'CatalogueDocumentReference');
                     this._negotiation_id = this.sparqlSelectedOption['rows'][0][index_id];
                     this._negotiation_catalogue_id = this.sparqlSelectedOption['rows'][0][index_catalogue];
-                    console.log(this._negotiation_catalogue_id, this._negotiation_id);
+                    //console.log(this._negotiation_catalogue_id, this._negotiation_id);
                 } else {
                     this.negotiationEnable = false;
                 }

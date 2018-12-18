@@ -149,7 +149,7 @@ export class OrderComponent implements OnInit {
 
         if(this.showPreview && !this.termsAndConditions) {
             this.fetchTermsAndConditionsStatus.submit();
-            this.bpeService.generateOrderTermsAndConditionsAsText(this.order, this.buyerParty, this.sellerParty)
+            this.bpeService.generateOrderTermsAndConditionsAsText(this.order, this.buyerParty.id, this.sellerParty.id)
             .then(text => {
                 this.fetchTermsAndConditionsStatus.callback("Successfully fetched terms and conditions", true);
                 this.termsAndConditions = text;

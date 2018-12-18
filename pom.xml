@@ -6,7 +6,7 @@
 
     <groupId>eu.nimble.core.frontend</groupId>
     <artifactId>frontend-service</artifactId>
-    <version>5.0.0</version>
+    <version>5.0.0-Staging</version>
     <name>Frontend Services for the NIMBLE platform</name>
     <packaging>war</packaging>
 
@@ -134,6 +134,7 @@
                 </executions>
             </plugin>
 
+            <!-- NB: globals may be overwritten during runtime -->
 			<plugin>
 				<groupId>com.coderplus.maven.plugins</groupId>
 				<artifactId>copy-rename-maven-plugin</artifactId>
@@ -202,6 +203,25 @@
                             <resources>
                                 <resource>
                                     <directory>${project.basedir}/src/main/docker/</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-dockerignore</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <overwrite>true</overwrite>
+                            <outputDirectory>${project.build.directory}</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.basedir}</directory>
+                                    <includes>
+                                        <include>.dockerignore</include>
+                                    </includes>
                                 </resource>
                             </resources>
                         </configuration>

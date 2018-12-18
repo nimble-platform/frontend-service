@@ -1,10 +1,10 @@
 <!-- Company Statement -->
 <div class="form-group row space-before">
   <label class="col-2 col-form-label">
-    <strong>Company Statement:</strong>
+    <strong>Company Description:</strong>
   </label>
   <div class="col-10">
-    <textarea class="form-control" rows="3" [formControl]="descriptionForm.controls['companyStatement']">
+    <textarea class="form-control" rows="3" [formControl]="descriptionForm.controls['companyStatement']" maxlength="255">
     </textarea>
   </div>
 </div>
@@ -15,7 +15,7 @@
     <strong>Website:</strong>
   </label>
   <div class="col-10">
-    <input type="text" class="form-control" [formControl]="descriptionForm.controls['website']">
+    <input type="text" class="form-control" [formControl]="descriptionForm.controls['website']" maxlength="255">
   </div>
 </div>
 
@@ -28,33 +28,48 @@
     <ng-container *ngFor="let socialMediaEntry of socialMediaList; let i = index; trackBy:trackFn">
       <div class="row mb-1">
         <div class="col-10">
-          <input type="text" class="form-control" [(ngModel)]="socialMediaList[i]" (input)="flagSocialMediaChanged()">
+          <input type="text" class="form-control" [(ngModel)]="socialMediaList[i]" (input)="flagSocialMediaChanged()" maxlength="255">
         </div>
-        <div class="col-2 align-right">
-          <button class="btn btn-danger" (click)="removeSocialMediaEntry(i)">Delete</button>
+        <div class="col-2">
+          <button class="btn btn-danger w-100" (click)="removeSocialMediaEntry(i)">Delete</button>
         </div>
       </div>
     </ng-container>
-    <!--<button class="btn btn-secondary" (click)="addSocialMediaEntry()">Add Entry</button>-->
+    <div class="row mt-2 mb-1">
+      <div class="col-10"></div>
+      <div class="col-2">
+        <button class="btn btn-secondary w-100" [disabled]="saveCallStatus.isLoading()" (click)="addSocialMediaEntry()">
+            Add Social Media
+        </button>
+      </div>
+    </div>
   </div>
 </div>
 
 <!-- Link (External Resource) List -->
 <div class="form-group row">
   <label class="col-2 col-form-label">
-    <strong>Links:</strong>
+    <strong>Other Links:</strong>
   </label>
   <div class="col-10">
     <ng-container *ngFor="let extEntry of externalResources; let i = index; trackBy:trackFn">
       <div class="row mb-1">
         <div class="col-10">
-          <input type="text" class="form-control" [(ngModel)]="externalResources[i]" (input)="flagExternalResourcesChanged()">
+          <input type="text" class="form-control" [(ngModel)]="externalResources[i]" (input)="flagExternalResourcesChanged()" maxlength="255">
         </div>
         <div class="col-2 align-right">
-          <button class="btn btn-danger" (click)="removeExternalResourceEntry(i)">Delete</button>
+          <button class="btn btn-danger w-100" (click)="removeExternalResourceEntry(i)">Delete</button>
         </div>
       </div>
     </ng-container>
+    <div class="row mt-2 mb-1">
+      <div class="col-10"></div>
+      <div class="col-2">
+        <button class="btn btn-secondary w-100" [disabled]="saveCallStatus.isLoading()" (click)="addExternalResourceEntry()">
+            Add Other Link
+        </button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -78,20 +93,28 @@
               <td>{{ev.dateFrom}} - {{ev.dateTo}}</td>
               <td>{{ev.name}}</td>
               <td>{{ev.description}}</td>
-              <td>{{ev.place.streetName}}<span *ngIf="ev.place.buildingNumber"> / {{ev.place.buildingNumber}}</span><br/>{{ev.place.postalCode}} {{ev.place.cityName}}<br/>{{ev.place.country}}</td>
+              <td>{{ev.place.streetName}}<span *ngIf="ev.place.buildingNumber"> {{ev.place.buildingNumber}}</span><br/>{{ev.place.postalCode}} {{ev.place.cityName}}<br/>{{ev.place.country}}</td>
               <td>
                   <button class="btn btn-danger btn-sm" (click)="removeCompEventEntry(i)">Delete</button>
               </td>
           </tr>
       </table>
-      <!--<button class="btn btn-secondary" (click)="addCompEventEntry(addEventModal)">Add Entry</button>-->
+      <div class="row mt-2 mb-1">
+        <div class="col-10"></div>
+        <div class="col-2">
+          <button class="btn btn-secondary w-100" [disabled]="saveCallStatus.isLoading()" (click)="addCompEventEntry(addEventModal)">
+              Add Event
+          </button>
+        </div>
+      </div>
   </div>
 </div>
 
 <div class="row actions-row pr-0 space-before">
-    <div class="col-4 call-status-col">
+    <div class="col-10 call-status-col">
         <call-status [callStatus]="saveCallStatus"></call-status>
     </div>
+    <!--
     <div class="col-2">
         <button class="btn btn-secondary action" [disabled]="saveCallStatus.isLoading()" (click)="addSocialMediaEntry()">
             Add Social Media
@@ -99,7 +122,7 @@
     </div>
     <div class="col-2">
         <button class="btn btn-secondary action" [disabled]="saveCallStatus.isLoading()" (click)="addExternalResourceEntry()">
-            Add Link
+            Add Other Link
         </button>
     </div>
     <div class="col-2">
@@ -107,6 +130,7 @@
             Add Event
         </button>
     </div>
+    -->
     <div class="col-2">
         <button class="btn btn-primary action" [disabled]="!descriptionForm.valid || (!descriptionForm.dirty && !socialMediaListChanged && !externalResourcesChanged && !compEventsChanged) || saveCallStatus.isLoading()" (click)="onSave(descriptionForm)">
             Save
@@ -179,6 +203,8 @@
             Add Photo
         </button>
     </div>
+    <div class="col-8"></div>
+    <div class="col-4 align-right mt-1"><small>Maximum allowed filesize: 1 MB; Allowed formats: PNG, JPG, GIF</small></div>
 </div>
 
 <!-- Event Modal -->
@@ -200,7 +226,7 @@
                       <strong>Name:</strong>
                     </label>
                     <div class="col-10">
-                        <input type="text" class="form-control" [formControl]="addEventForm.controls['name']" required>
+                        <input type="text" class="form-control" [formControl]="addEventForm.controls['name']" maxlength="255" required>
                     </div>
                 </div>
                 <div class="form-group row">
@@ -208,7 +234,7 @@
                       <strong>Description:</strong>
                     </label>
                     <div class="col-10">
-                        <input type="text" class="form-control" [formControl]="addEventForm.controls['description']" required>
+                        <input type="text" class="form-control" [formControl]="addEventForm.controls['description']" maxlength="255" required>
                     </div>
                 </div>
                 <address-form [group]="addEventForm.controls.place"></address-form>
@@ -240,7 +266,7 @@
         </div>
         <div class="modal-footer">
             <call-status [callStatus]="saveCallStatusImage"></call-status>
-            <button type="button" class="btn btn-primary save-cert-btn" [disabled]="!addImageForm.valid || saveCallStatusImage.isLoading()" (click)="onSaveImage(addImageForm, d);">
+            <button type="button" class="btn btn-primary save-cert-btn" [disabled]="!addImageForm.valid || !imgFile || saveCallStatusImage.isLoading()" (click)="onSaveImage(addImageForm, d);">
                 <span>Save</span>
             </button>
         </div>

@@ -7,18 +7,18 @@ export const debug = false;
 
 // Base path variables - SRFG staging
 
-// export const base_path = "http://nimble-staging.salzburgresearch.at";
-// export const ub_base = "http://nimble-staging.salzburgresearch.at/search";
-// export const simple_search_endpoint="http://nimble-staging.salzburgresearch.at/marmotta/solr/catalogue2";
-// export const pw_reset_link = "http://nimble-staging.salzburgresearch.at:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
+export const base_path = "http://nimble-staging.salzburgresearch.at";
+export const ub_base = "http://nimble-staging.salzburgresearch.at/search";
+export const simple_search_endpoint="http://nimble-staging.salzburgresearch.at/marmotta/solr/catalogue2";
+export const pw_reset_link = "http://nimble-staging.salzburgresearch.at:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
 
 
 // Base path variables - SRFG productive
 
-export const base_path = "http://nimble.salzburgresearch.at/nimble";
-export const ub_base = "http://nimble.salzburgresearch.at/ub-search";
-export const simple_search_endpoint="http://nimble.salzburgresearch.at/marmotta/solr/catalogue2";
-export const pw_reset_link = "https://nimble.salzburgresearch.at:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
+// export const base_path = "https://nimble-platform.salzburgresearch.at/nimble";
+// export const ub_base = "https://nimble-platform.salzburgresearch.at/ub-search";
+// export const simple_search_endpoint="https://nimble-platform.salzburgresearch.at/marmotta/solr/catalogue2";
+// export const pw_reset_link = "https://nimble-platform.salzburgresearch.at:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
 
 
 // Base path variables - SRFG K8S
@@ -39,10 +39,10 @@ export const pw_reset_link = "https://nimble.salzburgresearch.at:8080/auth/realm
 
 // Base path variables - Local development via service discovery
 
-// export const base_path = "http://localhost:443";
+// export const base_path = "http://localhost";
 // export const ub_base = "http://localhost:8090";
-// export const simple_search_endpoint="http://nimble-staging.salzburgresearch.at/marmotta/solr/catalogue2";
-// export const pw_reset_link = "http://nimble-staging.salzburgresearch.at:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
+// export const simple_search_endpoint="http://localhost:8082/solr/catalogue2";
+// export const pw_reset_link = "http://localhost:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
 
 
 // Service endpoints
@@ -74,6 +74,72 @@ export const sqpOrangeConcept = `${ub_base}/getPropertyValuesFromOrangeGroup`;
 
 export const tntEndpoint = `${bpe_endpoint}/t-t/epc-details`;
 export const tntAnalysisEndpoint = `${base_path}/tnt/simpleTrackingAnalysis`;
+
+
+// Platform Configuration
+
+export const config = {
+  "companyRegistrationRequired": false,
+  "logoPath": "./assets/logo_mvp.png",
+  "requiredAgreements": [
+    {
+      "title":"End-User License Agreement (EULA)",
+      "src":"./assets/eula.pdf"
+    }
+  ],
+  "showCompanyMembers": false,
+  "showExplorative": true,
+  "showPPAP": true,
+  "showTrack": true,
+  "showTrade": true,
+  "showVerification": true,
+  "standardTaxonomy": "eClass",
+  "supportedActivitySectors": {
+  	"": [],
+  	"Logistics Provider": [],
+  	"Manufacturer": [],
+  	"Service Provider": [],
+  	"Other": []
+  },
+  "supportedBusinessTypes": [
+  	"",
+  	"Logistics Provider",
+  	"Manufacturer",
+  	"Service Provider",
+  	"Other"
+  ],
+  "supportedCertificates": [
+      "Appearance Approval Report",
+      "Checking Aids",
+      "Control Plan",
+      "Customer Engineering Approval",
+      "Customer Specific Requirements",
+      "Design Documentation",
+      "Design Failure Mode and Effects Analysis",
+      "Dimensional Results",
+      "Engineering Change Documentation",
+      "Initial Process Studies",
+      "Master Sample",
+      "Measurement System Analysis Studies",
+      "Part Submission Warrant",
+      "Process Failure Mode and Effects Analysis",
+      "Process Flow Diagram",
+      "Qualified Laboratory Documentation",
+      "Records of Material / Performance Tests",
+      "Sample Production Parts",
+      "Other"
+  ],
+  "supportedRoles": [
+      "company_admin",
+      "external_representative",
+      "legal_representative",
+      "monitor",
+      "publisher",
+      "purchaser",
+      "sales_officer"
+  ],
+  "supportMail": "nimble-support@salzburgresearch.at"
+};
 
 
 // Catalogue format variables

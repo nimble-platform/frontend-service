@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from "@angular/core";
 import { CompanySettings } from "../model/company-settings";
 import { AppComponent } from "../../app.component";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import * as myGlobals from '../../globals';
 
 @Component({
     selector: "company-data-settings",
@@ -13,6 +14,7 @@ export class CompanyDataSettingsComponent implements OnInit {
 
     mailto: string;
     tooltipHTML: string;
+    config = myGlobals.config;
 
     constructor(private appComponent: AppComponent,
                 private modalService: NgbModal) {
@@ -24,26 +26,26 @@ export class CompanyDataSettingsComponent implements OnInit {
     }
 
     changeData(content) {
-        this.mailto = "mailto:nimble-support@salzburgresearch.at";
+        this.mailto = "mailto:"+this.config.supportMail;
         var subject = "NIMBLE Company Data Change Request (UserID: " + this.appComponent.userID + ", Timestamp: " + new Date().toISOString() + ")";
         this.mailto += "?subject=" + encodeURIComponent(subject);
         var body = "Dear NIMBLE support team,";
         body += "\n\n\n";
         body += "I would like to change my company data to the following:";
         body += "\n\n";
-        body += "Legal Name:\n";
+        body += "Company Name:\n";
         body += this.settings.details.companyLegalName + "\n\n";
         body += "VAT Number:\n";
         body += this.settings.details.vatNumber + "\n\n";
         body += "Verification Info:\n";
         body += this.settings.details.verificationInformation + "\n\n";
-        body += "Business Type (Manufacturer, Logistics Provider, Service Provider, Other):\n";
+        body += "Business Type:\n";
         body += this.settings.details.businessType + "\n\n";
+        body += "Activity Sectors:\n";
+        body += this.settings.details.industrySectors[0] + "\n\n";
         body += "Business Keywords:\n";
         body += this.settings.details.businessKeywords[0] + "\n\n";
-        body += "Industry Sectors:\n";
-        body += this.settings.details.industrySectors[0] + "\n\n";
-        body += "Year of Comp. Reg.:\n";
+        body += "Year of Foundation:\n";
         body += this.settings.details.yearOfCompanyRegistration + "\n\n";
         body += "Street:\n";
         body += this.settings.details.address.streetName + "\n\n";

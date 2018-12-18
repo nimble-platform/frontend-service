@@ -106,7 +106,7 @@ export class ExplorativeSearchFormComponent implements OnInit {
                     this.loading = false;
                 })
             .catch(error => {
-                console.log(error);
+                //console.log(error);
                 this._error_detected_kw = true;
                 this.loading = false;
             });
@@ -135,7 +135,7 @@ export class ExplorativeSearchFormComponent implements OnInit {
      * @param inputIndex index number of the output keyword that needs to hidden
      */
     hideKW(inputIndex: number) {
-        console.log(this.cbInput);
+        //console.log(this.cbInput);
         if (inputIndex > -1) {
             this.showParticularKeyword[inputIndex] = !this.showParticularKeyword[inputIndex];
         }
@@ -188,7 +188,7 @@ export class ExplorativeSearchFormComponent implements OnInit {
             }
         )
             .catch(error => {
-                console.log(error);
+                //console.log(error);
                 this._error_detected_query = true;
             });
     }

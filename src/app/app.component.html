@@ -1,9 +1,12 @@
 <nav class="navbar navbar-expand-lg navbar-dark nimble-bg space-after">
-	<a *ngIf="isLoggedIn" class="navbar-brand" routerLink="/dashboard" routerLinkActive="active">
-		<img id="nav-logo" src="./assets/nimble_logo_white.png" height="30" class="d-inline-block align-top" alt="">
+	<a *ngIf="isLoggedIn && (checkRoles('comp_req') || checkRoles('wait_comp'))" class="navbar-brand" routerLink="/dashboard" routerLinkActive="active">
+		<img id="nav-logo" [src]="config.logoPath" height="30" class="d-inline-block align-top" alt="">
+	</a>
+	<a *ngIf="isLoggedIn && (!checkRoles('comp_req') && !checkRoles('wait_comp'))" class="navbar-brand" routerLink="/user-mgmt/company-registration" routerLinkActive="active">
+		<img id="nav-logo" [src]="config.logoPath" height="30" class="d-inline-block align-top" alt="">
 	</a>
 	<a *ngIf="!isLoggedIn" class="navbar-brand" routerLink="/user-mgmt/login" routerLinkActive="active">
-		<img id="nav-logo" src="./assets/nimble_logo_white.png" height="30" class="d-inline-block align-top" alt="">
+		<img id="nav-logo" [src]="config.logoPath" height="30" class="d-inline-block align-top" alt="">
 	</a>
 	<button class="navbar-toggler" type="button" (click)="isCollapsed = !isCollapsed" aria-controls="navbarNavAltMarkup" [attr.aria-expanded]="!isCollapsed">
 		<span class="navbar-toggler-icon">
@@ -26,7 +29,7 @@
 			</li>
 		</ul>
 		<ul *ngIf="isLoggedIn" class="nav navbar-nav mr-auto">
-			<li class="nav-item" routerLinkActive="active">
+			<li class="nav-item" *ngIf="checkRoles('comp_req') || checkRoles('wait_comp')" routerLinkActive="active">
 				<a class="nav-link" routerLink="/dashboard">
 					<i class="fa fa-list-ul"></i> <span i18n>Dashboard</span>
 				</a>
@@ -37,7 +40,7 @@
 				</a>
 				<div class="dropdown-menu" aria-labelledby="dropdownMenuPublish" ngbDropdownMenu>
 					<a class="dropdown-item" [routerLink]="['/catalogue/categorysearch']" [queryParams]="{pageRef: 'menu', productType: 'product'}" routerLinkActive="active">
-						<i class="fa fa-shopping-cart dd-icon"></i> Product
+						<i class="fa fa-shopping-cart dd-icon"></i> Product / Service
 					</a>
 					<a class="dropdown-item" [routerLink]="['/catalogue/categorysearch']" [queryParams]="{pageRef: 'menu', productType: 'transportation'}" routerLinkActive="active">
 						<i class="fa fa-truck dd-icon"></i> Logistics Service
@@ -45,15 +48,13 @@
 				</div>
 			</li>
 
-			<!--
-			<li class="nav-item" routerLinkActive="active">
+			<li class="nav-item" *ngIf="!config.showExplorative && checkRoles('comp_req')" routerLinkActive="active">
 				<a class="nav-link" routerLink="/simple-search">
 					<i class="fa fa-search"></i> <span i18n>Search</span>
 				</a>
 			</li>
-			-->
 
-			<li ngbDropdown class="nav-item dropdown" routerLinkActive="active">
+			<li ngbDropdown class="nav-item dropdown" *ngIf="config.showExplorative && checkRoles('comp_req')" routerLinkActive="active">
 				<a class="nav-link pointer" id="dropdownMenuSearch" ngbDropdownToggle>
 					<i class="fa fa-search"></i> <span i18n>Search</span>
 				</a>
@@ -83,13 +84,13 @@
 
 			<!-- Tracking and Tracing Component UB Initial Version-->
 			<!-- This Will be adapted by the platform's core dev-team later -->
-			<li class="nav-item" *ngIf="checkRoles('track')" routerLinkActive="active">
+			<li class="nav-item" *ngIf="config.showTrack && checkRoles('track')" routerLinkActive="active">
 				<a class="nav-link" routerLink="/tnt" routerLinkActive="active">
 					<i class="fa fa-truck"></i> <span>Track</span>
 				</a>
 			</li>
 
-			<li class="nav-item" *ngIf="checkRoles('comp')" routerLinkActive="active">
+			<li class="nav-item" *ngIf="checkRoles('comp') || (checkRoles('comp_req') && config.showCompanyMembers)" routerLinkActive="active">
 				<a class="nav-link" routerLink="/user-mgmt/company-invitation">
 					<i class="fa fa-building"></i> Company Members
 				</a>
@@ -100,6 +101,9 @@
 					<i class="fa fa-chart-pie"></i> <span i18n>Platform Management</span>
 				</a>
 				<div class="dropdown-menu" aria-labelledby="dropdownMenuPM" ngbDropdownMenu>
+					<a class="dropdown-item" routerLink="/analytics/management" routerLinkActive="active">
+						<i class="fa fa-user-tie dd-icon"></i> Company Management
+					</a>
 					<a class="dropdown-item" routerLink="/analytics/trust" routerLinkActive="active">
 						<i class="fa fa-sliders-h dd-icon"></i> Trust Policy Configuration
 					</a>
@@ -124,6 +128,14 @@
 		</ul>
 
 		<ul class="nav navbar-nav">
+			<li class="nav-item" routerLinkActive="active">
+				<a class="nav-link pointer" routerLink="/analytics/info" title="Info">
+					<i class="fa fa-info-circle"></i>
+				</a>
+			</li>
+		</ul>
+
+		<ul class="nav navbar-nav">
 			<li class="nav-item">
 				<a class="nav-link pointer" (click)="open(support)" title="Help">
 					<i class="fa fa-question-circle"></i>
@@ -140,8 +152,11 @@
 					<a *ngIf="checkRoles('comp-settings')" class="dropdown-item" routerLink="/user-mgmt/company-settings" routerLinkActive="active">
 						<i class="fa fa-cog dd-icon"></i> Company Settings
 					</a>
-					<a *ngIf="companyID" class="dropdown-item" routerLink="/user-mgmt/company-rating" routerLinkActive="active">
+					<a *ngIf="checkRoles('comp-ratings')" class="dropdown-item" routerLink="/user-mgmt/company-rating" routerLinkActive="active">
 						<i class="fa fa-star dd-icon"></i> Company Ratings
+					</a>
+					<a class="dropdown-item" routerLink="/user-mgmt/user-profile" routerLinkActive="active">
+						<i class="fa fa-user-tie dd-icon"></i> User Profile
 					</a>
 					<a class="dropdown-item" routerLink="/user-mgmt/logout">
 						<i class="fa fa-lock dd-icon"></i> <span i18n>Logout</span>
@@ -180,6 +195,7 @@
 		</button>
 	</div>
 	<div class="modal-body">
+		This platform has only been developed for and tested on Chrome and Firefox. In case you are experiencing errors try using one of those browsers first.<br/><br/>
 		When you press "Open manual" a PDF with an user manual will open in a new tab.<br/><br/>
 		When you press "Contact support" a partially prefilled mail template will open in the mail client of your choice.<br/>
 		Please make sure to fill out the description and cause of the issue properly and add screenshots if they are of use.<br/>

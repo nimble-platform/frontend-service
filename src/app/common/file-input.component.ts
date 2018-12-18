@@ -1,5 +1,6 @@
 import { Component, EventEmitter, OnInit, Input, Output } from "@angular/core";
 import { BinaryObject } from "../catalogue/model/publish/binary-object";
+import {CatalogueService} from '../catalogue/catalogue.service';
 
 @Component({
     selector: "file-input",
@@ -30,7 +31,7 @@ export class FileInputComponent implements OnInit {
 
     @Input() binaryObjects: BinaryObject[] = [];
 
-    constructor() {
+    constructor(public catalogueService:CatalogueService) {
 
     }
 
@@ -73,22 +74,27 @@ export class FileInputComponent implements OnInit {
 
     onDownloadFile(file: BinaryObject, event: Event) {
         event.preventDefault();
+        this.catalogueService.downloadFile(file.uri).then(binaryObject => {
+            const binaryString = window.atob(binaryObject.value);
+            const binaryLen = binaryString.length;
+            const bytes = new Uint8Array(binaryLen);
+            for (let i = 0; i < binaryLen; i++) {
+                const ascii = binaryString.charCodeAt(i);
+                bytes[i] = ascii;
+            }
+            const a = document.createElement("a");
+            document.body.appendChild(a);
+            const blob = new Blob([bytes], { type: binaryObject.mimeCode });
+            const url = window.URL.createObjectURL(blob);
+            a.href = url;
+            a.download = binaryObject.fileName;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }).catch(error => {
+            console.error("Failed to download the file",error);
+        });
 
-        const binaryString = window.atob(file.value);
-        const binaryLen = binaryString.length;
-        const bytes = new Uint8Array(binaryLen);
-        for (let i = 0; i < binaryLen; i++) {
-            const ascii = binaryString.charCodeAt(i);
-            bytes[i] = ascii;
-        }
-        const a = document.createElement("a");
-        document.body.appendChild(a);
-        const blob = new Blob([bytes], { type: file.mimeCode });
-        const url = window.URL.createObjectURL(blob);
-        a.href = url;
-        a.download = file.fileName;
-        a.click();
-        window.URL.revokeObjectURL(url);
+
     }
 
     getFileClasses(): any {

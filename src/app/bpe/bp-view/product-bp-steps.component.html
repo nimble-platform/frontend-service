@@ -1,6 +1,6 @@
 <div class="row mt-5 mb-3">
     <div class="col-12">
-        <div class="status-text {{ displayMode === 'Transport' ? 'four-steps' : '' }}" [ngStyle]="getStatusTextStyle()">
+        <div class="status-text {{ displayMode === 'Transport' ? 'four-steps' : displayMode !== 'Transport_After_Order' && !config.showPPAP ? 'five-steps' : '' }}" [ngStyle]="getStatusTextStyle()">
             &nbsp;{{ statusText }}&nbsp;
         </div>
     </div>
@@ -11,7 +11,7 @@
             <div [ngClass]="getStepClasses('Item_Information_Request')">
                 <span>Request for Information</span>
             </div>
-            <div [ngClass]="getStepClasses('Ppap')">
+            <div *ngIf="config.showPPAP" [ngClass]="getStepClasses('Ppap')">
                 <span>Ppap</span>
             </div>
             <div [ngClass]="getStepClasses('Negotiation')">

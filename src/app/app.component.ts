@@ -21,9 +21,10 @@ export class AppComponent implements OnInit {
 	public activeCompanyName = null;
 	public eMail = "";
 	public userID = "";
-	public companyID = "";
+	public companyID = null;
 	public roles = [];
 	public debug = myGlobals.debug;
+  public config = myGlobals.config;
 	public mailto = "";
 	public allowed = false;
   public versions = [];
@@ -101,7 +102,7 @@ export class AppComponent implements OnInit {
   }
 
 	public open(content) {
-		this.mailto = "mailto:nimble-support@salzburgresearch.at";
+		this.mailto = "mailto:"+this.config.supportMail;
 		var subject = "NIMBLE Support Request (UserID: "+this.userID+", Timestamp: "+new Date().toISOString()+")";
 		this.mailto += "?subject="+encodeURIComponent(subject);
 		var body = "Dear NIMBLE support team,";
@@ -139,7 +140,7 @@ export class AppComponent implements OnInit {
 			if (this.debug)
 				console.log("Loading route "+link);
 			if (!this.cookieService.get("user_id")) {
-				if (link != "/" && link != "/user-mgmt/login" && link != "/user-mgmt/registration")
+				if (link != "/" && link != "/user-mgmt/login" && link != "/user-mgmt/registration" && link != "/analytics/info")
 					this.router.navigate(["/user-mgmt/login"]);
 			}
 		}
@@ -196,10 +197,13 @@ export class AppComponent implements OnInit {
 		this.allowed = false;
 		if (this.cookieService.get("company_id") != 'null') {
 			this.activeCompanyName = this.cookieService.get("active_company_name");
+      this.companyID = this.cookieService.get("company_id");
 		}
 		else {
 			this.activeCompanyName = null;
+      this.companyID = null;
 		}
+    const compReq = myGlobals.config.companyRegistrationRequired;
 		const admin = this.roles.indexOf("company_admin") != -1;
 		const external = this.roles.indexOf("external_representative") != -1;
 		const initial = this.roles.indexOf("initial_representative") != -1;
@@ -207,12 +211,16 @@ export class AppComponent implements OnInit {
 		const monitor = this.roles.indexOf("monitor") != -1;
 		const publish = this.roles.indexOf("publisher") != -1;
 		const purch = this.roles.indexOf("purchaser") != -1;
-		const sales = this.roles.indexOf("sales_offices") != -1;
+		const sales = this.roles.indexOf("sales_officer") != -1;
     const manager = this.roles.indexOf("platform_manager") != -1 || this.debug;
 		const all_rights = admin || external || legal;
 		switch (func) {
+      case "comp_req":
+        if (!compReq || (this.companyID && (legal || !initial)))
+          this.allowed = true;
+        break;
 			case "reg_comp":
-				if (!this.activeCompanyName)
+				if (!this.companyID)
 					this.allowed = true;
 				break;
 			case "wait_comp":
@@ -228,7 +236,7 @@ export class AppComponent implements OnInit {
 					this.allowed = true;
 				break;
 			case "catalogue":
-				if (all_rights || publish || initial)
+				if (all_rights || publish || (initial && !compReq))
 					this.allowed = true;
 				break;
 			case "bp":
@@ -245,6 +253,10 @@ export class AppComponent implements OnInit {
 				break;
       case "comp-settings":
         if (all_rights || initial)
+          this.allowed = true;
+        break;
+      case "comp-ratings":
+        if (this.companyID && (legal || !initial))
           this.allowed = true;
         break;
       case "pm":

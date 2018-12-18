@@ -95,13 +95,13 @@ export class BPConfigureComponent implements OnInit {
                         pathElement.style.fill = 'white';
                     }
                 }
-                console.log(' $$$ Partner role: ', this.partnerRole);
+                //console.log(' $$$ Partner role: ', this.partnerRole);
 
                 this.route.paramMap
                     .switchMap((params: ParamMap) => this.bpService.getConfiguration(this.partnerID, params.get('processID'), this.partnerRole))
                     .subscribe(configuration => {
                         this.configuration = configuration;
-                        console.log(' $$$ Retrieved configuration: ', this.configuration);
+                        //console.log(' $$$ Retrieved configuration: ', this.configuration);
                         if (this.selectedTransactionID !== '') {
                             this.onSelect();
                         }
@@ -143,7 +143,7 @@ export class BPConfigureComponent implements OnInit {
                     }
                 }
 
-                console.log(' $$$ Transaction ID ', this.selectedTransactionID);
+                //console.log(' $$$ Transaction ID ', this.selectedTransactionID);
                 this.onSelect();
             });
 
@@ -199,8 +199,8 @@ export class BPConfigureComponent implements OnInit {
             this.dataChannelType, this.dataChannelURI);
         transactionConfiguration.executionConfigurations.push(dataChannelExecutionConfiguration);
 
-        console.log(' $$$ Constructed TransactionConfiguration: ', transactionConfiguration);
-        console.log(' $$$ Existing TransactionConfigurations: ', this.configuration.transactionConfigurations);
+        //console.log(' $$$ Constructed TransactionConfiguration: ', transactionConfiguration);
+        //console.log(' $$$ Existing TransactionConfigurations: ', this.configuration.transactionConfigurations);
 
         if (this.configuration.transactionConfigurations != null && this.configuration.transactionConfigurations.length > 0) {
             let found = false;
@@ -218,7 +218,7 @@ export class BPConfigureComponent implements OnInit {
         } else {
             this.configuration.transactionConfigurations.push(transactionConfiguration);
         }
-        console.log(' $$$ TransactionConfigurations after processing: ', this.configuration.transactionConfigurations);
+        //console.log(' $$$ TransactionConfigurations after processing: ', this.configuration.transactionConfigurations);
 
         this.bpService.updateConfiguration(this.configuration)
             .subscribe(() => {

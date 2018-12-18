@@ -1,0 +1,102 @@
+<p class="nimble-title">Company Management</p>
+
+<h4>Unverified Companies
+    <span *ngIf="unverifiedCompaniesPage">(Total {{ unverifiedCompaniesPage.totalElements }})</span>
+</h4>
+
+<call-status [callStatus]="unverifiedCompaniesCallStatus" [large]="true"></call-status>
+
+<div *ngIf="!unverifiedCompaniesCallStatus.isLoading() && unverifiedCompaniesPage">
+    <table class="table table-striped table-bordered">
+        <tr>
+            <th><span i18n>ID</span></th>
+            <th><span i18n>Company Name</span></th>
+            <th><span i18n>Address</span></th>
+            <th><span i18n>Initial Representative</span></th>
+            <th style="min-width:12rem !important;"></th>
+        </tr>
+        <ng-container *ngFor="let company of unverifiedCompaniesPage.content">
+            <tr>
+                <td>{{ company.hjid }}</td>
+                <td>{{ company.name }}</td>
+                <td *ngIf="company.postalAddress">
+                  {{ company.postalAddress.streetName }} {{ company.postalAddress.buildingNumber }}<br/>
+                  {{ company.postalAddress.postalZone }} {{ company.postalAddress.cityName }}<br/>
+                  {{ company.postalAddress.country.name }}
+                </td>
+                <td *ngIf="!company.postalAddress">n/A</td>
+                <td *ngIf="company.person[0]">
+                  {{ company.person[0].firstName }} {{ company.person[0].familyName }}
+                  <span *ngIf="company.person[0].contact && company.person[0].contact.electronicMail">
+                    <br/><a href="mailto:{{ company.person[0].contact.electronicMail }}"><small style="word-wrap:break-word !important; word-break:break-all !important;">{{ company.person[0].contact.electronicMail }}</small></a>
+                  </span>
+                </td>
+                <td *ngIf="!company.person[0]">n/A</td>
+                <td>
+                    <a class="btn btn-primary" role="button" target="_blank" [routerLink]="['/user-mgmt/company-details']" [queryParams]="{id: company.hjid}">Details</a>
+                    <button class="btn btn-success ml-2" (click)="verifyCompany(company)">
+                        Verify
+                    </button>
+                </td>
+            </tr>
+        </ng-container>
+    </table>
+    <ngb-pagination class="d-flex justify-content-center"
+                    [collectionSize]="unverifiedCompaniesPage.totalElements"
+                    [pageSize]="unverifiedCompaniesPage.size"
+                    [page]="unverifiedCompaniesPage.number"
+                    [maxSize]="unverifiedCompaniesPage.size"
+                    [boundaryLinks]="false"
+                    (pageChange)="onUnverifiedPageChange($event)">
+    </ngb-pagination>
+</div>
+
+<h4>Registered Companies
+    <span *ngIf="registeredCompaniesPage">(Total {{ registeredCompaniesPage.totalElements }})</span>
+</h4>
+
+<call-status [callStatus]="registeredCompaniesCallStatus" [large]="true"></call-status>
+
+<div [hidden]="registeredCompaniesCallStatus.isLoading() || registeredCompaniesPage == null">
+    <div *ngIf="registeredCompaniesPage">
+        <table class="table table-striped table-bordered">
+            <tr>
+                <th><span i18n>ID</span></th>
+                <th><span i18n>Company Name</span></th>
+                <th><span i18n>Address</span></th>
+                <th><span i18n>Legal Representative</span></th>
+                <th style="min-width:12rem !important;"></th>
+            </tr>
+            <ng-container *ngFor="let company of registeredCompaniesPage.content">
+                <tr>
+                    <td>{{ company.hjid }}</td>
+                    <td>{{ company.name }}</td>
+                    <td *ngIf="company.postalAddress">
+                      {{ company.postalAddress.streetName }} {{ company.postalAddress.buildingNumber }}<br/>
+                      {{ company.postalAddress.postalZone }} {{ company.postalAddress.cityName }}<br/>
+                      {{ company.postalAddress.country.name }}
+                    </td>
+                    <td *ngIf="!company.postalAddress">n/A</td>
+                    <td *ngIf="company.person[0]">
+                      {{ company.person[0].firstName }} {{ company.person[0].familyName }}
+                      <span *ngIf="company.person[0].contact && company.person[0].contact.electronicMail">
+                        <br/><a href="mailto:{{ company.person[0].contact.electronicMail }}"><small style="word-wrap:break-word !important; word-break:break-all !important;">{{ company.person[0].contact.electronicMail }}</small></a>
+                      </span>
+                    </td>
+                    <td *ngIf="!company.person[0]">n/A</td>
+                    <td>
+                        <a class="btn btn-primary" role="button" target="_blank" [routerLink]="['/user-mgmt/company-details']" [queryParams]="{id: company.hjid}">Details</a>
+                    </td>
+                </tr>
+            </ng-container>
+        </table>
+        <ngb-pagination class="d-flex justify-content-center"
+                        [collectionSize]="registeredCompaniesPage.totalElements"
+                        [pageSize]="registeredCompaniesPage.size"
+                        [page]="registeredCompaniesPage.number+1"
+                        [maxSize]="registeredCompaniesPage.size"
+                        [boundaryLinks]="false"
+                        (pageChange)="onRegisteredCompaniesPageChange($event)">
+        </ngb-pagination>
+    </div>
+</div>

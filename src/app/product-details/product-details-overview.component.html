@@ -1,14 +1,16 @@
 <div class="row">
         <div class="col-4">
-            <strong>Product by:</strong> {{wrapper.item.manufacturerParty.name}}
+            <strong>Product / Service by:</strong><br/>{{wrapper.item.manufacturerParty.name}}
         </div>
-        <div class="col-8 d-flex flex-wrap">
+        <div class="col-8">
             <!-- Categories -->
-            <strong>Categories:</strong>
-            <div *ngFor="let classification of getClassifications()" >
-                <div class="rounded px-1 inline space-left" style="color:#919191; border:1px solid #919191;">
-                    {{classification.itemClassificationCode.name}}
-                </div>
+            <strong>Categories:</strong><br/>
+            <div class="d-flex flex-wrap">
+              <div *ngFor="let classification of getClassifications()" >
+                  <div class="rounded px-1 inline space-left" style="color:#919191; border:1px solid #919191;">
+                      {{classification.itemClassificationCode.name}}
+                  </div>
+              </div>
             </div>
         </div>
     </div>
@@ -77,7 +79,7 @@
                 <div *ngFor="let property of wrapper.getPropertiesWithListOfValues()" class="my-1">
                     <strong>{{property.name}}: </strong>
                     <span *ngFor="let val of getValuesAsString(property); let i = index" class="btn-group-toggle" data-toggle="buttons">
-                        <button type="button" class="btn btn-outline-primary no-y-padding" (click)="onTogglePropertyValue(property, i)" 
+                        <button type="button" class="btn btn-outline-primary no-y-padding" (click)="onTogglePropertyValue(property, i)"
                             [disabled]="readonly" [ngClass]="{ 'active': isPropertyValueSelected(property, i) }">
                             {{val}}
                         </button>

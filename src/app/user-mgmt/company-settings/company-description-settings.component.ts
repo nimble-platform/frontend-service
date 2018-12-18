@@ -148,16 +148,17 @@ export class CompanyDescriptionSettingsComponent implements OnInit {
             let file: File = fileList[0];
             if(file) {
                 const filesize = parseInt(((file.size/1024)/1024).toFixed(4));
-                if (filesize < 2) {
+                if (filesize < 1) {
                   this.imgFile = file;
                 }
                 else {
                   this.imgFile = null;
-                  alert("Maximum allowed filesize: 2 MB");
+                  alert("Maximum allowed filesize: 1 MB");
                 }
             }
         } else {
             this.imgFile = null;
+            event.target.files = [];
         }
     }
 

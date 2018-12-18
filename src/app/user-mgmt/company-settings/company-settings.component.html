@@ -31,17 +31,17 @@
 		</li>
     <li class="nav-item">
 			<a href id="COMPANY_DESCRIPTION" class="nav-link" [ngClass]="{ active: selectedTab === 'COMPANY_DESCRIPTION'}" (click)="onSelectTab($event)">
-				Company Description
+				Company Details
 			</a>
 		</li>
-		<li class="nav-item">
+		<li *ngIf="config.showTrade" class="nav-item">
 			<a href id="NEGOTIATION_SETTINGS" class="nav-link" [ngClass]="{ active: selectedTab === 'NEGOTIATION_SETTINGS'}" (click)="onSelectTab($event)">
 				Trade Details
 			</a>
 		</li>
 		<li class="nav-item">
 			<a href id="DELIVERY_TERMS" class="nav-link" [ngClass]="{ active: selectedTab === 'DELIVERY_TERMS'}" (click)="onSelectTab($event)">
-				Delivery Details
+				Delivery Address
 			</a>
 		</li>
 		<li class="nav-item">

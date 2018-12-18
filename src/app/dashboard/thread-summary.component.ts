@@ -29,6 +29,7 @@ import { Code } from "../catalogue/model/publish/code";
 export class ThreadSummaryComponent implements OnInit {
 
     @Input() processInstanceGroup: ProcessInstanceGroup;
+    @Input() collaborationGroupId: string;
     @Output() threadStateUpdated = new EventEmitter();
 
 
@@ -65,6 +66,8 @@ export class ThreadSummaryComponent implements OnInit {
     // this is always false unless the collaboration was cancelled or fully completed (buyer side only)
     showRateCollaborationButton = false;
 
+    expanded: boolean = false;
+
     constructor(private bpeService: BPEService,
                 private cookieService: CookieService,
                 private dataChannelService: DataChannelService,
@@ -89,6 +92,20 @@ export class ThreadSummaryComponent implements OnInit {
         this.historyExpanded = !this.historyExpanded;
     }
 
+    async openBpProcessView() {
+        let role = await this.documentService.getUserRole(this.titleEvent.activityVariables,this.processInstanceGroup.partyID);
+        this.bpDataService.setBpOptionParametersWithProcessMetadata(role, this.titleEvent.processType, this.titleEvent, false);
+        this.bpDataService.setRelatedGroupId(this.processInstanceGroup.id);
+        this.bpDataService.setCollaborationGroupId(this.collaborationGroupId);
+        this.router.navigate(['bpe/bpe-exec'], {
+            queryParams: {
+                catalogueId: this.titleEvent.product.catalogueDocumentReference.id,
+                id: this.titleEvent.product.manufacturersItemIdentification.id,
+                pid: this.titleEvent.processId
+            }
+        });
+    }
+
     private fetchEvents(): void {
         this.fetchCallStatus.submit();
         const ids = this.processInstanceGroup.processInstanceIDs;
@@ -100,7 +117,7 @@ export class ThreadSummaryComponent implements OnInit {
             // Update History in order to remove pending orders
             this.updateHistory(this.history);
             if (!this.lastEvent.isRated) {
-              if (this.lastEvent.statusText == "Receipt Advice sent" || this.processInstanceGroup.status == "CANCELLED") {
+              if (this.lastEvent.statusText == "Receipt Advice sent" || this.lastEvent.statusText == "Transport Execution Plan received" || this.processInstanceGroup.status == "CANCELLED") {
                 this.showRateCollaborationButton = true;
               }
             }
@@ -366,30 +383,6 @@ export class ThreadSummaryComponent implements OnInit {
                 }
             }
         }
-    }
-
-    archiveGroup(): void {
-        this.archiveCallStatus.submit();
-        this.bpeService.archiveProcessInstanceGroup(this.processInstanceGroup.id)
-            .then(() => {
-                this.archiveCallStatus.callback('Thread archived successfully');
-                this.threadStateUpdated.next();
-            })
-            .catch(err => {
-                this.archiveCallStatus.error('Failed to archive thread', err);
-            });
-    }
-
-    restoreGroup(): void {
-        this.archiveCallStatus.submit();
-        this.bpeService.restoreProcessInstanceGroup(this.processInstanceGroup.id)
-            .then(() => {
-                this.archiveCallStatus.callback('Thread restored successfully');
-                this.threadStateUpdated.next();
-            })
-            .catch(err => {
-                this.archiveCallStatus.error('Failed to restore thread', err);
-            });
     }
 
     deleteGroup(): void {

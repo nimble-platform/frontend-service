@@ -45,20 +45,24 @@
 	</div>
 
 	<!-- Date of Birth -->
+	<!--
 	<div class="form-group row col-10 mx-auto">
 		<label for="dateOfBirth" class="col-3 col-form-label font-weight-bold" i18n>Date Of Birth (Optional)</label>
 		<div class="col-9">
 			<input type="date" class="form-control" id="dateOfBirth" [(ngModel)]="model.user.dateOfBirth" name="dateOfBirth" #dateOfBirth="ngModel">
 		</div>
 	</div>
+	-->
 
 	<!-- Place of Birth -->
+	<!--
 	<div class="form-group row col-10 mx-auto">
 		<label for="placeOfBirth" class="col-3 col-form-label font-weight-bold" i18n>Place Of Birth (Optional)</label>
 		<div class="col-9">
 			<input type="text" class="form-control" id="placeOfBirth" [(ngModel)]="model.user.placeOfBirth" name="placeOfBirth" #placeOfBirth="ngModel">
 		</div>
 	</div>
+	-->
 
 	<!-- Phone Number -->
 	<div class="form-group row col-10 mx-auto">
@@ -69,11 +73,22 @@
 	</div>
 
 	<!-- EULA -->
+	<!--
 	<div class="form-group row col-10 mx-auto">
 		<div class="col-12">
 			<input id="eula" type="checkbox" name="eula" required [(ngModel)]="eula_accepted" #eula="ngModel">
 			<span class="form-control d-inline border-0" [ngClass]="{'ng-invalid':!eula_accepted,'ng-valid required':eula_accepted}">
 				I agree to the <span class="clickable" (click)="open(eula)">End-User License Agreement (EULA)</span>
+			</span>
+		</div>
+	</div>
+	-->
+
+	<div class="form-group row col-10 mx-auto">
+		<div *ngFor="let ra of config.requiredAgreements" class="col-12">
+			<input type="checkbox" required name="{{ra.title}}" [(ngModel)]="requiredAgreements[ra.title]">
+			<span class="form-control d-inline border-0" [ngClass]="{'ng-invalid':!requiredAgreements[ra.title],'ng-valid required':requiredAgreements[ra.title]}">
+				I agree to the <a class="clickable" href="{{ra.src}}" target="_blank">{{ra.title}}</a>
 			</span>
 		</div>
 	</div>
@@ -108,6 +123,7 @@
 
 </form>
 
+<!--
 <ng-template #eula let-d="dismiss">
 	<div class="modal-header">
 		<h4 class="modal-title">End-User License Agreement (EULA)</h4>
@@ -141,3 +157,4 @@
 		If you have any questions about this Agreement, please contact us at <a href="mailto:nimble-support@salzburgresearch.at">nimble-support@salzburgresearch.at</a>
 	</div>
 </ng-template>
+-->

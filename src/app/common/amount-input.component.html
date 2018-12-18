@@ -1,0 +1,27 @@
+<div class="row {{ rowClass }}" [hidden]="presentationMode === 'view' && visible && amountToString() == ''">
+        <div *ngIf="label" [class]="labelClass">
+            <input-label [class]="labelMainClass" [label]="label" [definition]="definition">
+            </input-label>
+        </div>
+        <div [class]="valueClass" *ngIf="presentationMode === 'edit' && visible">
+            <div class="row">
+                <div class="col-7 col-amount-value">
+                    <input type="number" class="form-control form-control-sm"
+                        [(ngModel)]="amount.value" [disabled]="disabled" [placeholder]="placeholder">
+                </div>
+                <div *ngIf="!amountCurrencies" class="col-5 col-amount-currency">
+                    <input type="text" class="form-control form-control-sm" [(ngModel)]="amount.currencyID"
+                           [disabled]="disabled || disableAmountCurrency" [placeholder]="unitPlaceholder">
+                </div>
+                <div *ngIf="amountCurrencies" class="col-5 col-amount-currency">
+                    <select class="form-control form-control-sm" [(ngModel)]="amount.currencyID" [disabled]="disabled || disableAmountCurrency">
+                        <option *ngFor="let option of amountCurrencies" [value]="option">{{option}}</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div [class]="valueClass" *ngIf="presentationMode === 'view' && visible">
+            <span [class]="valueTextClass">{{ amountToString() }}</span>
+        </div>
+    </div>

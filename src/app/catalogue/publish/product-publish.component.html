@@ -5,7 +5,7 @@
            [ngClass]="{'nav-link': true, active: publishingGranularity === 'single'}"
            (click)="onSelectTab($event)"
            i18n
-        >Upload Single Product</a>
+        >Single Upload</a>
     </li>
 
     <li class="nav-item">
@@ -13,7 +13,7 @@
            [ngClass]="{'nav-link': true, active: publishingGranularity == 'bulk'}"
            (click)="onSelectTab($event)"
            i18n
-        >Upload Multiple Products</a>
+        >Bulk Upload</a>
     </li>
 </ul>
 
@@ -39,7 +39,7 @@
     </div>
 
     <div class="d-flex mt-3 mb-4">
-        <label class="col-9">1. Download the product category template</label>
+        <label class="col-9">1. Download the product / service category template</label>
         <button class="btn btn-secondary col-3"
                 (click)="downloadTemplate()">Download template
         </button>
@@ -47,7 +47,7 @@
     <div class="d-flex mb-4">
         <label class="col-9">2. Select upload mode.
             <ul>
-                <li>Append mode: Already published products are updated if newer versions are provided in the template, new products are appended to the current catalogue.</li>
+                <li>Append mode: Already published products / services are updated if newer versions are provided in the template, new products / services are appended to the current catalogue.</li>
                 <li>Replace mode: All previously published items are deleted; and only the new ones are added to the catalogue.</li>
             </ul>
         </label>
@@ -57,7 +57,7 @@
         </select>
     </div>
     <div class="d-flex mb-4">
-        <label class="col-9">3. Upload the template after filling it with your products' information
+        <label class="col-9">3. Upload the template after filling it with your product / service information
         </label>
         <input #template type="file" (change)="uploadTemplate($event, uploadModeSelect.value)"
                 accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
@@ -67,7 +67,7 @@
         </button>
     </div>
     <div class="d-flex mb-4">
-        <label class="col-9">4. Upload a "zip package" including product images. Each image must be suffixed with the identifier of the product. For example: pid1.imageFile.jpg, pid1.imageFile2.png, etc.
+        <label class="col-9">4. Upload a "zip package" including product / service images. Each image must be suffixed with the identifier of the product / service. For example: pid1.imageFile.jpg, pid1.imageFile2.png, etc.
         </label>
         <input #imagePackage type="file" (change)="uploadImagePackage($event)"
                 accept="application/zip"
@@ -124,15 +124,15 @@
 
         <div class="col-9">
             <!-- Name -->
-            <text-input label="Product Name" [(text)]="catalogueLine.goodsItem.item.name" [rows]="1" [maxLength]="2047">
+            <text-input label="Name" [(text)]="catalogueLine.goodsItem.item.name" [rows]="1" [maxLength]="2047">
             </text-input>
 
             <!-- Description -->
-            <text-input label="Product Description" [(text)]="catalogueLine.goodsItem.item.description" [rows]="6" [maxLength]="2047" rowClass="space-before">
+            <text-input label="Description" [(text)]="catalogueLine.goodsItem.item.description" [rows]="6" [maxLength]="2047" rowClass="space-before">
             </text-input>
 
             <!-- product ID -->
-            <div class="col-12"><small class="float-right">Product Id: {{ catalogueLine.goodsItem.item.manufacturersItemIdentification.id }}</small></div>
+            <div class="col-12"><small class="float-right">ID: {{ catalogueLine.goodsItem.item.manufacturersItemIdentification.id }}</small></div>
         </div>
     </div>
 
@@ -146,9 +146,27 @@
             <div class="add-image btn btn-outline-primary">
                 <span>Add Image</span>
                 <input type="file" (change)="onAddImage($event)"/>
+                <i class="fa fa-question-circle delete-image" (click)="onClickImageRecommendations(imageRecommendationModal)"></i>
             </div>
         </div>
     </div>
+
+    <!-- Image recommendations Modal -->
+    <ng-template #imageRecommendationModal let-d="dismiss">
+        <div class="modal-header">
+            <h4 class="modal-title">Image recommendations</h4>
+            <button type="button" class="close" aria-label="Close" (click)="d('')">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <ul>
+                <li>Images must be files with one of the "png", "jpg" or "gif" formats.</li>
+                <li>Although not mandatory, square or squarish images are recommended for better visibility.</li>
+                <li>Images exceeding 1 MB in size are not permitted.</li>
+            </ul>
+        </div>
+    </ng-template>
 
     <hr>
 
@@ -161,7 +179,7 @@
                         <a href id="DETAILS" class="nav-link"
                             [ngClass]="{ active: selectedTabSinglePublish === 'DETAILS'}"
                             (click)="onSelectTabSinglePublish($event)">
-                            Product Details
+                            Details
                         </a>
                     </li>
                     <li class="nav-item">
@@ -185,7 +203,7 @@
                             Certificates
                         </a>
                     </li>
-                    <li class="nav-item">
+                    <li *ngIf="config.showTrack" class="nav-item">
                         <a href id="TRACK_TRACE" class="nav-link"
                             [ngClass]="{ active: selectedTabSinglePublish === 'TRACK_TRACE'}"
                             (click)="onSelectTabSinglePublish($event)">
@@ -223,11 +241,11 @@
                 <div *ngIf="!hasSelectedProperties()" class="space-before">
                     No selected properties.
                     <a href class="btn-link" (click)="showCategoriesModal(categoriesModal, $event)">
-                        Select properties from product's categories.
+                        Select properties from product / service categories.
                     </a>
                 </div>
                 <div *ngIf="hasSelectedProperties()">
-                    <a href class="btn-link" (click)="showCategoriesModal(categoriesModal, $event)">Add more properties from product's categories.</a>
+                    <a href class="btn-link" (click)="showCategoriesModal(categoriesModal, $event)">Add more properties from product / service categories.</a>
                 </div>
             </div>
         </div>
@@ -235,7 +253,7 @@
         <!-- Price Tab -->
         <div class="row space-before details-tab" *ngIf="selectedTabSinglePublish === 'PRICE'">
             <div class="col-12">
-                <product-price-tab [catalogueLine]="catalogueLine" [disabled]="isLoading()">
+                <product-price-tab [catalogueLine]="catalogueLine" [disabled]="isLoading()" [companyNegotiationSettings]="companyNegotiationSettings">
                 </product-price-tab>
             </div>
         </div>
@@ -319,11 +337,11 @@
                 <div *ngIf="!hasSelectedProperties()" class="space-before">
                     No selected properties.
                     <a href class="btn-link" (click)="showCategoriesModal(categoriesModal, $event)">
-                        Select properties from product's categories.
+                        Select properties from product / service categories.
                     </a>
                 </div>
                 <div *ngIf="hasSelectedProperties()">
-                    <a href class="btn-link" (click)="showCategoriesModal(categoriesModal, $event)">Add more properties from product's categories.</a>
+                    <a href class="btn-link" (click)="showCategoriesModal(categoriesModal, $event)">Add more properties from product / service categories.</a>
                 </div>
             </div>
         </div>
@@ -382,7 +400,7 @@
                     </div>
                     <div class="col-12">
                         No property matching your search? <br>
-                        <a href class="btn-link" (click)="onAddCategory($event, d)">Add more categories to this product</a>
+                        <a href class="btn-link" (click)="onAddCategory($event, d)">Add more categories to this product / service</a>
                         or
                         <a href class="btn-link" (click)="onAddCustomProperty($event, d)">Create a custom property</a>.
                     </div>
@@ -390,7 +408,7 @@
                 <div *ngIf="selectedCategories.length === 0" class="row">
                     <div class="col-12">
                         No categories to pick properties from. <br>
-                        <a href class="btn-link" (click)="onAddCategory($event, d)">Add more categories to this product.</a>
+                        <a href class="btn-link" (click)="onAddCategory($event, d)">Add more categories to this product / service</a>
                         or
                         <a href class="btn-link" (click)="onAddCustomProperty($event, d)">Create a custom property</a>.
                     </div>

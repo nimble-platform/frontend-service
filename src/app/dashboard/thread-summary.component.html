@@ -1,23 +1,70 @@
-<div class="row space-after thread-entry">
+<div class="row thread-entry m-0">
     <div class="col-12">
         <!-- Title bar -->
         <div class="row">
             <div class="col-12 d-flex thread-entry-header">
-                <div *ngIf="!titleEvent" class="header-label mr-auto">Loading...</div>
-                <div *ngIf="titleEvent" class="header-label mr-auto">
-                    <span class="clickable" (click)="navigateToSearchDetails()">{{titleEvent.product.name}}</span> (Trading partner: <span class="clickable" (click)="navigateToCompanyDetails()">{{titleEvent.tradingPartner}}</span>) <span *ngIf="processInstanceGroup.status == 'CANCELLED'"><i>- Collaboration cancelled</i></span>
+            <!--<div class="col-12 d-flex thread-entry-header" (click)="expanded = !expanded">-->
+                <div *ngIf="!titleEvent" class="header-label mr-auto d-flex w-100">
+                    <div class="row w-100 m-0">
+                      <div class="col pl-2 pr-2">
+                          <span *ngIf="fetchCallStatus.isLoading()"><img src="assets/form_loader.gif"/></span>
+                          <span *ngIf="fetchCallStatus.isError()">Error while fetching thread.</span>
+                      </div>
+                    </div>
                 </div>
+                <div *ngIf="titleEvent" class="header-label mr-auto d-flex w-100">
+                    <div class="row w-100 m-0">
+                        <div class="col pl-2">
+                          <strong>Product / Service:</strong><br/>
+                          <span class="clickable" (click)="navigateToSearchDetails()">{{titleEvent.product.name}}</span>
+                        </div>
+                        <div class="col pl-1">
+                          <strong>Trading Partner:</strong><br/>
+                          <span class="clickable" (click)="navigateToCompanyDetails()">{{titleEvent.tradingPartner}}</span>
+                        </div>
+                        <div class="col pl-1">
+                          <strong>Status:</strong><br/>
+                          <span *ngIf="processInstanceGroup.status == 'CANCELLED'" class="badge badge-secondary">Collaboration cancelled</span>
+                          <span *ngIf="processInstanceGroup.status != 'CANCELLED'" class="badge" [ngClass]="{'badge-secondary':(titleEvent.status=='CANCELLED'),'badge-success':(titleEvent.status=='DONE'),'badge-warning':(titleEvent.status=='WAITING'),'badge-danger':(titleEvent.status=='ACTION_REQUIRED')}">{{titleEvent.statusText}}</span>
+                        </div>
+                        <div class="col pl-1">
+                          <strong>Actions:</strong><br/>
+                          <span *ngIf="processInstanceGroup.status == 'CANCELLED'">n/A</span>
+                          <span *ngIf="processInstanceGroup.status != 'CANCELLED' && titleEvent.actionText !== ''" class="clickable" (click)="openBpProcessView()">{{titleEvent.actionText}}</span>
+                        </div>
+                        <div class="col-1 align-right pl-1 pr-2">
+                          <div *ngIf="titleEvent && showDataChannelButton" class="inline" data-toggle="tooltip" data-placement="top" title="Open Data Channel">
+                              <i class="fa fa-exchange-alt p-1 pointer" aria-hidden="true" [routerLink]="[channelLink]"></i>
+                          </div>
+                          <!--
+                          <div *ngIf="titleEvent && processInstanceGroup.archived" class="inline" (click)="deleteGroup()" data-toggle="tooltip" data-placement="top" title="Delete Permanently">
+                              <i class="fa fa-trash-alt p-1 pointer" aria-hidden="true"></i>
+                          </div>
+                          -->
+                          <div *ngIf="titleEvent && showRateCollaborationButton" class="inline" (click)="rateCollaboration(addSuccessRatingModal,addCancelRatingModal)" data-toggle="tooltip" data-placement="top" title="Rate this collaboration">
+                              <i class="fa fa-star p-1 pointer" aria-hidden="true"></i>
+                          </div>
+                          <div *ngIf="titleEvent && showCancelCollaborationButton" class="inline" (click)="cancelCollaboration()" data-toggle="tooltip" data-placement="top" title="Cancel the collaboration">
+                              <i class="fa fa-times p-1 pointer" aria-hidden="true"></i>
+                          </div>
+                          <div *ngIf="!expanded" class="inline" (click)="expanded = !expanded" data-toggle="tooltip" data-placement="top" title="Show details">
+                              <i class="fa fa-angle-double-down p-1 pointer" aria-hidden="true"></i>
+                          </div>
+                          <div *ngIf="expanded" class="inline" (click)="expanded = !expanded" data-toggle="tooltip" data-placement="top" title="Hide details">
+                              <i class="fa fa-angle-double-up p-1 pointer" aria-hidden="true"></i>
+                          </div>
+                        </div>
+                    </div>
+                    <!--
+                    <span class="clickable" (click)="navigateToSearchDetails()">{{titleEvent.product.name}}</span> (Trading partner: <span class="clickable" (click)="navigateToCompanyDetails()">{{titleEvent.tradingPartner}}</span>) <span *ngIf="processInstanceGroup.status == 'CANCELLED'"><i>- Collaboration cancelled</i></span> <span *ngIf="processInstanceGroup.status != 'CANCELLED'"><i>- {{titleEvent.statusText}}</i></span>
+                    -->
+                </div>
+                <!--
                 <div *ngIf="titleEvent && showDataChannelButton" data-toggle="tooltip" data-placement="top" title="Open Data Channel">
                     <i class="fa fa-exchange-alt p-2 pointer" aria-hidden="true" [routerLink]="[channelLink]"></i>
                 </div>
-                <div *ngIf="titleEvent && !processInstanceGroup.archived" (click)="archiveGroup()" data-toggle="tooltip" data-placement="top" title="Archive">
-                    <i class="fa fa-archive p-2 pointer" aria-hidden="true"></i>
-                </div>
                 <div *ngIf="titleEvent && processInstanceGroup.archived" (click)="deleteGroup()" data-toggle="tooltip" data-placement="top" title="Delete Permanently">
                     <i class="fa fa-trash-alt p-2 pointer" aria-hidden="true"></i>
-                </div>
-                <div *ngIf="titleEvent && processInstanceGroup.archived" (click)="restoreGroup()" data-toggle="tooltip" data-placement="top" title="Restore">
-                    <i class="fa fa-undo p-2 pointer" aria-hidden="true"></i>
                 </div>
                 <div *ngIf="titleEvent && showRateCollaborationButton" (click)="rateCollaboration(addSuccessRatingModal,addCancelRatingModal)" data-toggle="tooltip" data-placement="top" title="Rate this collaboration">
                     <i class="fa fa-star p-2 pointer" aria-hidden="true"></i>
@@ -25,11 +72,19 @@
                 <div *ngIf="titleEvent && showCancelCollaborationButton" (click)="cancelCollaboration()" data-toggle="tooltip" data-placement="top" title="Cancel the collaboration">
                     <i class="fa fa-times p-2 pointer" aria-hidden="true"></i>
                 </div>
+                <div *ngIf="!expanded" (click)="expanded = !expanded" data-toggle="tooltip" data-placement="top" title="Show details">
+                    <i class="fa fa-angle-double-down p-2 pointer" aria-hidden="true"></i>
+                </div>
+                <div *ngIf="expanded" (click)="expanded = !expanded" data-toggle="tooltip" data-placement="top" title="Hide details">
+                    <i class="fa fa-angle-double-up p-2 pointer" aria-hidden="true"></i>
+                </div>
+                -->
             </div>
         </div>
 
-        <!-- Titles for the rows -->
-        <div class="row thread-entry-heading">
+        <div *ngIf="expanded">
+            <!-- Titles for the rows -->
+            <div class="row thread-entry-heading">
                 <!--<div class="col-2"><strong>Customer</strong></div>-->
                 <div class="col-3"><strong>Type</strong></div>
                 <div class="col-3"><strong>Date</strong></div>
@@ -37,27 +92,28 @@
                 <div class="col-3"><strong>Status</strong></div>
             </div>
 
-        <!-- Most recent event -->
-        <thread-event *ngIf="lastEvent" [processInstanceGroup]="processInstanceGroup" [event]="lastEvent" (processCancelled)="threadStateUpdated.next()">
-        </thread-event>
+            <!-- Most recent event -->
+            <thread-event *ngIf="lastEvent" [processInstanceGroup]="processInstanceGroup" [collaborationGroupId]="collaborationGroupId" [event]="lastEvent" (processCancelled)="threadStateUpdated.next()">
+            </thread-event>
 
-        <!-- Loading most recent event -->
-        <div class="row" *ngIf="!lastEvent">
-            <call-status [callStatus]="fetchCallStatus" [large]="true"></call-status>
-        </div>
+            <!-- Loading most recent event -->
+            <div class="row" *ngIf="!lastEvent">
+                <call-status [callStatus]="fetchCallStatus" [large]="true"></call-status>
+            </div>
 
-        <!-- History -->
-        <ng-container *ngIf="historyExpanded && history">
-            <ng-container *ngFor="let event of history">
-                <thread-event [processInstanceGroup]="processInstanceGroup" [event]="event" (processCancelled)="threadStateUpdated.next()">
-                </thread-event>
+            <!-- History -->
+            <ng-container *ngIf="historyExpanded && history">
+                <ng-container *ngFor="let event of history">
+                    <thread-event [processInstanceGroup]="processInstanceGroup" [event]="event" [collaborationGroupId]="collaborationGroupId" (processCancelled)="threadStateUpdated.next()">
+                    </thread-event>
+                </ng-container>
             </ng-container>
-        </ng-container>
 
-        <!-- Toggle history -->
-        <div class="row" *ngIf="lastEvent && hasHistory">
-            <div class="col align-items-center clickable" (click)="toggleHistory()">
-                {{ historyExpanded ? "Hide" : "Show" }} previous step(s)
+            <!-- Toggle history -->
+            <div class="row" *ngIf="lastEvent && hasHistory">
+                <div class="col align-items-center clickable" (click)="toggleHistory()">
+                    {{ historyExpanded ? "Hide" : "Show" }} previous step(s)
+                </div>
             </div>
         </div>
     </div>

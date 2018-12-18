@@ -36,6 +36,7 @@
     overflow: hidden;
     margin: 0;
     text-align: center;
+    object-fit: contain;
 }
 
 .add-image .delete-image {

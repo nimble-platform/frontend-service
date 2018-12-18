@@ -1,0 +1,7 @@
+.price-option-row {
+    margin-bottom: 0.5rem;
+}
+
+.card-body > div:last-child hr {
+    display: none;
+}

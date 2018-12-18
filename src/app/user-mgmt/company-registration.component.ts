@@ -22,6 +22,7 @@ export class CompanyRegistrationComponent implements OnInit {
 
     public alertClosed = false;
     public registrationForm: FormGroup;
+    config = myGlobals.config;
     submitCallStatus: CallStatus = new CallStatus();
 	   tooltipHTML = "";
 
@@ -47,8 +48,9 @@ export class CompanyRegistrationComponent implements OnInit {
     }
 
     save(model: FormGroup) {
-
-
+        var sectorString = model.getRawValue()['industrySectors'];
+        if (Array.isArray(sectorString))
+          sectorString = sectorString.join(", ");
         // create company registration DTO
         let userId = this.cookieService.get('user_id');
         let companyRegistration: CompanyRegistration = new CompanyRegistration(
@@ -63,7 +65,7 @@ export class CompanyRegistrationComponent implements OnInit {
                 [model.getRawValue()['businessKeywords']],
                 model.getRawValue()['businessType'],
                 model.getRawValue()['name'],
-                [model.getRawValue()['industrySectors']],
+                [sectorString],
                 model.getRawValue()['vatNumber'],
                 model.getRawValue()['verificationInformation'],
                 model.getRawValue()['yearOfReg']
@@ -109,5 +111,20 @@ export class CompanyRegistrationComponent implements OnInit {
 		this.tooltipHTML = tooltip;
 		this.modalService.open(content);
 	}
+
+  showSectorTT(content) {
+    var tooltip = "";
+		tooltip += "Hold down the Ctrl key in order to select multiple sectors";
+		this.tooltipHTML = tooltip;
+		this.modalService.open(content);
+  }
+
+  showKeywordsTT(content) {
+    var tooltip = "";
+		tooltip += "List some keywords that represent your business. Those will be used to improve the visibility of your company on the platform.<br/><br/>";
+    tooltip += "e.g.: Design, Bathroom Manufacturing, Home Accessories";
+		this.tooltipHTML = tooltip;
+		this.modalService.open(content);
+  }
 
 }

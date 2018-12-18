@@ -1,34 +1,35 @@
 
 <!-- Ppap -->
 <!-- <h3 class="space-after space-before">PPAP</h3> -->
+<div *ngIf="config.showPPAP">
+  <div class="form-group row space-before">
+      <strong class="col-2 col-form-label">PPAP Comp. Level:</strong>
+      <div class="col-10">
+          <select class="form-control" [(ngModel)]="ppapLevel">
+              <option [value]="0">-</option>
+              <option [value]="1">Level 1</option>
+              <option [value]="2">Level 2</option>
+              <option [value]="3">Level 3</option>
+              <option [value]="4">Level 4</option>
+              <option [value]="5">Level 5</option>
+          </select>
+      </div>
+  </div>
 
-<div class="form-group row space-before">
-    <strong class="col-2 col-form-label">PPAP Comp. Level:</strong>
-    <div class="col-10">
-        <select class="form-control" [(ngModel)]="ppapLevel">
-            <option [value]="0">-</option>
-            <option [value]="1">Level 1</option>
-            <option [value]="2">Level 2</option>
-            <option [value]="3">Level 3</option>
-            <option [value]="4">Level 4</option>
-            <option [value]="5">Level 5</option>
-        </select>
-    </div>
+  <div class="row actions-row">
+      <div class="col-10 call-status-col"><call-status [callStatus]="savePpapLevelCallStatus"></call-status></div>
+      <div class="col-2">
+          <button class="btn btn-primary action" type="button" [disabled]="!isPpapLevelDirty()" (click)="onSavePpapLevel()">
+              Save
+          </button>
+      </div>
+  </div>
+
+  <hr>
 </div>
-
-<div class="row actions-row">
-    <div class="col-10 call-status-col"><call-status [callStatus]="savePpapLevelCallStatus"></call-status></div>
-    <div class="col-2">
-        <button class="btn btn-primary action" type="button" [disabled]="!isPpapLevelDirty()" (click)="onSavePpapLevel()">
-            Save
-        </button>
-    </div>
-</div>
-
-<hr>
 
 <!-- Certificates -->
-<h4 class="space-after">Certificates</h4>
+<h4 class="space-after" [ngClass]="{'space-before':!config.showPPAP}">Certificates</h4>
 
 <call-status [callStatus]="certificatesCallStatus"></call-status>
 
@@ -88,8 +89,7 @@
                     <div class="col-10">
                         <select class="form-control" [formControl]="addCertForm.controls['type']" required>
                             <option></option>
-                            <option>Other (Non-PPAP)</option>
-                            <option *ngFor="let ppapType of ppapTypes">{{ppapType}}</option>
+                            <option *ngFor="let certType of config.supportedCertificates">{{certType}}</option>
                         </select>
                     </div>
                 </div>
@@ -102,7 +102,7 @@
                 <div class="form-group row">
                     <label class="col-2 col-form-label">Description</label>
                     <div class="col-10">
-                        <input type="text" class="form-control" [formControl]="addCertForm.controls['description']" required>
+                        <input type="text" class="form-control" [formControl]="addCertForm.controls['description']">
                     </div>
                 </div>
         </div>

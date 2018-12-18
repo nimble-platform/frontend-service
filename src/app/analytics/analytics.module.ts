@@ -8,6 +8,8 @@ import {AnalyticsRoutingModule} from './analytics-routing.module';
 import {PlatformAnalyticsComponent} from "./platform-analytics.component";
 import {CompanyAnalyticsComponent} from "./company-analytics.component";
 import {TrustPolicyComponent} from "./trust-policy.component";
+import {CompanyManagementComponent} from './company-management.component';
+import {PlatformInfoComponent} from './platform-info.component';
 
 @NgModule({
     imports: [
@@ -21,13 +23,17 @@ import {TrustPolicyComponent} from "./trust-policy.component";
     ],
     declarations: [
         PlatformAnalyticsComponent,
-		    CompanyAnalyticsComponent,
-        TrustPolicyComponent
+        CompanyAnalyticsComponent,
+        TrustPolicyComponent,
+        CompanyManagementComponent,
+        PlatformInfoComponent
     ],
     exports: [
         PlatformAnalyticsComponent,
-		    CompanyAnalyticsComponent,
-        TrustPolicyComponent
+        CompanyAnalyticsComponent,
+        TrustPolicyComponent,
+        CompanyManagementComponent,
+        PlatformInfoComponent
     ],
     providers: []
 })
