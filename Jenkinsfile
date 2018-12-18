@@ -1,14 +1,16 @@
 node('nimble-jenkins-slave') {
 
-    stage('Clone and Update') {
-	
-        git(url: 'https://github.com/nimble-platform/frontend-service.git', branch: env.BRANCH_NAME)
-		
-    }
-
+    // -----------------------------------------------
+    // --------------- Staging Branch ----------------
+    // -----------------------------------------------
+  
     if (env.BRANCH_NAME == 'staging') {
 
-		stage('Build Application - FMP') {
+        stage('Clone and Update') {
+            git(url: 'https://github.com/nimble-platform/frontend-service.git', branch: env.BRANCH_NAME)
+        }
+      
+		    stage('Build Application - FMP') {
             sh 'mvn clean install -Denv=fmp-staging'
         }
 
@@ -39,7 +41,34 @@ node('nimble-jenkins-slave') {
         stage('Deploy - MVP') {
             sh 'ssh staging "cd /srv/nimble-staging/ && ./run-staging.sh restart-single frontend-service"'
         }
-    } else if (env.BRANCH_NAME == 'master') {
+    }
+
+    // -----------------------------------------------
+    // ---------------- Master Branch ----------------
+    // -----------------------------------------------
+    if (env.BRANCH_NAME == 'master') {
+
+        stage('Clone and Update') {
+            git(url: 'https://github.com/nimble-platform/frontend-service.git', branch: env.BRANCH_NAME)
+        }
+
+        stage('Build Application') {
+            sh 'mvn clean install -Denv=prod'
+        }
+    }
+
+    // -----------------------------------------------
+    // ---------------- Release Tags -----------------
+    // -----------------------------------------------
+    if( env.TAG_NAME ==~ /^\d+.\d+.\d+$/) {
+
+        stage('Clone and Update') {
+            git(url: 'https://github.com/nimble-platform/frontend-service.git', branch: 'master')
+        }
+
+        stage('Set version') {
+            sh 'mvn versions:set -DnewVersion=' + env.TAG_NAME
+        }
 
         stage('Build Application - MVP') {
             sh 'mvn clean install -Denv=prod'
