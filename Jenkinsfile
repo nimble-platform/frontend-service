@@ -79,12 +79,9 @@ node('nimble-jenkins-slave') {
         }
 
         stage('Push Docker - MVP') {
-
             sh 'docker push nimbleplatform/frontend-service:latest'
-
-            sh 'VERSION=$(./deploy.sh print-version)'
-            sh 'docker tag nimbleplatform/frontend-service:latest nimbleplatform/frontend-service:$VERSION'
-            sh 'docker push nimbleplatform/frontend-service:$VERSION'
+            sh 'docker tag nimbleplatform/frontend-service:latest nimbleplatform/frontend-service:' + env.TAG_NAME
+            sh 'docker push nimbleplatform/frontend-service:' + env.TAG_NAME
         }
 
         stage('Deploy - MVP') {
