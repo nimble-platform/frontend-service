@@ -25,12 +25,15 @@
                 </tr>
                 <tr>
                     <th><span i18n>Phone Number</span></th>
-                    <td>{{ userProfile.contact.telephone}}</td>
+                    <td *ngIf="userProfile.contact.telephone">{{ userProfile.contact.telephone}}</td>
+                    <td *ngIf="!userProfile.contact.telephone">n/A</td>
                 </tr>
+                <!--
                 <tr>
                     <th><span i18n>ID</span></th>
                     <td>{{ userProfile.id}}</td>
                 </tr>
+                -->
             </table>
         </div>
         <div class="col-1"></div>

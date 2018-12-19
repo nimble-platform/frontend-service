@@ -15,6 +15,7 @@ export class CompanyDetailsComponent implements OnInit {
 
 	@Input() details: CompanySettings = null;
 	@Input() hideTitle: boolean = false;
+    imgEndpoint = myGlobals.user_mgmt_endpoint+"/company-settings/image/";
     initCallStatus: CallStatus = new CallStatus();
 
     constructor(private cookieService: CookieService,

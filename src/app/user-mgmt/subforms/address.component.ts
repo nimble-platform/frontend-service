@@ -13,7 +13,8 @@ export class AddressSubForm {
     @Input('group')
     public addressForm: FormGroup;
 	public disabledFlag = false;
-	
+  @Input() requiredFlag: boolean = true;
+
 	public static setDisabled(addressForm, flag) {
 		addressForm.disabledFlag = flag;
 	}
@@ -27,7 +28,7 @@ export class AddressSubForm {
             country: addressForm.controls.country.value
         };
 	}
-	
+
     public static update(addressForm: FormGroup, address: Address): FormGroup {
         if (address) {
             addressForm.controls.streetName.setValue(address.streetName);
