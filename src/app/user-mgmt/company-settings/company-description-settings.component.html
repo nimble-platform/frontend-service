@@ -92,8 +92,10 @@
           <tr *ngFor="let ev of compEvents; let i = index">
               <td>{{ev.dateFrom}} - {{ev.dateTo}}</td>
               <td>{{ev.name}}</td>
-              <td>{{ev.description}}</td>
-              <td>{{ev.place.streetName}}<span *ngIf="ev.place.buildingNumber"> {{ev.place.buildingNumber}}</span><br/>{{ev.place.postalCode}} {{ev.place.cityName}}<br/>{{ev.place.country}}</td>
+              <td *ngIf="ev.description">{{ev.description}}</td>
+              <td *ngIf="!ev.description">n/A</td>
+              <td *ngIf="ev.place.streetName">{{ev.place.streetName}}<span *ngIf="ev.place.buildingNumber"> {{ev.place.buildingNumber}}</span><br/>{{ev.place.postalCode}} {{ev.place.cityName}}<br/>{{ev.place.country}}</td>
+              <td *ngIf="!ev.place.streetName">n/A</td>
               <td>
                   <button class="btn btn-danger btn-sm" (click)="removeCompEventEntry(i)">Delete</button>
               </td>
@@ -204,7 +206,7 @@
         </button>
     </div>
     <div class="col-8"></div>
-    <div class="col-4 align-right mt-1"><small>Maximum allowed filesize: 1 MB; Allowed formats: PNG, JPG, GIF</small></div>
+    <div class="col-4 align-right mt-1"><small>Maximum allowed filesize: 256 kB; Allowed formats: PNG, JPG, GIF</small></div>
 </div>
 
 <!-- Event Modal -->
@@ -234,10 +236,10 @@
                       <strong>Description:</strong>
                     </label>
                     <div class="col-10">
-                        <input type="text" class="form-control" [formControl]="addEventForm.controls['description']" maxlength="255" required>
+                        <input type="text" class="form-control" [formControl]="addEventForm.controls['description']" maxlength="255">
                     </div>
                 </div>
-                <address-form [group]="addEventForm.controls.place"></address-form>
+                <address-form [group]="addEventForm.controls.place" [requiredFlag]=false></address-form>
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-primary save-cert-btn" [disabled]="!addEventForm.valid" (click)="onSaveEventEntry(addEventForm, d);">
@@ -260,13 +262,13 @@
           <div class="form-group row">
             <label class="col-2 col-form-label">Image</label>
               <div class="col-10">
-                  <input type="file" class="form-control" [formControl]="addImageForm.controls['file']" (change)="onSetImageFile($event)" required>
+                  <input type="file" class="form-control" [formControl]="addImageForm.controls['file']" (change)="onSetImageFile($event, addImageForm)" required>
               </div>
           </div>
         </div>
         <div class="modal-footer">
             <call-status [callStatus]="saveCallStatusImage"></call-status>
-            <button type="button" class="btn btn-primary save-cert-btn" [disabled]="!addImageForm.valid || !imgFile || saveCallStatusImage.isLoading()" (click)="onSaveImage(addImageForm, d);">
+            <button type="button" class="btn btn-primary save-cert-btn" [disabled]="!addImageForm.valid || saveCallStatusImage.isLoading()" (click)="onSaveImage(addImageForm, d);">
                 <span>Save</span>
             </button>
         </div>

@@ -10,31 +10,31 @@
 	<div class="form-group row">
 		<strong class="col-2 col-form-label">Street Name:</strong>
 		<div class="col-10">
-			<input type="text" class="form-control" name="streetName" formControlName="streetName" [required]="!addressForm.disabledFlag" [readonly]="addressForm.disabledFlag">
+			<input type="text" class="form-control" name="streetName" formControlName="streetName" [required]="!addressForm.disabledFlag && addressForm.requiredFlag" [readonly]="addressForm.disabledFlag">
 		</div>
 	</div>
 	<div class="form-group row">
 		<strong class="col-2 col-form-label">Building Number:</strong>
 		<div class="col-10">
-			<input type="text" class="form-control" name="buildingNumber" formControlName="buildingNumber" [required]="!addressForm.disabledFlag" [readonly]="addressForm.disabledFlag">
+			<input type="text" class="form-control" name="buildingNumber" formControlName="buildingNumber" [required]="!addressForm.disabledFlag && addressForm.requiredFlag" [readonly]="addressForm.disabledFlag">
 		</div>
 	</div>
 	<div class="form-group row">
 		<strong class="col-2 col-form-label">City:</strong>
 		<div class="col-10">
-			<input type="text" class="form-control" name="cityName" formControlName="cityName" [required]="!addressForm.disabledFlag" [readonly]="addressForm.disabledFlag">
+			<input type="text" class="form-control" name="cityName" formControlName="cityName" [required]="!addressForm.disabledFlag && addressForm.requiredFlag" [readonly]="addressForm.disabledFlag">
 		</div>
 	</div>
 	<div class="form-group row">
 		<strong class="col-2 col-form-label">Postal code:</strong>
 		<div class="col-10">
-			<input type="text" class="form-control" name="postalCode" formControlName="postalCode" [required]="!addressForm.disabledFlag" [readonly]="addressForm.disabledFlag">
+			<input type="text" class="form-control" name="postalCode" formControlName="postalCode" [required]="!addressForm.disabledFlag && addressForm.requiredFlag" [readonly]="addressForm.disabledFlag">
 		</div>
 	</div>
 	<div class="form-group row">
 		<strong class="col-2 col-form-label">Country:</strong>
 		<div class="col-10">
-			<input type="text" class="form-control" name="country" formControlName="country" [required]="!addressForm.disabledFlag" [readonly]="addressForm.disabledFlag">
+			<input type="text" class="form-control" name="country" formControlName="country" [required]="!addressForm.disabledFlag && addressForm.requiredFlag" [readonly]="addressForm.disabledFlag">
 		</div>
 	</div>
 </div>

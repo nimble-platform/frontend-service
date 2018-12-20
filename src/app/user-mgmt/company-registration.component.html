@@ -32,6 +32,17 @@
 		</div>
 	</div>
 
+	<!-- Logo -->
+	<div *ngIf="config.logoRequired" class="form-group row">
+		<label class="col-2 col-form-label">
+			<strong>Logo:</strong>
+			<span class="tooltip-icon" (click)="showLogoTT(tooltip)"><i class="fa fa-question-circle"></i></span>
+		</label>
+		<div class="col-10">
+			<input type="file" class="form-control" [formControl]="registrationForm.controls['logo']" (change)="onSetImageFile($event, registrationForm)" required>
+		</div>
+	</div>
+
 	<!-- Verification Info -->
 	<div *ngIf="config.showVerification" class="form-group row">
 		<label class="col-2 col-form-label">

@@ -63,7 +63,8 @@
         <tr><th>Link</th></tr>
         <tr *ngIf="details.description.socialMediaList.length == 0"><td>No data</td></tr>
         <tr *ngFor="let socialMedia of details.description.socialMediaList; let i = index">
-            <td>{{socialMedia}}</td>
+            <td *ngIf="socialMedia">{{socialMedia}}</td>
+            <td *ngIf="!socialMedia">n/A</td>
         </tr>
     </table>
     <hr>
@@ -75,7 +76,8 @@
         <tr><th>Link</th></tr>
         <tr *ngIf="details.description.externalResources.length == 0"><td>No data</td></tr>
         <tr *ngFor="let extResource of details.description.externalResources; let i = index">
-            <td>{{extResource}}</td>
+            <td *ngIf="extResource">{{extResource}}</td>
+            <td *ngIf="!extResource">n/A</td>
         </tr>
     </table>
     <hr>
@@ -92,8 +94,13 @@
         <tr *ngFor="let ev of details.description.events; let i = index">
             <td>{{formatDate(ev.dateFrom)}} - {{formatDate(ev.dateTo)}}</td>
             <td>{{ev.name}}</td>
-            <td>{{ev.description}}</td>
-            <td>{{ev.place.streetName}}<span *ngIf="ev.place.buildingNumber"> {{ev.place.buildingNumber}}</span><br/>{{ev.place.postalCode}} {{ev.place.cityName}}<br/>{{ev.place.country}}</td>
+            <td *ngIf="ev.description">{{ev.description}}</td>
+            <td *ngIf="!ev.description">n/A</td>
+            <td *ngIf="ev.place.streetName">{{ev.place.streetName}}<span *ngIf="ev.place.buildingNumber"> {{ev.place.buildingNumber}}</span><br/>{{ev.place.postalCode}} {{ev.place.cityName}}<br/>{{ev.place.country}}</td>
+            <td *ngIf="!ev.place.streetName">n/A</td>
+            <td>
+                <button class="btn btn-danger btn-sm" (click)="removeCompEventEntry(i)">Delete</button>
+            </td>
         </tr>
     </table>
     <hr>
@@ -113,7 +120,7 @@
         <div *ngIf="details.description.logoImageId" class="card m-2" style="width: 15rem;">
           <div class="card-body p-2">
               <div class="align-center">
-                <img class="img-max" src="{{imgEndpoint}}{{settings.description.logoImageId}}">
+                <img class="img-max" src="{{imgEndpoint}}{{details.description.logoImageId}}">
               </div>
           </div>
         </div>
