@@ -128,7 +128,7 @@ export class ThreadSummaryComponent implements OnInit {
         )
 
         if (userRole === "buyer") {
-            this.lastEventPartnerID = ActivityVariableParser.getProductFromProcessData(initialDoc,processType).manufacturerParty.id;
+            this.lastEventPartnerID = ActivityVariableParser.getProductFromProcessData(initialDoc,processType).manufacturerParty.getId();
         }
         else {
             this.lastEventPartnerID = ActivityVariableParser.getBuyerId(initialDoc,processType);

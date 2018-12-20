@@ -52,8 +52,8 @@ export class ReceiptAdviceComponent implements OnInit {
     onSendReceiptAdvice(): void {
         const vars: ProcessVariables = ModelUtils.createProcessVariables(
             "Fulfilment", 
-            this.bpDataService.receiptAdvice.despatchSupplierParty.party.id, 
-            this.bpDataService.receiptAdvice.deliveryCustomerParty.party.id,
+            this.bpDataService.receiptAdvice.despatchSupplierParty.party.getId(),
+            this.bpDataService.receiptAdvice.deliveryCustomerParty.party.getId(),
             this.cookieService.get("user_id"),
             this.bpDataService.receiptAdvice, 
             this.bpDataService

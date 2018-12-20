@@ -24,7 +24,7 @@ export class PpapComponent implements OnInit {
         }
 
         const currentCompanyId: string = this.cookieService.get("company_id");
-        const sellerId: string = this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty.id;
+        const sellerId: string = this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty.getId();
 
 
         this.route.queryParams.subscribe(params => {

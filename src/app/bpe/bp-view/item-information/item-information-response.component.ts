@@ -69,8 +69,8 @@ export class ItemInformationResponseComponent implements OnInit {
     onSendResponse(): void {
         const vars: ProcessVariables = ModelUtils.createProcessVariables(
             "Item_Information_Request",
-            this.bpDataService.itemInformationRequest.buyerCustomerParty.party.id,
-            this.bpDataService.itemInformationRequest.sellerSupplierParty.party.id,
+            this.bpDataService.itemInformationRequest.buyerCustomerParty.party.getId(),
+            this.bpDataService.itemInformationRequest.sellerSupplierParty.party.getId(),
             this.cookieService.get("user_id"),
             this.bpDataService.itemInformationResponse,
             this.bpDataService

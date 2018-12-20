@@ -25,7 +25,7 @@ import { PrecedingBPDataService } from "./preceding-bp-data-service";
 import { BpUserRole } from "../model/bp-user-role";
 import { BpWorkflowOptions } from "../model/bp-workflow-options";
 import { NegotiationOptions } from "../../catalogue/model/publish/negotiation-options";
-import { PAYMENT_MEANS } from "../../catalogue/model/constants";
+import {DEFAULT_LANGUAGE, PAYMENT_MEANS} from '../../catalogue/model/constants';
 import { ThreadEventMetadata } from "../../catalogue/model/publish/thread-event-metadata";
 import { ProcessType } from "../model/process-type";
 import { PaymentMeans } from "../../catalogue/model/publish/payment-means";
@@ -39,6 +39,7 @@ import { CompanyNegotiationSettings } from "../../user-mgmt/model/company-negoti
 import { CompanySettings } from "../../user-mgmt/model/company-settings";
 import {DocumentService} from "./document-service";
 import {ShipmentStage} from "../../catalogue/model/publish/shipment-stage";
+import {PartyName} from '../../catalogue/model/publish/party-name';
 
 /**
  * Created by suat on 20-Sep-17.
@@ -341,7 +342,7 @@ export class BPDataService{
         if(!rfq.negotiationOptions) {
             rfq.negotiationOptions = new NegotiationOptions();
 
-            this.userService.getCompanyNegotiationSettingsForParty(rfq.sellerSupplierParty.party.id).then(res => {
+            this.userService.getCompanyNegotiationSettingsForParty(rfq.sellerSupplierParty.party.getId()).then(res => {
                 let settings: CompanyNegotiationSettings= res as CompanyNegotiationSettings;
                 const line = this.catalogueLines[0];
                 const wrapper = new NegotiationModelWrapper(line, rfq, null, settings);
@@ -447,7 +448,12 @@ export class BPDataService{
         this.despatchAdvice.despatchLine[0].deliveredQuantity.value = deliveredQuantity.value;
         this.despatchAdvice.despatchLine[0].shipment[0].handlingInstructions[0].value = handlingInst;
         this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage.push(new ShipmentStage());
-        this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage[0].carrierParty.name.value = carrierName;
+
+        let partyName: PartyName = new PartyName();
+        partyName.name.value = carrierName;
+        partyName.name.languageID = DEFAULT_LANGUAGE();
+
+        this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage[0].carrierParty.partyName= [partyName];
         this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage[0].carrierParty.contact.telephone = carrierContact;
         this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage[0].estimatedDeliveryDate = endDate;
     }

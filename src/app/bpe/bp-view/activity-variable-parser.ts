@@ -27,50 +27,50 @@ export class ActivityVariableParser {
     static getTradingPartnerName(initialDocument: any, partyId: string, processType: string): string {
         if (processType == "Order") {
             let order: Order = initialDocument as Order;
-            if(order.buyerCustomerParty.party.id == partyId) {
-                return order.sellerSupplierParty.party.name.value;
+            if(order.buyerCustomerParty.party.getId() == partyId) {
+                return order.sellerSupplierParty.party.getDisplayName();
             } else {
-                return order.buyerCustomerParty.party.name.value;
+                return order.buyerCustomerParty.party.getDisplayName();
             }
 
         } else if(processType == "Ppap"){
             let ppap: Ppap = initialDocument as Ppap;
-            if(ppap.buyerCustomerParty.party.id == partyId) {
-                return ppap.sellerSupplierParty.party.name.value;
+            if(ppap.buyerCustomerParty.party.getId() == partyId) {
+                return ppap.sellerSupplierParty.party.getDisplayName();
             } else {
-                return ppap.buyerCustomerParty.party.name.value;
+                return ppap.buyerCustomerParty.party.getDisplayName();
             }
 
         } else if (processType == "Negotiation") {
             let rfq: RequestForQuotation = initialDocument as RequestForQuotation;
-            if(rfq.buyerCustomerParty.party.id == partyId) {
-                return rfq.sellerSupplierParty.party.name.value;
+            if(rfq.buyerCustomerParty.party.getId() == partyId) {
+                return rfq.sellerSupplierParty.party.getDisplayName();
             } else {
-                return rfq.buyerCustomerParty.party.name.value;
+                return rfq.buyerCustomerParty.party.getDisplayName();
             }
 
         } else if (processType == "Fulfilment") {
             let despatchAdvice: DespatchAdvice = initialDocument as DespatchAdvice;
-            if(despatchAdvice.despatchSupplierParty.party.id == partyId) {
-                return despatchAdvice.deliveryCustomerParty.party.name.value;
+            if(despatchAdvice.despatchSupplierParty.party.getId() == partyId) {
+                return despatchAdvice.deliveryCustomerParty.party.getDisplayName();
             } else {
-                return despatchAdvice.despatchSupplierParty.party.name.value;
+                return despatchAdvice.despatchSupplierParty.party.getDisplayName();
             }
 
         } else if(processType == "Transport_Execution_Plan") {
             let tepr: TransportExecutionPlanRequest = initialDocument as TransportExecutionPlanRequest;
-            if(tepr.transportUserParty.id == partyId) {
-                return tepr.transportServiceProviderParty.name.value;
+            if(tepr.transportUserParty.getId() == partyId) {
+                return tepr.transportServiceProviderParty.getDisplayName();
             } else {
-                return tepr.transportUserParty.name.value;
+                return tepr.transportUserParty.getDisplayName();
             }
 
         } else if(processType == 'Item_Information_Request') {
             let itemInformationRequest: ItemInformationRequest = initialDocument as ItemInformationRequest;
-            if(itemInformationRequest.buyerCustomerParty.party.id == partyId) {
-                return itemInformationRequest.sellerSupplierParty.party.name.value;
+            if(itemInformationRequest.buyerCustomerParty.party.getId() == partyId) {
+                return itemInformationRequest.sellerSupplierParty.party.getDisplayName();
             } else {
-                return itemInformationRequest.buyerCustomerParty.party.name.value;
+                return itemInformationRequest.buyerCustomerParty.party.getDisplayName();
             }
         }
     }
@@ -78,26 +78,26 @@ export class ActivityVariableParser {
     static getBuyerId(initialDocument:any, processType: string){
         if (processType == "Order") {
             let order: Order = initialDocument as Order;
-            return order.buyerCustomerParty.party.id;
+            return order.buyerCustomerParty.party.getId();
 
         } else if(processType == "Ppap"){
             let ppap: Ppap = initialDocument as Ppap;
-            return ppap.buyerCustomerParty.party.id;
+            return ppap.buyerCustomerParty.party.getId();
         } else if (processType == "Negotiation") {
             let rfq: RequestForQuotation = initialDocument as RequestForQuotation;
-            return rfq.buyerCustomerParty.party.id;
+            return rfq.buyerCustomerParty.party.getId();
 
         } else if (processType == "Fulfilment") {
             let despatchAdvice: DespatchAdvice = initialDocument as DespatchAdvice;
-            return despatchAdvice.deliveryCustomerParty.party.id;
+            return despatchAdvice.deliveryCustomerParty.party.getId();
 
         } else if(processType == "Transport_Execution_Plan") {
             let tepr: TransportExecutionPlanRequest = initialDocument as TransportExecutionPlanRequest;
-            return tepr.transportUserParty.id;
+            return tepr.transportUserParty.getId();
 
         } else if(processType == 'Item_Information_Request') {
             let itemInformationRequest: ItemInformationRequest = initialDocument as ItemInformationRequest;
-            return itemInformationRequest.buyerCustomerParty.party.id;
+            return itemInformationRequest.buyerCustomerParty.party.getId();
         }
     }
 

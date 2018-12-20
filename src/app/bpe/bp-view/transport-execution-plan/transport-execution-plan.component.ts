@@ -119,7 +119,7 @@ export class TransportExecutionPlanComponent implements OnInit {
 
         // first initialize the seller and buyer parties.
         // once they are fetched continue with starting the ordering process
-        const sellerId: string = this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty.id;
+        const sellerId: string = this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty.getId();
         const buyerId: string = this.cookieService.get("company_id");
 
         Promise.all([
@@ -163,8 +163,8 @@ export class TransportExecutionPlanComponent implements OnInit {
         this.response.documentStatusCode.name = accepted ? "Accepted" : "Rejected";
 
         const vars: ProcessVariables = ModelUtils.createProcessVariables("Transport_Execution_Plan", 
-            this.bpDataService.transportExecutionPlan.transportUserParty.id, 
-            this.bpDataService.transportExecutionPlan.transportServiceProviderParty.id,
+            this.bpDataService.transportExecutionPlan.transportUserParty.getId(),
+            this.bpDataService.transportExecutionPlan.transportServiceProviderParty.getId(),
             this.cookieService.get("user_id"),
             this.bpDataService.transportExecutionPlan, this.bpDataService);
         const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, 

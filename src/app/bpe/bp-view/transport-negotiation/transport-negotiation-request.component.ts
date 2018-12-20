@@ -87,10 +87,10 @@ export class TransportNegotiationRequestComponent implements OnInit {
             // but this is a hack, the methods above should be fixed.
             rfq.requestForQuotationLine[0].lineItem.item = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;
 
-            sellerId = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item.manufacturerParty.id;
+            sellerId = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item.manufacturerParty.getId();
         }
         else {
-            sellerId = this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty.id;
+            sellerId = this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty.getId();
         }
 
         UBLModelUtils.removeHjidFieldsFromObject(rfq);

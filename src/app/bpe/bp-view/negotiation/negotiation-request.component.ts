@@ -92,7 +92,7 @@ export class NegotiationRequestComponent implements OnInit {
 
             //first initialize the seller and buyer parties.
             //once they are fetched continue with starting the ordering process
-            const sellerId: string = this.line.goodsItem.item.manufacturerParty.id;
+            const sellerId: string = this.line.goodsItem.item.manufacturerParty.getId();
             const buyerId: string = this.cookieService.get("company_id");
 
            Promise.all([

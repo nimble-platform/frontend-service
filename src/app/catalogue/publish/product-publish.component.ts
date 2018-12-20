@@ -148,7 +148,7 @@ export class ProductPublishComponent implements OnInit {
             return Promise.all([
                 Promise.resolve(party),
                 this.catalogueService.getCatalogue(userId),
-                this.userService.getCompanyNegotiationSettingsForParty(party.id)
+                this.userService.getCompanyNegotiationSettingsForParty(party.getId())
             ])
         })
         .then(([party, catalogue, settings]) => {

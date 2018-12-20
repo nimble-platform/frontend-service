@@ -127,7 +127,7 @@ export class PpapDocumentUploadComponent {
 
         this.ppapResponse.note = this.notesToSend;
         this.ppapResponse.additionalDocumentReference = this.additionalDocumentsToSend;
-        const vars: ProcessVariables = ModelUtils.createProcessVariables("Ppap", this.ppap.buyerCustomerParty.party.id, this.ppap.sellerSupplierParty.party.id, this.cookieService.get("user_id"),this.ppapResponse, this.bpDataService);
+        const vars: ProcessVariables = ModelUtils.createProcessVariables("Ppap", this.ppap.buyerCustomerParty.party.getId(), this.ppap.sellerSupplierParty.party.getId(), this.cookieService.get("user_id"),this.ppapResponse, this.bpDataService);
         const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.bpDataService.processMetadata.processId);
 
         this.callStatus.submit();

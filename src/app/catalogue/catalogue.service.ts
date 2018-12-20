@@ -40,7 +40,7 @@ export class CatalogueService {
             return this.userService.getUserParty(userId).then(party => {
 
                 // using the party query the default catalogue
-                let url = this.baseUrl + `/catalogue/${party.id}/default`;
+                let url = this.baseUrl + `/catalogue/${party.getId()}/default`;
                 return this.http
                     .get(url, {headers: this.headers})
                     .toPromise()
@@ -128,7 +128,7 @@ export class CatalogueService {
         taxonomyIds = taxonomyIds.substr(0, taxonomyIds.length-1);
 
         return this.userService.getUserParty(userId).then(party => {
-            const url = this.baseUrl + `/catalogue/template?partyId=${party.id}&partyName=${party.name.value}&categoryIds=${encodeURIComponent(categoryIds)}&taxonomyIds=${encodeURIComponent(taxonomyIds)}&templateLanguage=${templateLanguage}`;
+            const url = this.baseUrl + `/catalogue/template?partyId=${party.getId()}&partyName=${party.getDisplayName()}&categoryIds=${encodeURIComponent(categoryIds)}&taxonomyIds=${encodeURIComponent(taxonomyIds)}&templateLanguage=${templateLanguage}`;
             return new Promise<any>((resolve, reject) => {
 
                 let xhr = new XMLHttpRequest();
@@ -183,7 +183,7 @@ export class CatalogueService {
         const token = 'Bearer '+this.cookieService.get("bearer_token");
 
         return this.userService.getUserParty(userId).then(party => {
-            const url = this.baseUrl + `/catalogue/template/upload?partyId=${party.id}&partyName=${party.name.value}&uploadMode=${uploadMode}`;
+            const url = this.baseUrl + `/catalogue/template/upload?partyId=${party.getId()}&partyName=${party.getDisplayName()}&uploadMode=${uploadMode}`;
             return new Promise<any>((resolve, reject) => {
                 let formData: FormData = new FormData();
                 formData.append("file", template, template.name);

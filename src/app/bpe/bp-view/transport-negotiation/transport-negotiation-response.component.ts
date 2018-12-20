@@ -102,8 +102,8 @@ export class TransportNegotiationResponseComponent implements OnInit {
             this.quotation.documentStatusCode.name = NEGOTIATION_RESPONSES.REJECTED;
         }
 
-        const vars: ProcessVariables = ModelUtils.createProcessVariables("Negotiation", this.bpDataService.requestForQuotation.buyerCustomerParty.party.id,
-            this.bpDataService.requestForQuotation.sellerSupplierParty.party.id, this.cookieService.get("user_id"),this.quotation, this.bpDataService);
+        const vars: ProcessVariables = ModelUtils.createProcessVariables("Negotiation", this.bpDataService.requestForQuotation.buyerCustomerParty.party.getId(),
+            this.bpDataService.requestForQuotation.sellerSupplierParty.party.getId(), this.cookieService.get("user_id"),this.quotation, this.bpDataService);
         const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.bpDataService.processMetadata.processId);
 
         this.callStatus.submit();

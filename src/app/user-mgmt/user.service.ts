@@ -139,8 +139,8 @@ export class UserService {
     }
 
     getSettingsForProduct(line: CatalogueLine): Promise<CompanySettings> {
-        console.log("Getting settings for product: " + line.goodsItem.item.manufacturerParty.id);
-        return this.getSettingsForParty(line.goodsItem.item.manufacturerParty.id)
+        console.log("Getting settings for product: " + line.goodsItem.item.manufacturerParty.getId());
+        return this.getSettingsForParty(line.goodsItem.item.manufacturerParty.getId())
         .then(settings => {
             console.log("Settings", settings);
             return settings;
@@ -148,7 +148,7 @@ export class UserService {
     }
 
     getSettingsForUser(userId: string): Promise<CompanySettings> {
-        return this.getUserParty(userId).then(party => this.getSettingsForParty(party.id));
+        return this.getUserParty(userId).then(party => this.getSettingsForParty(party.getId()));
     }
 
     getSettingsForParty(partyId: string): Promise<CompanySettings> {
@@ -227,7 +227,7 @@ export class UserService {
         const settings = { ...rawSettings };
         delete settings.negotiationSettings;
         return this.getUserParty(userId).then(party => {
-            const url = `${this.url}/company-settings/${party.id}`;
+            const url = `${this.url}/company-settings/${party.getId()}`;
             const token = 'Bearer '+this.cookieService.get("bearer_token");
             const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
             return this.http
@@ -351,11 +351,11 @@ export class UserService {
     }
 
     getCompanyNegotiationSettingsForUser(userId: string): Promise<CompanyNegotiationSettings> {
-        return this.getUserParty(userId).then(party => this.getCompanyNegotiationSettingsForParty(party.id));
+        return this.getUserParty(userId).then(party => this.getCompanyNegotiationSettingsForParty(party.getId()));
     }
 
     getCompanyNegotiationSettingsForProduct(line: CatalogueLine): Promise<CompanyNegotiationSettings> {
-        return this.getCompanyNegotiationSettingsForParty(line.goodsItem.item.manufacturerParty.id);
+        return this.getCompanyNegotiationSettingsForParty(line.goodsItem.item.manufacturerParty.getId());
     }
 
     getCompanyNegotiationSettingsForParty(partyId: string): Promise<CompanyNegotiationSettings> {
