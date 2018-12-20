@@ -73,5 +73,17 @@ Alternative:
 docker run -it --rm -p 9092:8080 --name nimble-core_frontend-service nimbleplatform/frontend-service
 ```
 
+### Environments
+There are various environment files for different build configurations. By default src/app/globals.ts is used.
+
+In case you want to build using a different environment file (see src/environments/globals.[ENVIRONMENT].ts) execute
+```shell
+mvn clean install -Denv=[ENVIRONMENT]
+```
+or
+```shell
+./deploy.sh docker-build [ENVIRONMENT]
+```
+
  ---
 The project leading to this application has received funding from the European Union’s Horizon 2020 research and innovation programme under grant agreement No 723810.
