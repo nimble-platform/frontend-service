@@ -272,15 +272,6 @@ export class BPEService {
             .catch(this.handleError);
     }
 
-	archiveProcessInstanceGroup(groupId: string) {
-		const url = `${this.url}/group/${groupId}/archive`;
-		return this.http
-            .post(url, null)
-            .toPromise()
-            .then(res => res.json())
-            .catch(this.handleError);
-	}
-
 	archiveCollaborationGroup(groupId: string){
         const url = `${this.url}/group/collaboration/${groupId}/archive`;
         return this.http
@@ -298,15 +289,6 @@ export class BPEService {
         .then(res => res.json())
         .catch(this.handleError);
 }
-
-	restoreProcessInstanceGroup(groupId: string) {
-		const url = `${this.url}/group/${groupId}/restore`;
-		return this.http
-            .post(url, null)
-            .toPromise()
-            .then(res => res.json())
-            .catch(this.handleError);
-	}
 
 	constructContractForProcess(processInstancesId: string): Promise<Contract> {
 		const url = `${this.url}/contracts?processInstanceId=${processInstancesId}`;
