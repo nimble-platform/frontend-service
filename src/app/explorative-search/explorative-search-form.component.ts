@@ -16,6 +16,7 @@ import { ExplorativeSearchService } from './explorative-search.service';
 import { Explorative } from './model/explorative';
 import { Search } from './model/search';
 import {NgbTabChangeEvent} from '@ng-bootstrap/ng-bootstrap';
+import { CookieService} from 'ng2-cookies';
 
 /**
  * Array for storing incoming HTTP responses
@@ -30,7 +31,10 @@ export const OUTPUT: Explorative[] = [];
     selector: 'explore-search-form',
     templateUrl: './explorative-search-form.component.html',
     styleUrls: ['./explorative-search-form.component.css'],
-    providers: [ExplorativeSearchService]
+    providers: [
+            ExplorativeSearchService,
+            CookieService
+    ]
 })
 
 
@@ -41,7 +45,7 @@ export class ExplorativeSearchFormComponent implements OnInit {
     public loading = false;
     cbInput = true;
     langInput = true;
-    language = 'en'; // default search in english
+    language = 'en' || 'ENGLISH'; // default search in english
     availableLanguages = {};
     // Use the stored data which might further
     // data visualization
@@ -59,10 +63,16 @@ export class ExplorativeSearchFormComponent implements OnInit {
     private conceptName = '';
     private conceptURL = '';
     private conceptSource = '';
+    private _user_id: string;
     model = new Search('');
     SQPConfig: Object;
 
-    constructor(private expSearch: ExplorativeSearchService) {}
+    constructor(
+        private expSearch: ExplorativeSearchService,
+        private cookieService: CookieService
+    ) {
+        this._user_id = this.cookieService.get('user_id');
+    }
 
     ngOnInit(): void {
         this.showMore = new Array(this.Output.length);
@@ -91,7 +101,7 @@ export class ExplorativeSearchFormComponent implements OnInit {
         // Let the Service do its fetching of data from server
         // console.log(lang)
         this.loading = true;
-        this.expSearch.searchData(inputVal, this.language)
+        this.expSearch.searchData(inputVal, this.language, this._user_id)
                 .then(res => {
                     // push the data in to List
                     // console.log(res);
@@ -106,7 +116,7 @@ export class ExplorativeSearchFormComponent implements OnInit {
                     this.loading = false;
                 })
             .catch(error => {
-                //console.log(error);
+                // console.log(error);
                 this._error_detected_kw = true;
                 this.loading = false;
             });
