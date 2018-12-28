@@ -43,9 +43,10 @@ export class ExplorativeSearchFormComponent implements OnInit {
     // checkbox for every keyword in Search History
     // remember: the variable name is same as in the HTML file
     public loading = false;
+    public loading_query = false;
     cbInput = true;
     langInput = true;
-    language = 'en' || 'ENGLISH'; // default search in english
+    language = 'ENGLISH'; // default search in english
     availableLanguages = {};
     // Use the stored data which might further
     // data visualization
@@ -158,7 +159,7 @@ export class ExplorativeSearchFormComponent implements OnInit {
      */
 
     getQuery(inputVal: string, urlVal: string) {
-        this.loading = true;
+        this.loading_query = true;
         // console.log(inputVal);
         this.conceptName = urlVal;
         this.conceptURL = inputVal;
@@ -191,7 +192,7 @@ export class ExplorativeSearchFormComponent implements OnInit {
                     };
                 }
                 this.visData = res;
-                this.loading = false;
+                this.loading_query = false;
 
                 // console.log(this.visData);
                 this._error_detected_query = false;
