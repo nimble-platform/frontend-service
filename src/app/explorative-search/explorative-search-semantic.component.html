@@ -121,7 +121,7 @@
             </table>
         </div>
     </div>
-    <div class="row" style="margin-top: 15px">
+    <div class="row mt-3">
         <div class="col-md-6">
             <button class="btn btn-secondary" (click)="hiddenElement=!hiddenElement">Back to Explorer</button>
         </div>
@@ -404,7 +404,7 @@
 </div>
 
 <div *ngIf="sparqlJSON.parameters.length">
-    <div class="jumbotron" *ngIf="!tableResult?.columns.length">
+    <div class="jumbotron" *ngIf="tableResult?.columns !== undefined && !tableResult?.columns.length">
         <div class="container">
             <div class="row">
                 <div class="col-12 align-center">
