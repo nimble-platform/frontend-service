@@ -119,7 +119,7 @@ export class BPEService {
 
     cancelCollaboration(groupId: string): Promise<any> {
         let headers = this.getAuthorizedHeaders();
-        const url = `${this.url}/group/${groupId}/cancel`;
+        const url = `${this.url}/process-instance-groups/${groupId}/cancel`;
         return this.http
             .post(url, null, {headers: headers})
             .toPromise()
@@ -137,7 +137,7 @@ export class BPEService {
 	}
 
 	getProcessInstanceGroup(groupId: string){
-		let url:string = `${this.url}/group/${groupId}`;
+		let url:string = `${this.url}/process-instance-groups/${groupId}`;
 		return this.http
             .get(url, {headers: this.headers})
             .toPromise()
@@ -203,7 +203,7 @@ export class BPEService {
 		categories: string[], partners: string[],status: string[]): Promise<ProcessInstanceGroupFilter> {
 		const headers = this.getAuthorizedHeaders();
 
-		let url: string = `${this.url}/group/filters?partyID=${partyId}&collaborationRole=${collaborationRole}&archived=${archived}`;
+		let url: string = `${this.url}/process-instance-groups/filters?partyID=${partyId}&collaborationRole=${collaborationRole}&archived=${archived}`;
 		if(products.length > 0) {
 			url += '&relatedProducts=' + this.stringifyArray(products);
 		}
@@ -223,9 +223,9 @@ export class BPEService {
             .catch(this.handleError);
 	}
 
-	getProcessInstanceGroups(partyId:string, collaborationRole: CollaborationRole, page: number, limit: number, archived: boolean, products: string[], categories: string[], partners: string[], status: string[]): Promise<CollaborationGroupResponse> {
+	getCollaborationGroups(partyId:string, collaborationRole: CollaborationRole, page: number, limit: number, archived: boolean, products: string[], categories: string[], partners: string[], status: string[]): Promise<CollaborationGroupResponse> {
 		let offset:number = page * limit;
-		let url:string = `${this.url}/group?partyID=${partyId}&collaborationRole=${collaborationRole}&offset=${offset}&limit=${limit}&archived=${archived}`;
+		let url:string = `${this.url}/collaboration-groups?partyID=${partyId}&collaborationRole=${collaborationRole}&offset=${offset}&limit=${limit}&archived=${archived}`;
 		if(products.length > 0) {
 			url += '&relatedProducts=' + this.stringifyArray(products);
 		}
@@ -246,7 +246,7 @@ export class BPEService {
 	}
 
 	deleteProcessInstanceGroup(groupId: string) {
-		const url = `${this.url}/group/${groupId}`;
+		const url = `${this.url}/process-instance-groups/${groupId}`;
 		return this.http
             .delete(url)
             .toPromise()
@@ -255,7 +255,7 @@ export class BPEService {
 	}
 
 	updateCollaborationGroupName(groupId:string,groupName:string){
-        const url = `${this.url}/group/collaboration/${groupId}?groupName=${groupName}`;
+        const url = `${this.url}/collaboration-groups/${groupId}?groupName=${groupName}`;
         return this.http
             .patch(url,null)
             .toPromise()
@@ -264,7 +264,7 @@ export class BPEService {
     }
 
     deleteCollaborationGroup(groupId: string) {
-        const url = `${this.url}/group/collaboration/${groupId}`;
+        const url = `${this.url}/collaboration-groups/${groupId}`;
         return this.http
             .delete(url)
             .toPromise()
@@ -273,7 +273,7 @@ export class BPEService {
     }
 
 	archiveCollaborationGroup(groupId: string){
-        const url = `${this.url}/group/collaboration/${groupId}/archive`;
+        const url = `${this.url}/collaboration-groups/${groupId}/archive`;
         return this.http
             .post(url, null)
             .toPromise()
@@ -282,7 +282,7 @@ export class BPEService {
 	}
 
     restoreCollaborationGroup(groupId: string) {
-    const url = `${this.url}/group/collaboration/${groupId}/restore`;
+    const url = `${this.url}/collaboration-groups/${groupId}/restore`;
     return this.http
         .post(url, null)
         .toPromise()
@@ -348,7 +348,7 @@ export class BPEService {
 
 	getOriginalOrderForProcess(processId: string): Promise<Order | null> {
 		const headers = this.getAuthorizedHeaders();
-		const url = `${this.url}/group/order-process?processInstanceId=${processId}`;
+		const url = `${this.url}/process-instance-groups/order-process?processInstanceId=${processId}`;
 		return this.http
             .get(url, { headers })
             .toPromise()
