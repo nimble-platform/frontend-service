@@ -37,8 +37,8 @@ export class AnalyticsService {
   		.catch(this.handleError);
   	}
 
-    getNonOrdered(comp:string): Promise<any> {
-      const url = `${this.url_bpe}/non-ordered?companyId=${comp}`;
+    getNonOrdered(partyId:string): Promise<any> {
+      const url = `${this.url_bpe}/non-ordered?partyId=${partyId}`;
       return this.http
   		.get(url, {headers: this.headers})
   		.toPromise()
