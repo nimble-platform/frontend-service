@@ -32,6 +32,15 @@
     </div>
 </div>
 
+<div *ngIf="parentCategories">
+    <span  *ngFor="let parentCat of parentCategories.parents;let l=last" >
+        <span class="btn-link" (click)="scrollToDiv(parentCat.code,$event)" style="cursor: pointer">{{parentCat.preferredName}}</span>
+        <span *ngIf="!l">
+             >>
+        </span>
+    </span>
+</div>
+
 <div class="row mt-4 d-flex">
     <div class="col-7 pr-0 pb-0">
 

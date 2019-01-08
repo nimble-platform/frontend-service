@@ -10,7 +10,7 @@ import { ProductPublishComponent } from "../publish/product-publish.component";
 import { CallStatus } from "../../common/call-status";
 import { sanitizeDataTypeName } from "../../common/utils";
 import { ParentCategories } from "../model/category/parent-categories";
-import { sortCategories } from "../../common/utils";
+import { sortCategories,scrollToDiv } from "../../common/utils";
 import { Property } from "../model/category/property";
 import * as myGlobals from '../../globals';
 import { AppComponent } from "../../app.component";
@@ -305,6 +305,7 @@ export class CategorySearchComponent implements OnInit {
         this.categoryService
             .getCategoriesByName(this.categoryKeyword, this.taxonomyId,this.isLogistics)
             .then(categories => {
+                this.parentCategories = null;
                 this.categories = categories;
                 this.getCategoriesStatus.callback("Successfully got search results", true);
             })
@@ -450,5 +451,9 @@ export class CategorySearchComponent implements OnInit {
         if(this.selectedTab == "TREE"){
             this.getRootCategories(this.taxonomyId == "All" ? "eClass" : this.taxonomyId);
         }
+    }
+
+    private scrollToDiv(divId:string,event:any){
+        scrollToDiv(divId);
     }
 }
