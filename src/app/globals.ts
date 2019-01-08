@@ -94,7 +94,7 @@ export const config = {
   "showTrack": true,
   "showTrade": true,
   "showVerification": true,
-  "standardTaxonomy": "eClass",
+  "standardTaxonomy": "All",
   "supportedActivitySectors": {
   	"": [],
   	"Logistics Provider": [],

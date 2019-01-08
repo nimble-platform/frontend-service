@@ -133,8 +133,11 @@ export class CategorySearchComponent implements OnInit {
         });
         // get available taxonomy ids
         this.categoryService.getAvailableTaxonomies().then(taxonomyIDs => {
-            this.taxonomyIDs = taxonomyIDs;
-            this.getRootCategories();
+            this.taxonomyIDs = ["All"];
+            for(let i = 0; i < taxonomyIDs.length;i++){
+                this.taxonomyIDs.push(taxonomyIDs[i]);
+            }
+            this.getRootCategories(this.taxonomyId == "All" ? "eClass" : this.taxonomyId);
         })
     }
 
@@ -273,15 +276,15 @@ export class CategorySearchComponent implements OnInit {
         this.treeView = !this.treeView;
     }
 
-    private getRootCategories(): any {
+    private getRootCategories(taxonomyId:string): any {
         this.getCategoriesStatus.submit();
         this.categoryService
-            .getRootCategories(this.taxonomyId)
+            .getRootCategories(taxonomyId)
             .then(rootCategories => {
                 this.rootCategories = sortCategories(rootCategories);
                 this.getCategoriesStatus.callback("Retrieved category details", true);
                 this.eClassLogisticsCategory = this.rootCategories.find(c => c.code === "14000000");
-                if(this.taxonomyId == "eClass"){
+                if(taxonomyId == "eClass"){
                     let searchIndex = this.findCategoryInArray(this.rootCategories, this.eClassLogisticsCategory);
                     this.rootCategories.splice(searchIndex, 1);
                 }
@@ -294,13 +297,13 @@ export class CategorySearchComponent implements OnInit {
     displayRootCategories(taxonomyId: string): void {
         this.treeView = true;
         this.taxonomyId = taxonomyId;
-        this.getRootCategories();
+        this.getRootCategories(this.taxonomyId == "All" ? "eClass" : this.taxonomyId);
     }
 
     private getCategories(): void {
         this.getCategoriesStatus.submit();
         this.categoryService
-            .getCategoriesByName(this.categoryKeyword, this.isLogistics)
+            .getCategoriesByName(this.categoryKeyword, this.taxonomyId,this.isLogistics)
             .then(categories => {
                 this.categories = categories;
                 this.getCategoriesStatus.callback("Successfully got search results", true);
@@ -441,8 +444,11 @@ export class CategorySearchComponent implements OnInit {
 
     private changeTaxonomyId(taxonomyId){
         this.taxonomyId = taxonomyId;
+        if(this.categoryKeyword){
+            this.getCategories();
+        }
         if(this.selectedTab == "TREE"){
-            this.getRootCategories();
+            this.getRootCategories(this.taxonomyId == "All" ? "eClass" : this.taxonomyId);
         }
     }
 }
