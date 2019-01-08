@@ -130,7 +130,7 @@ export class BPEService {
 	updateBusinessProcess(content: string, processID: string, processInstanceID: string): Promise<any> {
         const url = `${this.url}/processInstance?processID=${processID}&processInstanceID=${processInstanceID}&creatorUserID=${this.cookieService.get("user_id")}`;
         return this.http
-            .put(url, content,{headers: this.headers})
+            .put(url, content,{headers: this.getAuthorizedHeaders()})
             .toPromise()
             .then(res => res.text())
             .catch(this.handleError);
@@ -139,7 +139,7 @@ export class BPEService {
 	getProcessInstanceGroup(groupId: string){
 		let url:string = `${this.url}/process-instance-groups/${groupId}`;
 		return this.http
-            .get(url, {headers: this.headers})
+            .get(url, {headers: this.getAuthorizedHeaders()})
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
@@ -246,54 +246,59 @@ export class BPEService {
 	}
 
 	deleteProcessInstanceGroup(groupId: string) {
+        const token = 'Bearer '+this.cookieService.get("bearer_token");
 		const url = `${this.url}/process-instance-groups/${groupId}`;
 		return this.http
-            .delete(url)
+            .delete(url,{headers:new Headers({"Authorization":token})})
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
 	}
 
 	updateCollaborationGroupName(groupId:string,groupName:string){
+        const token = 'Bearer '+this.cookieService.get("bearer_token");
         const url = `${this.url}/collaboration-groups/${groupId}?groupName=${groupName}`;
         return this.http
-            .patch(url,null)
+            .patch(url,null,{headers:new Headers({"Authorization":token})})
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
     }
 
     deleteCollaborationGroup(groupId: string) {
+        const token = 'Bearer '+this.cookieService.get("bearer_token");
         const url = `${this.url}/collaboration-groups/${groupId}`;
         return this.http
-            .delete(url)
+            .delete(url,{headers:new Headers({"Authorization":token})})
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
     }
 
 	archiveCollaborationGroup(groupId: string){
+        const token = 'Bearer '+this.cookieService.get("bearer_token");
         const url = `${this.url}/collaboration-groups/${groupId}/archive`;
         return this.http
-            .post(url, null)
+            .post(url, null,{headers:new Headers({"Authorization":token})})
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
 	}
 
     restoreCollaborationGroup(groupId: string) {
-    const url = `${this.url}/collaboration-groups/${groupId}/restore`;
-    return this.http
-        .post(url, null)
-        .toPromise()
-        .then(res => res.json())
-        .catch(this.handleError);
+        const token = 'Bearer '+this.cookieService.get("bearer_token");
+	    const url = `${this.url}/collaboration-groups/${groupId}/restore`;
+        return this.http
+            .post(url, null,{headers:new Headers({"Authorization":token})})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
 }
 
 	constructContractForProcess(processInstancesId: string): Promise<Contract> {
 		const url = `${this.url}/contracts?processInstanceId=${processInstancesId}`;
 		return this.http
-            .get(url, {headers: this.headers})
+            .get(url, {headers: this.getAuthorizedHeaders()})
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
@@ -302,19 +307,21 @@ export class BPEService {
 	getClauseDetails(clauseId:string): Promise<Clause> {
 		const url = `${this.url}/clauses/${clauseId}`;
 		return this.http
-            .get(url, {headers: this.headers})
+            .get(url, {headers: this.getAuthorizedHeaders()})
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
 	}
 
 	downloadContractBundle(id: string): Promise<any> {
-        const url = `${this.url}/contracts/create-bundle?orderId=${id}`;
+        const token = 'Bearer '+this.cookieService.get("bearer_token");
+		const url = `${this.url}/contracts/create-bundle?orderId=${id}`;
         return new Promise<any>((resolve, reject) => {
             let xhr = new XMLHttpRequest();
 
             xhr.open('GET', url, true);
             xhr.setRequestHeader('Accept', 'application/zip');
+            xhr.setRequestHeader("Authorization",token);
             xhr.responseType = 'blob';
 
             xhr.onreadystatechange = function () {

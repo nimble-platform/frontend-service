@@ -8,6 +8,7 @@ import {ItemInformationResponse} from "../../catalogue/model/publish/item-inform
 import {ItemInformationRequest} from "../../catalogue/model/publish/item-information-request";
 import {BpUserRole} from "../model/bp-user-role";
 import {ActivityVariableParser} from "./activity-variable-parser";
+import {CookieService} from 'ng2-cookies';
 
 @Injectable()
 export class DocumentService {
@@ -15,7 +16,8 @@ export class DocumentService {
     private headers = new Headers({'Content-Type': 'application/json'});
     private url = myGlobals.bpe_endpoint;
     private mapOfDocument = new Map();
-    constructor(private http: Http) { }
+    constructor(private http: Http,
+                private cookieService: CookieService) { }
 
     getCachedDocument(documentID:string): Promise<any> {
         if (this.mapOfDocument.has(documentID)){
@@ -36,7 +38,7 @@ export class DocumentService {
     getDocumentJsonContent(documentId:string):Promise<any> {
         const url = `${this.url}/document/json/${documentId}`;
         return this.http
-            .get(url, {headers: this.headers})
+            .get(url, {headers: this.getAuthorizedHeaders()})
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
@@ -87,6 +89,13 @@ export class DocumentService {
             let role:BpUserRole = buyerId == partyId ? 'buyer' : 'seller';
             return Promise.resolve(role);
         });
+    }
+
+    private getAuthorizedHeaders(): Headers {
+        const token = 'Bearer '+this.cookieService.get("bearer_token");
+        const headers = new Headers({'Authorization': token});
+        this.headers.keys().forEach(header => headers.append(header, this.headers.get(header)));
+        return headers;
     }
 
     private handleError(error: any): Promise<any> {

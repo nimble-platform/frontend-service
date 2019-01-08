@@ -42,7 +42,7 @@ export class CatalogueService {
                 // using the party query the default catalogue
                 let url = this.baseUrl + `/catalogue/${party.id}/default`;
                 return this.http
-                    .get(url, {headers: this.headers})
+                    .get(url, {headers: this.getAuthorizedHeaders()})
                     .toPromise()
                     .then(res => {
                         if (res.status == 204) {
@@ -67,7 +67,7 @@ export class CatalogueService {
     getCatalogueLine(catalogueId:string, lineId:string):Promise<CatalogueLine> {
         const url = this.baseUrl + `/catalogue/${catalogueId}/catalogueline/${lineId}`;
         return this.http
-            .get(url, {headers: this.headers})
+            .get(url, {headers: this.getAuthorizedHeaders()})
             .toPromise()
             .then(res => {
                 return res.json() as CatalogueLine;
@@ -78,7 +78,7 @@ export class CatalogueService {
     addCatalogueLine(catalogueId:string,catalogueLineJson:string){
         const url = this.baseUrl + `/catalogue/${catalogueId}/catalogueline`;
         return this.http
-            .post(url,catalogueLineJson,{headers:this.headers})
+            .post(url,catalogueLineJson,{headers:this.getAuthorizedHeaders()})
             .toPromise()
             .catch(this.handleError);
     }
@@ -86,7 +86,7 @@ export class CatalogueService {
     updateCatalogueLine(catalogueId:string,catalogueLineJson:string){
         const url = this.baseUrl + `/catalogue/${catalogueId}/catalogueline`;
         return this.http
-            .put(url,catalogueLineJson,{headers:this.headers})
+            .put(url,catalogueLineJson,{headers:this.getAuthorizedHeaders()})
             .toPromise()
             .catch(this.handleError);
     }
@@ -94,7 +94,7 @@ export class CatalogueService {
     postCatalogue(catalogue: Catalogue): Promise<Catalogue> {
         const url = this.baseUrl + `/catalogue/ubl`;
         return this.http
-            .post(url, JSON.stringify(catalogue), {headers: this.headers})
+            .post(url, JSON.stringify(catalogue), {headers: this.getAuthorizedHeaders()})
             .toPromise()
             .then(res =>
                 this.catalogue = res.json() as Catalogue
@@ -105,15 +105,16 @@ export class CatalogueService {
     putCatalogue(catalogue: Catalogue): Promise<Catalogue> {
         const url = this.baseUrl + `/catalogue/ubl`;
         return this.http
-            .put(url, JSON.stringify(catalogue), {headers: this.headers})
+            .put(url, JSON.stringify(catalogue), {headers: this.getAuthorizedHeaders()})
             .toPromise()
             .catch(this.handleError);
     }
 
     deleteCatalogue():Promise<any> {
+        const token = 'Bearer '+this.cookieService.get("bearer_token");
         const url = this.baseUrl + `/catalogue/ubl/${this.catalogue.uuid}`;
         return this.http
-            .delete(url)
+            .delete(url,{headers:new Headers({"Authorization":token})})
             .toPromise()
             .catch(this.handleError);
     }
@@ -208,6 +209,7 @@ export class CatalogueService {
     }
 
     uploadZipPackage(pck:File): Promise<any> {
+        const token = 'Bearer '+this.cookieService.get("bearer_token");
         const url = this.baseUrl + `/catalogue/image/upload?catalogueUuid=${this.catalogue.uuid}`;
         return new Promise<any>((resolve, reject) => {
             let formData: FormData = new FormData();
@@ -227,14 +229,16 @@ export class CatalogueService {
             };
 
             xhr.open('POST', url, true);
+            xhr.setRequestHeader('Authorization', token);
             xhr.send(formData);
         });
     }
 
     deleteCatalogueLine(catalogueId:string, lineId:string):Promise<any> {
+        const token = 'Bearer '+this.cookieService.get("bearer_token");
         const url = this.baseUrl + `/catalogue/${catalogueId}/catalogueline/${lineId}`;
         return this.http
-            .delete(url)
+            .delete(url,{headers:new Headers({"Authorization":token})})
             .toPromise()
             .then(res => {
                 let deletedLineIndex = this.catalogue.catalogueLine.findIndex(line => line.id == lineId);
