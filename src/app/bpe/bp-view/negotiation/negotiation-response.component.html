@@ -78,8 +78,14 @@
 
 <div class="row content-row bg-light">
     <div class="col-3"><strong class="font-weight-500">Total Price:</strong></div>
-    <div class="col-3">{{ wrapper.lineTotalPriceString }}</div>
-    <div class="col-3">{{ wrapper.rfqTotalPriceStringIfNegotiating }}</div>
+    <div class="col-3">
+      {{ wrapper.lineTotalPriceString }}<br/>
+      <small>( {{ wrapper.linePricePerItemString }} )</small>
+    </div>
+    <div class="col-3">
+      {{ wrapper.rfqTotalPriceStringIfNegotiating }}<br/>
+      <small>( {{ wrapper.rfqPricePerItemStringIfNegotiating}} )</small>
+    </div>
     <div class="col-3" [ngClass]="wrapper.quotationPriceWrapper.appliedDiscounts.length > 0 ? 'd-flex' : null">
         <quantity-input [presentationMode]="getPresentationMode()" [disabled]="isLoading()"
             [quantity]="wrapper.quotationPriceWrapper" [quantityUnits]="CURRENCIES"
