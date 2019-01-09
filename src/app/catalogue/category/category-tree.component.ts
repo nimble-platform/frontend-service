@@ -30,6 +30,8 @@ export class CategoryTreeComponent implements OnInit {
 
     @Output() detailsEvent: EventEmitter<Category> = new EventEmitter();
 
+    private _scrollToDivId;
+
     constructor(public categoryService: CategoryService) {
     }
 
@@ -43,12 +45,20 @@ export class CategoryTreeComponent implements OnInit {
                 this.expanded = true;
                 this.childrenCategories = sortCategories(parentCategories.categories[this.level])
             }
-            setTimeout((()=>{
-                if(parentCategories && this.category.code === parentCategories.parents[this.level - 1].code && this.level === parentCategories.parents.length) {
-                    scrollToDiv(this.category.code);
-                }
-            }), 0)
         }
+    }
+
+    @Input() set scrollToDivId(divId){
+        this._scrollToDivId = divId;
+        setTimeout((()=>{
+            if(this.category.code === divId) {
+                scrollToDiv(this.category.code);
+            }
+        }), 0)
+    }
+
+    get scrollToDiv() {
+        return this._scrollToDivId;
     }
 
     get parentCategories(): ParentCategories {

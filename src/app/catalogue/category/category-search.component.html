@@ -32,8 +32,8 @@
     </div>
 </div>
 
-<div *ngIf="parentCategories">
-    <span  *ngFor="let parentCat of parentCategories.parents;let l=last" >
+<div *ngIf="pathToSelectedCategories">
+    <span  *ngFor="let parentCat of pathToSelectedCategories.parents;let l=last" >
         <span class="btn-link" (click)="scrollToDiv(parentCat.code,$event)" style="cursor: pointer">{{parentCat.preferredName}}</span>
         <span *ngIf="!l">
              >>
@@ -164,7 +164,7 @@
                           <ng-container *ngIf="eClassLogisticsCategory && !getCategoriesStatus.isDisplayed()">
                               <category-tree [category]="eClassLogisticsCategory" [border]="false" [parentCategories]="parentCategories" [numberOfSteps]="parentCategories ? parentCategories.parents.length-1 : 0"
                                   (detailsEvent)="getCategoryDetails($event,false)" [selectedCategory]="selectedCategory"
-                                  [selectedCategories]="selectedCategories"></category-tree>
+                                  [selectedCategories]="selectedCategories" [scrollToDivId]="scrollToDivId"></category-tree>
                           </ng-container>
                           <h5 *ngIf="!eClassLogisticsCategory" class="noLogisticCategory">No available category</h5>
                       </div>
@@ -176,7 +176,7 @@
                               <div *ngFor="let rootCategory of rootCategories">
                                   <category-tree [category]="rootCategory" [parentCategories]="parentCategories" [numberOfSteps]="parentCategories ? parentCategories.parents.length-1 : 0"
                                       (detailsEvent)="getCategoryDetails($event,false)" [selectedCategory]="selectedCategory"
-                                      [selectedCategories]="selectedCategories"></category-tree>
+                                      [selectedCategories]="selectedCategories" [scrollToDivId]="scrollToDivId"></category-tree>
                               </div>
                           </ng-container>
                       </div>
