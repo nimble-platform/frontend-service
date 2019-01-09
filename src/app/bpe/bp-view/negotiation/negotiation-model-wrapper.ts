@@ -25,7 +25,7 @@ export class NegotiationModelWrapper {
                 public rfq: RequestForQuotation,
                 public quotation: Quotation,
                 public settings: CompanyNegotiationSettings) {
-        
+
         this.rfqPaymentTerms = new PaymentTermsWrapper(rfq.paymentTerms);
         if(quotation) {
             this.quotationPaymentTerms = new PaymentTermsWrapper(quotation.paymentTerms);
@@ -82,6 +82,10 @@ export class NegotiationModelWrapper {
 
     public get rfqPricePerItemString(): string {
         return this.rfqPriceWrapper.pricePerItemString;
+    }
+
+    public get rfqPricePerItemStringIfNegotiating(): string {
+        return this.IfNegotiating(this.rfqPriceWrapper.pricePerItemString, this.rfq.negotiationOptions.price);
     }
 
     public get rfqTotalPrice(): number {
