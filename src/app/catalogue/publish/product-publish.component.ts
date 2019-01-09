@@ -1013,22 +1013,6 @@ export class ProductPublishComponent implements OnInit {
         }
     }
 
-    private downloadExampleTemplate() {
-        var reader = new FileReader();
-        this.catalogueService.downloadExampleTemplate()
-            .then(result => {
-                    var contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-                    var data = result.content;
-                    var fileName = result.fileName;
-                    var blob = new Blob([data],{type:contentType});
-                    saveAs(blob,fileName);
-                    this.publishStatus.callback("Download completed");
-                },
-                error => {
-                    this.publishStatus.error("Download failed");
-                });
-    }
-
     /**
      * Used to establish the two-way binding on the additional values of custom properties
      */

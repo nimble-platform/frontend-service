@@ -154,36 +154,11 @@ export class CatalogueService {
         });
     }
 
-    downloadExampleTemplate(): Promise<any> {
-        const url = this.baseUrl + `/catalogue/template/example`;
-        return new Promise<any>((resolve, reject) => {
-            let xhr = new XMLHttpRequest();
-            xhr.open('GET', url, true);
-            xhr.setRequestHeader('Accept', 'application/octet-stream');
-            xhr.responseType = 'blob';
-
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState === 4) {
-                    if (xhr.status === 200) {
-
-                        let contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-                        let blob = new Blob([xhr.response], {type: contentType});
-                        let fileName = xhr.getResponseHeader("Content-Disposition").split("=")[1];
-                        resolve({fileName: fileName, content: blob});
-                    } else {
-                        reject(xhr.status);
-                    }
-                }
-            }
-            xhr.send();
-        });
-    }
-
     uploadTemplate(userId: string, template: File, uploadMode:string): Promise<any> {
         const token = 'Bearer '+this.cookieService.get("bearer_token");
 
         return this.userService.getUserParty(userId).then(party => {
-            const url = this.baseUrl + `/catalogue/template/upload?partyId=${party.id}&partyName=${party.name}&uploadMode=${uploadMode}`;
+            const url = this.baseUrl + `/catalogue/template/upload?partyId=${party.id}&uploadMode=${uploadMode}`;
             return new Promise<any>((resolve, reject) => {
                 let formData: FormData = new FormData();
                 formData.append("file", template, template.name);
@@ -208,7 +183,8 @@ export class CatalogueService {
     }
 
     uploadZipPackage(pck:File): Promise<any> {
-        const url = this.baseUrl + `/catalogue/image/upload?catalogueUuid=${this.catalogue.uuid}`;
+        const token = 'Bearer '+this.cookieService.get("bearer_token");
+        const url = this.baseUrl + `/catalogue/${this.catalogue.uuid}/image/upload`;
         return new Promise<any>((resolve, reject) => {
             let formData: FormData = new FormData();
             formData.append("package", pck, pck.name);
@@ -227,6 +203,7 @@ export class CatalogueService {
             };
 
             xhr.open('POST', url, true);
+            xhr.setRequestHeader('Authorization', token);
             xhr.send(formData);
         });
     }
