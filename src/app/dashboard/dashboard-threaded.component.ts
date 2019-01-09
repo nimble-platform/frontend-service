@@ -272,7 +272,7 @@ export class DashboardThreadedComponent implements OnInit {
         if(query.archived) {
             // only one query needed
             return this.bpeService
-            .getProcessInstanceGroups(this.cookieService.get("company_id"),
+            .getCollaborationGroups(this.cookieService.get("company_id"),
                 query.collaborationRole, query.page - 1, query.pageSize, query.archived,
                 query.products, query.categories, query.partners,query.status)
             .then(response => {
@@ -287,12 +287,12 @@ export class DashboardThreadedComponent implements OnInit {
             // Needs to query for archived orders to know if the "Show Archived" button should be enabled
             return Promise.all([
                 // regular query
-                this.bpeService.getProcessInstanceGroups(this.cookieService.get("company_id"),
+                this.bpeService.getCollaborationGroups(this.cookieService.get("company_id"),
                     query.collaborationRole, query.page - 1, query.pageSize, query.archived,
                     query.products, query.categories, query.partners,query.status
                 ),
                 // query for archived orders
-                this.bpeService.getProcessInstanceGroups(this.cookieService.get("company_id"),
+                this.bpeService.getCollaborationGroups(this.cookieService.get("company_id"),
                     query.collaborationRole, 0, 1, true, [], [], [],[]
                 ),
             ]).then(([response, archived]) => {

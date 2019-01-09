@@ -10,7 +10,7 @@ import { ProductPublishComponent } from "../publish/product-publish.component";
 import { CallStatus } from "../../common/call-status";
 import { sanitizeDataTypeName } from "../../common/utils";
 import { ParentCategories } from "../model/category/parent-categories";
-import { sortCategories } from "../../common/utils";
+import { sortCategories,scrollToDiv } from "../../common/utils";
 import { Property } from "../model/category/property";
 import * as myGlobals from '../../globals';
 import { AppComponent } from "../../app.component";
@@ -70,6 +70,10 @@ export class CategorySearchComponent implements OnInit {
     productType: ProductType;
 
     favSelected: boolean;
+
+    scrollToDivId = null;
+    // stores the parents of the selected category. We need this since changing parentCategories in tree view results in some problems.
+    pathToSelectedCategories = null;
 
     constructor(
         private router: Router,
@@ -133,8 +137,11 @@ export class CategorySearchComponent implements OnInit {
         });
         // get available taxonomy ids
         this.categoryService.getAvailableTaxonomies().then(taxonomyIDs => {
-            this.taxonomyIDs = taxonomyIDs;
-            this.getRootCategories();
+            this.taxonomyIDs = ["All"];
+            for(let i = 0; i < taxonomyIDs.length;i++){
+                this.taxonomyIDs.push(taxonomyIDs[i]);
+            }
+            this.getRootCategories(this.taxonomyId == "All" ? "eClass" : this.taxonomyId);
         })
     }
 
@@ -257,6 +264,7 @@ export class CategorySearchComponent implements OnInit {
 
     onSearchCategory(): void {
         this.parentCategories = null;
+        this.pathToSelectedCategories = null;
         this.selectedCategoryWithDetails = null;
         this.treeView = false;
         this.router.navigate(["/catalogue/categorysearch"], {
@@ -273,15 +281,15 @@ export class CategorySearchComponent implements OnInit {
         this.treeView = !this.treeView;
     }
 
-    private getRootCategories(): any {
+    private getRootCategories(taxonomyId:string): any {
         this.getCategoriesStatus.submit();
         this.categoryService
-            .getRootCategories(this.taxonomyId)
+            .getRootCategories(taxonomyId)
             .then(rootCategories => {
                 this.rootCategories = sortCategories(rootCategories);
                 this.getCategoriesStatus.callback("Retrieved category details", true);
                 this.eClassLogisticsCategory = this.rootCategories.find(c => c.code === "14000000");
-                if(this.taxonomyId == "eClass"){
+                if(taxonomyId == "eClass"){
                     let searchIndex = this.findCategoryInArray(this.rootCategories, this.eClassLogisticsCategory);
                     this.rootCategories.splice(searchIndex, 1);
                 }
@@ -294,14 +302,16 @@ export class CategorySearchComponent implements OnInit {
     displayRootCategories(taxonomyId: string): void {
         this.treeView = true;
         this.taxonomyId = taxonomyId;
-        this.getRootCategories();
+        this.getRootCategories(this.taxonomyId == "All" ? "eClass" : this.taxonomyId);
     }
 
     private getCategories(): void {
         this.getCategoriesStatus.submit();
         this.categoryService
-            .getCategoriesByName(this.categoryKeyword, this.isLogistics)
+            .getCategoriesByName(this.categoryKeyword, this.taxonomyId,this.isLogistics)
             .then(categories => {
+                this.parentCategories = null;
+                this.pathToSelectedCategories = null;
                 this.categories = categories;
                 this.getCategoriesStatus.callback("Successfully got search results", true);
             })
@@ -354,7 +364,7 @@ export class CategorySearchComponent implements OnInit {
             });
     }
 
-    getCategoryTree(category: Category) {
+    getCategoryTree(category: Category,scrollToDivId = null) {
         this.selectedCategoryWithDetails = null;
         this.treeView = true;
         this.taxonomyId = category.taxonomyId;
@@ -366,9 +376,16 @@ export class CategorySearchComponent implements OnInit {
                     .getCategory(category)
                     .then(category => {
                         this.rootCategories = sortCategories(categories.categories[0]);
+                        if(!scrollToDivId){
+                            this.scrollToDivId = category.code;
+                        }
+                        else {
+                            this.scrollToDivId = scrollToDivId;
+                        }
                         this.selectedCategoryWithDetails = category;
                         this.selectedCategory = category;
                         this.parentCategories = categories; // parents categories
+                        this.pathToSelectedCategories = this.parentCategories;
                         this.selectedCategoriesWRTLevels = [];
                         for (let parent of this.parentCategories.parents) {
                             this.selectedCategoriesWRTLevels.push(parent.code);
@@ -419,8 +436,14 @@ export class CategorySearchComponent implements OnInit {
         this.categoryService
             .getCategory(category)
             .then(category => {
-                this.getCategoryDetailsStatus.callback("Retrieved details of the category", true);
-                this.selectedCategoryWithDetails = category;
+                this.categoryService.getParentCategories(category).then(parentCategories => {
+                    this.pathToSelectedCategories = parentCategories;
+                    this.getCategoryDetailsStatus.callback("Retrieved details of the category", true);
+                    this.selectedCategoryWithDetails = category;
+                }).catch(error => {
+                    this.getCategoryDetailsStatus.error("Failed to retrieved parents of the category",error);
+                })
+
             })
             .catch(error => {
                 this.getCategoryDetailsStatus.error("Failed to retrieved details of the category", error);
@@ -441,8 +464,23 @@ export class CategorySearchComponent implements OnInit {
 
     private changeTaxonomyId(taxonomyId){
         this.taxonomyId = taxonomyId;
-        if(this.selectedTab == "TREE"){
-            this.getRootCategories();
+        if(this.categoryKeyword){
+            this.getCategories();
         }
+        if(this.selectedTab == "TREE"){
+            this.getRootCategories(this.taxonomyId == "All" ? "eClass" : this.taxonomyId);
+        }
+    }
+
+    private scrollToDiv(divId:string,event:any){
+        //this.scrollToDivId = divId;
+        // if treeView is false,firstly we have to switch to tree view
+        if(!this.treeView){
+            this.getCategoryTree(this.selectedCategoryWithDetails,divId);
+        }
+        else{
+            scrollToDiv(divId);
+        }
+
     }
 }

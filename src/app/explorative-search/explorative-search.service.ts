@@ -42,10 +42,10 @@ export class ExplorativeSearchService {
     }
     // This is where the HTTP GET service is performed
     // for keyword search from user
-    searchData(term: string, lang: string): Promise<any> {
+    searchData(term: string, lang: string, user_id: string): Promise<any> {
         this.userLang = lang;
         // console.log('Search term for language: ' + lang + ' and used backend url ' + this.url);
-        let input = {'keyword': term, 'language': this.userLang};
+        let input = {'keyword': term, 'language': this.userLang, 'userID': user_id};
         return this.http.get(`${this.url}?inputAsJson=${JSON.stringify(input)}`)
             .toPromise()
             .then(res => res.json())

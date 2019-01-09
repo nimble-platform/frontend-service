@@ -19,8 +19,8 @@ export class CategoryService {
     constructor(private http: Http) {
     }
 
-    getCategoriesByName(keywords: string, isLogistics: boolean): Promise<Category[]> {
-        const url = `${this.baseUrl}?categoryNames=${keywords}&forLogistics=${isLogistics}`;
+    getCategoriesByName(keyword: string, taxonomyId: string,isLogistics: boolean): Promise<Category[]> {
+        const url = `${myGlobals.catalogue_endpoint}/catalogue/taxonomies/${taxonomyId}?name=${keyword}&forLogistics=${isLogistics}`;
         return this.http
             .get(url, {headers: this.headers})
             .toPromise()

@@ -119,7 +119,7 @@ export class BPEService {
 
     cancelCollaboration(groupId: string): Promise<any> {
         let headers = this.getAuthorizedHeaders();
-        const url = `${this.url}/group/${groupId}/cancel`;
+        const url = `${this.url}/process-instance-groups/${groupId}/cancel`;
         return this.http
             .post(url, null, {headers: headers})
             .toPromise()
@@ -130,16 +130,16 @@ export class BPEService {
 	updateBusinessProcess(content: string, processID: string, processInstanceID: string): Promise<any> {
         const url = `${this.url}/processInstance?processID=${processID}&processInstanceID=${processInstanceID}&creatorUserID=${this.cookieService.get("user_id")}`;
         return this.http
-            .put(url, content,{headers: this.headers})
+            .put(url, content,{headers: this.getAuthorizedHeaders()})
             .toPromise()
             .then(res => res.text())
             .catch(this.handleError);
 	}
 
 	getProcessInstanceGroup(groupId: string){
-		let url:string = `${this.url}/group/${groupId}`;
+		let url:string = `${this.url}/process-instance-groups/${groupId}`;
 		return this.http
-            .get(url, {headers: this.headers})
+            .get(url, {headers: this.getAuthorizedHeaders()})
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
@@ -163,8 +163,8 @@ export class BPEService {
 			})
 	}
 
-	getActionRequiredBuyer(companyId: string): Promise<any> {
-		const url = `${this.url}/statistics/total-number/business-process/action-required?archived=false&role=buyer&companyId=${companyId}`;
+	getActionRequiredBuyer(partyId: string): Promise<any> {
+		const url = `${this.url}/statistics/total-number/business-process/action-required?archived=false&role=buyer&partyId=${partyId}`;
 		return this.http
             .get(url, {headers: this.headers})
             .toPromise()
@@ -172,8 +172,8 @@ export class BPEService {
             .catch(this.handleError);
 	}
 
-	getActionRequiredSeller(companyId: string): Promise<any> {
-		const url = `${this.url}/statistics/total-number/business-process/action-required?archived=false&role=seller&companyId=${companyId}`;
+	getActionRequiredSeller(partyId: string): Promise<any> {
+		const url = `${this.url}/statistics/total-number/business-process/action-required?archived=false&role=seller&partyId=${partyId}`;
 		return this.http
             .get(url, {headers: this.headers})
             .toPromise()
@@ -203,7 +203,7 @@ export class BPEService {
 		categories: string[], partners: string[],status: string[]): Promise<ProcessInstanceGroupFilter> {
 		const headers = this.getAuthorizedHeaders();
 
-		let url: string = `${this.url}/group/filters?partyID=${partyId}&collaborationRole=${collaborationRole}&archived=${archived}`;
+		let url: string = `${this.url}/process-instance-groups/filters?partyId=${partyId}&collaborationRole=${collaborationRole}&archived=${archived}`;
 		if(products.length > 0) {
 			url += '&relatedProducts=' + this.stringifyArray(products);
 		}
@@ -223,9 +223,9 @@ export class BPEService {
             .catch(this.handleError);
 	}
 
-	getProcessInstanceGroups(partyId:string, collaborationRole: CollaborationRole, page: number, limit: number, archived: boolean, products: string[], categories: string[], partners: string[], status: string[]): Promise<CollaborationGroupResponse> {
+	getCollaborationGroups(partyId:string, collaborationRole: CollaborationRole, page: number, limit: number, archived: boolean, products: string[], categories: string[], partners: string[], status: string[]): Promise<CollaborationGroupResponse> {
 		let offset:number = page * limit;
-		let url:string = `${this.url}/group?partyID=${partyId}&collaborationRole=${collaborationRole}&offset=${offset}&limit=${limit}&archived=${archived}`;
+		let url:string = `${this.url}/collaboration-groups?partyId=${partyId}&collaborationRole=${collaborationRole}&offset=${offset}&limit=${limit}&archived=${archived}`;
 		if(products.length > 0) {
 			url += '&relatedProducts=' + this.stringifyArray(products);
 		}
@@ -246,54 +246,59 @@ export class BPEService {
 	}
 
 	deleteProcessInstanceGroup(groupId: string) {
-		const url = `${this.url}/group/${groupId}`;
+        const token = 'Bearer '+this.cookieService.get("bearer_token");
+		const url = `${this.url}/process-instance-groups/${groupId}`;
 		return this.http
-            .delete(url)
+            .delete(url,{headers:new Headers({"Authorization":token})})
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
 	}
 
 	updateCollaborationGroupName(groupId:string,groupName:string){
-        const url = `${this.url}/group/collaboration/${groupId}?groupName=${groupName}`;
+        const token = 'Bearer '+this.cookieService.get("bearer_token");
+        const url = `${this.url}/collaboration-groups/${groupId}?groupName=${groupName}`;
         return this.http
-            .patch(url,null)
+            .patch(url,null,{headers:new Headers({"Authorization":token})})
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
     }
 
     deleteCollaborationGroup(groupId: string) {
-        const url = `${this.url}/group/collaboration/${groupId}`;
+        const token = 'Bearer '+this.cookieService.get("bearer_token");
+        const url = `${this.url}/collaboration-groups/${groupId}`;
         return this.http
-            .delete(url)
+            .delete(url,{headers:new Headers({"Authorization":token})})
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
     }
 
 	archiveCollaborationGroup(groupId: string){
-        const url = `${this.url}/group/collaboration/${groupId}/archive`;
+        const token = 'Bearer '+this.cookieService.get("bearer_token");
+        const url = `${this.url}/collaboration-groups/${groupId}/archive`;
         return this.http
-            .post(url, null)
+            .post(url, null,{headers:new Headers({"Authorization":token})})
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
 	}
 
     restoreCollaborationGroup(groupId: string) {
-    const url = `${this.url}/group/collaboration/${groupId}/restore`;
-    return this.http
-        .post(url, null)
-        .toPromise()
-        .then(res => res.json())
-        .catch(this.handleError);
+        const token = 'Bearer '+this.cookieService.get("bearer_token");
+	    const url = `${this.url}/collaboration-groups/${groupId}/restore`;
+        return this.http
+            .post(url, null,{headers:new Headers({"Authorization":token})})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
 }
 
 	constructContractForProcess(processInstancesId: string): Promise<Contract> {
 		const url = `${this.url}/contracts?processInstanceId=${processInstancesId}`;
 		return this.http
-            .get(url, {headers: this.headers})
+            .get(url, {headers: this.getAuthorizedHeaders()})
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
@@ -302,19 +307,21 @@ export class BPEService {
 	getClauseDetails(clauseId:string): Promise<Clause> {
 		const url = `${this.url}/clauses/${clauseId}`;
 		return this.http
-            .get(url, {headers: this.headers})
+            .get(url, {headers: this.getAuthorizedHeaders()})
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
 	}
 
 	downloadContractBundle(id: string): Promise<any> {
-        const url = `${this.url}/contracts/create-bundle?orderId=${id}`;
+        const token = 'Bearer '+this.cookieService.get("bearer_token");
+		const url = `${this.url}/contracts/create-bundle?orderId=${id}`;
         return new Promise<any>((resolve, reject) => {
             let xhr = new XMLHttpRequest();
 
             xhr.open('GET', url, true);
             xhr.setRequestHeader('Accept', 'application/zip');
+            xhr.setRequestHeader("Authorization",token);
             xhr.responseType = 'blob';
 
             xhr.onreadystatechange = function () {
@@ -348,7 +355,7 @@ export class BPEService {
 
 	getOriginalOrderForProcess(processId: string): Promise<Order | null> {
 		const headers = this.getAuthorizedHeaders();
-		const url = `${this.url}/group/order-process?processInstanceId=${processId}`;
+		const url = `${this.url}/process-instance-groups/order-process?processInstanceId=${processId}`;
 		return this.http
             .get(url, { headers })
             .toPromise()
@@ -358,7 +365,7 @@ export class BPEService {
 
 	getRatings(partyId: string): Promise<any> {
 		const headers = this.getAuthorizedHeaders();
-		const url = `${this.url}/ratingsAndReviews?partyID=${partyId}`;
+		const url = `${this.url}/ratingsAndReviews?partyId=${partyId}`;
 		return this.http
             .get(url, {headers: headers})
             .toPromise()
@@ -368,7 +375,7 @@ export class BPEService {
 
 	getRatingsSummary(partyId: string): Promise<any> {
 		const headers = this.getAuthorizedHeaders();
-		const url = `${this.url}/ratingsSummary?partyID=${partyId}`;
+		const url = `${this.url}/ratingsSummary?partyId=${partyId}`;
 		return this.http
             .get(url, {headers: headers})
             .toPromise()
@@ -378,7 +385,7 @@ export class BPEService {
 
 	postRatings(partyId: string, processInstanceId: string, ratings: EvidenceSupplied[], reviews: Comment[]): Promise<any> {
 		const headers = this.getAuthorizedHeaders();
-		const url = `${this.url}/ratingsAndReviews?partyID=${partyId}&processInstanceID=${processInstanceId}&ratings=${encodeURIComponent(JSON.stringify(ratings))}&reviews=${encodeURIComponent(JSON.stringify(reviews))}`;
+		const url = `${this.url}/ratingsAndReviews?partyId=${partyId}&processInstanceID=${processInstanceId}&ratings=${encodeURIComponent(JSON.stringify(ratings))}&reviews=${encodeURIComponent(JSON.stringify(reviews))}`;
 		return this.http
             .post(url, null, {headers: headers})
             .toPromise()
