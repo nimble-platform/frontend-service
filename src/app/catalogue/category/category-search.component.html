@@ -48,9 +48,9 @@
         <div *ngIf="!treeView" class="border" style="height:55vh; overflow-x: hidden; overflow-y: scroll;">
             <table class="table table-hover mb-0">
                 <thead class="thead-light fixed">
-                    <th scope="col" style="color: #000;">Classification</th>
-                    <th scope="col" style="color: #000;">Name</th>
-                    <th scope="col" colspan="2" class="p-0 text-right"><button class="btn btn-secondary mb-1" (click)="toggleTreeView()">Browse</button></th>
+                    <th scope="col" style="color: #000;" class="p-3 border-top-0 border-bottom">Classification</th>
+                    <th scope="col" style="color: #000;" class="p-3 border-top-0 border-bottom">Name</th>
+                    <th scope="col" colspan="2" class="p-0 border-top-0 border-bottom text-right" style="vertical-align:top"><button class="btn btn-secondary my-2 mr-1" (click)="toggleTreeView()">Browse</button></th>
                 </thead>
                 <tbody>
                     <tr *ngIf="getCategoriesStatus.isDisplayed()">
@@ -76,17 +76,17 @@
         </div>
 
         <!-- Tree view activated -->
-        <div *ngIf="treeView" class="border" style="height:55vh; overflow-x: hidden; overflow-y: scroll;">
+        <div *ngIf="treeView" id="scrollDiv" class="border" style="height:55vh; overflow-x: hidden; overflow-y: scroll;">
             <div class="fixed" style="background-color: #e9ecef;">
-                <div class="row border">
+                <div class="row">
                     <div class="pr-0 col-3">
                         <div class="thead-light-equivalent">
-                            <p class="mb-0" style="padding: 0.50rem;">Categories</p>
+                            <p class="mb-0 p-3">Categories</p>
                         </div>
                     </div>
                     <div class="pl-0 col-9">
                         <div class="thead-light-equivalent">
-                            <button *ngIf="categories" class="btn btn-secondary float-right my-1 mr-1" (click)="toggleTreeView()">Back to Search Results</button>
+                            <button *ngIf="categories" class="btn btn-secondary float-right my-2 mr-1" (click)="toggleTreeView()">Back to Search Results</button>
                         </div>
                     </div>
                 </div>
