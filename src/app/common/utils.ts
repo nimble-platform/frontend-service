@@ -8,6 +8,7 @@ import { PropertyValueQualifier } from "../catalogue/model/publish/property-valu
 import { CUSTOM_PROPERTY_LIST_ID } from "../catalogue/model/constants";
 import { CatalogueLine } from "../catalogue/model/publish/catalogue-line";
 import {Amount} from "../catalogue/model/publish/amount";
+import {CookieService} from "ng2-cookies";
 
 const UI_NAMES: any = {
     STRING: "TEXT"
@@ -218,4 +219,10 @@ export function deepEquals(obj1: any, obj2: any): boolean {
     }
 
     return true;
+}
+
+export function getAuthorizedHeaders(cookieService: CookieService): Headers {
+    const token = 'Bearer '+this.cookieService.get("bearer_token");
+    const headers = new Headers({ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': token});
+    return headers;
 }

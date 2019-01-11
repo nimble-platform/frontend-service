@@ -1,13 +1,15 @@
 import {Injectable} from '@angular/core';
 import * as myGlobals from '../globals';
 import {Headers, Http} from '@angular/http';
+import {getAuthorizedHeaders} from "../common/utils";
+import {CookieService} from "ng2-cookies";
 
 @Injectable()
 export class UnitService{
-    private headers = new Headers({'Content-Type': 'application/json', 'Accept': 'application/json'});
     private baseUrl = myGlobals.catalogue_endpoint;
 
-    constructor(private http: Http) {
+    constructor(private http: Http,
+                private cookieService: CookieService) {
     }
 
     private map = null;
@@ -26,7 +28,7 @@ export class UnitService{
     getUnitList(unitListId): Promise<any> {
         let url = this.baseUrl + `/unit-lists/${unitListId}`;
         return this.http
-            .get(url, {headers: this.headers})
+            .get(url, {headers: getAuthorizedHeaders(this.cookieService)})
             .toPromise()
             .then(res => {
                 return res.json();
@@ -37,7 +39,7 @@ export class UnitService{
     getAllUnitList(): Promise<any>{
         let url = this.baseUrl + '/unit-lists';
         return this.http
-            .get(url, {headers: this.headers})
+            .get(url, {headers: getAuthorizedHeaders(this.cookieService)})
             .toPromise()
             .then(res => {
                 let unitLists = res.json();
@@ -55,7 +57,7 @@ export class UnitService{
     addUnitToList(unit,unitListId): Promise<any>{
         let url = this.baseUrl + `/unit-lists/${unitListId}?unit=${unit}`;
         return this.http
-            .patch(url, {headers: this.headers})
+            .patch(url, {headers: getAuthorizedHeaders(this.cookieService)})
             .toPromise()
             .then(res => {
                 let result = res.json();
@@ -69,7 +71,7 @@ export class UnitService{
     deleteUnitFromList(unit,unitListId): Promise<any>{
         let url = this.baseUrl + `/unit-lists/${unitListId}/unit/${unit}`;
         return this.http
-            .delete(url, {headers: this.headers})
+            .delete(url, {headers: getAuthorizedHeaders(this.cookieService)})
             .toPromise()
             .then(res => {
                 let result = res.json();
@@ -83,7 +85,7 @@ export class UnitService{
     addUnitList(units:string[],unitListId): Promise<any>{
         let url = this.baseUrl + `/unit-lists?unitListId=${unitListId}&units=${units}`;
         return this.http
-            .post(url, {headers: this.headers})
+            .post(url, {headers: getAuthorizedHeaders(this.cookieService)})
             .toPromise()
             .then(res => {
                 let result = res.json();
