@@ -52,13 +52,23 @@
     <!-- Welcome tab -->
     <div *ngIf="queryParameters.tab === TABS.WELCOME" class="row">
         <div class="col-12">
-            <h4 class="space-before text-center">Looks like you are new here.</h4>
-            <p class="space-before">This is your dashboard - it shows:</p>
-            <ul>
-                <li><strong>Purchases:</strong> the history of all your purchases</li>
-                <li><strong>Sales:</strong> the history of all your sales</li>
-                <li><strong>Catalogue:</strong> the list of all your published products / services</li>
-            </ul>
+            <h4 class="space-before mb-4 text-center">Looks like you are new here.</h4>
+            <div class="row mb-4 ">
+              <div class="col-6">
+                <p class="mb-1">This is your dashboard - it shows:</p>
+                <ul>
+                    <li><strong>Purchases:</strong> the history of all your purchases</li>
+                    <li><strong>Sales:</strong> the history of all your sales</li>
+                    <li><strong>Catalogue:</strong> the list of all your published products / services</li>
+                </ul>
+              </div>
+              <div class="col-6">
+                <p class="mb-1">In your Purchases and Sales the following statuses are possible:</p>
+                <div>
+                  <span class="badge badge-success">Step completed</span> <span class="badge badge-warning">Waiting for trading partner</span> <span class="badge badge-danger">Action required</span> <span class="badge badge-secondary">Step cancelled</span>
+                </div>
+              </div>
+            </div>
             <div class="row text-center">
                 <div *ngIf="this.appComponent.checkRoles('purchases')" class="col-6">
                     <p>If you are looking to <b>buy</b> Products / Services</p>
@@ -117,16 +127,16 @@
             <div class="row" *ngIf="results.resultCount > 0 || queryParameters['archived']">
                 <div class="col-12">
                     <div class="row space-before">
-                        <div class="col-5"></div>
+                        <div class="col-4"></div>
                         <!-- Pagination Info -->
-                        <div class="col-2 pagination justify-content-center">
+                        <div class="col-4 pagination justify-content-center">
                             <ngb-pagination [collectionSize]="results.resultCount" [pageSize]="query.pageSize" [(page)]="query.page"
                                 [maxSize]="query.pageSize" [boundaryLinks]="true" (pageChange)="onPageChange()">
                             </ngb-pagination>
                         </div>
-                        <div class="col-3"></div>
+                        <!--<div class="col-3"></div>-->
                         <!-- Show Archived Button -->
-                        <div class="col-2">
+                        <div class="col-4">
                             <button class="btn btn-secondary float-right"
                                 (click)="onToggleArchived()"
                                 [disabled]="!isToggleArchivedButtonEnabled()">

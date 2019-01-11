@@ -480,6 +480,7 @@ export class CategorySearchComponent implements OnInit {
         }
         else{
             scrollToDiv(divId);
+            document.getElementById("scrollDiv").scrollTop-=57;
         }
 
     }
