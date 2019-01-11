@@ -129,12 +129,14 @@ export class CatalogueService {
         taxonomyIds = taxonomyIds.substr(0, taxonomyIds.length-1);
 
         return this.userService.getUserParty(userId).then(party => {
-            const url = this.baseUrl + `/catalogue/template?partyId=${party.id}&partyName=${party.name}&categoryIds=${encodeURIComponent(categoryIds)}&taxonomyIds=${encodeURIComponent(taxonomyIds)}`;
+            const token = 'Bearer '+this.cookieService.get("bearer_token");
+            const url = this.baseUrl + `/catalogue/template?categoryIds=${encodeURIComponent(categoryIds)}&taxonomyIds=${encodeURIComponent(taxonomyIds)}`;
             return new Promise<any>((resolve, reject) => {
 
                 let xhr = new XMLHttpRequest();
                 xhr.open('GET', url, true);
                 xhr.setRequestHeader('Accept', 'application/octet-stream');
+                xhr.setRequestHeader('Authorization', token);
                 xhr.responseType = 'blob';
 
                 xhr.onreadystatechange = function () {
