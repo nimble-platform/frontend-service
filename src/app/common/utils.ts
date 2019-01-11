@@ -9,6 +9,7 @@ import { CUSTOM_PROPERTY_LIST_ID } from "../catalogue/model/constants";
 import { CatalogueLine } from "../catalogue/model/publish/catalogue-line";
 import {Amount} from "../catalogue/model/publish/amount";
 import {CookieService} from "ng2-cookies";
+import {Headers} from "@angular/http";
 
 const UI_NAMES: any = {
     STRING: "TEXT"
