@@ -12,7 +12,7 @@ import {CookieService} from "ng2-cookies";
 
 @Injectable()
 export class CategoryService {
-    private baseUrl = myGlobals.catalogue_endpoint + `/catalogue/category`;
+    private baseUrl = myGlobals.catalogue_endpoint;
 
     selectedCategories: Category[] = [];
 
@@ -21,7 +21,7 @@ export class CategoryService {
     }
 
     getCategoriesByName(keyword: string, taxonomyId: string,isLogistics: boolean): Promise<Category[]> {
-        const url = `${myGlobals.catalogue_endpoint}/catalogue/taxonomies/${taxonomyId}?name=${keyword}&forLogistics=${isLogistics}`;
+        const url = `${this.baseUrl}/taxonomies/${taxonomyId}/categories?name=${keyword}&forLogistics=${isLogistics}`;
         return this.http
             .get(url, {headers: getAuthorizedHeaders(this.cookieService)})
             .toPromise()
@@ -67,7 +67,7 @@ export class CategoryService {
             categoryIds += encodeURIComponent(codes[i].value);
             taxonomyIds += codes[i].listID;
 
-            url += "?taxonomyIds=" + taxonomyIds + "&categoryIds=" + categoryIds;
+            url += "/categories?taxonomyIds=" + taxonomyIds + "&categoryIds=" + categoryIds;
 
             return this.http
                 .get(url, {headers: getAuthorizedHeaders(this.cookieService)})
@@ -84,7 +84,7 @@ export class CategoryService {
     }
 
     getCategory(category: Category): Promise<Category> {
-        const url = `${this.baseUrl}?taxonomyIds=` + category.taxonomyId + `&categoryIds=` + encodeURIComponent(category.id);
+        const url = `${this.baseUrl}/categories?taxonomyIds=` + category.taxonomyId + `&categoryIds=` + encodeURIComponent(category.id);
         return this.http
             .get(url, {headers: getAuthorizedHeaders(this.cookieService)})
             .toPromise()
@@ -94,19 +94,8 @@ export class CategoryService {
             .catch(this.handleError);
     }
 
-    getCategoryByCode(code: Code): Promise<Category> {
-        const url = `${this.baseUrl}/` + code.listID + "/" + encodeURIComponent(code.value);
-        return this.http
-            .get(url, {headers: getAuthorizedHeaders(this.cookieService)})
-            .toPromise()
-            .then(res => {
-                return res.json() as Category;
-            })
-            .catch(this.handleError);
-    }
-
     getParentCategories(category: Category): Promise<ParentCategories>{
-        const url = `${this.baseUrl}/tree?taxonomyId=${category.taxonomyId}&categoryId=${encodeURIComponent(category.id)}`;
+        const url = `${this.baseUrl}/taxonomies/${category.taxonomyId}/categories/tree?categoryId=${encodeURIComponent(category.id)}`;
         return this.http
             .get(url, {headers: getAuthorizedHeaders(this.cookieService)})
             .toPromise()
@@ -125,7 +114,7 @@ export class CategoryService {
     }
 
     getRootCategories(taxonomyId: string): Promise<Category[]>{
-        const url = `${this.baseUrl}/${taxonomyId}/root-categories`;
+        const url = `${this.baseUrl}/taxonomies/${taxonomyId}/root-categories`;
         return this.http
             .get(url, {headers: getAuthorizedHeaders(this.cookieService)})
             .toPromise()
@@ -136,7 +125,7 @@ export class CategoryService {
     }
 
     getChildrenCategories(category: Category): Promise<Category[]>{
-        const url = `${this.baseUrl}/children-categories?taxonomyId=${category.taxonomyId}&categoryId=${encodeURIComponent(category.id)}`;
+        const url = `${this.baseUrl}/taxonomies/${category.taxonomyId}/categories/children-categories?categoryId=${encodeURIComponent(category.id)}`;
         return this.http
             .get(url, {headers: getAuthorizedHeaders(this.cookieService)})
             .toPromise()
@@ -147,7 +136,7 @@ export class CategoryService {
     }
 
     getAvailableTaxonomies(){
-        const url = `${this.baseUrl}/taxonomies`;
+        const url = `${this.baseUrl}/taxonomies/id`;
         return this.http
             .get(url, {headers: getAuthorizedHeaders(this.cookieService)})
             .toPromise()

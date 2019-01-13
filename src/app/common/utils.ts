@@ -223,7 +223,7 @@ export function deepEquals(obj1: any, obj2: any): boolean {
 }
 
 export function getAuthorizedHeaders(cookieService: CookieService): Headers {
-    const token = 'Bearer '+this.cookieService.get("bearer_token");
+    const token = 'Bearer '+cookieService.get("bearer_token");
     const headers = new Headers({ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': token});
     return headers;
 }
