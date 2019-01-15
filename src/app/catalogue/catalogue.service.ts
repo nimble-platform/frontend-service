@@ -45,15 +45,19 @@ export class CatalogueService {
                     .get(url, {headers: this.getAuthorizedHeaders()})
                     .toPromise()
                     .then(res => {
-                        if (res.status == 204) {
-                            // no default catalogue yet, create new one
-                            this.catalogue = new Catalogue("default", null, party, "", "", []);
-                        } else {
-                            this.catalogue = res.json() as Catalogue;
-                        }
+                        this.catalogue = res.json() as Catalogue;
                         return this.catalogue;
                     })
-                    .catch(this.handleError);
+                    .catch(res => {
+                        if (res.status == 404) {
+                            // no default catalogue yet, create new one
+                            this.catalogue = new Catalogue("default", null, party, "", "", []);
+                            return this.catalogue;
+
+                        } else {
+                            this.handleError(res.getBody());
+                        }
+                    });
             });
         } else {
             return Promise.resolve(this.catalogue);
