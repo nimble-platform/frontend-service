@@ -67,7 +67,7 @@ export class BPEService {
 
 			// if we have a precedingGroupId,then we need also a precedingProcessId
 			if(this.bpDataService.precedingProcessId == null){
-                url += '&precedingPid=' + this.searchContextService.associatedProcessMetadata.processId;
+                url += '&precedingPid=' + this.searchContextService.getAssociatedProcessMetadata().processId;
             }
 		}
 		return this.http

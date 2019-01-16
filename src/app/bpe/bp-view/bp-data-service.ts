@@ -128,7 +128,7 @@ export class BPDataService{
 
     setRelatedGroupId(id: string): void {
         if(id == null) {
-            if(this.searchContextService.associatedProcessType) {
+            if(this.searchContextService.getAssociatedProcessType()) {
                 this.precedingGroupId = this.relatedGroupId;
             }
             else {
@@ -147,7 +147,7 @@ export class BPDataService{
 
     setCollaborationGroupId(id: string): void{
         if(id == null) {
-            if(this.searchContextService.associatedProcessType == null) {
+            if(this.searchContextService.getAssociatedProcessType() == null) {
                 this.collaborationGroupId = null;
             }
         } else {
@@ -475,7 +475,7 @@ export class BPDataService{
 
     async initTransportExecutionPlanRequestWithOrder() {
         this.resetBpData();
-        await this.setBpMessages('Order', this.searchContextService.associatedProcessMetadata);
+        await this.setBpMessages('Order', this.searchContextService.getAssociatedProcessMetadata());
         let copyOrder:Order = copy(this.order);
         this.modifiedCatalogueLines = copy(this.catalogueLines);
         this.transportExecutionPlanRequest = UBLModelUtils.createTransportExecutionPlanRequestWithOrder(copyOrder, this.modifiedCatalogueLines[0]);
@@ -508,7 +508,7 @@ export class BPDataService{
     }
 
     resetBpData():void {
-        if(this.searchContextService.associatedProcessType == null) {
+        if(this.searchContextService.getAssociatedProcessType() == null) {
             this.setProcessType(null);
         }
         this.updatingProcess = false;

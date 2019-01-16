@@ -4,13 +4,27 @@ import { ThreadEventMetadata } from "../catalogue/model/publish/thread-event-met
 
 @Injectable()
 export class SearchContextService {
-	public targetPartyRole:string;
-	public associatedProcessType:string;
-	public associatedProcessMetadata:ThreadEventMetadata;
+	private targetPartyRole:string;
+	private associatedProcessType:string;
+	private associatedProcessMetadata:ThreadEventMetadata;
 
 	public clearSearchContext():void {
 		this.targetPartyRole = null;
 		this.associatedProcessType = null;
 		this.associatedProcessMetadata = null;
 	}
+
+	public setSearchContext(targetPartyRole:string, associatedProcessType:string,associatedProcessMetadata:ThreadEventMetadata):void{
+	    this.targetPartyRole = targetPartyRole;
+	    this.associatedProcessType = associatedProcessType;
+	    this.associatedProcessMetadata = associatedProcessMetadata;
+    }
+
+    public getAssociatedProcessType():string{
+	    return this.associatedProcessType;
+    }
+
+    public getAssociatedProcessMetadata():ThreadEventMetadata{
+	    return this.associatedProcessMetadata;
+    }
 }

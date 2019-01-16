@@ -183,9 +183,7 @@ export class ThreadSummaryComponent implements OnInit {
 
     navigateToSearchDetails() {
         const item = this.titleEvent.product;
-        this.searchContextService.associatedProcessMetadata = null;
-        this.searchContextService.associatedProcessType = null;
-        this.searchContextService.targetPartyRole = null;
+        this.searchContextService.clearSearchContext();
         this.router.navigate(['/product-details'],
             {
                 queryParams: {

@@ -48,7 +48,7 @@ export class TransportExecutionPlanComponent implements OnInit {
 
     ngOnInit() {
         if(!this.bpDataService.transportExecutionPlanRequest) {
-            if(this.searchContextService.associatedProcessMetadata != null) {
+            if(this.searchContextService.getAssociatedProcessMetadata() != null) {
                 this.bpDataService.initTransportExecutionPlanRequestWithOrder().then(response => {
                     this.init();
                 });
