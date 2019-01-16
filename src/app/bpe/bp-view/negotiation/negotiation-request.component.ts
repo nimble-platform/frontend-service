@@ -118,7 +118,7 @@ export class NegotiationRequestComponent implements OnInit {
         } else {
             // just go to order page
             this.bpDataService.initOrderWithRfq();
-            this.bpDataService.setBpOptionParameters("buyer", "Order", "Negotiation");
+            this.bpDataService.setBpOptionParameters("buyer", "Order");
         }
     }
 

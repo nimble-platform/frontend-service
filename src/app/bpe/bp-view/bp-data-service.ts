@@ -82,7 +82,6 @@ export class BPDataService{
     userRole: BpUserRole;
     processMetadata: ThreadEventMetadata;
     updatingProcess: boolean = false;
-    previousProcess: string;
     workflowOptions: BpWorkflowOptions;
 
     // variable to keep the business process instance group related to the new process being initiated
@@ -158,7 +157,7 @@ export class BPDataService{
 
     setBpOptionParametersWithProcessMetadata(userRole: BpUserRole, targetProcess: ProcessType, processMetadata: ThreadEventMetadata,updatingProcess: boolean): void {
         this.resetBpData();
-        this.setBpOptionParameters(userRole, targetProcess, null);
+        this.setBpOptionParameters(userRole, targetProcess);
         this.processMetadata = processMetadata;
         this.updatingProcess = updatingProcess;
         this.setBpMessages(this.processTypeSubject.getValue(), processMetadata);
@@ -253,8 +252,7 @@ export class BPDataService{
         }
     }
 
-    setBpOptionParameters(userRole: BpUserRole, targetProcess: ProcessType, previousProcess: ProcessType) {
-        this.previousProcess = previousProcess;
+    setBpOptionParameters(userRole: BpUserRole, targetProcess: ProcessType) {
         this.setProcessType(targetProcess);
         this.userRole = userRole;
     }
@@ -512,7 +510,6 @@ export class BPDataService{
     resetBpData():void {
         if(this.searchContextService.associatedProcessType == null) {
             this.setProcessType(null);
-            this.previousProcess = null;
         }
         this.updatingProcess = false;
         this.processMetadata = null;

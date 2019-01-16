@@ -255,14 +255,14 @@ export class OrderComponent implements OnInit {
     }
 
     onDispatchOrder() {
-        this.bpDataService.setBpOptionParameters(this.userRole, "Fulfilment", "Order");
+        this.bpDataService.setBpOptionParameters(this.userRole, "Fulfilment");
     }
 
     onSearchTransportService() {
         this.searchContextService.targetPartyRole = 'Transport Service Provider';
         this.searchContextService.associatedProcessType = 'Order';
         this.searchContextService.associatedProcessMetadata = this.bpDataService.processMetadata;
-        this.bpDataService.setBpOptionParameters('buyer', 'Transport_Execution_Plan',"Order");
+        this.bpDataService.setBpOptionParameters('buyer', 'Transport_Execution_Plan');
         this.router.navigate(['simple-search'], {
             queryParams: {
                 searchContext: 'orderbp',

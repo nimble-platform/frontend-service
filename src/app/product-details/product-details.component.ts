@@ -111,7 +111,7 @@ export class ProductDetailsComponent implements OnInit {
 
     private navigateToBusinessProcess(targetProcess: ProcessType): void {
         this.bpDataService.resetBpData();
-        this.bpDataService.setBpOptionParameters("buyer", targetProcess, null);
+        this.bpDataService.setBpOptionParameters("buyer", targetProcess);
         this.router.navigate(['bpe/bpe-exec'], {
             queryParams: {
                 catalogueId: this.catalogueId,
