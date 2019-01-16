@@ -106,15 +106,6 @@ export class ItemInformationResponseComponent implements OnInit {
             this.bpDataService.resetBpData();
             this.bpDataService.initItemInformationRequest();
         }
-
-        const params = this.route.snapshot.queryParams;
-        this.router.navigate(['bpe/bpe-exec'], {
-            queryParams: {
-                catalogueId: params.catalogueId,
-                id: params.id,
-                pid: params.pid
-            }
-        });
     }
 
     onSelectItemSpecificationFile(binaryObject: BinaryObject): void {

@@ -183,14 +183,5 @@ export class TransportExecutionPlanComponent implements OnInit {
     onDispatchAdvice() {
         this.bpDataService.initDispatchAdviceWithOrder();
         this.bpDataService.setBpOptionParameters("seller", "Fulfilment");
-
-        const params = this.route.snapshot.queryParams;
-        this.router.navigate(['bpe/bpe-exec'], {
-            queryParams: {
-                catalogueId: params.catalogueId,
-                id: params.id,
-                pid: params.pid
-            }
-        });
     }
 }
