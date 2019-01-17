@@ -31,7 +31,9 @@ export class ThreadEventComponent implements OnInit {
     }
 
     async openBpProcessView(updateProcess:boolean) {
-        this.bpDataService.setBpOptionParametersWithThreadEvent(this.event, updateProcess);
+        // whether we are updating the process instance or not
+        this.event.isBeingUpdated = updateProcess;
+        this.bpDataService.setBpOptionParametersWithThreadEvent(this.event);
         this.bpDataService.setContainerGroupId(this.processInstanceGroup.id);
         this.searchContextService.clearSearchContext();
         this.bpDataService.setCollaborationGroupId(this.collaborationGroupId);
