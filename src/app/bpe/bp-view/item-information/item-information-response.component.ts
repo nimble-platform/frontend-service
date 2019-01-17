@@ -16,6 +16,7 @@ import { ProcessType } from "../../model/process-type";
 import { PresentationMode } from "../../../catalogue/model/publish/presentation-mode";
 import { isTransportService } from "../../../common/utils";
 import {CookieService} from 'ng2-cookies';
+import {BpStartEvent} from '../../../catalogue/model/publish/bp-start-event';
 
 @Component({
     selector: "item-information-response",
@@ -100,7 +101,7 @@ export class ItemInformationResponseComponent implements OnInit {
 
     private navigateToBusinessProcess(targetProcess: ProcessType): void {
         this.bpDataService.resetBpData();
-        this.bpDataService.setBpOptionParameters("buyer", targetProcess);
+        this.bpDataService.startBp(new BpStartEvent("buyer", targetProcess));
 
         if(targetProcess === "Item_Information_Request") {
             this.bpDataService.resetBpData();
@@ -154,7 +155,7 @@ export class ItemInformationResponseComponent implements OnInit {
     }
 
     isBuyer(): boolean {
-        return this.bpDataService.userRole === "buyer";
+        return this.bpDataService.bpStartEvent.userRole === "buyer";
     }
 
     getRequestFile(): BinaryObject | null {

@@ -16,6 +16,7 @@ import { copy } from "../../../common/utils";
 import { Certificate } from "../../../user-mgmt/model/certificate";
 import {DocumentService} from '../document-service';
 import {DocumentReference} from '../../../catalogue/model/publish/document-reference';
+import {BpStartEvent} from '../../../catalogue/model/publish/bp-start-event';
 
 type PpapLevels = [boolean, boolean, boolean, boolean, boolean]
 
@@ -153,7 +154,7 @@ export class PpapDocumentSelectComponent implements OnInit {
     onSkip() {
         this.bpDataService.resetBpData();
         this.bpDataService.initRfq(this.bpDataService.getCompanySettings().negotiationSettings).then(() => {
-            this.bpDataService.setBpOptionParameters(this.bpDataService.userRole, "Negotiation");
+            this.bpDataService.startBp(new BpStartEvent(this.bpDataService.bpStartEvent.userRole, "Negotiation"));
         });
     }
 

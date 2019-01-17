@@ -38,7 +38,7 @@ export class ReceiptAdviceComponent implements OnInit {
     ngOnInit() {
         this.receiptAdvice = this.bpDataService.receiptAdvice;
         this.dispatchAdvice = this.bpDataService.despatchAdvice;
-        this.userRole = this.bpDataService.userRole;
+        this.userRole = this.bpDataService.bpStartEvent.userRole;
     }
 
     /*

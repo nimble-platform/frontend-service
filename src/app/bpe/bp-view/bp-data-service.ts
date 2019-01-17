@@ -39,6 +39,7 @@ import { CompanyNegotiationSettings } from "../../user-mgmt/model/company-negoti
 import { CompanySettings } from "../../user-mgmt/model/company-settings";
 import {DocumentService} from "./document-service";
 import {ShipmentStage} from "../../catalogue/model/publish/shipment-stage";
+import {BpStartEvent} from '../../catalogue/model/publish/bp-start-event';
 
 /**
  * Created by suat on 20-Sep-17.
@@ -79,7 +80,6 @@ export class BPDataService{
     // setBpOptionParameters method must be used to set these values
     private processTypeSubject: BehaviorSubject<ProcessType> = new BehaviorSubject<ProcessType>("Item_Information_Request");
     processTypeObservable = this.processTypeSubject.asObservable();
-    userRole: BpUserRole;
     processMetadata: ThreadEventMetadata;
     updatingProcess: boolean = false;
     workflowOptions: BpWorkflowOptions;
@@ -88,6 +88,8 @@ export class BPDataService{
     private containerGroupId: string;
     private collaborationGroupId: string;
     precedingProcessId: string;
+
+    bpStartEvent:BpStartEvent = new BpStartEvent();
 
     constructor(private searchContextService: SearchContextService,
                 private precedingBPDataService: PrecedingBPDataService,
@@ -146,7 +148,7 @@ export class BPDataService{
     setBpOptionParametersWithThreadEvent(processMetadata: ThreadEventMetadata): void {
         let userRole:BpUserRole = processMetadata.buyer ? "buyer": "seller";
         this.resetBpData();
-        this.setBpOptionParameters(userRole, processMetadata.processType);
+        this.startBp(new BpStartEvent(userRole,processMetadata.processType));
         this.processMetadata = processMetadata;
         this.updatingProcess = processMetadata.isBeingUpdated;
         this.setBpMessages(this.processTypeSubject.getValue(), processMetadata);
@@ -161,7 +163,7 @@ export class BPDataService{
             let quotationVariable = await this.documentService.getResponseDocument(activityVariables);
             if(quotationVariable == null) {
                 // initialize the quotation only if the user is in seller role
-                if(this.userRole == 'seller') {
+                if(this.bpStartEvent.userRole == 'seller') {
                     this.quotation = copy(UBLModelUtils.createQuotation(this.requestForQuotation));
                 }
 
@@ -177,7 +179,7 @@ export class BPDataService{
             let orderResponseVariable = await this.documentService.getResponseDocument(activityVariables);
             if(orderResponseVariable == null) {
                 // initialize the order response only if the user is in seller role
-                if(this.userRole == 'seller') {
+                if(this.bpStartEvent.userRole == 'seller') {
                     this.orderResponse = UBLModelUtils.createOrderResponseSimple(this.order, true);
                 }
 
@@ -191,7 +193,7 @@ export class BPDataService{
 
             let ppapResponseVariable = await this.documentService.getResponseDocument(activityVariables);
             if(ppapResponseVariable == null) {
-                if (this.userRole == 'seller') {
+                if (this.bpStartEvent.userRole == 'seller') {
                     this.ppapResponse = UBLModelUtils.createPpapResponse(this.ppap, true);
                 }
             }
@@ -205,7 +207,7 @@ export class BPDataService{
             let receiptAdviceVariable = await this.documentService.getResponseDocument(activityVariables);
             if(receiptAdviceVariable == null) {
                 // initialize the quotation only if the user is in seller role
-                if(this.userRole == 'buyer') {
+                if(this.bpStartEvent.userRole == 'buyer') {
                     this.receiptAdvice = UBLModelUtils.createReceiptAdvice(this.despatchAdvice);
                 }
 
@@ -218,7 +220,7 @@ export class BPDataService{
 
             let transportExecutionPlanVariable = await this.documentService.getResponseDocument(activityVariables);
             if(transportExecutionPlanVariable == null) {
-                if(this.userRole == 'seller') {
+                if(this.bpStartEvent.userRole == 'seller') {
                     this.transportExecutionPlan = UBLModelUtils.createTransportExecutionPlan(this.transportExecutionPlanRequest);
                 }
 
@@ -231,7 +233,7 @@ export class BPDataService{
 
             let itemInformationResponseVariable = await this.documentService.getResponseDocument(activityVariables);
             if(itemInformationResponseVariable == null) {
-                if(this.userRole == 'seller') {
+                if(this.bpStartEvent.userRole == 'seller') {
                     this.itemInformationResponse = UBLModelUtils.createItemInformationResponse(this.itemInformationRequest);
                 }
 
@@ -241,9 +243,9 @@ export class BPDataService{
         }
     }
 
-    setBpOptionParameters(userRole: BpUserRole, targetProcess: ProcessType) {
-        this.setProcessType(targetProcess);
-        this.userRole = userRole;
+    startBp(bpStartEvent:BpStartEvent){
+        this.bpStartEvent = bpStartEvent;
+        this.setProcessType(this.bpStartEvent.processType);
     }
 
     // this method is supposed to be called when the user is about to initialize a business process via the

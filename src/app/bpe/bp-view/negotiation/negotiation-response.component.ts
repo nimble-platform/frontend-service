@@ -16,6 +16,7 @@ import { Quantity } from "../../../catalogue/model/publish/quantity";
 import { BpUserRole } from "../../model/bp-user-role";
 import {CookieService} from 'ng2-cookies';
 import {DiscountModalComponent} from '../../../product-details/discount-modal.component';
+import {BpStartEvent} from '../../../catalogue/model/publish/bp-start-event';
 
 @Component({
     selector: "negotiation-response",
@@ -58,7 +59,7 @@ export class NegotiationResponseComponent implements OnInit {
         // we set quotationPriceWrapper's presentationMode to be sure that the total price of quotation response will not be changed
         this.wrapper.quotationPriceWrapper.presentationMode = this.getPresentationMode();
 
-        this.userRole = this.bpDataService.userRole;
+        this.userRole = this.bpDataService.bpStartEvent.userRole;
     }
 
     onBack(): void {
@@ -94,12 +95,12 @@ export class NegotiationResponseComponent implements OnInit {
 
     onRequestNewQuotation() {
         this.bpDataService.initRfqWithQuotation();
-        this.bpDataService.setBpOptionParameters("buyer", "Negotiation");
+        this.bpDataService.startBp(new BpStartEvent("buyer", "Negotiation"));
     }
 
     onAcceptAndOrder() {
         this.bpDataService.initOrderWithQuotation();
-        this.bpDataService.setBpOptionParameters("buyer", "Order");
+        this.bpDataService.startBp(new BpStartEvent("buyer", "Order"));
     }
 
     /*

@@ -16,6 +16,7 @@ import { ProcessInstanceInputMessage } from "../../model/process-instance-input-
 import { BPEService } from "../../bpe.service";
 import {CookieService} from 'ng2-cookies';
 import {ItemPriceWrapper} from '../../../common/item-price-wrapper';
+import {BpStartEvent} from '../../../catalogue/model/publish/bp-start-event';
 
 @Component({
     selector: "transport-negotiation-response",
@@ -67,7 +68,7 @@ export class TransportNegotiationResponseComponent implements OnInit {
         this.quotationPrice.quantityPrice = new ItemPriceWrapper(this.quotation.quotationLine[0].lineItem.price);
         this.quotationPaymentTerms = new PaymentTermsWrapper(this.quotation.paymentTerms);
 
-        this.userRole = this.bpDataService.userRole;
+        this.userRole = this.bpDataService.bpStartEvent.userRole;
     }
 
     isDisabled(): boolean {
@@ -119,11 +120,11 @@ export class TransportNegotiationResponseComponent implements OnInit {
 
     onRequestNewQuotation() {
         this.bpDataService.initRfqWithQuotation();
-        this.bpDataService.setBpOptionParameters("buyer", "Negotiation");
+        this.bpDataService.startBp(new BpStartEvent("buyer", "Negotiation"));
     }
 
     onAcceptAndOrder() {
         this.bpDataService.initTransportExecutionPlanRequestWithQuotation();
-        this.bpDataService.setBpOptionParameters(this.userRole,'Transport_Execution_Plan');
+        this.bpDataService.startBp(new BpStartEvent(this.userRole,'Transport_Execution_Plan'));
     }
 }

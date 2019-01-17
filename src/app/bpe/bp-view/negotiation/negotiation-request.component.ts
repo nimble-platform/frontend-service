@@ -23,6 +23,7 @@ import { Option } from "../../../common/options-input.component";
 import { addressToString } from "../../../user-mgmt/utils";
 import {DocumentService} from '../document-service';
 import {DiscountModalComponent} from '../../../product-details/discount-modal.component';
+import {BpStartEvent} from '../../../catalogue/model/publish/bp-start-event';
 
 @Component({
     selector: "negotiation-request",
@@ -118,7 +119,7 @@ export class NegotiationRequestComponent implements OnInit {
         } else {
             // just go to order page
             this.bpDataService.initOrderWithRfq();
-            this.bpDataService.setBpOptionParameters("buyer", "Order");
+            this.bpDataService.startBp(new BpStartEvent("buyer", "Order"))
         }
     }
 

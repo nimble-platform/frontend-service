@@ -15,6 +15,7 @@ import { UserService } from "../user-mgmt/user.service";
 import { CompanySettings } from "../user-mgmt/model/company-settings";
 import {Quantity} from '../catalogue/model/publish/quantity';
 import {DiscountModalComponent} from './discount-modal.component';
+import {BpStartEvent} from '../catalogue/model/publish/bp-start-event';
 
 @Component({
     selector: 'product-details',
@@ -77,7 +78,7 @@ export class ProductDetailsComponent implements OnInit {
                         this.wrapper = new ProductWrapper(this.line, settings.negotiationSettings,this.priceWrapper.quantity);
                         this.bpDataService.resetBpData();
                         this.bpDataService.setCatalogueLines([this.line], [settings]);
-                        this.bpDataService.userRole = 'buyer';
+                        this.bpDataService.bpStartEvent.userRole = 'buyer';
                         this.bpDataService.workflowOptions = this.options;
                         this.bpDataService.setContainerGroupId(null);
                         this.bpDataService.setCollaborationGroupId(null);
@@ -111,7 +112,7 @@ export class ProductDetailsComponent implements OnInit {
 
     private navigateToBusinessProcess(targetProcess: ProcessType): void {
         this.bpDataService.resetBpData();
-        this.bpDataService.setBpOptionParameters("buyer", targetProcess);
+        this.bpDataService.startBp(new BpStartEvent("buyer", targetProcess));
         this.router.navigate(['bpe/bpe-exec'], {
             queryParams: {
                 catalogueId: this.catalogueId,

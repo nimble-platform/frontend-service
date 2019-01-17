@@ -8,6 +8,7 @@ import {DocumentReference} from "../../../catalogue/model/publish/document-refer
 import { Location } from "@angular/common";
 import { BinaryObject } from "../../../catalogue/model/publish/binary-object";
 import {DocumentService} from "../document-service";
+import {BpStartEvent} from '../../../catalogue/model/publish/bp-start-event';
 
 interface UploadedDocuments {
     [doc: string]: BinaryObject[];
@@ -89,7 +90,7 @@ export class PpapDocumentDownloadComponent{
     }
 
     isBuyer(): boolean {
-        return this.bpDataService.userRole === "buyer";
+        return this.bpDataService.bpStartEvent.userRole === "buyer";
     }
 
     onBack() {
@@ -99,7 +100,7 @@ export class PpapDocumentDownloadComponent{
     onNextStep() {
         this.bpDataService.resetBpData();
         this.bpDataService.initRfq(null).then(() => {
-            this.bpDataService.setBpOptionParameters(this.bpDataService.userRole, "Negotiation");
+            this.bpDataService.startBp(new BpStartEvent(this.bpDataService.bpStartEvent.userRole, "Negotiation"));
         })
     }
 

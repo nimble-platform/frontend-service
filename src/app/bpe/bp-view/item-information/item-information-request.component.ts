@@ -19,6 +19,7 @@ import { ProcessInstanceInputMessage } from "../../model/process-instance-input-
 import { copy, isTransportService } from "../../../common/utils";
 import { PresentationMode } from "../../../catalogue/model/publish/presentation-mode";
 import {DocumentService} from '../document-service';
+import {BpStartEvent} from '../../../catalogue/model/publish/bp-start-event';
 /**
  * Created by suat on 19-Nov-17.
  */
@@ -67,11 +68,11 @@ export class ItemInformationRequestComponent implements OnInit {
         if(isTransportService(this.bpDataService.getCatalogueLine()) || !this.bpDataService.getCompanySettings().tradeDetails.ppapCompatibilityLevel) {
             // skip ppap
             this.bpDataService.initRfq(this.bpDataService.getCompanySettings().negotiationSettings).then(() => {
-                this.bpDataService.setBpOptionParameters(this.bpDataService.userRole, "Negotiation");
+                this.bpDataService.startBp(new BpStartEvent(this.bpDataService.bpStartEvent.userRole,"Negotiation"));
             });
         } else {
             this.bpDataService.initPpap([]);
-            this.bpDataService.setBpOptionParameters(this.bpDataService.userRole, "Ppap");
+            this.bpDataService.startBp(new BpStartEvent(this.bpDataService.bpStartEvent.userRole, "Ppap"));
         }
     }
 

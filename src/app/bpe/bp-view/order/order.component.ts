@@ -27,6 +27,7 @@ import { SearchContextService } from "../../../simple-search/search-context.serv
 import { EpcCodes } from "../../../data-channel/model/epc-codes";
 import { EpcService } from "../epc-service";
 import {DocumentService} from "../document-service";
+import {BpStartEvent} from '../../../catalogue/model/publish/bp-start-event';
 
 /**
  * Created by suat on 20-Sep-17.
@@ -83,7 +84,7 @@ export class OrderComponent implements OnInit {
         this.order = this.bpDataService.order;
         this.address = this.order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address;
         this.paymentTermsWrapper = new PaymentTermsWrapper(this.order.paymentTerms);
-        this.userRole = this.bpDataService.userRole;
+        this.userRole = this.bpDataService.bpStartEvent.userRole;
         this.orderResponse = this.bpDataService.orderResponse;
         this.priceWrapper = new PriceWrapper(
             this.order.orderLine[0].lineItem.price,
@@ -255,7 +256,7 @@ export class OrderComponent implements OnInit {
     }
 
     onDispatchOrder() {
-        this.bpDataService.setBpOptionParameters(this.userRole, "Fulfilment");
+        this.bpDataService.startBp(new BpStartEvent(this.userRole, "Fulfilment"));
     }
 
     onSearchTransportService() {

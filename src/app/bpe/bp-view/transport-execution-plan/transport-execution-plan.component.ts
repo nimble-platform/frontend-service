@@ -18,6 +18,7 @@ import { copy } from "../../../common/utils";
 import { Order } from "../../../catalogue/model/publish/order";
 import { PresentationMode } from "../../../catalogue/model/publish/presentation-mode";
 import {DocumentService} from '../document-service';
+import {BpStartEvent} from '../../../catalogue/model/publish/bp-start-event';
 
 @Component({
     selector: "transport-execution-plan",
@@ -66,7 +67,7 @@ export class TransportExecutionPlanComponent implements OnInit {
         this.request = this.bpDataService.transportExecutionPlanRequest;
         this.response = this.bpDataService.transportExecutionPlan;
         this.productOrder = this.bpDataService.productOrder;
-        this.userRole = this.bpDataService.userRole;
+        this.userRole = this.bpDataService.bpStartEvent.userRole;
         this.updatingProcess = this.bpDataService.updatingProcess;
 
         if(this.request.transportContract == null && this.bpDataService.precedingProcessId != null) {
@@ -182,6 +183,6 @@ export class TransportExecutionPlanComponent implements OnInit {
 
     onDispatchAdvice() {
         this.bpDataService.initDispatchAdviceWithOrder();
-        this.bpDataService.setBpOptionParameters("seller", "Fulfilment");
+        this.bpDataService.startBp(new BpStartEvent("seller", "Fulfilment"));
     }
 }

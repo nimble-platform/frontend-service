@@ -163,7 +163,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     }
 
     private getOriginalOrder(): Promise<Order | null> {
-        if(this.bpDataService.userRole === "seller") {
+        if(this.bpDataService.bpStartEvent.userRole === "seller") {
             return Promise.resolve(null);
         }
         if(this.searchContextService.getAssociatedProcessMetadata()) {
@@ -222,7 +222,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
 
     private getStepsDisplayMode(): ProductBpStepsDisplay {
         if(this.isTransportService()) {
-            if(this.bpDataService.userRole === "seller") {
+            if(this.bpDataService.bpStartEvent.userRole === "seller") {
                 // The service provider only sees transport steps
                 return "Transport";
             } else if(!this.originalOrder) {
@@ -232,7 +232,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                 return "Transport_After_Order";
             }
         } else {
-            if(this.bpDataService.userRole === "seller") {
+            if(this.bpDataService.bpStartEvent.userRole === "seller") {
                 return "Order_Before_Transport";
             } else {
                 return "Order";
