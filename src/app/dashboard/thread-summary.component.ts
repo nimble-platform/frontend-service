@@ -93,7 +93,7 @@ export class ThreadSummaryComponent implements OnInit {
     }
 
     async openBpProcessView() {
-        this.bpDataService.setBpOptionParametersWithThreadEvent(this.titleEvent.processType, this.titleEvent, false);
+        this.bpDataService.setBpOptionParametersWithThreadEvent(this.titleEvent, false);
         this.bpDataService.setContainerGroupId(this.processInstanceGroup.id);
         this.searchContextService.clearSearchContext();
         this.bpDataService.setCollaborationGroupId(this.collaborationGroupId);

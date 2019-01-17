@@ -143,10 +143,10 @@ export class BPDataService{
         }
     }
 
-    setBpOptionParametersWithThreadEvent(targetProcess: ProcessType, processMetadata: ThreadEventMetadata, updatingProcess: boolean): void {
+    setBpOptionParametersWithThreadEvent(processMetadata: ThreadEventMetadata, updatingProcess: boolean): void {
         let userRole:BpUserRole = processMetadata.buyer ? "buyer": "seller";
         this.resetBpData();
-        this.setBpOptionParameters(userRole, targetProcess);
+        this.setBpOptionParameters(userRole, processMetadata.processType);
         this.processMetadata = processMetadata;
         this.updatingProcess = updatingProcess;
         this.setBpMessages(this.processTypeSubject.getValue(), processMetadata);
