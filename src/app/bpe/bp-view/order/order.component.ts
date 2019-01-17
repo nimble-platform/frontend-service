@@ -259,7 +259,7 @@ export class OrderComponent implements OnInit {
     }
 
     onSearchTransportService() {
-        this.searchContextService.setSearchContext('Transport Service Provider','Order',this.bpDataService.processMetadata,this.bpDataService.getRelatedGroupId());
+        this.searchContextService.setSearchContext('Transport Service Provider','Order',this.bpDataService.processMetadata,this.bpDataService.getContainerGroupId());
         this.router.navigate(['simple-search'], {
             queryParams: {
                 searchContext: 'orderbp',

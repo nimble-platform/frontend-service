@@ -79,7 +79,7 @@ export class ProductDetailsComponent implements OnInit {
                         this.bpDataService.setCatalogueLines([this.line], [settings]);
                         this.bpDataService.userRole = 'buyer';
                         this.bpDataService.workflowOptions = this.options;
-                        this.bpDataService.setRelatedGroupId(null);
+                        this.bpDataService.setContainerGroupId(null);
                         this.bpDataService.setCollaborationGroupId(null);
                         this.getProductStatus.callback("Retrieved product details", true);
                     })

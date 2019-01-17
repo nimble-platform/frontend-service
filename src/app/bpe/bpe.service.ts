@@ -35,11 +35,11 @@ export class BPEService {
 	startBusinessProcess(piim:ProcessInstanceInputMessage):Promise<ProcessInstance> {
 		const headers = this.getAuthorizedHeaders();
 		let url = `${this.url}/start`;
-		if(this.bpDataService.getRelatedGroupId() != null) {
-			url += '?gid=' + this.bpDataService.getRelatedGroupId();
+		if(this.bpDataService.getContainerGroupId() != null) {
+			url += '?gid=' + this.bpDataService.getContainerGroupId();
 		}
 		if(this.bpDataService.precedingProcessId != null) {
-			if(this.bpDataService.getRelatedGroupId() != null) {
+			if(this.bpDataService.getContainerGroupId() != null) {
 				url += '&';
 			} else {
 				url += '?';
@@ -47,7 +47,7 @@ export class BPEService {
 			url += 'precedingPid=' + this.bpDataService.precedingProcessId;
 		}
 		if(this.bpDataService.getCollaborationId() != null){
-			if(this.bpDataService.getRelatedGroupId() != null || this.bpDataService.precedingProcessId != null){
+			if(this.bpDataService.getContainerGroupId() != null || this.bpDataService.precedingProcessId != null){
 			    url += '&';
             }
             else {
@@ -57,7 +57,7 @@ export class BPEService {
 		}
 
 		if(this.searchContextService.getPrecedingGroupId() != null){
-			if(this.bpDataService.getRelatedGroupId() != null || this.bpDataService.precedingProcessId != null || this.bpDataService.getCollaborationId() != null){
+			if(this.bpDataService.getContainerGroupId() != null || this.bpDataService.precedingProcessId != null || this.bpDataService.getCollaborationId() != null){
 				url += '&';
 			}
 			else {
@@ -84,11 +84,11 @@ export class BPEService {
 	continueBusinessProcess(piim:ProcessInstanceInputMessage):Promise<ProcessInstance> {
 		const headers = this.getAuthorizedHeaders();
 		let url = `${this.url}/continue`;
-		if(this.bpDataService.getRelatedGroupId() != null) {
-			url += '?gid=' + this.bpDataService.getRelatedGroupId();
+		if(this.bpDataService.getContainerGroupId() != null) {
+			url += '?gid=' + this.bpDataService.getContainerGroupId();
 		}
 		if(this.bpDataService.getCollaborationId() != null){
-			if(this.bpDataService.getRelatedGroupId() != null){
+			if(this.bpDataService.getContainerGroupId() != null){
 				url += '&collaborationGID=' + this.bpDataService.getCollaborationId();
 			}
 			else {

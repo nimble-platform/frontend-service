@@ -84,8 +84,8 @@ export class BPDataService{
     updatingProcess: boolean = false;
     workflowOptions: BpWorkflowOptions;
 
-    // variable to keep the business process instance group related to the new process being initiated
-    private relatedGroupId: string;
+    // identifier of the business process instance group which contains the new process being initiated
+    private containerGroupId: string;
     private collaborationGroupId: string;
     precedingProcessId: string;
 
@@ -121,12 +121,12 @@ export class BPDataService{
         return this.companySettings[0];
     }
 
-    getRelatedGroupId(): string {
-        return this.relatedGroupId;
+    getContainerGroupId(): string {
+        return this.containerGroupId;
     }
 
-    setRelatedGroupId(id: string): void {
-        this.relatedGroupId = id;
+    setContainerGroupId(id: string): void {
+        this.containerGroupId = id;
     }
 
     getCollaborationId(): string{
