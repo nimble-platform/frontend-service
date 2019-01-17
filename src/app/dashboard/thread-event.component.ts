@@ -6,6 +6,8 @@ import { ThreadEventMetadata } from "../catalogue/model/publish/thread-event-met
 import {BPEService} from "../bpe/bpe.service";
 import {DocumentService} from "../bpe/bp-view/document-service";
 import {SearchContextService} from '../simple-search/search-context.service';
+import {BpStartEvent} from '../catalogue/model/publish/bp-start-event';
+import {BpUserRole} from '../bpe/model/bp-user-role';
 
 @Component({
     selector: "thread-event",
@@ -34,6 +36,8 @@ export class ThreadEventComponent implements OnInit {
         // whether we are updating the process instance or not
         this.event.isBeingUpdated = updateProcess;
         this.bpDataService.setBpOptionParametersWithThreadEvent(this.event);
+        let userRole:BpUserRole = this.event.buyer ? "buyer": "seller";
+        this.bpDataService.startBp(new BpStartEvent(userRole,this.event.processType));
         this.bpDataService.setContainerGroupId(this.processInstanceGroup.id);
         this.searchContextService.clearSearchContext();
         this.bpDataService.setCollaborationGroupId(this.collaborationGroupId);

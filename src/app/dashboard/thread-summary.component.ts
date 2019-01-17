@@ -17,6 +17,8 @@ import { EvidenceSupplied } from "../catalogue/model/publish/evidence-supplied";
 import { Comment } from "../catalogue/model/publish/comment";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { Code } from "../catalogue/model/publish/code";
+import {BpUserRole} from '../bpe/model/bp-user-role';
+import {BpStartEvent} from '../catalogue/model/publish/bp-start-event';
 
 /**
  * Created by suat on 12-Mar-18.
@@ -94,6 +96,8 @@ export class ThreadSummaryComponent implements OnInit {
 
     async openBpProcessView() {
         this.bpDataService.setBpOptionParametersWithThreadEvent(this.titleEvent);
+        let userRole:BpUserRole = this.titleEvent.buyer ? "buyer": "seller";
+        this.bpDataService.startBp(new BpStartEvent(userRole,this.titleEvent.processType));
         this.bpDataService.setContainerGroupId(this.processInstanceGroup.id);
         this.searchContextService.clearSearchContext();
         this.bpDataService.setCollaborationGroupId(this.collaborationGroupId);
