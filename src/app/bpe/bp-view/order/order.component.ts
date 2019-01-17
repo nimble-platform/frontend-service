@@ -432,7 +432,8 @@ export class OrderComponent implements OnInit {
 
         if (this.order.contract && this.order.contract.length > 0) {
             for (let clause of this.order.contract[0].clause) {
-                if (clause.clauseDocumentRef) {
+                let clauseCopy = JSON.parse(JSON.stringify(clause));
+                if (clauseCopy.clauseDocumentRef) {
                     docClause = clause as DocumentClause;
                     if(docClause.clauseDocumentRef.documentType === "QUOTATION") {
                         break;
