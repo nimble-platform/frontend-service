@@ -35,11 +35,11 @@ export class BPEService {
 	startBusinessProcess(piim:ProcessInstanceInputMessage):Promise<ProcessInstance> {
 		const headers = this.getAuthorizedHeaders();
 		let url = `${this.url}/start`;
-		if(this.bpDataService.getRelatedGroupId() != null) {
-			url += '?gid=' + this.bpDataService.getRelatedGroupId();
+		if(this.bpDataService.getContainerGroupId() != null) {
+			url += '?gid=' + this.bpDataService.getContainerGroupId();
 		}
 		if(this.bpDataService.precedingProcessId != null) {
-			if(this.bpDataService.getRelatedGroupId() != null) {
+			if(this.bpDataService.getContainerGroupId() != null) {
 				url += '&';
 			} else {
 				url += '?';
@@ -47,7 +47,7 @@ export class BPEService {
 			url += 'precedingPid=' + this.bpDataService.precedingProcessId;
 		}
 		if(this.bpDataService.getCollaborationId() != null){
-			if(this.bpDataService.getRelatedGroupId() != null || this.bpDataService.precedingProcessId != null){
+			if(this.bpDataService.getContainerGroupId() != null || this.bpDataService.precedingProcessId != null){
 			    url += '&';
             }
             else {
@@ -56,18 +56,18 @@ export class BPEService {
             url += 'collaborationGID=' + this.bpDataService.getCollaborationId()
 		}
 
-		if(this.bpDataService.precedingGroupId != null){
-			if(this.bpDataService.getRelatedGroupId() != null || this.bpDataService.precedingProcessId != null || this.bpDataService.getCollaborationId() != null){
+		if(this.searchContextService.getPrecedingGroupId() != null){
+			if(this.bpDataService.getContainerGroupId() != null || this.bpDataService.precedingProcessId != null || this.bpDataService.getCollaborationId() != null){
 				url += '&';
 			}
 			else {
 				url += '?';
 			}
-			url += 'precedingGid=' + this.bpDataService.precedingGroupId;
+			url += 'precedingGid=' + this.searchContextService.getPrecedingGroupId();
 
 			// if we have a precedingGroupId,then we need also a precedingProcessId
 			if(this.bpDataService.precedingProcessId == null){
-                url += '&precedingPid=' + this.searchContextService.associatedProcessMetadata.processId;
+                url += '&precedingPid=' + this.searchContextService.getAssociatedProcessMetadata().processId;
             }
 		}
 		return this.http
@@ -84,11 +84,11 @@ export class BPEService {
 	continueBusinessProcess(piim:ProcessInstanceInputMessage):Promise<ProcessInstance> {
 		const headers = this.getAuthorizedHeaders();
 		let url = `${this.url}/continue`;
-		if(this.bpDataService.getRelatedGroupId() != null) {
-			url += '?gid=' + this.bpDataService.getRelatedGroupId();
+		if(this.bpDataService.getContainerGroupId() != null) {
+			url += '?gid=' + this.bpDataService.getContainerGroupId();
 		}
 		if(this.bpDataService.getCollaborationId() != null){
-			if(this.bpDataService.getRelatedGroupId() != null){
+			if(this.bpDataService.getContainerGroupId() != null){
 				url += '&collaborationGID=' + this.bpDataService.getCollaborationId();
 			}
 			else {

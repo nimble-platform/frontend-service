@@ -67,11 +67,11 @@ export class ItemInformationRequestComponent implements OnInit {
         if(isTransportService(this.bpDataService.getCatalogueLine()) || !this.bpDataService.getCompanySettings().tradeDetails.ppapCompatibilityLevel) {
             // skip ppap
             this.bpDataService.initRfq(this.bpDataService.getCompanySettings().negotiationSettings).then(() => {
-                this.bpDataService.setBpOptionParameters(this.bpDataService.userRole, "Negotiation", "Ppap");
+                this.bpDataService.setBpOptionParameters(this.bpDataService.userRole, "Negotiation");
             });
         } else {
             this.bpDataService.initPpap([]);
-            this.bpDataService.setBpOptionParameters(this.bpDataService.userRole, "Ppap", "Item_Information_Request");
+            this.bpDataService.setBpOptionParameters(this.bpDataService.userRole, "Ppap");
         }
     }
 

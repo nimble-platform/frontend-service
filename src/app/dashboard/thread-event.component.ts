@@ -5,6 +5,7 @@ import { ProcessInstanceGroup } from "../bpe/model/process-instance-group";
 import { ThreadEventMetadata } from "../catalogue/model/publish/thread-event-metadata";
 import {BPEService} from "../bpe/bpe.service";
 import {DocumentService} from "../bpe/bp-view/document-service";
+import {SearchContextService} from '../simple-search/search-context.service';
 
 @Component({
     selector: "thread-event",
@@ -21,7 +22,8 @@ export class ThreadEventComponent implements OnInit {
     constructor(private bpDataService: BPDataService,
                 private bpeService: BPEService,
                 private router: Router,
-                private documentService: DocumentService) {
+                private documentService: DocumentService,
+                private searchContextService: SearchContextService) {
     }
 
     ngOnInit() {
@@ -29,9 +31,9 @@ export class ThreadEventComponent implements OnInit {
     }
 
     async openBpProcessView(updateProcess:boolean) {
-        let role = await this.documentService.getUserRole(this.event.activityVariables,this.processInstanceGroup.partyID);
-        this.bpDataService.setBpOptionParametersWithProcessMetadata(role, this.event.processType, this.event, updateProcess);
-        this.bpDataService.setRelatedGroupId(this.processInstanceGroup.id);
+        this.bpDataService.setBpOptionParametersWithThreadEvent(this.event.processType, this.event, updateProcess);
+        this.bpDataService.setContainerGroupId(this.processInstanceGroup.id);
+        this.searchContextService.clearSearchContext();
         this.bpDataService.setCollaborationGroupId(this.collaborationGroupId);
         this.router.navigate(['bpe/bpe-exec'], {
             queryParams: {

@@ -166,8 +166,8 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
         if(this.bpDataService.userRole === "seller") {
             return Promise.resolve(null);
         }
-        if(this.searchContextService.associatedProcessMetadata) {
-            const processId = this.searchContextService.associatedProcessMetadata.processId;
+        if(this.searchContextService.getAssociatedProcessMetadata()) {
+            const processId = this.searchContextService.getAssociatedProcessMetadata().processId;
             return this.bpeService.getOriginalOrderForProcess(processId)
         }
         if(this.bpDataService.processMetadata) {

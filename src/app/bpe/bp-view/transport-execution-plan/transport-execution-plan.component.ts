@@ -48,7 +48,7 @@ export class TransportExecutionPlanComponent implements OnInit {
 
     ngOnInit() {
         if(!this.bpDataService.transportExecutionPlanRequest) {
-            if(this.searchContextService.associatedProcessMetadata != null) {
+            if(this.searchContextService.getAssociatedProcessMetadata() != null) {
                 this.bpDataService.initTransportExecutionPlanRequestWithOrder().then(response => {
                     this.init();
                 });
@@ -182,15 +182,6 @@ export class TransportExecutionPlanComponent implements OnInit {
 
     onDispatchAdvice() {
         this.bpDataService.initDispatchAdviceWithOrder();
-        this.bpDataService.setBpOptionParameters("seller", "Fulfilment", "Order");
-
-        const params = this.route.snapshot.queryParams;
-        this.router.navigate(['bpe/bpe-exec'], {
-            queryParams: {
-                catalogueId: params.catalogueId,
-                id: params.id,
-                pid: params.pid
-            }
-        });
+        this.bpDataService.setBpOptionParameters("seller", "Fulfilment");
     }
 }

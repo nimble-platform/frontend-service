@@ -82,13 +82,11 @@ export class BPDataService{
     userRole: BpUserRole;
     processMetadata: ThreadEventMetadata;
     updatingProcess: boolean = false;
-    previousProcess: string;
     workflowOptions: BpWorkflowOptions;
 
-    // variable to keep the business process instance group related to the new process being initiated
-    private relatedGroupId: string;
+    // identifier of the business process instance group which contains the new process being initiated
+    private containerGroupId: string;
     private collaborationGroupId: string;
-    precedingGroupId: string;
     precedingProcessId: string;
 
     constructor(private searchContextService: SearchContextService,
@@ -123,23 +121,12 @@ export class BPDataService{
         return this.companySettings[0];
     }
 
-    getRelatedGroupId(): string {
-        return this.relatedGroupId;
+    getContainerGroupId(): string {
+        return this.containerGroupId;
     }
 
-    setRelatedGroupId(id: string): void {
-        if(id == null) {
-            if(this.searchContextService.associatedProcessType) {
-                this.precedingGroupId = this.relatedGroupId;
-            }
-            else {
-                this.precedingGroupId = null;
-            }
-            this.relatedGroupId = null;
-        } else {
-            this.relatedGroupId = id;
-            this.precedingGroupId = null;
-        }
+    setContainerGroupId(id: string): void {
+        this.containerGroupId = id;
     }
 
     getCollaborationId(): string{
@@ -148,7 +135,7 @@ export class BPDataService{
 
     setCollaborationGroupId(id: string): void{
         if(id == null) {
-            if(this.searchContextService.associatedProcessType == null) {
+            if(this.searchContextService.getAssociatedProcessType() == null) {
                 this.collaborationGroupId = null;
             }
         } else {
@@ -156,9 +143,10 @@ export class BPDataService{
         }
     }
 
-    setBpOptionParametersWithProcessMetadata(userRole: BpUserRole, targetProcess: ProcessType, processMetadata: ThreadEventMetadata,updatingProcess: boolean): void {
+    setBpOptionParametersWithThreadEvent(targetProcess: ProcessType, processMetadata: ThreadEventMetadata, updatingProcess: boolean): void {
+        let userRole:BpUserRole = processMetadata.buyer ? "buyer": "seller";
         this.resetBpData();
-        this.setBpOptionParameters(userRole, targetProcess, null);
+        this.setBpOptionParameters(userRole, targetProcess);
         this.processMetadata = processMetadata;
         this.updatingProcess = updatingProcess;
         this.setBpMessages(this.processTypeSubject.getValue(), processMetadata);
@@ -253,8 +241,7 @@ export class BPDataService{
         }
     }
 
-    setBpOptionParameters(userRole: BpUserRole, targetProcess: ProcessType, previousProcess: ProcessType) {
-        this.previousProcess = previousProcess;
+    setBpOptionParameters(userRole: BpUserRole, targetProcess: ProcessType) {
         this.setProcessType(targetProcess);
         this.userRole = userRole;
     }
@@ -480,7 +467,7 @@ export class BPDataService{
 
     async initTransportExecutionPlanRequestWithOrder() {
         this.resetBpData();
-        await this.setBpMessages('Order', this.searchContextService.associatedProcessMetadata);
+        await this.setBpMessages('Order', this.searchContextService.getAssociatedProcessMetadata());
         let copyOrder:Order = copy(this.order);
         this.modifiedCatalogueLines = copy(this.catalogueLines);
         this.transportExecutionPlanRequest = UBLModelUtils.createTransportExecutionPlanRequestWithOrder(copyOrder, this.modifiedCatalogueLines[0]);
@@ -513,9 +500,8 @@ export class BPDataService{
     }
 
     resetBpData():void {
-        if(this.searchContextService.associatedProcessType == null) {
+        if(this.searchContextService.getAssociatedProcessType() == null) {
             this.setProcessType(null);
-            this.previousProcess = null;
         }
         this.updatingProcess = false;
         this.processMetadata = null;

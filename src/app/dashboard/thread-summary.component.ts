@@ -93,9 +93,9 @@ export class ThreadSummaryComponent implements OnInit {
     }
 
     async openBpProcessView() {
-        let role = await this.documentService.getUserRole(this.titleEvent.activityVariables,this.processInstanceGroup.partyID);
-        this.bpDataService.setBpOptionParametersWithProcessMetadata(role, this.titleEvent.processType, this.titleEvent, false);
-        this.bpDataService.setRelatedGroupId(this.processInstanceGroup.id);
+        this.bpDataService.setBpOptionParametersWithThreadEvent(this.titleEvent.processType, this.titleEvent, false);
+        this.bpDataService.setContainerGroupId(this.processInstanceGroup.id);
+        this.searchContextService.clearSearchContext();
         this.bpDataService.setCollaborationGroupId(this.collaborationGroupId);
         this.router.navigate(['bpe/bpe-exec'], {
             queryParams: {
@@ -183,10 +183,7 @@ export class ThreadSummaryComponent implements OnInit {
 
     navigateToSearchDetails() {
         const item = this.titleEvent.product;
-        this.bpDataService.previousProcess = null;
-        this.searchContextService.associatedProcessMetadata = null;
-        this.searchContextService.associatedProcessType = null;
-        this.searchContextService.targetPartyRole = null;
+        this.searchContextService.clearSearchContext();
         this.router.navigate(['/product-details'],
             {
                 queryParams: {
