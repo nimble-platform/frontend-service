@@ -56,14 +56,14 @@ export class BPEService {
             url += 'collaborationGID=' + this.bpDataService.getCollaborationId()
 		}
 
-		if(this.bpDataService.precedingGroupId != null){
+		if(this.searchContextService.getPrecedingGroupId() != null){
 			if(this.bpDataService.getRelatedGroupId() != null || this.bpDataService.precedingProcessId != null || this.bpDataService.getCollaborationId() != null){
 				url += '&';
 			}
 			else {
 				url += '?';
 			}
-			url += 'precedingGid=' + this.bpDataService.precedingGroupId;
+			url += 'precedingGid=' + this.searchContextService.getPrecedingGroupId();
 
 			// if we have a precedingGroupId,then we need also a precedingProcessId
 			if(this.bpDataService.precedingProcessId == null){

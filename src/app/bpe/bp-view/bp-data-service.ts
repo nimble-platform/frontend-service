@@ -87,7 +87,6 @@ export class BPDataService{
     // variable to keep the business process instance group related to the new process being initiated
     private relatedGroupId: string;
     private collaborationGroupId: string;
-    precedingGroupId: string;
     precedingProcessId: string;
 
     constructor(private searchContextService: SearchContextService,
@@ -127,18 +126,7 @@ export class BPDataService{
     }
 
     setRelatedGroupId(id: string): void {
-        if(id == null) {
-            if(this.searchContextService.getAssociatedProcessType()) {
-                this.precedingGroupId = this.relatedGroupId;
-            }
-            else {
-                this.precedingGroupId = null;
-            }
-            this.relatedGroupId = null;
-        } else {
-            this.relatedGroupId = id;
-            this.precedingGroupId = null;
-        }
+        this.relatedGroupId = id;
     }
 
     getCollaborationId(): string{
