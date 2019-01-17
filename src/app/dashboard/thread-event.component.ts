@@ -31,8 +31,7 @@ export class ThreadEventComponent implements OnInit {
     }
 
     async openBpProcessView(updateProcess:boolean) {
-        let role = await this.documentService.getUserRole(this.event.activityVariables,this.processInstanceGroup.partyID);
-        this.bpDataService.setBpOptionParametersWithThreadEvent(role, this.event.processType, this.event, updateProcess);
+        this.bpDataService.setBpOptionParametersWithThreadEvent(this.event.processType, this.event, updateProcess);
         this.bpDataService.setContainerGroupId(this.processInstanceGroup.id);
         this.searchContextService.clearSearchContext();
         this.bpDataService.setCollaborationGroupId(this.collaborationGroupId);
