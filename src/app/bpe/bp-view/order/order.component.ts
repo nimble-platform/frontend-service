@@ -431,13 +431,15 @@ export class OrderComponent implements OnInit {
     }
 
     private isDataMonitoringDemanded(): Promise<boolean> {
-        let docClause = null;
+        let docClause: DocumentClause = null;
 
         if (this.order.contract && this.order.contract.length > 0) {
             for (let clause of this.order.contract[0].clause) {
-                if (clause.type === "NEGOTIATION") {
+                if (clause.clauseDocumentRef) {
                     docClause = clause as DocumentClause;
-                    break;
+                    if(docClause.clauseDocumentRef.documentType === "QUOTATION") {
+                        break;
+                    }
                 }
             }
         }

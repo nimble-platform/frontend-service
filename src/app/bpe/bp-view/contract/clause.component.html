@@ -7,19 +7,24 @@
 </h4>
 <ng-container *ngIf="expanded">
     <!-- Item Information Request -->
-    <item-information-response *ngIf="clause.type === 'ITEM_DETAILS' && itemInformationRequest" 
+    <item-information-response *ngIf="clause.clauseDocumentRef?.documentType === 'ITEMINFORMATIONRESPONSE' && itemInformationRequest"
             [request]="itemInformationRequest" [response]="clauseDocument" [readonly]="true">
     </item-information-response>
-    
+
     <!-- Ppap clause -->
-    <ppap-clause *ngIf="clause.type === 'PPAP'" [ppapResponse]="clauseDocument">
+    <ppap-clause *ngIf="clause.clauseDocumentRef?.documentType === 'PPAPRESPONSE'" [ppapResponse]="clauseDocument">
     </ppap-clause>
 
     <!-- Negotiation -->
-    <transport-negotiation-response *ngIf="clause.type === 'NEGOTIATION' && rfq"
+    <negotiation-response *ngIf="clause.clauseDocumentRef?.documentType === 'QUOTATION' && rfq && rfq.requestForQuotationLine[0].lineItem.item.transportationServiceDetails == null"
+        [rfq]="rfq" [quotation]="clauseDocument" [readonly]="true">
+    </negotiation-response>
+
+    <!-- Negotiation Transport -->
+    <transport-negotiation-response *ngIf="clause.clauseDocumentRef?.documentType === 'QUOTATION' && rfq && rfq.requestForQuotationLine[0].lineItem.item.transportationServiceDetails != null"
         [rfq]="rfq" [quotation]="clauseDocument" [readonly]="true">
     </transport-negotiation-response>
-    
+
     <!-- Loading icon -->
     <call-status [callStatus]="clauseDocumentRetrievalStatus"
                  [large]="true">

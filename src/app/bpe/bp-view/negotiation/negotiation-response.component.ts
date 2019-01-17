@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import { Location } from "@angular/common";
 import { CatalogueLine } from "../../../catalogue/model/publish/catalogue-line";
 import { RequestForQuotation } from "../../../catalogue/model/publish/request-for-quotation";
@@ -25,10 +25,11 @@ import {DiscountModalComponent} from '../../../product-details/discount-modal.co
 export class NegotiationResponseComponent implements OnInit {
 
     line: CatalogueLine;
-    rfq: RequestForQuotation;
-    quotation: Quotation;
+    @Input() rfq: RequestForQuotation;
+    @Input() quotation: Quotation;
     wrapper: NegotiationModelWrapper;
     userRole: BpUserRole;
+    @Input() readonly: boolean = false;
 
     CURRENCIES: string[] = CURRENCIES;
 
@@ -47,9 +48,14 @@ export class NegotiationResponseComponent implements OnInit {
 
     ngOnInit() {
         this.line = this.bpDataService.getCatalogueLine();
-        this.rfq = this.bpDataService.requestForQuotation;
-        this.bpDataService.computeRfqNegotiationOptionsIfNeeded();
-        this.quotation = this.bpDataService.quotation;
+        if(this.rfq == null) {
+            this.rfq = this.bpDataService.requestForQuotation;
+        }
+        if(this.quotation == null) {
+            this.quotation = this.bpDataService.quotation;
+        }
+        this.bpDataService.computeRfqNegotiationOptionsIfNeededWithRfq(this.rfq);
+
         this.wrapper = new NegotiationModelWrapper(this.line, this.rfq, this.quotation,
             this.bpDataService.getCompanySettings().negotiationSettings);
 
@@ -110,12 +116,16 @@ export class NegotiationResponseComponent implements OnInit {
         return false;
     }
 
+    isDisabled(): boolean {
+        return this.isLoading() || this.readonly;
+    }
+
     getPresentationMode(): "edit" | "view" {
         return this.isReadOnly() ? "view" : "edit";
     }
 
     isReadOnly(): boolean {
-        return this.bpDataService.processMetadata == null || this.bpDataService.processMetadata.processStatus !== 'Started';
+        return this.bpDataService.processMetadata == null || this.bpDataService.processMetadata.processStatus !== 'Started' || this.readonly;
     }
 
     get quotationPrice(): number {
