@@ -143,7 +143,7 @@ export class BPDataService{
         }
     }
 
-    setBpOptionParametersWithProcessMetadata(userRole: BpUserRole, targetProcess: ProcessType, processMetadata: ThreadEventMetadata,updatingProcess: boolean): void {
+    setBpOptionParametersWithThreadEvent(userRole: BpUserRole, targetProcess: ProcessType, processMetadata: ThreadEventMetadata, updatingProcess: boolean): void {
         this.resetBpData();
         this.setBpOptionParameters(userRole, targetProcess);
         this.processMetadata = processMetadata;

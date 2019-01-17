@@ -94,7 +94,7 @@ export class ThreadSummaryComponent implements OnInit {
 
     async openBpProcessView() {
         let role = await this.documentService.getUserRole(this.titleEvent.activityVariables,this.processInstanceGroup.partyID);
-        this.bpDataService.setBpOptionParametersWithProcessMetadata(role, this.titleEvent.processType, this.titleEvent, false);
+        this.bpDataService.setBpOptionParametersWithThreadEvent(role, this.titleEvent.processType, this.titleEvent, false);
         this.bpDataService.setContainerGroupId(this.processInstanceGroup.id);
         this.searchContextService.clearSearchContext();
         this.bpDataService.setCollaborationGroupId(this.collaborationGroupId);
