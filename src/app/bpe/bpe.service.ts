@@ -166,7 +166,7 @@ export class BPEService {
 	getActionRequiredBuyer(partyId: string): Promise<any> {
 		const url = `${this.url}/statistics/total-number/business-process/action-required?archived=false&role=buyer&partyId=${partyId}`;
 		return this.http
-            .get(url, {headers: this.headers})
+            .get(url, {headers: this.getAuthorizedHeaders()})
             .toPromise()
             .then(res => res.text())
             .catch(this.handleError);
@@ -175,7 +175,7 @@ export class BPEService {
 	getActionRequiredSeller(partyId: string): Promise<any> {
 		const url = `${this.url}/statistics/total-number/business-process/action-required?archived=false&role=seller&partyId=${partyId}`;
 		return this.http
-            .get(url, {headers: this.headers})
+            .get(url, {headers: this.getAuthorizedHeaders()})
             .toPromise()
             .then(res => res.text())
             .catch(this.handleError);
@@ -239,7 +239,7 @@ export class BPEService {
 		    url += '&status='+this.stringifyArray(status);
         }
 		return this.http
-            .get(url, {headers: this.headers})
+            .get(url, {headers: this.getAuthorizedHeaders()})
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
@@ -304,15 +304,6 @@ export class BPEService {
             .catch(this.handleError);
 	}
 
-	getClauseDetails(clauseId:string): Promise<Clause> {
-		const url = `${this.url}/clauses/${clauseId}`;
-		return this.http
-            .get(url, {headers: this.getAuthorizedHeaders()})
-            .toPromise()
-            .then(res => res.json())
-            .catch(this.handleError);
-	}
-
 	downloadContractBundle(id: string): Promise<any> {
         const token = 'Bearer '+this.cookieService.get("bearer_token");
 		const url = `${this.url}/contracts/create-bundle?orderId=${id}`;
@@ -355,7 +346,7 @@ export class BPEService {
 
 	getOriginalOrderForProcess(processId: string): Promise<Order | null> {
 		const headers = this.getAuthorizedHeaders();
-		const url = `${this.url}/process-instance-groups/order-process?processInstanceId=${processId}`;
+		const url = `${this.url}/process-instance-groups/order-document?processInstanceId=${processId}`;
 		return this.http
             .get(url, { headers })
             .toPromise()
