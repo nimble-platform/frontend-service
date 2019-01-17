@@ -78,9 +78,8 @@ export class ProductDetailsComponent implements OnInit {
                         this.wrapper = new ProductWrapper(this.line, settings.negotiationSettings,this.priceWrapper.quantity);
                         this.bpDataService.resetBpData();
                         this.bpDataService.setCatalogueLines([this.line], [settings]);
-                        this.bpDataService.bpStartEvent.userRole = 'buyer';
+                        this.bpDataService.bpStartEvent = new BpStartEvent('buyer',this.bpDataService.bpStartEvent.processType);
                         this.bpDataService.workflowOptions = this.options;
-                        this.bpDataService.setContainerGroupId(null);
                         this.bpDataService.setCollaborationGroupId(null);
                         this.getProductStatus.callback("Retrieved product details", true);
                     })

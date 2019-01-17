@@ -256,11 +256,11 @@ export class OrderComponent implements OnInit {
     }
 
     onDispatchOrder() {
-        this.bpDataService.startBp(new BpStartEvent(this.userRole, "Fulfilment"));
+        this.bpDataService.updateBpStartEvent(this.userRole, "Fulfilment");
     }
 
     onSearchTransportService() {
-        this.searchContextService.setSearchContext('Transport Service Provider','Order',this.bpDataService.processMetadata,this.bpDataService.getContainerGroupId());
+        this.searchContextService.setSearchContext('Transport Service Provider','Order',this.bpDataService.processMetadata,this.bpDataService.bpStartEvent.containerGroupId);
         this.router.navigate(['simple-search'], {
             queryParams: {
                 searchContext: 'orderbp',

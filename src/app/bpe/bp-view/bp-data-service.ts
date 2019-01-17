@@ -84,8 +84,6 @@ export class BPDataService{
     updatingProcess: boolean = false;
     workflowOptions: BpWorkflowOptions;
 
-    // identifier of the business process instance group which contains the new process being initiated
-    private containerGroupId: string;
     private collaborationGroupId: string;
     precedingProcessId: string;
 
@@ -121,14 +119,6 @@ export class BPDataService{
 
     getCompanySettings(): CompanySettings {
         return this.companySettings[0];
-    }
-
-    getContainerGroupId(): string {
-        return this.containerGroupId;
-    }
-
-    setContainerGroupId(id: string): void {
-        this.containerGroupId = id;
     }
 
     getCollaborationId(): string{
@@ -244,6 +234,14 @@ export class BPDataService{
     startBp(bpStartEvent:BpStartEvent){
         this.bpStartEvent = bpStartEvent;
         this.setProcessType(this.bpStartEvent.processType);
+    }
+
+    // For business processes transitions (for example, from PPAP to Negotiation), we have to keep containerGroupId same since all processes are in the same process instance group
+    // However, process type and userRole can be changed. Therefore, we use this function to update BpStartEvent correctly.
+    updateBpStartEvent(userRole: BpUserRole,processType:ProcessType){
+        this.bpStartEvent.processType = processType;
+        this.setProcessType(this.bpStartEvent.processType);
+        this.bpStartEvent.userRole = userRole;
     }
 
     // this method is supposed to be called when the user is about to initialize a business process via the

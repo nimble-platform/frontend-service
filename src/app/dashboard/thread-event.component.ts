@@ -37,8 +37,7 @@ export class ThreadEventComponent implements OnInit {
         this.event.isBeingUpdated = updateProcess;
         this.bpDataService.setBpOptionParametersWithThreadEvent(this.event);
         let userRole:BpUserRole = this.event.buyer ? "buyer": "seller";
-        this.bpDataService.startBp(new BpStartEvent(userRole,this.event.processType));
-        this.bpDataService.setContainerGroupId(this.processInstanceGroup.id);
+        this.bpDataService.startBp(new BpStartEvent(userRole,this.event.processType,this.processInstanceGroup.id));
         this.searchContextService.clearSearchContext();
         this.bpDataService.setCollaborationGroupId(this.collaborationGroupId);
         this.router.navigate(['bpe/bpe-exec'], {

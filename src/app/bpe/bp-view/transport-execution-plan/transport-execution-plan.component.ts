@@ -183,6 +183,6 @@ export class TransportExecutionPlanComponent implements OnInit {
 
     onDispatchAdvice() {
         this.bpDataService.initDispatchAdviceWithOrder();
-        this.bpDataService.startBp(new BpStartEvent("seller", "Fulfilment"));
+        this.bpDataService.updateBpStartEvent("seller", "Fulfilment");
     }
 }

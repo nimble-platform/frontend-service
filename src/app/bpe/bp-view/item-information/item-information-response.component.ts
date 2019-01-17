@@ -101,7 +101,7 @@ export class ItemInformationResponseComponent implements OnInit {
 
     private navigateToBusinessProcess(targetProcess: ProcessType): void {
         this.bpDataService.resetBpData();
-        this.bpDataService.startBp(new BpStartEvent("buyer", targetProcess));
+        this.bpDataService.updateBpStartEvent("buyer", targetProcess);
 
         if(targetProcess === "Item_Information_Request") {
             this.bpDataService.resetBpData();

@@ -50,7 +50,7 @@ export class DispatchAdviceComponent implements OnInit {
 
     async initDispatchAdvice() {
         this.initiatingDispatchAdvice.submit();
-        const processInstanceGroup = await this.bpeService.getProcessInstanceGroup(this.bpDataService.getContainerGroupId()) as ProcessInstanceGroup;
+        const processInstanceGroup = await this.bpeService.getProcessInstanceGroup(this.bpDataService.bpStartEvent.containerGroupId) as ProcessInstanceGroup;
         let details = [];
         for(let id of processInstanceGroup.processInstanceIDs){
             details.push(await Promise.all([

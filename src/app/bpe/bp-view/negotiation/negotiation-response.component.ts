@@ -95,12 +95,12 @@ export class NegotiationResponseComponent implements OnInit {
 
     onRequestNewQuotation() {
         this.bpDataService.initRfqWithQuotation();
-        this.bpDataService.startBp(new BpStartEvent("buyer", "Negotiation"));
+        this.bpDataService.updateBpStartEvent("buyer", "Negotiation");
     }
 
     onAcceptAndOrder() {
         this.bpDataService.initOrderWithQuotation();
-        this.bpDataService.startBp(new BpStartEvent("buyer", "Order"));
+        this.bpDataService.updateBpStartEvent("buyer", "Order");
     }
 
     /*

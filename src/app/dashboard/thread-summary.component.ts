@@ -97,8 +97,7 @@ export class ThreadSummaryComponent implements OnInit {
     async openBpProcessView() {
         this.bpDataService.setBpOptionParametersWithThreadEvent(this.titleEvent);
         let userRole:BpUserRole = this.titleEvent.buyer ? "buyer": "seller";
-        this.bpDataService.startBp(new BpStartEvent(userRole,this.titleEvent.processType));
-        this.bpDataService.setContainerGroupId(this.processInstanceGroup.id);
+        this.bpDataService.startBp(new BpStartEvent(userRole,this.titleEvent.processType,this.processInstanceGroup.id));
         this.searchContextService.clearSearchContext();
         this.bpDataService.setCollaborationGroupId(this.collaborationGroupId);
         this.router.navigate(['bpe/bpe-exec'], {
