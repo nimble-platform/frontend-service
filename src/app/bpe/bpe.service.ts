@@ -46,18 +46,18 @@ export class BPEService {
 			}
 			url += 'precedingPid=' + this.bpDataService.precedingProcessId;
 		}
-		if(this.bpDataService.getCollaborationId() != null){
+		if(this.bpDataService.bpStartEvent.collaborationGroupId != null){
 			if(this.bpDataService.bpStartEvent.containerGroupId != null || this.bpDataService.precedingProcessId != null){
 			    url += '&';
             }
             else {
 			    url += "?";
             }
-            url += 'collaborationGID=' + this.bpDataService.getCollaborationId()
+            url += 'collaborationGID=' + this.bpDataService.bpStartEvent.collaborationGroupId
 		}
 
 		if(this.searchContextService.getPrecedingGroupId() != null){
-			if(this.bpDataService.bpStartEvent.containerGroupId != null || this.bpDataService.precedingProcessId != null || this.bpDataService.getCollaborationId() != null){
+			if(this.bpDataService.bpStartEvent.containerGroupId != null || this.bpDataService.precedingProcessId != null || this.bpDataService.bpStartEvent.collaborationGroupId != null){
 				url += '&';
 			}
 			else {
@@ -87,12 +87,12 @@ export class BPEService {
 		if(this.bpDataService.bpStartEvent.containerGroupId != null) {
 			url += '?gid=' + this.bpDataService.bpStartEvent.containerGroupId;
 		}
-		if(this.bpDataService.getCollaborationId() != null){
+		if(this.bpDataService.bpStartEvent.collaborationGroupId != null){
 			if(this.bpDataService.bpStartEvent.containerGroupId != null){
-				url += '&collaborationGID=' + this.bpDataService.getCollaborationId();
+				url += '&collaborationGID=' + this.bpDataService.bpStartEvent.collaborationGroupId;
 			}
 			else {
-				url += '?collaborationGID=' + this.bpDataService.getCollaborationId();
+				url += '?collaborationGID=' + this.bpDataService.bpStartEvent.collaborationGroupId;
 			}
 		}
 

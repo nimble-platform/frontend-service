@@ -16,6 +16,7 @@ import { CompanySettings } from "../user-mgmt/model/company-settings";
 import {Quantity} from '../catalogue/model/publish/quantity';
 import {DiscountModalComponent} from './discount-modal.component';
 import {BpStartEvent} from '../catalogue/model/publish/bp-start-event';
+import {SearchContextService} from '../simple-search/search-context.service';
 
 @Component({
     selector: 'product-details',
@@ -47,6 +48,7 @@ export class ProductDetailsComponent implements OnInit {
 
     constructor(private bpDataService: BPDataService,
                 private catalogueService: CatalogueService,
+                private searchContextService: SearchContextService,
                 private userService: UserService,
                 private route: ActivatedRoute,
                 private router: Router,
@@ -78,9 +80,8 @@ export class ProductDetailsComponent implements OnInit {
                         this.wrapper = new ProductWrapper(this.line, settings.negotiationSettings,this.priceWrapper.quantity);
                         this.bpDataService.resetBpData();
                         this.bpDataService.setCatalogueLines([this.line], [settings]);
-                        this.bpDataService.bpStartEvent = new BpStartEvent('buyer',this.bpDataService.bpStartEvent.processType);
+                        this.bpDataService.bpStartEvent = new BpStartEvent('buyer',this.bpDataService.bpStartEvent.processType,null,this.bpDataService.bpStartEvent.collaborationGroupId);
                         this.bpDataService.workflowOptions = this.options;
-                        this.bpDataService.setCollaborationGroupId(null);
                         this.getProductStatus.callback("Retrieved product details", true);
                     })
                     .catch(error => {
@@ -111,7 +112,16 @@ export class ProductDetailsComponent implements OnInit {
 
     private navigateToBusinessProcess(targetProcess: ProcessType): void {
         this.bpDataService.resetBpData();
-        this.bpDataService.startBp(new BpStartEvent("buyer", targetProcess));
+
+        // If there is an associated process, we need to know collaboration group id since we will add the new process instance group to this collaboration group
+        // Else, it is OK to reset collaboration group id since a new collaboration group will be created for the process.
+        if(this.searchContextService.getAssociatedProcessType() == null){
+            this.bpDataService.startBp(new BpStartEvent('buyer',targetProcess));
+        }
+        else {
+            this.bpDataService.startBp(new BpStartEvent('buyer',targetProcess,null,this.bpDataService.bpStartEvent.collaborationGroupId));
+        }
+
         this.router.navigate(['bpe/bpe-exec'], {
             queryParams: {
                 catalogueId: this.catalogueId,

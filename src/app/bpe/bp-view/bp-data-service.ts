@@ -84,7 +84,6 @@ export class BPDataService{
     updatingProcess: boolean = false;
     workflowOptions: BpWorkflowOptions;
 
-    private collaborationGroupId: string;
     precedingProcessId: string;
 
     bpStartEvent:BpStartEvent = new BpStartEvent();
@@ -119,20 +118,6 @@ export class BPDataService{
 
     getCompanySettings(): CompanySettings {
         return this.companySettings[0];
-    }
-
-    getCollaborationId(): string{
-        return this.collaborationGroupId;
-    }
-
-    setCollaborationGroupId(id: string): void{
-        if(id == null) {
-            if(this.searchContextService.getAssociatedProcessType() == null) {
-                this.collaborationGroupId = null;
-            }
-        } else {
-            this.collaborationGroupId = id;
-        }
     }
 
     setBpOptionParametersWithThreadEvent(processMetadata: ThreadEventMetadata): void {
