@@ -354,8 +354,6 @@ export class BPDataService{
         this.order.paymentTerms = copyQuotation.paymentTerms;
 
         this.order.anticipatedMonetaryTotal.payableAmount.currencyID = copyRfq.requestForQuotationLine[0].lineItem.price.priceAmount.currencyID;
-
-        this.setProcessType('Order');
     }
 
     initOrderWithRfq() {
@@ -368,8 +366,6 @@ export class BPDataService{
         this.order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address = copyLineItem.deliveryTerms.deliveryLocation.address;
         this.order.paymentMeans = copyRfq.paymentMeans;
         this.order.paymentTerms = copyRfq.paymentTerms;
-
-        this.setProcessType('Order');
     }
 
     initRfqWithQuotation() {
