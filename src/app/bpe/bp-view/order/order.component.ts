@@ -65,7 +65,7 @@ export class OrderComponent implements OnInit {
     fetchTermsAndConditionsStatus: CallStatus = new CallStatus();
     fetchDataMonitoringStatus: CallStatus = new CallStatus();
 
-    // the copy of BPDataService's ThreadEventMetadata
+    // the copy of ThreadEventMetadata of the current business process
     processMetadata: ThreadEventMetadata;
 
     constructor(public bpDataService: BPDataService,
@@ -81,8 +81,8 @@ export class OrderComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        // get copy of BPDataService's ThreadEventMetadata
-        this.processMetadata = this.bpDataService.processMetadata;
+        // get copy of ThreadEventMetadata of the current business process
+        this.processMetadata = this.bpDataService.bpStartEvent.processMetadata;
 
         if(this.bpDataService.order == null) {
             this.router.navigate(['dashboard']);

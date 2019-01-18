@@ -80,7 +80,6 @@ export class BPDataService{
     // setBpOptionParameters method must be used to set these values
     private processTypeSubject: BehaviorSubject<ProcessType> = new BehaviorSubject<ProcessType>("Item_Information_Request");
     processTypeObservable = this.processTypeSubject.asObservable();
-    processMetadata: ThreadEventMetadata;
     workflowOptions: BpWorkflowOptions;
 
     precedingProcessId: string;
@@ -117,12 +116,6 @@ export class BPDataService{
 
     getCompanySettings(): CompanySettings {
         return this.companySettings[0];
-    }
-
-    setBpOptionParametersWithThreadEvent(processMetadata: ThreadEventMetadata): void {
-        this.resetBpData();
-        this.processMetadata = processMetadata;
-        this.setBpMessages(processMetadata.processType, processMetadata);
     }
 
     private async setBpMessages(processType: ProcessType, processMetadata: ThreadEventMetadata) {
@@ -214,15 +207,24 @@ export class BPDataService{
         }
     }
 
+    // This function is used to start viewing business processes.
+    // Dashboard and product-details are two way to start viewing business processes. For dashboard, business processes contain process document metadatas since
+    // they are already started/completed. However, in the product-details page, we start a new business process, this is why we have a null check for processMetadata in the function.
     startBp(bpStartEvent:BpStartEvent){
+        this.resetBpData();
+        if(bpStartEvent.processMetadata){
+            this.setBpMessages(bpStartEvent.processMetadata.processType, bpStartEvent.processMetadata);
+        }
         this.bpStartEvent = bpStartEvent;
         this.setProcessType(this.bpStartEvent.processType);
     }
 
     // For business processes transitions (for example, from PPAP to Negotiation), we have to keep containerGroupId same since all processes are in the same process instance group
     // However, process type and userRole can be changed. Therefore, we use this function to update BpStartEvent correctly.
+    // Moreover, processMetadata should be cleared since we will create a new business process.
     updateBpStartEvent(userRole: BpUserRole,processType:ProcessType){
         this.bpStartEvent.processType = processType;
+        this.bpStartEvent.processMetadata = null;
         this.setProcessType(this.bpStartEvent.processType);
         this.bpStartEvent.userRole = userRole;
     }
@@ -475,7 +477,6 @@ export class BPDataService{
 
     resetBpData():void {
         this.setProcessType(null);
-        this.processMetadata = null;
         this.modifiedCatalogueLines = null;
         this.requestForQuotation = null;
         this.quotation = null;

@@ -51,7 +51,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     productExpanded: boolean = false;
     serviceExpanded: boolean = false;
 
-    // the copy of BPDataService's ThreadEventMetadata
+    // the copy of ThreadEventMetadata of the current business process
     processMetadata: ThreadEventMetadata;
 
     constructor(public bpDataService: BPDataService, 
@@ -66,8 +66,8 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        // get copy of BPDataService's ThreadEventMetadata
-        this.processMetadata = this.bpDataService.processMetadata;
+        // get copy of ThreadEventMetadata of the current business process
+        this.processMetadata = this.bpDataService.bpStartEvent.processMetadata;
 
         this.processTypeSubs = this.bpDataService.processTypeObservable.subscribe(processType => {
             if (processType) {

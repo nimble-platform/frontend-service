@@ -32,7 +32,7 @@ export class DispatchAdviceComponent implements OnInit {
 	callStatus: CallStatus = new CallStatus();
     initiatingDispatchAdvice: CallStatus = new CallStatus();
 
-    // the copy of BPDataService's ThreadEventMetadata
+    // the copy of ThreadEventMetadata of the current business process
     processMetadata: ThreadEventMetadata;
 
     constructor(private bpeService: BPEService,
@@ -44,8 +44,8 @@ export class DispatchAdviceComponent implements OnInit {
     }
 
     ngOnInit() {
-        // get copy of BPDataService's ThreadEventMetadata
-        this.processMetadata = this.bpDataService.processMetadata;
+        // get copy of ThreadEventMetadata of the current business process
+        this.processMetadata = this.bpDataService.bpStartEvent.processMetadata;
 
         if(this.bpDataService.despatchAdvice == null) {
             this.initDispatchAdvice();

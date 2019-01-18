@@ -36,7 +36,7 @@ export class TransportExecutionPlanComponent implements OnInit {
     contractCallStatus: CallStatus = new CallStatus();
     callStatus: CallStatus = new CallStatus();
 
-    // the copy of BPDataService's ThreadEventMetadata
+    // the copy of ThreadEventMetadata of the current business process
     processMetadata: ThreadEventMetadata;
 
     constructor(private bpDataService: BPDataService,
@@ -52,8 +52,8 @@ export class TransportExecutionPlanComponent implements OnInit {
     }
 
     ngOnInit() {
-        // get copy of BPDataService's ThreadEventMetadata
-        this.processMetadata = this.bpDataService.processMetadata;
+        // get copy of ThreadEventMetadata of the current business process
+        this.processMetadata = this.bpDataService.bpStartEvent.processMetadata;
 
         if(!this.bpDataService.transportExecutionPlanRequest) {
             if(this.searchContextService.getAssociatedProcessMetadata() != null) {

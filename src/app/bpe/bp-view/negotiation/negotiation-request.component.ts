@@ -47,7 +47,7 @@ export class NegotiationRequestComponent implements OnInit {
 
     selectedAddressValue = "";
 
-    // the copy of BPDataService's ThreadEventMetadata
+    // the copy of ThreadEventMetadata of the current business process
     processMetadata: ThreadEventMetadata;
 
     @ViewChild(DiscountModalComponent)
@@ -64,8 +64,8 @@ export class NegotiationRequestComponent implements OnInit {
     }
 
     ngOnInit() {
-        // get copy of BPDataService's ThreadEventMetadata
-        this.processMetadata = this.bpDataService.processMetadata;
+        // get copy of ThreadEventMetadata of the current business process
+        this.processMetadata = this.bpDataService.bpStartEvent.processMetadata;
         this.bpDataService.computeRfqNegotiationOptionsIfNeeded();
         this.rfq = this.bpDataService.requestForQuotation;
         this.rfqLine = this.rfq.requestForQuotationLine[0];

@@ -46,7 +46,7 @@ export class TransportNegotiationResponseComponent implements OnInit {
     PAYMENT_TERMS: string[] = UBLModelUtils.getDefaultPaymentTermsAsStrings();
     CURRENCIES: string[] = CURRENCIES;
 
-    // the copy of BPDataService's ThreadEventMetadata
+    // the copy of ThreadEventMetadata of the current business process
     processMetadata: ThreadEventMetadata;
 
     constructor(private bpeService: BPEService,
@@ -58,8 +58,8 @@ export class TransportNegotiationResponseComponent implements OnInit {
     }
 
     ngOnInit() {
-        // get copy of BPDataService's ThreadEventMetadata
-        this.processMetadata = this.bpDataService.processMetadata;
+        // get copy of ThreadEventMetadata of the current business process
+        this.processMetadata = this.bpDataService.bpStartEvent.processMetadata;
 
         if(!this.rfq) {
             this.rfq = this.bpDataService.requestForQuotation;

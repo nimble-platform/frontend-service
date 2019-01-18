@@ -40,7 +40,7 @@ export class PpapDocumentUploadComponent {
     // check whether 'Send Response' button is clicked
     submitted: boolean = false;
 
-    // the copy of BPDataService's ThreadEventMetadata
+    // the copy of ThreadEventMetadata of the current business process
     processMetadata: ThreadEventMetadata;
 
     constructor(private bpDataService: BPDataService,
@@ -54,8 +54,8 @@ export class PpapDocumentUploadComponent {
     }
 
     ngOnInit() {
-        // get copy of BPDataService's ThreadEventMetadata
-        this.processMetadata = this.bpDataService.processMetadata;
+        // get copy of ThreadEventMetadata of the current business process
+        this.processMetadata = this.bpDataService.bpStartEvent.processMetadata;
 
         this.route.queryParams.subscribe(params =>{
             this.processid = params['pid'];

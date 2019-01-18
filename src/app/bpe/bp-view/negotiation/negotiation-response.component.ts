@@ -36,7 +36,7 @@ export class NegotiationResponseComponent implements OnInit {
 
     callStatus: CallStatus = new CallStatus();
 
-    // the copy of BPDataService's ThreadEventMetadata
+    // the copy of ThreadEventMetadata of the current business process
     processMetadata: ThreadEventMetadata;
 
     @ViewChild(DiscountModalComponent)
@@ -51,8 +51,8 @@ export class NegotiationResponseComponent implements OnInit {
     }
 
     ngOnInit() {
-        // get copy of BPDataService's ThreadEventMetadata
-        this.processMetadata = this.bpDataService.processMetadata;
+        // get copy of ThreadEventMetadata of the current business process
+        this.processMetadata = this.bpDataService.bpStartEvent.processMetadata;
 
         this.line = this.bpDataService.getCatalogueLine();
         this.rfq = this.bpDataService.requestForQuotation;
