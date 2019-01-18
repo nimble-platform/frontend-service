@@ -476,9 +476,7 @@ export class BPDataService{
     }
 
     resetBpData():void {
-        if(this.searchContextService.getAssociatedProcessType() == null) {
-            this.setProcessType(null);
-        }
+        this.setProcessType(null);
         this.updatingProcess = false;
         this.processMetadata = null;
         this.modifiedCatalogueLines = null;
