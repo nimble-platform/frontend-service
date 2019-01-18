@@ -143,7 +143,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     }
 
     isReadOnly(): boolean {
-        return !this.bpDataService.updatingProcess || this.bpDataService.getProcessType() == 'Fulfilment' || this.bpDataService.getProcessType() == 'Transport_Execution_Plan';
+        return !(this.bpDataService.processMetadata && this.bpDataService.processMetadata.isBeingUpdated) || this.bpDataService.getProcessType() == 'Fulfilment' || this.bpDataService.getProcessType() == 'Transport_Execution_Plan';
     }
 
     onToggleProductExpanded() {

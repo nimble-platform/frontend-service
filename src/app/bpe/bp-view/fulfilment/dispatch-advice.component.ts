@@ -182,6 +182,6 @@ export class DispatchAdviceComponent implements OnInit {
     }
 
     isReadOnly(): boolean {
-        return !!this.bpDataService.processMetadata && !this.bpDataService.updatingProcess;
+        return !!this.bpDataService.processMetadata && !this.bpDataService.processMetadata.isBeingUpdated;
     }
 }

@@ -29,7 +29,7 @@ export class TransportNegotiationRequestComponent implements OnInit {
     selectedTab: string = "OVERVIEW";
     rfqPrice: PriceWrapper;
     rfqPaymentTerms: PaymentTermsWrapper;
-    updatingProcess: boolean;
+    updatingProcess: boolean = false;
 
     callStatus: CallStatus = new CallStatus();
 
@@ -52,7 +52,9 @@ export class TransportNegotiationRequestComponent implements OnInit {
         this.rfqPrice = new PriceWrapper(this.rfq.requestForQuotationLine[0].lineItem.price);
         this.rfqPrice.quantityPrice = new ItemPriceWrapper(this.rfq.requestForQuotationLine[0].lineItem.price);
         this.rfqPaymentTerms = new PaymentTermsWrapper(this.rfq.paymentTerms);
-        this.updatingProcess = this.bpDataService.updatingProcess;
+        if(this.bpDataService.processMetadata && this.bpDataService.processMetadata.isBeingUpdated){
+            this.updatingProcess = true;
+        }
     }
 
     isDisabled(): boolean {
@@ -60,7 +62,7 @@ export class TransportNegotiationRequestComponent implements OnInit {
     }
 
     isWaitingForReply(): boolean {
-        return !!this.bpDataService.processMetadata && !this.bpDataService.updatingProcess;
+        return !!this.bpDataService.processMetadata && !this.bpDataService.processMetadata.isBeingUpdated;
     }
 
     onSelectTab(event: any): void {

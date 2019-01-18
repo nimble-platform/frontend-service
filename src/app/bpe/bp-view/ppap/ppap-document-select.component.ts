@@ -103,7 +103,7 @@ export class PpapDocumentSelectComponent implements OnInit {
     }
 
     isRequestSent(): boolean {
-        return !!this.bpDataService.processMetadata && !this.bpDataService.updatingProcess;
+        return !!this.bpDataService.processMetadata && !this.bpDataService.processMetadata.isBeingUpdated;
     }
 
     isLoading(): boolean {

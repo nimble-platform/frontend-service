@@ -30,7 +30,7 @@ export class TransportExecutionPlanComponent implements OnInit {
     response: TransportExecutionPlan;
     userRole: BpUserRole;
     productOrder?: Order;
-    updatingProcess: boolean;
+    updatingProcess: boolean = false;
 
     contractCallStatus: CallStatus = new CallStatus();
     callStatus: CallStatus = new CallStatus();
@@ -68,7 +68,9 @@ export class TransportExecutionPlanComponent implements OnInit {
         this.response = this.bpDataService.transportExecutionPlan;
         this.productOrder = this.bpDataService.productOrder;
         this.userRole = this.bpDataService.bpStartEvent.userRole;
-        this.updatingProcess = this.bpDataService.updatingProcess;
+        if(this.bpDataService.processMetadata && this.bpDataService.processMetadata.isBeingUpdated){
+            this.updatingProcess = true;
+        }
 
         if(this.request.transportContract == null && this.bpDataService.precedingProcessId != null) {
             this.contractCallStatus.submit();
@@ -87,7 +89,7 @@ export class TransportExecutionPlanComponent implements OnInit {
     }
 
     isStarted(): boolean {
-        return this.bpDataService.processMetadata && !this.bpDataService.updatingProcess && this.bpDataService.processMetadata.processStatus === "Started";
+        return this.bpDataService.processMetadata && !this.bpDataService.processMetadata.isBeingUpdated && this.bpDataService.processMetadata.processStatus === "Started";
     }
 
     isFinished(): boolean {

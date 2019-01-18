@@ -56,7 +56,7 @@ export class ItemInformationRequestComponent implements OnInit {
     }
 
     isRequestSent() {
-        return !!this.bpDataService.processMetadata && !this.bpDataService.updatingProcess;
+        return !!this.bpDataService.processMetadata && !this.bpDataService.processMetadata.isBeingUpdated;
     }
 
     getPresentationMode(): PresentationMode {

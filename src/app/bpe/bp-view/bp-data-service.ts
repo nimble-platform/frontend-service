@@ -81,7 +81,6 @@ export class BPDataService{
     private processTypeSubject: BehaviorSubject<ProcessType> = new BehaviorSubject<ProcessType>("Item_Information_Request");
     processTypeObservable = this.processTypeSubject.asObservable();
     processMetadata: ThreadEventMetadata;
-    updatingProcess: boolean = false;
     workflowOptions: BpWorkflowOptions;
 
     precedingProcessId: string;
@@ -123,7 +122,6 @@ export class BPDataService{
     setBpOptionParametersWithThreadEvent(processMetadata: ThreadEventMetadata): void {
         this.resetBpData();
         this.processMetadata = processMetadata;
-        this.updatingProcess = processMetadata.isBeingUpdated;
         this.setBpMessages(processMetadata.processType, processMetadata);
     }
 
@@ -477,7 +475,6 @@ export class BPDataService{
 
     resetBpData():void {
         this.setProcessType(null);
-        this.updatingProcess = false;
         this.processMetadata = null;
         this.modifiedCatalogueLines = null;
         this.requestForQuotation = null;

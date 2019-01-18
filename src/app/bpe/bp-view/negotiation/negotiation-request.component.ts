@@ -257,7 +257,7 @@ export class NegotiationRequestComponent implements OnInit {
     }
 
     isReadOnly(): boolean {
-        return !!this.bpDataService.processMetadata && !this.bpDataService.updatingProcess;
+        return !!this.bpDataService.processMetadata && !this.bpDataService.processMetadata.isBeingUpdated;
     }
 
     isFormValid(): boolean {
@@ -265,7 +265,7 @@ export class NegotiationRequestComponent implements OnInit {
     }
 
     isWaitingForReply(): boolean {
-        return this.bpDataService.processMetadata && !this.bpDataService.updatingProcess && this.bpDataService.processMetadata.processStatus === "Started";
+        return this.bpDataService.processMetadata && !this.bpDataService.processMetadata.isBeingUpdated && this.bpDataService.processMetadata.processStatus === "Started";
     }
 
     isPriceValid(): boolean {

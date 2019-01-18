@@ -29,10 +29,10 @@
             <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">Back</button>
         </div>
         <div class="col-2">
-            <button *ngIf="!bpDataService.updatingProcess" class="btn btn-primary action" [disabled]="isLoading() || isReadOnly()" (click)="onSendDispatchAdvice()">
+            <button *ngIf="!(bpDataService.processMetadata && bpDataService.processMetadata.isBeingUpdated)" class="btn btn-primary action" [disabled]="isLoading() || isReadOnly()" (click)="onSendDispatchAdvice()">
                 {{ isReadOnly() ? "Advice Sent" : "Send advice" }}
             </button>
-            <button *ngIf="bpDataService.updatingProcess" class="btn btn-primary action" [disabled]="isLoading() || isReadOnly()" (click)="onUpdateDispatchAdvice()">
+            <button *ngIf="bpDataService.processMetadata && bpDataService.processMetadata.isBeingUpdated" class="btn btn-primary action" [disabled]="isLoading() || isReadOnly()" (click)="onUpdateDispatchAdvice()">
                 Update Advice
             </button>
         </div>

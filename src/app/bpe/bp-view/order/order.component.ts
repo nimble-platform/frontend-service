@@ -350,7 +350,7 @@ export class OrderComponent implements OnInit {
 
     isReadOnly(): boolean {
         if(this.userRole === "buyer") {
-            return !!this.bpDataService.processMetadata && !this.bpDataService.updatingProcess;
+            return !!this.bpDataService.processMetadata && !this.bpDataService.processMetadata.isBeingUpdated;
         }
         return this.isOrderCompleted();
     }
