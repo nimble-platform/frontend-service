@@ -118,8 +118,9 @@ export class BPDataService{
         return this.companySettings[0];
     }
 
-    private async setBpMessages(processType: ProcessType, processMetadata: ThreadEventMetadata) {
+    private async setBpMessages(processMetadata: ThreadEventMetadata) {
         let activityVariables = processMetadata.activityVariables;
+        let processType = processMetadata.processType;
         if(processType == 'Negotiation') {
             this.requestForQuotation = await this.documentService.getInitialDocument(activityVariables);
             this.initFetchedRfq();
@@ -213,7 +214,7 @@ export class BPDataService{
     startBp(bpStartEvent:BpStartEvent){
         this.resetBpData();
         if(bpStartEvent.processMetadata){
-            this.setBpMessages(bpStartEvent.processMetadata.processType, bpStartEvent.processMetadata);
+            this.setBpMessages(bpStartEvent.processMetadata);
         }
         this.bpStartEvent = bpStartEvent;
         this.setProcessType(this.bpStartEvent.processType);
@@ -280,8 +281,8 @@ export class BPDataService{
         return Promise.resolve();
     }
 
-    async initRfqForTransportationWithTheadMetadata(thread: ThreadEventMetadata): Promise<void> {
-        await this.setBpMessages('Order', thread);
+    async initRfqForTransportationWithThreadMetadata(thread: ThreadEventMetadata): Promise<void> {
+        await this.setBpMessages(thread);
         return this.initRfqForTransportationWithOrder(this.order);
     }
 
@@ -443,7 +444,7 @@ export class BPDataService{
 
     async initTransportExecutionPlanRequestWithOrder() {
         this.resetBpData();
-        await this.setBpMessages('Order', this.searchContextService.getAssociatedProcessMetadata());
+        await this.setBpMessages(this.searchContextService.getAssociatedProcessMetadata());
         let copyOrder:Order = copy(this.order);
         this.modifiedCatalogueLines = copy(this.catalogueLines);
         this.transportExecutionPlanRequest = UBLModelUtils.createTransportExecutionPlanRequestWithOrder(copyOrder, this.modifiedCatalogueLines[0]);

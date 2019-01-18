@@ -30,7 +30,7 @@ export class TransportNegotiationComponent implements OnInit {
 
     async initRfq(): Promise<void> {
         if(this.searchContextService.getAssociatedProcessMetadata()) {
-            return await this.bpDataService.initRfqForTransportationWithTheadMetadata(this.searchContextService.getAssociatedProcessMetadata());
+            return await this.bpDataService.initRfqForTransportationWithThreadMetadata(this.searchContextService.getAssociatedProcessMetadata());
         } else if(this.bpDataService.productOrder) {
             return this.bpDataService.initRfqForTransportationWithOrder(this.bpDataService.productOrder);
         }
