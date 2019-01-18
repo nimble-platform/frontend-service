@@ -17,6 +17,7 @@ import { BpUserRole } from "../../model/bp-user-role";
 import {CookieService} from 'ng2-cookies';
 import {DiscountModalComponent} from '../../../product-details/discount-modal.component';
 import {BpStartEvent} from '../../../catalogue/model/publish/bp-start-event';
+import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
 
 @Component({
     selector: "negotiation-response",
@@ -35,6 +36,9 @@ export class NegotiationResponseComponent implements OnInit {
 
     callStatus: CallStatus = new CallStatus();
 
+    // the copy of BPDataService's ThreadEventMetadata
+    processMetadata: ThreadEventMetadata;
+
     @ViewChild(DiscountModalComponent)
     private discountModal: DiscountModalComponent;
 
@@ -47,6 +51,9 @@ export class NegotiationResponseComponent implements OnInit {
     }
 
     ngOnInit() {
+        // get copy of BPDataService's ThreadEventMetadata
+        this.processMetadata = this.bpDataService.processMetadata;
+
         this.line = this.bpDataService.getCatalogueLine();
         this.rfq = this.bpDataService.requestForQuotation;
         this.bpDataService.computeRfqNegotiationOptionsIfNeeded();
@@ -80,7 +87,7 @@ export class NegotiationResponseComponent implements OnInit {
 
         const vars: ProcessVariables = ModelUtils.createProcessVariables("Negotiation", this.bpDataService.requestForQuotation.buyerCustomerParty.party.id,
             this.bpDataService.requestForQuotation.sellerSupplierParty.party.id,this.cookieService.get("user_id"), this.quotation, this.bpDataService);
-        const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.bpDataService.processMetadata.processId);
+        const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.processMetadata.processId);
 
         this.callStatus.submit();
         this.bpeService.continueBusinessProcess(piim)
@@ -116,7 +123,7 @@ export class NegotiationResponseComponent implements OnInit {
     }
 
     isReadOnly(): boolean {
-        return this.bpDataService.processMetadata == null || this.bpDataService.processMetadata.processStatus !== 'Started';
+        return this.processMetadata == null || this.processMetadata.processStatus !== 'Started';
     }
 
     get quotationPrice(): number {

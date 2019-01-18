@@ -17,6 +17,7 @@ import { Certificate } from "../../../user-mgmt/model/certificate";
 import {DocumentService} from '../document-service';
 import {DocumentReference} from '../../../catalogue/model/publish/document-reference';
 import {BpStartEvent} from '../../../catalogue/model/publish/bp-start-event';
+import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
 
 type PpapLevels = [boolean, boolean, boolean, boolean, boolean]
 
@@ -71,6 +72,9 @@ export class PpapDocumentSelectComponent implements OnInit {
     /** Whether the definition of PPAP is visible or not. */
     showDetails = false;
 
+    // the copy of BPDataService's ThreadEventMetadata
+    processMetadata: ThreadEventMetadata;
+
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
                 private userService: UserService,
@@ -83,10 +87,13 @@ export class PpapDocumentSelectComponent implements OnInit {
     }
 
     ngOnInit() {
+        // get copy of BPDataService's ThreadEventMetadata
+        this.processMetadata = this.bpDataService.processMetadata;
+
         this.computeSelectedDocuments();
 
         this.route.queryParams.subscribe(params => {
-            if (params["pid"] && this.bpDataService.processMetadata) {
+            if (params["pid"] && this.processMetadata) {
                 this.level = 0;
                 this.resetSelectedDocumens();
                 this.ppap = this.bpDataService.ppap;
@@ -103,7 +110,7 @@ export class PpapDocumentSelectComponent implements OnInit {
     }
 
     isRequestSent(): boolean {
-        return !!this.bpDataService.processMetadata && !this.bpDataService.processMetadata.isBeingUpdated;
+        return !!this.processMetadata && !this.processMetadata.isBeingUpdated;
     }
 
     isLoading(): boolean {
@@ -205,7 +212,7 @@ export class PpapDocumentSelectComponent implements OnInit {
         ppap.additionalDocumentReference = this.additionalDocuments;
         ppap.documentType = this.DOCUMENTS.filter((_, i) => this.selectedDocuments[i]).map(doc => doc.name);
 
-        this.bpeService.updateBusinessProcess(JSON.stringify(ppap),"PPAPREQUEST",this.bpDataService.processMetadata.processId)
+        this.bpeService.updateBusinessProcess(JSON.stringify(ppap),"PPAPREQUEST",this.processMetadata.processId)
             .then(() => {
                 this.documentService.updateCachedDocument(ppap.id,ppap);
                 this.callStatus.callback("Ppap request updated", true);

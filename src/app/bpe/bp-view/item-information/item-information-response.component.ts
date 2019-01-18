@@ -17,6 +17,7 @@ import { PresentationMode } from "../../../catalogue/model/publish/presentation-
 import { isTransportService } from "../../../common/utils";
 import {CookieService} from 'ng2-cookies';
 import {BpStartEvent} from '../../../catalogue/model/publish/bp-start-event';
+import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
 
 @Component({
     selector: "item-information-response",
@@ -34,6 +35,9 @@ export class ItemInformationResponseComponent implements OnInit {
     requestFiles: BinaryObject[] = [];
     responseFiles: BinaryObject[] = [];
 
+    // the copy of BPDataService's ThreadEventMetadata
+    processMetadata: ThreadEventMetadata;
+
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
                 private location: Location,
@@ -44,6 +48,9 @@ export class ItemInformationResponseComponent implements OnInit {
     }
 
     ngOnInit() {
+        // get copy of BPDataService's ThreadEventMetadata
+        this.processMetadata = this.bpDataService.processMetadata;
+
         if (!this.request) {
             this.request = this.bpDataService.itemInformationRequest;
         }
@@ -76,7 +83,7 @@ export class ItemInformationResponseComponent implements OnInit {
             this.bpDataService.itemInformationResponse,
             this.bpDataService
         );
-        const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.bpDataService.processMetadata.processId);
+        const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.processMetadata.processId);
 
         this.callStatus.submit();
         this.bpeService.continueBusinessProcess(piim).then(() => {
@@ -133,8 +140,8 @@ export class ItemInformationResponseComponent implements OnInit {
 
     isResponseSent(): boolean {
         return this.readonly ||
-            (   this.bpDataService.processMetadata
-             && this.bpDataService.processMetadata.processStatus === "Completed");
+            (   this.processMetadata
+             && this.processMetadata.processStatus === "Completed");
     }
 
     getPresentationMode(): PresentationMode {

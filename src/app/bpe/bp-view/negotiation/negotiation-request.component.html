@@ -179,12 +179,12 @@
     <div class="col-2">
         <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
     </div>
-    <div class="col-3" *ngIf="!(bpDataService.processMetadata && bpDataService.processMetadata.isBeingUpdated)">
+    <div class="col-3" *ngIf="!(processMetadata && processMetadata.isBeingUpdated)">
         <button class="btn btn-primary action" [disabled]="isLoading() || !isFormValid()" (click)="onSendRequest()">
             {{ isNegotiatingAnyTerm() ? "Send Request" : "Continue With Manufacturer's Terms" }}
         </button>
     </div>
-    <div class="col-3" *ngIf="bpDataService.processMetadata && bpDataService.processMetadata.isBeingUpdated">
+    <div class="col-3" *ngIf="processMetadata && processMetadata.isBeingUpdated">
         <button class="btn btn-primary action" [disabled]="isLoading() || !isFormValid()" (click)="onUpdateRequest()">
             Update Request
         </button>

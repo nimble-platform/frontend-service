@@ -17,6 +17,7 @@ import { BPEService } from "../../bpe.service";
 import {CookieService} from 'ng2-cookies';
 import {ItemPriceWrapper} from '../../../common/item-price-wrapper';
 import {BpStartEvent} from '../../../catalogue/model/publish/bp-start-event';
+import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
 
 @Component({
     selector: "transport-negotiation-response",
@@ -45,6 +46,9 @@ export class TransportNegotiationResponseComponent implements OnInit {
     PAYMENT_TERMS: string[] = UBLModelUtils.getDefaultPaymentTermsAsStrings();
     CURRENCIES: string[] = CURRENCIES;
 
+    // the copy of BPDataService's ThreadEventMetadata
+    processMetadata: ThreadEventMetadata;
+
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
                 private location: Location,
@@ -54,6 +58,9 @@ export class TransportNegotiationResponseComponent implements OnInit {
     }
 
     ngOnInit() {
+        // get copy of BPDataService's ThreadEventMetadata
+        this.processMetadata = this.bpDataService.processMetadata;
+
         if(!this.rfq) {
             this.rfq = this.bpDataService.requestForQuotation;
         }
@@ -89,7 +96,7 @@ export class TransportNegotiationResponseComponent implements OnInit {
     }
 
     isResponseSent(): boolean {
-        return this.bpDataService.processMetadata && this.bpDataService.processMetadata.processStatus !== 'Started';
+        return this.processMetadata && this.processMetadata.processStatus !== 'Started';
     }
 
     onBack(): void {
@@ -105,7 +112,7 @@ export class TransportNegotiationResponseComponent implements OnInit {
 
         const vars: ProcessVariables = ModelUtils.createProcessVariables("Negotiation", this.bpDataService.requestForQuotation.buyerCustomerParty.party.id,
             this.bpDataService.requestForQuotation.sellerSupplierParty.party.id, this.cookieService.get("user_id"),this.quotation, this.bpDataService);
-        const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.bpDataService.processMetadata.processId);
+        const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.processMetadata.processId);
 
         this.callStatus.submit();
         this.bpeService.continueBusinessProcess(piim)

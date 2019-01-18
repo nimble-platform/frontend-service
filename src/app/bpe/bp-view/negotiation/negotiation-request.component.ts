@@ -24,6 +24,7 @@ import { addressToString } from "../../../user-mgmt/utils";
 import {DocumentService} from '../document-service';
 import {DiscountModalComponent} from '../../../product-details/discount-modal.component';
 import {BpStartEvent} from '../../../catalogue/model/publish/bp-start-event';
+import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
 
 @Component({
     selector: "negotiation-request",
@@ -46,6 +47,9 @@ export class NegotiationRequestComponent implements OnInit {
 
     selectedAddressValue = "";
 
+    // the copy of BPDataService's ThreadEventMetadata
+    processMetadata: ThreadEventMetadata;
+
     @ViewChild(DiscountModalComponent)
     private discountModal: DiscountModalComponent;
 
@@ -60,6 +64,8 @@ export class NegotiationRequestComponent implements OnInit {
     }
 
     ngOnInit() {
+        // get copy of BPDataService's ThreadEventMetadata
+        this.processMetadata = this.bpDataService.processMetadata;
         this.bpDataService.computeRfqNegotiationOptionsIfNeeded();
         this.rfq = this.bpDataService.requestForQuotation;
         this.rfqLine = this.rfq.requestForQuotationLine[0];
@@ -127,7 +133,7 @@ export class NegotiationRequestComponent implements OnInit {
         this.callStatus.submit();
         const rfq: RequestForQuotation = copy(this.rfq);
 
-        this.bpeService.updateBusinessProcess(JSON.stringify(rfq),"REQUESTFORQUOTATION",this.bpDataService.processMetadata.processId)
+        this.bpeService.updateBusinessProcess(JSON.stringify(rfq),"REQUESTFORQUOTATION",this.processMetadata.processId)
             .then(() => {
                 this.documentService.updateCachedDocument(rfq.id,rfq);
                 this.callStatus.callback("Terms updated", true);
@@ -257,7 +263,7 @@ export class NegotiationRequestComponent implements OnInit {
     }
 
     isReadOnly(): boolean {
-        return !!this.bpDataService.processMetadata && !this.bpDataService.processMetadata.isBeingUpdated;
+        return !!this.processMetadata && !this.processMetadata.isBeingUpdated;
     }
 
     isFormValid(): boolean {
@@ -265,7 +271,7 @@ export class NegotiationRequestComponent implements OnInit {
     }
 
     isWaitingForReply(): boolean {
-        return this.bpDataService.processMetadata && !this.bpDataService.processMetadata.isBeingUpdated && this.bpDataService.processMetadata.processStatus === "Started";
+        return this.processMetadata && !this.processMetadata.isBeingUpdated && this.processMetadata.processStatus === "Started";
     }
 
     isPriceValid(): boolean {

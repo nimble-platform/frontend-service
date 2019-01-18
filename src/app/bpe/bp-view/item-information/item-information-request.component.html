@@ -24,21 +24,21 @@
 <!-- Actions -->
 <div *ngIf="!isRequestSent()" class="row actions-row">
     <div class="col-2"></div>
-    <div *ngIf="!(bpDataService.processMetadata && bpDataService.processMetadata.isBeingUpdated)" class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
-    <div *ngIf="bpDataService.processMetadata && bpDataService.processMetadata.isBeingUpdated" class="col-6 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+    <div *ngIf="!(processMetadata && processMetadata.isBeingUpdated)" class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+    <div *ngIf="processMetadata && processMetadata.isBeingUpdated" class="col-6 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
     <div class="col-2">
         <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
     </div>
-    <div *ngIf="!(bpDataService.processMetadata && bpDataService.processMetadata.isBeingUpdated)" class="col-2">
+    <div *ngIf="!(processMetadata && processMetadata.isBeingUpdated)" class="col-2">
         <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onSkip()">
             Skip
         </button>
     </div>
     <div class="col-2">
-        <button *ngIf="!(bpDataService.processMetadata && bpDataService.processMetadata.isBeingUpdated)" class="btn btn-primary action" [disabled]="isLoading()" (click)="onSendRequest()">
+        <button *ngIf="!(processMetadata && processMetadata.isBeingUpdated)" class="btn btn-primary action" [disabled]="isLoading()" (click)="onSendRequest()">
             Send Request
         </button>
-        <button *ngIf="bpDataService.processMetadata && bpDataService.processMetadata.isBeingUpdated" class="btn btn-primary action" [disabled]="isLoading()" (click)="onUpdateRequest()">
+        <button *ngIf="processMetadata && processMetadata.isBeingUpdated" class="btn btn-primary action" [disabled]="isLoading()" (click)="onUpdateRequest()">
             Update Request
         </button>
     </div>

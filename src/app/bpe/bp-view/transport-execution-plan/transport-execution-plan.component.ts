@@ -19,6 +19,7 @@ import { Order } from "../../../catalogue/model/publish/order";
 import { PresentationMode } from "../../../catalogue/model/publish/presentation-mode";
 import {DocumentService} from '../document-service';
 import {BpStartEvent} from '../../../catalogue/model/publish/bp-start-event';
+import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
 
 @Component({
     selector: "transport-execution-plan",
@@ -35,6 +36,9 @@ export class TransportExecutionPlanComponent implements OnInit {
     contractCallStatus: CallStatus = new CallStatus();
     callStatus: CallStatus = new CallStatus();
 
+    // the copy of BPDataService's ThreadEventMetadata
+    processMetadata: ThreadEventMetadata;
+
     constructor(private bpDataService: BPDataService,
                 private searchContextService: SearchContextService,
                 private cookieService: CookieService,
@@ -48,6 +52,9 @@ export class TransportExecutionPlanComponent implements OnInit {
     }
 
     ngOnInit() {
+        // get copy of BPDataService's ThreadEventMetadata
+        this.processMetadata = this.bpDataService.processMetadata;
+
         if(!this.bpDataService.transportExecutionPlanRequest) {
             if(this.searchContextService.getAssociatedProcessMetadata() != null) {
                 this.bpDataService.initTransportExecutionPlanRequestWithOrder().then(response => {
@@ -68,7 +75,7 @@ export class TransportExecutionPlanComponent implements OnInit {
         this.response = this.bpDataService.transportExecutionPlan;
         this.productOrder = this.bpDataService.productOrder;
         this.userRole = this.bpDataService.bpStartEvent.userRole;
-        if(this.bpDataService.processMetadata && this.bpDataService.processMetadata.isBeingUpdated){
+        if(this.processMetadata && this.processMetadata.isBeingUpdated){
             this.updatingProcess = true;
         }
 
@@ -89,11 +96,11 @@ export class TransportExecutionPlanComponent implements OnInit {
     }
 
     isStarted(): boolean {
-        return this.bpDataService.processMetadata && !this.bpDataService.processMetadata.isBeingUpdated && this.bpDataService.processMetadata.processStatus === "Started";
+        return this.processMetadata && !this.processMetadata.isBeingUpdated && this.processMetadata.processStatus === "Started";
     }
 
     isFinished(): boolean {
-        return this.bpDataService.processMetadata && this.bpDataService.processMetadata.processStatus === "Completed";
+        return this.processMetadata && this.processMetadata.processStatus === "Completed";
     }
 
     isRequestDisabled(): boolean {
@@ -151,7 +158,7 @@ export class TransportExecutionPlanComponent implements OnInit {
         this.callStatus.submit();
         const transportationExecutionPlanRequest: TransportExecutionPlanRequest = copy(this.bpDataService.transportExecutionPlanRequest);
 
-        this.bpeService.updateBusinessProcess(JSON.stringify(transportationExecutionPlanRequest),"TRANSPORTEXECUTIONPLANREQUEST",this.bpDataService.processMetadata.processId)
+        this.bpeService.updateBusinessProcess(JSON.stringify(transportationExecutionPlanRequest),"TRANSPORTEXECUTIONPLANREQUEST",this.processMetadata.processId)
             .then(() => {
                 this.documentService.updateCachedDocument(transportationExecutionPlanRequest.id,transportationExecutionPlanRequest);
                 this.callStatus.callback("Item Information Request updated", true);
@@ -171,7 +178,7 @@ export class TransportExecutionPlanComponent implements OnInit {
             this.cookieService.get("user_id"),
             this.bpDataService.transportExecutionPlan, this.bpDataService);
         const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, 
-            this.bpDataService.processMetadata.processId);
+            this.processMetadata.processId);
 
         this.callStatus.submit();
         this.bpeService.continueBusinessProcess(piim)

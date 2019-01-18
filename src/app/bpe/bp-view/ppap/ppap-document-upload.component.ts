@@ -15,6 +15,7 @@ import {Attachment} from "../../../catalogue/model/publish/attachment";
 import { Location } from "@angular/common";
 import {DocumentService} from "../document-service";
 import {CookieService} from 'ng2-cookies';
+import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
 
 @Component({
     selector: "ppap-document-upload",
@@ -39,6 +40,9 @@ export class PpapDocumentUploadComponent {
     // check whether 'Send Response' button is clicked
     submitted: boolean = false;
 
+    // the copy of BPDataService's ThreadEventMetadata
+    processMetadata: ThreadEventMetadata;
+
     constructor(private bpDataService: BPDataService,
                 private bpeService: BPEService,
                 private route: ActivatedRoute,
@@ -50,6 +54,9 @@ export class PpapDocumentUploadComponent {
     }
 
     ngOnInit() {
+        // get copy of BPDataService's ThreadEventMetadata
+        this.processMetadata = this.bpDataService.processMetadata;
+
         this.route.queryParams.subscribe(params =>{
             this.processid = params['pid'];
 
@@ -128,7 +135,7 @@ export class PpapDocumentUploadComponent {
         this.ppapResponse.note = this.notesToSend;
         this.ppapResponse.additionalDocumentReference = this.additionalDocumentsToSend;
         const vars: ProcessVariables = ModelUtils.createProcessVariables("Ppap", this.ppap.buyerCustomerParty.party.id, this.ppap.sellerSupplierParty.party.id, this.cookieService.get("user_id"),this.ppapResponse, this.bpDataService);
-        const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.bpDataService.processMetadata.processId);
+        const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.processMetadata.processId);
 
         this.callStatus.submit();
         this.bpeService.continueBusinessProcess(piim).then(res => {

@@ -20,6 +20,7 @@ import { copy, isTransportService } from "../../../common/utils";
 import { PresentationMode } from "../../../catalogue/model/publish/presentation-mode";
 import {DocumentService} from '../document-service';
 import {BpStartEvent} from '../../../catalogue/model/publish/bp-start-event';
+import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
 /**
  * Created by suat on 19-Nov-17.
  */
@@ -35,6 +36,9 @@ export class ItemInformationRequestComponent implements OnInit {
     request: ItemInformationRequest;
     files: BinaryObject[]
 
+    // the copy of BPDataService's ThreadEventMetadata
+    processMetadata: ThreadEventMetadata;
+
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
                 private userService: UserService,
@@ -46,6 +50,9 @@ export class ItemInformationRequestComponent implements OnInit {
     }
 
     ngOnInit() {
+        // get copy of BPDataService's ThreadEventMetadata
+        this.processMetadata = this.bpDataService.processMetadata;
+
         this.request = this.bpDataService.itemInformationRequest;
         const documents = this.request.itemInformationRequestLine[0].salesItem[0].item.itemSpecificationDocumentReference;
         this.files = documents.map(doc => doc.attachment.embeddedDocumentBinaryObject);
@@ -56,7 +63,7 @@ export class ItemInformationRequestComponent implements OnInit {
     }
 
     isRequestSent() {
-        return !!this.bpDataService.processMetadata && !this.bpDataService.processMetadata.isBeingUpdated;
+        return !!this.processMetadata && !this.processMetadata.isBeingUpdated;
     }
 
     getPresentationMode(): PresentationMode {
@@ -116,7 +123,7 @@ export class ItemInformationRequestComponent implements OnInit {
         this.callStatus.submit();
         const itemInformationRequest: ItemInformationRequest = copy(this.bpDataService.itemInformationRequest);
 
-        this.bpeService.updateBusinessProcess(JSON.stringify(itemInformationRequest),"ITEMINFORMATIONREQUEST",this.bpDataService.processMetadata.processId)
+        this.bpeService.updateBusinessProcess(JSON.stringify(itemInformationRequest),"ITEMINFORMATIONREQUEST",this.processMetadata.processId)
             .then(() => {
                 this.documentService.updateCachedDocument(itemInformationRequest.id,itemInformationRequest);
                 this.callStatus.callback("Item Information Request updated", true);

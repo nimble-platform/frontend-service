@@ -18,6 +18,7 @@ import { ModelUtils } from "../../model/model-utils";
 import { ProcessInstanceInputMessage } from "../../model/process-instance-input-message";
 import { BPEService } from "../../bpe.service";
 import {ItemPriceWrapper} from '../../../common/item-price-wrapper';
+import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
 
 @Component({
     selector: "transport-negotiation-request",
@@ -38,6 +39,9 @@ export class TransportNegotiationRequestComponent implements OnInit {
     PAYMENT_TERMS: string[] = UBLModelUtils.getDefaultPaymentTermsAsStrings();
     CURRENCIES: string[] = CURRENCIES;
 
+    // the copy of BPDataService's ThreadEventMetadata
+    processMetadata: ThreadEventMetadata;
+
     constructor(private bpDataService: BPDataService,
                 private bpeService:BPEService,
                 private cookieService: CookieService,
@@ -48,11 +52,14 @@ export class TransportNegotiationRequestComponent implements OnInit {
     }
 
     ngOnInit() {
+        // get copy of BPDataService's ThreadEventMetadata
+        this.processMetadata = this.bpDataService.processMetadata;
+
         this.rfq = this.bpDataService.requestForQuotation;
         this.rfqPrice = new PriceWrapper(this.rfq.requestForQuotationLine[0].lineItem.price);
         this.rfqPrice.quantityPrice = new ItemPriceWrapper(this.rfq.requestForQuotationLine[0].lineItem.price);
         this.rfqPaymentTerms = new PaymentTermsWrapper(this.rfq.paymentTerms);
-        if(this.bpDataService.processMetadata && this.bpDataService.processMetadata.isBeingUpdated){
+        if(this.processMetadata && this.processMetadata.isBeingUpdated){
             this.updatingProcess = true;
         }
     }
@@ -62,7 +69,7 @@ export class TransportNegotiationRequestComponent implements OnInit {
     }
 
     isWaitingForReply(): boolean {
-        return !!this.bpDataService.processMetadata && !this.bpDataService.processMetadata.isBeingUpdated;
+        return !!this.processMetadata && !this.processMetadata.isBeingUpdated;
     }
 
     onSelectTab(event: any): void {
@@ -133,7 +140,7 @@ export class TransportNegotiationRequestComponent implements OnInit {
             rfq.requestForQuotationLine[0].lineItem.item = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;
         }
 
-        this.bpeService.updateBusinessProcess(JSON.stringify(rfq),"REQUESTFORQUOTATION",this.bpDataService.processMetadata.processId)
+        this.bpeService.updateBusinessProcess(JSON.stringify(rfq),"REQUESTFORQUOTATION",this.processMetadata.processId)
             .then(() => {
                 this.callStatus.callback("Terms updated", true);
                 this.router.navigate(['dashboard']);
