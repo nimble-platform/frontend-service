@@ -161,7 +161,7 @@ export class PpapDocumentSelectComponent implements OnInit {
     onSkip() {
         this.bpDataService.resetBpData();
         this.bpDataService.initRfq(this.bpDataService.getCompanySettings().negotiationSettings).then(() => {
-            this.bpDataService.updateBpStartEvent(this.bpDataService.bpStartEvent.userRole, "Negotiation");
+            this.bpDataService.proceedNextBpStep(this.bpDataService.bpStartEvent.userRole, "Negotiation");
         });
     }
 

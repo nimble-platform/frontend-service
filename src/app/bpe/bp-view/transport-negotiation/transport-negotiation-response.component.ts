@@ -127,11 +127,11 @@ export class TransportNegotiationResponseComponent implements OnInit {
 
     onRequestNewQuotation() {
         this.bpDataService.initRfqWithQuotation();
-        this.bpDataService.updateBpStartEvent("buyer", "Negotiation");
+        this.bpDataService.proceedNextBpStep("buyer", "Negotiation");
     }
 
     onAcceptAndOrder() {
         this.bpDataService.initTransportExecutionPlanRequestWithQuotation();
-        this.bpDataService.updateBpStartEvent(this.userRole,'Transport_Execution_Plan');
+        this.bpDataService.proceedNextBpStep(this.userRole,'Transport_Execution_Plan');
     }
 }

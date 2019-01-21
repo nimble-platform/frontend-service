@@ -223,7 +223,7 @@ export class BPDataService{
     // For business processes transitions (for example, from PPAP to Negotiation), we have to keep containerGroupId same since all processes are in the same process instance group
     // However, process type and userRole can be changed. Therefore, we use this function to update BpStartEvent correctly.
     // Moreover, processMetadata should be cleared since we will create a new business process.
-    updateBpStartEvent(userRole: BpUserRole,processType:ProcessType){
+    proceedNextBpStep(userRole: BpUserRole, processType:ProcessType){
         this.bpStartEvent.processType = processType;
         this.bpStartEvent.processMetadata = null;
         this.bpStartEventBehaviorSubject.next(new BpStartEvent(userRole,processType,this.bpStartEvent.containerGroupId,this.bpStartEvent.collaborationGroupId,this.bpStartEvent.processMetadata));

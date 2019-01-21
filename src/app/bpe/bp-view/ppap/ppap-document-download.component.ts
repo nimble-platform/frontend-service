@@ -100,7 +100,7 @@ export class PpapDocumentDownloadComponent{
     onNextStep() {
         this.bpDataService.resetBpData();
         this.bpDataService.initRfq(null).then(() => {
-            this.bpDataService.updateBpStartEvent(this.bpDataService.bpStartEvent.userRole, "Negotiation");
+            this.bpDataService.proceedNextBpStep(this.bpDataService.bpStartEvent.userRole, "Negotiation");
         })
     }
 

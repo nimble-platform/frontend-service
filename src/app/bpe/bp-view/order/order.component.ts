@@ -263,7 +263,7 @@ export class OrderComponent implements OnInit {
     }
 
     onDispatchOrder() {
-        this.bpDataService.updateBpStartEvent(this.userRole, "Fulfilment");
+        this.bpDataService.proceedNextBpStep(this.userRole, "Fulfilment");
     }
 
     onSearchTransportService() {
