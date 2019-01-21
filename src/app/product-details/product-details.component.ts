@@ -108,15 +108,7 @@ export class ProductDetailsComponent implements OnInit {
     }
 
     private navigateToBusinessProcess(targetProcess: ProcessType): void {
-        // If there is an associated process, we need to know collaboration group id since we will add the new process instance group to this collaboration group
-        // Else, it is OK to reset collaboration group id since a new collaboration group will be created for the process.
-        // For both case, we have to know selected properties (e.g. this.options)
-        if(this.searchContextService.getAssociatedProcessType() == null){
-            this.bpDataService.startBp(new BpStartEvent('buyer',targetProcess,null,null,null,this.options));
-        }
-        else {
-            this.bpDataService.startBp(new BpStartEvent('buyer',targetProcess,null,this.bpDataService.bpStartEvent.collaborationGroupId,null,this.options));
-        }
+        this.bpDataService.startBp(new BpStartEvent('buyer',targetProcess,null,this.bpDataService.bpStartEvent.collaborationGroupId,null,this.options),false);
 
         this.router.navigate(['bpe/bpe-exec'], {
             queryParams: {

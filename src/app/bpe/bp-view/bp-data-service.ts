@@ -211,8 +211,18 @@ export class BPDataService{
     // This function is used to start viewing business processes.
     // Dashboard and product-details are two way to start viewing business processes. For dashboard, business processes contain process document metadatas since
     // they are already started/completed. However, in the product-details page, we start a new business process, this is why we have a null check for processMetadata in the function.
-    startBp(bpStartEvent:BpStartEvent){
+    startBp(bpStartEvent:BpStartEvent,clearSearchContext:boolean){
         this.resetBpData();
+        if(clearSearchContext){
+            this.searchContextService.clearSearchContext();
+        }
+        else {
+            // If there is an associated process, we need to know collaboration group id since we will add the new process instance group to this collaboration group
+            // Else, it is OK to reset collaboration group id since a new collaboration group will be created for the process.
+            if(this.searchContextService.getAssociatedProcessType() == null){
+                bpStartEvent.collaborationGroupId = null;
+            }
+        }
         if(bpStartEvent.processMetadata){
             this.setBpMessages(bpStartEvent.processMetadata);
         }
