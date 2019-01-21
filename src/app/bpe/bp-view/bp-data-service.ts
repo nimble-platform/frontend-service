@@ -309,7 +309,10 @@ export class BPDataService{
     }
 
     computeRfqNegotiationOptionsIfNeeded() {
-        const rfq = this.requestForQuotation;
+        this.computeRfqNegotiationOptionsIfNeededWithRfq(this.requestForQuotation);
+    }
+
+    computeRfqNegotiationOptionsIfNeededWithRfq(rfq: RequestForQuotation) {
         if(!rfq.negotiationOptions) {
             rfq.negotiationOptions = new NegotiationOptions();
 

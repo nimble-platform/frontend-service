@@ -11,7 +11,7 @@
     <div class="col-3">{{ wrapper.rfqDeliveryPeriodStringIfNegotiating }}</div>
     <div class="col-3">
         <quantity-input [visible]="rfq.negotiationOptions.deliveryPeriod" [presentationMode]="getPresentationMode()"
-            [disabled]="isLoading()" [quantity]="wrapper.quotationDeliveryPeriod" quantityType="time_quantity">
+            [disabled]="isDisabled()" [quantity]="wrapper.quotationDeliveryPeriod" quantityType="time_quantity">
         </quantity-input>
     </div>
 </div>
@@ -22,7 +22,7 @@
     <div class="col-3">{{ wrapper.rfqWarrantyStringIfNegotiating }}</div>
     <div class="col-3">
         <quantity-input [visible]="rfq.negotiationOptions.warranty" [presentationMode]="getPresentationMode()"
-            [disabled]="isLoading()" [quantity]="wrapper.quotationWarranty" quantityType="warranty_period">
+            [disabled]="isDisabled()" [quantity]="wrapper.quotationWarranty" quantityType="warranty_period">
         </quantity-input>
     </div>
 </div>
@@ -33,7 +33,7 @@
     <div class="col-3">{{ wrapper.rfqIncotermsIfNegotiating }}</div>
     <div class="col-3">
         <options-input [visible]="rfq.negotiationOptions.incoterms" [presentationMode]="getPresentationMode()"
-            [disabled]="isLoading()" [options]="wrapper.settings.incoterms" [(selected)]="wrapper.quotationIncoterms">
+            [disabled]="isDisabled()" [options]="wrapper.settings.incoterms" [(selected)]="wrapper.quotationIncoterms">
         </options-input>
     </div>
 </div>
@@ -44,7 +44,7 @@
     <div class="col-3">{{ wrapper.rfqPaymentTermsIfNegotiating }}</div>
     <div class="col-3">
         <options-input [visible]="rfq.negotiationOptions.paymentTerms" [presentationMode]="getPresentationMode()"
-            [disabled]="isLoading()" [options]="wrapper.settings.paymentTerms"
+            [disabled]="isDisabled()" [options]="wrapper.settings.paymentTerms"
             [(selected)]="wrapper.quotationPaymentTerms.paymentTerm">
         </options-input>
     </div>
@@ -56,7 +56,7 @@
     <div class="col-3">{{ wrapper.rfqPaymentMeansIfNegotiating }}</div>
     <div class="col-3">
         <options-input [visible]="rfq.negotiationOptions.paymentMeans" [presentationMode]="getPresentationMode()"
-            [disabled]="isLoading()" [options]="wrapper.settings.paymentMeans" [(selected)]="wrapper.quotationPaymentMeans">
+            [disabled]="isDisabled()" [options]="wrapper.settings.paymentMeans" [(selected)]="wrapper.quotationPaymentMeans">
         </options-input>
     </div>
 </div>
@@ -67,7 +67,7 @@
     <div class="col-3">{{ rfq.dataMonitoringRequested ? "Yes" : "" }}</div>
     <div class="col-3" *ngIf="rfq.dataMonitoringRequested && !isReadOnly()">
         <input type="checkbox" [(ngModel)]="quotation.dataMonitoringPromised"
-            [disabled]="isLoading()">
+            [disabled]="isDisabled()">
         <label>Provide data monitoring service</label>
     </div>
     <div class="col-3" *ngIf="rfq.dataMonitoringRequested && isReadOnly()">
@@ -87,7 +87,7 @@
       <small>( {{ wrapper.rfqPricePerItemStringIfNegotiating}} )</small>
     </div>
     <div class="col-3" [ngClass]="wrapper.quotationPriceWrapper.appliedDiscounts.length > 0 ? 'd-flex' : null">
-        <quantity-input [presentationMode]="getPresentationMode()" [disabled]="isLoading()"
+        <quantity-input [presentationMode]="getPresentationMode()" [disabled]="isDisabled()"
             [quantity]="wrapper.quotationPriceWrapper" [quantityUnits]="CURRENCIES"
             [disableQuantityUnit]="wrapper.linePriceWrapper.hasPrice()">
         </quantity-input>
@@ -147,7 +147,7 @@
     </div>
 </div>
 
-<div class="row actions-row" *ngIf="userRole === 'buyer'">
+<div class="row actions-row" *ngIf="userRole === 'buyer' && !readonly">
     <div class="col-5 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
     <div class="col-2">
         <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>

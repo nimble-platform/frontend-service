@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import { Location } from "@angular/common";
 import { CatalogueLine } from "../../../catalogue/model/publish/catalogue-line";
 import { RequestForQuotation } from "../../../catalogue/model/publish/request-for-quotation";
@@ -27,10 +27,11 @@ import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event
 export class NegotiationResponseComponent implements OnInit {
 
     line: CatalogueLine;
-    rfq: RequestForQuotation;
-    quotation: Quotation;
+    @Input() rfq: RequestForQuotation;
+    @Input() quotation: Quotation;
     wrapper: NegotiationModelWrapper;
     userRole: BpUserRole;
+    @Input() readonly: boolean = false;
 
     CURRENCIES: string[] = CURRENCIES;
 
@@ -55,9 +56,14 @@ export class NegotiationResponseComponent implements OnInit {
         this.processMetadata = this.bpDataService.bpStartEvent.processMetadata;
 
         this.line = this.bpDataService.getCatalogueLine();
-        this.rfq = this.bpDataService.requestForQuotation;
-        this.bpDataService.computeRfqNegotiationOptionsIfNeeded();
-        this.quotation = this.bpDataService.quotation;
+        if(this.rfq == null) {
+            this.rfq = this.bpDataService.requestForQuotation;
+        }
+        if(this.quotation == null) {
+            this.quotation = this.bpDataService.quotation;
+        }
+        this.bpDataService.computeRfqNegotiationOptionsIfNeededWithRfq(this.rfq);
+
         this.wrapper = new NegotiationModelWrapper(this.line, this.rfq, this.quotation,
             this.bpDataService.getCompanySettings().negotiationSettings);
 
@@ -118,12 +124,16 @@ export class NegotiationResponseComponent implements OnInit {
         return false;
     }
 
+    isDisabled(): boolean {
+        return this.isLoading() || this.readonly;
+    }
+
     getPresentationMode(): "edit" | "view" {
         return this.isReadOnly() ? "view" : "edit";
     }
 
     isReadOnly(): boolean {
-        return this.processMetadata == null || this.processMetadata.processStatus !== 'Started';
+        return this.processMetadata == null || this.processMetadata.processStatus !== 'Started' || this.readonly;
     }
 
     get quotationPrice(): number {
