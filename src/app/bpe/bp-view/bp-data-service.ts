@@ -77,14 +77,16 @@ export class BPDataService{
     ////////////////////////////////////////////////////////////////////////////
     //////// variables used when navigating to bp options details page //////
     ////////////////////////////////////////////////////////////////////////////
-    // setBpOptionParameters method must be used to set these values
-    private processTypeSubject: BehaviorSubject<ProcessType> = new BehaviorSubject<ProcessType>("Item_Information_Request");
-    processTypeObservable = this.processTypeSubject.asObservable();
+
+    // this event is used to set bp options before navigating to bp details page
+    bpStartEvent:BpStartEvent = new BpStartEvent(null,"Item_Information_Request",null,null,null);
+    // these are used to update view according to the selected process type.
+    private bpStartEventBehaviorSubject: BehaviorSubject<BpStartEvent> = new BehaviorSubject<BpStartEvent>(this.bpStartEvent);
+    bpStartEventObservable = this.bpStartEventBehaviorSubject.asObservable();
+
     workflowOptions: BpWorkflowOptions;
 
     precedingProcessId: string;
-
-    bpStartEvent:BpStartEvent = new BpStartEvent();
 
     constructor(private searchContextService: SearchContextService,
                 private precedingBPDataService: PrecedingBPDataService,
@@ -217,7 +219,7 @@ export class BPDataService{
             this.setBpMessages(bpStartEvent.processMetadata);
         }
         this.bpStartEvent = bpStartEvent;
-        this.setProcessType(this.bpStartEvent.processType);
+        this.bpStartEventBehaviorSubject.next(this.bpStartEvent);
     }
 
     // For business processes transitions (for example, from PPAP to Negotiation), we have to keep containerGroupId same since all processes are in the same process instance group
@@ -226,7 +228,8 @@ export class BPDataService{
     updateBpStartEvent(userRole: BpUserRole,processType:ProcessType){
         this.bpStartEvent.processType = processType;
         this.bpStartEvent.processMetadata = null;
-        this.setProcessType(this.bpStartEvent.processType);
+        this.bpStartEventBehaviorSubject.next(new BpStartEvent(userRole,processType,this.bpStartEvent.containerGroupId,this.bpStartEvent.collaborationGroupId,this.bpStartEvent.processMetadata));
+        // it is crucial to update userRole after updating process type. Otherwise, we will have problems while viewing transport execution plan details.
         this.bpStartEvent.userRole = userRole;
     }
 
@@ -477,7 +480,7 @@ export class BPDataService{
     }
 
     resetBpData():void {
-        this.setProcessType(null);
+        this.bpStartEventBehaviorSubject.next(null);
         this.modifiedCatalogueLines = null;
         this.requestForQuotation = null;
         this.quotation = null;
@@ -494,14 +497,6 @@ export class BPDataService{
 
         // reinitialize the messages considering the search context
         //this.setBpMessages(this.searchContextService.associatedProcessType, this.searchContextService.associatedProcessMetadata);
-    }
-
-    setProcessType(processType: ProcessType): void {
-        this.processTypeSubject.next(processType);
-    }
-
-    getProcessType(): string {
-        return this.processTypeSubject.getValue();
     }
 
     /********************************************************************************************
@@ -567,7 +562,7 @@ export class BPDataService{
     }
 
     private getItemFromCurrentWorkflow(): Item {
-        switch(this.processTypeSubject.getValue()) {
+        switch(this.bpStartEventBehaviorSubject.getValue().processType) {
             case "Item_Information_Request":
                 return this.itemInformationRequest ? this.itemInformationRequest.itemInformationRequestLine[0].salesItem[0].item : null;
             case "Ppap":

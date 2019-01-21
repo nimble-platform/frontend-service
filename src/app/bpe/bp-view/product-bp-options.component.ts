@@ -33,7 +33,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     currentStep: ProductBpStep;
     stepsDisplayMode: ProductBpStepsDisplay;
     callStatus: CallStatus = new CallStatus();
-    processTypeSubs: Subscription;
+    bpStartEventSubs: Subscription;
 
     id: string;
     catalogueId: string;
@@ -69,10 +69,10 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
         // get copy of ThreadEventMetadata of the current business process
         this.processMetadata = this.bpDataService.bpStartEvent.processMetadata;
 
-        this.processTypeSubs = this.bpDataService.processTypeObservable.subscribe(processType => {
-            if (processType) {
-                this.processType = processType;
-                this.currentStep = this.getCurrentStep(processType);
+        this.bpStartEventSubs = this.bpDataService.bpStartEventObservable.subscribe(bpStartEvent => {
+            if (bpStartEvent) {
+                this.processType = bpStartEvent.processType;
+                this.currentStep = this.getCurrentStep(bpStartEvent.processType);
                 this.stepsDisplayMode = this.getStepsDisplayMode();
             }
         });
@@ -134,7 +134,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
-        this.processTypeSubs.unsubscribe();
+        this.bpStartEventSubs.unsubscribe();
         this.renderer.setStyle(document.body, "background-image", "url('assets/bg_global.jpg')");
     }
 
@@ -150,7 +150,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     }
 
     isReadOnly(): boolean {
-        return !(this.processMetadata && this.processMetadata.isBeingUpdated) || this.bpDataService.getProcessType() == 'Fulfilment' || this.bpDataService.getProcessType() == 'Transport_Execution_Plan';
+        return !(this.processMetadata && this.processMetadata.isBeingUpdated) || this.bpDataService.bpStartEvent.processType == 'Fulfilment' || this.bpDataService.bpStartEvent.processType == 'Transport_Execution_Plan';
     }
 
     onToggleProductExpanded() {
