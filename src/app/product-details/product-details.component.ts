@@ -17,6 +17,7 @@ import {Quantity} from '../catalogue/model/publish/quantity';
 import {DiscountModalComponent} from './discount-modal.component';
 import {BpStartEvent} from '../catalogue/model/publish/bp-start-event';
 import {SearchContextService} from '../simple-search/search-context.service';
+import {BpURLParams} from '../catalogue/model/publish/bpURLParams';
 
 @Component({
     selector: 'product-details',
@@ -51,7 +52,6 @@ export class ProductDetailsComponent implements OnInit {
                 private searchContextService: SearchContextService,
                 private userService: UserService,
                 private route: ActivatedRoute,
-                private router: Router,
                 public appComponent: AppComponent) {
 
     }
@@ -108,14 +108,8 @@ export class ProductDetailsComponent implements OnInit {
     }
 
     private navigateToBusinessProcess(targetProcess: ProcessType): void {
-        this.bpDataService.startBp(new BpStartEvent('buyer',targetProcess,null,this.bpDataService.bpStartEvent.collaborationGroupId,null,this.options),false);
-
-        this.router.navigate(['bpe/bpe-exec'], {
-            queryParams: {
-                catalogueId: this.catalogueId,
-                id: this.id
-            }
-        });
+        this.bpDataService.startBp(new BpStartEvent('buyer',targetProcess,null,this.bpDataService.bpStartEvent.collaborationGroupId,null,this.options),false,
+            new BpURLParams(this.catalogueId,this.id,null));
     }
 
     /*

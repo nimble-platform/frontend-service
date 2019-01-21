@@ -6,6 +6,7 @@ import { ThreadEventMetadata } from "../catalogue/model/publish/thread-event-met
 import {BPEService} from "../bpe/bpe.service";
 import {BpStartEvent} from '../catalogue/model/publish/bp-start-event';
 import {BpUserRole} from '../bpe/model/bp-user-role';
+import {BpURLParams} from '../catalogue/model/publish/bpURLParams';
 
 @Component({
     selector: "thread-event",
@@ -20,8 +21,7 @@ export class ThreadEventComponent implements OnInit {
     @Output() processCancelled = new EventEmitter();
 
     constructor(private bpDataService: BPDataService,
-                private bpeService: BPEService,
-                private router: Router) {
+                private bpeService: BPEService) {
     }
 
     ngOnInit() {
@@ -32,14 +32,7 @@ export class ThreadEventComponent implements OnInit {
         // whether we are updating the process instance or not
         this.event.isBeingUpdated = updateProcess;
         let userRole:BpUserRole = this.event.buyer ? "buyer": "seller";
-        this.bpDataService.startBp(new BpStartEvent(userRole,this.event.processType,this.processInstanceGroup.id,this.collaborationGroupId,this.event),true);
-        this.router.navigate(['bpe/bpe-exec'], {
-            queryParams: {
-                catalogueId: this.event.product.catalogueDocumentReference.id,
-                id: this.event.product.manufacturersItemIdentification.id,
-                pid: this.event.processId
-            }
-        });
+        this.bpDataService.startBp(new BpStartEvent(userRole,this.event.processType,this.processInstanceGroup.id,this.collaborationGroupId,this.event),true,new BpURLParams(this.event.product.catalogueDocumentReference.id,this.event.product.manufacturersItemIdentification.id,this.event.processId));
     }
 
     cancelBP(){

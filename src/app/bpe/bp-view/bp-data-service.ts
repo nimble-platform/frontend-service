@@ -40,6 +40,8 @@ import { CompanySettings } from "../../user-mgmt/model/company-settings";
 import {DocumentService} from "./document-service";
 import {ShipmentStage} from "../../catalogue/model/publish/shipment-stage";
 import {BpStartEvent} from '../../catalogue/model/publish/bp-start-event';
+import {BpURLParams} from '../../catalogue/model/publish/bpURLParams';
+import {Router} from '@angular/router';
 
 /**
  * Created by suat on 20-Sep-17.
@@ -90,7 +92,8 @@ export class BPDataService{
                 private precedingBPDataService: PrecedingBPDataService,
                 private userService: UserService,
                 private cookieService: CookieService,
-                private documentService: DocumentService) {
+                private documentService: DocumentService,
+                private router: Router) {
     }
 
     setCatalogueLines(catalogueLines: CatalogueLine[], settings: CompanySettings[]): void {
@@ -211,7 +214,7 @@ export class BPDataService{
     // This function is used to start viewing business processes.
     // Dashboard and product-details are two way to start viewing business processes. For dashboard, business processes contain process document metadatas since
     // they are already started/completed. However, in the product-details page, we start a new business process, this is why we have a null check for processMetadata in the function.
-    startBp(bpStartEvent:BpStartEvent,clearSearchContext:boolean){
+    startBp(bpStartEvent:BpStartEvent,clearSearchContext:boolean,bpURLParams:BpURLParams){
         this.resetBpData();
         if(clearSearchContext){
             this.searchContextService.clearSearchContext();
@@ -228,6 +231,28 @@ export class BPDataService{
         }
         this.bpStartEvent = bpStartEvent;
         this.bpStartEventBehaviorSubject.next(this.bpStartEvent);
+        this.navigateToBpExec(bpURLParams);
+    }
+
+    private navigateToBpExec(bpURLParams: BpURLParams){
+        if(bpURLParams.processInstanceId){
+            this.router.navigate(['bpe/bpe-exec'], {
+                queryParams: {
+                    catalogueId: bpURLParams.catalogueId,
+                    id: bpURLParams.catalogueLineId,
+                    pid: bpURLParams.processInstanceId
+                }
+            });
+        }
+        else {
+            this.router.navigate(['bpe/bpe-exec'], {
+                queryParams: {
+                    catalogueId: bpURLParams.catalogueId,
+                    id: bpURLParams.catalogueLineId
+                }
+            });
+        }
+
     }
 
     // For business processes transitions (for example, from PPAP to Negotiation), we have to keep containerGroupId same since all processes are in the same process instance group
