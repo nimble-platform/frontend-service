@@ -78,13 +78,11 @@ export class BPDataService{
     //////// variables used when navigating to bp options details page //////
     ////////////////////////////////////////////////////////////////////////////
 
-    // this event is used to set bp options before navigating to bp details page
+    // BpStartEvent is used to set bp options while navigating to bp details page
     bpStartEvent:BpStartEvent = new BpStartEvent(null,"Item_Information_Request",null,null,null);
     // these are used to update view according to the selected process type.
     private bpStartEventBehaviorSubject: BehaviorSubject<BpStartEvent> = new BehaviorSubject<BpStartEvent>(this.bpStartEvent);
     bpStartEventObservable = this.bpStartEventBehaviorSubject.asObservable();
-
-    workflowOptions: BpWorkflowOptions;
 
     precedingProcessId: string;
 
@@ -237,7 +235,7 @@ export class BPDataService{
     // search details page
     initRfq(settings: CompanyNegotiationSettings): Promise<void> {
         const rfq = UBLModelUtils.createRequestForQuotation(
-            this.workflowOptions ? this.workflowOptions.negotiation : new NegotiationOptions(),
+            this.bpStartEvent.workflowOptions ? this.bpStartEvent.workflowOptions.negotiation : new NegotiationOptions(),
             settings
         );
         this.requestForQuotation = rfq;
@@ -261,7 +259,7 @@ export class BPDataService{
         this.selectFirstValuesAmongAlternatives(rfqLine.lineItem.item);
 
         // quantity
-        rfqLine.lineItem.quantity.value = this.workflowOptions ? this.workflowOptions.quantity : 1;
+        rfqLine.lineItem.quantity.value = this.bpStartEvent.workflowOptions ? this.bpStartEvent.workflowOptions.quantity : 1;
 
         let userId = this.cookieService.get('user_id');
         return this.userService.getSettingsForUser(userId).then(settings => {
@@ -534,7 +532,7 @@ export class BPDataService{
             const prop = item.additionalItemProperty[i];
 
             const key = getPropertyKey(prop);
-            const indexToSelect = this.workflowOptions ? this.workflowOptions.selectedValues[key] || 0 : 0;
+            const indexToSelect = this.bpStartEvent.workflowOptions ? this.bpStartEvent.workflowOptions.selectedValues[key] || 0 : 0;
 
             switch(prop.valueQualifier) {
                 case "STRING":
@@ -554,7 +552,7 @@ export class BPDataService{
                     break;
                 case "QUANTITY":
                     if(prop.valueQuantity.length > 1) {
-                        prop.valueQuantity = [prop.valueQuantity[0]];
+                        prop.valueQuantity = [prop.valueQuantity[indexToSelect]];
                     }
                     break;
             }
@@ -579,8 +577,8 @@ export class BPDataService{
     }
 
     computeWorkflowOptions() {
-        if(!this.workflowOptions) {
-            this.workflowOptions = new BpWorkflowOptions();
+        if(!this.bpStartEvent.workflowOptions) {
+            this.bpStartEvent.workflowOptions = new BpWorkflowOptions();
 
             // this item only contains the properties choosen by the user
             const item = this.getItemFromCurrentWorkflow();
@@ -593,7 +591,7 @@ export class BPDataService{
             // negotiate the price if no price on the line
             const priceWrapper = new PriceWrapper(line.requiredItemLocationQuantity.price);
             if(!priceWrapper.hasPrice()) {
-                this.workflowOptions.negotiation.price = true;
+                this.bpStartEvent.workflowOptions.negotiation.price = true;
             }
 
             // this item contains all the properties.
@@ -612,7 +610,7 @@ export class BPDataService{
                         if(prop.value.length > 1) {
                             for(let valIndex = 0; valIndex < prop.value.length; valIndex++) {
                                 if(prop.value[valIndex] === itemProp.value[0]) {
-                                    this.workflowOptions.selectedValues[key] = valIndex;
+                                    this.bpStartEvent.workflowOptions.selectedValues[key] = valIndex;
                                 }
                             }
                         }
@@ -622,7 +620,7 @@ export class BPDataService{
                             if(prop.valueDecimal.length > 1) {
                                 for(let valIndex = 0; valIndex < prop.valueDecimal.length; valIndex++) {
                                     if(prop.valueDecimal[valIndex] === itemProp.valueDecimal[0]) {
-                                        this.workflowOptions.selectedValues[key] = valIndex;
+                                        this.bpStartEvent.workflowOptions.selectedValues[key] = valIndex;
                                     }
                                 }
                             }
@@ -633,7 +631,7 @@ export class BPDataService{
                             for(let valIndex = 0; valIndex < prop.valueQuantity.length; valIndex++) {
                                 if(prop.valueQuantity[valIndex].value === itemProp.valueQuantity[0].value
                                     && prop.valueQuantity[valIndex].unitCode === itemProp.valueQuantity[0].unitCode) {
-                                    this.workflowOptions.selectedValues[key] = valIndex;
+                                    this.bpStartEvent.workflowOptions.selectedValues[key] = valIndex;
                                 }
                             }
                         }

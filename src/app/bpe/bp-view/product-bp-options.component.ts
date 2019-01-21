@@ -187,7 +187,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     private initWithCatalogueLine(line: CatalogueLine, settings: CompanySettings) {
         this.wrapper = new ProductWrapper(line, settings.negotiationSettings);
         this.settings = settings;
-        this.options = this.bpDataService.workflowOptions;
+        this.options = this.bpDataService.bpStartEvent.workflowOptions;
         if(this.processType) {
             this.currentStep = this.getCurrentStep(this.processType);
         }
