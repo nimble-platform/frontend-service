@@ -24,7 +24,7 @@
             <ng-container *ngFor="let company of registeredCompaniesPage.content">
                 <tr>
                     <td>{{ company.name }}</td>
-                    <td *ngIf="company.websiteURI && company.websiteURI != ''"><a class="clickable" href="{{company.websiteURI}}" target="_blank">{{company.websiteURI}}</a></td>
+                    <td *ngIf="company.websiteURI && company.websiteURI != ''"><a class="clickable" href="{{company.websiteURIFull}}" target="_blank">{{company.websiteURI}}</a></td>
                     <td *ngIf="!company.websiteURI || company.websiteURI == ''">n/A</td>
                 </tr>
             </ng-container>
