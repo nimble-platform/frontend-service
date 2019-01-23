@@ -94,7 +94,7 @@
 	</div>
 
 	<!-- Submit -->
-	<div class="row col-12 actions-row">
+	<div class="row col-10 mx-auto actions-row" style="padding-right:15px !important; padding-left:15px !important;">
 		<div class="col-9 call-status-col">
 			<call-status [callStatus]="submitCallStatus"></call-status>
 		</div>
@@ -103,7 +103,7 @@
 			<button type="button" class="btn btn-outline-secondary action" (click)="userForm.reset();reset()" [hidden]="userForm.form.pristine" i18n>Reset</button>
 		</div>
 		-->
-		<div class="col-2">
+		<div class="col-3">
 			<button type="submit" class="btn btn-primary action" [disabled]="!userForm.form.valid || !passwords_matching || submitCallStatus.isLoading()" i18n>Submit</button>
 		</div>
 	</div>
