@@ -80,6 +80,18 @@ export const tntAnalysisEndpoint = `${base_path}/tnt/simpleTrackingAnalysis`;
 
 export const config = {
   "companyRegistrationRequired": true,
+  "categoryFilter": {
+    "eClass": {
+      "hiddenCategories": [],
+      "logisticsCategory": "14000000",
+      "ontologyPrefix": "http://www.nimble-project.org/resource/eclass/"
+    },
+    "FurnitureOntology": {
+      "hiddenCategories": ["Catalogue","Company","ContactPerson","Guarantee","Price","Process","Standard","Style","Technique"],
+      "logisticsCategory": "LogisticsService",
+      "ontologyPrefix": "http://www.aidimme.es/FurnitureSectorOntology.owl#"
+    }
+  },
   "logoPath": "./assets/logo_fmp.png",
   "logoRequired": true,
   "requiredAgreements": [

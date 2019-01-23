@@ -14,7 +14,7 @@
 }
 
 .disabled-section {
-    background-color: #e9ecef;
+    background-color: #fff;
     color: #A9A9A9;
 }
 
@@ -37,4 +37,27 @@
 .noLogisticCategory {
     padding-top: 0.30rem;
     padding-left: 0.20rem;
+}
+
+.star {
+  position: relative;
+  display: inline-block;
+  color: #b0c4de;
+	font-size: 130%;
+}
+
+.star-b {
+	font-size: 220% !important;
+  line-height: 110%;
+}
+
+.full {
+  color: #1e90ff;
+}
+
+.half {
+  position: absolute;
+  display: inline-block;
+  overflow: hidden;
+  color: #1e90ff;
 }

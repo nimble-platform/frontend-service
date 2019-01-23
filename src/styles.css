@@ -285,6 +285,10 @@ textarea {
     cursor: pointer;
 }
 
+.disabled {
+  cursor: not-allowed;
+}
+
 .align-left {
     text-align: left;
 }

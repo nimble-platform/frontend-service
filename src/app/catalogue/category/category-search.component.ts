@@ -59,12 +59,13 @@ export class CategorySearchComponent implements OnInit {
     selectedCategoriesWRTLevels = [];
     propertyNames: string[] = ["code", "taxonomyId", "level", "definition", "note", "remark"];
     taxonomyId: string = myGlobals.config.standardTaxonomy;
+    categoryFilter = myGlobals.config.categoryFilter;
     taxonomyIDs: string[];
     prefCats: string[] = [];
     recCats: string[] = [];
 
     isLogistics: boolean;
-    eClassLogisticsCategory: Category = null;
+    logisticsCategory: Category = null;
 
     showOtherProperties = null;
     productType: ProductType;
@@ -112,6 +113,7 @@ export class CategorySearchComponent implements OnInit {
                 this.categoryService.resetSelectedCategories();
                 this.selectedCategory = null;
                 this.selectedCategoryWithDetails = null;
+                this.pathToSelectedCategories = null;
                 // reset draft catalogue line
                 this.publishService.publishingStarted = false;
                 this.publishService.publishMode = "create";
@@ -147,7 +149,8 @@ export class CategorySearchComponent implements OnInit {
 
     onSelectTab(event: any) {
         event.preventDefault();
-        this.selectedTab = event.target.id;
+        if (!this.getCategoryDetailsStatus.isDisplayed())
+          this.selectedTab = event.target.id;
     }
 
     private getFavoriteCategories() {
@@ -194,39 +197,43 @@ export class CategorySearchComponent implements OnInit {
     }
 
     removeCategoryFromFavorites(cat: Category) {
-        this.addFavoriteCategoryStatus.submit();
-        const cat_str = cat.id + "::" + cat.taxonomyId + "::" + cat.preferredName + "::" + this.productType;
-        const userId = this.cookieService.get("user_id");
-        this.userService.togglePrefCat(userId, cat_str).then(res => {
-            const prefCats_tmp = [];
-            for (var i = 0; i < res.length; i++) {
-                if (res[i].split("::")[3] == this.productType) prefCats_tmp.push(res[i]);
-            }
-            prefCats_tmp.sort((a, b) => a.split("::")[2].localeCompare(b.split("::")[2]));
-            this.prefCats = prefCats_tmp;
-            this.addFavoriteCategoryStatus.callback("Category removed from favorites", true);
-        })
-        .catch(error => {
-            this.addFavoriteCategoryStatus.error("Error while removing category from favorites", error);
-        });
+        if (!this.addFavoriteCategoryStatus.isLoading()) {
+          this.addFavoriteCategoryStatus.submit();
+          const cat_str = cat.id + "::" + cat.taxonomyId + "::" + cat.preferredName + "::" + this.productType;
+          const userId = this.cookieService.get("user_id");
+          this.userService.togglePrefCat(userId, cat_str).then(res => {
+              const prefCats_tmp = [];
+              for (var i = 0; i < res.length; i++) {
+                  if (res[i].split("::")[3] == this.productType) prefCats_tmp.push(res[i]);
+              }
+              prefCats_tmp.sort((a, b) => a.split("::")[2].localeCompare(b.split("::")[2]));
+              this.prefCats = prefCats_tmp;
+              this.addFavoriteCategoryStatus.callback("Category removed from favorites", true);
+          })
+          .catch(error => {
+              this.addFavoriteCategoryStatus.error("Error while removing category from favorites", error);
+          });
+        }
     }
 
     addCategoryToFavorites(cat: Category) {
-        this.addFavoriteCategoryStatus.submit();
-        const cat_str = cat.id + "::" + cat.taxonomyId + "::" + cat.preferredName + "::" + this.productType;
-        const userId = this.cookieService.get("user_id");
-        this.userService.togglePrefCat(userId, cat_str).then(res => {
-            const prefCats_tmp = [];
-            for (var i = 0; i < res.length; i++) {
-                if (res[i].split("::")[3] == this.productType) prefCats_tmp.push(res[i]);
-            }
-            prefCats_tmp.sort((a, b) => a.split("::")[2].localeCompare(b.split("::")[2]));
-            this.prefCats = prefCats_tmp;
-            this.addFavoriteCategoryStatus.callback("Category added to favorites", true);
-        })
-        .catch(error => {
-            this.addFavoriteCategoryStatus.error("Error while adding category to favorites", error);
-        });
+        if (!this.addFavoriteCategoryStatus.isLoading()) {
+          this.addFavoriteCategoryStatus.submit();
+          const cat_str = cat.id + "::" + cat.taxonomyId + "::" + cat.preferredName + "::" + this.productType;
+          const userId = this.cookieService.get("user_id");
+          this.userService.togglePrefCat(userId, cat_str).then(res => {
+              const prefCats_tmp = [];
+              for (var i = 0; i < res.length; i++) {
+                  if (res[i].split("::")[3] == this.productType) prefCats_tmp.push(res[i]);
+              }
+              prefCats_tmp.sort((a, b) => a.split("::")[2].localeCompare(b.split("::")[2]));
+              this.prefCats = prefCats_tmp;
+              this.addFavoriteCategoryStatus.callback("Category added to favorites", true);
+          })
+          .catch(error => {
+              this.addFavoriteCategoryStatus.error("Error while adding category to favorites", error);
+          });
+        }
     }
 
     addRecentCategories(cat: Category[]) {
@@ -288,10 +295,15 @@ export class CategorySearchComponent implements OnInit {
             .then(rootCategories => {
                 this.rootCategories = sortCategories(rootCategories);
                 this.getCategoriesStatus.callback("Retrieved category details", true);
-                this.eClassLogisticsCategory = this.rootCategories.find(c => c.code === "14000000");
-                if(taxonomyId == "eClass"){
-                    let searchIndex = this.findCategoryInArray(this.rootCategories, this.eClassLogisticsCategory);
+                if (this.categoryFilter[this.taxonomyId]) {
+                  this.logisticsCategory = this.rootCategories.find(c => c.code === this.categoryFilter[this.taxonomyId].logisticsCategory);
+                  let searchIndex = this.findCategoryInArray(this.rootCategories, this.logisticsCategory);
+                  this.rootCategories.splice(searchIndex, 1);
+                  for (var i=0; i<this.categoryFilter[this.taxonomyId].hiddenCategories.length; i++) {
+                    let filterCat = this.rootCategories.find(c => c.code === this.categoryFilter[this.taxonomyId].hiddenCategories[i]);
+                    let searchIndex = this.findCategoryInArray(this.rootCategories, filterCat);
                     this.rootCategories.splice(searchIndex, 1);
+                  }
                 }
             })
             .catch(error => {
@@ -391,6 +403,12 @@ export class CategorySearchComponent implements OnInit {
                             this.selectedCategoriesWRTLevels.push(parent.code);
                         }
                         this.getCategoriesStatus.callback(null);
+                        if (this.treeView) {
+                          setTimeout(function(){
+                            scrollToDiv(category.code);
+                            document.getElementById("scrollDiv").scrollTop-=57;
+                          },100);
+                        }
                     })
                     .catch(error => {
                         this.getCategoriesStatus.error("Error while fetching category.", error);
@@ -427,27 +445,37 @@ export class CategorySearchComponent implements OnInit {
     }
 
     getCategoryDetails(category: Category, fav: boolean) {
-        this.favSelected = fav;
-        this.selectedCategory = category;
-        this.selectedCategoryWithDetails = null;
-        this.getCategoryDetailsStatus.submit();
+        if (!this.getCategoryDetailsStatus.isDisplayed()) {
+          if (!this.selectedCategory ||  (this.selectedCategory && this.selectedCategory.code !== category.code)) {
+            this.favSelected = fav;
+            this.selectedCategory = category;
+            this.selectedCategoryWithDetails = null;
+            this.getCategoryDetailsStatus.submit();
 
-        this.showOtherProperties = false;
-        this.categoryService
-            .getCategory(category)
-            .then(category => {
-                this.categoryService.getParentCategories(category).then(parentCategories => {
-                    this.pathToSelectedCategories = parentCategories;
-                    this.getCategoryDetailsStatus.callback("Retrieved details of the category", true);
-                    this.selectedCategoryWithDetails = category;
-                }).catch(error => {
-                    this.getCategoryDetailsStatus.error("Failed to retrieved parents of the category",error);
+            this.showOtherProperties = false;
+            this.categoryService
+                .getCategory(category)
+                .then(category => {
+                    this.categoryService.getParentCategories(category).then(parentCategories => {
+                        this.pathToSelectedCategories = parentCategories;
+                        this.getCategoryDetailsStatus.callback("Retrieved details of the category", true);
+                        this.selectedCategoryWithDetails = category;
+                        if (this.treeView) {
+                          setTimeout(function(){
+                            scrollToDiv(category.code);
+                            document.getElementById("scrollDiv").scrollTop-=57;
+                          },100);
+                        }
+                    }).catch(error => {
+                        this.getCategoryDetailsStatus.error("Failed to retrieved parents of the category",error);
+                    })
+
                 })
-
-            })
-            .catch(error => {
-                this.getCategoryDetailsStatus.error("Failed to retrieved details of the category", error);
-            });
+                .catch(error => {
+                    this.getCategoryDetailsStatus.error("Failed to retrieved details of the category", error);
+                });
+          }
+        }
     }
 
     getCategoryProperty(propName): string {
@@ -463,25 +491,32 @@ export class CategorySearchComponent implements OnInit {
     }
 
     private changeTaxonomyId(taxonomyId){
-        this.taxonomyId = taxonomyId;
-        if(this.categoryKeyword){
-            this.getCategories();
-        }
-        if(this.selectedTab == "TREE"){
-            this.getRootCategories(this.taxonomyId == "All" ? "eClass" : this.taxonomyId);
+        if (this.taxonomyId != taxonomyId) {
+          this.parentCategories = null;
+          this.pathToSelectedCategories = null;
+          this.selectedCategory = null;
+          this.selectedCategoryWithDetails = null;
+          this.taxonomyId = taxonomyId;
+          if(this.categoryKeyword){
+              this.getCategories();
+          }
+          if(this.selectedTab == "TREE"){
+              this.getRootCategories(this.taxonomyId == "All" ? "eClass" : this.taxonomyId);
+          }
         }
     }
 
     private scrollToDiv(divId:string,event:any){
         //this.scrollToDivId = divId;
         // if treeView is false,firstly we have to switch to tree view
-        if(!this.treeView){
-            this.getCategoryTree(this.selectedCategoryWithDetails,divId);
+        if (!this.getCategoryDetailsStatus.isDisplayed()) {
+          if(!this.treeView){
+              this.getCategoryTree(this.selectedCategoryWithDetails,divId);
+          }
+          else{
+              scrollToDiv(divId);
+              document.getElementById("scrollDiv").scrollTop-=57;
+          }
         }
-        else{
-            scrollToDiv(divId);
-            document.getElementById("scrollDiv").scrollTop-=57;
-        }
-
     }
 }
