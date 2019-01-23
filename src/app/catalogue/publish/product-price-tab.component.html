@@ -80,8 +80,8 @@
         *ngIf="(catalogueLine.priceOption | priceOptionCountPipe : priceOptions.PRODUCT_PROPERTY.typeID) > 0 && catalogueLine.goodsItem.item.additionalItemProperty.length > 0">
     <div class="card space-after">
         <div class="card-header">
-            <strong>Product property based price options</strong>
-            <span title="'Different prices could be specified based on different values of product properties'">&#9432;</span>
+            <strong>Product / Service property based price options</strong>
+            <span title="'Different prices could be specified based on different values of product / service properties'">&#9432;</span>
         </div>
         <div class="card-body">
             <div *ngFor="let priceOption of (catalogueLine.priceOption | priceOptionPipe : priceOptions.PRODUCT_PROPERTY.typeID); let i = index;">

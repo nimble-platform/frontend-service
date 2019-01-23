@@ -1,11 +1,12 @@
 import { Component, OnInit, Input, Output, EventEmitter } from "@angular/core";
 import { CompanySettings } from "../model/company-settings";
 import { CallStatus } from "../../common/call-status";
-import { PPAP_CERTIFICATES } from "../../catalogue/model/constants";
+//import { PPAP_CERTIFICATES } from "../../catalogue/model/constants";
 import { UserService } from "../user.service";
 import { CookieService } from "ng2-cookies";
 import { FormGroup, FormBuilder } from "@angular/forms";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import * as myGlobals from '../../globals';
 
 @Component({
     selector: "company-certificates-settings",
@@ -19,7 +20,8 @@ export class CompanyCertificatesSettingsComponent implements OnInit {
 
     @Output() onSaveEvent: EventEmitter<void> = new EventEmitter();
 
-    ppapTypes: string[] = PPAP_CERTIFICATES;
+    config = myGlobals.config;
+    //ppapTypes: string[] = PPAP_CERTIFICATES;
     savePpapLevelCallStatus: CallStatus = new CallStatus();
 
     certFile = null;

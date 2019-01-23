@@ -19,6 +19,8 @@ import { ProcessInstanceInputMessage } from "../../model/process-instance-input-
 import { copy, isTransportService } from "../../../common/utils";
 import { PresentationMode } from "../../../catalogue/model/publish/presentation-mode";
 import {DocumentService} from '../document-service';
+import {BpStartEvent} from '../../../catalogue/model/publish/bp-start-event';
+import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
 /**
  * Created by suat on 19-Nov-17.
  */
@@ -34,6 +36,9 @@ export class ItemInformationRequestComponent implements OnInit {
     request: ItemInformationRequest;
     files: BinaryObject[]
 
+    // the copy of ThreadEventMetadata of the current business process
+    processMetadata: ThreadEventMetadata;
+
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
                 private userService: UserService,
@@ -45,6 +50,9 @@ export class ItemInformationRequestComponent implements OnInit {
     }
 
     ngOnInit() {
+        // get copy of ThreadEventMetadata of the current business process
+        this.processMetadata = this.bpDataService.bpStartEvent.processMetadata;
+
         this.request = this.bpDataService.itemInformationRequest;
         const documents = this.request.itemInformationRequestLine[0].salesItem[0].item.itemSpecificationDocumentReference;
         this.files = documents.map(doc => doc.attachment.embeddedDocumentBinaryObject);
@@ -55,7 +63,7 @@ export class ItemInformationRequestComponent implements OnInit {
     }
 
     isRequestSent() {
-        return !!this.bpDataService.processMetadata && !this.bpDataService.updatingProcess;
+        return !!this.processMetadata && !this.processMetadata.isBeingUpdated;
     }
 
     getPresentationMode(): PresentationMode {
@@ -67,11 +75,11 @@ export class ItemInformationRequestComponent implements OnInit {
         if(isTransportService(this.bpDataService.getCatalogueLine()) || !this.bpDataService.getCompanySettings().tradeDetails.ppapCompatibilityLevel) {
             // skip ppap
             this.bpDataService.initRfq(this.bpDataService.getCompanySettings().negotiationSettings).then(() => {
-                this.bpDataService.setBpOptionParameters(this.bpDataService.userRole, "Negotiation", "Ppap");
+                this.bpDataService.proceedNextBpStep(this.bpDataService.bpStartEvent.userRole,"Negotiation");
             });
         } else {
             this.bpDataService.initPpap([]);
-            this.bpDataService.setBpOptionParameters(this.bpDataService.userRole, "Ppap", "Item_Information_Request");
+            this.bpDataService.proceedNextBpStep(this.bpDataService.bpStartEvent.userRole, "Ppap");
         }
     }
 
@@ -115,7 +123,7 @@ export class ItemInformationRequestComponent implements OnInit {
         this.callStatus.submit();
         const itemInformationRequest: ItemInformationRequest = copy(this.bpDataService.itemInformationRequest);
 
-        this.bpeService.updateBusinessProcess(JSON.stringify(itemInformationRequest),"ITEMINFORMATIONREQUEST",this.bpDataService.processMetadata.processId)
+        this.bpeService.updateBusinessProcess(JSON.stringify(itemInformationRequest),"ITEMINFORMATIONREQUEST",this.processMetadata.processId)
             .then(() => {
                 this.documentService.updateCachedDocument(itemInformationRequest.id,itemInformationRequest);
                 this.callStatus.callback("Item Information Request updated", true);

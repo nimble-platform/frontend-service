@@ -37,10 +37,10 @@ export class AnalyticsService {
   		.catch(this.handleError);
   	}
 
-    getNonOrdered(comp:string): Promise<any> {
-      const url = `${this.url_bpe}/non-ordered?companyId=${comp}`;
+    getNonOrdered(partyId:string): Promise<any> {
+      const url = `${this.url_bpe}/non-ordered?partyId=${partyId}`;
       return this.http
-  		.get(url, {headers: this.headers})
+  		.get(url, {headers: this.getAuthorizedHeaders()})
   		.toPromise()
   		.then(res => res.json())
   		.catch(this.handleError);
@@ -100,6 +100,13 @@ export class AnalyticsService {
             .toPromise()
             .then(res => res)
             .catch(this.handleError);
+    }
+
+    private getAuthorizedHeaders(): Headers {
+        const token = 'Bearer '+this.cookieService.get("bearer_token");
+        const headers = new Headers({'Accept': 'application/json','Authorization': token});
+        this.headers.keys().forEach(header => headers.append(header, this.headers.get(header)));
+        return headers;
     }
 
     private handleError(error: any): Promise<any> {

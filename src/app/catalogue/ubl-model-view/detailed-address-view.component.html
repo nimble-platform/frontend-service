@@ -4,7 +4,7 @@
                  [large]="true">
     </call-status>
     <span *ngIf="getDefaultDeliveryLocation.fb_callback" class="col-2 control-label">
-                    Street
+                    Street Name
     </span>
     <input *ngIf="getDefaultDeliveryLocation.fb_callback" class="form-control" [(ngModel)]="deliveryAddress.streetName" [disabled]="presentationMode != 'edit'">
 </div>

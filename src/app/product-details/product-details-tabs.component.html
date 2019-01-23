@@ -15,7 +15,7 @@
                 <a href id="DETAILS" class="nav-link"
                     [ngClass]="{ active: selectedTab === 'DETAILS'}"
                     (click)="onSelectTab($event)">
-                    Product Details
+                    Details
                 </a>
             </li>
             <li class="nav-item">
@@ -65,10 +65,10 @@
 
     <!-- Product Details Tab -->
     <div *ngIf="selectedTab === 'DETAILS'" class="p-3 col-12">
-        <h3 class="p-1">Product Details</h3>
+        <h3 class="p-1">Details</h3>
         <div class="row mx-auto">
         <div *ngIf="wrapper.getUniquePropertiesWithValue().length === 0">
-            <p class="p-1">This product does not seem to have any details.</p>
+            <p class="p-1">This product / service does not seem to have any details.</p>
         </div>
         <div *ngFor="let property of wrapper.getUniquePropertiesWithValue()" class="p-1 col-6 d-flex">
             <strong>{{ wrapper.getPropertyName(property) }}: </strong>

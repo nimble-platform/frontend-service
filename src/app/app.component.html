@@ -1,12 +1,12 @@
 <nav class="navbar navbar-expand-lg navbar-dark nimble-bg space-after">
 	<a *ngIf="isLoggedIn && (checkRoles('comp_req') || checkRoles('wait_comp'))" class="navbar-brand" routerLink="/dashboard" routerLinkActive="active">
-		<img id="nav-logo" src="./assets/nimble_logo_white.png" height="30" class="d-inline-block align-top" alt="">
+		<img id="nav-logo" [src]="config.logoPath" height="30" class="d-inline-block align-top" alt="">
 	</a>
 	<a *ngIf="isLoggedIn && (!checkRoles('comp_req') && !checkRoles('wait_comp'))" class="navbar-brand" routerLink="/user-mgmt/company-registration" routerLinkActive="active">
-		<img id="nav-logo" src="./assets/nimble_logo_white.png" height="30" class="d-inline-block align-top" alt="">
+		<img id="nav-logo" [src]="config.logoPath" height="30" class="d-inline-block align-top" alt="">
 	</a>
 	<a *ngIf="!isLoggedIn" class="navbar-brand" routerLink="/user-mgmt/login" routerLinkActive="active">
-		<img id="nav-logo" src="./assets/nimble_logo_white.png" height="30" class="d-inline-block align-top" alt="">
+		<img id="nav-logo" [src]="config.logoPath" height="30" class="d-inline-block align-top" alt="">
 	</a>
 	<button class="navbar-toggler" type="button" (click)="isCollapsed = !isCollapsed" aria-controls="navbarNavAltMarkup" [attr.aria-expanded]="!isCollapsed">
 		<span class="navbar-toggler-icon">
@@ -40,7 +40,7 @@
 				</a>
 				<div class="dropdown-menu" aria-labelledby="dropdownMenuPublish" ngbDropdownMenu>
 					<a class="dropdown-item" [routerLink]="['/catalogue/categorysearch']" [queryParams]="{pageRef: 'menu', productType: 'product'}" routerLinkActive="active">
-						<i class="fa fa-shopping-cart dd-icon"></i> Product
+						<i class="fa fa-shopping-cart dd-icon"></i> Product / Service
 					</a>
 					<a class="dropdown-item" [routerLink]="['/catalogue/categorysearch']" [queryParams]="{pageRef: 'menu', productType: 'transportation'}" routerLinkActive="active">
 						<i class="fa fa-truck dd-icon"></i> Logistics Service
@@ -90,7 +90,7 @@
 				</a>
 			</li>
 
-			<li class="nav-item" *ngIf="checkRoles('comp')" routerLinkActive="active">
+			<li class="nav-item" *ngIf="checkRoles('comp') || (checkRoles('comp_req') && config.showCompanyMembers)" routerLinkActive="active">
 				<a class="nav-link" routerLink="/user-mgmt/company-invitation">
 					<i class="fa fa-building"></i> Company Members
 				</a>
@@ -110,6 +110,7 @@
 					<a class="dropdown-item" routerLink="/analytics/platform" routerLinkActive="active">
 						<i class="fa fa-chart-area dd-icon"></i> Platform Analytics
 					</a>
+					<!--
 					<a class="dropdown-item" href="https://nimble-platform.uk-south.containers.mybluemix.net/dashboards/status" target="_blank">
 						<i class="fa fa-briefcase-medical dd-icon"></i> Health Report
 					</a>
@@ -122,9 +123,18 @@
 					<a class="dropdown-item" href="http://nimble-platform.salzburgresearch.at:5602/app/kibana#/dashboard/d0c4a3a0-1194-11e8-96a2-b11689429755" target="_blank">
 						<i class="fa fa-file-alt dd-icon"></i> Log Analysis
 					</a>
+					-->
 				</div>
 			</li>
 
+		</ul>
+
+		<ul class="nav navbar-nav">
+			<li class="nav-item" routerLinkActive="active">
+				<a class="nav-link pointer" routerLink="/analytics/info" title="Info">
+					<i class="fa fa-info-circle"></i>
+				</a>
+			</li>
 		</ul>
 
 		<ul class="nav navbar-nav">
@@ -187,6 +197,7 @@
 		</button>
 	</div>
 	<div class="modal-body">
+		This platform has only been developed for and tested on Chrome and Firefox. In case you are experiencing errors try using one of those browsers first.<br/><br/>
 		When you press "Open manual" a PDF with an user manual will open in a new tab.<br/><br/>
 		When you press "Contact support" a partially prefilled mail template will open in the mail client of your choice.<br/>
 		Please make sure to fill out the description and cause of the issue properly and add screenshots if they are of use.<br/>

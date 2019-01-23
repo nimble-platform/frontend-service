@@ -32,7 +32,7 @@ export class ClauseComponent implements OnInit {
             let documentClause: DocumentClause = this.clause as DocumentClause;
             this.documentService.getDocumentJsonContent(documentClause.clauseDocumentRef.id).then(result => {
                 this.clauseDocument = result;
-                if(this.clause.type === "ITEM_DETAILS") {
+                if(documentClause.clauseDocumentRef.documentType === "ITEMINFORMATIONRESPONSE") {
                     // fetch the itm information request as well
                     this.documentService.getItemInformationRequest(result)
                         .then(request => {
@@ -42,7 +42,7 @@ export class ClauseComponent implements OnInit {
                         .catch(error => {
                             this.clauseDocumentRetrievalStatus.error("Failed to retrieve item information request", error);
                         })
-                } else if(this.clause.type === "NEGOTIATION") {
+                } else if(documentClause.clauseDocumentRef.documentType === "QUOTATION") {
                     // fetch the itm information request as well
                     this.documentService.getRequestForQuotation(result)
                         .then(request => {
@@ -66,15 +66,17 @@ export class ClauseComponent implements OnInit {
     }
 
     getClauseName(): string {
-        switch(this.clause.type) {
-            case "PPAP":
-                return "Ppap";
-            case "ITEM_DETAILS":
-                return "Request for Information";
-            case "NEGOTIATION":
-                return "Negotiation";
-            default:
-                return this.clause.type;
+        if(this.clause instanceof DocumentClause) {
+            switch (this.clause.clauseDocumentRef.documentType) {
+                case "PPAPRESPONSE":
+                    return "Ppap";
+                case "ITEMINFORMATIONRESPONSE":
+                    return "Request for Information";
+                case "QUOTATION":
+                    return "Negotiation";
+                default:
+                    return this.clause.clauseDocumentRef.documentType;
+            }
         }
     }
 

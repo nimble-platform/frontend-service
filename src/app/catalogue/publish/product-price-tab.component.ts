@@ -68,7 +68,7 @@ export class ProductPriceTabComponent implements OnInit {
     }
 
     printPriceOptions(): void {
-        console.log(this.catalogueLine.priceOption);
+        //console.log(this.catalogueLine.priceOption);
     }
 
     updateDiscountUnits(){

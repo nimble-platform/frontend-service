@@ -30,8 +30,10 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
     private _negotiation_id: any;
     private _negotiation_catalogue_id: any;
 
-
-    // NEW
+    // Tab selection between Properties or References
+    public selectedTab = 'PROPS';
+    public allSelectedProperties = new Set();
+    public selectedProduct: string;
     public conceptPaths: any[] = [];
     public propertyResults: any[] = [];
     public dataResults: any[] = []; // All the Available Properties of the Product or Reference via API Call
@@ -181,12 +183,12 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
         let newConcept = '';
         this.expSearch.getReferencesFromConcept(dummyJSON)
             .then(res => {
-                console.log(res);
+                //console.log(res);
                 this.referenceResults = res['allAvailableReferences'][index];
                 this.refResultsRange = this.referenceResults['range'];
                 jsonforProperties['concept'] = encodeURIComponent(this.refResultsRange[0]['original']);
                 jsonforProperties['distanceToFrozenConcept'] += 1;
-                console.log(jsonforProperties);
+                //console.log(jsonforProperties);
                 this.expSearch.searchForProperty(jsonforProperties)
                     .then((resp) => {
                             // console.log(res); // DEBUG
@@ -215,7 +217,7 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
     }
 
     check(con, i) {
-        console.log(i);
+        //console.log(i);
         if (i === 0) {
             let dummyJSON = this.configSPQ;
             dummyJSON['concept'] = con.url;
@@ -226,7 +228,7 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
             let dummyJSON = this.configSPQ;
             dummyJSON['concept'] = encodeURIComponent(con.url);
             dummyJSON['distanceToFrozenConcept'] = i;
-            console.log(dummyJSON);
+            //console.log(dummyJSON);
             this.getPropertiesOfConcept(dummyJSON);
         }
         this.conceptPaths.length = i + 1;
@@ -235,7 +237,7 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
 
     noFilterSelected() {
         if (this.sparqlJSON['parameters'].findIndex(name => name === this.selectedProperty['translatedProperty']) > -1) {
-            console.log('already exists');
+            //console.log('already exists');
         } else {
             this.sparqlJSON['parameters'].push(this.selectedProperty['translatedProperty']);
             this.sparqlJSON['parametersURL'].push(encodeURIComponent(this.selectedProperty['propertyURL']));
@@ -265,13 +267,19 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
             }
         }
         this.propertySelectionComplete = true;
+        // Update
+        this.allSelectedProperties.add(this.selectedProperty['translatedProperty']);
     }
 
+    /**
+     * FILTER Handling: filterSelected
+     * If User decides to select the checkbox values
+     */
     filtersSelected(filterValue, ev) {
         if (ev.target.checked) {
             // console.log(this.configSPQ);
             if (this.sparqlJSON['parameters'].findIndex(name => name === this.selectedProperty['translatedProperty']) > -1) {
-                console.log('already exists');
+                // console.log('already exists');
             } else {
                 this.sparqlJSON['parameters'].push(this.selectedProperty['translatedProperty']);
                 this.sparqlJSON['parametersURL'].push(encodeURIComponent(this.selectedProperty['propertyURL']));
@@ -323,6 +331,7 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
             this.sparqlJSON['filters'].findIndex(fil => fil.exactValue === filterValue), 1);
         }
         // console.log(this.sparqlJSON);
+        this.allSelectedProperties.add(this.selectedProperty['translatedProperty']);
     }
 
     applyManualFilter(min, max) {
@@ -352,6 +361,7 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
             }
         }
         this.propertySelectionComplete = true;
+        this.allSelectedProperties.add(this.selectedProperty['translatedProperty']);
     }
 
     removeManualFilter(minVal) {
@@ -363,7 +373,7 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
     }
 
     removeSelection(name) {
-
+        this.allSelectedProperties.delete(name);
         let tableIndexToRemove = this.tableResult['columns'].findIndex(i => i === name);
         let propIndexToRemove = this.sparqlJSON['parameters'].findIndex(i => i === name);
             if (tableIndexToRemove === 0 && this.tableResult['columns'].length === 1) {
@@ -386,15 +396,19 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
                     this.sparqlJSON['filters'].splice(filterIndexToRemove);
                 }
             }
-        this.propSelection(name);
+            if (!(this.tableResult['uuids'].length && this.tableResult['columns'].length)) {
+                // if the whole tableResult is now empty
+                this.tableResult['columns'] = undefined;
+            }
     }
 
-    propSelection(eachVal): boolean {
-        // console.log(name);
-        return this.sparqlJSON['parameters'].findIndex(i => i === eachVal) > -1;
+    onSelectTab(event: any) {
+        event.preventDefault();
+        this.selectedTab = event.target.id;
     }
 
     genTable() {
+        this.selectedProduct = '';
         this.expSearch.getTableValues(this.sparqlJSON)
             .then(res => {
                 this.tableResult = res;
@@ -411,7 +425,7 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
     }
 
     getSparqlOptionalSelect(indexUUID) {
-        console.log(indexUUID);
+        // console.log(indexUUID);
         let optSPARQLQuery = {uuid: encodeURIComponent(this.tableResult.uuids[indexUUID].trim()), 'language': this.lang};
         // console.log(optSPARQLQuery);
         this.expSearch.getOptionalSelect(optSPARQLQuery)
@@ -419,17 +433,18 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
                 this.sparqlSelectedOption = res;
                 if (this.sparqlSelectedOption['columns'].findIndex(i => i === 'ManufacturersItemIdentification') >= 0 &&
                     this.sparqlSelectedOption['columns'].findIndex(j => j === 'CatalogueDocumentReference') >= 0) {
-                    console.log('Negotiation can exist');
+                    // console.log('Negotiation can exist');
                     this.negotiationEnable = true;
                     let index_id = this.sparqlSelectedOption['columns'].findIndex(i => i === 'ManufacturersItemIdentification');
                     let index_catalogue = this.sparqlSelectedOption['columns'].findIndex(i => i === 'CatalogueDocumentReference');
                     this._negotiation_id = this.sparqlSelectedOption['rows'][0][index_id];
                     this._negotiation_catalogue_id = this.sparqlSelectedOption['rows'][0][index_catalogue];
-                    console.log(this._negotiation_catalogue_id, this._negotiation_id);
+                    // console.log(this._negotiation_catalogue_id, this._negotiation_id);
                 } else {
                     this.negotiationEnable = false;
                 }
             });
         this.hiddenElement = true;
+        this.selectedProduct = indexUUID;
     }
 }

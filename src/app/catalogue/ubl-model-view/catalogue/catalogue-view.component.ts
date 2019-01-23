@@ -153,7 +153,6 @@ export class CatalogueViewComponent implements OnInit {
     }
 
     onOpenCatalogueLine(e: Event) {
-        this.bpDataService.previousProcess = null;
         e.stopImmediatePropagation();
     }
 

@@ -23,8 +23,10 @@ export class UserFormComponent implements OnInit {
     pw_val_class = "ng-valid";
     passwords_matching = false;
     email_preset = false;
-	eula_accepted = false;
+	  eula_accepted = false;
     debug = myGlobals.debug;
+    config = myGlobals.config;
+    requiredAgreements = {};
     /* ToDo: Hackathon only BEGIN */
     model: UserRegistration = UserRegistration.initEmpty();
     objToSubmit: UserRegistration = UserRegistration.initEmpty();
@@ -45,6 +47,9 @@ export class UserFormComponent implements OnInit {
     ) {}
 
     ngOnInit(): void {
+        for (var i=0; i<this.config.requiredAgreements.length; i++) {
+          this.requiredAgreements[this.config.requiredAgreements[i].title] = false;
+        }
         this.route.queryParams.subscribe(params => {
             if (params['email']) {
                 const test = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9._-]+\.[a-z]{2,3}$/.test(params['email']);

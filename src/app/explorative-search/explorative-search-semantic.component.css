@@ -20,3 +20,21 @@
 
 /*For Unicode Check mark which is compatible on all browsers*/
 .checkMark:before { content: "\2714" }
+
+.disabled-section {
+    background-color: #e9ecef;
+    color: #A9A9A9;
+}
+.fixed {
+    position:sticky;
+    z-index: 999;
+    top:0;
+}
+
+.fixed-header {
+    background-color: #fff;
+}
+
+.selected-row {
+    background-color: #d6d8db !important;
+}

@@ -49,26 +49,7 @@ svg text {
     pointer-events: none;
 }
 
-/*Column Highlighting*/
-
-svg {
-    margin-top: 100px;
-}
-table {
-    overflow: hidden;
+.selected-row {
+    background-color: #d6d8db !important;
 }
 
-td, th {
-    position: relative;
-}
-td:hover::after,
-th:hover::after {
-    content: "";
-    position: absolute;
-    background-color: rgba(0,0,0,0.075);
-    left: 0;
-    top: -5000px;
-    height: 10000px;
-    width: 100%;
-    z-index: -1;
-}

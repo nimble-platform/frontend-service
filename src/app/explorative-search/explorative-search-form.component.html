@@ -1,15 +1,6 @@
 <!-- Explorative Search Form HTML -->
 <!-- Search Bar -->
-<div id="loading-bg" *ngIf="loading">
-    <div id="sk-loading-icon">
-        <div class="sk-folding-cube">
-            <div class="sk-cube1 sk-cube"></div>
-            <div class="sk-cube2 sk-cube"></div>
-            <div class="sk-cube4 sk-cube"></div>
-            <div class="sk-cube3 sk-cube"></div>
-        </div>
-    </div>
-</div>
+
 <div>
     <p class="nimble-title">Explore</p>
         <form class="space-before" (ngSubmit)="Search(model.q, language)" #exSearchForm="ngForm" novalidate>
@@ -19,14 +10,15 @@
           			<div class="input-group">
           			  <input type="text" class="form-control" id="expSearch" required [(ngModel)]="model.q" name="expSearch" #q="ngModel" pattern=".{1,}" placeholder="Product / Service / Company">
           			  <div class="input-group-append">
-                    <select [(ngModel)]="language"
-                            [ngModelOptions]="{standalone: true}"
-                            class="custom-select" style="border-radius:0;">
-                        <option *ngFor="let eachLang of availableLanguages['languages']"
-                                [ngValue]="eachLang">
-                            {{eachLang}}
-                        </option>
-                    </select>
+                            <select [(ngModel)]="language"
+                                    [ngModelOptions]="{standalone: true}"
+                                    class="custom-select" style="border-radius:0;">
+                                <option value="" disabled selected>--language--</option>
+                                <option *ngFor="let eachLang of availableLanguages['languages']"
+                                        [ngValue]="eachLang">
+                                    {{eachLang}}
+                                </option>
+                            </select>
           					<button type="submit" class="btn btn-outline-secondary" [disabled]="!exSearchForm.form.valid">
           						<i class="fa fa-search"></i>
           					</button>
@@ -48,63 +40,105 @@
         </div>
     </div>
 </div>
-<!-- Search Keywords go here -->
-<div *ngIf="Output.length">
-    <div class="row">
-        <div class="col-sm-2">
-            <label class="col-form-label-lg"><b> Search History </b></label>
+
+<div class="jumbotron">
+    <div class="container" *ngIf="(!Output.length && !loading)">
+        <div class="row">
+            <div class="col-md-12 align-center">
+                <i class="fas fa-search-minus fa-lg"></i>
+            </div>
         </div>
-        <div class="col-sm-10 w-auto">
-            <div class="btn-group btn-group-toggle" *ngFor="let keyword of Output; let cbIndex = index" data-toggle="buttons">
-                    <label class="btn d-flex align-items-center btn-primary px-3 mb-0" ngbButtonLabel
-                           placement="top"
-                           ngbTooltip="{{(kwCheck.checked) ? 'show' : 'hide'}} result">
+        <div class="row">
+            <div class="col-md-12 align-center">
+                <h4>No Search Results</h4>
+                <p class="text-secondary">Try searching for a product/service above</p>
+            </div>
+        </div>
+    </div>
+    <!-- Loading GIF -->
+    <div *ngIf="loading">
+        <img class="space-before" src="assets/form_loader.gif">
+    </div>
+
+    <!-- Display of Content from server -->
+    <div *ngIf="Output.length">
+        <div class="row">
+            <div class="col-sm-2">
+                <label class="col-form-label-lg">
+                    <b> Results </b>
+                    <sup><i class="fas fa-question-circle"
+                       placement="top"
+                       ngbTooltip="Click Product For More Info."
+                    ></i>
+                    </sup>
+                </label>
+            </div>
+            <div class="col-sm-10">
+                <!--<ul>-->
+                    <div *ngFor="let eachOutput of Output; let outerIndex = index" style="margin-top: 5px; margin-bottom: 5px;">
+                        <div [hidden]="showParticularKeyword[outerIndex]">
+                            <div class="btn-group" role="group" aria-label="available keywords"
+                                 *ngFor="let each of eachOutput.resp.conceptOverview; let innerIndex = index">
+                                <button type="button" class="btn btn-primary"
+                                        *ngIf="innerIndex === 0 || showMore[outerIndex]"
+                                        (click)="getQuery(each.url, each.translatedURL)">{{each.translatedURL}}
+                                </button>
+                            </div>
+                            <div style="display: inline">
+                                <button type="button" class="btn btn-link btn-sm"
+                                        *ngIf="eachOutput.resp.conceptOverview.length > 1"
+                                        (click)="showMore[outerIndex]=!showMore[outerIndex]">
+                                    {{showMore[outerIndex] ? 'Hide': 'Show More'}} Results</button>
+                            </div>
+                        </div>
+                    </div>
+                <!--</ul>-->
+            </div>
+        </div>
+    </div>
+    <hr>
+    <!-- Search Keywords go here -->
+    <div *ngIf="Output.length">
+        <div class="row">
+            <div class="col-sm-2">
+                <label class="col-form-label-sm">
+                    <b> Search History </b>
+                    <sup><i class="fas fa-question-circle"
+                       placement="bottom"
+                       ngbTooltip="Hide/Remove Results"
+                    ></i>
+                    </sup>
+                </label>
+            </div>
+            <div class="col-sm-10 w-auto">
+                <div class="btn-group btn-group-toggle" *ngFor="let keyword of Output; let cbIndex = index" data-toggle="buttons">
+                    <label class="btn d-flex align-items-center btn-outline-dark px-3 mb-0 btn-sm" ngbButtonLabel
+                           placement="bottom"
+                           ngbTooltip="{{(kwCheck.checked) ? 'Show' : 'Hide'}} Results for {{keyword.kw}}">
                         <input type="checkbox"
                                ngbButton
                                #kwCheck
                                (change)="kwCheck.checked; hideKW(cbIndex)"
-                        /> <span class="px-1 mb-0">{{keyword.kw}}</span>
+                        /> <span class="px-1 mb-0" style="font-size: small">{{keyword.kw}}</span>
                     </label>
-                    <button class="btn btn-danger"
-                              (click)="deleteKW(keyword.kw); $event.stopPropagation()"
-                              [disabled]=kwCheck.checked
-                              [hidden]="kwCheck.checked">
+                    <button class="btn btn-sm btn-danger"
+                            (click)="deleteKW(keyword.kw); $event.stopPropagation()"
+                            [disabled]=kwCheck.checked
+                            [hidden]="kwCheck.checked">
                         &times;
                     </button>
+                </div>
             </div>
         </div>
     </div>
-</div>
-<!-- Display of Content from server -->
-<div *ngIf="Output.length">
-    <div class="row">
-        <div class="col-sm-2">
-            <label class="col-form-label-lg"><b> Results Found </b></label>
-        </div>
-        <div class="col-sm-10">
-            <!--<ul>-->
-                <div *ngFor="let eachOutput of Output; let outerIndex = index" style="margin-top: 5px; margin-bottom: 5px;">
-                    <div [hidden]="showParticularKeyword[outerIndex]">
-                        <div class="btn-group" role="group" aria-label="available keywords"
-                             *ngFor="let each of eachOutput.resp.conceptOverview; let innerIndex = index">
-                            <button type="button" class="btn btn-dark"
-                                    *ngIf="innerIndex === 0 || showMore[outerIndex]"
-                                    (click)="getQuery(each.url, each.translatedURL)">{{each.translatedURL}}
-                            </button>
-                        </div>
-                        <div style="display: inline">
-                            <button type="button" class="btn btn-secondary"
-                                    *ngIf="eachOutput.resp.conceptOverview.length > 1"
-                                    (click)="showMore[outerIndex]=!showMore[outerIndex]">
-                                {{showMore[outerIndex] ? 'Hide': 'Show'}} Options</button>
-                        </div>
-                    </div>
-                </div>
-            <!--</ul>-->
-        </div>
-    </div>
+</div> <!-- jumbotron -->
+
+<!-- Loading GIF -->
+<div *ngIf="loading_query">
+    <img class="space-before" src="assets/form_loader.gif">
 </div>
 
+<!-- Tabs for two distinct search options -->
 <div>
 <ngb-tabset (tabChange)="activeTab($event)" [destroyOnHide]="true">
     <ngb-tab title="Semantic Query" id="sqp" [disabled]="!SQPConfig">

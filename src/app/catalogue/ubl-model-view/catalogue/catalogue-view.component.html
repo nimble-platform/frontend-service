@@ -38,7 +38,7 @@
                                 Upload Image Package
                             </button>
                             <button class="dropdown-item" (click)="navigateToThePublishPage()">
-                                Publish New Product/Service
+                                Publish New Product / Service
                             </button>
                             <button class="dropdown-item" (click)="onDeleteCatalogue()">
                                 Delete Catalogue
@@ -107,9 +107,9 @@
 </div>
 
 <div class="jumbotron" *ngIf="catalogue && catalogue.catalogueLine.length <= 0">
-    <h3>No published products.</h3>
+    <h3>No published products / services.</h3>
     <h5>
-        <span (click)="navigateToThePublishPage()" class="pointer">Publish new products</span>
+        <span (click)="navigateToThePublishPage()" class="pointer">Publish new products / services</span>
         <i class="fa fa-plus-circle pointer" (click)="navigateToThePublishPage()"></i>
     </h5>
 </div>

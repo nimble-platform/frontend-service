@@ -142,22 +142,29 @@ export class CompanyDescriptionSettingsComponent implements OnInit {
       this.modalService.open(content);
     }
 
-    onSetImageFile(event: any) {
+    onSetImageFile(event: any, model: FormGroup) {
         let fileList: FileList = event.target.files;
         if (fileList.length > 0) {
             let file: File = fileList[0];
             if(file) {
-                const filesize = parseInt(((file.size/1024)/1024).toFixed(4));
-                if (filesize < 2) {
+                const filesize = parseInt((file.size/1024).toFixed(4));
+                if (filesize < 256) {
                   this.imgFile = file;
                 }
                 else {
                   this.imgFile = null;
-                  alert("Maximum allowed filesize: 2 MB");
+                  model.patchValue({
+                    file: null
+                  });
+                  alert("Maximum allowed filesize: 256 kB");
                 }
             }
         } else {
             this.imgFile = null;
+            model.patchValue({
+              file: null
+            });
+            event.target.files = [];
         }
     }
 

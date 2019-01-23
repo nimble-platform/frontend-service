@@ -26,7 +26,7 @@
             </text-input>
         </div>
         <div class="col-6">
-            <text-input presentationMode="view" label="Street"
+            <text-input presentationMode="view" label="Street Name"
                 [text]="address.streetName" labelClass="col-4" valueClass="col-8">
             </text-input>
         </div>
@@ -227,10 +227,10 @@
             </button>
         </div>
         <div class="col-2">
-            <button *ngIf="!bpDataService.updatingProcess" class="btn btn-primary action" [disabled]="isLoading()" (click)="onOrder()">
+            <button *ngIf="!(processMetadata && processMetadata.isBeingUpdated)" class="btn btn-primary action" [disabled]="isLoading()" (click)="onOrder()">
                 Order
             </button>
-            <button *ngIf="bpDataService.updatingProcess" class="btn btn-primary action" [disabled]="isLoading()" (click)="onOrderUpdate()">
+            <button *ngIf="processMetadata && processMetadata.isBeingUpdated" class="btn btn-primary action" [disabled]="isLoading()" (click)="onOrderUpdate()">
                 Update Order
             </button>
         </div>

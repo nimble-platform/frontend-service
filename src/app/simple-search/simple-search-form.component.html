@@ -32,25 +32,25 @@
 							<div *ngIf="idx<cat_levels[0].length" class="card col mr-3 ml-3 pl-0 pr-0 pointer" [ngClass]="{'mb-3':idx+4<cat_levels[0].length}" (click)="callCat(cat_levels[0][idx].name)">
 								<div class="card-body p-2 text-center">
 								<h6 class="card-title clickable">{{ cat_levels[0][idx].name }}</h6>
-								<h6 class="card-subtitle text-muted font-italic">{{ cat_levels[0][idx].count }} products</h6>
+								<h6 class="card-subtitle text-muted font-italic">{{ cat_levels[0][idx].count }} items</h6>
 								</div>
 							</div>
 							<div *ngIf="idx+1<cat_levels[0].length" class="card col mr-3 ml-3 pl-0 pr-0 pointer" [ngClass]="{'mb-3':idx+4<cat_levels[0].length}" (click)="callCat(cat_levels[0][idx+1].name)">
 								<div class="card-body p-2 text-center">
 								<h6 class="card-title clickable">{{ cat_levels[0][idx+1].name }}</h6>
-								<h6 class="card-subtitle text-muted font-italic">{{ cat_levels[0][idx+1].count }} products</h6>
+								<h6 class="card-subtitle text-muted font-italic">{{ cat_levels[0][idx+1].count }} items</h6>
 								</div>
 							</div>
 							<div *ngIf="idx+2<cat_levels[0].length" class="card col mr-3 ml-3 pl-0 pr-0 pointer" [ngClass]="{'mb-3':idx+4<cat_levels[0].length}" (click)="callCat(cat_levels[0][idx+2].name)">
 								<div class="card-body p-2 text-center">
 								<h6 class="card-title clickable">{{ cat_levels[0][idx+2].name }}</h6>
-								<h6 class="card-subtitle text-muted font-italic">{{ cat_levels[0][idx+2].count }} products</h6>
+								<h6 class="card-subtitle text-muted font-italic">{{ cat_levels[0][idx+2].count }} items</h6>
 								</div>
 							</div>
 							<div *ngIf="idx+3<cat_levels[0].length" class="card col mr-3 ml-3 pl-0 pr-0 pointer" [ngClass]="{'mb-3':idx+4<cat_levels[0].length}" (click)="callCat(cat_levels[0][idx+3].name)">
 								<div class="card-body p-2 text-center">
 								<h6 class="card-title clickable">{{ cat_levels[0][idx+3].name }}</h6>
-								<h6 class="card-subtitle text-muted font-italic">{{ cat_levels[0][idx+3].count }} products</h6>
+								<h6 class="card-subtitle text-muted font-italic">{{ cat_levels[0][idx+3].count }} items</h6>
 								</div>
 							</div>
 						</div>
@@ -61,25 +61,25 @@
 								<div *ngIf="idx<cat_other.length" class="card col mr-3 ml-3 pl-0 pr-0 pointer" [ngClass]="{'mb-3':idx+4<cat_other.length}" (click)="callCat(cat_other[idx].name)">
 									<div class="card-body p-2 text-center">
 									<h6 class="card-title clickable">{{ cat_other[idx].name }}</h6>
-									<h6 class="card-subtitle text-muted font-italic">{{ cat_other[idx].count }} products</h6>
+									<h6 class="card-subtitle text-muted font-italic">{{ cat_other[idx].count }} items</h6>
 									</div>
 								</div>
 								<div *ngIf="idx+1<cat_other.length" class="card col mr-3 ml-3 pl-0 pr-0 pointer" [ngClass]="{'mb-3':idx+4<cat_other.length}" (click)="callCat(cat_other[idx+1].name)">
 									<div class="card-body p-2 text-center">
 									<h6 class="card-title clickable">{{ cat_other[idx+1].name }}</h6>
-									<h6 class="card-subtitle text-muted font-italic">{{ cat_other[idx+1].count }} products</h6>
+									<h6 class="card-subtitle text-muted font-italic">{{ cat_other[idx+1].count }} items</h6>
 									</div>
 								</div>
 								<div *ngIf="idx+2<cat_other.length" class="card col mr-3 ml-3 pl-0 pr-0 pointer" [ngClass]="{'mb-3':idx+4<cat_other.length}" (click)="callCat(cat_other[idx+2].name)">
 									<div class="card-body p-2 text-center">
 									<h6 class="card-title clickable">{{ cat_other[idx+2].name }}</h6>
-									<h6 class="card-subtitle text-muted font-italic">{{ cat_other[idx+2].count }} products</h6>
+									<h6 class="card-subtitle text-muted font-italic">{{ cat_other[idx+2].count }} items</h6>
 									</div>
 								</div>
 								<div *ngIf="idx+3<cat_other.length" class="card col mr-3 ml-3 pl-0 pr-0 pointer" [ngClass]="{'mb-3':idx+4<cat_other.length}" (click)="callCat(cat_other[idx+3].name)">
 									<div class="card-body p-2 text-center">
 									<h6 class="card-title clickable">{{ cat_other[idx+3].name }}</h6>
-									<h6 class="card-subtitle text-muted font-italic">{{ cat_other[idx+3].count }} products</h6>
+									<h6 class="card-subtitle text-muted font-italic">{{ cat_other[idx+3].count }} items</h6>
 									</div>
 								</div>
 							</div>
@@ -89,8 +89,8 @@
 						<hr>
 						<div class="row">
 							<div class="col text-center">
-								<button class="btn btn-secondary" *ngIf="!showOther" (click)="showOther=!showOther">Show other categories ({{cat_other_count}} products) <i class="fa fa-angle-double-down"></i></button>
-								<button class="btn btn-secondary mb-3" *ngIf="showOther" (click)="showOther=!showOther">Hide other categories ({{cat_other_count}} products) <i class="fa fa-angle-double-up"></i></button>
+								<button class="btn btn-secondary" *ngIf="!showOther" (click)="showOther=!showOther">Show other categories ({{cat_other_count}} items) <i class="fa fa-angle-double-down"></i></button>
+								<button class="btn btn-secondary mb-3" *ngIf="showOther" (click)="showOther=!showOther">Hide other categories ({{cat_other_count}} items) <i class="fa fa-angle-double-up"></i></button>
 							</div>
 						</div>
 					</div>
@@ -102,15 +102,18 @@
 	<div [hidden]="!callback">
 		<hr/>
 		<div>
-			<div class="row space-after">
+
+			<div class="row">
 				<div *ngIf="size==0" class="col-12">
 					<span i18n>No search results</span>
 				</div>
-				<div *ngIf="size>0" class="col-6">
+				<div *ngIf="size>0" class="col-4">
 					<span i18n>Showing results</span> {{ start }} - {{ end }} <span i18n>of</span> {{ size }}
 				</div>
-				<div *ngIf="size>0" class="col-6">
-					<ngb-pagination [(collectionSize)]="size" [(page)]="page" [maxSize]="5" [boundaryLinks]="true" (pageChange)="get(objToSubmit)"></ngb-pagination>
+				<div *ngIf="size>0" class="col-8">
+					<div class="justify-content-center pagination">
+						<ngb-pagination [(collectionSize)]="size" [(page)]="page" [maxSize]="5" [boundaryLinks]="true" (pageChange)="get(objToSubmit)"></ngb-pagination>
+					</div>
 				</div>
 			</div>
 
@@ -460,6 +463,10 @@
 								</div>
 							</a>
 						</div>
+					</div>
+
+					<div *ngIf="size>0" class="justify-content-center pagination">
+						<ngb-pagination [(collectionSize)]="size" [(page)]="page" [maxSize]="5" [boundaryLinks]="true" (pageChange)="get(objToSubmit)"></ngb-pagination>
 					</div>
 
 				</div>

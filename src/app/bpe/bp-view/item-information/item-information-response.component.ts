@@ -16,6 +16,8 @@ import { ProcessType } from "../../model/process-type";
 import { PresentationMode } from "../../../catalogue/model/publish/presentation-mode";
 import { isTransportService } from "../../../common/utils";
 import {CookieService} from 'ng2-cookies';
+import {BpStartEvent} from '../../../catalogue/model/publish/bp-start-event';
+import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
 
 @Component({
     selector: "item-information-response",
@@ -33,6 +35,9 @@ export class ItemInformationResponseComponent implements OnInit {
     requestFiles: BinaryObject[] = [];
     responseFiles: BinaryObject[] = [];
 
+    // the copy of ThreadEventMetadata of the current business process
+    processMetadata: ThreadEventMetadata;
+
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
                 private location: Location,
@@ -43,6 +48,9 @@ export class ItemInformationResponseComponent implements OnInit {
     }
 
     ngOnInit() {
+        // get copy of ThreadEventMetadata of the current business process
+        this.processMetadata = this.bpDataService.bpStartEvent.processMetadata;
+
         if (!this.request) {
             this.request = this.bpDataService.itemInformationRequest;
         }
@@ -75,7 +83,7 @@ export class ItemInformationResponseComponent implements OnInit {
             this.bpDataService.itemInformationResponse,
             this.bpDataService
         );
-        const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.bpDataService.processMetadata.processId);
+        const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.processMetadata.processId);
 
         this.callStatus.submit();
         this.bpeService.continueBusinessProcess(piim).then(() => {
@@ -100,21 +108,12 @@ export class ItemInformationResponseComponent implements OnInit {
 
     private navigateToBusinessProcess(targetProcess: ProcessType): void {
         this.bpDataService.resetBpData();
-        this.bpDataService.setBpOptionParameters("buyer", targetProcess, "Item_Information_Request");
+        this.bpDataService.proceedNextBpStep("buyer", targetProcess);
 
         if(targetProcess === "Item_Information_Request") {
             this.bpDataService.resetBpData();
             this.bpDataService.initItemInformationRequest();
         }
-
-        const params = this.route.snapshot.queryParams;
-        this.router.navigate(['bpe/bpe-exec'], {
-            queryParams: {
-                catalogueId: params.catalogueId,
-                id: params.id,
-                pid: params.pid
-            }
-        });
     }
 
     onSelectItemSpecificationFile(binaryObject: BinaryObject): void {
@@ -141,8 +140,8 @@ export class ItemInformationResponseComponent implements OnInit {
 
     isResponseSent(): boolean {
         return this.readonly ||
-            (   this.bpDataService.processMetadata
-             && this.bpDataService.processMetadata.processStatus === "Completed");
+            (   this.processMetadata
+             && this.processMetadata.processStatus === "Completed");
     }
 
     getPresentationMode(): PresentationMode {
@@ -163,7 +162,7 @@ export class ItemInformationResponseComponent implements OnInit {
     }
 
     isBuyer(): boolean {
-        return this.bpDataService.userRole === "buyer";
+        return this.bpDataService.bpStartEvent.userRole === "buyer";
     }
 
     getRequestFile(): BinaryObject | null {

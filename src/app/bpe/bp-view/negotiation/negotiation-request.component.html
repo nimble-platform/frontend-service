@@ -15,7 +15,7 @@
         <strong class="font-weight-500">Delivery Period:</strong>
     </div>
     <div class="col-5">
-        {{ wrapper.lineDeliveryPeriod.value }} 
+        {{ wrapper.lineDeliveryPeriod.value }}
         {{ wrapper.lineDeliveryPeriod.unitCode }}
         <span [ngStyle]="getDeliveryPeriodStyle()">
             {{ getDeliveryPeriodText() }}
@@ -72,8 +72,8 @@
         </div>
     </div>
     <div class="col-5">
-        <negotiation-request-input label="Request Payment Terms" [(cbModel)]="rfq.negotiationOptions.paymentTerms" 
-            id="paymentTermsCb" [options]="wrapper.settings.paymentTerms" 
+        <negotiation-request-input label="Request Payment Terms" [(cbModel)]="rfq.negotiationOptions.paymentTerms"
+            id="paymentTermsCb" [options]="wrapper.settings.paymentTerms"
             [(selected)]="wrapper.rfqPaymentTerms.paymentTerm" [disabled]="isLoading() || isReadOnly()">
         </negotiation-request-input>
     </div>
@@ -90,8 +90,8 @@
         </div>
     </div>
     <div class="col-5">
-        <negotiation-request-input label="Request Payment Means" [(cbModel)]="rfq.negotiationOptions.paymentMeans" 
-            id="paymentMeansCb" [options]="wrapper.settings.paymentMeans" [(selected)]="wrapper.rfqPaymentMeans" 
+        <negotiation-request-input label="Request Payment Means" [(cbModel)]="rfq.negotiationOptions.paymentMeans"
+            id="paymentMeansCb" [options]="wrapper.settings.paymentMeans" [(selected)]="wrapper.rfqPaymentMeans"
             [disabled]="isLoading() || isReadOnly()">
         </negotiation-request-input>
     </div>
@@ -109,8 +109,8 @@
         </div>
     </div>
     <div class="col-5">
-        <negotiation-request-input label="Request Item Price" [(cbModel)]="negotiatePrice" id="priceCb" 
-            [disabled]="isLoading() || isReadOnly()" [quantity]="wrapper.rfqPriceWrapper.itemPrice" 
+        <negotiation-request-input label="Request Item Price" [(cbModel)]="negotiatePrice" id="priceCb"
+            [disabled]="isLoading() || isReadOnly()" [quantity]="wrapper.rfqPriceWrapper.itemPrice"
             [quantityUnits]="CURRENCIES" [cbDisabled]="!lineHasPrice" [disableQuantityUnit]="lineHasPrice" [invalid]="!isPriceValid()">
         </negotiation-request-input>
     </div>
@@ -124,7 +124,7 @@
     <div class="col-5"></div>
     <div class="col-5 mt-1">
         <div class="d-flex">
-            <input type="number" [(ngModel)]="requestedQuantity" class="form-control form-control-sm w-75" 
+            <input type="number" [(ngModel)]="requestedQuantity" class="form-control form-control-sm w-75"
                 [disabled]="isLoading() || isReadOnly()" />
             <span class="ml-2" *ngIf="getQuantityUnit() !== ''">{{ getQuantityUnit() }}</span>
         </div>
@@ -143,26 +143,32 @@
 
 <hr>
 
+<!-- Data Monitoring -->
+<div class="row">
+    <div class="col-12">
+        <h4>Data Monitoring</h4>
+        <div class="input-group input-group-lg">
+          <input type="checkbox" [(ngModel)]="rfq.dataMonitoringRequested" [disabled]="isLoading() || isReadOnly()" >
+          <span class="form-control d-inline border-0">
+              <strong class="font-weight-500">Request data monitoring service</strong>
+          </span>
+        </div>
+    </div>
+</div>
+
+<hr>
+
 <!-- Delivery -->
 <div class="row">
     <div class="col-12">
         <h4>Delivery Address</h4>
-        
+
         <options-input label="Use Existing Address" [(selected)]="selectedAddress" [options]="addressOptions"
             rowClass="mb-1" labelClass="col-2" valueClass="col-10">
         </options-input>
 
         <address-input [address]="wrapper.rfqDeliveryAddress" [disabled]="isLoading() || isReadOnly() || selectedAddressValue !== ''">
         </address-input>
-    </div>
-</div>
-<div class="row">
-    <div class="col-2"></div>
-    <div class="col-10">
-        <input type="checkbox" [(ngModel)]="rfq.dataMonitoringRequested" [disabled]="isLoading() || isReadOnly()" >
-        <span class="form-control d-inline border-0">
-            <strong class="font-weight-500">Request data monitoring service</strong>
-        </span>
     </div>
 </div>
 
@@ -173,12 +179,12 @@
     <div class="col-2">
         <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
     </div>
-    <div class="col-3" *ngIf="!bpDataService.updatingProcess">
+    <div class="col-3" *ngIf="!(processMetadata && processMetadata.isBeingUpdated)">
         <button class="btn btn-primary action" [disabled]="isLoading() || !isFormValid()" (click)="onSendRequest()">
             {{ isNegotiatingAnyTerm() ? "Send Request" : "Continue With Manufacturer's Terms" }}
         </button>
     </div>
-    <div class="col-3" *ngIf="bpDataService.updatingProcess">
+    <div class="col-3" *ngIf="processMetadata && processMetadata.isBeingUpdated">
         <button class="btn btn-primary action" [disabled]="isLoading() || !isFormValid()" (click)="onUpdateRequest()">
             Update Request
         </button>

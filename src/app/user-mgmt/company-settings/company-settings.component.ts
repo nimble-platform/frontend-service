@@ -26,6 +26,7 @@ export class CompanySettingsComponent implements OnInit {
     initCallStatus: CallStatus = new CallStatus();
     profile_completeness: number = 0;
     profile_completeness_str: string = "0%";
+    config = myGlobals.config;
 
     constructor(private cookieService: CookieService,
                 private userService: UserService) {

@@ -16,7 +16,7 @@
   <b>Your company is now registered</b><br/>
   <span *ngIf="!config.companyRegistrationRequired">You can start publishing your catalogue.<br/></span>
   In order to execute business processes your company needs to be verified by an administrator - please stay tuned.<br/>
-  If you are not being verified with 24h, please contact our support <a href="mailto:nimble-support@salzburgresearch.at">nimble-support@salzburgresearch.at</a>.
+  If you are not being verified with 24h, please contact our support <a href="mailto:{{config.supportMail}}">{{config.supportMail}}</a>.
 </div>
 
 <!-- Regular content -->
@@ -52,26 +52,37 @@
     <!-- Welcome tab -->
     <div *ngIf="queryParameters.tab === TABS.WELCOME" class="row">
         <div class="col-12">
-            <h4 class="space-before text-center">Looks like you are new here.</h4>
-            <p class="space-before">This is your dashboard - it shows:</p>
-            <ul>
-                <li><strong>Purchases:</strong> the history of all your purchases</li>
-                <li><strong>Sales:</strong> the history of all your sales</li>
-                <li><strong>Catalogue:</strong> the list of all your published products</li>
-            </ul>
+            <h4 class="space-before mb-4 text-center">Looks like you are new here.</h4>
+            <div class="row mb-4 ">
+              <div class="col-6">
+                <p class="mb-1">This is your dashboard - it shows:</p>
+                <ul>
+                    <li><strong>Purchases:</strong> the history of all your purchases</li>
+                    <li><strong>Sales:</strong> the history of all your sales</li>
+                    <li><strong>Catalogue:</strong> the list of all your published products / services</li>
+                </ul>
+              </div>
+              <div class="col-6">
+                <p class="mb-1">In your Purchases and Sales the following statuses are possible:</p>
+                <div>
+                  <span class="badge badge-success">Step completed</span> <span class="badge badge-warning">Waiting for trading partner</span> <span class="badge badge-danger">Action required</span> <span class="badge badge-secondary">Step cancelled</span>
+                </div>
+              </div>
+            </div>
             <div class="row text-center">
-                <div *ngIf="this.appComponent.checkRoles('sales')" class="col-6">
-                    <p>If you are looking to <b>buy</b> products</p>
-                    <a class="btn btn-primary btn-lg" href="#/simple-search" role="button">Search for Products</a>
+                <div *ngIf="this.appComponent.checkRoles('purchases')" class="col-6">
+                    <p>If you are looking to <b>buy</b> Products / Services</p>
+                    <a class="btn btn-primary btn-lg" href="#/simple-search" role="button">Search for Products / Services</a>
                 </div>
 
-                <div *ngIf="this.appComponent.checkRoles('purchases')" class="col-6">
-                    <p>If you are looking to <b>sell</b> Products</p>
-                    <a class="btn btn-primary btn-lg" href="#/catalogue/categorysearch" role="button">Publish a Product</a>
+                <div *ngIf="this.appComponent.checkRoles('sales')" class="col-6">
+                    <p>If you are looking to <b>sell</b> Products / Services</p>
+                    <a *ngIf="this.appComponent.checkRoles('catalogue')" class="btn btn-primary btn-lg" href="#/catalogue/categorysearch" role="button">Publish a Product / Service</a>
+					<p *ngIf="!this.appComponent.checkRoles('catalogue')">Please refer to the company manager or a legal representative to get permission to publish products / services in the NIMBLE Platform.</p>
                 </div>
 
                 <div *ngIf="!this.appComponent.checkRoles('purchases') && !this.appComponent.checkRoles('sales')" class="col-12">
-                    <p>Please refer to the company manager or a legal representative to get permission to purchase or sell products in the NIMBLE Platform.</p>
+                    <p>Please refer to the company manager or a legal representative to get permission to purchase or sell products / services in the NIMBLE Platform.</p>
                 </div>
             </div>
         </div>
@@ -92,7 +103,7 @@
                         </button>
                         <div style="margin-top: 20vh">
                             <h4 class="space-before text-center">You do not have any sales yet</h4>
-                            <p class="space-before text-center">When a customer enquires about your published products, you will see it here.</p>
+                            <p class="space-before text-center">When a customer enquires about your published products / services, you will see it here.</p>
                         </div>
                     </ng-container>
                     <!-- Purchases -->
@@ -105,7 +116,7 @@
                         <div style="margin-top: 20vh">
                             <h4 class="space-before text-center">You have not bought anything yet</h4>
                             <p class="space-before text-center">
-                                <a class="btn btn-primary btn-lg" href="#/simple-search" role="button">Search for Products</a>
+                                <a class="btn btn-primary btn-lg" href="#/simple-search" role="button">Search for Products / Services</a>
                             </p>
                         </div>
                     </ng-container>
@@ -116,16 +127,16 @@
             <div class="row" *ngIf="results.resultCount > 0 || queryParameters['archived']">
                 <div class="col-12">
                     <div class="row space-before">
-                        <div class="col-5"></div>
+                        <div class="col-4"></div>
                         <!-- Pagination Info -->
-                        <div class="col-2 pagination justify-content-center">
+                        <div class="col-4 pagination justify-content-center">
                             <ngb-pagination [collectionSize]="results.resultCount" [pageSize]="query.pageSize" [(page)]="query.page"
                                 [maxSize]="query.pageSize" [boundaryLinks]="true" (pageChange)="onPageChange()">
                             </ngb-pagination>
                         </div>
-                        <div class="col-3"></div>
+                        <!--<div class="col-3"></div>-->
                         <!-- Show Archived Button -->
-                        <div class="col-2">
+                        <div class="col-4">
                             <button class="btn btn-secondary float-right"
                                 (click)="onToggleArchived()"
                                 [disabled]="!isToggleArchivedButtonEnabled()">
@@ -137,19 +148,19 @@
                     <div class="row">
                         <!-- Filters -->
                         <div class="col-2">
-                            <facet [title]="'Product'" [dataType]="'string'"
+                            <facet [title]="'Product / Service'" [dataType]="'string'"
                                 [stringValues]="filterSet && filterSet.relatedProducts"
                                 [selectedStringValues]="modifiedFilterSet && modifiedFilterSet.relatedProducts"
                                 [loading]="areFiltersLoading()"
                                 (triggerCriteriaChanged)="onFilterChange()">
                             </facet>
-                            <facet [title]="'Product category'" [dataType]="'string'"
+                            <facet [title]="'Category'" [dataType]="'string'"
                                 [stringValues]="filterSet && filterSet.relatedProductCategories"
                                 [selectedStringValues]="modifiedFilterSet && modifiedFilterSet.relatedProductCategories"
                                 [loading]="areFiltersLoading()"
                                 (triggerCriteriaChanged)="onFilterChange()">
                             </facet>
-                            <facet [title]="'Trading partner'" [dataType]="'string'"
+                            <facet [title]="'Trading Partner'" [dataType]="'string'"
                                 [stringValues]="filterSet && filterSet.tradingPartnerNames"
                                 [selectedStringValues]="modifiedFilterSet && modifiedFilterSet.tradingPartnerNames"
                                 [loading]="areFiltersLoading()"
@@ -168,7 +179,7 @@
                             <h4 *ngIf="results.orders.length === 0">No orders.</h4>
                             <div *ngFor="let order of results.orders;let i=index" class="bordered space-after">
                                 <div class="row">
-                                    <div class="col-12 d-flex collaboration-group-header">
+                                    <div class="col-11 d-flex collaboration-group-header">
                                         <div class="header-label mr-auto d-flex">
                                             <h5 *ngIf="updatingCollaborationGroupName[i].status == false && (order.name != null || order.name != '')">{{order.name}}</h5>
                                             <h5 *ngIf="updatingCollaborationGroupName[i].status == false && (order.name == null || order.name == '')">{{updatingCollaborationGroupName[i].defaultName}}</h5>
@@ -180,17 +191,19 @@
                                                 <i class="fa fa-times p-2 pointer" aria-hidden="true"></i>
                                             </div>
                                         </div>
-                                        <div data-toggle="tooltip" (click)="changeCollaborationGroupNameStatus(i,true)" data-placement="top" title="Change group name">
-                                            <i class="fa fa-pencil-alt p-2 pointer" aria-hidden="true"></i>
+                                    </div>
+                                    <div class="col-1 align-right pl-2 pr-1">
+                                        <div data-toggle="tooltip" class="inline" (click)="changeCollaborationGroupNameStatus(i,true)" data-placement="top" title="Change group name">
+                                            <i class="fa fa-pencil-alt p-1 pointer" aria-hidden="true"></i>
                                         </div>
-                                        <div *ngIf="!order.archived" (click)="archiveGroup(order.id)" data-toggle="tooltip" data-placement="top" title="Archive">
-                                            <i class="fa fa-archive p-2 pointer" aria-hidden="true"></i>
+                                        <div *ngIf="!order.archived" class="inline" (click)="archiveGroup(order.id)" data-toggle="tooltip" data-placement="top" title="Archive">
+                                            <i class="fa fa-archive p-1 pointer" aria-hidden="true"></i>
                                         </div>
-                                        <div *ngIf="order.archived" (click)="restoreGroup(order.id)" data-toggle="tooltip" data-placement="top" title="Restore">
-                                            <i class="fa fa-undo p-2 pointer" aria-hidden="true"></i>
+                                        <div *ngIf="order.archived" class="inline" (click)="restoreGroup(order.id)" data-toggle="tooltip" data-placement="top" title="Restore">
+                                            <i class="fa fa-undo p-1 pointer" aria-hidden="true"></i>
                                         </div>
-                                        <div *ngIf="order.archived" (click)="deleteGroup(order.id)" data-toggle="tooltip" data-placement="top" title="Delete Permanently">
-                                            <i class="fa fa-trash-alt p-2 pointer" aria-hidden="true"></i>
+                                        <div *ngIf="order.archived" class="inline" (click)="deleteGroup(order.id)" data-toggle="tooltip" data-placement="top" title="Delete Permanently">
+                                            <i class="fa fa-trash-alt p-1 pointer" aria-hidden="true"></i>
                                         </div>
                                     </div>
                                 </div>

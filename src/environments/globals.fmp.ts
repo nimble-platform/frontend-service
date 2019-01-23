@@ -39,10 +39,10 @@ export const pw_reset_link = "https://fmp-nimble.salzburgresearch.at:8080/auth/r
 
 // Base path variables - Local development via service discovery
 
-// export const base_path = "http://localhost:443";
+// export const base_path = "http://localhost";
 // export const ub_base = "http://localhost:8090";
-// export const simple_search_endpoint="http://nimble-staging.salzburgresearch.at/marmotta/solr/catalogue2";
-// export const pw_reset_link = "http://nimble-staging.salzburgresearch.at:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
+// export const simple_search_endpoint="http://localhost:8082/solr/catalogue2";
+// export const pw_reset_link = "http://localhost:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
 
 
 // Service endpoints
@@ -80,9 +80,120 @@ export const tntAnalysisEndpoint = `${base_path}/tnt/simpleTrackingAnalysis`;
 
 export const config = {
   "companyRegistrationRequired": true,
-  "showTrack": false,
+  "logoPath": "./assets/logo_fmp.png",
+  "logoRequired": true,
+  "requiredAgreements": [
+    {
+      "title":"Privacy Policy",
+      "src":"./assets/privacy_policy.pdf"
+    },
+    {
+      "title":"Terms of Service (ToS)",
+      "src":"./assets/tos.pdf"
+    }
+  ],
+  "showCompanyMembers": true,
   "showExplorative": false,
-  "standardTaxonomy": "FurnitureOntology"
+  "showPPAP": false,
+  "showTrack": false,
+  "showTrade": false,
+  "showVerification": false,
+  "standardTaxonomy": "FurnitureOntology",
+  "supportedActivitySectors": {
+    "": [],
+    "Logistics Provider": [
+      "General"
+    ],
+    "Manufacturer": [
+      "Bathroom",
+      "Carpentry",
+      "Childcare",
+      "Closet / Cupboard",
+      "Contract",
+      "Doors / Windows",
+      "Furniture for Retail",
+      "Home",
+      "Hotels, Restaurants & Cafes",
+      "Kids",
+      "Kitchen",
+      "Lightings / Lamps",
+      "Mattresses",
+      "Office",
+      "Outdoor Furniture",
+      "Panels",
+      "Parquet Floors",
+      "Upholstered Furniture",
+      "Wooden Packaging"
+    ],
+    "Retailer": [
+      "General"
+    ],
+    "Service Provider": [
+      "Architects",
+      "Buyer-Designer",
+      "Certification",
+      "Consulting",
+      "Design / Decoration",
+      "Distributor",
+      "Engineering",
+      "Facility Cleaning",
+      "Facility Maintenance",
+      "Furniture Installer",
+      "Legal Services",
+      "Outsourcing",
+      "Print Services",
+      "Quality Control / Tests",
+      "Sales Agent",
+      "Training",
+      "Waste Management"
+    ],
+    "Supplier": [
+      "Adhesives",
+      "Board",
+      "Ceramic",
+      "Composites",
+      "Cork",
+      "Decorated Paper",
+      "Fitting",
+      "Foam",
+      "Glass",
+      "Machinery",
+      "Metal",
+      "Packaging Materials",
+      "Paints & Varnishes",
+      "Plastic",
+      "Plywood",
+      "Straw",
+      "Textile",
+      "Tools",
+      "Veneer",
+      "Wood"
+    ]
+  },
+  "supportedBusinessTypes": [
+    "",
+    "Logistics Provider",
+    "Manufacturer",
+    "Retailer",
+    "Service Provider",
+    "Supplier"
+  ],
+  "supportedCertificates": [
+      "Health and Safety",
+      "Innovation",
+      "Management",
+      "Quality",
+      "Sustainability and Environment",
+      "Other"
+  ],
+  "supportedRoles": [
+      "legal_representative",
+      "monitor",
+      "publisher",
+      "purchaser",
+      "sales_officer"
+  ],
+  "supportMail": "nimbleFMP@aidimme.es"
 };
 
 

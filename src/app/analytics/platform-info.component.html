@@ -1,0 +1,41 @@
+<p class="nimble-title">Platform Info</p>
+
+<h4>Platform Terms & Conditions</h4>
+
+<div *ngFor="let ra of config.requiredAgreements">
+  <a class="clickable" href="{{ra.src}}" target="_blank">{{ra.title}}</a><br/>
+</div>
+
+<hr/>
+
+<h4>Registered Companies
+    <span *ngIf="registeredCompaniesPage">(Total {{ registeredCompaniesPage.totalElements }})</span>
+</h4>
+
+<call-status [callStatus]="registeredCompaniesCallStatus" [large]="true"></call-status>
+
+<div [hidden]="registeredCompaniesCallStatus.isLoading() || registeredCompaniesPage == null">
+    <div *ngIf="registeredCompaniesPage">
+        <table class="table table-striped table-bordered">
+            <tr>
+                <th><span i18n>Company Name</span></th>
+                <th><span i18n>Website</span></th>
+            </tr>
+            <ng-container *ngFor="let company of registeredCompaniesPage.content">
+                <tr>
+                    <td>{{ company.name }}</td>
+                    <td *ngIf="company.websiteURI && company.websiteURI != ''"><a class="clickable" href="{{company.websiteURI}}" target="_blank">{{company.websiteURI}}</a></td>
+                    <td *ngIf="!company.websiteURI || company.websiteURI == ''">n/A</td>
+                </tr>
+            </ng-container>
+        </table>
+        <ngb-pagination class="d-flex justify-content-center"
+                        [collectionSize]="registeredCompaniesPage.totalElements"
+                        [pageSize]="registeredCompaniesPage.size"
+                        [page]="registeredCompaniesPage.number+1"
+                        [maxSize]="registeredCompaniesPage.size"
+                        [boundaryLinks]="false"
+                        (pageChange)="onRegisteredCompaniesPageChange($event)">
+        </ngb-pagination>
+    </div>
+</div>

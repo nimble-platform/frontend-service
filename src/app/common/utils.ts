@@ -10,6 +10,8 @@ import {Item} from '../catalogue/model/publish/item';
 import {Text} from '../catalogue/model/publish/text';
 import { CatalogueLine } from "../catalogue/model/publish/catalogue-line";
 import {Amount} from "../catalogue/model/publish/amount";
+import {CookieService} from "ng2-cookies";
+import {Headers} from "@angular/http";
 
 const UI_NAMES: any = {
     STRING: "TEXT"
@@ -299,4 +301,10 @@ export function deepEquals(obj1: any, obj2: any): boolean {
     }
 
     return true;
+}
+
+export function getAuthorizedHeaders(cookieService: CookieService): Headers {
+    const token = 'Bearer '+cookieService.get("bearer_token");
+    const headers = new Headers({ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': token});
+    return headers;
 }

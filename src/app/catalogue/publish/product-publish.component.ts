@@ -40,6 +40,7 @@ import 'rxjs/add/observable/fromPromise'
 import 'rxjs/add/observable/interval';
 import 'rxjs/add/operator/takeUntil';
 import {LANGUAGES, DEFAULT_LANGUAGE} from '../model/constants';
+import * as myGlobals from '../../globals';
 
 
 type ProductType = "product" | "transportation";
@@ -116,6 +117,8 @@ export class ProductPublishComponent implements OnInit {
     sameIdError = false;
     // the value of the erroneousID
     erroneousID = "";
+
+    config = myGlobals.config;
 
     json = JSON;
 
@@ -1063,22 +1066,6 @@ export class ProductPublishComponent implements OnInit {
             };
             reader.readAsDataURL(file);
         }
-    }
-
-    private downloadExampleTemplate() {
-        var reader = new FileReader();
-        this.catalogueService.downloadExampleTemplate()
-            .then(result => {
-                    var contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-                    var data = result.content;
-                    var fileName = result.fileName;
-                    var blob = new Blob([data],{type:contentType});
-                    saveAs(blob,fileName);
-                    this.publishStatus.callback("Download completed");
-                },
-                error => {
-                    this.publishStatus.error("Download failed");
-                });
     }
 
     /**

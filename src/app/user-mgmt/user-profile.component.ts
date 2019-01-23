@@ -17,7 +17,7 @@ export class UserProfileComponent implements OnInit {
     changePasswordCallStatus: CallStatus = new CallStatus();
     changePasswordCredentials: ResetPasswordCredentials = new ResetPasswordCredentials(null, null);
     newPasswordRepeated: string = null;
-    pw_val_class: string = "ng-valid";
+    pw_val_class: string = "ng-invalid";
     passwords_matching: boolean = false;
 
     constructor(private userService: UserService,

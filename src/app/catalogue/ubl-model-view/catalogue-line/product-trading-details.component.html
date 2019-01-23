@@ -11,7 +11,7 @@
 <!-- Price Base Quantity -->
 <quantity-view [presentationMode]="presentationMode"
                [propName]="'Price Base Quantity'"
-               [definition]="'The price of a product at a legally set quantity.\nFor example,if you sell MDF board and charge €15,00 for 3 m2 of it, the base price will be €5,00 for 1 m2,i.e.,Quantity:5,Unit:m2.'"
+               [definition]="'The price of a product / service at a legally set quantity.\nFor example,if you sell MDF board and charge €15,00 for 3 m2 of it, the base price will be €5,00 for 1 m2,i.e.,Quantity:5,Unit:m2.'"
                [quantity]="[catalogueLine.requiredItemLocationQuantity.price.baseQuantity]"
                [multiValue]="false"
                [parentForm]="parentForm">
@@ -61,7 +61,7 @@
     <address-view [presentationMode]="presentationMode"
                   [propName]="'Applicable Territory Address'"
                   [multiValue]="true"
-                  [definition]="'A reference to a territory (region, country, city, etc.) to which the product will apply'"
+                  [definition]="'A reference to a territory (region, country, city, etc.) to which the product / service will apply'"
                   [address]="catalogueLine.requiredItemLocationQuantity.applicableTerritoryAddress">
     </address-view>
 </ng-container>

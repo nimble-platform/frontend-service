@@ -23,6 +23,6 @@ export class FulfilmentComponent implements OnInit {
     }
 
     showReceiptAdvice(): boolean {
-        return this.bpDataService.userRole === "buyer" || !!this.bpDataService.receiptAdvice;
+        return this.bpDataService.bpStartEvent.userRole === "buyer" || !!this.bpDataService.receiptAdvice;
     }
 }

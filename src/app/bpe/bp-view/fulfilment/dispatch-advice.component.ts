@@ -19,6 +19,7 @@ import { TransportExecutionPlan } from "../../../catalogue/model/publish/transpo
 import { Quotation } from "../../../catalogue/model/publish/quotation";
 import {DocumentService} from "../document-service";
 import {CookieService} from 'ng2-cookies';
+import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
 
 @Component({
     selector: 'dispatch-advice',
@@ -31,6 +32,9 @@ export class DispatchAdviceComponent implements OnInit {
 	callStatus: CallStatus = new CallStatus();
     initiatingDispatchAdvice: CallStatus = new CallStatus();
 
+    // the copy of ThreadEventMetadata of the current business process
+    processMetadata: ThreadEventMetadata;
+
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
                 private location: Location,
@@ -40,6 +44,9 @@ export class DispatchAdviceComponent implements OnInit {
     }
 
     ngOnInit() {
+        // get copy of ThreadEventMetadata of the current business process
+        this.processMetadata = this.bpDataService.bpStartEvent.processMetadata;
+
         if(this.bpDataService.despatchAdvice == null) {
             this.initDispatchAdvice();
         }
@@ -50,7 +57,7 @@ export class DispatchAdviceComponent implements OnInit {
 
     async initDispatchAdvice() {
         this.initiatingDispatchAdvice.submit();
-        const processInstanceGroup = await this.bpeService.getProcessInstanceGroup(this.bpDataService.getRelatedGroupId()) as ProcessInstanceGroup;
+        const processInstanceGroup = await this.bpeService.getProcessInstanceGroup(this.bpDataService.bpStartEvent.containerGroupId) as ProcessInstanceGroup;
         let details = [];
         for(let id of processInstanceGroup.processInstanceIDs){
             details.push(await Promise.all([
@@ -162,7 +169,7 @@ export class DispatchAdviceComponent implements OnInit {
 
         let dispatchAdvice: DespatchAdvice = copy(this.bpDataService.despatchAdvice);
 
-        this.bpeService.updateBusinessProcess(JSON.stringify(dispatchAdvice),"DESPATCHADVICE",this.bpDataService.processMetadata.processId)
+        this.bpeService.updateBusinessProcess(JSON.stringify(dispatchAdvice),"DESPATCHADVICE",this.processMetadata.processId)
             .then(() => {
                 this.documentService.updateCachedDocument(dispatchAdvice.id,dispatchAdvice);
                 this.callStatus.callback("Dispatch Advice updated", true);
@@ -182,6 +189,6 @@ export class DispatchAdviceComponent implements OnInit {
     }
 
     isReadOnly(): boolean {
-        return !!this.bpDataService.processMetadata && !this.bpDataService.updatingProcess;
+        return !!this.processMetadata && !this.processMetadata.isBeingUpdated;
     }
 }

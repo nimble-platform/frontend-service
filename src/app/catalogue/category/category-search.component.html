@@ -1,24 +1,25 @@
 <div *ngIf="isLogistics">
-    <p class="pb-3 nimble-title">Publish Logistics Product</p>
+    <p class="pb-3 nimble-title">Publish Logistics Service</p>
 </div>
 <div *ngIf="!isLogistics">
-    <p class="pb-3 nimble-title">Publish Product</p>
+    <p class="pb-3 nimble-title">Publish Product / Service</p>
 </div>
-<p>All published products must belong to at least one category, which will describe the product and help customers find your offering.</p>
+<p>All published products / services must belong to at least one category, which will describe the product / service and help customers find your offering.</p>
 <div class="form-group row d-flex">
     <div class="col-12 inline">
         <form #categorySearch="ngForm" (ngSubmit)="onSearchCategory()" novalidate>
         <!-- TODO: All Categories Search Goes Here-->
             <div class="input-group">
+
                 <div ngbDropdown class="d-inline-block input-group-prepend">
                     <button class="btn btn-outline-dark" type="button" id="allCategories" ngbDropdownToggle>
-                        All Categories
+                        {{taxonomyId}} Categories
                     </button>
-                    <!-- TODO: Requires a service change -->
                     <div ngbDropdownMenu aria-labelledby="allCategories">
-                        <a class="dropdown-item">All Categories</a>
+                        <a *ngFor="let taxonomyID of taxonomyIDs" class="dropdown-item" (click)="changeTaxonomyId(taxonomyID)">{{taxonomyID}} Categories</a>
                     </div>
                 </div>
+
                 <!-- End TODO: All Categories Search -->
                 <input type="text" class="form-control" name="inputCtrl" [(ngModel)]="categoryKeyword" placeholder="Search Category..."/>
                 <div class="input-group-append">
@@ -31,6 +32,15 @@
     </div>
 </div>
 
+<div *ngIf="pathToSelectedCategories">
+    <span  *ngFor="let parentCat of pathToSelectedCategories.parents;let l=last" >
+        <span class="btn-link" (click)="scrollToDiv(parentCat.code,$event)" style="cursor: pointer">{{parentCat.preferredName}}</span>
+        <span *ngIf="!l">
+             >>
+        </span>
+    </span>
+</div>
+
 <div class="row mt-4 d-flex">
     <div class="col-7 pr-0 pb-0">
 
@@ -38,9 +48,9 @@
         <div *ngIf="!treeView" class="border" style="height:55vh; overflow-x: hidden; overflow-y: scroll;">
             <table class="table table-hover mb-0">
                 <thead class="thead-light fixed">
-                    <th scope="col" style="color: #000;">Classification</th>
-                    <th scope="col" style="color: #000;">Name</th>
-                    <th scope="col" colspan="2" class="p-0 text-right"><button class="btn btn-secondary mb-1" (click)="toggleTreeView()">Browse</button></th>
+                    <th scope="col" style="color: #000;" class="p-3 border-top-0 border-bottom">Classification</th>
+                    <th scope="col" style="color: #000;" class="p-3 border-top-0 border-bottom">Name</th>
+                    <th scope="col" colspan="2" class="p-0 border-top-0 border-bottom text-right" style="vertical-align:top"><button class="btn btn-secondary my-2 mr-1" (click)="toggleTreeView()">Browse</button></th>
                 </thead>
                 <tbody>
                     <tr *ngIf="getCategoriesStatus.isDisplayed()">
@@ -66,28 +76,17 @@
         </div>
 
         <!-- Tree view activated -->
-        <div *ngIf="treeView" class="border" style="height:55vh; overflow-x: hidden; overflow-y: scroll;">
+        <div *ngIf="treeView" id="scrollDiv" class="border" style="height:55vh; overflow-x: hidden; overflow-y: scroll;">
             <div class="fixed" style="background-color: #e9ecef;">
-                <div class="row border">
+                <div class="row">
                     <div class="pr-0 col-3">
                         <div class="thead-light-equivalent">
-                            <p *ngIf="selectedTab == 'TREE'" class="mb-0" style="padding: 0.50rem;text-align: center">Categories For</p>
-                            <p *ngIf="selectedTab != 'TREE'" class="mb-0" style="padding: 0.50rem;text-align: center">Categories</p>
+                            <p class="mb-0 p-3">Categories</p>
                         </div>
                     </div>
-                    <div *ngIf="selectedTab == 'TREE'" class="col-5 taxonomyDiv" >
-                        <div ngbDropdown class="thead-light-equivalent taxonomy">
-                            <button class="col-12 btn btn-outline-dark" type="button" id="taxonomy" ngbDropdownToggle>
-                                {{taxonomyId}}
-                            </button>
-                            <div ngbDropdownMenu aria-labelledby="taxonomy">
-                                <a *ngFor="let taxonomyID of taxonomyIDs" class="dropdown-item" (click)="changeTaxonomyId(taxonomyID)">{{taxonomyID}}</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="pl-0" [ngClass]="selectedTab == 'TREE' ? 'col-4' :'col-9'">
+                    <div class="pl-0 col-9">
                         <div class="thead-light-equivalent">
-                            <button *ngIf="categories" class="btn btn-secondary float-right my-1 mr-1" (click)="toggleTreeView()">Back to Search Results</button>
+                            <button *ngIf="categories" class="btn btn-secondary float-right my-2 mr-1" (click)="toggleTreeView()">Back to Search Results</button>
                         </div>
                     </div>
                 </div>
@@ -101,12 +100,12 @@
                     <ul class="nav nav-tabs pt-2 pl-1 pr-1">
                       <li *ngIf="!isLogistics" class="nav-item">
                         <a href id="TREE" class="nav-link" [ngClass]="{ active: selectedTab === 'TREE'}" (click)="onSelectTab($event)">
-                          All (Product)
+                          {{taxonomyId == "All" ? "eClass": taxonomyId}}
                         </a>
                       </li>
                       <li *ngIf="isLogistics" class="nav-item">
                         <a href id="TREE" class="nav-link" [ngClass]="{ active: selectedTab === 'TREE'}" (click)="onSelectTab($event)">
-                          All (Logistics)
+                            {{taxonomyId == "All" ? "eClass": taxonomyId}}
                         </a>
                       </li>
                       <li class="nav-item">
@@ -165,7 +164,7 @@
                           <ng-container *ngIf="eClassLogisticsCategory && !getCategoriesStatus.isDisplayed()">
                               <category-tree [category]="eClassLogisticsCategory" [border]="false" [parentCategories]="parentCategories" [numberOfSteps]="parentCategories ? parentCategories.parents.length-1 : 0"
                                   (detailsEvent)="getCategoryDetails($event,false)" [selectedCategory]="selectedCategory"
-                                  [selectedCategories]="selectedCategories"></category-tree>
+                                  [selectedCategories]="selectedCategories" [scrollToDivId]="scrollToDivId"></category-tree>
                           </ng-container>
                           <h5 *ngIf="!eClassLogisticsCategory" class="noLogisticCategory">No available category</h5>
                       </div>
@@ -177,7 +176,7 @@
                               <div *ngFor="let rootCategory of rootCategories">
                                   <category-tree [category]="rootCategory" [parentCategories]="parentCategories" [numberOfSteps]="parentCategories ? parentCategories.parents.length-1 : 0"
                                       (detailsEvent)="getCategoryDetails($event,false)" [selectedCategory]="selectedCategory"
-                                      [selectedCategories]="selectedCategories"></category-tree>
+                                      [selectedCategories]="selectedCategories" [scrollToDivId]="scrollToDivId"></category-tree>
                               </div>
                           </ng-container>
                       </div>
@@ -269,7 +268,7 @@
 <!-- Actions: no permission -->
 <div *ngIf="!this.appComponent.checkRoles('catalogue')" class="form-group row">
     <div class="col-12 d-flex align-items-center">
-        <p class="mt-1 mb-0 mr-3">You do not have permission to publish any products to your company catalogue.</p>
+        <p class="mt-1 mb-0 mr-3">You do not have permission to publish any products / services to your company catalogue.</p>
     </div>
 </div>
 

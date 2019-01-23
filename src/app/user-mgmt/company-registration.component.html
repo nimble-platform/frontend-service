@@ -15,10 +15,10 @@
 	<!-- Legal Name -->
 	<div class="form-group row">
 		<label class="col-2 col-form-label">
-			<strong>Legal Name:</strong>
+			<strong>Company Name:</strong>
 		</label>
 		<div class="col-10">
-			<input type="text" class="form-control" name="companyName" [formControl]="registrationForm.controls['name']" required>
+			<input type="text" class="form-control" name="companyName" [formControl]="registrationForm.controls['name']" required maxlength="255">
 		</div>
 	</div>
 
@@ -28,12 +28,23 @@
 			<strong>VAT Number:</strong>
 		</label>
 		<div class="col-10">
-			<input type="text" class="form-control" [formControl]="registrationForm.controls['vatNumber']" required>
+			<input type="text" class="form-control" [formControl]="registrationForm.controls['vatNumber']" required maxlength="255">
+		</div>
+	</div>
+
+	<!-- Logo -->
+	<div *ngIf="config.logoRequired" class="form-group row">
+		<label class="col-2 col-form-label">
+			<strong>Logo:</strong>
+			<span class="tooltip-icon" (click)="showLogoTT(tooltip)"><i class="fa fa-question-circle"></i></span>
+		</label>
+		<div class="col-10">
+			<input type="file" class="form-control" [formControl]="registrationForm.controls['logo']" (change)="onSetImageFile($event, registrationForm)" required>
 		</div>
 	</div>
 
 	<!-- Verification Info -->
-	<div class="form-group row">
+	<div *ngIf="config.showVerification" class="form-group row">
 		<label class="col-2 col-form-label">
 			<span>
 				<strong>Verification Info:</strong>
@@ -41,7 +52,7 @@
 			<span class="tooltip-icon" (click)="showVerificationTT(tooltip)"><i class="fa fa-question-circle"></i></span>
 		</label>
 		<div class="col-10">
-			<input type="text" class="form-control" [formControl]="registrationForm.controls['verificationInformation']">
+			<input type="text" class="form-control" [formControl]="registrationForm.controls['verificationInformation']" maxlength="255">
 		</div>
 	</div>
 
@@ -52,11 +63,24 @@
 		</label>
 		<div class="col-10">
 			<select class="form-control" [formControl]="registrationForm.controls['businessType']" required>
-				<option>Manufacturer</option>
-				<option>Logistics Provider</option>
-				<option>Service Provider</option>
+				<option *ngFor="let type of config.supportedBusinessTypes">{{type}}</option>
+			</select>
+		</div>
+	</div>
+
+	<!-- Industry Sectors -->
+	<div class="form-group row">
+		<label class="col-2 col-form-label">
+			<strong>Activity Sectors:</strong>
+			<span *ngIf="config.supportedActivitySectors[registrationForm.getRawValue()['businessType']].length>0" class="tooltip-icon" (click)="showSectorTT(tooltip)"><i class="fa fa-question-circle"></i></span>
+		</label>
+		<div class="col-10">
+			<input *ngIf="registrationForm.getRawValue()['businessType'] == ''" type="text" class="form-control" [formControl]="registrationForm.controls['industrySectors']" placeholder="Select Business Type" required readonly maxlength="255">
+			<select *ngIf="config.supportedActivitySectors[registrationForm.getRawValue()['businessType']].length>0" class="form-control" [formControl]="registrationForm.controls['industrySectors']" multiple required>
+				<option *ngFor="let sector of config.supportedActivitySectors[registrationForm.getRawValue()['businessType']]">{{sector}}</option>
 				<option>Other</option>
 			</select>
+			<input *ngIf="registrationForm.getRawValue()['businessType'] != '' && config.supportedActivitySectors[registrationForm.getRawValue()['businessType']].length==0" type="text" class="form-control" [formControl]="registrationForm.controls['industrySectors']" placeholder="Separate entries using ','" required maxlength="255">
 		</div>
 	</div>
 
@@ -64,29 +88,20 @@
 	<div class="form-group row">
 		<label class="col-2 col-form-label">
 			<strong>Business Keywords:</strong>
+			<span class="tooltip-icon" (click)="showKeywordsTT(tooltip)"><i class="fa fa-question-circle"></i></span>
 		</label>
 		<div class="col-10">
-			<input type="text" class="form-control" [formControl]="registrationForm.controls['businessKeywords']" required>
-		</div>
-	</div>
-
-	<!-- Industry Sectors -->
-	<div class="form-group row">
-		<label class="col-2 col-form-label">
-			<strong>Industry Sectors:</strong>
-		</label>
-		<div class="col-10">
-			<input type="text" class="form-control" [formControl]="registrationForm.controls['industrySectors']" required>
+			<input type="text" class="form-control" [formControl]="registrationForm.controls['businessKeywords']" placeholder="Separate entries using ','" maxlength="255">
 		</div>
 	</div>
 
 	<!-- Year of Comp. Reg. -->
 	<div class="form-group row">
 		<label class="col-2 col-form-label">
-			<strong>Year of Comp. Reg.:</strong>
+			<strong>Year of Foundation:</strong>
 		</label>
 		<div class="col-10">
-			<input type="number" class="form-control" [formControl]="registrationForm.controls['yearOfReg']" required>
+			<input type="number" class="form-control" [formControl]="registrationForm.controls['yearOfReg']">
 		</div>
 	</div>
 

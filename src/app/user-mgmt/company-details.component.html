@@ -6,24 +6,27 @@
 
 <div *ngIf="details" class="row">
   <div class="col-6">
-    <h4><p>Company Description</p></h4>
-    <text-input presentationMode="view" label="Legal Name"
+    <h4><p>Company Data</p></h4>
+    <text-input presentationMode="view" label="Company Name"
         [text]="details.details.companyLegalName" labelClass="col-4" valueClass="col-8">
     </text-input>
     <text-input presentationMode="view" label="VAT Number"
         [text]="details.details.vatNumber" labelClass="col-4" valueClass="col-8">
     </text-input>
-    <text-input presentationMode="view" label="Year of Comp. Reg."
-        [text]="details.details.yearOfCompanyRegistration" labelClass="col-4" valueClass="col-8">
-    </text-input>
     <text-input presentationMode="view" label="Business Type"
         [text]="details.details.businessType" labelClass="col-4" valueClass="col-8">
+    </text-input>
+    <text-input presentationMode="view" label="Activity Sectors"
+        [text]="details.details.industrySectors[0]" labelClass="col-4" valueClass="col-8">
     </text-input>
     <text-input presentationMode="view" label="Business Keywords"
         [text]="details.details.businessKeywords[0]" labelClass="col-4" valueClass="col-8">
     </text-input>
-    <text-input presentationMode="view" label="Industry Sectors"
-        [text]="details.details.industrySectors[0]" labelClass="col-4" valueClass="col-8">
+    <text-input presentationMode="view" label="Year of Foundation"
+        [text]="details.details.yearOfCompanyRegistration" labelClass="col-4" valueClass="col-8">
+    </text-input>
+    <text-input presentationMode="view" label="Company Description"
+        [text]="details.description.companyStatement" labelClass="col-4" valueClass="col-8">
     </text-input>
     <text-input presentationMode="view" label="Website"
         [text]="details.description.website" labelClass="col-4" valueClass="col-8">
@@ -31,7 +34,7 @@
   </div>
   <div class="col-6 border-left">
     <h4><p>Address</p></h4>
-    <text-input presentationMode="view" label="Street"
+    <text-input presentationMode="view" label="Street Name"
         [text]="details.details.address.streetName" labelClass="col-4" valueClass="col-8">
     </text-input>
     <text-input presentationMode="view" label="Building Number"
@@ -60,7 +63,8 @@
         <tr><th>Link</th></tr>
         <tr *ngIf="details.description.socialMediaList.length == 0"><td>No data</td></tr>
         <tr *ngFor="let socialMedia of details.description.socialMediaList; let i = index">
-            <td>{{socialMedia}}</td>
+            <td *ngIf="socialMedia">{{socialMedia}}</td>
+            <td *ngIf="!socialMedia">n/A</td>
         </tr>
     </table>
     <hr>
@@ -72,7 +76,8 @@
         <tr><th>Link</th></tr>
         <tr *ngIf="details.description.externalResources.length == 0"><td>No data</td></tr>
         <tr *ngFor="let extResource of details.description.externalResources; let i = index">
-            <td>{{extResource}}</td>
+            <td *ngIf="extResource">{{extResource}}</td>
+            <td *ngIf="!extResource">n/A</td>
         </tr>
     </table>
     <hr>
@@ -89,10 +94,59 @@
         <tr *ngFor="let ev of details.description.events; let i = index">
             <td>{{formatDate(ev.dateFrom)}} - {{formatDate(ev.dateTo)}}</td>
             <td>{{ev.name}}</td>
-            <td>{{ev.description}}</td>
-            <td>{{ev.place.streetName}}<span *ngIf="ev.place.buildingNumber"> / {{ev.place.buildingNumber}}</span><br/>{{ev.place.postalCode}} {{ev.place.cityName}}<br/>{{ev.place.country}}</td>
+            <td *ngIf="ev.description">{{ev.description}}</td>
+            <td *ngIf="!ev.description">n/A</td>
+            <td *ngIf="ev.place.streetName">{{ev.place.streetName}}<span *ngIf="ev.place.buildingNumber"> {{ev.place.buildingNumber}}</span><br/>{{ev.place.postalCode}} {{ev.place.cityName}}<br/>{{ev.place.country}}</td>
+            <td *ngIf="!ev.place.streetName">n/A</td>
+            <td>
+                <button class="btn btn-danger btn-sm" (click)="removeCompEventEntry(i)">Delete</button>
+            </td>
         </tr>
     </table>
+    <hr>
+    <h4><p>Images</p></h4>
+    <div class="form-group row">
+      <label class="col-2 col-form-label">
+        <strong>Logo:</strong>
+      </label>
+      <div class="col-10">
+        <div *ngIf="!details.description.logoImageId" class="card m-2" style="width: 15rem;">
+          <div class="card-body p-2">
+              <div class="align-center">
+                <img class="img-max" src="assets/empty_img.png">
+              </div>
+          </div>
+        </div>
+        <div *ngIf="details.description.logoImageId" class="card m-2" style="width: 15rem;">
+          <div class="card-body p-2">
+              <div class="align-center">
+                <img class="img-max" src="{{imgEndpoint}}{{details.description.logoImageId}}">
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label class="col-2 col-form-label">
+        <strong>Photos "At Work":</strong>
+      </label>
+      <div class="col-10 row ml-0 mr-0">
+        <div *ngIf="details.description.companyPhotoList.length == 0" class="card m-2" style="width: 15rem;">
+          <div class="card-body p-2">
+              <div class="align-center">
+                <img class="img-max" src="assets/empty_img.png">
+              </div>
+          </div>
+        </div>
+        <div *ngFor="let photo of details.description.companyPhotoList" class="card m-2" style="width: 15rem;">
+          <div class="card-body p-2">
+              <div class="align-center">
+                <img class="img-max" src="{{imgEndpoint}}{{photo}}">
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
