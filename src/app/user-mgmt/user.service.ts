@@ -139,8 +139,8 @@ export class UserService {
     }
 
     getSettingsForProduct(line: CatalogueLine): Promise<CompanySettings> {
-        console.log("Getting settings for product: " + line.goodsItem.item.manufacturerParty.getId());
-        return this.getSettingsForParty(line.goodsItem.item.manufacturerParty.getId())
+        console.log("Getting settings for product: " + UBLModelUtils.getPartyId(line.goodsItem.item.manufacturerParty));
+        return this.getSettingsForParty(UBLModelUtils.getPartyId(line.goodsItem.item.manufacturerParty))
         .then(settings => {
             //console.log("Settings", settings);
             return settings;
@@ -148,7 +148,7 @@ export class UserService {
     }
 
     getSettingsForUser(userId: string): Promise<CompanySettings> {
-        return this.getUserParty(userId).then(party => this.getSettingsForParty(party.getId()));
+        return this.getUserParty(userId).then(party => this.getSettingsForParty(UBLModelUtils.getPartyId(party)));
     }
 
     getSettingsForParty(partyId: string): Promise<CompanySettings> {
@@ -227,7 +227,7 @@ export class UserService {
         const settings = { ...rawSettings };
         delete settings.negotiationSettings;
         return this.getUserParty(userId).then(party => {
-            const url = `${this.url}/company-settings/${party.getId()}`;
+            const url = `${this.url}/company-settings/${UBLModelUtils.getPartyId(party)}`;
             const token = 'Bearer '+this.cookieService.get("bearer_token");
             const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
             return this.http
@@ -351,11 +351,11 @@ export class UserService {
     }
 
     getCompanyNegotiationSettingsForUser(userId: string): Promise<CompanyNegotiationSettings> {
-        return this.getUserParty(userId).then(party => this.getCompanyNegotiationSettingsForParty(party.getId()));
+        return this.getUserParty(userId).then(party => this.getCompanyNegotiationSettingsForParty(UBLModelUtils.getPartyId(party)));
     }
 
     getCompanyNegotiationSettingsForProduct(line: CatalogueLine): Promise<CompanyNegotiationSettings> {
-        return this.getCompanyNegotiationSettingsForParty(line.goodsItem.item.manufacturerParty.getId());
+        return this.getCompanyNegotiationSettingsForParty(UBLModelUtils.getPartyId(line.goodsItem.item.manufacturerParty));
     }
 
     getCompanyNegotiationSettingsForParty(partyId: string): Promise<CompanyNegotiationSettings> {

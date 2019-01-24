@@ -173,7 +173,7 @@ export class PpapDocumentSelectComponent implements OnInit {
         this.ppap.lineItem.item = copy(this.bpDataService.modifiedCatalogueLines[0].goodsItem.item);
         UBLModelUtils.removeHjidFieldsFromObject(this.ppap);
 
-        let sellerId = this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty.getId();
+        let sellerId = UBLModelUtils.getPartyId(this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty);
         let buyerId = this.cookieService.get("company_id");
 
         this.callStatus.submit();

@@ -48,7 +48,7 @@ import {PaymentTerms} from "./publish/payment-terms";
 import {Address} from "./publish/address";
 import {MonetaryTotal} from "./publish/monetary-total";
 import { NegotiationOptions } from "./publish/negotiation-options";
-import { CURRENCIES } from "./constants";
+import {CURRENCIES, DEFAULT_LANGUAGE} from './constants';
 import { TradingTerm } from "./publish/trading-term";
 import { CompanyNegotiationSettings } from "../../user-mgmt/model/company-negotiation-settings";
 import { headersToString } from "../../../../node_modules/@types/selenium-webdriver/http";
@@ -549,5 +549,28 @@ export class UBLModelUtils {
         });
         return uuid;
     };
+
+    public static getPartyId(party: Party):string{
+        return party.partyIdentification[0].id;
+    }
+
+    public static getPartyDisplayName(party: Party):string{
+        let defaultLanguage = DEFAULT_LANGUAGE();
+
+        let englishName = null;
+        for(let name of party.partyName){
+            if(name.name.languageID == "en"){
+                englishName = name.name.value;
+            }
+            if(name.name.languageID == defaultLanguage){
+                return name.name.value;
+            }
+        }
+
+        if(englishName){
+            return englishName;
+        }
+        return party.partyName[0].name.value;
+    }
 
 }

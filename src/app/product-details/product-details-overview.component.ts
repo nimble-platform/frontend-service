@@ -5,6 +5,7 @@ import { ItemProperty } from "../catalogue/model/publish/item-property";
 import { BpWorkflowOptions } from "../bpe/model/bp-workflow-options";
 import {getPropertyKey, getPropertyValuesAsStrings, selectName} from '../common/utils';
 import {Item} from '../catalogue/model/publish/item';
+import {UBLModelUtils} from '../catalogue/model/ubl-model-utils';
 
 @Component({
     selector: 'product-details-overview',
@@ -18,10 +19,13 @@ export class ProductDetailsOverviewComponent {
     @Input() readonly: boolean;
 
     selectedImage: number = 0;
+    manufacturerPartyName:string = null;
 
     
     constructor() {
-
+        if(this.wrapper){
+            this.manufacturerPartyName = UBLModelUtils.getPartyDisplayName(this.wrapper.item.manufacturerParty);
+        }
     }
 
     getClassifications(): CommodityClassification[] {

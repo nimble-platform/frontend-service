@@ -18,6 +18,7 @@ import { isTransportService } from "../../../common/utils";
 import {CookieService} from 'ng2-cookies';
 import {BpStartEvent} from '../../../catalogue/model/publish/bp-start-event';
 import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
+import {UBLModelUtils} from '../../../catalogue/model/ubl-model-utils';
 
 @Component({
     selector: "item-information-response",
@@ -77,8 +78,8 @@ export class ItemInformationResponseComponent implements OnInit {
     onSendResponse(): void {
         const vars: ProcessVariables = ModelUtils.createProcessVariables(
             "Item_Information_Request",
-            this.bpDataService.itemInformationRequest.buyerCustomerParty.party.getId(),
-            this.bpDataService.itemInformationRequest.sellerSupplierParty.party.getId(),
+            UBLModelUtils.getPartyId(this.bpDataService.itemInformationRequest.buyerCustomerParty.party),
+            UBLModelUtils.getPartyId(this.bpDataService.itemInformationRequest.sellerSupplierParty.party),
             this.cookieService.get("user_id"),
             this.bpDataService.itemInformationResponse,
             this.bpDataService

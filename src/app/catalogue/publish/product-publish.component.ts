@@ -151,7 +151,7 @@ export class ProductPublishComponent implements OnInit {
             return Promise.all([
                 Promise.resolve(party),
                 this.catalogueService.getCatalogue(userId),
-                this.userService.getCompanyNegotiationSettingsForParty(party.getId())
+                this.userService.getCompanyNegotiationSettingsForParty(UBLModelUtils.getPartyId(party))
             ])
         })
         .then(([party, catalogue, settings]) => {

@@ -352,7 +352,7 @@ export class BPDataService{
         if(!rfq.negotiationOptions) {
             rfq.negotiationOptions = new NegotiationOptions();
 
-            this.userService.getCompanyNegotiationSettingsForParty(rfq.sellerSupplierParty.party.getId()).then(res => {
+            this.userService.getCompanyNegotiationSettingsForParty(UBLModelUtils.getPartyId(rfq.sellerSupplierParty.party)).then(res => {
                 let settings: CompanyNegotiationSettings= res as CompanyNegotiationSettings;
                 const line = this.catalogueLines[0];
                 const wrapper = new NegotiationModelWrapper(line, rfq, null, settings);

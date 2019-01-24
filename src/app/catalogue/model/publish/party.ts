@@ -20,27 +20,4 @@ export class Party {
         public partyName: PartyName[] = null,
     ) {  }
 
-    getId():string{
-        return this.partyIdentification[0].id;
-    }
-
-    // Returns the display name according to the default language of web browser
-    getDisplayName():string{
-        let defaultLanguage = DEFAULT_LANGUAGE();
-
-        let englishName = null;
-        for(let name of this.partyName){
-            if(name.name.languageID == "en"){
-                englishName = name.name.value;
-            }
-            if(name.name.languageID == defaultLanguage){
-                return name.name.value;
-            }
-        }
-
-        if(englishName){
-            return englishName;
-        }
-        return this.partyName[0].name.value;
-    }
 }

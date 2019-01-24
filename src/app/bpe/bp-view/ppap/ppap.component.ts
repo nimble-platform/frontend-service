@@ -3,6 +3,7 @@ import { CookieService } from "ng2-cookies";
 import { BPDataService } from "../bp-data-service";
 import { ActivatedRoute } from "@angular/router";
 import { BpUserRole } from "../../model/bp-user-role";
+import {UBLModelUtils} from '../../../catalogue/model/ubl-model-utils';
 
 @Component({
     selector: "ppap",
@@ -24,7 +25,7 @@ export class PpapComponent implements OnInit {
         }
 
         const currentCompanyId: string = this.cookieService.get("company_id");
-        const sellerId: string = this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty.getId();
+        const sellerId: string = UBLModelUtils.getPartyId(this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty);
 
 
         this.route.queryParams.subscribe(params => {

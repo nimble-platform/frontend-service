@@ -12,6 +12,7 @@ import { BehaviorSubject } from "rxjs/BehaviorSubject";
 import {CookieService} from "ng2-cookies";
 import { copy } from "../common/utils";
 import {BinaryObject} from './model/publish/binary-object';
+import {UBLModelUtils} from './model/ubl-model-utils';
 
 @Injectable()
 export class CatalogueService {
@@ -40,7 +41,7 @@ export class CatalogueService {
             return this.userService.getUserParty(userId).then(party => {
 
                 // using the party query the default catalogue
-                let url = this.baseUrl + `/catalogue/${party.getId()}/default`;
+                let url = this.baseUrl + `/catalogue/${UBLModelUtils.getPartyId(party)}/default`;
                 return this.http
                     .get(url, {headers: this.getAuthorizedHeaders()})
                     .toPromise()
@@ -165,7 +166,7 @@ export class CatalogueService {
         const token = 'Bearer '+this.cookieService.get("bearer_token");
 
         return this.userService.getUserParty(userId).then(party => {
-            const url = this.baseUrl + `/catalogue/template/upload?partyId=${party.getId()}&uploadMode=${uploadMode}`;
+            const url = this.baseUrl + `/catalogue/template/upload?partyId=${UBLModelUtils.getPartyId(party)}&uploadMode=${uploadMode}`;
             return new Promise<any>((resolve, reject) => {
                 let formData: FormData = new FormData();
                 formData.append("file", template, template.name);
