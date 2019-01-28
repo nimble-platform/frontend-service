@@ -43,6 +43,7 @@ import {PartyName} from '../../catalogue/model/publish/party-name';
 import {BpStartEvent} from '../../catalogue/model/publish/bp-start-event';
 import {BpURLParams} from '../../catalogue/model/publish/bpURLParams';
 import {Router} from '@angular/router';
+import {Text} from '../../catalogue/model/publish/text';
 
 /**
  * Created by suat on 20-Sep-17.
@@ -302,7 +303,7 @@ export class BPDataService{
             // we can't copy because those are 2 different types of addresses.
             const lineItem = this.requestForQuotation.requestForQuotationLine[0].lineItem;
             const address = lineItem.deliveryTerms.deliveryLocation.address;
-            address.country.name.value = settings.details.address.country;
+            address.country.name = new Text(settings.details.address.country,DEFAULT_LANGUAGE());
             address.postalZone = settings.details.address.postalCode;
             address.cityName = settings.details.address.cityName;
             address.buildingNumber = settings.details.address.buildingNumber;
