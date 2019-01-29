@@ -2,7 +2,7 @@
     <value-view [presentationMode]="presentationMode"
                 [propName]="'Handling Instructions'"
                 [definition]="'The handling required for this shipment'"
-                [(value)]="shipment.handlingInstructions">
+                [(value)]="shipment.handlingInstructions[0].value">
     </value-view>
 
     <ng-container *ngIf="presentationMode != 'view'">
@@ -26,7 +26,7 @@
         <value-view [presentationMode]="presentationMode"
                     [propName]="'Carrier Party'"
                     [definition]="'The party carrying the goods'"
-                    [(value)]="shipment.shipmentStage[0].carrierParty.name.value">
+                    [(value)]="shipment.shipmentStage[0].carrierParty.partyName[0].name.value">
         </value-view>
         <value-view [presentationMode]="presentationMode"
                     [propName]="'Carrier Party Contact'"

@@ -453,7 +453,7 @@ export class BPDataService{
         }
 
         this.despatchAdvice.despatchLine[0].deliveredQuantity.value = deliveredQuantity.value;
-        this.despatchAdvice.despatchLine[0].shipment[0].handlingInstructions[0].value = handlingInst;
+        this.despatchAdvice.despatchLine[0].shipment[0].handlingInstructions = [new Text(handlingInst,DEFAULT_LANGUAGE())];
         this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage.push(new ShipmentStage());
 
         let partyName: PartyName = new PartyName();
