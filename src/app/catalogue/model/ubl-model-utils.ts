@@ -270,21 +270,21 @@ export class UBLModelUtils {
 
     public static getDefaultPaymentTerms(settings?: CompanyNegotiationSettings): PaymentTerms {
         const terms = new PaymentTerms([], [
-            new TradingTerm("Payment_In_Advance",[new Text("Payment in advance")],"PIA",["false"]),
+            new TradingTerm("Payment_In_Advance",[new Text("Payment in advance")],"PIA",[new Text("false")]),
             // new TradingTerm("Values_Net","e.g.,NET 10,payment 10 days after invoice date","Net %s",[null]),
-            new TradingTerm("End_of_month",[new Text("End of month")],"EOM",["false"]),
-            new TradingTerm("Cash_next_delivery",[new Text("Cash next delivery")],"CND",["false"]),
-            new TradingTerm("Cash_before_shipment",[new Text("Cash before shipment")],"CBS",["false"]),
+            new TradingTerm("End_of_month",[new Text("End of month")],"EOM",[new Text("false")]),
+            new TradingTerm("Cash_next_delivery",[new Text("Cash next delivery")],"CND",[new Text("false")]),
+            new TradingTerm("Cash_before_shipment",[new Text("Cash before shipment")],"CBS",[new Text("false")]),
             // new TradingTerm("Values_MFI","e.g.,21 MFI,21st of the month following invoice date","%s MFI", [null]),
             // new TradingTerm("Values_/NET","e.g.,1/10 NET 30,1% discount if payment received within 10 days otherwise payment 30 days after invoice date","%s/%s NET %s",[null,null,null]),
-            new TradingTerm("Cash_on_delivery",[new Text("Cash on delivery")],"COD",["false"]),
-            new TradingTerm("Cash_with_order",[new Text("Cash with order")],"CWO",["false"]),
-            new TradingTerm("Cash_in_advance",[new Text("Cash in advance")],"CIA",["false"]),
+            new TradingTerm("Cash_on_delivery",[new Text("Cash on delivery")],"COD",[new Text("false")]),
+            new TradingTerm("Cash_with_order",[new Text("Cash with order")],"CWO",[new Text("false")]),
+            new TradingTerm("Cash_in_advance",[new Text("Cash in advance")],"CIA",[new Text("false")]),
         ]);
 
         if(settings) {
             for(const term of terms.tradingTerms) {
-                term.value[0] = this.tradingTermToString(term) === settings.paymentTerms[0] ? "true" : "false";
+                term.value[0].value = this.tradingTermToString(term) === settings.paymentTerms[0] ? "true" : "false";
             }
         }
 
@@ -298,7 +298,7 @@ export class UBLModelUtils {
     }
 
     private static tradingTermToString(term: TradingTerm): string {
-        return term.tradingTermFormat + " - " + term.description;
+        return term.tradingTermFormat + " - " + term.description[0].value;
     }
 
     private static getDefaultPaymentMeans(settings: CompanyNegotiationSettings): PaymentMeans {
