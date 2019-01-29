@@ -10,14 +10,10 @@ import { Address } from '../model/address';
 })
 export class AddressSubForm {
 
-    @Input('group')
-    public addressForm: FormGroup;
-	public disabledFlag = false;
+  @Input('group')
+  public addressForm: FormGroup;
+	@Input() disabledFlag: boolean = false;
   @Input() requiredFlag: boolean = true;
-
-	public static setDisabled(addressForm, flag) {
-		addressForm.disabledFlag = flag;
-	}
 
 	public static get(addressForm): Address {
 		return {
@@ -47,7 +43,7 @@ export class AddressSubForm {
             buildingNumber: formDef,
             cityName: formDef,
             postalCode: formDef,
-            country: formDef,
+            country: formDef
         });
     }
 }
