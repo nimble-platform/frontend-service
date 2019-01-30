@@ -64,7 +64,7 @@
                                            [discountUnits]="discountUnits">
                     </quantity-price-option>
                     <div class="col-1">
-                        <button class="btn btn-danger btn-sm" (click)="removePriceOption(priceOption.index, priceOptions.ORDERED_QUANTITY)">
+                        <button class="btn btn-danger btn-sm" (click)="removePriceOption(priceOption.index)">
                             Remove
                         </button>
                     </div>
@@ -93,7 +93,7 @@
                                                 [index]="i">
                     </item-property-price-option>
                     <div class="col-1">
-                        <button class="btn btn-danger btn-sm" (click)="removePriceOption(priceOption.index, priceOptions.PRODUCT_PROPERTY)">
+                        <button class="btn btn-danger btn-sm" (click)="removePriceOption(priceOption.index)">
                             Remove
                         </button>
                     </div>
@@ -122,7 +122,7 @@
                                             [incoterms]="companyNegotiationSettings.incoterms">
                     </price-option-view>
                     <div class="col-1">
-                        <button class="btn btn-danger btn-sm" (click)="removePriceOption(priceOption.index, priceOptions.INCOTERM)">
+                        <button class="btn btn-danger btn-sm" (click)="removePriceOption(priceOption.index)">
                             Remove
                         </button>
                     </div>
@@ -151,7 +151,7 @@
                                        [paymentMeans]="companyNegotiationSettings.paymentMeans">
                     </price-option-view>
                     <div class="col-1">
-                        <button class="btn btn-danger btn-sm" (click)="removePriceOption(priceOption.index, priceOptions.PAYMENT_MEAN)">
+                        <button class="btn btn-danger btn-sm" (click)="removePriceOption(priceOption.index)">
                             Remove
                         </button>
                     </div>
@@ -179,7 +179,7 @@
                                        [priceOption]="priceOption.option">
                     </price-option-view>
                     <div class="col-1">
-                        <button class="btn btn-danger btn-sm" (click)="removePriceOption(priceOption.index, priceOptions.DELIVERY_LOCATION)">
+                        <button class="btn btn-danger btn-sm" (click)="removePriceOption(priceOption.index)">
                             Remove
                         </button>
                     </div>
@@ -208,7 +208,7 @@
                                        [deliveryPeriodUnits]="companyNegotiationSettings.deliveryPeriodUnits">
                     </price-option-view>
                     <div class="col-1">
-                        <button class="btn btn-danger btn-sm" (click)="removePriceOption(priceOption.index, priceOptions.DELIVERY_PERIOD)">
+                        <button class="btn btn-danger btn-sm" (click)="removePriceOption(priceOption.index)">
                             Remove
                         </button>
                     </div>
