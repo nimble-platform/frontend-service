@@ -231,7 +231,7 @@
                     <text-input *ngIf="selectedCategoryWithDetails[propName]" [visible]="selectedCategoryWithDetails[propName]" presentationMode="view" [label]="propName" labelClass="col-12 text-capitalize" labelMainClass="mb-0" valueClass="col-12" valueTextClass="mb-1 pl-3" [text]="getCategoryProperty(propName)"></text-input>
                 </div>
                 <div class="row">
-                    <div class="col-12 mb-0" *ngIf="selectedCategoryWithDetails.properties.length > 0">
+                    <div class="col-12 mb-0" *ngIf="selectedCategoryWithDetails.properties?.length > 0">
                         <label>
                             <strong>Properties: </strong>
                         </label>
