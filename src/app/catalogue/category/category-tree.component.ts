@@ -20,11 +20,14 @@ export class CategoryTreeComponent implements OnInit {
     taxonomyId: string;
     @Input() border: boolean = true;
     @Input() selectedCategories: Category[];
+    @Input() selectedPath: ParentCategories;
     @Input() level: number = 1;
     // this is the required number of steps to create category tree at the beginning
     // it is necessary to create correct category tree for FurnitureOntology categories
     @Input() numberOfSteps: number;
     private _parentCategories: ParentCategories;
+
+    @Input() loadingStatus: boolean;
 
     getCategoryStatus: CallStatus = new CallStatus;
 
@@ -86,7 +89,11 @@ export class CategoryTreeComponent implements OnInit {
     }
 
     showDetails(category: Category = this.category): void {
-        this.detailsEvent.emit(category);
+        if (!this.loadingStatus) {
+          this.detailsEvent.emit(category);
+          if (!this.childrenCategories)
+            this.getCategoryTree();
+        }
     }
 
     isSelected(): boolean {
@@ -94,6 +101,21 @@ export class CategoryTreeComponent implements OnInit {
             return this.category.code === this.selectedCategory.code;
         }
         return false;
+    }
+
+    isSelectedPath(): boolean {
+      let ret = false;
+      /*
+      if (this.isSelected())
+        ret = true;
+        */
+      if (this.selectedPath && this.selectedPath.parents && this.selectedPath.parents.length > 0) {
+        for (var i=0; i<this.selectedPath.parents.length; i++) {
+          if (this.selectedPath.parents[i].code == this.category.code)
+            ret = true;
+        }
+      }
+      return ret;
     }
 
     isInSelectedCategories(): boolean {

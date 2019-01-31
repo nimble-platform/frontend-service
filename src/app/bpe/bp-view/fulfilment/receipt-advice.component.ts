@@ -11,6 +11,7 @@ import { BpUserRole } from "../../model/bp-user-role";
 import { Location } from "@angular/common";
 import { DespatchAdvice } from "../../../catalogue/model/publish/despatch-advice";
 import {CookieService} from 'ng2-cookies';
+import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
 
 /**
  * Created by suat on 20-Sep-17.
@@ -28,6 +29,9 @@ export class ReceiptAdviceComponent implements OnInit {
 
     callStatus: CallStatus = new CallStatus();
 
+    // the copy of ThreadEventMetadata of the current business process
+    processMetadata: ThreadEventMetadata;
+
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
                 private location: Location,
@@ -36,9 +40,12 @@ export class ReceiptAdviceComponent implements OnInit {
     }
 
     ngOnInit() {
+        // get copy of ThreadEventMetadata of the current business process
+        this.processMetadata = this.bpDataService.bpStartEvent.processMetadata;
+
         this.receiptAdvice = this.bpDataService.receiptAdvice;
         this.dispatchAdvice = this.bpDataService.despatchAdvice;
-        this.userRole = this.bpDataService.userRole;
+        this.userRole = this.bpDataService.bpStartEvent.userRole;
     }
 
     /*
@@ -59,7 +66,7 @@ export class ReceiptAdviceComponent implements OnInit {
             this.bpDataService
         );
         const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(
-            vars, this.bpDataService.processMetadata.processId);
+            vars, this.processMetadata.processId);
 
         this.callStatus.submit();
         this.bpeService.continueBusinessProcess(piim)
@@ -80,6 +87,6 @@ export class ReceiptAdviceComponent implements OnInit {
     }
 
     isReadOnly(): boolean {
-        return this.userRole === "seller" || this.bpDataService.processMetadata.processStatus == "Completed";
+        return this.userRole === "seller" || this.processMetadata.processStatus == "Completed";
     }
 }

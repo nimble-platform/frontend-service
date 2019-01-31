@@ -131,7 +131,8 @@ export function sortProperties(properties: Property[]): Property[] {
 }
 
 export function scrollToDiv(divId: string): void {
-    document.getElementById(divId).scrollIntoView();
+    if (document.getElementById(divId))
+      document.getElementById(divId).scrollIntoView();
 }
 
 export function isCustomProperty(property: ItemProperty): boolean {
@@ -202,7 +203,7 @@ export function deepEquals(obj1: any, obj2: any): boolean {
                 return false;
             }
         }
-        
+
         return true;
     }
 

@@ -16,6 +16,8 @@ import { Quantity } from "../../../catalogue/model/publish/quantity";
 import { BpUserRole } from "../../model/bp-user-role";
 import {CookieService} from 'ng2-cookies';
 import {DiscountModalComponent} from '../../../product-details/discount-modal.component';
+import {BpStartEvent} from '../../../catalogue/model/publish/bp-start-event';
+import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
 
 @Component({
     selector: "negotiation-response",
@@ -35,6 +37,9 @@ export class NegotiationResponseComponent implements OnInit {
 
     callStatus: CallStatus = new CallStatus();
 
+    // the copy of ThreadEventMetadata of the current business process
+    processMetadata: ThreadEventMetadata;
+
     @ViewChild(DiscountModalComponent)
     private discountModal: DiscountModalComponent;
 
@@ -47,6 +52,9 @@ export class NegotiationResponseComponent implements OnInit {
     }
 
     ngOnInit() {
+        // get copy of ThreadEventMetadata of the current business process
+        this.processMetadata = this.bpDataService.bpStartEvent.processMetadata;
+
         this.line = this.bpDataService.getCatalogueLine();
         if(this.rfq == null) {
             this.rfq = this.bpDataService.requestForQuotation;
@@ -64,7 +72,7 @@ export class NegotiationResponseComponent implements OnInit {
         // we set quotationPriceWrapper's presentationMode to be sure that the total price of quotation response will not be changed
         this.wrapper.quotationPriceWrapper.presentationMode = this.getPresentationMode();
 
-        this.userRole = this.bpDataService.userRole;
+        this.userRole = this.bpDataService.bpStartEvent.userRole;
     }
 
     onBack(): void {
@@ -85,7 +93,7 @@ export class NegotiationResponseComponent implements OnInit {
 
         const vars: ProcessVariables = ModelUtils.createProcessVariables("Negotiation", this.bpDataService.requestForQuotation.buyerCustomerParty.party.id,
             this.bpDataService.requestForQuotation.sellerSupplierParty.party.id,this.cookieService.get("user_id"), this.quotation, this.bpDataService);
-        const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.bpDataService.processMetadata.processId);
+        const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.processMetadata.processId);
 
         this.callStatus.submit();
         this.bpeService.continueBusinessProcess(piim)
@@ -100,12 +108,12 @@ export class NegotiationResponseComponent implements OnInit {
 
     onRequestNewQuotation() {
         this.bpDataService.initRfqWithQuotation();
-        this.bpDataService.setBpOptionParameters("buyer", "Negotiation");
+        this.bpDataService.proceedNextBpStep("buyer", "Negotiation");
     }
 
     onAcceptAndOrder() {
         this.bpDataService.initOrderWithQuotation();
-        this.bpDataService.setBpOptionParameters("buyer", "Order");
+        this.bpDataService.proceedNextBpStep("buyer", "Order");
     }
 
     /*
@@ -125,7 +133,7 @@ export class NegotiationResponseComponent implements OnInit {
     }
 
     isReadOnly(): boolean {
-        return this.bpDataService.processMetadata == null || this.bpDataService.processMetadata.processStatus !== 'Started' || this.readonly;
+        return this.processMetadata == null || this.processMetadata.processStatus !== 'Started' || this.readonly;
     }
 
     get quotationPrice(): number {

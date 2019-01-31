@@ -28,11 +28,29 @@ export class PlatformInfoComponent implements OnInit {
             .getAllParties(requestedPage)
             .then(res => {
                 this.registeredCompaniesCallStatus.callback("Successfully loaded registered companies", true);
+                res = this.updateLinks(res);
                 this.registeredCompaniesPage = res;
             })
             .catch(error => {
                 this.registeredCompaniesCallStatus.error("Error while loading registered companies page", error);
             });
+    }
+
+    updateLinks(regComp: any): any {
+      if (regComp.content) {
+        for (var i=0; i<regComp.content.length; i++) {
+          if (regComp.content[i].websiteURI && regComp.content[i].websiteURI != "") {
+            var comp_link = regComp.content[i].websiteURI;
+            if (comp_link.indexOf("http://") == -1 && comp_link.indexOf("https://") == -1) {
+              regComp.content[i].websiteURIFull = "http://"+regComp.content[i].websiteURI;
+            }
+            else {
+              regComp.content[i].websiteURIFull = regComp.content[i].websiteURI;
+            }
+          }
+        }
+      }
+      return regComp;
     }
 
     onRegisteredCompaniesPageChange(newPage): void {

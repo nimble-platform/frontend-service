@@ -55,7 +55,8 @@
 							</div>
 						</div>
 					</div>
-					<div *ngIf="showOther" class="space-before">
+					<hr>
+					<div *ngIf="showOther" class="space-before space-after">
 						<div *ngFor="let other of cat_other; let idx = index;">
 							<div *ngIf="idx%4==0" class="row">
 								<div *ngIf="idx<cat_other.length" class="card col mr-3 ml-3 pl-0 pr-0 pointer" [ngClass]="{'mb-3':idx+4<cat_other.length}" (click)="callCat(cat_other[idx].name)">
@@ -86,11 +87,10 @@
 						</div>
 					</div>
 					<div *ngIf="cat_other_count>0">
-						<hr>
 						<div class="row">
 							<div class="col text-center">
 								<button class="btn btn-secondary" *ngIf="!showOther" (click)="showOther=!showOther">Show other categories ({{cat_other_count}} items) <i class="fa fa-angle-double-down"></i></button>
-								<button class="btn btn-secondary mb-3" *ngIf="showOther" (click)="showOther=!showOther">Hide other categories ({{cat_other_count}} items) <i class="fa fa-angle-double-up"></i></button>
+								<button class="btn btn-secondary" *ngIf="showOther" (click)="showOther=!showOther">Hide other categories ({{cat_other_count}} items) <i class="fa fa-angle-double-up"></i></button>
 							</div>
 						</div>
 					</div>

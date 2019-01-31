@@ -35,29 +35,29 @@ export class BPEService {
 	startBusinessProcess(piim:ProcessInstanceInputMessage):Promise<ProcessInstance> {
 		const headers = this.getAuthorizedHeaders();
 		let url = `${this.url}/start`;
-		if(this.bpDataService.getContainerGroupId() != null) {
-			url += '?gid=' + this.bpDataService.getContainerGroupId();
+		if(this.bpDataService.bpStartEvent.containerGroupId != null) {
+			url += '?gid=' + this.bpDataService.bpStartEvent.containerGroupId;
 		}
 		if(this.bpDataService.precedingProcessId != null) {
-			if(this.bpDataService.getContainerGroupId() != null) {
+			if(this.bpDataService.bpStartEvent.containerGroupId != null) {
 				url += '&';
 			} else {
 				url += '?';
 			}
 			url += 'precedingPid=' + this.bpDataService.precedingProcessId;
 		}
-		if(this.bpDataService.getCollaborationId() != null){
-			if(this.bpDataService.getContainerGroupId() != null || this.bpDataService.precedingProcessId != null){
+		if(this.bpDataService.bpStartEvent.collaborationGroupId != null){
+			if(this.bpDataService.bpStartEvent.containerGroupId != null || this.bpDataService.precedingProcessId != null){
 			    url += '&';
             }
             else {
 			    url += "?";
             }
-            url += 'collaborationGID=' + this.bpDataService.getCollaborationId()
+            url += 'collaborationGID=' + this.bpDataService.bpStartEvent.collaborationGroupId
 		}
 
 		if(this.searchContextService.getPrecedingGroupId() != null){
-			if(this.bpDataService.getContainerGroupId() != null || this.bpDataService.precedingProcessId != null || this.bpDataService.getCollaborationId() != null){
+			if(this.bpDataService.bpStartEvent.containerGroupId != null || this.bpDataService.precedingProcessId != null || this.bpDataService.bpStartEvent.collaborationGroupId != null){
 				url += '&';
 			}
 			else {
@@ -84,15 +84,15 @@ export class BPEService {
 	continueBusinessProcess(piim:ProcessInstanceInputMessage):Promise<ProcessInstance> {
 		const headers = this.getAuthorizedHeaders();
 		let url = `${this.url}/continue`;
-		if(this.bpDataService.getContainerGroupId() != null) {
-			url += '?gid=' + this.bpDataService.getContainerGroupId();
+		if(this.bpDataService.bpStartEvent.containerGroupId != null) {
+			url += '?gid=' + this.bpDataService.bpStartEvent.containerGroupId;
 		}
-		if(this.bpDataService.getCollaborationId() != null){
-			if(this.bpDataService.getContainerGroupId() != null){
-				url += '&collaborationGID=' + this.bpDataService.getCollaborationId();
+		if(this.bpDataService.bpStartEvent.collaborationGroupId != null){
+			if(this.bpDataService.bpStartEvent.containerGroupId != null){
+				url += '&collaborationGID=' + this.bpDataService.bpStartEvent.collaborationGroupId;
 			}
 			else {
-				url += '?collaborationGID=' + this.bpDataService.getCollaborationId();
+				url += '?collaborationGID=' + this.bpDataService.bpStartEvent.collaborationGroupId;
 			}
 		}
 

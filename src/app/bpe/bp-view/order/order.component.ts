@@ -27,6 +27,8 @@ import { SearchContextService } from "../../../simple-search/search-context.serv
 import { EpcCodes } from "../../../data-channel/model/epc-codes";
 import { EpcService } from "../epc-service";
 import {DocumentService} from "../document-service";
+import {BpStartEvent} from '../../../catalogue/model/publish/bp-start-event';
+import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
 
 /**
  * Created by suat on 20-Sep-17.
@@ -63,6 +65,9 @@ export class OrderComponent implements OnInit {
     fetchTermsAndConditionsStatus: CallStatus = new CallStatus();
     fetchDataMonitoringStatus: CallStatus = new CallStatus();
 
+    // the copy of ThreadEventMetadata of the current business process
+    processMetadata: ThreadEventMetadata;
+
     constructor(public bpDataService: BPDataService,
                 private userService: UserService,
                 private bpeService: BPEService,
@@ -76,6 +81,9 @@ export class OrderComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        // get copy of ThreadEventMetadata of the current business process
+        this.processMetadata = this.bpDataService.bpStartEvent.processMetadata;
+
         if(this.bpDataService.order == null) {
             this.router.navigate(['dashboard']);
         }
@@ -83,7 +91,7 @@ export class OrderComponent implements OnInit {
         this.order = this.bpDataService.order;
         this.address = this.order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address;
         this.paymentTermsWrapper = new PaymentTermsWrapper(this.order.paymentTerms);
-        this.userRole = this.bpDataService.userRole;
+        this.userRole = this.bpDataService.bpStartEvent.userRole;
         this.orderResponse = this.bpDataService.orderResponse;
         this.priceWrapper = new PriceWrapper(
             this.order.orderLine[0].lineItem.price,
@@ -197,7 +205,7 @@ export class OrderComponent implements OnInit {
         this.submitCallStatus.submit();
         const order = copy(this.bpDataService.order);
 
-        this.bpeService.updateBusinessProcess(JSON.stringify(order),"ORDER",this.bpDataService.processMetadata.processId)
+        this.bpeService.updateBusinessProcess(JSON.stringify(order),"ORDER",this.processMetadata.processId)
             .then(() => {
                 this.documentService.updateCachedDocument(order.id,order);
                 this.submitCallStatus.callback("Order updated", true);
@@ -221,7 +229,7 @@ export class OrderComponent implements OnInit {
         );
         let piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(
             vars,
-            this.bpDataService.processMetadata.processId
+            this.processMetadata.processId
         );
 
         this.submitCallStatus.submit();
@@ -255,11 +263,11 @@ export class OrderComponent implements OnInit {
     }
 
     onDispatchOrder() {
-        this.bpDataService.setBpOptionParameters(this.userRole, "Fulfilment");
+        this.bpDataService.proceedNextBpStep(this.userRole, "Fulfilment");
     }
 
     onSearchTransportService() {
-        this.searchContextService.setSearchContext('Transport Service Provider','Order',this.bpDataService.processMetadata,this.bpDataService.getContainerGroupId());
+        this.searchContextService.setSearchContext('Transport Service Provider','Order',this.processMetadata,this.bpDataService.bpStartEvent.containerGroupId);
         this.router.navigate(['simple-search'], {
             queryParams: {
                 searchContext: 'orderbp',
@@ -340,7 +348,7 @@ export class OrderComponent implements OnInit {
     }
 
     isOrderCompleted(): boolean {
-        return this.bpDataService.processMetadata && this.bpDataService.processMetadata.processStatus === "Completed";
+        return this.processMetadata && this.processMetadata.processStatus === "Completed";
     }
 
     isOrderRejected(): boolean {
@@ -349,7 +357,7 @@ export class OrderComponent implements OnInit {
 
     isReadOnly(): boolean {
         if(this.userRole === "buyer") {
-            return !!this.bpDataService.processMetadata && !this.bpDataService.updatingProcess;
+            return !!this.processMetadata && !this.processMetadata.isBeingUpdated;
         }
         return this.isOrderCompleted();
     }
@@ -401,8 +409,8 @@ export class OrderComponent implements OnInit {
      */
 
     private initializeEPCCodes() {
-        if(this.bpDataService.processMetadata
-            && this.bpDataService.processMetadata.processStatus == 'Completed'
+        if(this.processMetadata
+            && this.processMetadata.processStatus == 'Completed'
             && this.bpDataService.orderResponse
             && this.bpDataService.orderResponse.acceptedIndicator
             && this.trackAndTraceDetailsExists()) {
