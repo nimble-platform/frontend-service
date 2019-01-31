@@ -105,7 +105,7 @@ export class TransportNegotiationResponseComponent implements OnInit {
 
     onRespondToQuotation(accepted: boolean): void {
         if(accepted) {
-            this.quotation.documentStatusCode.name = NEGOTIATION_RESPONSES.TERMS_UPDATED;
+            this.quotation.documentStatusCode.name = NEGOTIATION_RESPONSES.ACCEPTED;
         } else {
             this.quotation.documentStatusCode.name = NEGOTIATION_RESPONSES.REJECTED;
         }
