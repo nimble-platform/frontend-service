@@ -18,6 +18,7 @@ import { ModelUtils } from "../../model/model-utils";
 import { ProcessInstanceInputMessage } from "../../model/process-instance-input-message";
 import { BPEService } from "../../bpe.service";
 import {ItemPriceWrapper} from '../../../common/item-price-wrapper';
+import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
 
 @Component({
     selector: "transport-negotiation-request",
@@ -29,7 +30,7 @@ export class TransportNegotiationRequestComponent implements OnInit {
     selectedTab: string = "OVERVIEW";
     rfqPrice: PriceWrapper;
     rfqPaymentTerms: PaymentTermsWrapper;
-    updatingProcess: boolean;
+    updatingProcess: boolean = false;
 
     callStatus: CallStatus = new CallStatus();
 
@@ -37,6 +38,9 @@ export class TransportNegotiationRequestComponent implements OnInit {
     PAYMENT_MEANS: string[] = PAYMENT_MEANS;
     PAYMENT_TERMS: string[] = UBLModelUtils.getDefaultPaymentTermsAsStrings();
     CURRENCIES: string[] = CURRENCIES;
+
+    // the copy of ThreadEventMetadata of the current business process
+    processMetadata: ThreadEventMetadata;
 
     constructor(private bpDataService: BPDataService,
                 private bpeService:BPEService,
@@ -48,11 +52,16 @@ export class TransportNegotiationRequestComponent implements OnInit {
     }
 
     ngOnInit() {
+        // get copy of ThreadEventMetadata of the current business process
+        this.processMetadata = this.bpDataService.bpStartEvent.processMetadata;
+
         this.rfq = this.bpDataService.requestForQuotation;
         this.rfqPrice = new PriceWrapper(this.rfq.requestForQuotationLine[0].lineItem.price);
         this.rfqPrice.quantityPrice = new ItemPriceWrapper(this.rfq.requestForQuotationLine[0].lineItem.price);
         this.rfqPaymentTerms = new PaymentTermsWrapper(this.rfq.paymentTerms);
-        this.updatingProcess = this.bpDataService.updatingProcess;
+        if(this.processMetadata && this.processMetadata.isBeingUpdated){
+            this.updatingProcess = true;
+        }
     }
 
     isDisabled(): boolean {
@@ -60,7 +69,7 @@ export class TransportNegotiationRequestComponent implements OnInit {
     }
 
     isWaitingForReply(): boolean {
-        return !!this.bpDataService.processMetadata && !this.bpDataService.updatingProcess;
+        return !!this.processMetadata && !this.processMetadata.isBeingUpdated;
     }
 
     onSelectTab(event: any): void {
@@ -114,7 +123,10 @@ export class TransportNegotiationRequestComponent implements OnInit {
         })
         .then(() => {
             this.callStatus.callback("Terms sent", true);
-            this.router.navigate(['dashboard']);
+            var tab = "PUCHASES";
+            if (this.bpDataService.bpStartEvent.userRole == "seller")
+              tab = "SALES";
+            this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
         })
         .catch(error => {
             this.callStatus.error("Failed to send Terms", error);
@@ -131,10 +143,13 @@ export class TransportNegotiationRequestComponent implements OnInit {
             rfq.requestForQuotationLine[0].lineItem.item = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;
         }
 
-        this.bpeService.updateBusinessProcess(JSON.stringify(rfq),"REQUESTFORQUOTATION",this.bpDataService.processMetadata.processId)
+        this.bpeService.updateBusinessProcess(JSON.stringify(rfq),"REQUESTFORQUOTATION",this.processMetadata.processId)
             .then(() => {
                 this.callStatus.callback("Terms updated", true);
-                this.router.navigate(['dashboard']);
+                var tab = "PUCHASES";
+                if (this.bpDataService.bpStartEvent.userRole == "seller")
+                  tab = "SALES";
+                this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
             })
             .catch(error => {
                 this.callStatus.error("Failed to update Terms", error);

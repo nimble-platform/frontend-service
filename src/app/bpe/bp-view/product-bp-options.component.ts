@@ -18,6 +18,7 @@ import { BPEService } from "../bpe.service";
 import { Order } from "../../catalogue/model/publish/order";
 import { SearchContextService } from "../../simple-search/search-context.service";
 import { CookieService } from "ng2-cookies";
+import {ThreadEventMetadata} from '../../catalogue/model/publish/thread-event-metadata';
 
 /**
  * Created by suat on 20-Oct-17.
@@ -32,7 +33,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     currentStep: ProductBpStep;
     stepsDisplayMode: ProductBpStepsDisplay;
     callStatus: CallStatus = new CallStatus();
-    processTypeSubs: Subscription;
+    bpStartEventSubs: Subscription;
 
     id: string;
     catalogueId: string;
@@ -50,6 +51,9 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     productExpanded: boolean = false;
     serviceExpanded: boolean = false;
 
+    // the copy of ThreadEventMetadata of the current business process
+    processMetadata: ThreadEventMetadata;
+
     constructor(public bpDataService: BPDataService, 
                 public catalogueService: CatalogueService, 
                 private searchContextService: SearchContextService,
@@ -62,10 +66,13 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.processTypeSubs = this.bpDataService.processTypeObservable.subscribe(processType => {
-            if (processType) {
-                this.processType = processType;
-                this.currentStep = this.getCurrentStep(processType);
+        // get copy of ThreadEventMetadata of the current business process
+        this.processMetadata = this.bpDataService.bpStartEvent.processMetadata;
+
+        this.bpStartEventSubs = this.bpDataService.bpStartEventObservable.subscribe(bpStartEvent => {
+            if (bpStartEvent) {
+                this.processType = bpStartEvent.processType;
+                this.currentStep = this.getCurrentStep(bpStartEvent.processType);
                 this.stepsDisplayMode = this.getStepsDisplayMode();
             }
         });
@@ -127,23 +134,23 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
-        this.processTypeSubs.unsubscribe();
+        this.bpStartEventSubs.unsubscribe();
         this.renderer.setStyle(document.body, "background-image", "url('assets/bg_global.jpg')");
     }
 
     getStepsStatus(): ProductBpStepStatus {
-        return this.bpDataService.processMetadata ? this.bpDataService.processMetadata.status : "OPEN"
+        return this.processMetadata ? this.processMetadata.status : "OPEN"
     }
 
     getStepsStatusText(): string {
-        if(this.bpDataService.processMetadata) {
-            return this.bpDataService.processMetadata.statusText;
+        if(this.processMetadata) {
+            return this.processMetadata.statusText;
         }
         return ""
     }
 
     isReadOnly(): boolean {
-        return !this.bpDataService.updatingProcess || this.bpDataService.getProcessType() == 'Fulfilment' || this.bpDataService.getProcessType() == 'Transport_Execution_Plan';
+        return !(this.processMetadata && this.processMetadata.isBeingUpdated) || this.bpDataService.bpStartEvent.processType == 'Fulfilment' || this.bpDataService.bpStartEvent.processType == 'Transport_Execution_Plan';
     }
 
     onToggleProductExpanded() {
@@ -158,20 +165,20 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
 
     private isOrderDone(): boolean {
         return (this.processType === "Order" || this.processType === "Transport_Execution_Plan")
-            && this.bpDataService.processMetadata 
-            && this.bpDataService.processMetadata.processStatus === "Completed";
+            && this.processMetadata
+            && this.processMetadata.processStatus === "Completed";
     }
 
     private getOriginalOrder(): Promise<Order | null> {
-        if(this.bpDataService.userRole === "seller") {
+        if(this.bpDataService.bpStartEvent.userRole === "seller") {
             return Promise.resolve(null);
         }
-        if(this.searchContextService.associatedProcessMetadata) {
-            const processId = this.searchContextService.associatedProcessMetadata.processId;
+        if(this.searchContextService.getAssociatedProcessMetadata()) {
+            const processId = this.searchContextService.getAssociatedProcessMetadata().processId;
             return this.bpeService.getOriginalOrderForProcess(processId)
         }
-        if(this.bpDataService.processMetadata) {
-            const processId = this.bpDataService.processMetadata.processId;
+        if(this.processMetadata) {
+            const processId = this.processMetadata.processId;
             return this.bpeService.getOriginalOrderForProcess(processId);
         }
         return Promise.resolve(null);
@@ -180,7 +187,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     private initWithCatalogueLine(line: CatalogueLine, settings: CompanySettings) {
         this.wrapper = new ProductWrapper(line, settings.negotiationSettings);
         this.settings = settings;
-        this.options = this.bpDataService.workflowOptions;
+        this.options = this.bpDataService.bpStartEvent.workflowOptions;
         if(this.processType) {
             this.currentStep = this.getCurrentStep(this.processType);
         }
@@ -222,7 +229,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
 
     private getStepsDisplayMode(): ProductBpStepsDisplay {
         if(this.isTransportService()) {
-            if(this.bpDataService.userRole === "seller") {
+            if(this.bpDataService.bpStartEvent.userRole === "seller") {
                 // The service provider only sees transport steps
                 return "Transport";
             } else if(!this.originalOrder) {
@@ -232,7 +239,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                 return "Transport_After_Order";
             }
         } else {
-            if(this.bpDataService.userRole === "seller") {
+            if(this.bpDataService.bpStartEvent.userRole === "seller") {
                 return "Order_Before_Transport";
             } else {
                 return "Order";

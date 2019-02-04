@@ -4,7 +4,9 @@ import { BPDataService } from "../bpe/bp-view/bp-data-service";
 import { ProcessInstanceGroup } from "../bpe/model/process-instance-group";
 import { ThreadEventMetadata } from "../catalogue/model/publish/thread-event-metadata";
 import {BPEService} from "../bpe/bpe.service";
-import {DocumentService} from "../bpe/bp-view/document-service";
+import {BpStartEvent} from '../catalogue/model/publish/bp-start-event';
+import {BpUserRole} from '../bpe/model/bp-user-role';
+import {BpURLParams} from '../catalogue/model/publish/bpURLParams';
 
 @Component({
     selector: "thread-event",
@@ -19,9 +21,7 @@ export class ThreadEventComponent implements OnInit {
     @Output() processCancelled = new EventEmitter();
 
     constructor(private bpDataService: BPDataService,
-                private bpeService: BPEService,
-                private router: Router,
-                private documentService: DocumentService) {
+                private bpeService: BPEService) {
     }
 
     ngOnInit() {
@@ -29,17 +29,10 @@ export class ThreadEventComponent implements OnInit {
     }
 
     async openBpProcessView(updateProcess:boolean) {
-        let role = await this.documentService.getUserRole(this.event.activityVariables,this.processInstanceGroup.partyID);
-        this.bpDataService.setBpOptionParametersWithProcessMetadata(role, this.event.processType, this.event, updateProcess);
-        this.bpDataService.setRelatedGroupId(this.processInstanceGroup.id);
-        this.bpDataService.setCollaborationGroupId(this.collaborationGroupId);
-        this.router.navigate(['bpe/bpe-exec'], {
-            queryParams: {
-                catalogueId: this.event.product.catalogueDocumentReference.id,
-                id: this.event.product.manufacturersItemIdentification.id,
-                pid: this.event.processId
-            }
-        });
+        // whether we are updating the process instance or not
+        this.event.isBeingUpdated = updateProcess;
+        let userRole:BpUserRole = this.event.buyer ? "buyer": "seller";
+        this.bpDataService.startBp(new BpStartEvent(userRole,this.event.processType,this.processInstanceGroup.id,this.collaborationGroupId,this.event),true,new BpURLParams(this.event.product.catalogueDocumentReference.id,this.event.product.manufacturersItemIdentification.id,this.event.processId));
     }
 
     cancelBP(){

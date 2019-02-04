@@ -1,7 +1,7 @@
 <p class="nimble-title">Company Management</p>
 
 <h4>Unverified Companies
-    <span *ngIf="unverifiedCompaniesPage">(Total {{ unverifiedCompaniesPage.totalElements }})</span>
+    <span *ngIf="unverifiedCompaniesPage"><span [hidden]="unverifiedCompaniesCallStatus.isLoading() || unverifiedCompaniesPage == null">(Total {{ unverifiedCompaniesPage.totalElements }})</span></span>
 </h4>
 
 <call-status [callStatus]="unverifiedCompaniesCallStatus" [large]="true"></call-status>
@@ -37,6 +37,9 @@
                     <button class="btn btn-success ml-2" (click)="verifyCompany(company)">
                         Verify
                     </button>
+                    <button class="btn btn-danger ml-2" (click)="rejectCompany(company)">
+                        Reject
+                    </button>
                 </td>
             </tr>
         </ng-container>
@@ -52,7 +55,7 @@
 </div>
 
 <h4>Registered Companies
-    <span *ngIf="registeredCompaniesPage">(Total {{ registeredCompaniesPage.totalElements }})</span>
+    <span *ngIf="registeredCompaniesPage"><span [hidden]="registeredCompaniesCallStatus.isLoading() || registeredCompaniesPage == null">(Total {{ registeredCompaniesPage.totalElements }})</span></span>
 </h4>
 
 <call-status [callStatus]="registeredCompaniesCallStatus" [large]="true"></call-status>
@@ -86,6 +89,7 @@
                     <td *ngIf="!company.person[0]">n/A</td>
                     <td>
                         <a class="btn btn-primary" role="button" target="_blank" [routerLink]="['/user-mgmt/company-details']" [queryParams]="{id: company.hjid}">Details</a>
+                        <a class="btn btn-primary ml-2" role="button" target="_blank" [routerLink]="['/user-mgmt/company-settings']" [queryParams]="{id: company.hjid, viewMode:'data'}">Change Data</a>
                     </td>
                 </tr>
             </ng-container>
@@ -93,7 +97,7 @@
         <ngb-pagination class="d-flex justify-content-center"
                         [collectionSize]="registeredCompaniesPage.totalElements"
                         [pageSize]="registeredCompaniesPage.size"
-                        [page]="registeredCompaniesPage.number+1"
+                        [page]="registeredCompaniesPage.number"
                         [maxSize]="registeredCompaniesPage.size"
                         [boundaryLinks]="false"
                         (pageChange)="onRegisteredCompaniesPageChange($event)">

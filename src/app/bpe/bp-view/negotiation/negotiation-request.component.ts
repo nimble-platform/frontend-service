@@ -23,6 +23,8 @@ import { Option } from "../../../common/options-input.component";
 import { addressToString } from "../../../user-mgmt/utils";
 import {DocumentService} from '../document-service';
 import {DiscountModalComponent} from '../../../product-details/discount-modal.component';
+import {BpStartEvent} from '../../../catalogue/model/publish/bp-start-event';
+import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
 
 @Component({
     selector: "negotiation-request",
@@ -45,6 +47,9 @@ export class NegotiationRequestComponent implements OnInit {
 
     selectedAddressValue = "";
 
+    // the copy of ThreadEventMetadata of the current business process
+    processMetadata: ThreadEventMetadata;
+
     @ViewChild(DiscountModalComponent)
     private discountModal: DiscountModalComponent;
 
@@ -59,6 +64,8 @@ export class NegotiationRequestComponent implements OnInit {
     }
 
     ngOnInit() {
+        // get copy of ThreadEventMetadata of the current business process
+        this.processMetadata = this.bpDataService.bpStartEvent.processMetadata;
         this.bpDataService.computeRfqNegotiationOptionsIfNeeded();
         this.rfq = this.bpDataService.requestForQuotation;
         this.rfqLine = this.rfq.requestForQuotationLine[0];
@@ -110,7 +117,10 @@ export class NegotiationRequestComponent implements OnInit {
             })
             .then(() => {
                 this.callStatus.callback("Terms sent", true);
-                this.router.navigate(['dashboard']);
+                var tab = "PUCHASES";
+                if (this.bpDataService.bpStartEvent.userRole == "seller")
+                  tab = "SALES";
+                this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
             })
             .catch(error => {
                 this.callStatus.error("Failed to send Terms", error);
@@ -118,7 +128,7 @@ export class NegotiationRequestComponent implements OnInit {
         } else {
             // just go to order page
             this.bpDataService.initOrderWithRfq();
-            this.bpDataService.setBpOptionParameters("buyer", "Order", "Negotiation");
+            this.bpDataService.proceedNextBpStep("buyer", "Order")
         }
     }
 
@@ -126,11 +136,14 @@ export class NegotiationRequestComponent implements OnInit {
         this.callStatus.submit();
         const rfq: RequestForQuotation = copy(this.rfq);
 
-        this.bpeService.updateBusinessProcess(JSON.stringify(rfq),"REQUESTFORQUOTATION",this.bpDataService.processMetadata.processId)
+        this.bpeService.updateBusinessProcess(JSON.stringify(rfq),"REQUESTFORQUOTATION",this.processMetadata.processId)
             .then(() => {
                 this.documentService.updateCachedDocument(rfq.id,rfq);
                 this.callStatus.callback("Terms updated", true);
-                this.router.navigate(['dashboard']);
+                var tab = "PUCHASES";
+                if (this.bpDataService.bpStartEvent.userRole == "seller")
+                  tab = "SALES";
+                this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
             })
             .catch(error => {
                 this.callStatus.error("Failed to update Terms", error);
@@ -256,7 +269,7 @@ export class NegotiationRequestComponent implements OnInit {
     }
 
     isReadOnly(): boolean {
-        return !!this.bpDataService.processMetadata && !this.bpDataService.updatingProcess;
+        return !!this.processMetadata && !this.processMetadata.isBeingUpdated;
     }
 
     isFormValid(): boolean {
@@ -264,7 +277,7 @@ export class NegotiationRequestComponent implements OnInit {
     }
 
     isWaitingForReply(): boolean {
-        return this.bpDataService.processMetadata && !this.bpDataService.updatingProcess && this.bpDataService.processMetadata.processStatus === "Started";
+        return this.processMetadata && !this.processMetadata.isBeingUpdated && this.processMetadata.processStatus === "Started";
     }
 
     isPriceValid(): boolean {

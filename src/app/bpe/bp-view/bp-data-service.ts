@@ -39,6 +39,9 @@ import { CompanyNegotiationSettings } from "../../user-mgmt/model/company-negoti
 import { CompanySettings } from "../../user-mgmt/model/company-settings";
 import {DocumentService} from "./document-service";
 import {ShipmentStage} from "../../catalogue/model/publish/shipment-stage";
+import {BpStartEvent} from '../../catalogue/model/publish/bp-start-event';
+import {BpURLParams} from '../../catalogue/model/publish/bpURLParams';
+import {Router} from '@angular/router';
 
 /**
  * Created by suat on 20-Sep-17.
@@ -76,26 +79,21 @@ export class BPDataService{
     ////////////////////////////////////////////////////////////////////////////
     //////// variables used when navigating to bp options details page //////
     ////////////////////////////////////////////////////////////////////////////
-    // setBpOptionParameters method must be used to set these values
-    private processTypeSubject: BehaviorSubject<ProcessType> = new BehaviorSubject<ProcessType>("Item_Information_Request");
-    processTypeObservable = this.processTypeSubject.asObservable();
-    userRole: BpUserRole;
-    processMetadata: ThreadEventMetadata;
-    updatingProcess: boolean = false;
-    previousProcess: string;
-    workflowOptions: BpWorkflowOptions;
 
-    // variable to keep the business process instance group related to the new process being initiated
-    private relatedGroupId: string;
-    private collaborationGroupId: string;
-    precedingGroupId: string;
+    // BpStartEvent is used to set bp options while navigating to bp details page
+    bpStartEvent:BpStartEvent = new BpStartEvent(null,"Item_Information_Request",null,null,null);
+    // these are used to update view according to the selected process type.
+    private bpStartEventBehaviorSubject: BehaviorSubject<BpStartEvent> = new BehaviorSubject<BpStartEvent>(this.bpStartEvent);
+    bpStartEventObservable = this.bpStartEventBehaviorSubject.asObservable();
+
     precedingProcessId: string;
 
     constructor(private searchContextService: SearchContextService,
                 private precedingBPDataService: PrecedingBPDataService,
                 private userService: UserService,
                 private cookieService: CookieService,
-                private documentService: DocumentService) {
+                private documentService: DocumentService,
+                private router: Router) {
     }
 
     setCatalogueLines(catalogueLines: CatalogueLine[], settings: CompanySettings[]): void {
@@ -123,49 +121,9 @@ export class BPDataService{
         return this.companySettings[0];
     }
 
-    getRelatedGroupId(): string {
-        return this.relatedGroupId;
-    }
-
-    setRelatedGroupId(id: string): void {
-        if(id == null) {
-            if(this.searchContextService.associatedProcessType) {
-                this.precedingGroupId = this.relatedGroupId;
-            }
-            else {
-                this.precedingGroupId = null;
-            }
-            this.relatedGroupId = null;
-        } else {
-            this.relatedGroupId = id;
-            this.precedingGroupId = null;
-        }
-    }
-
-    getCollaborationId(): string{
-        return this.collaborationGroupId;
-    }
-
-    setCollaborationGroupId(id: string): void{
-        if(id == null) {
-            if(this.searchContextService.associatedProcessType == null) {
-                this.collaborationGroupId = null;
-            }
-        } else {
-            this.collaborationGroupId = id;
-        }
-    }
-
-    setBpOptionParametersWithProcessMetadata(userRole: BpUserRole, targetProcess: ProcessType, processMetadata: ThreadEventMetadata,updatingProcess: boolean): void {
-        this.resetBpData();
-        this.setBpOptionParameters(userRole, targetProcess, null);
-        this.processMetadata = processMetadata;
-        this.updatingProcess = updatingProcess;
-        this.setBpMessages(this.processTypeSubject.getValue(), processMetadata);
-    }
-
-    private async setBpMessages(processType: ProcessType, processMetadata: ThreadEventMetadata) {
+    private async setBpMessages(processMetadata: ThreadEventMetadata) {
         let activityVariables = processMetadata.activityVariables;
+        let processType = processMetadata.processType;
         if(processType == 'Negotiation') {
             this.requestForQuotation = await this.documentService.getInitialDocument(activityVariables);
             this.initFetchedRfq();
@@ -173,7 +131,7 @@ export class BPDataService{
             let quotationVariable = await this.documentService.getResponseDocument(activityVariables);
             if(quotationVariable == null) {
                 // initialize the quotation only if the user is in seller role
-                if(this.userRole == 'seller') {
+                if(this.bpStartEvent.userRole == 'seller') {
                     this.quotation = copy(UBLModelUtils.createQuotation(this.requestForQuotation));
                 }
 
@@ -189,7 +147,7 @@ export class BPDataService{
             let orderResponseVariable = await this.documentService.getResponseDocument(activityVariables);
             if(orderResponseVariable == null) {
                 // initialize the order response only if the user is in seller role
-                if(this.userRole == 'seller') {
+                if(this.bpStartEvent.userRole == 'seller') {
                     this.orderResponse = UBLModelUtils.createOrderResponseSimple(this.order, true);
                 }
 
@@ -203,7 +161,7 @@ export class BPDataService{
 
             let ppapResponseVariable = await this.documentService.getResponseDocument(activityVariables);
             if(ppapResponseVariable == null) {
-                if (this.userRole == 'seller') {
+                if (this.bpStartEvent.userRole == 'seller') {
                     this.ppapResponse = UBLModelUtils.createPpapResponse(this.ppap, true);
                 }
             }
@@ -217,7 +175,7 @@ export class BPDataService{
             let receiptAdviceVariable = await this.documentService.getResponseDocument(activityVariables);
             if(receiptAdviceVariable == null) {
                 // initialize the quotation only if the user is in seller role
-                if(this.userRole == 'buyer') {
+                if(this.bpStartEvent.userRole == 'buyer') {
                     this.receiptAdvice = UBLModelUtils.createReceiptAdvice(this.despatchAdvice);
                 }
 
@@ -230,7 +188,7 @@ export class BPDataService{
 
             let transportExecutionPlanVariable = await this.documentService.getResponseDocument(activityVariables);
             if(transportExecutionPlanVariable == null) {
-                if(this.userRole == 'seller') {
+                if(this.bpStartEvent.userRole == 'seller') {
                     this.transportExecutionPlan = UBLModelUtils.createTransportExecutionPlan(this.transportExecutionPlanRequest);
                 }
 
@@ -243,7 +201,7 @@ export class BPDataService{
 
             let itemInformationResponseVariable = await this.documentService.getResponseDocument(activityVariables);
             if(itemInformationResponseVariable == null) {
-                if(this.userRole == 'seller') {
+                if(this.bpStartEvent.userRole == 'seller') {
                     this.itemInformationResponse = UBLModelUtils.createItemInformationResponse(this.itemInformationRequest);
                 }
 
@@ -253,17 +211,66 @@ export class BPDataService{
         }
     }
 
-    setBpOptionParameters(userRole: BpUserRole, targetProcess: ProcessType, previousProcess: ProcessType) {
-        this.previousProcess = previousProcess;
-        this.setProcessType(targetProcess);
-        this.userRole = userRole;
+    // This function is used to start viewing business processes.
+    // Dashboard and product-details are two way to start viewing business processes. For dashboard, business processes contain process document metadatas since
+    // they are already started/completed. However, in the product-details page, we start a new business process, this is why we have a null check for processMetadata in the function.
+    startBp(bpStartEvent:BpStartEvent,clearSearchContext:boolean,bpURLParams:BpURLParams){
+        this.resetBpData();
+        if(clearSearchContext){
+            this.searchContextService.clearSearchContext();
+        }
+        else {
+            // If there is an associated process, we need to know collaboration group id since we will add the new process instance group to this collaboration group
+            // Else, it is OK to reset collaboration group id since a new collaboration group will be created for the process.
+            if(this.searchContextService.getAssociatedProcessType() == null){
+                bpStartEvent.collaborationGroupId = null;
+            }
+        }
+        if(bpStartEvent.processMetadata){
+            this.setBpMessages(bpStartEvent.processMetadata);
+        }
+        this.bpStartEvent = bpStartEvent;
+        this.bpStartEventBehaviorSubject.next(this.bpStartEvent);
+        this.navigateToBpExec(bpURLParams);
+    }
+
+    private navigateToBpExec(bpURLParams: BpURLParams){
+        if(bpURLParams.processInstanceId){
+            this.router.navigate(['bpe/bpe-exec'], {
+                queryParams: {
+                    catalogueId: bpURLParams.catalogueId,
+                    id: bpURLParams.catalogueLineId,
+                    pid: bpURLParams.processInstanceId
+                }
+            });
+        }
+        else {
+            this.router.navigate(['bpe/bpe-exec'], {
+                queryParams: {
+                    catalogueId: bpURLParams.catalogueId,
+                    id: bpURLParams.catalogueLineId
+                }
+            });
+        }
+
+    }
+
+    // For business processes transitions (for example, from PPAP to Negotiation), we have to keep containerGroupId same since all processes are in the same process instance group
+    // However, process type and userRole can be changed. Therefore, we use this function to update BpStartEvent correctly.
+    // Moreover, processMetadata should be cleared since we will create a new business process.
+    proceedNextBpStep(userRole: BpUserRole, processType:ProcessType){
+        this.bpStartEvent.processType = processType;
+        this.bpStartEvent.processMetadata = null;
+        this.bpStartEventBehaviorSubject.next(new BpStartEvent(userRole,processType,this.bpStartEvent.containerGroupId,this.bpStartEvent.collaborationGroupId,this.bpStartEvent.processMetadata));
+        // it is crucial to update userRole after updating process type. Otherwise, we will have problems while viewing transport execution plan details.
+        this.bpStartEvent.userRole = userRole;
     }
 
     // this method is supposed to be called when the user is about to initialize a business process via the
     // search details page
     initRfq(settings: CompanyNegotiationSettings): Promise<void> {
         const rfq = UBLModelUtils.createRequestForQuotation(
-            this.workflowOptions ? this.workflowOptions.negotiation : new NegotiationOptions(),
+            this.bpStartEvent.workflowOptions ? this.bpStartEvent.workflowOptions.negotiation : new NegotiationOptions(),
             settings
         );
         this.requestForQuotation = rfq;
@@ -287,7 +294,7 @@ export class BPDataService{
         this.selectFirstValuesAmongAlternatives(rfqLine.lineItem.item);
 
         // quantity
-        rfqLine.lineItem.quantity.value = this.workflowOptions ? this.workflowOptions.quantity : 1;
+        rfqLine.lineItem.quantity.value = this.bpStartEvent.workflowOptions ? this.bpStartEvent.workflowOptions.quantity : 1;
 
         let userId = this.cookieService.get('user_id');
         return this.userService.getSettingsForUser(userId).then(settings => {
@@ -310,8 +317,8 @@ export class BPDataService{
         return Promise.resolve();
     }
 
-    async initRfqForTransportationWithTheadMetadata(thread: ThreadEventMetadata): Promise<void> {
-        await this.setBpMessages('Order', thread);
+    async initRfqForTransportationWithThreadMetadata(thread: ThreadEventMetadata): Promise<void> {
+        await this.setBpMessages(thread);
         return this.initRfqForTransportationWithOrder(this.order);
     }
 
@@ -337,7 +344,10 @@ export class BPDataService{
     }
 
     computeRfqNegotiationOptionsIfNeeded() {
-        const rfq = this.requestForQuotation;
+        this.computeRfqNegotiationOptionsIfNeededWithRfq(this.requestForQuotation);
+    }
+
+    computeRfqNegotiationOptionsIfNeededWithRfq(rfq: RequestForQuotation) {
         if(!rfq.negotiationOptions) {
             rfq.negotiationOptions = new NegotiationOptions();
 
@@ -384,8 +394,6 @@ export class BPDataService{
         this.order.paymentTerms = copyQuotation.paymentTerms;
 
         this.order.anticipatedMonetaryTotal.payableAmount.currencyID = copyRfq.requestForQuotationLine[0].lineItem.price.priceAmount.currencyID;
-
-        this.setProcessType('Order');
     }
 
     initOrderWithRfq() {
@@ -398,8 +406,6 @@ export class BPDataService{
         this.order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address = copyLineItem.deliveryTerms.deliveryLocation.address;
         this.order.paymentMeans = copyRfq.paymentMeans;
         this.order.paymentTerms = copyRfq.paymentTerms;
-
-        this.setProcessType('Order');
     }
 
     initRfqWithQuotation() {
@@ -477,7 +483,7 @@ export class BPDataService{
 
     async initTransportExecutionPlanRequestWithOrder() {
         this.resetBpData();
-        await this.setBpMessages('Order', this.searchContextService.associatedProcessMetadata);
+        await this.setBpMessages(this.searchContextService.getAssociatedProcessMetadata());
         let copyOrder:Order = copy(this.order);
         this.modifiedCatalogueLines = copy(this.catalogueLines);
         this.transportExecutionPlanRequest = UBLModelUtils.createTransportExecutionPlanRequestWithOrder(copyOrder, this.modifiedCatalogueLines[0]);
@@ -510,12 +516,7 @@ export class BPDataService{
     }
 
     resetBpData():void {
-        if(this.searchContextService.associatedProcessType == null) {
-            this.setProcessType(null);
-            this.previousProcess = null;
-        }
-        this.updatingProcess = false;
-        this.processMetadata = null;
+        this.bpStartEventBehaviorSubject.next(null);
         this.modifiedCatalogueLines = null;
         this.requestForQuotation = null;
         this.quotation = null;
@@ -532,14 +533,6 @@ export class BPDataService{
 
         // reinitialize the messages considering the search context
         //this.setBpMessages(this.searchContextService.associatedProcessType, this.searchContextService.associatedProcessMetadata);
-    }
-
-    setProcessType(processType: ProcessType): void {
-        this.processTypeSubject.next(processType);
-    }
-
-    getProcessType(): string {
-        return this.processTypeSubject.getValue();
     }
 
     /********************************************************************************************
@@ -577,7 +570,7 @@ export class BPDataService{
             const prop = item.additionalItemProperty[i];
 
             const key = getPropertyKey(prop);
-            const indexToSelect = this.workflowOptions ? this.workflowOptions.selectedValues[key] || 0 : 0;
+            const indexToSelect = this.bpStartEvent.workflowOptions ? this.bpStartEvent.workflowOptions.selectedValues[key] || 0 : 0;
 
             switch(prop.valueQualifier) {
                 case "STRING":
@@ -597,7 +590,7 @@ export class BPDataService{
                     break;
                 case "QUANTITY":
                     if(prop.valueQuantity.length > 1) {
-                        prop.valueQuantity = [prop.valueQuantity[0]];
+                        prop.valueQuantity = [prop.valueQuantity[indexToSelect]];
                     }
                     break;
             }
@@ -605,7 +598,7 @@ export class BPDataService{
     }
 
     private getItemFromCurrentWorkflow(): Item {
-        switch(this.processTypeSubject.getValue()) {
+        switch(this.bpStartEventBehaviorSubject.getValue().processType) {
             case "Item_Information_Request":
                 return this.itemInformationRequest ? this.itemInformationRequest.itemInformationRequestLine[0].salesItem[0].item : null;
             case "Ppap":
@@ -622,8 +615,8 @@ export class BPDataService{
     }
 
     computeWorkflowOptions() {
-        if(!this.workflowOptions) {
-            this.workflowOptions = new BpWorkflowOptions();
+        if(!this.bpStartEvent.workflowOptions) {
+            this.bpStartEvent.workflowOptions = new BpWorkflowOptions();
 
             // this item only contains the properties choosen by the user
             const item = this.getItemFromCurrentWorkflow();
@@ -636,7 +629,7 @@ export class BPDataService{
             // negotiate the price if no price on the line
             const priceWrapper = new PriceWrapper(line.requiredItemLocationQuantity.price);
             if(!priceWrapper.hasPrice()) {
-                this.workflowOptions.negotiation.price = true;
+                this.bpStartEvent.workflowOptions.negotiation.price = true;
             }
 
             // this item contains all the properties.
@@ -655,7 +648,7 @@ export class BPDataService{
                         if(prop.value.length > 1) {
                             for(let valIndex = 0; valIndex < prop.value.length; valIndex++) {
                                 if(prop.value[valIndex] === itemProp.value[0]) {
-                                    this.workflowOptions.selectedValues[key] = valIndex;
+                                    this.bpStartEvent.workflowOptions.selectedValues[key] = valIndex;
                                 }
                             }
                         }
@@ -665,7 +658,7 @@ export class BPDataService{
                             if(prop.valueDecimal.length > 1) {
                                 for(let valIndex = 0; valIndex < prop.valueDecimal.length; valIndex++) {
                                     if(prop.valueDecimal[valIndex] === itemProp.valueDecimal[0]) {
-                                        this.workflowOptions.selectedValues[key] = valIndex;
+                                        this.bpStartEvent.workflowOptions.selectedValues[key] = valIndex;
                                     }
                                 }
                             }
@@ -676,7 +669,7 @@ export class BPDataService{
                             for(let valIndex = 0; valIndex < prop.valueQuantity.length; valIndex++) {
                                 if(prop.valueQuantity[valIndex].value === itemProp.valueQuantity[0].value
                                     && prop.valueQuantity[valIndex].unitCode === itemProp.valueQuantity[0].unitCode) {
-                                    this.workflowOptions.selectedValues[key] = valIndex;
+                                    this.bpStartEvent.workflowOptions.selectedValues[key] = valIndex;
                                 }
                             }
                         }

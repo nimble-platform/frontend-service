@@ -1,8 +1,8 @@
 <div>
-    <div [id]="category.code" class="py-2 hover-row d-flex" [style.padding-left.rem]="(level * 0.75)" (click)="showDetails();" [ngClass]="{'selected-row': isSelected(), 'border-bottom': border}">
-        <i (click)="toggleExpanded($event)" class="fa fa-fw" [ngClass]="getToggleIcon()"></i> {{ category.preferredName }} <call-status [callStatus]="getCategoryStatus"></call-status>
+    <div [id]="category.code" class="py-2 hover-row d-flex pointer" [style.padding-left.rem]="(level * 1)" (click)="showDetails();" [ngClass]="{'selected-row': isSelected(), 'border-bottom': border, 'disabled': loadingStatus}">
+        <!--<i (click)="toggleExpanded($event)" class="fa fa-fw" [ngClass]="getToggleIcon()"></i> -->{{ category.preferredName }}<!--<call-status [callStatus]="getCategoryStatus"></call-status>-->
     </div>
-    <ul *ngIf="expanded && childrenCategories" class="list-unstyled mb-0">
-        <li *ngFor="let childCategory of childrenCategories"><category-tree [category]="childCategory" [numberOfSteps]="numberOfSteps-1" [parentCategories]="parentCategories" (detailsEvent)="showDetails($event)" [level]="level + 1" [selectedCategory]="selectedCategory"></category-tree></li>
+    <ul *ngIf="isSelectedPath() && childrenCategories" class="list-unstyled mb-0">
+        <li *ngFor="let childCategory of childrenCategories"><category-tree [category]="childCategory" [numberOfSteps]="numberOfSteps-1" [parentCategories]="parentCategories" (detailsEvent)="showDetails($event)" [level]="level + 1" [selectedCategory]="selectedCategory" [scrollToDivId]="_scrollToDivId" [selectedPath]="selectedPath" [loadingStatus]="loadingStatus"></category-tree></li>
     </ul>
 </div>

@@ -11,6 +11,7 @@ import { BpUserRole } from "../../model/bp-user-role";
 import { Location } from "@angular/common";
 import { DespatchAdvice } from "../../../catalogue/model/publish/despatch-advice";
 import {CookieService} from 'ng2-cookies';
+import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
 
 /**
  * Created by suat on 20-Sep-17.
@@ -28,6 +29,9 @@ export class ReceiptAdviceComponent implements OnInit {
 
     callStatus: CallStatus = new CallStatus();
 
+    // the copy of ThreadEventMetadata of the current business process
+    processMetadata: ThreadEventMetadata;
+
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
                 private location: Location,
@@ -36,9 +40,12 @@ export class ReceiptAdviceComponent implements OnInit {
     }
 
     ngOnInit() {
+        // get copy of ThreadEventMetadata of the current business process
+        this.processMetadata = this.bpDataService.bpStartEvent.processMetadata;
+
         this.receiptAdvice = this.bpDataService.receiptAdvice;
         this.dispatchAdvice = this.bpDataService.despatchAdvice;
-        this.userRole = this.bpDataService.userRole;
+        this.userRole = this.bpDataService.bpStartEvent.userRole;
     }
 
     /*
@@ -51,21 +58,24 @@ export class ReceiptAdviceComponent implements OnInit {
 
     onSendReceiptAdvice(): void {
         const vars: ProcessVariables = ModelUtils.createProcessVariables(
-            "Fulfilment", 
-            this.bpDataService.receiptAdvice.despatchSupplierParty.party.id, 
+            "Fulfilment",
+            this.bpDataService.receiptAdvice.despatchSupplierParty.party.id,
             this.bpDataService.receiptAdvice.deliveryCustomerParty.party.id,
             this.cookieService.get("user_id"),
-            this.bpDataService.receiptAdvice, 
+            this.bpDataService.receiptAdvice,
             this.bpDataService
         );
         const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(
-            vars, this.bpDataService.processMetadata.processId);
+            vars, this.processMetadata.processId);
 
         this.callStatus.submit();
         this.bpeService.continueBusinessProcess(piim)
             .then(res => {
                 this.callStatus.callback("Receipt Advice sent", true);
-                this.router.navigate(['dashboard']);
+                var tab = "PUCHASES";
+                if (this.bpDataService.bpStartEvent.userRole == "seller")
+                  tab = "SALES";
+                this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
             }).catch(error => {
                 this.callStatus.error("Failed to send Receipt Advice", error);
             });
@@ -80,6 +90,6 @@ export class ReceiptAdviceComponent implements OnInit {
     }
 
     isReadOnly(): boolean {
-        return this.userRole === "seller" || this.bpDataService.processMetadata.processStatus == "Completed";
+        return this.userRole === "seller" || this.processMetadata.processStatus == "Completed";
     }
 }

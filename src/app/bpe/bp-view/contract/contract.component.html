@@ -1,6 +1,7 @@
 <ng-container *ngIf="contract">
     <ng-container *ngFor="let clause of contract.clause">
-        <ng-container *ngIf="clause.type === 'ITEM_DETAILS' || clause.type === 'PPAP' || (showQuotation && clause.type === 'NEGOTIATION')">
+        <!-- show clauses if it's document clause. Check quotation clause specifically -->
+        <ng-container *ngIf="clause.clauseDocumentRef && ((showQuotation && clause.clauseDocumentRef.documentType === 'QUOTATION') || true)">
             <clause [clause]="clause">
             </clause>
         </ng-container>

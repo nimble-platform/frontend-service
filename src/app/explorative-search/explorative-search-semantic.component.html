@@ -28,66 +28,66 @@
     </li>
 </ol>
 
-<ng-template #valuesTemplateRef let-values>
-    <div class="card">
-        <div class="card-header">Available Values</div>
-        <div class="card-body">
-            <p>Select One or More Value</p>
-            <div style="overflow-y: scroll; height: 250px;">
-                <div *ngFor="let eachVal of values" class="custom-control custom-checkbox">
-                        <input type="checkbox"
-                               [disabled]="!disableManualFilters"
-                               (change)="filtersSelected(eachVal, $event)" class="custom-control-input"
-                               id="{{eachVal}}"
-                        />
-                    <label for="{{eachVal}}" class="custom-control-label">
-                        <span><strong>{{eachVal}}</strong></span>
-                    </label>
-                </div>
-            </div>
-            <hr>
-            <div *ngIf="valuesAreNumeric">
-                <div class="row">
-                    <p>Manual Filter
-                    <span><button
-                            class="btn btn-outline-secondary btn-sm"
-                            (click)="disableManualFilters = !disableManualFilters"
-                    >{{disableManualFilters ? 'Activate' : 'Deactivate'}}</button></span>
-                    </p>
-                </div>
-                <div class="input-group-sm">
-                    <label for="min"><span>min</span></label>
-                    <input id="min" type="number"
-                           class="form-control-sm"
-                           [disabled]="disableManualFilters"
-                           #minVal
-                    >
-                    <br>
-                    <label for="max"><span>max</span></label>
-                    <input id="max" type="number"
-                           class="form-control-sm"
-                           [disabled]="disableManualFilters"
-                           #maxVal
-                    >
+<!--<ng-template #valuesTemplateRef let-values>-->
+    <!--<div class="card">-->
+        <!--<div class="card-header">Available Values</div>-->
+        <!--<div class="card-body">-->
+            <!--<p>Select One or More Value</p>-->
+            <!--<div style="overflow-y: scroll; height: 250px;">-->
+                <!--<div *ngFor="let eachVal of values" class="custom-control custom-checkbox">-->
+                        <!--<input type="checkbox"-->
+                               <!--[disabled]="!disableManualFilters"-->
+                               <!--(change)="filtersSelected(eachVal, $event)" class="custom-control-input"-->
+                               <!--id="{{eachVal}}"-->
+                        <!--/>-->
+                    <!--<label for="{{eachVal}}" class="custom-control-label">-->
+                        <!--<span><strong>{{eachVal}}</strong></span>-->
+                    <!--</label>-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<hr>-->
+            <!--<div *ngIf="valuesAreNumeric">-->
+                <!--<div class="row">-->
+                    <!--<p>Manual Filter-->
+                    <!--<span><button-->
+                            <!--class="btn btn-outline-secondary btn-sm"-->
+                            <!--(click)="disableManualFilters = !disableManualFilters"-->
+                    <!--&gt;{{disableManualFilters ? 'Activate' : 'Deactivate'}}</button></span>-->
+                    <!--</p>-->
+                <!--</div>-->
+                <!--<div class="input-group-sm">-->
+                    <!--<label for="min"><span>min</span></label>-->
+                    <!--<input id="min" type="number"-->
+                           <!--class="form-control-sm"-->
+                           <!--[disabled]="disableManualFilters"-->
+                           <!--#minVal-->
+                    <!--&gt;-->
+                    <!--<br>-->
+                    <!--<label for="max"><span>max</span></label>-->
+                    <!--<input id="max" type="number"-->
+                           <!--class="form-control-sm"-->
+                           <!--[disabled]="disableManualFilters"-->
+                           <!--#maxVal-->
+                    <!--&gt;-->
 
-                    <button class="btn btn-primary btn-sm"
-                            [disabled]="disableManualFilters"
-                            (click)="applyManualFilter(minVal.value, maxVal.value)"
-                    >Apply</button>
-                    <button class="btn btn-danger btn-sm"
-                            [disabled]="disableManualFilters"
-                            (click)="removeManualFilter(minVal.value, maxVal.value)"
-                    >Remove</button>
-                </div>
-            </div>
-        </div>
-        <div class="card-footer">
-            <button class="btn btn-primary" (click)="noFilterSelected()"
-                    [disabled]="disableAddPropBtn || !disableManualFilters"
-            >Add Property without Filters</button>
-        </div>
-    </div>
-</ng-template>
+                    <!--<button class="btn btn-primary btn-sm"-->
+                            <!--[disabled]="disableManualFilters"-->
+                            <!--(click)="applyManualFilter(minVal.value, maxVal.value)"-->
+                    <!--&gt;Apply</button>-->
+                    <!--<button class="btn btn-danger btn-sm"-->
+                            <!--[disabled]="disableManualFilters"-->
+                            <!--(click)="removeManualFilter(minVal.value, maxVal.value)"-->
+                    <!--&gt;Remove</button>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--<div class="card-footer">-->
+            <!--<button class="btn btn-primary" (click)="noFilterSelected()"-->
+                    <!--[disabled]="disableAddPropBtn || !disableManualFilters"-->
+            <!--&gt;Add Property without Filters</button>-->
+        <!--</div>-->
+    <!--</div>-->
+<!--</ng-template>-->
 <div [hidden]="!hiddenElement">
     <div class="row">
         <!--<pre>-->
@@ -121,112 +121,312 @@
             </table>
         </div>
     </div>
-    <div class="row" style="margin-top: 15px">
+    <div class="row mt-3">
         <div class="col-md-6">
-            <button class="btn btn-primary" (click)="hiddenElement=!hiddenElement">Back to Explorer</button>
+            <button class="btn btn-secondary" (click)="hiddenElement=!hiddenElement">Back to Explorer</button>
         </div>
         <div class="col-md-6">
-            <button class="btn btn-warning" [disabled]="!negotiationEnable" (click)="negotiation()">
+            <button class="btn btn-primary" [disabled]="!negotiationEnable" (click)="negotiation()">
                 Initiate Business Process</button>
         </div>
     </div>
 </div>
 
 
-<div style="margin-top: 20px" *ngIf="configSPQ" [hidden]="hiddenElement">
-        <h4> Property Explorer for {{configSPQ.frozenConcept}}</h4>
-        <div class="row">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header">
-                        Available Properties
-                    </div>
-                    <ngb-alert type="info" [dismissible]="false" *ngIf="updateInfoAlert">
-                        <p>Information Updated</p>
-                    </ngb-alert>
-                    <div class="card-body">
-                        <div class="input-group-md">
-                            <label for="typeahead-template"><span>Search</span></label>
-                            <input id="typeahead-template"
-                                   type="text"
-                                   class="form-control"
-                                   [(ngModel)]="searchModel"
-                                   [ngbTypeahead]="search" [resultTemplate]="rt" [inputFormatter]="formatter"
-                                   (keyup.enter)="checkUserSelection(searchModel)"
-                            />
-                            <ng-template #rt let-r="result" let-t="term">
-                                {{ r.translatedProperty}}
-                            </ng-template>
+<!--<div style="margin-top: 20px" *ngIf="configSPQ" [hidden]="hiddenElement">-->
+        <!--<h4> Property Explorer for {{configSPQ.frozenConcept}}</h4>-->
+        <!--<div class="row">-->
+            <!--<div class="col-md-6">-->
+                <!--<div class="card">-->
+                    <!--<div class="card-header">-->
+                        <!--Available Properties-->
+                    <!--</div>-->
+                    <!--<ngb-alert type="info" [dismissible]="false" *ngIf="updateInfoAlert">-->
+                        <!--<p>Information Updated</p>-->
+                    <!--</ngb-alert>-->
+                    <!--<div class="card-body">-->
+                        <!--<div class="input-group-md">-->
+                            <!--<label for="typeahead-template"><span>Search</span></label>-->
+                            <!--<input id="typeahead-template"-->
+                                   <!--type="text"-->
+                                   <!--class="form-control"-->
+                                   <!--[(ngModel)]="searchModel"-->
+                                   <!--[ngbTypeahead]="search" [resultTemplate]="rt" [inputFormatter]="formatter"-->
+                                   <!--(keyup.enter)="checkUserSelection(searchModel)"-->
+                            <!--/>-->
+                            <!--<ng-template #rt let-r="result" let-t="term">-->
+                                <!--{{ r.translatedProperty}}-->
+                            <!--</ng-template>-->
 
+                        <!--</div>-->
+                        <!--<br>-->
+                        <!--<br>-->
+                        <!--<select size="15" class="form-control mr-4">-->
+                            <!--<optgroup label="Properties">-->
+                                <!--<option *ngFor="let eachVal of dataResults"-->
+                                        <!--[selected]="searchModel.translatedProperty===eachVal.translatedProperty"-->
+                                        <!--(click)="getPropertyValues(eachVal)"-->
+                                        <!--[ngClass]="{'checkMark': propSelection(eachVal.translatedProperty)}"-->
+                                <!--&gt;{{eachVal.translatedProperty}}-->
+                                <!--</option>-->
+                            <!--</optgroup>-->
+                            <!--<optgroup label="References">-->
+                                <!--<option *ngFor="let eachVal of objResults; let i=index;"-->
+                                        <!--[selected]="searchModel.translatedProperty===eachVal.translatedProperty"-->
+                                        <!--(click)="getReferenceValues(eachVal, i)">-->
+                                    <!--{{eachVal.translatedProperty}}-->
+                                <!--</option>-->
+                            <!--</optgroup>-->
+                        <!--</select>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<div class="col-md-4" *ngIf="emptyFilterAlert" >-->
+                <!--<ngb-alert type="danger" (close)="emptyFilterAlert=false">-->
+                    <!--<p> We couldn't find any filters for the selection.</p>-->
+                <!--</ngb-alert>-->
+            <!--</div>-->
+            <!--<div class="col-md-4" *ngIf="loadingFilter">-->
+              <!--<div class="align-center">-->
+                <!--<p>Loading Filter</p>-->
+                <!--<i class="fa fa-spin fa-spinner fa-6x"></i>-->
+              <!--</div>-->
+            <!--</div>-->
+            <!--<div class="col-md-6" *ngIf="searchvalue.length > 0">-->
+                <!--<template [ngTemplateOutlet]="valuesTemplateRef" [ngTemplateOutletContext]="{$implicit: searchvalue}">-->
+                <!--</template>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--<hr>-->
+<!--</div>-->
+<div *ngIf="configSPQ" [hidden]="hiddenElement">
+    <div>
+        <h4> Property Explorer for {{configSPQ.frozenConcept}}</h4>
+    </div>
+    <div class="row mt-4 d-flex">
+        <div class="col-7 pr-0 pb-0">
+            <div class="input-group-md">
+                <label for="typeahead-template"><span>Quick Search</span></label>
+                <input id="typeahead-template"
+                type="text"
+                class="form-control"
+                [(ngModel)]="searchModel"
+                [ngbTypeahead]="search" [resultTemplate]="rt" [inputFormatter]="formatter"
+                (keyup.enter)="checkUserSelection(searchModel)"
+                />
+                <ng-template #rt let-r="result" let-t="term">
+                {{ r.translatedProperty}}
+                </ng-template>
+                </div>
+        </div>
+    </div>
+
+    <div class="row mt-4 d-flex">
+        <div class="col-7 pr-0 pb-0">
+
+            <div class="border" style="height:55vh; overflow-x: hidden; overflow-y: scroll;">
+                <div class="fixed" style="background-color: #e9ecef">
+                    <div class="row border">
+                        <div class="pr-0 col-3">
+                            <div class="thead-light-equivalent">
+                                <p class="mb-0" style="padding: 0.50rem;text-align: center"><b>All Attributes</b></p>
+                            </div>
                         </div>
-                        <br>
-                        <br>
-                        <select size="15" class="form-control mr-4">
-                            <optgroup label="Properties">
-                                <option *ngFor="let eachVal of dataResults"
-                                        [selected]="searchModel.translatedProperty===eachVal.translatedProperty"
-                                        (click)="getPropertyValues(eachVal)"
-                                        [ngClass]="{'checkMark': propSelection(eachVal.translatedProperty)}"
-                                >{{eachVal.translatedProperty}}
-                                </option>
-                            </optgroup>
-                            <optgroup label="References">
-                                <option *ngFor="let eachVal of objResults; let i=index;"
-                                        [selected]="searchModel.translatedProperty===eachVal.translatedProperty"
-                                        (click)="getReferenceValues(eachVal, i)">
-                                    {{eachVal.translatedProperty}}
-                                </option>
-                            </optgroup>
-                        </select>
                     </div>
                 </div>
+                <div class="fixed" style="background-color: #e9ecef">
+                    <ul class="nav nav-tabs pt-2 pl-1 pr-1 fixed">
+                        <li class="nav-item">
+                            <a href id="PROPS" class="nav-link" [ngClass]="{active: selectedTab === 'PROPS'}" (click)="onSelectTab($event)">Properties</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href id="REFS" class="nav-link" [ngClass]="{active: selectedTab === 'REFS'}" (click)="onSelectTab($event)">References</a>
+                        </li>
+                    </ul>
+                </div>
+                <table class="table table-hover mb-0">
+                    <tbody>
+                    <ng-container *ngIf="selectedTab === 'PROPS'">
+                        <tr *ngFor="let eachVal of dataResults" [ngClass]="{'selected-row': eachVal===selectedProperty}">
+                            <td class="py-2 px-3"
+                                (click)="getPropertyValues(eachVal)"
+                            >{{eachVal.translatedProperty}}</td>
+                        </tr>
+                    </ng-container>
+                    <ng-container *ngIf="selectedTab === 'REFS'">
+                        <div class="disabled-section align-content-center" style="height: 55vh">
+                            <p *ngIf="!objResults.length">References for this Product are not available</p>
+                        </div>
+                        <tr *ngFor="let eachVal of objResults; let i=index;">
+                            <td class="py-2 px-3"
+                                (click)="getReferenceValues(eachVal, i)"
+                            >{{eachVal.translatedProperty}}</td>
+                        </tr>
+                    </ng-container>
+                    </tbody>
+                </table>
             </div>
-            <div class="col-md-4" *ngIf="emptyFilterAlert" >
+        </div>
+
+
+        <!-- Details (Right Side Panel) -->
+
+
+        <div class="col-5 pl-0">
+            <div class="border align-center disabled-section"
+                 style="height:55vh; overflow-x: hidden; overflow-y: scroll;"
+                 [hidden]="(emptyFilterAlert)"
+                 *ngIf="!searchvalue.length">
+                <div *ngIf="loadingFilter">
+                    <img src="assets/form_loader.gif">
+                </div>
+                <div class="align-content-center">
+                    <i class="fas fa-filter fa-4x"></i>
+                    <h5>Select Property to Obtain Filter Values</h5>
+                </div>
+            </div>
+            <div *ngIf="emptyFilterAlert" >
                 <ngb-alert type="danger" (close)="emptyFilterAlert=false">
-                    <p> We couldn't find any filters for the selection.</p>
+                    <i class="fas fa-exclamation-triangle"></i><p> We couldn't find any filters for the selection.</p>
                 </ngb-alert>
             </div>
-            <div class="col-md-4" *ngIf="loadingFilter">
-              <div class="align-center">
-                <p>Loading Filter</p>
-                <i class="fa fa-spin fa-spinner fa-6x"></i>
-              </div>
+            <div *ngIf="searchvalue.length" class="d-flex flex-row fixed p-2" [ngClass]="{'fixed-header': searchvalue.length}">
+                <h4 class="font-weight-bold mr-auto">Values</h4>
+                <div>
+                    <button class="btn btn-secondary float-right"
+                            placement="right"
+                            ngbTooltip="Add Property without Filter Values"
+                            (click)="noFilterSelected()"
+                            [disabled]="disableAddPropBtn || !disableManualFilters"
+                    >Select Property</button>
+                </div>
             </div>
-            <div class="col-md-6" *ngIf="searchvalue.length > 0">
-                <template [ngTemplateOutlet]="valuesTemplateRef" [ngTemplateOutletContext]="{$implicit: searchvalue}">
-                </template>
+            <div class="p-2 mt-2" style="overflow-y: scroll; height: 30vh; overflow-x: hidden"
+                 *ngIf="searchvalue.length"
+            >
+                <div *ngFor="let eachVal of searchvalue"
+                     class="custom-control custom-checkbox my-1">
+                    <input type="checkbox"
+                           [disabled]="!disableManualFilters"
+                           (change)="filtersSelected(eachVal, $event)" class="custom-control-input"
+                           id="{{eachVal}}"
+                    />
+                    <label for="{{eachVal}}" class="custom-control-label">
+                        <span><strong>{{eachVal}}</strong></span>
+                    </label>
+                </div>
+            </div>
+
+            <div *ngIf="valuesAreNumeric">
+                <hr>
+                <div class="d-flex flex-row fixed p-2">
+                    <h5>Manual Filter</h5>
+                    <div>
+                        <button
+                                class="btn btn-link btn-sm float-right"
+                                (click)="disableManualFilters = !disableManualFilters"
+                        >{{disableManualFilters ? 'Activate' : 'Deactivate'}}
+                        </button>
+                    </div>
+                </div>
+                <div class="input-group-sm auto-mr">
+                    <label for="min"><span>min</span></label>
+                    <input id="min" type="number"
+                           class="form-control-sm"
+                           [disabled]="disableManualFilters"
+                           #minVal
+                    >
+                    <label for="max"><span>max</span></label>
+                    <input id="max" type="number"
+                           class="form-control-sm"
+                           [disabled]="disableManualFilters"
+                           #maxVal
+                    >
+
+                        <button class="btn btn-success btn-sm"
+                            [disabled]="disableManualFilters"
+                            (click)="applyManualFilter(minVal.value, maxVal.value)"
+                        ><i class="fas fa-check"></i> </button>
+                        <button class="btn btn-danger btn-sm"
+                            [disabled]="disableManualFilters"
+                            (click)="removeManualFilter(minVal.value)"
+                        ><i class="fas fa-trash"></i></button>
+                </div>
             </div>
         </div>
-    <hr>
-</div>
-<div *ngIf="sparqlJSON.parameters.length">
-    <div class="row" [hidden]="hiddenElement">
-        <button class="btn btn-lg btn-success" (click)="genTable()">Obtain Results</button>
     </div>
-    <br>
-    <br>
-    <div class="row" *ngIf="tableResult?.columns !== undefined">
-        <div class="alert alert-info" role="info">
-            <i class="fa fa-info-circle"></i> You can remove your selections by:
-            <ul>
-                <li>scrolling to the top of the table below, click on the delete button.</li>
-                <li>Click on the <kbd>Obtain Results</kbd> button again to update your results.</li>
-            </ul>
+</div>
+
+<hr>
+<!-- Show Selected Properties here and Obtain Results Button -->
+<div class="form-group row" [hidden]="hiddenElement" *ngIf="configSPQ">
+    <div class="col-9 d-flex align-items-center">
+        <p class="mt-1 mb-0 mr-3 flex-shrink-0">Selected Properties: </p>
+        <p class="mt-1 mb-0 mr-3 flex-shrink-0" *ngIf="allSelectedProperties.size === 0">None. Please add a property from above to proceed.</p>
+        <div class="w-100 h-100 align-self-start">
+            <div class="d-flex flex-wrap">
+                <div *ngFor="let selectedProp of allSelectedProperties"
+                     class="bordered d-flex align-items-center mx-1 my-1">
+                    <small class="p-0">{{selectedProp}}</small>
+                    <i class="fa fa-times-circle pl-1 text-red"
+                       placement="right"
+                       (click)="removeSelection(selectedProp)"></i>
+                </div>
+            </div>
         </div>
-        <div class="table-responsive table-hover">
+    </div>
+    <div class="col-3 align-self-center">
+        <button class="btn btn-primary w-100 inline"
+                [disabled]="!sparqlJSON.parameters.length"
+                (click)="genTable()">
+            <span>
+                Obtain Results
+            </span>
+        </button>
+    </div>
+</div>
+
+<div class="jumbotron" *ngIf="!sparqlJSON.parameters.length && configSPQ">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 align-center">
+                <h4>Your Search Results will be visible here.</h4>
+                <i class="fas fa-table"></i>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 align-center">
+                <p class="text-secondary"> Select Properties from above and click <kbd>Obtain Results</kbd></p>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div *ngIf="sparqlJSON.parameters.length">
+    <div class="jumbotron" *ngIf="tableResult?.columns !== undefined && !tableResult?.columns.length">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 align-center">
+                    <h4>No Matching Products/Services Found. <i class="fas fa-table"></i></h4>
+
+                    <h5>We could not find any matching Products with your Selection.</h5>
+                    <h5>Try removing some Selected Properties above and click <kbd>Obtain Results</kbd> again</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" *ngIf="tableResult?.columns !== undefined && tableResult?.columns.length">
+        <div class="table-responsive table-hover" style="overflow-y: scroll; height: 35vh">
             <table class="table table-sm table-bordered">
                 <caption>Available Results from NIMBLE</caption>
                 <thead>
                 <tr>
                     <!--<th>-->
-                        <!--Results-->
+                    <!--Results-->
                     <!--</th>-->
-                    <th *ngFor="let column of tableResult?.columns; let i=index" scope="col"
-                        (mouseenter)="showSelectionDel=true" (mouseleave)="showSelectionDel=false">
+                    <th *ngFor="let column of tableResult?.columns; let i=index" scope="col">
                         {{column}}
-                        <span *ngIf="showSelectionDel">
-                            <i class="fa fa-minus-square" ngbTooltip="Remove {{column}}"  placement="right" (click)="removeSelection(column)"></i>
-                        </span>
                     </th>
                     <th *ngIf="tableResult?.uuids.length">
                         More
@@ -234,21 +434,21 @@
                 </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let row of tableResult?.rows; let i=index">
-                        <!--<td>{{i+1}}</td>-->
-                        <td *ngFor="let field of row">{{field}}</td>
-                        <td *ngIf="tableResult?.uuids.length">
-                            <button class="btn btn-xs btn-outline-success"
-                                    (click)="getSparqlOptionalSelect(i)"
-                            >
+                <tr *ngFor="let row of tableResult?.rows; let i=index" [ngClass] = "{'selected-row': i === selectedProduct}">
+                    <!--<td>{{i+1}}</td>-->
+                    <td *ngFor="let field of row">{{field}}</td>
+                    <td *ngIf="tableResult?.uuids.length">
+                        <button class="btn btn-xs btn-outline-primary"
+                                (click)="getSparqlOptionalSelect(i)"
+                        >
                             Further Info.
-                            </button>
-                        </td>
-                    </tr>
+                        </button>
+                    </td>
+                </tr>
                 </tbody>
             </table>
         </div>
-</div>
+    </div>
 
 </div>
 <!--<pre>-->

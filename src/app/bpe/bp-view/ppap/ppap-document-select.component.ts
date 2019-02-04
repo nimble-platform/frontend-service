@@ -16,6 +16,8 @@ import { copy } from "../../../common/utils";
 import { Certificate } from "../../../user-mgmt/model/certificate";
 import {DocumentService} from '../document-service';
 import {DocumentReference} from '../../../catalogue/model/publish/document-reference';
+import {BpStartEvent} from '../../../catalogue/model/publish/bp-start-event';
+import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
 
 type PpapLevels = [boolean, boolean, boolean, boolean, boolean]
 
@@ -36,7 +38,7 @@ export class PpapDocumentSelectComponent implements OnInit {
 
     /** The ppap level ,goes from 0 (level 1) to 4 (level 5). */
     level: number = 0;
-    
+
     /** All available Ppap documents and if they should be checked for each level. */
     DOCUMENTS: PpapDocument[] = [
         { name: "Design Documentation",                         levels: [false,  true,  true,  true,  true] },
@@ -70,6 +72,9 @@ export class PpapDocumentSelectComponent implements OnInit {
     /** Whether the definition of PPAP is visible or not. */
     showDetails = false;
 
+    // the copy of ThreadEventMetadata of the current business process
+    processMetadata: ThreadEventMetadata;
+
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
                 private userService: UserService,
@@ -78,14 +83,17 @@ export class PpapDocumentSelectComponent implements OnInit {
                 private router: Router,
                 private documentService: DocumentService,
                 private location: Location) {
-        
+
     }
 
     ngOnInit() {
+        // get copy of ThreadEventMetadata of the current business process
+        this.processMetadata = this.bpDataService.bpStartEvent.processMetadata;
+
         this.computeSelectedDocuments();
 
         this.route.queryParams.subscribe(params => {
-            if (params["pid"] && this.bpDataService.processMetadata) {
+            if (params["pid"] && this.processMetadata) {
                 this.level = 0;
                 this.resetSelectedDocumens();
                 this.ppap = this.bpDataService.ppap;
@@ -102,7 +110,7 @@ export class PpapDocumentSelectComponent implements OnInit {
     }
 
     isRequestSent(): boolean {
-        return !!this.bpDataService.processMetadata && !this.bpDataService.updatingProcess;
+        return !!this.processMetadata && !this.processMetadata.isBeingUpdated;
     }
 
     isLoading(): boolean {
@@ -153,7 +161,7 @@ export class PpapDocumentSelectComponent implements OnInit {
     onSkip() {
         this.bpDataService.resetBpData();
         this.bpDataService.initRfq(this.bpDataService.getCompanySettings().negotiationSettings).then(() => {
-            this.bpDataService.setBpOptionParameters(this.bpDataService.userRole, "Negotiation", "Ppap");
+            this.bpDataService.proceedNextBpStep(this.bpDataService.bpStartEvent.userRole, "Negotiation");
         });
     }
 
@@ -204,11 +212,14 @@ export class PpapDocumentSelectComponent implements OnInit {
         ppap.additionalDocumentReference = this.additionalDocuments;
         ppap.documentType = this.DOCUMENTS.filter((_, i) => this.selectedDocuments[i]).map(doc => doc.name);
 
-        this.bpeService.updateBusinessProcess(JSON.stringify(ppap),"PPAPREQUEST",this.bpDataService.processMetadata.processId)
+        this.bpeService.updateBusinessProcess(JSON.stringify(ppap),"PPAPREQUEST",this.processMetadata.processId)
             .then(() => {
                 this.documentService.updateCachedDocument(ppap.id,ppap);
                 this.callStatus.callback("Ppap request updated", true);
-                this.router.navigate(['dashboard']);
+                var tab = "PUCHASES";
+                if (this.bpDataService.bpStartEvent.userRole == "seller")
+                  tab = "SALES";
+                this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
             })
             .catch(error => {
                 this.callStatus.error("Failed to update Ppap request", error);

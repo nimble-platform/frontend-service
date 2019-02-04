@@ -8,9 +8,101 @@ import { PropertyValueQualifier } from "../catalogue/model/publish/property-valu
 import { CUSTOM_PROPERTY_LIST_ID } from "../catalogue/model/constants";
 import { CatalogueLine } from "../catalogue/model/publish/catalogue-line";
 import {Amount} from "../catalogue/model/publish/amount";
+import {CookieService} from "ng2-cookies";
+import {Headers} from "@angular/http";
+import { AbstractControl } from "@angular/forms";
+declare var Countries: any;
 
 const UI_NAMES: any = {
     STRING: "TEXT"
+}
+
+const COUNTRY_NAMES = getCountryNames();
+const COUNTRY_JSON = getCountryJSON();
+
+function getCountryNames(): string[] {
+  var countriesFull = Countries.countries;
+  var countryList = [];
+  for (let country in countriesFull) {
+    countryList.push(countriesFull[country]["name"]);
+  }
+  countryList.sort();
+  return countryList;
+}
+
+function getCountryJSON(): any[] {
+  var countriesFull = Countries.countries;
+  var countryList = [];
+  for (let country in countriesFull) {
+    countryList.push({
+      "iso":country,
+      "name":countriesFull[country]["name"],
+      "alt":countriesFull[country]["native"]
+    });
+  }
+  return countryList;
+}
+
+export function getCountryByISO(term: string): string {
+  var country = "";
+  if (term.length == 2) {
+    for (var i=0; i<COUNTRY_JSON.length; i++) {
+      if (COUNTRY_JSON[i].iso.toLowerCase() == term.toLowerCase())
+        country = COUNTRY_JSON[i].name;
+    }
+  }
+  return country;
+}
+
+export function getCountrySuggestions(term: string): string[] {
+  var suggestionList = [];
+  var suggestions = [];
+  if (term != "") {
+    for (var i=0; i<COUNTRY_JSON.length; i++) {
+      var prob = 0;
+      if (term.length == 2) {
+        if (COUNTRY_JSON[i].iso.toLowerCase() == term.toLowerCase())
+          prob = 1;
+      }
+      if (prob < 1) {
+        if (COUNTRY_JSON[i].name.toLowerCase() == term.toLowerCase())
+          prob = 1;
+        else if (COUNTRY_JSON[i].alt.toLowerCase() == term.toLowerCase())
+          prob = 1;
+        else if (COUNTRY_JSON[i].name.toLowerCase().indexOf(term.toLowerCase()) == 0)
+          prob = 0.9;
+        else if (COUNTRY_JSON[i].alt.toLowerCase().indexOf(term.toLowerCase()) == 0)
+          prob = 0.8;
+        else if (COUNTRY_JSON[i].name.toLowerCase().indexOf(term.toLowerCase()) != -1)
+          prob = 0.7;
+        else if (COUNTRY_JSON[i].alt.toLowerCase().indexOf(term.toLowerCase()) != -1)
+          prob = 0.6;
+      }
+      if (prob > 0) {
+        suggestions.push({
+          "prob": prob,
+          "text": COUNTRY_JSON[i].name
+        });
+      }
+    }
+    suggestions = suggestions.sort(function(a,b){
+        let a_comp = a.prob;
+        let b_comp = b.prob;
+        return b_comp-a_comp;
+    });
+    for (var i=0; i<Math.min(suggestions.length,10); i++) {
+      suggestionList.push(suggestions[i].text);
+    }
+  }
+  return suggestionList;
+}
+
+export function validateCountry(control: AbstractControl): any {
+  var match = (COUNTRY_NAMES.indexOf(control.value) != -1);
+  if (!match) {
+    return { invalidCountry: true };
+  }
+  return null;
 }
 
 export function sanitizeDataTypeName(dataType: PropertyValueQualifier): string {
@@ -129,7 +221,8 @@ export function sortProperties(properties: Property[]): Property[] {
 }
 
 export function scrollToDiv(divId: string): void {
-    document.getElementById(divId).scrollIntoView();
+    if (document.getElementById(divId))
+      document.getElementById(divId).scrollIntoView();
 }
 
 export function isCustomProperty(property: ItemProperty): boolean {
@@ -200,7 +293,7 @@ export function deepEquals(obj1: any, obj2: any): boolean {
                 return false;
             }
         }
-        
+
         return true;
     }
 
@@ -218,4 +311,10 @@ export function deepEquals(obj1: any, obj2: any): boolean {
     }
 
     return true;
+}
+
+export function getAuthorizedHeaders(cookieService: CookieService): Headers {
+    const token = 'Bearer '+cookieService.get("bearer_token");
+    const headers = new Headers({ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': token});
+    return headers;
 }

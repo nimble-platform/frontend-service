@@ -1,30 +1,30 @@
 <div class="form-group row">
 		<strong class="col-2 col-form-label">Street Name:</strong>
 		<div class="col-10">
-			<input type="text" class="form-control" [disabled]="disabled" [(value)]="address.streetName">
+			<input type="text" class="form-control" [disabled]="disabled" [required]="required" [(value)]="address.streetName">
 		</div>
 	</div>
 	<div class="form-group row">
 		<strong class="col-2 col-form-label">Building Number:</strong>
 		<div class="col-10">
-			<input type="text" class="form-control" [disabled]="disabled" [(value)]="address.buildingNumber">
+			<input type="text" class="form-control" [disabled]="disabled" [required]="required" [(value)]="address.buildingNumber">
 		</div>
 	</div>
 	<div class="form-group row">
 		<strong class="col-2 col-form-label">City:</strong>
 		<div class="col-10">
-			<input type="text" class="form-control" [disabled]="disabled" [(value)]="address.cityName">
+			<input type="text" class="form-control" [disabled]="disabled" [required]="required" [(value)]="address.cityName">
 		</div>
 	</div>
 	<div class="form-group row">
 		<strong class="col-2 col-form-label">Postal code:</strong>
 		<div class="col-10">
-			<input type="text" class="form-control" [disabled]="disabled" [(value)]="address.postalCode">
+			<input type="text" class="form-control" [disabled]="disabled" [required]="required" [(value)]="address.postalCode">
 		</div>
 	</div>
 	<div class="form-group row">
 		<strong class="col-2 col-form-label">Country:</strong>
 		<div class="col-10">
-			<input type="text" class="form-control" [disabled]="disabled" [(value)]="address.country">
+			<input type="text" class="form-control" [disabled]="disabled" [required]="required" [(value)]="address.country" [ngbTypeahead]="getSuggestions">
 		</div>
 	</div>

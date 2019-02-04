@@ -17,6 +17,9 @@ import { EvidenceSupplied } from "../catalogue/model/publish/evidence-supplied";
 import { Comment } from "../catalogue/model/publish/comment";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { Code } from "../catalogue/model/publish/code";
+import {BpUserRole} from '../bpe/model/bp-user-role';
+import {BpStartEvent} from '../catalogue/model/publish/bp-start-event';
+import {BpURLParams} from '../catalogue/model/publish/bpURLParams';
 
 /**
  * Created by suat on 12-Mar-18.
@@ -93,17 +96,9 @@ export class ThreadSummaryComponent implements OnInit {
     }
 
     async openBpProcessView() {
-        let role = await this.documentService.getUserRole(this.titleEvent.activityVariables,this.processInstanceGroup.partyID);
-        this.bpDataService.setBpOptionParametersWithProcessMetadata(role, this.titleEvent.processType, this.titleEvent, false);
-        this.bpDataService.setRelatedGroupId(this.processInstanceGroup.id);
-        this.bpDataService.setCollaborationGroupId(this.collaborationGroupId);
-        this.router.navigate(['bpe/bpe-exec'], {
-            queryParams: {
-                catalogueId: this.titleEvent.product.catalogueDocumentReference.id,
-                id: this.titleEvent.product.manufacturersItemIdentification.id,
-                pid: this.titleEvent.processId
-            }
-        });
+        let userRole:BpUserRole = this.titleEvent.buyer ? "buyer": "seller";
+        this.bpDataService.startBp(new BpStartEvent(userRole,this.titleEvent.processType,this.processInstanceGroup.id,this.collaborationGroupId,this.titleEvent),true,
+            new BpURLParams(this.titleEvent.product.catalogueDocumentReference.id,this.titleEvent.product.manufacturersItemIdentification.id,this.titleEvent.processId));
     }
 
     private fetchEvents(): void {
@@ -183,10 +178,7 @@ export class ThreadSummaryComponent implements OnInit {
 
     navigateToSearchDetails() {
         const item = this.titleEvent.product;
-        this.bpDataService.previousProcess = null;
-        this.searchContextService.associatedProcessMetadata = null;
-        this.searchContextService.associatedProcessType = null;
-        this.searchContextService.targetPartyRole = null;
+        this.searchContextService.clearSearchContext();
         this.router.navigate(['/product-details'],
             {
                 queryParams: {

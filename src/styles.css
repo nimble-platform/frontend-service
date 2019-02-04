@@ -6,6 +6,10 @@ html, body {
     min-height: 100vh;
 }
 
+p {
+  word-break: break-all;
+}
+
 .container-fluid {
     padding-left: 0px;
     padding-right: 0px;
@@ -279,6 +283,10 @@ textarea {
 
 .pointer {
     cursor: pointer;
+}
+
+.disabled {
+  cursor: not-allowed;
 }
 
 .align-left {

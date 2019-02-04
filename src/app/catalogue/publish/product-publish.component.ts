@@ -669,23 +669,15 @@ export class ProductPublishComponent implements OnInit {
         this.catalogueLine = splicedCatalogueLine
 
         this.publishStatus.submit();
-        if (this.catalogueService.catalogue.uuid == null) {
-            this.catalogueService.postCatalogue(this.catalogueService.catalogue)
-                .then(() => this.onSuccessfulPublish())
-                .then(() => this.changePublishModeToCreate())
-                .catch(err => {
-                    this.catalogueService.catalogue.catalogueLine[indexOfOriginalLine] = originalLine;
-                    this.onFailedPublish(err);
-                });
-        } else {
-            this.catalogueService.updateCatalogueLine(this.catalogueService.catalogue.uuid,JSON.stringify(splicedCatalogueLine))
-                .then(() => this.onSuccessfulPublish())
-                .then(() => this.changePublishModeToCreate())
-                .catch(err => {
-                    this.catalogueService.catalogue.catalogueLine[indexOfOriginalLine] = originalLine;
-                    this.onFailedPublish(err);
-                });
-        }
+
+        this.catalogueService.updateCatalogueLine(this.catalogueService.catalogue.uuid,JSON.stringify(splicedCatalogueLine))
+            .then(() => this.onSuccessfulPublish())
+            .then(() => this.changePublishModeToCreate())
+            .catch(err => {
+                this.catalogueService.catalogue.catalogueLine[indexOfOriginalLine] = originalLine;
+                this.onFailedPublish(err);
+            });
+
     }
 
     // changes publishMode to create
@@ -1011,22 +1003,6 @@ export class ProductPublishComponent implements OnInit {
             };
             reader.readAsDataURL(file);
         }
-    }
-
-    private downloadExampleTemplate() {
-        var reader = new FileReader();
-        this.catalogueService.downloadExampleTemplate()
-            .then(result => {
-                    var contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-                    var data = result.content;
-                    var fileName = result.fileName;
-                    var blob = new Blob([data],{type:contentType});
-                    saveAs(blob,fileName);
-                    this.publishStatus.callback("Download completed");
-                },
-                error => {
-                    this.publishStatus.error("Download failed");
-                });
     }
 
     /**

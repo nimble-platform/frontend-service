@@ -16,6 +16,8 @@ import { ProcessInstanceInputMessage } from "../../model/process-instance-input-
 import { BPEService } from "../../bpe.service";
 import {CookieService} from 'ng2-cookies';
 import {ItemPriceWrapper} from '../../../common/item-price-wrapper';
+import {BpStartEvent} from '../../../catalogue/model/publish/bp-start-event';
+import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
 
 @Component({
     selector: "transport-negotiation-response",
@@ -31,7 +33,7 @@ export class TransportNegotiationResponseComponent implements OnInit {
     @Input() quotation: Quotation;
     quotationPrice: PriceWrapper;
     quotationPaymentTerms: PaymentTermsWrapper;
-    
+
     @Input() readonly: boolean = false;
 
     selectedTab: string = "OVERVIEW";
@@ -44,6 +46,9 @@ export class TransportNegotiationResponseComponent implements OnInit {
     PAYMENT_TERMS: string[] = UBLModelUtils.getDefaultPaymentTermsAsStrings();
     CURRENCIES: string[] = CURRENCIES;
 
+    // the copy of ThreadEventMetadata of the current business process
+    processMetadata: ThreadEventMetadata;
+
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
                 private location: Location,
@@ -53,6 +58,9 @@ export class TransportNegotiationResponseComponent implements OnInit {
     }
 
     ngOnInit() {
+        // get copy of ThreadEventMetadata of the current business process
+        this.processMetadata = this.bpDataService.bpStartEvent.processMetadata;
+
         if(!this.rfq) {
             this.rfq = this.bpDataService.requestForQuotation;
         }
@@ -67,7 +75,7 @@ export class TransportNegotiationResponseComponent implements OnInit {
         this.quotationPrice.quantityPrice = new ItemPriceWrapper(this.quotation.quotationLine[0].lineItem.price);
         this.quotationPaymentTerms = new PaymentTermsWrapper(this.quotation.paymentTerms);
 
-        this.userRole = this.bpDataService.userRole;
+        this.userRole = this.bpDataService.bpStartEvent.userRole;
     }
 
     isDisabled(): boolean {
@@ -88,7 +96,7 @@ export class TransportNegotiationResponseComponent implements OnInit {
     }
 
     isResponseSent(): boolean {
-        return this.bpDataService.processMetadata && this.bpDataService.processMetadata.processStatus !== 'Started';
+        return this.processMetadata && this.processMetadata.processStatus !== 'Started';
     }
 
     onBack(): void {
@@ -104,13 +112,16 @@ export class TransportNegotiationResponseComponent implements OnInit {
 
         const vars: ProcessVariables = ModelUtils.createProcessVariables("Negotiation", this.bpDataService.requestForQuotation.buyerCustomerParty.party.id,
             this.bpDataService.requestForQuotation.sellerSupplierParty.party.id, this.cookieService.get("user_id"),this.quotation, this.bpDataService);
-        const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.bpDataService.processMetadata.processId);
+        const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.processMetadata.processId);
 
         this.callStatus.submit();
         this.bpeService.continueBusinessProcess(piim)
             .then(res => {
                 this.callStatus.callback("Quotation sent", true);
-                this.router.navigate(['dashboard']);
+                var tab = "PUCHASES";
+                if (this.bpDataService.bpStartEvent.userRole == "seller")
+                  tab = "SALES";
+                this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
             })
             .catch(error => {
                 this.callStatus.error("Failed to send quotation", error);
@@ -119,11 +130,11 @@ export class TransportNegotiationResponseComponent implements OnInit {
 
     onRequestNewQuotation() {
         this.bpDataService.initRfqWithQuotation();
-        this.bpDataService.setBpOptionParameters("buyer", "Negotiation", "Negotiation");
+        this.bpDataService.proceedNextBpStep("buyer", "Negotiation");
     }
 
     onAcceptAndOrder() {
         this.bpDataService.initTransportExecutionPlanRequestWithQuotation();
-        this.bpDataService.setBpOptionParameters(this.userRole,'Transport_Execution_Plan',"Negotiation");
+        this.bpDataService.proceedNextBpStep(this.userRole,'Transport_Execution_Plan');
     }
 }
