@@ -38,7 +38,7 @@
         <ngb-pagination class="d-flex justify-content-center"
                         [collectionSize]="registeredCompaniesPage.totalElements"
                         [pageSize]="registeredCompaniesPage.size"
-                        [page]="registeredCompaniesPage.number+1"
+                        [page]="registeredCompaniesPage.number"
                         [maxSize]="registeredCompaniesPage.size"
                         [boundaryLinks]="false"
                         (pageChange)="onRegisteredCompaniesPageChange($event)">

@@ -1,8 +1,12 @@
-import { Component, OnInit, Input } from "@angular/core";
+import { Component, OnInit, Input, Output, EventEmitter } from "@angular/core";
 import { CompanySettings } from "../model/company-settings";
 import { AppComponent } from "../../app.component";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import * as myGlobals from '../../globals';
+import { FormBuilder, FormGroup, FormControl } from "@angular/forms";
+import { AddressSubForm } from "../subforms/address.component";
+import { CallStatus } from "../../common/call-status";
+import { UserService } from "../user.service";
 
 @Component({
     selector: "company-data-settings",
@@ -11,18 +15,61 @@ import * as myGlobals from '../../globals';
 export class CompanyDataSettingsComponent implements OnInit {
 
     @Input() settings: CompanySettings;
-
+    dataForm: FormGroup;
     mailto: string;
     tooltipHTML: string;
     config = myGlobals.config;
+    alertClosed = false;
+    saveCallStatus: CallStatus = new CallStatus();
+    @Output() onSaveEvent: EventEmitter<void> = new EventEmitter();
 
     constructor(private appComponent: AppComponent,
-                private modalService: NgbModal) {
+                private _fb: FormBuilder,
+                private modalService: NgbModal,
+                private userService: UserService) {
 
     }
 
     ngOnInit() {
+      this.dataForm = this._fb.group({
+          name: new FormControl({value: (this.settings.details.companyLegalName || ""), disabled: !this.appComponent.checkRoles('pm')}),
+          vatNumber: new FormControl({value: (this.settings.details.vatNumber || ""), disabled: !this.appComponent.checkRoles('pm')}),
+          verificationInformation: new FormControl({value: (this.settings.details.verificationInformation || ""), disabled: (!this.appComponent.checkRoles('pm') && this.settings.details.verificationInformation)}),
+          businessType: new FormControl({value: (this.settings.details.businessType || ""), disabled: !this.appComponent.checkRoles('pm')}),
+          industrySectors: new FormControl({value: (this.settings.details.industrySectors[0] || ""), disabled: !this.appComponent.checkRoles('pm')}),
+          businessKeywords: new FormControl({value: (this.settings.details.businessKeywords[0] || ""), disabled: (!this.appComponent.checkRoles('pm') && this.settings.details.businessKeywords[0])}),
+          yearOfReg: new FormControl({value: (this.settings.details.yearOfCompanyRegistration || ""), disabled: (!this.appComponent.checkRoles('pm') && this.settings.details.yearOfCompanyRegistration)}),
+          address: AddressSubForm.update(AddressSubForm.generateForm(this._fb), this.settings.details.address)
+      });
+    }
 
+    save(model: FormGroup) {
+      this.saveCallStatus.submit();
+      var sectorString = model.getRawValue()['industrySectors'];
+      if (Array.isArray(sectorString))
+        sectorString = sectorString.join(", ");
+      this.settings.details.companyLegalName =  model.getRawValue()['name'];
+      this.settings.details.vatNumber =  model.getRawValue()['vatNumber'];
+      this.settings.details.verificationInformation =  model.getRawValue()['verificationInformation'];
+      this.settings.details.businessType =  model.getRawValue()['businessType'];
+      this.settings.details.industrySectors =  [sectorString];
+      this.settings.details.businessKeywords =  [model.getRawValue()['businessKeywords']];
+      this.settings.details.yearOfCompanyRegistration =  model.getRawValue()['yearOfReg'];
+      this.settings.details.address =  model.getRawValue()['address'];
+      let compId = this.settings.companyID;
+      this.userService
+          .putSettingsForParty(this.settings, compId)
+          .then(response => {
+              if (myGlobals.debug) {
+                  console.log(`Saved Company Settings for company ${compId}. Response: ${response}`);
+              }
+              this.saveCallStatus.callback("Successfully saved", true);
+              this.dataForm.markAsPristine();
+              this.onSaveEvent.emit();
+          })
+          .catch(error => {
+              this.saveCallStatus.error("Error while saving company settings", error);
+          });
     }
 
     changeData(content) {
@@ -72,6 +119,21 @@ export class CompanyDataSettingsComponent implements OnInit {
              + "e.g. Company member listing on an official website, signing authority, company registration at external authorities, additional identification numbers, ...";
         this.tooltipHTML = tooltip;
         this.modalService.open(content);
+    }
+
+    showSectorTT(content) {
+      var tooltip = "";
+  		tooltip += "Hold down the Ctrl key in order to select multiple sectors";
+  		this.tooltipHTML = tooltip;
+  		this.modalService.open(content);
+    }
+
+    showKeywordsTT(content) {
+      var tooltip = "";
+  		tooltip += "List some keywords that represent your business. Those will be used to improve the visibility of your company on the platform.<br/><br/>";
+      tooltip += "e.g.: Design, Bathroom Manufacturing, Home Accessories";
+  		this.tooltipHTML = tooltip;
+  		this.modalService.open(content);
     }
 
 }

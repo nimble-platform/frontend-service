@@ -58,11 +58,11 @@ export class ReceiptAdviceComponent implements OnInit {
 
     onSendReceiptAdvice(): void {
         const vars: ProcessVariables = ModelUtils.createProcessVariables(
-            "Fulfilment", 
-            this.bpDataService.receiptAdvice.despatchSupplierParty.party.id, 
+            "Fulfilment",
+            this.bpDataService.receiptAdvice.despatchSupplierParty.party.id,
             this.bpDataService.receiptAdvice.deliveryCustomerParty.party.id,
             this.cookieService.get("user_id"),
-            this.bpDataService.receiptAdvice, 
+            this.bpDataService.receiptAdvice,
             this.bpDataService
         );
         const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(
@@ -72,7 +72,10 @@ export class ReceiptAdviceComponent implements OnInit {
         this.bpeService.continueBusinessProcess(piim)
             .then(res => {
                 this.callStatus.callback("Receipt Advice sent", true);
-                this.router.navigate(['dashboard']);
+                var tab = "PUCHASES";
+                if (this.bpDataService.bpStartEvent.userRole == "seller")
+                  tab = "SALES";
+                this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
             }).catch(error => {
                 this.callStatus.error("Failed to send Receipt Advice", error);
             });

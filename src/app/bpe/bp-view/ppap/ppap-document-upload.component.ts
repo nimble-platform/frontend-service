@@ -140,7 +140,10 @@ export class PpapDocumentUploadComponent {
         this.callStatus.submit();
         this.bpeService.continueBusinessProcess(piim).then(res => {
             this.callStatus.callback("Ppap Response placed", true);
-            this.router.navigate(['dashboard']);
+            var tab = "PUCHASES";
+            if (this.bpDataService.bpStartEvent.userRole == "seller")
+              tab = "SALES";
+            this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
         }).catch(error => {
             this.submitted = false;
             error => this.callStatus.error("Failed to send Ppap Response", error)

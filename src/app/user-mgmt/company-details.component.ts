@@ -6,6 +6,7 @@ import * as myGlobals from "../globals";
 import * as moment from "moment";
 import { CallStatus } from "../common/call-status";
 import { CompanySettings } from "./model/company-settings";
+import { AppComponent } from "../app.component";
 
 @Component({
     selector: "company-details",
@@ -17,9 +18,11 @@ export class CompanyDetailsComponent implements OnInit {
 	@Input() hideTitle: boolean = false;
     imgEndpoint = myGlobals.user_mgmt_endpoint+"/company-settings/image/";
     initCallStatus: CallStatus = new CallStatus();
+    vatCallStatus: CallStatus = new CallStatus();
 
     constructor(private cookieService: CookieService,
                 private userService: UserService,
+                private appComponent: AppComponent,
                 public route: ActivatedRoute) {
     }
 
@@ -42,6 +45,34 @@ export class CompanyDetailsComponent implements OnInit {
 				}
 			});
 		}
+    }
+
+    validateVAT() {
+      this.vatCallStatus.submit();
+      this.userService.validateVAT(this.details.details.vatNumber)
+        .then(response => {
+          this.vatCallStatus.callback("VAT checked", true);
+          setTimeout(function(){
+            if (response.status == "success") {
+              if (response.valid) {
+                if (response.company_name) {
+                  alert("The VAT is valid and registered for "+response.company_name+".");
+                }
+                else
+                  alert("The VAT is valid.");
+              }
+              else {
+                alert("The VAT is invalid.");
+              }
+            }
+            else {
+              alert("The VAT is invalid.");
+            }
+          },50);
+        })
+        .catch(error => {
+            this.vatCallStatus.error("Error while checking VAT", error);
+        });
     }
 
     formatDate(date:string) {

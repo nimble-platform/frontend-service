@@ -22,15 +22,17 @@ export class CompanyManagementComponent implements OnInit {
         this.registeredCompaniesCallStatus.submit();
         this.unverifiedCompaniesCallStatus.submit();
         this.updateUnverifiedCompanies(1);
-        this.updateRegisteredCompanies(0);
+        this.updateRegisteredCompanies(1);
+        //this.updateRegisteredCompanies(0);
     }
 
     updateRegisteredCompanies(requestedPage: number): void {
         this.analyticsService
-            .getAllParties(requestedPage)
+            .getVerifiedCompanies(requestedPage)
             .then(res => {
                 this.registeredCompaniesCallStatus.callback("Successfully loaded registered companies", true);
                 this.registeredCompaniesPage = res;
+                this.registeredCompaniesPage.number += 1; // number has offset of 1
             })
             .catch(error => {
                 this.registeredCompaniesCallStatus.error("Error while loading registered companies page", error);
@@ -39,8 +41,8 @@ export class CompanyManagementComponent implements OnInit {
 
     onRegisteredCompaniesPageChange(newPage): void {
         this.registeredCompaniesCallStatus.submit();
-        if (newPage && newPage !== (this.registeredCompaniesPage.number+1)) {
-            this.updateRegisteredCompanies(newPage-1);
+        if (newPage && newPage !== this.registeredCompaniesPage.number) {
+            this.updateRegisteredCompanies(newPage);
         }
     }
 
@@ -61,13 +63,29 @@ export class CompanyManagementComponent implements OnInit {
     verifyCompany(company): void {
         if (confirm("Are you sure that you want to verify this company?")) {
           this.unverifiedCompaniesCallStatus.submit();
+          this.registeredCompaniesCallStatus.submit();
           this.analyticsService.verifyCompany(company.hjid)
+              .then(res => {
+                  this.unverifiedCompaniesPage.content = this.unverifiedCompaniesPage.content.filter(c => c.hjid !== company.hjid);
+                  this.updateUnverifiedCompanies(this.unverifiedCompaniesPage.number);
+                  this.updateRegisteredCompanies(this.registeredCompaniesPage.number);
+              })
+              .catch(error => {
+                  this.unverifiedCompaniesCallStatus.error("Error while verifing company", error);
+              });
+        }
+    }
+
+    rejectCompany(company): void {
+        if (confirm("Are you sure that you want to reject this company?")) {
+          this.unverifiedCompaniesCallStatus.submit();
+          this.analyticsService.deleteCompany(company.hjid)
               .then(res => {
                   this.unverifiedCompaniesPage.content = this.unverifiedCompaniesPage.content.filter(c => c.hjid !== company.hjid);
                   this.updateUnverifiedCompanies(this.unverifiedCompaniesPage.number);
               })
               .catch(error => {
-                  this.unverifiedCompaniesCallStatus.error("Error while verifing company", error);
+                  this.unverifiedCompaniesCallStatus.error("Error while rejecting company", error);
               });
         }
     }

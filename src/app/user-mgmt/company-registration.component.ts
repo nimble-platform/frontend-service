@@ -11,6 +11,8 @@ import { AppComponent } from '../app.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import * as myGlobals from '../globals';
 import { CallStatus } from '../common/call-status';
+import { Address } from './model/address';
+import { getCountryByISO } from '../common/utils';
 
 @Component({
     selector: 'company-registration',
@@ -24,8 +26,12 @@ export class CompanyRegistrationComponent implements OnInit {
     public registrationForm: FormGroup;
     config = myGlobals.config;
     submitCallStatus: CallStatus = new CallStatus();
+    vatCallStatus: CallStatus = new CallStatus();
 	   tooltipHTML = "";
      imgFile = null;
+     vatSkipped = false;
+     vatValidated = false;
+     vat = "";
 
     constructor(private _fb: FormBuilder,
 				        private appComponent: AppComponent,
@@ -46,6 +52,31 @@ export class CompanyRegistrationComponent implements OnInit {
             industrySectors: [''],
             yearOfReg: [''],
             address: AddressSubForm.generateForm(this._fb),
+        });
+    }
+
+    skipVAT() {
+      this.vatSkipped = true;
+    }
+
+    validateVAT() {
+      this.vatCallStatus.submit();
+      this.userService.validateVAT(this.vat)
+        .then(response => {
+          this.vatCallStatus.callback("VAT checked", true);
+          if (response.status == "success") {
+            if (response.valid) {
+              if (response.company_name)
+                this.registrationForm.controls['name'].setValue(response.company_name);
+              this.registrationForm.controls['vatNumber'].setValue(this.vat);
+              if (response.country_code)
+                AddressSubForm.update(this.registrationForm.controls['address'] as FormGroup, new Address("","","","",getCountryByISO(response.country_code)));
+            }
+          }
+          this.vatValidated = true;
+        })
+        .catch(error => {
+            this.vatCallStatus.error("Error while checking VAT", error);
         });
     }
 

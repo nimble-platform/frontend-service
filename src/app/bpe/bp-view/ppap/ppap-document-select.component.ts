@@ -38,7 +38,7 @@ export class PpapDocumentSelectComponent implements OnInit {
 
     /** The ppap level ,goes from 0 (level 1) to 4 (level 5). */
     level: number = 0;
-    
+
     /** All available Ppap documents and if they should be checked for each level. */
     DOCUMENTS: PpapDocument[] = [
         { name: "Design Documentation",                         levels: [false,  true,  true,  true,  true] },
@@ -83,7 +83,7 @@ export class PpapDocumentSelectComponent implements OnInit {
                 private router: Router,
                 private documentService: DocumentService,
                 private location: Location) {
-        
+
     }
 
     ngOnInit() {
@@ -216,7 +216,10 @@ export class PpapDocumentSelectComponent implements OnInit {
             .then(() => {
                 this.documentService.updateCachedDocument(ppap.id,ppap);
                 this.callStatus.callback("Ppap request updated", true);
-                this.router.navigate(['dashboard']);
+                var tab = "PUCHASES";
+                if (this.bpDataService.bpStartEvent.userRole == "seller")
+                  tab = "SALES";
+                this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
             })
             .catch(error => {
                 this.callStatus.error("Failed to update Ppap request", error);

@@ -88,7 +88,10 @@ export class ItemInformationResponseComponent implements OnInit {
         this.callStatus.submit();
         this.bpeService.continueBusinessProcess(piim).then(() => {
             this.callStatus.callback("Information Response sent", true);
-            this.router.navigate(['dashboard']);
+            var tab = "PUCHASES";
+            if (this.bpDataService.bpStartEvent.userRole == "seller")
+              tab = "SALES";
+            this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
         }).catch(error => {
             this.callStatus.error("Failed to send Information Response", error);
         });

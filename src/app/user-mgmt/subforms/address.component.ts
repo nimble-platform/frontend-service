@@ -1,6 +1,9 @@
-import { Component, Input } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, Input, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { Address } from '../model/address';
+import { validateCountry, getCountrySuggestions } from '../../common/utils';
+import { Observable } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 
 @Component({
     moduleId: module.id,
@@ -15,6 +18,13 @@ export class AddressSubForm {
 	@Input() disabledFlag: boolean = false;
   @Input() requiredFlag: boolean = true;
 
+  getSuggestions = (text$: Observable<string>) =>
+    text$.pipe(
+      debounceTime(50),
+      distinctUntilChanged(),
+      map(term => getCountrySuggestions(term))
+    );
+
 	public static get(addressForm): Address {
 		return {
             streetName: addressForm.controls.streetName.value,
@@ -27,11 +37,11 @@ export class AddressSubForm {
 
     public static update(addressForm: FormGroup, address: Address): FormGroup {
         if (address) {
-            addressForm.controls.streetName.setValue(address.streetName);
-            addressForm.controls.buildingNumber.setValue(address.buildingNumber);
-            addressForm.controls.cityName.setValue(address.cityName);
-            addressForm.controls.postalCode.setValue(address.postalCode);
-            addressForm.controls.country.setValue(address.country);
+            addressForm.controls.streetName.setValue(address.streetName || "");
+            addressForm.controls.buildingNumber.setValue(address.buildingNumber || "");
+            addressForm.controls.cityName.setValue(address.cityName || "");
+            addressForm.controls.postalCode.setValue(address.postalCode || "");
+            addressForm.controls.country.setValue(address.country || "");
         }
         return addressForm;
     }
@@ -43,7 +53,7 @@ export class AddressSubForm {
             buildingNumber: formDef,
             cityName: formDef,
             postalCode: formDef,
-            country: formDef
+            country: ['', [validateCountry] ]
         });
     }
 }

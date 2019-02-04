@@ -195,7 +195,10 @@ export class OrderComponent implements OnInit {
         this.bpeService.startBusinessProcess(piim)
             .then(res => {
                 this.submitCallStatus.callback("Order placed", true);
-                this.router.navigate(['dashboard']);
+                var tab = "PUCHASES";
+                if (this.bpDataService.bpStartEvent.userRole == "seller")
+                  tab = "SALES";
+                this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
             }).catch(error => {
                 this.submitCallStatus.error("Failed to send Order", error);
             });
@@ -209,7 +212,10 @@ export class OrderComponent implements OnInit {
             .then(() => {
                 this.documentService.updateCachedDocument(order.id,order);
                 this.submitCallStatus.callback("Order updated", true);
-                this.router.navigate(['dashboard']);
+                var tab = "PUCHASES";
+                if (this.bpDataService.bpStartEvent.userRole == "seller")
+                  tab = "SALES";
+                this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
             })
             .catch(error => {
                 this.submitCallStatus.error("Failed to update Order", error);
@@ -236,7 +242,10 @@ export class OrderComponent implements OnInit {
         this.bpeService.continueBusinessProcess(piim)
             .then(res => {
                 this.submitCallStatus.callback("Order Response placed", true);
-                this.router.navigate(['dashboard']);
+                var tab = "PUCHASES";
+                if (this.bpDataService.bpStartEvent.userRole == "seller")
+                  tab = "SALES";
+                this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
             }).catch(error => {
                 this.submitCallStatus.error("Failed to send Order Response", error);
             });
