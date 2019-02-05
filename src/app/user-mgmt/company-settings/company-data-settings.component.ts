@@ -34,7 +34,7 @@ export class CompanyDataSettingsComponent implements OnInit {
         body += "I would like to change my company data to the following:";
         body += "\n\n";
         body += "Company Name:\n";
-        body += this.settings.details.companyLegalName + "\n\n";
+        body += this.settings.details.legalName + "\n\n";
         body += "VAT Number:\n";
         body += this.settings.details.vatNumber + "\n\n";
         body += "Verification Info:\n";

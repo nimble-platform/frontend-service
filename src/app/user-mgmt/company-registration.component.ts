@@ -92,7 +92,7 @@ export class CompanyRegistrationComponent implements OnInit {
 
                 if( response['companyID'] ) {
                     this.cookieService.set("company_id", response['companyID']);
-                    this.cookieService.set("active_company_name", response['settings']['details']['companyLegalName']);
+                    this.cookieService.set("active_company_name", response['settings']['details']['legalName']);
                 }
 
                 if (this.config.logoRequired) {
