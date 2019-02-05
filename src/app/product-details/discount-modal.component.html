@@ -139,7 +139,7 @@
                 <div class="col-3" *ngIf="option.itemLocationQuantity.applicableTerritoryAddress[0].cityName != ''">City Name:{{option.itemLocationQuantity.applicableTerritoryAddress[0].cityName}}</div>
                 <div class="col-3" *ngIf="option.itemLocationQuantity.applicableTerritoryAddress[0].postalZone != ''">Postal Zone:{{option.itemLocationQuantity.applicableTerritoryAddress[0].postalZone}}</div>
                 <div class="col-3" *ngIf="option.itemLocationQuantity.applicableTerritoryAddress[0].streetName != ''">Street Name:{{option.itemLocationQuantity.applicableTerritoryAddress[0].streetName}}</div>
-                <div class="col-3" *ngIf="option.itemLocationQuantity.applicableTerritoryAddress[0].country && option.itemLocationQuantity.applicableTerritoryAddress[0].country.name != ''">Country:{{option.itemLocationQuantity.applicableTerritoryAddress[0].country.name}}</div>
+                <div class="col-3" *ngIf="option.itemLocationQuantity.applicableTerritoryAddress[0].country && option.itemLocationQuantity.applicableTerritoryAddress[0].country.name.value != ''">Country:{{option.itemLocationQuantity.applicableTerritoryAddress[0].country.name.value}}</div>
                 <div class="col-6">
                     <!--total price-->
                     <span *ngIf="option.itemLocationQuantity.allowanceCharge[0].amount && option.itemLocationQuantity.allowanceCharge[0].amount.currencyID != '%'">
