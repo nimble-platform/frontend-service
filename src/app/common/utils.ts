@@ -5,13 +5,14 @@ import { Price } from "../catalogue/model/publish/price";
 import { Category } from "../catalogue/model/category/category";
 import { Property } from "../catalogue/model/category/property";
 import { PropertyValueQualifier } from "../catalogue/model/publish/property-value-qualifier";
-import { CUSTOM_PROPERTY_LIST_ID } from "../catalogue/model/constants";
+import {CUSTOM_PROPERTY_LIST_ID, DEFAULT_LANGUAGE} from '../catalogue/model/constants';
 import {Item} from '../catalogue/model/publish/item';
 import {Text} from '../catalogue/model/publish/text';
 import { CatalogueLine } from "../catalogue/model/publish/catalogue-line";
 import {Amount} from "../catalogue/model/publish/amount";
 import {CookieService} from "ng2-cookies";
 import {Headers} from "@angular/http";
+import {PartyName} from '../catalogue/model/publish/party-name';
 
 const UI_NAMES: any = {
     STRING: "TEXT"
@@ -63,6 +64,68 @@ export function selectName (ip: ItemProperty | Item) {
         return '';
 
     return ip.name[0].value;
+}
+
+// textObject represents an object which contains languageId-value pairs
+// this function is used to get value according to the default language of browser
+export function selectValueOfTextObject(textObject): string{
+    let defaultLanguage = DEFAULT_LANGUAGE();
+    let englishName = null;
+    // get the keys
+    let keys = Object.keys(textObject);
+    for(let key of keys){
+        // if there is a value for the default language, simply return it
+        if(key == defaultLanguage){
+            return textObject[defaultLanguage];
+        }
+        else if(key == "en"){
+            englishName = textObject[key];
+        }
+    }
+    // if there's no value for default language, but an english value is available, then return it
+    if(englishName){
+        return englishName;
+    }
+    // if there's no value for default language and english, then return the first value if possible
+    if(keys.length > 0){
+        return textObject[keys[0]];
+    }
+    // if it is an empty object, return empty string.
+    return "";
+}
+
+// for the given value, it creates a languageId-value pair.
+// for now, languageId is the default language of the browser
+export function createTextObject(value:string):Object{
+    let defaultLanguage = DEFAULT_LANGUAGE();
+    let textObject = {};
+    textObject[defaultLanguage] = value;
+    return textObject;
+}
+
+// For the given PartyName array, it finds the correct name of the party according to the default language of the browser.
+export function selectPartyName(partyNames:PartyName[]):string{
+    let defaultLanguage = DEFAULT_LANGUAGE();
+    let englishName = null;
+    for(let partyName of partyNames){
+        // if the party has a name for the default language of the browser, return it
+        if(partyName.name.languageID == defaultLanguage){
+            return partyName.name.value;
+        }
+        else if(partyName.name.languageID == "en"){
+            englishName = partyName.name.value;
+        }
+    }
+    // if the party does not have a name for the default language of the browser, but english name is available, then return it
+    if(englishName){
+        return englishName;
+    }
+    // if there's no value for default language and english, then return the first value if possible
+    if(partyNames.length > 0){
+        return partyNames[0].name.value;
+    }
+    // if the party has no names, return empty string
+    return "";
 }
 
 export function createText (value: string): Text {
