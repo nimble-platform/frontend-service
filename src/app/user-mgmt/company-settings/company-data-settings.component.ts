@@ -3,6 +3,7 @@ import { CompanySettings } from "../model/company-settings";
 import { AppComponent } from "../../app.component";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import * as myGlobals from '../../globals';
+import {selectValueOfTextObject} from '../../common/utils';
 
 @Component({
     selector: "company-data-settings",
@@ -15,6 +16,8 @@ export class CompanyDataSettingsComponent implements OnInit {
     mailto: string;
     tooltipHTML: string;
     config = myGlobals.config;
+
+    selectValueOfTextObject = selectValueOfTextObject;
 
     constructor(private appComponent: AppComponent,
                 private modalService: NgbModal) {
@@ -34,7 +37,7 @@ export class CompanyDataSettingsComponent implements OnInit {
         body += "I would like to change my company data to the following:";
         body += "\n\n";
         body += "Company Name:\n";
-        body += this.settings.details.legalName + "\n\n";
+        body += this.selectValueOfTextObject(this.settings.details.legalName) + "\n\n";
         body += "VAT Number:\n";
         body += this.settings.details.vatNumber + "\n\n";
         body += "Verification Info:\n";
@@ -44,7 +47,7 @@ export class CompanyDataSettingsComponent implements OnInit {
         body += "Activity Sectors:\n";
         body += this.settings.details.industrySectors[0] + "\n\n";
         body += "Business Keywords:\n";
-        body += this.settings.details.businessKeywords[0] + "\n\n";
+        body += selectValueOfTextObject(this.settings.details.businessKeywords) + "\n\n";
         body += "Year of Foundation:\n";
         body += this.settings.details.yearOfCompanyRegistration + "\n\n";
         body += "Street:\n";

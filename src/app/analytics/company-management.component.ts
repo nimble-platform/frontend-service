@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { AnalyticsService } from "./analytics.service";
 import { CallStatus } from '../common/call-status';
+import {selectPartyName} from '../common/utils';
 
 @Component({
     selector: "company-management",
@@ -14,6 +15,8 @@ export class CompanyManagementComponent implements OnInit {
 
     unverifiedCompaniesPage = null;
     unverifiedCompaniesCallStatus: CallStatus = new CallStatus();
+
+    getNameOfTheCompany = selectPartyName;
 
     constructor(private analyticsService: AnalyticsService) {
     }

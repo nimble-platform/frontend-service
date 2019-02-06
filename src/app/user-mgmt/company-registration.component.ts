@@ -11,6 +11,7 @@ import { AppComponent } from '../app.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import * as myGlobals from '../globals';
 import { CallStatus } from '../common/call-status';
+import {createTextObject, selectValueOfTextObject} from '../common/utils';
 
 @Component({
     selector: 'company-registration',
@@ -64,9 +65,9 @@ export class CompanyRegistrationComponent implements OnInit {
               null,
               new CompanyDetails(
                 model.getRawValue()['address'],
-                [model.getRawValue()['businessKeywords']],
+                createTextObject(model.getRawValue()['businessKeywords']),
                 model.getRawValue()['businessType'],
-                model.getRawValue()['name'],
+                createTextObject(model.getRawValue()['name']),
                 [sectorString],
                 model.getRawValue()['vatNumber'],
                 model.getRawValue()['verificationInformation'],
@@ -92,7 +93,7 @@ export class CompanyRegistrationComponent implements OnInit {
 
                 if( response['companyID'] ) {
                     this.cookieService.set("company_id", response['companyID']);
-                    this.cookieService.set("active_company_name", response['settings']['details']['legalName']);
+                    this.cookieService.set("active_company_name", selectValueOfTextObject(response['settings']['details']['legalName']));
                 }
 
                 if (this.config.logoRequired) {

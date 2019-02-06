@@ -6,6 +6,7 @@ import * as myGlobals from "../globals";
 import * as moment from "moment";
 import { CallStatus } from "../common/call-status";
 import { CompanySettings } from "./model/company-settings";
+import {selectValueOfTextObject} from '../common/utils';
 
 @Component({
     selector: "company-details",
@@ -17,6 +18,8 @@ export class CompanyDetailsComponent implements OnInit {
 	@Input() hideTitle: boolean = false;
     imgEndpoint = myGlobals.user_mgmt_endpoint+"/company-settings/image/";
     initCallStatus: CallStatus = new CallStatus();
+
+    selectValueOfTextObject = selectValueOfTextObject;
 
     constructor(private cookieService: CookieService,
                 private userService: UserService,

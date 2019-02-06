@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { AnalyticsService } from "./analytics.service";
 import { CallStatus } from '../common/call-status';
 import * as myGlobals from '../globals';
+import {selectPartyName} from '../common/utils';
 
 @Component({
     selector: "platform-info",
@@ -14,6 +15,8 @@ export class PlatformInfoComponent implements OnInit {
     config = myGlobals.config;
     registeredCompaniesPage = null;
     registeredCompaniesCallStatus: CallStatus = new CallStatus();
+
+    getNameOfTheCompany = selectPartyName;
 
     constructor(private analyticsService: AnalyticsService) {
     }

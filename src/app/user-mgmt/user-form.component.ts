@@ -10,6 +10,7 @@ import { ActivatedRoute } from "@angular/router";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { Router } from '@angular/router';
 import { CallStatus } from '../common/call-status';
+import {selectValueOfTextObject} from '../common/utils';
 //declare var jsSHA: any;
 
 @Component({
@@ -133,7 +134,7 @@ export class UserFormComponent implements OnInit {
   			else
   				this.cookieService.set("company_id",null);
   			if (res.companyName)
-  				this.cookieService.set("active_company_name",res.companyName);
+  				this.cookieService.set("active_company_name",selectValueOfTextObject(res.companyName));
   			else
   				this.cookieService.set("active_company_name",null);
   			if (res.showWelcomeInfo)
