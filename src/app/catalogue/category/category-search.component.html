@@ -34,7 +34,7 @@
 
 <div *ngIf="pathToSelectedCategories">
     <span  *ngFor="let parentCat of pathToSelectedCategories.parents;let l=last" >
-        <span class="btn-link" (click)="scrollToDiv(parentCat.code,$event)" style="cursor: pointer">{{parentCat.preferredName}}</span>
+        <span class="btn-link" (click)="scrollToDiv(parentCat.code,$event)" style="cursor: pointer">{{selectPreferredName(parentCat)}}</span>
         <span *ngIf="!l">
              >>
         </span>
