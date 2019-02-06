@@ -111,7 +111,7 @@
             <h5>{{PRICE_OPTIONS.PAYMENT_MEAN.text}}</h5>
             <div class="discount-hr"></div>
             <div *ngFor="let option of paymentMeanDiscounts" class="row">
-                <div class="col-3">{{option.paymentMeans[0].instructionNote[0].value}}</div>
+                <div class="col-3">{{option.paymentMeans[0].paymentMeansCode.value}}</div>
                 <div class="col-6">
                     <!--total price-->
                     <span *ngIf="option.itemLocationQuantity.allowanceCharge[0].amount && option.itemLocationQuantity.allowanceCharge[0].amount.currencyID != '%'">

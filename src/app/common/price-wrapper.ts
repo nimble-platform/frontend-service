@@ -82,7 +82,7 @@ export class PriceWrapper {
                     this.appliedDiscounts.push(priceOption);
                 }
                 // check for paymentMeans
-                else if(this.paymentMeans && priceOption.typeID == PRICE_OPTIONS.PAYMENT_MEAN.typeID && priceOption.paymentMeans[0].instructionNote[0].value == this.paymentMeans){
+                else if(this.paymentMeans && priceOption.typeID == PRICE_OPTIONS.PAYMENT_MEAN.typeID && priceOption.paymentMeans[0].paymentMeansCode.value == this.paymentMeans){
                     priceOption.discount = this.calculateDiscountAmount(priceOption,totalPrice);
                     totalDiscount += priceOption.discount;
                     // add this discount to appliedDiscounts list
