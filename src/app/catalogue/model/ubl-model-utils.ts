@@ -89,7 +89,7 @@ export class UBLModelUtils {
             property.dataType === "BOOLEAN" ? [ new Text("false", "en" ) ] : [], [], [],
             new Array<BinaryObject>(), property.dataType, code, property.uri);
 
-        itemProperty.name.push(createText(selectPreferredName(property)));
+        itemProperty.name = [].concat(property.preferredName);
         return itemProperty;
     }
 

@@ -60,6 +60,31 @@ export function selectPreferredName (cp: Category | Property) {
     return cp.preferredName[0].value;
 }
 
+// if there is a value for the default language of the browser, it is returned
+// if there is an english value, it is returned
+// otherwise, the first one is returned
+export function selectPreferredValue(texts:Text[]): string{
+    let defaultLanguage = DEFAULT_LANGUAGE();
+    let englishName = null;
+    for (let text of texts) {
+        if(text.languageID === defaultLanguage) {
+            return text.value;
+        }
+        else if(text.languageID == "en"){
+            englishName = text.value;
+        }
+    }
+
+    if(englishName){
+        return englishName;
+    }
+
+    if (texts.length === 0)
+        return '';
+
+    return texts[0].value;
+}
+
 export function selectName (ip: ItemProperty | Item) {
     let defaultLanguage = DEFAULT_LANGUAGE();
     let englishName = null;
@@ -312,10 +337,11 @@ export function getPropertyValuesAsStrings(property: ItemProperty): string[] {
         case "QUANTITY":
             return property.valueQuantity.map(qty => `${qty.value} ${qty.unitCode}`);
         case "STRING":
-            if (property.value.length === 0)
-                return [''];
-            else
-                return [property.value[0].value];
+            // if (property.value.length === 0)
+            //     return [''];
+            // else
+            //     return [property.value[0].value];
+            return [selectPreferredValue(property.value)];
         case "BOOLEAN":
             if (property.value.length === 0)
                 return ['false'];

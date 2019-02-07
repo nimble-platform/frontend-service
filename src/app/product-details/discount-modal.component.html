@@ -34,7 +34,7 @@
             <h5>{{PRICE_OPTIONS.PRODUCT_PROPERTY.text}}</h5>
             <div class="discount-hr"></div>
             <div *ngFor="let option of productPropertyDiscounts" class="row">
-                <div class="col-3">{{option.additionalItemProperty[0].name}}:
+                <div class="col-3">{{getPropertyName(option.additionalItemProperty[0].name)}}:
                     <span *ngIf="option.additionalItemProperty[0].value.length > 0">{{option.additionalItemProperty[0].value[0]}}</span>
                     <span *ngIf="option.additionalItemProperty[0].valueBinary.length > 0">{{option.additionalItemProperty[0].valueBinary[0]}}</span>
                     <span *ngIf="option.additionalItemProperty[0].valueDecimal.length > 0">{{option.additionalItemProperty[0].valueDecimal[0]}}</span>
