@@ -10,7 +10,7 @@ export class Category {
         public preferredName: Text[] = [],
         public code: string,
         public level: number,
-        public definition: string,
+        public definition: Text[] = [],
         public note: string,
         public remark: string,
         public properties: Property[],
