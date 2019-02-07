@@ -79,7 +79,18 @@ export class ProductDetailsOverviewComponent {
         if(!this.options) {
             return false;
         }
-        const selected = this.options.selectedValues[getPropertyKey(property)] || 0;
+        let selected = null;
+
+        // if there is no selected index for the given property, we should set it to 0.
+        // it is important since we will calculate price options according to the selected properties
+
+        if(this.options.selectedValues[getPropertyKey(property)]){
+            selected = valueIndex;
+            // here, we do not need to update options.selectedValues since onTogglePropertyValue function will handle this.
+        } else {
+            selected = 0;
+            this.options.selectedValues[getPropertyKey(property)] = 0
+        }
         return valueIndex === selected;
     }
 
