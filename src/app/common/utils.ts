@@ -42,22 +42,38 @@ function isItemProperty(property: any): property is ItemProperty {
 }
 
 export function selectPreferredName (cp: Category | Property) {
-    let language = "en";
+    let defaultLanguage = DEFAULT_LANGUAGE();
+    let englishName = null;
     for (let pName of cp.preferredName) {
-        if(pName.languageID === language) {
+        if(pName.languageID === defaultLanguage) {
             return pName.value;
         }
+        else if(pName.languageID == "en"){
+            englishName = pName.value;
+        }
+    }
+
+    if(englishName){
+        return englishName;
     }
 
     return cp.preferredName[0].value;
 }
 
 export function selectName (ip: ItemProperty | Item) {
-    let language = "en";
+    let defaultLanguage = DEFAULT_LANGUAGE();
+    let englishName = null;
     for (let pName of ip.name) {
-        if(pName.languageID === language) {
+        if(pName.languageID === defaultLanguage) {
             return pName.value;
         }
+        else if(pName.languageID == "en"){
+            englishName = pName.value;
+        }
+    }
+
+    if(englishName){
+        return englishName;
     }
 
     if (ip.name.length === 0)
@@ -129,7 +145,7 @@ export function selectPartyName(partyNames:PartyName[]):string{
 }
 
 export function createText (value: string): Text {
-    let language = "en";
+    let language = DEFAULT_LANGUAGE();
     return new Text(value, language);
 }
 
@@ -137,32 +153,26 @@ export function selectDescription (item:  Item) {
     if(item.description.length == 0){
         return null;
     }
-    let language = "en";
+    let defaultLanguage = DEFAULT_LANGUAGE();
+    let englishName = null;
     for (let pName of item.description) {
-        if(pName.languageID === language) {
+        if(pName.languageID === defaultLanguage) {
             return pName.value;
         }
+        else if(pName.languageID == "en"){
+            englishName = pName.value;
+        }
     }
+
+    if(englishName)
+        return englishName;
 
     return item.description[0].value;
 }
 
-export function selectItemPropertyValuesAsText (ip: ItemProperty, language: string): Text[] {
-    if (language === null)
-        language = "en";
-    let result : Text[] = [];
-    for (let pValue of ip.value) {
-        if(pValue.languageID === language) {
-            result.push(pValue);
-        }
-    }
-
-    return result;
-}
-
 export function selectItemPropertyValuesAsString (ip: ItemProperty, language: string): string[] {
     if (language === null)
-        language = "en";
+        language = DEFAULT_LANGUAGE();
     let result : string[] = [];
     for (let pValue of ip.value) {
         if(pValue.languageID === language) {
@@ -258,12 +268,10 @@ export function currencyToString(currencyId: string): string {
 }
 
 export function sortCategories(categories: Category[]): Category[] {
-    let language = "en";
     return categories.sort((a, b) => selectPreferredName(a).localeCompare(selectPreferredName(b)));
 }
 
 export function sortProperties(properties: Property[]): Property[] {
-    let language = "en";
     return properties.sort((a, b) => selectPreferredName(a).localeCompare(selectPreferredName(b)));
 }
 
