@@ -60,29 +60,30 @@ export function selectPreferredName (cp: Category | Property) {
     return cp.preferredName[0].value;
 }
 
-// if there is a value for the default language of the browser, it is returned
-// if there is an english value, it is returned
-// otherwise, the first one is returned
-export function selectPreferredValue(texts:Text[]): string{
+// returns the all values for the default language of the browser
+// if there's no value for the defualt language of the browser, then returns english values if possible
+export function selectPreferredValue(texts:Text[]): string[]{
+    let values = [];
     let defaultLanguage = DEFAULT_LANGUAGE();
-    let englishName = null;
+    let englishValues = [];
     for (let text of texts) {
         if(text.languageID === defaultLanguage) {
-            return text.value;
+            values.push(text.value);
         }
         else if(text.languageID == "en"){
-            englishName = text.value;
+            englishValues.push(text.value);
         }
     }
-
-    if(englishName){
-        return englishName;
+    // there are values for the default language of the browser
+    if(values.length > 0){
+        return values;
+    }
+    // there are english values
+    if(englishValues.length > 0){
+        return englishValues;
     }
 
-    if (texts.length === 0)
-        return '';
-
-    return texts[0].value;
+    return [''];
 }
 
 export function selectName (ip: ItemProperty | Item) {
@@ -337,11 +338,7 @@ export function getPropertyValuesAsStrings(property: ItemProperty): string[] {
         case "QUANTITY":
             return property.valueQuantity.map(qty => `${qty.value} ${qty.unitCode}`);
         case "STRING":
-            // if (property.value.length === 0)
-            //     return [''];
-            // else
-            //     return [property.value[0].value];
-            return [selectPreferredValue(property.value)];
+            return selectPreferredValue(property.value);
         case "BOOLEAN":
             if (property.value.length === 0)
                 return ['false'];

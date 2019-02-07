@@ -459,7 +459,7 @@ export class CategorySearchComponent implements OnInit {
         // Type of the definition field is Text[]. Therefore, we have to use selectPreferredValue method
         // to get proper value of this category property
         if(propName == "definition"){
-            return selectPreferredValue(this.selectedCategoryWithDetails[propName]);
+            return selectPreferredValue(this.selectedCategoryWithDetails[propName])[0];
         }
         return String(this.selectedCategoryWithDetails[propName]);
     }
