@@ -581,8 +581,11 @@ export class BPDataService{
 
             switch(prop.valueQualifier) {
                 case "STRING":
-                    if(prop.value.length > 1) {
-                        prop.value = [prop.value[indexToSelect]];
+                    // Here, possible texts represent the values which can be chosen by the user in the product details page
+                    let possibleTexts = this.getPossibleText(prop);
+                    if(possibleTexts.length > 0){
+                        // instead of possibleTexts, if we use prop variable, property value may be wrong.
+                        prop.value = [possibleTexts[indexToSelect]];
                     }
                     break;
                 case "REAL_MEASURE":
@@ -602,6 +605,32 @@ export class BPDataService{
                     break;
             }
         }
+    }
+
+    // For the given item property, this function returns all values for the default language of the browser
+    // if there's no value for the default language of the browser, it returns english values
+    private getPossibleText(itemProperty:ItemProperty):Text[]{
+        let texts = [];
+        let defaultLanguage = DEFAULT_LANGUAGE();
+        let englishTexts = [];
+        for (let text of itemProperty.value) {
+            if(text.languageID === defaultLanguage) {
+                texts.push(text);
+            }
+            else if(text.languageID == "en"){
+                englishTexts.push(text);
+            }
+        }
+        // there are values for the default language of the browser
+        if(texts.length > 0){
+            return texts;
+        }
+        // there are english values
+        if(englishTexts.length > 0){
+            return englishTexts;
+        }
+
+        return [];
     }
 
     private getItemFromCurrentWorkflow(): Item {
