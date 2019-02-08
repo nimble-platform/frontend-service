@@ -355,37 +355,22 @@ export class ProductPublishComponent implements OnInit {
     private newItemDescription: Text = new Text(null,DEFAULT_LANGUAGE());
     private languages: Array<string> = LANGUAGES;
 
-    addItemNameValue() {
+    addItemNameDescription(){
         let nameText = new Text(this.newItemName.value, this.newItemName.languageID);
-
-        this.catalogueLine.goodsItem.item.name.push(nameText);
-
-        this.newItemName = new Text(null,DEFAULT_LANGUAGE());
-
-        // console.log(" $$$ Item: ", this.catalogueLine.goodsItem.item);
-    }
-
-    deleteItemNameValue(index) {
-        this.catalogueLine.goodsItem.item.name.splice(index, 1);
-
-        // console.log(" $$$ Item: ", this.catalogueLine.goodsItem.item);
-    }
-
-    addItemDescriptionValue() {
         let descriptionText = new Text(this.newItemDescription.value, this.newItemDescription.languageID);
 
+        this.catalogueLine.goodsItem.item.name.push(nameText);
         this.catalogueLine.goodsItem.item.description.push(descriptionText);
 
+        this.newItemName = new Text(null,DEFAULT_LANGUAGE());
         this.newItemDescription = new Text(null,DEFAULT_LANGUAGE());
-
-        // console.log(" $$$ Item: ", this.catalogueLine.goodsItem.item);
     }
 
-    deleteItemDescriptionValue(index) {
+    deleteItemNameDescription(index){
+        this.catalogueLine.goodsItem.item.name.splice(index, 1);
         this.catalogueLine.goodsItem.item.description.splice(index, 1);
-
-        // console.log(" $$$ Item: ", this.catalogueLine.goodsItem.item);
     }
+
     //////
 
     private recomputeSelectedProperties() {
@@ -621,7 +606,6 @@ export class ProductPublishComponent implements OnInit {
                 }
             }
         }
-
         this.recomputeSelectedProperties();
     }
 
