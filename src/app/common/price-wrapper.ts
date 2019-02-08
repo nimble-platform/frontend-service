@@ -6,6 +6,7 @@ import {PriceOption} from '../catalogue/model/publish/price-option';
 import {PRICE_OPTIONS} from '../catalogue/model/constants';
 import {ItemProperty} from '../catalogue/model/publish/item-property';
 import {Address} from '../catalogue/model/publish/address';
+import {Text} from '../catalogue/model/publish/text';
 
 /**
  * Wrapper around a price and a quantity, contains convenience methods to get the total price,
@@ -115,7 +116,7 @@ export class PriceWrapper {
                         if(priceOption.additionalItemProperty.length == 0) {
                             continue;
                         }
-                        if(property.id == priceOption.additionalItemProperty[0].id && priceOption.additionalItemProperty[0].value.indexOf(property.value[0]) != -1){
+                        if(property.id == priceOption.additionalItemProperty[0].id && this.existenceOfPriceOptionForPropertyValue(priceOption.additionalItemProperty[0].value,property.value[0])){
                             priceOption.discount = this.calculateDiscountAmount(priceOption,totalPrice);
                             totalDiscount += priceOption.discount;
                             // add this discount to appliedDiscounts list
@@ -278,5 +279,15 @@ export class PriceWrapper {
         }
 
         return discount;
+    }
+
+    // checks whether there's a price option for the selected property value or not
+    private existenceOfPriceOptionForPropertyValue(priceOptionPropertyValues:Text[],selectedPropertyValue:Text):boolean{
+        for(let property of priceOptionPropertyValues){
+            if(property.value == selectedPropertyValue.value && property.languageID == selectedPropertyValue.languageID){
+                return true;
+            }
+        }
+        return false;
     }
 }
