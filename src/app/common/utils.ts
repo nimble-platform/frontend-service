@@ -234,10 +234,10 @@ export function getPropertyValues(property: ItemProperty): any[] {
         case "INT":
         case "DOUBLE":
         case "NUMBER":
-        case "REAL_MEASURE":
             return property.valueDecimal;
         case "BINARY":
             return property.valueBinary;
+        case "REAL_MEASURE":
         case "QUANTITY":
             return property.valueQuantity;
         case "STRING":
@@ -251,10 +251,10 @@ export function getPropertyValuesAsStrings(property: ItemProperty): string[] {
         case "INT":
         case "DOUBLE":
         case "NUMBER":
-        case "REAL_MEASURE":
             return property.valueDecimal.map(num => String(num));
         case "BINARY":
             return property.valueBinary.map(bin => bin.fileName);
+        case "REAL_MEASURE":
         case "QUANTITY":
             return property.valueQuantity.map(qty => `${qty.value} ${qty.unitCode}`);
         case "STRING":

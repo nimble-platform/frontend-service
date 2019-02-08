@@ -41,7 +41,7 @@ export class AdditionalItemPropertyComponent implements OnInit, OnDestroy {
     addValueToProperty(aipName: string) {
         if (this.additionalItemProperty.valueQualifier == "STRING") {
             this.additionalItemProperty.value.push('');
-        } else if (this.additionalItemProperty.valueQualifier == "REAL_MEASURE") {
+        } else if (this.additionalItemProperty.valueQualifier == "NUMBER") {
             let newNumber: number;
             this.additionalItemProperty.valueDecimal.push(newNumber);
         } else if (this.additionalItemProperty.valueQualifier == "BINARY") {
@@ -75,7 +75,7 @@ export class AdditionalItemPropertyComponent implements OnInit, OnDestroy {
             this.additionalItemProperty.value.splice(index, 1);
             dataSource = this.additionalItemProperty.value;
 
-        } else if (this.additionalItemProperty.valueQualifier == "REAL_MEASURE") {
+        } else if (this.additionalItemProperty.valueQualifier == "NUMBER") {
             this.additionalItemProperty.valueDecimal.splice(index, 1);
             dataSource = this.additionalItemProperty.valueDecimal;
         }

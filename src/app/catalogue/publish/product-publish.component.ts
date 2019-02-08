@@ -389,9 +389,9 @@ export class ProductPublishComponent implements OnInit {
             case "INT":
             case "DOUBLE":
             case "NUMBER":
-            case "REAL_MEASURE":
                 property.valueDecimal.splice(index, 1);
                 break;
+            case "REAL_MEASURE":
             case "QUANTITY":
                 property.valueQuantity.splice(index, 1);
                 break;
@@ -703,8 +703,7 @@ export class ProductPublishComponent implements OnInit {
         let propertiesToBeSpliced: ItemProperty[] = [];
         for (let property of properties) {
             let valueQualifier: string = property.valueQualifier.toLocaleLowerCase();
-            if (valueQualifier == "real_measure" ||
-                valueQualifier == "int" ||
+            if (valueQualifier == "int" ||
                 valueQualifier == "double" ||
                 valueQualifier == "number") {
                 property.valueDecimal = property.valueDecimal.filter(function (el){
@@ -719,7 +718,8 @@ export class ProductPublishComponent implements OnInit {
                     propertiesToBeSpliced.push(property);
                 }
 
-            } else if (valueQualifier.toLowerCase() == 'quantity') {
+            } else if (valueQualifier.toLowerCase() == 'quantity' ||
+                        valueQualifier == "real_measure") {
                 if (property.valueQuantity.length == 0 || !property.valueQuantity[0].value) {
                     propertiesToBeSpliced.push(property);
                 }
@@ -795,7 +795,7 @@ export class ProductPublishComponent implements OnInit {
         if (event.target.value == "Text") {
             this.newProperty.valueQualifier = "STRING";
         } else if (event.target.value == "Number") {
-            this.newProperty.valueQualifier = "REAL_MEASURE";
+            this.newProperty.valueQualifier = "NUMBER";
         } else if (event.target.value == "Image" || event.target.value == "File") {
             this.newProperty.valueQualifier = "BINARY";
         } else if(event.target.value == "Quantity"){
@@ -891,7 +891,7 @@ export class ProductPublishComponent implements OnInit {
             this.newProperty.valueBinary = [];
             this.newProperty.valueQuantity = [];
 
-        } else if (this.newProperty.valueQualifier == "REAL_MEASURE") {
+        } else if (this.newProperty.valueQualifier == "NUMBER") {
             let filledValues: number[] = [];
             for (let val of this.newProperty.valueDecimal) {
                 if (val != undefined && val != null && val.toString() != "") {

@@ -578,7 +578,7 @@ export class BPDataService{
                         prop.value = [prop.value[indexToSelect]];
                     }
                     break;
-                case "REAL_MEASURE":
+                case "NUMBER":
                     if(prop.valueDecimal.length > 1) {
                         prop.valueDecimal = [prop.valueDecimal[indexToSelect]];
                     }
@@ -653,7 +653,7 @@ export class BPDataService{
                             }
                         }
                         break;
-                    case "REAL_MEASURE":
+                    case "NUMBER":
                         if(prop.valueDecimal.length > 1) {
                             if(prop.valueDecimal.length > 1) {
                                 for(let valIndex = 0; valIndex < prop.valueDecimal.length; valIndex++) {
