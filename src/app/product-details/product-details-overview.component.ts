@@ -85,7 +85,7 @@ export class ProductDetailsOverviewComponent {
         // it is important since we will calculate price options according to the selected properties
 
         if(this.options.selectedValues[getPropertyKey(property)]){
-            selected = valueIndex;
+            selected = this.options.selectedValues[getPropertyKey(property)];
             // here, we do not need to update options.selectedValues since onTogglePropertyValue function will handle this.
         } else {
             selected = 0;
