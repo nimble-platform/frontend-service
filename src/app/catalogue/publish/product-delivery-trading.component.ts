@@ -20,7 +20,7 @@ export class ProductDeliveryTradingComponent implements OnInit {
     }
 
     ngOnInit() {
-        if(this.wrapper.line.goodsItem.deliveryTerms.specialTerms == null){
+        if(this.wrapper.line.goodsItem.deliveryTerms.specialTerms == null || this.wrapper.line.goodsItem.deliveryTerms.specialTerms.length == 0){
             this.wrapper.line.goodsItem.deliveryTerms.specialTerms = [new Text(null,DEFAULT_LANGUAGE())];
         }
     }
