@@ -6,12 +6,14 @@
             <!-- Categories -->
             <strong>Categories:</strong><br/>
             <div class="d-flex flex-wrap">
-              <div *ngFor="let classification of getClassifications()" >
+              <div *ngFor="let name of classificationNames" >
                   <div class="rounded px-1 inline space-left" style="color:#919191; border:1px solid #919191;">
-                      {{classification.itemClassificationCode.name}}
+                      {{name}}
                   </div>
               </div>
             </div>
+            <call-status [callStatus]="getClassificationNamesStatus">
+            </call-status>
         </div>
     </div>
     <div class="row">

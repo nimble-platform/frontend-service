@@ -20,6 +20,34 @@ export class CategoryService {
                 private cookieService: CookieService) {
     }
 
+    private cachedCategories:Map<string,Category> = new Map<string, Category>();
+
+    getCachedCategories(codes:Code[]): Promise<Category[]> {
+        if(codes.length == 0){
+            return Promise.resolve([]);
+        }
+        let categories:Category[] = [];
+        let missingCodes:Code[] = [];
+        for(let code of codes){
+            if (this.cachedCategories.has(code.uri)){
+                categories.push(this.cachedCategories.get(code.uri));
+            }else {
+                missingCodes.push(code);
+            }
+        }
+        if(missingCodes.length > 0){
+            return this.getCategoriesByIds(missingCodes).then(cats => {
+                for(let category of cats){
+                    this.cachedCategories.set(category.categoryUri,category);
+                }
+
+                return categories.concat(cats);
+            })
+        } else {
+            return Promise.resolve(categories);
+        }
+    }
+
     getCategoriesByName(keyword: string, taxonomyId: string,isLogistics: boolean): Promise<Category[]> {
         const url = `${this.baseUrl}/taxonomies/${taxonomyId}/categories?name=${keyword}&forLogistics=${isLogistics}`;
         return this.http

@@ -1,18 +1,21 @@
-import { Component, Input } from "@angular/core";
+import {Component, Input, OnInit} from '@angular/core';
 import { ProductWrapper } from "../common/product-wrapper";
 import { CommodityClassification } from "../catalogue/model/publish/commodity-classification";
 import { ItemProperty } from "../catalogue/model/publish/item-property";
 import { BpWorkflowOptions } from "../bpe/model/bp-workflow-options";
-import {getPropertyKey, getPropertyValuesAsStrings, selectName} from '../common/utils';
+import {getPropertyKey, getPropertyValuesAsStrings, selectName, selectPreferredName} from '../common/utils';
 import {Item} from '../catalogue/model/publish/item';
 import {UBLModelUtils} from '../catalogue/model/ubl-model-utils';
+import {CategoryService} from '../catalogue/category/category.service';
+import {Code} from '../catalogue/model/publish/code';
+import {CallStatus} from '../common/call-status';
 
 @Component({
     selector: 'product-details-overview',
     templateUrl: './product-details-overview.component.html',
     styleUrls: ['./product-details-overview.component.css']
 })
-export class ProductDetailsOverviewComponent {
+export class ProductDetailsOverviewComponent implements OnInit{
 
     @Input() wrapper: ProductWrapper;
     @Input() options: BpWorkflowOptions;
@@ -21,11 +24,24 @@ export class ProductDetailsOverviewComponent {
     selectedImage: number = 0;
     manufacturerPartyName:string = null;
 
+    getClassificationNamesStatus: CallStatus = new CallStatus();
+    classificationNames = [];
     
-    constructor() {
+    constructor(public categoryService:CategoryService) {
         if(this.wrapper){
             this.manufacturerPartyName = UBLModelUtils.getPartyDisplayName(this.wrapper.item.manufacturerParty);
         }
+    }
+
+    ngOnInit(){
+        // get codes of the commodity classifications
+        let codes:Code[] = [];
+        let classifications = this.getClassifications();
+        for(let classification of classifications){
+            codes.push(classification.itemClassificationCode);
+        }
+        // get names of the commodity classifications
+        this.getClassificationNames(codes);
     }
 
     getClassifications(): CommodityClassification[] {
@@ -96,5 +112,17 @@ export class ProductDetailsOverviewComponent {
 
     getValuesAsString(property: ItemProperty): string[] {
         return getPropertyValuesAsStrings(property);
+    }
+
+    getClassificationNames(codes:Code[]){
+        this.getClassificationNamesStatus.submit();
+        this.categoryService.getCachedCategories(codes).then(categories => {
+            for(let category of categories){
+                this.classificationNames.push(selectPreferredName(category));
+            }
+            this.getClassificationNamesStatus.callback(null);
+        }).catch(error => {
+            this.getClassificationNamesStatus.error("Failed to get classification names",error);
+        })
     }
 }
