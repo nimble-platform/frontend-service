@@ -42,7 +42,7 @@ export class SimpleSearchService {
 		else {
         	url += "?";
 		}
-        url += "fl=label_" + DEFAULT_LANGUAGE() +",idxField";
+        url += "fl=label_*,idxField";
         url += "&json.nl=map&wt=json&rows="+facets.length;
         return this.http
             .get(url, {headers: this.headers})

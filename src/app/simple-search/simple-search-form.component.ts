@@ -450,15 +450,24 @@ export class SimpleSearchFormComponent implements OnInit {
         for(let property of properties){
             if(property["idxField"].indexOf(name) != -1){
                 // get label key
-                let objectFields = Object.keys(property);
+                let objectKeys = Object.keys(property);
 
-                if(objectFields.length < 2){
+                if(objectKeys.length < 2){
                     // we do not have a specific label for this facet
                     break;
                 }
 
-                objectFields.splice(objectFields.indexOf("idxField"),1);
-                let labelField = objectFields[0];
+                let defaultLanguage = DEFAULT_LANGUAGE();
+
+                if(objectKeys.indexOf("label_"+defaultLanguage) != -1){
+                	return property["label_"+defaultLanguage][0];
+				}
+				else if(objectKeys.indexOf("label_en") != -1){
+                    return property["label_en"][0];
+				}
+
+                objectKeys.splice(objectKeys.indexOf("idxField"),1);
+                let labelField = objectKeys[0];
                 return property[labelField][0];
             }
         }
