@@ -70,6 +70,7 @@ export class CompanyDeliveryTermsComponent implements OnInit {
                     console.log(`Saved Company Settings for user ${userId}. Response: ${response}`);
                 }
                 this.saveCallStatus.callback("Successfully saved", true);
+                this.settingsForm.markAsPristine();
                 this.onSaveEvent.emit();
             })
             .catch(error => {

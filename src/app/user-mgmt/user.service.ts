@@ -238,6 +238,30 @@ export class UserService {
         });
     }
 
+    putSettingsForParty(rawSettings: CompanySettings, partyId: string): Promise<any> {
+        const settings = { ...rawSettings };
+        delete settings.negotiationSettings;
+        const url = `${this.url}/company-settings/${partyId}`;
+        const token = 'Bearer '+this.cookieService.get("bearer_token");
+        const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
+        return this.http
+            .put(url, settings, {headers: headers_token, withCredentials: true})
+            .toPromise()
+            .then(response => response.json())
+            .catch(this.handleError)
+    }
+
+    validateVAT(vat:string): Promise<any> {
+      var vat_url = vat.replace(/ /g,"");
+      const url = `${this.url}/company-settings/vat/${vat_url}`;
+      const headers = new Headers({'Content-Type': 'application/json'});
+      return this.http
+          .get(url, {headers: headers})
+          .toPromise()
+          .then(res => res.json())
+          .catch(this.handleError);
+    }
+
     getPrefCat(userId: string): Promise<any> {
       return this.getSettingsForUser(userId).then(settings => settings.preferredProductCategories);
     }

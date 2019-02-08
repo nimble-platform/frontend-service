@@ -144,7 +144,7 @@ export class DispatchAdviceComponent implements OnInit {
         UBLModelUtils.removeHjidFieldsFromObject(dispatchAdvice);
 
         let vars: ProcessVariables = ModelUtils.createProcessVariables(
-            "Fulfilment", 
+            "Fulfilment",
             UBLModelUtils.getPartyId(dispatchAdvice.despatchSupplierParty.party),
             UBLModelUtils.getPartyId(dispatchAdvice.deliveryCustomerParty.party),
             this.cookieService.get("user_id"),
@@ -157,7 +157,10 @@ export class DispatchAdviceComponent implements OnInit {
         this.bpeService.startBusinessProcess(piim)
             .then(res => {
                 this.callStatus.callback("Dispatch Advice sent", true);
-                this.router.navigate(['dashboard']);
+                var tab = "PUCHASES";
+                if (this.bpDataService.bpStartEvent.userRole == "seller")
+                  tab = "SALES";
+                this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
             })
             .catch(error => {
                 this.callStatus.error("Failed to send Dispatch Advice", error);
@@ -173,7 +176,10 @@ export class DispatchAdviceComponent implements OnInit {
             .then(() => {
                 this.documentService.updateCachedDocument(dispatchAdvice.id,dispatchAdvice);
                 this.callStatus.callback("Dispatch Advice updated", true);
-                this.router.navigate(['dashboard']);
+                var tab = "PURCHASES";
+                if (this.bpDataService.bpStartEvent.userRole == "seller")
+                  tab = "SALES";
+                this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
             })
             .catch(error => {
                 this.callStatus.error("Failed to update Dispatch Advice", error);

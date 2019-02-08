@@ -100,7 +100,10 @@ export class NegotiationResponseComponent implements OnInit {
         this.bpeService.continueBusinessProcess(piim)
             .then(res => {
                 this.callStatus.callback("Quotation sent", true);
-                this.router.navigate(['dashboard']);
+                var tab = "PUCHASES";
+                if (this.bpDataService.bpStartEvent.userRole == "seller")
+                  tab = "SALES";
+                this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
             })
             .catch(error => {
                 this.callStatus.error("Failed to send quotation", error);

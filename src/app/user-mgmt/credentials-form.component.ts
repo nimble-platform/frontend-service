@@ -39,6 +39,13 @@ export class CredentialsFormComponent implements OnInit {
 			else
 				this.appComponent.checkLogin("/dashboard");
 		}
+		else {
+			setTimeout(function() {
+				var input = document.getElementById("email");
+				if (input)
+					input.focus();
+			},100);
+		}
 	}
 
 	post(credentials: Credentials): void {

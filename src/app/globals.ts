@@ -49,8 +49,8 @@ export const pw_reset_link = "http://nimble-staging.salzburgresearch.at:8080/aut
 // Service endpoints
 
 export const user_mgmt_endpoint=`${base_path}/identity`;
-export const catalogue_endpoint=`http://localhost:8095`;
-export const bpe_endpoint=`http://localhost:8081`;
+export const catalogue_endpoint=`${base_path}/catalog`;
+export const bpe_endpoint=`${base_path}/business-process`;
 export const data_channel_endpoint=`${base_path}/data-channel`;
 export const data_aggregation_endpoint=`${base_path}/data-aggregation`;
 export const trust_service_endpoint=`${base_path}/trust`;
@@ -81,6 +81,19 @@ export const tntAnalysisEndpoint = `${base_path}/tnt/simpleTrackingAnalysis`;
 
 export const config = {
   "companyRegistrationRequired": false,
+  "categoryFilter": {
+    "eClass": {
+      "hiddenCategories": [],
+      "logisticsCategory": "14000000",
+      "ontologyPrefix": "http://www.nimble-project.org/resource/eclass/"
+    },
+    "FurnitureOntology": {
+      "hiddenCategories": ["Catalogue","Company","ContactPerson","Guarantee","Price","Process","Standard","Style","Technique"],
+      "logisticsCategory": "LogisticsService",
+      "ontologyPrefix": "http://www.aidimme.es/FurnitureSectorOntology.owl#"
+    }
+  },
+  "imprint": "<u>Platform Owner & Provider</u><br/><b>Salzburg Research Forschungsgesellschaft m.b.H.</b><br/>Jakob Haringer Straße 5/3<br/>5020 Salzburg, Austria<br/>Phone: +43.662.2288.200<br/>Fax: +43.662.2288.222<br/>E-Mail: <a href='mailto:info@salzburgresearch.at'>info@salzburgresearch.at</a><br/>Internet: <a href='https://www.salzburgresearch.at' target='_blank'>www.salzburgresearch.at</a><br/>Managing Director: Siegfried Reich<br/>Registry Number: LG Salzburg (FN 149016 t)<br/>UID: ATU 41145408<br/>Content Officer: Siegfried Reich<br/>Owner: State of Salzburg (100%)",
   "logoPath": "./assets/logo_mvp.png",
   "logoRequired": false,
   "requiredAgreements": [

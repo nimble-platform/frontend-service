@@ -112,7 +112,10 @@ export class ItemInformationRequestComponent implements OnInit {
         })
         .then(() => {
             this.callStatus.callback("Item Information Request sent", true);
-            this.router.navigate(['dashboard']);
+            var tab = "PUCHASES";
+            if (this.bpDataService.bpStartEvent.userRole == "seller")
+              tab = "SALES";
+            this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
         })
         .catch(error => {
             this.callStatus.error("Failed to send Item Information Request", error);
@@ -127,7 +130,10 @@ export class ItemInformationRequestComponent implements OnInit {
             .then(() => {
                 this.documentService.updateCachedDocument(itemInformationRequest.id,itemInformationRequest);
                 this.callStatus.callback("Item Information Request updated", true);
-                this.router.navigate(['dashboard']);
+                var tab = "PUCHASES";
+                if (this.bpDataService.bpStartEvent.userRole == "seller")
+                  tab = "SALES";
+                this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
             })
             .catch(error => {
                 this.callStatus.error("Failed to update Item Information Request", error);

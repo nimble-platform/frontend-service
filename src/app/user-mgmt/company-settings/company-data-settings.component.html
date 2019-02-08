@@ -1,59 +1,117 @@
-<!-- Legal Name -->
-<text-input label="Company Name" [disabled]="true" [rows]="1" [text]="selectValueOfTextObject(settings.details.legalName)"
-    labelClass="col-2" labelMainClass="col-form-label" valueClass="col-10" rowClass="space-before">
-</text-input>
+<form [formGroup]="dataForm" novalidate (ngSubmit)="save(dataForm)">
 
-<!-- VAT Number -->
-<text-input label="VAT Number" [disabled]="true" [rows]="1" [text]="settings.details.vatNumber"
-    labelClass="col-2" labelMainClass="col-form-label" valueClass="col-10" rowClass="space-before">
-</text-input>
+  <div *ngIf="!alertClosed && !appComponent.checkRoles('pm')">
+    <p class="space-before">
+      <ngb-alert type="info" (close)="alertClosed=true">
+        Mandatory and already submitted data during the registration can only be changed after re-validation by a platform manager.
+      </ngb-alert>
+    </p>
+  </div>
 
-<!-- Verification Info -->
-<div *ngIf="config.showVerification" class="form-group row space-before">
-    <label class="col-2 col-form-label">
-        <strong>Verification Info:</strong>
-        <span class="tooltip-icon" (click)="showVerificationTT(tooltip)"><i class="fa fa-question-circle"></i></span>
-    </label>
-    <div class="col-10">
-        <input type="text" class="form-control" [ngModel]="settings.details.verificationInformation" readonly>
-    </div>
-</div>
+	<!-- Legal Name -->
+	<div class="form-group row space-before">
+		<label class="col-2 col-form-label">
+			<strong>Company Name:</strong>
+		</label>
+		<div class="col-10">
+			<input type="text" class="form-control" name="companyName" [formControl]="dataForm.controls['name']" required maxlength="255">
+		</div>
+	</div>
 
-<!-- Business Type -->
-<text-input label="Business Type" [disabled]="true" [rows]="1" [text]="settings.details.businessType"
-    labelClass="col-2" labelMainClass="col-form-label" valueClass="col-10" rowClass="space-before">
-</text-input>
+	<!-- VAT Number -->
+	<div class="form-group row">
+		<label class="col-2 col-form-label">
+			<strong>VAT Number:</strong>
+		</label>
+		<div class="col-10">
+			<input type="text" class="form-control" [formControl]="dataForm.controls['vatNumber']" required maxlength="255">
+		</div>
+	</div>
 
-<!-- Industry Sectors -->
-<text-input label="Activity Sectors" [disabled]="true" [rows]="1" [text]="settings.details.industrySectors[0]"
-    labelClass="col-2" labelMainClass="col-form-label" valueClass="col-10" rowClass="space-before">
-</text-input>
+	<!-- Verification Info -->
+	<div *ngIf="config.showVerification" class="form-group row">
+		<label class="col-2 col-form-label">
+			<span>
+				<strong>Verification Info:</strong>
+			</span>
+			<span class="tooltip-icon" (click)="showVerificationTT(tooltip)"><i class="fa fa-question-circle"></i></span>
+		</label>
+		<div class="col-10">
+			<input type="text" class="form-control" [formControl]="dataForm.controls['verificationInformation']" maxlength="255">
+		</div>
+	</div>
 
-<!-- Business Keywords -->
-<text-input label="Business Keywords" [disabled]="true" [rows]="1" [text]="selectValueOfTextObject(settings.details.businessKeywords)"
-    labelClass="col-2" labelMainClass="col-form-label" valueClass="col-10" rowClass="space-before">
-</text-input>
+	<!-- Business Type -->
+	<div class="form-group row">
+		<label class="col-2 col-form-label">
+			<strong>Business Type:</strong>
+		</label>
+		<div class="col-10">
+			<select class="form-control" [formControl]="dataForm.controls['businessType']" required>
+				<option *ngFor="let type of config.supportedBusinessTypes" value="{{type}}">{{type}}</option>
+			</select>
+		</div>
+	</div>
 
-<!-- Year of Company Registration -->
-<text-input label="Year of Foundation" [disabled]="true" [rows]="1" [text]="settings.details.yearOfCompanyRegistration"
-    labelClass="col-2" labelMainClass="col-form-label" valueClass="col-10" rowClass="space-before">
-</text-input>
+	<!-- Industry Sectors -->
+	<div class="form-group row">
+		<label class="col-2 col-form-label">
+			<strong>Activity Sectors:</strong>
+			<span *ngIf="config.supportedActivitySectors[dataForm.getRawValue()['businessType']].length>0" class="tooltip-icon" (click)="showSectorTT(tooltip)"><i class="fa fa-question-circle"></i></span>
+		</label>
+		<div class="col-10">
+			<input *ngIf="dataForm.getRawValue()['businessType'] == ''" type="text" class="form-control" [formControl]="dataForm.controls['industrySectors']" placeholder="Select Business Type" required readonly maxlength="255">
+			<select *ngIf="config.supportedActivitySectors[dataForm.getRawValue()['businessType']] && config.supportedActivitySectors[dataForm.getRawValue()['businessType']].length>0" class="form-control" [formControl]="dataForm.controls['industrySectors']" multiple required>
+				<option *ngFor="let sector of config.supportedActivitySectors[dataForm.getRawValue()['businessType']]">{{sector}}</option>
+				<option>Other</option>
+			</select>
+			<input *ngIf="dataForm.getRawValue()['businessType'] != '' && (!config.supportedActivitySectors[dataForm.getRawValue()['businessType']] || config.supportedActivitySectors[dataForm.getRawValue()['businessType']].length==0)" type="text" class="form-control" [formControl]="dataForm.controls['industrySectors']" placeholder="Separate entries using ','" required maxlength="255">
+		</div>
+	</div>
 
-<hr>
+	<!-- Business Keywords -->
+	<div class="form-group row">
+		<label class="col-2 col-form-label">
+			<strong>Business Keywords:</strong>
+			<span class="tooltip-icon" (click)="showKeywordsTT(tooltip)"><i class="fa fa-question-circle"></i></span>
+		</label>
+		<div class="col-10">
+			<input type="text" class="form-control" [formControl]="dataForm.controls['businessKeywords']" placeholder="Separate entries using ','" maxlength="255">
+		</div>
+	</div>
 
-<!-- Address -->
-<h4>Address</h4>
-<address-input-simple [address]="settings.details.address" [disabled]=true></address-input-simple>
+	<!-- Year of Comp. Reg. -->
+	<div class="form-group row">
+		<label class="col-2 col-form-label">
+			<strong>Year of Foundation:</strong>
+		</label>
+		<div class="col-10">
+			<input type="number" class="form-control" [formControl]="dataForm.controls['yearOfReg']">
+		</div>
+	</div>
 
-<!-- Request change button -->
-<div class="row actions-row pr-0 space-before">
-    <div class="col-9 call-status-col"></div>
-    <div class="col-3">
+  <hr>
+
+  <h3>Address</h3>
+
+	<!-- Address -->
+	<address-form [group]="dataForm.controls.address" [disabledFlag]="!appComponent.checkRoles('pm')"></address-form>
+
+	<!-- Submit -->
+	<div class="row actions-row">
+		<div class="col-7 call-status-col" [ngClass]="{'col-7':!appComponent.checkRoles('pm'),'col-10':appComponent.checkRoles('pm')}">
+			<call-status [callStatus]="saveCallStatus" [large]="true"></call-status>
+		</div>
+    <div *ngIf="!appComponent.checkRoles('pm')" class="col-3">
         <button class="btn btn-primary action" type="button" (click)="changeData(changeModal)">
             <span>Request Company Data Change</span>
         </button>
     </div>
-</div>
+		<div class="col-2">
+			<button class="btn btn-primary action" type="submit" [disabled]="!dataForm.valid || !dataForm.dirty || saveCallStatus.isLoading()">Save</button>
+		</div>
+	</div>
+</form>
 
 <!-- Change Modal -->
 <ng-template #changeModal let-d="dismiss">

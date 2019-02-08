@@ -60,7 +60,7 @@ export class SimpleSearchService {
             .catch(this.handleError);
     }
 
-	get(query: string, facets: [string], facetQueries: [string], page: number, cat: string): Promise<any> {
+	get(query: string, facets: [string], facetQueries: [string], page: number, cat: string, catID: string): Promise<any> {
 		query = query.replace(/[!'()]/g, '');
 		var start = page*10-10;
 		const url = `${this.url}/select?q=${query}&start=${start}&facet=true&sort=score%20desc&rows=10&facet.sort=count&facet.mincount=${this.facetMin}&json.nl=map&wt=json`;
@@ -74,7 +74,7 @@ export class SimpleSearchService {
 			full_url += "&fq="+encodeURIComponent(facetQuery);
 		}
 		if (cat != "") {
-			var add_url = `${this.product_cat}:"${cat}"`;
+			var add_url = `${this.product_cat_mix}:"${catID}:${cat}"`;
 			full_url += "&fq="+encodeURIComponent(add_url);
 		}
 		return this.http

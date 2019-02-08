@@ -52,6 +52,15 @@
   </div>
 </div>
 
+<div *ngIf="appComponent.checkRoles('pm') && !initCallStatus.isLoading() && details.details.vatNumber && details.details.vatNumber != ''" class="row actions-row pr-0">
+  <div class="col-10 call-status-col">
+    <call-status [callStatus]="vatCallStatus" [large]="true"></call-status>
+  </div>
+  <div class="col-2">
+    <button class="btn btn-primary action" type="button" [disabled]="vatCallStatus.isLoading()" (click)="validateVAT()">Check VAT</button>
+  </div>
+</div>
+
 <div *ngIf="details" class="row">
   <div class="col-12">
     <hr>

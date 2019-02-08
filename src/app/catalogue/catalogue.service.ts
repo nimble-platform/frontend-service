@@ -107,14 +107,6 @@ export class CatalogueService {
             .catch(this.handleError);
     }
 
-    putCatalogue(catalogue: Catalogue): Promise<Catalogue> {
-        const url = this.baseUrl + `/catalogue/ubl`;
-        return this.http
-            .put(url, JSON.stringify(catalogue), {headers: this.getAuthorizedHeaders()})
-            .toPromise()
-            .catch(this.handleError);
-    }
-
     deleteCatalogue():Promise<any> {
         const token = 'Bearer '+this.cookieService.get("bearer_token");
         const url = this.baseUrl + `/catalogue/ubl/${this.catalogue.uuid}`;

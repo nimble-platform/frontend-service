@@ -708,23 +708,15 @@ export class ProductPublishComponent implements OnInit {
         this.catalogueLine = splicedCatalogueLine
 
         this.publishStatus.submit();
-        if (this.catalogueService.catalogue.uuid == null) {
-            this.catalogueService.postCatalogue(this.catalogueService.catalogue)
-                .then(() => this.onSuccessfulPublish())
-                .then(() => this.changePublishModeToCreate())
-                .catch(err => {
-                    this.catalogueService.catalogue.catalogueLine[indexOfOriginalLine] = originalLine;
-                    this.onFailedPublish(err);
-                });
-        } else {
-            this.catalogueService.updateCatalogueLine(this.catalogueService.catalogue.uuid,JSON.stringify(splicedCatalogueLine))
-                .then(() => this.onSuccessfulPublish())
-                .then(() => this.changePublishModeToCreate())
-                .catch(err => {
-                    this.catalogueService.catalogue.catalogueLine[indexOfOriginalLine] = originalLine;
-                    this.onFailedPublish(err);
-                });
-        }
+
+        this.catalogueService.updateCatalogueLine(this.catalogueService.catalogue.uuid,JSON.stringify(splicedCatalogueLine))
+            .then(() => this.onSuccessfulPublish())
+            .then(() => this.changePublishModeToCreate())
+            .catch(err => {
+                this.catalogueService.catalogue.catalogueLine[indexOfOriginalLine] = originalLine;
+                this.onFailedPublish(err);
+            });
+
     }
 
     // changes publishMode to create

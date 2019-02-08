@@ -117,7 +117,10 @@ export class NegotiationRequestComponent implements OnInit {
             })
             .then(() => {
                 this.callStatus.callback("Terms sent", true);
-                this.router.navigate(['dashboard']);
+                var tab = "PUCHASES";
+                if (this.bpDataService.bpStartEvent.userRole == "seller")
+                  tab = "SALES";
+                this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
             })
             .catch(error => {
                 this.callStatus.error("Failed to send Terms", error);
@@ -137,7 +140,10 @@ export class NegotiationRequestComponent implements OnInit {
             .then(() => {
                 this.documentService.updateCachedDocument(rfq.id,rfq);
                 this.callStatus.callback("Terms updated", true);
-                this.router.navigate(['dashboard']);
+                var tab = "PUCHASES";
+                if (this.bpDataService.bpStartEvent.userRole == "seller")
+                  tab = "SALES";
+                this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
             })
             .catch(error => {
                 this.callStatus.error("Failed to update Terms", error);

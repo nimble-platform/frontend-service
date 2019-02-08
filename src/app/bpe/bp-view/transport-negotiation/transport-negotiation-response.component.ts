@@ -33,7 +33,7 @@ export class TransportNegotiationResponseComponent implements OnInit {
     @Input() quotation: Quotation;
     quotationPrice: PriceWrapper;
     quotationPaymentTerms: PaymentTermsWrapper;
-    
+
     @Input() readonly: boolean = false;
 
     selectedTab: string = "OVERVIEW";
@@ -118,7 +118,10 @@ export class TransportNegotiationResponseComponent implements OnInit {
         this.bpeService.continueBusinessProcess(piim)
             .then(res => {
                 this.callStatus.callback("Quotation sent", true);
-                this.router.navigate(['dashboard']);
+                var tab = "PUCHASES";
+                if (this.bpDataService.bpStartEvent.userRole == "seller")
+                  tab = "SALES";
+                this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
             })
             .catch(error => {
                 this.callStatus.error("Failed to send quotation", error);

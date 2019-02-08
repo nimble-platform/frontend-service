@@ -48,7 +48,7 @@ export class TransportExecutionPlanComponent implements OnInit {
                 private router: Router,
                 private documentService: DocumentService,
                 private route: ActivatedRoute) {
-        
+
     }
 
     ngOnInit() {
@@ -147,7 +147,10 @@ export class TransportExecutionPlanComponent implements OnInit {
         })
         .then(() => {
             this.callStatus.callback("Transport Execution Plan sent", true);
-            this.router.navigate(['dashboard']);
+            var tab = "PUCHASES";
+            if (this.bpDataService.bpStartEvent.userRole == "seller")
+              tab = "SALES";
+            this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
         })
         .catch(error => {
             this.callStatus.error("Failed to send Transport Execution Plan", error);
@@ -162,7 +165,10 @@ export class TransportExecutionPlanComponent implements OnInit {
             .then(() => {
                 this.documentService.updateCachedDocument(transportationExecutionPlanRequest.id,transportationExecutionPlanRequest);
                 this.callStatus.callback("Item Information Request updated", true);
-                this.router.navigate(['dashboard']);
+                var tab = "PUCHASES";
+                if (this.bpDataService.bpStartEvent.userRole == "seller")
+                  tab = "SALES";
+                this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
             })
             .catch(error => {
                 this.callStatus.error("Failed to update Item Information Request", error);
@@ -177,7 +183,7 @@ export class TransportExecutionPlanComponent implements OnInit {
             UBLModelUtils.getPartyId(this.bpDataService.transportExecutionPlan.transportServiceProviderParty),
             this.cookieService.get("user_id"),
             this.bpDataService.transportExecutionPlan, this.bpDataService);
-        const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, 
+        const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars,
             this.processMetadata.processId);
 
         this.callStatus.submit();
