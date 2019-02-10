@@ -7,7 +7,7 @@ import {Category} from "../model/category/category";
 import * as myGlobals from '../../globals';
 import {Code} from "../model/publish/code";
 import { ParentCategories } from '../model/category/parent-categories';
-import { sortCategories, getAuthorizedHeaders } from '../../common/utils';
+import {sortCategories, getAuthorizedHeaders, selectPreferredName} from '../../common/utils';
 import {CookieService} from "ng2-cookies";
 
 @Injectable()
@@ -46,6 +46,11 @@ export class CategoryService {
         } else {
             return Promise.resolve(categories);
         }
+    }
+
+    // This function assumes that category with the given uri is already cached.
+    getCachedCategoryName(uri:string):string{
+        return selectPreferredName(this.cachedCategories.get(uri));
     }
 
     getCategoriesByName(keyword: string, taxonomyId: string,isLogistics: boolean): Promise<Category[]> {
