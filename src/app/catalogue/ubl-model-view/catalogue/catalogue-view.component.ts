@@ -33,7 +33,7 @@ export class CatalogueViewComponent implements OnInit {
     searchKey : string = "";
 
     // categories
-    typeOfProducts : any = [];
+    categoryNames : any = [];
     selectedType = "All";
 
     // necessary info for pagination
@@ -99,25 +99,17 @@ export class CatalogueViewComponent implements OnInit {
 
     private init(): void {
         let len = this.catalogueResponse.catalogueLines.length;
+        this.categoryNames = this.catalogueResponse.categoryNames;
         this.collectionSize = this.catalogueResponse.size;
         this.catalogueLinesArray = [...this.catalogueResponse.catalogueLines].reverse();
         this.catalogueLinesWRTTypes = this.catalogueLinesArray;
         let i = 0;
-        this.typeOfProducts = [];
         this.selectedType = "All";
         this.searchKey = "";
         this.sortOption = null;
-        // Initialize catalogueLineView and typeOfProducts
+        // Initialize catalogueLineView
         for(;i<len;i++){
             this.catalogueLineView[this.catalogueResponse.catalogueLines[i].id] = false;
-
-            let j = 0;
-            let lenOfCom = this.catalogueResponse.catalogueLines[i].goodsItem.item.commodityClassification.length;
-            for(;j<lenOfCom;j++){
-                if(this.typeOfProducts.indexOf(this.catalogueResponse.catalogueLines[i].goodsItem.item.commodityClassification[j].itemClassificationCode.name) <= -1){
-                    this.typeOfProducts.push(this.catalogueResponse.catalogueLines[i].goodsItem.item.commodityClassification[j].itemClassificationCode.name);
-                }
-            }
         }
     }
 

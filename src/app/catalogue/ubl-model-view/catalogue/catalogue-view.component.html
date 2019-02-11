@@ -13,7 +13,7 @@
             </label>
             <select  class="custom-select col-3 space-right" [(ngModel)]="selectedType" (change)="typeChanged()">
                 <option>All</option>
-                <option *ngFor="let type of typeOfProducts">{{type}}</option>
+                <option *ngFor="let type of categoryNames">{{type}}</option>
             </select>
 
             <label class="space-right"><strong>Sort by:</strong>
