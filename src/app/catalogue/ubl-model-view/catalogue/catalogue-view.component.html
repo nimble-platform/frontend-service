@@ -4,8 +4,8 @@
     </call-status>
 </div>
 
-<div *ngIf="catalogue && catalogue.catalogueLine.length > 0">
-    <div *ngIf="catalogue.catalogueLine.length > 0">
+<div *ngIf="catalogueResponse && catalogueResponse.size > 0">
+    <div *ngIf="catalogueResponse.catalogueLines.length > 0">
         <div class="input-group form-group" style="background-color:#F2F2F2;padding-left: 25px;padding-top: 20px;padding-bottom: 20px;">
             <input  class="form-control col-3" type="text" [(ngModel)]="searchKey" (keyup)="search()" placeholder="Search ...">
 
@@ -50,10 +50,10 @@
         </div>
 
         <div *ngIf="catalogueLinesArray.length > 0" class="pagination justify-content-center space-before">
-            <ngb-pagination [(collectionSize)]="collectionSize" [(pageSize)]="pageSize" [(page)]="page" [maxSize]="5" [boundaryLinks]="true"></ngb-pagination>
+            <ngb-pagination [(collectionSize)]="collectionSize" [(pageSize)]="pageSize" [(page)]="page" [maxSize]="5" [boundaryLinks]="true" (pageChange)="onPageChanged()"></ngb-pagination>
         </div>
 
-        <div *ngFor="let catLine of catalogueLinesArray.slice((page-1)*pageSize,page*pageSize); let i = index" class="space-before">
+        <div *ngFor="let catLine of catalogueLinesArray; let i = index" class="space-before">
             <div class="card pointer">
                 <div class="card-body">
                     <div class="row" *ngIf="!catalogueLineView[catLine.id]" (click)="catalogueLineView[catLine.id]=true">
@@ -95,18 +95,19 @@
                     <catalogue-line-panel [catalogueLine]="catLine"
                                           [settings]="settings"
                                           [presentationMode]="'view'"
+                                          (catalogueLineDeleted)="deleteCatalogueLine(catLine,i)"
                                           [(show)]="catalogueLineView[catLine.id]">
                     </catalogue-line-panel>
                 </div>
             </div>
         </div>
         <div *ngIf="catalogueLinesArray.length > 0" class="pagination justify-content-center space-before">
-            <ngb-pagination [(collectionSize)]="collectionSize" [(pageSize)]="pageSize" [(page)]="page" [maxSize]="5" [boundaryLinks]="true"></ngb-pagination>
+            <ngb-pagination [(collectionSize)]="collectionSize" [(pageSize)]="pageSize" [(page)]="page" [maxSize]="5" [boundaryLinks]="true" (pageChange)="onPageChanged()"></ngb-pagination>
         </div>
     </div>
 </div>
 
-<div class="jumbotron" *ngIf="catalogue && catalogue.catalogueLine.length <= 0">
+<div class="jumbotron" *ngIf="catalogueResponse && catalogueResponse.size<= 0">
     <h3>No published products / services.</h3>
     <h5>
         <span (click)="navigateToThePublishPage()" class="pointer">Publish new products / services</span>

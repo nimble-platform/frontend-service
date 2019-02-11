@@ -307,13 +307,11 @@
         </div>
     </div>
     <div class="col-3 align-self-center">
-        <button class="btn btn-primary w-100 inline" [disabled]="categoryService.selectedCategories.length === 0 || navigateToPublishStatus.isLoading()"
+        <button class="btn btn-primary w-100 inline" [disabled]="categoryService.selectedCategories.length === 0"
                 (click)="navigateToPublishingPage()">
-            <span *ngIf="!navigateToPublishStatus.isLoading()">
+            <span>
                 Continue With Selected Categories
             </span>
-            <img *ngIf="navigateToPublishStatus.isLoading()" class="space-before" src="assets/form_loader.gif"/>
         </button>
-        <call-status *ngIf="navigateToPublishStatus.isError()" [callStatus]="navigateToPublishStatus"></call-status>
     </div>
 </div>

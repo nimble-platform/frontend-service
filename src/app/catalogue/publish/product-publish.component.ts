@@ -31,6 +31,8 @@ import 'rxjs/add/observable/interval';
 import 'rxjs/add/operator/takeUntil';
 import {Catalogue} from "../model/publish/catalogue";
 import * as myGlobals from '../../globals';
+import {CataloguePaginationResponse} from '../model/publish/catalogue-pagination-response';
+import {Party} from '../model/publish/party';
 
 
 type ProductType = "product" | "transportation";
@@ -137,12 +139,12 @@ export class ProductPublishComponent implements OnInit {
         this.userService.getUserParty(userId).then(party => {
             return Promise.all([
                 Promise.resolve(party),
-                this.catalogueService.getCatalogue(userId),
+                this.catalogueService.getCatalogueResponse(userId,0,0),
                 this.userService.getCompanyNegotiationSettingsForParty(party.id)
             ])
         })
-        .then(([party, catalogue, settings]) => {
-            this.initView(party, catalogue, settings);
+        .then(([party, catalogueResponse, settings]) => {
+            this.initView(party, catalogueResponse, settings);
             this.publishStateService.publishingStarted = true;
             this.callStatus.callback("Successfully initialized.", true);
         })
@@ -485,7 +487,7 @@ export class ProductPublishComponent implements OnInit {
         return true;
     }
 
-    private initView(userParty, userCatalogue, settings): void {
+    private initView(userParty, catalogueResponse:CataloguePaginationResponse, settings): void {
         this.companyNegotiationSettings = settings;
         this.catalogueService.setEditMode(true);
         this.publishStateService.resetData();
@@ -552,7 +554,7 @@ export class ProductPublishComponent implements OnInit {
             // new publishing is the first entry to the publishing page
             // i.e. publishing from scratch
             if (this.publishStateService.publishingStarted == false) {
-                    this.catalogueLine = UBLModelUtils.createCatalogueLine(userCatalogue.uuid, userParty, settings);
+                    this.catalogueLine = UBLModelUtils.createCatalogueLine(catalogueResponse.catalogueUuid, userParty, settings);
                     this.catalogueService.draftCatalogueLine = this.catalogueLine;
             } else {
                 this.catalogueLine = this.catalogueService.draftCatalogueLine;
@@ -630,21 +632,27 @@ export class ProductPublishComponent implements OnInit {
         this.checkProductNature(splicedCatalogueLine);
 
         this.publishStatus.submit();
-        if (this.catalogueService.catalogue.uuid == null) {
-            // add new line to the end of catalogue
-            this.catalogueService.catalogue.catalogueLine.push(splicedCatalogueLine);
+        if (this.catalogueService.catalogueResponse.catalogueUuid == null) {
+            const userId = this.cookieService.get("user_id");
+            this.callStatus.submit();
+            this.userService.getUserParty(userId).then(userParty => {
+                // create the catalogue
+                let catalogue:Catalogue = new Catalogue("default", null, userParty, "", "", []);
+                // add catalogue line to the end of catalogue
+                catalogue.catalogueLine.push(splicedCatalogueLine);
 
-            this.catalogueService.postCatalogue(this.catalogueService.catalogue)
-                .then(() => this.onSuccessfulPublish())
-                .catch(err => {
-                    this.catalogueService.catalogue.catalogueLine.pop();
-                    this.onFailedPublish(err);
-                })
+                this.catalogueService.postCatalogue(catalogue)
+                    .then(() => this.onSuccessfulPublish())
+                    .catch(err => {
+                        this.onFailedPublish(err);
+                    })
+            }).catch(err => {
+                this.onFailedPublish(err);
+            });
+
         } else {
-            this.catalogueService.addCatalogueLine(this.catalogueService.catalogue.uuid,JSON.stringify(splicedCatalogueLine))
+            this.catalogueService.addCatalogueLine(this.catalogueService.catalogueResponse.catalogueUuid,JSON.stringify(splicedCatalogueLine))
                 .then(() => {
-                    // add new line to the end of catalogue
-                    this.catalogueService.catalogue.catalogueLine.push(splicedCatalogueLine);
                     this.onSuccessfulPublish();
                 })
                 .catch(err=> this.onFailedPublish(err))
@@ -662,19 +670,12 @@ export class ProductPublishComponent implements OnInit {
         // nullify the transportation service details if a regular product is being published
         this.checkProductNature(splicedCatalogueLine);
 
-        // Replace original line in the catalogue with the edited version
-        const indexOfOriginalLine = this.catalogueService.catalogue.catalogueLine.findIndex(line => line.id === this.catalogueLine.id);
-        const originalLine = this.catalogueService.catalogue.catalogueLine[indexOfOriginalLine];
-        this.catalogueService.catalogue.catalogueLine[indexOfOriginalLine] = splicedCatalogueLine;
-        this.catalogueLine = splicedCatalogueLine
-
         this.publishStatus.submit();
 
-        this.catalogueService.updateCatalogueLine(this.catalogueService.catalogue.uuid,JSON.stringify(splicedCatalogueLine))
+        this.catalogueService.updateCatalogueLine(this.catalogueService.catalogueResponse.catalogueUuid,JSON.stringify(splicedCatalogueLine))
             .then(() => this.onSuccessfulPublish())
             .then(() => this.changePublishModeToCreate())
             .catch(err => {
-                this.catalogueService.catalogue.catalogueLine[indexOfOriginalLine] = originalLine;
                 this.onFailedPublish(err);
             });
 
@@ -744,10 +745,8 @@ export class ProductPublishComponent implements OnInit {
 
         let userId = this.cookieService.get("user_id");
         this.userService.getUserParty(userId).then(party => {
-            this.catalogueService.getCatalogueForceUpdate(userId, true).then(catalogue => {
-                this.catalogueService.catalogue = catalogue;
-                const line = this.catalogueLine;
-                this.catalogueLine = UBLModelUtils.createCatalogueLine(catalogue.uuid,
+            this.catalogueService.getCatalogueResponse(userId,0,0).then(catalogueResponse => {
+                this.catalogueLine = UBLModelUtils.createCatalogueLine(catalogueResponse.catalogueUuid,
                     party, this.companyNegotiationSettings);
                 this.catalogueService.draftCatalogueLine = this.catalogueLine;
 
@@ -969,7 +968,7 @@ export class ProductPublishComponent implements OnInit {
                 catalogueService.uploadTemplate(userId, file, uploadMode).then(res => {
                         self.publishStatus.callback(null);
                         ProductPublishComponent.dialogBox = false;
-                        self.router.navigate(['dashboard'], {queryParams: {forceUpdate: true, tab: "CATALOGUE"}});
+                        self.router.navigate(['dashboard'], {queryParams: {tab: "CATALOGUE"}});
                     },
                     error => {
                         self.publishStatus.error("Failed to upload the template:  " + error);
@@ -995,7 +994,7 @@ export class ProductPublishComponent implements OnInit {
                 catalogueService.uploadZipPackage(file).then(res => {
                         self.publishStatus.callback(null);
                         ProductPublishComponent.dialogBox = false;
-                        self.router.navigate(['dashboard'], {queryParams: {forceUpdate: true, tab: "CATALOGUE"}});
+                        self.router.navigate(['dashboard'], {queryParams: {tab: "CATALOGUE"}});
                     },
                     error => {
                         self.publishStatus.error("Failed to upload the image package:  " + error);

@@ -11,6 +11,7 @@ import { CatalogueLine } from "../../model/publish/catalogue-line";
 import { BPDataService } from "../../../bpe/bp-view/bp-data-service";
 import { UserService } from "../../../user-mgmt/user.service";
 import { CompanySettings } from "../../../user-mgmt/model/company-settings";
+import {CataloguePaginationResponse} from '../../model/publish/catalogue-pagination-response';
 
 @Component({
     selector: 'catalogue-view',
@@ -21,7 +22,7 @@ import { CompanySettings } from "../../../user-mgmt/model/company-settings";
 
 export class CatalogueViewComponent implements OnInit {
 
-    catalogue: Catalogue;
+    catalogueResponse: CataloguePaginationResponse;
     settings: CompanySettings;
 
     // available catalogue lines with respect to the selected category
@@ -58,39 +59,34 @@ export class CatalogueViewComponent implements OnInit {
                 private userService: UserService,
                 private route: ActivatedRoute,
                 private router: Router) {
-        
+
     }
 
     ngOnInit() {
         this.catalogueService.setEditMode(false);
-
-        this.route.queryParams.subscribe((params: Params) => {
-            const forceUpdate = params['forceUpdate'] === "true";
-            this.requestCatalogue(forceUpdate);
-        });
-
+        this.requestCatalogue();
         for(let i = 0; i < this.pageSize; i++) {
             this.deleteStatuses.push(new CallStatus());
         }
     }
 
-    private requestCatalogue(forceUpdate:boolean): void {
+    private requestCatalogue(): void {
         this.getCatalogueStatus.submit();
         const userId = this.cookieService.get("user_id");
         Promise.all([
-            this.catalogueService.getCatalogueForceUpdate(userId, forceUpdate),
+            this.catalogueService.getCatalogueResponse(userId, this.pageSize,(this.page-1)*this.pageSize),
             this.getCompanySettings(userId)
         ])
-            .then(([catalogue, settings]) => {
-                this.catalogue = catalogue;
-                this.settings = settings;
-                this.getCatalogueStatus.callback(null);
-                this.init();
-            },
-            error => {
-                this.getCatalogueStatus.error("Failed to get catalogue", error);
-            }
-        )
+            .then(([catalogueResponse, settings]) => {
+                    this.catalogueResponse = catalogueResponse;
+                    this.settings = settings;
+                    this.getCatalogueStatus.callback(null);
+                    this.init();
+                },
+                error => {
+                    this.getCatalogueStatus.error("Failed to get catalogue", error);
+                }
+            )
     }
 
     private getCompanySettings(userId: string): Promise<CompanySettings> {
@@ -102,9 +98,9 @@ export class CatalogueViewComponent implements OnInit {
     }
 
     private init(): void {
-        let len = this.catalogue.catalogueLine.length;
-        this.collectionSize = len;
-        this.catalogueLinesArray = [...this.catalogue.catalogueLine].reverse();
+        let len = this.catalogueResponse.catalogueLines.length;
+        this.collectionSize = this.catalogueResponse.size;
+        this.catalogueLinesArray = [...this.catalogueResponse.catalogueLines].reverse();
         this.catalogueLinesWRTTypes = this.catalogueLinesArray;
         let i = 0;
         this.typeOfProducts = [];
@@ -113,32 +109,31 @@ export class CatalogueViewComponent implements OnInit {
         this.sortOption = null;
         // Initialize catalogueLineView and typeOfProducts
         for(;i<len;i++){
-            this.catalogueLineView[this.catalogue.catalogueLine[i].id] = false;
+            this.catalogueLineView[this.catalogueResponse.catalogueLines[i].id] = false;
 
             let j = 0;
-            let lenOfCom = this.catalogue.catalogueLine[i].goodsItem.item.commodityClassification.length;
+            let lenOfCom = this.catalogueResponse.catalogueLines[i].goodsItem.item.commodityClassification.length;
             for(;j<lenOfCom;j++){
-                if(this.typeOfProducts.indexOf(this.catalogue.catalogueLine[i].goodsItem.item.commodityClassification[j].itemClassificationCode.name) <= -1){
-                    this.typeOfProducts.push(this.catalogue.catalogueLine[i].goodsItem.item.commodityClassification[j].itemClassificationCode.name);
+                if(this.typeOfProducts.indexOf(this.catalogueResponse.catalogueLines[i].goodsItem.item.commodityClassification[j].itemClassificationCode.name) <= -1){
+                    this.typeOfProducts.push(this.catalogueResponse.catalogueLines[i].goodsItem.item.commodityClassification[j].itemClassificationCode.name);
                 }
             }
         }
     }
 
     onDeleteCatalogue(): void {
-		if (confirm("Are you sure that you want to delete your entire catalogue?")) {
-			this.callStatus.submit();
+        if (confirm("Are you sure that you want to delete your entire catalogue?")) {
+            this.callStatus.submit();
 
-			this.catalogueService.deleteCatalogue().then(res => {
-					this.catalogueService.catalogue = null;
-					this.callStatus.reset();
-					this.requestCatalogue(false);
-				},
-				error => {
-					this.callStatus.error("Failed to delete catalogue", error);
-				}
-			);
-		}
+            this.catalogueService.deleteCatalogue().then(res => {
+                    this.callStatus.reset();
+                    this.requestCatalogue();
+                },
+                error => {
+                    this.callStatus.error("Failed to delete catalogue", error);
+                }
+            );
+        }
     }
 
     onOpenCatalogueLine(e: Event) {
@@ -151,17 +146,17 @@ export class CatalogueViewComponent implements OnInit {
         this.publishService.publishingStarted = false;
         this.categoryService.resetSelectedCategories();
         this.router.navigate(['catalogue/publish'], {queryParams: {
-            pg: "single", 
-            productType: isTransportService(catalogueLine) ? "transportation" : "product"}});
+                pg: "single",
+                productType: isTransportService(catalogueLine) ? "transportation" : "product"}});
     }
 
     deleteCatalogueLine(catalogueLine, i: number): void {
         if (confirm("Are you sure that you want to delete this catalogue item?")) {
             const status = this.getDeleteStatus(i);
             status.submit();
-            this.catalogueService.deleteCatalogueLine(this.catalogueService.catalogue.uuid, catalogueLine.id)
+            this.catalogueService.deleteCatalogueLine(this.catalogueService.catalogueResponse.catalogueUuid, catalogueLine.id)
                 .then(res => {
-                    this.init();
+                    this.requestCatalogue();
                     status.callback("Catalogue line deleted", true);
                 })
                 .catch(error => {
@@ -193,16 +188,16 @@ export class CatalogueViewComponent implements OnInit {
         this.catalogueLinesWRTTypes = [];
 
         if (this.selectedType == "All") {
-            this.catalogueLinesWRTTypes = [...this.catalogue.catalogueLine].reverse();
+            this.catalogueLinesWRTTypes = [...this.catalogueResponse.catalogueLines].reverse();
         } else {
             let i = 0;
-            let len = this.catalogue.catalogueLine.length;
+            let len = this.catalogueResponse.catalogueLines.length;
             for(;i<len;i++){
                 let j = 0;
-                let lenOfCom = this.catalogue.catalogueLine[i].goodsItem.item.commodityClassification.length;
+                let lenOfCom = this.catalogueResponse.catalogueLines[i].goodsItem.item.commodityClassification.length;
                 for(;j<lenOfCom;j++){
-                    if(!(this.catalogue.catalogueLine[i].goodsItem.item.commodityClassification[j].itemClassificationCode.name.localeCompare(this.selectedType))){
-                        this.catalogueLinesWRTTypes.unshift(this.catalogue.catalogueLine[i]);
+                    if(!(this.catalogueResponse.catalogueLines[i].goodsItem.item.commodityClassification[j].itemClassificationCode.name.localeCompare(this.selectedType))){
+                        this.catalogueLinesWRTTypes.unshift(this.catalogueResponse.catalogueLines[i]);
                         break;
                     }
                 }
@@ -250,7 +245,7 @@ export class CatalogueViewComponent implements OnInit {
                 event.target.value = "";
                 catalogueService.uploadZipPackage(file).then(res => {
                         self.callStatus.callback(null);
-                        self.router.navigate(['dashboard'], {queryParams: {forceUpdate: true, tab: "CATALOGUE"}});
+                        self.router.navigate(['dashboard'], {queryParams: {tab: "CATALOGUE"}});
                     },
                     error => {
                         self.callStatus.error("Failed to upload the image package:  " + error, error);
@@ -262,5 +257,9 @@ export class CatalogueViewComponent implements OnInit {
 
     navigateToThePublishPage(){
         this.router.navigate(['/catalogue/categorysearch']);
+    }
+
+    onPageChanged(){
+        this.requestCatalogue();
     }
 }

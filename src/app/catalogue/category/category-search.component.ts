@@ -35,7 +35,6 @@ export class CategorySearchComponent implements OnInit {
     addFavoriteCategoryStatus: CallStatus = new CallStatus();
     addRecentCategoryStatus: CallStatus = new CallStatus();
     getCategoryDetailsStatus: CallStatus = new CallStatus();
-    navigateToPublishStatus: CallStatus = new CallStatus();
 
     categories: Category[];
     pageRef: string = null;
@@ -360,20 +359,10 @@ export class CategorySearchComponent implements OnInit {
 
     navigateToPublishingPage(): void {
         this.addRecentCategories(this.selectedCategories);
-        this.navigateToPublishStatus.submit();
-        let userId = this.cookieService.get("user_id");
-        this.catalogueService
-            .getCatalogue(userId)
-            .then(catalogue => {
-                this.navigateToPublishStatus.callback("Catalogue Fetched", true);
-                ProductPublishComponent.dialogBox = true;
-                // set isReturnPublish in order not to show confirmation popup
-                this.isReturnPublish = true;
-                this.router.navigate(["catalogue/publish"], { queryParams: { pg: this.publishingGranularity, productType: this.productType } });
-            })
-            .catch(error => {
-                this.navigateToPublishStatus.error("Error while fetching user catalogue", error);
-            });
+        ProductPublishComponent.dialogBox = true;
+        // set isReturnPublish in order not to show confirmation popup
+        this.isReturnPublish = true;
+        this.router.navigate(["catalogue/publish"], { queryParams: { pg: this.publishingGranularity, productType: this.productType } });
     }
 
     getCategoryTree(category: Category,scrollToDivId = null) {
