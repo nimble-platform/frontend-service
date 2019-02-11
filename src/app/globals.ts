@@ -18,7 +18,8 @@ export const pw_reset_link = "http://nimble-staging.salzburgresearch.at:8080/aut
 
 // export const base_path = "https://nimble-platform.salzburgresearch.at/nimble";
 // export const ub_base = "https://nimble-platform.salzburgresearch.at/ub-search";
-// export const simple_search_endpoint="https://nimble-platform.salzburgresearch.at/marmotta/solr/catalogue2";
+// export const simple_search_endpoint="https://nimble-platform.salzburgresearch.at/marmotta/solr/catalogue_multilang";
+// export const simple_search_properties_endpoint="https://nimble-platform.salzburgresearch.at/marmotta/solr/prop_trial";
 // export const pw_reset_link = "https://nimble-platform.salzburgresearch.at:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
 
 
@@ -26,15 +27,17 @@ export const pw_reset_link = "http://nimble-staging.salzburgresearch.at:8080/aut
 
 // export const base_path = "https://nimble.salzburgresearch.at";
 // export const ub_base = "https://hydra2.ikap.biba.uni-bremen.de:8443";
-// export const simple_search_endpoint="https://nimble-platform.salzburgresearch.at/marmotta/solr/catalogue2";
+// export const simple_search_endpoint="https://nimble-platform.salzburgresearch.at/marmotta/solr/catalogue_multilang";
+// export const simple_search_properties_endpoint="https://nimble-platform.salzburgresearch.at/marmotta/solr/prop_trial";
 // export const pw_reset_link = "https://nimble-platform.salzburgresearch.at:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
 
 
-// Base path variabled - K8S domain
+// Base path variables - K8S domain
 
 // export const base_path = "http://nimble.uk-south.containers.mybluemix.net";
 // export const ub_base = "https://hydra2.ikap.biba.uni-bremen.de:8443";
-// export const simple_search_endpoint="https://nimble-platform.salzburgresearch.at/marmotta/solr/catalogue2";
+// export const simple_search_endpoint="https://nimble-platform.salzburgresearch.at/marmotta/solr/catalogue_multilang";
+// export const simple_search_properties_endpoint="https://nimble-platform.salzburgresearch.at/marmotta/solr/prop_trial";
 // export const pw_reset_link = "https://nimble-platform.salzburgresearch.at:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
 
 
@@ -42,7 +45,8 @@ export const pw_reset_link = "http://nimble-staging.salzburgresearch.at:8080/aut
 
 // export const base_path = "http://localhost";
 // export const ub_base = "http://localhost:8090";
-// export const simple_search_endpoint="http://localhost:8082/solr/catalogue2";
+// export const simple_search_endpoint="http://localhost:8082/solr/catalogue_multilang";
+// export const simple_search_properties_endpoint="http://localhost:8082/solr/prop_trial";
 // export const pw_reset_link = "http://localhost:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
 
 
