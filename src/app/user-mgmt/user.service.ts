@@ -383,7 +383,7 @@ export class UserService {
     }
 
     getCompanyNegotiationSettingsForParty(partyId: string): Promise<CompanyNegotiationSettings> {
-        const url = `${this.url}/company-settings/negotiation/${partyId}`;
+        const url = `${this.url}/company-settings/${partyId}/negotiation/`;
         const token = 'Bearer ' + this.cookieService.get("bearer_token");
         const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
         return this.http
