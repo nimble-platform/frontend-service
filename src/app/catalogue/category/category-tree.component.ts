@@ -3,7 +3,8 @@ import { Category } from "../model/category/category";
 import {CategoryService} from "./category.service";
 import { CallStatus } from "../../common/call-status";
 import { ParentCategories } from "../model/category/parent-categories";
-import { sortCategories, scrollToDiv } from "../../common/utils";
+import {sortCategories, scrollToDiv, selectPreferredName} from '../../common/utils';
+import {Property} from '../model/category/property';
 
 @Component({
     selector: 'category-tree',
@@ -39,6 +40,10 @@ export class CategoryTreeComponent implements OnInit {
     }
 
     ngOnInit() {
+    }
+
+    selectPreferredName(cp: Category) {
+        return selectPreferredName(cp);
     }
 
     @Input() set parentCategories(parentCategories: ParentCategories) {

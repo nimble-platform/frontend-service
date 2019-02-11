@@ -6,9 +6,10 @@ import {PriceOption} from "../model/publish/price-option";
 import {Quantity} from "../model/publish/quantity";
 import {PriceOptionPipe} from "./price-option/price-option.pipe";
 import {Period} from '../model/publish/period';
-import {PaymentMeans} from '../../user-mgmt/model/payment-means';
 import {Address} from '../model/publish/address';
 import {CompanyNegotiationSettings} from '../../user-mgmt/model/company-negotiation-settings';
+import {Text} from '../model/publish/text';
+import {PaymentMeans} from '../model/publish/payment-means';
 
 @Component({
     selector: "product-price-tab",
@@ -49,7 +50,7 @@ export class ProductPriceTabComponent implements OnInit {
         } else if(priceOptionType == PRICE_OPTIONS.INCOTERM.typeID){
             priceOption.incoterms = [];
         } else if(priceOptionType == PRICE_OPTIONS.PAYMENT_MEAN.typeID){
-            priceOption.paymentMeans = [new PaymentMeans("")];
+            priceOption.paymentMeans = [new PaymentMeans()];
         } else if(priceOptionType == PRICE_OPTIONS.DELIVERY_LOCATION.typeID){
             priceOption.itemLocationQuantity.applicableTerritoryAddress = [new Address()];
         } else if(priceOptionType == PRICE_OPTIONS.DELIVERY_PERIOD.typeID){

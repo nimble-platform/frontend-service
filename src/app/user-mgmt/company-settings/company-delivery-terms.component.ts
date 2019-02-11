@@ -4,10 +4,8 @@ import { FormGroup, FormBuilder, FormArray } from "@angular/forms";
 import { DeliveryTermsSubForm } from "../subforms/delivery-terms.component";
 import * as myGlobals from "../../globals";
 import { CallStatus } from "../../common/call-status";
-import { AddressSubForm } from "../subforms/address.component";
 import { CookieService } from "ng2-cookies";
 import { UserService } from "../user.service";
-import { Address } from "../model/address";
 
 @Component({
     selector: "company-delivery-terms",
@@ -63,7 +61,7 @@ export class CompanyDeliveryTermsComponent implements OnInit {
     onSave(model: FormGroup) {
         // update settings
         this.saveCallStatus.submit();
-        this.settings.tradeDetails.deliveryTerms = model.getRawValue()['deliveryTerms'];
+        this.settings.tradeDetails.deliveryTerms = this.generateSpecialTermsMap(model.getRawValue()['deliveryTerms']);
         let userId = this.cookieService.get("user_id");
         this.userService
             .putSettings(this.settings, userId)
@@ -82,5 +80,17 @@ export class CompanyDeliveryTermsComponent implements OnInit {
 
     private getDeliveryTerms(): FormArray {
         return this.settingsForm.controls.deliveryTerms as FormArray;
+    }
+
+    // this function is used to create languageId-value pairs for SpecialTerms using the raw value of special terms
+    private generateSpecialTermsMap(deliveryTermsRawValue){
+        for(let delTer of deliveryTermsRawValue){
+            let specialTermsMapping = {};
+            if(delTer.specialTerms.value != ""){
+                specialTermsMapping[delTer.specialTerms.languageID] = delTer.specialTerms.value;
+            }
+            delTer.specialTerms = specialTermsMapping;
+        }
+        return deliveryTermsRawValue;
     }
 }

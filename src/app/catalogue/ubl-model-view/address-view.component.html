@@ -9,13 +9,13 @@
         </label>
         <select *ngIf="address.length > 1"
                 class="custom-select">
-            <option *ngFor="let value of address">{{value.country.name}}</option>
+            <option *ngFor="let value of address">{{value.country.name.value}}</option>
         </select>
 
         <input *ngIf="address.length == 1"
                class="form-control"
                type="text"
-               [(ngModel)]="address[0].country.name"
+               [(ngModel)]="address[0].country.name.value"
                readonly>
 
         <input *ngIf="address.length == 0"
@@ -41,7 +41,7 @@
             </span>
         </label>
         <input type="text" class="form-control "
-               [(ngModel)]="addr.country.name"
+               [(ngModel)]="addr.country.name.value"
                [ngClass]="{'offset-3' : i > 0} ">
 
         <!-- remove value button -->

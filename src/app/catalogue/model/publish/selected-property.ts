@@ -1,5 +1,6 @@
 import { Property } from "../category/property";
 import { Category } from "../category/category";
+import {Text} from './text';
 
 export interface SelectedProperty {
     properties: Property[];
@@ -9,6 +10,6 @@ export interface SelectedProperty {
     key: string; // the ref for lunr
 
     // from Property, used for the lunr search
-    preferredName: string;
+    preferredName: Text[],
     shortName: string;
 }

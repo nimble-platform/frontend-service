@@ -2,6 +2,9 @@ import {Component, Input, ViewChild} from "@angular/core";
 import {CatalogueLine} from "../../model/publish/catalogue-line";
 import {FormGroup, NgForm} from "@angular/forms";
 import {BinaryObject} from "../../model/publish/binary-object";
+import {Item} from '../../model/publish/item';
+import {selectDescription, selectName} from '../../../common/utils';
+import {ItemProperty} from '../../model/publish/item-property';
 /**
  * Created by suat on 24-Oct-17.
  */
@@ -31,6 +34,14 @@ export class CatalogueLineHeaderComponent {
 
     trackByIndex(index: any, item: any) {
         return index;
+    }
+
+    selectName (ip: ItemProperty | Item) {
+        return selectName(ip);
+    }
+
+    selectDescription (item:  Item) {
+        return selectDescription(item);
     }
 
     private addImage(event: any) {

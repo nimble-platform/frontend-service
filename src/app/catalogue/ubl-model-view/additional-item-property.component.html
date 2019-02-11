@@ -5,14 +5,14 @@
             <div *ngIf="i == 0"
                  class="col-3 control-label pointer"
                  (click)="openPropertyDetails()">
-                {{additionalItemProperty.name}}&#9432;
+                {{selectName(additionalItemProperty)}}&#9432;
             </div>
 
             <!-- string value associated to the property -->
             <input *ngIf="additionalItemProperty.valueQualifier == 'STRING'"
                    type="text" class="form-control align-self-start"
                    [ngClass]="{'offset-3' : i > 0} "
-                   [(ngModel)]="additionalItemProperty.value[i]"
+                   [(ngModel)]="additionalItemProperty.value[i].value"
                    [readonly]="presentationMode != 'edit'">
 
             <!-- decimal value associated to the property -->
@@ -37,7 +37,7 @@
             <span *ngIf="presentationMode == 'edit' && ((additionalItemProperty.valueQualifier == 'STRING' && i == this.additionalItemProperty.value.length - 1) ||
                           (additionalItemProperty.valueQualifier == 'REAL_MEASURE' && i == this.additionalItemProperty.valueDecimal.length - 1))">
                 <button class="btn btn-primary btn-xs"
-                        (click)="addValueToProperty(additionalItemProperty.name)"
+                        (click)="addValueToProperty(selectName(additionalItemProperty))"
                 ><strong>+</strong></button>
             </span>
         </div>
@@ -51,16 +51,16 @@
             <!-- name of the property is shown once near the first value associated to it -->
             <div class="col-3 control-label cursor"
                  (click)="openPropertyDetails()">
-                {{additionalItemProperty.name}}&#9432;
+                {{selectName(additionalItemProperty)}}&#9432;
             </div>
             <select *ngIf="additionalItemProperty.value.length > 1"
                     class="custom-select"
                     (change)="updateNegotiationItemPropertyData($event)">
-                <option *ngFor="let value of additionalItemProperty.value">{{value}}</option>
+                <option *ngFor="let value of selectItemPropertyValuesAsString(additionalItemProperty)">{{value}}</option>
             </select>
             <input *ngIf="additionalItemProperty.value.length == 1"
                    type="text" class="form-control"
-                   [(ngModel)]="additionalItemProperty.value[0]"
+                   [(ngModel)]="additionalItemProperty.value[0].value"
                    readonly>
         </div>
     </ng-container>
@@ -70,7 +70,7 @@
             <!-- name of the property is shown once near the first value associated to it -->
             <div class="col-3 control-label pointer"
                  (click)="openPropertyDetails()">
-                {{additionalItemProperty.name}}&#9432;
+                {{selectName(additionalItemProperty)}}&#9432;
             </div>
             <select *ngIf="additionalItemProperty.valueDecimal.length > 1"
                     class="custom-select"
@@ -88,7 +88,7 @@
 
 <ng-container *ngIf="additionalItemProperty.valueQualifier == 'QUANTITY'">
     <quantity-view [presentationMode]="presentationMode"
-                   [propName]="additionalItemProperty.name"
+                   [propName]="selectName(additionalItemProperty)"
                    [quantity]="additionalItemProperty.valueQuantity"
                    [multiValue]="true"
                    [parentForm]="parentForm"
@@ -102,22 +102,22 @@
     <!-- name of the property is shown once near the first value associated to it -->
     <div class="col-3 control-label pointer"
          (click)="openPropertyDetails()">
-        {{additionalItemProperty.name}}&#9432;
+        {{selectName(additionalItemProperty)}}&#9432;
     </div>
 
     <input type="checkbox" class="space-right"
-           [checked]="additionalItemProperty.value[0] == 'true'"
-           (change)="additionalItemProperty.value[0] == 'true ' ? additionalItemProperty.value[0] = 'false' : additionalItemProperty.value[0] = 'true'"
+           [checked]="additionalItemProperty.value[0].value == 'true'"
+           (change)="additionalItemProperty.value[0].value == 'true ' ? additionalItemProperty.value[0].value = 'false' : additionalItemProperty.value[0].value = 'true'"
            [disabled]="presentationMode != 'edit'">
 
     <span *ngIf="presentationMode == 'edit' && customProperty"><button class="btn btn-xs btn-danger"
-                                                     (click)="deleteCustomProperty(additionalItemProperty.name); $event.stopPropagation()"
+                                                     (click)="deleteCustomProperty(selectName(additionalItemProperty)); $event.stopPropagation()"
     >&times;</button></span>
 </div>
 
 <!-- renders the binary content -->
 <div *ngIf="additionalItemProperty.valueQualifier=='BINARY'" class="input-group form-group">
-    <label class="col-3 control-label">{{additionalItemProperty.name}}</label>
+    <label class="col-3 control-label">{{selectName(additionalItemProperty)}}</label>
     <div style="display: inline-block">
         <div *ngFor="let file of additionalItemProperty.valueBinary"
              style="display: inline-block">
@@ -141,7 +141,7 @@
         </div>
 
         <span *ngIf="presentationMode == 'edit'"><button class="btn btn-xs btn-danger"
-                                                         (click)="deleteCustomProperty(additionalItemProperty.name); $event.stopPropagation()"
+                                                         (click)="deleteCustomProperty(selectName(additionalItemProperty)); $event.stopPropagation()"
         >&times;</button></span>
     </div>
 </div>
@@ -153,7 +153,7 @@
     </div>
     <div class="input-group form-group">
         <label class="col-3 control-label">Preferred name</label>
-        <label>{{propertyDetails.preferredName}}</label>
+        <label>{{selectPreferredName(propertyDetails)}}</label>
     </div>
     <div class="input-group form-group">
         <label class="col-3 control-label">Short name</label>

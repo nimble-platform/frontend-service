@@ -8,6 +8,9 @@ import {Subscription} from "rxjs/Subscription";
 import {BPDataService} from "../../bpe/bp-view/bp-data-service";
 import {Property} from "../model/category/property";
 import {FormGroup} from "@angular/forms";
+import {createText, selectName, selectDescription, selectPreferredName, selectItemPropertyValuesAsString} from '../../common/utils';
+import {Category} from '../model/category/category';
+import {Item} from '../model/publish/item';
 
 @Component({
     selector: 'additional-item-property',
@@ -38,15 +41,31 @@ export class AdditionalItemPropertyComponent implements OnInit, OnDestroy {
         this.showPropertyDetails = !this.showPropertyDetails;
     }
 
+    selectName (ip: ItemProperty | Item) {
+        return selectName(ip);
+    }
+
+    selectDescription (item:  Item) {
+        return selectDescription(item);
+    }
+
+    selectItemPropertyValuesAsString (ip: ItemProperty) {
+        return selectItemPropertyValuesAsString(ip, null);
+    }
+
     addValueToProperty(aipName: string) {
         if (this.additionalItemProperty.valueQualifier == "STRING") {
-            this.additionalItemProperty.value.push('');
+            this.additionalItemProperty.value.push(createText(''));
         } else if (this.additionalItemProperty.valueQualifier == "REAL_MEASURE") {
             let newNumber: number;
             this.additionalItemProperty.valueDecimal.push(newNumber);
         } else if (this.additionalItemProperty.valueQualifier == "BINARY") {
             // not applicable
         }
+    }
+
+    selectPreferredName(cp: Category | Property) {
+        return selectPreferredName(cp);
     }
 
     ngOnInit(): void {
@@ -82,7 +101,7 @@ export class AdditionalItemPropertyComponent implements OnInit, OnDestroy {
 
         // if the property no longer has a value, delete it
         if (dataSource.length == 0) {
-            this.deleteCustomProperty(this.additionalItemProperty.name);
+            this.deleteCustomProperty(selectName(this.additionalItemProperty));
         }
     }
 
@@ -91,7 +110,7 @@ export class AdditionalItemPropertyComponent implements OnInit, OnDestroy {
      */
     deleteCustomProperty(inputVal: string) {
         let draftCatalogueLine = this.catalogueService.draftCatalogueLine;
-        let indexCatalogue = draftCatalogueLine.goodsItem.item.additionalItemProperty.findIndex(p => p.name == inputVal);
+        let indexCatalogue = draftCatalogueLine.goodsItem.item.additionalItemProperty.findIndex(p => selectName(p) == inputVal);
         draftCatalogueLine.goodsItem.item.additionalItemProperty.splice(indexCatalogue, 1);
         draftCatalogueLine.goodsItem.item.additionalItemProperty = [].concat(draftCatalogueLine.goodsItem.item.additionalItemProperty);
     }
@@ -101,7 +120,7 @@ export class AdditionalItemPropertyComponent implements OnInit, OnDestroy {
 
         if(this.additionalItemProperty.valueQualifier == 'STRING') {
             let prevValue = this.additionalItemProperty.value[0];
-            this.additionalItemProperty.value[0] = event.target.value;
+            this.additionalItemProperty.value[0] = createText(event.target.value);
             this.additionalItemProperty.value[selectedIndex] = prevValue;
         } else if(this.additionalItemProperty.valueQualifier == 'REAL_MEASURE') {
             let prevValue = this.additionalItemProperty.valueDecimal[0];
@@ -109,7 +128,7 @@ export class AdditionalItemPropertyComponent implements OnInit, OnDestroy {
             this.additionalItemProperty.valueDecimal[selectedIndex] = prevValue;
         } else if(this.additionalItemProperty.valueQualifier == 'BOOLEAN') {
             let prevValue = this.additionalItemProperty.value[0];
-            this.additionalItemProperty.value[0] = event.target.value;
+            this.additionalItemProperty.value[0] = createText(event.target.value);
             this.additionalItemProperty.value[selectedIndex] = prevValue;
         } else if(this.additionalItemProperty.valueQualifier == 'QUANTITY') {
             let prevValue = this.additionalItemProperty.valueQuantity[0];
@@ -124,7 +143,7 @@ export class AdditionalItemPropertyComponent implements OnInit, OnDestroy {
         let firstValue = this.additionalItemProperty.valueQuantity[0];
         this.additionalItemProperty.valueQuantity[0] = this.additionalItemProperty.valueQuantity[event.target.selectedIndex];
         this.additionalItemProperty.valueQuantity[event.target.selectedIndex] = firstValue;
-        let index = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty.findIndex(item => item.name == this.additionalItemProperty.name);
+        let index = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty.findIndex(item => selectName(item) == selectName(this.additionalItemProperty));
         this.bpDataService.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty[index].valueQuantity[0] = this.additionalItemProperty.valueQuantity[0];
     }
 

@@ -13,7 +13,6 @@ import { UserFormComponent } from './user-form.component';
 import { CredentialsFormComponent } from './credentials-form.component';
 import { AddressSubForm } from './subforms/address.component';
 import { DeliveryTermsSubForm } from './subforms/delivery-terms.component';
-import { PaymentMeansForm } from './subforms/payment-means.component';
 import { CompanyRegistrationComponent } from './company-registration.component';
 import { CompanyInvitationComponent } from './company-invitation.component';
 import { CompanySettingsComponent } from './company-settings/company-settings.component';
@@ -45,7 +44,6 @@ import { UserProfileComponent } from './user-profile.component';
 		CredentialsFormComponent,
 		AddressSubForm,
         DeliveryTermsSubForm,
-        PaymentMeansForm,
         CompanySettingsComponent,
 		CompanyDescriptionSettingsComponent,
 		CompanyRegistrationComponent,
@@ -67,7 +65,6 @@ import { UserProfileComponent } from './user-profile.component';
 		CredentialsFormComponent,
 		AddressSubForm,
         DeliveryTermsSubForm,
-        PaymentMeansForm,
 		CompanyRegistrationComponent,
 		CompanyInvitationComponent,
 		CompanyDetailsComponent,

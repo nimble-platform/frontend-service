@@ -12,11 +12,12 @@ import { Dimension } from "./dimension";
 import { DocumentReference } from "./document-reference";
 import { TransportationService } from "./transportation-service";
 import { TrackAndTraceDetails } from "./track-and-trace-details";
+import {Text} from "./text";
 
 export class Item {
     constructor(
-        public name: string = null,
-        public description: string = null,
+        public name: Text[] = [],
+        public description: Text[] = [],
         public itemSpecificationDocumentReference: DocumentReference[] = [],
         public productImage: BinaryObject[] = [],
         public additionalItemProperty: ItemProperty[] = [],

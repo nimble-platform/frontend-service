@@ -5,7 +5,7 @@
         </input-label>
     </div>
     <div [class]="valueClass">
-        <div *ngFor="let value of address; last as isLast" [class]="valueTextClass">{{value.country.name}}<span [hidden]="isLast">,&nbsp;</span></div>
+        <div *ngFor="let value of address; last as isLast" [class]="valueTextClass">{{value.country.name.value}}<span [hidden]="isLast">,&nbsp;</span></div>
     </div>
 
     <!--<label>City</label>
@@ -28,7 +28,7 @@
         </div>
         <div [class]="valueClass" class="input-group" *ngIf="presentationMode === 'edit'">
             <input type="text" class="form-control {{valueTextClass}}"
-                    [(ngModel)]="addr.country.name">
+                    [(ngModel)]="addr.country.name.value">
 
             <!-- remove value button -->
             <span *ngIf="address.length > 1 && multiValue">

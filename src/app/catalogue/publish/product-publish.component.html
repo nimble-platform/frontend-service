@@ -28,7 +28,7 @@
         <div class="col-10 object-list">
             <div *ngFor="let selectedCategory of selectedCategories"
                  class="bordered my-1 ml-1" title="{{selectedCategory.taxonomyId}}">
-                <small class="p-0">{{selectedCategory.preferredName}}</small>
+                <small class="p-0">{{selectPreferredName(selectedCategory)}}</small>
                 <i class="fa fa-times-circle pl-1" placement="right" (click)="onRemoveCategory(selectedCategory)"></i>
             </div>
             <button class="btn btn-outline-primary btn-add-category"
@@ -40,7 +40,10 @@
 
     <div class="d-flex mt-3 mb-4">
         <label class="col-9">1. Download the product / service category template</label>
-        <button class="btn btn-secondary col-3"
+        <select [(ngModel)]="templateLanguage" class="form-control col-1" type="text" style="margin-right: 1px">
+            <option *ngFor='let language of languages' [value]="language" [selected]="templateLanguage === language">{{language}}</option>
+        </select>
+        <button class="btn btn-secondary col-2"
                 (click)="downloadTemplate()">Download template
         </button>
     </div>
@@ -92,7 +95,7 @@
         <div class="col-10 object-list">
             <div *ngFor="let selectedCategory of selectedCategories"
                 class="bordered my-1 ml-1" title="{{selectedCategory.taxonomyId}}">
-                <small class="p-0">{{selectedCategory.preferredName}}</small>
+                <small class="p-0">{{selectPreferredName(selectedCategory)}}</small>
                 <i class="fa fa-times-circle pl-1" placement="right" (click)="onRemoveCategory(selectedCategory)"></i>
             </div>
             <button class="btn btn-outline-primary btn-add-category"
@@ -117,16 +120,27 @@
         </div>
 
         <div class="col-9">
-            <!-- Name -->
-            <text-input label="Name" [(text)]="catalogueLine.goodsItem.item.name" [rows]="1" [maxLength]="2047">
-            </text-input>
+            <div *ngFor="let itemName of catalogueLine.goodsItem.item.name; let i = index" class="space-after">
+                <!-- Name -->
+                <text-input label="Name" [(text)]="itemName.value" [rows]="1" [maxLength]="2047" [valueClass]="'col-7'" [(languageId)]="itemName.languageID" [languageIdClass]="'col-1'" (languageIdChange)="catalogueLine.goodsItem.item.name[i].languageID = $event;catalogueLine.goodsItem.item.description[i].languageID = $event">
+                </text-input>
 
-            <!-- Description -->
-            <text-input label="Description" [(text)]="catalogueLine.goodsItem.item.description" [rows]="6" [maxLength]="2047" rowClass="space-before">
-            </text-input>
+                <!-- Description -->
+                <text-input label="Description" [(text)]="catalogueLine.goodsItem.item.description[i].value" [rows]="6" [maxLength]="2047" rowClass="space-before" [valueClass]="'col-7'" (deleteTextInput)="deleteItemNameDescription(i)" [deleteButtonStyle]="'btn-danger'">
+                </text-input>
+            </div>
+            <div>
+                <!-- Name -->
+                <text-input label="Name" [(text)]="newItemName.value" [rows]="1" [maxLength]="2047" [valueClass]="'col-7'" [(languageId)]="newItemName.languageID" [languageIdClass]="'col-1'" (languageIdChange)="newItemName.languageID = $event;newItemDescription.languageID = $event">
+                </text-input>
+
+                <!-- Description -->
+                <text-input label="Description" [(text)]="newItemDescription.value" [rows]="6" [maxLength]="2047" rowClass="space-before" [valueClass]="'col-7'" (addTextInput)="addItemNameDescription()" [addButtonStyle]="'btn-default'">
+                </text-input>
+            </div>
 
             <!-- product ID -->
-            <div class="col-12"><small class="float-right">ID: {{ catalogueLine.goodsItem.item.manufacturersItemIdentification.id }}</small></div>
+            <div class="col-12 space-before"><small class="float-right">ID: {{ catalogueLine.goodsItem.item.manufacturersItemIdentification.id }}</small></div>
         </div>
     </div>
 
@@ -217,8 +231,8 @@
                     </div>
                     <div class="col-8 object-list">
                         <input type="checkbox" class="form-check-input boolean-value-input"
-                            [checked]="prop.value[0] == 'true'" *ngIf="prop.valueQualifier === 'BOOLEAN'"
-                            (change)="prop.value[0] == 'true ' ? prop.value[0] = 'false' : prop.value[0] = 'true'">
+                            [checked]="prop.value[0].value == 'true'" *ngIf="prop.valueQualifier === 'BOOLEAN'"
+                            (change)="prop.value[0].value == 'true' ? prop.value[0].value = 'false' : prop.value[0].value = 'true'">
                         <ng-container *ngIf="prop.valueQualifier !== 'BOOLEAN'">
                             <div *ngFor="let value of getValuesAsString(prop); let i = index"
                                 class="bordered value-pill" title="{{ value }}">
@@ -377,13 +391,13 @@
                 </div>
                 <div class="modal-category" *ngFor="let category of selectedCategories; let i = index">
                     <hr *ngIf="i > 0">
-                    <h5>{{ category.preferredName }}</h5>
+                    <h5>{{ selectPreferredName(category) }}</h5>
                     <div class="row">
                         <ng-container *ngFor="let property of getCategoryProperties(category)">
                             <div class="col-6 form-check modal-category-property" *ngIf="isPropertyFilteredIn(property)">
                                 <input type="checkbox" class="form-check-input" [ngModel]="isCategoryPropertySelected(category, property)"
                                     (change)="onToggleCategoryPropertySelected(category, property)">
-                                <label class="form-check-label">{{ property.preferredName }} ({{ getPropertyType(property) }})</label>
+                                <label class="form-check-label">{{ selectPreferredName(property) }} ({{ getPropertyType(property) }})</label>
                             </div>
                         </ng-container>
                     </div>

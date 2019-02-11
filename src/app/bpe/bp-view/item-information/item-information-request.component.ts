@@ -93,7 +93,7 @@ export class ItemInformationRequestComponent implements OnInit {
 
         //first initialize the seller and buyer parties.
         //once they are fetched continue with starting the ordering process
-        const sellerId: string = this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty.id;
+        const sellerId: string = UBLModelUtils.getPartyId(this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty);
         const buyerId: string = this.cookieService.get("company_id");
 
         Promise.all([

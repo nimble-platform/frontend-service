@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AddressSubForm } from './address.component';
 import { DeliveryTerms } from '../model/delivery-terms';
 import { Address } from '../model/address';
+import {DEFAULT_LANGUAGE} from '../../catalogue/model/constants';
 
 @Component({
     moduleId: module.id,
@@ -23,17 +24,32 @@ export class DeliveryTermsSubForm {
 	}
 	
     public static update(deliveryTermsForm: FormGroup, deliveryTerms: DeliveryTerms): FormGroup {
-        deliveryTermsForm.controls.specialTerms.setValue(deliveryTerms.specialTerms);
+        this.updateSpecialTerms(deliveryTermsForm,deliveryTerms.specialTerms);
         AddressSubForm.update(deliveryTermsForm.controls["deliveryAddress"] as FormGroup, deliveryTerms.deliveryAddress);
         deliveryTermsForm.controls.estimatedDeliveryTime.setValue(deliveryTerms.estimatedDeliveryTime);
         return deliveryTermsForm;
     }
 
+    // To handle special terms, one FormGroup is created. However, to support multilinguality properly,
+    // more than one FormGroup is necessary. Currently, the user only can have one special term in the default language of browser.
     public static generateForm(builder: FormBuilder) {
         return builder.group({
-            specialTerms: [''],
+            specialTerms: builder.group({
+                value: [""],
+                languageID: [DEFAULT_LANGUAGE()]
+            }),
             deliveryAddress: AddressSubForm.generateForm(builder),
             estimatedDeliveryTime: ['', Validators.pattern('\\d+')] // only digits
         });
+    }
+
+    private static updateSpecialTerms(deliveryTermsForm: FormGroup, specialTerms: Object){
+        let keys = Object.keys(specialTerms);
+        if(keys.length > 0){
+            let formGroup = deliveryTermsForm.controls.specialTerms as FormGroup;
+            // For now, there might be just one special terms. This is why we use the initial key.
+            formGroup.controls.value.setValue(specialTerms[keys[0]]);
+            formGroup.controls.languageID.setValue(keys[0]);
+        }
     }
 }

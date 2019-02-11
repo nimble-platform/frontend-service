@@ -7,6 +7,7 @@ import {Category} from "./model/category/category";
 import {Property} from "./model/category/property";
 import {CategoryService} from "./category/category.service";
 import {PublishService} from "./publish-and-aip.service";
+import {selectPreferredName} from '../common/utils';
 
 /**
  * Pipe to transform the custom properties and properties of selected categories for a product to property blocks to
@@ -138,7 +139,7 @@ export class PropertyBlockPipe implements PipeTransform {
      * Creates two blocks as eClass-base and eClass-specific and puts properties into those
      */
     private createEClassPropertyBlocks(category: Category): void {
-        let eClassBlocks = this.createEmptyEClassPropertyBlocks(category.preferredName);
+        let eClassBlocks = this.createEmptyEClassPropertyBlocks(selectPreferredName(category));
         let basePropertyBlock: any = eClassBlocks[0];
         let specificPropertyBlock: any = eClassBlocks[1];
 
@@ -181,7 +182,7 @@ export class PropertyBlockPipe implements PipeTransform {
     }
 
     private createPropertyBlock(category: Category): void {
-        let propertyBlock: any = this.createEmptyPropertyBlock(category.preferredName, category.taxonomyId);
+        let propertyBlock: any = this.createEmptyPropertyBlock(selectPreferredName(category), category.taxonomyId);
         propertyBlock['isCollapsed'] = this.publishStateService.getCollapsedState(propertyBlock.name);
         this.propertyBlocks.push(propertyBlock);
 
