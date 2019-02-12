@@ -1,10 +1,11 @@
 import {Component, Input} from "@angular/core";
 import {PriceOption} from "../../model/publish/price-option";
-import {copy, getPropertyValuesAsStrings, sanitizePropertyName} from "../../../common/utils";
+import {copy, getPropertyValuesAsStrings, selectPreferredValue} from '../../../common/utils';
 import {ItemProperty} from "../../model/publish/item-property";
 import {UBLModelUtils} from "../../model/ubl-model-utils";
 import {CatalogueLine} from "../../model/publish/catalogue-line";
 import {Quantity} from "../../model/publish/quantity";
+import {Text} from '../../model/publish/text';
 
 /**
  * Created by suat on 03-Sep-18.
@@ -20,7 +21,8 @@ export class ItemPropertyPriceOptionComponent {
     @Input() priceOption: PriceOption;
     @Input() index: number;
     @Input() discountUnits;
-    sanitizePropertyName = sanitizePropertyName;
+
+    getItemPropertyName = selectPreferredValue;
 
     selectProperty(itemPropertyId: string): void {
         // ignore if the property is already selected
@@ -57,11 +59,11 @@ export class ItemPropertyPriceOptionComponent {
             case "QUANTITY": {
                 let quantityVal: Quantity = value;
                 let index: number = copyProperty.valueQuantity.findIndex(propVal => propVal.value == quantityVal.value && propVal.unitCode == quantityVal.unitCode)
-                index !== -1 ? copyProperty.value.splice(index, 1) : copyProperty.value.push(value);
+                index !== -1 ? copyProperty.value.splice(index, 1) : copyProperty.value.push(new Text(value));
             }
             case "STRING": {
                 let index: number = copyProperty.value.findIndex(propVal => propVal == value)
-                index !== -1 ? copyProperty.value.splice(index, 1) : copyProperty.value.push(value);
+                index !== -1 ? copyProperty.value.splice(index, 1) : copyProperty.value.push(new Text(value));
             }
         }
         this.priceOption.additionalItemProperty = [].concat(this.priceOption.additionalItemProperty);
@@ -87,7 +89,7 @@ export class ItemPropertyPriceOptionComponent {
                 return index != -1;
             }
             case "STRING": {
-                let index: number = copyProperty.value.findIndex(propVal => propVal == value)
+                let index: number = copyProperty.value.findIndex(propVal => propVal.value == value)
                 return index != -1;
             }
         }

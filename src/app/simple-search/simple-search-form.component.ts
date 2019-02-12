@@ -11,6 +11,8 @@ import { CallStatus } from '../common/call-status';
 import { CURRENCIES } from "../catalogue/model/constants";
 import { CategoryService } from '../catalogue/category/category.service';
 import { Category } from '../catalogue/model/category/category';
+import { DEFAULT_LANGUAGE} from '../catalogue/model/constants';
+import {Code} from '../catalogue/model/publish/code';
 
 @Component({
 	selector: 'simple-search-form',
@@ -173,12 +175,16 @@ export class SimpleSearchFormComponent implements OnInit {
 		this.categoriesCallStatus.submit();
 		this.simpleSearchService.get("*",[this.product_cat_mix],[""],1,"","")
 		.then(res => {
-			for (let facet in res.facet_counts.facet_fields) {
-				if (facet == this.product_cat_mix) {
-					this.buildCatTree(res.facet_counts.facet_fields[facet]);
-				}
+			if(Object.keys(res.facet_counts.facet_fields).indexOf(this.product_cat_mix) == -1){
+				this.categoriesCallStatus.callback("Categories loaded.", true);
+			}else{
+				let codes:Code[] = this.getCodes(res);
+				// before starting to build category tree, we have to get categories to retrieve their names
+				this.categoryService.getCachedCategories(codes).then(categories => {
+					this.buildCatTree(res.facet_counts.facet_fields[this.product_cat_mix]);
+					this.categoriesCallStatus.callback("Categories loaded.", true);
+				})
 			}
-			this.categoriesCallStatus.callback("Categories loaded.", true);
 		})
 		.catch(error => {
 			this.categoriesCallStatus.error("Error while loading category tree.", error);
@@ -207,16 +213,16 @@ export class SimpleSearchFormComponent implements OnInit {
 					if (ontology.indexOf(taxonomyPrefix) != -1) {
 						var eclass_idx = parseInt(ontology.split(taxonomyPrefix)[1]);
 						if (eclass_idx%1000000==0) {
-							this.cat_levels[0].push({"name":name,"id":ontology,"count":count});
+							this.cat_levels[0].push({"name":name,"id":ontology,"count":count,"preferredName":name});
 						}
 						else if(eclass_idx%10000==0) {
-							this.cat_levels[1].push({"name":name,"id":ontology,"count":count});
+							this.cat_levels[1].push({"name":name,"id":ontology,"count":count,"preferredName":name});
 						}
 						else if(eclass_idx%100==0) {
-							this.cat_levels[2].push({"name":name,"id":ontology,"count":count});
+							this.cat_levels[2].push({"name":name,"id":ontology,"count":count,"preferredName":name});
 						}
 						else {
-							this.cat_levels[3].push({"name":name,"id":ontology,"count":count});
+							this.cat_levels[3].push({"name":name,"id":ontology,"count":count,"preferredName":name});
 						}
 					}
 				}
@@ -237,8 +243,13 @@ export class SimpleSearchFormComponent implements OnInit {
 								var ontology = facet_inner.substr(0,split_idx);
 								var name = facet_inner.substr(split_idx+1);
 								if (ontology.indexOf(taxonomyPrefix) != -1) {
-									if (this.findCategory(rootCategories,ontology) != -1 && this.config.categoryFilter[taxonomy].hiddenCategories.indexOf(name) == -1)
-										lvl.push({"name":name,"id":ontology,"count":count});
+									if (this.findCategory(rootCategories,ontology) != -1 && this.config.categoryFilter[taxonomy].hiddenCategories.indexOf(name) == -1){
+										if(ontology.indexOf("http://www.aidimme.es/FurnitureSectorOntology.owl#") != -1){
+											lvl.push({"name":name,"id":ontology,"count":count,"preferredName":this.categoryService.getCachedCategoryName(facet_inner)});
+										}else{
+											lvl.push({"name":name,"id":ontology,"count":count,"preferredName":name});
+										}
+									}
 								}
 							}
 							this.cat_levels.push(lvl);
@@ -260,8 +271,14 @@ export class SimpleSearchFormComponent implements OnInit {
 									var ontology = facet_inner.substr(0,split_idx);
 									var name = facet_inner.substr(split_idx+1);
 									if (ontology.indexOf(taxonomyPrefix) != -1) {
-										if (this.findCategory(catLevels[i],ontology) != -1 && this.config.categoryFilter[taxonomy].hiddenCategories.indexOf(name) == -1)
-											lvl.push({"name":name,"id":ontology,"count":count});
+										if (this.findCategory(catLevels[i],ontology) != -1 && this.config.categoryFilter[taxonomy].hiddenCategories.indexOf(name) == -1){
+											if(ontology.indexOf("http://www.aidimme.es/FurnitureSectorOntology.owl#") != -1){
+												lvl.push({"name":name,"id":ontology,"count":count,"preferredName":this.categoryService.getCachedCategoryName(facet_inner)});
+											}else{
+												lvl.push({"name":name,"id":ontology,"count":count,"preferredName":name});
+											}
+										}
+
 									}
 								}
 								this.cat_levels.push(lvl);
@@ -270,6 +287,21 @@ export class SimpleSearchFormComponent implements OnInit {
 					})
 			}
 		}
+	}
+
+	// To get names of categories, we will call categoryService.getCachedCategories method.
+	// This function is used to create Code for each category.
+	// Since eClass categories only have english names, this function only handles FurnitureOntology categories for now.
+	getCodes(res):Code[]{
+		let codes:Code[] = [];
+		for(let facet_inner in res.facet_counts.facet_fields[this.product_cat_mix]){
+			var split_idx = facet_inner.lastIndexOf(":");
+			var ontology = facet_inner.substr(0,split_idx);
+			if(ontology.indexOf("http://www.aidimme.es/FurnitureSectorOntology.owl#") != -1){
+				codes.push(new Code(facet_inner,"","","FurnitureOntology",""));
+			}
+		}
+		return codes;
 	}
 
 	private findCategory(categoryArray: Category[], uri: String): number {
@@ -316,106 +348,178 @@ export class SimpleSearchFormComponent implements OnInit {
 		this.searchCallStatus.submit();
 		this.simpleSearchService.getFields()
 		.then(res => {
-			this.simpleSearchService.get(q,res._body.split(","),fq,p,cat,catID)
-			.then(res => {
-				this.facetObj = [];
-				this.temp = [];
-				var index = 0;
-				for (let facet in res.facet_counts.facet_fields) {
-					if (JSON.stringify(res.facet_counts.facet_fields[facet]) != "{}") {
-						if (facet == this.product_cat_mix) {
-							this.buildCatTree(res.facet_counts.facet_fields[facet]);
+			this.simpleSearchService.getPropertyLabels(res._body.split(",")).then(propertyLabelsRes => {
+                this.simpleSearchService.get(q,res._body.split(","),fq,p,cat,catID)
+                    .then(res => {
+                    	if(Object.keys(res.facet_counts.facet_fields).indexOf(this.product_cat_mix) != -1){
+							let codes:Code[] = this.getCodes(res);
+							// before starting to build category tree, we have to get categories to retrieve their names
+							this.categoryService.getCachedCategories(codes).then(categories => {
+								this.buildCatTree(res.facet_counts.facet_fields[this.product_cat_mix]);
+								this.handleFacets(propertyLabelsRes.response.docs,res,p);
+							})
+						}else{
+							this.handleFacets(propertyLabelsRes.response.docs,res,p);
 						}
-						if (this.simpleSearchService.checkField(facet)) {
-							this.facetObj.push({
-								"name":facet,
-								"options":[],
-								"total":0,
-								"selected":false
-							});
-							for (let facet_inner in res.facet_counts.facet_fields[facet]) {
-								if (facet_inner != "" && facet_inner.indexOf("urn:oasis:names:specification:ubl:schema:xsd") == -1) {
-									this.facetObj[index].options.push({
-										"name":facet_inner,
-										"count":res.facet_counts.facet_fields[facet][facet_inner]
-									});
-									this.facetObj[index].total += res.facet_counts.facet_fields[facet][facet_inner];
-									if (this.checkFacet(this.facetObj[index].name,facet_inner))
-										this.facetObj[index].selected=true;
-								}
-							}
-							this.facetObj[index].options.sort(function(a,b){
-								var a_c = a.name;
-								var b_c = b.name;
-								return a_c.localeCompare(b_c);
-							});
-							this.facetObj[index].options.sort(function(a,b){
-								return b.count-a.count;
-							});
-							index++;
-							this.facetObj.sort(function(a,b){
-								var a_c = a.name;
-								var b_c = b.name;
-								return a_c.localeCompare(b_c);
-							});
-							this.facetObj.sort(function(a,b){
-								return b.total-a.total;
-							});
-							this.facetObj.sort(function(a,b){
-								var ret = 0;
-								if (a.selected && !b.selected)
-									ret = -1;
-								else if (!a.selected && b.selected)
-									ret = 1;
-								return ret;
-							});
-						}
-					}
-				}
-				this.temp = res.response.docs;
-				for (let doc in this.temp) {
-					if (this.temp[doc][this.product_img]) {
-						var img = this.temp[doc][this.product_img];
-						if (Array.isArray(img)) {
-							this.temp[doc][this.product_img] = img[0];
-						}
-					}
-				}
-				/*
-				for (let doc in this.temp) {
-					if (this.isJson(this.temp[doc][this.product_img])) {
-						var json = JSON.parse(this.temp[doc][this.product_img]);
-						var img = "";
-						if (json.length > 1)
-							img = "data:"+JSON.parse(this.temp[doc][this.product_img][0])[0].mimeCode+";base64,"+JSON.parse(this.temp[doc][this.product_img][0])[0].value;
-						else
-							img = "data:"+this.temp[doc][this.product_img].mimeCode+";base64,"+this.temp[doc][this.product_img].value;
-						this.temp[doc][this.product_img] = img;
-					}
-				}
-				*/
-				this.response = copy(this.temp);
-				this.size = res.response.numFound;
-				this.page = p;
-				this.start = this.page*10-10+1;
-				this.end = this.start+res.response.docs.length-1;
-				this.callback = true;
-				this.searchCallStatus.callback("Search done.", true);
-			})
-			.catch(error => {
-				this.searchCallStatus.error("Error while running search.", error);
-			});
+                    })
+                    .catch(error => {
+                        this.searchCallStatus.error("Error while running search.", error);
+                    });
+            }).catch(error => {
+                this.searchCallStatus.error("Failed to get property labels",error);
+            })
 		})
 		.catch(error => {
 			this.searchCallStatus.error("Error while running search.", error);
 		});
 	}
 
-	onSubmit() {
-		this.objToSubmit = copy(this.model);
-		this.page = 1;
-		this.get(this.objToSubmit);
+	handleFacets(propertyLabels,res,p){
+		this.facetObj = [];
+		this.temp = [];
+		var index = 0;
+		for (let facet in res.facet_counts.facet_fields) {
+			if (JSON.stringify(res.facet_counts.facet_fields[facet]) != "{}") {
+				if (this.simpleSearchService.checkField(facet)) {
+					this.facetObj.push({
+						"name":facet,
+						"realName":this.getFacetRealName(facet,propertyLabels),
+						"options":[],
+						"total":0,
+						"selected":false
+					});
+
+					// check whether we have specific labels for the default language settings
+					let label = null;
+					let facet_innerLabel = null;
+					let facet_innerCount = null;
+					for (let facet_inner in res.facet_counts.facet_fields[facet]) {
+						let index = facet_inner.lastIndexOf(":"+DEFAULT_LANGUAGE());
+						if (index != -1) {
+							label = facet_inner.substring(0,index);
+							facet_innerLabel = facet_inner;
+							facet_innerCount = res.facet_counts.facet_fields[facet][facet_inner];
+						}
+					}
+
+					if(label == null){
+						for (let facet_inner in res.facet_counts.facet_fields[facet]) {
+							if (facet_inner != "" && facet_inner != ":" && facet_inner != ' ' && facet_inner.indexOf("urn:oasis:names:specification:ubl:schema:xsd") == -1) {
+								this.facetObj[index].options.push({
+									"name":facet_inner,
+									"realName":facet_inner,
+									"count":res.facet_counts.facet_fields[facet][facet_inner]
+								});
+								this.facetObj[index].total += res.facet_counts.facet_fields[facet][facet_inner];
+								if (this.checkFacet(this.facetObj[index].name,facet_inner))
+									this.facetObj[index].selected=true;
+							}
+						}
+					}
+					else {
+						this.facetObj[index].options.push({
+							"name":facet_innerLabel,
+							"realName":label,
+							"count":facet_innerCount
+						});
+						this.facetObj[index].total += res.facet_counts.facet_fields[facet][facet_innerLabel];
+						if (this.checkFacet(this.facetObj[index].name,facet_innerLabel))
+							this.facetObj[index].selected=true;
+					}
+
+					this.facetObj[index].options.sort(function(a,b){
+						var a_c = a.name;
+						var b_c = b.name;
+						return a_c.localeCompare(b_c);
+					});
+					this.facetObj[index].options.sort(function(a,b){
+						return b.count-a.count;
+					});
+					index++;
+					this.facetObj.sort(function(a,b){
+						var a_c = a.name;
+						var b_c = b.name;
+						return a_c.localeCompare(b_c);
+					});
+					this.facetObj.sort(function(a,b){
+						return b.total-a.total;
+					});
+					this.facetObj.sort(function(a,b){
+						var ret = 0;
+						if (a.selected && !b.selected)
+							ret = -1;
+						else if (!a.selected && b.selected)
+							ret = 1;
+						return ret;
+					});
+				}
+			}
+		}
+		this.temp = res.response.docs;
+		for (let doc in this.temp) {
+			if (this.temp[doc][this.product_img]) {
+				var img = this.temp[doc][this.product_img];
+				if (Array.isArray(img)) {
+					this.temp[doc][this.product_img] = img[0];
+				}
+			}
+		}
+		/*
+        for (let doc in this.temp) {
+            if (this.isJson(this.temp[doc][this.product_img])) {
+                var json = JSON.parse(this.temp[doc][this.product_img]);
+                var img = "";
+                if (json.length > 1)
+                    img = "data:"+JSON.parse(this.temp[doc][this.product_img][0])[0].mimeCode+";base64,"+JSON.parse(this.temp[doc][this.product_img][0])[0].value;
+                else
+                    img = "data:"+this.temp[doc][this.product_img].mimeCode+";base64,"+this.temp[doc][this.product_img].value;
+                this.temp[doc][this.product_img] = img;
+            }
+        }
+        */
+		this.response = copy(this.temp);
+		this.size = res.response.numFound;
+		this.page = p;
+		this.start = this.page*10-10+1;
+		this.end = this.start+res.response.docs.length-1;
+		this.callback = true;
+		this.searchCallStatus.callback("Search done.", true);
 	}
+
+    getFacetRealName(name:string,properties){
+        for(let property of properties){
+            if(property["idxField"].indexOf(name) != -1){
+                // get label key
+                let objectKeys = Object.keys(property);
+
+                if(objectKeys.length < 2){
+                    // we do not have a specific label for this facet
+                    break;
+                }
+
+                let defaultLanguage = DEFAULT_LANGUAGE();
+
+                if(objectKeys.indexOf("label_"+defaultLanguage) != -1){
+                	return property["label_"+defaultLanguage][0];
+				}
+				else if(objectKeys.indexOf("label_en") != -1){
+                    return property["label_en"][0];
+				}
+
+                objectKeys.splice(objectKeys.indexOf("idxField"),1);
+                let labelField = objectKeys[0];
+                return property[labelField][0];
+            }
+        }
+
+        return name;
+    }
+
+    onSubmit() {
+        this.objToSubmit = copy(this.model);
+        this.page = 1;
+        this.get(this.objToSubmit);
+    }
 
 	callCat(name:string,id:string) {
 		this.model.q="*";

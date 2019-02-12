@@ -5,7 +5,7 @@ import { Address } from './address';
 
 export class DeliveryTerms {
     constructor(
-        public specialTerms: string,
+        public specialTerms: Object = {}, // languageId-value pairs. For example, {en:"some special terms here"}
         public deliveryAddress: Address,
         public estimatedDeliveryTime: number,
     ) {  }

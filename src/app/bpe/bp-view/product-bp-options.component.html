@@ -4,8 +4,8 @@
             <!-- Title -->
             <h2 class="nimble-title">
                 Order for:
-            </h2> 
-            <h2>{{ line.goodsItem.item.name }}
+            </h2>
+            <h2>{{ line.goodsItem.item.name[0].value }}
                 <button class="btn btn-outline-dark inline ml-2" (click)="onToggleProductExpanded()">
                     <i class="fas fa-chevron-up fa-fw inline" aria-hidden="true" *ngIf="productExpanded"></i>
                     <i class="fas fa-chevron-down fa-fw inline" aria-hidden="true" *ngIf="!productExpanded"></i>
@@ -18,8 +18,8 @@
             <!-- Transport Service Title -->
             <h2 class="nimble-title">
                 Transport service:
-            </h2> 
-            <h2>{{ serviceLine.goodsItem.item.name }}
+            </h2>
+            <h2>{{ serviceLine.goodsItem.item.name[0].value }}
                 <button class="btn btn-outline-dark inline ml-2" (click)="onToggleServiceExpanded()">
                     <i class="fas fa-chevron-up fa-fw inline" aria-hidden="true" *ngIf="serviceExpanded"></i>
                     <i class="fas fa-chevron-down fa-fw inline" aria-hidden="true" *ngIf="!serviceExpanded"></i>
@@ -27,7 +27,7 @@
                     <span class="inline" *ngIf="serviceExpanded"><small>Hide Details</small></span>
                 </button>
             </h2>
-        </div>            
+        </div>
     </div>
 
     <!-- Product Details Panel -->
@@ -36,12 +36,12 @@
     </product-details-tabs>
 
     <!-- Service Details Panel -->
-    <product-details-tabs *ngIf="serviceExpanded" [wrapper]="serviceWrapper" [showOverview]="true" 
+    <product-details-tabs *ngIf="serviceExpanded" [wrapper]="serviceWrapper" [showOverview]="true"
         [settings]="serviceSettings" [options]="options" [readonly]="true">
     </product-details-tabs>
 
     <!-- BP Steps -->
-    <product-bp-steps [currentStep]="currentStep" [status]="getStepsStatus()" 
+    <product-bp-steps [currentStep]="currentStep" [status]="getStepsStatus()"
         [statusText]="getStepsStatusText()" [displayMode]="stepsDisplayMode">
     </product-bp-steps>
 

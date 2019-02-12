@@ -31,25 +31,25 @@
 						<div *ngIf="idx%4==0" class="row">
 							<div *ngIf="idx<cat_levels[0].length" class="card col mr-3 ml-3 pl-0 pr-0 pointer" [ngClass]="{'mb-3':idx+4<cat_levels[0].length}" (click)="callCat(cat_levels[0][idx].name,cat_levels[0][idx].id)">
 								<div class="card-body p-2 text-center">
-								<h6 class="card-title clickable">{{ cat_levels[0][idx].name }}</h6>
+								<h6 class="card-title clickable">{{ cat_levels[0][idx].preferredName }}</h6>
 								<h6 class="card-subtitle text-muted font-italic">{{ cat_levels[0][idx].count }} items</h6>
 								</div>
 							</div>
 							<div *ngIf="idx+1<cat_levels[0].length" class="card col mr-3 ml-3 pl-0 pr-0 pointer" [ngClass]="{'mb-3':idx+4<cat_levels[0].length}" (click)="callCat(cat_levels[0][idx+1].name,cat_levels[0][idx+1].id)">
 								<div class="card-body p-2 text-center">
-								<h6 class="card-title clickable">{{ cat_levels[0][idx+1].name }}</h6>
+								<h6 class="card-title clickable">{{ cat_levels[0][idx+1].preferredName }}</h6>
 								<h6 class="card-subtitle text-muted font-italic">{{ cat_levels[0][idx+1].count }} items</h6>
 								</div>
 							</div>
 							<div *ngIf="idx+2<cat_levels[0].length" class="card col mr-3 ml-3 pl-0 pr-0 pointer" [ngClass]="{'mb-3':idx+4<cat_levels[0].length}" (click)="callCat(cat_levels[0][idx+2].name,cat_levels[0][idx+2].id)">
 								<div class="card-body p-2 text-center">
-								<h6 class="card-title clickable">{{ cat_levels[0][idx+2].name }}</h6>
+								<h6 class="card-title clickable">{{ cat_levels[0][idx+2].preferredName }}</h6>
 								<h6 class="card-subtitle text-muted font-italic">{{ cat_levels[0][idx+2].count }} items</h6>
 								</div>
 							</div>
 							<div *ngIf="idx+3<cat_levels[0].length" class="card col mr-3 ml-3 pl-0 pr-0 pointer" [ngClass]="{'mb-3':idx+4<cat_levels[0].length}" (click)="callCat(cat_levels[0][idx+3].name,cat_levels[0][idx+3].id)">
 								<div class="card-body p-2 text-center">
-								<h6 class="card-title clickable">{{ cat_levels[0][idx+3].name }}</h6>
+								<h6 class="card-title clickable">{{ cat_levels[0][idx+3].preferredName }}</h6>
 								<h6 class="card-subtitle text-muted font-italic">{{ cat_levels[0][idx+3].count }} items</h6>
 								</div>
 							</div>
@@ -108,20 +108,20 @@
 											<div *ngIf="cat_level==-2&&i==0">
 												<div *ngFor="let lvl of c">
 													<div *ngIf="cat==lvl.name">
-														<span class="clickable" (click)="setCat(lvl.name,lvl.id)"><b>{{ lvl.name }}</b></span> ({{ lvl.count }})
+														<span class="clickable" (click)="setCat(lvl.name,lvl.id)"><b>{{ lvl.preferredName }}</b></span> ({{ lvl.count }})
 													</div>
 													<div *ngIf="cat!=lvl.name&&cat_level!=i">
-														<span class="clickable" (click)="setCat(lvl.name,lvl.id)">{{ lvl.name }}</span> ({{ lvl.count }})
+														<span class="clickable" (click)="setCat(lvl.name,lvl.id)">{{ lvl.preferredName }}</span> ({{ lvl.count }})
 													</div>
 												</div>
 											</div>
 											<div *ngIf="cat_level>=(i-1)">
 												<div *ngFor="let lvl of c">
 													<div *ngIf="cat==lvl.name">
-														<span class="clickable" (click)="setCat(lvl.name,lvl.id)" [style.padding-left.rem]="(i * 1)"><b>{{ lvl.name }}</b></span> ({{ lvl.count }})
+														<span class="clickable" (click)="setCat(lvl.name,lvl.id)" [style.padding-left.rem]="(i * 1)"><b>{{ lvl.preferredName }}</b></span> ({{ lvl.count }})
 													</div>
 													<div *ngIf="cat!=lvl.name&&cat_level!=i">
-														<span class="clickable" (click)="setCat(lvl.name,lvl.id)" [style.padding-left.rem]="(i * 1)">{{ lvl.name }}</span> ({{ lvl.count }})
+														<span class="clickable" (click)="setCat(lvl.name,lvl.id)" [style.padding-left.rem]="(i * 1)">{{ lvl.preferredName }}</span> ({{ lvl.count }})
 													</div>
 												</div>
 											</div>
@@ -170,15 +170,15 @@
 								<div *ngFor="let facet of facetObj">
 									<div *ngIf="facet.total > 0 && checkProdCat(facet.name)" class="card mb-3">
 										<div class="card-header">
-											{{ getName(facet.name) }}
+											{{ getName(facet.realName) }}
 										</div>
 										<div class="card-body">
 											<div *ngFor="let facetInner of facet.options">
 												<div *ngIf="!checkFacet(facet.name,facetInner.name)">
-													<span class="clickable" (click)="setFacet(facet.name,facetInner.name)">{{ facetInner.name }}</span> ({{ facetInner.count }})
+													<span class="clickable" (click)="setFacet(facet.name,facetInner.name)">{{ facetInner.realName }}</span> ({{ facetInner.count }})
 												</div>
 												<div *ngIf="checkFacet(facet.name,facetInner.name)">
-													<span class="clickable" (click)="setFacet(facet.name,facetInner.name)"><b>{{ facetInner.name }}</b></span> ({{ facetInner.count }})
+													<span class="clickable" (click)="setFacet(facet.name,facetInner.name)"><b>{{ facetInner.realName }}</b></span> ({{ facetInner.count }})
 												</div>
 											</div>
 										</div>
@@ -200,15 +200,15 @@
 								<div *ngFor="let facet of facetObj">
 									<div *ngIf="facet.total > 0 && checkCompCat(facet.name)" class="card mb-3">
 										<div class="card-header">
-											{{ getName(facet.name) }}
+											{{ getName(facet.realName) }}
 										</div>
 										<div class="card-body">
 											<div *ngFor="let facetInner of facet.options">
 												<div *ngIf="!checkFacet(facet.name,facetInner.name)">
-													<span class="clickable" (click)="setFacet(facet.name,facetInner.name)">{{ facetInner.name }}</span> ({{ facetInner.count }})
+													<span class="clickable" (click)="setFacet(facet.name,facetInner.name)">{{ facetInner.realName }}</span> ({{ facetInner.count }})
 												</div>
 												<div *ngIf="checkFacet(facet.name,facetInner.name)">
-													<span class="clickable" (click)="setFacet(facet.name,facetInner.name)"><b>{{ facetInner.name }}</b></span> ({{ facetInner.count }})
+													<span class="clickable" (click)="setFacet(facet.name,facetInner.name)"><b>{{ facetInner.realName }}</b></span> ({{ facetInner.count }})
 												</div>
 											</div>
 										</div>
@@ -305,15 +305,15 @@
 								<div *ngFor="let facet of facetObj">
 									<div *ngIf="facet.total > 0 && checkOtherCat(facet.name)" class="card mb-3">
 										<div class="card-header">
-											{{ facet.name }}
+											{{ facet.realName }}
 										</div>
 										<div class="card-body">
 											<div *ngFor="let facetInner of facet.options">
 												<div *ngIf="!checkFacet(facet.name,facetInner.name)">
-													<span class="clickable" (click)="setFacet(facet.name,facetInner.name)">{{ facetInner.name }}</span> ({{ facetInner.count }})
+													<span class="clickable" (click)="setFacet(facet.name,facetInner.name)">{{ facetInner.realName }}</span> ({{ facetInner.count }})
 												</div>
 												<div *ngIf="checkFacet(facet.name,facetInner.name)">
-													<span class="clickable" (click)="setFacet(facet.name,facetInner.name)"><b>{{ facetInner.name }}</b></span> ({{ facetInner.count }})
+													<span class="clickable" (click)="setFacet(facet.name,facetInner.name)"><b>{{ facetInner.realName }}</b></span> ({{ facetInner.count }})
 												</div>
 											</div>
 										</div>

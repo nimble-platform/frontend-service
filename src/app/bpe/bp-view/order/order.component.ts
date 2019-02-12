@@ -101,7 +101,7 @@ export class OrderComponent implements OnInit {
         // null check is for checking whether a new order is initialized
         // preceding process id check is for checking whether there is any preceding process before the order
 
-        const sellerId: string = this.order.orderLine[0].lineItem.item.manufacturerParty.id;
+        const sellerId: string = UBLModelUtils.getPartyId(this.order.orderLine[0].lineItem.item.manufacturerParty);
         const buyerId: string = this.cookieService.get("company_id");
         this.initCallStatus.submit();
         if(this.order.contract == null && this.bpDataService.precedingProcessId != null) {
@@ -157,7 +157,7 @@ export class OrderComponent implements OnInit {
 
         if(this.showPreview && !this.termsAndConditions) {
             this.fetchTermsAndConditionsStatus.submit();
-            this.bpeService.generateOrderTermsAndConditionsAsText(this.order, this.buyerParty.id, this.sellerParty.id)
+            this.bpeService.generateOrderTermsAndConditionsAsText(this.order, UBLModelUtils.getPartyId(this.buyerParty), UBLModelUtils.getPartyId(this.sellerParty))
             .then(text => {
                 this.fetchTermsAndConditionsStatus.callback("Successfully fetched terms and conditions", true);
                 this.termsAndConditions = text;
@@ -186,7 +186,7 @@ export class OrderComponent implements OnInit {
         const buyerId: string = this.cookieService.get("company_id");
         order.buyerCustomerParty = new CustomerParty(this.buyerParty);
 
-        const sellerId: string = this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty.id;
+        const sellerId: string = UBLModelUtils.getPartyId(this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty);
         order.sellerSupplierParty = new SupplierParty(this.sellerParty);
 
         const vars: ProcessVariables = ModelUtils.createProcessVariables("Order", buyerId, sellerId,this.cookieService.get("user_id"), order, this.bpDataService);
@@ -227,8 +227,8 @@ export class OrderComponent implements OnInit {
 
         let vars: ProcessVariables = ModelUtils.createProcessVariables(
             "Order",
-            this.bpDataService.order.buyerCustomerParty.party.id,
-            this.bpDataService.order.sellerSupplierParty.party.id,
+            UBLModelUtils.getPartyId(this.bpDataService.order.buyerCustomerParty.party),
+            UBLModelUtils.getPartyId(this.bpDataService.order.sellerSupplierParty.party),
             this.cookieService.get("user_id"),
             this.bpDataService.orderResponse,
             this.bpDataService

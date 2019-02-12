@@ -48,12 +48,13 @@ import {PaymentTerms} from "./publish/payment-terms";
 import {Address} from "./publish/address";
 import {MonetaryTotal} from "./publish/monetary-total";
 import { NegotiationOptions } from "./publish/negotiation-options";
-import { CURRENCIES } from "./constants";
+import {CURRENCIES, DEFAULT_LANGUAGE} from './constants';
 import { TradingTerm } from "./publish/trading-term";
-import { copy } from "../../common/utils";
 import { CompanyNegotiationSettings } from "../../user-mgmt/model/company-negotiation-settings";
 import { headersToString } from "../../../../node_modules/@types/selenium-webdriver/http";
 import {ShipmentStage} from "./publish/shipment-stage";
+import {copy, createText, selectPreferredName} from '../../common/utils';
+import {Text} from "./publish/text";
 
 /**
  * Created by suat on 05-Jul-17.
@@ -76,20 +77,24 @@ export class UBLModelUtils {
      */
     public static createAdditionalItemProperty(property: Property, category: Category): ItemProperty {
         const code: Code = category 
-            ? new Code(category.id, category.preferredName, category.categoryUri, category.taxonomyId, null) 
+            ? new Code(category.id, selectPreferredName(category), category.categoryUri, category.taxonomyId, null)
             : new Code(null, null, null, "Custom", null);
 
         if (property == null) {
-            return new ItemProperty(this.generateUUID(), "", [], [], [], 
+            return new ItemProperty(this.generateUUID(), [], [], [], [],
                 new Array<BinaryObject>(), "STRING", code, null);
         }
-        return new ItemProperty(property.id, property.preferredName, 
-            property.dataType === "BOOLEAN" ? ["false"] : [], [], [], 
+
+        let itemProperty = new ItemProperty(property.id, [],
+            property.dataType === "BOOLEAN" ? [ new Text("false", "en" ) ] : [], [], [],
             new Array<BinaryObject>(), property.dataType, code, property.uri);
+
+        itemProperty.name = [].concat(property.preferredName);
+        return itemProperty;
     }
 
     public static createCommodityClassification(category: Category): CommodityClassification {
-        const code: Code = new Code(category.id, category.preferredName, category.categoryUri, category.taxonomyId, null);
+        const code: Code = new Code(category.id, selectPreferredName(category), category.categoryUri, category.taxonomyId, null);
         const commodityClassification = new CommodityClassification(code, null, null, "");
         return commodityClassification;
     }
@@ -102,7 +107,7 @@ export class UBLModelUtils {
         return ilq;
     }
 
-    public static createCatalogueLine(catalogueUuid:string, providerParty: Party, 
+    public static createCatalogueLine(catalogueUuid:string, providerParty: Party,
         settings: CompanyNegotiationSettings): CatalogueLine {
         // create additional item properties
         const additionalItemProperties = new Array<ItemProperty>();
@@ -113,10 +118,10 @@ export class UBLModelUtils {
 
         // create item
         const uuid:string = this.generateUUID();
-        const item = new Item("", "", [], [], additionalItemProperties, providerParty, this.createItemIdentificationWithId(uuid), docRef, [], [], [], null);
+        const item = new Item([], [], [], [], additionalItemProperties, providerParty, this.createItemIdentificationWithId(uuid), docRef, [], [], [], null);
 
         // create goods item
-        const goodsItem = new GoodsItem(uuid, item, this.createPackage(), 
+        const goodsItem = new GoodsItem(uuid, item, this.createPackage(),
             this.createDeliveryTerms(null, settings.deliveryPeriodUnits[0]));
 
         // create required item location quantity
@@ -210,7 +215,7 @@ export class UBLModelUtils {
         const price: Price = catalogueLine.requiredItemLocationQuantity.price;
         const lineItem: LineItem = this.createLineItem(quantity, price, item);
         const requestForQuotationLine: RequestForQuotationLine = new RequestForQuotationLine(lineItem);
-        const rfq = new RequestForQuotation(this.generateUUID(), [""], false, null, null, new Delivery(), 
+        const rfq = new RequestForQuotation(this.generateUUID(), [""], false, null, null, new Delivery(),
             [requestForQuotationLine], new NegotiationOptions(), null, null);
 
         rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure = order.orderLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure;
@@ -242,7 +247,7 @@ export class UBLModelUtils {
         const lineItem:LineItem = this.createLineItem(quantity, price, item);
         const requestForQuotationLine:RequestForQuotationLine = new RequestForQuotationLine(lineItem);
         const settings = new CompanyNegotiationSettings();
-        const rfq = new RequestForQuotation(this.generateUUID(), [""], false, null, null, new Delivery(), 
+        const rfq = new RequestForQuotation(this.generateUUID(), [""], false, null, null, new Delivery(),
             [requestForQuotationLine], new NegotiationOptions(), this.getDefaultPaymentMeans(settings), this.getDefaultPaymentTerms(settings));
 
         rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.goodsItem[0].item.name = transportExecutionPlanRequest.consignment[0].consolidatedShipment[0].goodsItem[0].item.name;
@@ -265,19 +270,22 @@ export class UBLModelUtils {
 
     public static getDefaultPaymentTerms(settings?: CompanyNegotiationSettings): PaymentTerms {
         const terms = new PaymentTerms([], [
-            new TradingTerm("Payment_In_Advance","Payment in advance","PIA",["false"]),
-            new TradingTerm("End_of_month","End of month","EOM",["false"]),
-            new TradingTerm("Cash_next_delivery","Cash next delivery","CND",["false"]),
-            new TradingTerm("Cash_before_shipment","Cash before shipment","CBS",["false"]),
-            new TradingTerm("Cash_on_delivery","Cash on delivery","COD",["false"]),
-            new TradingTerm("Cash_with_order","Cash with order","CWO",["false"]),
-            new TradingTerm("Cash_in_advance","Cash in advance","CIA",["false"]),
+            new TradingTerm("Payment_In_Advance",[new Text("Payment in advance")],"PIA",[new Text("false")]),
+            // new TradingTerm("Values_Net","e.g.,NET 10,payment 10 days after invoice date","Net %s",[null]),
+            new TradingTerm("End_of_month",[new Text("End of month")],"EOM",[new Text("false")]),
+            new TradingTerm("Cash_next_delivery",[new Text("Cash next delivery")],"CND",[new Text("false")]),
+            new TradingTerm("Cash_before_shipment",[new Text("Cash before shipment")],"CBS",[new Text("false")]),
+            // new TradingTerm("Values_MFI","e.g.,21 MFI,21st of the month following invoice date","%s MFI", [null]),
+            // new TradingTerm("Values_/NET","e.g.,1/10 NET 30,1% discount if payment received within 10 days otherwise payment 30 days after invoice date","%s/%s NET %s",[null,null,null]),
+            new TradingTerm("Cash_on_delivery",[new Text("Cash on delivery")],"COD",[new Text("false")]),
+            new TradingTerm("Cash_with_order",[new Text("Cash with order")],"CWO",[new Text("false")]),
+            new TradingTerm("Cash_in_advance",[new Text("Cash in advance")],"CIA",[new Text("false")]),
         ]);
 
         if(settings) {
             for(const term of terms.tradingTerms) {
-                term.value[0] = this.tradingTermToString(term) === settings.paymentTerms[0] ? "true" : "false";
-            }    
+                term.value[0].value = this.tradingTermToString(term) === settings.paymentTerms[0] ? "true" : "false";
+            }
         }
 
         return terms;
@@ -290,7 +298,7 @@ export class UBLModelUtils {
     }
 
     private static tradingTermToString(term: TradingTerm): string {
-        return term.tradingTermFormat + " - " + term.description;
+        return term.tradingTermFormat + " - " + term.description[0].value;
     }
 
     private static getDefaultPaymentMeans(settings: CompanyNegotiationSettings): PaymentMeans {
@@ -322,7 +330,7 @@ export class UBLModelUtils {
 
         const documentReference: DocumentReference = new DocumentReference(rfq.id);
 
-        const quotation = new Quotation(this.generateUUID(), [""], new Code(), new Code(), 1, false, documentReference, 
+        const quotation = new Quotation(this.generateUUID(), [""], new Code(), new Code(), 1, false, documentReference,
             customerParty, supplierParty, [quotationLine], rfq.paymentMeans, rfq.paymentTerms);
         return quotation;
     }
@@ -442,7 +450,7 @@ export class UBLModelUtils {
     }
 
     public static createItem():Item {
-        const item = new Item("", "", [], [], [], null, this.createItemIdentification(), null, [], [], [], null);
+        const item = new Item([], [], [], [], [], null, this.createItemIdentification(), null, [], [], [], null);
         return item;
     }
 
@@ -462,7 +470,7 @@ export class UBLModelUtils {
     }
 
     private static createDeliveryTerms(value: number = null, unit: string = "day(s)"): DeliveryTerms {
-        const deliveryTerms = new DeliveryTerms(null, this.createPeriod(value, unit), 
+        const deliveryTerms = new DeliveryTerms(null, this.createPeriod(value, unit),
             null, null, this.createAmount(), new Location(), null);
         return deliveryTerms;
     }
@@ -541,5 +549,28 @@ export class UBLModelUtils {
         });
         return uuid;
     };
+
+    public static getPartyId(party: Party):string{
+        return party.partyIdentification[0].id;
+    }
+
+    public static getPartyDisplayName(party: Party):string{
+        let defaultLanguage = DEFAULT_LANGUAGE();
+
+        let englishName = null;
+        for(let name of party.partyName){
+            if(name.name.languageID == "en"){
+                englishName = name.name.value;
+            }
+            if(name.name.languageID == defaultLanguage){
+                return name.name.value;
+            }
+        }
+
+        if(englishName){
+            return englishName;
+        }
+        return party.partyName[0].name.value;
+    }
 
 }

@@ -9,6 +9,8 @@ import { CompanyNegotiationSettings } from "../../../user-mgmt/model/company-neg
 import { CallStatus } from "../../../common/call-status";
 import { isTransportService } from "../../../common/utils";
 import { CompanySettings } from "../../../user-mgmt/model/company-settings";
+import {Item} from '../../model/publish/item';
+import {selectDescription} from '../../../common/utils';
 
 @Component({
     selector: 'catalogue-line-panel',
@@ -28,11 +30,15 @@ export class CatalogueLinePanelComponent {
     productWrapper: ProductWrapper;
 
     deleteCallStatus: CallStatus = new CallStatus();
-    
+
     constructor(private catalogueService: CatalogueService,
                 private categoryService: CategoryService,
                 private publishService: PublishService,
                 private router: Router) {
+    }
+
+    selectDescription (item:  Item) {
+        return selectDescription(item);
     }
 
     ngOnInit() {

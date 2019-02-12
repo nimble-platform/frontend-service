@@ -1,5 +1,5 @@
 <!-- Warranty -->
-<quantity-input label="Warranty Period" [disabled]="disabled" 
+<quantity-input label="Warranty Period" [disabled]="disabled"
     [quantityUnits]="wrapper.negotiationSettings.warrantyPeriodUnits" rowClass="space-before"
     [quantity]="wrapper.line.warrantyValidityPeriod.durationMeasure">
 </quantity-input>
@@ -12,14 +12,15 @@
 </options-input>
 
 <!-- Delivery Period -->
-<quantity-input label="Delivery Period" [disabled]="disabled" 
+<quantity-input label="Delivery Period" [disabled]="disabled"
     [quantityUnits]="wrapper.negotiationSettings.deliveryPeriodUnits" rowClass="space-before"
     [quantity]="wrapper.line.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure">
 </quantity-input>
 
+<br/>
 <!-- Special Terms -->
 <text-input label="Special Terms" [disabled]="disabled" rowClass="space-before"
-    [(text)]="wrapper.line.goodsItem.deliveryTerms.specialTerms">
+    [(text)]="wrapper.line.goodsItem.deliveryTerms.specialTerms[0].value">
 </text-input>
 
 <hr>

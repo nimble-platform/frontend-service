@@ -83,3 +83,13 @@ export const DISCOUNT_TARGETS = {
 };
 
 export const DISCOUNT_UNITS = CURRENCIES.concat(['%']);
+
+export const LANGUAGES:Array<string>  = ["en", "es", "de", "tr", "it"];
+
+export const DEFAULT_LANGUAGE = function () {
+    let languageId = navigator.language.indexOf('-') == -1 ? navigator.language : navigator.language.substring(0,navigator.language.indexOf('-'));
+    if(LANGUAGES.indexOf(languageId) == -1){
+        return "en";
+    }
+    return languageId;
+};

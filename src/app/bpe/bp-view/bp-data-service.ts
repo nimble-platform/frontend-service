@@ -25,13 +25,13 @@ import { PrecedingBPDataService } from "./preceding-bp-data-service";
 import { BpUserRole } from "../model/bp-user-role";
 import { BpWorkflowOptions } from "../model/bp-workflow-options";
 import { NegotiationOptions } from "../../catalogue/model/publish/negotiation-options";
-import { PAYMENT_MEANS } from "../../catalogue/model/constants";
+import {DEFAULT_LANGUAGE, PAYMENT_MEANS} from '../../catalogue/model/constants';
 import { ThreadEventMetadata } from "../../catalogue/model/publish/thread-event-metadata";
 import { ProcessType } from "../model/process-type";
 import { PaymentMeans } from "../../catalogue/model/publish/payment-means";
 import { Code } from "../../catalogue/model/publish/code";
 import { PaymentTerms } from "../../catalogue/model/publish/payment-terms";
-import { copy, getPropertyKey } from "../../common/utils";
+import {copy, getPropertyKey, selectName} from '../../common/utils';
 import { NegotiationModelWrapper } from "./negotiation/negotiation-model-wrapper";
 import { PriceWrapper } from "../../common/price-wrapper";
 import { Quantity } from "../../catalogue/model/publish/quantity";
@@ -39,9 +39,11 @@ import { CompanyNegotiationSettings } from "../../user-mgmt/model/company-negoti
 import { CompanySettings } from "../../user-mgmt/model/company-settings";
 import {DocumentService} from "./document-service";
 import {ShipmentStage} from "../../catalogue/model/publish/shipment-stage";
+import {PartyName} from '../../catalogue/model/publish/party-name';
 import {BpStartEvent} from '../../catalogue/model/publish/bp-start-event';
 import {BpURLParams} from '../../catalogue/model/publish/bpURLParams';
 import {Router} from '@angular/router';
+import {Text} from '../../catalogue/model/publish/text';
 
 /**
  * Created by suat on 20-Sep-17.
@@ -104,7 +106,7 @@ export class BPDataService{
 
         for(let line of catalogueLines) {
             this.catalogueLines.push(line);
-            this.relatedProducts.push(line.goodsItem.item.name);
+            this.relatedProducts.push(line.goodsItem.item.name[0].value);
             for(let category of line.goodsItem.item.commodityClassification) {
                 if(this.relatedProductCategories.indexOf(category.itemClassificationCode.name) == -1) {
                     this.relatedProductCategories.push(category.itemClassificationCode.name);
@@ -301,7 +303,7 @@ export class BPDataService{
             // we can't copy because those are 2 different types of addresses.
             const lineItem = this.requestForQuotation.requestForQuotationLine[0].lineItem;
             const address = lineItem.deliveryTerms.deliveryLocation.address;
-            address.country.name = settings.details.address.country;
+            address.country.name = new Text(settings.details.address.country,DEFAULT_LANGUAGE());
             address.postalZone = settings.details.address.postalCode;
             address.cityName = settings.details.address.cityName;
             address.buildingNumber = settings.details.address.buildingNumber;
@@ -351,7 +353,7 @@ export class BPDataService{
         if(!rfq.negotiationOptions) {
             rfq.negotiationOptions = new NegotiationOptions();
 
-            this.userService.getCompanyNegotiationSettingsForParty(rfq.sellerSupplierParty.party.id).then(res => {
+            this.userService.getCompanyNegotiationSettingsForParty(UBLModelUtils.getPartyId(rfq.sellerSupplierParty.party)).then(res => {
                 let settings: CompanyNegotiationSettings= res as CompanyNegotiationSettings;
                 const line = this.catalogueLines[0];
                 const wrapper = new NegotiationModelWrapper(line, rfq, null, settings);
@@ -451,9 +453,14 @@ export class BPDataService{
         }
 
         this.despatchAdvice.despatchLine[0].deliveredQuantity.value = deliveredQuantity.value;
-        this.despatchAdvice.despatchLine[0].shipment[0].handlingInstructions = handlingInst;
+        this.despatchAdvice.despatchLine[0].shipment[0].handlingInstructions = [new Text(handlingInst,DEFAULT_LANGUAGE())];
         this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage.push(new ShipmentStage());
-        this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage[0].carrierParty.name = carrierName;
+
+        let partyName: PartyName = new PartyName();
+        partyName.name.value = carrierName;
+        partyName.name.languageID = DEFAULT_LANGUAGE();
+
+        this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage[0].carrierParty.partyName= [partyName];
         this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage[0].carrierParty.contact.telephone = carrierContact;
         this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage[0].estimatedDeliveryDate = endDate;
     }
@@ -574,8 +581,11 @@ export class BPDataService{
 
             switch(prop.valueQualifier) {
                 case "STRING":
-                    if(prop.value.length > 1) {
-                        prop.value = [prop.value[indexToSelect]];
+                    // Here, possible texts represent the values which can be chosen by the user in the product details page
+                    let possibleTexts = this.getPossibleText(prop);
+                    if(possibleTexts.length > 0){
+                        // instead of possibleTexts, if we use prop variable, property value may be wrong.
+                        prop.value = [possibleTexts[indexToSelect]];
                     }
                     break;
                 case "NUMBER":
@@ -595,6 +605,32 @@ export class BPDataService{
                     break;
             }
         }
+    }
+
+    // For the given item property, this function returns all values for the default language of the browser
+    // if there's no value for the default language of the browser, it returns english values
+    private getPossibleText(itemProperty:ItemProperty):Text[]{
+        let texts = [];
+        let defaultLanguage = DEFAULT_LANGUAGE();
+        let englishTexts = [];
+        for (let text of itemProperty.value) {
+            if(text.languageID === defaultLanguage) {
+                texts.push(text);
+            }
+            else if(text.languageID == "en"){
+                englishTexts.push(text);
+            }
+        }
+        // there are values for the default language of the browser
+        if(texts.length > 0){
+            return texts;
+        }
+        // there are english values
+        if(englishTexts.length > 0){
+            return englishTexts;
+        }
+
+        return [];
     }
 
     private getItemFromCurrentWorkflow(): Item {
@@ -647,7 +683,7 @@ export class BPDataService{
                     case "BOOLEAN":
                         if(prop.value.length > 1) {
                             for(let valIndex = 0; valIndex < prop.value.length; valIndex++) {
-                                if(prop.value[valIndex] === itemProp.value[0]) {
+                                if(prop.value[valIndex].value === itemProp.value[0].value) {
                                     this.bpStartEvent.workflowOptions.selectedValues[key] = valIndex;
                                 }
                             }
@@ -681,16 +717,16 @@ export class BPDataService{
 
     updateItemProperty(itemProperty:ItemProperty):void {
         if(itemProperty.valueQualifier == 'STRING') {
-            let index = this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty.findIndex(item => item.name == itemProperty.name);
+            let index = this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty.findIndex(item => selectName(item) == selectName(itemProperty));
             this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty[index].value[0] = itemProperty.value[0];
         } else if(itemProperty.valueQualifier == 'REAL_MEASURE') {
-            let index = this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty.findIndex(item => item.name == itemProperty.name);
+            let index = this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty.findIndex(item => selectName(item) == selectName(itemProperty));
             this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty[index].valueDecimal[0] = itemProperty.valueDecimal[0];
         } else if(itemProperty.valueQualifier == 'BOOLEAN') {
-            let index = this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty.findIndex(item => item.name == itemProperty.name);
+            let index = this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty.findIndex(item => selectName(item) == selectName(itemProperty));
             this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty[index].value[0] = itemProperty.value[0];
         } else if(itemProperty.valueQualifier == 'QUANTITY') {
-            let index = this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty.findIndex(item => item.name == itemProperty.name);
+            let index = this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty.findIndex(item => selectName(item) == selectName(itemProperty));
             this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty[index].valueQuantity[0] = itemProperty.valueQuantity[0];
         }
     }
@@ -716,3 +752,4 @@ export class BPDataService{
         this.modifiedCatalogueLines[0].goodsItem.item.dimension = dimensions;
     }
 }
+
