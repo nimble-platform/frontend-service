@@ -147,8 +147,8 @@ export class CompanyDescriptionSettingsComponent implements OnInit {
         if (fileList.length > 0) {
             let file: File = fileList[0];
             if(file) {
-                const filesize = parseInt((file.size/1024).toFixed(4));
-                if (filesize < 256) {
+                const filesize = parseInt(((file.size/1024)/1024).toFixed(4));
+                if (filesize < 2) {
                   this.imgFile = file;
                 }
                 else {
@@ -156,7 +156,7 @@ export class CompanyDescriptionSettingsComponent implements OnInit {
                   model.patchValue({
                     file: null
                   });
-                  alert("Maximum allowed filesize: 256 kB");
+                  alert("Maximum allowed filesize: 2 MB");
                 }
             }
         } else {
@@ -172,7 +172,7 @@ export class CompanyDescriptionSettingsComponent implements OnInit {
         this.saveCallStatusImage.submit();
         const fields = model.getRawValue();
         this.userService
-            .saveImage(this.imgFile, fields.isLogo)
+            .saveImage(this.imgFile, fields.isLogo, this.settings.companyID)
             .then(() => {
                 close();
                 this.saveCallStatusImage.callback("Image saved", true);
@@ -187,7 +187,7 @@ export class CompanyDescriptionSettingsComponent implements OnInit {
       if (confirm("Are you sure that you want to delete this image?")) {
         this.saveCallStatusImage.submit();
         this.userService
-          .deleteImage(id)
+          .deleteImage(id, this.settings.companyID)
           .then(() => {
               this.saveCallStatusImage.callback("Image deleted", true);
               this.onSaveEvent.emit();
