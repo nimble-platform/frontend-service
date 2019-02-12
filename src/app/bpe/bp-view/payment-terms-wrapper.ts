@@ -8,7 +8,7 @@ export class PaymentTermsWrapper {
     private selectedPaymentTerm: number;
 
     constructor(private paymentTerms: PaymentTerms) {
-        const index = paymentTerms.tradingTerms.findIndex(term => term.value[0] == "true");
+        const index = paymentTerms.tradingTerms.findIndex(term => term.value[0].value == "true");
         this.selectedPaymentTerm = index < 0 ? 0 : index;
     }
 
@@ -22,8 +22,8 @@ export class PaymentTermsWrapper {
             return;
         }
 
-        this.paymentTerms.tradingTerms[this.selectedPaymentTerm].value[0] = "false";
+        this.paymentTerms.tradingTerms[this.selectedPaymentTerm].value[0].value = "false";
         this.selectedPaymentTerm = index;
-        this.paymentTerms.tradingTerms[this.selectedPaymentTerm].value[0] = "true";
+        this.paymentTerms.tradingTerms[this.selectedPaymentTerm].value[0].value = "true";
     }
 }

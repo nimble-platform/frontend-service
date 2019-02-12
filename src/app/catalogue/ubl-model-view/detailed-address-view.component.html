@@ -22,5 +22,5 @@
 </div>
 <div *ngIf="getDefaultDeliveryLocation.fb_callback" class="input-group form-group">
     <label class="col-2 control-label offset-3">Country</label>
-    <input type="text" class="form-control" [(ngModel)]="deliveryAddress.country.name" [disabled]="presentationMode != 'edit'">
+    <input type="text" class="form-control" [(ngModel)]="deliveryAddress.country.name.value" [disabled]="presentationMode != 'edit'">
 </div>

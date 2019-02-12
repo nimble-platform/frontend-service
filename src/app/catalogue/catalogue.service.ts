@@ -13,6 +13,7 @@ import {CookieService} from "ng2-cookies";
 import { copy } from "../common/utils";
 import {BinaryObject} from './model/publish/binary-object';
 import {CataloguePaginationResponse} from './model/publish/catalogue-pagination-response';
+import {UBLModelUtils} from './model/ubl-model-utils';
 
 @Injectable()
 export class CatalogueService {
@@ -34,7 +35,7 @@ export class CatalogueService {
 
     getCatalogueResponse(userId: string, limit:number, offset:number): Promise<CataloguePaginationResponse>{
         return this.userService.getUserParty(userId).then(party => {
-            let url = this.baseUrl + `/catalogue/${party.id}/pagination/default?limit=${limit}&offset=${offset}`;
+            let url = this.baseUrl + `/catalogue/${UBLModelUtils.getPartyId(party)}/pagination/default?limit=${limit}&offset=${offset}`;
             return this.http
                 .get(url, {headers: this.getAuthorizedHeaders()})
                 .toPromise()
@@ -98,7 +99,7 @@ export class CatalogueService {
             .catch(this.handleError);
     }
 
-    downloadTemplate(userId:string, categories: Category[]): Promise<any> {
+    downloadTemplate(userId:string, categories: Category[],templateLanguage:string): Promise<any> {
         let taxonomyIds:string = "", categoryIds:string = "";
         for(let category of categories) {
             categoryIds += category.id + ",";
@@ -109,7 +110,7 @@ export class CatalogueService {
 
         return this.userService.getUserParty(userId).then(party => {
             const token = 'Bearer '+this.cookieService.get("bearer_token");
-            const url = this.baseUrl + `/catalogue/template?categoryIds=${encodeURIComponent(categoryIds)}&taxonomyIds=${encodeURIComponent(taxonomyIds)}`;
+            const url = this.baseUrl + `/catalogue/template?categoryIds=${encodeURIComponent(categoryIds)}&taxonomyIds=${encodeURIComponent(taxonomyIds)}&templateLanguage=${templateLanguage}`;
             return new Promise<any>((resolve, reject) => {
 
                 let xhr = new XMLHttpRequest();
@@ -140,7 +141,7 @@ export class CatalogueService {
         const token = 'Bearer '+this.cookieService.get("bearer_token");
 
         return this.userService.getUserParty(userId).then(party => {
-            const url = this.baseUrl + `/catalogue/template/upload?partyId=${party.id}&uploadMode=${uploadMode}`;
+            const url = this.baseUrl + `/catalogue/template/upload?partyId=${UBLModelUtils.getPartyId(party)}&uploadMode=${uploadMode}`;
             return new Promise<any>((resolve, reject) => {
                 let formData: FormData = new FormData();
                 formData.append("file", template, template.name);

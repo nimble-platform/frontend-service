@@ -22,7 +22,7 @@
                 <input-label [label]="'Payment Mean'"></input-label>
             </div>
             <div class="col-7">
-                <select class="form-control form-control-sm" [(ngModel)]="priceOption.paymentMeans[0].instructionNote">
+                <select class="form-control form-control-sm" [(ngModel)]="priceOption.paymentMeans[0].paymentMeansCode.value">
                     <option *ngFor="let option of paymentMeans" [value]="option">{{option}}</option>
                 </select>
             </div>

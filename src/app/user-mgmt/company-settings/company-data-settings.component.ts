@@ -3,6 +3,7 @@ import { CompanySettings } from "../model/company-settings";
 import { AppComponent } from "../../app.component";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import * as myGlobals from '../../globals';
+import {selectValueOfTextObject} from '../../common/utils';
 import { FormBuilder, FormGroup, FormControl } from "@angular/forms";
 import { AddressSubForm } from "../subforms/address.component";
 import { CallStatus } from "../../common/call-status";
@@ -23,6 +24,8 @@ export class CompanyDataSettingsComponent implements OnInit {
     saveCallStatus: CallStatus = new CallStatus();
     @Output() onSaveEvent: EventEmitter<void> = new EventEmitter();
 
+    selectValueOfTextObject = selectValueOfTextObject;
+
     constructor(private appComponent: AppComponent,
                 private _fb: FormBuilder,
                 private modalService: NgbModal,
@@ -32,12 +35,12 @@ export class CompanyDataSettingsComponent implements OnInit {
 
     ngOnInit() {
       this.dataForm = this._fb.group({
-          name: new FormControl({value: (this.settings.details.companyLegalName || ""), disabled: !this.appComponent.checkRoles('pm')}),
+          name: new FormControl({value: (this.selectValueOfTextObject(this.settings.details.legalName) || ""), disabled: !this.appComponent.checkRoles('pm')}),
           vatNumber: new FormControl({value: (this.settings.details.vatNumber || ""), disabled: !this.appComponent.checkRoles('pm')}),
           verificationInformation: new FormControl({value: (this.settings.details.verificationInformation || ""), disabled: (!this.appComponent.checkRoles('pm') && this.settings.details.verificationInformation)}),
           businessType: new FormControl({value: (this.settings.details.businessType || ""), disabled: !this.appComponent.checkRoles('pm')}),
           industrySectors: new FormControl({value: (this.settings.details.industrySectors[0] || ""), disabled: !this.appComponent.checkRoles('pm')}),
-          businessKeywords: new FormControl({value: (this.settings.details.businessKeywords[0] || ""), disabled: (!this.appComponent.checkRoles('pm') && this.settings.details.businessKeywords[0])}),
+          businessKeywords: new FormControl({value: (this.selectValueOfTextObject(this.settings.details.businessKeywords) || ""), disabled: (!this.appComponent.checkRoles('pm') && Object.keys(this.settings.details.businessKeywords).length == 0)}),
           yearOfReg: new FormControl({value: (this.settings.details.yearOfCompanyRegistration || ""), disabled: (!this.appComponent.checkRoles('pm') && this.settings.details.yearOfCompanyRegistration)}),
           address: AddressSubForm.update(AddressSubForm.generateForm(this._fb), this.settings.details.address)
       });
@@ -48,7 +51,7 @@ export class CompanyDataSettingsComponent implements OnInit {
       var sectorString = model.getRawValue()['industrySectors'];
       if (Array.isArray(sectorString))
         sectorString = sectorString.join(", ");
-      this.settings.details.companyLegalName =  model.getRawValue()['name'];
+      this.settings.details.legalName =  model.getRawValue()['name'];
       this.settings.details.vatNumber =  model.getRawValue()['vatNumber'];
       this.settings.details.verificationInformation =  model.getRawValue()['verificationInformation'];
       this.settings.details.businessType =  model.getRawValue()['businessType'];
@@ -81,7 +84,7 @@ export class CompanyDataSettingsComponent implements OnInit {
         body += "I would like to change my company data to the following:";
         body += "\n\n";
         body += "Company Name:\n";
-        body += this.settings.details.companyLegalName + "\n\n";
+        body += this.selectValueOfTextObject(this.settings.details.legalName) + "\n\n";
         body += "VAT Number:\n";
         body += this.settings.details.vatNumber + "\n\n";
         body += "Verification Info:\n";
@@ -91,7 +94,7 @@ export class CompanyDataSettingsComponent implements OnInit {
         body += "Activity Sectors:\n";
         body += this.settings.details.industrySectors[0] + "\n\n";
         body += "Business Keywords:\n";
-        body += this.settings.details.businessKeywords[0] + "\n\n";
+        body += this.selectValueOfTextObject(this.settings.details.businessKeywords) + "\n\n";
         body += "Year of Foundation:\n";
         body += this.settings.details.yearOfCompanyRegistration + "\n\n";
         body += "Street:\n";

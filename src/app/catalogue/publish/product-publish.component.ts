@@ -17,7 +17,17 @@ import { CookieService } from "ng2-cookies";
 import { Category } from "../model/category/category";
 import { BinaryObject } from "../model/publish/binary-object";
 import { Code } from "../model/publish/code";
-import { getPropertyKey, sortCategories, sortProperties, sanitizeDataTypeName, sanitizePropertyName, copy, isCustomProperty, getPropertyValuesAsStrings } from "../../common/utils";
+import {
+    getPropertyKey,
+    sortCategories,
+    sortProperties,
+    sanitizeDataTypeName,
+    sanitizePropertyName,
+    copy,
+    isCustomProperty,
+    getPropertyValuesAsStrings,
+    selectPreferredName, selectName, createText
+} from '../../common/utils';
 import { Property } from "../model/category/property";
 import { ProductWrapper } from "../../common/product-wrapper";
 import { EditPropertyModalComponent } from "./edit-property-modal.component";
@@ -29,13 +39,15 @@ import { Subject } from "rxjs/Subject";
 import 'rxjs/add/observable/fromPromise'
 import 'rxjs/add/observable/interval';
 import 'rxjs/add/operator/takeUntil';
-import {Catalogue} from "../model/publish/catalogue";
+import {LANGUAGES, DEFAULT_LANGUAGE} from '../model/constants';
 import * as myGlobals from '../../globals';
 import {CataloguePaginationResponse} from '../model/publish/catalogue-pagination-response';
 import {Party} from '../model/publish/party';
 
 
 type ProductType = "product" | "transportation";
+import {Text} from "../model/publish/text";
+import {Catalogue} from '../model/publish/catalogue';
 
 interface SelectedProperties {
     [key: string]: SelectedProperty;
@@ -113,6 +125,8 @@ export class ProductPublishComponent implements OnInit {
 
     json = JSON;
 
+    // the language of template
+    templateLanguage = "en";
     // used to add a new property which has a unit
     private quantity = new Quantity(null, null);
 
@@ -140,7 +154,7 @@ export class ProductPublishComponent implements OnInit {
             return Promise.all([
                 Promise.resolve(party),
                 this.catalogueService.getCatalogueResponse(userId,0,0),
-                this.userService.getCompanyNegotiationSettingsForParty(party.id)
+                this.userService.getCompanyNegotiationSettingsForParty(UBLModelUtils.getPartyId(party))
             ])
         })
         .then(([party, catalogueResponse, settings]) => {
@@ -171,6 +185,10 @@ export class ProductPublishComponent implements OnInit {
 
     ngOnDestroy() {
         this.ngUnsubscribe.next()
+    }
+
+    selectPreferredName(cp: Category | Property) {
+        return selectPreferredName(cp);
     }
 
     /*
@@ -332,8 +350,31 @@ export class ProductPublishComponent implements OnInit {
 
     isValidCatalogueLine(): boolean {
         // must have a name
-        return this.catalogueLine.goodsItem.item.name !== "";
+        return this.catalogueLine.goodsItem.item.name[0] && this.catalogueLine.goodsItem.item.name[0].value !== "";
     }
+
+    // TEST
+    private newItemName: Text = new Text(null,DEFAULT_LANGUAGE());
+    private newItemDescription: Text = new Text(null,DEFAULT_LANGUAGE());
+    private languages: Array<string> = LANGUAGES;
+
+    addItemNameDescription(){
+        let nameText = new Text(this.newItemName.value, this.newItemName.languageID);
+        let descriptionText = new Text(this.newItemDescription.value, this.newItemDescription.languageID);
+
+        this.catalogueLine.goodsItem.item.name.push(nameText);
+        this.catalogueLine.goodsItem.item.description.push(descriptionText);
+
+        this.newItemName = new Text(null,DEFAULT_LANGUAGE());
+        this.newItemDescription = new Text(null,DEFAULT_LANGUAGE());
+    }
+
+    deleteItemNameDescription(index){
+        this.catalogueLine.goodsItem.item.name.splice(index, 1);
+        this.catalogueLine.goodsItem.item.description.splice(index, 1);
+    }
+
+    //////
 
     private recomputeSelectedProperties() {
         const oldSelectedProps = this.selectedProperties;
@@ -379,7 +420,7 @@ export class ProductPublishComponent implements OnInit {
     }
 
     getPrettyName(property: ItemProperty): string {
-        return sanitizePropertyName(property.name);
+        return sanitizePropertyName(selectName(property));
     }
 
     getValuesAsString(property: ItemProperty): string[] {
@@ -568,7 +609,6 @@ export class ProductPublishComponent implements OnInit {
                 }
             }
         }
-
         this.recomputeSelectedProperties();
     }
 
@@ -726,7 +766,7 @@ export class ProductPublishComponent implements OnInit {
                 }
 
             } else {
-                if (property.value.length == 0 || property.value[0] == '') {
+                if (property.value.length == 0 || property.value[0].value == '') {
                     propertiesToBeSpliced.push(property);
                 }
             }
@@ -859,9 +899,9 @@ export class ProductPublishComponent implements OnInit {
      */
     private addCustomProperty(): void {
         if (this.newProperty.valueQualifier == "BOOLEAN"){
-            let filledValues: string[] = [];
+            let filledValues: Text[] = [];
             for (let val of this.newProperty.value) {
-                if (val != "") {
+                if (val.value != "") {
                     filledValues.push(val);
                 }
             }
@@ -878,9 +918,9 @@ export class ProductPublishComponent implements OnInit {
         }
         // remove empty/undefined values and keep only the the data array relevant to the value qualifier
         else if (this.newProperty.valueQualifier == "STRING") {
-            let filledValues: string[] = [];
+            let filledValues: Text[] = [];
             for (let val of this.newProperty.value) {
-                if (val != "") {
+                if (val.value != "") {
                     filledValues.push(val);
                 }
             }
@@ -933,7 +973,7 @@ export class ProductPublishComponent implements OnInit {
 
         let userId: string = this.cookieService.get("user_id");
         var reader = new FileReader();
-        this.catalogueService.downloadTemplate(userId, this.categoryService.selectedCategories)
+        this.catalogueService.downloadTemplate(userId, this.categoryService.selectedCategories,this.templateLanguage)
             .then(result => {
                     var link = document.createElement('a');
                     link.id = 'downloadLink';
@@ -1013,7 +1053,8 @@ export class ProductPublishComponent implements OnInit {
 
     addValueToProperty() {
         if (this.newProperty.valueQualifier == 'STRING') {
-            this.newProperty.value.push('');
+            let text = createText('');
+            this.newProperty.value.push(text);
         } else if (this.newProperty.valueQualifier == 'REAL_MEASURE') {
             let newNumber: number;
             this.newProperty.valueDecimal.push(newNumber);

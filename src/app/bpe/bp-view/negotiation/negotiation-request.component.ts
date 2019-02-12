@@ -99,7 +99,7 @@ export class NegotiationRequestComponent implements OnInit {
 
             //first initialize the seller and buyer parties.
             //once they are fetched continue with starting the ordering process
-            const sellerId: string = this.line.goodsItem.item.manufacturerParty.id;
+            const sellerId: string = UBLModelUtils.getPartyId(this.line.goodsItem.item.manufacturerParty);
             const buyerId: string = this.cookieService.get("company_id");
 
            Promise.all([
@@ -225,7 +225,7 @@ export class NegotiationRequestComponent implements OnInit {
             const rfqAddress = this.wrapper.rfqDeliveryAddress;
             rfqAddress.buildingNumber = address.buildingNumber;
             rfqAddress.cityName = address.cityName;
-            rfqAddress.country.name = address.country;
+            rfqAddress.country.name.value = address.country;
             rfqAddress.postalZone = address.postalCode;
             rfqAddress.streetName = address.streetName;
         }

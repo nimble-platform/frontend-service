@@ -12,6 +12,9 @@ import { BPDataService } from "../../../bpe/bp-view/bp-data-service";
 import { UserService } from "../../../user-mgmt/user.service";
 import { CompanySettings } from "../../../user-mgmt/model/company-settings";
 import {CataloguePaginationResponse} from '../../model/publish/catalogue-pagination-response';
+import {Item} from '../../model/publish/item';
+import {selectDescription, selectName} from '../../../common/utils';
+import {ItemProperty} from '../../model/publish/item-property';
 
 @Component({
     selector: 'catalogue-view',
@@ -68,6 +71,14 @@ export class CatalogueViewComponent implements OnInit {
         for(let i = 0; i < this.pageSize; i++) {
             this.deleteStatuses.push(new CallStatus());
         }
+    }
+
+    selectName (ip: ItemProperty | Item) {
+        return selectName(ip);
+    }
+
+    selectDescription (item:  Item) {
+        return selectDescription(item);
     }
 
     private requestCatalogue(): void {
@@ -210,8 +221,8 @@ export class CatalogueViewComponent implements OnInit {
         let i = 0;
         let len = this.catalogueLinesWRTTypes.length;
         for(;i<len;i++){
-            if(RE.test(this.catalogueLinesWRTTypes[i].goodsItem.item.name+" "+
-                    this.catalogueLinesWRTTypes[i].goodsItem.item.description)) {
+            if(RE.test(selectName(this.catalogueLinesWRTTypes[i].goodsItem.item)+" "+
+                    selectDescription(this.catalogueLinesWRTTypes[i].goodsItem.item))) {
                 answer.push(this.catalogueLinesWRTTypes[i]);
             }
         }

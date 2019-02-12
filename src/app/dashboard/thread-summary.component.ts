@@ -20,6 +20,7 @@ import { Code } from "../catalogue/model/publish/code";
 import {BpUserRole} from '../bpe/model/bp-user-role';
 import {BpStartEvent} from '../catalogue/model/publish/bp-start-event';
 import {BpURLParams} from '../catalogue/model/publish/bpURLParams';
+import {UBLModelUtils} from '../catalogue/model/ubl-model-utils';
 
 /**
  * Created by suat on 12-Mar-18.
@@ -137,7 +138,7 @@ export class ThreadSummaryComponent implements OnInit {
         )
 
         if (userRole === "buyer") {
-            this.lastEventPartnerID = ActivityVariableParser.getProductFromProcessData(initialDoc,processType).manufacturerParty.id;
+            this.lastEventPartnerID = UBLModelUtils.getPartyId(ActivityVariableParser.getProductFromProcessData(initialDoc,processType).manufacturerParty);
         }
         else {
             this.lastEventPartnerID = ActivityVariableParser.getBuyerId(initialDoc,processType);
