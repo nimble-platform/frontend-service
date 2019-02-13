@@ -131,6 +131,32 @@ function isItemProperty(property: any): property is ItemProperty {
     return !!property.name; // preferredName for Property
 }
 
+/**
+ * label object in the form of:
+ * {
+ *    "en": "English label",
+ *    "es": "Spanish label"
+ * }
+ *
+ * tries first to get label in the preferred language, then English label, then the first label
+ * @param label
+ */
+export function selectNameFromLabelObject(label: any): string {
+    let defaultLanguage = DEFAULT_LANGUAGE();
+    let englishName = null;
+    if(label[defaultLanguage] != null) {
+        return label[defaultLanguage];
+    }
+    if(label["en"] != null) {
+        return label["en"];
+    }
+    if(Object.keys.length > 0) {
+        return label[Object.keys(label)[0]];
+    } else {
+        return "";
+    }
+}
+
 export function selectPreferredName (cp: Category | Property) {
     let defaultLanguage = DEFAULT_LANGUAGE();
     let englishName = null;

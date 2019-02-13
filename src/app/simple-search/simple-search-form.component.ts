@@ -6,7 +6,7 @@ import * as myGlobals from '../globals';
 import {SearchContextService} from "./search-context.service";
 import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
-import { copy } from '../common/utils';
+import { copy, selectNameFromLabelObject } from '../common/utils';
 import { CallStatus } from '../common/call-status';
 import { CURRENCIES } from "../catalogue/model/constants";
 import { CategoryService } from '../catalogue/category/category.service';
@@ -175,15 +175,15 @@ export class SimpleSearchFormComponent implements OnInit {
 		this.categoriesCallStatus.submit();
 		this.simpleSearchService.get("*",[this.product_cat_mix],[""],1,"","")
 		.then(res => {
-			if(Object.keys(res.facet_counts.facet_fields).indexOf(this.product_cat_mix) == -1){
+			if(Object.keys(res.facets).indexOf(this.product_cat_mix) == -1){
 				this.categoriesCallStatus.callback("Categories loaded.", true);
 			}else{
-				let codes:Code[] = this.getCodes(res);
+				// let codes:Code[] = this.getCodes(res);
 				// before starting to build category tree, we have to get categories to retrieve their names
-				this.categoryService.getCachedCategories(codes).then(categories => {
-					this.buildCatTree(res.facet_counts.facet_fields[this.product_cat_mix]);
+				// this.categoryService.getCachedCategories(codes).then(categories => {
+					this.buildCatTree(res.facets[this.product_cat_mix].entry);
 					this.categoriesCallStatus.callback("Categories loaded.", true);
-				})
+				// })
 			}
 		})
 		.catch(error => {
@@ -191,7 +191,7 @@ export class SimpleSearchFormComponent implements OnInit {
 		});
 	}
 
-	private buildCatTree(mix: any): void {
+	private async buildCatTree(categoryCounts: any[]) {
 		this.cat_loading = true;
 		var taxonomy = "eClass";
 		if (this.config.standardTaxonomy.localeCompare("All") != 0 && this.config.standardTaxonomy.localeCompare("eClass") != 0) {
@@ -200,29 +200,34 @@ export class SimpleSearchFormComponent implements OnInit {
 		var taxonomyPrefix = "";
 		if (this.config.categoryFilter[taxonomy] && this.config.categoryFilter[taxonomy].ontologyPrefix)
 			taxonomyPrefix = this.config.categoryFilter[taxonomy].ontologyPrefix;
+
+		// retrieve the labels for the category uris included in the categoryCounts field
+		let categoryUris: string[] = [];
+		for (let categoryCount of categoryCounts) {
+			categoryUris.push(categoryCount.label);
+		}
+		var labels = await this.simpleSearchService.getCategoryLabels(categoryUris);
 		if (taxonomyPrefix != "") {
 			// ToDo: Remove manual distinction after search update
 			// ================================================================================
 			if (taxonomy == "eClass") {
 				this.cat_levels = [[],[],[],[]];
-				for (let facet_inner in mix) {
-					var count = mix[facet_inner];
-					var split_idx = facet_inner.lastIndexOf(":");
-					var ontology = facet_inner.substr(0,split_idx);
-					var name = facet_inner.substr(split_idx+1);
-					if (ontology.indexOf(taxonomyPrefix) != -1) {
-						var eclass_idx = parseInt(ontology.split(taxonomyPrefix)[1]);
+				for (let categoryCount of categoryCounts) {
+					let facet_inner = categoryCount.label;
+					var count = categoryCounts[facet_inner];
+					if (facet_inner.startsWith(taxonomyPrefix)) {
+						var eclass_idx = labels[facet_inner].code;
 						if (eclass_idx%1000000==0) {
-							this.cat_levels[0].push({"name":name,"id":ontology,"count":count,"preferredName":name});
+							this.cat_levels[0].push({"name":facet_inner,"id":facet_inner,"count":count,"preferredName":selectNameFromLabelObject(labels[facet_inner].label)});
 						}
 						else if(eclass_idx%10000==0) {
-							this.cat_levels[1].push({"name":name,"id":ontology,"count":count,"preferredName":name});
+							this.cat_levels[1].push({"name":facet_inner,"id":facet_inner,"count":count,"preferredName":selectNameFromLabelObject(labels[facet_inner].label)});
 						}
 						else if(eclass_idx%100==0) {
-							this.cat_levels[2].push({"name":name,"id":ontology,"count":count,"preferredName":name});
+							this.cat_levels[2].push({"name":facet_inner,"id":facet_inner,"count":count,"preferredName":selectNameFromLabelObject(labels[facet_inner].label)});
 						}
 						else {
-							this.cat_levels[3].push({"name":name,"id":ontology,"count":count,"preferredName":name});
+							this.cat_levels[3].push({"name":facet_inner,"id":facet_inner,"count":count,"preferredName":selectNameFromLabelObject(labels[facet_inner].label)});
 						}
 					}
 				}
@@ -237,8 +242,8 @@ export class SimpleSearchFormComponent implements OnInit {
 							var rootCategories = rootCategories;
 							this.cat_levels = [];
 							var lvl = [];
-							for (let facet_inner in mix) {
-								var count = mix[facet_inner];
+							for (let facet_inner in categoryCounts) {
+								var count = categoryCounts[facet_inner];
 								var split_idx = facet_inner.lastIndexOf(":");
 								var ontology = facet_inner.substr(0,split_idx);
 								var name = facet_inner.substr(split_idx+1);
@@ -265,8 +270,8 @@ export class SimpleSearchFormComponent implements OnInit {
 							this.cat_levels = [];
 							for (var i=0; i<catLevels.length; i++) {
 								var lvl = [];
-								for (let facet_inner in mix) {
-									var count = mix[facet_inner];
+								for (let facet_inner in categoryCounts) {
+									var count = categoryCounts[facet_inner];
 									var split_idx = facet_inner.lastIndexOf(":");
 									var ontology = facet_inner.substr(0,split_idx);
 									var name = facet_inner.substr(split_idx+1);
@@ -298,8 +303,8 @@ export class SimpleSearchFormComponent implements OnInit {
 			var split_idx = facet_inner.lastIndexOf(":");
 			var ontology = facet_inner.substr(0,split_idx);
 			if(ontology.indexOf("http://www.aidimme.es/FurnitureSectorOntology.owl#") != -1){
-				codes.push(new Code(facet_inner,"","","FurnitureOntology",""));
-			}
+			codes.push(new Code(facet_inner,"","","FurnitureOntology",""));
+		}
 		}
 		return codes;
 	}
@@ -311,8 +316,8 @@ export class SimpleSearchFormComponent implements OnInit {
 	private sortCatLevels() {
 		for (var i=0; i<this.cat_levels.length; i++) {
 			this.cat_levels[i].sort(function(a,b){
-				var a_c = a.name;
-				var b_c = b.name;
+				var a_c:string = a.name;
+				var b_c:string = b.name;
 				return a_c.localeCompare(b_c);
 			});
 			this.cat_levels[i].sort(function(a,b){
@@ -348,26 +353,40 @@ export class SimpleSearchFormComponent implements OnInit {
 		this.searchCallStatus.submit();
 		this.simpleSearchService.getFields()
 		.then(res => {
-			this.simpleSearchService.getPropertyLabels(res._body.split(",")).then(propertyLabelsRes => {
-                this.simpleSearchService.get(q,res._body.split(","),fq,p,cat,catID)
-                    .then(res => {
-                    	if(Object.keys(res.facet_counts.facet_fields).indexOf(this.product_cat_mix) != -1){
-							let codes:Code[] = this.getCodes(res);
-							// before starting to build category tree, we have to get categories to retrieve their names
-							this.categoryService.getCachedCategories(codes).then(categories => {
-								this.buildCatTree(res.facet_counts.facet_fields[this.product_cat_mix]);
-								this.handleFacets(propertyLabelsRes.response.docs,res,p);
-							})
-						}else{
-							this.handleFacets(propertyLabelsRes.response.docs,res,p);
+// <<<<<<< Updated upstream
+// 			this.simpleSearchService.getPropertyLabels(res._body.split(",")).then(propertyLabelsRes => {
+//                 this.simpleSearchService.get(q,res._body.split(","),fq,p,cat,catID)
+//                     .then(res => {
+//                     	if(Object.keys(res.facet_counts.facet_fields).indexOf(this.product_cat_mix) != -1){
+// 							let codes:Code[] = this.getCodes(res);
+// 							// before starting to build category tree, we have to get categories to retrieve their names
+// 							this.categoryService.getCachedCategories(codes).then(categories => {
+// 								this.buildCatTree(res.facet_counts.facet_fields[this.product_cat_mix]);
+// 								this.handleFacets(propertyLabelsRes.response.docs,res,p);
+// 							})
+// 						}else{
+// 							this.handleFacets(propertyLabelsRes.response.docs,res,p);
+// =======
+			// this.simpleSearchService.get(q,res._body.split(","),fq,p,cat,catID)
+			let fieldLabels:string [] = this.getFieldNames(res);
+			this.simpleSearchService.get(q,Object.keys(fieldLabels),fq,p,cat,catID)
+			.then(res => {
+				this.facetObj = [];
+				this.temp = [];
+				var index = 0;
+				for (let facet in res.facets) {
+					// if (JSON.stringify(res.facet_counts.facet_fields[facet]) != "{}") {
+						if (facet == this.product_cat_mix) {
+							this.buildCatTree(res.facets[this.product_cat_mix].entry);
+							this.handleFacets(fieldLabels, res, p)
+// >>>>>>> Stashed changes
 						}
-                    })
-                    .catch(error => {
-                        this.searchCallStatus.error("Error while running search.", error);
-                    });
-            }).catch(error => {
-                this.searchCallStatus.error("Failed to get property labels",error);
-            })
+					// }
+				}
+			})
+			.catch(error => {
+				this.searchCallStatus.error("Error while running search.", error);
+			});
 		})
 		.catch(error => {
 			this.searchCallStatus.error("Error while running search.", error);
@@ -378,29 +397,34 @@ export class SimpleSearchFormComponent implements OnInit {
 		this.facetObj = [];
 		this.temp = [];
 		var index = 0;
-		for (let facet in res.facet_counts.facet_fields) {
-			if (JSON.stringify(res.facet_counts.facet_fields[facet]) != "{}") {
+		for (let facet in res.facets) {
+			// if (JSON.stringify(res.facet_counts.facet_fields[facet]) != "{}") {
 				if (this.simpleSearchService.checkField(facet)) {
 					this.facetObj.push({
 						"name":facet,
-						"realName":this.getFacetRealName(facet,propertyLabels),
+						"realName":selectNameFromLabelObject(propertyLabels[facet]),
 						"options":[],
 						"total":0,
 						"selected":false
 					});
 
 					// check whether we have specific labels for the default language settings
-					let label = null;
-					let facet_innerLabel = null;
-					let facet_innerCount = null;
-					for (let facet_inner in res.facet_counts.facet_fields[facet]) {
-						let index = facet_inner.lastIndexOf(":"+DEFAULT_LANGUAGE());
-						if (index != -1) {
-							label = facet_inner.substring(0,index);
-							facet_innerLabel = facet_inner;
-							facet_innerCount = res.facet_counts.facet_fields[facet][facet_inner];
-						}
+					let label;
+					let facet_innerLabel;
+					let facet_innerCount = facets[facet].count;
+					if(res.facets[facet].label !== null) {
+						label = selectNameFromLabelObject(res.facets[facet].label);
+						facet_innerLabel = selectNameFromLabelObject(res.facets[facet].label);
 					}
+					// for (let facet_inner in res.facet_counts.facet_fields[facet]) {
+					// 	let index = facet_inner.lastIndexOf(":"+DEFAULT_LANGUAGE());
+					// 	if (index != -1) {
+					// 		label = facet_inner.substring(0,index);
+					// 		facet_innerLabel = facet_inner;
+					// 		facet_innerCount = res.facet_counts.facet_fields[facet][facet_inner];
+					// 	}
+					// }
+
 
 					if(label == null){
 						for (let facet_inner in res.facet_counts.facet_fields[facet]) {
@@ -422,7 +446,8 @@ export class SimpleSearchFormComponent implements OnInit {
 							"realName":label,
 							"count":facet_innerCount
 						});
-						this.facetObj[index].total += res.facet_counts.facet_fields[facet][facet_innerLabel];
+						// this.facetObj[index].total += res.facet_counts.facet_fields[facet][facet_innerLabel];
+						this.facetObj[index].total += facet_innerCount;
 						if (this.checkFacet(this.facetObj[index].name,facet_innerLabel))
 							this.facetObj[index].selected=true;
 					}
@@ -453,7 +478,7 @@ export class SimpleSearchFormComponent implements OnInit {
 						return ret;
 					});
 				}
-			}
+			// }
 		}
 		this.temp = res.response.docs;
 		for (let doc in this.temp) {
@@ -486,40 +511,20 @@ export class SimpleSearchFormComponent implements OnInit {
 		this.searchCallStatus.callback("Search done.", true);
 	}
 
-    getFacetRealName(name:string,properties){
-        for(let property of properties){
-            if(property["idxField"].indexOf(name) != -1){
-                // get label key
-                let objectKeys = Object.keys(property);
+	private getFieldNames(fields: any[]): any {
+		let fieldLabes = {};
+		for(let field of fields) {
+			fieldLabes[field.fieldName] = {};
+			fieldLabes[field.fieldName].label = field.label;
+		}
+		return fieldLabes;
+	}
 
-                if(objectKeys.length < 2){
-                    // we do not have a specific label for this facet
-                    break;
-                }
-
-                let defaultLanguage = DEFAULT_LANGUAGE();
-
-                if(objectKeys.indexOf("label_"+defaultLanguage) != -1){
-                	return property["label_"+defaultLanguage][0];
-				}
-				else if(objectKeys.indexOf("label_en") != -1){
-                    return property["label_en"][0];
-				}
-
-                objectKeys.splice(objectKeys.indexOf("idxField"),1);
-                let labelField = objectKeys[0];
-                return property[labelField][0];
-            }
-        }
-
-        return name;
-    }
-
-    onSubmit() {
-        this.objToSubmit = copy(this.model);
-        this.page = 1;
-        this.get(this.objToSubmit);
-    }
+	onSubmit() {
+		this.objToSubmit = copy(this.model);
+		this.page = 1;
+		this.get(this.objToSubmit);
+	}
 
 	callCat(name:string,id:string) {
 		this.model.q="*";

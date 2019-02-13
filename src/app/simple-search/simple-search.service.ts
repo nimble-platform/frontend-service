@@ -3,7 +3,8 @@ import { Headers, Http } from '@angular/http';
 import 'rxjs/add/operator/toPromise';
 import * as myGlobals from '../globals';
 import { map } from 'rxjs/operators';
-import { DEFAULT_LANGUAGE} from '../catalogue/model/constants';
+import { getAuthorizedHeaders } from '../common/utils'
+import {CookieService} from "ng2-cookies";
 
 @Injectable()
 export class SimpleSearchService {
@@ -23,7 +24,9 @@ export class SimpleSearchService {
 	product_cat = myGlobals.product_cat;
 	product_cat_mix = myGlobals.product_cat_mix;
 
-	constructor(private http: Http) { }
+	constructor(private http: Http,
+				private cookieService: CookieService) {
+	}
 
     getPropertyLabels(facets:[string]){
         let url = `${this.urlProperty}/select`;
@@ -52,18 +55,20 @@ export class SimpleSearchService {
     }
 
     getFields(): Promise<any> {
-        const url = `${this.url}/select?q=*:*&rows=0&wt=csv`;
-        return this.http
-            .get(url, {headers: this.headers})
-            .toPromise()
-            .then(res => res)
-            .catch(this.handleError);
-    }
+		const url = `http://nimble-staging.salzburgresearch.at/index/item/fields`;
+		// const url = `${this.url}/select?q=*:*&rows=0&wt=csv`;
+		return this.http
+		.get(url, {headers: this.headers})
+		.toPromise()
+		.then(res => res.json())
+		.catch(this.handleError);
+	}
 
-	get(query: string, facets: [string], facetQueries: [string], page: number, cat: string, catID: string): Promise<any> {
+	get(query: string, facets: string[], facetQueries: string[], page: number, cat: string, catID: string): Promise<any> {
 		query = query.replace(/[!'()]/g, '');
 		var start = page*10-10;
-		const url = `${this.url}/select?q=${query}&start=${start}&facet=true&sort=score%20desc&rows=10&facet.sort=count&facet.mincount=${this.facetMin}&json.nl=map&wt=json`;
+		 const url = `http://nimble-staging.salzburgresearch.at/index/item/select?q=${query}&start=${start}&facet=true&sort=score%20desc&rows=10&facet.sort=count&facet.mincount=${this.facetMin}&json.nl=map&wt=json`;
+		// const url = `${this.url}/select?q=${query}&start=${start}&facet=true&sort=score%20desc&rows=10&facet.sort=count&facet.mincount=${this.facetMin}&json.nl=map&wt=json`;
 		var full_url = url + "";
 		for (let facet of facets) {
 			if (facet.length === 0 || !facet.trim()) {}
@@ -74,11 +79,12 @@ export class SimpleSearchService {
 			full_url += "&fq="+encodeURIComponent(facetQuery);
 		}
 		if (cat != "") {
-			var add_url = `${this.product_cat_mix}:"${catID}:${cat}"`;
+			var add_url = `${this.product_cat_mix}:"${catID}"`;
 			full_url += "&fq="+encodeURIComponent(add_url);
 		}
+
 		return this.http
-		.get(full_url, {headers: this.headers})
+		.get(full_url, {headers: this.getHeadersWithBasicAuthorization()})
 		.toPromise()
 		.then(res => res.json())
 		.catch(this.handleError);
@@ -87,7 +93,7 @@ export class SimpleSearchService {
 	getSingle(id: string): Promise<any> {
 		const url = `${this.url}/select?q=*&rows=1&wt=json&fq=item_id:${id}`;
 		return this.http
-		.get(url, {headers: this.headers})
+		.get(url, {headers: this.getHeadersWithBasicAuthorization()})
 		.toPromise()
 		.then(res => res.json())
 		.catch(this.handleError);
@@ -105,7 +111,7 @@ export class SimpleSearchService {
 			full_url += "&fq="+encodeURIComponent(add_url);
 		}
 		return this.http
-		.get(full_url, {headers: this.headers})
+		.get(full_url, {headers: this.getHeadersWithBasicAuthorization()})
 		.pipe(
 			map(response =>
 				this.getSuggestionArray(response,query)
@@ -144,6 +150,38 @@ export class SimpleSearchService {
 				valid = false;
 		}
 		return valid;
+	}
+
+	/**
+	 * Gets labels for the categories specified with the uris. The result is a map of uri->label map.
+	 * @param uris
+	 */
+	public getCategoryLabels(uris: string[]): Promise<any> {
+		const url = "http://nimble-staging.salzburgresearch.at/index/classes?";
+		let full_url = url;
+		for(let uri of uris) {
+			full_url += `uri=${encodeURIComponent(uri)}&`;
+		}
+		return this.http
+            .get(full_url, {headers: getAuthorizedHeaders(this.cookieService)})
+            .toPromise()
+            .then(res => {
+            	let labelMap = {};
+            	for(let category of res.json().result) {
+					labelMap[category.uri] = {};
+            		labelMap[category.uri].label = category.label;
+            		labelMap[category.uri].code = category.code;
+				}
+				return labelMap;
+            })
+            .catch(this.handleError);
+	}
+
+	private getHeadersWithBasicAuthorization(): Headers {
+		const headers = new Headers();
+		this.headers.keys().forEach(header => headers.append(header, this.headers.get(header)));
+		headers.append('Authorization', "Basic " + btoa("admin:*platform*"));
+		return headers;
 	}
 
 	private handleError(error: any): Promise<any> {
