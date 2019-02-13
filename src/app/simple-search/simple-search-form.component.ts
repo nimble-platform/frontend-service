@@ -477,14 +477,50 @@ export class SimpleSearchFormComponent implements OnInit {
             }
         }
         */
-		this.response = copy(this.temp);
-		this.size = res.response.numFound;
-		this.page = p;
-		this.start = this.page*10-10+1;
-		this.end = this.start+res.response.docs.length-1;
-		this.callback = true;
-		this.searchCallStatus.callback("Search done.", true);
-	}
+        this.response = this.handleItemNameAndDescription(copy(this.temp));
+        this.size = res.response.numFound;
+        this.page = p;
+        this.start = this.page*10-10+1;
+        this.end = this.start+res.response.docs.length-1;
+        this.callback = true;
+        this.searchCallStatus.callback("Search done.", true);
+    }
+
+    // we have to choose the name and description of the item according to the default language of the browser
+    handleItemNameAndDescription(response){
+        for(let result of response){
+            result["item_name"] = [this.getPreferredValue(result["item_name"])];
+            result["item_description"] = [this.getPreferredValue(result["item_description"])];
+        }
+        return response;
+    }
+
+    getPreferredValue(values:string[]){
+        if(!values || values.length <= 0){
+            return "";
+        }
+
+        let defaultLanguage = DEFAULT_LANGUAGE();
+        let englishName = null;
+        for(let value of values){
+            let index = value.lastIndexOf(":");
+            let languageId = value.substring(index+1);
+
+            if(languageId == defaultLanguage){
+                return value.substring(0,index);
+            }
+            else if(languageId == "en"){
+                englishName = value.substring(0,index);
+            }
+        }
+
+        if(englishName){
+            return englishName;
+        }
+
+        let index = values[0].lastIndexOf(":");
+        return values[0].substring(0,index);
+    }
 
     getFacetRealName(name:string,properties){
         for(let property of properties){
