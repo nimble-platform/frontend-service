@@ -33,9 +33,23 @@ export class CatalogueService {
                 private cookieService: CookieService) {
     }
 
-    getCatalogueResponse(userId: string, limit:number, offset:number): Promise<CataloguePaginationResponse>{
+    getCatalogueResponse(userId: string,categoryNames:string[],limit:number, offset:number): Promise<CataloguePaginationResponse>{
         return this.userService.getUserParty(userId).then(party => {
             let url = this.baseUrl + `/catalogue/${UBLModelUtils.getPartyId(party)}/pagination/default?limit=${limit}&offset=${offset}`;
+            // if there are selected category names to filter the results, then add them to the url
+            let numberOfCategories = categoryNames.length;
+            if(numberOfCategories > 0){
+                url += "&categoryNames=";
+                for(let i = 0 ; i < numberOfCategories;i++){
+                    if(i == numberOfCategories-1){
+                        url += categoryNames[i];
+                    }
+                    else {
+                        url += categoryNames[i] + ",";
+                    }
+                }
+            }
+
             return this.http
                 .get(url, {headers: this.getAuthorizedHeaders()})
                 .toPromise()

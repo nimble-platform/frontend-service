@@ -11,7 +11,7 @@
 
             <label class="space-left space-right"><strong>Category :</strong>
             </label>
-            <select  class="custom-select col-3 space-right" [(ngModel)]="selectedType" (change)="typeChanged()">
+            <select class="custom-select col-3 space-right" [(ngModel)]="selectedCategory" (change)="onCategorySelection()">
                 <option>All</option>
                 <option *ngFor="let type of categoryNames">{{type}}</option>
             </select>

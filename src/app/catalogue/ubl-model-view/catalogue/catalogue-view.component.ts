@@ -1,13 +1,11 @@
 import {Component, OnInit} from "@angular/core";
 import {CookieService} from 'ng2-cookies';
 import {CatalogueService} from "../../catalogue.service";
-import {Catalogue} from "../../model/publish/catalogue";
 import {CallStatus} from "../../../common/call-status";
 import {ActivatedRoute, Params, Router} from "@angular/router";
 import {PublishService} from "../../publish-and-aip.service";
 import {CategoryService} from "../../category/category.service";
 import { isTransportService } from "../../../common/utils";
-import { CatalogueLine } from "../../model/publish/catalogue-line";
 import { BPDataService } from "../../../bpe/bp-view/bp-data-service";
 import { UserService } from "../../../user-mgmt/user.service";
 import { CompanySettings } from "../../../user-mgmt/model/company-settings";
@@ -37,7 +35,7 @@ export class CatalogueViewComponent implements OnInit {
 
     // categories
     categoryNames : any = [];
-    selectedType = "All";
+    selectedCategory = "All";
 
     // necessary info for pagination
     collectionSize = 0;
@@ -84,15 +82,17 @@ export class CatalogueViewComponent implements OnInit {
     private requestCatalogue(): void {
         this.getCatalogueStatus.submit();
         const userId = this.cookieService.get("user_id");
+        // check whether the user chose a category to filter the catalogue lines
+        let categoryNames = this.selectedCategory == "All" ? [] : [this.selectedCategory];
         Promise.all([
-            this.catalogueService.getCatalogueResponse(userId, this.pageSize,(this.page-1)*this.pageSize),
+            this.catalogueService.getCatalogueResponse(userId, categoryNames,this.pageSize,(this.page-1)*this.pageSize),
             this.getCompanySettings(userId)
         ])
             .then(([catalogueResponse, settings]) => {
                     this.catalogueResponse = catalogueResponse;
                     this.settings = settings;
-                    this.getCatalogueStatus.callback(null);
                     this.init();
+                    this.getCatalogueStatus.callback(null);
                 },
                 error => {
                     this.getCatalogueStatus.error("Failed to get catalogue", error);
@@ -115,7 +115,6 @@ export class CatalogueViewComponent implements OnInit {
         this.catalogueLinesArray = [...this.catalogueResponse.catalogueLines].reverse();
         this.catalogueLinesWRTTypes = this.catalogueLinesArray;
         let i = 0;
-        this.selectedType = "All";
         this.searchKey = "";
         this.sortOption = null;
         // Initialize catalogueLineView
@@ -186,30 +185,9 @@ export class CatalogueViewComponent implements OnInit {
         }
     }
 
-    typeChanged():void{
-        this.searchKey = "";
-        this.catalogueLinesWRTTypes = [];
-
-        if (this.selectedType == "All") {
-            this.catalogueLinesWRTTypes = [...this.catalogueResponse.catalogueLines].reverse();
-        } else {
-            let i = 0;
-            let len = this.catalogueResponse.catalogueLines.length;
-            for(;i<len;i++){
-                let j = 0;
-                let lenOfCom = this.catalogueResponse.catalogueLines[i].goodsItem.item.commodityClassification.length;
-                for(;j<lenOfCom;j++){
-                    if(!(this.catalogueResponse.catalogueLines[i].goodsItem.item.commodityClassification[j].itemClassificationCode.name.localeCompare(this.selectedType))){
-                        this.catalogueLinesWRTTypes.unshift(this.catalogueResponse.catalogueLines[i]);
-                        break;
-                    }
-                }
-            }
-        }
-        this.catalogueLinesArray = this.catalogueLinesWRTTypes;
-        this.collectionSize = this.catalogueLinesArray.length;
-
-        this.sortOption = "";
+    // this function is called when the user selects a category to filter the catalogue lines
+    onCategorySelection():void{
+        this.requestCatalogue();
     }
 
     search():void{
