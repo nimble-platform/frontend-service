@@ -1,13 +1,11 @@
 import {Component, OnInit} from "@angular/core";
 import {CookieService} from 'ng2-cookies';
 import {CatalogueService} from "../../catalogue.service";
-import {Catalogue} from "../../model/publish/catalogue";
 import {CallStatus} from "../../../common/call-status";
 import {ActivatedRoute, Params, Router} from "@angular/router";
 import {PublishService} from "../../publish-and-aip.service";
 import {CategoryService} from "../../category/category.service";
 import { isTransportService } from "../../../common/utils";
-import { CatalogueLine } from "../../model/publish/catalogue-line";
 import { BPDataService } from "../../../bpe/bp-view/bp-data-service";
 import { UserService } from "../../../user-mgmt/user.service";
 import { CompanySettings } from "../../../user-mgmt/model/company-settings";
@@ -15,6 +13,9 @@ import {CataloguePaginationResponse} from '../../model/publish/catalogue-paginat
 import {Item} from '../../model/publish/item';
 import {selectDescription, selectName} from '../../../common/utils';
 import {ItemProperty} from '../../model/publish/item-property';
+import {debounceTime, distinctUntilChanged} from 'rxjs/operators';
+import {Subject} from 'rxjs/Subject';
+import {Subscription} from 'rxjs/Subscription';
 
 @Component({
     selector: 'catalogue-view',
@@ -33,11 +34,9 @@ export class CatalogueViewComponent implements OnInit {
     // catalogue lines which are available to the user after search operation
     catalogueLinesArray : any = [];
 
-    searchKey : string = "";
-
     // categories
     categoryNames : any = [];
-    selectedType = "All";
+    selectedCategory = "All";
 
     // necessary info for pagination
     collectionSize = 0;
@@ -54,6 +53,10 @@ export class CatalogueViewComponent implements OnInit {
     callStatus = new CallStatus();
     deleteStatuses: CallStatus[] = []
 
+    searchTextChanged = new Subject<string>();
+    subscription:Subscription;
+    private searchKey: string = "";
+
     constructor(private cookieService: CookieService,
                 private publishService: PublishService,
                 private catalogueService: CatalogueService,
@@ -66,6 +69,15 @@ export class CatalogueViewComponent implements OnInit {
     }
 
     ngOnInit() {
+        //TODO: check whether we can use switch-map or not
+        this.subscription = this.searchTextChanged
+            .pipe(
+                debounceTime(200),
+                distinctUntilChanged()
+            ).subscribe(value => {
+                this.requestCatalogue();
+            });
+
         this.catalogueService.setEditMode(false);
         this.requestCatalogue();
         for(let i = 0; i < this.pageSize; i++) {
@@ -84,15 +96,17 @@ export class CatalogueViewComponent implements OnInit {
     private requestCatalogue(): void {
         this.getCatalogueStatus.submit();
         const userId = this.cookieService.get("user_id");
+        // check whether the user chose a category to filter the catalogue lines
+        let categoryName = this.selectedCategory == "All" ? null : this.selectedCategory;
         Promise.all([
-            this.catalogueService.getCatalogueResponse(userId, this.pageSize,(this.page-1)*this.pageSize),
+            this.catalogueService.getCatalogueResponse(userId, categoryName,this.searchKey,this.pageSize,(this.page-1)*this.pageSize),
             this.getCompanySettings(userId)
         ])
             .then(([catalogueResponse, settings]) => {
                     this.catalogueResponse = catalogueResponse;
                     this.settings = settings;
-                    this.getCatalogueStatus.callback(null);
                     this.init();
+                    this.getCatalogueStatus.callback(null);
                 },
                 error => {
                     this.getCatalogueStatus.error("Failed to get catalogue", error);
@@ -115,8 +129,6 @@ export class CatalogueViewComponent implements OnInit {
         this.catalogueLinesArray = [...this.catalogueResponse.catalogueLines].reverse();
         this.catalogueLinesWRTTypes = this.catalogueLinesArray;
         let i = 0;
-        this.selectedType = "All";
-        this.searchKey = "";
         this.sortOption = null;
         // Initialize catalogueLineView
         for(;i<len;i++){
@@ -186,49 +198,13 @@ export class CatalogueViewComponent implements OnInit {
         }
     }
 
-    typeChanged():void{
-        this.searchKey = "";
-        this.catalogueLinesWRTTypes = [];
-
-        if (this.selectedType == "All") {
-            this.catalogueLinesWRTTypes = [...this.catalogueResponse.catalogueLines].reverse();
-        } else {
-            let i = 0;
-            let len = this.catalogueResponse.catalogueLines.length;
-            for(;i<len;i++){
-                let j = 0;
-                let lenOfCom = this.catalogueResponse.catalogueLines[i].goodsItem.item.commodityClassification.length;
-                for(;j<lenOfCom;j++){
-                    if(!(this.catalogueResponse.catalogueLines[i].goodsItem.item.commodityClassification[j].itemClassificationCode.name.localeCompare(this.selectedType))){
-                        this.catalogueLinesWRTTypes.unshift(this.catalogueResponse.catalogueLines[i]);
-                        break;
-                    }
-                }
-            }
-        }
-        this.catalogueLinesArray = this.catalogueLinesWRTTypes;
-        this.collectionSize = this.catalogueLinesArray.length;
-
-        this.sortOption = "";
+    // this function is called when the user selects a category to filter the catalogue lines
+    onCategorySelection():void{
+        this.requestCatalogue();
     }
 
     search():void{
-        let splitArray = this.searchKey.split(" ").filter(
-            item => item.trim() != "");
-        let answer = [];
-        let RE = new RegExp(splitArray.join("|"),"i");
-
-        let i = 0;
-        let len = this.catalogueLinesWRTTypes.length;
-        for(;i<len;i++){
-            if(RE.test(selectName(this.catalogueLinesWRTTypes[i].goodsItem.item)+" "+
-                    selectDescription(this.catalogueLinesWRTTypes[i].goodsItem.item))) {
-                answer.push(this.catalogueLinesWRTTypes[i]);
-            }
-        }
-
-        this.catalogueLinesArray = answer;
-        this.collectionSize = this.catalogueLinesArray.length;
+        this.searchTextChanged.next(this.searchKey);
     }
 
     getDeleteStatus(index: number): CallStatus {
