@@ -6,6 +6,7 @@ import * as myGlobals from '../globals';
 import { CookieService } from 'ng2-cookies';
 import { CallStatus } from '../common/call-status';
 import {copy, selectValueOfTextObject} from '../common/utils';
+import {CategoryService} from '../catalogue/category/category.service';
 //declare var jsSHA: any;
 
 @Component({
@@ -28,7 +29,8 @@ export class CredentialsFormComponent implements OnInit {
 	constructor(
 		private credentialsService: CredentialsService,
 		private cookieService: CookieService,
-		private appComponent: AppComponent
+		private appComponent: AppComponent,
+		private categoryService:CategoryService
 	) {	}
 
 	ngOnInit() {
@@ -73,6 +75,8 @@ export class CredentialsFormComponent implements OnInit {
 			this.cookieService.set("user_email",res.email);
 			this.cookieService.set("bearer_token",res.accessToken);
 			this.submitCallStatus.callback("Login Successful");
+			// cache FurnitureOntology categories
+			this.categoryService.cacheFurnitureOntologyCategories();
 			if (!res.companyID && myGlobals.config.companyRegistrationRequired)
 				this.appComponent.checkLogin("/user-mgmt/company-registration");
 			else

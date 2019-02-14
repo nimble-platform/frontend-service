@@ -53,6 +53,23 @@ export class CategoryService {
         return selectPreferredName(this.cachedCategories.get(uri));
     }
 
+    // this function get all FurnitureOntology categories
+    // however, those categories only contains information about the labels and definitions
+    cacheFurnitureOntologyCategories(){
+        const url = `${this.baseUrl}/taxonomies/FurnitureOntology/all-categories`;
+        return this.http
+            .get(url, {headers: getAuthorizedHeaders(this.cookieService)})
+            .toPromise()
+            .then(response => {
+                let categories:Category[] = response.json() as Category[];
+                for(let category of categories){
+                    this.cachedCategories.set(category.categoryUri,category);
+                }
+                return null;
+            })
+            .catch(this.handleError);
+    }
+
     getCategoriesByName(keyword: string, taxonomyId: string,isLogistics: boolean): Promise<Category[]> {
         const url = `${this.baseUrl}/taxonomies/${taxonomyId}/categories?name=${keyword}&forLogistics=${isLogistics}`;
         return this.http
