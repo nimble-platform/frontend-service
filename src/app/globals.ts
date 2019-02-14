@@ -163,7 +163,7 @@ export const config = {
 
 // Catalogue format variables
 
-export const product_name = "en_label";
+export const product_name = "label";
 export const product_vendor_id = "item_manufacturer_id";
 export const product_vendor_name = "item_manufacturer_name";
 export const product_vendor_rating = "trust_company_rating";

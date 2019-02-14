@@ -152,31 +152,6 @@ export class SimpleSearchService {
 		return valid;
 	}
 
-	/**
-	 * Gets labels for the categories specified with the uris. The result is a map of uri->label map.
-	 * @param uris
-	 */
-	public getCategoryLabels(uris: string[]): Promise<any> {
-		const url = "http://nimble-staging.salzburgresearch.at/index/classes?";
-		let full_url = url;
-		for(let uri of uris) {
-			full_url += `uri=${encodeURIComponent(uri)}&`;
-		}
-		return this.http
-            .get(full_url, {headers: getAuthorizedHeaders(this.cookieService)})
-            .toPromise()
-            .then(res => {
-            	let labelMap = {};
-            	for(let category of res.json().result) {
-					labelMap[category.uri] = {};
-            		labelMap[category.uri].label = category.label;
-            		labelMap[category.uri].code = category.code;
-				}
-				return labelMap;
-            })
-            .catch(this.handleError);
-	}
-
 	private getHeadersWithBasicAuthorization(): Headers {
 		const headers = new Headers();
 		this.headers.keys().forEach(header => headers.append(header, this.headers.get(header)));

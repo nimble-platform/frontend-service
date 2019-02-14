@@ -23,8 +23,8 @@ import {Code} from '../catalogue/model/publish/code';
 export class SimpleSearchFormComponent implements OnInit {
 
 	product_name = myGlobals.product_name;
-	product_vendor_id = myGlobals.product_vendor_id;
-	product_vendor_name = myGlobals.product_vendor_name;
+	// product_vendor_id = myGlobals.product_vendor_id;
+	// product_vendor_name = myGlobals.product_vendor_name;
 	product_vendor_rating = myGlobals.product_vendor_rating;
 	product_vendor_rating_seller = myGlobals.product_vendor_rating_seller;
 	product_vendor_rating_fulfillment = myGlobals.product_vendor_rating_fulfillment;
@@ -87,6 +87,7 @@ export class SimpleSearchFormComponent implements OnInit {
 	noP = true;
 
 	config = myGlobals.config;
+	getMultilingualLabel = selectNameFromLabelObject;
 
 	constructor(
 		private simpleSearchService: SimpleSearchService,
@@ -175,14 +176,15 @@ export class SimpleSearchFormComponent implements OnInit {
 		this.categoriesCallStatus.submit();
 		this.simpleSearchService.get("*",[this.product_cat_mix],[""],1,"","")
 		.then(res => {
-			if(Object.keys(res.facets).indexOf(this.product_cat_mix) == -1){
+			// if res.facets are null, it means that there is no product in the index
+			if (res.facets == null || Object.keys(res.facets).indexOf(this.product_cat_mix) == -1) {
 				this.categoriesCallStatus.callback("Categories loaded.", true);
-			}else{
+			} else {
 				// let codes:Code[] = this.getCodes(res);
 				// before starting to build category tree, we have to get categories to retrieve their names
 				// this.categoryService.getCachedCategories(codes).then(categories => {
-					this.buildCatTree(res.facets[this.product_cat_mix].entry);
-					this.categoriesCallStatus.callback("Categories loaded.", true);
+				this.buildCatTree(res.facets[this.product_cat_mix].entry);
+				this.categoriesCallStatus.callback("Categories loaded.", true);
 				// })
 			}
 		})
@@ -206,7 +208,8 @@ export class SimpleSearchFormComponent implements OnInit {
 		for (let categoryCount of categoryCounts) {
 			categoryUris.push(categoryCount.label);
 		}
-		var labels = await this.simpleSearchService.getCategoryLabels(categoryUris);
+		var indexCategories = await this.categoryService.getCategories(categoryUris);
+		let categoryDisplayInfo: any = this.getCategoryDisplayInfo(indexCategories);
 		if (taxonomyPrefix != "") {
 			// ToDo: Remove manual distinction after search update
 			// ================================================================================
@@ -214,20 +217,20 @@ export class SimpleSearchFormComponent implements OnInit {
 				this.cat_levels = [[],[],[],[]];
 				for (let categoryCount of categoryCounts) {
 					let facet_inner = categoryCount.label;
-					var count = categoryCounts[facet_inner];
+					var count = categoryCount.count;
 					if (facet_inner.startsWith(taxonomyPrefix)) {
-						var eclass_idx = labels[facet_inner].code;
+						var eclass_idx = categoryDisplayInfo[facet_inner].code;
 						if (eclass_idx%1000000==0) {
-							this.cat_levels[0].push({"name":facet_inner,"id":facet_inner,"count":count,"preferredName":selectNameFromLabelObject(labels[facet_inner].label)});
+							this.cat_levels[0].push({"name":facet_inner,"id":facet_inner,"count":count,"preferredName":selectNameFromLabelObject(categoryDisplayInfo[facet_inner].label)});
 						}
 						else if(eclass_idx%10000==0) {
-							this.cat_levels[1].push({"name":facet_inner,"id":facet_inner,"count":count,"preferredName":selectNameFromLabelObject(labels[facet_inner].label)});
+							this.cat_levels[1].push({"name":facet_inner,"id":facet_inner,"count":count,"preferredName":selectNameFromLabelObject(categoryDisplayInfo[facet_inner].label)});
 						}
 						else if(eclass_idx%100==0) {
-							this.cat_levels[2].push({"name":facet_inner,"id":facet_inner,"count":count,"preferredName":selectNameFromLabelObject(labels[facet_inner].label)});
+							this.cat_levels[2].push({"name":facet_inner,"id":facet_inner,"count":count,"preferredName":selectNameFromLabelObject(categoryDisplayInfo[facet_inner].label)});
 						}
 						else {
-							this.cat_levels[3].push({"name":facet_inner,"id":facet_inner,"count":count,"preferredName":selectNameFromLabelObject(labels[facet_inner].label)});
+							this.cat_levels[3].push({"name":facet_inner,"id":facet_inner,"count":count,"preferredName":selectNameFromLabelObject(categoryDisplayInfo[facet_inner].label)});
 						}
 					}
 				}
@@ -236,60 +239,59 @@ export class SimpleSearchFormComponent implements OnInit {
 			// ================================================================================
 			// if (this.cat == "") {
 			else if (this.cat == "") {
-				this.categoryService
-					.getRootCategories(taxonomy)
-					.then(rootCategories => {
-							var rootCategories = rootCategories;
-							this.cat_levels = [];
-							var lvl = [];
-							for (let facet_inner in categoryCounts) {
-								var count = categoryCounts[facet_inner];
-								var split_idx = facet_inner.lastIndexOf(":");
-								var ontology = facet_inner.substr(0,split_idx);
-								var name = facet_inner.substr(split_idx+1);
-								if (ontology.indexOf(taxonomyPrefix) != -1) {
-									if (this.findCategory(rootCategories,ontology) != -1 && this.config.categoryFilter[taxonomy].hiddenCategories.indexOf(name) == -1){
-										if(ontology.indexOf("http://www.aidimme.es/FurnitureSectorOntology.owl#") != -1){
-											lvl.push({"name":name,"id":ontology,"count":count,"preferredName":this.categoryService.getCachedCategoryName(facet_inner)});
-										}else{
-											lvl.push({"name":name,"id":ontology,"count":count,"preferredName":name});
-										}
-									}
-								}
+				this.cat_levels = [];
+				var lvl = [];
+
+				for (let categoryCount of categoryCounts) {
+					var count = categoryCount.count;
+					var ontology = categoryCount.label;
+					if (categoryDisplayInfo[ontology] != null && ontology.indexOf(taxonomyPrefix) != -1) {
+						if (categoryDisplayInfo[ontology].isRoot && this.config.categoryFilter[taxonomy].hiddenCategories.indexOf(name) == -1){
+							if(ontology.indexOf("http://www.aidimme.es/FurnitureSectorOntology.owl#") != -1){
+								lvl.push({"name":ontology,"id":ontology,"count":count,"preferredName": selectNameFromLabelObject(categoryDisplayInfo[ontology].label)});
+							}else{
+								lvl.push({"name":ontology,"id":ontology,"count":count,"preferredName":ontology});
 							}
-							this.cat_levels.push(lvl);
-							this.sortCatLevels();
-					})
+						}
+					}
+				}
+				this.cat_levels.push(lvl);
+				this.sortCatLevels();
 			}
 			else {
 				var catToSubmit = new Category(this.catID,null,null,null,null,null,null,null,null,taxonomy,this.catID);
-				this.categoryService
-          .getParentCategories(catToSubmit)
-					.then(res => {
-							var catLevels = res.categories;
+			// 	this.categoryService
+          // .getParentCategories(catToSubmit)
+			// 		.then(res => {
+							var catLevels = [];
+							this.constructCategoryTree(indexCategories.result, catLevels);
 							this.cat_levels = [];
 							for (var i=0; i<catLevels.length; i++) {
 								var lvl = [];
-								for (let facet_inner in categoryCounts) {
-									var count = categoryCounts[facet_inner];
-									var split_idx = facet_inner.lastIndexOf(":");
-									var ontology = facet_inner.substr(0,split_idx);
-									var name = facet_inner.substr(split_idx+1);
-									if (ontology.indexOf(taxonomyPrefix) != -1) {
-										if (this.findCategory(catLevels[i],ontology) != -1 && this.config.categoryFilter[taxonomy].hiddenCategories.indexOf(name) == -1){
-											if(ontology.indexOf("http://www.aidimme.es/FurnitureSectorOntology.owl#") != -1){
-												lvl.push({"name":name,"id":ontology,"count":count,"preferredName":this.categoryService.getCachedCategoryName(facet_inner)});
-											}else{
-												lvl.push({"name":name,"id":ontology,"count":count,"preferredName":name});
+								var constructedLevel: string[] = catLevels[i];
+								for(let uri of constructedLevel) {
+									let categoryCount = categoryCounts.find(cat => cat.label == uri);
+									if(categoryCount != null) {
+										var count = categoryCount.count;
+										var ontology = categoryCount.label;
+
+										if (categoryDisplayInfo[uri] != null && uri.indexOf(taxonomyPrefix) != -1) {
+											var split_idx = uri.lastIndexOf("#");
+											var name = uri.substr(split_idx+1);
+											if (this.config.categoryFilter[taxonomy].hiddenCategories.indexOf(name) == -1) {
+												if (ontology.indexOf("http://www.aidimme.es/FurnitureSectorOntology.owl#") != -1) {
+													lvl.push({"name": uri, "id": uri, "count": count, "preferredName": selectNameFromLabelObject(categoryDisplayInfo[uri].label)});
+												} else {
+													lvl.push({"name": uri, "id": uri, "count": count, "preferredName": name});
+												}
 											}
 										}
-
 									}
 								}
 								this.cat_levels.push(lvl);
 							}
 							this.sortCatLevels();
-					})
+					// })
 			}
 		}
 	}
@@ -309,8 +311,39 @@ export class SimpleSearchFormComponent implements OnInit {
 		return codes;
 	}
 
-	private findCategory(categoryArray: Category[], uri: String): number {
-			return categoryArray.findIndex(c => c.categoryUri == uri);
+	private constructCategoryTree(indexCategories: any[], levels: string[][]) {
+
+		if(levels.length == 0) {
+			// get root categories
+			let rootCategories: any[] = [];
+			for (let category of indexCategories) {
+				if (category.allParents == null) {
+					rootCategories.push(category.uri);
+				}
+			}
+			levels.push(rootCategories);
+			this.constructCategoryTree(indexCategories, levels);
+
+		} else {
+			let parentCategoryUris: string[] = levels[levels.length-1];
+			let level: string[] = []; // contains all children of all the parent categories of an upper level
+			for(let parentCategoryUri of parentCategoryUris) {
+				let parentIndexCategory = indexCategories.find(indexCategory => indexCategory.uri == parentCategoryUri);
+				let children: string[] = parentIndexCategory.children;
+				if(children != null) {
+					for (let childCategoryUri of children) {
+						let childCategory = indexCategories.find(indexCategory => indexCategory.uri == childCategoryUri);
+						if (childCategory != null) {
+							level.push(childCategoryUri);
+						}
+					}
+				}
+			}
+			if(level.length > 0) {
+				levels.push(level);
+				this.constructCategoryTree(indexCategories, levels);
+			}
+		}
 	}
 
 	private sortCatLevels() {
@@ -397,12 +430,12 @@ export class SimpleSearchFormComponent implements OnInit {
 		this.facetObj = [];
 		this.temp = [];
 		var index = 0;
-		for (let facet in res.facets) {
+		for (let facet of res.facets) {
 			// if (JSON.stringify(res.facet_counts.facet_fields[facet]) != "{}") {
-				if (this.simpleSearchService.checkField(facet)) {
+				if (this.simpleSearchService.checkField(facet.fieldName)) {
 					this.facetObj.push({
-						"name":facet,
-						"realName":selectNameFromLabelObject(propertyLabels[facet]),
+						"name":facet.fieldName,
+						"realName":selectNameFromLabelObject(propertyLabels[facet.fieldName]),
 						"options":[],
 						"total":0,
 						"selected":false
@@ -411,30 +444,26 @@ export class SimpleSearchFormComponent implements OnInit {
 					// check whether we have specific labels for the default language settings
 					let label;
 					let facet_innerLabel;
-					let facet_innerCount = facets[facet].count;
-					if(res.facets[facet].label !== null) {
-						label = selectNameFromLabelObject(res.facets[facet].label);
-						facet_innerLabel = selectNameFromLabelObject(res.facets[facet].label);
-					}
-					// for (let facet_inner in res.facet_counts.facet_fields[facet]) {
-					// 	let index = facet_inner.lastIndexOf(":"+DEFAULT_LANGUAGE());
-					// 	if (index != -1) {
-					// 		label = facet_inner.substring(0,index);
-					// 		facet_innerLabel = facet_inner;
-					// 		facet_innerCount = res.facet_counts.facet_fields[facet][facet_inner];
-					// 	}
-					// }
+					let facet_innerCount = res.facets[facet].count;
 
+					for (let facet_inner of facet.entry) {
+						let index = facet_inner.lastIndexOf("@"+DEFAULT_LANGUAGE());
+						if (index != -1) {
+							label = facet_inner.substring(0,index);
+							facet_innerLabel = facet_inner.label;
+							facet_innerCount = facet_inner.count;
+						}
+					}
 
 					if(label == null){
-						for (let facet_inner in res.facet_counts.facet_fields[facet]) {
+						for (let facet_inner in res.facets) {
 							if (facet_inner != "" && facet_inner != ":" && facet_inner != ' ' && facet_inner.indexOf("urn:oasis:names:specification:ubl:schema:xsd") == -1) {
 								this.facetObj[index].options.push({
 									"name":facet_inner,
 									"realName":facet_inner,
-									"count":res.facet_counts.facet_fields[facet][facet_inner]
+									"count":facet_innerCount
 								});
-								this.facetObj[index].total += res.facet_counts.facet_fields[facet][facet_inner];
+								this.facetObj[index].total += facet_innerCount;
 								if (this.checkFacet(this.facetObj[index].name,facet_inner))
 									this.facetObj[index].selected=true;
 							}
@@ -480,7 +509,7 @@ export class SimpleSearchFormComponent implements OnInit {
 				}
 			// }
 		}
-		this.temp = res.response.docs;
+		this.temp = res.result;
 		for (let doc in this.temp) {
 			if (this.temp[doc][this.product_img]) {
 				var img = this.temp[doc][this.product_img];
@@ -503,10 +532,10 @@ export class SimpleSearchFormComponent implements OnInit {
         }
         */
 		this.response = copy(this.temp);
-		this.size = res.response.numFound;
+		this.size = res.totalElements;
 		this.page = p;
 		this.start = this.page*10-10+1;
-		this.end = this.start+res.response.docs.length-1;
+		this.end = this.start+res.result.length-1;
 		this.callback = true;
 		this.searchCallStatus.callback("Search done.", true);
 	}
@@ -764,6 +793,28 @@ export class SimpleSearchFormComponent implements OnInit {
 		if (this.facetQuery.indexOf(fq) != -1)
 			match = true;
 		return match;
+	}
+
+	/**
+	 * Gets the price from a price object in the form of:
+	 {
+		"EUR": 100
+	  },
+	 * @param price
+	 */
+	getCurrency(price: any): string {
+		return Object.keys(price)[0];
+	}
+
+	getCategoryDisplayInfo(categories: any): any {
+		let labelMap = {};
+		for(let category of categories.result) {
+			labelMap[category.uri] = {};
+			labelMap[category.uri].label = category.label;
+			labelMap[category.uri].code = category.code;
+			labelMap[category.uri].isRoot = category.allParents == null ? true : false;
+		}
+		return labelMap;
 	}
 
 	checkNaN(rating:any): boolean {

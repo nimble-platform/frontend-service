@@ -116,6 +116,23 @@ export class CategoryService {
         }
     }
 
+    /**
+     * Gets labels for the categories specified with the uris. The result is a map of uri->label map.
+     * @param uris
+     */
+    public getCategories(uris: string[]): Promise<any> {
+        const url = "http://nimble-staging.salzburgresearch.at/index/classes?";
+        let full_url = url;
+        for(let uri of uris) {
+            full_url += `uri=${encodeURIComponent(uri)}&`;
+        }
+        return this.http
+            .get(full_url, {headers: getAuthorizedHeaders(this.cookieService)})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+    }
+
     getCategory(category: Category): Promise<Category> {
         const url = `${this.baseUrl}/categories?taxonomyIds=` + category.taxonomyId + `&categoryIds=` + encodeURIComponent(category.id);
         return this.http
