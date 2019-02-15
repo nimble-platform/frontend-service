@@ -4,7 +4,7 @@
     </call-status>
 </div>
 
-<div *ngIf="catalogueResponse && catalogueResponse.size > 0">
+<div *ngIf="catalogueResponse && catalogueResponse.categoryNames.length > 0">
     <div>
         <div class="input-group form-group" style="background-color:#F2F2F2;padding-left: 25px;padding-top: 20px;padding-bottom: 20px;">
             <input  class="form-control col-3" type="text" [(ngModel)]="searchText" [ngbTypeahead]="search" placeholder="Search ...">
@@ -106,7 +106,7 @@
     </div>
 </div>
 
-<div class="jumbotron" *ngIf="catalogueResponse && catalogueResponse.size<= 0">
+<div class="jumbotron" *ngIf="catalogueResponse && catalogueResponse.categoryNames.length == 0">
     <h3>No published products / services.</h3>
     <h5>
         <span (click)="navigateToThePublishPage()" class="pointer">Publish new products / services</span>
