@@ -7,7 +7,7 @@
 <div *ngIf="catalogueResponse && catalogueResponse.size > 0">
     <div>
         <div class="input-group form-group" style="background-color:#F2F2F2;padding-left: 25px;padding-top: 20px;padding-bottom: 20px;">
-            <input  class="form-control col-3" type="text" [(ngModel)]="searchKey" (keyup)="search()" placeholder="Search ...">
+            <input  class="form-control col-3" type="text" [(ngModel)]="searchText" [ngbTypeahead]="search" placeholder="Search ...">
 
             <label class="space-left space-right"><strong>Category :</strong>
             </label>
