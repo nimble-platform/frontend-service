@@ -153,7 +153,7 @@ export class ProductPublishComponent implements OnInit {
         this.userService.getUserParty(userId).then(party => {
             return Promise.all([
                 Promise.resolve(party),
-                this.catalogueService.getCatalogueResponse(userId,null,null,0,0),
+                this.catalogueService.getCatalogueResponse(userId),
                 this.userService.getCompanyNegotiationSettingsForParty(UBLModelUtils.getPartyId(party))
             ])
         })
@@ -785,7 +785,7 @@ export class ProductPublishComponent implements OnInit {
 
         let userId = this.cookieService.get("user_id");
         this.userService.getUserParty(userId).then(party => {
-            this.catalogueService.getCatalogueResponse(userId,null,null,0,0).then(catalogueResponse => {
+            this.catalogueService.getCatalogueResponse(userId).then(catalogueResponse => {
                 this.catalogueLine = UBLModelUtils.createCatalogueLine(catalogueResponse.catalogueUuid,
                     party, this.companyNegotiationSettings);
                 this.catalogueService.draftCatalogueLine = this.catalogueLine;

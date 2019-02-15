@@ -20,8 +20,7 @@
             </label>
             <select  class="custom-select col-3 space-right" [(ngModel)]="sortOption" (change)="sortCatalogueLines()">
                 <option></option>
-                <option>Price:Low to High</option>
-                <option>Price:High to Low</option>
+                <option *ngFor="let option of CATALOGUE_LINE_SORT_OPTIONS" [value]="option.name">{{option.value}}</option>
             </select>
 
             <div class="col-1 d-flex justify-content-center">

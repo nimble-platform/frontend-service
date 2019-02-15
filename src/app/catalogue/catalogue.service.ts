@@ -34,7 +34,7 @@ export class CatalogueService {
                 private cookieService: CookieService) {
     }
 
-    getCatalogueResponse(userId: string,categoryName:string,searchText:string,limit:number, offset:number): Promise<CataloguePaginationResponse>{
+    getCatalogueResponse(userId: string,categoryName:string=null,searchText:string=null,limit:number=0, offset:number=0, sortOption=null): Promise<CataloguePaginationResponse>{
         return this.userService.getUserParty(userId).then(party => {
             let url = this.baseUrl + `/catalogue/${UBLModelUtils.getPartyId(party)}/pagination/default?limit=${limit}&offset=${offset}`;
             // if there is a selected category to filter the results, then add it to the url
@@ -44,6 +44,9 @@ export class CatalogueService {
             // if there is a search text, append it to the end of the url. Also, default language id is added.
             if(searchText){
                 url += `&searchText=${searchText}&languageId=${DEFAULT_LANGUAGE()}`
+            }
+            if(sortOption){
+                url += `&sortOption=${sortOption}`;
             }
             return this.http
                 .get(url, {headers: this.getAuthorizedHeaders()})

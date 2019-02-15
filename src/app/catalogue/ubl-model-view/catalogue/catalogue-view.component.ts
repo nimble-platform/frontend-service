@@ -15,6 +15,7 @@ import {selectDescription, selectName} from '../../../common/utils';
 import {ItemProperty} from '../../model/publish/item-property';
 import {debounceTime, distinctUntilChanged, switchMap} from 'rxjs/operators';
 import {Observable} from 'rxjs/Observable';
+import {CATALOGUE_LINE_SORT_OPTIONS} from '../../model/constants';
 
 @Component({
     selector: 'catalogue-view',
@@ -51,6 +52,8 @@ export class CatalogueViewComponent implements OnInit {
     getCatalogueStatus = new CallStatus();
     callStatus = new CallStatus();
     deleteStatuses: CallStatus[] = []
+
+    CATALOGUE_LINE_SORT_OPTIONS = CATALOGUE_LINE_SORT_OPTIONS;
 
     private searchText: string = "";
 
@@ -97,7 +100,7 @@ export class CatalogueViewComponent implements OnInit {
         // check whether the user chose a category to filter the catalogue lines
         let categoryName = this.selectedCategory == "All" ? null : this.selectedCategory;
         Promise.all([
-            this.catalogueService.getCatalogueResponse(userId, categoryName,this.searchText,this.pageSize,(this.page-1)*this.pageSize),
+            this.catalogueService.getCatalogueResponse(userId, categoryName,this.searchText,this.pageSize,(this.page-1)*this.pageSize,this.sortOption),
             this.getCompanySettings(userId)
         ])
             .then(([catalogueResponse, settings]) => {
@@ -124,10 +127,9 @@ export class CatalogueViewComponent implements OnInit {
         let len = this.catalogueResponse.catalogueLines.length;
         this.categoryNames = this.catalogueResponse.categoryNames;
         this.collectionSize = this.catalogueResponse.size;
-        this.catalogueLinesArray = [...this.catalogueResponse.catalogueLines].reverse();
+        this.catalogueLinesArray = [...this.catalogueResponse.catalogueLines];
         this.catalogueLinesWRTTypes = this.catalogueLinesArray;
         let i = 0;
-        this.sortOption = null;
         // Initialize catalogueLineView
         for(;i<len;i++){
             this.catalogueLineView[this.catalogueResponse.catalogueLines[i].id] = false;
@@ -179,21 +181,7 @@ export class CatalogueViewComponent implements OnInit {
     }
 
     sortCatalogueLines(): void{
-        if(this.sortOption == "Price:Low to High"){
-            this.catalogueLinesArray.sort(function (a,b) {
-                let x = parseInt(a.requiredItemLocationQuantity.price.priceAmount.value);
-                let y = parseInt(b.requiredItemLocationQuantity.price.priceAmount.value);
-                return x-y;
-            });
-        }
-        else if(this.sortOption == "Price:High to Low"){
-            this.catalogueLinesArray.sort(function (a,b) {
-                let x = parseInt(a.requiredItemLocationQuantity.price.priceAmount.value);
-                let y = parseInt(b.requiredItemLocationQuantity.price.priceAmount.value);
-                return x-y;
-            });
-            this.catalogueLinesArray.reverse();
-        }
+        this.requestCatalogue();
     }
 
     // this function is called when the user selects a category to filter the catalogue lines
