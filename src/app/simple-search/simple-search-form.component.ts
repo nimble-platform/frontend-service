@@ -386,21 +386,6 @@ export class SimpleSearchFormComponent implements OnInit {
 		this.searchCallStatus.submit();
 		this.simpleSearchService.getFields()
 		.then(res => {
-// <<<<<<< Updated upstream
-// 			this.simpleSearchService.getPropertyLabels(res._body.split(",")).then(propertyLabelsRes => {
-//                 this.simpleSearchService.get(q,res._body.split(","),fq,p,cat,catID)
-//                     .then(res => {
-//                     	if(Object.keys(res.facet_counts.facet_fields).indexOf(this.product_cat_mix) != -1){
-// 							let codes:Code[] = this.getCodes(res);
-// 							// before starting to build category tree, we have to get categories to retrieve their names
-// 							this.categoryService.getCachedCategories(codes).then(categories => {
-// 								this.buildCatTree(res.facet_counts.facet_fields[this.product_cat_mix]);
-// 								this.handleFacets(propertyLabelsRes.response.docs,res,p);
-// 							})
-// 						}else{
-// 							this.handleFacets(propertyLabelsRes.response.docs,res,p);
-// =======
-			// this.simpleSearchService.get(q,res._body.split(","),fq,p,cat,catID)
 			let fieldLabels:string [] = this.getFieldNames(res);
 			this.simpleSearchService.get(q,Object.keys(fieldLabels),fq,p,cat,catID)
 			.then(res => {
@@ -408,13 +393,10 @@ export class SimpleSearchFormComponent implements OnInit {
 				this.temp = [];
 				var index = 0;
 				for (let facet in res.facets) {
-					// if (JSON.stringify(res.facet_counts.facet_fields[facet]) != "{}") {
-						if (facet == this.product_cat_mix) {
-							this.buildCatTree(res.facets[this.product_cat_mix].entry);
-							this.handleFacets(fieldLabels, res, p)
-// >>>>>>> Stashed changes
-						}
-					// }
+					if (facet == this.product_cat_mix) {
+						this.buildCatTree(res.facets[this.product_cat_mix].entry);
+						this.handleFacets(fieldLabels, res, p)
+					}
 				}
 			})
 			.catch(error => {
@@ -426,59 +408,54 @@ export class SimpleSearchFormComponent implements OnInit {
 		});
 	}
 
-	handleFacets(propertyLabels,res,p){
+	handleFacets(facetMetadata,res,p){
 		this.facetObj = [];
 		this.temp = [];
 		var index = 0;
-		for (let facet of res.facets) {
+		for (let facet in res.facets) {
 			// if (JSON.stringify(res.facet_counts.facet_fields[facet]) != "{}") {
-				if (this.simpleSearchService.checkField(facet.fieldName)) {
+				if (this.simpleSearchService.checkField(facet)) {
+					if(facetMetadata[facet].label == null) {
+						continue;
+					}
 					this.facetObj.push({
-						"name":facet.fieldName,
-						"realName":selectNameFromLabelObject(propertyLabels[facet.fieldName]),
+						"name":facet,
+						"realName":selectNameFromLabelObject(facetMetadata[facet].label),
 						"options":[],
 						"total":0,
 						"selected":false
 					});
 
-					// check whether we have specific labels for the default language settings
 					let label;
 					let facet_innerLabel;
-					let facet_innerCount = res.facets[facet].count;
+					let facet_innerCount;
+					let atLeastOneMultilingualLabel: number = res.facets[facet].entry.findIndex(facetInner => facetInner.label.indexOf("@" + DEFAULT_LANGUAGE()) != -1);
 
-					for (let facet_inner of facet.entry) {
-						let index = facet_inner.lastIndexOf("@"+DEFAULT_LANGUAGE());
-						if (index != -1) {
-							label = facet_inner.substring(0,index);
-							facet_innerLabel = facet_inner.label;
-							facet_innerCount = facet_inner.count;
-						}
-					}
-
-					if(label == null){
-						for (let facet_inner in res.facets) {
-							if (facet_inner != "" && facet_inner != ":" && facet_inner != ' ' && facet_inner.indexOf("urn:oasis:names:specification:ubl:schema:xsd") == -1) {
-								this.facetObj[index].options.push({
-									"name":facet_inner,
-									"realName":facet_inner,
-									"count":facet_innerCount
-								});
-								this.facetObj[index].total += facet_innerCount;
-								if (this.checkFacet(this.facetObj[index].name,facet_inner))
-									this.facetObj[index].selected=true;
+					for (let facet_inner of res.facets[facet].entry) {
+						facet_innerLabel = facet_inner.label;
+						facet_innerCount = facet_inner.count;
+						if(facetMetadata[facet].dataType == 'string') {
+							if(atLeastOneMultilingualLabel != -1) {
+								let idx = facet_innerLabel.lastIndexOf("@" + DEFAULT_LANGUAGE());
+								if(idx != -1) {
+									facet_innerLabel = label = facet_innerLabel.substring(0,idx);
+								} else {
+									// there is at least one label in the preferred language but this is not one of them
+									continue;
+								}
 							}
 						}
-					}
-					else {
-						this.facetObj[index].options.push({
-							"name":facet_innerLabel,
-							"realName":label,
-							"count":facet_innerCount
-						});
-						// this.facetObj[index].total += res.facet_counts.facet_fields[facet][facet_innerLabel];
-						this.facetObj[index].total += facet_innerCount;
-						if (this.checkFacet(this.facetObj[index].name,facet_innerLabel))
-							this.facetObj[index].selected=true;
+
+						if (facet_innerLabel != "" && facet_innerLabel != ":" && facet_innerLabel != ' ' && facet_innerLabel.indexOf("urn:oasis:names:specification:ubl:schema:xsd") == -1) {
+							this.facetObj[index].options.push({
+								"name":facet_inner.label, // the label with the language id, if there is any
+								"realName":facet_innerLabel, // the displayed label
+								"count":facet_innerCount
+							});
+							this.facetObj[index].total += facet_innerCount;
+							if (this.checkFacet(this.facetObj[index].name,facet_inner.label))
+								this.facetObj[index].selected=true;
+						}
 					}
 
 					this.facetObj[index].options.sort(function(a,b){
@@ -545,6 +522,7 @@ export class SimpleSearchFormComponent implements OnInit {
 		for(let field of fields) {
 			fieldLabes[field.fieldName] = {};
 			fieldLabes[field.fieldName].label = field.label;
+			fieldLabes[field.fieldName].dataType = field.dataType;
 		}
 		return fieldLabes;
 	}

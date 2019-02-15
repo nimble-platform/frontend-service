@@ -20,6 +20,7 @@ export class SimpleSearchService {
 	product_img = myGlobals.product_img;
 	product_nonfilter_full = myGlobals.product_nonfilter_full;
 	product_nonfilter_regex = myGlobals.product_nonfilter_regex;
+	product_nonfilter_key_field = myGlobals.product_nonfilter_key_field;
 	product_configurable = myGlobals.product_configurable;
 	product_cat = myGlobals.product_cat;
 	product_cat_mix = myGlobals.product_cat_mix;
@@ -134,22 +135,25 @@ export class SimpleSearchService {
 	}
 
 	checkField(field:string): boolean {
-		var valid = true;
-		if (field == this.product_name || field == this.product_img || field == this.product_vendor_id || field == this.product_cat || field == this.product_cat_mix)
-			valid = false;
+		if (field == this.product_name || field == this.product_img || field == this.product_vendor_id || field == this.product_cat || field == this.product_cat_mix) {
+			return false;
+		}
+		if(field.search(this.product_nonfilter_key_field) != -1) {
+			return false;
+		}
 		for (let filter of this.product_nonfilter_full) {
 			if (field == filter)
-				valid = false;
+				return false;
 		}
 		for (let filter of this.product_nonfilter_regex) {
 			if (field.search(filter) != -1)
-				valid = false;
+				return false;
 		}
 		for (let filter of this.product_configurable) {
 			if (field.search(filter) != -1)
-				valid = false;
+				return false;
 		}
-		return valid;
+		return true;
 	}
 
 	private getHeadersWithBasicAuthorization(): Headers {

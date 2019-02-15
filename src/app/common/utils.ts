@@ -138,12 +138,12 @@ function isItemProperty(property: any): property is ItemProperty {
  *    "es": "Spanish label"
  * }
  *
- * tries first to get label in the preferred language, then English label, then the first label
+ * tries first to get label in the preferred language, then English label, then the first label.
+ * If the label is not a json object, then the label itself is returned
  * @param label
  */
 export function selectNameFromLabelObject(label: any): string {
     let defaultLanguage = DEFAULT_LANGUAGE();
-    let englishName = null;
     if(label[defaultLanguage] != null) {
         return label[defaultLanguage];
     }
@@ -153,7 +153,7 @@ export function selectNameFromLabelObject(label: any): string {
     if(Object.keys.length > 0) {
         return label[Object.keys(label)[0]];
     } else {
-        return "";
+        return label;
     }
 }
 
