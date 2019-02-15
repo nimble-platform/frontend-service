@@ -178,9 +178,7 @@ export class SimpleSearchFormComponent implements OnInit {
 			if(Object.keys(res.facet_counts.facet_fields).indexOf(this.product_cat_mix) == -1){
 				this.categoriesCallStatus.callback("Categories loaded.", true);
 			}else{
-				let codes:Code[] = this.getCodes(res);
-				// before starting to build category tree, we have to get categories to retrieve their names
-				this.categoryService.getCachedCategories(codes).then(categories => {
+				this.categoryService.cacheFurnitureOntologyCategories().then(categories => {
 					this.buildCatTree(res.facet_counts.facet_fields[this.product_cat_mix]);
 					this.categoriesCallStatus.callback("Categories loaded.", true);
 				})
@@ -289,21 +287,6 @@ export class SimpleSearchFormComponent implements OnInit {
 		}
 	}
 
-	// To get names of categories, we will call categoryService.getCachedCategories method.
-	// This function is used to create Code for each category.
-	// Since eClass categories only have english names, this function only handles FurnitureOntology categories for now.
-	getCodes(res):Code[]{
-		let codes:Code[] = [];
-		for(let facet_inner in res.facet_counts.facet_fields[this.product_cat_mix]){
-			var split_idx = facet_inner.lastIndexOf(":");
-			var ontology = facet_inner.substr(0,split_idx);
-			if(ontology.indexOf("http://www.aidimme.es/FurnitureSectorOntology.owl#") != -1){
-				codes.push(new Code(facet_inner,"","","FurnitureOntology",""));
-			}
-		}
-		return codes;
-	}
-
 	private findCategory(categoryArray: Category[], uri: String): number {
 			return categoryArray.findIndex(c => c.categoryUri == uri);
 	}
@@ -352,9 +335,7 @@ export class SimpleSearchFormComponent implements OnInit {
                 this.simpleSearchService.get(q,res._body.split(","),fq,p,cat,catID)
                     .then(res => {
                     	if(Object.keys(res.facet_counts.facet_fields).indexOf(this.product_cat_mix) != -1){
-							let codes:Code[] = this.getCodes(res);
-							// before starting to build category tree, we have to get categories to retrieve their names
-							this.categoryService.getCachedCategories(codes).then(categories => {
+							this.categoryService.cacheFurnitureOntologyCategories().then(categories => {
 								this.buildCatTree(res.facet_counts.facet_fields[this.product_cat_mix]);
 								this.handleFacets(propertyLabelsRes.response.docs,res,p);
 							})
@@ -477,14 +458,50 @@ export class SimpleSearchFormComponent implements OnInit {
             }
         }
         */
-		this.response = copy(this.temp);
-		this.size = res.response.numFound;
-		this.page = p;
-		this.start = this.page*10-10+1;
-		this.end = this.start+res.response.docs.length-1;
-		this.callback = true;
-		this.searchCallStatus.callback("Search done.", true);
-	}
+        this.response = this.handleItemNameAndDescription(copy(this.temp));
+        this.size = res.response.numFound;
+        this.page = p;
+        this.start = this.page*10-10+1;
+        this.end = this.start+res.response.docs.length-1;
+        this.callback = true;
+        this.searchCallStatus.callback("Search done.", true);
+    }
+
+    // we have to choose the name and description of the item according to the default language of the browser
+    handleItemNameAndDescription(response){
+        for(let result of response){
+            result["item_name"] = [this.getPreferredValue(result["item_name"])];
+            result["item_description"] = [this.getPreferredValue(result["item_description"])];
+        }
+        return response;
+    }
+
+    getPreferredValue(values:string[]){
+        if(!values || values.length <= 0){
+            return "";
+        }
+
+        let defaultLanguage = DEFAULT_LANGUAGE();
+        let englishName = null;
+        for(let value of values){
+            let index = value.lastIndexOf(":");
+            let languageId = value.substring(index+1);
+
+            if(languageId == defaultLanguage){
+                return value.substring(0,index);
+            }
+            else if(languageId == "en"){
+                englishName = value.substring(0,index);
+            }
+        }
+
+        if(englishName){
+            return englishName;
+        }
+
+        let index = values[0].lastIndexOf(":");
+        return values[0].substring(0,index);
+    }
 
     getFacetRealName(name:string,properties){
         for(let property of properties){

@@ -20,32 +20,28 @@ export class CategoryService {
                 private cookieService: CookieService) {
     }
 
+    // This map only contains FurnitureOntology categories
     private cachedCategories:Map<string,Category> = new Map<string, Category>();
 
-    getCachedCategories(codes:Code[]): Promise<Category[]> {
-        if(codes.length == 0){
-            return Promise.resolve([]);
+    // this function gets all FurnitureOntology categories
+    // however, those categories only contains information about the labels and definitions
+    cacheFurnitureOntologyCategories(){
+        // check whether FurnitureOntology categories are cached or not
+        if(this.cachedCategories.size != 0){
+            return Promise.resolve(null);
         }
-        let categories:Category[] = [];
-        let missingCodes:Code[] = [];
-        for(let code of codes){
-            if (this.cachedCategories.has(code.uri)){
-                categories.push(this.cachedCategories.get(code.uri));
-            }else {
-                missingCodes.push(code);
-            }
-        }
-        if(missingCodes.length > 0){
-            return this.getCategoriesByIds(missingCodes).then(cats => {
-                for(let category of cats){
+        const url = `${this.baseUrl}/taxonomies/FurnitureOntology/all-categories`;
+        return this.http
+            .get(url, {headers: getAuthorizedHeaders(this.cookieService)})
+            .toPromise()
+            .then(response => {
+                let categories:Category[] = response.json() as Category[];
+                for(let category of categories){
                     this.cachedCategories.set(category.categoryUri,category);
                 }
-
-                return categories.concat(cats);
+                return null;
             })
-        } else {
-            return Promise.resolve(categories);
-        }
+            .catch(this.handleError);
     }
 
     // This function assumes that category with the given uri is already cached.
