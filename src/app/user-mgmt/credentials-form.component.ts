@@ -75,8 +75,6 @@ export class CredentialsFormComponent implements OnInit {
 			this.cookieService.set("user_email",res.email);
 			this.cookieService.set("bearer_token",res.accessToken);
 			this.submitCallStatus.callback("Login Successful");
-			// cache FurnitureOntology categories
-			this.categoryService.cacheFurnitureOntologyCategories();
 			if (!res.companyID && myGlobals.config.companyRegistrationRequired)
 				this.appComponent.checkLogin("/user-mgmt/company-registration");
 			else

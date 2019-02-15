@@ -20,42 +20,16 @@ export class CategoryService {
                 private cookieService: CookieService) {
     }
 
+    // This map only contains FurnitureOntology categories
     private cachedCategories:Map<string,Category> = new Map<string, Category>();
 
-    getCachedCategories(codes:Code[]): Promise<Category[]> {
-        if(codes.length == 0){
-            return Promise.resolve([]);
-        }
-        let categories:Category[] = [];
-        let missingCodes:Code[] = [];
-        for(let code of codes){
-            if (this.cachedCategories.has(code.uri)){
-                categories.push(this.cachedCategories.get(code.uri));
-            }else {
-                missingCodes.push(code);
-            }
-        }
-        if(missingCodes.length > 0){
-            return this.getCategoriesByIds(missingCodes).then(cats => {
-                for(let category of cats){
-                    this.cachedCategories.set(category.categoryUri,category);
-                }
-
-                return categories.concat(cats);
-            })
-        } else {
-            return Promise.resolve(categories);
-        }
-    }
-
-    // This function assumes that category with the given uri is already cached.
-    getCachedCategoryName(uri:string):string{
-        return selectPreferredName(this.cachedCategories.get(uri));
-    }
-
-    // this function get all FurnitureOntology categories
+    // this function gets all FurnitureOntology categories
     // however, those categories only contains information about the labels and definitions
     cacheFurnitureOntologyCategories(){
+        // check whether FurnitureOntology categories are cached or not
+        if(this.cachedCategories.size != 0){
+            return Promise.resolve(null);
+        }
         const url = `${this.baseUrl}/taxonomies/FurnitureOntology/all-categories`;
         return this.http
             .get(url, {headers: getAuthorizedHeaders(this.cookieService)})
@@ -68,6 +42,11 @@ export class CategoryService {
                 return null;
             })
             .catch(this.handleError);
+    }
+
+    // This function assumes that category with the given uri is already cached.
+    getCachedCategoryName(uri:string):string{
+        return selectPreferredName(this.cachedCategories.get(uri));
     }
 
     getCategoriesByName(keyword: string, taxonomyId: string,isLogistics: boolean): Promise<Category[]> {

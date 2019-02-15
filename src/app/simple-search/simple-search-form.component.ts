@@ -178,8 +178,10 @@ export class SimpleSearchFormComponent implements OnInit {
 			if(Object.keys(res.facet_counts.facet_fields).indexOf(this.product_cat_mix) == -1){
 				this.categoriesCallStatus.callback("Categories loaded.", true);
 			}else{
-				this.buildCatTree(res.facet_counts.facet_fields[this.product_cat_mix]);
-				this.categoriesCallStatus.callback("Categories loaded.", true);
+				this.categoryService.cacheFurnitureOntologyCategories().then(categories => {
+					this.buildCatTree(res.facet_counts.facet_fields[this.product_cat_mix]);
+					this.categoriesCallStatus.callback("Categories loaded.", true);
+				})
 			}
 		})
 		.catch(error => {
@@ -333,8 +335,10 @@ export class SimpleSearchFormComponent implements OnInit {
                 this.simpleSearchService.get(q,res._body.split(","),fq,p,cat,catID)
                     .then(res => {
                     	if(Object.keys(res.facet_counts.facet_fields).indexOf(this.product_cat_mix) != -1){
-							this.buildCatTree(res.facet_counts.facet_fields[this.product_cat_mix]);
-							this.handleFacets(propertyLabelsRes.response.docs,res,p);
+							this.categoryService.cacheFurnitureOntologyCategories().then(categories => {
+								this.buildCatTree(res.facet_counts.facet_fields[this.product_cat_mix]);
+								this.handleFacets(propertyLabelsRes.response.docs,res,p);
+							})
 						}else{
 							this.handleFacets(propertyLabelsRes.response.docs,res,p);
 						}
