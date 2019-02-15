@@ -12,14 +12,16 @@ import { BehaviorSubject } from "rxjs/BehaviorSubject";
 import {CookieService} from "ng2-cookies";
 import { copy } from "../common/utils";
 import {BinaryObject} from './model/publish/binary-object';
+import {CataloguePaginationResponse} from './model/publish/catalogue-pagination-response';
 import {UBLModelUtils} from './model/ubl-model-utils';
+import {DEFAULT_LANGUAGE} from './model/constants';
 
 @Injectable()
 export class CatalogueService {
     private headers = new Headers({ 'Content-Type': 'application/json', 'Accept': 'application/json' });
     private baseUrl = catalogue_endpoint;
 
-    catalogue: Catalogue;
+    catalogueResponse: CataloguePaginationResponse;
     draftCatalogueLine: CatalogueLine;
     // To save a reference to the original version of the item being edited
     originalCatalogueLine: CatalogueLine;
@@ -32,41 +34,37 @@ export class CatalogueService {
                 private cookieService: CookieService) {
     }
 
-    getCatalogueForceUpdate(userId: string, forceUpdate:boolean): Promise<Catalogue> {
-        // if the default catalogue is already fetched, return it
-        if (this.catalogue == null || forceUpdate == true) {
-
-            // chain the promise for getting the user's party with the promise for getting the default catalogue
-            // for the party
-            return this.userService.getUserParty(userId).then(party => {
-
-                // using the party query the default catalogue
-                let url = this.baseUrl + `/catalogue/${UBLModelUtils.getPartyId(party)}/default`;
-                return this.http
-                    .get(url, {headers: this.getAuthorizedHeaders()})
-                    .toPromise()
-                    .then(res => {
-                        this.catalogue = res.json() as Catalogue;
-                        return this.catalogue;
-                    })
-                    .catch(res => {
-                        if (res.status == 404) {
-                            // no default catalogue yet, create new one
-                            this.catalogue = new Catalogue("default", null, party, "", "", []);
-                            return this.catalogue;
-
-                        } else {
-                            this.handleError(res.getBody());
-                        }
-                    });
-            });
-        } else {
-            return Promise.resolve(this.catalogue);
-        }
-    }
-
-    getCatalogue(userId: string): Promise<Catalogue> {
-        return this.getCatalogueForceUpdate(userId, false);
+    getCatalogueResponse(userId: string,categoryName:string=null,searchText:string=null,limit:number=0, offset:number=0, sortOption=null): Promise<CataloguePaginationResponse>{
+        return this.userService.getUserParty(userId).then(party => {
+            let url = this.baseUrl + `/catalogue/${UBLModelUtils.getPartyId(party)}/pagination/default?limit=${limit}&offset=${offset}`;
+            // if there is a selected category to filter the results, then add it to the url
+            if(categoryName){
+                url += `&categoryName=${categoryName}`;
+            }
+            // if there is a search text, append it to the end of the url. Also, default language id is added.
+            if(searchText){
+                url += `&searchText=${searchText}&languageId=${DEFAULT_LANGUAGE()}`
+            }
+            if(sortOption){
+                url += `&sortOption=${sortOption}`;
+            }
+            return this.http
+                .get(url, {headers: this.getAuthorizedHeaders()})
+                .toPromise()
+                .then(res => {
+                    this.catalogueResponse = res.json() as CataloguePaginationResponse;
+                    return this.catalogueResponse;
+                })
+                .catch(res => {
+                    if (res.status == 404) {
+                        // no default catalogue yet, create new one
+                        this.catalogueResponse = new CataloguePaginationResponse(null,0,[]);
+                        return this.catalogueResponse;
+                    } else {
+                        this.handleError(res.getBody());
+                    }
+                });
+        })
     }
 
     getCatalogueLine(catalogueId:string, lineId:string):Promise<CatalogueLine> {
@@ -101,15 +99,12 @@ export class CatalogueService {
         return this.http
             .post(url, JSON.stringify(catalogue), {headers: this.getAuthorizedHeaders()})
             .toPromise()
-            .then(res =>
-                this.catalogue = res.json() as Catalogue
-            )
             .catch(this.handleError);
     }
 
     deleteCatalogue():Promise<any> {
         const token = 'Bearer '+this.cookieService.get("bearer_token");
-        const url = this.baseUrl + `/catalogue/ubl/${this.catalogue.uuid}`;
+        const url = this.baseUrl + `/catalogue/ubl/${this.catalogueResponse.catalogueUuid}`;
         return this.http
             .delete(url,{headers:new Headers({"Authorization":token})})
             .toPromise()
@@ -184,7 +179,7 @@ export class CatalogueService {
 
     uploadZipPackage(pck:File): Promise<any> {
         const token = 'Bearer '+this.cookieService.get("bearer_token");
-        const url = this.baseUrl + `/catalogue/${this.catalogue.uuid}/image/upload`;
+        const url = this.baseUrl + `/catalogue/${this.catalogueResponse.catalogueUuid}/image/upload`;
         return new Promise<any>((resolve, reject) => {
             let formData: FormData = new FormData();
             formData.append("package", pck, pck.name);
@@ -214,10 +209,6 @@ export class CatalogueService {
         return this.http
             .delete(url,{headers:new Headers({"Authorization":token})})
             .toPromise()
-            .then(res => {
-                let deletedLineIndex = this.catalogue.catalogueLine.findIndex(line => line.id == lineId);
-                this.catalogue.catalogueLine.splice(deletedLineIndex, 1)
-            })
             .catch(this.handleError);
     }
 
@@ -240,7 +231,6 @@ export class CatalogueService {
     }
 
     resetData(): void {
-        this.catalogue = null;
         this.draftCatalogueLine = null;
     }
 
