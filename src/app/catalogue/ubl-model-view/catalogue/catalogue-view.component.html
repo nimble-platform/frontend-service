@@ -11,14 +11,14 @@
 
             <label class="space-left space-right"><strong>Category :</strong>
             </label>
-            <select  class="custom-select col-3 space-right" [(ngModel)]="selectedCategory" (change)="onCategorySelection()">
+            <select  class="custom-select col-3 space-right" [(ngModel)]="selectedCategory" (change)="requestCatalogue()">
                 <option>All</option>
                 <option *ngFor="let type of categoryNames">{{type}}</option>
             </select>
 
             <label class="space-right"><strong>Sort by:</strong>
             </label>
-            <select  class="custom-select col-3 space-right" [(ngModel)]="sortOption" (change)="sortCatalogueLines()">
+            <select  class="custom-select col-3 space-right" [(ngModel)]="sortOption" (change)="requestCatalogue()">
                 <option></option>
                 <option *ngFor="let option of CATALOGUE_LINE_SORT_OPTIONS" [value]="option.name">{{option.value}}</option>
             </select>
@@ -49,7 +49,7 @@
         </div>
 
         <div *ngIf="catalogueLinesArray.length > 0" class="pagination justify-content-center space-before">
-            <ngb-pagination [(collectionSize)]="collectionSize" [(pageSize)]="pageSize" [(page)]="page" [maxSize]="5" [boundaryLinks]="true" (pageChange)="onPageChanged()"></ngb-pagination>
+            <ngb-pagination [(collectionSize)]="collectionSize" [(pageSize)]="pageSize" [(page)]="page" [maxSize]="5" [boundaryLinks]="true" (pageChange)="requestCatalogue()"></ngb-pagination>
         </div>
 
         <div *ngFor="let catLine of catalogueLinesArray; let i = index" class="space-before">
@@ -101,7 +101,7 @@
             </div>
         </div>
         <div *ngIf="catalogueLinesArray.length > 0" class="pagination justify-content-center space-before">
-            <ngb-pagination [(collectionSize)]="collectionSize" [(pageSize)]="pageSize" [(page)]="page" [maxSize]="5" [boundaryLinks]="true" (pageChange)="onPageChanged()"></ngb-pagination>
+            <ngb-pagination [(collectionSize)]="collectionSize" [(pageSize)]="pageSize" [(page)]="page" [maxSize]="5" [boundaryLinks]="true" (pageChange)="requestCatalogue()"></ngb-pagination>
         </div>
     </div>
 </div>

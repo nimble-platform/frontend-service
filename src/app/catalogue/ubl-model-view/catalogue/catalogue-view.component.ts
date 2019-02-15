@@ -94,7 +94,7 @@ export class CatalogueViewComponent implements OnInit {
             })
         );
 
-    private requestCatalogue(): void {
+    requestCatalogue(): void {
         this.getCatalogueStatus.submit();
         const userId = this.cookieService.get("user_id");
         // check whether the user chose a category to filter the catalogue lines
@@ -180,15 +180,6 @@ export class CatalogueViewComponent implements OnInit {
         }
     }
 
-    sortCatalogueLines(): void{
-        this.requestCatalogue();
-    }
-
-    // this function is called when the user selects a category to filter the catalogue lines
-    onCategorySelection():void{
-        this.requestCatalogue();
-    }
-
     getDeleteStatus(index: number): CallStatus {
         return this.deleteStatuses[index % this.pageSize];
     }
@@ -218,9 +209,5 @@ export class CatalogueViewComponent implements OnInit {
 
     navigateToThePublishPage(){
         this.router.navigate(['/catalogue/categorysearch']);
-    }
-
-    onPageChanged(){
-        this.requestCatalogue();
     }
 }
