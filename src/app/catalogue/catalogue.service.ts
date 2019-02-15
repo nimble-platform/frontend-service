@@ -14,6 +14,7 @@ import { copy } from "../common/utils";
 import {BinaryObject} from './model/publish/binary-object';
 import {CataloguePaginationResponse} from './model/publish/catalogue-pagination-response';
 import {UBLModelUtils} from './model/ubl-model-utils';
+import {DEFAULT_LANGUAGE} from './model/constants';
 
 @Injectable()
 export class CatalogueService {
@@ -33,23 +34,17 @@ export class CatalogueService {
                 private cookieService: CookieService) {
     }
 
-    getCatalogueResponse(userId: string,categoryNames:string[],limit:number, offset:number): Promise<CataloguePaginationResponse>{
+    getCatalogueResponse(userId: string,categoryName:string,searchText:string,limit:number, offset:number): Promise<CataloguePaginationResponse>{
         return this.userService.getUserParty(userId).then(party => {
             let url = this.baseUrl + `/catalogue/${UBLModelUtils.getPartyId(party)}/pagination/default?limit=${limit}&offset=${offset}`;
-            // if there are selected category names to filter the results, then add them to the url
-            let numberOfCategories = categoryNames.length;
-            if(numberOfCategories > 0){
-                url += "&categoryNames=";
-                for(let i = 0 ; i < numberOfCategories;i++){
-                    if(i == numberOfCategories-1){
-                        url += categoryNames[i];
-                    }
-                    else {
-                        url += categoryNames[i] + ",";
-                    }
-                }
+            // if there is a selected category to filter the results, then add it to the url
+            if(categoryName){
+                url += `&categoryName=${categoryName}`;
             }
-
+            // if there is a search text, append it to the end of the url. Also, default language id is added.
+            if(searchText){
+                url += `&searchText=${searchText}&languageId=${DEFAULT_LANGUAGE()}`
+            }
             return this.http
                 .get(url, {headers: this.getAuthorizedHeaders()})
                 .toPromise()

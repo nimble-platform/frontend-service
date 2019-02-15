@@ -5,13 +5,13 @@
 </div>
 
 <div *ngIf="catalogueResponse && catalogueResponse.size > 0">
-    <div *ngIf="catalogueResponse.catalogueLines.length > 0">
+    <div>
         <div class="input-group form-group" style="background-color:#F2F2F2;padding-left: 25px;padding-top: 20px;padding-bottom: 20px;">
             <input  class="form-control col-3" type="text" [(ngModel)]="searchKey" (keyup)="search()" placeholder="Search ...">
 
             <label class="space-left space-right"><strong>Category :</strong>
             </label>
-            <select class="custom-select col-3 space-right" [(ngModel)]="selectedCategory" (change)="onCategorySelection()">
+            <select  class="custom-select col-3 space-right" [(ngModel)]="selectedCategory" (change)="onCategorySelection()">
                 <option>All</option>
                 <option *ngFor="let type of categoryNames">{{type}}</option>
             </select>
