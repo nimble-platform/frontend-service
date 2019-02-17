@@ -180,21 +180,8 @@ export const product_filter_prod = ["item_free_of_charge_indicator","item_certif
 export const product_filter_comp = ["item_manufacturer_name","item_manufacturer_origin","manufacturer_certificate","manufacturer_ppap_compliance_level","manufacturer_ppap_document"];
 export const product_filter_trust = ["trust_company_trust_score","trust_company_rating","trust_company_seller_communication","trust_company_fulfillment_of_terms","trust_company_delivery_packaging"];
 export const product_filter_mappings = {
-  "item_price": "Price",
-  "item_price_currency": "Currency",
-  "item_free_of_charge_indicator": "Free Sample",
-  "item_certificate": "Product / Service Certificate",
-  "item_applicable_countries": "Destination Country",
-  "item_manufacturer_name": "Vendor Name",
-  "item_manufacturer_origin": "Vendor Origin",
-  "manufacturer_certificate": "Vendor Certificate",
-  "manufacturer_ppap_compliance_level": "PPAP Compliance Level",
-  "manufacturer_ppap_document": "PPAP Document",
-  "trust_company_trust_score": "Trust Score",
-  "trust_company_rating": "Overall Rating",
-  "trust_company_seller_communication": "Seller Communication",
-  "trust_company_fulfillment_of_terms": "Fulfillment of Terms",
-  "trust_company_delivery_packaging": "Delivery & Packaging"
+    "item_price": "Price",
+    "item_price_currency": "Currency"
 };
 export const product_nonfilter_full = ["id","_version_","item_description","item_price","item_price_currency","item_commodity_classification_code","item_commodity_classification_uri","item_properties"];
 export const product_nonfilter_regex = ["lmf.","_id"];

@@ -29,25 +29,12 @@ export class SimpleSearchService {
 				private cookieService: CookieService) {
 	}
 
-    getPropertyLabels(facets:[string]){
-        let url = `${this.urlProperty}/select`;
-        let size = facets.length;
-        if(size > 0){
-        	url += "?q=idxField:(";
-            for(let i = 0; i < size ; i++){
-                if(size - 1 == i){
-                    url += facets[i]+")&";
-                }
-                else {
-                    url += facets[i] + " OR ";
-                }
-            }
+    getUblProperties(facets){
+        let url = `http://nimble-staging.salzburgresearch.at/index/properties?nameSpace=${encodeURIComponent("http://www.nimble-project.org/resource/ubl#")}`;
+
+        for(let facet of facets){
+        	url += "&localName="+encodeURIComponent(facet);
 		}
-		else {
-        	url += "?";
-		}
-        url += "fl=label_*,idxField";
-        url += "&json.nl=map&wt=json&rows="+facets.length;
         return this.http
             .get(url, {headers: this.headers})
             .toPromise()

@@ -88,6 +88,8 @@ export class SimpleSearchFormComponent implements OnInit {
 
 	config = myGlobals.config;
 	getMultilingualLabel = selectNameFromLabelObject;
+	// used to get labels of the ubl properties
+	ublProperties = null;
 
 	constructor(
 		private simpleSearchService: SimpleSearchService,
@@ -365,47 +367,51 @@ export class SimpleSearchFormComponent implements OnInit {
 			let fieldLabels:string [] = this.getFieldNames(res);
 			this.simpleSearchService.get(q,Object.keys(fieldLabels).concat(this.product_filter_comp).concat(this.product_filter_trust),fq,p,cat,catID)
 			.then(res => {
-				this.facetObj = [];
-				this.temp = [];
-				var index = 0;
-				for (let facet in res.facets) {
-					if (facet == this.product_cat_mix) {
-						this.buildCatTree(res.facets[this.product_cat_mix].entry);
-						this.handleFacets(fieldLabels, res, p)
-					}
-				}
-
-				this.cat_loading = false;
-				this.callback = true;
-				this.searchCallStatus.callback("Search done.", true);
-
-				this.temp = res.result;
-				for (let doc in this.temp) {
-					if (this.temp[doc][this.product_img]) {
-						var img = this.temp[doc][this.product_img];
-						if (Array.isArray(img)) {
-							this.temp[doc][this.product_img] = img[0];
+				this.simpleSearchService.getUblProperties(Object.keys(fieldLabels).concat(this.product_filter_comp).concat(this.product_filter_trust)).then(response => {
+					this.facetObj = [];
+					this.temp = [];
+					var index = 0;
+					for (let facet in res.facets) {
+						if (facet == this.product_cat_mix) {
+							this.buildCatTree(res.facets[this.product_cat_mix].entry);
+							this.handleFacets(fieldLabels, res, p, response.result)
 						}
 					}
-				}
-				/*
-				 for (let doc in this.temp) {
-				 if (this.isJson(this.temp[doc][this.product_img])) {
-				 var json = JSON.parse(this.temp[doc][this.product_img]);
-				 var img = "";
-				 if (json.length > 1)
-				 img = "data:"+JSON.parse(this.temp[doc][this.product_img][0])[0].mimeCode+";base64,"+JSON.parse(this.temp[doc][this.product_img][0])[0].value;
-				 else
-				 img = "data:"+this.temp[doc][this.product_img].mimeCode+";base64,"+this.temp[doc][this.product_img].value;
-				 this.temp[doc][this.product_img] = img;
-				 }
-				 }
-				 */
-				this.response = copy(this.temp);
-				this.size = res.totalElements;
-				this.page = p;
-				this.start = this.page*10-10+1;
-				this.end = this.start+res.result.length-1;
+
+					this.cat_loading = false;
+					this.callback = true;
+					this.searchCallStatus.callback("Search done.", true);
+
+					this.temp = res.result;
+					for (let doc in this.temp) {
+						if (this.temp[doc][this.product_img]) {
+							var img = this.temp[doc][this.product_img];
+							if (Array.isArray(img)) {
+								this.temp[doc][this.product_img] = img[0];
+							}
+						}
+					}
+					/*
+                     for (let doc in this.temp) {
+                     if (this.isJson(this.temp[doc][this.product_img])) {
+                     var json = JSON.parse(this.temp[doc][this.product_img]);
+                     var img = "";
+                     if (json.length > 1)
+                     img = "data:"+JSON.parse(this.temp[doc][this.product_img][0])[0].mimeCode+";base64,"+JSON.parse(this.temp[doc][this.product_img][0])[0].value;
+                     else
+                     img = "data:"+this.temp[doc][this.product_img].mimeCode+";base64,"+this.temp[doc][this.product_img].value;
+                     this.temp[doc][this.product_img] = img;
+                     }
+                     }
+                     */
+					this.response = copy(this.temp);
+					this.size = res.totalElements;
+					this.page = p;
+					this.start = this.page*10-10+1;
+					this.end = this.start+res.result.length-1;
+				}).catch(error => {
+					this.searchCallStatus.error("Error while running search.", error);
+				})
 			})
 			.catch(error => {
 				this.searchCallStatus.error("Error while running search.", error);
@@ -416,17 +422,19 @@ export class SimpleSearchFormComponent implements OnInit {
 		});
 	}
 
-	handleFacets(facetMetadata,res,p){
+	handleFacets(facetMetadata,res,p,ublProperties){
+		this.ublProperties = ublProperties;
 		this.facetObj = [];
 		this.temp = [];
 		var index = 0;
 		for (let facet in res.facets) {
 			if (this.simpleSearchService.checkField(facet)) {
 				let facetMetadataExists: boolean = facetMetadata[facet] != null && facetMetadata[facet].label != null;
+				let propertyLabel = this.getName(facet);
 
 				this.facetObj.push({
 					"name":facet,
-					"realName":facetMetadataExists ? selectNameFromLabelObject(facetMetadata[facet].label) : facet,
+					"realName":facetMetadataExists ? selectNameFromLabelObject(facetMetadata[facet].label) : propertyLabel,
 					"options":[],
 					"total":0,
 					"selected":false
@@ -518,6 +526,13 @@ export class SimpleSearchFormComponent implements OnInit {
 	}
 
 	getName(name:string) {
+		// if it is a ubl property, then get its label from the ublProperties
+		for(let ublProperty of this.ublProperties){
+			if(name == ublProperty.localName){
+				return selectNameFromLabelObject(ublProperty.label);
+			}
+		}
+		// otherwise, use product_filter_mappings
 		var ret = name;
 		if (this.product_filter_mappings[name]) {
 			ret = this.product_filter_mappings[name];

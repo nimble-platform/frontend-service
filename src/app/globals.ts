@@ -181,20 +181,7 @@ export const product_filter_comp = ["manufacturer.name","manufacturer.origin","m
 export const product_filter_trust = ["manufacturer.trustScore","manufacturer.trustRating","manufacturer.trustSellerCommunication","manufacturer.trustFullfillmentOfTerms","manufacturer.trustDeliveryPackaging","manufacturer.trustNumberOfTransactions"];
 export const product_filter_mappings = {
   "item_price": "Price",
-  "item_price_currency": "Currency",
-  "freeOfCharge": "Free Sample",
-  "certificateType": "Product / Service Certificate",
-  "item_applicable_countries": "Destination Country",
-  "manufacturer.name": "Vendor Name",
-  "item_manufacturer_origin": "Vendor Origin",
-  "manufacturer_certificate": "Vendor Certificate",
-  "manufacturer_ppap_compliance_level": "PPAP Compliance Level",
-  "manufacturer_ppap_document": "PPAP Document",
-  "manufacturer.trustScore": "Trust Score",
-  "manufacturer.trustRating": "Overall Rating",
-  "manufacturer.trustSellerCommunication": "Seller Communication",
-  "manufacturer.trustFullfillmentOfTerms": "Fulfillment of Terms",
-  "manufacturer.trustDeliveryPackaging": "Delivery & Packaging"
+  "item_price_currency": "Currency"
 };
 export const product_nonfilter_full = ["id","_text_","_version_","item_description","item_price","item_price_currency","item_commodity_classification_code","item_commodity_classification_uri","item_properties"];
 export const product_nonfilter_regex = ["lmf.","_id"];
