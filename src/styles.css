@@ -531,7 +531,7 @@ ngb-pagination .page-item.active .page-link {
 
 .actions-row .action {
     width: 100%;
-    height: 100%;
+    /*height: 100%;*/
     white-space: normal;
 }
 
