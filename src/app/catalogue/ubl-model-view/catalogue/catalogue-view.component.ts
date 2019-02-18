@@ -198,6 +198,7 @@ export class CatalogueViewComponent implements OnInit {
                 catalogueService.uploadZipPackage(file).then(res => {
                         self.callStatus.callback(null);
                         self.router.navigate(['dashboard'], {queryParams: {tab: "CATALOGUE"}});
+                        self.requestCatalogue();
                     },
                     error => {
                         self.callStatus.error("Failed to upload the image package:  " + error, error);
