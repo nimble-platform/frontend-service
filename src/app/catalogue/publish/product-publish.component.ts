@@ -534,8 +534,8 @@ export class ProductPublishComponent implements OnInit {
         this.publishStateService.resetData();
         // Following "if" block is executed when redirected by an "edit" button
         // "else" block is executed when redirected by "publish" tab
-        let publishMode = this.publishStateService.publishMode;
-        if (publishMode == 'edit') {
+        this.publishMode = this.publishStateService.publishMode;
+        if (this.publishMode == 'edit') {
             this.catalogueLine = this.catalogueService.draftCatalogueLine;
             if (this.catalogueLine == null) {
                 this.publishStateService.publishMode = 'create';
