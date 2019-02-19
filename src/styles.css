@@ -504,6 +504,7 @@ ngb-pagination .page-item.active .page-link {
 
 .actions-row {
     padding: 0.3rem;
+    align-items: center !important;
 }
 
 .actions-row .price-col {
