@@ -68,6 +68,17 @@ export class AnalyticsService {
   		.catch(this.handleError);
     }
 
+    initTrustPolicy(): Promise<any> {
+      const url = `${this.url_trust}/policy/global/initialize`;
+      const token = 'Bearer '+this.cookieService.get("bearer_token");
+      const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
+      return this.http
+  		.post(url, {headers: headers_token, withCredentials: true})
+  		.toPromise()
+  		.then(res => res)
+  		.catch(this.handleError);
+    }
+
     getUnverifiedCompanies(page: number): Promise<any> {
         const url = `${this.url_identity}/admin/unverified_companies?page=${page}`;
         const token = 'Bearer '+this.cookieService.get("bearer_token");
