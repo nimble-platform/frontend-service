@@ -147,8 +147,8 @@ export class CompanyDescriptionSettingsComponent implements OnInit {
         if (fileList.length > 0) {
             let file: File = fileList[0];
             if(file) {
-                const filesize = parseInt((file.size/1024).toFixed(4));
-                if (filesize < 256) {
+                const filesize = parseInt(((file.size/1024)/1024).toFixed(4));
+                if (filesize < 2) {
                   this.imgFile = file;
                 }
                 else {
@@ -156,7 +156,7 @@ export class CompanyDescriptionSettingsComponent implements OnInit {
                   model.patchValue({
                     file: null
                   });
-                  alert("Maximum allowed filesize: 256 kB");
+                  alert("Maximum allowed filesize: 2 MB");
                 }
             }
         } else {
