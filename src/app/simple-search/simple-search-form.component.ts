@@ -193,7 +193,6 @@ export class SimpleSearchFormComponent implements OnInit {
 	}
 
 	private async buildCatTree(categoryCounts: any[]) {
-		this.cat_loading = true;
 		var taxonomy = "eClass";
 		if (this.config.standardTaxonomy.localeCompare("All") != 0 && this.config.standardTaxonomy.localeCompare("eClass") != 0) {
 			taxonomy = this.config.standardTaxonomy;
@@ -207,7 +206,9 @@ export class SimpleSearchFormComponent implements OnInit {
 		for (let categoryCount of categoryCounts) {
 			categoryUris.push(categoryCount.label);
 		}
+		this.cat_loading = true;
 		var indexCategories = await this.categoryService.getCategories(categoryUris);
+		this.cat_loading = false;
 		let categoryDisplayInfo: any = this.getCategoryDisplayInfo(indexCategories);
 		if (taxonomyPrefix != "") {
 			// ToDo: Remove manual distinction after search update
@@ -690,6 +691,11 @@ export class SimpleSearchFormComponent implements OnInit {
 	}
 
 	checkOtherCat(name:string) {
+		for(let nonFilter of this.product_nonfilter_regex) {
+			if(name.search(nonFilter) != -1) {
+				return false;
+			}
+		}
 		return (!this.checkProdCat(name) && !this.checkCompCat(name) && !this.checkTrustCat(name));
 	}
 
