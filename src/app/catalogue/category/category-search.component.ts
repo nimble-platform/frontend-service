@@ -440,7 +440,7 @@ export class CategorySearchComponent implements OnInit {
 
     getCategoryDetails(category: Category, fav: boolean) {
         if (!this.getCategoryDetailsStatus.isDisplayed()) {
-          if (!this.selectedCategory ||  (this.selectedCategory && this.selectedCategory.code !== category.code)) {
+          if (!this.selectedCategory ||  (this.selectedCategory && this.selectedCategory.id !== category.id)) {
             this.favSelected = fav;
             this.selectedCategory = category;
             this.selectedCategoryWithDetails = null;
