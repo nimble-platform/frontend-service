@@ -208,6 +208,20 @@ export class CatalogueViewComponent implements OnInit {
         }
     }
 
+    deleteAllProductImages():void{
+        if (confirm("Are you sure that you want to delete all product images inside the catalogue?")) {
+            this.callStatus.submit();
+            this.catalogueService.deleteAllProductImagesInsideCatalogue(this.catalogueService.catalogueResponse.catalogueUuid)
+                .then(res => {
+                    this.requestCatalogue();
+                    this.callStatus.callback("Product images deleted", true);
+                })
+                .catch(error => {
+                    this.callStatus.error("Error while deleting product images");
+                });
+        }
+    }
+
     navigateToThePublishPage(){
         this.router.navigate(['/catalogue/categorysearch']);
     }

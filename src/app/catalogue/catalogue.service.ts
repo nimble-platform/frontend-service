@@ -212,6 +212,15 @@ export class CatalogueService {
             .catch(this.handleError);
     }
 
+    deleteAllProductImagesInsideCatalogue(catalogueId:string):Promise<any> {
+        const token = 'Bearer '+this.cookieService.get("bearer_token");
+        const url = this.baseUrl + `/catalogue/${catalogueId}/delete-images`;
+        return this.http
+            .get(url,{headers:new Headers({"Authorization":token})})
+            .toPromise()
+            .catch(this.handleError);
+    }
+
     downloadFile(uri:string){
         const url = this.baseUrl + `/binary-content?uri=${encodeURIComponent(uri)}`;
         return this.http
