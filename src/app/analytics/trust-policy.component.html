@@ -71,13 +71,8 @@
     <hr>
 
     <div class="row actions-row pr-0 space-before">
-        <div class="col-8 call-status-col">
+        <div class="col-10 call-status-col">
             <call-status [callStatus]="saveCallStatus"></call-status>
-        </div>
-        <div class="col-2">
-            <button class="btn btn-secondary action" [disabled]="saveCallStatus.isLoading()" (click)="initTrustPolicy()">
-                Initialize
-            </button>
         </div>
         <div class="col-2">
             <button class="btn btn-primary action" [disabled]="policyUnchanged() || saveCallStatus.isLoading()" (click)="saveTrustPolicy()">
