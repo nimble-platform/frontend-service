@@ -238,14 +238,16 @@ export class SimpleSearchFormComponent implements OnInit {
 							for (let facet_inner in mix) {
 								var count = mix[facet_inner];
 								var split_idx = facet_inner.lastIndexOf(":");
-								var ontology = facet_inner.substr(0,split_idx);
+								var hash_idx = facet_inner.lastIndexOf("#");
+								var ontology = facet_inner.substr(0,hash_idx+1);
 								var name = facet_inner.substr(split_idx+1);
+								var categoryUri = facet_inner.substr(0,split_idx);
 								if (ontology.indexOf(taxonomyPrefix) != -1) {
-									if (this.findCategory(rootCategories,ontology) != -1 && this.config.categoryFilter[taxonomy].hiddenCategories.indexOf(name) == -1){
+									if (this.findCategory(rootCategories,categoryUri) != -1 && this.config.categoryFilter[taxonomy].hiddenCategories.indexOf(name) == -1){
 										if(ontology.indexOf("http://www.aidimme.es/FurnitureSectorOntology.owl#") != -1){
-											lvl.push({"name":name,"id":ontology,"count":count,"preferredName":this.categoryService.getCachedCategoryName(facet_inner)});
+											lvl.push({"name":name,"id":categoryUri,"count":count,"preferredName":this.categoryService.getCachedCategoryName(categoryUri)});
 										}else{
-											lvl.push({"name":name,"id":ontology,"count":count,"preferredName":name});
+											lvl.push({"name":name,"id":categoryUri,"count":count,"preferredName":name});
 										}
 									}
 								}
@@ -266,14 +268,16 @@ export class SimpleSearchFormComponent implements OnInit {
 								for (let facet_inner in mix) {
 									var count = mix[facet_inner];
 									var split_idx = facet_inner.lastIndexOf(":");
-									var ontology = facet_inner.substr(0,split_idx);
+									var hash_idx = facet_inner.lastIndexOf("#");
+									var ontology = facet_inner.substr(0,hash_idx+1);
 									var name = facet_inner.substr(split_idx+1);
+									var categoryUri = facet_inner.substr(0,split_idx);
 									if (ontology.indexOf(taxonomyPrefix) != -1) {
-										if (this.findCategory(catLevels[i],ontology) != -1 && this.config.categoryFilter[taxonomy].hiddenCategories.indexOf(name) == -1){
+										if (this.findCategory(catLevels[i],categoryUri) != -1 && this.config.categoryFilter[taxonomy].hiddenCategories.indexOf(name) == -1){
 											if(ontology.indexOf("http://www.aidimme.es/FurnitureSectorOntology.owl#") != -1){
-												lvl.push({"name":name,"id":ontology,"count":count,"preferredName":this.categoryService.getCachedCategoryName(facet_inner)});
+												lvl.push({"name":name,"id":categoryUri,"count":count,"preferredName":this.categoryService.getCachedCategoryName(categoryUri)});
 											}else{
-												lvl.push({"name":name,"id":ontology,"count":count,"preferredName":name});
+												lvl.push({"name":name,"id":categoryUri,"count":count,"preferredName":name});
 											}
 										}
 
