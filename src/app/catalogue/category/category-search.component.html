@@ -204,10 +204,10 @@
             <!-- Title + buttons -->
             <div *ngIf="selectedCategoryWithDetails" class="d-flex flex-row fixed p-2" [ngClass]="{'fixed-header': selectedCategoryWithDetails}">
                 <h4 class="font-weight-bold" *ngIf="!selectedCategoryWithDetails">Details</h4>
-                <h4 class="font-weight-bold mr-auto" *ngIf="selectedCategoryWithDetails">Details for {{selectPreferredName(selectedCategoryWithDetails)}}</h4>
+                <h4 class="font-weight-bold pr-2 mr-auto" *ngIf="selectedCategoryWithDetails">Details for {{selectPreferredName(selectedCategoryWithDetails)}}</h4>
                 <div *ngIf="selectedCategoryWithDetails">
                     <button *ngIf="findCategoryInArray(selectedCategories, selectedCategoryWithDetails) === -1"
-                            class="btn btn-primary float-right" (click)="addCategoryToSelected(selectedCategoryWithDetails)">
+                            class="btn btn-outline-primary float-right" (click)="addCategoryToSelected(selectedCategoryWithDetails)">
                         Select Category
                     </button>
                     <button *ngIf="findCategoryInArray(selectedCategories, selectedCategoryWithDetails) > -1"

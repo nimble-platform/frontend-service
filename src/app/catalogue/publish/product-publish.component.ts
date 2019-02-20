@@ -279,10 +279,9 @@ export class ProductPublishComponent implements OnInit {
     onAddCustomProperty(event: Event, dismissModal: any) {
         event.preventDefault();
         dismissModal("add property")
-
         const property = UBLModelUtils.createAdditionalItemProperty(null, null);
-        this.catalogueLine.goodsItem.item.additionalItemProperty.push(property);
-        this.editPropertyModal.open(property, null);
+        //this.catalogueLine.goodsItem.item.additionalItemProperty.push(property);
+        this.editPropertyModal.open(property, null, this.catalogueLine.goodsItem.item.additionalItemProperty);
     }
 
     onRemoveProperty(property: ItemProperty) {
@@ -344,6 +343,28 @@ export class ProductPublishComponent implements OnInit {
         return selectedProp.selected;
     }
 
+    selectAllProperties(category: Category, event?: Event): any {
+      if(event) {
+          event.preventDefault();
+      }
+      var properties = this.getCategoryProperties(category);
+      for(let property of properties) {
+        if (!this.isCategoryPropertySelected(category,property))
+          this.onToggleCategoryPropertySelected(category,property);
+      }
+    }
+
+    selectNoProperties(category: Category, event?: Event): any {
+      if(event) {
+          event.preventDefault();
+      }
+      var properties = this.getCategoryProperties(category);
+      for(let property of properties) {
+        if (this.isCategoryPropertySelected(category,property))
+          this.onToggleCategoryPropertySelected(category,property);
+      }
+    }
+
     getPropertyType(property: Property): string {
         return sanitizeDataTypeName(property.dataType);
     }
@@ -354,9 +375,11 @@ export class ProductPublishComponent implements OnInit {
     }
 
     // TEST
+    /*
     private newItemName: Text = new Text(null,DEFAULT_LANGUAGE());
     private newItemDescription: Text = new Text(null,DEFAULT_LANGUAGE());
     private languages: Array<string> = LANGUAGES;
+
 
     addItemNameDescription(){
         let nameText = new Text(this.newItemName.value, this.newItemName.languageID);
@@ -367,6 +390,14 @@ export class ProductPublishComponent implements OnInit {
 
         this.newItemName = new Text(null,DEFAULT_LANGUAGE());
         this.newItemDescription = new Text(null,DEFAULT_LANGUAGE());
+    }
+    */
+
+    addItemNameDescription() {
+      let newItemName: Text = new Text("",DEFAULT_LANGUAGE());
+      let newItemDescription: Text = new Text("",DEFAULT_LANGUAGE());
+      this.catalogueLine.goodsItem.item.name.push(newItemName);
+      this.catalogueLine.goodsItem.item.description.push(newItemDescription);
     }
 
     deleteItemNameDescription(index){
@@ -448,7 +479,7 @@ export class ProductPublishComponent implements OnInit {
 
     onEditProperty(property: ItemProperty) {
         const key = getPropertyKey(property);
-        this.editPropertyModal.open(property, this.selectedProperties[key]);
+        this.editPropertyModal.open(property, this.selectedProperties[key], null);
     }
 
     showCategoriesModal(categoriesModal: any, event: Event) {
@@ -600,6 +631,8 @@ export class ProductPublishComponent implements OnInit {
             } else {
                 this.catalogueLine = this.catalogueService.draftCatalogueLine;
             }
+            if (this.catalogueLine.goodsItem.item.name.length == 0)
+              this.addItemNameDescription();
             this.productWrapper = new ProductWrapper(this.catalogueLine, settings);
 
             for (let category of this.categoryService.selectedCategories) {
