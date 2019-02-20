@@ -462,7 +462,7 @@ export class SimpleSearchFormComponent implements OnInit {
             }
         }
         */
-        this.response = this.handleItemNameAndDescription(copy(this.temp));
+        this.response = this.handleMultilingualFields(copy(this.temp));
         this.size = res.response.numFound;
         this.page = p;
         this.start = this.page*10-10+1;
@@ -471,11 +471,12 @@ export class SimpleSearchFormComponent implements OnInit {
         this.searchCallStatus.callback("Search done.", true);
     }
 
-    // we have to choose the name and description of the item according to the default language of the browser
-    handleItemNameAndDescription(response){
+    // we have to choose the name and description of the item and the manufacturer name according to the default language of the browser
+    handleMultilingualFields(response){
         for(let result of response){
             result["item_name"] = [this.getPreferredValue(result["item_name"])];
             result["item_description"] = [this.getPreferredValue(result["item_description"])];
+            result["item_manufacturer_name"] = [this.getPreferredValue(result["item_manufacturer_name"])];
         }
         return response;
     }
