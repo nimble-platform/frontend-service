@@ -143,7 +143,6 @@ export class EditPropertyModalComponent implements OnInit {
             case "INT":
             case "DOUBLE":
             case "NUMBER":
-            case "REAL_MEASURE":
                 this.property.valueDecimal.push(0);
                 break;
             case "QUANTITY":
@@ -162,7 +161,6 @@ export class EditPropertyModalComponent implements OnInit {
             case "INT":
             case "DOUBLE":
             case "NUMBER":
-            case "REAL_MEASURE":
                 this.property.valueDecimal.splice(index, 1);
                 break;
             case "QUANTITY":

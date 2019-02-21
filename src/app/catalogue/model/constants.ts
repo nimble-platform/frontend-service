@@ -43,7 +43,7 @@ export const CUSTOM_PROPERTY_LIST_ID = "Custom";
 
 export const PROPERTY_TYPES: Option[] = [
     { name: "Text", value: "STRING" },
-    { name: "Number", value: "REAL_MEASURE" },
+    { name: "Number", value: "NUMBER" },
     { name: "Image", value: "BINARY" },
     { name: "File", value: "BINARY" },
     { name: "Quantity", value: "QUANTITY" },

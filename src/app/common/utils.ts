@@ -405,7 +405,6 @@ export function getPropertyValues(property: ItemProperty): any[] {
         case "INT":
         case "DOUBLE":
         case "NUMBER":
-        case "REAL_MEASURE":
             return property.valueDecimal;
         case "BINARY":
             return property.valueBinary;
@@ -422,7 +421,6 @@ export function getPropertyValuesAsStrings(property: ItemProperty): string[] {
         case "INT":
         case "DOUBLE":
         case "NUMBER":
-        case "REAL_MEASURE":
             return property.valueDecimal.map(num => String(num));
         case "BINARY":
             return property.valueBinary.map(bin => bin.fileName);

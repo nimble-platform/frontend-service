@@ -51,8 +51,7 @@ export class ItemPropertyPriceOptionComponent {
         switch (copyProperty.valueQualifier) {
             case "INT":
             case "DOUBLE":
-            case "NUMBER":
-            case "REAL_MEASURE": {
+            case "NUMBER": {
                 let index: number = copyProperty.valueDecimal.findIndex(propVal => propVal == value)
                 index !== -1 ? copyProperty.valueDecimal.splice(index, 1) : copyProperty.valueDecimal.push(value);
             }
@@ -78,8 +77,7 @@ export class ItemPropertyPriceOptionComponent {
         switch (copyProperty.valueQualifier) {
             case "INT":
             case "DOUBLE":
-            case "NUMBER":
-            case "REAL_MEASURE": {
+            case "NUMBER": {
                 let index: number = copyProperty.valueDecimal.findIndex(propVal => propVal == value)
                 return index != -1;
             }
