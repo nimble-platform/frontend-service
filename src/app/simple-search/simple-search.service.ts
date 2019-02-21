@@ -30,13 +30,21 @@ export class SimpleSearchService {
 	}
 
     getUblProperties(facets){
-        let url = `http://nimble-staging.salzburgresearch.at/index/properties?nameSpace=${encodeURIComponent("http://www.nimble-project.org/resource/ubl#")}`;
+        //let url = `http://nimble-staging.salzburgresearch.at/index/properties?nameSpace=${encodeURIComponent("http://www.nimble-project.org/resource/ubl#")}`;
+		let url = `http://nimble-staging.salzburgresearch.at/index/property/search`;
+		let searchObject: any = {};
+		searchObject.rows = 2147483647;
+		searchObject.start = 0;
+		searchObject.q = "*:*";
+		searchObject.fq = [];
+		searchObject.fq.push("nameSpace:http://www.nimble-project.org/resource/ubl#")
 
         for(let facet of facets){
-        	url += "&localName="+encodeURIComponent(facet);
+        	//url += "&localName="+encodeURIComponent(facet);
+            // searchObject.fq.push("localName:" + facet)
 		}
         return this.http
-            .get(url, {headers: this.headers})
+            .post(url, searchObject, {headers: this.headers})
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
@@ -55,24 +63,47 @@ export class SimpleSearchService {
 	get(query: string, facets: string[], facetQueries: string[], page: number, cat: string, catID: string): Promise<any> {
 		query = query.replace(/[!'()]/g, '');
 		var start = page*10-10;
-		 const url = `http://nimble-staging.salzburgresearch.at/index/item/select?q=${query}&start=${start}&facet=true&sort=score%20desc&rows=10&facet.sort=count&facet.mincount=${this.facetMin}&json.nl=map&wt=json`;
+		const url = `http://nimble-staging.salzburgresearch.at/index/item/search`
+		// const url = `http://nimble-staging.salzburgresearch.at/index/item/select?q=${query}&start=${start}&facet=true&sort=score%20desc&rows=10&facet.sort=count&facet.mincount=${this.facetMin}&json.nl=map&wt=json`;
 		// const url = `${this.url}/select?q=${query}&start=${start}&facet=true&sort=score%20desc&rows=10&facet.sort=count&facet.mincount=${this.facetMin}&json.nl=map&wt=json`;
+
+		let searchObject:any = {};
+		searchObject.rows = 10;
+		searchObject.start = start;
+		searchObject.q = query;
+
 		var full_url = url + "";
 		for (let facet of facets) {
 			if (facet.length === 0 || !facet.trim()) {}
-			else
-				full_url += "&facet.field="+facet;
+			else {
+				//full_url += "&facet.field=" + facet;
+				if(searchObject.facet == null) {
+					searchObject.facet = {};
+					searchObject.facet.field = [];
+					searchObject.facet.minCount = 1;
+				}
+				searchObject.facet.field.push(facet)
+			}
 		}
+
 		for (let facetQuery of facetQueries) {
-			full_url += "&fq="+encodeURIComponent(facetQuery);
+			//full_url += "&fq="+encodeURIComponent(facetQuery);
+			if(searchObject.fq == null) {
+				searchObject.fq = [];
+			}
+			searchObject.fq.push(facetQuery);
 		}
 		if (cat != "") {
 			var add_url = `${this.product_cat_mix}:"${catID}"`;
-			full_url += "&fq="+encodeURIComponent(add_url);
+			//full_url += "&fq="+encodeURIComponent(add_url);
+			if(searchObject.fq == null) {
+				searchObject.fq = [];
+			}
+			searchObject.fq.push(add_url);
 		}
 
 		return this.http
-		.get(full_url, {headers: this.getHeadersWithBasicAuthorization()})
+		.post(url, searchObject, {headers: this.getHeadersWithBasicAuthorization()})
 		.toPromise()
 		.then(res => res.json())
 		.catch(this.handleError);
