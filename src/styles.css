@@ -7,7 +7,8 @@ html, body {
 }
 
 p {
-  word-break: break-all;
+  /*word-break: break-all;*/
+  overflow-wrap: break-word;
 }
 
 .container-fluid {

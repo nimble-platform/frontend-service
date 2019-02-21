@@ -238,14 +238,16 @@ export class SimpleSearchFormComponent implements OnInit {
 							for (let facet_inner in mix) {
 								var count = mix[facet_inner];
 								var split_idx = facet_inner.lastIndexOf(":");
-								var ontology = facet_inner.substr(0,split_idx);
+								var hash_idx = facet_inner.lastIndexOf("#");
+								var ontology = facet_inner.substr(0,hash_idx+1);
 								var name = facet_inner.substr(split_idx+1);
+								var categoryUri = facet_inner.substr(0,split_idx);
 								if (ontology.indexOf(taxonomyPrefix) != -1) {
-									if (this.findCategory(rootCategories,ontology) != -1 && this.config.categoryFilter[taxonomy].hiddenCategories.indexOf(name) == -1){
+									if (this.findCategory(rootCategories,categoryUri) != -1 && this.config.categoryFilter[taxonomy].hiddenCategories.indexOf(name) == -1){
 										if(ontology.indexOf("http://www.aidimme.es/FurnitureSectorOntology.owl#") != -1){
-											lvl.push({"name":name,"id":ontology,"count":count,"preferredName":this.categoryService.getCachedCategoryName(facet_inner)});
+											lvl.push({"name":name,"id":categoryUri,"count":count,"preferredName":this.categoryService.getCachedCategoryName(categoryUri)});
 										}else{
-											lvl.push({"name":name,"id":ontology,"count":count,"preferredName":name});
+											lvl.push({"name":name,"id":categoryUri,"count":count,"preferredName":name});
 										}
 									}
 								}
@@ -266,14 +268,16 @@ export class SimpleSearchFormComponent implements OnInit {
 								for (let facet_inner in mix) {
 									var count = mix[facet_inner];
 									var split_idx = facet_inner.lastIndexOf(":");
-									var ontology = facet_inner.substr(0,split_idx);
+									var hash_idx = facet_inner.lastIndexOf("#");
+									var ontology = facet_inner.substr(0,hash_idx+1);
 									var name = facet_inner.substr(split_idx+1);
+									var categoryUri = facet_inner.substr(0,split_idx);
 									if (ontology.indexOf(taxonomyPrefix) != -1) {
-										if (this.findCategory(catLevels[i],ontology) != -1 && this.config.categoryFilter[taxonomy].hiddenCategories.indexOf(name) == -1){
+										if (this.findCategory(catLevels[i],categoryUri) != -1 && this.config.categoryFilter[taxonomy].hiddenCategories.indexOf(name) == -1){
 											if(ontology.indexOf("http://www.aidimme.es/FurnitureSectorOntology.owl#") != -1){
-												lvl.push({"name":name,"id":ontology,"count":count,"preferredName":this.categoryService.getCachedCategoryName(facet_inner)});
+												lvl.push({"name":name,"id":categoryUri,"count":count,"preferredName":this.categoryService.getCachedCategoryName(categoryUri)});
 											}else{
-												lvl.push({"name":name,"id":ontology,"count":count,"preferredName":name});
+												lvl.push({"name":name,"id":categoryUri,"count":count,"preferredName":name});
 											}
 										}
 
@@ -458,7 +462,7 @@ export class SimpleSearchFormComponent implements OnInit {
             }
         }
         */
-        this.response = this.handleItemNameAndDescription(copy(this.temp));
+        this.response = this.handleMultilingualFields(copy(this.temp));
         this.size = res.response.numFound;
         this.page = p;
         this.start = this.page*10-10+1;
@@ -467,11 +471,12 @@ export class SimpleSearchFormComponent implements OnInit {
         this.searchCallStatus.callback("Search done.", true);
     }
 
-    // we have to choose the name and description of the item according to the default language of the browser
-    handleItemNameAndDescription(response){
+    // we have to choose the name and description of the item and the manufacturer name according to the default language of the browser
+    handleMultilingualFields(response){
         for(let result of response){
             result["item_name"] = [this.getPreferredValue(result["item_name"])];
             result["item_description"] = [this.getPreferredValue(result["item_description"])];
+            result["item_manufacturer_name"] = [this.getPreferredValue(result["item_manufacturer_name"])];
         }
         return response;
     }

@@ -17,6 +17,7 @@ export class TextInputComponent implements OnInit {
     @Input() labelClass: string = "col-3";
     @Input() labelMainClass: string = "";
     @Input() rowClass: string = "";
+    @Input() flexClass: string = "";
     @Input() valueClass: string; // set based on label
     @Input() placeholder: string = "Enter a value...";
     @Input() addButtonStyle:string = "";

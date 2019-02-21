@@ -39,18 +39,16 @@ export class TrustPolicyComponent implements OnInit {
     }
 
     initTrustPolicy() {
-      if (confirm("Are you sure that you want to initialize a new trust policy?")) {
-        this.saveCallStatus.submit();
-        this.analyticsService
-            .initTrustPolicy()
-            .then(res => {
-                this.saveCallStatus.callback("Successfully initialized trust policy", true);
-                this.ngOnInit();
-            })
-            .catch(error => {
-                this.saveCallStatus.error("Error while initializing trust policy", error);
-            });
-        }
+      this.saveCallStatus.submit();
+      this.analyticsService
+          .initTrustPolicy()
+          .then(res => {
+              this.saveCallStatus.callback("Successfully initialized trust policy", true);
+              this.ngOnInit();
+          })
+          .catch(error => {
+              this.saveCallStatus.error("Error while initializing trust policy", error);
+          });
     }
 
     saveTrustPolicy() {
