@@ -379,12 +379,25 @@ export class SimpleSearchFormComponent implements OnInit {
 					let facet_innerLabel = null;
 					let facet_innerCount = null;
 					for (let facet_inner in res.facet_counts.facet_fields[facet]) {
+					    // check label for the default language of the browser
 						let index = facet_inner.lastIndexOf(":"+DEFAULT_LANGUAGE());
 						if (index != -1) {
 							label = facet_inner.substring(0,index);
 							facet_innerLabel = facet_inner;
 							facet_innerCount = res.facet_counts.facet_fields[facet][facet_inner];
 						}
+						// there is no label for the default language of the browser
+						else{
+						    // check whether there is an english label or not
+                            if(DEFAULT_LANGUAGE() != "en"){
+                                let index = facet_inner.lastIndexOf(":en");
+                                if (index != -1) {
+                                    label = facet_inner.substring(0,index);
+                                    facet_innerLabel = facet_inner;
+                                    facet_innerCount = res.facet_counts.facet_fields[facet][facet_inner];
+                                }
+                            }
+                        }
 					}
 
 					if(label == null){
