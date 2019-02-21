@@ -374,35 +374,17 @@ export class SimpleSearchFormComponent implements OnInit {
 						"selected":false
 					});
 
-					// check whether we have specific labels for the default language settings
-					let label = null;
-					let facet_innerLabel = null;
-					let facet_innerCount = null;
+					// check whether we have multilingual values or not
+					let atLeastOneMultilingualLabel: number = Object.keys(res.facet_counts.facet_fields[facet]).findIndex(
+						facetInner => facetInner.indexOf(":" + DEFAULT_LANGUAGE()) != -1 || facetInner.indexOf(":en") != -1);
+					// check whether we have a value for the default language of the browser
+					let labelForDefaultLanguage: number = Object.keys(res.facet_counts.facet_fields[facet]).findIndex(
+						facetInner => facetInner.indexOf(":" + DEFAULT_LANGUAGE()) != -1);
 					for (let facet_inner in res.facet_counts.facet_fields[facet]) {
-					    // check label for the default language of the browser
-						let index = facet_inner.lastIndexOf(":"+DEFAULT_LANGUAGE());
-						if (index != -1) {
-							label = facet_inner.substring(0,index);
-							facet_innerLabel = facet_inner;
-							facet_innerCount = res.facet_counts.facet_fields[facet][facet_inner];
-						}
-						// there is no label for the default language of the browser
-						else{
-						    // check whether there is an english label or not
-                            if(DEFAULT_LANGUAGE() != "en"){
-                                let index = facet_inner.lastIndexOf(":en");
-                                if (index != -1) {
-                                    label = facet_inner.substring(0,index);
-                                    facet_innerLabel = facet_inner;
-                                    facet_innerCount = res.facet_counts.facet_fields[facet][facet_inner];
-                                }
-                            }
-                        }
-					}
-
-					if(label == null){
-						for (let facet_inner in res.facet_counts.facet_fields[facet]) {
-							if (facet_inner != "" && facet_inner != ":" && facet_inner != ' ' && facet_inner.indexOf("urn:oasis:names:specification:ubl:schema:xsd") == -1) {
+						if (facet_inner != "" && facet_inner != ":" && facet_inner != ' ' && facet_inner.indexOf("urn:oasis:names:specification:ubl:schema:xsd") == -1) {
+							// This facet does not contain multilingual values
+							// therefore, they are added to facet options directly
+							if(atLeastOneMultilingualLabel == -1){
 								this.facetObj[index].options.push({
 									"name":facet_inner,
 									"realName":facet_inner,
@@ -412,17 +394,51 @@ export class SimpleSearchFormComponent implements OnInit {
 								if (this.checkFacet(this.facetObj[index].name,facet_inner))
 									this.facetObj[index].selected=true;
 							}
+							// This facet contains multilingual values
+							else if(atLeastOneMultilingualLabel != -1){
+								let label = facet_inner;
+								let facet_innerLabel = facet_inner;
+								let facet_innerCount = res.facet_counts.facet_fields[facet][facet_inner];
+								// since we have values for the default language of the browser,
+								// only those values are added to facet options
+								if(labelForDefaultLanguage != -1){
+									let ind = facet_inner.lastIndexOf(":"+DEFAULT_LANGUAGE());
+									if (ind != -1) {
+										label = facet_inner.substring(0,ind);
+										facet_innerLabel = facet_inner;
+										facet_innerCount = res.facet_counts.facet_fields[facet][facet_inner];
+
+										this.facetObj[index].options.push({
+											"name":facet_innerLabel,
+											"realName":label,
+											"count":facet_innerCount
+										});
+										this.facetObj[index].total += res.facet_counts.facet_fields[facet][facet_innerLabel];
+										if (this.checkFacet(this.facetObj[index].name,facet_innerLabel))
+											this.facetObj[index].selected=true;
+									}
+								}
+								// we do not have values for the default language of the browser
+								// therefore, we add english values to facet options if possible.
+								else{
+									let ind = facet_inner.lastIndexOf(":en");
+									if (ind != -1) {
+										label = facet_inner.substring(0,ind);
+										facet_innerLabel = facet_inner;
+										facet_innerCount = res.facet_counts.facet_fields[facet][facet_inner];
+
+										this.facetObj[index].options.push({
+											"name":facet_innerLabel,
+											"realName":label,
+											"count":facet_innerCount
+										});
+										this.facetObj[index].total += res.facet_counts.facet_fields[facet][facet_innerLabel];
+										if (this.checkFacet(this.facetObj[index].name,facet_innerLabel))
+											this.facetObj[index].selected=true;
+									}
+								}
+							}
 						}
-					}
-					else {
-						this.facetObj[index].options.push({
-							"name":facet_innerLabel,
-							"realName":label,
-							"count":facet_innerCount
-						});
-						this.facetObj[index].total += res.facet_counts.facet_fields[facet][facet_innerLabel];
-						if (this.checkFacet(this.facetObj[index].name,facet_innerLabel))
-							this.facetObj[index].selected=true;
 					}
 
 					this.facetObj[index].options.sort(function(a,b){
