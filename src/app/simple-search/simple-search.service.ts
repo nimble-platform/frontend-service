@@ -62,14 +62,14 @@ export class SimpleSearchService {
 
 	get(query: string, facets: string[], facetQueries: string[], page: number, cat: string, catID: string): Promise<any> {
 		query = query.replace(/[!'()]/g, '');
-		var start = page*10-10;
+		// var start = page*10-10;
 		const url = `http://nimble-staging.salzburgresearch.at/index/item/search`
 		// const url = `http://nimble-staging.salzburgresearch.at/index/item/select?q=${query}&start=${start}&facet=true&sort=score%20desc&rows=10&facet.sort=count&facet.mincount=${this.facetMin}&json.nl=map&wt=json`;
 		// const url = `${this.url}/select?q=${query}&start=${start}&facet=true&sort=score%20desc&rows=10&facet.sort=count&facet.mincount=${this.facetMin}&json.nl=map&wt=json`;
 
 		let searchObject:any = {};
 		searchObject.rows = 10;
-		searchObject.start = start;
+		searchObject.start = page-1;
 		searchObject.q = query;
 
 		var full_url = url + "";

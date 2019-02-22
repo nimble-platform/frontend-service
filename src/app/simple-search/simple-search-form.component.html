@@ -349,10 +349,10 @@
 										</div>
 										<div class="col-6">
 											<b>{{ getMultilingualLabel(result[product_name]) }}</b><br/>
-											<small *ngIf="result.en_desc">{{getMultilingualLabel(result.description)}}</small>
+											<small *ngIf="result.description">{{getMultilingualLabel(result.description)}}</small>
 										</div>
 										<div class="col-2">
-											<i>{{ result.manufacturer.name }}</i>
+											<i>{{ result.manufacturer.legalName }}</i>
 											<div *ngIf="!checkNaN(result.manufacturer.trustRating)">
 												<ngb-rating [rate]="calcRating(result.manufacturer.trustRating,1)" [readonly]="true" max="5" title="{{getName(product_vendor_rating)}}:&#10;{{calcRating(result.manufacturer.trustRating,1)}} out of 5&#10;&#10;{{getName(product_vendor_rating_seller)}}:&#10;{{calcRating(result.manufacturer.trustSellerCommunication,1)}} out of 5&#10;&#10;{{getName(product_vendor_rating_fulfillment)}}:&#10;{{calcRating(result.manufacturer.trustFullfillmentOfTerms,1)}} out of 5&#10;&#10;{{getName(product_vendor_rating_delivery)}}:&#10;{{calcRating(result.manufacturer.trustDeliveryPackaging,1)}} out of 5">
 													<ng-template let-fill="fill">
