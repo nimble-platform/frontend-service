@@ -550,21 +550,34 @@ export class SimpleSearchFormComponent implements OnInit {
 
                 let defaultLanguage = DEFAULT_LANGUAGE();
 
+                // Properties variable holds facet labels and descriptions.
+                // Therefore, we simply return the shortest one by assuming it is the label
+
                 if(objectKeys.indexOf("label_"+defaultLanguage) != -1){
-                	return property["label_"+defaultLanguage][0];
+                	return this.getTheShortestOneAmongValues(property["label_"+defaultLanguage]);
 				}
 				else if(objectKeys.indexOf("label_en") != -1){
-                    return property["label_en"][0];
+                    return this.getTheShortestOneAmongValues(property["label_en"]);
 				}
 
                 objectKeys.splice(objectKeys.indexOf("idxField"),1);
                 let labelField = objectKeys[0];
-                return property[labelField][0];
+                return this.getTheShortestOneAmongValues(property[labelField]);
             }
         }
 
         return name;
     }
+
+    getTheShortestOneAmongValues(values){
+		let shortestOne = values[0];
+		for(let i = 1; i < values.length;i++){
+			if(values[i].length < shortestOne.length){
+				shortestOne = values[i];
+			}
+		}
+		return shortestOne;
+	}
 
     onSubmit() {
         this.objToSubmit = copy(this.model);
