@@ -126,6 +126,8 @@ export class NegotiationRequestComponent implements OnInit {
                 this.callStatus.error("Failed to send Terms", error);
             });
         } else {
+            // set the item price, otherwise we will lose item price information
+            this.bpDataService.requestForQuotation.requestForQuotationLine[0].lineItem.price.priceAmount.value = this.wrapper.rfqPriceWrapper.totalPrice/this.wrapper.rfqPriceWrapper.quantity.value;
             // just go to order page
             this.bpDataService.initOrderWithRfq();
             this.bpDataService.proceedNextBpStep("buyer", "Order")
