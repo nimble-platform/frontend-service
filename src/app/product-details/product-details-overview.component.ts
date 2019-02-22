@@ -28,12 +28,12 @@ export class ProductDetailsOverviewComponent implements OnInit{
     classificationNames = [];
     
     constructor(public categoryService:CategoryService) {
-        if(this.wrapper){
-            this.manufacturerPartyName = UBLModelUtils.getPartyDisplayName(this.wrapper.item.manufacturerParty);
-        }
     }
 
     ngOnInit(){
+        if(this.wrapper){
+            this.manufacturerPartyName = UBLModelUtils.getPartyDisplayName(this.wrapper.item.manufacturerParty);
+        }
         /*
             Cache FurnitureOntology categories. Then, use cached categories to get correct category label according
             to the default language of the browser.
