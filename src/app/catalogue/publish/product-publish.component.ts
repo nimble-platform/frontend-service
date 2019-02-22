@@ -413,24 +413,26 @@ export class ProductPublishComponent implements OnInit {
         const newSelectedProps = this.selectedProperties;
 
         for(const category of this.selectedCategories) {
-            for(const property of category.properties) {
-                const key = getPropertyKey(property);
-                if(!this.selectedProperties[key]) {
-                    const oldProp = oldSelectedProps[key];
-                    this.selectedProperties[key] = {
-                        categories: [],
-                        properties: [],
-                        lunrSearchId: null,
-                        key,
-                        selected: oldProp && oldProp.selected,
-                        preferredName: property.preferredName,
-                        shortName: property.shortName
-                    };
-                }
+            if(category.properties){
+                for(const property of category.properties) {
+                    const key = getPropertyKey(property);
+                    if(!this.selectedProperties[key]) {
+                        const oldProp = oldSelectedProps[key];
+                        this.selectedProperties[key] = {
+                            categories: [],
+                            properties: [],
+                            lunrSearchId: null,
+                            key,
+                            selected: oldProp && oldProp.selected,
+                            preferredName: property.preferredName,
+                            shortName: property.shortName
+                        };
+                    }
 
-                const newProp = this.selectedProperties[key];
-                newProp.properties.push(property);
-                newProp.categories.push(category);
+                    const newProp = this.selectedProperties[key];
+                    newProp.properties.push(property);
+                    newProp.categories.push(category);
+                }
             }
         }
 
