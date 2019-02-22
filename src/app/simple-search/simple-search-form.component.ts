@@ -520,12 +520,15 @@ export class SimpleSearchFormComponent implements OnInit {
         for(let value of values){
             let index = value.lastIndexOf(":");
             let languageId = value.substring(index+1);
+            let preferredValue = value.substring(0,index);
 
-            if(languageId == defaultLanguage){
-                return value.substring(0,index);
-            }
-            else if(languageId == "en"){
-                englishName = value.substring(0,index);
+            if(preferredValue != ""){
+                if(languageId == defaultLanguage){
+                    return preferredValue;
+                }
+                else if(languageId == "en"){
+                    englishName = preferredValue;
+                }
             }
         }
 
