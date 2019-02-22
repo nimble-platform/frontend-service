@@ -135,11 +135,18 @@
             <h5>{{PRICE_OPTIONS.DELIVERY_LOCATION.text}}</h5>
             <div class="discount-hr"></div>
             <div *ngFor="let option of deliveryLocationDiscount" class="row">
-                <div class="col-3" *ngIf="option.itemLocationQuantity.applicableTerritoryAddress[0].buildingNumber != ''">Building Number:{{option.itemLocationQuantity.applicableTerritoryAddress[0].buildingNumber}}</div>
-                <div class="col-3" *ngIf="option.itemLocationQuantity.applicableTerritoryAddress[0].cityName != ''">City Name:{{option.itemLocationQuantity.applicableTerritoryAddress[0].cityName}}</div>
-                <div class="col-3" *ngIf="option.itemLocationQuantity.applicableTerritoryAddress[0].postalZone != ''">Postal Zone:{{option.itemLocationQuantity.applicableTerritoryAddress[0].postalZone}}</div>
-                <div class="col-3" *ngIf="option.itemLocationQuantity.applicableTerritoryAddress[0].streetName != ''">Street Name:{{option.itemLocationQuantity.applicableTerritoryAddress[0].streetName}}</div>
-                <div class="col-3" *ngIf="option.itemLocationQuantity.applicableTerritoryAddress[0].country && option.itemLocationQuantity.applicableTerritoryAddress[0].country.name.value != ''">Country:{{option.itemLocationQuantity.applicableTerritoryAddress[0].country.name.value}}</div>
+                <!--<div class="col-3" *ngIf="option.itemLocationQuantity.applicableTerritoryAddress[0].buildingNumber != ''">Building Number:{{option.itemLocationQuantity.applicableTerritoryAddress[0].buildingNumber}}</div>-->
+                <!--<div class="col-3" *ngIf="option.itemLocationQuantity.applicableTerritoryAddress[0].cityName != ''">City Name:{{option.itemLocationQuantity.applicableTerritoryAddress[0].cityName}}</div>-->
+                <!--<div class="col-3" *ngIf="option.itemLocationQuantity.applicableTerritoryAddress[0].postalZone != ''">Postal Zone:{{option.itemLocationQuantity.applicableTerritoryAddress[0].postalZone}}</div>-->
+                <!--<div class="col-3" *ngIf="option.itemLocationQuantity.applicableTerritoryAddress[0].streetName != ''">Street Name:{{option.itemLocationQuantity.applicableTerritoryAddress[0].streetName}}</div>-->
+                <!--<div class="col-3" *ngIf="option.itemLocationQuantity.applicableTerritoryAddress[0].country && option.itemLocationQuantity.applicableTerritoryAddress[0].country.name.value != ''">Country:{{option.itemLocationQuantity.applicableTerritoryAddress[0].country.name.value}}</div>-->
+                <div class="col-3">
+                    <div *ngIf="option.itemLocationQuantity.applicableTerritoryAddress[0].buildingNumber != ''">Building Number:{{option.itemLocationQuantity.applicableTerritoryAddress[0].buildingNumber}}</div>
+                    <div *ngIf="option.itemLocationQuantity.applicableTerritoryAddress[0].cityName != ''">City Name:{{option.itemLocationQuantity.applicableTerritoryAddress[0].cityName}}</div>
+                    <div *ngIf="option.itemLocationQuantity.applicableTerritoryAddress[0].postalZone != ''">Postal Zone:{{option.itemLocationQuantity.applicableTerritoryAddress[0].postalZone}}</div>
+                    <div *ngIf="option.itemLocationQuantity.applicableTerritoryAddress[0].streetName != ''">Street Name:{{option.itemLocationQuantity.applicableTerritoryAddress[0].streetName}}</div>
+                    <div *ngIf="option.itemLocationQuantity.applicableTerritoryAddress[0].country && option.itemLocationQuantity.applicableTerritoryAddress[0].country.name.value != ''">Country:{{option.itemLocationQuantity.applicableTerritoryAddress[0].country.name.value}}</div>
+                </div>
                 <div class="col-6">
                     <!--total price-->
                     <span *ngIf="option.itemLocationQuantity.allowanceCharge[0].amount && option.itemLocationQuantity.allowanceCharge[0].amount.currencyID != '%'">
