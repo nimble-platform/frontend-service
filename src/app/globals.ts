@@ -183,7 +183,7 @@ export const product_filter_mappings = {
   "item_price": "Price",
   "item_price_currency": "Currency"
 };
-export const product_nonfilter_full = ["_text_","_version_","localName","languages","catalogueId","doctype", "manufacturerId"];
+export const product_nonfilter_full = ["_text_","_version_","id","image","localName","languages","catalogueId","doctype","manufacturerId","manufacturerItemId"];
 export const product_nonfilter_regex = ["lmf.","_id", "_txt", "_desc", "_label"];
 export const product_nonfilter_key_field = "_key";
 export const product_configurable = [];
