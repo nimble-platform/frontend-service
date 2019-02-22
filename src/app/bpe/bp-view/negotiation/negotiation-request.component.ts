@@ -164,9 +164,9 @@ export class NegotiationRequestComponent implements OnInit {
         return this.rfq.negotiationOptions.price
             || this.rfq.negotiationOptions.deliveryPeriod
             || this.rfq.negotiationOptions.warranty
-            || this.rfq.negotiationOptions.incoterms
-            || this.rfq.negotiationOptions.paymentTerms
-            || this.rfq.negotiationOptions.paymentMeans
+            || (this.rfq.negotiationOptions.incoterms && this.wrapper.lineIncoterms != this.wrapper.rfqIncoterms)
+            || (this.rfq.negotiationOptions.paymentTerms && this.wrapper.linePaymentTerms != this.wrapper.rfqPaymentTerms.paymentTerm)
+            || (this.rfq.negotiationOptions.paymentMeans && this.wrapper.linePaymentMeans != this.wrapper.rfqPaymentMeans)
             || this.rfq.dataMonitoringRequested;
     }
 
