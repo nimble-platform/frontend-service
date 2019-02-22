@@ -176,6 +176,26 @@ export function selectPreferredValues(texts:Text[]): string[]{
     return [''];
 }
 
+// return the value for the default language of the browser
+export function selectPreferredValue(texts:Text[]):string{
+    let defaultLanguage = DEFAULT_LANGUAGE();
+    let englishValue = null;
+    for (let text of texts) {
+        if(text.languageID === defaultLanguage) {
+            return text.value;
+        }
+        else if(text.languageID == "en"){
+            englishValue = text.value;
+        }
+    }
+    // there is an english value
+    if(englishValue){
+        return englishValue;
+    }
+
+    return "";
+}
+
 export function selectName (ip: ItemProperty | Item) {
     let defaultLanguage = DEFAULT_LANGUAGE();
     let englishName = null;

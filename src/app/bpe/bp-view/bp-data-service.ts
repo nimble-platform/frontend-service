@@ -441,7 +441,13 @@ export class BPDataService{
     }
 
     initDispatchAdvice(handlingInst: string, carrierName: string, carrierContact: string, deliveredQuantity: Quantity, endDate: string) {
-        let copyOrder:Order = copy(this.order);
+        let copyOrder:Order;
+        if(this.order){
+            copyOrder = copy(this.order);
+        }else{
+            copyOrder = copy(this.productOrder)
+        }
+
         this.resetBpData();
         this.modifiedCatalogueLines = copy(this.catalogueLines);
         this.despatchAdvice = UBLModelUtils.createDespatchAdvice(copyOrder);
@@ -463,17 +469,6 @@ export class BPDataService{
         this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage[0].carrierParty.partyName= [partyName];
         this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage[0].carrierParty.contact.telephone = carrierContact;
         this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage[0].estimatedDeliveryDate = endDate;
-    }
-
-    initDispatchAdviceWithOrder() {
-        const copyOrder: Order = copy(this.productOrder);
-        this.resetBpData();
-        this.modifiedCatalogueLines = copy(this.catalogueLines);
-        this.despatchAdvice = UBLModelUtils.createDespatchAdvice(copyOrder);
-
-        const quantity = copyOrder.orderLine[0].lineItem.quantity;
-        this.despatchAdvice.despatchLine[0].deliveredQuantity.unitCode = quantity.unitCode;
-        this.despatchAdvice.despatchLine[0].deliveredQuantity.value = quantity.value;
     }
 
     initTransportExecutionPlanRequest() {

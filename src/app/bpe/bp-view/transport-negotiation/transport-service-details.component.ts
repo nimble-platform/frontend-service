@@ -3,6 +3,7 @@ import { BPDataService } from "../bp-data-service";
 import { RequestForQuotation } from "../../../catalogue/model/publish/request-for-quotation";
 import { Shipment } from "../../../catalogue/model/publish/shipment";
 import { LineItem } from "../../../catalogue/model/publish/line-item";
+import {selectPreferredValue} from '../../../common/utils';
 
 @Component({
     selector: "transport-service-details",
@@ -15,6 +16,7 @@ export class TransportServiceDetailsComponent implements OnInit {
 
     lineItem: LineItem;
     shipment: Shipment;
+    itemName:string;
 
     constructor(private bpDataService: BPDataService) {
         
@@ -23,5 +25,7 @@ export class TransportServiceDetailsComponent implements OnInit {
     ngOnInit() {
         this.lineItem = this.rfq.requestForQuotationLine[0].lineItem;
         this.shipment = this.lineItem.delivery[0].shipment;
+
+        this.itemName = selectPreferredValue(this.shipment.goodsItem[0].item.name);
     }
 }
