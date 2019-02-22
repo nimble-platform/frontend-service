@@ -1,6 +1,6 @@
 import {Component, Input} from "@angular/core";
 import {PriceOption} from "../../model/publish/price-option";
-import {copy, getPropertyValuesAsStrings, selectPreferredValue} from '../../../common/utils';
+import {copy, getPropertyValuesAsStrings, selectPreferredValues} from '../../../common/utils';
 import {ItemProperty} from "../../model/publish/item-property";
 import {UBLModelUtils} from "../../model/ubl-model-utils";
 import {CatalogueLine} from "../../model/publish/catalogue-line";
@@ -22,7 +22,7 @@ export class ItemPropertyPriceOptionComponent {
     @Input() index: number;
     @Input() discountUnits;
 
-    getItemPropertyName = selectPreferredValue;
+    getItemPropertyName = selectPreferredValues;
 
     selectProperty(itemPropertyId: string): void {
         // ignore if the property is already selected
