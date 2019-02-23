@@ -9,7 +9,7 @@ export class Certificate {
         public certificateType: string = "",
         public certificateTypeCode: Code = new Code(),
         public remarks: string = "",
-        public documentReference: DocumentReference = [],
+        public documentReference: DocumentReference[] = [],
         public hjid: number = null
     ) {  }
 }
