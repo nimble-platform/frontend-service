@@ -440,7 +440,7 @@ export class BPDataService{
         this.requestForQuotation = UBLModelUtils.createRequestForQuotationWithTransportExecutionPlanRequest(copyTransportExecutionPlanRequest,this.modifiedCatalogueLines[0]);
     }
 
-    initDispatchAdvice(handlingInst: string, carrierName: string, carrierContact: string, deliveredQuantity: Quantity, endDate: string) {
+    initDispatchAdvice(handlingInst: Text, carrierName: string, carrierContact: string, deliveredQuantity: Quantity, endDate: string) {
         let copyOrder:Order;
         if(this.order){
             copyOrder = copy(this.order);
@@ -459,7 +459,12 @@ export class BPDataService{
         }
 
         this.despatchAdvice.despatchLine[0].deliveredQuantity.value = deliveredQuantity.value;
-        this.despatchAdvice.despatchLine[0].shipment[0].handlingInstructions = [new Text(handlingInst,DEFAULT_LANGUAGE())];
+        if(handlingInst){
+            this.despatchAdvice.despatchLine[0].shipment[0].handlingInstructions = [handlingInst];
+        }else{
+            this.despatchAdvice.despatchLine[0].shipment[0].handlingInstructions = [new Text("",DEFAULT_LANGUAGE())];
+        }
+
         this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage.push(new ShipmentStage());
 
         let partyName: PartyName = new PartyName();

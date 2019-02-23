@@ -95,7 +95,9 @@ export class DispatchAdviceComponent implements OnInit {
 
                     let tep = initialDoc as TransportExecutionPlanRequest;
 
-                    handlingInst = tep.consignment[0].consolidatedShipment[0].handlingInstructions;
+                    if(tep.consignment[0].consolidatedShipment[0].handlingInstructions.length > 0){
+                        handlingInst = tep.consignment[0].consolidatedShipment[0].handlingInstructions[0];
+                    }
                     carrierName = UBLModelUtils.getPartyDisplayName(tep.transportServiceProviderParty);
                     endDate = tep.serviceEndTimePeriod.endDate;
                     if(tep.transportServiceProviderParty.contact){
