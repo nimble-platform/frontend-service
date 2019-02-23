@@ -238,14 +238,16 @@ export class SimpleSearchFormComponent implements OnInit {
 							for (let facet_inner in mix) {
 								var count = mix[facet_inner];
 								var split_idx = facet_inner.lastIndexOf(":");
-								var ontology = facet_inner.substr(0,split_idx);
+								var hash_idx = facet_inner.lastIndexOf("#");
+								var ontology = facet_inner.substr(0,hash_idx+1);
 								var name = facet_inner.substr(split_idx+1);
+								var categoryUri = facet_inner.substr(0,split_idx);
 								if (ontology.indexOf(taxonomyPrefix) != -1) {
-									if (this.findCategory(rootCategories,ontology) != -1 && this.config.categoryFilter[taxonomy].hiddenCategories.indexOf(name) == -1){
+									if (this.findCategory(rootCategories,categoryUri) != -1 && this.config.categoryFilter[taxonomy].hiddenCategories.indexOf(name) == -1){
 										if(ontology.indexOf("http://www.aidimme.es/FurnitureSectorOntology.owl#") != -1){
-											lvl.push({"name":name,"id":ontology,"count":count,"preferredName":this.categoryService.getCachedCategoryName(facet_inner)});
+											lvl.push({"name":name,"id":categoryUri,"count":count,"preferredName":this.categoryService.getCachedCategoryName(categoryUri)});
 										}else{
-											lvl.push({"name":name,"id":ontology,"count":count,"preferredName":name});
+											lvl.push({"name":name,"id":categoryUri,"count":count,"preferredName":name});
 										}
 									}
 								}
@@ -266,14 +268,16 @@ export class SimpleSearchFormComponent implements OnInit {
 								for (let facet_inner in mix) {
 									var count = mix[facet_inner];
 									var split_idx = facet_inner.lastIndexOf(":");
-									var ontology = facet_inner.substr(0,split_idx);
+									var hash_idx = facet_inner.lastIndexOf("#");
+									var ontology = facet_inner.substr(0,hash_idx+1);
 									var name = facet_inner.substr(split_idx+1);
+									var categoryUri = facet_inner.substr(0,split_idx);
 									if (ontology.indexOf(taxonomyPrefix) != -1) {
-										if (this.findCategory(catLevels[i],ontology) != -1 && this.config.categoryFilter[taxonomy].hiddenCategories.indexOf(name) == -1){
+										if (this.findCategory(catLevels[i],categoryUri) != -1 && this.config.categoryFilter[taxonomy].hiddenCategories.indexOf(name) == -1){
 											if(ontology.indexOf("http://www.aidimme.es/FurnitureSectorOntology.owl#") != -1){
-												lvl.push({"name":name,"id":ontology,"count":count,"preferredName":this.categoryService.getCachedCategoryName(facet_inner)});
+												lvl.push({"name":name,"id":categoryUri,"count":count,"preferredName":this.categoryService.getCachedCategoryName(categoryUri)});
 											}else{
-												lvl.push({"name":name,"id":ontology,"count":count,"preferredName":name});
+												lvl.push({"name":name,"id":categoryUri,"count":count,"preferredName":name});
 											}
 										}
 
@@ -370,22 +374,17 @@ export class SimpleSearchFormComponent implements OnInit {
 						"selected":false
 					});
 
-					// check whether we have specific labels for the default language settings
-					let label = null;
-					let facet_innerLabel = null;
-					let facet_innerCount = null;
+					// check whether we have multilingual values or not
+					let atLeastOneMultilingualLabel: number = Object.keys(res.facet_counts.facet_fields[facet]).findIndex(
+						facetInner => facetInner.indexOf(":" + DEFAULT_LANGUAGE()) != -1 || facetInner.indexOf(":en") != -1);
+					// check whether we have a value for the default language of the browser
+					let labelForDefaultLanguage: number = Object.keys(res.facet_counts.facet_fields[facet]).findIndex(
+						facetInner => facetInner.indexOf(":" + DEFAULT_LANGUAGE()) != -1);
 					for (let facet_inner in res.facet_counts.facet_fields[facet]) {
-						let index = facet_inner.lastIndexOf(":"+DEFAULT_LANGUAGE());
-						if (index != -1) {
-							label = facet_inner.substring(0,index);
-							facet_innerLabel = facet_inner;
-							facet_innerCount = res.facet_counts.facet_fields[facet][facet_inner];
-						}
-					}
-
-					if(label == null){
-						for (let facet_inner in res.facet_counts.facet_fields[facet]) {
-							if (facet_inner != "" && facet_inner != ":" && facet_inner != ' ' && facet_inner.indexOf("urn:oasis:names:specification:ubl:schema:xsd") == -1) {
+						if (facet_inner != "" && facet_inner != ":" && facet_inner != ' ' && facet_inner.indexOf("urn:oasis:names:specification:ubl:schema:xsd") == -1) {
+							// This facet does not contain multilingual values
+							// therefore, they are added to facet options directly
+							if(atLeastOneMultilingualLabel == -1){
 								this.facetObj[index].options.push({
 									"name":facet_inner,
 									"realName":facet_inner,
@@ -395,17 +394,51 @@ export class SimpleSearchFormComponent implements OnInit {
 								if (this.checkFacet(this.facetObj[index].name,facet_inner))
 									this.facetObj[index].selected=true;
 							}
+							// This facet contains multilingual values
+							else if(atLeastOneMultilingualLabel != -1){
+								let label = facet_inner;
+								let facet_innerLabel = facet_inner;
+								let facet_innerCount = res.facet_counts.facet_fields[facet][facet_inner];
+								// since we have values for the default language of the browser,
+								// only those values are added to facet options
+								if(labelForDefaultLanguage != -1){
+									let ind = facet_inner.lastIndexOf(":"+DEFAULT_LANGUAGE());
+									if (ind != -1) {
+										label = facet_inner.substring(0,ind);
+										facet_innerLabel = facet_inner;
+										facet_innerCount = res.facet_counts.facet_fields[facet][facet_inner];
+
+										this.facetObj[index].options.push({
+											"name":facet_innerLabel,
+											"realName":label,
+											"count":facet_innerCount
+										});
+										this.facetObj[index].total += res.facet_counts.facet_fields[facet][facet_innerLabel];
+										if (this.checkFacet(this.facetObj[index].name,facet_innerLabel))
+											this.facetObj[index].selected=true;
+									}
+								}
+								// we do not have values for the default language of the browser
+								// therefore, we add english values to facet options if possible.
+								else{
+									let ind = facet_inner.lastIndexOf(":en");
+									if (ind != -1) {
+										label = facet_inner.substring(0,ind);
+										facet_innerLabel = facet_inner;
+										facet_innerCount = res.facet_counts.facet_fields[facet][facet_inner];
+
+										this.facetObj[index].options.push({
+											"name":facet_innerLabel,
+											"realName":label,
+											"count":facet_innerCount
+										});
+										this.facetObj[index].total += res.facet_counts.facet_fields[facet][facet_innerLabel];
+										if (this.checkFacet(this.facetObj[index].name,facet_innerLabel))
+											this.facetObj[index].selected=true;
+									}
+								}
+							}
 						}
-					}
-					else {
-						this.facetObj[index].options.push({
-							"name":facet_innerLabel,
-							"realName":label,
-							"count":facet_innerCount
-						});
-						this.facetObj[index].total += res.facet_counts.facet_fields[facet][facet_innerLabel];
-						if (this.checkFacet(this.facetObj[index].name,facet_innerLabel))
-							this.facetObj[index].selected=true;
 					}
 
 					this.facetObj[index].options.sort(function(a,b){
@@ -458,7 +491,7 @@ export class SimpleSearchFormComponent implements OnInit {
             }
         }
         */
-        this.response = this.handleItemNameAndDescription(copy(this.temp));
+        this.response = this.handleMultilingualFields(copy(this.temp));
         this.size = res.response.numFound;
         this.page = p;
         this.start = this.page*10-10+1;
@@ -467,11 +500,12 @@ export class SimpleSearchFormComponent implements OnInit {
         this.searchCallStatus.callback("Search done.", true);
     }
 
-    // we have to choose the name and description of the item according to the default language of the browser
-    handleItemNameAndDescription(response){
+    // we have to choose the name and description of the item and the manufacturer name according to the default language of the browser
+    handleMultilingualFields(response){
         for(let result of response){
             result["item_name"] = [this.getPreferredValue(result["item_name"])];
             result["item_description"] = [this.getPreferredValue(result["item_description"])];
+            result["item_manufacturer_name"] = [this.getPreferredValue(result["item_manufacturer_name"])];
         }
         return response;
     }
@@ -486,12 +520,15 @@ export class SimpleSearchFormComponent implements OnInit {
         for(let value of values){
             let index = value.lastIndexOf(":");
             let languageId = value.substring(index+1);
+            let preferredValue = value.substring(0,index);
 
-            if(languageId == defaultLanguage){
-                return value.substring(0,index);
-            }
-            else if(languageId == "en"){
-                englishName = value.substring(0,index);
+            if(preferredValue != ""){
+                if(languageId == defaultLanguage){
+                    return preferredValue;
+                }
+                else if(languageId == "en"){
+                    englishName = preferredValue;
+                }
             }
         }
 
@@ -516,21 +553,34 @@ export class SimpleSearchFormComponent implements OnInit {
 
                 let defaultLanguage = DEFAULT_LANGUAGE();
 
+                // Properties variable holds facet labels and descriptions.
+                // Therefore, we simply return the shortest one by assuming it is the label
+
                 if(objectKeys.indexOf("label_"+defaultLanguage) != -1){
-                	return property["label_"+defaultLanguage][0];
+                	return this.getTheShortestOneAmongValues(property["label_"+defaultLanguage]);
 				}
 				else if(objectKeys.indexOf("label_en") != -1){
-                    return property["label_en"][0];
+                    return this.getTheShortestOneAmongValues(property["label_en"]);
 				}
 
                 objectKeys.splice(objectKeys.indexOf("idxField"),1);
                 let labelField = objectKeys[0];
-                return property[labelField][0];
+                return this.getTheShortestOneAmongValues(property[labelField]);
             }
         }
 
         return name;
     }
+
+    getTheShortestOneAmongValues(values){
+		let shortestOne = values[0];
+		for(let i = 1; i < values.length;i++){
+			if(values[i].length < shortestOne.length){
+				shortestOne = values[i];
+			}
+		}
+		return shortestOne;
+	}
 
     onSubmit() {
         this.objToSubmit = copy(this.model);

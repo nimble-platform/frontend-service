@@ -6,7 +6,7 @@
 
             <!-- Goods Item -->
             <text-input presentationMode="view" label="Goods Item" definition="The goods item included in this shipment" [disabled]="isRequestDisabled()"
-                        [(text)]="request.consignment[0].consolidatedShipment[0].goodsItem[0].item.name" labelClass="col-2" valueClass="col-10">
+                        [(text)]="itemName" labelClass="col-2" valueClass="col-10">
             </text-input>
 
             <!-- Quantity -->

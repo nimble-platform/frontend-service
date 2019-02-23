@@ -74,7 +74,13 @@ export class SimpleSearchService {
 			full_url += "&fq="+encodeURIComponent(facetQuery);
 		}
 		if (cat != "") {
-			var add_url = `${this.product_cat_mix}:"${catID}:${cat}"`;
+            var add_url;
+			if(catID){
+                add_url = `${this.product_cat_mix}:"${catID}:${cat}"`;
+			}else{
+                add_url = `${this.product_cat_mix}:":${cat}"`;
+			}
+
 			full_url += "&fq="+encodeURIComponent(add_url);
 		}
 		return this.http

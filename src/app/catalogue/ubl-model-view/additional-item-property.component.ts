@@ -56,7 +56,7 @@ export class AdditionalItemPropertyComponent implements OnInit, OnDestroy {
     addValueToProperty(aipName: string) {
         if (this.additionalItemProperty.valueQualifier == "STRING") {
             this.additionalItemProperty.value.push(createText(''));
-        } else if (this.additionalItemProperty.valueQualifier == "REAL_MEASURE") {
+        } else if (this.additionalItemProperty.valueQualifier == "NUMBER") {
             let newNumber: number;
             this.additionalItemProperty.valueDecimal.push(newNumber);
         } else if (this.additionalItemProperty.valueQualifier == "BINARY") {
@@ -94,7 +94,7 @@ export class AdditionalItemPropertyComponent implements OnInit, OnDestroy {
             this.additionalItemProperty.value.splice(index, 1);
             dataSource = this.additionalItemProperty.value;
 
-        } else if (this.additionalItemProperty.valueQualifier == "REAL_MEASURE") {
+        } else if (this.additionalItemProperty.valueQualifier == "NUMBER") {
             this.additionalItemProperty.valueDecimal.splice(index, 1);
             dataSource = this.additionalItemProperty.valueDecimal;
         }
@@ -122,7 +122,7 @@ export class AdditionalItemPropertyComponent implements OnInit, OnDestroy {
             let prevValue = this.additionalItemProperty.value[0];
             this.additionalItemProperty.value[0] = createText(event.target.value);
             this.additionalItemProperty.value[selectedIndex] = prevValue;
-        } else if(this.additionalItemProperty.valueQualifier == 'REAL_MEASURE') {
+        } else if(this.additionalItemProperty.valueQualifier == 'NUMBER') {
             let prevValue = this.additionalItemProperty.valueDecimal[0];
             this.additionalItemProperty.valueDecimal[0] = event.target.value;
             this.additionalItemProperty.valueDecimal[selectedIndex] = prevValue;

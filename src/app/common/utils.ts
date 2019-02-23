@@ -152,7 +152,7 @@ export function selectPreferredName (cp: Category | Property) {
 
 // returns the all values for the default language of the browser
 // if there's no value for the defualt language of the browser, then returns english values if possible
-export function selectPreferredValue(texts:Text[]): string[]{
+export function selectPreferredValues(texts:Text[]): string[]{
     let values = [];
     let defaultLanguage = DEFAULT_LANGUAGE();
     let englishValues = [];
@@ -174,6 +174,26 @@ export function selectPreferredValue(texts:Text[]): string[]{
     }
 
     return [''];
+}
+
+// return the value for the default language of the browser
+export function selectPreferredValue(texts:Text[]):string{
+    let defaultLanguage = DEFAULT_LANGUAGE();
+    let englishValue = null;
+    for (let text of texts) {
+        if(text.languageID === defaultLanguage) {
+            return text.value;
+        }
+        else if(text.languageID == "en"){
+            englishValue = text.value;
+        }
+    }
+    // there is an english value
+    if(englishValue){
+        return englishValue;
+    }
+
+    return "";
 }
 
 export function selectName (ip: ItemProperty | Item) {
@@ -405,7 +425,6 @@ export function getPropertyValues(property: ItemProperty): any[] {
         case "INT":
         case "DOUBLE":
         case "NUMBER":
-        case "REAL_MEASURE":
             return property.valueDecimal;
         case "BINARY":
             return property.valueBinary;
@@ -422,14 +441,13 @@ export function getPropertyValuesAsStrings(property: ItemProperty): string[] {
         case "INT":
         case "DOUBLE":
         case "NUMBER":
-        case "REAL_MEASURE":
             return property.valueDecimal.map(num => String(num));
         case "BINARY":
             return property.valueBinary.map(bin => bin.fileName);
         case "QUANTITY":
             return property.valueQuantity.map(qty => `${qty.value} ${qty.unitCode}`);
         case "STRING":
-            return selectPreferredValue(property.value);
+            return selectPreferredValues(property.value);
         case "BOOLEAN":
             if (property.value.length === 0)
                 return ['false'];

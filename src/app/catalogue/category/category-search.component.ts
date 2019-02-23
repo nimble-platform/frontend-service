@@ -8,7 +8,7 @@ import { CatalogueService } from "../catalogue.service";
 import { PublishService } from "../publish-and-aip.service";
 import { ProductPublishComponent } from "../publish/product-publish.component";
 import { CallStatus } from "../../common/call-status";
-import {sanitizeDataTypeName, selectPreferredName, selectPreferredValue} from '../../common/utils';
+import {sanitizeDataTypeName, selectPreferredName, selectPreferredValues} from '../../common/utils';
 import { ParentCategories } from "../model/category/parent-categories";
 import { sortCategories,scrollToDiv } from "../../common/utils";
 import { Property } from "../model/category/property";
@@ -473,10 +473,10 @@ export class CategorySearchComponent implements OnInit {
     }
 
     getCategoryProperty(propName): string {
-        // Type of the definition field is Text[]. Therefore, we have to use selectPreferredValue method
+        // Type of the definition field is Text[]. Therefore, we have to use selectPreferredValues method
         // to get proper value of this category property
         if(propName == "definition"){
-            return selectPreferredValue(this.selectedCategoryWithDetails[propName])[0];
+            return selectPreferredValues(this.selectedCategoryWithDetails[propName])[0];
         }
         return String(this.selectedCategoryWithDetails[propName]);
     }

@@ -1,5 +1,5 @@
 <ng-container *ngIf="presentationMode != 'singlevalue'">
-    <ng-container *ngIf="additionalItemProperty.valueQualifier == 'STRING' || additionalItemProperty.valueQualifier == 'REAL_MEASURE'">
+    <ng-container *ngIf="additionalItemProperty.valueQualifier == 'STRING' || additionalItemProperty.valueQualifier == 'NUMBER'">
         <div *ngFor="let value of additionalItemProperty.valueQualifier | itemPropertyDataSourcePipe : additionalItemProperty; let i = index; trackBy : trackByIndex" class="input-group form-group">
             <!-- name of the property is shown once near the first value associated to it -->
             <div *ngIf="i == 0"
@@ -16,7 +16,7 @@
                    [readonly]="presentationMode != 'edit'">
 
             <!-- decimal value associated to the property -->
-            <input *ngIf="additionalItemProperty.valueQualifier == 'REAL_MEASURE'"
+            <input *ngIf="additionalItemProperty.valueQualifier == 'NUMBER'"
                    type="text" class="form-control align-self-start"
                    [ngClass]="{'offset-3' : i > 0} "
                    [(ngModel)]="additionalItemProperty.valueDecimal[i]"
@@ -26,7 +26,7 @@
             <span *ngIf="presentationMode == 'edit' &&
                            (additionalItemProperty.itemClassificationCode.listID != 'Custom' &&
                            ((additionalItemProperty.valueQualifier == 'STRING' &&additionalItemProperty.value.length > 1) ||
-                           (additionalItemProperty.valueQualifier == 'REAL_MEASURE' &&additionalItemProperty.valueDecimal.length > 1))||
+                           (additionalItemProperty.valueQualifier == 'NUMBER' &&additionalItemProperty.valueDecimal.length > 1))||
                            additionalItemProperty.itemClassificationCode.listID == 'Custom')">
                 <button class="btn btn-xs btn-danger"
                         (click)="removeCustomValue(i); $event.stopPropagation()">&times;
@@ -35,7 +35,7 @@
 
             <!-- add value button -->
             <span *ngIf="presentationMode == 'edit' && ((additionalItemProperty.valueQualifier == 'STRING' && i == this.additionalItemProperty.value.length - 1) ||
-                          (additionalItemProperty.valueQualifier == 'REAL_MEASURE' && i == this.additionalItemProperty.valueDecimal.length - 1))">
+                          (additionalItemProperty.valueQualifier == 'NUMBER' && i == this.additionalItemProperty.valueDecimal.length - 1))">
                 <button class="btn btn-primary btn-xs"
                         (click)="addValueToProperty(selectName(additionalItemProperty))"
                 ><strong>+</strong></button>
@@ -65,7 +65,7 @@
         </div>
     </ng-container>
 
-    <ng-container *ngIf="additionalItemProperty.valueQualifier == 'REAL_MEASURE'">
+    <ng-container *ngIf="additionalItemProperty.valueQualifier == 'NUMBER'">
         <div class="input-group form-group">
             <!-- name of the property is shown once near the first value associated to it -->
             <div class="col-3 control-label pointer"
