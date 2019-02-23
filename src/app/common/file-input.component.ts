@@ -74,7 +74,7 @@ export class FileInputComponent implements OnInit {
 
     onDownloadFile(file: BinaryObject, event: Event) {
         event.preventDefault();
-        this.catalogueService.downloadFile(file.uri).then(binaryObject => {
+        this.catalogueService.getBinaryObject(file.uri).then(binaryObject => {
             const binaryString = window.atob(binaryObject.value);
             const binaryLen = binaryString.length;
             const bytes = new Uint8Array(binaryLen);

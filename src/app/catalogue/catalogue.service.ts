@@ -10,7 +10,7 @@ import { CatalogueLine } from "./model/publish/catalogue-line";
 import { Category } from "./model/category/category";
 import { BehaviorSubject } from "rxjs/BehaviorSubject";
 import {CookieService} from "ng2-cookies";
-import { copy } from "../common/utils";
+import {copy, getAuthorizedHeaders} from "../common/utils";
 import {BinaryObject} from './model/publish/binary-object';
 import {CataloguePaginationResponse} from './model/publish/catalogue-pagination-response';
 import {UBLModelUtils} from './model/ubl-model-utils';
@@ -221,7 +221,7 @@ export class CatalogueService {
             .catch(this.handleError);
     }
 
-    downloadFile(uri:string){
+    getBinaryObject(uri:string){
         const url = this.baseUrl + `/binary-content?uri=${encodeURIComponent(uri)}`;
         return this.http
             .get(url, {headers: this.getAuthorizedHeaders()})
