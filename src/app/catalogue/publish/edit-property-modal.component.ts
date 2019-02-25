@@ -53,7 +53,7 @@ export class EditPropertyModalComponent implements OnInit {
                 property.valueQualifier = this.property.valueQualifier;
             }
             if (ref) {
-              console.log(property.value);
+              //console.log(property.value);
               ref.push(property);
             }
         }, () => {
@@ -206,7 +206,7 @@ export class EditPropertyModalComponent implements OnInit {
     }
 
     setBooleanValue(i: number, event:any) {
-      console.log(event.target.checked);
+      //console.log(event.target.checked);
       if (event.target.checked)
         this.property.value[i].value = "true";
       else

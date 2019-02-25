@@ -26,7 +26,7 @@ import {
     copy,
     isCustomProperty,
     getPropertyValuesAsStrings,
-    selectPreferredName, selectName, createText
+    selectPreferredName, selectName, createText, getPropertyValues
 } from '../../common/utils';
 import { Property } from "../model/category/property";
 import { ProductWrapper } from "../../common/product-wrapper";
@@ -460,6 +460,25 @@ export class ProductPublishComponent implements OnInit {
         return getPropertyValuesAsStrings(property);
     }
 
+    private languages: Array<string> = LANGUAGES;
+    onAddValue(property: ItemProperty) {
+        switch(property.valueQualifier) {
+            case "INT":
+            case "DOUBLE":
+            case "NUMBER":
+                property.valueDecimal.push(0);
+                break;
+            case "QUANTITY":
+                property.valueQuantity.push(new Quantity(0, ""));
+                break;
+            case "STRING":
+                property.value.push(createText(''));
+                break;
+            default:
+                // BINARY and BOOLEAN: nothing
+        }
+    }
+
     onRemoveValue(property: ItemProperty, index: number) {
         switch(property.valueQualifier) {
             case "INT":
@@ -476,6 +495,57 @@ export class ProductPublishComponent implements OnInit {
             default:
                 // BINARY and BOOLEAN: nothing
         }
+    }
+
+    addEmptyValuesToProperty(property: ItemProperty) {
+        if(property.value.length === 0) {
+          if (property.valueQualifier == "BOOLEAN") {
+              property.value.push(createText('false'));
+          } else {
+              property.value.push(createText(''));
+          }
+        }
+        if(property.valueDecimal.length === 0) {
+            property.valueDecimal.push(0);
+        }
+        if(property.valueQuantity.length === 0) {
+            property.valueQuantity.push(new Quantity());
+        }
+    }
+
+    getDefinition(property: ItemProperty): string {
+      const key = getPropertyKey(property);
+      let selProp = this.selectedProperties[key];
+      if(!selProp) {
+          return "No definition."
+      }
+      for(const prop of selProp.properties) {
+          if(prop.definition && prop.definition !== "") {
+              return prop.definition;
+          }
+      }
+      return "No definition."
+    }
+
+    getValues(property: ItemProperty): any[] {
+        let values = getPropertyValues(property);
+        this.addEmptyValuesToProperty(property);
+        return values;
+    }
+
+    setValue(property: ItemProperty, i: number, event: any) {
+        property.value[i].value = event.target.value;
+    }
+
+    setBooleanValue(property: ItemProperty, i: number, event:any) {
+      if (event.target.checked)
+        property.value[i].value = "true";
+      else
+        property.value[i].value = "false";
+    }
+
+    setValueDecimal(property: ItemProperty, i: number, event: any) {
+        property.valueDecimal[i] = event.target.value;
     }
 
     onEditProperty(property: ItemProperty) {
