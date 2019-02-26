@@ -90,8 +90,10 @@ export class AnalyticsService {
             .catch(this.handleError);
     }
 
-    getVerifiedCompanies(page: number): Promise<any> {
-        const url = `${this.url_identity}/admin/verified_companies?page=${page}`;
+    getVerifiedCompanies(page: number, size?: number): Promise<any> {
+        var url = `${this.url_identity}/admin/verified_companies?page=${page}`;
+        if (size)
+          url += "&size="+size;
         const token = 'Bearer '+this.cookieService.get("bearer_token");
         const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
         return this.http

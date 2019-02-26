@@ -11,6 +11,12 @@ p {
   overflow-wrap: break-word;
 }
 
+.max-container {
+  padding-top:15px;
+  padding-bottom:15px;
+  max-width: 100% !important;
+}
+
 .container-fluid {
     padding-left: 0px;
     padding-right: 0px;
