@@ -28,20 +28,34 @@ export class ProductDetailsOverviewComponent implements OnInit{
     classificationNames = [];
     
     constructor(public categoryService:CategoryService) {
-        if(this.wrapper){
-            this.manufacturerPartyName = UBLModelUtils.getPartyDisplayName(this.wrapper.item.manufacturerParty);
-        }
     }
 
     ngOnInit(){
-        // get codes of the commodity classifications
-        let codes:Code[] = [];
-        let classifications = this.getClassifications();
-        for(let classification of classifications){
-            codes.push(classification.itemClassificationCode);
+        if(this.wrapper){
+            this.manufacturerPartyName = UBLModelUtils.getPartyDisplayName(this.wrapper.item.manufacturerParty);
         }
-        // get names of the commodity classifications
-        this.getClassificationNames(codes);
+        /*
+            Cache FurnitureOntology categories. Then, use cached categories to get correct category label according
+            to the default language of the browser.
+         */
+        this.getClassificationNamesStatus.submit();
+        this.categoryService.cacheFurnitureOntologyCategories().then(response => {
+            let classifications = this.getClassifications();
+            for(let classification of classifications){
+                // For FurnitureOntology categories, we need to get the name of it from the cached ones since they
+                // contain the labels
+                if(classification.itemClassificationCode.listID == "FurnitureOntology"){
+                    this.classificationNames.push(this.categoryService.getCachedCategoryName(classification.itemClassificationCode.uri));
+                }
+                // For eClass categories, it is OK to use the name of the category directly.
+                else {
+                    this.classificationNames.push(classification.itemClassificationCode.name);
+                }
+            }
+            this.getClassificationNamesStatus.callback(null);
+        }).catch(error => {
+            this.getClassificationNamesStatus.error("Failed to get classification names",error);
+        })
     }
 
     getClassifications(): CommodityClassification[] {
@@ -112,17 +126,5 @@ export class ProductDetailsOverviewComponent implements OnInit{
 
     getValuesAsString(property: ItemProperty): string[] {
         return getPropertyValuesAsStrings(property);
-    }
-
-    getClassificationNames(codes:Code[]){
-        this.getClassificationNamesStatus.submit();
-        this.categoryService.getCachedCategories(codes).then(categories => {
-            for(let category of categories){
-                this.classificationNames.push(selectPreferredName(category));
-            }
-            this.getClassificationNamesStatus.callback(null);
-        }).catch(error => {
-            this.getClassificationNamesStatus.error("Failed to get classification names",error);
-        })
     }
 }

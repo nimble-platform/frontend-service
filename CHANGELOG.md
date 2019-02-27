@@ -1,6 +1,22 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [7.0.0] - 2019-02-04
+### Added
+- Default ontology configuration including separate tabs and filters in category search
+- Company rejection and data change capabilities in platform management
+- VAT validation and data retrieval
+- Defined country selection based on fixed dataset
+- Configurable Terms of Service documents
+- Color code tooltip in dashboard welcome tab
+
+### Changed
+- Full price breakdown during negotiation
+- Return to previously used dashboard tab after completing a business process step
+- Improved category tree navigation including breadcrumbs
+- Ontology-independent usage of parent categories on search landing page
+- Automatic re-parsing of malformed website links
+
 ## [6.0.0] - 2018-12-21
 ### Added
 - Platform configuration options in globals in order to allow for adjusting the UI without changing the code base

@@ -1,19 +1,21 @@
 import {Component, OnInit} from "@angular/core";
 import {CookieService} from 'ng2-cookies';
 import {CatalogueService} from "../../catalogue.service";
-import {Catalogue} from "../../model/publish/catalogue";
 import {CallStatus} from "../../../common/call-status";
 import {ActivatedRoute, Params, Router} from "@angular/router";
 import {PublishService} from "../../publish-and-aip.service";
 import {CategoryService} from "../../category/category.service";
 import { isTransportService } from "../../../common/utils";
-import { CatalogueLine } from "../../model/publish/catalogue-line";
 import { BPDataService } from "../../../bpe/bp-view/bp-data-service";
 import { UserService } from "../../../user-mgmt/user.service";
 import { CompanySettings } from "../../../user-mgmt/model/company-settings";
+import {CataloguePaginationResponse} from '../../model/publish/catalogue-pagination-response';
 import {Item} from '../../model/publish/item';
 import {selectDescription, selectName} from '../../../common/utils';
 import {ItemProperty} from '../../model/publish/item-property';
+import {debounceTime, distinctUntilChanged, switchMap} from 'rxjs/operators';
+import {Observable} from 'rxjs/Observable';
+import {CATALOGUE_LINE_SORT_OPTIONS} from '../../model/constants';
 
 @Component({
     selector: 'catalogue-view',
@@ -24,7 +26,7 @@ import {ItemProperty} from '../../model/publish/item-property';
 
 export class CatalogueViewComponent implements OnInit {
 
-    catalogue: Catalogue;
+    catalogueResponse: CataloguePaginationResponse;
     settings: CompanySettings;
 
     // available catalogue lines with respect to the selected category
@@ -32,11 +34,9 @@ export class CatalogueViewComponent implements OnInit {
     // catalogue lines which are available to the user after search operation
     catalogueLinesArray : any = [];
 
-    searchKey : string = "";
-
     // categories
-    typeOfProducts : any = [];
-    selectedType = "All";
+    categoryNames : any = [];
+    selectedCategory = "All";
 
     // necessary info for pagination
     collectionSize = 0;
@@ -53,6 +53,10 @@ export class CatalogueViewComponent implements OnInit {
     callStatus = new CallStatus();
     deleteStatuses: CallStatus[] = []
 
+    CATALOGUE_LINE_SORT_OPTIONS = CATALOGUE_LINE_SORT_OPTIONS;
+
+    private searchText: string = "";
+
     constructor(private cookieService: CookieService,
                 private publishService: PublishService,
                 private catalogueService: CatalogueService,
@@ -66,12 +70,7 @@ export class CatalogueViewComponent implements OnInit {
 
     ngOnInit() {
         this.catalogueService.setEditMode(false);
-
-        this.route.queryParams.subscribe((params: Params) => {
-            const forceUpdate = params['forceUpdate'] === "true";
-            this.requestCatalogue(forceUpdate);
-        });
-
+        this.requestCatalogue();
         for(let i = 0; i < this.pageSize; i++) {
             this.deleteStatuses.push(new CallStatus());
         }
@@ -85,23 +84,35 @@ export class CatalogueViewComponent implements OnInit {
         return selectDescription(item);
     }
 
-    private requestCatalogue(forceUpdate:boolean): void {
+    search = (text$: Observable<string>) =>
+        text$.pipe(
+            debounceTime(200),
+            distinctUntilChanged(),
+            switchMap(term =>{
+                this.requestCatalogue();
+                return [];
+            })
+        );
+
+    requestCatalogue(): void {
         this.getCatalogueStatus.submit();
         const userId = this.cookieService.get("user_id");
+        // check whether the user chose a category to filter the catalogue lines
+        let categoryName = this.selectedCategory == "All" ? null : this.selectedCategory;
         Promise.all([
-            this.catalogueService.getCatalogueForceUpdate(userId, forceUpdate),
+            this.catalogueService.getCatalogueResponse(userId, categoryName,this.searchText,this.pageSize,(this.page-1)*this.pageSize,this.sortOption),
             this.getCompanySettings(userId)
         ])
-            .then(([catalogue, settings]) => {
-                this.catalogue = catalogue;
-                this.settings = settings;
-                this.getCatalogueStatus.callback(null);
-                this.init();
-            },
-            error => {
-                this.getCatalogueStatus.error("Failed to get catalogue", error);
-            }
-        )
+            .then(([catalogueResponse, settings]) => {
+                    this.catalogueResponse = catalogueResponse;
+                    this.settings = settings;
+                    this.init();
+                    this.getCatalogueStatus.callback(null);
+                },
+                error => {
+                    this.getCatalogueStatus.error("Failed to get catalogue", error);
+                }
+            )
     }
 
     private getCompanySettings(userId: string): Promise<CompanySettings> {
@@ -113,43 +124,31 @@ export class CatalogueViewComponent implements OnInit {
     }
 
     private init(): void {
-        let len = this.catalogue.catalogueLine.length;
-        this.collectionSize = len;
-        this.catalogueLinesArray = [...this.catalogue.catalogueLine].reverse();
+        let len = this.catalogueResponse.catalogueLines.length;
+        this.categoryNames = this.catalogueResponse.categoryNames;
+        this.collectionSize = this.catalogueResponse.size;
+        this.catalogueLinesArray = [...this.catalogueResponse.catalogueLines];
         this.catalogueLinesWRTTypes = this.catalogueLinesArray;
         let i = 0;
-        this.typeOfProducts = [];
-        this.selectedType = "All";
-        this.searchKey = "";
-        this.sortOption = null;
-        // Initialize catalogueLineView and typeOfProducts
+        // Initialize catalogueLineView
         for(;i<len;i++){
-            this.catalogueLineView[this.catalogue.catalogueLine[i].id] = false;
-
-            let j = 0;
-            let lenOfCom = this.catalogue.catalogueLine[i].goodsItem.item.commodityClassification.length;
-            for(;j<lenOfCom;j++){
-                if(this.typeOfProducts.indexOf(this.catalogue.catalogueLine[i].goodsItem.item.commodityClassification[j].itemClassificationCode.name) <= -1){
-                    this.typeOfProducts.push(this.catalogue.catalogueLine[i].goodsItem.item.commodityClassification[j].itemClassificationCode.name);
-                }
-            }
+            this.catalogueLineView[this.catalogueResponse.catalogueLines[i].id] = false;
         }
     }
 
     onDeleteCatalogue(): void {
-		if (confirm("Are you sure that you want to delete your entire catalogue?")) {
-			this.callStatus.submit();
+        if (confirm("Are you sure that you want to delete your entire catalogue?")) {
+            this.callStatus.submit();
 
-			this.catalogueService.deleteCatalogue().then(res => {
-					this.catalogueService.catalogue = null;
-					this.callStatus.reset();
-					this.requestCatalogue(false);
-				},
-				error => {
-					this.callStatus.error("Failed to delete catalogue", error);
-				}
-			);
-		}
+            this.catalogueService.deleteCatalogue().then(res => {
+                    this.callStatus.reset();
+                    this.requestCatalogue();
+                },
+                error => {
+                    this.callStatus.error("Failed to delete catalogue", error);
+                }
+            );
+        }
     }
 
     onOpenCatalogueLine(e: Event) {
@@ -162,86 +161,23 @@ export class CatalogueViewComponent implements OnInit {
         this.publishService.publishingStarted = false;
         this.categoryService.resetSelectedCategories();
         this.router.navigate(['catalogue/publish'], {queryParams: {
-            pg: "single",
-            productType: isTransportService(catalogueLine) ? "transportation" : "product"}});
+                pg: "single",
+                productType: isTransportService(catalogueLine) ? "transportation" : "product"}});
     }
 
     deleteCatalogueLine(catalogueLine, i: number): void {
         if (confirm("Are you sure that you want to delete this catalogue item?")) {
             const status = this.getDeleteStatus(i);
             status.submit();
-            this.catalogueService.deleteCatalogueLine(this.catalogueService.catalogue.uuid, catalogueLine.id)
+            this.catalogueService.deleteCatalogueLine(this.catalogueService.catalogueResponse.catalogueUuid, catalogueLine.id)
                 .then(res => {
-                    this.init();
+                    this.requestCatalogue();
                     status.callback("Catalogue line deleted", true);
                 })
                 .catch(error => {
                     status.error("Error while deleting catalogue line");
                 });
         }
-    }
-
-    sortCatalogueLines(): void{
-        if(this.sortOption == "Price:Low to High"){
-            this.catalogueLinesArray.sort(function (a,b) {
-                let x = parseInt(a.requiredItemLocationQuantity.price.priceAmount.value);
-                let y = parseInt(b.requiredItemLocationQuantity.price.priceAmount.value);
-                return x-y;
-            });
-        }
-        else if(this.sortOption == "Price:High to Low"){
-            this.catalogueLinesArray.sort(function (a,b) {
-                let x = parseInt(a.requiredItemLocationQuantity.price.priceAmount.value);
-                let y = parseInt(b.requiredItemLocationQuantity.price.priceAmount.value);
-                return x-y;
-            });
-            this.catalogueLinesArray.reverse();
-        }
-    }
-
-    typeChanged():void{
-        this.searchKey = "";
-        this.catalogueLinesWRTTypes = [];
-
-        if (this.selectedType == "All") {
-            this.catalogueLinesWRTTypes = [...this.catalogue.catalogueLine].reverse();
-        } else {
-            let i = 0;
-            let len = this.catalogue.catalogueLine.length;
-            for(;i<len;i++){
-                let j = 0;
-                let lenOfCom = this.catalogue.catalogueLine[i].goodsItem.item.commodityClassification.length;
-                for(;j<lenOfCom;j++){
-                    if(!(this.catalogue.catalogueLine[i].goodsItem.item.commodityClassification[j].itemClassificationCode.name.localeCompare(this.selectedType))){
-                        this.catalogueLinesWRTTypes.unshift(this.catalogue.catalogueLine[i]);
-                        break;
-                    }
-                }
-            }
-        }
-        this.catalogueLinesArray = this.catalogueLinesWRTTypes;
-        this.collectionSize = this.catalogueLinesArray.length;
-
-        this.sortOption = "";
-    }
-
-    search():void{
-        let splitArray = this.searchKey.split(" ").filter(
-            item => item.trim() != "");
-        let answer = [];
-        let RE = new RegExp(splitArray.join("|"),"i");
-
-        let i = 0;
-        let len = this.catalogueLinesWRTTypes.length;
-        for(;i<len;i++){
-            if(RE.test(selectName(this.catalogueLinesWRTTypes[i].goodsItem.item)+" "+
-                    selectDescription(this.catalogueLinesWRTTypes[i].goodsItem.item))) {
-                answer.push(this.catalogueLinesWRTTypes[i]);
-            }
-        }
-
-        this.catalogueLinesArray = answer;
-        this.collectionSize = this.catalogueLinesArray.length;
     }
 
     getDeleteStatus(index: number): CallStatus {
@@ -261,13 +197,28 @@ export class CatalogueViewComponent implements OnInit {
                 event.target.value = "";
                 catalogueService.uploadZipPackage(file).then(res => {
                         self.callStatus.callback(null);
-                        self.router.navigate(['dashboard'], {queryParams: {forceUpdate: true, tab: "CATALOGUE"}});
+                        self.router.navigate(['dashboard'], {queryParams: {tab: "CATALOGUE"}});
+                        self.requestCatalogue();
                     },
                     error => {
                         self.callStatus.error("Failed to upload the image package:  " + error, error);
                     });
             };
             reader.readAsDataURL(file);
+        }
+    }
+
+    deleteAllProductImages():void{
+        if (confirm("Are you sure that you want to delete all product images inside the catalogue?")) {
+            this.callStatus.submit();
+            this.catalogueService.deleteAllProductImagesInsideCatalogue(this.catalogueService.catalogueResponse.catalogueUuid)
+                .then(res => {
+                    this.requestCatalogue();
+                    this.callStatus.callback("Product images deleted", true);
+                })
+                .catch(error => {
+                    this.callStatus.error("Error while deleting product images");
+                });
         }
     }
 

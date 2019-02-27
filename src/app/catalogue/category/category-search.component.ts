@@ -8,7 +8,7 @@ import { CatalogueService } from "../catalogue.service";
 import { PublishService } from "../publish-and-aip.service";
 import { ProductPublishComponent } from "../publish/product-publish.component";
 import { CallStatus } from "../../common/call-status";
-import {sanitizeDataTypeName, selectPreferredName, selectPreferredValue} from '../../common/utils';
+import {sanitizeDataTypeName, selectPreferredName, selectPreferredValues} from '../../common/utils';
 import { ParentCategories } from "../model/category/parent-categories";
 import { sortCategories,scrollToDiv } from "../../common/utils";
 import { Property } from "../model/category/property";
@@ -36,7 +36,6 @@ export class CategorySearchComponent implements OnInit {
     addFavoriteCategoryStatus: CallStatus = new CallStatus();
     addRecentCategoryStatus: CallStatus = new CallStatus();
     getCategoryDetailsStatus: CallStatus = new CallStatus();
-    navigateToPublishStatus: CallStatus = new CallStatus();
 
     categories: Category[];
     pageRef: string = null;
@@ -365,20 +364,10 @@ export class CategorySearchComponent implements OnInit {
 
     navigateToPublishingPage(): void {
         this.addRecentCategories(this.selectedCategories);
-        this.navigateToPublishStatus.submit();
-        let userId = this.cookieService.get("user_id");
-        this.catalogueService
-            .getCatalogue(userId)
-            .then(catalogue => {
-                this.navigateToPublishStatus.callback("Catalogue Fetched", true);
-                ProductPublishComponent.dialogBox = true;
-                // set isReturnPublish in order not to show confirmation popup
-                this.isReturnPublish = true;
-                this.router.navigate(["catalogue/publish"], { queryParams: { pg: this.publishingGranularity, productType: this.productType } });
-            })
-            .catch(error => {
-                this.navigateToPublishStatus.error("Error while fetching user catalogue", error);
-            });
+        ProductPublishComponent.dialogBox = true;
+        // set isReturnPublish in order not to show confirmation popup
+        this.isReturnPublish = true;
+        this.router.navigate(["catalogue/publish"], { queryParams: { pg: this.publishingGranularity, productType: this.productType } });
     }
 
     getCategoryTree(category: Category,scrollToDivId = null) {
@@ -451,7 +440,7 @@ export class CategorySearchComponent implements OnInit {
 
     getCategoryDetails(category: Category, fav: boolean) {
         if (!this.getCategoryDetailsStatus.isDisplayed()) {
-          if (!this.selectedCategory ||  (this.selectedCategory && this.selectedCategory.code !== category.code)) {
+          if (!this.selectedCategory ||  (this.selectedCategory && this.selectedCategory.id !== category.id)) {
             this.favSelected = fav;
             this.selectedCategory = category;
             this.selectedCategoryWithDetails = null;
@@ -484,10 +473,10 @@ export class CategorySearchComponent implements OnInit {
     }
 
     getCategoryProperty(propName): string {
-        // Type of the definition field is Text[]. Therefore, we have to use selectPreferredValue method
+        // Type of the definition field is Text[]. Therefore, we have to use selectPreferredValues method
         // to get proper value of this category property
         if(propName == "definition"){
-            return selectPreferredValue(this.selectedCategoryWithDetails[propName])[0];
+            return selectPreferredValues(this.selectedCategoryWithDetails[propName])[0];
         }
         return String(this.selectedCategoryWithDetails[propName]);
     }

@@ -59,7 +59,7 @@ export class CompanyCertificatesSettingsComponent implements OnInit {
         this.saveCertCallStatus.submit();
         const fields = model.getRawValue();
         this.userService
-            .saveCert(this.certFile, encodeURIComponent(fields.name), encodeURIComponent(fields.description), encodeURIComponent(fields.type))
+            .saveCert(this.certFile, encodeURIComponent(fields.name), encodeURIComponent(fields.description), encodeURIComponent(fields.type), this.settings.companyID)
             .then(() => {
                 close();
                 this.saveCertCallStatus.callback("Certificate saved", true);
@@ -74,7 +74,7 @@ export class CompanyCertificatesSettingsComponent implements OnInit {
         if (confirm("Are you sure that you want to delete this certificate?")) {
             this.certificatesCallStatus.submit();
             this.userService
-                .deleteCert(id)
+                .deleteCert(id, this.settings.companyID)
                 .then(() => {
                     this.certificatesCallStatus.callback("Succesfully deleted certificate", true);
                     this.onSaveEvent.emit();

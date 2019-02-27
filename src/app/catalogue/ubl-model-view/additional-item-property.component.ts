@@ -122,7 +122,7 @@ export class AdditionalItemPropertyComponent implements OnInit, OnDestroy {
             let prevValue = this.additionalItemProperty.value[0];
             this.additionalItemProperty.value[0] = createText(event.target.value);
             this.additionalItemProperty.value[selectedIndex] = prevValue;
-        } else if(this.additionalItemProperty.valueQualifier == 'REAL_MEASURE') {
+        } else if(this.additionalItemProperty.valueQualifier == 'NUMBER') {
             let prevValue = this.additionalItemProperty.valueDecimal[0];
             this.additionalItemProperty.valueDecimal[0] = event.target.value;
             this.additionalItemProperty.valueDecimal[selectedIndex] = prevValue;

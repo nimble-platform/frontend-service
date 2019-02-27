@@ -180,4 +180,15 @@ export class ItemInformationRequestComponent implements OnInit {
     isLoading(): boolean {
         return this.callStatus.fb_submitted;
     }
+
+    isEmpty(): boolean {
+      var empty = true;
+      if (this.request.note.length > 1 || (this.request.note.length == 1 && this.request.note[0] != ""))
+        empty = false;
+      else if (this.request.additionalDocumentReference.length > 0)
+        empty = false;
+      else if (this.getRequestDocuments().length > 0)
+        empty = false;
+      return empty;
+    }
 }

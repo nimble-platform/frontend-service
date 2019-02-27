@@ -1,6 +1,5 @@
 export type PropertyValueQualifier = 
- | "REAL_MEASURE" 
- | "INT" 
+ | "INT"
  | "DOUBLE" 
  | "NUMBER" 
  | "BINARY" 

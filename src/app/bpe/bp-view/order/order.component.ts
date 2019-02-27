@@ -281,7 +281,7 @@ export class OrderComponent implements OnInit {
             queryParams: {
                 searchContext: 'orderbp',
                 q:'*',
-                cat:'Transport service'
+                cat:'Transport Service'
             }
         });
     }

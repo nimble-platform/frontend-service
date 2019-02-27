@@ -126,6 +126,8 @@ export class NegotiationRequestComponent implements OnInit {
                 this.callStatus.error("Failed to send Terms", error);
             });
         } else {
+            // set the item price, otherwise we will lose item price information
+            this.bpDataService.requestForQuotation.requestForQuotationLine[0].lineItem.price.priceAmount.value = this.wrapper.rfqPriceWrapper.totalPrice/this.wrapper.rfqPriceWrapper.quantity.value;
             // just go to order page
             this.bpDataService.initOrderWithRfq();
             this.bpDataService.proceedNextBpStep("buyer", "Order")
@@ -162,9 +164,9 @@ export class NegotiationRequestComponent implements OnInit {
         return this.rfq.negotiationOptions.price
             || this.rfq.negotiationOptions.deliveryPeriod
             || this.rfq.negotiationOptions.warranty
-            || this.rfq.negotiationOptions.incoterms
-            || this.rfq.negotiationOptions.paymentTerms
-            || this.rfq.negotiationOptions.paymentMeans
+            || (this.rfq.negotiationOptions.incoterms && this.wrapper.lineIncoterms != this.wrapper.rfqIncoterms)
+            || (this.rfq.negotiationOptions.paymentTerms && this.wrapper.linePaymentTerms != this.wrapper.rfqPaymentTerms.paymentTerm)
+            || (this.rfq.negotiationOptions.paymentMeans && this.wrapper.linePaymentMeans != this.wrapper.rfqPaymentMeans)
             || this.rfq.dataMonitoringRequested;
     }
 

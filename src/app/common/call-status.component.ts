@@ -43,7 +43,7 @@ export class CallStatusComponent {
         } while (clickedComponent);
 
         if(!inside && this.callStatus.fb_errordetc == true) {
-            this.callStatus.reset();
+            //this.callStatus.reset();
         }
     }
 }

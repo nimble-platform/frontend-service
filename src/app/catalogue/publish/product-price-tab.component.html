@@ -37,15 +37,15 @@
 <!-- add price option -->
 <div class="row mb-3">
     <div class="col-3">
-        <label>Add discount/charge on</label>
+        <label>Add discount / charge on</label>
     </div>
     <div class="col-2">
         <select class="form-control form-control-sm" #priceOptionSelect>
             <option *ngFor="let option of object.keys(priceOptions)" [value]="option">{{priceOptions[option].text}}</option>
         </select>
     </div>
-    <button class="btn btn-primary btn-sm" (click)="addPriceOption(priceOptions[priceOptionSelect.value].typeID)">
-        Add
+    <button class="btn btn-outline-primary btn-sm" (click)="addPriceOption(priceOptions[priceOptionSelect.value].typeID)">
+        Add discount / charge
     </button>
 </div>
 
@@ -65,7 +65,7 @@
                     </quantity-price-option>
                     <div class="col-1">
                         <button class="btn btn-danger btn-sm" (click)="removePriceOption(priceOption.index)">
-                            Remove
+                            Delete
                         </button>
                     </div>
                 </div>
@@ -94,7 +94,7 @@
                     </item-property-price-option>
                     <div class="col-1">
                         <button class="btn btn-danger btn-sm" (click)="removePriceOption(priceOption.index)">
-                            Remove
+                            Delete
                         </button>
                     </div>
                 </div>
@@ -123,7 +123,7 @@
                     </price-option-view>
                     <div class="col-1">
                         <button class="btn btn-danger btn-sm" (click)="removePriceOption(priceOption.index)">
-                            Remove
+                            Delete
                         </button>
                     </div>
                 </div>
@@ -152,7 +152,7 @@
                     </price-option-view>
                     <div class="col-1">
                         <button class="btn btn-danger btn-sm" (click)="removePriceOption(priceOption.index)">
-                            Remove
+                            Delete
                         </button>
                     </div>
                 </div>
@@ -180,7 +180,7 @@
                     </price-option-view>
                     <div class="col-1">
                         <button class="btn btn-danger btn-sm" (click)="removePriceOption(priceOption.index)">
-                            Remove
+                            Delete
                         </button>
                     </div>
                 </div>
@@ -209,7 +209,7 @@
                     </price-option-view>
                     <div class="col-1">
                         <button class="btn btn-danger btn-sm" (click)="removePriceOption(priceOption.index)">
-                            Remove
+                            Delete
                         </button>
                     </div>
                 </div>

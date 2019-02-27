@@ -139,13 +139,17 @@ export class SimpleSearchService {
 	}
 
 	getSuggestionArray(res:any, q:string): string[] {
+		let defaultLanguage = DEFAULT_LANGUAGE();
 		var suggestions=[];
 		if (q.length >= 2) {
 			res = JSON.parse(res._body);
 			if (res && res.suggestions && res.suggestions.suggestion_facets && res.suggestions.suggestion_facets[this.product_name]) {
 				for (let sug in res.suggestions.suggestion_facets[this.product_name]) {
-					if (suggestions.length<10)
-					suggestions.push(sug);
+					// get the language id of the value
+                    let index = sug.lastIndexOf(":");
+                    let languageId = sug.substring(index+1);
+					if (suggestions.length<10 && languageId == defaultLanguage)
+					suggestions.push(sug.substring(0,index));
 				}
 			}
 		}

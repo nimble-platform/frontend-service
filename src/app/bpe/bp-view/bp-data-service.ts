@@ -440,8 +440,14 @@ export class BPDataService{
         this.requestForQuotation = UBLModelUtils.createRequestForQuotationWithTransportExecutionPlanRequest(copyTransportExecutionPlanRequest,this.modifiedCatalogueLines[0]);
     }
 
-    initDispatchAdvice(handlingInst: string, carrierName: string, carrierContact: string, deliveredQuantity: Quantity, endDate: string) {
-        let copyOrder:Order = copy(this.order);
+    initDispatchAdvice(handlingInst: Text, carrierName: string, carrierContact: string, deliveredQuantity: Quantity, endDate: string) {
+        let copyOrder:Order;
+        if(this.order){
+            copyOrder = copy(this.order);
+        }else{
+            copyOrder = copy(this.productOrder)
+        }
+
         this.resetBpData();
         this.modifiedCatalogueLines = copy(this.catalogueLines);
         this.despatchAdvice = UBLModelUtils.createDespatchAdvice(copyOrder);
@@ -453,7 +459,12 @@ export class BPDataService{
         }
 
         this.despatchAdvice.despatchLine[0].deliveredQuantity.value = deliveredQuantity.value;
-        this.despatchAdvice.despatchLine[0].shipment[0].handlingInstructions = [new Text(handlingInst,DEFAULT_LANGUAGE())];
+        if(handlingInst){
+            this.despatchAdvice.despatchLine[0].shipment[0].handlingInstructions = [handlingInst];
+        }else{
+            this.despatchAdvice.despatchLine[0].shipment[0].handlingInstructions = [new Text("",DEFAULT_LANGUAGE())];
+        }
+
         this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage.push(new ShipmentStage());
 
         let partyName: PartyName = new PartyName();
@@ -463,17 +474,6 @@ export class BPDataService{
         this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage[0].carrierParty.partyName= [partyName];
         this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage[0].carrierParty.contact.telephone = carrierContact;
         this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage[0].estimatedDeliveryDate = endDate;
-    }
-
-    initDispatchAdviceWithOrder() {
-        const copyOrder: Order = copy(this.productOrder);
-        this.resetBpData();
-        this.modifiedCatalogueLines = copy(this.catalogueLines);
-        this.despatchAdvice = UBLModelUtils.createDespatchAdvice(copyOrder);
-
-        const quantity = copyOrder.orderLine[0].lineItem.quantity;
-        this.despatchAdvice.despatchLine[0].deliveredQuantity.unitCode = quantity.unitCode;
-        this.despatchAdvice.despatchLine[0].deliveredQuantity.value = quantity.value;
     }
 
     initTransportExecutionPlanRequest() {
@@ -719,7 +719,7 @@ export class BPDataService{
         if(itemProperty.valueQualifier == 'STRING') {
             let index = this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty.findIndex(item => selectName(item) == selectName(itemProperty));
             this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty[index].value[0] = itemProperty.value[0];
-        } else if(itemProperty.valueQualifier == 'REAL_MEASURE') {
+        } else if(itemProperty.valueQualifier == 'NUMBER') {
             let index = this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty.findIndex(item => selectName(item) == selectName(itemProperty));
             this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty[index].valueDecimal[0] = itemProperty.valueDecimal[0];
         } else if(itemProperty.valueQualifier == 'BOOLEAN') {

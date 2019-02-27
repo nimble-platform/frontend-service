@@ -55,6 +55,7 @@ import { headersToString } from "../../../../node_modules/@types/selenium-webdri
 import {ShipmentStage} from "./publish/shipment-stage";
 import {copy, createText, selectPreferredName} from '../../common/utils';
 import {Text} from "./publish/text";
+import {Attachment} from "./publish/attachment";
 
 /**
  * Created by suat on 05-Jul-17.
@@ -447,6 +448,14 @@ export class UBLModelUtils {
         const documentReference:DocumentReference = new DocumentReference(orderId);
         const orderReference:OrderReference = new OrderReference(documentReference);
         return orderReference;
+    }
+
+    public static createDocumentReferenceWithBinaryObject(binaryObject: BinaryObject): DocumentReference {
+        let attachment:Attachment = new Attachment();
+        attachment.embeddedDocumentBinaryObject = binaryObject;
+        let documentReference: DocumentReference = new DocumentReference();
+        documentReference.attachment = attachment;
+        return documentReference;
     }
 
     public static createItem():Item {

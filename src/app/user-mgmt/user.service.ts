@@ -321,8 +321,8 @@ export class UserService {
       });
     }
 
-    saveCert(file: File, name: string, description: string, type: string): Promise<void> {
-      const url = `${this.url}/company-settings/certificate?name=${name}&description=${description}&type=${type}`;
+    saveCert(file: File, name: string, description: string, type: string, partyId: string): Promise<void> {
+      const url = `${this.url}/company-settings/${partyId}/certificate?name=${name}&description=${description}&type=${type}`;
       const token = 'Bearer '+this.cookieService.get("bearer_token");
       const headers_token = new Headers({'Authorization': token});
       const form_data: FormData = new FormData();
@@ -334,8 +334,8 @@ export class UserService {
           .catch(this.handleError)
     }
 
-    saveImage(file: File, isLogo: boolean): Promise<void> {
-      const url = `${this.url}/company-settings/image?isLogo=${isLogo}`;
+    saveImage(file: File, isLogo: boolean, partyId: string): Promise<void> {
+      const url = `${this.url}/company-settings/${partyId}/image?isLogo=${isLogo}`;
       const token = 'Bearer '+this.cookieService.get("bearer_token");
       const headers_token = new Headers({'Authorization': token});
       const form_data: FormData = new FormData();
@@ -347,8 +347,8 @@ export class UserService {
           .catch(this.handleError)
     }
 
-    deleteImage(id: string): Promise<void> {
-      const url = `${this.url}/company-settings/image/${id}`;
+    deleteImage(id: string, partyId: string): Promise<void> {
+      const url = `${this.url}/company-settings/${partyId}/image/${id}`;
       const token = 'Bearer '+this.cookieService.get("bearer_token");
       const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
       return this.http
@@ -363,8 +363,8 @@ export class UserService {
       window.open(url,"_blank");
     }
 
-    deleteCert(id: string): Promise<void> {
-      const url = `${this.url}/company-settings/certificate/${id}`;
+    deleteCert(id: string, partyId: string): Promise<void> {
+      const url = `${this.url}/company-settings/${partyId}/certificate/${id}`;
       const token = 'Bearer '+this.cookieService.get("bearer_token");
       const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
       return this.http
@@ -432,8 +432,8 @@ export class UserService {
         return settings;
     }
 
-    putCompanyNegotiationSettings(settings: CompanyNegotiationSettings): Promise<void> {
-        const url = `${this.url}/company-settings/negotiation`;
+    putCompanyNegotiationSettings(settings: CompanyNegotiationSettings, partyId: string): Promise<void> {
+        const url = `${this.url}/company-settings/${partyId}/negotiation`;
         const token = 'Bearer '+this.cookieService.get("bearer_token");
         const headers_token = new Headers({ 'Content-Type': 'application/json', 'Authorization': token });
         return this.http

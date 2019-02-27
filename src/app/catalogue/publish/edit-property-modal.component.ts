@@ -30,17 +30,20 @@ export class EditPropertyModalComponent implements OnInit {
 
     }
 
-    open(property: ItemProperty, selectedProperty: SelectedProperty) {
+    open(property: ItemProperty, selectedProperty: SelectedProperty, ref: any) {
         this.selectedProperty = selectedProperty;
         this.property = copy(property);
         this.addEmptyValuesToProperty();
         this.modalService.open(this.modal).result.then(() => {
             // on OK, update the property with the values
+            /*
             if(this.property.valueQualifier == "BOOLEAN"){
                 property.value = [createText("false")];
             }else {
                 property.value = this.property.value;
             }
+            */
+            property.value = this.property.value;
             property.valueBinary = this.property.valueBinary;
             property.valueDecimal = this.property.valueDecimal;
             property.valueQuantity = this.property.valueQuantity;
@@ -49,15 +52,26 @@ export class EditPropertyModalComponent implements OnInit {
                 property.name = this.property.name;
                 property.valueQualifier = this.property.valueQualifier;
             }
+            if (ref) {
+              //console.log(property.value);
+              ref.push(property);
+            }
         }, () => {
 
         });
     }
 
     addEmptyValuesToProperty() {
-        // if(this.property.value.length === 0) {
-        //     this.property.value.push(createText(''));
-        // }
+        if(this.property.name.length === 0) {
+          this.property.name.push(createText(''));
+        }
+        if(this.property.value.length === 0) {
+          if (this.property.valueQualifier == "BOOLEAN") {
+              this.property.value.push(createText('false'));
+          } else {
+              this.property.value.push(createText(''));
+          }
+        }
         if(this.property.valueDecimal.length === 0) {
             this.property.valueDecimal.push(0);
         }
@@ -108,6 +122,7 @@ export class EditPropertyModalComponent implements OnInit {
     }
 
     // TEST
+    /*
     private newPvalue: Text = new Text(null,DEFAULT_LANGUAGE());
     private languages: Array<string> = LANGUAGES;
 
@@ -118,12 +133,19 @@ export class EditPropertyModalComponent implements OnInit {
 
         this.newPvalue = new Text(null,DEFAULT_LANGUAGE());
     }
+    */
+
+    private languages: Array<string> = LANGUAGES;
+    addPropertyValue() {
+      this.property.value.push(createText(''));
+    }
 
     deletePropertyValue(index) {
         this.property.value.splice(index, 1);
     }
 
     // TEST
+    /*
     private newPname: Text = new Text(null,DEFAULT_LANGUAGE());
 
     addPropertyName() {
@@ -132,6 +154,11 @@ export class EditPropertyModalComponent implements OnInit {
         this.property.name.push(propertyNameText);
 
         this.newPname = new Text(null,DEFAULT_LANGUAGE());
+    }
+    */
+
+    addPropertyName() {
+        this.property.name.push(createText(''));
     }
 
     deletePropertyName(index) {
@@ -178,6 +205,14 @@ export class EditPropertyModalComponent implements OnInit {
 
     setValue(i: number, event: any) {
         this.property.value[i].value = event.target.value;
+    }
+
+    setBooleanValue(i: number, event:any) {
+      //console.log(event.target.checked);
+      if (event.target.checked)
+        this.property.value[i].value = "true";
+      else
+        this.property.value[i].value = "false";
     }
 
     setValueDecimal(i: number, event: any) {
