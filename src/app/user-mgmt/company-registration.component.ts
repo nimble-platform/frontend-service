@@ -46,6 +46,7 @@ export class CompanyRegistrationComponent implements OnInit {
     ngOnInit() {
         this.registrationForm = this._fb.group({
             name: [''],
+            brandName: [''],
       			vatNumber: [''],
             logo: [''],
       			verificationInformation: [''],
@@ -100,6 +101,7 @@ export class CompanyRegistrationComponent implements OnInit {
                 createTextObject(model.getRawValue()['businessKeywords']),
                 model.getRawValue()['businessType'],
                 createTextObject(model.getRawValue()['name']),
+                createTextObject(model.getRawValue()['brandName']),
                 [sectorString],
                 model.getRawValue()['vatNumber'],
                 model.getRawValue()['verificationInformation'],
