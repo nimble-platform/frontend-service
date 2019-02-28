@@ -33,6 +33,7 @@ export class CompanyRegistrationComponent implements OnInit {
      vatSkipped = false;
      vatValidated = false;
      vat = "";
+     forceActText = false;
 
     constructor(private _fb: FormBuilder,
 				        private appComponent: AppComponent,

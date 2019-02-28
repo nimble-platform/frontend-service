@@ -21,6 +21,7 @@ export class CompanyDataSettingsComponent implements OnInit {
     tooltipHTML: string;
     config = myGlobals.config;
     alertClosed = false;
+    forceActText = false;
     saveCallStatus: CallStatus = new CallStatus();
     @Output() onSaveEvent: EventEmitter<void> = new EventEmitter();
 
