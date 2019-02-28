@@ -34,11 +34,16 @@ export const CURRENCIES = [
     "SEK"
 ]
 
+export const CATALOGUE_LINE_SORT_OPTIONS = [
+    { name: "PRICE_LOW_TO_HIGH", value: "Price:Low to High"},
+    { name: "PRICE_HIGH_TO_LOW", value: "Price:High to Low"}
+]
+
 export const CUSTOM_PROPERTY_LIST_ID = "Custom";
 
 export const PROPERTY_TYPES: Option[] = [
     { name: "Text", value: "STRING" },
-    { name: "Number", value: "REAL_MEASURE" },
+    { name: "Number", value: "NUMBER" },
     { name: "Image", value: "BINARY" },
     { name: "File", value: "BINARY" },
     { name: "Quantity", value: "QUANTITY" },
@@ -83,3 +88,13 @@ export const DISCOUNT_TARGETS = {
 };
 
 export const DISCOUNT_UNITS = CURRENCIES.concat(['%']);
+
+export const LANGUAGES:Array<string>  = ["en", "es", "de", "tr", "it"];
+
+export const DEFAULT_LANGUAGE = function () {
+    let languageId = navigator.language.indexOf('-') == -1 ? navigator.language : navigator.language.substring(0,navigator.language.indexOf('-'));
+    if(LANGUAGES.indexOf(languageId) == -1){
+        return "en";
+    }
+    return languageId;
+};

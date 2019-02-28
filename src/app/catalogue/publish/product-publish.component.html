@@ -28,7 +28,7 @@
         <div class="col-10 object-list">
             <div *ngFor="let selectedCategory of selectedCategories"
                  class="bordered my-1 ml-1" title="{{selectedCategory.taxonomyId}}">
-                <small class="p-0">{{selectedCategory.preferredName}}</small>
+                <small class="p-0">{{selectPreferredName(selectedCategory)}}</small>
                 <i class="fa fa-times-circle pl-1" placement="right" (click)="onRemoveCategory(selectedCategory)"></i>
             </div>
             <button class="btn btn-outline-primary btn-add-category"
@@ -40,7 +40,10 @@
 
     <div class="d-flex mt-3 mb-4">
         <label class="col-9">1. Download the product / service category template</label>
-        <button class="btn btn-secondary col-3"
+        <select [(ngModel)]="templateLanguage" class="form-control col-1" type="text" style="margin-right: 1px">
+            <option *ngFor='let language of languages' [value]="language" [selected]="templateLanguage === language">{{language}}</option>
+        </select>
+        <button class="btn btn-secondary col-2"
                 (click)="downloadTemplate()">Download template
         </button>
     </div>
@@ -92,7 +95,7 @@
         <div class="col-10 object-list">
             <div *ngFor="let selectedCategory of selectedCategories"
                 class="bordered my-1 ml-1" title="{{selectedCategory.taxonomyId}}">
-                <small class="p-0">{{selectedCategory.preferredName}}</small>
+                <small class="p-0">{{selectPreferredName(selectedCategory)}}</small>
                 <i class="fa fa-times-circle pl-1" placement="right" (click)="onRemoveCategory(selectedCategory)"></i>
             </div>
             <button class="btn btn-outline-primary btn-add-category"
@@ -117,16 +120,20 @@
         </div>
 
         <div class="col-9">
-            <!-- Name -->
-            <text-input label="Name" [(text)]="catalogueLine.goodsItem.item.name" [rows]="1" [maxLength]="2047">
-            </text-input>
-
-            <!-- Description -->
-            <text-input label="Description" [(text)]="catalogueLine.goodsItem.item.description" [rows]="6" [maxLength]="2047" rowClass="space-before">
-            </text-input>
-
+            <div *ngFor="let itemName of catalogueLine.goodsItem.item.name; let i = index" class="space-after">
+                <!-- Name -->
+                <text-input label="Name" [(text)]="itemName.value" [rows]="1" [maxLength]="2047" [rowClass]="'m-0'" [valueClass]="'col-8'" [(languageId)]="itemName.languageID" [languageIdClass]="'col-1'" (languageIdChange)="catalogueLine.goodsItem.item.name[i].languageID = $event;catalogueLine.goodsItem.item.description[i].languageID = $event">
+                </text-input>
+                <!-- Description -->
+                <text-input *ngIf="i==0" label="Description" [(text)]="catalogueLine.goodsItem.item.description[i].value" [rows]="6" [maxLength]="2047" [rowClass]="'m-0 space-before'" [valueClass]="'col-8'">
+                </text-input>
+                <!-- Description -->
+                <text-input *ngIf="i>0" label="Description" [(text)]="catalogueLine.goodsItem.item.description[i].value" [rows]="6" [maxLength]="2047" [rowClass]="'m-0 space-before'" [flexClass]="'col-1 pr-0'" [valueClass]="'col-8'" (deleteTextInput)="deleteItemNameDescription(i)" [deleteButtonStyle]="'btn-danger'">
+                </text-input>
+            </div>
+            <div class="col-12 pr-0 align-right"><button class='btn btn-outline-primary' (click)="addItemNameDescription()">Add Name & Description</button></div>
             <!-- product ID -->
-            <div class="col-12"><small class="float-right">ID: {{ catalogueLine.goodsItem.item.manufacturersItemIdentification.id }}</small></div>
+            <div class="col-12 pr-0 space-before"><small class="float-right">ID: {{ catalogueLine.goodsItem.item.manufacturersItemIdentification.id }}</small></div>
         </div>
     </div>
 
@@ -212,24 +219,87 @@
         <div class="row space-before details-tab" *ngIf="selectedTabSinglePublish === 'DETAILS'">
             <div class="col-12">
                 <div class="row" *ngFor="let prop of getProductProperties()">
-                    <div class="col-3">
-                        <strong>{{ getPrettyName(prop) }}: </strong>
+                    <div class="col-3" style="align-self:center">
+                        <strong [title]="getDefinition(prop)">{{ getPrettyName(prop) }}: </strong>
                     </div>
-                    <div class="col-8 object-list">
+                    <div class="col-6">
+                        <table *ngIf="prop.valueQualifier === 'BINARY'" class="table table-borderless mb-0">
+                            <tbody>
+                              <tr>
+                                <td>
+                                  <file-input [binaryObjects]="prop.valueBinary" [multiple]="true" [maxSize]=1>
+                                  </file-input>
+                                </td>
+                              </tr>
+                            </tbody>
+                        </table>
+                        <table *ngIf="prop.valueQualifier !== 'BINARY'" class="table table-borderless mb-0">
+                            <tbody>
+                                <tr *ngFor="let value of getValues(prop); let i = index">
+                                    <td *ngIf="prop.valueQualifier === 'STRING'" style="vertical-align:middle">
+                                        <input [(ngModel)]="value.value" class="form-control" type="text" name="{{value.value}}" />
+                                    </td>
+                                    <td *ngIf="prop.valueQualifier === 'STRING'" style="vertical-align:middle">
+                                        <select [(ngModel)]="value.languageID" class="form-control" type="text" name="{{value.languageID}}">
+                                            <option *ngFor='let language of languages' [value]="language" [selected]="language === value.languageID">{{language}}</option>
+                                        </select>
+                                    </td>
+                                    <td *ngIf="prop.valueQualifier === 'QUANTITY'" style="vertical-align:middle">
+                                      <quantity-input [quantity]="prop.valueQuantity[i]" rowClass="quantity-input">
+                                      </quantity-input>
+                                    </td>
+                                    <td *ngIf="prop.valueQualifier === 'BOOLEAN'" style="vertical-align:middle">
+                                      <input type="checkbox" [checked]="prop.value[i].value == 'true'" (change)="setBooleanValue(prop, i, $event)">
+                                    </td>
+                                    <td *ngIf="prop.valueQualifier !== 'STRING' && prop.valueQualifier !== 'QUANTITY' && prop.valueQualifier !== 'BOOLEAN'" style="vertical-align:middle">
+                                      <input type="number" class="form-control form-control-sm value-input" [ngModel]="prop.valueDecimal[i]" (change)="setValueDecimal(prop, i, $event)">
+                                    </td>
+                                    <td *ngIf="i>0 && prop.valueQualifier !== 'BOOLEAN'" class="align-right" style="vertical-align:middle">
+                                        <button class="btn btn-danger"  type="button" (click)="onRemoveValue(prop,i)">&times;</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <!--
+                        <ng-container *ngFor="let value of getValues(prop); let i = index">
+                            <div *ngIf="prop.valueQualifier !== 'BINARY' && prop.valueQualifier !== 'STRING'" [ngSwitch]="prop.valueQualifier">
+                                <ng-container *ngSwitchCase="'QUANTITY'">
+                                  <quantity-input [quantity]="prop.valueQuantity[i]"
+                                      rowClass="quantity-input">
+                                  </quantity-input><br/>
+                                </ng-container>
+                                <ng-container *ngSwitchDefault>
+                                    <input *ngIf="prop.valueQualifier !== 'BOOLEAN'" type="number"
+                                    class="form-control form-control value-input"
+                                        [ngModel]="prop.valueDecimal[i]" (change)="setValueDecimal(prop, i, $event)"><br/>
+                                    <input *ngIf="prop.valueQualifier === 'BOOLEAN'" type="checkbox"
+                                        [checked]="prop.value[i].value == 'true'" (change)="setBooleanValue(prop, i, $event)"><br/>
+                                </ng-container>
+                                <div *ngIf="prop.valueQualifier !== 'BOOLEAN' && prop.valueQualifier !== 'BINARY'">
+                                    <button class="btn btn-danger" [disabled]="i==0" (click)="onRemoveValue(prop,i)">&times;</button>
+                                </div>
+                            </div>
+                        </ng-container>
                         <input type="checkbox" class="form-check-input boolean-value-input"
-                            [checked]="prop.value[0] == 'true'" *ngIf="prop.valueQualifier === 'BOOLEAN'"
-                            (change)="prop.value[0] == 'true ' ? prop.value[0] = 'false' : prop.value[0] = 'true'">
+                            [checked]="prop.value[0].value == 'true'" *ngIf="prop.valueQualifier === 'BOOLEAN'"
+                            (change)="prop.value[0].value == 'true' ? prop.value[0].value = 'false' : prop.value[0].value = 'true'">
                         <ng-container *ngIf="prop.valueQualifier !== 'BOOLEAN'">
-                            <div *ngFor="let value of getValuesAsString(prop); let i = index"
-                                class="bordered value-pill" title="{{ value }}">
-                                <span class="mr-1">{{ value }}</span>
-                                <i class="fa fa-times-circle mt-1" placement="right" (click)="onRemoveValue(prop, i)"></i>
+                            <div *ngFor="let value of getValuesAsString(prop); let i = index">
+                                <div *ngIf="value!=''" class="bordered value-pill" title="{{ value }}">
+                                  <span>{{ value }}</span>
+                                </div>
                             </div>
                             <button class="btn btn-outline-primary btn-add-category" (click)="onEditProperty(prop)">Edit Value(s)</button>
                         </ng-container>
+                        -->
                     </div>
-                    <div class="col-1">
-                        <button class="btn btn-danger btn-remove-property" (click)="onRemoveProperty(prop)">Remove</button>
+                    <div class="col-3 align-right" style="align-self:center">
+                        <button class="btn btn-outline-primary" (click)="onAddValue(prop)"
+                            *ngIf="prop.valueQualifier !== 'BOOLEAN' && prop.valueQualifier !== 'BINARY'">
+                            Add
+                        </button>
+                        <button class="btn btn-outline-primary ml-1" (click)="onEditProperty(prop)">Edit</button>
+                        <button class="btn btn-danger ml-1" (click)="onRemoveProperty(prop)">Delete</button>
                     </div>
                 </div>
                 <div *ngIf="!hasSelectedProperties()" class="space-before">
@@ -238,7 +308,7 @@
                         Select properties from product / service categories.
                     </a>
                 </div>
-                <div *ngIf="hasSelectedProperties()">
+                <div *ngIf="hasSelectedProperties()" class="space-before">
                     <a href class="btn-link" (click)="showCategoriesModal(categoriesModal, $event)">Add more properties from product / service categories.</a>
                 </div>
             </div>
@@ -308,7 +378,7 @@
         <div class="row space-before"[hidden]="selectedTabSinglePublish !== 'PRICE'">
             <div class="col-12">
                 <div class="row" *ngFor="let prop of getProductProperties()">
-                    <div class="col-3">
+                    <div class="col-3" style="align-self:center">
                         <strong>{{ getPrettyName(prop) }}: </strong>
                     </div>
                     <div class="col-8 object-list">
@@ -316,16 +386,20 @@
                             [checked]="prop.value[0] == 'true'" *ngIf="prop.valueQualifier === 'BOOLEAN'"
                             (change)="prop.value[0] == 'true ' ? prop.value[0] = 'false' : prop.value[0] = 'true'">
                         <ng-container *ngIf="prop.valueQualifier !== 'BOOLEAN'">
-                            <div *ngFor="let value of getValuesAsString(prop); let i = index"
-                                class="bordered value-pill" title="{{ value }}">
-                                <span class="mr-1">{{ value }}</span>
-                                <i class="fa fa-times-circle mt-1" placement="right" (click)="onRemoveValue(prop, i)"></i>
+                            <div *ngFor="let value of getValuesAsString(prop); let i = index">
+                                <div *ngIf="value!=''" class="bordered value-pill" title="{{ value }}">
+                                  <span>{{ value }}</span>
+                                  <!--
+                                  <span class="mr-1">{{ value }}</span>
+                                  <i class="fa fa-times-circle mt-1" placement="right" (click)="onRemoveValue(prop, i)"></i>
+                                  -->
+                                </div>
                             </div>
                             <button class="btn btn-outline-primary btn-add-category" (click)="onEditProperty(prop)">Edit Value(s)</button>
                         </ng-container>
                     </div>
-                    <div class="col-1">
-                        <button class="btn btn-danger btn-remove-property" (click)="onRemoveProperty(prop)">Remove</button>
+                    <div class="col-1" style="align-self:center">
+                        <button class="btn btn-danger btn-remove-property" (click)="onRemoveProperty(prop)">Delete</button>
                     </div>
                 </div>
                 <div *ngIf="!hasSelectedProperties()" class="space-before">
@@ -334,16 +408,17 @@
                         Select properties from product / service categories.
                     </a>
                 </div>
-                <div *ngIf="hasSelectedProperties()">
+                <div *ngIf="hasSelectedProperties()" class="space-before">
                     <a href class="btn-link" (click)="showCategoriesModal(categoriesModal, $event)">Add more properties from product / service categories.</a>
                 </div>
             </div>
         </div>
     </div>
 
+    <hr>
 
     <!-- Actions -->
-    <div class="row actions-row">
+    <div class="row actions-row pr-0">
         <div class="col-7 call-status-col"><call-status [callStatus]="publishStatus"></call-status></div>
         <div class="col-2">
             <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">
@@ -377,13 +452,21 @@
                 </div>
                 <div class="modal-category" *ngFor="let category of selectedCategories; let i = index">
                     <hr *ngIf="i > 0">
-                    <h5>{{ category.preferredName }}</h5>
+                    <h5>{{ selectPreferredName(category) }}</h5>
+                    <div class="row">
+                      <div class="col-12">
+                        <a href class="btn-link" (click)="selectAllProperties(category,$event)">Select all</a>
+                        or
+                        <a href class="btn-link" (click)="selectNoProperties(category,$event)">Select none</a>
+                      </div>
+                    </div>
+                    <hr>
                     <div class="row">
                         <ng-container *ngFor="let property of getCategoryProperties(category)">
                             <div class="col-6 form-check modal-category-property" *ngIf="isPropertyFilteredIn(property)">
                                 <input type="checkbox" class="form-check-input" [ngModel]="isCategoryPropertySelected(category, property)"
                                     (change)="onToggleCategoryPropertySelected(category, property)">
-                                <label class="form-check-label">{{ property.preferredName }} ({{ getPropertyType(property) }})</label>
+                                <label class="form-check-label">{{ selectPreferredName(property) }} ({{ getPropertyType(property) }})</label>
                             </div>
                         </ng-container>
                     </div>

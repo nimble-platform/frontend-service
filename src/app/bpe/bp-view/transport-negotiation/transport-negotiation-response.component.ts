@@ -105,13 +105,13 @@ export class TransportNegotiationResponseComponent implements OnInit {
 
     onRespondToQuotation(accepted: boolean): void {
         if(accepted) {
-            this.quotation.documentStatusCode.name = NEGOTIATION_RESPONSES.TERMS_UPDATED;
+            this.quotation.documentStatusCode.name = NEGOTIATION_RESPONSES.ACCEPTED;
         } else {
             this.quotation.documentStatusCode.name = NEGOTIATION_RESPONSES.REJECTED;
         }
 
-        const vars: ProcessVariables = ModelUtils.createProcessVariables("Negotiation", this.bpDataService.requestForQuotation.buyerCustomerParty.party.id,
-            this.bpDataService.requestForQuotation.sellerSupplierParty.party.id, this.cookieService.get("user_id"),this.quotation, this.bpDataService);
+        const vars: ProcessVariables = ModelUtils.createProcessVariables("Negotiation", UBLModelUtils.getPartyId(this.bpDataService.requestForQuotation.buyerCustomerParty.party),
+            UBLModelUtils.getPartyId(this.bpDataService.requestForQuotation.sellerSupplierParty.party), this.cookieService.get("user_id"),this.quotation, this.bpDataService);
         const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.processMetadata.processId);
 
         this.callStatus.submit();

@@ -16,4 +16,13 @@
     <div [class]="valueClass" *ngIf="presentationMode === 'view' && visible">
         <p class="{{valueTextClass}}">{{ text }}</p>
     </div>
+
+    <select class="form-control {{languageIdClass}}" *ngIf="languageIdClass != ''" [(ngModel)]="languageId" >
+        <option *ngFor='let language of languages' [value]="language">{{language}}</option>
+    </select>
+
+    <div class="d-flex align-items-end justify-content-end {{flexClass}}">
+        <button *ngIf="addButtonStyle != ''" class="btn {{addButtonStyle}}"  type="button" (click)="onAddTextInput()">Add</button>
+        <button *ngIf="deleteButtonStyle != ''" class="btn {{deleteButtonStyle}} "   type="button" (click)="onDeleteTextInput()" >Delete</button>
+    </div>
 </div>

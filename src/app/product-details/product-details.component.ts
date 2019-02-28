@@ -76,10 +76,20 @@ export class ProductDetailsComponent implements OnInit {
                     })
                     .then(settings => {
                         this.settings = settings;
-                        this.priceWrapper = new PriceWrapper(this.line.requiredItemLocationQuantity.price,new Quantity(1, this.line.requiredItemLocationQuantity.price.baseQuantity.unitCode),this.line.priceOption);
+                        this.priceWrapper = new PriceWrapper(
+                            this.line.requiredItemLocationQuantity.price,
+                            new Quantity(1,this.line.requiredItemLocationQuantity.price.baseQuantity.unitCode),
+                            this.line.priceOption,
+                            [],
+                            this.line.goodsItem.deliveryTerms.incoterms,
+                            settings.negotiationSettings.paymentMeans[0],
+                            this.line.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure);
                         this.wrapper = new ProductWrapper(this.line, settings.negotiationSettings,this.priceWrapper.quantity);
                         this.bpDataService.setCatalogueLines([this.line], [settings]);
                         this.getProductStatus.callback("Retrieved product details", true);
+                        // we have to set bpStartEvent.workflowOptions here
+                        // in BPDataService,chooseFirstValuesOfItemProperties method, we use this workflowOptions to select values of the properties correctly
+                        this.bpDataService.bpStartEvent.workflowOptions = this.options;
                     })
                     .catch(error => {
                         this.getProductStatus.error("Failed to retrieve product details", error);

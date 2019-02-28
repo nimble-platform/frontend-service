@@ -17,7 +17,17 @@ import { CookieService } from "ng2-cookies";
 import { Category } from "../model/category/category";
 import { BinaryObject } from "../model/publish/binary-object";
 import { Code } from "../model/publish/code";
-import { getPropertyKey, sortCategories, sortProperties, sanitizeDataTypeName, sanitizePropertyName, copy, isCustomProperty, getPropertyValuesAsStrings } from "../../common/utils";
+import {
+    getPropertyKey,
+    sortCategories,
+    sortProperties,
+    sanitizeDataTypeName,
+    sanitizePropertyName,
+    copy,
+    isCustomProperty,
+    getPropertyValuesAsStrings,
+    selectPreferredName, selectName, createText, getPropertyValues
+} from '../../common/utils';
 import { Property } from "../model/category/property";
 import { ProductWrapper } from "../../common/product-wrapper";
 import { EditPropertyModalComponent } from "./edit-property-modal.component";
@@ -29,11 +39,15 @@ import { Subject } from "rxjs/Subject";
 import 'rxjs/add/observable/fromPromise'
 import 'rxjs/add/observable/interval';
 import 'rxjs/add/operator/takeUntil';
-import {Catalogue} from "../model/publish/catalogue";
+import {LANGUAGES, DEFAULT_LANGUAGE} from '../model/constants';
 import * as myGlobals from '../../globals';
+import {CataloguePaginationResponse} from '../model/publish/catalogue-pagination-response';
+import {Party} from '../model/publish/party';
 
 
 type ProductType = "product" | "transportation";
+import {Text} from "../model/publish/text";
+import {Catalogue} from '../model/publish/catalogue';
 
 interface SelectedProperties {
     [key: string]: SelectedProperty;
@@ -111,6 +125,8 @@ export class ProductPublishComponent implements OnInit {
 
     json = JSON;
 
+    // the language of template
+    templateLanguage = "en";
     // used to add a new property which has a unit
     private quantity = new Quantity(null, null);
 
@@ -137,12 +153,12 @@ export class ProductPublishComponent implements OnInit {
         this.userService.getUserParty(userId).then(party => {
             return Promise.all([
                 Promise.resolve(party),
-                this.catalogueService.getCatalogue(userId),
-                this.userService.getCompanyNegotiationSettingsForParty(party.id)
+                this.catalogueService.getCatalogueResponse(userId),
+                this.userService.getCompanyNegotiationSettingsForParty(UBLModelUtils.getPartyId(party))
             ])
         })
-        .then(([party, catalogue, settings]) => {
-            this.initView(party, catalogue, settings);
+        .then(([party, catalogueResponse, settings]) => {
+            this.initView(party, catalogueResponse, settings);
             this.publishStateService.publishingStarted = true;
             this.callStatus.callback("Successfully initialized.", true);
         })
@@ -169,6 +185,10 @@ export class ProductPublishComponent implements OnInit {
 
     ngOnDestroy() {
         this.ngUnsubscribe.next()
+    }
+
+    selectPreferredName(cp: Category | Property) {
+        return selectPreferredName(cp);
     }
 
     /*
@@ -259,10 +279,9 @@ export class ProductPublishComponent implements OnInit {
     onAddCustomProperty(event: Event, dismissModal: any) {
         event.preventDefault();
         dismissModal("add property")
-
         const property = UBLModelUtils.createAdditionalItemProperty(null, null);
-        this.catalogueLine.goodsItem.item.additionalItemProperty.push(property);
-        this.editPropertyModal.open(property, null);
+        //this.catalogueLine.goodsItem.item.additionalItemProperty.push(property);
+        this.editPropertyModal.open(property, null, this.catalogueLine.goodsItem.item.additionalItemProperty);
     }
 
     onRemoveProperty(property: ItemProperty) {
@@ -324,14 +343,69 @@ export class ProductPublishComponent implements OnInit {
         return selectedProp.selected;
     }
 
+    selectAllProperties(category: Category, event?: Event): any {
+      if(event) {
+          event.preventDefault();
+      }
+      var properties = this.getCategoryProperties(category);
+      for(let property of properties) {
+        if (!this.isCategoryPropertySelected(category,property))
+          this.onToggleCategoryPropertySelected(category,property);
+      }
+    }
+
+    selectNoProperties(category: Category, event?: Event): any {
+      if(event) {
+          event.preventDefault();
+      }
+      var properties = this.getCategoryProperties(category);
+      for(let property of properties) {
+        if (this.isCategoryPropertySelected(category,property))
+          this.onToggleCategoryPropertySelected(category,property);
+      }
+    }
+
     getPropertyType(property: Property): string {
         return sanitizeDataTypeName(property.dataType);
     }
 
     isValidCatalogueLine(): boolean {
         // must have a name
-        return this.catalogueLine.goodsItem.item.name !== "";
+        return this.catalogueLine.goodsItem.item.name[0] && this.catalogueLine.goodsItem.item.name[0].value !== "";
     }
+
+    // TEST
+    /*
+    private newItemName: Text = new Text(null,DEFAULT_LANGUAGE());
+    private newItemDescription: Text = new Text(null,DEFAULT_LANGUAGE());
+    private languages: Array<string> = LANGUAGES;
+
+
+    addItemNameDescription(){
+        let nameText = new Text(this.newItemName.value, this.newItemName.languageID);
+        let descriptionText = new Text(this.newItemDescription.value, this.newItemDescription.languageID);
+
+        this.catalogueLine.goodsItem.item.name.push(nameText);
+        this.catalogueLine.goodsItem.item.description.push(descriptionText);
+
+        this.newItemName = new Text(null,DEFAULT_LANGUAGE());
+        this.newItemDescription = new Text(null,DEFAULT_LANGUAGE());
+    }
+    */
+
+    addItemNameDescription() {
+      let newItemName: Text = new Text("",DEFAULT_LANGUAGE());
+      let newItemDescription: Text = new Text("",DEFAULT_LANGUAGE());
+      this.catalogueLine.goodsItem.item.name.push(newItemName);
+      this.catalogueLine.goodsItem.item.description.push(newItemDescription);
+    }
+
+    deleteItemNameDescription(index){
+        this.catalogueLine.goodsItem.item.name.splice(index, 1);
+        this.catalogueLine.goodsItem.item.description.splice(index, 1);
+    }
+
+    //////
 
     private recomputeSelectedProperties() {
         const oldSelectedProps = this.selectedProperties;
@@ -339,24 +413,26 @@ export class ProductPublishComponent implements OnInit {
         const newSelectedProps = this.selectedProperties;
 
         for(const category of this.selectedCategories) {
-            for(const property of category.properties) {
-                const key = getPropertyKey(property);
-                if(!this.selectedProperties[key]) {
-                    const oldProp = oldSelectedProps[key];
-                    this.selectedProperties[key] = {
-                        categories: [],
-                        properties: [],
-                        lunrSearchId: null,
-                        key,
-                        selected: oldProp && oldProp.selected,
-                        preferredName: property.preferredName,
-                        shortName: property.shortName
-                    };
-                }
+            if(category.properties){
+                for(const property of category.properties) {
+                    const key = getPropertyKey(property);
+                    if(!this.selectedProperties[key]) {
+                        const oldProp = oldSelectedProps[key];
+                        this.selectedProperties[key] = {
+                            categories: [],
+                            properties: [],
+                            lunrSearchId: null,
+                            key,
+                            selected: oldProp && oldProp.selected,
+                            preferredName: property.preferredName,
+                            shortName: property.shortName
+                        };
+                    }
 
-                const newProp = this.selectedProperties[key];
-                newProp.properties.push(property);
-                newProp.categories.push(category);
+                    const newProp = this.selectedProperties[key];
+                    newProp.properties.push(property);
+                    newProp.categories.push(category);
+                }
             }
         }
 
@@ -377,11 +453,30 @@ export class ProductPublishComponent implements OnInit {
     }
 
     getPrettyName(property: ItemProperty): string {
-        return sanitizePropertyName(property.name);
+        return sanitizePropertyName(selectName(property));
     }
 
     getValuesAsString(property: ItemProperty): string[] {
         return getPropertyValuesAsStrings(property);
+    }
+
+    private languages: Array<string> = LANGUAGES;
+    onAddValue(property: ItemProperty) {
+        switch(property.valueQualifier) {
+            case "INT":
+            case "DOUBLE":
+            case "NUMBER":
+                property.valueDecimal.push(0);
+                break;
+            case "QUANTITY":
+                property.valueQuantity.push(new Quantity(0, ""));
+                break;
+            case "STRING":
+                property.value.push(createText(''));
+                break;
+            default:
+                // BINARY and BOOLEAN: nothing
+        }
     }
 
     onRemoveValue(property: ItemProperty, index: number) {
@@ -389,7 +484,6 @@ export class ProductPublishComponent implements OnInit {
             case "INT":
             case "DOUBLE":
             case "NUMBER":
-            case "REAL_MEASURE":
                 property.valueDecimal.splice(index, 1);
                 break;
             case "QUANTITY":
@@ -403,9 +497,60 @@ export class ProductPublishComponent implements OnInit {
         }
     }
 
+    addEmptyValuesToProperty(property: ItemProperty) {
+        if(property.value.length === 0) {
+          if (property.valueQualifier == "BOOLEAN") {
+              property.value.push(createText('false'));
+          } else {
+              property.value.push(createText(''));
+          }
+        }
+        if(property.valueDecimal.length === 0) {
+            property.valueDecimal.push(0);
+        }
+        if(property.valueQuantity.length === 0) {
+            property.valueQuantity.push(new Quantity());
+        }
+    }
+
+    getDefinition(property: ItemProperty): string {
+      const key = getPropertyKey(property);
+      let selProp = this.selectedProperties[key];
+      if(!selProp) {
+          return "No definition."
+      }
+      for(const prop of selProp.properties) {
+          if(prop.definition && prop.definition !== "") {
+              return prop.definition;
+          }
+      }
+      return "No definition."
+    }
+
+    getValues(property: ItemProperty): any[] {
+        let values = getPropertyValues(property);
+        this.addEmptyValuesToProperty(property);
+        return values;
+    }
+
+    setValue(property: ItemProperty, i: number, event: any) {
+        property.value[i].value = event.target.value;
+    }
+
+    setBooleanValue(property: ItemProperty, i: number, event:any) {
+      if (event.target.checked)
+        property.value[i].value = "true";
+      else
+        property.value[i].value = "false";
+    }
+
+    setValueDecimal(property: ItemProperty, i: number, event: any) {
+        property.valueDecimal[i] = event.target.value;
+    }
+
     onEditProperty(property: ItemProperty) {
         const key = getPropertyKey(property);
-        this.editPropertyModal.open(property, this.selectedProperties[key]);
+        this.editPropertyModal.open(property, this.selectedProperties[key], null);
     }
 
     showCategoriesModal(categoriesModal: any, event: Event) {
@@ -485,14 +630,14 @@ export class ProductPublishComponent implements OnInit {
         return true;
     }
 
-    private initView(userParty, userCatalogue, settings): void {
+    private initView(userParty, catalogueResponse:CataloguePaginationResponse, settings): void {
         this.companyNegotiationSettings = settings;
         this.catalogueService.setEditMode(true);
         this.publishStateService.resetData();
         // Following "if" block is executed when redirected by an "edit" button
         // "else" block is executed when redirected by "publish" tab
-        let publishMode = this.publishStateService.publishMode;
-        if (publishMode == 'edit') {
+        this.publishMode = this.publishStateService.publishMode;
+        if (this.publishMode == 'edit') {
             this.catalogueLine = this.catalogueService.draftCatalogueLine;
             if (this.catalogueLine == null) {
                 this.publishStateService.publishMode = 'create';
@@ -552,11 +697,13 @@ export class ProductPublishComponent implements OnInit {
             // new publishing is the first entry to the publishing page
             // i.e. publishing from scratch
             if (this.publishStateService.publishingStarted == false) {
-                    this.catalogueLine = UBLModelUtils.createCatalogueLine(userCatalogue.uuid, userParty, settings);
+                    this.catalogueLine = UBLModelUtils.createCatalogueLine(catalogueResponse.catalogueUuid, userParty, settings);
                     this.catalogueService.draftCatalogueLine = this.catalogueLine;
             } else {
                 this.catalogueLine = this.catalogueService.draftCatalogueLine;
             }
+            if (this.catalogueLine.goodsItem.item.name.length == 0)
+              this.addItemNameDescription();
             this.productWrapper = new ProductWrapper(this.catalogueLine, settings);
 
             for (let category of this.categoryService.selectedCategories) {
@@ -566,7 +713,6 @@ export class ProductPublishComponent implements OnInit {
                 }
             }
         }
-
         this.recomputeSelectedProperties();
     }
 
@@ -630,21 +776,27 @@ export class ProductPublishComponent implements OnInit {
         this.checkProductNature(splicedCatalogueLine);
 
         this.publishStatus.submit();
-        if (this.catalogueService.catalogue.uuid == null) {
-            // add new line to the end of catalogue
-            this.catalogueService.catalogue.catalogueLine.push(splicedCatalogueLine);
+        if (this.catalogueService.catalogueResponse.catalogueUuid == null) {
+            const userId = this.cookieService.get("user_id");
+            this.callStatus.submit();
+            this.userService.getUserParty(userId).then(userParty => {
+                // create the catalogue
+                let catalogue:Catalogue = new Catalogue("default", null, userParty, "", "", []);
+                // add catalogue line to the end of catalogue
+                catalogue.catalogueLine.push(splicedCatalogueLine);
 
-            this.catalogueService.postCatalogue(this.catalogueService.catalogue)
-                .then(() => this.onSuccessfulPublish())
-                .catch(err => {
-                    this.catalogueService.catalogue.catalogueLine.pop();
-                    this.onFailedPublish(err);
-                })
+                this.catalogueService.postCatalogue(catalogue)
+                    .then(() => this.onSuccessfulPublish())
+                    .catch(err => {
+                        this.onFailedPublish(err);
+                    })
+            }).catch(err => {
+                this.onFailedPublish(err);
+            });
+
         } else {
-            this.catalogueService.addCatalogueLine(this.catalogueService.catalogue.uuid,JSON.stringify(splicedCatalogueLine))
+            this.catalogueService.addCatalogueLine(this.catalogueService.catalogueResponse.catalogueUuid,JSON.stringify(splicedCatalogueLine))
                 .then(() => {
-                    // add new line to the end of catalogue
-                    this.catalogueService.catalogue.catalogueLine.push(splicedCatalogueLine);
                     this.onSuccessfulPublish();
                 })
                 .catch(err=> this.onFailedPublish(err))
@@ -662,19 +814,12 @@ export class ProductPublishComponent implements OnInit {
         // nullify the transportation service details if a regular product is being published
         this.checkProductNature(splicedCatalogueLine);
 
-        // Replace original line in the catalogue with the edited version
-        const indexOfOriginalLine = this.catalogueService.catalogue.catalogueLine.findIndex(line => line.id === this.catalogueLine.id);
-        const originalLine = this.catalogueService.catalogue.catalogueLine[indexOfOriginalLine];
-        this.catalogueService.catalogue.catalogueLine[indexOfOriginalLine] = splicedCatalogueLine;
-        this.catalogueLine = splicedCatalogueLine
-
         this.publishStatus.submit();
 
-        this.catalogueService.updateCatalogueLine(this.catalogueService.catalogue.uuid,JSON.stringify(splicedCatalogueLine))
+        this.catalogueService.updateCatalogueLine(this.catalogueService.catalogueResponse.catalogueUuid,JSON.stringify(splicedCatalogueLine))
             .then(() => this.onSuccessfulPublish())
             .then(() => this.changePublishModeToCreate())
             .catch(err => {
-                this.catalogueService.catalogue.catalogueLine[indexOfOriginalLine] = originalLine;
                 this.onFailedPublish(err);
             });
 
@@ -703,8 +848,7 @@ export class ProductPublishComponent implements OnInit {
         let propertiesToBeSpliced: ItemProperty[] = [];
         for (let property of properties) {
             let valueQualifier: string = property.valueQualifier.toLocaleLowerCase();
-            if (valueQualifier == "real_measure" ||
-                valueQualifier == "int" ||
+            if (valueQualifier == "int" ||
                 valueQualifier == "double" ||
                 valueQualifier == "number") {
                 property.valueDecimal = property.valueDecimal.filter(function (el){
@@ -725,7 +869,7 @@ export class ProductPublishComponent implements OnInit {
                 }
 
             } else {
-                if (property.value.length == 0 || property.value[0] == '') {
+                if (property.value.length == 0 || property.value[0].value == '') {
                     propertiesToBeSpliced.push(property);
                 }
             }
@@ -744,10 +888,8 @@ export class ProductPublishComponent implements OnInit {
 
         let userId = this.cookieService.get("user_id");
         this.userService.getUserParty(userId).then(party => {
-            this.catalogueService.getCatalogueForceUpdate(userId, true).then(catalogue => {
-                this.catalogueService.catalogue = catalogue;
-                const line = this.catalogueLine;
-                this.catalogueLine = UBLModelUtils.createCatalogueLine(catalogue.uuid,
+            this.catalogueService.getCatalogueResponse(userId).then(catalogueResponse => {
+                this.catalogueLine = UBLModelUtils.createCatalogueLine(catalogueResponse.catalogueUuid,
                     party, this.companyNegotiationSettings);
                 this.catalogueService.draftCatalogueLine = this.catalogueLine;
 
@@ -795,7 +937,7 @@ export class ProductPublishComponent implements OnInit {
         if (event.target.value == "Text") {
             this.newProperty.valueQualifier = "STRING";
         } else if (event.target.value == "Number") {
-            this.newProperty.valueQualifier = "REAL_MEASURE";
+            this.newProperty.valueQualifier = "NUMBER";
         } else if (event.target.value == "Image" || event.target.value == "File") {
             this.newProperty.valueQualifier = "BINARY";
         } else if(event.target.value == "Quantity"){
@@ -860,9 +1002,9 @@ export class ProductPublishComponent implements OnInit {
      */
     private addCustomProperty(): void {
         if (this.newProperty.valueQualifier == "BOOLEAN"){
-            let filledValues: string[] = [];
+            let filledValues: Text[] = [];
             for (let val of this.newProperty.value) {
-                if (val != "") {
+                if (val.value != "") {
                     filledValues.push(val);
                 }
             }
@@ -879,9 +1021,9 @@ export class ProductPublishComponent implements OnInit {
         }
         // remove empty/undefined values and keep only the the data array relevant to the value qualifier
         else if (this.newProperty.valueQualifier == "STRING") {
-            let filledValues: string[] = [];
+            let filledValues: Text[] = [];
             for (let val of this.newProperty.value) {
-                if (val != "") {
+                if (val.value != "") {
                     filledValues.push(val);
                 }
             }
@@ -891,7 +1033,7 @@ export class ProductPublishComponent implements OnInit {
             this.newProperty.valueBinary = [];
             this.newProperty.valueQuantity = [];
 
-        } else if (this.newProperty.valueQualifier == "REAL_MEASURE") {
+        } else if (this.newProperty.valueQualifier == "NUMBER") {
             let filledValues: number[] = [];
             for (let val of this.newProperty.valueDecimal) {
                 if (val != undefined && val != null && val.toString() != "") {
@@ -934,7 +1076,7 @@ export class ProductPublishComponent implements OnInit {
 
         let userId: string = this.cookieService.get("user_id");
         var reader = new FileReader();
-        this.catalogueService.downloadTemplate(userId, this.categoryService.selectedCategories)
+        this.catalogueService.downloadTemplate(userId, this.categoryService.selectedCategories,this.templateLanguage)
             .then(result => {
                     var link = document.createElement('a');
                     link.id = 'downloadLink';
@@ -969,7 +1111,7 @@ export class ProductPublishComponent implements OnInit {
                 catalogueService.uploadTemplate(userId, file, uploadMode).then(res => {
                         self.publishStatus.callback(null);
                         ProductPublishComponent.dialogBox = false;
-                        self.router.navigate(['dashboard'], {queryParams: {forceUpdate: true, tab: "CATALOGUE"}});
+                        self.router.navigate(['dashboard'], {queryParams: {tab: "CATALOGUE"}});
                     },
                     error => {
                         self.publishStatus.error("Failed to upload the template:  " + error);
@@ -995,7 +1137,7 @@ export class ProductPublishComponent implements OnInit {
                 catalogueService.uploadZipPackage(file).then(res => {
                         self.publishStatus.callback(null);
                         ProductPublishComponent.dialogBox = false;
-                        self.router.navigate(['dashboard'], {queryParams: {forceUpdate: true, tab: "CATALOGUE"}});
+                        self.router.navigate(['dashboard'], {queryParams: {tab: "CATALOGUE"}});
                     },
                     error => {
                         self.publishStatus.error("Failed to upload the image package:  " + error);
@@ -1014,8 +1156,9 @@ export class ProductPublishComponent implements OnInit {
 
     addValueToProperty() {
         if (this.newProperty.valueQualifier == 'STRING') {
-            this.newProperty.value.push('');
-        } else if (this.newProperty.valueQualifier == 'REAL_MEASURE') {
+            let text = createText('');
+            this.newProperty.value.push(text);
+        } else if (this.newProperty.valueQualifier == 'NUMBER') {
             let newNumber: number;
             this.newProperty.valueDecimal.push(newNumber);
         }
@@ -1024,7 +1167,7 @@ export class ProductPublishComponent implements OnInit {
     removeValueFromProperty(valueIndex: number): void {
         if (this.newProperty.valueQualifier == 'STRING') {
             this.newProperty.value.splice(valueIndex, 1)
-        } else if (this.newProperty.valueQualifier == 'REAL_MEASURE') {
+        } else if (this.newProperty.valueQualifier == 'NUMBER') {
             this.newProperty.valueDecimal.splice(valueIndex, 1)
         }
     }

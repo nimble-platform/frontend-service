@@ -4,24 +4,23 @@
     </call-status>
 </div>
 
-<div *ngIf="catalogue && catalogue.catalogueLine.length > 0">
-    <div *ngIf="catalogue.catalogueLine.length > 0">
+<div *ngIf="catalogueResponse && catalogueResponse.categoryNames.length > 0">
+    <div>
         <div class="input-group form-group" style="background-color:#F2F2F2;padding-left: 25px;padding-top: 20px;padding-bottom: 20px;">
-            <input  class="form-control col-3" type="text" [(ngModel)]="searchKey" (keyup)="search()" placeholder="Search ...">
+            <input  class="form-control col-3" type="text" [(ngModel)]="searchText" [ngbTypeahead]="search" placeholder="Search ...">
 
             <label class="space-left space-right"><strong>Category :</strong>
             </label>
-            <select  class="custom-select col-3 space-right" [(ngModel)]="selectedType" (change)="typeChanged()">
+            <select  class="custom-select col-3 space-right" [(ngModel)]="selectedCategory" (change)="requestCatalogue()">
                 <option>All</option>
-                <option *ngFor="let type of typeOfProducts">{{type}}</option>
+                <option *ngFor="let type of categoryNames">{{type}}</option>
             </select>
 
             <label class="space-right"><strong>Sort by:</strong>
             </label>
-            <select  class="custom-select col-3 space-right" [(ngModel)]="sortOption" (change)="sortCatalogueLines()">
+            <select  class="custom-select col-3 space-right" [(ngModel)]="sortOption" (change)="requestCatalogue()">
                 <option></option>
-                <option>Price:Low to High</option>
-                <option>Price:High to Low</option>
+                <option *ngFor="let option of CATALOGUE_LINE_SORT_OPTIONS" [value]="option.name">{{option.value}}</option>
             </select>
 
             <div class="col-1 d-flex justify-content-center">
@@ -34,11 +33,14 @@
                             <input #imagePackage type="file" (change)="uploadImagePackage($event)"
                                    accept="application/zip"
                                    style="display: none">
+                            <button class="dropdown-item" (click)="navigateToThePublishPage()">
+                                Publish New Product / Service
+                            </button>
                             <button class="dropdown-item" (click)="imagePackage.click()">
                                 Upload Image Package
                             </button>
-                            <button class="dropdown-item" (click)="navigateToThePublishPage()">
-                                Publish New Product / Service
+                            <button class="dropdown-item" (click)="deleteAllProductImages()">
+                                Delete All Product Images
                             </button>
                             <button class="dropdown-item" (click)="onDeleteCatalogue()">
                                 Delete Catalogue
@@ -50,10 +52,10 @@
         </div>
 
         <div *ngIf="catalogueLinesArray.length > 0" class="pagination justify-content-center space-before">
-            <ngb-pagination [(collectionSize)]="collectionSize" [(pageSize)]="pageSize" [(page)]="page" [maxSize]="5" [boundaryLinks]="true"></ngb-pagination>
+            <ngb-pagination [(collectionSize)]="collectionSize" [(pageSize)]="pageSize" [(page)]="page" [maxSize]="5" [boundaryLinks]="true" (pageChange)="requestCatalogue()"></ngb-pagination>
         </div>
 
-        <div *ngFor="let catLine of catalogueLinesArray.slice((page-1)*pageSize,page*pageSize); let i = index" class="space-before">
+        <div *ngFor="let catLine of catalogueLinesArray; let i = index" class="space-before">
             <div class="card pointer">
                 <div class="card-body">
                     <div class="row" *ngIf="!catalogueLineView[catLine.id]" (click)="catalogueLineView[catLine.id]=true">
@@ -70,13 +72,13 @@
                         <div class="col-10 d-flex justify-content-between">
                             <div class="col-8">
                                 <p style="word-break: break-all;word-wrap: break-word;">
-                                    <strong>{{catLine.goodsItem.item.name}}
+                                    <strong>{{selectName(catLine.goodsItem.item)}}
                                         <a class="text-std" [routerLink]="['/product-details']" [queryParams]="{catalogueId: catLine.goodsItem.item.catalogueDocumentReference.id, id: catLine.goodsItem.item.manufacturersItemIdentification.id}" (click)="onOpenCatalogueLine($event)" target="_blank">
                                             <i class="fas fa-external-link-alt btn-light"></i>
                                         </a>
                                     </strong>
                                 </p>
-                                <p style="word-break: break-all;word-wrap: break-word;">{{catLine.goodsItem.item.description}}</p>
+                                <p style="word-break: break-all;word-wrap: break-word;">{{selectDescription(catLine.goodsItem.item)}}</p>
                                 <p *ngIf="catLine.requiredItemLocationQuantity.price.priceAmount.value != null" style="word-break: break-all;word-wrap: break-word;">{{catLine.requiredItemLocationQuantity.price.priceAmount.value+" "+catLine.requiredItemLocationQuantity.price.priceAmount.currencyID}}</p>
                             </div>
                             <div class="col-2">
@@ -95,18 +97,19 @@
                     <catalogue-line-panel [catalogueLine]="catLine"
                                           [settings]="settings"
                                           [presentationMode]="'view'"
+                                          (catalogueLineDeleted)="deleteCatalogueLine(catLine,i)"
                                           [(show)]="catalogueLineView[catLine.id]">
                     </catalogue-line-panel>
                 </div>
             </div>
         </div>
         <div *ngIf="catalogueLinesArray.length > 0" class="pagination justify-content-center space-before">
-            <ngb-pagination [(collectionSize)]="collectionSize" [(pageSize)]="pageSize" [(page)]="page" [maxSize]="5" [boundaryLinks]="true"></ngb-pagination>
+            <ngb-pagination [(collectionSize)]="collectionSize" [(pageSize)]="pageSize" [(page)]="page" [maxSize]="5" [boundaryLinks]="true" (pageChange)="requestCatalogue()"></ngb-pagination>
         </div>
     </div>
 </div>
 
-<div class="jumbotron" *ngIf="catalogue && catalogue.catalogueLine.length <= 0">
+<div class="jumbotron" *ngIf="catalogueResponse && catalogueResponse.categoryNames.length == 0">
     <h3>No published products / services.</h3>
     <h5>
         <span (click)="navigateToThePublishPage()" class="pointer">Publish new products / services</span>

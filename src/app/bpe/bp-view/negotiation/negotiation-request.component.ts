@@ -99,7 +99,7 @@ export class NegotiationRequestComponent implements OnInit {
 
             //first initialize the seller and buyer parties.
             //once they are fetched continue with starting the ordering process
-            const sellerId: string = this.line.goodsItem.item.manufacturerParty.id;
+            const sellerId: string = UBLModelUtils.getPartyId(this.line.goodsItem.item.manufacturerParty);
             const buyerId: string = this.cookieService.get("company_id");
 
            Promise.all([
@@ -126,6 +126,8 @@ export class NegotiationRequestComponent implements OnInit {
                 this.callStatus.error("Failed to send Terms", error);
             });
         } else {
+            // set the item price, otherwise we will lose item price information
+            this.bpDataService.requestForQuotation.requestForQuotationLine[0].lineItem.price.priceAmount.value = this.wrapper.rfqPriceWrapper.totalPrice/this.wrapper.rfqPriceWrapper.quantity.value;
             // just go to order page
             this.bpDataService.initOrderWithRfq();
             this.bpDataService.proceedNextBpStep("buyer", "Order")
@@ -162,9 +164,9 @@ export class NegotiationRequestComponent implements OnInit {
         return this.rfq.negotiationOptions.price
             || this.rfq.negotiationOptions.deliveryPeriod
             || this.rfq.negotiationOptions.warranty
-            || this.rfq.negotiationOptions.incoterms
-            || this.rfq.negotiationOptions.paymentTerms
-            || this.rfq.negotiationOptions.paymentMeans
+            || (this.rfq.negotiationOptions.incoterms && this.wrapper.lineIncoterms != this.wrapper.rfqIncoterms)
+            || (this.rfq.negotiationOptions.paymentTerms && this.wrapper.linePaymentTerms != this.wrapper.rfqPaymentTerms.paymentTerm)
+            || (this.rfq.negotiationOptions.paymentMeans && this.wrapper.linePaymentMeans != this.wrapper.rfqPaymentMeans)
             || this.rfq.dataMonitoringRequested;
     }
 
@@ -225,7 +227,7 @@ export class NegotiationRequestComponent implements OnInit {
             const rfqAddress = this.wrapper.rfqDeliveryAddress;
             rfqAddress.buildingNumber = address.buildingNumber;
             rfqAddress.cityName = address.cityName;
-            rfqAddress.country.name = address.country;
+            rfqAddress.country.name.value = address.country;
             rfqAddress.postalZone = address.postalCode;
             rfqAddress.streetName = address.streetName;
         }

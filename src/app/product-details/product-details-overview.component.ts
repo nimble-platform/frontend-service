@@ -1,26 +1,61 @@
-import { Component, Input } from "@angular/core";
+import {Component, Input, OnInit} from '@angular/core';
 import { ProductWrapper } from "../common/product-wrapper";
 import { CommodityClassification } from "../catalogue/model/publish/commodity-classification";
 import { ItemProperty } from "../catalogue/model/publish/item-property";
 import { BpWorkflowOptions } from "../bpe/model/bp-workflow-options";
-import { getPropertyKey, getPropertyValuesAsStrings } from "../common/utils";
+import {getPropertyKey, getPropertyValuesAsStrings, selectName, selectPreferredName} from '../common/utils';
+import {Item} from '../catalogue/model/publish/item';
+import {UBLModelUtils} from '../catalogue/model/ubl-model-utils';
+import {CategoryService} from '../catalogue/category/category.service';
+import {Code} from '../catalogue/model/publish/code';
+import {CallStatus} from '../common/call-status';
 
 @Component({
     selector: 'product-details-overview',
     templateUrl: './product-details-overview.component.html',
     styleUrls: ['./product-details-overview.component.css']
 })
-export class ProductDetailsOverviewComponent {
+export class ProductDetailsOverviewComponent implements OnInit{
 
     @Input() wrapper: ProductWrapper;
     @Input() options: BpWorkflowOptions;
     @Input() readonly: boolean;
 
     selectedImage: number = 0;
+    manufacturerPartyName:string = null;
 
+    getClassificationNamesStatus: CallStatus = new CallStatus();
+    classificationNames = [];
     
-    constructor() {
+    constructor(public categoryService:CategoryService) {
+    }
 
+    ngOnInit(){
+        if(this.wrapper){
+            this.manufacturerPartyName = UBLModelUtils.getPartyDisplayName(this.wrapper.item.manufacturerParty);
+        }
+        /*
+            Cache FurnitureOntology categories. Then, use cached categories to get correct category label according
+            to the default language of the browser.
+         */
+        this.getClassificationNamesStatus.submit();
+        this.categoryService.cacheFurnitureOntologyCategories().then(response => {
+            let classifications = this.getClassifications();
+            for(let classification of classifications){
+                // For FurnitureOntology categories, we need to get the name of it from the cached ones since they
+                // contain the labels
+                if(classification.itemClassificationCode.listID == "FurnitureOntology"){
+                    this.classificationNames.push(this.categoryService.getCachedCategoryName(classification.itemClassificationCode.uri));
+                }
+                // For eClass categories, it is OK to use the name of the category directly.
+                else {
+                    this.classificationNames.push(classification.itemClassificationCode.name);
+                }
+            }
+            this.getClassificationNamesStatus.callback(null);
+        }).catch(error => {
+            this.getClassificationNamesStatus.error("Failed to get classification names",error);
+        })
     }
 
     getClassifications(): CommodityClassification[] {
@@ -37,6 +72,10 @@ export class ProductDetailsOverviewComponent {
         if(this.options) {
             this.options.selectedValues[getPropertyKey(property)] = valueIndex;
         }
+    }
+
+    selectName (ip: ItemProperty | Item) {
+        return selectName(ip);
     }
 
     onSelectImage(index: number): void {
@@ -70,7 +109,18 @@ export class ProductDetailsOverviewComponent {
         if(!this.options) {
             return false;
         }
-        const selected = this.options.selectedValues[getPropertyKey(property)] || 0;
+        let selected = null;
+
+        // if there is no selected index for the given property, we should set it to 0.
+        // it is important since we will calculate price options according to the selected properties
+
+        if(this.options.selectedValues[getPropertyKey(property)]){
+            selected = this.options.selectedValues[getPropertyKey(property)];
+            // here, we do not need to update options.selectedValues since onTogglePropertyValue function will handle this.
+        } else {
+            selected = 0;
+            this.options.selectedValues[getPropertyKey(property)] = 0
+        }
         return valueIndex === selected;
     }
 

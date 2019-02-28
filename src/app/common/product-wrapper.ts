@@ -3,7 +3,7 @@ import { Predicate } from "@angular/core";
 import { ItemProperty } from "../catalogue/model/publish/item-property";
 import { PAYMENT_MEANS } from "../catalogue/model/constants";
 import { UBLModelUtils } from "../catalogue/model/ubl-model-utils";
-import { sanitizePropertyName, getPropertyKey, periodToString, isCustomProperty, getPropertyValues, isTransportService } from "./utils";
+import { sanitizePropertyName, getPropertyKey, periodToString, isCustomProperty, getPropertyValues, isTransportService, selectName } from "./utils";
 import { PriceWrapper } from "./price-wrapper";
 import { CompanyNegotiationSettings } from "../user-mgmt/model/company-negotiation-settings";
 import {Quantity} from '../catalogue/model/publish/quantity';
@@ -53,7 +53,7 @@ export class ProductWrapper {
     }
 
     getSpecialTerms(): string {
-        return this.goodsItem.deliveryTerms.specialTerms || "None";
+        return this.goodsItem.deliveryTerms.specialTerms.length > 0 ? this.goodsItem.deliveryTerms.specialTerms[0].value : "None";
     }
 
     getDeliveryPeriod(): string {
@@ -85,7 +85,7 @@ export class ProductWrapper {
     }
 
     getPropertyName(property: ItemProperty): string {
-        return sanitizePropertyName(property.name);
+        return sanitizePropertyName(selectName(property));
     }
 
     getLogisticsStatus(): boolean {
@@ -116,7 +116,7 @@ export class ProductWrapper {
             duplicates[key] = true;
         });
 
-        return result.sort((p1, p2) => p1.name.localeCompare(p2.name));
+        return result.sort((p1, p2) => selectName(p1).localeCompare(selectName(p2)));
     }
 
 }

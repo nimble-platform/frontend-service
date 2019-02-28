@@ -7,7 +7,14 @@ html, body {
 }
 
 p {
-  word-break: break-all;
+  /*word-break: break-all;*/
+  overflow-wrap: break-word;
+}
+
+.max-container {
+  padding-top:15px;
+  padding-bottom:15px;
+  max-width: 100% !important;
 }
 
 .container-fluid {
@@ -504,6 +511,7 @@ ngb-pagination .page-item.active .page-link {
 
 .actions-row {
     padding: 0.3rem;
+    align-items: center !important;
 }
 
 .actions-row .price-col {
@@ -531,7 +539,7 @@ ngb-pagination .page-item.active .page-link {
 
 .actions-row .action {
     width: 100%;
-    height: 100%;
+    /*height: 100%;*/
     white-space: normal;
 }
 

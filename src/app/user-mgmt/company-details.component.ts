@@ -7,6 +7,7 @@ import * as moment from "moment";
 import { CallStatus } from "../common/call-status";
 import { CompanySettings } from "./model/company-settings";
 import { AppComponent } from "../app.component";
+import {selectValueOfTextObject} from '../common/utils';
 
 @Component({
     selector: "company-details",
@@ -19,6 +20,8 @@ export class CompanyDetailsComponent implements OnInit {
     imgEndpoint = myGlobals.user_mgmt_endpoint+"/company-settings/image/";
     initCallStatus: CallStatus = new CallStatus();
     vatCallStatus: CallStatus = new CallStatus();
+
+    selectValueOfTextObject = selectValueOfTextObject;
 
     constructor(private cookieService: CookieService,
                 private userService: UserService,

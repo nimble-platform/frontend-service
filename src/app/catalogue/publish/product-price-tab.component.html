@@ -37,15 +37,15 @@
 <!-- add price option -->
 <div class="row mb-3">
     <div class="col-3">
-        <label>Add discount/charge on</label>
+        <label>Add discount / charge on</label>
     </div>
     <div class="col-2">
         <select class="form-control form-control-sm" #priceOptionSelect>
             <option *ngFor="let option of object.keys(priceOptions)" [value]="option">{{priceOptions[option].text}}</option>
         </select>
     </div>
-    <button class="btn btn-primary btn-sm" (click)="addPriceOption(priceOptions[priceOptionSelect.value].typeID)">
-        Add
+    <button class="btn btn-outline-primary btn-sm" (click)="addPriceOption(priceOptions[priceOptionSelect.value].typeID)">
+        Add discount / charge
     </button>
 </div>
 
@@ -64,8 +64,8 @@
                                            [discountUnits]="discountUnits">
                     </quantity-price-option>
                     <div class="col-1">
-                        <button class="btn btn-danger btn-sm" (click)="removePriceOption(priceOption.index, priceOptions.ORDERED_QUANTITY)">
-                            Remove
+                        <button class="btn btn-danger btn-sm" (click)="removePriceOption(priceOption.index)">
+                            Delete
                         </button>
                     </div>
                 </div>
@@ -93,8 +93,8 @@
                                                 [index]="i">
                     </item-property-price-option>
                     <div class="col-1">
-                        <button class="btn btn-danger btn-sm" (click)="removePriceOption(priceOption.index, priceOptions.PRODUCT_PROPERTY)">
-                            Remove
+                        <button class="btn btn-danger btn-sm" (click)="removePriceOption(priceOption.index)">
+                            Delete
                         </button>
                     </div>
                 </div>
@@ -122,8 +122,8 @@
                                             [incoterms]="companyNegotiationSettings.incoterms">
                     </price-option-view>
                     <div class="col-1">
-                        <button class="btn btn-danger btn-sm" (click)="removePriceOption(priceOption.index, priceOptions.INCOTERM)">
-                            Remove
+                        <button class="btn btn-danger btn-sm" (click)="removePriceOption(priceOption.index)">
+                            Delete
                         </button>
                     </div>
                 </div>
@@ -151,8 +151,8 @@
                                        [paymentMeans]="companyNegotiationSettings.paymentMeans">
                     </price-option-view>
                     <div class="col-1">
-                        <button class="btn btn-danger btn-sm" (click)="removePriceOption(priceOption.index, priceOptions.PAYMENT_MEAN)">
-                            Remove
+                        <button class="btn btn-danger btn-sm" (click)="removePriceOption(priceOption.index)">
+                            Delete
                         </button>
                     </div>
                 </div>
@@ -179,8 +179,8 @@
                                        [priceOption]="priceOption.option">
                     </price-option-view>
                     <div class="col-1">
-                        <button class="btn btn-danger btn-sm" (click)="removePriceOption(priceOption.index, priceOptions.DELIVERY_LOCATION)">
-                            Remove
+                        <button class="btn btn-danger btn-sm" (click)="removePriceOption(priceOption.index)">
+                            Delete
                         </button>
                     </div>
                 </div>
@@ -208,8 +208,8 @@
                                        [deliveryPeriodUnits]="companyNegotiationSettings.deliveryPeriodUnits">
                     </price-option-view>
                     <div class="col-1">
-                        <button class="btn btn-danger btn-sm" (click)="removePriceOption(priceOption.index, priceOptions.DELIVERY_PERIOD)">
-                            Remove
+                        <button class="btn btn-danger btn-sm" (click)="removePriceOption(priceOption.index)">
+                            Delete
                         </button>
                     </div>
                 </div>

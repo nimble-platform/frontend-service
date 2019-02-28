@@ -7,7 +7,7 @@ import {Category} from "../model/category/category";
 import * as myGlobals from '../../globals';
 import {Code} from "../model/publish/code";
 import { ParentCategories } from '../model/category/parent-categories';
-import { sortCategories, getAuthorizedHeaders } from '../../common/utils';
+import {sortCategories, getAuthorizedHeaders, selectPreferredName} from '../../common/utils';
 import {CookieService} from "ng2-cookies";
 
 @Injectable()
@@ -18,6 +18,35 @@ export class CategoryService {
 
     constructor(private http: Http,
                 private cookieService: CookieService) {
+    }
+
+    // This map only contains FurnitureOntology categories
+    private cachedCategories:Map<string,Category> = new Map<string, Category>();
+
+    // this function gets all FurnitureOntology categories
+    // however, those categories only contains information about the labels and definitions
+    cacheFurnitureOntologyCategories(){
+        // check whether FurnitureOntology categories are cached or not
+        if(this.cachedCategories.size != 0){
+            return Promise.resolve(null);
+        }
+        const url = `${this.baseUrl}/taxonomies/FurnitureOntology/all-categories`;
+        return this.http
+            .get(url, {headers: getAuthorizedHeaders(this.cookieService)})
+            .toPromise()
+            .then(response => {
+                let categories:Category[] = response.json() as Category[];
+                for(let category of categories){
+                    this.cachedCategories.set(category.categoryUri,category);
+                }
+                return null;
+            })
+            .catch(this.handleError);
+    }
+
+    // This function assumes that category with the given uri is already cached.
+    getCachedCategoryName(uri:string):string{
+        return selectPreferredName(this.cachedCategories.get(uri));
     }
 
     getCategoriesByName(keyword: string, taxonomyId: string,isLogistics: boolean): Promise<Category[]> {
@@ -32,7 +61,7 @@ export class CategoryService {
     }
 
     getCategoriesByIds(codes: Code[]): Promise<Category[]> {
-        if(!codes) {
+        if (!codes) {
             return Promise.resolve([]);
         }
 

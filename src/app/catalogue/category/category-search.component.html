@@ -37,7 +37,7 @@
 </div>
 <div *ngIf="pathToSelectedCategories">
     <span  *ngFor="let parentCat of pathToSelectedCategories.parents;let l=last" >
-        <span class="btn-link pointer" [ngClass]="{'disabled text-muted': getCategoryDetailsStatus.isDisplayed()}" (click)="scrollToDiv(parentCat.code,$event)">{{parentCat.preferredName}}</span>
+        <span class="btn-link pointer" [ngClass]="{'disabled text-muted': getCategoryDetailsStatus.isDisplayed()}" (click)="scrollToDiv(parentCat.code,$event)">{{selectPreferredName(parentCat)}}</span>
         <span *ngIf="!l">
              >>
         </span>
@@ -68,7 +68,7 @@
                             class="pointer"
                             [ngClass]="{'table-secondary': selectedCategory && category.code == selectedCategory.code, 'disabled': getCategoryDetailsStatus.isDisplayed()}">
                             <td class="py-2 px-3 font-weight-light">{{category.taxonomyId}}</td>
-                            <td class="py-2 px-3">{{category.preferredName}}</td>
+                            <td class="py-2 px-3">{{selectPreferredName(category)}}</td>
                             <td></td>
                             <td class="py-2 px-3">
                                 <span class="fa fa-fw mr-1 icon-secondary fa-sitemap" aria-hidden="true" (click)="getCategoryTree(category)"></span>
@@ -204,10 +204,10 @@
             <!-- Title + buttons -->
             <div *ngIf="selectedCategoryWithDetails" class="d-flex flex-row fixed p-2" [ngClass]="{'fixed-header': selectedCategoryWithDetails}">
                 <h4 class="font-weight-bold" *ngIf="!selectedCategoryWithDetails">Details</h4>
-                <h4 class="font-weight-bold mr-auto" *ngIf="selectedCategoryWithDetails">Details for {{selectedCategoryWithDetails["preferredName"]}}</h4>
+                <h4 class="font-weight-bold pr-2 mr-auto" *ngIf="selectedCategoryWithDetails">Details for {{selectPreferredName(selectedCategoryWithDetails)}}</h4>
                 <div *ngIf="selectedCategoryWithDetails">
                     <button *ngIf="findCategoryInArray(selectedCategories, selectedCategoryWithDetails) === -1"
-                            class="btn btn-primary float-right" (click)="addCategoryToSelected(selectedCategoryWithDetails)">
+                            class="btn btn-outline-primary float-right" (click)="addCategoryToSelected(selectedCategoryWithDetails)">
                         Select Category
                     </button>
                     <button *ngIf="findCategoryInArray(selectedCategories, selectedCategoryWithDetails) > -1"
@@ -261,7 +261,7 @@
                         <div class="col-8">
                             <label>
                                 <p class="text-capitalize pl-3 mb-1">
-                                    {{prop.preferredName}}
+                                    {{selectPreferredName(prop)}}
                                     <span *ngIf="prop.definition" class="label label-default" title="{{prop.definition}}">
                                         &#9432;
                                     </span>
@@ -300,20 +300,18 @@
             <div class="d-flex flex-wrap">
                 <div *ngFor="let selectedCategory of categoryService.selectedCategories"
                 class="bordered d-flex align-items-center mx-1 my-1" title="{{selectedCategory.taxonomyId}}">
-                    <small class="p-0">{{selectedCategory.preferredName}}</small>
+                    <small class="p-0">{{selectPreferredName(selectedCategory)}}</small>
                     <i class="fa fa-times-circle pl-1 text-red" placement="right" (click)="removeCategoryFromSelected(selectedCategory)"></i>
                 </div>
             </div>
         </div>
     </div>
     <div class="col-3 align-self-center">
-        <button class="btn btn-primary w-100 inline" [disabled]="categoryService.selectedCategories.length === 0 || navigateToPublishStatus.isLoading()"
+        <button class="btn btn-primary w-100 inline" [disabled]="categoryService.selectedCategories.length === 0"
                 (click)="navigateToPublishingPage()">
-            <span *ngIf="!navigateToPublishStatus.isLoading()">
+            <span>
                 Continue With Selected Categories
             </span>
-            <img *ngIf="navigateToPublishStatus.isLoading()" class="space-before" src="assets/form_loader.gif"/>
         </button>
-        <call-status *ngIf="navigateToPublishStatus.isError()" [callStatus]="navigateToPublishStatus"></call-status>
     </div>
 </div>

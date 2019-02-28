@@ -14,7 +14,7 @@ import { ModelUtils } from "../../model/model-utils";
 import { ProcessInstanceInputMessage } from "../../model/process-instance-input-message";
 import { TransportExecutionPlan } from "../../../catalogue/model/publish/transport-execution-plan";
 import { BpUserRole } from "../../model/bp-user-role";
-import { copy } from "../../../common/utils";
+import {copy, selectPreferredValue} from '../../../common/utils';
 import { Order } from "../../../catalogue/model/publish/order";
 import { PresentationMode } from "../../../catalogue/model/publish/presentation-mode";
 import {DocumentService} from '../document-service';
@@ -38,6 +38,8 @@ export class TransportExecutionPlanComponent implements OnInit {
 
     // the copy of ThreadEventMetadata of the current business process
     processMetadata: ThreadEventMetadata;
+
+    itemName:string;
 
     constructor(private bpDataService: BPDataService,
                 private searchContextService: SearchContextService,
@@ -72,6 +74,7 @@ export class TransportExecutionPlanComponent implements OnInit {
 
     init(){
         this.request = this.bpDataService.transportExecutionPlanRequest;
+        this.itemName = selectPreferredValue(this.request.consignment[0].consolidatedShipment[0].goodsItem[0].item.name)
         this.response = this.bpDataService.transportExecutionPlan;
         this.productOrder = this.bpDataService.productOrder;
         this.userRole = this.bpDataService.bpStartEvent.userRole;
@@ -129,7 +132,7 @@ export class TransportExecutionPlanComponent implements OnInit {
 
         // first initialize the seller and buyer parties.
         // once they are fetched continue with starting the ordering process
-        const sellerId: string = this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty.id;
+        const sellerId: string = UBLModelUtils.getPartyId(this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty);
         const buyerId: string = this.cookieService.get("company_id");
 
         Promise.all([
@@ -178,9 +181,9 @@ export class TransportExecutionPlanComponent implements OnInit {
     onSendResponse(accepted: boolean) {
         this.response.documentStatusCode.name = accepted ? "Accepted" : "Rejected";
 
-        const vars: ProcessVariables = ModelUtils.createProcessVariables("Transport_Execution_Plan",
-            this.bpDataService.transportExecutionPlan.transportUserParty.id,
-            this.bpDataService.transportExecutionPlan.transportServiceProviderParty.id,
+        const vars: ProcessVariables = ModelUtils.createProcessVariables("Transport_Execution_Plan", 
+            UBLModelUtils.getPartyId(this.bpDataService.transportExecutionPlan.transportUserParty),
+            UBLModelUtils.getPartyId(this.bpDataService.transportExecutionPlan.transportServiceProviderParty),
             this.cookieService.get("user_id"),
             this.bpDataService.transportExecutionPlan, this.bpDataService);
         const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars,
@@ -197,7 +200,6 @@ export class TransportExecutionPlanComponent implements OnInit {
     }
 
     onDispatchAdvice() {
-        this.bpDataService.initDispatchAdviceWithOrder();
         this.bpDataService.proceedNextBpStep("seller", "Fulfilment");
     }
 }

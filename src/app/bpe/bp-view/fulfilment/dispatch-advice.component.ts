@@ -95,8 +95,10 @@ export class DispatchAdviceComponent implements OnInit {
 
                     let tep = initialDoc as TransportExecutionPlanRequest;
 
-                    handlingInst = tep.consignment[0].consolidatedShipment[0].handlingInstructions;
-                    carrierName = tep.transportServiceProviderParty.name;
+                    if(tep.consignment[0].consolidatedShipment[0].handlingInstructions.length > 0){
+                        handlingInst = tep.consignment[0].consolidatedShipment[0].handlingInstructions[0];
+                    }
+                    carrierName = UBLModelUtils.getPartyDisplayName(tep.transportServiceProviderParty);
                     endDate = tep.serviceEndTimePeriod.endDate;
                     if(tep.transportServiceProviderParty.contact){
                         carrierContact = tep.transportServiceProviderParty.contact.telephone;
@@ -145,10 +147,10 @@ export class DispatchAdviceComponent implements OnInit {
 
         let vars: ProcessVariables = ModelUtils.createProcessVariables(
             "Fulfilment",
-            dispatchAdvice.despatchSupplierParty.party.id,
-            dispatchAdvice.deliveryCustomerParty.party.id,
+            UBLModelUtils.getPartyId(dispatchAdvice.despatchSupplierParty.party),
+            UBLModelUtils.getPartyId(dispatchAdvice.deliveryCustomerParty.party),
             this.cookieService.get("user_id"),
-            dispatchAdvice,
+            dispatchAdvice, 
             this.bpDataService
         );
         let piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");

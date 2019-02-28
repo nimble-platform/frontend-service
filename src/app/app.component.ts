@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CookieService } from 'ng2-cookies';
-import {Router, NavigationStart, NavigationEnd, NavigationCancel, RoutesRecognized} from '@angular/router';
+import {Router, NavigationStart, NavigationEnd, NavigationCancel, RoutesRecognized, ActivatedRoute} from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import * as myGlobals from './globals';
 
@@ -28,10 +28,12 @@ export class AppComponent implements OnInit {
 	public mailto = "";
 	public allowed = false;
   public versions = [];
+  public minimalView = false;
 
 	constructor(
 		private cookieService: CookieService,
 		private router: Router,
+    private route: ActivatedRoute,
 		private modalService: NgbModal
 	) {
 		router.events.subscribe(event => {
@@ -58,6 +60,14 @@ export class AppComponent implements OnInit {
 
 	ngOnInit() {
 		this.checkLogin("");
+    this.route.queryParams.subscribe(params => {
+        if (params["externalView"] && params["externalView"]=="frame") {
+          this.minimalView = true;
+        }
+        else {
+          this.minimalView = false;
+        }
+    });
 	}
 
   public addVersion(id:String, ver:String, date:String) {

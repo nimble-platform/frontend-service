@@ -1,17 +1,19 @@
 <div class="row">
         <div class="col-4">
-            <strong>Product / Service by:</strong><br/>{{wrapper.item.manufacturerParty.name}}
+            <strong>Product / Service by:</strong><br/> {{manufacturerPartyName}}
         </div>
         <div class="col-8">
             <!-- Categories -->
             <strong>Categories:</strong><br/>
             <div class="d-flex flex-wrap">
-              <div *ngFor="let classification of getClassifications()" >
+              <div *ngFor="let name of classificationNames" >
                   <div class="rounded px-1 inline space-left" style="color:#919191; border:1px solid #919191;">
-                      {{classification.itemClassificationCode.name}}
+                      {{name}}
                   </div>
               </div>
             </div>
+            <call-status [callStatus]="getClassificationNamesStatus">
+            </call-status>
         </div>
     </div>
     <div class="row">
@@ -72,12 +74,13 @@
             <div>
                 <!-- Description -->
                 <strong>Description:</strong>
-                <p>{{wrapper.item.description || "No description provided."}}</p>
+                <p *ngIf="wrapper.item.description.length > 0">{{wrapper.item.description[0].value}}</p>
+                <p *ngIf="wrapper.item.description.length == 0">No description provided.</p>
             </div>
             <!-- Properties with multiple values to select from -->
             <div class="d-flex flex-column">
                 <div *ngFor="let property of wrapper.getPropertiesWithListOfValues()" class="my-1">
-                    <strong>{{property.name}}: </strong>
+                    <strong>{{selectName(property)}}: </strong>
                     <span *ngFor="let val of getValuesAsString(property); let i = index" class="btn-group-toggle" data-toggle="buttons">
                         <button type="button" class="btn btn-outline-primary no-y-padding" (click)="onTogglePropertyValue(property, i)"
                             [disabled]="readonly" [ngClass]="{ 'active': isPropertyValueSelected(property, i) }">

@@ -3,13 +3,15 @@ import { Headers, Http } from '@angular/http';
 import 'rxjs/add/operator/toPromise';
 import * as myGlobals from '../globals';
 import { map } from 'rxjs/operators';
+import { DEFAULT_LANGUAGE} from '../catalogue/model/constants';
 
 @Injectable()
 export class SimpleSearchService {
 
-	private headers = new Headers({'Content-Type': 'application/json'});
-	private url = myGlobals.simple_search_endpoint;
-	private facetMin = myGlobals.facet_min;
+    private headers = new Headers({'Content-Type': 'application/json'});
+    private url = myGlobals.simple_search_endpoint;
+    private urlProperty = myGlobals.simple_search_properties_endpoint;
+    private facetMin = myGlobals.facet_min;
 
 	product_name = myGlobals.product_name;
 	product_vendor_id = myGlobals.product_vendor_id;
@@ -23,14 +25,40 @@ export class SimpleSearchService {
 
 	constructor(private http: Http) { }
 
-	getFields(): Promise<any> {
-		const url = `${this.url}/select?q=*:*&rows=0&wt=csv`;
-		return this.http
-		.get(url, {headers: this.headers})
-		.toPromise()
-		.then(res => res)
-		.catch(this.handleError);
-	}
+    getPropertyLabels(facets:[string]){
+        let url = `${this.urlProperty}/select`;
+        let size = facets.length;
+        if(size > 0){
+        	url += "?q=idxField:(";
+            for(let i = 0; i < size ; i++){
+                if(size - 1 == i){
+                    url += facets[i]+")&";
+                }
+                else {
+                    url += facets[i] + " OR ";
+                }
+            }
+		}
+		else {
+        	url += "?";
+		}
+        url += "fl=label_*,idxField";
+        url += "&json.nl=map&wt=json&rows="+facets.length;
+        return this.http
+            .get(url, {headers: this.headers})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+    }
+
+    getFields(): Promise<any> {
+        const url = `${this.url}/select?q=*:*&rows=0&wt=csv`;
+        return this.http
+            .get(url, {headers: this.headers})
+            .toPromise()
+            .then(res => res)
+            .catch(this.handleError);
+    }
 
 	get(query: string, facets: [string], facetQueries: [string], page: number, cat: string, catID: string): Promise<any> {
 		query = query.replace(/[!'()]/g, '');
@@ -46,7 +74,13 @@ export class SimpleSearchService {
 			full_url += "&fq="+encodeURIComponent(facetQuery);
 		}
 		if (cat != "") {
-			var add_url = `${this.product_cat_mix}:"${catID}:${cat}"`;
+            var add_url;
+			if(catID){
+                add_url = `${this.product_cat_mix}:"${catID}:${cat}"`;
+			}else{
+                add_url = `${this.product_cat_mix}:":${cat}"`;
+			}
+
 			full_url += "&fq="+encodeURIComponent(add_url);
 		}
 		return this.http
@@ -86,13 +120,17 @@ export class SimpleSearchService {
 	}
 
 	getSuggestionArray(res:any, q:string): string[] {
+		let defaultLanguage = DEFAULT_LANGUAGE();
 		var suggestions=[];
 		if (q.length >= 2) {
 			res = JSON.parse(res._body);
 			if (res && res.suggestions && res.suggestions.suggestion_facets && res.suggestions.suggestion_facets[this.product_name]) {
 				for (let sug in res.suggestions.suggestion_facets[this.product_name]) {
-					if (suggestions.length<10)
-					suggestions.push(sug);
+					// get the language id of the value
+                    let index = sug.lastIndexOf(":");
+                    let languageId = sug.substring(index+1);
+					if (suggestions.length<10 && languageId == defaultLanguage)
+					suggestions.push(sug.substring(0,index));
 				}
 			}
 		}

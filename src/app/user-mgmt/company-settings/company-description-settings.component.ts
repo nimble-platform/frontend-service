@@ -172,7 +172,7 @@ export class CompanyDescriptionSettingsComponent implements OnInit {
         this.saveCallStatusImage.submit();
         const fields = model.getRawValue();
         this.userService
-            .saveImage(this.imgFile, fields.isLogo)
+            .saveImage(this.imgFile, fields.isLogo, this.settings.companyID)
             .then(() => {
                 close();
                 this.saveCallStatusImage.callback("Image saved", true);
@@ -187,7 +187,7 @@ export class CompanyDescriptionSettingsComponent implements OnInit {
       if (confirm("Are you sure that you want to delete this image?")) {
         this.saveCallStatusImage.submit();
         this.userService
-          .deleteImage(id)
+          .deleteImage(id, this.settings.companyID)
           .then(() => {
               this.saveCallStatusImage.callback("Image deleted", true);
               this.onSaveEvent.emit();

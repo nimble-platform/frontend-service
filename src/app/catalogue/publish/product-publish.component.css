@@ -27,7 +27,8 @@
 
 .btn-remove-property {
     width: 100%;
-    margin-bottom: 0.5rem;
+    height: 2.6rem;
+    margin: 0.25rem 0 0 0.25rem;
 }
 
 .image-small {
@@ -83,13 +84,13 @@ div.add-image input {
     margin: 0.25rem 0.25rem 0.25rem 0.25rem;
     height: 2.6rem;
     flex-basis: auto;
-    min-width: 50px;
+    /*min-width: 50px;*/
     display: flex;
     justify-content: space-between;
 }
 
 .boolean-value-input {
-    margin: 1rem 0 0 0.1rem;
+    margin: 1rem 0 0 0.25rem;
 }
 
 .details-tab {

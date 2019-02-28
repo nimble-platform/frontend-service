@@ -8,12 +8,13 @@ import { CatalogueService } from "../catalogue.service";
 import { PublishService } from "../publish-and-aip.service";
 import { ProductPublishComponent } from "../publish/product-publish.component";
 import { CallStatus } from "../../common/call-status";
-import { sanitizeDataTypeName } from "../../common/utils";
+import {sanitizeDataTypeName, selectPreferredName, selectPreferredValues} from '../../common/utils';
 import { ParentCategories } from "../model/category/parent-categories";
 import { sortCategories,scrollToDiv } from "../../common/utils";
 import { Property } from "../model/category/property";
 import * as myGlobals from '../../globals';
 import { AppComponent } from "../../app.component";
+import { Text} from '../model/publish/text';
 
 type ProductType = "product" | "transportation";
 type SelectedTab = "TREE"
@@ -35,7 +36,6 @@ export class CategorySearchComponent implements OnInit {
     addFavoriteCategoryStatus: CallStatus = new CallStatus();
     addRecentCategoryStatus: CallStatus = new CallStatus();
     getCategoryDetailsStatus: CallStatus = new CallStatus();
-    navigateToPublishStatus: CallStatus = new CallStatus();
 
     categories: Category[];
     pageRef: string = null;
@@ -190,7 +190,7 @@ export class CategorySearchComponent implements OnInit {
     }
 
     findPrefCat(cat: Category): boolean {
-        var cat_str = cat.id + "::" + cat.taxonomyId + "::" + cat.preferredName + "::" + this.productType;
+        var cat_str = cat.id + "::" + cat.taxonomyId + "::" + selectPreferredName(cat) + "::" + this.productType;
         var found = false;
         if (this.prefCats.indexOf(cat_str) != -1) found = true;
         return found;
@@ -199,7 +199,7 @@ export class CategorySearchComponent implements OnInit {
     removeCategoryFromFavorites(cat: Category) {
         if (!this.addFavoriteCategoryStatus.isLoading()) {
           this.addFavoriteCategoryStatus.submit();
-          const cat_str = cat.id + "::" + cat.taxonomyId + "::" + cat.preferredName + "::" + this.productType;
+          const cat_str = cat.id + "::" + cat.taxonomyId + "::" + selectPreferredName(cat) + "::" + this.productType;
           const userId = this.cookieService.get("user_id");
           this.userService.togglePrefCat(userId, cat_str).then(res => {
               const prefCats_tmp = [];
@@ -219,7 +219,7 @@ export class CategorySearchComponent implements OnInit {
     addCategoryToFavorites(cat: Category) {
         if (!this.addFavoriteCategoryStatus.isLoading()) {
           this.addFavoriteCategoryStatus.submit();
-          const cat_str = cat.id + "::" + cat.taxonomyId + "::" + cat.preferredName + "::" + this.productType;
+          const cat_str = cat.id + "::" + cat.taxonomyId + "::" + selectPreferredName(cat) + "::" + this.productType;
           const userId = this.cookieService.get("user_id");
           this.userService.togglePrefCat(userId, cat_str).then(res => {
               const prefCats_tmp = [];
@@ -241,7 +241,7 @@ export class CategorySearchComponent implements OnInit {
       var recCatPost = [];
       var timeStamp = new Date().getTime();
       for (var i=0; i<cat.length; i++) {
-        const cat_str = cat[i].id + "::" + cat[i].taxonomyId + "::" + cat[i].preferredName + "::" + this.productType + "::" + timeStamp;
+        const cat_str = cat[i].id + "::" + cat[i].taxonomyId + "::" + selectPreferredName(cat[i]) + "::" + this.productType + "::" + timeStamp;
         recCatPost.push(cat_str);
       }
       const userId = this.cookieService.get("user_id");
@@ -257,6 +257,10 @@ export class CategorySearchComponent implements OnInit {
       .catch(error => {
           this.addRecentCategoryStatus.error("Error while adding categories to recently used", error);
       });
+    }
+
+    selectPreferredName(cp: Category | Property) {
+        return selectPreferredName(cp);
     }
 
     canDeactivate(): boolean {
@@ -295,12 +299,12 @@ export class CategorySearchComponent implements OnInit {
             .then(rootCategories => {
                 this.rootCategories = sortCategories(rootCategories);
                 this.getCategoriesStatus.callback("Retrieved category details", true);
-                if (this.categoryFilter[this.taxonomyId]) {
-                  this.logisticsCategory = this.rootCategories.find(c => c.code === this.categoryFilter[this.taxonomyId].logisticsCategory);
+                if (this.categoryFilter[taxonomyId]) {
+                  this.logisticsCategory = this.rootCategories.find(c => c.code === this.categoryFilter[taxonomyId].logisticsCategory);
                   let searchIndex = this.findCategoryInArray(this.rootCategories, this.logisticsCategory);
                   this.rootCategories.splice(searchIndex, 1);
-                  for (var i=0; i<this.categoryFilter[this.taxonomyId].hiddenCategories.length; i++) {
-                    let filterCat = this.rootCategories.find(c => c.code === this.categoryFilter[this.taxonomyId].hiddenCategories[i]);
+                  for (var i=0; i<this.categoryFilter[taxonomyId].hiddenCategories.length; i++) {
+                    let filterCat = this.rootCategories.find(c => c.code === this.categoryFilter[taxonomyId].hiddenCategories[i]);
                     let searchIndex = this.findCategoryInArray(this.rootCategories, filterCat);
                     this.rootCategories.splice(searchIndex, 1);
                   }
@@ -360,20 +364,10 @@ export class CategorySearchComponent implements OnInit {
 
     navigateToPublishingPage(): void {
         this.addRecentCategories(this.selectedCategories);
-        this.navigateToPublishStatus.submit();
-        let userId = this.cookieService.get("user_id");
-        this.catalogueService
-            .getCatalogue(userId)
-            .then(catalogue => {
-                this.navigateToPublishStatus.callback("Catalogue Fetched", true);
-                ProductPublishComponent.dialogBox = true;
-                // set isReturnPublish in order not to show confirmation popup
-                this.isReturnPublish = true;
-                this.router.navigate(["catalogue/publish"], { queryParams: { pg: this.publishingGranularity, productType: this.productType } });
-            })
-            .catch(error => {
-                this.navigateToPublishStatus.error("Error while fetching user catalogue", error);
-            });
+        ProductPublishComponent.dialogBox = true;
+        // set isReturnPublish in order not to show confirmation popup
+        this.isReturnPublish = true;
+        this.router.navigate(["catalogue/publish"], { queryParams: { pg: this.publishingGranularity, productType: this.productType } });
     }
 
     getCategoryTree(category: Category,scrollToDivId = null) {
@@ -423,10 +417,10 @@ export class CategorySearchComponent implements OnInit {
         var cat_split = cat.split("::");
         var catFull: Category = {
             id: cat_split[0],
-            preferredName: cat_split[2],
+            preferredName: [new Text(cat_split[2])],
             code: "",
             level: 0,
-            definition: "",
+            definition: [],
             note: "",
             remark: "",
             properties: [],
@@ -446,7 +440,7 @@ export class CategorySearchComponent implements OnInit {
 
     getCategoryDetails(category: Category, fav: boolean) {
         if (!this.getCategoryDetailsStatus.isDisplayed()) {
-          if (!this.selectedCategory ||  (this.selectedCategory && this.selectedCategory.code !== category.code)) {
+          if (!this.selectedCategory ||  (this.selectedCategory && this.selectedCategory.id !== category.id)) {
             this.favSelected = fav;
             this.selectedCategory = category;
             this.selectedCategoryWithDetails = null;
@@ -479,6 +473,11 @@ export class CategorySearchComponent implements OnInit {
     }
 
     getCategoryProperty(propName): string {
+        // Type of the definition field is Text[]. Therefore, we have to use selectPreferredValues method
+        // to get proper value of this category property
+        if(propName == "definition"){
+            return selectPreferredValues(this.selectedCategoryWithDetails[propName])[0];
+        }
         return String(this.selectedCategoryWithDetails[propName]);
     }
 

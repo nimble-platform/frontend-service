@@ -6,6 +6,7 @@ import {PriceOption} from '../catalogue/model/publish/price-option';
 import {PRICE_OPTIONS} from '../catalogue/model/constants';
 import {ItemProperty} from '../catalogue/model/publish/item-property';
 import {Address} from '../catalogue/model/publish/address';
+import {Text} from '../catalogue/model/publish/text';
 
 /**
  * Wrapper around a price and a quantity, contains convenience methods to get the total price,
@@ -82,7 +83,7 @@ export class PriceWrapper {
                     this.appliedDiscounts.push(priceOption);
                 }
                 // check for paymentMeans
-                else if(this.paymentMeans && priceOption.typeID == PRICE_OPTIONS.PAYMENT_MEAN.typeID && priceOption.paymentMeans[0].instructionNote == this.paymentMeans){
+                else if(this.paymentMeans && priceOption.typeID == PRICE_OPTIONS.PAYMENT_MEAN.typeID && priceOption.paymentMeans[0].paymentMeansCode.value == this.paymentMeans){
                     priceOption.discount = this.calculateDiscountAmount(priceOption,totalPrice);
                     totalDiscount += priceOption.discount;
                     // add this discount to appliedDiscounts list
@@ -115,7 +116,7 @@ export class PriceWrapper {
                         if(priceOption.additionalItemProperty.length == 0) {
                             continue;
                         }
-                        if(property.id == priceOption.additionalItemProperty[0].id && priceOption.additionalItemProperty[0].value.indexOf(property.value[0]) != -1){
+                        if(property.id == priceOption.additionalItemProperty[0].id && this.existenceOfPriceOptionForPropertyValue(priceOption.additionalItemProperty[0].value,property.value[0])){
                             priceOption.discount = this.calculateDiscountAmount(priceOption,totalPrice);
                             totalDiscount += priceOption.discount;
                             // add this discount to appliedDiscounts list
@@ -129,7 +130,7 @@ export class PriceWrapper {
                     let checkBuildingNumber = priceOption.itemLocationQuantity.applicableTerritoryAddress[0].buildingNumber != "";
                     let checkPostalZone = priceOption.itemLocationQuantity.applicableTerritoryAddress[0].postalZone != "";
                     let checkCityName = priceOption.itemLocationQuantity.applicableTerritoryAddress[0].cityName != "";
-                    let checkCountryName = priceOption.itemLocationQuantity.applicableTerritoryAddress[0].country && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].country.name != "";
+                    let checkCountryName = priceOption.itemLocationQuantity.applicableTerritoryAddress[0].country && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].country.name.value != "";
                     if(checkStreetName && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].streetName.toLocaleLowerCase() != this.deliveryLocation.streetName.toLocaleLowerCase()){
                         continue;
                     }
@@ -142,7 +143,7 @@ export class PriceWrapper {
                     if(checkCityName && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].cityName.toLocaleLowerCase() != this.deliveryLocation.cityName.toLocaleLowerCase()){
                         continue;
                     }
-                    if(checkCountryName && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].country.name.toLocaleLowerCase() != this.deliveryLocation.country.name.toLocaleLowerCase()){
+                    if(checkCountryName && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].country.name.value.toLocaleLowerCase() != this.deliveryLocation.country.name.value.toLocaleLowerCase()){
                         continue;
                     }
                     // the delivery location satisfies all conditions
@@ -278,5 +279,15 @@ export class PriceWrapper {
         }
 
         return discount;
+    }
+
+    // checks whether there's a price option for the selected property value or not
+    private existenceOfPriceOptionForPropertyValue(priceOptionPropertyValues:Text[],selectedPropertyValue:Text):boolean{
+        for(let property of priceOptionPropertyValues){
+            if(property.value == selectedPropertyValue.value && property.languageID == selectedPropertyValue.languageID){
+                return true;
+            }
+        }
+        return false;
     }
 }

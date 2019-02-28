@@ -35,10 +35,10 @@
         </button>
     </div>
     <div class="col-2">
-        <button *ngIf="!(processMetadata && processMetadata.isBeingUpdated)" class="btn btn-primary action" [disabled]="isLoading()" (click)="onSendRequest()">
+        <button *ngIf="!(processMetadata && processMetadata.isBeingUpdated)" class="btn btn-primary action" [disabled]="isLoading()||isEmpty()" (click)="onSendRequest()">
             Send Request
         </button>
-        <button *ngIf="processMetadata && processMetadata.isBeingUpdated" class="btn btn-primary action" [disabled]="isLoading()" (click)="onUpdateRequest()">
+        <button *ngIf="processMetadata && processMetadata.isBeingUpdated" class="btn btn-primary action" [disabled]="isLoading()||isEmpty()" (click)="onUpdateRequest()">
             Update Request
         </button>
     </div>

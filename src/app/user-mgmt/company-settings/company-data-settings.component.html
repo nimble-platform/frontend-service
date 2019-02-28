@@ -53,21 +53,22 @@
 		</div>
 	</div>
 
-	<!-- Industry Sectors -->
-	<div class="form-group row">
-		<label class="col-2 col-form-label">
-			<strong>Activity Sectors:</strong>
-			<span *ngIf="config.supportedActivitySectors[dataForm.getRawValue()['businessType']].length>0" class="tooltip-icon" (click)="showSectorTT(tooltip)"><i class="fa fa-question-circle"></i></span>
-		</label>
-		<div class="col-10">
-			<input *ngIf="dataForm.getRawValue()['businessType'] == ''" type="text" class="form-control" [formControl]="dataForm.controls['industrySectors']" placeholder="Select Business Type" required readonly maxlength="255">
-			<select *ngIf="config.supportedActivitySectors[dataForm.getRawValue()['businessType']] && config.supportedActivitySectors[dataForm.getRawValue()['businessType']].length>0" class="form-control" [formControl]="dataForm.controls['industrySectors']" multiple required>
-				<option *ngFor="let sector of config.supportedActivitySectors[dataForm.getRawValue()['businessType']]">{{sector}}</option>
-				<option>Other</option>
-			</select>
-			<input *ngIf="dataForm.getRawValue()['businessType'] != '' && (!config.supportedActivitySectors[dataForm.getRawValue()['businessType']] || config.supportedActivitySectors[dataForm.getRawValue()['businessType']].length==0)" type="text" class="form-control" [formControl]="dataForm.controls['industrySectors']" placeholder="Separate entries using ','" required maxlength="255">
-		</div>
-	</div>
+  <!-- Industry Sectors -->
+  <div class="form-group row">
+    <label class="col-2 col-form-label">
+      <strong>Activity Sectors:</strong>
+      <span *ngIf="config.supportedActivitySectors[dataForm.getRawValue()['businessType']].length>0 && !forceActText" class="tooltip-icon" (click)="showSectorTT(tooltip)"><i class="fa fa-question-circle"></i></span>
+    </label>
+    <div class="col-10">
+      <input *ngIf="dataForm.getRawValue()['businessType'] == ''" type="text" class="form-control" [formControl]="dataForm.controls['industrySectors']" placeholder="Select Business Type" required readonly maxlength="255">
+      <select *ngIf="config.supportedActivitySectors[dataForm.getRawValue()['businessType']] && config.supportedActivitySectors[dataForm.getRawValue()['businessType']].length>0 && !forceActText" class="form-control" [formControl]="dataForm.controls['industrySectors']" multiple required>
+        <option *ngFor="let sector of config.supportedActivitySectors[dataForm.getRawValue()['businessType']]">{{sector}}</option>
+        <!--<option>Other</option>-->
+      </select>
+      <input *ngIf="dataForm.getRawValue()['businessType'] != '' && (!config.supportedActivitySectors[dataForm.getRawValue()['businessType']] || config.supportedActivitySectors[dataForm.getRawValue()['businessType']].length==0) || forceActText" type="text" class="form-control" [formControl]="dataForm.controls['industrySectors']" placeholder="Separate entries using ','" required maxlength="255">
+      <div *ngIf="config.supportedActivitySectors[dataForm.getRawValue()['businessType']].length>0"><button class="btn btn-link pl-0" type="button" (click)="forceActText = !forceActText"><span *ngIf="!forceActText">Nothing fitting your business? Switch to manual input.</span><span *ngIf="forceActText">Back to list input.</span></button></div>
+    </div>
+  </div>
 
 	<!-- Business Keywords -->
 	<div class="form-group row">

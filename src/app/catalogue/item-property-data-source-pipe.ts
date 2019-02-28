@@ -16,7 +16,7 @@ import {CatalogueLine} from "./model/publish/catalogue-line";
 export class ItemPropertyDataSourcePipe implements PipeTransform {
 
     transform(qualifier:string, itemProperty: ItemProperty): Array<any> {
-        if (itemProperty.valueQualifier == "REAL_MEASURE") {
+        if (itemProperty.valueQualifier == "NUMBER") {
             return itemProperty.valueDecimal;
         } else if (itemProperty.valueQualifier == "BINARY") {
             return itemProperty.valueBinary;

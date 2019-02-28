@@ -13,6 +13,7 @@ import * as myGlobals from '../globals';
 import { CallStatus } from '../common/call-status';
 import { Address } from './model/address';
 import { getCountryByISO } from '../common/utils';
+import {createTextObject, selectValueOfTextObject} from '../common/utils';
 
 @Component({
     selector: 'company-registration',
@@ -32,6 +33,7 @@ export class CompanyRegistrationComponent implements OnInit {
      vatSkipped = false;
      vatValidated = false;
      vat = "";
+     forceActText = false;
 
     constructor(private _fb: FormBuilder,
 				        private appComponent: AppComponent,
@@ -95,9 +97,9 @@ export class CompanyRegistrationComponent implements OnInit {
               null,
               new CompanyDetails(
                 model.getRawValue()['address'],
-                [model.getRawValue()['businessKeywords']],
+                createTextObject(model.getRawValue()['businessKeywords']),
                 model.getRawValue()['businessType'],
-                model.getRawValue()['name'],
+                createTextObject(model.getRawValue()['name']),
                 [sectorString],
                 model.getRawValue()['vatNumber'],
                 model.getRawValue()['verificationInformation'],
@@ -123,12 +125,12 @@ export class CompanyRegistrationComponent implements OnInit {
 
                 if( response['companyID'] ) {
                     this.cookieService.set("company_id", response['companyID']);
-                    this.cookieService.set("active_company_name", response['settings']['details']['companyLegalName']);
+                    this.cookieService.set("active_company_name", selectValueOfTextObject(response['settings']['details']['legalName']));
                 }
 
                 if (this.config.logoRequired) {
                   this.userService
-                      .saveImage(this.imgFile, true)
+                      .saveImage(this.imgFile, true, response['companyID'])
                       .then(() => {
                           this.submitCallStatus.callback("Registration submitted", true);
                           this.appComponent.checkLogin("/user-mgmt/company-settings");

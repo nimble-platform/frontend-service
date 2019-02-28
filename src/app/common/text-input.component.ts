@@ -1,4 +1,5 @@
 import { Component, EventEmitter, OnInit, Input, Output } from "@angular/core";
+import {LANGUAGES} from '../catalogue/model/constants';
 
 @Component({
     selector: "text-input",
@@ -16,14 +17,24 @@ export class TextInputComponent implements OnInit {
     @Input() labelClass: string = "col-3";
     @Input() labelMainClass: string = "";
     @Input() rowClass: string = "";
+    @Input() flexClass: string = "";
     @Input() valueClass: string; // set based on label
     @Input() placeholder: string = "Enter a value...";
+    @Input() addButtonStyle:string = "";
+    @Input() deleteButtonStyle:string = "";
 
     private textValue: string;
+    private languageIdValue: string;
+    @Input() languageIdClass:String = "";
     @Input() valueTextClass: string = "";
     @Output() textChange = new EventEmitter<string>();
+    @Output() languageIdChange = new EventEmitter<string>();
+    @Output() addTextInput = new EventEmitter();
+    @Output() deleteTextInput = new EventEmitter();
     @Input() rows: number = 3;
     @Input() maxLength: string = "255";
+
+    languages = LANGUAGES;
 
     constructor() {
 
@@ -43,5 +54,23 @@ export class TextInputComponent implements OnInit {
     set text(text: string) {
         this.textValue = text;
         this.textChange.emit(text);
+    }
+
+    @Input()
+    get languageId(): string{
+        return this.languageIdValue;
+    }
+
+    set languageId(languageId: string){
+        this.languageIdValue = languageId;
+        this.languageIdChange.emit(languageId);
+    }
+
+    onAddTextInput(){
+        this.addTextInput.emit();
+    }
+
+    onDeleteTextInput(){
+        this.deleteTextInput.emit();
     }
 }

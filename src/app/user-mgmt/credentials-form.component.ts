@@ -5,7 +5,8 @@ import { CredentialsService } from './credentials.service';
 import * as myGlobals from '../globals';
 import { CookieService } from 'ng2-cookies';
 import { CallStatus } from '../common/call-status';
-import { copy } from '../common/utils';
+import {copy, selectValueOfTextObject} from '../common/utils';
+import {CategoryService} from '../catalogue/category/category.service';
 //declare var jsSHA: any;
 
 @Component({
@@ -28,7 +29,8 @@ export class CredentialsFormComponent implements OnInit {
 	constructor(
 		private credentialsService: CredentialsService,
 		private cookieService: CookieService,
-		private appComponent: AppComponent
+		private appComponent: AppComponent,
+		private categoryService:CategoryService
 	) {	}
 
 	ngOnInit() {
@@ -62,7 +64,7 @@ export class CredentialsFormComponent implements OnInit {
 			else
 				this.cookieService.set("company_id",null);
 			if (res.companyName)
-				this.cookieService.set("active_company_name",res.companyName);
+				this.cookieService.set("active_company_name",selectValueOfTextObject(res.companyName));
 			else
 				this.cookieService.set("active_company_name",null);
 			if (res.showWelcomeInfo)

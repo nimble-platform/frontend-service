@@ -2,7 +2,7 @@ import {Period} from "./period";
 import {ItemProperty} from "./item-property";
 import {ItemLocationQuantity} from "./item-location-quantity";
 import {PaymentTerms} from "./payment-terms";
-import {PaymentMeans} from "../../../user-mgmt/model/payment-means";
+import {PaymentMeans} from './payment-means';
 
 export class PriceOption {
     constructor(

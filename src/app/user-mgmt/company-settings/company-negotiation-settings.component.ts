@@ -14,7 +14,7 @@ import { CompanySettings } from "../model/company-settings";
     templateUrl: "./company-negotiation-settings.component.html"
 })
 export class CompanyNegotiationSettingsComponent implements OnInit {
-    
+
     @Input() presentationMode: "edit" | "view" = "edit";
     @Input() settings: CompanySettings = null;
 
@@ -36,7 +36,7 @@ export class CompanyNegotiationSettingsComponent implements OnInit {
     incoterms: SelectedTerms;
 
     constructor(private userService: UserService) {
-        
+
     }
 
     ngOnInit() {
@@ -52,7 +52,7 @@ export class CompanyNegotiationSettingsComponent implements OnInit {
     onSave() {
         this.callStatus.submit();
         this.userService
-            .putCompanyNegotiationSettings(this.negotiationSettings)
+            .putCompanyNegotiationSettings(this.negotiationSettings, this.settings.companyID)
             .then(() => {
                 this.callStatus.callback("Done saving company negotiation settings", true);
                 this.originalSettings = copy(this.negotiationSettings);
