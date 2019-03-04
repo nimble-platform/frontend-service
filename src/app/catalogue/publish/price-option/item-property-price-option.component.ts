@@ -55,7 +55,6 @@ export class ItemPropertyPriceOptionComponent {
                 let index: number = copyProperty.valueDecimal.findIndex(propVal => propVal == value)
                 index !== -1 ? copyProperty.valueDecimal.splice(index, 1) : copyProperty.valueDecimal.push(value);
             }
-            case "REAL_MEASURE":
             case "QUANTITY": {
                 let quantityVal: Quantity = value;
                 let index: number = copyProperty.valueQuantity.findIndex(propVal => propVal.value == quantityVal.value && propVal.unitCode == quantityVal.unitCode)
@@ -82,7 +81,6 @@ export class ItemPropertyPriceOptionComponent {
                 let index: number = copyProperty.valueDecimal.findIndex(propVal => propVal == value)
                 return index != -1;
             }
-            case "REAL_MEASURE":
             case "QUANTITY": {
                 let quantityVal: Quantity = value;
                 let index: number = copyProperty.valueQuantity.findIndex(propVal => propVal.value == quantityVal.value && propVal.unitCode == quantityVal.unitCode)

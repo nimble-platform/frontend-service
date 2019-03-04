@@ -486,7 +486,6 @@ export class ProductPublishComponent implements OnInit {
             case "NUMBER":
                 property.valueDecimal.splice(index, 1);
                 break;
-            case "REAL_MEASURE":
             case "QUANTITY":
                 property.valueQuantity.splice(index, 1);
                 break;
@@ -864,8 +863,7 @@ export class ProductPublishComponent implements OnInit {
                     propertiesToBeSpliced.push(property);
                 }
 
-            } else if (valueQualifier.toLowerCase() == 'quantity' ||
-                        valueQualifier == "real_measure") {
+            } else if (valueQualifier.toLowerCase() == 'quantity') {
                 if (property.valueQuantity.length == 0 || !property.valueQuantity[0].value) {
                     propertiesToBeSpliced.push(property);
                 }
