@@ -11,6 +11,7 @@ export class SimpleSearchService {
 
     private headers = new Headers({'Content-Type': 'application/json'});
     private url = myGlobals.simple_search_endpoint;
+    private indexingServiceUrl = myGlobals.indexing_service_endpoint;
     private urlProperty = myGlobals.simple_search_properties_endpoint;
     private facetMin = myGlobals.facet_min;
 
@@ -30,8 +31,7 @@ export class SimpleSearchService {
 	}
 
     getUblProperties(facets){
-        //let url = `http://nimble-staging.salzburgresearch.at/index/properties?nameSpace=${encodeURIComponent("http://www.nimble-project.org/resource/ubl#")}`;
-		let url = `http://nimble-staging.salzburgresearch.at/index/property/search`;
+		let url = this.indexingServiceUrl + `/property/search`;
 		let searchObject: any = {};
 		searchObject.rows = 2147483647;
 		searchObject.start = 0;
@@ -51,7 +51,7 @@ export class SimpleSearchService {
     }
 
     getFields(): Promise<any> {
-		const url = `http://nimble-staging.salzburgresearch.at/index/item/fields`;
+		const url = this.indexingServiceUrl + `/item/fields`;
 		// const url = `${this.url}/select?q=*:*&rows=0&wt=csv`;
 		return this.http
 		.get(url, {headers: this.headers})
@@ -63,9 +63,7 @@ export class SimpleSearchService {
 	get(query: string, facets: string[], facetQueries: string[], page: number, cat: string, catID: string): Promise<any> {
 		query = query.replace(/[!'()]/g, '');
 		// var start = page*10-10;
-		const url = `http://nimble-staging.salzburgresearch.at/index/item/search`
-		// const url = `http://nimble-staging.salzburgresearch.at/index/item/select?q=${query}&start=${start}&facet=true&sort=score%20desc&rows=10&facet.sort=count&facet.mincount=${this.facetMin}&json.nl=map&wt=json`;
-		// const url = `${this.url}/select?q=${query}&start=${start}&facet=true&sort=score%20desc&rows=10&facet.sort=count&facet.mincount=${this.facetMin}&json.nl=map&wt=json`;
+		const url = this.indexingServiceUrl + `/item/search`
 
 		let searchObject:any = {};
 		searchObject.rows = 10;

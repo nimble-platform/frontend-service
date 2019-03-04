@@ -58,7 +58,7 @@ export const bpe_endpoint=`${base_path}/business-process`;
 export const data_channel_endpoint=`${base_path}/data-channel`;
 export const data_aggregation_endpoint=`${base_path}/data-aggregation`;
 export const trust_service_endpoint=`${base_path}/trust`;
-
+export const indexing_service_endpoint=`${base_path}/index`;
 
 // BIBA endpoints
 

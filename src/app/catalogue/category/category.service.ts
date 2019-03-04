@@ -13,40 +13,12 @@ import {CookieService} from "ng2-cookies";
 @Injectable()
 export class CategoryService {
     private baseUrl = myGlobals.catalogue_endpoint;
+    private indexingBaseUrl = myGlobals.indexing_service_endpoint;
 
     selectedCategories: Category[] = [];
 
     constructor(private http: Http,
                 private cookieService: CookieService) {
-    }
-
-    // This map only contains FurnitureOntology categories
-    private cachedCategories:Map<string,Category> = new Map<string, Category>();
-
-    // this function gets all FurnitureOntology categories
-    // however, those categories only contains information about the labels and definitions
-    cacheFurnitureOntologyCategories(){
-        // check whether FurnitureOntology categories are cached or not
-        if(this.cachedCategories.size != 0){
-            return Promise.resolve(null);
-        }
-        const url = `${this.baseUrl}/taxonomies/FurnitureOntology/all-categories`;
-        return this.http
-            .get(url, {headers: getAuthorizedHeaders(this.cookieService)})
-            .toPromise()
-            .then(response => {
-                let categories:Category[] = response.json() as Category[];
-                for(let category of categories){
-                    this.cachedCategories.set(category.categoryUri,category);
-                }
-                return null;
-            })
-            .catch(this.handleError);
-    }
-
-    // This function assumes that category with the given uri is already cached.
-    getCachedCategoryName(uri:string):string{
-        return selectPreferredName(this.cachedCategories.get(uri));
     }
 
     getCategoriesByName(keyword: string, taxonomyId: string,isLogistics: boolean): Promise<Category[]> {
@@ -117,7 +89,7 @@ export class CategoryService {
      * @param uris
      */
     public getCategories(uris: string[]): Promise<any> {
-        const url = "http://nimble-staging.salzburgresearch.at/index/classes?";
+        const url = this.indexingBaseUrl + "/classes?";
         let full_url = url;
         for(let uri of uris) {
             full_url += `uri=${encodeURIComponent(uri)}&`;
