@@ -6,6 +6,7 @@ export class CompanyDetails {
       public businessKeywords: {},
       public businessType: string,
       public legalName: {},
+      public brandName: {},
       public industrySectors: string[],
       public vatNumber: string,
       public verificationInformation: string,

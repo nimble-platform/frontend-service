@@ -49,6 +49,16 @@
 			</div>
 		</div>
 
+		<!-- Brand Name -->
+		<div class="form-group row">
+			<label class="col-2 col-form-label">
+				<strong>Trade Name:</strong>
+			</label>
+			<div class="col-10">
+				<input type="text" class="form-control" name="brandName" [formControl]="registrationForm.controls['brandName']" maxlength="255">
+			</div>
+		</div>
+
 		<!-- VAT Number -->
 		<div class="form-group row">
 			<label class="col-2 col-form-label">
@@ -99,15 +109,16 @@
 		<div class="form-group row">
 			<label class="col-2 col-form-label">
 				<strong>Activity Sectors:</strong>
-				<span *ngIf="config.supportedActivitySectors[registrationForm.getRawValue()['businessType']].length>0" class="tooltip-icon" (click)="showSectorTT(tooltip)"><i class="fa fa-question-circle"></i></span>
+				<span *ngIf="config.supportedActivitySectors[registrationForm.getRawValue()['businessType']].length>0 && !forceActText" class="tooltip-icon" (click)="showSectorTT(tooltip)"><i class="fa fa-question-circle"></i></span>
 			</label>
 			<div class="col-10">
 				<input *ngIf="registrationForm.getRawValue()['businessType'] == ''" type="text" class="form-control" [formControl]="registrationForm.controls['industrySectors']" placeholder="Select Business Type" required readonly maxlength="255">
-				<select *ngIf="config.supportedActivitySectors[registrationForm.getRawValue()['businessType']].length>0" class="form-control" [formControl]="registrationForm.controls['industrySectors']" multiple required>
+				<select *ngIf="config.supportedActivitySectors[registrationForm.getRawValue()['businessType']].length>0 && !forceActText" class="form-control" [formControl]="registrationForm.controls['industrySectors']" multiple required>
 					<option *ngFor="let sector of config.supportedActivitySectors[registrationForm.getRawValue()['businessType']]">{{sector}}</option>
-					<option>Other</option>
+					<!--<option>Other</option>-->
 				</select>
-				<input *ngIf="registrationForm.getRawValue()['businessType'] != '' && config.supportedActivitySectors[registrationForm.getRawValue()['businessType']].length==0" type="text" class="form-control" [formControl]="registrationForm.controls['industrySectors']" placeholder="Separate entries using ','" required maxlength="255">
+				<input *ngIf="registrationForm.getRawValue()['businessType'] != '' && config.supportedActivitySectors[registrationForm.getRawValue()['businessType']].length==0 || forceActText" type="text" class="form-control" [formControl]="registrationForm.controls['industrySectors']" placeholder="Separate entries using ','" required maxlength="255">
+				<div *ngIf="config.supportedActivitySectors[registrationForm.getRawValue()['businessType']].length>0"><button class="btn btn-link pl-0" type="button" (click)="forceActText = !forceActText"><span *ngIf="!forceActText">Nothing fitting your business? Switch to manual input.</span><span *ngIf="forceActText">Back to list input.</span></button></div>
 			</div>
 		</div>
 

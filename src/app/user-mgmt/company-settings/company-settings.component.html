@@ -1,27 +1,31 @@
-<div *ngIf="viewMode=='full'">
+<div *ngIf="viewMode=='full' || viewMode=='data'">
 
-  <!-- Title -->
-  <div class="row">
-      <div class="col-12">
-          <p class="nimble-title" i18n>Company Settings</p>
-      </div>
-  </div>
+  <div *ngIf="viewMode=='full'">
 
-  <!-- Profile Completess Progress Bar -->
-  <div class="row">
-    <div class="col-2">
-      <strong>Profile Completeness:</strong>
+    <!-- Title -->
+    <div class="row">
+        <div class="col-12">
+            <p class="nimble-title" i18n>Company Settings</p>
+        </div>
     </div>
-    <div class="col-10">
-      <div class="progress" style="height:1.5rem">
-        <div class="progress-bar" role="progressbar" [ngStyle]="{'width':profile_completeness_str}" [attr.aria-valuenow]="profile_completeness" aria-valuemin="0" aria-valuemax="1">
-          <span *ngIf="profile_completeness>0">{{profile_completeness_str}}</span>
+
+    <!-- Profile Completess Progress Bar -->
+    <div class="row">
+      <div class="col-2">
+        <strong>Profile Completeness:</strong>
+      </div>
+      <div class="col-10">
+        <div class="progress" style="height:1.5rem">
+          <div class="progress-bar" role="progressbar" [ngStyle]="{'width':profile_completeness_str}" [attr.aria-valuenow]="profile_completeness" aria-valuemin="0" aria-valuemax="1">
+            <span *ngIf="profile_completeness>0">{{profile_completeness_str}}</span>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <hr/>
+    <hr/>
+
+  </div>
 
   <!-- Tabs -->
   <div>
@@ -36,22 +40,22 @@
   				Company Details
   			</a>
   		</li>
-  		<li *ngIf="config.showTrade" class="nav-item">
+  		<li *ngIf="viewMode=='full' && config.showTrade" class="nav-item">
   			<a href id="NEGOTIATION_SETTINGS" class="nav-link" [ngClass]="{ active: selectedTab === 'NEGOTIATION_SETTINGS'}" (click)="onSelectTab($event)">
   				Trade Details
   			</a>
   		</li>
-  		<li class="nav-item">
+  		<li *ngIf="viewMode=='full'" class="nav-item">
   			<a href id="DELIVERY_TERMS" class="nav-link" [ngClass]="{ active: selectedTab === 'DELIVERY_TERMS'}" (click)="onSelectTab($event)">
   				Delivery Address
   			</a>
   		</li>
-  		<li class="nav-item">
+  		<li *ngIf="viewMode=='full'" class="nav-item">
   			<a href id="CERTIFICATES" class="nav-link" [ngClass]="{ active: selectedTab === 'CERTIFICATES'}" (click)="onSelectTab($event)">
   				Certificates
   			</a>
   		</li>
-  		<li class="nav-item">
+  		<li *ngIf="viewMode=='full'" class="nav-item">
   			<a href id="CATEGORIES" class="nav-link" [ngClass]="{ active: selectedTab === 'CATEGORIES'}" (click)="onSelectTab($event)">
   				Catalogue Categories
   			</a>
@@ -69,13 +73,13 @@
 	</company-data-settings>
 </div>
 
-<div *ngIf="viewMode=='full'">
+<!-- Company Description, hidden to avoid reloading  -->
+<div *ngIf="settings" [hidden]="selectedTab !== 'COMPANY_DESCRIPTION'">
+	<company-description-settings [settings]="settings" (onSaveEvent)="onSettingsUpdated()">
+	</company-description-settings>
+</div>
 
-  <!-- Company Description, hidden to avoid reloading  -->
-  <div *ngIf="settings" [hidden]="selectedTab !== 'COMPANY_DESCRIPTION'">
-  	<company-description-settings [settings]="settings" (onSaveEvent)="onSettingsUpdated()">
-  	</company-description-settings>
-  </div>
+<div *ngIf="viewMode=='full'">
 
   <!-- Negotiation Settings, hidden to avoid reloading -->
   <div *ngIf="settings" [hidden]="selectedTab !== 'NEGOTIATION_SETTINGS'">

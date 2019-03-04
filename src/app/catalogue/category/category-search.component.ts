@@ -299,12 +299,12 @@ export class CategorySearchComponent implements OnInit {
             .then(rootCategories => {
                 this.rootCategories = sortCategories(rootCategories);
                 this.getCategoriesStatus.callback("Retrieved category details", true);
-                if (this.categoryFilter[this.taxonomyId]) {
-                  this.logisticsCategory = this.rootCategories.find(c => c.code === this.categoryFilter[this.taxonomyId].logisticsCategory);
+                if (this.categoryFilter[taxonomyId]) {
+                  this.logisticsCategory = this.rootCategories.find(c => c.code === this.categoryFilter[taxonomyId].logisticsCategory);
                   let searchIndex = this.findCategoryInArray(this.rootCategories, this.logisticsCategory);
                   this.rootCategories.splice(searchIndex, 1);
-                  for (var i=0; i<this.categoryFilter[this.taxonomyId].hiddenCategories.length; i++) {
-                    let filterCat = this.rootCategories.find(c => c.code === this.categoryFilter[this.taxonomyId].hiddenCategories[i]);
+                  for (var i=0; i<this.categoryFilter[taxonomyId].hiddenCategories.length; i++) {
+                    let filterCat = this.rootCategories.find(c => c.code === this.categoryFilter[taxonomyId].hiddenCategories[i]);
                     let searchIndex = this.findCategoryInArray(this.rootCategories, filterCat);
                     this.rootCategories.splice(searchIndex, 1);
                   }

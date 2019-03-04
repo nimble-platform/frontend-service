@@ -1,6 +1,19 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [8.0.0] - 2019-02-28
+### Added
+- Multilinguality features
+- Simplified and unified product publishing page including direct value inputs
+- Preparations for switch to new indexing service (will be performed in the following minor release)
+
+### Changed
+- Improved platform information page
+- Adapted to identity-service updates
+- Increased image upload limits to 2 MB
+- Taxonomy caching for improved performance
+- Added input switch for "Other" sectors
+
 ## [7.0.0] - 2019-02-04
 ### Added
 - Default ontology configuration including separate tabs and filters in category search
