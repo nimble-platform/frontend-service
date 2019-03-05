@@ -13,6 +13,7 @@ import { CategoryService } from '../catalogue/category/category.service';
 import { Category } from '../catalogue/model/category/category';
 import { DEFAULT_LANGUAGE} from '../catalogue/model/constants';
 import {Code} from '../catalogue/model/publish/code';
+import {CatalogueService} from "../catalogue/catalogue.service";
 
 @Component({
 	selector: 'simple-search-form',
@@ -85,6 +86,7 @@ export class SimpleSearchFormComponent implements OnInit {
 	facetQuery: any;
 	temp: any;
 	response: any;
+	imageMap: any = {}; // keeps the images if exists for the search results
     // check whether 'p' query parameter exists or not
 	noP = true;
 
@@ -97,6 +99,7 @@ export class SimpleSearchFormComponent implements OnInit {
 		private simpleSearchService: SimpleSearchService,
 		private searchContextService: SearchContextService,
 		private categoryService: CategoryService,
+		private catalogueService: CatalogueService,
 		public route: ActivatedRoute,
 		public router: Router
 	) {
@@ -415,6 +418,8 @@ export class SimpleSearchFormComponent implements OnInit {
 				}).catch(error => {
 					this.searchCallStatus.error("Error while running search.", error);
 				})
+
+				this.fetchImages(res.result);
 			})
 			.catch(error => {
 				this.searchCallStatus.error("Error while running search.", error);
@@ -423,6 +428,35 @@ export class SimpleSearchFormComponent implements OnInit {
 		.catch(error => {
 			this.searchCallStatus.error("Error while running search.", error);
 		});
+	}
+
+	fetchImages(searchResults:any[]): void {
+		// fetch images asynchronously
+		this.imageMap = {};
+
+		let imageMap: any = {};
+		for(let result of searchResults) {
+			let productImages: string[] = result.imgageUri;
+			if(productImages != null && productImages.length > 0) {
+				imageMap[result.uri] = productImages[0];
+			}
+		}
+
+		let imageUris: string[] = [];
+		for(let productUri in imageMap) {
+			imageUris.push(imageMap[productUri]);
+		}
+		if(imageUris.length > 0) {
+			this.catalogueService.getBinaryObjects(imageUris).then(images => {
+				for (let image of images) {
+					for (let productUri in imageMap) {
+						if(imageMap[productUri] == image.uri) {
+							this.imageMap[productUri] = "data:" + image.mimeCode + ";base64," + image.value
+						}
+					}
+				}
+			});
+		}
 	}
 
 	handleFacets(facetMetadata,res,p,ublProperties){

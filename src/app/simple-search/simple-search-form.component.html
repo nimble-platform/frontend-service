@@ -336,16 +336,7 @@
 								<div class="card-body">
 									<div class="row">
 										<div class="col-2 align-center">
-											<img src="data:image/png;base64,{{result[product_img]}}" class="thumb" onerror="this.src='assets/empty_img.png';"/>
-											<!--
-											<div *ngIf="isJson(result[product_img])">
-												<img src="{{result[product_img]}}" class="thumb" onerror="this.src='assets/empty_img.png';"/>
-											</div>
-											<div *ngIf="!isJson(result[product_img])">
-												<img src="{{result[product_img]}}" class="thumb" onerror="this.src='assets/empty_img.png';"/>
-											</div>
-											{{result[product_img]}}
-											-->
+											<img src="{{imageMap[result.uri]}}" class="thumb" onerror="this.src='assets/empty_img.png';"/>
 										</div>
 										<div class="col-6">
 											<b>{{ getMultilingualLabel(result[product_name]) }}</b><br/>
