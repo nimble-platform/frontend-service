@@ -232,7 +232,7 @@ export class CatalogueService {
             .catch(this.handleError);
     }
 
-    getBinaryObjects(uris:string[]): BinaryObject[]{
+    getBinaryObjects(uris:string[]){
         let condition: string = "";
         for(let uri of uris) {
             condition += uri + ","

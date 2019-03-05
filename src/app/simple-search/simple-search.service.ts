@@ -11,9 +11,7 @@ import { DEFAULT_LANGUAGE } from '../catalogue/model/constants';
 export class SimpleSearchService {
 
     private headers = new Headers({'Content-Type': 'application/json'});
-    private indexingServiceUrl = myGlobals.indexing_service_endpoint;
-    private url = myGlobals.simple_search_endpoint;
-    private urlProperty = myGlobals.simple_search_properties_endpoint;
+    private url = myGlobals.indexing_service_endpoint;
     private facetMin = myGlobals.facet_min;
 
 	product_name = myGlobals.product_name;
@@ -31,7 +29,7 @@ export class SimpleSearchService {
 	}
 
     getUblProperties(facets){
-		let url = this.indexingServiceUrl + `/property/search`;
+		let url = this.url + `/property/search`;
 		let searchObject: any = {};
 		searchObject.rows = 2147483647;
 		searchObject.start = 0;
@@ -51,7 +49,7 @@ export class SimpleSearchService {
     }
 
     getFields(): Promise<any> {
-		const url = this.indexingServiceUrl + `/item/fields`;
+		const url = this.url + `/item/fields`;
 		// const url = `${this.url}/select?q=*:*&rows=0&wt=csv`;
 		return this.http
 		.get(url, {headers: this.headers})
@@ -63,7 +61,7 @@ export class SimpleSearchService {
 	get(query: string, facets: string[], facetQueries: string[], page: number, cat: string, catID: string): Promise<any> {
 		query = query.replace(/[!'()]/g, '');
 		// var start = page*10-10;
-		const url = this.indexingServiceUrl + `/item/search`
+		const url = this.url + `/item/search`
 
 		let searchObject:any = {};
 		searchObject.rows = 10;
@@ -107,49 +105,25 @@ export class SimpleSearchService {
 		.catch(this.handleError);
 	}
 
-	getSingle(id: string): Promise<any> {
-		const url = `${this.url}/select?q=*&rows=1&wt=json&fq=item_id:${id}`;
+  getSuggestions(query:string, field: string) {
+		query = query.replace(/[!'()]/g, '');
+		const url = `${this.url}/item/suggest?q=${query}&field=${field}`;
 		return this.http
 		.get(url, {headers: this.getHeadersWithBasicAuthorization()})
-		.toPromise()
-		.then(res => res.json())
-		.catch(this.handleError);
-	}
-
-	getSuggestions(query:string, facetQueries: [string], cat: string) {
-		query = query.replace(/[!'()]/g, '');
-		const url = `${this.url}/suggest?q=${query}&wt=json`;
-		var full_url = url + "";
-		for (let facetQuery of facetQueries) {
-			full_url += "&fq="+encodeURIComponent(facetQuery);
-		}
-		if (cat != "") {
-			var add_url = `${this.product_cat}:"${cat}"`;
-			full_url += "&fq="+encodeURIComponent(add_url);
-		}
-		return this.http
-		.get(full_url, {headers: this.getHeadersWithBasicAuthorization()})
 		.pipe(
 			map(response =>
-				this.getSuggestionArray(response,query)
+				this.getSuggestionArray(response.json(),query)
 			)
 		);
 	}
 
 	getSuggestionArray(res:any, q:string): string[] {
-		let defaultLanguage = DEFAULT_LANGUAGE();
 		var suggestions=[];
-		if (q.length >= 2) {
-			res = JSON.parse(res._body);
-			if (res && res.suggestions && res.suggestions.suggestion_facets && res.suggestions.suggestion_facets[this.product_name]) {
-				for (let sug in res.suggestions.suggestion_facets[this.product_name]) {
-					// get the language id of the value
-                    let index = sug.lastIndexOf(":");
-                    let languageId = sug.substring(index+1);
-					if (suggestions.length<10 && languageId == defaultLanguage)
-					suggestions.push(sug.substring(0,index));
-				}
-			}
+		if (q.length >= 2 && res.entry && res.entry.length > 0) {
+      for (let sug of res.entry) {
+        if (sug["label"])
+          suggestions.push(sug["label"]);
+      }
 		}
 		return suggestions;
 	}

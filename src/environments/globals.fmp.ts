@@ -9,8 +9,6 @@ export const debug = false;
 
 // export const base_path = "http://nimble-staging.salzburgresearch.at";
 // export const ub_base = "http://nimble-staging.salzburgresearch.at/search";
-// export const simple_search_endpoint="http://nimble-staging.salzburgresearch.at/marmotta/solr/catalogue_multilang";
-// export const simple_search_properties_endpoint="http://nimble-staging.salzburgresearch.at/marmotta/solr/prop_trial";
 // export const pw_reset_link = "http://nimble-staging.salzburgresearch.at:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
 
 
@@ -18,8 +16,6 @@ export const debug = false;
 
 export const base_path = "https://fmp-nimble.salzburgresearch.at/api";
 export const ub_base = "https://fmp-nimble.salzburgresearch.at/ub-search";
-export const simple_search_endpoint="https://fmp-nimble.salzburgresearch.at/marmotta/solr/catalogue_multilang";
-export const simple_search_properties_endpoint="https://fmp-nimble.salzburgresearch.at/marmotta/solr/prop_trial";
 export const pw_reset_link = "https://fmp-nimble.salzburgresearch.at:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
 
 
@@ -27,8 +23,6 @@ export const pw_reset_link = "https://fmp-nimble.salzburgresearch.at:8080/auth/r
 
 // export const base_path = "https://nimble.salzburgresearch.at";
 // export const ub_base = "https://hydra2.ikap.biba.uni-bremen.de:8443";
-// export const simple_search_endpoint="https://nimble-platform.salzburgresearch.at/marmotta/solr/catalogue_multilang";
-// export const simple_search_properties_endpoint="https://nimble-platform.salzburgresearch.at/marmotta/solr/prop_trial";
 // export const pw_reset_link = "https://nimble-platform.salzburgresearch.at:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
 
 
@@ -36,8 +30,6 @@ export const pw_reset_link = "https://fmp-nimble.salzburgresearch.at:8080/auth/r
 
 // export const base_path = "http://nimble.uk-south.containers.mybluemix.net";
 // export const ub_base = "https://hydra2.ikap.biba.uni-bremen.de:8443";
-// export const simple_search_endpoint="https://nimble-platform.salzburgresearch.at/marmotta/solr/catalogue_multilang";
-// export const simple_search_properties_endpoint="https://nimble-platform.salzburgresearch.at/marmotta/solr/prop_trial";
 // export const pw_reset_link = "https://nimble-platform.salzburgresearch.at:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
 
 
@@ -45,8 +37,6 @@ export const pw_reset_link = "https://fmp-nimble.salzburgresearch.at:8080/auth/r
 
 // export const base_path = "http://localhost";
 // export const ub_base = "http://localhost:8090";
-// export const simple_search_endpoint="http://localhost:8082/solr/catalogue_multilang";
-// export const simple_search_properties_endpoint="http://localhost:8082/solr/prop_trial";
 // export const pw_reset_link = "http://localhost:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
 
 
