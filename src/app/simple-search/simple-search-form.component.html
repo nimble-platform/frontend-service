@@ -235,7 +235,7 @@
 									<div class="card-body">
 										<div class="mb-2">
 											<div class="mb-2">
-												{{ getName(product_vendor_rating) }}<br/>
+												{{ getName(product_vendor_rating,product_vendor) }}<br/>
 												<ngb-rating [(rate)]="ratingOverall" max="5">
 													<ng-template let-fill="fill">
 														<span class="star star-b" [class.full]="fill === 100">
@@ -245,7 +245,7 @@
 												</ngb-rating>
 											</div>
 											<div class="mb-2">
-												{{ getName(product_vendor_rating_seller) }}<br/>
+												{{ getName(product_vendor_rating_seller,product_vendor) }}<br/>
 												<ngb-rating [(rate)]="ratingSeller" max="5">
 													<ng-template let-fill="fill">
 														<span class="star star-b" [class.full]="fill === 100">
@@ -255,7 +255,7 @@
 												</ngb-rating>
 											</div>
 											<div class="mb-2">
-												{{ getName(product_vendor_rating_fulfillment) }}<br/>
+												{{ getName(product_vendor_rating_fulfillment,product_vendor) }}<br/>
 												<ngb-rating [(rate)]="ratingFulfillment" max="5">
 													<ng-template let-fill="fill">
 														<span class="star star-b" [class.full]="fill === 100">
@@ -265,7 +265,7 @@
 												</ngb-rating>
 											</div>
 											<div class="mb-2">
-												{{ getName(product_vendor_rating_delivery) }}<br/>
+												{{ getName(product_vendor_rating_delivery,product_vendor) }}<br/>
 												<ngb-rating [(rate)]="ratingDelivery" max="5">
 													<ng-template let-fill="fill">
 														<span class="star star-b" [class.full]="fill === 100">
@@ -275,7 +275,7 @@
 												</ngb-rating>
 											</div>
 											<div class="mb-2">
-												{{ getName(product_vendor_trust) }}<br/>
+												{{ getName(product_vendor_trust,product_vendor) }}<br/>
 												<ngb-rating [(rate)]="ratingTrust" max="5">
 													<ng-template let-fill="fill">
 														<span class="heart heart-b" [class.full-heart]="fill === 100">
@@ -349,12 +349,12 @@
 										</div>
 										<div class="col-6">
 											<b>{{ getMultilingualLabel(result[product_name]) }}</b><br/>
-											<small *ngIf="result.description">{{getMultilingualLabel(result.description)}}</small>
+											<small *ngIf="result.description">{{getMultilingualLabel(result[product_description])}}</small>
 										</div>
 										<div class="col-2">
-											<i>{{ result.manufacturer.legalName }}</i>
-											<div *ngIf="!checkNaN(result.manufacturer.trustRating)">
-												<ngb-rating [rate]="calcRating(result.manufacturer.trustRating,1)" [readonly]="true" max="5" title="{{getName(product_vendor_rating)}}:&#10;{{calcRating(result.manufacturer.trustRating,1)}} out of 5&#10;&#10;{{getName(product_vendor_rating_seller)}}:&#10;{{calcRating(result.manufacturer.trustSellerCommunication,1)}} out of 5&#10;&#10;{{getName(product_vendor_rating_fulfillment)}}:&#10;{{calcRating(result.manufacturer.trustFullfillmentOfTerms,1)}} out of 5&#10;&#10;{{getName(product_vendor_rating_delivery)}}:&#10;{{calcRating(result.manufacturer.trustDeliveryPackaging,1)}} out of 5">
+											<i>{{ result[product_vendor][product_vendor_name] }}</i>
+											<div *ngIf="!checkNaN(result[product_vendor][product_vendor_rating])">
+												<ngb-rating [rate]="calcRating(result[product_vendor][product_vendor_rating],1)" [readonly]="true" max="5" title="{{getName(product_vendor_rating,product_vendor)}}:&#10;{{calcRating(result[product_vendor][product_vendor_rating],1)}} out of 5&#10;&#10;{{getName(product_vendor_rating_seller,product_vendor)}}:&#10;{{calcRating(result[product_vendor][product_vendor_rating_seller],1)}} out of 5&#10;&#10;{{getName(product_vendor_rating_fulfillment,product_vendor)}}:&#10;{{calcRating(result[product_vendor][product_vendor_rating_fulfillment],1)}} out of 5&#10;&#10;{{getName(product_vendor_rating_delivery,product_vendor)}}:&#10;{{calcRating(result[product_vendor][product_vendor_rating_delivery],1)}} out of 5">
 													<ng-template let-fill="fill">
 													  <span class="star" [class.full]="fill === 100">
 													    <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
@@ -362,7 +362,7 @@
 													</ng-template>
 												</ngb-rating>
 											</div>
-											<div *ngIf="checkNaN(result.manufacturer.trustRating)">
+											<div *ngIf="checkNaN(result[product_vendor][product_vendor_rating])">
 												<ngb-rating [rate]="0" [readonly]="true" max="5" title="Unrated">
 													<ng-template let-fill="fill">
 													  <span class="star" [class.full]="fill === 100">
@@ -371,8 +371,8 @@
 													</ng-template>
 												</ngb-rating>
 											</div>
-											<div *ngIf="!checkNaN(result.manufacturer.trustScore)">
-												<ngb-rating [rate]="calcRating(result.manufacturer.trustScore,5)" [readonly]="true" max="5" title="{{getName(product_vendor_trust)}}:&#10;{{calcRating(result.manufacturer.trustScore,5)}} out of 5">
+											<div *ngIf="!checkNaN(result[product_vendor][product_vendor_trust])">
+												<ngb-rating [rate]="calcRating(result[product_vendor][product_vendor_trust],5)" [readonly]="true" max="5" title="{{getName(product_vendor_trust,product_vendor)}}:&#10;{{calcRating(result[product_vendor][product_vendor_trust],5)}} out of 5">
 													<ng-template let-fill="fill">
 													  <span class="heart" [class.full-heart]="fill === 100">
 													    <span class="half-heart" [style.width.%]="fill">&#10084;</span>&#10084;
@@ -380,7 +380,7 @@
 													</ng-template>
 												</ngb-rating>
 											</div>
-											<div *ngIf="checkNaN(result.manufacturer.trustScore)">
+											<div *ngIf="checkNaN(result[product_vendor][product_vendor_trust])">
 												<ngb-rating [rate]="0" [readonly]="true" max="5" title="Unrated">
 													<ng-template let-fill="fill">
 													  <span class="heart" [class.full-heart]="fill === 100">
@@ -391,8 +391,8 @@
 											</div>
 										</div>
 										<div class="col-2 align-right">
-											<span class="badge badge-primary-nimble" *ngIf="result.price">{{result.price[getCurrency(result.price)]}} {{getCurrency(result.price)}}</span>
-											<span class="badge badge-warning" *ngIf="!result.price">Upon request</span><br/>
+											<span class="badge badge-primary-nimble" *ngIf="result[product_price] && !checkEmpty(result[product_price])">{{result[product_price][getCurrency(result[product_price])]}} {{getCurrency(result[product_price])}}</span>
+											<span class="badge badge-warning" *ngIf="!result[product_price] || checkEmpty(result[product_price])">Upon request</span><br/>
 										</div>
 									</div>
 								</div>

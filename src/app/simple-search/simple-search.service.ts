@@ -5,23 +5,23 @@ import * as myGlobals from '../globals';
 import { map } from 'rxjs/operators';
 import { getAuthorizedHeaders } from '../common/utils'
 import {CookieService} from "ng2-cookies";
+import { DEFAULT_LANGUAGE } from '../catalogue/model/constants';
 
 @Injectable()
 export class SimpleSearchService {
 
     private headers = new Headers({'Content-Type': 'application/json'});
-    private url = myGlobals.simple_search_endpoint;
     private indexingServiceUrl = myGlobals.indexing_service_endpoint;
+    private url = myGlobals.simple_search_endpoint;
     private urlProperty = myGlobals.simple_search_properties_endpoint;
     private facetMin = myGlobals.facet_min;
 
 	product_name = myGlobals.product_name;
-	product_vendor_id = myGlobals.product_vendor_id;
-	product_vendor_name = myGlobals.product_vendor_name;
+	product_vendor_id = myGlobals.product_vendor+"."+myGlobals.product_vendor_id;
+	product_vendor_name = myGlobals.product_vendor+"."+myGlobals.product_vendor_name;
 	product_img = myGlobals.product_img;
 	product_nonfilter_full = myGlobals.product_nonfilter_full;
 	product_nonfilter_regex = myGlobals.product_nonfilter_regex;
-	product_nonfilter_key_field = myGlobals.product_nonfilter_key_field;
 	product_configurable = myGlobals.product_configurable;
 	product_cat = myGlobals.product_cat;
 	product_cat_mix = myGlobals.product_cat_mix;
@@ -78,7 +78,7 @@ export class SimpleSearchService {
 				if(searchObject.facet == null) {
 					searchObject.facet = {};
 					searchObject.facet.field = [];
-					searchObject.facet.minCount = 1;
+					searchObject.facet.minCount = this.facetMin;
 				}
 				searchObject.facet.field.push(facet)
 			}
@@ -156,9 +156,6 @@ export class SimpleSearchService {
 
 	checkField(field:string): boolean {
 		if (field == this.product_name || field == this.product_img || field == this.product_vendor_id || field == this.product_cat || field == this.product_cat_mix) {
-			return false;
-		}
-		if(field.search(this.product_nonfilter_key_field) != -1) {
 			return false;
 		}
 		for (let filter of this.product_nonfilter_full) {

@@ -164,30 +164,30 @@ export const config = {
 
 // Catalogue format variables
 
+export const product_vendor = "manufacturer";
+export const product_vendor_id = "id";
+export const product_vendor_name = "legalName";
+export const product_vendor_rating = "trustRating";
+export const product_vendor_rating_seller = "trustSellerCommunication";
+export const product_vendor_rating_fulfillment = "trustFullfillmentOfTerms";
+export const product_vendor_rating_delivery = "trustDeliveryPackaging";
+export const product_vendor_trust = "trustScore";
 export const product_name = "label";
-export const product_vendor_id = "item_manufacturer_id";
-export const product_vendor_name = "manufacturer.name";
-export const product_vendor_rating = "manufacturer.trustRating";
-export const product_vendor_rating_seller = "manufacturer.trustSellerCommunication";
-export const product_vendor_rating_fulfillment = "manufacturer.trustFullfillmentOfTerms";
-export const product_vendor_rating_delivery = "manufacturer.trustDeliveryPackaging";
-export const product_vendor_trust = "manufacturer.trustScore";
-export const product_img = "item_image";
-export const product_price = "item_price";
-export const product_currency = "item_price_currency";
-export const product_cat = "item_commodity_classification";
+export const product_description = "description";
+export const product_img = "imgageUri";
+export const product_price = "price";
+export const product_currency = "currency";
+export const product_cat = "classificationUri";
 export const product_cat_mix = "commodityClassficationUri";
-export const product_filter_prod = ["freeOfCharge","certificateType","item_applicable_countries"];
-export const product_filter_comp = ["manufacturer.name","manufacturer.origin","manufacturer.certificateType","manufacturer.ppapComplianceLevel","manufacturer.ppapDocumentType"];
+export const product_filter_prod = ["freeOfCharge","certificateType","applicableCountries"];
+export const product_filter_comp = ["manufacturer.legalName","manufacturer.origin","manufacturer.certificateType","manufacturer.ppapComplianceLevel","manufacturer.ppapDocumentType"];
 export const product_filter_trust = ["manufacturer.trustScore","manufacturer.trustRating","manufacturer.trustSellerCommunication","manufacturer.trustFullfillmentOfTerms","manufacturer.trustDeliveryPackaging","manufacturer.trustNumberOfTransactions"];
 export const product_filter_mappings = {
-    "item_price": "Price",
-    "item_price_currency": "Currency"
+  "price": "Price",
+  "currency": "Currency"
 };
 export const product_nonfilter_full = ["_text_","_version_","id","image","localName","languages","catalogueId","doctype","manufacturerId","manufacturerItemId"];
-export const product_nonfilter_regex = ["lmf.","_id", "_txt", "_desc", "_label"];
-export const product_nonfilter_key_field = "_key";
+export const product_nonfilter_regex = ["lmf.","_id", "_txt", "_desc", "_label", "_key", "_price", "_currency"];
 export const product_configurable = [];
 export const product_default = {};
 export const facet_min = 1;
-export const negotiatables = ["size", "duration"];

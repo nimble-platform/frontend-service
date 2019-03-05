@@ -22,14 +22,16 @@ import {Code} from '../catalogue/model/publish/code';
 
 export class SimpleSearchFormComponent implements OnInit {
 
-	product_name = myGlobals.product_name;
-	// product_vendor_id = myGlobals.product_vendor_id;
-	// product_vendor_name = myGlobals.product_vendor_name;
+	product_vendor = myGlobals.product_vendor;
+	product_vendor_id = myGlobals.product_vendor_id;
+	product_vendor_name = myGlobals.product_vendor_name;
 	product_vendor_rating = myGlobals.product_vendor_rating;
 	product_vendor_rating_seller = myGlobals.product_vendor_rating_seller;
 	product_vendor_rating_fulfillment = myGlobals.product_vendor_rating_fulfillment;
 	product_vendor_rating_delivery = myGlobals.product_vendor_rating_delivery;
 	product_vendor_trust = myGlobals.product_vendor_trust;
+	product_name = myGlobals.product_name;
+	product_description = myGlobals.product_description;
 	product_img = myGlobals.product_img;
 	product_price = myGlobals.product_price;
 	product_currency = myGlobals.product_currency;
@@ -444,14 +446,33 @@ export class SimpleSearchFormComponent implements OnInit {
 				let label;
 				let facet_innerLabel;
 				let facet_innerCount;
-				let atLeastOneMultilingualLabel: number = res.facets[facet].entry.findIndex(facetInner => facetInner.label.indexOf("@" + DEFAULT_LANGUAGE()) != -1);
-
+				let tmp_lang = DEFAULT_LANGUAGE();
+				let atLeastOneMultilingualLabel: number = res.facets[facet].entry.findIndex(facetInner => {
+					var idx = facetInner.label.lastIndexOf("@" + DEFAULT_LANGUAGE());
+					return (idx != -1 && idx+3 == facetInner.label.length);
+				});
+				if (atLeastOneMultilingualLabel == -1) {
+					atLeastOneMultilingualLabel = res.facets[facet].entry.findIndex(facetInner => {
+						var idx = facetInner.label.lastIndexOf("@en");
+						return (idx != -1 && idx+3 == facetInner.label.length);
+					});
+				}
+				if (atLeastOneMultilingualLabel == -1) {
+					atLeastOneMultilingualLabel = res.facets[facet].entry.findIndex(facetInner => {
+						var idx = facetInner.label.lastIndexOf("@");
+						return (idx != -1 && idx+3 == facetInner.label.length);
+					});
+				}
+				if (atLeastOneMultilingualLabel != -1) {
+					var idx = res.facets[facet].entry[atLeastOneMultilingualLabel].label.lastIndexOf("@");
+					tmp_lang = res.facets[facet].entry[atLeastOneMultilingualLabel].label.substring(idx+1);
+				}
 				for (let facet_inner of res.facets[facet].entry) {
 					facet_innerLabel = facet_inner.label;
 					facet_innerCount = facet_inner.count;
 					if(facetMetadataExists && facetMetadata[facet].dataType == 'string') {
 						if(atLeastOneMultilingualLabel != -1) {
-							let idx = facet_innerLabel.lastIndexOf("@" + DEFAULT_LANGUAGE());
+							let idx = facet_innerLabel.lastIndexOf("@" + tmp_lang);
 							if(idx != -1) {
 								facet_innerLabel = label = facet_innerLabel.substring(0,idx);
 							} else {
@@ -526,8 +547,10 @@ export class SimpleSearchFormComponent implements OnInit {
 		this.get(this.objToSubmit);
 	}
 
-	getName(name:string) {
+	getName(name:string,prefix?:string) {
 		// if it is a ubl property, then get its label from the ublProperties
+		if (prefix)
+			name = prefix+"."+name;
 		for(let ublProperty of this.ublProperties){
 			if(name == ublProperty.localName){
 				return selectNameFromLabelObject(ublProperty.label);
@@ -562,7 +585,7 @@ export class SimpleSearchFormComponent implements OnInit {
 		var found = false;
 		for (var i=0; i<this.facetQuery.length; i++) {
 			var comp = this.facetQuery[i].split(":")[0];
-			if (comp.localeCompare(this.product_currency) == 0 || comp.localeCompare(this.product_price) == 0) {
+			if (comp.localeCompare(this.lowerFirstLetter(this.selectedCurrency)+"_"+this.product_price) == 0) {
 				found = true;
 			}
 		}
@@ -573,7 +596,7 @@ export class SimpleSearchFormComponent implements OnInit {
 		var found = false;
 		for (var i=0; i<this.facetQuery.length; i++) {
 			var comp = this.facetQuery[i].split(":")[0];
-			if (comp.localeCompare(this.product_vendor_rating) == 0 || comp.localeCompare(this.product_vendor_rating_seller) == 0 || comp.localeCompare(this.product_vendor_rating_fulfillment) == 0 || comp.localeCompare(this.product_vendor_rating_delivery) == 0 || comp.localeCompare(this.product_vendor_trust) == 0) {
+			if (comp.localeCompare(this.product_vendor+"."+this.product_vendor_rating) == 0 || comp.localeCompare(this.product_vendor+"."+this.product_vendor_rating_seller) == 0 || comp.localeCompare(this.product_vendor+"."+this.product_vendor_rating_fulfillment) == 0 || comp.localeCompare(this.product_vendor+"."+this.product_vendor_rating_delivery) == 0 || comp.localeCompare(this.product_vendor+"."+this.product_vendor_trust) == 0) {
 				found = true;
 			}
 		}
@@ -581,29 +604,27 @@ export class SimpleSearchFormComponent implements OnInit {
 	}
 
 	setPriceFilter() {
-		this.clearFacet(this.product_currency);
-		this.clearFacet(this.product_price);
-		this.setFacetWithoutQuery(this.product_currency,this.selectedCurrency);
-		this.setRangeWithoutQuery(this.product_price,this.selectedPriceMin,this.selectedPriceMax);
+		this.clearFacet(this.lowerFirstLetter(this.selectedCurrency)+"_"+this.product_price);
+		this.setRangeWithoutQuery(this.lowerFirstLetter(this.selectedCurrency)+"_"+this.product_price,this.selectedPriceMin,this.selectedPriceMax);
 		this.get(this.objToSubmit);
 	}
 
 	setTrustFilter() {
-		this.clearFacet(this.product_vendor_rating);
-		this.clearFacet(this.product_vendor_rating_seller);
-		this.clearFacet(this.product_vendor_rating_fulfillment);
-		this.clearFacet(this.product_vendor_rating_delivery);
-		this.clearFacet(this.product_vendor_trust);
+		this.clearFacet(this.product_vendor_rating,this.product_vendor);
+		this.clearFacet(this.product_vendor_rating_seller,this.product_vendor);
+		this.clearFacet(this.product_vendor_rating_fulfillment,this.product_vendor);
+		this.clearFacet(this.product_vendor_rating_delivery,this.product_vendor);
+		this.clearFacet(this.product_vendor_trust,this.product_vendor);
 		if (this.ratingOverall > 0)
-			this.setRangeWithoutQuery(this.product_vendor_rating,this.ratingOverall,5);
+			this.setRangeWithoutQuery(this.product_vendor_rating,this.ratingOverall,5,this.product_vendor);
 		if (this.ratingSeller > 0)
-			this.setRangeWithoutQuery(this.product_vendor_rating_seller,this.ratingSeller,5);
+			this.setRangeWithoutQuery(this.product_vendor_rating_seller,this.ratingSeller,5,this.product_vendor);
 		if (this.ratingFulfillment > 0)
-			this.setRangeWithoutQuery(this.product_vendor_rating_fulfillment,this.ratingFulfillment,5);
+			this.setRangeWithoutQuery(this.product_vendor_rating_fulfillment,this.ratingFulfillment,5,this.product_vendor);
 		if (this.ratingDelivery > 0)
-			this.setRangeWithoutQuery(this.product_vendor_rating_delivery,this.ratingDelivery,5);
+			this.setRangeWithoutQuery(this.product_vendor_rating_delivery,this.ratingDelivery,5,this.product_vendor);
 		if (this.ratingTrust > 0)
-			this.setRangeWithoutQuery(this.product_vendor_trust,(this.ratingTrust/5),1);
+			this.setRangeWithoutQuery(this.product_vendor_trust,(this.ratingTrust/5),1,this.product_vendor);
 		this.get(this.objToSubmit);
 	}
 
@@ -611,8 +632,7 @@ export class SimpleSearchFormComponent implements OnInit {
 		this.selectedCurrency = "EUR";
 		this.selectedPriceMin = null;
 		this.selectedPriceMax = null;
-		this.clearFacet(this.product_currency);
-		this.clearFacet(this.product_price);
+		this.clearFacet(this.lowerFirstLetter(this.selectedCurrency)+"_"+this.product_price);
 		this.get(this.objToSubmit);
 	}
 
@@ -622,11 +642,11 @@ export class SimpleSearchFormComponent implements OnInit {
 		this.ratingFulfillment = 0;
 		this.ratingDelivery = 0;
 		this.ratingTrust = 0;
-		this.clearFacet(this.product_vendor_rating);
-		this.clearFacet(this.product_vendor_rating_seller);
-		this.clearFacet(this.product_vendor_rating_fulfillment);
-		this.clearFacet(this.product_vendor_rating_delivery);
-		this.clearFacet(this.product_vendor_trust);
+		this.clearFacet(this.product_vendor_rating,this.product_vendor);
+		this.clearFacet(this.product_vendor_rating_seller,this.product_vendor);
+		this.clearFacet(this.product_vendor_rating_fulfillment,this.product_vendor);
+		this.clearFacet(this.product_vendor_rating_delivery,this.product_vendor);
+		this.clearFacet(this.product_vendor_trust,this.product_vendor);
 		this.get(this.objToSubmit);
 	}
 
@@ -711,7 +731,9 @@ export class SimpleSearchFormComponent implements OnInit {
 		return count;
 	}
 
-	clearFacet(outer:string) {
+	clearFacet(outer:string, prefix?:string) {
+		if (prefix)
+			outer = prefix+"."+outer;
 		var idx = -1;
 		for (var i=0; i<this.facetQuery.length; i++) {
 			var comp = this.facetQuery[i].split(":")[0];
@@ -724,7 +746,9 @@ export class SimpleSearchFormComponent implements OnInit {
 		}
 	}
 
-	setFacet(outer:string, inner:string) {
+	setFacet(outer:string, inner:string, prefix?:string) {
+		if (prefix)
+			outer = prefix+"."+outer;
 		var fq = outer+":\""+inner+"\"";
 		if (this.facetQuery.indexOf(fq) == -1)
 			this.facetQuery.push(fq);
@@ -733,12 +757,16 @@ export class SimpleSearchFormComponent implements OnInit {
 		this.get(this.objToSubmit);
 	}
 
-	setFacetWithoutQuery(outer:string, inner:string) {
+	setFacetWithoutQuery(outer:string, inner:string, prefix?:string) {
+		if (prefix)
+			outer = prefix+"."+outer;
 		var fq = outer+":\""+inner+"\"";
 		this.facetQuery.push(fq);
 	}
 
-	setRangeWithoutQuery(outer:string, min:number, max:number) {
+	setRangeWithoutQuery(outer:string, min:number, max:number, prefix?:string) {
+		if (prefix)
+			outer = prefix+"."+outer;
 		var fq = outer+":["+min+" TO "+max+"]";
 		this.facetQuery.push(fq);
 	}
@@ -778,6 +806,10 @@ export class SimpleSearchFormComponent implements OnInit {
 	 * @param price
 	 */
 	getCurrency(price: any): string {
+		if (price[this.selectedCurrency])
+			return this.selectedCurrency;
+		if (this.selectedCurrency != "EUR" && price["EUR"])
+			return "EUR";
 		return Object.keys(price)[0];
 	}
 
@@ -799,10 +831,18 @@ export class SimpleSearchFormComponent implements OnInit {
 		return nan;
 	}
 
+	checkEmpty(obj:any): boolean {
+		return (Object.keys(obj).length === 0);
+	}
+
 	calcRating(rating:any,multiplier:number): number {
 		var result = parseFloat(rating)*multiplier;
 		var rounded = Math.round(result*10)/10;
 		return rounded;
+	}
+
+	lowerFirstLetter(string) {
+	    return string.charAt(0).toLowerCase() + string.slice(1);
 	}
 
 	isJson(str: string): boolean {
