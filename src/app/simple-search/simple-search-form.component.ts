@@ -455,6 +455,7 @@ export class SimpleSearchFormComponent implements OnInit {
 						}
 					}
 				}
+			}, error => {
 			});
 		}
 	}
@@ -504,7 +505,7 @@ export class SimpleSearchFormComponent implements OnInit {
 				for (let facet_inner of res.facets[facet].entry) {
 					facet_innerLabel = facet_inner.label;
 					facet_innerCount = facet_inner.count;
-					if(facetMetadataExists && facetMetadata[facet].dataType == 'string') {
+					//if(facetMetadataExists && facetMetadata[facet].dataType == 'string') {
 						if(atLeastOneMultilingualLabel != -1) {
 							let idx = facet_innerLabel.lastIndexOf("@" + tmp_lang);
 							if(idx != -1) {
@@ -514,7 +515,7 @@ export class SimpleSearchFormComponent implements OnInit {
 								continue;
 							}
 						}
-					}
+					//}
 
 					if (facet_innerLabel != "" && facet_innerLabel != ":" && facet_innerLabel != ' ' && facet_innerLabel.indexOf("urn:oasis:names:specification:ubl:schema:xsd") == -1) {
 						this.facetObj[index].options.push({
