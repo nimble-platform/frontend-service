@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 - Multilinguality features
 - Simplified and unified product publishing page including direct value inputs
-- Preparations for switch to new indexing service (will be performed in the following minor release)
+- Switch to new indexing service
 
 ### Changed
 - Improved platform information page

@@ -232,6 +232,21 @@ export class CatalogueService {
             .catch(this.handleError);
     }
 
+    getBinaryObjects(uris:string[]){
+        let condition: string = "";
+        for(let uri of uris) {
+            condition += uri + ","
+        }
+        const url = this.baseUrl + `/binary-contents?uris=${encodeURIComponent(condition)}`;
+        return this.http
+            .get(url, {headers: this.getAuthorizedHeaders()})
+            .toPromise()
+            .then(res => {
+                return res.json() as BinaryObject[];
+            })
+            .catch(this.handleError);
+    }
+
     private getAuthorizedHeaders(): Headers {
         const token = 'Bearer '+this.cookieService.get("bearer_token");
         const headers = new Headers({'Authorization': token});

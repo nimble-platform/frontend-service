@@ -3,7 +3,7 @@ import { ProductWrapper } from "../common/product-wrapper";
 import { CommodityClassification } from "../catalogue/model/publish/commodity-classification";
 import { ItemProperty } from "../catalogue/model/publish/item-property";
 import { BpWorkflowOptions } from "../bpe/model/bp-workflow-options";
-import {getPropertyKey, getPropertyValuesAsStrings, selectName, selectPreferredName} from '../common/utils';
+import {getPropertyKey, getPropertyValuesAsStrings, selectName, selectNameFromLabelObject} from '../common/utils';
 import {Item} from '../catalogue/model/publish/item';
 import {UBLModelUtils} from '../catalogue/model/ubl-model-utils';
 import {CategoryService} from '../catalogue/category/category.service';
@@ -39,23 +39,27 @@ export class ProductDetailsOverviewComponent implements OnInit{
             to the default language of the browser.
          */
         this.getClassificationNamesStatus.submit();
-        this.categoryService.cacheFurnitureOntologyCategories().then(response => {
-            let classifications = this.getClassifications();
-            for(let classification of classifications){
-                // For FurnitureOntology categories, we need to get the name of it from the cached ones since they
-                // contain the labels
-                if(classification.itemClassificationCode.listID == "FurnitureOntology"){
-                    this.classificationNames.push(this.categoryService.getCachedCategoryName(classification.itemClassificationCode.uri));
-                }
-                // For eClass categories, it is OK to use the name of the category directly.
-                else {
-                    this.classificationNames.push(classification.itemClassificationCode.name);
-                }
+        let classifications = this.getClassifications();
+        let categoryUris: string[] = [];
+        if(classifications.length > 0) {
+            for (let classification of this.wrapper.item.commodityClassification) {
+                categoryUris.push(classification.itemClassificationCode.uri);
             }
-            this.getClassificationNamesStatus.callback(null);
-        }).catch(error => {
-            this.getClassificationNamesStatus.error("Failed to get classification names",error);
-        })
+            this.classificationNames = [];
+            this.categoryService.getCategories(categoryUris).then(response => {
+                for(let category of response.result) {
+                    this.classificationNames.push(selectNameFromLabelObject(category.label));
+                }
+
+                // sort labels
+                this.classificationNames.sort((c1, c2) => c1.localeCompare(c2));
+
+                this.getClassificationNamesStatus.callback(null);
+
+            }).catch(error => {
+                this.getClassificationNamesStatus.error("Failed to get classification names", error);
+            });
+        }
     }
 
     getClassifications(): CommodityClassification[] {
@@ -64,8 +68,7 @@ export class ProductDetailsOverviewComponent implements OnInit{
         }
 
         return this.wrapper.item.commodityClassification
-            .filter(c => c.itemClassificationCode.listID != 'Default')
-            .sort((c1, c2) => c1.itemClassificationCode.name.localeCompare(c2.itemClassificationCode.name));
+            .filter(c => c.itemClassificationCode.listID != 'Default');
     }
 
     onTogglePropertyValue(property: ItemProperty, valueIndex: number): void {
