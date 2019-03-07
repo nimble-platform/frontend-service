@@ -3,11 +3,10 @@ import { ProductWrapper } from "../common/product-wrapper";
 import { CommodityClassification } from "../catalogue/model/publish/commodity-classification";
 import { ItemProperty } from "../catalogue/model/publish/item-property";
 import { BpWorkflowOptions } from "../bpe/model/bp-workflow-options";
-import {getPropertyKey, getPropertyValuesAsStrings, selectName, selectNameFromLabelObject} from '../common/utils';
+import {getPropertyKey, getPropertyValuesAsStrings, selectName, selectNameFromLabelObject, selectPreferredValue} from '../common/utils';
 import {Item} from '../catalogue/model/publish/item';
 import {UBLModelUtils} from '../catalogue/model/ubl-model-utils';
 import {CategoryService} from '../catalogue/category/category.service';
-import {Code} from '../catalogue/model/publish/code';
 import {CallStatus} from '../common/call-status';
 
 @Component({
@@ -26,6 +25,8 @@ export class ProductDetailsOverviewComponent implements OnInit{
 
     getClassificationNamesStatus: CallStatus = new CallStatus();
     classificationNames = [];
+
+    selectPreferredValue = selectPreferredValue;
     
     constructor(public categoryService:CategoryService) {
     }

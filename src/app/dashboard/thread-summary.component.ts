@@ -21,6 +21,7 @@ import {BpUserRole} from '../bpe/model/bp-user-role';
 import {BpStartEvent} from '../catalogue/model/publish/bp-start-event';
 import {BpURLParams} from '../catalogue/model/publish/bpURLParams';
 import {UBLModelUtils} from '../catalogue/model/ubl-model-utils';
+import {selectPreferredValue} from '../common/utils';
 
 /**
  * Created by suat on 12-Mar-18.
@@ -71,6 +72,8 @@ export class ThreadSummaryComponent implements OnInit {
     showRateCollaborationButton = false;
 
     expanded: boolean = false;
+
+    selectPreferredValue = selectPreferredValue;
 
     constructor(private bpeService: BPEService,
                 private cookieService: CookieService,

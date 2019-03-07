@@ -9,7 +9,7 @@ import { ProcessType } from "../bpe/model/process-type";
 import { ProductWrapper } from "../common/product-wrapper";
 import { Item } from "../catalogue/model/publish/item";
 import { PriceWrapper } from "../common/price-wrapper";
-import { getMaximumQuantityForPrice, getStepForPrice, isTransportService } from "../common/utils";
+import { getMaximumQuantityForPrice, getStepForPrice, isTransportService, selectPreferredValue } from "../common/utils";
 import { AppComponent } from "../app.component";
 import { UserService } from "../user-mgmt/user.service";
 import { CompanySettings } from "../user-mgmt/model/company-settings";
@@ -46,6 +46,7 @@ export class ProductDetailsComponent implements OnInit {
 
     @ViewChild(DiscountModalComponent)
     private discountModal: DiscountModalComponent;
+    selectPreferredValue = selectPreferredValue;
 
     constructor(private bpDataService: BPDataService,
                 private catalogueService: CatalogueService,

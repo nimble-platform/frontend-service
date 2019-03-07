@@ -74,7 +74,7 @@
             <div>
                 <!-- Description -->
                 <strong>Description:</strong>
-                <p *ngIf="wrapper.item.description.length > 0">{{wrapper.item.description[0].value}}</p>
+                <p *ngIf="wrapper.item.description.length > 0">{{selectPreferredValue(wrapper.item.description)}}</p>
                 <p *ngIf="wrapper.item.description.length == 0">No description provided.</p>
             </div>
             <!-- Properties with multiple values to select from -->
