@@ -13,6 +13,7 @@ export class SimpleSearchService {
     private headers = new Headers({'Content-Type': 'application/json'});
     private url = myGlobals.indexing_service_endpoint;
     private facetMin = myGlobals.facet_min;
+    private facetCount = myGlobals.facet_count;
 
 	product_name = myGlobals.product_name;
 	product_vendor_id = myGlobals.product_vendor+"."+myGlobals.product_vendor_id;
@@ -77,6 +78,7 @@ export class SimpleSearchService {
 					searchObject.facet = {};
 					searchObject.facet.field = [];
 					searchObject.facet.minCount = this.facetMin;
+					searchObject.facet.limit = this.facetCount;
 				}
 				searchObject.facet.field.push(facet)
 			}
