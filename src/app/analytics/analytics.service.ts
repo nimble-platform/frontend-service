@@ -22,7 +22,7 @@ export class AnalyticsService {
     getPlatAnalytics(): Promise<any> {
   		const url = `${this.url_da}`;
   		return this.http
-  		.get(url, {headers: this.headers})
+  		.get(url, {headers: this.getAuthorizedHeaders()})
   		.toPromise()
   		.then(res => res.json())
   		.catch(this.handleError);
