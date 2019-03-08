@@ -6,13 +6,14 @@ import * as myGlobals from '../globals';
 import {SearchContextService} from "./search-context.service";
 import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
-import { copy } from '../common/utils';
+import { copy, selectNameFromLabelObject } from '../common/utils';
 import { CallStatus } from '../common/call-status';
 import { CURRENCIES } from "../catalogue/model/constants";
 import { CategoryService } from '../catalogue/category/category.service';
 import { Category } from '../catalogue/model/category/category';
 import { DEFAULT_LANGUAGE} from '../catalogue/model/constants';
 import {Code} from '../catalogue/model/publish/code';
+import {CatalogueService} from "../catalogue/catalogue.service";
 
 @Component({
 	selector: 'simple-search-form',
@@ -22,7 +23,7 @@ import {Code} from '../catalogue/model/publish/code';
 
 export class SimpleSearchFormComponent implements OnInit {
 
-	product_name = myGlobals.product_name;
+	product_vendor = myGlobals.product_vendor;
 	product_vendor_id = myGlobals.product_vendor_id;
 	product_vendor_name = myGlobals.product_vendor_name;
 	product_vendor_rating = myGlobals.product_vendor_rating;
@@ -30,6 +31,8 @@ export class SimpleSearchFormComponent implements OnInit {
 	product_vendor_rating_fulfillment = myGlobals.product_vendor_rating_fulfillment;
 	product_vendor_rating_delivery = myGlobals.product_vendor_rating_delivery;
 	product_vendor_trust = myGlobals.product_vendor_trust;
+	product_name = myGlobals.product_name;
+	product_description = myGlobals.product_description;
 	product_img = myGlobals.product_img;
 	product_price = myGlobals.product_price;
 	product_currency = myGlobals.product_currency;
@@ -83,15 +86,20 @@ export class SimpleSearchFormComponent implements OnInit {
 	facetQuery: any;
 	temp: any;
 	response: any;
+	imageMap: any = {}; // keeps the images if exists for the search results
     // check whether 'p' query parameter exists or not
 	noP = true;
 
 	config = myGlobals.config;
+	getMultilingualLabel = selectNameFromLabelObject;
+	// used to get labels of the ubl properties
+	ublProperties = null;
 
 	constructor(
 		private simpleSearchService: SimpleSearchService,
 		private searchContextService: SearchContextService,
 		private categoryService: CategoryService,
+		private catalogueService: CatalogueService,
 		public route: ActivatedRoute,
 		public router: Router
 	) {
@@ -167,7 +175,7 @@ export class SimpleSearchFormComponent implements OnInit {
       debounceTime(200),
       distinctUntilChanged(),
       switchMap(term =>
-        this.simpleSearchService.getSuggestions(term,this.facetQuery,this.cat)
+        this.simpleSearchService.getSuggestions(term,(DEFAULT_LANGUAGE()+"_"+this.product_name))
       )
     );
 
@@ -175,13 +183,13 @@ export class SimpleSearchFormComponent implements OnInit {
 		this.categoriesCallStatus.submit();
 		this.simpleSearchService.get("*",[this.product_cat_mix],[""],1,"","")
 		.then(res => {
-			if(Object.keys(res.facet_counts.facet_fields).indexOf(this.product_cat_mix) == -1){
+			// if res.facets are null, it means that there is no product in the index
+			if (res.facets == null || Object.keys(res.facets).indexOf(this.product_cat_mix) == -1) {
 				this.categoriesCallStatus.callback("Categories loaded.", true);
-			}else{
-				this.categoryService.cacheFurnitureOntologyCategories().then(categories => {
-					this.buildCatTree(res.facet_counts.facet_fields[this.product_cat_mix]);
-					this.categoriesCallStatus.callback("Categories loaded.", true);
-				})
+			} else {
+				// before starting to build category tree, we have to get categories to retrieve their names
+				this.buildCatTree(res.facets[this.product_cat_mix].entry);
+				this.categoriesCallStatus.callback("Categories loaded.", true);
 			}
 		})
 		.catch(error => {
@@ -189,8 +197,7 @@ export class SimpleSearchFormComponent implements OnInit {
 		});
 	}
 
-	private buildCatTree(mix: any): void {
-		this.cat_loading = true;
+	private async buildCatTree(categoryCounts: any[]) {
 		var taxonomy = "eClass";
 		if (this.config.standardTaxonomy.localeCompare("All") != 0 && this.config.standardTaxonomy.localeCompare("eClass") != 0) {
 			taxonomy = this.config.standardTaxonomy;
@@ -198,29 +205,37 @@ export class SimpleSearchFormComponent implements OnInit {
 		var taxonomyPrefix = "";
 		if (this.config.categoryFilter[taxonomy] && this.config.categoryFilter[taxonomy].ontologyPrefix)
 			taxonomyPrefix = this.config.categoryFilter[taxonomy].ontologyPrefix;
+
+		// retrieve the labels for the category uris included in the categoryCounts field
+		let categoryUris: string[] = [];
+		for (let categoryCount of categoryCounts) {
+			categoryUris.push(categoryCount.label);
+		}
+		this.cat_loading = true;
+		var indexCategories = await this.categoryService.getCategories(categoryUris);
+		this.cat_loading = false;
+		let categoryDisplayInfo: any = this.getCategoryDisplayInfo(indexCategories);
 		if (taxonomyPrefix != "") {
 			// ToDo: Remove manual distinction after search update
 			// ================================================================================
 			if (taxonomy == "eClass") {
 				this.cat_levels = [[],[],[],[]];
-				for (let facet_inner in mix) {
-					var count = mix[facet_inner];
-					var split_idx = facet_inner.lastIndexOf(":");
-					var ontology = facet_inner.substr(0,split_idx);
-					var name = facet_inner.substr(split_idx+1);
-					if (ontology.indexOf(taxonomyPrefix) != -1) {
-						var eclass_idx = parseInt(ontology.split(taxonomyPrefix)[1]);
+				for (let categoryCount of categoryCounts) {
+					let facet_inner = categoryCount.label;
+					var count = categoryCount.count;
+					if (facet_inner.startsWith(taxonomyPrefix)) {
+						var eclass_idx = categoryDisplayInfo[facet_inner].code;
 						if (eclass_idx%1000000==0) {
-							this.cat_levels[0].push({"name":name,"id":ontology,"count":count,"preferredName":name});
+							this.cat_levels[0].push({"name":facet_inner,"id":facet_inner,"count":count,"preferredName":selectNameFromLabelObject(categoryDisplayInfo[facet_inner].label)});
 						}
 						else if(eclass_idx%10000==0) {
-							this.cat_levels[1].push({"name":name,"id":ontology,"count":count,"preferredName":name});
+							this.cat_levels[1].push({"name":facet_inner,"id":facet_inner,"count":count,"preferredName":selectNameFromLabelObject(categoryDisplayInfo[facet_inner].label)});
 						}
 						else if(eclass_idx%100==0) {
-							this.cat_levels[2].push({"name":name,"id":ontology,"count":count,"preferredName":name});
+							this.cat_levels[2].push({"name":facet_inner,"id":facet_inner,"count":count,"preferredName":selectNameFromLabelObject(categoryDisplayInfo[facet_inner].label)});
 						}
 						else {
-							this.cat_levels[3].push({"name":name,"id":ontology,"count":count,"preferredName":name});
+							this.cat_levels[3].push({"name":facet_inner,"id":facet_inner,"count":count,"preferredName":selectNameFromLabelObject(categoryDisplayInfo[facet_inner].label)});
 						}
 					}
 				}
@@ -229,77 +244,98 @@ export class SimpleSearchFormComponent implements OnInit {
 			// ================================================================================
 			// if (this.cat == "") {
 			else if (this.cat == "") {
-				this.categoryService
-					.getRootCategories(taxonomy)
-					.then(rootCategories => {
-							var rootCategories = rootCategories;
-							this.cat_levels = [];
-							var lvl = [];
-							for (let facet_inner in mix) {
-								var count = mix[facet_inner];
-								var split_idx = facet_inner.lastIndexOf(":");
-								var hash_idx = facet_inner.lastIndexOf("#");
-								var ontology = facet_inner.substr(0,hash_idx+1);
-								var name = facet_inner.substr(split_idx+1);
-								var categoryUri = facet_inner.substr(0,split_idx);
-								if (ontology.indexOf(taxonomyPrefix) != -1) {
-									if (this.findCategory(rootCategories,categoryUri) != -1 && this.config.categoryFilter[taxonomy].hiddenCategories.indexOf(name) == -1){
-										if(ontology.indexOf("http://www.aidimme.es/FurnitureSectorOntology.owl#") != -1){
-											lvl.push({"name":name,"id":categoryUri,"count":count,"preferredName":this.categoryService.getCachedCategoryName(categoryUri)});
-										}else{
-											lvl.push({"name":name,"id":categoryUri,"count":count,"preferredName":name});
-										}
-									}
-								}
+				this.cat_levels = [];
+				var lvl = [];
+
+				for (let categoryCount of categoryCounts) {
+					var count = categoryCount.count;
+					var ontology = categoryCount.label;
+					if (categoryDisplayInfo[ontology] != null && ontology.indexOf(taxonomyPrefix) != -1) {
+						if (categoryDisplayInfo[ontology].isRoot && this.config.categoryFilter[taxonomy].hiddenCategories.indexOf(name) == -1){
+							if(ontology.indexOf("http://www.aidimme.es/FurnitureSectorOntology.owl#") != -1){
+								lvl.push({"name":ontology,"id":ontology,"count":count,"preferredName": selectNameFromLabelObject(categoryDisplayInfo[ontology].label)});
+							}else{
+								lvl.push({"name":ontology,"id":ontology,"count":count,"preferredName":ontology});
 							}
-							this.cat_levels.push(lvl);
-							this.sortCatLevels();
-					})
+						}
+					}
+				}
+				this.cat_levels.push(lvl);
+				this.sortCatLevels();
 			}
 			else {
-				var catToSubmit = new Category(this.catID,null,null,null,null,null,null,null,null,taxonomy,this.catID);
-				this.categoryService
-          .getParentCategories(catToSubmit)
-					.then(res => {
-							var catLevels = res.categories;
-							this.cat_levels = [];
-							for (var i=0; i<catLevels.length; i++) {
-								var lvl = [];
-								for (let facet_inner in mix) {
-									var count = mix[facet_inner];
-									var split_idx = facet_inner.lastIndexOf(":");
-									var hash_idx = facet_inner.lastIndexOf("#");
-									var ontology = facet_inner.substr(0,hash_idx+1);
-									var name = facet_inner.substr(split_idx+1);
-									var categoryUri = facet_inner.substr(0,split_idx);
-									if (ontology.indexOf(taxonomyPrefix) != -1) {
-										if (this.findCategory(catLevels[i],categoryUri) != -1 && this.config.categoryFilter[taxonomy].hiddenCategories.indexOf(name) == -1){
-											if(ontology.indexOf("http://www.aidimme.es/FurnitureSectorOntology.owl#") != -1){
-												lvl.push({"name":name,"id":categoryUri,"count":count,"preferredName":this.categoryService.getCachedCategoryName(categoryUri)});
-											}else{
-												lvl.push({"name":name,"id":categoryUri,"count":count,"preferredName":name});
-											}
-										}
+				var catLevels = [];
+				this.constructCategoryTree(indexCategories.result, catLevels);
+				this.cat_levels = [];
+				for (var i=0; i<catLevels.length; i++) {
+					var lvl = [];
+					var constructedLevel: string[] = catLevels[i];
+					for(let uri of constructedLevel) {
+						let categoryCount = categoryCounts.find(cat => cat.label == uri);
+						if(categoryCount != null) {
+							var count = categoryCount.count;
+							var ontology = categoryCount.label;
 
+							if (categoryDisplayInfo[uri] != null && uri.indexOf(taxonomyPrefix) != -1) {
+								var split_idx = uri.lastIndexOf("#");
+								var name = uri.substr(split_idx+1);
+								if (this.config.categoryFilter[taxonomy].hiddenCategories.indexOf(name) == -1) {
+									if (ontology.indexOf("http://www.aidimme.es/FurnitureSectorOntology.owl#") != -1) {
+										lvl.push({"name": uri, "id": uri, "count": count, "preferredName": selectNameFromLabelObject(categoryDisplayInfo[uri].label)});
+									} else {
+										lvl.push({"name": uri, "id": uri, "count": count, "preferredName": name});
 									}
 								}
-								this.cat_levels.push(lvl);
 							}
-							this.sortCatLevels();
-					})
+						}
+					}
+					this.cat_levels.push(lvl);
+				}
+				this.sortCatLevels();
 			}
 		}
 	}
 
-	private findCategory(categoryArray: Category[], uri: String): number {
-			return categoryArray.findIndex(c => c.categoryUri == uri);
+	private constructCategoryTree(indexCategories: any[], levels: string[][]) {
+
+		if(levels.length == 0) {
+			// get root categories
+			let rootCategories: any[] = [];
+			for (let category of indexCategories) {
+				if (category.allParents == null) {
+					rootCategories.push(category.uri);
+				}
+			}
+			levels.push(rootCategories);
+			this.constructCategoryTree(indexCategories, levels);
+
+		} else {
+			let parentCategoryUris: string[] = levels[levels.length-1];
+			let level: string[] = []; // contains all children of all the parent categories of an upper level
+			for(let parentCategoryUri of parentCategoryUris) {
+				let parentIndexCategory = indexCategories.find(indexCategory => indexCategory.uri == parentCategoryUri);
+				let children: string[] = parentIndexCategory.children;
+				if(children != null) {
+					for (let childCategoryUri of children) {
+						let childCategory = indexCategories.find(indexCategory => indexCategory.uri == childCategoryUri);
+						if (childCategory != null) {
+							level.push(childCategoryUri);
+						}
+					}
+				}
+			}
+			if(level.length > 0) {
+				levels.push(level);
+				this.constructCategoryTree(indexCategories, levels);
+			}
+		}
 	}
 
 	private sortCatLevels() {
 		for (var i=0; i<this.cat_levels.length; i++) {
 			this.cat_levels[i].sort(function(a,b){
-				var a_c = a.name;
-				var b_c = b.name;
+				var a_c:string = a.name;
+				var b_c:string = b.name;
 				return a_c.localeCompare(b_c);
 			});
 			this.cat_levels[i].sort(function(a,b){
@@ -307,7 +343,6 @@ export class SimpleSearchFormComponent implements OnInit {
 			});
 		}
 		this.cat_level = this.getCatLevel(this.cat);
-		this.cat_loading = false;
 	}
 
 	private getCatLevel(name:string): number {
@@ -335,258 +370,209 @@ export class SimpleSearchFormComponent implements OnInit {
 		this.searchCallStatus.submit();
 		this.simpleSearchService.getFields()
 		.then(res => {
-			this.simpleSearchService.getPropertyLabels(res._body.split(",")).then(propertyLabelsRes => {
-                this.simpleSearchService.get(q,res._body.split(","),fq,p,cat,catID)
-                    .then(res => {
-                    	if(Object.keys(res.facet_counts.facet_fields).indexOf(this.product_cat_mix) != -1){
-							this.categoryService.cacheFurnitureOntologyCategories().then(categories => {
-								this.buildCatTree(res.facet_counts.facet_fields[this.product_cat_mix]);
-								this.handleFacets(propertyLabelsRes.response.docs,res,p);
-							})
-						}else{
-							this.handleFacets(propertyLabelsRes.response.docs,res,p);
+			let fieldLabels:string [] = this.getFieldNames(res);
+			this.simpleSearchService.get(q,Object.keys(fieldLabels).concat(this.product_filter_comp).concat(this.product_filter_trust),fq,p,cat,catID)
+			.then(res => {
+				this.simpleSearchService.getUblProperties(Object.keys(fieldLabels).concat(this.product_filter_comp).concat(this.product_filter_trust)).then(response => {
+					this.facetObj = [];
+					this.temp = [];
+					var index = 0;
+					for (let facet in res.facets) {
+						if (facet == this.product_cat_mix) {
+							this.buildCatTree(res.facets[this.product_cat_mix].entry);
+							this.handleFacets(fieldLabels, res, p, response.result)
 						}
-                    })
-                    .catch(error => {
-                        this.searchCallStatus.error("Error while running search.", error);
-                    });
-            }).catch(error => {
-                this.searchCallStatus.error("Failed to get property labels",error);
-            })
+					}
+
+					this.cat_loading = false;
+					this.callback = true;
+					this.searchCallStatus.callback("Search done.", true);
+
+					this.temp = res.result;
+					for (let doc in this.temp) {
+						if (this.temp[doc][this.product_img]) {
+							var img = this.temp[doc][this.product_img];
+							if (Array.isArray(img)) {
+								this.temp[doc][this.product_img] = img[0];
+							}
+						}
+					}
+					/*
+                     for (let doc in this.temp) {
+                     if (this.isJson(this.temp[doc][this.product_img])) {
+                     var json = JSON.parse(this.temp[doc][this.product_img]);
+                     var img = "";
+                     if (json.length > 1)
+                     img = "data:"+JSON.parse(this.temp[doc][this.product_img][0])[0].mimeCode+";base64,"+JSON.parse(this.temp[doc][this.product_img][0])[0].value;
+                     else
+                     img = "data:"+this.temp[doc][this.product_img].mimeCode+";base64,"+this.temp[doc][this.product_img].value;
+                     this.temp[doc][this.product_img] = img;
+                     }
+                     }
+                     */
+					this.response = copy(this.temp);
+					this.size = res.totalElements;
+					this.page = p;
+					this.start = this.page*10-10+1;
+					this.end = this.start+res.result.length-1;
+				}).catch(error => {
+					this.searchCallStatus.error("Error while running search.", error);
+				})
+
+				this.fetchImages(res.result);
+			})
+			.catch(error => {
+				this.searchCallStatus.error("Error while running search.", error);
+			});
 		})
 		.catch(error => {
 			this.searchCallStatus.error("Error while running search.", error);
 		});
 	}
 
-	handleFacets(propertyLabels,res,p){
+	fetchImages(searchResults:any[]): void {
+		// fetch images asynchronously
+		this.imageMap = {};
+
+		let imageMap: any = {};
+		for(let result of searchResults) {
+			let productImages: string[] = result.imgageUri;
+			if(productImages != null && productImages.length > 0) {
+				imageMap[result.uri] = productImages[0];
+			}
+		}
+
+		let imageUris: string[] = [];
+		for(let productUri in imageMap) {
+			imageUris.push(imageMap[productUri]);
+		}
+		if(imageUris.length > 0) {
+			this.catalogueService.getBinaryObjects(imageUris).then(images => {
+				for (let image of images) {
+					for (let productUri in imageMap) {
+						if(imageMap[productUri] == image.uri) {
+							this.imageMap[productUri] = "data:" + image.mimeCode + ";base64," + image.value
+						}
+					}
+				}
+			}, error => {
+			});
+		}
+	}
+
+	handleFacets(facetMetadata,res,p,ublProperties){
+		this.ublProperties = ublProperties;
 		this.facetObj = [];
 		this.temp = [];
 		var index = 0;
-		for (let facet in res.facet_counts.facet_fields) {
-			if (JSON.stringify(res.facet_counts.facet_fields[facet]) != "{}") {
-				if (this.simpleSearchService.checkField(facet)) {
-					this.facetObj.push({
-						"name":facet,
-						"realName":this.getFacetRealName(facet,propertyLabels),
-						"options":[],
-						"total":0,
-						"selected":false
+		for (let facet in res.facets) {
+			if (this.simpleSearchService.checkField(facet)) {
+				let facetMetadataExists: boolean = facetMetadata[facet] != null && facetMetadata[facet].label != null;
+				let propertyLabel = this.getName(facet);
+
+				this.facetObj.push({
+					"name":facet,
+					"realName":facetMetadataExists ? selectNameFromLabelObject(facetMetadata[facet].label) : propertyLabel,
+					"options":[],
+					"total":0,
+					"selected":false
+				});
+
+				let label;
+				let facet_innerLabel;
+				let facet_innerCount;
+				let tmp_lang = DEFAULT_LANGUAGE();
+				let atLeastOneMultilingualLabel: number = res.facets[facet].entry.findIndex(facetInner => {
+					var idx = facetInner.label.lastIndexOf("@" + DEFAULT_LANGUAGE());
+					return (idx != -1 && idx+3 == facetInner.label.length);
+				});
+				if (atLeastOneMultilingualLabel == -1) {
+					atLeastOneMultilingualLabel = res.facets[facet].entry.findIndex(facetInner => {
+						var idx = facetInner.label.lastIndexOf("@en");
+						return (idx != -1 && idx+3 == facetInner.label.length);
 					});
-
-					// check whether we have multilingual values or not
-					let atLeastOneMultilingualLabel: number = Object.keys(res.facet_counts.facet_fields[facet]).findIndex(
-						facetInner => facetInner.indexOf(":" + DEFAULT_LANGUAGE()) != -1 || facetInner.indexOf(":en") != -1);
-					// check whether we have a value for the default language of the browser
-					let labelForDefaultLanguage: number = Object.keys(res.facet_counts.facet_fields[facet]).findIndex(
-						facetInner => facetInner.indexOf(":" + DEFAULT_LANGUAGE()) != -1);
-					for (let facet_inner in res.facet_counts.facet_fields[facet]) {
-						if (facet_inner != "" && facet_inner != ":" && facet_inner != ' ' && facet_inner.indexOf("urn:oasis:names:specification:ubl:schema:xsd") == -1) {
-							// This facet does not contain multilingual values
-							// therefore, they are added to facet options directly
-							if(atLeastOneMultilingualLabel == -1){
-								this.facetObj[index].options.push({
-									"name":facet_inner,
-									"realName":facet_inner,
-									"count":res.facet_counts.facet_fields[facet][facet_inner]
-								});
-								this.facetObj[index].total += res.facet_counts.facet_fields[facet][facet_inner];
-								if (this.checkFacet(this.facetObj[index].name,facet_inner))
-									this.facetObj[index].selected=true;
-							}
-							// This facet contains multilingual values
-							else if(atLeastOneMultilingualLabel != -1){
-								let label = facet_inner;
-								let facet_innerLabel = facet_inner;
-								let facet_innerCount = res.facet_counts.facet_fields[facet][facet_inner];
-								// since we have values for the default language of the browser,
-								// only those values are added to facet options
-								if(labelForDefaultLanguage != -1){
-									let ind = facet_inner.lastIndexOf(":"+DEFAULT_LANGUAGE());
-									if (ind != -1) {
-										label = facet_inner.substring(0,ind);
-										facet_innerLabel = facet_inner;
-										facet_innerCount = res.facet_counts.facet_fields[facet][facet_inner];
-
-										this.facetObj[index].options.push({
-											"name":facet_innerLabel,
-											"realName":label,
-											"count":facet_innerCount
-										});
-										this.facetObj[index].total += res.facet_counts.facet_fields[facet][facet_innerLabel];
-										if (this.checkFacet(this.facetObj[index].name,facet_innerLabel))
-											this.facetObj[index].selected=true;
-									}
-								}
-								// we do not have values for the default language of the browser
-								// therefore, we add english values to facet options if possible.
-								else{
-									let ind = facet_inner.lastIndexOf(":en");
-									if (ind != -1) {
-										label = facet_inner.substring(0,ind);
-										facet_innerLabel = facet_inner;
-										facet_innerCount = res.facet_counts.facet_fields[facet][facet_inner];
-
-										this.facetObj[index].options.push({
-											"name":facet_innerLabel,
-											"realName":label,
-											"count":facet_innerCount
-										});
-										this.facetObj[index].total += res.facet_counts.facet_fields[facet][facet_innerLabel];
-										if (this.checkFacet(this.facetObj[index].name,facet_innerLabel))
-											this.facetObj[index].selected=true;
-									}
-								}
+				}
+				if (atLeastOneMultilingualLabel == -1) {
+					atLeastOneMultilingualLabel = res.facets[facet].entry.findIndex(facetInner => {
+						var idx = facetInner.label.lastIndexOf("@");
+						return (idx != -1 && idx+3 == facetInner.label.length);
+					});
+				}
+				if (atLeastOneMultilingualLabel != -1) {
+					var idx = res.facets[facet].entry[atLeastOneMultilingualLabel].label.lastIndexOf("@");
+					tmp_lang = res.facets[facet].entry[atLeastOneMultilingualLabel].label.substring(idx+1);
+				}
+				for (let facet_inner of res.facets[facet].entry) {
+					facet_innerLabel = facet_inner.label;
+					facet_innerCount = facet_inner.count;
+					//if(facetMetadataExists && facetMetadata[facet].dataType == 'string') {
+						if(atLeastOneMultilingualLabel != -1) {
+							let idx = facet_innerLabel.lastIndexOf("@" + tmp_lang);
+							if(idx != -1) {
+								facet_innerLabel = label = facet_innerLabel.substring(0,idx);
+							} else {
+								// there is at least one label in the preferred language but this is not one of them
+								continue;
 							}
 						}
+					//}
+
+					if (facet_innerLabel != "" && facet_innerLabel != ":" && facet_innerLabel != ' ' && facet_innerLabel.indexOf("urn:oasis:names:specification:ubl:schema:xsd") == -1) {
+						this.facetObj[index].options.push({
+							"name":facet_inner.label, // the label with the language id, if there is any
+							"realName":facet_innerLabel, // the displayed label
+							"count":facet_innerCount
+						});
+						this.facetObj[index].total += facet_innerCount;
+						if (this.checkFacet(this.facetObj[index].name,facet_inner.label))
+							this.facetObj[index].selected=true;
 					}
-
-					this.facetObj[index].options.sort(function(a,b){
-						var a_c = a.name;
-						var b_c = b.name;
-						return a_c.localeCompare(b_c);
-					});
-					this.facetObj[index].options.sort(function(a,b){
-						return b.count-a.count;
-					});
-					index++;
-					this.facetObj.sort(function(a,b){
-						var a_c = a.name;
-						var b_c = b.name;
-						return a_c.localeCompare(b_c);
-					});
-					this.facetObj.sort(function(a,b){
-						return b.total-a.total;
-					});
-					this.facetObj.sort(function(a,b){
-						var ret = 0;
-						if (a.selected && !b.selected)
-							ret = -1;
-						else if (!a.selected && b.selected)
-							ret = 1;
-						return ret;
-					});
 				}
+
+				this.facetObj[index].options.sort(function(a,b){
+					var a_c = a.name;
+					var b_c = b.name;
+					return a_c.localeCompare(b_c);
+				});
+				this.facetObj[index].options.sort(function(a,b){
+					return b.count-a.count;
+				});
+				index++;
+				this.facetObj.sort(function(a,b){
+					var a_c = a.name;
+					var b_c = b.name;
+					return a_c.localeCompare(b_c);
+				});
+				this.facetObj.sort(function(a,b){
+					return b.total-a.total;
+				});
+				this.facetObj.sort(function(a,b){
+					var ret = 0;
+					if (a.selected && !b.selected)
+						ret = -1;
+					else if (!a.selected && b.selected)
+						ret = 1;
+					return ret;
+				});
 			}
 		}
-		this.temp = res.response.docs;
-		for (let doc in this.temp) {
-			if (this.temp[doc][this.product_img]) {
-				var img = this.temp[doc][this.product_img];
-				if (Array.isArray(img)) {
-					this.temp[doc][this.product_img] = img[0];
-				}
-			}
-		}
-		/*
-        for (let doc in this.temp) {
-            if (this.isJson(this.temp[doc][this.product_img])) {
-                var json = JSON.parse(this.temp[doc][this.product_img]);
-                var img = "";
-                if (json.length > 1)
-                    img = "data:"+JSON.parse(this.temp[doc][this.product_img][0])[0].mimeCode+";base64,"+JSON.parse(this.temp[doc][this.product_img][0])[0].value;
-                else
-                    img = "data:"+this.temp[doc][this.product_img].mimeCode+";base64,"+this.temp[doc][this.product_img].value;
-                this.temp[doc][this.product_img] = img;
-            }
-        }
-        */
-        this.response = this.handleMultilingualFields(copy(this.temp));
-        this.size = res.response.numFound;
-        this.page = p;
-        this.start = this.page*10-10+1;
-        this.end = this.start+res.response.docs.length-1;
-        this.callback = true;
-        this.searchCallStatus.callback("Search done.", true);
-    }
-
-    // we have to choose the name and description of the item and the manufacturer name according to the default language of the browser
-    handleMultilingualFields(response){
-        for(let result of response){
-            result["item_name"] = [this.getPreferredValue(result["item_name"])];
-            result["item_description"] = [this.getPreferredValue(result["item_description"])];
-            result["item_manufacturer_name"] = [this.getPreferredValue(result["item_manufacturer_name"])];
-        }
-        return response;
-    }
-
-    getPreferredValue(values:string[]){
-        if(!values || values.length <= 0){
-            return "";
-        }
-
-        let defaultLanguage = DEFAULT_LANGUAGE();
-        let englishName = null;
-        for(let value of values){
-            let index = value.lastIndexOf(":");
-            let languageId = value.substring(index+1);
-            let preferredValue = value.substring(0,index);
-
-            if(preferredValue != ""){
-                if(languageId == defaultLanguage){
-                    return preferredValue;
-                }
-                else if(languageId == "en"){
-                    englishName = preferredValue;
-                }
-            }
-        }
-
-        if(englishName){
-            return englishName;
-        }
-
-        let index = values[0].lastIndexOf(":");
-        return values[0].substring(0,index);
-    }
-
-    getFacetRealName(name:string,properties){
-        for(let property of properties){
-            if(property["idxField"].indexOf(name) != -1){
-                // get label key
-                let objectKeys = Object.keys(property);
-
-                if(objectKeys.length < 2){
-                    // we do not have a specific label for this facet
-                    break;
-                }
-
-                let defaultLanguage = DEFAULT_LANGUAGE();
-
-                // Properties variable holds facet labels and descriptions.
-                // Therefore, we simply return the shortest one by assuming it is the label
-
-                if(objectKeys.indexOf("label_"+defaultLanguage) != -1){
-                	return this.getTheShortestOneAmongValues(property["label_"+defaultLanguage]);
-				}
-				else if(objectKeys.indexOf("label_en") != -1){
-                    return this.getTheShortestOneAmongValues(property["label_en"]);
-				}
-
-                objectKeys.splice(objectKeys.indexOf("idxField"),1);
-                let labelField = objectKeys[0];
-                return this.getTheShortestOneAmongValues(property[labelField]);
-            }
-        }
-
-        return name;
-    }
-
-    getTheShortestOneAmongValues(values){
-		let shortestOne = values[0];
-		for(let i = 1; i < values.length;i++){
-			if(values[i].length < shortestOne.length){
-				shortestOne = values[i];
-			}
-		}
-		return shortestOne;
 	}
 
-    onSubmit() {
-        this.objToSubmit = copy(this.model);
-        this.page = 1;
-        this.get(this.objToSubmit);
-    }
+	private getFieldNames(fields: any[]): any {
+		let fieldLabes = {};
+		for(let field of fields) {
+			fieldLabes[field.fieldName] = {};
+			fieldLabes[field.fieldName].label = field.label;
+			fieldLabes[field.fieldName].dataType = field.dataType;
+		}
+		return fieldLabes;
+	}
+
+	onSubmit() {
+		this.objToSubmit = copy(this.model);
+		this.page = 1;
+		this.get(this.objToSubmit);
+	}
 
 	callCat(name:string,id:string) {
 		this.model.q="*";
@@ -596,7 +582,16 @@ export class SimpleSearchFormComponent implements OnInit {
 		this.get(this.objToSubmit);
 	}
 
-	getName(name:string) {
+	getName(name:string,prefix?:string) {
+		// if it is a ubl property, then get its label from the ublProperties
+		if (prefix)
+			name = prefix+"."+name;
+		for(let ublProperty of this.ublProperties){
+			if(name == ublProperty.localName){
+				return selectNameFromLabelObject(ublProperty.label);
+			}
+		}
+		// otherwise, use product_filter_mappings
 		var ret = name;
 		if (this.product_filter_mappings[name]) {
 			ret = this.product_filter_mappings[name];
@@ -625,7 +620,7 @@ export class SimpleSearchFormComponent implements OnInit {
 		var found = false;
 		for (var i=0; i<this.facetQuery.length; i++) {
 			var comp = this.facetQuery[i].split(":")[0];
-			if (comp.localeCompare(this.product_currency) == 0 || comp.localeCompare(this.product_price) == 0) {
+			if (comp.localeCompare(this.lowerFirstLetter(this.selectedCurrency)+"_"+this.product_price) == 0) {
 				found = true;
 			}
 		}
@@ -636,7 +631,7 @@ export class SimpleSearchFormComponent implements OnInit {
 		var found = false;
 		for (var i=0; i<this.facetQuery.length; i++) {
 			var comp = this.facetQuery[i].split(":")[0];
-			if (comp.localeCompare(this.product_vendor_rating) == 0 || comp.localeCompare(this.product_vendor_rating_seller) == 0 || comp.localeCompare(this.product_vendor_rating_fulfillment) == 0 || comp.localeCompare(this.product_vendor_rating_delivery) == 0 || comp.localeCompare(this.product_vendor_trust) == 0) {
+			if (comp.localeCompare(this.product_vendor+"."+this.product_vendor_rating) == 0 || comp.localeCompare(this.product_vendor+"."+this.product_vendor_rating_seller) == 0 || comp.localeCompare(this.product_vendor+"."+this.product_vendor_rating_fulfillment) == 0 || comp.localeCompare(this.product_vendor+"."+this.product_vendor_rating_delivery) == 0 || comp.localeCompare(this.product_vendor+"."+this.product_vendor_trust) == 0) {
 				found = true;
 			}
 		}
@@ -644,29 +639,27 @@ export class SimpleSearchFormComponent implements OnInit {
 	}
 
 	setPriceFilter() {
-		this.clearFacet(this.product_currency);
-		this.clearFacet(this.product_price);
-		this.setFacetWithoutQuery(this.product_currency,this.selectedCurrency);
-		this.setRangeWithoutQuery(this.product_price,this.selectedPriceMin,this.selectedPriceMax);
+		this.clearFacet(this.lowerFirstLetter(this.selectedCurrency)+"_"+this.product_price);
+		this.setRangeWithoutQuery(this.lowerFirstLetter(this.selectedCurrency)+"_"+this.product_price,this.selectedPriceMin,this.selectedPriceMax);
 		this.get(this.objToSubmit);
 	}
 
 	setTrustFilter() {
-		this.clearFacet(this.product_vendor_rating);
-		this.clearFacet(this.product_vendor_rating_seller);
-		this.clearFacet(this.product_vendor_rating_fulfillment);
-		this.clearFacet(this.product_vendor_rating_delivery);
-		this.clearFacet(this.product_vendor_trust);
+		this.clearFacet(this.product_vendor_rating,this.product_vendor);
+		this.clearFacet(this.product_vendor_rating_seller,this.product_vendor);
+		this.clearFacet(this.product_vendor_rating_fulfillment,this.product_vendor);
+		this.clearFacet(this.product_vendor_rating_delivery,this.product_vendor);
+		this.clearFacet(this.product_vendor_trust,this.product_vendor);
 		if (this.ratingOverall > 0)
-			this.setRangeWithoutQuery(this.product_vendor_rating,this.ratingOverall,5);
+			this.setRangeWithoutQuery(this.product_vendor_rating,this.ratingOverall,5,this.product_vendor);
 		if (this.ratingSeller > 0)
-			this.setRangeWithoutQuery(this.product_vendor_rating_seller,this.ratingSeller,5);
+			this.setRangeWithoutQuery(this.product_vendor_rating_seller,this.ratingSeller,5,this.product_vendor);
 		if (this.ratingFulfillment > 0)
-			this.setRangeWithoutQuery(this.product_vendor_rating_fulfillment,this.ratingFulfillment,5);
+			this.setRangeWithoutQuery(this.product_vendor_rating_fulfillment,this.ratingFulfillment,5,this.product_vendor);
 		if (this.ratingDelivery > 0)
-			this.setRangeWithoutQuery(this.product_vendor_rating_delivery,this.ratingDelivery,5);
+			this.setRangeWithoutQuery(this.product_vendor_rating_delivery,this.ratingDelivery,5,this.product_vendor);
 		if (this.ratingTrust > 0)
-			this.setRangeWithoutQuery(this.product_vendor_trust,(this.ratingTrust/5),1);
+			this.setRangeWithoutQuery(this.product_vendor_trust,(this.ratingTrust/5),1,this.product_vendor);
 		this.get(this.objToSubmit);
 	}
 
@@ -674,8 +667,7 @@ export class SimpleSearchFormComponent implements OnInit {
 		this.selectedCurrency = "EUR";
 		this.selectedPriceMin = null;
 		this.selectedPriceMax = null;
-		this.clearFacet(this.product_currency);
-		this.clearFacet(this.product_price);
+		this.clearFacet(this.lowerFirstLetter(this.selectedCurrency)+"_"+this.product_price);
 		this.get(this.objToSubmit);
 	}
 
@@ -685,11 +677,11 @@ export class SimpleSearchFormComponent implements OnInit {
 		this.ratingFulfillment = 0;
 		this.ratingDelivery = 0;
 		this.ratingTrust = 0;
-		this.clearFacet(this.product_vendor_rating);
-		this.clearFacet(this.product_vendor_rating_seller);
-		this.clearFacet(this.product_vendor_rating_fulfillment);
-		this.clearFacet(this.product_vendor_rating_delivery);
-		this.clearFacet(this.product_vendor_trust);
+		this.clearFacet(this.product_vendor_rating,this.product_vendor);
+		this.clearFacet(this.product_vendor_rating_seller,this.product_vendor);
+		this.clearFacet(this.product_vendor_rating_fulfillment,this.product_vendor);
+		this.clearFacet(this.product_vendor_rating_delivery,this.product_vendor);
+		this.clearFacet(this.product_vendor_trust,this.product_vendor);
 		this.get(this.objToSubmit);
 	}
 
@@ -754,6 +746,11 @@ export class SimpleSearchFormComponent implements OnInit {
 	}
 
 	checkOtherCat(name:string) {
+		for(let nonFilter of this.product_nonfilter_regex) {
+			if(name.search(nonFilter) != -1) {
+				return false;
+			}
+		}
 		return (!this.checkProdCat(name) && !this.checkCompCat(name) && !this.checkTrustCat(name));
 	}
 
@@ -769,7 +766,9 @@ export class SimpleSearchFormComponent implements OnInit {
 		return count;
 	}
 
-	clearFacet(outer:string) {
+	clearFacet(outer:string, prefix?:string) {
+		if (prefix)
+			outer = prefix+"."+outer;
 		var idx = -1;
 		for (var i=0; i<this.facetQuery.length; i++) {
 			var comp = this.facetQuery[i].split(":")[0];
@@ -782,7 +781,9 @@ export class SimpleSearchFormComponent implements OnInit {
 		}
 	}
 
-	setFacet(outer:string, inner:string) {
+	setFacet(outer:string, inner:string, prefix?:string) {
+		if (prefix)
+			outer = prefix+"."+outer;
 		var fq = outer+":\""+inner+"\"";
 		if (this.facetQuery.indexOf(fq) == -1)
 			this.facetQuery.push(fq);
@@ -791,12 +792,16 @@ export class SimpleSearchFormComponent implements OnInit {
 		this.get(this.objToSubmit);
 	}
 
-	setFacetWithoutQuery(outer:string, inner:string) {
+	setFacetWithoutQuery(outer:string, inner:string, prefix?:string) {
+		if (prefix)
+			outer = prefix+"."+outer;
 		var fq = outer+":\""+inner+"\"";
 		this.facetQuery.push(fq);
 	}
 
-	setRangeWithoutQuery(outer:string, min:number, max:number) {
+	setRangeWithoutQuery(outer:string, min:number, max:number, prefix?:string) {
+		if (prefix)
+			outer = prefix+"."+outer;
 		var fq = outer+":["+min+" TO "+max+"]";
 		this.facetQuery.push(fq);
 	}
@@ -828,6 +833,32 @@ export class SimpleSearchFormComponent implements OnInit {
 		return match;
 	}
 
+	/**
+	 * Gets the price from a price object in the form of:
+	 {
+		"EUR": 100
+	  },
+	 * @param price
+	 */
+	getCurrency(price: any): string {
+		if (price[this.selectedCurrency])
+			return this.selectedCurrency;
+		if (this.selectedCurrency != "EUR" && price["EUR"])
+			return "EUR";
+		return Object.keys(price)[0];
+	}
+
+	getCategoryDisplayInfo(categories: any): any {
+		let labelMap = {};
+		for(let category of categories.result) {
+			labelMap[category.uri] = {};
+			labelMap[category.uri].label = category.label;
+			labelMap[category.uri].code = category.code;
+			labelMap[category.uri].isRoot = category.allParents == null ? true : false;
+		}
+		return labelMap;
+	}
+
 	checkNaN(rating:any): boolean {
 		var nan = false;
 		if (isNaN(parseFloat(rating)))
@@ -835,10 +866,18 @@ export class SimpleSearchFormComponent implements OnInit {
 		return nan;
 	}
 
+	checkEmpty(obj:any): boolean {
+		return (Object.keys(obj).length === 0);
+	}
+
 	calcRating(rating:any,multiplier:number): number {
 		var result = parseFloat(rating)*multiplier;
 		var rounded = Math.round(result*10)/10;
 		return rounded;
+	}
+
+	lowerFirstLetter(string) {
+	    return string.charAt(0).toLowerCase() + string.slice(1);
 	}
 
 	isJson(str: string): boolean {
