@@ -19,6 +19,7 @@ import {DiscountModalComponent} from '../../../product-details/discount-modal.co
 import {BpStartEvent} from '../../../catalogue/model/publish/bp-start-event';
 import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
 import {UBLModelUtils} from '../../../catalogue/model/ubl-model-utils';
+import * as myGlobals from '../../../globals';
 
 @Component({
     selector: "negotiation-response",
@@ -33,6 +34,7 @@ export class NegotiationResponseComponent implements OnInit {
     wrapper: NegotiationModelWrapper;
     userRole: BpUserRole;
     @Input() readonly: boolean = false;
+    config = myGlobals.config;
 
     CURRENCIES: string[] = CURRENCIES;
 
