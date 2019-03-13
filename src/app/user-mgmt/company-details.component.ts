@@ -20,7 +20,7 @@ export class CompanyDetailsComponent implements OnInit {
     imgEndpoint = myGlobals.user_mgmt_endpoint+"/company-settings/image/";
     initCallStatus: CallStatus = new CallStatus();
     vatCallStatus: CallStatus = new CallStatus();
-
+    party : any = {};
     selectValueOfTextObject = selectValueOfTextObject;
 
     constructor(private cookieService: CookieService,
@@ -33,7 +33,8 @@ export class CompanyDetailsComponent implements OnInit {
 		if(!this.details) {
 			this.initCallStatus.submit();
 			this.route.queryParams.subscribe(params => {
-				const id = params['id'];
+        const id = params['id'];
+        this.party.partyId = id;
 				if (id) {
 					this.userService.getSettingsForParty(id).then(details => {
 						if (myGlobals.debug) {

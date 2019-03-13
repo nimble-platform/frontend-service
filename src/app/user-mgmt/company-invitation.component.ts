@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,Input } from '@angular/core';
 import { AppComponent } from '../app.component';
 import { CompanyInvitation } from './model/company-invitation';
 import { UserService } from './user.service';
@@ -31,7 +31,9 @@ export class CompanyInvitationComponent implements OnInit {
 	submitCallStatus: CallStatus = new CallStatus();
 	membersCallStatus: CallStatus = new CallStatus();
 	membersFetched: boolean = false;
-
+	@Input() partyId : string = null;
+	platformManagerMode: boolean = false;
+	
     constructor(
         private cookieService: CookieService,
         private userService: UserService,
@@ -44,7 +46,10 @@ export class CompanyInvitationComponent implements OnInit {
 		this.loadRoles();
 		if (this.cookieService.get('user_email'))
 			this.myEmail = decodeURIComponent(this.cookieService.get('user_email'));
-    }
+
+		if(this.partyId != this.cookieService.get("company_id") && this.partyId != null)
+			this.platformManagerMode = true;
+  }
 
 	checkMail(mail) {
 		return (mail.localeCompare(this.myEmail) == 0);
@@ -63,7 +68,8 @@ export class CompanyInvitationComponent implements OnInit {
 		this.invPending = [];
 		this.membersCallStatus.submit();
 		this.membersFetched = false;
-		this.userService.getCompanyMemberList()
+		let partyId = this.partyId != "" ? this.partyId : null;
+		this.userService.getCompanyMemberList(partyId)
             .then(response => {
                 this.invPending = response;
 				this.membersCallStatus.callback("Successfully loading invites", true);

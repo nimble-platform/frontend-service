@@ -61,6 +61,12 @@
   </div>
 </div>
 
+<div *ngIf="appComponent.checkRoles('pm') && !initCallStatus.isLoading()" class="row actions-row pr-0">
+  <div class="col-12">
+    <company-invitation [partyId]="party.partyId"></company-invitation>
+  </div>
+</div>
+
 <div *ngIf="details" class="row">
   <div class="col-12">
     <hr>
