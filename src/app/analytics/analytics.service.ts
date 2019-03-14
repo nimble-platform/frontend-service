@@ -79,8 +79,8 @@ export class AnalyticsService {
   		.catch(this.handleError);
     }
 
-    getUnverifiedCompanies(page: number): Promise<any> {
-        const url = `${this.url_identity}/admin/unverified_companies?page=${page}`;
+    getUnverifiedCompanies(page: number, sortBy?: string, orderBy?: string): Promise<any> {
+        const url = `${this.url_identity}/admin/unverified_companies?page=${page}&sortBy=${sortBy}&orderBy=${orderBy}`;
         const token = 'Bearer '+this.cookieService.get("bearer_token");
         const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
         return this.http
@@ -90,8 +90,8 @@ export class AnalyticsService {
             .catch(this.handleError);
     }
 
-    getVerifiedCompanies(page: number, size?: number): Promise<any> {
-        var url = `${this.url_identity}/admin/verified_companies?page=${page}`;
+    getVerifiedCompanies(page: number, size?: number, sortBy?: string, orderBy?: string): Promise<any> {
+        var url = `${this.url_identity}/admin/verified_companies?page=${page}&sortBy=${sortBy}&orderBy=${orderBy}`;
         if (size)
           url += "&size="+size;
         const token = 'Bearer '+this.cookieService.get("bearer_token");
