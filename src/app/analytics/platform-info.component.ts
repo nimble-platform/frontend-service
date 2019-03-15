@@ -5,6 +5,7 @@ import * as myGlobals from '../globals';
 import {selectPartyName} from '../common/utils';
 import { AppComponent } from "../app.component";
 import { ActivatedRoute } from "@angular/router";
+import {COMPANY_LIST_SORT_OPTIONS} from './constants';
 
 @Component({
     selector: "platform-info",
@@ -22,6 +23,9 @@ export class PlatformInfoComponent implements OnInit {
 
     getNameOfTheCompany = selectPartyName;
 
+    COMPANY_LIST_SORT_OPTIONS = COMPANY_LIST_SORT_OPTIONS;
+    sortOptionForVerifiedCompanies = this.COMPANY_LIST_SORT_OPTIONS[0].name;
+
     constructor(
       private analyticsService: AnalyticsService,
       public appComponent: AppComponent,
@@ -38,12 +42,12 @@ export class PlatformInfoComponent implements OnInit {
             }
         });
         this.registeredCompaniesCallStatus.submit();
-        this.updateRegisteredCompanies(1);
+        this.updateRegisteredCompanies(1, this.COMPANY_LIST_SORT_OPTIONS[0].sortBy, this.COMPANY_LIST_SORT_OPTIONS[0].orderBy);
     }
 
-    updateRegisteredCompanies(requestedPage: number): void {
+    updateRegisteredCompanies(requestedPage: number, sortBy?: string, orderBy?: string): void {
         this.analyticsService
-            .getVerifiedCompanies(requestedPage,this.size)
+            .getVerifiedCompanies(requestedPage,this.size, sortBy, orderBy)
             .then(res => {
                 this.registeredCompaniesCallStatus.callback("Successfully loaded registered companies", true);
                 res = this.updateLinks(res);
@@ -100,8 +104,16 @@ export class PlatformInfoComponent implements OnInit {
     onRegisteredCompaniesPageChange(newPage): void {
         this.registeredCompaniesCallStatus.submit();
         if (newPage && newPage !== this.registeredCompaniesPage.number) {
-            this.updateRegisteredCompanies(newPage);
+            let selectedSortOption = COMPANY_LIST_SORT_OPTIONS.filter(i => i.name === this.sortOptionForVerifiedCompanies);
+            this.updateRegisteredCompanies(newPage, selectedSortOption[0].sortBy, selectedSortOption[0].orderBy);
         }
+    }
+
+    sortRegisteredCompanyList(): void {
+        let selectedSortOption = COMPANY_LIST_SORT_OPTIONS.filter(i => i.name === this.sortOptionForVerifiedCompanies);
+        this.updateRegisteredCompanies(1, selectedSortOption[0].sortBy, selectedSortOption[0].orderBy);
+        this.registeredCompaniesCallStatus.submit();
+        this.registeredCompaniesPage = null;
     }
 
 }

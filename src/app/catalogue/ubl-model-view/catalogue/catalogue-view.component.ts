@@ -51,7 +51,7 @@ export class CatalogueViewComponent implements OnInit {
 
     getCatalogueStatus = new CallStatus();
     callStatus = new CallStatus();
-    deleteStatuses: CallStatus[] = []
+    deleteStatuses: CallStatus[] = [];
 
     CATALOGUE_LINE_SORT_OPTIONS = CATALOGUE_LINE_SORT_OPTIONS;
 

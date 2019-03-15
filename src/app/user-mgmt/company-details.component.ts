@@ -17,6 +17,7 @@ export class CompanyDetailsComponent implements OnInit {
 
 	@Input() details: CompanySettings = null;
 	@Input() hideTitle: boolean = false;
+  @Input() platformManagerMode: boolean = false;
     imgEndpoint = myGlobals.user_mgmt_endpoint+"/company-settings/image/";
     initCallStatus: CallStatus = new CallStatus();
     vatCallStatus: CallStatus = new CallStatus();
@@ -30,25 +31,28 @@ export class CompanyDetailsComponent implements OnInit {
     }
 
     ngOnInit() {
-		if(!this.details) {
-			this.initCallStatus.submit();
-			this.route.queryParams.subscribe(params => {
-        const id = params['id'];
-        this.party.partyId = id;
-				if (id) {
-					this.userService.getSettingsForParty(id).then(details => {
-						if (myGlobals.debug) {
-							console.log("Fetched details: " + JSON.stringify(details));
-						}
-						this.details = details;
-						this.initCallStatus.callback("Details successfully fetched", true);
-					})
-					.catch(error => {
-						this.initCallStatus.error("Error while fetching company details", error);
-					});
-				}
-			});
-		}
+  		if(!this.details) {
+  			this.initCallStatus.submit();
+  			this.route.queryParams.subscribe(params => {
+          const id = params['id'];
+  				if (id) {
+            this.party.partyId = id;
+  					this.userService.getSettingsForParty(id).then(details => {
+  						if (myGlobals.debug) {
+  							console.log("Fetched details: " + JSON.stringify(details));
+  						}
+  						this.details = details;
+  						this.initCallStatus.callback("Details successfully fetched", true);
+  					})
+  					.catch(error => {
+  						this.initCallStatus.error("Error while fetching company details", error);
+  					});
+  				}
+  			});
+  		}
+      else {
+        this.party.partyId = this.details.companyID;
+      }
     }
 
     validateVAT() {

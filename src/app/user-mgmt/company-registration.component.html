@@ -148,8 +148,11 @@
 
 		<!-- Submit -->
 		<div class="row actions-row pr-0">
-			<div class="col-10 call-status-col">
+			<div class="col-8 call-status-col">
 				<call-status [callStatus]="submitCallStatus" [large]="true"></call-status>
+			</div>
+			<div class="col-2">
+				<button class="btn btn-secondary action" type="button" [disabled]="submitCallStatus.isLoading()" (click)="backToVAT()">Back</button>
 			</div>
 			<div class="col-2">
 				<button class="btn btn-primary action" type="submit" [disabled]="!registrationForm.valid || submitCallStatus.isLoading()">Register</button>
