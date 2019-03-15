@@ -3,7 +3,6 @@ import { Headers, Http } from '@angular/http';
 import 'rxjs/add/operator/toPromise';
 import * as myGlobals from '../globals';
 import { map } from 'rxjs/operators';
-import { getAuthorizedHeaders } from '../common/utils'
 import {CookieService} from "ng2-cookies";
 import { DEFAULT_LANGUAGE } from '../catalogue/model/constants';
 

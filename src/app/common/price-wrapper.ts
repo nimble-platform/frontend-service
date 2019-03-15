@@ -1,6 +1,6 @@
 import { Price } from "../catalogue/model/publish/price";
 import { Quantity } from "../catalogue/model/publish/quantity";
-import { currencyToString } from "./utils";
+import {currencyToString, roundToTwoDecimals} from "./utils";
 import { ItemPriceWrapper } from "./item-price-wrapper";
 import {PriceOption} from '../catalogue/model/publish/price-option';
 import {PRICE_OPTIONS} from '../catalogue/model/constants';
@@ -29,6 +29,7 @@ export class PriceWrapper {
     presentationMode:string = 'edit';
     // this field is used to create discount-modal view
     appliedDiscounts: PriceOption[] = [];
+    roundToTwoDecimals= roundToTwoDecimals;
 
     constructor(public price: Price,
                 public quantity: Quantity = new Quantity(1, price.baseQuantity.unitCode),
@@ -190,7 +191,7 @@ export class PriceWrapper {
         if(!this.hasPrice()) {
             return "Not specified";
         }
-        return `${this.totalPrice} ${this.currency}`;
+        return `${roundToTwoDecimals(this.totalPrice)} ${this.currency}`;
     }
 
     get pricePerItemString(): string {
@@ -202,9 +203,9 @@ export class PriceWrapper {
         }
 
         if(this.price.baseQuantity.value === 1) {
-            return `${this.roundPrice(totalPrice/qty.value)} ${currencyToString(this.price.priceAmount.currencyID)} per ${this.price.baseQuantity.unitCode}`
+            return `${this.roundToTwoDecimals(totalPrice/qty.value)} ${currencyToString(this.price.priceAmount.currencyID)} per ${this.price.baseQuantity.unitCode}`
         }
-        return `${this.roundPrice(totalPrice/qty.value)} ${currencyToString(this.price.priceAmount.currencyID)} for ${this.price.baseQuantity.value} ${this.price.baseQuantity.unitCode}`
+        return `${this.roundToTwoDecimals(totalPrice/qty.value)} ${currencyToString(this.price.priceAmount.currencyID)} for ${this.price.baseQuantity.value} ${this.price.baseQuantity.unitCode}`
     }
 
     get currency(): string {

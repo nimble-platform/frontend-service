@@ -6,7 +6,7 @@ import * as myGlobals from '../globals';
 import {SearchContextService} from "./search-context.service";
 import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
-import { copy, selectNameFromLabelObject } from '../common/utils';
+import {copy, roundToTwoDecimals, selectNameFromLabelObject} from '../common/utils';
 import { CallStatus } from '../common/call-status';
 import { CURRENCIES } from "../catalogue/model/constants";
 import { CategoryService } from '../catalogue/category/category.service';
@@ -44,6 +44,7 @@ export class SimpleSearchFormComponent implements OnInit {
 	product_nonfilter_regex = myGlobals.product_nonfilter_regex;
 	product_cat = myGlobals.product_cat;
 	product_cat_mix = myGlobals.product_cat_mix;
+	roundToTwoDecimals = roundToTwoDecimals;
 
 	CURRENCIES = CURRENCIES;
 	selectedCurrency: any = "EUR";

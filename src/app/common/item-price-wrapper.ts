@@ -1,6 +1,6 @@
 import { Price } from "../catalogue/model/publish/price";
 import { Quantity } from "../catalogue/model/publish/quantity";
-import { currencyToString } from "./utils";
+import {currencyToString, roundToTwoDecimals} from "./utils";
 
 /**
  * Wrapper for the price of a single item (or at least, for the base quantity of this item).
@@ -25,9 +25,9 @@ export class ItemPriceWrapper {
         }
 
         if(baseQuantity === 1) {
-            return `${this.roundPrice(amount.value)} ${currencyToString(amount.currencyID)} per ${qty.unitCode}`
+            return `${roundToTwoDecimals(amount.value)} ${currencyToString(amount.currencyID)} per ${qty.unitCode}`
         }
-        return `${this.roundPrice(amount.value)} ${currencyToString(amount.currencyID)} for ${baseQuantity} ${qty.unitCode}`
+        return `${roundToTwoDecimals(amount.value)} ${currencyToString(amount.currencyID)} for ${baseQuantity} ${qty.unitCode}`
     }
 
     get currency(): string {
@@ -41,10 +41,6 @@ export class ItemPriceWrapper {
     hasPrice(): boolean {
         // != here gives "not null or undefined", which is the behaviour we want.
         return this.price.priceAmount.value != null;
-    }
-
-    private roundPrice(value: number): number {
-        return Math.round(value * 100) / 100;
     }
 
     /**

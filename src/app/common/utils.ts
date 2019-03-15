@@ -425,6 +425,13 @@ const CURRENCIES_STRING_VALUES: CurrenciesStringValues = {
     // GBP: "₤"
 }
 
+export function roundToTwoDecimals(value): any{
+    if (!isNaN(value) && value !== null) {
+        return (Math.round(parseFloat(value) * 100) / 100).toFixed(2);
+    }
+    return value;
+}
+
 export function currencyToString(currencyId: string): string {
     return CURRENCIES_STRING_VALUES[currencyId] || currencyId;
 }
