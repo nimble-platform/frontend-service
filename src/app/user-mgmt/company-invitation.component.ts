@@ -32,8 +32,8 @@ export class CompanyInvitationComponent implements OnInit {
 	membersCallStatus: CallStatus = new CallStatus();
 	membersFetched: boolean = false;
 	@Input() partyId : string = null;
-	platformManagerMode: boolean = false;
-	
+	@Input() platformManagerMode: boolean = false;
+
     constructor(
         private cookieService: CookieService,
         private userService: UserService,
@@ -46,8 +46,7 @@ export class CompanyInvitationComponent implements OnInit {
 		this.loadRoles();
 		if (this.cookieService.get('user_email'))
 			this.myEmail = decodeURIComponent(this.cookieService.get('user_email'));
-
-		if(this.partyId != this.cookieService.get("company_id") && this.partyId != null)
+		if(this.partyId && this.partyId != this.cookieService.get("company_id"))
 			this.platformManagerMode = true;
   }
 
@@ -68,8 +67,9 @@ export class CompanyInvitationComponent implements OnInit {
 		this.invPending = [];
 		this.membersCallStatus.submit();
 		this.membersFetched = false;
-		let partyId = this.partyId != "" ? this.partyId : null;
-		this.userService.getCompanyMemberList(partyId)
+    if (this.partyId == "")
+      this.partyId = null;
+		this.userService.getCompanyMemberList(this.partyId)
             .then(response => {
                 this.invPending = response;
 				this.membersCallStatus.callback("Successfully loading invites", true);

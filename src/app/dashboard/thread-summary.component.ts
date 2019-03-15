@@ -22,6 +22,7 @@ import {BpStartEvent} from '../catalogue/model/publish/bp-start-event';
 import {BpURLParams} from '../catalogue/model/publish/bpURLParams';
 import {UBLModelUtils} from '../catalogue/model/ubl-model-utils';
 import {selectPreferredValue} from '../common/utils';
+import {DashboardProcessInstanceDetails} from '../bpe/model/dashboard-process-instance-details';
 
 /**
  * Created by suat on 12-Mar-18.
@@ -128,17 +129,16 @@ export class ThreadSummaryComponent implements OnInit {
     }
 
     private async fetchThreadEvent(processInstanceId: string): Promise<ThreadEventMetadata> {
-        const activityVariables = await this.bpeService.getProcessDetailsHistory(processInstanceId);
-        const processType = ActivityVariableParser.getProcessType(activityVariables);
-        const initialDoc: any = await this.documentService.getInitialDocument(activityVariables);
-        const response: any = await this.documentService.getResponseDocument(activityVariables);
-        const userRole = await this.documentService.getUserRole(activityVariables,this.processInstanceGroup.partyID);
-        const processId = ActivityVariableParser.getProcessInstanceID(activityVariables);
+        // get dashboard process instance details
+        const dashboardProcessInstanceDetails:DashboardProcessInstanceDetails = await this.bpeService.getDashboardProcessInstanceDetails(processInstanceId);
 
-        const [lastActivity, processInstance] = await Promise.all([
-            this.bpeService.getLastActivityForProcessInstance(processId),
-            this.bpeService.getProcessInstanceDetails(processId)]
-        )
+        const activityVariables = dashboardProcessInstanceDetails.variableInstance;
+        const processType = ActivityVariableParser.getProcessType(activityVariables);
+        const initialDoc: any = dashboardProcessInstanceDetails.requestDocument;
+        const response: any = dashboardProcessInstanceDetails.responseDocument;
+        const userRole = ActivityVariableParser.getUserRole(processType,initialDoc,this.processInstanceGroup.partyID);
+        const lastActivity = dashboardProcessInstanceDetails.lastActivityInstance;
+        const processInstance = dashboardProcessInstanceDetails.processInstance;
 
         if (userRole === "buyer") {
             this.lastEventPartnerID = UBLModelUtils.getPartyId(ActivityVariableParser.getProductFromProcessData(initialDoc,processType).manufacturerParty);
@@ -152,8 +152,8 @@ export class ThreadSummaryComponent implements OnInit {
         const event: ThreadEventMetadata = new ThreadEventMetadata(
             processType,
             processType.replace(/[_]/gi, " "),
-            processId,
-            moment(lastActivity.startTime + "Z", 'YYYY-MM-DDTHH:mm:ssZ').format("YYYY-MM-DD HH:mm"),
+            processInstanceId,
+            moment(new Date(lastActivity["startTime"]), 'YYYY-MM-DDTHH:mm:ss.SSSZ').format("YYYY-MM-DD HH:mm:ss"),
             ActivityVariableParser.getTradingPartnerName(initialDoc, this.cookieService.get("company_id"),processType),
             ActivityVariableParser.getProductFromProcessData(initialDoc,processType),
             ActivityVariableParser.getNoteFromProcessData(initialDoc,processType),
@@ -164,7 +164,7 @@ export class ThreadSummaryComponent implements OnInit {
             isRated === "true"
         );
 
-        this.fillStatus(event, processInstance.state, processType, response, userRole === "buyer");
+        this.fillStatus(event, processInstance["state"], processType, response, userRole === "buyer");
         this.setCancelCollaborationButtonStatus(processType,response);
         this.checkDataChannel(event);
 

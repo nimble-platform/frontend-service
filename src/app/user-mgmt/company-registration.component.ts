@@ -62,6 +62,14 @@ export class CompanyRegistrationComponent implements OnInit {
       this.vatSkipped = true;
     }
 
+    backToVAT() {
+      this.vatSkipped = false;
+      this.vatValidated = false;
+      this.registrationForm.controls['name'].setValue("");
+      this.registrationForm.controls['vatNumber'].setValue("");
+      AddressSubForm.update(this.registrationForm.controls['address'] as FormGroup, new Address("","","","",""));
+    }
+
     validateVAT() {
       this.vatCallStatus.submit();
       this.userService.validateVAT(this.vat)
@@ -74,9 +82,15 @@ export class CompanyRegistrationComponent implements OnInit {
               this.registrationForm.controls['vatNumber'].setValue(this.vat);
               if (response.country_code)
                 AddressSubForm.update(this.registrationForm.controls['address'] as FormGroup, new Address("","","","",getCountryByISO(response.country_code)));
+              this.vatValidated = true;
+            }
+            else {
+              setTimeout(function(){alert("The VAT is invalid.");},50);
             }
           }
-          this.vatValidated = true;
+          else {
+            setTimeout(function(){alert("The VAT is invalid.");},50);
+          }
         })
         .catch(error => {
             this.vatCallStatus.error("Error while checking VAT", error);
