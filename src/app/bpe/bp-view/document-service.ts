@@ -82,15 +82,6 @@ export class DocumentService {
         }
     }
 
-    getUserRole(activityVariables: any,partyId:any): Promise<BpUserRole> {
-        return this.getInitialDocument(activityVariables).then(initialDoc => {
-            let processType = ActivityVariableParser.getProcessType(activityVariables);
-            let buyerId:any = ActivityVariableParser.getBuyerId(initialDoc,processType);
-            let role:BpUserRole = buyerId == partyId ? 'buyer' : 'seller';
-            return Promise.resolve(role);
-        });
-    }
-
     private getAuthorizedHeaders(): Headers {
         const token = 'Bearer '+this.cookieService.get("bearer_token");
         const headers = new Headers({'Authorization': token});

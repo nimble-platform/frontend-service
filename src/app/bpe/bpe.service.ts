@@ -20,6 +20,7 @@ import { RequestForQuotation } from '../catalogue/model/publish/request-for-quot
 import { EvidenceSupplied } from '../catalogue/model/publish/evidence-supplied';
 import { Comment } from '../catalogue/model/publish/comment';
 import {SearchContextService} from '../simple-search/search-context.service';
+import {DashboardProcessInstanceDetails} from './model/dashboard-process-instance-details';
 
 @Injectable()
 export class BPEService {
@@ -190,15 +191,6 @@ export class BPEService {
             .catch(this.handleError);
 	}
 
-	getProcessInstanceDetails(processInstanceId: string): Promise<any> {
-		const url = `${this.url}/rest/engine/default/history/process-instance/${processInstanceId}`;
-		return this.http
-            .get(url, {headers: this.headers})
-            .toPromise()
-            .then(res => res.json())
-            .catch(this.handleError);
-    }
-
 	getProcessInstanceGroupFilters(partyId:string, collaborationRole: CollaborationRole, archived: boolean, products: string[],
 		categories: string[], partners: string[],status: string[]): Promise<ProcessInstanceGroupFilter> {
 		const headers = this.getAuthorizedHeaders();
@@ -239,6 +231,15 @@ export class BPEService {
 		    url += '&status='+this.stringifyArray(status);
         }
 		return this.http
+            .get(url, {headers: this.getAuthorizedHeaders()})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+	}
+
+	getDashboardProcessInstanceDetails(processInstanceId:string): Promise<DashboardProcessInstanceDetails>{
+        let url:string = `${this.url}/processInstance/${processInstanceId}/details`;
+        return this.http
             .get(url, {headers: this.getAuthorizedHeaders()})
             .toPromise()
             .then(res => res.json())
