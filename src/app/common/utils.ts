@@ -425,6 +425,11 @@ const CURRENCIES_STRING_VALUES: CurrenciesStringValues = {
     // GBP: "₤"
 }
 
+export function getFileExtension(filename: string): string {
+    let ext = /^.+\.([^.]+)$/.exec(filename);
+    return ext == null ? "" : ext[1];
+}
+
 export function roundToTwoDecimals(value): any{
     if (!isNaN(value) && value !== null) {
         return (Math.round(parseFloat(value) * 100) / 100).toFixed(2);
