@@ -34,11 +34,17 @@
                                    accept="application/zip"
                                    style="display: none">
                             <button class="dropdown-item" (click)="navigateToThePublishPage()">
-                                Publish New Product / Service
+                                Publish Product
+                            </button>
+                            <button class="dropdown-item" (click)="navigateToBulkUploadPage()">
+                                Publish Multiple Products
                             </button>
                             <button class="dropdown-item" (click)="imagePackage.click()">
                                 Upload Image Package
                             </button>
+                            <!--<button class="dropdown-item" (click)="imagePackage.click()">-->
+                                <!--Export Catalogue-->
+                            <!--</button>-->
                             <button class="dropdown-item" (click)="deleteAllProductImages()">
                                 Delete All Product Images
                             </button>
