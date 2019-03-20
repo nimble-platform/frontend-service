@@ -125,8 +125,6 @@ export class ProductPublishComponent implements OnInit {
 
     json = JSON;
 
-    // the language of template
-    templateLanguage = DEFAULT_LANGUAGE();
     // used to add a new property which has a unit
     private quantity = new Quantity(null, null);
 
@@ -373,25 +371,6 @@ export class ProductPublishComponent implements OnInit {
         // must have a name
         return this.catalogueLine.goodsItem.item.name[0] && this.catalogueLine.goodsItem.item.name[0].value !== "";
     }
-
-    // TEST
-    /*
-    private newItemName: Text = new Text(null,DEFAULT_LANGUAGE());
-    private newItemDescription: Text = new Text(null,DEFAULT_LANGUAGE());
-    private languages: Array<string> = LANGUAGES;
-
-
-    addItemNameDescription(){
-        let nameText = new Text(this.newItemName.value, this.newItemName.languageID);
-        let descriptionText = new Text(this.newItemDescription.value, this.newItemDescription.languageID);
-
-        this.catalogueLine.goodsItem.item.name.push(nameText);
-        this.catalogueLine.goodsItem.item.description.push(descriptionText);
-
-        this.newItemName = new Text(null,DEFAULT_LANGUAGE());
-        this.newItemDescription = new Text(null,DEFAULT_LANGUAGE());
-    }
-    */
 
     addItemNameDescription() {
       let newItemName: Text = new Text("",DEFAULT_LANGUAGE());
@@ -716,46 +695,6 @@ export class ProductPublishComponent implements OnInit {
         this.recomputeSelectedProperties();
     }
 
-    /* no longer needed (as far as I am aware...)
-    private restoreItemProperties() {
-        let newProperties: ItemProperty[] = [];
-        let existingProperties: ItemProperty[] = this.catalogueLine.goodsItem.item.additionalItemProperty;
-        let customProperties: ItemProperty[] = [];
-
-        // prepare empty category fields
-        for (let category of this.categoryService.selectedCategories) {
-            for (let property of category.properties) {
-                newProperties.push(UBLModelUtils.createAdditionalItemProperty(property, category));
-            }
-        }
-
-        // gather the custom properties
-        for (let i = 0; i < existingProperties.length; i++) {
-            if (existingProperties[i].itemClassificationCode.listID == "Custom") {
-                customProperties.push(existingProperties[i]);
-            }
-        }
-
-        // existingProperties contains only non-custom properties now
-        existingProperties = existingProperties.filter(function(el){
-            return el.itemClassificationCode.listID != "Custom";
-        });
-
-        // replace the empty properties with the existing ones
-        for (let i = 0; i < newProperties.length; i++) {
-            for (let j = 0; j < existingProperties.length; j++) {
-                // If a property already exists, copy it over
-                if (newProperties[i].id == existingProperties[j].id && newProperties[i].itemClassificationCode.value == existingProperties[j].itemClassificationCode.value) {
-                    newProperties[i] = existingProperties[j];
-                }
-            }
-        }
-
-        newProperties = customProperties.concat(newProperties);
-        this.catalogueLine.goodsItem.item.additionalItemProperty = newProperties;
-    }
-    */
-
     private updateItemWithNewCategory(category: Category): void {
         this.catalogueLine.goodsItem.item.commodityClassification.push(UBLModelUtils.createCommodityClassification(category));
     }
@@ -985,17 +924,6 @@ export class ProductPublishComponent implements OnInit {
         }
     }
 
-    /* cancel an image upload */
-    imageCancel(fileName: string) {
-        let binaryObjects = this.newProperty.valueBinary;
-
-        let index = binaryObjects.findIndex(img => img.fileName === fileName);
-
-        if (index > -1) {
-            binaryObjects.splice(index, 1);
-        }
-    }
-
     /**
      * Adds the new property to the end of existing custom properties. Processes the value arrays of the property;
      * keeps only the relevant array based on the value qualifier and removes the empty values
@@ -1068,83 +996,6 @@ export class ProductPublishComponent implements OnInit {
         this.quantity = new Quantity(null,null);
         this.propertyValueType.nativeElement.selectedIndex = 0;
 
-    }
-
-    // used in bulk publish
-    downloadTemplate() {
-        this.publishStatus.submit();
-
-        let userId: string = this.cookieService.get("user_id");
-        var reader = new FileReader();
-        this.catalogueService.downloadTemplate(userId, this.categoryService.selectedCategories,this.templateLanguage)
-            .then(result => {
-                    var link = document.createElement('a');
-                    link.id = 'downloadLink';
-                    link.href = window.URL.createObjectURL(result.content);
-                    link.download = result.fileName;
-
-                    document.body.appendChild(link);
-                    var downloadLink = document.getElementById('downloadLink');
-                    downloadLink.click();
-                    document.body.removeChild(downloadLink);
-
-                    this.publishStatus.callback("Download completed");
-                },
-                error => {
-                    this.publishStatus.error("Download failed");
-                });
-    }
-
-    // used in bulk publish
-    uploadTemplate(event: any, uploadMode: string) {
-        this.publishStatus.submit();
-        let catalogueService = this.catalogueService;
-        let userId: string = this.cookieService.get("user_id");
-        let fileList: FileList = event.target.files;
-        if (fileList.length > 0) {
-            let file: File = fileList[0];
-            let self = this;
-            var reader = new FileReader();
-            reader.onload = function (e) {
-                // reset the target value so that the same file could be chosen more than once
-                event.target.value = "";
-                catalogueService.uploadTemplate(userId, file, uploadMode).then(res => {
-                        self.publishStatus.callback(null);
-                        ProductPublishComponent.dialogBox = false;
-                        self.router.navigate(['dashboard'], {queryParams: {tab: "CATALOGUE"}});
-                    },
-                    error => {
-                        self.publishStatus.error("Failed to upload the template:  " + error);
-                    });
-            };
-            reader.readAsDataURL(file);
-        }
-    }
-
-    // used in bulk publish
-    uploadImagePackage(event: any): void {
-        this.publishStatus.submit();
-        let catalogueService = this.catalogueService;
-        let userId: string = this.cookieService.get("user_id");
-        let fileList: FileList = event.target.files;
-        if (fileList.length > 0) {
-            let file: File = fileList[0];
-            let self = this;
-            var reader = new FileReader();
-            reader.onload = function (e) {
-                // reset the target value so that the same file could be chosen more than once
-                event.target.value = "";
-                catalogueService.uploadZipPackage(file).then(res => {
-                        self.publishStatus.callback(null);
-                        ProductPublishComponent.dialogBox = false;
-                        self.router.navigate(['dashboard'], {queryParams: {tab: "CATALOGUE"}});
-                    },
-                    error => {
-                        self.publishStatus.error("Failed to upload the image package:  " + error);
-                    });
-            };
-            reader.readAsDataURL(file);
-        }
     }
 
     /**
