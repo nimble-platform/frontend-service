@@ -699,13 +699,6 @@ export class ProductPublishComponent implements OnInit {
         this.catalogueLine.goodsItem.item.commodityClassification.push(UBLModelUtils.createCommodityClassification(category));
     }
 
-    // used in bulk publish
-    checkMode(mode: string) {
-        if (mode == "replace") {
-            alert("Beware: All previously published items are deleted and only the new ones are added to the catalogue in replace mode!");
-        }
-    }
-
     // should be called on publish new product
     private publishProduct(): void {
 

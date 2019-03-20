@@ -13,9 +13,9 @@ import {CookieService} from "ng2-cookies";
     styleUrls: ["./bulk-publish.component.css"]
 })
 export class BulkPublishComponent {
-    @Input() publishStatus:CallStatus;
     @Input() selectCategories:Category[];
 
+    publishStatus:CallStatus = new CallStatus();
     showCategoryWarning: boolean = false;
 
     constructor(private categoryService: CategoryService,
@@ -25,6 +25,12 @@ export class BulkPublishComponent {
 
     closeCategoryWarning(): void {
         this.showCategoryWarning = false;
+    }
+
+    checkMode(mode: string) {
+        if (mode == "replace") {
+            alert("Beware: All previously published items are deleted and only the new ones are added to the catalogue in replace mode!");
+        }
     }
 
     downloadTemplate() {
