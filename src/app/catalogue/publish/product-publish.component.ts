@@ -126,7 +126,7 @@ export class ProductPublishComponent implements OnInit {
     json = JSON;
 
     // the language of template
-    templateLanguage = "en";
+    templateLanguage = DEFAULT_LANGUAGE();
     // used to add a new property which has a unit
     private quantity = new Quantity(null, null);
 

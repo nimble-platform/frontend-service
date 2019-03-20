@@ -17,33 +17,33 @@
     </li>
 </ul>
 
-<div *ngIf="publishingGranularity === 'bulk'">
-    <!-- Selected Categories -->
-    <div class="row space-before">
-        <div class="col-2 category-list-label">
-            <strong *ngIf="!isProductCategoriesLoading()">Categories: </strong>
-            <strong class="mr-2" *ngIf="isProductCategoriesLoading()">Fetching Categories </strong>
-            <call-status [callStatus]="productCategoryRetrievalStatus"></call-status>
-        </div>
-        <div class="col-10 object-list">
-            <div *ngFor="let selectedCategory of selectedCategories"
-                 class="bordered my-1 ml-1" title="{{selectedCategory.taxonomyId}}">
-                <small class="p-0">{{selectPreferredName(selectedCategory)}}</small>
-                <i class="fa fa-times-circle pl-1" placement="right" (click)="onRemoveCategory(selectedCategory)"></i>
-            </div>
-            <button class="btn btn-outline-primary btn-add-category"
-                    (click)="onAddCategory()" [disabled]="isLoading()">
-                Add Category
-            </button>
-        </div>
+<!-- Selected Categories -->
+<div class="row space-before">
+    <div class="col-2 category-list-label">
+        <strong *ngIf="!isProductCategoriesLoading()">Categories: </strong>
+        <strong class="mr-2" *ngIf="isProductCategoriesLoading()">Fetching Categories </strong>
+        <call-status [callStatus]="productCategoryRetrievalStatus"></call-status>
     </div>
+    <div class="col-10 object-list">
+        <div *ngFor="let selectedCategory of selectedCategories"
+             class="bordered my-1 ml-1" title="{{selectedCategory.taxonomyId}}">
+            <small class="p-0">{{selectPreferredName(selectedCategory)}}</small>
+            <i class="fa fa-times-circle pl-1" placement="right" (click)="onRemoveCategory(selectedCategory)"></i>
+        </div>
+        <button class="btn btn-outline-primary btn-add-category"
+                (click)="onAddCategory()" [disabled]="isLoading()">
+            Add Category
+        </button>
+    </div>
+</div>
 
+<div *ngIf="publishingGranularity === 'bulk'">
     <div class="d-flex mt-3 mb-4">
         <label class="col-9">1. Download the product / service category template</label>
-        <select [(ngModel)]="templateLanguage" class="form-control col-1" type="text" style="margin-right: 1px">
-            <option *ngFor='let language of languages' [value]="language" [selected]="templateLanguage === language">{{language}}</option>
-        </select>
-        <button class="btn btn-secondary col-2"
+        <!--<select [(ngModel)]="templateLanguage" class="form-control col-1" type="text" style="margin-right: 1px">-->
+            <!--<option *ngFor='let language of languages' [value]="language" [selected]="templateLanguage === language">{{language}}</option>-->
+        <!--</select>-->
+        <button class="btn btn-secondary col-3"
                 (click)="downloadTemplate()">Download template
         </button>
     </div>
@@ -85,26 +85,6 @@
 </div>
 
 <ng-container *ngIf="publishingGranularity === 'single' && catalogueLine">
-    <!-- Selected Categories -->
-    <div class="row space-before">
-        <div class="col-2 category-list-label">
-            <strong *ngIf="!isProductCategoriesLoading()">Categories: </strong>
-            <strong class="mr-2" *ngIf="isProductCategoriesLoading()">Fetching Categories </strong>
-            <call-status [callStatus]="productCategoryRetrievalStatus"></call-status>
-        </div>
-        <div class="col-10 object-list">
-            <div *ngFor="let selectedCategory of selectedCategories"
-                class="bordered my-1 ml-1" title="{{selectedCategory.taxonomyId}}">
-                <small class="p-0">{{selectPreferredName(selectedCategory)}}</small>
-                <i class="fa fa-times-circle pl-1" placement="right" (click)="onRemoveCategory(selectedCategory)"></i>
-            </div>
-            <button class="btn btn-outline-primary btn-add-category"
-                (click)="onAddCategory()" [disabled]="isLoading()">
-                Add Category
-            </button>
-        </div>
-    </div>
-
     <hr>
 
     <!-- Image, Name & Description -->
