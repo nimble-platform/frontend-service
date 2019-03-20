@@ -42,7 +42,7 @@ export class CallStatus {
               try {
                 errorJSON = JSON.parse(error._body);
               } catch (e) {}
-              if (errorJSON["error"] || errorJSON["expection"] || errorJSON["message"]) {
+              if (errorJSON["error"] || errorJSON["exception"] || errorJSON["message"]) {
                 if (errorJSON["error"]) {
                   this.fb_details += "<br/>";
                   this.fb_details += errorJSON["error"];
@@ -55,6 +55,10 @@ export class CallStatus {
                   this.fb_details += "<br/>";
                   this.fb_details += errorJSON["exception"];
                 }
+              } else {
+                  if(typeof error._body == 'string') {
+                      this.fb_details = error._body;
+                  }
               }
             }
         }
