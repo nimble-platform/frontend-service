@@ -27,6 +27,11 @@
 					<i class="fa fa-edit"></i> <span i18n>Registration</span>
 				</a>
 			</li>
+			<li class="nav-item" routerLinkActive="active">
+				<a class="nav-link" routerLink="/analytics/members">
+					<i class="fa fa-edit"></i> <span i18n>Members</span>
+				</a>
+			</li>
 		</ul>
 		<ul *ngIf="isLoggedIn" class="nav navbar-nav mr-auto">
 			<li class="nav-item" *ngIf="checkRoles('comp_req') || checkRoles('wait_comp')" routerLinkActive="active">
