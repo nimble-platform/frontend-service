@@ -57,7 +57,7 @@ export class CatalogueService {
                 })
                 .catch(res => {
                     if (res.status == 404) {
-                        // no default catalogue yet, create new one
+                        // no default catalogue yet, create new one            
                         this.catalogueResponse = new CataloguePaginationResponse(null,0,[]);
                         return this.catalogueResponse;
                     } else {
@@ -65,6 +65,33 @@ export class CatalogueService {
                     }
                 });
         })
+    }
+
+
+    getFavouriteResponse(userId: string,limit:number=0, offset:number=0, sortOption=null): Promise<any>{
+        return this.userService.getPerson(userId).then(person => {
+            
+            let url = this.baseUrl + `/cataloguelines?limit=${limit}&offset=${offset}`;
+            // if there is a selected category to filter the results, then add it to the url
+    
+            if(sortOption){
+                url += `&sortOption=${sortOption}`;
+            }
+       
+            if(person){
+                url += `&ids=${person.favouriteProductID}`;                
+            }
+
+            return this.http
+                .get(url, {headers: this.getAuthorizedHeaders()})
+                .toPromise()
+                .then(res => {
+                    return res.json() as Array<CatalogueLine>;
+                })
+                .catch(res => {
+                    this.handleError(res.getBody());
+                });
+            });
     }
 
     getCatalogueLine(catalogueId:string, lineId:string):Promise<CatalogueLine> {
