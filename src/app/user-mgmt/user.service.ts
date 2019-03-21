@@ -455,4 +455,15 @@ export class UserService {
 		return Promise.reject(error.message || error);
 	}
 
+    putUserFavourite(uuid: string[],status:number=1){
+        const userId = this.cookieService.get("user_id");
+        const url =  `${this.url}/favourite/${userId}?status=${status}`;
+        const token = 'Bearer '+this.cookieService.get("bearer_token");
+        const headers_token = new Headers({ 'Content-Type': 'application/json', 'Authorization': token });
+        return this.http
+        .put(url, uuid, {headers: headers_token, withCredentials: true})
+        .toPromise()
+        .then(() => {})
+        .catch(this.handleError)
+    }
 }
