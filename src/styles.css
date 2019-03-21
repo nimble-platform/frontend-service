@@ -255,6 +255,11 @@ textarea {
     max-height: 15rem;
 }
 
+.img-med {
+    max-width: 100%;
+    max-height: 7rem;
+}
+
 .img-sm {
     max-height: 2rem;
     max-width: 100%;

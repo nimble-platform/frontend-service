@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CookieService } from 'ng2-cookies';
+import { CredentialsService } from './user-mgmt/credentials.service';
 import {Router, NavigationStart, NavigationEnd, NavigationCancel, RoutesRecognized, ActivatedRoute} from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import * as myGlobals from './globals';
@@ -32,6 +33,7 @@ export class AppComponent implements OnInit {
 
 	constructor(
 		private cookieService: CookieService,
+    private credentialsService: CredentialsService,
 		private router: Router,
     private route: ActivatedRoute,
 		private modalService: NgbModal
@@ -59,6 +61,7 @@ export class AppComponent implements OnInit {
 	}
 
 	ngOnInit() {
+    this.getVersions();
 		this.checkLogin("");
     this.route.queryParams.subscribe(params => {
         if (params["externalView"] && params["externalView"]=="frame") {
@@ -68,6 +71,49 @@ export class AppComponent implements OnInit {
           this.minimalView = false;
         }
     });
+	}
+
+  getVersions(): void {
+		this.credentialsService.getVersionIdentity()
+		.then(res => {
+			if (res.git && res.git.branch && res.git.commit && res.git.commit.time && res.git.commit.id) {
+				const date_str = new Date(res.git.commit.time).toISOString();
+				this.addVersion("identity",`${res.git.branch}-${res.git.commit.id}`,`${date_str}`);
+			}
+			else {
+				this.removeVersion("identity");
+			}
+		});
+		this.credentialsService.getVersionBP()
+		.then(res => {
+			if (res.git && res.git.branch && res.git.commit && res.git.commit.time && res.git.commit.id) {
+				const date_str = new Date(res.git.commit.time).toISOString();
+				this.addVersion("business-process",`${res.git.branch}-${res.git.commit.id}`,`${date_str}`);
+			}
+			else {
+				this.removeVersion("business-process");
+			}
+		});
+    this.credentialsService.getVersionCatalog()
+		.then(res => {
+			if (res.git && res.git.branch && res.git.commit && res.git.commit.time && res.git.commit.id) {
+				const date_str = new Date(res.git.commit.time).toISOString();
+				this.addVersion("catalog",`${res.git.branch}-${res.git.commit.id}`,`${date_str}`);
+			}
+			else {
+				this.removeVersion("catalog");
+			}
+		});
+		this.credentialsService.getVersionDataChannel()
+		.then(res => {
+			if (res.git && res.git.branch && res.git.commit && res.git.commit.time && res.git.commit.id) {
+				const date_str = new Date(res.git.commit.time).toISOString();
+				this.addVersion("data-channel",`${res.git.branch}-${res.git.commit.id}`,`${date_str}`);
+			}
+			else {
+				this.removeVersion("data-channel");
+			}
+		});
 	}
 
   public addVersion(id:String, ver:String, date:String) {
@@ -159,9 +205,11 @@ export class AppComponent implements OnInit {
 	public checkLogin(path:any) {
 		if (this.cookieService.get("user_id")) {
 			this.isLoggedIn = true;
+      /*
       if (this.cookieService.get("versions")) {
         this.versions = JSON.parse(this.cookieService.get("versions"));
       }
+      */
 			this.fullName = this.cookieService.get("user_fullname");
 			this.eMail = this.cookieService.get("user_email");
 			this.userID = this.cookieService.get("user_id");

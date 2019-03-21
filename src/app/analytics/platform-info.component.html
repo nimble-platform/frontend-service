@@ -1,4 +1,4 @@
-<div *ngIf="!appComponent.minimalView">
+<div>
 
     <p class="nimble-title">Platform Info</p>
 
@@ -14,92 +14,4 @@
         <a class="clickable" href="{{ra.src}}" target="_blank">{{ra.title}}</a><br/>
     </div>
 
-    <hr/>
-
-</div>
-
-<h4>Registered Companies
-    <span *ngIf="registeredCompaniesPage">(Total {{ registeredCompaniesPage.totalElements }})</span>
-</h4>
-
-<call-status [callStatus]="registeredCompaniesCallStatus" [large]="true"></call-status>
-
-<div [hidden]="registeredCompaniesCallStatus.isLoading() || registeredCompaniesPage == null">
-    <div *ngIf="registeredCompaniesPage">
-        <div class="input-group form-group"
-             style="background-color:#F2F2F2;padding-left: 25px;padding-top: 20px;padding-bottom: 20px;">
-            <label class="space-right"><strong>Sort by:</strong>
-            </label>
-            <select class="custom-select col-3 space-right" [(ngModel)]="sortOptionForVerifiedCompanies"
-                    (change)="sortRegisteredCompanyList()">
-                <option *ngFor="let option of COMPANY_LIST_SORT_OPTIONS" [value]="option.name">{{option.value}}</option>
-            </select>
-        </div>
-        <div class="mt-3 mb-3">
-            <ng-container *ngFor="let company of registeredCompaniesPage.content; let i = index">
-                <div *ngIf="i%4==0" class="row">
-                    <div *ngIf="i<registeredCompaniesPage.content.length" class="card col mr-3 ml-3 pl-0 pr-0"
-                         [ngClass]="{'mb-3':i+4<registeredCompaniesPage.content.length}">
-                        <div class="card-header text-center">
-                            <a *ngIf="registeredCompaniesPage.content[i].websiteURIFull && registeredCompaniesPage.content[i].websiteURIFull != ''"
-                               href="{{registeredCompaniesPage.content[i].websiteURIFull}}"
-                               target="_blank">{{getNameOfTheCompany(registeredCompaniesPage.content[i].partyName)}}</a>
-                            <span *ngIf="!registeredCompaniesPage.content[i].websiteURIFull || registeredCompaniesPage.content[i].websiteURIFull == ''">{{getNameOfTheCompany(registeredCompaniesPage.content[i].partyName)}}</span>
-                        </div>
-                        <div class="card-body p-3 text-center">
-                            <img class="img-max"
-                                 [src]="getCompanyLogo(registeredCompaniesPage.content[i].documentReference)">
-                        </div>
-                    </div>
-                    <div *ngIf="i+1<registeredCompaniesPage.content.length" class="card col mr-3 ml-3 pl-0 pr-0"
-                         [ngClass]="{'mb-3':i+4<registeredCompaniesPage.content.length}">
-                        <div class="card-header text-center">
-                            <a *ngIf="registeredCompaniesPage.content[i+1].websiteURIFull && registeredCompaniesPage.content[i+1].websiteURIFull != ''"
-                               href="{{registeredCompaniesPage.content[i+1].websiteURIFull}}"
-                               target="_blank">{{getNameOfTheCompany(registeredCompaniesPage.content[i + 1].partyName)}}</a>
-                            <span *ngIf="!registeredCompaniesPage.content[i+1].websiteURIFull || registeredCompaniesPage.content[i+1].websiteURIFull == ''">{{getNameOfTheCompany(registeredCompaniesPage.content[i + 1].partyName)}}</span>
-                        </div>
-                        <div class="card-body p-3 text-center">
-                            <img class="img-max"
-                                 [src]="getCompanyLogo(registeredCompaniesPage.content[i+1].documentReference)">
-                        </div>
-                    </div>
-                    <div *ngIf="i+2<registeredCompaniesPage.content.length" class="card col mr-3 ml-3 pl-0 pr-0"
-                         [ngClass]="{'mb-3':i+4<registeredCompaniesPage.content.length}">
-                        <div class="card-header text-center">
-                            <a *ngIf="registeredCompaniesPage.content[i+2].websiteURIFull && registeredCompaniesPage.content[i+2].websiteURIFull != ''"
-                               href="{{registeredCompaniesPage.content[i+2].websiteURIFull}}"
-                               target="_blank">{{getNameOfTheCompany(registeredCompaniesPage.content[i + 2].partyName)}}</a>
-                            <span *ngIf="!registeredCompaniesPage.content[i+2].websiteURIFull || registeredCompaniesPage.content[i+2].websiteURIFull == ''">{{getNameOfTheCompany(registeredCompaniesPage.content[i + 2].partyName)}}</span>
-                        </div>
-                        <div class="card-body p-3 text-center">
-                            <img class="img-max"
-                                 [src]="getCompanyLogo(registeredCompaniesPage.content[i+2].documentReference)">
-                        </div>
-                    </div>
-                    <div *ngIf="i+3<registeredCompaniesPage.content.length" class="card col mr-3 ml-3 pl-0 pr-0"
-                         [ngClass]="{'mb-3':i+4<registeredCompaniesPage.content.length}">
-                        <div class="card-header text-center">
-                            <a *ngIf="registeredCompaniesPage.content[i+3].websiteURIFull && registeredCompaniesPage.content[i+3].websiteURIFull != ''"
-                               href="{{registeredCompaniesPage.content[i+3].websiteURIFull}}"
-                               target="_blank">{{getNameOfTheCompany(registeredCompaniesPage.content[i + 3].partyName)}}</a>
-                            <span *ngIf="!registeredCompaniesPage.content[i+3].websiteURIFull || registeredCompaniesPage.content[i+3].websiteURIFull == ''">{{getNameOfTheCompany(registeredCompaniesPage.content[i + 3].partyName)}}</span>
-                        </div>
-                        <div class="card-body p-3 text-center">
-                            <img class="img-max"
-                                 [src]="getCompanyLogo(registeredCompaniesPage.content[i+3].documentReference)">
-                        </div>
-                    </div>
-                </div>
-            </ng-container>
-        </div>
-        <ngb-pagination class="d-flex justify-content-center"
-                        [collectionSize]="registeredCompaniesPage.totalElements"
-                        [pageSize]="registeredCompaniesPage.size"
-                        [page]="registeredCompaniesPage.number"
-                        [maxSize]="registeredCompaniesPage.size"
-                        [boundaryLinks]="false"
-                        (pageChange)="onRegisteredCompaniesPageChange($event)">
-        </ngb-pagination>
-    </div>
 </div>

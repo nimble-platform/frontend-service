@@ -34,7 +34,6 @@ export class CredentialsFormComponent implements OnInit {
 	) {	}
 
 	ngOnInit() {
-		this.getVersions();
 		if (this.cookieService.get("user_id")) {
 			if (!this.appComponent.checkRoles("comp_req") && !this.appComponent.checkRoles('wait_comp'))
 				this.appComponent.checkLogin("/user-mgmt/company-registration");
@@ -90,39 +89,6 @@ export class CredentialsFormComponent implements OnInit {
 			this.cookieService.delete("bearer_token");
 			this.appComponent.checkLogin("");
 			this.submitCallStatus.error("Invalid email or password", error);
-		});
-	}
-
-	getVersions(): void {
-		this.credentialsService.getVersionIdentity()
-		.then(res => {
-			if (res.git && res.git.branch && res.git.commit && res.git.commit.time && res.git.commit.id) {
-				const date_str = new Date(res.git.commit.time).toISOString();
-				this.appComponent.addVersion("identity",`${res.git.branch}-${res.git.commit.id}`,`${date_str}`);
-			}
-			else {
-				this.appComponent.removeVersion("identity");
-			}
-		});
-		this.credentialsService.getVersionBP()
-		.then(res => {
-			if (res.git && res.git.branch && res.git.commit && res.git.commit.time && res.git.commit.id) {
-				const date_str = new Date(res.git.commit.time).toISOString();
-				this.appComponent.addVersion("business-process",`${res.git.branch}-${res.git.commit.id}`,`${date_str}`);
-			}
-			else {
-				this.appComponent.removeVersion("business-process");
-			}
-		});
-		this.credentialsService.getVersionDataChannel()
-		.then(res => {
-			if (res.git && res.git.branch && res.git.commit && res.git.commit.time && res.git.commit.id) {
-				const date_str = new Date(res.git.commit.time).toISOString();
-				this.appComponent.addVersion("data-channels",`${res.git.branch}-${res.git.commit.id}`,`${date_str}`);
-			}
-			else {
-				this.appComponent.removeVersion("data-channels");
-			}
 		});
 	}
 
