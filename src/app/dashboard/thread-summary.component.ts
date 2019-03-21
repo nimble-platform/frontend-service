@@ -128,6 +128,35 @@ export class ThreadSummaryComponent implements OnInit {
         });
     }
 
+    /*
+        For all processes except Fulfilment,
+            * for the buyer,correspondent is the one who sends the response
+            * for the seller, correspondent is the one who sends the request
+        For Fulfilment, this is vice versa.
+     */
+    private getCorrespondent(dashboardProcessInstanceDetails:DashboardProcessInstanceDetails, userRole:string,processType:ProcessType):string{
+        let correspondent = null;
+        if (userRole === "buyer") {
+            if(processType == "Fulfilment"){
+                correspondent = dashboardProcessInstanceDetails.requestCreatorUser.firstName + " " + dashboardProcessInstanceDetails.requestCreatorUser.familyName;
+            }
+            else if(dashboardProcessInstanceDetails.responseCreatorUser){
+                correspondent = dashboardProcessInstanceDetails.responseCreatorUser.firstName + " " + dashboardProcessInstanceDetails.responseCreatorUser.familyName;
+            }
+        }
+        else {
+            if(processType == "Fulfilment"){
+                if(dashboardProcessInstanceDetails.responseCreatorUser){
+                    correspondent = dashboardProcessInstanceDetails.responseCreatorUser.firstName + " " + dashboardProcessInstanceDetails.responseCreatorUser.familyName;
+                }
+            }
+            else {
+                correspondent = dashboardProcessInstanceDetails.requestCreatorUser.firstName + " " + dashboardProcessInstanceDetails.requestCreatorUser.familyName;
+            }
+        }
+        return correspondent;
+    }
+
     private async fetchThreadEvent(processInstanceId: string): Promise<ThreadEventMetadata> {
         // get dashboard process instance details
         const dashboardProcessInstanceDetails:DashboardProcessInstanceDetails = await this.bpeService.getDashboardProcessInstanceDetails(processInstanceId);
@@ -139,6 +168,7 @@ export class ThreadSummaryComponent implements OnInit {
         const userRole = ActivityVariableParser.getUserRole(processType,initialDoc,this.processInstanceGroup.partyID);
         const lastActivity = dashboardProcessInstanceDetails.lastActivityInstance;
         const processInstance = dashboardProcessInstanceDetails.processInstance;
+        const correspondent = this.getCorrespondent(dashboardProcessInstanceDetails,userRole,processType);
 
         if (userRole === "buyer") {
             this.lastEventPartnerID = UBLModelUtils.getPartyId(ActivityVariableParser.getProductFromProcessData(initialDoc,processType).manufacturerParty);
@@ -156,7 +186,7 @@ export class ThreadSummaryComponent implements OnInit {
             moment(new Date(lastActivity["startTime"]), 'YYYY-MM-DDTHH:mm:ss.SSSZ').format("YYYY-MM-DD HH:mm:ss"),
             ActivityVariableParser.getTradingPartnerName(initialDoc, this.cookieService.get("company_id"),processType),
             ActivityVariableParser.getProductFromProcessData(initialDoc,processType),
-            ActivityVariableParser.getNoteFromProcessData(initialDoc,processType),
+            correspondent,
             this.getBPStatus(response),
             initialDoc,
             activityVariables,
