@@ -4,6 +4,9 @@ import {DEFAULT_LANGUAGE} from "../model/constants";
 import {CategoryService} from "../category/category.service";
 import {CatalogueService} from "../catalogue.service";
 import {CookieService} from "ng2-cookies";
+import {Category} from '../model/category/category';
+import {ProductPublishComponent} from './product-publish.component';
+import {Router} from '@angular/router';
 /**
  * Created by suat on 20-Mar-19.
  */
@@ -20,6 +23,7 @@ export class BulkPublishComponent {
 
     constructor(private categoryService: CategoryService,
                 private catalogueService: CatalogueService,
+                private router: Router,
                 private cookieService: CookieService) {
     }
 
