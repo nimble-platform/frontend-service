@@ -208,6 +208,28 @@ export class CatalogueViewComponent implements OnInit {
         }
     }
 
+    onExportCatalogue():void{
+        this.callStatus.submit();
+
+        this.catalogueService.exportCatalogue(this.catalogueService.catalogueResponse.catalogueUuid)
+            .then(result => {
+                    var link = document.createElement('a');
+                    link.id = 'downloadLink';
+                    link.href = window.URL.createObjectURL(result.content);
+                    link.download = result.fileName;
+
+                    document.body.appendChild(link);
+                    var downloadLink = document.getElementById('downloadLink');
+                    downloadLink.click();
+                    document.body.removeChild(downloadLink);
+
+                    this.callStatus.callback("Catalogue is exported");
+                },
+                error => {
+                    this.callStatus.error("Failed to export catalogue");
+                });
+    }
+
     deleteAllProductImages():void{
         if (confirm("Are you sure that you want to delete all product images inside the catalogue?")) {
             this.callStatus.submit();

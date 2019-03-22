@@ -203,6 +203,34 @@ export class CatalogueService {
         });
     }
 
+    exportCatalogue(catalogueUuid:string): Promise<any> {
+        const token = 'Bearer '+this.cookieService.get("bearer_token");
+        const languageId = DEFAULT_LANGUAGE();
+        const url = this.baseUrl + `/catalogue/export?uuid=${catalogueUuid}&languageId=${languageId}`;
+        return new Promise<any>((resolve, reject) => {
+
+            let xhr = new XMLHttpRequest();
+            xhr.open('GET', url, true);
+            xhr.setRequestHeader('Accept', 'application/zip');
+            xhr.setRequestHeader('Authorization', token);
+            xhr.responseType = 'blob';
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+
+                        var contentType = 'application/zip';
+                        var blob = new Blob([xhr.response], {type: contentType});
+                        resolve({fileName: "Catalogue_Export.zip", content: blob});
+                    } else {
+                        reject(xhr.status);
+                    }
+                }
+            }
+            xhr.send();
+        });
+    }
+
     deleteCatalogueLine(catalogueId:string, lineId:string):Promise<any> {
         const token = 'Bearer '+this.cookieService.get("bearer_token");
         const url = this.baseUrl + `/catalogue/${catalogueId}/catalogueline/${lineId}`;
