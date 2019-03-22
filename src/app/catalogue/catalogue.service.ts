@@ -165,7 +165,7 @@ export class CatalogueService {
                             //observer.next(JSON.parse(xhr.response));
                             resolve(xhr.response);
                         } else {
-                            reject(JSON.parse(xhr.response).message);
+                            reject(xhr.response);
                         }
                     }
                 };

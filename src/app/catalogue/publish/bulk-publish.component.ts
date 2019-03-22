@@ -19,9 +19,9 @@ export class BulkPublishComponent {
     @Input() selectCategories:Category[];
 
     publishStatus:CallStatus = new CallStatus();
-    uploadPublishStatus: CallStatus[] = [];
-    selectedFileList: FileList;
     showCategoryWarning: boolean = false;
+    uploadPublishStatus: CallStatus[] = [];
+    selectedFileList: File[];
 
     constructor(private categoryService: CategoryService,
                 private catalogueService: CatalogueService,
@@ -72,12 +72,15 @@ export class BulkPublishComponent {
     uploadTemplate(event: any, uploadMode: string) {
         let catalogueService = this.catalogueService;
         let userId: string = this.cookieService.get("user_id");
-        this.selectedFileList = event.target.files;
-        if (this.selectedFileList.length > 0) {
+        let fileList: FileList = event.target.files;
+
+        if (fileList.length > 0) {
             // initialize one call status for each uploaded file
             this.uploadPublishStatus = [];
-            for(let i=0; i<this.selectedFileList.length; i++) {
+            this.selectedFileList = [];
+            for(let i=0; i<fileList.length; i++) {
                 this.uploadPublishStatus.push(new CallStatus());
+                this.selectedFileList.push(fileList[i]);
             }
 
             let self = this;
@@ -93,12 +96,9 @@ export class BulkPublishComponent {
                             self.resetEventWhenUploadCompletes(++callbackCount, self.selectedFileList.length, event);
                         },
                         error => {
-                            self.uploadPublishStatus[i].error("Failed to upload: " + file.name + "\n" + error);
-                            self.resetEventWhenUploadCompletes(++callbackCount, self.selectedFileList.length, eventx1);
+                            self.uploadPublishStatus[i].error("Failed to upload: " + file.name, error);
+                            self.resetEventWhenUploadCompletes(++callbackCount, self.selectedFileList.length, event);
                         });
-
-                    // reset the event target
-                    callbackCount++;
                 };
                 reader.readAsDataURL(self.selectedFileList[i]);
             }
