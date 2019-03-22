@@ -35,11 +35,22 @@
     <label class="col-9">3. Upload the template after filling it with your product / service information
     </label>
     <input #template type="file" (change)="uploadTemplate($event, uploadModeSelect.value)"
+           multiple="true"
            accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
            style="display: none">
     <button class="btn btn-secondary col-3"
-            (click)="template.click()">Upload template
+            (click)="template.click()">Upload template(s)
     </button>
+</div>
+<!-- upload statuses -->
+<div *ngIf="selectedFileList?.length > 0" class="col-9 mb-4">
+    <ng-container *ngFor="let selectedFile of selectedFileList; let i = index">
+        <div *ngIf="uploadPublishStatus[i].isLoading()" class="alert-danger rounded align-self-center">
+            {{selectedFile.name}}
+        </div>
+        <call-status [callStatus]="uploadPublishStatus[i]">
+        </call-status>
+    </ng-container>
 </div>
 <div class="d-flex mb-4">
     <label class="col-9">4. Upload a "zip package" including product / service images. Each image must be suffixed with the identifier of the product / service.
