@@ -117,9 +117,13 @@
 
 <div class="jumbotron" *ngIf="catalogueResponse && catalogueResponse.categoryNames.length == 0">
     <h3>No published products / services.</h3>
-    <h5>
-        <span (click)="navigateToThePublishPage()" class="pointer">Publish new products / services</span>
+    <h5 class="mt-3">
+        <span (click)="navigateToThePublishPage()" class="pointer">Publish single product / service</span>
         <i class="fa fa-plus-circle pointer" (click)="navigateToThePublishPage()"></i>
+    </h5>
+    <h5 class="mt-3">
+        <span (click)="navigateToThePublishPage()" class="pointer">Publish multiple products / services</span>
+        <i class="fa fa-plus-circle pointer" (click)="navigateToBulkUploadPage()"></i>
     </h5>
 </div>
 

@@ -85,6 +85,7 @@ export class BulkPublishComponent {
 
             let self = this;
             let callbackCount: number = 0;
+            let errorCount: number = 0;
             for(let i=0; i<this.selectedFileList.length; i++) {
                 this.uploadPublishStatus[i].submit();
                 let file:File = self.selectedFileList[i];
@@ -93,11 +94,12 @@ export class BulkPublishComponent {
                     catalogueService.uploadTemplate(userId, file, uploadMode).then(res => {
                             self.uploadPublishStatus[i].callback("Uploaded " + file.name + " successfully");
                             ProductPublishComponent.dialogBox = false;
-                            self.resetEventWhenUploadCompletes(++callbackCount, self.selectedFileList.length, event);
+                            self.resetEventWhenUploadCompletes(++callbackCount, self.selectedFileList.length, errorCount, event);
                         },
                         error => {
+                            errorCount++;
                             self.uploadPublishStatus[i].error("Failed to upload: " + file.name, error);
-                            self.resetEventWhenUploadCompletes(++callbackCount, self.selectedFileList.length, event);
+                            self.resetEventWhenUploadCompletes(++callbackCount, self.selectedFileList.length, errorCount, event);
                         });
                 };
                 reader.readAsDataURL(self.selectedFileList[i]);
@@ -105,9 +107,12 @@ export class BulkPublishComponent {
         }
     }
 
-    private resetEventWhenUploadCompletes(currentCount: number, totalCount, event: any): void {
+    private resetEventWhenUploadCompletes(currentCount: number, totalCount: number, errorCount: number, event: any): void {
         if(currentCount == totalCount) {
             event.target.value = "";
+            if(errorCount == 0) {
+                this.navigateToCatalogueTab();
+            }
         }
     }
 
@@ -126,7 +131,7 @@ export class BulkPublishComponent {
                 catalogueService.uploadZipPackage(file).then(res => {
                         self.publishStatus.callback(null);
                         ProductPublishComponent.dialogBox = false;
-                        self.router.navigate(['dashboard'], {queryParams: {tab: "CATALOGUE"}});
+                        self.navigateToCatalogueTab();
                     },
                     error => {
                         self.publishStatus.error("Failed to upload the image package:  " + error);
@@ -134,5 +139,9 @@ export class BulkPublishComponent {
             };
             reader.readAsDataURL(file);
         }
+    }
+
+    public navigateToCatalogueTab():void {
+        this.router.navigate(['dashboard'], {queryParams: {tab: "CATALOGUE"}});
     }
 }
