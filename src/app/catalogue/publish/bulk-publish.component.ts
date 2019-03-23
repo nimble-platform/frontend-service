@@ -105,7 +105,7 @@ export class BulkPublishComponent {
         }
     }
 
-    private resetEventWhenUploadCompletes(currentCount: int, totalCount, event: any): void {
+    private resetEventWhenUploadCompletes(currentCount: number, totalCount, event: any): void {
         if(currentCount == totalCount) {
             event.target.value = "";
         }
