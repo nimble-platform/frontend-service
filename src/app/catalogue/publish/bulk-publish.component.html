@@ -45,8 +45,8 @@
 <!-- upload statuses -->
 <div *ngIf="selectedFileList?.length > 0" class="col-9 mb-4">
     <ng-container *ngFor="let selectedFile of selectedFileList; let i = index">
-        <div class="mt-1"
-             [ngClass]="{'d-flex justify-content-between alert-danger alert-dismissable rounded align-self-center p-2' : uploadPublishStatus[i].isLoading()}">
+        <div class="mt-1 position-relative"
+             [ngClass]="{'d-flex justify-content-between alert-danger rounded align-self-center p-2' : uploadPublishStatus[i].isLoading()}">
             <span *ngIf="uploadPublishStatus[i].isLoading()">{{selectedFile.name}}</span>
             <call-status [callStatus]="uploadPublishStatus[i]">
             </call-status>
