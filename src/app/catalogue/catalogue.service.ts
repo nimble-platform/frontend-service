@@ -221,7 +221,9 @@ export class CatalogueService {
 
                         var contentType = 'application/zip';
                         var blob = new Blob([xhr.response], {type: contentType});
-                        resolve({fileName: "Catalogue_Export.zip", content: blob});
+                        // file name
+                        let fileName = catalogueUuid + '_' + new Date().toString();
+                        resolve({fileName: fileName, content: blob});
                     } else {
                         reject(xhr.status);
                     }
