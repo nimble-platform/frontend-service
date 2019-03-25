@@ -1,0 +1,76 @@
+<div class="d-flex align-items-stretch mt-3 mb-4">
+    <label class="col-9">1. Download the product / service category template</label>
+    <!--<select [(ngModel)]="templateLanguage" class="form-control col-1" type="text" style="margin-right: 1px">-->
+    <!--<option *ngFor='let language of languages' [value]="language" [selected]="templateLanguage === language">{{language}}</option>-->
+    <!--</select>-->
+    <div class="col-3 p-0">
+        <button class="btn btn-secondary btn-download-template"
+                (click)="downloadTemplate()">Download template
+        </button>
+        <div *ngIf="showCategoryWarning"
+             class="alert-danger rounded align-self-center mt-2 pl-3 pr-2">
+            <small>At least one category should be selected!</small>
+            <button type="button" class="close" aria-label="Close" (click)="closeCategoryWarning()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    </div>
+</div>
+<div class="d-flex mb-4">
+    <label class="col-9">2. Select upload mode.
+        <ul>
+            <li>Append mode: Already published products / services are updated if newer versions are provided in the template, new products / services are
+                appended to the current catalogue.
+            </li>
+            <li>Replace mode: All previously published items having the same categories specified in the template are deleted; and only the new ones are added to the catalogue.</li>
+        </ul>
+    </label>
+    <select #uploadModeSelect class="col-3 btn btn-outline-secondary align-self-start" style="text-align-last:center;"
+            (change)="checkMode(uploadModeSelect.value)">
+        <option value="append">Append</option>
+        <option value="replace">Replace</option>
+    </select>
+</div>
+<div class="d-flex mb-4">
+    <label class="col-9">3. Upload the template after filling it with your product / service information
+    </label>
+    <input #template type="file" (change)="uploadTemplate($event, uploadModeSelect.value)"
+           multiple="true"
+           accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+           style="display: none">
+    <button class="btn btn-secondary col-3 align-self-start"
+            (click)="template.click()">Upload template(s)
+    </button>
+</div>
+<!-- upload statuses -->
+<div *ngIf="selectedFileList?.length > 0" class="col-9 mb-4">
+    <ng-container *ngFor="let selectedFile of selectedFileList; let i = index">
+        <div class="mt-1 position-relative"
+             [ngClass]="{'d-flex justify-content-between alert-danger rounded align-self-center p-2' : uploadPublishStatus[i].isLoading()}">
+            <span *ngIf="uploadPublishStatus[i].isLoading()">{{selectedFile.name}}</span>
+            <call-status [callStatus]="uploadPublishStatus[i]">
+            </call-status>
+        </div>
+    </ng-container>
+</div>
+<div class="d-flex mb-4">
+    <label class="col-9">4. Upload a "zip package" including product / service images. Each image must be suffixed with the identifier of the product / service.
+        For example: pid1.imageFile.jpg, pid1.imageFile2.png, etc.
+    </label>
+    <input #imagePackage type="file" (change)="uploadImagePackage($event)"
+           accept="application/zip"
+           style="display: none">
+    <button class="btn btn-secondary col-3 align-self-start"
+            (click)="imagePackage.click()">Upload Image Package
+    </button>
+</div>
+
+<div class="d-flex mb-4">
+    <span class="col-9"></span>
+    <button class="btn btn-secondary col-3 align-self-start"
+            (click)="navigateToCatalogueTab()">See Catalogue
+    </button>
+</div>
+
+<call-status [callStatus]="publishStatus" [large]="true">
+</call-status>

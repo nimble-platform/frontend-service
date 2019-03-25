@@ -83,7 +83,7 @@ export class DashboardThreadedComponent implements OnInit {
             else if (this.appComponent.checkRoles('sales'))
               this.updateQueryParameters({ tab: TABS.SALES });
             else
-              this.updateQueryParameters({ tab: TABS.CATALOGUE });
+              this.updateQueryParameters({ tab: TABS.CATALOGUE });  
         }
     }
 
@@ -207,6 +207,7 @@ export class DashboardThreadedComponent implements OnInit {
 
         switch(this.queryParameters.tab) {
             case TABS.PURCHASES:
+            case TABS.FAVOURITE:
             case TABS.SALES:
                 this.queryOrdersIfNeeded();
                 return;
@@ -226,7 +227,7 @@ export class DashboardThreadedComponent implements OnInit {
             }
         } else {
             const upped = tab.toUpperCase()
-            if(upped === TABS.CATALOGUE || upped === TABS.SALES || upped === TABS.WELCOME) {
+            if(upped === TABS.CATALOGUE || upped === TABS.SALES || upped === TABS.WELCOME || upped === TABS.FAVOURITE) {
                 return upped;
             }
         }

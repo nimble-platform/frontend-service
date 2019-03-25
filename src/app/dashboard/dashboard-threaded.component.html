@@ -44,6 +44,9 @@
                 <li class="nav-item">
                     <a href id="CATALOGUE" *ngIf="this.appComponent.checkRoles('catalogue')" [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.CATALOGUE}" (click)="onChangeTab($event)" i18n>Catalogue</a>
                 </li>
+                <li class="nav-item">
+                    <a href id="FAVOURITE" *ngIf="this.appComponent.checkRoles('favourite')" [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.FAVOURITE}" (click)="onChangeTab($event)" i18n>Favourite</a>
+                </li>
             </ul>
         </div>
     </div>
@@ -239,6 +242,13 @@
     <div *ngIf="queryParameters.tab === TABS.CATALOGUE" class="row">
         <div class="col-12">
             <catalogue-view></catalogue-view>
+        </div>
+    </div>
+
+    <!-- Favourite tab -->
+    <div *ngIf="queryParameters.tab === TABS.FAVOURITE" class="row">
+        <div class="col-12">
+            <favourite-view></favourite-view>
         </div>
     </div>
 </div>
