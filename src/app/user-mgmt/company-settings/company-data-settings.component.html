@@ -4,7 +4,7 @@
     <p class="space-before">
       <ngb-alert type="info" (close)="alertClosed=true">
 				Mandatory and already submitted data during the registration can only be changed after re-validation by a platform manager.
-				<div class="jumbotron space-after" style="margin-top: 25px;">
+				<div *ngIf="user.roles.indexOf('initial_representative')!= -1 && user.roles.indexOf('legal_representative') == -1"  class="jumbotron space-after" style="margin-top: 25px;">
 					<b>Your company is now registered</b><br/>
 					<span *ngIf="!config.companyRegistrationRequired">You can start publishing your catalogue.<br/></span>
 					In order to execute business processes your company needs to be verified by an administrator - please stay tuned.<br/>
