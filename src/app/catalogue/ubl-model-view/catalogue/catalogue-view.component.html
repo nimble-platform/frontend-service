@@ -1,6 +1,5 @@
-<div class="d-flex justify-content-end mb-2">
-    <call-status [callStatus]="callStatus"
-        class="d-flex">
+<div>
+    <call-status [callStatus]="callStatus">
     </call-status>
 </div>
 
@@ -34,10 +33,16 @@
                                    accept="application/zip"
                                    style="display: none">
                             <button class="dropdown-item" (click)="navigateToThePublishPage()">
-                                Publish New Product / Service
+                                Publish Product
+                            </button>
+                            <button class="dropdown-item" (click)="navigateToBulkUploadPage()">
+                                Publish Multiple Products
                             </button>
                             <button class="dropdown-item" (click)="imagePackage.click()">
                                 Upload Image Package
+                            </button>
+                            <button class="dropdown-item" (click)="onExportCatalogue()">
+                                Export Catalogue
                             </button>
                             <button class="dropdown-item" (click)="deleteAllProductImages()">
                                 Delete All Product Images
@@ -111,9 +116,13 @@
 
 <div class="jumbotron" *ngIf="catalogueResponse && catalogueResponse.categoryNames.length == 0">
     <h3>No published products / services.</h3>
-    <h5>
-        <span (click)="navigateToThePublishPage()" class="pointer">Publish new products / services</span>
+    <h5 class="mt-3">
+        <span (click)="navigateToThePublishPage()" class="pointer">Publish single product / service</span>
         <i class="fa fa-plus-circle pointer" (click)="navigateToThePublishPage()"></i>
+    </h5>
+    <h5 class="mt-3">
+        <span (click)="navigateToThePublishPage()" class="pointer">Publish multiple products / services</span>
+        <i class="fa fa-plus-circle pointer" (click)="navigateToBulkUploadPage()"></i>
     </h5>
 </div>
 
