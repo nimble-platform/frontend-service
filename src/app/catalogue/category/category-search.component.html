@@ -13,10 +13,10 @@
 
                 <div ngbDropdown class="d-inline-block input-group-prepend">
                     <button class="btn btn-outline-dark" type="button" id="allCategories" [disabled]="getCategoryDetailsStatus.isDisplayed()" ngbDropdownToggle>
-                        {{taxonomyId}} Categories
+                        {{taxonomyId.replace("FurnitureOntology", "Furniture Sector")}} Categories
                     </button>
                     <div ngbDropdownMenu aria-labelledby="allCategories">
-                        <a *ngFor="let taxonomyID of taxonomyIDs" class="dropdown-item" (click)="changeTaxonomyId(taxonomyID)">{{taxonomyID}} Categories</a>
+                        <a *ngFor="let taxonomyID of taxonomyIDs" class="dropdown-item" (click)="changeTaxonomyId(taxonomyID)">{{taxonomyID.replace("FurnitureOntology", "Furniture Sector")}} Categories</a>
                     </div>
                 </div>
 
@@ -104,12 +104,12 @@
                     <ul class="nav nav-tabs pt-2 pl-1 pr-1">
                       <li *ngIf="!isLogistics" class="nav-item">
                         <a href id="TREE" class="nav-link" [ngClass]="{ active: selectedTab === 'TREE', 'disabled': getCategoryDetailsStatus.isDisplayed()}" (click)="onSelectTab($event)">
-                          {{taxonomyId == "All" ? "eClass": taxonomyId}}
+                          {{taxonomyId == "All" ? "eClass": taxonomyId.replace("FurnitureOntology", "Furniture Sector")}}
                         </a>
                       </li>
                       <li *ngIf="isLogistics" class="nav-item">
                         <a href id="TREE" class="nav-link" [ngClass]="{ active: selectedTab === 'TREE', 'disabled': getCategoryDetailsStatus.isDisplayed()}" (click)="onSelectTab($event)">
-                            {{taxonomyId == "All" ? "eClass": taxonomyId}}
+                            {{taxonomyId == "All" ? "eClass": taxonomyId.replace("FurnitureOntology", "Furniture Sector")}}
                         </a>
                       </li>
                       <li class="nav-item">
@@ -247,7 +247,7 @@
             <!-- Details -->
             <div *ngIf="selectedCategoryWithDetails" class="p-2">
                 <div *ngFor="let propName of propertyNames" class="my-1">
-                    <text-input *ngIf="selectedCategoryWithDetails[propName]" [visible]="selectedCategoryWithDetails[propName]" presentationMode="view" [label]="propName" labelClass="col-12 text-capitalize" labelMainClass="mb-0" valueClass="col-12" valueTextClass="mb-1 pl-3" [text]="getCategoryProperty(propName)"></text-input>
+                    <text-input *ngIf="selectedCategoryWithDetails[propName]" [visible]="selectedCategoryWithDetails[propName]" presentationMode="view" [label]="propName" labelClass="col-12 text-capitalize" labelMainClass="mb-0" valueClass="col-12" valueTextClass="mb-1 pl-3" [text]="getCategoryProperty(propName).replace('FurnitureOntology', 'Furniture Sector')"></text-input>
                 </div>
                 <div class="row">
                     <div class="col-12 mb-0" *ngIf="selectedCategoryWithDetails.properties?.length > 0">

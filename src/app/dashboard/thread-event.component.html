@@ -1,7 +1,7 @@
 <div class="row thread-entry-row">
     <div class="col-3"><p>{{event.presentableProcessType}}</p></div>
     <div class="col-3"><p>{{event.startTime}}</p></div>
-    <div class="col-3"><p>{{event.note}}</p></div>
+    <div class="col-3"><p>{{event.correspondent}}</p></div>
     <div *ngIf="event.status === 'CANCELLED'" class="col-3 alert-dark">
         <div class="pt-2"><strong>Cancelled</strong></div>
         <button *ngIf="processInstanceGroup.status !== 'CANCELLED' && event.buyer" class="btn btn-secondary" (click)="openBpProcessView(false)">{{event.actionText}}</button>
