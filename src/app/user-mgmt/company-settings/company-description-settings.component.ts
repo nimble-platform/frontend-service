@@ -205,12 +205,12 @@ export class CompanyDescriptionSettingsComponent implements OnInit {
         this.settings.description.socialMediaList = this.socialMediaList;
         this.settings.description.externalResources = this.externalResources;
         this.settings.description.events = this.compEvents;
-        let userId = this.cookieService.get("user_id");
+        let compId = this.settings.companyID;
         this.userService
-            .putSettings(this.settings, userId)
+            .putSettingsForParty(this.settings, compId)
             .then(response => {
                 if (myGlobals.debug) {
-                    console.log(`Saved Company Settings for user ${userId}. Response: ${response}`);
+                    console.log(`Saved Company Settings for company ${compId}. Response: ${response}`);
                 }
                 this.saveCallStatus.callback("Successfully saved", true);
                 this.socialMediaListChanged = false;
