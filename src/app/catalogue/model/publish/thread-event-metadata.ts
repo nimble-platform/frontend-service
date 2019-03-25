@@ -10,7 +10,7 @@ export class ThreadEventMetadata {
         public startTime: string,
         public tradingPartner: string,
         public product: Item,
-        public note: string,
+        public correspondent: string,
         public processStatus: string,
         public content: any,
         public activityVariables: any,

@@ -29,6 +29,15 @@ export class CredentialsService {
 		.catch(this.handleError);
 	}
 
+	getVersionCatalog(): Promise<any> {
+		const url = `${myGlobals.catalogue_endpoint}/info`;
+		return this.http
+		.get(url, {headers: this.headers, withCredentials: true})
+		.toPromise()
+		.then(res => res.json())
+		.catch(this.handleError);
+	}
+
 	getVersionBP(): Promise<any> {
 		const url = `${myGlobals.bpe_endpoint}/info`;
 		return this.http

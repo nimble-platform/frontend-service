@@ -41,4 +41,8 @@ export class ProductDetailsTabsComponent implements OnInit {
     getValuesAsString(property: ItemProperty): string[] {
         return getPropertyValuesAsStrings(property);
     }
+
+    getHumanReadablePropertyName(propertyName:string): string{
+        return propertyName.replace("Has", "");
+    }
 }
