@@ -1,7 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from "@angular/core";
 import { CompanySettings } from "../model/company-settings";
 import { AppComponent } from "../../app.component";
-import { CookieService } from "ng2-cookies";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import * as myGlobals from '../../globals';
 import {selectValueOfTextObject, createTextObject} from '../../common/utils';
@@ -9,7 +8,6 @@ import { FormBuilder, FormGroup, FormControl } from "@angular/forms";
 import { AddressSubForm } from "../subforms/address.component";
 import { CallStatus } from "../../common/call-status";
 import { UserService } from "../user.service";
-import { DashboardUser } from "../../dashboard/model/dashboard-user";
 
 @Component({
     selector: "company-data-settings",
@@ -28,12 +26,10 @@ export class CompanyDataSettingsComponent implements OnInit {
     @Output() onSaveEvent: EventEmitter<void> = new EventEmitter();
 
     selectValueOfTextObject = selectValueOfTextObject;
-    user: DashboardUser;
 
     constructor(private appComponent: AppComponent,
                 private _fb: FormBuilder,
                 private modalService: NgbModal,
-                private cookieService: CookieService,
                 private userService: UserService) {
 
     }
@@ -50,7 +46,6 @@ export class CompanyDataSettingsComponent implements OnInit {
           yearOfReg: new FormControl({value: (this.settings.details.yearOfCompanyRegistration || ""), disabled: (!this.appComponent.checkRoles('pm') && this.settings.details.yearOfCompanyRegistration)}),
           address: AddressSubForm.update(AddressSubForm.generateForm(this._fb), this.settings.details.address)
       });
-      this.computeUserFromCookies();
     }
 
     save(model: FormGroup) {
@@ -147,25 +142,4 @@ export class CompanyDataSettingsComponent implements OnInit {
   		this.modalService.open(content);
     }
 
-    private computeUserFromCookies(): void {
-      this.user = new DashboardUser(
-          this.cookieService.get("user_fullname") || ""
-      )
-
-      if (this.cookieService.get("user_id") && this.cookieService.get("company_id")) {
-          this.user.hasCompany = this.cookieService.get("company_id") !== "null"
-      }
-
-      if (this.cookieService.get("bearer_token")) {
-          const at = this.cookieService.get("bearer_token");
-          if (at.split(".").length == 3) {
-              const at_payload = at.split(".")[1];
-              try {
-                  const at_payload_json = JSON.parse(atob(at_payload));
-                  const at_payload_json_roles = at_payload_json["realm_access"]["roles"];
-                  this.user.roles = at_payload_json_roles;
-              } catch (e) {}
-          }
-      }
-  }
 }
