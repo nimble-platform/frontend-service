@@ -10,6 +10,7 @@ import { CategorySearchComponent } from "./category/category-search.component";
 import { ProductPublishComponent } from "./publish/product-publish.component";
 import { AdditionalItemPropertyComponent } from "./ubl-model-view/additional-item-property.component";
 import { CatalogueViewComponent } from "./ubl-model-view/catalogue/catalogue-view.component";
+import { FavouriteViewComponent } from "./favourite/favourite-view.component";
 import { CatalogueLinePanelComponent } from "./ubl-model-view/catalogue/catalogue-line-panel.component";
 import { CatalogueLineViewComponent } from "./ubl-model-view/catalogue-line/catalogue-line-view.component";
 import { CatalogueLineDetailsComponent } from "./ubl-model-view/catalogue-line/catalogue-line-details.component";
@@ -99,7 +100,8 @@ import {BulkPublishComponent} from "./publish/bulk-publish.component";
         QuantityPriceOptionComponent,
         ItemPropertyPriceOptionComponent,
         DiscountTargetComponent,
-        PriceOptionViewComponent
+        PriceOptionViewComponent,
+        FavouriteViewComponent
     ],
     exports: [
         CategorySearchComponent,
@@ -130,7 +132,8 @@ import {BulkPublishComponent} from "./publish/bulk-publish.component";
         DiscountTargetComponent,
         PaymentTermsView,
         NoteFileViewComponent,
-        PriceOptionViewComponent
+        PriceOptionViewComponent,
+        FavouriteViewComponent
     ],
     providers: [PublishDeactivateGuardService, CategoryDeactivateGuardService]
 })

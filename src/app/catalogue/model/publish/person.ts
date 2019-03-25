@@ -9,6 +9,7 @@ export class Person {
         public firstName: string = null,
         public familyName: string = null,
         public contact: Contact = new Contact(),
+        public favouriteProductID: string[] = [''],
     ) {
     }
 }

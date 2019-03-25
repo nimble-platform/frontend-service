@@ -3,7 +3,8 @@ export const TABS = {
     WELCOME: "WELCOME",
     PURCHASES: "PURCHASES",
     SALES: "SALES",
-    CATALOGUE: "CATALOGUE"
+    CATALOGUE: "CATALOGUE",
+    FAVOURITE: "FAVOURITE"
 };
 
 export const PAGE_SIZE = 5;
