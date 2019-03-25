@@ -129,12 +129,10 @@ export class BulkPublishComponent {
                 // reset the target value so that the same file could be chosen more than once
                 event.target.value = "";
                 catalogueService.uploadZipPackage(file).then(res => {
-                        self.publishStatus.callback(null);
-                        ProductPublishComponent.dialogBox = false;
-                        self.navigateToCatalogueTab();
+                        self.publishStatus.callback(res.message);
                     },
                     error => {
-                        self.publishStatus.error("Failed to upload the image package:  " + error);
+                        self.publishStatus.error("Failed to upload the image package.", error);
                     });
             };
             reader.readAsDataURL(file);

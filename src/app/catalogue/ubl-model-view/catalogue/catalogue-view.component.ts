@@ -196,12 +196,15 @@ export class CatalogueViewComponent implements OnInit {
                 // reset the target value so that the same file could be chosen more than once
                 event.target.value = "";
                 catalogueService.uploadZipPackage(file).then(res => {
-                        self.callStatus.callback(null);
-                        self.router.navigate(['dashboard'], {queryParams: {tab: "CATALOGUE"}});
-                        self.requestCatalogue();
+                        if (res.status == 200) {
+                            self.callStatus.callback(null);
+                            self.requestCatalogue();
+                        } else if (res.status == 504) {
+                            self.callStatus.callback(res.message);
+                        }
                     },
                     error => {
-                        self.callStatus.error("Failed to upload the image package:  " + error, error);
+                        self.callStatus.error("Failed to upload the image package.", error);
                     });
             };
             reader.readAsDataURL(file);

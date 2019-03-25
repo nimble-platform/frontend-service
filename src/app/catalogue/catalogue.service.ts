@@ -186,13 +186,19 @@ export class CatalogueService {
 
             let xhr: XMLHttpRequest = new XMLHttpRequest();
             xhr.onreadystatechange = () => {
+                let response: any = {};
+                // the operation completed
                 if (xhr.readyState === 4) {
                     if (xhr.status === 200) {
-                        resolve(xhr.response);
-                    } else if(xhr.status === 400) {
-                        reject(xhr.response);
+                        response.status = xhr.status;
+                        response.message = "Image package uploaded successfully.";
+                        resolve(response);
+                    } else if(xhr.status == 504) {
+                        response.status = xhr.status;
+                        response.message = "Images uploaded but still being processed. They will be visible once the processing is done.";
+                        resolve(response);
                     } else {
-                        reject(JSON.parse(xhr.response).message);
+                        reject(xhr.response);
                     }
                 }
             };
