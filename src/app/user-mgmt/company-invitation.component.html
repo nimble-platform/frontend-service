@@ -88,6 +88,7 @@
 			</td>
 			<td *ngIf="appComponent.checkRoles('comp') && !platformManagerMode">
 				<button *ngIf="!inv.pending&&!checkMail(inv.email)" class="btn btn-primary btn-sm" (click)="editRole(inv);openModal(role);">Edit</button>
+				<button *ngIf="inv.pending&&!checkMail(inv.email)&&appComponent.checkRoles('legal')" class="btn btn-danger btn-sm" (click)="cancelInvite(inv)">Cancel</button>
 				<button *ngIf="!inv.pending&&!checkMail(inv.email)&&appComponent.checkRoles('legal')" class="btn btn-danger btn-sm ml-2" (click)="deleteInvite(inv)">Delete</button>
 			</td>
 		</tr>

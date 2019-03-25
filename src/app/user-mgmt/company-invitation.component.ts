@@ -146,6 +146,19 @@ export class CompanyInvitationComponent implements OnInit {
 		this.modalService.open(content);
 	}
 
+  cancelInvite(inv) {
+		if (confirm("Are you sure that you want to cancel the invitation for this user?")) {
+			this.userService.deleteInvite(inv["email"])
+				.then(response => {
+					this.loadInvites();
+				})
+				.catch(error => {
+					console.error('An error occurred', error);
+					this.loadInvites();
+				});
+		}
+	}
+
 	deleteInvite(inv) {
 		if (confirm("Are you sure that you want to remove this user from your company?")) {
 			this.userService.deleteInvite(inv["email"])
