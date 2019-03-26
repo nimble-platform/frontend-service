@@ -67,8 +67,14 @@
     <div *ngIf="selectedTab === 'DETAILS'" class="p-3 col-12">
         <h3 class="p-1">Details</h3>
         <div class="row mx-auto">
-        <div *ngIf="wrapper.getUniquePropertiesWithValue().length === 0">
+        <div *ngIf="wrapper.getDimensions().length == 0 && wrapper.getUniquePropertiesWithValue().length === 0">
             <p class="p-1">This product / service does not seem to have any details.</p>
+        </div>
+        <div *ngFor="let dim of wrapper.getDimensions()" class="p-1 col-6 d-flex">
+            <strong>{{ dim.attributeID }}: </strong>
+            <span class="ml-2">
+                {{ dim.measure.value }} <span *ngIf="dim.measure.unitCode && dim.measure.unitCode != ''">{{ dim.measure.unitCode }}</span>
+            </span>
         </div>
         <div *ngFor="let property of wrapper.getUniquePropertiesWithValue()" class="p-1 col-6 d-flex">
             <strong>{{ getHumanReadablePropertyName(wrapper.getPropertyName(property)) }}: </strong>
