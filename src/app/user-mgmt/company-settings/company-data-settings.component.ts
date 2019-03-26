@@ -35,13 +35,24 @@ export class CompanyDataSettingsComponent implements OnInit {
     }
 
     ngOnInit() {
+      let industrySectorVal;
+      if (this.settings.details.industrySectors && this.settings.details.industrySectors[0])
+        industrySectorVal = this.settings.details.industrySectors[0];
+      else
+        industrySectorVal = "";
+      if (this.isSectorArray(this.settings.details.industrySectors[0])) {
+        industrySectorVal = this.getSectorArray(this.settings.details.industrySectors[0]);
+        this.forceActText = false;
+      }
+      else
+        this.forceActText = true;
       this.dataForm = this._fb.group({
           name: new FormControl({value: (this.selectValueOfTextObject(this.settings.details.legalName) || ""), disabled: !this.appComponent.checkRoles('pm')}),
           brandName: new FormControl({value: (this.selectValueOfTextObject(this.settings.details.brandName) || ""), disabled: (!this.appComponent.checkRoles('pm') && Object.keys(this.settings.details.brandName).length == 0)}),
           vatNumber: new FormControl({value: (this.settings.details.vatNumber || ""), disabled: !this.appComponent.checkRoles('pm')}),
           verificationInformation: new FormControl({value: (this.settings.details.verificationInformation || ""), disabled: (!this.appComponent.checkRoles('pm') && this.settings.details.verificationInformation)}),
           businessType: new FormControl({value: (this.settings.details.businessType || ""), disabled: !this.appComponent.checkRoles('pm')}),
-          industrySectors: new FormControl({value: (this.settings.details.industrySectors[0] || ""), disabled: !this.appComponent.checkRoles('pm')}),
+          industrySectors: new FormControl({value: industrySectorVal, disabled: !this.appComponent.checkRoles('pm')}),
           businessKeywords: new FormControl({value: (this.selectValueOfTextObject(this.settings.details.businessKeywords) || ""), disabled: (!this.appComponent.checkRoles('pm') && Object.keys(this.settings.details.businessKeywords).length == 0)}),
           yearOfReg: new FormControl({value: (this.settings.details.yearOfCompanyRegistration || ""), disabled: (!this.appComponent.checkRoles('pm') && this.settings.details.yearOfCompanyRegistration)}),
           address: AddressSubForm.update(AddressSubForm.generateForm(this._fb), this.settings.details.address)
@@ -52,7 +63,7 @@ export class CompanyDataSettingsComponent implements OnInit {
       this.saveCallStatus.submit();
       var sectorString = model.getRawValue()['industrySectors'];
       if (Array.isArray(sectorString))
-        sectorString = sectorString.join(", ");
+        sectorString = sectorString.join("\n");
       this.settings.details.legalName =  createTextObject(model.getRawValue()['name']);
       this.settings.details.brandName = createTextObject(model.getRawValue()['brandName']);
       this.settings.details.vatNumber =  model.getRawValue()['vatNumber'];
@@ -76,6 +87,30 @@ export class CompanyDataSettingsComponent implements OnInit {
           .catch(error => {
               this.saveCallStatus.error("Error while saving company settings", error);
           });
+    }
+
+    isSectorArray(sectors): boolean {
+      let isArray = true;
+      if (this.config.supportedActivitySectors[this.settings.details.businessType] && this.config.supportedActivitySectors[this.settings.details.businessType].length>0) {
+        let sectorsArr = sectors.split("\n");
+        let availableSectors = this.config.supportedActivitySectors[this.settings.details.businessType];
+        for (let i=0; i<sectorsArr.length; i++) {
+          if (availableSectors.indexOf(sectorsArr[i]) == -1)
+            isArray = false;
+        }
+      }
+      else
+        isArray = false;
+      return isArray;
+    }
+
+    getSectorArray(sectors): string[] {
+      return sectors.split("\n");
+    }
+
+    switchInput() {
+      this.dataForm.controls['industrySectors'].setValue("");
+      this.forceActText = !this.forceActText;
     }
 
     changeData(content) {
