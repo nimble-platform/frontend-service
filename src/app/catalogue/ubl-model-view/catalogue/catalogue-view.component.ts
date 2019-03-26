@@ -165,6 +165,16 @@ export class CatalogueViewComponent implements OnInit {
                 productType: isTransportService(catalogueLine) ? "transportation" : "product"}});
     }
 
+    redirectToCopy(catalogueLine) {
+        this.catalogueService.editCatalogueLine(catalogueLine);
+        this.publishService.publishMode = 'copy';
+        this.publishService.publishingStarted = false;
+        this.categoryService.resetSelectedCategories();
+        this.router.navigate(['catalogue/publish'], {queryParams: {
+                pg: "single",
+                productType: isTransportService(catalogueLine) ? "transportation" : "product"}});
+    }
+
     deleteCatalogueLine(catalogueLine, i: number): void {
         if (confirm("Are you sure that you want to delete this catalogue item?")) {
             const status = this.getDeleteStatus(i);

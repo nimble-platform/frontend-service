@@ -26,7 +26,7 @@ import {
     copy,
     isCustomProperty,
     getPropertyValuesAsStrings,
-    selectPreferredName, selectName, createText, getPropertyValues
+    selectPreferredName, selectName, createText, getPropertyValues, removeHjids
 } from '../../common/utils';
 import { Property } from "../model/category/property";
 import { ProductWrapper } from "../../common/product-wrapper";
@@ -302,7 +302,7 @@ export class ProductPublishComponent implements OnInit {
     }
 
     onPublish() {
-        if (this.publishStateService.publishMode === "create") {
+        if (this.publishStateService.publishMode === "create" || this.publishStateService.publishMode === "copy") {
             // publish new product
             this.publishProduct();
         } else {
@@ -616,7 +616,14 @@ export class ProductPublishComponent implements OnInit {
         // Following "if" block is executed when redirected by an "edit" button
         // "else" block is executed when redirected by "publish" tab
         this.publishMode = this.publishStateService.publishMode;
-        if (this.publishMode == 'edit') {
+        if (this.publishMode == 'edit' || this.publishMode == 'copy') {
+            if (this.publishMode == 'copy') {
+              let newId = UBLModelUtils.generateUUID();
+              this.catalogueService.draftCatalogueLine.id = newId;
+              this.catalogueService.draftCatalogueLine.goodsItem.id = newId;
+              this.catalogueService.draftCatalogueLine.goodsItem.item.manufacturersItemIdentification.id = newId;
+              this.catalogueService.draftCatalogueLine = removeHjids(this.catalogueService.draftCatalogueLine);
+            }
             this.catalogueLine = this.catalogueService.draftCatalogueLine;
             if (this.catalogueLine == null) {
                 this.publishStateService.publishMode = 'create';
