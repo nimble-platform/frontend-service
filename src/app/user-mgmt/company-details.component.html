@@ -52,7 +52,7 @@
   </div>
 </div>
 
-<div *ngIf="appComponent.checkRoles('pm') && !initCallStatus.isLoading() && details.details.vatNumber && details.details.vatNumber != ''" class="row actions-row pr-0">
+<div *ngIf="managementMode && appComponent.checkRoles('pm') && !initCallStatus.isLoading() && details.details.vatNumber && details.details.vatNumber != ''" class="row actions-row pr-0">
   <div class="col-10 call-status-col">
     <call-status [callStatus]="vatCallStatus" [large]="true"></call-status>
   </div>
@@ -61,7 +61,7 @@
   </div>
 </div>
 
-<div *ngIf="appComponent.checkRoles('pm') && !initCallStatus.isLoading()" class="row actions-row pr-0">
+<div *ngIf="managementMode && appComponent.checkRoles('pm') && !initCallStatus.isLoading()" class="row actions-row pr-0">
   <div class="col-12">
     <company-invitation [partyId]="party.partyId" [platformManagerMode]="platformManagerMode"></company-invitation>
   </div>
