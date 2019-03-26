@@ -67,7 +67,14 @@ export class CompanyRegistrationComponent implements OnInit {
         this.vatSkipped = false;
         this.vatValidated = false;
         this.registrationForm.controls['name'].setValue("");
+        this.registrationForm.controls['brandName'].setValue("");
         this.registrationForm.controls['vatNumber'].setValue("");
+        this.registrationForm.controls['logo'].setValue("");
+        this.registrationForm.controls['verificationInformation'].setValue("");
+        this.registrationForm.controls['businessType'].setValue("");
+        this.registrationForm.controls['businessKeywords'].setValue("");
+        this.registrationForm.controls['industrySectors'].setValue("");
+        this.registrationForm.controls['yearOfReg'].setValue("");
         AddressSubForm.update(this.registrationForm.controls['address'] as FormGroup, new Address("", "", "", "", ""));
     }
 
@@ -103,7 +110,7 @@ export class CompanyRegistrationComponent implements OnInit {
     save(model: FormGroup) {
         var sectorString = model.getRawValue()['industrySectors'];
         if (Array.isArray(sectorString))
-            sectorString = sectorString.join(", ");
+            sectorString = sectorString.join("\n");
         // create company registration DTO
         let userId = this.cookieService.get('user_id');
         let companyRegistration: CompanyRegistration = new CompanyRegistration(
@@ -168,6 +175,11 @@ export class CompanyRegistrationComponent implements OnInit {
             });
 
         return false;
+    }
+
+    switchInput() {
+      this.registrationForm.controls['industrySectors'].setValue("");
+      this.forceActText = !this.forceActText;
     }
 
     onSetImageFile(event: any, model: FormGroup) {

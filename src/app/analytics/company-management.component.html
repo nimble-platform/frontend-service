@@ -43,7 +43,7 @@
                 </td>
                 <td *ngIf="!company.person[0]">n/A</td>
                 <td>
-                    <a class="btn btn-primary" role="button" target="_blank" [routerLink]="['/user-mgmt/company-details']" [queryParams]="{id: company.hjid}">Details</a>
+                    <a class="btn btn-primary" role="button" target="_blank" [routerLink]="['/user-mgmt/company-details']" [queryParams]="{id: company.hjid, viewMode:'mgmt'}">Details</a>
                     <button class="btn btn-success ml-2" (click)="verifyCompany(company)">
                         Verify
                     </button>
@@ -107,7 +107,7 @@
                     </td>
                     <td *ngIf="!company.person[0]">n/A</td>
                     <td>
-                        <a class="btn btn-primary" role="button" target="_blank" [routerLink]="['/user-mgmt/company-details']" [queryParams]="{id: company.hjid}">Details</a>
+                        <a class="btn btn-primary" role="button" target="_blank" [routerLink]="['/user-mgmt/company-details']" [queryParams]="{id: company.hjid, viewMode:'mgmt'}">Details</a>
                         <a class="btn btn-primary ml-2" role="button" target="_blank" [routerLink]="['/user-mgmt/company-settings']" [queryParams]="{id: company.hjid, viewMode:'data'}">Change Data</a>
                     </td>
                 </tr>
