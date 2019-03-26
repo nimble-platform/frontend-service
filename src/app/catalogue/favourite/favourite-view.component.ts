@@ -122,6 +122,10 @@ export class FavouriteViewComponent implements OnInit {
         let len = this.catalogueResponse.length;
         this.catalogueLinesArray = [...this.catalogueResponse];
         this.catalogueLinesWRTTypes = this.catalogueLinesArray;
+        let i = 0;
+        for(;i<len;i++){
+            this.catalogueLineView[this.catalogueResponse[i].id] = false;
+        }      
     }
 
     onOpenCatalogueLine(e: Event) {
@@ -157,4 +161,12 @@ export class FavouriteViewComponent implements OnInit {
     navigateToTheSearchPage(){
         this.router.navigate(['/simple-search']);
     }
+
+    viewCatalogueLine(cat : CatalogueLine){
+        this.catalogueLineView[cat.id]=true;
+        this.userService.getSettingsForProduct(cat).then(res => {
+            this.settings = res;
+        });
+    }
+
 }

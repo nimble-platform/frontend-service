@@ -22,7 +22,7 @@
         <div *ngFor="let catLine of catalogueLinesArray; let i = index" class="space-before">
             <div class="card pointer">
                 <div class="card-body">
-                    <div class="row">
+                    <div class="row" *ngIf="!catalogueLineView[catLine.id]" (click)="viewCatalogueLine(catLine); $event.stopPropagation();">
                         <div class="col-2">
                             <div style="text-align:center">
                                 <img *ngIf="catLine.goodsItem.item.productImage.length == 0"
@@ -55,6 +55,11 @@
                             </div>
                         </div>
                     </div>
+                    <catalogue-line-panel [catalogueLine]="catLine"
+                    [settings]="settings"
+                    [presentationMode]="'view'"
+                    [(show)]="catalogueLineView[catLine.id]">
+                    </catalogue-line-panel>
                 </div>
             </div>
         </div>
