@@ -34,11 +34,6 @@ export class AmountInputComponent implements OnInit {
     }
 
     ngOnInit() {
-        // use the first currency value as default
-        if(this.amount.currencyID == null){
-            this.amount.currencyID = this.amountCurrencies[0];
-        }
-
         if(!this.valueClass) {
             this.valueClass = this.label ? "col-9" : "col-12";
         }
@@ -48,7 +43,16 @@ export class AmountInputComponent implements OnInit {
             this.unitService.getCachedUnitList(this.amountType)
             .then(units => {
                 this.amountCurrencies = units;
+                this.initAmountCurrency();
             })
+        }
+
+        this.initAmountCurrency();
+    }
+
+    private initAmountCurrency(): void {
+        if(this.amount.currencyID == null && this.amountCurrencies != null){
+            this.amount.currencyID = this.amountCurrencies[0];
         }
     }
 

@@ -89,7 +89,7 @@ export class ProductPublishComponent implements OnInit {
     catalogueLine: CatalogueLine = null;
     productWrapper: ProductWrapper = null;
     companyNegotiationSettings: CompanyNegotiationSettings;
-    selectedTabSinglePublish: "DETAILS" | "DELIVERY_TRADING" | "PRICE" | "CERTIFICATES" | "TRACK_TRACE" = "DETAILS";
+    selectedTabSinglePublish: "DETAILS" | "DELIVERY_TRADING" | "PRICE" | "CERTIFICATES" | "TRACK_TRACE" | "LCC" = "DETAILS";
     private selectedProperties: SelectedProperties = {};
     private categoryProperties: CategoryProperties = {};
     private lunrIndex: lunr.Index;

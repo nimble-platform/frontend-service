@@ -1,0 +1,54 @@
+<quantity-input label="Average Life Cycle Length"
+                [disabled]="disabled"
+                [disableQuantityUnit]="true"
+                [quantityUnits]="['Month(s)']"
+                [quantity]="lcpaDetails.lifeCycleLength">
+</quantity-input>
+<amount-input label="Average Purchasing Price"
+              [rowClass]="'space-before'"
+              [disabled]="disabled"
+              [amount]="lcpaDetails.purchasingPrice"
+              [amountType]="'currency_quantity'">
+</amount-input>
+<amount-input label="Average Assembly Cost"
+              [rowClass]="'space-before'"
+              [disabled]="disabled"
+              [amount]="lcpaDetails.assemblyCost"
+              [amountType]="'currency_quantity'">
+</amount-input>
+<amount-input label="Average Transport Cost"
+              [rowClass]="'space-before'"
+              [disabled]="disabled"
+              [amount]="lcpaDetails.transportCost"
+              [amountType]="'currency_quantity'">
+</amount-input>
+<amount-input label="Average Consumable Cost"
+              [rowClass]="'space-before'"
+              [disabled]="disabled"
+              [amount]="lcpaDetails.consumableCost"
+              [amountType]="'currency_quantity'">
+</amount-input>
+<amount-input label="Average Energy Consumption Cost"
+              [rowClass]="'space-before'"
+              [disabled]="disabled"
+              [amount]="lcpaDetails.energyConsumptionCost"
+              [amountType]="'currency_quantity'">
+</amount-input>
+<amount-input label="Average Maintenance Cost"
+              [rowClass]="'space-before'"
+              [disabled]="disabled"
+              [amount]="lcpaDetails.maintenanceCost"
+              [amountType]="'currency_quantity'">
+</amount-input>
+<amount-input label="Average Spare Part Cost"
+              [rowClass]="'space-before'"
+              [disabled]="disabled"
+              [amount]="lcpaDetails.sparePartCost"
+              [amountType]="'currency_quantity'">
+</amount-input>
+<amount-input label="Average End of Life Cost"
+              [rowClass]="'space-before'"
+              [disabled]="disabled"
+              [amount]="lcpaDetails.endOfLifeCost"
+              [amountType]="'currency_quantity'">
+</amount-input>

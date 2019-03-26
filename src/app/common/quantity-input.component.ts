@@ -43,7 +43,16 @@ export class QuantityInputComponent implements OnInit {
             this.unitService.getCachedUnitList(this.quantityType)
             .then(units => {
                 this.quantityUnits = units;
+                this.initQuantityUnit();
             })
+        }
+
+        this.initQuantityUnit();
+    }
+
+    private initQuantityUnit(): void {
+        if(this.quantity.unitCode == null && this.quantityUnits != null){
+            this.quantity.unitCode = this.quantityUnits[0];
         }
     }
 
