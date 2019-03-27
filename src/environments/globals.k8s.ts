@@ -184,3 +184,4 @@ export const product_configurable = [];
 export const product_default = {};
 export const facet_min = 1;
 export const facet_count = 30;
+export const party_facet_field_list = ["legalName","origin","certificateType","ppapComplianceLevel","ppapDocumentType"];
