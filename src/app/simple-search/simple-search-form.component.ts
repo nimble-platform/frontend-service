@@ -44,6 +44,7 @@ export class SimpleSearchFormComponent implements OnInit {
 	product_nonfilter_regex = myGlobals.product_nonfilter_regex;
 	product_cat = myGlobals.product_cat;
 	product_cat_mix = myGlobals.product_cat_mix;
+	party_facet_field_list = myGlobals.party_facet_field_list;
 	roundToTwoDecimals = roundToTwoDecimals;
 
 	CURRENCIES = CURRENCIES;
@@ -64,6 +65,7 @@ export class SimpleSearchFormComponent implements OnInit {
 	showOtherSection = false;
 
 	categoriesCallStatus: CallStatus = new CallStatus();
+	companyCallStatus: CallStatus = new CallStatus();
 	searchCallStatus: CallStatus = new CallStatus();
 	searchDone = false;
 	callback = false;
@@ -890,4 +892,22 @@ export class SimpleSearchFormComponent implements OnInit {
 		return true;
 	}
 
+	getCompanyNameFromIds(idList: string[],fieldList: string[]){
+		let query = "";
+		let length = idList.length;
+		while (length--) {
+			//full_url += "&fq="+encodeURIComponent(facetQuery);
+			query = query+"id:"+idList[length];
+			if(length != 0){
+				query = query+" OR ";
+			}
+		}
+		this.simpleSearchService.getCompanies(query,this.party_facet_field_list,idList)
+		.then(res => {
+			// if res.facets are null, it means that there is no product in the index
+		})
+		.catch(error => {
+			this.categoriesCallStatus.error("Error while loading category tree.", error);
+		});
+	}
 }
