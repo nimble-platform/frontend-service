@@ -159,4 +159,36 @@ export class SimpleSearchService {
 		return Promise.reject(error.message || error);
 	}
 
+	getCompanies(query: string, facets: string[], facetQueries: string[]): Promise<any> {
+		query = query.replace(/[!'()]/g, '');
+		// var start = page*10-10;
+		const url = this.url + `/party/search`
+
+		let searchObject:any = {};
+		searchObject.rows = facetQueries.length;
+
+		searchObject.q = query;
+
+		var full_url = url + "";
+		for (let facet of facets) {
+			if (facet.length === 0 || !facet.trim()) {}
+			else {
+				//full_url += "&facet.field=" + facet;
+				if(searchObject.facet == null) {
+					searchObject.facet = {};
+					searchObject.facet.field = [];
+					searchObject.facet.minCount = this.facetMin;
+					searchObject.facet.limit = this.facetCount;
+				}
+				searchObject.facet.field.push(facet)
+			}
+		}
+		return this.http
+		.post(url, searchObject, {headers: this.getHeadersWithBasicAuthorization()})
+		.toPromise()
+		.then(res => res.json())
+		.catch(this.handleError);
+	}
+
+
 }
