@@ -892,7 +892,7 @@ export class SimpleSearchFormComponent implements OnInit {
 		return true;
 	}
 
-	getCompanyNameFromIds(idList: string[],fieldList: string[]){
+	getCompanyNameFromIds(idList: string[]): Promise<any>{
 		let query = "";
 		let length = idList.length;
 		while (length--) {
@@ -902,12 +902,6 @@ export class SimpleSearchFormComponent implements OnInit {
 				query = query+" OR ";
 			}
 		}
-		this.simpleSearchService.getCompanies(query,this.party_facet_field_list,idList)
-		.then(res => {
-			// if res.facets are null, it means that there is no product in the index
-		})
-		.catch(error => {
-			this.categoriesCallStatus.error("Error while loading category tree.", error);
-		});
+		return this.simpleSearchService.getCompanies(query,this.party_facet_field_list,idList);
 	}
 }
