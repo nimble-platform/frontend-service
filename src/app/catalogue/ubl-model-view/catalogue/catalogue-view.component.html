@@ -91,6 +91,10 @@
                                         (click)="redirectToEdit(catLine)" style="display: block">
                                     Edit
                                 </button>
+                                <button type="button" class="btn btn-primary space-after col"
+                                        (click)="redirectToCopy(catLine)" style="display: block">
+                                    Copy
+                                </button>
                                 <button type="button" class="btn btn-danger col" [disabled]="getDeleteStatus(i).isLoading()"
                                         (click)="deleteCatalogueLine(catLine, i); $event.stopPropagation();">
                                     Delete

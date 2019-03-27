@@ -51,6 +51,8 @@ export class FavouriteViewComponent implements OnInit {
     deleteStatuses: CallStatus[] = [];
 
     status = 1;
+    hasFavourite = false;
+    indexItem = 0;
 
     CATALOGUE_LINE_SORT_OPTIONS = CATALOGUE_LINE_SORT_OPTIONS;
     FAVOURITE_LINEITEM_PUT_OPTIONS = FAVOURITE_LINEITEM_PUT_OPTIONS;
@@ -94,7 +96,20 @@ export class FavouriteViewComponent implements OnInit {
             .then(([catalogueResponse,person]) => {
                     this.catalogueResponse = catalogueResponse;
                     this.collectionSize = person.favouriteProductID.length;
-                    this.init();
+                    if(this.collectionSize > 0 && this.catalogueResponse.length >0){
+                        this.hasFavourite = true;
+                        this.init();
+                        
+                    }else{
+                        if(this.page > 1){
+                            this.hasFavourite = true;
+                            this.page = this.page-1;
+                            this.requestCatalogue();
+                            // this.onRegisteredCompaniesPageChange(this.page-1);
+                        }else{
+                            this.hasFavourite = false;
+                        }
+                    }
                     this.getCatalogueStatus.callback(null);
                 },
                 error => {
@@ -107,6 +122,10 @@ export class FavouriteViewComponent implements OnInit {
         let len = this.catalogueResponse.length;
         this.catalogueLinesArray = [...this.catalogueResponse];
         this.catalogueLinesWRTTypes = this.catalogueLinesArray;
+        let i = 0;
+        for(;i<len;i++){
+            this.catalogueLineView[this.catalogueResponse[i].id] = false;
+        }      
     }
 
     onOpenCatalogueLine(e: Event) {
@@ -117,7 +136,7 @@ export class FavouriteViewComponent implements OnInit {
         this.status = status != null ? status : this.status; 
         const statuss = this.getDeleteStatus(i);
         statuss.submit();
-        
+
         this.userService.putUserFavourite([catalogueLine.hjid+""],FAVOURITE_LINEITEM_PUT_OPTIONS[0].value)
             .then(res => {
                 this.requestCatalogue();
@@ -138,4 +157,16 @@ export class FavouriteViewComponent implements OnInit {
            this.requestCatalogue();
         }
     }
+
+    navigateToTheSearchPage(){
+        this.router.navigate(['/simple-search']);
+    }
+
+    viewCatalogueLine(cat : CatalogueLine){
+        this.catalogueLineView[cat.id]=true;
+        this.userService.getSettingsForProduct(cat).then(res => {
+            this.settings = res;
+        });
+    }
+
 }

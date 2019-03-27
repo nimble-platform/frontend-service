@@ -48,6 +48,18 @@ export class TextInputComponent implements OnInit {
 
     @Input()
     get text(): string {
+        if (this.presentationMode == "view") {
+          let textBreaks = "";
+          let textBreaksArr = [""];
+          if (this.textValue) {
+            textBreaksArr = this.textValue.split("\n");
+          }
+          if (textBreaksArr.length > 1)
+            textBreaks = textBreaksArr.join("<br/>");
+          else
+            textBreaks = textBreaksArr[0];
+          return textBreaks;
+        }
         return this.textValue;
     }
 

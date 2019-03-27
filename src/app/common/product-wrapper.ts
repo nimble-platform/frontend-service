@@ -7,6 +7,7 @@ import { sanitizePropertyName, getPropertyKey, periodToString, isCustomProperty,
 import { PriceWrapper } from "./price-wrapper";
 import { CompanyNegotiationSettings } from "../user-mgmt/model/company-negotiation-settings";
 import {Quantity} from '../catalogue/model/publish/quantity';
+import { Dimension } from "../catalogue/model/publish/dimension";
 
 /**
  * Wrapper class for Catalogue line.
@@ -40,6 +41,18 @@ export class ProductWrapper {
 
     getAllUniqueProperties(): ItemProperty[] {
         return this.getUniquePropertiesWithFilter(() => true);
+    }
+
+    getDimensions(): Dimension[] {
+      if(!this.item) {
+          return [];
+      }
+      const ret = [];
+      this.item.dimension.forEach(prop => {
+        if (prop.attributeID && prop.measure.value)
+          ret.push(prop);
+      });
+      return ret;
     }
 
     getPackaging(): string {
@@ -95,7 +108,7 @@ export class ProductWrapper {
     /*
      * Private methods
      */
-    
+
     private getUniquePropertiesWithFilter(filter: Predicate<ItemProperty>): ItemProperty[] {
         if(!this.item) {
             return [];

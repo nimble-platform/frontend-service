@@ -1,1 +1,1 @@
-export type PublishMode = "create" | "edit"
+export type PublishMode = "create" | "edit" | "copy"

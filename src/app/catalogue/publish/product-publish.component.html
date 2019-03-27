@@ -1,5 +1,5 @@
 <!-- Topmost navigation bar -->
-<ul class="nav nav-tabs" *ngIf="publishMode !== 'edit'">
+<ul class="nav nav-tabs" *ngIf="publishMode !== 'edit' && publishMode !== 'copy'">
     <li class="nav-item">
         <a href id="singleUpload"
            [ngClass]="{'nav-link': true, active: publishingGranularity === 'single'}"
@@ -380,7 +380,7 @@
         </div>
         <div class="col-3">
             <button class="btn btn-primary action" [disabled]="isLoading() || !isValidCatalogueLine()" (click)="onPublish()">
-                {{ publishStateService.publishMode === "create" ? "Publish" : "Save"  }}
+                {{ publishStateService.publishMode === "edit" ? "Save" : "Publish"  }}
             </button>
         </div>
     </div>

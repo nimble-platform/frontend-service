@@ -544,6 +544,21 @@ export function deepEquals(obj1: any, obj2: any): boolean {
     return true;
 }
 
+export function removeHjids(json): any {
+    let ret = JSON.parse(JSON.stringify(json));
+    let keys = Object.keys(ret);
+    for (let i=0; i<keys.length; i++) {
+      if (keys[i] == "hjid")
+        ret[keys[i]] = null;
+      else if (ret[keys[i]] && typeof(ret[keys[i]]) === "object") {
+        let keys_inner = Object.keys(ret[keys[i]]);
+        if (keys_inner.length > 0)
+          ret[keys[i]] = this.removeHjids(ret[keys[i]]);
+      }
+    }
+    return ret;
+}
+
 export function getAuthorizedHeaders(cookieService: CookieService): Headers {
     const token = 'Bearer '+cookieService.get("bearer_token");
     const headers = new Headers({ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': token});

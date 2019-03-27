@@ -89,6 +89,9 @@ export class CatalogueService {
                     return res.json() as Array<CatalogueLine>;
                 })
                 .catch(res => {
+                    if(res.status == 500){
+                        return [];
+                    }
                     this.handleError(res.getBody());
                 });
             });
