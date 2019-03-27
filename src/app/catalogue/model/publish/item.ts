@@ -13,7 +13,7 @@ import { DocumentReference } from "./document-reference";
 import { TransportationService } from "./transportation-service";
 import { TrackAndTraceDetails } from "./track-and-trace-details";
 import {Text} from "./text";
-import {LifeCyclePerformanceAssessmentDetails} from "./life-cycle-cost-details";
+import {LifeCyclePerformanceAssessmentDetails} from "./life-cycle-performance-assessment-details";
 
 export class Item {
     constructor(
@@ -30,6 +30,6 @@ export class Item {
         public dimension: Dimension[] = [],
         public transportationServiceDetails = new TransportationService(),
         public trackAndTraceDetails: TrackAndTraceDetails = new TrackAndTraceDetails(),
-        public lifeCycleCostDetails: LifeCyclePerformanceAssessmentDetails = new LifeCyclePerformanceAssessmentDetails()
+        public lifeCyclePerformanceAssessmentDetails: LifeCyclePerformanceAssessmentDetails = new LifeCyclePerformanceAssessmentDetails()
     ) {}
 }

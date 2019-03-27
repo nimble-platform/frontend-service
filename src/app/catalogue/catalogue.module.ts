@@ -49,7 +49,8 @@ import {ItemPropertyPriceOptionComponent} from "./publish/price-option/item-prop
 import {DiscountTargetComponent} from "./publish/price-option/discount-target.component";
 import {PriceOptionViewComponent} from './publish/price-option/price-option-view.component';
 import {BulkPublishComponent} from "./publish/bulk-publish.component";
-import {ProductLcpaTabComponent} from "./publish/product-lcpa-tab.component";
+import {ProductLcpaTabComponent} from "./publish/lcpa/product-lcpa-tab.component";
+import {LcpaDetailModalComponent} from "./publish/lcpa/lcpa-detail-modal.component";
 
 @NgModule({
 	imports: [CommonModule, 
@@ -78,6 +79,7 @@ import {ProductLcpaTabComponent} from "./publish/product-lcpa-tab.component";
         ProductCertificatesTabComponent,
         ProductTrackAndTraceTabComponent,
         ProductLcpaTabComponent,
+        LcpaDetailModalComponent,
         QuantityViewComponent,
         AmountViewComponent,
         QuantityValueViewComponent,

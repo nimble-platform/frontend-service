@@ -1,6 +1,6 @@
 import {Quantity} from "./quantity";
 import {Amount} from "./amount";
-import {ItemProperty} from "./item-property";
+import {LCPAInputDetail} from "./lcpa-input-detail";
 export class LifeCyclePerformanceAssessmentDetails {
     constructor(
         public lifeCycleLength: Quantity = new Quantity(),
@@ -12,6 +12,6 @@ export class LifeCyclePerformanceAssessmentDetails {
         public maintenanceCost: Amount = new Amount(),
         public sparePartCost: Amount = new Amount(),
         public endOfLifeCost: Amount = new Amount(),
-        public additionalLCPADetail: ItemProperty[] = []
+        public additionalLCPAInputDetail: LCPAInputDetail[] = []
         ) {  }
 }

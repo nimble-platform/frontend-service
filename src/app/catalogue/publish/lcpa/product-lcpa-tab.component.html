@@ -52,3 +52,42 @@
               [amount]="lcpaDetails.endOfLifeCost"
               [amountType]="'currency_quantity'">
 </amount-input>
+<ng-container *ngFor="let detail of catalogueLine.goodsItem.item.lifeCyclePerformanceAssessmentDetails.additionalLCPAInputDetail; let i = index">
+    <div [ngSwitch]="detail.valueQualifier">
+        <div *ngIf="i == 0">
+            <hr>
+            <h6>Additional LCPA Details</h6>
+        </div>
+
+        <div class="row space-before">
+            <quantity-input class="col"
+                            *ngSwitchCase="'QUANTITY'"
+                            [disabled]="disabled"
+                            [label]="detail.name.value"
+                            [quantity]="detail.valueQuantity">
+            </quantity-input>
+            <text-input *ngSwitchDefault
+                        class="col"
+                        [disabled]="disabled"
+                        [(text)]="detail.value"
+                        [label]="detail.name.value"
+                        [rows]="1">
+            </text-input>
+            <div class="col-1">
+                <button class="btn btn-danger btn-remove-value btn-sm btn-block"
+                        (click)="onDeleteDetail(i)">
+                    Delete
+                </button>
+            </div>
+        </div>
+    </div>
+</ng-container>
+<div class="d-flex justify-content-end space-before">
+    <button class="btn btn-outline-primary btn-sm" (click)="openLcpaDetailsModal($event)">
+        Add more LCPA details
+    </button>
+</div>
+
+<!-- Edit Property Value(s) Modal -->
+<lcpa-detail-modal (valueAdded)="onDetailSpecified($event)">
+</lcpa-detail-modal>
