@@ -4,7 +4,7 @@ export class LCPAInputDetail {
     constructor(
         public name:Text = new Text(),
         public valueQualifier: string = 'QUANTITY',
-        public value:string = "",
+        public value:Text = new Text(),
         public valueQuantity: Quantity = new Quantity()
     ) {  }
 }

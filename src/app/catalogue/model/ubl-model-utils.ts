@@ -56,6 +56,7 @@ import {ShipmentStage} from "./publish/shipment-stage";
 import {copy, createText, selectPreferredName} from '../../common/utils';
 import {Text} from "./publish/text";
 import {Attachment} from "./publish/attachment";
+import {LifeCyclePerformanceAssessmentDetails} from "./publish/life-cycle-performance-assessment-details";
 
 /**
  * Created by suat on 05-Jul-17.
@@ -582,4 +583,19 @@ export class UBLModelUtils {
         return party.partyName[0].name.value;
     }
 
+    public static isFilledLCPAInput(lcpaDetails: LifeCyclePerformanceAssessmentDetails): boolean {
+        if(!isNaN(parseFloat(lcpaDetails.assemblyCost.value)) ||
+            !isNaN(parseFloat(lcpaDetails.consumableCost.value)) ||
+            !isNaN(parseFloat(lcpaDetails.endOfLifeCost.value)) ||
+            !isNaN(parseFloat(lcpaDetails.energyConsumptionCost.value)) ||
+            !isNaN(parseFloat(lcpaDetails.lifeCycleLength.value)) ||
+            !isNaN(parseFloat(lcpaDetails.purchasingPrice.value)) ||
+            !isNaN(parseFloat(lcpaDetails.sparePartCost.value)) ||
+            !isNaN(parseFloat(lcpaDetails.transportCost.value)) ||
+            lcpaDetails.additionalLCPAInputDetail.length > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

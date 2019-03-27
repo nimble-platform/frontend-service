@@ -22,6 +22,8 @@ export class ProductLcpaTabComponent implements OnInit {
     ngOnInit() {
         if(this.catalogueLine.goodsItem.item.lifeCyclePerformanceAssessmentDetails == null) {
             this.catalogueLine.goodsItem.item.lifeCyclePerformanceAssessmentDetails = this.lcpaDetails;
+        } else {
+            this.lcpaDetails = this.catalogueLine.goodsItem.item.lifeCyclePerformanceAssessmentDetails
         }
     }
 

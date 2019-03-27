@@ -782,6 +782,10 @@ export class ProductPublishComponent implements OnInit {
         // This is required because there is no redirect after publish action
         let catalogueLineCopy: CatalogueLine = copy(catalogueLine);
 
+        if(!UBLModelUtils.isFilledLCPAInput(catalogueLineCopy.goodsItem.item.lifeCyclePerformanceAssessmentDetails)) {
+            catalogueLineCopy.goodsItem.item.lifeCyclePerformanceAssessmentDetails = null;
+        }
+
         // splice out properties that are unfilled
         let properties: ItemProperty[] = catalogueLineCopy.goodsItem.item.additionalItemProperty;
         let propertiesToBeSpliced: ItemProperty[] = [];
