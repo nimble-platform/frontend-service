@@ -15,9 +15,11 @@
 
 	<call-status [callStatus]="searchCallStatus" [large]="true"></call-status>
 
+	<!--
 	<div [hidden]="error_detc || callback || !submitted">
 		<img class="space-before" src="assets/form_loader.gif"/>
 	</div>
+	-->
 
 	<div [hidden]="searchDone">
 		<div class="card border-primary-nimble">
@@ -60,7 +62,7 @@
 		</div>
 	</div>
 
-	<div [hidden]="!callback">
+	<div [hidden]="searchCallStatus.isLoading()">
 		<hr/>
 		<div>
 
@@ -342,7 +344,7 @@
 											<b>{{ getMultilingualLabel(result[product_name]) }}</b><br/>
 											<small *ngIf="result.description">{{getMultilingualLabel(result[product_description])}}</small>
 										</div>
-										<div class="col-2">
+										<div *ngIf="result[product_vendor]" class="col-2">
 											<i>{{ result[product_vendor][product_vendor_name] }}</i>
 											<div *ngIf="!checkNaN(result[product_vendor][product_vendor_rating])">
 												<ngb-rating [rate]="calcRating(result[product_vendor][product_vendor_rating],1)" [readonly]="true" max="5" title="{{getName(product_vendor_rating,product_vendor)}}:&#10;{{calcRating(result[product_vendor][product_vendor_rating],1)}} out of 5&#10;&#10;{{getName(product_vendor_rating_seller,product_vendor)}}:&#10;{{calcRating(result[product_vendor][product_vendor_rating_seller],1)}} out of 5&#10;&#10;{{getName(product_vendor_rating_fulfillment,product_vendor)}}:&#10;{{calcRating(result[product_vendor][product_vendor_rating_fulfillment],1)}} out of 5&#10;&#10;{{getName(product_vendor_rating_delivery,product_vendor)}}:&#10;{{calcRating(result[product_vendor][product_vendor_rating_delivery],1)}} out of 5">
@@ -380,6 +382,9 @@
 													</ng-template>
 												</ngb-rating>
 											</div>
+										</div>
+										<div *ngIf="!result[product_vendor]" class="col-2">
+											<i>Unknown</i>
 										</div>
 										<div class="col-2 align-right">
 											<span class="badge badge-primary-nimble" *ngIf="result[product_price] && !checkEmpty(result[product_price])">{{roundToTwoDecimals(result[product_price][getCurrency(result[product_price])])}} {{getCurrency(result[product_price])}}</span>

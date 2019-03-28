@@ -178,7 +178,7 @@ export class SimpleSearchFormComponent implements OnInit {
       debounceTime(200),
       distinctUntilChanged(),
       switchMap(term =>
-        this.simpleSearchService.getSuggestions(term,(DEFAULT_LANGUAGE()+"_"+this.product_name))
+        this.simpleSearchService.getSuggestions(term,("{LANG}_"+this.product_name))
       )
     );
 
