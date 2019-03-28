@@ -31,6 +31,7 @@ export class AddressSubForm {
             buildingNumber: addressForm.controls.buildingNumber.value,
             cityName: addressForm.controls.cityName.value,
             postalCode: addressForm.controls.postalCode.value,
+            region: addressForm.controls.region.value,
             country: addressForm.controls.country.value
         };
 	}
@@ -40,6 +41,7 @@ export class AddressSubForm {
             addressForm.controls.streetName.setValue(address.streetName || "");
             addressForm.controls.buildingNumber.setValue(address.buildingNumber || "");
             addressForm.controls.cityName.setValue(address.cityName || "");
+            addressForm.controls.region.setValue(address.region || "");
             addressForm.controls.postalCode.setValue(address.postalCode || "");
             addressForm.controls.country.setValue(address.country || "");
         }
@@ -53,6 +55,7 @@ export class AddressSubForm {
             buildingNumber: formDef,
             cityName: formDef,
             postalCode: formDef,
+            region: formDef,
             country: ['', [validateCountry] ]
         });
     }

@@ -38,6 +38,7 @@ export class DetailedAddressViewComponent implements OnInit{
                 this.deliveryAddress.country.name.value = settings.details.address.country;
                 this.deliveryAddress.postalZone = settings.details.address.postalCode;
                 this.deliveryAddress.cityName = settings.details.address.cityName;
+                this.deliveryAddress.region = settings.details.address.region;
                 this.deliveryAddress.buildingNumber = settings.details.address.buildingNumber;
                 this.deliveryAddress.streetName = settings.details.address.streetName;
 

@@ -75,7 +75,7 @@ export class CompanyRegistrationComponent implements OnInit {
         this.registrationForm.controls['businessKeywords'].setValue("");
         this.registrationForm.controls['industrySectors'].setValue("");
         this.registrationForm.controls['yearOfReg'].setValue("");
-        AddressSubForm.update(this.registrationForm.controls['address'] as FormGroup, new Address("", "", "", "", ""));
+        AddressSubForm.update(this.registrationForm.controls['address'] as FormGroup, new Address("", "", "", "", "", ""));
     }
 
     validateVAT() {
@@ -89,7 +89,7 @@ export class CompanyRegistrationComponent implements OnInit {
                             this.registrationForm.controls['name'].setValue(response.company_name);
                         this.registrationForm.controls['vatNumber'].setValue(this.vat);
                         if (response.country_code)
-                            AddressSubForm.update(this.registrationForm.controls['address'] as FormGroup, new Address("", "", "", "", getCountryByISO(response.country_code)));
+                            AddressSubForm.update(this.registrationForm.controls['address'] as FormGroup, new Address("", "", "", "", "", getCountryByISO(response.country_code)));
                         this.vatValidated = true;
                     } else {
                         setTimeout(function () {

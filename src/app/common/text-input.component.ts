@@ -51,7 +51,7 @@ export class TextInputComponent implements OnInit {
         if (this.presentationMode == "view") {
           let textBreaks = "";
           let textBreaksArr = [""];
-          if (this.textValue) {
+          if (this.textValue && typeof(this.textValue) == "string") {
             textBreaksArr = this.textValue.split("\n");
           }
           if (textBreaksArr.length > 1)
