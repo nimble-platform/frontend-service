@@ -62,7 +62,7 @@
 		</div>
 	</div>
 
-	<div [hidden]="searchCallStatus.isLoading()">
+	<div [hidden]="!callback || searchCallStatus.isLoading()">
 		<hr/>
 		<div>
 
