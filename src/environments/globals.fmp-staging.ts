@@ -226,8 +226,9 @@ export const product_currency = "currency";
 export const product_cat = "classificationUri";
 export const product_cat_mix = "commodityClassficationUri";
 export const product_filter_prod = ["freeOfCharge","certificateType","applicableCountries"];
-export const product_filter_comp = ["manufacturer.legalName","manufacturer.origin","manufacturer.certificateType"];
-export const party_facet_field_list = ["legalName","origin","certificateType"];
+export const product_filter_comp = ["manufacturer.id","manufacturer.legalName","manufacturer.origin","manufacturer.certificateType"];
+export const party_facet_field_list = ["id","legalName","origin","certificateType"];
+export const item_manufacturer_id = "manufacturerId";
 export const product_filter_trust = ["manufacturer.trustScore","manufacturer.trustRating","manufacturer.trustSellerCommunication","manufacturer.trustFullfillmentOfTerms","manufacturer.trustDeliveryPackaging","manufacturer.trustNumberOfTransactions"];
 export const product_filter_mappings = {
   "price": "Price",

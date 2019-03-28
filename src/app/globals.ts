@@ -173,8 +173,8 @@ export const product_cat = "classificationUri";
 export const product_cat_mix = "commodityClassficationUri";
 export const product_filter_prod = ["freeOfCharge","certificateType","applicableCountries"];
 export const product_filter_comp = ["manufacturer.id","manufacturer.legalName","manufacturer.origin","manufacturer.certificateType","manufacturer.ppapComplianceLevel","manufacturer.ppapDocumentType"];
+export const party_facet_field_list = ["id","legalName","origin","certificateType","ppapComplianceLevel","ppapDocumentType"];
 export const item_manufacturer_id = "manufacturerId";
-
 export const product_filter_trust = ["manufacturer.trustScore","manufacturer.trustRating","manufacturer.trustSellerCommunication","manufacturer.trustFullfillmentOfTerms","manufacturer.trustDeliveryPackaging","manufacturer.trustNumberOfTransactions"];
 export const product_filter_mappings = {
   "price": "Price",
@@ -186,7 +186,6 @@ export const product_configurable = [];
 export const product_default = {};
 export const facet_min = 1;
 export const facet_count = 30;
-export const party_facet_field_list = ["id","legalName","origin","certificateType","ppapComplianceLevel","ppapDocumentType"];
 export const query_settings = {
   "fields": ["STANDARD","commodityClassficationUri","{LANG}_label","{LANG}_desc"],
   "boosting": true,
