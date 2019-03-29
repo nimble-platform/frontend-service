@@ -28,7 +28,7 @@
 			</div>
 			<div class="card-body">
 				<call-status [callStatus]="categoriesCallStatus" [large]="true"></call-status>
-				<ng-container *ngIf="!cat_loading && cat_levels.length>0 && cat_levels[0].length>0">
+				<ng-container *ngIf="!categoriesCallStatus.isLoading() && !cat_loading && cat_levels.length>0 && cat_levels[0].length>0">
 					<div *ngFor="let lvl0 of cat_levels[0]; let idx = index;">
 						<div *ngIf="idx%4==0" class="row">
 							<div *ngIf="idx<cat_levels[0].length" class="card col mr-3 ml-3 pl-0 pr-0 pointer" [ngClass]="{'mb-3':idx+4<cat_levels[0].length}" (click)="callCat(cat_levels[0][idx].name,cat_levels[0][idx].id)">
@@ -176,13 +176,17 @@
 											{{ getName(facet.realName) }}
 										</div>
 										<div class="card-body">
-											<div *ngFor="let facetInner of facet.options">
-												<div *ngIf="!checkFacet(facet.name,facetInner.name)">
-													<span class="clickable" (click)="setFacet(facet.name,facetInner.name)">{{ facetInner.realName }}</span> ({{ facetInner.count }})
+											<div *ngFor="let facetInner of facet.options; let i=index">
+												<div *ngIf="!checkFacet(facet.name,facetInner.name) && (i < 10 || facet.expanded)">
+													<span class="clickable" (click)="setFacet(facet.name,facetInner.name)" [title]="facetInner.realName">{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></span> ({{ facetInner.count }})
 												</div>
-												<div *ngIf="checkFacet(facet.name,facetInner.name)">
-													<span class="clickable" (click)="setFacet(facet.name,facetInner.name)"><b>{{ facetInner.realName }}</b></span> ({{ facetInner.count }})
+												<div *ngIf="checkFacet(facet.name,facetInner.name) && (i < 10 || facet.expanded)">
+													<span class="clickable" (click)="setFacet(facet.name,facetInner.name)" [title]="facetInner.realName"><b>{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></b></span> ({{ facetInner.count }})
 												</div>
+											</div>
+											<div *ngIf="facet.options.length>10">
+												<hr>
+												<span class="clickable" (click)="facet.expanded=!facet.expanded"><span *ngIf="!facet.expanded">Show more</span><span *ngIf="facet.expanded">Show less</span></span>
 											</div>
 										</div>
 									</div>
@@ -206,13 +210,17 @@
 											{{ getName(facet.realName) }}
 										</div>
 										<div class="card-body">
-											<div *ngFor="let facetInner of facet.options">
-												<div *ngIf="!checkFacet(facet.name,facetInner.name)">
-													<span class="clickable" (click)="setFacet(facet.name,facetInner.name)">{{ facetInner.realName }}</span> ({{ facetInner.count }})
+											<div *ngFor="let facetInner of facet.options; let i = index">
+												<div *ngIf="!checkFacet(facet.name,facetInner.name) && (i < 10 || facet.expanded)">
+													<span class="clickable" (click)="setFacet(facet.name,facetInner.name)" [title]="facetInner.realName">{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></span> ({{ facetInner.count }})
 												</div>
-												<div *ngIf="checkFacet(facet.name,facetInner.name)">
-													<span class="clickable" (click)="setFacet(facet.name,facetInner.name)"><b>{{ facetInner.realName }}</b></span> ({{ facetInner.count }})
+												<div *ngIf="checkFacet(facet.name,facetInner.name) && (i < 10 || facet.expanded)">
+													<span class="clickable" (click)="setFacet(facet.name,facetInner.name)" [title]="facetInner.realName"><b>{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></b></span> ({{ facetInner.count }})
 												</div>
+											</div>
+											<div *ngIf="facet.options.length>10">
+												<hr>
+												<span class="clickable" (click)="facet.expanded=!facet.expanded"><span *ngIf="!facet.expanded">Show more</span><span *ngIf="facet.expanded">Show less</span></span>
 											</div>
 										</div>
 									</div>
@@ -223,7 +231,7 @@
 
 						</div>
 
-						<div *ngIf="checkTrustCatCount()>0">
+						<div *ngIf="checkCompCatCount()>0">
 
 							<div class="pointer" (click)="showTrustSection=!showTrustSection">
 								<h5>Rating / Trust Filters <span *ngIf="!showTrustSection"><i class="fa fa-angle-double-down"></i></span><span *ngIf="showTrustSection"><i class="fa fa-angle-double-up"></i></span></h5>
@@ -311,13 +319,17 @@
 											{{ facet.realName }}
 										</div>
 										<div class="card-body">
-											<div *ngFor="let facetInner of facet.options">
-												<div *ngIf="!checkFacet(facet.name,facetInner.name)">
-													<span class="clickable" (click)="setFacet(facet.name,facetInner.name)">{{ facetInner.realName }}</span> ({{ facetInner.count }})
+											<div *ngFor="let facetInner of facet.options; let i = index">
+												<div *ngIf="!checkFacet(facet.name,facetInner.name) && (i < 10 || facet.expanded)">
+													<span class="clickable" (click)="setFacet(facet.name,facetInner.name)" [title]="facetInner.realName">{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></span> ({{ facetInner.count }})
 												</div>
-												<div *ngIf="checkFacet(facet.name,facetInner.name)">
-													<span class="clickable" (click)="setFacet(facet.name,facetInner.name)"><b>{{ facetInner.realName }}</b></span> ({{ facetInner.count }})
+												<div *ngIf="checkFacet(facet.name,facetInner.name) && (i < 10 || facet.expanded)">
+													<span class="clickable" (click)="setFacet(facet.name,facetInner.name)" [title]="facetInner.realName"><b>{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></b></span> ({{ facetInner.count }})
 												</div>
+											</div>
+											<div *ngIf="facet.options.length>10">
+												<hr>
+												<span class="clickable" (click)="facet.expanded=!facet.expanded"><span *ngIf="!facet.expanded">Show more</span><span *ngIf="facet.expanded">Show less</span></span>
 											</div>
 										</div>
 									</div>

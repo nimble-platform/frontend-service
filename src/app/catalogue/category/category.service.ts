@@ -89,16 +89,21 @@ export class CategoryService {
      * @param uris
      */
     public getCategories(uris: string[]): Promise<any> {
-        const url = this.indexingBaseUrl + "/classes?";
-        let full_url = url;
+        const url = this.indexingBaseUrl + "/class/search";
+        let query = "";
         for(let uri of uris) {
-            full_url += `uri=${encodeURIComponent(uri)}&`;
+            query += `id:"${uri}" OR `;
         }
+        if (query != "")
+          query = query.substring(0, query.length - 4);
+        let searchObject:any = {};
+    		searchObject.rows = 99999;
+    		searchObject.q = query;
         return this.http
-            .get(full_url, {headers: getAuthorizedHeaders(this.cookieService)})
-            .toPromise()
-            .then(res => res.json())
-            .catch(this.handleError);
+    		.post(url, searchObject, {headers: getAuthorizedHeaders(this.cookieService)})
+    		.toPromise()
+    		.then(res => res.json())
+    		.catch(this.handleError);
     }
 
     getCategory(category: Category): Promise<Category> {

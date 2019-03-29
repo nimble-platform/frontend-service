@@ -105,14 +105,19 @@ export class SimpleSearchService {
       "boostingFactors": {}
     };
     let queryRes = this.buildQueryString(query,querySettings,true);
-    let queryFull = encodeURIComponent(queryRes.queryStr);
-		let url = `${this.url}/item/select?q=${queryFull}&facet.limit=-1&rows=0`;
+    const url = this.url + `/item/search`
+		let searchObject:any = {};
+		searchObject.rows = 0;
+		searchObject.q = queryRes.queryStr;
+    searchObject.facet = {};
+    searchObject.facet.field = [];
+    searchObject.facet.limit = -1;
     for (let i=0; i<queryRes.queryFields.length; i++) {
-      url += "&facet.field="+queryRes.queryFields[i];
+      searchObject.facet.field.push(queryRes.queryFields[i]);
     }
-		return this.http
-		.get(url, {headers: this.getHeadersWithBasicAuthorization()})
-		.pipe(
+    return this.http
+		.post(url, searchObject, {headers: this.getHeadersWithBasicAuthorization()})
+    .pipe(
 			map(response =>
 				this.getSuggestionArray(response.json(),query,queryRes.queryArr,queryRes.queryFields)
 			)
