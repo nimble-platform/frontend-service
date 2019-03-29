@@ -34,20 +34,22 @@ export class AmountInputComponent implements OnInit {
     }
 
     ngOnInit() {
-        if(!this.valueClass) {
+        if (!this.valueClass) {
             this.valueClass = this.label ? "col-9" : "col-12";
         }
 
-        if(this.amountType) {
+        if (this.amountType) {
             this.amountCurrencies = ["Loading..."];
             this.unitService.getCachedUnitList(this.amountType)
-            .then(units => {
-                this.amountCurrencies = units;
+                .then(units => {
+                    this.amountCurrencies = units;
+                    this.initAmountCurrency();
+                });
+        } else {
+            if (this.amountCurrencies != null && this.amountCurrencies.length > 0) {
                 this.initAmountCurrency();
-            })
+            }
         }
-
-        this.initAmountCurrency();
     }
 
     private initAmountCurrency(): void {

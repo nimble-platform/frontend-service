@@ -45,9 +45,9 @@ export class QuantityInputComponent implements OnInit {
                 this.quantityUnits = units;
                 this.initQuantityUnit();
             })
+        } else if(this.quantityUnits != null && this.quantityUnits.length > 0) {
+            this.initQuantityUnit();
         }
-
-        this.initQuantityUnit();
     }
 
     private initQuantityUnit(): void {
