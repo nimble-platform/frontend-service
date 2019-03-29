@@ -225,6 +225,8 @@ export class SimpleSearchFormComponent implements OnInit {
 		this.cat_loading = true;
 		var indexCategories = await this.categoryService.getCategories(categoryUris);
 		let categoryDisplayInfo: any = this.getCategoryDisplayInfo(indexCategories);
+		let split_idx:any = -1;
+		let name:any = "";
 		if (taxonomyPrefix != "") {
 			// ToDo: Remove manual distinction after search update
 			// ================================================================================
@@ -261,8 +263,10 @@ export class SimpleSearchFormComponent implements OnInit {
 					var count = categoryCount.count;
 					var ontology = categoryCount.label;
 					if (categoryDisplayInfo[ontology] != null && ontology.indexOf(taxonomyPrefix) != -1) {
+						split_idx = ontology.lastIndexOf("#");
+						name = ontology.substr(split_idx+1);
 						if (categoryDisplayInfo[ontology].isRoot && this.config.categoryFilter[taxonomy].hiddenCategories.indexOf(name) == -1){
-							if(ontology.indexOf("http://www.aidimme.es/FurnitureSectorOntology.owl#") != -1){
+							if(ontology.startsWith(taxonomyPrefix)){
 								lvl.push({"name":ontology,"id":ontology,"count":count,"preferredName": selectNameFromLabelObject(categoryDisplayInfo[ontology].label)});
 							}else{
 								lvl.push({"name":ontology,"id":ontology,"count":count,"preferredName":ontology});
@@ -287,10 +291,10 @@ export class SimpleSearchFormComponent implements OnInit {
 							var ontology = categoryCount.label;
 
 							if (categoryDisplayInfo[uri] != null && uri.indexOf(taxonomyPrefix) != -1) {
-								var split_idx = uri.lastIndexOf("#");
-								var name = uri.substr(split_idx+1);
+								split_idx = uri.lastIndexOf("#");
+								name = uri.substr(split_idx+1);
 								if (this.config.categoryFilter[taxonomy].hiddenCategories.indexOf(name) == -1) {
-									if (ontology.indexOf("http://www.aidimme.es/FurnitureSectorOntology.owl#") != -1) {
+									if (ontology.startsWith(taxonomyPrefix)) {
 										lvl.push({"name": uri, "id": uri, "count": count, "preferredName": selectNameFromLabelObject(categoryDisplayInfo[uri].label)});
 									} else {
 										lvl.push({"name": uri, "id": uri, "count": count, "preferredName": name});
