@@ -39,7 +39,7 @@ export class FavouriteViewComponent implements OnInit {
     collectionSize = 0;
     page = 1;
     // default
-    pageSize = 3;
+    pageSize = 5;
 
     // check whether catalogue-line-panel should be displayed for a specific catalogue line
     catalogueLineView = {};
