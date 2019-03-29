@@ -71,8 +71,8 @@
             </div>
         </div>
         <div class="col-6">
-            <text-input presentationMode="view" label="Postal Code"
-                [text]="address.postalZone" labelClass="col-4" valueClass="col-8">
+            <text-input presentationMode="view" label="State / Province"
+                [text]="address.region" labelClass="col-4" valueClass="col-8">
             </text-input>
         </div>
     </div>
@@ -84,9 +84,9 @@
             </text-input>
         </div>
         <div class="col-6">
-            <text-input presentationMode="view" label="Country"
-                [text]="address.country.name.value" labelClass="col-4" valueClass="col-8">
-            </text-input>
+          <text-input presentationMode="view" label="Postal Code"
+              [text]="address.postalZone" labelClass="col-4" valueClass="col-8">
+          </text-input>
         </div>
     </div>
 
@@ -97,7 +97,9 @@
             </text-input>
         </div>
         <div class="col-6">
-            <!-- Nothing for now -->
+          <text-input presentationMode="view" label="Country"
+              [text]="address.country.name.value" labelClass="col-4" valueClass="col-8">
+          </text-input>
         </div>
     </div>
 

@@ -31,7 +31,7 @@
                 <td>{{ getNameOfTheCompany(company.partyName) }}</td>
                 <td *ngIf="company.postalAddress">
                   {{ company.postalAddress.streetName }} {{ company.postalAddress.buildingNumber }}<br/>
-                  {{ company.postalAddress.postalZone }} {{ company.postalAddress.cityName }}<br/>
+                  {{ company.postalAddress.postalZone }} {{ company.postalAddress.cityName }} <span *ngIf="company.postalAddress.region">{{company.postalAddress.region}}</span><br/>
                   {{ company.postalAddress.country.name.value }}
                 </td>
                 <td *ngIf="!company.postalAddress">n/A</td>
@@ -95,7 +95,7 @@
                     <td>{{ getNameOfTheCompany(company.partyName) }}</td>
                     <td *ngIf="company.postalAddress">
                       {{ company.postalAddress.streetName }} {{ company.postalAddress.buildingNumber }}<br/>
-                      {{ company.postalAddress.postalZone }} {{ company.postalAddress.cityName }}<br/>
+                      {{ company.postalAddress.postalZone }} {{ company.postalAddress.cityName }} <span *ngIf="company.postalAddress.region">{{company.postalAddress.region}}</span><br/>
                       {{ company.postalAddress.country.name.value }}
                     </td>
                     <td *ngIf="!company.postalAddress">n/A</td>

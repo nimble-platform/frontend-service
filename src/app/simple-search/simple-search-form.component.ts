@@ -44,7 +44,9 @@ export class SimpleSearchFormComponent implements OnInit {
 	product_nonfilter_regex = myGlobals.product_nonfilter_regex;
 	product_cat = myGlobals.product_cat;
 	product_cat_mix = myGlobals.product_cat_mix;
+	party_facet_field_list = myGlobals.party_facet_field_list;
 	roundToTwoDecimals = roundToTwoDecimals;
+	item_manufacturer_id = myGlobals.item_manufacturer_id;
 
 	CURRENCIES = CURRENCIES;
 	selectedCurrency: any = "EUR";
@@ -64,6 +66,7 @@ export class SimpleSearchFormComponent implements OnInit {
 	showOtherSection = false;
 
 	categoriesCallStatus: CallStatus = new CallStatus();
+	companyCallStatus: CallStatus = new CallStatus();
 	searchCallStatus: CallStatus = new CallStatus();
 	searchDone = false;
 	callback = false;
@@ -91,10 +94,17 @@ export class SimpleSearchFormComponent implements OnInit {
     // check whether 'p' query parameter exists or not
 	noP = true;
 
+	//manufacturer.legalName : {id,count}
+	//manufacturerIdCountMap : { [indx : string], string};
+	manufacturerIdCountMap : any;
+
+
 	config = myGlobals.config;
 	getMultilingualLabel = selectNameFromLabelObject;
 	// used to get labels of the ubl properties
 	ublProperties = null;
+
+	partyNamesList :any;
 
 	constructor(
 		private simpleSearchService: SimpleSearchService,
@@ -143,9 +153,9 @@ export class SimpleSearchFormComponent implements OnInit {
 			} else {
 				this.searchContext = searchContext;
 			}
-			if (q)
-				this.getCall(q,fq,p,cat,catID);
-			else {
+			if (q) {
+				this.getCall(q, fq, p, cat, catID);
+			} else {
 				this.callback = false;
 				this.searchDone = false;
 				this.searchCallStatus.reset();
@@ -176,7 +186,7 @@ export class SimpleSearchFormComponent implements OnInit {
       debounceTime(200),
       distinctUntilChanged(),
       switchMap(term =>
-        this.simpleSearchService.getSuggestions(term,(DEFAULT_LANGUAGE()+"_"+this.product_name))
+        this.simpleSearchService.getSuggestions(term,("{LANG}_"+this.product_name))
       )
     );
 
@@ -361,74 +371,81 @@ export class SimpleSearchFormComponent implements OnInit {
 		return level;
 	}
 
-	private getCall(q:string, fq:any, p:number, cat:string, catID:string) {
+	private getCall(q: string, fq: any, p: number, cat: string, catID: string) {
 		this.cat_loading = true;
 		this.searchDone = true;
-    	this.model.q=q;
-		this.objToSubmit.q=q;
-		this.facetQuery=fq;
-		this.page=p;
+		this.model.q = q;
+		this.objToSubmit.q = q;
+		this.facetQuery = fq;
+		this.page = p;
 		this.searchCallStatus.submit();
 		this.simpleSearchService.getFields()
-		.then(res => {
-			let fieldLabels:string [] = this.getFieldNames(res);
-			this.simpleSearchService.get(q,Object.keys(fieldLabels).concat(this.product_filter_comp).concat(this.product_filter_trust),fq,p,cat,catID)
 			.then(res => {
-				this.simpleSearchService.getUblProperties(Object.keys(fieldLabels).concat(this.product_filter_comp).concat(this.product_filter_trust)).then(response => {
-					this.facetObj = [];
-					this.temp = [];
-					var index = 0;
-					for (let facet in res.facets) {
-						if (facet == this.product_cat_mix) {
-							this.buildCatTree(res.facets[this.product_cat_mix].entry);
-							this.handleFacets(fieldLabels, res, p, response.result)
-						}
-					}
+				let fieldLabels: string [] = this.getFieldNames(res);
+				this.simpleSearchService.get(q, Object.keys(fieldLabels), fq, p, cat, catID)
+					.then(res => {
+						this.simpleSearchService.getUblProperties(Object.keys(fieldLabels)).then(response => {
+							this.facetObj = [];
+							this.temp = [];
+							this.manufacturerIdCountMap = new Map();
 
-					this.cat_loading = false;
-					this.callback = true;
-					this.searchCallStatus.callback("Search done.", true);
-
-					this.temp = res.result;
-					for (let doc in this.temp) {
-						if (this.temp[doc][this.product_img]) {
-							var img = this.temp[doc][this.product_img];
-							if (Array.isArray(img)) {
-								this.temp[doc][this.product_img] = img[0];
+							for (let facet in res.facets) {
+								if (facet == this.product_cat_mix) {
+									this.buildCatTree(res.facets[this.product_cat_mix].entry);
+									this.handleFacets(fieldLabels, res, p, response.result);
+									break;
+								}
 							}
-						}
-					}
-					/*
-                     for (let doc in this.temp) {
-                     if (this.isJson(this.temp[doc][this.product_img])) {
-                     var json = JSON.parse(this.temp[doc][this.product_img]);
-                     var img = "";
-                     if (json.length > 1)
-                     img = "data:"+JSON.parse(this.temp[doc][this.product_img][0])[0].mimeCode+";base64,"+JSON.parse(this.temp[doc][this.product_img][0])[0].value;
-                     else
-                     img = "data:"+this.temp[doc][this.product_img].mimeCode+";base64,"+this.temp[doc][this.product_img].value;
-                     this.temp[doc][this.product_img] = img;
-                     }
-                     }
-                     */
-					this.response = copy(this.temp);
-					this.size = res.totalElements;
-					this.page = p;
-					this.start = this.page*10-10+1;
-					this.end = this.start+res.result.length-1;
-				}).catch(error => {
-					this.searchCallStatus.error("Error while running search.", error);
-				})
 
-				this.fetchImages(res.result);
+							for (let facet in res.facets) {
+								if (facet == this.item_manufacturer_id) {
+									let facetEntries = res.facets[this.item_manufacturer_id].entry;
+									for (let manufacturerEntry of facetEntries) {
+										this.manufacturerIdCountMap.set(manufacturerEntry.label, manufacturerEntry.count);
+									}
+									//getting the manufacturer ids list
+									let manufacturerIds = Array.from(this.manufacturerIdCountMap.keys());
+									this.getCompanyNameFromIds(manufacturerIds).then((res1) => {
+										this.handleCompanyFacets(res1, "manufacturer.", this.manufacturerIdCountMap);
+										this.cat_loading = false;
+										this.callback = true;
+										this.searchCallStatus.callback("Search done.", true);
+
+										this.temp = res.result;
+										for (let doc in this.temp) {
+											if (this.temp[doc][this.product_img]) {
+												var img = this.temp[doc][this.product_img];
+												if (Array.isArray(img)) {
+													this.temp[doc][this.product_img] = img[0];
+												}
+											}
+										}
+
+										this.response = copy(this.temp);
+										this.size = res.totalElements;
+										this.page = p;
+										this.start = this.page * 10 - 10 + 1;
+										this.end = this.start + res.result.length - 1;
+
+									}).catch((error) => {
+										this.searchCallStatus.error("Error while creating Vendor filters in the search.", error);
+									});
+									break;
+								}
+							}
+
+						}).catch(error => {
+							this.searchCallStatus.error("Error while running search.", error);
+						})
+						this.fetchImages(res.result);
+					})
+					.catch(error => {
+						this.searchCallStatus.error("Error while running search.", error);
+					});
 			})
 			.catch(error => {
 				this.searchCallStatus.error("Error while running search.", error);
 			});
-		})
-		.catch(error => {
-			this.searchCallStatus.error("Error while running search.", error);
-		});
 	}
 
 	fetchImages(searchResults:any[]): void {
@@ -459,6 +476,71 @@ export class SimpleSearchFormComponent implements OnInit {
 			}, error => {
 			});
 		}
+	}
+
+	handleCompanyFacets(res,prefix :string, manufacturerIdCountMap:any){
+		//this.facetObj = [];
+		this.temp = [];
+		//map for name:id
+		//loop through the result sent to create name:Id mapping
+		let manufacturerNameIdMap = new Map();
+		for(let i=0; i<res.result.length; i++){
+			let manufacturerId = res.result[i].id;
+			let manufacturerName = res.result[i].legalName;
+			manufacturerNameIdMap.set(manufacturerName, manufacturerId);
+		}
+
+		for (let facet in res.facets) {
+			if (this.simpleSearchService.checkField(facet)) {
+				//TO DO: currently only handles manufacturer.legalName facet because there is no way to retrieve item counts related
+				//to other company facets (manufacturer.ppapComplianceLevel","manufacturer.ppapDocumentType)
+				if (facet == "legalName") {
+					let propertyLabel = this.getName(facet);
+					let facet_innerLabel;
+					let facet_innerCount;
+					let facetCount = 0;
+
+					let name = prefix + res.facets[facet].fieldName;
+					let realName = prefix + res.facets[facet].fieldName;
+					let total = 0;
+					let selected = false;
+
+					//creating options[]
+					let options: any[] = [];
+
+					for (let facet_inner of res.facets[facet].entry) {
+						facet_innerLabel = facet_inner.label;
+						facet_innerCount = facet_inner.count;
+						let id = manufacturerNameIdMap.get(facet_innerLabel);
+						let itemCountForManufacturer = manufacturerIdCountMap.get(id);
+						facetCount = itemCountForManufacturer;
+
+						if (facet_innerLabel != "" && facet_innerLabel != ":" && facet_innerLabel != ' ' && facet_innerLabel.indexOf("urn:oasis:names:specification:ubl:schema:xsd") == -1) {
+							options.push({
+								"name": facet_inner.label, //legalName
+								"realName": facet_innerLabel, // the displayed label
+								"count": facetCount
+							});
+							total += facetCount;
+							 if (this.checkFacet(name, facet_inner.label))
+							 	selected = true;
+						}
+					}
+
+					this.facetObj.push({
+						"name": name,
+						"realName": realName,
+						"options": options,
+						"total": total,
+						"selected": selected
+					});
+
+				} else {
+					//need to implement the logic to get the correct counts for other company facets ;
+				}
+			}
+		}
+
 	}
 
 	handleFacets(facetMetadata,res,p,ublProperties){
@@ -889,5 +971,19 @@ export class SimpleSearchFormComponent implements OnInit {
 		}
 		return true;
 	}
+
+	getCompanyNameFromIds(idList: any[]): Promise<any>{
+		let query = "";
+		let length = idList.length;
+		while (length--) {
+			//full_url += "&fq="+encodeURIComponent(facetQuery);
+			query = query+"id:"+idList[length];
+			if(length != 0){
+				query = query+" OR ";
+			}
+		}
+		return this.simpleSearchService.getCompanies(query,this.party_facet_field_list,idList);
+	}
+
 
 }

@@ -131,6 +131,7 @@ export class PriceWrapper {
                     let checkBuildingNumber = priceOption.itemLocationQuantity.applicableTerritoryAddress[0].buildingNumber != "";
                     let checkPostalZone = priceOption.itemLocationQuantity.applicableTerritoryAddress[0].postalZone != "";
                     let checkCityName = priceOption.itemLocationQuantity.applicableTerritoryAddress[0].cityName != "";
+                    let checkRegion = priceOption.itemLocationQuantity.applicableTerritoryAddress[0].region != "";
                     let checkCountryName = priceOption.itemLocationQuantity.applicableTerritoryAddress[0].country && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].country.name.value != "";
                     if(checkStreetName && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].streetName.toLocaleLowerCase() != this.deliveryLocation.streetName.toLocaleLowerCase()){
                         continue;
@@ -142,6 +143,9 @@ export class PriceWrapper {
                         continue;
                     }
                     if(checkCityName && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].cityName.toLocaleLowerCase() != this.deliveryLocation.cityName.toLocaleLowerCase()){
+                        continue;
+                    }
+                    if(checkRegion && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].region.toLocaleLowerCase() != this.deliveryLocation.region.toLocaleLowerCase()){
                         continue;
                     }
                     if(checkCountryName && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].country.name.value.toLocaleLowerCase() != this.deliveryLocation.country.name.value.toLocaleLowerCase()){
@@ -211,11 +215,11 @@ export class PriceWrapper {
     get currency(): string {
         return currencyToString(this.price.priceAmount.currencyID);
     }
-    
+
     set currency(currency: string) {
         this.price.priceAmount.currencyID = currency;
     }
-    
+
     hasPrice(): boolean {
         // != here gives "not null or undefined", which is the behaviour we want.
         return this.price.priceAmount.value != null;

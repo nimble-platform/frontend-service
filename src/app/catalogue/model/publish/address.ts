@@ -6,6 +6,7 @@ import {Country} from "./country";
 export class Address {
     constructor(
         public cityName: string = '',
+        public region: string = '',
         public postalZone: string = '',
         public buildingNumber: string = '',
         public streetName: string = '',

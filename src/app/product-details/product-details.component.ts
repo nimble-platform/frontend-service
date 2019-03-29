@@ -26,6 +26,7 @@ import {SearchContextService} from '../simple-search/search-context.service';
 import {BpURLParams} from '../catalogue/model/publish/bpURLParams';
 import { CookieService } from 'ng2-cookies';
 import {FAVOURITE_LINEITEM_PUT_OPTIONS} from '../catalogue/model/constants';
+import * as myGlobals from '../globals';
 
 @Component({
     selector: 'product-details',
@@ -52,6 +53,8 @@ export class ProductDetailsComponent implements OnInit {
     showNavigation: boolean = true;
     showProcesses: boolean = true;
     isLogistics: boolean = false;
+
+    config = myGlobals.config;
 
     addFavoriteCategoryStatus: CallStatus = new CallStatus();
     callStatus: CallStatus = new CallStatus();
