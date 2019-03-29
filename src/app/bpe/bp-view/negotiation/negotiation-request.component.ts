@@ -229,6 +229,7 @@ export class NegotiationRequestComponent implements OnInit {
             const rfqAddress = this.wrapper.rfqDeliveryAddress;
             rfqAddress.buildingNumber = address.buildingNumber;
             rfqAddress.cityName = address.cityName;
+            rfqAddress.region = address.region;
             rfqAddress.country.name.value = address.country;
             rfqAddress.postalZone = address.postalCode;
             rfqAddress.streetName = address.streetName;

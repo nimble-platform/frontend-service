@@ -59,20 +59,16 @@ export class SimpleSearchService {
 	}
 
 	get(query: string, facets: string[], facetQueries: string[], page: number, cat: string, catID: string): Promise<any> {
-		query = query.replace(/[!'()]/g, '');
-		// var start = page*10-10;
+    let queryRes = this.buildQueryString(query,myGlobals.query_settings,true);
+    query = queryRes.queryStr;
 		const url = this.url + `/item/search`
-
 		let searchObject:any = {};
 		searchObject.rows = 10;
 		searchObject.start = page-1;
 		searchObject.q = query;
-
-		var full_url = url + "";
 		for (let facet of facets) {
 			if (facet.length === 0 || !facet.trim()) {}
 			else {
-				//full_url += "&facet.field=" + facet;
 				if(searchObject.facet == null) {
 					searchObject.facet = {};
 					searchObject.facet.field = [];
@@ -82,9 +78,7 @@ export class SimpleSearchService {
 				searchObject.facet.field.push(facet)
 			}
 		}
-
 		for (let facetQuery of facetQueries) {
-			//full_url += "&fq="+encodeURIComponent(facetQuery);
 			if(searchObject.fq == null) {
 				searchObject.fq = [];
 			}
@@ -92,13 +86,11 @@ export class SimpleSearchService {
 		}
 		if (cat != "") {
 			var add_url = `${this.product_cat_mix}:"${catID}"`;
-			//full_url += "&fq="+encodeURIComponent(add_url);
 			if(searchObject.fq == null) {
 				searchObject.fq = [];
 			}
 			searchObject.fq.push(add_url);
 		}
-
 		return this.http
 		.post(url, searchObject, {headers: this.getHeadersWithBasicAuthorization()})
 		.toPromise()
@@ -107,27 +99,156 @@ export class SimpleSearchService {
 	}
 
   getSuggestions(query:string, field: string) {
-		query = query.replace(/[!'()]/g, '');
-		const url = `${this.url}/item/suggest?q=${query}&field=${field}`;
+    let querySettings = {
+      "fields": [field],
+      "boosting": false,
+      "boostingFactors": {}
+    };
+    let queryRes = this.buildQueryString(query,querySettings,true);
+    let queryFull = encodeURIComponent(queryRes.queryStr);
+		let url = `${this.url}/item/select?q=${queryFull}&facet.limit=-1&rows=0`;
+    for (let i=0; i<queryRes.queryFields.length; i++) {
+      url += "&facet.field="+queryRes.queryFields[i];
+    }
 		return this.http
 		.get(url, {headers: this.getHeadersWithBasicAuthorization()})
 		.pipe(
 			map(response =>
-				this.getSuggestionArray(response.json(),query)
+				this.getSuggestionArray(response.json(),query,queryRes.queryArr,queryRes.queryFields)
 			)
 		);
 	}
 
-	getSuggestionArray(res:any, q:string): string[] {
+	getSuggestionArray(res:any, q:string, qA:string[], fields:string[]): string[] {
 		var suggestions=[];
-		if (q.length >= 2 && res.entry && res.entry.length > 0) {
-      for (let sug of res.entry) {
-        if (sug["label"])
-          suggestions.push(sug["label"]);
+    var suggestionsTmp=[];
+    var suggestionsCount=[];
+		if (q.length >= 2 && res.facets) {
+      for (let i=0; i<fields.length; i++) {
+        let field = fields[i];
+        if (res.facets[field] && res.facets[field].entry && res.facets[field].entry.length > 0) {
+          for (let sug of res.facets[field].entry) {
+            if (sug["label"]) {
+              let label = sug["label"];
+              if (suggestionsTmp.indexOf(label) == -1) {
+                suggestionsTmp.push(label);
+                suggestionsCount.push({
+                  "label": label,
+                  "count": 0
+                });
+              }
+            }
+          }
+        }
+      }
+      for (let i=0; i<suggestionsCount.length; i++) {
+        let fullLabel = suggestionsCount[i].label.toLowerCase();;
+        for (let j=0; j<qA.length; j++) {
+          var idx = fullLabel.indexOf(qA[j].toLowerCase());
+          if (idx != -1) {
+            if (j == 0)
+              suggestionsCount[i].count += 9999;
+            else {
+              suggestionsCount[i].count += (qA[j].length)*50;
+              suggestionsCount[i].count += (qA.length-j)*20;
+              suggestionsCount[i].count -= Math.min(Math.round(idx/2),20);
+            }
+          }
+        }
+      }
+      suggestionsCount = suggestionsCount.sort(function(a,b){
+          return b.count-a.count;
+      });
+      for (let i=0; i<Math.min(suggestionsCount.length,10); i++) {
+          if (suggestionsCount[i].count > 0)
+            suggestions.push(suggestionsCount[i].label);
       }
 		}
 		return suggestions;
 	}
+
+  buildQueryString(query:string, qS:any, full:boolean): any {
+    if (query == "*") {
+      return {
+        "queryStr": "*",
+        "queryArr": [],
+        "queryFields": []
+      };
+    }
+    query = query.replace(/[!'()]/g, '');
+    query = query.trim();
+    let splitQuery = [];
+    if (full)
+      splitQuery = query.split(" ");
+    let queryArr = [query];
+    let queryStr = "";
+    let queryFields = [];
+    let negativeBoosts = [];
+    for (let i=0; i<qS.fields.length; i++) {
+      let field = qS.fields[i];
+      if (field.indexOf("{LANG}") != -1) {
+        queryFields.push(field.replace("{LANG}","en"));
+        if (qS.boosting && qS.boostingFactors && qS.boostingFactors[field]) {
+          qS.boostingFactors[field.replace("{LANG}","en")] = qS.boostingFactors[field];
+          if (qS.boostingFactors[field]<0)
+            negativeBoosts.push(field.replace("{LANG}","en"));
+        }
+        if (DEFAULT_LANGUAGE() != "en") {
+          queryFields.push(field.replace("{LANG}",DEFAULT_LANGUAGE()));
+          if (qS.boosting && qS.boostingFactors && qS.boostingFactors[field]) {
+            qS.boostingFactors[field.replace("{LANG}",DEFAULT_LANGUAGE())] = qS.boostingFactors[field];
+            if (qS.boostingFactors[field]<0)
+              negativeBoosts.push(field.replace("{LANG}",DEFAULT_LANGUAGE()));
+          }
+        }
+      }
+      else {
+        queryFields.push(field);
+        if (qS.boosting && qS.boostingFactors && qS.boostingFactors[field] && qS.boostingFactors[field]<0) {
+          negativeBoosts.push(field);
+        }
+      }
+    }
+    for (let i=0; i<splitQuery.length; i++) {
+      splitQuery[i] = splitQuery[i].replace(/ /g, '');
+      if (splitQuery[i].length >= 2) {
+        if (queryArr.indexOf(splitQuery[i]) == -1)
+          queryArr.push(splitQuery[i]);
+        let allLower = splitQuery[i].toLowerCase();
+        if (queryArr.indexOf(allLower) == -1)
+          queryArr.push(allLower);
+        let firstCapital = allLower.substring(0,1).toUpperCase() + "" + allLower.substring(1,allLower.length);
+        if (queryArr.indexOf(firstCapital) == -1)
+          queryArr.push(firstCapital);
+      }
+    }
+    for (let i=0; i<queryArr.length; i++) {
+      for (let j=0; j<queryFields.length; j++) {
+        if (queryFields[j] != "STANDARD") {
+          queryStr += queryFields[j] + ":*" + queryArr[i] +"*";
+        }
+        else {
+          if (negativeBoosts.length > 0) {
+            queryStr += "(*" + queryArr[i] +"* ";
+            for (let k=0; k<negativeBoosts.length; k++) {
+              queryStr += "AND ((" + negativeBoosts[k] + ":* -*"+ queryArr[i] + "*) OR (-" + negativeBoosts[k] + ":[* TO *] AND *:*)) ";
+            }
+            queryStr += ")";
+          }
+          else
+            queryStr += "*" + queryArr[i] +"*";
+        }
+        if (qS.boosting)
+          queryStr += "^" + Math.abs(qS.boostingFactors[queryFields[j]]);
+        queryStr += " ";
+      }
+    }
+    return {
+      "queryStr": queryStr,
+      "queryArr": queryArr,
+      "queryFields": queryFields
+    };
+  }
 
 	checkField(field:string): boolean {
 		if (field == this.product_name || field == this.product_img || field == this.product_vendor_id || field == this.product_cat || field == this.product_cat_mix) {

@@ -77,7 +77,7 @@ export class UBLModelUtils {
      * @returns {ItemProperty}
      */
     public static createAdditionalItemProperty(property: Property, category: Category): ItemProperty {
-        const code: Code = category 
+        const code: Code = category
             ? new Code(category.id, selectPreferredName(category), category.categoryUri, category.taxonomyId, null)
             : new Code(null, null, null, "Custom", null);
 
@@ -127,7 +127,7 @@ export class UBLModelUtils {
 
         // create required item location quantity
         const ilq = this.createItemLocationQuantity("");
-        const catalogueLine = new CatalogueLine(uuid, null, null, false, 
+        const catalogueLine = new CatalogueLine(uuid, null, null, false,
             this.createPeriod(settings.warrantyPeriodRanges[0].start, settings.warrantyPeriodUnits[0]), [], ilq,[], goodsItem);
 
         // extra initialization
@@ -355,7 +355,7 @@ export class UBLModelUtils {
         receiptAdvice.deliveryCustomerParty = despatchAdvice.deliveryCustomerParty;
         receiptAdvice.despatchSupplierParty = despatchAdvice.despatchSupplierParty;
         receiptAdvice.receiptLine = [
-            new ReceiptLine(new Quantity(0, despatchAdvice.despatchLine[0].deliveredQuantity.unitCode), 
+            new ReceiptLine(new Quantity(0, despatchAdvice.despatchLine[0].deliveredQuantity.unitCode),
                 [], despatchAdvice.despatchLine[0].item)];
         return receiptAdvice;
     }
@@ -495,7 +495,7 @@ export class UBLModelUtils {
     }
 
     public static createAddress():Address {
-        return new Address(null,null,null,null, this.createCountry());
+        return new Address(null,null,null,null,null, this.createCountry());
     }
 
     public static createCountry():Country {
@@ -528,6 +528,7 @@ export class UBLModelUtils {
         const addr: Address = new Address();
         addr.buildingNumber = address.buildingNumber;
         addr.cityName = address.cityName;
+        addr.region = address.region;
         addr.postalZone = address.postalCode;
         addr.streetName = address.streetName;
         addr.country = new Country(address.country);

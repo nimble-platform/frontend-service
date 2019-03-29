@@ -306,6 +306,7 @@ export class BPDataService{
             address.country.name = new Text(settings.details.address.country,DEFAULT_LANGUAGE());
             address.postalZone = settings.details.address.postalCode;
             address.cityName = settings.details.address.cityName;
+            address.region = settings.details.address.region;
             address.buildingNumber = settings.details.address.buildingNumber;
             address.streetName = settings.details.address.streetName;
         });
@@ -752,4 +753,3 @@ export class BPDataService{
         this.modifiedCatalogueLines[0].goodsItem.item.dimension = dimensions;
     }
 }
-

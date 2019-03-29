@@ -7,6 +7,7 @@ export class Address {
         public buildingNumber: string,
         public cityName: string,
         public postalCode: string,
+        public region: string,
         public country: string,
     ) {  }
 }
