@@ -57,6 +57,7 @@ import {copy, createText, selectPreferredName} from '../../common/utils';
 import {Text} from "./publish/text";
 import {Attachment} from "./publish/attachment";
 import {LifeCyclePerformanceAssessmentDetails} from "./publish/life-cycle-performance-assessment-details";
+import {LCPAInput} from "./publish/lcpa-input";
 
 /**
  * Created by suat on 05-Jul-17.
@@ -584,7 +585,7 @@ export class UBLModelUtils {
         return party.partyName[0].name.value;
     }
 
-    public static isFilledLCPAInput(lcpaDetails: LifeCyclePerformanceAssessmentDetails): boolean {
+    public static isFilledLCPAInput(lcpaDetails: LCPAInput): boolean {
         if(!isNaN(parseFloat(lcpaDetails.assemblyCost.value)) ||
             !isNaN(parseFloat(lcpaDetails.consumableCost.value)) ||
             !isNaN(parseFloat(lcpaDetails.endOfLifeCost.value)) ||

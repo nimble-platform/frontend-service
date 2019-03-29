@@ -3,6 +3,7 @@ import {CatalogueLine} from "../../model/publish/catalogue-line";
 import {LcpaDetailModalComponent} from "./lcpa-detail-modal.component";
 import {LifeCyclePerformanceAssessmentDetails} from "../../model/publish/life-cycle-performance-assessment-details";
 import {LCPAInputDetail} from "../../model/publish/lcpa-input-detail";
+import {LCPAInput} from "../../model/publish/lcpa-input";
 
 @Component({
     selector: "product-lcpa-tab",
@@ -23,7 +24,10 @@ export class ProductLcpaTabComponent implements OnInit {
         if(this.catalogueLine.goodsItem.item.lifeCyclePerformanceAssessmentDetails == null) {
             this.catalogueLine.goodsItem.item.lifeCyclePerformanceAssessmentDetails = this.lcpaDetails;
         } else {
-            this.lcpaDetails = this.catalogueLine.goodsItem.item.lifeCyclePerformanceAssessmentDetails
+            this.lcpaDetails = this.catalogueLine.goodsItem.item.lifeCyclePerformanceAssessmentDetails;
+            if(this.lcpaDetails.lcpainput == null) {
+                this.lcpaDetails.lcpainput = new LCPAInput();
+            }
         }
     }
 
@@ -34,10 +38,10 @@ export class ProductLcpaTabComponent implements OnInit {
     }
 
     onDetailSpecified(detail: LCPAInputDetail): void {
-        this.catalogueLine.goodsItem.item.lifeCyclePerformanceAssessmentDetails.additionalLCPAInputDetail.push(detail);
+        this.catalogueLine.goodsItem.item.lifeCyclePerformanceAssessmentDetails.lcpainput.additionalLCPAInputDetail.push(detail);
     }
 
     onDeleteDetail(detailIndex: number): void {
-        this.catalogueLine.goodsItem.item.lifeCyclePerformanceAssessmentDetails.additionalLCPAInputDetail.splice(detailIndex, 1);
+        this.catalogueLine.goodsItem.item.lifeCyclePerformanceAssessmentDetails.lcpainput.additionalLCPAInputDetail.splice(detailIndex, 1);
     }
 }

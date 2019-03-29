@@ -1,93 +1,95 @@
-<quantity-input label="Average Life Cycle Length"
-                [disabled]="disabled"
-                [disableQuantityUnit]="true"
-                [quantityUnits]="['Month(s)']"
-                [quantity]="lcpaDetails.lifeCycleLength">
-</quantity-input>
-<amount-input label="Average Purchasing Price"
-              [rowClass]="'space-before'"
-              [disabled]="disabled"
-              [amount]="lcpaDetails.purchasingPrice"
-              [amountType]="'currency_quantity'">
-</amount-input>
-<amount-input label="Average Assembly Cost"
-              [rowClass]="'space-before'"
-              [disabled]="disabled"
-              [amount]="lcpaDetails.assemblyCost"
-              [amountType]="'currency_quantity'">
-</amount-input>
-<amount-input label="Average Transport Cost"
-              [rowClass]="'space-before'"
-              [disabled]="disabled"
-              [amount]="lcpaDetails.transportCost"
-              [amountType]="'currency_quantity'">
-</amount-input>
-<amount-input label="Average Consumable Cost"
-              [rowClass]="'space-before'"
-              [disabled]="disabled"
-              [amount]="lcpaDetails.consumableCost"
-              [amountType]="'currency_quantity'">
-</amount-input>
-<amount-input label="Average Energy Consumption Cost"
-              [rowClass]="'space-before'"
-              [disabled]="disabled"
-              [amount]="lcpaDetails.energyConsumptionCost"
-              [amountType]="'currency_quantity'">
-</amount-input>
-<amount-input label="Average Maintenance Cost"
-              [rowClass]="'space-before'"
-              [disabled]="disabled"
-              [amount]="lcpaDetails.maintenanceCost"
-              [amountType]="'currency_quantity'">
-</amount-input>
-<amount-input label="Average Spare Part Cost"
-              [rowClass]="'space-before'"
-              [disabled]="disabled"
-              [amount]="lcpaDetails.sparePartCost"
-              [amountType]="'currency_quantity'">
-</amount-input>
-<amount-input label="Average End of Life Cost"
-              [rowClass]="'space-before'"
-              [disabled]="disabled"
-              [amount]="lcpaDetails.endOfLifeCost"
-              [amountType]="'currency_quantity'">
-</amount-input>
-<ng-container *ngFor="let detail of catalogueLine.goodsItem.item.lifeCyclePerformanceAssessmentDetails.additionalLCPAInputDetail; let i = index">
-    <div [ngSwitch]="detail.valueQualifier">
-        <div *ngIf="i == 0">
-            <hr>
-            <h6>Additional LCPA Details</h6>
-        </div>
+<ng-container *ngIf="lcpaDetails.lcpainput">
+    <quantity-input label="Average Life Cycle Length"
+                    [disabled]="disabled"
+                    [disableQuantityUnit]="true"
+                    [quantityUnits]="['Month(s)']"
+                    [quantity]="lcpaDetails.lcpainput.lifeCycleLength">
+    </quantity-input>
+    <amount-input label="Average Purchasing Price"
+                  [rowClass]="'space-before'"
+                  [disabled]="disabled"
+                  [amount]="lcpaDetails.lcpainput.purchasingPrice"
+                  [amountType]="'currency_quantity'">
+    </amount-input>
+    <amount-input label="Average Assembly Cost"
+                  [rowClass]="'space-before'"
+                  [disabled]="disabled"
+                  [amount]="lcpaDetails.lcpainput.assemblyCost"
+                  [amountType]="'currency_quantity'">
+    </amount-input>
+    <amount-input label="Average Transport Cost"
+                  [rowClass]="'space-before'"
+                  [disabled]="disabled"
+                  [amount]="lcpaDetails.lcpainput.transportCost"
+                  [amountType]="'currency_quantity'">
+    </amount-input>
+    <amount-input label="Average Consumable Cost"
+                  [rowClass]="'space-before'"
+                  [disabled]="disabled"
+                  [amount]="lcpaDetails.lcpainput.consumableCost"
+                  [amountType]="'currency_quantity'">
+    </amount-input>
+    <amount-input label="Average Energy Consumption Cost"
+                  [rowClass]="'space-before'"
+                  [disabled]="disabled"
+                  [amount]="lcpaDetails.lcpainput.energyConsumptionCost"
+                  [amountType]="'currency_quantity'">
+    </amount-input>
+    <amount-input label="Average Maintenance Cost"
+                  [rowClass]="'space-before'"
+                  [disabled]="disabled"
+                  [amount]="lcpaDetails.lcpainput.maintenanceCost"
+                  [amountType]="'currency_quantity'">
+    </amount-input>
+    <amount-input label="Average Spare Part Cost"
+                  [rowClass]="'space-before'"
+                  [disabled]="disabled"
+                  [amount]="lcpaDetails.lcpainput.sparePartCost"
+                  [amountType]="'currency_quantity'">
+    </amount-input>
+    <amount-input label="Average End of Life Cost"
+                  [rowClass]="'space-before'"
+                  [disabled]="disabled"
+                  [amount]="lcpaDetails.lcpainput.endOfLifeCost"
+                  [amountType]="'currency_quantity'">
+    </amount-input>
+    <ng-container *ngFor="let detail of catalogueLine.goodsItem.item.lifeCyclePerformanceAssessmentDetails.lcpainput.additionalLCPAInputDetail; let i = index">
+        <div [ngSwitch]="detail.valueQualifier">
+            <div *ngIf="i == 0">
+                <hr>
+                <h6>Additional LCPA Details</h6>
+            </div>
 
-        <div class="row space-before">
-            <quantity-input class="col"
-                            *ngSwitchCase="'QUANTITY'"
+            <div class="row space-before">
+                <quantity-input class="col"
+                                *ngSwitchCase="'QUANTITY'"
+                                [disabled]="disabled"
+                                [label]="detail.name.value"
+                                [quantity]="detail.valueQuantity">
+                </quantity-input>
+                <text-input *ngSwitchDefault
+                            class="col"
                             [disabled]="disabled"
+                            [(text)]="detail.value.value"
                             [label]="detail.name.value"
-                            [quantity]="detail.valueQuantity">
-            </quantity-input>
-            <text-input *ngSwitchDefault
-                        class="col"
-                        [disabled]="disabled"
-                        [(text)]="detail.value.value"
-                        [label]="detail.name.value"
-                        [rows]="1">
-            </text-input>
-            <div class="col-1">
-                <button class="btn btn-danger btn-remove-value btn-sm btn-block"
-                        (click)="onDeleteDetail(i)">
-                    Delete
-                </button>
+                            [rows]="1">
+                </text-input>
+                <div class="col-1">
+                    <button class="btn btn-danger btn-remove-value btn-sm btn-block"
+                            (click)="onDeleteDetail(i)">
+                        Delete
+                    </button>
+                </div>
             </div>
         </div>
+    </ng-container>
+    <div class="d-flex justify-content-end space-before">
+        <button class="btn btn-outline-primary btn-sm" (click)="openLcpaDetailsModal($event)">
+            Add more LCPA details
+        </button>
     </div>
-</ng-container>
-<div class="d-flex justify-content-end space-before">
-    <button class="btn btn-outline-primary btn-sm" (click)="openLcpaDetailsModal($event)">
-        Add more LCPA details
-    </button>
-</div>
 
-<!-- Edit Property Value(s) Modal -->
-<lcpa-detail-modal (valueAdded)="onDetailSpecified($event)">
-</lcpa-detail-modal>
+    <!-- Edit Property Value(s) Modal -->
+    <lcpa-detail-modal (valueAdded)="onDetailSpecified($event)">
+    </lcpa-detail-modal>
+</ng-container>
