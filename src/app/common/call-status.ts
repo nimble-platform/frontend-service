@@ -35,26 +35,33 @@ export class CallStatus {
         this.fb_details = "";
         this.fb_showDetails = false;
         if(error) {
-            console.error(msg, error);
             this.fb_details = "Error "+error.status;
             if (error._body != "") {
               let errorJSON = {};
               try {
-                errorJSON = JSON.parse(error._body);
-              } catch (e) {}
-              if (errorJSON["error"] || errorJSON["expection"] || errorJSON["message"]) {
-                if (errorJSON["error"]) {
-                  this.fb_details += "<br/>";
-                  this.fb_details += errorJSON["error"];
-                }
-                if (errorJSON["message"]) {
-                  this.fb_details += "<br/>";
-                  this.fb_details += errorJSON["message"];
-                }
-                if (errorJSON["exception"]) {
-                  this.fb_details += "<br/>";
-                  this.fb_details += errorJSON["exception"];
-                }
+                  errorJSON = JSON.parse(error._body);
+                  if (errorJSON["error"] || errorJSON["exception"] || errorJSON["message"]) {
+                      if (errorJSON["error"]) {
+                          this.fb_details += "<br/>";
+                          this.fb_details += errorJSON["error"];
+                      }
+                      if (errorJSON["message"]) {
+                          this.fb_details += "<br/>";
+                          this.fb_details += errorJSON["message"];
+                      }
+                      if (errorJSON["exception"]) {
+                          this.fb_details += "<br/>";
+                          this.fb_details += errorJSON["exception"];
+                      }
+                  }
+
+                // the error data is not in the json format, so it's shown as it is
+              } catch (e) {
+                  if(error._body != null) {
+                      this.fb_details = error._body;
+                  } else {
+                      this.fb_details = error;
+                  }
               }
             }
         }

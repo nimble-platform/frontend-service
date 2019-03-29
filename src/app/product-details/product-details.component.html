@@ -4,6 +4,17 @@
             <div class="col-12">
                 <!-- Product Overview -->
                 <h1 class="py-2">{{selectPreferredValue(item.name)}}</h1>
+                <div class="float-right mt-1">
+                    <span *ngIf="!findPrefItem(line.hjid)" class="star star-b pointer" [ngClass]="{'disabled':addFavoriteCategoryStatus.isLoading()}" (click)="addFavorites(line)" title="Add To Favorite">
+                      <span class="half" style="width:0%">&#9733;</span>&#9733;
+                    </span>
+                    <span  *ngIf="findPrefItem(line.hjid)"  class="star star-b full pointer" [ngClass]="{'disabled':addFavoriteCategoryStatus.isLoading()}" (click)="removeFavorites(line)" title="Remove From Favorite">
+                      <span class="half" style="width:100%">&#9733;</span>&#9733;
+                    </span>
+                </div>
+                <div class="float-right mr-3 pt-2">
+                    <call-status [callStatus]="addFavoriteCategoryStatus"></call-status>
+                </div>
                 <product-details-overview [wrapper]="wrapper" [options]="options">
                 </product-details-overview>
             </div>
@@ -94,13 +105,13 @@
                 </div>
                 <div class="inline-order-group">
                     <span class="order-qty-range">
-                        <input type="range" [(ngModel)]="options.quantity" class="form-control-range" 
+                        <input type="range" [(ngModel)]="options.quantity" class="form-control-range"
                             min="0" [max]="getMaximumQuantity()" [step]="getSteps()"/>
                     </span>
                 </div>
                 <div class="inline-order-group">
                     <label class="order-label order-price">
-                        Total Price: 
+                        Total Price:
                     </label>
                     <span class="order-price-value">
                         {{getTotalPrice()}} {{ line.requiredItemLocationQuantity.price.priceAmount.currencyID }}
@@ -124,7 +135,7 @@
                 </div>
                 <div class="inline-order-group">
                     <label class="order-label order-price">
-                        Total Price: 
+                        Total Price:
                     </label>
                     <span class="order-price-value">
                         on demand
@@ -165,7 +176,7 @@
             </div>
             <div class="inline-order-group">
                 <label class="order-label order-price">
-                    Total Price: 
+                    Total Price:
                 </label>
                 <span class="order-price-value">
                     on demand
@@ -190,7 +201,7 @@
                         Request Information
                     </button>
                 </div>
-                <div *ngIf="isPpapAvailable() && !isLogistics">
+                <div *ngIf="config.showPPAP && isPpapAvailable() && !isLogistics">
                     <button class="btn btn-secondary space-before w-100" (click)="onStartPpap()">
                         Start Ppap
                     </button>

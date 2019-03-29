@@ -57,7 +57,7 @@ export class CatalogueService {
                 })
                 .catch(res => {
                     if (res.status == 404) {
-                        // no default catalogue yet, create new one
+                        // no default catalogue yet, create new one            
                         this.catalogueResponse = new CataloguePaginationResponse(null,0,[]);
                         return this.catalogueResponse;
                     } else {
@@ -65,6 +65,36 @@ export class CatalogueService {
                     }
                 });
         })
+    }
+
+
+    getFavouriteResponse(userId: string,limit:number=0, offset:number=0, sortOption=null): Promise<any>{
+        return this.userService.getPerson(userId).then(person => {
+            
+            let url = this.baseUrl + `/cataloguelines?limit=${limit}&offset=${offset}`;
+            // if there is a selected category to filter the results, then add it to the url
+    
+            if(sortOption){
+                url += `&sortOption=${sortOption}`;
+            }
+       
+            if(person){
+                url += `&ids=${person.favouriteProductID}`;                
+            }
+
+            return this.http
+                .get(url, {headers: this.getAuthorizedHeaders()})
+                .toPromise()
+                .then(res => {
+                    return res.json() as Array<CatalogueLine>;
+                })
+                .catch(res => {
+                    if(res.status == 500){
+                        return [];
+                    }
+                    this.handleError(res.getBody());
+                });
+            });
     }
 
     getCatalogueLine(catalogueId:string, lineId:string):Promise<CatalogueLine> {
@@ -165,7 +195,7 @@ export class CatalogueService {
                             //observer.next(JSON.parse(xhr.response));
                             resolve(xhr.response);
                         } else {
-                            reject(JSON.parse(xhr.response).message);
+                            reject(xhr.response);
                         }
                     }
                 };
@@ -186,13 +216,19 @@ export class CatalogueService {
 
             let xhr: XMLHttpRequest = new XMLHttpRequest();
             xhr.onreadystatechange = () => {
+                let response: any = {};
+                // the operation completed
                 if (xhr.readyState === 4) {
                     if (xhr.status === 200) {
-                        resolve(xhr.response);
-                    } else if(xhr.status === 400) {
-                        reject(xhr.response);
+                        response.status = xhr.status;
+                        response.message = "Image package uploaded successfully.";
+                        resolve(response);
+                    } else if(xhr.status == 504) {
+                        response.status = xhr.status;
+                        response.message = "Images uploaded but still being processed. They will be visible once the processing is done.";
+                        resolve(response);
                     } else {
-                        reject(JSON.parse(xhr.response).message);
+                        reject(xhr.response);
                     }
                 }
             };
@@ -200,6 +236,36 @@ export class CatalogueService {
             xhr.open('POST', url, true);
             xhr.setRequestHeader('Authorization', token);
             xhr.send(formData);
+        });
+    }
+
+    exportCatalogue(catalogueUuid:string): Promise<any> {
+        const token = 'Bearer '+this.cookieService.get("bearer_token");
+        const languageId = DEFAULT_LANGUAGE();
+        const url = this.baseUrl + `/catalogue/export?uuid=${catalogueUuid}&languageId=${languageId}`;
+        return new Promise<any>((resolve, reject) => {
+
+            let xhr = new XMLHttpRequest();
+            xhr.open('GET', url, true);
+            xhr.setRequestHeader('Accept', 'application/zip');
+            xhr.setRequestHeader('Authorization', token);
+            xhr.responseType = 'blob';
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+
+                        var contentType = 'application/zip';
+                        var blob = new Blob([xhr.response], {type: contentType});
+                        // file name
+                        let fileName = catalogueUuid + '_' + new Date().toString();
+                        resolve({fileName: fileName, content: blob});
+                    } else {
+                        reject(xhr.status);
+                    }
+                }
+            }
+            xhr.send();
         });
     }
 

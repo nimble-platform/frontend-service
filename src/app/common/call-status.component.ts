@@ -25,8 +25,8 @@ export class CallStatusComponent {
     closed: boolean = true;
 
     handleClick(event){
-        // remove the alert if it shown already, otherwise it removes the loading icon as well
-        if(this.callStatus.fb_errordetc == false) {
+        // if the call is still active, ignore click
+        if(this.callStatus.fb_submitted == true) {
             return;
         }
 
@@ -42,6 +42,10 @@ export class CallStatusComponent {
             clickedComponent = clickedComponent.parentNode;
         } while (clickedComponent);
 
+        // if successful and outside the box, reset the status
+        if(!inside && this.callStatus.fb_callback == true) {
+            this.callStatus.reset();
+        }
         if(!inside && this.callStatus.fb_errordetc == true) {
             //this.callStatus.reset();
         }

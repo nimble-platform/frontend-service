@@ -1,5 +1,5 @@
 <!-- Topmost navigation bar -->
-<ul class="nav nav-tabs" *ngIf="publishMode !== 'edit'">
+<ul class="nav nav-tabs" *ngIf="publishMode !== 'edit' && publishMode !== 'copy'">
     <li class="nav-item">
         <a href id="singleUpload"
            [ngClass]="{'nav-link': true, active: publishingGranularity === 'single'}"
@@ -17,94 +17,32 @@
     </li>
 </ul>
 
+<!-- Selected Categories -->
+<div class="row space-before">
+    <div class="col-2 category-list-label">
+        <strong *ngIf="!isProductCategoriesLoading()">Categories: </strong>
+        <strong class="mr-2" *ngIf="isProductCategoriesLoading()">Fetching Categories </strong>
+        <call-status [callStatus]="productCategoryRetrievalStatus"></call-status>
+    </div>
+    <div class="col-10 object-list">
+        <div *ngFor="let selectedCategory of selectedCategories"
+             class="bordered my-1 ml-1" title="{{selectedCategory.taxonomyId}}">
+            <small class="p-0">{{selectPreferredName(selectedCategory)}}</small>
+            <i class="fa fa-times-circle pl-1" placement="right" (click)="onRemoveCategory(selectedCategory)"></i>
+        </div>
+        <button class="btn btn-outline-primary btn-add-category"
+                (click)="onAddCategory()" [disabled]="isLoading()">
+            Add Category
+        </button>
+    </div>
+</div>
+
 <div *ngIf="publishingGranularity === 'bulk'">
-    <!-- Selected Categories -->
-    <div class="row space-before">
-        <div class="col-2 category-list-label">
-            <strong *ngIf="!isProductCategoriesLoading()">Categories: </strong>
-            <strong class="mr-2" *ngIf="isProductCategoriesLoading()">Fetching Categories </strong>
-            <call-status [callStatus]="productCategoryRetrievalStatus"></call-status>
-        </div>
-        <div class="col-10 object-list">
-            <div *ngFor="let selectedCategory of selectedCategories"
-                 class="bordered my-1 ml-1" title="{{selectedCategory.taxonomyId}}">
-                <small class="p-0">{{selectPreferredName(selectedCategory)}}</small>
-                <i class="fa fa-times-circle pl-1" placement="right" (click)="onRemoveCategory(selectedCategory)"></i>
-            </div>
-            <button class="btn btn-outline-primary btn-add-category"
-                    (click)="onAddCategory()" [disabled]="isLoading()">
-                Add Category
-            </button>
-        </div>
-    </div>
-
-    <div class="d-flex mt-3 mb-4">
-        <label class="col-9">1. Download the product / service category template</label>
-        <select [(ngModel)]="templateLanguage" class="form-control col-1" type="text" style="margin-right: 1px">
-            <option *ngFor='let language of languages' [value]="language" [selected]="templateLanguage === language">{{language}}</option>
-        </select>
-        <button class="btn btn-secondary col-2"
-                (click)="downloadTemplate()">Download template
-        </button>
-    </div>
-    <div class="d-flex mb-4">
-        <label class="col-9">2. Select upload mode.
-            <ul>
-                <li>Append mode: Already published products / services are updated if newer versions are provided in the template, new products / services are appended to the current catalogue.</li>
-                <li>Replace mode: All previously published items are deleted; and only the new ones are added to the catalogue.</li>
-            </ul>
-        </label>
-        <select #uploadModeSelect class="col-3 btn btn-outline-secondary align-self-start" style="text-align-last:center;" (change)="checkMode(uploadModeSelect.value)">
-            <option value="append">Append</option>
-            <option value="replace">Replace</option>
-        </select>
-    </div>
-    <div class="d-flex mb-4">
-        <label class="col-9">3. Upload the template after filling it with your product / service information
-        </label>
-        <input #template type="file" (change)="uploadTemplate($event, uploadModeSelect.value)"
-                accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                style="display: none">
-        <button class="btn btn-secondary col-3"
-                (click)="template.click()">Upload template
-        </button>
-    </div>
-    <div class="d-flex mb-4">
-        <label class="col-9">4. Upload a "zip package" including product / service images. Each image must be suffixed with the identifier of the product / service. For example: pid1.imageFile.jpg, pid1.imageFile2.png, etc.
-        </label>
-        <input #imagePackage type="file" (change)="uploadImagePackage($event)"
-                accept="application/zip"
-                style="display: none">
-        <button class="btn btn-secondary col-3 align-self-start"
-                (click)="imagePackage.click()">Upload Image Package
-        </button>
-    </div>
-
-    <call-status [callStatus]="publishStatus" [large]="true">
-    </call-status>
+    <bulk-publish [selectCategories]="selectedCategories">
+    </bulk-publish>
 </div>
 
 <ng-container *ngIf="publishingGranularity === 'single' && catalogueLine">
-    <!-- Selected Categories -->
-    <div class="row space-before">
-        <div class="col-2 category-list-label">
-            <strong *ngIf="!isProductCategoriesLoading()">Categories: </strong>
-            <strong class="mr-2" *ngIf="isProductCategoriesLoading()">Fetching Categories </strong>
-            <call-status [callStatus]="productCategoryRetrievalStatus"></call-status>
-        </div>
-        <div class="col-10 object-list">
-            <div *ngFor="let selectedCategory of selectedCategories"
-                class="bordered my-1 ml-1" title="{{selectedCategory.taxonomyId}}">
-                <small class="p-0">{{selectPreferredName(selectedCategory)}}</small>
-                <i class="fa fa-times-circle pl-1" placement="right" (click)="onRemoveCategory(selectedCategory)"></i>
-            </div>
-            <button class="btn btn-outline-primary btn-add-category"
-                (click)="onAddCategory()" [disabled]="isLoading()">
-                Add Category
-            </button>
-        </div>
-    </div>
-
     <hr>
 
     <!-- Image, Name & Description -->
@@ -427,7 +365,7 @@
         </div>
         <div class="col-3">
             <button class="btn btn-primary action" [disabled]="isLoading() || !isValidCatalogueLine()" (click)="onPublish()">
-                {{ publishStateService.publishMode === "create" ? "Publish" : "Save"  }}
+                {{ publishStateService.publishMode === "edit" ? "Save" : "Publish"  }}
             </button>
         </div>
     </div>

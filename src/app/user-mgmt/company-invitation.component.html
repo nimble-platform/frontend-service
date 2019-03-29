@@ -1,4 +1,4 @@
-<div *ngIf="appComponent.checkRoles('comp')">
+<div *ngIf="appComponent.checkRoles('comp') && !platformManagerMode">
 
 	<p class="nimble-title">Send Invitation</p>
 
@@ -65,7 +65,7 @@
 			<th>E-mail</th>
 			<th>Status</th>
 			<th>Assigned Roles</th>
-			<th *ngIf="appComponent.checkRoles('comp')">Options</th>
+			<th *ngIf="appComponent.checkRoles('comp') && !platformManagerMode">Options</th>
 		</tr>
 		<tr *ngIf="membersCallStatus.isDisplayed() ">
 			<td colspan="4">
@@ -86,8 +86,9 @@
 					<div *ngIf="inv.roleIDs.indexOf(role.identifier)!=-1">{{role.name}}</div>
 				</span>
 			</td>
-			<td *ngIf="appComponent.checkRoles('comp')">
+			<td *ngIf="appComponent.checkRoles('comp') && !platformManagerMode">
 				<button *ngIf="!inv.pending&&!checkMail(inv.email)" class="btn btn-primary btn-sm" (click)="editRole(inv);openModal(role);">Edit</button>
+				<button *ngIf="inv.pending&&!checkMail(inv.email)&&appComponent.checkRoles('legal')" class="btn btn-danger btn-sm" (click)="cancelInvite(inv)">Cancel</button>
 				<button *ngIf="!inv.pending&&!checkMail(inv.email)&&appComponent.checkRoles('legal')" class="btn btn-danger btn-sm ml-2" (click)="deleteInvite(inv)">Delete</button>
 			</td>
 		</tr>

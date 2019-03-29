@@ -216,7 +216,7 @@ export class BPDataService{
     // This function is used to start viewing business processes.
     // Dashboard and product-details are two way to start viewing business processes. For dashboard, business processes contain process document metadatas since
     // they are already started/completed. However, in the product-details page, we start a new business process, this is why we have a null check for processMetadata in the function.
-    startBp(bpStartEvent:BpStartEvent,clearSearchContext:boolean,bpURLParams:BpURLParams){
+    async startBp(bpStartEvent:BpStartEvent,clearSearchContext:boolean,bpURLParams:BpURLParams){
         this.resetBpData();
         if(clearSearchContext){
             this.searchContextService.clearSearchContext();
@@ -228,10 +228,11 @@ export class BPDataService{
                 bpStartEvent.collaborationGroupId = null;
             }
         }
-        if(bpStartEvent.processMetadata){
-            this.setBpMessages(bpStartEvent.processMetadata);
-        }
+
         this.bpStartEvent = bpStartEvent;
+        if(bpStartEvent.processMetadata){
+            await this.setBpMessages(bpStartEvent.processMetadata);
+        }
         this.bpStartEventBehaviorSubject.next(this.bpStartEvent);
         this.navigateToBpExec(bpURLParams);
     }
@@ -306,6 +307,7 @@ export class BPDataService{
             address.country.name = new Text(settings.details.address.country,DEFAULT_LANGUAGE());
             address.postalZone = settings.details.address.postalCode;
             address.cityName = settings.details.address.cityName;
+            address.region = settings.details.address.region;
             address.buildingNumber = settings.details.address.buildingNumber;
             address.streetName = settings.details.address.streetName;
         });
@@ -752,4 +754,3 @@ export class BPDataService{
         this.modifiedCatalogueLines[0].goodsItem.item.dimension = dimensions;
     }
 }
-

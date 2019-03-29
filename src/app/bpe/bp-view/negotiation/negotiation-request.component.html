@@ -144,7 +144,7 @@
 <hr>
 
 <!-- Data Monitoring -->
-<div class="row">
+<div class="row" *ngIf="config.dataChannelsEnabled">
     <div class="col-12">
         <h4>Data Monitoring</h4>
         <div class="input-group input-group-lg">
@@ -156,7 +156,7 @@
     </div>
 </div>
 
-<hr>
+<hr *ngIf="config.dataChannelsEnabled">
 
 <!-- Delivery -->
 <div class="row">

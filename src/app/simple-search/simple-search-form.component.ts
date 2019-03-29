@@ -6,7 +6,7 @@ import * as myGlobals from '../globals';
 import {SearchContextService} from "./search-context.service";
 import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
-import { copy, selectNameFromLabelObject } from '../common/utils';
+import {copy, roundToTwoDecimals, selectNameFromLabelObject} from '../common/utils';
 import { CallStatus } from '../common/call-status';
 import { CURRENCIES } from "../catalogue/model/constants";
 import { CategoryService } from '../catalogue/category/category.service';
@@ -44,6 +44,9 @@ export class SimpleSearchFormComponent implements OnInit {
 	product_nonfilter_regex = myGlobals.product_nonfilter_regex;
 	product_cat = myGlobals.product_cat;
 	product_cat_mix = myGlobals.product_cat_mix;
+	party_facet_field_list = myGlobals.party_facet_field_list;
+	roundToTwoDecimals = roundToTwoDecimals;
+	item_manufacturer_id = myGlobals.item_manufacturer_id;
 
 	CURRENCIES = CURRENCIES;
 	selectedCurrency: any = "EUR";
@@ -63,6 +66,7 @@ export class SimpleSearchFormComponent implements OnInit {
 	showOtherSection = false;
 
 	categoriesCallStatus: CallStatus = new CallStatus();
+	companyCallStatus: CallStatus = new CallStatus();
 	searchCallStatus: CallStatus = new CallStatus();
 	searchDone = false;
 	callback = false;
@@ -90,10 +94,17 @@ export class SimpleSearchFormComponent implements OnInit {
     // check whether 'p' query parameter exists or not
 	noP = true;
 
+	//manufacturer.legalName : {id,count}
+	//manufacturerIdCountMap : { [indx : string], string};
+	manufacturerIdCountMap : any;
+
+
 	config = myGlobals.config;
 	getMultilingualLabel = selectNameFromLabelObject;
 	// used to get labels of the ubl properties
 	ublProperties = null;
+
+	partyNamesList :any;
 
 	constructor(
 		private simpleSearchService: SimpleSearchService,
@@ -142,9 +153,9 @@ export class SimpleSearchFormComponent implements OnInit {
 			} else {
 				this.searchContext = searchContext;
 			}
-			if (q)
-				this.getCall(q,fq,p,cat,catID);
-			else {
+			if (q) {
+				this.getCall(q, fq, p, cat, catID);
+			} else {
 				this.callback = false;
 				this.searchDone = false;
 				this.searchCallStatus.reset();
@@ -175,7 +186,7 @@ export class SimpleSearchFormComponent implements OnInit {
       debounceTime(200),
       distinctUntilChanged(),
       switchMap(term =>
-        this.simpleSearchService.getSuggestions(term,(DEFAULT_LANGUAGE()+"_"+this.product_name))
+        this.simpleSearchService.getSuggestions(term,("{LANG}_"+this.product_name))
       )
     );
 
@@ -189,7 +200,7 @@ export class SimpleSearchFormComponent implements OnInit {
 			} else {
 				// before starting to build category tree, we have to get categories to retrieve their names
 				this.buildCatTree(res.facets[this.product_cat_mix].entry);
-				this.categoriesCallStatus.callback("Categories loaded.", true);
+				//this.categoriesCallStatus.callback("Categories loaded.", true);
 			}
 		})
 		.catch(error => {
@@ -213,8 +224,9 @@ export class SimpleSearchFormComponent implements OnInit {
 		}
 		this.cat_loading = true;
 		var indexCategories = await this.categoryService.getCategories(categoryUris);
-		this.cat_loading = false;
 		let categoryDisplayInfo: any = this.getCategoryDisplayInfo(indexCategories);
+		let split_idx:any = -1;
+		let name:any = "";
 		if (taxonomyPrefix != "") {
 			// ToDo: Remove manual distinction after search update
 			// ================================================================================
@@ -251,8 +263,10 @@ export class SimpleSearchFormComponent implements OnInit {
 					var count = categoryCount.count;
 					var ontology = categoryCount.label;
 					if (categoryDisplayInfo[ontology] != null && ontology.indexOf(taxonomyPrefix) != -1) {
+						split_idx = ontology.lastIndexOf("#");
+						name = ontology.substr(split_idx+1);
 						if (categoryDisplayInfo[ontology].isRoot && this.config.categoryFilter[taxonomy].hiddenCategories.indexOf(name) == -1){
-							if(ontology.indexOf("http://www.aidimme.es/FurnitureSectorOntology.owl#") != -1){
+							if(ontology.startsWith(taxonomyPrefix)){
 								lvl.push({"name":ontology,"id":ontology,"count":count,"preferredName": selectNameFromLabelObject(categoryDisplayInfo[ontology].label)});
 							}else{
 								lvl.push({"name":ontology,"id":ontology,"count":count,"preferredName":ontology});
@@ -277,10 +291,10 @@ export class SimpleSearchFormComponent implements OnInit {
 							var ontology = categoryCount.label;
 
 							if (categoryDisplayInfo[uri] != null && uri.indexOf(taxonomyPrefix) != -1) {
-								var split_idx = uri.lastIndexOf("#");
-								var name = uri.substr(split_idx+1);
+								split_idx = uri.lastIndexOf("#");
+								name = uri.substr(split_idx+1);
 								if (this.config.categoryFilter[taxonomy].hiddenCategories.indexOf(name) == -1) {
-									if (ontology.indexOf("http://www.aidimme.es/FurnitureSectorOntology.owl#") != -1) {
+									if (ontology.startsWith(taxonomyPrefix)) {
 										lvl.push({"name": uri, "id": uri, "count": count, "preferredName": selectNameFromLabelObject(categoryDisplayInfo[uri].label)});
 									} else {
 										lvl.push({"name": uri, "id": uri, "count": count, "preferredName": name});
@@ -294,6 +308,8 @@ export class SimpleSearchFormComponent implements OnInit {
 				this.sortCatLevels();
 			}
 		}
+		this.cat_loading = false;
+		this.categoriesCallStatus.callback("Categories loaded.", true);
 	}
 
 	private constructCategoryTree(indexCategories: any[], levels: string[][]) {
@@ -360,74 +376,94 @@ export class SimpleSearchFormComponent implements OnInit {
 		return level;
 	}
 
-	private getCall(q:string, fq:any, p:number, cat:string, catID:string) {
+	private getCall(q: string, fq: any, p: number, cat: string, catID: string) {
 		this.cat_loading = true;
 		this.searchDone = true;
-    	this.model.q=q;
-		this.objToSubmit.q=q;
-		this.facetQuery=fq;
-		this.page=p;
+		this.model.q = q;
+		this.objToSubmit.q = q;
+		this.facetQuery = fq;
+		this.page = p;
 		this.searchCallStatus.submit();
 		this.simpleSearchService.getFields()
-		.then(res => {
-			let fieldLabels:string [] = this.getFieldNames(res);
-			this.simpleSearchService.get(q,Object.keys(fieldLabels).concat(this.product_filter_comp).concat(this.product_filter_trust),fq,p,cat,catID)
 			.then(res => {
-				this.simpleSearchService.getUblProperties(Object.keys(fieldLabels).concat(this.product_filter_comp).concat(this.product_filter_trust)).then(response => {
-					this.facetObj = [];
-					this.temp = [];
-					var index = 0;
-					for (let facet in res.facets) {
-						if (facet == this.product_cat_mix) {
-							this.buildCatTree(res.facets[this.product_cat_mix].entry);
-							this.handleFacets(fieldLabels, res, p, response.result)
+				let fieldLabels: string [] = this.getFieldNames(res);
+				this.simpleSearchService.get(q, Object.keys(fieldLabels), fq, p, cat, catID)
+					.then(res => {
+						if (res.result.length == 0) {
+							this.cat_loading = false;
+							this.callback = true;
+							this.searchCallStatus.callback("Search done.", true);
+							this.response = res.result;
+							this.size = res.totalElements;
+							this.page = p;
+							this.start = this.page * 10 - 10 + 1;
+							this.end = this.start + res.result.length - 1;
 						}
-					}
+						else {
+							this.simpleSearchService.getUblProperties(Object.keys(fieldLabels)).then(response => {
+								this.facetObj = [];
+								this.temp = [];
+								this.manufacturerIdCountMap = new Map();
 
-					this.cat_loading = false;
-					this.callback = true;
-					this.searchCallStatus.callback("Search done.", true);
+								for (let facet in res.facets) {
+									if (facet == this.product_cat_mix) {
+										this.buildCatTree(res.facets[this.product_cat_mix].entry);
+										this.handleFacets(fieldLabels, res, p, response.result);
+										break;
+									}
+								}
 
-					this.temp = res.result;
-					for (let doc in this.temp) {
-						if (this.temp[doc][this.product_img]) {
-							var img = this.temp[doc][this.product_img];
-							if (Array.isArray(img)) {
-								this.temp[doc][this.product_img] = img[0];
-							}
+								for (let facet in res.facets) {
+									if (facet == this.item_manufacturer_id) {
+										let facetEntries = res.facets[this.item_manufacturer_id].entry;
+										for (let manufacturerEntry of facetEntries) {
+											this.manufacturerIdCountMap.set(manufacturerEntry.label, manufacturerEntry.count);
+										}
+										//getting the manufacturer ids list
+										let manufacturerIds = Array.from(this.manufacturerIdCountMap.keys());
+										this.getCompanyNameFromIds(manufacturerIds).then((res1) => {
+											this.handleCompanyFacets(res1, "manufacturer.", this.manufacturerIdCountMap);
+											//this.cat_loading = false;
+											this.callback = true;
+											this.searchCallStatus.callback("Search done.", true);
+
+											this.temp = res.result;
+											for (let doc in this.temp) {
+												if (this.temp[doc][this.product_img]) {
+													var img = this.temp[doc][this.product_img];
+													if (Array.isArray(img)) {
+														this.temp[doc][this.product_img] = img[0];
+													}
+												}
+											}
+
+											this.response = copy(this.temp);
+											this.size = res.totalElements;
+											this.page = p;
+											this.start = this.page * 10 - 10 + 1;
+											this.end = this.start + res.result.length - 1;
+
+										}).catch((error) => {
+											this.searchCallStatus.error("Error while creating Vendor filters in the search.", error);
+										});
+										break;
+									}
+								}
+
+							}).catch(error => {
+								this.searchCallStatus.error("Error while running search.", error);
+							})
+							this.fetchImages(res.result);
 						}
-					}
-					/*
-                     for (let doc in this.temp) {
-                     if (this.isJson(this.temp[doc][this.product_img])) {
-                     var json = JSON.parse(this.temp[doc][this.product_img]);
-                     var img = "";
-                     if (json.length > 1)
-                     img = "data:"+JSON.parse(this.temp[doc][this.product_img][0])[0].mimeCode+";base64,"+JSON.parse(this.temp[doc][this.product_img][0])[0].value;
-                     else
-                     img = "data:"+this.temp[doc][this.product_img].mimeCode+";base64,"+this.temp[doc][this.product_img].value;
-                     this.temp[doc][this.product_img] = img;
-                     }
-                     }
-                     */
-					this.response = copy(this.temp);
-					this.size = res.totalElements;
-					this.page = p;
-					this.start = this.page*10-10+1;
-					this.end = this.start+res.result.length-1;
-				}).catch(error => {
-					this.searchCallStatus.error("Error while running search.", error);
-				})
 
-				this.fetchImages(res.result);
+					})
+					.catch(error => {
+						this.searchCallStatus.error("Error while running search.", error);
+					});
 			})
 			.catch(error => {
 				this.searchCallStatus.error("Error while running search.", error);
 			});
-		})
-		.catch(error => {
-			this.searchCallStatus.error("Error while running search.", error);
-		});
 	}
 
 	fetchImages(searchResults:any[]): void {
@@ -460,6 +496,81 @@ export class SimpleSearchFormComponent implements OnInit {
 		}
 	}
 
+	handleCompanyFacets(res,prefix :string, manufacturerIdCountMap:any){
+		//this.facetObj = [];
+		this.temp = [];
+		//map for name:id
+		//loop through the result sent to create name:Id mapping
+		let manufacturerNameIdMap = new Map();
+		for(let i=0; i<res.result.length; i++){
+			let manufacturerId = res.result[i].id;
+			let manufacturerName = res.result[i].legalName;
+			manufacturerNameIdMap.set(manufacturerName, manufacturerId);
+		}
+
+		for (let facet in res.facets) {
+			if (this.simpleSearchService.checkField(facet)) {
+				//TO DO: currently only handles manufacturer.legalName facet because there is no way to retrieve item counts related
+				//to other company facets (manufacturer.ppapComplianceLevel","manufacturer.ppapDocumentType)
+				if (facet == "legalName") {
+					let propertyLabel = this.getName(facet);
+					let facet_innerLabel;
+					let facet_innerCount;
+					let facetCount = 0;
+
+					let name = prefix + res.facets[facet].fieldName;
+					let realName = prefix + res.facets[facet].fieldName;
+					let total = 0;
+					let selected = false;
+
+					//creating options[]
+					let options: any[] = [];
+
+					for (let facet_inner of res.facets[facet].entry) {
+						facet_innerLabel = facet_inner.label;
+						facet_innerCount = facet_inner.count;
+						let id = manufacturerNameIdMap.get(facet_innerLabel);
+						let itemCountForManufacturer = manufacturerIdCountMap.get(id);
+						facetCount = itemCountForManufacturer;
+
+						if (facet_innerLabel != "" && facet_innerLabel != ":" && facet_innerLabel != ' ' && facet_innerLabel.indexOf("urn:oasis:names:specification:ubl:schema:xsd") == -1) {
+							options.push({
+								"name": facet_inner.label, //legalName
+								"realName": facet_innerLabel, // the displayed label
+								"count": facetCount
+							});
+							total += facetCount;
+							 if (this.checkFacet(name, facet_inner.label))
+							 	selected = true;
+						}
+					}
+
+					options.sort(function(a,b){
+						var a_c = a.name;
+						var b_c = b.name;
+						return a_c.localeCompare(b_c);
+					});
+					options.sort(function(a,b){
+						return b.count-a.count;
+					});
+
+					this.facetObj.push({
+						"name": name,
+						"realName": realName,
+						"options": options,
+						"total": total,
+						"selected": selected,
+						"expanded": false
+					});
+
+				} else {
+					//need to implement the logic to get the correct counts for other company facets ;
+				}
+			}
+		}
+
+	}
+
 	handleFacets(facetMetadata,res,p,ublProperties){
 		this.ublProperties = ublProperties;
 		this.facetObj = [];
@@ -475,7 +586,8 @@ export class SimpleSearchFormComponent implements OnInit {
 					"realName":facetMetadataExists ? selectNameFromLabelObject(facetMetadata[facet].label) : propertyLabel,
 					"options":[],
 					"total":0,
-					"selected":false
+					"selected":false,
+					"expanded":false
 				});
 
 				let label;
@@ -888,5 +1000,19 @@ export class SimpleSearchFormComponent implements OnInit {
 		}
 		return true;
 	}
+
+	getCompanyNameFromIds(idList: any[]): Promise<any>{
+		let query = "";
+		let length = idList.length;
+		while (length--) {
+			//full_url += "&fq="+encodeURIComponent(facetQuery);
+			query = query+"id:"+idList[length];
+			if(length != 0){
+				query = query+" OR ";
+			}
+		}
+		return this.simpleSearchService.getCompanies(query,this.party_facet_field_list,idList);
+	}
+
 
 }

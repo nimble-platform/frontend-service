@@ -1,6 +1,6 @@
 import { Price } from "../catalogue/model/publish/price";
 import { Quantity } from "../catalogue/model/publish/quantity";
-import { currencyToString } from "./utils";
+import {currencyToString, roundToTwoDecimals} from "./utils";
 import { ItemPriceWrapper } from "./item-price-wrapper";
 import {PriceOption} from '../catalogue/model/publish/price-option';
 import {PRICE_OPTIONS} from '../catalogue/model/constants';
@@ -29,6 +29,7 @@ export class PriceWrapper {
     presentationMode:string = 'edit';
     // this field is used to create discount-modal view
     appliedDiscounts: PriceOption[] = [];
+    roundToTwoDecimals= roundToTwoDecimals;
 
     constructor(public price: Price,
                 public quantity: Quantity = new Quantity(1, price.baseQuantity.unitCode),
@@ -130,6 +131,7 @@ export class PriceWrapper {
                     let checkBuildingNumber = priceOption.itemLocationQuantity.applicableTerritoryAddress[0].buildingNumber != "";
                     let checkPostalZone = priceOption.itemLocationQuantity.applicableTerritoryAddress[0].postalZone != "";
                     let checkCityName = priceOption.itemLocationQuantity.applicableTerritoryAddress[0].cityName != "";
+                    let checkRegion = priceOption.itemLocationQuantity.applicableTerritoryAddress[0].region != "";
                     let checkCountryName = priceOption.itemLocationQuantity.applicableTerritoryAddress[0].country && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].country.name.value != "";
                     if(checkStreetName && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].streetName.toLocaleLowerCase() != this.deliveryLocation.streetName.toLocaleLowerCase()){
                         continue;
@@ -141,6 +143,9 @@ export class PriceWrapper {
                         continue;
                     }
                     if(checkCityName && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].cityName.toLocaleLowerCase() != this.deliveryLocation.cityName.toLocaleLowerCase()){
+                        continue;
+                    }
+                    if(checkRegion && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].region.toLocaleLowerCase() != this.deliveryLocation.region.toLocaleLowerCase()){
                         continue;
                     }
                     if(checkCountryName && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].country.name.value.toLocaleLowerCase() != this.deliveryLocation.country.name.value.toLocaleLowerCase()){
@@ -190,7 +195,7 @@ export class PriceWrapper {
         if(!this.hasPrice()) {
             return "Not specified";
         }
-        return `${this.totalPrice} ${this.currency}`;
+        return `${roundToTwoDecimals(this.totalPrice)} ${this.currency}`;
     }
 
     get pricePerItemString(): string {
@@ -202,19 +207,19 @@ export class PriceWrapper {
         }
 
         if(this.price.baseQuantity.value === 1) {
-            return `${this.roundPrice(totalPrice/qty.value)} ${currencyToString(this.price.priceAmount.currencyID)} per ${this.price.baseQuantity.unitCode}`
+            return `${this.roundToTwoDecimals(totalPrice/qty.value)} ${currencyToString(this.price.priceAmount.currencyID)} per ${this.price.baseQuantity.unitCode}`
         }
-        return `${this.roundPrice(totalPrice/qty.value)} ${currencyToString(this.price.priceAmount.currencyID)} for ${this.price.baseQuantity.value} ${this.price.baseQuantity.unitCode}`
+        return `${this.roundToTwoDecimals(totalPrice/qty.value)} ${currencyToString(this.price.priceAmount.currencyID)} for ${this.price.baseQuantity.value} ${this.price.baseQuantity.unitCode}`
     }
 
     get currency(): string {
         return currencyToString(this.price.priceAmount.currencyID);
     }
-    
+
     set currency(currency: string) {
         this.price.priceAmount.currencyID = currency;
     }
-    
+
     hasPrice(): boolean {
         // != here gives "not null or undefined", which is the behaviour we want.
         return this.price.priceAmount.value != null;

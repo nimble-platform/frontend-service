@@ -10,7 +10,7 @@ import { CallStatus } from "../../../common/call-status";
 import { isTransportService } from "../../../common/utils";
 import { CompanySettings } from "../../../user-mgmt/model/company-settings";
 import {Item} from '../../model/publish/item';
-import {selectDescription} from '../../../common/utils';
+import {selectDescription,selectName} from '../../../common/utils';
 
 @Component({
     selector: 'catalogue-line-panel',
@@ -36,8 +36,8 @@ export class CatalogueLinePanelComponent {
                 private router: Router) {
     }
 
-    selectDescription (item:  Item) {
-        return selectDescription(item);
+    selectItemName (item:  Item) {
+        return selectName(item);
     }
 
     ngOnInit() {

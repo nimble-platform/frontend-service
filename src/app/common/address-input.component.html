@@ -1,19 +1,24 @@
 <div class="row address-row">
-    <div class="col-12">
+    <div class="col-6">
             <text-input label="Street Name" [(text)]="address.streetName" [presentationMode]="presentationMode" [disabled]="disabled"
-            labelClass="col-2" valueClass="col-10">
+            labelClass="col-4" valueClass="col-8">
+        </text-input>
+    </div>
+    <div class="col-6">
+        <text-input label="Building Number" [(text)]="address.buildingNumber" [presentationMode]="presentationMode" [disabled]="disabled"
+            labelClass="col-4" valueClass="col-8">
         </text-input>
     </div>
 </div>
 
 <div class="row address-row">
     <div class="col-6">
-        <text-input label="Building Number" [(text)]="address.buildingNumber" [presentationMode]="presentationMode" [disabled]="disabled"
+        <text-input label="City / Town" [(text)]="address.cityName" [presentationMode]="presentationMode" [disabled]="disabled"
             labelClass="col-4" valueClass="col-8">
         </text-input>
     </div>
     <div class="col-6">
-        <text-input label="City" [(text)]="address.cityName" [presentationMode]="presentationMode" [disabled]="disabled"
+        <text-input label="State / Province" [(text)]="address.region" [presentationMode]="presentationMode" [disabled]="disabled"
             labelClass="col-4" valueClass="col-8">
         </text-input>
     </div>

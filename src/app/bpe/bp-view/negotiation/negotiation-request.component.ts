@@ -25,6 +25,7 @@ import {DocumentService} from '../document-service';
 import {DiscountModalComponent} from '../../../product-details/discount-modal.component';
 import {BpStartEvent} from '../../../catalogue/model/publish/bp-start-event';
 import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
+import * as myGlobals from '../../../globals';
 
 @Component({
     selector: "negotiation-request",
@@ -37,6 +38,7 @@ export class NegotiationRequestComponent implements OnInit {
     rfq: RequestForQuotation;
     rfqLine: RequestForQuotationLine;
     wrapper: NegotiationModelWrapper;
+    config = myGlobals.config;
 
     negotiatedPriceValue: number;
     totalPrice: number;
@@ -227,6 +229,7 @@ export class NegotiationRequestComponent implements OnInit {
             const rfqAddress = this.wrapper.rfqDeliveryAddress;
             rfqAddress.buildingNumber = address.buildingNumber;
             rfqAddress.cityName = address.cityName;
+            rfqAddress.region = address.region;
             rfqAddress.country.name.value = address.country;
             rfqAddress.postalZone = address.postalCode;
             rfqAddress.streetName = address.streetName;

@@ -51,7 +51,7 @@ export class CatalogueViewComponent implements OnInit {
 
     getCatalogueStatus = new CallStatus();
     callStatus = new CallStatus();
-    deleteStatuses: CallStatus[] = []
+    deleteStatuses: CallStatus[] = [];
 
     CATALOGUE_LINE_SORT_OPTIONS = CATALOGUE_LINE_SORT_OPTIONS;
 
@@ -165,6 +165,16 @@ export class CatalogueViewComponent implements OnInit {
                 productType: isTransportService(catalogueLine) ? "transportation" : "product"}});
     }
 
+    redirectToCopy(catalogueLine) {
+        this.catalogueService.editCatalogueLine(catalogueLine);
+        this.publishService.publishMode = 'copy';
+        this.publishService.publishingStarted = false;
+        this.categoryService.resetSelectedCategories();
+        this.router.navigate(['catalogue/publish'], {queryParams: {
+                pg: "single",
+                productType: isTransportService(catalogueLine) ? "transportation" : "product"}});
+    }
+
     deleteCatalogueLine(catalogueLine, i: number): void {
         if (confirm("Are you sure that you want to delete this catalogue item?")) {
             const status = this.getDeleteStatus(i);
@@ -196,16 +206,41 @@ export class CatalogueViewComponent implements OnInit {
                 // reset the target value so that the same file could be chosen more than once
                 event.target.value = "";
                 catalogueService.uploadZipPackage(file).then(res => {
-                        self.callStatus.callback(null);
-                        self.router.navigate(['dashboard'], {queryParams: {tab: "CATALOGUE"}});
-                        self.requestCatalogue();
+                        if (res.status == 200) {
+                            self.callStatus.callback(null);
+                            self.requestCatalogue();
+                        } else if (res.status == 504) {
+                            self.callStatus.callback(res.message);
+                        }
                     },
                     error => {
-                        self.callStatus.error("Failed to upload the image package:  " + error, error);
+                        self.callStatus.error("Failed to upload the image package.", error);
                     });
             };
             reader.readAsDataURL(file);
         }
+    }
+
+    onExportCatalogue():void{
+        this.callStatus.submit();
+
+        this.catalogueService.exportCatalogue(this.catalogueService.catalogueResponse.catalogueUuid)
+            .then(result => {
+                    var link = document.createElement('a');
+                    link.id = 'downloadLink';
+                    link.href = window.URL.createObjectURL(result.content);
+                    link.download = result.fileName;
+
+                    document.body.appendChild(link);
+                    var downloadLink = document.getElementById('downloadLink');
+                    downloadLink.click();
+                    document.body.removeChild(downloadLink);
+
+                    this.callStatus.callback("Catalogue is exported");
+                },
+                error => {
+                    this.callStatus.error("Failed to export catalogue");
+                });
     }
 
     deleteAllProductImages():void{
@@ -224,5 +259,9 @@ export class CatalogueViewComponent implements OnInit {
 
     navigateToThePublishPage(){
         this.router.navigate(['/catalogue/categorysearch']);
+    }
+
+    navigateToBulkUploadPage() {
+        this.router.navigate(["/catalogue/publish"], { queryParams: { pg: 'bulk', productType: 'product'}});
     }
 }

@@ -1,6 +1,28 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [9.0.0] - 2019-03-29
+### Added
+- Boosting mechanisms for search results
+- UBL dimension fields in product details
+- "State / Province" input for addresses
+- Catalogue export functionality
+- Catalogue clone/copy product functionality
+- Favourite product mechanisms in product details and dashboard
+- Ability to cancel pending member invites
+- Sorting mechanisms for company lists
+- File extension checks for image uploads on the UI
+- Display of correspondents in business processes
+
+### Changed
+- Improved search filter retrieval and presentation
+- Improved search suggestions
+- Proper join of item and party item on the UI (some fields still missing)
+- Fixed storage and selection of company settings
+- Improved naming conventions for ontologies
+- Improved "Platform Members" page and added direct link to navbar
+- Unified price display
+
 ## [8.0.0] - 2019-02-28
 ### Added
 - Multilinguality features

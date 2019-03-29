@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,Input } from '@angular/core';
 import { AppComponent } from '../app.component';
 import { CompanyInvitation } from './model/company-invitation';
 import { UserService } from './user.service';
@@ -31,6 +31,8 @@ export class CompanyInvitationComponent implements OnInit {
 	submitCallStatus: CallStatus = new CallStatus();
 	membersCallStatus: CallStatus = new CallStatus();
 	membersFetched: boolean = false;
+	@Input() partyId : string = null;
+	@Input() platformManagerMode: boolean = false;
 
     constructor(
         private cookieService: CookieService,
@@ -44,7 +46,9 @@ export class CompanyInvitationComponent implements OnInit {
 		this.loadRoles();
 		if (this.cookieService.get('user_email'))
 			this.myEmail = decodeURIComponent(this.cookieService.get('user_email'));
-    }
+		if(this.partyId && this.partyId != this.cookieService.get("company_id"))
+			this.platformManagerMode = true;
+  }
 
 	checkMail(mail) {
 		return (mail.localeCompare(this.myEmail) == 0);
@@ -63,7 +67,9 @@ export class CompanyInvitationComponent implements OnInit {
 		this.invPending = [];
 		this.membersCallStatus.submit();
 		this.membersFetched = false;
-		this.userService.getCompanyMemberList()
+    if (this.partyId == "")
+      this.partyId = null;
+		this.userService.getCompanyMemberList(this.partyId)
             .then(response => {
                 this.invPending = response;
 				this.membersCallStatus.callback("Successfully loading invites", true);
@@ -138,6 +144,19 @@ export class CompanyInvitationComponent implements OnInit {
 
 	openModal(content) {
 		this.modalService.open(content);
+	}
+
+  cancelInvite(inv) {
+		if (confirm("Are you sure that you want to cancel the invitation for this user?")) {
+			this.userService.deleteInvite(inv["email"])
+				.then(response => {
+					this.loadInvites();
+				})
+				.catch(error => {
+					console.error('An error occurred', error);
+					this.loadInvites();
+				});
+		}
 	}
 
 	deleteInvite(inv) {

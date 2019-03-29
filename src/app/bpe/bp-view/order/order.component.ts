@@ -29,6 +29,7 @@ import { EpcService } from "../epc-service";
 import {DocumentService} from "../document-service";
 import {BpStartEvent} from '../../../catalogue/model/publish/bp-start-event';
 import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
+import * as myGlobals from '../../../globals';
 
 /**
  * Created by suat on 20-Sep-17.
@@ -46,6 +47,7 @@ export class OrderComponent implements OnInit {
     paymentTermsWrapper: PaymentTermsWrapper;
     priceWrapper: PriceWrapper;
     userRole: BpUserRole;
+    config = myGlobals.config;
 
     showPreview: boolean = false;
     termsAndConditions: string;

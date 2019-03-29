@@ -40,8 +40,11 @@
     <text-input presentationMode="view" label="Building Number"
         [text]="details.details.address.buildingNumber" labelClass="col-4" valueClass="col-8">
     </text-input>
-    <text-input presentationMode="view" label="City"
+    <text-input presentationMode="view" label="City / Town"
         [text]="details.details.address.cityName" labelClass="col-4" valueClass="col-8">
+    </text-input>
+    <text-input presentationMode="view" label="State / Province"
+        [text]="details.details.address.region" labelClass="col-4" valueClass="col-8">
     </text-input>
     <text-input presentationMode="view" label="Postal Code"
         [text]="details.details.address.postalCode" labelClass="col-4" valueClass="col-8">
@@ -52,12 +55,18 @@
   </div>
 </div>
 
-<div *ngIf="appComponent.checkRoles('pm') && !initCallStatus.isLoading() && details.details.vatNumber && details.details.vatNumber != ''" class="row actions-row pr-0">
+<div *ngIf="managementMode && appComponent.checkRoles('pm') && !initCallStatus.isLoading() && details.details.vatNumber && details.details.vatNumber != ''" class="row actions-row pr-0">
   <div class="col-10 call-status-col">
     <call-status [callStatus]="vatCallStatus" [large]="true"></call-status>
   </div>
   <div class="col-2">
     <button class="btn btn-primary action" type="button" [disabled]="vatCallStatus.isLoading()" (click)="validateVAT()">Check VAT</button>
+  </div>
+</div>
+
+<div *ngIf="managementMode && appComponent.checkRoles('pm') && !initCallStatus.isLoading()" class="row actions-row pr-0">
+  <div class="col-12">
+    <company-invitation [partyId]="party.partyId" [platformManagerMode]="platformManagerMode"></company-invitation>
   </div>
 </div>
 

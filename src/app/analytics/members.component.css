@@ -1,0 +1,5 @@
+.card-header {
+  padding: .25rem .5rem !important;
+  max-height: 2rem;
+  overflow: hidden;
+}

@@ -9,7 +9,13 @@ import { ProcessType } from "../bpe/model/process-type";
 import { ProductWrapper } from "../common/product-wrapper";
 import { Item } from "../catalogue/model/publish/item";
 import { PriceWrapper } from "../common/price-wrapper";
-import { getMaximumQuantityForPrice, getStepForPrice, isTransportService, selectPreferredValue } from "../common/utils";
+import {
+    getMaximumQuantityForPrice,
+    getStepForPrice,
+    isTransportService,
+    selectPreferredValue,
+    roundToTwoDecimals
+} from "../common/utils";
 import { AppComponent } from "../app.component";
 import { UserService } from "../user-mgmt/user.service";
 import { CompanySettings } from "../user-mgmt/model/company-settings";
@@ -18,6 +24,9 @@ import {DiscountModalComponent} from './discount-modal.component';
 import {BpStartEvent} from '../catalogue/model/publish/bp-start-event';
 import {SearchContextService} from '../simple-search/search-context.service';
 import {BpURLParams} from '../catalogue/model/publish/bpURLParams';
+import { CookieService } from 'ng2-cookies';
+import {FAVOURITE_LINEITEM_PUT_OPTIONS} from '../catalogue/model/constants';
+import * as myGlobals from '../globals';
 
 @Component({
     selector: 'product-details',
@@ -30,6 +39,7 @@ export class ProductDetailsComponent implements OnInit {
 
     id: string;
     catalogueId: string;
+    favouriteItemIds: string[] = [];
 
     options: BpWorkflowOptions = new BpWorkflowOptions();
 
@@ -44,6 +54,12 @@ export class ProductDetailsComponent implements OnInit {
     showProcesses: boolean = true;
     isLogistics: boolean = false;
 
+    config = myGlobals.config;
+
+    addFavoriteCategoryStatus: CallStatus = new CallStatus();
+    callStatus: CallStatus = new CallStatus();
+    FAVOURITE_LINEITEM_PUT_OPTIONS = FAVOURITE_LINEITEM_PUT_OPTIONS;
+
     @ViewChild(DiscountModalComponent)
     private discountModal: DiscountModalComponent;
     selectPreferredValue = selectPreferredValue;
@@ -53,7 +69,8 @@ export class ProductDetailsComponent implements OnInit {
                 private searchContextService: SearchContextService,
                 private userService: UserService,
                 private route: ActivatedRoute,
-                public appComponent: AppComponent) {
+                private cookieService: CookieService,
+                public appComponent: AppComponent,) {
 
     }
 
@@ -99,7 +116,17 @@ export class ProductDetailsComponent implements OnInit {
                         this.wrapper = null;
                     });
             }
-		});
+        });
+        let userId = this.cookieService.get("user_id");
+        this.callStatus.submit();
+        this.userService.getPerson(userId)
+        .then(person => {
+            this.callStatus.callback("Successfully loaded user profile", true);
+            this.favouriteItemIds = person.favouriteProductID;
+        })
+        .catch(error => {
+            this.callStatus.error("Invalid credentials", error);
+        });
     }
 
     /*
@@ -134,7 +161,7 @@ export class ProductDetailsComponent implements OnInit {
 
     getTotalPrice(): number {
         this.updatePriceWrapperOnUserSelections();
-        return this.priceWrapper.totalPrice;
+        return roundToTwoDecimals(this.priceWrapper.totalPrice);
     }
 
     hasPrice(): boolean {
@@ -169,5 +196,53 @@ export class ProductDetailsComponent implements OnInit {
 
     private openDiscountModal(): void{
         this.discountModal.open(this.priceWrapper.appliedDiscounts,this.priceWrapper.price.priceAmount.currencyID);
+    }
+
+    removeFavorites(item: CatalogueLine) {
+        if (!this.addFavoriteCategoryStatus.isLoading()) {
+          let itemidList = [];
+          itemidList.push(item.hjid.toString());
+          this.addFavoriteCategoryStatus.submit();
+          this.userService.putUserFavourite(itemidList, FAVOURITE_LINEITEM_PUT_OPTIONS[0].value).then(res => {
+              const prefCats_tmp = [];
+              var index = this.favouriteItemIds.indexOf(item.hjid.toString());
+              if (index !== -1) {
+                this.favouriteItemIds.splice(index, 1);
+              }
+             this.findPrefItem(item.hjid);
+              this.addFavoriteCategoryStatus.callback("Category removed from favorites", true);
+          })
+          .catch(error => {
+              this.addFavoriteCategoryStatus.error("Error while removing category from favorites", error);
+          });
+        }
+    }
+
+    addFavorites(item: CatalogueLine) {
+        if (!this.addFavoriteCategoryStatus.isLoading()) {
+          let itemidList = [];
+          itemidList.push(item.hjid.toString());
+          this.addFavoriteCategoryStatus.submit();
+          this.userService.putUserFavourite(itemidList, FAVOURITE_LINEITEM_PUT_OPTIONS[0].value).then(res => {
+              const prefCats_tmp = [];
+              var index = this.favouriteItemIds.indexOf(item.hjid.toString());
+              if (index == -1) {
+                this.favouriteItemIds.push(item.hjid.toString());
+              }
+             this.findPrefItem(item.hjid);
+              this.addFavoriteCategoryStatus.callback("Category removed from favorites", true);
+          })
+          .catch(error => {
+              this.addFavoriteCategoryStatus.error("Error while removing category from favorites", error);
+          });
+        }
+    }
+
+
+
+    findPrefItem(itemId: any): boolean {
+        let found = false;
+        found = (this.favouriteItemIds.indexOf(itemId.toString()) !== -1) ? true : false;
+        return found;
     }
 }

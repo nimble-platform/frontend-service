@@ -425,6 +425,18 @@ const CURRENCIES_STRING_VALUES: CurrenciesStringValues = {
     // GBP: "₤"
 }
 
+export function getFileExtension(filename: string): string {
+    let ext = /^.+\.([^.]+)$/.exec(filename);
+    return ext == null ? "" : ext[1];
+}
+
+export function roundToTwoDecimals(value): any{
+    if (!isNaN(value) && value !== null) {
+        return (Math.round(parseFloat(value) * 100) / 100).toFixed(2);
+    }
+    return value;
+}
+
 export function currencyToString(currencyId: string): string {
     return CURRENCIES_STRING_VALUES[currencyId] || currencyId;
 }
@@ -530,6 +542,21 @@ export function deepEquals(obj1: any, obj2: any): boolean {
     }
 
     return true;
+}
+
+export function removeHjids(json): any {
+    let ret = JSON.parse(JSON.stringify(json));
+    let keys = Object.keys(ret);
+    for (let i=0; i<keys.length; i++) {
+      if (keys[i] == "hjid")
+        ret[keys[i]] = null;
+      else if (ret[keys[i]] && typeof(ret[keys[i]]) === "object") {
+        let keys_inner = Object.keys(ret[keys[i]]);
+        if (keys_inner.length > 0)
+          ret[keys[i]] = this.removeHjids(ret[keys[i]]);
+      }
+    }
+    return ret;
 }
 
 export function getAuthorizedHeaders(cookieService: CookieService): Headers {
