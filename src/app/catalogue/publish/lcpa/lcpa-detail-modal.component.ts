@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Output, ViewChild} from "@angular/core";
+import {Component, ElementRef, EventEmitter, Output, ViewChild} from "@angular/core";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {LCPAInputDetail} from "../../model/publish/lcpa-input-detail";
 

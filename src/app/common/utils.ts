@@ -437,6 +437,13 @@ export function roundToTwoDecimals(value): any{
     return value;
 }
 
+export function isNaNNullAware(number: number): boolean {
+    if(isNaN(number) || number == null) {
+        return true;
+    }
+    return false;
+}
+
 export function currencyToString(currencyId: string): string {
     return CURRENCIES_STRING_VALUES[currencyId] || currencyId;
 }

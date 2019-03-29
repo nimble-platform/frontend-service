@@ -785,6 +785,9 @@ export class ProductPublishComponent implements OnInit {
         if(!UBLModelUtils.isFilledLCPAInput(catalogueLineCopy.goodsItem.item.lifeCyclePerformanceAssessmentDetails.lcpainput)) {
             catalogueLineCopy.goodsItem.item.lifeCyclePerformanceAssessmentDetails.lcpainput = null;
         }
+        if(!UBLModelUtils.isFilledLCPAOutput(catalogueLineCopy.goodsItem.item.lifeCyclePerformanceAssessmentDetails.lcpaoutput)) {
+            catalogueLineCopy.goodsItem.item.lifeCyclePerformanceAssessmentDetails.lcpaoutput = null;
+        }
 
         // splice out properties that are unfilled
         let properties: ItemProperty[] = catalogueLineCopy.goodsItem.item.additionalItemProperty;

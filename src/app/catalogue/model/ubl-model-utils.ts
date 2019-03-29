@@ -47,17 +47,16 @@ import {ItemInformationResponse} from "./publish/item-information-response";
 import {PaymentTerms} from "./publish/payment-terms";
 import {Address} from "./publish/address";
 import {MonetaryTotal} from "./publish/monetary-total";
-import { NegotiationOptions } from "./publish/negotiation-options";
-import {CURRENCIES, DEFAULT_LANGUAGE} from './constants';
-import { TradingTerm } from "./publish/trading-term";
-import { CompanyNegotiationSettings } from "../../user-mgmt/model/company-negotiation-settings";
-import { headersToString } from "../../../../node_modules/@types/selenium-webdriver/http";
+import {NegotiationOptions} from "./publish/negotiation-options";
+import {CURRENCIES, DEFAULT_LANGUAGE} from "./constants";
+import {TradingTerm} from "./publish/trading-term";
+import {CompanyNegotiationSettings} from "../../user-mgmt/model/company-negotiation-settings";
 import {ShipmentStage} from "./publish/shipment-stage";
-import {copy, createText, selectPreferredName} from '../../common/utils';
+import {copy, isNaNNullAware, selectPreferredName} from "../../common/utils";
 import {Text} from "./publish/text";
 import {Attachment} from "./publish/attachment";
-import {LifeCyclePerformanceAssessmentDetails} from "./publish/life-cycle-performance-assessment-details";
 import {LCPAInput} from "./publish/lcpa-input";
+import {LCPAOutput} from "./publish/lcpa-output";
 
 /**
  * Created by suat on 05-Jul-17.
@@ -586,18 +585,22 @@ export class UBLModelUtils {
     }
 
     public static isFilledLCPAInput(lcpaDetails: LCPAInput): boolean {
-        if(!isNaN(parseFloat(lcpaDetails.assemblyCost.value)) ||
-            !isNaN(parseFloat(lcpaDetails.consumableCost.value)) ||
-            !isNaN(parseFloat(lcpaDetails.endOfLifeCost.value)) ||
-            !isNaN(parseFloat(lcpaDetails.energyConsumptionCost.value)) ||
-            !isNaN(parseFloat(lcpaDetails.lifeCycleLength.value)) ||
-            !isNaN(parseFloat(lcpaDetails.purchasingPrice.value)) ||
-            !isNaN(parseFloat(lcpaDetails.sparePartCost.value)) ||
-            !isNaN(parseFloat(lcpaDetails.transportCost.value)) ||
+        if(!isNaNNullAware(lcpaDetails.assemblyCost.value) ||
+            !isNaNNullAware(lcpaDetails.consumableCost.value) ||
+            !isNaNNullAware(lcpaDetails.endOfLifeCost.value) ||
+            !isNaNNullAware(lcpaDetails.energyConsumptionCost.value) ||
+            !isNaNNullAware(lcpaDetails.lifeCycleLength.value) ||
+            !isNaNNullAware(lcpaDetails.purchasingPrice.value) ||
+            !isNaNNullAware(lcpaDetails.sparePartCost.value) ||
+            !isNaNNullAware(lcpaDetails.transportCost.value) ||
             lcpaDetails.additionalLCPAInputDetail.length > 0) {
             return true;
         } else {
             return false;
         }
+    }
+
+    public static isFilledLCPAOutput(lcpaDetails: LCPAOutput): boolean {
+        return false;
     }
 }
