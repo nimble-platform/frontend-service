@@ -228,10 +228,11 @@ export class BPDataService{
                 bpStartEvent.collaborationGroupId = null;
             }
         }
+
+        this.bpStartEvent = bpStartEvent;
         if(bpStartEvent.processMetadata){
             await this.setBpMessages(bpStartEvent.processMetadata);
         }
-        this.bpStartEvent = bpStartEvent;
         this.bpStartEventBehaviorSubject.next(this.bpStartEvent);
         this.navigateToBpExec(bpURLParams);
     }
