@@ -216,7 +216,7 @@ export class BPDataService{
     // This function is used to start viewing business processes.
     // Dashboard and product-details are two way to start viewing business processes. For dashboard, business processes contain process document metadatas since
     // they are already started/completed. However, in the product-details page, we start a new business process, this is why we have a null check for processMetadata in the function.
-    startBp(bpStartEvent:BpStartEvent,clearSearchContext:boolean,bpURLParams:BpURLParams){
+    async startBp(bpStartEvent:BpStartEvent,clearSearchContext:boolean,bpURLParams:BpURLParams){
         this.resetBpData();
         if(clearSearchContext){
             this.searchContextService.clearSearchContext();
@@ -229,7 +229,7 @@ export class BPDataService{
             }
         }
         if(bpStartEvent.processMetadata){
-            this.setBpMessages(bpStartEvent.processMetadata);
+            await this.setBpMessages(bpStartEvent.processMetadata);
         }
         this.bpStartEvent = bpStartEvent;
         this.bpStartEventBehaviorSubject.next(this.bpStartEvent);
