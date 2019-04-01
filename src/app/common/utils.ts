@@ -199,7 +199,10 @@ export function selectPreferredValues(texts:Text[]): string[]{
         return englishValues;
     }
 
-    return [''];
+    if (texts.length > 0 && texts[0].value)
+      return [texts[0].value];
+    else
+      return [''];
 }
 
 // return the value for the default language of the browser
