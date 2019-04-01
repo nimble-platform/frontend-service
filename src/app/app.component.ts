@@ -4,6 +4,7 @@ import { CredentialsService } from './user-mgmt/credentials.service';
 import {Router, NavigationStart, NavigationEnd, NavigationCancel, RoutesRecognized, ActivatedRoute} from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import * as myGlobals from './globals';
+import { DEFAULT_LANGUAGE } from './catalogue/model/constants';
 
 @Component({
     selector: 'nimble-app',
@@ -159,33 +160,41 @@ export class AppComponent implements OnInit {
 
 	public open(content) {
 		this.mailto = "mailto:"+this.config.supportMail;
-		var subject = "NIMBLE Support Request (UserID: "+this.userID+", Timestamp: "+new Date().toISOString()+")";
+		var subject = "NIMBLE Support Request (";
+    if (this.userID)
+      subject += "UserID: "+this.userID+", ";
+    if (this.companyID)
+      subject += "CompanyID: "+this.companyID+", ";
+    subject += "Timestamp: "+new Date().toISOString()+")";
 		this.mailto += "?subject="+encodeURIComponent(subject);
-		var body = "Dear NIMBLE support team,";
-		body += "\n\n\n";
-		body += "I have encountered an issue.";
-		body += "\n\n";
-		body += "Path:\n"+window.location.href;
-		body += "\n\n";
-    body += "Versions:\n";
-    for (var i=0; i<this.versions.length; i++) {
-      if (i>0) {
-        body += " | ";
-      }
-      body += this.versions[i].id + ": " + this.versions[i].ver;
-    }
+		var body = "";
+    if (this.config.supportMailContent[DEFAULT_LANGUAGE()])
+      body += this.config.supportMailContent[DEFAULT_LANGUAGE()];
+    else
+      body += this.config.supportMailContent["en"];
+    body += "\n\n\n";
+    body += "-----";
     body += "\n\n";
-		body += "Description of the issue:\n";
-		body += "[Please insert a detailed description of the issue here. Add some screenshots as an attachement if they are of use.]";
-		body += "\n\n";
-		body += "Cause of the issue:\n";
-		body += "[Please describe the actions taken that caused the issue here.]";
-		body += "\n\n\n";
-		body += "Best regards,";
-		body += "\n\n";
-		body += this.fullName;
+    body += "Path:\n"+window.location.href;
+    if (this.versions.length > 0) {
+  		body += "\n\n";
+      body += "Versions:\n";
+      for (var i=0; i<this.versions.length; i++) {
+        if (i>0) {
+          body += " | ";
+        }
+        body += this.versions[i].id + ": " + this.versions[i].ver;
+      }
+    }
+    if (this.userID) {
+      body += "\n\n";
+      body += "User:\n"+this.fullName+" (ID: "+this.userID+", E-Mail: "+this.eMail+")";
+    }
+    if (this.companyID) {
+  		body += "\n\n";
+      body += "Company:\n"+this.activeCompanyName+" (ID: "+this.companyID+")";
+    }
 		body += "\n";
-		body += "(E-Mail: "+this.eMail+", Company: "+this.activeCompanyName+", CompanyID: "+this.companyID+")";
 		this.mailto += "&body="+encodeURIComponent(body);
 		this.modalService.open(content);
 	}

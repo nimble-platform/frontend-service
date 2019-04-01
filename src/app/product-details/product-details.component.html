@@ -1,22 +1,28 @@
 <div *ngIf="wrapper" class="row product-details">
     <div class="col-9">
         <div class="row">
-            <div class="col-12">
+            <div class="col">
                 <!-- Product Overview -->
                 <h1 class="py-2">{{selectPreferredValue(item.name)}}</h1>
-                <div class="float-right mt-1">
-                    <span *ngIf="!findPrefItem(line.hjid)" class="star star-b pointer" [ngClass]="{'disabled':addFavoriteCategoryStatus.isLoading()}" (click)="addFavorites(line)" title="Add To Favorite">
-                      <span class="half" style="width:0%">&#9733;</span>&#9733;
-                    </span>
-                    <span  *ngIf="findPrefItem(line.hjid)"  class="star star-b full pointer" [ngClass]="{'disabled':addFavoriteCategoryStatus.isLoading()}" (click)="removeFavorites(line)" title="Remove From Favorite">
-                      <span class="half" style="width:100%">&#9733;</span>&#9733;
-                    </span>
-                </div>
-                <div class="float-right mr-3 pt-2">
-                    <call-status [callStatus]="addFavoriteCategoryStatus"></call-status>
-                </div>
-                <product-details-overview [wrapper]="wrapper" [options]="options">
-                </product-details-overview>
+            </div>
+            <div class="col-xs-auto align-right">
+              <div class="float-right">
+                  <span *ngIf="!findPrefItem(line.hjid)" class="star star-b pointer" [ngClass]="{'disabled':addFavoriteCategoryStatus.isLoading()}" (click)="addFavorites(line)" title="Add To Favorite">
+                    <span class="half" style="width:0%">&#9733;</span>&#9733;
+                  </span>
+                  <span  *ngIf="findPrefItem(line.hjid)"  class="star star-b full pointer" [ngClass]="{'disabled':addFavoriteCategoryStatus.isLoading()}" (click)="removeFavorites(line)" title="Remove From Favorite">
+                    <span class="half" style="width:100%">&#9733;</span>&#9733;
+                  </span>
+              </div>
+              <div class="float-right mr-3 pt-2">
+                  <call-status [callStatus]="addFavoriteCategoryStatus"></call-status>
+              </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+              <product-details-overview [wrapper]="wrapper" [options]="options">
+              </product-details-overview>
             </div>
         </div>
         <product-details-tabs [wrapper]="wrapper" [settings]="settings">

@@ -8,6 +8,7 @@ import {Item} from '../catalogue/model/publish/item';
 import {UBLModelUtils} from '../catalogue/model/ubl-model-utils';
 import {CategoryService} from '../catalogue/category/category.service';
 import {CallStatus} from '../common/call-status';
+import { ActivatedRoute } from "@angular/router";
 
 @Component({
     selector: 'product-details-overview',
@@ -25,11 +26,13 @@ export class ProductDetailsOverviewComponent implements OnInit{
 
     getClassificationNamesStatus: CallStatus = new CallStatus();
     classificationNames = [];
-
+    productId = "";
     selectPreferredValue = selectPreferredValue;
     
-    constructor(public categoryService:CategoryService) {
-    }
+    constructor(
+        public categoryService:CategoryService,
+        private route: ActivatedRoute
+    ) {}
 
     ngOnInit(){
         if(this.wrapper){
@@ -61,6 +64,14 @@ export class ProductDetailsOverviewComponent implements OnInit{
                 this.getClassificationNamesStatus.error("Failed to get classification names", error);
             });
         }
+
+        this.route.queryParams.subscribe(params => {
+            if (params["id"]) {
+              this.productId = params["id"];
+            }else {
+                this.productId = this.wrapper.item.manufacturersItemIdentification.id;
+            }
+        });
     }
 
     getClassifications(): CommodityClassification[] {

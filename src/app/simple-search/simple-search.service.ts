@@ -222,6 +222,9 @@ export class SimpleSearchService {
         let allLower = splitQuery[i].toLowerCase();
         if (queryArr.indexOf(allLower) == -1)
           queryArr.push(allLower);
+        let allUpper = splitQuery[i].toUpperCase();
+        if (queryArr.indexOf(allUpper) == -1)
+          queryArr.push(allUpper);
         let firstCapital = allLower.substring(0,1).toUpperCase() + "" + allLower.substring(1,allLower.length);
         if (queryArr.indexOf(firstCapital) == -1)
           queryArr.push(firstCapital);
