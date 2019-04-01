@@ -222,7 +222,10 @@ export function selectPreferredValue(texts:Text[]):string{
         return englishValue;
     }
 
-    return "";
+    if (texts.length > 0 && texts[0].value)
+      return texts[0].value;
+    else
+      return '';
 }
 
 export function selectName (ip: ItemProperty | Item) {
