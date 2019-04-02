@@ -30,7 +30,7 @@
     </div>
     <div class="col-3">
         <!-- Order Workflow For Product -->
-        <div *ngIf="isLogistics === false" class="p-3 border border-dark">
+        <div *ngIf="isLogistics === false" class="p-3 border border-dark border-bottom-0">
 
             <h2 class="py-1">Negotiate & Order</h2>
 
@@ -157,7 +157,7 @@
         </div>
 
         <!-- Order Workflow For Logistics -->
-        <div *ngIf="isLogistics === true" class="p-3 border border-dark">
+        <div *ngIf="isLogistics === true" class="p-3 border border-dark border-bottom-0">
 
             <h2 class="py-1">Negotiate & Order</h2>
 
@@ -196,23 +196,16 @@
             </button>
         </div>
         <div *ngIf="this.appComponent.checkRoles('bp')" class="p-3 border border-dark border-top-0">
-            <div class="inline w-100" (click)="showProcesses = !showProcesses">
-                <h4 class="py-1 inline w-75">Other Processes</h4>
-                <i class="fas fa-chevron-up fa-lg toggle-processes" aria-hidden="true" *ngIf="showProcesses"></i>
-                <i class="fas fa-chevron-down fa-lg toggle-processes" aria-hidden="true" *ngIf="!showProcesses"></i>
-            </div>
-            <div *ngIf="showProcesses">
                 <div>
-                    <button class="btn btn-secondary space-before w-100" (click)="onRequestInformation()">
+                    <button class="btn btn-secondary w-100" (click)="onRequestInformation()">
                         Request Information
                     </button>
                 </div>
                 <div *ngIf="config.showPPAP && isPpapAvailable() && !isLogistics">
-                    <button class="btn btn-secondary space-before w-100" (click)="onStartPpap()">
+                    <button class="btn btn-secondary w-100" (click)="onStartPpap()">
                         Start Ppap
                     </button>
                 </div>
-            </div>
         </div>
     </div>
 </div>
