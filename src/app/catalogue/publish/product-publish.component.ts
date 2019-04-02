@@ -8,6 +8,7 @@ import { ItemProperty } from "../model/publish/item-property";
 import { FormGroup } from "@angular/forms";
 import { UBLModelUtils } from "../model/ubl-model-utils";
 import { CallStatus } from "../../common/call-status";
+import { isValidPrice } from "../../common/utils";
 import { Quantity } from "../model/publish/quantity";
 import { CategoryService } from "../category/category.service";
 import { CatalogueService } from "../catalogue.service";
@@ -368,7 +369,12 @@ export class ProductPublishComponent implements OnInit {
     }
 
     isValidCatalogueLine(): boolean {
-        // must have a name
+        // must have a name && if a price is set it, then it should not exceed two decimals
+        if (this.catalogueLine.requiredItemLocationQuantity.price.priceAmount.value != null) {
+            if (!isValidPrice(this.catalogueLine.requiredItemLocationQuantity.price.priceAmount.value)) {
+                return false;
+            }
+        }
         return this.catalogueLine.goodsItem.item.name[0] && this.catalogueLine.goodsItem.item.name[0].value !== "";
     }
 
