@@ -194,8 +194,9 @@
                 (click)="onNegotiate()" [disabled]="!this.appComponent.checkRoles('bp') || options.quantity <= 0">
                 Negotiate & Order
             </button>
+            
         </div>
-        <div *ngIf="this.appComponent.checkRoles('bp')" class="p-3 border border-dark border-top-0">
+        <div *ngIf="this.appComponent.checkRoles('bp')" class="pb-3 pl-3 pr-3 pt-0 border border-dark border-top-0">
                 <div>
                     <button class="btn btn-secondary w-100" (click)="onRequestInformation()">
                         Request Information
