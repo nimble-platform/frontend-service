@@ -303,6 +303,14 @@ export class ProductPublishComponent implements OnInit {
     }
 
     onPublish() {
+
+        if (this.catalogueLine.requiredItemLocationQuantity.price.priceAmount.value != null) {
+            if (!isValidPrice(this.catalogueLine.requiredItemLocationQuantity.price.priceAmount.value)) {
+                alert("Price cannot have more than 2 decimal places");
+                return false;
+            }
+        }
+
         if (this.publishStateService.publishMode === "create" || this.publishStateService.publishMode === "copy") {
             // publish new product
             this.publishProduct();
@@ -369,12 +377,7 @@ export class ProductPublishComponent implements OnInit {
     }
 
     isValidCatalogueLine(): boolean {
-        // must have a name && if a price is set it, then it should not exceed two decimals
-        if (this.catalogueLine.requiredItemLocationQuantity.price.priceAmount.value != null) {
-            if (!isValidPrice(this.catalogueLine.requiredItemLocationQuantity.price.priceAmount.value)) {
-                return false;
-            }
-        }
+        // must have a name
         return this.catalogueLine.goodsItem.item.name[0] && this.catalogueLine.goodsItem.item.name[0].value !== "";
     }
 

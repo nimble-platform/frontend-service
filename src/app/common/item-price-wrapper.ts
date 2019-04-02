@@ -52,7 +52,7 @@ export class ItemPriceWrapper {
     }
 
     set value(value: number) {
-        this.price.priceAmount.value = roundToTwoDecimals(value);
+        this.price.priceAmount.value = value;
     }
 
     get unitCode(): string {

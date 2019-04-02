@@ -444,9 +444,9 @@ export function roundToTwoDecimals(value): any{
     return value;
 }
 
-export function isValidPrice(vale: any, maximumDecimals: number = maximumDecimalsForPrice ) {
-    if (!isNaN(vale) && vale !== "") {
-        let decimals = countDecimals(vale);
+export function isValidPrice(value: any, maximumDecimals: number = maximumDecimalsForPrice ) {
+    if (value != null && !isNaN(value) && value !== "") {
+        let decimals = countDecimals(value);
         return (decimals <= maximumDecimals);
     }else {
         return false;

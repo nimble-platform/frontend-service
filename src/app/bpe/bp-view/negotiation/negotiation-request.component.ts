@@ -17,7 +17,7 @@ import { ProcessVariables } from "../../model/process-variables";
 import { ModelUtils } from "../../model/model-utils";
 import { ProcessInstanceInputMessage } from "../../model/process-instance-input-message";
 import { NegotiationModelWrapper } from "./negotiation-model-wrapper";
-import { getMaximumQuantityForPrice, getStepForPrice, copy } from "../../../common/utils";
+import {getMaximumQuantityForPrice, getStepForPrice, copy, isValidPrice} from "../../../common/utils";
 import { PeriodRange } from "../../../user-mgmt/model/period-range";
 import { Option } from "../../../common/options-input.component";
 import { addressToString } from "../../../user-mgmt/utils";
@@ -86,6 +86,12 @@ export class NegotiationRequestComponent implements OnInit {
      */
 
     onSendRequest(): void {
+        if (this.wrapper.rfqPriceWrapper.itemPrice.hasPrice()) {
+            if (!isValidPrice(this.wrapper.rfqPriceWrapper.itemPrice.price.priceAmount.value)) {
+                alert("Price cannot have more than 2 decimal places");
+                return;
+            }
+        }
         if(this.isNegotiatingAnyTerm()) {
             // send request for quotation
             this.callStatus.submit();
