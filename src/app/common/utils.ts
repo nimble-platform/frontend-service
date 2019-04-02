@@ -15,6 +15,7 @@ import {Headers} from "@angular/http";
 import { AbstractControl } from "@angular/forms";
 declare var Countries: any;
 import {PartyName} from '../catalogue/model/publish/party-name';
+import {maximumDecimalsForPrice} from  './constants'
 
 const UI_NAMES: any = {
     STRING: "TEXT"
@@ -441,6 +442,20 @@ export function roundToTwoDecimals(value): any{
         return (Math.round(parseFloat(value) * 100) / 100).toFixed(2);
     }
     return value;
+}
+
+export function isValidPrice(value: any, maximumDecimals: number = maximumDecimalsForPrice ) {
+    if (value != null && !isNaN(value) && value !== "") {
+        let decimals = countDecimals(value);
+        return (decimals <= maximumDecimals);
+    }else {
+        return false;
+    }
+}
+
+export function countDecimals(value : any): number{
+    if(Math.floor(value) === value) return 0;
+    return value.toString().split(".")[1].length || 0;
 }
 
 export function currencyToString(currencyId: string): string {

@@ -8,6 +8,7 @@ import { ItemProperty } from "../model/publish/item-property";
 import { FormGroup } from "@angular/forms";
 import { UBLModelUtils } from "../model/ubl-model-utils";
 import { CallStatus } from "../../common/call-status";
+import { isValidPrice } from "../../common/utils";
 import { Quantity } from "../model/publish/quantity";
 import { CategoryService } from "../category/category.service";
 import { CatalogueService } from "../catalogue.service";
@@ -302,6 +303,14 @@ export class ProductPublishComponent implements OnInit {
     }
 
     onPublish() {
+
+        if (this.catalogueLine.requiredItemLocationQuantity.price.priceAmount.value != null) {
+            if (!isValidPrice(this.catalogueLine.requiredItemLocationQuantity.price.priceAmount.value)) {
+                alert("Price cannot have more than 2 decimal places");
+                return false;
+            }
+        }
+
         if (this.publishStateService.publishMode === "create" || this.publishStateService.publishMode === "copy") {
             // publish new product
             this.publishProduct();
