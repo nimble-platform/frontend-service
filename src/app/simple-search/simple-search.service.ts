@@ -4,7 +4,7 @@ import 'rxjs/add/operator/toPromise';
 import * as myGlobals from '../globals';
 import { map } from 'rxjs/operators';
 import {CookieService} from "ng2-cookies";
-import { DEFAULT_LANGUAGE } from '../catalogue/model/constants';
+import { DEFAULT_LANGUAGE, LANGUAGES } from '../catalogue/model/constants';
 
 @Injectable()
 export class SimpleSearchService {
@@ -59,7 +59,7 @@ export class SimpleSearchService {
 	}
 
 	get(query: string, facets: string[], facetQueries: string[], page: number, cat: string, catID: string): Promise<any> {
-    let queryRes = this.buildQueryString(query,myGlobals.query_settings,true);
+    let queryRes = this.buildQueryString(query,myGlobals.query_settings,true,false);
     query = queryRes.queryStr;
 		const url = this.url + `/item/search`
 		let searchObject:any = {};
@@ -104,7 +104,7 @@ export class SimpleSearchService {
       "boosting": false,
       "boostingFactors": {}
     };
-    let queryRes = this.buildQueryString(query,querySettings,true);
+    let queryRes = this.buildQueryString(query,querySettings,true,true);
     const url = this.url + `/item/search`
 		let searchObject:any = {};
 		searchObject.rows = 0;
@@ -172,7 +172,7 @@ export class SimpleSearchService {
 		return suggestions;
 	}
 
-  buildQueryString(query:string, qS:any, full:boolean): any {
+  buildQueryString(query:string, qS:any, full:boolean, allLang: boolean): any {
     if (query == "*") {
       return {
         "queryStr": "*",
@@ -198,7 +198,19 @@ export class SimpleSearchService {
           if (qS.boostingFactors[field]<0)
             negativeBoosts.push(field.replace("{LANG}","en"));
         }
-        if (DEFAULT_LANGUAGE() != "en") {
+        if (allLang) {
+          for (let j=0; j<LANGUAGES.length; j++) {
+            if (LANGUAGES[j] != "en") {
+              queryFields.push(field.replace("{LANG}",LANGUAGES[j]));
+              if (qS.boosting && qS.boostingFactors && qS.boostingFactors[field]) {
+                qS.boostingFactors[field.replace("{LANG}",LANGUAGES[j])] = qS.boostingFactors[field];
+                if (qS.boostingFactors[field]<0)
+                  negativeBoosts.push(field.replace("{LANG}",LANGUAGES[j]));
+              }
+            }
+          }
+        }
+        else if (DEFAULT_LANGUAGE() != "en") {
           queryFields.push(field.replace("{LANG}",DEFAULT_LANGUAGE()));
           if (qS.boosting && qS.boostingFactors && qS.boostingFactors[field]) {
             qS.boostingFactors[field.replace("{LANG}",DEFAULT_LANGUAGE())] = qS.boostingFactors[field];
