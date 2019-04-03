@@ -4,7 +4,7 @@ import 'rxjs/add/operator/toPromise';
 import * as myGlobals from '../globals';
 import { map } from 'rxjs/operators';
 import {CookieService} from "ng2-cookies";
-import { DEFAULT_LANGUAGE } from '../catalogue/model/constants';
+import { DEFAULT_LANGUAGE, LANGUAGES } from '../catalogue/model/constants';
 
 @Injectable()
 export class SimpleSearchService {
@@ -59,7 +59,7 @@ export class SimpleSearchService {
 	}
 
 	get(query: string, facets: string[], facetQueries: string[], page: number, cat: string, catID: string): Promise<any> {
-    let queryRes = this.buildQueryString(query,myGlobals.query_settings,true);
+    let queryRes = this.buildQueryString(query,myGlobals.query_settings,true,false);
     query = queryRes.queryStr;
 		const url = this.url + `/item/search`
 		let searchObject:any = {};
@@ -104,15 +104,20 @@ export class SimpleSearchService {
       "boosting": false,
       "boostingFactors": {}
     };
-    let queryRes = this.buildQueryString(query,querySettings,true);
-    let queryFull = encodeURIComponent(queryRes.queryStr);
-		let url = `${this.url}/item/select?q=${queryFull}&facet.limit=-1&rows=0`;
+    let queryRes = this.buildQueryString(query,querySettings,true,true);
+    const url = this.url + `/item/search`
+		let searchObject:any = {};
+		searchObject.rows = 0;
+		searchObject.q = queryRes.queryStr;
+    searchObject.facet = {};
+    searchObject.facet.field = [];
+    searchObject.facet.limit = -1;
     for (let i=0; i<queryRes.queryFields.length; i++) {
-      url += "&facet.field="+queryRes.queryFields[i];
+      searchObject.facet.field.push(queryRes.queryFields[i]);
     }
-		return this.http
-		.get(url, {headers: this.getHeadersWithBasicAuthorization()})
-		.pipe(
+    return this.http
+		.post(url, searchObject, {headers: this.getHeadersWithBasicAuthorization()})
+    .pipe(
 			map(response =>
 				this.getSuggestionArray(response.json(),query,queryRes.queryArr,queryRes.queryFields)
 			)
@@ -167,7 +172,7 @@ export class SimpleSearchService {
 		return suggestions;
 	}
 
-  buildQueryString(query:string, qS:any, full:boolean): any {
+  buildQueryString(query:string, qS:any, full:boolean, allLang: boolean): any {
     if (query == "*") {
       return {
         "queryStr": "*",
@@ -193,7 +198,19 @@ export class SimpleSearchService {
           if (qS.boostingFactors[field]<0)
             negativeBoosts.push(field.replace("{LANG}","en"));
         }
-        if (DEFAULT_LANGUAGE() != "en") {
+        if (allLang) {
+          for (let j=0; j<LANGUAGES.length; j++) {
+            if (LANGUAGES[j] != "en") {
+              queryFields.push(field.replace("{LANG}",LANGUAGES[j]));
+              if (qS.boosting && qS.boostingFactors && qS.boostingFactors[field]) {
+                qS.boostingFactors[field.replace("{LANG}",LANGUAGES[j])] = qS.boostingFactors[field];
+                if (qS.boostingFactors[field]<0)
+                  negativeBoosts.push(field.replace("{LANG}",LANGUAGES[j]));
+              }
+            }
+          }
+        }
+        else if (DEFAULT_LANGUAGE() != "en") {
           queryFields.push(field.replace("{LANG}",DEFAULT_LANGUAGE()));
           if (qS.boosting && qS.boostingFactors && qS.boostingFactors[field]) {
             qS.boostingFactors[field.replace("{LANG}",DEFAULT_LANGUAGE())] = qS.boostingFactors[field];
@@ -217,6 +234,9 @@ export class SimpleSearchService {
         let allLower = splitQuery[i].toLowerCase();
         if (queryArr.indexOf(allLower) == -1)
           queryArr.push(allLower);
+        let allUpper = splitQuery[i].toUpperCase();
+        if (queryArr.indexOf(allUpper) == -1)
+          queryArr.push(allUpper);
         let firstCapital = allLower.substring(0,1).toUpperCase() + "" + allLower.substring(1,allLower.length);
         if (queryArr.indexOf(firstCapital) == -1)
           queryArr.push(firstCapital);

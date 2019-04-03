@@ -88,11 +88,11 @@ export const config = {
       "ontologyPrefix": "http://www.aidimme.es/FurnitureSectorOntology.owl#"
     }
   },
+  "dataChannelsEnabled" : true,
   "imprint": "<u>Platform Owner & Provider</u><br/><b>Salzburg Research Forschungsgesellschaft m.b.H.</b><br/>Jakob Haringer Straße 5/3<br/>5020 Salzburg, Austria<br/>Phone: +43.662.2288.200<br/>Fax: +43.662.2288.222<br/>E-Mail: <a href='mailto:info@salzburgresearch.at'>info@salzburgresearch.at</a><br/>Internet: <a href='https://www.salzburgresearch.at' target='_blank'>www.salzburgresearch.at</a><br/>Managing Director: Siegfried Reich<br/>Registry Number: LG Salzburg (FN 149016 t)<br/>UID: ATU 41145408<br/>Content Officer: Siegfried Reich<br/>Owner: State of Salzburg (100%)",
   "logoPath": "./assets/logo_mvp.png",
   "logoRequired": false,
   "phoneNumberRequired": false,
-  "dataChannelsEnabled" : true,
   "requiredAgreements": [
     {
       "title":"End-User License Agreement (EULA)",
@@ -150,7 +150,11 @@ export const config = {
       "purchaser",
       "sales_officer"
   ],
-  "supportMail": "nimble-support@salzburgresearch.at"
+  "supportMail": "nimble-support@salzburgresearch.at",
+  "supportMailContent": {
+    "en":"Dear NIMBLE support team,\n\n\nI have encountered an issue.\n\nDescription of the issue:\n[Please insert a detailed description of the issue here. Add some screenshots as an attachement if they are of use.]",
+    "es":"Equipo de soporte NIMBLE,\n\n\nHe detectado una incidencia.\n\nDescripción:\n[Por favor indique a continuación los detalles de la incidencia. Si es posible incluya alguna captura de pantalla si puede ser de utilidad.]"
+  }
 };
 
 
@@ -172,8 +176,8 @@ export const product_currency = "currency";
 export const product_cat = "classificationUri";
 export const product_cat_mix = "commodityClassficationUri";
 export const product_filter_prod = ["freeOfCharge","certificateType","applicableCountries"];
-export const product_filter_comp = ["manufacturer.id","manufacturer.legalName","manufacturer.origin","manufacturer.certificateType","manufacturer.ppapComplianceLevel","manufacturer.ppapDocumentType"];
-export const party_facet_field_list = ["id","legalName","origin","certificateType","ppapComplianceLevel","ppapDocumentType"];
+export const product_filter_comp = ["manufacturer.legalName","manufacturer.origin","manufacturer.certificateType","manufacturer.ppapComplianceLevel","manufacturer.ppapDocumentType"];
+export const party_facet_field_list = ["legalName","origin","certificateType","ppapComplianceLevel","ppapDocumentType"];
 export const item_manufacturer_id = "manufacturerId";
 export const product_filter_trust = ["manufacturer.trustScore","manufacturer.trustRating","manufacturer.trustSellerCommunication","manufacturer.trustFullfillmentOfTerms","manufacturer.trustDeliveryPackaging","manufacturer.trustNumberOfTransactions"];
 export const product_filter_mappings = {
@@ -185,7 +189,7 @@ export const product_nonfilter_regex = ["lmf.","_id", "_txt", "_desc", "_label",
 export const product_configurable = [];
 export const product_default = {};
 export const facet_min = 1;
-export const facet_count = 30;
+export const facet_count = -1;
 export const query_settings = {
   "fields": ["STANDARD","commodityClassficationUri","{LANG}_label","{LANG}_desc"],
   "boosting": true,

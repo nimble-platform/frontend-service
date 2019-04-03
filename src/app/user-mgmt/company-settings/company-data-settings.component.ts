@@ -139,7 +139,7 @@ export class CompanyDataSettingsComponent implements OnInit {
         body += this.settings.details.address.streetName + "\n\n";
         body += "Building Number:\n";
         body += this.settings.details.address.buildingNumber + "\n\n";
-        body += "City:\n";
+        body += "City / Town:\n";
         body += this.settings.details.address.cityName + "\n\n";
         body += "State / Province:\n";
         body += this.settings.details.address.region + "\n\n";

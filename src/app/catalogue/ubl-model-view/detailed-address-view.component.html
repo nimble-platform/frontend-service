@@ -13,7 +13,7 @@
     <input type="text" class="form-control" [(ngModel)]="deliveryAddress.buildingNumber" [disabled]="presentationMode != 'edit'">
 </div>
 <div *ngIf="getDefaultDeliveryLocation.fb_callback" class="input-group form-group">
-    <label class="col-2 control-label offset-3">City</label>
+    <label class="col-2 control-label offset-3">City / Town</label>
     <input type="text" class="form-control" [(ngModel)]="deliveryAddress.cityName" [disabled]="presentationMode != 'edit'">
 </div>
 <div *ngIf="getDefaultDeliveryLocation.fb_callback" class="input-group form-group">

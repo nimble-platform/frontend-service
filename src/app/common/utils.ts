@@ -15,6 +15,7 @@ import {Headers} from "@angular/http";
 import { AbstractControl } from "@angular/forms";
 declare var Countries: any;
 import {PartyName} from '../catalogue/model/publish/party-name';
+import {maximumDecimalsForPrice} from  './constants'
 
 const UI_NAMES: any = {
     STRING: "TEXT"
@@ -199,7 +200,10 @@ export function selectPreferredValues(texts:Text[]): string[]{
         return englishValues;
     }
 
-    return [''];
+    if (texts.length > 0 && texts[0].value)
+      return [texts[0].value];
+    else
+      return [''];
 }
 
 // return the value for the default language of the browser
@@ -219,7 +223,10 @@ export function selectPreferredValue(texts:Text[]):string{
         return englishValue;
     }
 
-    return "";
+    if (texts.length > 0 && texts[0].value)
+      return texts[0].value;
+    else
+      return '';
 }
 
 export function selectName (ip: ItemProperty | Item) {
@@ -438,10 +445,24 @@ export function roundToTwoDecimals(value): any{
 }
 
 export function isNaNNullAware(number: number): boolean {
-    if(isNaN(number) || number == null) {
+    if (isNaN(number) || number == null) {
         return true;
     }
     return false;
+}
+
+export function isValidPrice(value: any, maximumDecimals: number = maximumDecimalsForPrice ) {
+    if (value != null && !isNaN(value) && value !== "") {
+        let decimals = countDecimals(value);
+        return (decimals <= maximumDecimals);
+    }else {
+        return false;
+    }
+}
+
+export function countDecimals(value : any): number{
+    if(Math.floor(value) === value) return 0;
+    return value.toString().split(".")[1].length || 0;
 }
 
 export function currencyToString(currencyId: string): string {

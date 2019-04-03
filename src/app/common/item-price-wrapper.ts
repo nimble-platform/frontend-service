@@ -48,7 +48,7 @@ export class ItemPriceWrapper {
      */
 
     get value(): number {
-        return this.price.priceAmount.value;
+        return roundToTwoDecimals(this.price.priceAmount.value);
     }
 
     set value(value: number) {

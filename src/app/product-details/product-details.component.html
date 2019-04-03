@@ -1,22 +1,28 @@
 <div *ngIf="wrapper" class="row product-details">
     <div class="col-9">
         <div class="row">
-            <div class="col-12">
+            <div class="col">
                 <!-- Product Overview -->
                 <h1 class="py-2">{{selectPreferredValue(item.name)}}</h1>
-                <div class="float-right mt-1">
-                    <span *ngIf="!findPrefItem(line.hjid)" class="star star-b pointer" [ngClass]="{'disabled':addFavoriteCategoryStatus.isLoading()}" (click)="addFavorites(line)" title="Add To Favorite">
-                      <span class="half" style="width:0%">&#9733;</span>&#9733;
-                    </span>
-                    <span  *ngIf="findPrefItem(line.hjid)"  class="star star-b full pointer" [ngClass]="{'disabled':addFavoriteCategoryStatus.isLoading()}" (click)="removeFavorites(line)" title="Remove From Favorite">
-                      <span class="half" style="width:100%">&#9733;</span>&#9733;
-                    </span>
-                </div>
-                <div class="float-right mr-3 pt-2">
-                    <call-status [callStatus]="addFavoriteCategoryStatus"></call-status>
-                </div>
-                <product-details-overview [wrapper]="wrapper" [options]="options">
-                </product-details-overview>
+            </div>
+            <div class="col-xs-auto align-right">
+              <div class="float-right">
+                  <span *ngIf="!findPrefItem(line.hjid)" class="star star-b pointer" [ngClass]="{'disabled':addFavoriteCategoryStatus.isLoading()}" (click)="addFavorites(line)" title="Add To Favorite">
+                    <span class="half" style="width:0%">&#9733;</span>&#9733;
+                  </span>
+                  <span  *ngIf="findPrefItem(line.hjid)"  class="star star-b full pointer" [ngClass]="{'disabled':addFavoriteCategoryStatus.isLoading()}" (click)="removeFavorites(line)" title="Remove From Favorite">
+                    <span class="half" style="width:100%">&#9733;</span>&#9733;
+                  </span>
+              </div>
+              <div class="float-right mr-3 pt-2">
+                  <call-status [callStatus]="addFavoriteCategoryStatus"></call-status>
+              </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+              <product-details-overview [wrapper]="wrapper" [options]="options">
+              </product-details-overview>
             </div>
         </div>
         <product-details-tabs [wrapper]="wrapper" [settings]="settings">
@@ -24,7 +30,7 @@
     </div>
     <div class="col-3">
         <!-- Order Workflow For Product -->
-        <div *ngIf="isLogistics === false" class="p-3 border border-dark">
+        <div *ngIf="isLogistics === false" class="p-3 border border-dark border-bottom-0">
 
             <h2 class="py-1">Negotiate & Order</h2>
 
@@ -151,7 +157,7 @@
         </div>
 
         <!-- Order Workflow For Logistics -->
-        <div *ngIf="isLogistics === true" class="p-3 border border-dark">
+        <div *ngIf="isLogistics === true" class="p-3 border border-dark border-bottom-0">
 
             <h2 class="py-1">Negotiate & Order</h2>
 
@@ -188,25 +194,19 @@
                 (click)="onNegotiate()" [disabled]="!this.appComponent.checkRoles('bp') || options.quantity <= 0">
                 Negotiate & Order
             </button>
+            
         </div>
-        <div *ngIf="this.appComponent.checkRoles('bp')" class="p-3 border border-dark border-top-0">
-            <div class="inline w-100" (click)="showProcesses = !showProcesses">
-                <h4 class="py-1 inline w-75">Other Processes</h4>
-                <i class="fas fa-chevron-up fa-lg toggle-processes" aria-hidden="true" *ngIf="showProcesses"></i>
-                <i class="fas fa-chevron-down fa-lg toggle-processes" aria-hidden="true" *ngIf="!showProcesses"></i>
-            </div>
-            <div *ngIf="showProcesses">
+        <div *ngIf="this.appComponent.checkRoles('bp')" class="pb-3 pl-3 pr-3 pt-0 border border-dark border-top-0">
                 <div>
-                    <button class="btn btn-secondary space-before w-100" (click)="onRequestInformation()">
+                    <button class="btn btn-secondary w-100" (click)="onRequestInformation()">
                         Request Information
                     </button>
                 </div>
                 <div *ngIf="config.showPPAP && isPpapAvailable() && !isLogistics">
-                    <button class="btn btn-secondary space-before w-100" (click)="onStartPpap()">
+                    <button class="btn btn-secondary w-100" (click)="onStartPpap()">
                         Start Ppap
                     </button>
                 </div>
-            </div>
         </div>
     </div>
 </div>
