@@ -584,26 +584,28 @@ export class UBLModelUtils {
         return party.partyName[0].name.value;
     }
 
-    public static isFilledLCPAInput(lcpaDetails: LCPAInput): boolean {
-        if(lcpaDetails == null) {
-            return true;
+    public static isFilledLCPAInput(lcpaDetails: LifeCyclePerformanceAssessmentDetails): boolean {
+        if(lcpaDetails.lcpainput == null) {
+            return false;
         }
-        if(!isNaNNullAware(lcpaDetails.assemblyCost.value) ||
-            !isNaNNullAware(lcpaDetails.consumableCost.value) ||
-            !isNaNNullAware(lcpaDetails.endOfLifeCost.value) ||
-            !isNaNNullAware(lcpaDetails.energyConsumptionCost.value) ||
-            !isNaNNullAware(lcpaDetails.lifeCycleLength.value) ||
-            !isNaNNullAware(lcpaDetails.purchasingPrice.value) ||
-            !isNaNNullAware(lcpaDetails.sparePartCost.value) ||
-            !isNaNNullAware(lcpaDetails.transportCost.value) ||
-            lcpaDetails.additionalLCPAInputDetail.length > 0) {
+        let lcpaInput = item.lifeCyclePerformanceAssessmentDetails.lcpainput;
+
+        if(!isNaNNullAware(lcpaInput.assemblyCost.value) ||
+            !isNaNNullAware(lcpaInput.consumableCost.value) ||
+            !isNaNNullAware(lcpaInput.endOfLifeCost.value) ||
+            !isNaNNullAware(lcpaInput.energyConsumptionCost.value) ||
+            !isNaNNullAware(lcpaInput.lifeCycleLength.value) ||
+            !isNaNNullAware(lcpaInput.purchasingPrice.value) ||
+            !isNaNNullAware(lcpaInput.sparePartCost.value) ||
+            !isNaNNullAware(lcpaInput.transportCost.value) ||
+            lcpaInput.additionalLCPAInputDetail.length > 0) {
             return true;
         } else {
             return false;
         }
     }
 
-    public static isFilledLCPAOutput(lcpaDetails: LCPAOutput): boolean {
+    public static isFilledLCPAOutput(item: Item): boolean {
         return false;
     }
 
