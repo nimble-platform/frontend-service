@@ -1,6 +1,6 @@
 import {Component, ElementRef, EventEmitter, Output, ViewChild} from "@angular/core";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
-import {LCPAInputDetail} from "../../model/publish/lcpa-input-detail";
+import {LCPAInputDetail} from "../catalogue/model/publish/lcpa-input-detail";
 
 @Component({
     selector: "lcpa-detail-modal",

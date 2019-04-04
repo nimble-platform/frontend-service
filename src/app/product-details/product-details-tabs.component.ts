@@ -5,6 +5,7 @@ import { BpWorkflowOptions } from "../bpe/model/bp-workflow-options";
 import { ItemProperty } from "../catalogue/model/publish/item-property";
 import { getPropertyValuesAsStrings } from "../common/utils";
 import { CompanySettings } from "../user-mgmt/model/company-settings";
+import * as myGlobals from '../globals';
 
 @Component({
     selector: 'product-details-tabs',
@@ -19,11 +20,12 @@ export class ProductDetailsTabsComponent implements OnInit {
 
     @Input() showOverview: boolean = false;
     @Input() readonly: boolean = false;
+    config = myGlobals.config;
 
     selectedTab: ProductDetailsTab;
 
     isLogistics: boolean = false;
-    
+
     constructor() {
 
     }

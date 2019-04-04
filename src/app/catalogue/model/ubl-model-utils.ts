@@ -585,6 +585,9 @@ export class UBLModelUtils {
     }
 
     public static isFilledLCPAInput(lcpaDetails: LCPAInput): boolean {
+        if(lcpaDetails == null) {
+            return true;
+        }
         if(!isNaNNullAware(lcpaDetails.assemblyCost.value) ||
             !isNaNNullAware(lcpaDetails.consumableCost.value) ||
             !isNaNNullAware(lcpaDetails.endOfLifeCost.value) ||
@@ -601,6 +604,13 @@ export class UBLModelUtils {
     }
 
     public static isFilledLCPAOutput(lcpaDetails: LCPAOutput): boolean {
+        return false;
+    }
+
+    public static isEmptyQuantity(quantity:Quantity | Amount): boolean {
+        if(quantity.value == null) {
+            return true;
+        }
         return false;
     }
 }

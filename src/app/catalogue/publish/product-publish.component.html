@@ -149,7 +149,7 @@
                             Track &amp; Trace
                         </a>
                     </li>
-                    <li *ngIf="config.showTrack" class="nav-item">
+                    <li *ngIf="config.showLCPA" class="nav-item">
                         <a href id="LCC" class="nav-link"
                            [ngClass]="{ active: selectedTabSinglePublish === 'LCC'}"
                            (click)="onSelectTabSinglePublish($event)">
@@ -294,7 +294,7 @@
         <!-- Life Cycle Cost -->
         <div class="row space-before" *ngIf="selectedTabSinglePublish === 'LCC'">
             <div class="col-12">
-                <product-lcpa-tab [catalogueLine]="catalogueLine" [disabled]="isLoading()">
+                <product-lcpa-tab [catalogueLine]="catalogueLine" [disabled]="isLoading()" [presentationMode]="'edit'">
                 </product-lcpa-tab>
             </div>
         </div>

@@ -24,7 +24,7 @@ const UI_NAMES: any = {
 const COUNTRY_NAMES = getCountryNames();
 const COUNTRY_JSON = getCountryJSON();
 
-function getCountryNames(): string[] {
+export function getCountryNames(): string[] {
   var countriesFull = Countries.countries;
   var countryList = [];
   for (let country in countriesFull) {

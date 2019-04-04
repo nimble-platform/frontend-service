@@ -39,6 +39,13 @@
                     Certificates
                 </a>
             </li>
+            <li *ngIf="config.showLCPA" class="nav-item">
+                <a href id="LCPA" class="nav-link"
+                   [ngClass]="{ active: selectedTab === 'LCPA'}"
+                   (click)="onSelectTab($event)">
+                    LCPA Details
+                </a>
+            </li>
             <li class="nav-item">
                 <a href id="COMPANY" class="nav-link"
                     [ngClass]="{ active: selectedTab === 'COMPANY'}"
@@ -129,6 +136,13 @@
     <div *ngIf="selectedTab === 'CERTIFICATES'" class="p-3 col-12">
         <product-details-certificates [wrapper]="wrapper" [settings]="settings">
         </product-details-certificates>
+    </div>
+
+    <!-- LCPA Tab -->
+    <div *ngIf="selectedTab === 'LCPA'" class="p-3 col-12">
+        <product-lcpa-tab [presentationMode]="'view'"
+                          [catalogueLine]="wrapper.line">
+        </product-lcpa-tab>
     </div>
 
     <!-- Company Details Tab -->
