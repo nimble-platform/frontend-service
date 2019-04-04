@@ -57,6 +57,7 @@ import {Text} from "./publish/text";
 import {Attachment} from "./publish/attachment";
 import {LCPAInput} from "./publish/lcpa-input";
 import {LCPAOutput} from "./publish/lcpa-output";
+import {LifeCyclePerformanceAssessmentDetails} from "./publish/life-cycle-performance-assessment-details";
 
 /**
  * Created by suat on 05-Jul-17.
@@ -588,7 +589,7 @@ export class UBLModelUtils {
         if(lcpaDetails.lcpainput == null) {
             return false;
         }
-        let lcpaInput = item.lifeCyclePerformanceAssessmentDetails.lcpainput;
+        let lcpaInput = lcpaDetails.lcpainput;
 
         if(!isNaNNullAware(lcpaInput.assemblyCost.value) ||
             !isNaNNullAware(lcpaInput.consumableCost.value) ||
@@ -605,7 +606,7 @@ export class UBLModelUtils {
         }
     }
 
-    public static isFilledLCPAOutput(item: Item): boolean {
+    public static isFilledLCPAOutput(lcpaDetails: LifeCyclePerformanceAssessmentDetails): boolean {
         return false;
     }
 
