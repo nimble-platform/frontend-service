@@ -110,6 +110,7 @@ export const config = {
   ],
   "showCompanyMembers": true,
   "showExplorative": false,
+  "showLCPA": false,
   "showPPAP": false,
   "showTrack": false,
   "showTrade": false,

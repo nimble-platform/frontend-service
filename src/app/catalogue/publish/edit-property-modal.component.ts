@@ -36,13 +36,6 @@ export class EditPropertyModalComponent implements OnInit {
         this.addEmptyValuesToProperty();
         this.modalService.open(this.modal).result.then(() => {
             // on OK, update the property with the values
-            /*
-            if(this.property.valueQualifier == "BOOLEAN"){
-                property.value = [createText("false")];
-            }else {
-                property.value = this.property.value;
-            }
-            */
             property.value = this.property.value;
             property.valueBinary = this.property.valueBinary;
             property.valueDecimal = this.property.valueDecimal;
@@ -121,20 +114,6 @@ export class EditPropertyModalComponent implements OnInit {
         return isCustomProperty(this.property) ? "edit" : "view";
     }
 
-    // TEST
-    /*
-    private newPvalue: Text = new Text(null,DEFAULT_LANGUAGE());
-    private languages: Array<string> = LANGUAGES;
-
-    addPropertyValue() {
-        let propertyValueText = new Text(this.newPvalue.value, this.newPvalue.languageID);
-
-        this.property.value.push(propertyValueText);
-
-        this.newPvalue = new Text(null,DEFAULT_LANGUAGE());
-    }
-    */
-
     private languages: Array<string> = LANGUAGES;
     addPropertyValue() {
       this.property.value.push(createText(''));
@@ -143,19 +122,6 @@ export class EditPropertyModalComponent implements OnInit {
     deletePropertyValue(index) {
         this.property.value.splice(index, 1);
     }
-
-    // TEST
-    /*
-    private newPname: Text = new Text(null,DEFAULT_LANGUAGE());
-
-    addPropertyName() {
-        let propertyNameText = new Text(this.newPname.value, this.newPname.languageID);
-
-        this.property.name.push(propertyNameText);
-
-        this.newPname = new Text(null,DEFAULT_LANGUAGE());
-    }
-    */
 
     addPropertyName() {
         this.property.name.push(createText(''));

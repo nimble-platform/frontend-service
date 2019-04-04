@@ -24,7 +24,7 @@ const UI_NAMES: any = {
 const COUNTRY_NAMES = getCountryNames();
 const COUNTRY_JSON = getCountryJSON();
 
-function getCountryNames(): string[] {
+export function getCountryNames(): string[] {
   var countriesFull = Countries.countries;
   var countryList = [];
   for (let country in countriesFull) {
@@ -442,6 +442,13 @@ export function roundToTwoDecimals(value): any{
         return (Math.round(parseFloat(value) * 100) / 100).toFixed(2);
     }
     return value;
+}
+
+export function isNaNNullAware(number: number): boolean {
+    if (isNaN(number) || number == null) {
+        return true;
+    }
+    return false;
 }
 
 export function isValidPrice(value: any, maximumDecimals: number = maximumDecimalsForPrice ) {

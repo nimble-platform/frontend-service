@@ -47,15 +47,16 @@ import {ItemInformationResponse} from "./publish/item-information-response";
 import {PaymentTerms} from "./publish/payment-terms";
 import {Address} from "./publish/address";
 import {MonetaryTotal} from "./publish/monetary-total";
-import { NegotiationOptions } from "./publish/negotiation-options";
-import {CURRENCIES, DEFAULT_LANGUAGE} from './constants';
-import { TradingTerm } from "./publish/trading-term";
-import { CompanyNegotiationSettings } from "../../user-mgmt/model/company-negotiation-settings";
-import { headersToString } from "../../../../node_modules/@types/selenium-webdriver/http";
+import {NegotiationOptions} from "./publish/negotiation-options";
+import {CURRENCIES, DEFAULT_LANGUAGE} from "./constants";
+import {TradingTerm} from "./publish/trading-term";
+import {CompanyNegotiationSettings} from "../../user-mgmt/model/company-negotiation-settings";
 import {ShipmentStage} from "./publish/shipment-stage";
-import {copy, createText, selectPreferredName} from '../../common/utils';
+import {copy, isNaNNullAware, selectPreferredName} from "../../common/utils";
 import {Text} from "./publish/text";
 import {Attachment} from "./publish/attachment";
+import {LCPAInput} from "./publish/lcpa-input";
+import {LCPAOutput} from "./publish/lcpa-output";
 
 /**
  * Created by suat on 05-Jul-17.
@@ -583,4 +584,33 @@ export class UBLModelUtils {
         return party.partyName[0].name.value;
     }
 
+    public static isFilledLCPAInput(lcpaDetails: LCPAInput): boolean {
+        if(lcpaDetails == null) {
+            return true;
+        }
+        if(!isNaNNullAware(lcpaDetails.assemblyCost.value) ||
+            !isNaNNullAware(lcpaDetails.consumableCost.value) ||
+            !isNaNNullAware(lcpaDetails.endOfLifeCost.value) ||
+            !isNaNNullAware(lcpaDetails.energyConsumptionCost.value) ||
+            !isNaNNullAware(lcpaDetails.lifeCycleLength.value) ||
+            !isNaNNullAware(lcpaDetails.purchasingPrice.value) ||
+            !isNaNNullAware(lcpaDetails.sparePartCost.value) ||
+            !isNaNNullAware(lcpaDetails.transportCost.value) ||
+            lcpaDetails.additionalLCPAInputDetail.length > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static isFilledLCPAOutput(lcpaDetails: LCPAOutput): boolean {
+        return false;
+    }
+
+    public static isEmptyQuantity(quantity:Quantity | Amount): boolean {
+        if(quantity.value == null) {
+            return true;
+        }
+        return false;
+    }
 }
