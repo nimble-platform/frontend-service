@@ -1,13 +1,16 @@
-import { Component, OnInit, Input } from "@angular/core";
+import {Component, OnInit, Input, ViewChild, ElementRef} from "@angular/core";
 import { CatalogueLine } from "../model/publish/catalogue-line";
 import { Certificate } from "../model/publish/certificate";
 import * as myGlobals from '../../globals';
-import {FormBuilder, FormGroup} from "@angular/forms";
+import {FormBuilder, FormControl, FormGroup} from "@angular/forms";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {DocumentReference} from "../model/publish/document-reference";
 import {Attachment} from "../model/publish/attachment";
 import {BinaryObject} from "../model/publish/binary-object";
 import {UBLModelUtils} from "../model/ubl-model-utils";
+import {COUNTRY_NAMES} from "../../common/utils";
+import {Country} from "../model/publish/country";
+import {Text} from "../model/publish/text";
 
 @Component({
     selector: "product-certificates-tab",
@@ -20,8 +23,12 @@ export class ProductCertificatesTabComponent implements OnInit {
     @Input() disabled: boolean
 
     addCertForm: FormGroup;
+    countryFormControl: FormControl;
     config = myGlobals.config;
     certDocumentReference: DocumentReference;
+    countryNames = COUNTRY_NAMES;
+    countryInputValue: string = ''
+    selectedCountries: string[] = [];
 
     constructor(private _fb: FormBuilder,
                 private modalService: NgbModal) {
@@ -42,6 +49,7 @@ export class ProductCertificatesTabComponent implements OnInit {
             description: [""],
             type: [""]
         });
+        this.countryFormControl = new FormControl('');
         this.modalService.open(content);
     }
 
@@ -56,8 +64,35 @@ export class ProductCertificatesTabComponent implements OnInit {
         certificate.remarks = fields.description;
         certificate.certificateTypeCode.name = fields.name;
         certificate.documentReference = [this.certDocumentReference];
+        for(let countryName of this.selectedCountries) {
+            let country: Country = new Country(new Text(countryName, "en"));
+            certificate.country.push(country);
+        }
+        console.log(certificate.country);
 
         this.catalogueLine.goodsItem.item.certificate.push(certificate);
         close();
+    }
+
+    onCountrySelected(event) {
+        this.selectedCountries.push(event.target.value);
+    }
+
+    onCountryRemoved(countryName: string) {
+        this.selectedCountries.splice(this.selectedCountries.indexOf(countryName), 1);
+        this.countryFormControl.setValue('');
+    }
+
+    getCertificateCountryNames(certificate:Certificate): string[] {
+        console.log(certificate.country);
+        let countryNames:string[] = [];
+        if(certificate.country == null || certificate.country.length == 0) {
+            return countryNames;
+        }
+
+        for(let country of certificate.country) {
+            countryNames.push(country.name.value);
+        }
+        return countryNames;
     }
 }

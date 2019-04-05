@@ -21,10 +21,10 @@ const UI_NAMES: any = {
     STRING: "TEXT"
 }
 
-const COUNTRY_NAMES = getCountryNames();
+export const COUNTRY_NAMES = getCountryNames();
 const COUNTRY_JSON = getCountryJSON();
 
-export function getCountryNames(): string[] {
+function getCountryNames(): string[] {
   var countriesFull = Countries.countries;
   var countryList = [];
   for (let country in countriesFull) {
