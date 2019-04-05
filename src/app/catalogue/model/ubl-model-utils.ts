@@ -47,15 +47,17 @@ import {ItemInformationResponse} from "./publish/item-information-response";
 import {PaymentTerms} from "./publish/payment-terms";
 import {Address} from "./publish/address";
 import {MonetaryTotal} from "./publish/monetary-total";
-import { NegotiationOptions } from "./publish/negotiation-options";
-import {CURRENCIES, DEFAULT_LANGUAGE} from './constants';
-import { TradingTerm } from "./publish/trading-term";
-import { CompanyNegotiationSettings } from "../../user-mgmt/model/company-negotiation-settings";
-import { headersToString } from "../../../../node_modules/@types/selenium-webdriver/http";
+import {NegotiationOptions} from "./publish/negotiation-options";
+import {CURRENCIES, DEFAULT_LANGUAGE} from "./constants";
+import {TradingTerm} from "./publish/trading-term";
+import {CompanyNegotiationSettings} from "../../user-mgmt/model/company-negotiation-settings";
 import {ShipmentStage} from "./publish/shipment-stage";
-import {copy, createText, selectPreferredName} from '../../common/utils';
+import {copy, isNaNNullAware, selectPreferredName} from "../../common/utils";
 import {Text} from "./publish/text";
 import {Attachment} from "./publish/attachment";
+import {LCPAInput} from "./publish/lcpa-input";
+import {LCPAOutput} from "./publish/lcpa-output";
+import {LifeCyclePerformanceAssessmentDetails} from "./publish/life-cycle-performance-assessment-details";
 
 /**
  * Created by suat on 05-Jul-17.
@@ -583,4 +585,35 @@ export class UBLModelUtils {
         return party.partyName[0].name.value;
     }
 
+    public static isFilledLCPAInput(lcpaDetails: LifeCyclePerformanceAssessmentDetails): boolean {
+        if(lcpaDetails.lcpainput == null) {
+            return false;
+        }
+        let lcpaInput = lcpaDetails.lcpainput;
+
+        if(!isNaNNullAware(lcpaInput.assemblyCost.value) ||
+            !isNaNNullAware(lcpaInput.consumableCost.value) ||
+            !isNaNNullAware(lcpaInput.endOfLifeCost.value) ||
+            !isNaNNullAware(lcpaInput.energyConsumptionCost.value) ||
+            !isNaNNullAware(lcpaInput.lifeCycleLength.value) ||
+            !isNaNNullAware(lcpaInput.purchasingPrice.value) ||
+            !isNaNNullAware(lcpaInput.sparePartCost.value) ||
+            !isNaNNullAware(lcpaInput.transportCost.value) ||
+            lcpaInput.additionalLCPAInputDetail.length > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static isFilledLCPAOutput(lcpaDetails: LifeCyclePerformanceAssessmentDetails): boolean {
+        return false;
+    }
+
+    public static isEmptyQuantity(quantity:Quantity | Amount): boolean {
+        if(quantity.value == null) {
+            return true;
+        }
+        return false;
+    }
 }

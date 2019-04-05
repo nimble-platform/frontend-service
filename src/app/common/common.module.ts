@@ -17,6 +17,7 @@ import { BooleanInputComponent } from './boolean-input.component';
 import { MultiAddressInputComponent } from './multi-address-input.component';
 import { InputLabelComponent } from './input-label.component';
 import {AmountInputComponent} from "./amount-input.component";
+import {ExpandableFlexRow} from "./expandable-flex-row.component";
 
 @NgModule({
 	imports: [
@@ -39,7 +40,8 @@ import {AmountInputComponent} from "./amount-input.component";
 		BooleanInputComponent,
 		MultiAddressInputComponent,
 		InputLabelComponent,
-		AmountInputComponent
+		AmountInputComponent,
+		ExpandableFlexRow
 	],
 	exports: [
 		CallStatusComponent,
@@ -54,7 +56,8 @@ import {AmountInputComponent} from "./amount-input.component";
 		BooleanInputComponent,
 		MultiAddressInputComponent,
 		InputLabelComponent,
-		AmountInputComponent
+		AmountInputComponent,
+		ExpandableFlexRow
 	],
 	providers: [
 	]
