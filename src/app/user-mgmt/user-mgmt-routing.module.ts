@@ -10,10 +10,12 @@ import { CompanySettingsComponent } from "./company-settings/company-settings.co
 import { CompanyDetailsComponent } from "./company-details.component";
 import { CompanyRatingComponent } from './company-rating.component';
 import { UserProfileComponent } from './user-profile.component';
+import {ForgotPasswordComponent} from "./forgot-password.component";
 
 const routes: Routes = [
     { path: "login", component: LoginComponent },
     { path: "logout", component: LogoutComponent },
+    { path: "forgot", component: ForgotPasswordComponent },
     { path: "registration", component: RegistrationComponent },
     { path: "company-registration", component: CompanyRegistrationComponent },
     { path: "company-invitation", component: CompanyInvitationComponent },

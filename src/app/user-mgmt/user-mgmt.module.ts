@@ -8,6 +8,7 @@ import { UserMgmtRoutingModule } from './user-mgmt-routing.module';
 
 import { LoginComponent } from './login.component';
 import { LogoutComponent } from './logout.component';
+import { ForgotPasswordComponent } from './forgot-password.component';
 import { RegistrationComponent } from './registration.component';
 import { UserFormComponent } from './user-form.component';
 import { CredentialsFormComponent } from './credentials-form.component';
@@ -55,7 +56,8 @@ import { UserProfileComponent } from './user-profile.component';
 		CompanyCategoriesSettingsComponent,
 		CompanyDetailsComponent,
 		CompanyRatingComponent,
-		UserProfileComponent
+		UserProfileComponent,
+		ForgotPasswordComponent
 	],
 	exports: [
 		LoginComponent,
@@ -69,7 +71,8 @@ import { UserProfileComponent } from './user-profile.component';
 		CompanyInvitationComponent,
 		CompanyDetailsComponent,
 		CompanyRatingComponent,
-		UserProfileComponent
+		UserProfileComponent,
+		ForgotPasswordComponent
 	],
 	providers: [
 	]
