@@ -150,10 +150,10 @@
                         </a>
                     </li>
                     <li *ngIf="config.showLCPA" class="nav-item">
-                        <a href id="LCC" class="nav-link"
-                           [ngClass]="{ active: selectedTabSinglePublish === 'LCC'}"
+                        <a href id="LCPA" class="nav-link"
+                           [ngClass]="{ active: selectedTabSinglePublish === 'LCPA'}"
                            (click)="onSelectTabSinglePublish($event)">
-                            Life Cycle Cost
+                            LCPA Details
                         </a>
                     </li>
                 </ul>
@@ -291,8 +291,8 @@
             </div>
         </div>
 
-        <!-- Life Cycle Cost -->
-        <div class="row space-before" *ngIf="selectedTabSinglePublish === 'LCC'">
+        <!-- Life Cycle Performance Analysis -->
+        <div class="row space-before" *ngIf="selectedTabSinglePublish === 'LCPA'">
             <div class="col-12">
                 <product-lcpa-tab [catalogueLine]="catalogueLine" [disabled]="isLoading()" [presentationMode]="'edit'">
                 </product-lcpa-tab>

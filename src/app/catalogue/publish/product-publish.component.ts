@@ -8,7 +8,7 @@ import { ItemProperty } from "../model/publish/item-property";
 import { FormGroup } from "@angular/forms";
 import { UBLModelUtils } from "../model/ubl-model-utils";
 import { CallStatus } from "../../common/call-status";
-import {getCountryNames, isValidPrice} from "../../common/utils";
+import {isValidPrice} from "../../common/utils";
 import { Quantity } from "../model/publish/quantity";
 import { CategoryService } from "../category/category.service";
 import { CatalogueService } from "../catalogue.service";
@@ -89,7 +89,7 @@ export class ProductPublishComponent implements OnInit {
     catalogueLine: CatalogueLine = null;
     productWrapper: ProductWrapper = null;
     companyNegotiationSettings: CompanyNegotiationSettings;
-    selectedTabSinglePublish: "DETAILS" | "DELIVERY_TRADING" | "PRICE" | "CERTIFICATES" | "TRACK_TRACE" | "LCC" = "DETAILS";
+    selectedTabSinglePublish: "DETAILS" | "DELIVERY_TRADING" | "PRICE" | "CERTIFICATES" | "TRACK_TRACE" | "LCPA" = "DETAILS";
     private selectedProperties: SelectedProperties = {};
     private categoryProperties: CategoryProperties = {};
     private lunrIndex: lunr.Index;
@@ -789,13 +789,14 @@ export class ProductPublishComponent implements OnInit {
         // Make deep copy of catalogue line so we can remove empty fields without disturbing UI model
         // This is required because there is no redirect after publish action
         let catalogueLineCopy: CatalogueLine = copy(catalogueLine);
-        console.log(getCountryNames());
 
-        if(!UBLModelUtils.isFilledLCPAInput(catalogueLineCopy.goodsItem.item.lifeCyclePerformanceAssessmentDetails.lcpainput)) {
-            catalogueLineCopy.goodsItem.item.lifeCyclePerformanceAssessmentDetails.lcpainput = null;
-        }
-        if(!UBLModelUtils.isFilledLCPAOutput(catalogueLineCopy.goodsItem.item.lifeCyclePerformanceAssessmentDetails.lcpaoutput)) {
-            catalogueLineCopy.goodsItem.item.lifeCyclePerformanceAssessmentDetails.lcpaoutput = null;
+        if(catalogueLineCopy.goodsItem.item.lifeCyclePerformanceAssessmentDetails != null) {
+            if(!UBLModelUtils.isFilledLCPAInput(catalogueLineCopy.goodsItem.item.lifeCyclePerformanceAssessmentDetails)) {
+                catalogueLineCopy.goodsItem.item.lifeCyclePerformanceAssessmentDetails.lcpainput = null;
+            }
+            if(!UBLModelUtils.isFilledLCPAOutput(catalogueLineCopy.goodsItem.item.lifeCyclePerformanceAssessmentDetails)) {
+                catalogueLineCopy.goodsItem.item.lifeCyclePerformanceAssessmentDetails.lcpaoutput = null;
+            }
         }
 
         // splice out properties that are unfilled
