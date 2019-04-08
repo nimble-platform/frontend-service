@@ -23,6 +23,7 @@ import {BpURLParams} from '../catalogue/model/publish/bpURLParams';
 import {UBLModelUtils} from '../catalogue/model/ubl-model-utils';
 import {selectPreferredValue} from '../common/utils';
 import {DashboardProcessInstanceDetails} from '../bpe/model/dashboard-process-instance-details';
+import {Item} from '../catalogue/model/publish/item';
 
 /**
  * Created by suat on 12-Mar-18.
@@ -171,10 +172,11 @@ export class ThreadSummaryComponent implements OnInit {
         const correspondent = this.getCorrespondent(dashboardProcessInstanceDetails,userRole,processType);
 
         if (userRole === "buyer") {
-            this.lastEventPartnerID = UBLModelUtils.getPartyId(ActivityVariableParser.getProductFromProcessData(initialDoc,processType).manufacturerParty);
+            let item:Item = initialDoc.item;
+            this.lastEventPartnerID = UBLModelUtils.getPartyId(item.manufacturerParty);
         }
         else {
-            this.lastEventPartnerID = ActivityVariableParser.getBuyerId(initialDoc,processType);
+            this.lastEventPartnerID = initialDoc.buyerPartyId;
         }
 
         const isRated = await this.bpeService.ratingExists(processInstanceId, this.lastEventPartnerID);
@@ -185,7 +187,7 @@ export class ThreadSummaryComponent implements OnInit {
             processInstanceId,
             moment(new Date(lastActivity["startTime"]), 'YYYY-MM-DDTHH:mm:ss.SSSZ').format("YYYY-MM-DD HH:mm:ss"),
             ActivityVariableParser.getTradingPartnerName(initialDoc, this.cookieService.get("company_id"),processType),
-            ActivityVariableParser.getProductFromProcessData(initialDoc,processType),
+            initialDoc.item,
             correspondent,
             this.getBPStatus(response),
             initialDoc,
@@ -464,7 +466,7 @@ export class ThreadSummaryComponent implements OnInit {
                 }
                 break;
             case "Transport_Execution_Plan":
-                if (response && response.documentStatusCode.name == "Accepted") {
+                if (response && response.acceptedIndicator == "Accepted") {
                     this.showCancelCollaborationButton = false;
                 }
         }
