@@ -13,6 +13,7 @@
             </ng-container>
             <li class="nav-item">
                 <a href id="DETAILS" class="nav-link"
+                    *ngIf="haveDatails === true"
                     [ngClass]="{ active: selectedTab === 'DETAILS'}"
                     (click)="onSelectTab($event)">
                     Details
@@ -26,7 +27,7 @@
                     Delivery &amp; Trading
                 </a>
                 <a href id="DELIVERY_TRADING" class="nav-link"
-                    *ngIf="isLogistics === true"
+                    *ngIf="isLogistics === true && haveTransportServiceDetails === true"
                     [ngClass]="{ active: selectedTab === 'DELIVERY_TRADING'}"
                     (click)="onSelectTab($event)">
                     Transportation Service Details
@@ -34,6 +35,7 @@
             </li>
             <li class="nav-item">
                 <a href id="CERTIFICATES" class="nav-link"
+                *ngIf="haveCertificates === true"
                     [ngClass]="{ active: selectedTab === 'CERTIFICATES'}"
                     (click)="onSelectTab($event)">
                     Certificates
@@ -41,6 +43,7 @@
             </li>
             <li *ngIf="config.showLCPA" class="nav-item">
                 <a href id="LCPA" class="nav-link"
+                *ngIf="haveLcps === true"
                    [ngClass]="{ active: selectedTab === 'LCPA'}"
                    (click)="onSelectTab($event)">
                     LCPA Details
@@ -55,6 +58,7 @@
             </li>
             <li class="nav-item">
                 <a href id="RATING" class="nav-link"
+                *ngIf="haveRating === true"
                     [ngClass]="{ active: selectedTab === 'RATING'}"
                     (click)="onSelectTab($event)">
                     Company Ratings
@@ -99,23 +103,23 @@
     <div *ngIf="selectedTab === 'DELIVERY_TRADING'" class="p-3 col-12">
         <div class="d-flex" *ngIf="isLogistics === false">
             <div style="flex-grow:1;">
-                <h3 class="p-1">Price</h3>
-                <div class="p-1">
+                <h3 *ngIf="wrapper.getPricePerItem() != '' || wrapper.getFreeSample() != ''" class="p-1">Price</h3>
+                <div *ngIf="wrapper.getPricePerItem() != ''" class="p-1">
                     <strong>Price: </strong> {{ wrapper.getPricePerItem() }}
                 </div>
-                <div class="p-1">
+                <div *ngIf="wrapper.getFreeSample() != ''" class="p-1">
                     <strong>Free Sample: </strong> {{ wrapper.getFreeSample() }}
                 </div>
             </div>
             <div style="flex-grow:1;">
-                <h3 class="pt-2 p-1">Delivery Terms</h3>
-                <div class="p-1">
+                <h3 *ngIf="wrapper.getIncoterms() != '' || wrapper.getSpecialTerms() != null || wrapper.getDeliveryPeriod() != ''" class="pt-2 p-1">Delivery Terms</h3>
+                <div *ngIf="wrapper.getIncoterms() != ''" class="p-1">
                     <strong>Incoterms: </strong> {{ wrapper.getIncoterms() }}
                 </div>
-                <div class="p-1">
+                <div  *ngIf="wrapper.getSpecialTerms() != null" class="p-1">
                     <strong>Special Terms: </strong> {{ wrapper.getSpecialTerms() }}
                 </div>
-                <div class="p-1">
+                <div  *ngIf="wrapper.getDeliveryPeriod() != ''" class="p-1">
                     <strong>Delivery Period: </strong> {{ wrapper.getDeliveryPeriod() }}
                 </div>
             </div>
@@ -127,20 +131,20 @@
             </div>
         </div>
         <div *ngIf="isLogistics === true">
-            <transportation-service-input [catalogueLine]="wrapper.line" presentationMode="view">
+            <transportation-service-input  (sendStatus)="getStatusOfTansportTab($event)" [catalogueLine]="wrapper.line" presentationMode="view">
             </transportation-service-input>
         </div>
     </div>
 
     <!-- Certificates Tab -->
     <div *ngIf="selectedTab === 'CERTIFICATES'" class="p-3 col-12">
-        <product-details-certificates [wrapper]="wrapper" [settings]="settings">
+        <product-details-certificates  (sendTrustStatus)="getTrustStatusTab($event)"  [wrapper]="wrapper" [settings]="settings">
         </product-details-certificates>
     </div>
 
     <!-- LCPA Tab -->
     <div *ngIf="selectedTab === 'LCPA'" class="p-3 col-12">
-        <product-lcpa-tab [presentationMode]="'view'"
+        <product-lcpa-tab  (lcpaDetailsStatus)="getlcpaStatusTab($event)"  [presentationMode]="'view'"
                           [catalogueLine]="wrapper.line">
         </product-lcpa-tab>
     </div>
@@ -153,7 +157,7 @@
 
     <!-- Company Ratings Tab -->
     <div *ngIf="selectedTab === 'RATING'" class="p-3 col-12">
-        <company-rating [id]="settings.companyID" [hideTitle]="true">
+        <company-rating (ratingDetailsStatus)="getRatingStatus($event)" [id]="settings.companyID" [hideTitle]="true">
         </company-rating>
     </div>
 
