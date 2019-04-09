@@ -1,3 +1,7 @@
+
+/*----------------------------------------------------------------------------------------------------*/
+/* Basics*/
+/*----------------------------------------------------------------------------------------------------*/
 #channel-messages td {
     line-height: 2em;
     padding-right: 70px;
@@ -39,6 +43,11 @@ h4 {
     font-size: 0.8em;
 }
 
+#new-server p {
+    margin-top: 10px;
+    font-size: 0.8em;
+}
+
 .add-sensor-btn {
     float: right;
 }
@@ -53,4 +62,201 @@ h4 {
 
 #add-sensor-form input {
     margin-right: 10px;
+}
+
+
+/*----------------------------------------------------------------------------------------------------*/
+/* The switch - the box around the slider */
+/*----------------------------------------------------------------------------------------------------*/
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #b77563F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: .25rem;
+}
+.slider.round:before {
+  border-radius: .11rem;
+}
+
+
+#DataStorageHeader table tr td{
+  border: none;
+}
+
+
+#HeaderTextArea h1{
+    margin-top: 40px !important;
+    margin-bottom: 20px !important;
+    float: left;
+}
+
+#ToggleButtonArea label {
+    margin-top: 40px !important;
+    margin-bottom: 20px !important;
+    margin-left: 0px;
+    float: left;
+}
+
+#DescriptionTextArea {
+    margin-top: 40px !important;
+    margin-bottom: 20px !important;
+    margin-left: 20px;
+    float: right;
+    display: inline !important;
+}
+
+#StorageDataArea {
+   transition: ease-in-out 1s;
+   overflow: hidden;
+   width: 100%;
+}
+
+.storage-max {
+    max-height: 600px;
+    color: black;
+}
+
+.storage-min {
+    max-height: 0px;
+    color: transparent;
+}
+
+
+
+/*----------------------------------------------------------------------------------------------------*/
+/* settings for service type selectbox */
+/*----------------------------------------------------------------------------------------------------*/
+.styled-select {
+   background: url(http://i62.tinypic.com/15xvbd5.png) no-repeat 96% 0;
+   height: 29px;
+   overflow: hidden;
+   width: 345px;
+}
+
+.styled-select select {
+   background: transparent;
+   border: none;
+   font-size: 14px;
+   height: 29px;
+   padding: 5px; /* If you add too much padding here, the options won't show in IE */
+   width: 373px;
+}
+
+.styled-select.slate {
+   background: url(http://i62.tinypic.com/2e3ybe1.jpg) no-repeat right center;
+   height: 34px;
+   width: 345px;
+}
+
+.styled-select.slate select {
+   border: 1px solid #ccc;
+   font-size: 16px;
+   height: 34px;
+   width: 373px;
+}
+
+.semi-square {
+   -webkit-border-radius: 5px;
+   -moz-border-radius: 5px;
+   border-radius: 5px;
+}
+
+.nimbleColor { background-color: #b77563F3; } /* Colors: Background */
+.nimbleColor select  { color: #000; } /* Colors: Text */
+
+
+select#soflow, select#soflow-color {
+   -webkit-appearance: button;
+   -webkit-border-radius: 2px;
+   -webkit-box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+   -webkit-padding-end: 20px;
+   -webkit-padding-start: 2px;
+   -webkit-user-select: none;
+   background-image: url(http://i62.tinypic.com/15xvbd5.png), -webkit-linear-gradient(#FAFAFA, #F4F4F4 40%, #E5E5E5);
+   background-position: 97% center;
+   background-repeat: no-repeat;
+   border: 1px solid #AAA;
+   color: #555;
+   font-size: inherit;
+   margin: 20px;
+   overflow: hidden;
+   padding: 5px 10px;
+   text-overflow: ellipsis;
+   white-space: nowrap;
+   width: 300px;
+}
+
+select#soflow-color {
+   color: #fff;
+   background-image: url(http://i62.tinypic.com/15xvbd5.png), -webkit-linear-gradient(#779126, #779126 40%, #779126);
+   background-color: #779126;
+   -webkit-border-radius: 20px;
+   -moz-border-radius: 20px;
+   border-radius: 20px;
+   padding-left: 15px;
+}
+
+/*----------------------------------------------------------------------------------------------------*/
+/* additional settings */
+/*----------------------------------------------------------------------------------------------------*/
+#AdditionalSettings {
+    width: 600px !important;
+    color: #AAAAAA;
+}
+
+#ServerHostRequestCheckbox {
+    width: 20px;
+    height: 20px;
+    float: left;
 }

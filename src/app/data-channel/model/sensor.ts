@@ -6,6 +6,8 @@ export class Sensor {
 
     constructor(
         public name: string,
+        public interval: string,
+        public filter: string,
         public description: string,
         public machine: Machine
     ) {  }

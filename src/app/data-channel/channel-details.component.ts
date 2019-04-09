@@ -4,16 +4,44 @@ import {ActivatedRoute, ParamMap, Router} from '@angular/router';
 import {DataChannelService} from "./data-channel.service";
 import {Machine} from "./model/machine";
 import {Sensor} from "./model/sensor";
+import {Server} from "./model/server";
+
+class NewServer {
+    constructor(
+        public priority: string,
+        public name: string,
+        public address: string,
+        public duration: string,
+        public ownership: string,
+        public description: string
+    ) {
+    }
+}
 
 class NewSensor {
     constructor(
         public name: string,
+        public interval: string,
+        public filter: string,
         public description: string,
         public machineName: string
     ) {
     }
 }
 
+class AdditionalSettings {
+    constructor(
+        public hostrequest: boolean,
+        public serviceType: string,
+        public login: string,
+        public loginPW: string
+    ) {
+    }
+}
+
+//-------------------------------------------------------------------------------------
+// Component
+//-------------------------------------------------------------------------------------
 @Component({
     selector: 'channel-details',
     templateUrl: './channel-details.component.html',
@@ -23,9 +51,16 @@ export class ChannelDetailsComponent implements OnInit {
 
     channelConfig: object = {};
     channelMessages: object[] = [];
+    channelServers: object[] = [];
     channelSensors: object[] = [];
-    private newSensor: NewSensor = new NewSensor(null, null, null);
+    displayStorageArea: boolean = true;
+    private newServer: NewServer = new NewServer(null, null, null, null, null, null);
+    private newSensor: NewSensor = new NewSensor(null, null, null, null, null);
+    private additionalSettings: AdditionalSettings = new AdditionalSettings(false, 'MongoDb', "", "");
 
+    //-------------------------------------------------------------------------------------
+    // CTOR
+    //-------------------------------------------------------------------------------------
     constructor(
         private route: ActivatedRoute,
         private dataChannelService: DataChannelService,
@@ -33,10 +68,16 @@ export class ChannelDetailsComponent implements OnInit {
     ) {
     }
 
+    //-------------------------------------------------------------------------------------
+    // ngOnInit to update
+    //-------------------------------------------------------------------------------------
     ngOnInit(): void {
         this.update();
     }
 
+    //-------------------------------------------------------------------------------------
+    // update
+    //-------------------------------------------------------------------------------------
     update(): void {
 
         const channelID = this.route.snapshot.params['channelID'];
@@ -60,6 +101,24 @@ export class ChannelDetailsComponent implements OnInit {
             });
     }
 
+    //-------------------------------------------------------------------------------------
+    // create/open a channel
+    //-------------------------------------------------------------------------------------
+    createChannel(): void {
+        const channelId = this.channelConfig["channelID"];
+        this.dataChannelService.startChannel(channelId)
+            .then(() => {
+                alert("Deleted Channel");
+                this.router.navigate(["dashboard"]);
+            })
+            .catch(() => {
+                alert("Error while deleting channel");
+            });
+    }
+
+    //-------------------------------------------------------------------------------------
+    // delete/close a channel
+    //-------------------------------------------------------------------------------------
     deleteChannel(): void {
         const channelId = this.channelConfig["channelID"];
         this.dataChannelService.deleteChannel(channelId)
@@ -72,15 +131,51 @@ export class ChannelDetailsComponent implements OnInit {
             });
     }
 
+    //-------------------------------------------------------------------------------------
+    // add a private DB server
+    //-------------------------------------------------------------------------------------
+    addServer(): void {
+       const server = new Server(this.newServer.priority, this.newServer.name, this.newServer.address,
+                                 this.newServer.duration, this.newServer.ownership, this.newServer.description);
+
+       // add to backend
+       const channelId = this.channelConfig["channelID"];
+       this.dataChannelService.addServersForChannel(channelId, server)
+            .then(addedServer => {
+                this.update();
+            })
+            .catch(() => {
+                alert("Error while adding server");
+            });
+    }
+
+    //-------------------------------------------------------------------------------------
+    // remove a private DB server
+    //-------------------------------------------------------------------------------------
+    removeServer(server: Server): void {
+       const channelId = this.channelConfig["channelID"];
+
+       this.dataChannelService.removeServerForChannel(channelId, server)
+           .then( () => {
+               this.update();
+           })
+           .catch( () => {
+               this.update();
+           });
+    }
+
+    //-------------------------------------------------------------------------------------
+    // add a sensor
+    //-------------------------------------------------------------------------------------
     addSensor(): void {
         // create sensor locally
         const machine = new Machine(this.newSensor.machineName, null, null);
-        const sensor = new Sensor(this.newSensor.name, this.newSensor.description, machine);
+        const sensor = new Sensor(this.newSensor.name, this.newSensor.interval, this.newSensor.filter, this.newSensor.description, machine);
 
         // add to backend
         const channelId = this.channelConfig["channelID"];
         this.dataChannelService.addSensor(channelId, sensor)
-            .then( addedSensor => {
+            .then(addedSensor => {
                 this.update();
             })
             .catch(() => {
@@ -88,6 +183,9 @@ export class ChannelDetailsComponent implements OnInit {
             });
     }
 
+    //-------------------------------------------------------------------------------------
+    // remove a sensor
+    //-------------------------------------------------------------------------------------
     removeSensor(sensor: Sensor) : void {
         const channelId = this.channelConfig["channelID"];
 
@@ -98,6 +196,5 @@ export class ChannelDetailsComponent implements OnInit {
             .catch( () => {
                 this.update();
             });
-
     }
 }

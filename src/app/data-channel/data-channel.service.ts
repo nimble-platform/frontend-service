@@ -4,6 +4,7 @@ import 'rxjs/add/operator/toPromise';
 import * as myGlobals from '../globals';
 import {CookieService} from 'ng2-cookies';
 import {Sensor} from './model/sensor';
+import {Server} from './model/server';
 
 @Injectable()
 export class DataChannelService {
@@ -87,6 +88,24 @@ export class DataChannelService {
     isBusinessProcessAttached(processID: string): Promise<boolean> {
         return this.channelsForBusinessProcess(processID)
             .then(res => Object.keys(res).length > 0)
+    }
+
+    // TODO:
+    addServersForChannel(channelID: string, server: Server): Promise<any> {
+        // not implemented yet
+        return null;
+    }
+
+    // TODO:
+    removeServerForChannel(channelID: string, server: Server): Promise<any> {
+        // not implemented yet
+        return null;
+    }
+
+    // TODO:
+    startChannel(channelID: string): Promise<any> {
+        // not implemented yet
+        return null;
     }
 
     deleteChannel(channelID: string): Promise<any> {
