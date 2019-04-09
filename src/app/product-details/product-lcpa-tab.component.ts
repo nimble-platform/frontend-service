@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, ViewChild} from "@angular/core";
+import {Component, Input, OnInit, ViewChild,EventEmitter, Output} from "@angular/core";
 import {LcpaDetailModalComponent} from "./lcpa-detail-modal.component";
 import {LifeCyclePerformanceAssessmentDetails} from "../catalogue/model/publish/life-cycle-performance-assessment-details";
 import {CatalogueLine} from "../catalogue/model/publish/catalogue-line";
@@ -18,6 +18,8 @@ export class ProductLcpaTabComponent implements OnInit {
     @Input() catalogueLine: CatalogueLine;
     @Input() disabled: boolean;
     @Input() presentationMode: 'view' | 'edit' = 'view';
+    @Output() lcpaDetailsStatus = new EventEmitter<boolean>();
+
     @ViewChild(LcpaDetailModalComponent)
     private lcpaDetailModal: LcpaDetailModalComponent;
     lcpaDetails: LifeCyclePerformanceAssessmentDetails = new LifeCyclePerformanceAssessmentDetails();
@@ -27,6 +29,7 @@ export class ProductLcpaTabComponent implements OnInit {
 
     ngOnInit() {
         if(this.catalogueLine.goodsItem.item.lifeCyclePerformanceAssessmentDetails == null) {
+            this.lcpaDetailsStatus.emit(true);
             this.catalogueLine.goodsItem.item.lifeCyclePerformanceAssessmentDetails = this.lcpaDetails;
         } else {
             this.lcpaDetails = this.catalogueLine.goodsItem.item.lifeCyclePerformanceAssessmentDetails;
