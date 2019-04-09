@@ -1,4 +1,4 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input , EventEmitter, Output} from "@angular/core";
 import { ProductWrapper } from "../common/product-wrapper";
 import { CompanySettings } from "../user-mgmt/model/company-settings";
 import { UserService } from "../user-mgmt/user.service";
@@ -13,10 +13,17 @@ export class ProductDetailsCertificatesComponent {
 
     @Input() wrapper: ProductWrapper;
     @Input() settings: CompanySettings;
+    @Output() sendTrustStatus = new EventEmitter<boolean>();
 
     constructor(private userService: UserService,
                 private catalogueService: CatalogueService) {
-
+       
+    }
+    ngOnInit() {
+        let aa =this.wrapper.line.goodsItem.item.certificate;
+        if(this.settings.certificates.length == 0 && this.wrapper.line.goodsItem.item.certificate.length == 0){
+            this.sendTrustStatus.emit(true);
+        }   
     }
 
     downloadCertificate(id: string) {
