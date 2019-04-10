@@ -215,7 +215,7 @@ export class ProductPublishComponent implements OnInit {
             for (let i = 0; i < fileList.length; i++) {
                 let file: File = fileList[i];
                 const filesize = parseInt(((file.size/1024)/1024).toFixed(4));
-                if (filesize < 1) {
+                if (filesize <= 5) {
                   let reader = new FileReader();
 
                   reader.onload = function (e: any) {
@@ -226,7 +226,7 @@ export class ProductPublishComponent implements OnInit {
                   reader.readAsDataURL(file);
                 }
                 else {
-                  alert("Maximum allowed filesize: 1 MB");
+                  alert("Maximum allowed filesize: 5 MB");
                 }
             }
         }
