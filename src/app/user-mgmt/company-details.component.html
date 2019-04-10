@@ -72,9 +72,9 @@
 
 <div *ngIf="details" class="row">
   <div class="col-12">
-    <hr>
-    <h4><p>Social Media</p></h4>
-    <table class="table table-striped table-bordered mb-1 mt-0" style="table-layout: fixed; width: 100%;">
+    <hr *ngIf="details.description.socialMediaList.length != 0 && details.description.socialMediaList[0]">
+    <h4 *ngIf="details.description.socialMediaList.length != 0 && details.description.socialMediaList[0]"><p>Social Media</p></h4>
+    <table *ngIf="details.description.socialMediaList.length != 0 && details.description.socialMediaList[0]" class="table table-striped table-bordered mb-1 mt-0" style="table-layout: fixed; width: 100%;">
         <colgroup>
             <col style="width: 150%;">
         </colgroup>
@@ -85,9 +85,9 @@
             <td *ngIf="!socialMedia">n/A</td>
         </tr>
     </table>
-    <hr>
-    <h4><p>Links</p></h4>
-    <table class="table table-striped table-bordered mb-1 mt-0" style="table-layout: fixed; width: 100%;">
+    <hr *ngIf="details.description.externalResources.length != 0 && details.description.externalResources[0]">
+    <h4 *ngIf="details.description.externalResources.length != 0 && details.description.externalResources[0]"><p>Links</p></h4>
+    <table *ngIf="details.description.externalResources.length != 0 && details.description.externalResources[0]" class="table table-striped table-bordered mb-1 mt-0" style="table-layout: fixed; width: 100%;">
         <colgroup>
             <col style="width: 150%;">
         </colgroup>
@@ -98,9 +98,9 @@
             <td *ngIf="!extResource">n/A</td>
         </tr>
     </table>
-    <hr>
-    <h4><p>Events</p></h4>
-    <table class="table table-striped table-bordered mb-1 mt-0" style="table-layout: fixed; width: 100%;">
+    <hr *ngIf="details.description.events.length != 0">
+    <h4 *ngIf="details.description.events.length != 0"><p>Events</p></h4>
+    <table *ngIf="details.description.events.length != 0" class="table table-striped table-bordered mb-1 mt-0" style="table-layout: fixed; width: 100%;">
         <colgroup>
             <col style="width: 150%;">
             <col style="width: 150%;">
@@ -121,13 +121,13 @@
             </td>
         </tr>
     </table>
-    <hr>
-    <h4><p>Images</p></h4>
+    <hr *ngIf="details.description.companyPhotoList.length != 0 || details.description.logoImageId">
+    <h4 *ngIf="details.description.companyPhotoList.length != 0 || details.description.logoImageId"><p>Images</p></h4>
     <div class="form-group row">
-      <label class="col-2 col-form-label">
+      <label *ngIf="details.description.logoImageId" class="col-2 col-form-label">
         <strong>Logo:</strong>
       </label>
-      <div class="col-10">
+      <div  *ngIf="details.description.logoImageId" class="col-10">
         <div *ngIf="!details.description.logoImageId" class="card m-2" style="width: 15rem;">
           <div class="card-body p-2">
               <div class="align-center">
@@ -145,12 +145,12 @@
       </div>
     </div>
     <div class="form-group row">
-      <label class="col-2 col-form-label">
+      <label *ngIf="details.description.companyPhotoList.length != 0" class="col-2 col-form-label">
         <strong>Photos "At Work":</strong>
       </label>
-      <div class="col-10 row ml-0 mr-0">
+      <div *ngIf="details.description.companyPhotoList.length != 0" class="col-10 row ml-0 mr-0">
         <div *ngIf="details.description.companyPhotoList.length == 0" class="card m-2" style="width: 15rem;">
-          <div class="card-body p-2">
+          <div  class="card-body p-2">
               <div class="align-center">
                 <img class="img-max" src="assets/empty_img.png">
               </div>

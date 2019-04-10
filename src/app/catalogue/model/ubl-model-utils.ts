@@ -58,6 +58,7 @@ import {Attachment} from "./publish/attachment";
 import {LCPAInput} from "./publish/lcpa-input";
 import {LCPAOutput} from "./publish/lcpa-output";
 import {LifeCyclePerformanceAssessmentDetails} from "./publish/life-cycle-performance-assessment-details";
+import {PartyName} from './publish/party-name';
 
 /**
  * Created by suat on 05-Jul-17.
@@ -567,22 +568,26 @@ export class UBLModelUtils {
     }
 
     public static getPartyDisplayName(party: Party):string{
+        return this.getPartyDisplayNameForPartyName(party.partyName);
+    }
+
+    public static getPartyDisplayNameForPartyName(partyNames: PartyName[]):string{
         let defaultLanguage = DEFAULT_LANGUAGE();
 
         let englishName = null;
-        for(let name of party.partyName){
-            if(name.name.languageID == "en"){
-                englishName = name.name.value;
+        for(let partyName of partyNames){
+            if(partyName.name.languageID == "en"){
+                englishName = partyName.name.value;
             }
-            if(name.name.languageID == defaultLanguage){
-                return name.name.value;
+            if(partyName.name.languageID == defaultLanguage){
+                return partyName.name.value;
             }
         }
 
         if(englishName){
             return englishName;
         }
-        return party.partyName[0].name.value;
+        return partyNames[0].name.value;
     }
 
     public static isFilledLCPAInput(lcpaDetails: LifeCyclePerformanceAssessmentDetails): boolean {

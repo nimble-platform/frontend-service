@@ -1,5 +1,5 @@
 <div class="p-1">
-    <h3>Company Certificates</h3>
+    <h3 *ngIf="settings.certificates.length !== 0">Company Certificates</h3>
 
     <div *ngFor="let certificate of settings.certificates" class="row mt-1">
         <div class="col-10">
@@ -10,7 +10,7 @@
         </div>
     </div>
 
-    <h3 class="space-before">Product / Service Certificates</h3>
+    <h3 *ngIf="wrapper.line.goodsItem.item.certificate.length !== 0" class="space-before">Product / Service Certificates</h3>
 
     <div *ngFor="let certificate of wrapper.line.goodsItem.item.certificate" class="row mt-1">
         <div class="col-10">

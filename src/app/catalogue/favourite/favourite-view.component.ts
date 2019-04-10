@@ -99,7 +99,7 @@ export class FavouriteViewComponent implements OnInit {
                     if(this.collectionSize > 0 && this.catalogueResponse.length >0){
                         this.hasFavourite = true;
                         this.init();
-                        
+
                     }else{
                         if(this.page > 1){
                             this.hasFavourite = true;
@@ -125,7 +125,7 @@ export class FavouriteViewComponent implements OnInit {
         let i = 0;
         for(;i<len;i++){
             this.catalogueLineView[this.catalogueResponse[i].id] = false;
-        }      
+        }
     }
 
     onOpenCatalogueLine(e: Event) {
@@ -133,7 +133,7 @@ export class FavouriteViewComponent implements OnInit {
     }
 
     removeFavourite(catalogueLine, i: number,status?: number): void {
-        this.status = status != null ? status : this.status; 
+        this.status = status != null ? status : this.status;
         const statuss = this.getDeleteStatus(i);
         statuss.submit();
 
@@ -144,7 +144,7 @@ export class FavouriteViewComponent implements OnInit {
 
             })
             .catch(error => {
-                statuss.error("Error while removing catalogue line");                
+                statuss.error("Error while removing catalogue line");
             });
     }
 
@@ -163,9 +163,9 @@ export class FavouriteViewComponent implements OnInit {
     }
 
     viewCatalogueLine(cat : CatalogueLine){
-        this.catalogueLineView[cat.id]=true;
         this.userService.getSettingsForProduct(cat).then(res => {
             this.settings = res;
+            this.catalogueLineView[cat.id]=true;
         });
     }
 

@@ -10,7 +10,6 @@
             <label class="space-right"><strong>Sort by:</strong>
             </label>
             <select  class="custom-select col-3 space-right" [(ngModel)]="sortOption" (change)="requestCatalogue()">
-                <option></option>
                 <option *ngFor="let option of CATALOGUE_LINE_SORT_OPTIONS" [value]="option.name">{{option.value}}</option>
             </select>
         </div>
