@@ -11,15 +11,14 @@
                     </a>
                 </li>
             </ng-container>
-            <li class="nav-item">
+            <li *ngIf="haveDetails" class="nav-item">
                 <a href id="DETAILS" class="nav-link"
-                    *ngIf="haveDatails === true"
                     [ngClass]="{ active: selectedTab === 'DETAILS'}"
                     (click)="onSelectTab($event)">
                     Details
                 </a>
             </li>
-            <li class="nav-item">
+            <li *ngIf="haveTransportServiceDetails" class="nav-item">
                 <a href id="DELIVERY_TRADING" class="nav-link"
                     *ngIf="isLogistics === false"
                     [ngClass]="{ active: selectedTab === 'DELIVERY_TRADING'}"
@@ -27,23 +26,21 @@
                     Delivery &amp; Trading
                 </a>
                 <a href id="DELIVERY_TRADING" class="nav-link"
-                    *ngIf="isLogistics === true && haveTransportServiceDetails === true"
+                    *ngIf="isLogistics === true"
                     [ngClass]="{ active: selectedTab === 'DELIVERY_TRADING'}"
                     (click)="onSelectTab($event)">
                     Transportation Service Details
                 </a>
             </li>
-            <li class="nav-item">
+            <li *ngIf="haveCertificates" class="nav-item">
                 <a href id="CERTIFICATES" class="nav-link"
-                *ngIf="haveCertificates === true"
                     [ngClass]="{ active: selectedTab === 'CERTIFICATES'}"
                     (click)="onSelectTab($event)">
                     Certificates
                 </a>
             </li>
-            <li *ngIf="config.showLCPA" class="nav-item">
+            <li *ngIf="config.showLCPA && haveLCPA" class="nav-item">
                 <a href id="LCPA" class="nav-link"
-                *ngIf="haveLcps === true"
                    [ngClass]="{ active: selectedTab === 'LCPA'}"
                    (click)="onSelectTab($event)">
                     LCPA Details
@@ -56,9 +53,8 @@
                     Company Details
                 </a>
             </li>
-            <li class="nav-item">
+            <li *ngIf="haveRating" class="nav-item">
                 <a href id="RATING" class="nav-link"
-                *ngIf="haveRating === true"
                     [ngClass]="{ active: selectedTab === 'RATING'}"
                     (click)="onSelectTab($event)">
                     Company Ratings
@@ -124,27 +120,27 @@
                 </div>
             </div>
             <div style="flex-grow:1;">
-                <h3 class="pt-2 p-1">Packaging</h3>
-                <div class="p-1">
+                <h3 *ngIf="wrapper.getPackaging() != ''" class="pt-2 p-1">Packaging</h3>
+                <div *ngIf="wrapper.getPackaging() != ''" class="p-1">
                     <strong>Packaging: </strong> {{ wrapper.getPackaging() }}
                 </div>
             </div>
         </div>
         <div *ngIf="isLogistics === true">
-            <transportation-service-input  (sendStatus)="getStatusOfTansportTab($event)" [catalogueLine]="wrapper.line" presentationMode="view">
+            <transportation-service-input  (transportStatus)="getTransportStatusTab($event)" [catalogueLine]="wrapper.line" presentationMode="view">
             </transportation-service-input>
         </div>
     </div>
 
     <!-- Certificates Tab -->
     <div *ngIf="selectedTab === 'CERTIFICATES'" class="p-3 col-12">
-        <product-details-certificates  (sendTrustStatus)="getTrustStatusTab($event)"  [wrapper]="wrapper" [settings]="settings">
+        <product-details-certificates  (certificateStatus)="getCertificateStatusTab($event)"  [wrapper]="wrapper" [settings]="settings">
         </product-details-certificates>
     </div>
 
     <!-- LCPA Tab -->
     <div *ngIf="selectedTab === 'LCPA'" class="p-3 col-12">
-        <product-lcpa-tab  (lcpaDetailsStatus)="getlcpaStatusTab($event)"  [presentationMode]="'view'"
+        <product-lcpa-tab  (lcpaStatus)="getLCPAStatusTab($event)"  [presentationMode]="'view'"
                           [catalogueLine]="wrapper.line">
         </product-lcpa-tab>
     </div>
@@ -157,7 +153,7 @@
 
     <!-- Company Ratings Tab -->
     <div *ngIf="selectedTab === 'RATING'" class="p-3 col-12">
-        <company-rating (ratingDetailsStatus)="getRatingStatus($event)" [id]="settings.companyID" [hideTitle]="true">
+        <company-rating (ratingStatus)="getRatingStatusTab($event)" [id]="settings.companyID" [hideTitle]="true">
         </company-rating>
     </div>
 

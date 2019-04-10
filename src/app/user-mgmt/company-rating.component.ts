@@ -14,8 +14,8 @@ export class CompanyRatingComponent implements OnInit {
 
 	@Input() id: any = null;
   @Input() hideTitle: boolean = false;
-  @Output() ratingDetailsStatus = new EventEmitter<boolean>();
-  
+  @Output() ratingStatus = new EventEmitter<boolean>();
+
     initCallStatus: CallStatus = new CallStatus();
     ratings: any = null;
     ratingOverall = 0;
@@ -57,7 +57,7 @@ export class CompanyRatingComponent implements OnInit {
         if (this.ratings.totalNumberOfRatings > 0) {
           this.calcRatings();
         }else{
-          this.ratingDetailsStatus.emit(true);
+          this.ratingStatus.emit(true);
         }
         this.initCallStatus.callback("Ratings successfully fetched", true);
       })

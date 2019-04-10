@@ -13,17 +13,16 @@ export class ProductDetailsCertificatesComponent {
 
     @Input() wrapper: ProductWrapper;
     @Input() settings: CompanySettings;
-    @Output() sendTrustStatus = new EventEmitter<boolean>();
+    @Output() certificateStatus = new EventEmitter<boolean>();
 
     constructor(private userService: UserService,
                 private catalogueService: CatalogueService) {
-       
+
     }
     ngOnInit() {
-        let aa =this.wrapper.line.goodsItem.item.certificate;
         if(this.settings.certificates.length == 0 && this.wrapper.line.goodsItem.item.certificate.length == 0){
-            this.sendTrustStatus.emit(true);
-        }   
+            this.certificateStatus.emit(true);
+        }
     }
 
     downloadCertificate(id: string) {

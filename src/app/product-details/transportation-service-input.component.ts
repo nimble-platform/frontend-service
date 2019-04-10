@@ -13,7 +13,7 @@ export class TransportationServiceInput implements OnInit {
 
     @Input() catalogueLine: CatalogueLine;
     @Input() presentationMode: "edit" | "view" = "edit";
-    @Output() sendStatus = new EventEmitter<boolean>();
+    @Output() transportStatus = new EventEmitter<boolean>();
 
     spacingClass: string = "";
     valueTextClass: string = "";
@@ -32,12 +32,12 @@ export class TransportationServiceInput implements OnInit {
         this.catalogueLine.goodsItem.item.transportationServiceDetails = new TransportationService();
       }
 
-     
+
       if(this.catalogueLine.goodsItem.item.transportationServiceDetails.transportServiceCode.name == "" &&
         this.catalogueLine.goodsItem.item.transportationServiceDetails.supportedCommodityClassification[0].natureCode.name == "" &&
         this.catalogueLine.goodsItem.item.transportationServiceDetails.supportedCommodityClassification[0].cargoTypeCode.name == "" &&
         this.catalogueLine.goodsItem.item.transportationServiceDetails.totalCapacityDimension.measure.value == null &&
-        this.catalogueLine.goodsItem.item.transportationServiceDetails.estimatedDurationPeriod.durationMeasure.value == null && 
+        this.catalogueLine.goodsItem.item.transportationServiceDetails.estimatedDurationPeriod.durationMeasure.value == null &&
         this.catalogueLine.goodsItem.item.transportationServiceDetails.scheduledServiceFrequency[0].weekDayCode.name == ""){
           this.haveTransporationServiceDetails = false;
       }
@@ -47,8 +47,8 @@ export class TransportationServiceInput implements OnInit {
           this.shipmentStage = false;
       }
 
-      if(this.catalogueLine.requiredItemLocationQuantity.applicableTerritoryAddress == null || 
-         this.catalogueLine.requiredItemLocationQuantity.applicableTerritoryAddress == [] || 
+      if(this.catalogueLine.requiredItemLocationQuantity.applicableTerritoryAddress == null ||
+         this.catalogueLine.requiredItemLocationQuantity.applicableTerritoryAddress == [] ||
          this.catalogueLine.requiredItemLocationQuantity.applicableTerritoryAddress == undefined){
          this.haveCountries = false;
       }else{
@@ -66,14 +66,14 @@ export class TransportationServiceInput implements OnInit {
         this.catalogueLine.goodsItem.item.transportationServiceDetails.shipmentStage[0].transportMeans.transportEquipment[0].transportEquipmentTypeCode.name == ""){
           this.haveTransportMeans = false;
       }
-      
-      if(this.catalogueLine.goodsItem.item.transportationServiceDetails.environmentalEmission[0].environmentalEmissionTypeCode.name == "" && 
+
+      if(this.catalogueLine.goodsItem.item.transportationServiceDetails.environmentalEmission[0].environmentalEmissionTypeCode.name == "" &&
       this.catalogueLine.goodsItem.item.transportationServiceDetails.environmentalEmission[0].valueMeasure.value == null){
         this.haveEnvironmentalEmission = false;
       }
 
       if(this.haveCountries == false && this.haveEnvironmentalEmission == false && this.haveTransporationServiceDetails == false && this.haveTransportMeans ==false && this.shipmentStage ==false){
-        this.sendStatus.emit(true);
+        this.transportStatus.emit(true);
       }
 
       if(this.presentationMode === "edit") {

@@ -194,7 +194,7 @@
                 (click)="onNegotiate()" [disabled]="!this.appComponent.checkRoles('bp') || options.quantity <= 0">
                 Negotiate & Order
             </button>
-            
+
         </div>
         <div *ngIf="this.appComponent.checkRoles('bp')" class="pb-3 pl-3 pr-3 pt-0 border border-dark border-top-0">
                 <div>
@@ -203,7 +203,7 @@
                     </button>
                 </div>
                 <div *ngIf="config.showPPAP && isPpapAvailable() && !isLogistics">
-                    <button class="btn btn-secondary w-100" (click)="onStartPpap()">
+                    <button class="btn btn-secondary w-100 mt-3" (click)="onStartPpap()">
                         Start Ppap
                     </button>
                 </div>
