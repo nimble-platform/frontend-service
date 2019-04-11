@@ -1,4 +1,5 @@
-<div>
+<div [ngClass]="divStyle">
+    <!-- All over the world-->
     <div class="row">
         <input class="align-self-center custom-checkbox col-1" type="checkbox">
         <label class="form-check-label">All over the world</label>
@@ -7,6 +8,7 @@
         <input class="align-self-center custom-checkbox col-1" type="checkbox">
         <label class="form-check-label">Regions</label>
     </div>
+    <!-- Region options -->
     <div *ngFor="let option of regionOptions" class="row">
         <div class="col-1"></div>
         <div class="col-11">
@@ -16,17 +18,33 @@
             </div>
         </div>
     </div>
+    <!-- Country selection -->
     <div class="row">
         <input class="align-self-center custom-checkbox col-1" type="checkbox">
         <label class="form-check-label">Only selected countries</label>
     </div>
     <div class="row">
-        <input id="country" list="countries" name="Country" class="form-control col-10" placeholder="Select country">
+        <div class="col-12">
+            <input id="country" list="countries" name="Country" class="form-control" placeholder="Select country" (change)="onCountrySelected($event)">
+        </div>
         <datalist id="countries">
             <ng-container *ngFor="let country of countryNames">
                 <option>{{country}}</option>
             </ng-container>
         </datalist>
-        <button class="btn col-2">Add</button>
     </div>
+    <div class="row d-flex flex-wrap">
+        <div class="col-12 d-flex flex-wrap" >
+            <div *ngFor="let country of selectedCountries"
+                 class="bordered my-1">
+                <small class="p-0">{{country}}</small>
+                <i class="fa fa-times-circle pl-1" placement="right" (click)="onCountryRemoved(country)"></i>
+            </div>
+        </div>
+    </div>
+    <!-- Comments -->
+    <h5>Comments</h5>
+    <textarea class="form-control"
+              rows="4">
+    </textarea>
 </div>
