@@ -360,7 +360,7 @@
         <div class="space-before" [hidden]="selectedTabSinglePublish !== 'TRANSPORT'">
             <h4>Transport mode</h4>
             <div class="row">
-                <label class="col-1">Road</label>
+                <h6 class="col-1">Road</h6>
                 <div class="col-11 well">
                     <div class="row">
                         <div class="col-6">
@@ -373,30 +373,30 @@
                 </div>
             </div>
             <div class="row">
-                <label class="col-1">Maritime</label>
+                <h6 class="col-1">Maritime</h6>
                 <div class="col-5 well">
                     <div class="row">
-                        <div class="col-6">
+                        <div class="col-12">
                             <options-panel [selectedTab]="'MARITIME'" [nameDescriptionPanel]="false"></options-panel>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="row">
-                <label class="col-1">Air</label>
+                <h6 class="col-1">Air</h6>
                 <div class="col-5 well">
                     <div class="row">
-                        <div class="col-6">
+                        <div class="col-12">
                             <options-panel [selectedTab]="'AIR'" [nameDescriptionPanel]="false"></options-panel>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="row">
-                <label class="col-1">Rail</label>
+                <h6 class="col-1">Rail</h6>
                 <div class="col-5 well">
                     <div class="row">
-                        <div class="col-6">
+                        <div class="col-12">
                             <options-panel [selectedTab]="'RAIL'" [nameDescriptionPanel]="false"></options-panel>
                         </div>
                     </div>
@@ -404,12 +404,12 @@
             </div>
             <div class="row">
                 <div class="col-6">
-                    <label>Destination</label>
-                    <origin-destination-view></origin-destination-view>
+                    <h6>Destination</h6>
+                    <origin-destination-view [divStyle]="'well'"></origin-destination-view>
                 </div>
                 <div class="col-6">
-                    <label>Origin</label>
-                    <origin-destination-view></origin-destination-view>
+                    <h6>Origin</h6>
+                    <origin-destination-view [divStyle]="'well'"></origin-destination-view>
                 </div>
             </div>
         </div>
@@ -441,6 +441,16 @@
         <div class="row space-before"[hidden]="selectedTabSinglePublish !== 'LOGISTICSCONSULTANCY'">
             <div class="col-12">
                 <options-panel [selectedTab]="'LOGISTICSCONSULTANCY'"></options-panel>
+            </div>
+        </div>
+        <div class="row space-before">
+            <div class="col-6">
+                <h6>Choose the type of product you can manage</h6>
+                <options-panel [selectedTab]="'PRODUCTTYPE'" [checkboxOther]="false" [divStyle]="'well'" [nameDescriptionPanel]="false"></options-panel>
+            </div>
+            <div class="col-6">
+                <h6>Industry specialization</h6>
+                <options-panel [selectedTab]="'INDUSTRYSPECIALIZATION'" [checkboxOther]="false" [divStyle]="'well'" [nameDescriptionPanel]="false"></options-panel>
             </div>
         </div>
     </div>

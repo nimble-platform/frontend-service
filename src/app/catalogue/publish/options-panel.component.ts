@@ -13,9 +13,15 @@ export class OptionsPanelComponent implements OnInit{
     @Input() title;
     @Input() selectedTab;
     @Input() nameDescriptionPanel = true;
+    @Input() divStyle;
+    @Input() checkboxOther = true;
     // variables
 
     options = [];
+
+    option:string = null;
+
+    selectedOptions:string[] = [];
 
     ngOnInit(){
 
@@ -41,6 +47,21 @@ export class OptionsPanelComponent implements OnInit{
         else if(this.selectedTab == "AIR")
             this.options = ["Pallet transport","Medium/big package transport"];
         else if(this.selectedTab == "RAIL")
-            this.options = ["Multi-train","Customer train"];
+            this.options = ["Multi-train","Customer train","Slot"];
+        else if(this.selectedTab == "PRODUCTTYPE")
+            this.options = ["Pallets","Medium/big packages","Box/small packages","Bulk cargo","Liquids","Coil","Hazardous goods","Stackable products","Perishable"];
+        else if(this.selectedTab == "INDUSTRYSPECIALIZATION")
+            this.options = ["Automotive","Construction","Wood/furniture","Food","Textile","Ceramic","Toy","Footwear","Retail"];
+    }
+
+    onOptionAdded() {
+        if(this.option){
+            this.selectedOptions.push(this.option);
+            this.option = null;
+        }
+    }
+
+    onOptionRemoved(option: string) {
+        this.selectedOptions.splice(this.selectedOptions.indexOf(option), 1);
     }
 }
