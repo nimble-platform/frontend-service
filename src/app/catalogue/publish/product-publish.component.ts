@@ -89,7 +89,7 @@ export class ProductPublishComponent implements OnInit {
     catalogueLine: CatalogueLine = null;
     productWrapper: ProductWrapper = null;
     companyNegotiationSettings: CompanyNegotiationSettings;
-    selectedTabSinglePublish: "DETAILS" | "DELIVERY_TRADING" | "PRICE" | "CERTIFICATES" | "TRACK_TRACE" | "LCPA" = "DETAILS";
+    selectedTabSinglePublish: "DETAILS" | "DELIVERY_TRADING" | "PRICE" | "CERTIFICATES" | "TRACK_TRACE" | "LCPA" | "TRANSPORT"= "DETAILS";
     private selectedProperties: SelectedProperties = {};
     private categoryProperties: CategoryProperties = {};
     private lunrIndex: lunr.Index;
@@ -175,6 +175,8 @@ export class ProductPublishComponent implements OnInit {
             this.isLogistics = (this.productType === "transportation");
             if(this.isLogistics) {
                 this.publishStateService.publishedProductNature = 'Transportation service';
+                // update the selected tab
+                this.selectedTabSinglePublish = "TRANSPORT";
             } else {
                 this.publishStateService.publishedProductNature = 'Regular product';
             }

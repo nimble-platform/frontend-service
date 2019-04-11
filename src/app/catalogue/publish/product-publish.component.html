@@ -18,7 +18,7 @@
 </ul>
 
 <!-- Selected Categories -->
-<div class="row space-before">
+<div *ngIf="!isLogistics" class="row space-before">
     <div class="col-2 category-list-label">
         <strong *ngIf="!isProductCategoriesLoading()">Categories: </strong>
         <strong class="mr-2" *ngIf="isProductCategoriesLoading()">Fetching Categories </strong>
@@ -43,10 +43,10 @@
 </div>
 
 <ng-container *ngIf="publishingGranularity === 'single' && catalogueLine">
-    <hr>
+    <hr *ngIf="!isLogistics">
 
     <!-- Image, Name & Description -->
-    <div class="row space-before">
+    <div *ngIf="!isLogistics" class="row space-before">
         <!-- Image -->
         <div class="col-3 product-image">
             <img *ngIf="catalogueLine.goodsItem.item.productImage.length == 0"
@@ -76,7 +76,7 @@
     </div>
 
     <!-- Add Images -->
-    <div class="row space-before">
+    <div *ngIf="!isLogistics" class="row space-before">
         <div class="col-12 d-flex flex-wrap">
             <div *ngFor="let image of catalogueLine.goodsItem.item.productImage; let i = index" class="add-image">
                 <img class="image-small img-thumbnail" src="data:{{image.mimeCode}};base64,{{image.value}}" />
@@ -107,7 +107,7 @@
         </div>
     </ng-template>
 
-    <hr>
+    <hr *ngIf="!isLogistics" >
 
     <!-- Tabs for Product -->
     <ng-container *ngIf="!isLogistics">
@@ -306,64 +306,141 @@
             <div class="col-12">
                 <ul class="nav nav-tabs">
                     <li class="nav-item">
-                        <a href id="DETAILS" class="nav-link"
-                            [ngClass]="{ active: selectedTabSinglePublish === 'DETAILS'}"
+                        <a href id="TRANSPORT" class="nav-link"
+                            [ngClass]="{ active: selectedTabSinglePublish === 'TRANSPORT'}"
                             (click)="onSelectTabSinglePublish($event)">
-                            Service Information
+                            Transport
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href id="PRICE" class="nav-link"
-                            [ngClass]="{ active: selectedTabSinglePublish === 'PRICE'}"
+                        <a href id="WAREHOUSING" class="nav-link"
+                            [ngClass]="{ active: selectedTabSinglePublish === 'WAREHOUSING'}"
                             (click)="onSelectTabSinglePublish($event)">
-                            Service Details
+                            Warehousing
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href id="ORDERPICKING" class="nav-link"
+                           [ngClass]="{ active: selectedTabSinglePublish === 'ORDERPICKING'}"
+                           (click)="onSelectTabSinglePublish($event)">
+                            Order Picking
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href id="REVERSELOGISTICS" class="nav-link"
+                           [ngClass]="{ active: selectedTabSinglePublish === 'REVERSELOGISTICS'}"
+                           (click)="onSelectTabSinglePublish($event)">
+                            Reverse Logistics
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href id="INHOUSESERVICES" class="nav-link"
+                           [ngClass]="{ active: selectedTabSinglePublish === 'INHOUSESERVICES'}"
+                           (click)="onSelectTabSinglePublish($event)">
+                            In-house Services
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href id="CUSTOMSMANAGEMENT" class="nav-link"
+                           [ngClass]="{ active: selectedTabSinglePublish === 'CUSTOMSMANAGEMENT'}"
+                           (click)="onSelectTabSinglePublish($event)">
+                            Customs Management
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href id="LOGISTICSCONSULTANCY" class="nav-link"
+                           [ngClass]="{ active: selectedTabSinglePublish === 'LOGISTICSCONSULTANCY'}"
+                           (click)="onSelectTabSinglePublish($event)">
+                            Logistics Consultancy
                         </a>
                     </li>
                 </ul>
             </div>
         </div>
-        <div class="row space-before" [hidden]="selectedTabSinglePublish !== 'DETAILS'">
-            <div class="col-12">
-                <transportation-service-input [catalogueLine]="catalogueLine" presentationMode="edit">
-                </transportation-service-input>
+        <div class="space-before" [hidden]="selectedTabSinglePublish !== 'TRANSPORT'">
+            <h4>Transport mode</h4>
+            <div class="row">
+                <label class="col-1">Road</label>
+                <div class="col-11 well">
+                    <div class="row">
+                        <div class="col-6">
+                            <options-panel [selectedTab]="'TRUCKLOAD'" [title]="'Truck load'" [nameDescriptionPanel]="false"></options-panel>
+                        </div>
+                        <div class="col-6">
+                            <options-panel [selectedTab]="'SHIPMENTTYPE'" [title]="'Shipment type'" [nameDescriptionPanel]="false"></options-panel>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <label class="col-1">Maritime</label>
+                <div class="col-5 well">
+                    <div class="row">
+                        <div class="col-6">
+                            <options-panel [selectedTab]="'MARITIME'" [nameDescriptionPanel]="false"></options-panel>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <label class="col-1">Air</label>
+                <div class="col-5 well">
+                    <div class="row">
+                        <div class="col-6">
+                            <options-panel [selectedTab]="'AIR'" [nameDescriptionPanel]="false"></options-panel>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <label class="col-1">Rail</label>
+                <div class="col-5 well">
+                    <div class="row">
+                        <div class="col-6">
+                            <options-panel [selectedTab]="'RAIL'" [nameDescriptionPanel]="false"></options-panel>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6">
+                    <label>Destination</label>
+                    <origin-destination-view></origin-destination-view>
+                </div>
+                <div class="col-6">
+                    <label>Origin</label>
+                    <origin-destination-view></origin-destination-view>
+                </div>
             </div>
         </div>
-        <div class="row space-before"[hidden]="selectedTabSinglePublish !== 'PRICE'">
+        <div class="row space-before"[hidden]="selectedTabSinglePublish !== 'WAREHOUSING'">
             <div class="col-12">
-                <div class="row" *ngFor="let prop of getProductProperties()">
-                    <div class="col-3" style="align-self:center">
-                        <strong>{{ getPrettyName(prop) }}: </strong>
-                    </div>
-                    <div class="col-8 object-list">
-                        <input type="checkbox" class="form-check-input boolean-value-input"
-                            [checked]="prop.value[0] == 'true'" *ngIf="prop.valueQualifier === 'BOOLEAN'"
-                            (change)="prop.value[0] == 'true ' ? prop.value[0] = 'false' : prop.value[0] = 'true'">
-                        <ng-container *ngIf="prop.valueQualifier !== 'BOOLEAN'">
-                            <div *ngFor="let value of getValuesAsString(prop); let i = index">
-                                <div *ngIf="value!=''" class="bordered value-pill" title="{{ value }}">
-                                  <span>{{ value }}</span>
-                                  <!--
-                                  <span class="mr-1">{{ value }}</span>
-                                  <i class="fa fa-times-circle mt-1" placement="right" (click)="onRemoveValue(prop, i)"></i>
-                                  -->
-                                </div>
-                            </div>
-                            <button class="btn btn-outline-primary btn-add-category" (click)="onEditProperty(prop)">Edit Value(s)</button>
-                        </ng-container>
-                    </div>
-                    <div class="col-1" style="align-self:center">
-                        <button class="btn btn-danger btn-remove-property" (click)="onRemoveProperty(prop)">Delete</button>
-                    </div>
-                </div>
-                <div *ngIf="!hasSelectedProperties()" class="space-before">
-                    No selected properties.
-                    <a href class="btn-link" (click)="showCategoriesModal(categoriesModal, $event)">
-                        Select properties from product / service categories.
-                    </a>
-                </div>
-                <div *ngIf="hasSelectedProperties()" class="space-before">
-                    <a href class="btn-link" (click)="showCategoriesModal(categoriesModal, $event)">Add more properties from product / service categories.</a>
-                </div>
+                <options-panel [selectedTab]="'WAREHOUSING'"></options-panel>
+            </div>
+        </div>
+        <div class="row space-before"[hidden]="selectedTabSinglePublish !== 'ORDERPICKING'">
+            <div class="col-12">
+                <options-panel [selectedTab]="'ORDERPICKING'" ></options-panel>
+            </div>
+        </div>
+        <div class="row space-before"[hidden]="selectedTabSinglePublish !== 'REVERSELOGISTICS'">
+            <div class="col-12">
+                <options-panel [selectedTab]="'REVERSELOGISTICS'"></options-panel>
+            </div>
+        </div>
+        <div class="row space-before"[hidden]="selectedTabSinglePublish !== 'INHOUSESERVICES'">
+            <div class="col-12">
+                <options-panel [selectedTab]="'INHOUSESERVICES'"></options-panel>
+            </div>
+        </div>
+        <div class="row space-before"[hidden]="selectedTabSinglePublish !== 'CUSTOMSMANAGEMENT'">
+            <div class="col-12">
+                <options-panel [selectedTab]="'CUSTOMSMANAGEMENT'"></options-panel>
+            </div>
+        </div>
+        <div class="row space-before"[hidden]="selectedTabSinglePublish !== 'LOGISTICSCONSULTANCY'">
+            <div class="col-12">
+                <options-panel [selectedTab]="'LOGISTICSCONSULTANCY'"></options-panel>
             </div>
         </div>
     </div>
