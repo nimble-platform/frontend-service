@@ -64,6 +64,10 @@ h4 {
     margin-right: 10px;
 }
 
+#add-server-form input {
+    margin-right: 10px;
+}
+
 
 /*----------------------------------------------------------------------------------------------------*/
 /* The switch - the box around the slider */
@@ -172,91 +176,10 @@ input:checked + .slider:before {
     color: transparent;
 }
 
-
-
-/*----------------------------------------------------------------------------------------------------*/
-/* settings for service type selectbox */
-/*----------------------------------------------------------------------------------------------------*/
-.styled-select {
-   background: url(http://i62.tinypic.com/15xvbd5.png) no-repeat 96% 0;
-   height: 29px;
-   overflow: hidden;
-   width: 345px;
-}
-
-.styled-select select {
-   background: transparent;
-   border: none;
-   font-size: 14px;
-   height: 29px;
-   padding: 5px; /* If you add too much padding here, the options won't show in IE */
-   width: 373px;
-}
-
-.styled-select.slate {
-   background: url(http://i62.tinypic.com/2e3ybe1.jpg) no-repeat right center;
-   height: 34px;
-   width: 345px;
-}
-
-.styled-select.slate select {
-   border: 1px solid #ccc;
-   font-size: 16px;
-   height: 34px;
-   width: 373px;
-}
-
-.semi-square {
-   -webkit-border-radius: 5px;
-   -moz-border-radius: 5px;
-   border-radius: 5px;
-}
-
-.nimbleColor { background-color: #b77563F3; } /* Colors: Background */
-.nimbleColor select  { color: #000; } /* Colors: Text */
-
-
-select#soflow, select#soflow-color {
-   -webkit-appearance: button;
-   -webkit-border-radius: 2px;
-   -webkit-box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
-   -webkit-padding-end: 20px;
-   -webkit-padding-start: 2px;
-   -webkit-user-select: none;
-   background-image: url(http://i62.tinypic.com/15xvbd5.png), -webkit-linear-gradient(#FAFAFA, #F4F4F4 40%, #E5E5E5);
-   background-position: 97% center;
-   background-repeat: no-repeat;
-   border: 1px solid #AAA;
-   color: #555;
-   font-size: inherit;
-   margin: 20px;
-   overflow: hidden;
-   padding: 5px 10px;
-   text-overflow: ellipsis;
-   white-space: nowrap;
-   width: 300px;
-}
-
-select#soflow-color {
-   color: #fff;
-   background-image: url(http://i62.tinypic.com/15xvbd5.png), -webkit-linear-gradient(#779126, #779126 40%, #779126);
-   background-color: #779126;
-   -webkit-border-radius: 20px;
-   -moz-border-radius: 20px;
-   border-radius: 20px;
-   padding-left: 15px;
-}
-
 /*----------------------------------------------------------------------------------------------------*/
 /* additional settings */
 /*----------------------------------------------------------------------------------------------------*/
-#AdditionalSettings {
-    width: 600px !important;
-    color: #AAAAAA;
-}
-
 #ServerHostRequestCheckbox {
     width: 20px;
     height: 20px;
-    float: left;
 }

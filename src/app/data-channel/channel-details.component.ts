@@ -13,6 +13,8 @@ class NewServer {
         public address: string,
         public duration: string,
         public ownership: string,
+        public login: string,
+        public loginPW: string,
         public description: string
     ) {
     }
@@ -31,10 +33,9 @@ class NewSensor {
 
 class AdditionalSettings {
     constructor(
+        public notes: string,
         public hostrequest: boolean,
-        public serviceType: string,
-        public login: string,
-        public loginPW: string
+        public serviceType: string
     ) {
     }
 }
@@ -53,10 +54,33 @@ export class ChannelDetailsComponent implements OnInit {
     channelMessages: object[] = [];
     channelServers: object[] = [];
     channelSensors: object[] = [];
+
     displayStorageArea: boolean = true;
-    private newServer: NewServer = new NewServer(null, null, null, null, null, null);
+    private newServer: NewServer = new NewServer(null, null, null, null, null, null, null, null);
     private newSensor: NewSensor = new NewSensor(null, null, null, null, null);
-    private additionalSettings: AdditionalSettings = new AdditionalSettings(false, 'MongoDb', "", "");
+    private initialSettings: AdditionalSettings = new AdditionalSettings("Info", false, 'MongoDB');
+    private counterSettings: AdditionalSettings = new AdditionalSettings("Info", false, 'MongoDB');
+
+    private SERVICE_TYPES: string[] = [
+        "MongoDB",
+        "Oracle",
+        "Mqtt",
+        "Kafka"
+    ]
+
+    private pageNumber: number = 0; // Todo: needs to be changed after testing to get info from backend
+    public incrementPageNrTest()    // Todo: instead get info from backend (data available? -> load 2nd design)
+    {
+      if(this.pageNumber<3)
+      {
+        this.pageNumber++;
+      }
+      else
+      {
+        this.pageNumber=0;
+      }
+    }
+
 
     //-------------------------------------------------------------------------------------
     // CTOR
@@ -102,6 +126,24 @@ export class ChannelDetailsComponent implements OnInit {
     }
 
     //-------------------------------------------------------------------------------------
+    // switch page visualisation left and right
+    //-------------------------------------------------------------------------------------
+    getPresentationModeLeft(): string
+    {
+        if(this.pageNumber == 0)
+           return "edit";
+        else
+           return "view";
+    }
+    getPresentationModeRight(): string
+    {
+        if(this.pageNumber == 1)
+           return "edit";
+        else
+           return "view";
+    }
+
+    //-------------------------------------------------------------------------------------
     // create/open a channel
     //-------------------------------------------------------------------------------------
     createChannel(): void {
@@ -136,7 +178,8 @@ export class ChannelDetailsComponent implements OnInit {
     //-------------------------------------------------------------------------------------
     addServer(): void {
        const server = new Server(this.newServer.priority, this.newServer.name, this.newServer.address,
-                                 this.newServer.duration, this.newServer.ownership, this.newServer.description);
+                                 this.newServer.duration, this.newServer.ownership,
+                                 this.newServer.login, this.newServer.loginPW, this.newServer.description);
 
        // add to backend
        const channelId = this.channelConfig["channelID"];

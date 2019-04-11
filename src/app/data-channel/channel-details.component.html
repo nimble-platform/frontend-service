@@ -27,6 +27,7 @@
 </table>
 
 <div class="interactions">
+    <!--<button class="btn btn-warning"(click)="incrementPageNrTest()">Testing Frontend Page: {{pageNumber}}</button>-->
     <button class="btn btn-success" (click)="createChannel()">Open Channel</button>
     <button class="btn btn-danger" (click)="deleteChannel()">Close Channel</button>
 </div>
@@ -68,17 +69,21 @@
             <th><span i18n>Endpoint Address</span></th>
             <th><span i18n>Storage Duration</span></th>
             <th><span i18n>Ownership</span></th>
+            <th><span i18n>Login</span></th>
+            <th><span i18n>Password</span></th>
             <th><span i18n>Description</span></th>
             <th class="interaction-column"></th>
         </tr>
         <ng-container *ngFor="let sensor of channelSensors">
             <tr>
-                <td>{{db_server.priority}}</td>
-                <td>{{db_server.name}}</td>
-                <td>{{db_server.address}}</td>
-                <td>{{db_server.duration}}</td>
-                <td>{{db_server.ownership}}</td>
-                <td>{{db_server.description}}</td>
+                <td>{{server.priority}}</td>
+                <td>{{server.name}}</td>
+                <td>{{server.address}}</td>
+                <td>{{server.duration}}</td>
+                <td>{{server.ownership}}</td>
+                <td>{{server.login}}</td>
+                <td>{{server.loginPW}}</td>
+                <td>{{server.description}}</td>
                 <td>
                     <button class="btn btn-warning remove-channel-btn"
                             (click)="removeDB(db_server)">Remove
@@ -98,29 +103,39 @@
                    placeholder="priority" required/>
 
             <!-- server name -->
-            <input name="serverName" class="form-control col-2"
+            <input name="serverName" class="form-control col-1"
                    [(ngModel)]="newServer.name"
-                   placeholder="name of server" required/>
+                   placeholder="name" required/>
 
             <!-- server address -->
-            <input name="serverAddress" class="form-control col-2"
+            <input name="serverAddress" class="form-control col-1"
                    [(ngModel)]="newServer.address"
-                   placeholder="server address" required/>
+                   placeholder="address" required/>
 
             <!-- server duration -->
-            <input name="serverDuration" class="form-control col-2"
+            <input name="serverDuration" class="form-control col-1"
                    [(ngModel)]="newServer.duration"
-                   placeholder="storage duration"/>
+                   placeholder="duration" required/>
 
             <!-- server ownership -->
             <input name="serverOwnership" class="form-control col-1"
                    [(ngModel)]="newServer.ownership"
-                   placeholder="owner"/>
+                   placeholder="owner" required/>
+
+            <!-- server login -->
+            <input name="serverLogin" class="form-control col-1"
+                   [(ngModel)]="newServer.login"
+                   placeholder="login" required/>
+
+            <!-- server password -->
+            <input name="serverPassword" type="password" class="form-control col-1"
+                   [(ngModel)]="newServer.loginPW"
+                   placeholder="password" required/>
 
             <!-- server description -->
             <input name="serverDescription" class="form-control col-2"
                    [(ngModel)]="newServer.description"
-                   placeholder="server description"/>
+                   placeholder="server description" required/>
 
             <button [disabled]="!customPropertyForm.form.valid"
                     class="btn btn-success ml-2 add-sensor-btn"
@@ -133,52 +148,47 @@
     </div>
 
     <br/>
-    <table id="AdditionalSettings">
-        <tr>
-            <td>
-                <p>Host Request: </p>
-            </td>
-            <td>
-                <input id="ServerHostRequestCheckbox" [(ngModel)]="additionalSettings.hostrequest" type="checkbox" value="false" />
-                <p>(request the other party to host a server)</p>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <p>Service Type: </p>
-            </td>
-            <td>
-                <div class="styled-select nimbleColor semi-square">
-                    <select [(ngModel)]="additionalSettings.serviceType">
-                        <option value="MongoDb">MongoDb</option>
-                        <option value="Oracle">Oracle</option>
-                        <option value="Mqtt">Mqtt</option>
-                        <option value="Kafka">Kafka</option>
-                    </select>
-                </div>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <p>Server Login: </p>
-            </td>
-            <td>
-                <input id="ServerLoginTextfield" class="form-control col-9"
-                       [(ngModel)]="additionalSettings.login"
-                       placeholder="server login" required/>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <p>Server PW.: </p>
-            </td>
-            <td>
-                <input id="ServerPasswordTextfield" type="password" class="form-control col-9"
-                       [(ngModel)]="additionalSettings.loginPW"
-                       placeholder="server password" required/>
-            </td>
-        </tr>
-    </table>
+    <div class="row" id="additional-settings">
+        <div [ngClass]="{'col-6':pageNumber > 0,'col-12':pageNumber == 0}">
+
+            <!-- Additional Notes -->
+            <text-input label="Additional Notes" [presentationMode]="getPresentationModeLeft()" [(text)]="initialSettings.notes"
+                        labelClass="col-4" valueClass="col-8" [rows]="1" [required]="true">
+            </text-input><br/>
+
+            <!-- Service Type -->
+            <options-input label="Service Type" [visible]="true" [presentationMode]="getPresentationModeLeft()"
+                           [disabled]="false" [options]="SERVICE_TYPES" [(selected)]="initialSettings.serviceType"
+                           labelClass="col-4" valueClass="col-8">
+            </options-input><br/>
+
+            <!-- Host Request -->
+            <boolean-input label="Host Request" [presentationMode]="getPresentationModeLeft()"
+                           [(value)]="initialSettings.hostrequest" labelClass="col-4" valueClass="col-8">
+            </boolean-input>
+            <p>(request the other party to host a server)</p>
+        </div>
+        <div *ngIf="pageNumber > 0" class="col-6">
+
+            <!-- Additional Notes -->
+            <text-input label="Additional Notes" [presentationMode]="getPresentationModeRight()" [(text)]="counterSettings.notes"
+                        labelClass="col-4" valueClass="col-8" [rows]="1" [required]="true">
+            </text-input><br/>
+
+            <!-- Service Type -->
+            <options-input label="Service Type" [visible]="true" [presentationMode]="getPresentationModeRight()"
+                           [disabled]="false" [options]="SERVICE_TYPES" [(selected)]="SERVICE_TYPES[0]"
+                           labelClass="col-4" valueClass="col-8">
+            </options-input><br/>
+
+            <!-- Host Request -->
+            <boolean-input label="Host Request" [presentationMode]="getPresentationModeRight()"
+                           [(value)]="counterSettings.hostrequest" labelClass="col-4" valueClass="col-8">
+            </boolean-input>
+            <p>(other party agreed to host a server)</p>
+
+        </div>
+    </div>
 </div>
 
 
@@ -240,7 +250,7 @@
         <!-- sensor description -->
         <input name="sensorDescription" class="form-control col-2"
                [(ngModel)]="newSensor.description"
-               placeholder="description"/>
+               placeholder="description" required/>
 
         <button [disabled]="!customPropertyForm.form.valid"
                 class="btn btn-success ml-2 add-sensor-btn"

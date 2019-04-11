@@ -10,6 +10,7 @@ export class TextInputComponent implements OnInit {
 
     @Input() visible: boolean = true;
     @Input() disabled: boolean = false;
+    @Input() required: boolean = false;
     @Input() presentationMode: "edit" | "view" = "edit";
 
     @Input() label: string;
