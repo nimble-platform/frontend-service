@@ -48,6 +48,8 @@ import {ItemPropertyPriceOptionComponent} from "./publish/price-option/item-prop
 import {DiscountTargetComponent} from "./publish/price-option/discount-target.component";
 import {PriceOptionViewComponent} from './publish/price-option/price-option-view.component';
 import {BulkPublishComponent} from "./publish/bulk-publish.component";
+import {OptionsPanelComponent} from './publish/options-panel.component';
+import {OriginDestinationViewComponent} from './publish/origin-destination-view-component';
 
 @NgModule({
 	imports: [CommonModule, 
@@ -66,6 +68,8 @@ import {BulkPublishComponent} from "./publish/bulk-publish.component";
         ProductPublishComponent,
         EditPropertyModalComponent,
         BulkPublishComponent,
+        OptionsPanelComponent,
+        OriginDestinationViewComponent,
         ProductDeliveryTradingComponent,
         ProductPriceTabComponent,
         AdditionalItemPropertyComponent,

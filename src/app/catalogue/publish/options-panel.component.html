@@ -1,0 +1,32 @@
+<div>
+    <!--Title-->
+    <h4 *ngIf="title">{{title}}</h4>
+    <!--options-->
+    <div *ngFor="let option of options" class="row">
+        <input class="align-self-center custom-checkbox col-1" type="checkbox">
+        <label class="form-check-label">{{option}}</label>
+    </div>
+    <!--other options-->
+    <div class="row space-before">
+        <input class="align-self-center custom-checkbox col-1" type="checkbox">
+        <label class="form-check-label">Other</label>
+        <input type="text" class="space-left">
+        <button class="btn space-left">Add</button>
+    </div>
+    <!--name, description and additional files-->
+    <div *ngIf="nameDescriptionPanel" class="row space-before">
+        <div class="col-6">
+            <text-input label="Description" [rows]="6" [maxLength]="2047" [rowClass]="'m-0'" [flexClass]="'col-1 pr-0'" [valueClass]="'col-8'">
+            </text-input>
+        </div>
+        <div class="col-3">
+            <label>Additional Information</label>
+        </div>
+        <div class="col-3">
+            <file-input [disabled]="true" [multiple]="true" [presentationMode]="'edit'">
+            </file-input>
+        </div>
+    </div>
+
+
+</div>

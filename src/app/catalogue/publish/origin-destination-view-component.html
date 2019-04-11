@@ -1,0 +1,32 @@
+<div>
+    <div class="row">
+        <input class="align-self-center custom-checkbox col-1" type="checkbox">
+        <label class="form-check-label">All over the world</label>
+    </div>
+    <div class="row">
+        <input class="align-self-center custom-checkbox col-1" type="checkbox">
+        <label class="form-check-label">Regions</label>
+    </div>
+    <div *ngFor="let option of regionOptions" class="row">
+        <div class="col-1"></div>
+        <div class="col-11">
+            <div class="row">
+                <input class="align-self-center custom-checkbox col-1" type="checkbox">
+                <label class="form-check-label">{{option}}</label>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <input class="align-self-center custom-checkbox col-1" type="checkbox">
+        <label class="form-check-label">Only selected countries</label>
+    </div>
+    <div class="row">
+        <input id="country" list="countries" name="Country" class="form-control col-10" placeholder="Select country">
+        <datalist id="countries">
+            <ng-container *ngFor="let country of countryNames">
+                <option>{{country}}</option>
+            </ng-container>
+        </datalist>
+        <button class="btn col-2">Add</button>
+    </div>
+</div>
