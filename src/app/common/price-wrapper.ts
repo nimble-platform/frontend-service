@@ -7,6 +7,7 @@ import {PRICE_OPTIONS} from '../catalogue/model/constants';
 import {ItemProperty} from '../catalogue/model/publish/item-property';
 import {Address} from '../catalogue/model/publish/address';
 import {Text} from '../catalogue/model/publish/text';
+import {Country} from '../catalogue/model/publish/country';
 
 /**
  * Wrapper around a price and a quantity, contains convenience methods to get the total price,
@@ -131,7 +132,8 @@ export class PriceWrapper {
                     let checkPostalZone = priceOption.itemLocationQuantity.applicableTerritoryAddress[0].postalZone != "";
                     let checkCityName = priceOption.itemLocationQuantity.applicableTerritoryAddress[0].cityName != "";
                     let checkRegion = priceOption.itemLocationQuantity.applicableTerritoryAddress[0].region != "";
-                    let checkCountryName = priceOption.itemLocationQuantity.applicableTerritoryAddress[0].country && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].country.name.value != "";
+                    let country:Country = priceOption.itemLocationQuantity.applicableTerritoryAddress[0].country;
+                    let checkCountryName = country && country.name.value && country.name.value != "";
                     if(checkStreetName && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].streetName.toLocaleLowerCase() != this.deliveryLocation.streetName.toLocaleLowerCase()){
                         continue;
                     }
