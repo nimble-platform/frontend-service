@@ -441,10 +441,13 @@
                 <h6 class="col-1">Road</h6>
                 <div class="col-11 well">
                     <div class="row">
-                        <div class="col-6">
+                        <div class="col-4 name-description-panel">
+                            <name-description-panel [item]="logisticCatalogueLines[0].goodsItem.item" [valueClass]="'col-7'" [languageIdClass]="'col-2'" [flexClass]="'col-2'"></name-description-panel>
+                        </div>
+                        <div class="col-4">
                             <options-panel [selectedTab]="'TRUCKLOAD'" [title]="'Truck load'"></options-panel>
                         </div>
-                        <div class="col-6">
+                        <div class="col-4">
                             <options-panel [selectedTab]="'SHIPMENTTYPE'" [title]="'Shipment type'" ></options-panel>
                         </div>
                     </div>
@@ -452,9 +455,12 @@
             </div>
             <div class="row">
                 <h6 class="col-1">Maritime</h6>
-                <div class="col-5 well">
+                <div class="col-11 well">
                     <div class="row">
-                        <div class="col-12">
+                        <div class="col-4 name-description-panel">
+                            <name-description-panel [item]="logisticCatalogueLines[1].goodsItem.item" [valueClass]="'col-7'" [languageIdClass]="'col-2'" [flexClass]="'col-2'"></name-description-panel>
+                        </div>
+                        <div class="col-4">
                             <options-panel [selectedTab]="'MARITIME'" ></options-panel>
                         </div>
                     </div>
@@ -462,9 +468,12 @@
             </div>
             <div class="row">
                 <h6 class="col-1">Air</h6>
-                <div class="col-5 well">
+                <div class="col-11 well">
                     <div class="row">
-                        <div class="col-12">
+                        <div class="col-4 name-description-panel">
+                            <name-description-panel [item]="logisticCatalogueLines[2].goodsItem.item" [valueClass]="'col-7'" [languageIdClass]="'col-2'" [flexClass]="'col-2'"></name-description-panel>
+                        </div>
+                        <div class="col-4">
                             <options-panel [selectedTab]="'AIR'" ></options-panel>
                         </div>
                     </div>
@@ -472,9 +481,12 @@
             </div>
             <div class="row">
                 <h6 class="col-1">Rail</h6>
-                <div class="col-5 well">
+                <div class="col-11 well">
                     <div class="row">
-                        <div class="col-12">
+                        <div class="col-4 name-description-panel">
+                            <name-description-panel [item]="logisticCatalogueLines[3].goodsItem.item" [valueClass]="'col-7'" [languageIdClass]="'col-2'" [flexClass]="'col-2'"></name-description-panel>
+                        </div>
+                        <div class="col-4">
                             <options-panel [selectedTab]="'RAIL'" ></options-panel>
                         </div>
                     </div>

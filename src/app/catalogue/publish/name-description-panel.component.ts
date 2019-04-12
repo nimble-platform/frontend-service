@@ -13,6 +13,9 @@ export class NameDescriptionPanelComponent implements OnInit{
     }
 
     @Input() item;
+    @Input() valueClass= "col-8";
+    @Input() languageIdClass = "col-1";
+    @Input() flexClass = "col-1";
 
     ngOnInit(){
 

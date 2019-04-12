@@ -80,6 +80,10 @@ div.add-image input {
     top: 0;
 }
 
+div.name-description-panel {
+    padding-left: 0px;
+}
+
 .value-pill {
     margin: 0.25rem 0.25rem 0.25rem 0.25rem;
     height: 2.6rem;
