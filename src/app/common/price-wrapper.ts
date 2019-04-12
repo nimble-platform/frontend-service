@@ -29,7 +29,6 @@ export class PriceWrapper {
     presentationMode:string = 'edit';
     // this field is used to create discount-modal view
     appliedDiscounts: PriceOption[] = [];
-    roundToTwoDecimals= roundToTwoDecimals;
 
     constructor(public price: Price,
                 public quantity: Quantity = new Quantity(1, price.baseQuantity.unitCode),
@@ -60,7 +59,7 @@ export class PriceWrapper {
 
         const amount = Number(this.price.priceAmount.value);
         const baseQuantity = this.price.baseQuantity.value || 1;
-        let totalPrice = this.roundPrice(this.quantity.value * amount / baseQuantity);
+        let totalPrice = this.quantity.value * amount / baseQuantity;
 
         let totalDiscount:number = 0;
         let totalMinimumOrderQuantityDiscount = 0;
@@ -195,7 +194,7 @@ export class PriceWrapper {
         if(!this.hasPrice()) {
             return "Not specified";
         }
-        return `${roundToTwoDecimals(this.totalPrice)} ${this.currency}`;
+        return `${this.totalPrice} ${this.currency}`;
     }
 
     get pricePerItemString(): string {
@@ -206,10 +205,7 @@ export class PriceWrapper {
             return "On demand";
         }
 
-        if(this.price.baseQuantity.value === 1) {
-            return `${this.roundToTwoDecimals(totalPrice/qty.value)} ${currencyToString(this.price.priceAmount.currencyID)} per ${this.price.baseQuantity.unitCode}`
-        }
-        return `${this.roundToTwoDecimals(totalPrice/qty.value)} ${currencyToString(this.price.priceAmount.currencyID)} for ${this.price.baseQuantity.value} ${this.price.baseQuantity.unitCode}`
+        return `${totalPrice/qty.value} ${currencyToString(this.price.priceAmount.currencyID)} per ${qty.unitCode}`
     }
 
     get currency(): string {
@@ -227,10 +223,6 @@ export class PriceWrapper {
 
     quotationHasPrice() :boolean{
          return this.quantityPrice.price.priceAmount.value != null;
-    }
-
-    private roundPrice(value: number): number {
-        return Math.round(value * 100) / 100;
     }
 
     /**
@@ -271,7 +263,7 @@ export class PriceWrapper {
         if(priceOption.itemLocationQuantity.allowanceCharge[0].amount && priceOption.itemLocationQuantity.allowanceCharge[0].amount.value){
             // unit is %
             if(priceOption.itemLocationQuantity.allowanceCharge[0].amount.currencyID == "%"){
-                discount += this.roundPrice(totalPrice*priceOption.itemLocationQuantity.allowanceCharge[0].amount.value/100);
+                discount += totalPrice*priceOption.itemLocationQuantity.allowanceCharge[0].amount.value/100.0;
             }
             // unit is not %
             else {

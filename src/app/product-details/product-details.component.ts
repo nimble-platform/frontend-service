@@ -161,7 +161,7 @@ export class ProductDetailsComponent implements OnInit {
 
     getTotalPrice(): number {
         this.updatePriceWrapperOnUserSelections();
-        return roundToTwoDecimals(this.priceWrapper.totalPrice);
+        return this.priceWrapper.totalPrice;
     }
 
     hasPrice(): boolean {
