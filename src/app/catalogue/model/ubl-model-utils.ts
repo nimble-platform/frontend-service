@@ -139,6 +139,23 @@ export class UBLModelUtils {
         return catalogueLine;
     }
 
+    public static createCatalogueLinesForLogistics(catalogueUuid:string, providerParty: Party, settings: CompanyNegotiationSettings): CatalogueLine[]{
+        let logisticCatalogueLines: CatalogueLine[] = [];
+        // create 10 catalogue lines
+        for(let i=0; i < 10;i++){
+            // create the catalogue line
+            let catalogueLine = this.createCatalogueLine(catalogueUuid,providerParty,settings);
+            // add item name and descriptions
+            let newItemName: Text = new Text("",DEFAULT_LANGUAGE());
+            let newItemDescription: Text = new Text("",DEFAULT_LANGUAGE());
+            catalogueLine.goodsItem.item.name.push(newItemName);
+            catalogueLine.goodsItem.item.description.push(newItemDescription);
+            // push it to the list
+            logisticCatalogueLines.push(catalogueLine);
+        }
+        return logisticCatalogueLines;
+    }
+
     public static createOrder(): Order {
         const quantity: Quantity = new Quantity(null, "", null);
         const item: Item = this.createItem();

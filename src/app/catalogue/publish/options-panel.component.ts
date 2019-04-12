@@ -1,8 +1,11 @@
 import {Component, Input, OnInit} from '@angular/core';
+import {Text} from '../model/publish/text';
+import {DEFAULT_LANGUAGE} from '../model/constants';
 
 @Component({
     selector: "options-panel",
-    templateUrl: "./options-panel.component.html"
+    templateUrl: "./options-panel.component.html",
+    styleUrls: ["./options-panel.component.css"]
 })
 export class OptionsPanelComponent implements OnInit{
 
@@ -12,9 +15,9 @@ export class OptionsPanelComponent implements OnInit{
     // inputs
     @Input() title;
     @Input() selectedTab;
-    @Input() nameDescriptionPanel = true;
     @Input() divStyle;
     @Input() checkboxOther = true;
+    @Input() item;
     // variables
 
     options = [];
@@ -63,5 +66,17 @@ export class OptionsPanelComponent implements OnInit{
 
     onOptionRemoved(option: string) {
         this.selectedOptions.splice(this.selectedOptions.indexOf(option), 1);
+    }
+
+    addItemNameDescription() {
+        let newItemName: Text = new Text("",DEFAULT_LANGUAGE());
+        let newItemDescription: Text = new Text("",DEFAULT_LANGUAGE());
+        this.item.name.push(newItemName);
+        this.item.description.push(newItemDescription);
+    }
+
+    deleteItemNameDescription(index){
+        this.item.name.splice(index, 1);
+        this.item.description.splice(index, 1);
     }
 }

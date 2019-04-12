@@ -87,6 +87,7 @@ export class ProductPublishComponent implements OnInit {
      */
 
     catalogueLine: CatalogueLine = null;
+    logisticCatalogueLines: CatalogueLine[] = null;
     productWrapper: ProductWrapper = null;
     companyNegotiationSettings: CompanyNegotiationSettings;
     selectedTabSinglePublish: "DETAILS" | "DELIVERY_TRADING" | "PRICE" | "CERTIFICATES" | "TRACK_TRACE" | "LCPA" | "TRANSPORT"= "DETAILS";
@@ -693,19 +694,24 @@ export class ProductPublishComponent implements OnInit {
             // new publishing is the first entry to the publishing page
             // i.e. publishing from scratch
             if (this.publishStateService.publishingStarted == false) {
+                if(this.isLogistics){
+                    this.logisticCatalogueLines = UBLModelUtils.createCatalogueLinesForLogistics(catalogueResponse.catalogueUuid, userParty, settings);
+                }else{
                     this.catalogueLine = UBLModelUtils.createCatalogueLine(catalogueResponse.catalogueUuid, userParty, settings);
                     this.catalogueService.draftCatalogueLine = this.catalogueLine;
+                }
             } else {
                 this.catalogueLine = this.catalogueService.draftCatalogueLine;
             }
-            if (this.catalogueLine.goodsItem.item.name.length == 0)
-              this.addItemNameDescription();
-            this.productWrapper = new ProductWrapper(this.catalogueLine, settings);
-
-            for (let category of this.categoryService.selectedCategories) {
-                let newCategory = this.isNewCategory(category);
-                if (newCategory) {
-                    this.updateItemWithNewCategory(category);
+            if(this.catalogueLine){
+                if (this.catalogueLine.goodsItem.item.name.length == 0)
+                    this.addItemNameDescription();
+                this.productWrapper = new ProductWrapper(this.catalogueLine, settings);
+                for (let category of this.categoryService.selectedCategories) {
+                    let newCategory = this.isNewCategory(category);
+                    if (newCategory) {
+                        this.updateItemWithNewCategory(category);
+                    }
                 }
             }
         }
