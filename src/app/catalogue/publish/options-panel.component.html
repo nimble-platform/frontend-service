@@ -19,27 +19,37 @@
             <button class="btn btn-outline-primary space-left" (click)="onOptionAdded()">Add</button>
         </div>
     </div>
+    <!--selected options-->
+    <div *ngIf="selectedOptionsWithExtraColumn" class="row d-flex flex-wrap">
+        <div class="col-1"></div>
+        <div class="col-11 d-flex flex-wrap without-left-padding">
+            <div *ngFor="let option of selectedOptions"
+                 class="bordered my-1 mr-1">
+                <small class="p-0">{{option}}</small>
+                <i class="fa fa-times-circle pl-1" placement="right" (click)="onOptionRemoved(option)"></i>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="!selectedOptionsWithExtraColumn" class="row d-flex flex-wrap">
+        <div class="col-12 d-flex flex-wrap">
+            <div *ngFor="let option of selectedOptions"
+                 class="bordered my-1 mr-1">
+                <small class="p-0">{{option}}</small>
+                <i class="fa fa-times-circle pl-1" placement="right" (click)="onOptionRemoved(option)"></i>
+            </div>
+        </div>
+    </div>
     <!--name, description and additional files-->
-    <div *ngIf="item" class="row space-before">
+    <div *ngIf="item" class="row space-before space-left">
         <div class="col-8">
             <name-description-panel [item]="item"></name-description-panel>
         </div>
         <div id="info" class="col-2">
             <label>Additional Information</label>
         </div>
-        <div id="file" class="col-2">
+        <div class="col-2 without-left-padding">
             <file-input [disabled]="true" [multiple]="true" [presentationMode]="'edit'">
             </file-input>
-        </div>
-    </div>
-    <!--selected options-->
-    <div class="row d-flex flex-wrap">
-        <div class="col-12 d-flex flex-wrap" >
-            <div *ngFor="let option of selectedOptions"
-                 class="bordered my-1 mr-1">
-                <small class="p-0">{{option}}</small>
-                <i class="fa fa-times-circle pl-1" placement="right" (click)="onOptionRemoved(option)"></i>
-            </div>
         </div>
     </div>
 </div>

@@ -18,6 +18,7 @@ export class OptionsPanelComponent implements OnInit{
     @Input() divStyle;
     @Input() checkboxOther = true;
     @Input() item;
+    @Input() selectedOptionsWithExtraColumn = true;
     // variables
 
     options = [];
