@@ -293,15 +293,20 @@
 
     <!-- Actions -->
     <div class="row actions-row pr-0">
-        <div class="col-7 call-status-col"><call-status [callStatus]="publishStatus"></call-status></div>
+        <div class="col-4 call-status-col"><call-status [callStatus]="publishStatus"></call-status></div>
         <div class="col-2">
             <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">
-                Back
+                Cancel
             </button>
         </div>
         <div class="col-3">
-            <button class="btn btn-primary action" [disabled]="isLoading() || !isValidCatalogueLine()" (click)="onPublish()">
-                {{ publishStateService.publishMode === "edit" ? "Save" : "Publish"  }}
+            <button class="btn btn-primary action" [disabled]="isLoading() || !isValidCatalogueLine()" (click)="onPublish(false)">
+                {{ publishStateService.publishMode === "edit" ? "Save & Continue" : "Publish & Continue"  }}
+            </button>
+        </div>
+        <div class="col-3">
+            <button class="btn btn-primary action" [disabled]="isLoading() || !isValidCatalogueLine()" (click)="onPublish(true)">
+                {{ publishStateService.publishMode === "edit" ? "Save & Exit" : "Publish & Exit"  }}
             </button>
         </div>
     </div>

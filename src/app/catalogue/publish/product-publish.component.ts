@@ -218,7 +218,7 @@ export class ProductPublishComponent implements OnInit {
             for (let i = 0; i < fileList.length; i++) {
                 let file: File = fileList[i];
                 const filesize = parseInt(((file.size/1024)/1024).toFixed(4));
-                if (filesize < 1) {
+                if (filesize <= 5) {
                   let reader = new FileReader();
 
                   reader.onload = function (e: any) {
@@ -229,7 +229,7 @@ export class ProductPublishComponent implements OnInit {
                   reader.readAsDataURL(file);
                 }
                 else {
-                  alert("Maximum allowed filesize: 1 MB");
+                  alert("Maximum allowed filesize: 5 MB");
                 }
             }
         }
@@ -304,7 +304,7 @@ export class ProductPublishComponent implements OnInit {
         this.location.back();
     }
 
-    onPublish() {
+    onPublish(exitThePage:boolean) {
 
         if (this.catalogueLine.requiredItemLocationQuantity.price.priceAmount.value != null) {
             if (!isValidPrice(this.catalogueLine.requiredItemLocationQuantity.price.priceAmount.value)) {
@@ -315,10 +315,10 @@ export class ProductPublishComponent implements OnInit {
 
         if (this.publishStateService.publishMode === "create" || this.publishStateService.publishMode === "copy") {
             // publish new product
-            this.publishProduct();
+            this.publishProduct(exitThePage);
         } else {
             // update existing product
-            this.saveEditedProduct();
+            this.saveEditedProduct(exitThePage);
         }
     }
 
@@ -723,7 +723,7 @@ export class ProductPublishComponent implements OnInit {
     }
 
     // should be called on publish new product
-    private publishProduct(): void {
+    private publishProduct(exitThePage:boolean): void {
 
         // remove unused properties from catalogueLine
         let splicedCatalogueLine: CatalogueLine = this.removeEmptyProperties(this.catalogueLine);
@@ -733,7 +733,6 @@ export class ProductPublishComponent implements OnInit {
         this.publishStatus.submit();
         if (this.catalogueService.catalogueResponse.catalogueUuid == null) {
             const userId = this.cookieService.get("user_id");
-            this.callStatus.submit();
             this.userService.getUserParty(userId).then(userParty => {
                 // create the catalogue
                 let catalogue:Catalogue = new Catalogue("default", null, userParty, "", "", []);
@@ -741,7 +740,7 @@ export class ProductPublishComponent implements OnInit {
                 catalogue.catalogueLine.push(splicedCatalogueLine);
 
                 this.catalogueService.postCatalogue(catalogue)
-                    .then(() => this.onSuccessfulPublish())
+                    .then(() => this.onSuccessfulPublish(exitThePage,splicedCatalogueLine.id))
                     .catch(err => {
                         this.onFailedPublish(err);
                     })
@@ -752,14 +751,14 @@ export class ProductPublishComponent implements OnInit {
         } else {
             this.catalogueService.addCatalogueLine(this.catalogueService.catalogueResponse.catalogueUuid,JSON.stringify(splicedCatalogueLine))
                 .then(() => {
-                    this.onSuccessfulPublish();
+                    this.onSuccessfulPublish(exitThePage,splicedCatalogueLine.id);
                 })
                 .catch(err=> this.onFailedPublish(err))
         }
     }
 
     // Should be called on save
-    private saveEditedProduct(): void {
+    private saveEditedProduct(exitThePage:boolean): void {
         this.error_detc = false;
         this.callback = false;
         this.submitted = true;
@@ -772,7 +771,7 @@ export class ProductPublishComponent implements OnInit {
         this.publishStatus.submit();
 
         this.catalogueService.updateCatalogueLine(this.catalogueService.catalogueResponse.catalogueUuid,JSON.stringify(splicedCatalogueLine))
-            .then(() => this.onSuccessfulPublish())
+            .then(() => this.onSuccessfulPublish(exitThePage,splicedCatalogueLine.id))
             .then(() => this.changePublishModeToCreate())
             .catch(err => {
                 this.onFailedPublish(err);
@@ -846,33 +845,47 @@ export class ProductPublishComponent implements OnInit {
         return catalogueLineCopy;
     }
 
-    private onSuccessfulPublish(): void {
-        // since every changes is saved,we do not need a dialog box
-        ProductPublishComponent.dialogBox = false;
+    // catalogueLineId is the id of catalogue line created or edited
+    private onSuccessfulPublish(exitThePage:boolean,catalogueLineId:string): void {
 
         let userId = this.cookieService.get("user_id");
         this.userService.getUserParty(userId).then(party => {
             this.catalogueService.getCatalogueResponse(userId).then(catalogueResponse => {
-                this.catalogueLine = UBLModelUtils.createCatalogueLine(catalogueResponse.catalogueUuid,
-                    party, this.companyNegotiationSettings);
-                this.catalogueService.draftCatalogueLine = this.catalogueLine;
+                this.catalogueService.getCatalogueLine(catalogueResponse.catalogueUuid,catalogueLineId).then(catalogueLine => {
+                    // go to the dashboard - catalogue tab
+                    if(exitThePage){
+                        this.catalogueLine = UBLModelUtils.createCatalogueLine(catalogueResponse.catalogueUuid,
+                            party, this.companyNegotiationSettings);
 
-                // avoid category duplication
-                this.categoryService.resetSelectedCategories();
-                this.publishStateService.resetData();
+                        // since every changes is saved,we do not need a dialog box
+                        ProductPublishComponent.dialogBox = false;
+                        // avoid category duplication
+                        this.categoryService.resetSelectedCategories();
+                        this.publishStateService.resetData();
 
-                this.publishStatus.callback("Successfully Submitted", true);
-
-                this.router.navigate(['dashboard'], {
-                    queryParams: {
-                        tab: "CATALOGUE",
-
+                        this.router.navigate(['dashboard'], {
+                            queryParams: {
+                                tab: "CATALOGUE",
+                            }
+                        });
                     }
-                });
+                    // stay in this page and allow the user to edit his product/service
+                    else{
+                        this.catalogueLine = catalogueLine;
+                        // we need to change publish mode to 'edit' since we published the product/service
+                        this.publishStateService.publishMode = "edit";
+                    }
+                    this.catalogueService.draftCatalogueLine = this.catalogueLine;
 
-                this.submitted = false;
-                this.callback = true;
-                this.error_detc = false;
+                    this.publishStatus.callback("Successfully Submitted", true);
+
+                    this.submitted = false;
+                    this.callback = true;
+                    this.error_detc = false;
+                }).
+                catch(error => {
+                    this.publishStatus.error("Error while publishing product", error);
+                });
             })
             .catch(error => {
                 this.publishStatus.error("Error while publishing product", error);
