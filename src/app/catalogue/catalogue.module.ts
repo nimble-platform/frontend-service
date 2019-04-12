@@ -50,6 +50,7 @@ import {PriceOptionViewComponent} from './publish/price-option/price-option-view
 import {BulkPublishComponent} from "./publish/bulk-publish.component";
 import {OptionsPanelComponent} from './publish/options-panel.component';
 import {OriginDestinationViewComponent} from './publish/origin-destination-view-component';
+import {NameDescriptionPanelComponent} from './publish/name-description-panel.component';
 
 @NgModule({
 	imports: [CommonModule, 
@@ -70,6 +71,7 @@ import {OriginDestinationViewComponent} from './publish/origin-destination-view-
         BulkPublishComponent,
         OptionsPanelComponent,
         OriginDestinationViewComponent,
+        NameDescriptionPanelComponent,
         ProductDeliveryTradingComponent,
         ProductPriceTabComponent,
         AdditionalItemPropertyComponent,
