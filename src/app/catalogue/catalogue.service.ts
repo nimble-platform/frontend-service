@@ -108,6 +108,18 @@ export class CatalogueService {
             .catch(this.handleError);
     }
 
+
+    getCatalogueLineByHjid(hjId:string):Promise<CatalogueLine> {
+        const url = this.baseUrl + `/catalogueline/${hjId}`;
+        return this.http
+            .get(url, {headers: this.getAuthorizedHeaders()})
+            .toPromise()
+            .then(res => {
+                return res.json() as CatalogueLine;
+            })
+            .catch(this.handleError);
+    }
+
     addCatalogueLine(catalogueId:string,catalogueLineJson:string){
         const url = this.baseUrl + `/catalogue/${catalogueId}/catalogueline`;
         return this.http
