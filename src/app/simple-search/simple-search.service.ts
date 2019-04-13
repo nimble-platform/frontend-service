@@ -332,4 +332,37 @@ export class SimpleSearchService {
 	}
 
 
+	getFavouriteSearch(query: string, facets: string[],page?: number,sortType?:string): Promise<any> {
+    query = query;
+		const url = this.url + `/item/search`;
+		let searchObject:any = {};
+		searchObject.rows = 10;
+		searchObject.start = page-1;
+    searchObject.q = query;
+    searchObject.sort = [];
+    if(sortType === "PRICE_HIGH_TO_LOW"){
+      searchObject.sort.push("eUR_price desc");
+    }else{
+      searchObject.sort.push("eUR_price asc");
+    }
+		for (let facet of facets) {
+			if (facet.length === 0 || !facet.trim()) {}
+			else {
+				if(searchObject.facet == null) {
+					searchObject.facet = {};
+					searchObject.facet.field = [];
+					searchObject.facet.minCount = this.facetMin;
+					searchObject.facet.limit = this.facetCount;
+				}
+				searchObject.facet.field.push(facet)
+			}
+		}
+		return this.http
+		.post(url, searchObject, {headers: this.getHeadersWithBasicAuthorization()})
+		.toPromise()
+		.then(res => res.json())
+		.catch(this.handleError);
+	}
+
+
 }
