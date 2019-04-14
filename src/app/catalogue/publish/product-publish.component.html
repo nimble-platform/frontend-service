@@ -42,7 +42,7 @@
     </bulk-publish>
 </div>
 
-<ng-container *ngIf="publishingGranularity === 'single' && catalogueLine">
+<ng-container *ngIf="publishingGranularity === 'single' && !isLogistics && catalogueLine">
     <hr>
 
     <!-- Image, Name & Description -->
@@ -382,10 +382,10 @@
     </edit-property-modal>
 </ng-container>
 
-<ng-container *ngIf="publishingGranularity === 'single' && logisticCatalogueLines">
+<ng-container *ngIf="publishingGranularity === 'single' && isLogistics && (logisticCatalogueLines || catalogueLine)">
     <!-- Logistics tabs -->
-    <div *ngIf="isLogistics">
-        <div class="row space-before">
+    <div>
+        <div *ngIf="!singleTabForLogisticServices" class="row space-before">
             <div class="col-12">
                 <ul class="nav nav-tabs">
                     <li class="nav-item">
@@ -440,64 +440,76 @@
                 </ul>
             </div>
         </div>
-        <div class="space-before" [hidden]="selectedTabSinglePublish !== 'TRANSPORT'">
+        <div class="space-before" *ngIf="selectedTabSinglePublish == 'TRANSPORT' || singleTabForLogisticServices">
             <h4>Transport mode</h4>
-            <div class="row">
+            <div class="row" *ngIf="!singleTabForLogisticServices || selectedTabSinglePublish == 'ROAD'">
                 <h6 class="col-1">Road</h6>
                 <div class="col-11 well">
                     <div class="row">
                         <div class="col-4 name-description-panel">
-                            <name-description-panel [item]="logisticCatalogueLines[0].goodsItem.item" [valueClass]="'col-7'" [languageIdClass]="'col-2'" [flexClass]="'col-2'"></name-description-panel>
+                            <name-description-panel [item]="getItemForLogisticCatalogueLine(0)" [valueClass]="'col-7'" [languageIdClass]="'col-2'" [flexClass]="'col-2'"></name-description-panel>
                         </div>
                         <div class="col-4">
-                            <options-panel [selectedTab]="'TRUCKLOAD'" [title]="'Truck load'"></options-panel>
+                            <options-panel [selectedTab]="'TRUCKLOAD'" [title]="'Truck load'" [selectedOptions]="getDefaultPropertyForLogistics(0, 'Truck load')"></options-panel>
                         </div>
                         <div class="col-4">
-                            <options-panel [selectedTab]="'SHIPMENTTYPE'" [title]="'Shipment type'" ></options-panel>
+                            <options-panel [selectedTab]="'SHIPMENTTYPE'" [title]="'Shipment type'" [selectedOptions]="getDefaultPropertyForLogistics(0, 'Shipment type')"></options-panel>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="row">
+            <div class="row" *ngIf="!singleTabForLogisticServices || selectedTabSinglePublish == 'MARITIME'">
                 <h6 class="col-1">Maritime</h6>
                 <div class="col-11 well">
                     <div class="row">
                         <div class="col-4 name-description-panel">
-                            <name-description-panel [item]="logisticCatalogueLines[1].goodsItem.item" [valueClass]="'col-7'" [languageIdClass]="'col-2'" [flexClass]="'col-2'"></name-description-panel>
+                            <name-description-panel [item]="getItemForLogisticCatalogueLine(1)" [valueClass]="'col-7'" [languageIdClass]="'col-2'" [flexClass]="'col-2'"></name-description-panel>
                         </div>
                         <div class="col-4">
-                            <options-panel [selectedTab]="'MARITIME'" ></options-panel>
+                            <options-panel [selectedTab]="'MARITIME'" [selectedOptions]="getDefaultPropertyForLogistics(1)"></options-panel>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="row">
+            <div class="row" *ngIf="!singleTabForLogisticServices || selectedTabSinglePublish == 'AIR'">
                 <h6 class="col-1">Air</h6>
                 <div class="col-11 well">
                     <div class="row">
                         <div class="col-4 name-description-panel">
-                            <name-description-panel [item]="logisticCatalogueLines[2].goodsItem.item" [valueClass]="'col-7'" [languageIdClass]="'col-2'" [flexClass]="'col-2'"></name-description-panel>
+                            <name-description-panel [item]="getItemForLogisticCatalogueLine(2)" [valueClass]="'col-7'" [languageIdClass]="'col-2'" [flexClass]="'col-2'"></name-description-panel>
                         </div>
                         <div class="col-4">
-                            <options-panel [selectedTab]="'AIR'" ></options-panel>
+                            <options-panel [selectedTab]="'AIR'" [selectedOptions]="getDefaultPropertyForLogistics(2)"></options-panel>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="row">
+            <div class="row" *ngIf="!singleTabForLogisticServices || selectedTabSinglePublish == 'RAIL'">
                 <h6 class="col-1">Rail</h6>
                 <div class="col-11 well">
                     <div class="row">
                         <div class="col-4 name-description-panel">
-                            <name-description-panel [item]="logisticCatalogueLines[3].goodsItem.item" [valueClass]="'col-7'" [languageIdClass]="'col-2'" [flexClass]="'col-2'"></name-description-panel>
+                            <name-description-panel [item]="getItemForLogisticCatalogueLine(3)" [valueClass]="'col-7'" [languageIdClass]="'col-2'" [flexClass]="'col-2'"></name-description-panel>
                         </div>
                         <div class="col-4">
-                            <options-panel [selectedTab]="'RAIL'" ></options-panel>
+                            <options-panel [selectedTab]="'RAIL'" [selectedOptions]="getDefaultPropertyForLogistics(3)"></options-panel>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="row">
+            <div class="row space-before" *ngIf="selectedTabSinglePublish == 'TRANSPORT' || selectedTabSinglePublish == 'RAIL' || selectedTabSinglePublish == 'AIR' || selectedTabSinglePublish == 'MARITIME' || selectedTabSinglePublish == 'ROAD'">
+                <div class="col-6">
+                    <h6>Choose the type of product you can manage</h6>
+                    <options-panel [selectedTab]="'PRODUCTTYPE'" [checkboxOther]="false" [divStyle]="'well'" [selectedOptions]="getProductTypeForLogistic(0)"
+                                   [selectedOptionsWithExtraColumn]="false"></options-panel>
+                </div>
+                <div class="col-6">
+                    <h6>Industry specialization</h6>
+                    <options-panel [selectedTab]="'INDUSTRYSPECIALIZATION'" [checkboxOther]="false" [divStyle]="'well'" [selectedOptions]="getIndustrySpecializationForLogistics(0)"
+                                   [selectedOptionsWithExtraColumn]="false"></options-panel>
+                </div>
+            </div>
+            <div class="row" *ngIf="selectedTabSinglePublish == 'TRANSPORT' || selectedTabSinglePublish == 'RAIL' || selectedTabSinglePublish == 'AIR' || selectedTabSinglePublish == 'MARITIME' || selectedTabSinglePublish == 'ROAD'">
                 <div class="col-6">
                     <h6>Destination</h6>
                     <origin-destination-view [divStyle]="'well'"></origin-destination-view>
@@ -507,49 +519,256 @@
                     <origin-destination-view [divStyle]="'well'"></origin-destination-view>
                 </div>
             </div>
-        </div>
-        <div class="row space-before"[hidden]="selectedTabSinglePublish !== 'WAREHOUSING'">
-            <div class="col-12">
-                <options-panel [selectedTab]="'WAREHOUSING'" [item]="logisticCatalogueLines[4].goodsItem.item"></options-panel>
+            <!-- Actions -->
+            <div class="row actions-row pr-0" *ngIf="selectedTabSinglePublish == 'TRANSPORT' || selectedTabSinglePublish == 'RAIL' || selectedTabSinglePublish == 'AIR' || selectedTabSinglePublish == 'MARITIME' || selectedTabSinglePublish == 'ROAD'">
+                <div class="col-4 call-status-col"><call-status [callStatus]="publishStatus"></call-status></div>
+                <div class="col-2">
+                    <button class="btn btn-secondary action" [disabled]="isLoading() || !isValidCatalogueLineForLogistics()" (click)="onBack()">
+                        Cancel
+                    </button>
+                </div>
+                <div class="col-3">
+                    <button class="btn btn-primary action" [disabled]="isLoading() || !isValidCatalogueLineForLogistics()" (click)="onPublish(false)">
+                        {{ publishStateService.publishMode === "edit" ? "Save & Continue" : (logisticPublishMode[0] === 'edit' || logisticPublishMode[1] === 'edit' || logisticPublishMode[2] === 'edit' || logisticPublishMode[3] === 'edit') ? "Save & Continue": "Publish & Continue"  }}
+                    </button>
+                </div>
+                <div class="col-3">
+                    <button class="btn btn-primary action" [disabled]="isLoading() || !isValidCatalogueLineForLogistics()" (click)="onPublish(true)">
+                        {{ publishStateService.publishMode === "edit" ? "Save & Exit" : (logisticPublishMode[0] === 'edit' || logisticPublishMode[1] === 'edit' || logisticPublishMode[2] === 'edit' || logisticPublishMode[3] === 'edit') ? "Save & Exit": "Publish & Exit" }}
+                    </button>
+                </div>
             </div>
         </div>
-        <div class="row space-before"[hidden]="selectedTabSinglePublish !== 'ORDERPICKING'">
-            <div class="col-12">
-                <options-panel [selectedTab]="'ORDERPICKING'" [item]="logisticCatalogueLines[5].goodsItem.item"></options-panel>
+        <div *ngIf="selectedTabSinglePublish == 'WAREHOUSING'">
+            <div class="row space-before">
+                <div class="col-12">
+                    <options-panel [selectedTab]="'WAREHOUSING'" [item]="getItemForLogisticCatalogueLine(4)" [selectedOptions]=getDefaultPropertyForLogistics(4)></options-panel>
+                </div>
+            </div>
+            <div class="row space-before">
+                <div class="col-6">
+                    <h6>Choose the type of product you can manage</h6>
+                    <options-panel [selectedTab]="'PRODUCTTYPE'" [checkboxOther]="false" [divStyle]="'well'" [selectedOptions]="getProductTypeForLogistic(4)"
+                                   [selectedOptionsWithExtraColumn]="false"></options-panel>
+                </div>
+                <div class="col-6">
+                    <h6>Industry specialization</h6>
+                    <options-panel [selectedTab]="'INDUSTRYSPECIALIZATION'" [checkboxOther]="false" [divStyle]="'well'" [selectedOptions]="getIndustrySpecializationForLogistics(4)"
+                                   [selectedOptionsWithExtraColumn]="false"></options-panel>
+                </div>
+            </div>
+            <!-- Actions -->
+            <div class="row actions-row pr-0">
+                <div class="col-4 call-status-col"><call-status [callStatus]="publishStatus"></call-status></div>
+                <div class="col-2">
+                    <button class="btn btn-secondary action" [disabled]="isLoading() || !isValidCatalogueLineForLogistics()" (click)="onBack()">
+                        Cancel
+                    </button>
+                </div>
+                <div class="col-3">
+                    <button class="btn btn-primary action" [disabled]="isLoading() || !isValidCatalogueLineForLogistics()" (click)="onPublish(false)">
+                        {{ publishStateService.publishMode === "edit" ? "Save & Continue" : logisticPublishMode[4] === 'edit' ? "Save & Continue": "Publish & Continue"  }}
+                    </button>
+                </div>
+                <div class="col-3">
+                    <button class="btn btn-primary action" [disabled]="isLoading() || !isValidCatalogueLineForLogistics()" (click)="onPublish(true)">
+                        {{ publishStateService.publishMode === "edit" ? "Save & Exit" : logisticPublishMode[4] === 'edit' ? "Save & Exit": "Publish & Exit" }}
+                    </button>
+                </div>
             </div>
         </div>
-        <div class="row space-before"[hidden]="selectedTabSinglePublish !== 'REVERSELOGISTICS'">
-            <div class="col-12">
-                <options-panel [selectedTab]="'REVERSELOGISTICS'" [item]="logisticCatalogueLines[6].goodsItem.item"></options-panel>
+        <div *ngIf="selectedTabSinglePublish == 'ORDERPICKING'">
+            <div class="row space-before">
+                <div class="col-12">
+                    <options-panel [selectedTab]="'ORDERPICKING'" [item]="getItemForLogisticCatalogueLine(5)" [selectedOptions]=getDefaultPropertyForLogistics(5)></options-panel>
+                </div>
+            </div>
+            <div class="row space-before">
+                <div class="col-6">
+                    <h6>Choose the type of product you can manage</h6>
+                    <options-panel [selectedTab]="'PRODUCTTYPE'" [checkboxOther]="false" [divStyle]="'well'" [selectedOptions]="getProductTypeForLogistic(5)"
+                                   [selectedOptionsWithExtraColumn]="false"></options-panel>
+                </div>
+                <div class="col-6">
+                    <h6>Industry specialization</h6>
+                    <options-panel [selectedTab]="'INDUSTRYSPECIALIZATION'" [checkboxOther]="false" [divStyle]="'well'" [selectedOptions]="getIndustrySpecializationForLogistics(5)"
+                                   [selectedOptionsWithExtraColumn]="false"></options-panel>
+                </div>
+            </div>
+            <!-- Actions -->
+            <div class="row actions-row pr-0">
+                <div class="col-4 call-status-col"><call-status [callStatus]="publishStatus"></call-status></div>
+                <div class="col-2">
+                    <button class="btn btn-secondary action" [disabled]="isLoading() || !isValidCatalogueLineForLogistics()" (click)="onBack()">
+                        Cancel
+                    </button>
+                </div>
+                <div class="col-3">
+                    <button class="btn btn-primary action" [disabled]="isLoading() || !isValidCatalogueLineForLogistics()" (click)="onPublish(false)">
+                        {{ publishStateService.publishMode === "edit" ? "Save & Continue" : logisticPublishMode[5] === 'edit' ? "Save & Continue": "Publish & Continue"  }}
+                    </button>
+                </div>
+                <div class="col-3">
+                    <button class="btn btn-primary action" [disabled]="isLoading() || !isValidCatalogueLineForLogistics()" (click)="onPublish(true)">
+                        {{ publishStateService.publishMode === "edit" ? "Save & Exit" : logisticPublishMode[5] === 'edit' ? "Save & Exit": "Publish & Exit" }}
+                    </button>
+                </div>
             </div>
         </div>
-        <div class="row space-before"[hidden]="selectedTabSinglePublish !== 'INHOUSESERVICES'">
-            <div class="col-12">
-                <options-panel [selectedTab]="'INHOUSESERVICES'" [item]="logisticCatalogueLines[7].goodsItem.item"></options-panel>
+        <div *ngIf="selectedTabSinglePublish == 'REVERSELOGISTICS'">
+            <div class="row space-before">
+                <div class="col-12">
+                    <options-panel [selectedTab]="'REVERSELOGISTICS'" [item]="getItemForLogisticCatalogueLine(6)" [selectedOptions]=getDefaultPropertyForLogistics(6)></options-panel>
+                </div>
+            </div>
+            <div class="row space-before">
+                <div class="col-6">
+                    <h6>Choose the type of product you can manage</h6>
+                    <options-panel [selectedTab]="'PRODUCTTYPE'" [checkboxOther]="false" [divStyle]="'well'" [selectedOptions]="getProductTypeForLogistic(6)"
+                                   [selectedOptionsWithExtraColumn]="false"></options-panel>
+                </div>
+                <div class="col-6">
+                    <h6>Industry specialization</h6>
+                    <options-panel [selectedTab]="'INDUSTRYSPECIALIZATION'" [checkboxOther]="false" [divStyle]="'well'" [selectedOptions]="getIndustrySpecializationForLogistics(6)"
+                                   [selectedOptionsWithExtraColumn]="false"></options-panel>
+                </div>
+            </div>
+            <!-- Actions -->
+            <div class="row actions-row pr-0">
+                <div class="col-4 call-status-col"><call-status [callStatus]="publishStatus"></call-status></div>
+                <div class="col-2">
+                    <button class="btn btn-secondary action" [disabled]="isLoading() || !isValidCatalogueLineForLogistics()" (click)="onBack()">
+                        Cancel
+                    </button>
+                </div>
+                <div class="col-3">
+                    <button class="btn btn-primary action" [disabled]="isLoading() || !isValidCatalogueLineForLogistics()" (click)="onPublish(false)">
+                        {{ publishStateService.publishMode === "edit" ? "Save & Continue" : logisticPublishMode[6] === 'edit' ? "Save & Continue": "Publish & Continue"  }}
+                    </button>
+                </div>
+                <div class="col-3">
+                    <button class="btn btn-primary action" [disabled]="isLoading() || !isValidCatalogueLineForLogistics()" (click)="onPublish(true)">
+                        {{ publishStateService.publishMode === "edit" ? "Save & Exit" : logisticPublishMode[6] === 'edit' ? "Save & Exit": "Publish & Exit" }}
+                    </button>
+                </div>
             </div>
         </div>
-        <div class="row space-before"[hidden]="selectedTabSinglePublish !== 'CUSTOMSMANAGEMENT'">
-            <div class="col-12">
-                <options-panel [selectedTab]="'CUSTOMSMANAGEMENT'" [item]="logisticCatalogueLines[8].goodsItem.item"></options-panel>
+        <div *ngIf="selectedTabSinglePublish == 'INHOUSESERVICES'">
+            <div class="row space-before">
+                <div class="col-12">
+                    <options-panel [selectedTab]="'INHOUSESERVICES'" [item]="getItemForLogisticCatalogueLine(7)" [selectedOptions]=getDefaultPropertyForLogistics(7)></options-panel>
+                </div>
+            </div>
+            <div class="row space-before">
+                <div class="col-6">
+                    <h6>Choose the type of product you can manage</h6>
+                    <options-panel [selectedTab]="'PRODUCTTYPE'" [checkboxOther]="false" [divStyle]="'well'" [selectedOptions]="getProductTypeForLogistic(7)"
+                                   [selectedOptionsWithExtraColumn]="false"></options-panel>
+                </div>
+                <div class="col-6">
+                    <h6>Industry specialization</h6>
+                    <options-panel [selectedTab]="'INDUSTRYSPECIALIZATION'" [checkboxOther]="false" [divStyle]="'well'" [selectedOptions]="getIndustrySpecializationForLogistics(7)"
+                                   [selectedOptionsWithExtraColumn]="false"></options-panel>
+                </div>
+            </div>
+            <!-- Actions -->
+            <div class="row actions-row pr-0">
+                <div class="col-4 call-status-col"><call-status [callStatus]="publishStatus"></call-status></div>
+                <div class="col-2">
+                    <button class="btn btn-secondary action" [disabled]="isLoading() || !isValidCatalogueLineForLogistics()" (click)="onBack()">
+                        Cancel
+                    </button>
+                </div>
+                <div class="col-3">
+                    <button class="btn btn-primary action" [disabled]="isLoading() || !isValidCatalogueLineForLogistics()" (click)="onPublish(false)">
+                        {{ publishStateService.publishMode === "edit" ? "Save & Continue" : logisticPublishMode[7] === 'edit' ? "Save & Continue": "Publish & Continue"  }}
+                    </button>
+                </div>
+                <div class="col-3">
+                    <button class="btn btn-primary action" [disabled]="isLoading() || !isValidCatalogueLineForLogistics()" (click)="onPublish(true)">
+                        {{ publishStateService.publishMode === "edit" ? "Save & Exit" : logisticPublishMode[7] === 'edit' ? "Save & Exit": "Publish & Exit" }}
+                    </button>
+                </div>
             </div>
         </div>
-        <div class="row space-before"[hidden]="selectedTabSinglePublish !== 'LOGISTICSCONSULTANCY'">
-            <div class="col-12">
-                <options-panel [selectedTab]="'LOGISTICSCONSULTANCY'" [item]="logisticCatalogueLines[9].goodsItem.item"></options-panel>
+        <div *ngIf="selectedTabSinglePublish == 'CUSTOMSMANAGEMENT'">
+            <div class="row space-before">
+                <div class="col-12">
+                    <options-panel [selectedTab]="'CUSTOMSMANAGEMENT'" [item]="getItemForLogisticCatalogueLine(8)" [selectedOptions]=getDefaultPropertyForLogistics(8)></options-panel>
+                </div>
+            </div>
+            <div class="row space-before">
+                <div class="col-6">
+                    <h6>Choose the type of product you can manage</h6>
+                    <options-panel [selectedTab]="'PRODUCTTYPE'" [checkboxOther]="false" [divStyle]="'well'" [selectedOptions]="getProductTypeForLogistic(8)"
+                                   [selectedOptionsWithExtraColumn]="false"></options-panel>
+                </div>
+                <div class="col-6">
+                    <h6>Industry specialization</h6>
+                    <options-panel [selectedTab]="'INDUSTRYSPECIALIZATION'" [checkboxOther]="false" [divStyle]="'well'" [selectedOptions]="getIndustrySpecializationForLogistics(8)"
+                                   [selectedOptionsWithExtraColumn]="false"></options-panel>
+                </div>
+            </div>
+            <!-- Actions -->
+            <div class="row actions-row pr-0">
+                <div class="col-4 call-status-col"><call-status [callStatus]="publishStatus"></call-status></div>
+                <div class="col-2">
+                    <button class="btn btn-secondary action" [disabled]="isLoading() || !isValidCatalogueLineForLogistics()" (click)="onBack()">
+                        Cancel
+                    </button>
+                </div>
+                <div class="col-3">
+                    <button class="btn btn-primary action" [disabled]="isLoading() || !isValidCatalogueLineForLogistics()" (click)="onPublish(false)">
+                        {{ publishStateService.publishMode === "edit" ? "Save & Continue" : logisticPublishMode[8] === 'edit' ? "Save & Continue": "Publish & Continue"  }}
+                    </button>
+                </div>
+                <div class="col-3">
+                    <button class="btn btn-primary action" [disabled]="isLoading() || !isValidCatalogueLineForLogistics()" (click)="onPublish(true)">
+                        {{ publishStateService.publishMode === "edit" ? "Save & Exit" : logisticPublishMode[8] === 'edit' ? "Save & Exit": "Publish & Exit" }}
+                    </button>
+                </div>
             </div>
         </div>
-        <div class="row space-before">
-            <div class="col-6">
-                <h6>Choose the type of product you can manage</h6>
-                <options-panel [selectedTab]="'PRODUCTTYPE'" [checkboxOther]="false" [divStyle]="'well'"
-                               [selectedOptionsWithExtraColumn]="false"></options-panel>
+        <div *ngIf="selectedTabSinglePublish == 'LOGISTICSCONSULTANCY'">
+            <div class="row space-before">
+                <div class="col-12">
+                    <options-panel [selectedTab]="'LOGISTICSCONSULTANCY'" [item]="getItemForLogisticCatalogueLine(9)" [selectedOptions]=getDefaultPropertyForLogistics(9)></options-panel>
+                </div>
             </div>
-            <div class="col-6">
-                <h6>Industry specialization</h6>
-                <options-panel [selectedTab]="'INDUSTRYSPECIALIZATION'" [checkboxOther]="false" [divStyle]="'well'"
-                               [selectedOptionsWithExtraColumn]="false"></options-panel>
+            <div class="row space-before">
+                <div class="col-6">
+                    <h6>Choose the type of product you can manage</h6>
+                    <options-panel [selectedTab]="'PRODUCTTYPE'" [checkboxOther]="false" [divStyle]="'well'" [selectedOptions]="getProductTypeForLogistic(9)"
+                                   [selectedOptionsWithExtraColumn]="false"></options-panel>
+                </div>
+                <div class="col-6">
+                    <h6>Industry specialization</h6>
+                    <options-panel [selectedTab]="'INDUSTRYSPECIALIZATION'" [checkboxOther]="false" [divStyle]="'well'" [selectedOptions]="getIndustrySpecializationForLogistics(9)"
+                                   [selectedOptionsWithExtraColumn]="false"></options-panel>
+                </div>
+            </div>
+            <!-- Actions -->
+            <div class="row actions-row pr-0">
+                <div class="col-4 call-status-col"><call-status [callStatus]="publishStatus"></call-status></div>
+                <div class="col-2">
+                    <button class="btn btn-secondary action" [disabled]="isLoading() || !isValidCatalogueLineForLogistics()" (click)="onBack()">
+                        Cancel
+                    </button>
+                </div>
+                <div class="col-3">
+                    <button class="btn btn-primary action" [disabled]="isLoading() || !isValidCatalogueLineForLogistics()" (click)="onPublish(false)">
+                        {{ publishStateService.publishMode === "edit" ? "Save & Continue" : logisticPublishMode[9] === 'edit' ? "Save & Continue": "Publish & Continue"  }}
+                    </button>
+                </div>
+                <div class="col-3">
+                    <button class="btn btn-primary action" [disabled]="isLoading() || !isValidCatalogueLineForLogistics()" (click)="onPublish(true)">
+                        {{ publishStateService.publishMode === "edit" ? "Save & Exit" : logisticPublishMode[9] === 'edit' ? "Save & Exit": "Publish & Exit" }}
+                    </button>
+                </div>
             </div>
         </div>
+
+
     </div>
 </ng-container>
 <call-status [callStatus]="callStatus" [large]="true"></call-status>

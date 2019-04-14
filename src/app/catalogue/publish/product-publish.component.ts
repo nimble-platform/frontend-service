@@ -48,6 +48,9 @@ import {CataloguePaginationResponse} from '../model/publish/catalogue-pagination
 type ProductType = "product" | "transportation";
 import {Text} from "../model/publish/text";
 import {Catalogue} from '../model/publish/catalogue';
+import {Item} from '../model/publish/item';
+import {TransportationService} from '../model/publish/transportation-service';
+import {CommodityClassification} from '../model/publish/commodity-classification';
 
 interface SelectedProperties {
     [key: string]: SelectedProperty;
@@ -90,7 +93,7 @@ export class ProductPublishComponent implements OnInit {
     logisticCatalogueLines: CatalogueLine[] = null;
     productWrapper: ProductWrapper = null;
     companyNegotiationSettings: CompanyNegotiationSettings;
-    selectedTabSinglePublish: "DETAILS" | "DELIVERY_TRADING" | "PRICE" | "CERTIFICATES" | "TRACK_TRACE" | "LCPA" | "TRANSPORT"= "DETAILS";
+    selectedTabSinglePublish: "DETAILS" | "ROAD"| "MARITIME" | "AIR" | "RAIL" | "WAREHOUSING" | "CUSTOMSMANAGEMENT" | "INHOUSESERVICES" | "REVERSELOGISTICS" | "ORDERPICKING" | "DELIVERY_TRADING" | "PRICE" | "CERTIFICATES" | "TRACK_TRACE" | "LCPA" | "TRANSPORT" | "LOGISTICSCONSULTANCY" = "DETAILS";
     private selectedProperties: SelectedProperties = {};
     private categoryProperties: CategoryProperties = {};
     private lunrIndex: lunr.Index;
@@ -134,6 +137,14 @@ export class ProductPublishComponent implements OnInit {
     // check whether changing publish-mode to 'create' is necessary or not
     changePublishModeCreate: boolean = false;
 
+    logisticCatalogueLineIndexMap:Map<string,number[]> = new Map<string, number[]>();
+    private logisticCategoryIds = "0173-1#01-AGD951#001,0173-1#01-AGD936#001,0173-1#01-AGD954#001,0173-1#01-AGD963#001,0173-1#01-AGD971#001,0173-1#01-AGD948#001,0173-1#01-AGE137#001,0173-1#01-AGD955#001,0173-1#01-AGD945#001,0173-1#01-AGD957#001";
+    private logisticCategoryTaxonomyIds = "eClass,eClass,eClass,eClass,eClass,eClass,eClass,eClass,eClass,eClass";
+
+    logisticPublishMode:string[] = []
+
+    singleTabForLogisticServices = false;
+
     constructor(public categoryService: CategoryService,
                 private catalogueService: CatalogueService,
                 public publishStateService: PublishService,
@@ -153,11 +164,12 @@ export class ProductPublishComponent implements OnInit {
             return Promise.all([
                 Promise.resolve(party),
                 this.catalogueService.getCatalogueResponse(userId),
-                this.userService.getCompanyNegotiationSettingsForParty(UBLModelUtils.getPartyId(party))
+                this.userService.getCompanyNegotiationSettingsForParty(UBLModelUtils.getPartyId(party)),
+                this.categoryService.getCategoriesForIds(this.logisticCategoryTaxonomyIds,this.logisticCategoryIds)
             ])
         })
-        .then(([party, catalogueResponse, settings]) => {
-            this.initView(party, catalogueResponse, settings);
+        .then(([party, catalogueResponse, settings, logisticCategories]) => {
+            this.initView(party, catalogueResponse, settings,logisticCategories);
             this.publishStateService.publishingStarted = true;
             this.callStatus.callback("Successfully initialized.", true);
         })
@@ -182,6 +194,20 @@ export class ProductPublishComponent implements OnInit {
                 this.publishStateService.publishedProductNature = 'Regular product';
             }
         });
+    }
+
+    populateLogisticCatalogueLinesMap(){
+        this.logisticCatalogueLineIndexMap.set("TRANSPORT",[0,1,2,3]);
+        this.logisticCatalogueLineIndexMap.set("WAREHOUSING",[4]);
+        this.logisticCatalogueLineIndexMap.set("ORDERPICKING",[5]);
+        this.logisticCatalogueLineIndexMap.set("REVERSELOGISTICS",[6]);
+        this.logisticCatalogueLineIndexMap.set("INHOUSESERVICES",[7]);
+        this.logisticCatalogueLineIndexMap.set("CUSTOMSMANAGEMENT",[8]);
+        this.logisticCatalogueLineIndexMap.set("LOGISTICSCONSULTANCY",[9]);
+    }
+
+    populateLogisticPublishMode(){
+        this.logisticPublishMode = ['create','create','create','create','create','create','create','create','create','create'];
     }
 
     ngOnDestroy() {
@@ -306,19 +332,104 @@ export class ProductPublishComponent implements OnInit {
 
     onPublish(exitThePage:boolean) {
 
-        if (this.catalogueLine.requiredItemLocationQuantity.price.priceAmount.value != null) {
-            if (!isValidPrice(this.catalogueLine.requiredItemLocationQuantity.price.priceAmount.value)) {
-                alert("Price cannot have more than 2 decimal places");
-                return false;
+        if(this.isLogistics){
+
+            if(this.publishStateService.publishMode === 'edit') {
+
+                // remove unused properties from catalogueLine
+                const splicedCatalogueLine: CatalogueLine = this.removeEmptyProperties(this.catalogueLine);
+                // nullify the transportation service details if a regular product is being published
+                this.checkProductNature(splicedCatalogueLine);
+
+
+                // update existing service
+                this.saveEditedProduct(exitThePage,[splicedCatalogueLine]);
+            }
+            else{
+                let indexes:number[] = this.logisticCatalogueLineIndexMap.get(this.selectedTabSinglePublish);
+                if(indexes.length > 1){
+
+                    this.copyMissingAdditionalItemProperties(this.logisticCatalogueLines[indexes[1]]);
+                    this.copyMissingAdditionalItemProperties(this.logisticCatalogueLines[indexes[2]]);
+                    this.copyMissingAdditionalItemProperties(this.logisticCatalogueLines[indexes[3]]);
+
+                    let validCatalogueLinesToBePublished:CatalogueLine[] = [];
+                    let validCatalogueLinesToBeUpdated:CatalogueLine[] = [];
+
+                    for(let i = 0; i < 4 ; i++){
+                        if(this.itemHasName(this.logisticCatalogueLines[i].goodsItem.item)){
+                            // be sure that its transportation service details is not null
+                            this.logisticCatalogueLines[i].goodsItem.item.transportationServiceDetails = new TransportationService();
+
+                            if(this.logisticPublishMode[i] == 'edit'){
+                                validCatalogueLinesToBeUpdated.push(this.logisticCatalogueLines[i]);
+                            }else{
+                                validCatalogueLinesToBePublished.push(this.logisticCatalogueLines[i]);
+                            }
+                        }
+                    }
+
+                    if(validCatalogueLinesToBePublished.length > 0){
+                        this.publish(validCatalogueLinesToBePublished,exitThePage);
+                    }
+                    if(validCatalogueLinesToBeUpdated.length > 0){
+                        this.saveEditedProduct(exitThePage,validCatalogueLinesToBeUpdated);
+                    }
+                }
+                else{
+                    if(this.logisticPublishMode[indexes[0]] === "create" || this.logisticPublishMode[indexes[0]] === "copy"){
+                        // publish new service
+                        this.publishLogisticService(exitThePage, [this.logisticCatalogueLines[indexes[0]]]);
+                    }
+                    else{
+                        // update the existing service
+                        this.saveEditedProduct(exitThePage,[this.logisticCatalogueLines[indexes[0]]]);
+                    }
+                }
+            }
+        } else{
+            if (this.catalogueLine.requiredItemLocationQuantity.price.priceAmount.value != null) {
+                if (!isValidPrice(this.catalogueLine.requiredItemLocationQuantity.price.priceAmount.value)) {
+                    alert("Price cannot have more than 2 decimal places");
+                    return false;
+                }
+            }
+
+            if (this.publishStateService.publishMode === "create" || this.publishStateService.publishMode === "copy") {
+                // publish new product
+                this.publishProduct(exitThePage);
+            } else {
+                // remove unused properties from catalogueLine
+                const splicedCatalogueLine: CatalogueLine = this.removeEmptyProperties(this.catalogueLine);
+                // nullify the transportation service details if a regular product is being published
+                this.checkProductNature(splicedCatalogueLine);
+
+                // update existing product
+                this.saveEditedProduct(exitThePage,[splicedCatalogueLine]);
             }
         }
+    }
 
-        if (this.publishStateService.publishMode === "create" || this.publishStateService.publishMode === "copy") {
-            // publish new product
-            this.publishProduct(exitThePage);
-        } else {
-            // update existing product
-            this.saveEditedProduct(exitThePage);
+    publishLogisticService(exitThePage:boolean,catalogueLines:CatalogueLine[]){
+        // be sure that its transportation service details is not null
+        for(let catalogueLine of catalogueLines){
+            catalogueLine.goodsItem.item.transportationServiceDetails = new TransportationService();
+        }
+
+        // Publish the service
+        this.publish(catalogueLines,exitThePage);
+    }
+
+    private copyMissingAdditionalItemProperties(catalogueLine:CatalogueLine){
+        let productType = this.getProductTypeForLogistic(0);
+        let industrySpecialization = this.getIndustrySpecializationForLogistics(0);
+        for(let itemProperty of catalogueLine.goodsItem.item.additionalItemProperty){
+            if(itemProperty.name[0].value == "Product Type"){
+                itemProperty.value = productType;
+            }
+            else if(itemProperty.name[0].value == "Industry Specialization"){
+                itemProperty.value = industrySpecialization;
+            }
         }
     }
 
@@ -380,7 +491,77 @@ export class ProductPublishComponent implements OnInit {
 
     isValidCatalogueLine(): boolean {
         // must have a name
-        return this.catalogueLine.goodsItem.item.name[0] && this.catalogueLine.goodsItem.item.name[0].value !== "";
+        return this.itemHasName(this.catalogueLine.goodsItem.item);
+    }
+
+    isValidCatalogueLineForLogistics(): boolean {
+        if(this.publishMode == 'create'){
+            let indexes:number[] = this.logisticCatalogueLineIndexMap.get(this.selectedTabSinglePublish);
+            for(let index of indexes){
+                if(this.itemHasName(this.logisticCatalogueLines[index].goodsItem.item)){
+                    return true;
+                }
+            }
+            return false;
+        }
+        return this.isValidCatalogueLine();
+    }
+
+    private itemHasName(item:Item):boolean{
+        return item.name[0] && item.name[0].value !== "";
+    }
+
+    getProductTypeForLogistic(index:number){
+        let item:Item = this.getItemForLogisticCatalogueLine(index);
+        for(let itemProperty of item.additionalItemProperty){
+            if(itemProperty.name[0].value == "Product Type"){
+                return itemProperty.value;
+            }
+        }
+
+        let itemProperty = UBLModelUtils.createProductTypeAdditionalItemProperty();
+        item.additionalItemProperty.push(itemProperty);
+        return itemProperty.value;
+    }
+
+    getIndustrySpecializationForLogistics(index:number){
+        let item:Item = this.getItemForLogisticCatalogueLine(index);
+        for(let itemProperty of item.additionalItemProperty){
+            if(itemProperty.name[0].value == "Industry Specialization"){
+                return itemProperty.value;
+            }
+        }
+
+        let itemProperty = UBLModelUtils.createIndustrySpecializationAdditionalItemProperty();
+        item.additionalItemProperty.push(itemProperty);
+        return itemProperty.value;
+    }
+
+    getDefaultPropertyForLogistics(index:number,propertyName:string = null){
+        let item:Item = this.getItemForLogisticCatalogueLine(index);
+
+        let itemProperty:ItemProperty = null;
+        for(let ip of item.additionalItemProperty){
+            if(ip.name[0].value != "Industry Specialization" && ip.name[0].value != "Product Type"){
+                if(propertyName && ip.name[0].value == propertyName){
+                    return ip.value;
+                } else{
+                    itemProperty = ip;
+                }
+            }
+        }
+
+        if(itemProperty){
+            return itemProperty.value;
+        }
+
+        let itemProperties = UBLModelUtils.createItemPropertiesForLogistics(index);
+
+        for(let itemProperty of itemProperties){
+            item.additionalItemProperty.push(itemProperty);
+        }
+
+        return itemProperties[0].value;
     }
 
     addItemNameDescription() {
@@ -620,13 +801,21 @@ export class ProductPublishComponent implements OnInit {
         return true;
     }
 
-    private initView(userParty, catalogueResponse:CataloguePaginationResponse, settings): void {
+    getItemForLogisticCatalogueLine(index:number){
+        if(this.publishMode == 'create'){
+            return this.logisticCatalogueLines[index].goodsItem.item;
+        }
+        return this.catalogueLine.goodsItem.item;
+    }
+
+    private initView(userParty, catalogueResponse:CataloguePaginationResponse, settings, logisticCategories): void {
         this.companyNegotiationSettings = settings;
         this.catalogueService.setEditMode(true);
         this.publishStateService.resetData();
         // Following "if" block is executed when redirected by an "edit" button
         // "else" block is executed when redirected by "publish" tab
         this.publishMode = this.publishStateService.publishMode;
+
         if (this.publishMode == 'edit' || this.publishMode == 'copy') {
             if (this.publishMode == 'copy') {
               let newId = UBLModelUtils.generateUUID();
@@ -641,6 +830,12 @@ export class ProductPublishComponent implements OnInit {
                 this.router.navigate(['catalogue/publish']);
                 return;
             }
+
+            // show only one tab
+            this.singleTabForLogisticServices = true;
+
+            this.selectedTabSinglePublish = this.getSelectedTabForLogisticServices();
+
             this.productWrapper = new ProductWrapper(this.catalogueLine, settings);
 
             // Get categories of item to edit
@@ -695,7 +890,9 @@ export class ProductPublishComponent implements OnInit {
             // i.e. publishing from scratch
             if (this.publishStateService.publishingStarted == false) {
                 if(this.isLogistics){
-                    this.logisticCatalogueLines = UBLModelUtils.createCatalogueLinesForLogistics(catalogueResponse.catalogueUuid, userParty, settings);
+                    this.logisticCatalogueLines = UBLModelUtils.createCatalogueLinesForLogistics(catalogueResponse.catalogueUuid, userParty, settings, logisticCategories);
+                    this.populateLogisticCatalogueLinesMap();
+                    this.populateLogisticPublishMode();
                 }else{
                     this.catalogueLine = UBLModelUtils.createCatalogueLine(catalogueResponse.catalogueUuid, userParty, settings);
                     this.catalogueService.draftCatalogueLine = this.catalogueLine;
@@ -718,6 +915,31 @@ export class ProductPublishComponent implements OnInit {
         this.recomputeSelectedProperties();
     }
 
+    private getSelectedTabForLogisticServices(){
+        for(let commodityClassification of this.catalogueLine.goodsItem.item.commodityClassification){
+            if(commodityClassification.itemClassificationCode.uri == "http://www.nimble-project.org/resource/eclass#0173-1#01-AGD951#001")
+                return "ROAD";
+            else if(commodityClassification.itemClassificationCode.uri == "http://www.nimble-project.org/resource/eclass#0173-1#01-AGD936#001")
+                return "MARITIME";
+            else if(commodityClassification.itemClassificationCode.uri == "http://www.nimble-project.org/resource/eclass#0173-1#01-AGD954#001")
+                return "AIR";
+            else if(commodityClassification.itemClassificationCode.uri == "http://www.nimble-project.org/resource/eclass#0173-1#01-AGD963#001")
+                return "RAIL";
+            else if(commodityClassification.itemClassificationCode.uri == "http://www.nimble-project.org/resource/eclass#0173-1#01-AGD971#001")
+                return "WAREHOUSING";
+            else if(commodityClassification.itemClassificationCode.uri == "http://www.nimble-project.org/resource/eclass#0173-1#01-AGD948#001")
+                return "ORDERPICKING";
+            else if(commodityClassification.itemClassificationCode.uri == "http://www.nimble-project.org/resource/eclass#0173-1#01-AGE137#001")
+                return "REVERSELOGISTICS";
+            else if(commodityClassification.itemClassificationCode.uri == "http://www.nimble-project.org/resource/eclass#0173-1#01-AGD955#001")
+                return "INHOUSESERVICES";
+            else if(commodityClassification.itemClassificationCode.uri == "http://www.nimble-project.org/resource/eclass#0173-1#01-AGD945#001")
+                return "CUSTOMSMANAGEMENT";
+            else if(commodityClassification.itemClassificationCode.uri == "http://www.nimble-project.org/resource/eclass#0173-1#01-AGD957#001")
+                return "LOGISTICSCONSULTANCY";
+        }
+    }
+
     private updateItemWithNewCategory(category: Category): void {
         this.catalogueLine.goodsItem.item.commodityClassification.push(UBLModelUtils.createCommodityClassification(category));
     }
@@ -730,17 +952,23 @@ export class ProductPublishComponent implements OnInit {
         // nullify the transportation service details if a regular product is being published
         this.checkProductNature(splicedCatalogueLine);
 
+        this.publish([splicedCatalogueLine],exitThePage);
+    }
+
+    private publish(catalogueLines:CatalogueLine[],exitThePage:boolean){
         this.publishStatus.submit();
         if (this.catalogueService.catalogueResponse.catalogueUuid == null) {
             const userId = this.cookieService.get("user_id");
             this.userService.getUserParty(userId).then(userParty => {
                 // create the catalogue
                 let catalogue:Catalogue = new Catalogue("default", null, userParty, "", "", []);
-                // add catalogue line to the end of catalogue
-                catalogue.catalogueLine.push(splicedCatalogueLine);
+                // add catalogue lines to the end of catalogue
+                for(let catalogueLine of catalogueLines){
+                    catalogue.catalogueLine.push(catalogueLine);
+                }
 
                 this.catalogueService.postCatalogue(catalogue)
-                    .then(() => this.onSuccessfulPublish(exitThePage,splicedCatalogueLine.id))
+                    .then(() => this.onSuccessfulPublish(exitThePage,catalogueLines))
                     .catch(err => {
                         this.onFailedPublish(err);
                     })
@@ -749,33 +977,34 @@ export class ProductPublishComponent implements OnInit {
             });
 
         } else {
-            this.catalogueService.addCatalogueLine(this.catalogueService.catalogueResponse.catalogueUuid,JSON.stringify(splicedCatalogueLine))
-                .then(() => {
-                    this.onSuccessfulPublish(exitThePage,splicedCatalogueLine.id);
-                })
-                .catch(err=> this.onFailedPublish(err))
+            // TODO: create a service to add multiple catalogue lines
+            for(let catalogueLine of catalogueLines){
+                this.catalogueService.addCatalogueLine(this.catalogueService.catalogueResponse.catalogueUuid,JSON.stringify(catalogueLine))
+                    .then(() => {
+                        this.onSuccessfulPublish(exitThePage,[catalogueLine]);
+                    })
+                    .catch(err=> this.onFailedPublish(err))
+            }
         }
     }
 
     // Should be called on save
-    private saveEditedProduct(exitThePage:boolean): void {
+    private saveEditedProduct(exitThePage:boolean, catalogueLines:CatalogueLine[]): void {
         this.error_detc = false;
         this.callback = false;
         this.submitted = true;
 
-        // remove unused properties from catalogueLine
-        const splicedCatalogueLine: CatalogueLine = this.removeEmptyProperties(this.catalogueLine);
-        // nullify the transportation service details if a regular product is being published
-        this.checkProductNature(splicedCatalogueLine);
-
         this.publishStatus.submit();
 
-        this.catalogueService.updateCatalogueLine(this.catalogueService.catalogueResponse.catalogueUuid,JSON.stringify(splicedCatalogueLine))
-            .then(() => this.onSuccessfulPublish(exitThePage,splicedCatalogueLine.id))
-            .then(() => this.changePublishModeToCreate())
-            .catch(err => {
-                this.onFailedPublish(err);
-            });
+        // TODO: create a service to update multiple catalogue lines
+        for(let catalogueLine of catalogueLines){
+            this.catalogueService.updateCatalogueLine(this.catalogueService.catalogueResponse.catalogueUuid,JSON.stringify(catalogueLine))
+                .then(() => this.onSuccessfulPublish(exitThePage,[catalogueLine]))
+                .then(() => this.changePublishModeToCreate())
+                .catch(err => {
+                    this.onFailedPublish(err);
+                });
+        }
 
     }
 
@@ -846,12 +1075,14 @@ export class ProductPublishComponent implements OnInit {
     }
 
     // catalogueLineId is the id of catalogue line created or edited
-    private onSuccessfulPublish(exitThePage:boolean,catalogueLineId:string): void {
+    private onSuccessfulPublish(exitThePage:boolean,catalogueLines:CatalogueLine[]): void {
+
+        let catalogueLineIds:string[] = catalogueLines.map(catalogueLine => catalogueLine.id);
 
         let userId = this.cookieService.get("user_id");
         this.userService.getUserParty(userId).then(party => {
             this.catalogueService.getCatalogueResponse(userId).then(catalogueResponse => {
-                this.catalogueService.getCatalogueLine(catalogueResponse.catalogueUuid,catalogueLineId).then(catalogueLine => {
+                this.catalogueService.getCatalogueLines(catalogueResponse.catalogueUuid,catalogueLineIds).then(catalogueLines => {
                     // go to the dashboard - catalogue tab
                     if(exitThePage){
                         this.catalogueLine = UBLModelUtils.createCatalogueLine(catalogueResponse.catalogueUuid,
@@ -871,9 +1102,28 @@ export class ProductPublishComponent implements OnInit {
                     }
                     // stay in this page and allow the user to edit his product/service
                     else{
-                        this.catalogueLine = catalogueLine;
-                        // we need to change publish mode to 'edit' since we published the product/service
-                        this.publishStateService.publishMode = "edit";
+
+                        if(this.publishStateService.publishMode == 'create' && this.isLogistics){
+                            for(let catalogueLine of catalogueLines){
+                                for(let logisticCatalogueLine of this.logisticCatalogueLines){
+                                    if(catalogueLine.id == logisticCatalogueLine.id){
+                                        let index = this.logisticCatalogueLines.indexOf(logisticCatalogueLine);
+                                        this.logisticCatalogueLines[index] = catalogueLine;
+                                        this.logisticPublishMode[index] = 'edit';
+                                        break;
+                                    }
+                                }
+                            }
+                            // be sure that each logistics catalogue line has a reference to the catalogue
+                            for(let catalogueLine of this.logisticCatalogueLines){
+                               catalogueLine.goodsItem.item.catalogueDocumentReference.id = catalogueResponse.catalogueUuid;
+                            }
+                        } else{
+                            // since there is only one catalogue line
+                            this.catalogueLine = catalogueLines[0];
+                            // we need to change publish mode to 'edit' since we published the product/service
+                            this.publishStateService.publishMode = "edit";
+                        }
                     }
                     this.catalogueService.draftCatalogueLine = this.catalogueLine;
 
