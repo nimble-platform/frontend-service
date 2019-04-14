@@ -334,16 +334,21 @@ export class ProductPublishComponent implements OnInit {
 
         if(this.isLogistics){
 
-            if(this.publishStateService.publishMode === 'edit') {
+            if(this.publishStateService.publishMode === 'edit' || this.publishStateService.publishMode === 'copy') {
 
                 // remove unused properties from catalogueLine
                 const splicedCatalogueLine: CatalogueLine = this.removeEmptyProperties(this.catalogueLine);
                 // nullify the transportation service details if a regular product is being published
                 this.checkProductNature(splicedCatalogueLine);
 
-
-                // update existing service
-                this.saveEditedProduct(exitThePage,[splicedCatalogueLine]);
+                if(this.publishStateService.publishMode === 'edit'){
+                    // update existing service
+                    this.saveEditedProduct(exitThePage,[splicedCatalogueLine]);
+                }
+                else{
+                    // publish the new service
+                    this.publish([splicedCatalogueLine],exitThePage);
+                }
             }
             else{
                 let indexes:number[] = this.logisticCatalogueLineIndexMap.get(this.selectedTabSinglePublish);
