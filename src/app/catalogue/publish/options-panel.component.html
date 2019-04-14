@@ -1,4 +1,18 @@
 <div [ngClass]="divStyle">
+    <!--name, description and additional files-->
+    <div *ngIf="item" class="row space-before space-left">
+        <div class="col-8">
+            <name-description-panel [item]="item"></name-description-panel>
+        </div>
+        <div id="info" class="col-2">
+            <label>Additional Information</label>
+        </div>
+        <div class="col-2 without-left-padding">
+            <file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFile($event)" [binaryObjects]="files"
+                        (onClearFile)="onUnSelectFile($event)">
+            </file-input>
+        </div>
+    </div>
     <!--Title-->
     <h6 *ngIf="title">{{title}}</h6>
     <!--options-->
@@ -37,20 +51,6 @@
                 <small class="p-0">{{selectedOption.value}}</small>
                 <i *ngIf="!isDefaultOption(selectedOption)" class="fa fa-times-circle pl-1" placement="right" (click)="onOptionRemoved(selectedOption)"></i>
             </div>
-        </div>
-    </div>
-    <!--name, description and additional files-->
-    <div *ngIf="item" class="row space-before space-left">
-        <div class="col-8">
-            <name-description-panel [item]="item"></name-description-panel>
-        </div>
-        <div id="info" class="col-2">
-            <label>Additional Information</label>
-        </div>
-        <div class="col-2 without-left-padding">
-            <file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFile($event)" [binaryObjects]="files"
-                        (onClearFile)="onUnSelectFile($event)">
-            </file-input>
         </div>
     </div>
 </div>

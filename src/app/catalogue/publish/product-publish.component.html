@@ -466,7 +466,7 @@
                             <name-description-panel [item]="getItemForLogisticCatalogueLine(1)" [valueClass]="'col-7'" [languageIdClass]="'col-2'" [flexClass]="'col-2'"></name-description-panel>
                         </div>
                         <div class="col-4">
-                            <options-panel [selectedTab]="'MARITIME'" [selectedOptions]="getDefaultPropertyForLogistics(1)"></options-panel>
+                            <options-panel [selectedTab]="'MARITIME'" [selectedOptions]="getDefaultPropertyForLogistics(1)" [title]="'Maritime'"></options-panel>
                         </div>
                     </div>
                 </div>
@@ -479,7 +479,7 @@
                             <name-description-panel [item]="getItemForLogisticCatalogueLine(2)" [valueClass]="'col-7'" [languageIdClass]="'col-2'" [flexClass]="'col-2'"></name-description-panel>
                         </div>
                         <div class="col-4">
-                            <options-panel [selectedTab]="'AIR'" [selectedOptions]="getDefaultPropertyForLogistics(2)"></options-panel>
+                            <options-panel [selectedTab]="'AIR'" [selectedOptions]="getDefaultPropertyForLogistics(2)" [title]="'Air'"></options-panel>
                         </div>
                     </div>
                 </div>
@@ -492,7 +492,7 @@
                             <name-description-panel [item]="getItemForLogisticCatalogueLine(3)" [valueClass]="'col-7'" [languageIdClass]="'col-2'" [flexClass]="'col-2'"></name-description-panel>
                         </div>
                         <div class="col-4">
-                            <options-panel [selectedTab]="'RAIL'" [selectedOptions]="getDefaultPropertyForLogistics(3)"></options-panel>
+                            <options-panel [selectedTab]="'RAIL'" [selectedOptions]="getDefaultPropertyForLogistics(3)" [title]="'Rail'"></options-panel>
                         </div>
                     </div>
                 </div>
@@ -542,7 +542,7 @@
         <div *ngIf="selectedTabSinglePublish == 'WAREHOUSING'">
             <div class="row space-before">
                 <div class="col-12">
-                    <options-panel [selectedTab]="'WAREHOUSING'" [item]="getItemForLogisticCatalogueLine(4)" [selectedOptions]=getDefaultPropertyForLogistics(4)></options-panel>
+                    <options-panel [selectedTab]="'WAREHOUSING'" [item]="getItemForLogisticCatalogueLine(4)" [selectedOptions]=getDefaultPropertyForLogistics(4) [title]="'Warehousing'"></options-panel>
                 </div>
             </div>
             <div class="row space-before">
@@ -580,7 +580,7 @@
         <div *ngIf="selectedTabSinglePublish == 'ORDERPICKING'">
             <div class="row space-before">
                 <div class="col-12">
-                    <options-panel [selectedTab]="'ORDERPICKING'" [item]="getItemForLogisticCatalogueLine(5)" [selectedOptions]=getDefaultPropertyForLogistics(5)></options-panel>
+                    <options-panel [selectedTab]="'ORDERPICKING'" [item]="getItemForLogisticCatalogueLine(5)" [selectedOptions]=getDefaultPropertyForLogistics(5) [title]="'Order Picking'"></options-panel>
                 </div>
             </div>
             <div class="row space-before">
@@ -618,7 +618,7 @@
         <div *ngIf="selectedTabSinglePublish == 'REVERSELOGISTICS'">
             <div class="row space-before">
                 <div class="col-12">
-                    <options-panel [selectedTab]="'REVERSELOGISTICS'" [item]="getItemForLogisticCatalogueLine(6)" [selectedOptions]=getDefaultPropertyForLogistics(6)></options-panel>
+                    <options-panel [selectedTab]="'REVERSELOGISTICS'" [item]="getItemForLogisticCatalogueLine(6)" [selectedOptions]=getDefaultPropertyForLogistics(6) [title]="'Reverse Logistics'"></options-panel>
                 </div>
             </div>
             <div class="row space-before">
@@ -656,7 +656,7 @@
         <div *ngIf="selectedTabSinglePublish == 'INHOUSESERVICES'">
             <div class="row space-before">
                 <div class="col-12">
-                    <options-panel [selectedTab]="'INHOUSESERVICES'" [item]="getItemForLogisticCatalogueLine(7)" [selectedOptions]=getDefaultPropertyForLogistics(7)></options-panel>
+                    <options-panel [selectedTab]="'INHOUSESERVICES'" [item]="getItemForLogisticCatalogueLine(7)" [selectedOptions]=getDefaultPropertyForLogistics(7) [title]="'In-house Services'"></options-panel>
                 </div>
             </div>
             <div class="row space-before">
@@ -694,7 +694,7 @@
         <div *ngIf="selectedTabSinglePublish == 'CUSTOMSMANAGEMENT'">
             <div class="row space-before">
                 <div class="col-12">
-                    <options-panel [selectedTab]="'CUSTOMSMANAGEMENT'" [item]="getItemForLogisticCatalogueLine(8)" [selectedOptions]=getDefaultPropertyForLogistics(8)></options-panel>
+                    <options-panel [selectedTab]="'CUSTOMSMANAGEMENT'" [item]="getItemForLogisticCatalogueLine(8)" [selectedOptions]=getDefaultPropertyForLogistics(8) [title]="'Customs Management'"></options-panel>
                 </div>
             </div>
             <div class="row space-before">
@@ -732,7 +732,7 @@
         <div *ngIf="selectedTabSinglePublish == 'LOGISTICSCONSULTANCY'">
             <div class="row space-before">
                 <div class="col-12">
-                    <options-panel [selectedTab]="'LOGISTICSCONSULTANCY'" [item]="getItemForLogisticCatalogueLine(9)" [selectedOptions]=getDefaultPropertyForLogistics(9)></options-panel>
+                    <options-panel [selectedTab]="'LOGISTICSCONSULTANCY'" [item]="getItemForLogisticCatalogueLine(9)" [selectedOptions]=getDefaultPropertyForLogistics(9) [title]="'Logistics Consultancy'"></options-panel>
                 </div>
             </div>
             <div class="row space-before">
