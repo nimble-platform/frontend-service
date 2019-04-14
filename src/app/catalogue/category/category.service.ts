@@ -117,6 +117,17 @@ export class CategoryService {
             .catch(this.handleError);
     }
 
+    getCategoriesForIds(taxonomyIds:string,categoryIds:string): Promise<Category[]> {
+        const url = `${this.baseUrl}/categories?taxonomyIds=` + taxonomyIds + `&categoryIds=` + encodeURIComponent(categoryIds);
+        return this.http
+            .get(url, {headers: getAuthorizedHeaders(this.cookieService)})
+            .toPromise()
+            .then(res => {
+                return res.json();
+            })
+            .catch(this.handleError);
+    }
+
     getParentCategories(category: Category): Promise<ParentCategories>{
         const url = `${this.baseUrl}/taxonomies/${category.taxonomyId}/categories/tree?categoryId=${encodeURIComponent(category.id)}`;
         return this.http
