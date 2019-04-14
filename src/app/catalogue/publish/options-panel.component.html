@@ -3,8 +3,8 @@
     <h6 *ngIf="title">{{title}}</h6>
     <!--options-->
     <div *ngFor="let option of options" class="row">
-        <input class="align-self-center custom-checkbox col-1" type="checkbox">
-        <label class="form-check-label">{{option}}</label>
+        <input class="align-self-center custom-checkbox col-1" type="checkbox" [checked]="isSelected(option)" (change)="onCheckboxChanged($event.target.checked,option)">
+        <label class="form-check-label">{{option.value}}</label>
     </div>
     <!--other options-->
     <div *ngIf="checkboxOther" class="row space-before">
@@ -23,19 +23,19 @@
     <div *ngIf="selectedOptionsWithExtraColumn" class="row d-flex flex-wrap">
         <div class="col-1"></div>
         <div class="col-11 d-flex flex-wrap without-left-padding">
-            <div *ngFor="let option of selectedOptions"
+            <div *ngFor="let selectedOption of selectedOptions"
                  class="bordered my-1 mr-1">
-                <small class="p-0">{{option}}</small>
-                <i class="fa fa-times-circle pl-1" placement="right" (click)="onOptionRemoved(option)"></i>
+                <small class="p-0">{{selectedOption.value}}</small>
+                <i *ngIf="!isDefaultOption(selectedOption)" class="fa fa-times-circle pl-1" placement="right" (click)="onOptionRemoved(selectedOption)"></i>
             </div>
         </div>
     </div>
     <div *ngIf="!selectedOptionsWithExtraColumn" class="row d-flex flex-wrap">
         <div class="col-12 d-flex flex-wrap">
-            <div *ngFor="let option of selectedOptions"
+            <div *ngFor="let selectedOption of selectedOptions"
                  class="bordered my-1 mr-1">
-                <small class="p-0">{{option}}</small>
-                <i class="fa fa-times-circle pl-1" placement="right" (click)="onOptionRemoved(option)"></i>
+                <small class="p-0">{{selectedOption.value}}</small>
+                <i *ngIf="!isDefaultOption(selectedOption)" class="fa fa-times-circle pl-1" placement="right" (click)="onOptionRemoved(selectedOption)"></i>
             </div>
         </div>
     </div>
