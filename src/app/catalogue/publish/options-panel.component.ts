@@ -32,6 +32,8 @@ export class OptionsPanelComponent implements OnInit{
 
     files:BinaryObject[];
 
+    isOtherOptionEnabled = false;
+
     ngOnInit(){
 
         if(this.item && this.item.itemSpecificationDocumentReference){
