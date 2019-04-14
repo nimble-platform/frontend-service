@@ -48,7 +48,8 @@
             <label>Additional Information</label>
         </div>
         <div class="col-2 without-left-padding">
-            <file-input [disabled]="true" [multiple]="true" [presentationMode]="'edit'">
+            <file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFile($event)" [binaryObjects]="files"
+                        (onClearFile)="onUnSelectFile($event)">
             </file-input>
         </div>
     </div>

@@ -2,6 +2,9 @@ import {Component, Input, OnInit} from '@angular/core';
 import {Text} from '../model/publish/text';
 import {DEFAULT_LANGUAGE} from '../model/constants';
 import {Item} from '../model/publish/item';
+import {BinaryObject} from '../model/publish/binary-object';
+import {DocumentReference} from '../model/publish/document-reference';
+import {Attachment} from '../model/publish/attachment';
 
 @Component({
     selector: "options-panel",
@@ -27,7 +30,13 @@ export class OptionsPanelComponent implements OnInit{
 
     option:string = null;
 
+    files:BinaryObject[];
+
     ngOnInit(){
+
+        if(this.item && this.item.itemSpecificationDocumentReference){
+            this.files = this.item.itemSpecificationDocumentReference.map(doc => doc.attachment.embeddedDocumentBinaryObject);
+        }
 
         // set options according to the selected tab
         if(this.selectedTab == "WAREHOUSING")
@@ -108,5 +117,20 @@ export class OptionsPanelComponent implements OnInit{
     deleteItemNameDescription(index){
         this.item.name.splice(index, 1);
         this.item.description.splice(index, 1);
+    }
+
+    onSelectFile(binaryObject: BinaryObject){
+        const document: DocumentReference = new DocumentReference();
+        const attachment: Attachment = new Attachment();
+        attachment.embeddedDocumentBinaryObject = binaryObject;
+        document.attachment = attachment;
+        this.item.itemSpecificationDocumentReference.push(document);
+    }
+
+    onUnSelectFile(binaryObject: BinaryObject){
+        const index = this.item.itemSpecificationDocumentReference.findIndex(doc => doc.attachment.embeddedDocumentBinaryObject === binaryObject);
+        if(index >= 0) {
+            this.item.itemSpecificationDocumentReference.splice(index, 1);
+        }
     }
 }
