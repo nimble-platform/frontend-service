@@ -571,13 +571,6 @@ export class ProductPublishComponent implements OnInit {
       this.catalogueLine.goodsItem.item.description.push(newItemDescription);
     }
 
-    deleteItemNameDescription(index){
-        this.catalogueLine.goodsItem.item.name.splice(index, 1);
-        this.catalogueLine.goodsItem.item.description.splice(index, 1);
-    }
-
-    //////
-
     private recomputeSelectedProperties() {
         const oldSelectedProps = this.selectedProperties;
         this.selectedProperties = {};

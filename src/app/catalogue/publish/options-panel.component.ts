@@ -107,18 +107,6 @@ export class OptionsPanelComponent implements OnInit{
         return false;
     }
 
-    addItemNameDescription() {
-        let newItemName: Text = new Text("",DEFAULT_LANGUAGE());
-        let newItemDescription: Text = new Text("",DEFAULT_LANGUAGE());
-        this.item.name.push(newItemName);
-        this.item.description.push(newItemDescription);
-    }
-
-    deleteItemNameDescription(index){
-        this.item.name.splice(index, 1);
-        this.item.description.splice(index, 1);
-    }
-
     onSelectFile(binaryObject: BinaryObject){
         const document: DocumentReference = new DocumentReference();
         const attachment: Attachment = new Attachment();
