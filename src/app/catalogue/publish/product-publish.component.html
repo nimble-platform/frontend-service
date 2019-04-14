@@ -441,7 +441,7 @@
             </div>
         </div>
         <div class="space-before" *ngIf="selectedTabSinglePublish == 'TRANSPORT' || singleTabForLogisticServices">
-            <h4>Transport mode</h4>
+            <h4 *ngIf="!singleTabForLogisticServices || selectedTabSinglePublish == 'ROAD' || selectedTabSinglePublish == 'RAIL' || selectedTabSinglePublish == 'MARITIME' || selectedTabSinglePublish == 'AIR'" >Transport mode</h4>
             <div class="row" *ngIf="!singleTabForLogisticServices || selectedTabSinglePublish == 'ROAD'">
                 <h6 class="col-1">Road</h6>
                 <div class="col-11 well">
