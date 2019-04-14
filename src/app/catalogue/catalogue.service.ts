@@ -108,6 +108,30 @@ export class CatalogueService {
             .catch(this.handleError);
     }
 
+    getCatalogueLines(catalogueId:string, lineIds:string[]):Promise<CatalogueLine[]> {
+        let url = this.baseUrl + `/catalogue/${catalogueId}/cataloguelines`;
+        // append catalogue line ids to the url
+        let size = lineIds.length;
+        for(let i = 0; i < size ;i++){
+            if(i == 0){
+                url += "?lineIds=";
+            }
+
+            url += lineIds[i];
+
+            if(i != size-1){
+                url += ",";
+            }
+        }
+        return this.http
+            .get(url, {headers: this.getAuthorizedHeaders()})
+            .toPromise()
+            .then(res => {
+                return res.json() as CatalogueLine[];
+            })
+            .catch(this.handleError);
+    }
+
     addCatalogueLine(catalogueId:string,catalogueLineJson:string){
         const url = this.baseUrl + `/catalogue/${catalogueId}/catalogueline`;
         return this.http
