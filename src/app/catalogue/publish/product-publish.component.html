@@ -449,11 +449,21 @@
                         <div class="col-4 name-description-panel">
                             <name-description-panel [item]="getItemForLogisticCatalogueLine(0)" [valueClass]="'col-7'" [languageIdClass]="'col-2'" [flexClass]="'col-2'"></name-description-panel>
                         </div>
-                        <div class="col-4">
-                            <options-panel [selectedTab]="'TRUCKLOAD'" [title]="'Truck load'" [selectedOptions]="getDefaultPropertyForLogistics(0, 'Truck load')"></options-panel>
-                        </div>
-                        <div class="col-4">
-                            <options-panel [selectedTab]="'SHIPMENTTYPE'" [title]="'Shipment type'" [selectedOptions]="getDefaultPropertyForLogistics(0, 'Shipment type')"></options-panel>
+                        <div class="col-8">
+                            <div class="row">
+                                <div class="col-6">
+                                    <options-panel [selectedTab]="'TRUCKLOAD'" [title]="'Truck load'" [selectedOptions]="getDefaultPropertyForLogistics(0, 'Truck load')"></options-panel>
+                                </div>
+                                <div class="col-6">
+                                    <options-panel [selectedTab]="'SHIPMENTTYPE'" [title]="'Shipment type'" [selectedOptions]="getDefaultPropertyForLogistics(0, 'Shipment type')"></options-panel>
+                                </div>
+                            </div>
+                            <div>
+                                <h6>Additional Information</h6>
+                                <file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFileForLogisticService($event,0)" [binaryObjects]="getBinaryObjectsForLogisticService(0)"
+                                            (onClearFile)="onUnSelectFileForLogisticService($event,0)">
+                                </file-input>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -465,8 +475,18 @@
                         <div class="col-4 name-description-panel">
                             <name-description-panel [item]="getItemForLogisticCatalogueLine(1)" [valueClass]="'col-7'" [languageIdClass]="'col-2'" [flexClass]="'col-2'"></name-description-panel>
                         </div>
-                        <div class="col-4">
-                            <options-panel [selectedTab]="'MARITIME'" [selectedOptions]="getDefaultPropertyForLogistics(1)" [title]="'Maritime'"></options-panel>
+                        <div class="col-8">
+                            <div class="row">
+                                <div class="col-6">
+                                    <options-panel [selectedTab]="'MARITIME'" [selectedOptions]="getDefaultPropertyForLogistics(1)" [title]="'Maritime'"></options-panel>
+                                </div>
+                            </div>
+                            <div>
+                                <h6>Additional Information</h6>
+                                <file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFileForLogisticService($event,1)" [binaryObjects]="getBinaryObjectsForLogisticService(1)"
+                                            (onClearFile)="onUnSelectFileForLogisticService($event,1)">
+                                </file-input>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -478,8 +498,18 @@
                         <div class="col-4 name-description-panel">
                             <name-description-panel [item]="getItemForLogisticCatalogueLine(2)" [valueClass]="'col-7'" [languageIdClass]="'col-2'" [flexClass]="'col-2'"></name-description-panel>
                         </div>
-                        <div class="col-4">
-                            <options-panel [selectedTab]="'AIR'" [selectedOptions]="getDefaultPropertyForLogistics(2)" [title]="'Air'"></options-panel>
+                        <div class="col-8">
+                            <div class="row">
+                                <div class="col-6">
+                                    <options-panel [selectedTab]="'AIR'" [selectedOptions]="getDefaultPropertyForLogistics(2)" [title]="'Air'"></options-panel>
+                                </div>
+                            </div>
+                            <div>
+                                <h6>Additional Information</h6>
+                                <file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFileForLogisticService($event,2)" [binaryObjects]="getBinaryObjectsForLogisticService(2)"
+                                            (onClearFile)="onUnSelectFileForLogisticService($event,2)">
+                                </file-input>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -491,8 +521,18 @@
                         <div class="col-4 name-description-panel">
                             <name-description-panel [item]="getItemForLogisticCatalogueLine(3)" [valueClass]="'col-7'" [languageIdClass]="'col-2'" [flexClass]="'col-2'"></name-description-panel>
                         </div>
-                        <div class="col-4">
-                            <options-panel [selectedTab]="'RAIL'" [selectedOptions]="getDefaultPropertyForLogistics(3)" [title]="'Rail'"></options-panel>
+                        <div class="col-8">
+                            <div class="row">
+                                <div class="col-6">
+                                    <options-panel [selectedTab]="'RAIL'" [selectedOptions]="getDefaultPropertyForLogistics(3)" [title]="'Rail'"></options-panel>
+                                </div>
+                            </div>
+                            <div>
+                                <h6>Additional Information</h6>
+                                <file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFileForLogisticService($event,3)" [binaryObjects]="getBinaryObjectsForLogisticService(3)"
+                                            (onClearFile)="onUnSelectFileForLogisticService($event,3)">
+                                </file-input>
+                            </div>
                         </div>
                     </div>
                 </div>

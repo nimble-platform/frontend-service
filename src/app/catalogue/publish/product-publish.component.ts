@@ -51,6 +51,8 @@ import {Catalogue} from '../model/publish/catalogue';
 import {Item} from '../model/publish/item';
 import {TransportationService} from '../model/publish/transportation-service';
 import {CommodityClassification} from '../model/publish/commodity-classification';
+import {DocumentReference} from '../model/publish/document-reference';
+import {Attachment} from '../model/publish/attachment';
 
 interface SelectedProperties {
     [key: string]: SelectedProperty;
@@ -1307,6 +1309,48 @@ export class ProductPublishComponent implements OnInit {
         } else if (this.newProperty.valueQualifier == 'NUMBER') {
             this.newProperty.valueDecimal.splice(valueIndex, 1)
         }
+    }
+
+    // methods to select/unselect files for Transport logistic services
+    onSelectFileForLogisticService(binaryObject: BinaryObject,index:number){
+        const document: DocumentReference = new DocumentReference();
+        const attachment: Attachment = new Attachment();
+        attachment.embeddedDocumentBinaryObject = binaryObject;
+        document.attachment = attachment;
+
+        if(this.publishStateService.publishMode == 'create'){
+            this.logisticCatalogueLines[index].goodsItem.item.itemSpecificationDocumentReference.push(document);
+        } else{
+            this.catalogueLine.goodsItem.item.itemSpecificationDocumentReference.push(document);
+        }
+    }
+
+    onUnSelectFileForLogisticService(binaryObject: BinaryObject, index:number){
+        if(this.publishStateService.publishMode == 'create'){
+            const i = this.logisticCatalogueLines[index].goodsItem.item.itemSpecificationDocumentReference.findIndex(doc => doc.attachment.embeddedDocumentBinaryObject === binaryObject);
+            if(i >= 0) {
+                this.logisticCatalogueLines[i].goodsItem.item.itemSpecificationDocumentReference.splice(i, 1);
+            }
+
+        } else{
+            const i = this.catalogueLine.goodsItem.item.itemSpecificationDocumentReference.findIndex(doc => doc.attachment.embeddedDocumentBinaryObject === binaryObject);
+            if(i >= 0) {
+                this.catalogueLine.goodsItem.item.itemSpecificationDocumentReference.splice(i, 1);
+            }
+        }
+    }
+
+    getBinaryObjectsForLogisticService(index:number){
+        let binaryObjects:BinaryObject[] = [];
+
+
+        if(this.publishStateService.publishMode == 'create'){
+            binaryObjects = this.logisticCatalogueLines[index].goodsItem.item.itemSpecificationDocumentReference.map(doc => doc.attachment.embeddedDocumentBinaryObject)
+        } else{
+            binaryObjects = this.catalogueLine.goodsItem.item.itemSpecificationDocumentReference.map(doc => doc.attachment.embeddedDocumentBinaryObject)
+        }
+
+        return binaryObjects;
     }
 
     private isNewCategory(category: Category): boolean {
