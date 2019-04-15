@@ -167,7 +167,7 @@ input:checked + .slider:before {
 }
 
 .storage-max {
-    max-height: 600px;
+    max-height: 1200px;
     color: black;
 }
 

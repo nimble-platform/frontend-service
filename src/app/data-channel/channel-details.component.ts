@@ -23,8 +23,7 @@ class NewServer {
 class NewSensor {
     constructor(
         public name: string,
-        public interval: string,
-        public filter: string,
+        public interval: number,
         public description: string,
         public machineName: string
     ) {
@@ -57,16 +56,12 @@ export class ChannelDetailsComponent implements OnInit {
 
     displayStorageArea: boolean = true;
     private newServer: NewServer = new NewServer(null, null, null, null, null, null, null, null);
-    private newSensor: NewSensor = new NewSensor(null, null, null, null, null);
+    private newSensor: NewSensor = new NewSensor(null, null, null, null);
     private initialSettings: AdditionalSettings = new AdditionalSettings("Info", false, 'MongoDB');
     private counterSettings: AdditionalSettings = new AdditionalSettings("Info", false, 'MongoDB');
 
-    private SERVICE_TYPES: string[] = [
-        "MongoDB",
-        "Oracle",
-        "Mqtt",
-        "Kafka"
-    ]
+    private SERVICE_TYPES: string[] = ["MongoDB", "Oracle", "Mqtt", "Kafka"]
+
 
     private pageNumber: number = 0; // Todo: needs to be changed after testing to get info from backend
     public incrementPageNrTest()    // Todo: instead get info from backend (data available? -> load 2nd design)
@@ -119,10 +114,10 @@ export class ChannelDetailsComponent implements OnInit {
             });
 
         // get messages of channels
-        this.dataChannelService.getChannelMessages(channelID)
-            .then(messages => {
-                this.channelMessages = messages.map(JSON.parse);
-            });
+        //this.dataChannelService.getChannelMessages(channelID)
+        //    .then(messages => {
+        //        this.channelMessages = messages.map(JSON.parse);
+        //    });
     }
 
     //-------------------------------------------------------------------------------------
@@ -163,7 +158,7 @@ export class ChannelDetailsComponent implements OnInit {
     //-------------------------------------------------------------------------------------
     deleteChannel(): void {
         const channelId = this.channelConfig["channelID"];
-        this.dataChannelService.deleteChannel(channelId)
+        this.dataChannelService.closeChannel(channelId)
             .then(() => {
                 alert("Deleted Channel");
                 this.router.navigate(["dashboard"]);
@@ -213,7 +208,7 @@ export class ChannelDetailsComponent implements OnInit {
     addSensor(): void {
         // create sensor locally
         const machine = new Machine(this.newSensor.machineName, null, null);
-        const sensor = new Sensor(this.newSensor.name, this.newSensor.interval, this.newSensor.filter, this.newSensor.description, machine);
+        const sensor = new Sensor(this.newSensor.name, this.newSensor.interval, this.newSensor.description, machine);
 
         // add to backend
         const channelId = this.channelConfig["channelID"];

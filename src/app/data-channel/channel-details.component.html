@@ -11,8 +11,6 @@
         <th><span i18n>Description</span></th>
         <th><span i18n>Start Time</span></th>
         <th><span i18n>End Time</span></th>
-        <th><span i18n>Producer Topic</span></th>
-        <th><span i18n>Consumer Topics</span></th>
     </tr>
     <tr>
         <td>{{channelConfig.channelID}}</td>
@@ -20,19 +18,80 @@
         <td>{{channelConfig.description}}</td>
         <td>{{channelConfig.startDateTime}}</td>
         <td>{{channelConfig.endDateTime}}</td>
-        <td>{{channelConfig.producerTopic}}</td>
-        <td><span ng-repeat="topic in channelConfig.consumerTopics">{{topic}}</span>
-        </td>
     </tr>
 </table>
 
 <div class="interactions">
-    <!--<button class="btn btn-warning"(click)="incrementPageNrTest()">Testing Frontend Page: {{pageNumber}}</button>-->
+    <button class="btn btn-warning"(click)="incrementPageNrTest()">Testing Frontend Page: {{pageNumber}}</button>
     <button class="btn btn-success" (click)="createChannel()">Open Channel</button>
-    <button class="btn btn-danger" (click)="deleteChannel()">Close Channel</button>
+    <button class="btn btn-danger" (click)="closeChannel()">Close Channel</button>
 </div>
 
 <div style="clear: right;"></div>
+
+<!------------------------------------------------------------------------------------------------------------>
+<!-- Associated Sensors -->
+<!------------------------------------------------------------------------------------------------------------>
+<h1>Associated Sensors</h1>
+
+<table id="channel-sensors" class="table table-striped table-bordered">
+    <tr>
+        <th><span i18n>Machine</span></th>
+        <th><span i18n>Sensor</span></th>
+        <th><span i18n>Interval</span></th>
+        <th><span i18n>Description</span></th>
+        <th class="interaction-column"></th>
+    </tr>
+    <ng-container *ngFor="let sensor of channelSensors">
+        <tr>
+            <td>{{sensor.machine.name}}</td>
+            <td>{{sensor.name}}</td>
+            <td>{{sensor.interval}}</td>
+            <td>{{sensor.description}}</td>
+            <td>
+                <button class="btn btn-warning remove-channel-btn"
+                        (click)="removeSensor(sensor)">Remove
+                </button>
+            </td>
+        </tr>
+    </ng-container>
+</table>
+
+
+<div class="form-group" id="new-sensor">
+    <h6 i18n>Add new sensor</h6><br/>
+    <form id="add-sensor-form" #customPropertyForm="ngForm" class="col-12">
+
+        <!-- machine name-->
+        <text-input label="Name of machine" [(text)]="newSensor.machineName"
+                    labelClass="col-4" valueClass="col-8" [rows]="1" [required]="true">
+        </text-input>
+
+        <!-- sensor name -->
+        <text-input label="Name of sensor" [(text)]="newSensor.name"
+                    labelClass="col-4" valueClass="col-8" [rows]="1" [required]="true">
+        </text-input>
+
+        <!-- sensor interval -->
+        <text-input label="Sensor data interval" [(text)]="newSensor.interval"
+                    labelClass="col-4" valueClass="col-8" [rows]="1" [required]="true">
+        </text-input>
+
+        <!-- sensor description -->
+        <text-input label="Sensor description" [(text)]="newSensor.description"
+                    labelClass="col-4" valueClass="col-8" [rows]="1" [required]="true">
+        </text-input>
+
+        <br/>
+        <button [disabled]="!customPropertyForm.form.valid"
+                class="btn btn-success ml-2 add-sensor-btn"
+                (click)="addSensor()">
+            <span i18n>Add sensor</span>
+        </button>
+    </form>
+    <p>Names of sensors are unique. Entering the name of an existing sensor, will
+        associate it to this channel.</p>
+</div>
 
 
 <!------------------------------------------------------------------------------------------------------------>
@@ -62,6 +121,7 @@
 </table>
 
 <div id="StorageDataArea" [ngClass]="{'storage-max':displayStorageArea,'storage-min':!displayStorageArea}">
+    <h1>Hosted Servers</h1>
     <table id="channel-servers" class="table table-striped table-bordered">
         <tr>
             <th><span i18n>Prio</span></th>
@@ -74,7 +134,7 @@
             <th><span i18n>Description</span></th>
             <th class="interaction-column"></th>
         </tr>
-        <ng-container *ngFor="let sensor of channelSensors">
+        <ng-container *ngFor="let server of channelServers">
             <tr>
                 <td>{{server.priority}}</td>
                 <td>{{server.name}}</td>
@@ -94,49 +154,50 @@
     </table>
 
     <div class="form-group" id="new-server">
-        <h6 i18n>Add new server</h6>
-        <form id="add-server-form" #customPropertyForm="ngForm" class="d-flex">
+        <h6 i18n>Add new server</h6><br/>
+        <form id="add-server-form" #customPropertyForm="ngForm" class="col-12">
 
             <!-- server prio-->
-            <input name="serverPrio" class="form-control col-1"
-                   [(ngModel)]="newServer.prio"
-                   placeholder="priority" required/>
+            <text-input label="Hosted server priority" [(text)]="newServer.prio"
+                        labelClass="col-4" valueClass="col-8" [rows]="1" [required]="true">
+            </text-input>
 
             <!-- server name -->
-            <input name="serverName" class="form-control col-1"
-                   [(ngModel)]="newServer.name"
-                   placeholder="name" required/>
+            <text-input label="Hosted server name" [(text)]="newServer.name"
+                        labelClass="col-4" valueClass="col-8" [rows]="1" [required]="true">
+            </text-input>
 
             <!-- server address -->
-            <input name="serverAddress" class="form-control col-1"
-                   [(ngModel)]="newServer.address"
-                   placeholder="address" required/>
+            <text-input label="Hosted server address" [(text)]="newServer.address"
+                        labelClass="col-4" valueClass="col-8" [rows]="1" [required]="true">
+            </text-input>
 
             <!-- server duration -->
-            <input name="serverDuration" class="form-control col-1"
-                   [(ngModel)]="newServer.duration"
-                   placeholder="duration" required/>
+            <text-input label="Hosted server storage duration" [(text)]="newServer.duration"
+                        labelClass="col-4" valueClass="col-8" [rows]="1" [required]="true">
+            </text-input>
 
             <!-- server ownership -->
-            <input name="serverOwnership" class="form-control col-1"
-                   [(ngModel)]="newServer.ownership"
-                   placeholder="owner" required/>
+            <text-input label="Hosted server ownership" [(text)]="newServer.ownership"
+                        labelClass="col-4" valueClass="col-8" [rows]="1" [required]="true">
+            </text-input>
 
             <!-- server login -->
-            <input name="serverLogin" class="form-control col-1"
-                   [(ngModel)]="newServer.login"
-                   placeholder="login" required/>
+            <text-input label="Hosted server login" [(text)]="newServer.login"
+                        labelClass="col-4" valueClass="col-8" [rows]="1" [required]="true">
+            </text-input>
 
             <!-- server password -->
-            <input name="serverPassword" type="password" class="form-control col-1"
-                   [(ngModel)]="newServer.loginPW"
-                   placeholder="password" required/>
+            <text-input label="Hosted server password" [(text)]="newServer.loginPW"
+                        labelClass="col-4" valueClass="col-8" [rows]="1" [required]="true">
+            </text-input>
 
             <!-- server description -->
-            <input name="serverDescription" class="form-control col-2"
-                   [(ngModel)]="newServer.description"
-                   placeholder="server description" required/>
+            <text-input label="Hosted server description" [(text)]="newServer.description"
+                        labelClass="col-4" valueClass="col-8" [rows]="1" [required]="true">
+            </text-input>
 
+            <br/>
             <button [disabled]="!customPropertyForm.form.valid"
                     class="btn btn-success ml-2 add-sensor-btn"
                     (click)="addServer()">
@@ -148,6 +209,7 @@
     </div>
 
     <br/>
+    <h1>Additional Settings</h1>
     <div class="row" id="additional-settings">
         <div [ngClass]="{'col-6':pageNumber > 0,'col-12':pageNumber == 0}">
 
@@ -192,76 +254,6 @@
 </div>
 
 
-<!------------------------------------------------------------------------------------------------------------>
-<!-- Associated Sensors -->
-<!------------------------------------------------------------------------------------------------------------>
-<h1>Associated Sensors</h1>
-
-<table id="channel-sensors" class="table table-striped table-bordered">
-    <tr>
-        <th><span i18n>Machine</span></th>
-        <th><span i18n>Sensor</span></th>
-        <th><span i18n>Interval</span></th>
-        <th><span i18n>Filter</span></th>
-        <th><span i18n>Description</span></th>
-        <th class="interaction-column"></th>
-    </tr>
-    <ng-container *ngFor="let sensor of channelSensors">
-        <tr>
-            <td>{{sensor.machine.name}}</td>
-            <td>{{sensor.name}}</td>
-            <td>{{sensor.interval}}</td>
-            <td>{{sensor.filter}}</td>
-            <td>{{sensor.description}}</td>
-            <td>
-                <button class="btn btn-warning remove-channel-btn"
-                        (click)="removeSensor(sensor)">Remove
-                </button>
-            </td>
-        </tr>
-    </ng-container>
-</table>
-
-
-<div class="form-group" id="new-sensor">
-    <h6 i18n>Add new sensor</h6>
-    <form id="add-sensor-form" #customPropertyForm="ngForm" class="d-flex">
-
-        <!-- machine name-->
-        <input name="machineName" class="form-control col-2"
-               [(ngModel)]="newSensor.machineName"
-               placeholder="name of machine" required/>
-
-        <!-- sensor name -->
-        <input name="sensorName" class="form-control col-2"
-               [(ngModel)]="newSensor.name"
-               placeholder="name of sensor" required/>
-
-        <!-- sensor interval -->
-        <input name="sensorInterval" class="form-control col-2"
-               [(ngModel)]="newSensor.interval"
-               placeholder="sensor data interval" required/>
-
-        <!-- sensor interval -->
-        <input name="sensorFilter" class="form-control col-2"
-               [(ngModel)]="newSensor.filter"
-               placeholder="sensor data filter" required/>
-
-        <!-- sensor description -->
-        <input name="sensorDescription" class="form-control col-2"
-               [(ngModel)]="newSensor.description"
-               placeholder="description" required/>
-
-        <button [disabled]="!customPropertyForm.form.valid"
-                class="btn btn-success ml-2 add-sensor-btn"
-                (click)="addSensor()">
-            <span i18n>Add sensor</span>
-        </button>
-    </form>
-    <p>Names of sensors are unique. Entering the name of an existing sensor, will
-        associate it to this channel.</p>
-</div>
-
 
 <!------------------------------------------------------------------------------------------------------------>
 <!-- Messages -->
@@ -289,6 +281,7 @@
 <!------------------------------------------------------------------------------------------------------------>
 <!-- Integration Details -->
 <!------------------------------------------------------------------------------------------------------------>
+<!--
 <h1>Integration Details</h1>
 
 <h4>Kafka Brokers</h4>
@@ -315,3 +308,4 @@ All messages must be sent as JSON to the Kafka topic <span class="inline-code">{
         &#125;
     &#125;
 </pre>
+-->

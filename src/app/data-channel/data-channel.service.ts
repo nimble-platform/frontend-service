@@ -29,16 +29,16 @@ export class DataChannelService {
             .catch(this.handleError);
     }
 
-    getChannelMessages(channelID: string): Promise<any> {
-        const url = `${this.url}/channel/${channelID}/messages`;
-        const token = 'Bearer ' + this.cookieService.get("bearer_token");
-        const headers = new Headers({'Authorization': token});
-        return this.http
-            .get(url, {headers: headers, withCredentials: true})
-            .toPromise()
-            .then(res => res.json())
-            .catch(this.handleError);
-    }
+    //getChannelMessages(channelID: string): Promise<any> {
+    //    const url = `${this.url}/channel/${channelID}/messages`;
+    //    const token = 'Bearer ' + this.cookieService.get("bearer_token");
+    //    const headers = new Headers({'Authorization': token});
+    //    return this.http
+    //        .get(url, {headers: headers, withCredentials: true})
+    //        .toPromise()
+    //        .then(res => res.json())
+    //        .catch(this.handleError);
+    //}
 
     channelsForBusinessProcess(processID: string): Promise<any> {
 
@@ -90,26 +90,41 @@ export class DataChannelService {
             .then(res => Object.keys(res).length > 0)
     }
 
-    // TODO:
     addServersForChannel(channelID: string, server: Server): Promise<any> {
-        // not implemented yet
-        return null;
+        const url = `${this.url}/channel/${channelID}/servers`;
+        const token = 'Bearer ' + this.cookieService.get("bearer_token");
+        const headers = new Headers({'Authorization': token});
+        return this.http
+            .post(url, server, {headers: headers, withCredentials: true})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
     }
 
-    // TODO:
     removeServerForChannel(channelID: string, server: Server): Promise<any> {
-        // not implemented yet
-        return null;
+         const url = `${this.url}/channel/${channelID}/server/${server.id}`;
+         const token = 'Bearer ' + this.cookieService.get("bearer_token");
+         const headers = new Headers({'Authorization': token});
+         return this.http
+             .delete(url, {headers: headers, withCredentials: true})
+             .toPromise()
+             .then(res => res.json())
+             .catch(this.handleError);
     }
 
-    // TODO:
     startChannel(channelID: string): Promise<any> {
-        // not implemented yet
-        return null;
+        const url = `${this.url}/channel/${channelID}/start`;
+        const token = 'Bearer ' + this.cookieService.get("bearer_token");
+        const headers = new Headers({'Authorization': token});
+        return this.http
+            .post(url, null, {headers: headers, withCredentials: true})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
     }
 
-    deleteChannel(channelID: string): Promise<any> {
-        const url = `${this.url}/channel/${channelID}`;
+    closeChannel(channelID: string): Promise<any> {
+        const url = `${this.url}/channel/${channelID}/close`;
         const token = 'Bearer ' + this.cookieService.get("bearer_token");
         const headers = new Headers({'Authorization': token});
         return this.http
