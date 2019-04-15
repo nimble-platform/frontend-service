@@ -89,9 +89,9 @@ export class FavouriteViewComponent implements OnInit {
 	cat = "";
 	comapanyList = {};
 	catLineList = {};
-	selectedCurrency: any = "EUR";    
+	selectedCurrency: any = "EUR";
 	initial = true;
-    
+
 	manufacturerIdCountMap : any;
 
 
@@ -154,7 +154,7 @@ export class FavouriteViewComponent implements OnInit {
         const userId = this.cookieService.get("user_id");
         // check whether the user chose a category to filter the catalogue lines
 		this.sortOption = this.sortOption == null ? CATALOGUE_LINE_SORT_OPTIONS[0].name : this.sortOption;
-        let categoryURI = this.selectedCategory == "All" ? null : this.selectedCategory;		
+        let categoryURI = this.selectedCategory == "All" ? null : this.selectedCategory;
         this.userService.getPerson(userId)
         .then((person) => {
 			this.favouriteIdList = person.favouriteProductID;
@@ -183,12 +183,12 @@ export class FavouriteViewComponent implements OnInit {
                         query = query+" OR ";
                     }
 				}
-				
+
 				if((term != null && term != "") || ((term == null || term == "") && categoryURI != null )){
 					query = query+ ")";
 				}
                 this.getCall(query);
-                
+
             }else{
                 this.hasFavourite = false;
             }
@@ -198,7 +198,7 @@ export class FavouriteViewComponent implements OnInit {
             this.getCatalogueStatus.error("Failed to get catalogue", error);
         });
     }
- 
+
     private getFieldNames(fields: any[]): any {
 		let fieldLabes = {};
 		for(let field of fields) {
@@ -208,7 +208,7 @@ export class FavouriteViewComponent implements OnInit {
 		}
 		return fieldLabes;
     }
- 
+
 	getCategoryDisplayInfo(categories: any): any {
 		let labelMap = {};
 		for(let category of categories.result) {
@@ -219,7 +219,7 @@ export class FavouriteViewComponent implements OnInit {
 		}
 		return labelMap;
 	}
-   
+
 	private sortCatLevels() {
 		for (var i=0; i<this.cat_levels.length; i++) {
 			this.cat_levels[i].sort(function(a,b){
@@ -269,7 +269,7 @@ export class FavouriteViewComponent implements OnInit {
 
 		let split_idx:any = -1;
 		let name:any = "";
-		if (taxonomyPrefix != "") { 
+		if (taxonomyPrefix != "") {
 			// ToDo: Remove manual distinction after search update
 			// ================================================================================
 			if (taxonomy == "eClass") {
@@ -353,7 +353,7 @@ export class FavouriteViewComponent implements OnInit {
 
 	private getCall(q: string) {
 		this.model.q = q;
-	
+
 		this.searchFavouriteCallStatus.submit();
 		this.simpleSearchService.getFields()
 			.then(res => {
@@ -383,7 +383,7 @@ export class FavouriteViewComponent implements OnInit {
 										}
 										//getting the manufacturer ids list
                                         let manufacturerIds = Array.from(this.manufacturerIdCountMap.keys());
-                                     
+
 										this.temp = res.result;
 										for (let doc in this.temp) {
 											if (this.temp[doc][this.product_img]) {
@@ -392,8 +392,8 @@ export class FavouriteViewComponent implements OnInit {
 														this.temp[doc][this.product_img] = img[0];
 													}
 											}
-                                        }   
-                                            
+                                        }
+
 									    	this.itemTypeResponse = copy(this.temp);
 										    if(this.collectionSize > 0 && this.itemTypeResponse.length >0){
 										        this.hasFavourite = true;
@@ -401,13 +401,13 @@ export class FavouriteViewComponent implements OnInit {
 										    }else{
 										        this.hasFavourite = false;
 											}
-									
+
 										break;
 									}
 								}
 
 								this.fetchImages(res.result);
-							    
+							  this.searchFavouriteCallStatus.callback("Search done.", true);
 
 							}).catch(error => {
 								this.searchFavouriteCallStatus.error("Error while running search.", error);
@@ -471,7 +471,7 @@ export class FavouriteViewComponent implements OnInit {
 		}
 		return ret;
     }
-    
+
 
     private init(): void {
 		let len = this.itemTypeResponse.length;
@@ -483,7 +483,7 @@ export class FavouriteViewComponent implements OnInit {
         let i = 0;
         for(;i<len;i++){
             this.catalogueLineView[this.itemTypeResponse[i].localName] = false;
-        }      
+        }
     }
 
     onOpenCatalogueLine(e: Event) {

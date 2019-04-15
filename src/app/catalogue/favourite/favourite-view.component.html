@@ -1,4 +1,4 @@
-<div class="d-flex justify-content-end mb-2">
+<div class="d-flex justify-content-end">
     <call-status [callStatus]="callStatus"
         class="d-flex">
     </call-status>
@@ -6,9 +6,9 @@
 
 <div *ngIf="itemTypeResponse && hasFavourite == true">
     <div>
-        <div class="input-group form-group" style="background-color:#F2F2F2;padding-left: 102px;padding-top: 20px;padding-bottom: 20px;">
+        <div class="input-group form-group" style="background-color:#F2F2F2;padding-left: 25px;padding-top: 20px;padding-bottom: 20px;">
             <input  class="form-control col-3" type="text" [(ngModel)]="searchText" [ngbTypeahead]="searchFavourite" placeholder="Search ...">
-            
+
             <label class="space-left space-right"><strong>Category :</strong>
             </label>
             <select  class="custom-select col-3 space-right" [(ngModel)]="selectedCategory" (change)="requestCatalogue()">
@@ -22,7 +22,7 @@
                 <option *ngFor="let option of CATALOGUE_LINE_SORT_OPTIONS" [value]="option.name">{{option.value}}</option>
             </select>
         </div>
-        
+
         <div *ngIf="catalogueLinesArray.length > 0" class="pagination justify-content-center space-before">
             <ngb-pagination [(collectionSize)]="collectionSize" [(pageSize)]="pageSize" [(page)]="page" [maxSize]="10" [boundaryLinks]="true" (pageChange)="onRegisteredCompaniesPageChange($event)"></ngb-pagination>
         </div>
@@ -30,7 +30,7 @@
         <div *ngFor="let catLine of catalogueLinesArray; let i = index" class="space-before">
             <div class="card pointer">
                 <div class="card-body">
-                    <div class="row" *ngIf="!catalogueLineView[catLine.id]" (click)="viewCatalogueLine(catLine,i); $event.stopPropagation();">
+                    <div class="row" *ngIf="!catalogueLineView[catLine.localName]" (click)="viewCatalogueLine(catLine,i); $event.stopPropagation();">
                         <div class="col-2">
                             <div style="text-align:center">
                                 <img src="{{imageMap[catLine.uri]}}" class="thumb" onerror="this.src='assets/empty_img.png';"/>
@@ -47,11 +47,11 @@
                                 </p>
                                 <p  *ngIf="catLine[product_description] != null"  style="word-break: break-all;word-wrap: break-word;">{{getMultilingualLabel(catLine[product_description])}}</p>
                                 <!-- <p *ngIf="catLine.requiredItemLocationQuantity.price.priceAmount.value != null" style="word-break: break-all;word-wrap: break-word;">{{catLine.requiredItemLocationQuantity.price.priceAmount.value+" "+catLine.requiredItemLocationQuantity.price.priceAmount.currencyID}}</p> -->
-                                    <span class="badge badge-primary-nimble" *ngIf="catLine[product_price] && !checkEmpty(catLine[product_price])">{{roundToTwoDecimals(catLine[product_price][getCurrency(catLine[product_price])])}} {{getCurrency(catLine[product_price])}}</span>
-                                    <span class="badge badge-warning" *ngIf="!catLine[product_price] || checkEmpty(catLine[product_price])">Upon request</span><br/>
+                                    <p *ngIf="catLine[product_price] && !checkEmpty(catLine[product_price])" style="word-break: break-all;word-wrap: break-word;">{{roundToTwoDecimals(catLine[product_price][getCurrency(catLine[product_price])])}} {{getCurrency(catLine[product_price])}}</p>
+                                    <p *ngIf="!catLine[product_price] || checkEmpty(catLine[product_price])" style="word-break: break-all;word-wrap: break-word;">Upon request</p>
                             </div>
                             <div class="col-2">
-                                
+
                                 <button type="button" class="btn btn-danger col" [disabled]="getDeleteStatus(i).isLoading()"
                                         (click)="removeFavourite(catLine, i); $event.stopPropagation();">
                                     Remove
@@ -85,4 +85,7 @@
 </div>
 
 <call-status [callStatus]="getCatalogueStatus" [large]="true">
+</call-status>
+
+<call-status [callStatus]="searchFavouriteCallStatus" [large]="true">
 </call-status>
