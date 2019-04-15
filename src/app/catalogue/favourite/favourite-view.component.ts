@@ -175,7 +175,13 @@ export class FavouriteViewComponent implements OnInit {
 
 				if(term != null && term != ""){
 					this.initial = false;
-					query = "en_label:*"+term + "* AND (";
+					let querySettings = {
+						"fields": [("{LANG}_"+this.product_name)],
+						"boosting": false,
+						"boostingFactors": {}
+					  };
+    				let queryRes = this.simpleSearchService.buildQueryString(term.toString(),querySettings,true,false);
+					query = "("+queryRes.queryStr + ") AND (";
 				}
                 while (length--) {
                     query = query+"id:"+ this.favouriteIdList[length];
