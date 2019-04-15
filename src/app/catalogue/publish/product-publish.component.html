@@ -447,7 +447,7 @@
                 <div class="col-11 well">
                     <div class="row">
                         <div class="col-4 name-description-panel">
-                            <name-description-panel [item]="getItemForLogisticCatalogueLine(0)" [valueClass]="'col-7'" [languageIdClass]="'col-2'" [flexClass]="'col-2'"></name-description-panel>
+                            <name-description-panel [item]="getLogisticCatalogueLine(0).goodsItem.item" [valueClass]="'col-7'" [languageIdClass]="'col-2'" [flexClass]="'col-2'"></name-description-panel>
                         </div>
                         <div class="col-8">
                             <div class="row">
@@ -473,7 +473,7 @@
                 <div class="col-11 well">
                     <div class="row">
                         <div class="col-4 name-description-panel">
-                            <name-description-panel [item]="getItemForLogisticCatalogueLine(1)" [valueClass]="'col-7'" [languageIdClass]="'col-2'" [flexClass]="'col-2'"></name-description-panel>
+                            <name-description-panel [item]="getLogisticCatalogueLine(1).goodsItem.item" [valueClass]="'col-7'" [languageIdClass]="'col-2'" [flexClass]="'col-2'"></name-description-panel>
                         </div>
                         <div class="col-8">
                             <div class="row">
@@ -496,7 +496,7 @@
                 <div class="col-11 well">
                     <div class="row">
                         <div class="col-4 name-description-panel">
-                            <name-description-panel [item]="getItemForLogisticCatalogueLine(2)" [valueClass]="'col-7'" [languageIdClass]="'col-2'" [flexClass]="'col-2'"></name-description-panel>
+                            <name-description-panel [item]="getLogisticCatalogueLine(2).goodsItem.item" [valueClass]="'col-7'" [languageIdClass]="'col-2'" [flexClass]="'col-2'"></name-description-panel>
                         </div>
                         <div class="col-8">
                             <div class="row">
@@ -519,7 +519,7 @@
                 <div class="col-11 well">
                     <div class="row">
                         <div class="col-4 name-description-panel">
-                            <name-description-panel [item]="getItemForLogisticCatalogueLine(3)" [valueClass]="'col-7'" [languageIdClass]="'col-2'" [flexClass]="'col-2'"></name-description-panel>
+                            <name-description-panel [item]="getLogisticCatalogueLine(3).goodsItem.item" [valueClass]="'col-7'" [languageIdClass]="'col-2'" [flexClass]="'col-2'"></name-description-panel>
                         </div>
                         <div class="col-8">
                             <div class="row">
@@ -552,11 +552,11 @@
             <div class="row" *ngIf="selectedTabSinglePublish == 'TRANSPORT' || selectedTabSinglePublish == 'RAIL' || selectedTabSinglePublish == 'AIR' || selectedTabSinglePublish == 'MARITIME' || selectedTabSinglePublish == 'ROAD'">
                 <div class="col-6">
                     <h6>Destination</h6>
-                    <origin-destination-view [divStyle]="'well'"></origin-destination-view>
+                    <origin-destination-view [divStyle]="'well'" [addresses]="getLogisticCatalogueLine(0).requiredItemLocationQuantity.applicableTerritoryAddress"></origin-destination-view>
                 </div>
                 <div class="col-6">
                     <h6>Origin</h6>
-                    <origin-destination-view [divStyle]="'well'"></origin-destination-view>
+                    <origin-destination-view [divStyle]="'well'" [addressesText]="getOriginAddressForLogistics(0)"></origin-destination-view>
                 </div>
             </div>
             <!-- Actions -->
@@ -582,7 +582,7 @@
         <div *ngIf="selectedTabSinglePublish == 'WAREHOUSING'">
             <div class="row space-before">
                 <div class="col-12">
-                    <options-panel [selectedTab]="'WAREHOUSING'" [item]="getItemForLogisticCatalogueLine(4)" [selectedOptions]=getDefaultPropertyForLogistics(4) [title]="'Warehousing'"></options-panel>
+                    <options-panel [selectedTab]="'WAREHOUSING'" [item]="getLogisticCatalogueLine(4).goodsItem.item" [selectedOptions]=getDefaultPropertyForLogistics(4) [title]="'Warehousing'"></options-panel>
                 </div>
             </div>
             <div class="row space-before">
@@ -620,7 +620,7 @@
         <div *ngIf="selectedTabSinglePublish == 'ORDERPICKING'">
             <div class="row space-before">
                 <div class="col-12">
-                    <options-panel [selectedTab]="'ORDERPICKING'" [item]="getItemForLogisticCatalogueLine(5)" [selectedOptions]=getDefaultPropertyForLogistics(5) [title]="'Order Picking'"></options-panel>
+                    <options-panel [selectedTab]="'ORDERPICKING'" [item]="getLogisticCatalogueLine(5).goodsItem.item" [selectedOptions]=getDefaultPropertyForLogistics(5) [title]="'Order Picking'"></options-panel>
                 </div>
             </div>
             <div class="row space-before">
@@ -658,7 +658,7 @@
         <div *ngIf="selectedTabSinglePublish == 'REVERSELOGISTICS'">
             <div class="row space-before">
                 <div class="col-12">
-                    <options-panel [selectedTab]="'REVERSELOGISTICS'" [item]="getItemForLogisticCatalogueLine(6)" [selectedOptions]=getDefaultPropertyForLogistics(6) [title]="'Reverse Logistics'"></options-panel>
+                    <options-panel [selectedTab]="'REVERSELOGISTICS'" [item]="getLogisticCatalogueLine(6).goodsItem.item" [selectedOptions]=getDefaultPropertyForLogistics(6) [title]="'Reverse Logistics'"></options-panel>
                 </div>
             </div>
             <div class="row space-before">
@@ -696,7 +696,7 @@
         <div *ngIf="selectedTabSinglePublish == 'INHOUSESERVICES'">
             <div class="row space-before">
                 <div class="col-12">
-                    <options-panel [selectedTab]="'INHOUSESERVICES'" [item]="getItemForLogisticCatalogueLine(7)" [selectedOptions]=getDefaultPropertyForLogistics(7) [title]="'In-house Services'"></options-panel>
+                    <options-panel [selectedTab]="'INHOUSESERVICES'" [item]="getLogisticCatalogueLine(7).goodsItem.item" [selectedOptions]=getDefaultPropertyForLogistics(7) [title]="'In-house Services'"></options-panel>
                 </div>
             </div>
             <div class="row space-before">
@@ -734,7 +734,7 @@
         <div *ngIf="selectedTabSinglePublish == 'CUSTOMSMANAGEMENT'">
             <div class="row space-before">
                 <div class="col-12">
-                    <options-panel [selectedTab]="'CUSTOMSMANAGEMENT'" [item]="getItemForLogisticCatalogueLine(8)" [selectedOptions]=getDefaultPropertyForLogistics(8) [title]="'Customs Management'"></options-panel>
+                    <options-panel [selectedTab]="'CUSTOMSMANAGEMENT'" [item]="getLogisticCatalogueLine(8).goodsItem.item" [selectedOptions]=getDefaultPropertyForLogistics(8) [title]="'Customs Management'"></options-panel>
                 </div>
             </div>
             <div class="row space-before">
@@ -772,7 +772,7 @@
         <div *ngIf="selectedTabSinglePublish == 'LOGISTICSCONSULTANCY'">
             <div class="row space-before">
                 <div class="col-12">
-                    <options-panel [selectedTab]="'LOGISTICSCONSULTANCY'" [item]="getItemForLogisticCatalogueLine(9)" [selectedOptions]=getDefaultPropertyForLogistics(9) [title]="'Logistics Consultancy'"></options-panel>
+                    <options-panel [selectedTab]="'LOGISTICSCONSULTANCY'" [item]="getLogisticCatalogueLine(9).goodsItem.item" [selectedOptions]=getDefaultPropertyForLogistics(9) [title]="'Logistics Consultancy'"></options-panel>
                 </div>
             </div>
             <div class="row space-before">

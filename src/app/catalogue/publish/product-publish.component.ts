@@ -53,6 +53,8 @@ import {TransportationService} from '../model/publish/transportation-service';
 import {CommodityClassification} from '../model/publish/commodity-classification';
 import {DocumentReference} from '../model/publish/document-reference';
 import {Attachment} from '../model/publish/attachment';
+import {Address} from '../model/publish/address';
+import {Country} from '../model/publish/country';
 
 interface SelectedProperties {
     [key: string]: SelectedProperty;
@@ -356,9 +358,9 @@ export class ProductPublishComponent implements OnInit {
                 let indexes:number[] = this.logisticCatalogueLineIndexMap.get(this.selectedTabSinglePublish);
                 if(indexes.length > 1){
 
-                    this.copyMissingAdditionalItemProperties(this.logisticCatalogueLines[indexes[1]]);
-                    this.copyMissingAdditionalItemProperties(this.logisticCatalogueLines[indexes[2]]);
-                    this.copyMissingAdditionalItemProperties(this.logisticCatalogueLines[indexes[3]]);
+                    this.copyMissingAdditionalItemPropertiesAndAddresses(this.logisticCatalogueLines[indexes[1]]);
+                    this.copyMissingAdditionalItemPropertiesAndAddresses(this.logisticCatalogueLines[indexes[2]]);
+                    this.copyMissingAdditionalItemPropertiesAndAddresses(this.logisticCatalogueLines[indexes[3]]);
 
                     let validCatalogueLinesToBePublished:CatalogueLine[] = [];
                     let validCatalogueLinesToBeUpdated:CatalogueLine[] = [];
@@ -427,9 +429,10 @@ export class ProductPublishComponent implements OnInit {
         this.publish(catalogueLines,exitThePage);
     }
 
-    private copyMissingAdditionalItemProperties(catalogueLine:CatalogueLine){
+    private copyMissingAdditionalItemPropertiesAndAddresses(catalogueLine:CatalogueLine){
         let productType = this.getProductTypeForLogistic(0);
         let industrySpecialization = this.getIndustrySpecializationForLogistics(0);
+        let originAddress = this.getOriginAddressForLogistics(0);
         for(let itemProperty of catalogueLine.goodsItem.item.additionalItemProperty){
             if(itemProperty.name[0].value == "Product Type"){
                 itemProperty.value = productType;
@@ -437,6 +440,20 @@ export class ProductPublishComponent implements OnInit {
             else if(itemProperty.name[0].value == "Industry Specialization"){
                 itemProperty.value = industrySpecialization;
             }
+            else if(itemProperty.name[0].value == "Origin Address"){
+                itemProperty.value = originAddress;
+            }
+        }
+        // destination address
+        for(let address of this.logisticCatalogueLines[0].requiredItemLocationQuantity.applicableTerritoryAddress){
+            let country:Country = null;
+            if(address.country.name){
+                country = new Country(new Text(address.country.name.value));
+            }
+
+            let newAddress:Address = new Address(address.cityName,address.region,address.postalZone,address.buildingNumber,address.streetName,country);
+
+            catalogueLine.requiredItemLocationQuantity.applicableTerritoryAddress.push(newAddress);
         }
     }
 
@@ -519,7 +536,7 @@ export class ProductPublishComponent implements OnInit {
     }
 
     getProductTypeForLogistic(index:number){
-        let item:Item = this.getItemForLogisticCatalogueLine(index);
+        let item:Item = this.getLogisticCatalogueLine(index).goodsItem.item;
         for(let itemProperty of item.additionalItemProperty){
             if(itemProperty.name[0].value == "Product Type"){
                 return itemProperty.value;
@@ -532,7 +549,7 @@ export class ProductPublishComponent implements OnInit {
     }
 
     getIndustrySpecializationForLogistics(index:number){
-        let item:Item = this.getItemForLogisticCatalogueLine(index);
+        let item:Item = this.getLogisticCatalogueLine(index).goodsItem.item;
         for(let itemProperty of item.additionalItemProperty){
             if(itemProperty.name[0].value == "Industry Specialization"){
                 return itemProperty.value;
@@ -544,8 +561,21 @@ export class ProductPublishComponent implements OnInit {
         return itemProperty.value;
     }
 
+    getOriginAddressForLogistics(index:number){
+        let item:Item = this.getLogisticCatalogueLine(index).goodsItem.item;
+        for(let itemProperty of item.additionalItemProperty){
+            if(itemProperty.name[0].value == "Origin Address"){
+                return itemProperty.value;
+            }
+        }
+
+        let itemProperty = UBLModelUtils.createOriginAddressAdditionalItemProperty();
+        item.additionalItemProperty.push(itemProperty);
+        return itemProperty.value;
+    }
+
     getDefaultPropertyForLogistics(index:number,propertyName:string = null){
-        let item:Item = this.getItemForLogisticCatalogueLine(index);
+        let item:Item = this.getLogisticCatalogueLine(index).goodsItem.item;
 
         let itemProperty:ItemProperty = null;
         for(let ip of item.additionalItemProperty){
@@ -801,11 +831,11 @@ export class ProductPublishComponent implements OnInit {
         return true;
     }
 
-    getItemForLogisticCatalogueLine(index:number){
+    getLogisticCatalogueLine(index:number):CatalogueLine{
         if(this.publishMode == 'create'){
-            return this.logisticCatalogueLines[index].goodsItem.item;
+            return this.logisticCatalogueLines[index];
         }
-        return this.catalogueLine.goodsItem.item;
+        return this.catalogueLine;
     }
 
     private initView(userParty, catalogueResponse:CataloguePaginationResponse, settings, logisticCategories): void {
