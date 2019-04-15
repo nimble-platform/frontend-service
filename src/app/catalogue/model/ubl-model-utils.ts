@@ -152,9 +152,10 @@ export class UBLModelUtils {
             catalogueLine.goodsItem.item.description.push(newItemDescription);
             // add additional item properties
             catalogueLine.goodsItem.item.additionalItemProperty = this.createItemPropertiesForLogistics(i);
-            // create additional item properties to handle product type and industry specialization
+            // create additional item properties to handle product type, industry specialization and origin address
             catalogueLine.goodsItem.item.additionalItemProperty.push(this.createProductTypeAdditionalItemProperty());
             catalogueLine.goodsItem.item.additionalItemProperty.push(this.createIndustrySpecializationAdditionalItemProperty());
+            catalogueLine.goodsItem.item.additionalItemProperty.push(this.createOriginAddressAdditionalItemProperty());
             // add its default category
             catalogueLine.goodsItem.item.commodityClassification.push(this.createCommodityClassification(this.getCorrespondingCategory(i,logisticCategories)));
             // push it to the list
@@ -167,6 +168,12 @@ export class UBLModelUtils {
         let productType = this.createAdditionalItemProperty(null,null);
         productType.name.push(new Text("Product Type"));
         return productType;
+    }
+
+    public static createOriginAddressAdditionalItemProperty(){
+        let originAddress = this.createAdditionalItemProperty(null,null);
+        originAddress.name.push(new Text("Origin Address"));
+        return originAddress;
     }
 
     public static createIndustrySpecializationAdditionalItemProperty(){
