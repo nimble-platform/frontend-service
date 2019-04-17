@@ -15,7 +15,9 @@ import {Headers} from "@angular/http";
 import { AbstractControl } from "@angular/forms";
 declare var Countries: any;
 import {PartyName} from '../catalogue/model/publish/party-name';
-import {maximumDecimalsForPrice} from  './constants'
+import {deliveryPeriodUnitListId, maximumDecimalsForPrice, warrantyPeriodUnitListId} from  './constants'
+import {UnitService} from "./unit-service";
+import {CompanyNegotiationSettings} from "../user-mgmt/model/company-negotiation-settings";
 
 const UI_NAMES: any = {
     STRING: "TEXT"
