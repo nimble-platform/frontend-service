@@ -49,9 +49,11 @@ export class CatalogueLinePanelComponent {
         this.publishService.publishMode = 'edit';
         this.publishService.publishingStarted = false;
         this.categoryService.resetSelectedCategories();
-        this.router.navigate(['catalogue/publish'], {queryParams: {
-                pg: "single",
-                productType: isTransportService(this.catalogueLine) ? "transportation" : "product"}});
+
+        if(isTransportService(this.catalogueLine))
+            this.router.navigate(['catalogue/publish-logistic'], {queryParams: {pg: "single"}});
+        else
+            this.router.navigate(['catalogue/publish'], {queryParams: {pg: "single"}});
     }
 
     deleteCatalogueLine(): void {

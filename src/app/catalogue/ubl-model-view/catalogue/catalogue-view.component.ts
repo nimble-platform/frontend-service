@@ -160,9 +160,11 @@ export class CatalogueViewComponent implements OnInit {
         this.publishService.publishMode = 'edit';
         this.publishService.publishingStarted = false;
         this.categoryService.resetSelectedCategories();
-        this.router.navigate(['catalogue/publish'], {queryParams: {
-                pg: "single",
-                productType: isTransportService(catalogueLine) ? "transportation" : "product"}});
+
+        if(isTransportService(catalogueLine))
+            this.router.navigate(['catalogue/publish-logistic'], {queryParams: {pg: "single"}});
+        else
+            this.router.navigate(['catalogue/publish'], {queryParams: {pg: "single"}});
     }
 
     redirectToCopy(catalogueLine) {
@@ -170,9 +172,11 @@ export class CatalogueViewComponent implements OnInit {
         this.publishService.publishMode = 'copy';
         this.publishService.publishingStarted = false;
         this.categoryService.resetSelectedCategories();
-        this.router.navigate(['catalogue/publish'], {queryParams: {
-                pg: "single",
-                productType: isTransportService(catalogueLine) ? "transportation" : "product"}});
+
+        if(isTransportService(catalogueLine))
+            this.router.navigate(['catalogue/publish-logistic'], {queryParams: {pg: "single"}});
+        else
+            this.router.navigate(['catalogue/publish'], {queryParams: {pg: "single"}});
     }
 
     deleteCatalogueLine(catalogueLine, i: number): void {

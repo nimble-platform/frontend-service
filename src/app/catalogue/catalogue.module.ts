@@ -51,6 +51,8 @@ import {BulkPublishComponent} from "./publish/bulk-publish.component";
 import {OptionsPanelComponent} from './publish/options-panel.component';
 import {OriginDestinationViewComponent} from './publish/origin-destination-view-component';
 import {NameDescriptionPanelComponent} from './publish/name-description-panel.component';
+import {LogisticServicePublishComponent} from './publish/logistic-service-publish.component';
+import {LogisticPublishDeactivateGuardService} from './logistic-publish-deactivate-guard.service';
 
 @NgModule({
 	imports: [CommonModule, 
@@ -67,6 +69,7 @@ import {NameDescriptionPanelComponent} from './publish/name-description-panel.co
         CategorySearchComponent,
         CategoryTreeComponent,
         ProductPublishComponent,
+        LogisticServicePublishComponent,
         EditPropertyModalComponent,
         BulkPublishComponent,
         OptionsPanelComponent,
@@ -140,6 +143,6 @@ import {NameDescriptionPanelComponent} from './publish/name-description-panel.co
         PriceOptionViewComponent,
         FavouriteViewComponent
     ],
-    providers: [PublishDeactivateGuardService, CategoryDeactivateGuardService]
+    providers: [PublishDeactivateGuardService, CategoryDeactivateGuardService, LogisticPublishDeactivateGuardService]
 })
 export class CatalogueModule {}
