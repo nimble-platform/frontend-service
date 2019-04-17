@@ -358,8 +358,8 @@
 										</div>
 										<div *ngIf="result[product_vendor]" class="col-2">
 											<i>{{ result[product_vendor][product_vendor_name] }}</i>
-											<div *ngIf="!checkNaN(result[product_vendor][product_vendor_rating])">
-												<ngb-rating [rate]="calcRating(result[product_vendor][product_vendor_rating],1)" [readonly]="true" max="5" title="{{getName(product_vendor_rating,product_vendor)}}:&#10;{{calcRating(result[product_vendor][product_vendor_rating],1)}} out of 5&#10;&#10;{{getName(product_vendor_rating_seller,product_vendor)}}:&#10;{{calcRating(result[product_vendor][product_vendor_rating_seller],1)}} out of 5&#10;&#10;{{getName(product_vendor_rating_fulfillment,product_vendor)}}:&#10;{{calcRating(result[product_vendor][product_vendor_rating_fulfillment],1)}} out of 5&#10;&#10;{{getName(product_vendor_rating_delivery,product_vendor)}}:&#10;{{calcRating(result[product_vendor][product_vendor_rating_delivery],1)}} out of 5">
+											<div *ngIf="!checkNaN(result[product_vendor][product_vendor_rating])" (click)= "redirectToRating($event,result); $event.stopPropagation();">
+												<ngb-rating [rate]="calcRating(result[product_vendor][product_vendor_rating],1)" [readonly]="true" max="5">
 													<ng-template let-fill="fill">
 													  <span class="star" [class.full]="fill === 100">
 													    <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
@@ -368,7 +368,7 @@
 												</ngb-rating>
 											</div>
 											<div *ngIf="checkNaN(result[product_vendor][product_vendor_rating])">
-												<ngb-rating [rate]="0" [readonly]="true" max="5" title="Unrated">
+												<ngb-rating [rate]="0" [readonly]="true" max="5">
 													<ng-template let-fill="fill">
 													  <span class="star" [class.full]="fill === 100">
 													    <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
@@ -377,7 +377,7 @@
 												</ngb-rating>
 											</div>
 											<div *ngIf="!checkNaN(result[product_vendor][product_vendor_trust])">
-												<ngb-rating [rate]="calcRating(result[product_vendor][product_vendor_trust],5)" [readonly]="true" max="5" title="{{getName(product_vendor_trust,product_vendor)}}:&#10;{{calcRating(result[product_vendor][product_vendor_trust],5)}} out of 5">
+												<ngb-rating [rate]="calcRating(result[product_vendor][product_vendor_trust],5)" [readonly]="true" max="5">
 													<ng-template let-fill="fill">
 													  <span class="heart" [class.full-heart]="fill === 100">
 													    <span class="half-heart" [style.width.%]="fill">&#10084;</span>&#10084;
@@ -386,7 +386,7 @@
 												</ngb-rating>
 											</div>
 											<div *ngIf="checkNaN(result[product_vendor][product_vendor_trust])">
-												<ngb-rating [rate]="0" [readonly]="true" max="5" title="Unrated">
+												<ngb-rating [rate]="0" [readonly]="true" max="5">
 													<ng-template let-fill="fill">
 													  <span class="heart" [class.full-heart]="fill === 100">
 													    <span class="half-heart" [style.width.%]="fill">&#10084;</span>&#10084;
