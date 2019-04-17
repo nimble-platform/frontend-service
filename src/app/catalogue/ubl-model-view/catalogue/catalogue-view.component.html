@@ -47,7 +47,7 @@
                             <button class="dropdown-item" (click)="deleteAllProductImages()">
                                 Delete All Product Images
                             </button>
-                            <button class="dropdown-item">
+                            <button class="dropdown-item" (click)="onAddingCatalogue()">
                                 Add Catalogue
                             </button>
                             <button class="dropdown-item" (click)="onDeleteCatalogue()">
@@ -59,6 +59,20 @@
             </div>
         </div>
 
+        <div *ngIf="addCatalogue" class="input-group form-group" style="background-color:#F2F2F2;padding-left: 25px;padding-top: 20px;padding-bottom: 20px;">
+            <input  class="form-control col-3" style="padding-left: 25px" type="text" [(ngModel)]="catalogueText" placeholder="Catalogue Title">
+            <div class="col-2">
+                <button type="button" class="btn btn-primary"
+                        (click)="onAddCatalogue()">
+                    Add
+                </button>
+                <button type="button" class="btn btn-danger"
+                        (click)="cancelAddingCatalogue(); $event.stopPropagation();">
+                    Cancel
+                </button>
+            </div>
+        </div>
+        
         <div *ngIf="catalogueLinesArray.length > 0" class="pagination justify-content-center space-before">
             <ngb-pagination [(collectionSize)]="collectionSize" [(pageSize)]="pageSize" [(page)]="page" [maxSize]="5" [boundaryLinks]="true" (pageChange)="requestCatalogue()"></ngb-pagination>
         </div>
