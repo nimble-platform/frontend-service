@@ -16,6 +16,7 @@ import {ItemProperty} from '../../model/publish/item-property';
 import {debounceTime, distinctUntilChanged, switchMap} from 'rxjs/operators';
 import {Observable} from 'rxjs/Observable';
 import {CATALOGUE_LINE_SORT_OPTIONS} from '../../model/constants';
+import {Catalogue} from '../../model/publish/catalogue';
 
 @Component({
     selector: 'catalogue-view',
@@ -43,12 +44,13 @@ export class CatalogueViewComponent implements OnInit {
     page = 1;
     // default
     pageSize = 10;
+    addCatalogue = false;
 
     // check whether catalogue-line-panel should be displayed for a specific catalogue line
     catalogueLineView = {};
 
     sortOption = null;
-
+    catalogueText: string = "";
     getCatalogueStatus = new CallStatus();
     callStatus = new CallStatus();
     deleteStatuses: CallStatus[] = [];
@@ -149,6 +151,32 @@ export class CatalogueViewComponent implements OnInit {
                 }
             );
         }
+    }
+
+    onAddCatalogue(){
+        const userId = this.cookieService.get("user_id");
+        this.userService.getUserParty(userId).then(userParty => {
+
+        let catalogue:Catalogue = new Catalogue(this.catalogueText, null, userParty, "", "", []);
+        // add catalogue line to the end of catalogue
+        this.catalogueService.postCatalogue(catalogue)
+            .then(() =>
+            { 
+                this.catalogueText = "";
+                this.cancelAddingCatalogue()
+            })
+            .catch(err => {
+            })
+        }).catch(err => {
+        });
+    }
+
+    cancelAddingCatalogue(){
+        this.addCatalogue = false;
+    }
+
+    onAddingCatalogue(){
+        this.addCatalogue = true;
     }
 
     onOpenCatalogueLine(e: Event) {

@@ -48,7 +48,7 @@ export class ProductDetailsComponent implements OnInit {
     wrapper?: ProductWrapper;
     settings?: CompanySettings;
     priceWrapper?: PriceWrapper;
-
+    tabToOpen: string = "";
     toggleImageBorder: boolean = false;
     showNavigation: boolean = true;
     showProcesses: boolean = true;
@@ -79,6 +79,7 @@ export class ProductDetailsComponent implements OnInit {
 		this.route.queryParams.subscribe(params => {
 			let id = params['id'];
             let catalogueId = params['catalogueId'];
+            this.tabToOpen = params['tabToOpen'];
 
             if(id !== this.id || catalogueId !== this.catalogueId) {
                 this.id = id;
