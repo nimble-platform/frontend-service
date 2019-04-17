@@ -193,6 +193,13 @@ export class ProductPublishComponent implements OnInit {
      * Event Handlers
      */
 
+    /**
+     * Input is bound to the manufacturersItemIdentification.id . Copy it to the line id
+     */
+    onLineIdChange(): void {
+        this.catalogueLine.id = this.catalogueLine.goodsItem.item.manufacturersItemIdentification.id;
+    }
+
     onSelectTab(event: any) {
         event.preventDefault();
         if(event.target.id === "singleUpload") {
