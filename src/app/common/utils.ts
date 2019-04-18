@@ -146,6 +146,9 @@ function isItemProperty(property: any): property is ItemProperty {
  * @param label
  */
 export function selectNameFromLabelObject(label: any): string {
+    if(label == null) {
+        return "";
+    }
     let defaultLanguage = DEFAULT_LANGUAGE();
     if(label[defaultLanguage] != null) {
         return label[defaultLanguage];
