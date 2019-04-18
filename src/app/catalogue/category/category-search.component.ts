@@ -267,6 +267,17 @@ export class CategorySearchComponent implements OnInit {
         return selectPreferredName(cp);
     }
 
+    isDefinitionOrRemarkAvailable(property: Property): boolean {
+        return (property.definition != null && property.definition.trim().length > 0) || (property.remark != null && property.remark.length > 0);
+    }
+
+    getPropertyDefinitionOrRemark(property: Property): string {
+        if(property.definition != null && property.definition.length > 0) {
+            return property.definition
+        }
+        return selectPreferredValues(property.remark);
+    }
+
     canDeactivate(): boolean {
         this.inPublish = false;
         if (this.pageRef == "publish" && this.isReturnPublish == false) {

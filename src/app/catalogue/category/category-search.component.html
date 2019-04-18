@@ -262,7 +262,7 @@
                             <label>
                                 <p class="text-capitalize pl-3 mb-1">
                                     {{selectPreferredName(prop)}}
-                                    <span *ngIf="prop.definition" class="label label-default" title="{{prop.definition}}">
+                                    <span *ngIf="isDefinitionOrRemarkAvailable(prop)" class="label label-default" title="{{getPropertyDefinitionOrRemark(prop)}}">
                                         &#9432;
                                     </span>
                                 </p>
