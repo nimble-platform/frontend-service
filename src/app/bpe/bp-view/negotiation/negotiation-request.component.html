@@ -124,7 +124,7 @@
     <div class="col-5"></div>
     <div class="col-5 mt-1">
         <div class="d-flex">
-            <input type="number" [(ngModel)]="requestedQuantity" class="form-control form-control-sm w-75"
+            <input type="number" (keypress)="onOrderQuantityChange($event)" [(ngModel)]="requestedQuantity" class="form-control form-control-sm w-75"
                 [disabled]="isLoading() || isReadOnly()" />
             <span class="ml-2" *ngIf="getQuantityUnit() !== ''">{{ getQuantityUnit() }}</span>
         </div>
