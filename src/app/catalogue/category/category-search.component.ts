@@ -15,6 +15,9 @@ import { Property } from "../model/category/property";
 import * as myGlobals from '../../globals';
 import { AppComponent } from "../../app.component";
 import { Text} from '../model/publish/text';
+import { Observable } from "rxjs/Observable";
+import { debounceTime, distinctUntilChanged, switchMap } from "rxjs/operators";
+import { SimpleSearchService } from "../../simple-search/simple-search.service";
 
 type ProductType = "product" | "transportation";
 type SelectedTab = "TREE"
@@ -82,6 +85,7 @@ export class CategorySearchComponent implements OnInit {
         private cookieService: CookieService,
         private userService: UserService,
         public categoryService: CategoryService,
+        private simpleSearchService: SimpleSearchService,
         private catalogueService: CatalogueService,
         private publishService: PublishService,
         public appComponent: AppComponent
@@ -316,6 +320,15 @@ export class CategorySearchComponent implements OnInit {
                 this.getCategoriesStatus.error("Failed to retrieve category details", error);
             });
     }
+
+    getSuggestions = (text$: Observable<string>) =>
+      text$.pipe(
+        debounceTime(200),
+        distinctUntilChanged(),
+        switchMap(term =>
+          this.simpleSearchService.getClassSuggestions(term,("{LANG}_label"),this.taxonomyId == "All" ? "" : this.categoryFilter[this.taxonomyId].ontologyPrefix)
+        )
+      );
 
     displayRootCategories(taxonomyId: string): void {
         this.treeView = true;

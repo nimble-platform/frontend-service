@@ -407,14 +407,16 @@ export class UserService {
             settings.deliveryPeriodUnits.push(...await this.unitService.getCachedUnitList(deliveryPeriodUnitListId));
         }
         if(settings.deliveryPeriodRanges.length === 0) {
+            settings.deliveryPeriodRanges.push({ start: 24, end: 1344 });
+            settings.deliveryPeriodRanges.push({ start: 1, end: 40 });
             settings.deliveryPeriodRanges.push({ start: 1, end: 56 });
             settings.deliveryPeriodRanges.push({ start: 0, end: 8 });
         }
-        while(settings.deliveryPeriodRanges.length > 2) {
+        while(settings.deliveryPeriodRanges.length > 4) {
             settings.deliveryPeriodRanges.pop();
         }
-        if(settings.warrantyPeriodRanges.length === 0) {
-            settings.deliveryPeriodUnits.push(...await this.unitService.getCachedUnitList(warrantyPeriodUnitListId));
+        if(settings.warrantyPeriodUnits.length === 0) {
+            settings.warrantyPeriodUnits.push(...await this.unitService.getCachedUnitList(warrantyPeriodUnitListId));
         }
         if(settings.warrantyPeriodRanges.length === 0) {
             settings.warrantyPeriodRanges.push({ start: 0, end: 24 });
