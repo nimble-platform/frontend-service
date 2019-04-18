@@ -333,7 +333,20 @@ export class CatalogueService {
             .get(url, {headers: this.getAuthorizedHeaders()})
             .toPromise()
             .then(res => {
-                return res.json() as BinaryObject;
+                return res.json();
+            })
+            .catch(this.handleError);
+
+    }
+
+    getCatalogueFromId(id: string){
+        const partyId =this.cookieService.get("company_id");
+        const url = this.baseUrl + `/catalogue/${partyId}/${id}/ubl`;
+        return this.http
+            .get(url, {headers: this.getAuthorizedHeaders()})
+            .toPromise()
+            .then(res => {
+                return res.json();
             })
             .catch(this.handleError);
 
