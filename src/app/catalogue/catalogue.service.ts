@@ -325,6 +325,33 @@ export class CatalogueService {
             .catch(this.handleError);
     }
 
+    getCatalogueIdsForParty(){
+        const token = 'Bearer '+this.cookieService.get("bearer_token");
+        const partyId =this.cookieService.get("company_id");
+        const url = this.baseUrl + `/catalogue/${partyId}`;
+        return this.http
+            .get(url, {headers: this.getAuthorizedHeaders()})
+            .toPromise()
+            .then(res => {
+                return res.json();
+            })
+            .catch(this.handleError);
+
+    }
+
+    getCatalogueFromId(id: string){
+        const partyId =this.cookieService.get("company_id");
+        const url = this.baseUrl + `/catalogue/${partyId}/${id}/ubl`;
+        return this.http
+            .get(url, {headers: this.getAuthorizedHeaders()})
+            .toPromise()
+            .then(res => {
+                return res.json();
+            })
+            .catch(this.handleError);
+
+    }
+
     private getAuthorizedHeaders(): Headers {
         const token = 'Bearer '+this.cookieService.get("bearer_token");
         const headers = new Headers({'Authorization': token});

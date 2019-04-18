@@ -17,6 +17,19 @@
     </li>
 </ul>
 
+<div *ngIf="cataloguesIds.length > 1 && publishingGranularity !== 'bulk'" class="row space-before">
+        <div class="col-2 category-list-label">
+            <strong *ngIf="!productCatalogueRetrievalStatus.isLoading()">Catalogue: </strong>
+            <strong class="mr-2" *ngIf="productCatalogueRetrievalStatus.isLoading()">Fetching Catalogues </strong>
+            <call-status [callStatus]="productCatalogueRetrievalStatus"></call-status>
+        </div>
+        <div class="col-4">
+          <select class="custom-select" [(ngModel)]="selectedCatalogue" (change)="changeCat()">
+              <option *ngFor="let catalogue of cataloguesIds"  [value]=catalogue>{{catalogue}}</option>
+          </select>
+        </div>
+</div>
+
 <!-- Selected Categories -->
 <div class="row space-before">
     <div class="col-2 category-list-label">

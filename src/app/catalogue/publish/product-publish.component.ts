@@ -78,6 +78,7 @@ export class ProductPublishComponent implements OnInit {
     publishStatus: CallStatus = new CallStatus();
     publishingGranularity: "single" | "bulk" = "single";
     productCategoryRetrievalStatus: CallStatus = new CallStatus();
+    productCatalogueRetrievalStatus: CallStatus = new CallStatus();
     ngUnsubscribe: Subject<void> = new Subject<void>();
     productType: ProductType;
     isLogistics: boolean;
@@ -97,9 +98,13 @@ export class ProductPublishComponent implements OnInit {
     private selectedPropertiesUpdates: SelectedPropertiesUpdate = {};
     selectedProperty: ItemProperty;
     categoryModalPropertyKeyword: string = "";
+    selectedCatalogue: string = "default";
+    catlogueId = "default";
     @ViewChild(EditPropertyModalComponent)
     private editPropertyModal: EditPropertyModalComponent;
     customProperties: any[] = [];
+    cataloguesIds:any[] = [];
+    selectedCatalogueuuid = "";
     callStatus: CallStatus = new CallStatus();
 
     /*
@@ -146,6 +151,7 @@ export class ProductPublishComponent implements OnInit {
 
     ngOnInit() {
         this.selectedCategories = this.categoryService.selectedCategories;
+        this.getCatagloueIdsForParty();
         const userId = this.cookieService.get("user_id");
         this.callStatus.submit();
         this.userService.getUserParty(userId).then(party => {
@@ -179,6 +185,8 @@ export class ProductPublishComponent implements OnInit {
                 this.publishStateService.publishedProductNature = 'Regular product';
             }
         });
+
+        this.selectedCatalogueuuid = this.catalogueService.catalogueResponse.catalogueUuid;
     }
 
     ngOnDestroy() {
@@ -187,6 +195,15 @@ export class ProductPublishComponent implements OnInit {
 
     selectPreferredName(cp: Category | Property) {
         return selectPreferredName(cp);
+    }
+
+    changeCat(){
+        this.catlogueId = this.selectedCatalogue;
+        this.catalogueService.getCatalogueFromId(this.catlogueId).then((catalogue) => {
+            this.selectedCatalogueuuid = catalogue.uuid;
+        }).catch((err) => {
+            this.selectedCatalogueuuid = this.catalogueService.catalogueResponse.catalogueUuid;
+        })
     }
 
     /*
@@ -748,11 +765,19 @@ export class ProductPublishComponent implements OnInit {
             });
 
         } else {
-            this.catalogueService.addCatalogueLine(this.catalogueService.catalogueResponse.catalogueUuid,JSON.stringify(splicedCatalogueLine))
+            let catalogueId = this.catlogueId;
+            this.catalogueService.getCatalogueFromId(catalogueId).then((catalogue) => {
+                splicedCatalogueLine.goodsItem.item.catalogueDocumentReference.id = catalogue.uuid;
+                this.catalogueService.addCatalogueLine(catalogue.uuid,JSON.stringify(splicedCatalogueLine))
                 .then(() => {
                     this.onSuccessfulPublish(exitThePage,splicedCatalogueLine.id);
                 })
                 .catch(err=> this.onFailedPublish(err))
+            })
+            .catch(err=> {
+                this.onFailedPublish(err)
+            })
+
         }
     }
 
@@ -769,7 +794,7 @@ export class ProductPublishComponent implements OnInit {
 
         this.publishStatus.submit();
 
-        this.catalogueService.updateCatalogueLine(this.catalogueService.catalogueResponse.catalogueUuid,JSON.stringify(splicedCatalogueLine))
+        this.catalogueService.updateCatalogueLine(this.selectedCatalogueuuid,JSON.stringify(splicedCatalogueLine))
             .then(() => this.onSuccessfulPublish(exitThePage,splicedCatalogueLine.id))
             .then(() => this.changePublishModeToCreate())
             .catch(err => {
@@ -849,11 +874,11 @@ export class ProductPublishComponent implements OnInit {
 
         let userId = this.cookieService.get("user_id");
         this.userService.getUserParty(userId).then(party => {
-            this.catalogueService.getCatalogueResponse(userId).then(catalogueResponse => {
-                this.catalogueService.getCatalogueLine(catalogueResponse.catalogueUuid,catalogueLineId).then(catalogueLine => {
+            this.catalogueService.getCatalogueFromId(this.catlogueId).then(catalogueResponse => {
+                this.catalogueService.getCatalogueLine(catalogueResponse.uuid,catalogueLineId).then(catalogueLine => {
                     // go to the dashboard - catalogue tab
                     if(exitThePage){
-                        this.catalogueLine = UBLModelUtils.createCatalogueLine(catalogueResponse.catalogueUuid,
+                        this.catalogueLine = UBLModelUtils.createCatalogueLine(catalogueResponse.uuid,
                             party, this.companyNegotiationSettings);
 
                         // since every changes is saved,we do not need a dialog box
@@ -1071,5 +1096,15 @@ export class ProductPublishComponent implements OnInit {
 
     private handleError(error: any): Promise<any> {
         return Promise.reject(error.message || error);
+    }
+
+    public getCatagloueIdsForParty(){
+        this.productCatalogueRetrievalStatus.submit();
+        this.catalogueService.getCatalogueIdsForParty().then((catalogueIds) => {
+            this.cataloguesIds = catalogueIds;
+            this.productCatalogueRetrievalStatus.callback("Successfully loaded catalogueId list", true);
+        }).catch((error) => {
+            this.productCatalogueRetrievalStatus.error('Failed to get product catalogues');
+        });
     }
 }
