@@ -7,7 +7,7 @@ import * as moment from "moment";
 import { CallStatus } from "../common/call-status";
 import { CompanySettings } from "./model/company-settings";
 import { AppComponent } from "../app.component";
-import {selectValueOfTextObject} from '../common/utils';
+import {selectValueOfTextObject, sanitizeLink} from '../common/utils';
 
 @Component({
     selector: "company-details",
@@ -24,6 +24,7 @@ export class CompanyDetailsComponent implements OnInit {
     vatCallStatus: CallStatus = new CallStatus();
     party : any = {};
     selectValueOfTextObject = selectValueOfTextObject;
+    getLink = sanitizeLink;
 
     constructor(private cookieService: CookieService,
                 private userService: UserService,

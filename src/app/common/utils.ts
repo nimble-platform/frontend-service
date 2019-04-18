@@ -111,6 +111,30 @@ export function validateCountry(control: AbstractControl): any {
   return null;
 }
 
+export function sanitizeLink(link: any): any {
+  let parsed_link = "";
+  if (link && link != "") {
+    if (link.indexOf("http://") == -1 && link.indexOf("https://") == -1) {
+      parsed_link = "http://"+link;
+    }
+    else {
+      parsed_link = link;
+    }
+    if (!checkURL(parsed_link))
+      parsed_link = "";
+  }
+  return parsed_link;
+}
+
+function checkURL(url: string): boolean {
+  var expression = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
+  var regex = new RegExp(expression);
+  var match = false;
+  if (url.match(regex))
+    match = true;
+  return match;
+}
+
 export function sanitizeDataTypeName(dataType: PropertyValueQualifier): string {
     if(UI_NAMES[dataType]) {
         return UI_NAMES[dataType]
