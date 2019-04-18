@@ -272,10 +272,13 @@ export class CategorySearchComponent implements OnInit {
     }
 
     getPropertyDefinitionOrRemark(property: Property): string {
-        if(property.definition != null && property.definition.length > 0) {
-            return property.definition
+        if(property.definition != null && property.definition.trim().length > 0) {
+            return property.definition;
         }
-        return selectPreferredValues(property.remark);
+        if(property.remark != null && property.remark.length > 0) {
+            return selectPreferredValues(property.remark)[0];
+        }
+        return "";
     }
 
     canDeactivate(): boolean {
