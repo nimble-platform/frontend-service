@@ -91,7 +91,7 @@
 			</li>
 
 			<li class="nav-item" *ngIf="checkRoles('comp') || (checkRoles('comp_req') && config.showCompanyMembers)" routerLinkActive="active">
-				<a class="nav-link" routerLink="/user-mgmt/company-invitation">
+				<a class="nav-link" [title]="activeCompanyName?activeCompanyName:''" routerLink="/user-mgmt/company-invitation">
 					<i class="fa fa-building"></i> Company Members
 				</a>
 			</li>
@@ -155,14 +155,14 @@
 
 		<ul *ngIf="isLoggedIn" class="nav navbar-nav">
 			<li ngbDropdown class="nav-item dropdown" routerLinkActive="active">
-				<a class="nav-link pointer" id="dropdownMenuUser" ngbDropdownToggle>
+				<a class="nav-link pointer" [title]="activeCompanyName?activeCompanyName:''" id="dropdownMenuUser" ngbDropdownToggle>
 					<i class="fa fa-user"></i> {{fullName}}
 				</a>
 				<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuUser" ngbDropdownMenu>
-					<a *ngIf="checkRoles('comp-settings')" class="dropdown-item" routerLink="/user-mgmt/company-settings" routerLinkActive="active">
+					<a *ngIf="checkRoles('comp-settings')" class="dropdown-item" [title]="activeCompanyName?activeCompanyName:''" routerLink="/user-mgmt/company-settings" routerLinkActive="active">
 						<i class="fa fa-cog dd-icon"></i> Company Settings
 					</a>
-					<a *ngIf="checkRoles('comp-ratings')" class="dropdown-item" routerLink="/user-mgmt/company-rating" routerLinkActive="active">
+					<a *ngIf="checkRoles('comp-ratings')" class="dropdown-item" [title]="activeCompanyName?activeCompanyName:''" routerLink="/user-mgmt/company-rating" routerLinkActive="active">
 						<i class="fa fa-star dd-icon"></i> Company Ratings
 					</a>
 					<a class="dropdown-item" routerLink="/user-mgmt/user-profile" routerLinkActive="active">
