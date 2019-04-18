@@ -304,9 +304,11 @@ export class CategorySearchComponent implements OnInit {
                   let searchIndex = this.findCategoryInArray(this.rootCategories, this.logisticsCategory);
                   this.rootCategories.splice(searchIndex, 1);
                   for (var i=0; i<this.categoryFilter[taxonomyId].hiddenCategories.length; i++) {
-                    let filterCat = this.rootCategories.find(c => c.code === this.categoryFilter[taxonomyId].hiddenCategories[i]);
-                    let searchIndex = this.findCategoryInArray(this.rootCategories, filterCat);
-                    this.rootCategories.splice(searchIndex, 1);
+                      let filterCat = this.rootCategories.find(c => c.code === this.categoryFilter[taxonomyId].hiddenCategories[i]);
+                      if(filterCat != null){
+                          let searchIndex = this.findCategoryInArray(this.rootCategories, filterCat);
+                          this.rootCategories.splice(searchIndex, 1);
+                      }
                   }
                 }
             })

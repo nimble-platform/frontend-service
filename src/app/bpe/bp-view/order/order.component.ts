@@ -283,7 +283,8 @@ export class OrderComponent implements OnInit {
             queryParams: {
                 searchContext: 'orderbp',
                 q:'*',
-                cat:'Transport Service'
+                cat:'Transport Service',
+                catID:'nimble:category:TransportService'
             }
         });
     }
