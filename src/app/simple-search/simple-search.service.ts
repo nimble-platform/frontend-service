@@ -124,6 +124,38 @@ export class SimpleSearchService {
 		);
 	}
 
+  getClassSuggestions(query:string, field: string, ontology: string) {
+    let querySettings = {
+      "fields": [field],
+      "boosting": false,
+      "boostingFactors": {}
+    };
+    let queryRes = this.buildQueryString(query,querySettings,true,true);
+    const url = this.url + `/class/search`
+		let searchObject:any = {};
+		searchObject.rows = 0;
+		searchObject.q = "(" + queryRes.queryStr + ")";
+    if (ontology != "") {
+      let ontologyPrefixSimpleArr = ontology.split("/");
+      let ontologyPrefixSimple = ontologyPrefixSimpleArr[ontologyPrefixSimpleArr.length-1];
+      ontologyPrefixSimple.replace("#","");
+      searchObject.q += " AND nameSpace:*"+ontologyPrefixSimple+"*";
+    }
+    searchObject.facet = {};
+    searchObject.facet.field = [];
+    searchObject.facet.limit = -1;
+    for (let i=0; i<queryRes.queryFields.length; i++) {
+      searchObject.facet.field.push(queryRes.queryFields[i]);
+    }
+    return this.http
+		.post(url, searchObject, {headers: this.getHeadersWithBasicAuthorization()})
+    .pipe(
+			map(response =>
+				this.getSuggestionArray(response.json(),query,queryRes.queryArr,queryRes.queryFields)
+			)
+		);
+	}
+
 	getSuggestionArray(res:any, q:string, qA:string[], fields:string[]): string[] {
 		var suggestions=[];
     var suggestionsTmp=[];
