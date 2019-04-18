@@ -103,7 +103,7 @@ export class ProductPublishComponent implements OnInit {
     @ViewChild(EditPropertyModalComponent)
     private editPropertyModal: EditPropertyModalComponent;
     customProperties: any[] = [];
-    cataloguesIds: [];
+    cataloguesIds:any[] = [];
     selectedCatalogueuuid = "";
     callStatus: CallStatus = new CallStatus();
 
@@ -777,7 +777,7 @@ export class ProductPublishComponent implements OnInit {
             .catch(err=> {
                 this.onFailedPublish(err)
             })
-            
+
         }
     }
 
