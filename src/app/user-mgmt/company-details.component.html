@@ -81,7 +81,10 @@
         <tr><th>Link</th></tr>
         <tr *ngIf="details.description.socialMediaList.length == 0"><td>No data</td></tr>
         <tr *ngFor="let socialMedia of details.description.socialMediaList; let i = index">
-            <td *ngIf="socialMedia">{{socialMedia}}</td>
+            <td *ngIf="socialMedia">
+              <span *ngIf="getLink(socialMedia) != ''"><a [href]="getLink(socialMedia)" target="'blank'">{{socialMedia}}</a></span>
+              <span *ngIf="getLink(socialMedia) == ''">{{socialMedia}}</span>
+            </td>
             <td *ngIf="!socialMedia">n/A</td>
         </tr>
     </table>
@@ -94,7 +97,10 @@
         <tr><th>Link</th></tr>
         <tr *ngIf="details.description.externalResources.length == 0"><td>No data</td></tr>
         <tr *ngFor="let extResource of details.description.externalResources; let i = index">
-            <td *ngIf="extResource">{{extResource}}</td>
+            <td *ngIf="extResource">
+              <span *ngIf="getLink(extResource) != ''"><a [href]="getLink(extResource)" target="'blank'">{{extResource}}</a></span>
+              <span *ngIf="getLink(extResource) == ''">{{extResource}}</span>
+            </td>
             <td *ngIf="!extResource">n/A</td>
         </tr>
     </table>

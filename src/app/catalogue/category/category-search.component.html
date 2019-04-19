@@ -21,7 +21,7 @@
                 </div>
 
                 <!-- End TODO: All Categories Search -->
-                <input type="text" class="form-control" name="inputCtrl" [(ngModel)]="categoryKeyword" placeholder="Search Category..."/>
+                <input type="text" class="form-control" name="inputCtrl" [(ngModel)]="categoryKeyword" [ngbTypeahead]="getSuggestions" [focusFirst]=false placeholder="Search Category..."/>
                 <div class="input-group-append">
                     <button type="submit" class="btn btn-primary" [disabled]="!categorySearch.form.valid || getCategoryDetailsStatus.isDisplayed()">
                         <i class="fa fa-search"></i> Search Categories
@@ -262,7 +262,7 @@
                             <label>
                                 <p class="text-capitalize pl-3 mb-1">
                                     {{selectPreferredName(prop)}}
-                                    <span *ngIf="prop.definition" class="label label-default" title="{{prop.definition}}">
+                                    <span *ngIf="isDefinitionOrRemarkAvailable(prop)" class="label label-default" title="{{getPropertyDefinitionOrRemark(prop)}}">
                                         &#9432;
                                     </span>
                                 </p>
