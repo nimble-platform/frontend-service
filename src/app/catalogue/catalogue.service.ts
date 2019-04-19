@@ -34,9 +34,9 @@ export class CatalogueService {
                 private cookieService: CookieService) {
     }
 
-    getCatalogueResponse(userId: string,categoryName:string=null,searchText:string=null,limit:number=0, offset:number=0, sortOption=null): Promise<CataloguePaginationResponse>{
+    getCatalogueResponse(userId: string,categoryName:string=null,searchText:string=null,limit:number=0, offset:number=0, sortOption=null,catalogueId="default"): Promise<CataloguePaginationResponse>{
         return this.userService.getUserParty(userId).then(party => {
-            let url = this.baseUrl + `/catalogue/${UBLModelUtils.getPartyId(party)}/pagination/default?limit=${limit}&offset=${offset}`;
+            let url = this.baseUrl + `/catalogue/${UBLModelUtils.getPartyId(party)}/pagination/${catalogueId}?limit=${limit}&offset=${offset}`;
             // if there is a selected category to filter the results, then add it to the url
             if(categoryName){
                 url += `&categoryName=${categoryName}`;

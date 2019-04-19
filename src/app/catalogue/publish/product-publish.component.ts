@@ -176,6 +176,12 @@ export class ProductPublishComponent implements OnInit {
             if(this.publishingGranularity == null) {
                 this.publishingGranularity = 'single';
             }
+
+            let catalogueId = params['cat'];
+            if(catalogueId != null){
+                this.selectedCatalogue = catalogueId;
+            }
+
             //set product type
             this.productType = params["productType"] === "transportation" ? "transportation" : "product";
             this.isLogistics = (this.productType === "transportation");
