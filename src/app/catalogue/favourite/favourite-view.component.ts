@@ -438,7 +438,7 @@ export class FavouriteViewComponent implements OnInit {
 		for(let result of searchResults) {
 			let productImages: string[] = result.imgageUri;
 			if(productImages != null && productImages.length > 0) {
-				imageMap[result.uri] = productImages[0];
+				imageMap[result.uri] = productImages;
 			}
 		}
 

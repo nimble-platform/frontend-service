@@ -33,7 +33,7 @@
                     <div class="row" *ngIf="!catalogueLineView[catLine.localName]" (click)="viewCatalogueLine(catLine,i); $event.stopPropagation();">
                         <div class="col-2">
                             <div style="text-align:center">
-                                <img src="{{imageMap[catLine.uri]}}" class="thumb" onerror="this.src='assets/empty_img.png';"/>
+                                <img src="{{imageMap[catLine.uri]}}" class="thumb" style="max-height: 5rem;max-width: 100%;" onerror="this.src='assets/empty_img.png';"/>
                             </div>
                         </div>
                         <div class="col-10 d-flex justify-content-between">
