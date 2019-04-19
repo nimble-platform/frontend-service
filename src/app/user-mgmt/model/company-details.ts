@@ -7,7 +7,7 @@ export class CompanyDetails {
       public businessType: string,
       public legalName: {},
       public brandName: {},
-      public industrySectors: string[],
+      public industrySectors: {},
       public vatNumber: string,
       public verificationInformation: string,
       public yearOfCompanyRegistration: number

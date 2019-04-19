@@ -10,6 +10,9 @@
     <text-input presentationMode="view" label="Company Name"
                 [text]="selectValueOfTextObject(details.details.legalName)" labelClass="col-4" valueClass="col-8">
     </text-input>
+    <text-input presentationMode="view" label="Trade Name"
+                [text]="selectValueOfTextObject(details.details.brandName)" labelClass="col-4" valueClass="col-8">
+    </text-input>
     <text-input presentationMode="view" label="VAT Number"
         [text]="details.details.vatNumber" labelClass="col-4" valueClass="col-8">
     </text-input>
@@ -17,7 +20,7 @@
         [text]="details.details.businessType" labelClass="col-4" valueClass="col-8">
     </text-input>
     <text-input presentationMode="view" label="Activity Sectors"
-        [text]="details.details.industrySectors[0]" labelClass="col-4" valueClass="col-8">
+        [text]="selectValueOfTextObject(details.details.industrySectors)" labelClass="col-4" valueClass="col-8">
     </text-input>
     <text-input presentationMode="view" label="Business Keywords"
         [text]="selectValueOfTextObject(details.details.businessKeywords)" labelClass="col-4" valueClass="col-8">
@@ -26,7 +29,7 @@
         [text]="details.details.yearOfCompanyRegistration" labelClass="col-4" valueClass="col-8">
     </text-input>
     <text-input presentationMode="view" label="Company Description"
-        [text]="details.description.companyStatement" labelClass="col-4" valueClass="col-8">
+        [text]="selectValueOfTextObject(details.description.companyStatement)" labelClass="col-4" valueClass="col-8">
     </text-input>
     <text-input presentationMode="view" label="Website"
         [text]="details.description.website" labelClass="col-4" valueClass="col-8">
