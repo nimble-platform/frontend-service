@@ -77,6 +77,22 @@ export class CatalogueViewComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.searchText = "";
+        this.deleteStatuses = [];
+        this.catalogueText = "";
+        this.sortOption = null;
+        this.cataloguesIds = [];
+        this.catlogueId = "default";
+        this.selectedCatalogue = "default";
+        this.catalogueLinesWRTTypes = [];
+        this.catalogueLinesArray = [];
+        this.categoryNames = [];
+        this.selectedCategory = "All";
+        this.collectionSize = 0;
+        this.page = 1;
+        this.pageSize = 10;
+        this.addCatalogue = false;
+        this.catalogueLineView = {};
         this.getCatagloueIdsForParty();
         this.catalogueService.setEditMode(false);
         this.requestCatalogue();
@@ -156,7 +172,7 @@ export class CatalogueViewComponent implements OnInit {
 
             this.catalogueService.deleteCatalogue().then(res => {
                     this.callStatus.reset();
-                    window.location.reload();
+                    this.ngOnInit();
                 },
                 error => {
                     this.callStatus.error("Failed to delete catalogue", error);
@@ -173,11 +189,11 @@ export class CatalogueViewComponent implements OnInit {
         // add catalogue line to the end of catalogue
         this.catalogueService.postCatalogue(catalogue)
             .then(() =>
-            { 
+            {
                 this.catalogueText = "";
                 this.cancelAddingCatalogue();
-                window.location.reload();
-                
+                this.ngOnInit();
+
             })
             .catch(err => {
             })
