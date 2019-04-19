@@ -139,28 +139,63 @@ export class UBLModelUtils {
         return catalogueLine;
     }
 
-    public static createCatalogueLinesForLogistics(catalogueUuid:string, providerParty: Party, settings: CompanyNegotiationSettings,logisticCategories: Category[]): CatalogueLine[]{
-        let logisticCatalogueLines: CatalogueLine[] = [];
-        // create 10 catalogue lines
-        for(let i=0; i < 10;i++){
-            // create the catalogue line
-            let catalogueLine = this.createCatalogueLine(catalogueUuid,providerParty,settings);
-            // add item name and descriptions
-            let newItemName: Text = new Text("",DEFAULT_LANGUAGE());
-            let newItemDescription: Text = new Text("",DEFAULT_LANGUAGE());
-            catalogueLine.goodsItem.item.name.push(newItemName);
-            catalogueLine.goodsItem.item.description.push(newItemDescription);
-            // add additional item properties
-            catalogueLine.goodsItem.item.additionalItemProperty = this.createItemPropertiesForLogistics(i);
-            // create additional item properties to handle product type, industry specialization and origin address
-            catalogueLine.goodsItem.item.additionalItemProperty.push(this.createProductTypeAdditionalItemProperty());
-            catalogueLine.goodsItem.item.additionalItemProperty.push(this.createIndustrySpecializationAdditionalItemProperty());
-            catalogueLine.goodsItem.item.additionalItemProperty.push(this.createOriginAddressAdditionalItemProperty());
-            // add its default category
-            catalogueLine.goodsItem.item.commodityClassification.push(this.createCommodityClassification(this.getCorrespondingCategory(i,logisticCategories)));
-            // push it to the list
-            logisticCatalogueLines.push(catalogueLine);
+    public static createCatalogueLinesForLogistics(catalogueUuid:string, providerParty: Party, settings: CompanyNegotiationSettings,logisticRelatedServices, eClassLogisticCategories:Category[],furnitureOntologyLogisticCategories:Category[]): Map<string,CatalogueLine>{
+        let logisticCatalogueLines: Map<string,CatalogueLine> = new Map<string, CatalogueLine>();
+        // if we have furniture ontology categories for logistics services,then use them. Otherwise, use eClass categories to create logistics services.
+        if(furnitureOntologyLogisticCategories){
+            let furnitureOntologyLogisticRelatedServices = logisticRelatedServices["FurnitureOntology"];
+            // for each service type, create a catalogue line
+            for(let serviceType of Object.keys(furnitureOntologyLogisticRelatedServices)){
+                // create the catalogue line
+                let catalogueLine = this.createCatalogueLine(catalogueUuid,providerParty,settings);
+                // add item name and descriptions
+                let newItemName: Text = new Text("",DEFAULT_LANGUAGE());
+                let newItemDescription: Text = new Text("",DEFAULT_LANGUAGE());
+                catalogueLine.goodsItem.item.name.push(newItemName);
+                catalogueLine.goodsItem.item.description.push(newItemDescription);
+                // add additional item properties
+                catalogueLine.goodsItem.item.additionalItemProperty = this.createItemPropertiesForLogistics(serviceType);
+                // create additional item properties to handle product type, industry specialization and origin address
+                catalogueLine.goodsItem.item.additionalItemProperty.push(this.createProductTypeAdditionalItemProperty());
+                catalogueLine.goodsItem.item.additionalItemProperty.push(this.createIndustrySpecializationAdditionalItemProperty());
+                catalogueLine.goodsItem.item.additionalItemProperty.push(this.createOriginAddressAdditionalItemProperty());
+                // add its default category
+                catalogueLine.goodsItem.item.commodityClassification.push(this.createCommodityClassification(this.getCorrespondingCategory(furnitureOntologyLogisticRelatedServices[serviceType],furnitureOntologyLogisticCategories)));
+                // push it to the list
+                logisticCatalogueLines.set(serviceType,catalogueLine);
+            }
+        } else if(eClassLogisticCategories){
+            let eClassLogisticRelatedServices = logisticRelatedServices["eClass"];
+            // for each service type, create a catalogue line
+            for(let serviceType of Object.keys(eClassLogisticRelatedServices)){
+                // create the catalogue line
+                let catalogueLine = this.createCatalogueLine(catalogueUuid,providerParty,settings);
+                // add item name and descriptions
+                let newItemName: Text = new Text("",DEFAULT_LANGUAGE());
+                let newItemDescription: Text = new Text("",DEFAULT_LANGUAGE());
+                catalogueLine.goodsItem.item.name.push(newItemName);
+                catalogueLine.goodsItem.item.description.push(newItemDescription);
+                // add additional item properties
+                catalogueLine.goodsItem.item.additionalItemProperty = this.createItemPropertiesForLogistics(serviceType);
+                // create additional item properties to handle product type, industry specialization and origin address
+                catalogueLine.goodsItem.item.additionalItemProperty.push(this.createProductTypeAdditionalItemProperty());
+                catalogueLine.goodsItem.item.additionalItemProperty.push(this.createIndustrySpecializationAdditionalItemProperty());
+                catalogueLine.goodsItem.item.additionalItemProperty.push(this.createOriginAddressAdditionalItemProperty());
+                // add its default category
+                catalogueLine.goodsItem.item.commodityClassification.push(this.createCommodityClassification(this.getCorrespondingCategory(eClassLogisticRelatedServices[serviceType],eClassLogisticCategories)));
+                // push it to the list
+                logisticCatalogueLines.set(serviceType,catalogueLine);
+            }
         }
+        // create a dummy catalogue line to represent transport services
+        let catalogueLine = this.createCatalogueLine(catalogueUuid,providerParty,settings);
+        // create additional item properties to handle product type, industry specialization and origin address
+        catalogueLine.goodsItem.item.additionalItemProperty.push(this.createProductTypeAdditionalItemProperty());
+        catalogueLine.goodsItem.item.additionalItemProperty.push(this.createIndustrySpecializationAdditionalItemProperty());
+        catalogueLine.goodsItem.item.additionalItemProperty.push(this.createOriginAddressAdditionalItemProperty());
+        // push it to the list
+        logisticCatalogueLines.set("TRANSPORT",catalogueLine);
+
         return logisticCatalogueLines;
     }
 
@@ -182,41 +217,7 @@ export class UBLModelUtils {
         return industrySpecialization;
     }
 
-    private static getCorrespondingCategory(index,logisticCategories:Category[]){
-        let categoryUri;
-        switch (index) {
-            case 0:
-                categoryUri = "http://www.nimble-project.org/resource/eclass#0173-1#01-AGD951#001";
-                break;
-            case 1:
-                categoryUri = "http://www.nimble-project.org/resource/eclass#0173-1#01-AGD936#001";
-                break;
-            case 2:
-                categoryUri = "http://www.nimble-project.org/resource/eclass#0173-1#01-AGD954#001";
-                break;
-            case 3:
-                categoryUri = "http://www.nimble-project.org/resource/eclass#0173-1#01-AGD963#001";
-                break;
-            case 4:
-                categoryUri = "http://www.nimble-project.org/resource/eclass#0173-1#01-AGD971#001";
-                break;
-            case 5:
-                categoryUri = "http://www.nimble-project.org/resource/eclass#0173-1#01-AGD948#001";
-                break;
-            case 6:
-                categoryUri = "http://www.nimble-project.org/resource/eclass#0173-1#01-AGE137#001";
-                break;
-            case 7:
-                categoryUri = "http://www.nimble-project.org/resource/eclass#0173-1#01-AGD955#001";
-                break;
-            case 8:
-                categoryUri = "http://www.nimble-project.org/resource/eclass#0173-1#01-AGD945#001";
-                break;
-            case 9:
-                categoryUri = "http://www.nimble-project.org/resource/eclass#0173-1#01-AGD957#001";
-                break;
-        }
-
+    private static getCorrespondingCategory(categoryUri,logisticCategories:Category[]){
         for(let category of logisticCategories){
             if(category.id == categoryUri){
                 return category;
@@ -224,56 +225,56 @@ export class UBLModelUtils {
         }
     }
 
-    public static createItemPropertiesForLogistics(index:number){
+    public static createItemPropertiesForLogistics(serviceType:string){
 
-        if(index == 0){
+        if(serviceType == "ROADTRANSPORT"){
             let roadTruckLoadItemProperty = this.createAdditionalItemProperty(null,null);
             roadTruckLoadItemProperty.name.push(new Text("Truck load"));
             let roadShipmentTypeItemProperty = this.createAdditionalItemProperty(null,null);
             roadShipmentTypeItemProperty.name.push(new Text("Shipment type"));
             return [roadShipmentTypeItemProperty,roadTruckLoadItemProperty];
         }
-        else if(index == 1){
+        else if(serviceType == "MARITIMETRANSPORT"){
             let maritimeItemProperty = this.createAdditionalItemProperty(null,null);
             maritimeItemProperty.name.push(new Text("Maritime"));
             return [maritimeItemProperty];
         }
-        else if(index == 2){
+        else if(serviceType == "AIRTRANSPORT"){
             let airItemProperty = this.createAdditionalItemProperty(null,null);
             airItemProperty.name.push(new Text("Air"));
             return [airItemProperty];
         }
-        else if(index == 3){
+        else if(serviceType == "RAILTRANSPORT"){
             let railItemProperty = this.createAdditionalItemProperty(null,null);
             railItemProperty.name.push(new Text("Rail"));
             return [railItemProperty];
         }
-        else if(index == 4){
+        else if(serviceType == "WAREHOUSING"){
             let warehousingItemProperty = this.createAdditionalItemProperty(null,null);
             warehousingItemProperty.name.push(new Text("Warehousing"));
             return [warehousingItemProperty];
         }
-        else if(index == 5){
+        else if(serviceType == "ORDERPICKING"){
             let orderPickingItemProperty = this.createAdditionalItemProperty(null,null);
             orderPickingItemProperty.name.push(new Text("Order picking"));
             return [orderPickingItemProperty];
         }
-        else if(index == 6){
+        else if(serviceType == "REVERSELOGISTICS"){
             let reverseLogisticsItemProperty = this.createAdditionalItemProperty(null,null);
             reverseLogisticsItemProperty.name.push(new Text("Reverse logistics"));
             return [reverseLogisticsItemProperty];
         }
-        else if(index == 7){
+        else if(serviceType == "INHOUSESERVICES"){
             let inHouseServicesItemProperty = this.createAdditionalItemProperty(null,null);
             inHouseServicesItemProperty.name.push(new Text("In-house services"));
             return [inHouseServicesItemProperty];
         }
-        else if(index == 8){
+        else if(serviceType == "CUSTOMSMANAGEMENT"){
             let customsManagementItemProperty = this.createAdditionalItemProperty(null,null);
             customsManagementItemProperty.name.push(new Text("Customs management"));
             return [customsManagementItemProperty];
         }
-        else if(index == 9){
+        else if(serviceType == "LOGISTICSCONSULTANCY"){
             let logisticsConsultancyItemProperty = this.createAdditionalItemProperty(null,null);
             logisticsConsultancyItemProperty.name.push(new Text("Logistics consultancy"));
             return [logisticsConsultancyItemProperty];

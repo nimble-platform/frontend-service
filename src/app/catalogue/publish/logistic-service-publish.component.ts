@@ -23,6 +23,7 @@ import {Text} from '../model/publish/text';
 import {Address} from '../model/publish/address';
 import {TransportationService} from '../model/publish/transportation-service';
 import {Catalogue} from '../model/publish/catalogue';
+import * as myGlobals from '../../globals';
 
 @Component({
     selector: "logistic-service-publish",
@@ -40,6 +41,7 @@ export class LogisticServicePublishComponent implements OnInit {
                 private cookieService: CookieService) {
     }
 
+    config = myGlobals.config;
     // check whether product id conflict exists or not
     sameIdError = false;
     // the value of the erroneousID
@@ -62,40 +64,48 @@ export class LogisticServicePublishComponent implements OnInit {
 
     callStatus: CallStatus = new CallStatus();
 
-    // logistic categories
-    private logisticCategoryIds = "0173-1#01-AGD951#001,0173-1#01-AGD936#001,0173-1#01-AGD954#001,0173-1#01-AGD963#001,0173-1#01-AGD971#001,0173-1#01-AGD948#001,0173-1#01-AGE137#001,0173-1#01-AGD955#001,0173-1#01-AGD945#001,0173-1#01-AGD957#001";
-    private logisticCategoryTaxonomyIds = "eClass,eClass,eClass,eClass,eClass,eClass,eClass,eClass,eClass,eClass";
-    // tabs
-    selectedTabSinglePublish: "ROAD"| "MARITIME" | "AIR" | "RAIL" | "WAREHOUSING" | "CUSTOMSMANAGEMENT" | "INHOUSESERVICES" | "REVERSELOGISTICS" | "ORDERPICKING" | "DELIVERY_TRADING" | "PRICE" | "CERTIFICATES" | "TRACK_TRACE" | "LCPA" | "TRANSPORT" | "LOGISTICSCONSULTANCY" = "TRANSPORT";
-    // whether we need to show available tabs or not
+    // selected tab
+    selectedTabSinglePublish = "TRANSPORT";
+    // whether we need to show all tabs or not
     singleTabForLogisticServices = false;
-    // variables used in 'create' mode
-    logisticCatalogueLineIndexMap:Map<string,number[]> = new Map<string, number[]>();
-    // publish mode of each logistic service
-    logisticPublishMode:string[] = [];
-    logisticCatalogueLines: CatalogueLine[] = null;
-
+    // publish mode of each logistic services
+    logisticPublishMode:Map<string,string> = null;
+    // catalogue lines of each logistic services
+    logisticCatalogueLines: Map<string,CatalogueLine> = null;
+    // this is the object which is taken from the catalog service and it gives us the logistic service-category uri pairs for each taxonomy id
+    logisticRelatedServices = null;
+    // available logistics services
+    availableLogisticsServices = [];
     dialogBox = true;
 
     ngOnInit() {
         const userId = this.cookieService.get("user_id");
         this.callStatus.submit();
-        this.userService.getUserParty(userId).then(party => {
+
+        Promise.all([
+            this.userService.getUserParty(userId),
+            this.categoryService.getLogisticRelatedServices(this.config.standardTaxonomy)
+        ]).then(([party, logisticRelatedServices]) => {
+            this.logisticRelatedServices = logisticRelatedServices;
+            let keys = Object.keys(this.logisticRelatedServices);
+            // get category uris for logistic services
+            let eClassCategoryUris = keys.indexOf("eClass") != -1 ? this.getCategoryUrisForTaxonomyId("eClass"): null;
+            let furnitureOntologyCategoryUris = keys.indexOf("FurnitureOntology") != -1 ?this.getCategoryUrisForTaxonomyId("FurnitureOntology"): null;
             return Promise.all([
                 Promise.resolve(party),
                 this.catalogueService.getCatalogueResponse(userId),
                 this.userService.getCompanyNegotiationSettingsForParty(UBLModelUtils.getPartyId(party)),
-                this.categoryService.getCategoriesForIds(this.logisticCategoryTaxonomyIds,this.logisticCategoryIds)
-            ])
-        })
-            .then(([party, catalogueResponse, settings, logisticCategories]) => {
-                this.initView(party, catalogueResponse, settings,logisticCategories);
+                eClassCategoryUris ? this.categoryService.getCategoriesForIds(new Array(eClassCategoryUris.length).fill("eClass"),eClassCategoryUris): Promise.resolve(null),
+                furnitureOntologyCategoryUris ? this.categoryService.getCategoriesForIds(new Array(furnitureOntologyCategoryUris.length).fill("FurnitureOntology"),furnitureOntologyCategoryUris): Promise.resolve(null)
+            ]).then(([party, catalogueResponse, settings,eClassLogisticCategories,furnitureOntologyLogisticCategories]) => {
+                this.initView(party, catalogueResponse, settings,eClassLogisticCategories,furnitureOntologyLogisticCategories);
                 this.publishStateService.publishingStarted = true;
                 this.callStatus.callback("Successfully initialized.", true);
             })
-            .catch(error => {
-                this.callStatus.error("Error while initializing the publish view.", error);
-            });
+                .catch(error => {
+                    this.callStatus.error("Error while initializing the publish view.", error);
+                });
+        });
 
         this.route.queryParams.subscribe((params: Params) => {
             // handle publishing granularity: single, bulk, null
@@ -106,18 +116,29 @@ export class LogisticServicePublishComponent implements OnInit {
         });
     }
 
-    populateLogisticCatalogueLinesMap(){
-        this.logisticCatalogueLineIndexMap.set("TRANSPORT",[0,1,2,3]);
-        this.logisticCatalogueLineIndexMap.set("WAREHOUSING",[4]);
-        this.logisticCatalogueLineIndexMap.set("ORDERPICKING",[5]);
-        this.logisticCatalogueLineIndexMap.set("REVERSELOGISTICS",[6]);
-        this.logisticCatalogueLineIndexMap.set("INHOUSESERVICES",[7]);
-        this.logisticCatalogueLineIndexMap.set("CUSTOMSMANAGEMENT",[8]);
-        this.logisticCatalogueLineIndexMap.set("LOGISTICSCONSULTANCY",[9]);
+    getCategoryUrisForTaxonomyId(taxonomyId:string){
+        let serviceCategoryUriMap = this.logisticRelatedServices[taxonomyId];
+
+        let categoryUris = [];
+        for(let key of Object.keys(serviceCategoryUriMap)){
+            categoryUris.push(serviceCategoryUriMap[key]);
+        }
+        return categoryUris;
     }
 
     populateLogisticPublishMode(){
-        this.logisticPublishMode = ['create','create','create','create','create','create','create','create','create','create'];
+        this.logisticPublishMode = new Map<string,string>();
+        for(let serviceType of this.availableLogisticsServices){
+            this.logisticPublishMode.set(serviceType,this.publishStateService.publishMode);
+        }
+    }
+
+    getServiceTypesFromLogisticsCatalogueLines(){
+        let numberOfCatalogueLines = this.logisticCatalogueLines.size;
+        let iterator = this.logisticCatalogueLines.keys();
+        for(let i=0; i<numberOfCatalogueLines;i++){
+            this.availableLogisticsServices.push(iterator.next().value);
+        }
     }
 
     // switching between tabs
@@ -156,7 +177,7 @@ export class LogisticServicePublishComponent implements OnInit {
         return true;
     }
 
-    private initView(userParty, catalogueResponse:CataloguePaginationResponse, settings, logisticCategories): void {
+    private initView(userParty, catalogueResponse:CataloguePaginationResponse, settings, eClassLogisticCategories,furnitureOntologyLogisticCategories): void {
         this.companyNegotiationSettings = settings;
         this.catalogueService.setEditMode(true);
         this.publishStateService.resetData();
@@ -183,57 +204,70 @@ export class LogisticServicePublishComponent implements OnInit {
             this.singleTabForLogisticServices = true;
 
             this.selectedTabSinglePublish = this.getSelectedTabForLogisticServices();
+            this.availableLogisticsServices.push(this.selectedTabSinglePublish);
 
         } else {
             // new publishing is the first entry to the publishing page
             // i.e. publishing from scratch
             if (this.publishStateService.publishingStarted == false) {
-                this.logisticCatalogueLines = UBLModelUtils.createCatalogueLinesForLogistics(catalogueResponse.catalogueUuid, userParty, settings, logisticCategories);
-                this.populateLogisticCatalogueLinesMap();
+                this.logisticCatalogueLines = UBLModelUtils.createCatalogueLinesForLogistics(catalogueResponse.catalogueUuid, userParty, settings, this.logisticRelatedServices, eClassLogisticCategories,furnitureOntologyLogisticCategories);
+                this.getServiceTypesFromLogisticsCatalogueLines();
                 this.populateLogisticPublishMode();
             }
         }
     }
 
     // getters
-    getLogisticCatalogueLine(index:number):CatalogueLine{
+    getLogisticCatalogueLine(serviceType:string):CatalogueLine{
         if(this.publishMode == 'create'){
-            return this.logisticCatalogueLines[index];
+            return this.logisticCatalogueLines.get(serviceType);
         }
         return this.catalogueLine;
     }
 
     private getSelectedTabForLogisticServices(){
+        let serviceCategoryMap;
+        if(this.config.standardTaxonomy == "All" || this.config.standardTaxonomy == "FurnitureOntology"){
+            serviceCategoryMap = this.logisticRelatedServices["FurnitureOntology"];
+        }
+        else{
+            serviceCategoryMap = this.logisticRelatedServices["eClass"];
+        }
+
         for(let commodityClassification of this.catalogueLine.goodsItem.item.commodityClassification){
-            if(commodityClassification.itemClassificationCode.uri == "http://www.nimble-project.org/resource/eclass#0173-1#01-AGD951#001")
-                return "ROAD";
-            else if(commodityClassification.itemClassificationCode.uri == "http://www.nimble-project.org/resource/eclass#0173-1#01-AGD936#001")
-                return "MARITIME";
-            else if(commodityClassification.itemClassificationCode.uri == "http://www.nimble-project.org/resource/eclass#0173-1#01-AGD954#001")
-                return "AIR";
-            else if(commodityClassification.itemClassificationCode.uri == "http://www.nimble-project.org/resource/eclass#0173-1#01-AGD963#001")
-                return "RAIL";
-            else if(commodityClassification.itemClassificationCode.uri == "http://www.nimble-project.org/resource/eclass#0173-1#01-AGD971#001")
-                return "WAREHOUSING";
-            else if(commodityClassification.itemClassificationCode.uri == "http://www.nimble-project.org/resource/eclass#0173-1#01-AGD948#001")
-                return "ORDERPICKING";
-            else if(commodityClassification.itemClassificationCode.uri == "http://www.nimble-project.org/resource/eclass#0173-1#01-AGE137#001")
-                return "REVERSELOGISTICS";
-            else if(commodityClassification.itemClassificationCode.uri == "http://www.nimble-project.org/resource/eclass#0173-1#01-AGD955#001")
-                return "INHOUSESERVICES";
-            else if(commodityClassification.itemClassificationCode.uri == "http://www.nimble-project.org/resource/eclass#0173-1#01-AGD945#001")
-                return "CUSTOMSMANAGEMENT";
-            else if(commodityClassification.itemClassificationCode.uri == "http://www.nimble-project.org/resource/eclass#0173-1#01-AGD957#001")
-                return "LOGISTICSCONSULTANCY";
+            let serviceTypes = Object.keys(serviceCategoryMap);
+            for(let serviceType of serviceTypes){
+                if(commodityClassification.itemClassificationCode.uri == serviceCategoryMap[serviceType]){
+                    return serviceType;
+                }
+            }
         }
     }
 
-    getBinaryObjectsForLogisticService(index:number){
+
+    getButtonLabel(serviceType:string,exit:boolean = false){
+        if(this.publishStateService.publishMode === "edit")
+            return exit ? "Save & Exit" : "Save & Continue";
+        else if(this.publishStateService.publishMode === "copy")
+            return exit ? "Publish & Exit" : "Publish & Continue";
+
+        if(serviceType == "TRANSPORT"){
+            if(this.logisticPublishMode.get('ROADTRANSPORT') === 'edit' || this.logisticPublishMode.get('MARITIMETRANSPORT') === 'edit' || this.logisticPublishMode.get('AIRTRANSPORT') === 'edit' || this.logisticPublishMode.get('RAILTRANSPORT') === 'edit')
+                return exit ? "Save & Exit" : "Save & Continue";
+        }
+        else if(this.logisticPublishMode.get(serviceType) === 'edit')
+            return exit ? "Save & Exit" : "Save & Continue";
+
+        return exit ? "Publish & Exit" : "Publish & Continue";
+    }
+
+
+    getBinaryObjectsForLogisticService(serviceType:string){
         let binaryObjects:BinaryObject[] = [];
 
 
         if(this.publishStateService.publishMode == 'create'){
-            binaryObjects = this.logisticCatalogueLines[index].goodsItem.item.itemSpecificationDocumentReference.map(doc => doc.attachment.embeddedDocumentBinaryObject)
+            binaryObjects = this.logisticCatalogueLines.get(serviceType).goodsItem.item.itemSpecificationDocumentReference.map(doc => doc.attachment.embeddedDocumentBinaryObject)
         } else{
             binaryObjects = this.catalogueLine.goodsItem.item.itemSpecificationDocumentReference.map(doc => doc.attachment.embeddedDocumentBinaryObject)
         }
@@ -241,8 +275,8 @@ export class LogisticServicePublishComponent implements OnInit {
         return binaryObjects;
     }
 
-    getProductTypeForLogistic(index:number){
-        let item:Item = this.getLogisticCatalogueLine(index).goodsItem.item;
+    getProductTypeForLogistic(serviceType:string){
+        let item:Item = this.getLogisticCatalogueLine(serviceType).goodsItem.item;
         for(let itemProperty of item.additionalItemProperty){
             if(itemProperty.name[0].value == "Product Type"){
                 return itemProperty.value;
@@ -254,8 +288,8 @@ export class LogisticServicePublishComponent implements OnInit {
         return itemProperty.value;
     }
 
-    getIndustrySpecializationForLogistics(index:number){
-        let item:Item = this.getLogisticCatalogueLine(index).goodsItem.item;
+    getIndustrySpecializationForLogistics(serviceType:string){
+        let item:Item = this.getLogisticCatalogueLine(serviceType).goodsItem.item;
         for(let itemProperty of item.additionalItemProperty){
             if(itemProperty.name[0].value == "Industry Specialization"){
                 return itemProperty.value;
@@ -267,8 +301,8 @@ export class LogisticServicePublishComponent implements OnInit {
         return itemProperty.value;
     }
 
-    getOriginAddressForLogistics(index:number){
-        let item:Item = this.getLogisticCatalogueLine(index).goodsItem.item;
+    getOriginAddressForLogistics(serviceType:string){
+        let item:Item = this.getLogisticCatalogueLine(serviceType).goodsItem.item;
         for(let itemProperty of item.additionalItemProperty){
             if(itemProperty.name[0].value == "Origin Address"){
                 return itemProperty.value;
@@ -280,12 +314,12 @@ export class LogisticServicePublishComponent implements OnInit {
         return itemProperty.value;
     }
 
-    getDefaultPropertyForLogistics(index:number,propertyName:string = null){
-        let item:Item = this.getLogisticCatalogueLine(index).goodsItem.item;
+    getDefaultPropertyForLogistics(serviceType:string,propertyName:string = null){
+        let item:Item = this.getLogisticCatalogueLine(serviceType).goodsItem.item;
 
         let itemProperty:ItemProperty = null;
         for(let ip of item.additionalItemProperty){
-            if(ip.name[0].value != "Industry Specialization" && ip.name[0].value != "Product Type"){
+            if(ip.name[0].value != "Industry Specialization" && ip.name[0].value != "Product Type" && ip.name[0].value != "Origin Address"){
                 if(propertyName && ip.name[0].value == propertyName){
                     return ip.value;
                 } else{
@@ -298,7 +332,7 @@ export class LogisticServicePublishComponent implements OnInit {
             return itemProperty.value;
         }
 
-        let itemProperties = UBLModelUtils.createItemPropertiesForLogistics(index);
+        let itemProperties = UBLModelUtils.createItemPropertiesForLogistics(serviceType);
 
         for(let itemProperty of itemProperties){
             item.additionalItemProperty.push(itemProperty);
@@ -307,24 +341,24 @@ export class LogisticServicePublishComponent implements OnInit {
         return itemProperties[0].value;
     }
     // methods to select/unselect files for Transport logistic services
-    onSelectFileForLogisticService(binaryObject: BinaryObject,index:number){
+    onSelectFileForLogisticService(binaryObject: BinaryObject,serviceType:string){
         const document: DocumentReference = new DocumentReference();
         const attachment: Attachment = new Attachment();
         attachment.embeddedDocumentBinaryObject = binaryObject;
         document.attachment = attachment;
 
         if(this.publishStateService.publishMode == 'create'){
-            this.logisticCatalogueLines[index].goodsItem.item.itemSpecificationDocumentReference.push(document);
+            this.logisticCatalogueLines.get(serviceType).goodsItem.item.itemSpecificationDocumentReference.push(document);
         } else{
             this.catalogueLine.goodsItem.item.itemSpecificationDocumentReference.push(document);
         }
     }
 
-    onUnSelectFileForLogisticService(binaryObject: BinaryObject, index:number){
+    onUnSelectFileForLogisticService(binaryObject: BinaryObject, serviceType:string){
         if(this.publishStateService.publishMode == 'create'){
-            const i = this.logisticCatalogueLines[index].goodsItem.item.itemSpecificationDocumentReference.findIndex(doc => doc.attachment.embeddedDocumentBinaryObject === binaryObject);
+            const i = this.logisticCatalogueLines.get(serviceType).goodsItem.item.itemSpecificationDocumentReference.findIndex(doc => doc.attachment.embeddedDocumentBinaryObject === binaryObject);
             if(i >= 0) {
-                this.logisticCatalogueLines[i].goodsItem.item.itemSpecificationDocumentReference.splice(i, 1);
+                this.logisticCatalogueLines.get(serviceType).goodsItem.item.itemSpecificationDocumentReference.splice(i, 1);
             }
 
         } else{
@@ -338,9 +372,29 @@ export class LogisticServicePublishComponent implements OnInit {
     // methods used to validate catalogue lines
     isValidCatalogueLineForLogistics(): boolean {
         if(this.publishMode == 'create'){
-            let indexes:number[] = this.logisticCatalogueLineIndexMap.get(this.selectedTabSinglePublish);
-            for(let index of indexes){
-                if(this.itemHasName(this.logisticCatalogueLines[index].goodsItem.item)){
+            if(this.selectedTabSinglePublish == 'TRANSPORT'){
+                if(this.logisticCatalogueLines.has("ROADTRANSPORT")){
+                    if(this.itemHasName(this.logisticCatalogueLines.get("ROADTRANSPORT").goodsItem.item)){
+                        return true;
+                    }
+                }
+                if(this.logisticCatalogueLines.has("MARITIMETRANSPORT")){
+                    if(this.itemHasName(this.logisticCatalogueLines.get("MARITIMETRANSPORT").goodsItem.item)){
+                        return true;
+                    }
+                }
+                if(this.logisticCatalogueLines.has("AIRTRANSPORT")){
+                    if(this.itemHasName(this.logisticCatalogueLines.get("AIRTRANSPORT").goodsItem.item)){
+                        return true;
+                    }
+                }
+                if(this.logisticCatalogueLines.has("RAILTRANSPORT")){
+                    if(this.itemHasName(this.logisticCatalogueLines.get("RAILTRANSPORT").goodsItem.item)){
+                        return true;
+                    }
+                }
+            }else{
+                if(this.itemHasName(this.logisticCatalogueLines.get(this.selectedTabSinglePublish).goodsItem.item)){
                     return true;
                 }
             }
@@ -420,9 +474,9 @@ export class LogisticServicePublishComponent implements OnInit {
     }
 
     private copyMissingAdditionalItemPropertiesAndAddresses(catalogueLine:CatalogueLine){
-        let productType = this.getProductTypeForLogistic(0);
-        let industrySpecialization = this.getIndustrySpecializationForLogistics(0);
-        let originAddress = this.getOriginAddressForLogistics(0);
+        let productType = this.getProductTypeForLogistic('TRANSPORT');
+        let industrySpecialization = this.getIndustrySpecializationForLogistics('TRANSPORT');
+        let originAddress = this.getOriginAddressForLogistics('TRANSPORT');
         for(let itemProperty of catalogueLine.goodsItem.item.additionalItemProperty){
             if(itemProperty.name[0].value == "Product Type"){
                 itemProperty.value = productType;
@@ -435,7 +489,7 @@ export class LogisticServicePublishComponent implements OnInit {
             }
         }
         // destination address
-        for(let address of this.logisticCatalogueLines[0].requiredItemLocationQuantity.applicableTerritoryAddress){
+        for(let address of this.logisticCatalogueLines.get("TRANSPORT").requiredItemLocationQuantity.applicableTerritoryAddress){
             let country:Country = null;
             if(address.country.name){
                 country = new Country(new Text(address.country.name.value));
@@ -454,8 +508,6 @@ export class LogisticServicePublishComponent implements OnInit {
 
             // remove unused properties from catalogueLine
             const splicedCatalogueLine: CatalogueLine = this.removeEmptyProperties(this.catalogueLine);
-            // nullify the transportation service details if a regular product is being published
-            this.checkProductNature(splicedCatalogueLine);
 
             if(this.publishStateService.publishMode === 'edit'){
                 // update existing service
@@ -467,25 +519,42 @@ export class LogisticServicePublishComponent implements OnInit {
             }
         }
         else{
-            let indexes:number[] = this.logisticCatalogueLineIndexMap.get(this.selectedTabSinglePublish);
-            if(indexes.length > 1){
-
-                this.copyMissingAdditionalItemPropertiesAndAddresses(this.logisticCatalogueLines[indexes[1]]);
-                this.copyMissingAdditionalItemPropertiesAndAddresses(this.logisticCatalogueLines[indexes[2]]);
-                this.copyMissingAdditionalItemPropertiesAndAddresses(this.logisticCatalogueLines[indexes[3]]);
+            if(this.selectedTabSinglePublish == "TRANSPORT"){
+                let transportServiceCatalogueLines:CatalogueLine[] = [];
+                let transportServicePublishModes:string[] = [];
+                if(this.logisticCatalogueLines.has("ROADTRANSPORT")){
+                    this.copyMissingAdditionalItemPropertiesAndAddresses(this.logisticCatalogueLines.get("ROADTRANSPORT"));
+                    transportServiceCatalogueLines.push(this.logisticCatalogueLines.get("ROADTRANSPORT"));
+                    transportServicePublishModes.push(this.logisticPublishMode.get("ROADTRANSPORT"));
+                }
+                if(this.logisticCatalogueLines.has("MARITIMETRANSPORT")){
+                    this.copyMissingAdditionalItemPropertiesAndAddresses(this.logisticCatalogueLines.get("MARITIMETRANSPORT"));
+                    transportServiceCatalogueLines.push(this.logisticCatalogueLines.get("MARITIMETRANSPORT"));
+                    transportServicePublishModes.push(this.logisticPublishMode.get("MARITIMETRANSPORT"));
+                }
+                if(this.logisticCatalogueLines.has("AIRTRANSPORT")){
+                    this.copyMissingAdditionalItemPropertiesAndAddresses(this.logisticCatalogueLines.get("AIRTRANSPORT"));
+                    transportServiceCatalogueLines.push(this.logisticCatalogueLines.get("AIRTRANSPORT"));
+                    transportServicePublishModes.push(this.logisticPublishMode.get("AIRTRANSPORT"));
+                }
+                if(this.logisticCatalogueLines.has("RAILTRANSPORT")){
+                    this.copyMissingAdditionalItemPropertiesAndAddresses(this.logisticCatalogueLines.get("RAILTRANSPORT"));
+                    transportServiceCatalogueLines.push(this.logisticCatalogueLines.get("RAILTRANSPORT"));
+                    transportServicePublishModes.push(this.logisticPublishMode.get("RAILTRANSPORT"));
+                }
 
                 let validCatalogueLinesToBePublished:CatalogueLine[] = [];
                 let validCatalogueLinesToBeUpdated:CatalogueLine[] = [];
 
-                for(let i = 0; i < 4 ; i++){
-                    if(this.itemHasName(this.logisticCatalogueLines[i].goodsItem.item)){
+                for(let i = 0; i < transportServiceCatalogueLines.length ; i++){
+                    if(this.itemHasName(transportServiceCatalogueLines[i].goodsItem.item)){
                         // be sure that its transportation service details is not null
-                        this.logisticCatalogueLines[i].goodsItem.item.transportationServiceDetails = new TransportationService();
+                        transportServiceCatalogueLines[i].goodsItem.item.transportationServiceDetails = new TransportationService();
 
-                        if(this.logisticPublishMode[i] == 'edit'){
-                            validCatalogueLinesToBeUpdated.push(this.logisticCatalogueLines[i]);
+                        if(transportServicePublishModes[i] == 'edit'){
+                            validCatalogueLinesToBeUpdated.push(transportServiceCatalogueLines[i]);
                         }else{
-                            validCatalogueLinesToBePublished.push(this.logisticCatalogueLines[i]);
+                            validCatalogueLinesToBePublished.push(transportServiceCatalogueLines[i]);
                         }
                     }
                 }
@@ -496,15 +565,15 @@ export class LogisticServicePublishComponent implements OnInit {
                 if(validCatalogueLinesToBeUpdated.length > 0){
                     this.saveEditedProduct(exitThePage,validCatalogueLinesToBeUpdated);
                 }
-            }
-            else{
-                if(this.logisticPublishMode[indexes[0]] === "create" || this.logisticPublishMode[indexes[0]] === "copy"){
+
+            } else{
+                if(this.logisticPublishMode.get(this.selectedTabSinglePublish) === "create" || this.logisticPublishMode.get(this.selectedTabSinglePublish) === "copy"){
                     // publish new service
-                    this.publish([this.logisticCatalogueLines[indexes[0]]], exitThePage);
+                    this.publish([this.logisticCatalogueLines.get(this.selectedTabSinglePublish)], exitThePage);
                 }
                 else{
                     // update the existing service
-                    this.saveEditedProduct(exitThePage,[this.logisticCatalogueLines[indexes[0]]]);
+                    this.saveEditedProduct(exitThePage,[this.logisticCatalogueLines.get(this.selectedTabSinglePublish)]);
                 }
             }
         }
@@ -612,18 +681,17 @@ export class LogisticServicePublishComponent implements OnInit {
 
                         if(this.publishStateService.publishMode == 'create'){
                             for(let catalogueLine of catalogueLines){
-                                for(let logisticCatalogueLine of this.logisticCatalogueLines){
-                                    if(catalogueLine.id == logisticCatalogueLine.id){
-                                        let index = this.logisticCatalogueLines.indexOf(logisticCatalogueLine);
-                                        this.logisticCatalogueLines[index] = catalogueLine;
-                                        this.logisticPublishMode[index] = 'edit';
+                                for(let serviceType of this.availableLogisticsServices){
+                                    if(catalogueLine.id == this.logisticCatalogueLines.get(serviceType).id){
+                                        this.logisticCatalogueLines.set(serviceType,this.catalogueLine);
+                                        this.logisticPublishMode.set(serviceType,'edit');
                                         break;
                                     }
                                 }
                             }
                             // be sure that each logistics catalogue line has a reference to the catalogue
-                            for(let catalogueLine of this.logisticCatalogueLines){
-                                catalogueLine.goodsItem.item.catalogueDocumentReference.id = catalogueResponse.catalogueUuid;
+                            for(let serviceType of this.availableLogisticsServices){
+                                this.logisticCatalogueLines.get(serviceType).goodsItem.item.catalogueDocumentReference.id = catalogueResponse.catalogueUuid;
                             }
                         } else{
                             // since there is only one catalogue line
@@ -651,6 +719,10 @@ export class LogisticServicePublishComponent implements OnInit {
             .catch(error => {
                 this.publishStatus.error("Error while publishing product", error);
             });
+    }
+
+    onBack() {
+        this.location.back();
     }
 
 }

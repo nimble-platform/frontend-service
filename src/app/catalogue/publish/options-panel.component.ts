@@ -57,11 +57,11 @@ export class OptionsPanelComponent implements OnInit{
             this.options = [new Text("FTL-Full truck load"),new Text("PTL-Partial truck load"),new Text("Groupage")];
         else if(this.selectedTab == "SHIPMENTTYPE")
             this.options = [new Text("Doortodoor"),new Text("Direct shipment"),new Text("Drop shipping"),new Text("Cross docking")];
-        else if(this.selectedTab == "MARITIME")
+        else if(this.selectedTab == "MARITIMETRANSPORT")
             this.options = [new Text("Full container"),new Text("Groupage")];
-        else if(this.selectedTab == "AIR")
+        else if(this.selectedTab == "AIRTRANSPORT")
             this.options = [new Text("Pallet transport"),new Text("Medium/big package transport")];
-        else if(this.selectedTab == "RAIL")
+        else if(this.selectedTab == "RAILTRANSPORT")
             this.options = [new Text("Multi-train"),new Text("Customer train"),new Text("Slot")];
         else if(this.selectedTab == "PRODUCTTYPE")
             this.options = [new Text("Pallets"),new Text("Medium/big packages"),new Text("Box/small packages"),new Text("Bulk cargo"),new Text("Liquids"),new Text("Coil"),new Text("Hazardous goods"),new Text("Stackable products"),new Text("Perishable")];

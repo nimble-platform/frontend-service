@@ -117,8 +117,40 @@ export class CategoryService {
             .catch(this.handleError);
     }
 
-    getCategoriesForIds(taxonomyIds:string,categoryIds:string): Promise<Category[]> {
-        const url = `${this.baseUrl}/categories?taxonomyIds=` + taxonomyIds + `&categoryIds=` + encodeURIComponent(categoryIds);
+    getLogisticRelatedServices(taxonomyId:string):Promise<any>{
+        const url = `${this.baseUrl}/taxonomies/${taxonomyId}/logistics-services`;
+        return this.http
+            .get(url, {headers: getAuthorizedHeaders(this.cookieService)})
+            .toPromise()
+            .then(res => {
+                return res.json();
+            })
+            .catch(this.handleError);
+    }
+
+    getCategoriesForIds(taxonomyIds:string[],categoryIds:string[]): Promise<Category[]> {
+        // create the url
+        const taxonomyIdSize = taxonomyIds.length;
+        const categoryIdSize = categoryIds.length;
+
+        let taxonomyIdsParam = "";
+        let categoryIdsParam = "";
+
+        taxonomyIds.forEach(function(value, index){
+            if (index === taxonomyIdSize-1)
+                taxonomyIdsParam += value;
+            else
+                taxonomyIdsParam += value + ",";
+        });
+
+        categoryIds.forEach(function(value, index){
+            if (index === categoryIdSize-1)
+                categoryIdsParam += value;
+            else
+                categoryIdsParam += value + ",";
+        });
+
+        const url = `${this.baseUrl}/categories?taxonomyIds=` + taxonomyIdsParam + `&categoryIds=` + encodeURIComponent(categoryIdsParam);
         return this.http
             .get(url, {headers: getAuthorizedHeaders(this.cookieService)})
             .toPromise()
