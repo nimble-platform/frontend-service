@@ -289,13 +289,13 @@ export class FavouriteViewComponent implements OnInit {
 							this.cat_levels[0].push({"name":facet_inner,"id":facet_inner,"count":count,"preferredName":selectNameFromLabelObject(categoryDisplayInfo[facet_inner].label)});
 						}
 						else if(eclass_idx%10000==0) {
-							this.cat_levels[1].push({"name":facet_inner,"id":facet_inner,"count":count,"preferredName":selectNameFromLabelObject(categoryDisplayInfo[facet_inner].label)});
+							this.cat_levels[0].push({"name":facet_inner,"id":facet_inner,"count":count,"preferredName":selectNameFromLabelObject(categoryDisplayInfo[facet_inner].label)});
 						}
 						else if(eclass_idx%100==0) {
-							this.cat_levels[2].push({"name":facet_inner,"id":facet_inner,"count":count,"preferredName":selectNameFromLabelObject(categoryDisplayInfo[facet_inner].label)});
+							this.cat_levels[0].push({"name":facet_inner,"id":facet_inner,"count":count,"preferredName":selectNameFromLabelObject(categoryDisplayInfo[facet_inner].label)});
 						}
 						else {
-							this.cat_levels[3].push({"name":facet_inner,"id":facet_inner,"count":count,"preferredName":selectNameFromLabelObject(categoryDisplayInfo[facet_inner].label)});
+							this.cat_levels[0].push({"name":facet_inner,"id":facet_inner,"count":count,"preferredName":selectNameFromLabelObject(categoryDisplayInfo[facet_inner].label)});
 						}
 					}
 				}
