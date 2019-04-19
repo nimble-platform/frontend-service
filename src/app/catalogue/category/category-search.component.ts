@@ -301,8 +301,10 @@ export class CategorySearchComponent implements OnInit {
                 this.getCategoriesStatus.callback("Retrieved category details", true);
                 if (this.categoryFilter[taxonomyId]) {
                   this.logisticsCategory = this.rootCategories.find(c => c.code === this.categoryFilter[taxonomyId].logisticsCategory);
-                  let searchIndex = this.findCategoryInArray(this.rootCategories, this.logisticsCategory);
-                  this.rootCategories.splice(searchIndex, 1);
+                  if(this.logisticsCategory != null){
+                      let searchIndex = this.findCategoryInArray(this.rootCategories, this.logisticsCategory);
+                      this.rootCategories.splice(searchIndex, 1);
+                  }
                   for (var i=0; i<this.categoryFilter[taxonomyId].hiddenCategories.length; i++) {
                       let filterCat = this.rootCategories.find(c => c.code === this.categoryFilter[taxonomyId].hiddenCategories[i]);
                       if(filterCat != null){
