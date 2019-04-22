@@ -34,6 +34,8 @@ import * as myGlobals from '../../../globals';
 })
 export class NegotiationRequestComponent implements OnInit {
 
+    CURRENCIES: string[] = CURRENCIES;
+
     line: CatalogueLine;
     rfq: RequestForQuotation;
     rfqLine: RequestForQuotationLine;
@@ -43,10 +45,6 @@ export class NegotiationRequestComponent implements OnInit {
     negotiatedPriceValue: number;
     totalPrice: number;
 
-    callStatus: CallStatus = new CallStatus();
-
-    CURRENCIES: string[] = CURRENCIES;
-
     selectedAddressValue = "";
 
     // the copy of ThreadEventMetadata of the current business process
@@ -54,6 +52,17 @@ export class NegotiationRequestComponent implements OnInit {
 
     @ViewChild(DiscountModalComponent)
     private discountModal: DiscountModalComponent;
+
+    /**
+     * View control fields
+     */
+
+    showCounterOfferTerms:boolean = false;
+    showRestOfNegotiationDetails: boolean = false;
+    showNotesAndAdditionalFiles: boolean = false;
+    showDataMonitoring: boolean = false;
+    showDeliveryAddress: boolean = false;
+    callStatus: CallStatus = new CallStatus();
 
     constructor(private bpDataService: BPDataService,
                 private bpeService:BPEService,
@@ -170,6 +179,10 @@ export class NegotiationRequestComponent implements OnInit {
             return false;
         }
         return true;
+    }
+
+    onOfferCounterTerms(): void {
+        this.showCounterOfferTerms = !this.showCounterOfferTerms;
     }
 
     /*
