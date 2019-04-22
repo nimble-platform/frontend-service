@@ -332,16 +332,16 @@ export class BPEService {
         });
     }
 
-    generateOrderTermsAndConditionsAsText(order: Order, buyerPartyId, sellerPartyId): Promise<string> {
+    getTermsAndConditions(order: Order, buyerPartyId, sellerPartyId): Promise<any>{
         const token = 'Bearer '+this.cookieService.get("bearer_token");
         const headers = new Headers({'Authorization': token});
         this.headers.keys().forEach(header => headers.append(header, this.headers.get(header)));
 
-        const url = `${this.url}/contracts/create-terms?orderId=${order.id}&sellerPartyId=${sellerPartyId}&buyerPartyId=${buyerPartyId}&incoterms=${order.orderLine[0].lineItem.deliveryTerms.incoterms == null ? "" :order.orderLine[0].lineItem.deliveryTerms.incoterms}&tradingTerms=${encodeURIComponent(JSON.stringify(this.getSelectedTradingTerms(order.paymentTerms.tradingTerms)))}`;
+        const url = `${this.url}/contracts/terms-and-conditions?orderId=${order.id}&sellerPartyId=${sellerPartyId}&buyerPartyId=${buyerPartyId}&incoterms=${order.orderLine[0].lineItem.deliveryTerms.incoterms == null ? "" :order.orderLine[0].lineItem.deliveryTerms.incoterms}&tradingTerms=${encodeURIComponent(JSON.stringify(this.getSelectedTradingTerms(order.paymentTerms.tradingTerms)))}`;
         return this.http
             .get(url, {headers: headers})
             .toPromise()
-            .then(res => res.text())
+            .then(res => res.json())
             .catch(this.handleError);
 	}
 

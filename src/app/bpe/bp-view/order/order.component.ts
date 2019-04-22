@@ -49,9 +49,6 @@ export class OrderComponent implements OnInit {
     userRole: BpUserRole;
     config = myGlobals.config;
 
-    showPreview: boolean = false;
-    termsAndConditions: string;
-
     buyerParty: Party;
     sellerParty: Party;
 
@@ -64,7 +61,6 @@ export class OrderComponent implements OnInit {
 
     initCallStatus: CallStatus = new CallStatus();
     submitCallStatus: CallStatus = new CallStatus();
-    fetchTermsAndConditionsStatus: CallStatus = new CallStatus();
     fetchDataMonitoringStatus: CallStatus = new CallStatus();
 
     // the copy of ThreadEventMetadata of the current business process
@@ -153,21 +149,6 @@ export class OrderComponent implements OnInit {
     /*
      * Event Handlers
      */
-
-    onPreviewTermsAndConditions() {
-        this.showPreview = !this.showPreview;
-
-        if(this.showPreview && !this.termsAndConditions) {
-            this.fetchTermsAndConditionsStatus.submit();
-            this.bpeService.generateOrderTermsAndConditionsAsText(this.order, UBLModelUtils.getPartyId(this.buyerParty), UBLModelUtils.getPartyId(this.sellerParty))
-            .then(text => {
-                this.fetchTermsAndConditionsStatus.callback("Successfully fetched terms and conditions", true);
-                this.termsAndConditions = text;
-            }).catch(error => {
-                this.fetchTermsAndConditionsStatus.error("Error while fetching terms and conditions", error);
-            });
-        }
-    }
 
     onBack() {
         this.location.back();

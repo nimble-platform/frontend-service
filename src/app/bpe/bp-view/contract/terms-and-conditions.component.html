@@ -1,0 +1,36 @@
+<div class="col-12">
+    <h2>
+        Terms and Conditions
+        <button class="btn btn-outline-dark" (click)="fetchTermsAndConditions()"
+                [disabled]="!order.contract || order.contract[0]?.clause.length === 0">
+            <i class="fas fa-chevron-up fa-fw fa-lg mt-2" aria-hidden="true" *ngIf="showPreview"></i>
+            <i class="fas fa-chevron-down fa-fw fa-lg mt-2" aria-hidden="true" *ngIf="!showPreview"></i>
+        </button>
+    </h2>
+</div>
+<call-status [callStatus]="callStatus"></call-status>
+<div class="col-12" *ngIf="showPreview && termsAndConditions">
+    <h4>General terms and conditions</h4>
+    <div *ngFor="let section of termsAndConditions.sections;let i=index">
+        <button class="btn btn-primary btn-outline-primary" (click)="showSection[i] = !showSection[i];setSectionText(i)">
+            {{section.name}}
+        </button>
+        <div class="card" [hidden]="!showSection[i]">
+            <div class="card-header">{{section.name}}</div>
+            <div id="section{{i}}" class="card-body" style="white-space: pre-wrap">
+            </div>
+            <div *ngIf="section.parameters.length > 0" class="card-footer">
+                <div *ngFor="let parameter of section.parameters; let j=index" class="row">
+                    <div class="col-3">
+                        {{parameter}}
+                    </div>
+                    <div class="col-9">
+                        <input type="text" class="form-control" value="{{valuesOfParameters.get(parameter)}}"  (keyup)="updateParameter(parameter,$event.target.value)">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <contract [contract]="order.contract[0]">
+    </contract>
+</div>
