@@ -74,25 +74,25 @@
     <div *ngIf="selectedTab === 'DETAILS'" class="p-3 col-12">
         <h3 class="p-1">Details</h3>
         <div class="row mx-auto">
-        <div *ngIf="wrapper.getDimensions().length == 0 && wrapper.getUniquePropertiesWithValue().length === 0">
-            <p class="p-1">This product / service does not seem to have any details.</p>
-        </div>
-        <div *ngFor="let dim of wrapper.getDimensions()" class="p-1 col-6 d-flex">
-            <strong>{{ dim.attributeID }}: </strong>
-            <span class="ml-2">
-                {{ dim.measure.value }} <span *ngIf="dim.measure.unitCode && dim.measure.unitCode != ''">{{ dim.measure.unitCode }}</span>
+            <div *ngIf="wrapper.getDimensions().length == 0 && wrapper.getUniquePropertiesWithValue().length === 0">
+                <p class="p-1">This product / service does not seem to have any details.</p>
+            </div>
+            <div *ngFor="let multiValuedDimension of wrapper.getDimensionMultiValue(false)" class="p-1 col-6 d-flex">
+                <strong>{{ multiValuedDimension.attributeID }}: </strong>
+                <span class="ml-2">
+                {{getMultiValuedDimensionAsString(multiValuedDimension.measure)}}
             </span>
-        </div>
-        <div *ngFor="let property of wrapper.getUniquePropertiesWithValue()" class="p-1 col-6 d-flex">
-            <strong>{{ getHumanReadablePropertyName(wrapper.getPropertyName(property)) }}: </strong>
-            <span *ngIf="property.valueQualifier !== 'BINARY'" class="ml-2">
+            </div>
+            <div *ngFor="let property of wrapper.getUniquePropertiesWithValue()" class="p-1 col-6 d-flex">
+                <strong>{{ getHumanReadablePropertyName(wrapper.getPropertyName(property)) }}: </strong>
+                <span *ngIf="property.valueQualifier !== 'BINARY'" class="ml-2">
                 {{ getValuesAsString(property).join(", ") }}
             </span>
-            <ng-container *ngIf="property.valueQualifier === 'BINARY'">
-                <file-input presentationMode="view" [binaryObjects]="property.valueBinary" [multiple]="true" rowClass="ml-2" [small]="true"></file-input>
-            </ng-container>
+                <ng-container *ngIf="property.valueQualifier === 'BINARY'">
+                    <file-input presentationMode="view" [binaryObjects]="property.valueBinary" [multiple]="true" rowClass="ml-2" [small]="true"></file-input>
+                </ng-container>
+            </div>
         </div>
-    </div>
     </div>
 
     <!-- Delivery & Trading Tab -->

@@ -137,36 +137,36 @@
                 <ul class="nav nav-tabs">
                     <li class="nav-item">
                         <a href id="DETAILS" class="nav-link"
-                            [ngClass]="{ active: selectedTabSinglePublish === 'DETAILS'}"
-                            (click)="onSelectTabSinglePublish($event)">
+                           [ngClass]="{ active: selectedTabSinglePublish === 'DETAILS'}"
+                           (click)="onSelectTabSinglePublish($event)">
                             Details
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href id="PRICE" class="nav-link"
-                            [ngClass]="{ active: selectedTabSinglePublish === 'PRICE'}"
-                            (click)="onSelectTabSinglePublish($event)">
+                           [ngClass]="{ active: selectedTabSinglePublish === 'PRICE'}"
+                           (click)="onSelectTabSinglePublish($event)">
                             Price
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href id="DELIVERY_TRADING" class="nav-link"
-                            [ngClass]="{ active: selectedTabSinglePublish === 'DELIVERY_TRADING'}"
-                            (click)="onSelectTabSinglePublish($event)">
+                           [ngClass]="{ active: selectedTabSinglePublish === 'DELIVERY_TRADING'}"
+                           (click)="onSelectTabSinglePublish($event)">
                             Delivery &amp; Trading
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href id="CERTIFICATES" class="nav-link"
-                            [ngClass]="{ active: selectedTabSinglePublish === 'CERTIFICATES'}"
-                            (click)="onSelectTabSinglePublish($event)">
+                           [ngClass]="{ active: selectedTabSinglePublish === 'CERTIFICATES'}"
+                           (click)="onSelectTabSinglePublish($event)">
                             Certificates
                         </a>
                     </li>
                     <li *ngIf="config.showTrack" class="nav-item">
                         <a href id="TRACK_TRACE" class="nav-link"
-                            [ngClass]="{ active: selectedTabSinglePublish === 'TRACK_TRACE'}"
-                            (click)="onSelectTabSinglePublish($event)">
+                           [ngClass]="{ active: selectedTabSinglePublish === 'TRACK_TRACE'}"
+                           (click)="onSelectTabSinglePublish($event)">
                             Track &amp; Trace
                         </a>
                     </li>
@@ -184,6 +184,36 @@
         <!-- Product Details Tab -->
         <div class="row space-before" *ngIf="selectedTabSinglePublish === 'DETAILS'">
             <div class="col-12">
+                <button class='btn btn-outline-primary' (click)="toggleDimensionCard()">Dimensions</button>
+                <div *ngIf="showDimensions" >
+                    <div class="row" *ngFor="let multiValuedDimension of multiValuedDimensions">
+                        <div class="col-3" style="align-self:center">
+                            <strong>{{multiValuedDimension.attributeID}} : </strong>
+                        </div>
+                        <div class="col-6">
+                            <table class="table table-borderless mb-0">
+                                <tbody>
+                                <tr *ngFor="let quantity of multiValuedDimension.measure;let i=index">
+                                    <td>
+                                        <quantity-input [quantity]="quantity" rowClass="quantity-input">
+                                        </quantity-input>
+                                    </td>
+                                    <td *ngIf="i>0" class="align-right" >
+                                        <button class="btn btn-danger"  type="button" (click)="onRemoveDimension(multiValuedDimension.attributeID,quantity)">&times;</button>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-3" style="align-self:center">
+                            <button class="btn btn-outline-primary" (click)="onAddDimension(multiValuedDimension.attributeID)">
+                                Add
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
                 <div class="row" *ngFor="let prop of getProductProperties()">
                     <div class="col-3" style="align-self:center">
                         <strong [title]="getDefinition(prop)">{{ getPrettyName(prop) }}: </strong>
@@ -191,12 +221,12 @@
                     <div class="col-6">
                         <table *ngIf="prop.valueQualifier === 'BINARY'" class="table table-borderless mb-0">
                             <tbody>
-                              <tr>
+                            <tr>
                                 <td>
-                                  <file-input [binaryObjects]="prop.valueBinary" [multiple]="true" [maxSize]=1>
-                                  </file-input>
+                                    <file-input [binaryObjects]="prop.valueBinary" [multiple]="true" [maxSize]=1>
+                                    </file-input>
                                 </td>
-                              </tr>
+                            </tr>
                             </tbody>
                         </table>
                         <table *ngIf="prop.valueQualifier !== 'BINARY'" class="table table-borderless mb-0">

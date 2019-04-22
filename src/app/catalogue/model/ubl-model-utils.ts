@@ -112,7 +112,7 @@ export class UBLModelUtils {
     }
 
     public static createCatalogueLine(catalogueUuid:string, providerParty: Party,
-        settings: CompanyNegotiationSettings): CatalogueLine {
+        settings: CompanyNegotiationSettings,dimensionUnits:string[]): CatalogueLine {
         // create additional item properties
         const additionalItemProperties = new Array<ItemProperty>();
 
@@ -122,7 +122,7 @@ export class UBLModelUtils {
 
         // create item
         const uuid:string = this.generateUUID();
-        const item = new Item([], [], [], [], additionalItemProperties, providerParty, this.createItemIdentificationWithId(uuid), docRef, [], [], [], null);
+        const item = new Item([], [], [], [], additionalItemProperties, providerParty, this.createItemIdentificationWithId(uuid), docRef, [], [], this.createDimensions(dimensionUnits), null);
 
         // create goods item
         const goodsItem = new GoodsItem(uuid, item, this.createPackage(),
@@ -464,6 +464,15 @@ export class UBLModelUtils {
     public static createItem():Item {
         const item = new Item([], [], [], [], [], null, this.createItemIdentification(), null, [], [], [], null);
         return item;
+    }
+
+    private static createDimensions(dimensionUnits:string[]):Dimension[]{
+        let dimensions:Dimension[] = [];
+        for(let unit of dimensionUnits){
+            let unitName = unit.charAt(0).toUpperCase() + unit.slice(1);
+            dimensions.push(new Dimension(unitName));
+        }
+        return dimensions;
     }
 
     public static createLineItem(quantity, price, item):LineItem {

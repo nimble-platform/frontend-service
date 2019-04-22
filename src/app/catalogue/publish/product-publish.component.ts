@@ -48,6 +48,8 @@ import {CataloguePaginationResponse} from '../model/publish/catalogue-pagination
 type ProductType = "product" | "transportation";
 import {Text} from "../model/publish/text";
 import {Catalogue} from '../model/publish/catalogue';
+import {MultiValuedDimension} from '../model/publish/multi-valued-dimension';
+import {UnitService} from '../../common/unit-service';
 
 interface SelectedProperties {
     [key: string]: SelectedProperty;
@@ -137,6 +139,12 @@ export class ProductPublishComponent implements OnInit {
     public static dialogBox = true;
     // check whether changing publish-mode to 'create' is necessary or not
     changePublishModeCreate: boolean = false;
+    // whether we need to show dimensions or not
+    showDimensions = false;
+    // dimensions of the item
+    multiValuedDimensions:MultiValuedDimension[] = null;
+    // dimension unit list retrieved from the unit service
+    dimensionUnits:string[] = [];
 
     constructor(public categoryService: CategoryService,
                 private catalogueService: CatalogueService,
@@ -146,6 +154,7 @@ export class ProductPublishComponent implements OnInit {
                 private router: Router,
                 private location: Location,
                 private cookieService: CookieService,
+                private unitService:UnitService,
                 private modalService: NgbModal) {
     }
 
@@ -158,17 +167,20 @@ export class ProductPublishComponent implements OnInit {
             return Promise.all([
                 Promise.resolve(party),
                 this.catalogueService.getCatalogueResponse(userId),
-                this.userService.getCompanyNegotiationSettingsForParty(UBLModelUtils.getPartyId(party))
+                this.userService.getCompanyNegotiationSettingsForParty(UBLModelUtils.getPartyId(party)),
+                this.unitService.getCachedUnitList("dimensions")
             ])
         })
-        .then(([party, catalogueResponse, settings]) => {
-            this.initView(party, catalogueResponse, settings);
-            this.publishStateService.publishingStarted = true;
-            this.callStatus.callback("Successfully initialized.", true);
-        })
-        .catch(error => {
-            this.callStatus.error("Error while initializing the publish view.", error);
-        });
+            .then(([party, catalogueResponse, settings, dimensionUnits]) => {
+                // set dimension unit list
+                this.dimensionUnits = dimensionUnits;
+                this.initView(party, catalogueResponse, settings);
+                this.publishStateService.publishingStarted = true;
+                this.callStatus.callback("Successfully initialized.", true);
+            })
+            .catch(error => {
+                this.callStatus.error("Error while initializing the publish view.", error);
+            });
 
         this.route.queryParams.subscribe((params: Params) => {
             // handle publishing granularity: single, bulk, null
@@ -465,6 +477,22 @@ export class ProductPublishComponent implements OnInit {
 
     }
 
+    toggleDimensionCard(){
+        this.showDimensions = !this.showDimensions;
+    }
+
+    onAddDimension(attributeId:string){
+        this.productWrapper.addDimension(attributeId);
+        // update dimensions
+        this.multiValuedDimensions = this.productWrapper.getDimensionMultiValue();
+    }
+
+    onRemoveDimension(attributeId:string,quantity:Quantity){
+        this.productWrapper.removeDimension(attributeId,quantity);
+        // update dimensions
+        this.multiValuedDimensions = this.productWrapper.getDimensionMultiValue();
+    }
+
     getProductProperties(): ItemProperty[] {
         return this.productWrapper.getAllUniqueProperties();
     }
@@ -721,7 +749,7 @@ export class ProductPublishComponent implements OnInit {
             // new publishing is the first entry to the publishing page
             // i.e. publishing from scratch
             if (this.publishStateService.publishingStarted == false) {
-                    this.catalogueLine = UBLModelUtils.createCatalogueLine(catalogueResponse.catalogueUuid, userParty, settings);
+                    this.catalogueLine = UBLModelUtils.createCatalogueLine(catalogueResponse.catalogueUuid, userParty, settings, this.dimensionUnits);
                     this.catalogueService.draftCatalogueLine = this.catalogueLine;
             } else {
                 this.catalogueLine = this.catalogueService.draftCatalogueLine;
@@ -737,6 +765,7 @@ export class ProductPublishComponent implements OnInit {
                 }
             }
         }
+        this.multiValuedDimensions = this.productWrapper.getDimensionMultiValue();
         this.recomputeSelectedProperties();
     }
 
@@ -885,7 +914,7 @@ export class ProductPublishComponent implements OnInit {
                     // go to the dashboard - catalogue tab
                     if(exitThePage){
                         this.catalogueLine = UBLModelUtils.createCatalogueLine(catalogueResponse.uuid,
-                            party, this.companyNegotiationSettings);
+                            party, this.companyNegotiationSettings,this.dimensionUnits);
 
                         // since every changes is saved,we do not need a dialog box
                         ProductPublishComponent.dialogBox = false;
