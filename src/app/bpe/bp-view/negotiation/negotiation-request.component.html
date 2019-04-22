@@ -152,14 +152,39 @@
                 </div>
             </div>
             <hr class="w-100">
-            <button class="btn btn-primary action mb-3" [disabled]="isLoading()"(click)="onOfferCounterTerms()">Offer Counter Terms</button>
+            <button class="btn btn-primary action mb-3" [disabled]="isLoading()"(click)="showCounterOfferTerms = !showCounterOfferTerms">Offer Counter Terms</button>
         </div>
     </div>
 </div>
 
-<!--Notes-->
-<!--<h5 class="mt-3">Notes and Additional Files</h5>-->
 <div class="d-flex flex-column">
+    <!-- Frame contract -->
+    <div class="btn btn-outline-primary align-self-start mt-3 mb-2" (click)="showFrameContractDetails = !showFrameContractDetails;">Frame Contract</div>
+    <div *ngIf="showFrameContractDetails" class="row mb-3">
+        <div class="col-12">
+            <div class="input-group">
+                <div class="d-flex align-items-center">
+                    <input type="checkbox" [(ngModel)]="offerFrameContractSelected" [disabled]="isLoading() || isReadOnly()" >
+                </div>
+                <span class="form-control d-inline border-0">
+                        <strong class="font-weight-500">Offer terms as a frame contract</strong>
+                </span>
+            </div>
+        </div>
+        <div *ngIf="offerFrameContractSelected" class="col-12">
+            <quantity-input [rowClass]="'space-before'"
+                            [label]="'Valid for'"
+                            [labelClass]="'col-2'"
+                            [valueClass]="'col-3'"
+                            [definition]="'The period within which the offered conditions will be valid upon confirmation by the seller.'"
+                            [quantity]="digitalAgreement.digitalAgreementTerms.validityPeriod.durationMeasure"
+                            [quantityUnits]="frameContractDurationUnits"
+                            [disabled]="isLoading() || isReadOnly()">
+            </quantity-input>
+        </div>
+    </div>
+
+    <!--Notes-->
     <div class="btn btn-outline-primary align-self-start mt-3 mb-2" (click)="showNotesAndAdditionalFiles = !showNotesAndAdditionalFiles;">Notes and Additional Files</div>
     <note-file-view *ngIf="showNotesAndAdditionalFiles"
                     class="mb-2"
@@ -209,7 +234,7 @@
     <div class="col-2">
         <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
     </div>
-    <div class="col-3" *ngIf="!(processMetadata && processMetadata.isBeingUpdated)">
+    <div class="col-3"   *ngIf="!(processMetadata && processMetadata.isBeingUpdated)">
         <button class="btn btn-primary action" [disabled]="isLoading() || !isFormValid()" (click)="onSendRequest()">
             {{ isNegotiatingAnyTerm() ? "Send Request" : "Continue With Manufacturer's Terms" }}
         </button>

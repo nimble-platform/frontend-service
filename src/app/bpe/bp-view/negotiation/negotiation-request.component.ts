@@ -26,6 +26,10 @@ import {DiscountModalComponent} from '../../../product-details/discount-modal.co
 import {BpStartEvent} from '../../../catalogue/model/publish/bp-start-event';
 import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
 import * as myGlobals from '../../../globals';
+import {DigitalAgreement} from "../../../catalogue/model/publish/digital-agreement";
+import {DocumentReference} from "../../../catalogue/model/publish/document-reference";
+import {UnitService} from "../../../common/unit-service";
+import {frameContractDurationUnitListId} from "../../../common/constants";
 
 @Component({
     selector: "negotiation-request",
@@ -39,7 +43,9 @@ export class NegotiationRequestComponent implements OnInit {
     line: CatalogueLine;
     rfq: RequestForQuotation;
     rfqLine: RequestForQuotationLine;
+    digitalAgreement: DigitalAgreement = new DigitalAgreement();
     wrapper: NegotiationModelWrapper;
+    frameContractDurationUnits: string[];
     config = myGlobals.config;
 
     negotiatedPriceValue: number;
@@ -58,7 +64,8 @@ export class NegotiationRequestComponent implements OnInit {
      */
 
     showCounterOfferTerms:boolean = false;
-    showRestOfNegotiationDetails: boolean = false;
+    offerFrameContractSelected: boolean = false;
+    showFrameContractDetails: boolean = false;
     showNotesAndAdditionalFiles: boolean = false;
     showDataMonitoring: boolean = false;
     showDeliveryAddress: boolean = false;
@@ -67,6 +74,7 @@ export class NegotiationRequestComponent implements OnInit {
     constructor(private bpDataService: BPDataService,
                 private bpeService:BPEService,
                 private userService:UserService,
+                private unitService: UnitService,
                 private cookieService: CookieService,
                 private location: Location,
                 private documentService: DocumentService,
@@ -87,6 +95,19 @@ export class NegotiationRequestComponent implements OnInit {
 
         if(!this.lineHasPrice) {
             this.rfq.negotiationOptions.price = true;
+        }
+
+        // get frame contract units
+        this.unitService.getCachedUnitList(frameContractDurationUnitListId).then(list => {
+           this.frameContractDurationUnits = list;
+        });
+
+        // check associated frame contract
+        if(this.rfq.additionalDocumentReference.length > 0) {
+            this.offerFrameContractSelected = true;
+            this.bpeService.getDigitalAgreement(this.rfq.additionalDocumentReference[0].id).then(digitalAgreement =>
+                this.digitalAgreement = digitalAgreement
+            );
         }
     }
 
@@ -119,27 +140,40 @@ export class NegotiationRequestComponent implements OnInit {
             const sellerId: string = UBLModelUtils.getPartyId(this.line.goodsItem.item.manufacturerParty);
             const buyerId: string = this.cookieService.get("company_id");
 
-           Promise.all([
+            let storedDigitalAgreement: Promise<DigitalAgreement> = Promise.resolve(null);
+            if(this.offerFrameContractSelected) {
+                storedDigitalAgreement = this.bpeService.saveDigitalAgreement(this.digitalAgreement);
+            }
+            Promise.all([
                 this.userService.getParty(buyerId),
-                this.userService.getParty(sellerId)
-            ])
-            .then(([buyerParty, sellerParty]) => {
+                this.userService.getParty(sellerId),
+                storedDigitalAgreement
+
+            ]).then(([buyerParty, sellerParty, digitalAgreementResp]) => {
                 rfq.buyerCustomerParty = new CustomerParty(buyerParty);
                 rfq.sellerSupplierParty = new SupplierParty(sellerParty);
 
-                const vars: ProcessVariables = ModelUtils.createProcessVariables("Negotiation", buyerId, sellerId,this.cookieService.get("user_id"), rfq, this.bpDataService);
+                // update rfq with the digital agreement reference
+                if (digitalAgreementResp != null) {
+                    let documentReference: DocumentReference = new DocumentReference();
+                    documentReference.documentType = 'DIGITAL_AGREEMENT';
+                    documentReference.id = digitalAgreementResp.id;
+                    rfq.additionalDocumentReference.push(documentReference);
+                }
+
+                const vars: ProcessVariables = ModelUtils.createProcessVariables("Negotiation", buyerId, sellerId, this.cookieService.get("user_id"), rfq, this.bpDataService);
                 const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
 
                 return this.bpeService.startBusinessProcess(piim);
-            })
-            .then(() => {
+
+            }).then(() => {
                 this.callStatus.callback("Terms sent", true);
                 var tab = "PUCHASES";
                 if (this.bpDataService.bpStartEvent.userRole == "seller")
-                  tab = "SALES";
+                    tab = "SALES";
                 this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
-            })
-            .catch(error => {
+
+            }).catch(error => {
                 this.callStatus.error("Failed to send Terms", error);
             });
         } else {
@@ -153,20 +187,19 @@ export class NegotiationRequestComponent implements OnInit {
 
     onUpdateRequest(): void {
         this.callStatus.submit();
-        const rfq: RequestForQuotation = copy(this.rfq);
 
-        this.bpeService.updateBusinessProcess(JSON.stringify(rfq),"REQUESTFORQUOTATION",this.processMetadata.processId)
-            .then(() => {
-                this.documentService.updateCachedDocument(rfq.id,rfq);
-                this.callStatus.callback("Terms updated", true);
-                var tab = "PUCHASES";
-                if (this.bpDataService.bpStartEvent.userRole == "seller")
-                  tab = "SALES";
-                this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
-            })
-            .catch(error => {
-                this.callStatus.error("Failed to update Terms", error);
-            });
+        const rfq: RequestForQuotation = copy(this.rfq);
+        Promise.all([this.bpeService.updateDigitalAgreement(this.digitalAgreement),
+            this.bpeService.updateBusinessProcess(JSON.stringify(rfq),"REQUESTFORQUOTATION",this.processMetadata.processId)]).then(() => {
+            this.documentService.updateCachedDocument(rfq.id,rfq);
+            this.callStatus.callback("Terms updated", true);
+            var tab = "PUCHASES";
+            if (this.bpDataService.bpStartEvent.userRole == "seller")
+                tab = "SALES";
+            this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
+        }).catch(error => {
+            this.callStatus.error("Failed to update Terms", error);
+        });
     }
 
     onBack(): void {
@@ -181,10 +214,6 @@ export class NegotiationRequestComponent implements OnInit {
         return true;
     }
 
-    onOfferCounterTerms(): void {
-        this.showCounterOfferTerms = !this.showCounterOfferTerms;
-    }
-
     /*
      * Getters and setters for the template.
      */
@@ -196,7 +225,8 @@ export class NegotiationRequestComponent implements OnInit {
             || (this.rfq.negotiationOptions.incoterms && this.wrapper.lineIncoterms != this.wrapper.rfqIncoterms)
             || (this.rfq.negotiationOptions.paymentTerms && this.wrapper.linePaymentTerms != this.wrapper.rfqPaymentTerms.paymentTerm)
             || (this.rfq.negotiationOptions.paymentMeans && this.wrapper.linePaymentMeans != this.wrapper.rfqPaymentMeans)
-            || this.rfq.dataMonitoringRequested;
+            || this.rfq.dataMonitoringRequested
+            || this.rfq.additionalDocumentReference.length > 0;
     }
 
     get lineHasPrice(): boolean {

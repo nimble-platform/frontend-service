@@ -21,6 +21,7 @@ import { EvidenceSupplied } from '../catalogue/model/publish/evidence-supplied';
 import { Comment } from '../catalogue/model/publish/comment';
 import {SearchContextService} from '../simple-search/search-context.service';
 import {DashboardProcessInstanceDetails} from './model/dashboard-process-instance-details';
+import {DigitalAgreement} from "../catalogue/model/publish/digital-agreement";
 
 @Injectable()
 export class BPEService {
@@ -393,6 +394,33 @@ export class BPEService {
             .get(url, {headers: headers})
             .toPromise()
             .then(res => res.text())
+            .catch(this.handleError);
+	}
+
+	saveDigitalAgreement(digitalAgreement: DigitalAgreement): Promise<DigitalAgreement> {
+		const url = `${this.url}/contract/digital-agreement`;
+		return this.http
+		    .post(url, digitalAgreement, {headers: this.getAuthorizedHeaders()})
+		    .toPromise()
+		    .then(res => res.json())
+		    .catch(this.handleError);
+	}
+
+	updateDigitalAgreement(digitalAgreement: DigitalAgreement): Promise<DigitalAgreement> {
+		const url = `${this.url}/contract/digital-agreement/${digitalAgreement.id}`;
+		return this.http
+            .put(url, digitalAgreement, {headers: this.getAuthorizedHeaders()})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+	}
+
+	getDigitalAgreement(id: string): Promise<DigitalAgreement> {
+		const url = `${this.url}/contract/digital-agreement/${id}`;
+		return this.http
+            .get(url, {headers: this.getAuthorizedHeaders()})
+            .toPromise()
+            .then(res => res.json())
             .catch(this.handleError);
 	}
 
