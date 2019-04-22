@@ -49,9 +49,15 @@ export class CatalogueViewComponent implements OnInit {
     // check whether catalogue-line-panel should be displayed for a specific catalogue line
     catalogueLineView = {};
 
+    selectedCatalogue: string = "default";
+    catlogueId: string = "default";
+    cataloguesIds : any = [];
+
     sortOption = null;
     catalogueText: string = "";
     getCatalogueStatus = new CallStatus();
+    productCatalogueRetrievalStatus: CallStatus = new CallStatus();
+
     callStatus = new CallStatus();
     deleteStatuses: CallStatus[] = [];
 
@@ -71,6 +77,23 @@ export class CatalogueViewComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.searchText = "";
+        this.deleteStatuses = [];
+        this.catalogueText = "";
+        this.sortOption = null;
+        this.cataloguesIds = [];
+        this.catlogueId = "default";
+        this.selectedCatalogue = "default";
+        this.catalogueLinesWRTTypes = [];
+        this.catalogueLinesArray = [];
+        this.categoryNames = [];
+        this.selectedCategory = "All";
+        this.collectionSize = 0;
+        this.page = 1;
+        this.pageSize = 10;
+        this.addCatalogue = false;
+        this.catalogueLineView = {};
+        this.getCatagloueIdsForParty();
         this.catalogueService.setEditMode(false);
         this.requestCatalogue();
         for(let i = 0; i < this.pageSize; i++) {
@@ -84,6 +107,11 @@ export class CatalogueViewComponent implements OnInit {
 
     selectDescription (item:  Item) {
         return selectDescription(item);
+    }
+
+    changeCat(){
+        this.catlogueId = this.selectedCatalogue;
+        this.requestCatalogue();
     }
 
     search = (text$: Observable<string>) =>
@@ -102,7 +130,7 @@ export class CatalogueViewComponent implements OnInit {
         // check whether the user chose a category to filter the catalogue lines
         let categoryName = this.selectedCategory == "All" ? null : this.selectedCategory;
         Promise.all([
-            this.catalogueService.getCatalogueResponse(userId, categoryName,this.searchText,this.pageSize,(this.page-1)*this.pageSize,this.sortOption),
+            this.catalogueService.getCatalogueResponse(userId, categoryName,this.searchText,this.pageSize,(this.page-1)*this.pageSize,this.sortOption,this.catlogueId),
             this.getCompanySettings(userId)
         ])
             .then(([catalogueResponse, settings]) => {
@@ -144,7 +172,7 @@ export class CatalogueViewComponent implements OnInit {
 
             this.catalogueService.deleteCatalogue().then(res => {
                     this.callStatus.reset();
-                    this.requestCatalogue();
+                    this.ngOnInit();
                 },
                 error => {
                     this.callStatus.error("Failed to delete catalogue", error);
@@ -161,9 +189,11 @@ export class CatalogueViewComponent implements OnInit {
         // add catalogue line to the end of catalogue
         this.catalogueService.postCatalogue(catalogue)
             .then(() =>
-            { 
+            {
                 this.catalogueText = "";
-                this.cancelAddingCatalogue()
+                this.cancelAddingCatalogue();
+                this.ngOnInit();
+
             })
             .catch(err => {
             })
@@ -189,6 +219,7 @@ export class CatalogueViewComponent implements OnInit {
         this.publishService.publishingStarted = false;
         this.categoryService.resetSelectedCategories();
         this.router.navigate(['catalogue/publish'], {queryParams: {
+                cat:this.catlogueId,
                 pg: "single",
                 productType: isTransportService(catalogueLine) ? "transportation" : "product"}});
     }
@@ -199,6 +230,7 @@ export class CatalogueViewComponent implements OnInit {
         this.publishService.publishingStarted = false;
         this.categoryService.resetSelectedCategories();
         this.router.navigate(['catalogue/publish'], {queryParams: {
+                cat:this.catlogueId,
                 pg: "single",
                 productType: isTransportService(catalogueLine) ? "transportation" : "product"}});
     }
@@ -291,5 +323,15 @@ export class CatalogueViewComponent implements OnInit {
 
     navigateToBulkUploadPage() {
         this.router.navigate(["/catalogue/publish"], { queryParams: { pg: 'bulk', productType: 'product'}});
+    }
+
+    public getCatagloueIdsForParty(){
+        this.productCatalogueRetrievalStatus.submit();
+        this.catalogueService.getCatalogueIdsForParty().then((catalogueIds) => {
+            this.cataloguesIds = catalogueIds;
+            this.productCatalogueRetrievalStatus.callback("Successfully loaded catalogueId list", true);
+        }).catch((error) => {
+            this.productCatalogueRetrievalStatus.error('Failed to get product catalogues');
+        });
     }
 }

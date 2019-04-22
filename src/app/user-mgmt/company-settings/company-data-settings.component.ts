@@ -36,12 +36,12 @@ export class CompanyDataSettingsComponent implements OnInit {
 
     ngOnInit() {
       let industrySectorVal;
-      if (this.settings.details.industrySectors && this.settings.details.industrySectors[0])
-        industrySectorVal = this.settings.details.industrySectors[0];
+      if (this.settings.details.industrySectors && this.selectValueOfTextObject(this.settings.details.industrySectors))
+        industrySectorVal = this.selectValueOfTextObject(this.settings.details.industrySectors);
       else
         industrySectorVal = "";
-      if (this.isSectorArray(this.settings.details.industrySectors[0])) {
-        industrySectorVal = this.getSectorArray(this.settings.details.industrySectors[0]);
+      if (this.isSectorArray(industrySectorVal)) {
+        industrySectorVal = this.getSectorArray(industrySectorVal);
         this.forceActText = false;
       }
       else
@@ -69,7 +69,7 @@ export class CompanyDataSettingsComponent implements OnInit {
       this.settings.details.vatNumber =  model.getRawValue()['vatNumber'];
       this.settings.details.verificationInformation =  model.getRawValue()['verificationInformation'];
       this.settings.details.businessType =  model.getRawValue()['businessType'];
-      this.settings.details.industrySectors =  [sectorString];
+      this.settings.details.industrySectors =  createTextObject(sectorString);
       this.settings.details.businessKeywords =  createTextObject(model.getRawValue()['businessKeywords']);
       this.settings.details.yearOfCompanyRegistration =  model.getRawValue()['yearOfReg'];
       this.settings.details.address =  model.getRawValue()['address'];
@@ -130,7 +130,7 @@ export class CompanyDataSettingsComponent implements OnInit {
         body += "Business Type:\n";
         body += this.settings.details.businessType + "\n\n";
         body += "Activity Sectors:\n";
-        body += this.settings.details.industrySectors[0] + "\n\n";
+        body += this.selectValueOfTextObject(this.settings.details.industrySectors) + "\n\n";
         body += "Business Keywords:\n";
         body += this.selectValueOfTextObject(this.settings.details.businessKeywords) + "\n\n";
         body += "Year of Foundation:\n";
