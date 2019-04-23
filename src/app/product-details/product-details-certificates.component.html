@@ -6,7 +6,7 @@
             {{ certificate.name }} (type: {{ certificate.type }})
         </div>
         <div class="col-2">
-            <button class="btn btn-primary btn-sm w-100" (click)="downloadCertificate(certificate.id)">Download</button>
+            <button *ngIf="certificate.documentReference.length !== 0" class="btn btn-primary btn-sm w-100" (click)="downloadCertificate(certificate.id)">Download</button>
         </div>
     </div>
 
@@ -16,8 +16,11 @@
         <div class="col-10">
             {{ certificate.certificateTypeCode.name }} (type: {{ certificate.certificateType }})
         </div>
+        <div *ngIf="certificate.country.length !== 0" class="col-10">
+            <small class="float-right">Available Countries: {{ getCertificateCountryNames(certificate.country) }}</small>
+        </div>
         <div class="col-2">
-            <button class="btn btn-primary btn-sm w-100" (click)="downloadProductCertificate(certificate)">Download</button>
+            <button *ngIf="certificate.documentReference.length !== 0" class="btn btn-primary btn-sm w-100" (click)="downloadProductCertificate(certificate)">Download</button>
         </div>
     </div>
 </div>
