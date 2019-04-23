@@ -63,6 +63,17 @@ export class DataChannelService {
             .catch(this.handleError);
     }
 
+    getAssociatedServers(channelID: string): Promise<any> {
+            const url = `${this.url}/channel/${channelID}/servers`;
+            const token = 'Bearer ' + this.cookieService.get("bearer_token");
+            const headers = new Headers({'Authorization': token});
+            return this.http
+                .get(url, {headers: headers, withCredentials: true})
+                .toPromise()
+                .then(res => res.json())
+                .catch(this.handleError);
+        }
+
     addSensor(channelID: string, sensor: Sensor): Promise<any> {
         const url = `${this.url}/channel/${channelID}/sensors`;
         const token = 'Bearer ' + this.cookieService.get("bearer_token");

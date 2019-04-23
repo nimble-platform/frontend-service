@@ -64,17 +64,7 @@ export class ChannelDetailsComponent implements OnInit {
 
 
     private pageNumber: number = 0; // Todo: needs to be changed after testing to get info from backend
-    public incrementPageNrTest()    // Todo: instead get info from backend (data available? -> load 2nd design)
-    {
-      if(this.pageNumber<3)
-      {
-        this.pageNumber++;
-      }
-      else
-      {
-        this.pageNumber=0;
-      }
-    }
+                                    // Todo: instead get info from backend (data available? -> load 2nd design)
 
 
     //-------------------------------------------------------------------------------------
@@ -113,6 +103,12 @@ export class ChannelDetailsComponent implements OnInit {
                 this.channelSensors = sensors;
             });
 
+        // get servers
+        this.dataChannelService.getAssociatedServers(channelID)
+            .then(servers => {
+                this.channelServers = servers;
+            });
+
         // get messages of channels
         //this.dataChannelService.getChannelMessages(channelID)
         //    .then(messages => {
@@ -139,6 +135,52 @@ export class ChannelDetailsComponent implements OnInit {
     }
 
     //-------------------------------------------------------------------------------------
+    // handle negotiation steps
+    //-------------------------------------------------------------------------------------
+    getCurrentNegotationStep(step: number): any {
+        if(step === this.pageNumber) {
+            const result: any = {
+                step: true,
+                current: true
+            };
+            return result;
+        }
+        return { step: true }
+    }
+
+    //-------------------------------------------------------------------------------------
+    // confirm initial Offer
+    //-------------------------------------------------------------------------------------
+    confirmInitialOffer(): void {
+       // Todo: not yet implemented
+       this.pageNumber++; // for testing
+    }
+
+    //-------------------------------------------------------------------------------------
+    // confirm counter Offer
+    //-------------------------------------------------------------------------------------
+    confirmCounterOffer(): void {
+       // Todo: not yet implemented
+       this.pageNumber++; // for testing
+    }
+
+    //-------------------------------------------------------------------------------------
+    // accept all terms
+    //-------------------------------------------------------------------------------------
+    acceptCounterTerms(): void {
+       // Todo: not yet implemented
+       this.pageNumber++; // for testing
+    }
+
+    //-------------------------------------------------------------------------------------
+    // renegotiate
+    //-------------------------------------------------------------------------------------
+    renegotiateTerms(): void {
+       // Todo: not yet implemented
+       this.pageNumber = 0; // for testing
+    }
+
+    //-------------------------------------------------------------------------------------
     // create/open a channel
     //-------------------------------------------------------------------------------------
     createChannel(): void {
@@ -149,7 +191,7 @@ export class ChannelDetailsComponent implements OnInit {
                 this.router.navigate(["dashboard"]);
             })
             .catch(() => {
-                alert("Error while deleting channel");
+                alert("Error while opening channel");
             });
     }
 
@@ -164,7 +206,7 @@ export class ChannelDetailsComponent implements OnInit {
                 this.router.navigate(["dashboard"]);
             })
             .catch(() => {
-                alert("Error while deleting channel");
+                alert("Error while closing channel");
             });
     }
 
