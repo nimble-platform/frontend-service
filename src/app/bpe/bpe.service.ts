@@ -415,8 +415,8 @@ export class BPEService {
             .catch(this.handleError);
 	}
 
-	getDigitalAgreement(id: string): Promise<DigitalAgreement> {
-		const url = `${this.url}/contract/digital-agreement/${id}`;
+	getDigitalAgreement(sellerId: string, buyerId: string, productId: string): Promise<DigitalAgreement> {
+		const url = `${this.url}/contract/digital-agreement?sellerId=${sellerId}&buyerId=${buyerId}&productId=${productId}`;
 		return this.http
             .get(url, {headers: this.getAuthorizedHeaders()})
             .toPromise()

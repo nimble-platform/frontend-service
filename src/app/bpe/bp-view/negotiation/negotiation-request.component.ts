@@ -30,6 +30,7 @@ import {DigitalAgreement} from "../../../catalogue/model/publish/digital-agreeme
 import {DocumentReference} from "../../../catalogue/model/publish/document-reference";
 import {UnitService} from "../../../common/unit-service";
 import {frameContractDurationUnitListId} from "../../../common/constants";
+import {Party} from "../../../catalogue/model/publish/party";
 
 @Component({
     selector: "negotiation-request",
@@ -105,7 +106,9 @@ export class NegotiationRequestComponent implements OnInit {
         // check associated frame contract
         if(this.rfq.additionalDocumentReference.length > 0) {
             this.offerFrameContractSelected = true;
-            this.bpeService.getDigitalAgreement(this.rfq.additionalDocumentReference[0].id).then(digitalAgreement =>
+            this.bpeService.getDigitalAgreement(this.rfq.sellerSupplierParty.party.partyIdentification[0].id,
+                this.rfq.buyerCustomerParty.party.partyIdentification[0].id,
+                this.rfq.requestForQuotationLine[0].lineItem.item.manufacturersItemIdentification.id).then(digitalAgreement =>
                 this.digitalAgreement = digitalAgreement
             );
         }
@@ -139,27 +142,31 @@ export class NegotiationRequestComponent implements OnInit {
             //once they are fetched continue with starting the ordering process
             const sellerId: string = UBLModelUtils.getPartyId(this.line.goodsItem.item.manufacturerParty);
             const buyerId: string = this.cookieService.get("company_id");
+            let sellerParty: Party;
+            let buyerParty: Party;
 
-            let storedDigitalAgreement: Promise<DigitalAgreement> = Promise.resolve(null);
-            if(this.offerFrameContractSelected) {
-                storedDigitalAgreement = this.bpeService.saveDigitalAgreement(this.digitalAgreement);
-            }
             Promise.all([
                 this.userService.getParty(buyerId),
                 this.userService.getParty(sellerId),
-                storedDigitalAgreement
 
-            ]).then(([buyerParty, sellerParty, digitalAgreementResp]) => {
-                rfq.buyerCustomerParty = new CustomerParty(buyerParty);
-                rfq.sellerSupplierParty = new SupplierParty(sellerParty);
+            ]).then(([buyerPartyResp, sellerPartyResp]) => {
+                sellerParty = sellerPartyResp;
+                buyerParty = buyerPartyResp;
+                return this.saveDigitalAgreement(buyerParty, sellerParty);
 
+            }).then((savedDigitalAgreement: DigitalAgreement) => {
                 // update rfq with the digital agreement reference
-                if (digitalAgreementResp != null) {
+                if (savedDigitalAgreement != null) {
                     let documentReference: DocumentReference = new DocumentReference();
                     documentReference.documentType = 'DIGITAL_AGREEMENT';
-                    documentReference.id = digitalAgreementResp.id;
+                    documentReference.id = savedDigitalAgreement.id;
                     rfq.additionalDocumentReference.push(documentReference);
+                    // the specfic item instance subject to this negotiation is already persisted while saving the the digital agreement. So, we should use it.
+                    rfq.requestForQuotationLine[0].lineItem.item = savedDigitalAgreement.item;
                 }
+
+                rfq.buyerCustomerParty = new CustomerParty(buyerParty);
+                rfq.sellerSupplierParty = new SupplierParty(sellerParty);
 
                 const vars: ProcessVariables = ModelUtils.createProcessVariables("Negotiation", buyerId, sellerId, this.cookieService.get("user_id"), rfq, this.bpDataService);
                 const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
@@ -183,6 +190,19 @@ export class NegotiationRequestComponent implements OnInit {
             this.bpDataService.initOrderWithRfq();
             this.bpDataService.proceedNextBpStep("buyer", "Order")
         }
+    }
+
+    saveDigitalAgreement(sellerParty: Party, buyerParty: Party): Promise<DigitalAgreement> {
+        this.digitalAgreement.item = this.rfq.requestForQuotationLine[0].lineItem.item;
+        this.digitalAgreement.participantParty.push(sellerParty);
+        this.digitalAgreement.participantParty.push(buyerParty);
+        UBLModelUtils.removeHjidFieldsFromObject(this.digitalAgreement);
+
+        let savedDigitalAgreement: Promise<DigitalAgreement> = Promise.resolve(null);
+        if(this.offerFrameContractSelected) {
+            savedDigitalAgreement = this.bpeService.saveDigitalAgreement(this.digitalAgreement);
+        }
+        return savedDigitalAgreement;
     }
 
     onUpdateRequest(): void {

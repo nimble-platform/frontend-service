@@ -1,22 +1,25 @@
+<!-- Titles -->
 <div class="row">
-    <div class="{{showCounterOfferTerms ? 'col-12' : 'col-7'}}">
-        <!-- Titles -->
+    <div class="col-12">
         <div class="row title-row">
-            <div class="{{showCounterOfferTerms ? 'col-2' : 'col-4'}}"></div>
-            <div class="{{showCounterOfferTerms ? 'col-5' : 'col-8'}}">
+            <div class="col-2"></div>
+            <div class="col-5">
                 <h4>Manufacturer's Terms</h4>
             </div>
-            <div *ngIf="showCounterOfferTerms" class="col-5">
+            <div class="col-5">
                 <h4>Counter Offer</h4>
             </div>
         </div>
-
+    </div>
+</div>
+<div class="row">
+    <div class="{{showCounterOfferTerms ? 'col-12' : 'col-7'}}">
         <!-- Delivery Period -->
         <div class="row content-row bg-light">
-            <div class="col-2">
+            <div class="{{showCounterOfferTerms ? 'col-2' : 'col-3'}}">
                 <strong class="font-weight-500">Delivery Period:</strong>
             </div>
-            <div class="{{showCounterOfferTerms ? 'col-5' : 'col-10'}}">
+            <div class="{{showCounterOfferTerms ? 'col-5' : 'col-9'}}">
                 {{ wrapper.lineDeliveryPeriod.value }}
                 {{ wrapper.lineDeliveryPeriod.unitCode }}
                 <span [ngStyle]="getDeliveryPeriodStyle()">
@@ -34,10 +37,10 @@
 
         <!-- Warranty -->
         <div class="row content-row">
-            <div class="col-2">
+            <div class="{{showCounterOfferTerms ? 'col-2' : 'col-3'}}">
                 <strong class="font-weight-500">Warranty:</strong>
             </div>
-            <div class="{{showCounterOfferTerms ? 'col-5' : 'col-10'}}">
+            <div class="{{showCounterOfferTerms ? 'col-5' : 'col-9'}}">
                 {{ wrapper.lineWarrantyString }}
                 <span [ngStyle]="getWarrantyPeriodStyle()">
                 {{ getWarrantyPeriodText() }}
@@ -53,10 +56,10 @@
 
         <!-- Incoterms -->
         <div class="row content-row bg-light">
-            <div class="col-2">
+            <div class="{{showCounterOfferTerms ? 'col-2' : 'col-3'}}">
                 <strong class="font-weight-500">Request Incoterms:</strong>
             </div>
-            <div class="{{showCounterOfferTerms ? 'col-5' : 'col-10'}}">
+            <div class="{{showCounterOfferTerms ? 'col-5' : 'col-9'}}">
                 {{ wrapper.lineIncoterms }}
             </div>
             <div *ngIf="showCounterOfferTerms" class="col-5">
@@ -68,10 +71,10 @@
 
         <!-- Payment Terms -->
         <div class="row content-row">
-            <div class="col-2">
+            <div class="{{showCounterOfferTerms ? 'col-2' : 'col-3'}}">
                 <strong class="font-weight-500">Payment Terms:</strong>
             </div>
-            <div class="{{showCounterOfferTerms ? 'col-5' : 'col-10'}}">
+            <div class="{{showCounterOfferTerms ? 'col-5' : 'col-9'}}">
                 <div class="d-flex">
                     {{ wrapper.linePaymentTerms }}
                 </div>
@@ -86,10 +89,10 @@
 
         <!-- Payment Means -->
         <div class="row content-row bg-light">
-            <div class="col-2">
+            <div class="{{showCounterOfferTerms ? 'col-2' : 'col-3'}}">
                 <strong class="font-weight-500">Payment Means:</strong>
             </div>
-            <div class="{{showCounterOfferTerms ? 'col-5' : 'col-10'}}">
+            <div class="{{showCounterOfferTerms ? 'col-5' : 'col-9'}}">
                 <div class="d-flex">
                     {{ wrapper.linePaymentMeans }}
                 </div>
@@ -104,10 +107,10 @@
 
         <!-- Price -->
         <div class="row content-row">
-            <div class="col-2">
+            <div class="{{showCounterOfferTerms ? 'col-2' : 'col-3'}}">
                 <strong class="font-weight-500">Price:</strong>
             </div>
-            <div class="{{showCounterOfferTerms ? 'col-5' : 'col-10'}} d-flex">
+            <div class="{{showCounterOfferTerms ? 'col-5' : 'col-9'}} d-flex">
                 {{ wrapper.linePricePerItemString }}
                 <div *ngIf="wrapper.linePriceWrapper.appliedDiscounts.length > 0 && !isReadOnly()" class="space-left" data-toggle="tooltip" data-placement="top"
                      (click)="openDiscountModal()" title="Applied Discounts/Charges" style="cursor: pointer">
@@ -153,6 +156,7 @@
             </div>
             <hr class="w-100">
             <button class="btn btn-primary action mb-3" [disabled]="isLoading()"(click)="showCounterOfferTerms = !showCounterOfferTerms">Offer Counter Terms</button>
+            <button class="btn btn-primary action mb-3" [disabled]="isLoading()"(click)="showCounterOfferTerms = !showCounterOfferTerms">Offer Frame Contract Terms</button>
         </div>
     </div>
 </div>
