@@ -67,6 +67,7 @@ export class NegotiationRequestComponent implements OnInit {
     showCounterOfferTerms:boolean = false;
     offerFrameContractSelected: boolean = false;
     showFrameContractDetails: boolean = false;
+    frameContractAvailable: boolean = false;
     showNotesAndAdditionalFiles: boolean = false;
     showDataMonitoring: boolean = false;
     showDeliveryAddress: boolean = false;
@@ -104,14 +105,13 @@ export class NegotiationRequestComponent implements OnInit {
         });
 
         // check associated frame contract
-        if(this.rfq.additionalDocumentReference.length > 0) {
+        this.bpeService.getDigitalAgreement(UBLModelUtils.getPartyId(this.line.goodsItem.item.manufacturerParty),
+            this.cookieService.get("company_id"),
+            this.rfq.requestForQuotationLine[0].lineItem.item.manufacturersItemIdentification.id).then(digitalAgreement => {
+            this.digitalAgreement = digitalAgreement;
+            this.frameContractAvailable = true;
             this.offerFrameContractSelected = true;
-            this.bpeService.getDigitalAgreement(this.rfq.sellerSupplierParty.party.partyIdentification[0].id,
-                this.rfq.buyerCustomerParty.party.partyIdentification[0].id,
-                this.rfq.requestForQuotationLine[0].lineItem.item.manufacturersItemIdentification.id).then(digitalAgreement =>
-                this.digitalAgreement = digitalAgreement
-            );
-        }
+        });
     }
 
     /*
@@ -246,7 +246,7 @@ export class NegotiationRequestComponent implements OnInit {
             || (this.rfq.negotiationOptions.paymentTerms && this.wrapper.linePaymentTerms != this.wrapper.rfqPaymentTerms.paymentTerm)
             || (this.rfq.negotiationOptions.paymentMeans && this.wrapper.linePaymentMeans != this.wrapper.rfqPaymentMeans)
             || this.rfq.dataMonitoringRequested
-            || this.rfq.additionalDocumentReference.length > 0;
+            || (this.isFrameContractEditable() && this.offerFrameContractSelected);
     }
 
     get lineHasPrice(): boolean {
@@ -355,15 +355,39 @@ export class NegotiationRequestComponent implements OnInit {
     }
 
     isFormValid(): boolean {
-        return this.isDeliveryPeriodValid() && this.isWarrantyPeriodValid() && this.isPriceValid();
-    }
-
-    isWaitingForReply(): boolean {
-        return this.processMetadata && !this.processMetadata.isBeingUpdated && this.processMetadata.processStatus === "Started";
+        return this.isDeliveryPeriodValid() && this.isWarrantyPeriodValid() && this.isPriceValid() && this.isFrameContractValid();
     }
 
     isPriceValid(): boolean {
         return this.wrapper.rfqPriceWrapper.value > 0;
+    }
+
+    isWaitingForReply(): boolean {
+        return this.processMetadata && this.processMetadata.processStatus === "Started";
+    }
+
+    showRequestedPrice(): boolean {
+        return this.isWaitingForReply() && !this.processMetadata.isBeingUpdated;
+    }
+
+    isFrameContractValid(): boolean {
+        return this.digitalAgreement.digitalAgreementTerms.validityPeriod.durationMeasure.value != null && this.digitalAgreement.digitalAgreementTerms.validityPeriod.durationMeasure.unitCode != null;
+    }
+
+    isFrameContractEditable(): boolean {
+        return !this.isLoading() && !this.isReadOnly() && (!this.frameContractAvailable || this.rfqContainsDigitalAgreementReference());
+    }
+
+    isFrameContractVisible(): boolean {
+        return !this.isReadOnly() || this.frameContractAvailable;
+    }
+
+    isFrameContractConfirmed(): boolean {
+        let confirmed: boolean = false;
+        if(this.digitalAgreement != null) {
+            confirmed = this.digitalAgreement.digitalAgreementTerms.validityPeriod.startDate != null;
+        }
+        return confirmed;
     }
 
     getDeliveryPeriodText(): string {
@@ -440,6 +464,10 @@ export class NegotiationRequestComponent implements OnInit {
         }
 
         return value >= range.start && value <= range.end;
+    }
+
+    private rfqContainsDigitalAgreementReference(): boolean {
+        return this.rfq.additionalDocumentReference.filter(ref => ref.documentType == 'DIGITAL_AGREEMENT').length > 0;
     }
 
     private openDiscountModal(): void{
