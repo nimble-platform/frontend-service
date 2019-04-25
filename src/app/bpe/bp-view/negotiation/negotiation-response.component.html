@@ -77,6 +77,12 @@
 </div>
 
 <div class="row content-row bg-light">
+    <div class="col-3"><strong class="font-weight-500">Quantity:</strong></div>
+    <div class="col-3"></div>
+    <div class="col-3">{{rfq.requestForQuotationLine[0].lineItem.quantity.value}} {{this.rfq.requestForQuotationLine[0].lineItem.quantity.unitCode}}</div>
+</div>
+
+<div class="row content-row mb-3">
     <div class="col-3"><strong class="font-weight-500">Total Price:</strong></div>
     <div class="col-3">
       {{ wrapper.lineTotalPriceString }}<br/>
@@ -97,8 +103,11 @@
     </div>
 </div>
 <!--Notes-->
-<h5>Notes and Additional Files</h5>
-<note-file-view [notes]="quotation.note"
+<div class="row">
+    <div class="btn btn-outline-primary align-self-start mb-2" (click)="showNotesAndAdditionalFiles = !showNotesAndAdditionalFiles;">Notes and Additional Files</div>
+</div>
+<note-file-view *ngIf="showNotesAndAdditionalFiles"
+            [notes]="quotation.note"
            [requestNotes]="rfq.note"
            [documents]="quotation.additionalDocumentReference"
            [requestDocuments]="rfq.additionalDocumentReference"
@@ -108,12 +117,13 @@
            [thirdCol]="'col-3'"
            [lastCol]="'col-3'"
            [readonly]="isLoading() || isReadOnly()"></note-file-view>
-<hr>
 
 <!-- Delivery Location -->
-<div class="row address-row">
+<div class="row">
+    <div class="btn btn-outline-primary align-self-start mb-2" (click)="showDeliveryAddress = !showDeliveryAddress">Delivery Address</div>
+</div>
+<div *ngIf="showDeliveryAddress" class="row address-row">
     <div class="col-12">
-        <h3>Delivery Address</h3>
         <address-input [address]="wrapper.rfqDeliveryAddress" disabled="true">
         </address-input>
     </div>
