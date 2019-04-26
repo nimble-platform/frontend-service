@@ -136,7 +136,7 @@
 
     <!-- Contract Preview -->
     <div class="row" *ngIf="isReady()">
-        <terms-and-conditions [order]="order" [buyerParty]="buyerParty" [sellerParty]="sellerParty"></terms-and-conditions>
+        <terms-and-conditions [order]="order" [buyerParty]="buyerParty" [sellerParty]="sellerParty" [readOnly]="isReadOnly() || isSeller()"></terms-and-conditions>
     </div>
 </ng-container>
 

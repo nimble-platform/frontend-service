@@ -19,13 +19,13 @@
             <div class="card-header">{{section.name}}</div>
             <div id="section{{i}}" class="card-body" style="white-space: pre-wrap">
             </div>
-            <div *ngIf="section.parameters.length > 0" class="card-footer">
+            <div *ngIf="section.parameters.length > 0 && !readOnly" class="card-footer">
                 <div *ngFor="let parameter of section.parameters; let j=index" class="row">
                     <div class="col-3">
                         {{parameter}}
                     </div>
                     <div class="col-9">
-                        <input type="text" class="form-control" value="{{valuesOfParameters.get(parameter)}}"  (keyup)="updateParameter(parameter,$event.target.value)">
+                        <input type="text" class="form-control" value="{{valuesOfParameters.get(parameter)}}"  (keyup)="updateParameter(i,parameter,$event.target.value)">
                     </div>
                 </div>
             </div>
