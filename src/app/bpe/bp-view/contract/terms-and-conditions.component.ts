@@ -7,6 +7,10 @@ import { Party } from "../../../catalogue/model/publish/party";
 import {Contract} from '../../../catalogue/model/publish/contract';
 import {Clause} from '../../../catalogue/model/publish/clause';
 import {Text} from '../../../catalogue/model/publish/text';
+import {UserService} from '../../../user-mgmt/user.service';
+import {COUNTRY_NAMES} from '../../../common/utils';
+import {UnitService} from '../../../common/unit-service';
+import {deliveryPeriodUnitListId, warrantyPeriodUnitListId} from '../../../common/constants';
 
 
 @Component({
@@ -33,12 +37,41 @@ export class TermsAndConditionsComponent implements OnInit {
     // contract containing the terms and conditions details
     contract:Contract = null;
 
-    constructor(public bpeService: BPEService) {
+    // options
+    INCOTERMS: string[] = [];
+    PAYMENT_TERMS:string[] = [];
+    COUNTRY_NAMES = COUNTRY_NAMES;
+    UNITS:string[] = [];
+
+    constructor(public bpeService: BPEService,
+                public userService: UserService,
+                public unitService: UnitService) {
 
     }
 
     ngOnInit(): void {
-        this.getTermsAndConditionsContract();
+
+        this.callStatus.submit();
+
+        Promise.all([
+            this.userService.getSettingsForParty(this.sellerParty.partyIdentification[0].id),
+            this.userService.getSettingsForParty(this.buyerParty.partyIdentification[0].id),
+            this.unitService.getCachedUnitList(deliveryPeriodUnitListId),
+            this.unitService.getCachedUnitList(warrantyPeriodUnitListId)
+        ]).then(([sellerPartySettings, buyerPartySettings, deliveryPeriodUnits, warrantyPeriodUnits]) => {
+
+            // populate available incoterms
+            this.INCOTERMS = buyerPartySettings.negotiationSettings.incoterms;
+            // populate available payment terms
+            this.PAYMENT_TERMS = buyerPartySettings.negotiationSettings.paymentTerms;
+            // populate available units
+            this.UNITS = deliveryPeriodUnits.concat(warrantyPeriodUnits);
+
+            this.getTermsAndConditionsContract();
+            this.callStatus.callback("Successfully fetched terms and conditions", true);
+        }).catch(error => {
+            this.callStatus.error("Error while getting the settings of parties",error);
+        });
     }
 
     fetchTermsAndConditions(){
@@ -72,8 +105,22 @@ export class TermsAndConditionsComponent implements OnInit {
                                     let indexValueEnd = sectionText.indexOf("</span>");
                                     // find the parameter value
                                     let value = sectionText.substring(indexIdEnd+2,indexValueEnd);
-                                    // add <id,value> to map
-                                    this.valuesOfParameters.set(id,value);
+
+                                    let typeOfParameter = this.getTypeOfParameter(id);
+                                    // check type of the parameter
+                                    if(typeOfParameter == "QUANTITY"){
+                                        let spaceIndex = value.indexOf(" ");
+                                        let quantityValue = value.substring(0,spaceIndex);
+                                        let unit = value.substring(spaceIndex+1);
+
+                                        // for the quantity, we have two parameters: one for the value, one for the unit
+                                        this.valuesOfParameters.set(id,quantityValue);
+                                        this.valuesOfParameters.set(id+"_unit",unit);
+                                    }
+                                    else{
+                                        // add <id,value> to map
+                                        this.valuesOfParameters.set(id,value);
+                                    }
 
                                     let indexCloseTag = sectionText.indexOf("</b>");
                                     sectionText = sectionText.substring(indexCloseTag+4);
@@ -86,7 +133,19 @@ export class TermsAndConditionsComponent implements OnInit {
                         else{
                             for(let section of this.termsAndConditions.sections){
                                 for(let i = 0; i < section.parameters.length;i++){
-                                    this.valuesOfParameters.set(section.parameters[i],section.defaultValues[i]);
+                                    let typeOfParameter = this.getTypeOfParameter(section.parameters[i]);
+
+                                    if(typeOfParameter == "QUANTITY"){
+                                        let spaceIndex = section.defaultValues[i].indexOf(" ");
+                                        let value = section.defaultValues[i].substring(0,spaceIndex);
+                                        let unit = section.defaultValues[i].substring(spaceIndex+1);
+
+                                        // for the quantity, we have two parameters: one for the value, one for the unit
+                                        this.valuesOfParameters.set(section.parameters[i],value);
+                                        this.valuesOfParameters.set(section.parameters[i]+"_unit",unit);
+                                    } else{
+                                        this.valuesOfParameters.set(section.parameters[i],section.defaultValues[i]);
+                                    }
                                 }
                             }
                         }
@@ -136,7 +195,15 @@ export class TermsAndConditionsComponent implements OnInit {
             for(let j = 0; j < section.parameters.length; j++){
                 let parameter = section.parameters[j];
                 let defaultValue = this.valuesOfParameters.get(parameter);
-                text = text.replace(parameter,"<b><span id='"+parameter+"'>"+defaultValue+"</span></b>");
+                let typeOfParameter = this.getTypeOfParameter(parameter);
+                // for the quantities, we have value and unit
+                if(typeOfParameter == "QUANTITY"){
+                    let defaultUnit = this.valuesOfParameters.get(parameter+"_unit");
+                    text = text.replace(parameter,"<b><span id='"+parameter+"'>"+defaultValue+" "+defaultUnit+"</span></b>");
+                }else{
+                    text = text.replace(parameter,"<b><span id='"+parameter+"'>"+defaultValue+"</span></b>");
+                }
+
             }
             element.innerHTML = text;
 
@@ -145,9 +212,22 @@ export class TermsAndConditionsComponent implements OnInit {
     }
 
     updateParameter(sectionIndex:number,id:string,value:string){
-        let element = document.getElementById(id);
-        element.innerText = value;
         this.valuesOfParameters.set(id,value);
+
+        if(id.endsWith("_unit")){
+            let valueId = id.substring(0,id.indexOf("_unit"));
+
+            let element = document.getElementById(valueId);
+            element.innerText = this.valuesOfParameters.get(valueId)+" "+ value;
+        } else{
+            let element = document.getElementById(id);
+            let typeOfParameter = this.getTypeOfParameter(id);
+            if(typeOfParameter == "QUANTITY"){
+                element.innerText = value + " " + this.valuesOfParameters.get(id+"_unit");
+            } else{
+                element.innerText = value;
+            }
+        }
 
         if(!this.readOnly){
             let sectionName = this.termsAndConditions.sections[sectionIndex].name;
@@ -180,7 +260,14 @@ export class TermsAndConditionsComponent implements OnInit {
             for(let i = 0 ; i < section.parameters.length; i++){
                 let parameter = section.parameters[i];
                 let defaultValue = this.valuesOfParameters.get(parameter);
-                text = text.replace(parameter,"<b><span id='"+parameter+"'>"+defaultValue+"</span></b>");
+
+                let typeOfParameter = this.getTypeOfParameter(parameter);
+                if(typeOfParameter == "QUANTITY"){
+                    let defaultUnit = this.valuesOfParameters.get(parameter+"_unit");
+                    text = text.replace(parameter,"<b><span id='"+parameter+"'>"+defaultValue+" "+defaultUnit+"</span></b>");
+                }else{
+                    text = text.replace(parameter,"<b><span id='"+parameter+"'>"+defaultValue+"</span></b>");
+                }
             }
             this.contract.clause[sectionIndex].content = [new Text(text,"en")];
         }
@@ -196,5 +283,23 @@ export class TermsAndConditionsComponent implements OnInit {
                 }
             }
         }
+    }
+
+    getTypeOfParameter(parameter:string){
+        let type = "STRING";
+        if(parameter == "$buyer_country"){
+            type = "COUNTRY";
+        } else if(parameter == "$payment_id"){
+            type = "PAYMENT_MEANS";
+        } else if(parameter == "$incoterms_id"){
+            type = "INCOTERMS";
+        } else if(parameter == "$action_day" || parameter == "$decision_id"){
+            type = "NUMBER";
+        } else if(parameter == '$change_id' || parameter == '$insurance_id' || parameter == '$termination_id' || parameter == '$agreement_id' ||
+                  parameter == '$warranty_seller_id' || parameter == '$warranty_buyer_id' || parameter == '$inspection_id'){
+            type = "QUANTITY";
+        }
+
+        return type;
     }
 }

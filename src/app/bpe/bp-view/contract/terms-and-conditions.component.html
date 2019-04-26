@@ -20,11 +20,27 @@
             </div>
             <div *ngIf="section.parameters.length > 0 && !readOnly && i != 0" class="card-footer">
                 <div *ngFor="let parameter of section.parameters; let j=index" class="row">
-                    <div class="col-3">
+                    <div class="col-4">
                         {{parameter}}
                     </div>
-                    <div class="col-9">
-                        <input type="text" class="form-control" value="{{valuesOfParameters.get(parameter)}}"  (keyup)="updateParameter(i,parameter,$event.target.value)">
+                    <div class="col-8">
+                        <input *ngIf="getTypeOfParameter(parameter) == 'STRING'" type="text" class="form-control" value="{{valuesOfParameters.get(parameter)}}"  (keyup)="updateParameter(i,parameter,$event.target.value)">
+                        <input *ngIf="getTypeOfParameter(parameter) == 'NUMBER'" type="number" class="form-control" value="{{valuesOfParameters.get(parameter)}}"  (keyup)="updateParameter(i,parameter,$event.target.value)">
+                        <select *ngIf="getTypeOfParameter(parameter) == 'INCOTERMS'" class="form-control custom-select" value="{{valuesOfParameters.get(parameter)}}" (change)="updateParameter(i,parameter,$event.target.value)">
+                            <option *ngFor="let option of INCOTERMS" [value]="option">{{option}}</option>
+                        </select>
+                        <select *ngIf="getTypeOfParameter(parameter) == 'PAYMENT_MEANS'" class="form-control custom-select" value="{{valuesOfParameters.get(parameter)}}" (change)="updateParameter(i,parameter,$event.target.value)">
+                            <option *ngFor="let option of PAYMENT_TERMS" [value]="option">{{option}}</option>
+                        </select>
+                        <select *ngIf="getTypeOfParameter(parameter) == 'COUNTRY'" class="form-control custom-select" value="{{valuesOfParameters.get(parameter)}}" (change)="updateParameter(i,parameter,$event.target.value)">
+                            <option *ngFor="let option of COUNTRY_NAMES" [value]="option">{{option}}</option>
+                        </select>
+                        <div *ngIf="getTypeOfParameter(parameter) == 'QUANTITY'" class="row col-12">
+                            <input type="number" class="form-control col-6 space-right" value="{{valuesOfParameters.get(parameter)}}"  (keyup)="updateParameter(i,parameter,$event.target.value)">
+                            <select class="form-control custom-select col-5" value="{{valuesOfParameters.get(parameter+'_unit')}}" (change)="updateParameter(i,parameter+'_unit',$event.target.value)">
+                                <option *ngFor="let option of UNITS" [value]="option">{{option}}</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>
