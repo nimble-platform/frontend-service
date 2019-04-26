@@ -55,10 +55,9 @@ import {ShipmentStage} from "./publish/shipment-stage";
 import {copy, isNaNNullAware, selectPreferredName} from "../../common/utils";
 import {Text} from "./publish/text";
 import {Attachment} from "./publish/attachment";
-import {LCPAInput} from "./publish/lcpa-input";
-import {LCPAOutput} from "./publish/lcpa-output";
 import {LifeCyclePerformanceAssessmentDetails} from "./publish/life-cycle-performance-assessment-details";
 import {PartyName} from './publish/party-name';
+import {MultiTypeValue} from "./publish/multi-type-value";
 
 /**
  * Created by suat on 05-Jul-17.
@@ -274,21 +273,21 @@ export class UBLModelUtils {
 
     public static getDefaultPaymentTerms(settings?: CompanyNegotiationSettings): PaymentTerms {
         const terms = new PaymentTerms([], [
-            new TradingTerm("Payment_In_Advance",[new Text("Payment in advance")],"PIA",[new Text("false")]),
+            new TradingTerm("Payment_In_Advance",[new Text("Payment in advance")],"PIA", new MultiTypeValue(null, 'STRING', [new Text("false")], null, null)),
             // new TradingTerm("Values_Net","e.g.,NET 10,payment 10 days after invoice date","Net %s",[null]),
-            new TradingTerm("End_of_month",[new Text("End of month")],"EOM",[new Text("false")]),
-            new TradingTerm("Cash_next_delivery",[new Text("Cash next delivery")],"CND",[new Text("false")]),
-            new TradingTerm("Cash_before_shipment",[new Text("Cash before shipment")],"CBS",[new Text("false")]),
+            new TradingTerm("End_of_month",[new Text("End of month")],"EOM", new MultiTypeValue(null, 'STRING', [new Text("false")], null, null)),
+            new TradingTerm("Cash_next_delivery",[new Text("Cash next delivery")],"CND", new MultiTypeValue(null, 'STRING', [new Text("false")], null, null)),
+            new TradingTerm("Cash_before_shipment",[new Text("Cash before shipment")],"CBS", new MultiTypeValue(null, 'STRING', [new Text("false")], null, null)),
             // new TradingTerm("Values_MFI","e.g.,21 MFI,21st of the month following invoice date","%s MFI", [null]),
             // new TradingTerm("Values_/NET","e.g.,1/10 NET 30,1% discount if payment received within 10 days otherwise payment 30 days after invoice date","%s/%s NET %s",[null,null,null]),
-            new TradingTerm("Cash_on_delivery",[new Text("Cash on delivery")],"COD",[new Text("false")]),
-            new TradingTerm("Cash_with_order",[new Text("Cash with order")],"CWO",[new Text("false")]),
-            new TradingTerm("Cash_in_advance",[new Text("Cash in advance")],"CIA",[new Text("false")]),
+            new TradingTerm("Cash_on_delivery",[new Text("Cash on delivery")],"COD", new MultiTypeValue(null, 'STRING', [new Text("false")], null, null)),
+            new TradingTerm("Cash_with_order",[new Text("Cash with order")],"CWO", new MultiTypeValue(null, 'STRING', [new Text("false")], null, null)),
+            new TradingTerm("Cash_in_advance",[new Text("Cash in advance")],"CIA", new MultiTypeValue(null, 'STRING', [new Text("false")], null, null)),
         ]);
 
         if(settings) {
             for(const term of terms.tradingTerms) {
-                term.value[0].value = this.tradingTermToString(term) === settings.paymentTerms[0] ? "true" : "false";
+                term.value.value[0].value = this.tradingTermToString(term) === settings.paymentTerms[0] ? "true" : "false";
             }
         }
 
