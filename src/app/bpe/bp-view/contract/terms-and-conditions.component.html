@@ -1,4 +1,4 @@
-<div class="col-12">
+<div class="col-12 title">
     <h2>
         Terms and Conditions
         <button class="btn btn-outline-dark" (click)="fetchTermsAndConditions()"
@@ -9,8 +9,7 @@
     </h2>
 </div>
 <call-status [callStatus]="callStatus"></call-status>
-<div class="col-12" *ngIf="showPreview && termsAndConditions">
-    <h4>General terms and conditions</h4>
+<div class="col-12 section" *ngIf="showPreview && termsAndConditions">
     <div *ngFor="let section of termsAndConditions.sections;let i=index">
         <button class="btn btn-primary btn-outline-primary" (click)="showSection[i] = !showSection[i];setSectionText(i)">
             {{section.name}}
@@ -31,6 +30,4 @@
             </div>
         </div>
     </div>
-    <contract [contract]="order.contract[0]">
-    </contract>
 </div>

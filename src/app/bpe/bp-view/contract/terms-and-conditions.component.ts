@@ -11,7 +11,8 @@ import {Text} from '../../../catalogue/model/publish/text';
 
 @Component({
     selector: "terms-and-conditions",
-    templateUrl: "./terms-and-conditions.component.html"
+    templateUrl: "./terms-and-conditions.component.html",
+    styleUrls: ["./terms-and-conditions.component.css"]
 })
 export class TermsAndConditionsComponent implements OnInit {
 
