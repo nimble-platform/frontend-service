@@ -263,7 +263,7 @@ export class TermsAndConditionsComponent implements OnInit {
             let endIndex = text.indexOf(":");
             let name = text.substring(startIndex+1,endIndex);
             if(endIndex == -1){
-                name = "Purchase Order Terms and Conditions";
+                name = "PURCHASE ORDER TERMS AND CONDITIONS";
             }
             if(sectionName == name){
                 return clause;
