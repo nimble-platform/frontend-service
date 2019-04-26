@@ -21,8 +21,8 @@ import {deliveryPeriodUnitListId, warrantyPeriodUnitListId} from '../../../commo
 export class TermsAndConditionsComponent implements OnInit {
 
     @Input() order:Order;
-    @Input() buyerParty:Party;
-    @Input() sellerParty:Party;
+    @Input() buyerPartyId:string;
+    @Input() sellerPartyId:string;
     @Input() readOnly:boolean = false;
 
     showPreview: boolean = false;
@@ -54,16 +54,15 @@ export class TermsAndConditionsComponent implements OnInit {
         this.callStatus.submit();
 
         Promise.all([
-            this.userService.getSettingsForParty(this.sellerParty.partyIdentification[0].id),
-            this.userService.getSettingsForParty(this.buyerParty.partyIdentification[0].id),
+            this.userService.getSettingsForParty(this.sellerPartyId),
             this.unitService.getCachedUnitList(deliveryPeriodUnitListId),
             this.unitService.getCachedUnitList(warrantyPeriodUnitListId)
-        ]).then(([sellerPartySettings, buyerPartySettings, deliveryPeriodUnits, warrantyPeriodUnits]) => {
+        ]).then(([sellerPartySettings, deliveryPeriodUnits, warrantyPeriodUnits]) => {
 
             // populate available incoterms
-            this.INCOTERMS = buyerPartySettings.negotiationSettings.incoterms;
+            this.INCOTERMS = sellerPartySettings.negotiationSettings.incoterms;
             // populate available payment terms
-            this.PAYMENT_TERMS = buyerPartySettings.negotiationSettings.paymentTerms;
+            this.PAYMENT_TERMS = sellerPartySettings.negotiationSettings.paymentTerms;
             // populate available units
             this.UNITS = deliveryPeriodUnits.concat(warrantyPeriodUnits);
 
@@ -80,7 +79,7 @@ export class TermsAndConditionsComponent implements OnInit {
 
         if(this.showPreview) {
             this.callStatus.submit();
-            this.bpeService.getTermsAndConditions(this.order, UBLModelUtils.getPartyId(this.buyerParty), UBLModelUtils.getPartyId(this.sellerParty))
+            this.bpeService.getTermsAndConditions(this.order, this.buyerPartyId, this.sellerPartyId)
                 .then(termsAndConditions => {
                     this.termsAndConditions = termsAndConditions;
                     // create valuesOfParameters map

@@ -67,6 +67,8 @@ export class OrderComponent implements OnInit {
     // the copy of ThreadEventMetadata of the current business process
     processMetadata: ThreadEventMetadata;
 
+    getPartyId = UBLModelUtils.getPartyId;
+
     constructor(public bpDataService: BPDataService,
                 private userService: UserService,
                 private bpeService: BPEService,
