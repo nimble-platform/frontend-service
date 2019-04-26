@@ -212,6 +212,25 @@ export class TermsAndConditionsComponent implements OnInit {
     }
 
     updateParameter(sectionIndex:number,id:string,value:string){
+        // handling of empty string
+        if(value == ""){
+            let section = this.termsAndConditions.sections[sectionIndex];
+            // find the index of parameter
+            let index = section.parameters.indexOf(id);
+
+            let typeOfParameter = this.getTypeOfParameter(id);
+            if(typeOfParameter == "QUANTITY"){
+                let defaultValue = section.defaultValues[index];
+                // get the value of quantity
+                let spaceIndex = defaultValue.indexOf(" ");
+                value = defaultValue.substring(0,spaceIndex);
+            } else{
+                // get the default value
+                value = section.defaultValues[index];
+            }
+
+        }
+
         this.valuesOfParameters.set(id,value);
 
         if(id.endsWith("_unit")){
