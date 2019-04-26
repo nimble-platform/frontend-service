@@ -102,6 +102,56 @@
         </div>
     </div>
 </div>
+
+<!-- Frame contract -->
+<ng-container *ngIf="frameContractAvailable">
+    <div class="row">
+        <div class="btn btn-outline-primary align-self-start mb-2" (click)="showFrameContractDetails = !showFrameContractDetails;">Frame Contract</div>
+    </div>
+    <ng-container *ngIf="showFrameContractDetails">
+        <!--<div class="d-flex align-items-center mb-3">-->
+        <div class="row">
+            <div class="col-3">
+                <strong class="font-weight-500">Frame Contract:</strong>
+            </div>
+            <div class="col-3"></div>
+            <div class="col-3">
+                <quantity-input [rowClass]="'space-before'"
+                                [label]="'Valid for'"
+                                [labelClass]="'col-5'"
+                                [valueClass]="'col-7'"
+                                [valueSizeClass]="'col-5'"
+                                [unitSizeClass]="'col-7'"
+                                [definition]="'The period within which the offered conditions will be valid upon confirmation by the seller.'"
+                                [quantity]="customerFrameContractDuration"
+                                [disabled]="true">
+                </quantity-input>
+            </div>
+            <div class="col-3">
+                <quantity-input [rowClass]="'space-before'"
+                                [label]="'Valid for'"
+                                [labelClass]="'col-5'"
+                                [valueClass]="'col-7'"
+                                [valueSizeClass]="'col-5'"
+                                [unitSizeClass]="'col-7'"
+                                [definition]="'The period within which the offered conditions will be valid upon confirmation by the seller.'"
+                                [quantity]="frameContract.digitalAgreementTerms.validityPeriod.durationMeasure"
+                                [disabled]="isReadOnly()">
+                </quantity-input>
+                <text-input [rowClass]="'space-before'"
+                            [rows]="1"
+                            [label]="'Until'"
+                            [labelClass]="'col-5'"
+                            [valueClass]="'col-7'"
+                            [definition]="'The date until which the frame contract will be valid.'"
+                            [disabled]="true"
+                            [text]="getContractEndDate()">
+                </text-input>
+            </div>
+        </div>
+    </ng-container>
+</ng-container>
+
 <!--Notes-->
 <div class="row">
     <div class="btn btn-outline-primary align-self-start mb-2" (click)="showNotesAndAdditionalFiles = !showNotesAndAdditionalFiles;">Notes and Additional Files</div>
@@ -141,10 +191,10 @@
         </button>
     </div>
     <div class="col-2">
-        <button *ngIf="!hasUpdatedTerms()" class="btn btn-primary action" [disabled]="isLoading()" (click)="onRespondToQuotation(true)">
+        <button *ngIf="!hasUpdatedTerms()" class="btn btn-primary action" [disabled]="isLoading() && isFormValid()" (click)="onRespondToQuotation(true)">
             Accept Offer
         </button>
-        <button *ngIf="hasUpdatedTerms()" class="btn btn-primary action" [disabled]="isLoading()" (click)="onRespondToQuotation(true)">
+        <button *ngIf="hasUpdatedTerms()" class="btn btn-primary action" [disabled]="isLoading() && isFormValid()" (click)="onRespondToQuotation(true)">
             Submit Response
         </button>
     </div>

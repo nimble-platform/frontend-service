@@ -44,7 +44,7 @@ export class NegotiationRequestComponent implements OnInit {
     line: CatalogueLine;
     rfq: RequestForQuotation;
     rfqLine: RequestForQuotationLine;
-    digitalAgreement: DigitalAgreement = new DigitalAgreement();
+    frameContract: DigitalAgreement = new DigitalAgreement();
     wrapper: NegotiationModelWrapper;
     frameContractDurationUnits: string[];
     config = myGlobals.config;
@@ -65,7 +65,6 @@ export class NegotiationRequestComponent implements OnInit {
      */
 
     showCounterOfferTerms:boolean = false;
-    offerFrameContractSelected: boolean = false;
     showFrameContractDetails: boolean = false;
     frameContractAvailable: boolean = false;
     showNotesAndAdditionalFiles: boolean = false;
@@ -108,9 +107,8 @@ export class NegotiationRequestComponent implements OnInit {
         this.bpeService.getDigitalAgreement(UBLModelUtils.getPartyId(this.line.goodsItem.item.manufacturerParty),
             this.cookieService.get("company_id"),
             this.rfq.requestForQuotationLine[0].lineItem.item.manufacturersItemIdentification.id).then(digitalAgreement => {
-            this.digitalAgreement = digitalAgreement;
+            this.frameContract = digitalAgreement;
             this.frameContractAvailable = true;
-            this.offerFrameContractSelected = true;
         });
     }
 
@@ -152,7 +150,7 @@ export class NegotiationRequestComponent implements OnInit {
             ]).then(([buyerPartyResp, sellerPartyResp]) => {
                 sellerParty = sellerPartyResp;
                 buyerParty = buyerPartyResp;
-                return this.saveDigitalAgreement(buyerParty, sellerParty);
+                return this.saveFrameContract(buyerParty, sellerParty);
 
             }).then((savedDigitalAgreement: DigitalAgreement) => {
                 // update rfq with the digital agreement reference
@@ -192,24 +190,24 @@ export class NegotiationRequestComponent implements OnInit {
         }
     }
 
-    saveDigitalAgreement(sellerParty: Party, buyerParty: Party): Promise<DigitalAgreement> {
-        this.digitalAgreement.item = this.rfq.requestForQuotationLine[0].lineItem.item;
-        this.digitalAgreement.participantParty.push(sellerParty);
-        this.digitalAgreement.participantParty.push(buyerParty);
-        UBLModelUtils.removeHjidFieldsFromObject(this.digitalAgreement);
+    saveFrameContract(sellerParty: Party, buyerParty: Party): Promise<DigitalAgreement> {
+        this.frameContract.item = this.rfq.requestForQuotationLine[0].lineItem.item;
+        this.frameContract.participantParty.push(sellerParty);
+        this.frameContract.participantParty.push(buyerParty);
+        UBLModelUtils.removeHjidFieldsFromObject(this.frameContract);
 
-        let savedDigitalAgreement: Promise<DigitalAgreement> = Promise.resolve(null);
-        if(this.offerFrameContractSelected) {
-            savedDigitalAgreement = this.bpeService.saveDigitalAgreement(this.digitalAgreement);
+        let savedFrameContract: Promise<DigitalAgreement> = Promise.resolve(null);
+        if(this.isFrameContractInEditMode() && this.isFrameContractValid()) {
+            savedFrameContract = this.bpeService.saveFrameContract(this.frameContract);
         }
-        return savedDigitalAgreement;
+        return savedFrameContract;
     }
 
     onUpdateRequest(): void {
         this.callStatus.submit();
 
         const rfq: RequestForQuotation = copy(this.rfq);
-        Promise.all([this.bpeService.updateDigitalAgreement(this.digitalAgreement),
+        Promise.all([this.bpeService.updateFrameContract(this.frameContract),
             this.bpeService.updateBusinessProcess(JSON.stringify(rfq),"REQUESTFORQUOTATION",this.processMetadata.processId)]).then(() => {
             this.documentService.updateCachedDocument(rfq.id,rfq);
             this.callStatus.callback("Terms updated", true);
@@ -246,7 +244,7 @@ export class NegotiationRequestComponent implements OnInit {
             || (this.rfq.negotiationOptions.paymentTerms && this.wrapper.linePaymentTerms != this.wrapper.rfqPaymentTerms.paymentTerm)
             || (this.rfq.negotiationOptions.paymentMeans && this.wrapper.linePaymentMeans != this.wrapper.rfqPaymentMeans)
             || this.rfq.dataMonitoringRequested
-            || (this.isFrameContractEditable() && this.offerFrameContractSelected);
+            || (this.isFrameContractInEditMode() && this.isFrameContractValid());
     }
 
     get lineHasPrice(): boolean {
@@ -371,11 +369,15 @@ export class NegotiationRequestComponent implements OnInit {
     }
 
     isFrameContractValid(): boolean {
-        return this.digitalAgreement.digitalAgreementTerms.validityPeriod.durationMeasure.value != null && this.digitalAgreement.digitalAgreementTerms.validityPeriod.durationMeasure.unitCode != null;
+        return this.frameContract.digitalAgreementTerms.validityPeriod.durationMeasure.value != null && this.frameContract.digitalAgreementTerms.validityPeriod.durationMeasure.unitCode != null;
     }
 
-    isFrameContractEditable(): boolean {
-        return !this.isLoading() && !this.isReadOnly() && (!this.frameContractAvailable || this.rfqContainsDigitalAgreementReference());
+    isFrameContractDisabled(): boolean {
+        return this.isLoading() || !this.isFrameContractInEditMode();
+    }
+
+    isFrameContractInEditMode(): boolean {
+        return !this.isReadOnly() && (!this.frameContractAvailable || this.rfqContainsDigitalAgreementReference());
     }
 
     isFrameContractVisible(): boolean {
@@ -384,8 +386,8 @@ export class NegotiationRequestComponent implements OnInit {
 
     isFrameContractConfirmed(): boolean {
         let confirmed: boolean = false;
-        if(this.digitalAgreement != null) {
-            confirmed = this.digitalAgreement.digitalAgreementTerms.validityPeriod.startDate != null;
+        if(this.frameContract != null) {
+            confirmed = this.frameContract.digitalAgreementTerms.validityPeriod.startDate != null;
         }
         return confirmed;
     }

@@ -20,7 +20,11 @@ import {BpStartEvent} from '../../../catalogue/model/publish/bp-start-event';
 import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
 import {UBLModelUtils} from '../../../catalogue/model/ubl-model-utils';
 import * as myGlobals from '../../../globals';
-import {isValidPrice} from "../../../common/utils";
+import {copy, isValidPrice} from "../../../common/utils";
+import {DigitalAgreement} from "../../../catalogue/model/publish/digital-agreement";
+import * as moment from "moment";
+import {Moment, unitOfTime} from "moment";
+import {Period} from "../../../catalogue/model/publish/period";
 
 @Component({
     selector: "negotiation-response",
@@ -29,12 +33,16 @@ import {isValidPrice} from "../../../common/utils";
 })
 export class NegotiationResponseComponent implements OnInit {
 
+    dateFormat = "YYYY-MM-DD";
+
     line: CatalogueLine;
     @Input() rfq: RequestForQuotation;
     @Input() quotation: Quotation;
     wrapper: NegotiationModelWrapper;
     userRole: BpUserRole;
     @Input() readonly: boolean = false;
+    frameContract: DigitalAgreement;
+    customerFrameContractDuration: Quantity;
     config = myGlobals.config;
 
     CURRENCIES: string[] = CURRENCIES;
@@ -47,6 +55,8 @@ export class NegotiationResponseComponent implements OnInit {
     @ViewChild(DiscountModalComponent)
     private discountModal: DiscountModalComponent;
 
+    frameContractAvailable: boolean = false;
+    showFrameContractDetails: boolean = false;
     showNotesAndAdditionalFiles: boolean = false;
     showDeliveryAddress: boolean = false;
 
@@ -80,6 +90,15 @@ export class NegotiationResponseComponent implements OnInit {
         this.wrapper.quotationPriceWrapper.presentationMode = this.getPresentationMode();
 
         this.userRole = this.bpDataService.bpStartEvent.userRole;
+
+        // check associated frame contract
+        this.bpeService.getDigitalAgreement(UBLModelUtils.getPartyId(this.rfq.requestForQuotationLine[0].lineItem.item.manufacturerParty),
+            UBLModelUtils.getPartyId(this.rfq.buyerCustomerParty.party),
+            this.rfq.requestForQuotationLine[0].lineItem.item.manufacturersItemIdentification.id).then(digitalAgreement => {
+            this.frameContract = digitalAgreement;
+            this.customerFrameContractDuration = copy(digitalAgreement.digitalAgreementTerms.validityPeriod.durationMeasure);
+            this.frameContractAvailable = true;
+        });
     }
 
     onBack(): void {
@@ -106,17 +125,19 @@ export class NegotiationResponseComponent implements OnInit {
         const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.processMetadata.processId);
 
         this.callStatus.submit();
-        this.bpeService.continueBusinessProcess(piim)
-            .then(res => {
-                this.callStatus.callback("Quotation sent", true);
-                var tab = "PUCHASES";
-                if (this.bpDataService.bpStartEvent.userRole == "seller")
-                  tab = "SALES";
-                this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
-            })
-            .catch(error => {
-                this.callStatus.error("Failed to send quotation", error);
-            });
+        this.updateFrameContract().then(() => {
+            return this.bpeService.continueBusinessProcess(piim);
+
+        }).then(() => {
+            this.callStatus.callback("Quotation sent", true);
+            var tab = "PUCHASES";
+            if (this.bpDataService.bpStartEvent.userRole == "seller")
+                tab = "SALES";
+            this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
+
+        }).catch(error => {
+            this.callStatus.error("Failed to send quotation", error);
+        });
     }
 
     onRequestNewQuotation() {
@@ -155,6 +176,24 @@ export class NegotiationResponseComponent implements OnInit {
 
     set quotationPrice(price: number) {
         this.wrapper.quotationPriceWrapper.totalPrice = price;
+    }
+
+    getContractEndDate(): string {
+        let rangeUnit: string;
+        switch (this.frameContract.digitalAgreementTerms.validityPeriod.durationMeasure.unitCode) {
+            case "year(s)": rangeUnit = 'y'; break;
+            case "month(s)": rangeUnit = 'M'; break;
+            case "week(s)": rangeUnit = 'w'; break;
+            case "day(s)": rangeUnit = 'd'; break;
+        }
+        let m:Moment = moment().add(this.frameContract.digitalAgreementTerms.validityPeriod.durationMeasure.value, <unitOfTime.DurationConstructor>rangeUnit);
+        let date: string = m.format(this.dateFormat);
+        return date;
+    }
+
+    isFormValid(): boolean {
+        // TODO check other elements
+        return this.isFrameContractDurationValid();
     }
 
     /*
@@ -196,7 +235,34 @@ export class NegotiationResponseComponent implements OnInit {
                 return true;
             }
         }
+        if(this.frameContract) {
+            if(this.isFrameContractDurationUpdated()) {
+                return true;
+            }
+        }
         return false;
+    }
+
+    private updateFrameContract(): Promise<DigitalAgreement> {
+        let savedFrameContract: Promise<DigitalAgreement> = Promise.resolve(null);
+        if(this.frameContract != null && this.isFrameContractDurationUpdated()) {
+            this.frameContract.digitalAgreementTerms.validityPeriod.startDate = moment().format(this.dateFormat);
+            this.frameContract.digitalAgreementTerms.validityPeriod.endDate = this.getContractEndDate();
+            savedFrameContract = this.bpeService.updateFrameContract(this.frameContract);
+        }
+        return savedFrameContract;
+    }
+
+    private isFrameContractDurationValid(): boolean {
+        if(this.frameContract.digitalAgreementTerms.validityPeriod.durationMeasure.unitCode != null &&
+            this.frameContract.digitalAgreementTerms.validityPeriod.durationMeasure.value != null) {
+            return true;
+        }
+        return false;
+    }
+
+    private isFrameContractDurationUpdated() {
+        return !this.qtyEquals(this.customerFrameContractDuration, this.frameContract.digitalAgreementTerms.validityPeriod.durationMeasure);
     }
 
     private qtyEquals(qty1: Quantity, qty2: Quantity): boolean {

@@ -397,7 +397,7 @@ export class BPEService {
             .catch(this.handleError);
 	}
 
-	saveDigitalAgreement(digitalAgreement: DigitalAgreement): Promise<DigitalAgreement> {
+	saveFrameContract(digitalAgreement: DigitalAgreement): Promise<DigitalAgreement> {
 		const url = `${this.url}/contract/digital-agreement`;
 		return this.http
 		    .post(url, digitalAgreement, {headers: this.getAuthorizedHeaders()})
@@ -406,7 +406,7 @@ export class BPEService {
 		    .catch(this.handleError);
 	}
 
-	updateDigitalAgreement(digitalAgreement: DigitalAgreement): Promise<DigitalAgreement> {
+	updateFrameContract(digitalAgreement: DigitalAgreement): Promise<DigitalAgreement> {
 		const url = `${this.url}/contract/digital-agreement/${digitalAgreement.id}`;
 		return this.http
             .put(url, digitalAgreement, {headers: this.getAuthorizedHeaders()})

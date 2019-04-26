@@ -1,6 +1,6 @@
 import {Component, ElementRef, EventEmitter, Output, ViewChild} from "@angular/core";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
-import {LCPAInputDetail} from "../catalogue/model/publish/lcpa-input-detail";
+import {MultiTypeValue} from "../catalogue/model/publish/lcpa-input-detail";
 
 @Component({
     selector: "lcpa-detail-modal",
@@ -9,9 +9,9 @@ import {LCPAInputDetail} from "../catalogue/model/publish/lcpa-input-detail";
 export class LcpaDetailModalComponent {
 
     @ViewChild("modal") modal: ElementRef;
-    @Output() valueAdded = new EventEmitter<LCPAInputDetail>();
+    @Output() valueAdded = new EventEmitter<MultiTypeValue>();
 
-    lcpaInputDetail: LCPAInputDetail = new LCPAInputDetail();
+    lcpaInputDetail: MultiTypeValue = new MultiTypeValue();
     presentationMode: "edit" | "view" = "edit";
     valueQualifiers = [
         { name: "Text", value: "STRING" },
@@ -22,7 +22,7 @@ export class LcpaDetailModalComponent {
     }
 
     open() {
-        this.lcpaInputDetail = new LCPAInputDetail();
+        this.lcpaInputDetail = new MultiTypeValue();
         this.modalService.open(this.modal);
     }
 

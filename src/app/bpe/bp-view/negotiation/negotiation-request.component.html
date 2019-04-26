@@ -12,7 +12,7 @@
         </div>
     </div>
 </div>
-<div class="row">
+<div class="row mb-3">
     <div class="{{showCounterOfferTerms ? 'col-12' : 'col-7'}}">
         <!-- Delivery Period -->
         <div class="row content-row bg-light">
@@ -161,110 +161,132 @@
     </div>
 </div>
 
-<div class="d-flex flex-column mt-3">
     <!-- Frame contract -->
     <ng-container *ngIf="isFrameContractVisible()">
-        <div class="btn btn-outline-primary align-self-start mb-2" (click)="showFrameContractDetails = !showFrameContractDetails;">Frame Contract</div>
+        <div class="row">
+            <div class="btn btn-outline-primary align-self-start mb-2" (click)="showFrameContractDetails = !showFrameContractDetails;">Frame Contract</div>
+        </div>
         <ng-container *ngIf="showFrameContractDetails">
-            <div class="d-flex align-items-center mb-3">
+            <!--<div class="d-flex align-items-center mb-3">-->
+            <div class="row">
                 <!-- visible when
                     1) there is no frame contract
                     2) there is one but waiting for reply
                     3) there is one frame contract
                 -->
-                <div *ngIf="!frameContractAvailable || (frameContractAvailable && !isFrameContractConfirmed())" class="col-4">
-                    <div class="input-group">
-                        <div class="d-flex align-items-center">
-                            <input type="checkbox" [(ngModel)]="offerFrameContractSelected" [disabled]="!isFrameContractEditable()">
-                        </div>
-                        <span class="form-control d-inline border-0">
-                                <strong class="font-weight-500">Offer terms as a frame contract</strong>
-                        </span>
-                    </div>
-                </div>
+                <!--<div *ngIf="!frameContractAvailable || (frameContractAvailable && !isFrameContractConfirmed())" class="col-4">-->
+                    <!--<div class="input-group">-->
+                        <!--<div class="d-flex align-items-center">-->
+                            <!--<input type="checkbox" [(ngModel)]="offerFrameContractSelected" [disabled]="!isFrameContractEditable()">-->
+                        <!--</div>-->
+                        <!--<span class="form-control d-inline border-0">-->
+                                <!--<strong class="font-weight-500">Offer terms as a frame contract</strong>-->
+                        <!--</span>-->
+                    <!--</div>-->
+                <!--</div>-->
                 <!-- visible when
                     1) there is not contract but offer checkbox is ticked
                     2) there is a contract but waiting for reply
                  -->
-                <div *ngIf="(!frameContractAvailable && offerFrameContractSelected) || (frameContractAvailable && !isFrameContractConfirmed())" class="col-8">
+                <div class="col-2">
+                    <strong class="font-weight-500">Frame Contract:</strong>
+                </div>
+                <div class="col-5"></div>
+                <div *ngIf="!frameContractAvailable || (frameContractAvailable && !isFrameContractConfirmed())" class="d-flex align-items-center">
                     <quantity-input [rowClass]="'space-before'"
                                     [label]="'Valid for'"
-                                    [labelClass]="'col-2'"
-                                    [valueClass]="'col-4'"
+                                    [labelClass]="'col-5'"
+                                    [valueClass]="'col-7'"
                                     [definition]="'The period within which the offered conditions will be valid upon confirmation by the seller.'"
-                                    [quantity]="digitalAgreement.digitalAgreementTerms.validityPeriod.durationMeasure"
+                                    [quantity]="frameContract.digitalAgreementTerms.validityPeriod.durationMeasure"
                                     [quantityUnits]="frameContractDurationUnits"
-                                    [disabled]="!isFrameContractEditable()">
+                                    [disabled]="isFrameContractDisabled()">
                     </quantity-input>
                 </div>
+                <!--<div *ngIf="!frameContractAvailable || (frameContractAvailable && !isFrameContractConfirmed())" class="col-5">-->
+                    <!--<quantity-input [rowClass]="'space-before'"-->
+                                    <!--[label]="'Valid for'"-->
+                                    <!--[labelClass]="'col-5'"-->
+                                    <!--[valueClass]="'col-7'"-->
+                                    <!--[definition]="'The period within which the offered conditions will be valid upon confirmation by the seller.'"-->
+                                    <!--[quantity]="frameContract.digitalAgreementTerms.validityPeriod.durationMeasure"-->
+                                    <!--[quantityUnits]="frameContractDurationUnits"-->
+                                    <!--[disabled]="isFrameContractDisabled()">-->
+                    <!--</quantity-input>-->
+                <!--</div>-->
                 <!-- visible when there is a confirmed contract  -->
-                <ng-container *ngIf="offerFrameContractSelected && isFrameContractConfirmed()">
-                    <div class="col-4">
-                        <div class="input-group">
-                            <div class="d-flex align-items-center">
-                                <input type="checkbox" [(ngModel)]="offerFrameContractSelected" [disabled]="!isFrameContractEditable()">
-                            </div>
-                            <span class="form-control d-inline border-0">
-                                    <strong class="font-weight-500">Frame contract confirmed</strong>
-                            </span>
-                        </div>
-                    </div>
-                    <div class="col-8">
-                        <text-input [rowClass]="'space-before'"
-                                    [rows]="1"
-                                    [label]="'Valid for'"
-                                    [labelClass]="'col-2'"
-                                    [valueClass]="'col-3'"
-                                    [definition]="'The date until which the frame contract is valid.'"
-                                    [disabled]="true"
-                                    [text]="'25-02-2019'">
-                        </text-input>
-                    </div>
-                </ng-container>
+                <!--<ng-container *ngIf="offerFrameContractSelected && isFrameContractConfirmed()">-->
+                    <!--<div class="col-4">-->
+                        <!--<div class="input-group">-->
+                            <!--<div class="d-flex align-items-center">-->
+                                <!--<input type="checkbox" [(ngModel)]="offerFrameContractSelected" [disabled]="!isFrameContractEditable()">-->
+                            <!--</div>-->
+                            <!--<span class="form-control d-inline border-0">-->
+                                    <!--<strong class="font-weight-500">Frame contract confirmed</strong>-->
+                            <!--</span>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<div class="col-8">-->
+                        <!--<text-input [rowClass]="'space-before'"-->
+                                    <!--[rows]="1"-->
+                                    <!--[label]="'Valid for'"-->
+                                    <!--[labelClass]="'col-2'"-->
+                                    <!--[valueClass]="'col-3'"-->
+                                    <!--[definition]="'The date until which the frame contract is valid.'"-->
+                                    <!--[disabled]="true"-->
+                                    <!--[text]="'25-02-2019'">-->
+                        <!--</text-input>-->
+                    <!--</div>-->
+                <!--</ng-container>-->
             </div>
         </ng-container>
     </ng-container>
 
-    <!--Notes-->
+<!--Notes-->
+<div class="row">
     <div class="btn btn-outline-primary align-self-start mb-2" (click)="showNotesAndAdditionalFiles = !showNotesAndAdditionalFiles;">Notes and Additional Files</div>
-    <note-file-view *ngIf="showNotesAndAdditionalFiles"
-                    class="mb-2"
-                    [notes]="rfq.note"
-                    [documents]="rfq.additionalDocumentReference"
-                    [label]="'Notes'"
-                    [firstCol]="'col-2'"
-                    [secondCol]="'col-5'"
-                    [lastCol]="'col-5'"
-                    [readonly]="isLoading() || isReadOnly()"></note-file-view>
+</div>
+<note-file-view *ngIf="showNotesAndAdditionalFiles"
+                class="mb-2"
+                [notes]="rfq.note"
+                [documents]="rfq.additionalDocumentReference"
+                [label]="'Notes'"
+                [firstCol]="'col-2'"
+                [secondCol]="'col-5'"
+                [lastCol]="'col-5'"
+                [readonly]="isLoading() || isReadOnly()"></note-file-view>
 
-    <!-- Data Monitoring -->
-    <ng-container *ngIf="config.dataChannelsEnabled">
+<!-- Data Monitoring -->
+<ng-container *ngIf="config.dataChannelsEnabled">
+    <div class="row">
         <div class="btn btn-outline-primary align-self-start mb-2" (click)="showDataMonitoring = !showDataMonitoring;">Data Monitoring</div>
-        <div *ngIf="showDataMonitoring" class="row mb-3">
-            <div class="col-12">
-                <div class="input-group">
-                    <div class="d-flex align-items-center">
-                            <input type="checkbox" [(ngModel)]="rfq.dataMonitoringRequested" [disabled]="isLoading() || isReadOnly()" >
-                    </div>
-                    <span class="form-control d-inline border-0">
+    </div>
+    <div *ngIf="showDataMonitoring" class="row mb-3">
+        <div class="col-12">
+            <div class="input-group">
+                <div class="d-flex align-items-center">
+                    <input type="checkbox" [(ngModel)]="rfq.dataMonitoringRequested" [disabled]="isLoading() || isReadOnly()" >
+                </div>
+                <span class="form-control d-inline border-0">
                         <strong class="font-weight-500">Request data monitoring service</strong>
                     </span>
-                </div>
             </div>
         </div>
-    </ng-container>
+    </div>
+</ng-container>
 
-    <!-- Delivery -->
+<!-- Delivery -->
+<div class="row">
     <div class="btn btn-outline-primary align-self-start mb-2" (click)="showDeliveryAddress = !showDeliveryAddress">Delivery Address</div>
-    <div *ngIf="showDeliveryAddress" class="row mb-3">
-        <div class="col-12">
-            <options-input label="Use Existing Address" [(selected)]="selectedAddress" [options]="addressOptions"
-                rowClass="mb-1" labelClass="col-2" valueClass="col-10">
-            </options-input>
+</div>
+<div *ngIf="showDeliveryAddress" class="row mb-3">
+    <div class="col-12">
+        <options-input label="Use Existing Address" [(selected)]="selectedAddress" [options]="addressOptions"
+                       rowClass="mb-1" labelClass="col-2" valueClass="col-10">
+        </options-input>
 
-            <address-input [address]="wrapper.rfqDeliveryAddress" [disabled]="isLoading() || isReadOnly() || selectedAddressValue !== ''">
-            </address-input>
-        </div>
+        <address-input [address]="wrapper.rfqDeliveryAddress" [disabled]="isLoading() || isReadOnly() || selectedAddressValue !== ''">
+        </address-input>
     </div>
 </div>
 
