@@ -21,11 +21,11 @@
                 <div class="row space-before">
                     <div class="offset-3 col-9">
                         <div *ngIf="lcpaInputDetail.valueQualifier === 'QUANTITY'">
-                            <quantity-input [quantity]="lcpaInputDetail.valueQuantity">
+                            <quantity-input [quantity]="lcpaInputDetail.valueQuantity[0]">
                             </quantity-input>
                         </div>
                         <div *ngIf="lcpaInputDetail.valueQualifier === 'STRING'">
-                            <text-input [(text)]="lcpaInputDetail.value.value" [rows]="1">
+                            <text-input [(text)]="lcpaInputDetail.value[0].value" [rows]="1">
                             </text-input>
                         </div>
                     </div>

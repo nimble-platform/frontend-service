@@ -1,6 +1,6 @@
 import {Quantity} from "./quantity";
 import {Amount} from "./amount";
-import {MultiTypeValue} from "./lcpa-input-detail";
+import {MultiTypeValue} from "./multi-type-value";
 export class LCPAInput {
     constructor(public lifeCycleLength: Quantity = new Quantity(),
                 public purchasingPrice: Amount = new Amount(),
