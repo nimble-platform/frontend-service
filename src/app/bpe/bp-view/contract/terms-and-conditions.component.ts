@@ -11,6 +11,7 @@ import {UserService} from '../../../user-mgmt/user.service';
 import {COUNTRY_NAMES} from '../../../common/utils';
 import {UnitService} from '../../../common/unit-service';
 import {deliveryPeriodUnitListId, warrantyPeriodUnitListId} from '../../../common/constants';
+import {TradingTerm} from '../../../catalogue/model/publish/trading-term';
 
 
 @Component({
@@ -28,12 +29,12 @@ export class TermsAndConditionsComponent implements OnInit {
     showPreview: boolean = false;
     callStatus : CallStatus = new CallStatus();
 
-    termsAndConditions:any;
+    termAndConditionClauses:Clause[];
 
     showSection:boolean[] = [];
 
     // used to store values of parameters inside the terms and conditions text
-    valuesOfParameters:Map<string,string> = null;
+    tradingTerms:Map<string,TradingTerm> = null;
     // contract containing the terms and conditions details
     contract:Contract = null;
 
@@ -81,70 +82,26 @@ export class TermsAndConditionsComponent implements OnInit {
             this.callStatus.submit();
             this.bpeService.getTermsAndConditions(this.order, this.buyerPartyId, this.sellerPartyId)
                 .then(termsAndConditions => {
-                    this.termsAndConditions = termsAndConditions;
+                    this.termAndConditionClauses = termsAndConditions;
                     // create valuesOfParameters map
-                    if(!this.valuesOfParameters){
-                        this.valuesOfParameters = new Map<string, string>();
+                    if(!this.tradingTerms){
+                        this.tradingTerms = new Map<string, TradingTerm>();
 
                         // fill the map
                         // if we have the contract containing terms details, then use it to fill the map
                         if(this.contract){
                             for(let clause of this.contract.clause){
-                                let sectionText:string = clause.content[0].value;
-                                // find the index of parameter
-                                let indexOfParameter = sectionText.indexOf("<span");
-                                while (indexOfParameter != -1){
-                                    // find the parameter value
-                                    sectionText = sectionText.substring(indexOfParameter);
-                                    // find the parameter id
-                                    let indexIdStart = sectionText.indexOf("id")+4;
-                                    let indexIdEnd = sectionText.indexOf(">")-1;
-                                    let id = sectionText.substring(indexIdStart,indexIdEnd);
-
-                                    let indexValueEnd = sectionText.indexOf("</span>");
-                                    // find the parameter value
-                                    let value = sectionText.substring(indexIdEnd+2,indexValueEnd);
-
-                                    let typeOfParameter = this.getTypeOfParameter(id);
-                                    // check type of the parameter
-                                    if(typeOfParameter == "QUANTITY"){
-                                        let spaceIndex = value.indexOf(" ");
-                                        let quantityValue = value.substring(0,spaceIndex);
-                                        let unit = value.substring(spaceIndex+1);
-
-                                        // for the quantity, we have two parameters: one for the value, one for the unit
-                                        this.valuesOfParameters.set(id,quantityValue);
-                                        this.valuesOfParameters.set(id+"_unit",unit);
-                                    }
-                                    else{
-                                        // add <id,value> to map
-                                        this.valuesOfParameters.set(id,value);
-                                    }
-
-                                    let indexCloseTag = sectionText.indexOf("</b>");
-                                    sectionText = sectionText.substring(indexCloseTag+4);
-                                    // find the index of parameter
-                                    indexOfParameter = sectionText.indexOf("<span");
+                                for(let tradingTerm of clause.tradingTerms){
+                                    this.tradingTerms.set(tradingTerm.tradingTermFormat,tradingTerm);
                                 }
                             }
                         }
                         // otherwise fill the map using the default values of parameters
                         else{
-                            for(let section of this.termsAndConditions.sections){
-                                for(let i = 0; i < section.parameters.length;i++){
-                                    let typeOfParameter = this.getTypeOfParameter(section.parameters[i]);
 
-                                    if(typeOfParameter == "QUANTITY"){
-                                        let spaceIndex = section.defaultValues[i].indexOf(" ");
-                                        let value = section.defaultValues[i].substring(0,spaceIndex);
-                                        let unit = section.defaultValues[i].substring(spaceIndex+1);
-
-                                        // for the quantity, we have two parameters: one for the value, one for the unit
-                                        this.valuesOfParameters.set(section.parameters[i],value);
-                                        this.valuesOfParameters.set(section.parameters[i]+"_unit",unit);
-                                    } else{
-                                        this.valuesOfParameters.set(section.parameters[i],section.defaultValues[i]);
-                                    }
+                            for(let clause of this.termAndConditionClauses){
+                                for(let tradingTerm of clause.tradingTerms){
+                                    this.tradingTerms.set(tradingTerm.tradingTermFormat,JSON.parse(JSON.stringify(tradingTerm)));
                                 }
                             }
                         }
@@ -154,15 +111,13 @@ export class TermsAndConditionsComponent implements OnInit {
                         // create a contract for Terms and Conditions
                         this.contract = new Contract();
                         this.contract.id = UBLModelUtils.generateUUID();
-                        let size = this.termsAndConditions.sections.length;
-                        for(let i = 0; i < size; i++){
-                            // create a clause for the section
-                            let clause:Clause = new Clause();
-                            clause.id = UBLModelUtils.generateUUID();
-                            this.contract.clause.push(clause);
+
+                        for(let clause of this.termAndConditionClauses){
+
+                            let newClause:Clause = JSON.parse(JSON.stringify(clause));
+                            newClause.id = UBLModelUtils.generateUUID();
+                            this.contract.clause.push(newClause);
                         }
-                        // set clause contents
-                        this.setClauseContents();
                         // push contract to order.contract
                         this.order.contract.push(this.contract);
                     }
@@ -181,77 +136,122 @@ export class TermsAndConditionsComponent implements OnInit {
 
     setSectionText(index:number){
         if(this.readOnly){
-            let section = this.termsAndConditions.sections[index];
+            let clause = this.termAndConditionClauses[index];
 
-            let element = document.getElementById("section"+index);
-            element.innerHTML = this.getClause(section.name).content[0].value;
+            let element = document.getElementById("clause"+index);
 
-        } else{
-            let element = document.getElementById("section"+index);
-            let section = this.termsAndConditions.sections[index];
-            let text = section.text;
-            // replace placeholders with spans
-            for(let j = 0; j < section.parameters.length; j++){
-                let parameter = section.parameters[j];
-                let defaultValue = this.valuesOfParameters.get(parameter);
-                let typeOfParameter = this.getTypeOfParameter(parameter);
-                // for the quantities, we have value and unit
-                if(typeOfParameter == "QUANTITY"){
-                    let defaultUnit = this.valuesOfParameters.get(parameter+"_unit");
-                    text = text.replace(parameter,"<b><span id='"+parameter+"'>"+defaultValue+" "+defaultUnit+"</span></b>");
-                }else{
-                    text = text.replace(parameter,"<b><span id='"+parameter+"'>"+defaultValue+"</span></b>");
+            clause = this.getClause(this.getClauseName(clause));
+
+            let text = clause.content[0].value
+
+            for(let tradingTerm of clause.tradingTerms){
+                if(tradingTerm.value.valueQualifier == "QUANTITY"){
+                    let defaultValue = tradingTerm.value.valueQuantity[0].value;
+                    let defaultUnit = tradingTerm.value.valueQuantity[0].unitCode;
+                    text = text.replace(tradingTerm.tradingTermFormat,"<b><span>"+defaultValue+" "+defaultUnit+"</span></b>");
+                } else if(tradingTerm.value.valueQualifier == "STRING"){
+                    let defaultValue = this.tradingTerms.get(tradingTerm.tradingTermFormat).value.value[0].value;
+                    text = text.replace(tradingTerm.tradingTermFormat,"<b><span>"+defaultValue+"</span></b>");
+                } else if(tradingTerm.value.valueQualifier == "NUMBER"){
+                    let defaultValue = this.tradingTerms.get(tradingTerm.tradingTermFormat).value.valueDecimal[0].toString();
+                    text = text.replace(tradingTerm.tradingTermFormat,"<b><span>"+defaultValue+"</span></b>");
+                } else if(tradingTerm.value.valueQualifier == "CODE"){
+                    let defaultValue = this.tradingTerms.get(tradingTerm.tradingTermFormat).value.valueCode[0].value;
+                    text = text.replace(tradingTerm.tradingTermFormat,"<b><span>"+defaultValue+"</span></b>");
                 }
-
             }
+
             element.innerHTML = text;
 
-            this.getClause(section.name).content[0].value = element.innerText;
+        } else{
+            let element = document.getElementById("clause"+index);
+            let clause = this.termAndConditionClauses[index];
+            let text = clause.content[0].value;
+
+            // replace placeholders with spans
+            for(let tradingTerm of clause.tradingTerms){
+                let parameter = tradingTerm.tradingTermFormat;
+                // for the quantities, we have value and unit
+                if(tradingTerm.value.valueQualifier == "QUANTITY"){
+                    let defaultValue = this.tradingTerms.get(parameter).value.valueQuantity[0].value;
+                    let defaultUnit = this.tradingTerms.get(parameter).value.valueQuantity[0].unitCode;
+                    text = text.replace(parameter,"<b><span id='"+parameter+"'>"+defaultValue+" "+defaultUnit+"</span></b>");
+                } else if(tradingTerm.value.valueQualifier == "STRING"){
+                    let defaultValue = this.tradingTerms.get(parameter).value.value[0].value;
+                    text = text.replace(parameter,"<b><span id='"+parameter+"'>"+defaultValue+"</span></b>");
+                } else if(tradingTerm.value.valueQualifier == "NUMBER"){
+                    let defaultValue = this.tradingTerms.get(parameter).value.valueDecimal[0].toString();
+                    text = text.replace(parameter,"<b><span id='"+parameter+"'>"+defaultValue+"</span></b>");
+                } else if(tradingTerm.value.valueQualifier == "CODE"){
+                    let defaultValue = this.tradingTerms.get(parameter).value.valueCode[0].value;
+                    text = text.replace(parameter,"<b><span id='"+parameter+"'>"+defaultValue+"</span></b>");
+                }
+            }
+
+            element.innerHTML = text;
         }
     }
 
-    updateParameter(sectionIndex:number,id:string,value:string){
+    updateParameter(sectionIndex:number,id:string,value:string,isUnit:boolean = false){
         // handling of empty string
         if(value == ""){
-            let section = this.termsAndConditions.sections[sectionIndex];
-            // find the index of parameter
-            let index = section.parameters.indexOf(id);
+            let clause = this.termAndConditionClauses[sectionIndex];
 
-            let typeOfParameter = this.getTypeOfParameter(id);
-            if(typeOfParameter == "QUANTITY"){
-                let defaultValue = section.defaultValues[index];
-                // get the value of quantity
-                let spaceIndex = defaultValue.indexOf(" ");
-                value = defaultValue.substring(0,spaceIndex);
-            } else{
-                // get the default value
-                value = section.defaultValues[index];
+            for(let tradingTerm of clause.tradingTerms){
+                if(tradingTerm.tradingTermFormat == id){
+                    if(tradingTerm.value.valueQualifier == "STRING"){
+                        value = tradingTerm.value.value[0].value;
+                    } else if(tradingTerm.value.valueQualifier == "NUMBER"){
+                        value = tradingTerm.value.valueDecimal[0].toString();
+                    } else if(tradingTerm.value.valueQualifier == "QUANTITY"){
+                        value = tradingTerm.value.valueQuantity[0].value.toString();
+                    } else if(tradingTerm.value.valueQualifier == "CODE"){
+                        value = tradingTerm.value.valueCode[0].value ;
+                    }
+                    break;
+                }
             }
-
         }
 
-        this.valuesOfParameters.set(id,value);
+        let clauseName = this.getClauseName(this.termAndConditionClauses[sectionIndex]);
+        let contractClause = this.getClause(clauseName);
+        let contractTradingTerm:TradingTerm = null;
+        for(let tradingTerm of contractClause.tradingTerms){
+            if(tradingTerm.tradingTermFormat == id){
+                contractTradingTerm = tradingTerm;
+                break;
+            }
+        }
 
-        if(id.endsWith("_unit")){
-            let valueId = id.substring(0,id.indexOf("_unit"));
+        if(isUnit){
+            this.tradingTerms.get(id).value.valueQuantity[0].unitCode = value;
+            contractTradingTerm.value.valueQuantity[0].unitCode = value;
 
-            let element = document.getElementById(valueId);
-            element.innerText = this.valuesOfParameters.get(valueId)+" "+ value;
-        } else{
             let element = document.getElementById(id);
-            let typeOfParameter = this.getTypeOfParameter(id);
-            if(typeOfParameter == "QUANTITY"){
-                element.innerText = value + " " + this.valuesOfParameters.get(id+"_unit");
+            element.innerText = this.tradingTerms.get(id).value.valueQuantity[0].value +" "+ value;
+        } else{
+            let tradingTerm = this.tradingTerms.get(id);
+            if(tradingTerm.value.valueQualifier == "STRING"){
+                tradingTerm.value.value[0].value = value;
+                contractTradingTerm.value.value[0].value = value;
+            } else if(tradingTerm.value.valueQualifier == "NUMBER"){
+                tradingTerm.value.valueDecimal[0] = Number(value);
+                contractTradingTerm.value.valueDecimal[0] = Number(value);
+            } else if(tradingTerm.value.valueQualifier == "QUANTITY"){
+                tradingTerm.value.valueQuantity[0].value = Number(value);
+                contractTradingTerm.value.valueQuantity[0].value = Number(value);
+            } else if(tradingTerm.value.valueQualifier == "CODE"){
+                tradingTerm.value.valueCode[0].value = value;
+                contractTradingTerm.value.valueCode[0].value = value;
+            }
+
+            let element = document.getElementById(id);
+
+            if(tradingTerm.value.valueQualifier == "QUANTITY"){
+                element.innerText = value + " " + tradingTerm.value.valueQuantity[0].unitCode;
             } else{
                 element.innerText = value;
             }
-        }
-
-        if(!this.readOnly){
-            let sectionName = this.termsAndConditions.sections[sectionIndex].name;
-
-            let textElement = document.getElementById("section"+sectionIndex);
-            this.getClause(sectionName).content[0].value = textElement.innerHTML;
         }
     }
 
@@ -270,27 +270,6 @@ export class TermsAndConditionsComponent implements OnInit {
         }
     }
 
-    private setClauseContents(){
-        let numberOfSections = this.termsAndConditions.sections.length;
-        for(let sectionIndex = 0; sectionIndex < numberOfSections; sectionIndex++){
-            let section = this.termsAndConditions.sections[sectionIndex];
-            let text = section.text;
-            for(let i = 0 ; i < section.parameters.length; i++){
-                let parameter = section.parameters[i];
-                let defaultValue = this.valuesOfParameters.get(parameter);
-
-                let typeOfParameter = this.getTypeOfParameter(parameter);
-                if(typeOfParameter == "QUANTITY"){
-                    let defaultUnit = this.valuesOfParameters.get(parameter+"_unit");
-                    text = text.replace(parameter,"<b><span id='"+parameter+"'>"+defaultValue+" "+defaultUnit+"</span></b>");
-                }else{
-                    text = text.replace(parameter,"<b><span id='"+parameter+"'>"+defaultValue+"</span></b>");
-                }
-            }
-            this.contract.clause[sectionIndex].content = [new Text(text,"en")];
-        }
-    }
-
     // get the contract containing the terms and conditions details
     private getTermsAndConditionsContract(){
         for(let contract of this.order.contract){
@@ -303,21 +282,13 @@ export class TermsAndConditionsComponent implements OnInit {
         }
     }
 
-    getTypeOfParameter(parameter:string){
-        let type = "STRING";
-        if(parameter == "$buyer_country"){
-            type = "COUNTRY";
-        } else if(parameter == "$payment_id"){
-            type = "PAYMENT_MEANS";
-        } else if(parameter == "$incoterms_id"){
-            type = "INCOTERMS";
-        } else if(parameter == "$action_day" || parameter == "$decision_id"){
-            type = "NUMBER";
-        } else if(parameter == '$change_id' || parameter == '$insurance_id' || parameter == '$termination_id' || parameter == '$agreement_id' ||
-                  parameter == '$warranty_seller_id' || parameter == '$warranty_buyer_id' || parameter == '$inspection_id'){
-            type = "QUANTITY";
-        }
+    getClauseName(clause:Clause){
+        let startIndex = clause.content[0].value.indexOf(" ");
+        let endIndex = clause.content[0].value.indexOf(":");
 
-        return type;
+        if(endIndex == -1){
+            return "PURCHASE ORDER TERMS AND CONDITIONS";
+        }
+        return clause.content[0].value.substring(startIndex+1,endIndex);
     }
 }

@@ -332,7 +332,7 @@ export class BPEService {
         });
     }
 
-    getTermsAndConditions(order: Order, buyerPartyId, sellerPartyId): Promise<any>{
+    getTermsAndConditions(order: Order, buyerPartyId, sellerPartyId): Promise<Clause[]>{
         const token = 'Bearer '+this.cookieService.get("bearer_token");
         const headers = new Headers({'Authorization': token});
         this.headers.keys().forEach(header => headers.append(header, this.headers.get(header)));
