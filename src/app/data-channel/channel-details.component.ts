@@ -74,8 +74,7 @@ export class ChannelDetailsComponent implements OnInit {
         private route: ActivatedRoute,
         private dataChannelService: DataChannelService,
         private router: Router
-    ) {
-    }
+    ) {}
 
     //-------------------------------------------------------------------------------------
     // ngOnInit to update
