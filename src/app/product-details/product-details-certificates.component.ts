@@ -4,6 +4,7 @@ import { CompanySettings } from "../user-mgmt/model/company-settings";
 import { UserService } from "../user-mgmt/user.service";
 import {CatalogueService} from "../catalogue/catalogue.service";
 import {Certificate} from "../catalogue/model/publish/certificate";
+import {Country} from '../catalogue/model/publish/country';
 
 @Component({
     selector: 'product-details-certificates',
@@ -29,23 +30,23 @@ export class ProductDetailsCertificatesComponent {
         this.userService.downloadCert(id);
     }
 
-    getCertificateCountryNames(countries: string[]) {
+    getCertificateCountryNames(countries: Country[]) {
         let countryNames:string = null;
         if(countries == null || countries.length == 0) {
             return countryNames;
         }
 
         for(let country of countries) {
-        	if (countryNames==null){
-        		countryNames = country.name.value;
-        	}
-        	else{
-	            countryNames += "," + country.name.value;
-	        }
+            if (countryNames==null){
+                countryNames = country.name.value;
+            }
+            else{
+                countryNames += "," + country.name.value;
+            }
         }
         return countryNames;
     }
-    
+
     downloadProductCertificate(certificate: Certificate) {
         this.catalogueService.getBinaryObject(certificate.documentReference[0].attachment.embeddedDocumentBinaryObject.uri).then(binaryObject => {
             const binaryString = window.atob(binaryObject.value);
