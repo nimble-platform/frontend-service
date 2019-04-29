@@ -91,22 +91,22 @@
             </div>
 
             <div class="row space-before">
-                <ng-container *ngIf="isVisible(detail.valueQuantity)">
+                <ng-container *ngIf="isVisible(detail.valueQuantity[0])">
                     <quantity-input *ngSwitchCase="'QUANTITY'"
                                     class="col"
                                     [disabled]="isDisabled()"
                                     [label]="detail.name.value"
-                                    [quantity]="detail.valueQuantity">
+                                    [quantity]="detail.valueQuantity[0]">
                     </quantity-input>
                 </ng-container>
                 <text-input *ngSwitchDefault
                             class="col"
                             [disabled]="isDisabled()"
-                            [(text)]="detail.value.value"
+                            [(text)]="detail.value[0].value"
                             [label]="detail.name.value"
                             [rows]="1">
                 </text-input>
-                <div *ngIf="!presentationMode" class="col-1">
+                <div *ngIf="isEditMode()" class="col-1">
                     <button class="btn btn-danger btn-remove-value btn-sm btn-block"
                             (click)="onDeleteDetail(i)">
                         Delete
@@ -115,7 +115,7 @@
             </div>
         </div>
     </ng-container>
-    <div *ngIf="!presentationMode" class="d-flex justify-content-end space-before">
+    <div *ngIf="isEditMode()" class="d-flex justify-content-end space-before">
         <button class="btn btn-outline-primary btn-sm" (click)="openLcpaDetailsModal($event)">
             Add more LCPA details
         </button>
