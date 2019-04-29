@@ -200,7 +200,7 @@ export class UBLModelUtils {
         const lineItem: LineItem = this.createLineItem(quantity, price, item);
         const requestForQuotationLine: RequestForQuotationLine = new RequestForQuotationLine(lineItem);
         const rfq = new RequestForQuotation(this.generateUUID(), [""], false, null, null, new Delivery(),
-        [requestForQuotationLine], negotiationOptions, this.getDefaultPaymentMeans(settings), this.getDefaultPaymentTerms(settings));
+        [requestForQuotationLine], negotiationOptions, this.getDefaultPaymentMeans(settings), this.getDefaultPaymentTerms(settings), [], []);
 
         // TODO remove this custom dimension addition once the dimension-view is improved to handle such cases
         let handlingUnitDimension: Dimension = new Dimension();
@@ -219,7 +219,7 @@ export class UBLModelUtils {
         const lineItem: LineItem = this.createLineItem(quantity, price, item);
         const requestForQuotationLine: RequestForQuotationLine = new RequestForQuotationLine(lineItem);
         const rfq = new RequestForQuotation(this.generateUUID(), [""], false, null, null, new Delivery(),
-            [requestForQuotationLine], new NegotiationOptions(), null, null);
+            [requestForQuotationLine], new NegotiationOptions(), null, null, null, null);
 
         rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure = order.orderLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure;
         rfq.requestForQuotationLine[0].lineItem.deliveryTerms.deliveryLocation.address = order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address;
@@ -251,7 +251,7 @@ export class UBLModelUtils {
         const requestForQuotationLine:RequestForQuotationLine = new RequestForQuotationLine(lineItem);
         const settings = new CompanyNegotiationSettings();
         const rfq = new RequestForQuotation(this.generateUUID(), [""], false, null, null, new Delivery(),
-            [requestForQuotationLine], new NegotiationOptions(), this.getDefaultPaymentMeans(settings), this.getDefaultPaymentTerms(settings));
+            [requestForQuotationLine], new NegotiationOptions(), this.getDefaultPaymentMeans(settings), this.getDefaultPaymentTerms(settings), [], []);
 
         rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.goodsItem[0].item.name = transportExecutionPlanRequest.consignment[0].consolidatedShipment[0].goodsItem[0].item.name;
         rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.consignment[0].grossVolumeMeasure = transportExecutionPlanRequest.consignment[0].grossVolumeMeasure;
@@ -334,7 +334,7 @@ export class UBLModelUtils {
         const documentReference: DocumentReference = new DocumentReference(rfq.id);
 
         const quotation = new Quotation(this.generateUUID(), [""], new Code(), new Code(), 1, false, documentReference,
-            customerParty, supplierParty, [quotationLine], rfq.paymentMeans, rfq.paymentTerms);
+            customerParty, supplierParty, [quotationLine], rfq.paymentMeans, rfq.paymentTerms, rfq.tradingTerms, rfq.termOrCondition);
         return quotation;
     }
 
