@@ -17,6 +17,7 @@ import {debounceTime, distinctUntilChanged, switchMap} from 'rxjs/operators';
 import {Observable} from 'rxjs/Observable';
 import {CATALOGUE_LINE_SORT_OPTIONS} from '../../model/constants';
 import {Catalogue} from '../../model/publish/catalogue';
+import { CatalogueLine } from "../../model/publish/catalogue-line";
 
 @Component({
     selector: 'catalogue-view',
@@ -49,7 +50,7 @@ export class CatalogueViewComponent implements OnInit {
     // check whether catalogue-line-panel should be displayed for a specific catalogue line
     catalogueLineView = {};
 
-    selectedCatalogue: string = "default";
+    selectedCatalogue: string = "all";
     catlogueId: string = "default";
     cataloguesIds : any = [];
 
@@ -83,7 +84,7 @@ export class CatalogueViewComponent implements OnInit {
         this.sortOption = null;
         this.cataloguesIds = [];
         this.catlogueId = "default";
-        this.selectedCatalogue = "default";
+        this.selectedCatalogue = "all";
         this.catalogueLinesWRTTypes = [];
         this.catalogueLinesArray = [];
         this.categoryNames = [];
@@ -218,10 +219,27 @@ export class CatalogueViewComponent implements OnInit {
         this.publishService.publishMode = 'edit';
         this.publishService.publishingStarted = false;
         this.categoryService.resetSelectedCategories();
-        this.router.navigate(['catalogue/publish'], {queryParams: {
-                cat:this.catlogueId,
-                pg: "single",
-                productType: isTransportService(catalogueLine) ? "transportation" : "product"}});
+        if(this.catlogueId == "all"){
+             this.catalogueService.getCatalogueFromUuid(catalogueLine.goodsItem.item.catalogueDocumentReference.id)
+            .then(res => {
+                this.router.navigate(['catalogue/publish'], {queryParams: {
+                    cat:res.id,
+                    pg: "single",
+                    productType: isTransportService(catalogueLine) ? "transportation" : "product"}});
+            })
+            .catch(error => {
+                this.router.navigate(['catalogue/publish'], {queryParams: {
+                    cat:'default',
+                    pg: "single",
+                    productType: isTransportService(catalogueLine) ? "transportation" : "product"}});
+            });;
+
+        }else{
+            this.router.navigate(['catalogue/publish'], {queryParams: {
+                    cat:this.catlogueId,
+                    pg: "single",
+                    productType: isTransportService(catalogueLine) ? "transportation" : "product"}});
+        }
     }
 
     redirectToCopy(catalogueLine) {
@@ -229,17 +247,42 @@ export class CatalogueViewComponent implements OnInit {
         this.publishService.publishMode = 'copy';
         this.publishService.publishingStarted = false;
         this.categoryService.resetSelectedCategories();
-        this.router.navigate(['catalogue/publish'], {queryParams: {
+        if(this.catlogueId == "all"){
+            this.catalogueService.getCatalogueFromUuid(catalogueLine.goodsItem.item.catalogueDocumentReference.id)
+            .then(res => {
+                this.router.navigate(['catalogue/publish'], {queryParams: {
+                    cat:res.id,
+                    pg: "single",
+                    productType: isTransportService(catalogueLine) ? "transportation" : "product"}});
+            })
+            .catch(error => {
+                this.router.navigate(['catalogue/publish'], {queryParams: {
+                    cat:'default',
+                    pg: "single",
+                    productType: isTransportService(catalogueLine) ? "transportation" : "product"}});
+            });;
+        }else{
+            this.router.navigate(['catalogue/publish'], {queryParams: {
                 cat:this.catlogueId,
                 pg: "single",
                 productType: isTransportService(catalogueLine) ? "transportation" : "product"}});
+        }
+        
     }
 
-    deleteCatalogueLine(catalogueLine, i: number): void {
+    deleteCatalogueLine(catalogueLine:CatalogueLine, i: number): void {
         if (confirm("Are you sure that you want to delete this catalogue item?")) {
             const status = this.getDeleteStatus(i);
             status.submit();
-            this.catalogueService.deleteCatalogueLine(this.catalogueService.catalogueResponse.catalogueUuid, catalogueLine.id)
+            let catalogue_uuid = "";
+            
+            if(this.catalogueService.catalogueResponse.catalogueUuid === "" || this.catalogueService.catalogueResponse.catalogueUuid == null){
+                catalogue_uuid = catalogueLine.goodsItem.item.catalogueDocumentReference.id;
+            }else{
+                catalogue_uuid = this.catalogueService.catalogueResponse.catalogueUuid;
+            }
+
+            this.catalogueService.deleteCatalogueLine(catalogue_uuid, catalogueLine.id)
                 .then(res => {
                     this.requestCatalogue();
                     status.callback("Catalogue line deleted", true);
