@@ -104,12 +104,11 @@
 </div>
 
 <!-- Frame contract -->
-<ng-container *ngIf="frameContractAvailable">
+<ng-container *ngIf="isFrameContractPanelVisible()">
     <div class="row">
         <div class="btn btn-outline-primary align-self-start mb-2" (click)="showFrameContractDetails = !showFrameContractDetails;">Frame Contract</div>
     </div>
     <ng-container *ngIf="showFrameContractDetails">
-        <!--<div class="d-flex align-items-center mb-3">-->
         <div class="row">
             <div class="col-3">
                 <strong class="font-weight-500">Frame Contract:</strong>
@@ -123,7 +122,7 @@
                                 [valueSizeClass]="'col-5'"
                                 [unitSizeClass]="'col-7'"
                                 [definition]="'The period within which the offered conditions will be valid upon confirmation by the seller.'"
-                                [quantity]="customerFrameContractDuration"
+                                [quantity]="wrapper.rfqFrameContractDuration"
                                 [disabled]="true">
                 </quantity-input>
             </div>
@@ -135,7 +134,7 @@
                                 [valueSizeClass]="'col-5'"
                                 [unitSizeClass]="'col-7'"
                                 [definition]="'The period within which the offered conditions will be valid upon confirmation by the seller.'"
-                                [quantity]="frameContract.digitalAgreementTerms.validityPeriod.durationMeasure"
+                                [quantity]="wrapper.quotationFrameContractDuration"
                                 [disabled]="isReadOnly()">
                 </quantity-input>
                 <text-input [rowClass]="'space-before'"

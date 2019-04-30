@@ -8,6 +8,8 @@ import { durationToString } from "../../../common/utils";
 import { PriceWrapper } from "../../../common/price-wrapper";
 import { Address } from "../../../catalogue/model/publish/address";
 import { CompanyNegotiationSettings } from "../../../user-mgmt/model/company-negotiation-settings";
+import {TradingTerm} from "../../../catalogue/model/publish/trading-term";
+import {MultiTypeValue} from "../../../catalogue/model/publish/multi-type-value";
 
 /**
  * Convenient getters (and some setters) for catalogue line, request for quotations and quotations.
@@ -234,6 +236,25 @@ export class NegotiationModelWrapper {
         this.rfq.paymentMeans.paymentMeansCode.value = paymentMeans;
     }
 
+    public get rfqFrameContractDuration(): Quantity {
+        let tradingTerm: TradingTerm = this.rfq.tradingTerms.find(tradingTerm => tradingTerm.id == "FRAME_CONTRACT_DURATION");
+        if(tradingTerm != null) {
+            return tradingTerm.value.valueQuantity[0];
+        }
+        return null;
+    }
+
+    public set rfqFrameContractDuration(duration: Quantity) {
+        let tradingTerm: TradingTerm = this.rfq.tradingTerms.find(tradingTerm => tradingTerm.id == "FRAME_CONTRACT_DURATION");
+        if(tradingTerm == null) {
+            tradingTerm = new TradingTerm("FRAME_CONTRACT_DURATION", null, null, new MultiTypeValue());
+            tradingTerm.value.valueQuantity.push(duration)
+            this.rfq.tradingTerms.push(tradingTerm);
+        } else {
+            tradingTerm.value.valueQuantity[0] = duration;
+        }
+    }
+
     public get quotationPaymentMeans(): string {
         // update quotation payment means to calculate quotation price correctly
         if(this.quotationPriceWrapper.paymentMeans !=  this.quotation.paymentMeans.paymentMeansCode.value){
@@ -246,6 +267,25 @@ export class NegotiationModelWrapper {
 
     public set quotationPaymentMeans(paymentMeans: string) {
         this.quotation.paymentMeans.paymentMeansCode.value = paymentMeans;
+    }
+
+    public get quotationFrameContractDuration(): Quantity {
+        let tradingTerm: TradingTerm = this.quotation.tradingTerms.find(tradingTerm => tradingTerm.id == "FRAME_CONTRACT_DURATION");
+        if(tradingTerm != null) {
+            return tradingTerm.value.valueQuantity[0];
+        }
+        return null;
+    }
+
+    public set quotationFrameContractDuration(duration: Quantity) {
+        let tradingTerm: TradingTerm = this.quotation.tradingTerms.find(tradingTerm => tradingTerm.id == "FRAME_CONTRACT_DURATION");
+        if(tradingTerm == null) {
+            tradingTerm = new TradingTerm("FRAME_CONTRACT_DURATION", null, null, new MultiTypeValue());
+            tradingTerm.value.valueQuantity.push(duration)
+            this.quotation.tradingTerms.push(tradingTerm);
+        } else {
+            tradingTerm.value.valueQuantity[0] = duration;
+        }
     }
 
     public get rfqPaymentMeansIfNegotiating(): string {

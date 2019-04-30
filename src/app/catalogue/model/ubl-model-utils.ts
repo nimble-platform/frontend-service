@@ -629,4 +629,18 @@ export class UBLModelUtils {
         }
         return false;
     }
+
+    public static areQuantitiesEqual(quantity1: Quantity, quantity2: Quantity): boolean {
+        if(quantity1 == null && quantity2 == null) {
+            return true;
+        }
+        if(quantity1 == null || quantity2 == null) {
+            return false;
+        }
+        if(quantity1.value == quantity2.value && quantity1.unitCode == quantity2.unitCode) {
+            return true;
+        }
+
+        return false;
+    }
 }

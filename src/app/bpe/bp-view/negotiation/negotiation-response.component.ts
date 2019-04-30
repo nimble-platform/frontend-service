@@ -41,8 +41,6 @@ export class NegotiationResponseComponent implements OnInit {
     wrapper: NegotiationModelWrapper;
     userRole: BpUserRole;
     @Input() readonly: boolean = false;
-    frameContract: DigitalAgreement;
-    customerFrameContractDuration: Quantity;
     config = myGlobals.config;
 
     CURRENCIES: string[] = CURRENCIES;
@@ -55,7 +53,7 @@ export class NegotiationResponseComponent implements OnInit {
     @ViewChild(DiscountModalComponent)
     private discountModal: DiscountModalComponent;
 
-    frameContractAvailable: boolean = false;
+    frameContract: DigitalAgreement;
     showFrameContractDetails: boolean = false;
     showNotesAndAdditionalFiles: boolean = false;
     showDeliveryAddress: boolean = false;
@@ -96,8 +94,6 @@ export class NegotiationResponseComponent implements OnInit {
             UBLModelUtils.getPartyId(this.rfq.buyerCustomerParty.party),
             this.rfq.requestForQuotationLine[0].lineItem.item.manufacturersItemIdentification.id).then(digitalAgreement => {
             this.frameContract = digitalAgreement;
-            this.customerFrameContractDuration = copy(digitalAgreement.digitalAgreementTerms.validityPeriod.durationMeasure);
-            this.frameContractAvailable = true;
         });
     }
 
@@ -120,15 +116,31 @@ export class NegotiationResponseComponent implements OnInit {
             this.quotation.documentStatusCode.name = NEGOTIATION_RESPONSES.REJECTED;
         }
 
+        this.callStatus.submit();
+        // create new frame contract
+        let savedFrameContract: Promise<DigitalAgreement>;
+        if(this.frameContract == null) {
+            savedFrameContract = this.saveFrameContract()
+
+            // update the frame contract
+        } else {
+            savedFrameContract = this.updateFrameContract();
+        }
+
+        savedFrameContract.then(contract => {
+            let documentReference: DocumentReference = new DocumentReference();
+            documentReference.documentType = 'FRAME_CONTRACT';
+            documentReference.id = savedDigitalAgreement.id;
+            this.quotation.additionalDocumentReference.push(documentReference);
+            // the specfic item instance subject to this negotiation is already persisted while saving the the digital agreement. So, we should use it.
+            this.quotation.requestForQuotationLine[0].lineItem.item = savedDigitalAgreement.item;
+        });
+
         const vars: ProcessVariables = ModelUtils.createProcessVariables("Negotiation", UBLModelUtils.getPartyId(this.bpDataService.requestForQuotation.buyerCustomerParty.party),
             UBLModelUtils.getPartyId(this.bpDataService.requestForQuotation.sellerSupplierParty.party),this.cookieService.get("user_id"), this.quotation, this.bpDataService);
         const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.processMetadata.processId);
 
-        this.callStatus.submit();
-        this.updateFrameContract().then(() => {
-            return this.bpeService.continueBusinessProcess(piim);
-
-        }).then(() => {
+        this.bpeService.continueBusinessProcess(piim).then(() => {
             this.callStatus.callback("Quotation sent", true);
             var tab = "PUCHASES";
             if (this.bpDataService.bpStartEvent.userRole == "seller")
@@ -170,6 +182,10 @@ export class NegotiationResponseComponent implements OnInit {
         return this.processMetadata == null || this.processMetadata.processStatus !== 'Started' || this.readonly;
     }
 
+    isFrameContractPanelVisible(): boolean {
+        return this.wrapper.rfqFrameContractDuration != null;
+    }
+
     get quotationPrice(): number {
         return this.wrapper.quotationPriceWrapper.totalPrice;
     }
@@ -180,13 +196,13 @@ export class NegotiationResponseComponent implements OnInit {
 
     getContractEndDate(): string {
         let rangeUnit: string;
-        switch (this.frameContract.digitalAgreementTerms.validityPeriod.durationMeasure.unitCode) {
+        switch (this.wrapper.quotationFrameContractDuration.unitCode) {
             case "year(s)": rangeUnit = 'y'; break;
             case "month(s)": rangeUnit = 'M'; break;
             case "week(s)": rangeUnit = 'w'; break;
             case "day(s)": rangeUnit = 'd'; break;
         }
-        let m:Moment = moment().add(this.frameContract.digitalAgreementTerms.validityPeriod.durationMeasure.value, <unitOfTime.DurationConstructor>rangeUnit);
+        let m:Moment = moment().add(this.wrapper.quotationFrameContractDuration.value, <unitOfTime.DurationConstructor>rangeUnit);
         let date: string = m.format(this.dateFormat);
         return date;
     }
@@ -202,9 +218,7 @@ export class NegotiationResponseComponent implements OnInit {
 
     hasUpdatedTerms(): boolean {
         if(this.rfq.negotiationOptions.deliveryPeriod) {
-            const rfq = this.wrapper.rfqDeliveryPeriod;
-            const quotation = this.wrapper.quotationDeliveryPeriod;
-            if(!this.qtyEquals(rfq, quotation)) {
+            if(!UBLModelUtils.areQuantitiesEqual(this.wrapper.rfqDeliveryPeriod, this.wrapper.quotationDeliveryPeriod)) {
                 return true;
             }
         }
@@ -229,28 +243,34 @@ export class NegotiationResponseComponent implements OnInit {
             }
         }
         if(this.rfq.negotiationOptions.warranty) {
-            const rfq = this.wrapper.rfqWarranty;
-            const quotation = this.wrapper.quotationWarranty;
-            if(!this.qtyEquals(rfq, quotation)) {
+            if(!UBLModelUtils.areQuantitiesEqual(this.wrapper.rfqWarranty, this.wrapper.quotationWarranty)) {
                 return true;
             }
         }
-        if(this.frameContract) {
-            if(this.isFrameContractDurationUpdated()) {
-                return true;
-            }
+        if(!UBLModelUtils.areQuantitiesEqual(this.wrapper.rfqFrameContractDuration, this.wrapper.quotationFrameContractDuration)) {
+            return true;
         }
         return false;
     }
 
+    saveFrameContract(sellerParty: Party, buyerParty: Party): Promise<DigitalAgreement> {
+        let frameContract: DigitalAgreement = new DigitalAgreement();
+        frameContract.item = this.rfq.requestForQuotationLine[0].lineItem.item;
+        frameContract.participantParty.push(this.rfq.sellerSupplierParty.party);
+        frameContract.participantParty.push(this.rfq.buyerCustomerParty.party);
+
+        frameContract.digitalAgreementTerms.validityPeriod.startDate = moment().format(this.dateFormat);
+        frameContract.digitalAgreementTerms.validityPeriod.endDate = this.getContractEndDate();
+
+        UBLModelUtils.removeHjidFieldsFromObject(frameContract);
+        return this.bpeService.saveFrameContract(frameContract);
+    }
+
     private updateFrameContract(): Promise<DigitalAgreement> {
-        let savedFrameContract: Promise<DigitalAgreement> = Promise.resolve(null);
-        if(this.frameContract != null && this.isFrameContractDurationUpdated()) {
-            this.frameContract.digitalAgreementTerms.validityPeriod.startDate = moment().format(this.dateFormat);
-            this.frameContract.digitalAgreementTerms.validityPeriod.endDate = this.getContractEndDate();
-            savedFrameContract = this.bpeService.updateFrameContract(this.frameContract);
-        }
-        return savedFrameContract;
+        this.frameContract.digitalAgreementTerms.validityPeriod.startDate = moment().format(this.dateFormat);
+        this.frameContract.digitalAgreementTerms.validityPeriod.endDate = this.getContractEndDate();
+
+        return this.bpeService.updateFrameContract(this.frameContract);
     }
 
     private isFrameContractDurationValid(): boolean {
@@ -259,14 +279,6 @@ export class NegotiationResponseComponent implements OnInit {
             return true;
         }
         return false;
-    }
-
-    private isFrameContractDurationUpdated() {
-        return !this.qtyEquals(this.customerFrameContractDuration, this.frameContract.digitalAgreementTerms.validityPeriod.durationMeasure);
-    }
-
-    private qtyEquals(qty1: Quantity, qty2: Quantity): boolean {
-        return qty1.value === qty2.value && qty1.unitCode === qty2.unitCode;
     }
 
     private openDiscountModal(): void{

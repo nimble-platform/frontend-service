@@ -31,6 +31,9 @@ import {DocumentReference} from "../../../catalogue/model/publish/document-refer
 import {UnitService} from "../../../common/unit-service";
 import {frameContractDurationUnitListId} from "../../../common/constants";
 import {Party} from "../../../catalogue/model/publish/party";
+import {TradingTerm} from "../../../catalogue/model/publish/trading-term";
+import {MultiTypeValue} from "../../../catalogue/model/publish/multi-type-value";
+import {Quantity} from "../../../catalogue/model/publish/quantity";
 
 @Component({
     selector: "negotiation-request",
@@ -44,8 +47,10 @@ export class NegotiationRequestComponent implements OnInit {
     line: CatalogueLine;
     rfq: RequestForQuotation;
     rfqLine: RequestForQuotationLine;
-    frameContract: DigitalAgreement = new DigitalAgreement();
     wrapper: NegotiationModelWrapper;
+    frameContract: DigitalAgreement = new DigitalAgreement();
+    frameContractDuration: Quantity = new Quantity();
+    initialFrameContractDuration: Quantity = new Quantity(); // to be able to compare the latest value with the initial one
     frameContractDurationUnits: string[];
     config = myGlobals.config;
 
@@ -98,6 +103,11 @@ export class NegotiationRequestComponent implements OnInit {
             this.rfq.negotiationOptions.price = true;
         }
 
+        if(this.wrapper.rfqFrameContractDuration != null) {
+            this.frameContractDuration = this.wrapper.rfqFrameContractDuration;
+            this.initialFrameContractDuration = copy(this.frameContractDuration);
+        }
+
         // get frame contract units
         this.unitService.getCachedUnitList(frameContractDurationUnitListId).then(list => {
            this.frameContractDurationUnits = list;
@@ -124,11 +134,18 @@ export class NegotiationRequestComponent implements OnInit {
             }
         }
         if(this.isNegotiatingAnyTerm()) {
-            // send request for quotation
-            this.callStatus.submit();
-            const rfq: RequestForQuotation = copy(this.rfq);
+            // create an additional trading term for the frame contract duration
+            if(this.isFrameContractValid()) {
+                this.wrapper.rfqFrameContractDuration = this.frameContractDuration;
+            }
+
+            //first initialize the seller and buyer parties.
+            //once they are fetched continue with starting the ordering process
+            const sellerId: string = UBLModelUtils.getPartyId(this.line.goodsItem.item.manufacturerParty);
+            const buyerId: string = this.cookieService.get("company_id");
 
             // final check on the rfq
+            const rfq: RequestForQuotation = copy(this.rfq);
             if(this.bpDataService.modifiedCatalogueLines) {
                 // still needed when initializing RFQ with BpDataService.initRfqWithIir() or BpDataService.initRfqWithQuotation()
                 // but this is a hack, the methods above should be fixed.
@@ -136,13 +153,11 @@ export class NegotiationRequestComponent implements OnInit {
             }
             UBLModelUtils.removeHjidFieldsFromObject(rfq);
 
-            //first initialize the seller and buyer parties.
-            //once they are fetched continue with starting the ordering process
-            const sellerId: string = UBLModelUtils.getPartyId(this.line.goodsItem.item.manufacturerParty);
-            const buyerId: string = this.cookieService.get("company_id");
+            // send request for quotation
+            this.callStatus.submit();
+
             let sellerParty: Party;
             let buyerParty: Party;
-
             Promise.all([
                 this.userService.getParty(buyerId),
                 this.userService.getParty(sellerId),
@@ -150,19 +165,6 @@ export class NegotiationRequestComponent implements OnInit {
             ]).then(([buyerPartyResp, sellerPartyResp]) => {
                 sellerParty = sellerPartyResp;
                 buyerParty = buyerPartyResp;
-                return this.saveFrameContract(buyerParty, sellerParty);
-
-            }).then((savedDigitalAgreement: DigitalAgreement) => {
-                // update rfq with the digital agreement reference
-                if (savedDigitalAgreement != null) {
-                    let documentReference: DocumentReference = new DocumentReference();
-                    documentReference.documentType = 'DIGITAL_AGREEMENT';
-                    documentReference.id = savedDigitalAgreement.id;
-                    rfq.additionalDocumentReference.push(documentReference);
-                    // the specfic item instance subject to this negotiation is already persisted while saving the the digital agreement. So, we should use it.
-                    rfq.requestForQuotationLine[0].lineItem.item = savedDigitalAgreement.item;
-                }
-
                 rfq.buyerCustomerParty = new CustomerParty(buyerParty);
                 rfq.sellerSupplierParty = new SupplierParty(sellerParty);
 
@@ -190,25 +192,25 @@ export class NegotiationRequestComponent implements OnInit {
         }
     }
 
-    saveFrameContract(sellerParty: Party, buyerParty: Party): Promise<DigitalAgreement> {
-        this.frameContract.item = this.rfq.requestForQuotationLine[0].lineItem.item;
-        this.frameContract.participantParty.push(sellerParty);
-        this.frameContract.participantParty.push(buyerParty);
-        UBLModelUtils.removeHjidFieldsFromObject(this.frameContract);
-
-        let savedFrameContract: Promise<DigitalAgreement> = Promise.resolve(null);
-        if(this.isFrameContractInEditMode() && this.isFrameContractValid()) {
-            savedFrameContract = this.bpeService.saveFrameContract(this.frameContract);
-        }
-        return savedFrameContract;
-    }
+    // saveFrameContract(sellerParty: Party, buyerParty: Party): Promise<DigitalAgreement> {
+    //     this.frameContract.item = this.rfq.requestForQuotationLine[0].lineItem.item;
+    //     this.frameContract.participantParty.push(sellerParty);
+    //     this.frameContract.participantParty.push(buyerParty);
+    //     UBLModelUtils.removeHjidFieldsFromObject(this.frameContract);
+    //
+    //     let savedFrameContract: Promise<DigitalAgreement> = Promise.resolve(null);
+    //     if(this.isFrameContractInEditMode() && this.isFrameContractValid()) {
+    //         savedFrameContract = this.bpeService.saveFrameContract(this.frameContract);
+    //     }
+    //     return savedFrameContract;
+    // }
 
     onUpdateRequest(): void {
         this.callStatus.submit();
 
         const rfq: RequestForQuotation = copy(this.rfq);
-        Promise.all([this.bpeService.updateFrameContract(this.frameContract),
-            this.bpeService.updateBusinessProcess(JSON.stringify(rfq),"REQUESTFORQUOTATION",this.processMetadata.processId)]).then(() => {
+        // this.bpeService.updateFrameContract(this.frameContract),
+        this.bpeService.updateBusinessProcess(JSON.stringify(rfq),"REQUESTFORQUOTATION",this.processMetadata.processId).then(() => {
             this.documentService.updateCachedDocument(rfq.id,rfq);
             this.callStatus.callback("Terms updated", true);
             var tab = "PUCHASES";
@@ -244,7 +246,7 @@ export class NegotiationRequestComponent implements OnInit {
             || (this.rfq.negotiationOptions.paymentTerms && this.wrapper.linePaymentTerms != this.wrapper.rfqPaymentTerms.paymentTerm)
             || (this.rfq.negotiationOptions.paymentMeans && this.wrapper.linePaymentMeans != this.wrapper.rfqPaymentMeans)
             || this.rfq.dataMonitoringRequested
-            || (this.isFrameContractInEditMode() && this.isFrameContractValid());
+            || (this.rfq.negotiationOptions.frameContractDuration && !UBLModelUtils.areQuantitiesEqual(this.initialFrameContractDuration, this.wrapper.rfqFrameContractDuration));
     }
 
     get lineHasPrice(): boolean {
@@ -369,27 +371,27 @@ export class NegotiationRequestComponent implements OnInit {
     }
 
     isFrameContractValid(): boolean {
-        return this.frameContract.digitalAgreementTerms.validityPeriod.durationMeasure.value != null && this.frameContract.digitalAgreementTerms.validityPeriod.durationMeasure.unitCode != null;
+        if(this.rfq.negotiationOptions.frameContractDuration) {
+            return this.frameContractDuration.value != null && this.frameContractDuration.unitCode != null;
+        }
+        return true;
     }
 
     isFrameContractDisabled(): boolean {
         return this.isLoading() || !this.isFrameContractInEditMode();
     }
 
+    /**
+     * Frame contract is editable when (in addition to the edit mode)
+     * 1) there is not a frame contract available for the product between the trading partners
+     * 2) the current request for quotation have the corresponding trading term (e.g. this might occur during a second negotiation step)
+     */
     isFrameContractInEditMode(): boolean {
-        return !this.isReadOnly() && (!this.frameContractAvailable || this.rfqContainsDigitalAgreementReference());
+        return !this.isReadOnly() && (!this.frameContractAvailable || this.wrapper.rfqFrameContractDuration != null);
     }
 
     isFrameContractVisible(): boolean {
-        return !this.isReadOnly() || this.frameContractAvailable;
-    }
-
-    isFrameContractConfirmed(): boolean {
-        let confirmed: boolean = false;
-        if(this.frameContract != null) {
-            confirmed = this.frameContract.digitalAgreementTerms.validityPeriod.startDate != null;
-        }
-        return confirmed;
+        return !this.isReadOnly() || this.frameContractAvailable || this.wrapper.rfqFrameContractDuration != null;
     }
 
     getDeliveryPeriodText(): string {
