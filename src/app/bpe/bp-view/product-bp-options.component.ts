@@ -19,7 +19,8 @@ import { Order } from "../../catalogue/model/publish/order";
 import { SearchContextService } from "../../simple-search/search-context.service";
 import { CookieService } from "ng2-cookies";
 import {ThreadEventMetadata} from '../../catalogue/model/publish/thread-event-metadata';
-
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import * as myGlobals from '../../globals';
 /**
  * Created by suat on 20-Oct-17.
  */
@@ -50,6 +51,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
 
     productExpanded: boolean = false;
     serviceExpanded: boolean = false;
+    public config = myGlobals.config;
 
     // the copy of ThreadEventMetadata of the current business process
     processMetadata: ThreadEventMetadata;
@@ -61,8 +63,17 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                 public bpeService: BPEService,
                 public route: ActivatedRoute,
                 private cookieService: CookieService,
-                private renderer: Renderer2) {
+                private renderer: Renderer2,
+                private modalService: NgbModal) {
         this.renderer.setStyle(document.body, "background-image", "none");
+    }
+
+    open(content) {
+        this.modalService.open(content, {}).result.then((result) => {
+            // this.closeResult = `Closed with: ${result}`;
+        }, (reason) => {
+            // this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+        });
     }
 
     ngOnInit() {

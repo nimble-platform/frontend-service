@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import {  NgbModal, ModalDismissReasons , NgbModalOptions} from '@ng-bootstrap/ng-bootstrap';
-
+import {rocketChatEndpoint} from "../globals";
 
 @Component({
     selector: "chat",
@@ -12,35 +12,10 @@ import {  NgbModal, ModalDismissReasons , NgbModalOptions} from '@ng-bootstrap/n
 
 export class ChatComponent implements OnInit {
 
-    closeResult: string;
+    rocketChatEndpoint = rocketChatEndpoint;
     constructor(private modalService: NgbModal) {}
 
     ngOnInit(): void {
 
     }
-
-    modalOptions: NgbModalOptions = {
-        size: 'lg',
-        backdrop: 'static',
-        keyboard: false,
-    };
-
-    open(content) {
-        this.modalService.open(content, {}).result.then((result) => {
-            this.closeResult = `Closed with: ${result}`;
-        }, (reason) => {
-            this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-        });
-    }
-
-    private getDismissReason(reason: any): string {
-        if (reason === ModalDismissReasons.ESC) {
-            return 'by pressing ESC';
-        } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
-            return 'by clicking on a backdrop';
-        } else {
-            return  `with: ${reason}`;
-        }
-    }
-
 }
