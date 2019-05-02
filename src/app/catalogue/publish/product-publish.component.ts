@@ -203,8 +203,8 @@ export class ProductPublishComponent implements OnInit {
                 this.publishStateService.publishedProductNature = 'Regular product';
             }
         });
-
         this.selectedCatalogueuuid = this.catalogueService.catalogueResponse.catalogueUuid;
+
     }
 
     ngOnDestroy() {
@@ -829,15 +829,24 @@ export class ProductPublishComponent implements OnInit {
 
         this.publishStatus.submit();
 
-        this.catalogueService.updateCatalogueLine(this.selectedCatalogueuuid,JSON.stringify(splicedCatalogueLine))
+        this.getCatalogueUUid().then((catalogue) => {
+            this.selectedCatalogueuuid = catalogue.uuid;
+            this.catalogueService.updateCatalogueLine(this.selectedCatalogueuuid,JSON.stringify(splicedCatalogueLine))
             .then(() => this.onSuccessfulPublish(exitThePage,splicedCatalogueLine.id))
             .then(() => this.changePublishModeToCreate())
             .catch(err => {
                 this.onFailedPublish(err);
             });
-
+        }).catch((err) => {
+            this.onFailedPublish(err);
+        })
+     
     }
 
+    private getCatalogueUUid(){
+        this.catlogueId = this.selectedCatalogue;
+        return this.catalogueService.getCatalogueFromId(this.catlogueId);
+    }
     // changes publishMode to create
     private changePublishModeToCreate():void{
         this.changePublishModeCreate = true;
