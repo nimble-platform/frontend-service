@@ -332,23 +332,25 @@ export class BPEService {
         });
     }
 
-    getTermsAndConditions(order: Order,rfq: RequestForQuotation, buyerPartyId, sellerPartyId): Promise<Clause[]>{
-        const token = 'Bearer '+this.cookieService.get("bearer_token");
-        const headers = new Headers({'Authorization': token});
-        this.headers.keys().forEach(header => headers.append(header, this.headers.get(header)));
+	getTermsAndConditions(order: Order,rfq: RequestForQuotation,quotation:Quotation, buyerPartyId, sellerPartyId, rfqId:string): Promise<Clause[]>{
+		const token = 'Bearer '+this.cookieService.get("bearer_token");
+		const headers = new Headers({'Authorization': token});
+		this.headers.keys().forEach(header => headers.append(header, this.headers.get(header)));
 
-        let url;
-        if(order){
-            url = `${this.url}/contracts/terms-and-conditions?orderId=${order.id }&sellerPartyId=${sellerPartyId}&buyerPartyId=${buyerPartyId}&incoterms=${order.orderLine[0].lineItem.deliveryTerms.incoterms == null ? "" :order.orderLine[0].lineItem.deliveryTerms.incoterms}&tradingTerms=${encodeURIComponent(JSON.stringify(this.getSelectedTradingTerms(order.paymentTerms.tradingTerms)))}`;
-        }
-        else if(rfq){
-            url = `${this.url}/contracts/terms-and-conditions?orderId=${null}&sellerPartyId=${sellerPartyId}&buyerPartyId=${buyerPartyId}&incoterms=${rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms == null ? "" :rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms}&tradingTerms=${encodeURIComponent(JSON.stringify(this.getSelectedTradingTerms(rfq.paymentTerms.tradingTerms)))}`;
-        }
-        return this.http
-            .get(url, {headers: headers})
-            .toPromise()
-            .then(res => res.json())
-            .catch(this.handleError);
+		let url;
+		if(order){
+			url = `${this.url}/contracts/terms-and-conditions?orderId=${order.id }&sellerPartyId=${sellerPartyId}&buyerPartyId=${buyerPartyId}&incoterms=${order.orderLine[0].lineItem.deliveryTerms.incoterms == null ? "" :order.orderLine[0].lineItem.deliveryTerms.incoterms}&tradingTerms=${encodeURIComponent(JSON.stringify(this.getSelectedTradingTerms(order.paymentTerms.tradingTerms)))}`;
+		}
+		else if(rfq){
+			url = `${this.url}/contracts/terms-and-conditions?sellerPartyId=${sellerPartyId}&buyerPartyId=${buyerPartyId}&incoterms=${rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms == null ? "" :rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms}&tradingTerms=${encodeURIComponent(JSON.stringify(this.getSelectedTradingTerms(rfq.paymentTerms.tradingTerms)))}`;
+		} else if(quotation){
+			url = `${this.url}/contracts/terms-and-conditions?rfqId=${rfqId}&sellerPartyId=${sellerPartyId}&buyerPartyId=${buyerPartyId}&incoterms=${quotation.quotationLine[0].lineItem.deliveryTerms.incoterms == null ? "" :quotation.quotationLine[0].lineItem.deliveryTerms.incoterms}&tradingTerms=${encodeURIComponent(JSON.stringify(this.getSelectedTradingTerms(quotation.paymentTerms.tradingTerms)))}`;
+		}
+		return this.http
+			.get(url, {headers: headers})
+			.toPromise()
+			.then(res => res.json())
+			.catch(this.handleError);
 	}
 
 	getOriginalOrderForProcess(processId: string): Promise<Order | null> {
