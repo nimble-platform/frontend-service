@@ -508,6 +508,9 @@ export class ThreadSummaryComponent implements OnInit {
         "ConformanceToOtherAgreedTerms": 0,
         "DeliveryAndPackaging": 0
       };
+      this.ratingOverall = 0;
+      this.ratingSeller = 0;
+      this.ratingFulfillment = 0
       this.compComment = "";
       this.modalService.open(content);
     }
