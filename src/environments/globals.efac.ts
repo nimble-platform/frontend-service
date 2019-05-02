@@ -76,6 +76,8 @@ export const sqpOrangeConcept = `${ub_base}/getPropertyValuesFromOrangeGroup`;
 export const tntEndpoint = `${bpe_endpoint}/t-t/epc-details`;
 export const tntAnalysisEndpoint = `${base_path}/tnt/simpleTrackingAnalysis`;
 
+export const rocketChatEndpoint = `${base_path}:3000`;
+
 
 // Platform Configuration
 

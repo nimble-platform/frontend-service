@@ -71,6 +71,8 @@ export const sqpOrangeConcept = `${ub_base}/getPropertyValuesFromOrangeGroup`;
 export const tntEndpoint = `${bpe_endpoint}/t-t/epc-details`;
 export const tntAnalysisEndpoint = `${base_path}/tnt/simpleTrackingAnalysis`;
 
+export const rocketChatEndpoint = `${base_path}:3000`;
+
 
 // Platform Configuration
 
@@ -156,7 +158,7 @@ export const config = {
     "en":"Dear NIMBLE support team,\n\n\nI have encountered an issue.\n\nDescription of the issue:\n[Please insert a detailed description of the issue here. Add some screenshots as an attachement if they are of use.]",
     "es":"Equipo de soporte NIMBLE,\n\n\nHe detectado una incidencia.\n\nDescripción:\n[Por favor indique a continuación los detalles de la incidencia. Si es posible incluya alguna captura de pantalla si puede ser de utilidad.]"
   },
-  "showChat": false
+  "showChat": true
 };
 
 
