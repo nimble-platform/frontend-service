@@ -1,11 +1,11 @@
 <div class="col-12 title">
-    <h2>
+    <h4>
         Terms and Conditions
         <button class="btn btn-outline-dark" (click)="fetchTermsAndConditions()">
             <i class="fas fa-chevron-up fa-fw fa-lg mt-2" aria-hidden="true" *ngIf="showPreview"></i>
             <i class="fas fa-chevron-down fa-fw fa-lg mt-2" aria-hidden="true" *ngIf="!showPreview"></i>
         </button>
-    </h2>
+    </h4>
 </div>
 <call-status [callStatus]="callStatus"></call-status>
 <div class="col-12 section" *ngIf="showPreview && termAndConditionClauses">

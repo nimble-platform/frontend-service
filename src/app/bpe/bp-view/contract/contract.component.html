@@ -1,12 +1,12 @@
 <div class="col-12 title">
-    <h2>
+    <h4>
         Previous Steps
         <button class="btn btn-outline-dark" (click)="showClauses =! showClauses"
                 [disabled]="!contract">
             <i class="fas fa-chevron-up fa-fw fa-lg mt-2" aria-hidden="true" *ngIf="showClauses"></i>
             <i class="fas fa-chevron-down fa-fw fa-lg mt-2" aria-hidden="true" *ngIf="!showClauses"></i>
         </button>
-    </h2>
+    </h4>
 </div>
 <ng-container *ngIf="showClauses">
     <ng-container *ngFor="let clause of contract.clause">
