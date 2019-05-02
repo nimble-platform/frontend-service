@@ -51,7 +51,7 @@ export class CatalogueViewComponent implements OnInit {
     catalogueLineView = {};
 
     selectedCatalogue: string = "all";
-    catlogueId: string = "default";
+    catlogueId: string = "all";
     cataloguesIds : any = [];
 
     sortOption = null;
@@ -83,7 +83,7 @@ export class CatalogueViewComponent implements OnInit {
         this.catalogueText = "";
         this.sortOption = null;
         this.cataloguesIds = [];
-        this.catlogueId = "default";
+        this.catlogueId = "all";
         this.selectedCatalogue = "all";
         this.catalogueLinesWRTTypes = [];
         this.catalogueLinesArray = [];
@@ -368,7 +368,7 @@ export class CatalogueViewComponent implements OnInit {
         this.router.navigate(["/catalogue/publish"], { queryParams: { pg: 'bulk', productType: 'product'}});
     }
 
-    public getCatagloueIdsForParty(){
+    getCatagloueIdsForParty(){
         this.productCatalogueRetrievalStatus.submit();
         this.catalogueService.getCatalogueIdsForParty().then((catalogueIds) => {
             this.cataloguesIds = catalogueIds;
