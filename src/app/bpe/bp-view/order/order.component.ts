@@ -105,7 +105,7 @@ export class OrderComponent implements OnInit {
         const sellerId: string = UBLModelUtils.getPartyId(this.order.orderLine[0].lineItem.item.manufacturerParty);
         const buyerId: string = this.cookieService.get("company_id");
         this.initCallStatus.submit();
-        if(this.order.contract == null && this.bpDataService.precedingProcessId != null) {
+        if(this.getNonTermAndConditionContract() == null && this.bpDataService.precedingProcessId != null) {
             Promise.all([
                 this.bpeService.constructContractForProcess(this.bpDataService.precedingProcessId),
                 this.userService.getParty(buyerId),
@@ -143,6 +143,18 @@ export class OrderComponent implements OnInit {
         }
 
         this.initializeEPCCodes();
+    }
+
+    // retrieve the order contract which is not the Term and Condition contract
+    getNonTermAndConditionContract(){
+        for(let contract of this.order.contract){
+            for(let clause of contract.clause){
+                if(clause.type){
+                    return clause;
+                }
+            }
+        }
+        return null;
     }
 
     trackByFn(index: any) {
