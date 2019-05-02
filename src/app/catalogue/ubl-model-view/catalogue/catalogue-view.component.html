@@ -64,6 +64,7 @@
                     <label class="space-left space-right"><strong>Catalogue:</strong>
                     </label>
                     <select  class="custom-select col-8 space-right" [(ngModel)]="selectedCatalogue" (change)="changeCat()">
+                        <option value="all">All</option>
                         <option *ngFor="let catalogue of cataloguesIds"  [value]=catalogue>{{catalogue}}</option>
                     </select>
                     <call-status [callStatus]="productCatalogueRetrievalStatus"></call-status>
@@ -116,11 +117,11 @@
                             </div>
                             <div class="col-2">
                                 <button type="button" class="btn btn-primary space-after col"
-                                        (click)="redirectToEdit(catLine)" style="display: block">
+                                        (click)="redirectToEdit(catLine) ; $event.stopPropagation();" style="display: block">
                                     Edit
                                 </button>
                                 <button type="button" class="btn btn-primary space-after col"
-                                        (click)="redirectToCopy(catLine)" style="display: block">
+                                        (click)="redirectToCopy(catLine) ; $event.stopPropagation();" style="display: block">
                                     Copy
                                 </button>
                                 <button type="button" class="btn btn-danger col" [disabled]="getDeleteStatus(i).isLoading()"
@@ -166,6 +167,7 @@
                         <label class="space-left space-right"><strong>Catalogue:</strong>
                         </label>
                         <select  class="custom-select col-8 space-right" [(ngModel)]="selectedCatalogue" (change)="changeCat()">
+                            <option value="all">All</option>
                             <option *ngFor="let catalogue of cataloguesIds"  [value]=catalogue>{{catalogue}}</option>
                         </select>
                         <call-status [callStatus]="productCatalogueRetrievalStatus"></call-status>

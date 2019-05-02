@@ -352,6 +352,18 @@ export class CatalogueService {
 
     }
 
+    getCatalogueFromUuid(Uuid: string){
+        const url = this.baseUrl + `/catalogue/ubl/${Uuid}`;
+        return this.http
+            .get(url, {headers: this.getAuthorizedHeaders()})
+            .toPromise()
+            .then(res => {
+                return res.json();
+            })
+            .catch(this.handleError);
+
+    }
+
     private getAuthorizedHeaders(): Headers {
         const token = 'Bearer '+this.cookieService.get("bearer_token");
         const headers = new Headers({'Authorization': token});
