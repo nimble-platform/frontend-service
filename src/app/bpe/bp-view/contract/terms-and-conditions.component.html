@@ -1,8 +1,7 @@
 <div class="col-12 title">
     <h2>
         Terms and Conditions
-        <button class="btn btn-outline-dark" (click)="fetchTermsAndConditions()"
-                [disabled]="!order.contract || order.contract[0]?.clause.length === 0">
+        <button class="btn btn-outline-dark" (click)="fetchTermsAndConditions()">
             <i class="fas fa-chevron-up fa-fw fa-lg mt-2" aria-hidden="true" *ngIf="showPreview"></i>
             <i class="fas fa-chevron-down fa-fw fa-lg mt-2" aria-hidden="true" *ngIf="!showPreview"></i>
         </button>
