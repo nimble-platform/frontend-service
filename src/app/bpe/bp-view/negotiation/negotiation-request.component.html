@@ -200,6 +200,14 @@
             </address-input>
         </div>
     </div>
+
+    <!-- Contract Preview -->
+    <div class="row">
+        <div class="col-6">
+            <terms-and-conditions [requestForQuotation]="rfq" [buyerPartyId]="buyerId"
+                                  [sellerPartyId]="sellerId" [readOnly]="isLoading() || isReadOnly()"></terms-and-conditions>
+        </div>
+    </div>
 </div>
 
 <!-- Actions -->

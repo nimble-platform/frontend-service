@@ -12,6 +12,7 @@ import {COUNTRY_NAMES} from '../../../common/utils';
 import {UnitService} from '../../../common/unit-service';
 import {deliveryPeriodUnitListId, warrantyPeriodUnitListId} from '../../../common/constants';
 import {TradingTerm} from '../../../catalogue/model/publish/trading-term';
+import {RequestForQuotation} from '../../../catalogue/model/publish/request-for-quotation';
 
 
 @Component({
@@ -22,6 +23,7 @@ import {TradingTerm} from '../../../catalogue/model/publish/trading-term';
 export class TermsAndConditionsComponent implements OnInit {
 
     @Input() order:Order;
+    @Input() requestForQuotation: RequestForQuotation;
     @Input() buyerPartyId:string;
     @Input() sellerPartyId:string;
     @Input() readOnly:boolean = false;
@@ -67,7 +69,9 @@ export class TermsAndConditionsComponent implements OnInit {
             // populate available units
             this.UNITS = deliveryPeriodUnits.concat(warrantyPeriodUnits);
 
-            this.getTermsAndConditionsContract();
+            if(this.order){
+                this.getTermsAndConditionsContract();
+            }
             this.callStatus.callback("Successfully fetched terms and conditions", true);
         }).catch(error => {
             this.callStatus.error("Error while getting the settings of parties",error);
@@ -80,7 +84,7 @@ export class TermsAndConditionsComponent implements OnInit {
 
         if(this.showPreview) {
             this.callStatus.submit();
-            this.bpeService.getTermsAndConditions(this.order, this.buyerPartyId, this.sellerPartyId)
+            this.bpeService.getTermsAndConditions(this.order,this.requestForQuotation, this.buyerPartyId, this.sellerPartyId)
                 .then(termsAndConditions => {
                     this.termAndConditionClauses = termsAndConditions;
                     // create valuesOfParameters map
@@ -91,6 +95,14 @@ export class TermsAndConditionsComponent implements OnInit {
                         // if we have the contract containing terms details, then use it to fill the map
                         if(this.contract){
                             for(let clause of this.contract.clause){
+                                for(let tradingTerm of clause.tradingTerms){
+                                    this.tradingTerms.set(tradingTerm.tradingTermFormat,tradingTerm);
+                                }
+                            }
+                        }
+                        // if we have request for quotation, then use its terms and conditions to fill the map
+                        else if(this.requestForQuotation.termOrCondition.length > 0){
+                            for(let clause of this.requestForQuotation.termOrCondition){
                                 for(let tradingTerm of clause.tradingTerms){
                                     this.tradingTerms.set(tradingTerm.tradingTermFormat,tradingTerm);
                                 }
@@ -107,7 +119,7 @@ export class TermsAndConditionsComponent implements OnInit {
                         }
                     }
                     // create the contract
-                    if(!this.contract){
+                    if(this.order && !this.contract){
                         // create a contract for Terms and Conditions
                         this.contract = new Contract();
                         this.contract.id = UBLModelUtils.generateUUID();
@@ -120,6 +132,15 @@ export class TermsAndConditionsComponent implements OnInit {
                         }
                         // push contract to order.contract
                         this.order.contract.push(this.contract);
+                    }
+                    // create term and conditions for request for quotation
+                    if(this.requestForQuotation && this.requestForQuotation.termOrCondition.length == 0){
+                        for(let clause of this.termAndConditionClauses){
+
+                            let newClause:Clause = JSON.parse(JSON.stringify(clause));
+                            newClause.id = UBLModelUtils.generateUUID();
+                            this.requestForQuotation.termOrCondition.push(newClause);
+                        }
                     }
                     this.callStatus.callback("Successfully fetched terms and conditions", true);
                 }).catch(error => {
@@ -213,19 +234,41 @@ export class TermsAndConditionsComponent implements OnInit {
             }
         }
 
-        let clauseName = this.getClauseName(this.termAndConditionClauses[sectionIndex]);
-        let contractClause = this.getClause(clauseName);
+        // get the corresponding trading term from contract
         let contractTradingTerm:TradingTerm = null;
-        for(let tradingTerm of contractClause.tradingTerms){
-            if(tradingTerm.tradingTermFormat == id){
-                contractTradingTerm = tradingTerm;
-                break;
+        if(this.contract){
+
+            let clauseName = this.getClauseName(this.termAndConditionClauses[sectionIndex]);
+            let contractClause = this.getClause(clauseName);
+            for(let tradingTerm of contractClause.tradingTerms){
+                if(tradingTerm.tradingTermFormat == id){
+                    contractTradingTerm = tradingTerm;
+                    break;
+                }
+            }
+        }
+
+        // get the corresponding trading term from request for quotation
+        let rfqTradingTerm:TradingTerm = null;
+        if(this.requestForQuotation){
+            let clauseName = this.getClauseName(this.termAndConditionClauses[sectionIndex]);
+            let rfqClause = this.getClause(clauseName);
+            for(let tradingTerm of rfqClause.tradingTerms){
+                if(tradingTerm.tradingTermFormat == id){
+                    rfqTradingTerm = tradingTerm;
+                    break;
+                }
             }
         }
 
         if(isUnit){
             this.tradingTerms.get(id).value.valueQuantity[0].unitCode = value;
-            contractTradingTerm.value.valueQuantity[0].unitCode = value;
+
+            if(contractTradingTerm){
+                contractTradingTerm.value.valueQuantity[0].unitCode = value;
+            } else if(rfqTradingTerm){
+                rfqTradingTerm.value.valueQuantity[0].unitCode = value;
+            }
 
             let element = document.getElementById(id);
             element.innerText = this.tradingTerms.get(id).value.valueQuantity[0].value +" "+ value;
@@ -233,16 +276,40 @@ export class TermsAndConditionsComponent implements OnInit {
             let tradingTerm = this.tradingTerms.get(id);
             if(tradingTerm.value.valueQualifier == "STRING"){
                 tradingTerm.value.value[0].value = value;
-                contractTradingTerm.value.value[0].value = value;
+
+                if(contractTradingTerm){
+                    contractTradingTerm.value.value[0].value = value;
+                } else if(rfqTradingTerm){
+                    rfqTradingTerm.value.value[0].value = value;
+                }
+
             } else if(tradingTerm.value.valueQualifier == "NUMBER"){
                 tradingTerm.value.valueDecimal[0] = Number(value);
-                contractTradingTerm.value.valueDecimal[0] = Number(value);
+
+                if(contractTradingTerm){
+                    contractTradingTerm.value.valueDecimal[0] = Number(value);
+                } else if(rfqTradingTerm){
+                    rfqTradingTerm.value.valueDecimal[0] = Number(value);
+                }
+
             } else if(tradingTerm.value.valueQualifier == "QUANTITY"){
                 tradingTerm.value.valueQuantity[0].value = Number(value);
-                contractTradingTerm.value.valueQuantity[0].value = Number(value);
+
+                if(contractTradingTerm){
+                    contractTradingTerm.value.valueQuantity[0].value = Number(value);
+                } else if(rfqTradingTerm){
+                    rfqTradingTerm.value.valueQuantity[0].value = Number(value);
+                }
+
             } else if(tradingTerm.value.valueQualifier == "CODE"){
                 tradingTerm.value.valueCode[0].value = value;
-                contractTradingTerm.value.valueCode[0].value = value;
+
+                if(contractTradingTerm){
+                    contractTradingTerm.value.valueCode[0].value = value;
+                } else if(rfqTradingTerm){
+                    rfqTradingTerm.value.valueCode[0].value = value;
+                }
+
             }
 
             let element = document.getElementById(id);
@@ -256,7 +323,8 @@ export class TermsAndConditionsComponent implements OnInit {
     }
 
     private getClause(sectionName:string){
-        for(let clause of this.contract.clause){
+        let clauses: Clause[] = this.contract ? this.contract.clause : this.requestForQuotation.termOrCondition;
+        for(let clause of clauses){
             let text = clause.content[0].value;
             let startIndex = text.indexOf(" ");
             let endIndex = text.indexOf(":");
