@@ -50,6 +50,10 @@ export class ThreadSummaryComponent implements OnInit {
     history: ThreadEventMetadata[];
     historyExpanded: boolean = false;
 
+    ratingOverall = 0;
+    ratingSeller = 0;
+    ratingFulfillment = 0;
+
     // Utilities
     eventCount: number = 0
     archiveCallStatus: CallStatus = new CallStatus();
@@ -479,6 +483,20 @@ export class ThreadSummaryComponent implements OnInit {
       else {
         this.rateCollaborationSuccess(success);
       }
+    }
+
+    changeCommunicationRating(){
+        this.ratingSeller = (this.compRating.QualityOfTheNegotiationProcess + this.compRating.QualityOfTheOrderingProcess + this.compRating.ResponseTime) / 3;
+        this.ratingOverall = (this.ratingSeller + this.ratingFulfillment + this.compRating.DeliveryAndPackaging) / 3;
+    }
+
+    changeFullfillmentRating(){
+      this.ratingFulfillment = (this.compRating.ProductListingAccuracy + this.compRating.ConformanceToOtherAgreedTerms) / 2;
+      this.ratingOverall = (this.ratingSeller + this.ratingFulfillment + this.compRating.DeliveryAndPackaging) / 3;
+    }
+
+    changeDeliveryRating(){
+      this.ratingOverall = (this.ratingSeller + this.ratingFulfillment + this.compRating.DeliveryAndPackaging) / 3;
     }
 
     rateCollaborationSuccess(content) {
