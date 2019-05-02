@@ -135,14 +135,40 @@
 
 
     <!-- Contract Preview -->
-    <div class="row" *ngIf="isReady()">
-        <div class="col-6">
-            <terms-and-conditions [order]="order" [buyerPartyId]="getPartyId(buyerParty)"
-                                  [sellerPartyId]="getPartyId(sellerParty)" [readOnly]="isReadOnly() || isSeller()"></terms-and-conditions>
-        </div>
-        <div class="col-6">
+    <div *ngIf="isReady()">
+        <div>
             <contract [contract]="getOrderContract()"></contract>
         </div>
+        <div class="row">
+            <div class="col-6">
+                <terms-and-conditions [order]="order" [buyerPartyId]="getPartyId(buyerParty)"
+                                      [sellerPartyId]="getPartyId(sellerParty)" [readOnly]="isReadOnly() || isSeller()"></terms-and-conditions>
+            </div>
+            <div class="col-6">
+                <h4>
+                    Purchase Order
+                    <button class="btn btn-outline-dark" (click)="showPurchaseOrder = !showPurchaseOrder">
+                        <i class="fas fa-chevron-up fa-fw fa-lg mt-2" aria-hidden="true" *ngIf="showPurchaseOrder"></i>
+                        <i class="fas fa-chevron-down fa-fw fa-lg mt-2" aria-hidden="true" *ngIf="!showPurchaseOrder"></i>
+                    </button>
+                </h4>
+                <div *ngIf="showPurchaseOrder">
+                    <div class="row">
+                        <div class="col-3"><strong>Product Id:</strong></div>
+                        <div class="col-9">{{order.orderLine[0].lineItem.item.manufacturersItemIdentification.id}}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-3"><strong>Quantity:</strong></div>
+                        <div class="col-9">{{getQuantityText()}}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-3"><strong>Total Price:</strong></div>
+                        <div class="col-9">{{getTotalPriceText()}}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 </ng-container>
 

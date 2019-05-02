@@ -69,6 +69,8 @@ export class OrderComponent implements OnInit {
 
     getPartyId = UBLModelUtils.getPartyId;
 
+    showPurchaseOrder:boolean = false;
+
     constructor(public bpDataService: BPDataService,
                 private userService: UserService,
                 private bpeService: BPEService,
