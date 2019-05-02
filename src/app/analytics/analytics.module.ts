@@ -11,6 +11,7 @@ import {TrustPolicyComponent} from "./trust-policy.component";
 import {CompanyManagementComponent} from './company-management.component';
 import {PlatformInfoComponent} from './platform-info.component';
 import {MembersComponent} from './members.component';
+import {ChatComponent} from './chat.component';
 
 @NgModule({
     imports: [
@@ -28,7 +29,8 @@ import {MembersComponent} from './members.component';
         TrustPolicyComponent,
         CompanyManagementComponent,
         PlatformInfoComponent,
-        MembersComponent
+        MembersComponent,
+        ChatComponent
     ],
     exports: [
         PlatformAnalyticsComponent,
@@ -36,7 +38,8 @@ import {MembersComponent} from './members.component';
         TrustPolicyComponent,
         CompanyManagementComponent,
         PlatformInfoComponent,
-        MembersComponent
+        MembersComponent,
+        ChatComponent
     ],
     providers: []
 })
