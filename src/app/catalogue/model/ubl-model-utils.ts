@@ -465,7 +465,7 @@ export class UBLModelUtils {
         return item;
     }
 
-    private static createDimensions(dimensionUnits:string[]):Dimension[]{
+    public static createDimensions(dimensionUnits:string[]):Dimension[]{
         let dimensions:Dimension[] = [];
         for(let unit of dimensionUnits){
             let unitName = unit.charAt(0).toUpperCase() + unit.slice(1);
