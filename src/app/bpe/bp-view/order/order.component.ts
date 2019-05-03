@@ -118,7 +118,7 @@ export class OrderComponent implements OnInit {
                 this.buyerParty = buyerParty;
                 this.sellerParty = sellerParty;
                 this.dataMonitoringDemanded = dataMonitoringDemanded;
-                this.order.contract = [contract];
+                this.order.contract.push(contract);
                 return this.isDataMonitoringDemanded();
             })
             .then(dataMonitoringDemanded => {
