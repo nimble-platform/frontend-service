@@ -30,6 +30,7 @@ import {DocumentService} from "../document-service";
 import {BpStartEvent} from '../../../catalogue/model/publish/bp-start-event';
 import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
 import * as myGlobals from '../../../globals';
+import {Contract} from '../../../catalogue/model/publish/contract';
 
 /**
  * Created by suat on 20-Sep-17.
@@ -49,9 +50,6 @@ export class OrderComponent implements OnInit {
     userRole: BpUserRole;
     config = myGlobals.config;
 
-    showPreview: boolean = false;
-    termsAndConditions: string;
-
     buyerParty: Party;
     sellerParty: Party;
 
@@ -64,11 +62,14 @@ export class OrderComponent implements OnInit {
 
     initCallStatus: CallStatus = new CallStatus();
     submitCallStatus: CallStatus = new CallStatus();
-    fetchTermsAndConditionsStatus: CallStatus = new CallStatus();
     fetchDataMonitoringStatus: CallStatus = new CallStatus();
 
     // the copy of ThreadEventMetadata of the current business process
     processMetadata: ThreadEventMetadata;
+
+    getPartyId = UBLModelUtils.getPartyId;
+
+    showPurchaseOrder:boolean = false;
 
     constructor(public bpDataService: BPDataService,
                 private userService: UserService,
@@ -106,7 +107,7 @@ export class OrderComponent implements OnInit {
         const sellerId: string = UBLModelUtils.getPartyId(this.order.orderLine[0].lineItem.item.manufacturerParty);
         const buyerId: string = this.cookieService.get("company_id");
         this.initCallStatus.submit();
-        if(this.order.contract == null && this.bpDataService.precedingProcessId != null) {
+        if(this.getNonTermAndConditionContract() == null && this.bpDataService.precedingProcessId != null) {
             Promise.all([
                 this.bpeService.constructContractForProcess(this.bpDataService.precedingProcessId),
                 this.userService.getParty(buyerId),
@@ -146,6 +147,18 @@ export class OrderComponent implements OnInit {
         this.initializeEPCCodes();
     }
 
+    // retrieve the order contract which is not the Term and Condition contract
+    getNonTermAndConditionContract(){
+        for(let contract of this.order.contract){
+            for(let clause of contract.clause){
+                if(clause.type){
+                    return clause;
+                }
+            }
+        }
+        return null;
+    }
+
     trackByFn(index: any) {
         return index;
     }
@@ -153,21 +166,6 @@ export class OrderComponent implements OnInit {
     /*
      * Event Handlers
      */
-
-    onPreviewTermsAndConditions() {
-        this.showPreview = !this.showPreview;
-
-        if(this.showPreview && !this.termsAndConditions) {
-            this.fetchTermsAndConditionsStatus.submit();
-            this.bpeService.generateOrderTermsAndConditionsAsText(this.order, UBLModelUtils.getPartyId(this.buyerParty), UBLModelUtils.getPartyId(this.sellerParty))
-            .then(text => {
-                this.fetchTermsAndConditionsStatus.callback("Successfully fetched terms and conditions", true);
-                this.termsAndConditions = text;
-            }).catch(error => {
-                this.fetchTermsAndConditionsStatus.error("Error while fetching terms and conditions", error);
-            });
-        }
-    }
 
     onBack() {
         this.location.back();
@@ -476,5 +474,18 @@ export class OrderComponent implements OnInit {
         }
 
         return Promise.resolve(false);
+    }
+
+    getOrderContract():Contract{
+        let orderContract = null;
+        for(let contract of this.order.contract){
+            for(let clause of contract.clause){
+                if(clause.type){
+                    orderContract = contract;
+                    break;
+                }
+            }
+        }
+        return orderContract;
     }
 }
