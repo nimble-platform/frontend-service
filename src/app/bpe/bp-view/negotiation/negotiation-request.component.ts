@@ -192,19 +192,6 @@ export class NegotiationRequestComponent implements OnInit {
         }
     }
 
-    // saveFrameContract(sellerParty: Party, buyerParty: Party): Promise<DigitalAgreement> {
-    //     this.frameContract.item = this.rfq.requestForQuotationLine[0].lineItem.item;
-    //     this.frameContract.participantParty.push(sellerParty);
-    //     this.frameContract.participantParty.push(buyerParty);
-    //     UBLModelUtils.removeHjidFieldsFromObject(this.frameContract);
-    //
-    //     let savedFrameContract: Promise<DigitalAgreement> = Promise.resolve(null);
-    //     if(this.isFrameContractInEditMode() && this.isFrameContractValid()) {
-    //         savedFrameContract = this.bpeService.saveFrameContract(this.frameContract);
-    //     }
-    //     return savedFrameContract;
-    // }
-
     onUpdateRequest(): void {
         this.callStatus.submit();
 

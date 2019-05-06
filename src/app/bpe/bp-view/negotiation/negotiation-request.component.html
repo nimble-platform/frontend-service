@@ -173,12 +173,12 @@
                 <span title="The period within which the offered conditions will be valid upon confirmation by the seller.">&#9432;</span>
             </div>
             <div class="col-5"></div>
-            <div *ngIf="!frameContractAvailable" class="col-5">
+            <div class="col-5">
                 <negotiation-request-input label="Request Frame Contract" [(cbModel)]="rfq.negotiationOptions.frameContractDuration"
                                            id="frameContractCb"
                                            [quantityUnits]="frameContractDurationUnits"
                                            [quantity]="frameContractDuration"
-                                           [(selected)]="wrapper.rfqPaymentTerms.paymentTerm" [disabled]="isFrameContractDisabled()">
+                                           [disabled]="isFrameContractDisabled()">
                 </negotiation-request-input>
             </div>
         </div>

@@ -25,6 +25,8 @@ import {DigitalAgreement} from "../../../catalogue/model/publish/digital-agreeme
 import * as moment from "moment";
 import {Moment, unitOfTime} from "moment";
 import {Period} from "../../../catalogue/model/publish/period";
+import {DocumentReference} from "../../../catalogue/model/publish/document-reference";
+import {Party} from "../../../catalogue/model/publish/party";
 
 @Component({
     selector: "negotiation-response",
@@ -90,7 +92,7 @@ export class NegotiationResponseComponent implements OnInit {
         this.userRole = this.bpDataService.bpStartEvent.userRole;
 
         // check associated frame contract
-        this.bpeService.getDigitalAgreement(UBLModelUtils.getPartyId(this.rfq.requestForQuotationLine[0].lineItem.item.manufacturerParty),
+        this.bpeService.getDigitalAgreement(UBLModelUtils.getPartyId(this.rfq.sellerSupplierParty.party),
             UBLModelUtils.getPartyId(this.rfq.buyerCustomerParty.party),
             this.rfq.requestForQuotationLine[0].lineItem.item.manufacturersItemIdentification.id).then(digitalAgreement => {
             this.frameContract = digitalAgreement;
@@ -117,6 +119,7 @@ export class NegotiationResponseComponent implements OnInit {
         }
 
         this.callStatus.submit();
+
         // create new frame contract
         let savedFrameContract: Promise<DigitalAgreement>;
         if(this.frameContract == null) {
@@ -127,13 +130,12 @@ export class NegotiationResponseComponent implements OnInit {
             savedFrameContract = this.updateFrameContract();
         }
 
+        // update the quotation by referring the frame contract via an additional document reference
         savedFrameContract.then(contract => {
             let documentReference: DocumentReference = new DocumentReference();
             documentReference.documentType = 'FRAME_CONTRACT';
-            documentReference.id = savedDigitalAgreement.id;
+            documentReference.id = contract.id;
             this.quotation.additionalDocumentReference.push(documentReference);
-            // the specfic item instance subject to this negotiation is already persisted while saving the the digital agreement. So, we should use it.
-            this.quotation.requestForQuotationLine[0].lineItem.item = savedDigitalAgreement.item;
         });
 
         const vars: ProcessVariables = ModelUtils.createProcessVariables("Negotiation", UBLModelUtils.getPartyId(this.bpDataService.requestForQuotation.buyerCustomerParty.party),
@@ -253,7 +255,7 @@ export class NegotiationResponseComponent implements OnInit {
         return false;
     }
 
-    saveFrameContract(sellerParty: Party, buyerParty: Party): Promise<DigitalAgreement> {
+    saveFrameContract(): Promise<DigitalAgreement> {
         let frameContract: DigitalAgreement = new DigitalAgreement();
         frameContract.item = this.rfq.requestForQuotationLine[0].lineItem.item;
         frameContract.participantParty.push(this.rfq.sellerSupplierParty.party);
