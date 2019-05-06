@@ -7,6 +7,7 @@ import { ItemProperty } from "../catalogue/model/publish/item-property";
 import { getPropertyValuesAsStrings, selectPartyName } from "../common/utils";
 import { CompanySettings } from "../user-mgmt/model/company-settings";
 import * as myGlobals from '../globals';
+import {Quantity} from '../catalogue/model/publish/quantity';
 
 @Component({
     selector: 'product-details-tabs',
@@ -21,6 +22,7 @@ export class ProductDetailsTabsComponent implements OnInit {
 
     @Input() showOverview: boolean = false;
     @Input() readonly: boolean = false;
+    @Input() tabToOpen: string = "";
     config = myGlobals.config;
 
     selectedTab: ProductDetailsTab;
@@ -79,6 +81,11 @@ export class ProductDetailsTabsComponent implements OnInit {
             this.haveLCPA = false;
             this.selectedTab = this.getFirstTab();
         }
+
+        if(this.tabToOpen == "rating"){
+          this.selectedTab = "RATING";
+        }
+
         this.bpeService.getRatingsSummary(this.settings.companyID).then(ratings => {
             if (ratings.totalNumberOfRatings <= 0) {
                 this.haveRating = false;
@@ -87,11 +94,17 @@ export class ProductDetailsTabsComponent implements OnInit {
             else {
               this.haveRating = true;
             }
+
+            if(this.tabToOpen == "rating"){
+              this.selectedTab = "RATING";
+            }
+
           })
           .catch(error => {
             this.haveRating = false;
             this.selectedTab = this.getFirstTab();
           });
+        
     }
 
     onSelectTab(event: any): void {
@@ -101,6 +114,11 @@ export class ProductDetailsTabsComponent implements OnInit {
 
     getValuesAsString(property: ItemProperty): string[] {
         return getPropertyValuesAsStrings(property);
+    }
+
+    getMultiValuedDimensionAsString(quantities:Quantity[]){
+        let quantitiesWithUnits = quantities.filter(qty => qty.unitCode && qty.unitCode != '');
+        return quantitiesWithUnits.map(qty => `${qty.value} ${qty.unitCode}`).join(", ");
     }
 
     getHumanReadablePropertyName(propertyName:string): string{

@@ -25,7 +25,7 @@
               </product-details-overview>
             </div>
         </div>
-        <product-details-tabs [wrapper]="wrapper" [settings]="settings">
+        <product-details-tabs [wrapper]="wrapper" [settings]="settings" [tabToOpen]="tabToOpen">
         </product-details-tabs>
     </div>
     <div class="col-3">
@@ -105,7 +105,7 @@
                         Quantity:
                     </label>
                     <span class="order-qty-input">
-                        <input type="number" [(ngModel)]="options.quantity" class="form-control form-control-sm w-75 px-1" />
+                        <input type="number" min="0" step="1" (keypress)="onOrderQuantityChange($event)" [(ngModel)]="options.quantity" class="form-control form-control-sm w-75 px-1" />
                         <span *ngIf="getQuantityUnit() !== ''" class="ml-2">{{ getQuantityUnit() }}</span>
                     </span>
                 </div>

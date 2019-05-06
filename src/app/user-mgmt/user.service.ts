@@ -15,6 +15,8 @@ import { CatalogueLine } from '../catalogue/model/publish/catalogue-line';
 import { INCOTERMS, PAYMENT_MEANS } from '../catalogue/model/constants';
 import { Person } from '../catalogue/model/publish/person';
 import { ResetPasswordCredentials } from './model/reset-password-credentials';
+import {UnitService} from "../common/unit-service";
+import {deliveryPeriodUnitListId, warrantyPeriodUnitListId} from "../common/constants";
 
 @Injectable()
 export class UserService {
@@ -25,6 +27,7 @@ export class UserService {
     userParty: Party;
 
     constructor(
+        private unitService: UnitService,
         private http: Http,
         private cookieService: CookieService
     ) { }
@@ -399,21 +402,21 @@ export class UserService {
             .catch(this.handleError);
     }
 
-    private sanitizeNegotiationSettings(settings: CompanyNegotiationSettings): CompanyNegotiationSettings {
+    private async sanitizeNegotiationSettings(settings: CompanyNegotiationSettings): Promise<CompanyNegotiationSettings> {
         if(settings.deliveryPeriodUnits.length === 0) {
-            settings.deliveryPeriodUnits.push("day(s)");
-            settings.deliveryPeriodUnits.push("week(s)");
+            settings.deliveryPeriodUnits.push(...await this.unitService.getCachedUnitList(deliveryPeriodUnitListId));
         }
         if(settings.deliveryPeriodRanges.length === 0) {
+            settings.deliveryPeriodRanges.push({ start: 24, end: 1344 });
+            settings.deliveryPeriodRanges.push({ start: 1, end: 40 });
             settings.deliveryPeriodRanges.push({ start: 1, end: 56 });
             settings.deliveryPeriodRanges.push({ start: 0, end: 8 });
         }
-        while(settings.deliveryPeriodRanges.length > 2) {
+        while(settings.deliveryPeriodRanges.length > 4) {
             settings.deliveryPeriodRanges.pop();
         }
-        if(settings.warrantyPeriodRanges.length === 0) {
-            settings.warrantyPeriodUnits.push("month(s)");
-            settings.warrantyPeriodUnits.push("year(s)");
+        if(settings.warrantyPeriodUnits.length === 0) {
+            settings.warrantyPeriodUnits.push(...await this.unitService.getCachedUnitList(warrantyPeriodUnitListId));
         }
         if(settings.warrantyPeriodRanges.length === 0) {
             settings.warrantyPeriodRanges.push({ start: 0, end: 24 });

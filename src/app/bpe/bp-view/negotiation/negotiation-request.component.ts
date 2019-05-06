@@ -34,6 +34,8 @@ import * as myGlobals from '../../../globals';
 })
 export class NegotiationRequestComponent implements OnInit {
 
+    CURRENCIES: string[] = CURRENCIES;
+
     line: CatalogueLine;
     rfq: RequestForQuotation;
     rfqLine: RequestForQuotationLine;
@@ -43,10 +45,6 @@ export class NegotiationRequestComponent implements OnInit {
     negotiatedPriceValue: number;
     totalPrice: number;
 
-    callStatus: CallStatus = new CallStatus();
-
-    CURRENCIES: string[] = CURRENCIES;
-
     selectedAddressValue = "";
 
     // the copy of ThreadEventMetadata of the current business process
@@ -54,6 +52,22 @@ export class NegotiationRequestComponent implements OnInit {
 
     @ViewChild(DiscountModalComponent)
     private discountModal: DiscountModalComponent;
+
+    /**
+     * View control fields
+     */
+
+    showCounterOfferTerms:boolean = false;
+    showRestOfNegotiationDetails: boolean = false;
+    showNotesAndAdditionalFiles: boolean = false;
+    showDataMonitoring: boolean = false;
+    showDeliveryAddress: boolean = false;
+    callStatus: CallStatus = new CallStatus();
+
+    sellerId:string = null;
+    buyerId:string = null;
+
+    showPurchaseOrder:boolean = false;
 
     constructor(private bpDataService: BPDataService,
                 private bpeService:BPEService,
@@ -79,6 +93,9 @@ export class NegotiationRequestComponent implements OnInit {
         if(!this.lineHasPrice) {
             this.rfq.negotiationOptions.price = true;
         }
+
+        this.sellerId = UBLModelUtils.getPartyId(this.line.goodsItem.item.manufacturerParty);
+        this.buyerId = this.cookieService.get("company_id");
     }
 
     /*
@@ -105,20 +122,15 @@ export class NegotiationRequestComponent implements OnInit {
             }
             UBLModelUtils.removeHjidFieldsFromObject(rfq);
 
-            //first initialize the seller and buyer parties.
-            //once they are fetched continue with starting the ordering process
-            const sellerId: string = UBLModelUtils.getPartyId(this.line.goodsItem.item.manufacturerParty);
-            const buyerId: string = this.cookieService.get("company_id");
-
            Promise.all([
-                this.userService.getParty(buyerId),
-                this.userService.getParty(sellerId)
+                this.userService.getParty(this.buyerId),
+                this.userService.getParty(this.sellerId)
             ])
             .then(([buyerParty, sellerParty]) => {
                 rfq.buyerCustomerParty = new CustomerParty(buyerParty);
                 rfq.sellerSupplierParty = new SupplierParty(sellerParty);
 
-                const vars: ProcessVariables = ModelUtils.createProcessVariables("Negotiation", buyerId, sellerId,this.cookieService.get("user_id"), rfq, this.bpDataService);
+                const vars: ProcessVariables = ModelUtils.createProcessVariables("Negotiation", this.buyerId, this.sellerId,this.cookieService.get("user_id"), rfq, this.bpDataService);
                 const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
 
                 return this.bpeService.startBusinessProcess(piim);
@@ -162,6 +174,18 @@ export class NegotiationRequestComponent implements OnInit {
 
     onBack(): void {
         this.location.back();
+    }
+
+    onOrderQuantityChange(event:any): boolean {
+        const charCode = (event.which) ? event.which : event.keyCode;
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        return true;
+    }
+
+    onOfferCounterTerms(): void {
+        this.showCounterOfferTerms = !this.showCounterOfferTerms;
     }
 
     /*

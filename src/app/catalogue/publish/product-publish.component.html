@@ -17,6 +17,19 @@
     </li>
 </ul>
 
+<div *ngIf="cataloguesIds.length > 1 && publishingGranularity !== 'bulk'" class="row space-before">
+        <div class="col-2 category-list-label">
+            <strong *ngIf="!productCatalogueRetrievalStatus.isLoading()">Catalogue: </strong>
+            <strong class="mr-2" *ngIf="productCatalogueRetrievalStatus.isLoading()">Fetching Catalogues </strong>
+            <call-status [callStatus]="productCatalogueRetrievalStatus"></call-status>
+        </div>
+        <div class="col-4">
+          <select class="custom-select" [(ngModel)]="selectedCatalogue" (change)="changeCat()">
+              <option *ngFor="let catalogue of cataloguesIds"  [value]=catalogue>{{catalogue}}</option>
+          </select>
+        </div>
+</div>
+
 <!-- Selected Categories -->
 <div class="row space-before">
     <div class="col-2 category-list-label">
@@ -58,9 +71,17 @@
         </div>
 
         <div class="col-9">
-            <name-description-panel [item]="catalogueLine.goodsItem.item"></name-description-panel>
             <!-- product ID -->
-            <div class="col-12 pr-0 space-before"><small class="float-right">ID: {{ catalogueLine.goodsItem.item.manufacturersItemIdentification.id }}</small></div>
+            <text-input label="ID"
+                        [(text)]="catalogueLine.goodsItem.item.manufacturersItemIdentification.id"
+                        [rows]="1"
+                        [maxLength]="256"
+                        [rowClass]="'m-0'"
+                        [valueClass]="'col-9 pr-0'"
+                        (textChange)="onLineIdChange()">
+            </text-input>
+            <hr>
+            <name-description-panel [item]="catalogueLine.goodsItem.item"></name-description-panel>
         </div>
     </div>
 
@@ -105,36 +126,36 @@
                 <ul class="nav nav-tabs">
                     <li class="nav-item">
                         <a href id="DETAILS" class="nav-link"
-                            [ngClass]="{ active: selectedTabSinglePublish === 'DETAILS'}"
-                            (click)="onSelectTabSinglePublish($event)">
+                           [ngClass]="{ active: selectedTabSinglePublish === 'DETAILS'}"
+                           (click)="onSelectTabSinglePublish($event)">
                             Details
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href id="PRICE" class="nav-link"
-                            [ngClass]="{ active: selectedTabSinglePublish === 'PRICE'}"
-                            (click)="onSelectTabSinglePublish($event)">
+                           [ngClass]="{ active: selectedTabSinglePublish === 'PRICE'}"
+                           (click)="onSelectTabSinglePublish($event)">
                             Price
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href id="DELIVERY_TRADING" class="nav-link"
-                            [ngClass]="{ active: selectedTabSinglePublish === 'DELIVERY_TRADING'}"
-                            (click)="onSelectTabSinglePublish($event)">
+                           [ngClass]="{ active: selectedTabSinglePublish === 'DELIVERY_TRADING'}"
+                           (click)="onSelectTabSinglePublish($event)">
                             Delivery &amp; Trading
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href id="CERTIFICATES" class="nav-link"
-                            [ngClass]="{ active: selectedTabSinglePublish === 'CERTIFICATES'}"
-                            (click)="onSelectTabSinglePublish($event)">
+                           [ngClass]="{ active: selectedTabSinglePublish === 'CERTIFICATES'}"
+                           (click)="onSelectTabSinglePublish($event)">
                             Certificates
                         </a>
                     </li>
                     <li *ngIf="config.showTrack" class="nav-item">
                         <a href id="TRACK_TRACE" class="nav-link"
-                            [ngClass]="{ active: selectedTabSinglePublish === 'TRACK_TRACE'}"
-                            (click)="onSelectTabSinglePublish($event)">
+                           [ngClass]="{ active: selectedTabSinglePublish === 'TRACK_TRACE'}"
+                           (click)="onSelectTabSinglePublish($event)">
                             Track &amp; Trace
                         </a>
                     </li>
@@ -152,6 +173,36 @@
         <!-- Product Details Tab -->
         <div class="row space-before" *ngIf="selectedTabSinglePublish === 'DETAILS'">
             <div class="col-12">
+                <button class='btn btn-outline-primary' (click)="toggleDimensionCard()">Dimensions</button>
+                <div *ngIf="showDimensions" >
+                    <div class="row" *ngFor="let multiValuedDimension of multiValuedDimensions">
+                        <div class="col-3" style="align-self:center">
+                            <strong>{{multiValuedDimension.attributeID}} : </strong>
+                        </div>
+                        <div class="col-6">
+                            <table class="table table-borderless mb-0">
+                                <tbody>
+                                <tr *ngFor="let quantity of multiValuedDimension.measure;let i=index">
+                                    <td>
+                                        <quantity-input [quantity]="quantity" rowClass="quantity-input">
+                                        </quantity-input>
+                                    </td>
+                                    <td *ngIf="i>0" class="align-right" >
+                                        <button class="btn btn-danger"  type="button" (click)="onRemoveDimension(multiValuedDimension.attributeID,quantity)">&times;</button>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-3" style="align-self:center">
+                            <button class="btn btn-outline-primary" (click)="onAddDimension(multiValuedDimension.attributeID)">
+                                Add
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
                 <div class="row" *ngFor="let prop of getProductProperties()">
                     <div class="col-3" style="align-self:center">
                         <strong [title]="getDefinition(prop)">{{ getPrettyName(prop) }}: </strong>
@@ -159,12 +210,12 @@
                     <div class="col-6">
                         <table *ngIf="prop.valueQualifier === 'BINARY'" class="table table-borderless mb-0">
                             <tbody>
-                              <tr>
+                            <tr>
                                 <td>
-                                  <file-input [binaryObjects]="prop.valueBinary" [multiple]="true" [maxSize]=1>
-                                  </file-input>
+                                    <file-input [binaryObjects]="prop.valueBinary" [multiple]="true" [maxSize]=1>
+                                    </file-input>
                                 </td>
-                              </tr>
+                            </tr>
                             </tbody>
                         </table>
                         <table *ngIf="prop.valueQualifier !== 'BINARY'" class="table table-borderless mb-0">

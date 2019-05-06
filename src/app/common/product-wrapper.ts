@@ -8,6 +8,7 @@ import { PriceWrapper } from "./price-wrapper";
 import { CompanyNegotiationSettings } from "../user-mgmt/model/company-negotiation-settings";
 import {Quantity} from '../catalogue/model/publish/quantity';
 import { Dimension } from "../catalogue/model/publish/dimension";
+import {MultiValuedDimension} from '../catalogue/model/publish/multi-valued-dimension';
 
 /**
  * Wrapper class for Catalogue line.
@@ -43,16 +44,60 @@ export class ProductWrapper {
         return this.getUniquePropertiesWithFilter(() => true);
     }
 
-    getDimensions(): Dimension[] {
-      if(!this.item) {
-          return [];
-      }
-      const ret = [];
-      this.item.dimension.forEach(prop => {
-        if (prop.attributeID && prop.measure.value)
-          ret.push(prop);
-      });
-      return ret;
+    getDimensions(includingNullValues:boolean = true): Dimension[] {
+        if(!this.item) {
+            return [];
+        }
+        const ret = [];
+        this.item.dimension.forEach(prop => {
+            if(includingNullValues){
+                if (prop.attributeID)
+                    ret.push(prop);
+            }else{
+                if (prop.attributeID && prop.measure.value)
+                    ret.push(prop);
+            }
+        });
+        return ret;
+    }
+
+    // it creates MultiValuedDimensions using the item's dimensions
+    // if the item has no dimensions, then it creates them using the given list of dimension units.
+    getDimensionMultiValue(includeDimensionsWithNullValues:boolean = true, dimensionUnits:string[] = []):MultiValuedDimension[]{
+        let multiValuedDimensions:MultiValuedDimension[] = [];
+        // each item should have dimensions
+        if(this.item.dimension.length == 0 && dimensionUnits.length > 0){
+            this.item.dimension = UBLModelUtils.createDimensions(dimensionUnits);
+        }
+        for(let dimension of this.item.dimension){
+            if(!includeDimensionsWithNullValues && !dimension.measure.value){
+                continue;
+            }
+            let found:boolean = false;
+            for(let multiValuedDimension of multiValuedDimensions){
+                if(multiValuedDimension.attributeID == dimension.attributeID){
+                    multiValuedDimension.measure.push(dimension.measure);
+                    found = true;
+                    break;
+                }
+            }
+            if(!found){
+                multiValuedDimensions.push(new MultiValuedDimension(dimension.attributeID,[dimension.measure]));
+            }
+        }
+        return multiValuedDimensions;
+    }
+
+    addDimension(attributeId:string){
+        let dimension:Dimension = new Dimension(attributeId);
+        this.item.dimension.push(dimension);
+    }
+
+    removeDimension(attributeId:string,quantity:Quantity): void {
+        let index: number = this.item.dimension.slice().reverse().findIndex(dim => dim.attributeID == attributeId && dim.measure.value == quantity.value);
+        let count = this.item.dimension.length - 1;
+        let finalIndex = count - index;
+        this.item.dimension.splice(finalIndex, 1);
     }
 
     getPackaging(): string {

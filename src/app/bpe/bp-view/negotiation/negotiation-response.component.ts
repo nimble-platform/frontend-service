@@ -47,6 +47,10 @@ export class NegotiationResponseComponent implements OnInit {
     @ViewChild(DiscountModalComponent)
     private discountModal: DiscountModalComponent;
 
+    getPartyId = UBLModelUtils.getPartyId;
+    showTermsAndConditions:boolean = false;
+    showPurchaseOrder:boolean = false;
+
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
                 private location: Location,

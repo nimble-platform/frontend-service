@@ -44,12 +44,12 @@ export const pw_reset_link = "http://nimble-staging.salzburgresearch.at:8080/aut
 
 export const user_mgmt_endpoint=`${base_path}/identity`;
 export const catalogue_endpoint=`${base_path}/catalog`;
+
 export const bpe_endpoint=`${base_path}/business-process`;
 export const data_channel_endpoint=`${base_path}/data-channel`;
 export const data_aggregation_endpoint=`${base_path}/data-aggregation`;
 export const trust_service_endpoint=`${base_path}/trust`;
 export const indexing_service_endpoint=`${base_path}/indexing-service`;
-
 
 // BIBA endpoints
 
@@ -71,6 +71,8 @@ export const sqpOrangeConcept = `${ub_base}/getPropertyValuesFromOrangeGroup`;
 export const tntEndpoint = `${bpe_endpoint}/t-t/epc-details`;
 export const tntAnalysisEndpoint = `${base_path}/tnt/simpleTrackingAnalysis`;
 
+export const rocketChatEndpoint = `${base_path}:3000`;
+
 
 // Platform Configuration
 
@@ -83,7 +85,7 @@ export const config = {
       "ontologyPrefix": "http://www.nimble-project.org/resource/eclass#"
     },
     "FurnitureOntology": {
-      "hiddenCategories": ["Catalogue","Company","ContactPerson","Guarantee","Price","Process","Standard","Style","Technique"],
+      "hiddenCategories": ["Catalogue","Company","Guarantee","ContactPerson","Price","Process","Standard","Technique","Style","Use"],
       "logisticsCategory": "LogisticsService",
       "ontologyPrefix": "http://www.aidimme.es/FurnitureSectorOntology.owl#"
     }
@@ -155,7 +157,8 @@ export const config = {
   "supportMailContent": {
     "en":"Dear NIMBLE support team,\n\n\nI have encountered an issue.\n\nDescription of the issue:\n[Please insert a detailed description of the issue here. Add some screenshots as an attachement if they are of use.]",
     "es":"Equipo de soporte NIMBLE,\n\n\nHe detectado una incidencia.\n\nDescripción:\n[Por favor indique a continuación los detalles de la incidencia. Si es posible incluya alguna captura de pantalla si puede ser de utilidad.]"
-  }
+  },
+  "showChat": true
 };
 
 

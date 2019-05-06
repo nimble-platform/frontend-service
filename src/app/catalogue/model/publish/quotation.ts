@@ -5,6 +5,7 @@ import { DocumentReference } from "./document-reference";
 import { Code } from "./code";
 import { PaymentTerms } from "./payment-terms";
 import { PaymentMeans } from "./payment-means";
+import {Clause} from './clause';
 /**
  * Created by suat on 17-Sep-17.
  */
@@ -22,6 +23,7 @@ export class Quotation {
         public quotationLine: QuotationLine[],
         public paymentMeans: PaymentMeans,
         public paymentTerms: PaymentTerms,
-        public additionalDocumentReference:DocumentReference[] = []
+        public additionalDocumentReference:DocumentReference[] = [],
+        public termOrCondition:Clause[] = []
     ) {}
 }

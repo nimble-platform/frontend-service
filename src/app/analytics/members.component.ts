@@ -2,7 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { AnalyticsService } from "./analytics.service";
 import { CallStatus } from '../common/call-status';
 import * as myGlobals from '../globals';
-import {selectPartyName} from '../common/utils';
+import {selectPartyName, sanitizeLink} from '../common/utils';
 import { AppComponent } from "../app.component";
 import { ActivatedRoute } from "@angular/router";
 import {COMPANY_LIST_SORT_OPTIONS} from './constants';
@@ -22,6 +22,7 @@ export class MembersComponent implements OnInit {
     size = 16;
 
     getNameOfTheCompany = selectPartyName;
+    getLink = sanitizeLink;
 
     COMPANY_LIST_SORT_OPTIONS = COMPANY_LIST_SORT_OPTIONS;
     sortOptionForVerifiedCompanies = this.COMPANY_LIST_SORT_OPTIONS[0].name;
@@ -50,41 +51,12 @@ export class MembersComponent implements OnInit {
             .getVerifiedCompanies(requestedPage,this.size, sortBy, orderBy)
             .then(res => {
                 this.registeredCompaniesCallStatus.callback("Successfully loaded registered companies", true);
-                res = this.updateLinks(res);
                 this.registeredCompaniesPage = res;
                 this.registeredCompaniesPage.number += 1; // number has offset of 1
             })
             .catch(error => {
                 this.registeredCompaniesCallStatus.error("Error while loading registered companies page", error);
             });
-    }
-
-    updateLinks(regComp: any): any {
-      if (regComp.content) {
-        for (var i=0; i<regComp.content.length; i++) {
-          if (regComp.content[i].websiteURI && regComp.content[i].websiteURI != "") {
-            var comp_link = regComp.content[i].websiteURI;
-            if (comp_link.indexOf("http://") == -1 && comp_link.indexOf("https://") == -1) {
-              regComp.content[i].websiteURIFull = "http://"+regComp.content[i].websiteURI;
-            }
-            else {
-              regComp.content[i].websiteURIFull = regComp.content[i].websiteURI;
-            }
-            if (!this.checkURL(regComp.content[i].websiteURIFull))
-              regComp.content[i].websiteURIFull = "";
-          }
-        }
-      }
-      return regComp;
-    }
-
-    checkURL(url: string): boolean {
-      var expression = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
-      var regex = new RegExp(expression);
-      var match = false;
-      if (url.match(regex))
-        match = true;
-      return match;
     }
 
     getCompanyLogo(ref: any): string {

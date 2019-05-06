@@ -12,7 +12,11 @@
     <div *ngIf="ratings.totalNumberOfRatings>0">
         <div class="form-group row">
           <label class="col-6 col-form-label">
-            <strong>Overall Rating</strong><br/>
+            <strong>Overall Rating 
+              <span title="Overall rating of the company based on 'Seller Communication','Fulfillment of Terms' and 'Delivery & Packaging'. See the subitems for more details.">
+                <i class="fa fa-exclamation-circle"></i>
+              </span>
+            </strong><br/>
             <i>based on {{ratings.totalNumberOfRatings}} rating(s)</i>
           </label>
             <div class="col-6 align-right">
@@ -27,7 +31,11 @@
         </div>
         <div class="form-group row">
           <label class="col-6 col-form-label">
-            <strong>Seller Communication</strong>
+            <strong>Seller Communication 
+              <span title=' Overall rating of how well the seller communicated based on "Quality of Negotiation Process","Quality of Ordering Process" and "Response Time". See the subitems for more details.'>
+                <i class="fa fa-exclamation-circle"></i>
+              </span>
+            </strong>
           </label>
             <div class="col-6 align-right">
               <ngb-rating [rate]="ratingSeller" [readonly]="true" max="5">
@@ -40,7 +48,11 @@
             </div>
         </div>
         <div class="form-group row">
-          <label class="col-6 col-form-label">Quality of Negotiation Process</label>
+          <label class="col-6 col-form-label">Quality of Negotiation Process 
+            <span title='Indicates how well the negotiation was executed; e.g. clear responses, flexibility on provided terms, supporting documentation, etc.'>
+              <i class="fa fa-exclamation-circle"></i>
+            </span>
+          </label>
             <div class="col-6 align-right">
               <ngb-rating [rate]="ratings.qualityOfNegotiationProcess" [readonly]="true" max="5">
                 <ng-template let-fill="fill">
@@ -52,7 +64,11 @@
             </div>
         </div>
         <div class="form-group row">
-          <label class="col-6 col-form-label">Quality of Ordering Process</label>
+          <label class="col-6 col-form-label">Quality of Ordering Process 
+            <span title=' Indicates how well the ordering was executed; e.g. clear responses, supporting documentation, transition to fulfillment, etc.'>
+              <i class="fa fa-exclamation-circle"></i>
+            </span>
+          </label>
             <div class="col-6 align-right">
               <ngb-rating [rate]="ratings.qualityOfOrderingProcess" [readonly]="true" max="5">
                 <ng-template let-fill="fill">
@@ -64,7 +80,11 @@
             </div>
         </div>
         <div class="form-group row">
-          <label class="col-6 col-form-label">Response Time</label>
+          <label class="col-6 col-form-label">Response Time 
+            <span title="Indicates how the response times were perceived by the trading partner. This is a subjective value.">
+              <i class="fa fa-exclamation-circle"></i>
+            </span>
+          </label>
             <div class="col-6 align-right">
               <ngb-rating [rate]="ratings.responseTimeRating" [readonly]="true" max="5">
                 <ng-template let-fill="fill">
@@ -77,7 +97,11 @@
         </div>
         <div class="form-group row">
           <label class="col-6 col-form-label">
-            <strong>Fulfillment of Terms</strong>
+            <strong>Fulfillment of Terms 
+              <span title='Overall rating of how accurately the seller fulfilled the agreed upon terms based on "Quality of Requested Information" and "Conformance to Contractual Terms". See the subitems for more details.'>
+                <i class="fa fa-exclamation-circle"></i>
+              </span>
+            </strong>
           </label>
             <div class="col-6 align-right">
               <ngb-rating [rate]="ratingFulfillment" [readonly]="true" max="5">
@@ -90,7 +114,11 @@
             </div>
         </div>
         <div class="form-group row">
-          <label class="col-6 col-form-label">Listing Accuracy</label>
+          <label class="col-6 col-form-label">Quality of Requested Information 
+            <span title="Indicates how well the received product or service matches the listed details.">
+              <i class="fa fa-exclamation-circle"></i>
+            </span>
+          </label>
             <div class="col-6 align-right">
               <ngb-rating [rate]="ratings.listingAccuracy" [readonly]="true" max="5">
                 <ng-template let-fill="fill">
@@ -102,7 +130,11 @@
             </div>
         </div>
         <div class="form-group row">
-          <label class="col-6 col-form-label">Conformance to Contractual Terms</label>
+          <label class="col-6 col-form-label">Conformance to Contractual Terms 
+            <span title="Indicates how accurately the seller conformed to the agreed upon contractual terms; e.g. dispatch date, payment method, additional services, etc.">
+              <i class="fa fa-exclamation-circle"></i>
+            </span>
+          </label>
             <div class="col-6 align-right">
               <ngb-rating [rate]="ratings.conformanceToContractualTerms" [readonly]="true" max="5">
                 <ng-template let-fill="fill">
@@ -115,7 +147,11 @@
         </div>
         <div class="form-group row">
           <label class="col-6 col-form-label">
-            <strong>Delivery & Packaging</strong>
+            <strong>Delivery & Packaging 
+              <span title="Overall rating of the quality of delivery and packaging, e.g. delivery date, adequate packing, adequate delivery method, etc.">
+                <i class="fa fa-exclamation-circle"></i>
+              </span>
+            </strong>
           </label>
             <div class="col-6 align-right">
               <ngb-rating [rate]="ratings.deliveryAndPackaging" [readonly]="true" max="5">

@@ -6,6 +6,7 @@ import {TrustPolicyComponent} from "./trust-policy.component";
 import {CompanyManagementComponent} from "./company-management.component";
 import {PlatformInfoComponent} from "./platform-info.component";
 import {MembersComponent} from "./members.component";
+import {ChatComponent} from "./chat.component";
 
 const routes: Routes = [
 	{path: 'platform', component: PlatformAnalyticsComponent},
@@ -13,7 +14,8 @@ const routes: Routes = [
 	{path: 'trust', component: TrustPolicyComponent},
 	{path: 'management', component: CompanyManagementComponent},
 	{path: 'info', component: PlatformInfoComponent},
-	{path: 'members', component: MembersComponent}
+	{path: 'members', component: MembersComponent},
+	{path: 'chat', component: ChatComponent}
 ];
 
 @NgModule({
