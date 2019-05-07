@@ -18,6 +18,7 @@ import {CookieService} from 'ng2-cookies';
 import {ItemPriceWrapper} from '../../../common/item-price-wrapper';
 import {BpStartEvent} from '../../../catalogue/model/publish/bp-start-event';
 import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
+import {DiscountPriceWrapper} from "../../../common/discount-price-wrapper";
 
 @Component({
     selector: "transport-negotiation-response",
@@ -27,11 +28,11 @@ import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event
 export class TransportNegotiationResponseComponent implements OnInit {
 
     @Input() rfq: RequestForQuotation;
-    rfqPrice: PriceWrapper;
+    rfqPrice: DiscountPriceWrapper;
     rfqPaymentTerms: PaymentTermsWrapper;
 
     @Input() quotation: Quotation;
-    quotationPrice: PriceWrapper;
+    quotationPrice: DiscountPriceWrapper;
     quotationPaymentTerms: PaymentTermsWrapper;
 
     @Input() readonly: boolean = false;
@@ -64,14 +65,14 @@ export class TransportNegotiationResponseComponent implements OnInit {
         if(!this.rfq) {
             this.rfq = this.bpDataService.requestForQuotation;
         }
-        this.rfqPrice = new PriceWrapper(this.rfq.requestForQuotationLine[0].lineItem.price);
+        this.rfqPrice = new DiscountPriceWrapper(this.rfq.requestForQuotationLine[0].lineItem.price);
         this.rfqPrice.quantityPrice = new ItemPriceWrapper(this.rfq.requestForQuotationLine[0].lineItem.price);
         this.rfqPaymentTerms = new PaymentTermsWrapper(this.rfq.paymentTerms);
 
         if(!this.quotation) {
             this.quotation = this.bpDataService.quotation;
         }
-        this.quotationPrice = new PriceWrapper(this.quotation.quotationLine[0].lineItem.price);
+        this.quotationPrice = new DiscountPriceWrapper(this.quotation.quotationLine[0].lineItem.price);
         this.quotationPrice.quantityPrice = new ItemPriceWrapper(this.quotation.quotationLine[0].lineItem.price);
         this.quotationPaymentTerms = new PaymentTermsWrapper(this.quotation.paymentTerms);
 

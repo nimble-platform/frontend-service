@@ -27,6 +27,7 @@ import {BpURLParams} from '../catalogue/model/publish/bpURLParams';
 import { CookieService } from 'ng2-cookies';
 import {FAVOURITE_LINEITEM_PUT_OPTIONS} from '../catalogue/model/constants';
 import * as myGlobals from '../globals';
+import {DiscountPriceWrapper} from "../common/discount-price-wrapper";
 
 @Component({
     selector: 'product-details',
@@ -47,7 +48,7 @@ export class ProductDetailsComponent implements OnInit {
     item?: Item;
     wrapper?: ProductWrapper;
     settings?: CompanySettings;
-    priceWrapper?: PriceWrapper;
+    priceWrapper?: DiscountPriceWrapper;
     tabToOpen: string = "";
     toggleImageBorder: boolean = false;
     showNavigation: boolean = true;
@@ -95,7 +96,7 @@ export class ProductDetailsComponent implements OnInit {
                     })
                     .then(settings => {
                         this.settings = settings;
-                        this.priceWrapper = new PriceWrapper(
+                        this.priceWrapper = new DiscountPriceWrapper(
                             this.line.requiredItemLocationQuantity.price,
                             new Quantity(1,this.line.requiredItemLocationQuantity.price.baseQuantity.unitCode),
                             this.line.priceOption,

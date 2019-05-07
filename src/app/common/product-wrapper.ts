@@ -9,6 +9,7 @@ import { CompanyNegotiationSettings } from "../user-mgmt/model/company-negotiati
 import {Quantity} from '../catalogue/model/publish/quantity';
 import { Dimension } from "../catalogue/model/publish/dimension";
 import {MultiValuedDimension} from '../catalogue/model/publish/multi-valued-dimension';
+import {DiscountPriceWrapper} from "./discount-price-wrapper";
 
 /**
  * Wrapper class for Catalogue line.
@@ -16,12 +17,12 @@ import {MultiValuedDimension} from '../catalogue/model/publish/multi-valued-dime
  */
 export class ProductWrapper {
 
-    private priceWrapper: PriceWrapper;
+    private priceWrapper: DiscountPriceWrapper;
 
     constructor(public line: CatalogueLine,
                 public negotiationSettings: CompanyNegotiationSettings,
                 public quantity: Quantity = new Quantity(1,line.requiredItemLocationQuantity.price.baseQuantity.unitCode)) {
-        this.priceWrapper = new PriceWrapper(line.requiredItemLocationQuantity.price,this.quantity,this.line.priceOption);
+        this.priceWrapper = new DiscountPriceWrapper(line.requiredItemLocationQuantity.price,this.quantity,this.line.priceOption);
     }
 
     get goodsItem() {

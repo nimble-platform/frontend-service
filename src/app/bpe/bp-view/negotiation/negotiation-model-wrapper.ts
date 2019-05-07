@@ -10,6 +10,7 @@ import { Address } from "../../../catalogue/model/publish/address";
 import { CompanyNegotiationSettings } from "../../../user-mgmt/model/company-negotiation-settings";
 import {TradingTerm} from "../../../catalogue/model/publish/trading-term";
 import {MultiTypeValue} from "../../../catalogue/model/publish/multi-type-value";
+import {DiscountPriceWrapper} from "../../../common/discount-price-wrapper";
 
 /**
  * Convenient getters (and some setters) for catalogue line, request for quotations and quotations.
@@ -19,9 +20,10 @@ export class NegotiationModelWrapper {
 
     public rfqPaymentTerms: PaymentTermsWrapper;
     public quotationPaymentTerms: PaymentTermsWrapper;
-    public linePriceWrapper: PriceWrapper;
-    public rfqPriceWrapper: PriceWrapper;
     public quotationPriceWrapper: PriceWrapper;
+    public lineDiscountPriceWrapper: DiscountPriceWrapper;
+    public rfqDiscountPriceWrapper: DiscountPriceWrapper;
+    public quotationDiscountPriceWrapper: DiscountPriceWrapper;
 
     constructor(public line: CatalogueLine,
                 public rfq: RequestForQuotation,
@@ -32,84 +34,92 @@ export class NegotiationModelWrapper {
         if(quotation) {
             this.quotationPaymentTerms = new PaymentTermsWrapper(quotation.paymentTerms);
         }
-
-        this.linePriceWrapper = new PriceWrapper(
-            line.requiredItemLocationQuantity.price,
-            rfq.requestForQuotationLine[0].lineItem.quantity,
-            line.priceOption,
-            rfq.requestForQuotationLine[0].lineItem.item.additionalItemProperty
-        );
-        this.rfqPriceWrapper = new PriceWrapper(
-            rfq.requestForQuotationLine[0].lineItem.price,
-            rfq.requestForQuotationLine[0].lineItem.quantity,
-            line.priceOption,
-            rfq.requestForQuotationLine[0].lineItem.item.additionalItemProperty
-        )
+        // price wrappers
         if(quotation) {
-            this.quotationPriceWrapper = new PriceWrapper(
+            this.quotationPriceWrapper = new PriceWrapper(quotation.quotationLine[0].lineItem.price, quotation.quotationLine[0].lineItem.quantity);
+        }
+
+        // discount price wrappers
+        if(line && rfq) {
+            this.lineDiscountPriceWrapper = new DiscountPriceWrapper(
                 line.requiredItemLocationQuantity.price,
-                quotation.quotationLine[0].lineItem.quantity,
+                rfq.requestForQuotationLine[0].lineItem.quantity,
                 line.priceOption,
-                rfq.requestForQuotationLine[0].lineItem.item.additionalItemProperty,
-                rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms,
-                rfq.paymentMeans.paymentMeansCode.value,
-                rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure,
-                rfq.requestForQuotationLine[0].lineItem.deliveryTerms.deliveryLocation.address,
-                quotation.quotationLine[0].lineItem.price
+                rfq.requestForQuotationLine[0].lineItem.item.additionalItemProperty
             );
+            this.rfqDiscountPriceWrapper = new DiscountPriceWrapper(
+                rfq.requestForQuotationLine[0].lineItem.price,
+                rfq.requestForQuotationLine[0].lineItem.quantity,
+                line.priceOption,
+                rfq.requestForQuotationLine[0].lineItem.item.additionalItemProperty
+            );
+
+            if(quotation) {
+                this.quotationDiscountPriceWrapper = new DiscountPriceWrapper(
+                    line.requiredItemLocationQuantity.price,
+                    quotation.quotationLine[0].lineItem.quantity,
+                    line.priceOption,
+                    rfq.requestForQuotationLine[0].lineItem.item.additionalItemProperty,
+                    rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms,
+                    rfq.paymentMeans.paymentMeansCode.value,
+                    rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure,
+                    rfq.requestForQuotationLine[0].lineItem.deliveryTerms.deliveryLocation.address,
+                    quotation.quotationLine[0].lineItem.price
+                );
+            }
         }
     }
 
     public get linePricePerItemString(): string {
         this.updateLinePriceWrapperFields();
-        return this.linePriceWrapper.pricePerItemString;
+        return this.lineDiscountPriceWrapper.pricePerItemString;
     }
 
     public get lineTotalPrice(): number {
-        return this.linePriceWrapper.totalPrice;
+        return this.lineDiscountPriceWrapper.totalPrice;
     }
 
     public get lineTotalPriceString(): string {
         this.updateLinePriceWrapperFields();
-        return this.linePriceWrapper.totalPriceString;
+        return this.lineDiscountPriceWrapper.totalPriceString;
     }
 
     // before calculating total price for line, we have to update linePriceWrapper fields so that it can calculate discount amount correctly
     private updateLinePriceWrapperFields(){
-        this.linePriceWrapper.incoterm = this.rfq.negotiationOptions.incoterms ? this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms : this.line.goodsItem.deliveryTerms.incoterms;
-        this.linePriceWrapper.paymentMeans = this.rfq.negotiationOptions.paymentMeans ? this.rfq.paymentMeans.paymentMeansCode.value : this.settings.paymentMeans[0];
-        this.linePriceWrapper.deliveryPeriod = this.rfq.negotiationOptions.deliveryPeriod ? JSON.parse(JSON.stringify(this.rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure)): this.line.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure;
-        this.linePriceWrapper.deliveryLocation = this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.deliveryLocation.address;
+        this.lineDiscountPriceWrapper.incoterm = this.rfq.negotiationOptions.incoterms ? this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms : this.line.goodsItem.deliveryTerms.incoterms;
+        this.lineDiscountPriceWrapper.paymentMeans = this.rfq.negotiationOptions.paymentMeans ? this.rfq.paymentMeans.paymentMeansCode.value : this.settings.paymentMeans[0];
+        this.lineDiscountPriceWrapper.deliveryPeriod = this.rfq.negotiationOptions.deliveryPeriod ? JSON.parse(JSON.stringify(this.rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure)): this.line.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure;
+        this.lineDiscountPriceWrapper.deliveryLocation = this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.deliveryLocation.address;
     }
 
     public get rfqPricePerItemString(): string {
-        return this.rfqPriceWrapper.pricePerItemString;
+        return this.rfqDiscountPriceWrapper.pricePerItemString;
     }
 
     public get rfqPricePerItemStringIfNegotiating(): string {
-        return this.IfNegotiating(this.rfqPriceWrapper.pricePerItemString, this.rfq.negotiationOptions.price);
+        return this.IfNegotiating(this.rfqDiscountPriceWrapper.pricePerItemString, this.rfq.negotiationOptions.price);
     }
 
     public get rfqTotalPrice(): number {
-        return this.rfqPriceWrapper.totalPrice;
+        return this.rfqDiscountPriceWrapper.totalPrice;
     }
 
     public get rfqTotalPriceString(): string {
         this.updateRFQPriceWrapperFields()
-        return this.rfqPriceWrapper.totalPriceString;
+        return this.rfqDiscountPriceWrapper.totalPriceString;
     }
 
     public get rfqTotalPriceStringIfNegotiating(): string {
         this.updateRFQPriceWrapperFields();
-        return this.IfNegotiating(this.rfqPriceWrapper.totalPriceString, this.rfq.negotiationOptions.price);
+        return this.IfNegotiating(this.rfqDiscountPriceWrapper.totalPriceString, this.rfq.negotiationOptions.price);
     }
 
     // before calculating total price for rfq, we have to update rfqPriceWrapper fields so that it can calculate discount amount correctly
     private updateRFQPriceWrapperFields(){
-        this.rfqPriceWrapper.incoterm = this.rfq.negotiationOptions.incoterms ? this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms : this.line.goodsItem.deliveryTerms.incoterms;
-        this.rfqPriceWrapper.paymentMeans = this.rfq.negotiationOptions.paymentMeans ? this.rfq.paymentMeans.paymentMeansCode.value : this.settings.paymentMeans[0];
-        this.rfqPriceWrapper.deliveryPeriod = this.rfq.negotiationOptions.deliveryPeriod ? JSON.parse(JSON.stringify(this.rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure)): this.line.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure;
-        this.rfqPriceWrapper.deliveryLocation = this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.deliveryLocation.address;
+        this.rfqDiscountPriceWrapper.incoterm = this.rfq.negotiationOptions.incoterms ? this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms : this.line.goodsItem.deliveryTerms.incoterms;
+        this.rfqDiscountPriceWrapper.paymentMeans = this.rfq.negotiationOptions.paymentMeans ? this.rfq.paymentMeans.paymentMeansCode.value : this.settings.paymentMeans[0];
+        this.rfqDiscountPriceWrapper.deliveryPeriod = this.rfq.negotiationOptions.deliveryPeriod ? JSON.parse(JSON.stringify(this.rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure)): this.line.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure;
+        this.rfqDiscountPriceWrapper.deliveryLocation = this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.deliveryLocation.address;
     }
 
     public get quotationPriceAmount(): Amount {
@@ -136,6 +146,10 @@ export class NegotiationModelWrapper {
         return this.rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure;
     }
 
+    public set rfqDeliveryPeriod(quantity: Quantity) {
+        this.rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure = quantity;
+    }
+
     public get rfqDeliveryPeriodString(): string {
         return durationToString(this.rfqDeliveryPeriod);
     }
@@ -145,16 +159,20 @@ export class NegotiationModelWrapper {
     }
 
     public get quotationDeliveryPeriod(): Quantity {
-        // update quotation delivery period to calculate price correctly
-        if(this.quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.value && (
-                this.quotationPriceWrapper.deliveryPeriod.value != this.quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.value ||
-                this.quotationPriceWrapper.deliveryPeriod.unitCode != this.quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.unitCode)){
-
-            this.quotationPriceWrapper.deliveryPeriod = JSON.parse(JSON.stringify(this.quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure));
-            // make this field true so that quotation price will be updated
-            this.quotationPriceWrapper.quotationDeliveryPeriodUpdated = true;
-        }
         return this.quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure;
+    }
+
+    public get quotationDeliveryPeriodWithPriceCheck(): Quantity {
+        // update quotation delivery period to calculate price correctly
+        if(this.quotationDiscountPriceWrapper != null && this.quotationDeliveryPeriod.value && (
+                this.quotationDiscountPriceWrapper.deliveryPeriod.value != this.quotationDeliveryPeriod.value ||
+                this.quotationDiscountPriceWrapper.deliveryPeriod.unitCode != this.quotationDeliveryPeriod.unitCode)){
+
+            this.quotationDiscountPriceWrapper.deliveryPeriod = JSON.parse(JSON.stringify(this.quotationDeliveryPeriod));
+            // make this field true so that quotation price will be updated
+            this.quotationDiscountPriceWrapper.quotationDeliveryPeriodUpdated = true;
+        }
+        return this.quotationDeliveryPeriod;
     }
 
     public get lineWarranty(): Quantity {
@@ -167,6 +185,10 @@ export class NegotiationModelWrapper {
 
     public get rfqWarranty(): Quantity {
         return this.rfq.requestForQuotationLine[0].lineItem.warrantyValidityPeriod.durationMeasure;
+    }
+
+    public set rfqWarranty(quantity: Quantity) {
+        this.rfq.requestForQuotationLine[0].lineItem.warrantyValidityPeriod.durationMeasure = quantity;
     }
 
     public get rfqWarrantyString(): string {
@@ -199,10 +221,11 @@ export class NegotiationModelWrapper {
 
     public get quotationIncoterms(): string {
         // update quotation incoterm to calculate price correctly
-        if(this.quotationPriceWrapper.incoterm != this.quotation.quotationLine[0].lineItem.deliveryTerms.incoterms){
-            this.quotationPriceWrapper.incoterm = this.quotation.quotationLine[0].lineItem.deliveryTerms.incoterms;
+        // TODO remove this logic from wrappers
+        if(this.quotationDiscountPriceWrapper != null && this.quotationDiscountPriceWrapper.incoterm != this.quotation.quotationLine[0].lineItem.deliveryTerms.incoterms){
+            this.quotationDiscountPriceWrapper.incoterm = this.quotation.quotationLine[0].lineItem.deliveryTerms.incoterms;
             // make this field true so that quotation price will be updated
-            this.quotationPriceWrapper.quotationIncotermUpdated = true;
+            this.quotationDiscountPriceWrapper.quotationIncotermUpdated = true;
         }
 
         return this.quotation.quotationLine[0].lineItem.deliveryTerms.incoterms;
@@ -257,10 +280,10 @@ export class NegotiationModelWrapper {
 
     public get quotationPaymentMeans(): string {
         // update quotation payment means to calculate quotation price correctly
-        if(this.quotationPriceWrapper.paymentMeans !=  this.quotation.paymentMeans.paymentMeansCode.value){
-            this.quotationPriceWrapper.paymentMeans = this.quotation.paymentMeans.paymentMeansCode.value;
+        if(this.quotationDiscountPriceWrapper != null && this.quotationDiscountPriceWrapper.paymentMeans !=  this.quotation.paymentMeans.paymentMeansCode.value){
+            this.quotationDiscountPriceWrapper.paymentMeans = this.quotation.paymentMeans.paymentMeansCode.value;
             // make this field true so that quotation price will be updated
-            this.quotationPriceWrapper.quotationPaymentMeansUpdated = true;
+            this.quotationDiscountPriceWrapper.quotationPaymentMeansUpdated = true;
         }
         return this.quotation.paymentMeans.paymentMeansCode.value;
     }

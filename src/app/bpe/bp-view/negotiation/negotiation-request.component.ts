@@ -34,6 +34,7 @@ import {Party} from "../../../catalogue/model/publish/party";
 import {TradingTerm} from "../../../catalogue/model/publish/trading-term";
 import {MultiTypeValue} from "../../../catalogue/model/publish/multi-type-value";
 import {Quantity} from "../../../catalogue/model/publish/quantity";
+import {Quotation} from "../../../catalogue/model/publish/quotation";
 
 @Component({
     selector: "negotiation-request",
@@ -103,9 +104,20 @@ export class NegotiationRequestComponent implements OnInit {
             this.rfq.negotiationOptions.price = true;
         }
 
+        // if the rfq frame contract duration is not null, we are rendering the negotiation process in which the frame contract duration is also negotiated
         if(this.wrapper.rfqFrameContractDuration != null) {
             this.frameContractDuration = this.wrapper.rfqFrameContractDuration;
             this.initialFrameContractDuration = copy(this.frameContractDuration);
+
+        } else {
+            // check whether there is an existing frame contract created in another negotiation process
+            this.bpeService.getDigitalAgreement(UBLModelUtils.getPartyId(this.line.goodsItem.item.manufacturerParty),
+                this.cookieService.get("company_id"),
+                this.rfq.requestForQuotationLine[0].lineItem.item.manufacturersItemIdentification.id).then(digitalAgreement => {
+                this.frameContract = digitalAgreement;
+                this.frameContractAvailable = true;
+                this.frameContractDuration = this.frameContract.digitalAgreementTerms.validityPeriod.durationMeasure;
+            });
         }
 
         // get frame contract units
@@ -113,13 +125,10 @@ export class NegotiationRequestComponent implements OnInit {
            this.frameContractDurationUnits = list;
         });
 
-        // check associated frame contract
-        this.bpeService.getDigitalAgreement(UBLModelUtils.getPartyId(this.line.goodsItem.item.manufacturerParty),
-            this.cookieService.get("company_id"),
-            this.rfq.requestForQuotationLine[0].lineItem.item.manufacturersItemIdentification.id).then(digitalAgreement => {
-            this.frameContract = digitalAgreement;
-            this.frameContractAvailable = true;
-        });
+        // set the flag for showing the counter terms
+        if(!this.processMetadata.isBeingUpdated) {
+            this.showCounterOfferTerms = true;
+        }
     }
 
     /*
@@ -127,15 +136,15 @@ export class NegotiationRequestComponent implements OnInit {
      */
 
     onSendRequest(): void {
-        if (this.wrapper.rfqPriceWrapper.itemPrice.hasPrice()) {
-            if (!isValidPrice(this.wrapper.rfqPriceWrapper.itemPrice.price.priceAmount.value)) {
+        if (this.wrapper.rfqDiscountPriceWrapper.itemPrice.hasPrice()) {
+            if (!isValidPrice(this.wrapper.rfqDiscountPriceWrapper.itemPrice.price.priceAmount.value)) {
                 alert("Price cannot have more than 2 decimal places");
                 return;
             }
         }
         if(this.isNegotiatingAnyTerm()) {
             // create an additional trading term for the frame contract duration
-            if(this.isFrameContractValid()) {
+            if(this.rfq.negotiationOptions.frameContractDuration && this.isFrameContractValid()) {
                 this.wrapper.rfqFrameContractDuration = this.frameContractDuration;
             }
 
@@ -185,7 +194,7 @@ export class NegotiationRequestComponent implements OnInit {
             });
         } else {
             // set the item price, otherwise we will lose item price information
-            this.bpDataService.requestForQuotation.requestForQuotationLine[0].lineItem.price.priceAmount.value = this.wrapper.rfqPriceWrapper.totalPrice/this.wrapper.rfqPriceWrapper.quantity.value;
+            this.bpDataService.requestForQuotation.requestForQuotationLine[0].lineItem.price.priceAmount.value = this.wrapper.rfqDiscountPriceWrapper.totalPrice/this.wrapper.rfqDiscountPriceWrapper.quantity.value;
             // just go to order page
             this.bpDataService.initOrderWithRfq();
             this.bpDataService.proceedNextBpStep("buyer", "Order")
@@ -221,6 +230,27 @@ export class NegotiationRequestComponent implements OnInit {
         return true;
     }
 
+    onloadFrameContractTerms(): void {
+        // load the quotation associated to the frame contract
+        this.documentService.getDocumentJsonContent(this.frameContract.quotationReference.id).then(document => {
+            let quotation: Quotation = document;
+            let quotationWrapper: NegotiationModelWrapper = new NegotiationModelWrapper(null, this.rfq, quotation, null);
+            this.wrapper.rfqDeliveryPeriod = quotationWrapper.quotationDeliveryPeriod;
+            this.rfq.negotiationOptions.deliveryPeriod = true;
+            this.wrapper.rfqWarranty = quotationWrapper.quotationWarranty;
+            this.rfq.negotiationOptions.warranty = true;
+            this.wrapper.rfqPaymentTerms.paymentTerm = quotationWrapper.quotationPaymentTerms.paymentTerm;
+            this.rfq.negotiationOptions.paymentTerms = true;
+            this.wrapper.rfqIncoterms = quotationWrapper.quotationIncoterms;
+            this.rfq.negotiationOptions.incoterms = true;
+            this.wrapper.rfqPaymentMeans = quotationWrapper.quotationPaymentMeans;
+            this.rfq.negotiationOptions.paymentMeans = true;
+            this.wrapper.rfqDiscountPriceWrapper.itemPrice.price.priceAmount = quotationWrapper.quotationPriceWrapper.price.priceAmount;
+            this.wrapper.rfqDiscountPriceWrapper.itemPrice.price.baseQuantity = quotationWrapper.quotationPriceWrapper.price.baseQuantity;
+            this.rfq.negotiationOptions.price = true;
+        });
+    }
+
     /*
      * Getters and setters for the template.
      */
@@ -237,7 +267,7 @@ export class NegotiationRequestComponent implements OnInit {
     }
 
     get lineHasPrice(): boolean {
-        return this.wrapper.linePriceWrapper.hasPrice();
+        return this.wrapper.lineDiscountPriceWrapper.hasPrice();
     }
 
     get requestedQuantity(): number {
@@ -257,7 +287,7 @@ export class NegotiationRequestComponent implements OnInit {
         this.setRemoveDiscountAmount(negotiate);
         this.rfq.negotiationOptions.price = negotiate;
         if(!negotiate) {
-            this.wrapper.rfqPriceWrapper.itemPrice.value = this.wrapper.linePriceWrapper.itemPrice.value;
+            this.wrapper.rfqDiscountPriceWrapper.itemPrice.value = this.wrapper.lineDiscountPriceWrapper.itemPrice.value;
         }
     }
 
@@ -265,18 +295,18 @@ export class NegotiationRequestComponent implements OnInit {
     private setRemoveDiscountAmount(negotiate: boolean){
         // if they negotiate price, then set removeDiscountAmount to false so that prices for wrappers will not be affected by total discount
         if(negotiate){
-            this.wrapper.linePriceWrapper.removeDiscountAmount = false;
-            this.wrapper.rfqPriceWrapper.removeDiscountAmount = false;
+            this.wrapper.lineDiscountPriceWrapper.removeDiscountAmount = false;
+            this.wrapper.rfqDiscountPriceWrapper.removeDiscountAmount = false;
         }
         else {
-            this.wrapper.linePriceWrapper.removeDiscountAmount = true;
-            this.wrapper.rfqPriceWrapper.removeDiscountAmount = true;
+            this.wrapper.lineDiscountPriceWrapper.removeDiscountAmount = true;
+            this.wrapper.rfqDiscountPriceWrapper.removeDiscountAmount = true;
 
-            this.wrapper.linePriceWrapper.itemPrice.price.priceAmount.value =this.line.requiredItemLocationQuantity.price.priceAmount.value;
-            this.wrapper.linePriceWrapper.itemPrice.price.priceAmount.currencyID = this.line.requiredItemLocationQuantity.price.priceAmount.currencyID;
+            this.wrapper.lineDiscountPriceWrapper.itemPrice.price.priceAmount.value =this.line.requiredItemLocationQuantity.price.priceAmount.value;
+            this.wrapper.lineDiscountPriceWrapper.itemPrice.price.priceAmount.currencyID = this.line.requiredItemLocationQuantity.price.priceAmount.currencyID;
 
-            this.wrapper.rfqPriceWrapper.itemPrice.price.priceAmount.value = this.line.requiredItemLocationQuantity.price.priceAmount.value;
-            this.wrapper.rfqPriceWrapper.itemPrice.price.priceAmount.currencyID = this.line.requiredItemLocationQuantity.price.priceAmount.currencyID;
+            this.wrapper.rfqDiscountPriceWrapper.itemPrice.price.priceAmount.value = this.line.requiredItemLocationQuantity.price.priceAmount.value;
+            this.wrapper.rfqDiscountPriceWrapper.itemPrice.price.priceAmount.currencyID = this.line.requiredItemLocationQuantity.price.priceAmount.currencyID;
         }
     }
 
@@ -342,11 +372,13 @@ export class NegotiationRequestComponent implements OnInit {
     }
 
     isFormValid(): boolean {
-        return this.isDeliveryPeriodValid() && this.isWarrantyPeriodValid() && this.isPriceValid() && this.isFrameContractValid();
+        let formValid = this.rfq.negotiationOptions.frameContractDuration || this.isFrameContractValid();
+        formValid = formValid && this.isDeliveryPeriodValid() && this.isWarrantyPeriodValid() && this.isPriceValid();
+        return formValid;
     }
 
     isPriceValid(): boolean {
-        return this.wrapper.rfqPriceWrapper.value > 0;
+        return this.wrapper.rfqDiscountPriceWrapper.value > 0;
     }
 
     isWaitingForReply(): boolean {
@@ -358,10 +390,7 @@ export class NegotiationRequestComponent implements OnInit {
     }
 
     isFrameContractValid(): boolean {
-        if(this.rfq.negotiationOptions.frameContractDuration) {
-            return this.frameContractDuration.value != null && this.frameContractDuration.unitCode != null;
-        }
-        return true;
+        return this.frameContractDuration.value != null && this.frameContractDuration.unitCode != null;
     }
 
     isFrameContractDisabled(): boolean {
@@ -462,6 +491,6 @@ export class NegotiationRequestComponent implements OnInit {
     }
 
     private openDiscountModal(): void{
-        this.discountModal.open(this.wrapper.linePriceWrapper.appliedDiscounts,this.wrapper.linePriceWrapper.price.priceAmount.currencyID);
+        this.discountModal.open(this.wrapper.lineDiscountPriceWrapper.appliedDiscounts,this.wrapper.lineDiscountPriceWrapper.price.priceAmount.currencyID);
     }
 }

@@ -19,6 +19,7 @@ import { ProcessInstanceInputMessage } from "../../model/process-instance-input-
 import { BPEService } from "../../bpe.service";
 import {ItemPriceWrapper} from '../../../common/item-price-wrapper';
 import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
+import {DiscountPriceWrapper} from "../../../common/discount-price-wrapper";
 
 @Component({
     selector: "transport-negotiation-request",
@@ -28,7 +29,7 @@ export class TransportNegotiationRequestComponent implements OnInit {
 
     rfq: RequestForQuotation;
     selectedTab: string = "OVERVIEW";
-    rfqPrice: PriceWrapper;
+    rfqPrice: DiscountPriceWrapper;
     rfqPaymentTerms: PaymentTermsWrapper;
     updatingProcess: boolean = false;
 
@@ -56,7 +57,7 @@ export class TransportNegotiationRequestComponent implements OnInit {
         this.processMetadata = this.bpDataService.bpStartEvent.processMetadata;
 
         this.rfq = this.bpDataService.requestForQuotation;
-        this.rfqPrice = new PriceWrapper(this.rfq.requestForQuotationLine[0].lineItem.price);
+        this.rfqPrice = new DiscountPriceWrapper(this.rfq.requestForQuotationLine[0].lineItem.price);
         this.rfqPrice.quantityPrice = new ItemPriceWrapper(this.rfq.requestForQuotationLine[0].lineItem.price);
         this.rfqPaymentTerms = new PaymentTermsWrapper(this.rfq.paymentTerms);
         if(this.processMetadata && this.processMetadata.isBeingUpdated){

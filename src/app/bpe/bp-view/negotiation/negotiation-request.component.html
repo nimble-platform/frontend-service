@@ -112,14 +112,14 @@
             </div>
             <div class="{{showCounterOfferTerms ? 'col-5' : 'col-9'}} d-flex">
                 {{ wrapper.linePricePerItemString }}
-                <div *ngIf="wrapper.linePriceWrapper.appliedDiscounts.length > 0 && !isReadOnly()" class="space-left" data-toggle="tooltip" data-placement="top"
+                <div *ngIf="wrapper.lineDiscountPriceWrapper.appliedDiscounts.length > 0 && !isReadOnly()" class="space-left" data-toggle="tooltip" data-placement="top"
                      (click)="openDiscountModal()" title="Applied Discounts/Charges" style="cursor: pointer">
                     <i class="fa fa-search" aria-hidden="true"></i>
                 </div>
             </div>
             <div *ngIf="showCounterOfferTerms" class="col-5">
                 <negotiation-request-input label="Request Item Price" [(cbModel)]="negotiatePrice" id="priceCb"
-                                           [disabled]="isLoading() || isReadOnly()" [quantity]="wrapper.rfqPriceWrapper.itemPrice"
+                                           [disabled]="isLoading() || isReadOnly()" [quantity]="wrapper.rfqDiscountPriceWrapper.itemPrice"
                                            [quantityUnits]="CURRENCIES" [disableQuantityUnit]="lineHasPrice" [invalid]="!isPriceValid()">
                 </negotiation-request-input>
             </div>
@@ -156,7 +156,7 @@
             </div>
             <hr class="w-100">
             <button class="btn btn-primary action mb-3" [disabled]="isLoading()"(click)="showCounterOfferTerms = !showCounterOfferTerms">Offer Counter Terms</button>
-            <button class="btn btn-primary action mb-3" [disabled]="isLoading()"(click)="showCounterOfferTerms = !showCounterOfferTerms">Offer Frame Contract Terms</button>
+            <button *ngIf="frameContractAvailable" class="btn btn-primary action mb-3" [disabled]="isLoading()"(click)="showCounterOfferTerms = !showCounterOfferTerms; onloadFrameContractTerms()">Offer Frame Contract Terms</button>
         </div>
     </div>
 </div>

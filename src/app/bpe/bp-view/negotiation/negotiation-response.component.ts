@@ -85,9 +85,9 @@ export class NegotiationResponseComponent implements OnInit {
             this.bpDataService.getCompanySettings().negotiationSettings);
 
         // we set removeDiscountAmount to false so that total price of rfq will not be changed
-        this.wrapper.rfqPriceWrapper.removeDiscountAmount = false;
+        this.wrapper.rfqDiscountPriceWrapper.removeDiscountAmount = false;
         // we set quotationPriceWrapper's presentationMode to be sure that the total price of quotation response will not be changed
-        this.wrapper.quotationPriceWrapper.presentationMode = this.getPresentationMode();
+        this.wrapper.quotationDiscountPriceWrapper.presentationMode = this.getPresentationMode();
 
         this.userRole = this.bpDataService.bpStartEvent.userRole;
 
@@ -104,7 +104,7 @@ export class NegotiationResponseComponent implements OnInit {
     }
 
     onRespondToQuotation(accepted: boolean) {
-        if (!isValidPrice(this.wrapper.quotationPriceWrapper.totalPrice)) {
+        if (!isValidPrice(this.wrapper.quotationDiscountPriceWrapper.totalPrice)) {
             alert("Price cannot have more than 2 decimal places");
             return false;
         }
@@ -189,11 +189,11 @@ export class NegotiationResponseComponent implements OnInit {
     }
 
     get quotationPrice(): number {
-        return this.wrapper.quotationPriceWrapper.totalPrice;
+        return this.wrapper.quotationDiscountPriceWrapper.totalPrice;
     }
 
     set quotationPrice(price: number) {
-        this.wrapper.quotationPriceWrapper.totalPrice = price;
+        this.wrapper.quotationDiscountPriceWrapper.totalPrice = price;
     }
 
     getContractEndDate(): string {
@@ -220,7 +220,7 @@ export class NegotiationResponseComponent implements OnInit {
 
     hasUpdatedTerms(): boolean {
         if(this.rfq.negotiationOptions.deliveryPeriod) {
-            if(!UBLModelUtils.areQuantitiesEqual(this.wrapper.rfqDeliveryPeriod, this.wrapper.quotationDeliveryPeriod)) {
+            if(!UBLModelUtils.areQuantitiesEqual(this.wrapper.rfqDeliveryPeriod, this.wrapper.quotationDeliveryPeriodWithPriceCheck)) {
                 return true;
             }
         }
@@ -240,7 +240,7 @@ export class NegotiationResponseComponent implements OnInit {
             }
         }
         if(this.rfq.negotiationOptions.price) {
-            if(this.wrapper.rfqPriceWrapper.totalPriceString !== this.wrapper.quotationPriceWrapper.totalPriceString) {
+            if(this.wrapper.rfqDiscountPriceWrapper.totalPriceString !== this.wrapper.quotationDiscountPriceWrapper.totalPriceString) {
                 return true;
             }
         }
@@ -261,6 +261,9 @@ export class NegotiationResponseComponent implements OnInit {
         frameContract.participantParty.push(this.rfq.sellerSupplierParty.party);
         frameContract.participantParty.push(this.rfq.buyerCustomerParty.party);
 
+        frameContract.quotationReference.id = this.quotation.id;
+
+        frameContract.digitalAgreementTerms.validityPeriod.durationMeasure = this.wrapper.quotationFrameContractDuration;
         frameContract.digitalAgreementTerms.validityPeriod.startDate = moment().format(this.dateFormat);
         frameContract.digitalAgreementTerms.validityPeriod.endDate = this.getContractEndDate();
 
@@ -269,6 +272,9 @@ export class NegotiationResponseComponent implements OnInit {
     }
 
     private updateFrameContract(): Promise<DigitalAgreement> {
+        this.frameContract.quotationReference.id = this.quotation.id;
+
+        this.frameContract.digitalAgreementTerms.validityPeriod.durationMeasure = this.wrapper.quotationFrameContractDuration;
         this.frameContract.digitalAgreementTerms.validityPeriod.startDate = moment().format(this.dateFormat);
         this.frameContract.digitalAgreementTerms.validityPeriod.endDate = this.getContractEndDate();
 
@@ -284,6 +290,6 @@ export class NegotiationResponseComponent implements OnInit {
     }
 
     private openDiscountModal(): void{
-        this.discountModal.open(this.wrapper.quotationPriceWrapper.appliedDiscounts,this.wrapper.quotationPriceWrapper.price.priceAmount.currencyID);
+        this.discountModal.open(this.wrapper.quotationDiscountPriceWrapper.appliedDiscounts,this.wrapper.quotationDiscountPriceWrapper.price.priceAmount.currencyID);
     }
 }
