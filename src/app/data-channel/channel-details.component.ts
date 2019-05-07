@@ -148,7 +148,7 @@ export class ChannelDetailsComponent implements OnInit {
     //-------------------------------------------------------------------------------------
     // handle negotiation steps
     //-------------------------------------------------------------------------------------
-    getCurrentNegotationStep(step: number): any {
+    getCurrentNegotiationStep(step: number): any {
         if(step === this.pageNumber) {
             const result: any = {
                 step: true,
@@ -160,27 +160,21 @@ export class ChannelDetailsComponent implements OnInit {
     }
 
     //-------------------------------------------------------------------------------------
-    // confirm initial Offer
+    // confirm current page
     //-------------------------------------------------------------------------------------
-    confirmInitialOffer(): void {
+    confirmPage(): void {
        // Todo: not yet implemented
        this.pageNumber++; // for testing
-    }
 
-    //-------------------------------------------------------------------------------------
-    // confirm counter Offer
-    //-------------------------------------------------------------------------------------
-    confirmCounterOffer(): void {
-       // Todo: not yet implemented
-       this.pageNumber++; // for testing
-    }
-
-    //-------------------------------------------------------------------------------------
-    // accept all terms
-    //-------------------------------------------------------------------------------------
-    acceptCounterTerms(): void {
-       // Todo: not yet implemented
-       this.pageNumber++; // for testing
+       const channelId = this.channelConfig["channelID"];
+       this.dataChannelService.doNegotiationStep(channelId, 'seller test', 'buyer test')
+           .then(() => {
+               alert("configuration submitted");
+               //this.router.navigate(["dashboard"]);
+           })
+           .catch(() => {
+               alert("Error while doing a negotiation step");
+           });
     }
 
     //-------------------------------------------------------------------------------------
@@ -261,6 +255,14 @@ export class ChannelDetailsComponent implements OnInit {
     // add a sensor
     //-------------------------------------------------------------------------------------
     addSensor(): void {
+
+        if(!this.hasFilteringService)
+        {
+           this.newSensor.dataKey = "not installed";
+           this.newSensor.metadata = "not installed";
+           this.newSensor.advancedFiltering = "not installed";
+        }
+
         // create sensor locally
         const machine = new Machine(this.newSensor.machineName, null, null);
         const sensor = new Sensor(this.newSensor.name, this.newSensor.interval, this.newSensor.description,

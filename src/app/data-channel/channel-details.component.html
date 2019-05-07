@@ -6,16 +6,16 @@
 <br/>
 <div class="col-12">
     <div class="steps">
-        <div [ngClass]="getCurrentNegotationStep(0)">
+        <div [ngClass]="getCurrentNegotiationStep(0)">
             <span>Initial Offer</span>
         </div>
-        <div [ngClass]="getCurrentNegotationStep(1)">
+        <div [ngClass]="getCurrentNegotiationStep(1)">
             <span>Counter Offer</span>
         </div>
-        <div [ngClass]="getCurrentNegotationStep(2)">
+        <div [ngClass]="getCurrentNegotiationStep(2)">
             <span>Confrontation</span>
         </div>
-        <div [ngClass]="getCurrentNegotationStep(3)">
+        <div [ngClass]="getCurrentNegotiationStep(3)">
             <span>Exchange Data</span>
         </div>
     </div>
@@ -45,13 +45,13 @@
 </table>
 
 <div *ngIf="pageNumber == 0" class="interactions">
-    <button class="btn btn-success" (click)="confirmInitialOffer()">Confirm Inital Offer</button>
+    <button class="btn btn-success" (click)="confirmPage()">Confirm Inital Offer</button>
 </div>
 <div *ngIf="pageNumber == 1" class="interactions">
-    <button class="btn btn-success" (click)="confirmCounterOffer()">Confirm Counter Offer</button>
+    <button class="btn btn-success" (click)="confirmPage()">Confirm Counter Offer</button>
 </div>
 <div *ngIf="pageNumber == 2" class="interactions">
-    <button class="btn btn-success" (click)="acceptCounterTerms()">Accept Counter Offer</button>
+    <button class="btn btn-success" (click)="confirmPage()">Accept Counter Offer</button>
     <button class="btn btn-danger" (click)="renegotiateTerms()">Renegotiate Terms</button>
 </div>
 <div *ngIf="pageNumber == 3" class="interactions">
@@ -82,20 +82,20 @@
                     <th><span i18n>Machine</span></th>
                     <th><span i18n>Sensor</span></th>
                     <th><span i18n>Interval</span></th>
-                    <th><span i18n>Datakey</span></th>
-                    <th><span i18n>Metadata</span></th>
-                    <th><span i18n>Advanced Filtering</span></th>
                     <th><span i18n>Description</span></th>
+                    <th *ngIf="hasFilteringService"><span i18n>Datakey</span></th>
+                    <th *ngIf="hasFilteringService"><span i18n>Metadata</span></th>
+                    <th *ngIf="hasFilteringService"><span i18n>Advanced Filtering</span></th>
                     <th *ngIf="pageNumber <= 1" class="interaction-column"></th>
                 </tr>
                 <tr>
                     <td>{{sensor.machine.name}}</td>
                     <td>{{sensor.name}}</td>
                     <td>{{sensor.interval}}</td>
-                    <td>{{sensor.dataKey}}</td>
-                    <td>{{sensor.metadata}}</td>
-                    <td>{{sensor.advancedFiltering}}</td>
                     <td>{{sensor.description}}</td>
+                    <td *ngIf="hasFilteringService">{{sensor.dataKey}}</td>
+                    <td *ngIf="hasFilteringService">{{sensor.metadata}}</td>
+                    <td *ngIf="hasFilteringService">{{sensor.advancedFiltering}}</td>
                     <td *ngIf="pageNumber <= 1">
                         <button class="btn btn-warning remove-channel-btn"
                                 (click)="removeSensor(sensor)">Remove
@@ -112,23 +112,23 @@
                     <th><span i18n>Machine</span></th>
                     <th><span i18n>Sensor</span></th>
                     <th><span i18n>Interval</span></th>
-                    <th><span i18n>Datakey</span></th>
+                    <th><span i18n>Description</span></th>
                 </tr>
                 <tr>
                     <td>{{sensor.machine.name}}</td>
                     <td>{{sensor.name}}</td>
                     <td>{{sensor.interval}}</td>
-                    <td>{{sensor.dataKey}}</td>
+                    <td>{{sensor.description}}</td>
                 </tr>
-                <tr>
+                <tr *ngIf="hasFilteringService">
                     <th><span i18n>Metadata</span></th>
                     <th><span i18n>Advanced Filtering</span></th>
-                    <th><span i18n>Description</span></th>
+                    <th><span i18n>Datakey</span></th>
                 </tr>
-                <tr>
+                <tr *ngIf="hasFilteringService">
                     <td>{{sensor.metadata}}</td>
                     <td>{{sensor.advancedFiltering}}</td>
-                    <td>{{sensor.description}}</td>
+                    <td>{{sensor.dataKey}}</td>
                 </tr>
             </table>
         </ng-container>
@@ -140,23 +140,23 @@
                     <th><span i18n>Machine</span></th>
                     <th><span i18n>Sensor</span></th>
                     <th><span i18n>Interval</span></th>
-                    <th><span i18n>Datakey</span></th>
+                    <th><span i18n>Description</span></th>
                 </tr>
                 <tr>
                     <td>{{sensor.machine.name}}</td>
                     <td>{{sensor.name}}</td>
                     <td>{{sensor.interval}}</td>
-                    <td>{{sensor.dataKey}}</td>
+                    <td>{{sensor.description}}</td>
                 </tr>
-                <tr>
+                <tr *ngIf="hasFilteringService">
                     <th><span i18n>Metadata</span></th>
                     <th><span i18n>Advanced Filtering</span></th>
-                    <th><span i18n>Description</span></th>
+                    <th><span i18n>Datakey</span></th>
                 </tr>
-                <tr>
+                <tr *ngIf="hasFilteringService">
                     <td>{{sensor.metadata}}</td>
                     <td>{{sensor.advancedFiltering}}</td>
-                    <td>{{sensor.description}}</td>
+                    <td>{{sensor.dataKey}}</td>
                 </tr>
             </table>
         </ng-container>
@@ -168,19 +168,19 @@
                     <th><span i18n>Machine</span></th>
                     <th><span i18n>Sensor</span></th>
                     <th><span i18n>Interval</span></th>
-                    <th><span i18n>Datakey</span></th>
-                    <th><span i18n>Metadata</span></th>
-                    <th><span i18n>Advanced Filtering</span></th>
                     <th><span i18n>Description</span></th>
+                    <th *ngIf="hasFilteringService"><span i18n>Datakey</span></th>
+                    <th *ngIf="hasFilteringService"><span i18n>Metadata</span></th>
+                    <th *ngIf="hasFilteringService"><span i18n>Advanced Filtering</span></th>
                 </tr>
                 <tr>
                     <td>{{sensor.machine.name}}</td>
                     <td>{{sensor.name}}</td>
                     <td>{{sensor.interval}}</td>
-                    <td>{{sensor.dataKey}}</td>
-                    <td>{{sensor.metadata}}</td>
-                    <td>{{sensor.advancedFiltering}}</td>
                     <td>{{sensor.description}}</td>
+                    <td *ngIf="hasFilteringService">{{sensor.dataKey}}</td>
+                    <td *ngIf="hasFilteringService">{{sensor.metadata}}</td>
+                    <td *ngIf="hasFilteringService">{{sensor.advancedFiltering}}</td>
                 </tr>
             </table>
         </ng-container>
@@ -209,23 +209,23 @@
                     labelClass="col-4" valueClass="col-8" [rows]="1" [required]="true">
         </text-input>
 
+        <!-- sensor description -->
+        <text-input label="Sensor description" [(text)]="newSensor.description"
+                    labelClass="col-4" valueClass="col-8" [rows]="1" [required]="true">
+        </text-input>
+
         <!-- sensor dataKey -->
-        <text-input label="Sensor data key" [(text)]="newSensor.dataKey"
+        <text-input *ngIf="hasFilteringService" label="Sensor data key" [(text)]="newSensor.dataKey"
                     labelClass="col-4" valueClass="col-8" [rows]="1" [required]="true">
         </text-input>
 
         <!-- sensor metadata -->
-        <text-input label="Sensor metadata" [(text)]="newSensor.metadata"
+        <text-input *ngIf="hasFilteringService" label="Sensor metadata" [(text)]="newSensor.metadata"
                     labelClass="col-4" valueClass="col-8" [rows]="1" [required]="true">
         </text-input>
 
         <!-- sensor advancedFiltering -->
-        <text-input label="Sensor advanced filtering" [(text)]="newSensor.advancedFiltering"
-                    labelClass="col-4" valueClass="col-8" [rows]="1" [required]="true">
-        </text-input>
-
-        <!-- sensor description -->
-        <text-input label="Sensor description" [(text)]="newSensor.description"
+        <text-input *ngIf="hasFilteringService" label="Sensor advanced filtering" [(text)]="newSensor.advancedFiltering"
                     labelClass="col-4" valueClass="col-8" [rows]="1" [required]="true">
         </text-input>
 

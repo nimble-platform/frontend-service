@@ -11,13 +11,20 @@ export class DataChannelService {
 
     private url = myGlobals.data_channel_endpoint;
 
+    constructor(private http: Http,private cookieService: CookieService) {}
 
-    constructor(
-        private http: Http,
-        private cookieService: CookieService
-    ) {
+    isBusinessProcessAttached(processID: string): Promise<boolean> {
+        return this.channelsForBusinessProcess(processID)
+            .then(res => Object.keys(res).length > 0)
     }
 
+     private handleError(error: any): Promise<any> {
+        return Promise.reject(error.message || error);
+     }
+
+    //-------------------------------------------------------------------------------------
+    // GET - Requests
+    //-------------------------------------------------------------------------------------
     getChannelConfig(channelID: string): Promise<any> {
         const url = `${this.url}/channel/${channelID}`;
         const token = 'Bearer ' + this.cookieService.get("bearer_token");
@@ -28,17 +35,6 @@ export class DataChannelService {
             .then(res => res.json())
             .catch(this.handleError);
     }
-
-    //getChannelMessages(channelID: string): Promise<any> {
-    //    const url = `${this.url}/channel/${channelID}/messages`;
-    //    const token = 'Bearer ' + this.cookieService.get("bearer_token");
-    //    const headers = new Headers({'Authorization': token});
-    //    return this.http
-    //        .get(url, {headers: headers, withCredentials: true})
-    //        .toPromise()
-    //        .then(res => res.json())
-    //        .catch(this.handleError);
-    //}
 
     channelsForBusinessProcess(processID: string): Promise<any> {
 
@@ -64,38 +60,41 @@ export class DataChannelService {
     }
 
     getAssociatedServers(channelID: string): Promise<any> {
-            const url = `${this.url}/channel/${channelID}/servers`;
-            const token = 'Bearer ' + this.cookieService.get("bearer_token");
-            const headers = new Headers({'Authorization': token});
-            return this.http
-                .get(url, {headers: headers, withCredentials: true})
-                .toPromise()
-                .then(res => res.json())
-                .catch(this.handleError);
-        }
+         const url = `${this.url}/channel/${channelID}/servers`;
+         const token = 'Bearer ' + this.cookieService.get("bearer_token");
+         const headers = new Headers({'Authorization': token});
+         return this.http
+             .get(url, {headers: headers, withCredentials: true})
+             .toPromise()
+             .then(res => res.json())
+             .catch(this.handleError);
+    }
 
     getInternalService(): Promise<any> {
-             const url = `${this.url}/channel/hasInternalService`;
-             const token = 'Bearer ' + this.cookieService.get("bearer_token");
-             const headers = new Headers({'Authorization': token});
-             return this.http
-                 .get(url, {headers: headers, withCredentials: true})
-                 .toPromise()
-                 .then(res => res.json())
-                 .catch(this.handleError);
-        }
+         const url = `${this.url}/channel/hasInternalService`;
+         const token = 'Bearer ' + this.cookieService.get("bearer_token");
+         const headers = new Headers({'Authorization': token});
+         return this.http
+             .get(url, {headers: headers, withCredentials: true})
+             .toPromise()
+             .then(res => res.json())
+             .catch(this.handleError);
+    }
 
     getFilteringService(): Promise<any> {
-                 const url = `${this.url}/channel/hasFilteringService`;
-                 const token = 'Bearer ' + this.cookieService.get("bearer_token");
-                 const headers = new Headers({'Authorization': token});
-                 return this.http
-                     .get(url, {headers: headers, withCredentials: true})
-                     .toPromise()
-                     .then(res => res.json())
-                     .catch(this.handleError);
-            }
+         const url = `${this.url}/channel/hasFilteringService`;
+         const token = 'Bearer ' + this.cookieService.get("bearer_token");
+         const headers = new Headers({'Authorization': token});
+         return this.http
+             .get(url, {headers: headers, withCredentials: true})
+             .toPromise()
+             .then(res => res.json())
+             .catch(this.handleError);
+    }
 
+    //-------------------------------------------------------------------------------------
+    // POST - Requests
+    //-------------------------------------------------------------------------------------
     addSensor(channelID: string, sensor: Sensor): Promise<any> {
         const url = `${this.url}/channel/${channelID}/sensor`;
         const token = 'Bearer ' + this.cookieService.get("bearer_token");
@@ -107,22 +106,6 @@ export class DataChannelService {
             .catch(this.handleError);
     }
 
-    removeSensor(channelID: string, sensor: Sensor): Promise<any> {
-        const url = `${this.url}/channel/${channelID}/sensors/${sensor.id}`;
-        const token = 'Bearer ' + this.cookieService.get("bearer_token");
-        const headers = new Headers({'Authorization': token});
-        return this.http
-            .delete(url, {headers: headers, withCredentials: true})
-            .toPromise()
-            .then(res => res.json())
-            .catch(this.handleError);
-    }
-
-    isBusinessProcessAttached(processID: string): Promise<boolean> {
-        return this.channelsForBusinessProcess(processID)
-            .then(res => Object.keys(res).length > 0)
-    }
-
     addServersForChannel(channelID: string, server: Server): Promise<any> {
         const url = `${this.url}/channel/${channelID}/server`;
         const token = 'Bearer ' + this.cookieService.get("bearer_token");
@@ -132,17 +115,6 @@ export class DataChannelService {
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
-    }
-
-    removeServerForChannel(channelID: string, server: Server): Promise<any> {
-         const url = `${this.url}/channel/${channelID}/server/${server.id}`;
-         const token = 'Bearer ' + this.cookieService.get("bearer_token");
-         const headers = new Headers({'Authorization': token});
-         return this.http
-             .delete(url, {headers: headers, withCredentials: true})
-             .toPromise()
-             .then(res => res.json())
-             .catch(this.handleError);
     }
 
     startChannel(channelID: string): Promise<any> {
@@ -167,8 +139,50 @@ export class DataChannelService {
             .catch(this.handleError);
     }
 
-    private handleError(error: any): Promise<any> {
-        return Promise.reject(error.message || error);
+    doNegotiationStep(channelID: string, sellerMessage: string, buyerMessage: string): Promise<any> {
+        const url = `${this.url}/channel/${channelID}/doNegotiationStep?sellerMessage=${sellerMessage}&buyerMessage=${buyerMessage}`;
+        const token = 'Bearer ' + this.cookieService.get("bearer_token");
+        const headers = new Headers({'Authorization': token});
+        return this.http
+            .post(url, null, {headers: headers, withCredentials: true})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
     }
 
+    getChannelConfigFromNegotiationStep(channelID: string, stepNumber: number): Promise<any> {
+        const url = `${this.url}/channel/${channelID}/getChannelFromNegotiationStep/${stepNumber}`;
+        const token = 'Bearer ' + this.cookieService.get("bearer_token");
+        const headers = new Headers({'Authorization': token});
+        return this.http
+            .post(url, null, {headers: headers, withCredentials: true})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+    }
+
+    //-------------------------------------------------------------------------------------
+    // DELETE - Requests
+    //-------------------------------------------------------------------------------------
+    removeSensor(channelID: string, sensor: Sensor): Promise<any> {
+        const url = `${this.url}/channel/${channelID}/sensors/${sensor.id}`;
+        const token = 'Bearer ' + this.cookieService.get("bearer_token");
+        const headers = new Headers({'Authorization': token});
+        return this.http
+            .delete(url, {headers: headers, withCredentials: true})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+    }
+
+    removeServerForChannel(channelID: string, server: Server): Promise<any> {
+         const url = `${this.url}/channel/${channelID}/server/${server.id}`;
+         const token = 'Bearer ' + this.cookieService.get("bearer_token");
+         const headers = new Headers({'Authorization': token});
+         return this.http
+             .delete(url, {headers: headers, withCredentials: true})
+             .toPromise()
+             .then(res => res.json())
+             .catch(this.handleError);
+    }
 }
