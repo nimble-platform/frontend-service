@@ -254,6 +254,10 @@ export class PriceWrapper {
         this.quantityPrice.price.priceAmount.currencyID = unitCode;
     }
 
+    // used to get quantity price when presentation mode is edit
+    public getQuantityPrice(){
+        return this.quantityPrice.price.priceAmount.value*this.quantity.value;
+    }
     /**
      *  Price options functions
      */

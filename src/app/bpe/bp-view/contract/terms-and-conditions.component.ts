@@ -142,7 +142,12 @@ export class TermsAndConditionsComponent implements OnInit {
                             this.contract.clause.push(newClause);
                         }
                         // push contract to order.contract
-                        this.order.contract.push(this.contract);
+                        if(this.order.contract){
+                            this.order.contract.push(this.contract);
+                        } else{
+                            this.order.contract = [this.contract];
+                        }
+
                     }
                     // create term and conditions for request for quotation
                     if(this.requestForQuotation && this.requestForQuotation.termOrCondition.length == 0){
@@ -179,7 +184,7 @@ export class TermsAndConditionsComponent implements OnInit {
         if(this.readOnly){
             let clause = this.termAndConditionClauses[index];
 
-            let element = document.getElementById("clause"+index);
+            let element = document.getElementById(this.generateIdForClause(index));
 
             clause = this.getClause(this.getClauseName(clause));
 
@@ -205,7 +210,7 @@ export class TermsAndConditionsComponent implements OnInit {
             element.innerHTML = text;
 
         } else{
-            let element = document.getElementById("clause"+index);
+            let element = document.getElementById(this.generateIdForClause(index));
             let clause = this.termAndConditionClauses[index];
             let text = clause.content[0].value;
 
@@ -216,16 +221,16 @@ export class TermsAndConditionsComponent implements OnInit {
                 if(tradingTerm.value.valueQualifier == "QUANTITY"){
                     let defaultValue = this.tradingTerms.get(parameter).value.valueQuantity[0].value;
                     let defaultUnit = this.tradingTerms.get(parameter).value.valueQuantity[0].unitCode;
-                    text = text.replace(parameter,"<b><span id='"+parameter+"'>"+defaultValue+" "+defaultUnit+"</span></b>");
+                    text = text.replace(parameter,"<b><span id='"+this.generateIdForParameter(parameter)+"'>"+defaultValue+" "+defaultUnit+"</span></b>");
                 } else if(tradingTerm.value.valueQualifier == "STRING"){
                     let defaultValue = this.tradingTerms.get(parameter).value.value[0].value;
-                    text = text.replace(parameter,"<b><span id='"+parameter+"'>"+defaultValue+"</span></b>");
+                    text = text.replace(parameter,"<b><span id='"+this.generateIdForParameter(parameter)+"'>"+defaultValue+"</span></b>");
                 } else if(tradingTerm.value.valueQualifier == "NUMBER"){
                     let defaultValue = this.tradingTerms.get(parameter).value.valueDecimal[0].toString();
-                    text = text.replace(parameter,"<b><span id='"+parameter+"'>"+defaultValue+"</span></b>");
+                    text = text.replace(parameter,"<b><span id='"+this.generateIdForParameter(parameter)+"'>"+defaultValue+"</span></b>");
                 } else if(tradingTerm.value.valueQualifier == "CODE"){
                     let defaultValue = this.tradingTerms.get(parameter).value.valueCode[0].value;
-                    text = text.replace(parameter,"<b><span id='"+parameter+"'>"+defaultValue+"</span></b>");
+                    text = text.replace(parameter,"<b><span id='"+this.generateIdForParameter(parameter)+"'>"+defaultValue+"</span></b>");
                 }
             }
 
@@ -305,7 +310,7 @@ export class TermsAndConditionsComponent implements OnInit {
                 quotationTradingTerm.value.valueQuantity[0].unitCode = value;
             }
 
-            let element = document.getElementById(id);
+            let element = document.getElementById(this.generateIdForParameter(id));
             element.innerText = this.tradingTerms.get(id).value.valueQuantity[0].value +" "+ value;
         } else{
             let tradingTerm = this.tradingTerms.get(id);
@@ -355,7 +360,7 @@ export class TermsAndConditionsComponent implements OnInit {
 
             }
 
-            let element = document.getElementById(id);
+            let element = document.getElementById(this.generateIdForParameter(id));
 
             if(tradingTerm.value.valueQualifier == "QUANTITY"){
                 element.innerText = value + " " + tradingTerm.value.valueQuantity[0].unitCode;
@@ -391,11 +396,13 @@ export class TermsAndConditionsComponent implements OnInit {
 
     // get the contract containing the terms and conditions details
     private getTermsAndConditionsContract(){
-        for(let contract of this.order.contract){
-            for(let clause of contract.clause){
-                if(!clause.type){
-                    this.contract = contract;
-                    break;
+        if(this.order.contract){
+            for(let contract of this.order.contract){
+                for(let clause of contract.clause){
+                    if(!clause.type){
+                        this.contract = contract;
+                        break;
+                    }
                 }
             }
         }
@@ -409,5 +416,25 @@ export class TermsAndConditionsComponent implements OnInit {
             return "PURCHASE ORDER TERMS AND CONDITIONS";
         }
         return clause.content[0].value.substring(startIndex+1,endIndex);
+    }
+
+    generateIdForClause(clauseId:number){
+        if(this.order){
+            return "order-clause"+clauseId;
+        } else if(this.requestForQuotation){
+            return "rfq-clause"+clauseId;
+        } else if(this.quotation){
+            return "quotation-clause"+clauseId;
+        }
+    }
+
+    generateIdForParameter(parameter:string){
+        if(this.order){
+            return "order-"+parameter;
+        } else if(this.requestForQuotation){
+            return "rfq-"+parameter;
+        } else if(this.quotation){
+            return "quotation-"+parameter;
+        }
     }
 }

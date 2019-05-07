@@ -136,6 +136,28 @@
     </div>
 </div>
 
+<h5>
+    Purchase Order
+    <button class="btn btn-outline-dark" (click)="showPurchaseOrder = !showPurchaseOrder">
+        <i class="fas fa-chevron-up fa-fw fa-lg mt-2" aria-hidden="true" *ngIf="showPurchaseOrder"></i>
+        <i class="fas fa-chevron-down fa-fw fa-lg mt-2" aria-hidden="true" *ngIf="!showPurchaseOrder"></i>
+    </button>
+</h5>
+<div *ngIf="showPurchaseOrder">
+    <div class="row">
+        <div class="col-2"><strong>Product Id:</strong></div>
+        <div class="col-10">{{rfq.requestForQuotationLine[0].lineItem.item.manufacturersItemIdentification.id}}</div>
+    </div>
+    <div class="row">
+        <div class="col-2"><strong>Quantity:</strong></div>
+        <div class="col-10">{{wrapper.quotationQuantity.value}} {{wrapper.quotationQuantity.unitCode}}</div>
+    </div>
+    <div class="row">
+        <div class="col-2"><strong>Total Price:</strong></div>
+        <div class="col-10">{{wrapper.quotationPriceWrapper.getQuantityPrice()}} {{wrapper.quotationPriceWrapper.unitCode}}</div>
+    </div>
+</div>
+
 <!-- Delivery Location -->
 <div class="row address-row">
     <div class="col-12">

@@ -118,7 +118,7 @@ export class OrderComponent implements OnInit {
                 this.buyerParty = buyerParty;
                 this.sellerParty = sellerParty;
                 this.dataMonitoringDemanded = dataMonitoringDemanded;
-                this.order.contract = [contract];
+                this.order.contract.push(contract);
                 return this.isDataMonitoringDemanded();
             })
             .then(dataMonitoringDemanded => {
@@ -149,10 +149,12 @@ export class OrderComponent implements OnInit {
 
     // retrieve the order contract which is not the Term and Condition contract
     getNonTermAndConditionContract(){
-        for(let contract of this.order.contract){
-            for(let clause of contract.clause){
-                if(clause.type){
-                    return clause;
+        if(this.order.contract){
+            for(let contract of this.order.contract){
+                for(let clause of contract.clause){
+                    if(clause.type){
+                        return clause;
+                    }
                 }
             }
         }
@@ -478,11 +480,13 @@ export class OrderComponent implements OnInit {
 
     getOrderContract():Contract{
         let orderContract = null;
-        for(let contract of this.order.contract){
-            for(let clause of contract.clause){
-                if(clause.type){
-                    orderContract = contract;
-                    break;
+        if(this.order.contract){
+            for(let contract of this.order.contract){
+                for(let clause of contract.clause){
+                    if(clause.type){
+                        orderContract = contract;
+                        break;
+                    }
                 }
             }
         }

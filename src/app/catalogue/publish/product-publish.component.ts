@@ -765,7 +765,8 @@ export class ProductPublishComponent implements OnInit {
                 }
             }
         }
-        this.multiValuedDimensions = this.productWrapper.getDimensionMultiValue();
+        // call this function with dimension unit list to be sure that item will have some dimension
+        this.multiValuedDimensions = this.productWrapper.getDimensionMultiValue(true,this.dimensionUnits);
         this.recomputeSelectedProperties();
     }
 

@@ -67,6 +67,8 @@ export class NegotiationRequestComponent implements OnInit {
     sellerId:string = null;
     buyerId:string = null;
 
+    showPurchaseOrder:boolean = false;
+
     constructor(private bpDataService: BPDataService,
                 private bpeService:BPEService,
                 private userService:UserService,
