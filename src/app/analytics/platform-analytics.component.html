@@ -76,4 +76,26 @@
     </div>
   </div>
 
+  <hr>
+
+  <div class="row justify-content-center" *ngIf="loadedps">
+    <div class="card col-3">
+      <div class="card-body text-center">
+        <h4 *ngIf="user_count>=0" class="card-title"><b>{{product_count}}</b></h4>
+        <h4 *ngIf="user_count<0" class="card-title"><b>???</b></h4>
+        <h6 class="card-subtitle mb-2 text-muted">No Of Products</h6>
+        <p class="card-text" style="font-size:32px"><i class="fa fa-cog"></i></p>
+      </div>
+    </div>
+    <div class="col-1"></div>
+    <div class="card col-3">
+      <div class="card-body text-center">
+        <h4 *ngIf="comp_count>=0" class="card-title"><b>{{service_count}}</b></h4>
+        <h4 *ngIf="comp_count<0" class="card-title"><b>???</b></h4>
+        <h6 class="card-subtitle mb-2 text-muted">No Of Services</h6>
+        <p class="card-text" style="font-size:32px"><i class="fa fa-wrench"></i></p>
+      </div>
+    </div>
+  </div>
+
 </div>
