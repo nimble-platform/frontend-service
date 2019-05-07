@@ -92,7 +92,7 @@ export class NegotiationResponseComponent implements OnInit {
         this.userRole = this.bpDataService.bpStartEvent.userRole;
 
         // check associated frame contract
-        this.bpeService.getDigitalAgreement(UBLModelUtils.getPartyId(this.rfq.sellerSupplierParty.party),
+        this.bpeService.getFrameContract(UBLModelUtils.getPartyId(this.rfq.sellerSupplierParty.party),
             UBLModelUtils.getPartyId(this.rfq.buyerCustomerParty.party),
             this.rfq.requestForQuotationLine[0].lineItem.item.manufacturersItemIdentification.id).then(digitalAgreement => {
             this.frameContract = digitalAgreement;

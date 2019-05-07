@@ -28,6 +28,11 @@ import { CookieService } from 'ng2-cookies';
 import {FAVOURITE_LINEITEM_PUT_OPTIONS} from '../catalogue/model/constants';
 import * as myGlobals from '../globals';
 import {DiscountPriceWrapper} from "../common/discount-price-wrapper";
+import {DigitalAgreement} from "../catalogue/model/publish/digital-agreement";
+import {DocumentService} from "../bpe/bp-view/document-service";
+import {BPEService} from "../bpe/bpe.service";
+import {UBLModelUtils} from "../catalogue/model/ubl-model-utils";
+import {NegotiationModelWrapper} from "../bpe/bp-view/negotiation/negotiation-model-wrapper";
 
 @Component({
     selector: 'product-details',
@@ -46,28 +51,27 @@ export class ProductDetailsComponent implements OnInit {
 
     line?: CatalogueLine;
     item?: Item;
-    wrapper?: ProductWrapper;
+    productWrapper?: ProductWrapper;
     settings?: CompanySettings;
-    priceWrapper?: DiscountPriceWrapper;
+    productDefaultsDiscountPriceWrapper?: DiscountPriceWrapper;
+    frameContractQuotationWrapper: NegotiationModelWrapper;
+    frameContract: DigitalAgreement;
     tabToOpen: string = "";
-    toggleImageBorder: boolean = false;
-    showNavigation: boolean = true;
-    showProcesses: boolean = true;
     isLogistics: boolean = false;
 
     config = myGlobals.config;
 
     addFavoriteCategoryStatus: CallStatus = new CallStatus();
     callStatus: CallStatus = new CallStatus();
-    FAVOURITE_LINEITEM_PUT_OPTIONS = FAVOURITE_LINEITEM_PUT_OPTIONS;
 
     @ViewChild(DiscountModalComponent)
     private discountModal: DiscountModalComponent;
     selectPreferredValue = selectPreferredValue;
 
-    constructor(private bpDataService: BPDataService,
+    constructor(private bpeService: BPEService,
+                private bpDataService: BPDataService,
                 private catalogueService: CatalogueService,
-                private searchContextService: SearchContextService,
+                private documentService: DocumentService,
                 private userService: UserService,
                 private route: ActivatedRoute,
                 private cookieService: CookieService,
@@ -92,11 +96,23 @@ export class ProductDetailsComponent implements OnInit {
                         this.line = line;
                         this.item = line.goodsItem.item;
                         this.isLogistics = isTransportService(this.line);
+
+                        // check frame contract for the current line
+                        this.bpeService.getFrameContract(UBLModelUtils.getPartyId(this.line.goodsItem.item.manufacturerParty),
+                            this.cookieService.get("company_id"),
+                            this.line.id).then(contract => {
+                            this.frameContract = contract;
+                            // contract exists, get the corresponding quotation including the terms
+                            this.documentService.getDocumentJsonContent(this.frameContract.quotationReference.id).then(document => {
+                                this.frameContractQuotationWrapper = new NegotiationModelWrapper(null, null, document, null);
+                            });
+                        });
+
                         return this.userService.getSettingsForProduct(line)
                     })
                     .then(settings => {
                         this.settings = settings;
-                        this.priceWrapper = new DiscountPriceWrapper(
+                        this.productDefaultsDiscountPriceWrapper = new DiscountPriceWrapper(
                             this.line.requiredItemLocationQuantity.price,
                             new Quantity(1,this.line.requiredItemLocationQuantity.price.baseQuantity.unitCode),
                             this.line.priceOption,
@@ -104,7 +120,7 @@ export class ProductDetailsComponent implements OnInit {
                             this.line.goodsItem.deliveryTerms.incoterms,
                             settings.negotiationSettings.paymentMeans[0],
                             this.line.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure);
-                        this.wrapper = new ProductWrapper(this.line, settings.negotiationSettings,this.priceWrapper.quantity);
+                        this.productWrapper = new ProductWrapper(this.line, settings.negotiationSettings,this.productDefaultsDiscountPriceWrapper.quantity);
                         this.bpDataService.setCatalogueLines([this.line], [settings]);
                         this.getProductStatus.callback("Retrieved product details", true);
                         // we have to set bpStartEvent.workflowOptions here
@@ -115,10 +131,12 @@ export class ProductDetailsComponent implements OnInit {
                         this.getProductStatus.error("Failed to retrieve product details", error);
 
                         this.line = null;
-                        this.wrapper = null;
+                        this.productWrapper = null;
                     });
             }
         });
+
+		// load favourite item ids for the person
         let userId = this.cookieService.get("user_id");
         this.callStatus.submit();
         this.userService.getPerson(userId)
@@ -135,8 +153,8 @@ export class ProductDetailsComponent implements OnInit {
      * Event Handlers
      */
 
-    onNegotiate(): void {
-        this.navigateToBusinessProcess("Negotiation");
+    onNegotiate(termsSource): void {
+        this.navigateToBusinessProcess("Negotiation", termsSource);
     }
 
     onRequestInformation(): void {
@@ -147,42 +165,9 @@ export class ProductDetailsComponent implements OnInit {
         this.navigateToBusinessProcess("Ppap");
     }
 
-    private navigateToBusinessProcess(targetProcess: ProcessType): void {
+    private navigateToBusinessProcess(targetProcess: ProcessType, termsSource: 'product_defaults' | 'frame_contract' = 'product_defaults'): void {
         this.bpDataService.startBp(new BpStartEvent('buyer',targetProcess,null,this.bpDataService.bpStartEvent.collaborationGroupId,null,this.options),false,
-            new BpURLParams(this.catalogueId,this.id,null));
-    }
-
-    /*
-     * Getters For Template
-     */
-
-    getPricePerItem(): string {
-        this.updatePriceWrapperOnUserSelections();
-        return this.priceWrapper.pricePerItemString;
-    }
-
-    getTotalPrice(): number {
-        this.updatePriceWrapperOnUserSelections();
-        return this.priceWrapper.totalPrice;
-    }
-
-    hasPrice(): boolean {
-        return this.priceWrapper.hasPrice();
-    }
-
-    getMaximumQuantity(): number {
-        return getMaximumQuantityForPrice(this.priceWrapper.price);
-    }
-
-    getSteps(): number {
-        return getStepForPrice(this.priceWrapper.price);
-    }
-
-    getQuantityUnit(): string {
-        if(!this.line) {
-            return "";
-        }
-        return this.line.requiredItemLocationQuantity.price.baseQuantity.unitCode || "";
+            new BpURLParams(this.catalogueId, this.id, null, termsSource));
     }
 
     onOrderQuantityChange(event:any): boolean {
@@ -193,19 +178,70 @@ export class ProductDetailsComponent implements OnInit {
         return true;
     }
 
+    onTermsChange(event): void {
+        if(event.target.value == 'product_defaults') {
+            this.productDefaultsDiscountPriceWrapper.price = this.line.requiredItemLocationQuantity.price;
+            this.productDefaultsDiscountPriceWrapper.incoterm = this.line.goodsItem.deliveryTerms.incoterms;
+            this.productDefaultsDiscountPriceWrapper.paymentMeans = this.settings.negotiationSettings.paymentMeans[0];
+            this.productDefaultsDiscountPriceWrapper.deliveryPeriod = this.line.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure;
+
+        } else {
+            this.productDefaultsDiscountPriceWrapper.price = this.frameContractQuotationWrapper.quotationPriceWrapper.price;
+            this.productDefaultsDiscountPriceWrapper.incoterm = this.frameContractQuotationWrapper.quotationIncoterms;
+            this.productDefaultsDiscountPriceWrapper.paymentMeans = this.frameContractQuotationWrapper.quotationPaymentMeans;
+            this.productDefaultsDiscountPriceWrapper.deliveryPeriod = this.frameContractQuotationWrapper.quotationFrameContractDuration;
+        }
+    }
+
+    /*
+     * Getters For Template
+     */
+
+    getPricePerItem(): string {
+        this.updatePriceWrapperOnUserSelections();
+        return this.productDefaultsDiscountPriceWrapper.pricePerItemString;
+    }
+
+    getTotalPrice(): number {
+        this.updatePriceWrapperOnUserSelections();
+        return this.productDefaultsDiscountPriceWrapper.totalPrice;
+    }
+
+    hasPrice(): boolean {
+        return this.productDefaultsDiscountPriceWrapper.hasPrice();
+    }
+
+    getMaximumQuantity(): number {
+        return getMaximumQuantityForPrice(this.productDefaultsDiscountPriceWrapper.price);
+    }
+
+    getSteps(): number {
+        return getStepForPrice(this.productDefaultsDiscountPriceWrapper.price);
+    }
+
+    getQuantityUnit(): string {
+        if(!this.line) {
+            return "";
+        }
+        return this.line.requiredItemLocationQuantity.price.baseQuantity.unitCode || "";
+    }
+
     isPpapAvailable(): boolean {
         return this.settings && !!this.settings.tradeDetails.ppapCompatibilityLevel;
     }
 
     private updatePriceWrapperOnUserSelections() {
+        // copy the selected specific item properties into the price wrapper so that the discounts can be calculated based on the selections
         let copyItem = JSON.parse(JSON.stringify(this.item));
         this.bpDataService.selectFirstValuesAmongAlternatives(copyItem);
-        this.priceWrapper.additionalItemProperties = copyItem.additionalItemProperty;
-        this.priceWrapper.quantity.value = this.options.quantity;
+        this.productDefaultsDiscountPriceWrapper.additionalItemProperties = copyItem.additionalItemProperty;
+
+        // similarly, copy the requested quantity as well
+        this.productDefaultsDiscountPriceWrapper.quantity.value = this.options.quantity;
     }
 
     private openDiscountModal(): void{
-        this.discountModal.open(this.priceWrapper.appliedDiscounts,this.priceWrapper.price.priceAmount.currencyID);
+        this.discountModal.open(this.productDefaultsDiscountPriceWrapper.appliedDiscounts,this.productDefaultsDiscountPriceWrapper.price.priceAmount.currencyID);
     }
 
     removeFavorites(item: CatalogueLine) {

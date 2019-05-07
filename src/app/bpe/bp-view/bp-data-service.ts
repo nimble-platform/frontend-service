@@ -243,7 +243,8 @@ export class BPDataService{
                 queryParams: {
                     catalogueId: bpURLParams.catalogueId,
                     id: bpURLParams.catalogueLineId,
-                    pid: bpURLParams.processInstanceId
+                    pid: bpURLParams.processInstanceId,
+                    termsSource: bpURLParams.termsSource
                 }
             });
         }
@@ -251,7 +252,8 @@ export class BPDataService{
             this.router.navigate(['bpe/bpe-exec'], {
                 queryParams: {
                     catalogueId: bpURLParams.catalogueId,
-                    id: bpURLParams.catalogueLineId
+                    id: bpURLParams.catalogueLineId,
+                    termsSource: bpURLParams.termsSource
                 }
             });
         }

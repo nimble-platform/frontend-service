@@ -10,7 +10,7 @@ import { UBLModelUtils } from "../../../catalogue/model/ubl-model-utils";
 import { BPEService } from "../../bpe.service";
 import { UserService } from "../../../user-mgmt/user.service";
 import { CookieService } from "ng2-cookies";
-import { Router } from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import { CustomerParty } from "../../../catalogue/model/publish/customer-party";
 import { SupplierParty } from "../../../catalogue/model/publish/supplier-party";
 import { ProcessVariables } from "../../model/process-variables";
@@ -78,6 +78,11 @@ export class NegotiationRequestComponent implements OnInit {
     showDeliveryAddress: boolean = false;
     callStatus: CallStatus = new CallStatus();
 
+    /**
+     * URL parameters
+     */
+    termsSource: 'product_defaults' | 'frame_contract' = 'product_defaults';
+
     constructor(private bpDataService: BPDataService,
                 private bpeService:BPEService,
                 private userService:UserService,
@@ -85,7 +90,8 @@ export class NegotiationRequestComponent implements OnInit {
                 private cookieService: CookieService,
                 private location: Location,
                 private documentService: DocumentService,
-                private router: Router) {
+                private router: Router,
+                private route: ActivatedRoute) {
 
     }
 
@@ -100,6 +106,10 @@ export class NegotiationRequestComponent implements OnInit {
         this.totalPrice = this.wrapper.rfqTotalPrice;
         this.negotiatedPriceValue = this.totalPrice;
 
+        this.route.queryParams.subscribe(params => {
+            this.termsSource = params["termsSource"];
+        });
+
         if(!this.lineHasPrice) {
             this.rfq.negotiationOptions.price = true;
         }
@@ -111,12 +121,17 @@ export class NegotiationRequestComponent implements OnInit {
 
         } else {
             // check whether there is an existing frame contract created in another negotiation process
-            this.bpeService.getDigitalAgreement(UBLModelUtils.getPartyId(this.line.goodsItem.item.manufacturerParty),
+            this.bpeService.getFrameContract(UBLModelUtils.getPartyId(this.line.goodsItem.item.manufacturerParty),
                 this.cookieService.get("company_id"),
                 this.rfq.requestForQuotationLine[0].lineItem.item.manufacturersItemIdentification.id).then(digitalAgreement => {
                 this.frameContract = digitalAgreement;
                 this.frameContractAvailable = true;
                 this.frameContractDuration = this.frameContract.digitalAgreementTerms.validityPeriod.durationMeasure;
+
+                // automatically load the terms if the user has already initiated the negotiation with the frame contract
+                if(this.termsSource == 'frame_contract') {
+                    this.onloadFrameContractTerms();
+                }
             });
         }
 
@@ -125,8 +140,8 @@ export class NegotiationRequestComponent implements OnInit {
            this.frameContractDurationUnits = list;
         });
 
-        // set the flag for showing the counter terms
-        if(!this.processMetadata.isBeingUpdated) {
+        // set the flag for showing the counter terms if the presen
+        if(this.isReadOnly()) {
             this.showCounterOfferTerms = true;
         }
     }
@@ -248,6 +263,7 @@ export class NegotiationRequestComponent implements OnInit {
             this.wrapper.rfqDiscountPriceWrapper.itemPrice.price.priceAmount = quotationWrapper.quotationPriceWrapper.price.priceAmount;
             this.wrapper.rfqDiscountPriceWrapper.itemPrice.price.baseQuantity = quotationWrapper.quotationPriceWrapper.price.baseQuantity;
             this.rfq.negotiationOptions.price = true;
+            this.showCounterOfferTerms = true;
         });
     }
 

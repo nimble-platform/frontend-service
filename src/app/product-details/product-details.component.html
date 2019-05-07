@@ -1,4 +1,4 @@
-<div *ngIf="wrapper" class="row product-details">
+<div *ngIf="productWrapper" class="row product-details">
     <div class="col-9">
         <div class="row">
             <div class="col">
@@ -21,26 +21,41 @@
         </div>
         <div class="row">
             <div class="col-12">
-              <product-details-overview [wrapper]="wrapper" [options]="options">
+              <product-details-overview [wrapper]="productWrapper" [options]="options">
               </product-details-overview>
             </div>
         </div>
-        <product-details-tabs [wrapper]="wrapper" [settings]="settings" [tabToOpen]="tabToOpen">
+        <product-details-tabs [wrapper]="productWrapper" [settings]="settings" [tabToOpen]="tabToOpen">
         </product-details-tabs>
     </div>
     <div class="col-3">
         <!-- Order Workflow For Product -->
         <div *ngIf="isLogistics === false" class="p-3 border border-dark border-bottom-0">
 
-            <h2 class="py-1">Negotiate & Order</h2>
+            <h3 class="py-1">Negotiate & Order</h3>
+
+            <div [hidden]="frameContract == null">
+                <hr>
+                Terms:
+
+                <select #termSelectBox class="btn btn-outline-secondary" [value]="'product_defaults'" (change)="termSelectBox.value = $event.target.value; onTermsChange($event)">
+                    <option value="product_defaults">Product Defaults</option>
+                    <option value="frame_contract">Frame Contract</option>
+                </select>
+            </div>
+
+            <hr>
 
             <!-- Delivery Period -->
             <div class="order-group">
                 <label class="order-label">
                     Delivery Period
                 </label>
-                <span class="order-value">
-                    {{ wrapper.getDeliveryPeriod() }}
+                <span *ngIf="termSelectBox.value == 'product_defaults'" class="order-value">
+                    {{ productWrapper.getDeliveryPeriod() }}
+                </span>
+                <span *ngIf="termSelectBox.value == 'frame_contract'" class="order-value">
+                    {{frameContractQuotationWrapper.quotationDeliveryPeriodString}}
                 </span>
             </div>
 
@@ -49,8 +64,11 @@
                 <label class="order-label">
                     Warranty
                 </label>
-                <span class="order-value">
-                    {{ wrapper.getWarrantyPeriod() }}
+                <span *ngIf="termSelectBox.value == 'product_defaults'" class="order-value">
+                    {{ productWrapper.getWarrantyPeriod() }}
+                </span>
+                <span *ngIf="termSelectBox.value == 'frame_contract'" class="order-value">
+                    {{ frameContractQuotationWrapper.quotationWarrantyString}}
                 </span>
             </div>
 
@@ -59,8 +77,11 @@
                 <label class="order-label">
                     Incoterms
                 </label>
-                <span class="order-value">
-                    {{ wrapper.getIncoterms() }}
+                <span *ngIf="termSelectBox.value == 'product_defaults'" class="order-value">
+                    {{ productWrapper.getIncoterms() }}
+                </span>
+                <span *ngIf="termSelectBox.value == 'frame_contract'" class="order-value">
+                    {{ frameContractQuotationWrapper.quotationIncotermsString }}
                 </span>
             </div>
 
@@ -69,8 +90,11 @@
                 <label class="order-label">
                     Payment Terms
                 </label>
-                <span class="order-value">
-                    {{ wrapper.getPaymentTerms() }}
+                <span *ngIf="termSelectBox.value == 'product_defaults'" class="order-value">
+                    {{ productWrapper.getPaymentTerms() }}
+                </span>
+                <span *ngIf="termSelectBox.value == 'frame_contract'" class="order-value">
+                    {{ frameContractQuotationWrapper.quotationPaymentTerms.paymentTerm }}
                 </span>
             </div>
 
@@ -79,8 +103,11 @@
                 <label class="order-label">
                     Payment Means
                 </label>
-                <span class="order-value">
-                    {{ wrapper.getPaymentMeans() }}
+                <span *ngIf="termSelectBox.value == 'product_defaults'" class="order-value">
+                    {{ productWrapper.getPaymentMeans() }}
+                </span>
+                <span *ngIf="termSelectBox.value == 'frame_contract'" class="order-value">
+                    {{ frameContractQuotationWrapper.quotationPaymentMeans }}
                 </span>
             </div>
 
@@ -93,7 +120,7 @@
                     <span class="order-value">
                         {{ getPricePerItem() }}
                     </span>
-                    <div *ngIf="priceWrapper.appliedDiscounts.length > 0" class="space-left" data-toggle="tooltip" data-placement="top" (click)="openDiscountModal()"  title="Applied Discounts/Charges" style="cursor: pointer">
+                    <div *ngIf="productDefaultsDiscountPriceWrapper.appliedDiscounts.length > 0" class="space-left" data-toggle="tooltip" data-placement="top" (click)="openDiscountModal()" title="Applied Discounts/Charges" style="cursor: pointer">
                         <i class="fa fa-search" aria-hidden="true"></i>
                     </div>
                 </div>
@@ -151,7 +178,7 @@
 
             <!-- Action Button -->
             <button class="btn btn-primary pt-2 w-100"
-                (click)="onNegotiate()" [disabled]="!this.appComponent.checkRoles('bp') || options.quantity <= 0">
+                (click)="onNegotiate(termSelectBox.value)" [disabled]="!this.appComponent.checkRoles('bp') || options.quantity <= 0">
                 Negotiate & Order
             </button>
         </div>
@@ -167,7 +194,7 @@
                     Payment Terms
                 </label>
                 <span class="order-value">
-                    {{ wrapper.getPaymentTerms() }}
+                    {{ productWrapper.getPaymentTerms() }}
                 </span>
             </div>
 
@@ -177,7 +204,7 @@
                     Payment Means
                 </label>
                 <span class="order-value">
-                    {{ wrapper.getPaymentMeans() }}
+                    {{ productWrapper.getPaymentMeans() }}
                 </span>
             </div>
             <div class="inline-order-group">
@@ -191,7 +218,7 @@
 
             <!-- Action Button -->
             <button class="btn btn-primary pt-2 w-100"
-                (click)="onNegotiate()" [disabled]="!this.appComponent.checkRoles('bp') || options.quantity <= 0">
+                (click)="onNegotiate(termSelectBox.value)" [disabled]="!this.appComponent.checkRoles('bp') || options.quantity <= 0">
                 Negotiate & Order
             </button>
 

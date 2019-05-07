@@ -30,7 +30,9 @@ export class NegotiationModelWrapper {
                 public quotation: Quotation,
                 public settings: CompanyNegotiationSettings) {
 
-        this.rfqPaymentTerms = new PaymentTermsWrapper(rfq.paymentTerms);
+        if(rfq) {
+            this.rfqPaymentTerms = new PaymentTermsWrapper(rfq.paymentTerms);
+        }
         if(quotation) {
             this.quotationPaymentTerms = new PaymentTermsWrapper(quotation.paymentTerms);
         }
@@ -162,6 +164,10 @@ export class NegotiationModelWrapper {
         return this.quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure;
     }
 
+    public get quotationDeliveryPeriodString(): string {
+        return durationToString(this.quotationDeliveryPeriod);
+    }
+
     public get quotationDeliveryPeriodWithPriceCheck(): Quantity {
         // update quotation delivery period to calculate price correctly
         if(this.quotationDiscountPriceWrapper != null && this.quotationDeliveryPeriod.value && (
@@ -203,6 +209,10 @@ export class NegotiationModelWrapper {
         return this.quotation.quotationLine[0].lineItem.warrantyValidityPeriod.durationMeasure;
     }
 
+    public get quotationWarrantyString(): string {
+        return durationToString(this.quotationWarranty);
+    }
+
     public get lineIncoterms(): string {
         return this.line.goodsItem.deliveryTerms.incoterms;
     }
@@ -229,6 +239,10 @@ export class NegotiationModelWrapper {
         }
 
         return this.quotation.quotationLine[0].lineItem.deliveryTerms.incoterms;
+    }
+
+    public get quotationIncotermsString(): string {
+        return this.quotation.quotationLine[0].lineItem.deliveryTerms.incoterms || "None";
     }
 
     public set quotationIncoterms(incoterms: string) {
