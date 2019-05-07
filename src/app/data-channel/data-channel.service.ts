@@ -74,8 +74,30 @@ export class DataChannelService {
                 .catch(this.handleError);
         }
 
+    getInternalService(): Promise<any> {
+             const url = `${this.url}/channel/hasInternalService`;
+             const token = 'Bearer ' + this.cookieService.get("bearer_token");
+             const headers = new Headers({'Authorization': token});
+             return this.http
+                 .get(url, {headers: headers, withCredentials: true})
+                 .toPromise()
+                 .then(res => res.json())
+                 .catch(this.handleError);
+        }
+
+    getFilteringService(): Promise<any> {
+                 const url = `${this.url}/channel/hasFilteringService`;
+                 const token = 'Bearer ' + this.cookieService.get("bearer_token");
+                 const headers = new Headers({'Authorization': token});
+                 return this.http
+                     .get(url, {headers: headers, withCredentials: true})
+                     .toPromise()
+                     .then(res => res.json())
+                     .catch(this.handleError);
+            }
+
     addSensor(channelID: string, sensor: Sensor): Promise<any> {
-        const url = `${this.url}/channel/${channelID}/sensors`;
+        const url = `${this.url}/channel/${channelID}/sensor`;
         const token = 'Bearer ' + this.cookieService.get("bearer_token");
         const headers = new Headers({'Authorization': token});
         return this.http
@@ -102,7 +124,7 @@ export class DataChannelService {
     }
 
     addServersForChannel(channelID: string, server: Server): Promise<any> {
-        const url = `${this.url}/channel/${channelID}/servers`;
+        const url = `${this.url}/channel/${channelID}/server`;
         const token = 'Bearer ' + this.cookieService.get("bearer_token");
         const headers = new Headers({'Authorization': token});
         return this.http
@@ -139,8 +161,9 @@ export class DataChannelService {
         const token = 'Bearer ' + this.cookieService.get("bearer_token");
         const headers = new Headers({'Authorization': token});
         return this.http
-            .delete(url, {headers: headers, withCredentials: true})
+            .post(url, null, {headers: headers, withCredentials: true})
             .toPromise()
+            .then(res => res.json())
             .catch(this.handleError);
     }
 

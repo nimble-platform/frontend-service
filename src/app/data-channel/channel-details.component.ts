@@ -25,6 +25,9 @@ class NewSensor {
         public name: string,
         public interval: number,
         public description: string,
+        public dataKey: string,
+        public metadata: string,
+        public advancedFiltering: string,
         public machineName: string
     ) {
     }
@@ -54,9 +57,12 @@ export class ChannelDetailsComponent implements OnInit {
     channelServers: object[] = [];
     channelSensors: object[] = [];
 
+    hasInternalService: boolean = false;
+    hasFilteringService: boolean = false;
+
     displayStorageArea: boolean = true;
     private newServer: NewServer = new NewServer(null, null, null, null, null, null, null, null);
-    private newSensor: NewSensor = new NewSensor(null, null, null, null);
+    private newSensor: NewSensor = new NewSensor(null, null, null, null, null, null, null);
     private initialSettings: AdditionalSettings = new AdditionalSettings("Info", false, 'MongoDB');
     private counterSettings: AdditionalSettings = new AdditionalSettings("Info", false, 'MongoDB');
 
@@ -108,11 +114,17 @@ export class ChannelDetailsComponent implements OnInit {
                 this.channelServers = servers;
             });
 
-        // get messages of channels
-        //this.dataChannelService.getChannelMessages(channelID)
-        //    .then(messages => {
-        //        this.channelMessages = messages.map(JSON.parse);
-        //    });
+        // get setup internal service boolean
+        this.dataChannelService.getInternalService()
+             .then(bInternalService => {
+                 this.hasInternalService = bInternalService;
+             });
+
+        // get setup internal service boolean
+        this.dataChannelService.getFilteringService()
+             .then(bFilteringService => {
+                 this.hasFilteringService = bFilteringService;
+             });
     }
 
     //-------------------------------------------------------------------------------------
@@ -180,14 +192,15 @@ export class ChannelDetailsComponent implements OnInit {
     }
 
     //-------------------------------------------------------------------------------------
-    // create/open a channel
+    // open a channel
     //-------------------------------------------------------------------------------------
-    createChannel(): void {
+    openChannel(): void {
         const channelId = this.channelConfig["channelID"];
         this.dataChannelService.startChannel(channelId)
             .then(() => {
-                alert("Deleted Channel");
-                this.router.navigate(["dashboard"]);
+                location.reload();
+                alert("Opened Channel");
+                //this.router.navigate(["dashboard"]);
             })
             .catch(() => {
                 alert("Error while opening channel");
@@ -195,14 +208,15 @@ export class ChannelDetailsComponent implements OnInit {
     }
 
     //-------------------------------------------------------------------------------------
-    // delete/close a channel
+    // close a channel
     //-------------------------------------------------------------------------------------
-    deleteChannel(): void {
+    closeChannel(): void {
         const channelId = this.channelConfig["channelID"];
         this.dataChannelService.closeChannel(channelId)
             .then(() => {
-                alert("Deleted Channel");
-                this.router.navigate(["dashboard"]);
+                location.reload();
+                alert("Closed Channel");
+                //this.router.navigate(["dashboard"]);
             })
             .catch(() => {
                 alert("Error while closing channel");
@@ -249,7 +263,9 @@ export class ChannelDetailsComponent implements OnInit {
     addSensor(): void {
         // create sensor locally
         const machine = new Machine(this.newSensor.machineName, null, null);
-        const sensor = new Sensor(this.newSensor.name, this.newSensor.interval, this.newSensor.description, machine);
+        const sensor = new Sensor(this.newSensor.name, this.newSensor.interval, this.newSensor.description,
+                                  this.newSensor.dataKey, this.newSensor.metadata, this.newSensor.advancedFiltering,
+                                  machine);
 
         // add to backend
         const channelId = this.channelConfig["channelID"];

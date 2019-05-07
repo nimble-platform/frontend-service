@@ -46,6 +46,7 @@ h4 {
 #comparison-header-right{
     text-align:right;
     float:right;
+    margin-right: 25%;
 }
 
 #new-sensor {
