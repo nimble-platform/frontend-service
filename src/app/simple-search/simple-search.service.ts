@@ -5,6 +5,8 @@ import * as myGlobals from '../globals';
 import { map } from 'rxjs/operators';
 import {CookieService} from "ng2-cookies";
 import { DEFAULT_LANGUAGE, LANGUAGES } from '../catalogue/model/constants';
+import {class_suggestion_field} from "../globals";
+
 
 @Injectable()
 export class SimpleSearchService {
@@ -23,6 +25,7 @@ export class SimpleSearchService {
 	product_configurable = myGlobals.product_configurable;
 	product_cat = myGlobals.product_cat;
 	product_cat_mix = myGlobals.product_cat_mix;
+	class_suggestions_field = myGlobals.class_suggestion_field;
 
 	constructor(private http: Http,
 				private cookieService: CookieService) {
@@ -98,9 +101,9 @@ export class SimpleSearchService {
 		.catch(this.handleError);
 	}
 
-  getSuggestions(query:string, field: string) {
+    getSuggestions(query: string, item_field: string) {
     let querySettings = {
-      "fields": [field],
+      "fields": [item_field, class_suggestion_field],
       "boosting": false,
       "boostingFactors": {}
     };
@@ -290,8 +293,10 @@ export class SimpleSearchService {
           else
             queryStr += "*" + queryArr[i] +"*";
         }
-        if (qS.boosting)
-          queryStr += "^" + Math.abs(qS.boostingFactors[queryFields[j]]);
+        if (qS.boosting && queryFields[j] != class_suggestion_field) {
+            queryStr += "^" + Math.abs(qS.boostingFactors[queryFields[j]]);
+        }
+
         queryStr += " ";
       }
     }
