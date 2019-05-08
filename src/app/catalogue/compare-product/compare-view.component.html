@@ -8,20 +8,21 @@
     <div class="col-md-6">
         <div>
             <div class="input-group form-group" style="background-color:#F2F2F2;padding-left: 25px;padding-top: 20px;padding-bottom: 20px;">
-                <input  class="form-control col-5" type="text" [(ngModel)]="searchText_first" #q="ngModel" [ngbTypeahead]="searchFavourite_first" placeholder="Search ...">
-                <div class="input-group-append">
-                    	<button (click)="searchFavouriteSearch_first()" class="btn btn-outline-secondary">
-                                <i class="fa fa-search"></i>
-                        </button>
-                </div>
+                
+                <form (ngSubmit)="searchFavouriteSearch_first()"  novalidate>
+                    <input  class="form-control col-12" type="text" [(ngModel)]="searchText_first" #q="ngModel" [ngModelOptions]="{standalone: true}" [ngbTypeahead]="searchFavourite_first" placeholder="Search ...">
+                </form>
+                    <div class="input-group-append">
+                            <button (click)="searchFavouriteSearch_first()" class="btn btn-outline-secondary">
+                                    <i class="fa fa-search"></i>
+                            </button>
+                    </div>
+             
+
             </div>
 
             <div class="jumbotron" *ngIf="itemTypeResponse_first && hasFavourite_first == false" class="col-md-10"> 
-                <h5>Search For products / services.</h5>
-                <h6>
-                    <span (click)="navigateToTheSearchPage()" class="pointer">Compare products / services</span>
-                    <i class="fa fa-plus-circle pointer" (click)="navigateToTheSearchPage()"></i>
-                </h6>
+                <h5>Search & Compare.</h5>
             </div>
 
             <div *ngIf="itemTypeResponse_first && hasFavourite_first == true">
@@ -73,7 +74,9 @@
     <div class="col-md-6">
         <div>
             <div class="input-group form-group" style="background-color:#F2F2F2;padding-left: 25px;padding-top: 20px;padding-bottom: 20px;">
-                <input  class="form-control col-5" type="text" [(ngModel)]="searchText"  #q="ngModel" [ngbTypeahead]="searchFavourite" placeholder="Search ...">
+                <form (ngSubmit)="searchFavouriteSearch()"  novalidate>
+                    <input  class="form-control col-12" type="text" [(ngModel)]="searchText" [ngModelOptions]="{standalone: true}" #q="ngModel" [ngbTypeahead]="searchFavourite" placeholder="Search ...">
+                </form>
                 <div class="input-group-append">
                     	<button (click)="searchFavouriteSearch()" class="btn btn-outline-secondary">
                                 <i class="fa fa-search"></i>
@@ -82,11 +85,7 @@
             </div>
 
             <div class="jumbotron" *ngIf="itemTypeResponse && hasFavourite == false" class="col-md-10"> 
-                <h5>Search For products / services.</h5>
-                <h6>
-                    <span (click)="navigateToTheSearchPage()" class="pointer">Compare products / services</span>
-                    <i class="fa fa-plus-circle pointer" (click)="navigateToTheSearchPage()"></i>
-                </h6>
+                <h5>Search & Compare.</h5>
             </div>
             
             <div *ngIf="itemTypeResponse && hasFavourite == true">
