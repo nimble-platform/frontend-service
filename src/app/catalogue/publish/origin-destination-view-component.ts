@@ -14,7 +14,6 @@ export class OriginDestinationViewComponent implements OnInit{
 
     // stores the address information
     @Input() itemProperty:ItemProperty;
-    @Input() divStyle;
 
     regionOptions = ["Europe","Asia","Africa","North America","South America","Oceania"];
     countryNames = COUNTRY_NAMES;
