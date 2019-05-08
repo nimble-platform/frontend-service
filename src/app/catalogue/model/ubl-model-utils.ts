@@ -143,10 +143,18 @@ export class UBLModelUtils {
         // if we have furniture ontology categories for logistics services,then use them.
         if(furnitureOntologyLogisticCategories){
             let furnitureOntologyLogisticRelatedServices = logisticRelatedServices["FurnitureOntology"];
+            let eClassLogisticRelatedServices = logisticRelatedServices["eClass"];
+
             // for each service type, create a catalogue line
             for(let serviceType of Object.keys(furnitureOntologyLogisticRelatedServices)){
-                // get corresponding category
-                let category = this.getCorrespondingCategory(furnitureOntologyLogisticRelatedServices[serviceType],furnitureOntologyLogisticCategories);
+                // get corresponding furniture ontology category
+                let furnitureOntologyCategory = this.getCorrespondingCategory(furnitureOntologyLogisticRelatedServices[serviceType],furnitureOntologyLogisticCategories);
+                // get corresponding eClass category
+                let eClassCategory = null;
+                if(eClassLogisticCategories && eClassLogisticRelatedServices[serviceType]){
+                    eClassCategory = this.getCorrespondingCategory(eClassLogisticRelatedServices[serviceType],eClassLogisticCategories);
+                }
+
                 // create the catalogue line
                 let catalogueLine = this.createCatalogueLine(catalogueUuid,providerParty,settings);
                 // add item name and descriptions
@@ -157,11 +165,15 @@ export class UBLModelUtils {
                 // clear additional item properties
                 catalogueLine.goodsItem.item.additionalItemProperty = [];
                 // add additional item properties
-                for(let property of category.properties){
-                    catalogueLine.goodsItem.item.additionalItemProperty.push(this.createAdditionalItemProperty(property,category));
+                for(let property of furnitureOntologyCategory.properties){
+                    catalogueLine.goodsItem.item.additionalItemProperty.push(this.createAdditionalItemProperty(property,furnitureOntologyCategory));
                 }
-                // add its default category
-                catalogueLine.goodsItem.item.commodityClassification.push(this.createCommodityClassification(category));
+                // add its default furniture ontology category
+                catalogueLine.goodsItem.item.commodityClassification.push(this.createCommodityClassification(furnitureOntologyCategory));
+                // add its default eClass category if exists
+                if(eClassCategory){
+                    catalogueLine.goodsItem.item.commodityClassification.push(this.createCommodityClassification(eClassCategory));
+                }
                 // push it to the list
                 logisticCatalogueLines.set(serviceType,catalogueLine);
             }
