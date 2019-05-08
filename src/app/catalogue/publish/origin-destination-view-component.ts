@@ -2,6 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {COUNTRY_NAMES, selectPreferredValue} from '../../common/utils';
 import {Text} from '../model/publish/text';
 import {ItemProperty} from '../model/publish/item-property';
+import {REGIONS} from '../model/constants';
 
 @Component({
     selector: "origin-destination-view",
@@ -15,7 +16,7 @@ export class OriginDestinationViewComponent implements OnInit{
     // stores the address information
     @Input() itemProperty:ItemProperty;
 
-    regionOptions = ["Europe","Asia","Africa","North America","South America","Oceania"];
+    regionOptions = REGIONS;
     countryNames = COUNTRY_NAMES;
 
     enableRegionSelection:boolean = false;
