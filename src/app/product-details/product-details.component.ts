@@ -190,6 +190,7 @@ export class ProductDetailsComponent implements OnInit {
             this.productDefaultsDiscountPriceWrapper.incoterm = this.frameContractQuotationWrapper.quotationIncoterms;
             this.productDefaultsDiscountPriceWrapper.paymentMeans = this.frameContractQuotationWrapper.quotationPaymentMeans;
             this.productDefaultsDiscountPriceWrapper.deliveryPeriod = this.frameContractQuotationWrapper.quotationFrameContractDuration;
+            this.productDefaultsDiscountPriceWrapper.removeDiscountAmount = false;
         }
     }
 
