@@ -119,25 +119,6 @@ export class NegotiationResponseComponent implements OnInit {
         }
 
         this.callStatus.submit();
-
-        // create new frame contract
-        let savedFrameContract: Promise<DigitalAgreement>;
-        if(this.frameContract == null) {
-            savedFrameContract = this.saveFrameContract()
-
-            // update the frame contract
-        } else {
-            savedFrameContract = this.updateFrameContract();
-        }
-
-        // update the quotation by referring the frame contract via an additional document reference
-        savedFrameContract.then(contract => {
-            let documentReference: DocumentReference = new DocumentReference();
-            documentReference.documentType = 'FRAME_CONTRACT';
-            documentReference.id = contract.id;
-            this.quotation.additionalDocumentReference.push(documentReference);
-        });
-
         const vars: ProcessVariables = ModelUtils.createProcessVariables("Negotiation", UBLModelUtils.getPartyId(this.bpDataService.requestForQuotation.buyerCustomerParty.party),
             UBLModelUtils.getPartyId(this.bpDataService.requestForQuotation.sellerSupplierParty.party),this.cookieService.get("user_id"), this.quotation, this.bpDataService);
         const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.processMetadata.processId);
@@ -253,32 +234,6 @@ export class NegotiationResponseComponent implements OnInit {
             return true;
         }
         return false;
-    }
-
-    saveFrameContract(): Promise<DigitalAgreement> {
-        let frameContract: DigitalAgreement = new DigitalAgreement();
-        frameContract.item = this.rfq.requestForQuotationLine[0].lineItem.item;
-        frameContract.participantParty.push(this.rfq.sellerSupplierParty.party);
-        frameContract.participantParty.push(this.rfq.buyerCustomerParty.party);
-
-        frameContract.quotationReference.id = this.quotation.id;
-
-        frameContract.digitalAgreementTerms.validityPeriod.durationMeasure = this.wrapper.quotationFrameContractDuration;
-        frameContract.digitalAgreementTerms.validityPeriod.startDate = moment().format(this.dateFormat);
-        frameContract.digitalAgreementTerms.validityPeriod.endDate = this.getContractEndDate();
-
-        UBLModelUtils.removeHjidFieldsFromObject(frameContract);
-        return this.bpeService.saveFrameContract(frameContract);
-    }
-
-    private updateFrameContract(): Promise<DigitalAgreement> {
-        this.frameContract.quotationReference.id = this.quotation.id;
-
-        this.frameContract.digitalAgreementTerms.validityPeriod.durationMeasure = this.wrapper.quotationFrameContractDuration;
-        this.frameContract.digitalAgreementTerms.validityPeriod.startDate = moment().format(this.dateFormat);
-        this.frameContract.digitalAgreementTerms.validityPeriod.endDate = this.getContractEndDate();
-
-        return this.bpeService.updateFrameContract(this.frameContract);
     }
 
     private isFrameContractDurationValid(): boolean {
