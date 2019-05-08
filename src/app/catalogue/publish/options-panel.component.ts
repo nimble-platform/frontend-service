@@ -61,7 +61,7 @@ export class OptionsPanelComponent implements OnInit{
     }
 
     onOptionRemoved(value:Text) {
-        this.itemProperty.value.slice(this.itemProperty.value.indexOf(value), 1);
+        this.itemProperty.value.splice(this.itemProperty.value.indexOf(value), 1);
     }
 
     onCheckboxChanged(checked,option){
