@@ -37,7 +37,7 @@
     <div *ngIf="selectedOptionsWithExtraColumn" class="row d-flex flex-wrap">
         <div class="col-1"></div>
         <div class="col-11 d-flex flex-wrap without-left-padding">
-            <div *ngFor="let selectedOption of selectedOptions"
+            <div *ngFor="let selectedOption of itemProperty.value"
                  class="bordered my-1 mr-1">
                 <small class="p-0">{{selectedOption.value}}</small>
                 <i *ngIf="!isDefaultOption(selectedOption)" class="fa fa-times-circle pl-1" placement="right" (click)="onOptionRemoved(selectedOption)"></i>
@@ -46,7 +46,7 @@
     </div>
     <div *ngIf="!selectedOptionsWithExtraColumn" class="row d-flex flex-wrap">
         <div class="col-12 d-flex flex-wrap">
-            <div *ngFor="let selectedOption of selectedOptions"
+            <div *ngFor="let selectedOption of itemProperty.value"
                  class="bordered my-1 mr-1">
                 <small class="p-0">{{selectedOption.value}}</small>
                 <i *ngIf="!isDefaultOption(selectedOption)" class="fa fa-times-circle pl-1" placement="right" (click)="onOptionRemoved(selectedOption)"></i>
