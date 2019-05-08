@@ -149,30 +149,36 @@ export class CompareViewComponent implements OnInit {
 	}
 
 	searchFavourite_first = (text$: Observable<string>) =>
-	text$.pipe(
-		debounceTime(1000),
-		distinctUntilChanged(),
-		switchMap(term =>{
+    text$.pipe(
+      debounceTime(200),
+      distinctUntilChanged(),
+      switchMap(term =>
+        this.simpleSearchService.getSuggestions(term,("{LANG}_"+this.product_name))
+      )
+	);
+	
+	searchFavouriteSearch_first(){
 			this.catalogueLinesArray_first = [];
 			this.firstSearch = true;
-			this.secondeSearch = false;
-			this.requestCatalogue(term);
+			this.requestCatalogue(this.searchText_first);
 			return [];
-		})
+	}
+
+	searchFavourite = (text$: Observable<string>) =>
+    text$.pipe(
+      debounceTime(200),
+      distinctUntilChanged(),
+      switchMap(term =>
+        this.simpleSearchService.getSuggestions(term,("{LANG}_"+this.product_name))
+      )
 	);
 
-    searchFavourite = (text$: Observable<string>) =>
-        text$.pipe(
-            debounceTime(1000),
-            distinctUntilChanged(),
-            switchMap(term =>{
-                this.catalogueLinesArray = [];
-				this.requestCatalogue(term);
-				this.firstSearch = false;
-				this.secondeSearch = true;
-                return [];
-            })
-		);
+    searchFavouriteSearch(){
+            this.catalogueLinesArray = [];
+			this.requestCatalogue(this.searchText);
+			this.firstSearch = false;
+            return [];
+	}
 
     requestCatalogue(termText?:String): void {
 		let term =  termText != null ? termText : this.searchText;
@@ -201,13 +207,13 @@ export class CompareViewComponent implements OnInit {
 
 				if(term != null && term != ""){
 					this.initial = false;
-					let querySettings = {
-						"fields": [("{LANG}_"+this.product_name)],
-						"boosting": false,
-						"boostingFactors": {}
-					  };
-    				let queryRes = this.simpleSearchService.buildQueryString(term.toString(),querySettings,true,false);
-					query = queryRes.queryStr;
+					// let querySettings = {
+					// 	"fields": [("{LANG}_"+this.product_name)],
+					// 	"boosting": false,
+					// 	"boostingFactors": {}
+					//   };
+    				// let queryRes = this.simpleSearchService.buildQueryString(term.toString(),querySettings,false,false);
+					query = 'en_label: "'+term+'"';
 				}
                 this.getCall(query);
 
