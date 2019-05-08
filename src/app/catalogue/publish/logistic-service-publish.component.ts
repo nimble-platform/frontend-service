@@ -75,6 +75,8 @@ export class LogisticServicePublishComponent implements OnInit {
     // available logistics services
     availableLogisticsServices = [];
     dialogBox = true;
+    // furniture ontology categories which are used to represent Logistic Services
+    furnitureOntologyLogisticCategories:Category[] = null;
 
     ngOnInit() {
         const userId = this.cookieService.get("user_id");
@@ -96,7 +98,9 @@ export class LogisticServicePublishComponent implements OnInit {
                 eClassCategoryUris ? this.categoryService.getCategoriesForIds(new Array(eClassCategoryUris.length).fill("eClass"),eClassCategoryUris): Promise.resolve(null),
                 furnitureOntologyCategoryUris ? this.categoryService.getCategoriesForIds(new Array(furnitureOntologyCategoryUris.length).fill("FurnitureOntology"),furnitureOntologyCategoryUris): Promise.resolve(null)
             ]).then(([party, catalogueResponse, settings,eClassLogisticCategories,furnitureOntologyLogisticCategories]) => {
-                this.initView(party, catalogueResponse, settings,eClassLogisticCategories,furnitureOntologyLogisticCategories);
+                // set furniture ontology logistic categories
+                this.furnitureOntologyLogisticCategories = furnitureOntologyLogisticCategories;
+                this.initView(party, catalogueResponse, settings,eClassLogisticCategories);
                 this.publishStateService.publishingStarted = true;
                 this.callStatus.callback("Successfully initialized.", true);
             })
@@ -175,7 +179,7 @@ export class LogisticServicePublishComponent implements OnInit {
         return true;
     }
 
-    private initView(userParty, catalogueResponse:CataloguePaginationResponse, settings, eClassLogisticCategories,furnitureOntologyLogisticCategories): void {
+    private initView(userParty, catalogueResponse:CataloguePaginationResponse, settings, eClassLogisticCategories): void {
         this.companyNegotiationSettings = settings;
         this.catalogueService.setEditMode(true);
         this.publishStateService.resetData();
@@ -193,7 +197,7 @@ export class LogisticServicePublishComponent implements OnInit {
             }
             this.catalogueLine = this.catalogueService.draftCatalogueLine;
             // add missing additional item properties to catalogue line
-            this.addMissingAdditionalItemProperties(eClassLogisticCategories,furnitureOntologyLogisticCategories);
+            this.addMissingAdditionalItemProperties(this.catalogueLine);
             if (this.catalogueLine == null) {
                 this.publishStateService.publishMode = 'create';
                 this.router.navigate(['catalogue/publish-logistic']);
@@ -210,7 +214,7 @@ export class LogisticServicePublishComponent implements OnInit {
             // new publishing is the first entry to the publishing page
             // i.e. publishing from scratch
             if (this.publishStateService.publishingStarted == false) {
-                this.logisticCatalogueLines = UBLModelUtils.createCatalogueLinesForLogistics(catalogueResponse.catalogueUuid, userParty, settings, this.logisticRelatedServices, eClassLogisticCategories,furnitureOntologyLogisticCategories);
+                this.logisticCatalogueLines = UBLModelUtils.createCatalogueLinesForLogistics(catalogueResponse.catalogueUuid, userParty, settings, this.logisticRelatedServices, eClassLogisticCategories,this.furnitureOntologyLogisticCategories);
                 this.getServiceTypesFromLogisticsCatalogueLines();
                 this.populateLogisticPublishMode();
             }
@@ -218,11 +222,11 @@ export class LogisticServicePublishComponent implements OnInit {
     }
 
     // this method is used to add missing additional item properties to catalogue line in 'edit' mode
-    addMissingAdditionalItemProperties(eClassLogisticCategories:Category[],furnitureOntologyLogisticCategories:Category[]){
-        if(furnitureOntologyLogisticCategories){
+    addMissingAdditionalItemProperties(catalogueLine:CatalogueLine){
+        if(this.furnitureOntologyLogisticCategories){
             let category:Category = null;
-            for(let commodityClassification of this.catalogueLine.goodsItem.item.commodityClassification){
-                for(let logisticCategory of furnitureOntologyLogisticCategories){
+            for(let commodityClassification of catalogueLine.goodsItem.item.commodityClassification){
+                for(let logisticCategory of this.furnitureOntologyLogisticCategories){
                     if(commodityClassification.itemClassificationCode.uri == logisticCategory.categoryUri){
                         category = logisticCategory;
                         break;
@@ -232,16 +236,16 @@ export class LogisticServicePublishComponent implements OnInit {
             // add missing additional item properties to catalogue line
             for(let property of category.properties){
                 let missing:boolean = true;
-                for(let itemProperty of this.catalogueLine.goodsItem.item.additionalItemProperty){
+                for(let itemProperty of catalogueLine.goodsItem.item.additionalItemProperty){
                     if(itemProperty.uri == property.uri){
                         missing = false;
                         break;
                     }
                 }
-                this.catalogueLine.goodsItem.item.additionalItemProperty.push(UBLModelUtils.createAdditionalItemProperty(property,category));
+                if(missing){
+                    catalogueLine.goodsItem.item.additionalItemProperty.push(UBLModelUtils.createAdditionalItemProperty(property,category));
+                }
             }
-        } else if(eClassLogisticCategories){
-            console.error("not implemented to validate additional item property")
         }
     }
 
@@ -709,7 +713,9 @@ export class LogisticServicePublishComponent implements OnInit {
                             for(let catalogueLine of catalogueLines){
                                 for(let serviceType of this.availableLogisticsServices){
                                     if(catalogueLine.id == this.logisticCatalogueLines.get(serviceType).id){
-                                        this.logisticCatalogueLines.set(serviceType,this.catalogueLine);
+                                        // add missing additional item properties
+                                        this.addMissingAdditionalItemProperties(catalogueLine);
+                                        this.logisticCatalogueLines.set(serviceType,catalogueLine);
                                         this.logisticPublishMode.set(serviceType,'edit');
                                         break;
                                     }
@@ -722,6 +728,8 @@ export class LogisticServicePublishComponent implements OnInit {
                         } else{
                             // since there is only one catalogue line
                             this.catalogueLine = catalogueLines[0];
+                            // add missing additional item properties
+                            this.addMissingAdditionalItemProperties(this.catalogueLine);
                             // we need to change publish mode to 'edit' since we published the product/service
                             this.publishStateService.publishMode = "edit";
                         }
