@@ -90,11 +90,14 @@
                         </div>
                         <div class="col-8">
                             <div class="row">
-                                <div class="col-6">
-                                    <options-panel [selectedTab]="'TRUCKLOAD'" [title]="'Truck load'" [selectedOptions]="getDefaultPropertyForLogistics('ROADTRANSPORT', 'Truck load')"></options-panel>
-                                </div>
-                                <div class="col-6">
-                                    <options-panel [selectedTab]="'SHIPMENTTYPE'" [title]="'Shipment type'" [selectedOptions]="getDefaultPropertyForLogistics('ROADTRANSPORT', 'Shipment type')"></options-panel>
+                                <!--<div class="col-6">-->
+                                    <!--<options-panel [selectedTab]="'TRUCKLOAD'" [title]="'Truck load'" ></options-panel>-->
+                                <!--</div>-->
+                                <!--<div class="col-6">-->
+                                    <!--<options-panel [selectedTab]="'SHIPMENTTYPE'" [title]="'Shipment type'" ></options-panel>-->
+                                <!--</div>-->
+                                <div class="col-6" *ngFor="let property of getLogisticProperties('ROADTRANSPORT')">
+                                    <options-panel [itemProperty]="property"></options-panel>
                                 </div>
                             </div>
                             <div>
@@ -116,8 +119,8 @@
                         </div>
                         <div class="col-8">
                             <div class="row">
-                                <div class="col-6">
-                                    <options-panel [selectedTab]="'MARITIMETRANSPORT'" [selectedOptions]="getDefaultPropertyForLogistics('MARITIMETRANSPORT')" [title]="'Maritime'"></options-panel>
+                                <div class="col-6" *ngFor="let property of getLogisticProperties('MARITIMETRANSPORT')">
+                                    <options-panel [itemProperty]="property"></options-panel>
                                 </div>
                             </div>
                             <div>
@@ -139,8 +142,8 @@
                         </div>
                         <div class="col-8">
                             <div class="row">
-                                <div class="col-6">
-                                    <options-panel [selectedTab]="'AIRTRANSPORT'" [selectedOptions]="getDefaultPropertyForLogistics('AIRTRANSPORT')" [title]="'Air'"></options-panel>
+                                <div class="col-6" *ngFor="let property of getLogisticProperties('AIRTRANSPORT')">
+                                    <options-panel [itemProperty]="property"></options-panel>
                                 </div>
                             </div>
                             <div>
@@ -162,8 +165,8 @@
                         </div>
                         <div class="col-8">
                             <div class="row">
-                                <div class="col-6">
-                                    <options-panel [selectedTab]="'RAILTRANSPORT'" [selectedOptions]="getDefaultPropertyForLogistics('RAILTRANSPORT')" [title]="'Rail'"></options-panel>
+                                <div class="col-6" *ngFor="let property of getLogisticProperties('RAILTRANSPORT')">
+                                    <options-panel [itemProperty]="property"></options-panel>
                                 </div>
                             </div>
                             <div>
@@ -179,23 +182,23 @@
             <div class="row space-before" *ngIf="selectedTabSinglePublish == 'TRANSPORT' || selectedTabSinglePublish == 'RAILTRANSPORT' || selectedTabSinglePublish == 'AIRTRANSPORT' || selectedTabSinglePublish == 'MARITIMETRANSPORT' || selectedTabSinglePublish == 'ROADTRANSPORT'">
                 <div class="col-6">
                     <h6>Choose the type of product you can manage</h6>
-                    <options-panel [selectedTab]="'PRODUCTTYPE'" [checkboxOther]="false" [divStyle]="'well'" [selectedOptions]="getProductTypeForLogistic('TRANSPORT')"
+                    <options-panel [itemProperty]="getProductTypeProperty('TRANSPORT')" [checkboxOther]="false" [divStyle]="'well'"
                                    [selectedOptionsWithExtraColumn]="false"></options-panel>
                 </div>
                 <div class="col-6">
                     <h6>Industry specialization</h6>
-                    <options-panel [selectedTab]="'INDUSTRYSPECIALIZATION'" [checkboxOther]="false" [divStyle]="'well'" [selectedOptions]="getIndustrySpecializationForLogistics('TRANSPORT')"
+                    <options-panel [itemProperty]="getIndustrySpecializationProperty('TRANSPORT')" [checkboxOther]="false" [divStyle]="'well'"
                                    [selectedOptionsWithExtraColumn]="false"></options-panel>
                 </div>
             </div>
             <div class="row" *ngIf="selectedTabSinglePublish == 'TRANSPORT' || selectedTabSinglePublish == 'RAILTRANSPORT' || selectedTabSinglePublish == 'AIRTRANSPORT' || selectedTabSinglePublish == 'MARITIMETRANSPORT' || selectedTabSinglePublish == 'ROADTRANSPORT'">
                 <div class="col-6">
                     <h6>Destination</h6>
-                    <origin-destination-view [divStyle]="'well'" [addresses]="getLogisticCatalogueLine('TRANSPORT').requiredItemLocationQuantity.applicableTerritoryAddress"></origin-destination-view>
+                    <origin-destination-view [divStyle]="'well'" [itemProperty]="getDestinationAddressForLogistics('TRANSPORT')"></origin-destination-view>
                 </div>
                 <div class="col-6">
                     <h6>Origin</h6>
-                    <origin-destination-view [divStyle]="'well'" [addressesText]="getOriginAddressForLogistics('TRANSPORT')"></origin-destination-view>
+                    <origin-destination-view [divStyle]="'well'" [itemProperty]="getOriginAddressForLogistics('TRANSPORT')"></origin-destination-view>
                 </div>
             </div>
             <!-- Actions -->
@@ -220,19 +223,19 @@
         </div>
         <div *ngIf="availableLogisticsServices.indexOf('WAREHOUSING') != -1 && selectedTabSinglePublish == 'WAREHOUSING'">
             <div class="row space-before">
-                <div class="col-12">
-                    <options-panel [selectedTab]="'WAREHOUSING'" [item]="getLogisticCatalogueLine('WAREHOUSING').goodsItem.item" [selectedOptions]="getDefaultPropertyForLogistics('WAREHOUSING')" [title]="'Warehousing'"></options-panel>
+                <div class="col-12" *ngFor="let property of getLogisticProperties('WAREHOUSING')">
+                    <options-panel [itemProperty]="property" [item]="getLogisticCatalogueLine('WAREHOUSING').goodsItem.item"></options-panel>
                 </div>
             </div>
             <div class="row space-before">
                 <div class="col-6">
                     <h6>Choose the type of product you can manage</h6>
-                    <options-panel [selectedTab]="'PRODUCTTYPE'" [checkboxOther]="false" [divStyle]="'well'" [selectedOptions]="getProductTypeForLogistic('WAREHOUSING')"
+                    <options-panel [itemProperty]="getProductTypeProperty('WAREHOUSING')" [checkboxOther]="false" [divStyle]="'well'"
                                    [selectedOptionsWithExtraColumn]="false"></options-panel>
                 </div>
                 <div class="col-6">
                     <h6>Industry specialization</h6>
-                    <options-panel [selectedTab]="'INDUSTRYSPECIALIZATION'" [checkboxOther]="false" [divStyle]="'well'" [selectedOptions]="getIndustrySpecializationForLogistics('WAREHOUSING')"
+                    <options-panel [itemProperty]="getIndustrySpecializationProperty('WAREHOUSING')" [checkboxOther]="false" [divStyle]="'well'"
                                    [selectedOptionsWithExtraColumn]="false"></options-panel>
                 </div>
             </div>
@@ -258,19 +261,19 @@
         </div>
         <div *ngIf="availableLogisticsServices.indexOf('ORDERPICKING') != -1 && selectedTabSinglePublish == 'ORDERPICKING'">
             <div class="row space-before">
-                <div class="col-12">
-                    <options-panel [selectedTab]="'ORDERPICKING'" [item]="getLogisticCatalogueLine('ORDERPICKING').goodsItem.item" [selectedOptions]="getDefaultPropertyForLogistics('ORDERPICKING')" [title]="'Order Picking'"></options-panel>
+                <div class="col-12" *ngFor="let property of getLogisticProperties('ORDERPICKING')">
+                    <options-panel [itemProperty]="property" [item]="getLogisticCatalogueLine('ORDERPICKING').goodsItem.item"></options-panel>
                 </div>
             </div>
             <div class="row space-before">
                 <div class="col-6">
                     <h6>Choose the type of product you can manage</h6>
-                    <options-panel [selectedTab]="'PRODUCTTYPE'" [checkboxOther]="false" [divStyle]="'well'" [selectedOptions]="getProductTypeForLogistic('ORDERPICKING')"
+                    <options-panel [itemProperty]="getProductTypeProperty('ORDERPICKING')" [checkboxOther]="false" [divStyle]="'well'"
                                    [selectedOptionsWithExtraColumn]="false"></options-panel>
                 </div>
                 <div class="col-6">
                     <h6>Industry specialization</h6>
-                    <options-panel [selectedTab]="'INDUSTRYSPECIALIZATION'" [checkboxOther]="false" [divStyle]="'well'" [selectedOptions]="getIndustrySpecializationForLogistics('ORDERPICKING')"
+                    <options-panel [itemProperty]="getIndustrySpecializationProperty('ORDERPICKING')" [checkboxOther]="false" [divStyle]="'well'"
                                    [selectedOptionsWithExtraColumn]="false"></options-panel>
                 </div>
             </div>
@@ -296,19 +299,19 @@
         </div>
         <div *ngIf="availableLogisticsServices.indexOf('REVERSELOGISTICS') != -1 && selectedTabSinglePublish == 'REVERSELOGISTICS'">
             <div class="row space-before">
-                <div class="col-12">
-                    <options-panel [selectedTab]="'REVERSELOGISTICS'" [item]="getLogisticCatalogueLine('REVERSELOGISTICS').goodsItem.item" [selectedOptions]="getDefaultPropertyForLogistics('REVERSELOGISTICS')" [title]="'Reverse Logistics'"></options-panel>
+                <div class="col-12" *ngFor="let property of getLogisticProperties('REVERSELOGISTICS')">
+                    <options-panel [itemProperty]="property" [item]="getLogisticCatalogueLine('REVERSELOGISTICS').goodsItem.item"></options-panel>
                 </div>
             </div>
             <div class="row space-before">
                 <div class="col-6">
                     <h6>Choose the type of product you can manage</h6>
-                    <options-panel [selectedTab]="'PRODUCTTYPE'" [checkboxOther]="false" [divStyle]="'well'" [selectedOptions]="getProductTypeForLogistic('REVERSELOGISTICS')"
+                    <options-panel [itemProperty]="getProductTypeProperty('REVERSELOGISTICS')" [checkboxOther]="false" [divStyle]="'well'"
                                    [selectedOptionsWithExtraColumn]="false"></options-panel>
                 </div>
                 <div class="col-6">
                     <h6>Industry specialization</h6>
-                    <options-panel [selectedTab]="'INDUSTRYSPECIALIZATION'" [checkboxOther]="false" [divStyle]="'well'" [selectedOptions]="getIndustrySpecializationForLogistics('REVERSELOGISTICS')"
+                    <options-panel [itemProperty]="getIndustrySpecializationProperty('REVERSELOGISTICS')" [checkboxOther]="false" [divStyle]="'well'"
                                    [selectedOptionsWithExtraColumn]="false"></options-panel>
                 </div>
             </div>
@@ -334,19 +337,19 @@
         </div>
         <div *ngIf="availableLogisticsServices.indexOf('INHOUSESERVICES') != -1 && selectedTabSinglePublish == 'INHOUSESERVICES'">
             <div class="row space-before">
-                <div class="col-12">
-                    <options-panel [selectedTab]="'INHOUSESERVICES'" [item]="getLogisticCatalogueLine('INHOUSESERVICES').goodsItem.item" [selectedOptions]="getDefaultPropertyForLogistics('INHOUSESERVICES')" [title]="'In-house Services'"></options-panel>
+                <div class="col-12" *ngFor="let property of getLogisticProperties('INHOUSESERVICES')">
+                    <options-panel [itemProperty]="property" [item]="getLogisticCatalogueLine('INHOUSESERVICES').goodsItem.item"></options-panel>
                 </div>
             </div>
             <div class="row space-before">
                 <div class="col-6">
                     <h6>Choose the type of product you can manage</h6>
-                    <options-panel [selectedTab]="'PRODUCTTYPE'" [checkboxOther]="false" [divStyle]="'well'" [selectedOptions]="getProductTypeForLogistic('INHOUSESERVICES')"
+                    <options-panel [itemProperty]="getProductTypeProperty('INHOUSESERVICES')" [checkboxOther]="false" [divStyle]="'well'"
                                    [selectedOptionsWithExtraColumn]="false"></options-panel>
                 </div>
                 <div class="col-6">
                     <h6>Industry specialization</h6>
-                    <options-panel [selectedTab]="'INDUSTRYSPECIALIZATION'" [checkboxOther]="false" [divStyle]="'well'" [selectedOptions]="getIndustrySpecializationForLogistics('INHOUSESERVICES')"
+                    <options-panel [itemProperty]="getIndustrySpecializationProperty('INHOUSESERVICES')" [checkboxOther]="false" [divStyle]="'well'"
                                    [selectedOptionsWithExtraColumn]="false"></options-panel>
                 </div>
             </div>
@@ -372,19 +375,19 @@
         </div>
         <div *ngIf="availableLogisticsServices.indexOf('CUSTOMSMANAGEMENT') != -1 && selectedTabSinglePublish == 'CUSTOMSMANAGEMENT'">
             <div class="row space-before">
-                <div class="col-12">
-                    <options-panel [selectedTab]="'CUSTOMSMANAGEMENT'" [item]="getLogisticCatalogueLine('CUSTOMSMANAGEMENT').goodsItem.item" [selectedOptions]="getDefaultPropertyForLogistics('CUSTOMSMANAGEMENT')" [title]="'Customs Management'"></options-panel>
+                <div class="col-12" *ngFor="let property of getLogisticProperties('CUSTOMSMANAGEMENT')">
+                    <options-panel [itemProperty]="property" [item]="getLogisticCatalogueLine('CUSTOMSMANAGEMENT').goodsItem.item"></options-panel>
                 </div>
             </div>
             <div class="row space-before">
                 <div class="col-6">
                     <h6>Choose the type of product you can manage</h6>
-                    <options-panel [selectedTab]="'PRODUCTTYPE'" [checkboxOther]="false" [divStyle]="'well'" [selectedOptions]="getProductTypeForLogistic('CUSTOMSMANAGEMENT')"
+                    <options-panel [itemProperty]="getProductTypeProperty('CUSTOMSMANAGEMENT')" [checkboxOther]="false" [divStyle]="'well'"
                                    [selectedOptionsWithExtraColumn]="false"></options-panel>
                 </div>
                 <div class="col-6">
                     <h6>Industry specialization</h6>
-                    <options-panel [selectedTab]="'INDUSTRYSPECIALIZATION'" [checkboxOther]="false" [divStyle]="'well'" [selectedOptions]="getIndustrySpecializationForLogistics('CUSTOMSMANAGEMENT')"
+                    <options-panel [itemProperty]="getIndustrySpecializationProperty('CUSTOMSMANAGEMENT')" [checkboxOther]="false" [divStyle]="'well'"
                                    [selectedOptionsWithExtraColumn]="false"></options-panel>
                 </div>
             </div>
@@ -410,19 +413,19 @@
         </div>
         <div *ngIf="availableLogisticsServices.indexOf('LOGISTICSCONSULTANCY') != -1 && selectedTabSinglePublish == 'LOGISTICSCONSULTANCY'">
             <div class="row space-before">
-                <div class="col-12">
-                    <options-panel [selectedTab]="'LOGISTICSCONSULTANCY'" [item]="getLogisticCatalogueLine('LOGISTICSCONSULTANCY').goodsItem.item" [selectedOptions]="getDefaultPropertyForLogistics('LOGISTICSCONSULTANCY')" [title]="'Logistics Consultancy'"></options-panel>
+                <div class="col-12" *ngFor="let property of getLogisticProperties('LOGISTICSCONSULTANCY')">
+                    <options-panel [itemProperty]="property" [item]="getLogisticCatalogueLine('LOGISTICSCONSULTANCY').goodsItem.item"></options-panel>
                 </div>
             </div>
             <div class="row space-before">
                 <div class="col-6">
                     <h6>Choose the type of product you can manage</h6>
-                    <options-panel [selectedTab]="'PRODUCTTYPE'" [checkboxOther]="false" [divStyle]="'well'" [selectedOptions]="getProductTypeForLogistic('LOGISTICSCONSULTANCY')"
+                    <options-panel [itemProperty]="getProductTypeProperty('LOGISTICSCONSULTANCY')" [checkboxOther]="false" [divStyle]="'well'"
                                    [selectedOptionsWithExtraColumn]="false"></options-panel>
                 </div>
                 <div class="col-6">
                     <h6>Industry specialization</h6>
-                    <options-panel [selectedTab]="'INDUSTRYSPECIALIZATION'" [checkboxOther]="false" [divStyle]="'well'" [selectedOptions]="getIndustrySpecializationForLogistics('LOGISTICSCONSULTANCY')"
+                    <options-panel [itemProperty]="getIndustrySpecializationProperty('LOGISTICSCONSULTANCY')" [checkboxOther]="false" [divStyle]="'well'"
                                    [selectedOptionsWithExtraColumn]="false"></options-panel>
                 </div>
             </div>

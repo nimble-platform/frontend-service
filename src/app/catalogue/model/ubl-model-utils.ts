@@ -145,6 +145,8 @@ export class UBLModelUtils {
             let furnitureOntologyLogisticRelatedServices = logisticRelatedServices["FurnitureOntology"];
             // for each service type, create a catalogue line
             for(let serviceType of Object.keys(furnitureOntologyLogisticRelatedServices)){
+                // get corresponding category
+                let category = this.getCorrespondingCategory(furnitureOntologyLogisticRelatedServices[serviceType],furnitureOntologyLogisticCategories);
                 // create the catalogue line
                 let catalogueLine = this.createCatalogueLine(catalogueUuid,providerParty,settings);
                 // add item name and descriptions
@@ -152,18 +154,27 @@ export class UBLModelUtils {
                 let newItemDescription: Text = new Text("",DEFAULT_LANGUAGE());
                 catalogueLine.goodsItem.item.name.push(newItemName);
                 catalogueLine.goodsItem.item.description.push(newItemDescription);
+                // clear additional item properties
+                catalogueLine.goodsItem.item.additionalItemProperty = [];
                 // add additional item properties
-                catalogueLine.goodsItem.item.additionalItemProperty = this.createItemPropertiesForLogistics(serviceType);
-                // create additional item properties to handle product type, industry specialization and origin address
-                catalogueLine.goodsItem.item.additionalItemProperty.push(this.createProductTypeAdditionalItemProperty());
-                catalogueLine.goodsItem.item.additionalItemProperty.push(this.createIndustrySpecializationAdditionalItemProperty());
-                catalogueLine.goodsItem.item.additionalItemProperty.push(this.createOriginAddressAdditionalItemProperty());
+                for(let property of category.properties){
+                    catalogueLine.goodsItem.item.additionalItemProperty.push(this.createAdditionalItemProperty(property,category));
+                }
                 // add its default category
-                catalogueLine.goodsItem.item.commodityClassification.push(this.createCommodityClassification(this.getCorrespondingCategory(furnitureOntologyLogisticRelatedServices[serviceType],furnitureOntologyLogisticCategories)));
+                catalogueLine.goodsItem.item.commodityClassification.push(this.createCommodityClassification(category));
                 // push it to the list
                 logisticCatalogueLines.set(serviceType,catalogueLine);
             }
+            // create a dummy catalogue line to represent transport services
+            let catalogueLine = this.createCatalogueLine(catalogueUuid,providerParty,settings);
+            let category = this.getCorrespondingCategory(furnitureOntologyLogisticRelatedServices["ROADTRANSPORT"],furnitureOntologyLogisticCategories);
+            for(let property of category.properties){
+                catalogueLine.goodsItem.item.additionalItemProperty.push(this.createAdditionalItemProperty(property,category));
+            }
+            // push it to the list
+            logisticCatalogueLines.set("TRANSPORT",catalogueLine);
         } else if(eClassLogisticCategories){
+            console.error("not implemented eClass logistic services")
             let eClassLogisticRelatedServices = logisticRelatedServices["eClass"];
             // for each service type, create a catalogue line
             for(let serviceType of Object.keys(eClassLogisticRelatedServices)){
@@ -185,15 +196,8 @@ export class UBLModelUtils {
                 // push it to the list
                 logisticCatalogueLines.set(serviceType,catalogueLine);
             }
+            console.error("not implemented to create a dummy transport service for eClass")
         }
-        // create a dummy catalogue line to represent transport services
-        let catalogueLine = this.createCatalogueLine(catalogueUuid,providerParty,settings);
-        // create additional item properties to handle product type, industry specialization and origin address
-        catalogueLine.goodsItem.item.additionalItemProperty.push(this.createProductTypeAdditionalItemProperty());
-        catalogueLine.goodsItem.item.additionalItemProperty.push(this.createIndustrySpecializationAdditionalItemProperty());
-        catalogueLine.goodsItem.item.additionalItemProperty.push(this.createOriginAddressAdditionalItemProperty());
-        // push it to the list
-        logisticCatalogueLines.set("TRANSPORT",catalogueLine);
 
         return logisticCatalogueLines;
     }

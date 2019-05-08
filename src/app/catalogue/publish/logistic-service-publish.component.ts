@@ -18,12 +18,10 @@ import {BinaryObject} from '../model/publish/binary-object';
 import {DocumentReference} from '../model/publish/document-reference';
 import {Item} from '../model/publish/item';
 import {ItemProperty} from '../model/publish/item-property';
-import {Country} from '../model/publish/country';
-import {Text} from '../model/publish/text';
-import {Address} from '../model/publish/address';
 import {TransportationService} from '../model/publish/transportation-service';
 import {Catalogue} from '../model/publish/catalogue';
 import * as myGlobals from '../../globals';
+import {Category} from '../model/category/category';
 
 @Component({
     selector: "logistic-service-publish",
@@ -194,6 +192,8 @@ export class LogisticServicePublishComponent implements OnInit {
                 this.catalogueService.draftCatalogueLine = removeHjids(this.catalogueService.draftCatalogueLine);
             }
             this.catalogueLine = this.catalogueService.draftCatalogueLine;
+            // add missing additional item properties to catalogue line
+            this.addMissingAdditionalItemProperties(eClassLogisticCategories,furnitureOntologyLogisticCategories);
             if (this.catalogueLine == null) {
                 this.publishStateService.publishMode = 'create';
                 this.router.navigate(['catalogue/publish-logistic']);
@@ -214,6 +214,34 @@ export class LogisticServicePublishComponent implements OnInit {
                 this.getServiceTypesFromLogisticsCatalogueLines();
                 this.populateLogisticPublishMode();
             }
+        }
+    }
+
+    // this method is used to add missing additional item properties to catalogue line in 'edit' mode
+    addMissingAdditionalItemProperties(eClassLogisticCategories:Category[],furnitureOntologyLogisticCategories:Category[]){
+        if(furnitureOntologyLogisticCategories){
+            let category:Category = null;
+            for(let commodityClassification of this.catalogueLine.goodsItem.item.commodityClassification){
+                for(let logisticCategory of furnitureOntologyLogisticCategories){
+                    if(commodityClassification.itemClassificationCode.uri == logisticCategory.categoryUri){
+                        category = logisticCategory;
+                        break;
+                    }
+                }
+            }
+            // add missing additional item properties to catalogue line
+            for(let property of category.properties){
+                let missing:boolean = true;
+                for(let itemProperty of this.catalogueLine.goodsItem.item.additionalItemProperty){
+                    if(itemProperty.uri == property.uri){
+                        missing = false;
+                        break;
+                    }
+                }
+                this.catalogueLine.goodsItem.item.additionalItemProperty.push(UBLModelUtils.createAdditionalItemProperty(property,category));
+            }
+        } else if(eClassLogisticCategories){
+            console.error("not implemented to validate additional item property")
         }
     }
 
@@ -275,10 +303,40 @@ export class LogisticServicePublishComponent implements OnInit {
         return binaryObjects;
     }
 
+    getProductTypeProperty(serviceType:string){
+        let item:Item = this.getLogisticCatalogueLine(serviceType).goodsItem.item;
+        for(let property of item.additionalItemProperty){
+            if(property.uri == "http://www.aidimme.es/FurnitureSectorOntology.owl#managedProductType"){
+                return property;
+            }
+        }
+    }
+
+    getIndustrySpecializationProperty(serviceType:string){
+        let item:Item = this.getLogisticCatalogueLine(serviceType).goodsItem.item;
+        for(let property of item.additionalItemProperty){
+            if(property.uri == "http://www.aidimme.es/FurnitureSectorOntology.owl#industrySpecialization"){
+                return property;
+            }
+        }
+    }
+
+    getLogisticProperties(serviceType:string){
+        let properties = [];
+        let item:Item = this.getLogisticCatalogueLine(serviceType).goodsItem.item;
+        for(let property of item.additionalItemProperty){
+            if(property.uri != "http://www.aidimme.es/FurnitureSectorOntology.owl#industrySpecialization" && property.uri != "http://www.aidimme.es/FurnitureSectorOntology.owl#managedProductType"
+                && property.uri != "http://www.aidimme.es/FurnitureSectorOntology.owl#originTransport" && property.uri != 'http://www.aidimme.es/FurnitureSectorOntology.owl#destinationTransport' && property.itemClassificationCode.listID != 'Custom'){
+                properties.push(property);
+            }
+        }
+        return properties
+    }
+
     getProductTypeForLogistic(serviceType:string){
         let item:Item = this.getLogisticCatalogueLine(serviceType).goodsItem.item;
         for(let itemProperty of item.additionalItemProperty){
-            if(itemProperty.name[0].value == "Product Type"){
+            if(itemProperty.uri == "http://www.aidimme.es/FurnitureSectorOntology.owl#managedProductType"){
                 return itemProperty.value;
             }
         }
@@ -291,7 +349,7 @@ export class LogisticServicePublishComponent implements OnInit {
     getIndustrySpecializationForLogistics(serviceType:string){
         let item:Item = this.getLogisticCatalogueLine(serviceType).goodsItem.item;
         for(let itemProperty of item.additionalItemProperty){
-            if(itemProperty.name[0].value == "Industry Specialization"){
+            if(itemProperty.uri == 'http://www.aidimme.es/FurnitureSectorOntology.owl#industrySpecialization'){
                 return itemProperty.value;
             }
         }
@@ -304,42 +362,21 @@ export class LogisticServicePublishComponent implements OnInit {
     getOriginAddressForLogistics(serviceType:string){
         let item:Item = this.getLogisticCatalogueLine(serviceType).goodsItem.item;
         for(let itemProperty of item.additionalItemProperty){
-            if(itemProperty.name[0].value == "Origin Address"){
-                return itemProperty.value;
+            if(itemProperty.uri == "http://www.aidimme.es/FurnitureSectorOntology.owl#originTransport"){
+                return itemProperty;
             }
         }
-
-        let itemProperty = UBLModelUtils.createOriginAddressAdditionalItemProperty();
-        item.additionalItemProperty.push(itemProperty);
-        return itemProperty.value;
     }
 
-    getDefaultPropertyForLogistics(serviceType:string,propertyName:string = null){
+    getDestinationAddressForLogistics(serviceType:string){
         let item:Item = this.getLogisticCatalogueLine(serviceType).goodsItem.item;
-
-        let itemProperty:ItemProperty = null;
-        for(let ip of item.additionalItemProperty){
-            if(ip.name[0].value != "Industry Specialization" && ip.name[0].value != "Product Type" && ip.name[0].value != "Origin Address"){
-                if(propertyName && ip.name[0].value == propertyName){
-                    return ip.value;
-                } else{
-                    itemProperty = ip;
-                }
+        for(let itemProperty of item.additionalItemProperty){
+            if(itemProperty.uri == "http://www.aidimme.es/FurnitureSectorOntology.owl#destinationTransport"){
+                return itemProperty;
             }
         }
-
-        if(itemProperty){
-            return itemProperty.value;
-        }
-
-        let itemProperties = UBLModelUtils.createItemPropertiesForLogistics(serviceType);
-
-        for(let itemProperty of itemProperties){
-            item.additionalItemProperty.push(itemProperty);
-        }
-
-        return itemProperties[0].value;
     }
+
     // methods to select/unselect files for Transport logistic services
     onSelectFileForLogisticService(binaryObject: BinaryObject,serviceType:string){
         const document: DocumentReference = new DocumentReference();
@@ -412,12 +449,6 @@ export class LogisticServicePublishComponent implements OnInit {
         return item.name[0] && item.name[0].value !== "";
     }
 
-    private checkProductNature(catalogueLine: CatalogueLine) {
-        if(this.publishStateService.publishedProductNature == 'Regular product') {
-            catalogueLine.goodsItem.item.transportationServiceDetails = null;
-        }
-    }
-
     // Removes empty properties from catalogueLines about to be sent
     private removeEmptyProperties(catalogueLine: CatalogueLine): CatalogueLine {
 
@@ -477,27 +508,20 @@ export class LogisticServicePublishComponent implements OnInit {
         let productType = this.getProductTypeForLogistic('TRANSPORT');
         let industrySpecialization = this.getIndustrySpecializationForLogistics('TRANSPORT');
         let originAddress = this.getOriginAddressForLogistics('TRANSPORT');
+        let destinationAddress = this.getDestinationAddressForLogistics('TRANSPORT');
         for(let itemProperty of catalogueLine.goodsItem.item.additionalItemProperty){
-            if(itemProperty.name[0].value == "Product Type"){
+            if(itemProperty.uri == 'http://www.aidimme.es/FurnitureSectorOntology.owl#managedProductType'){
                 itemProperty.value = productType;
             }
-            else if(itemProperty.name[0].value == "Industry Specialization"){
+            else if(itemProperty.uri == 'http://www.aidimme.es/FurnitureSectorOntology.owl#industrySpecialization'){
                 itemProperty.value = industrySpecialization;
             }
-            else if(itemProperty.name[0].value == "Origin Address"){
-                itemProperty.value = originAddress;
+            else if(itemProperty.uri == "http://www.aidimme.es/FurnitureSectorOntology.owl#originTransport"){
+                itemProperty.value = originAddress.value;
             }
-        }
-        // destination address
-        for(let address of this.logisticCatalogueLines.get("TRANSPORT").requiredItemLocationQuantity.applicableTerritoryAddress){
-            let country:Country = null;
-            if(address.country.name){
-                country = new Country(new Text(address.country.name.value));
+            else if(itemProperty.uri == "http://www.aidimme.es/FurnitureSectorOntology.owl#destinationTransport"){
+                itemProperty.value = destinationAddress.value;
             }
-
-            let newAddress:Address = new Address(address.cityName,address.region,address.postalZone,address.buildingNumber,address.streetName,country);
-
-            catalogueLine.requiredItemLocationQuantity.applicableTerritoryAddress.push(newAddress);
         }
     }
 
@@ -506,16 +530,13 @@ export class LogisticServicePublishComponent implements OnInit {
     onPublish(exitThePage:boolean) {
         if(this.publishStateService.publishMode === 'edit' || this.publishStateService.publishMode === 'copy') {
 
-            // remove unused properties from catalogueLine
-            const splicedCatalogueLine: CatalogueLine = this.removeEmptyProperties(this.catalogueLine);
-
             if(this.publishStateService.publishMode === 'edit'){
                 // update existing service
-                this.saveEditedProduct(exitThePage,[splicedCatalogueLine]);
+                this.saveEditedProduct(exitThePage,[this.catalogueLine]);
             }
             else{
                 // publish the new service
-                this.publish([splicedCatalogueLine],exitThePage);
+                this.publish([this.catalogueLine],exitThePage);
             }
         }
         else{
@@ -581,8 +602,15 @@ export class LogisticServicePublishComponent implements OnInit {
 
     private publish(catalogueLines:CatalogueLine[],exitThePage:boolean){
         this.publishStatus.submit();
-        // be sure that its transportation service details is not null
+
+        let splicedCatalogueLines: CatalogueLine[] = [];
+        // remove unused properties from catalogueLine
         for(let catalogueLine of catalogueLines){
+            splicedCatalogueLines.push(this.removeEmptyProperties(catalogueLine));
+        }
+
+        // be sure that its transportation service details is not null
+        for(let catalogueLine of splicedCatalogueLines){
             catalogueLine.goodsItem.item.transportationServiceDetails = new TransportationService();
         }
 
@@ -592,12 +620,12 @@ export class LogisticServicePublishComponent implements OnInit {
                 // create the catalogue
                 let catalogue:Catalogue = new Catalogue("default", null, userParty, "", "", []);
                 // add catalogue lines to the end of catalogue
-                for(let catalogueLine of catalogueLines){
+                for(let catalogueLine of splicedCatalogueLines){
                     catalogue.catalogueLine.push(catalogueLine);
                 }
 
                 this.catalogueService.postCatalogue(catalogue)
-                    .then(() => this.onSuccessfulPublish(exitThePage,catalogueLines))
+                    .then(() => this.onSuccessfulPublish(exitThePage,splicedCatalogueLines))
                     .catch(err => {
                         this.onFailedPublish(err);
                     })
@@ -607,7 +635,7 @@ export class LogisticServicePublishComponent implements OnInit {
 
         } else {
             // TODO: create a service to add multiple catalogue lines
-            for(let catalogueLine of catalogueLines){
+            for(let catalogueLine of splicedCatalogueLines){
                 this.catalogueService.addCatalogueLine(this.catalogueService.catalogueResponse.catalogueUuid,JSON.stringify(catalogueLine))
                     .then(() => {
                         this.onSuccessfulPublish(exitThePage,[catalogueLine]);
@@ -625,8 +653,14 @@ export class LogisticServicePublishComponent implements OnInit {
 
         this.publishStatus.submit();
 
-        // TODO: create a service to update multiple catalogue lines
+        let splicedCatalogueLines: CatalogueLine[] = [];
+        // remove unused properties from catalogueLine
         for(let catalogueLine of catalogueLines){
+            splicedCatalogueLines.push(this.removeEmptyProperties(catalogueLine));
+        }
+
+        // TODO: create a service to update multiple catalogue lines
+        for(let catalogueLine of splicedCatalogueLines){
             this.catalogueService.updateCatalogueLine(this.catalogueService.catalogueResponse.catalogueUuid,JSON.stringify(catalogueLine))
                 .then(() => this.onSuccessfulPublish(exitThePage,[catalogueLine]))
                 .then(() => this.changePublishModeToCreate())
