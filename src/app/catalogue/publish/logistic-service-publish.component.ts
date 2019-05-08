@@ -340,10 +340,6 @@ export class LogisticServicePublishComponent implements OnInit {
                 return itemProperty.value;
             }
         }
-
-        let itemProperty = UBLModelUtils.createProductTypeAdditionalItemProperty();
-        item.additionalItemProperty.push(itemProperty);
-        return itemProperty.value;
     }
 
     getIndustrySpecializationForLogistics(serviceType:string){
@@ -353,10 +349,6 @@ export class LogisticServicePublishComponent implements OnInit {
                 return itemProperty.value;
             }
         }
-
-        let itemProperty = UBLModelUtils.createIndustrySpecializationAdditionalItemProperty();
-        item.additionalItemProperty.push(itemProperty);
-        return itemProperty.value;
     }
 
     getOriginAddressForLogistics(serviceType:string){
