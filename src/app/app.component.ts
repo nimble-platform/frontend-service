@@ -316,6 +316,10 @@ export class AppComponent implements OnInit {
                 if (all_rights || publish || purch || sales || (initial && !compReq))
                     this.allowed = true;
                 break;
+            case "compare" :
+                if (all_rights || publish || purch || sales || (initial && !compReq))
+                    this.allowed = true;
+                break;
             case "bp":
                 if (all_rights || purch || sales)
                     this.allowed = true;

@@ -142,7 +142,12 @@ export class TermsAndConditionsComponent implements OnInit {
                             this.contract.clause.push(newClause);
                         }
                         // push contract to order.contract
-                        this.order.contract.push(this.contract);
+                        if(this.order.contract){
+                            this.order.contract.push(this.contract);
+                        } else{
+                            this.order.contract = [this.contract];
+                        }
+
                     }
                     // create term and conditions for request for quotation
                     if(this.requestForQuotation && this.requestForQuotation.termOrCondition.length == 0){
@@ -391,11 +396,13 @@ export class TermsAndConditionsComponent implements OnInit {
 
     // get the contract containing the terms and conditions details
     private getTermsAndConditionsContract(){
-        for(let contract of this.order.contract){
-            for(let clause of contract.clause){
-                if(!clause.type){
-                    this.contract = contract;
-                    break;
+        if(this.order.contract){
+            for(let contract of this.order.contract){
+                for(let clause of contract.clause){
+                    if(!clause.type){
+                        this.contract = contract;
+                        break;
+                    }
                 }
             }
         }

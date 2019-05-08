@@ -208,6 +208,7 @@ export class DashboardThreadedComponent implements OnInit {
         switch(this.queryParameters.tab) {
             case TABS.PURCHASES:
             case TABS.FAVOURITE:
+            case TABS.COMPARE:
             case TABS.SALES:
                 this.queryOrdersIfNeeded();
                 return;
@@ -227,7 +228,7 @@ export class DashboardThreadedComponent implements OnInit {
             }
         } else {
             const upped = tab.toUpperCase()
-            if(upped === TABS.CATALOGUE || upped === TABS.SALES || upped === TABS.WELCOME || upped === TABS.FAVOURITE) {
+            if(upped === TABS.CATALOGUE || upped === TABS.SALES || upped === TABS.WELCOME || upped === TABS.FAVOURITE || upped == TABS.COMPARE) {
                 return upped;
             }
         }

@@ -19,6 +19,13 @@
                 </a>
             </li>
             <li *ngIf="haveTransportServiceDetails" class="nav-item">
+                    <a href id="PRICE" class="nav-link"
+                        [ngClass]="{ active: selectedTab === 'PRICE'}"
+                        (click)="onSelectTab($event)">
+                        Price
+                    </a>
+            </li>
+            <li *ngIf="haveTransportServiceDetails" class="nav-item">
                 <a href id="DELIVERY_TRADING" class="nav-link"
                     *ngIf="isLogistics === false"
                     [ngClass]="{ active: selectedTab === 'DELIVERY_TRADING'}"
@@ -95,9 +102,8 @@
         </div>
     </div>
 
-    <!-- Delivery & Trading Tab -->
-    <div *ngIf="selectedTab === 'DELIVERY_TRADING'" class="p-3 col-12">
-        <div class="d-flex" *ngIf="isLogistics === false">
+    <!-- Price Tab -->
+    <div *ngIf="selectedTab === 'PRICE'" class="p-3 col-12">
             <div style="flex-grow:1;">
                 <h3 *ngIf="wrapper.getPricePerItem() != '' || wrapper.getFreeSample() != ''" class="p-1">Price</h3>
                 <div *ngIf="wrapper.getPricePerItem() != ''" class="p-1">
@@ -107,6 +113,11 @@
                     <strong>Free Sample: </strong> {{ wrapper.getFreeSample() }}
                 </div>
             </div>
+    </div>
+
+    <!-- Delivery & Trading Tab -->
+    <div *ngIf="selectedTab === 'DELIVERY_TRADING'" class="p-3 col-12">
+        <div class="d-flex" *ngIf="isLogistics === false">
             <div style="flex-grow:1;">
                 <h3 *ngIf="wrapper.getIncoterms() != '' || wrapper.getSpecialTerms() != null || wrapper.getDeliveryPeriod() != ''" class="pt-2 p-1">Delivery Terms</h3>
                 <div *ngIf="wrapper.getIncoterms() != ''" class="p-1">

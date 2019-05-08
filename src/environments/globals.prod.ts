@@ -173,6 +173,7 @@ export const product_vendor_rating_fulfillment = "trustFullfillmentOfTerms";
 export const product_vendor_rating_delivery = "trustDeliveryPackaging";
 export const product_vendor_trust = "trustScore";
 export const product_name = "label";
+export const class_suggestion_field = "classification.allLabels";
 export const product_description = "description";
 export const product_img = "imgageUri";
 export const product_price = "price";
@@ -195,7 +196,7 @@ export const product_default = {};
 export const facet_min = 1;
 export const facet_count = -1;
 export const query_settings = {
-  "fields": ["STANDARD","commodityClassficationUri","{LANG}_label","{LANG}_desc"],
+  "fields": ["STANDARD","commodityClassficationUri","{LANG}_label","{LANG}_desc", class_suggestion_field],
   "boosting": true,
   "boostingFactors": {
     "STANDARD": 4,
