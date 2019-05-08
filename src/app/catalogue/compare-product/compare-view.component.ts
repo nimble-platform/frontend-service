@@ -64,7 +64,8 @@ export class CompareViewComponent implements OnInit {
     getCatalogueStatus = new CallStatus();
     callStatus = new CallStatus();
     deleteStatuses: CallStatus[] = [];
-    imageMap: any = {};
+	imageMap: any = {};
+	imageMap_first: any = {};	
 	facetObj: any;
 	temp: any;
 	hari = false;
@@ -463,31 +464,60 @@ export class CompareViewComponent implements OnInit {
 
     fetchImages(searchResults:any[]): void {
 		// fetch images asynchronously
-		this.imageMap = {};
+		if(this.firstSearch){
+			this.imageMap_first = {};
 
-		let imageMap: any = {};
-		for(let result of searchResults) {
-			let productImages: string[] = result.imgageUri;
-			if(productImages != null && productImages.length > 0) {
-				imageMap[result.uri] = productImages;
+			let imageMap_first: any = {};
+			for(let result of searchResults) {
+				let productImages: string[] = result.imgageUri;
+				if(productImages != null && productImages.length > 0) {
+					imageMap_first[result.uri] = productImages;
+				}
 			}
-		}
 
-		let imageUris: string[] = [];
-		for(let productUri in imageMap) {
-			imageUris.push(imageMap[productUri]);
-		}
-		if(imageUris.length > 0) {
-			this.catalogueService.getBinaryObjects(imageUris).then(images => {
-				for (let image of images) {
-					for (let productUri in imageMap) {
-						if(imageMap[productUri] == image.uri) {
-							this.imageMap[productUri] = "data:" + image.mimeCode + ";base64," + image.value
+			let imageUris_first: string[] = [];
+			for(let productUri in imageMap_first) {
+				imageUris_first.push(imageMap_first[productUri]);
+			}
+			if(imageUris_first.length > 0) {
+				this.catalogueService.getBinaryObjects(imageUris_first).then(images => {
+					for (let image of images) {
+						for (let productUri in imageMap_first) {
+							if(imageMap_first[productUri] == image.uri) {
+								this.imageMap_first[productUri] = "data:" + image.mimeCode + ";base64," + image.value
+							}
 						}
 					}
+				}, error => {
+				});
+			}
+		}else{
+			this.imageMap = {};
+
+			let imageMap: any = {};
+			for(let result of searchResults) {
+				let productImages: string[] = result.imgageUri;
+				if(productImages != null && productImages.length > 0) {
+					imageMap[result.uri] = productImages;
 				}
-			}, error => {
-			});
+			}
+
+			let imageUris: string[] = [];
+			for(let productUri in imageMap) {
+				imageUris.push(imageMap[productUri]);
+			}
+			if(imageUris.length > 0) {
+				this.catalogueService.getBinaryObjects(imageUris).then(images => {
+					for (let image of images) {
+						for (let productUri in imageMap) {
+							if(imageMap[productUri] == image.uri) {
+								this.imageMap[productUri] = "data:" + image.mimeCode + ";base64," + image.value
+							}
+						}
+					}
+				}, error => {
+				});
+			}
 		}
     }
 
