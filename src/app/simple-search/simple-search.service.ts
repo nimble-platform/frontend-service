@@ -116,7 +116,9 @@ export class SimpleSearchService {
     searchObject.facet.field = [];
     searchObject.facet.limit = -1;
     for (let i=0; i<queryRes.queryFields.length; i++) {
-      searchObject.facet.field.push(queryRes.queryFields[i]);
+        if(queryRes.queryFields[i] != class_suggestion_field){
+            searchObject.facet.field.push(queryRes.queryFields[i]);
+        }
     }
     return this.http
 		.post(url, searchObject, {headers: this.getHeadersWithBasicAuthorization()})
