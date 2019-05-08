@@ -1,15 +1,15 @@
 <div class="well">
     <!--name, description and additional files-->
-    <div *ngIf="item" class="row space-before space-left">
-        <div id="info" class="col-2">
-            <label>Additional Information</label>
-        </div>
-        <div class="col-2 without-left-padding">
-            <file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFile($event)" [binaryObjects]="files"
-                        (onClearFile)="onUnSelectFile($event)">
-            </file-input>
-        </div>
-    </div>
+    <!--<div *ngIf="item" class="row space-before space-left">-->
+        <!--<div id="info" class="col-2">-->
+            <!--<label>Additional Information</label>-->
+        <!--</div>-->
+        <!--<div class="col-2 without-left-padding">-->
+            <!--<file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFile($event)" [binaryObjects]="files"-->
+                        <!--(onClearFile)="onUnSelectFile($event)">-->
+            <!--</file-input>-->
+        <!--</div>-->
+    <!--</div>-->
     <!--Title-->
     <h6 *ngIf="title">{{title}}</h6>
     <!--options-->
