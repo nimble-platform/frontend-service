@@ -48,7 +48,7 @@
                 <label class="col-3 col-form-label">File</label>
                 <div class="col-9">
                     <!--<input type="file" class="form-control" [formControl]="addCertForm.controls['file']" (change)="onSetCertificateFile($event)" required>-->
-                    <file-input [disabled]="disabled" [presentationMode]="'edit'" (onSelectFile)="onSetCertificateFile($event)">
+                    <file-input [disabled]="disabled" [presentationMode]="'edit'" (onSelectFile)="onSetCertificateFile($event)" (onRemovingEmit)="removedFile($event)" required>
                     </file-input>
                 </div>
             </div>
@@ -95,7 +95,7 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-primary save-cert-btn" [disabled]="!addCertForm.valid || disabled" (click)="onCertificateDetailsProvided(addCertForm, d);">
+            <button type="button" class="btn btn-primary save-cert-btn" [disabled]="!addCertForm.valid || disabled || !validUpload" (click)="onCertificateDetailsProvided(addCertForm, d);">
                 <span>Add</span>
             </button>
         </div>
