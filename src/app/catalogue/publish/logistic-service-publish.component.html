@@ -85,10 +85,10 @@
                 <h6 class="col-1">Road</h6>
                 <div class="col-11 well">
                     <div class="row">
-                        <div class="col-4 name-description-panel">
+                        <div class="col-5 name-description-panel">
                             <name-description-panel [item]="getLogisticCatalogueLine('ROADTRANSPORT').goodsItem.item" [valueClass]="'col-7'" [languageIdClass]="'col-2'" [flexClass]="'col-2'"></name-description-panel>
                         </div>
-                        <div class="col-8">
+                        <div class="col-7">
                             <div class="row">
                                 <!--<div class="col-6">-->
                                     <!--<options-panel [selectedTab]="'TRUCKLOAD'" [title]="'Truck load'" ></options-panel>-->
@@ -114,10 +114,10 @@
                 <h6 class="col-1">Maritime</h6>
                 <div class="col-11 well">
                     <div class="row">
-                        <div class="col-4 name-description-panel">
+                        <div class="col-5 name-description-panel">
                             <name-description-panel [item]="getLogisticCatalogueLine('MARITIMETRANSPORT').goodsItem.item" [valueClass]="'col-7'" [languageIdClass]="'col-2'" [flexClass]="'col-2'"></name-description-panel>
                         </div>
-                        <div class="col-8">
+                        <div class="col-7">
                             <div class="row">
                                 <div class="col-6" *ngFor="let property of getLogisticProperties('MARITIMETRANSPORT')">
                                     <options-panel [itemProperty]="property"></options-panel>
@@ -137,10 +137,10 @@
                 <h6 class="col-1">Air</h6>
                 <div class="col-11 well">
                     <div class="row">
-                        <div class="col-4 name-description-panel">
+                        <div class="col-5 name-description-panel">
                             <name-description-panel [item]="getLogisticCatalogueLine('AIRTRANSPORT').goodsItem.item" [valueClass]="'col-7'" [languageIdClass]="'col-2'" [flexClass]="'col-2'"></name-description-panel>
                         </div>
-                        <div class="col-8">
+                        <div class="col-7">
                             <div class="row">
                                 <div class="col-6" *ngFor="let property of getLogisticProperties('AIRTRANSPORT')">
                                     <options-panel [itemProperty]="property"></options-panel>
@@ -160,10 +160,10 @@
                 <h6 class="col-1">Rail</h6>
                 <div class="col-11 well">
                     <div class="row">
-                        <div class="col-4 name-description-panel">
+                        <div class="col-5 name-description-panel">
                             <name-description-panel [item]="getLogisticCatalogueLine('RAILTRANSPORT').goodsItem.item" [valueClass]="'col-7'" [languageIdClass]="'col-2'" [flexClass]="'col-2'"></name-description-panel>
                         </div>
-                        <div class="col-8">
+                        <div class="col-7">
                             <div class="row">
                                 <div class="col-6" *ngFor="let property of getLogisticProperties('RAILTRANSPORT')">
                                     <options-panel [itemProperty]="property"></options-panel>
