@@ -21,23 +21,17 @@ export class OptionsPanelComponent implements OnInit{
     // inputs
     @Input() itemProperty:ItemProperty;
     @Input() checkboxOther = true;
-    @Input() item:Item;
     @Input() selectedOptionsWithExtraColumn = true;
     // variables
     options = [];
 
     option:string = null;
 
-    files:BinaryObject[];
-
     isOtherOptionEnabled = false;
     title:string = null;
 
     ngOnInit(){
 
-        if(this.item && this.item.itemSpecificationDocumentReference){
-            this.files = this.item.itemSpecificationDocumentReference.map(doc => doc.attachment.embeddedDocumentBinaryObject);
-        }
         if(this.itemProperty){
             this.searchService.getProperty(this.itemProperty.uri).then(indexedProperty => {
                 // set the title
@@ -92,21 +86,5 @@ export class OptionsPanelComponent implements OnInit{
             }
         }
         return false;
-    }
-
-    // methods for file selection
-    onSelectFile(binaryObject: BinaryObject){
-        const document: DocumentReference = new DocumentReference();
-        const attachment: Attachment = new Attachment();
-        attachment.embeddedDocumentBinaryObject = binaryObject;
-        document.attachment = attachment;
-        this.item.itemSpecificationDocumentReference.push(document);
-    }
-
-    onUnSelectFile(binaryObject: BinaryObject){
-        const index = this.item.itemSpecificationDocumentReference.findIndex(doc => doc.attachment.embeddedDocumentBinaryObject === binaryObject);
-        if(index >= 0) {
-            this.item.itemSpecificationDocumentReference.splice(index, 1);
-        }
     }
 }
