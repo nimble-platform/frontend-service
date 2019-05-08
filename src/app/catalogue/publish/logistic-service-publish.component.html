@@ -83,102 +83,78 @@
             <button *ngIf="availableLogisticsServices.indexOf('ROADTRANSPORT') != -1 && (!singleTabForLogisticServices || selectedTabSinglePublish == 'ROADTRANSPORT')" class='btn btn-outline-primary button-block col-3' (click)="showRoadTransportService = !showRoadTransportService">Road Transport</button>
             <div class="well" *ngIf="showRoadTransportService">
                 <name-description-panel [catalogueLine]="getLogisticCatalogueLine('ROADTRANSPORT')"></name-description-panel>
-                <div class="row">
-                    <div>
-                        <div class="div-padding-left">
-                            <h6>Additional Information</h6>
-                            <file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFileForLogisticService($event,'ROADTRANSPORT')" [binaryObjects]="getBinaryObjectsForLogisticService('ROADTRANSPORT')"
-                                        (onClearFile)="onUnSelectFileForLogisticService($event,'ROADTRANSPORT')">
-                            </file-input>
-                        </div>
-                    </div>
-                    <div class="col-7">
-                        <div class="row">
-                            <div class="col-6" *ngFor="let property of getLogisticProperties('ROADTRANSPORT')">
-                                <options-panel [itemProperty]="property"></options-panel>
-                            </div>
-                        </div>
-                    </div>
+                <!--<div>-->
+                    <!--<div class="div-padding-left">-->
+                        <!--<h6>Additional Information</h6>-->
+                        <!--<file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFileForLogisticService($event,'ROADTRANSPORT')" [binaryObjects]="getBinaryObjectsForLogisticService('ROADTRANSPORT')"-->
+                                    <!--(onClearFile)="onUnSelectFileForLogisticService($event,'ROADTRANSPORT')">-->
+                        <!--</file-input>-->
+                    <!--</div>-->
+                <!--</div>-->
+                <div class="space-before" *ngFor="let property of getLogisticProperties('ROADTRANSPORT')">
+                    <options-panel [itemProperty]="property"></options-panel>
                 </div>
             </div>
             <button *ngIf="availableLogisticsServices.indexOf('MARITIMETRANSPORT') != -1 && (!singleTabForLogisticServices || selectedTabSinglePublish == 'MARITIMETRANSPORT')" class='btn btn-outline-primary button-block col-3' (click)="showMaritimeTransportService = !showMaritimeTransportService">Maritime Transport</button>
             <div class="well" *ngIf="showMaritimeTransportService">
                 <name-description-panel [catalogueLine]="getLogisticCatalogueLine('MARITIMETRANSPORT')"></name-description-panel>
-                <div class="row">
-                    <div>
-                        <div class="div-padding-left">
-                            <h6>Additional Information</h6>
-                            <file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFileForLogisticService($event,'MARITIMETRANSPORT')" [binaryObjects]="getBinaryObjectsForLogisticService('MARITIMETRANSPORT')"
-                                        (onClearFile)="onUnSelectFileForLogisticService($event,'MARITIMETRANSPORT')">
-                            </file-input>
-                        </div>
-                    </div>
-                    <div class="col-7">
-                        <div class="row">
-                            <div class="col-6" *ngFor="let property of getLogisticProperties('MARITIMETRANSPORT')">
-                                <options-panel [itemProperty]="property"></options-panel>
-                            </div>
-                        </div>
-                    </div>
+                <!--<div>-->
+                    <!--<div class="div-padding-left">-->
+                        <!--<h6>Additional Information</h6>-->
+                        <!--<file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFileForLogisticService($event,'MARITIMETRANSPORT')" [binaryObjects]="getBinaryObjectsForLogisticService('MARITIMETRANSPORT')"-->
+                                    <!--(onClearFile)="onUnSelectFileForLogisticService($event,'MARITIMETRANSPORT')">-->
+                        <!--</file-input>-->
+                    <!--</div>-->
+                <!--</div>-->
+                <div class="space-before" *ngFor="let property of getLogisticProperties('MARITIMETRANSPORT')">
+                    <options-panel [itemProperty]="property"></options-panel>
                 </div>
             </div>
             <button *ngIf="availableLogisticsServices.indexOf('AIRTRANSPORT') != -1 && (!singleTabForLogisticServices || selectedTabSinglePublish == 'AIRTRANSPORT')" class='btn btn-outline-primary button-block col-3' (click)="showAirTransportService = !showAirTransportService">Air Transport</button>
             <div class="well" *ngIf="showAirTransportService">
                 <name-description-panel [catalogueLine]="getLogisticCatalogueLine('AIRTRANSPORT')"></name-description-panel>
-                <div class="row">
-                    <div>
-                        <div class="div-padding-left">
-                            <h6>Additional Information</h6>
-                            <file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFileForLogisticService($event,'AIRTRANSPORT')" [binaryObjects]="getBinaryObjectsForLogisticService('AIRTRANSPORT')"
-                                        (onClearFile)="onUnSelectFileForLogisticService($event,'AIRTRANSPORT')">
-                            </file-input>
-                        </div>
-                    </div>
-                    <div class="col-7">
-                        <div class="row">
-                            <div class="col-6" *ngFor="let property of getLogisticProperties('AIRTRANSPORT')">
-                                <options-panel [itemProperty]="property"></options-panel>
-                            </div>
-                        </div>
-                    </div>
+                <!--<div>-->
+                    <!--<div class="div-padding-left">-->
+                        <!--<h6>Additional Information</h6>-->
+                        <!--<file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFileForLogisticService($event,'AIRTRANSPORT')" [binaryObjects]="getBinaryObjectsForLogisticService('AIRTRANSPORT')"-->
+                                    <!--(onClearFile)="onUnSelectFileForLogisticService($event,'AIRTRANSPORT')">-->
+                        <!--</file-input>-->
+                    <!--</div>-->
+                <!--</div>-->
+                <div class="space-before" *ngFor="let property of getLogisticProperties('AIRTRANSPORT')">
+                    <options-panel [itemProperty]="property"></options-panel>
                 </div>
             </div>
             <button *ngIf="availableLogisticsServices.indexOf('RAILTRANSPORT') != -1 && (!singleTabForLogisticServices || selectedTabSinglePublish == 'RAILTRANSPORT')" class='btn btn-outline-primary button-block col-3' (click)="showRailTransportService = !showRailTransportService">Rail Transport</button>
             <div class="well" *ngIf="showRailTransportService">
                 <name-description-panel [catalogueLine]="getLogisticCatalogueLine('RAILTRANSPORT')"></name-description-panel>
-                <div class="row">
-                    <div>
-                        <div class="div-padding-left">
-                            <h6>Additional Information</h6>
-                            <file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFileForLogisticService($event,'RAILTRANSPORT')" [binaryObjects]="getBinaryObjectsForLogisticService('RAILTRANSPORT')"
-                                        (onClearFile)="onUnSelectFileForLogisticService($event,'RAILTRANSPORT')">
-                            </file-input>
-                        </div>
-                    </div>
-                    <div class="col-7">
-                        <div class="row">
-                            <div class="col-6" *ngFor="let property of getLogisticProperties('RAILTRANSPORT')">
-                                <options-panel [itemProperty]="property"></options-panel>
-                            </div>
-                        </div>
-                    </div>
+                <!--<div>-->
+                    <!--<div class="div-padding-left">-->
+                        <!--<h6>Additional Information</h6>-->
+                        <!--<file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFileForLogisticService($event,'RAILTRANSPORT')" [binaryObjects]="getBinaryObjectsForLogisticService('RAILTRANSPORT')"-->
+                                    <!--(onClearFile)="onUnSelectFileForLogisticService($event,'RAILTRANSPORT')">-->
+                        <!--</file-input>-->
+                    <!--</div>-->
+                <!--</div>-->
+                <div class="space-before" *ngFor="let property of getLogisticProperties('RAILTRANSPORT')">
+                    <options-panel [itemProperty]="property"></options-panel>
                 </div>
             </div>
-            <div class="row space-before" *ngIf="selectedTabSinglePublish == 'TRANSPORT' || selectedTabSinglePublish == 'RAILTRANSPORT' || selectedTabSinglePublish == 'AIRTRANSPORT' || selectedTabSinglePublish == 'MARITIMETRANSPORT' || selectedTabSinglePublish == 'ROADTRANSPORT'">
-                <div class="col-6">
+            <div *ngIf="selectedTabSinglePublish == 'TRANSPORT' || selectedTabSinglePublish == 'RAILTRANSPORT' || selectedTabSinglePublish == 'AIRTRANSPORT' || selectedTabSinglePublish == 'MARITIMETRANSPORT' || selectedTabSinglePublish == 'ROADTRANSPORT'">
+                <div class="space-before">
                     <options-panel [itemProperty]="getProductTypeProperty('TRANSPORT')" [checkboxOther]="false"
                                    [selectedOptionsWithExtraColumn]="false"></options-panel>
                 </div>
-                <div class="col-6">
+                <div class="space-before">
                     <options-panel [itemProperty]="getIndustrySpecializationProperty('TRANSPORT')" [checkboxOther]="false"
                                    [selectedOptionsWithExtraColumn]="false"></options-panel>
                 </div>
             </div>
-            <div class="row" *ngIf="selectedTabSinglePublish == 'TRANSPORT' || selectedTabSinglePublish == 'RAILTRANSPORT' || selectedTabSinglePublish == 'AIRTRANSPORT' || selectedTabSinglePublish == 'MARITIMETRANSPORT' || selectedTabSinglePublish == 'ROADTRANSPORT'">
-                <div class="col-6">
+            <div *ngIf="selectedTabSinglePublish == 'TRANSPORT' || selectedTabSinglePublish == 'RAILTRANSPORT' || selectedTabSinglePublish == 'AIRTRANSPORT' || selectedTabSinglePublish == 'MARITIMETRANSPORT' || selectedTabSinglePublish == 'ROADTRANSPORT'">
+                <div class="space-before">
                     <origin-destination-view  [itemProperty]="getDestinationAddressForLogistics('TRANSPORT')"></origin-destination-view>
                 </div>
-                <div class="col-6">
+                <div class="space-before">
                     <origin-destination-view  [itemProperty]="getOriginAddressForLogistics('TRANSPORT')"></origin-destination-view>
                 </div>
             </div>
@@ -205,7 +181,7 @@
         <div *ngIf="availableLogisticsServices.indexOf('WAREHOUSING') != -1 && selectedTabSinglePublish == 'WAREHOUSING'">
             <name-description-panel [catalogueLine]="getLogisticCatalogueLine('WAREHOUSING')"></name-description-panel>
 
-            <div class="row space-before" *ngFor="let property of getLogisticCatalogueLine('WAREHOUSING').goodsItem.item.additionalItemProperty">
+            <div class="space-before" *ngFor="let property of getLogisticCatalogueLine('WAREHOUSING').goodsItem.item.additionalItemProperty">
                 <options-panel [itemProperty]="property" [item]="getLogisticCatalogueLine('WAREHOUSING').goodsItem.item"></options-panel>
             </div>
 
@@ -232,7 +208,7 @@
         <div *ngIf="availableLogisticsServices.indexOf('ORDERPICKING') != -1 && selectedTabSinglePublish == 'ORDERPICKING'">
             <name-description-panel [catalogueLine]="getLogisticCatalogueLine('ORDERPICKING')"></name-description-panel>
 
-            <div class="row space-before" *ngFor="let property of getLogisticCatalogueLine('ORDERPICKING').goodsItem.item.additionalItemProperty">
+            <div class="space-before" *ngFor="let property of getLogisticCatalogueLine('ORDERPICKING').goodsItem.item.additionalItemProperty">
                 <options-panel [itemProperty]="property" [item]="getLogisticCatalogueLine('ORDERPICKING').goodsItem.item"></options-panel>
             </div>
 
@@ -259,7 +235,7 @@
         <div *ngIf="availableLogisticsServices.indexOf('REVERSELOGISTICS') != -1 && selectedTabSinglePublish == 'REVERSELOGISTICS'">
             <name-description-panel [catalogueLine]="getLogisticCatalogueLine('REVERSELOGISTICS')"></name-description-panel>
 
-            <div class="row space-before" *ngFor="let property of getLogisticCatalogueLine('REVERSELOGISTICS').goodsItem.item.additionalItemProperty">
+            <div class="space-before" *ngFor="let property of getLogisticCatalogueLine('REVERSELOGISTICS').goodsItem.item.additionalItemProperty">
                 <options-panel [itemProperty]="property" [item]="getLogisticCatalogueLine('REVERSELOGISTICS').goodsItem.item"></options-panel>
             </div>
 
@@ -286,7 +262,7 @@
         <div *ngIf="availableLogisticsServices.indexOf('INHOUSESERVICES') != -1 && selectedTabSinglePublish == 'INHOUSESERVICES'">
             <name-description-panel [catalogueLine]="getLogisticCatalogueLine('INHOUSESERVICES')"></name-description-panel>
 
-            <div class="row space-before" *ngFor="let property of getLogisticCatalogueLine('INHOUSESERVICES').goodsItem.item.additionalItemProperty">
+            <div class="space-before" *ngFor="let property of getLogisticCatalogueLine('INHOUSESERVICES').goodsItem.item.additionalItemProperty">
                 <options-panel [itemProperty]="property" [item]="getLogisticCatalogueLine('INHOUSESERVICES').goodsItem.item"></options-panel>
             </div>
 
@@ -313,7 +289,7 @@
         <div *ngIf="availableLogisticsServices.indexOf('CUSTOMSMANAGEMENT') != -1 && selectedTabSinglePublish == 'CUSTOMSMANAGEMENT'">
             <name-description-panel [catalogueLine]="getLogisticCatalogueLine('CUSTOMSMANAGEMENT')"></name-description-panel>
 
-            <div class="row space-before" *ngFor="let property of getLogisticCatalogueLine('CUSTOMSMANAGEMENT').goodsItem.item.additionalItemProperty">
+            <div class="space-before" *ngFor="let property of getLogisticCatalogueLine('CUSTOMSMANAGEMENT').goodsItem.item.additionalItemProperty">
                 <options-panel [itemProperty]="property" [item]="getLogisticCatalogueLine('CUSTOMSMANAGEMENT').goodsItem.item"></options-panel>
             </div>
 
@@ -340,7 +316,7 @@
         <div *ngIf="availableLogisticsServices.indexOf('LOGISTICSCONSULTANCY') != -1 && selectedTabSinglePublish == 'LOGISTICSCONSULTANCY'">
             <name-description-panel [catalogueLine]="getLogisticCatalogueLine('LOGISTICSCONSULTANCY')"></name-description-panel>
 
-            <div class="row space-before" *ngFor="let property of getLogisticCatalogueLine('LOGISTICSCONSULTANCY').goodsItem.item.additionalItemProperty">
+            <div class="space-before" *ngFor="let property of getLogisticCatalogueLine('LOGISTICSCONSULTANCY').goodsItem.item.additionalItemProperty">
                 <options-panel [itemProperty]="property" [item]="getLogisticCatalogueLine('LOGISTICSCONSULTANCY').goodsItem.item"></options-panel>
             </div>
 
