@@ -225,13 +225,6 @@ export class ProductPublishComponent implements OnInit {
      * Event Handlers
      */
 
-    /**
-     * Input is bound to the manufacturersItemIdentification.id . Copy it to the line id
-     */
-    onLineIdChange(): void {
-        this.catalogueLine.id = this.catalogueLine.goodsItem.item.manufacturersItemIdentification.id;
-    }
-
     onSelectTab(event: any) {
         event.preventDefault();
         if(event.target.id === "singleUpload") {
@@ -244,39 +237,6 @@ export class ProductPublishComponent implements OnInit {
     onSelectTabSinglePublish(event: any) {
         event.preventDefault();
         this.selectedTabSinglePublish = event.target.id;
-    }
-
-    onAddImage(event: any) {
-        let fileList: FileList = event.target.files;
-        if (fileList.length > 0) {
-            let images = this.catalogueLine.goodsItem.item.productImage;
-
-            for (let i = 0; i < fileList.length; i++) {
-                let file: File = fileList[i];
-                const filesize = parseInt(((file.size/1024)/1024).toFixed(4));
-                if (filesize <= 5) {
-                  let reader = new FileReader();
-
-                  reader.onload = function (e: any) {
-                      let base64String = (reader.result as string).split(',').pop();
-                      let binaryObject = new BinaryObject(base64String, file.type, file.name, "", "");
-                      images.push(binaryObject);
-                  };
-                  reader.readAsDataURL(file);
-                }
-                else {
-                  alert("Maximum allowed filesize: 5 MB");
-                }
-            }
-        }
-    }
-
-    onRemoveImage(index: number): void {
-        this.catalogueLine.goodsItem.item.productImage.splice(index, 1);
-    }
-
-    onClickImageRecommendations(content): void {
-        this.modalService.open(content);
     }
 
     /**

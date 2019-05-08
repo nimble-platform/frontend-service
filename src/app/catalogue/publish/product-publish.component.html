@@ -57,66 +57,7 @@
 
 <ng-container *ngIf="publishingGranularity === 'single' && catalogueLine">
     <hr>
-
-    <!-- Image, Name & Description -->
-    <div class="row space-before">
-        <!-- Image -->
-        <div class="col-3 product-image">
-            <img *ngIf="catalogueLine.goodsItem.item.productImage.length == 0"
-                class="img-max"
-                src="assets/empty_img.png">
-            <img *ngIf="catalogueLine.goodsItem.item.productImage.length > 0"
-                class="img-selected d-block active"
-                src="data:{{catalogueLine.goodsItem.item.productImage[0].mimeCode}};base64,{{catalogueLine.goodsItem.item.productImage[0].value}}"/>
-        </div>
-
-        <div class="col-9">
-            <!-- product ID -->
-            <text-input label="ID"
-                        [(text)]="catalogueLine.goodsItem.item.manufacturersItemIdentification.id"
-                        [rows]="1"
-                        [maxLength]="256"
-                        [rowClass]="'m-0'"
-                        [valueClass]="'col-9 pr-0'"
-                        (textChange)="onLineIdChange()">
-            </text-input>
-            <hr>
-            <name-description-panel [item]="catalogueLine.goodsItem.item"></name-description-panel>
-        </div>
-    </div>
-
-    <!-- Add Images -->
-    <div class="row space-before">
-        <div class="col-12 d-flex flex-wrap">
-            <div *ngFor="let image of catalogueLine.goodsItem.item.productImage; let i = index" class="add-image">
-                <img class="image-small img-thumbnail" src="data:{{image.mimeCode}};base64,{{image.value}}" />
-                <i class="fa fa-times-circle delete-image" (click)="onRemoveImage(i)"></i>
-            </div>
-            <div class="add-image btn btn-outline-primary">
-                <span>Add Image</span>
-                <input type="file" (change)="onAddImage($event)"/>
-                <i class="fa fa-question-circle delete-image" (click)="onClickImageRecommendations(imageRecommendationModal)"></i>
-            </div>
-        </div>
-    </div>
-
-    <!-- Image recommendations Modal -->
-    <ng-template #imageRecommendationModal let-d="dismiss">
-        <div class="modal-header">
-            <h4 class="modal-title">Image recommendations</h4>
-            <button type="button" class="close" aria-label="Close" (click)="d('')">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <div class="modal-body">
-            <ul>
-                <li>Images must be files with one of the "png", "jpg" or "gif" formats.</li>
-                <li>Although not mandatory, square or squarish images are recommended for better visibility.</li>
-                <li>Images exceeding 1 MB in size are not permitted.</li>
-            </ul>
-        </div>
-    </ng-template>
-
+    <name-description-panel [catalogueLine]="catalogueLine"></name-description-panel>
     <hr>
 
     <!-- Tabs for Product -->
