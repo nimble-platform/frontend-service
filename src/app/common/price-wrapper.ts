@@ -2,6 +2,7 @@ import { Price } from "../catalogue/model/publish/price";
 import { Quantity } from "../catalogue/model/publish/quantity";
 import { currencyToString } from "./utils";
 import { ItemPriceWrapper } from "./item-price-wrapper";
+import {Amount} from "../catalogue/model/publish/amount";
 
 /**
  * Wrapper around a price and a quantity, contains convenience methods to get the total price,
@@ -41,6 +42,10 @@ export class PriceWrapper {
             return "Not specified";
         }
         return `${this.totalPrice} ${this.currency}`;
+    }
+
+    get pricePerItem(): number {
+        return this.price.priceAmount.value;
     }
 
     get pricePerItemString(): string {

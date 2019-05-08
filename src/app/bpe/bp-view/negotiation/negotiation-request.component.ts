@@ -1,40 +1,37 @@
-import {Component, OnInit, Input, ViewChild} from '@angular/core';
-import { CatalogueLine } from "../../../catalogue/model/publish/catalogue-line";
-import { BPDataService } from "../bp-data-service";
-import { CURRENCIES } from "../../../catalogue/model/constants";
-import { RequestForQuotation } from "../../../catalogue/model/publish/request-for-quotation";
-import { RequestForQuotationLine } from "../../../catalogue/model/publish/request-for-quotation-line";
-import { Location } from "@angular/common";
-import { CallStatus } from "../../../common/call-status";
-import { UBLModelUtils } from "../../../catalogue/model/ubl-model-utils";
-import { BPEService } from "../../bpe.service";
-import { UserService } from "../../../user-mgmt/user.service";
-import { CookieService } from "ng2-cookies";
+import {Component, OnInit, ViewChild} from "@angular/core";
+import {CatalogueLine} from "../../../catalogue/model/publish/catalogue-line";
+import {BPDataService} from "../bp-data-service";
+import {CURRENCIES} from "../../../catalogue/model/constants";
+import {RequestForQuotation} from "../../../catalogue/model/publish/request-for-quotation";
+import {RequestForQuotationLine} from "../../../catalogue/model/publish/request-for-quotation-line";
+import {Location} from "@angular/common";
+import {CallStatus} from "../../../common/call-status";
+import {UBLModelUtils} from "../../../catalogue/model/ubl-model-utils";
+import {BPEService} from "../../bpe.service";
+import {UserService} from "../../../user-mgmt/user.service";
+import {CookieService} from "ng2-cookies";
 import {ActivatedRoute, Router} from "@angular/router";
-import { CustomerParty } from "../../../catalogue/model/publish/customer-party";
-import { SupplierParty } from "../../../catalogue/model/publish/supplier-party";
-import { ProcessVariables } from "../../model/process-variables";
-import { ModelUtils } from "../../model/model-utils";
-import { ProcessInstanceInputMessage } from "../../model/process-instance-input-message";
-import { NegotiationModelWrapper } from "./negotiation-model-wrapper";
-import {getMaximumQuantityForPrice, getStepForPrice, copy, isValidPrice} from "../../../common/utils";
-import { PeriodRange } from "../../../user-mgmt/model/period-range";
-import { Option } from "../../../common/options-input.component";
-import { addressToString } from "../../../user-mgmt/utils";
-import {DocumentService} from '../document-service';
-import {DiscountModalComponent} from '../../../product-details/discount-modal.component';
-import {BpStartEvent} from '../../../catalogue/model/publish/bp-start-event';
-import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
-import * as myGlobals from '../../../globals';
+import {CustomerParty} from "../../../catalogue/model/publish/customer-party";
+import {SupplierParty} from "../../../catalogue/model/publish/supplier-party";
+import {ProcessVariables} from "../../model/process-variables";
+import {ModelUtils} from "../../model/model-utils";
+import {ProcessInstanceInputMessage} from "../../model/process-instance-input-message";
+import {NegotiationModelWrapper} from "./negotiation-model-wrapper";
+import {copy, getMaximumQuantityForPrice, getStepForPrice, isValidPrice} from "../../../common/utils";
+import {PeriodRange} from "../../../user-mgmt/model/period-range";
+import {Option} from "../../../common/options-input.component";
+import {addressToString} from "../../../user-mgmt/utils";
+import {DocumentService} from "../document-service";
+import {DiscountModalComponent} from "../../../product-details/discount-modal.component";
+import {ThreadEventMetadata} from "../../../catalogue/model/publish/thread-event-metadata";
+import * as myGlobals from "../../../globals";
 import {DigitalAgreement} from "../../../catalogue/model/publish/digital-agreement";
-import {DocumentReference} from "../../../catalogue/model/publish/document-reference";
 import {UnitService} from "../../../common/unit-service";
 import {frameContractDurationUnitListId} from "../../../common/constants";
 import {Party} from "../../../catalogue/model/publish/party";
-import {TradingTerm} from "../../../catalogue/model/publish/trading-term";
-import {MultiTypeValue} from "../../../catalogue/model/publish/multi-type-value";
 import {Quantity} from "../../../catalogue/model/publish/quantity";
 import {Quotation} from "../../../catalogue/model/publish/quotation";
+import {Price} from "../../../catalogue/model/publish/price";
 
 @Component({
     selector: "negotiation-request",
@@ -48,11 +45,14 @@ export class NegotiationRequestComponent implements OnInit {
     line: CatalogueLine;
     rfq: RequestForQuotation;
     rfqLine: RequestForQuotationLine;
-    wrapper: NegotiationModelWrapper;
+    wrapper: NegotiationModelWrapper; // keeps the active information to be sent to the server
+    initialWrapper: NegotiationModelWrapper // keeps the information passed initially
     frameContract: DigitalAgreement = new DigitalAgreement();
     frameContractDuration: Quantity = new Quantity();
-    initialFrameContractDuration: Quantity = new Quantity(); // to be able to compare the latest value with the initial one
+    frameContractQuotationWrapper: NegotiationModelWrapper; // keeps the terms in the quotation, if available
+    initialFrameContractDuration: Quantity = new Quantity(); // keeps the initial frame contract duration to be able to compare the latest value with the initial one
     frameContractDurationUnits: string[];
+    termsDropdownValue: 'product_defaults' | 'frame_contract' = 'product_defaults';
     config = myGlobals.config;
 
     negotiatedPriceValue: number;
@@ -103,6 +103,7 @@ export class NegotiationRequestComponent implements OnInit {
         this.rfqLine = this.rfq.requestForQuotationLine[0];
         this.line = this.bpDataService.getCatalogueLine();
         this.wrapper = new NegotiationModelWrapper(this.line, this.rfq, null, this.bpDataService.getCompanySettings().negotiationSettings);
+        this.initialWrapper = new NegotiationModelWrapper(copy(this.line), copy(this.rfq), null, null);
         this.totalPrice = this.wrapper.rfqTotalPrice;
         this.negotiatedPriceValue = this.totalPrice;
 
@@ -128,10 +129,16 @@ export class NegotiationRequestComponent implements OnInit {
                 this.frameContractAvailable = true;
                 this.frameContractDuration = this.frameContract.digitalAgreementTerms.validityPeriod.durationMeasure;
 
-                // automatically load the terms if the user has already initiated the negotiation with the frame contract
-                if(this.termsSource == 'frame_contract') {
-                    this.onloadFrameContractTerms();
-                }
+                // load the quotation associated to the frame contract
+                this.documentService.getDocumentJsonContent(this.frameContract.quotationReference.id).then(document => {
+                    let quotation: Quotation = document;
+                    this.frameContractQuotationWrapper = new NegotiationModelWrapper(null, this.rfq, quotation, null);
+
+                    // automatically load the terms if the user has already initiated the negotiation with the frame contract
+                    if(this.termsSource == 'frame_contract') {
+                        this.loadTerms(this.termsSource);
+                    }
+                });
             });
         }
 
@@ -245,41 +252,57 @@ export class NegotiationRequestComponent implements OnInit {
         return true;
     }
 
-    onloadFrameContractTerms(): void {
-        // load the quotation associated to the frame contract
-        this.documentService.getDocumentJsonContent(this.frameContract.quotationReference.id).then(document => {
-            let quotation: Quotation = document;
-            let quotationWrapper: NegotiationModelWrapper = new NegotiationModelWrapper(null, this.rfq, quotation, null);
-            this.wrapper.rfqDeliveryPeriod = quotationWrapper.quotationDeliveryPeriod;
-            this.rfq.negotiationOptions.deliveryPeriod = true;
-            this.wrapper.rfqWarranty = quotationWrapper.quotationWarranty;
-            this.rfq.negotiationOptions.warranty = true;
-            this.wrapper.rfqPaymentTerms.paymentTerm = quotationWrapper.quotationPaymentTerms.paymentTerm;
-            this.rfq.negotiationOptions.paymentTerms = true;
-            this.wrapper.rfqIncoterms = quotationWrapper.quotationIncoterms;
-            this.rfq.negotiationOptions.incoterms = true;
-            this.wrapper.rfqPaymentMeans = quotationWrapper.quotationPaymentMeans;
-            this.rfq.negotiationOptions.paymentMeans = true;
-            this.wrapper.rfqDiscountPriceWrapper.itemPrice.price.priceAmount = quotationWrapper.quotationPriceWrapper.price.priceAmount;
-            this.wrapper.rfqDiscountPriceWrapper.itemPrice.price.baseQuantity = quotationWrapper.quotationPriceWrapper.price.baseQuantity;
-            this.rfq.negotiationOptions.price = true;
-            this.showCounterOfferTerms = true;
-        });
+    loadTerms(termSource: 'product_defaults' | 'frame_contract'): void {
+        this.termsDropdownValue = termSource;
+
+        if(termSource == 'frame_contract') {
+            // replicate the quotation data since we want to use original quotation data while checking whether the quotation terms have been changed
+            this.wrapper.rfqDeliveryPeriod = copy(this.frameContractQuotationWrapper.quotationDeliveryPeriod);
+            this.wrapper.rfqWarranty = copy(this.frameContractQuotationWrapper.quotationWarranty);
+            this.wrapper.rfqPaymentTerms.paymentTerm = this.frameContractQuotationWrapper.quotationPaymentTerms.paymentTerm;
+            this.wrapper.rfqIncoterms = this.frameContractQuotationWrapper.quotationIncoterms;
+            this.wrapper.rfqPaymentMeans = this.frameContractQuotationWrapper.quotationPaymentMeans;
+            this.wrapper.rfqDiscountPriceWrapper.itemPrice.value = this.frameContractQuotationWrapper.quotationPriceWrapper.pricePerItem;
+            this.wrapper.rfqDiscountPriceWrapper.itemPrice.currency = this.frameContractQuotationWrapper.quotationPriceWrapper.currency;
+
+            this.rfq.requestForQuotationLine[0].lineItem.price.priceAmount.value = this.frameContractQuotationWrapper.quotationPriceWrapper.value;
+
+        } else {
+            this.wrapper.rfqDeliveryPeriod = copy(this.initialWrapper.rfqDeliveryPeriod);
+            this.wrapper.rfqWarranty = copy(this.initialWrapper.rfqWarranty);
+            this.wrapper.rfqPaymentTerms.paymentTerm = this.initialWrapper.rfqPaymentTerms.paymentTerm;
+            this.wrapper.rfqIncoterms = this.initialWrapper.rfqIncoterms;
+            this.wrapper.rfqPaymentMeans = this.initialWrapper.rfqPaymentMeans;
+            this.wrapper.rfqDiscountPriceWrapper.itemPrice.value = this.initialWrapper.rfqDiscountPriceWrapper.itemPrice.value;
+            this.wrapper.rfqDiscountPriceWrapper.itemPrice.currency = this.initialWrapper.rfqDiscountPriceWrapper.itemPrice.currency;
+        }
+
+        // this.rfq.negotiationOptions.deliveryPeriod = !UBLModelUtils.areQuantitiesEqual(this.wrapper.rfqDeliveryPeriod, this.frameContractQuotationWrapper.quotationDeliveryPeriod);
+        // this.rfq.negotiationOptions.warranty = !UBLModelUtils.areQuantitiesEqual(this.wrapper.rfqWarranty, this.frameContractQuotationWrapper.quotationWarranty);
+        // this.rfq.negotiationOptions.paymentTerms = this.wrapper.rfqPaymentTerms.paymentTerm != this.frameContractQuotationWrapper.quotationPaymentTerms.paymentTerm;
+        // this.rfq.negotiationOptions.incoterms = this.wrapper.rfqIncoterms != this.frameContractQuotationWrapper.quotationIncoterms;
+        // this.rfq.negotiationOptions.paymentMeans = this.wrapper.rfqPaymentMeans != this.frameContractQuotationWrapper.quotationPaymentMeans;
+        // this.rfq.negotiationOptions.price = this.wrapper.rfqDiscountPriceWrapper.itemPrice.price.priceAmount.value != this.frameContractQuotationWrapper.quotationPriceWrapper.price.priceAmount.value ||
+        //     this.wrapper.rfqDiscountPriceWrapper.itemPrice.price.baseQuantity.value != this.frameContractQuotationWrapper.quotationPriceWrapper.price.baseQuantity.value;
     }
 
     /*
      * Getters and setters for the template.
      */
 
+    /**
+     * Check product defaults
+     * @returns {boolean}
+     */
     isNegotiatingAnyTerm(): boolean {
         return this.rfq.negotiationOptions.price
             || this.rfq.negotiationOptions.deliveryPeriod
             || this.rfq.negotiationOptions.warranty
-            || (this.rfq.negotiationOptions.incoterms && this.wrapper.lineIncoterms != this.wrapper.rfqIncoterms)
-            || (this.rfq.negotiationOptions.paymentTerms && this.wrapper.linePaymentTerms != this.wrapper.rfqPaymentTerms.paymentTerm)
-            || (this.rfq.negotiationOptions.paymentMeans && this.wrapper.linePaymentMeans != this.wrapper.rfqPaymentMeans)
+            || (this.rfq.negotiationOptions.incoterms /*&& this.wrapper.lineIncoterms != this.wrapper.rfqIncoterms*/)
+            || (this.rfq.negotiationOptions.paymentTerms /*&& this.wrapper.linePaymentTerms != this.wrapper.rfqPaymentTerms.paymentTerm*/)
+            || (this.rfq.negotiationOptions.paymentMeans /*&& this.wrapper.linePaymentMeans != this.wrapper.rfqPaymentMeans*/)
             || this.rfq.dataMonitoringRequested
-            || (this.rfq.negotiationOptions.frameContractDuration && !UBLModelUtils.areQuantitiesEqual(this.initialFrameContractDuration, this.wrapper.rfqFrameContractDuration));
+            || (this.rfq.negotiationOptions.frameContractDuration /*&& !UBLModelUtils.areQuantitiesEqual(this.initialFrameContractDuration, this.wrapper.rfqFrameContractDuration)*/);
     }
 
     get lineHasPrice(): boolean {
@@ -318,11 +341,13 @@ export class NegotiationRequestComponent implements OnInit {
             this.wrapper.lineDiscountPriceWrapper.removeDiscountAmount = true;
             this.wrapper.rfqDiscountPriceWrapper.removeDiscountAmount = true;
 
-            this.wrapper.lineDiscountPriceWrapper.itemPrice.price.priceAmount.value =this.line.requiredItemLocationQuantity.price.priceAmount.value;
-            this.wrapper.lineDiscountPriceWrapper.itemPrice.price.priceAmount.currencyID = this.line.requiredItemLocationQuantity.price.priceAmount.currencyID;
-
-            this.wrapper.rfqDiscountPriceWrapper.itemPrice.price.priceAmount.value = this.line.requiredItemLocationQuantity.price.priceAmount.value;
-            this.wrapper.rfqDiscountPriceWrapper.itemPrice.price.priceAmount.currencyID = this.line.requiredItemLocationQuantity.price.priceAmount.currencyID;
+            if(this.termsDropdownValue == 'product_defaults') {
+                this.wrapper.rfqDiscountPriceWrapper.itemPrice.value = this.wrapper.lineDiscountPriceWrapper.itemPrice.value = this.line.requiredItemLocationQuantity.price.priceAmount.value;
+                this.wrapper.lineDiscountPriceWrapper.itemPrice.currency = this.wrapper.lineDiscountPriceWrapper.itemPrice.currency = this.line.requiredItemLocationQuantity.price.priceAmount.currencyID;
+            } else {
+                this.wrapper.rfqDiscountPriceWrapper.itemPrice.value = this.wrapper.lineDiscountPriceWrapper.itemPrice.value = this.frameContractQuotationWrapper.quotationPriceWrapper.pricePerItem;
+                this.wrapper.rfqDiscountPriceWrapper.itemPrice.currency = this.wrapper.lineDiscountPriceWrapper.itemPrice.currency = this.frameContractQuotationWrapper.quotationPriceWrapper.currency;
+            }
         }
     }
 
@@ -388,7 +413,7 @@ export class NegotiationRequestComponent implements OnInit {
     }
 
     isFormValid(): boolean {
-        let formValid = this.rfq.negotiationOptions.frameContractDuration || this.isFrameContractValid();
+        let formValid = !this.rfq.negotiationOptions.frameContractDuration || this.isFrameContractValid();
         formValid = formValid && this.isDeliveryPeriodValid() && this.isWarrantyPeriodValid() && this.isPriceValid();
         return formValid;
     }
@@ -452,14 +477,6 @@ export class NegotiationRequestComponent implements OnInit {
         return !range || this.isPeriodValid(this.wrapper.rfqDeliveryPeriod.value, range);
     }
 
-    private getDeliveryPeriodRange(): PeriodRange | null {
-        const unit = this.wrapper.rfqDeliveryPeriod.unitCode;
-        const settings = this.wrapper.settings;
-
-        const index = settings.deliveryPeriodUnits.indexOf(unit);
-        return index >= 0 ? settings.deliveryPeriodRanges[index] : null;
-    }
-
     getWarrantyPeriodText(): string {
         const range = this.getWarrantyPeriodRange();
 
@@ -486,6 +503,29 @@ export class NegotiationRequestComponent implements OnInit {
         return !range || this.isPeriodValid(this.wrapper.rfqWarranty.value, range);
     }
 
+    isFrameContractTermsChanged(): boolean {
+        return UBLModelUtils.areQuantitiesEqual(this.wrapper.rfqDeliveryPeriod, this.frameContractQuotationWrapper.quotationDeliveryPeriod) ||
+            !UBLModelUtils.areQuantitiesEqual(this.wrapper.rfqDeliveryPeriod, this.frameContractQuotationWrapper.quotationDeliveryPeriod) ||
+            !UBLModelUtils.areQuantitiesEqual(this.wrapper.rfqWarranty, this.frameContractQuotationWrapper.quotationWarranty) ||
+            this.wrapper.rfqPaymentTerms.paymentTerm != this.frameContractQuotationWrapper.quotationPaymentTerms.paymentTerm ||
+            this.wrapper.rfqIncoterms != this.frameContractQuotationWrapper.quotationIncoterms ||
+            this.wrapper.rfqPaymentMeans != this.frameContractQuotationWrapper.quotationPaymentMeans ||
+            !UBLModelUtils.areAmountsEqual(this.wrapper.rfqDiscountPriceWrapper.itemPrice.price.priceAmount, this.frameContractQuotationWrapper.quotationPriceWrapper.price.priceAmount) ||
+            !UBLModelUtils.areQuantitiesEqual(this.wrapper.rfqDiscountPriceWrapper.itemPrice.price.baseQuantity, this.frameContractQuotationWrapper.quotationPriceWrapper.price.baseQuantity);
+    }
+
+    /**
+     * Internal methods
+     */
+
+    private getDeliveryPeriodRange(): PeriodRange | null {
+        const unit = this.wrapper.rfqDeliveryPeriod.unitCode;
+        const settings = this.wrapper.settings;
+
+        const index = settings.deliveryPeriodUnits.indexOf(unit);
+        return index >= 0 ? settings.deliveryPeriodRanges[index] : null;
+    }
+
     private getWarrantyPeriodRange(): PeriodRange | null {
         const unit = this.wrapper.rfqWarranty.unitCode;
         const settings = this.wrapper.settings;
@@ -500,10 +540,6 @@ export class NegotiationRequestComponent implements OnInit {
         }
 
         return value >= range.start && value <= range.end;
-    }
-
-    private rfqContainsDigitalAgreementReference(): boolean {
-        return this.rfq.additionalDocumentReference.filter(ref => ref.documentType == 'DIGITAL_AGREEMENT').length > 0;
     }
 
     private openDiscountModal(): void{

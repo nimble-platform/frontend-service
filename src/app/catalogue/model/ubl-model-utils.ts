@@ -643,4 +643,18 @@ export class UBLModelUtils {
 
         return false;
     }
+
+    public static areAmountsEqual(amount1: Amount, amount2: Amount): boolean {
+        if(amount1 == null && amount2 == null) {
+            return true;
+        }
+        if(amount1 == null || amount2 == null) {
+            return false;
+        }
+        if(amount1.value == amount2.value && amount1.currencyID == amount2.currencyID) {
+            return true;
+        }
+
+        return false;
+    }
 }
