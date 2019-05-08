@@ -81,99 +81,85 @@
         </div>
         <div class="space-before" *ngIf="selectedTabSinglePublish == 'TRANSPORT' || singleTabForLogisticServices">
             <h4 *ngIf="!singleTabForLogisticServices || selectedTabSinglePublish == 'ROADTRANSPORT' || selectedTabSinglePublish == 'RAILTRANSPORT' || selectedTabSinglePublish == 'MARITIMETRANSPORT' || selectedTabSinglePublish == 'AIRTRANSPORT'" >Transport mode</h4>
-            <div class="row" *ngIf="availableLogisticsServices.indexOf('ROADTRANSPORT') != -1 && (!singleTabForLogisticServices || selectedTabSinglePublish == 'ROADTRANSPORT')">
-                <h6 class="col-1">Road</h6>
-                <div class="col-11 well">
-                    <div class="row">
-                        <div class="col-5 name-description-panel">
-                            <name-description-panel [item]="getLogisticCatalogueLine('ROADTRANSPORT').goodsItem.item" [valueClass]="'col-7'" [languageIdClass]="'col-2'" [flexClass]="'col-2'"></name-description-panel>
+            <button *ngIf="availableLogisticsServices.indexOf('ROADTRANSPORT') != -1 && (!singleTabForLogisticServices || selectedTabSinglePublish == 'ROADTRANSPORT')" class='btn btn-outline-primary button-block' (click)="showRoadTransportService = !showRoadTransportService">Road</button>
+            <div class="well" *ngIf="showRoadTransportService">
+                <div class="row">
+                    <div class="col-5 name-description-panel">
+                        <name-description-panel [item]="getLogisticCatalogueLine('ROADTRANSPORT').goodsItem.item" [valueClass]="'col-7'" [languageIdClass]="'col-2'" [flexClass]="'col-2'"></name-description-panel>
+                        <div class="div-padding-left">
+                            <h6>Additional Information</h6>
+                            <file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFileForLogisticService($event,'ROADTRANSPORT')" [binaryObjects]="getBinaryObjectsForLogisticService('ROADTRANSPORT')"
+                                        (onClearFile)="onUnSelectFileForLogisticService($event,'ROADTRANSPORT')">
+                            </file-input>
                         </div>
-                        <div class="col-7">
-                            <div class="row">
-                                <!--<div class="col-6">-->
-                                    <!--<options-panel [selectedTab]="'TRUCKLOAD'" [title]="'Truck load'" ></options-panel>-->
-                                <!--</div>-->
-                                <!--<div class="col-6">-->
-                                    <!--<options-panel [selectedTab]="'SHIPMENTTYPE'" [title]="'Shipment type'" ></options-panel>-->
-                                <!--</div>-->
-                                <div class="col-6" *ngFor="let property of getLogisticProperties('ROADTRANSPORT')">
-                                    <options-panel [itemProperty]="property"></options-panel>
-                                </div>
-                            </div>
-                            <div>
-                                <h6>Additional Information</h6>
-                                <file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFileForLogisticService($event,'ROADTRANSPORT')" [binaryObjects]="getBinaryObjectsForLogisticService('ROADTRANSPORT')"
-                                            (onClearFile)="onUnSelectFileForLogisticService($event,'ROADTRANSPORT')">
-                                </file-input>
+                    </div>
+                    <div class="col-7">
+                        <div class="row">
+                            <div class="col-6" *ngFor="let property of getLogisticProperties('ROADTRANSPORT')">
+                                <options-panel [itemProperty]="property"></options-panel>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="row" *ngIf="availableLogisticsServices.indexOf('MARITIMETRANSPORT') != -1 && (!singleTabForLogisticServices || selectedTabSinglePublish == 'MARITIMETRANSPORT')">
-                <h6 class="col-1">Maritime</h6>
-                <div class="col-11 well">
-                    <div class="row">
-                        <div class="col-5 name-description-panel">
-                            <name-description-panel [item]="getLogisticCatalogueLine('MARITIMETRANSPORT').goodsItem.item" [valueClass]="'col-7'" [languageIdClass]="'col-2'" [flexClass]="'col-2'"></name-description-panel>
+            <button *ngIf="availableLogisticsServices.indexOf('MARITIMETRANSPORT') != -1 && (!singleTabForLogisticServices || selectedTabSinglePublish == 'MARITIMETRANSPORT')" class='btn btn-outline-primary button-block' (click)="showMaritimeTransportService = !showMaritimeTransportService">Maritime</button>
+            <div class="well" *ngIf="showMaritimeTransportService">
+                <div class="row">
+                    <div class="col-5 name-description-panel">
+                        <name-description-panel [item]="getLogisticCatalogueLine('MARITIMETRANSPORT').goodsItem.item" [valueClass]="'col-7'" [languageIdClass]="'col-2'" [flexClass]="'col-2'"></name-description-panel>
+                        <div class="div-padding-left">
+                            <h6>Additional Information</h6>
+                            <file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFileForLogisticService($event,'MARITIMETRANSPORT')" [binaryObjects]="getBinaryObjectsForLogisticService('MARITIMETRANSPORT')"
+                                        (onClearFile)="onUnSelectFileForLogisticService($event,'MARITIMETRANSPORT')">
+                            </file-input>
                         </div>
-                        <div class="col-7">
-                            <div class="row">
-                                <div class="col-6" *ngFor="let property of getLogisticProperties('MARITIMETRANSPORT')">
-                                    <options-panel [itemProperty]="property"></options-panel>
-                                </div>
-                            </div>
-                            <div>
-                                <h6>Additional Information</h6>
-                                <file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFileForLogisticService($event,'MARITIMETRANSPORT')" [binaryObjects]="getBinaryObjectsForLogisticService('MARITIMETRANSPORT')"
-                                            (onClearFile)="onUnSelectFileForLogisticService($event,'MARITIMETRANSPORT')">
-                                </file-input>
+                    </div>
+                    <div class="col-7">
+                        <div class="row">
+                            <div class="col-6" *ngFor="let property of getLogisticProperties('MARITIMETRANSPORT')">
+                                <options-panel [itemProperty]="property"></options-panel>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="row" *ngIf="availableLogisticsServices.indexOf('AIRTRANSPORT') != -1 && (!singleTabForLogisticServices || selectedTabSinglePublish == 'AIRTRANSPORT')">
-                <h6 class="col-1">Air</h6>
-                <div class="col-11 well">
-                    <div class="row">
-                        <div class="col-5 name-description-panel">
-                            <name-description-panel [item]="getLogisticCatalogueLine('AIRTRANSPORT').goodsItem.item" [valueClass]="'col-7'" [languageIdClass]="'col-2'" [flexClass]="'col-2'"></name-description-panel>
+            <button *ngIf="availableLogisticsServices.indexOf('AIRTRANSPORT') != -1 && (!singleTabForLogisticServices || selectedTabSinglePublish == 'AIRTRANSPORT')" class='btn btn-outline-primary button-block' (click)="showAirTransportService = !showAirTransportService">Air</button>
+            <div class="well" *ngIf="showAirTransportService">
+                <div class="row">
+                    <div class="col-5 name-description-panel">
+                        <name-description-panel [item]="getLogisticCatalogueLine('AIRTRANSPORT').goodsItem.item" [valueClass]="'col-7'" [languageIdClass]="'col-2'" [flexClass]="'col-2'"></name-description-panel>
+                        <div class="div-padding-left">
+                            <h6>Additional Information</h6>
+                            <file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFileForLogisticService($event,'AIRTRANSPORT')" [binaryObjects]="getBinaryObjectsForLogisticService('AIRTRANSPORT')"
+                                        (onClearFile)="onUnSelectFileForLogisticService($event,'AIRTRANSPORT')">
+                            </file-input>
                         </div>
-                        <div class="col-7">
-                            <div class="row">
-                                <div class="col-6" *ngFor="let property of getLogisticProperties('AIRTRANSPORT')">
-                                    <options-panel [itemProperty]="property"></options-panel>
-                                </div>
-                            </div>
-                            <div>
-                                <h6>Additional Information</h6>
-                                <file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFileForLogisticService($event,'AIRTRANSPORT')" [binaryObjects]="getBinaryObjectsForLogisticService('AIRTRANSPORT')"
-                                            (onClearFile)="onUnSelectFileForLogisticService($event,'AIRTRANSPORT')">
-                                </file-input>
+                    </div>
+                    <div class="col-7">
+                        <div class="row">
+                            <div class="col-6" *ngFor="let property of getLogisticProperties('AIRTRANSPORT')">
+                                <options-panel [itemProperty]="property"></options-panel>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="row" *ngIf="availableLogisticsServices.indexOf('RAILTRANSPORT') != -1 && (!singleTabForLogisticServices || selectedTabSinglePublish == 'RAILTRANSPORT')">
-                <h6 class="col-1">Rail</h6>
-                <div class="col-11 well">
-                    <div class="row">
-                        <div class="col-5 name-description-panel">
-                            <name-description-panel [item]="getLogisticCatalogueLine('RAILTRANSPORT').goodsItem.item" [valueClass]="'col-7'" [languageIdClass]="'col-2'" [flexClass]="'col-2'"></name-description-panel>
+            <button *ngIf="availableLogisticsServices.indexOf('RAILTRANSPORT') != -1 && (!singleTabForLogisticServices || selectedTabSinglePublish == 'RAILTRANSPORT')" class='btn btn-outline-primary button-block' (click)="showRailTransportService = !showRailTransportService">Rail</button>
+            <div class="well" *ngIf="showRailTransportService">
+                <div class="row">
+                    <div class="col-5 name-description-panel">
+                        <name-description-panel [item]="getLogisticCatalogueLine('RAILTRANSPORT').goodsItem.item" [valueClass]="'col-7'" [languageIdClass]="'col-2'" [flexClass]="'col-2'"></name-description-panel>
+                        <div class="div-padding-left">
+                            <h6>Additional Information</h6>
+                            <file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFileForLogisticService($event,'RAILTRANSPORT')" [binaryObjects]="getBinaryObjectsForLogisticService('RAILTRANSPORT')"
+                                        (onClearFile)="onUnSelectFileForLogisticService($event,'RAILTRANSPORT')">
+                            </file-input>
                         </div>
-                        <div class="col-7">
-                            <div class="row">
-                                <div class="col-6" *ngFor="let property of getLogisticProperties('RAILTRANSPORT')">
-                                    <options-panel [itemProperty]="property"></options-panel>
-                                </div>
-                            </div>
-                            <div>
-                                <h6>Additional Information</h6>
-                                <file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFileForLogisticService($event,'RAILTRANSPORT')" [binaryObjects]="getBinaryObjectsForLogisticService('RAILTRANSPORT')"
-                                            (onClearFile)="onUnSelectFileForLogisticService($event,'RAILTRANSPORT')">
-                                </file-input>
+                    </div>
+                    <div class="col-7">
+                        <div class="row">
+                            <div class="col-6" *ngFor="let property of getLogisticProperties('RAILTRANSPORT')">
+                                <options-panel [itemProperty]="property"></options-panel>
                             </div>
                         </div>
                     </div>

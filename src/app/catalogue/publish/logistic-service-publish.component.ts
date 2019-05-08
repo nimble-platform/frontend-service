@@ -25,7 +25,8 @@ import {Category} from '../model/category/category';
 
 @Component({
     selector: "logistic-service-publish",
-    templateUrl: "./logistic-service-publish.component.html"
+    templateUrl: "./logistic-service-publish.component.html",
+    styleUrls: ["./logistic-service-publish.component.css"]
 })
 export class LogisticServicePublishComponent implements OnInit {
 
@@ -77,6 +78,11 @@ export class LogisticServicePublishComponent implements OnInit {
     dialogBox = true;
     // furniture ontology categories which are used to represent Logistic Services
     furnitureOntologyLogisticCategories:Category[] = null;
+
+    showRoadTransportService:boolean = false;
+    showMaritimeTransportService:boolean = false;
+    showAirTransportService:boolean = false;
+    showRailTransportService:boolean = false;
 
     ngOnInit() {
         const userId = this.cookieService.get("user_id");
