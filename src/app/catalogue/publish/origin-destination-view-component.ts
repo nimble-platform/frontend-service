@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {COUNTRY_NAMES} from '../../common/utils';
+import {COUNTRY_NAMES, selectPreferredValue} from '../../common/utils';
 import {Text} from '../model/publish/text';
 import {ItemProperty} from '../model/publish/item-property';
 
@@ -21,7 +21,12 @@ export class OriginDestinationViewComponent implements OnInit{
     enableRegionSelection:boolean = false;
     enableCountrySelection:boolean = false;
 
+    title:string;
+
     ngOnInit(){
+        // set the title
+        this.title = selectPreferredValue(this.itemProperty.name);
+
         for(let address of this.itemProperty.value){
             if(this.regionOptions.indexOf(address.value) != -1){
                 this.enableRegionSelection = true;

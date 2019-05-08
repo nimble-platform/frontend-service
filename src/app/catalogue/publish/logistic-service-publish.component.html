@@ -193,11 +193,9 @@
             </div>
             <div class="row" *ngIf="selectedTabSinglePublish == 'TRANSPORT' || selectedTabSinglePublish == 'RAILTRANSPORT' || selectedTabSinglePublish == 'AIRTRANSPORT' || selectedTabSinglePublish == 'MARITIMETRANSPORT' || selectedTabSinglePublish == 'ROADTRANSPORT'">
                 <div class="col-6">
-                    <h6>Destination</h6>
                     <origin-destination-view  [itemProperty]="getDestinationAddressForLogistics('TRANSPORT')"></origin-destination-view>
                 </div>
                 <div class="col-6">
-                    <h6>Origin</h6>
                     <origin-destination-view  [itemProperty]="getOriginAddressForLogistics('TRANSPORT')"></origin-destination-view>
                 </div>
             </div>
