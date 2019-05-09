@@ -613,11 +613,6 @@ export class LogisticServicePublishComponent implements OnInit {
             splicedCatalogueLines.push(this.removeEmptyProperties(catalogueLine));
         }
 
-        // be sure that its transportation service details is not null
-        for(let catalogueLine of splicedCatalogueLines){
-            catalogueLine.goodsItem.item.transportationServiceDetails = new TransportationService();
-        }
-
         if (this.catalogueService.catalogueResponse.catalogueUuid == null) {
             const userId = this.cookieService.get("user_id");
             this.userService.getUserParty(userId).then(userParty => {
