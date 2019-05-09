@@ -403,5 +403,43 @@ export class SimpleSearchService {
 		.catch(this.handleError);
 	}
 
-
+  getCompanyBasedProductsAndServices(query: string, facets: string[], facetQueries: string[], page: number, cat: string, catID: string): Promise<any> {
+    // let queryRes = this.buildQueryString(query,myGlobals.query_settings,true,false);
+    // query = queryRes.queryStr;
+		const url = this.url + `/item/search`
+		let searchObject:any = {};
+		searchObject.rows = 10;
+		searchObject.start = page-1;
+		searchObject.q = query;
+		for (let facet of facets) {
+			if (facet.length === 0 || !facet.trim()) {}
+			else {
+				if(searchObject.facet == null) {
+					searchObject.facet = {};
+					searchObject.facet.field = [];
+					searchObject.facet.minCount = this.facetMin;
+					searchObject.facet.limit = this.facetCount;
+				}
+				searchObject.facet.field.push(facet)
+			}
+		}
+		for (let facetQuery of facetQueries) {
+			if(searchObject.fq == null) {
+				searchObject.fq = [];
+			}
+			searchObject.fq.push(facetQuery);
+		}
+		if (cat != "") {
+			var add_url = `${this.product_cat_mix}:"${catID}"`;
+			if(searchObject.fq == null) {
+				searchObject.fq = [];
+			}
+			searchObject.fq.push(add_url);
+		}
+		return this.http
+		.post(url, searchObject, {headers: this.getHeadersWithBasicAuthorization()})
+		.toPromise()
+		.then(res => res.json())
+		.catch(this.handleError);
+	}
 }
