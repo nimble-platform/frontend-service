@@ -32,12 +32,6 @@
                     (click)="onSelectTab($event)">
                     Delivery &amp; Trading
                 </a>
-                <a href id="DELIVERY_TRADING" class="nav-link"
-                    *ngIf="isLogistics === true"
-                    [ngClass]="{ active: selectedTab === 'DELIVERY_TRADING'}"
-                    (click)="onSelectTab($event)">
-                    Transportation Service Details
-                </a>
             </li>
             <li *ngIf="haveCertificates" class="nav-item">
                 <a href id="CERTIFICATES" class="nav-link"
@@ -47,7 +41,7 @@
                 </a>
             </li>
             <li *ngIf="config.showLCPA && haveLCPA" class="nav-item">
-                <a href id="LCPA" class="nav-link"
+                <a href id="LCPA" class="nav-link" *ngIf="isLogistics === false"
                    [ngClass]="{ active: selectedTab === 'LCPA'}"
                    (click)="onSelectTab($event)">
                     LCPA Details
@@ -136,10 +130,6 @@
                     <strong>Packaging: </strong> {{ wrapper.getPackaging() }}
                 </div>
             </div>
-        </div>
-        <div *ngIf="isLogistics === true">
-            <transportation-service-input  (transportStatus)="getTransportStatusTab($event)" [catalogueLine]="wrapper.line" presentationMode="view">
-            </transportation-service-input>
         </div>
     </div>
 
