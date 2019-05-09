@@ -10,6 +10,7 @@ import {DashboardThreadedComponent} from "./dashboard-threaded.component";
 import {ThreadSummaryComponent} from "./thread-summary.component";
 import {FacetComponent} from "./facet-component";
 import { CatalogueModule } from "../catalogue/catalogue.module";
+import { AnalyticsModule } from "../analytics/analytics.module";
 import { ThreadEventComponent } from "./thread-event.component";
 
 @NgModule({
@@ -21,6 +22,7 @@ import { ThreadEventComponent } from "./thread-event.component";
 		ReactiveFormsModule,
 		DashboardRoutingModule,
 		CatalogueModule,
+		AnalyticsModule,
 		NgbModule.forRoot()
 	],
 	declarations: [

@@ -5,7 +5,8 @@ export const TABS = {
     SALES: "SALES",
     CATALOGUE: "CATALOGUE",
     FAVOURITE: "FAVOURITE",
-    COMPARE:"COMPARE"
+    COMPARE:"COMPARE",
+    PERFORMANCE:"PERFORMANCE"
 };
 
 export const PAGE_SIZE = 5;

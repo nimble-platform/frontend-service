@@ -50,6 +50,9 @@
                 <li class="nav-item">
                     <a href id="COMPARE" *ngIf="this.appComponent.checkRoles('compare')" [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.COMPARE}" (click)="onChangeTab($event)" i18n>Compare</a>
                 </li>
+                <li class="nav-item">
+                    <a href id="PERFORMANCE" *ngIf="this.appComponent.checkRoles('performance')" [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.PERFORMANCE}" (click)="onChangeTab($event)" i18n>Performance</a>
+                </li>
             </ul>
         </div>
     </div>
@@ -259,6 +262,13 @@
      <div *ngIf="queryParameters.tab === TABS.COMPARE" class="row">
         <div class="col-12">
             <compare-view></compare-view>
+        </div>
+    </div>
+
+    <!-- Performance tab -->
+     <div *ngIf="queryParameters.tab === TABS.PERFORMANCE" class="row">
+        <div class="col-12">
+            <performance-analytics></performance-analytics>
         </div>
     </div>
 </div>
