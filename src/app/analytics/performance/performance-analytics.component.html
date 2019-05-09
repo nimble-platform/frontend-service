@@ -1,0 +1,76 @@
+<call-status [callStatus]="callStatus" [large]="true"></call-status>
+
+<div [hidden]="isLoading()" class="space-before">
+
+  <div class="row justify-content-center" *ngIf="loadedps">
+    <div class="card col-3">
+      <div class="card-body text-center">
+        <h4 *ngIf="user_count>=0" class="card-title"><b>{{product_count}}</b></h4>
+        <h4 *ngIf="user_count<0" class="card-title"><b>???</b></h4>
+        <h6 class="card-subtitle mb-2 text-muted">No Of Products</h6>
+        <p class="card-text" style="font-size:32px"><i class="fa fa-cog"></i></p>
+      </div>
+    </div>
+    <div class="col-1"></div>
+    <div class="card col-3">
+      <div class="card-body text-center">
+        <h4 *ngIf="comp_count>=0" class="card-title"><b>{{service_count}}</b></h4>
+        <h4 *ngIf="comp_count<0" class="card-title"><b>???</b></h4>
+        <h6 class="card-subtitle mb-2 text-muted">No Of Services</h6>
+        <p class="card-text" style="font-size:32px"><i class="fa fa-wrench"></i></p>
+      </div>
+    </div>
+  </div>
+  <hr>
+  <div class="row justify-content-center">
+    <div class="card col-3">
+      <div class="card-body text-center">
+        <h4 *ngIf="bp_count>=0" class="card-title"><b>{{bp_count}}</b></h4>
+        <h4 *ngIf="bp_count<0" class="card-title"><b>???</b></h4>
+        <h6 class="card-subtitle mb-2 text-muted">Executed Business Transactions</h6>
+        <p class="card-text" style="font-size:32px"><i class="fa fa-briefcase"></i></p>
+      </div>
+    </div>
+    <div class="col-1"></div>
+    <div class="col-6">
+      <div *ngIf="bp_count>0" class="progress mt-5">
+        <div class="progress-bar bg-success" role="progressbar" [ngStyle]="{'width':green_perc_str}" [attr.aria-valuenow]="green_perc" aria-valuemin="0" aria-valuemax="100"></div>
+        <div class="progress-bar bg-warning" role="progressbar" [ngStyle]="{'width':yellow_perc_str}" [attr.aria-valuenow]="yellow_perc" aria-valuemin="0" aria-valuemax="100"></div>
+        <div class="progress-bar bg-danger" role="progressbar" [ngStyle]="{'width':red_perc_str}" [attr.aria-valuenow]="red_perc" aria-valuemin="0" aria-valuemax="100"></div>
+      </div>
+      <div *ngIf="bp_count>0" class="space-before text-center">
+        <span class="badge badge-pill badge-success">{{green_perc_str}} Approved</span>
+        <span class="badge badge-pill badge-warning">{{yellow_perc_str}} Waiting</span>
+        <span class="badge badge-pill badge-danger">{{red_perc_str}} Rejected</span>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
+  <div class="row justify-content-center">
+    <div class="card col-3">
+      <div class="card-body text-center">
+        <h4 *ngIf="trade_count>=0" class="card-title"><b>{{trade_count}}€</b></h4>
+        <h4 *ngIf="trade_count<0" class="card-title"><b>???</b></h4>
+        <h6 class="card-subtitle mb-2 text-muted">Trading Volume</h6>
+        <p class="card-text" style="font-size:32px"><i class="fa fa-money-bill"></i></p>
+      </div>
+    </div>
+    <div class="col-1"></div>
+    <div class="col-6">
+      <div *ngIf="trade_count>0" class="progress mt-5">
+        <div class="progress-bar bg-success" role="progressbar" [ngStyle]="{'width':trade_green_perc_str}" [attr.aria-valuenow]="trade_green_perc" aria-valuemin="0" aria-valuemax="100"></div>
+        <div class="progress-bar bg-warning" role="progressbar" [ngStyle]="{'width':trade_yellow_perc_str}" [attr.aria-valuenow]="trade_yellow_perc" aria-valuemin="0" aria-valuemax="100"></div>
+        <div class="progress-bar bg-danger" role="progressbar" [ngStyle]="{'width':trade_red_perc_str}" [attr.aria-valuenow]="trade_red_perc" aria-valuemin="0" aria-valuemax="100"></div>
+      </div>
+      <div *ngIf="trade_count>0" class="space-before text-center">
+        <span class="badge badge-pill badge-success">{{trade_green_perc_str}} Approved</span>
+        <span class="badge badge-pill badge-warning">{{trade_yellow_perc_str}} Waiting</span>
+        <span class="badge badge-pill badge-danger">{{trade_red_perc_str}} Rejected</span>
+      </div>
+    </div>
+  </div>
+
+
+</div>
