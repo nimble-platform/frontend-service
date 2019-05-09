@@ -92,7 +92,7 @@ export class LogisticServicePublishComponent implements OnInit {
 
         Promise.all([
             this.userService.getUserParty(userId),
-            this.logisticPublishingService.getLogisticRelatedServices(this.config.standardTaxonomy)
+            this.logisticPublishingService.getCachedLogisticRelatedServices(this.config.standardTaxonomy)
         ]).then(([party, logisticRelatedServices]) => {
             this.logisticRelatedServices = logisticRelatedServices;
             let keys = Object.keys(this.logisticRelatedServices);

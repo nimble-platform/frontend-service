@@ -29,12 +29,12 @@ export class OptionsPanelComponent implements OnInit{
     ngOnInit(){
 
         if(this.itemProperty){
-            this.logisticPublishingService.getProperty(this.itemProperty.uri).then(indexedProperty => {
+            this.logisticPublishingService.getCachedProperty(this.itemProperty.uri).then(indexedProperty => {
                 // set the title
                 this.title = selectPreferredValue(this.itemProperty.name);
 
                 // retrieve options
-                this.logisticPublishingService.getPropertyCodeList(indexedProperty.codeListUri).then(codeListResult => {
+                this.logisticPublishingService.getCachedPropertyCodeList(indexedProperty.codeListUri).then(codeListResult => {
                     for(let result of codeListResult.result){
                         let label = selectNameFromLabelObject(result.label);
                         this.options.push(new Text(label));
