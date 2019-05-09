@@ -50,6 +50,17 @@
                                             <p *ngIf="!catLine[product_price] || checkEmpty(catLine[product_price])" style="word-break: break-all;word-wrap: break-word;">Upon request</p>
                                     </div>
                                     <div class="col-3">
+                                                    <div class="float-right">
+                                                        <span *ngIf="!findPrefItem(catLine.localName)" class="star star-b pointer" [ngClass]="{'disabled':addFavoriteCategoryStatus.isLoading()}" (click)="addFavorites(catLine.localName)" title="Add To Favorite">
+                                                          <span class="half" style="width:0%">&#9733;</span>&#9733;
+                                                        </span>
+                                                        <span  *ngIf="findPrefItem(catLine.localName)"  class="star star-b full pointer" [ngClass]="{'disabled':addFavoriteCategoryStatus.isLoading()}" (click)="removeFavorites(catLine.localName)" title="Remove From Favorite">
+                                                          <span class="half" style="width:100%">&#9733;</span>&#9733;
+                                                        </span>
+                                                    </div>
+                                                    <div class="float-right mr-3 pt-2">
+                                                        <call-status [callStatus]="addFavoriteCategoryStatus"></call-status>
+                                                    </div>
 
                                         <a  href="#" role="button" class="btn btn-primary btn-sm col" [routerLink]="['/product-details']" [queryParams]="{catalogueId: catLine.catalogueId, id: catLine.manufactuerItemId}">
                                             Order
@@ -113,6 +124,17 @@
                                             <p *ngIf="!catLine[product_price] || checkEmpty(catLine[product_price])" style="word-break: break-all;word-wrap: break-word;">Upon request</p>
                                     </div>
                                     <div class="col-3">
+                                        <div>
+                                            <span *ngIf="!findPrefItem(catLine.localName)" class="star star-b pointer" [ngClass]="{'disabled':addFavoriteCategoryStatus.isLoading()}" (click)="addFavorites(catLine.localName);$event.stopPropagation();" title="Add To Favorite">
+                                                <span class="half" style="width:0%">&#9733;</span>&#9733;
+                                            </span>
+                                            <span  *ngIf="findPrefItem(catLine.localName)"  class="star star-b full pointer" [ngClass]="{'disabled':addFavoriteCategoryStatus.isLoading()}" (click)="removeFavorites(catLine.localName);$event.stopPropagation();" title="Remove From Favorite">
+                                                <span class="half" style="width:100%">&#9733;</span>&#9733;
+                                            </span>
+                                        </div>
+                                        <div class="float-right mr-3 pt-2">
+                                            <call-status [callStatus]="addFavoriteCategoryStatus"></call-status>
+                                        </div>
                                         <a  href="#" role="button" class="btn btn-primary btn-sm col" [routerLink]="['/product-details']" [queryParams]="{catalogueId: catLine.catalogueId, id: catLine.manufactuerItemId}">
                                             Order
                                         </a>
