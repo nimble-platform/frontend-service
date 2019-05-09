@@ -190,7 +190,7 @@
             </div>
 
             <!-- Action Button -->
-            <button class="btn btn-primary pt-2 w-100"
+            <button class="btn btn-primary pt-2 w-100" *ngIf="isTransportService"
                 (click)="onNegotiate()" [disabled]="!this.appComponent.checkRoles('bp') || options.quantity <= 0">
                 Negotiate & Order
             </button>
