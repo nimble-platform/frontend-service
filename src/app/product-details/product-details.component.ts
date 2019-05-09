@@ -14,8 +14,8 @@ import {
     getStepForPrice,
     isTransportService,
     selectPreferredValue,
-    roundToTwoDecimals
-} from "../common/utils";
+    roundToTwoDecimals, isLogisticsService
+} from '../common/utils';
 import { AppComponent } from "../app.component";
 import { UserService } from "../user-mgmt/user.service";
 import { CompanySettings } from "../user-mgmt/model/company-settings";
@@ -53,6 +53,7 @@ export class ProductDetailsComponent implements OnInit {
     showNavigation: boolean = true;
     showProcesses: boolean = true;
     isLogistics: boolean = false;
+    isTransportService:boolean = false;
 
     config = myGlobals.config;
 
@@ -90,7 +91,8 @@ export class ProductDetailsComponent implements OnInit {
                     .then(line => {
                         this.line = line;
                         this.item = line.goodsItem.item;
-                        this.isLogistics = isTransportService(this.line);
+                        this.isLogistics = isLogisticsService(this.line);
+                        this.isTransportService = isTransportService(this.line);
                         return this.userService.getSettingsForProduct(line)
                     })
                     .then(settings => {

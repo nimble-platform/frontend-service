@@ -46,8 +46,8 @@
                        [queryParams]="{pageRef: 'menu', productType: 'product'}" routerLinkActive="active">
                         <i class="fa fa-shopping-cart dd-icon"></i> Product / Service
                     </a>
-                    <a class="dropdown-item" [routerLink]="['/catalogue/categorysearch']"
-                       [queryParams]="{pageRef: 'menu', productType: 'transportation'}" routerLinkActive="active">
+                    <a *ngIf="enableLogisticServicePublishing" class="dropdown-item" [routerLink]="['/catalogue/publish-logistic']"
+                       [queryParams]="{pageRef: 'single', productType: 'transportation'}" routerLinkActive="active">
                         <i class="fa fa-truck dd-icon"></i> Logistics Service
                     </a>
                 </div>

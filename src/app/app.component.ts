@@ -39,6 +39,8 @@ export class AppComponent implements OnInit {
     public versions = [];
     public minimalView = false;
 
+    enableLogisticServicePublishing = true;
+
     constructor(
         private cookieService: CookieService,
         private credentialsService: CredentialsService,
@@ -69,6 +71,11 @@ export class AppComponent implements OnInit {
     }
 
     ngOnInit() {
+        // the user could not publish logistic services if the standard taxonomy is 'eClass'
+        if(this.config.standardTaxonomy == "eClass"){
+            this.enableLogisticServicePublishing = false;
+        }
+
         this.getVersions();
         this.checkLogin("");
         this.route.queryParams.subscribe(params => {

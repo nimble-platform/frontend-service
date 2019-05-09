@@ -3,7 +3,10 @@ import { Predicate } from "@angular/core";
 import { ItemProperty } from "../catalogue/model/publish/item-property";
 import { PAYMENT_MEANS } from "../catalogue/model/constants";
 import { UBLModelUtils } from "../catalogue/model/ubl-model-utils";
-import { sanitizePropertyName, getPropertyKey, periodToString, isCustomProperty, getPropertyValues, isTransportService, selectName } from "./utils";
+import {
+    sanitizePropertyName, getPropertyKey, periodToString, isCustomProperty, getPropertyValues, isTransportService, selectName,
+    isLogisticsService
+} from './utils';
 import { PriceWrapper } from "./price-wrapper";
 import { CompanyNegotiationSettings } from "../user-mgmt/model/company-negotiation-settings";
 import {Quantity} from '../catalogue/model/publish/quantity';
@@ -147,6 +150,10 @@ export class ProductWrapper {
     }
 
     getLogisticsStatus(): boolean {
+        return isLogisticsService(this.line);
+    }
+
+    isTransportService(): boolean {
         return isTransportService(this.line);
     }
 
