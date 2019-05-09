@@ -49,6 +49,11 @@ import {ItemPropertyPriceOptionComponent} from "./publish/price-option/item-prop
 import {DiscountTargetComponent} from "./publish/price-option/discount-target.component";
 import {PriceOptionViewComponent} from './publish/price-option/price-option-view.component';
 import {BulkPublishComponent} from "./publish/bulk-publish.component";
+import {OptionsPanelComponent} from './publish/options-panel.component';
+import {OriginDestinationViewComponent} from './publish/origin-destination-view-component';
+import {NameDescriptionPanelComponent} from './publish/name-description-panel.component';
+import {LogisticServicePublishComponent} from './publish/logistic-service-publish.component';
+import {LogisticPublishDeactivateGuardService} from './logistic-publish-deactivate-guard.service';
 
 @NgModule({
 	imports: [CommonModule, 
@@ -65,8 +70,12 @@ import {BulkPublishComponent} from "./publish/bulk-publish.component";
         CategorySearchComponent,
         CategoryTreeComponent,
         ProductPublishComponent,
+        LogisticServicePublishComponent,
         EditPropertyModalComponent,
         BulkPublishComponent,
+        OptionsPanelComponent,
+        OriginDestinationViewComponent,
+        NameDescriptionPanelComponent,
         ProductDeliveryTradingComponent,
         ProductPriceTabComponent,
         AdditionalItemPropertyComponent,
@@ -137,6 +146,6 @@ import {BulkPublishComponent} from "./publish/bulk-publish.component";
         FavouriteViewComponent,
         CompareViewComponent
     ],
-    providers: [PublishDeactivateGuardService, CategoryDeactivateGuardService]
+    providers: [PublishDeactivateGuardService, CategoryDeactivateGuardService, LogisticPublishDeactivateGuardService]
 })
 export class CatalogueModule {}

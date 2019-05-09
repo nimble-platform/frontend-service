@@ -5,7 +5,7 @@ import {CallStatus} from "../../../common/call-status";
 import {ActivatedRoute, Params, Router} from "@angular/router";
 import {PublishService} from "../../publish-and-aip.service";
 import {CategoryService} from "../../category/category.service";
-import { isTransportService } from "../../../common/utils";
+import {isLogisticsService, isTransportService} from '../../../common/utils';
 import { BPDataService } from "../../../bpe/bp-view/bp-data-service";
 import { UserService } from "../../../user-mgmt/user.service";
 import { CompanySettings } from "../../../user-mgmt/model/company-settings";
@@ -222,23 +222,23 @@ export class CatalogueViewComponent implements OnInit {
         if(this.catlogueId == "all"){
              this.catalogueService.getCatalogueFromUuid(catalogueLine.goodsItem.item.catalogueDocumentReference.id)
             .then(res => {
-                this.router.navigate(['catalogue/publish'], {queryParams: {
-                    cat:res.id,
-                    pg: "single",
-                    productType: isTransportService(catalogueLine) ? "transportation" : "product"}});
+                if(isLogisticsService(catalogueLine))
+                    this.router.navigate(['catalogue/publish-logistic'], {queryParams: {cat:res.id, pg: "single"}});
+                else
+                    this.router.navigate(['catalogue/publish'], {queryParams: {cat:res.id, pg: "single"}});
             })
             .catch(error => {
-                this.router.navigate(['catalogue/publish'], {queryParams: {
-                    cat:'default',
-                    pg: "single",
-                    productType: isTransportService(catalogueLine) ? "transportation" : "product"}});
+                if(isLogisticsService(catalogueLine))
+                    this.router.navigate(['catalogue/publish-logistic'], {queryParams: {cat:'default', pg: "single"}});
+                else
+                    this.router.navigate(['catalogue/publish'], {queryParams: {cat:'default', pg: "single"}});
             });;
 
         }else{
-            this.router.navigate(['catalogue/publish'], {queryParams: {
-                    cat:this.catlogueId,
-                    pg: "single",
-                    productType: isTransportService(catalogueLine) ? "transportation" : "product"}});
+            if(isLogisticsService(catalogueLine))
+                this.router.navigate(['catalogue/publish-logistic'], {queryParams: {cat:this.catlogueId, pg: "single"}});
+            else
+                this.router.navigate(['catalogue/publish'], {queryParams: {cat:this.catlogueId, pg: "single"}});
         }
     }
 
@@ -250,24 +250,24 @@ export class CatalogueViewComponent implements OnInit {
         if(this.catlogueId == "all"){
             this.catalogueService.getCatalogueFromUuid(catalogueLine.goodsItem.item.catalogueDocumentReference.id)
             .then(res => {
-                this.router.navigate(['catalogue/publish'], {queryParams: {
-                    cat:res.id,
-                    pg: "single",
-                    productType: isTransportService(catalogueLine) ? "transportation" : "product"}});
+                if(isLogisticsService(catalogueLine))
+                    this.router.navigate(['catalogue/publish-logistic'], {queryParams: {cat:res.id, pg: "single"}});
+                else
+                    this.router.navigate(['catalogue/publish'], {queryParams: {cat:res.id, pg: "single"}});
             })
             .catch(error => {
-                this.router.navigate(['catalogue/publish'], {queryParams: {
-                    cat:'default',
-                    pg: "single",
-                    productType: isTransportService(catalogueLine) ? "transportation" : "product"}});
+                if(isLogisticsService(catalogueLine))
+                    this.router.navigate(['catalogue/publish-logistic'], {queryParams: {cat:'default', pg: "single"}});
+                else
+                    this.router.navigate(['catalogue/publish'], {queryParams: {cat:'default', pg: "single"}});
             });;
         }else{
-            this.router.navigate(['catalogue/publish'], {queryParams: {
-                cat:this.catlogueId,
-                pg: "single",
-                productType: isTransportService(catalogueLine) ? "transportation" : "product"}});
+            if(isLogisticsService(catalogueLine))
+                this.router.navigate(['catalogue/publish-logistic'], {queryParams: {cat:this.catlogueId, pg: "single"}});
+            else
+                this.router.navigate(['catalogue/publish'], {queryParams: {cat:this.catlogueId, pg: "single"}});
         }
-        
+
     }
 
     deleteCatalogueLine(catalogueLine:CatalogueLine, i: number): void {
@@ -275,7 +275,7 @@ export class CatalogueViewComponent implements OnInit {
             const status = this.getDeleteStatus(i);
             status.submit();
             let catalogue_uuid = "";
-            
+
             if(this.catalogueService.catalogueResponse.catalogueUuid === "" || this.catalogueService.catalogueResponse.catalogueUuid == null){
                 catalogue_uuid = catalogueLine.goodsItem.item.catalogueDocumentReference.id;
             }else{

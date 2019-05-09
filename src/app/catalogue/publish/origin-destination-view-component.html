@@ -1,0 +1,52 @@
+<div class="row">
+    <div class="col-3">
+        <strong>{{title}}</strong>
+    </div>
+    <div class="col-6">
+        <!-- All over the world-->
+        <div class="row">
+            <input class="align-self-center custom-checkbox col-1" type="checkbox" (change)="isAllOverTheWorldOptionSelected($event.target.checked)" [checked]="isRegionSelected('All over the world')">
+            <label class="form-check-label">All over the world</label>
+        </div>
+        <div class="row">
+            <input class="align-self-center custom-checkbox col-1" type="checkbox" [(ngModel)]="enableRegionSelection" (change)="onRegionsChecked($event.target.checked)">
+            <label class="form-check-label">Regions</label>
+        </div>
+        <!-- Region options -->
+        <div *ngFor="let option of regionOptions" class="row">
+            <div class="col-1"></div>
+            <div class="col-11">
+                <div class="row">
+                    <input class="align-self-center custom-checkbox col-1" type="checkbox" [checked]="isRegionSelected(option)" (change)="onRegionChecked($event.target.checked,option,option)" [disabled]="!enableRegionSelection">
+                    <label class="form-check-label">{{option}}</label>
+                </div>
+            </div>
+        </div>
+        <!-- Country selection -->
+        <div class="row">
+            <input class="align-self-center custom-checkbox col-1" type="checkbox" [(ngModel)]="enableCountrySelection">
+            <label class="form-check-label">Only selected countries</label>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <input id="country" list="countries" name="Country" class="form-control" placeholder="Select country" (change)="onCountrySelected($event)" [disabled]="!enableCountrySelection">
+            </div>
+            <datalist id="countries">
+                <ng-container *ngFor="let country of countryNames">
+                    <option>{{country}}</option>
+                </ng-container>
+            </datalist>
+        </div>
+    </div>
+    <div class="col-3">
+        <div class="row d-flex flex-wrap">
+            <div class="col-12 d-flex flex-wrap" >
+                <div *ngFor="let country of getSelectedCountries()"
+                     class="bordered my-1 mr-1">
+                    <small class="p-0">{{country}}</small>
+                    <i class="fa fa-times-circle pl-1" placement="right" (click)="onCountryRemoved(country)"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

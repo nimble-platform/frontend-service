@@ -11,7 +11,7 @@ import { BpWorkflowOptions } from "../model/bp-workflow-options";
 import { ProcessType } from "../model/process-type";
 import { ProductBpStep } from "./product-bp-step";
 import { ProductBpStepsDisplay } from "./product-bp-steps-display";
-import { isTransportService } from "../../common/utils";
+import {isLogisticsService, isTransportService} from '../../common/utils';
 import { UserService } from "../../user-mgmt/user.service";
 import { CompanySettings } from "../../user-mgmt/model/company-settings";
 import { BPEService } from "../bpe.service";
@@ -238,6 +238,10 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
         return !!this.serviceLine || isTransportService(this.line);
     }
 
+    private isLogisticsService(): boolean {
+        return !!this.serviceLine || isLogisticsService(this.line);
+    }
+
     private getStepsDisplayMode(): ProductBpStepsDisplay {
         if(this.isTransportService()) {
             if(this.bpDataService.bpStartEvent.userRole === "seller") {
@@ -250,6 +254,9 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                 return "Transport_After_Order";
             }
         } else {
+            if(this.isLogisticsService()){
+                return "Logistics";
+            }
             if(this.bpDataService.bpStartEvent.userRole === "seller") {
                 return "Order_Before_Transport";
             } else {

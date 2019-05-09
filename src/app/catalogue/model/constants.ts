@@ -78,6 +78,15 @@ export const PPAP_CERTIFICATES = [
     "Sample Production Parts"
 ];
 
+export const REGIONS = [
+    "Europe",
+    "Asia",
+    "Africa",
+    "North America",
+    "South America",
+    "Oceania"
+]
+
 export const PRICE_OPTIONS = {
     ORDERED_QUANTITY: {text:'Ordered Quantity',typeID:1},
     PRODUCT_PROPERTY: {text:'Product Property',typeID:2},

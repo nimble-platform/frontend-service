@@ -28,6 +28,7 @@ export class ProductDetailsTabsComponent implements OnInit {
     selectedTab: ProductDetailsTab;
 
     isLogistics: boolean = false;
+    isTransportService: boolean = false;
 
     haveDetails = true;
     haveTransportServiceDetails = true;
@@ -43,6 +44,7 @@ export class ProductDetailsTabsComponent implements OnInit {
     ngOnInit() {
         this.selectedTab = this.showOverview? "OVERVIEW" : "DETAILS";
         this.isLogistics = this.wrapper.getLogisticsStatus();
+        this.isTransportService = this.wrapper.isTransportService();
         if(this.wrapper.getDimensions().length == 0 && this.wrapper.getUniquePropertiesWithValue().length == 0){
             this.haveDetails = false;
             this.selectedTab = this.getFirstTab();
@@ -53,7 +55,7 @@ export class ProductDetailsTabsComponent implements OnInit {
             this.selectedTab = this.getFirstTab();
           }
         }
-        else {
+        else if (this.isTransportService){
           if(this.wrapper.line.goodsItem.item.transportationServiceDetails.transportServiceCode.name == "" &&
             this.wrapper.line.goodsItem.item.transportationServiceDetails.supportedCommodityClassification[0].natureCode.name == "" &&
             this.wrapper.line.goodsItem.item.transportationServiceDetails.supportedCommodityClassification[0].cargoTypeCode.name == "" &&
