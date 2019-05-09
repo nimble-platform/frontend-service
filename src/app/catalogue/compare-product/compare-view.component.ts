@@ -4,13 +4,10 @@ import {CatalogueService} from "../catalogue.service";
 import { SimpleSearchService } from '../../simple-search/simple-search.service';
 import {CallStatus} from "../../common/call-status";
 import {ActivatedRoute, Params, Router} from "@angular/router";
-import {PublishService} from "../publish-and-aip.service";
 import {CategoryService} from "../category/category.service";
 import { isTransportService } from "../../common/utils";
-import { BPDataService } from "../../bpe/bp-view/bp-data-service";
 import { UserService } from "../../user-mgmt/user.service";
 import { CompanySettings } from "../../user-mgmt/model/company-settings";
-import {CataloguePaginationResponse} from '../model/publish/catalogue-pagination-response';
 import {Item} from '../model/publish/item';
 import {selectDescription, selectName,selectNameFromLabelObject,copy,roundToTwoDecimals} from '../../common/utils';
 import {ItemProperty} from '../model/publish/item-property';
@@ -25,7 +22,7 @@ import { Search } from '../../simple-search/model/search';
 @Component({
     selector: 'compare-view',
     templateUrl: './compare-view.component.html',
-    styles: ['.dropdown-toggle:after{content: initial}'],
+    styleUrls: ['./compare-view.component.css'],
     providers: [CookieService]
 })
 
@@ -105,14 +102,15 @@ export class CompareViewComponent implements OnInit {
 	firstSearch = false;
 	secondeSearch = false;
 	manufacturerIdCountMap : any;
+	favouriteItemIds: string[] = [];
+    addFavoriteCategoryStatus: CallStatus = new CallStatus();	
+
 
 
     constructor(private cookieService: CookieService,
-                private publishService: PublishService,
         		private simpleSearchService: SimpleSearchService,
                 private catalogueService: CatalogueService,
                 private categoryService: CategoryService,
-                private bpDataService: BPDataService,
                 private userService: UserService,
                 private route: ActivatedRoute,
                 private router: Router) {
@@ -125,7 +123,18 @@ export class CompareViewComponent implements OnInit {
 		this.hasFavourite_first = false;
         for(let i = 0; i < this.pageSize; i++) {
             this.deleteStatuses.push(new CallStatus());
-        }
+		}
+		
+		let userId = this.cookieService.get("user_id");
+        this.callStatus.submit();
+        this.userService.getPerson(userId)
+        .then(person => {
+            this.callStatus.callback("Successfully loaded user profile", true);
+            this.favouriteItemIds = person.favouriteProductID;
+        })
+        .catch(error => {
+            this.callStatus.error("Invalid credentials", error);
+        });
     }
 
     selectName (ip: ItemProperty | Item) {
@@ -624,5 +633,52 @@ export class CompareViewComponent implements OnInit {
 			});
 
 		});
+	}
+
+    findPrefItem(itemId: any): boolean {
+        let found = false;
+        found = (this.favouriteItemIds.indexOf(itemId.toString()) !== -1) ? true : false;
+        return found;
+	}
+	
+	removeFavorites(hjid: any) {
+        if (!this.addFavoriteCategoryStatus.isLoading()) {
+          let itemidList = [];
+          itemidList.push(hjid.toString());
+          this.addFavoriteCategoryStatus.submit();
+          this.userService.putUserFavourite(itemidList, FAVOURITE_LINEITEM_PUT_OPTIONS[0].value).then(res => {
+              const prefCats_tmp = [];
+              var index = this.favouriteItemIds.indexOf(hjid.toString());
+              if (index !== -1) {
+                this.favouriteItemIds.splice(index, 1);
+              }
+             this.findPrefItem(hjid);
+              this.addFavoriteCategoryStatus.callback("Category removed from favorites", true);
+          })
+          .catch(error => {
+              this.addFavoriteCategoryStatus.error("Error while removing category from favorites", error);
+          });
+        }
     }
+
+    addFavorites(hjid: any) {
+        if (!this.addFavoriteCategoryStatus.isLoading()) {
+          let itemidList = [];
+          itemidList.push(hjid.toString());
+          this.addFavoriteCategoryStatus.submit();
+          this.userService.putUserFavourite(itemidList, FAVOURITE_LINEITEM_PUT_OPTIONS[0].value).then(res => {
+              const prefCats_tmp = [];
+              var index = this.favouriteItemIds.indexOf(hjid.toString());
+              if (index == -1) {
+                this.favouriteItemIds.push(hjid.toString());
+              }
+             this.findPrefItem(hjid);
+              this.addFavoriteCategoryStatus.callback("Category removed from favorites", true);
+          })
+          .catch(error => {
+              this.addFavoriteCategoryStatus.error("Error while removing category from favorites", error);
+          });
+        }
+    }
+
 }
