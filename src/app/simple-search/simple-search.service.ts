@@ -51,24 +51,6 @@ export class SimpleSearchService {
             .catch(this.handleError);
     }
 
-    getProperty(uri:string){
-        let url = this.url + `/property?uri=${encodeURIComponent(uri)}`;
-        return this.http
-            .get(url, {headers: this.headers})
-            .toPromise()
-            .then(res => res.json())
-            .catch(this.handleError);
-    }
-
-    getPropertyCodeList(uri:string){
-	    const url = this.url + `/code/select?q=codedList:"${encodeURIComponent(uri)}"`;
-        return this.http
-            .get(url, {headers: this.headers})
-            .toPromise()
-            .then(res => res.json())
-            .catch(this.handleError);
-    }
-
     getFields(): Promise<any> {
 		const url = this.url + `/item/fields`;
 		// const url = `${this.url}/select?q=*:*&rows=0&wt=csv`;

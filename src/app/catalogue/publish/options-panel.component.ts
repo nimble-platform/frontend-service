@@ -1,12 +1,8 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Text} from '../model/publish/text';
-import {Item} from '../model/publish/item';
-import {BinaryObject} from '../model/publish/binary-object';
-import {DocumentReference} from '../model/publish/document-reference';
-import {Attachment} from '../model/publish/attachment';
-import {SimpleSearchService} from '../../simple-search/simple-search.service';
 import {ItemProperty} from '../model/publish/item-property';
 import {selectNameFromLabelObject, selectPreferredValue} from '../../common/utils';
+import {LogisticPublishingService} from './logistic-publishing.service';
 
 @Component({
     selector: "options-panel",
@@ -15,7 +11,7 @@ import {selectNameFromLabelObject, selectPreferredValue} from '../../common/util
 })
 export class OptionsPanelComponent implements OnInit{
 
-    constructor(public searchService:SimpleSearchService) {
+    constructor(public logisticPublishingService:LogisticPublishingService) {
     }
 
     // inputs
@@ -33,12 +29,12 @@ export class OptionsPanelComponent implements OnInit{
     ngOnInit(){
 
         if(this.itemProperty){
-            this.searchService.getProperty(this.itemProperty.uri).then(indexedProperty => {
+            this.logisticPublishingService.getProperty(this.itemProperty.uri).then(indexedProperty => {
                 // set the title
                 this.title = selectPreferredValue(this.itemProperty.name);
 
                 // retrieve options
-                this.searchService.getPropertyCodeList(indexedProperty.codeListUri).then(codeListResult => {
+                this.logisticPublishingService.getPropertyCodeList(indexedProperty.codeListUri).then(codeListResult => {
                     for(let result of codeListResult.result){
                         let label = selectNameFromLabelObject(result.label);
                         this.options.push(new Text(label));

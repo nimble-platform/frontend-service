@@ -22,6 +22,7 @@ import {TransportationService} from '../model/publish/transportation-service';
 import {Catalogue} from '../model/publish/catalogue';
 import * as myGlobals from '../../globals';
 import {Category} from '../model/category/category';
+import {LogisticPublishingService} from './logistic-publishing.service';
 
 @Component({
     selector: "logistic-service-publish",
@@ -37,7 +38,8 @@ export class LogisticServicePublishComponent implements OnInit {
                 private route: ActivatedRoute,
                 private router: Router,
                 private location: Location,
-                private cookieService: CookieService) {
+                private cookieService: CookieService,
+                private logisticPublishingService:LogisticPublishingService) {
     }
 
     config = myGlobals.config;
@@ -90,7 +92,7 @@ export class LogisticServicePublishComponent implements OnInit {
 
         Promise.all([
             this.userService.getUserParty(userId),
-            this.categoryService.getLogisticRelatedServices(this.config.standardTaxonomy)
+            this.logisticPublishingService.getLogisticRelatedServices(this.config.standardTaxonomy)
         ]).then(([party, logisticRelatedServices]) => {
             this.logisticRelatedServices = logisticRelatedServices;
             let keys = Object.keys(this.logisticRelatedServices);

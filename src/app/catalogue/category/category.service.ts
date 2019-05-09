@@ -7,7 +7,7 @@ import {Category} from "../model/category/category";
 import * as myGlobals from '../../globals';
 import {Code} from "../model/publish/code";
 import { ParentCategories } from '../model/category/parent-categories';
-import {sortCategories, getAuthorizedHeaders, selectPreferredName} from '../../common/utils';
+import {sortCategories, getAuthorizedHeaders} from '../../common/utils';
 import {CookieService} from "ng2-cookies";
 
 @Injectable()
@@ -113,17 +113,6 @@ export class CategoryService {
             .toPromise()
             .then(res => {
                 return res.json()[0] as Category;
-            })
-            .catch(this.handleError);
-    }
-
-    getLogisticRelatedServices(taxonomyId:string):Promise<any>{
-        const url = `${this.baseUrl}/taxonomies/${taxonomyId}/logistics-services`;
-        return this.http
-            .get(url, {headers: getAuthorizedHeaders(this.cookieService)})
-            .toPromise()
-            .then(res => {
-                return res.json();
             })
             .catch(this.handleError);
     }
