@@ -80,4 +80,13 @@
             <i class="fas fa-ellipsis-h"></i>
         </div>
     </div>
+
+    <!-- Logistics Services Steps -->
+    <div *ngIf="displayMode === 'Logistics'" class="col-12">
+        <div class="steps">
+            <div [ngClass]="getStepClasses('Item_Information_Request')">
+                <span>Request for Information</span>
+            </div>
+        </div>
+    </div>
 </div>

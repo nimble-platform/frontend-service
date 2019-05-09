@@ -14,7 +14,7 @@ import { BinaryObject } from "../../../catalogue/model/publish/binary-object";
 import { Attachment } from "../../../catalogue/model/publish/attachment";
 import { ProcessType } from "../../model/process-type";
 import { PresentationMode } from "../../../catalogue/model/publish/presentation-mode";
-import { isTransportService } from "../../../common/utils";
+import {isLogisticsService, isTransportService} from '../../../common/utils';
 import {CookieService} from 'ng2-cookies';
 import {BpStartEvent} from '../../../catalogue/model/publish/bp-start-event';
 import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
@@ -38,6 +38,9 @@ export class ItemInformationResponseComponent implements OnInit {
 
     // the copy of ThreadEventMetadata of the current business process
     processMetadata: ThreadEventMetadata;
+
+    isLogisticsService:boolean = false;
+    isTransportService:boolean = false;
 
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
@@ -65,6 +68,9 @@ export class ItemInformationResponseComponent implements OnInit {
         if(this.response) {
             this.responseFiles = this.getResponseDocuments().map(doc => doc.attachment.embeddedDocumentBinaryObject);
         }
+
+        this.isTransportService = isTransportService(this.bpDataService.getCatalogueLine());
+        this.isLogisticsService = isLogisticsService(this.bpDataService.getCatalogueLine());
     }
 
     /*

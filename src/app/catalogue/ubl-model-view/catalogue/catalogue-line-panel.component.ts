@@ -7,7 +7,7 @@ import {CategoryService} from "../../category/category.service";
 import { ProductWrapper } from "../../../common/product-wrapper";
 import { CompanyNegotiationSettings } from "../../../user-mgmt/model/company-negotiation-settings";
 import { CallStatus } from "../../../common/call-status";
-import { isTransportService } from "../../../common/utils";
+import {isLogisticsService, isTransportService} from '../../../common/utils';
 import { CompanySettings } from "../../../user-mgmt/model/company-settings";
 import {Item} from '../../model/publish/item';
 import {selectDescription,selectName} from '../../../common/utils';
@@ -50,7 +50,7 @@ export class CatalogueLinePanelComponent {
         this.publishService.publishingStarted = false;
         this.categoryService.resetSelectedCategories();
 
-        if(isTransportService(this.catalogueLine))
+        if(isLogisticsService(this.catalogueLine))
             this.router.navigate(['catalogue/publish-logistic'], {queryParams: {pg: "single"}});
         else
             this.router.navigate(['catalogue/publish'], {queryParams: {pg: "single"}});
