@@ -57,7 +57,7 @@
 
 <ng-container *ngIf="publishingGranularity === 'single' && catalogueLine">
     <hr>
-    <name-description-panel [catalogueLine]="catalogueLine"></name-description-panel>
+    <name-description-panel [catalogueLine]="catalogueLine" [productIdEditable]="isProductIdEditable()"></name-description-panel>
     <hr>
 
     <!-- Tabs for Product -->

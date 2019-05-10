@@ -301,6 +301,18 @@ export class LogisticServicePublishComponent implements OnInit {
         return exit ? "Publish & Exit" : "Publish & Continue";
     }
 
+    isProductIdEditable(serviceType:string){
+        // handling of 'edit' and 'copy' publish modes
+        if(this.publishStateService.publishMode === 'edit'){
+            return false;
+        }
+        else if(this.publishStateService.publishMode === 'copy'){
+            return true;
+        }
+        // handling of 'create' publish mode
+        return this.logisticPublishMode.get(serviceType) == 'create';
+
+    }
 
     getBinaryObjectsForLogisticService(serviceType:string){
         let binaryObjects:BinaryObject[] = [];

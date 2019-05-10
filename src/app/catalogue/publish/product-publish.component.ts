@@ -1084,6 +1084,11 @@ export class ProductPublishComponent implements OnInit {
 
     }
 
+    // Product id is not editable when publish mode is 'edit'
+    isProductIdEditable():boolean{
+        return this.publishStateService.publishMode != 'edit';
+    }
+
     /**
      * Used to establish the two-way binding on the additional values of custom properties
      */

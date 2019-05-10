@@ -82,7 +82,7 @@
         <div class="space-before" *ngIf="selectedTabSinglePublish == 'TRANSPORT' || singleTabForLogisticServices">
             <button *ngIf="availableLogisticsServices.indexOf('ROADTRANSPORT') != -1 && (!singleTabForLogisticServices || selectedTabSinglePublish == 'ROADTRANSPORT')" class='btn btn-outline-primary button-block col-3' (click)="showRoadTransportService = !showRoadTransportService">Road Transport</button>
             <div class="well" *ngIf="showRoadTransportService">
-                <name-description-panel [catalogueLine]="getLogisticCatalogueLine('ROADTRANSPORT')"></name-description-panel>
+                <name-description-panel [catalogueLine]="getLogisticCatalogueLine('ROADTRANSPORT')" [productIdEditable]="isProductIdEditable('ROADTRANSPORT')"></name-description-panel>
                 <div class="row space-before">
                     <div class="col-3">
                         <strong>Additional Information</strong>
@@ -99,7 +99,7 @@
             </div>
             <button *ngIf="availableLogisticsServices.indexOf('MARITIMETRANSPORT') != -1 && (!singleTabForLogisticServices || selectedTabSinglePublish == 'MARITIMETRANSPORT')" class='btn btn-outline-primary button-block col-3' (click)="showMaritimeTransportService = !showMaritimeTransportService">Maritime Transport</button>
             <div class="well" *ngIf="showMaritimeTransportService">
-                <name-description-panel [catalogueLine]="getLogisticCatalogueLine('MARITIMETRANSPORT')"></name-description-panel>
+                <name-description-panel [catalogueLine]="getLogisticCatalogueLine('MARITIMETRANSPORT')" [productIdEditable]="isProductIdEditable('MARITIMETRANSPORT')"></name-description-panel>
                 <div class="row space-before">
                     <div class="col-3">
                         <strong>Additional Information</strong>
@@ -116,7 +116,7 @@
             </div>
             <button *ngIf="availableLogisticsServices.indexOf('AIRTRANSPORT') != -1 && (!singleTabForLogisticServices || selectedTabSinglePublish == 'AIRTRANSPORT')" class='btn btn-outline-primary button-block col-3' (click)="showAirTransportService = !showAirTransportService">Air Transport</button>
             <div class="well" *ngIf="showAirTransportService">
-                <name-description-panel [catalogueLine]="getLogisticCatalogueLine('AIRTRANSPORT')"></name-description-panel>
+                <name-description-panel [catalogueLine]="getLogisticCatalogueLine('AIRTRANSPORT')" [productIdEditable]="isProductIdEditable('AIRTRANSPORT')"></name-description-panel>
                 <div class="row space-before">
                     <div class="col-3">
                         <strong>Additional Information</strong>
@@ -133,7 +133,7 @@
             </div>
             <button *ngIf="availableLogisticsServices.indexOf('RAILTRANSPORT') != -1 && (!singleTabForLogisticServices || selectedTabSinglePublish == 'RAILTRANSPORT')" class='btn btn-outline-primary button-block col-3' (click)="showRailTransportService = !showRailTransportService">Rail Transport</button>
             <div class="well" *ngIf="showRailTransportService">
-                <name-description-panel [catalogueLine]="getLogisticCatalogueLine('RAILTRANSPORT')"></name-description-panel>
+                <name-description-panel [catalogueLine]="getLogisticCatalogueLine('RAILTRANSPORT')" [productIdEditable]="isProductIdEditable('RAILTRANSPORT')"></name-description-panel>
                 <div class="row space-before">
                     <div class="col-3">
                         <strong>Additional Information</strong>
@@ -187,7 +187,7 @@
             </div>
         </div>
         <div *ngIf="availableLogisticsServices.indexOf('WAREHOUSING') != -1 && selectedTabSinglePublish == 'WAREHOUSING'">
-            <name-description-panel [catalogueLine]="getLogisticCatalogueLine('WAREHOUSING')"></name-description-panel>
+            <name-description-panel [catalogueLine]="getLogisticCatalogueLine('WAREHOUSING')" [productIdEditable]="isProductIdEditable('WAREHOUSING')"></name-description-panel>
 
             <div class="row space-before">
                 <div class="col-3">
@@ -225,7 +225,7 @@
             </div>
         </div>
         <div *ngIf="availableLogisticsServices.indexOf('ORDERPICKING') != -1 && selectedTabSinglePublish == 'ORDERPICKING'">
-            <name-description-panel [catalogueLine]="getLogisticCatalogueLine('ORDERPICKING')"></name-description-panel>
+            <name-description-panel [catalogueLine]="getLogisticCatalogueLine('ORDERPICKING')" [productIdEditable]="isProductIdEditable('ORDERPICKING')"></name-description-panel>
 
             <div class="row space-before">
                 <div class="col-3">
@@ -263,7 +263,7 @@
             </div>
         </div>
         <div *ngIf="availableLogisticsServices.indexOf('REVERSELOGISTICS') != -1 && selectedTabSinglePublish == 'REVERSELOGISTICS'">
-            <name-description-panel [catalogueLine]="getLogisticCatalogueLine('REVERSELOGISTICS')"></name-description-panel>
+            <name-description-panel [catalogueLine]="getLogisticCatalogueLine('REVERSELOGISTICS')" [productIdEditable]="isProductIdEditable('REVERSELOGISTICS')"></name-description-panel>
 
             <div class="row space-before">
                 <div class="col-3">
@@ -301,7 +301,7 @@
             </div>
         </div>
         <div *ngIf="availableLogisticsServices.indexOf('INHOUSESERVICES') != -1 && selectedTabSinglePublish == 'INHOUSESERVICES'">
-            <name-description-panel [catalogueLine]="getLogisticCatalogueLine('INHOUSESERVICES')"></name-description-panel>
+            <name-description-panel [catalogueLine]="getLogisticCatalogueLine('INHOUSESERVICES')" [productIdEditable]="isProductIdEditable('INHOUSESERVICES')"></name-description-panel>
 
             <div class="row space-before">
                 <div class="col-3">
@@ -339,7 +339,7 @@
             </div>
         </div>
         <div *ngIf="availableLogisticsServices.indexOf('CUSTOMSMANAGEMENT') != -1 && selectedTabSinglePublish == 'CUSTOMSMANAGEMENT'">
-            <name-description-panel [catalogueLine]="getLogisticCatalogueLine('CUSTOMSMANAGEMENT')"></name-description-panel>
+            <name-description-panel [catalogueLine]="getLogisticCatalogueLine('CUSTOMSMANAGEMENT')" [productIdEditable]="isProductIdEditable('CUSTOMSMANAGEMENT')"></name-description-panel>
 
             <div class="row space-before">
                 <div class="col-3">
@@ -376,7 +376,7 @@
             </div>
         </div>
         <div *ngIf="availableLogisticsServices.indexOf('LOGISTICSCONSULTANCY') != -1 && selectedTabSinglePublish == 'LOGISTICSCONSULTANCY'">
-            <name-description-panel [catalogueLine]="getLogisticCatalogueLine('LOGISTICSCONSULTANCY')"></name-description-panel>
+            <name-description-panel [catalogueLine]="getLogisticCatalogueLine('LOGISTICSCONSULTANCY')" [productIdEditable]="isProductIdEditable('LOGISTICSCONSULTANCY')"></name-description-panel>
 
             <div class="row space-before">
                 <div class="col-3">

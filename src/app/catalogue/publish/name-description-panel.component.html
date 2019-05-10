@@ -19,7 +19,8 @@
                         [maxLength]="256"
                         [rowClass]="'m-0'"
                         [valueClass]="'col-9 pr-0'"
-                        (textChange)="onLineIdChange()">
+                        (textChange)="onLineIdChange()"
+                        [disabled]="!productIdEditable">
             </text-input>
             <hr>
             <div *ngFor="let itemName of catalogueLine.goodsItem.item.name; let i = index" class="space-after">
