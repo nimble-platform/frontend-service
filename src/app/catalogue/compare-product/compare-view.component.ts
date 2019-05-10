@@ -202,20 +202,19 @@ export class CompareViewComponent implements OnInit {
         .then((person) => {
 			this.favouriteIdList = person.favouriteProductID;
             this.collectionSize = person.favouriteProductID.length;
-            if(this.collectionSize > 0){
-				let query = "";
+			let query = "";
 
-				let length =  this.favouriteIdList.length;
+			let length =  this.favouriteIdList.length;
 
-				if(categoryURI != null && categoryURI != undefined){
+			if(categoryURI != null && categoryURI != undefined){
 					this.initial = false;
 					query = 'commodityClassficationUri:("'+ categoryURI.toString() +'") AND '
 					if(term == null || term == ""){
 						query = query+ "("
 					}
-				}
+			}
 
-				if(term != null && term != ""){
+			if(term != null && term != ""){
 					this.initial = false;
 					// let querySettings = {
 					// 	"fields": [("{LANG}_"+this.product_name)],
@@ -224,12 +223,8 @@ export class CompareViewComponent implements OnInit {
 					//   };
     				// let queryRes = this.simpleSearchService.buildQueryString(term.toString(),querySettings,false,false);
 					query = 'en_label: "'+term+'"';
-				}
-                this.getCall(query);
-
-            }else{
-                this.hasFavourite = false;
-            }
+			}
+            this.getCall(query);
             this.getCatalogueStatus.callback(null);
         })
         .catch(error => {
