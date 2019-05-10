@@ -5,12 +5,12 @@ import { CommonModule } from "@angular/common";
 import { AppCommonModule } from "../common/common.module";
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
 import { CatalogueRoutingModule } from "./catalogue-routing.module";
-
 import { CategorySearchComponent } from "./category/category-search.component";
 import { ProductPublishComponent } from "./publish/product-publish.component";
 import { AdditionalItemPropertyComponent } from "./ubl-model-view/additional-item-property.component";
 import { CatalogueViewComponent } from "./ubl-model-view/catalogue/catalogue-view.component";
 import { FavouriteViewComponent } from "./favourite/favourite-view.component";
+import { CompareViewComponent } from "./compare-product/compare-view.component";
 import { CatalogueLinePanelComponent } from "./ubl-model-view/catalogue/catalogue-line-panel.component";
 import { CatalogueLineViewComponent } from "./ubl-model-view/catalogue-line/catalogue-line-view.component";
 import { CatalogueLineDetailsComponent } from "./ubl-model-view/catalogue-line/catalogue-line-details.component";
@@ -49,6 +49,11 @@ import {ItemPropertyPriceOptionComponent} from "./publish/price-option/item-prop
 import {DiscountTargetComponent} from "./publish/price-option/discount-target.component";
 import {PriceOptionViewComponent} from './publish/price-option/price-option-view.component';
 import {BulkPublishComponent} from "./publish/bulk-publish.component";
+import {OptionsPanelComponent} from './publish/options-panel.component';
+import {OriginDestinationViewComponent} from './publish/origin-destination-view-component';
+import {NameDescriptionPanelComponent} from './publish/name-description-panel.component';
+import {LogisticServicePublishComponent} from './publish/logistic-service-publish.component';
+import {LogisticPublishDeactivateGuardService} from './logistic-publish-deactivate-guard.service';
 
 @NgModule({
 	imports: [CommonModule, 
@@ -65,8 +70,12 @@ import {BulkPublishComponent} from "./publish/bulk-publish.component";
         CategorySearchComponent,
         CategoryTreeComponent,
         ProductPublishComponent,
+        LogisticServicePublishComponent,
         EditPropertyModalComponent,
         BulkPublishComponent,
+        OptionsPanelComponent,
+        OriginDestinationViewComponent,
+        NameDescriptionPanelComponent,
         ProductDeliveryTradingComponent,
         ProductPriceTabComponent,
         AdditionalItemPropertyComponent,
@@ -101,7 +110,8 @@ import {BulkPublishComponent} from "./publish/bulk-publish.component";
         ItemPropertyPriceOptionComponent,
         DiscountTargetComponent,
         PriceOptionViewComponent,
-        FavouriteViewComponent
+        FavouriteViewComponent,
+        CompareViewComponent
     ],
     exports: [
         CategorySearchComponent,
@@ -133,8 +143,9 @@ import {BulkPublishComponent} from "./publish/bulk-publish.component";
         PaymentTermsView,
         NoteFileViewComponent,
         PriceOptionViewComponent,
-        FavouriteViewComponent
+        FavouriteViewComponent,
+        CompareViewComponent
     ],
-    providers: [PublishDeactivateGuardService, CategoryDeactivateGuardService]
+    providers: [PublishDeactivateGuardService, CategoryDeactivateGuardService, LogisticPublishDeactivateGuardService]
 })
 export class CatalogueModule {}

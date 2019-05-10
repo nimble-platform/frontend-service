@@ -28,6 +28,15 @@ export class AnalyticsService {
   		.catch(this.handleError);
   	}
 
+    getPerfromanceAnalytics(comp:string): Promise<any> {
+  		const url = `${this.url_da}/company?companyID=${comp}`;
+  		return this.http
+  		.get(url, {headers: this.getAuthorizedHeaders()})
+  		.toPromise()
+  		.then(res => res.json())
+  		.catch(this.handleError);
+    }
+    
     getCompAnalytics(comp:string): Promise<any> {
   		const url = `${this.url_da}?companyID=${comp}`;
   		return this.http
@@ -73,7 +82,7 @@ export class AnalyticsService {
       const token = 'Bearer '+this.cookieService.get("bearer_token");
       const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
       return this.http
-  		.post(url, {headers: headers_token, withCredentials: true})
+  		.post(url, null, {headers: headers_token, withCredentials: true})
   		.toPromise()
   		.then(res => res)
   		.catch(this.handleError);

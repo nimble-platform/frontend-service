@@ -1,0 +1,420 @@
+<!-- Topmost navigation bar -->
+<ul class="nav nav-tabs" *ngIf="publishMode !== 'edit' && publishMode !== 'copy'">
+    <li class="nav-item">
+        <a href id="singleUpload"
+           [ngClass]="{'nav-link': true, active: publishingGranularity === 'single'}"
+           (click)="onSelectTab($event)"
+           i18n
+        >Single Upload</a>
+    </li>
+
+    <li class="nav-item">
+        <a href id="bulkUpload"
+           [ngClass]="{'nav-link': true, active: publishingGranularity == 'bulk'}"
+           (click)="onSelectTab($event)"
+           i18n
+        >Bulk Upload</a>
+    </li>
+</ul>
+
+<div *ngIf="publishingGranularity === 'bulk'">
+    <bulk-publish></bulk-publish>
+</div>
+
+<ng-container *ngIf="publishingGranularity === 'single' && (logisticCatalogueLines || catalogueLine)">
+    <!-- Logistics tabs -->
+    <div>
+        <div *ngIf="!singleTabForLogisticServices" class="row space-before">
+            <div class="col-12">
+                <ul class="nav nav-tabs">
+                    <li *ngIf="availableLogisticsServices.indexOf('ROADTRANSPORT') != -1 || availableLogisticsServices.indexOf('MARITIMETRANSPORT') != -1 || availableLogisticsServices.indexOf('AIRTRANSPORT') != -1 || availableLogisticsServices.indexOf('RAILTRANSPORT') != -1" class="nav-item">
+                        <a href id="TRANSPORT" class="nav-link"
+                           [ngClass]="{ active: selectedTabSinglePublish === 'TRANSPORT'}"
+                           (click)="onSelectTabSinglePublish($event)">
+                            Transport
+                        </a>
+                    </li>
+                    <li *ngIf="availableLogisticsServices.indexOf('WAREHOUSING') != -1" class="nav-item">
+                        <a href id="WAREHOUSING" class="nav-link"
+                           [ngClass]="{ active: selectedTabSinglePublish === 'WAREHOUSING'}"
+                           (click)="onSelectTabSinglePublish($event)">
+                            Warehousing
+                        </a>
+                    </li>
+                    <li *ngIf="availableLogisticsServices.indexOf('ORDERPICKING') != -1" class="nav-item">
+                        <a href id="ORDERPICKING" class="nav-link"
+                           [ngClass]="{ active: selectedTabSinglePublish === 'ORDERPICKING'}"
+                           (click)="onSelectTabSinglePublish($event)">
+                            Order Picking
+                        </a>
+                    </li>
+                    <li *ngIf="availableLogisticsServices.indexOf('REVERSELOGISTICS') != -1" class="nav-item">
+                        <a href id="REVERSELOGISTICS" class="nav-link"
+                           [ngClass]="{ active: selectedTabSinglePublish === 'REVERSELOGISTICS'}"
+                           (click)="onSelectTabSinglePublish($event)">
+                            Reverse Logistics
+                        </a>
+                    </li>
+                    <li *ngIf="availableLogisticsServices.indexOf('INHOUSESERVICES') != -1" class="nav-item">
+                        <a href id="INHOUSESERVICES" class="nav-link"
+                           [ngClass]="{ active: selectedTabSinglePublish === 'INHOUSESERVICES'}"
+                           (click)="onSelectTabSinglePublish($event)">
+                            In-house Services
+                        </a>
+                    </li>
+                    <li *ngIf="availableLogisticsServices.indexOf('CUSTOMSMANAGEMENT') != -1" class="nav-item">
+                        <a href id="CUSTOMSMANAGEMENT" class="nav-link"
+                           [ngClass]="{ active: selectedTabSinglePublish === 'CUSTOMSMANAGEMENT'}"
+                           (click)="onSelectTabSinglePublish($event)">
+                            Customs Management
+                        </a>
+                    </li>
+                    <li *ngIf="availableLogisticsServices.indexOf('LOGISTICSCONSULTANCY') != -1" class="nav-item">
+                        <a href id="LOGISTICSCONSULTANCY" class="nav-link"
+                           [ngClass]="{ active: selectedTabSinglePublish === 'LOGISTICSCONSULTANCY'}"
+                           (click)="onSelectTabSinglePublish($event)">
+                            Logistics Consultancy
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="space-before" *ngIf="selectedTabSinglePublish == 'TRANSPORT' || singleTabForLogisticServices">
+            <button *ngIf="availableLogisticsServices.indexOf('ROADTRANSPORT') != -1 && (!singleTabForLogisticServices || selectedTabSinglePublish == 'ROADTRANSPORT')" class='btn btn-outline-primary button-block col-3' (click)="showRoadTransportService = !showRoadTransportService">Road Transport</button>
+            <div class="well" *ngIf="showRoadTransportService">
+                <name-description-panel [catalogueLine]="getLogisticCatalogueLine('ROADTRANSPORT')" [productIdEditable]="isProductIdEditable('ROADTRANSPORT')"></name-description-panel>
+                <div class="row space-before">
+                    <div class="col-3">
+                        <strong>Additional Information</strong>
+                    </div>
+                    <div class="div-padding-left">
+                        <file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFileForLogisticService($event,'ROADTRANSPORT')" [binaryObjects]="getBinaryObjectsForLogisticService('ROADTRANSPORT')"
+                                    (onClearFile)="onUnSelectFileForLogisticService($event,'ROADTRANSPORT')">
+                        </file-input>
+                    </div>
+                </div>
+                <div class="space-before" *ngFor="let property of getLogisticProperties('ROADTRANSPORT')">
+                    <options-panel [itemProperty]="property"></options-panel>
+                </div>
+            </div>
+            <button *ngIf="availableLogisticsServices.indexOf('MARITIMETRANSPORT') != -1 && (!singleTabForLogisticServices || selectedTabSinglePublish == 'MARITIMETRANSPORT')" class='btn btn-outline-primary button-block col-3' (click)="showMaritimeTransportService = !showMaritimeTransportService">Maritime Transport</button>
+            <div class="well" *ngIf="showMaritimeTransportService">
+                <name-description-panel [catalogueLine]="getLogisticCatalogueLine('MARITIMETRANSPORT')" [productIdEditable]="isProductIdEditable('MARITIMETRANSPORT')"></name-description-panel>
+                <div class="row space-before">
+                    <div class="col-3">
+                        <strong>Additional Information</strong>
+                    </div>
+                    <div class="div-padding-left">
+                        <file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFileForLogisticService($event,'MARITIMETRANSPORT')" [binaryObjects]="getBinaryObjectsForLogisticService('MARITIMETRANSPORT')"
+                                    (onClearFile)="onUnSelectFileForLogisticService($event,'MARITIMETRANSPORT')">
+                        </file-input>
+                    </div>
+                </div>
+                <div class="space-before" *ngFor="let property of getLogisticProperties('MARITIMETRANSPORT')">
+                    <options-panel [itemProperty]="property"></options-panel>
+                </div>
+            </div>
+            <button *ngIf="availableLogisticsServices.indexOf('AIRTRANSPORT') != -1 && (!singleTabForLogisticServices || selectedTabSinglePublish == 'AIRTRANSPORT')" class='btn btn-outline-primary button-block col-3' (click)="showAirTransportService = !showAirTransportService">Air Transport</button>
+            <div class="well" *ngIf="showAirTransportService">
+                <name-description-panel [catalogueLine]="getLogisticCatalogueLine('AIRTRANSPORT')" [productIdEditable]="isProductIdEditable('AIRTRANSPORT')"></name-description-panel>
+                <div class="row space-before">
+                    <div class="col-3">
+                        <strong>Additional Information</strong>
+                    </div>
+                    <div class="div-padding-left">
+                        <file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFileForLogisticService($event,'AIRTRANSPORT')" [binaryObjects]="getBinaryObjectsForLogisticService('AIRTRANSPORT')"
+                                    (onClearFile)="onUnSelectFileForLogisticService($event,'AIRTRANSPORT')">
+                        </file-input>
+                    </div>
+                </div>
+                <div class="space-before" *ngFor="let property of getLogisticProperties('AIRTRANSPORT')">
+                    <options-panel [itemProperty]="property"></options-panel>
+                </div>
+            </div>
+            <button *ngIf="availableLogisticsServices.indexOf('RAILTRANSPORT') != -1 && (!singleTabForLogisticServices || selectedTabSinglePublish == 'RAILTRANSPORT')" class='btn btn-outline-primary button-block col-3' (click)="showRailTransportService = !showRailTransportService">Rail Transport</button>
+            <div class="well" *ngIf="showRailTransportService">
+                <name-description-panel [catalogueLine]="getLogisticCatalogueLine('RAILTRANSPORT')" [productIdEditable]="isProductIdEditable('RAILTRANSPORT')"></name-description-panel>
+                <div class="row space-before">
+                    <div class="col-3">
+                        <strong>Additional Information</strong>
+                    </div>
+                    <div class="div-padding-left">
+                        <file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFileForLogisticService($event,'RAILTRANSPORT')" [binaryObjects]="getBinaryObjectsForLogisticService('RAILTRANSPORT')"
+                                    (onClearFile)="onUnSelectFileForLogisticService($event,'RAILTRANSPORT')">
+                        </file-input>
+                    </div>
+                </div>
+                <div class="space-before" *ngFor="let property of getLogisticProperties('RAILTRANSPORT')">
+                    <options-panel [itemProperty]="property"></options-panel>
+                </div>
+            </div>
+            <div *ngIf="selectedTabSinglePublish == 'TRANSPORT' || selectedTabSinglePublish == 'RAILTRANSPORT' || selectedTabSinglePublish == 'AIRTRANSPORT' || selectedTabSinglePublish == 'MARITIMETRANSPORT' || selectedTabSinglePublish == 'ROADTRANSPORT'">
+                <div class="space-before">
+                    <options-panel [itemProperty]="getProductTypeProperty('TRANSPORT')" [checkboxOther]="false"
+                                   [selectedOptionsWithExtraColumn]="false"></options-panel>
+                </div>
+                <div class="space-before">
+                    <options-panel [itemProperty]="getIndustrySpecializationProperty('TRANSPORT')" [checkboxOther]="false"
+                                   [selectedOptionsWithExtraColumn]="false"></options-panel>
+                </div>
+            </div>
+            <div *ngIf="selectedTabSinglePublish == 'TRANSPORT' || selectedTabSinglePublish == 'RAILTRANSPORT' || selectedTabSinglePublish == 'AIRTRANSPORT' || selectedTabSinglePublish == 'MARITIMETRANSPORT' || selectedTabSinglePublish == 'ROADTRANSPORT'">
+                <div class="space-before">
+                    <origin-destination-view  [itemProperty]="getDestinationAddressForLogistics('TRANSPORT')"></origin-destination-view>
+                </div>
+                <div class="space-before">
+                    <origin-destination-view  [itemProperty]="getOriginAddressForLogistics('TRANSPORT')"></origin-destination-view>
+                </div>
+            </div>
+            <!-- Actions -->
+            <div class="row actions-row pr-0" *ngIf="selectedTabSinglePublish == 'TRANSPORT' || selectedTabSinglePublish == 'RAILTRANSPORT' || selectedTabSinglePublish == 'AIRTRANSPORT' || selectedTabSinglePublish == 'MARITIMETRANSPORT' || selectedTabSinglePublish == 'ROADTRANSPORT'">
+                <div class="col-4 call-status-col"><call-status [callStatus]="publishStatus"></call-status></div>
+                <div class="col-2">
+                    <button class="btn btn-secondary action" [disabled]="isLoading() || !isValidCatalogueLineForLogistics()" (click)="onBack()">
+                        Cancel
+                    </button>
+                </div>
+                <div class="col-3">
+                    <button class="btn btn-primary action" [disabled]="isLoading() || !isValidCatalogueLineForLogistics()" (click)="onPublish(false)">
+                        {{ getButtonLabel('TRANSPORT') }}
+                    </button>
+                </div>
+                <div class="col-3">
+                    <button class="btn btn-primary action" [disabled]="isLoading() || !isValidCatalogueLineForLogistics()" (click)="onPublish(true)">
+                        {{ getButtonLabel('TRANSPORT',true) }}
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="availableLogisticsServices.indexOf('WAREHOUSING') != -1 && selectedTabSinglePublish == 'WAREHOUSING'">
+            <name-description-panel [catalogueLine]="getLogisticCatalogueLine('WAREHOUSING')" [productIdEditable]="isProductIdEditable('WAREHOUSING')"></name-description-panel>
+
+            <div class="row space-before">
+                <div class="col-3">
+                    <strong>Additional Information</strong>
+                </div>
+                <div class="div-padding-left">
+                    <file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFileForLogisticService($event,'WAREHOUSING')" [binaryObjects]="getBinaryObjectsForLogisticService('WAREHOUSING')"
+                                (onClearFile)="onUnSelectFileForLogisticService($event,'WAREHOUSING')">
+                    </file-input>
+                </div>
+            </div>
+
+            <div class="space-before" *ngFor="let property of getLogisticCatalogueLine('WAREHOUSING').goodsItem.item.additionalItemProperty">
+                <options-panel [itemProperty]="property"></options-panel>
+            </div>
+
+            <!-- Actions -->
+            <div class="row actions-row pr-0">
+                <div class="col-4 call-status-col"><call-status [callStatus]="publishStatus"></call-status></div>
+                <div class="col-2">
+                    <button class="btn btn-secondary action" [disabled]="isLoading() || !isValidCatalogueLineForLogistics()" (click)="onBack()">
+                        Cancel
+                    </button>
+                </div>
+                <div class="col-3">
+                    <button class="btn btn-primary action" [disabled]="isLoading() || !isValidCatalogueLineForLogistics()" (click)="onPublish(false)">
+                        {{ getButtonLabel('WAREHOUSING') }}
+                    </button>
+                </div>
+                <div class="col-3">
+                    <button class="btn btn-primary action" [disabled]="isLoading() || !isValidCatalogueLineForLogistics()" (click)="onPublish(true)">
+                        {{ getButtonLabel('WAREHOUSING',true) }}
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="availableLogisticsServices.indexOf('ORDERPICKING') != -1 && selectedTabSinglePublish == 'ORDERPICKING'">
+            <name-description-panel [catalogueLine]="getLogisticCatalogueLine('ORDERPICKING')" [productIdEditable]="isProductIdEditable('ORDERPICKING')"></name-description-panel>
+
+            <div class="row space-before">
+                <div class="col-3">
+                    <strong>Additional Information</strong>
+                </div>
+                <div class="div-padding-left">
+                    <file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFileForLogisticService($event,'ORDERPICKING')" [binaryObjects]="getBinaryObjectsForLogisticService('ORDERPICKING')"
+                                (onClearFile)="onUnSelectFileForLogisticService($event,'ORDERPICKING')">
+                    </file-input>
+                </div>
+            </div>
+
+            <div class="space-before" *ngFor="let property of getLogisticCatalogueLine('ORDERPICKING').goodsItem.item.additionalItemProperty">
+                <options-panel [itemProperty]="property"></options-panel>
+            </div>
+
+            <!-- Actions -->
+            <div class="row actions-row pr-0">
+                <div class="col-4 call-status-col"><call-status [callStatus]="publishStatus"></call-status></div>
+                <div class="col-2">
+                    <button class="btn btn-secondary action" [disabled]="isLoading() || !isValidCatalogueLineForLogistics()" (click)="onBack()">
+                        Cancel
+                    </button>
+                </div>
+                <div class="col-3">
+                    <button class="btn btn-primary action" [disabled]="isLoading() || !isValidCatalogueLineForLogistics()" (click)="onPublish(false)">
+                        {{ getButtonLabel('ORDERPICKING') }}
+                    </button>
+                </div>
+                <div class="col-3">
+                    <button class="btn btn-primary action" [disabled]="isLoading() || !isValidCatalogueLineForLogistics()" (click)="onPublish(true)">
+                        {{ getButtonLabel('ORDERPICKING',true) }}
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="availableLogisticsServices.indexOf('REVERSELOGISTICS') != -1 && selectedTabSinglePublish == 'REVERSELOGISTICS'">
+            <name-description-panel [catalogueLine]="getLogisticCatalogueLine('REVERSELOGISTICS')" [productIdEditable]="isProductIdEditable('REVERSELOGISTICS')"></name-description-panel>
+
+            <div class="row space-before">
+                <div class="col-3">
+                    <strong>Additional Information</strong>
+                </div>
+                <div class="div-padding-left">
+                    <file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFileForLogisticService($event,'REVERSELOGISTICS')" [binaryObjects]="getBinaryObjectsForLogisticService('REVERSELOGISTICS')"
+                                (onClearFile)="onUnSelectFileForLogisticService($event,'REVERSELOGISTICS')">
+                    </file-input>
+                </div>
+            </div>
+
+            <div class="space-before" *ngFor="let property of getLogisticCatalogueLine('REVERSELOGISTICS').goodsItem.item.additionalItemProperty">
+                <options-panel [itemProperty]="property"></options-panel>
+            </div>
+
+            <!-- Actions -->
+            <div class="row actions-row pr-0">
+                <div class="col-4 call-status-col"><call-status [callStatus]="publishStatus"></call-status></div>
+                <div class="col-2">
+                    <button class="btn btn-secondary action" [disabled]="isLoading() || !isValidCatalogueLineForLogistics()" (click)="onBack()">
+                        Cancel
+                    </button>
+                </div>
+                <div class="col-3">
+                    <button class="btn btn-primary action" [disabled]="isLoading() || !isValidCatalogueLineForLogistics()" (click)="onPublish(false)">
+                        {{ getButtonLabel('REVERSELOGISTICS') }}
+                    </button>
+                </div>
+                <div class="col-3">
+                    <button class="btn btn-primary action" [disabled]="isLoading() || !isValidCatalogueLineForLogistics()" (click)="onPublish(true)">
+                        {{ getButtonLabel('REVERSELOGISTICS',true) }}
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="availableLogisticsServices.indexOf('INHOUSESERVICES') != -1 && selectedTabSinglePublish == 'INHOUSESERVICES'">
+            <name-description-panel [catalogueLine]="getLogisticCatalogueLine('INHOUSESERVICES')" [productIdEditable]="isProductIdEditable('INHOUSESERVICES')"></name-description-panel>
+
+            <div class="row space-before">
+                <div class="col-3">
+                    <strong>Additional Information</strong>
+                </div>
+                <div class="div-padding-left">
+                    <file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFileForLogisticService($event,'INHOUSESERVICES')" [binaryObjects]="getBinaryObjectsForLogisticService('INHOUSESERVICES')"
+                                (onClearFile)="onUnSelectFileForLogisticService($event,'INHOUSESERVICES')">
+                    </file-input>
+                </div>
+            </div>
+
+            <div class="space-before" *ngFor="let property of getLogisticCatalogueLine('INHOUSESERVICES').goodsItem.item.additionalItemProperty">
+                <options-panel [itemProperty]="property"></options-panel>
+            </div>
+
+            <!-- Actions -->
+            <div class="row actions-row pr-0">
+                <div class="col-4 call-status-col"><call-status [callStatus]="publishStatus"></call-status></div>
+                <div class="col-2">
+                    <button class="btn btn-secondary action" [disabled]="isLoading() || !isValidCatalogueLineForLogistics()" (click)="onBack()">
+                        Cancel
+                    </button>
+                </div>
+                <div class="col-3">
+                    <button class="btn btn-primary action" [disabled]="isLoading() || !isValidCatalogueLineForLogistics()" (click)="onPublish(false)">
+                        {{ getButtonLabel('INHOUSESERVICES') }}
+                    </button>
+                </div>
+                <div class="col-3">
+                    <button class="btn btn-primary action" [disabled]="isLoading() || !isValidCatalogueLineForLogistics()" (click)="onPublish(true)">
+                        {{ getButtonLabel('INHOUSESERVICES',true)}}
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="availableLogisticsServices.indexOf('CUSTOMSMANAGEMENT') != -1 && selectedTabSinglePublish == 'CUSTOMSMANAGEMENT'">
+            <name-description-panel [catalogueLine]="getLogisticCatalogueLine('CUSTOMSMANAGEMENT')" [productIdEditable]="isProductIdEditable('CUSTOMSMANAGEMENT')"></name-description-panel>
+
+            <div class="row space-before">
+                <div class="col-3">
+                    <strong>Additional Information</strong>
+                </div>
+                <div class="div-padding-left">
+                    <file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFileForLogisticService($event,'CUSTOMSMANAGEMENT')" [binaryObjects]="getBinaryObjectsForLogisticService('CUSTOMSMANAGEMENT')"
+                                (onClearFile)="onUnSelectFileForLogisticService($event,'CUSTOMSMANAGEMENT')">
+                    </file-input>
+                </div>
+            </div>
+            <div class="space-before" *ngFor="let property of getLogisticCatalogueLine('CUSTOMSMANAGEMENT').goodsItem.item.additionalItemProperty">
+                <options-panel [itemProperty]="property"></options-panel>
+            </div>
+
+            <!-- Actions -->
+            <div class="row actions-row pr-0">
+                <div class="col-4 call-status-col"><call-status [callStatus]="publishStatus"></call-status></div>
+                <div class="col-2">
+                    <button class="btn btn-secondary action" [disabled]="isLoading() || !isValidCatalogueLineForLogistics()" (click)="onBack()">
+                        Cancel
+                    </button>
+                </div>
+                <div class="col-3">
+                    <button class="btn btn-primary action" [disabled]="isLoading() || !isValidCatalogueLineForLogistics()" (click)="onPublish(false)">
+                        {{ getButtonLabel('CUSTOMSMANAGEMENT') }}
+                    </button>
+                </div>
+                <div class="col-3">
+                    <button class="btn btn-primary action" [disabled]="isLoading() || !isValidCatalogueLineForLogistics()" (click)="onPublish(true)">
+                        {{ getButtonLabel('CUSTOMSMANAGEMENT',true) }}
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="availableLogisticsServices.indexOf('LOGISTICSCONSULTANCY') != -1 && selectedTabSinglePublish == 'LOGISTICSCONSULTANCY'">
+            <name-description-panel [catalogueLine]="getLogisticCatalogueLine('LOGISTICSCONSULTANCY')" [productIdEditable]="isProductIdEditable('LOGISTICSCONSULTANCY')"></name-description-panel>
+
+            <div class="row space-before">
+                <div class="col-3">
+                    <strong>Additional Information</strong>
+                </div>
+                <div class="div-padding-left">
+                    <file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFileForLogisticService($event,'LOGISTICSCONSULTANCY')" [binaryObjects]="getBinaryObjectsForLogisticService('LOGISTICSCONSULTANCY')"
+                                (onClearFile)="onUnSelectFileForLogisticService($event,'LOGISTICSCONSULTANCY')">
+                    </file-input>
+                </div>
+            </div>
+            <div class="space-before" *ngFor="let property of getLogisticCatalogueLine('LOGISTICSCONSULTANCY').goodsItem.item.additionalItemProperty">
+                <options-panel [itemProperty]="property"></options-panel>
+            </div>
+
+            <!-- Actions -->
+            <div class="row actions-row pr-0">
+                <div class="col-4 call-status-col"><call-status [callStatus]="publishStatus"></call-status></div>
+                <div class="col-2">
+                    <button class="btn btn-secondary action" [disabled]="isLoading() || !isValidCatalogueLineForLogistics()" (click)="onBack()">
+                        Cancel
+                    </button>
+                </div>
+                <div class="col-3">
+                    <button class="btn btn-primary action" [disabled]="isLoading() || !isValidCatalogueLineForLogistics()" (click)="onPublish(false)">
+                        {{ getButtonLabel('LOGISTICSCONSULTANCY')  }}
+                    </button>
+                </div>
+                <div class="col-3">
+                    <button class="btn btn-primary action" [disabled]="isLoading() || !isValidCatalogueLineForLogistics()" (click)="onPublish(true)">
+                        {{ getButtonLabel('LOGISTICSCONSULTANCY',true) }}
+                    </button>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</ng-container>
+
+<call-status [callStatus]="callStatus" [large]="true"></call-status>

@@ -5,7 +5,7 @@ import {CallStatus} from "../../../common/call-status";
 import {ActivatedRoute, Params, Router} from "@angular/router";
 import {PublishService} from "../../publish-and-aip.service";
 import {CategoryService} from "../../category/category.service";
-import { isTransportService } from "../../../common/utils";
+import {isLogisticsService, isTransportService} from '../../../common/utils';
 import { BPDataService } from "../../../bpe/bp-view/bp-data-service";
 import { UserService } from "../../../user-mgmt/user.service";
 import { CompanySettings } from "../../../user-mgmt/model/company-settings";
@@ -16,6 +16,8 @@ import {ItemProperty} from '../../model/publish/item-property';
 import {debounceTime, distinctUntilChanged, switchMap} from 'rxjs/operators';
 import {Observable} from 'rxjs/Observable';
 import {CATALOGUE_LINE_SORT_OPTIONS} from '../../model/constants';
+import {Catalogue} from '../../model/publish/catalogue';
+import { CatalogueLine } from "../../model/publish/catalogue-line";
 
 @Component({
     selector: 'catalogue-view',
@@ -43,13 +45,20 @@ export class CatalogueViewComponent implements OnInit {
     page = 1;
     // default
     pageSize = 10;
+    addCatalogue = false;
 
     // check whether catalogue-line-panel should be displayed for a specific catalogue line
     catalogueLineView = {};
 
-    sortOption = null;
+    selectedCatalogue: string = "all";
+    catlogueId: string = "all";
+    cataloguesIds : any = [];
 
+    sortOption = null;
+    catalogueText: string = "";
     getCatalogueStatus = new CallStatus();
+    productCatalogueRetrievalStatus: CallStatus = new CallStatus();
+
     callStatus = new CallStatus();
     deleteStatuses: CallStatus[] = [];
 
@@ -69,6 +78,23 @@ export class CatalogueViewComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.searchText = "";
+        this.deleteStatuses = [];
+        this.catalogueText = "";
+        this.sortOption = null;
+        this.cataloguesIds = [];
+        this.catlogueId = "all";
+        this.selectedCatalogue = "all";
+        this.catalogueLinesWRTTypes = [];
+        this.catalogueLinesArray = [];
+        this.categoryNames = [];
+        this.selectedCategory = "All";
+        this.collectionSize = 0;
+        this.page = 1;
+        this.pageSize = 10;
+        this.addCatalogue = false;
+        this.catalogueLineView = {};
+        this.getCatagloueIdsForParty();
         this.catalogueService.setEditMode(false);
         this.requestCatalogue();
         for(let i = 0; i < this.pageSize; i++) {
@@ -82,6 +108,11 @@ export class CatalogueViewComponent implements OnInit {
 
     selectDescription (item:  Item) {
         return selectDescription(item);
+    }
+
+    changeCat(){
+        this.catlogueId = this.selectedCatalogue;
+        this.requestCatalogue();
     }
 
     search = (text$: Observable<string>) =>
@@ -100,7 +131,7 @@ export class CatalogueViewComponent implements OnInit {
         // check whether the user chose a category to filter the catalogue lines
         let categoryName = this.selectedCategory == "All" ? null : this.selectedCategory;
         Promise.all([
-            this.catalogueService.getCatalogueResponse(userId, categoryName,this.searchText,this.pageSize,(this.page-1)*this.pageSize,this.sortOption),
+            this.catalogueService.getCatalogueResponse(userId, categoryName,this.searchText,this.pageSize,(this.page-1)*this.pageSize,this.sortOption,this.catlogueId),
             this.getCompanySettings(userId)
         ])
             .then(([catalogueResponse, settings]) => {
@@ -142,13 +173,41 @@ export class CatalogueViewComponent implements OnInit {
 
             this.catalogueService.deleteCatalogue().then(res => {
                     this.callStatus.reset();
-                    this.requestCatalogue();
+                    this.ngOnInit();
                 },
                 error => {
                     this.callStatus.error("Failed to delete catalogue", error);
                 }
             );
         }
+    }
+
+    onAddCatalogue(){
+        const userId = this.cookieService.get("user_id");
+        this.userService.getUserParty(userId).then(userParty => {
+
+        let catalogue:Catalogue = new Catalogue(this.catalogueText, null, userParty, "", "", []);
+        // add catalogue line to the end of catalogue
+        this.catalogueService.postCatalogue(catalogue)
+            .then(() =>
+            {
+                this.catalogueText = "";
+                this.cancelAddingCatalogue();
+                this.ngOnInit();
+
+            })
+            .catch(err => {
+            })
+        }).catch(err => {
+        });
+    }
+
+    cancelAddingCatalogue(){
+        this.addCatalogue = false;
+    }
+
+    onAddingCatalogue(){
+        this.addCatalogue = true;
     }
 
     onOpenCatalogueLine(e: Event) {
@@ -160,9 +219,27 @@ export class CatalogueViewComponent implements OnInit {
         this.publishService.publishMode = 'edit';
         this.publishService.publishingStarted = false;
         this.categoryService.resetSelectedCategories();
-        this.router.navigate(['catalogue/publish'], {queryParams: {
-                pg: "single",
-                productType: isTransportService(catalogueLine) ? "transportation" : "product"}});
+        if(this.catlogueId == "all"){
+             this.catalogueService.getCatalogueFromUuid(catalogueLine.goodsItem.item.catalogueDocumentReference.id)
+            .then(res => {
+                if(isLogisticsService(catalogueLine))
+                    this.router.navigate(['catalogue/publish-logistic'], {queryParams: {cat:res.id, pg: "single"}});
+                else
+                    this.router.navigate(['catalogue/publish'], {queryParams: {cat:res.id, pg: "single"}});
+            })
+            .catch(error => {
+                if(isLogisticsService(catalogueLine))
+                    this.router.navigate(['catalogue/publish-logistic'], {queryParams: {cat:'default', pg: "single"}});
+                else
+                    this.router.navigate(['catalogue/publish'], {queryParams: {cat:'default', pg: "single"}});
+            });;
+
+        }else{
+            if(isLogisticsService(catalogueLine))
+                this.router.navigate(['catalogue/publish-logistic'], {queryParams: {cat:this.catlogueId, pg: "single"}});
+            else
+                this.router.navigate(['catalogue/publish'], {queryParams: {cat:this.catlogueId, pg: "single"}});
+        }
     }
 
     redirectToCopy(catalogueLine) {
@@ -170,16 +247,42 @@ export class CatalogueViewComponent implements OnInit {
         this.publishService.publishMode = 'copy';
         this.publishService.publishingStarted = false;
         this.categoryService.resetSelectedCategories();
-        this.router.navigate(['catalogue/publish'], {queryParams: {
-                pg: "single",
-                productType: isTransportService(catalogueLine) ? "transportation" : "product"}});
+        if(this.catlogueId == "all"){
+            this.catalogueService.getCatalogueFromUuid(catalogueLine.goodsItem.item.catalogueDocumentReference.id)
+            .then(res => {
+                if(isLogisticsService(catalogueLine))
+                    this.router.navigate(['catalogue/publish-logistic'], {queryParams: {cat:res.id, pg: "single"}});
+                else
+                    this.router.navigate(['catalogue/publish'], {queryParams: {cat:res.id, pg: "single"}});
+            })
+            .catch(error => {
+                if(isLogisticsService(catalogueLine))
+                    this.router.navigate(['catalogue/publish-logistic'], {queryParams: {cat:'default', pg: "single"}});
+                else
+                    this.router.navigate(['catalogue/publish'], {queryParams: {cat:'default', pg: "single"}});
+            });;
+        }else{
+            if(isLogisticsService(catalogueLine))
+                this.router.navigate(['catalogue/publish-logistic'], {queryParams: {cat:this.catlogueId, pg: "single"}});
+            else
+                this.router.navigate(['catalogue/publish'], {queryParams: {cat:this.catlogueId, pg: "single"}});
+        }
+
     }
 
-    deleteCatalogueLine(catalogueLine, i: number): void {
+    deleteCatalogueLine(catalogueLine:CatalogueLine, i: number): void {
         if (confirm("Are you sure that you want to delete this catalogue item?")) {
             const status = this.getDeleteStatus(i);
             status.submit();
-            this.catalogueService.deleteCatalogueLine(this.catalogueService.catalogueResponse.catalogueUuid, catalogueLine.id)
+            let catalogue_uuid = "";
+
+            if(this.catalogueService.catalogueResponse.catalogueUuid === "" || this.catalogueService.catalogueResponse.catalogueUuid == null){
+                catalogue_uuid = catalogueLine.goodsItem.item.catalogueDocumentReference.id;
+            }else{
+                catalogue_uuid = this.catalogueService.catalogueResponse.catalogueUuid;
+            }
+
+            this.catalogueService.deleteCatalogueLine(catalogue_uuid, catalogueLine.id)
                 .then(res => {
                     this.requestCatalogue();
                     status.callback("Catalogue line deleted", true);
@@ -263,5 +366,15 @@ export class CatalogueViewComponent implements OnInit {
 
     navigateToBulkUploadPage() {
         this.router.navigate(["/catalogue/publish"], { queryParams: { pg: 'bulk', productType: 'product'}});
+    }
+
+    getCatagloueIdsForParty(){
+        this.productCatalogueRetrievalStatus.submit();
+        this.catalogueService.getCatalogueIdsForParty().then((catalogueIds) => {
+            this.cataloguesIds = catalogueIds;
+            this.productCatalogueRetrievalStatus.callback("Successfully loaded catalogueId list", true);
+        }).catch((error) => {
+            this.productCatalogueRetrievalStatus.error('Failed to get product catalogues');
+        });
     }
 }

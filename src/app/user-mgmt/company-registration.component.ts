@@ -126,7 +126,7 @@ export class CompanyRegistrationComponent implements OnInit {
                     model.getRawValue()['businessType'],
                     createTextObject(model.getRawValue()['name']),
                     createTextObject(model.getRawValue()['brandName']),
-                    [sectorString],
+                    createTextObject(sectorString),
                     model.getRawValue()['vatNumber'],
                     model.getRawValue()['verificationInformation'],
                     model.getRawValue()['yearOfReg']

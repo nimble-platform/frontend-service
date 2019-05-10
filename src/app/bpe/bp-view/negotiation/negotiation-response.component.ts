@@ -20,6 +20,7 @@ import {BpStartEvent} from '../../../catalogue/model/publish/bp-start-event';
 import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
 import {UBLModelUtils} from '../../../catalogue/model/ubl-model-utils';
 import * as myGlobals from '../../../globals';
+import {isValidPrice} from "../../../common/utils";
 
 @Component({
     selector: "negotiation-response",
@@ -45,6 +46,10 @@ export class NegotiationResponseComponent implements OnInit {
 
     @ViewChild(DiscountModalComponent)
     private discountModal: DiscountModalComponent;
+
+    getPartyId = UBLModelUtils.getPartyId;
+    showTermsAndConditions:boolean = false;
+    showPurchaseOrder:boolean = false;
 
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
@@ -83,7 +88,10 @@ export class NegotiationResponseComponent implements OnInit {
     }
 
     onRespondToQuotation(accepted: boolean) {
-
+        if (!isValidPrice(this.wrapper.quotationPriceWrapper.totalPrice)) {
+            alert("Price cannot have more than 2 decimal places");
+            return false;
+        }
         if(accepted) {
             if(this.hasUpdatedTerms()) {
                 this.quotation.documentStatusCode.name = NEGOTIATION_RESPONSES.TERMS_UPDATED;

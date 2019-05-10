@@ -23,8 +23,8 @@
 
     <!-- Quantity -->
     <div *ngIf="quantity !== undefined" class="col-4 col-quantity-value">
-        <input type="number" class="form-control form-control-sm" [(ngModel)]="quantity.value" 
-            [ngClass]="formControlClass" [disabled]="!cbModel || disabled">
+        <input type="number" class="form-control form-control-sm" [(ngModel)]="quantity.value"
+            [ngClass]="formControlClass" [disabled]="!cbModel || disabled" step="0.01">
     </div>
     <div *ngIf="quantity !== undefined && !quantityUnits" class="col-3 col-quantity-unit">
         <input type="text" class="form-control form-control-sm" [(ngModel)]="quantity.unitCode" 

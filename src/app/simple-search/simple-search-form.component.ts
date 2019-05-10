@@ -1001,6 +1001,11 @@ export class SimpleSearchFormComponent implements OnInit {
 		return true;
 	}
 
+	redirectToRating(event:any,result:any){
+		event.preventDefault();
+		this.router.navigate(['product-details'], {queryParams: {catalogueId: result.catalogueId, id: result.manufactuerItemId, tabToOpen: "rating"}});
+	}
+
 	getCompanyNameFromIds(idList: any[]): Promise<any>{
 		let query = "";
 		let length = idList.length;

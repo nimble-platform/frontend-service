@@ -1,3 +1,8 @@
 .action-btn {
     margin: 0 0.3rem;
 }
+
+.certificate-table td {
+    vertical-align: middle;
+    padding: 0.5rem;
+}

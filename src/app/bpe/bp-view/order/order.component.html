@@ -135,24 +135,40 @@
 
 
     <!-- Contract Preview -->
-    <div class="row" *ngIf="isReady()">
-        <div class="col-12">
-            <h2>
-                Terms and Conditions
-                <button class="btn btn-outline-dark" (click)="onPreviewTermsAndConditions()"
-                    [disabled]="!order.contract || order.contract[0]?.clause.length === 0">
-                    <i class="fas fa-chevron-up fa-fw fa-lg mt-2" aria-hidden="true" *ngIf="showPreview"></i>
-                    <i class="fas fa-chevron-down fa-fw fa-lg mt-2" aria-hidden="true" *ngIf="!showPreview"></i>
-                </button>
-            </h2>
+    <div *ngIf="isReady()">
+        <div>
+            <contract [contract]="getOrderContract()"></contract>
         </div>
-        <call-status [callStatus]="fetchTermsAndConditionsStatus"></call-status>
-        <div class="col-12" *ngIf="showPreview && termsAndConditions">
-            <h4>General terms and conditions</h4>
-            <textarea rows="12" class="form-control" [disabled]="true">{{ termsAndConditions }}</textarea>
-            <contract [contract]="order.contract[0]">
-            </contract>
+        <div class="row">
+            <div class="col-6">
+                <terms-and-conditions [order]="order" [buyerPartyId]="getPartyId(buyerParty)"
+                                      [sellerPartyId]="getPartyId(sellerParty)" [readOnly]="true"></terms-and-conditions>
+            </div>
+            <div class="col-6">
+                <h4>
+                    Purchase Order
+                    <button class="btn btn-outline-dark" (click)="showPurchaseOrder = !showPurchaseOrder">
+                        <i class="fas fa-chevron-up fa-fw fa-lg mt-2" aria-hidden="true" *ngIf="showPurchaseOrder"></i>
+                        <i class="fas fa-chevron-down fa-fw fa-lg mt-2" aria-hidden="true" *ngIf="!showPurchaseOrder"></i>
+                    </button>
+                </h4>
+                <div *ngIf="showPurchaseOrder">
+                    <div class="row">
+                        <div class="col-3"><strong>Product Id:</strong></div>
+                        <div class="col-9">{{order.orderLine[0].lineItem.item.manufacturersItemIdentification.id}}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-3"><strong>Quantity:</strong></div>
+                        <div class="col-9">{{getQuantityText()}}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-3"><strong>Total Price:</strong></div>
+                        <div class="col-9">{{getTotalPriceText()}}</div>
+                    </div>
+                </div>
+            </div>
         </div>
+
     </div>
 </ng-container>
 

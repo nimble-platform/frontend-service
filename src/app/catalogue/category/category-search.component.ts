@@ -15,6 +15,9 @@ import { Property } from "../model/category/property";
 import * as myGlobals from '../../globals';
 import { AppComponent } from "../../app.component";
 import { Text} from '../model/publish/text';
+import { Observable } from "rxjs/Observable";
+import { debounceTime, distinctUntilChanged, switchMap } from "rxjs/operators";
+import { SimpleSearchService } from "../../simple-search/simple-search.service";
 
 type ProductType = "product" | "transportation";
 type SelectedTab = "TREE"
@@ -82,6 +85,7 @@ export class CategorySearchComponent implements OnInit {
         private cookieService: CookieService,
         private userService: UserService,
         public categoryService: CategoryService,
+        private simpleSearchService: SimpleSearchService,
         private catalogueService: CatalogueService,
         private publishService: PublishService,
         public appComponent: AppComponent
@@ -263,6 +267,20 @@ export class CategorySearchComponent implements OnInit {
         return selectPreferredName(cp);
     }
 
+    isDefinitionOrRemarkAvailable(property: Property): boolean {
+        return (property.definition != null && property.definition.trim().length > 0) || (property.remark != null && property.remark.length > 0);
+    }
+
+    getPropertyDefinitionOrRemark(property: Property): string {
+        if(property.definition != null && property.definition.trim().length > 0) {
+            return property.definition;
+        }
+        if(property.remark != null && property.remark.length > 0) {
+            return selectPreferredValues(property.remark)[0];
+        }
+        return "";
+    }
+
     canDeactivate(): boolean {
         this.inPublish = false;
         if (this.pageRef == "publish" && this.isReturnPublish == false) {
@@ -301,12 +319,16 @@ export class CategorySearchComponent implements OnInit {
                 this.getCategoriesStatus.callback("Retrieved category details", true);
                 if (this.categoryFilter[taxonomyId]) {
                   this.logisticsCategory = this.rootCategories.find(c => c.code === this.categoryFilter[taxonomyId].logisticsCategory);
-                  let searchIndex = this.findCategoryInArray(this.rootCategories, this.logisticsCategory);
-                  this.rootCategories.splice(searchIndex, 1);
+                  if(this.logisticsCategory != null){
+                      let searchIndex = this.findCategoryInArray(this.rootCategories, this.logisticsCategory);
+                      this.rootCategories.splice(searchIndex, 1);
+                  }
                   for (var i=0; i<this.categoryFilter[taxonomyId].hiddenCategories.length; i++) {
-                    let filterCat = this.rootCategories.find(c => c.code === this.categoryFilter[taxonomyId].hiddenCategories[i]);
-                    let searchIndex = this.findCategoryInArray(this.rootCategories, filterCat);
-                    this.rootCategories.splice(searchIndex, 1);
+                      let filterCat = this.rootCategories.find(c => c.code === this.categoryFilter[taxonomyId].hiddenCategories[i]);
+                      if(filterCat != null){
+                          let searchIndex = this.findCategoryInArray(this.rootCategories, filterCat);
+                          this.rootCategories.splice(searchIndex, 1);
+                      }
                   }
                 }
             })
@@ -314,6 +336,15 @@ export class CategorySearchComponent implements OnInit {
                 this.getCategoriesStatus.error("Failed to retrieve category details", error);
             });
     }
+
+    getSuggestions = (text$: Observable<string>) =>
+      text$.pipe(
+        debounceTime(200),
+        distinctUntilChanged(),
+        switchMap(term =>
+          this.simpleSearchService.getClassSuggestions(term,("{LANG}_label"),this.taxonomyId == "All" ? "" : this.categoryFilter[this.taxonomyId].ontologyPrefix)
+        )
+      );
 
     displayRootCategories(taxonomyId: string): void {
         this.treeView = true;

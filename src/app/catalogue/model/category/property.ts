@@ -14,7 +14,7 @@ export class Property {
         public shortName: string,
         public definition: string,
         public note: string,
-        public remark: string,
+        public remark: Text[] = [],
         public preferredSymbol: string,
         public unit: Unit,
         public iecCategory: string,

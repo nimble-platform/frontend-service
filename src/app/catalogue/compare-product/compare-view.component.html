@@ -1,0 +1,165 @@
+<div class="d-flex justify-content-end">
+    <call-status [callStatus]="callStatus"
+        class="d-flex">
+    </call-status>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div>
+            <div class="input-group form-group" style="background-color:#F2F2F2;padding-left: 25px;padding-top: 20px;padding-bottom: 20px;">
+                
+                <form (ngSubmit)="searchFavouriteSearch_first()"  novalidate>
+                    <input  class="form-control col-12" type="text" [(ngModel)]="searchText_first" #q="ngModel" [ngModelOptions]="{standalone: true}" [ngbTypeahead]="searchFavourite_first" placeholder="Search ...">
+                </form>
+                    <div class="input-group-append">
+                            <button (click)="searchFavouriteSearch_first()" class="btn btn-outline-secondary">
+                                    <i class="fa fa-search"></i>
+                            </button>
+                    </div>
+             
+
+            </div>
+
+            <div class="jumbotron" *ngIf="itemTypeResponse_first && hasFavourite_first == false" class="col-md-10"> 
+                <h5>Search & Compare.</h5>
+            </div>
+
+            <div *ngIf="itemTypeResponse_first && hasFavourite_first == true">
+                <div *ngFor="let catLine of catalogueLinesArray_first; let i = index" class="space-before">
+                    <div class="card pointer">
+                        <div class="card-body">
+                            <div class="row" *ngIf="!catalogueLineView_first[catLine.localName]" (click)="viewCatalogueLine_first(catLine,i); $event.stopPropagation();">
+                                <div class="col-2">
+                                    <div style="text-align:center">
+                                        <img src="{{imageMap_first[catLine.uri]}}" class="thumb" style="max-height: 5rem;max-width: 100%;" onerror="this.src='assets/empty_img.png';"/>
+                                    </div>
+                                </div>
+                                <div class="col-10 d-flex justify-content-between">
+                                    <div class="col-7">
+                                        <p style="word-break: break-all;word-wrap: break-word;">
+                                            <strong>{{ getMultilingualLabel(catLine[product_name]) }}
+                                                <a class="text-std" [routerLink]="['/product-details']" [queryParams]="{catalogueId: catLine.catalogueId, id: catLine.manufactuerItemId}" (click)="onOpenCatalogueLine($event)" target="_blank">
+                                                    <i class="fas fa-external-link-alt btn-light"></i>
+                                                </a>
+                                            </strong>
+                                        </p>
+                                        <p  *ngIf="catLine[product_description] != null"  style="word-break: break-all;word-wrap: break-word;">{{getMultilingualLabel(catLine[product_description])}}</p>
+                                        <!-- <p *ngIf="catLine.requiredItemLocationQuantity.price.priceAmount.value != null" style="word-break: break-all;word-wrap: break-word;">{{catLine.requiredItemLocationQuantity.price.priceAmount.value+" "+catLine.requiredItemLocationQuantity.price.priceAmount.currencyID}}</p> -->
+                                            <p *ngIf="catLine[product_price] && !checkEmpty(catLine[product_price])" style="word-break: break-all;word-wrap: break-word;">{{roundToTwoDecimals(catLine[product_price][getCurrency(catLine[product_price])])}} {{getCurrency(catLine[product_price])}}</p>
+                                            <p *ngIf="!catLine[product_price] || checkEmpty(catLine[product_price])" style="word-break: break-all;word-wrap: break-word;">Upon request</p>
+                                    </div>
+                                    <div class="col-3">
+                                                    <div class="float-right">
+                                                        <span *ngIf="!findPrefItem(catLine.localName)" class="star star-b pointer" [ngClass]="{'disabled':addFavoriteCategoryStatus.isLoading()}" (click)="addFavorites(catLine.localName)" title="Add To Favorite">
+                                                          <span class="half" style="width:0%">&#9733;</span>&#9733;
+                                                        </span>
+                                                        <span  *ngIf="findPrefItem(catLine.localName)"  class="star star-b full pointer" [ngClass]="{'disabled':addFavoriteCategoryStatus.isLoading()}" (click)="removeFavorites(catLine.localName)" title="Remove From Favorite">
+                                                          <span class="half" style="width:100%">&#9733;</span>&#9733;
+                                                        </span>
+                                                    </div>
+                                                    <div class="float-right mr-3 pt-2">
+                                                        <call-status [callStatus]="addFavoriteCategoryStatus"></call-status>
+                                                    </div>
+
+                                        <a  href="#" role="button" class="btn btn-primary btn-sm col" [routerLink]="['/product-details']" [queryParams]="{catalogueId: catLine.catalogueId, id: catLine.manufactuerItemId}">
+                                            Order
+                                        </a>
+                                        <call-status [callStatus]="getDeleteStatus(i)"></call-status>
+                                    </div>
+                                </div>
+                            </div>
+                            <div *ngIf="catalogueLineView_first[catLine.localName]">
+                            <catalogue-line-panel [catalogueLine]="catLineList_first[catLine.localName]"
+                            [settings]="comapanyList_first[catLine.localName]"
+                            [presentationMode]="''"
+                            [(show)]="catalogueLineView_first[catLine.localName]">
+                            </catalogue-line-panel>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div>
+            <div class="input-group form-group" style="background-color:#F2F2F2;padding-left: 25px;padding-top: 20px;padding-bottom: 20px;">
+                <form (ngSubmit)="searchFavouriteSearch()"  novalidate>
+                    <input  class="form-control col-12" type="text" [(ngModel)]="searchText" [ngModelOptions]="{standalone: true}" #q="ngModel" [ngbTypeahead]="searchFavourite" placeholder="Search ...">
+                </form>
+                <div class="input-group-append">
+                    	<button (click)="searchFavouriteSearch()" class="btn btn-outline-secondary">
+                                <i class="fa fa-search"></i>
+                        </button>
+                </div>
+            </div>
+
+            <div class="jumbotron" *ngIf="itemTypeResponse && hasFavourite == false" class="col-md-10"> 
+                <h5>Search & Compare.</h5>
+            </div>
+            
+            <div *ngIf="itemTypeResponse && hasFavourite == true">
+                <div *ngFor="let catLine of catalogueLinesArray; let i = index" class="space-before">
+                    <div class="card pointer">
+                        <div class="card-body">
+                            <div class="row" *ngIf="!catalogueLineView[catLine.localName]" (click)="viewCatalogueLine(catLine,i); $event.stopPropagation();">
+                                <div class="col-2">
+                                    <div style="text-align:center">
+                                        <img src="{{imageMap[catLine.uri]}}" class="thumb" style="max-height: 5rem;max-width: 100%;" onerror="this.src='assets/empty_img.png';"/>
+                                    </div>
+                                </div>
+                                <div class="col-10 d-flex justify-content-between">
+                                    <div class="col-7">
+                                        <p style="word-break: break-all;word-wrap: break-word;">
+                                            <strong>{{ getMultilingualLabel(catLine[product_name]) }}
+                                                <a class="text-std" [routerLink]="['/product-details']" [queryParams]="{catalogueId: catLine.catalogueId, id: catLine.manufactuerItemId}" (click)="onOpenCatalogueLine($event)" target="_blank">
+                                                    <i class="fas fa-external-link-alt btn-light"></i>
+                                                </a>
+                                            </strong>
+                                        </p>
+                                        <p  *ngIf="catLine[product_description] != null"  style="word-break: break-all;word-wrap: break-word;">{{getMultilingualLabel(catLine[product_description])}}</p>
+                                        <!-- <p *ngIf="catLine.requiredItemLocationQuantity.price.priceAmount.value != null" style="word-break: break-all;word-wrap: break-word;">{{catLine.requiredItemLocationQuantity.price.priceAmount.value+" "+catLine.requiredItemLocationQuantity.price.priceAmount.currencyID}}</p> -->
+                                            <p *ngIf="catLine[product_price] && !checkEmpty(catLine[product_price])" style="word-break: break-all;word-wrap: break-word;">{{roundToTwoDecimals(catLine[product_price][getCurrency(catLine[product_price])])}} {{getCurrency(catLine[product_price])}}</p>
+                                            <p *ngIf="!catLine[product_price] || checkEmpty(catLine[product_price])" style="word-break: break-all;word-wrap: break-word;">Upon request</p>
+                                    </div>
+                                    <div class="col-3">
+                                        <div>
+                                            <span *ngIf="!findPrefItem(catLine.localName)" class="star star-b pointer" [ngClass]="{'disabled':addFavoriteCategoryStatus.isLoading()}" (click)="addFavorites(catLine.localName);$event.stopPropagation();" title="Add To Favorite">
+                                                <span class="half" style="width:0%">&#9733;</span>&#9733;
+                                            </span>
+                                            <span  *ngIf="findPrefItem(catLine.localName)"  class="star star-b full pointer" [ngClass]="{'disabled':addFavoriteCategoryStatus.isLoading()}" (click)="removeFavorites(catLine.localName);$event.stopPropagation();" title="Remove From Favorite">
+                                                <span class="half" style="width:100%">&#9733;</span>&#9733;
+                                            </span>
+                                        </div>
+                                        <div class="float-right mr-3 pt-2">
+                                            <call-status [callStatus]="addFavoriteCategoryStatus"></call-status>
+                                        </div>
+                                        <a  href="#" role="button" class="btn btn-primary btn-sm col" [routerLink]="['/product-details']" [queryParams]="{catalogueId: catLine.catalogueId, id: catLine.manufactuerItemId}">
+                                            Order
+                                        </a>
+                                        <call-status [callStatus]="getDeleteStatus(i)"></call-status>
+                                    </div>
+                                </div>
+                            </div>
+                            <div *ngIf="catalogueLineView[catLine.localName]">
+                            <catalogue-line-panel [catalogueLine]="catLineList[catLine.localName]"
+                            [settings]="comapanyList[catLine.localName]"
+                            [presentationMode]="''"
+                            [(show)]="catalogueLineView[catLine.localName]">
+                            </catalogue-line-panel>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<call-status [callStatus]="getCatalogueStatus" [large]="true">
+</call-status>
+
+<call-status [callStatus]="searchFavouriteCallStatus" [large]="true">
+</call-status>

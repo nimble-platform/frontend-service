@@ -1,23 +1,26 @@
 <div class="p-1">
-    <h3>Company Certificates</h3>
+    <h3 *ngIf="settings.certificates.length !== 0">Company Certificates</h3>
 
     <div *ngFor="let certificate of settings.certificates" class="row mt-1">
         <div class="col-10">
             {{ certificate.name }} (type: {{ certificate.type }})
         </div>
         <div class="col-2">
-            <button class="btn btn-primary btn-sm w-100" (click)="downloadCertificate(certificate.id)">Download</button>
+            <button *ngIf="certificate.documentReference.length !== 0" class="btn btn-primary btn-sm w-100" (click)="downloadCertificate(certificate.id)">Download</button>
         </div>
     </div>
 
-    <h3 class="space-before">Product / Service Certificates</h3>
+    <h3 *ngIf="wrapper.line.goodsItem.item.certificate.length !== 0" class="space-before">Product / Service Certificates</h3>
 
     <div *ngFor="let certificate of wrapper.line.goodsItem.item.certificate" class="row mt-1">
         <div class="col-10">
             {{ certificate.certificateTypeCode.name }} (type: {{ certificate.certificateType }})
         </div>
+        <div *ngIf="certificate.country.length !== 0" class="col-10">
+            <small class="float-right">Available Countries: {{ getCertificateCountryNames(certificate.country) }}</small>
+        </div>
         <div class="col-2">
-            <button class="btn btn-primary btn-sm w-100" (click)="downloadProductCertificate(certificate)">Download</button>
+            <button *ngIf="certificate.documentReference.length !== 0" class="btn btn-primary btn-sm w-100" (click)="downloadProductCertificate(certificate)">Download</button>
         </div>
     </div>
 </div>

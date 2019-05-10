@@ -1,0 +1,39 @@
+<ng-template #modal let-c="close" let-d="dismiss">
+        <div class="modal-header">
+            <h5 class="modal-title" id="modal-basic-title">{{ lcpaInputDetail.name.value }}</h5>
+            <button type="button" class="close" aria-label="Close" (click)="d('cross')">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="container-fluid">
+                <div class="row space-before">
+                    <div class="col-3">
+                        <strong>Name:</strong>
+                    </div>
+                    <div class="col-9">
+                        <input [(ngModel)]="lcpaInputDetail.name.value" class="form-control" type="text" name="{{lcpaInputDetail.name.value}}" [disabled]="presentationMode === 'view'" />
+                    </div>
+                </div>
+                <options-input label="Data Type" [presentationMode]="presentationMode"
+                               [options]="valueQualifiers" [(selected)]="lcpaInputDetail.valueQualifier" rowClass="space-before">
+                </options-input>
+                <div class="row space-before">
+                    <div class="offset-3 col-9">
+                        <div *ngIf="lcpaInputDetail.valueQualifier === 'QUANTITY'">
+                            <quantity-input [quantity]="lcpaInputDetail.valueQuantity[0]">
+                            </quantity-input>
+                        </div>
+                        <div *ngIf="lcpaInputDetail.valueQualifier === 'STRING'">
+                            <text-input [(text)]="lcpaInputDetail.value[0].value" [rows]="1">
+                            </text-input>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="d('cancel')">Cancel</button>
+            <button type="button" class="btn btn-primary" (click)="addDetail(c)" [disabled]="lcpaInputDetail.name.value==''">OK</button>
+        </div>
+    </ng-template>

@@ -47,15 +47,17 @@ import {ItemInformationResponse} from "./publish/item-information-response";
 import {PaymentTerms} from "./publish/payment-terms";
 import {Address} from "./publish/address";
 import {MonetaryTotal} from "./publish/monetary-total";
-import { NegotiationOptions } from "./publish/negotiation-options";
-import {CURRENCIES, DEFAULT_LANGUAGE} from './constants';
-import { TradingTerm } from "./publish/trading-term";
-import { CompanyNegotiationSettings } from "../../user-mgmt/model/company-negotiation-settings";
-import { headersToString } from "../../../../node_modules/@types/selenium-webdriver/http";
+import {NegotiationOptions} from "./publish/negotiation-options";
+import {CURRENCIES, DEFAULT_LANGUAGE} from "./constants";
+import {TradingTerm} from "./publish/trading-term";
+import {CompanyNegotiationSettings} from "../../user-mgmt/model/company-negotiation-settings";
 import {ShipmentStage} from "./publish/shipment-stage";
-import {copy, createText, selectPreferredName} from '../../common/utils';
+import {copy, isNaNNullAware, selectPreferredName} from "../../common/utils";
 import {Text} from "./publish/text";
 import {Attachment} from "./publish/attachment";
+import {LifeCyclePerformanceAssessmentDetails} from "./publish/life-cycle-performance-assessment-details";
+import {PartyName} from './publish/party-name';
+import {MultiTypeValue} from "./publish/multi-type-value";
 
 /**
  * Created by suat on 05-Jul-17.
@@ -109,7 +111,7 @@ export class UBLModelUtils {
     }
 
     public static createCatalogueLine(catalogueUuid:string, providerParty: Party,
-        settings: CompanyNegotiationSettings): CatalogueLine {
+        settings: CompanyNegotiationSettings,dimensionUnits:string[]=[]): CatalogueLine {
         // create additional item properties
         const additionalItemProperties = new Array<ItemProperty>();
 
@@ -119,7 +121,7 @@ export class UBLModelUtils {
 
         // create item
         const uuid:string = this.generateUUID();
-        const item = new Item([], [], [], [], additionalItemProperties, providerParty, this.createItemIdentificationWithId(uuid), docRef, [], [], [], null);
+        const item = new Item([], [], [], [], additionalItemProperties, providerParty, this.createItemIdentificationWithId(uuid), docRef, [], [], this.createDimensions(dimensionUnits), null);
 
         // create goods item
         const goodsItem = new GoodsItem(uuid, item, this.createPackage(),
@@ -134,6 +136,66 @@ export class UBLModelUtils {
         catalogueLine.goodsItem.containingPackage.quantity.unitCode = "item(s)";
 
         return catalogueLine;
+    }
+
+    public static createCatalogueLinesForLogistics(catalogueUuid:string, providerParty: Party, settings: CompanyNegotiationSettings,logisticRelatedServices, eClassLogisticCategories:Category[],furnitureOntologyLogisticCategories:Category[]): Map<string,CatalogueLine>{
+        let logisticCatalogueLines: Map<string,CatalogueLine> = new Map<string, CatalogueLine>();
+        // if we have furniture ontology categories for logistics services,then use them.
+        if(furnitureOntologyLogisticCategories){
+            let furnitureOntologyLogisticRelatedServices = logisticRelatedServices["FurnitureOntology"];
+            let eClassLogisticRelatedServices = logisticRelatedServices["eClass"];
+
+            // for each service type, create a catalogue line
+            for(let serviceType of Object.keys(furnitureOntologyLogisticRelatedServices)){
+                // get corresponding furniture ontology category
+                let furnitureOntologyCategory = this.getCorrespondingCategory(furnitureOntologyLogisticRelatedServices[serviceType],furnitureOntologyLogisticCategories);
+                // get corresponding eClass category
+                let eClassCategory = null;
+                if(eClassLogisticCategories && eClassLogisticRelatedServices[serviceType]){
+                    eClassCategory = this.getCorrespondingCategory(eClassLogisticRelatedServices[serviceType],eClassLogisticCategories);
+                }
+
+                // create the catalogue line
+                let catalogueLine = this.createCatalogueLine(catalogueUuid,providerParty,settings);
+                // add item name and descriptions
+                let newItemName: Text = new Text("",DEFAULT_LANGUAGE());
+                let newItemDescription: Text = new Text("",DEFAULT_LANGUAGE());
+                catalogueLine.goodsItem.item.name.push(newItemName);
+                catalogueLine.goodsItem.item.description.push(newItemDescription);
+                // clear additional item properties
+                catalogueLine.goodsItem.item.additionalItemProperty = [];
+                // add additional item properties
+                for(let property of furnitureOntologyCategory.properties){
+                    catalogueLine.goodsItem.item.additionalItemProperty.push(this.createAdditionalItemProperty(property,furnitureOntologyCategory));
+                }
+                // add its default furniture ontology category
+                catalogueLine.goodsItem.item.commodityClassification.push(this.createCommodityClassification(furnitureOntologyCategory));
+                // add its default eClass category if exists
+                if(eClassCategory){
+                    catalogueLine.goodsItem.item.commodityClassification.push(this.createCommodityClassification(eClassCategory));
+                }
+                // push it to the list
+                logisticCatalogueLines.set(serviceType,catalogueLine);
+            }
+            // create a dummy catalogue line to represent transport services
+            let catalogueLine = this.createCatalogueLine(catalogueUuid,providerParty,settings);
+            let category = this.getCorrespondingCategory(furnitureOntologyLogisticRelatedServices["ROADTRANSPORT"],furnitureOntologyLogisticCategories);
+            for(let property of category.properties){
+                catalogueLine.goodsItem.item.additionalItemProperty.push(this.createAdditionalItemProperty(property,category));
+            }
+            // push it to the list
+            logisticCatalogueLines.set("TRANSPORT",catalogueLine);
+        }
+
+        return logisticCatalogueLines;
+    }
+
+    private static getCorrespondingCategory(categoryUri,logisticCategories:Category[]){
+        for(let category of logisticCategories){
+            if(category.id == categoryUri){
+                return category;
+            }
+        }
     }
 
     public static createOrder(): Order {
@@ -271,21 +333,21 @@ export class UBLModelUtils {
 
     public static getDefaultPaymentTerms(settings?: CompanyNegotiationSettings): PaymentTerms {
         const terms = new PaymentTerms([], [
-            new TradingTerm("Payment_In_Advance",[new Text("Payment in advance")],"PIA",[new Text("false")]),
+            new TradingTerm("Payment_In_Advance",[new Text("Payment in advance")],"PIA", new MultiTypeValue(null, 'STRING', [new Text("false")], null, null)),
             // new TradingTerm("Values_Net","e.g.,NET 10,payment 10 days after invoice date","Net %s",[null]),
-            new TradingTerm("End_of_month",[new Text("End of month")],"EOM",[new Text("false")]),
-            new TradingTerm("Cash_next_delivery",[new Text("Cash next delivery")],"CND",[new Text("false")]),
-            new TradingTerm("Cash_before_shipment",[new Text("Cash before shipment")],"CBS",[new Text("false")]),
+            new TradingTerm("End_of_month",[new Text("End of month")],"EOM", new MultiTypeValue(null, 'STRING', [new Text("false")], null, null)),
+            new TradingTerm("Cash_next_delivery",[new Text("Cash next delivery")],"CND", new MultiTypeValue(null, 'STRING', [new Text("false")], null, null)),
+            new TradingTerm("Cash_before_shipment",[new Text("Cash before shipment")],"CBS", new MultiTypeValue(null, 'STRING', [new Text("false")], null, null)),
             // new TradingTerm("Values_MFI","e.g.,21 MFI,21st of the month following invoice date","%s MFI", [null]),
             // new TradingTerm("Values_/NET","e.g.,1/10 NET 30,1% discount if payment received within 10 days otherwise payment 30 days after invoice date","%s/%s NET %s",[null,null,null]),
-            new TradingTerm("Cash_on_delivery",[new Text("Cash on delivery")],"COD",[new Text("false")]),
-            new TradingTerm("Cash_with_order",[new Text("Cash with order")],"CWO",[new Text("false")]),
-            new TradingTerm("Cash_in_advance",[new Text("Cash in advance")],"CIA",[new Text("false")]),
+            new TradingTerm("Cash_on_delivery",[new Text("Cash on delivery")],"COD", new MultiTypeValue(null, 'STRING', [new Text("false")], null, null)),
+            new TradingTerm("Cash_with_order",[new Text("Cash with order")],"CWO", new MultiTypeValue(null, 'STRING', [new Text("false")], null, null)),
+            new TradingTerm("Cash_in_advance",[new Text("Cash in advance")],"CIA", new MultiTypeValue(null, 'STRING', [new Text("false")], null, null)),
         ]);
 
         if(settings) {
             for(const term of terms.tradingTerms) {
-                term.value[0].value = this.tradingTermToString(term) === settings.paymentTerms[0] ? "true" : "false";
+                term.value.value[0].value = this.tradingTermToString(term) === settings.paymentTerms[0] ? "true" : "false";
             }
         }
 
@@ -463,6 +525,15 @@ export class UBLModelUtils {
         return item;
     }
 
+    public static createDimensions(dimensionUnits:string[]):Dimension[]{
+        let dimensions:Dimension[] = [];
+        for(let unit of dimensionUnits){
+            let unitName = unit.charAt(0).toUpperCase() + unit.slice(1);
+            dimensions.push(new Dimension(unitName));
+        }
+        return dimensions;
+    }
+
     public static createLineItem(quantity, price, item):LineItem {
         return new LineItem(quantity, [], [new Delivery()], new DeliveryTerms(), price, item, new Period(), null);
     }
@@ -565,22 +636,57 @@ export class UBLModelUtils {
     }
 
     public static getPartyDisplayName(party: Party):string{
+        return this.getPartyDisplayNameForPartyName(party.partyName);
+    }
+
+    public static getPartyDisplayNameForPartyName(partyNames: PartyName[]):string{
         let defaultLanguage = DEFAULT_LANGUAGE();
 
         let englishName = null;
-        for(let name of party.partyName){
-            if(name.name.languageID == "en"){
-                englishName = name.name.value;
+        for(let partyName of partyNames){
+            if(partyName.name.languageID == "en"){
+                englishName = partyName.name.value;
             }
-            if(name.name.languageID == defaultLanguage){
-                return name.name.value;
+            if(partyName.name.languageID == defaultLanguage){
+                return partyName.name.value;
             }
         }
 
         if(englishName){
             return englishName;
         }
-        return party.partyName[0].name.value;
+        return partyNames[0].name.value;
     }
 
+    public static isFilledLCPAInput(lcpaDetails: LifeCyclePerformanceAssessmentDetails): boolean {
+        if(lcpaDetails.lcpainput == null) {
+            return false;
+        }
+        let lcpaInput = lcpaDetails.lcpainput;
+
+        if(!isNaNNullAware(lcpaInput.assemblyCost.value) ||
+            !isNaNNullAware(lcpaInput.consumableCost.value) ||
+            !isNaNNullAware(lcpaInput.endOfLifeCost.value) ||
+            !isNaNNullAware(lcpaInput.energyConsumptionCost.value) ||
+            !isNaNNullAware(lcpaInput.lifeCycleLength.value) ||
+            !isNaNNullAware(lcpaInput.purchasingPrice.value) ||
+            !isNaNNullAware(lcpaInput.sparePartCost.value) ||
+            !isNaNNullAware(lcpaInput.transportCost.value) ||
+            lcpaInput.additionalLCPAInputDetail.length > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static isFilledLCPAOutput(lcpaDetails: LifeCyclePerformanceAssessmentDetails): boolean {
+        return false;
+    }
+
+    public static isEmptyQuantity(quantity:Quantity | Amount): boolean {
+        if(quantity.value == null) {
+            return true;
+        }
+        return false;
+    }
 }

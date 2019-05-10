@@ -4,7 +4,9 @@ import 'rxjs/add/operator/toPromise';
 import * as myGlobals from '../globals';
 import { map } from 'rxjs/operators';
 import {CookieService} from "ng2-cookies";
-import { DEFAULT_LANGUAGE } from '../catalogue/model/constants';
+import { DEFAULT_LANGUAGE, LANGUAGES } from '../catalogue/model/constants';
+import {class_suggestion_field} from "../globals";
+
 
 @Injectable()
 export class SimpleSearchService {
@@ -23,6 +25,7 @@ export class SimpleSearchService {
 	product_configurable = myGlobals.product_configurable;
 	product_cat = myGlobals.product_cat;
 	product_cat_mix = myGlobals.product_cat_mix;
+	class_suggestions_field = myGlobals.class_suggestion_field;
 
 	constructor(private http: Http,
 				private cookieService: CookieService) {
@@ -59,7 +62,7 @@ export class SimpleSearchService {
 	}
 
 	get(query: string, facets: string[], facetQueries: string[], page: number, cat: string, catID: string): Promise<any> {
-    let queryRes = this.buildQueryString(query,myGlobals.query_settings,true);
+    let queryRes = this.buildQueryString(query,myGlobals.query_settings,true,false);
     query = queryRes.queryStr;
 		const url = this.url + `/item/search`
 		let searchObject:any = {};
@@ -98,17 +101,51 @@ export class SimpleSearchService {
 		.catch(this.handleError);
 	}
 
-  getSuggestions(query:string, field: string) {
+    getSuggestions(query: string, item_field: string) {
+    let querySettings = {
+      "fields": [item_field, class_suggestion_field],
+      "boosting": false,
+      "boostingFactors": {}
+    };
+    let queryRes = this.buildQueryString(query,querySettings,true,true);
+    const url = this.url + `/item/search`
+		let searchObject:any = {};
+		searchObject.rows = 0;
+		searchObject.q = queryRes.queryStr;
+    searchObject.facet = {};
+    searchObject.facet.field = [];
+    searchObject.facet.limit = -1;
+    for (let i=0; i<queryRes.queryFields.length; i++) {
+        if(queryRes.queryFields[i] != class_suggestion_field){
+            searchObject.facet.field.push(queryRes.queryFields[i]);
+        }
+    }
+    return this.http
+		.post(url, searchObject, {headers: this.getHeadersWithBasicAuthorization()})
+    .pipe(
+			map(response =>
+				this.getSuggestionArray(response.json(),query,queryRes.queryArr,queryRes.queryFields)
+			)
+		);
+	}
+
+  getClassSuggestions(query:string, field: string, ontology: string) {
     let querySettings = {
       "fields": [field],
       "boosting": false,
       "boostingFactors": {}
     };
-    let queryRes = this.buildQueryString(query,querySettings,true);
-    const url = this.url + `/item/search`
+    let queryRes = this.buildQueryString(query,querySettings,true,true);
+    const url = this.url + `/class/search`
 		let searchObject:any = {};
 		searchObject.rows = 0;
-		searchObject.q = queryRes.queryStr;
+		searchObject.q = "(" + queryRes.queryStr + ")";
+    if (ontology != "") {
+      let ontologyPrefixSimpleArr = ontology.split("/");
+      let ontologyPrefixSimple = ontologyPrefixSimpleArr[ontologyPrefixSimpleArr.length-1];
+      ontologyPrefixSimple.replace("#","");
+      searchObject.q += " AND nameSpace:*"+ontologyPrefixSimple+"*";
+    }
     searchObject.facet = {};
     searchObject.facet.field = [];
     searchObject.facet.limit = -1;
@@ -172,7 +209,7 @@ export class SimpleSearchService {
 		return suggestions;
 	}
 
-  buildQueryString(query:string, qS:any, full:boolean): any {
+  buildQueryString(query:string, qS:any, full:boolean, allLang: boolean): any {
     if (query == "*") {
       return {
         "queryStr": "*",
@@ -198,7 +235,19 @@ export class SimpleSearchService {
           if (qS.boostingFactors[field]<0)
             negativeBoosts.push(field.replace("{LANG}","en"));
         }
-        if (DEFAULT_LANGUAGE() != "en") {
+        if (allLang) {
+          for (let j=0; j<LANGUAGES.length; j++) {
+            if (LANGUAGES[j] != "en") {
+              queryFields.push(field.replace("{LANG}",LANGUAGES[j]));
+              if (qS.boosting && qS.boostingFactors && qS.boostingFactors[field]) {
+                qS.boostingFactors[field.replace("{LANG}",LANGUAGES[j])] = qS.boostingFactors[field];
+                if (qS.boostingFactors[field]<0)
+                  negativeBoosts.push(field.replace("{LANG}",LANGUAGES[j]));
+              }
+            }
+          }
+        }
+        else if (DEFAULT_LANGUAGE() != "en") {
           queryFields.push(field.replace("{LANG}",DEFAULT_LANGUAGE()));
           if (qS.boosting && qS.boostingFactors && qS.boostingFactors[field]) {
             qS.boostingFactors[field.replace("{LANG}",DEFAULT_LANGUAGE())] = qS.boostingFactors[field];
@@ -246,8 +295,10 @@ export class SimpleSearchService {
           else
             queryStr += "*" + queryArr[i] +"*";
         }
-        if (qS.boosting)
-          queryStr += "^" + Math.abs(qS.boostingFactors[queryFields[j]]);
+        if (qS.boosting && queryFields[j] != class_suggestion_field) {
+            queryStr += "^" + Math.abs(qS.boostingFactors[queryFields[j]]);
+        }
+
         queryStr += " ";
       }
     }
@@ -320,4 +371,75 @@ export class SimpleSearchService {
 	}
 
 
+	getFavouriteSearch(query: string, facets: string[],page?: number,sortType?:string): Promise<any> {
+    query = query;
+		const url = this.url + `/item/search`;
+		let searchObject:any = {};
+		searchObject.rows = 10;
+		searchObject.start = page-1;
+    searchObject.q = query;
+    searchObject.sort = [];
+    if(sortType === "PRICE_HIGH_TO_LOW"){
+      searchObject.sort.push("eUR_price desc");
+    }else{
+      searchObject.sort.push("eUR_price asc");
+    }
+		for (let facet of facets) {
+			if (facet.length === 0 || !facet.trim()) {}
+			else {
+				if(searchObject.facet == null) {
+					searchObject.facet = {};
+					searchObject.facet.field = [];
+					searchObject.facet.minCount = this.facetMin;
+					searchObject.facet.limit = this.facetCount;
+				}
+				searchObject.facet.field.push(facet)
+			}
+		}
+		return this.http
+		.post(url, searchObject, {headers: this.getHeadersWithBasicAuthorization()})
+		.toPromise()
+		.then(res => res.json())
+		.catch(this.handleError);
+	}
+
+  getCompanyBasedProductsAndServices(query: string, facets: string[], facetQueries: string[], page: number, cat: string, catID: string): Promise<any> {
+    // let queryRes = this.buildQueryString(query,myGlobals.query_settings,true,false);
+    // query = queryRes.queryStr;
+		const url = this.url + `/item/search`
+		let searchObject:any = {};
+		searchObject.rows = 10;
+		searchObject.start = page-1;
+		searchObject.q = query;
+		for (let facet of facets) {
+			if (facet.length === 0 || !facet.trim()) {}
+			else {
+				if(searchObject.facet == null) {
+					searchObject.facet = {};
+					searchObject.facet.field = [];
+					searchObject.facet.minCount = this.facetMin;
+					searchObject.facet.limit = this.facetCount;
+				}
+				searchObject.facet.field.push(facet)
+			}
+		}
+		for (let facetQuery of facetQueries) {
+			if(searchObject.fq == null) {
+				searchObject.fq = [];
+			}
+			searchObject.fq.push(facetQuery);
+		}
+		if (cat != "") {
+			var add_url = `${this.product_cat_mix}:"${catID}"`;
+			if(searchObject.fq == null) {
+				searchObject.fq = [];
+			}
+			searchObject.fq.push(add_url);
+		}
+		return this.http
+		.post(url, searchObject, {headers: this.getHeadersWithBasicAuthorization()})
+		.toPromise()
+		.then(res => res.json())
+		.catch(this.handleError);
+	}
 }

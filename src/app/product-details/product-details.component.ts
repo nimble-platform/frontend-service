@@ -14,8 +14,8 @@ import {
     getStepForPrice,
     isTransportService,
     selectPreferredValue,
-    roundToTwoDecimals
-} from "../common/utils";
+    roundToTwoDecimals, isLogisticsService
+} from '../common/utils';
 import { AppComponent } from "../app.component";
 import { UserService } from "../user-mgmt/user.service";
 import { CompanySettings } from "../user-mgmt/model/company-settings";
@@ -48,11 +48,12 @@ export class ProductDetailsComponent implements OnInit {
     wrapper?: ProductWrapper;
     settings?: CompanySettings;
     priceWrapper?: PriceWrapper;
-
+    tabToOpen: string = "";
     toggleImageBorder: boolean = false;
     showNavigation: boolean = true;
     showProcesses: boolean = true;
     isLogistics: boolean = false;
+    isTransportService:boolean = false;
 
     config = myGlobals.config;
 
@@ -79,6 +80,7 @@ export class ProductDetailsComponent implements OnInit {
 		this.route.queryParams.subscribe(params => {
 			let id = params['id'];
             let catalogueId = params['catalogueId'];
+            this.tabToOpen = params['tabToOpen'];
 
             if(id !== this.id || catalogueId !== this.catalogueId) {
                 this.id = id;
@@ -89,7 +91,8 @@ export class ProductDetailsComponent implements OnInit {
                     .then(line => {
                         this.line = line;
                         this.item = line.goodsItem.item;
-                        this.isLogistics = isTransportService(this.line);
+                        this.isLogistics = isLogisticsService(this.line);
+                        this.isTransportService = isTransportService(this.line);
                         return this.userService.getSettingsForProduct(line)
                     })
                     .then(settings => {
@@ -161,7 +164,7 @@ export class ProductDetailsComponent implements OnInit {
 
     getTotalPrice(): number {
         this.updatePriceWrapperOnUserSelections();
-        return roundToTwoDecimals(this.priceWrapper.totalPrice);
+        return this.priceWrapper.totalPrice;
     }
 
     hasPrice(): boolean {
@@ -181,6 +184,14 @@ export class ProductDetailsComponent implements OnInit {
             return "";
         }
         return this.line.requiredItemLocationQuantity.price.baseQuantity.unitCode || "";
+    }
+
+    onOrderQuantityChange(event:any): boolean {
+        const charCode = (event.which) ? event.which : event.keyCode;
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        return true;
     }
 
     isPpapAvailable(): boolean {
