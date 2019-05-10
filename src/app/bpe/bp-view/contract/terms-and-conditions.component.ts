@@ -50,7 +50,6 @@ export class TermsAndConditionsComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        console.log(this.termsAndConditions)
         this.callStatus.submit();
 
         Promise.all([
@@ -70,34 +69,23 @@ export class TermsAndConditionsComponent implements OnInit {
             // set default term and condition clauses
             this.defaultTermAndConditionClauses = termsAndConditions;
 
-            // create valuesOfParameters map
-            if(!this.tradingTerms){
-                this.tradingTerms = new Map<string, TradingTerm>();
-
-                // if we already have terms and conditions, use them to fill the map
-                if(this.termsAndConditions.length > 0){
-                    for(let clause of this.termsAndConditions){
-                        for(let tradingTerm of clause.tradingTerms){
-                            this.tradingTerms.set(tradingTerm.tradingTermFormat,tradingTerm);
-                        }
-                    }
-                }
-                // otherwise fill the map using the default values of parameters
-                else{
-                    for(let clause of this.defaultTermAndConditionClauses){
-                        for(let tradingTerm of clause.tradingTerms){
-                            this.tradingTerms.set(tradingTerm.tradingTermFormat,JSON.parse(JSON.stringify(tradingTerm)));
-                        }
-                    }
-                }
-            }
-
             // create terms and conditions if we do not have any
             if(this.termsAndConditions.length == 0){
                 for(let clause of this.defaultTermAndConditionClauses){
                     let newClause:Clause = JSON.parse(JSON.stringify(clause));
                     newClause.id = UBLModelUtils.generateUUID();
                     this.termsAndConditions.push(newClause);
+                }
+            }
+
+            // create valuesOfParameters map
+            if(!this.tradingTerms){
+                this.tradingTerms = new Map<string, TradingTerm>();
+                // create tradingTerms map using the terms and conditions
+                for(let clause of this.termsAndConditions){
+                    for(let tradingTerm of clause.tradingTerms){
+                        this.tradingTerms.set(tradingTerm.tradingTermFormat,tradingTerm);
+                    }
                 }
             }
 
@@ -197,20 +185,8 @@ export class TermsAndConditionsComponent implements OnInit {
             }
         }
 
-        let tradingTermToBeUpdated:TradingTerm;
-        let clauseName = this.getClauseName(this.defaultTermAndConditionClauses[sectionIndex]);
-        let clause = this.getClause(clauseName);
-        for(let tradingTerm of clause.tradingTerms){
-            if(tradingTerm.tradingTermFormat == id){
-                tradingTermToBeUpdated = tradingTerm;
-                break;
-            }
-        }
-
         if(isUnit){
             this.tradingTerms.get(id).value.valueQuantity[0].unitCode = value;
-
-            tradingTermToBeUpdated.value.valueQuantity[0].unitCode = value;
 
             let element = document.getElementById(this.generateIdForParameter(id));
             element.innerText = this.tradingTerms.get(id).value.valueQuantity[0].value +" "+ value;
@@ -218,21 +194,12 @@ export class TermsAndConditionsComponent implements OnInit {
             let tradingTerm = this.tradingTerms.get(id);
             if(tradingTerm.value.valueQualifier == "STRING"){
                 tradingTerm.value.value[0].value = value;
-
-                tradingTermToBeUpdated.value.value[0].value = value;
             } else if(tradingTerm.value.valueQualifier == "NUMBER"){
                 tradingTerm.value.valueDecimal[0] = Number(value);
-
-                tradingTermToBeUpdated.value.valueDecimal[0] = Number(value);
             } else if(tradingTerm.value.valueQualifier == "QUANTITY"){
                 tradingTerm.value.valueQuantity[0].value = Number(value);
-
-                tradingTermToBeUpdated.value.valueQuantity[0].value = Number(value);
-
             } else if(tradingTerm.value.valueQualifier == "CODE"){
                 tradingTerm.value.valueCode[0].value = value;
-
-                tradingTermToBeUpdated.value.valueCode[0].value = value;
             }
 
             let element = document.getElementById(this.generateIdForParameter(id));
