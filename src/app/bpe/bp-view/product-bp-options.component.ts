@@ -68,13 +68,13 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
         this.renderer.setStyle(document.body, "background-image", "none");
     }
 
-    open(content) {
-        this.modalService.open(content, {}).result.then((result) => {
-            // this.closeResult = `Closed with: ${result}`;
-        }, (reason) => {
-            // this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-        });
-    }
+    // open(content) {
+    //     this.modalService.open(content, {}).result.then((result) => {
+    //         // this.closeResult = `Closed with: ${result}`;
+    //     }, (reason) => {
+    //         // this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+    //     });
+    // }
 
     ngOnInit() {
         // get copy of ThreadEventMetadata of the current business process
