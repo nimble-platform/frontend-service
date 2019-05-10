@@ -148,7 +148,9 @@ export class ProductPublishComponent implements OnInit {
     showDimensions = false;
     // dimensions of the item
     multiValuedDimensions:MultiValuedDimension[] = null;
-    // dimension unit list retrieved from the unit service
+    // dimensions retrieved from the unit service
+    dimensions:string[] = [];
+    // dimensions' units retrieved from the unit service
     dimensionUnits:string[] = [];
     selectedTabSinglePublish: "DETAILS" | "DELIVERY_TRADING" | "PRICE" | "CERTIFICATES" | "TRACK_TRACE" | "LCPA" = "DETAILS";
 
@@ -174,12 +176,15 @@ export class ProductPublishComponent implements OnInit {
                 Promise.resolve(party),
                 this.catalogueService.getCatalogueResponse(userId),
                 this.userService.getCompanyNegotiationSettingsForParty(UBLModelUtils.getPartyId(party)),
-                this.unitService.getCachedUnitList("dimensions")
+                this.unitService.getCachedUnitList("dimensions"),
+                this.unitService.getCachedUnitList("length_quantity")
             ])
         })
-            .then(([party, catalogueResponse, settings, dimensionUnits]) => {
-                // set dimension unit list
+            .then(([party, catalogueResponse, settings, dimensions,dimensionUnits]) => {
+                // set dimensions and units lists
+                this.dimensions = dimensions;
                 this.dimensionUnits = dimensionUnits;
+
                 this.initView(party, catalogueResponse, settings);
                 this.publishStateService.publishingStarted = true;
                 this.callStatus.callback("Successfully initialized.", true);
@@ -711,7 +716,7 @@ export class ProductPublishComponent implements OnInit {
             // new publishing is the first entry to the publishing page
             // i.e. publishing from scratch
             if (this.publishStateService.publishingStarted == false) {
-                    this.catalogueLine = UBLModelUtils.createCatalogueLine(catalogueResponse.catalogueUuid, userParty, settings, this.dimensionUnits);
+                    this.catalogueLine = UBLModelUtils.createCatalogueLine(catalogueResponse.catalogueUuid, userParty, settings, this.dimensions);
                     this.catalogueService.draftCatalogueLine = this.catalogueLine;
             } else {
                 this.catalogueLine = this.catalogueService.draftCatalogueLine;
@@ -729,7 +734,7 @@ export class ProductPublishComponent implements OnInit {
             }
         }
         // call this function with dimension unit list to be sure that item will have some dimension
-        this.multiValuedDimensions = this.productWrapper.getDimensionMultiValue(true,this.dimensionUnits);
+        this.multiValuedDimensions = this.productWrapper.getDimensionMultiValue(true,this.dimensions);
         this.recomputeSelectedProperties();
     }
 
@@ -897,7 +902,7 @@ export class ProductPublishComponent implements OnInit {
                     // go to the dashboard - catalogue tab
                     if(exitThePage){
                         this.catalogueLine = UBLModelUtils.createCatalogueLine(catalogueResponse.uuid,
-                            party, this.companyNegotiationSettings,this.dimensionUnits);
+                            party, this.companyNegotiationSettings,this.dimensions);
 
                         // since every changes is saved,we do not need a dialog box
                         ProductPublishComponent.dialogBox = false;
