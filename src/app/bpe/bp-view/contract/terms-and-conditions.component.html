@@ -8,8 +8,8 @@
     </h4>
 </div>
 <call-status [callStatus]="callStatus"></call-status>
-<div class="col-12 section" *ngIf="showPreview && termAndConditionClauses">
-    <div *ngFor="let clause of termAndConditionClauses;let i=index">
+<div class="col-12 section" *ngIf="showPreview && defaultTermAndConditionClauses">
+    <div *ngFor="let clause of defaultTermAndConditionClauses;let i=index">
         <button class="btn btn-primary btn-outline-primary" (click)="showSection[i] = !showSection[i];setSectionText(i)">
             {{getClauseName(clause)}}
         </button>

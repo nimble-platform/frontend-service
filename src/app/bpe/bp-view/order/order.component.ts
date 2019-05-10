@@ -31,6 +31,7 @@ import {BpStartEvent} from '../../../catalogue/model/publish/bp-start-event';
 import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
 import * as myGlobals from '../../../globals';
 import {Contract} from '../../../catalogue/model/publish/contract';
+import {Clause} from '../../../catalogue/model/publish/clause';
 
 /**
  * Created by suat on 20-Sep-17.
@@ -154,6 +155,19 @@ export class OrderComponent implements OnInit {
                 for(let clause of contract.clause){
                     if(clause.type){
                         return clause;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    getTermAndConditionClauses():Clause[]{
+        if(this.order.contract){
+            for(let contract of this.order.contract){
+                for(let clause of contract.clause){
+                    if(!clause.type){
+                        return contract.clause;
                     }
                 }
             }
