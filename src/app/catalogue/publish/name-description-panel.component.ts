@@ -15,6 +15,7 @@ export class NameDescriptionPanelComponent implements OnInit{
     }
 
     @Input() catalogueLine;
+    @Input() productIdEditable;
 
     ngOnInit(){
 
