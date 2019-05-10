@@ -56,8 +56,9 @@ export class TermsAndConditionsComponent implements OnInit {
         Promise.all([
             this.userService.getSettingsForParty(this.sellerPartyId),
             this.unitService.getCachedUnitList(deliveryPeriodUnitListId),
-            this.unitService.getCachedUnitList(warrantyPeriodUnitListId)
-        ]).then(([sellerPartySettings, deliveryPeriodUnits, warrantyPeriodUnits]) => {
+            this.unitService.getCachedUnitList(warrantyPeriodUnitListId),
+            this.bpeService.getTermsAndConditions(this.orderId,this.buyerPartyId, this.sellerPartyId, this.rfqId, this.selectedIncoterm, this.selectedTradingTerms),
+        ]).then(([sellerPartySettings, deliveryPeriodUnits, warrantyPeriodUnits,termsAndConditions]) => {
 
             // populate available incoterms
             this.INCOTERMS = sellerPartySettings.negotiationSettings.incoterms;
@@ -66,56 +67,49 @@ export class TermsAndConditionsComponent implements OnInit {
             // populate available units
             this.UNITS = deliveryPeriodUnits.concat(warrantyPeriodUnits);
 
+            // set default term and condition clauses
+            this.defaultTermAndConditionClauses = termsAndConditions;
+
+            // create valuesOfParameters map
+            if(!this.tradingTerms){
+                this.tradingTerms = new Map<string, TradingTerm>();
+
+                // if we already have terms and conditions, use them to fill the map
+                if(this.termsAndConditions.length > 0){
+                    for(let clause of this.termsAndConditions){
+                        for(let tradingTerm of clause.tradingTerms){
+                            this.tradingTerms.set(tradingTerm.tradingTermFormat,tradingTerm);
+                        }
+                    }
+                }
+                // otherwise fill the map using the default values of parameters
+                else{
+                    for(let clause of this.defaultTermAndConditionClauses){
+                        for(let tradingTerm of clause.tradingTerms){
+                            this.tradingTerms.set(tradingTerm.tradingTermFormat,JSON.parse(JSON.stringify(tradingTerm)));
+                        }
+                    }
+                }
+            }
+
+            // create terms and conditions if we do not have any
+            if(this.termsAndConditions.length == 0){
+                for(let clause of this.defaultTermAndConditionClauses){
+                    let newClause:Clause = JSON.parse(JSON.stringify(clause));
+                    newClause.id = UBLModelUtils.generateUUID();
+                    this.termsAndConditions.push(newClause);
+                }
+            }
+
             this.callStatus.callback("Successfully fetched terms and conditions", true);
         }).catch(error => {
-            this.callStatus.error("Error while getting the settings of parties",error);
+            this.callStatus.error("Error while fething terms and conditions",error);
         });
     }
 
-    fetchTermsAndConditions(){
+    displayTermsAndConditions(){
         this.clearShowSectionArray();
         this.showPreview = !this.showPreview;
-
-        if(this.showPreview) {
-            this.callStatus.submit();
-            this.bpeService.getTermsAndConditions(this.orderId,this.buyerPartyId, this.sellerPartyId, this.rfqId, this.selectedIncoterm, this.selectedTradingTerms)
-                .then(termsAndConditions => {
-                    this.defaultTermAndConditionClauses = termsAndConditions;
-                    // create valuesOfParameters map
-                    if(!this.tradingTerms){
-                        this.tradingTerms = new Map<string, TradingTerm>();
-
-                        // if we already have terms and conditions, use them to fill the map
-                        if(this.termsAndConditions.length > 0){
-                            for(let clause of this.termsAndConditions){
-                                for(let tradingTerm of clause.tradingTerms){
-                                    this.tradingTerms.set(tradingTerm.tradingTermFormat,tradingTerm);
-                                }
-                            }
-                        }
-                        // otherwise fill the map using the default values of parameters
-                        else{
-                            for(let clause of this.defaultTermAndConditionClauses){
-                                for(let tradingTerm of clause.tradingTerms){
-                                    this.tradingTerms.set(tradingTerm.tradingTermFormat,JSON.parse(JSON.stringify(tradingTerm)));
-                                }
-                            }
-                        }
-                    }
-
-                    // create terms and conditions if we do not have any
-                    if(this.termsAndConditions.length == 0){
-                        for(let clause of this.defaultTermAndConditionClauses){
-                            let newClause:Clause = JSON.parse(JSON.stringify(clause));
-                            newClause.id = UBLModelUtils.generateUUID();
-                            this.termsAndConditions.push(newClause);
-                        }
-                    }
-                    this.callStatus.callback("Successfully fetched terms and conditions", true);
-                }).catch(error => {
-                this.callStatus.error("Error while fetching terms and conditions", error);
-            });
-        }
     }
 
     clearShowSectionArray(){
