@@ -66,11 +66,11 @@ export class ProductWrapper {
 
     // it creates MultiValuedDimensions using the item's dimensions
     // if the item has no dimensions, then it creates them using the given list of dimension units.
-    getDimensionMultiValue(includeDimensionsWithNullValues:boolean = true, dimensionUnits:string[] = []):MultiValuedDimension[]{
+    getDimensionMultiValue(includeDimensionsWithNullValues:boolean = true, dimensions:string[] = []):MultiValuedDimension[]{
         let multiValuedDimensions:MultiValuedDimension[] = [];
         // each item should have dimensions
-        if(this.item.dimension.length == 0 && dimensionUnits.length > 0){
-            this.item.dimension = UBLModelUtils.createDimensions(dimensionUnits);
+        if(this.item.dimension.length == 0 && dimensions.length > 0){
+            this.item.dimension = UBLModelUtils.createDimensions(dimensions);
         }
         for(let dimension of this.item.dimension){
             if(!includeDimensionsWithNullValues && !dimension.measure.value){

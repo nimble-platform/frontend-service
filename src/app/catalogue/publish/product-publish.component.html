@@ -125,7 +125,7 @@
                                 <tbody>
                                 <tr *ngFor="let quantity of multiValuedDimension.measure;let i=index">
                                     <td>
-                                        <quantity-input [quantity]="quantity" rowClass="quantity-input">
+                                        <quantity-input [quantity]="quantity" rowClass="quantity-input" [quantityUnits]="dimensionUnits">
                                         </quantity-input>
                                     </td>
                                     <td *ngIf="i>0" class="align-right" >
