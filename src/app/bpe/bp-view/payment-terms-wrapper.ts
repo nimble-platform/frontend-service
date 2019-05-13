@@ -1,5 +1,6 @@
 import { PaymentTerms } from "../../catalogue/model/publish/payment-terms";
 import { UBLModelUtils } from "../../catalogue/model/ubl-model-utils";
+import {TradingTerm} from '../../catalogue/model/publish/trading-term';
 
 export class PaymentTermsWrapper {
 
@@ -25,5 +26,11 @@ export class PaymentTermsWrapper {
         this.paymentTerms.tradingTerms[this.selectedPaymentTerm].value.value[0].value = "false";
         this.selectedPaymentTerm = index;
         this.paymentTerms.tradingTerms[this.selectedPaymentTerm].value.value[0].value = "true";
+
+        this.paymentTerms.tradingTerms = [].concat(this.paymentTerms.tradingTerms);
+    }
+
+    get tradingTerms():TradingTerm[]{
+        return this.paymentTerms.tradingTerms;
     }
 }
