@@ -24,11 +24,11 @@ export class TermsAndConditionsComponent implements OnInit {
     @Input() readOnly:boolean = false;
     @Input() rfqId:string = null;
     @Input() documentType:string; // "order", "rfq", "quotation";
-    @Input() selectedTradingTerms: TradingTerm[] = [];
     @Input() termsAndConditions:Clause[];
 
     // Outputs
     @Output() onIncotermChanged = new EventEmitter();
+    @Output() onTradingTermChanged = new EventEmitter();
 
     showPreview: boolean = false;
     callStatus : CallStatus = new CallStatus();
@@ -47,6 +47,7 @@ export class TermsAndConditionsComponent implements OnInit {
     UNITS:string[] = [];
 
     _selectedIncoterm: string = null;
+    _selectedTradingTerms: TradingTerm[] = [];
 
     constructor(public bpeService: BPEService,
                 public userService: UserService,
@@ -220,6 +221,9 @@ export class TermsAndConditionsComponent implements OnInit {
         if(id == "$incoterms_id"){
             this.onIncotermChanged.emit(value);
         }
+        else if(id == "$payment_id"){
+            this.onTradingTermChanged.emit(value);
+        }
     }
 
     private getClause(sectionName:string){
@@ -265,7 +269,7 @@ export class TermsAndConditionsComponent implements OnInit {
 
         let id = "$incoterms_id";
 
-        // update the value of parameter in trandingTerms map
+        // update the value of parameter in tradingTerms map
         if(this.tradingTerms){
             let tradingTerm = this.tradingTerms.get(id);
             tradingTerm.value.valueCode[0].value = this._selectedIncoterm;
@@ -274,6 +278,37 @@ export class TermsAndConditionsComponent implements OnInit {
         let element = document.getElementById(this.generateIdForParameter(id));
         if(element){
             element.innerText = this._selectedIncoterm;
+        }
+    }
+
+    get selectedTradingTerms():TradingTerm[]{
+        return this._selectedTradingTerms;
+    }
+
+    @Input('selectedTradingTerms')
+    set selectedTradingTerms(tradingTerms:TradingTerm[]){
+        this._selectedTradingTerms = [];
+        // get the selected trading term
+        for(let tradingTerm of tradingTerms){
+            if(tradingTerm.value.value[0].value == "true"){
+                this._selectedTradingTerms.push(tradingTerm);
+                break;
+            }
+        }
+        // construct to value representing the selected trading term
+        let value = this._selectedTradingTerms[0].tradingTermFormat + " - " + this._selectedTradingTerms[0].description[0].value;
+
+        let id = "$payment_id";
+
+        // update the value of parameter in tradingTerms map
+        if(this.tradingTerms){
+            let tradingTerm = this.tradingTerms.get(id);
+            tradingTerm.value.valueCode[0].value = value;
+        }
+        // update the value of parameter in the text
+        let element = document.getElementById(this.generateIdForParameter(id));
+        if(element){
+            element.innerText = value;
         }
     }
 }
