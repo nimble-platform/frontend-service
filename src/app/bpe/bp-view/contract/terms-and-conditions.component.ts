@@ -46,8 +46,11 @@ export class TermsAndConditionsComponent implements OnInit {
     COUNTRY_NAMES = COUNTRY_NAMES;
     UNITS:string[] = [];
 
+    // selected values for Incoterm and Trading Terms (e.g. Payment Terms)
     _selectedIncoterm: string = null;
     _selectedTradingTerms: TradingTerm[] = [];
+    _isIncotermsNegotiating:boolean = true;
+    _isTradingTermsNegotiating: boolean = true;
 
     constructor(public bpeService: BPEService,
                 public userService: UserService,
@@ -218,10 +221,10 @@ export class TermsAndConditionsComponent implements OnInit {
         }
 
         // emit the new value if necessary
-        if(id == "$incoterms_id"){
+        if(id == "$incoterms_id" && this.isIncotermsNegotiating){
             this.onIncotermChanged.emit(value);
         }
-        else if(id == "$payment_id"){
+        else if(id == "$payment_id" && this.isTradingTermsNegotiating){
             this.onTradingTermChanged.emit(value);
         }
     }
@@ -269,16 +272,37 @@ export class TermsAndConditionsComponent implements OnInit {
 
         let id = "$incoterms_id";
 
-        // update the value of parameter in tradingTerms map
-        if(this.tradingTerms){
-            let tradingTerm = this.tradingTerms.get(id);
-            tradingTerm.value.valueCode[0].value = this._selectedIncoterm;
+        if(this._selectedIncoterm != ""){
+            this.updateTermNegotiating(id, this._selectedIncoterm);
         }
-        // update the value of parameter in the text
-        let element = document.getElementById(this.generateIdForParameter(id));
-        if(element){
-            element.innerText = this._selectedIncoterm;
+    }
+
+    get isIncotermsNegotiating():boolean{
+        return this._isIncotermsNegotiating;
+    }
+
+    @Input('isIncotermsNegotiating')
+    set isIncotermsNegotiating(isNegotiating:boolean){
+        this._isIncotermsNegotiating = isNegotiating;
+
+        let id = "$incoterms_id";
+        // if we do not negotiate incoterms, use the default value
+        if(!isNegotiating && this.defaultTermAndConditionClauses){
+
+            for(let clause of this.defaultTermAndConditionClauses){
+                for(let tradingTerm of clause.tradingTerms){
+                    if(tradingTerm.tradingTermFormat == id){
+
+                        this.updateTermNegotiating(id,tradingTerm.value.valueCode[0].value);
+
+                        break;
+                    }
+                }
+            }
         }
+        // otherwise, use the selected incoterm
+        else if(this._selectedIncoterm)
+            this.updateTermNegotiating(id, this._selectedIncoterm);
     }
 
     get selectedTradingTerms():TradingTerm[]{
@@ -298,12 +322,42 @@ export class TermsAndConditionsComponent implements OnInit {
         // construct to value representing the selected trading term
         let value = this._selectedTradingTerms[0].tradingTermFormat + " - " + this._selectedTradingTerms[0].description[0].value;
 
-        let id = "$payment_id";
+        this.updateTermNegotiating("$payment_id", value);
+    }
 
+    get isTradingTermsNegotiating():boolean{
+        return this._isTradingTermsNegotiating;
+    }
+
+    @Input('isTradingTermsNegotiating')
+    set isTradingTermsNegotiating(isNegotiating:boolean){
+        this._isTradingTermsNegotiating = isNegotiating;
+
+        let id = "$payment_id";
+        // if we do not negotiate trading terms, then use the default value
+        if(!isNegotiating && this.defaultTermAndConditionClauses){
+            for(let clause of this.defaultTermAndConditionClauses){
+                for(let tradingTerm of clause.tradingTerms){
+                    if(tradingTerm.tradingTermFormat == id){
+                        this.updateTermNegotiating(id, tradingTerm.value.valueCode[0].value);
+                        break;
+                    }
+                }
+            }
+        }
+        // otherwise, use the selected trading terms
+        else if(this._selectedTradingTerms){
+            // construct to value representing the selected trading term
+            let value = this._selectedTradingTerms[0].tradingTermFormat + " - " + this._selectedTradingTerms[0].description[0].value;
+            this.updateTermNegotiating(id, value);
+
+        }
+    }
+
+    private updateTermNegotiating(id:string,value:string){
         // update the value of parameter in tradingTerms map
         if(this.tradingTerms){
-            let tradingTerm = this.tradingTerms.get(id);
-            tradingTerm.value.valueCode[0].value = value;
+            this.tradingTerms.get(id).value.valueCode[0].value = value;
         }
         // update the value of parameter in the text
         let element = document.getElementById(this.generateIdForParameter(id));
