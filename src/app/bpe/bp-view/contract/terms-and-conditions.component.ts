@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import { CallStatus } from "../../../common/call-status";
 import { UBLModelUtils } from "../../../catalogue/model/ubl-model-utils";
 import { BPEService } from "../../bpe.service";
@@ -17,15 +17,18 @@ import {TradingTerm} from '../../../catalogue/model/publish/trading-term';
 })
 export class TermsAndConditionsComponent implements OnInit {
 
+    // Inputs
     @Input() orderId:string = null;
     @Input() buyerPartyId:string;
     @Input() sellerPartyId:string;
     @Input() readOnly:boolean = false;
     @Input() rfqId:string = null;
     @Input() documentType:string; // "order", "rfq", "quotation";
-    @Input() selectedIncoterm: string = null;
     @Input() selectedTradingTerms: TradingTerm[] = [];
     @Input() termsAndConditions:Clause[];
+
+    // Outputs
+    @Output() onIncotermChanged = new EventEmitter();
 
     showPreview: boolean = false;
     callStatus : CallStatus = new CallStatus();
@@ -42,6 +45,8 @@ export class TermsAndConditionsComponent implements OnInit {
     PAYMENT_TERMS:string[] = [];
     COUNTRY_NAMES = COUNTRY_NAMES;
     UNITS:string[] = [];
+
+    _selectedIncoterm: string = null;
 
     constructor(public bpeService: BPEService,
                 public userService: UserService,
@@ -184,7 +189,7 @@ export class TermsAndConditionsComponent implements OnInit {
                 }
             }
         }
-
+        // update the value of parameter
         if(isUnit){
             this.tradingTerms.get(id).value.valueQuantity[0].unitCode = value;
 
@@ -209,6 +214,11 @@ export class TermsAndConditionsComponent implements OnInit {
             } else{
                 element.innerText = value;
             }
+        }
+
+        // emit the new value if necessary
+        if(id == "$incoterms_id"){
+            this.onIncotermChanged.emit(value);
         }
     }
 
@@ -243,5 +253,27 @@ export class TermsAndConditionsComponent implements OnInit {
 
     generateIdForParameter(parameter:string){
         return this.documentType + "-" + parameter;
+    }
+
+    get selectedIncoterm():string{
+        return this._selectedIncoterm;
+    }
+
+    @Input('selectedIncoterm')
+    set selectedIncoterm(incoterm:string){
+        this._selectedIncoterm = incoterm;
+
+        let id = "$incoterms_id";
+
+        // update the value of parameter in trandingTerms map
+        if(this.tradingTerms){
+            let tradingTerm = this.tradingTerms.get(id);
+            tradingTerm.value.valueCode[0].value = this._selectedIncoterm;
+        }
+        // update the value of parameter in the text
+        let element = document.getElementById(this.generateIdForParameter(id));
+        if(element){
+            element.innerText = this._selectedIncoterm;
+        }
     }
 }

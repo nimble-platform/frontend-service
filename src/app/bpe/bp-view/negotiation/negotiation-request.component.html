@@ -205,8 +205,9 @@
     <div class="row">
         <div class="col-6">
             <terms-and-conditions [buyerPartyId]="buyerId"
-                                  [selectedIncoterm]="rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms"
+                                  [selectedIncoterm]="wrapper.rfqIncoterms"
                                   [selectedTradingTerms]="rfq.paymentTerms.tradingTerms"
+                                  (onIncotermChanged)="wrapper.rfqIncoterms = $event"
                                   [sellerPartyId]="sellerId" [readOnly]="isLoading() || isReadOnly()" [documentType]="'rfq'" [termsAndConditions]="rfq.termOrCondition"></terms-and-conditions>
         </div>
         <div class="col-6">
