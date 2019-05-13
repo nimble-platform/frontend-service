@@ -37,7 +37,7 @@ export class PerformanceAnalyticsComponent implements OnInit {
     product_count = 0;
     service_count = 0;
     loadedps = false;
-
+	comp_id = "";
     callStatus: CallStatus = new CallStatus();
 	categoriesCallStatus: CallStatus = new CallStatus();
 
@@ -54,9 +54,10 @@ export class PerformanceAnalyticsComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.callStatus.submit();
+		this.callStatus.submit();
+		let compId = this.cookieService.get('company_id');		
+		this.comp_id = compId;
 		this.getCatTree();
-        let compId = this.cookieService.get('company_id');		
         this.analyticsService
             .getPerfromanceAnalytics(compId)
             .then(res => {
@@ -89,7 +90,8 @@ export class PerformanceAnalyticsComponent implements OnInit {
 
     private getCatTree(): void {
 		this.categoriesCallStatus.submit();
-		this.simpleSearchService.getCompanyBasedProductsAndServices('manufacturerId:"41915"',[this.product_cat_mix],[""],1,"","")
+
+		this.simpleSearchService.getCompanyBasedProductsAndServices('manufacturerId:"'+this.comp_id+'"',[this.product_cat_mix],[""],1,"","")
 		.then(res => {
 			// if res.facets are null, it means that there is no product in the index
 			if (res.facets == null || Object.keys(res.facets).indexOf(this.product_cat_mix) == -1) {
