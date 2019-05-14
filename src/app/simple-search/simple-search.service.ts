@@ -103,7 +103,7 @@ export class SimpleSearchService {
 
     getSuggestions(query: string, item_field: string) {
     let querySettings = {
-      "fields": [item_field, class_suggestion_field],
+      "fields": [item_field],
       "boosting": false,
       "boostingFactors": {}
     };
@@ -116,9 +116,7 @@ export class SimpleSearchService {
     searchObject.facet.field = [];
     searchObject.facet.limit = -1;
     for (let i=0; i<queryRes.queryFields.length; i++) {
-        if(queryRes.queryFields[i] != class_suggestion_field){
             searchObject.facet.field.push(queryRes.queryFields[i]);
-        }
     }
     return this.http
 		.post(url, searchObject, {headers: this.getHeadersWithBasicAuthorization()})
