@@ -425,6 +425,19 @@ export class BPDataService{
         this.order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address = copyLineItem.deliveryTerms.deliveryLocation.address;
         this.order.paymentMeans = copyRfq.paymentMeans;
         this.order.paymentTerms = copyRfq.paymentTerms;
+
+        // create a contract for Terms and Conditions
+        let contract = new Contract();
+        contract.id = UBLModelUtils.generateUUID();
+
+        for(let clause of copyRfq.termOrCondition){
+
+            let newClause:Clause = JSON.parse(JSON.stringify(clause));
+            newClause.id = UBLModelUtils.generateUUID();
+            contract.clause.push(newClause);
+        }
+        // push contract to order.contract
+        this.order.contract = [contract];
     }
 
     initRfqWithQuotation() {
