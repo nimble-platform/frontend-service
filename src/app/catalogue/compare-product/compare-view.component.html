@@ -27,7 +27,7 @@
 
             <div *ngIf="itemTypeResponse_first && hasFavourite_first == true">
                 <div *ngFor="let catLine of catalogueLinesArray_first; let i = index" class="space-before">
-                    <div class="card pointer">
+                    <div *ngIf="i == 0" class="card pointer">
                         <div class="card-body">
                             <div class="row" *ngIf="!catalogueLineView_first[catLine.localName]" (click)="viewCatalogueLine_first(catLine,i); $event.stopPropagation();">
                                 <div class="col-2">
@@ -101,7 +101,7 @@
             
             <div *ngIf="itemTypeResponse && hasFavourite == true">
                 <div *ngFor="let catLine of catalogueLinesArray; let i = index" class="space-before">
-                    <div class="card pointer">
+                    <div *ngIf="i == 0" class="card pointer">
                         <div class="card-body">
                             <div class="row" *ngIf="!catalogueLineView[catLine.localName]" (click)="viewCatalogueLine(catLine,i); $event.stopPropagation();">
                                 <div class="col-2">

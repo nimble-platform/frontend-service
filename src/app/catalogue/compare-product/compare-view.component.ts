@@ -218,13 +218,18 @@ export class CompareViewComponent implements OnInit {
 					this.initial = false;
 					// let querySettings = {
 					// 	"fields": [("{LANG}_"+this.product_name)],
-					// 	"boosting": false,
-					// 	"boostingFactors": {}
+					// 	"boosting": true,
+					// 	"boostingFactors": {
+					// 		// "STANDARD": 4,
+					// 		// "commodityClassficationUri": 16,
+					// 		"{LANG}_label": 64
+					// 		// "{LANG}_desc": -1
+					// 	  }
 					//   };
-    				// let queryRes = this.simpleSearchService.buildQueryString(term.toString(),querySettings,false,false);
-					query = 'en_label: "'+term+'"';
+					let queryRes = this.simpleSearchService.buildQueryString(term.toString(),myGlobals.query_settings,true,false);
+					query = queryRes.queryStr;
 			}
-            this.getCall(query);
+            this.getCall(term.toString());
             this.getCatalogueStatus.callback(null);
         })
         .catch(error => {
@@ -391,7 +396,7 @@ export class CompareViewComponent implements OnInit {
 		this.simpleSearchService.getFields()
 			.then(res => {
 				let fieldLabels: string [] = this.getFieldNames(res);
-				this.simpleSearchService.getFavouriteSearch(q, Object.keys(fieldLabels),this.page,this.sortOption)
+				this.simpleSearchService.get(q, Object.keys(fieldLabels),[],this.page,"",this.sortOption)
 					.then(res => {
 						if (res.result.length == 0) {
 							this.searchFavouriteCallStatus.callback("Search done.", true);
