@@ -27,7 +27,7 @@ import { SearchContextService } from "../../../simple-search/search-context.serv
 import { EpcCodes } from "../../../data-channel/model/epc-codes";
 import { EpcService } from "../epc-service";
 import {DocumentService} from "../document-service";
-import {BpStartEvent} from '../../../catalogue/model/publish/bp-start-event';
+import {BpActivityEvent} from '../../../catalogue/model/publish/bp-start-event';
 import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
 import * as myGlobals from '../../../globals';
 
@@ -84,7 +84,9 @@ export class OrderComponent implements OnInit {
 
     ngOnInit(): void {
         // get copy of ThreadEventMetadata of the current business process
-        this.processMetadata = this.bpDataService.bpStartEvent.processMetadata;
+        if(!this.bpDataService.bpActivityEvent.newProcess) {
+            this.processMetadata = this.bpDataService.bpActivityEvent.processHistory[0];
+        }
 
         if(this.bpDataService.order == null) {
             this.router.navigate(['dashboard']);
@@ -93,7 +95,7 @@ export class OrderComponent implements OnInit {
         this.order = this.bpDataService.order;
         this.address = this.order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address;
         this.paymentTermsWrapper = new PaymentTermsWrapper(this.order.paymentTerms);
-        this.userRole = this.bpDataService.bpStartEvent.userRole;
+        this.userRole = this.bpDataService.bpActivityEvent.userRole;
         this.orderResponse = this.bpDataService.orderResponse;
         this.priceWrapper = new PriceWrapper(
             this.order.orderLine[0].lineItem.price,
@@ -198,7 +200,7 @@ export class OrderComponent implements OnInit {
             .then(res => {
                 this.submitCallStatus.callback("Order placed", true);
                 var tab = "PUCHASES";
-                if (this.bpDataService.bpStartEvent.userRole == "seller")
+                if (this.bpDataService.bpActivityEvent.userRole == "seller")
                   tab = "SALES";
                 this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
             }).catch(error => {
@@ -215,7 +217,7 @@ export class OrderComponent implements OnInit {
                 this.documentService.updateCachedDocument(order.id,order);
                 this.submitCallStatus.callback("Order updated", true);
                 var tab = "PUCHASES";
-                if (this.bpDataService.bpStartEvent.userRole == "seller")
+                if (this.bpDataService.bpActivityEvent.userRole == "seller")
                   tab = "SALES";
                 this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
             })
@@ -245,7 +247,7 @@ export class OrderComponent implements OnInit {
             .then(res => {
                 this.submitCallStatus.callback("Order Response placed", true);
                 var tab = "PUCHASES";
-                if (this.bpDataService.bpStartEvent.userRole == "seller")
+                if (this.bpDataService.bpActivityEvent.userRole == "seller")
                   tab = "SALES";
                 this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
             }).catch(error => {
@@ -278,7 +280,7 @@ export class OrderComponent implements OnInit {
     }
 
     onSearchTransportService() {
-        this.searchContextService.setSearchContext('Transport Service Provider','Order',this.processMetadata,this.bpDataService.bpStartEvent.containerGroupId);
+        this.searchContextService.setSearchContext('Transport Service Provider','Order',this.processMetadata,this.bpDataService.bpActivityEvent.containerGroupId);
         this.router.navigate(['simple-search'], {
             queryParams: {
                 searchContext: 'orderbp',

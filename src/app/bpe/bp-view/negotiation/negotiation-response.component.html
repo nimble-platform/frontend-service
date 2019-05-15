@@ -84,22 +84,29 @@
 
 <div class="row content-row mb-3">
     <div class="col-3"><strong class="font-weight-500">Total Price:</strong></div>
+    <!-- Original terms -->
     <div class="col-3">
       {{ wrapper.lineTotalPriceString }}<br/>
       <small>( {{ wrapper.linePricePerItemString }} )</small>
     </div>
+    <!-- Customer's request -->
     <div class="col-3">
-      {{ wrapper.rfqTotalPriceStringIfNegotiating }}<br/>
-      <small>( {{ wrapper.rfqPricePerItemStringIfNegotiating}} )</small>
+        {{ wrapper.rfqTotalPriceString }}<br/>
+        <small>( {{ wrapper.rfqPricePerItemString}} )</small>
+        <span *ngIf="isDiscountIconVisibleInCustomerRequestColumn()" class="space-left" data-toggle="tooltip" data-placement="top" (click)="openDiscountModal()" title="Applied Discounts/Charges" style="cursor: pointer">
+            <i class="fa fa-search" aria-hidden="true"></i>
+        </span>
     </div>
+    <!-- Seller's response -->
     <div class="col-3" [ngClass]="wrapper.quotationDiscountPriceWrapper.appliedDiscounts.length > 0 ? 'd-flex' : null">
         <quantity-input [presentationMode]="getPresentationMode()" [disabled]="isDisabled()"
-                        [quantity]="wrapper.quotationDiscountPriceWrapper" [quantityUnits]="CURRENCIES"
+                        [quantity]="wrapper.quotationTotalPrice" [quantityUnits]="CURRENCIES"
+                        (onQuantityValueChange)="onTotalPriceChanged($event)"
                         [disableQuantityUnit]="wrapper.lineDiscountPriceWrapper.hasPrice()">
         </quantity-input>
-        <div *ngIf="wrapper.quotationDiscountPriceWrapper.appliedDiscounts.length > 0" class="space-left" data-toggle="tooltip" data-placement="top" (click)="openDiscountModal()" title="Applied Discounts/Charges" style="cursor: pointer">
+        <!--<div *ngIf="wrapper.wrapper.quotationDiscountPriceWrapper.appliedDiscounts.length > 0" class="space-left" data-toggle="tooltip" data-placement="top" (click)="openDiscountModal()" title="Applied Discounts/Charges" style="cursor: pointer">
             <i class="fa fa-search" aria-hidden="true"></i>
-        </div>
+        </div>-->
     </div>
 </div>
 

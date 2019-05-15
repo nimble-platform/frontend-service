@@ -7,7 +7,7 @@
         <div class="row">
             <div class="{{valueSizeClass}} col-quantity-value">
                 <input type="number" class="form-control form-control-sm"
-                    [(ngModel)]="quantity.value" [disabled]="disabled" [placeholder]="placeholder">
+                       [ngModel]="quantity.value" (ngModelChange)="quantity.value = $event; onQuantityValueChanged($event)" [disabled]="disabled" [placeholder]="placeholder">
             </div>
             <div *ngIf="!quantityUnits" class="{{unitSizeClass}} col-quantity-unit">
                 <input type="text" class="form-control form-control-sm" [(ngModel)]="quantity.unitCode"

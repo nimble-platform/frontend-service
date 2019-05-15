@@ -198,7 +198,7 @@ export class FavouriteViewComponent implements OnInit {
             }else{
                 this.hasFavourite = false;
             }
-            this.getCatalogueStatus.callback(null);
+            this.getCatalogueStatus.callback(null, true);
         })
         .catch(error => {
             this.getCatalogueStatus.error("Failed to get catalogue", error);

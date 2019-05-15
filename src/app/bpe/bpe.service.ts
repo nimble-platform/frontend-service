@@ -37,29 +37,29 @@ export class BPEService {
 	startBusinessProcess(piim:ProcessInstanceInputMessage):Promise<ProcessInstance> {
 		const headers = this.getAuthorizedHeaders();
 		let url = `${this.url}/start`;
-		if(this.bpDataService.bpStartEvent.containerGroupId != null) {
-			url += '?gid=' + this.bpDataService.bpStartEvent.containerGroupId;
+		if(this.bpDataService.bpActivityEvent.containerGroupId != null) {
+			url += '?gid=' + this.bpDataService.bpActivityEvent.containerGroupId;
 		}
 		if(this.bpDataService.precedingProcessId != null) {
-			if(this.bpDataService.bpStartEvent.containerGroupId != null) {
+			if(this.bpDataService.bpActivityEvent.containerGroupId != null) {
 				url += '&';
 			} else {
 				url += '?';
 			}
 			url += 'precedingPid=' + this.bpDataService.precedingProcessId;
 		}
-		if(this.bpDataService.bpStartEvent.collaborationGroupId != null){
-			if(this.bpDataService.bpStartEvent.containerGroupId != null || this.bpDataService.precedingProcessId != null){
+		if(this.bpDataService.bpActivityEvent.collaborationGroupId != null){
+			if(this.bpDataService.bpActivityEvent.containerGroupId != null || this.bpDataService.precedingProcessId != null){
 			    url += '&';
             }
             else {
 			    url += "?";
             }
-            url += 'collaborationGID=' + this.bpDataService.bpStartEvent.collaborationGroupId
+            url += 'collaborationGID=' + this.bpDataService.bpActivityEvent.collaborationGroupId
 		}
 
 		if(this.searchContextService.getPrecedingGroupId() != null){
-			if(this.bpDataService.bpStartEvent.containerGroupId != null || this.bpDataService.precedingProcessId != null || this.bpDataService.bpStartEvent.collaborationGroupId != null){
+			if(this.bpDataService.bpActivityEvent.containerGroupId != null || this.bpDataService.precedingProcessId != null || this.bpDataService.bpActivityEvent.collaborationGroupId != null){
 				url += '&';
 			}
 			else {
@@ -86,15 +86,15 @@ export class BPEService {
 	continueBusinessProcess(piim:ProcessInstanceInputMessage):Promise<ProcessInstance> {
 		const headers = this.getAuthorizedHeaders();
 		let url = `${this.url}/continue`;
-		if(this.bpDataService.bpStartEvent.containerGroupId != null) {
-			url += '?gid=' + this.bpDataService.bpStartEvent.containerGroupId;
+		if(this.bpDataService.bpActivityEvent.containerGroupId != null) {
+			url += '?gid=' + this.bpDataService.bpActivityEvent.containerGroupId;
 		}
-		if(this.bpDataService.bpStartEvent.collaborationGroupId != null){
-			if(this.bpDataService.bpStartEvent.containerGroupId != null){
-				url += '&collaborationGID=' + this.bpDataService.bpStartEvent.collaborationGroupId;
+		if(this.bpDataService.bpActivityEvent.collaborationGroupId != null){
+			if(this.bpDataService.bpActivityEvent.containerGroupId != null){
+				url += '&collaborationGID=' + this.bpDataService.bpActivityEvent.collaborationGroupId;
 			}
 			else {
-				url += '?collaborationGID=' + this.bpDataService.bpStartEvent.collaborationGroupId;
+				url += '?collaborationGID=' + this.bpDataService.bpActivityEvent.collaborationGroupId;
 			}
 		}
 

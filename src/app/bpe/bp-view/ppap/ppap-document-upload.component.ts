@@ -55,7 +55,9 @@ export class PpapDocumentUploadComponent {
 
     ngOnInit() {
         // get copy of ThreadEventMetadata of the current business process
-        this.processMetadata = this.bpDataService.bpStartEvent.processMetadata;
+        if(!this.bpDataService.bpActivityEvent.newProcess) {
+            this.processMetadata = this.bpDataService.bpActivityEvent.processHistory[0];
+        }
 
         this.route.queryParams.subscribe(params =>{
             this.processid = params['pid'];
@@ -141,7 +143,7 @@ export class PpapDocumentUploadComponent {
         this.bpeService.continueBusinessProcess(piim).then(res => {
             this.callStatus.callback("Ppap Response placed", true);
             var tab = "PUCHASES";
-            if (this.bpDataService.bpStartEvent.userRole == "seller")
+            if (this.bpDataService.bpActivityEvent.userRole == "seller")
               tab = "SALES";
             this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
         }).catch(error => {

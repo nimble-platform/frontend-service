@@ -146,10 +146,8 @@ export class UserService {
     }
 
     getSettingsForProduct(line: CatalogueLine): Promise<CompanySettings> {
-        console.log("Getting settings for product: " + UBLModelUtils.getPartyId(line.goodsItem.item.manufacturerParty));
         return this.getSettingsForParty(UBLModelUtils.getPartyId(line.goodsItem.item.manufacturerParty))
         .then(settings => {
-            //console.log("Settings", settings);
             return settings;
         })
     }

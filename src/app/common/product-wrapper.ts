@@ -22,7 +22,7 @@ export class ProductWrapper {
     constructor(public line: CatalogueLine,
                 public negotiationSettings: CompanyNegotiationSettings,
                 public quantity: Quantity = new Quantity(1,line.requiredItemLocationQuantity.price.baseQuantity.unitCode)) {
-        this.priceWrapper = new DiscountPriceWrapper(line.requiredItemLocationQuantity.price,this.quantity,this.line.priceOption);
+        this.priceWrapper = new DiscountPriceWrapper(line.requiredItemLocationQuantity.price.priceAmount.value, line.requiredItemLocationQuantity.price,this.quantity,this.line.priceOption);
     }
 
     get goodsItem() {

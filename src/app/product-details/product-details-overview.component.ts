@@ -61,7 +61,7 @@ export class ProductDetailsOverviewComponent implements OnInit{
                 // sort labels
                 this.classificationNames.sort((c1, c2) => c1.localeCompare(c2));
 
-                this.getClassificationNamesStatus.callback(null);
+                this.getClassificationNamesStatus.callback(null, true);
 
             }).catch(error => {
                 this.getClassificationNamesStatus.error("Failed to get classification names", error);

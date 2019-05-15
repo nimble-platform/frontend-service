@@ -137,7 +137,7 @@ export class CatalogueViewComponent implements OnInit {
                     this.catalogueResponse = catalogueResponse;
                     this.settings = settings;
                     this.init();
-                    this.getCatalogueStatus.callback(null);
+                    this.getCatalogueStatus.callback(null, true);
                 },
                 error => {
                     this.getCatalogueStatus.error("Failed to get catalogue", error);
@@ -267,7 +267,7 @@ export class CatalogueViewComponent implements OnInit {
                 event.target.value = "";
                 catalogueService.uploadZipPackage(file).then(res => {
                         if (res.status == 200) {
-                            self.callStatus.callback(null);
+                            self.callStatus.callback(null, true);
                             self.requestCatalogue();
                         } else if (res.status == 504) {
                             self.callStatus.callback(res.message);

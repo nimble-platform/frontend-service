@@ -16,7 +16,7 @@ import { ProcessType } from "../../model/process-type";
 import { PresentationMode } from "../../../catalogue/model/publish/presentation-mode";
 import { isTransportService } from "../../../common/utils";
 import {CookieService} from 'ng2-cookies';
-import {BpStartEvent} from '../../../catalogue/model/publish/bp-start-event';
+import {BpActivityEvent} from '../../../catalogue/model/publish/bp-start-event';
 import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
 import {UBLModelUtils} from '../../../catalogue/model/ubl-model-utils';
 
@@ -50,7 +50,9 @@ export class ItemInformationResponseComponent implements OnInit {
 
     ngOnInit() {
         // get copy of ThreadEventMetadata of the current business process
-        this.processMetadata = this.bpDataService.bpStartEvent.processMetadata;
+        if(!this.bpDataService.bpActivityEvent.newProcess) {
+            this.processMetadata = this.bpDataService.bpActivityEvent.processHistory[0];
+        }
 
         if (!this.request) {
             this.request = this.bpDataService.itemInformationRequest;
@@ -90,7 +92,7 @@ export class ItemInformationResponseComponent implements OnInit {
         this.bpeService.continueBusinessProcess(piim).then(() => {
             this.callStatus.callback("Information Response sent", true);
             var tab = "PUCHASES";
-            if (this.bpDataService.bpStartEvent.userRole == "seller")
+            if (this.bpDataService.bpActivityEvent.userRole == "seller")
               tab = "SALES";
             this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
         }).catch(error => {
@@ -166,7 +168,7 @@ export class ItemInformationResponseComponent implements OnInit {
     }
 
     isBuyer(): boolean {
-        return this.bpDataService.bpStartEvent.userRole === "buyer";
+        return this.bpDataService.bpActivityEvent.userRole === "buyer";
     }
 
     getRequestFile(): BinaryObject | null {

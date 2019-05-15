@@ -93,7 +93,12 @@
             </div>
 
             <!-- Most recent event -->
-            <thread-event *ngIf="lastEvent" [processInstanceGroup]="processInstanceGroup" [collaborationGroupId]="collaborationGroupId" [event]="lastEvent" (processCancelled)="threadStateUpdated.next()">
+            <thread-event *ngIf="lastEvent"
+                          [processInstanceGroup]="processInstanceGroup"
+                          [collaborationGroupId]="collaborationGroupId"
+                          [event]="lastEvent"
+                          [history]="history"
+                          (processCancelled)="threadStateUpdated.next()">
             </thread-event>
 
             <!-- Loading most recent event -->
@@ -104,7 +109,11 @@
             <!-- History -->
             <ng-container *ngIf="historyExpanded && history">
                 <ng-container *ngFor="let event of history">
-                    <thread-event [processInstanceGroup]="processInstanceGroup" [event]="event" [collaborationGroupId]="collaborationGroupId" (processCancelled)="threadStateUpdated.next()">
+                    <thread-event [processInstanceGroup]="processInstanceGroup"
+                                  [event]="event"
+                                  [history]="history"
+                                  [collaborationGroupId]="collaborationGroupId"
+                                  (processCancelled)="threadStateUpdated.next()">
                     </thread-event>
                 </ng-container>
             </ng-container>

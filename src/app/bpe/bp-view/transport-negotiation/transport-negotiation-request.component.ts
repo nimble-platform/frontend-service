@@ -7,7 +7,6 @@ import { CallStatus } from "../../../common/call-status";
 import { RequestForQuotation } from "../../../catalogue/model/publish/request-for-quotation";
 import { INCOTERMS, PAYMENT_MEANS, CURRENCIES } from "../../../catalogue/model/constants";
 import { UBLModelUtils } from "../../../catalogue/model/ubl-model-utils";
-import { PriceWrapper } from "../../../common/price-wrapper";
 import { copy } from "../../../common/utils";
 import { PaymentTermsWrapper } from "../payment-terms-wrapper";
 import { UserService } from "../../../user-mgmt/user.service";
@@ -54,11 +53,13 @@ export class TransportNegotiationRequestComponent implements OnInit {
 
     ngOnInit() {
         // get copy of ThreadEventMetadata of the current business process
-        this.processMetadata = this.bpDataService.bpStartEvent.processMetadata;
+        if(!this.bpDataService.bpActivityEvent.newProcess) {
+            this.processMetadata = this.bpDataService.bpActivityEvent.processHistory[0];
+        }
 
         this.rfq = this.bpDataService.requestForQuotation;
-        this.rfqPrice = new DiscountPriceWrapper(this.rfq.requestForQuotationLine[0].lineItem.price);
-        this.rfqPrice.quantityPrice = new ItemPriceWrapper(this.rfq.requestForQuotationLine[0].lineItem.price);
+        this.rfqPrice = new DiscountPriceWrapper(this.rfq.requestForQuotationLine[0].lineItem.price.priceAmount.value, this.rfq.requestForQuotationLine[0].lineItem.price);
+        this.rfqPrice.quotationLinePriceWrapper = new ItemPriceWrapper(this.rfq.requestForQuotationLine[0].lineItem.price);
         this.rfqPaymentTerms = new PaymentTermsWrapper(this.rfq.paymentTerms);
         if(this.processMetadata && this.processMetadata.isBeingUpdated){
             this.updatingProcess = true;
@@ -125,7 +126,7 @@ export class TransportNegotiationRequestComponent implements OnInit {
         .then(() => {
             this.callStatus.callback("Terms sent", true);
             var tab = "PUCHASES";
-            if (this.bpDataService.bpStartEvent.userRole == "seller")
+            if (this.bpDataService.bpActivityEvent.userRole == "seller")
               tab = "SALES";
             this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
         })
@@ -148,7 +149,7 @@ export class TransportNegotiationRequestComponent implements OnInit {
             .then(() => {
                 this.callStatus.callback("Terms updated", true);
                 var tab = "PUCHASES";
-                if (this.bpDataService.bpStartEvent.userRole == "seller")
+                if (this.bpDataService.bpActivityEvent.userRole == "seller")
                   tab = "SALES";
                 this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
             })

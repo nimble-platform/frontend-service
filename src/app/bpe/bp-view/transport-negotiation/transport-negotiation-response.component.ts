@@ -16,9 +16,10 @@ import { ProcessInstanceInputMessage } from "../../model/process-instance-input-
 import { BPEService } from "../../bpe.service";
 import {CookieService} from 'ng2-cookies';
 import {ItemPriceWrapper} from '../../../common/item-price-wrapper';
-import {BpStartEvent} from '../../../catalogue/model/publish/bp-start-event';
+import {BpActivityEvent} from '../../../catalogue/model/publish/bp-start-event';
 import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
 import {DiscountPriceWrapper} from "../../../common/discount-price-wrapper";
+import {copy} from "../../../common/utils";
 
 @Component({
     selector: "transport-negotiation-response",
@@ -60,23 +61,25 @@ export class TransportNegotiationResponseComponent implements OnInit {
 
     ngOnInit() {
         // get copy of ThreadEventMetadata of the current business process
-        this.processMetadata = this.bpDataService.bpStartEvent.processMetadata;
+        if(!this.bpDataService.bpActivityEvent.newProcess) {
+            this.processMetadata = this.bpDataService.bpActivityEvent.processHistory[0];
+        }
 
         if(!this.rfq) {
             this.rfq = this.bpDataService.requestForQuotation;
         }
-        this.rfqPrice = new DiscountPriceWrapper(this.rfq.requestForQuotationLine[0].lineItem.price);
-        this.rfqPrice.quantityPrice = new ItemPriceWrapper(this.rfq.requestForQuotationLine[0].lineItem.price);
+        this.rfqPrice = new DiscountPriceWrapper(this.rfq.requestForQuotationLine[0].lineItem.price.priceAmount.value, this.rfq.requestForQuotationLine[0].lineItem.price);
+        this.rfqPrice.quotationLinePriceWrapper = new ItemPriceWrapper(this.rfq.requestForQuotationLine[0].lineItem.price);
         this.rfqPaymentTerms = new PaymentTermsWrapper(this.rfq.paymentTerms);
 
         if(!this.quotation) {
             this.quotation = this.bpDataService.quotation;
         }
-        this.quotationPrice = new DiscountPriceWrapper(this.quotation.quotationLine[0].lineItem.price);
-        this.quotationPrice.quantityPrice = new ItemPriceWrapper(this.quotation.quotationLine[0].lineItem.price);
+        this.quotationPrice = new DiscountPriceWrapper(this.quotation.quotationLine[0].lineItem.price.priceAmount.value, this.quotation.quotationLine[0].lineItem.price);
+        this.quotationPrice.quotationLinePriceWrapper = new ItemPriceWrapper(this.quotation.quotationLine[0].lineItem.price);
         this.quotationPaymentTerms = new PaymentTermsWrapper(this.quotation.paymentTerms);
 
-        this.userRole = this.bpDataService.bpStartEvent.userRole;
+        this.userRole = this.bpDataService.bpActivityEvent.userRole;
     }
 
     isDisabled(): boolean {
@@ -120,7 +123,7 @@ export class TransportNegotiationResponseComponent implements OnInit {
             .then(res => {
                 this.callStatus.callback("Quotation sent", true);
                 var tab = "PUCHASES";
-                if (this.bpDataService.bpStartEvent.userRole == "seller")
+                if (this.bpDataService.bpActivityEvent.userRole == "seller")
                   tab = "SALES";
                 this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
             })

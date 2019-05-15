@@ -9,6 +9,7 @@ import {ItemInformationRequest} from "../../catalogue/model/publish/item-informa
 import {BpUserRole} from "../model/bp-user-role";
 import {ActivityVariableParser} from "./activity-variable-parser";
 import {CookieService} from 'ng2-cookies';
+import {copy} from "../../common/utils";
 
 @Injectable()
 export class DocumentService {
@@ -21,12 +22,12 @@ export class DocumentService {
 
     getCachedDocument(documentID:string): Promise<any> {
         if (this.mapOfDocument.has(documentID)){
-            return Promise.resolve(this.mapOfDocument.get(documentID));
+            return Promise.resolve(copy(this.mapOfDocument.get(documentID)));
         }
         else {
             return this.getDocumentJsonContent(documentID).then(document => {
                 this.mapOfDocument.set(documentID,document);
-                return document;
+                return copy(document);
             })
         }
     }
