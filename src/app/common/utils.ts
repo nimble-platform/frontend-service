@@ -552,7 +552,28 @@ export function getPropertyValuesAsStrings(property: ItemProperty): string[] {
 }
 
 export function isTransportService(product: CatalogueLine): boolean {
-    return product && !!product.goodsItem.item.transportationServiceDetails;
+    if(product){
+        for(let commodityClassification of product.goodsItem.item.commodityClassification){
+            if(commodityClassification.itemClassificationCode.listID == "Default" && commodityClassification.itemClassificationCode.value == "Transport Service"){
+                    return true;
+            }
+        }
+    }
+    return false;
+}
+
+export function isLogisticsService(product: CatalogueLine): boolean {
+    if(product){
+        for(let commodityClassification of product.goodsItem.item.commodityClassification){
+            if(commodityClassification.itemClassificationCode.listID == "Default"){
+                if(commodityClassification.itemClassificationCode.value == "Logistics Service" || commodityClassification.itemClassificationCode.value == "Transport Service"){
+                    return true;
+                }
+            }
+
+        }
+    }
+    return false;
 }
 
 export function deepEquals(obj1: any, obj2: any): boolean {

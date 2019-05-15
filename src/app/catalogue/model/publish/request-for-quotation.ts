@@ -22,7 +22,7 @@ export class RequestForQuotation {
 		public paymentMeans: PaymentMeans,
 		public paymentTerms: PaymentTerms,
 		public tradingTerms: TradingTerm[],
-        public termOrCondition: Clause[],
+        public termOrCondition: Clause[] = [],
         public additionalDocumentReference:DocumentReference[] = []
 	) {  }
 }

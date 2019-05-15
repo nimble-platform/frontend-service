@@ -42,7 +42,7 @@
         <div *ngIf="!unverifiedCompaniesCallStatus.isLoading() && unverifiedCompaniesPage">
         
             <div class="input-group form-group" style="background-color:#F2F2F2;padding-left: 25px;padding-top: 20px;padding-bottom: 20px;">
-                <label class="space-right"><strong>Sort by:</strong>
+                <label class="space-right"><strong></strong>
                 </label>
                 <select  class="custom-select col-3 space-right" [(ngModel)]="sortOptionForUnverifiedCompanies" (change)="sortUnverifiedCompanyList()">
                     <option *ngFor="let option of COMPANY_LIST_SORT_OPTIONS" [value]="option.name">{{option.value}}</option>
@@ -110,7 +110,7 @@
             <div *ngIf="registeredCompaniesPage">
         
                 <div class="input-group form-group" style="background-color:#F2F2F2;padding-left: 25px;padding-top: 20px;padding-bottom: 20px;">
-                    <label class="space-right"><strong>Sort by:</strong>
+                    <label class="space-right"><strong></strong>
                     </label>
                     <select class="custom-select col-3 space-right" [(ngModel)]="sortOptionForRegisteredCompanies" (change)="sortRegisteredCompanyList()">
                         <option *ngFor="let option of COMPANY_LIST_SORT_OPTIONS" [value]="option.name">{{option.value}}</option>

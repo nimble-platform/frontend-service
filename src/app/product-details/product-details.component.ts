@@ -13,8 +13,9 @@ import {
     getMaximumQuantityForPrice,
     getStepForPrice,
     isTransportService,
-    selectPreferredValue
-} from "../common/utils";
+    selectPreferredValue,
+    isLogisticsService
+} from '../common/utils';
 import { AppComponent } from "../app.component";
 import { UserService } from "../user-mgmt/user.service";
 import { CompanySettings } from "../user-mgmt/model/company-settings";
@@ -60,6 +61,8 @@ export class ProductDetailsComponent implements OnInit {
     frameContract: DigitalAgreement;
     tabToOpen: string = "";
     isLogistics: boolean = false;
+    isTransportService:boolean = false;
+
     config = myGlobals.config;
 
     termsSelectBoxValue: 'product_defaults' | 'frame_contract' = 'product_defaults';
@@ -99,7 +102,8 @@ export class ProductDetailsComponent implements OnInit {
                     .then(line => {
                         this.line = line;
                         this.item = line.goodsItem.item;
-                        this.isLogistics = isTransportService(this.line);
+                        this.isLogistics = isLogisticsService(this.line);
+                        this.isTransportService = isTransportService(this.line);
 
                         // check frame contract for the current line
                         this.bpeService.getFrameContract(UBLModelUtils.getPartyId(this.line.goodsItem.item.manufacturerParty),
@@ -234,12 +238,10 @@ export class ProductDetailsComponent implements OnInit {
      */
 
     getPricePerItem(): string {
-        //this.updatePriceWrapperOnUserSelections();
         return this.priceWrapper.pricePerItemString;
     }
 
     getTotalPrice(): number {
-        //this.updatePriceWrapperOnUserSelections();
         return this.priceWrapper.totalPrice;
     }
 

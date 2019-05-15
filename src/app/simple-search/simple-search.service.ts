@@ -5,6 +5,8 @@ import * as myGlobals from '../globals';
 import { map } from 'rxjs/operators';
 import {CookieService} from "ng2-cookies";
 import { DEFAULT_LANGUAGE, LANGUAGES } from '../catalogue/model/constants';
+import {class_suggestion_field} from "../globals";
+
 
 @Injectable()
 export class SimpleSearchService {
@@ -23,6 +25,7 @@ export class SimpleSearchService {
 	product_configurable = myGlobals.product_configurable;
 	product_cat = myGlobals.product_cat;
 	product_cat_mix = myGlobals.product_cat_mix;
+	class_suggestions_field = myGlobals.class_suggestion_field;
 
 	constructor(private http: Http,
 				private cookieService: CookieService) {
@@ -98,9 +101,9 @@ export class SimpleSearchService {
 		.catch(this.handleError);
 	}
 
-  getSuggestions(query:string, field: string) {
+    getSuggestions(query: string, item_field: string) {
     let querySettings = {
-      "fields": [field],
+      "fields": [item_field],
       "boosting": false,
       "boostingFactors": {}
     };
@@ -113,7 +116,7 @@ export class SimpleSearchService {
     searchObject.facet.field = [];
     searchObject.facet.limit = -1;
     for (let i=0; i<queryRes.queryFields.length; i++) {
-      searchObject.facet.field.push(queryRes.queryFields[i]);
+            searchObject.facet.field.push(queryRes.queryFields[i]);
     }
     return this.http
 		.post(url, searchObject, {headers: this.getHeadersWithBasicAuthorization()})
@@ -290,8 +293,10 @@ export class SimpleSearchService {
           else
             queryStr += "*" + queryArr[i] +"*";
         }
-        if (qS.boosting)
-          queryStr += "^" + Math.abs(qS.boostingFactors[queryFields[j]]);
+        if (qS.boosting && queryFields[j] != class_suggestion_field) {
+            queryStr += "^" + Math.abs(qS.boostingFactors[queryFields[j]]);
+        }
+
         queryStr += " ";
       }
     }
@@ -396,5 +401,43 @@ export class SimpleSearchService {
 		.catch(this.handleError);
 	}
 
-
+  getCompanyBasedProductsAndServices(query: string, facets: string[], facetQueries: string[], page: number, cat: string, catID: string): Promise<any> {
+    // let queryRes = this.buildQueryString(query,myGlobals.query_settings,true,false);
+    // query = queryRes.queryStr;
+		const url = this.url + `/item/search`
+		let searchObject:any = {};
+		searchObject.rows = 10;
+		searchObject.start = page-1;
+		searchObject.q = query;
+		for (let facet of facets) {
+			if (facet.length === 0 || !facet.trim()) {}
+			else {
+				if(searchObject.facet == null) {
+					searchObject.facet = {};
+					searchObject.facet.field = [];
+					searchObject.facet.minCount = this.facetMin;
+					searchObject.facet.limit = this.facetCount;
+				}
+				searchObject.facet.field.push(facet)
+			}
+		}
+		for (let facetQuery of facetQueries) {
+			if(searchObject.fq == null) {
+				searchObject.fq = [];
+			}
+			searchObject.fq.push(facetQuery);
+		}
+		if (cat != "") {
+			var add_url = `${this.product_cat_mix}:"${catID}"`;
+			if(searchObject.fq == null) {
+				searchObject.fq = [];
+			}
+			searchObject.fq.push(add_url);
+		}
+		return this.http
+		.post(url, searchObject, {headers: this.getHeadersWithBasicAuthorization()})
+		.toPromise()
+		.then(res => res.json())
+		.catch(this.handleError);
+	}
 }

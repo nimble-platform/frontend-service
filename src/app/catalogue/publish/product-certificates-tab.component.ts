@@ -27,6 +27,7 @@ export class ProductCertificatesTabComponent implements OnInit {
     config = myGlobals.config;
     certDocumentReference: DocumentReference;
     countryNames = COUNTRY_NAMES;
+    validUpload = false;
     countryInputValue: string = ''
     selectedCountries: string[] = [];
 
@@ -43,6 +44,7 @@ export class ProductCertificatesTabComponent implements OnInit {
     }
 
     onAddCertificate(content) {
+        this.validUpload = false;
         this.addCertForm = this._fb.group({
             file: [""],
             name: [""],
@@ -54,7 +56,14 @@ export class ProductCertificatesTabComponent implements OnInit {
     }
 
     onSetCertificateFile(event: BinaryObject) {
+        this.validUpload = true;
         this.certDocumentReference = UBLModelUtils.createDocumentReferenceWithBinaryObject(event);
+    }
+
+    removedFile(event:boolean){
+        if(event){
+            this.validUpload = false;
+        }
     }
 
     onCertificateDetailsProvided(model: FormGroup, close: any) {

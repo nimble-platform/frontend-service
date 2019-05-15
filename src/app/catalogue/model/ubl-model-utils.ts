@@ -111,7 +111,7 @@ export class UBLModelUtils {
     }
 
     public static createCatalogueLine(catalogueUuid:string, providerParty: Party,
-        settings: CompanyNegotiationSettings,dimensionUnits:string[]): CatalogueLine {
+        settings: CompanyNegotiationSettings,dimensionUnits:string[]=[]): CatalogueLine {
         // create additional item properties
         const additionalItemProperties = new Array<ItemProperty>();
 
@@ -136,6 +136,66 @@ export class UBLModelUtils {
         catalogueLine.goodsItem.containingPackage.quantity.unitCode = "item(s)";
 
         return catalogueLine;
+    }
+
+    public static createCatalogueLinesForLogistics(catalogueUuid:string, providerParty: Party, settings: CompanyNegotiationSettings,logisticRelatedServices, eClassLogisticCategories:Category[],furnitureOntologyLogisticCategories:Category[]): Map<string,CatalogueLine>{
+        let logisticCatalogueLines: Map<string,CatalogueLine> = new Map<string, CatalogueLine>();
+        // if we have furniture ontology categories for logistics services,then use them.
+        if(furnitureOntologyLogisticCategories){
+            let furnitureOntologyLogisticRelatedServices = logisticRelatedServices["FurnitureOntology"];
+            let eClassLogisticRelatedServices = logisticRelatedServices["eClass"];
+
+            // for each service type, create a catalogue line
+            for(let serviceType of Object.keys(furnitureOntologyLogisticRelatedServices)){
+                // get corresponding furniture ontology category
+                let furnitureOntologyCategory = this.getCorrespondingCategory(furnitureOntologyLogisticRelatedServices[serviceType],furnitureOntologyLogisticCategories);
+                // get corresponding eClass category
+                let eClassCategory = null;
+                if(eClassLogisticCategories && eClassLogisticRelatedServices[serviceType]){
+                    eClassCategory = this.getCorrespondingCategory(eClassLogisticRelatedServices[serviceType],eClassLogisticCategories);
+                }
+
+                // create the catalogue line
+                let catalogueLine = this.createCatalogueLine(catalogueUuid,providerParty,settings);
+                // add item name and descriptions
+                let newItemName: Text = new Text("",DEFAULT_LANGUAGE());
+                let newItemDescription: Text = new Text("",DEFAULT_LANGUAGE());
+                catalogueLine.goodsItem.item.name.push(newItemName);
+                catalogueLine.goodsItem.item.description.push(newItemDescription);
+                // clear additional item properties
+                catalogueLine.goodsItem.item.additionalItemProperty = [];
+                // add additional item properties
+                for(let property of furnitureOntologyCategory.properties){
+                    catalogueLine.goodsItem.item.additionalItemProperty.push(this.createAdditionalItemProperty(property,furnitureOntologyCategory));
+                }
+                // add its default furniture ontology category
+                catalogueLine.goodsItem.item.commodityClassification.push(this.createCommodityClassification(furnitureOntologyCategory));
+                // add its default eClass category if exists
+                if(eClassCategory){
+                    catalogueLine.goodsItem.item.commodityClassification.push(this.createCommodityClassification(eClassCategory));
+                }
+                // push it to the list
+                logisticCatalogueLines.set(serviceType,catalogueLine);
+            }
+            // create a dummy catalogue line to represent transport services
+            let catalogueLine = this.createCatalogueLine(catalogueUuid,providerParty,settings);
+            let category = this.getCorrespondingCategory(furnitureOntologyLogisticRelatedServices["ROADTRANSPORT"],furnitureOntologyLogisticCategories);
+            for(let property of category.properties){
+                catalogueLine.goodsItem.item.additionalItemProperty.push(this.createAdditionalItemProperty(property,category));
+            }
+            // push it to the list
+            logisticCatalogueLines.set("TRANSPORT",catalogueLine);
+        }
+
+        return logisticCatalogueLines;
+    }
+
+    private static getCorrespondingCategory(categoryUri,logisticCategories:Category[]){
+        for(let category of logisticCategories){
+            if(category.id == categoryUri){
+                return category;
+            }
+        }
     }
 
     public static createOrder(): Order {
@@ -465,7 +525,7 @@ export class UBLModelUtils {
         return item;
     }
 
-    private static createDimensions(dimensionUnits:string[]):Dimension[]{
+    public static createDimensions(dimensionUnits:string[]):Dimension[]{
         let dimensions:Dimension[] = [];
         for(let unit of dimensionUnits){
             let unitName = unit.charAt(0).toUpperCase() + unit.slice(1);

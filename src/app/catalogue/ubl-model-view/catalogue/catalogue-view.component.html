@@ -8,17 +8,16 @@
         <div class="input-group form-group" style="background-color:#F2F2F2;padding-left: 25px;padding-top: 20px;padding-bottom: 20px;">
             <input  class="form-control col-3" type="text" [(ngModel)]="searchText" [ngbTypeahead]="search" placeholder="Search ...">
 
-            <label class="space-left space-right"><strong>Category :</strong>
+            <label class="space-left space-right"><strong></strong>
             </label>
             <select  class="custom-select col-3 space-right" [(ngModel)]="selectedCategory" (change)="requestCatalogue()">
                 <option>All</option>
                 <option *ngFor="let type of categoryNames">{{type}}</option>
             </select>
 
-            <label class="space-right"><strong>Sort by:</strong>
+            <label class="space-right"><strong></strong>
             </label>
             <select  class="custom-select col-3 space-right" [(ngModel)]="sortOption" (change)="requestCatalogue()">
-                <option></option>
                 <option *ngFor="let option of CATALOGUE_LINE_SORT_OPTIONS" [value]="option.name">{{option.value}}</option>
             </select>
 
@@ -64,6 +63,7 @@
                     <label class="space-left space-right"><strong>Catalogue:</strong>
                     </label>
                     <select  class="custom-select col-8 space-right" [(ngModel)]="selectedCatalogue" (change)="changeCat()">
+                        <option value="all">All</option>
                         <option *ngFor="let catalogue of cataloguesIds"  [value]=catalogue>{{catalogue}}</option>
                     </select>
                     <call-status [callStatus]="productCatalogueRetrievalStatus"></call-status>
@@ -116,11 +116,11 @@
                             </div>
                             <div class="col-2">
                                 <button type="button" class="btn btn-primary space-after col"
-                                        (click)="redirectToEdit(catLine)" style="display: block">
+                                        (click)="redirectToEdit(catLine) ; $event.stopPropagation();" style="display: block">
                                     Edit
                                 </button>
                                 <button type="button" class="btn btn-primary space-after col"
-                                        (click)="redirectToCopy(catLine)" style="display: block">
+                                        (click)="redirectToCopy(catLine) ; $event.stopPropagation();" style="display: block">
                                     Copy
                                 </button>
                                 <button type="button" class="btn btn-danger col" [disabled]="getDeleteStatus(i).isLoading()"
@@ -166,6 +166,7 @@
                         <label class="space-left space-right"><strong>Catalogue:</strong>
                         </label>
                         <select  class="custom-select col-8 space-right" [(ngModel)]="selectedCatalogue" (change)="changeCat()">
+                            <option value="all">All</option>
                             <option *ngFor="let catalogue of cataloguesIds"  [value]=catalogue>{{catalogue}}</option>
                         </select>
                         <call-status [callStatus]="productCatalogueRetrievalStatus"></call-status>

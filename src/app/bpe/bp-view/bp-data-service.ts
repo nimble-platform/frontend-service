@@ -44,6 +44,8 @@ import {BpActivityEvent} from '../../catalogue/model/publish/bp-start-event';
 import {BpURLParams} from '../../catalogue/model/publish/bpURLParams';
 import {Router} from '@angular/router';
 import {Text} from '../../catalogue/model/publish/text';
+import {Contract} from '../../catalogue/model/publish/contract';
+import {Clause} from '../../catalogue/model/publish/clause';
 
 /**
  * Created by suat on 20-Sep-17.
@@ -386,6 +388,19 @@ export class BPDataService{
         this.order.paymentTerms = copyQuotation.paymentTerms;
 
         this.order.anticipatedMonetaryTotal.payableAmount.currencyID = copyRfq.requestForQuotationLine[0].lineItem.price.priceAmount.currencyID;
+
+        // create a contract for Terms and Conditions
+        let contract = new Contract();
+        contract.id = UBLModelUtils.generateUUID();
+
+        for(let clause of copyQuotation.termOrCondition){
+
+            let newClause:Clause = JSON.parse(JSON.stringify(clause));
+            newClause.id = UBLModelUtils.generateUUID();
+            contract.clause.push(newClause);
+        }
+        // push contract to order.contract
+        this.order.contract = [contract];
     }
 
     initOrderWithRfq() {
@@ -398,6 +413,19 @@ export class BPDataService{
         this.order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address = copyLineItem.deliveryTerms.deliveryLocation.address;
         this.order.paymentMeans = copyRfq.paymentMeans;
         this.order.paymentTerms = copyRfq.paymentTerms;
+
+        // create a contract for Terms and Conditions
+        let contract = new Contract();
+        contract.id = UBLModelUtils.generateUUID();
+
+        for(let clause of copyRfq.termOrCondition){
+
+            let newClause:Clause = JSON.parse(JSON.stringify(clause));
+            newClause.id = UBLModelUtils.generateUUID();
+            contract.clause.push(newClause);
+        }
+        // push contract to order.contract
+        this.order.contract = [contract];
     }
 
     initRfqWithQuotation() {

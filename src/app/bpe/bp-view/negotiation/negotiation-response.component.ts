@@ -56,10 +56,13 @@ export class NegotiationResponseComponent implements OnInit {
     @ViewChild(DiscountModalComponent)
     private discountModal: DiscountModalComponent;
 
+    getPartyId = UBLModelUtils.getPartyId;
     frameContract: DigitalAgreement;
     showFrameContractDetails: boolean = false;
     showNotesAndAdditionalFiles: boolean = false;
     showDeliveryAddress: boolean = false;
+    showTermsAndConditions:boolean = false;
+    showPurchaseOrder:boolean = false;
 
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
@@ -77,13 +80,11 @@ export class NegotiationResponseComponent implements OnInit {
 
         this.line = this.bpDataService.getCatalogueLine();
         if(this.rfq == null) {
-            this.rfq = copy(this.bpDataService.requestForQuotation);
+            this.rfq = this.bpDataService.requestForQuotation;
         }
         if(this.quotation == null) {
             this.quotation = this.bpDataService.quotation;
         }
-        //this.bpDataService.computeRfqNegotiationOptionsIfNeededWithRfq(this.rfq);
-
         this.wrapper = new NegotiationModelWrapper(
             this.line,
             this.rfq,

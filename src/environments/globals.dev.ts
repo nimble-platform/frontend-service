@@ -12,11 +12,25 @@ export const debug = false;
 // export const pw_reset_link = "http://nimble-staging.salzburgresearch.at:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
 
 
-// Base path variables - SRFG productive
+// Base path variables - MVP productive
 
 // export const base_path = "https://nimble-platform.salzburgresearch.at/nimble";
 // export const ub_base = "https://nimble-platform.salzburgresearch.at/ub-search";
 // export const pw_reset_link = "https://nimble-platform.salzburgresearch.at:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
+
+
+// Base path variables - FMP productive
+
+// export const base_path = "https://fmp-nimble.salzburgresearch.at/api";
+// export const ub_base = "https://fmp-nimble.salzburgresearch.at/ub-search";
+// export const pw_reset_link = "https://fmp-nimble.salzburgresearch.at:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
+
+
+// Base path variables - EFAC productive
+
+// export const base_path = "https://efactory-nimble.salzburgresearch.at/api";
+// export const ub_base = "https://efactory-nimble.salzburgresearch.at/ub-search";
+// export const pw_reset_link = "https://efactory-nimble.salzburgresearch.at:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
 
 
 // Base path variables - SRFG K8S
@@ -33,7 +47,21 @@ export const debug = false;
 // export const pw_reset_link = "https://nimble-platform.salzburgresearch.at:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
 
 
-// Base path variables - Local development via service discovery
+// Base path variables - BIBA domain
+
+// export const base_path = "http://nimble-dev.ikap.biba.uni-bremen.de";
+// export const ub_base = "http://nimble-dev.ikap.biba.uni-bremen.de:8090";
+// export const pw_reset_link = "http://nimble-dev.ikap.biba.uni-bremen.de:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
+
+
+// Base path variables - IBM domain
+
+// export const base_path = "http://161.156.70.122";
+// export const ub_base = "http://161.156.70.122:8090";
+// export const pw_reset_link = "http://161.156.70.122:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
+
+
+// Base path variables - Local development
 
 export const base_path = "http://localhost";
 export const ub_base = "http://localhost:8090";
@@ -49,6 +77,7 @@ export const data_channel_endpoint=`${base_path}/data-channel`;
 export const data_aggregation_endpoint=`${base_path}/data-aggregation`;
 export const trust_service_endpoint=`${base_path}/trust`;
 export const indexing_service_endpoint=`${base_path}/indexing-service`;
+export const rocketChatEndpoint = `${base_path}:3000`;
 
 
 // BIBA endpoints
@@ -99,6 +128,7 @@ export const config = {
       "src":"./assets/eula.pdf"
     }
   ],
+  "showChat": false,
   "showCompanyMembers": false,
   "showExplorative": true,
   "showLCPA": true,
@@ -170,6 +200,7 @@ export const product_vendor_rating_fulfillment = "trustFullfillmentOfTerms";
 export const product_vendor_rating_delivery = "trustDeliveryPackaging";
 export const product_vendor_trust = "trustScore";
 export const product_name = "label";
+export const class_suggestion_field = "classification.allLabels";
 export const product_description = "description";
 export const product_img = "imgageUri";
 export const product_price = "price";
@@ -192,7 +223,7 @@ export const product_default = {};
 export const facet_min = 1;
 export const facet_count = -1;
 export const query_settings = {
-  "fields": ["STANDARD","commodityClassficationUri","{LANG}_label","{LANG}_desc"],
+  "fields": ["STANDARD","commodityClassficationUri","{LANG}_label","{LANG}_desc", class_suggestion_field],
   "boosting": true,
   "boostingFactors": {
     "STANDARD": 4,

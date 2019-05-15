@@ -3,7 +3,10 @@ import { Predicate } from "@angular/core";
 import { ItemProperty } from "../catalogue/model/publish/item-property";
 import { PAYMENT_MEANS } from "../catalogue/model/constants";
 import { UBLModelUtils } from "../catalogue/model/ubl-model-utils";
-import { sanitizePropertyName, getPropertyKey, periodToString, isCustomProperty, getPropertyValues, isTransportService, selectName } from "./utils";
+import {
+    sanitizePropertyName, getPropertyKey, periodToString, isCustomProperty, getPropertyValues, isTransportService, selectName,
+    isLogisticsService
+} from './utils';
 import { PriceWrapper } from "./price-wrapper";
 import { CompanyNegotiationSettings } from "../user-mgmt/model/company-negotiation-settings";
 import {Quantity} from '../catalogue/model/publish/quantity';
@@ -63,8 +66,13 @@ export class ProductWrapper {
     }
 
     // it creates MultiValuedDimensions using the item's dimensions
-    getDimensionMultiValue(includeDimensionsWithNullValues:boolean = true):MultiValuedDimension[]{
+    // if the item has no dimensions, then it creates them using the given list of dimension units.
+    getDimensionMultiValue(includeDimensionsWithNullValues:boolean = true, dimensions:string[] = []):MultiValuedDimension[]{
         let multiValuedDimensions:MultiValuedDimension[] = [];
+        // each item should have dimensions
+        if(this.item.dimension.length == 0 && dimensions.length > 0){
+            this.item.dimension = UBLModelUtils.createDimensions(dimensions);
+        }
         for(let dimension of this.item.dimension){
             if(!includeDimensionsWithNullValues && !dimension.measure.value){
                 continue;
@@ -143,6 +151,10 @@ export class ProductWrapper {
     }
 
     getLogisticsStatus(): boolean {
+        return isLogisticsService(this.line);
+    }
+
+    isTransportService(): boolean {
         return isTransportService(this.line);
     }
 

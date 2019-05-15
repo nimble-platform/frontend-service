@@ -1,1 +1,1 @@
-export type ProductDetailsTab = "OVERVIEW" | "DETAILS" | "DELIVERY_TRADING" | "CERTIFICATES" | "LCPA" | "COMPANY" | "RATING";
+export type ProductDetailsTab = "OVERVIEW" | "DETAILS" |"PRICE" | "DELIVERY_TRADING" | "CERTIFICATES" | "LCPA" | "COMPANY" | "RATING";

@@ -54,11 +54,11 @@ export class NegotiationRequestComponent implements OnInit {
     frameContractDurationUnits: string[];
     termsDropdownValue: 'product_defaults' | 'frame_contract' | 'last_offer' = 'product_defaults';
     manufacturersTermsExistence: any = {'product_defaults': true};
-    config = myGlobals.config;
-
+    sellerId:string = null;
+    buyerId:string = null;
     totalPrice: number;
-
     selectedAddressValue = "";
+    config = myGlobals.config;
 
     // the copy of ThreadEventMetadata of the current business process
     processMetadata: ThreadEventMetadata = null;
@@ -77,6 +77,7 @@ export class NegotiationRequestComponent implements OnInit {
     showNotesAndAdditionalFiles: boolean = false;
     showDataMonitoring: boolean = false;
     showDeliveryAddress: boolean = false;
+    showPurchaseOrder:boolean = false;
     callStatus: CallStatus = new CallStatus();
     pageInitCallStatus: CallStatus = new CallStatus();
 
@@ -110,6 +111,9 @@ export class NegotiationRequestComponent implements OnInit {
         this.rfq = this.bpDataService.requestForQuotation;
         this.rfqLine = this.rfq.requestForQuotationLine[0];
         this.catalogueLine = this.bpDataService.getCatalogueLine();
+
+        this.sellerId = UBLModelUtils.getPartyId(this.catalogueLine.goodsItem.item.manufacturerParty);
+        this.buyerId = this.cookieService.get("company_id");
 
         let frameContractDuration = this.getFrameContractDurationFromRfq();
         // if the rfq frame contract duration is not null, we are rendering the negotiation process in which the frame contract duration is also negotiated
@@ -298,11 +302,6 @@ export class NegotiationRequestComponent implements OnInit {
                 this.wrapper.rfqFrameContractDuration = this.frameContractDuration;
             }
 
-            //first initialize the seller and buyer parties.
-            //once they are fetched continue with starting the ordering process
-            const sellerId: string = UBLModelUtils.getPartyId(this.catalogueLine.goodsItem.item.manufacturerParty);
-            const buyerId: string = this.cookieService.get("company_id");
-
             // final check on the rfq
             const rfq: RequestForQuotation = copy(this.rfq);
             if(this.bpDataService.modifiedCatalogueLines) {
@@ -318,8 +317,8 @@ export class NegotiationRequestComponent implements OnInit {
             let sellerParty: Party;
             let buyerParty: Party;
             Promise.all([
-                this.userService.getParty(buyerId),
-                this.userService.getParty(sellerId),
+                this.userService.getParty(this.buyerId),
+                this.userService.getParty(this.sellerId),
 
             ]).then(([buyerPartyResp, sellerPartyResp]) => {
                 sellerParty = sellerPartyResp;
@@ -327,7 +326,7 @@ export class NegotiationRequestComponent implements OnInit {
                 rfq.buyerCustomerParty = new CustomerParty(buyerParty);
                 rfq.sellerSupplierParty = new SupplierParty(sellerParty);
 
-                const vars: ProcessVariables = ModelUtils.createProcessVariables("Negotiation", buyerId, sellerId, this.cookieService.get("user_id"), rfq, this.bpDataService);
+                const vars: ProcessVariables = ModelUtils.createProcessVariables("Negotiation", this.buyerId, this.sellerId,this.cookieService.get("user_id"), rfq, this.bpDataService);
                 const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
 
                 return this.bpeService.startBusinessProcess(piim);
@@ -355,7 +354,6 @@ export class NegotiationRequestComponent implements OnInit {
         this.callStatus.submit();
 
         const rfq: RequestForQuotation = copy(this.rfq);
-        // this.bpeService.updateFrameContract(this.frameContract),
         this.bpeService.updateBusinessProcess(JSON.stringify(rfq),"REQUESTFORQUOTATION",this.processMetadata.processId).then(() => {
             this.documentService.updateCachedDocument(rfq.id,rfq);
             this.callStatus.callback("Terms updated", true);
@@ -461,10 +459,6 @@ export class NegotiationRequestComponent implements OnInit {
      * Getters and setters for the template.
      */
 
-    /**
-     * Check product defaults
-     * @returns {boolean}
-     */
     isNegotiatingAnyTerm(): boolean {
         return this.rfq.negotiationOptions.price
             || this.rfq.negotiationOptions.deliveryPeriod
@@ -493,13 +487,11 @@ export class NegotiationRequestComponent implements OnInit {
     }
 
     set negotiatePrice(negotiate: boolean) {
-        //console.log("in set negotiate price");
         this.rfq.negotiationOptions.price = negotiate;
         if(!negotiate) {
             if(this.termsDropdownValue == 'product_defaults') {
                 this.wrapper.rfqDiscountPriceWrapper.itemPrice.value = this.wrapper.lineDiscountPriceWrapper.itemPrice.value;
                 this.wrapper.rfqDiscountPriceWrapper.itemPrice.currency = this.wrapper.lineDiscountPriceWrapper.itemPrice.currency;
-                console.log("in set remove discount amount: " + this.wrapper.rfqDiscountPriceWrapper.itemPrice.value);
 
             } else if(this.termsDropdownValue == 'frame_contract') {
                 this.wrapper.rfqDiscountPriceWrapper.itemPrice.value = this.wrapper.frameContractQuotationWrapper.priceWrapper.pricePerItem;
@@ -511,8 +503,6 @@ export class NegotiationRequestComponent implements OnInit {
             }
         }
     }
-
-    // it is used to set wrappers' removeDiscountAmount field while negotiating price
 
     get selectedAddress(): string {
         return this.selectedAddressValue;

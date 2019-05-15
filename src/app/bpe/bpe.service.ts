@@ -333,17 +333,27 @@ export class BPEService {
         });
     }
 
-    generateOrderTermsAndConditionsAsText(order: Order, buyerPartyId, sellerPartyId): Promise<string> {
-        const token = 'Bearer '+this.cookieService.get("bearer_token");
-        const headers = new Headers({'Authorization': token});
-        this.headers.keys().forEach(header => headers.append(header, this.headers.get(header)));
+	getTermsAndConditions(orderId: string,buyerPartyId, sellerPartyId, rfqId:string, incoterms:string, tradingTerms:TradingTerm[]): Promise<Clause[]>{
+		const token = 'Bearer '+this.cookieService.get("bearer_token");
+		const headers = new Headers({'Authorization': token});
+		this.headers.keys().forEach(header => headers.append(header, this.headers.get(header)));
 
-        const url = `${this.url}/contracts/create-terms?orderId=${order.id}&sellerPartyId=${sellerPartyId}&buyerPartyId=${buyerPartyId}&incoterms=${order.orderLine[0].lineItem.deliveryTerms.incoterms == null ? "" :order.orderLine[0].lineItem.deliveryTerms.incoterms}&tradingTerms=${encodeURIComponent(JSON.stringify(this.getSelectedTradingTerms(order.paymentTerms.tradingTerms)))}`;
-        return this.http
-            .get(url, {headers: headers})
-            .toPromise()
-            .then(res => res.text())
-            .catch(this.handleError);
+		let url;
+		if(orderId){
+			url = `${this.url}/contracts/terms-and-conditions?orderId=${orderId}&sellerPartyId=${sellerPartyId}&buyerPartyId=${buyerPartyId}&incoterms=${incoterms == null ? "" :incoterms}&tradingTerms=${encodeURIComponent(JSON.stringify(this.getSelectedTradingTerms(tradingTerms)))}`;
+		}
+		else if(rfqId){
+			url = `${this.url}/contracts/terms-and-conditions?rfqId=${rfqId}&sellerPartyId=${sellerPartyId}&buyerPartyId=${buyerPartyId}&incoterms=${incoterms == null ? "" :incoterms}&tradingTerms=${encodeURIComponent(JSON.stringify(this.getSelectedTradingTerms(tradingTerms)))}`;
+		}
+		else{
+            url = `${this.url}/contracts/terms-and-conditions?sellerPartyId=${sellerPartyId}&buyerPartyId=${buyerPartyId}&incoterms=${incoterms == null ? "" :incoterms}&tradingTerms=${encodeURIComponent(JSON.stringify(this.getSelectedTradingTerms(tradingTerms)))}`;
+
+        }
+		return this.http
+			.get(url, {headers: headers})
+			.toPromise()
+			.then(res => res.json())
+			.catch(this.handleError);
 	}
 
 	getOriginalOrderForProcess(processId: string): Promise<Order | null> {

@@ -1,180 +1,199 @@
 <nav *ngIf="!minimalView" class="navbar navbar-expand-lg navbar-dark nimble-bg space-after">
-	<a *ngIf="isLoggedIn && (checkRoles('comp_req') || checkRoles('wait_comp'))" class="navbar-brand" routerLink="/dashboard" routerLinkActive="active">
-		<img id="nav-logo" [src]="config.logoPath" height="30" class="d-inline-block align-top" alt="">
-	</a>
-	<a *ngIf="isLoggedIn && (!checkRoles('comp_req') && !checkRoles('wait_comp'))" class="navbar-brand" routerLink="/user-mgmt/company-registration" routerLinkActive="active">
-		<img id="nav-logo" [src]="config.logoPath" height="30" class="d-inline-block align-top" alt="">
-	</a>
-	<a *ngIf="!isLoggedIn" class="navbar-brand" routerLink="/user-mgmt/login" routerLinkActive="active">
-		<img id="nav-logo" [src]="config.logoPath" height="30" class="d-inline-block align-top" alt="">
-	</a>
-	<button class="navbar-toggler" type="button" (click)="isCollapsed = !isCollapsed" aria-controls="navbarNavAltMarkup" [attr.aria-expanded]="!isCollapsed">
+    <a *ngIf="isLoggedIn && (checkRoles('comp_req') || checkRoles('wait_comp'))" class="navbar-brand"
+       routerLink="/dashboard" routerLinkActive="active">
+        <img id="nav-logo" [src]="config.logoPath" height="30" class="d-inline-block align-top" alt="">
+    </a>
+    <a *ngIf="isLoggedIn && (!checkRoles('comp_req') && !checkRoles('wait_comp'))" class="navbar-brand"
+       routerLink="/user-mgmt/company-registration" routerLinkActive="active">
+        <img id="nav-logo" [src]="config.logoPath" height="30" class="d-inline-block align-top" alt="">
+    </a>
+    <a *ngIf="!isLoggedIn" class="navbar-brand" routerLink="/user-mgmt/login" routerLinkActive="active">
+        <img id="nav-logo" [src]="config.logoPath" height="30" class="d-inline-block align-top" alt="">
+    </a>
+    <button class="navbar-toggler" type="button" (click)="isCollapsed = !isCollapsed" aria-controls="navbarNavAltMarkup"
+            [attr.aria-expanded]="!isCollapsed">
 		<span class="navbar-toggler-icon">
 			<span class="icon-bar"></span>
       <span class="icon-bar"></span>
       <span class="icon-bar"></span>
 		</span>
-	</button>
-	<div class="navbar-collapse" [ngbCollapse]="isCollapsed" id="navbarNavAltMarkup">
-		<ul *ngIf="!isLoggedIn" class="nav navbar-nav mr-auto">
-			<li class="nav-item" routerLinkActive="active">
-				<a class="nav-link" routerLink="/user-mgmt/login">
-					<i class="fa fa-unlock"></i> <span i18n>Login</span>
-				</a>
-			</li>
-			<li class="nav-item" routerLinkActive="active">
-				<a class="nav-link" routerLink="/user-mgmt/registration">
-					<i class="fa fa-edit"></i> <span i18n>Registration</span>
-				</a>
-			</li>
-		</ul>
-		<ul *ngIf="isLoggedIn" class="nav navbar-nav mr-auto">
-			<li class="nav-item" *ngIf="checkRoles('comp_req') || checkRoles('wait_comp')" routerLinkActive="active">
-				<a class="nav-link" routerLink="/dashboard">
-					<i class="fa fa-list-ul"></i> <span i18n>Dashboard</span>
-				</a>
-			</li>
-			<li ngbDropdown class="nav-item dropdown" *ngIf="checkRoles('catalogue')" routerLinkActive="active">
-				<a class="nav-link pointer" id="dropdownMenuPublish" ngbDropdownToggle>
-					<i class="fa fa-arrow-up"></i> <span i18n>Publish</span>
-				</a>
-				<div class="dropdown-menu" aria-labelledby="dropdownMenuPublish" ngbDropdownMenu>
-					<a class="dropdown-item" [routerLink]="['/catalogue/categorysearch']" [queryParams]="{pageRef: 'menu', productType: 'product'}" routerLinkActive="active">
-						<i class="fa fa-shopping-cart dd-icon"></i> Product / Service
-					</a>
-					<a class="dropdown-item" [routerLink]="['/catalogue/categorysearch']" [queryParams]="{pageRef: 'menu', productType: 'transportation'}" routerLinkActive="active">
-						<i class="fa fa-truck dd-icon"></i> Logistics Service
-					</a>
-				</div>
-			</li>
+    </button>
+    <div class="navbar-collapse" [ngbCollapse]="isCollapsed" id="navbarNavAltMarkup">
+        <ul *ngIf="!isLoggedIn" class="nav navbar-nav mr-auto">
+            <li class="nav-item" routerLinkActive="active">
+                <a class="nav-link" routerLink="/user-mgmt/login">
+                    <i class="fa fa-unlock"></i> <span i18n>Login</span>
+                </a>
+            </li>
+            <li class="nav-item" routerLinkActive="active">
+                <a class="nav-link" routerLink="/user-mgmt/registration">
+                    <i class="fa fa-edit"></i> <span i18n>Registration</span>
+                </a>
+            </li>
+        </ul>
+        <ul *ngIf="isLoggedIn" class="nav navbar-nav mr-auto">
+            <li class="nav-item" *ngIf="checkRoles('comp_req') || checkRoles('wait_comp')" routerLinkActive="active">
+                <a class="nav-link" routerLink="/dashboard">
+                    <i class="fa fa-list-ul"></i> <span i18n>Dashboard</span>
+                </a>
+            </li>
+            <li ngbDropdown class="nav-item dropdown" *ngIf="checkRoles('catalogue')" routerLinkActive="active">
+                <a class="nav-link pointer" id="dropdownMenuPublish" ngbDropdownToggle>
+                    <i class="fa fa-arrow-up"></i> <span i18n>Publish</span>
+                </a>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuPublish" ngbDropdownMenu>
+                    <a class="dropdown-item" [routerLink]="['/catalogue/categorysearch']"
+                       [queryParams]="{pageRef: 'menu', productType: 'product'}" routerLinkActive="active">
+                        <i class="fa fa-shopping-cart dd-icon"></i> Product / Service
+                    </a>
+                    <a *ngIf="enableLogisticServicePublishing" class="dropdown-item" [routerLink]="['/catalogue/publish-logistic']"
+                       [queryParams]="{pageRef: 'single', productType: 'transportation'}" routerLinkActive="active">
+                        <i class="fa fa-truck dd-icon"></i> Logistics Service
+                    </a>
+                </div>
+            </li>
 
-			<li class="nav-item" *ngIf="!config.showExplorative && checkRoles('comp_req')" routerLinkActive="active">
-				<a class="nav-link" routerLink="/simple-search">
-					<i class="fa fa-search"></i> <span i18n>Search</span>
-				</a>
-			</li>
+            <li class="nav-item" *ngIf="!config.showExplorative && checkRoles('comp_req')" routerLinkActive="active">
+                <a class="nav-link" routerLink="/simple-search">
+                    <i class="fa fa-search"></i> <span i18n>Search</span>
+                </a>
+            </li>
 
-			<li ngbDropdown class="nav-item dropdown" *ngIf="config.showExplorative && checkRoles('comp_req')" routerLinkActive="active">
-				<a class="nav-link pointer" id="dropdownMenuSearch" ngbDropdownToggle>
-					<i class="fa fa-search"></i> <span i18n>Search</span>
-				</a>
-				<div class="dropdown-menu" aria-labelledby="dropdownMenuSearch" ngbDropdownMenu>
-					<a class="dropdown-item" routerLink="/simple-search" routerLinkActive="active">
-						<i class="fa fa-keyboard dd-icon"></i> Text-based
-					</a>
-					<a class="dropdown-item" routerLink="/explore-search" routerLinkActive="active">
-						<i class="fa fa-code-branch dd-icon"></i> Explorative
-					</a>
-				</div>
-			</li>
+            <li ngbDropdown class="nav-item dropdown" *ngIf="config.showExplorative && checkRoles('comp_req')"
+                routerLinkActive="active">
+                <a class="nav-link pointer" id="dropdownMenuSearch" ngbDropdownToggle>
+                    <i class="fa fa-search"></i> <span i18n>Search</span>
+                </a>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuSearch" ngbDropdownMenu>
+                    <a class="dropdown-item" routerLink="/simple-search" routerLinkActive="active">
+                        <i class="fa fa-keyboard dd-icon"></i> Text-based
+                    </a>
+                    <a class="dropdown-item" routerLink="/explore-search" routerLinkActive="active">
+                        <i class="fa fa-code-branch dd-icon"></i> Explorative
+                    </a>
+                </div>
+            </li>
 
-			<!--
-			<li class="nav-item" *ngIf="debug||roles.indexOf('legal_representative')!=-1" routerLinkActive="active">
-				<a class="nav-link" [routerLink]="['/bpe/bpe-design']" [queryParams]="{fromScratch: true}">
-					<i class="fa fa-exchange-alt"></i> <span i18n>Business Process</span>
-				</a>
-			</li>
-			-->
+            <!--
+            <li class="nav-item" *ngIf="debug||roles.indexOf('legal_representative')!=-1" routerLinkActive="active">
+                <a class="nav-link" [routerLink]="['/bpe/bpe-design']" [queryParams]="{fromScratch: true}">
+                    <i class="fa fa-exchange-alt"></i> <span i18n>Business Process</span>
+                </a>
+            </li>
+            -->
 
-			<li class="nav-item" *ngIf="checkRoles('reg_comp')" routerLinkActive="active">
-				<a class="nav-link" routerLink="/user-mgmt/company-registration">
-					<i class="fa fa-edit"></i> <span i18n>Register a Company</span>
-				</a>
-			</li>
+            <li class="nav-item" *ngIf="checkRoles('reg_comp')" routerLinkActive="active">
+                <a class="nav-link" routerLink="/user-mgmt/company-registration">
+                    <i class="fa fa-edit"></i> <span i18n>Register a Company</span>
+                </a>
+            </li>
 
-			<!-- Tracking and Tracing Component UB Initial Version-->
-			<!-- This Will be adapted by the platform's core dev-team later -->
-			<li class="nav-item" *ngIf="config.showTrack && checkRoles('track')" routerLinkActive="active">
-				<a class="nav-link" routerLink="/tnt" routerLinkActive="active">
-					<i class="fa fa-truck"></i> <span>Track</span>
-				</a>
-			</li>
+            <!-- Tracking and Tracing Component UB Initial Version-->
+            <!-- This Will be adapted by the platform's core dev-team later -->
+            <li class="nav-item" *ngIf="config.showTrack && checkRoles('track')" routerLinkActive="active">
+                <a class="nav-link" routerLink="/tnt" routerLinkActive="active">
+                    <i class="fa fa-truck"></i> <span>Track</span>
+                </a>
+            </li>
 
-			<li class="nav-item" *ngIf="checkRoles('comp') || (checkRoles('comp_req') && config.showCompanyMembers)" routerLinkActive="active">
-				<a class="nav-link" [title]="activeCompanyName?activeCompanyName:''" routerLink="/user-mgmt/company-invitation">
-					<i class="fa fa-building"></i> Company Members
-				</a>
-			</li>
+            <li class="nav-item" *ngIf="checkRoles('comp') || (checkRoles('comp_req') && config.showCompanyMembers)"
+                routerLinkActive="active">
+                <a class="nav-link" [title]="activeCompanyName?activeCompanyName:''"
+                   routerLink="/user-mgmt/company-invitation">
+                    <i class="fa fa-building"></i> Company Members
+                </a>
+            </li>
 
-			<li ngbDropdown class="nav-item dropdown" *ngIf="checkRoles('pm')" routerLinkActive="active">
-				<a class="nav-link pointer" id="dropdownMenuPM" ngbDropdownToggle>
-					<i class="fa fa-chart-pie"></i> <span i18n>Platform Management</span>
-				</a>
-				<div class="dropdown-menu" aria-labelledby="dropdownMenuPM" ngbDropdownMenu>
-					<a class="dropdown-item" routerLink="/analytics/management" routerLinkActive="active">
-						<i class="fa fa-user-tie dd-icon"></i> Company Management
-					</a>
-					<a class="dropdown-item" routerLink="/analytics/trust" routerLinkActive="active">
-						<i class="fa fa-sliders-h dd-icon"></i> Trust Policy Configuration
-					</a>
-					<a class="dropdown-item" routerLink="/analytics/platform" routerLinkActive="active">
-						<i class="fa fa-chart-area dd-icon"></i> Platform Analytics
-					</a>
-					<!--
-					<a class="dropdown-item" href="https://nimble-platform.uk-south.containers.mybluemix.net/dashboards/status" target="_blank">
-						<i class="fa fa-briefcase-medical dd-icon"></i> Health Report
-					</a>
-					<a class="dropdown-item" href="http://nimble-platform.salzburgresearch.at:5602/app/kibana#/dashboard/5ad4bff0-119d-11e8-96a2-b11689429755" target="_blank">
-						<i class="fa fa-clock dd-icon"></i> Activity Report
-					</a>
-					<a class="dropdown-item" href="http://nimble-platform.salzburgresearch.at:5602/app/kibana#/dashboard/5f19a540-1250-11e8-96a2-b11689429755" target="_blank">
-						<i class="fa fa-user-lock dd-icon"></i> Security Report
-					</a>
-					<a class="dropdown-item" href="http://nimble-platform.salzburgresearch.at:5602/app/kibana#/dashboard/d0c4a3a0-1194-11e8-96a2-b11689429755" target="_blank">
-						<i class="fa fa-file-alt dd-icon"></i> Log Analysis
-					</a>
-					-->
-				</div>
-			</li>
+            <li ngbDropdown class="nav-item dropdown" *ngIf="checkRoles('pm')" routerLinkActive="active">
+                <a class="nav-link pointer" id="dropdownMenuPM" ngbDropdownToggle>
+                    <i class="fa fa-chart-pie"></i> <span i18n>Platform Management</span>
+                </a>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuPM" ngbDropdownMenu>
+                    <a class="dropdown-item" routerLink="/analytics/management" routerLinkActive="active">
+                        <i class="fa fa-user-tie dd-icon"></i> Company Management
+                    </a>
+                    <a class="dropdown-item" routerLink="/analytics/trust" routerLinkActive="active">
+                        <i class="fa fa-sliders-h dd-icon"></i> Trust Policy Configuration
+                    </a>
+                    <a class="dropdown-item" routerLink="/analytics/platform" routerLinkActive="active">
+                        <i class="fa fa-chart-area dd-icon"></i> Platform Analytics
+                    </a>
+                    <!--
+                    <a class="dropdown-item" href="https://nimble-platform.uk-south.containers.mybluemix.net/dashboards/status" target="_blank">
+                        <i class="fa fa-briefcase-medical dd-icon"></i> Health Report
+                    </a>
+                    <a class="dropdown-item" href="http://nimble-platform.salzburgresearch.at:5602/app/kibana#/dashboard/5ad4bff0-119d-11e8-96a2-b11689429755" target="_blank">
+                        <i class="fa fa-clock dd-icon"></i> Activity Report
+                    </a>
+                    <a class="dropdown-item" href="http://nimble-platform.salzburgresearch.at:5602/app/kibana#/dashboard/5f19a540-1250-11e8-96a2-b11689429755" target="_blank">
+                        <i class="fa fa-user-lock dd-icon"></i> Security Report
+                    </a>
+                    <a class="dropdown-item" href="http://nimble-platform.salzburgresearch.at:5602/app/kibana#/dashboard/d0c4a3a0-1194-11e8-96a2-b11689429755" target="_blank">
+                        <i class="fa fa-file-alt dd-icon"></i> Log Analysis
+                    </a>
+                    -->
+                </div>
+            </li>
 
-		</ul>
+            <li class="nav-item" routerLinkActive="active" *ngIf="config.showChat">
+                <a class="nav-link" routerLink="/analytics/chat">
+                    <i class="fa fa-users"></i> <span i18n>Chat</span>
+                </a>
+            </li>
 
-		<ul class="nav navbar-nav">
-			<li class="nav-item" routerLinkActive="active">
-				<a class="nav-link pointer" routerLink="/analytics/info" title="Imprint / Info">
-					<i class="fa fa-info-circle"></i>
-				</a>
-			</li>
-		</ul>
+        </ul>
 
-		<ul class="nav navbar-nav">
-			<li class="nav-item">
-				<a class="nav-link pointer" (click)="open(support)" title="Help">
-					<i class="fa fa-question-circle"></i>
-				</a>
-			</li>
-		</ul>
+        <ul class="nav navbar-nav">
+            <li class="nav-item" routerLinkActive="active">
+                <a class="nav-link pointer" routerLink="/analytics/info" title="Imprint / Info">
+                    <i class="fa fa-info-circle"></i>
+                </a>
+            </li>
+        </ul>
 
-		<ul class="nav navbar-nav">
-			<li class="nav-item" routerLinkActive="active">
-				<a class="nav-link" routerLink="/analytics/members">
-					<i class="fa fa-users"></i> <span i18n>Platform Members</span>
-				</a>
-			</li>
-		</ul>
+        <ul class="nav navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link pointer" (click)="open(support)" title="Help">
+                    <i class="fa fa-question-circle"></i>
+                </a>
+            </li>
+        </ul>
 
-		<ul *ngIf="isLoggedIn" class="nav navbar-nav">
-			<li ngbDropdown class="nav-item dropdown" routerLinkActive="active">
-				<a class="nav-link pointer" [title]="activeCompanyName?activeCompanyName:''" id="dropdownMenuUser" ngbDropdownToggle>
-					<i class="fa fa-user"></i> {{fullName}}
-				</a>
-				<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuUser" ngbDropdownMenu>
-					<a *ngIf="checkRoles('comp-settings')" class="dropdown-item" [title]="activeCompanyName?activeCompanyName:''" routerLink="/user-mgmt/company-settings" routerLinkActive="active">
-						<i class="fa fa-cog dd-icon"></i> Company Settings
-					</a>
-					<a *ngIf="checkRoles('comp-ratings')" class="dropdown-item" [title]="activeCompanyName?activeCompanyName:''" routerLink="/user-mgmt/company-rating" routerLinkActive="active">
-						<i class="fa fa-star dd-icon"></i> Company Ratings
-					</a>
-					<a class="dropdown-item" routerLink="/user-mgmt/user-profile" routerLinkActive="active">
-						<i class="fa fa-user-tie dd-icon"></i> User Profile
-					</a>
-					<a class="dropdown-item" routerLink="/user-mgmt/logout">
-						<i class="fa fa-lock dd-icon"></i> <span i18n>Logout</span>
-					</a>
-				</div>
-			</li>
-		</ul>
-	</div>
+        <ul class="nav navbar-nav">
+            <li class="nav-item" routerLinkActive="active">
+                <a class="nav-link" routerLink="/analytics/members">
+                    <i class="fa fa-users"></i> <span i18n>Platform Members</span>
+                </a>
+            </li>
+        </ul>
+
+        <ul *ngIf="isLoggedIn" class="nav navbar-nav">
+            <li ngbDropdown class="nav-item dropdown" routerLinkActive="active">
+                <a class="nav-link pointer" [title]="activeCompanyName?activeCompanyName:''" id="dropdownMenuUser"
+                   ngbDropdownToggle>
+                    <i class="fa fa-user"></i> {{fullName}}
+                </a>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuUser" ngbDropdownMenu>
+                    <a *ngIf="checkRoles('comp-settings')" class="dropdown-item"
+                       [title]="activeCompanyName?activeCompanyName:''" routerLink="/user-mgmt/company-settings"
+                       routerLinkActive="active">
+                        <i class="fa fa-cog dd-icon"></i> Company Settings
+                    </a>
+                    <a *ngIf="checkRoles('comp-ratings')" class="dropdown-item"
+                       [title]="activeCompanyName?activeCompanyName:''" routerLink="/user-mgmt/company-rating"
+                       routerLinkActive="active">
+                        <i class="fa fa-star dd-icon"></i> Company Ratings
+                    </a>
+                    <a class="dropdown-item" routerLink="/user-mgmt/user-profile" routerLinkActive="active">
+                        <i class="fa fa-user-tie dd-icon"></i> User Profile
+                    </a>
+                    <a class="dropdown-item" routerLink="/user-mgmt/logout">
+                        <i class="fa fa-lock dd-icon"></i> <span i18n>Logout</span>
+                    </a>
+                </div>
+            </li>
+        </ul>
+    </div>
 </nav>
 
 <!-- <div *ngIf="!alertBetaClosed">
@@ -187,48 +206,53 @@
 </div> -->
 
 <div id="loading-bg" *ngIf="loading">
-	<div id="sk-loading-icon">
-		<div class="sk-folding-cube">
-			<div class="sk-cube1 sk-cube"></div>
-			<div class="sk-cube2 sk-cube"></div>
-			<div class="sk-cube4 sk-cube"></div>
-			<div class="sk-cube3 sk-cube"></div>
-		</div>
-	</div>
+    <div id="sk-loading-icon">
+        <div class="sk-folding-cube">
+            <div class="sk-cube1 sk-cube"></div>
+            <div class="sk-cube2 sk-cube"></div>
+            <div class="sk-cube4 sk-cube"></div>
+            <div class="sk-cube3 sk-cube"></div>
+        </div>
+    </div>
 </div>
 
 <ng-template #support let-d="dismiss">
-	<div class="modal-header">
-		<h4 class="modal-title">Help</h4>
-		<button type="button" class="close" aria-label="Close" (click)="d('')">
-			<span aria-hidden="true">&times;</span>
-		</button>
-	</div>
-	<div class="modal-body">
-		This platform has only been developed for and tested on Chrome and Firefox. In case you are experiencing errors try using one of those browsers first.<br/><br/>
-		When you press "Open manual" a PDF with an user manual will open in a new tab.<br/><br/>
-		When you press "Contact support" a partially prefilled mail template will open in the mail client of your choice.<br/>
-		Please make sure to fill out the description and cause of the issue properly and add screenshots if they are of use.<br/>
-		We will get back to you within one business day.
-	</div>
-	<div class="modal-footer">
-		<a href="assets/user_manual.pdf" target="_blank" role="button" class="btn btn-primary" (click)="d('')">Open manual</a>
-		<a [href]="mailto" role="button" class="btn btn-primary" (click)="d('')">Contact support</a>
-	</div>
+    <div class="modal-header">
+        <h4 class="modal-title">Help</h4>
+        <button type="button" class="close" aria-label="Close" (click)="d('')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        This platform has only been developed for and tested on Chrome and Firefox. In case you are experiencing errors
+        try using one of those browsers first.<br/><br/>
+        When you press "Open manual" a PDF with an user manual will open in a new tab.<br/><br/>
+        When you press "Contact support" a partially prefilled mail template will open in the mail client of your
+        choice.<br/>
+        Please make sure to fill out the description and cause of the issue properly and add screenshots if they are of
+        use.<br/>
+        We will get back to you within one business day.
+    </div>
+    <div class="modal-footer">
+        <a href="assets/user_manual.pdf" target="_blank" role="button" class="btn btn-primary" (click)="d('')">Open
+            manual</a>
+        <a [href]="mailto" role="button" class="btn btn-primary" (click)="d('')">Contact support</a>
+    </div>
 </ng-template>
 <!--<div id="support-btn" (click)="open(support)"><img id="support-img" src="assets/support_white.png"/></div>-->
 
 <div id="wrapper" [ngClass]="{'max-container':minimalView}">
-	<router-outlet></router-outlet>
+    <router-outlet></router-outlet>
 </div>
 
 <div *ngIf="!minimalView" id="footer">
-	<img src="assets/eu_flag.png" alt=""> This project has received funding from the European Union's Horizon 2020 research and innovation programme under grant agreement No 723810
-	<div *ngIf="versions.length > 0">
-		<small>
+    <img src="assets/eu_flag.png" alt=""> This project has received funding from the European Union's Horizon 2020
+    research and innovation programme under grant agreement No 723810
+    <div *ngIf="versions.length > 0">
+        <small>
 			<span *ngFor="let version of versions; let i = index" [attr.data-index]="i">
 				<span><i *ngIf="i>0"> | </i>{{version.id}}: {{version.ver}}</span>
 			</span>
-		</small>
-	</div>
+        </small>
+    </div>
 </div>

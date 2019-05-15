@@ -28,6 +28,15 @@ export class AnalyticsService {
   		.catch(this.handleError);
   	}
 
+    getPerfromanceAnalytics(comp:string): Promise<any> {
+  		const url = `${this.url_da}/company?companyID=${comp}`;
+  		return this.http
+  		.get(url, {headers: this.getAuthorizedHeaders()})
+  		.toPromise()
+  		.then(res => res.json())
+  		.catch(this.handleError);
+    }
+    
     getCompAnalytics(comp:string): Promise<any> {
   		const url = `${this.url_da}?companyID=${comp}`;
   		return this.http

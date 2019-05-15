@@ -305,6 +305,43 @@
         </div>
     </div>
 
+    <!-- Contract Preview -->
+    <div class="row">
+        <div class="col-6">
+            <terms-and-conditions [buyerPartyId]="buyerId"
+                                  [selectedIncoterm]="wrapper.rfqIncoterms"
+                                  [selectedTradingTerms]="wrapper.rfqPaymentTerms.tradingTerms"
+                                  (onIncotermChanged)="wrapper.rfqIncoterms = $event"
+                                  [isIncotermsNegotiating]="rfq.negotiationOptions.incoterms"
+                                  (onTradingTermChanged)="wrapper.rfqPaymentTerms.paymentTerm=$event"
+                                  [isTradingTermsNegotiating]="rfq.negotiationOptions.paymentTerms"
+                                  [sellerPartyId]="sellerId" [readOnly]="isLoading() || isReadOnly()" [documentType]="'rfq'" [termsAndConditions]="rfq.termOrCondition"></terms-and-conditions>
+        </div>
+        <div class="col-6">
+            <h4>
+                Purchase Order
+                <button class="btn btn-outline-dark" (click)="showPurchaseOrder = !showPurchaseOrder">
+                    <i class="fas fa-chevron-up fa-fw fa-lg mt-2" aria-hidden="true" *ngIf="showPurchaseOrder"></i>
+                    <i class="fas fa-chevron-down fa-fw fa-lg mt-2" aria-hidden="true" *ngIf="!showPurchaseOrder"></i>
+                </button>
+            </h4>
+            <div *ngIf="showPurchaseOrder">
+                <div class="row">
+                    <div class="col-3"><strong>Product Id:</strong></div>
+                    <div class="col-9">{{rfq.requestForQuotationLine[0].lineItem.item.manufacturersItemIdentification.id}}</div>
+                </div>
+                <div class="row">
+                    <div class="col-3"><strong>Quantity:</strong></div>
+                    <div class="col-9">{{requestedQuantity}} {{getQuantityUnit()}}</div>
+                </div>
+                <div class="row">
+                    <div class="col-3"><strong>Total Price:</strong></div>
+                    <div class="col-9">{{ wrapper.rfqTotalPriceString }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Actions -->
     <div *ngIf="!showRequestedPrice()" class="d-flex justify-content-end actions-row">
         <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>

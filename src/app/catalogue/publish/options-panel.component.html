@@ -1,0 +1,47 @@
+<div class="row">
+    <div class="col-3">
+        <strong>{{title}}</strong>
+    </div>
+    <div class="col-6">
+        <!--options-->
+        <div *ngFor="let option of options" class="row">
+            <input class="align-self-center custom-checkbox col-1" type="checkbox" [checked]="isSelected(option)" (change)="onCheckboxChanged($event.target.checked,option)">
+            <label class="form-check-label">{{option.value}}</label>
+        </div>
+        <!--other options-->
+        <div *ngIf="checkboxOther" class="row space-before">
+            <input class="align-self-center custom-checkbox col-1" type="checkbox" [(ngModel)]="isOtherOptionEnabled">
+            <label class="form-check-label align-self-center ">Other</label>
+            <input type="text" class="space-left" [(ngModel)]="option">
+            <button class="btn btn-outline-primary space-left" (click)="onOptionAdded()" [disabled]="!isOtherOptionEnabled">Add</button>
+        </div>
+        <div *ngIf="!checkboxOther" class="row space-before">
+            <div class="col-12">
+                <input type="text" [(ngModel)]="option">
+                <button class="btn btn-outline-primary space-left" (click)="onOptionAdded()">Add</button>
+            </div>
+        </div>
+    </div>
+    <div class="col-3">
+        <!--selected options-->
+        <div *ngIf="selectedOptionsWithExtraColumn" class="row d-flex flex-wrap">
+            <div class="col-1"></div>
+            <div class="col-11 d-flex flex-wrap without-left-padding">
+                <div *ngFor="let selectedOption of itemProperty.value"
+                     class="bordered my-1 mr-1">
+                    <small class="p-0">{{selectedOption.value}}</small>
+                    <i *ngIf="!isDefaultOption(selectedOption)" class="fa fa-times-circle pl-1" placement="right" (click)="onOptionRemoved(selectedOption)"></i>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="!selectedOptionsWithExtraColumn" class="row d-flex flex-wrap">
+            <div class="col-12 d-flex flex-wrap">
+                <div *ngFor="let selectedOption of itemProperty.value"
+                     class="bordered my-1 mr-1">
+                    <small class="p-0">{{selectedOption.value}}</small>
+                    <i *ngIf="!isDefaultOption(selectedOption)" class="fa fa-times-circle pl-1" placement="right" (click)="onOptionRemoved(selectedOption)"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

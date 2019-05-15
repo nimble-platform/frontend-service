@@ -1,0 +1,48 @@
+<div class="col-12 title">
+    <h4>
+        Terms and Conditions
+        <button class="btn btn-outline-dark" (click)="displayTermsAndConditions()">
+            <i class="fas fa-chevron-up fa-fw fa-lg mt-2" aria-hidden="true" *ngIf="showPreview"></i>
+            <i class="fas fa-chevron-down fa-fw fa-lg mt-2" aria-hidden="true" *ngIf="!showPreview"></i>
+        </button>
+    </h4>
+</div>
+<call-status [callStatus]="callStatus"></call-status>
+<div class="col-12 section" *ngIf="showPreview && defaultTermAndConditionClauses">
+    <div *ngFor="let clause of defaultTermAndConditionClauses;let i=index">
+        <button class="btn btn-primary btn-outline-primary" (click)="showSection[i] = !showSection[i];setSectionText(i)">
+            {{getClauseName(clause)}}
+        </button>
+        <div class="card" [hidden]="!showSection[i]">
+            <div class="card-header">{{getClauseName(clause)}}</div>
+            <div id="{{generateIdForClause(i)}}" class="card-body" style="white-space: pre-wrap">
+            </div>
+            <div *ngIf="clause.tradingTerms.length > 0 && !readOnly && i != 0" class="card-footer">
+                <div *ngFor="let tradingTerm of clause.tradingTerms; let j=index" class="row">
+                    <div class="col-4">
+                        {{tradingTerm.tradingTermFormat}}
+                    </div>
+                    <div class="col-8">
+                        <input *ngIf="tradingTerm.value.valueQualifier == 'STRING'" type="text" class="form-control" value="{{tradingTerms.get(tradingTerm.tradingTermFormat).value.value[0].value}}"  (keyup)="updateParameter(i,tradingTerm.tradingTermFormat,$event.target.value)">
+                        <input *ngIf="tradingTerm.value.valueQualifier == 'NUMBER'" type="number" class="form-control" value="{{tradingTerms.get(tradingTerm.tradingTermFormat).value.valueDecimal[0]}}"  (change)="updateParameter(i,tradingTerm.tradingTermFormat,$event.target.value)" (keyup)="updateParameter(i,tradingTerm.tradingTermFormat,$event.target.value)">
+                        <select *ngIf="tradingTerm.value.valueQualifier == 'CODE' && tradingTerm.value.valueCode[0].listID == 'INCOTERMS_LIST'" class="form-control custom-select" value="{{tradingTerms.get(tradingTerm.tradingTermFormat).value.valueCode[0].value}}" (change)="updateParameter(i,tradingTerm.tradingTermFormat,$event.target.value)">
+                            <option *ngFor="let option of INCOTERMS" [value]="option">{{option}}</option>
+                        </select>
+                        <select *ngIf="tradingTerm.value.valueQualifier == 'CODE' && tradingTerm.value.valueCode[0].listID == 'PAYMENT_MEANS_LIST'" class="form-control custom-select" value="{{tradingTerms.get(tradingTerm.tradingTermFormat).value.valueCode[0].value}}" (change)="updateParameter(i,tradingTerm.tradingTermFormat,$event.target.value)">
+                            <option *ngFor="let option of PAYMENT_TERMS" [value]="option">{{option}}</option>
+                        </select>
+                        <select *ngIf="tradingTerm.value.valueQualifier == 'CODE' && tradingTerm.value.valueCode[0].listID == 'COUNTRY_LIST'" class="form-control custom-select" value="{{tradingTerms.get(tradingTerm.tradingTermFormat).value.valueCode[0].value}}" (change)="updateParameter(i,tradingTerm.tradingTermFormat,$event.target.value)">
+                            <option *ngFor="let option of COUNTRY_NAMES" [value]="option">{{option}}</option>
+                        </select>
+                        <div *ngIf="tradingTerm.value.valueQualifier == 'QUANTITY'" class="row col-12">
+                            <input type="number" class="form-control col-6 space-right" value="{{tradingTerms.get(tradingTerm.tradingTermFormat).value.valueQuantity[0].value}}"  (keyup)="updateParameter(i,tradingTerm.tradingTermFormat,$event.target.value)" (change)="updateParameter(i,tradingTerm.tradingTermFormat,$event.target.value)">
+                            <select class="form-control custom-select col-5" value="{{tradingTerms.get(tradingTerm.tradingTermFormat).value.valueQuantity[0].unitCode}}" (change)="updateParameter(i,tradingTerm.tradingTermFormat,$event.target.value,true)">
+                                <option *ngFor="let option of UNITS" [value]="option">{{option}}</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -11,7 +11,7 @@ import { BpWorkflowOptions } from "../model/bp-workflow-options";
 import { ProcessType } from "../model/process-type";
 import { ProductBpStep } from "./product-bp-step";
 import { ProductBpStepsDisplay } from "./product-bp-steps-display";
-import { isTransportService } from "../../common/utils";
+import {isLogisticsService, isTransportService} from '../../common/utils';
 import { UserService } from "../../user-mgmt/user.service";
 import { CompanySettings } from "../../user-mgmt/model/company-settings";
 import { BPEService } from "../bpe.service";
@@ -19,7 +19,8 @@ import { Order } from "../../catalogue/model/publish/order";
 import { SearchContextService } from "../../simple-search/search-context.service";
 import { CookieService } from "ng2-cookies";
 import {ThreadEventMetadata} from '../../catalogue/model/publish/thread-event-metadata';
-
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import * as myGlobals from '../../globals';
 /**
  * Created by suat on 20-Oct-17.
  */
@@ -50,6 +51,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
 
     productExpanded: boolean = false;
     serviceExpanded: boolean = false;
+    public config = myGlobals.config;
 
     // the copy of ThreadEventMetadata of the current business process
     processMetadata: ThreadEventMetadata;
@@ -61,8 +63,17 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                 public bpeService: BPEService,
                 public route: ActivatedRoute,
                 private cookieService: CookieService,
-                private renderer: Renderer2) {
+                private renderer: Renderer2,
+                private modalService: NgbModal) {
         this.renderer.setStyle(document.body, "background-image", "none");
+    }
+
+    open(content) {
+        this.modalService.open(content, {}).result.then((result) => {
+            // this.closeResult = `Closed with: ${result}`;
+        }, (reason) => {
+            // this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+        });
     }
 
     ngOnInit() {
@@ -229,6 +240,10 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
         return !!this.serviceLine || isTransportService(this.line);
     }
 
+    private isLogisticsService(): boolean {
+        return !!this.serviceLine || isLogisticsService(this.line);
+    }
+
     private getStepsDisplayMode(): ProductBpStepsDisplay {
         if(this.isTransportService()) {
             if(this.bpDataService.bpActivityEvent.userRole === "seller") {
@@ -241,6 +256,9 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                 return "Transport_After_Order";
             }
         } else {
+            if(this.isLogisticsService()){
+                return "Logistics";
+            }
             if(this.bpDataService.bpActivityEvent.userRole === "seller") {
                 return "Order_Before_Transport";
             } else {

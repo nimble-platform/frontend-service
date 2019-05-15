@@ -47,9 +47,9 @@
                              <a *ngIf="registeredCompaniesPage.content[i+1].websiteURI && getLink(registeredCompaniesPage.content[i+1].websiteURI) != ''"
                                 href="{{getLink(registeredCompaniesPage.content[i+1].websiteURI)}}"
                                 title="{{getNameOfTheCompany(registeredCompaniesPage.content[i+1].partyName)}}"
-                                target="_blank">{{getNameOfTheCompany(registeredCompaniesPage.content[i].partyName)}}</a>
+                                target="_blank">{{getNameOfTheCompany(registeredCompaniesPage.content[i+1].partyName)}}</a>
                              <span *ngIf="!registeredCompaniesPage.content[i+1].websiteURI || getLink(registeredCompaniesPage.content[i+1].websiteURI) == ''"
-                                title="{{getNameOfTheCompany(registeredCompaniesPage.content[i+1].partyName)}}">{{getNameOfTheCompany(registeredCompaniesPage.content[i].partyName)}}</span>
+                                title="{{getNameOfTheCompany(registeredCompaniesPage.content[i+1].partyName)}}">{{getNameOfTheCompany(registeredCompaniesPage.content[i+1].partyName)}}</span>
                          </div>
                         <div class="card-body p-3 text-center">
                             <div style="height:100%;width:100%;display:table;">
@@ -65,9 +65,9 @@
                              <a *ngIf="registeredCompaniesPage.content[i+2].websiteURI && getLink(registeredCompaniesPage.content[i+2].websiteURI) != ''"
                                 href="{{getLink(registeredCompaniesPage.content[i+2].websiteURI)}}"
                                 title="{{getNameOfTheCompany(registeredCompaniesPage.content[i+2].partyName)}}"
-                                target="_blank">{{getNameOfTheCompany(registeredCompaniesPage.content[i].partyName)}}</a>
+                                target="_blank">{{getNameOfTheCompany(registeredCompaniesPage.content[i+2].partyName)}}</a>
                              <span *ngIf="!registeredCompaniesPage.content[i+2].websiteURI || getLink(registeredCompaniesPage.content[i+2].websiteURI) == ''"
-                                title="{{getNameOfTheCompany(registeredCompaniesPage.content[i+2].partyName)}}">{{getNameOfTheCompany(registeredCompaniesPage.content[i].partyName)}}</span>
+                                title="{{getNameOfTheCompany(registeredCompaniesPage.content[i+2].partyName)}}">{{getNameOfTheCompany(registeredCompaniesPage.content[i+2].partyName)}}</span>
                          </div>
                         <div class="card-body p-3 text-center">
                             <div style="height:100%;width:100%;display:table;">
@@ -83,9 +83,9 @@
                              <a *ngIf="registeredCompaniesPage.content[i+3].websiteURI && getLink(registeredCompaniesPage.content[i+3].websiteURI) != ''"
                                 href="{{getLink(registeredCompaniesPage.content[i+3].websiteURI)}}"
                                 title="{{getNameOfTheCompany(registeredCompaniesPage.content[i+3].partyName)}}"
-                                target="_blank">{{getNameOfTheCompany(registeredCompaniesPage.content[i].partyName)}}</a>
+                                target="_blank">{{getNameOfTheCompany(registeredCompaniesPage.content[i+3].partyName)}}</a>
                              <span *ngIf="!registeredCompaniesPage.content[i+3].websiteURI || getLink(registeredCompaniesPage.content[i+3].websiteURI) == ''"
-                                title="{{getNameOfTheCompany(registeredCompaniesPage.content[i+3].partyName)}}">{{getNameOfTheCompany(registeredCompaniesPage.content[i].partyName)}}</span>
+                                title="{{getNameOfTheCompany(registeredCompaniesPage.content[i+3].partyName)}}">{{getNameOfTheCompany(registeredCompaniesPage.content[i+3].partyName)}}</span>
                          </div>
                         <div class="card-body p-3 text-center">
                             <div style="height:100%;width:100%;display:table;">

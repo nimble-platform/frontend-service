@@ -6,11 +6,13 @@ import {AppCommonModule} from "../common/common.module";
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {AnalyticsRoutingModule} from './analytics-routing.module';
 import {PlatformAnalyticsComponent} from "./platform-analytics.component";
+import {PerformanceAnalyticsComponent} from "../analytics/performance/performance-analytics.component";
 import {CompanyAnalyticsComponent} from "./company-analytics.component";
 import {TrustPolicyComponent} from "./trust-policy.component";
 import {CompanyManagementComponent} from './company-management.component';
 import {PlatformInfoComponent} from './platform-info.component';
 import {MembersComponent} from './members.component';
+import {ChatComponent} from './chat.component';
 
 @NgModule({
     imports: [
@@ -28,7 +30,9 @@ import {MembersComponent} from './members.component';
         TrustPolicyComponent,
         CompanyManagementComponent,
         PlatformInfoComponent,
-        MembersComponent
+        MembersComponent,
+        ChatComponent,
+        PerformanceAnalyticsComponent
     ],
     exports: [
         PlatformAnalyticsComponent,
@@ -36,7 +40,9 @@ import {MembersComponent} from './members.component';
         TrustPolicyComponent,
         CompanyManagementComponent,
         PlatformInfoComponent,
-        MembersComponent
+        MembersComponent,
+        ChatComponent,
+        PerformanceAnalyticsComponent
     ],
     providers: []
 })

@@ -28,11 +28,13 @@ export class ProductDetailsTabsComponent implements OnInit {
     selectedTab: ProductDetailsTab;
 
     isLogistics: boolean = false;
+    isTransportService: boolean = false;
 
     haveDetails = true;
     haveTransportServiceDetails = true;
     haveCertificates = true;
     haveLCPA = true;
+    havePrice = true;
     haveRating = false;
 
     constructor(
@@ -42,17 +44,18 @@ export class ProductDetailsTabsComponent implements OnInit {
     ngOnInit() {
         this.selectedTab = this.showOverview? "OVERVIEW" : "DETAILS";
         this.isLogistics = this.wrapper.getLogisticsStatus();
+        this.isTransportService = this.wrapper.isTransportService();
         if(this.wrapper.getDimensions().length == 0 && this.wrapper.getUniquePropertiesWithValue().length == 0){
             this.haveDetails = false;
             this.selectedTab = this.getFirstTab();
         }
         if(!this.isLogistics) {
-          if (this.wrapper.getPricePerItem() == '' && this.wrapper.getFreeSample() == '' && this.wrapper.getIncoterms() == '' && this.wrapper.getSpecialTerms() == null && this.wrapper.getDeliveryPeriod() == '' && this.wrapper.getPackaging() == '') {
+          if (this.wrapper.getIncoterms() == '' && this.wrapper.getSpecialTerms() == null && this.wrapper.getDeliveryPeriod() == '' && this.wrapper.getPackaging() == '') {
             this.haveTransportServiceDetails = false;
             this.selectedTab = this.getFirstTab();
           }
         }
-        else {
+        else if (this.isTransportService){
           if(this.wrapper.line.goodsItem.item.transportationServiceDetails.transportServiceCode.name == "" &&
             this.wrapper.line.goodsItem.item.transportationServiceDetails.supportedCommodityClassification[0].natureCode.name == "" &&
             this.wrapper.line.goodsItem.item.transportationServiceDetails.supportedCommodityClassification[0].cargoTypeCode.name == "" &&
@@ -73,6 +76,12 @@ export class ProductDetailsTabsComponent implements OnInit {
               this.selectedTab = this.getFirstTab();
             }
         }
+
+        if(this.wrapper.getPricePerItem() == '' && this.wrapper.getFreeSample() == ''){
+          this.havePrice = false;
+          this.selectedTab = this.getFirstTab();
+        }
+
         if(this.settings.certificates.length == 0 && this.wrapper.line.goodsItem.item.certificate.length == 0){
             this.haveCertificates = false;
             this.selectedTab = this.getFirstTab();
@@ -164,6 +173,8 @@ export class ProductDetailsTabsComponent implements OnInit {
       else {
         if (this.haveDetails)
           return "DETAILS";
+        else if (this.havePrice)
+          return "PRICE";
         else if (this.haveTransportServiceDetails)
           return "DELIVERY_TRADING";
         else if (this.haveCertificates)

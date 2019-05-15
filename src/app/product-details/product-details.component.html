@@ -32,7 +32,7 @@
         <!-- Order Workflow For Product -->
         <div *ngIf="isLogistics === false" class="p-3 border border-dark border-bottom-0">
 
-            <h3 class="py-1">Negotiate & Order</h3>
+            <h2 class="py-1">Negotiate & Order</h2>
 
             <div [hidden]="frameContract == null">
                 <hr>
@@ -229,7 +229,7 @@
             </div>
 
             <!-- Action Button -->
-            <button class="btn btn-primary pt-2 w-100"
+            <button *ngIf="isTransportService" class="btn btn-primary pt-2 w-100"
                 (click)="onNegotiate(termsSelectBoxValue)" [disabled]="!this.appComponent.checkRoles('bp') || options.quantity <= 0">
                 Negotiate & Order
             </button>
