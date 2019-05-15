@@ -52,10 +52,14 @@
                             </div>
                             <div class="col-2">
 
-                                <button type="button" class="btn btn-danger col" [disabled]="getDeleteStatus(i).isLoading()"
+                                <button type="button" class="btn btn-danger space-after col" [disabled]="getDeleteStatus(i).isLoading()"
                                         (click)="removeFavourite(catLine, i); $event.stopPropagation();">
                                     Remove
                                 </button>
+
+                                <a  href="#" role="button" class="btn btn-primary col" [routerLink]="['/product-details']" [queryParams]="{catalogueId: catLine.catalogueId, id: catLine.manufactuerItemId}">
+                                    Negotiate
+                                </a>
                                 <call-status [callStatus]="getDeleteStatus(i)"></call-status>
                             </div>
                         </div>
