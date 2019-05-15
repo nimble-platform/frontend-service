@@ -12,11 +12,25 @@ export const debug = false;
 // export const pw_reset_link = "http://nimble-staging.salzburgresearch.at:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
 
 
-// Base path variables - SRFG productive
+// Base path variables - MVP productive
+
+// export const base_path = "https://nimble-platform.salzburgresearch.at/nimble";
+// export const ub_base = "https://nimble-platform.salzburgresearch.at/ub-search";
+// export const pw_reset_link = "https://nimble-platform.salzburgresearch.at:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
+
+
+// Base path variables - FMP productive
 
 export const base_path = "https://fmp-nimble.salzburgresearch.at/api";
 export const ub_base = "https://fmp-nimble.salzburgresearch.at/ub-search";
 export const pw_reset_link = "https://fmp-nimble.salzburgresearch.at:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
+
+
+// Base path variables - EFAC productive
+
+// export const base_path = "https://efactory-nimble.salzburgresearch.at/api";
+// export const ub_base = "https://efactory-nimble.salzburgresearch.at/ub-search";
+// export const pw_reset_link = "https://efactory-nimble.salzburgresearch.at:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
 
 
 // Base path variables - SRFG K8S
@@ -33,7 +47,21 @@ export const pw_reset_link = "https://fmp-nimble.salzburgresearch.at:8080/auth/r
 // export const pw_reset_link = "https://nimble-platform.salzburgresearch.at:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
 
 
-// Base path variables - Local development via service discovery
+// Base path variables - BIBA domain
+
+// export const base_path = "http://nimble-dev.ikap.biba.uni-bremen.de";
+// export const ub_base = "http://nimble-dev.ikap.biba.uni-bremen.de:8090";
+// export const pw_reset_link = "http://nimble-dev.ikap.biba.uni-bremen.de:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
+
+
+// Base path variables - IBM domain
+
+// export const base_path = "http://161.156.70.122";
+// export const ub_base = "http://161.156.70.122:8090";
+// export const pw_reset_link = "http://161.156.70.122:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
+
+
+// Base path variables - Local development
 
 // export const base_path = "http://localhost";
 // export const ub_base = "http://localhost:8090";
@@ -49,6 +77,7 @@ export const data_channel_endpoint=`${base_path}/data-channel`;
 export const data_aggregation_endpoint=`${base_path}/data-aggregation`;
 export const trust_service_endpoint=`${base_path}/trust`;
 export const indexing_service_endpoint=`${base_path}/indexing-service`;
+export const rocketChatEndpoint = `${base_path}:3000`;
 
 
 // BIBA endpoints
@@ -70,8 +99,6 @@ export const sqpOrangeConcept = `${ub_base}/getPropertyValuesFromOrangeGroup`;
 
 export const tntEndpoint = `${bpe_endpoint}/t-t/epc-details`;
 export const tntAnalysisEndpoint = `${base_path}/tnt/simpleTrackingAnalysis`;
-
-export const rocketChatEndpoint = `${base_path}:3000`;
 
 
 // Platform Configuration
@@ -105,6 +132,7 @@ export const config = {
       "src":"./assets/tos.pdf"
     }
   ],
+  "showChat": false,
   "showCompanyMembers": true,
   "showExplorative": false,
   "showLCPA": false,
@@ -211,8 +239,7 @@ export const config = {
   "supportMailContent": {
     "en":"Dear NIMBLE support team,\n\n\nI have encountered an issue.\n\nDescription of the issue:\n[Please insert a detailed description of the issue here. Add some screenshots as an attachement if they are of use.]",
     "es":"Equipo de soporte NIMBLE,\n\n\nHe detectado una incidencia.\n\nDescripción:\n[Por favor indique a continuación los detalles de la incidencia. Si es posible incluya alguna captura de pantalla si puede ser de utilidad.]"
-  },
-  "showChat": false
+  }
 };
 
 
