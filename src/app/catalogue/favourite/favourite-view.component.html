@@ -16,7 +16,7 @@
                 <option *ngFor="let type of cat_levels[0]" [value]=type.id>{{type.preferredName}}</option>
             </select>
 
-            <label class="space-right"><strong>Sort by:</strong>
+            <label class="space-right"><strong></strong>
             </label>
             <select  class="custom-select col-3 space-right" [(ngModel)]="sortOption" (change)="requestCatalogue()">
                 <option *ngFor="let option of CATALOGUE_LINE_SORT_OPTIONS" [value]="option.name">{{option.value}}</option>
