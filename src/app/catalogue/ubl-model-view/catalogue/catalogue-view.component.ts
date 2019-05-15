@@ -96,6 +96,7 @@ export class CatalogueViewComponent implements OnInit {
         this.catalogueLineView = {};
         this.getCatagloueIdsForParty();
         this.catalogueService.setEditMode(false);
+        this.sortOption = this.sortOption == null ? CATALOGUE_LINE_SORT_OPTIONS[0].name : this.sortOption;
         this.requestCatalogue();
         for(let i = 0; i < this.pageSize; i++) {
             this.deleteStatuses.push(new CallStatus());
