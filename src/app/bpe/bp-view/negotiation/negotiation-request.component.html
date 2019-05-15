@@ -311,9 +311,9 @@
             <terms-and-conditions [buyerPartyId]="buyerId"
                                   [selectedIncoterm]="wrapper.rfqIncoterms"
                                   [selectedTradingTerms]="wrapper.rfqPaymentTerms.tradingTerms"
-                                  (onIncotermChanged)="wrapper.rfqIncoterms = $event"
+                                  (onIncotermChanged)="wrapper.rfqIncoterms = $event; onPriceConditionsChange();"
                                   [isIncotermsNegotiating]="rfq.negotiationOptions.incoterms"
-                                  (onTradingTermChanged)="wrapper.rfqPaymentTerms.paymentTerm=$event"
+                                  (onTradingTermChanged)="wrapper.rfqPaymentTerms.paymentTerm=$event; onPriceConditionsChange();"
                                   [isTradingTermsNegotiating]="rfq.negotiationOptions.paymentTerms"
                                   [sellerPartyId]="sellerId" [readOnly]="isLoading() || isReadOnly()" [documentType]="'rfq'" [termsAndConditions]="rfq.termOrCondition"></terms-and-conditions>
         </div>

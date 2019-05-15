@@ -17,7 +17,7 @@ export class QuotationWrapper {
     paymentTermsWrapper: PaymentTermsWrapper;
     priceWrapper: PriceWrapper;
 
-    constructor(private quotation: Quotation) {
+    constructor(public quotation: Quotation) {
         this.paymentTermsWrapper = new PaymentTermsWrapper(quotation.paymentTerms);
         this.priceWrapper = new PriceWrapper(quotation.quotationLine[0].lineItem.price, quotation.quotationLine[0].lineItem.quantity);
     }

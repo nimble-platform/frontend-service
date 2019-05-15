@@ -164,7 +164,7 @@ export class NegotiationRequestComponent implements OnInit {
 
             // if a new business process is created load initial terms based on the selected terms source
             if(!this.processMetadata) {
-                this.loadTermsInitially();
+                this.loadTerms(this.termsDropdownValue, true);
             }
 
             // compute negotiation options for selecting the negotiation ticks automatically
@@ -220,32 +220,6 @@ export class NegotiationRequestComponent implements OnInit {
         response['frameContractQuotation'] = await frameContractQuotation;
 
         return Promise.resolve(response);
-    }
-
-    private loadTermsInitially(): void {
-        if(this.termsDropdownValue == 'frame_contract' || this.termsDropdownValue == 'last_offer') {
-            let quotationWrapper = this.wrapper.frameContractQuotationWrapper;
-            if(this.termsDropdownValue == 'last_offer') {
-                quotationWrapper = this.wrapper.lastOfferQuotationWrapper;
-            }
-
-            this.wrapper.rfqDeliveryPeriod = copy(quotationWrapper.deliveryPeriod);
-            this.wrapper.rfqWarranty = copy(quotationWrapper.warranty);
-            this.wrapper.rfqPaymentTerms.paymentTerm = quotationWrapper.paymentTermsWrapper.paymentTerm;
-            this.wrapper.rfqIncoterms = quotationWrapper.incoterms;
-            this.wrapper.rfqPaymentMeans = quotationWrapper.paymentMeans;
-            this.wrapper.rfqDiscountPriceWrapper.itemPrice.value = quotationWrapper.priceWrapper.pricePerItem;
-            this.wrapper.rfqDiscountPriceWrapper.itemPrice.currency = quotationWrapper.priceWrapper.currency;
-
-        } else if(this.termsDropdownValue == 'product_defaults') {
-            this.wrapper.rfqDeliveryPeriod = copy(this.wrapper.originalLineDeliveryPeriod);
-            this.wrapper.rfqWarranty = copy(this.wrapper.originalLineWarranty);
-            this.wrapper.rfqPaymentTerms.paymentTerm = this.wrapper.linePaymentTerms;
-            this.wrapper.rfqIncoterms = this.wrapper.originalLineIncoterms;
-            this.wrapper.rfqPaymentMeans = this.wrapper.linePaymentMeans;
-            this.wrapper.rfqDiscountPriceWrapper.itemPrice.value = this.wrapper.lineDiscountPriceWrapper.itemPrice.value;
-            this.wrapper.rfqDiscountPriceWrapper.itemPrice.currency = this.wrapper.lineDiscountPriceWrapper.itemPrice.currency;
-        }
     }
 
     private setProcessMetadataFields(processHistory: ThreadEventMetadata[]): void {
@@ -386,7 +360,7 @@ export class NegotiationRequestComponent implements OnInit {
         }), 0);
     }
 
-    loadTerms(termSource: 'product_defaults' | 'frame_contract' | 'last_offer'): void {
+    loadTerms(termSource: 'product_defaults' | 'frame_contract' | 'last_offer', ignoreNegotiationOptions: boolean = false): void {
         this.termsDropdownValue = termSource;
 
         if(termSource == 'frame_contract' || termSource == 'last_offer') {
@@ -395,43 +369,44 @@ export class NegotiationRequestComponent implements OnInit {
                 quotationWrapper = this.wrapper.lastOfferQuotationWrapper;
             }
 
-            if(!this.rfq.negotiationOptions.deliveryPeriod) {
+            if(!this.rfq.negotiationOptions.deliveryPeriod || ignoreNegotiationOptions) {
                 this.wrapper.rfqDeliveryPeriod = copy(quotationWrapper.deliveryPeriod);
             }
-            if(!this.rfq.negotiationOptions.warranty) {
+            if(!this.rfq.negotiationOptions.warranty || ignoreNegotiationOptions) {
                 this.wrapper.rfqWarranty = copy(quotationWrapper.warranty);
             }
-            if(!this.rfq.negotiationOptions.paymentTerms) {
+            if(!this.rfq.negotiationOptions.paymentTerms || ignoreNegotiationOptions) {
                 this.wrapper.rfqPaymentTerms.paymentTerm = quotationWrapper.paymentTermsWrapper.paymentTerm;
             }
-            if(!this.rfq.negotiationOptions.incoterms) {
+            if(!this.rfq.negotiationOptions.incoterms || ignoreNegotiationOptions) {
                 this.wrapper.rfqIncoterms = quotationWrapper.incoterms;
             }
-            if(!this.rfq.negotiationOptions.paymentMeans) {
+            if(!this.rfq.negotiationOptions.paymentMeans || ignoreNegotiationOptions) {
                 this.wrapper.rfqPaymentMeans = quotationWrapper.paymentMeans;
             }
-            if(!this.rfq.negotiationOptions.price) {
+            if(!this.rfq.negotiationOptions.price || ignoreNegotiationOptions) {
                 this.wrapper.rfqDiscountPriceWrapper.itemPrice.value = quotationWrapper.priceWrapper.pricePerItem;
                 this.wrapper.rfqDiscountPriceWrapper.itemPrice.currency = quotationWrapper.priceWrapper.currency;
             }
+            this.rfq.termOrCondition = copy(quotationWrapper.quotation.termOrCondition);
 
         } else if(termSource == 'product_defaults') {
-            if(!this.rfq.negotiationOptions.deliveryPeriod) {
+            if(!this.rfq.negotiationOptions.deliveryPeriod || ignoreNegotiationOptions) {
                 this.wrapper.rfqDeliveryPeriod = copy(this.wrapper.originalLineDeliveryPeriod);
             }
-            if(!this.rfq.negotiationOptions.warranty) {
+            if(!this.rfq.negotiationOptions.warranty || ignoreNegotiationOptions) {
                 this.wrapper.rfqWarranty = copy(this.wrapper.originalLineWarranty);
             }
-            if(!this.rfq.negotiationOptions.paymentTerms) {
+            if(!this.rfq.negotiationOptions.paymentTerms || ignoreNegotiationOptions) {
                 this.wrapper.rfqPaymentTerms.paymentTerm = this.wrapper.linePaymentTerms;
             }
-            if(!this.rfq.negotiationOptions.incoterms) {
+            if(!this.rfq.negotiationOptions.incoterms || ignoreNegotiationOptions) {
                 this.wrapper.rfqIncoterms = this.wrapper.originalLineIncoterms;
             }
-            if(!this.rfq.negotiationOptions.paymentMeans) {
+            if(!this.rfq.negotiationOptions.paymentMeans || ignoreNegotiationOptions) {
                 this.wrapper.rfqPaymentMeans = this.wrapper.linePaymentMeans;
             }
-            if(!this.rfq.negotiationOptions.price) {
+            if(!this.rfq.negotiationOptions.price || ignoreNegotiationOptions) {
                 this.onPriceConditionsChange();
                 this.wrapper.rfqDiscountPriceWrapper.itemPrice.value = this.wrapper.lineDiscountPriceWrapper.itemPrice.value;
                 this.wrapper.rfqDiscountPriceWrapper.itemPrice.currency = this.wrapper.lineDiscountPriceWrapper.itemPrice.currency;
