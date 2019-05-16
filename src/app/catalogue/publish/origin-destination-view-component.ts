@@ -19,6 +19,7 @@ export class OriginDestinationViewComponent implements OnInit{
     regionOptions = REGIONS;
     countryNames = COUNTRY_NAMES;
 
+    isAllOverTheWorldOptionSelected:boolean = false;
     enableRegionSelection:boolean = false;
     enableCountrySelection:boolean = false;
 
@@ -29,9 +30,14 @@ export class OriginDestinationViewComponent implements OnInit{
         this.title = selectPreferredValue(this.itemProperty.name);
 
         for(let address of this.itemProperty.value){
-            if(this.regionOptions.indexOf(address.value) != -1){
+            if(address.value == "All over the world"){
+                this.isAllOverTheWorldOptionSelected = true;
+            }
+            else if(this.regionOptions.indexOf(address.value) != -1){
                 this.enableRegionSelection = true;
-                break;
+            }
+            else{
+                this.enableCountrySelection = true;
             }
         }
     }
@@ -49,9 +55,12 @@ export class OriginDestinationViewComponent implements OnInit{
         }
     }
 
-    isAllOverTheWorldOptionSelected(isChecked:boolean){
+    onAllOverTheWorldOptionSelected(isChecked:boolean){
         if(isChecked){
-            this.itemProperty.value.push(new Text("All over the world"));
+            // remove other selected options
+            this.itemProperty.value = [new Text("All over the world")];
+            // disable Region and Country selection
+            this.enableRegionSelection = this.enableCountrySelection = false;
         }else{
             for(let address of this.itemProperty.value){
                 if(address.value == "All over the world"){
@@ -64,7 +73,15 @@ export class OriginDestinationViewComponent implements OnInit{
 
     // if Regions option is deselected, then remove all selected regions
     onRegionsChecked(isChecked:boolean){
-        if(!isChecked){
+        this.enableRegionSelection = isChecked;
+
+        if(isChecked){
+            // remove selected options
+            this.itemProperty.value = [];
+            // disable other options
+            this.enableCountrySelection = this.isAllOverTheWorldOptionSelected = false;
+        }
+        else {
             let addressesToBeRemoved:Text[] = [];
             for(let address of this.itemProperty.value){
                 if(this.regionOptions.indexOf(address.value) != -1 && address.value != "All over the world"){
@@ -88,6 +105,17 @@ export class OriginDestinationViewComponent implements OnInit{
                     break;
                 }
             }
+        }
+    }
+
+    onCountrySelectionChanged(isSelected:boolean){
+        this.enableCountrySelection = isSelected;
+
+        if(isSelected){
+            // remove selected options
+            this.itemProperty.value = [];
+            // disable other options
+            this.enableRegionSelection = this.isAllOverTheWorldOptionSelected = false;
         }
     }
 
