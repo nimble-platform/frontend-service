@@ -44,6 +44,8 @@ export class OriginDestinationViewComponent implements OnInit{
 
     onCountrySelected(event) {
         this.itemProperty.value.push(new Text(event.target.value));
+        // set input value to null
+        event.target.value = null;
     }
 
     onCountryRemoved(country: string) {
