@@ -47,6 +47,7 @@ export class OptionsPanelComponent implements OnInit{
     onOptionAdded() {
         if(this.option){
             this.itemProperty.value.push(new Text(this.option));
+            this.option = null;
         }
     }
 

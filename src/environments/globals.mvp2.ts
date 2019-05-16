@@ -21,9 +21,9 @@ export const debug = false;
 
 // Base path variables - FMP productive
 
-export const base_path = "https://fmp-nimble.salzburgresearch.at/api";
-export const ub_base = "https://fmp-nimble.salzburgresearch.at/ub-search";
-export const pw_reset_link = "https://fmp-nimble.salzburgresearch.at:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
+// export const base_path = "https://fmp-nimble.salzburgresearch.at/api";
+// export const ub_base = "https://fmp-nimble.salzburgresearch.at/ub-search";
+// export const pw_reset_link = "https://fmp-nimble.salzburgresearch.at:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
 
 
 // Base path variables - EFAC productive
@@ -56,9 +56,9 @@ export const pw_reset_link = "https://fmp-nimble.salzburgresearch.at:8080/auth/r
 
 // Base path variables - IBM domain
 
-// export const base_path = "http://161.156.70.122";
-// export const ub_base = "http://161.156.70.122:8090";
-// export const pw_reset_link = "http://161.156.70.122:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
+export const base_path = "http://161.156.70.122";
+export const ub_base = "http://161.156.70.122:8090";
+export const pw_reset_link = "http://161.156.70.122:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
 
 
 // Base path variables - Local development
@@ -104,7 +104,7 @@ export const tntAnalysisEndpoint = `${base_path}/tnt/simpleTrackingAnalysis`;
 // Platform Configuration
 
 export const config = {
-  "companyRegistrationRequired": true,
+  "companyRegistrationRequired": false,
   "categoryFilter": {
     "eClass": {
       "hiddenCategories": [],
@@ -117,125 +117,71 @@ export const config = {
       "ontologyPrefix": "http://www.aidimme.es/FurnitureSectorOntology.owl#"
     }
   },
-  "dataChannelsEnabled" : false,
-  "imprint": "<table class='table table-borderless'><tr><td class='w-50 p-0 pr-3'><u>Platform Owner</u><br/><b>AIDIMME - Technological Institute of Metalworking, Furniture, Wood, Packaging and Related sectors</b><br/>Technological Park, Benjamín Franklin Street 13<br/>46980 Paterna (Valencia), Spain<br/>Phone: +34.961.366.070<br/>E-Mail: <a href='mailto:info@aidimme.es'>info@aidimme.es</a><br/>CIF: G46261590</td><td class='w-50 p-0 pl-3'><u>Platform Provider</u><br/><b>Salzburg Research Forschungsgesellschaft m.b.H.</b><br/>Jakob Haringer Straße 5/3<br/>5020 Salzburg, Austria<br/>Phone: +43.662.2288.200<br/>Fax: +43.662.2288.222<br/>E-Mail: <a href='mailto:info@salzburgresearch.at'>info@salzburgresearch.at</a><br/>Internet: <a href='https://www.salzburgresearch.at' target='_blank'>www.salzburgresearch.at</a><br/>Managing Director: Siegfried Reich<br/>Registry Number: LG Salzburg (FN 149016 t)<br/>UID: ATU 41145408<br/>Content Officer: Siegfried Reich<br/>Owner: State of Salzburg (100%)</td></tr></table>",
-  "logoPath": "./assets/logo_fmp.png",
-  "logoRequired": true,
-  "phoneNumberRequired": true,
+  "dataChannelsEnabled" : true,
+  "imprint": "<u>Platform Owner & Provider</u><br/><b>Salzburg Research Forschungsgesellschaft m.b.H.</b><br/>Jakob Haringer Straße 5/3<br/>5020 Salzburg, Austria<br/>Phone: +43.662.2288.200<br/>Fax: +43.662.2288.222<br/>E-Mail: <a href='mailto:info@salzburgresearch.at'>info@salzburgresearch.at</a><br/>Internet: <a href='https://www.salzburgresearch.at' target='_blank'>www.salzburgresearch.at</a><br/>Managing Director: Siegfried Reich<br/>Registry Number: LG Salzburg (FN 149016 t)<br/>UID: ATU 41145408<br/>Content Officer: Siegfried Reich<br/>Owner: State of Salzburg (100%)",
+  "logoPath": "./assets/logo_mvp.png",
+  "logoRequired": false,
+  "phoneNumberRequired": false,
   "requiredAgreements": [
     {
-      "title":"Privacy Policy",
-      "src":"./assets/privacy_policy.pdf"
-    },
-    {
-      "title":"Terms of Service (ToS)",
-      "src":"./assets/tos.pdf"
+      "title":"End-User License Agreement (EULA)",
+      "src":"./assets/eula.pdf"
     }
   ],
   "showChat": false,
-  "showCompanyMembers": true,
-  "showExplorative": false,
-  "showLCPA": false,
-  "showPPAP": false,
-  "showTrack": false,
-  "showTrade": false,
-  "showVerification": false,
-  "standardTaxonomy": "FurnitureOntology",
+  "showCompanyMembers": false,
+  "showExplorative": true,
+  "showLCPA": true,
+  "showPPAP": true,
+  "showTrack": true,
+  "showTrade": true,
+  "showVerification": true,
+  "standardTaxonomy": "All",
   "supportedActivitySectors": {
-    "": [],
-    "Logistics Provider": [
-      "General"
-    ],
-    "Manufacturer": [
-      "Bathroom",
-      "Carpentry",
-      "Childcare",
-      "Closet / Cupboard",
-      "Contract",
-      "Doors / Windows",
-      "Furniture for Retail",
-      "Home",
-      "Hotels, Restaurants & Cafes",
-      "Kids",
-      "Kitchen",
-      "Lightings / Lamps",
-      "Mattresses",
-      "Office",
-      "Outdoor Furniture",
-      "Panels",
-      "Parquet Floors",
-      "Upholstered Furniture",
-      "Wooden Packaging"
-    ],
-    "Retailer": [
-      "General"
-    ],
-    "Service Provider": [
-      "Architects",
-      "Buyer-Designer",
-      "Certification",
-      "Consulting",
-      "Design / Decoration",
-      "Distributor",
-      "Engineering",
-      "Facility Cleaning",
-      "Facility Maintenance",
-      "Furniture Installer",
-      "Legal Services",
-      "Outsourcing",
-      "Print Services",
-      "Quality Control / Tests",
-      "Sales Agent",
-      "Training",
-      "Waste Management"
-    ],
-    "Supplier": [
-      "Adhesives",
-      "Board",
-      "Ceramic",
-      "Composites",
-      "Cork",
-      "Decorated Paper",
-      "Fitting",
-      "Foam",
-      "Glass",
-      "Machinery",
-      "Metal",
-      "Packaging Materials",
-      "Paints & Varnishes",
-      "Plastic",
-      "Plywood",
-      "Straw",
-      "Textile",
-      "Tools",
-      "Veneer",
-      "Wood"
-    ]
+  	"": [],
+  	"Logistics Provider": [],
+  	"Manufacturer": [],
+  	"Service Provider": [],
+  	"Other": []
   },
   "supportedBusinessTypes": [
-    "",
-    "Logistics Provider",
-    "Manufacturer",
-    "Retailer",
-    "Service Provider",
-    "Supplier"
+  	"",
+  	"Logistics Provider",
+  	"Manufacturer",
+  	"Service Provider",
+  	"Other"
   ],
   "supportedCertificates": [
-      "Health and Safety",
-      "Innovation",
-      "Management",
-      "Quality",
-      "Sustainability and Environment",
+      "Appearance Approval Report",
+      "Checking Aids",
+      "Control Plan",
+      "Customer Engineering Approval",
+      "Customer Specific Requirements",
+      "Design Documentation",
+      "Design Failure Mode and Effects Analysis",
+      "Dimensional Results",
+      "Engineering Change Documentation",
+      "Initial Process Studies",
+      "Master Sample",
+      "Measurement System Analysis Studies",
+      "Part Submission Warrant",
+      "Process Failure Mode and Effects Analysis",
+      "Process Flow Diagram",
+      "Qualified Laboratory Documentation",
+      "Records of Material / Performance Tests",
+      "Sample Production Parts",
       "Other"
   ],
   "supportedRoles": [
+      "company_admin",
+      "external_representative",
       "legal_representative",
       "monitor",
       "publisher",
       "purchaser",
       "sales_officer"
   ],
-  "supportMail": "nimbleFMP@aidimme.es",
+  "supportMail": "nimble-support@salzburgresearch.at",
   "supportMailContent": {
     "en":"Dear NIMBLE support team,\n\n\nI have encountered an issue.\n\nDescription of the issue:\n[Please insert a detailed description of the issue here. Add some screenshots as an attachement if they are of use.]",
     "es":"Equipo de soporte NIMBLE,\n\n\nHe detectado una incidencia.\n\nDescripción:\n[Por favor indique a continuación los detalles de la incidencia. Si es posible incluya alguna captura de pantalla si puede ser de utilidad.]"
@@ -262,15 +208,15 @@ export const product_currency = "currency";
 export const product_cat = "classificationUri";
 export const product_cat_mix = "commodityClassficationUri";
 export const product_filter_prod = ["freeOfCharge","certificateType","applicableCountries"];
-export const product_filter_comp = ["manufacturer.legalName","manufacturer.origin","manufacturer.certificateType"];
-export const party_facet_field_list = ["legalName","origin","certificateType"];
+export const product_filter_comp = ["manufacturer.legalName","manufacturer.origin","manufacturer.certificateType","manufacturer.ppapComplianceLevel","manufacturer.ppapDocumentType"];
+export const party_facet_field_list = ["legalName","origin","certificateType","ppapComplianceLevel","ppapDocumentType"];
 export const item_manufacturer_id = "manufacturerId";
 export const product_filter_trust = ["manufacturer.trustScore","manufacturer.trustRating","manufacturer.trustSellerCommunication","manufacturer.trustFullfillmentOfTerms","manufacturer.trustDeliveryPackaging","manufacturer.trustNumberOfTransactions"];
 export const product_filter_mappings = {
   "price": "Price",
   "currency": "Currency"
 };
-export const product_nonfilter_full = ["_text_","_version_","id","image","localName","languages","catalogueId","doctype","manufacturerId","manufacturerItemId","manufacturer.ppapComplianceLevel","manufacturer.ppapDocumentType"];
+export const product_nonfilter_full = ["_text_","_version_","id","image","localName","languages","catalogueId","doctype","manufacturerId","manufacturerItemId"];
 export const product_nonfilter_regex = ["lmf.","_id", "_txt", "_desc", "_label", "_key", "_price", "_currency", "httpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclass"];
 export const product_configurable = [];
 export const product_default = {};
@@ -281,8 +227,8 @@ export const query_settings = {
   "boosting": true,
   "boostingFactors": {
     "STANDARD": 4,
-    "commodityClassficationUri": 64,
-    "{LANG}_label": 16,
+    "commodityClassficationUri": 16,
+    "{LANG}_label": 64,
     "{LANG}_desc": -1
   }
 };

@@ -427,7 +427,7 @@ export class CategorySearchComponent implements OnInit {
                         for (let parent of this.parentCategories.parents) {
                             this.selectedCategoriesWRTLevels.push(parent.code);
                         }
-                        this.getCategoriesStatus.callback(null);
+                        this.getCategoriesStatus.callback(null, true);
                         if (this.treeView) {
                           setTimeout(function(){
                             scrollToDiv(category.code);

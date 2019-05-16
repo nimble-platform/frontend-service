@@ -18,7 +18,7 @@ import {copy, selectPreferredValue} from '../../../common/utils';
 import { Order } from "../../../catalogue/model/publish/order";
 import { PresentationMode } from "../../../catalogue/model/publish/presentation-mode";
 import {DocumentService} from '../document-service';
-import {BpStartEvent} from '../../../catalogue/model/publish/bp-start-event';
+import {BpActivityEvent} from '../../../catalogue/model/publish/bp-start-event';
 import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
 
 @Component({
@@ -55,7 +55,9 @@ export class TransportExecutionPlanComponent implements OnInit {
 
     ngOnInit() {
         // get copy of ThreadEventMetadata of the current business process
-        this.processMetadata = this.bpDataService.bpStartEvent.processMetadata;
+        if(!this.bpDataService.bpActivityEvent.newProcess) {
+            this.processMetadata = this.bpDataService.bpActivityEvent.processHistory[0];
+        }
 
         if(!this.bpDataService.transportExecutionPlanRequest) {
             if(this.searchContextService.getAssociatedProcessMetadata() != null) {
@@ -77,7 +79,7 @@ export class TransportExecutionPlanComponent implements OnInit {
         this.itemName = selectPreferredValue(this.request.consignment[0].consolidatedShipment[0].goodsItem[0].item.name)
         this.response = this.bpDataService.transportExecutionPlan;
         this.productOrder = this.bpDataService.productOrder;
-        this.userRole = this.bpDataService.bpStartEvent.userRole;
+        this.userRole = this.bpDataService.bpActivityEvent.userRole;
         if(this.processMetadata && this.processMetadata.isBeingUpdated){
             this.updatingProcess = true;
         }
@@ -151,7 +153,7 @@ export class TransportExecutionPlanComponent implements OnInit {
         .then(() => {
             this.callStatus.callback("Transport Execution Plan sent", true);
             var tab = "PUCHASES";
-            if (this.bpDataService.bpStartEvent.userRole == "seller")
+            if (this.bpDataService.bpActivityEvent.userRole == "seller")
               tab = "SALES";
             this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
         })
@@ -169,7 +171,7 @@ export class TransportExecutionPlanComponent implements OnInit {
                 this.documentService.updateCachedDocument(transportationExecutionPlanRequest.id,transportationExecutionPlanRequest);
                 this.callStatus.callback("Item Information Request updated", true);
                 var tab = "PUCHASES";
-                if (this.bpDataService.bpStartEvent.userRole == "seller")
+                if (this.bpDataService.bpActivityEvent.userRole == "seller")
                   tab = "SALES";
                 this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
             })

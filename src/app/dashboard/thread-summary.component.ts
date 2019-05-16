@@ -18,7 +18,7 @@ import { Comment } from "../catalogue/model/publish/comment";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { Code } from "../catalogue/model/publish/code";
 import {BpUserRole} from '../bpe/model/bp-user-role';
-import {BpStartEvent} from '../catalogue/model/publish/bp-start-event';
+import {BpActivityEvent} from '../catalogue/model/publish/bp-start-event';
 import {BpURLParams} from '../catalogue/model/publish/bpURLParams';
 import {UBLModelUtils} from '../catalogue/model/ubl-model-utils';
 import {selectPreferredValue} from '../common/utils';
@@ -107,8 +107,20 @@ export class ThreadSummaryComponent implements OnInit {
 
     async openBpProcessView() {
         let userRole:BpUserRole = this.titleEvent.buyer ? "buyer": "seller";
-        this.bpDataService.startBp(new BpStartEvent(userRole,this.titleEvent.processType,this.processInstanceGroup.id,this.collaborationGroupId,this.titleEvent),true,
-            new BpURLParams(this.titleEvent.product.catalogueDocumentReference.id,this.titleEvent.product.manufacturersItemIdentification.id,this.titleEvent.processId));
+        this.bpDataService.startBp(
+            new BpActivityEvent(
+                userRole,
+                this.titleEvent.processType,
+                this.processInstanceGroup.id,
+                this.collaborationGroupId,
+                [this.titleEvent].concat(this.history),
+                null,
+                false),
+            true,
+            new BpURLParams(
+                this.titleEvent.product.catalogueDocumentReference.id,
+                this.titleEvent.product.manufacturersItemIdentification.id,
+                this.titleEvent.processId));
     }
 
     private fetchEvents(): void {

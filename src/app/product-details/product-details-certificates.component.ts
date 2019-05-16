@@ -37,16 +37,16 @@ export class ProductDetailsCertificatesComponent {
         }
 
         for(let country of countries) {
-        	if (countryNames==null){
-        		countryNames = country.name.value;
-        	}
-        	else{
-	            countryNames += "," + country.name.value;
-	        }
+            if (countryNames==null){
+                countryNames = country.name.value;
+            }
+            else{
+                countryNames += "," + country.name.value;
+            }
         }
         return countryNames;
     }
-    
+
     downloadProductCertificate(certificate: Certificate) {
         this.catalogueService.getBinaryObject(certificate.documentReference[0].attachment.embeddedDocumentBinaryObject.uri).then(binaryObject => {
             const binaryString = window.atob(binaryObject.value);

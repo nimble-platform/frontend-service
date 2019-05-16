@@ -21,6 +21,7 @@ import { EvidenceSupplied } from '../catalogue/model/publish/evidence-supplied';
 import { Comment } from '../catalogue/model/publish/comment';
 import {SearchContextService} from '../simple-search/search-context.service';
 import {DashboardProcessInstanceDetails} from './model/dashboard-process-instance-details';
+import {DigitalAgreement} from "../catalogue/model/publish/digital-agreement";
 
 @Injectable()
 export class BPEService {
@@ -36,29 +37,29 @@ export class BPEService {
 	startBusinessProcess(piim:ProcessInstanceInputMessage):Promise<ProcessInstance> {
 		const headers = this.getAuthorizedHeaders();
 		let url = `${this.url}/start`;
-		if(this.bpDataService.bpStartEvent.containerGroupId != null) {
-			url += '?gid=' + this.bpDataService.bpStartEvent.containerGroupId;
+		if(this.bpDataService.bpActivityEvent.containerGroupId != null) {
+			url += '?gid=' + this.bpDataService.bpActivityEvent.containerGroupId;
 		}
 		if(this.bpDataService.precedingProcessId != null) {
-			if(this.bpDataService.bpStartEvent.containerGroupId != null) {
+			if(this.bpDataService.bpActivityEvent.containerGroupId != null) {
 				url += '&';
 			} else {
 				url += '?';
 			}
 			url += 'precedingPid=' + this.bpDataService.precedingProcessId;
 		}
-		if(this.bpDataService.bpStartEvent.collaborationGroupId != null){
-			if(this.bpDataService.bpStartEvent.containerGroupId != null || this.bpDataService.precedingProcessId != null){
+		if(this.bpDataService.bpActivityEvent.collaborationGroupId != null){
+			if(this.bpDataService.bpActivityEvent.containerGroupId != null || this.bpDataService.precedingProcessId != null){
 			    url += '&';
             }
             else {
 			    url += "?";
             }
-            url += 'collaborationGID=' + this.bpDataService.bpStartEvent.collaborationGroupId
+            url += 'collaborationGID=' + this.bpDataService.bpActivityEvent.collaborationGroupId
 		}
 
 		if(this.searchContextService.getPrecedingGroupId() != null){
-			if(this.bpDataService.bpStartEvent.containerGroupId != null || this.bpDataService.precedingProcessId != null || this.bpDataService.bpStartEvent.collaborationGroupId != null){
+			if(this.bpDataService.bpActivityEvent.containerGroupId != null || this.bpDataService.precedingProcessId != null || this.bpDataService.bpActivityEvent.collaborationGroupId != null){
 				url += '&';
 			}
 			else {
@@ -85,15 +86,15 @@ export class BPEService {
 	continueBusinessProcess(piim:ProcessInstanceInputMessage):Promise<ProcessInstance> {
 		const headers = this.getAuthorizedHeaders();
 		let url = `${this.url}/continue`;
-		if(this.bpDataService.bpStartEvent.containerGroupId != null) {
-			url += '?gid=' + this.bpDataService.bpStartEvent.containerGroupId;
+		if(this.bpDataService.bpActivityEvent.containerGroupId != null) {
+			url += '?gid=' + this.bpDataService.bpActivityEvent.containerGroupId;
 		}
-		if(this.bpDataService.bpStartEvent.collaborationGroupId != null){
-			if(this.bpDataService.bpStartEvent.containerGroupId != null){
-				url += '&collaborationGID=' + this.bpDataService.bpStartEvent.collaborationGroupId;
+		if(this.bpDataService.bpActivityEvent.collaborationGroupId != null){
+			if(this.bpDataService.bpActivityEvent.containerGroupId != null){
+				url += '&collaborationGID=' + this.bpDataService.bpActivityEvent.collaborationGroupId;
 			}
 			else {
-				url += '?collaborationGID=' + this.bpDataService.bpStartEvent.collaborationGroupId;
+				url += '?collaborationGID=' + this.bpDataService.bpActivityEvent.collaborationGroupId;
 			}
 		}
 
@@ -403,6 +404,33 @@ export class BPEService {
             .get(url, {headers: headers})
             .toPromise()
             .then(res => res.text())
+            .catch(this.handleError);
+	}
+
+	saveFrameContract(digitalAgreement: DigitalAgreement): Promise<DigitalAgreement> {
+		const url = `${this.url}/contract/digital-agreement`;
+		return this.http
+		    .post(url, digitalAgreement, {headers: this.getAuthorizedHeaders()})
+		    .toPromise()
+		    .then(res => res.json())
+		    .catch(this.handleError);
+	}
+
+	updateFrameContract(digitalAgreement: DigitalAgreement): Promise<DigitalAgreement> {
+		const url = `${this.url}/contract/digital-agreement/${digitalAgreement.id}`;
+		return this.http
+            .put(url, digitalAgreement, {headers: this.getAuthorizedHeaders()})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+	}
+
+	getFrameContract(sellerId: string, buyerId: string, productId: string): Promise<DigitalAgreement> {
+		const url = `${this.url}/contract/digital-agreement?sellerId=${sellerId}&buyerId=${buyerId}&productId=${productId}`;
+		return this.http
+            .get(url, {headers: this.getAuthorizedHeaders()})
+            .toPromise()
+            .then(res => res.json())
             .catch(this.handleError);
 	}
 
