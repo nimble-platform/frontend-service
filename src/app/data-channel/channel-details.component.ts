@@ -35,8 +35,8 @@ class NewSensor {
 
 class AdditionalSettings {
     constructor(
-        public notes: string,
-        public hostrequest: boolean,
+        public additionalNotes: string,
+        public hostRequest: boolean,
         public serviceType: string
     ) {
     }
@@ -52,25 +52,28 @@ class AdditionalSettings {
 })
 export class ChannelDetailsComponent implements OnInit {
 
-    channelConfig: object = {};
-    channelMessages: object[] = [];
-    channelServers: object[] = [];
-    channelSensors: object[] = [];
-
+    private SERVICE_TYPES: string[] = ["MongoDB", "Oracle", "Mqtt", "Kafka"]
+    private sellerMessage: string = '';
+    private buyerMessage: string = '';
+    private pageNumber: number = 0;
     hasInternalService: boolean = false;
     hasFilteringService: boolean = false;
-
     displayStorageArea: boolean = true;
-    private newServer: NewServer = new NewServer(null, null, null, null, null, null, null, null);
-    private newSensor: NewSensor = new NewSensor(null, null, null, null, null, null, null);
+
+    channelConfig: object = {};
+    channelMessages: object[] = [];
+
+    initialChannelServers: object[] = [];
+    counterChannelServers: object[] = [];
+
+    initialChannelSensors: object[] = [];
+    counterChannelSensors: object[] = [];
+
     private initialSettings: AdditionalSettings = new AdditionalSettings("Info", false, 'MongoDB');
     private counterSettings: AdditionalSettings = new AdditionalSettings("Info", false, 'MongoDB');
 
-    private SERVICE_TYPES: string[] = ["MongoDB", "Oracle", "Mqtt", "Kafka"]
-
-
-    private pageNumber: number = 0; // Todo: needs to be changed after testing to get info from backend
-                                    // Todo: instead get info from backend (data available? -> load 2nd design)
+    private newServer: NewServer = new NewServer(null, null, null, null, null, null, null, null);
+    private newSensor: NewSensor = new NewSensor(null, null, null, null, null, null, null);
 
 
     //-------------------------------------------------------------------------------------
@@ -100,19 +103,61 @@ export class ChannelDetailsComponent implements OnInit {
         this.dataChannelService.getChannelConfig(channelID)
             .then(channelConfig => {
                 this.channelConfig = channelConfig;
+                this.pageNumber = channelConfig.negotiationStepcounter % 5;
+                this.sellerMessage = channelConfig.negotiationSellerMessages;
+                this.buyerMessage = channelConfig.negotiationBuyerMessages;
+
+                if(this.pageNumber > 1)
+                {
+                    //get relevant step data
+                    this.dataChannelService.getChannelConfigFromNegotiationStep(channelID, this.pageNumber-2)
+                        .then(initialChannelConfig => {
+
+                            this.initialChannelSensors = initialChannelConfig.associatedSensors;
+                            this.initialChannelServers = initialChannelConfig.associatedServers;
+                            this.initialSettings.serviceType = initialChannelConfig.privateServersType;
+                            this.initialSettings.hostRequest = initialChannelConfig.hostRequest;
+                            this.initialSettings.additionalNotes = initialChannelConfig.additionalNotes;
+                       })
+                       .catch(() => {
+                           alert("Error while doing getting historic step");
+                       });
+
+                    //get relevant step data
+                    this.dataChannelService.getChannelConfigFromNegotiationStep(channelID, this.pageNumber-1)
+                        .then(counterChannelConfig => {
+
+                            this.counterChannelSensors = counterChannelConfig.associatedSensors;
+                            this.counterChannelServers = counterChannelConfig.associatedServers;
+                            this.counterSettings.serviceType = counterChannelConfig.privateServersType;
+                            this.counterSettings.hostRequest = counterChannelConfig.hostRequest;
+                            this.counterSettings.additionalNotes = counterChannelConfig.additionalNotes;
+                       })
+                       .catch(() => {
+                           alert("Error while doing getting historic step");
+                       });
+                }
+                else
+                {
+                        // get sensors
+                        this.dataChannelService.getAssociatedSensors(channelID)
+                            .then(sensors => {
+                                this.initialChannelSensors = sensors;
+                                this.counterChannelSensors = sensors;
+                            });
+
+                        // get servers
+                        this.dataChannelService.getAssociatedServers(channelID)
+                            .then(servers => {
+                                this.initialChannelServers = servers;
+                                this.counterChannelServers = servers;
+                            });
+                }
+            })
+            .catch(() => {
+                alert("Error while getting channel config");
             });
 
-        // get sensors
-        this.dataChannelService.getAssociatedSensors(channelID)
-            .then(sensors => {
-                this.channelSensors = sensors;
-            });
-
-        // get servers
-        this.dataChannelService.getAssociatedServers(channelID)
-            .then(servers => {
-                this.channelServers = servers;
-            });
 
         // get setup internal service boolean
         this.dataChannelService.getInternalService()
@@ -120,7 +165,7 @@ export class ChannelDetailsComponent implements OnInit {
                  this.hasInternalService = bInternalService;
              });
 
-        // get setup internal service boolean
+        // get setup filtering service boolean
         this.dataChannelService.getFilteringService()
              .then(bFilteringService => {
                  this.hasFilteringService = bFilteringService;
@@ -163,14 +208,39 @@ export class ChannelDetailsComponent implements OnInit {
     // confirm current page
     //-------------------------------------------------------------------------------------
     confirmPage(): void {
-       // Todo: not yet implemented
-       this.pageNumber++; // for testing
 
        const channelId = this.channelConfig["channelID"];
-       this.dataChannelService.doNegotiationStep(channelId, 'seller test', 'buyer test')
+
+       if(this.pageNumber == 0)
+       {
+           this.dataChannelService.setAdvancedConfig(channelId, this.displayStorageArea,
+                                                     this.initialSettings.additionalNotes,
+                                                     this.initialSettings.serviceType,
+                                                     this.initialSettings.hostRequest)
+               .then(() => {
+                   location.reload();
+               })
+               .catch(() => {
+                   alert("Error while setting advanced config");
+               });
+       }
+       else if(this.pageNumber == 1)
+       {
+             this.dataChannelService.setAdvancedConfig(channelId, this.displayStorageArea,
+                                                       this.counterSettings.additionalNotes,
+                                                       this.counterSettings.serviceType,
+                                                       this.counterSettings.hostRequest)
+                 .then(() => {
+                     location.reload();
+                 })
+                 .catch(() => {
+                     alert("Error while setting advanced config");
+                 });
+       }
+
+       this.dataChannelService.doNegotiationStep(channelId, this.sellerMessage, this.buyerMessage)
            .then(() => {
-               alert("configuration submitted");
-               //this.router.navigate(["dashboard"]);
+               location.reload();
            })
            .catch(() => {
                alert("Error while doing a negotiation step");
@@ -180,9 +250,16 @@ export class ChannelDetailsComponent implements OnInit {
     //-------------------------------------------------------------------------------------
     // renegotiate
     //-------------------------------------------------------------------------------------
-    renegotiateTerms(): void {
-       // Todo: not yet implemented
-       this.pageNumber = 0; // for testing
+    renegotiateTerms(numberOfSteps:number): void {
+
+       const channelId = this.channelConfig["channelID"];
+       this.dataChannelService.renegotiate(channelId, numberOfSteps)
+           .then(() => {
+               location.reload();
+           })
+           .catch(() => {
+               alert("Error while doing a negotiation step");
+           });
     }
 
     //-------------------------------------------------------------------------------------

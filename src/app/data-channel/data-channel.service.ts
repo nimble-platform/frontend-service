@@ -37,7 +37,6 @@ export class DataChannelService {
     }
 
     channelsForBusinessProcess(processID: string): Promise<any> {
-
         const url = `${this.url}/channel/business-process/${processID}`;
         const token = 'Bearer ' + this.cookieService.get("bearer_token");
         const headers = new Headers({'Authorization': token});
@@ -152,6 +151,31 @@ export class DataChannelService {
 
     getChannelConfigFromNegotiationStep(channelID: string, stepNumber: number): Promise<any> {
         const url = `${this.url}/channel/${channelID}/getChannelFromNegotiationStep/${stepNumber}`;
+        const token = 'Bearer ' + this.cookieService.get("bearer_token");
+        const headers = new Headers({'Authorization': token});
+        return this.http
+            .post(url, null, {headers: headers, withCredentials: true})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+    }
+
+    renegotiate(channelID: string, numberOfSteps: number): Promise<any> {
+        const url = `${this.url}/channel/${channelID}/renegotiate/${numberOfSteps}`;
+        const token = 'Bearer ' + this.cookieService.get("bearer_token");
+        const headers = new Headers({'Authorization': token});
+        return this.http
+            .post(url, null, {headers: headers, withCredentials: true})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+    }
+
+    setAdvancedConfig(channelID: string, usePrivateServers: boolean, additionalNotes: string,
+                      privateServersType: string, hostRequest: boolean): Promise<any> {
+
+        const url = `${this.url}/channel/${channelID}/setAdvancedConfig?usePrivateServers=${usePrivateServers}&privateServersType=${privateServersType}&hostRequest=${hostRequest}&additionalNotes=${additionalNotes}`;
+
         const token = 'Bearer ' + this.cookieService.get("bearer_token");
         const headers = new Headers({'Authorization': token});
         return this.http
