@@ -210,7 +210,9 @@ export class ProductDetailsComponent implements OnInit {
 
     onOrderQuantityChange(): void {
         this.priceWrapper.orderedQuantity.value = this.options.quantity;
-        this.frameContractQuotationWrapper.orderedQuantity.value = this.options.quantity;
+        if(this.frameContractQuotationWrapper != null) {
+            this.frameContractQuotationWrapper.orderedQuantity.value = this.options.quantity;
+        }
 
         // quantity change must be activated in the next iteration of execution
         // otherwise, the update discount method will use the old value of the quantity

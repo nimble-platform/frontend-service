@@ -195,9 +195,6 @@ export class NegotiationResponseComponent implements OnInit {
     }
 
     isDiscountIconVisibleInCustomerRequestColumn(): boolean {
-        console.log("rfq: " + this.wrapper.rfqTotalPriceString);
-        console.log("line: " + this.wrapper.lineDiscountPriceWrapper.totalPriceString)
-
         return this.wrapper.quotationDiscountPriceWrapper.appliedDiscounts.length > 0 &&
             this.wrapper.rfqTotalPriceString == this.wrapper.lineDiscountPriceWrapper.totalPriceString;
     }

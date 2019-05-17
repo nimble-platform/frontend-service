@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from "@angular/core";
 import { BPDataService } from "../bp-data-service";
 import { CallStatus } from "../../../common/call-status";
 import { CompanyNegotiationSettings } from "../../../user-mgmt/model/company-negotiation-settings";
+import {ThreadEventMetadata} from "../../../catalogue/model/publish/thread-event-metadata";
 
 @Component({
     selector: 'negotiation',
@@ -10,7 +11,8 @@ import { CompanyNegotiationSettings } from "../../../user-mgmt/model/company-neg
 export class NegotiationComponent implements OnInit {
 
     initCallStatus: CallStatus = new CallStatus();
-
+    negotiationProcessHistory: ThreadEventMetadata[] = [];
+    sliderIndex: number = -1;
     companyNegotiationSettings: CompanyNegotiationSettings;
 
     constructor(public bpDataService: BPDataService) {
@@ -27,6 +29,22 @@ export class NegotiationComponent implements OnInit {
                     this.initCallStatus.error("Error while initializing request for quotation.", error);
                 });
         }
+
+        let history: ThreadEventMetadata[] = this.bpDataService.bpActivityEvent.processHistory;
+        if(history) {
+            for(let processMetadata of history) {
+                if(processMetadata.processType == 'Negotiation') {
+                    this.negotiationProcessHistory.push(processMetadata);
+                }
+            }
+            this.sliderIndex = this.negotiationProcessHistory.length-1;
+            console.log(this.negotiationProcessHistory.length);
+        }
+    }
+
+    onSliderValueChange(sliderIndex: number): void {
+        // if(this.negotiationProcessHistory[sliderIndex].)
+        console.log(sliderIndex);
     }
 
     isLoading(): boolean {

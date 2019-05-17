@@ -4,7 +4,7 @@ import { Quotation } from "../../../catalogue/model/publish/quotation";
 import { Amount } from "../../../catalogue/model/publish/amount";
 import { Quantity } from "../../../catalogue/model/publish/quantity";
 import { PaymentTermsWrapper } from "../payment-terms-wrapper";
-import {copy, durationToString} from "../../../common/utils";
+import {copy, durationToString, periodToString} from "../../../common/utils";
 import { PriceWrapper } from "../../../common/price-wrapper";
 import { Address } from "../../../catalogue/model/publish/address";
 import { CompanyNegotiationSettings } from "../../../user-mgmt/model/company-negotiation-settings";
@@ -329,6 +329,14 @@ export class NegotiationModelWrapper {
         let tradingTerm: TradingTerm = this.rfq.tradingTerms.find(tradingTerm => tradingTerm.id == "FRAME_CONTRACT_DURATION");
         if(tradingTerm != null) {
             return tradingTerm.value.valueQuantity[0];
+        }
+        return null;
+    }
+
+    public get rfqFrameContractDurationString(): string {
+        let duration: Quantity = this.rfqFrameContractDuration;
+        if(duration != null) {
+            return durationToString(duration);
         }
         return null;
     }

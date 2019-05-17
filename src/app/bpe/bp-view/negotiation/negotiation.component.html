@@ -1,8 +1,14 @@
 <ng-container *ngIf="!isLoading() && bpDataService.getCatalogueLine()">
-    <negotiation-request *ngIf="!bpDataService.quotation && bpDataService.bpActivityEvent.userRole === 'buyer'">
-    </negotiation-request>
-    <negotiation-response *ngIf="bpDataService.quotation">
-    </negotiation-response>
+    <!--<input *ngIf="negotiationProcessHistory.length > 1" #processHistorySlider-->
+           <!--type="range" class="form-control-range"-->
+           <!--[(ngModel)]="sliderIndex" min="0" [max]="negotiationProcessHistory.length-1" [step]="1"-->
+           <!--(change)="onSliderValueChange($event.target.value)"/>-->
+    <div [hidden]="sliderIndex != negotiationProcessHistory.length-1">
+        <negotiation-request *ngIf="!bpDataService.quotation && bpDataService.bpActivityEvent.userRole === 'buyer'">
+        </negotiation-request>
+        <negotiation-response *ngIf="bpDataService.quotation">
+        </negotiation-response>
+    </div>
 </ng-container>
 
 <call-status *ngIf="isLoading()" [callStatus]="initCallStatus" [large]="true">

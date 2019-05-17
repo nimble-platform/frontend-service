@@ -11,6 +11,7 @@ import { CompanyNegotiationSettings } from "../../../user-mgmt/model/company-neg
 import {TradingTerm} from "../../../catalogue/model/publish/trading-term";
 import {MultiTypeValue} from "../../../catalogue/model/publish/multi-type-value";
 import {DiscountPriceWrapper} from "../../../common/discount-price-wrapper";
+import {Clause} from "../../../catalogue/model/publish/clause";
 
 export class QuotationWrapper {
 
@@ -78,6 +79,14 @@ export class QuotationWrapper {
         return null;
     }
 
+    public get rfqFrameContractDurationString(): string {
+        let duration: Quantity = this.frameContractDuration;
+        if(duration != null) {
+            return durationToString(duration);
+        }
+        return null;
+    }
+
     public set frameContractDuration(duration: Quantity) {
         let tradingTerm: TradingTerm = this.quotation.tradingTerms.find(tradingTerm => tradingTerm.id == "FRAME_CONTRACT_DURATION");
         if(tradingTerm == null) {
@@ -87,5 +96,9 @@ export class QuotationWrapper {
         } else {
             tradingTerm.value.valueQuantity[0] = duration;
         }
+    }
+
+    public get dataMonitoringPromised(): boolean {
+        return this.quotation.dataMonitoringPromised;
     }
 }
