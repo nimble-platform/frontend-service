@@ -394,9 +394,7 @@ export class BPDataService{
         contract.id = UBLModelUtils.generateUUID();
 
         for(let clause of copyQuotation.termOrCondition){
-
             let newClause:Clause = JSON.parse(JSON.stringify(clause));
-            newClause.id = UBLModelUtils.generateUUID();
             contract.clause.push(newClause);
         }
         // push contract to order.contract
@@ -419,9 +417,7 @@ export class BPDataService{
         contract.id = UBLModelUtils.generateUUID();
 
         for(let clause of copyRfq.termOrCondition){
-
             let newClause:Clause = JSON.parse(JSON.stringify(clause));
-            newClause.id = UBLModelUtils.generateUUID();
             contract.clause.push(newClause);
         }
         // push contract to order.contract
