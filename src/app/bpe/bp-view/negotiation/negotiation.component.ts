@@ -5,6 +5,7 @@ import { CompanyNegotiationSettings } from "../../../user-mgmt/model/company-neg
 import {ThreadEventMetadata} from "../../../catalogue/model/publish/thread-event-metadata";
 import {DocumentService} from "../document-service";
 import {BpActivityEvent} from "../../../catalogue/model/publish/bp-start-event";
+import {Subscription} from "rxjs/Subscription";
 
 @Component({
     selector: 'negotiation',
@@ -14,7 +15,7 @@ export class NegotiationComponent implements OnInit, OnDestroy {
 
     initCallStatus: CallStatus = new CallStatus();
     negotiationDocumentsCallStatus: CallStatus = new CallStatus();
-    bpActivityEventSubs: Subscription<BpActivityEvent>;
+    bpActivityEventSubs: Subscription;
     negotiationProcessList: any[] = [];
     negotiationDocuments: any[] = [];
     companyNegotiationSettings: CompanyNegotiationSettings;
