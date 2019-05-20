@@ -1,6 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import { CallStatus } from "../../../common/call-status";
-import { UBLModelUtils } from "../../../catalogue/model/ubl-model-utils";
 import { BPEService } from "../../bpe.service";
 import {Clause} from '../../../catalogue/model/publish/clause';
 import {UserService} from '../../../user-mgmt/user.service';
@@ -77,12 +76,17 @@ export class TermsAndConditionsComponent implements OnInit {
 
             // set default term and condition clauses
             this.defaultTermAndConditionClauses = termsAndConditions;
+            // sort terms and conditions to get the correct order
+            this.defaultTermAndConditionClauses.sort((clause1, clause2) => {
+               let order1 = Number(clause1.id.substring(0,clause1.id.indexOf("_")));
+               let order2 = Number(clause2.id.substring(0,clause2.id.indexOf("_")));
+               return order1 - order2;
+            });
 
             // create terms and conditions if we do not have any
             if(this.termsAndConditions.length == 0){
                 for(let clause of this.defaultTermAndConditionClauses){
                     let newClause:Clause = JSON.parse(JSON.stringify(clause));
-                    newClause.id = UBLModelUtils.generateUUID();
                     this.termsAndConditions.push(newClause);
                 }
             }
@@ -121,7 +125,7 @@ export class TermsAndConditionsComponent implements OnInit {
 
             let element = document.getElementById(this.generateIdForClause(index));
 
-            clause = this.getClause(this.getClauseName(clause));
+            clause = this.getClause(clause.id);
 
             let text = clause.content[0].value
 
@@ -229,29 +233,18 @@ export class TermsAndConditionsComponent implements OnInit {
         }
     }
 
-    private getClause(sectionName:string){
+    private getClause(clauseId:string){
         for(let clause of this.termsAndConditions){
-            let text = clause.content[0].value;
-            let startIndex = text.indexOf(" ");
-            let endIndex = text.indexOf(":");
-            let name = text.substring(startIndex+1,endIndex);
-            if(endIndex == -1){
-                name = "PURCHASE ORDER TERMS AND CONDITIONS";
-            }
-            if(sectionName == name){
+            if(clause.id == clauseId){
                 return clause;
             }
         }
     }
 
     getClauseName(clause:Clause){
-        let startIndex = clause.content[0].value.indexOf(" ");
-        let endIndex = clause.content[0].value.indexOf(":");
+        let startIndex = clause.id.indexOf("_");
 
-        if(endIndex == -1){
-            return "PURCHASE ORDER TERMS AND CONDITIONS";
-        }
-        return clause.content[0].value.substring(startIndex+1,endIndex);
+        return clause.id.substring(startIndex+1);
     }
 
     generateIdForClause(clauseId:number){
