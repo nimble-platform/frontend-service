@@ -30,6 +30,7 @@ import { TnTService } from './tnt/tnt.service';
 import { AnalyticsService } from './analytics/analytics.service';
 import { EpcService } from './bpe/bp-view/epc-service';
 import {DocumentService} from "./bpe/bp-view/document-service";
+import {LogisticPublishingService} from './catalogue/publish/logistic-publishing.service';
 
 @NgModule({
     imports: [
@@ -54,6 +55,7 @@ import {DocumentService} from "./bpe/bp-view/document-service";
 		BPDataService,
 		CatalogueService,
         CategoryService,
+        LogisticPublishingService,
         PublishService,
 		ExplorativeSearchService,
 		SimpleSearchService,

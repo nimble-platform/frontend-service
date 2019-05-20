@@ -55,9 +55,10 @@ import {ShipmentStage} from "./publish/shipment-stage";
 import {copy, isNaNNullAware, selectPreferredName} from "../../common/utils";
 import {Text} from "./publish/text";
 import {Attachment} from "./publish/attachment";
-import {LCPAInput} from "./publish/lcpa-input";
-import {LCPAOutput} from "./publish/lcpa-output";
 import {LifeCyclePerformanceAssessmentDetails} from "./publish/life-cycle-performance-assessment-details";
+import {PartyName} from './publish/party-name';
+import {MultiTypeValue} from "./publish/multi-type-value";
+import {Clause} from "./publish/clause";
 
 /**
  * Created by suat on 05-Jul-17.
@@ -111,7 +112,7 @@ export class UBLModelUtils {
     }
 
     public static createCatalogueLine(catalogueUuid:string, providerParty: Party,
-        settings: CompanyNegotiationSettings): CatalogueLine {
+        settings: CompanyNegotiationSettings,dimensionUnits:string[]=[]): CatalogueLine {
         // create additional item properties
         const additionalItemProperties = new Array<ItemProperty>();
 
@@ -121,7 +122,7 @@ export class UBLModelUtils {
 
         // create item
         const uuid:string = this.generateUUID();
-        const item = new Item([], [], [], [], additionalItemProperties, providerParty, this.createItemIdentificationWithId(uuid), docRef, [], [], [], null);
+        const item = new Item([], [], [], [], additionalItemProperties, providerParty, this.createItemIdentificationWithId(uuid), docRef, [], [], this.createDimensions(dimensionUnits), null);
 
         // create goods item
         const goodsItem = new GoodsItem(uuid, item, this.createPackage(),
@@ -136,6 +137,66 @@ export class UBLModelUtils {
         catalogueLine.goodsItem.containingPackage.quantity.unitCode = "item(s)";
 
         return catalogueLine;
+    }
+
+    public static createCatalogueLinesForLogistics(catalogueUuid:string, providerParty: Party, settings: CompanyNegotiationSettings,logisticRelatedServices, eClassLogisticCategories:Category[],furnitureOntologyLogisticCategories:Category[]): Map<string,CatalogueLine>{
+        let logisticCatalogueLines: Map<string,CatalogueLine> = new Map<string, CatalogueLine>();
+        // if we have furniture ontology categories for logistics services,then use them.
+        if(furnitureOntologyLogisticCategories){
+            let furnitureOntologyLogisticRelatedServices = logisticRelatedServices["FurnitureOntology"];
+            let eClassLogisticRelatedServices = logisticRelatedServices["eClass"];
+
+            // for each service type, create a catalogue line
+            for(let serviceType of Object.keys(furnitureOntologyLogisticRelatedServices)){
+                // get corresponding furniture ontology category
+                let furnitureOntologyCategory = this.getCorrespondingCategory(furnitureOntologyLogisticRelatedServices[serviceType],furnitureOntologyLogisticCategories);
+                // get corresponding eClass category
+                let eClassCategory = null;
+                if(eClassLogisticCategories && eClassLogisticRelatedServices[serviceType]){
+                    eClassCategory = this.getCorrespondingCategory(eClassLogisticRelatedServices[serviceType],eClassLogisticCategories);
+                }
+
+                // create the catalogue line
+                let catalogueLine = this.createCatalogueLine(catalogueUuid,providerParty,settings);
+                // add item name and descriptions
+                let newItemName: Text = new Text("",DEFAULT_LANGUAGE());
+                let newItemDescription: Text = new Text("",DEFAULT_LANGUAGE());
+                catalogueLine.goodsItem.item.name.push(newItemName);
+                catalogueLine.goodsItem.item.description.push(newItemDescription);
+                // clear additional item properties
+                catalogueLine.goodsItem.item.additionalItemProperty = [];
+                // add additional item properties
+                for(let property of furnitureOntologyCategory.properties){
+                    catalogueLine.goodsItem.item.additionalItemProperty.push(this.createAdditionalItemProperty(property,furnitureOntologyCategory));
+                }
+                // add its default furniture ontology category
+                catalogueLine.goodsItem.item.commodityClassification.push(this.createCommodityClassification(furnitureOntologyCategory));
+                // add its default eClass category if exists
+                if(eClassCategory){
+                    catalogueLine.goodsItem.item.commodityClassification.push(this.createCommodityClassification(eClassCategory));
+                }
+                // push it to the list
+                logisticCatalogueLines.set(serviceType,catalogueLine);
+            }
+            // create a dummy catalogue line to represent transport services
+            let catalogueLine = this.createCatalogueLine(catalogueUuid,providerParty,settings);
+            let category = this.getCorrespondingCategory(furnitureOntologyLogisticRelatedServices["ROADTRANSPORT"],furnitureOntologyLogisticCategories);
+            for(let property of category.properties){
+                catalogueLine.goodsItem.item.additionalItemProperty.push(this.createAdditionalItemProperty(property,category));
+            }
+            // push it to the list
+            logisticCatalogueLines.set("TRANSPORT",catalogueLine);
+        }
+
+        return logisticCatalogueLines;
+    }
+
+    private static getCorrespondingCategory(categoryUri,logisticCategories:Category[]){
+        for(let category of logisticCategories){
+            if(category.id == categoryUri){
+                return category;
+            }
+        }
     }
 
     public static createOrder(): Order {
@@ -200,7 +261,7 @@ export class UBLModelUtils {
         const lineItem: LineItem = this.createLineItem(quantity, price, item);
         const requestForQuotationLine: RequestForQuotationLine = new RequestForQuotationLine(lineItem);
         const rfq = new RequestForQuotation(this.generateUUID(), [""], false, null, null, new Delivery(),
-        [requestForQuotationLine], negotiationOptions, this.getDefaultPaymentMeans(settings), this.getDefaultPaymentTerms(settings));
+        [requestForQuotationLine], negotiationOptions, this.getDefaultPaymentMeans(settings), this.getDefaultPaymentTerms(settings), [], []);
 
         // TODO remove this custom dimension addition once the dimension-view is improved to handle such cases
         let handlingUnitDimension: Dimension = new Dimension();
@@ -219,7 +280,7 @@ export class UBLModelUtils {
         const lineItem: LineItem = this.createLineItem(quantity, price, item);
         const requestForQuotationLine: RequestForQuotationLine = new RequestForQuotationLine(lineItem);
         const rfq = new RequestForQuotation(this.generateUUID(), [""], false, null, null, new Delivery(),
-            [requestForQuotationLine], new NegotiationOptions(), null, null);
+            [requestForQuotationLine], new NegotiationOptions(), null, null, null, null);
 
         rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure = order.orderLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure;
         rfq.requestForQuotationLine[0].lineItem.deliveryTerms.deliveryLocation.address = order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address;
@@ -251,7 +312,7 @@ export class UBLModelUtils {
         const requestForQuotationLine:RequestForQuotationLine = new RequestForQuotationLine(lineItem);
         const settings = new CompanyNegotiationSettings();
         const rfq = new RequestForQuotation(this.generateUUID(), [""], false, null, null, new Delivery(),
-            [requestForQuotationLine], new NegotiationOptions(), this.getDefaultPaymentMeans(settings), this.getDefaultPaymentTerms(settings));
+            [requestForQuotationLine], new NegotiationOptions(), this.getDefaultPaymentMeans(settings), this.getDefaultPaymentTerms(settings), [], []);
 
         rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.goodsItem[0].item.name = transportExecutionPlanRequest.consignment[0].consolidatedShipment[0].goodsItem[0].item.name;
         rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.consignment[0].grossVolumeMeasure = transportExecutionPlanRequest.consignment[0].grossVolumeMeasure;
@@ -272,22 +333,22 @@ export class UBLModelUtils {
     }
 
     public static getDefaultPaymentTerms(settings?: CompanyNegotiationSettings): PaymentTerms {
-        const terms = new PaymentTerms([], [
-            new TradingTerm("Payment_In_Advance",[new Text("Payment in advance")],"PIA",[new Text("false")]),
+        const terms = new PaymentTerms([
+            new TradingTerm("Payment_In_Advance",[new Text("Payment in advance")],"PIA", new MultiTypeValue(null, 'STRING', [new Text("false")], null, null)),
             // new TradingTerm("Values_Net","e.g.,NET 10,payment 10 days after invoice date","Net %s",[null]),
-            new TradingTerm("End_of_month",[new Text("End of month")],"EOM",[new Text("false")]),
-            new TradingTerm("Cash_next_delivery",[new Text("Cash next delivery")],"CND",[new Text("false")]),
-            new TradingTerm("Cash_before_shipment",[new Text("Cash before shipment")],"CBS",[new Text("false")]),
+            new TradingTerm("End_of_month",[new Text("End of month")],"EOM", new MultiTypeValue(null, 'STRING', [new Text("false")], null, null)),
+            new TradingTerm("Cash_next_delivery",[new Text("Cash next delivery")],"CND", new MultiTypeValue(null, 'STRING', [new Text("false")], null, null)),
+            new TradingTerm("Cash_before_shipment",[new Text("Cash before shipment")],"CBS", new MultiTypeValue(null, 'STRING', [new Text("false")], null, null)),
             // new TradingTerm("Values_MFI","e.g.,21 MFI,21st of the month following invoice date","%s MFI", [null]),
             // new TradingTerm("Values_/NET","e.g.,1/10 NET 30,1% discount if payment received within 10 days otherwise payment 30 days after invoice date","%s/%s NET %s",[null,null,null]),
-            new TradingTerm("Cash_on_delivery",[new Text("Cash on delivery")],"COD",[new Text("false")]),
-            new TradingTerm("Cash_with_order",[new Text("Cash with order")],"CWO",[new Text("false")]),
-            new TradingTerm("Cash_in_advance",[new Text("Cash in advance")],"CIA",[new Text("false")]),
+            new TradingTerm("Cash_on_delivery",[new Text("Cash on delivery")],"COD", new MultiTypeValue(null, 'STRING', [new Text("false")], null, null)),
+            new TradingTerm("Cash_with_order",[new Text("Cash with order")],"CWO", new MultiTypeValue(null, 'STRING', [new Text("false")], null, null)),
+            new TradingTerm("Cash_in_advance",[new Text("Cash in advance")],"CIA", new MultiTypeValue(null, 'STRING', [new Text("false")], null, null)),
         ]);
 
         if(settings) {
             for(const term of terms.tradingTerms) {
-                term.value[0].value = this.tradingTermToString(term) === settings.paymentTerms[0] ? "true" : "false";
+                term.value.value[0].value = this.tradingTermToString(term) === settings.paymentTerms[0] ? "true" : "false";
             }
         }
 
@@ -334,7 +395,7 @@ export class UBLModelUtils {
         const documentReference: DocumentReference = new DocumentReference(rfq.id);
 
         const quotation = new Quotation(this.generateUUID(), [""], new Code(), new Code(), 1, false, documentReference,
-            customerParty, supplierParty, [quotationLine], rfq.paymentMeans, rfq.paymentTerms);
+            customerParty, supplierParty, [quotationLine], rfq.paymentMeans, rfq.paymentTerms, rfq.tradingTerms, rfq.termOrCondition);
         return quotation;
     }
 
@@ -465,6 +526,15 @@ export class UBLModelUtils {
         return item;
     }
 
+    public static createDimensions(dimensionUnits:string[]):Dimension[]{
+        let dimensions:Dimension[] = [];
+        for(let unit of dimensionUnits){
+            let unitName = unit.charAt(0).toUpperCase() + unit.slice(1);
+            dimensions.push(new Dimension(unitName));
+        }
+        return dimensions;
+    }
+
     public static createLineItem(quantity, price, item):LineItem {
         return new LineItem(quantity, [], [new Delivery()], new DeliveryTerms(), price, item, new Period(), null);
     }
@@ -567,22 +637,26 @@ export class UBLModelUtils {
     }
 
     public static getPartyDisplayName(party: Party):string{
+        return this.getPartyDisplayNameForPartyName(party.partyName);
+    }
+
+    public static getPartyDisplayNameForPartyName(partyNames: PartyName[]):string{
         let defaultLanguage = DEFAULT_LANGUAGE();
 
         let englishName = null;
-        for(let name of party.partyName){
-            if(name.name.languageID == "en"){
-                englishName = name.name.value;
+        for(let partyName of partyNames){
+            if(partyName.name.languageID == "en"){
+                englishName = partyName.name.value;
             }
-            if(name.name.languageID == defaultLanguage){
-                return name.name.value;
+            if(partyName.name.languageID == defaultLanguage){
+                return partyName.name.value;
             }
         }
 
         if(englishName){
             return englishName;
         }
-        return party.partyName[0].name.value;
+        return partyNames[0].name.value;
     }
 
     public static isFilledLCPAInput(lcpaDetails: LifeCyclePerformanceAssessmentDetails): boolean {
@@ -615,5 +689,133 @@ export class UBLModelUtils {
             return true;
         }
         return false;
+    }
+
+    public static areQuantitiesEqual(quantity1: Quantity, quantity2: Quantity): boolean {
+        if(quantity1 == null && quantity2 == null) {
+            return true;
+        }
+        if(quantity1 == null || quantity2 == null) {
+            return false;
+        }
+        if(quantity1.value == quantity2.value && quantity1.unitCode == quantity2.unitCode) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static areAmountsEqual(amount1: Amount, amount2: Amount): boolean {
+        if(amount1 == null && amount2 == null) {
+            return true;
+        }
+        if(amount1 == null || amount2 == null) {
+            return false;
+        }
+        if(amount1.value == amount2.value && amount1.currencyID == amount2.currencyID) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static areTermsAndConditionListsDifferent(firstList: Clause[], secondList: Clause[]): boolean {
+        // both null
+        if(firstList == null && secondList == null) {
+            return false;
+        }
+        // one of them is null
+        if(firstList == null || secondList == null) {
+            return true;
+        }
+        // check sizes
+        if(firstList.length != secondList.length) {
+            return true;
+        }
+        // check inner values
+        for(let clause of firstList) {
+            // find the corresponding clause in the passed array
+            let correspondingClause: Clause = null;
+            for(let otherClause of secondList) {
+                if(clause.id == otherClause.id) {
+                    correspondingClause = otherClause;
+                    break;
+                }
+            }
+            // did not found the corresponding clause
+            if(correspondingClause == null) {
+                return true;
+
+            } else {
+                // check the trading terms lists in the clauses
+                // both null
+                if(clause.tradingTerms == null && correspondingClause.tradingTerms == null) {
+                    continue;
+                }
+                // one of them is null
+                if(clause.tradingTerms == null || correspondingClause.tradingTerms == null) {
+                    return true;
+                }
+                // check sizes
+                if(clause.tradingTerms.length != correspondingClause.tradingTerms.length) {
+                    return true;
+                }
+
+                // check the terms themselves
+                for(let term of clause.tradingTerms) {
+                    // find the corresponding clause in the passed array
+                    let correspondingTerm: TradingTerm = null;
+                    for (let otherTerm of correspondingClause.tradingTerms) {
+                        if (term.id == otherTerm.id) {
+                            correspondingTerm = otherTerm;
+                            break;
+                        }
+                    }
+                    // did not found the corresponding term
+                    if(correspondingTerm == null) {
+                        return true;
+
+                    } else {
+                        let qualifier: string = term.value.valueQualifier;
+                        // qualifiers do not match
+                        if(qualifier != term.value.valueQualifier) {
+                            return true;
+                        }
+                        // skip if both values are null
+                        if(term.value == null && correspondingTerm.value == null) {
+                            continue;
+                        }
+
+                        // value existences do not match
+                        if((term.value == null && correspondingTerm.value != null) ||
+                            term.value != null && correspondingTerm.value == null) {
+                            return true;
+                        }
+
+                        // for it is possible to specify single value for terms concerning the terms and conditions
+                        if(qualifier == 'STRING') {
+                            if(term.value.value[0].value != correspondingTerm.value.value[0].value ||
+                                term.value.value[0].languageID != correspondingTerm.value.value[0].languageID) {
+
+                            }
+                        } else if(qualifier == 'NUMBER') {
+                            if(term.value.valueDecimal[0] != correspondingTerm.value.valueDecimal[0]) {
+                                return true;
+                            }
+                        } else if(qualifier == 'QUANTITY') {
+                            if(term.value.valueQuantity[0].value != correspondingTerm.value.valueQuantity[0].value ||
+                                term.value.valueQuantity[0].unitCode != correspondingTerm.value.valueQuantity[0].unitCode) {
+                                return true;
+                            }
+                        } else if(qualifier == 'CODE') {
+                            if(term.value.valueCode[0].value != correspondingTerm.value.valueCode[0].value ||
+                                term.value.valueCode[0].name != correspondingTerm.value.valueCode[0].name) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }

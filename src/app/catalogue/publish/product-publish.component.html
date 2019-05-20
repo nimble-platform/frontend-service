@@ -17,6 +17,19 @@
     </li>
 </ul>
 
+<div *ngIf="cataloguesIds.length > 1 && publishingGranularity !== 'bulk'" class="row space-before">
+        <div class="col-2 category-list-label">
+            <strong *ngIf="!productCatalogueRetrievalStatus.isLoading()">Catalogue: </strong>
+            <strong class="mr-2" *ngIf="productCatalogueRetrievalStatus.isLoading()">Fetching Catalogues </strong>
+            <call-status [callStatus]="productCatalogueRetrievalStatus"></call-status>
+        </div>
+        <div class="col-4">
+          <select class="custom-select" [(ngModel)]="selectedCatalogue" (change)="changeCat()">
+              <option *ngFor="let catalogue of cataloguesIds"  [value]=catalogue>{{catalogue}}</option>
+          </select>
+        </div>
+</div>
+
 <!-- Selected Categories -->
 <div class="row space-before">
     <div class="col-2 category-list-label">
@@ -44,108 +57,46 @@
 
 <ng-container *ngIf="publishingGranularity === 'single' && catalogueLine">
     <hr>
-
-    <!-- Image, Name & Description -->
-    <div class="row space-before">
-        <!-- Image -->
-        <div class="col-3 product-image">
-            <img *ngIf="catalogueLine.goodsItem.item.productImage.length == 0"
-                class="img-max"
-                src="assets/empty_img.png">
-            <img *ngIf="catalogueLine.goodsItem.item.productImage.length > 0"
-                class="img-selected d-block active"
-                src="data:{{catalogueLine.goodsItem.item.productImage[0].mimeCode}};base64,{{catalogueLine.goodsItem.item.productImage[0].value}}"/>
-        </div>
-
-        <div class="col-9">
-            <div *ngFor="let itemName of catalogueLine.goodsItem.item.name; let i = index" class="space-after">
-                <!-- Name -->
-                <text-input label="Name" [(text)]="itemName.value" [rows]="1" [maxLength]="2047" [rowClass]="'m-0'" [valueClass]="'col-8'" [(languageId)]="itemName.languageID" [languageIdClass]="'col-1'" (languageIdChange)="catalogueLine.goodsItem.item.name[i].languageID = $event;catalogueLine.goodsItem.item.description[i].languageID = $event">
-                </text-input>
-                <!-- Description -->
-                <text-input *ngIf="i==0" label="Description" [(text)]="catalogueLine.goodsItem.item.description[i].value" [rows]="6" [maxLength]="2047" [rowClass]="'m-0 space-before'" [valueClass]="'col-8'">
-                </text-input>
-                <!-- Description -->
-                <text-input *ngIf="i>0" label="Description" [(text)]="catalogueLine.goodsItem.item.description[i].value" [rows]="6" [maxLength]="2047" [rowClass]="'m-0 space-before'" [flexClass]="'col-1 pr-0'" [valueClass]="'col-8'" (deleteTextInput)="deleteItemNameDescription(i)" [deleteButtonStyle]="'btn-danger'">
-                </text-input>
-            </div>
-            <div class="col-12 pr-0 align-right"><button class='btn btn-outline-primary' (click)="addItemNameDescription()">Add Name & Description</button></div>
-            <!-- product ID -->
-            <div class="col-12 pr-0 space-before"><small class="float-right">ID: {{ catalogueLine.goodsItem.item.manufacturersItemIdentification.id }}</small></div>
-        </div>
-    </div>
-
-    <!-- Add Images -->
-    <div class="row space-before">
-        <div class="col-12 d-flex flex-wrap">
-            <div *ngFor="let image of catalogueLine.goodsItem.item.productImage; let i = index" class="add-image">
-                <img class="image-small img-thumbnail" src="data:{{image.mimeCode}};base64,{{image.value}}" />
-                <i class="fa fa-times-circle delete-image" (click)="onRemoveImage(i)"></i>
-            </div>
-            <div class="add-image btn btn-outline-primary">
-                <span>Add Image</span>
-                <input type="file" (change)="onAddImage($event)"/>
-                <i class="fa fa-question-circle delete-image" (click)="onClickImageRecommendations(imageRecommendationModal)"></i>
-            </div>
-        </div>
-    </div>
-
-    <!-- Image recommendations Modal -->
-    <ng-template #imageRecommendationModal let-d="dismiss">
-        <div class="modal-header">
-            <h4 class="modal-title">Image recommendations</h4>
-            <button type="button" class="close" aria-label="Close" (click)="d('')">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <div class="modal-body">
-            <ul>
-                <li>Images must be files with one of the "png", "jpg" or "gif" formats.</li>
-                <li>Although not mandatory, square or squarish images are recommended for better visibility.</li>
-                <li>Images exceeding 1 MB in size are not permitted.</li>
-            </ul>
-        </div>
-    </ng-template>
-
+    <name-description-panel [catalogueLine]="catalogueLine" [productIdEditable]="isProductIdEditable()"></name-description-panel>
     <hr>
 
     <!-- Tabs for Product -->
-    <ng-container *ngIf="!isLogistics">
+    <ng-container>
         <div class="row space-before">
             <div class="col-12">
                 <ul class="nav nav-tabs">
                     <li class="nav-item">
                         <a href id="DETAILS" class="nav-link"
-                            [ngClass]="{ active: selectedTabSinglePublish === 'DETAILS'}"
-                            (click)="onSelectTabSinglePublish($event)">
+                           [ngClass]="{ active: selectedTabSinglePublish === 'DETAILS'}"
+                           (click)="onSelectTabSinglePublish($event)">
                             Details
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href id="PRICE" class="nav-link"
-                            [ngClass]="{ active: selectedTabSinglePublish === 'PRICE'}"
-                            (click)="onSelectTabSinglePublish($event)">
+                           [ngClass]="{ active: selectedTabSinglePublish === 'PRICE'}"
+                           (click)="onSelectTabSinglePublish($event)">
                             Price
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href id="DELIVERY_TRADING" class="nav-link"
-                            [ngClass]="{ active: selectedTabSinglePublish === 'DELIVERY_TRADING'}"
-                            (click)="onSelectTabSinglePublish($event)">
+                           [ngClass]="{ active: selectedTabSinglePublish === 'DELIVERY_TRADING'}"
+                           (click)="onSelectTabSinglePublish($event)">
                             Delivery &amp; Trading
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href id="CERTIFICATES" class="nav-link"
-                            [ngClass]="{ active: selectedTabSinglePublish === 'CERTIFICATES'}"
-                            (click)="onSelectTabSinglePublish($event)">
+                           [ngClass]="{ active: selectedTabSinglePublish === 'CERTIFICATES'}"
+                           (click)="onSelectTabSinglePublish($event)">
                             Certificates
                         </a>
                     </li>
                     <li *ngIf="config.showTrack" class="nav-item">
                         <a href id="TRACK_TRACE" class="nav-link"
-                            [ngClass]="{ active: selectedTabSinglePublish === 'TRACK_TRACE'}"
-                            (click)="onSelectTabSinglePublish($event)">
+                           [ngClass]="{ active: selectedTabSinglePublish === 'TRACK_TRACE'}"
+                           (click)="onSelectTabSinglePublish($event)">
                             Track &amp; Trace
                         </a>
                     </li>
@@ -163,6 +114,36 @@
         <!-- Product Details Tab -->
         <div class="row space-before" *ngIf="selectedTabSinglePublish === 'DETAILS'">
             <div class="col-12">
+                <button class='btn btn-outline-primary' (click)="toggleDimensionCard()">Dimensions</button>
+                <div *ngIf="showDimensions" >
+                    <div class="row" *ngFor="let multiValuedDimension of multiValuedDimensions">
+                        <div class="col-3" style="align-self:center">
+                            <strong>{{multiValuedDimension.attributeID}} : </strong>
+                        </div>
+                        <div class="col-6">
+                            <table class="table table-borderless mb-0">
+                                <tbody>
+                                <tr *ngFor="let quantity of multiValuedDimension.measure;let i=index">
+                                    <td>
+                                        <quantity-input [quantity]="quantity" rowClass="quantity-input" [quantityUnits]="dimensionUnits">
+                                        </quantity-input>
+                                    </td>
+                                    <td *ngIf="i>0" class="align-right" >
+                                        <button class="btn btn-danger"  type="button" (click)="onRemoveDimension(multiValuedDimension.attributeID,quantity)">&times;</button>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-3" style="align-self:center">
+                            <button class="btn btn-outline-primary" (click)="onAddDimension(multiValuedDimension.attributeID)">
+                                Add
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
                 <div class="row" *ngFor="let prop of getProductProperties()">
                     <div class="col-3" style="align-self:center">
                         <strong [title]="getDefinition(prop)">{{ getPrettyName(prop) }}: </strong>
@@ -170,12 +151,12 @@
                     <div class="col-6">
                         <table *ngIf="prop.valueQualifier === 'BINARY'" class="table table-borderless mb-0">
                             <tbody>
-                              <tr>
+                            <tr>
                                 <td>
-                                  <file-input [binaryObjects]="prop.valueBinary" [multiple]="true" [maxSize]=1>
-                                  </file-input>
+                                    <file-input [binaryObjects]="prop.valueBinary" [multiple]="true" [maxSize]=1>
+                                    </file-input>
                                 </td>
-                              </tr>
+                            </tr>
                             </tbody>
                         </table>
                         <table *ngIf="prop.valueQualifier !== 'BINARY'" class="table table-borderless mb-0">
@@ -300,87 +281,24 @@
         </div>
     </ng-container>
 
-    <!-- Logistics tabs -->
-    <div *ngIf="isLogistics">
-        <div class="row space-before">
-            <div class="col-12">
-                <ul class="nav nav-tabs">
-                    <li class="nav-item">
-                        <a href id="DETAILS" class="nav-link"
-                            [ngClass]="{ active: selectedTabSinglePublish === 'DETAILS'}"
-                            (click)="onSelectTabSinglePublish($event)">
-                            Service Information
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href id="PRICE" class="nav-link"
-                            [ngClass]="{ active: selectedTabSinglePublish === 'PRICE'}"
-                            (click)="onSelectTabSinglePublish($event)">
-                            Service Details
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-        <div class="row space-before" [hidden]="selectedTabSinglePublish !== 'DETAILS'">
-            <div class="col-12">
-                <transportation-service-input [catalogueLine]="catalogueLine" presentationMode="edit">
-                </transportation-service-input>
-            </div>
-        </div>
-        <div class="row space-before"[hidden]="selectedTabSinglePublish !== 'PRICE'">
-            <div class="col-12">
-                <div class="row" *ngFor="let prop of getProductProperties()">
-                    <div class="col-3" style="align-self:center">
-                        <strong>{{ getPrettyName(prop) }}: </strong>
-                    </div>
-                    <div class="col-8 object-list">
-                        <input type="checkbox" class="form-check-input boolean-value-input"
-                            [checked]="prop.value[0] == 'true'" *ngIf="prop.valueQualifier === 'BOOLEAN'"
-                            (change)="prop.value[0] == 'true ' ? prop.value[0] = 'false' : prop.value[0] = 'true'">
-                        <ng-container *ngIf="prop.valueQualifier !== 'BOOLEAN'">
-                            <div *ngFor="let value of getValuesAsString(prop); let i = index">
-                                <div *ngIf="value!=''" class="bordered value-pill" title="{{ value }}">
-                                  <span>{{ value }}</span>
-                                  <!--
-                                  <span class="mr-1">{{ value }}</span>
-                                  <i class="fa fa-times-circle mt-1" placement="right" (click)="onRemoveValue(prop, i)"></i>
-                                  -->
-                                </div>
-                            </div>
-                            <button class="btn btn-outline-primary btn-add-category" (click)="onEditProperty(prop)">Edit Value(s)</button>
-                        </ng-container>
-                    </div>
-                    <div class="col-1" style="align-self:center">
-                        <button class="btn btn-danger btn-remove-property" (click)="onRemoveProperty(prop)">Delete</button>
-                    </div>
-                </div>
-                <div *ngIf="!hasSelectedProperties()" class="space-before">
-                    No selected properties.
-                    <a href class="btn-link" (click)="showCategoriesModal(categoriesModal, $event)">
-                        Select properties from product / service categories.
-                    </a>
-                </div>
-                <div *ngIf="hasSelectedProperties()" class="space-before">
-                    <a href class="btn-link" (click)="showCategoriesModal(categoriesModal, $event)">Add more properties from product / service categories.</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <hr>
 
     <!-- Actions -->
     <div class="row actions-row pr-0">
-        <div class="col-7 call-status-col"><call-status [callStatus]="publishStatus"></call-status></div>
+        <div class="col-4 call-status-col"><call-status [callStatus]="publishStatus"></call-status></div>
         <div class="col-2">
             <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">
-                Back
+                Cancel
             </button>
         </div>
         <div class="col-3">
-            <button class="btn btn-primary action" [disabled]="isLoading() || !isValidCatalogueLine()" (click)="onPublish()">
-                {{ publishStateService.publishMode === "edit" ? "Save" : "Publish"  }}
+            <button class="btn btn-primary action" [disabled]="isLoading() || !isValidCatalogueLine()" (click)="onPublish(false)">
+                {{ publishStateService.publishMode === "edit" ? "Save & Continue" : "Publish & Continue"  }}
+            </button>
+        </div>
+        <div class="col-3">
+            <button class="btn btn-primary action" [disabled]="isLoading() || !isValidCatalogueLine()" (click)="onPublish(true)">
+                {{ publishStateService.publishMode === "edit" ? "Save & Exit" : "Publish & Exit"  }}
             </button>
         </div>
     </div>

@@ -11,6 +11,7 @@ import { CookieService } from "ng2-cookies";
 import { UserService } from "../user.service";
 import { AppComponent } from "../../app.component";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { createTextObject, selectValueOfTextObject } from "../../common/utils";
 
 @Component({
     selector: "company-description-settings",
@@ -46,7 +47,7 @@ export class CompanyDescriptionSettingsComponent implements OnInit {
 
     ngOnInit() {
       this.descriptionForm = this._fb.group({
-          companyStatement: this.settings.description.companyStatement,
+          companyStatement: selectValueOfTextObject(this.settings.description.companyStatement),
           website: this.settings.description.website
       });
       this.externalResources = this.settings.description.externalResources;
@@ -200,7 +201,7 @@ export class CompanyDescriptionSettingsComponent implements OnInit {
 
     onSave(model: FormGroup) {
         this.saveCallStatus.submit();
-        this.settings.description.companyStatement =  model.getRawValue()['companyStatement'];
+        this.settings.description.companyStatement =  createTextObject(model.getRawValue()['companyStatement']);
         this.settings.description.website = model.getRawValue()['website'];
         this.settings.description.socialMediaList = this.socialMediaList;
         this.settings.description.externalResources = this.externalResources;

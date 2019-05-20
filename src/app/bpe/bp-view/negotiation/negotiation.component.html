@@ -1,8 +1,25 @@
 <ng-container *ngIf="!isLoading() && bpDataService.getCatalogueLine()">
-    <negotiation-request *ngIf="!bpDataService.quotation && bpDataService.bpStartEvent.userRole === 'buyer'">
-    </negotiation-request>
-    <negotiation-response *ngIf="bpDataService.quotation">
-    </negotiation-response>
+    <input *ngIf="negotiationProcessList.length > 1 && negotiationDocumentsCallStatus.fb_callback" #processHistorySlider
+           type="range" class="form-control-range mt-2 mb-2"
+           [(ngModel)]="sliderIndex" min="0" [max]="negotiationProcessList.length-1" [step]="1"/>
+
+    <ng-container *ngFor="let metadata of negotiationProcessList; let i = index">
+        <!-- previous steps -->
+        <div *ngIf="negotiationDocumentsCallStatus.isComplete() && i != negotiationProcessList.length-1" [hidden]="!(sliderIndex == i)">
+            <negotiation-response [rfq]="negotiationDocuments[i].request"
+                                  [quotation]="negotiationDocuments[i].response"
+                                  [readonly]="true">
+            </negotiation-response>
+        </div>
+        <!-- current, last step -->
+        <div [hidden]="!(sliderIndex == negotiationProcessList.length-1 && i == negotiationProcessList.length-1)">
+            <negotiation-request *ngIf="!bpDataService.quotation && bpDataService.bpActivityEvent.userRole === 'buyer'">
+            </negotiation-request>
+            <negotiation-response *ngIf="bpDataService.quotation">
+            </negotiation-response>
+        </div>
+
+    </ng-container>
 </ng-container>
 
 <call-status *ngIf="isLoading()" [callStatus]="initCallStatus" [large]="true">

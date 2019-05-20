@@ -3,11 +3,16 @@ import { Predicate } from "@angular/core";
 import { ItemProperty } from "../catalogue/model/publish/item-property";
 import { PAYMENT_MEANS } from "../catalogue/model/constants";
 import { UBLModelUtils } from "../catalogue/model/ubl-model-utils";
-import { sanitizePropertyName, getPropertyKey, periodToString, isCustomProperty, getPropertyValues, isTransportService, selectName } from "./utils";
+import {
+    sanitizePropertyName, getPropertyKey, periodToString, isCustomProperty, getPropertyValues, isTransportService, selectName,
+    isLogisticsService
+} from './utils';
 import { PriceWrapper } from "./price-wrapper";
 import { CompanyNegotiationSettings } from "../user-mgmt/model/company-negotiation-settings";
 import {Quantity} from '../catalogue/model/publish/quantity';
 import { Dimension } from "../catalogue/model/publish/dimension";
+import {MultiValuedDimension} from '../catalogue/model/publish/multi-valued-dimension';
+import {DiscountPriceWrapper} from "./discount-price-wrapper";
 
 /**
  * Wrapper class for Catalogue line.
@@ -15,12 +20,12 @@ import { Dimension } from "../catalogue/model/publish/dimension";
  */
 export class ProductWrapper {
 
-    private priceWrapper: PriceWrapper;
+    private priceWrapper: DiscountPriceWrapper;
 
     constructor(public line: CatalogueLine,
                 public negotiationSettings: CompanyNegotiationSettings,
                 public quantity: Quantity = new Quantity(1,line.requiredItemLocationQuantity.price.baseQuantity.unitCode)) {
-        this.priceWrapper = new PriceWrapper(line.requiredItemLocationQuantity.price,this.quantity,this.line.priceOption);
+        this.priceWrapper = new DiscountPriceWrapper(line.requiredItemLocationQuantity.price.priceAmount.value, line.requiredItemLocationQuantity.price,this.quantity,this.line.priceOption);
     }
 
     get goodsItem() {
@@ -43,16 +48,60 @@ export class ProductWrapper {
         return this.getUniquePropertiesWithFilter(() => true);
     }
 
-    getDimensions(): Dimension[] {
-      if(!this.item) {
-          return [];
-      }
-      const ret = [];
-      this.item.dimension.forEach(prop => {
-        if (prop.attributeID && prop.measure.value)
-          ret.push(prop);
-      });
-      return ret;
+    getDimensions(includingNullValues:boolean = true): Dimension[] {
+        if(!this.item) {
+            return [];
+        }
+        const ret = [];
+        this.item.dimension.forEach(prop => {
+            if(includingNullValues){
+                if (prop.attributeID)
+                    ret.push(prop);
+            }else{
+                if (prop.attributeID && prop.measure.value)
+                    ret.push(prop);
+            }
+        });
+        return ret;
+    }
+
+    // it creates MultiValuedDimensions using the item's dimensions
+    // if the item has no dimensions, then it creates them using the given list of dimension units.
+    getDimensionMultiValue(includeDimensionsWithNullValues:boolean = true, dimensions:string[] = []):MultiValuedDimension[]{
+        let multiValuedDimensions:MultiValuedDimension[] = [];
+        // each item should have dimensions
+        if(this.item.dimension.length == 0 && dimensions.length > 0){
+            this.item.dimension = UBLModelUtils.createDimensions(dimensions);
+        }
+        for(let dimension of this.item.dimension){
+            if(!includeDimensionsWithNullValues && !dimension.measure.value){
+                continue;
+            }
+            let found:boolean = false;
+            for(let multiValuedDimension of multiValuedDimensions){
+                if(multiValuedDimension.attributeID == dimension.attributeID){
+                    multiValuedDimension.measure.push(dimension.measure);
+                    found = true;
+                    break;
+                }
+            }
+            if(!found){
+                multiValuedDimensions.push(new MultiValuedDimension(dimension.attributeID,[dimension.measure]));
+            }
+        }
+        return multiValuedDimensions;
+    }
+
+    addDimension(attributeId:string){
+        let dimension:Dimension = new Dimension(attributeId);
+        this.item.dimension.push(dimension);
+    }
+
+    removeDimension(attributeId:string,quantity:Quantity): void {
+        let index: number = this.item.dimension.slice().reverse().findIndex(dim => dim.attributeID == attributeId && dim.measure.value == quantity.value);
+        let count = this.item.dimension.length - 1;
+        let finalIndex = count - index;
+        this.item.dimension.splice(finalIndex, 1);
     }
 
     getPackaging(): string {
@@ -102,6 +151,10 @@ export class ProductWrapper {
     }
 
     getLogisticsStatus(): boolean {
+        return isLogisticsService(this.line);
+    }
+
+    isTransportService(): boolean {
         return isTransportService(this.line);
     }
 

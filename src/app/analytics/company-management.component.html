@@ -1,125 +1,164 @@
 <p class="nimble-title">Company Management</p>
 
-<h4>Unverified Companies
-    <span *ngIf="unverifiedCompaniesPage"><span [hidden]="unverifiedCompaniesCallStatus.isLoading() || unverifiedCompaniesPage == null">(Total {{ unverifiedCompaniesPage.totalElements }})</span></span>
-</h4>
+<div class="row border-bottom mb-3">
+    <div class="col-12 pt-4">
+        <!-- Product Tabs -->
+        <ul class="nav nav-tabs">
+            <ng-container>
+                <li class="nav-item">
+                    <a href id="UNVERIFIED" class="nav-link"
+                        [ngClass]="{ active: selectedTab === 'UNVERIFIED'}"
+                        (click)="onSelectTab($event)">
+                        Unverified Companies
+                        <span *ngIf="unverifiedCompaniesPage">
+                            <span [hidden]="unverifiedCompaniesCallStatus.isLoading() || unverifiedCompaniesPage == null">(Total {{ unverifiedCompaniesPage.totalElements }})</span>
+                        </span>
 
-<call-status [callStatus]="unverifiedCompaniesCallStatus" [large]="true"></call-status>
-
-<div *ngIf="!unverifiedCompaniesCallStatus.isLoading() && unverifiedCompaniesPage">
-
-    <div class="input-group form-group" style="background-color:#F2F2F2;padding-left: 25px;padding-top: 20px;padding-bottom: 20px;">
-        <label class="space-right"><strong>Sort by:</strong>
-        </label>
-        <select  class="custom-select col-3 space-right" [(ngModel)]="sortOptionForUnverifiedCompanies" (change)="sortUnverifiedCompanyList()">
-            <option *ngFor="let option of COMPANY_LIST_SORT_OPTIONS" [value]="option.name">{{option.value}}</option>
-        </select>
-    </div>
-
-
-    <table class="table table-striped table-bordered">
-        <tr>
-            <th><span i18n>ID</span></th>
-            <th><span i18n>Company Name</span></th>
-            <th><span i18n>Address</span></th>
-            <th><span i18n>Initial Representative</span></th>
-            <th style="width:20rem !important;"></th>
-        </tr>
-        <ng-container *ngFor="let company of unverifiedCompaniesPage.content">
-            <tr>
-                <td>{{ company.hjid }}</td>
-                <td>{{ getNameOfTheCompany(company.partyName) }}</td>
-                <td *ngIf="company.postalAddress">
-                  {{ company.postalAddress.streetName }} {{ company.postalAddress.buildingNumber }}<br/>
-                  {{ company.postalAddress.postalZone }} {{ company.postalAddress.cityName }} <span *ngIf="company.postalAddress.region">{{company.postalAddress.region}}</span><br/>
-                  {{ company.postalAddress.country.name.value }}
-                </td>
-                <td *ngIf="!company.postalAddress">n/A</td>
-                <td *ngIf="company.person[0]">
-                  {{ company.person[0].firstName }} {{ company.person[0].familyName }}
-                  <span *ngIf="company.person[0].contact && company.person[0].contact.electronicMail">
-                    <br/><a href="mailto:{{ company.person[0].contact.electronicMail }}"><small style="word-wrap:break-word !important; word-break:break-all !important;">{{ company.person[0].contact.electronicMail }}</small></a>
-                  </span>
-                </td>
-                <td *ngIf="!company.person[0]">n/A</td>
-                <td>
-                    <a class="btn btn-primary" role="button" target="_blank" [routerLink]="['/user-mgmt/company-details']" [queryParams]="{id: company.hjid, viewMode:'mgmt'}">Details</a>
-                    <button class="btn btn-success ml-2" (click)="verifyCompany(company)">
-                        Verify
-                    </button>
-                    <button class="btn btn-danger ml-2" (click)="rejectCompany(company)">
-                        Reject
-                    </button>
-                </td>
-            </tr>
-        </ng-container>
-    </table>
-    <ngb-pagination class="d-flex justify-content-center"
-                    [collectionSize]="unverifiedCompaniesPage.totalElements"
-                    [pageSize]="unverifiedCompaniesPage.size"
-                    [page]="unverifiedCompaniesPage.number"
-                    [maxSize]="unverifiedCompaniesPage.size"
-                    [boundaryLinks]="false"
-                    (pageChange)="onUnverifiedPageChange($event)">
-    </ngb-pagination>
-</div>
-
-<h4>Registered Companies
-    <span *ngIf="registeredCompaniesPage"><span [hidden]="registeredCompaniesCallStatus.isLoading() || registeredCompaniesPage == null">(Total {{ registeredCompaniesPage.totalElements }})</span></span>
-</h4>
-
-<call-status [callStatus]="registeredCompaniesCallStatus" [large]="true"></call-status>
-
-<div [hidden]="registeredCompaniesCallStatus.isLoading() || registeredCompaniesPage == null">
-    <div *ngIf="registeredCompaniesPage">
-
-        <div class="input-group form-group" style="background-color:#F2F2F2;padding-left: 25px;padding-top: 20px;padding-bottom: 20px;">
-            <label class="space-right"><strong>Sort by:</strong>
-            </label>
-            <select class="custom-select col-3 space-right" [(ngModel)]="sortOptionForRegisteredCompanies" (change)="sortRegisteredCompanyList()">
-                <option *ngFor="let option of COMPANY_LIST_SORT_OPTIONS" [value]="option.name">{{option.value}}</option>
-            </select>
-        </div>
-
-        <table class="table table-striped table-bordered">
-            <tr>
-                <th><span i18n>ID</span></th>
-                <th><span i18n>Company Name</span></th>
-                <th><span i18n>Address</span></th>
-                <th><span i18n>Legal Representative</span></th>
-                <th style="width:20rem !important;"></th>
-            </tr>
-            <ng-container *ngFor="let company of registeredCompaniesPage.content">
-                <tr>
-                    <td>{{ company.hjid }}</td>
-                    <td>{{ getNameOfTheCompany(company.partyName) }}</td>
-                    <td *ngIf="company.postalAddress">
-                      {{ company.postalAddress.streetName }} {{ company.postalAddress.buildingNumber }}<br/>
-                      {{ company.postalAddress.postalZone }} {{ company.postalAddress.cityName }} <span *ngIf="company.postalAddress.region">{{company.postalAddress.region}}</span><br/>
-                      {{ company.postalAddress.country.name.value }}
-                    </td>
-                    <td *ngIf="!company.postalAddress">n/A</td>
-                    <td *ngIf="company.person[0]">
-                      {{ company.person[0].firstName }} {{ company.person[0].familyName }}
-                      <span *ngIf="company.person[0].contact && company.person[0].contact.electronicMail">
-                        <br/><a href="mailto:{{ company.person[0].contact.electronicMail }}"><small style="word-wrap:break-word !important; word-break:break-all !important;">{{ company.person[0].contact.electronicMail }}</small></a>
-                      </span>
-                    </td>
-                    <td *ngIf="!company.person[0]">n/A</td>
-                    <td>
-                        <a class="btn btn-primary" role="button" target="_blank" [routerLink]="['/user-mgmt/company-details']" [queryParams]="{id: company.hjid, viewMode:'mgmt'}">Details</a>
-                        <a class="btn btn-primary ml-2" role="button" target="_blank" [routerLink]="['/user-mgmt/company-settings']" [queryParams]="{id: company.hjid, viewMode:'data'}">Change Data</a>
-                    </td>
-                </tr>
+                    </a>
+                </li>
             </ng-container>
-        </table>
-        <ngb-pagination class="d-flex justify-content-center"
-                        [collectionSize]="registeredCompaniesPage.totalElements"
-                        [pageSize]="registeredCompaniesPage.size"
-                        [page]="registeredCompaniesPage.number"
-                        [maxSize]="registeredCompaniesPage.size"
-                        [boundaryLinks]="false"
-                        (pageChange)="onRegisteredCompaniesPageChange($event)">
-        </ngb-pagination>
+            <li  class="nav-item">
+                <a href id="VERIFIED" class="nav-link"
+                    [ngClass]="{ active: selectedTab === 'VERIFIED'}"
+                    (click)="onSelectTab($event)">
+                    Registered Companies
+                    <span *ngIf="registeredCompaniesPage">
+                        <span [hidden]="registeredCompaniesCallStatus.isLoading() || registeredCompaniesPage == null">(Total {{ registeredCompaniesPage.totalElements }})</span>
+                    </span>
+
+                </a>
+            </li>
+        </ul>
     </div>
+
+    <!-- Unverified Tab -->
+    <div *ngIf="selectedTab === 'UNVERIFIED'" class="p-3 col-12">
+        <h4>Unverified Companies
+            <span *ngIf="unverifiedCompaniesPage"><span [hidden]="unverifiedCompaniesCallStatus.isLoading() || unverifiedCompaniesPage == null">(Total {{ unverifiedCompaniesPage.totalElements }})</span></span>
+        </h4>
+        
+        <call-status [callStatus]="unverifiedCompaniesCallStatus" [large]="true"></call-status>
+        
+        <div *ngIf="!unverifiedCompaniesCallStatus.isLoading() && unverifiedCompaniesPage">
+        
+            <div class="input-group form-group" style="background-color:#F2F2F2;padding-left: 25px;padding-top: 20px;padding-bottom: 20px;">
+                <label class="space-right"><strong></strong>
+                </label>
+                <select  class="custom-select col-3 space-right" [(ngModel)]="sortOptionForUnverifiedCompanies" (change)="sortUnverifiedCompanyList()">
+                    <option *ngFor="let option of COMPANY_LIST_SORT_OPTIONS" [value]="option.name">{{option.value}}</option>
+                </select>
+            </div>
+        
+        
+            <table class="table table-striped table-bordered">
+                <tr>
+                    <th><span i18n>ID</span></th>
+                    <th><span i18n>Company Name</span></th>
+                    <th><span i18n>Address</span></th>
+                    <th><span i18n>Initial Representative</span></th>
+                    <th style="width:20rem !important;"></th>
+                </tr>
+                <ng-container *ngFor="let company of unverifiedCompaniesPage.content">
+                    <tr>
+                        <td>{{ company.hjid }}</td>
+                        <td>{{ getNameOfTheCompany(company.partyName) }}</td>
+                        <td *ngIf="company.postalAddress">
+                          {{ company.postalAddress.streetName }} {{ company.postalAddress.buildingNumber }}<br/>
+                          {{ company.postalAddress.postalZone }} {{ company.postalAddress.cityName }} <span *ngIf="company.postalAddress.region">{{company.postalAddress.region}}</span><br/>
+                          {{ company.postalAddress.country.name.value }}
+                        </td>
+                        <td *ngIf="!company.postalAddress">n/A</td>
+                        <td *ngIf="company.person[0]">
+                          {{ company.person[0].firstName }} {{ company.person[0].familyName }}
+                          <span *ngIf="company.person[0].contact && company.person[0].contact.electronicMail">
+                            <br/><a href="mailto:{{ company.person[0].contact.electronicMail }}"><small style="word-wrap:break-word !important; word-break:break-all !important;">{{ company.person[0].contact.electronicMail }}</small></a>
+                          </span>
+                        </td>
+                        <td *ngIf="!company.person[0]">n/A</td>
+                        <td>
+                            <a class="btn btn-primary" role="button" target="_blank" [routerLink]="['/user-mgmt/company-details']" [queryParams]="{id: company.hjid, viewMode:'mgmt'}">Details</a>
+                            <button class="btn btn-success ml-2" (click)="verifyCompany(company)">
+                                Verify
+                            </button>
+                            <button class="btn btn-danger ml-2" (click)="rejectCompany(company)">
+                                Reject
+                            </button>
+                        </td>
+                    </tr>
+                </ng-container>
+            </table>
+            <ngb-pagination class="d-flex justify-content-center"
+                            [collectionSize]="unverifiedCompaniesPage.totalElements"
+                            [pageSize]="unverifiedCompaniesPage.size"
+                            [page]="unverifiedCompaniesPage.number"
+                            [maxSize]="unverifiedCompaniesPage.size"
+                            [boundaryLinks]="false"
+                            (pageChange)="onUnverifiedPageChange($event)">
+            </ngb-pagination>
+        </div>
+    </div>
+
+    <!-- Product Details Tab -->
+    <div *ngIf="selectedTab === 'VERIFIED'" class="p-3 col-12">
+        <h4>Registered Companies
+            <span *ngIf="registeredCompaniesPage"><span [hidden]="registeredCompaniesCallStatus.isLoading() || registeredCompaniesPage == null">(Total {{ registeredCompaniesPage.totalElements }})</span></span>
+        </h4>
+        
+        <call-status [callStatus]="registeredCompaniesCallStatus" [large]="true"></call-status>
+        
+        <div [hidden]="registeredCompaniesCallStatus.isLoading() || registeredCompaniesPage == null">
+            <div *ngIf="registeredCompaniesPage">
+        
+                <div class="input-group form-group" style="background-color:#F2F2F2;padding-left: 25px;padding-top: 20px;padding-bottom: 20px;">
+                    <label class="space-right"><strong></strong>
+                    </label>
+                    <select class="custom-select col-3 space-right" [(ngModel)]="sortOptionForRegisteredCompanies" (change)="sortRegisteredCompanyList()">
+                        <option *ngFor="let option of COMPANY_LIST_SORT_OPTIONS" [value]="option.name">{{option.value}}</option>
+                    </select>
+                </div>
+        
+                <table class="table table-striped table-bordered">
+                    <tr>
+                        <th><span i18n>ID</span></th>
+                        <th><span i18n>Company Name</span></th>
+                        <th><span i18n>Address</span></th>
+                        <th><span i18n>Legal Representative</span></th>
+                        <th style="width:20rem !important;"></th>
+                    </tr>
+                    <ng-container *ngFor="let company of registeredCompaniesPage.content">
+                        <tr>
+                            <td>{{ company.hjid }}</td>
+                            <td>{{ getNameOfTheCompany(company.partyName) }}</td>
+                            <td *ngIf="company.postalAddress">
+                              {{ company.postalAddress.streetName }} {{ company.postalAddress.buildingNumber }}<br/>
+                              {{ company.postalAddress.postalZone }} {{ company.postalAddress.cityName }} <span *ngIf="company.postalAddress.region">{{company.postalAddress.region}}</span><br/>
+                              {{ company.postalAddress.country.name.value }}
+                            </td>
+                            <td *ngIf="!company.postalAddress">n/A</td>
+                            <td *ngIf="company.person[0]">
+                              {{ company.person[0].firstName }} {{ company.person[0].familyName }}
+                              <span *ngIf="company.person[0].contact && company.person[0].contact.electronicMail">
+                                <br/><a href="mailto:{{ company.person[0].contact.electronicMail }}"><small style="word-wrap:break-word !important; word-break:break-all !important;">{{ company.person[0].contact.electronicMail }}</small></a>
+                              </span>
+                            </td>
+                            <td *ngIf="!company.person[0]">n/A</td>
+                            <td>
+                                <a class="btn btn-primary" role="button" target="_blank" [routerLink]="['/user-mgmt/company-details']" [queryParams]="{id: company.hjid, viewMode:'mgmt'}">Details</a>
+                                <a class="btn btn-primary ml-2" role="button" target="_blank" [routerLink]="['/user-mgmt/company-settings']" [queryParams]="{id: company.hjid, viewMode:'data'}">Change Data</a>
+                            </td>
+                        </tr>
+                    </ng-container>
+                </table>
+                <ngb-pagination class="d-flex justify-content-center"
+                                [collectionSize]="registeredCompaniesPage.totalElements"
+                                [pageSize]="registeredCompaniesPage.size"
+                                [page]="registeredCompaniesPage.number"
+                                [maxSize]="registeredCompaniesPage.size"
+                                [boundaryLinks]="false"
+                                (pageChange)="onRegisteredCompaniesPageChange($event)">
+                </ngb-pagination>
+            </div>
+        </div>
+    </div>
+
 </div>

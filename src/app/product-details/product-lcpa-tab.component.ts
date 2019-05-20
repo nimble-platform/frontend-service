@@ -1,9 +1,9 @@
-import {Component, Input, OnInit, ViewChild} from "@angular/core";
+import {Component, Input, OnInit, ViewChild,EventEmitter, Output} from "@angular/core";
 import {LcpaDetailModalComponent} from "./lcpa-detail-modal.component";
 import {LifeCyclePerformanceAssessmentDetails} from "../catalogue/model/publish/life-cycle-performance-assessment-details";
 import {CatalogueLine} from "../catalogue/model/publish/catalogue-line";
 import {LCPAInput} from "../catalogue/model/publish/lcpa-input";
-import {LCPAInputDetail} from "../catalogue/model/publish/lcpa-input-detail";
+import {MultiTypeValue} from "../catalogue/model/publish/multi-type-value";
 import {Quantity} from "../catalogue/model/publish/quantity";
 import {UBLModelUtils} from "../catalogue/model/ubl-model-utils";
 import {Amount} from "../catalogue/model/publish/amount";
@@ -18,6 +18,8 @@ export class ProductLcpaTabComponent implements OnInit {
     @Input() catalogueLine: CatalogueLine;
     @Input() disabled: boolean;
     @Input() presentationMode: 'view' | 'edit' = 'view';
+    @Output() lcpaStatus = new EventEmitter<boolean>();
+
     @ViewChild(LcpaDetailModalComponent)
     private lcpaDetailModal: LcpaDetailModalComponent;
     lcpaDetails: LifeCyclePerformanceAssessmentDetails = new LifeCyclePerformanceAssessmentDetails();
@@ -27,6 +29,7 @@ export class ProductLcpaTabComponent implements OnInit {
 
     ngOnInit() {
         if(this.catalogueLine.goodsItem.item.lifeCyclePerformanceAssessmentDetails == null) {
+            this.lcpaStatus.emit(true);
             this.catalogueLine.goodsItem.item.lifeCyclePerformanceAssessmentDetails = this.lcpaDetails;
         } else {
             this.lcpaDetails = this.catalogueLine.goodsItem.item.lifeCyclePerformanceAssessmentDetails;
@@ -42,7 +45,7 @@ export class ProductLcpaTabComponent implements OnInit {
         this.lcpaDetailModal.open();
     }
 
-    onDetailSpecified(detail: LCPAInputDetail): void {
+    onDetailSpecified(detail: MultiTypeValue): void {
         this.catalogueLine.goodsItem.item.lifeCyclePerformanceAssessmentDetails.lcpainput.additionalLCPAInputDetail.push(detail);
     }
 
@@ -61,5 +64,10 @@ export class ProductLcpaTabComponent implements OnInit {
 
     isDisabled(): boolean {
         return this.disabled || this.presentationMode == 'view';
+    }
+
+
+    isEditMode(): boolean {
+        return this.presentationMode == 'edit';
     }
 }

@@ -10,6 +10,4 @@ export class ModelUtils {
         let vars:ProcessVariables = new ProcessVariables(processId, initiatorId, responderId, content.id, creatorUserID,bpDataService.relatedProducts, bpDataService.relatedProductCategories, JSON.stringify(content));
         return vars;
     }
-
-
 }

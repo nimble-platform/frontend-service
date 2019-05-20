@@ -66,6 +66,9 @@ export class ProductBpStepsComponent implements OnInit {
                     throw new Error("Unexpected step for displayMode 'Transport': " + this.currentStep);
             }
         }
+        else if (this.displayMode === "Logistics"){
+            return "42%";
+        }
         else if (this.displayMode === "Transport_After_Order") {
           switch(this.currentStep) {
               case "Item_Information_Request":

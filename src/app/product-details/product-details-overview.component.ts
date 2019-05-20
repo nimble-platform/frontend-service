@@ -7,6 +7,7 @@ import {getPropertyKey, getPropertyValuesAsStrings, selectName, selectNameFromLa
 import {Item} from '../catalogue/model/publish/item';
 import {UBLModelUtils} from '../catalogue/model/ubl-model-utils';
 import {CategoryService} from '../catalogue/category/category.service';
+import { CatalogueService } from "../catalogue/catalogue.service";
 import {CallStatus} from '../common/call-status';
 import { ActivatedRoute,Router } from "@angular/router";
 
@@ -25,13 +26,18 @@ export class ProductDetailsOverviewComponent implements OnInit{
     manufacturerPartyName:string = null;
 
     getClassificationNamesStatus: CallStatus = new CallStatus();
+    productCatalogueNameRetrievalStatus: CallStatus = new CallStatus();
+
     classificationNames = [];
     productId = "";
     selectPreferredValue = selectPreferredValue;
-	facetQuery: any;
+    facetQuery: any;
+    catalogueId = "";
+    catalogueName = "";
     
     constructor(
         public categoryService:CategoryService,
+        public catalogueService:CatalogueService,
         private route: ActivatedRoute,
 		public router: Router
 
@@ -61,7 +67,7 @@ export class ProductDetailsOverviewComponent implements OnInit{
                 // sort labels
                 this.classificationNames.sort((c1, c2) => c1.localeCompare(c2));
 
-                this.getClassificationNamesStatus.callback(null);
+                this.getClassificationNamesStatus.callback(null, true);
 
             }).catch(error => {
                 this.getClassificationNamesStatus.error("Failed to get classification names", error);
@@ -74,6 +80,25 @@ export class ProductDetailsOverviewComponent implements OnInit{
             }else {
                 this.productId = this.wrapper.item.manufacturersItemIdentification.id;
             }
+
+            if(params["catalogueId"]){
+                this.catalogueId = params["catalogueId"];
+            }else{
+                this.catalogueId = this.wrapper.item.catalogueDocumentReference.id;
+            }
+
+            this.productCatalogueNameRetrievalStatus.submit();
+
+            this.catalogueService.getCatalogueFromUuid(this.catalogueId)
+            .then((res) =>
+            {
+              this.catalogueName = res.id;
+              this.productCatalogueNameRetrievalStatus.callback("Successfully loaded catalogue name", true);
+
+            })
+            .catch(err => {
+                this.productCatalogueNameRetrievalStatus.error('Failed to get product catalogue');
+            })
         });
     }
 

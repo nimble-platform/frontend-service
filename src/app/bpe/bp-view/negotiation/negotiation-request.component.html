@@ -1,202 +1,373 @@
-<!-- Titles -->
-<div class="row title-row">
-    <div class="col-2"></div>
-    <div class="col-5">
-        <h4>Manufacturer's Terms</h4>
-    </div>
-    <div class="col-5">
-        <h4>Counter Offer</h4>
-    </div>
-</div>
-
-<!-- Delivery Period -->
-<div class="row content-row bg-light">
-    <div class="col-2">
-        <strong class="font-weight-500">Delivery Period:</strong>
-    </div>
-    <div class="col-5">
-        {{ wrapper.lineDeliveryPeriod.value }}
-        {{ wrapper.lineDeliveryPeriod.unitCode }}
-        <span [ngStyle]="getDeliveryPeriodStyle()">
-            {{ getDeliveryPeriodText() }}
-        </span>
-    </div>
-    <div class="col-5">
-        <negotiation-request-input label="Request Delivery Period" [(cbModel)]="rfq.negotiationOptions.deliveryPeriod" [disabled]="isLoading() || isReadOnly()"
-            id="deliveryCb" [quantity]="wrapper.rfqDeliveryPeriod" [quantityUnits]="wrapper.settings.deliveryPeriodUnits" [invalid]="!isDeliveryPeriodValid()">
-        </negotiation-request-input>
-    </div>
-</div>
-
-<!-- Warranty -->
-<div class="row content-row">
-    <div class="col-2">
-        <strong class="font-weight-500">Warranty:</strong>
-    </div>
-    <div class="col-5">
-        {{ wrapper.lineWarrantyString }}
-        <span [ngStyle]="getWarrantyPeriodStyle()">
-            {{ getWarrantyPeriodText() }}
-        </span>
-    </div>
-    <div class="col-5">
-        <negotiation-request-input label="Request Warranty" [(cbModel)]="rfq.negotiationOptions.warranty" [disabled]="isLoading() || isReadOnly()"
-            id="warrantyCb" [quantity]="wrapper.rfqWarranty" [quantityUnits]="wrapper.settings.warrantyPeriodUnits" [invalid]="!isWarrantyPeriodValid()">
-        </negotiation-request-input>
-    </div>
-</div>
-
-<!-- Incoterms -->
-<div class="row content-row bg-light">
-    <div class="col-2">
-        <strong class="font-weight-500">Request Incoterms:</strong>
-    </div>
-    <div class="col-5">
-        {{ wrapper.lineIncoterms }}
-    </div>
-    <div class="col-5">
-        <negotiation-request-input label="Incoterms" [(cbModel)]="rfq.negotiationOptions.incoterms" [disabled]="isLoading() || isReadOnly()"
-            id="incotermsCb" [options]="wrapper.settings.incoterms" [(selected)]="wrapper.rfqIncoterms">
-        </negotiation-request-input>
-    </div>
-</div>
-
-<!-- Payment Terms -->
-<div class="row content-row">
-    <div class="col-2">
-        <strong class="font-weight-500">Payment Terms:</strong>
-    </div>
-    <div class="col-5">
-        <div class="d-flex">
-            {{ wrapper.linePaymentTerms }}
+<ng-container *ngIf="pageInitCallStatus.isComplete()">
+    <!-- Titles -->
+    <div class="row">
+        <div class="col-12">
+            <div class="row title-row">
+                <div class="col-2"></div>
+                <div class="col-5">
+                    <label class="column-title mr-2">Manufacturer's Terms</label>
+                    <select [hidden]="!isManufacturersTermsSelectBoxVisible()" #termSelectBox class="btn btn-outline-secondary" [value]="termsDropdownValue" (change)="loadTerms($event.target.value)">
+                        <option *ngIf="manufacturersTermsExistence.last_offer" value="last_offer">Last Offer</option>
+                        <option *ngIf="manufacturersTermsExistence.frame_contract" value="frame_contract">Frame Contract</option>
+                        <option value="product_defaults">Product Defaults</option>
+                    </select>
+                </div>
+                <div class="col-5">
+                    <label class="column-title">Counter Offer</label>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="col-5">
-        <negotiation-request-input label="Request Payment Terms" [(cbModel)]="rfq.negotiationOptions.paymentTerms"
-            id="paymentTermsCb" [options]="wrapper.settings.paymentTerms"
-            [(selected)]="wrapper.rfqPaymentTerms.paymentTerm" [disabled]="isLoading() || isReadOnly()">
-        </negotiation-request-input>
-    </div>
-</div>
+    <div class="row mb-3">
+        <div class="{{showCounterOfferTerms ? 'col-12' : 'col-7'}}">
+            <!-- Delivery Period -->
+            <div class="row content-row bg-light">
+                <div class="{{showCounterOfferTerms ? 'col-2' : 'col-3'}}">
+                    <strong class="font-weight-500">Delivery Period:</strong>
+                </div>
+                <!-- Manufacturers's offer -->
+                <div class="{{showCounterOfferTerms ? 'col-5' : 'col-9'}}">
+                    <ng-container [ngSwitch]="termsDropdownValue">
+                        <ng-container *ngSwitchCase="'product_defaults'">
+                            {{ wrapper.lineDeliveryPeriod.value }}
+                            {{ wrapper.lineDeliveryPeriod.unitCode }}
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'frame_contract'">
+                            {{ wrapper.frameContractQuotationWrapper.deliveryPeriod.value }}
+                            {{ wrapper.frameContractQuotationWrapper.deliveryPeriod.unitCode }}
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'last_offer'">
+                            {{ wrapper.lastOfferQuotationWrapper.deliveryPeriod.value }}
+                            {{ wrapper.lastOfferQuotationWrapper.deliveryPeriod.unitCode }}
+                        </ng-container>
+                    </ng-container>
+                    <span [ngStyle]="getDeliveryPeriodStyle()">
+                        {{ getDeliveryPeriodText() }}
+                    </span>
+                </div>
+                <!-- Customer's offer-->
+                <div *ngIf="showCounterOfferTerms" class="col-5">
+                    <negotiation-request-input label="Request Delivery Period" [(cbModel)]="rfq.negotiationOptions.deliveryPeriod"
+                                               [disabled]="isLoading() || isReadOnly()"
+                                               id="deliveryCb" [quantity]="wrapper.rfqDeliveryPeriod" [quantityUnits]="wrapper.settings.deliveryPeriodUnits"
+                                               [invalid]="!isDeliveryPeriodValid()">
+                    </negotiation-request-input>
+                </div>
+            </div>
 
-<!-- Payment Means -->
-<div class="row content-row bg-light">
-    <div class="col-2">
-        <strong class="font-weight-500">Payment Means:</strong>
-    </div>
-    <div class="col-5">
-        <div class="d-flex">
-            {{ wrapper.linePaymentMeans }}
+            <!-- Warranty -->
+            <div class="row content-row">
+                <div class="{{showCounterOfferTerms ? 'col-2' : 'col-3'}}">
+                    <strong class="font-weight-500">Warranty:</strong>
+                </div>
+                <!-- Manufacturers's offer -->
+                <div class="{{showCounterOfferTerms ? 'col-5' : 'col-9'}}">
+                    <ng-container [ngSwitch]="termsDropdownValue">
+                        <ng-container *ngSwitchCase="'product_defaults'">
+                            {{ wrapper.lineWarrantyString }}
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'frame_contract'">
+                            {{ wrapper.frameContractQuotationWrapper.warrantyString}}
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'last_offer'">
+                            {{ wrapper.lastOfferQuotationWrapper.warrantyString }}
+                        </ng-container>
+                    </ng-container>
+                    <span [ngStyle]="getWarrantyPeriodStyle()">
+                        {{ getWarrantyPeriodText() }}
+                    </span>
+                </div>
+                <!-- Customer's offer-->
+                <div *ngIf="showCounterOfferTerms" class="col-5">
+                    <negotiation-request-input label="Request Warranty" [(cbModel)]="rfq.negotiationOptions.warranty" [disabled]="isLoading() || isReadOnly()"
+                                               id="warrantyCb" [quantity]="wrapper.rfqWarranty" [quantityUnits]="wrapper.settings.warrantyPeriodUnits"
+                                               [invalid]="!isWarrantyPeriodValid()">
+                    </negotiation-request-input>
+                </div>
+            </div>
+
+            <!-- Incoterms -->
+            <div class="row content-row bg-light">
+                <div class="{{showCounterOfferTerms ? 'col-2' : 'col-3'}}">
+                    <strong class="font-weight-500">Incoterms:</strong>
+                </div>
+                <div class="{{showCounterOfferTerms ? 'col-5' : 'col-9'}}">
+                    <ng-container [ngSwitch]="termsDropdownValue">
+                        <ng-container *ngSwitchCase="'product_defaults'">
+                            {{ wrapper.lineIncoterms }}
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'frame_contract'">
+                            {{wrapper.frameContractQuotationWrapper.incoterms}}
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'last_offer'">
+                            {{wrapper.lastOfferQuotationWrapper.incoterms}}
+                        </ng-container>
+                    </ng-container>
+                </div>
+                <div *ngIf="showCounterOfferTerms" class="col-5">
+                    <negotiation-request-input label="Request Incoterms" [(cbModel)]="rfq.negotiationOptions.incoterms" [disabled]="isLoading() || isReadOnly()"
+                                               id="incotermsCb" [options]="wrapper.settings.incoterms" [selected]="wrapper.rfqIncoterms" (selectedChange)="wrapper.rfqIncoterms = $event; onPriceConditionsChange()">
+                    </negotiation-request-input>
+                </div>
+            </div>
+
+            <!-- Payment Terms -->
+            <div class="row content-row">
+                <div class="{{showCounterOfferTerms ? 'col-2' : 'col-3'}}">
+                    <strong class="font-weight-500">Payment Terms:</strong>
+                </div>
+                <div class="{{showCounterOfferTerms ? 'col-5' : 'col-9'}}">
+                    <ng-container [ngSwitch]="termsDropdownValue">
+                        <ng-container *ngSwitchCase="'product_defaults'">
+                            {{ wrapper.linePaymentTerms }}
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'frame_contract'">
+                            {{ wrapper.frameContractQuotationWrapper.paymentTermsWrapper.paymentTerm }}
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'last_offer'">
+                            {{ wrapper.lastOfferQuotationWrapper.paymentTermsWrapper.paymentTerm }}
+                        </ng-container>
+                    </ng-container>
+                </div>
+                <div *ngIf="showCounterOfferTerms" class="col-5">
+                    <negotiation-request-input label="Request Payment Terms" [(cbModel)]="rfq.negotiationOptions.paymentTerms"
+                                               id="paymentTermsCb" [options]="wrapper.settings.paymentTerms"
+                                               [selected]="wrapper.rfqPaymentTerms.paymentTerm" (selectedChange)="wrapper.rfqPaymentTerms.paymentTerm = $event; onPriceConditionsChange($event)"
+                                               [disabled]="isLoading() || isReadOnly()">
+                    </negotiation-request-input>
+                </div>
+            </div>
+
+            <!-- Payment Means -->
+            <div class="row content-row bg-light">
+                <div class="{{showCounterOfferTerms ? 'col-2' : 'col-3'}}">
+                    <strong class="font-weight-500">Payment Means:</strong>
+                </div>
+                <div class="{{showCounterOfferTerms ? 'col-5' : 'col-9'}}">
+                    <ng-container [ngSwitch]="termsDropdownValue">
+                        <ng-container *ngSwitchCase="'product_defaults'">
+                            {{ wrapper.linePaymentMeans }}
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'frame_contract'">
+                            {{ wrapper.frameContractQuotationWrapper.paymentMeans}}
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'last_offer'">
+                            {{ wrapper.lastOfferQuotationWrapper.paymentMeans }}
+                        </ng-container>
+                    </ng-container>
+                </div>
+                <div *ngIf="showCounterOfferTerms" class="col-5">
+                    <negotiation-request-input label="Request Payment Means" [(cbModel)]="rfq.negotiationOptions.paymentMeans"
+                                               id="paymentMeansCb" [options]="wrapper.settings.paymentMeans" [selected]="wrapper.rfqPaymentMeans" (selectedChange)="wrapper.rfqPaymentMeans = $event; onPriceConditionsChange()"
+                                               [disabled]="isLoading() || isReadOnly()">
+                    </negotiation-request-input>
+                </div>
+            </div>
+
+            <!-- Price -->
+            <div class="row content-row">
+                <div class="{{showCounterOfferTerms ? 'col-2' : 'col-3'}}">
+                    <strong class="font-weight-500">Price:</strong>
+                </div>
+                <!-- Manufacturer's offer -->
+                <div class="{{showCounterOfferTerms ? 'col-5' : 'col-9'}} d-flex">
+                    <ng-container [ngSwitch]="termsDropdownValue">
+                        <ng-container *ngSwitchCase="'product_defaults'">
+                            {{ wrapper.linePricePerItemString }}
+                            <div *ngIf="wrapper.lineDiscountPriceWrapper.isDiscountApplied() > 0 && !isReadOnly()" class="space-left" data-toggle="tooltip" data-placement="top"
+                                 (click)="openDiscountModal()" title="Applied Discounts/Charges" style="cursor: pointer">
+                                <i class="fa fa-search" aria-hidden="true"></i>
+                            </div>
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'frame_contract'">
+                            {{ wrapper.frameContractQuotationWrapper.priceWrapper.pricePerItemString}}
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'last_offer'">
+                            {{ wrapper.lastOfferQuotationWrapper.priceWrapper.pricePerItemString }}
+                        </ng-container>
+                    </ng-container>
+                </div>
+                <!-- Customer's offer -->
+                <div *ngIf="showCounterOfferTerms" class="col-5">
+                    <negotiation-request-input label="Request Item Price" [(cbModel)]="negotiatePrice" id="priceCb"
+                                               [disabled]="isLoading() || isReadOnly()" [quantity]="wrapper.rfqDiscountPriceWrapper.itemPrice"
+                                               [quantityUnits]="CURRENCIES" [disableQuantityUnit]="lineHasPrice" [invalid]="!isPriceValid()">
+                    </negotiation-request-input>
+                </div>
+            </div>
+
+            <!-- Quantity -->
+            <div *ngIf="showCounterOfferTerms" class="row content-row bg-light">
+                <div class="col-2">
+                    <strong class="font-weight-500">Quantity:</strong>
+                </div>
+                <div class="col-5"></div>
+                <div class="col-5 mt-1">
+                    <div class="d-flex">
+                        <input type="number" (keypress)="onOrderQuantityKeyPressed($event)" [ngModel]="requestedQuantity" (ngModelChange)="requestedQuantity = $event; onOrderQuantityChange()"
+                               class="form-control form-control-sm w-75"
+                               [disabled]="isLoading() || isReadOnly()"/>
+                        <span class="ml-2" *ngIf="getQuantityUnit() !== ''">{{ getQuantityUnit() }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="!showCounterOfferTerms" class="col-5 d-flex flex-column justify-content-center align-items-center">
+            <div class="d-flex flex-column">
+                <div class="d-flex align-items-center mb-2">
+                    <div class="col-3">
+                        <strong class="font-weight-500">Quantity:</strong>
+                    </div>
+                    <div class="col-6 mt-1">
+                        <div class="d-flex">
+                            <input type="number" (keypress)="onOrderQuantityKeyPressed($event)" [ngModel]="requestedQuantity" (ngModelChange)="requestedQuantity = $event; onOrderQuantityChange()"
+                                   class="form-control form-control-sm w-75"
+                                   [disabled]="isLoading() || isReadOnly()"/>
+                            <span class="ml-2" *ngIf="getQuantityUnit() !== ''">{{ getQuantityUnit() }}</span>
+                        </div>
+                    </div>
+                </div>
+                <hr class="w-100">
+                <button class="btn btn-primary action mb-3" [disabled]="isLoading()"(click)="showCounterOfferTerms = !showCounterOfferTerms">Offer Counter Terms</button>
+            </div>
         </div>
     </div>
-    <div class="col-5">
-        <negotiation-request-input label="Request Payment Means" [(cbModel)]="rfq.negotiationOptions.paymentMeans"
-            id="paymentMeansCb" [options]="wrapper.settings.paymentMeans" [(selected)]="wrapper.rfqPaymentMeans"
-            [disabled]="isLoading() || isReadOnly()">
-        </negotiation-request-input>
-    </div>
-</div>
 
-<!-- Price -->
-<div class="row content-row">
-    <div class="col-2">
-        <strong class="font-weight-500">Price:</strong>
+    <!-- Frame contract -->
+    <ng-container *ngIf="isFrameContractVisible()">
+        <div class="row">
+            <div class="btn btn-outline-primary align-self-start mb-2" (click)="showFrameContractDetails = !showFrameContractDetails;">Frame Contract</div>
+        </div>
+        <ng-container *ngIf="showFrameContractDetails">
+            <div class="row">
+                <div class="col-2">
+                    <strong class="font-weight-500">Frame Contract:</strong>
+                    <span title="The period within which the offered conditions will be valid upon confirmation by the seller.">&#9432;</span>
+                </div>
+                <div class="col-5"></div>
+                <div class="col-5">
+                    <negotiation-request-input label="Request Frame Contract" [(cbModel)]="rfq.negotiationOptions.frameContractDuration"
+                                               id="frameContractCb"
+                                               [quantityUnits]="frameContractDurationUnits"
+                                               [quantity]="frameContractDuration"
+                                               [disabled]="isFrameContractDisabled()">
+                    </negotiation-request-input>
+                </div>
+            </div>
+        </ng-container>
+    </ng-container>
+
+    <!--Notes-->
+    <div class="row">
+        <div class="btn btn-outline-primary align-self-start mb-2" (click)="showNotesAndAdditionalFiles = !showNotesAndAdditionalFiles;">Notes and Additional Files</div>
     </div>
-    <div class="col-5 d-flex">
-        {{ wrapper.linePricePerItemString }}
-        <div *ngIf="wrapper.linePriceWrapper.appliedDiscounts.length > 0 && !isReadOnly()" class="space-left" data-toggle="tooltip" data-placement="top" (click)="openDiscountModal()"  title="Applied Discounts/Charges" style="cursor: pointer">
-            <i class="fa fa-search" aria-hidden="true"></i>
+    <note-file-view *ngIf="showNotesAndAdditionalFiles"
+                    class="mb-2"
+                    [notes]="rfq.note"
+                    [documents]="rfq.additionalDocumentReference"
+                    [label]="'Notes'"
+                    [firstCol]="'col-2'"
+                    [secondCol]="'col-5'"
+                    [lastCol]="'col-5'"
+                    [readonly]="isLoading() || isReadOnly()"></note-file-view>
+
+    <!-- Data Monitoring -->
+    <ng-container *ngIf="config.dataChannelsEnabled">
+        <div class="row">
+            <div class="btn btn-outline-primary align-self-start mb-2" (click)="showDataMonitoring = !showDataMonitoring;">Data Monitoring</div>
+        </div>
+        <div *ngIf="showDataMonitoring" class="row mb-3">
+            <div class="col-12">
+                <div class="input-group">
+                    <div class="d-flex align-items-center">
+                        <input type="checkbox" [(ngModel)]="rfq.dataMonitoringRequested" [disabled]="isLoading() || isReadOnly()" >
+                    </div>
+                    <span class="form-control d-inline border-0">
+                            <strong class="font-weight-500">Request data monitoring service</strong>
+                        </span>
+                </div>
+            </div>
+        </div>
+    </ng-container>
+
+    <!-- Delivery -->
+    <div class="row">
+        <div class="btn btn-outline-primary align-self-start mb-2" (click)="showDeliveryAddress = !showDeliveryAddress">Delivery Address</div>
+    </div>
+    <div *ngIf="showDeliveryAddress" class="row mb-3">
+        <div class="col-12">
+            <options-input label="Use Existing Address" [(selected)]="selectedAddress" [options]="addressOptions"
+                           rowClass="mb-1" labelClass="col-2" valueClass="col-10">
+            </options-input>
+
+            <address-input [address]="wrapper.rfqDeliveryAddress" [disabled]="isLoading() || isReadOnly() || selectedAddressValue !== ''">
+            </address-input>
         </div>
     </div>
-    <div class="col-5">
-        <negotiation-request-input label="Request Item Price" [(cbModel)]="negotiatePrice" id="priceCb"
-            [disabled]="isLoading() || isReadOnly()" [quantity]="wrapper.rfqPriceWrapper.itemPrice"
-            [quantityUnits]="CURRENCIES" [cbDisabled]="!lineHasPrice" [disableQuantityUnit]="lineHasPrice" [invalid]="!isPriceValid()">
-        </negotiation-request-input>
-    </div>
-</div>
 
-<!-- Quantity -->
-<div class="row content-row bg-light">
-    <div class="col-2">
-        <strong class="font-weight-500">Quantity:</strong>
-    </div>
-    <div class="col-5"></div>
-    <div class="col-5 mt-1">
-        <div class="d-flex">
-            <input type="number" [(ngModel)]="requestedQuantity" class="form-control form-control-sm w-75"
-                [disabled]="isLoading() || isReadOnly()" />
-            <span class="ml-2" *ngIf="getQuantityUnit() !== ''">{{ getQuantityUnit() }}</span>
+    <!-- Contract Preview -->
+    <div class="row">
+        <div class="col-6">
+            <terms-and-conditions [buyerPartyId]="buyerId"
+                                  [selectedIncoterm]="wrapper.rfqIncoterms"
+                                  [selectedTradingTerms]="wrapper.rfqPaymentTerms.tradingTerms"
+                                  (onIncotermChanged)="wrapper.rfqIncoterms = $event; onPriceConditionsChange();"
+                                  [isIncotermsNegotiating]="rfq.negotiationOptions.incoterms"
+                                  (onTradingTermChanged)="wrapper.rfqPaymentTerms.paymentTerm=$event; onPriceConditionsChange();"
+                                  [isTradingTermsNegotiating]="rfq.negotiationOptions.paymentTerms"
+                                  [sellerPartyId]="sellerId" [readOnly]="isLoading() || isReadOnly()" [documentType]="'rfq'" [termsAndConditions]="rfq.termOrCondition"></terms-and-conditions>
+        </div>
+        <div class="col-6">
+            <h4>
+                Purchase Order
+                <button class="btn btn-outline-dark" (click)="showPurchaseOrder = !showPurchaseOrder">
+                    <i class="fas fa-chevron-up fa-fw fa-lg mt-2" aria-hidden="true" *ngIf="showPurchaseOrder"></i>
+                    <i class="fas fa-chevron-down fa-fw fa-lg mt-2" aria-hidden="true" *ngIf="!showPurchaseOrder"></i>
+                </button>
+            </h4>
+            <div *ngIf="showPurchaseOrder">
+                <div class="row">
+                    <div class="col-3"><strong>Product Id:</strong></div>
+                    <div class="col-9">{{rfq.requestForQuotationLine[0].lineItem.item.manufacturersItemIdentification.id}}</div>
+                </div>
+                <div class="row">
+                    <div class="col-3"><strong>Quantity:</strong></div>
+                    <div class="col-9">{{requestedQuantity}} {{getQuantityUnit()}}</div>
+                </div>
+                <div class="row">
+                    <div class="col-3"><strong>Total Price:</strong></div>
+                    <div class="col-9">{{ wrapper.rfqTotalPriceString }}</div>
+                </div>
+            </div>
         </div>
     </div>
-</div>
 
-<!--Notes-->
-<h5>Notes and Additional Files</h5>
-<note-file-view [notes]="rfq.note"
-           [documents]="rfq.additionalDocumentReference"
-           [label]="'Notes'"
-           [firstCol]="'col-2'"
-           [secondCol]="'col-5'"
-           [lastCol]="'col-5'"
-           [readonly]="isLoading() || isReadOnly()"></note-file-view>
-
-<hr>
-
-<!-- Data Monitoring -->
-<div class="row" *ngIf="config.dataChannelsEnabled">
-    <div class="col-12">
-        <h4>Data Monitoring</h4>
-        <div class="input-group input-group-lg">
-          <input type="checkbox" [(ngModel)]="rfq.dataMonitoringRequested" [disabled]="isLoading() || isReadOnly()" >
-          <span class="form-control d-inline border-0">
-              <strong class="font-weight-500">Request data monitoring service</strong>
-          </span>
+    <!-- Actions -->
+    <div *ngIf="!showRequestedPrice()" class="d-flex justify-content-end actions-row">
+        <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+        <div class="col-3 price-col">Total Price: {{ wrapper.rfqTotalPriceString }}</div>
+        <div class="col-2">
+            <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
+        </div>
+        <div class="col-3"   *ngIf="!(processMetadata && processMetadata.isBeingUpdated)">
+            <button class="btn btn-primary action" [disabled]="isLoading() || !isFormValid()" (click)="onSendRequest()">
+                {{ isNegotiatingAnyTerm() ? "Send Request" : "Continue With Manufacturer's Terms" }}
+            </button>
+        </div>
+        <div class="col-3" *ngIf="processMetadata && processMetadata.isBeingUpdated">
+            <button class="btn btn-primary action" [disabled]="isLoading() || !isFormValid()" (click)="onUpdateRequest()">
+                Update Request
+            </button>
         </div>
     </div>
-</div>
 
-<hr *ngIf="config.dataChannelsEnabled">
-
-<!-- Delivery -->
-<div class="row">
-    <div class="col-12">
-        <h4>Delivery Address</h4>
-
-        <options-input label="Use Existing Address" [(selected)]="selectedAddress" [options]="addressOptions"
-            rowClass="mb-1" labelClass="col-2" valueClass="col-10">
-        </options-input>
-
-        <address-input [address]="wrapper.rfqDeliveryAddress" [disabled]="isLoading() || isReadOnly() || selectedAddressValue !== ''">
-        </address-input>
-    </div>
-</div>
-
-<!-- Actions -->
-<div *ngIf="!isWaitingForReply()" class="row actions-row">
-    <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
-    <div class="col-3 price-col">Total Price: {{ wrapper.rfqTotalPriceString }}</div>
-    <div class="col-2">
-        <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
-    </div>
-    <div class="col-3" *ngIf="!(processMetadata && processMetadata.isBeingUpdated)">
-        <button class="btn btn-primary action" [disabled]="isLoading() || !isFormValid()" (click)="onSendRequest()">
-            {{ isNegotiatingAnyTerm() ? "Send Request" : "Continue With Manufacturer's Terms" }}
-        </button>
-    </div>
-    <div class="col-3" *ngIf="processMetadata && processMetadata.isBeingUpdated">
-        <button class="btn btn-primary action" [disabled]="isLoading() || !isFormValid()" (click)="onUpdateRequest()">
-            Update Request
-        </button>
-    </div>
-</div>
-
-<div *ngIf="isWaitingForReply()" class="row actions-row">
+    <div *ngIf="showRequestedPrice()" class="row actions-row">
         <div class="col-6"></div>
         <div class="col-4 price-col">Requested Price: {{ wrapper.rfqTotalPriceString }}</div>
         <div class="col-2">
-        <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
+            <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
+        </div>
     </div>
-</div>
 
-<discount-modal></discount-modal>
+    <discount-modal></discount-modal>
+</ng-container>

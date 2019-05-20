@@ -3,6 +3,7 @@ import * as myGlobals from '../globals';
 import {Headers, Http} from '@angular/http';
 import {getAuthorizedHeaders} from "../common/utils";
 import {CookieService} from "ng2-cookies";
+import {ServiceBridge} from "./ServiceBridge";
 
 @Injectable()
 export class UnitService{
@@ -10,6 +11,7 @@ export class UnitService{
 
     constructor(private http: Http,
                 private cookieService: CookieService) {
+        ServiceBridge.unitService = this;
     }
 
     private map = null;

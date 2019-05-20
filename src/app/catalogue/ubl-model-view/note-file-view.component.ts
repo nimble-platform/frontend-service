@@ -27,10 +27,10 @@ export class NoteFileViewComponent implements OnInit{
     requestFiles:BinaryObject[];
     ngOnInit(){
         if(this.documents){
-            this.files = this.documents.map(doc => doc.attachment.embeddedDocumentBinaryObject);
+            this.files = this.documents.filter(doc => doc.attachment != null).map(doc => doc.attachment.embeddedDocumentBinaryObject);
         }
         if(this.requestDocuments){
-            this.requestFiles = this.requestDocuments.map(doc => doc.attachment.embeddedDocumentBinaryObject);
+            this.requestFiles = this.requestDocuments.filter(doc => doc.attachment != null).map(doc => doc.attachment.embeddedDocumentBinaryObject);
         }
     }
 

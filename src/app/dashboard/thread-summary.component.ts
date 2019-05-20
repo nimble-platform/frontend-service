@@ -18,11 +18,12 @@ import { Comment } from "../catalogue/model/publish/comment";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { Code } from "../catalogue/model/publish/code";
 import {BpUserRole} from '../bpe/model/bp-user-role';
-import {BpStartEvent} from '../catalogue/model/publish/bp-start-event';
+import {BpActivityEvent} from '../catalogue/model/publish/bp-start-event';
 import {BpURLParams} from '../catalogue/model/publish/bpURLParams';
 import {UBLModelUtils} from '../catalogue/model/ubl-model-utils';
 import {selectPreferredValue} from '../common/utils';
 import {DashboardProcessInstanceDetails} from '../bpe/model/dashboard-process-instance-details';
+import {Item} from '../catalogue/model/publish/item';
 
 /**
  * Created by suat on 12-Mar-18.
@@ -48,6 +49,10 @@ export class ThreadSummaryComponent implements OnInit {
     hasHistory: boolean = false;
     history: ThreadEventMetadata[];
     historyExpanded: boolean = false;
+
+    ratingOverall = 0;
+    ratingSeller = 0;
+    ratingFulfillment = 0;
 
     // Utilities
     eventCount: number = 0
@@ -102,8 +107,20 @@ export class ThreadSummaryComponent implements OnInit {
 
     async openBpProcessView() {
         let userRole:BpUserRole = this.titleEvent.buyer ? "buyer": "seller";
-        this.bpDataService.startBp(new BpStartEvent(userRole,this.titleEvent.processType,this.processInstanceGroup.id,this.collaborationGroupId,this.titleEvent),true,
-            new BpURLParams(this.titleEvent.product.catalogueDocumentReference.id,this.titleEvent.product.manufacturersItemIdentification.id,this.titleEvent.processId));
+        this.bpDataService.startBp(
+            new BpActivityEvent(
+                userRole,
+                this.titleEvent.processType,
+                this.processInstanceGroup.id,
+                this.collaborationGroupId,
+                [this.titleEvent].concat(this.history),
+                null,
+                false),
+            true,
+            new BpURLParams(
+                this.titleEvent.product.catalogueDocumentReference.id,
+                this.titleEvent.product.manufacturersItemIdentification.id,
+                this.titleEvent.processId));
     }
 
     private fetchEvents(): void {
@@ -171,10 +188,11 @@ export class ThreadSummaryComponent implements OnInit {
         const correspondent = this.getCorrespondent(dashboardProcessInstanceDetails,userRole,processType);
 
         if (userRole === "buyer") {
-            this.lastEventPartnerID = UBLModelUtils.getPartyId(ActivityVariableParser.getProductFromProcessData(initialDoc,processType).manufacturerParty);
+            let item:Item = initialDoc.item;
+            this.lastEventPartnerID = UBLModelUtils.getPartyId(item.manufacturerParty);
         }
         else {
-            this.lastEventPartnerID = ActivityVariableParser.getBuyerId(initialDoc,processType);
+            this.lastEventPartnerID = initialDoc.buyerPartyId;
         }
 
         const isRated = await this.bpeService.ratingExists(processInstanceId, this.lastEventPartnerID);
@@ -185,7 +203,7 @@ export class ThreadSummaryComponent implements OnInit {
             processInstanceId,
             moment(new Date(lastActivity["startTime"]), 'YYYY-MM-DDTHH:mm:ss.SSSZ').format("YYYY-MM-DD HH:mm:ss"),
             ActivityVariableParser.getTradingPartnerName(initialDoc, this.cookieService.get("company_id"),processType),
-            ActivityVariableParser.getProductFromProcessData(initialDoc,processType),
+            initialDoc.item,
             correspondent,
             this.getBPStatus(response),
             initialDoc,
@@ -464,7 +482,7 @@ export class ThreadSummaryComponent implements OnInit {
                 }
                 break;
             case "Transport_Execution_Plan":
-                if (response && response.documentStatusCode.name == "Accepted") {
+                if (response && response.acceptedIndicator == "Accepted") {
                     this.showCancelCollaborationButton = false;
                 }
         }
@@ -479,6 +497,20 @@ export class ThreadSummaryComponent implements OnInit {
       }
     }
 
+    changeCommunicationRating(){
+        this.ratingSeller = (this.compRating.QualityOfTheNegotiationProcess + this.compRating.QualityOfTheOrderingProcess + this.compRating.ResponseTime) / 3;
+        this.ratingOverall = (this.ratingSeller + this.ratingFulfillment + this.compRating.DeliveryAndPackaging) / 3;
+    }
+
+    changeFullfillmentRating(){
+      this.ratingFulfillment = (this.compRating.ProductListingAccuracy + this.compRating.ConformanceToOtherAgreedTerms) / 2;
+      this.ratingOverall = (this.ratingSeller + this.ratingFulfillment + this.compRating.DeliveryAndPackaging) / 3;
+    }
+
+    changeDeliveryRating(){
+      this.ratingOverall = (this.ratingSeller + this.ratingFulfillment + this.compRating.DeliveryAndPackaging) / 3;
+    }
+
     rateCollaborationSuccess(content) {
       this.compRating = {
         "QualityOfTheNegotiationProcess": 0,
@@ -488,6 +520,9 @@ export class ThreadSummaryComponent implements OnInit {
         "ConformanceToOtherAgreedTerms": 0,
         "DeliveryAndPackaging": 0
       };
+      this.ratingOverall = 0;
+      this.ratingSeller = 0;
+      this.ratingFulfillment = 0
       this.compComment = "";
       this.modalService.open(content);
     }

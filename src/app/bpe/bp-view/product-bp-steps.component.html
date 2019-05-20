@@ -1,4 +1,4 @@
-<div class="row mt-5 mb-3">
+<div class="row mt-5 mb-2">
     <div class="col-12">
         <div class="status-text {{ displayMode === 'Transport' ? 'four-steps' : displayMode !== 'Transport_After_Order' && !config.showPPAP ? 'five-steps' : '' }}" [ngStyle]="getStatusTextStyle()">
             &nbsp;{{ statusText }}&nbsp;
@@ -78,6 +78,15 @@
         </div>
         <div class="expand-steps-div expand-order">
             <i class="fas fa-ellipsis-h"></i>
+        </div>
+    </div>
+
+    <!-- Logistics Services Steps -->
+    <div *ngIf="displayMode === 'Logistics'" class="col-12">
+        <div class="steps">
+            <div [ngClass]="getStepClasses('Item_Information_Request')">
+                <span>Request for Information</span>
+            </div>
         </div>
     </div>
 </div>

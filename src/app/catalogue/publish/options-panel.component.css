@@ -1,0 +1,7 @@
+#info {
+    padding-right: 0px;
+}
+
+div.without-left-padding {
+    padding-left: 0px;
+}

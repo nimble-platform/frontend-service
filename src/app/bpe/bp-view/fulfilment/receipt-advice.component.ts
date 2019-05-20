@@ -42,11 +42,13 @@ export class ReceiptAdviceComponent implements OnInit {
 
     ngOnInit() {
         // get copy of ThreadEventMetadata of the current business process
-        this.processMetadata = this.bpDataService.bpStartEvent.processMetadata;
+        if(!this.bpDataService.bpActivityEvent.newProcess) {
+            this.processMetadata = this.bpDataService.bpActivityEvent.processHistory[0];
+        }
 
         this.receiptAdvice = this.bpDataService.receiptAdvice;
         this.dispatchAdvice = this.bpDataService.despatchAdvice;
-        this.userRole = this.bpDataService.bpStartEvent.userRole;
+        this.userRole = this.bpDataService.bpActivityEvent.userRole;
     }
 
     /*
@@ -74,7 +76,7 @@ export class ReceiptAdviceComponent implements OnInit {
             .then(res => {
                 this.callStatus.callback("Receipt Advice sent", true);
                 var tab = "PUCHASES";
-                if (this.bpDataService.bpStartEvent.userRole == "seller")
+                if (this.bpDataService.bpActivityEvent.userRole == "seller")
                   tab = "SALES";
                 this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
             }).catch(error => {

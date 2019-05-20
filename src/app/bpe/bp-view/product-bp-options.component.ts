@@ -11,7 +11,7 @@ import { BpWorkflowOptions } from "../model/bp-workflow-options";
 import { ProcessType } from "../model/process-type";
 import { ProductBpStep } from "./product-bp-step";
 import { ProductBpStepsDisplay } from "./product-bp-steps-display";
-import { isTransportService } from "../../common/utils";
+import {isLogisticsService, isTransportService} from '../../common/utils';
 import { UserService } from "../../user-mgmt/user.service";
 import { CompanySettings } from "../../user-mgmt/model/company-settings";
 import { BPEService } from "../bpe.service";
@@ -19,7 +19,8 @@ import { Order } from "../../catalogue/model/publish/order";
 import { SearchContextService } from "../../simple-search/search-context.service";
 import { CookieService } from "ng2-cookies";
 import {ThreadEventMetadata} from '../../catalogue/model/publish/thread-event-metadata';
-
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import * as myGlobals from '../../globals';
 /**
  * Created by suat on 20-Oct-17.
  */
@@ -33,7 +34,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     currentStep: ProductBpStep;
     stepsDisplayMode: ProductBpStepsDisplay;
     callStatus: CallStatus = new CallStatus();
-    bpStartEventSubs: Subscription;
+    bpActivityEventSubs: Subscription;
 
     id: string;
     catalogueId: string;
@@ -50,6 +51,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
 
     productExpanded: boolean = false;
     serviceExpanded: boolean = false;
+    public config = myGlobals.config;
 
     // the copy of ThreadEventMetadata of the current business process
     processMetadata: ThreadEventMetadata;
@@ -61,18 +63,29 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                 public bpeService: BPEService,
                 public route: ActivatedRoute,
                 private cookieService: CookieService,
-                private renderer: Renderer2) {
+                private renderer: Renderer2,
+                private modalService: NgbModal) {
         this.renderer.setStyle(document.body, "background-image", "none");
+    }
+
+    open(content) {
+        this.modalService.open(content, {}).result.then((result) => {
+            // this.closeResult = `Closed with: ${result}`;
+        }, (reason) => {
+            // this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+        });
     }
 
     ngOnInit() {
         // get copy of ThreadEventMetadata of the current business process
-        this.processMetadata = this.bpDataService.bpStartEvent.processMetadata;
+        if(this.bpDataService.bpActivityEvent.processHistory.length > 0) {
+            this.processMetadata = this.bpDataService.bpActivityEvent.processHistory[0];
+        }
 
-        this.bpStartEventSubs = this.bpDataService.bpStartEventObservable.subscribe(bpStartEvent => {
-            if (bpStartEvent) {
-                this.processType = bpStartEvent.processType;
-                this.currentStep = this.getCurrentStep(bpStartEvent.processType);
+        this.bpActivityEventSubs = this.bpDataService.bpActivityEventObservable.subscribe(bpActivityEvent => {
+            if (bpActivityEvent) {
+                this.processType = bpActivityEvent.processType;
+                this.currentStep = this.getCurrentStep(bpActivityEvent.processType);
                 this.stepsDisplayMode = this.getStepsDisplayMode();
             }
         });
@@ -134,7 +147,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
-        this.bpStartEventSubs.unsubscribe();
+        this.bpActivityEventSubs.unsubscribe();
         this.renderer.setStyle(document.body, "background-image", "url('assets/bg_global.jpg')");
     }
 
@@ -150,7 +163,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     }
 
     isReadOnly(): boolean {
-        return !(this.processMetadata && this.processMetadata.isBeingUpdated) || this.bpDataService.bpStartEvent.processType == 'Fulfilment' || this.bpDataService.bpStartEvent.processType == 'Transport_Execution_Plan';
+        return !(this.processMetadata && this.processMetadata.isBeingUpdated) || this.bpDataService.bpActivityEvent.processType == 'Fulfilment' || this.bpDataService.bpActivityEvent.processType == 'Transport_Execution_Plan';
     }
 
     onToggleProductExpanded() {
@@ -170,7 +183,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     }
 
     private getOriginalOrder(): Promise<Order | null> {
-        if(this.bpDataService.bpStartEvent.userRole === "seller") {
+        if(this.bpDataService.bpActivityEvent.userRole === "seller") {
             return Promise.resolve(null);
         }
         if(this.searchContextService.getAssociatedProcessMetadata()) {
@@ -187,7 +200,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     private initWithCatalogueLine(line: CatalogueLine, settings: CompanySettings) {
         this.wrapper = new ProductWrapper(line, settings.negotiationSettings);
         this.settings = settings;
-        this.options = this.bpDataService.bpStartEvent.workflowOptions;
+        this.options = this.bpDataService.bpActivityEvent.workflowOptions;
         if(this.processType) {
             this.currentStep = this.getCurrentStep(this.processType);
         }
@@ -227,9 +240,13 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
         return !!this.serviceLine || isTransportService(this.line);
     }
 
+    private isLogisticsService(): boolean {
+        return !!this.serviceLine || isLogisticsService(this.line);
+    }
+
     private getStepsDisplayMode(): ProductBpStepsDisplay {
         if(this.isTransportService()) {
-            if(this.bpDataService.bpStartEvent.userRole === "seller") {
+            if(this.bpDataService.bpActivityEvent.userRole === "seller") {
                 // The service provider only sees transport steps
                 return "Transport";
             } else if(!this.originalOrder) {
@@ -239,7 +256,10 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                 return "Transport_After_Order";
             }
         } else {
-            if(this.bpDataService.bpStartEvent.userRole === "seller") {
+            if(this.isLogisticsService()){
+                return "Logistics";
+            }
+            if(this.bpDataService.bpActivityEvent.userRole === "seller") {
                 return "Order_Before_Transport";
             } else {
                 return "Order";

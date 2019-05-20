@@ -9,7 +9,7 @@ export class Period {
         public startTime: string = null,
         public endDate: string = null,
         public endTime: string = null,
-        public durationMeasure: Quantity = new Quantity(null, "working days", null),
+        public durationMeasure: Quantity = new Quantity(null, null, null),
         public hjid: string = null
     ) {  }
 }
