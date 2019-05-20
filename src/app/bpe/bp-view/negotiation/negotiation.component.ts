@@ -32,7 +32,7 @@ export class NegotiationComponent implements OnInit, OnDestroy {
         this.bpActivityEventSubs = this.bpDataService.bpActivityEventObservable.subscribe(bpActivityEvent => {
             if (bpActivityEvent) {
                 if(bpActivityEvent.processType == 'Negotiation' && bpActivityEvent.newProcess) {
-                    this.negotiationProcessList.push({});
+                    this.negotiationProcessList.push(null);
                     this.sliderIndex++;
                 }
             }
@@ -64,7 +64,7 @@ export class NegotiationComponent implements OnInit, OnDestroy {
             // if this is a new process, put an empty object
             // just to have a correct number of elements in the negotiationProcessList array
             if(this.newProcess) {
-                this.negotiationProcessList.push({});
+                this.negotiationProcessList.push(null);
             }
 
             this.sliderIndex = this.negotiationProcessList.length-1;

@@ -1,12 +1,31 @@
 <ng-container *ngIf="!isLoading() && bpDataService.getCatalogueLine()">
-    <input *ngIf="negotiationProcessList.length > 1 && negotiationDocumentsCallStatus.fb_callback" #processHistorySlider
-           type="range" class="form-control-range mt-2 mb-2"
-           [(ngModel)]="sliderIndex" min="0" [max]="negotiationProcessList.length-1" [step]="1"/>
+    <ng-container *ngIf="negotiationProcessList.length > 1 && negotiationDocumentsCallStatus.fb_callback">
+        <!-- slider -->
+        <input #processHistorySlider
+               type="range" class="form-control-range mt-2 mb-2"
+               [(ngModel)]="sliderIndex" min="0" [max]="negotiationProcessList.length-1" [step]="1"/>
+
+        <!-- dates -->
+        <div class="d-flex justify-content-between">
+            <ng-container *ngFor="let metadata of negotiationProcessList; let i = index">
+                <ng-container *ngIf="metadata != null">
+                    <div>
+                        <div [ngClass]="sliderIndex == i ? 'font-weight-bold' : ''">{{ metadata.startTime.substr(0, metadata.startTime.indexOf(' '))}}</div>
+                        <div [ngClass]="sliderIndex == i ? 'font-weight-bold' : ''">{{ metadata.startTime.substr(metadata.startTime.indexOf(' '))}}</div>
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="metadata == null">
+                    &nbsp;
+                </ng-container>
+            </ng-container>
+        </div>
+
+        <hr class="mb-3">
+    </ng-container>
 
     <ng-container *ngFor="let metadata of negotiationProcessList; let i = index">
         <!-- previous steps -->
         <div *ngIf="negotiationDocumentsCallStatus.isComplete() && i != negotiationProcessList.length-1" [hidden]="!(sliderIndex == i)">
-            <br>{{i}}<br>
             <negotiation-response [rfq]="negotiationDocuments[i].request"
                                   [quotation]="negotiationDocuments[i].response"
                                   [readonly]="true">
