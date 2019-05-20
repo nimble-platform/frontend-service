@@ -77,6 +77,7 @@ export class NegotiationRequestComponent implements OnInit {
     showDataMonitoring: boolean = false;
     showDeliveryAddress: boolean = false;
     showPurchaseOrder:boolean = false;
+    showTermsAndConditions:boolean = false;
     callStatus: CallStatus = new CallStatus();
     pageInitCallStatus: CallStatus = new CallStatus();
 

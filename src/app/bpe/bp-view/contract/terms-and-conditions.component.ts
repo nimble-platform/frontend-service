@@ -23,7 +23,8 @@ export class TermsAndConditionsComponent implements OnInit {
     @Input() readOnly:boolean = false;
     @Input() rfqId:string = null;
     @Input() documentType:string; // "order", "rfq", "quotation";
-    @Input() termsAndConditions:Clause[];
+    @Input() originalTermAndConditionClauses:Clause[] = null; // original terms and conditions of the object
+    @Input() termsAndConditions:Clause[] = []; // updated terms and conditions of the object
 
     // Outputs
     @Output() onIncotermChanged = new EventEmitter();
@@ -31,8 +32,6 @@ export class TermsAndConditionsComponent implements OnInit {
 
     showPreview: boolean = false;
     callStatus : CallStatus = new CallStatus();
-    // these are the default clauses which are retrieved from the server
-    defaultTermAndConditionClauses:Clause[];
 
     showSection:boolean[] = [];
 
@@ -64,7 +63,7 @@ export class TermsAndConditionsComponent implements OnInit {
             this.userService.getSettingsForParty(this.sellerPartyId),
             this.unitService.getCachedUnitList(deliveryPeriodUnitListId),
             this.unitService.getCachedUnitList(warrantyPeriodUnitListId),
-            this.bpeService.getTermsAndConditions(this.orderId,this.buyerPartyId, this.sellerPartyId, this.rfqId, this.selectedIncoterm, this.selectedTradingTerm),
+            this.originalTermAndConditionClauses ? Promise.resolve(null) : this.bpeService.getTermsAndConditions(this.orderId,this.buyerPartyId, this.sellerPartyId, this.rfqId, this.selectedIncoterm, this.selectedTradingTerm),
         ]).then(([sellerPartySettings, deliveryPeriodUnits, warrantyPeriodUnits,termsAndConditions]) => {
 
             // populate available incoterms
@@ -73,19 +72,22 @@ export class TermsAndConditionsComponent implements OnInit {
             this.PAYMENT_TERMS = sellerPartySettings.negotiationSettings.paymentTerms;
             // populate available units
             this.UNITS = deliveryPeriodUnits.concat(warrantyPeriodUnits);
+            // since we do not have an original terms and conditions for this object, we retrieve it from the server
+            if(termsAndConditions){
+                // set default term and condition clauses
+                this.originalTermAndConditionClauses = termsAndConditions;
+            }
 
-            // set default term and condition clauses
-            this.defaultTermAndConditionClauses = termsAndConditions;
             // sort terms and conditions to get the correct order
-            this.defaultTermAndConditionClauses.sort((clause1, clause2) => {
-               let order1 = Number(clause1.id.substring(0,clause1.id.indexOf("_")));
-               let order2 = Number(clause2.id.substring(0,clause2.id.indexOf("_")));
-               return order1 - order2;
+            this.originalTermAndConditionClauses.sort((clause1, clause2) => {
+                let order1 = Number(clause1.id.substring(0,clause1.id.indexOf("_")));
+                let order2 = Number(clause2.id.substring(0,clause2.id.indexOf("_")));
+                return order1 - order2;
             });
 
             // create terms and conditions if we do not have any
             if(this.termsAndConditions.length == 0){
-                for(let clause of this.defaultTermAndConditionClauses){
+                for(let clause of this.originalTermAndConditionClauses){
                     let newClause:Clause = JSON.parse(JSON.stringify(clause));
                     this.termsAndConditions.push(newClause);
                 }
@@ -120,8 +122,8 @@ export class TermsAndConditionsComponent implements OnInit {
     }
 
     setSectionText(index:number){
+        let clause = this.originalTermAndConditionClauses[index];
         if(this.readOnly){
-            let clause = this.defaultTermAndConditionClauses[index];
 
             let element = document.getElementById(this.generateIdForClause(index));
 
@@ -130,19 +132,26 @@ export class TermsAndConditionsComponent implements OnInit {
             let text = clause.content[0].value
 
             for(let tradingTerm of clause.tradingTerms){
+                let spanText = "";
+                if(this.isOriginalTradingTermOfClause(clause,tradingTerm.id)){
+                    spanText = "<b><span style='color: red'>";
+                }
+                else{
+                    spanText = "<b><span>";
+                }
                 if(tradingTerm.value.valueQualifier == "QUANTITY"){
                     let defaultValue = tradingTerm.value.valueQuantity[0].value;
                     let defaultUnit = tradingTerm.value.valueQuantity[0].unitCode;
-                    text = text.replace(tradingTerm.id,"<b><span>"+defaultValue+" "+defaultUnit+"</span></b>");
+                    text = text.replace(tradingTerm.id,spanText+defaultValue+" "+defaultUnit+"</span></b>");
                 } else if(tradingTerm.value.valueQualifier == "STRING"){
                     let defaultValue = this.tradingTerms.get(tradingTerm.id).value.value[0].value;
-                    text = text.replace(tradingTerm.id,"<b><span>"+defaultValue+"</span></b>");
+                    text = text.replace(tradingTerm.id,spanText+defaultValue+"</span></b>");
                 } else if(tradingTerm.value.valueQualifier == "NUMBER"){
                     let defaultValue = this.tradingTerms.get(tradingTerm.id).value.valueDecimal[0].toString();
-                    text = text.replace(tradingTerm.id,"<b><span>"+defaultValue+"</span></b>");
+                    text = text.replace(tradingTerm.id,spanText+defaultValue+"</span></b>");
                 } else if(tradingTerm.value.valueQualifier == "CODE"){
                     let defaultValue = this.tradingTerms.get(tradingTerm.id).value.valueCode[0].value;
-                    text = text.replace(tradingTerm.id,"<b><span>"+defaultValue+"</span></b>");
+                    text = text.replace(tradingTerm.id,spanText+defaultValue+"</span></b>");
                 }
             }
 
@@ -150,26 +159,34 @@ export class TermsAndConditionsComponent implements OnInit {
 
         } else{
             let element = document.getElementById(this.generateIdForClause(index));
-            let clause = this.defaultTermAndConditionClauses[index];
+            let clause = this.originalTermAndConditionClauses[index];
             let text = clause.content[0].value;
 
             // replace placeholders with spans
             for(let tradingTerm of clause.tradingTerms){
                 let id = tradingTerm.id;
+                let spanText = "";
+                if(this.isOriginalTradingTermOfClause(clause,tradingTerm.id)){
+                    spanText = "<b><span style='color: red' id='"+this.generateIdForParameter(id)+"'>";
+                }
+                else{
+                    spanText = "<b><span id='"+this.generateIdForParameter(id)+"'>";
+                }
+
                 // for the quantities, we have value and unit
                 if(tradingTerm.value.valueQualifier == "QUANTITY"){
                     let defaultValue = this.tradingTerms.get(id).value.valueQuantity[0].value;
                     let defaultUnit = this.tradingTerms.get(id).value.valueQuantity[0].unitCode;
-                    text = text.replace(id,"<b><span id='"+this.generateIdForParameter(id)+"'>"+defaultValue+" "+defaultUnit+"</span></b>");
+                    text = text.replace(id,spanText+defaultValue+" "+defaultUnit+"</span></b>");
                 } else if(tradingTerm.value.valueQualifier == "STRING"){
                     let defaultValue = this.tradingTerms.get(id).value.value[0].value;
-                    text = text.replace(id,"<b><span id='"+this.generateIdForParameter(id)+"'>"+defaultValue+"</span></b>");
+                    text = text.replace(id,spanText+defaultValue+"</span></b>");
                 } else if(tradingTerm.value.valueQualifier == "NUMBER"){
                     let defaultValue = this.tradingTerms.get(id).value.valueDecimal[0].toString();
-                    text = text.replace(id,"<b><span id='"+this.generateIdForParameter(id)+"'>"+defaultValue+"</span></b>");
+                    text = text.replace(id,spanText+defaultValue+"</span></b>");
                 } else if(tradingTerm.value.valueQualifier == "CODE"){
                     let defaultValue = this.tradingTerms.get(id).value.valueCode[0].value;
-                    text = text.replace(id,"<b><span id='"+this.generateIdForParameter(id)+"'>"+defaultValue+"</span></b>");
+                    text = text.replace(id,spanText+defaultValue+"</span></b>");
                 }
             }
 
@@ -178,9 +195,9 @@ export class TermsAndConditionsComponent implements OnInit {
     }
 
     updateParameter(sectionIndex:number,id:string,value:string,isUnit:boolean = false){
+        let clause = this.originalTermAndConditionClauses[sectionIndex];
         // handling of empty string
         if(value == ""){
-            let clause = this.defaultTermAndConditionClauses[sectionIndex];
 
             for(let tradingTerm of clause.tradingTerms){
                 if(tradingTerm.id == id){
@@ -203,6 +220,12 @@ export class TermsAndConditionsComponent implements OnInit {
 
             let element = document.getElementById(this.generateIdForParameter(id));
             element.innerText = this.tradingTerms.get(id).value.valueQuantity[0].value +" "+ value;
+
+            if(this.isOriginalTradingTermOfClause(clause,id)){
+                element.style.color = 'red';
+            } else{
+                element.style.color = 'black';
+            }
         } else{
             let tradingTerm = this.tradingTerms.get(id);
             if(tradingTerm.value.valueQualifier == "STRING"){
@@ -221,6 +244,12 @@ export class TermsAndConditionsComponent implements OnInit {
                 element.innerText = value + " " + tradingTerm.value.valueQuantity[0].unitCode;
             } else{
                 element.innerText = value;
+            }
+
+            if(this.isOriginalTradingTermOfClause(clause,id)){
+                element.style.color = 'red';
+            } else{
+                element.style.color = 'black';
             }
         }
 
@@ -265,7 +294,7 @@ export class TermsAndConditionsComponent implements OnInit {
 
         let id = "$incoterms_id";
 
-        if(this._selectedIncoterm != ""){
+        if(this._selectedIncoterm != "" && this._isIncotermsNegotiating){
             this.updateTermNegotiating(id, this._selectedIncoterm);
         }
     }
@@ -280,9 +309,9 @@ export class TermsAndConditionsComponent implements OnInit {
 
         let id = "$incoterms_id";
         // if we do not negotiate incoterms, use the default value
-        if(!isNegotiating && this.defaultTermAndConditionClauses){
+        if(!isNegotiating && this.originalTermAndConditionClauses){
 
-            for(let clause of this.defaultTermAndConditionClauses){
+            for(let clause of this.originalTermAndConditionClauses){
                 for(let tradingTerm of clause.tradingTerms){
                     if(tradingTerm.id == id){
 
@@ -319,8 +348,8 @@ export class TermsAndConditionsComponent implements OnInit {
 
         let id = "$payment_id";
         // if we do not negotiate trading terms, then use the default value
-        if(!isNegotiating && this.defaultTermAndConditionClauses){
-            for(let clause of this.defaultTermAndConditionClauses){
+        if(!isNegotiating && this.originalTermAndConditionClauses){
+            for(let clause of this.originalTermAndConditionClauses){
                 for(let tradingTerm of clause.tradingTerms){
                     if(tradingTerm.id == id){
                         this.updateTermNegotiating(id, tradingTerm.value.valueCode[0].value);
@@ -333,8 +362,55 @@ export class TermsAndConditionsComponent implements OnInit {
         else if(this._selectedTradingTerm){
             // construct to value representing the selected trading term
             this.updateTermNegotiating(id, this._selectedTradingTerm);
+        }
+    }
+
+    // checks the given clause is the same with the original clause
+    isOriginalClause(clauseId:string){
+        // if we have an order, we do not need to check the clause is changed or not
+        if(this.orderId){
+            return true;
+        }
+        let defaultClause = this.originalTermAndConditionClauses.find(clause => clause.id == clauseId);
+        for(let tradingTerm of defaultClause.tradingTerms){
+
+            if (!this.isOriginalTradingTerm(tradingTerm)){
+                return false;
+            }
 
         }
+        return true;
+    }
+
+    isOriginalTradingTermOfClause(originalClause:Clause, tradingTermId:string){
+        if(this.orderId){
+            return true;
+        }
+        let defaultTradingTerm = originalClause.tradingTerms.find(tradingTerm => tradingTerm.id == tradingTermId);
+
+        return this.isOriginalTradingTerm(defaultTradingTerm);
+    }
+
+    isOriginalTradingTerm(defaultTradingTerm:TradingTerm){
+        if(defaultTradingTerm.value.valueQualifier == "STRING"){
+            if(defaultTradingTerm.value.value[0].value != this.tradingTerms.get(defaultTradingTerm.id).value.value[0].value){
+                return false;
+            }
+        } else if(defaultTradingTerm.value.valueQualifier == "NUMBER"){
+            if(defaultTradingTerm.value.valueDecimal[0] != this.tradingTerms.get(defaultTradingTerm.id).value.valueDecimal[0]){
+                return false;
+            }
+        } else if(defaultTradingTerm.value.valueQualifier == "QUANTITY"){
+            if(defaultTradingTerm.value.valueQuantity[0].value != this.tradingTerms.get(defaultTradingTerm.id).value.valueQuantity[0].value
+                || defaultTradingTerm.value.valueQuantity[0].unitCode != this.tradingTerms.get(defaultTradingTerm.id).value.valueQuantity[0].unitCode){
+                return false;
+            }
+        } else if(defaultTradingTerm.value.valueQualifier == "CODE"){
+            if(defaultTradingTerm.value.valueCode[0].value != this.tradingTerms.get(defaultTradingTerm.id).value.valueCode[0].value){
+                return false;
+            }
+        }
+        return true;
     }
 
     private updateTermNegotiating(id:string,value:string){
