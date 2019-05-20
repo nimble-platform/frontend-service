@@ -186,8 +186,8 @@ export class NegotiationRequestComponent implements OnInit {
             if(this.rfq.termOrCondition == null || this.rfq.termOrCondition.length == 0) {
                 defaultTermsPromise = this.bpeService.getTermsAndConditions(
                     null,
-                    this.sellerId,
                     this.buyerId,
+                    this.sellerId,
                     null,
                     this.wrapper.rfqIncoterms,
                     this.wrapper.rfqPaymentTerms.tradingTerms);
