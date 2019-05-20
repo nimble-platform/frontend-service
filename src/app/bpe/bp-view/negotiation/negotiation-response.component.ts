@@ -261,6 +261,9 @@ export class NegotiationResponseComponent implements OnInit {
         if(!UBLModelUtils.areQuantitiesEqual(this.wrapper.rfqFrameContractDuration, this.wrapper.quotationFrameContractDuration)) {
             return true;
         }
+        if(UBLModelUtils.areTermsAndConditionListsDifferent(this.wrapper.rfq.termOrCondition, this.wrapper.newQuotation.termOrCondition)) {
+            return true;
+        }
 
         return false;
     }
