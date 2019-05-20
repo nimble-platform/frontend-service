@@ -3,6 +3,7 @@ import { BPDataService } from "../bp-data-service";
 import { CallStatus } from "../../../common/call-status";
 import { CompanyNegotiationSettings } from "../../../user-mgmt/model/company-negotiation-settings";
 import {ThreadEventMetadata} from "../../../catalogue/model/publish/thread-event-metadata";
+import {DocumentService} from "../document-service";
 
 @Component({
     selector: 'negotiation',
@@ -11,11 +12,16 @@ import {ThreadEventMetadata} from "../../../catalogue/model/publish/thread-event
 export class NegotiationComponent implements OnInit {
 
     initCallStatus: CallStatus = new CallStatus();
-    negotiationProcessHistory: ThreadEventMetadata[] = [];
-    sliderIndex: number = -1;
+    negotiationDocumentsCallStatus: CallStatus = new CallStatus();
+    negotiationProcessList: any[] = [];
+    negotiationDocuments: any[] = [];
     companyNegotiationSettings: CompanyNegotiationSettings;
+    newProcess: boolean;
+    sliderIndex: number = -1;
 
-    constructor(public bpDataService: BPDataService) {
+
+    constructor(private bpDataService: BPDataService,
+                private documentService: DocumentService) {
     }
 
     ngOnInit() {
@@ -30,21 +36,56 @@ export class NegotiationComponent implements OnInit {
                 });
         }
 
+        this.newProcess = this.bpDataService.bpActivityEvent.newProcess;
+
         let history: ThreadEventMetadata[] = this.bpDataService.bpActivityEvent.processHistory;
         if(history) {
             for(let processMetadata of history) {
                 if(processMetadata.processType == 'Negotiation') {
-                    this.negotiationProcessHistory.push(processMetadata);
+                    this.negotiationProcessList.push(processMetadata);
                 }
             }
-            this.sliderIndex = this.negotiationProcessHistory.length-1;
-            console.log(this.negotiationProcessHistory.length);
+            // reverse the list so that the most recent item will be at the end
+            this.negotiationProcessList = this.negotiationProcessList.reverse();
+
+            // if this is a new process, put an empty object
+            // just to have a correct number of elements in the negotiationProcessList array
+            if(this.newProcess) {
+                this.negotiationProcessList.push({});
+            }
+
+            this.sliderIndex = this.negotiationProcessList.length-1;
+            this.fetchHistoryDocuments();
         }
     }
 
-    onSliderValueChange(sliderIndex: number): void {
-        // if(this.negotiationProcessHistory[sliderIndex].)
-        console.log(sliderIndex);
+    private fetchHistoryDocuments(): void {
+        // check there are entries in the history
+        if(this.negotiationProcessList.length <= 1) {
+            return;
+        }
+
+        this.negotiationDocumentsCallStatus.submit();
+        let documentPromises: Promise<any>[] = [];
+        // the documents for the last step is already available via the BpDataService
+        for(let i=0; i < this.negotiationProcessList.length-1; i++) {
+            documentPromises.push(this.documentService.getInitialDocument(this.negotiationProcessList[i].activityVariables));
+            documentPromises.push(this.documentService.getResponseDocument(this.negotiationProcessList[i].activityVariables));
+        }
+
+        Promise.all(documentPromises).then(responseArray => {
+            for(let i=0; i<responseArray.length; i++) {
+                let documents: any = {};
+                documents.request = responseArray[i];
+                i++;
+                documents.response = responseArray[i];
+                this.negotiationDocuments.push(documents);
+            }
+
+            this.negotiationDocumentsCallStatus.callback(null, true);
+        }).catch(error => {
+            this.negotiationDocumentsCallStatus.error("Failed to get previous negotiation documents", error);
+        });
     }
 
     isLoading(): boolean {
