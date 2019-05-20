@@ -1,18 +1,20 @@
-import { Component, OnInit, Input } from "@angular/core";
+import {Component, OnInit, Input, OnDestroy} from "@angular/core";
 import { BPDataService } from "../bp-data-service";
 import { CallStatus } from "../../../common/call-status";
 import { CompanyNegotiationSettings } from "../../../user-mgmt/model/company-negotiation-settings";
 import {ThreadEventMetadata} from "../../../catalogue/model/publish/thread-event-metadata";
 import {DocumentService} from "../document-service";
+import {BpActivityEvent} from "../../../catalogue/model/publish/bp-start-event";
 
 @Component({
     selector: 'negotiation',
     templateUrl: './negotiation.component.html'
 })
-export class NegotiationComponent implements OnInit {
+export class NegotiationComponent implements OnInit, OnDestroy {
 
     initCallStatus: CallStatus = new CallStatus();
     negotiationDocumentsCallStatus: CallStatus = new CallStatus();
+    bpActivityEventSubs: Subscription<BpActivityEvent>;
     negotiationProcessList: any[] = [];
     negotiationDocuments: any[] = [];
     companyNegotiationSettings: CompanyNegotiationSettings;
@@ -25,6 +27,17 @@ export class NegotiationComponent implements OnInit {
     }
 
     ngOnInit() {
+        // subscribe to the bp change event so that we can update negotiation history when a new negotiation process is initialized with a negotiation response
+        // in this case, the view is not refreshed but we have add a new negotiation history element for the new process, otherwise we lose the last history item
+        this.bpActivityEventSubs = this.bpDataService.bpActivityEventObservable.subscribe(bpActivityEvent => {
+            if (bpActivityEvent) {
+                if(bpActivityEvent.processType == 'Negotiation' && bpActivityEvent.newProcess) {
+                    this.negotiationProcessList.push({});
+                    this.sliderIndex++;
+                }
+            }
+        });
+
         if(this.bpDataService.requestForQuotation == null) {
             this.initCallStatus.submit();
             this.bpDataService.initRfq(this.bpDataService.getCompanySettings().negotiationSettings)
@@ -59,6 +72,11 @@ export class NegotiationComponent implements OnInit {
         }
     }
 
+    ngOnDestroy(): void {
+        this.bpActivityEventSubs.unsubscribe();
+    }
+
+
     private fetchHistoryDocuments(): void {
         // check there are entries in the history
         if(this.negotiationProcessList.length <= 1) {
@@ -68,7 +86,7 @@ export class NegotiationComponent implements OnInit {
         this.negotiationDocumentsCallStatus.submit();
         let documentPromises: Promise<any>[] = [];
         // the documents for the last step is already available via the BpDataService
-        for(let i=0; i < this.negotiationProcessList.length-1; i++) {
+        for(let i=0; i < this.negotiationProcessList.length; i++) {
             documentPromises.push(this.documentService.getInitialDocument(this.negotiationProcessList[i].activityVariables));
             documentPromises.push(this.documentService.getResponseDocument(this.negotiationProcessList[i].activityVariables));
         }

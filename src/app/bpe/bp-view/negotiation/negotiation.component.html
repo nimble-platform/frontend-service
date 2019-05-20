@@ -6,6 +6,7 @@
     <ng-container *ngFor="let metadata of negotiationProcessList; let i = index">
         <!-- previous steps -->
         <div *ngIf="negotiationDocumentsCallStatus.isComplete() && i != negotiationProcessList.length-1" [hidden]="!(sliderIndex == i)">
+            <br>{{i}}<br>
             <negotiation-response [rfq]="negotiationDocuments[i].request"
                                   [quotation]="negotiationDocuments[i].response"
                                   [readonly]="true">
