@@ -10,7 +10,7 @@
 <call-status [callStatus]="callStatus"></call-status>
 <div class="col-12 section" *ngIf="showPreview && originalTermAndConditionClauses">
     <div *ngFor="let clause of originalTermAndConditionClauses;let i=index">
-        <button [ngClass]="isOriginalClause(clause.id) ? 'btn btn-danger' : 'btn btn-primary btn-outline-primary'" (click)="showSection[i] = !showSection[i];setSectionText(i)">
+        <button [ngClass]="isOriginalClause(clause.id) ? 'btn btn-primary btn-outline-primary' : 'btn btn-danger'" (click)="showSection[i] = !showSection[i];setSectionText(i)">
             {{getClauseName(clause)}}
         </button>
         <div class="card" [hidden]="!showSection[i]">

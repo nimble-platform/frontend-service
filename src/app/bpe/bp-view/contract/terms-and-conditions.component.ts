@@ -134,10 +134,11 @@ export class TermsAndConditionsComponent implements OnInit {
             for(let tradingTerm of clause.tradingTerms){
                 let spanText = "";
                 if(this.isOriginalTradingTermOfClause(clause,tradingTerm.id)){
-                    spanText = "<b><span style='color: red'>";
+                    spanText = "<b><span>";
+
                 }
                 else{
-                    spanText = "<b><span>";
+                    spanText = "<b><span style='color: red'>";
                 }
                 if(tradingTerm.value.valueQualifier == "QUANTITY"){
                     let defaultValue = tradingTerm.value.valueQuantity[0].value;
@@ -167,10 +168,11 @@ export class TermsAndConditionsComponent implements OnInit {
                 let id = tradingTerm.id;
                 let spanText = "";
                 if(this.isOriginalTradingTermOfClause(clause,tradingTerm.id)){
-                    spanText = "<b><span style='color: red' id='"+this.generateIdForParameter(id)+"'>";
+                    spanText = "<b><span id='"+this.generateIdForParameter(id)+"'>";
+
                 }
                 else{
-                    spanText = "<b><span id='"+this.generateIdForParameter(id)+"'>";
+                    spanText = "<b><span style='color: red' id='"+this.generateIdForParameter(id)+"'>";
                 }
 
                 // for the quantities, we have value and unit
@@ -222,9 +224,9 @@ export class TermsAndConditionsComponent implements OnInit {
             element.innerText = this.tradingTerms.get(id).value.valueQuantity[0].value +" "+ value;
 
             if(this.isOriginalTradingTermOfClause(clause,id)){
-                element.style.color = 'red';
-            } else{
                 element.style.color = 'black';
+            } else{
+                element.style.color = 'red';
             }
         } else{
             let tradingTerm = this.tradingTerms.get(id);
@@ -247,9 +249,9 @@ export class TermsAndConditionsComponent implements OnInit {
             }
 
             if(this.isOriginalTradingTermOfClause(clause,id)){
-                element.style.color = 'red';
-            } else{
                 element.style.color = 'black';
+            } else{
+                element.style.color = 'red';
             }
         }
 
