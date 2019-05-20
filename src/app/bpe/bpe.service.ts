@@ -333,20 +333,20 @@ export class BPEService {
         });
     }
 
-	getTermsAndConditions(orderId: string,buyerPartyId, sellerPartyId, rfqId:string, incoterms:string, tradingTerms:TradingTerm[]): Promise<Clause[]>{
+	getTermsAndConditions(orderId: string,buyerPartyId, sellerPartyId, rfqId:string, incoterms:string, tradingTerm:string): Promise<Clause[]>{
 		const token = 'Bearer '+this.cookieService.get("bearer_token");
 		const headers = new Headers({'Authorization': token});
 		this.headers.keys().forEach(header => headers.append(header, this.headers.get(header)));
 
 		let url;
 		if(orderId){
-			url = `${this.url}/contracts/terms-and-conditions?orderId=${orderId}&sellerPartyId=${sellerPartyId}&buyerPartyId=${buyerPartyId}&incoterms=${incoterms == null ? "" :incoterms}&tradingTerms=${encodeURIComponent(JSON.stringify(this.getSelectedTradingTerms(tradingTerms)))}`;
+			url = `${this.url}/contracts/terms-and-conditions?orderId=${orderId}&sellerPartyId=${sellerPartyId}&buyerPartyId=${buyerPartyId}&incoterms=${incoterms == null ? "" :incoterms}&tradingTerm=${tradingTerm}`;
 		}
 		else if(rfqId){
-			url = `${this.url}/contracts/terms-and-conditions?rfqId=${rfqId}&sellerPartyId=${sellerPartyId}&buyerPartyId=${buyerPartyId}&incoterms=${incoterms == null ? "" :incoterms}&tradingTerms=${encodeURIComponent(JSON.stringify(this.getSelectedTradingTerms(tradingTerms)))}`;
+			url = `${this.url}/contracts/terms-and-conditions?rfqId=${rfqId}&sellerPartyId=${sellerPartyId}&buyerPartyId=${buyerPartyId}&incoterms=${incoterms == null ? "" :incoterms}&tradingTerm=${tradingTerm}`;
 		}
 		else{
-            url = `${this.url}/contracts/terms-and-conditions?sellerPartyId=${sellerPartyId}&buyerPartyId=${buyerPartyId}&incoterms=${incoterms == null ? "" :incoterms}&tradingTerms=${encodeURIComponent(JSON.stringify(this.getSelectedTradingTerms(tradingTerms)))}`;
+            url = `${this.url}/contracts/terms-and-conditions?sellerPartyId=${sellerPartyId}&buyerPartyId=${buyerPartyId}&incoterms=${incoterms == null ? "" :incoterms}&tradingTerm=${tradingTerm}`;
 
         }
 		return this.http
@@ -439,31 +439,6 @@ export class BPEService {
 		const headers = new Headers({'Accept': 'application/json','Authorization': token});
 		this.headers.keys().forEach(header => headers.append(header, this.headers.get(header)));
 		return headers;
-	}
-
-	private  getSelectedTradingTerms(tradingTerms): TradingTerm[] {
-        let selectedTradingTerms: TradingTerm[] = [];
-
-        for(let tradingTerm of tradingTerms){
-            if(tradingTerm.id.indexOf("Values") != -1){
-                let addToList = true;
-                for(let value of tradingTerm.value){
-                    if(value == null){
-                        addToList = false;
-                        break;
-                    }
-                }
-                if(addToList){
-                    selectedTradingTerms.push(tradingTerm);
-                }
-            }
-            else{
-                if(tradingTerm.value[0] == 'true'){
-                    selectedTradingTerms.push(tradingTerm);
-                }
-            }
-        }
-        return selectedTradingTerms;
 	}
 
 	private stringifyArray(values: any[]): string {

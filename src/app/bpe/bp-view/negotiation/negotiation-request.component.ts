@@ -190,7 +190,7 @@ export class NegotiationRequestComponent implements OnInit {
                     this.sellerId,
                     null,
                     this.wrapper.rfqIncoterms,
-                    this.wrapper.rfqPaymentTerms.tradingTerms);
+                    this.wrapper.rfqPaymentTerms.paymentTerm);
             }
             defaultTermsPromise.then(clauses => {
                 if(clauses != null) {

@@ -310,7 +310,7 @@
         <div class="col-6">
             <terms-and-conditions [buyerPartyId]="buyerId"
                                   [selectedIncoterm]="wrapper.rfqIncoterms"
-                                  [selectedTradingTerms]="wrapper.rfqPaymentTerms.tradingTerms"
+                                  [selectedTradingTerm]="wrapper.rfqPaymentTerms.paymentTerm"
                                   (onIncotermChanged)="wrapper.rfqIncoterms = $event; onPriceConditionsChange();"
                                   [isIncotermsNegotiating]="rfq.negotiationOptions.incoterms"
                                   (onTradingTermChanged)="wrapper.rfqPaymentTerms.paymentTerm=$event; onPriceConditionsChange();"

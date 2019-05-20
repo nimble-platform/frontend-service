@@ -45,9 +45,9 @@ export class TermsAndConditionsComponent implements OnInit {
     COUNTRY_NAMES = COUNTRY_NAMES;
     UNITS:string[] = [];
 
-    // selected values for Incoterm and Trading Terms (e.g. Payment Terms)
+    // selected values for Incoterm and Trading Term (e.g. Payment Terms)
     _selectedIncoterm: string = null;
-    _selectedTradingTerms: TradingTerm[] = [];
+    _selectedTradingTerm: string = null;
     _isIncotermsNegotiating:boolean = true;
     _isTradingTermsNegotiating: boolean = true;
 
@@ -64,7 +64,7 @@ export class TermsAndConditionsComponent implements OnInit {
             this.userService.getSettingsForParty(this.sellerPartyId),
             this.unitService.getCachedUnitList(deliveryPeriodUnitListId),
             this.unitService.getCachedUnitList(warrantyPeriodUnitListId),
-            this.bpeService.getTermsAndConditions(this.orderId,this.buyerPartyId, this.sellerPartyId, this.rfqId, this.selectedIncoterm, this.selectedTradingTerms),
+            this.bpeService.getTermsAndConditions(this.orderId,this.buyerPartyId, this.sellerPartyId, this.rfqId, this.selectedIncoterm, this.selectedTradingTerm),
         ]).then(([sellerPartySettings, deliveryPeriodUnits, warrantyPeriodUnits,termsAndConditions]) => {
 
             // populate available incoterms
@@ -298,24 +298,15 @@ export class TermsAndConditionsComponent implements OnInit {
             this.updateTermNegotiating(id, this._selectedIncoterm);
     }
 
-    get selectedTradingTerms():TradingTerm[]{
-        return this._selectedTradingTerms;
+    get selectedTradingTerm():string{
+        return this._selectedTradingTerm;
     }
 
-    @Input('selectedTradingTerms')
-    set selectedTradingTerms(tradingTerms:TradingTerm[]){
-        this._selectedTradingTerms = [];
-        // get the selected trading term
-        for(let tradingTerm of tradingTerms){
-            if(tradingTerm.value.value[0].value == "true"){
-                this._selectedTradingTerms.push(tradingTerm);
-                break;
-            }
-        }
-        // construct to value representing the selected trading term
-        let value = this._selectedTradingTerms[0].tradingTermFormat + " - " + this._selectedTradingTerms[0].description[0].value;
+    @Input('selectedTradingTerm')
+    set selectedTradingTerm(tradingTerm:string){
+        this._selectedTradingTerm = tradingTerm;
 
-        this.updateTermNegotiating("$payment_id", value);
+        this.updateTermNegotiating("$payment_id", tradingTerm);
     }
 
     get isTradingTermsNegotiating():boolean{
@@ -339,10 +330,9 @@ export class TermsAndConditionsComponent implements OnInit {
             }
         }
         // otherwise, use the selected trading terms
-        else if(this._selectedTradingTerms){
+        else if(this._selectedTradingTerm){
             // construct to value representing the selected trading term
-            let value = this._selectedTradingTerms[0].tradingTermFormat + " - " + this._selectedTradingTerms[0].description[0].value;
-            this.updateTermNegotiating(id, value);
+            this.updateTermNegotiating(id, this._selectedTradingTerm);
 
         }
     }

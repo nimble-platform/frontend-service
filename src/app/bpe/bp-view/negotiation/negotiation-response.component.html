@@ -193,13 +193,13 @@
         <div class="col-6">
             <terms-and-conditions [buyerPartyId]="getPartyId(rfq.buyerCustomerParty.party)"
                                   [selectedIncoterm]="wrapper.rfqIncoterms"
-                                  [selectedTradingTerms]="wrapper.rfqPaymentTerms.tradingTerms"
+                                  [selectedTradingTerm]="wrapper.rfqPaymentTerms.paymentTerm"
                                   [sellerPartyId]="getPartyId(rfq.sellerSupplierParty.party)" [readOnly]="true" [documentType]="'rfq'" [termsAndConditions]="rfq.termOrCondition"></terms-and-conditions>
         </div>
         <div class="col-6">
             <terms-and-conditions [rfqId]="rfq.id" [buyerPartyId]="getPartyId(quotation.buyerCustomerParty.party)"
                                   [selectedIncoterm]="wrapper.quotationIncoterms"
-                                  [selectedTradingTerms]="wrapper.quotationPaymentTerms.tradingTerms"
+                                  [selectedTradingTerm]="wrapper.quotationPaymentTerms.paymentTerm"
                                   (onIncotermChanged)="wrapper.quotationIncoterms = $event"
                                   (onTradingTermChanged)="wrapper.quotationPaymentTerms.paymentTerm = $event"
                                   [sellerPartyId]="getPartyId(quotation.sellerSupplierParty.party)" [readOnly]="isLoading() || isReadOnly()" [documentType]="'quotation'" [termsAndConditions]="quotation.termOrCondition"></terms-and-conditions>
