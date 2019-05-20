@@ -33,14 +33,7 @@ class NewSensor {
     }
 }
 
-class AdditionalSettings {
-    constructor(
-        public additionalNotes: string,
-        public hostRequest: boolean,
-        public serviceType: string
-    ) {
-    }
-}
+
 
 //-------------------------------------------------------------------------------------
 // Component
@@ -52,25 +45,27 @@ class AdditionalSettings {
 })
 export class ChannelDetailsComponent implements OnInit {
 
-    private SERVICE_TYPES: string[] = ["MongoDB", "Oracle", "Mqtt", "Kafka"]
+    private pageNumber: number = 0;
+    private hasInternalService: boolean = false;
+    private hasFilteringService: boolean = false;
+    private displayStorageArea: boolean = true;
+
+    private channelConfig: object = {};
+    private channelMessages: object[] = [];
+
+    private SERVER_TYPES: string[] = ["MongoDB", "Oracle", "Mqtt", "Kafka"]
+
     private sellerMessage: string = '';
     private buyerMessage: string = '';
-    private pageNumber: number = 0;
-    hasInternalService: boolean = false;
-    hasFilteringService: boolean = false;
-    displayStorageArea: boolean = true;
 
-    channelConfig: object = {};
-    channelMessages: object[] = [];
+    private sellerServerType: string = '';
+    private buyerServerType: string = '';
 
-    initialChannelServers: object[] = [];
-    counterChannelServers: object[] = [];
+    private initialChannelServers: object[] = [];
+    private counterChannelServers: object[] = [];
 
-    initialChannelSensors: object[] = [];
-    counterChannelSensors: object[] = [];
-
-    private initialSettings: AdditionalSettings = new AdditionalSettings("Info", false, 'MongoDB');
-    private counterSettings: AdditionalSettings = new AdditionalSettings("Info", false, 'MongoDB');
+    private initialChannelSensors: object[] = [];
+    private counterChannelSensors: object[] = [];
 
     private newServer: NewServer = new NewServer(null, null, null, null, null, null, null, null);
     private newSensor: NewSensor = new NewSensor(null, null, null, null, null, null, null);
@@ -106,52 +101,73 @@ export class ChannelDetailsComponent implements OnInit {
                 this.pageNumber = channelConfig.negotiationStepcounter % 5;
                 this.sellerMessage = channelConfig.negotiationSellerMessages;
                 this.buyerMessage = channelConfig.negotiationBuyerMessages;
+                this.sellerServerType = channelConfig.sellerServersType;
+                this.buyerServerType = channelConfig.buyerServersType;
 
-                if(this.pageNumber > 1)
+                if(this.pageNumber == 1)
                 {
-                    //get relevant step data
-                    this.dataChannelService.getChannelConfigFromNegotiationStep(channelID, this.pageNumber-2)
+                    this.dataChannelService.getChannelConfigFromNegotiationStep(channelID, channelConfig.negotiationStepcounter-1)
                         .then(initialChannelConfig => {
 
                             this.initialChannelSensors = initialChannelConfig.associatedSensors;
                             this.initialChannelServers = initialChannelConfig.associatedServers;
-                            this.initialSettings.serviceType = initialChannelConfig.privateServersType;
-                            this.initialSettings.hostRequest = initialChannelConfig.hostRequest;
-                            this.initialSettings.additionalNotes = initialChannelConfig.additionalNotes;
-                       })
-                       .catch(() => {
-                           alert("Error while doing getting historic step");
-                       });
-
-                    //get relevant step data
-                    this.dataChannelService.getChannelConfigFromNegotiationStep(channelID, this.pageNumber-1)
-                        .then(counterChannelConfig => {
-
-                            this.counterChannelSensors = counterChannelConfig.associatedSensors;
-                            this.counterChannelServers = counterChannelConfig.associatedServers;
-                            this.counterSettings.serviceType = counterChannelConfig.privateServersType;
-                            this.counterSettings.hostRequest = counterChannelConfig.hostRequest;
-                            this.counterSettings.additionalNotes = counterChannelConfig.additionalNotes;
                        })
                        .catch(() => {
                            alert("Error while doing getting historic step");
                        });
                 }
-                else
-                {
-                        // get sensors
-                        this.dataChannelService.getAssociatedSensors(channelID)
-                            .then(sensors => {
-                                this.initialChannelSensors = sensors;
-                                this.counterChannelSensors = sensors;
-                            });
 
-                        // get servers
-                        this.dataChannelService.getAssociatedServers(channelID)
-                            .then(servers => {
-                                this.initialChannelServers = servers;
-                                this.counterChannelServers = servers;
-                            });
+                else if(this.pageNumber == 2)
+                {
+                    this.dataChannelService.getChannelConfigFromNegotiationStep(channelID, channelConfig.negotiationStepcounter-2)
+                        .then(initialChannelConfig => {
+
+                            this.initialChannelSensors = initialChannelConfig.associatedSensors;
+                            this.initialChannelServers = initialChannelConfig.associatedServers;
+                       })
+                       .catch(() => {
+                           alert("Error while doing getting historic step");
+                       });
+
+                    this.dataChannelService.getChannelConfigFromNegotiationStep(channelID, channelConfig.negotiationStepcounter-1)
+                        .then(counterChannelConfig => {
+
+                            this.counterChannelSensors = counterChannelConfig.associatedSensors;
+                            this.counterChannelServers = counterChannelConfig.associatedServers;
+                       })
+                       .catch(() => {
+                           alert("Error while doing getting historic step");
+                       });
+                }
+
+                else if(this.pageNumber == 3)
+                {
+                     this.dataChannelService.getChannelConfigFromNegotiationStep(channelID, channelConfig.negotiationStepcounter-2)
+                         .then(counterChannelConfig => {
+
+                             this.counterChannelSensors = counterChannelConfig.associatedSensors;
+                             this.counterChannelServers = counterChannelConfig.associatedServers;
+                        })
+                        .catch(() => {
+                            alert("Error while doing getting historic step");
+                        });
+                }
+
+
+                if(this.pageNumber <= 1)
+                {
+                       // get sensors
+                       this.dataChannelService.getAssociatedSensors(channelID)
+                           .then(sensors => {
+                               this.initialChannelSensors = sensors;
+                               this.counterChannelSensors = sensors;
+                           });
+                       // get servers
+                       this.dataChannelService.getAssociatedServers(channelID)
+                           .then(servers => {
+                               this.initialChannelServers = servers;
+                               this.counterChannelServers = servers;
+                           });
                 }
             })
             .catch(() => {
@@ -211,34 +227,9 @@ export class ChannelDetailsComponent implements OnInit {
 
        const channelId = this.channelConfig["channelID"];
 
-       if(this.pageNumber == 0)
-       {
-           this.dataChannelService.setAdvancedConfig(channelId, this.displayStorageArea,
-                                                     this.initialSettings.additionalNotes,
-                                                     this.initialSettings.serviceType,
-                                                     this.initialSettings.hostRequest)
-               .then(() => {
-                   location.reload();
-               })
-               .catch(() => {
-                   alert("Error while setting advanced config");
-               });
-       }
-       else if(this.pageNumber == 1)
-       {
-             this.dataChannelService.setAdvancedConfig(channelId, this.displayStorageArea,
-                                                       this.counterSettings.additionalNotes,
-                                                       this.counterSettings.serviceType,
-                                                       this.counterSettings.hostRequest)
-                 .then(() => {
-                     location.reload();
-                 })
-                 .catch(() => {
-                     alert("Error while setting advanced config");
-                 });
-       }
-
-       this.dataChannelService.doNegotiationStep(channelId, this.sellerMessage, this.buyerMessage)
+       this.dataChannelService.doNegotiationStep(channelId, this.displayStorageArea,
+                                                 this.sellerMessage, this.buyerMessage,
+                                                 this.sellerServerType, this.buyerServerType)
            .then(() => {
                location.reload();
            })

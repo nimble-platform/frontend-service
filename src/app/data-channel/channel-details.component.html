@@ -298,7 +298,6 @@
     </div>
     <div *ngIf="pageNumber == 3"><h1>Agreed Servers</h1></div>
 
-
     <div class="row">
         <div *ngIf="pageNumber <= 1" class="col-12">
            <ng-container *ngFor="let server of initialChannelServers">
@@ -482,63 +481,40 @@
             associate it to this channel.</p>
     </div>
 
-    <!------------------------------------------------------------------------------------------------------------>
-    <!-- Additional Settings -->
-    <!------------------------------------------------------------------------------------------------------------>
-    <div *ngIf="pageNumber < 2"><h1>Additional Settings</h1></div>
-    <div  *ngIf="pageNumber == 2">
-        <h1 id="comparison-header-left">Initial Settings</h1>
-        <h1 id="comparison-header-right">Counter Settings</h1>
-        <hr style="clear:both;"/>
-    </div>
-    <div *ngIf="pageNumber == 3">
-        <h1 id="comparison-header-left">Declined Settings</h1>
-        <h1 id="comparison-header-right">Agreed Settings</h1>
-        <hr style="clear:both;"/>
-    </div>
 
+    <!------------------------------------------------------------------------------------------------------------>
+    <!-- Server Type -->
+    <!------------------------------------------------------------------------------------------------------------>
+    <br/>
     <div class="row" id="additional-settings">
-        <div [ngClass]="{'col-6':pageNumber > 0,'col-12':pageNumber == 0}">
 
-            <!-- Additional Notes -->
-            <text-input label="Additional Notes" [presentationMode]="getPresentationModeLeft()" [(text)]="initialSettings.additionalNotes"
-                        labelClass="col-4" valueClass="col-8" [rows]="1" [required]="true">
-            </text-input><br/>
+
+        <div *ngIf="pageNumber < 3" [ngClass]="{'col-6':pageNumber > 0,'col-12':pageNumber == 0}">
 
             <!-- Service Type -->
-            <options-input label="Service Type" [visible]="true" [presentationMode]="getPresentationModeLeft()"
-                           [disabled]="false" [options]="SERVICE_TYPES" [(selected)]="initialSettings.serviceType"
+            <options-input label="Server Type" [visible]="true" [presentationMode]="getPresentationModeLeft()"
+                           [disabled]="false" [options]="SERVER_TYPES" [(selected)]="sellerServerType"
+                           labelClass="col-4" valueClass="col-8">
+            </options-input><br/>
+        </div>
+        <div *ngIf="pageNumber > 0 && pageNumber < 3" class="col-6">
+
+            <!-- Service Type -->
+            <options-input label="Server Type" [visible]="true" [presentationMode]="getPresentationModeRight()"
+                           [disabled]="false" [options]="SERVER_TYPES" [(selected)]="buyerServerType"
                            labelClass="col-4" valueClass="col-8">
             </options-input><br/>
 
-            <!-- Host Request -->
-            <boolean-input label="Host Request" [presentationMode]="getPresentationModeLeft()"
-                           [(value)]="initialSettings.hostRequest" labelClass="col-4" valueClass="col-8">
-            </boolean-input>
-            <p>(request the other party to host a server)</p>
         </div>
-        <div *ngIf="pageNumber > 0" class="col-6">
-
-            <!-- Additional Notes -->
-            <text-input label="Additional Notes" [presentationMode]="getPresentationModeRight()" [(text)]="counterSettings.additionalNotes"
-                        labelClass="col-4" valueClass="col-8" [rows]="1" [required]="true">
-            </text-input><br/>
-
-            <!-- Service Type -->
-            <options-input label="Service Type" [visible]="true" [presentationMode]="getPresentationModeRight()"
-                           [disabled]="false" [options]="SERVICE_TYPES" [(selected)]="counterSettings.serviceType"
-                           labelClass="col-4" valueClass="col-8">
-            </options-input><br/>
-
-            <!-- Host Request -->
-            <boolean-input label="Host Request" [presentationMode]="getPresentationModeRight()"
-                           [(value)]="counterSettings.hostRequest" labelClass="col-4" valueClass="col-8">
-            </boolean-input>
-            <p>(other party agreed to host a server)</p>
-
+        <div *ngIf="pageNumber == 3" class="col-12">
+                <!-- Service Type -->
+                <options-input label="Server Type" [visible]="true" [presentationMode]="getPresentationModeLeft()"
+                               [disabled]="false" [options]="SERVER_TYPES" [(selected)]="buyerServerType"
+                               labelClass="col-4" valueClass="col-8">
+                </options-input><br/>
         </div>
+
     </div>
-</div>
 
 
 

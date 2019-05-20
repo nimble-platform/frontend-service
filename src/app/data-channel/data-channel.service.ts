@@ -138,8 +138,14 @@ export class DataChannelService {
             .catch(this.handleError);
     }
 
-    doNegotiationStep(channelID: string, sellerMessage: string, buyerMessage: string): Promise<any> {
-        const url = `${this.url}/channel/${channelID}/doNegotiationStep?sellerMessage=${sellerMessage}&buyerMessage=${buyerMessage}`;
+    doNegotiationStep(channelID: string, usePrivateServers: boolean,
+                      sellerMessage: string, buyerMessage: string,
+                      sellerServerType: string, buyerServerType: string): Promise<any> {
+
+        const url = `${this.url}/channel/${channelID}/doNegotiationStep` +
+        `?usePrivateServers=${usePrivateServers}&sellerMessage=${sellerMessage}&buyerMessage=${buyerMessage}` +
+        `&sellerServerType=${sellerServerType}&buyerServerType=${buyerServerType}`;
+
         const token = 'Bearer ' + this.cookieService.get("bearer_token");
         const headers = new Headers({'Authorization': token});
         return this.http
@@ -171,19 +177,19 @@ export class DataChannelService {
             .catch(this.handleError);
     }
 
-    setAdvancedConfig(channelID: string, usePrivateServers: boolean, additionalNotes: string,
-                      privateServersType: string, hostRequest: boolean): Promise<any> {
-
-        const url = `${this.url}/channel/${channelID}/setAdvancedConfig?usePrivateServers=${usePrivateServers}&privateServersType=${privateServersType}&hostRequest=${hostRequest}&additionalNotes=${additionalNotes}`;
-
-        const token = 'Bearer ' + this.cookieService.get("bearer_token");
-        const headers = new Headers({'Authorization': token});
-        return this.http
-            .post(url, null, {headers: headers, withCredentials: true})
-            .toPromise()
-            .then(res => res.json())
-            .catch(this.handleError);
-    }
+    //setAdvancedConfig(channelID: string, usePrivateServers: boolean, additionalNotes: string,
+    //                  privateServersType: string, hostRequest: boolean): Promise<any> {
+    //
+    //    const url = `${this.url}/channel/${channelID}/setAdvancedConfig?usePrivateServers=${usePrivateServers}&privateServersType=${privateServersType}&hostRequest=${hostRequest}&additionalNotes=${additionalNotes}`;
+    //
+    //    const token = 'Bearer ' + this.cookieService.get("bearer_token");
+    //    const headers = new Headers({'Authorization': token});
+    //    return this.http
+    //        .post(url, null, {headers: headers, withCredentials: true})
+    //        .toPromise()
+    //        .then(res => res.json())
+    //        .catch(this.handleError);
+    //}
 
     //-------------------------------------------------------------------------------------
     // DELETE - Requests
