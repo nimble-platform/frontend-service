@@ -8,10 +8,10 @@
 <div class="row content-row bg-light">
     <div class="col-3"><strong class="font-weight-500">Delivery Period:</strong></div>
     <div class="col-3">{{ wrapper.lineDeliveryPeriodString }}</div>
-    <div class="col-3">{{ wrapper.rfqDeliveryPeriodStringIfNegotiating }}</div>
+    <div class="col-3">{{ wrapper.rfqDeliveryPeriodString }}</div>
     <div class="col-3">
-        <quantity-input [visible]="rfq.negotiationOptions.deliveryPeriod" [presentationMode]="getPresentationMode()"
-                        [disabled]="isDisabled()" [quantity]="wrapper.quotationDeliveryPeriodWithPriceCheck" quantityType="time_quantity">
+        <quantity-input [presentationMode]="getPresentationMode()"
+                        [disabled]="isDisabled()" [quantity]="wrapper.newQuotationWrapper.deliveryPeriod" quantityType="time_quantity">
         </quantity-input>
     </div>
 </div>
@@ -19,10 +19,10 @@
 <div class="row content-row">
     <div class="col-3"><strong class="font-weight-500">Warranty:</strong></div>
     <div class="col-3">{{ wrapper.lineWarrantyString }}</div>
-    <div class="col-3">{{ wrapper.rfqWarrantyStringIfNegotiating }}</div>
+    <div class="col-3">{{ wrapper.rfqWarrantyString }}</div>
     <div class="col-3">
-        <quantity-input [visible]="rfq.negotiationOptions.warranty" [presentationMode]="getPresentationMode()"
-            [disabled]="isDisabled()" [quantity]="wrapper.quotationWarranty" quantityType="warranty_period">
+        <quantity-input [presentationMode]="getPresentationMode()"
+            [disabled]="isDisabled()" [quantity]="wrapper.newQuotationWrapper.warranty" quantityType="warranty_period">
         </quantity-input>
     </div>
 </div>
@@ -30,10 +30,10 @@
 <div class="row content-row bg-light">
     <div class="col-3"><strong class="font-weight-500">Incoterms:</strong></div>
     <div class="col-3">{{ wrapper.lineIncoterms }}</div>
-    <div class="col-3">{{ wrapper.rfqIncotermsIfNegotiating }}</div>
+    <div class="col-3">{{ wrapper.rfqIncoterms }}</div>
     <div class="col-3">
-        <options-input [visible]="rfq.negotiationOptions.incoterms" [presentationMode]="getPresentationMode()"
-            [disabled]="isDisabled()" [options]="wrapper.settings.incoterms" [(selected)]="wrapper.quotationIncoterms">
+        <options-input [presentationMode]="getPresentationMode()"
+            [disabled]="isDisabled()" [options]="wrapper.settings.incoterms" [(selected)]="wrapper.newQuotationWrapper.incoterms">
         </options-input>
     </div>
 </div>
@@ -41,11 +41,11 @@
 <div class="row content-row">
     <div class="col-3"><strong class="font-weight-500">Payment Terms:</strong></div>
     <div class="col-3">{{ wrapper.linePaymentTerms }}</div>
-    <div class="col-3">{{ wrapper.rfqPaymentTermsIfNegotiating }}</div>
+    <div class="col-3">{{ wrapper.rfqPaymentTerms.paymentTerm }}</div>
     <div class="col-3">
-        <options-input [visible]="rfq.negotiationOptions.paymentTerms" [presentationMode]="getPresentationMode()"
+        <options-input [presentationMode]="getPresentationMode()"
             [disabled]="isDisabled()" [options]="wrapper.settings.paymentTerms"
-            [(selected)]="wrapper.quotationPaymentTerms.paymentTerm">
+            [(selected)]="wrapper.newQuotationWrapper.paymentTermsWrapper.paymentTerm">
         </options-input>
     </div>
 </div>
@@ -53,10 +53,10 @@
 <div class="row content-row bg-light">
     <div class="col-3"><strong class="font-weight-500">Payment Means:</strong></div>
     <div class="col-3">{{ wrapper.linePaymentMeans }}</div>
-    <div class="col-3">{{ wrapper.rfqPaymentMeansIfNegotiating }}</div>
+    <div class="col-3">{{ wrapper.rfqPaymentMeans }}</div>
     <div class="col-3">
-        <options-input [visible]="rfq.negotiationOptions.paymentMeans" [presentationMode]="getPresentationMode()"
-            [disabled]="isDisabled()" [options]="wrapper.settings.paymentMeans" [(selected)]="wrapper.quotationPaymentMeans">
+        <options-input [presentationMode]="getPresentationMode()"
+            [disabled]="isDisabled()" [options]="wrapper.settings.paymentMeans" [(selected)]="wrapper.newQuotationWrapper.paymentMeans">
         </options-input>
     </div>
 </div>
@@ -98,12 +98,20 @@
         </span>
     </div>
     <!-- Seller's response -->
-    <div class="col-3" [ngClass]="wrapper.quotationDiscountPriceWrapper.appliedDiscounts.length > 0 ? 'd-flex' : null">
-        <quantity-input [presentationMode]="getPresentationMode()" [disabled]="isDisabled()"
-                        [quantity]="wrapper.quotationTotalPrice" [quantityUnits]="CURRENCIES"
-                        (onQuantityValueChange)="onTotalPriceChanged($event)"
-                        [disableQuantityUnit]="wrapper.lineDiscountPriceWrapper.hasPrice()">
-        </quantity-input>
+    <!--<div class="col-3" [ngClass]="wrapper.quotationDiscountPriceWrapper.appliedDiscounts.length > 0 ? 'd-flex' : null">-->
+    <div class="col-3">
+        <ng-container *ngIf="getPresentationMode() == 'edit'">
+            <quantity-input [presentationMode]="'edit'" [disabled]="isDisabled()"
+                            [quantity]="quotationTotalPrice" [quantityUnits]="CURRENCIES"
+                            (onQuantityValueChange)="onTotalPriceChanged($event)"
+                            [disableQuantityUnit]="wrapper.lineDiscountPriceWrapper.hasPrice()">
+            </quantity-input>
+        </ng-container>
+            {{ wrapper.newQuotationWrapper.priceWrapper.totalPriceString }}<br/>
+            <small>( {{ wrapper.newQuotationWrapper.priceWrapper.pricePerItemString}} )</small><br/>
+            {{ wrapper.quotationDiscountPriceWrapper.totalPriceString }}<br/>
+            <small>( {{ wrapper.quotationDiscountPriceWrapper.pricePerItemString}} )</small>
+
         <!--<div *ngIf="wrapper.wrapper.quotationDiscountPriceWrapper.appliedDiscounts.length > 0" class="space-left" data-toggle="tooltip" data-placement="top" (click)="openDiscountModal()" title="Applied Discounts/Charges" style="cursor: pointer">
             <i class="fa fa-search" aria-hidden="true"></i>
         </div>-->
@@ -141,7 +149,7 @@
                                 [valueSizeClass]="'col-5'"
                                 [unitSizeClass]="'col-7'"
                                 [definition]="'The period within which the offered conditions will be valid upon confirmation by the seller.'"
-                                [quantity]="wrapper.quotationFrameContractDuration"
+                                [quantity]="wrapper.newQuotationWrapper.frameContractDuration"
                                 [quantityType]="'frame_contract_period'"
                                 [disabled]="isReadOnly()">
                 </quantity-input>
@@ -198,10 +206,10 @@
         </div>
         <div class="col-6">
             <terms-and-conditions [rfqId]="rfq.id" [buyerPartyId]="getPartyId(quotation.buyerCustomerParty.party)"
-                                  [selectedIncoterm]="wrapper.quotationIncoterms"
-                                  [selectedTradingTerms]="wrapper.quotationPaymentTerms.tradingTerms"
-                                  (onIncotermChanged)="wrapper.quotationIncoterms = $event"
-                                  (onTradingTermChanged)="wrapper.quotationPaymentTerms.paymentTerm = $event"
+                                  [selectedIncoterm]="wrapper.newQuotationWrapper.incoterms"
+                                  [selectedTradingTerms]="wrapper.newQuotationWrapper.paymentTermsWrapper.tradingTerms"
+                                  (onIncotermChanged)="wrapper.newQuotationWrapper.incoterms = $event"
+                                  (onTradingTermChanged)="wrapper.newQuotationWrapper.paymentTermsWrapper.paymentTerm = $event"
                                   [sellerPartyId]="getPartyId(quotation.sellerSupplierParty.party)" [readOnly]="isLoading() || isReadOnly()" [documentType]="'quotation'" [termsAndConditions]="quotation.termOrCondition"></terms-and-conditions>
         </div>
     </div>
@@ -225,7 +233,7 @@
     </div>
     <div class="row">
         <div class="col-2"><strong>Total Price:</strong></div>
-        <div class="col-10">{{wrapper.quotationPriceWrapper.getQuantityPrice()}} {{wrapper.quotationPriceWrapper.unitCode}}</div>
+        <div class="col-10">{{wrapper.newQuotationWrapper.priceWrapper.totalPriceString</div>
     </div>
 </div>
 
