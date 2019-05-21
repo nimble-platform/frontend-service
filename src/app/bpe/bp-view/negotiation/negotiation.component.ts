@@ -32,7 +32,11 @@ export class NegotiationComponent implements OnInit, OnDestroy {
         // in this case, the view is not refreshed but we have add a new negotiation history element for the new process, otherwise we lose the last history item
         this.bpActivityEventSubs = this.bpDataService.bpActivityEventObservable.subscribe(bpActivityEvent => {
             if (bpActivityEvent) {
-                if(bpActivityEvent.processType == 'Negotiation' && bpActivityEvent.newProcess) {
+                if(bpActivityEvent.processType == 'Negotiation' &&
+                    bpActivityEvent.newProcess &&
+                    bpActivityEvent.processHistory.length > 0 &&
+                    bpActivityEvent.processHistory[bpActivityEvent.processHistory.length-1].processType == 'Negotiation') {
+
                     this.negotiationProcessList.push(null);
                     this.sliderIndex++;
                 }
@@ -53,7 +57,7 @@ export class NegotiationComponent implements OnInit, OnDestroy {
         this.newProcess = this.bpDataService.bpActivityEvent.newProcess;
 
         let history: ThreadEventMetadata[] = this.bpDataService.bpActivityEvent.processHistory;
-        if(history) {
+        if(history && history.length > 0) {
             for(let processMetadata of history) {
                 if(processMetadata.processType == 'Negotiation') {
                     this.negotiationProcessList.push(processMetadata);
@@ -61,16 +65,16 @@ export class NegotiationComponent implements OnInit, OnDestroy {
             }
             // reverse the list so that the most recent item will be at the end
             this.negotiationProcessList = this.negotiationProcessList.reverse();
-
-            // if this is a new process, put an empty object
-            // just to have a correct number of elements in the negotiationProcessList array
-            if(this.newProcess) {
-                this.negotiationProcessList.push(null);
-            }
-
-            this.sliderIndex = this.negotiationProcessList.length-1;
-            this.fetchHistoryDocuments();
         }
+
+        // if this is a new process, put an empty object
+        // just to have a correct number of elements in the negotiationProcessList array
+        if(this.newProcess) {
+            this.negotiationProcessList.push(null);
+        }
+
+        this.sliderIndex = this.negotiationProcessList.length-1;
+        this.fetchHistoryDocuments();
     }
 
     ngOnDestroy(): void {

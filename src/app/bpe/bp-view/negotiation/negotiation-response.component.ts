@@ -46,6 +46,7 @@ export class NegotiationResponseComponent implements OnInit {
     userRole: BpUserRole;
     @Input() readonly: boolean = false;
     config = myGlobals.config;
+    quotationTotalPrice: Quantity;
 
     CURRENCIES: string[] = CURRENCIES;
 
@@ -96,10 +97,12 @@ export class NegotiationResponseComponent implements OnInit {
             null,
             this.bpDataService.getCompanySettings().negotiationSettings);
 
+        this.quotationTotalPrice = new Quantity(this.wrapper.quotationDiscountPriceWrapper.totalPrice, this.wrapper.quotationDiscountPriceWrapper.currency);
+
         this.computeRfqNegotiationOptions(this.rfq);
 
         // we set quotationPriceWrapper's presentationMode to be sure that the total price of quotation response will not be changed
-        this.wrapper.quotationDiscountPriceWrapper.presentationMode = this.getPresentationMode();
+        //this.wrapper.quotationDiscountPriceWrapper.presentationMode = this.getPresentationMode();
 
         this.userRole = this.bpDataService.bpActivityEvent.userRole;
 
@@ -214,23 +217,15 @@ export class NegotiationResponseComponent implements OnInit {
             this.wrapper.rfqTotalPriceString == this.wrapper.lineDiscountPriceWrapper.totalPriceString;
     }
 
-    get quotationPrice(): number {
-        return this.wrapper.quotationDiscountPriceWrapper.totalPrice;
-    }
-
-    set quotationPrice(price: number) {
-        this.wrapper.quotationDiscountPriceWrapper.totalPrice = price;
-    }
-
     getContractEndDate(): string {
         let rangeUnit: string;
-        switch (this.wrapper.quotationFrameContractDuration.unitCode) {
+        switch (this.wrapper.newQuotationWrapper.frameContractDuration.unitCode) {
             case "year(s)": rangeUnit = 'y'; break;
             case "month(s)": rangeUnit = 'M'; break;
             case "week(s)": rangeUnit = 'w'; break;
             case "day(s)": rangeUnit = 'd'; break;
         }
-        let m:Moment = moment().add(this.wrapper.quotationFrameContractDuration.value, <unitOfTime.DurationConstructor>rangeUnit);
+        let m:Moment = moment().add(this.wrapper.newQuotationWrapper.frameContractDuration.value, <unitOfTime.DurationConstructor>rangeUnit);
         let date: string = m.format(this.dateFormat);
         return date;
     }
@@ -246,22 +241,22 @@ export class NegotiationResponseComponent implements OnInit {
 
     hasUpdatedTerms(): boolean {
         if(this.rfq.negotiationOptions.deliveryPeriod) {
-            if(!UBLModelUtils.areQuantitiesEqual(this.wrapper.rfqDeliveryPeriod, this.wrapper.quotationDeliveryPeriodWithPriceCheck)) {
+            if(!UBLModelUtils.areQuantitiesEqual(this.wrapper.rfqDeliveryPeriod, this.wrapper.newQuotationWrapper.deliveryPeriod)) {
                 return true;
             }
         }
         if(this.rfq.negotiationOptions.incoterms) {
-            if(this.wrapper.rfqIncoterms !== this.wrapper.quotationIncoterms) {
+            if(this.wrapper.rfqIncoterms !== this.wrapper.newQuotationWrapper.incoterms) {
                 return true;
             }
         }
         if(this.rfq.negotiationOptions.paymentMeans) {
-            if(this.wrapper.rfqPaymentMeans !== this.wrapper.quotationPaymentMeans) {
+            if(this.wrapper.rfqPaymentMeans !== this.wrapper.newQuotationWrapper.paymentMeans) {
                 return true;
             }
         }
         if(this.rfq.negotiationOptions.paymentTerms) {
-            if(this.wrapper.rfqPaymentTerms.paymentTerm !== this.wrapper.quotationPaymentTerms.paymentTerm) {
+            if(this.wrapper.rfqPaymentTerms.paymentTerm !== this.wrapper.newQuotationWrapper.paymentTermsWrapper.paymentTerm) {
                 return true;
             }
         }
@@ -269,11 +264,11 @@ export class NegotiationResponseComponent implements OnInit {
             return true;
         }
         if(this.rfq.negotiationOptions.warranty) {
-            if(!UBLModelUtils.areQuantitiesEqual(this.wrapper.rfqWarranty, this.wrapper.quotationWarranty)) {
+            if(!UBLModelUtils.areQuantitiesEqual(this.wrapper.rfqWarranty, this.wrapper.newQuotationWrapper.warranty)) {
                 return true;
             }
         }
-        if(!UBLModelUtils.areQuantitiesEqual(this.wrapper.rfqFrameContractDuration, this.wrapper.quotationFrameContractDuration)) {
+        if(!UBLModelUtils.areQuantitiesEqual(this.wrapper.rfqFrameContractDuration, this.wrapper.newQuotationWrapper.frameContractDuration)) {
             return true;
         }
         if(UBLModelUtils.areTermsAndConditionListsDifferent(this.wrapper.rfq.termOrCondition, this.wrapper.newQuotation.termOrCondition)) {

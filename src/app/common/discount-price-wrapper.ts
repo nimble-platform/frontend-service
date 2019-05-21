@@ -23,13 +23,13 @@ export class DiscountPriceWrapper {
 
     itemPrice: ItemPriceWrapper;
     // the item price wrapper which is used when we pass this price wrapper as quantity to QuantityInputComponent
-    quotationLinePriceWrapper: ItemPriceWrapper;
+    // quotationLinePriceWrapper: ItemPriceWrapper;
     // these fields are used to check whether we need to update quotation price or not
-    quotationIncotermUpdated = true;
-    quotationDeliveryPeriodUpdated = true;
-    quotationPaymentMeansUpdated = true;
+    // quotationIncotermUpdated = true;
+    // quotationDeliveryPeriodUpdated = true;
+    // quotationPaymentMeansUpdated = true;
     // this presentation mode is used to calculate total price for quotation
-    presentationMode:string = 'edit';
+    //presentationMode:string = 'edit';
 
     // discounted (if any) price, it's updated upon an update in an information affecting the discounts
     // discountedPerItemPrice: number;
@@ -45,12 +45,12 @@ export class DiscountPriceWrapper {
                 public paymentMeans:string = null,
                 public deliveryPeriod: Quantity = null,
                 public deliveryLocation: Address = null,
-                public quotationLinePrice: Price = null,
+                // public quotationLinePrice: Price = null,
                 //public useCatalogueLinePrice: boolean = true // if true, the initial catalogue line price is used as price per item while calculating discount
                 //public updatePriceWithDiscount: boolean = false // controls whether the price.priceAmount.value should be updated based on the discount updates
     ) {
         this.itemPrice = new ItemPriceWrapper(price);
-        this.quotationLinePriceWrapper = new ItemPriceWrapper(this.quotationLinePrice);
+        // this.quotationLinePriceWrapper = new ItemPriceWrapper(this.quotationLinePrice);
         this.getDiscountedTotalPrice(); // to initialize the applied discounts list
     }
 
@@ -60,12 +60,12 @@ export class DiscountPriceWrapper {
         }
 
         // if this PriceWrapper has a quotation price but we do not need to update it, simply return.
-        if(this.quotationLinePriceWrapper.price && !this.quotationIncotermUpdated && !this.quotationPaymentMeansUpdated && !this.quotationDeliveryPeriodUpdated){
-            if(!this.quotationHasPrice()){
-                return 0;
-            }
-            return this.quotationLinePriceWrapper.value * this.orderedQuantity.value;
-        }
+        // if(this.quotationLinePriceWrapper.price && !this.quotationIncotermUpdated && !this.quotationPaymentMeansUpdated && !this.quotationDeliveryPeriodUpdated){
+        //     if(!this.quotationHasPrice()){
+        //         return 0;
+        //     }
+        //     return this.quotationLinePriceWrapper.value * this.orderedQuantity.value;
+        // }
 
         let discountedTotalPrice: number = this.getDiscountedTotalPrice();
         return discountedTotalPrice / this.orderedQuantity.value;
@@ -116,9 +116,9 @@ export class DiscountPriceWrapper {
         return this.price.priceAmount.value != null;
     }
 
-    quotationHasPrice() :boolean{
-        return this.quotationLinePriceWrapper.price.priceAmount.value != null;
-    }
+    // quotationHasPrice() :boolean{
+    //     return this.quotationLinePriceWrapper.price.priceAmount.value != null;
+    // }
 
     isDiscountApplied(): boolean {
         return this.appliedDiscounts.length > 0;
@@ -276,13 +276,13 @@ export class DiscountPriceWrapper {
         */
 
         // if PriceWrapper has a quotation price, then we have to update it with the calculated total price
-        if(this.quotationLinePriceWrapper.price){
-            this.quotationLinePriceWrapper.price.priceAmount.value = this.itemPrice.value;
-
-            this.quotationDeliveryPeriodUpdated = false;
-            this.quotationIncotermUpdated = false;
-            this.quotationPaymentMeansUpdated = false;
-        }
+        // if(this.quotationLinePriceWrapper.price){
+        //     this.quotationLinePriceWrapper.price.priceAmount.value = this.itemPrice.value;
+        //
+        //     this.quotationDeliveryPeriodUpdated = false;
+        //     this.quotationIncotermUpdated = false;
+        //     this.quotationPaymentMeansUpdated = false;
+        // }
 
         return totalPrice - totalDiscount;
     }

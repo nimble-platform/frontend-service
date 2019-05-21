@@ -451,6 +451,11 @@ export class BPEService {
 	}
 
 	private handleError(error: any): Promise<any> {
-		return Promise.reject(error.message || error);
+		if(error.status == 404) {
+			// ignore
+			return null;
+		} else {
+			return Promise.reject(error.message || error);
+		}
 	}
 }
