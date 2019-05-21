@@ -305,29 +305,22 @@
         </div>
     </div>
 
-    <h5>
-        Terms and Conditions
-        <button class="btn btn-outline-dark" (click)="showTermsAndConditions = !showTermsAndConditions">
-            <i class="fas fa-chevron-up fa-fw fa-lg mt-2" aria-hidden="true" *ngIf="showTermsAndConditions"></i>
-            <i class="fas fa-chevron-down fa-fw fa-lg mt-2" aria-hidden="true" *ngIf="!showTermsAndConditions"></i>
-        </button>
-    </h5>
     <!-- Contract Preview -->
+    <div class="row">
+        <div class="btn btn-outline-primary align-self-start mb-2" (click)="showTermsAndConditions = !showTermsAndConditions">Terms and Conditions</div>
+    </div>
     <div *ngIf="showTermsAndConditions">
-        <div class="row title-row">
-            <div class="col-6"><h4 class="font-weight-600">Manufacturer's Terms</h4></div>
-            <div class="col-6"><h4 class="font-weight-600">Counter Offer</h4></div>
-        </div>
-
         <div class="row content-row bg-light">
-            <div class="col-6">
+            <div class="col-2"></div>
+            <div class="col-5">
                 <terms-and-conditions [buyerPartyId]="buyerId"
                                       [selectedIncoterm]="wrapper.rfqIncoterms"
                                       [selectedTradingTerm]="wrapper.rfqPaymentTerms.paymentTerm"
                                       [isIncotermsNegotiating]="false" [isTradingTermsNegotiating]="false"
+                                      [needATitle]="false"
                                       [sellerPartyId]="sellerId" [readOnly]="true" [documentType]="'rfq-manufacturer'" [termsAndConditions]="wrapper.initialImmutableRfq.termOrCondition"></terms-and-conditions>
             </div>
-            <div class="col-6">
+            <div class="col-5">
                 <terms-and-conditions [buyerPartyId]="buyerId"
                                       [selectedIncoterm]="wrapper.rfqIncoterms"
                                       [selectedTradingTerm]="wrapper.rfqPaymentTerms.paymentTerm"
@@ -336,6 +329,7 @@
                                       (onTradingTermChanged)="wrapper.rfqPaymentTerms.paymentTerm=$event; onPriceConditionsChange();"
                                       [isTradingTermsNegotiating]="rfq.negotiationOptions.paymentTerms"
                                       [originalTermAndConditionClauses]="wrapper.initialImmutableRfq.termOrCondition"
+                                      [needATitle]="false"
                                       [sellerPartyId]="sellerId" [readOnly]="isLoading() || isReadOnly()" [documentType]="'rfq'" [termsAndConditions]="wrapper.rfq.termOrCondition"></terms-and-conditions>
             </div>
         </div>

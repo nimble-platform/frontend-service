@@ -25,6 +25,7 @@ export class TermsAndConditionsComponent implements OnInit {
     @Input() documentType:string; // "order", "rfq", "quotation";
     @Input() originalTermAndConditionClauses:Clause[] = null; // original terms and conditions of the object
     @Input() termsAndConditions:Clause[] = []; // updated terms and conditions of the object
+    @Input() needATitle:boolean = true; // whether we need to add a title before displaying terms and conditions
 
     // Outputs
     @Output() onIncotermChanged = new EventEmitter();
@@ -102,6 +103,11 @@ export class TermsAndConditionsComponent implements OnInit {
                         this.tradingTerms.set(tradingTerm.id,tradingTerm);
                     }
                 }
+            }
+
+            // if there is no need to have a title, then display the preview
+            if(!this.needATitle){
+                this.showPreview = true;
             }
 
             this.callStatus.callback("Successfully fetched terms and conditions", true);

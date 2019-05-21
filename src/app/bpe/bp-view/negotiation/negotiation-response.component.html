@@ -175,41 +175,36 @@
            [lastCol]="'col-3'"
            [readonly]="isLoading() || isReadOnly()"></note-file-view>
 
-<h5>
-    Terms and Conditions
-    <button class="btn btn-outline-dark" (click)="showTermsAndConditions = !showTermsAndConditions">
-        <i class="fas fa-chevron-up fa-fw fa-lg mt-2" aria-hidden="true" *ngIf="showTermsAndConditions"></i>
-        <i class="fas fa-chevron-down fa-fw fa-lg mt-2" aria-hidden="true" *ngIf="!showTermsAndConditions"></i>
-    </button>
-</h5>
+<!-- Contract Preview -->
+<div class="row">
+    <div class="btn btn-outline-primary align-self-start mb-2" (click)="showTermsAndConditions = !showTermsAndConditions">Terms and Conditions</div>
+</div>
 
 <div *ngIf="showTermsAndConditions && originalTermsAndConditions">
-    <div class="row title-row">
-        <div class="col-4"><h4 class="font-weight-600">Original Terms</h4></div>
-        <div class="col-4"><h4 class="font-weight-600">Customer Request</h4></div>
-        <div class="col-4"><h4 class="font-weight-600">Producer Response</h4></div>
-    </div>
-
     <div class="row content-row bg-light">
-        <div class="col-4">
+        <div class="col-3"></div>
+        <div class="col-3">
             <terms-and-conditions [buyerPartyId]="getPartyId(rfq.buyerCustomerParty.party)"
                                   [selectedIncoterm]="wrapper.lineIncoterms" [selectedTradingTerm]="wrapper.linePaymentTerms"
+                                  [needATitle]="false"
                                   [sellerPartyId]="getPartyId(rfq.sellerSupplierParty.party)" [readOnly]="true" [documentType]="'rfq-manufacturer'" [termsAndConditions]="originalTermsAndConditions"></terms-and-conditions>
         </div>
-        <div class="col-4">
+        <div class="col-3">
             <terms-and-conditions [buyerPartyId]="getPartyId(rfq.buyerCustomerParty.party)"
                                   [selectedIncoterm]="wrapper.rfqIncoterms"
                                   [selectedTradingTerm]="wrapper.rfqPaymentTerms.paymentTerm"
                                   [originalTermAndConditionClauses]="originalTermsAndConditions"
+                                  [needATitle]="false"
                                   [sellerPartyId]="getPartyId(rfq.sellerSupplierParty.party)" [readOnly]="true" [documentType]="'rfq'" [termsAndConditions]="rfq.termOrCondition"></terms-and-conditions>
         </div>
-        <div class="col-4">
+        <div class="col-3">
             <terms-and-conditions [rfqId]="rfq.id" [buyerPartyId]="getPartyId(quotation.buyerCustomerParty.party)"
                                   [selectedIncoterm]="wrapper.quotationIncoterms"
                                   [selectedTradingTerm]="wrapper.quotationPaymentTerms.paymentTerm"
                                   (onIncotermChanged)="wrapper.quotationIncoterms = $event"
                                   (onTradingTermChanged)="wrapper.quotationPaymentTerms.paymentTerm = $event"
                                   [originalTermAndConditionClauses]="originalTermsAndConditions"
+                                  [needATitle]="false"
                                   [sellerPartyId]="getPartyId(quotation.sellerSupplierParty.party)" [readOnly]="isLoading() || isReadOnly()" [documentType]="'quotation'" [termsAndConditions]="quotation.termOrCondition"></terms-and-conditions>
         </div>
     </div>
