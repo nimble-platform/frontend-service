@@ -128,18 +128,17 @@ export class TermsAndConditionsComponent implements OnInit {
     }
 
     setSectionText(index:number){
-        let clause = this.originalTermAndConditionClauses[index];
         if(this.readOnly){
-
+            let originalClause = this.originalTermAndConditionClauses[index];
             let element = document.getElementById(this.generateIdForClause(index));
 
-            clause = this.getClause(clause.id);
+            let clause = this.getClause(originalClause.id);
 
             let text = clause.content[0].value
 
             for(let tradingTerm of clause.tradingTerms){
                 let spanText = "";
-                if(this.isOriginalTradingTermOfClause(clause,tradingTerm.id)){
+                if(this.isOriginalTradingTermOfClause(originalClause,tradingTerm.id)){
                     spanText = "<b><span>";
 
                 }
