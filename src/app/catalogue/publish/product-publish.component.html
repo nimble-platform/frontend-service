@@ -149,7 +149,7 @@
                         <strong [title]="getDefinition(prop)">{{ getPrettyName(prop) }}: </strong>
                     </div>
                     <div class="col-6">
-                        <table *ngIf="prop.valueQualifier === 'BINARY'" class="table table-borderless mb-0">
+                        <table *ngIf="prop.valueQualifier === 'FILE'" class="table table-borderless mb-0">
                             <tbody>
                             <tr>
                                 <td>
@@ -159,7 +159,7 @@
                             </tr>
                             </tbody>
                         </table>
-                        <table *ngIf="prop.valueQualifier !== 'BINARY'" class="table table-borderless mb-0">
+                        <table *ngIf="prop.valueQualifier !== 'FILE'" class="table table-borderless mb-0">
                             <tbody>
                                 <tr *ngFor="let value of getValues(prop); let i = index">
                                     <td *ngIf="prop.valueQualifier === 'STRING'" style="vertical-align:middle">
@@ -221,7 +221,7 @@
                     </div>
                     <div class="col-3 align-right" style="align-self:center">
                         <button class="btn btn-outline-primary" (click)="onAddValue(prop)"
-                            *ngIf="prop.valueQualifier !== 'BOOLEAN' && prop.valueQualifier !== 'BINARY'">
+                            *ngIf="prop.valueQualifier !== 'BOOLEAN' && prop.valueQualifier !== 'FILE'">
                             Add
                         </button>
                         <button class="btn btn-outline-primary ml-1" (click)="onEditProperty(prop)">Edit</button>

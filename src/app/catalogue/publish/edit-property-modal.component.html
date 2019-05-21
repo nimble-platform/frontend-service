@@ -66,7 +66,7 @@
                         <strong>Value(s):</strong>
                     </div>
                     <div class="col-9">
-                        <file-input *ngIf="property.valueQualifier === 'BINARY'" [binaryObjects]="property.valueBinary"
+                        <file-input *ngIf="property.valueQualifier === 'FILE'" [binaryObjects]="property.valueBinary"
                             [multiple]="true" [maxSize]=1>
                         </file-input>
                         <table *ngIf="property.valueQualifier === 'STRING'" class="table borderless">
@@ -123,14 +123,14 @@
 
                                     <!-- Do not use [(ngModel)]="...", as each change removes focus from the element... -->
                                     <ng-container *ngSwitchDefault>
-                                            <input *ngIf="property.valueQualifier !== 'BINARY' && property.valueQualifier !== 'BOOLEAN'" type="number"
+                                            <input *ngIf="property.valueQualifier !== 'FILE' && property.valueQualifier !== 'BOOLEAN'" type="number"
                                             class="form-control form-control-sm value-input"
                                                 [ngModel]="property.valueDecimal[i]" (change)="setValueDecimal(i, $event)">
-                                            <input *ngIf="property.valueQualifier !== 'BINARY' && property.valueQualifier === 'BOOLEAN'" type="checkbox"
+                                            <input *ngIf="property.valueQualifier !== 'FILE' && property.valueQualifier === 'BOOLEAN'" type="checkbox"
                                                 [checked]="property.value[i].value == 'true'" (change)="setBooleanValue(i, $event)">
                                     </ng-container>
                                 </div>
-                                <div *ngIf="i > 0 && property.valueQualifier !== 'BINARY'" class="col-3">
+                                <div *ngIf="i > 0 && property.valueQualifier !== 'FILE'" class="col-3">
                                     <button class="btn btn-danger btn-remove-value btn-sm"
                                         (click)="onRemoveValue(i)">
                                         Delete
@@ -139,7 +139,7 @@
                             </div>
                         </ng-container>
                         <button class="btn btn-outline-primary add-value-button" (click)="onAddValue()"
-                            *ngIf="property.valueQualifier !== 'BOOLEAN' && property.valueQualifier !== 'BINARY' && property.valueQualifier !== 'STRING'">
+                            *ngIf="property.valueQualifier !== 'BOOLEAN' && property.valueQualifier !== 'FILE' && property.valueQualifier !== 'STRING'">
                             Add Value
                         </button>
                     </div>
