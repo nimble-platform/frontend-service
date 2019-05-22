@@ -28,6 +28,7 @@ import {Period} from "../../../catalogue/model/publish/period";
 import {DocumentReference} from "../../../catalogue/model/publish/document-reference";
 import {Party} from "../../../catalogue/model/publish/party";
 import {NegotiationOptions} from "../../../catalogue/model/publish/negotiation-options";
+import {Clause} from '../../../catalogue/model/publish/clause';
 
 @Component({
     selector: "negotiation-response",
@@ -67,6 +68,8 @@ export class NegotiationResponseComponent implements OnInit {
     showDeliveryAddress: boolean = false;
     showTermsAndConditions:boolean = false;
     showPurchaseOrder:boolean = false;
+    // manufacturer original terms and conditions
+    originalTermsAndConditions:Clause[] = null;
 
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
@@ -114,6 +117,18 @@ export class NegotiationResponseComponent implements OnInit {
         //     this.rfq.requestForQuotationLine[0].lineItem.item.manufacturersItemIdentification.id).then(digitalAgreement => {
         //     this.frameContract = digitalAgreement;
         // });
+
+        // retrieve original terms and conditions
+        this.bpeService.getTermsAndConditions(
+            null,
+            this.getPartyId(this.rfq.buyerCustomerParty.party),
+            this.getPartyId(this.rfq.sellerSupplierParty.party),
+            null,
+            this.wrapper.lineIncoterms,
+            this.wrapper.linePaymentTerms
+        ).then(clauses => {
+            this.originalTermsAndConditions = clauses;
+        });
     }
 
     computeRfqNegotiationOptions(rfq: RequestForQuotation) {

@@ -116,7 +116,7 @@
 </div>
 
 <!-- renders the binary content -->
-<div *ngIf="additionalItemProperty.valueQualifier=='BINARY'" class="input-group form-group">
+<div *ngIf="additionalItemProperty.valueQualifier=='FILE'" class="input-group form-group">
     <label class="col-3 control-label">{{selectName(additionalItemProperty)}}</label>
     <div style="display: inline-block">
         <div *ngFor="let file of additionalItemProperty.valueBinary"

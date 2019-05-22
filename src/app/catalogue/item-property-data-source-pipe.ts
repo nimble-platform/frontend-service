@@ -18,7 +18,7 @@ export class ItemPropertyDataSourcePipe implements PipeTransform {
     transform(qualifier:string, itemProperty: ItemProperty): Array<any> {
         if (itemProperty.valueQualifier == "NUMBER") {
             return itemProperty.valueDecimal;
-        } else if (itemProperty.valueQualifier == "BINARY") {
+        } else if (itemProperty.valueQualifier == "FILE") {
             return itemProperty.valueBinary;
         } else {
             return itemProperty.value;

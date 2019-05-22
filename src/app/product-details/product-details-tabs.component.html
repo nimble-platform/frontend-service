@@ -86,10 +86,10 @@
             </div>
             <div *ngFor="let property of wrapper.getUniquePropertiesWithValue()" class="p-1 col-6 d-flex">
                 <strong>{{ getHumanReadablePropertyName(wrapper.getPropertyName(property)) }}: </strong>
-                <span *ngIf="property.valueQualifier !== 'BINARY'" class="ml-2">
+                <span *ngIf="property.valueQualifier !== 'FILE'" class="ml-2">
                 {{ getValuesAsString(property).join(", ") }}
             </span>
-                <ng-container *ngIf="property.valueQualifier === 'BINARY'">
+                <ng-container *ngIf="property.valueQualifier === 'FILE'">
                     <file-input presentationMode="view" [binaryObjects]="property.valueBinary" [multiple]="true" rowClass="ml-2" [small]="true"></file-input>
                 </ng-container>
             </div>
