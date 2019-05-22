@@ -866,7 +866,7 @@ export class ProductPublishComponent implements OnInit {
                     propertiesToBeSpliced.push(property);
                 }
 
-            } else if (valueQualifier == "binary") {
+            } else if (valueQualifier == "file") {
                 if (property.valueBinary.length == 0) {
                     propertiesToBeSpliced.push(property);
                 }
@@ -964,7 +964,7 @@ export class ProductPublishComponent implements OnInit {
         } else if (event.target.value == "Number") {
             this.newProperty.valueQualifier = "NUMBER";
         } else if (event.target.value == "Image" || event.target.value == "File") {
-            this.newProperty.valueQualifier = "BINARY";
+            this.newProperty.valueQualifier = "FILE";
         } else if(event.target.value == "Quantity"){
             this.newProperty.valueQualifier = "QUANTITY";
         } else if(event.target.value == "Boolean"){
@@ -1060,7 +1060,7 @@ export class ProductPublishComponent implements OnInit {
             this.newProperty.valueBinary = [];
             this.newProperty.valueQuantity = [];
 
-        } else if (this.newProperty.valueQualifier == "BINARY") {
+        } else if (this.newProperty.valueQualifier == "FILE") {
             this.newProperty.value = [];
             this.newProperty.valueDecimal = [];
             this.newProperty.valueQuantity = [];

@@ -101,4 +101,8 @@ export class QuotationWrapper {
     public get dataMonitoringPromised(): boolean {
         return this.quotation.dataMonitoringPromised;
     }
+
+    public get dataMonitoringPromisedString(): string {
+        return this.quotation.dataMonitoringPromised ? "Promised" : "Not Promised";
+    }
 }

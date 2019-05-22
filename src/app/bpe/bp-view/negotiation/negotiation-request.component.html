@@ -307,41 +307,54 @@
 
     <!-- Contract Preview -->
     <div class="row">
-        <div class="col-6">
-            <terms-and-conditions [buyerPartyId]="buyerId"
-                                  [selectedIncoterm]="wrapper.rfqIncoterms"
-                                  [selectedTradingTerms]="wrapper.rfqPaymentTerms.tradingTerms"
-                                  (onIncotermChanged)="wrapper.rfqIncoterms = $event; onPriceConditionsChange();"
-                                  [isIncotermsNegotiating]="rfq.negotiationOptions.incoterms"
-                                  (onTradingTermChanged)="wrapper.rfqPaymentTerms.paymentTerm=$event; onPriceConditionsChange();"
-                                  [isTradingTermsNegotiating]="rfq.negotiationOptions.paymentTerms"
-                                  [sellerPartyId]="sellerId" [readOnly]="isLoading() || isReadOnly()" [documentType]="'rfq'" [termsAndConditions]="rfq.termOrCondition"></terms-and-conditions>
-        </div>
-        <div class="col-6">
-            <h4>
-                Purchase Order
-                <button class="btn btn-outline-dark" (click)="showPurchaseOrder = !showPurchaseOrder">
-                    <i class="fas fa-chevron-up fa-fw fa-lg mt-2" aria-hidden="true" *ngIf="showPurchaseOrder"></i>
-                    <i class="fas fa-chevron-down fa-fw fa-lg mt-2" aria-hidden="true" *ngIf="!showPurchaseOrder"></i>
-                </button>
-            </h4>
-            <div *ngIf="showPurchaseOrder">
-                <div class="row">
-                    <div class="col-3"><strong>Product Id:</strong></div>
-                    <div class="col-9">{{rfq.requestForQuotationLine[0].lineItem.item.manufacturersItemIdentification.id}}</div>
-                </div>
-                <div class="row">
-                    <div class="col-3"><strong>Quantity:</strong></div>
-                    <div class="col-9">{{requestedQuantity}} {{getQuantityUnit()}}</div>
-                </div>
-                <div class="row">
-                    <div class="col-3"><strong>Total Price:</strong></div>
-                    <div class="col-9">{{ wrapper.rfqTotalPriceString }}</div>
-                </div>
+        <div class="btn btn-outline-primary align-self-start mb-2" (click)="showTermsAndConditions = !showTermsAndConditions">Terms and Conditions</div>
+    </div>
+    <div *ngIf="showTermsAndConditions">
+        <div class="row content-row bg-light">
+            <div class="col-2"></div>
+            <div class="col-5">
+                <terms-and-conditions [buyerPartyId]="buyerId"
+                                      [selectedIncoterm]="wrapper.rfqIncoterms"
+                                      [selectedTradingTerm]="wrapper.rfqPaymentTerms.paymentTerm"
+                                      [isIncotermsNegotiating]="false" [isTradingTermsNegotiating]="false"
+                                      [needATitle]="false"
+                                      [sellerPartyId]="sellerId" [readOnly]="true" [documentType]="'rfq-manufacturer'" [termsAndConditions]="wrapper.initialImmutableRfq.termOrCondition"></terms-and-conditions>
+            </div>
+            <div class="col-5">
+                <terms-and-conditions [buyerPartyId]="buyerId"
+                                      [selectedIncoterm]="wrapper.rfqIncoterms"
+                                      [selectedTradingTerm]="wrapper.rfqPaymentTerms.paymentTerm"
+                                      (onIncotermChanged)="wrapper.rfqIncoterms = $event; onPriceConditionsChange();"
+                                      [isIncotermsNegotiating]="rfq.negotiationOptions.incoterms"
+                                      (onTradingTermChanged)="wrapper.rfqPaymentTerms.paymentTerm=$event; onPriceConditionsChange();"
+                                      [isTradingTermsNegotiating]="rfq.negotiationOptions.paymentTerms"
+                                      [originalTermAndConditionClauses]="wrapper.initialImmutableRfq.termOrCondition"
+                                      [needATitle]="false"
+                                      [sellerPartyId]="sellerId" [readOnly]="isLoading() || isReadOnly()" [documentType]="'rfq'" [termsAndConditions]="wrapper.rfq.termOrCondition"></terms-and-conditions>
             </div>
         </div>
     </div>
 
+    <!-- Purchase Order -->
+    <div class="row">
+        <div class="btn btn-outline-primary align-self-start mb-2" (click)="showPurchaseOrder = !showPurchaseOrder">Purchase Order</div>
+    </div>
+    <div *ngIf="showPurchaseOrder" class="row mb-3">
+        <div class="col-12">
+            <div class="row">
+                <div class="col-2"><strong>Product Id:</strong></div>
+                <div class="col-10">{{rfq.requestForQuotationLine[0].lineItem.item.manufacturersItemIdentification.id}}</div>
+            </div>
+            <div class="row">
+                <div class="col-2"><strong>Quantity:</strong></div>
+                <div class="col-10">{{requestedQuantity}} {{getQuantityUnit()}}</div>
+            </div>
+            <div class="row">
+                <div class="col-2"><strong>Total Price:</strong></div>
+                <div class="col-10">{{ wrapper.rfqTotalPriceString }}</div>
+            </div>
+        </div>
+    </div>
     <!-- Actions -->
     <div *ngIf="!showRequestedPrice()" class="d-flex justify-content-end actions-row">
         <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>

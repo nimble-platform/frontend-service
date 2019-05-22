@@ -496,7 +496,7 @@ export class LogisticServicePublishComponent implements OnInit {
                     propertiesToBeSpliced.push(property);
                 }
 
-            } else if (valueQualifier == "binary") {
+            } else if (valueQualifier == "file") {
                 if (property.valueBinary.length == 0) {
                     propertiesToBeSpliced.push(property);
                 }

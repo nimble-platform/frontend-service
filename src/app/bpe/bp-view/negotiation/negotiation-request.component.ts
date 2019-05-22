@@ -77,6 +77,7 @@ export class NegotiationRequestComponent implements OnInit {
     showDataMonitoring: boolean = false;
     showDeliveryAddress: boolean = false;
     showPurchaseOrder:boolean = false;
+    showTermsAndConditions:boolean = false;
     callStatus: CallStatus = new CallStatus();
     pageInitCallStatus: CallStatus = new CallStatus();
 
@@ -102,7 +103,7 @@ export class NegotiationRequestComponent implements OnInit {
 
     ngOnInit() {
         this.route.queryParams.subscribe(params => {
-            let termsSource = params["termsDropdownValue"];
+            let termsSource = params["termsSource"];
             if(termsSource != null) {
                 this.termsDropdownValue = termsSource;
             }
@@ -186,11 +187,11 @@ export class NegotiationRequestComponent implements OnInit {
             if(this.rfq.termOrCondition == null || this.rfq.termOrCondition.length == 0) {
                 defaultTermsPromise = this.bpeService.getTermsAndConditions(
                     null,
-                    this.sellerId,
                     this.buyerId,
+                    this.sellerId,
                     null,
                     this.wrapper.rfqIncoterms,
-                    this.wrapper.rfqPaymentTerms.tradingTerms);
+                    this.wrapper.rfqPaymentTerms.paymentTerm);
             }
             defaultTermsPromise.then(clauses => {
                 if(clauses != null) {
