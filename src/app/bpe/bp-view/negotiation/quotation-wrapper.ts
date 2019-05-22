@@ -102,7 +102,7 @@ export class QuotationWrapper {
         return this.quotation.dataMonitoringPromised;
     }
 
-    public get dataMonitoringPromisedString(): boolean {
+    public get dataMonitoringPromisedString(): string {
         return this.quotation.dataMonitoringPromised ? "Promised" : "Not Promised";
     }
 }
