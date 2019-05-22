@@ -320,6 +320,10 @@ export class AppComponent implements OnInit {
                 if (all_rights || publish || purch || sales || (initial && !compReq))
                     this.allowed = true;
                 break;
+            case "projects" :
+                if (all_rights || publish || purch || sales || (initial && !compReq))
+                    this.allowed = true;
+                break;
             case "performance":
                 if (all_rights || publish || purch || sales || (initial && !compReq))
                     this.allowed = true;
