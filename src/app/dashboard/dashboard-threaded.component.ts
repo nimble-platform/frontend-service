@@ -13,6 +13,7 @@ import { DashboardQueryParameters } from "./model/dashboard-query-parameters";
 import { DashboardUser } from "./model/dashboard-user";
 import * as myGlobals from '../globals';
 import {CollaborationGroup} from '../bpe/model/collaboration-group';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
     selector: "dashboard-threaded",
@@ -30,10 +31,17 @@ export class DashboardThreadedComponent implements OnInit {
     queryParameters: DashboardQueryParameters = new DashboardQueryParameters();
 
     query: DashboardOrdersQuery = new DashboardOrdersQuery();
+    querypopup: DashboardOrdersQuery = new DashboardOrdersQuery();
+
     results: DashboardOrdersQueryResults = new DashboardOrdersQueryResults();
     queryStatus: CallStatus = new CallStatus();
 
     TABS = TABS;
+
+    selectedNegotiations = [];
+    selectedNegotiation:any;
+    selectedNegotiationLists = [];
+    selectedNegotiationIndex = -1;
 
     buyerCounter = 0;
     sellerCounter = 0;
@@ -47,6 +55,7 @@ export class DashboardThreadedComponent implements OnInit {
 
     constructor(
         private cookieService: CookieService,
+        private modalService: NgbModal,
         private bpeService: BPEService,
         private userService: UserService,
         private router: Router,
@@ -93,6 +102,11 @@ export class DashboardThreadedComponent implements OnInit {
 
     onPageChange(): void {
         this.updateQueryParameters({ pg: this.query.page });
+    }
+
+    onPopUpPageChange(): void {
+        this.getOrdersQuery(this.querypopup);
+        // this.updateQueryParameters({ pg: this.query.page });
     }
 
     onFilterChange(): void {
@@ -209,6 +223,7 @@ export class DashboardThreadedComponent implements OnInit {
             case TABS.PURCHASES:
             case TABS.FAVOURITE:
             case TABS.COMPARE:
+            case TABS.PROJECTS:
             case TABS.PERFORMANCE:
             case TABS.SALES:
                 this.queryOrdersIfNeeded();
@@ -229,7 +244,7 @@ export class DashboardThreadedComponent implements OnInit {
             }
         } else {
             const upped = tab.toUpperCase()
-            if(upped === TABS.CATALOGUE || upped === TABS.SALES || upped === TABS.WELCOME || upped === TABS.FAVOURITE || upped == TABS.COMPARE || upped == TABS.PERFORMANCE) {
+            if(upped === TABS.CATALOGUE || upped === TABS.SALES || upped === TABS.WELCOME || upped === TABS.FAVOURITE || upped == TABS.COMPARE || upped == TABS.PROJECTS || upped == TABS.PERFORMANCE) {
                 return upped;
             }
         }
@@ -460,4 +475,47 @@ export class DashboardThreadedComponent implements OnInit {
                 });
         }
     }
+
+    open(content,index,order) {
+        this.selectedNegotiation = order;
+        this.selectedNegotiationIndex = index + (this.query.page -1)*this.query.pageSize;
+        this.onPopUpPageChange();
+        this.modalService.open(content, {backdropClass: 'light-blue-backdrop'}).result.then((result) => {
+            this.selectedNegotiations = [];
+            this.ngOnInit();
+        }, (reason) => {
+            this.selectedNegotiations = [];
+            this.ngOnInit();
+        });
+    }
+
+    changeNegotation(index,order){
+        let lastindex = index + (this.querypopup.page -1)*this.querypopup.pageSize;
+        if(this.selectedNegotiations.indexOf(lastindex) > -1){
+            let indexOfNegotation = this.selectedNegotiations.indexOf(lastindex);
+            this.selectedNegotiations.splice(indexOfNegotation,1);
+            delete this.selectedNegotiationLists[lastindex];
+        }else{
+            this.selectedNegotiations.push(lastindex);
+            this.selectedNegotiationLists[lastindex] = order;
+        }
+    }
+
+    async mergeNegotations(){
+        let selectedNegotation = this.selectedNegotiation.id;
+        let mergeIdList = [];
+
+
+        await this.selectedNegotiationLists.forEach(item => {
+            mergeIdList.push(item.id);
+        })
+
+        this.bpeService.mergeNegotations(selectedNegotation,mergeIdList)
+        .then(() => {
+           
+        })
+        .catch(err => {
+        });
+    }
+  
 }
