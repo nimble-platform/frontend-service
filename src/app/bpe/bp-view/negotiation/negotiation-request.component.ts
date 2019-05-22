@@ -102,7 +102,7 @@ export class NegotiationRequestComponent implements OnInit {
 
     ngOnInit() {
         this.route.queryParams.subscribe(params => {
-            let termsSource = params["termsDropdownValue"];
+            let termsSource = params["termsSource"];
             if(termsSource != null) {
                 this.termsDropdownValue = termsSource;
             }

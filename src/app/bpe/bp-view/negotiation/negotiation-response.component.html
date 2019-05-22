@@ -1,13 +1,26 @@
 <div class="row title-row">
     <div class="col-3"></div>
-    <div class="col-3"><h3 class="font-weight-600">Original Terms</h3></div>
+    <div class="col-3">
+        <!--<h3 class="font-weight-600">Original Terms</h3>-->
+        <select [hidden]="!(lastOfferQuotation || frameContractQuotation)"
+                #termSelectBox class="btn btn-outline-secondary"
+                [(ngModel)]="primaryTermsSource">
+            <option *ngIf="lastOfferQuotation" value="last_offer">Last Offer</option>
+            <option *ngIf="frameContractQuotation" value="frame_contract">Frame Contract</option>
+            <option value="product_defaults">Product Defaults</option>
+        </select>
+    </div>
     <div class="col-3"><h3 class="font-weight-600">Customer Request</h3></div>
     <div class="col-3"><h3 class="font-weight-600">Producer Response</h3></div>
 </div>
 
 <div class="row content-row bg-light">
     <div class="col-3"><strong class="font-weight-500">Delivery Period:</strong></div>
-    <div class="col-3">{{ wrapper.lineDeliveryPeriodString }}</div>
+    <ng-container [ngSwitch]="primaryTermsSource">
+        <div *ngSwitchCase="'product_defaults'" class="col-3">{{ wrapper.lineDeliveryPeriodString }}</div>
+        <div *ngSwitchCase="'frame_contract'" class="col-3">{{ wrapper.frameContractQuotationWrapper.deliveryPeriodString}}</div>
+        <div *ngSwitchCase="'last_offer'" class="col-3">{{ wrapper.lastOfferQuotationWrapper.deliveryPeriodString}}</div>
+    </ng-container>
     <div class="col-3">{{ wrapper.rfqDeliveryPeriodString }}</div>
     <div class="col-3">
         <quantity-input [presentationMode]="getPresentationMode()"
@@ -18,7 +31,11 @@
 
 <div class="row content-row">
     <div class="col-3"><strong class="font-weight-500">Warranty:</strong></div>
-    <div class="col-3">{{ wrapper.lineWarrantyString }}</div>
+    <ng-container [ngSwitch]="primaryTermsSource">
+        <div *ngSwitchCase="'product_defaults'" class="col-3">{{ wrapper.lineWarrantyString }}</div>
+        <div *ngSwitchCase="'frame_contract'" class="col-3">{{ wrapper.frameContractQuotationWrapper.warrantyString}}</div>
+        <div *ngSwitchCase="'last_offer'" class="col-3">{{ wrapper.lastOfferQuotationWrapper.warrantyString}}</div>
+    </ng-container>
     <div class="col-3">{{ wrapper.rfqWarrantyString }}</div>
     <div class="col-3">
         <quantity-input [presentationMode]="getPresentationMode()"
@@ -29,7 +46,11 @@
 
 <div class="row content-row bg-light">
     <div class="col-3"><strong class="font-weight-500">Incoterms:</strong></div>
-    <div class="col-3">{{ wrapper.lineIncoterms }}</div>
+    <ng-container [ngSwitch]="primaryTermsSource">
+        <div *ngSwitchCase="'product_defaults'" class="col-3">{{ wrapper.lineIncoterms }}</div>
+        <div *ngSwitchCase="'frame_contract'" class="col-3">{{ wrapper.frameContractQuotationWrapper.incotermsString}}</div>
+        <div *ngSwitchCase="'last_offer'" class="col-3">{{ wrapper.lastOfferQuotationWrapper.incotermsString}}</div>
+    </ng-container>
     <div class="col-3">{{ wrapper.rfqIncoterms }}</div>
     <div class="col-3">
         <options-input [presentationMode]="getPresentationMode()"
@@ -40,7 +61,11 @@
 
 <div class="row content-row">
     <div class="col-3"><strong class="font-weight-500">Payment Terms:</strong></div>
-    <div class="col-3">{{ wrapper.linePaymentTerms }}</div>
+    <ng-container [ngSwitch]="primaryTermsSource">
+        <div *ngSwitchCase="'product_defaults'" class="col-3">{{ wrapper.linePaymentTerms }}</div>
+        <div *ngSwitchCase="'frame_contract'" class="col-3">{{ wrapper.frameContractQuotationWrapper.paymentTermsWrapper.paymentTerm}}</div>
+        <div *ngSwitchCase="'last_offer'" class="col-3">{{ wrapper.lastOfferQuotationWrapper.paymentTermsWrapper.paymentTerm}}</div>
+    </ng-container>
     <div class="col-3">{{ wrapper.rfqPaymentTerms.paymentTerm }}</div>
     <div class="col-3">
         <options-input [presentationMode]="getPresentationMode()"
@@ -52,7 +77,11 @@
 
 <div class="row content-row bg-light">
     <div class="col-3"><strong class="font-weight-500">Payment Means:</strong></div>
-    <div class="col-3">{{ wrapper.linePaymentMeans }}</div>
+    <ng-container [ngSwitch]="primaryTermsSource">
+        <div *ngSwitchCase="'product_defaults'" class="col-3">{{ wrapper.linePaymentMeans }}</div>
+        <div *ngSwitchCase="'frame_contract'" class="col-3">{{ wrapper.frameContractQuotationWrapper.paymentMeans}}</div>
+        <div *ngSwitchCase="'last_offer'" class="col-3">{{ wrapper.lastOfferQuotationWrapper.paymentMeans}}</div>
+    </ng-container>
     <div class="col-3">{{ wrapper.rfqPaymentMeans }}</div>
     <div class="col-3">
         <options-input [presentationMode]="getPresentationMode()"
@@ -63,8 +92,12 @@
 
 <div class="row content-row" *ngIf="config.dataChannelsEnabled">
     <div class="col-3"><strong class="font-weight-500">Data monitoring service requested:</strong></div>
-    <div class="col-3"></div>
-    <div class="col-3">{{ rfq.dataMonitoringRequested ? "Yes" : "" }}</div>
+    <ng-container [ngSwitch]="primaryTermsSource">
+        <div *ngSwitchCase="'product_defaults'" class="col-3"></div>
+        <div *ngSwitchCase="'frame_contract'" class="col-3">{{ rfq.dataMonitoringRequested ? wrapper.frameContractQuotationWrapper.dataMonitoringPromisedString : ''}}</div>
+        <div *ngSwitchCase="'last_offer'" class="col-3">{{ rfq.dataMonitoringRequested ? wrapper.lastOfferQuotationWrapper.dataMonitoringPromisedString : ''}}</div>
+    </ng-container>
+    <div class="col-3">{{ rfq.dataMonitoringRequested ? "Requested" : "Not Requested" }}</div>
     <div class="col-3" *ngIf="rfq.dataMonitoringRequested && !isReadOnly()">
         <input type="checkbox" [(ngModel)]="quotation.dataMonitoringPromised"
             [disabled]="isDisabled()">
@@ -78,17 +111,35 @@
 
 <div class="row content-row bg-light">
     <div class="col-3"><strong class="font-weight-500">Quantity:</strong></div>
-    <div class="col-3"></div>
+    <ng-container [ngSwitch]="primaryTermsSource">
+        <div *ngSwitchCase="'product_defaults'" class="col-3"></div>
+        <div *ngSwitchCase="'frame_contract'" class="col-3">
+            {{ wrapper.frameContractQuotationWrapper.orderedQuantity.value }} {{wrapper.frameContractQuotationWrapper.orderedQuantity.unitCode}}
+        </div>
+        <div *ngSwitchCase="'last_offer'" class="col-3">
+            {{ wrapper.lastOfferQuotationWrapper.orderedQuantity.value }} {{wrapper.lastOfferQuotationWrapper.orderedQuantity.unitCode}}
+        </div>
+    </ng-container>
     <div class="col-3">{{rfq.requestForQuotationLine[0].lineItem.quantity.value}} {{this.rfq.requestForQuotationLine[0].lineItem.quantity.unitCode}}</div>
 </div>
 
 <div class="row content-row mb-3">
     <div class="col-3"><strong class="font-weight-500">Total Price:</strong></div>
     <!-- Original terms -->
-    <div class="col-3">
-      {{ wrapper.lineTotalPriceString }}<br/>
-      <small>( {{ wrapper.linePricePerItemString }} )</small>
-    </div>
+    <ng-container [ngSwitch]="primaryTermsSource">
+        <div *ngSwitchCase="'product_defaults'" class="col-3">
+            {{ wrapper.lineTotalPriceString }}<br/>
+            <small>( {{ wrapper.linePricePerItemString }} )</small>
+        </div>
+        <div *ngSwitchCase="'frame_contract'" class="col-3">
+            {{ wrapper.frameContractQuotationWrapper.priceWrapper.totalPriceString }}<br/>
+            <small>( {{ wrapper.frameContractQuotationWrapper.priceWrapper.pricePerItemString }} )</small>
+        </div>
+        <div *ngSwitchCase="'last_offer'" class="col-3">
+            {{ wrapper.lastOfferQuotationWrapper.priceWrapper.totalPriceString }}<br/>
+            <small>( {{ wrapper.lastOfferQuotationWrapper.priceWrapper.pricePerItemString }} )</small>
+        </div>
+    </ng-container>
     <!-- Customer's request -->
     <div class="col-3">
         {{ wrapper.rfqTotalPriceString }}<br/>
@@ -107,10 +158,13 @@
                             [disableQuantityUnit]="wrapper.lineDiscountPriceWrapper.hasPrice()">
             </quantity-input>
         </ng-container>
+        <ng-container *ngIf="getPresentationMode() == 'view'">
             {{ wrapper.newQuotationWrapper.priceWrapper.totalPriceString }}<br/>
-            <small>( {{ wrapper.newQuotationWrapper.priceWrapper.pricePerItemString}} )</small><br/>
-            {{ wrapper.quotationDiscountPriceWrapper.totalPriceString }}<br/>
-            <small>( {{ wrapper.quotationDiscountPriceWrapper.pricePerItemString}} )</small>
+        </ng-container>
+        <!--{{ wrapper.newQuotationWrapper.priceWrapper.totalPriceString }}<br/>-->
+        <small>( {{ wrapper.newQuotationWrapper.priceWrapper.pricePerItemString}} )</small><br/>
+        <!--{{ wrapper.quotationDiscountPriceWrapper.totalPriceString }}<br/>-->
+        <!--<small>( {{ wrapper.quotationDiscountPriceWrapper.pricePerItemString}} )</small>-->
 
         <!--<div *ngIf="wrapper.wrapper.quotationDiscountPriceWrapper.appliedDiscounts.length > 0" class="space-left" data-toggle="tooltip" data-placement="top" (click)="openDiscountModal()" title="Applied Discounts/Charges" style="cursor: pointer">
             <i class="fa fa-search" aria-hidden="true"></i>

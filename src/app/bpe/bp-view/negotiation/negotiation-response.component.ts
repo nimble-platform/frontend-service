@@ -41,9 +41,13 @@ export class NegotiationResponseComponent implements OnInit {
     line: CatalogueLine;
     @Input() rfq: RequestForQuotation;
     @Input() quotation: Quotation;
+    @Input() lastOfferQuotation: Quotation;
+    @Input() frameContractQuotation: Quotation;
+    @Input() frameContract: DigitalAgreement;
+    @Input() primaryTermsSource: 'product_defaults' | 'frame_contract' | 'last_offer' = 'product_defaults';
+    @Input() readonly: boolean = false;
     wrapper: NegotiationModelWrapper;
     userRole: BpUserRole;
-    @Input() readonly: boolean = false;
     config = myGlobals.config;
     quotationTotalPrice: Quantity;
 
@@ -58,7 +62,6 @@ export class NegotiationResponseComponent implements OnInit {
     private discountModal: DiscountModalComponent;
 
     getPartyId = UBLModelUtils.getPartyId;
-    frameContract: DigitalAgreement;
     showFrameContractDetails: boolean = false;
     showNotesAndAdditionalFiles: boolean = false;
     showDeliveryAddress: boolean = false;
@@ -86,12 +89,14 @@ export class NegotiationResponseComponent implements OnInit {
         if(this.quotation == null) {
             this.quotation = this.bpDataService.quotation;
         }
+        console.log(this.primaryTermsSource);
+        console.log(this.lastOfferQuotation);
         this.wrapper = new NegotiationModelWrapper(
             this.line,
             this.rfq,
             this.quotation,
-            null,
-            null,
+            this.frameContractQuotation,
+            this.lastOfferQuotation,
             this.bpDataService.getCompanySettings().negotiationSettings);
 
         this.quotationTotalPrice = new Quantity(this.wrapper.quotationDiscountPriceWrapper.totalPrice, this.wrapper.quotationDiscountPriceWrapper.currency);
@@ -104,11 +109,11 @@ export class NegotiationResponseComponent implements OnInit {
         this.userRole = this.bpDataService.bpActivityEvent.userRole;
 
         // check associated frame contract
-        this.bpeService.getFrameContract(UBLModelUtils.getPartyId(this.rfq.sellerSupplierParty.party),
-            UBLModelUtils.getPartyId(this.rfq.buyerCustomerParty.party),
-            this.rfq.requestForQuotationLine[0].lineItem.item.manufacturersItemIdentification.id).then(digitalAgreement => {
-            this.frameContract = digitalAgreement;
-        });
+        // this.bpeService.getFrameContract(UBLModelUtils.getPartyId(this.rfq.sellerSupplierParty.party),
+        //     UBLModelUtils.getPartyId(this.rfq.buyerCustomerParty.party),
+        //     this.rfq.requestForQuotationLine[0].lineItem.item.manufacturersItemIdentification.id).then(digitalAgreement => {
+        //     this.frameContract = digitalAgreement;
+        // });
     }
 
     computeRfqNegotiationOptions(rfq: RequestForQuotation) {
