@@ -37,10 +37,13 @@
                 </negotiation-response>
             </div>
         </ng-container>
-        <!-- current, last step -->
+        <!-- last step -->
         <ng-container *ngIf="wrapperInformationCallStatus.isComplete()">
             <div [hidden]="!(sliderIndex == negotiationProcessList.length-1 && i == negotiationProcessList.length-1)">
-                <negotiation-request *ngIf="!bpDataService.quotation && bpDataService.bpActivityEvent.userRole === 'buyer'">
+                <negotiation-request *ngIf="!bpDataService.quotation && bpDataService.bpActivityEvent.userRole === 'buyer'"
+                                     [frameContract]="frameContract"
+                                     [frameContractQuotation]="frameContractQuotation"
+                                     [lastOfferQuotation]="lastOfferQuotation">
                 </negotiation-request>
                 <negotiation-response *ngIf="bpDataService.quotation"
                                       [lastOfferQuotation]="lastOfferQuotation"

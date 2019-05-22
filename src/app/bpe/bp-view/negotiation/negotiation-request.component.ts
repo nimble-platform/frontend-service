@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from "@angular/core";
+import {Component, Input, OnInit, ViewChild} from "@angular/core";
 import {CatalogueLine} from "../../../catalogue/model/publish/catalogue-line";
 import {BPDataService} from "../bp-data-service";
 import {CURRENCIES} from "../../../catalogue/model/constants";
@@ -52,7 +52,9 @@ export class NegotiationRequestComponent implements OnInit {
     rfq: RequestForQuotation;
     rfqLine: RequestForQuotationLine;
     wrapper: NegotiationModelWrapper;
-    frameContract: DigitalAgreement = new DigitalAgreement();
+    @Input() frameContract: DigitalAgreement = new DigitalAgreement();
+    @Input() frameContractQuotation: Quotation;
+    @Input() lastOfferQuotation: Quotation;
     frameContractDuration: Quantity = new Quantity();
     initialFrameContractDuration: Quantity = new Quantity(); // keeps the initial frame contract duration to be able to compare the latest value with the initial one
     frameContractDurationUnits: string[];
@@ -123,130 +125,85 @@ export class NegotiationRequestComponent implements OnInit {
 
         let frameContractDuration = this.getFrameContractDurationFromRfq();
         // if the rfq frame contract duration is not null, we are rendering the negotiation process in which the frame contract duration is also negotiated
-        let frameContractPromise: Promise<DigitalAgreement> = Promise.resolve(null);
         if(frameContractDuration != null) {
             this.frameContractDuration = frameContractDuration;
             this.initialFrameContractDuration = copy(this.frameContractDuration);
 
-            // check whether there is an existing frame contract created in another negotiation process
-        } else {
-            frameContractPromise = this.bpeService.getFrameContract(
-                UBLModelUtils.getPartyId(this.catalogueLine.goodsItem.item.manufacturerParty),
-                this.cookieService.get("company_id"),
-                this.rfq.requestForQuotationLine[0].lineItem.item.manufacturersItemIdentification.id);
+        } else if(this.frameContract) {
+            // initialize frame contract variables
+            this.frameContractAvailable = true;
+            this.frameContractDuration = this.frameContract.digitalAgreementTerms.validityPeriod.durationMeasure;
         }
 
         // execute the promises and initialize wrapper
         // first check the existence a frame contract
         this.pageInitCallStatus.submit();
-        this.fetchInformationForWrapper(frameContractPromise).then(response => {
-            let frameContract = response.frameContract;
-            let lastOfferQuotation = response.lastOfferQuotation;
-            let frameContractQuotation = response.frameContractQuotation;
 
-            // construct wrapper with the retrieved documents
-            this.wrapper = new NegotiationModelWrapper(
-                this.catalogueLine,
-                this.rfq,
+        // construct wrapper with the retrieved documents
+        this.wrapper = new NegotiationModelWrapper(
+            this.catalogueLine,
+            this.rfq,
+            null,
+            this.frameContractQuotation,
+            this.lastOfferQuotation,
+            this.bpDataService.getCompanySettings().negotiationSettings);
+
+        // terms select box value should be set before computing the negotiation options
+        if (this.manufacturersTermsExistence.last_offer) {
+            this.termsDropdownValue = 'last_offer';
+        } else if(this.manufacturersTermsExistence.frame_contract) {
+            this.termsDropdownValue = 'frame_contract';
+        }
+
+        // if a new business process is created load initial terms based on the selected terms source
+        if(!this.processMetadata) {
+            this.loadTerms(this.termsDropdownValue, true);
+        }
+
+        // compute negotiation options for selecting the negotiation ticks automatically
+        this.computeRfqNegotiationOptions(this.rfq);
+        // if the line does not have a price enable the price negotiation
+        if(!this.lineHasPrice) {
+            this.rfq.negotiationOptions.price = true;
+        }
+
+        // load the terms based on the availability of the terms
+        this.loadTerms(this.termsDropdownValue);
+
+        // check terms and conditions
+        let defaultTermsPromise: Promise<Clause[]> = Promise.resolve(null);
+        if(this.rfq.termOrCondition == null || this.rfq.termOrCondition.length == 0) {
+            defaultTermsPromise = this.bpeService.getTermsAndConditions(
                 null,
-                frameContractQuotation,
-                lastOfferQuotation,
-                this.bpDataService.getCompanySettings().negotiationSettings);
-
-            // initialize frame contract variables
-            if(frameContract) {
-                this.frameContract = response.frameContract;
-                this.frameContractAvailable = true;
-                this.frameContractDuration = this.frameContract.digitalAgreementTerms.validityPeriod.durationMeasure;
+                this.buyerId,
+                this.sellerId,
+                null,
+                this.wrapper.rfqIncoterms,
+                this.wrapper.rfqPaymentTerms.paymentTerm);
+        }
+        defaultTermsPromise.then(clauses => {
+            if(clauses != null) {
+                this.wrapper.rfq.termOrCondition = clauses;
+                // here we are still initializing the rfq and that's why we are modifying the immutable rfq
+                this.wrapper.initialImmutableRfq.termOrCondition = copy(clauses);
             }
-
-            // terms select box value should be set before computing the negotiation options
-            if (this.manufacturersTermsExistence.last_offer) {
-                this.termsDropdownValue = 'last_offer';
-            } else if(this.manufacturersTermsExistence.frame_contract) {
-                this.termsDropdownValue = 'frame_contract';
-            }
-
-            // if a new business process is created load initial terms based on the selected terms source
-            if(!this.processMetadata) {
-                this.loadTerms(this.termsDropdownValue, true);
-            }
-
-            // compute negotiation options for selecting the negotiation ticks automatically
-            this.computeRfqNegotiationOptions(this.rfq);
-            // if the line does not have a price enable the price negotiation
-            if(!this.lineHasPrice) {
-                this.rfq.negotiationOptions.price = true;
-            }
-
-            // load the terms based on the availability of the terms
-            this.loadTerms(this.termsDropdownValue);
-
-            // check terms and conditions
-            let defaultTermsPromise: Promise<Clause[]> = Promise.resolve(null);
-            if(this.rfq.termOrCondition == null || this.rfq.termOrCondition.length == 0) {
-                defaultTermsPromise = this.bpeService.getTermsAndConditions(
-                    null,
-                    this.buyerId,
-                    this.sellerId,
-                    null,
-                    this.wrapper.rfqIncoterms,
-                    this.wrapper.rfqPaymentTerms.paymentTerm);
-            }
-            defaultTermsPromise.then(clauses => {
-                if(clauses != null) {
-                    this.wrapper.rfq.termOrCondition = clauses;
-                    // here we are still initializing the rfq and that's why we are modifying the immutable rfq
-                    this.wrapper.initialImmutableRfq.termOrCondition = copy(clauses);
-                }
-            });
-
-            // update the price based on the updated conditions
-            this.onPriceConditionsChange();
-
-            // set the flag for showing the counter terms if the presen
-            if(this.processMetadata != null) {
-                this.showCounterOfferTerms = true;
-            }
-
-            this.pageInitCallStatus.callback(null, true);
         });
+
+        // update the price based on the updated conditions
+        // this is required to initialize the line discount wrapper with the terms from rfq
+        this.onPriceConditionsChange();
+
+        // set the flag for showing the counter terms if the presen
+        if(this.processMetadata != null) {
+            this.showCounterOfferTerms = true;
+        }
+
+        this.pageInitCallStatus.callback(null, true);
 
         // get frame contract units
         this.unitService.getCachedUnitList(frameContractDurationUnitListId).then(list => {
            this.frameContractDurationUnits = list;
         });
-    }
-
-    private async fetchInformationForWrapper(frameContractPromise: Promise<DigitalAgreement>): Promise<any> {
-        let response = {};
-        let frameContract = null;
-        try {
-            frameContract = await frameContractPromise;
-        } catch(e) {
-            // do nothing
-        }
-        let responseDocument: Promise<any> = Promise.resolve(null);
-        if(this.manufacturersTermsExistence.last_offer) {
-            responseDocument = this.documentService.getResponseDocument(this.processMetadataHistory[0].activityVariables);
-        }
-
-        let frameContractQuotationPromise: Promise<any> = Promise.resolve(null);
-        if(frameContract != null) {
-            response['frameContract'] = frameContract;
-            this.manufacturersTermsExistence.frame_contract = true;
-
-            // load the quotation associated to the frame contract
-            frameContractQuotationPromise = this.documentService.getDocumentJsonContent(frameContract.quotationReference.id);
-        }
-
-        // retrieve the corresponding documents for the frame contract and last offer
-        let lastOffer: Quotation = await responseDocument;
-        response['lastOfferQuotation'] = lastOffer;
-        let frameContractQuotation: Quotation = await frameContractQuotationPromise;
-        response['frameContractQuotation'] = frameContractQuotation;
-
-        return Promise.resolve(response);
     }
 
     private setProcessMetadataFields(processHistory: ThreadEventMetadata[]): void {

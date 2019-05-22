@@ -1,4 +1,4 @@
-import {Component, OnInit, Input, OnDestroy} from "@angular/core";
+import {Component, OnInit, OnDestroy} from "@angular/core";
 import { BPDataService } from "../bp-data-service";
 import { CallStatus } from "../../../common/call-status";
 import {ThreadEventMetadata} from "../../../catalogue/model/publish/thread-event-metadata";
@@ -7,10 +7,8 @@ import {BpActivityEvent} from "../../../catalogue/model/publish/bp-start-event";
 import {Subscription} from "rxjs/Subscription";
 import {DigitalAgreement} from "../../../catalogue/model/publish/digital-agreement";
 import {UBLModelUtils} from "../../../catalogue/model/ubl-model-utils";
-import {Quantity} from "../../../catalogue/model/publish/quantity";
 import {Quotation} from "../../../catalogue/model/publish/quotation";
 import {ActivatedRoute} from "@angular/router";
-import {TradingTerm} from "../../../catalogue/model/publish/trading-term";
 import {BPEService} from "../../bpe.service";
 import {CookieService} from "ng2-cookies";
 
@@ -60,8 +58,8 @@ export class NegotiationComponent implements OnInit, OnDestroy {
                     bpActivityEvent.newProcess &&
                     this.isLastStepNegotiation(bpActivityEvent)) {
 
-                    this.negotiationProcessList.push(null);
-                    this.sliderIndex++;
+                    this.initializeFrameContractAndLastOffer();
+                    this.initializeNegotiationHistory();
                 }
             }
         });
@@ -90,11 +88,21 @@ export class NegotiationComponent implements OnInit, OnDestroy {
      */
 
     private async initializeFrameContractAndLastOffer(): Promise<any> {
+        this.wrapperInformationCallStatus.submit();
         try {
+            let buyerPartyId;
+            if(this.bpDataService.bpActivityEvent.userRole === 'buyer') {
+                buyerPartyId = this.cookieService.get("company_id");
+            } else {
+                // for sellers rfq should include buyer supplier party
+                buyerPartyId = UBLModelUtils.getPartyId(this.bpDataService.requestForQuotation.buyerCustomerParty.party);
+            }
+
             this.frameContract = await this.bpeService.getFrameContract(
                 UBLModelUtils.getPartyId(this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty),
-                UBLModelUtils.getPartyId(this.bpDataService.requestForQuotation.buyerCustomerParty.party),
+                buyerPartyId,
                 this.bpDataService.requestForQuotation.requestForQuotationLine[0].lineItem.item.manufacturersItemIdentification.id);
+
         } catch(e) {
             // do nothing
         }
@@ -105,22 +113,20 @@ export class NegotiationComponent implements OnInit, OnDestroy {
             frameContractQuotationPromise = this.documentService.getDocumentJsonContent(this.frameContract.quotationReference.id);
         }
 
-        let responseDocument: Promise<any> = this.getLastOfferQuotationPromise();
-
         // retrieve the corresponding documents for the frame contract and last offer
-        this.wrapperInformationCallStatus.submit();
+
         this.frameContractQuotation = await frameContractQuotationPromise;
         if(this.frameContractQuotation != null) {
             this.primaryTermsSource = 'frame_contract';
         }
 
+        let responseDocument: Promise<any> = this.getLastOfferQuotationPromise();
         this.lastOfferQuotation = await responseDocument;
         if(this.lastOfferQuotation != null) {
             this.primaryTermsSource = 'last_offer';
         }
 
         this.wrapperInformationCallStatus.callback(null, true);
-
         return null;
     }
 
@@ -129,6 +135,7 @@ export class NegotiationComponent implements OnInit, OnDestroy {
 
         if(this.isLastStepNegotiation(this.bpDataService.bpActivityEvent)) {
             let checkIndex = 0;
+            // if the process is not new, then the previous step is in the 1st index i.e. [1]
             if(!this.bpDataService.bpActivityEvent.newProcess) {
                 checkIndex = 1;
             }
@@ -140,6 +147,7 @@ export class NegotiationComponent implements OnInit, OnDestroy {
 
     private initializeNegotiationHistory(): void {
         this.newProcess = this.bpDataService.bpActivityEvent.newProcess;
+        this.negotiationProcessList = [];
 
         let history: ThreadEventMetadata[] = this.bpDataService.bpActivityEvent.processHistory;
         if(history && history.length > 0) {
@@ -169,9 +177,10 @@ export class NegotiationComponent implements OnInit, OnDestroy {
         }
 
         this.negotiationDocumentsCallStatus.submit();
+        this.negotiationDocuments = [];
         let documentPromises: Promise<any>[] = [];
         // the documents for the last step is already available via the BpDataService
-        for(let i=0; i < this.negotiationProcessList.length; i++) {
+        for(let i=0; i < this.negotiationProcessList.length - 1; i++) {
             documentPromises.push(this.documentService.getInitialDocument(this.negotiationProcessList[i].activityVariables));
             documentPromises.push(this.documentService.getResponseDocument(this.negotiationProcessList[i].activityVariables));
         }
@@ -214,8 +223,8 @@ export class NegotiationComponent implements OnInit, OnDestroy {
      */
     private isLastStepNegotiation(bpActivityEvent: BpActivityEvent): boolean {
         let checkIndex = 0;
-        // if the event is for an existing process, the history contains entry for that process
-        // in such a case, we should check the earlier step which is available in the 1st index
+        // if the event is emitted for an existing process, the history contains entry for that process
+        // in such a case, we should check the soonest step which is available in the 1st index
         if(!bpActivityEvent.newProcess) {
             checkIndex = 1;
         }

@@ -267,7 +267,7 @@ export class BPDataService{
     // However, process type and userRole can be changed. Therefore, we use this function to update BpActivityEvent correctly.
     // Moreover, processMetadata should be cleared since we will create a new business process.
     proceedNextBpStep(userRole: BpUserRole, processType:ProcessType){
-        let continueEvent: BpActivityEvent = new BpActivityEvent(
+        let bpStartEvent: BpActivityEvent = new BpActivityEvent(
             userRole,
             processType,
             this.bpActivityEvent.containerGroupId,
@@ -275,9 +275,9 @@ export class BPDataService{
             this.bpActivityEvent.processHistory,
             null,
             true);
-        this.bpActivityEvent = continueEvent;
+        this.bpActivityEvent = bpStartEvent;
         // this event is listened by the product-bp-options.component where the displayed process view is adjusted
-        this.bpActivityEventBehaviorSubject.next(continueEvent);
+        this.bpActivityEventBehaviorSubject.next(bpStartEvent);
 
         // TODO make getting the user role and process type more systematic, we should not have a logic as below
         // it is crucial to update userRole after updating process type. Otherwise, we will have problems while viewing transport execution plan details.
