@@ -434,6 +434,29 @@ export class BPEService {
             .catch(this.handleError);
 	}
 
+	mergeNegotations(baseId:string , mergeIds){
+		let url = `${this.url}/collaboration-groups/merge`;
+		 // append catalogue merge ids to the url
+		url += "?bcid="+baseId;
+        let size = mergeIds.length;
+        for(let i = 0; i < size ;i++){
+            if(i == 0){
+                url += "&cgids=";
+            }
+
+            url += mergeIds[i];
+
+            if(i != size-1){
+                url += ",";
+            }
+        }
+		return this.http
+            .get(url,{headers: this.getAuthorizedHeaders()})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+	}
+
 	private getAuthorizedHeaders(): Headers {
 		const token = 'Bearer '+this.cookieService.get("bearer_token");
 		const headers = new Headers({'Accept': 'application/json','Authorization': token});
