@@ -11,10 +11,10 @@
 <div class="col-12 section" *ngIf="showPreview && originalTermAndConditionClauses">
     <div *ngFor="let clause of originalTermAndConditionClauses;let i=index">
         <button [ngClass]="isOriginalClause(clause) ? 'btn btn-primary btn-outline-primary small-button' : 'btn btn-danger small-button'" (click)="showSection[i] = !showSection[i];setSectionText(i)">
-            {{getClauseName(clause)}}
+            {{clause.id}}
         </button>
         <div class="card" [hidden]="!showSection[i]" style="font-size: 0.9rem">
-            <div class="card-header">{{getClauseName(clause)}}</div>
+            <div class="card-header">{{clause.id}}</div>
             <div id="{{generateIdForClause(i)}}" class="card-body" style="white-space: pre-wrap">
             </div>
             <div *ngIf="clause.tradingTerms.length > 0 && !readOnly && i != 0" class="card-footer">

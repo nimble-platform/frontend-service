@@ -81,13 +81,6 @@ export class TermsAndConditionsComponent implements OnInit {
                 this.originalTermAndConditionClauses = termsAndConditions;
             }
 
-            // sort terms and conditions to get the correct order
-            this.originalTermAndConditionClauses.sort((clause1, clause2) => {
-                let order1 = Number(clause1.id.substring(0,clause1.id.indexOf("_")));
-                let order2 = Number(clause2.id.substring(0,clause2.id.indexOf("_")));
-                return order1 - order2;
-            });
-
             // create terms and conditions if we do not have any
             if(this.termsAndConditions.length == 0){
                 for(let clause of this.originalTermAndConditionClauses){
@@ -280,12 +273,6 @@ export class TermsAndConditionsComponent implements OnInit {
                 return clause;
             }
         }
-    }
-
-    getClauseName(clause:Clause){
-        let startIndex = clause.id.indexOf("_");
-
-        return clause.id.substring(startIndex+1);
     }
 
     generateIdForClause(clauseId:number){
