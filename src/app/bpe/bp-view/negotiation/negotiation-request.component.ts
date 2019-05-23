@@ -55,6 +55,7 @@ export class NegotiationRequestComponent implements OnInit {
     @Input() frameContract: DigitalAgreement = new DigitalAgreement();
     @Input() frameContractQuotation: Quotation;
     @Input() lastOfferQuotation: Quotation;
+    @Input() primaryTermsSource: 'product_defaults' | 'frame_contract' | 'last_offer' = 'product_defaults';
     frameContractDuration: Quantity = new Quantity();
     initialFrameContractDuration: Quantity = new Quantity(); // keeps the initial frame contract duration to be able to compare the latest value with the initial one
     frameContractDurationUnits: string[];
@@ -83,11 +84,6 @@ export class NegotiationRequestComponent implements OnInit {
     callStatus: CallStatus = new CallStatus();
     pageInitCallStatus: CallStatus = new CallStatus();
 
-    /**
-     * URL parameters
-     */
-    termsDropdownValue: 'product_defaults' | 'frame_contract' | 'last_offer' = 'product_defaults';
-
     @ViewChild(DiscountModalComponent)
     private discountModal: DiscountModalComponent;
 
@@ -104,13 +100,6 @@ export class NegotiationRequestComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.route.queryParams.subscribe(params => {
-            let termsSource = params["termsSource"];
-            if(termsSource != null) {
-                this.termsDropdownValue = termsSource;
-            }
-        });
-
         // get copy of ThreadEventMetadata of the current business process
         this.setProcessMetadataFields(this.bpDataService.bpActivityEvent.processHistory);
 
@@ -133,6 +122,7 @@ export class NegotiationRequestComponent implements OnInit {
             // initialize frame contract variables
             this.frameContractAvailable = true;
             this.frameContractDuration = this.frameContract.digitalAgreementTerms.validityPeriod.durationMeasure;
+            this.manufacturersTermsExistence.frame_contract = true;
         }
 
         // execute the promises and initialize wrapper
@@ -149,15 +139,12 @@ export class NegotiationRequestComponent implements OnInit {
             this.bpDataService.getCompanySettings().negotiationSettings);
 
         // terms select box value should be set before computing the negotiation options
-        if (this.manufacturersTermsExistence.last_offer) {
-            this.termsDropdownValue = 'last_offer';
-        } else if(this.manufacturersTermsExistence.frame_contract) {
-            this.termsDropdownValue = 'frame_contract';
+        if (this.lastOfferQuotation) {
+            this.manufacturersTermsExistence.last_offer = true;
         }
-
         // if a new business process is created load initial terms based on the selected terms source
         if(!this.processMetadata) {
-            this.loadTerms(this.termsDropdownValue, true);
+            this.loadTerms(this.primaryTermsSource, true);
         }
 
         // compute negotiation options for selecting the negotiation ticks automatically
@@ -168,7 +155,7 @@ export class NegotiationRequestComponent implements OnInit {
         }
 
         // load the terms based on the availability of the terms
-        this.loadTerms(this.termsDropdownValue);
+        this.loadTerms(this.primaryTermsSource);
 
         // check terms and conditions
         let defaultTermsPromise: Promise<Clause[]> = Promise.resolve(null);
@@ -221,7 +208,7 @@ export class NegotiationRequestComponent implements OnInit {
         if(!rfq.negotiationOptions) {
             rfq.negotiationOptions = new NegotiationOptions();
         }
-        if(this.termsDropdownValue == 'product_defaults') {
+        if(this.primaryTermsSource == 'product_defaults') {
             rfq.negotiationOptions.deliveryPeriod = this.wrapper.lineDeliveryPeriodString !== this.wrapper.rfqDeliveryPeriodString;
             rfq.negotiationOptions.incoterms = this.wrapper.lineIncoterms !== this.wrapper.rfqIncoterms;
             rfq.negotiationOptions.paymentMeans = this.wrapper.linePaymentMeans !== this.wrapper.rfqPaymentMeans;
@@ -231,7 +218,7 @@ export class NegotiationRequestComponent implements OnInit {
 
         } else {
             let quotationWrapper = this.wrapper.frameContractQuotationWrapper;
-            if(this.termsDropdownValue == 'last_offer') {
+            if(this.primaryTermsSource == 'last_offer') {
                 quotationWrapper = this.wrapper.lastOfferQuotationWrapper;
             }
             rfq.negotiationOptions.deliveryPeriod = quotationWrapper.deliveryPeriodString !== this.wrapper.rfqDeliveryPeriodString;
@@ -345,7 +332,7 @@ export class NegotiationRequestComponent implements OnInit {
     }
 
     loadTerms(termSource: 'product_defaults' | 'frame_contract' | 'last_offer', ignoreNegotiationOptions: boolean = false): void {
-        this.termsDropdownValue = termSource;
+        this.primaryTermsSource = termSource;
 
         if(termSource == 'frame_contract' || termSource == 'last_offer') {
             let quotationWrapper = this.wrapper.frameContractQuotationWrapper;
@@ -409,7 +396,7 @@ export class NegotiationRequestComponent implements OnInit {
 
         // update the rfq price only if the price is not being negotiated and the default product terms are presented
         // it does not make sense to update price based on the discounts when the terms of frame contract or last offer terms are presented
-        if(!this.rfq.negotiationOptions.price && this.termsDropdownValue == 'product_defaults') {
+        if(!this.rfq.negotiationOptions.price && this.primaryTermsSource == 'product_defaults') {
             this.wrapper.rfqDiscountPriceWrapper.itemPrice.value = this.wrapper.lineDiscountPriceWrapper.pricePerItem;
         }
     }
@@ -428,9 +415,9 @@ export class NegotiationRequestComponent implements OnInit {
         let frameContractDurationDiffers: boolean = false; // this is valid only in the second and subsequent steps of a negotiation process
         let termsAndConditionsDiffer: boolean;
 
-        if(this.termsDropdownValue == 'last_offer' || this.termsDropdownValue == 'frame_contract') {
+        if(this.primaryTermsSource == 'last_offer' || this.primaryTermsSource == 'frame_contract') {
             let quotationWrapper = this.wrapper.frameContractQuotationWrapper;
-            if(this.termsDropdownValue == 'last_offer') {
+            if(this.primaryTermsSource == 'last_offer') {
                 quotationWrapper = this.wrapper.lastOfferQuotationWrapper;
             }
 
@@ -492,11 +479,11 @@ export class NegotiationRequestComponent implements OnInit {
     set negotiatePrice(negotiate: boolean) {
         this.rfq.negotiationOptions.price = negotiate;
         if(!negotiate) {
-            if(this.termsDropdownValue == 'product_defaults') {
+            if(this.primaryTermsSource == 'product_defaults') {
                 this.wrapper.rfqDiscountPriceWrapper.itemPrice.value = this.wrapper.lineDiscountPriceWrapper.itemPrice.value;
                 this.wrapper.rfqDiscountPriceWrapper.itemPrice.currency = this.wrapper.lineDiscountPriceWrapper.itemPrice.currency;
 
-            } else if(this.termsDropdownValue == 'frame_contract') {
+            } else if(this.primaryTermsSource == 'frame_contract') {
                 this.wrapper.rfqDiscountPriceWrapper.itemPrice.value = this.wrapper.frameContractQuotationWrapper.priceWrapper.pricePerItem;
                 this.wrapper.rfqDiscountPriceWrapper.itemPrice.currency = this.wrapper.frameContractQuotationWrapper.priceWrapper.currency;
 

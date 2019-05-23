@@ -43,7 +43,8 @@
                 <negotiation-request *ngIf="!bpDataService.quotation && bpDataService.bpActivityEvent.userRole === 'buyer'"
                                      [frameContract]="frameContract"
                                      [frameContractQuotation]="frameContractQuotation"
-                                     [lastOfferQuotation]="lastOfferQuotation">
+                                     [lastOfferQuotation]="lastOfferQuotation"
+                                     [primaryTermsSource]="getPrimaryTermsSource(lastOfferQuotation)">
                 </negotiation-request>
                 <negotiation-response *ngIf="bpDataService.quotation"
                                       [lastOfferQuotation]="lastOfferQuotation"

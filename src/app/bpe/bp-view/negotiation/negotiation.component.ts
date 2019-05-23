@@ -117,7 +117,10 @@ export class NegotiationComponent implements OnInit, OnDestroy {
 
         this.frameContractQuotation = await frameContractQuotationPromise;
         if(this.frameContractQuotation != null) {
-            this.primaryTermsSource = 'frame_contract';
+            // this check is required to prevent override the value passed via the route subscription
+            if(this.primaryTermsSource == null) {
+                this.primaryTermsSource = 'frame_contract';
+            }
         }
 
         let responseDocument: Promise<any> = this.getLastOfferQuotationPromise();

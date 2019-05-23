@@ -5,8 +5,8 @@
             <div class="row title-row">
                 <div class="col-2"></div>
                 <div class="col-5">
-                    <label class="column-title mr-2">Manufacturer's Terms</label>
-                    <select [hidden]="!isManufacturersTermsSelectBoxVisible()" #termSelectBox class="btn btn-outline-secondary" [value]="termsDropdownValue" (change)="loadTerms($event.target.value)">
+                    <!--<label class="column-title mr-2">Manufacturer's Terms</label>-->
+                    <select [hidden]="!isManufacturersTermsSelectBoxVisible()" #termSelectBox class="btn btn-outline-secondary" [value]="primaryTermsSource" (change)="loadTerms($event.target.value)">
                         <option *ngIf="manufacturersTermsExistence.last_offer" value="last_offer">Last Offer</option>
                         <option *ngIf="manufacturersTermsExistence.frame_contract" value="frame_contract">Frame Contract</option>
                         <option value="product_defaults">Product Defaults</option>
@@ -27,7 +27,7 @@
                 </div>
                 <!-- Manufacturers's offer -->
                 <div class="{{showCounterOfferTerms ? 'col-5' : 'col-9'}}">
-                    <ng-container [ngSwitch]="termsDropdownValue">
+                    <ng-container [ngSwitch]="primaryTermsSource">
                         <ng-container *ngSwitchCase="'product_defaults'">
                             {{ wrapper.lineDeliveryPeriod.value }}
                             {{ wrapper.lineDeliveryPeriod.unitCode }}
@@ -62,7 +62,7 @@
                 </div>
                 <!-- Manufacturers's offer -->
                 <div class="{{showCounterOfferTerms ? 'col-5' : 'col-9'}}">
-                    <ng-container [ngSwitch]="termsDropdownValue">
+                    <ng-container [ngSwitch]="primaryTermsSource">
                         <ng-container *ngSwitchCase="'product_defaults'">
                             {{ wrapper.lineWarrantyString }}
                         </ng-container>
@@ -92,7 +92,7 @@
                     <strong class="font-weight-500">Incoterms:</strong>
                 </div>
                 <div class="{{showCounterOfferTerms ? 'col-5' : 'col-9'}}">
-                    <ng-container [ngSwitch]="termsDropdownValue">
+                    <ng-container [ngSwitch]="primaryTermsSource">
                         <ng-container *ngSwitchCase="'product_defaults'">
                             {{ wrapper.lineIncoterms }}
                         </ng-container>
@@ -117,7 +117,7 @@
                     <strong class="font-weight-500">Payment Terms:</strong>
                 </div>
                 <div class="{{showCounterOfferTerms ? 'col-5' : 'col-9'}}">
-                    <ng-container [ngSwitch]="termsDropdownValue">
+                    <ng-container [ngSwitch]="primaryTermsSource">
                         <ng-container *ngSwitchCase="'product_defaults'">
                             {{ wrapper.linePaymentTerms }}
                         </ng-container>
@@ -144,7 +144,7 @@
                     <strong class="font-weight-500">Payment Means:</strong>
                 </div>
                 <div class="{{showCounterOfferTerms ? 'col-5' : 'col-9'}}">
-                    <ng-container [ngSwitch]="termsDropdownValue">
+                    <ng-container [ngSwitch]="primaryTermsSource">
                         <ng-container *ngSwitchCase="'product_defaults'">
                             {{ wrapper.linePaymentMeans }}
                         </ng-container>
@@ -171,7 +171,7 @@
                 </div>
                 <!-- Manufacturer's offer -->
                 <div class="{{showCounterOfferTerms ? 'col-5' : 'col-9'}} d-flex">
-                    <ng-container [ngSwitch]="termsDropdownValue">
+                    <ng-container [ngSwitch]="primaryTermsSource">
                         <ng-container *ngSwitchCase="'product_defaults'">
                             {{ wrapper.linePricePerItemString }}
                             <div *ngIf="wrapper.lineDiscountPriceWrapper.isDiscountApplied() > 0 && !isReadOnly()" class="space-left" data-toggle="tooltip" data-placement="top"
