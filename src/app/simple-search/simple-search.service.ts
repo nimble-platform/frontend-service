@@ -37,7 +37,7 @@ export class SimpleSearchService {
 		searchObject.start = 0;
 		searchObject.q = "*:*";
 		searchObject.fq = [];
-		searchObject.fq.push("nameSpace:http://www.nimble-project.org/resource/ubl#")
+		searchObject.fq.push("nameSpace:\"http://www.nimble-project.org/resource/ubl#\"")
 
         for(let facet of facets){
         	//url += "&localName="+encodeURIComponent(facet);
