@@ -1,0 +1,77 @@
+<div *ngIf="defaultTermsAndConditions">
+
+    <!-- Default Clauses -->
+    <div>Choose clauses:</div>
+    <div class="row">
+        <div class="col-3" *ngFor="let clause of defaultTermsAndConditions;let i=index">
+            <label>
+                <input type="checkbox" (change)="onClauseSelection(clause,$event.target.checked)">
+                {{clause.id}}
+            </label>
+        </div>
+    </div>
+
+    <br>
+
+    <!-- Update/Add clauses -->
+    <div>Update/Add clauses:</div>
+    <div *ngFor="let clause of termsAndConditions;let i=index">
+        <!-- Clause Id-->
+        <button [ngClass]="'btn btn-primary btn-outline-primary small-button'" (click)="showSection.set(clause.id,!showSection.get(clause.id));setSectionText(clause)">
+            {{clause.id}}
+        </button>
+        <!-- Card representing the clause-->
+        <div class="card" [hidden]="!showSection.get(clause.id)" style="font-size: 0.9rem">
+            <!-- Clause Id-->
+            <div class="card-header">
+                <input type="text" class="form-control" value="{{clause.id}}"  (keyup)="onClauseIdUpdated(clause.id,i,$event.target.value)">
+            </div>
+            <!-- Clause Content -->
+            <span id="{{clause.id}}" class="card-body" contenteditable="true"  (input)="onContentUpdated(clause,$event)">
+
+            </span>
+            <!-- Trading Terms -->
+            <div class="card-footer">
+                <div class="row" *ngFor="let tradingTerm of clause.tradingTerms">
+                    <!-- Trading Term id-->
+                    <div class="col-2">
+                        <input type="text" class="form-control" [(ngModel)]="tradingTerm.id">
+                    </div>
+                    <!-- Trading Term values-->
+                    <div class="col-10">
+                        <table>
+                            <tbody>
+                            <tr>
+                                <!-- STRING data type-->
+                                <td *ngIf="tradingTerm.value.valueQualifier === 'STRING'" style="vertical-align:middle">
+                                    <input [(ngModel)]="tradingTerm.value.value[0].value" class="form-control" type="text" name="{{tradingTerm.id}}" />
+                                </td>
+                                <!-- QUANTITY data type-->
+                                <td *ngIf="tradingTerm.value.valueQualifier === 'QUANTITY'" style="vertical-align:middle">
+                                    <quantity-input [quantity]="tradingTerm.value.valueQuantity[0]">
+                                    </quantity-input>
+                                </td>
+                                <!-- NUMBER data type-->
+                                <td *ngIf="tradingTerm.value.valueQualifier === 'NUMBER'" style="vertical-align:middle">
+                                    <input type="number" class="form-control value-input" [ngModel]="tradingTerm.value.valueDecimal[0]" (change)="setValueDecimal(tradingTerm, 0, $event)">
+                                </td>
+                                <!-- Button to delete trading term-->
+                                <td class="align-right" style="vertical-align:middle">
+                                    <button class="btn btn-danger"  type="button" (click)="onRemoveTradingTerm(clause,tradingTerm)">&times;</button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- Button to add trading term -->
+                <button [ngClass]="'btn btn-primary btn-outline-primary small-button'" (click)="onAddTradingTerm(clause)">
+                    Add Trading Term
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<edit-trading-term-modal></edit-trading-term-modal>
+<call-status [callStatus]="pageInitCallStatus"></call-status>

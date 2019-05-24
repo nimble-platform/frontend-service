@@ -1,0 +1,67 @@
+<ng-template #modal let-c="close" let-d="dismiss">
+    <!-- Header -->
+    <div class="modal-header">
+        <button type="button" class="close" aria-label="Close" (click)="d('cross')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <!-- Body -->
+    <div class="modal-body">
+        <div class="container-fluid">
+            <!-- Trading term id -->
+            <div class="row space-before">
+                <div class="col-3">
+                    <strong>Id:</strong>
+                </div>
+                <div class="col-9">
+                    <input [(ngModel)]="tradingTerm.id" class="form-control" type="text"/>
+                </div>
+            </div>
+            <!-- Trading term data type -->
+            <options-input label="Data Type"
+                           [options]="DATA_TYPES" [(selected)]="tradingTerm.value.valueQualifier" rowClass="space-before">
+            </options-input>
+            <!-- Trading term default values -->
+            <div class="row space-before">
+                <div class="col-3">
+                    <strong>Default Value(s):</strong>
+                </div>
+                <div class="col-9">
+                    <!-- STRING data type-->
+                    <table *ngIf="tradingTerm.value.valueQualifier === 'STRING'" class="table borderless">
+                        <tbody>
+                            <tr *ngFor="let text of tradingTerm.value.value;">
+                                <td>
+                                    <input [(ngModel)]="text.value" class="form-control" type="text" />
+                                </td>
+                                <!--<td>-->
+                                    <!--<select [(ngModel)]="text.languageID" class="form-control" type="text" >-->
+                                        <!--<option *ngFor='let language of languages' [value]="language" [selected]="language === text.languageID">{{language}}</option>-->
+                                    <!--</select>-->
+                                <!--</td>-->
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="row value-container">
+                        <div class="col-12">
+                            <!-- NUMBER data type-->
+                            <ng-container *ngIf="tradingTerm.value.valueQualifier === 'NUMBER'">
+                                <input type="number" class="form-control form-control-sm value-input"
+                                       [ngModel]="tradingTerm.value.valueDecimal[i]" (change)="setValueDecimal(0, $event.target.value)">
+                            </ng-container>
+                            <!-- QUANTITY data type-->
+                            <ng-container *ngIf="tradingTerm.value.valueQualifier === 'QUANTITY'">
+                                <quantity-input [quantity]="tradingTerm.value.valueQuantity[0]">
+                                </quantity-input>
+                            </ng-container>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="d('cancel')">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="c('ok')" [disabled]="tradingTerm.id==''">OK</button>
+    </div>
+</ng-template>

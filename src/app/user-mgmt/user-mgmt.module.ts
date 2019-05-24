@@ -26,6 +26,8 @@ import { CompanyCategoriesSettingsComponent } from './company-settings/company-c
 import { CompanyDetailsComponent } from './company-details.component';
 import { CompanyRatingComponent } from './company-rating.component';
 import { UserProfileComponent } from './user-profile.component';
+import { CompanyTermsAndConditions } from './company-settings/company-terms-and-conditions';
+import { EditTradingTermModalComponent } from './company-settings/edit-trading-term-modal.component';
 
 @NgModule({
 	imports: [
@@ -54,6 +56,8 @@ import { UserProfileComponent } from './user-profile.component';
 		CompanyDataSettingsComponent,
 		CompanyDeliveryTermsComponent,
 		CompanyCategoriesSettingsComponent,
+		CompanyTermsAndConditions,
+		EditTradingTermModalComponent,
 		CompanyDetailsComponent,
 		CompanyRatingComponent,
 		UserProfileComponent,
