@@ -144,7 +144,10 @@
                 <terms-and-conditions [orderId]="order.id" [buyerPartyId]="getPartyId(buyerParty)"
                                       [selectedIncoterm]="order.orderLine[0].lineItem.deliveryTerms.incoterms"
                                       [selectedTradingTerm]="order.paymentTerms.tradingTerms"
-                                      [sellerPartyId]="getPartyId(sellerParty)" [readOnly]="true" [documentType]="'order'" [termsAndConditions]="getTermAndConditionClauses()"></terms-and-conditions>
+                                      [sellerPartyId]="getPartyId(sellerParty)" [readOnly]="true"
+                                      [documentType]="'order'"
+                                      [termsAndConditions]="getTermAndConditionClauses()">
+                </terms-and-conditions>
             </div>
             <div class="col-6">
                 <h4>

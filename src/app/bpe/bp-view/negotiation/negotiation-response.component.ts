@@ -16,17 +16,13 @@ import { Quantity } from "../../../catalogue/model/publish/quantity";
 import { BpUserRole } from "../../model/bp-user-role";
 import {CookieService} from 'ng2-cookies';
 import {DiscountModalComponent} from '../../../product-details/discount-modal.component';
-import {BpActivityEvent} from '../../../catalogue/model/publish/bp-start-event';
 import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
 import {UBLModelUtils} from '../../../catalogue/model/ubl-model-utils';
 import * as myGlobals from '../../../globals';
-import {copy, isValidPrice} from "../../../common/utils";
+import {isValidPrice} from "../../../common/utils";
 import {DigitalAgreement} from "../../../catalogue/model/publish/digital-agreement";
 import * as moment from "moment";
 import {Moment, unitOfTime} from "moment";
-import {Period} from "../../../catalogue/model/publish/period";
-import {DocumentReference} from "../../../catalogue/model/publish/document-reference";
-import {Party} from "../../../catalogue/model/publish/party";
 import {NegotiationOptions} from "../../../catalogue/model/publish/negotiation-options";
 import {Clause} from '../../../catalogue/model/publish/clause';
 
@@ -45,6 +41,7 @@ export class NegotiationResponseComponent implements OnInit {
     @Input() lastOfferQuotation: Quotation;
     @Input() frameContractQuotation: Quotation;
     @Input() frameContract: DigitalAgreement;
+    @Input() defaultTermsAndConditions: Clause[];
     @Input() primaryTermsSource: 'product_defaults' | 'frame_contract' | 'last_offer' = 'product_defaults';
     @Input() readonly: boolean = false;
     wrapper: NegotiationModelWrapper;
@@ -68,8 +65,6 @@ export class NegotiationResponseComponent implements OnInit {
     showDeliveryAddress: boolean = false;
     showTermsAndConditions:boolean = false;
     showPurchaseOrder:boolean = false;
-    // manufacturer original terms and conditions
-    originalTermsAndConditions:Clause[] = null;
 
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
@@ -92,8 +87,6 @@ export class NegotiationResponseComponent implements OnInit {
         if(this.quotation == null) {
             this.quotation = this.bpDataService.quotation;
         }
-        console.log(this.primaryTermsSource);
-        console.log(this.lastOfferQuotation);
         this.wrapper = new NegotiationModelWrapper(
             this.line,
             this.rfq,
@@ -106,29 +99,7 @@ export class NegotiationResponseComponent implements OnInit {
 
         this.computeRfqNegotiationOptions(this.rfq);
 
-        // we set quotationPriceWrapper's presentationMode to be sure that the total price of quotation response will not be changed
-        //this.wrapper.quotationDiscountPriceWrapper.presentationMode = this.getPresentationMode();
-
         this.userRole = this.bpDataService.bpActivityEvent.userRole;
-
-        // check associated frame contract
-        // this.bpeService.getFrameContract(UBLModelUtils.getPartyId(this.rfq.sellerSupplierParty.party),
-        //     UBLModelUtils.getPartyId(this.rfq.buyerCustomerParty.party),
-        //     this.rfq.requestForQuotationLine[0].lineItem.item.manufacturersItemIdentification.id).then(digitalAgreement => {
-        //     this.frameContract = digitalAgreement;
-        // });
-
-        // retrieve original terms and conditions
-        this.bpeService.getTermsAndConditions(
-            null,
-            this.getPartyId(this.rfq.buyerCustomerParty.party),
-            this.getPartyId(this.rfq.sellerSupplierParty.party),
-            null,
-            this.wrapper.lineIncoterms,
-            this.wrapper.linePaymentTerms
-        ).then(clauses => {
-            this.originalTermsAndConditions = clauses;
-        });
     }
 
     computeRfqNegotiationOptions(rfq: RequestForQuotation) {

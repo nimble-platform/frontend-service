@@ -11,6 +11,7 @@ import {Quotation} from "../../../catalogue/model/publish/quotation";
 import {ActivatedRoute} from "@angular/router";
 import {BPEService} from "../../bpe.service";
 import {CookieService} from "ng2-cookies";
+import {Clause} from "../../../catalogue/model/publish/clause";
 
 @Component({
     selector: 'negotiation',
@@ -20,9 +21,10 @@ export class NegotiationComponent implements OnInit, OnDestroy {
 
     initCallStatus: CallStatus = new CallStatus();
     negotiationDocumentsCallStatus: CallStatus = new CallStatus();
-    wrapperInformationCallStatus: CallStatus = new CallStatus();
+    lastOfferCalStatus: CallStatus = new CallStatus();
+    frameContractAndTermsCallStatus: CallStatus = new CallStatus();
 
-    primaryTermsSource: 'product_defaults' | 'frame_contract' | 'last_offer' = 'product_defaults';
+    primaryTermsSource: 'product_defaults' | 'frame_contract' | 'last_offer' = null;
     bpActivityEventSubs: Subscription;
 
     negotiationProcessList: any[] = [];
@@ -31,6 +33,7 @@ export class NegotiationComponent implements OnInit, OnDestroy {
     frameContract:DigitalAgreement;
     frameContractQuotation: Quotation;
     lastOfferQuotation: Quotation;
+    defaultTermsAndConditions: Clause[];
 
     newProcess: boolean;
     sliderIndex: number = -1;
@@ -44,10 +47,7 @@ export class NegotiationComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.route.queryParams.subscribe(params => {
-            let termsSource = params["termsSource"];
-            if(termsSource != null) {
-                this.primaryTermsSource = termsSource;
-            }
+            this.primaryTermsSource = params["termsSource"];
         });
 
         // subscribe to the bp change event so that we can update negotiation history when a new negotiation process is initialized with a negotiation response
@@ -58,7 +58,7 @@ export class NegotiationComponent implements OnInit, OnDestroy {
                     bpActivityEvent.newProcess &&
                     this.isLastStepNegotiation(bpActivityEvent)) {
 
-                    this.initializeFrameContractAndLastOffer();
+                    this.initializeLastOffer();
                     this.initializeNegotiationHistory();
                 }
             }
@@ -75,7 +75,8 @@ export class NegotiationComponent implements OnInit, OnDestroy {
                 });
         }
 
-        this.initializeFrameContractAndLastOffer();
+        this.initializeLastOffer();
+        this.initialDefaultTermsAndConditionsAndFrameContract();
         this.initializeNegotiationHistory();
     }
 
@@ -87,34 +88,43 @@ export class NegotiationComponent implements OnInit, OnDestroy {
      * Initializing methods
      */
 
-    private async initializeFrameContractAndLastOffer(): Promise<any> {
-        this.wrapperInformationCallStatus.submit();
-        try {
-            let buyerPartyId;
-            if(this.bpDataService.bpActivityEvent.userRole === 'buyer') {
-                buyerPartyId = this.cookieService.get("company_id");
-            } else {
-                // for sellers rfq should include buyer supplier party
-                buyerPartyId = UBLModelUtils.getPartyId(this.bpDataService.requestForQuotation.buyerCustomerParty.party);
-            }
-
-            this.frameContract = await this.bpeService.getFrameContract(
-                UBLModelUtils.getPartyId(this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty),
-                buyerPartyId,
-                this.bpDataService.requestForQuotation.requestForQuotationLine[0].lineItem.item.manufacturersItemIdentification.id);
-
-        } catch(e) {
-            // do nothing
+    private async initialDefaultTermsAndConditionsAndFrameContract(): Promise<any> {
+        let buyerPartyId;
+        if(this.bpDataService.bpActivityEvent.userRole === 'buyer') {
+            buyerPartyId = this.cookieService.get("company_id");
+        } else {
+            // for sellers rfq should include buyer supplier party
+            buyerPartyId = UBLModelUtils.getPartyId(this.bpDataService.requestForQuotation.buyerCustomerParty.party);
         }
 
+        // retrieve default terms and conditions and frame contract
+        this.frameContractAndTermsCallStatus.submit();
+        let [termsAndConditions, frameContract] = await Promise.all([
+            this.bpeService.getTermsAndConditions(
+                null,
+                buyerPartyId,
+                UBLModelUtils.getPartyId(this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty),
+                null,
+                this.bpDataService.getCatalogueLine().goodsItem.deliveryTerms.incoterms,
+                this.bpDataService.getCompanySettings().negotiationSettings.paymentTerms[0]
+            ),
+
+            // retrieve frame contract
+            this.bpeService.getFrameContract(
+                UBLModelUtils.getPartyId(this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty),
+                buyerPartyId,
+                this.bpDataService.requestForQuotation.requestForQuotationLine[0].lineItem.item.manufacturersItemIdentification.id)
+        ]);
+        this.defaultTermsAndConditions = termsAndConditions;
+        this.frameContract = frameContract;
+
         let frameContractQuotationPromise: Promise<any> = Promise.resolve(null);
-        if(this.frameContract != null) {
+        if(frameContract != null) {
             // load the quotation associated to the frame contract
             frameContractQuotationPromise = this.documentService.getDocumentJsonContent(this.frameContract.quotationReference.id);
         }
 
         // retrieve the corresponding documents for the frame contract and last offer
-
         this.frameContractQuotation = await frameContractQuotationPromise;
         if(this.frameContractQuotation != null) {
             // this check is required to prevent override the value passed via the route subscription
@@ -123,13 +133,20 @@ export class NegotiationComponent implements OnInit, OnDestroy {
             }
         }
 
+        this.frameContractAndTermsCallStatus.callback(null);
+        return null;
+    }
+
+    private async initializeLastOffer(): Promise<any> {
+        this.lastOfferCalStatus.submit();
+
         let responseDocument: Promise<any> = this.getLastOfferQuotationPromise();
         this.lastOfferQuotation = await responseDocument;
         if(this.lastOfferQuotation != null) {
             this.primaryTermsSource = 'last_offer';
         }
 
-        this.wrapperInformationCallStatus.callback(null, true);
+        this.lastOfferCalStatus.callback(null, true);
         return null;
     }
 
@@ -210,20 +227,33 @@ export class NegotiationComponent implements OnInit, OnDestroy {
     /**
      * Template getters
      */
+
+
     getPrimaryTermsSource(lastOfferQuotation): 'product_defaults' | 'frame_contract' | 'last_offer' {
         let termsSource = this.primaryTermsSource;
-        if(termsSource == 'last_offer' && lastOfferQuotation == null) {
-            termsSource = 'frame_contract';
+        if(termsSource == null) {
+            if(this.frameContract != null) {
+                termsSource = 'frame_contract';
+            } else {
+                termsSource = 'product_defaults';
+            }
+        } else if(termsSource == 'last_offer' || termsSource == 'frame_contract') {
+            if(lastOfferQuotation == null) {
+                if(this.frameContract != null) {
+                    termsSource = 'frame_contract';
+                } else {
+                    termsSource = 'product_defaults';
+                }
+            }
         }
-        if(termsSource == 'frame_contract' && this.frameContract == null) {
-            termsSource = 'product_defaults';
-        }
+
         return termsSource;
     }
 
     /**
      * Internal methods
      */
+
     private isLastStepNegotiation(bpActivityEvent: BpActivityEvent): boolean {
         let checkIndex = 0;
         // if the event is emitted for an existing process, the history contains entry for that process

@@ -23,8 +23,8 @@ export class TermsAndConditionsComponent implements OnInit {
     @Input() readOnly:boolean = false;
     @Input() rfqId:string = null;
     @Input() documentType:string; // "order", "rfq", "quotation";
-    @Input() originalTermAndConditionClauses:Clause[] = null; // original terms and conditions of the object
-    @Input() termsAndConditions:Clause[] = []; // updated terms and conditions of the object
+    _originalTermAndConditionClauses:Clause[] = null; // original terms and conditions of the object
+    _termsAndConditions:Clause[] = []; // updated terms and conditions of the object
     @Input() needATitle:boolean = true; // whether we need to add a title before displaying terms and conditions
 
     // Outputs
@@ -40,6 +40,7 @@ export class TermsAndConditionsComponent implements OnInit {
     tradingTerms:Map<string,TradingTerm> = null;
     // used to store original values of parameters
     originalTradingTerms:Map<string,TradingTerm> = null;
+    randomComponentId: string = '';
 
     // options
     INCOTERMS: string[] = [];
@@ -62,12 +63,16 @@ export class TermsAndConditionsComponent implements OnInit {
     ngOnInit(): void {
         this.callStatus.submit();
 
+        let array = new Uint32Array(1);
+        window.crypto.getRandomValues(array);
+        this.randomComponentId = "" + array[0];
+
         Promise.all([
             this.userService.getSettingsForParty(this.sellerPartyId),
             this.unitService.getCachedUnitList(deliveryPeriodUnitListId),
-            this.unitService.getCachedUnitList(warrantyPeriodUnitListId),
-            this.originalTermAndConditionClauses ? Promise.resolve(null) : this.bpeService.getTermsAndConditions(this.orderId,this.buyerPartyId, this.sellerPartyId, this.rfqId, this.selectedIncoterm, this.selectedTradingTerm),
-        ]).then(([sellerPartySettings, deliveryPeriodUnits, warrantyPeriodUnits,termsAndConditions]) => {
+            this.unitService.getCachedUnitList(warrantyPeriodUnitListId)
+
+        ]).then(([sellerPartySettings, deliveryPeriodUnits, warrantyPeriodUnits]) => {
 
             // populate available incoterms
             this.INCOTERMS = sellerPartySettings.negotiationSettings.incoterms;
@@ -75,48 +80,8 @@ export class TermsAndConditionsComponent implements OnInit {
             this.PAYMENT_TERMS = sellerPartySettings.negotiationSettings.paymentTerms;
             // populate available units
             this.UNITS = deliveryPeriodUnits.concat(warrantyPeriodUnits);
-            // since we do not have an original terms and conditions for this object, we retrieve it from the server
-            if(termsAndConditions){
-                // set default term and condition clauses
-                this.originalTermAndConditionClauses = termsAndConditions;
-            }
 
-            // sort terms and conditions to get the correct order
-            this.originalTermAndConditionClauses.sort((clause1, clause2) => {
-                let order1 = Number(clause1.id.substring(0,clause1.id.indexOf("_")));
-                let order2 = Number(clause2.id.substring(0,clause2.id.indexOf("_")));
-                return order1 - order2;
-            });
 
-            // create terms and conditions if we do not have any
-            if(this.termsAndConditions.length == 0){
-                for(let clause of this.originalTermAndConditionClauses){
-                    let newClause:Clause = JSON.parse(JSON.stringify(clause));
-                    this.termsAndConditions.push(newClause);
-                }
-            }
-
-            // create valuesOfParameters map
-            if(!this.tradingTerms){
-                this.tradingTerms = new Map<string, TradingTerm>();
-                // create tradingTerms map using the terms and conditions
-                for(let clause of this.termsAndConditions){
-                    for(let tradingTerm of clause.tradingTerms){
-                        this.tradingTerms.set(tradingTerm.id,tradingTerm);
-                    }
-                }
-            }
-
-            // create original trading terms map
-            if(!this.originalTradingTerms){
-                this.originalTradingTerms = new Map<string, TradingTerm>();
-                // create tradingTerms map using the original terms and conditions
-                for(let clause of this.originalTermAndConditionClauses){
-                    for(let tradingTerm of clause.tradingTerms){
-                        this.originalTradingTerms.set(tradingTerm.id,tradingTerm);
-                    }
-                }
-            }
 
             // if there is no need to have a title, then display the preview
             if(!this.needATitle){
@@ -289,7 +254,7 @@ export class TermsAndConditionsComponent implements OnInit {
     }
 
     generateIdForClause(clauseId:number){
-        return this.documentType + "-" + clauseId;
+        return this.randomComponentId + "-" + this.documentType + "-" + clauseId;
     }
 
     generateIdForParameter(parameter:string){
@@ -377,8 +342,68 @@ export class TermsAndConditionsComponent implements OnInit {
         }
     }
 
+    @Input()
+    set originalTermAndConditionClauses(clauses: Clause[]) {
+        this._originalTermAndConditionClauses = clauses;
+        this._originalTermAndConditionClauses.sort((clause1, clause2) => {
+            let order1 = Number(clause1.id.substring(0,clause1.id.indexOf("_")));
+            let order2 = Number(clause2.id.substring(0,clause2.id.indexOf("_")));
+            return order1 - order2;
+        });
+
+        this.originalTradingTerms = new Map<string, TradingTerm>();
+        // create tradingTerms map using the original terms and conditions
+        for(let clause of this._originalTermAndConditionClauses){
+            for(let tradingTerm of clause.tradingTerms){
+                this.originalTradingTerms.set(tradingTerm.id,tradingTerm);
+            }
+        }
+
+        // refresh the texts for the open sections, otherwise the panel gets empty
+        for(let i=0; i<this.showSection.length; i++) {
+            if(this.showSection[i]) {
+                setTimeout(() => {
+                   this.setSectionText(i);
+                });
+            }
+        }
+    }
+
+    get originalTermAndConditionClauses(): Clause[] {
+        return this._originalTermAndConditionClauses;
+    }
+
+    @Input()
+    set termsAndConditions(clauses: Clause[]) {
+        this._termsAndConditions = clauses;
+
+        // create valuesOfParameters map
+        if(!this.tradingTerms){
+            this.tradingTerms = new Map<string, TradingTerm>();
+            // create tradingTerms map using the terms and conditions
+            for(let clause of this._termsAndConditions){
+                for(let tradingTerm of clause.tradingTerms){
+                    this.tradingTerms.set(tradingTerm.id,tradingTerm);
+                }
+            }
+        }
+
+        // refresh the texts for the open sections, otherwise the panel gets empty
+        for(let i=0; i<this.showSection.length; i++) {
+            if(this.showSection[i]) {
+                setTimeout(() => {
+                    this.setSectionText(i);
+                });
+            }
+        }
+    }
+
+    get termsAndConditions(): Clause[] {
+        return this._termsAndConditions;
+    }
+
     // checks whether the terms are updated or not with respect to the original clause
-    isOriginalClause(originalClause:Clause){
+    isClauseUpdated(originalClause:Clause){
         // if we have an order, we do not need to check the clause is changed or not
         if(this.orderId){
             return true;
