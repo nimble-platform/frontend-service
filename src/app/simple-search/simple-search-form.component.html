@@ -2,14 +2,23 @@
 
 	<div class="form-group row">
 		<div class="col-12">
-			<div class="input-group">
-			  <input type="text" class="form-control" id="searchTerm" required [(ngModel)]="model.q" [ngbTypeahead]="getSuggestions" [focusFirst]=false name="searchTerm" #q="ngModel" pattern=".{1,}" placeholder="Product / Service / Company">
-			  <div class="input-group-append">
-					<button type="submit" class="btn btn-outline-secondary" [disabled]="!simpleSearchForm.form.valid">
-						<i class="fa fa-search"></i>
-					</button>
-			  </div>
-			</div>
+				<div class="input-group">
+					<div ngbDropdown class="d-inline-block input-group-prepend">
+						<button class="btn btn-outline-dark" type="button" id="searchIndex" ngbDropdownToggle>
+							{{searchIndex}}
+						</button>
+						<div ngbDropdownMenu aria-labelledby="searchIndex">
+							<a *ngFor="let searchIndexName of searchIndexes" class="dropdown-item" (click)="changeSearchIndex(searchIndexName)">{{searchIndexName}}</a>
+						</div>
+					</div>
+					<input type="text" class="form-control" id="searchTerm" required [(ngModel)]="model.q" [ngbTypeahead]="getSuggestions"
+						   [focusFirst]=false name="searchTerm" #q="ngModel" pattern=".{1,}" placeholder="Product / Service">
+					<div class="input-group-append">
+						<button type="submit" class="btn btn-outline-secondary" [disabled]="!simpleSearchForm.form.valid">
+							<i class="fa fa-search"></i>
+						</button>
+					</div>
+				</div>
 		</div>
 	</div>
 

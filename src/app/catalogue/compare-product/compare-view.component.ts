@@ -50,9 +50,9 @@ export class CompareViewComponent implements OnInit {
     // check whether catalogue-line-panel should be displayed for a specific catalogue line
 	catalogueLineView = {};
     catalogueLineView_first = {};
-	
+	searchIndex = myGlobals.config.defaultSearchIndex;
 
-    sortOption = null;
+	sortOption = null;
     model = new Search('');
 	facetQuery: any;
     catLine1: any;
@@ -163,7 +163,7 @@ export class CompareViewComponent implements OnInit {
       debounceTime(200),
       distinctUntilChanged(),
       switchMap(term =>
-        this.simpleSearchService.getSuggestions(term,("{LANG}_"+this.product_name))
+        this.simpleSearchService.getSuggestions(term,("{LANG}_"+this.product_name), this.searchIndex)
       )
 	);
 	
@@ -179,7 +179,7 @@ export class CompareViewComponent implements OnInit {
       debounceTime(200),
       distinctUntilChanged(),
       switchMap(term =>
-        this.simpleSearchService.getSuggestions(term,("{LANG}_"+this.product_name))
+        this.simpleSearchService.getSuggestions(term,("{LANG}_"+this.product_name), this.searchIndex)
       )
 	);
 
@@ -396,7 +396,7 @@ export class CompareViewComponent implements OnInit {
 		this.simpleSearchService.getFields()
 			.then(res => {
 				let fieldLabels: string [] = this.getFieldNames(res);
-				this.simpleSearchService.get(q, Object.keys(fieldLabels),[],this.page,"",this.sortOption)
+				this.simpleSearchService.get(q, Object.keys(fieldLabels),[],this.page,"",this.sortOption, myGlobals.config.defaultSearchIndex)
 					.then(res => {
 						if (res.result.length == 0) {
 							this.searchFavouriteCallStatus.callback("Search done.", true);

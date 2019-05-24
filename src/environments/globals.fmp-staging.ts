@@ -141,6 +141,7 @@ export const config = {
   "showTrade": false,
   "showVerification": false,
   "standardTaxonomy": "FurnitureOntology",
+  "defaultSearchIndex": "Products",
   "supportedActivitySectors": {
     "": [],
     "Logistics Provider": [
@@ -254,7 +255,7 @@ export const product_vendor_rating_fulfillment = "trustFullfillmentOfTerms";
 export const product_vendor_rating_delivery = "trustDeliveryPackaging";
 export const product_vendor_trust = "trustScore";
 export const product_name = "label";
-export const class_suggestion_field = "classification.allLabels";
+export const class_label = "classification.allLabels";
 export const product_description = "description";
 export const product_img = "imgageUri";
 export const product_price = "price";
@@ -277,7 +278,7 @@ export const product_default = {};
 export const facet_min = 1;
 export const facet_count = -1;
 export const query_settings = {
-  "fields": ["STANDARD","commodityClassficationUri","{LANG}_label","{LANG}_desc", class_suggestion_field],
+  "fields": ["STANDARD","commodityClassficationUri","{LANG}_label","{LANG}_desc"],
   "boosting": true,
   "boostingFactors": {
     "STANDARD": 4,
