@@ -378,13 +378,11 @@ export class TermsAndConditionsComponent implements OnInit {
         this._termsAndConditions = clauses;
 
         // create valuesOfParameters map
-        if(!this.tradingTerms){
-            this.tradingTerms = new Map<string, TradingTerm>();
-            // create tradingTerms map using the terms and conditions
-            for(let clause of this._termsAndConditions){
-                for(let tradingTerm of clause.tradingTerms){
-                    this.tradingTerms.set(tradingTerm.id,tradingTerm);
-                }
+        this.tradingTerms = new Map<string, TradingTerm>();
+        // create tradingTerms map using the terms and conditions
+        for(let clause of this._termsAndConditions){
+            for(let tradingTerm of clause.tradingTerms){
+                this.tradingTerms.set(tradingTerm.id,tradingTerm);
             }
         }
 
