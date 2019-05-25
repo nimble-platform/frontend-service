@@ -49,6 +49,8 @@ export class ChannelDetailsComponent implements OnInit {
     private hasInternalService: boolean = false;
     private hasFilteringService: boolean = false;
     private displayStorageArea: boolean = true;
+    private pageSubmitted: boolean = false;
+    private pageRenegotiated: boolean = false;
 
     private channelConfig: object = {};
     private channelMessages: object[] = [];
@@ -225,6 +227,7 @@ export class ChannelDetailsComponent implements OnInit {
     //-------------------------------------------------------------------------------------
     confirmPage(): void {
 
+       this.pageSubmitted = true;
        const channelId = this.channelConfig["channelID"];
 
        this.dataChannelService.doNegotiationStep(channelId, this.displayStorageArea,
@@ -243,6 +246,7 @@ export class ChannelDetailsComponent implements OnInit {
     //-------------------------------------------------------------------------------------
     renegotiateTerms(numberOfSteps:number): void {
 
+       this.pageRenegotiated = true;
        const channelId = this.channelConfig["channelID"];
        this.dataChannelService.renegotiate(channelId, numberOfSteps)
            .then(() => {

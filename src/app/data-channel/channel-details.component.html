@@ -62,19 +62,19 @@
 
 
 <div *ngIf="pageNumber == 0" class="interactions">
-    <button class="btn btn-success" (click)="confirmPage()">Confirm Inital Offer</button>
+    <button class="btn btn-success" [disabled]="pageSubmitted" (click)="confirmPage()">Confirm Inital Offer</button>
 </div>
 <div *ngIf="pageNumber == 1" class="interactions">
-    <button class="btn btn-success" (click)="confirmPage()">Confirm Counter Offer</button>
+    <button class="btn btn-success" [disabled]="pageSubmitted" (click)="confirmPage()">Confirm Counter Offer</button>
 </div>
 <div *ngIf="pageNumber == 2" class="interactions">
-    <button class="btn btn-success" (click)="confirmPage()">Accept Counter Offer</button>
-    <button class="btn btn-danger" (click)="renegotiateTerms(3)">Renegotiate Terms</button>
+    <button class="btn btn-success" [disabled]="pageSubmitted" (click)="confirmPage()">Accept Counter Offer</button>
+    <button class="btn btn-danger" [disabled]="pageRenegotiated" (click)="renegotiateTerms(3)">Renegotiate Terms</button>
 </div>
 <div *ngIf="pageNumber == 3" class="interactions">
     <button class="btn btn-success" (click)="openChannel()">Open Channel</button>
     <button class="btn btn-danger" (click)="closeChannel()">Close Channel</button>
-    <button class="btn btn-danger" (click)="renegotiateTerms(2)">Renegotiate Terms</button>
+    <button class="btn btn-danger" [disabled]="pageRenegotiated" (click)="renegotiateTerms(2)">Renegotiate Terms</button>
 </div>
 
 <div style="clear: right;"></div>
