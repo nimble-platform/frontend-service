@@ -20,6 +20,8 @@
         <button [ngClass]="'btn btn-primary btn-outline-primary small-button'" (click)="showSection.set(clause.id,!showSection.get(clause.id));setSectionText(clause)">
             {{clause.id}}
         </button>
+        <!-- Button to delete clause -->
+        <button class="btn btn-danger btn-sm"  (click)="onRemoveClause(clause)">&times;</button>
         <!-- Card representing the clause-->
         <div class="card" [hidden]="!showSection.get(clause.id)" style="font-size: 0.9rem">
             <!-- Clause Id-->
@@ -71,6 +73,8 @@
             </div>
         </div>
     </div>
+    <!-- Button to add clause -->
+    <button class="btn btn-danger btn-sm" (click)="onAddClause()">+</button>
 </div>
 
 <edit-trading-term-modal></edit-trading-term-modal>

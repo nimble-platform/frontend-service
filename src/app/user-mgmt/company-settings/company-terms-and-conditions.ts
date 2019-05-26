@@ -10,7 +10,7 @@ import {COUNTRY_NAMES} from '../../common/utils';
 import {UnitService} from '../../common/unit-service';
 import {BPEService} from '../../bpe/bpe.service';
 import {EditTradingTermModalComponent} from './edit-trading-term-modal.component';
-
+import {Text} from '../../catalogue/model/publish/text';
 
 @Component({
     selector: "company-terms-and-conditions",
@@ -85,9 +85,7 @@ export class CompanyTermsAndConditions implements OnInit {
         }
         else{
             // remove clause
-            this.termsAndConditions.splice(this.termsAndConditions.indexOf(clause),1);
-            // update the showSection map
-            this.showSection.delete(clause.id);
+            this.onRemoveClause(clause);
         }
     }
 
@@ -157,5 +155,33 @@ export class CompanyTermsAndConditions implements OnInit {
     // used to set the value of trading terms whose data type is NUMBER
     setValueDecimal(tradingTerm:TradingTerm, i: number, event: any) {
         tradingTerm.value.valueDecimal[i] = event.target.value;
+    }
+
+    // methods used to add/remove clause
+    onAddClause(){
+        let clause = new Clause();
+        // generate an id for the clause
+        let id = "Title of clause";
+        let idExists = this.showSection.has(id);
+        let number = 1;
+        while(idExists){
+            id += number;
+            idExists = this.showSection.has(id);
+        }
+        // set the id of clause
+        clause.id = id;
+        // set the content of clause
+        clause.content[0] = new Text('');
+        // add clause
+        this.termsAndConditions.push(clause);
+        // update the showSection map
+        this.showSection.set(clause.id, false);
+    }
+
+    onRemoveClause(clause:Clause){
+        // remove clause
+        this.termsAndConditions.splice(this.termsAndConditions.indexOf(clause),1);
+        // update the showSection map
+        this.showSection.delete(clause.id);
     }
 }
