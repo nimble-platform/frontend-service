@@ -137,9 +137,12 @@ export class NegotiationRequestComponent implements OnInit {
         }
         // if a new business process is created load initial terms based on the selected terms source
         // ignore negotiation options is true as they are not calculated yet
+        // rfq is provided with values in onTermsSourceChange. this is done after initializing the wrapper,
+        // because this method requires the wrapper
         if(!this.processMetadata) {
             this.onTermsSourceChange(this.primaryTermsSource, true);
         }
+        this.wrapper.initialImmutableRfq.termOrCondition = copy(this.defaultTermsAndConditions);
 
         // compute negotiation options for selecting the negotiation ticks automatically
         this.computeRfqNegotiationOptions(this.rfq);
@@ -150,13 +153,6 @@ export class NegotiationRequestComponent implements OnInit {
 
         // load the terms based on the availability of the terms
         this.onTermsSourceChange(this.primaryTermsSource);
-
-        // check terms and conditions
-        if(this.rfq.termOrCondition == null || this.rfq.termOrCondition.length == 0) {
-            this.wrapper.rfq.termOrCondition = copy(this.defaultTermsAndConditions);
-            // here we are still initializing the rfq and that's why we are modifying the immutable rfq
-            this.wrapper.initialImmutableRfq.termOrCondition = copy(this.defaultTermsAndConditions);
-        }
 
         // update the price based on the updated conditions
         // this is required to initialize the line discount wrapper with the terms from rfq
@@ -341,7 +337,7 @@ export class NegotiationRequestComponent implements OnInit {
                 this.wrapper.rfqDiscountPriceWrapper.itemPrice.value = quotationWrapper.priceWrapper.pricePerItem;
                 this.wrapper.rfqDiscountPriceWrapper.itemPrice.currency = quotationWrapper.priceWrapper.currency;
             }
-            if(!this.rfq.negotiationOptions.termsAndConditions) {
+            if(!this.rfq.negotiationOptions.termsAndConditions || ignoreNegotiationOptions) {
                 this.rfq.termOrCondition = copy(quotationWrapper.quotation.termOrCondition);
             }
 
@@ -366,7 +362,7 @@ export class NegotiationRequestComponent implements OnInit {
                 this.wrapper.rfqDiscountPriceWrapper.itemPrice.value = this.wrapper.lineDiscountPriceWrapper.itemPrice.value;
                 this.wrapper.rfqDiscountPriceWrapper.itemPrice.currency = this.wrapper.lineDiscountPriceWrapper.itemPrice.currency;
             }
-            if(!this.rfq.negotiationOptions.termsAndConditions) {
+            if(!this.rfq.negotiationOptions.termsAndConditions || ignoreNegotiationOptions) {
                 this.rfq.termOrCondition = copy(this.defaultTermsAndConditions);
             }
 
