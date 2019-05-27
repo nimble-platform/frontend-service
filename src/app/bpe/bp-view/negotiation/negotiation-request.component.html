@@ -172,7 +172,7 @@
             <div class="{{showCounterOfferTerms ? 'col-5' : 'col-9'}} d-flex">
                 <ng-container [ngSwitch]="primaryTermsSource">
                     <ng-container *ngSwitchCase="'product_defaults'">
-                        {{ wrapper.linePricePerItemString }}
+                        {{ wrapper.lineDiscountPriceWrapper.pricePerItemString }}
                         <div *ngIf="wrapper.lineDiscountPriceWrapper.isDiscountApplied() > 0 && !isReadOnly()" class="space-left" data-toggle="tooltip" data-placement="top"
                              (click)="openDiscountModal()" title="Applied Discounts/Charges" style="cursor: pointer">
                             <i class="fa fa-search" aria-hidden="true"></i>

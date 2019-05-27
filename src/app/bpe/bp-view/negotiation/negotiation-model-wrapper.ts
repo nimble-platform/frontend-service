@@ -108,17 +108,7 @@ export class NegotiationModelWrapper {
      */
 
     public get linePricePerItemString(): string {
-        //this.updateLinePriceWrapperFields();
-        return this.lineDiscountPriceWrapper.pricePerItemString;
-    }
-
-    public get lineTotalPrice(): number {
-        return this.lineDiscountPriceWrapper.totalPrice;
-    }
-
-    public get lineTotalPriceString(): string {
-        //this.updateLinePriceWrapperFields();
-        return this.lineDiscountPriceWrapper.totalPriceString;
+        return this.initialImmutableCatalogueLine.requiredItemLocationQuantity.price.priceAmount.value;
     }
 
     public get lineDeliveryPeriod(): Quantity {

@@ -95,6 +95,7 @@ export class NegotiationResponseComponent implements OnInit {
             this.lastOfferQuotation,
             this.bpDataService.getCompanySettings().negotiationSettings);
 
+        this.wrapper.lineDiscountPriceWrapper.itemPrice.value = this.wrapper.lineDiscountPriceWrapper.pricePerItem;
         this.quotationTotalPrice = new Quantity(this.wrapper.quotationDiscountPriceWrapper.totalPrice, this.wrapper.quotationDiscountPriceWrapper.currency);
 
         this.computeRfqNegotiationOptions(this.rfq);
