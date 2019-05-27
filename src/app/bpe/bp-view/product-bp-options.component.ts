@@ -84,6 +84,9 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
 
         this.bpActivityEventSubs = this.bpDataService.bpActivityEventObservable.subscribe(bpActivityEvent => {
             if (bpActivityEvent) {
+                if(this.bpDataService.bpActivityEvent.newProcess) {
+                    this.processMetadata = null;
+                }
                 this.processType = bpActivityEvent.processType;
                 this.currentStep = this.getCurrentStep(bpActivityEvent.processType);
                 this.stepsDisplayMode = this.getStepsDisplayMode();
