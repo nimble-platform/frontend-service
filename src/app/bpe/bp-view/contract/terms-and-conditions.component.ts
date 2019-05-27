@@ -107,10 +107,9 @@ export class TermsAndConditionsComponent implements OnInit {
 
     setSectionText(index:number){
         if(this.readOnly){
-            let originalClause = this.originalTermAndConditionClauses[index];
             let element = document.getElementById(this.generateIdForClause(index));
 
-            let clause = this.getClause(originalClause.id);
+            let clause = this._termsAndConditions[index];
 
             let text = clause.content[0].value
 
@@ -143,7 +142,7 @@ export class TermsAndConditionsComponent implements OnInit {
 
         } else{
             let element = document.getElementById(this.generateIdForClause(index));
-            let clause = this.originalTermAndConditionClauses[index];
+            let clause = this._termsAndConditions[index];
             let text = clause.content[0].value;
 
             // replace placeholders with spans
@@ -236,14 +235,6 @@ export class TermsAndConditionsComponent implements OnInit {
         }
         else if(id == "$payment_id" && this.isTradingTermsNegotiating){
             this.onTradingTermChanged.emit(value);
-        }
-    }
-
-    private getClause(clauseId:string){
-        for(let clause of this.termsAndConditions){
-            if(clause.id == clauseId){
-                return clause;
-            }
         }
     }
 
@@ -377,6 +368,13 @@ export class TermsAndConditionsComponent implements OnInit {
     set termsAndConditions(clauses: Clause[]) {
         this._termsAndConditions = clauses;
 
+        // sort terms and conditions
+        this._termsAndConditions.sort((clause1, clause2) => {
+            let order1 = Number(clause1.id.substring(0,clause1.id.indexOf("_")));
+            let order2 = Number(clause2.id.substring(0,clause2.id.indexOf("_")));
+            return order1 - order2;
+        });
+
         // create valuesOfParameters map
         this.tradingTerms = new Map<string, TradingTerm>();
         // create tradingTerms map using the terms and conditions
@@ -385,7 +383,10 @@ export class TermsAndConditionsComponent implements OnInit {
                 this.tradingTerms.set(tradingTerm.id,tradingTerm);
             }
         }
-
+        // // populate show section array if it's empty
+        // if(this.showSection.length == 0){
+        //     this.populateShowSectionArray(this._termsAndConditions.length);
+        // }
         // refresh the texts for the open sections, otherwise the panel gets empty
         for(let i=0; i<this.showSection.length; i++) {
             if(this.showSection[i]) {
@@ -401,12 +402,12 @@ export class TermsAndConditionsComponent implements OnInit {
     }
 
     // checks whether the terms are updated or not with respect to the original clause
-    isClauseUpdated(originalClause:Clause){
+    isClauseUpdated(clause:Clause){
         // if we have an order, we do not need to check the clause is changed or not
         if(this.orderId){
             return true;
         }
-        for(let tradingTerm of originalClause.tradingTerms){
+        for(let tradingTerm of clause.tradingTerms){
 
             if (!this.isOriginalTradingTerm(tradingTerm.id)){
                 return false;
