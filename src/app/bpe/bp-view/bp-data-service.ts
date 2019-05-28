@@ -85,7 +85,7 @@ export class BPDataService{
     ////////////////////////////////////////////////////////////////////////////
 
     // BpActivityEvent is used to set bp options while navigating to bp details page
-    bpActivityEvent:BpActivityEvent = new BpActivityEvent(null,"Item_Information_Request",null,null,[], null, true);
+    bpActivityEvent:BpActivityEvent = new BpActivityEvent(null,"Item_Information_Request",null,null,[], null, true, false);
     // these are used to update view according to the selected process type.
     private bpActivityEventBehaviorSubject: BehaviorSubject<BpActivityEvent> = new BehaviorSubject<BpActivityEvent>(this.bpActivityEvent);
     bpActivityEventObservable = this.bpActivityEventBehaviorSubject.asObservable();
@@ -274,7 +274,8 @@ export class BPDataService{
             this.bpActivityEvent.collaborationGroupId,
             this.bpActivityEvent.processHistory,
             null,
-            true);
+            true, // new process is true
+            false); // as this is a new process there is no subsequent process after this one
         this.bpActivityEvent = bpStartEvent;
         // this event is listened by the product-bp-options.component where the displayed process view is adjusted
         this.bpActivityEventBehaviorSubject.next(bpStartEvent);

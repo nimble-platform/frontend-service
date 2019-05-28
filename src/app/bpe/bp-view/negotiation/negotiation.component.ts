@@ -36,6 +36,7 @@ export class NegotiationComponent implements OnInit, OnDestroy {
     defaultTermsAndConditions: Clause[];
 
     newProcess: boolean;
+    formerProcess: boolean; // true indicates that the last step of the history IS NOT negotiation
     sliderIndex: number = -1;
 
     constructor(private bpDataService: BPDataService,
@@ -50,6 +51,7 @@ export class NegotiationComponent implements OnInit, OnDestroy {
             this.primaryTermsSource = params["termsSource"];
         });
 
+
         // subscribe to the bp change event so that we can update negotiation history when a new negotiation process is initialized with a negotiation response
         // in this case, the view is not refreshed but we have add a new negotiation history element for the new process, otherwise we lose the last history item
         this.bpActivityEventSubs = this.bpDataService.bpActivityEventObservable.subscribe(bpActivityEvent => {
@@ -58,6 +60,7 @@ export class NegotiationComponent implements OnInit, OnDestroy {
                     bpActivityEvent.newProcess &&
                     this.isLastStepNegotiation(bpActivityEvent)) {
 
+                    this.formerProcess = false;
                     this.initializeLastOffer();
                     this.initializeNegotiationHistory();
                 }
@@ -176,6 +179,12 @@ export class NegotiationComponent implements OnInit, OnDestroy {
                     this.negotiationProcessList.push(processMetadata);
                 }
             }
+
+            // check the last step of the history to set the formerProcess parameter
+            if(history[0].processType != 'Negotiation') {
+                this.formerProcess = true;
+            }
+
             // reverse the list so that the most recent item will be at the end
             this.negotiationProcessList = this.negotiationProcessList.reverse();
         }

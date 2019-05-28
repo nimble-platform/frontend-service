@@ -195,7 +195,8 @@ export class ProductDetailsComponent implements OnInit {
                 this.bpDataService.bpActivityEvent.collaborationGroupId,
                 [],
                 this.options,
-                true),
+                true, // this is a new process
+                false), // there is no subsequent process as this is a new process
             false,
             new BpURLParams(this.catalogueId, this.id, null, termsSource));
     }

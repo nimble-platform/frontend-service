@@ -34,7 +34,8 @@
                                       [frameContract]="frameContract"
                                       [defaultTermsAndConditions]="defaultTermsAndConditions"
                                       [primaryTermsSource]="getPrimaryTermsSource(negotiationDocuments[i-1]?.response)"
-                                      [readonly]="true">
+                                      [readonly]="true"
+                                      [formerProcess]="true">
                 </negotiation-response>
             </div>
         </ng-container>
@@ -53,7 +54,8 @@
                                       [frameContractQuotation]="frameContractQuotation"
                                       [frameContract]="frameContract"
                                       [defaultTermsAndConditions]="defaultTermsAndConditions"
-                                      [primaryTermsSource]="getPrimaryTermsSource(lastOfferQuotation)">
+                                      [primaryTermsSource]="getPrimaryTermsSource(lastOfferQuotation)"
+                                      [formerProcess]="formerProcess">
                 </negotiation-response>
             </div>
         </ng-container>

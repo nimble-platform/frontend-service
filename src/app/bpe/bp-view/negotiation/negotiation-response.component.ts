@@ -44,10 +44,11 @@ export class NegotiationResponseComponent implements OnInit {
     @Input() defaultTermsAndConditions: Clause[];
     @Input() primaryTermsSource: 'product_defaults' | 'frame_contract' | 'last_offer' = 'product_defaults';
     @Input() readonly: boolean = false;
+    @Input() formerProcess: boolean;
     wrapper: NegotiationModelWrapper;
     userRole: BpUserRole;
-    config = myGlobals.config;
     quotationTotalPrice: Quantity;
+    config = myGlobals.config;
 
     CURRENCIES: string[] = CURRENCIES;
 
@@ -79,6 +80,7 @@ export class NegotiationResponseComponent implements OnInit {
         if(!this.bpDataService.bpActivityEvent.newProcess) {
             this.processMetadata = this.bpDataService.bpActivityEvent.processHistory[0];
         }
+        this.formerProcess = this.bpDataService.bpActivityEvent.formerProcess;
 
         this.line = this.bpDataService.getCatalogueLine();
         if(this.rfq == null) {
