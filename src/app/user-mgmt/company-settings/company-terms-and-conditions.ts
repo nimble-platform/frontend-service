@@ -54,7 +54,7 @@ export class CompanyTermsAndConditions implements OnInit {
         Promise.all([
             this.unitService.getCachedUnitList(deliveryPeriodUnitListId),
             this.unitService.getCachedUnitList(warrantyPeriodUnitListId),
-            this.bpeService.getTermsAndConditions(null,"1339", this.settings.companyID, null, null,null),
+            this.bpeService.getTermsAndConditions(null,null, this.settings.companyID, null, null,null),
         ]).then(([ deliveryPeriodUnits, warrantyPeriodUnits,defaultTermsAndConditions]) => {
 
             // populate available incoterms
