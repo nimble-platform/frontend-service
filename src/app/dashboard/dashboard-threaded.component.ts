@@ -14,13 +14,21 @@ import { DashboardUser } from "./model/dashboard-user";
 import * as myGlobals from '../globals';
 import {CollaborationGroup} from '../bpe/model/collaboration-group';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import * as d3timelines from 'd3-timelines';
+import * as d3 from 'd3';
+import * as d3time from 'd3-time';
+import * as d3timeformat from 'd3-time-format';
+import { id } from "@swimlane/ngx-charts/release/utils";
+
+
+// import { GoogleChartInterface } from 'ng2-google-charts/google-charts-interfaces';
 
 @Component({
     selector: "dashboard-threaded",
     templateUrl: "./dashboard-threaded.component.html",
     styleUrls: ["./dashboard-threaded.component.css"]
 })
-export class DashboardThreadedComponent implements OnInit {
+export class DashboardThreadedComponent implements OnInit{
 
     user: DashboardUser;
 
@@ -38,14 +46,22 @@ export class DashboardThreadedComponent implements OnInit {
 
     TABS = TABS;
 
+    selectedId = "";
     selectedNegotiations = [];
     selectedNegotiation:any;
     selectedNegotiationLists = [];
     selectedNegotiationIndex = -1;
-
+    isDivVisible = false;
     buyerCounter = 0;
     sellerCounter = 0;
+    isProject = false;
+    expanded = false;
+    private data: any = [
+        // {times: [{"color":"green", "label":"Weeee", "starting_time": 1355752800000, "ending_time": 1355759900000}, {"color":"blue", "label":"Weeee", "starting_time": 1355767900000, "ending_time": 1355774400000}]},
+      ];
+    private chart: any;
 
+    
     // this contains status-name-defaultName information of collaboration groups
     // if status is true, that means we are changing collaboration group name
     // defaultName is used if the collaboration group does not have any name assigned.
@@ -63,15 +79,67 @@ export class DashboardThreadedComponent implements OnInit {
         public appComponent: AppComponent
     ) {}
 
+   
+
     ngOnInit() {
         this.computeUserFromCookies();
         this.getTabCounters();
         this.route.queryParams.subscribe(params => this.updateStateFromQueryParameters(params));
     }
 
-    /*
-     * Handlers called from the template.
-     */
+    async clickexpand(data){
+        if(this.selectedId != ""){
+            this.data = [];
+            this.chart = null;
+            var idDiv = ".cls"+this.selectedId + " > svg";
+            d3.select(idDiv).remove();
+        }
+        this.expanded = !this.expanded;
+        this.isDivVisible = !this.isDivVisible;
+        this.selectedId = data.id;
+        var t_arr = [];
+        await data.associatedProcessInstanceGroups.forEach(element => {
+            var obj =  { times: [{"color":"red", "label":element.name, "starting_time": ((new Date(element.firstActivityTime)).getTime()), "ending_time": ((new Date(element.lastActivityTime)).getTime())}]}
+            t_arr.push((new Date(element.firstActivityTime)).getTime()/1000);
+            t_arr.push((new Date(element.lastActivityTime)).getTime()/1000);
+            this.data.push(obj);
+        });
+
+        var specifier = "%S";
+        var parsedData = await t_arr.map(function(d) {
+          return d3.timeParse(specifier)(d)
+        });
+
+        var scale = d3.scaleTime()
+                .domain(d3.extent(parsedData));
+        
+
+        
+        this.chart = d3timelines.timelines()
+        .stack() // toggles graph stacking
+        .tickFormat({
+            format: d3timeformat.timeFormat("%Y-%m-%d, %H:%M")
+        })
+        .showTimeAxisTick()
+        .margin({left:70, right:30, top:0, bottom:0})
+       ;
+        var idDiv = ".cls"+data.id;
+        d3.select(idDiv).append('svg').attr('width', 1000)
+        .datum(this.data).call(this.chart);
+    }
+
+    clickantiExampand(data){
+        this.expanded = !this.expanded;
+        this.isDivVisible = !this.isDivVisible;
+        if(this.selectedId == data.id){
+            this.selectedId = "";
+            this.data = [];
+            this.chart = null;
+            var idDiv = ".cls"+data.id + " > svg";
+            d3.select(idDiv).remove();
+        }
+        //d3.selectAll('svg > *').remove();
+    }
 
     onChangeTab(event: any): void {
         event.preventDefault();
@@ -287,6 +355,12 @@ export class DashboardThreadedComponent implements OnInit {
     }
 
     private getOrdersQuery(query: DashboardOrdersQuery): Promise<void> {
+        if(this.queryParameters.tab == "PROJECTS"){
+            this.isProject = true;
+        }else{
+            this.isProject = false;
+        }
+
         if(query.archived) {
             // only one query needed
             return this.bpeService
@@ -307,13 +381,14 @@ export class DashboardThreadedComponent implements OnInit {
                 // regular query
                 this.bpeService.getCollaborationGroups(this.cookieService.get("company_id"),
                     query.collaborationRole, query.page - 1, query.pageSize, query.archived,
-                    query.products, query.categories, query.partners,query.status
+                    query.products, query.categories, query.partners,query.status,this.isProject
                 ),
                 // query for archived orders
                 this.bpeService.getCollaborationGroups(this.cookieService.get("company_id"),
                     query.collaborationRole, 0, 1, true, [], [], [],[]
                 ),
             ]).then(([response, archived]) => {
+                this.isProject = false;
                 this.results = new DashboardOrdersQueryResults(
                     response.collaborationGroups,
                     archived.collaborationGroups.length > 0,
@@ -412,7 +487,7 @@ export class DashboardThreadedComponent implements OnInit {
     private computeOrderQueryFromQueryParams(): DashboardOrdersQuery {
         return new DashboardOrdersQuery(
             this.queryParameters.arch,
-            this.queryParameters.tab === TABS.PURCHASES ? "BUYER" : "SELLER",
+            this.queryParameters.tab === TABS.PURCHASES || this.queryParameters.tab == TABS.PROJECTS ? "BUYER" : "SELLER",
             this.queryParameters.pg,
             this.parseArray(this.queryParameters.prd),
             this.parseArray(this.queryParameters.cat),
@@ -512,7 +587,7 @@ export class DashboardThreadedComponent implements OnInit {
 
         this.bpeService.mergeNegotations(selectedNegotation,mergeIdList)
         .then(() => {
-           
+            this.ngOnInit();
         })
         .catch(err => {
         });
