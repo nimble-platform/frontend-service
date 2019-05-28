@@ -33,8 +33,20 @@ export class EditTradingTermModalComponent implements OnInit {
 
     }
 
-    open(tradingTerms:TradingTerm[],clause:Clause, element:any) {
-        this.tradingTerm = new TradingTerm();
+    open(tradingTerms:TradingTerm[],clause:Clause, element:any, tradingTerm:TradingTerm = null) {
+        // store the previous id of trading term since we need it if we update a trading term
+        let previousId = null;
+        // Edit the given trading term
+        if(tradingTerm){
+            // set the previous id
+            previousId = tradingTerm.id;
+            // set the trading term
+            this.tradingTerm = tradingTerm;
+        }
+        // Create a new trading term
+        else{
+            this.tradingTerm = new TradingTerm();
+        }
         this.addValuesToTradingTerm();
 
         this.modalService.open(this.modal).result.then(() => {
@@ -44,16 +56,26 @@ export class EditTradingTermModalComponent implements OnInit {
             if(this.tradingTerm.id.charAt(0) != '$'){
                 this.tradingTerm.id = "$" + this.tradingTerm.id;
             }
-
-            // push the created trading term to the list
-            tradingTerms.push(this.tradingTerm);
-            // add the id of trading term to the end of clause content
-            clause.content[0].value += this.tradingTerm.id + " ";
-            // update the innerHTML
-            element.innerHTML = element.innerHTML.concat("<span id='"+clause.id+"-"+this.tradingTerm.id+"'><b>" + this.tradingTerm.id + "</b></span>"," ");
-            // the span should be non-editable
-            element = document.getElementById(clause.id+"-"+this.tradingTerm.id);
-            element.contentEditable = "false";
+            // no previous id means that we create a new one
+            if(!previousId){
+                // push the created trading term to the list
+                tradingTerms.push(this.tradingTerm);
+                // add the id of trading term to the end of clause content
+                clause.content[0].value += this.tradingTerm.id + " ";
+                // update the innerHTML
+                element.innerHTML = element.innerHTML.concat("<span id='"+clause.id+"-"+this.tradingTerm.id+"'><b>" + this.tradingTerm.id + "</b></span>"," ");
+                // the span should be non-editable
+                element = document.getElementById(clause.id+"-"+this.tradingTerm.id);
+                element.contentEditable = "false";
+            }
+            // update the trading term
+            else{
+                // update the clause content
+                clause.content[0].value = clause.content[0].value.replace(previousId, this.tradingTerm.id);
+                // update the innerHTML
+                // we use regular expression to update the id of span as well.
+                element.innerHTML = element.innerHTML.replace(new RegExp(previousId.substr(1),'g'),this.tradingTerm.id.substr(1));
+            }
 
         }, () => {
 
@@ -62,7 +84,9 @@ export class EditTradingTermModalComponent implements OnInit {
 
     addValuesToTradingTerm() {
         // initialize the id of trading term
-        this.tradingTerm.id = '';
+        if(!this.tradingTerm.id){
+            this.tradingTerm.id = '';
+        }
         // initialize the value of trading term
         if(!this.tradingTerm.value){
             this.tradingTerm.value = new MultiTypeValue();
