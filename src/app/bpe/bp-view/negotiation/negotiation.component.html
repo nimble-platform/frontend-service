@@ -40,6 +40,10 @@
             </div>
         </ng-container>
         <!-- last step -->
+        <call-status [callStatus]="lastOfferCalStatus"></call-status>
+        <ng-container *ngIf="lastOfferCalStatus.isComplete()">
+            <call-status [callStatus]="frameContractAndTermsCallStatus"></call-status>
+        </ng-container>
         <ng-container *ngIf="lastOfferCalStatus.isComplete() && frameContractAndTermsCallStatus.isComplete()">
             <div [hidden]="!(sliderIndex == negotiationProcessList.length-1 && i == negotiationProcessList.length-1)">
                 <negotiation-request *ngIf="!bpDataService.quotation && bpDataService.bpActivityEvent.userRole === 'buyer'"

@@ -136,7 +136,7 @@ export class NegotiationComponent implements OnInit, OnDestroy {
             }
         }
 
-        this.frameContractAndTermsCallStatus.callback(null);
+        this.frameContractAndTermsCallStatus.callback(null, true);
         return null;
     }
 
