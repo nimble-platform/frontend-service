@@ -128,8 +128,8 @@
     <!-- Original terms -->
     <ng-container [ngSwitch]="primaryTermsSource">
         <div *ngSwitchCase="'product_defaults'" class="col-3">
-            {{ wrapper.lineTotalPriceString }}<br/>
-            <small>( {{ wrapper.linePricePerItemString }} )</small>
+            {{ wrapper.lineDiscountPriceWrapper.totalPriceString }}<br/>
+            <small>( {{ wrapper.lineDiscountPriceWrapper.pricePerItemString }} )</small>
         </div>
         <div *ngSwitchCase="'frame_contract'" class="col-3">
             {{ wrapper.frameContractQuotationWrapper.priceWrapper.totalPriceString }}<br/>
@@ -144,9 +144,6 @@
     <div class="col-3">
         {{ wrapper.rfqTotalPriceString }}<br/>
         <small>( {{ wrapper.rfqPricePerItemString}} )</small>
-        <span *ngIf="isDiscountIconVisibleInCustomerRequestColumn()" class="space-left" data-toggle="tooltip" data-placement="top" (click)="openDiscountModal()" title="Applied Discounts/Charges" style="cursor: pointer">
-            <i class="fa fa-search" aria-hidden="true"></i>
-        </span>
     </div>
     <!-- Seller's response -->
     <!--<div class="col-3" [ngClass]="wrapper.quotationDiscountPriceWrapper.appliedDiscounts.length > 0 ? 'd-flex' : null">-->
@@ -157,18 +154,23 @@
                             (onQuantityValueChange)="onTotalPriceChanged($event)"
                             [disableQuantityUnit]="wrapper.lineDiscountPriceWrapper.hasPrice()">
             </quantity-input>
+            <small>( {{ wrapper.newQuotationWrapper.priceWrapper.pricePerItemString}} )</small>
+            <span *ngIf="isDiscountIconVisibleInCustomerRequestColumn()" class="space-left" data-toggle="tooltip" data-placement="top" (click)="openDiscountModal()" title="Applied Discounts/Charges" style="cursor: pointer">
+                <i class="fa fa-search" aria-hidden="true"></i>
+            </span>
         </ng-container>
         <ng-container *ngIf="getPresentationMode() == 'view'">
-            {{ wrapper.newQuotationWrapper.priceWrapper.totalPriceString }}<br/>
+            {{ wrapper.newQuotationWrapper.priceWrapper.totalPriceString }}
+            <span *ngIf="isDiscountIconVisibleInCustomerRequestColumn()" class="space-left" data-toggle="tooltip" data-placement="top" (click)="openDiscountModal()" title="Applied Discounts/Charges" style="cursor: pointer">
+                <i class="fa fa-search" aria-hidden="true"></i>
+            </span>
+            <br/>
+            <small>( {{ wrapper.newQuotationWrapper.priceWrapper.pricePerItemString}} )</small>
         </ng-container>
         <!--{{ wrapper.newQuotationWrapper.priceWrapper.totalPriceString }}<br/>-->
-        <small>( {{ wrapper.newQuotationWrapper.priceWrapper.pricePerItemString}} )</small><br/>
+        <!--<small>( {{ wrapper.newQuotationWrapper.priceWrapper.pricePerItemString}} )</small>-->
         <!--{{ wrapper.quotationDiscountPriceWrapper.totalPriceString }}<br/>-->
         <!--<small>( {{ wrapper.quotationDiscountPriceWrapper.pricePerItemString}} )</small>-->
-
-        <!--<div *ngIf="wrapper.wrapper.quotationDiscountPriceWrapper.appliedDiscounts.length > 0" class="space-left" data-toggle="tooltip" data-placement="top" (click)="openDiscountModal()" title="Applied Discounts/Charges" style="cursor: pointer">
-            <i class="fa fa-search" aria-hidden="true"></i>
-        </div>-->
     </div>
 </div>
 

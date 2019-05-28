@@ -114,13 +114,14 @@ export class TermsAndConditionsComponent implements OnInit {
             let text = clause.content[0].value
 
             for(let tradingTerm of clause.tradingTerms){
+                let id = tradingTerm.id;
                 let spanText = "";
                 if(this.isOriginalTradingTerm(tradingTerm.id)){
-                    spanText = "<b><span>";
+                    spanText = "<b><span id='"+this.generateIdForParameter(id)+"'>";
 
                 }
                 else{
-                    spanText = "<b><span style='color: red'>";
+                    spanText ="<b><span style='color: red' id='"+this.generateIdForParameter(id)+"'>";
                 }
                 if(tradingTerm.value.valueQualifier == "QUANTITY"){
                     let defaultValue = tradingTerm.value.valueQuantity[0].value;

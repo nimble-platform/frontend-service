@@ -95,23 +95,10 @@ export class NegotiationResponseComponent implements OnInit {
             this.lastOfferQuotation,
             this.bpDataService.getCompanySettings().negotiationSettings);
 
+        this.wrapper.lineDiscountPriceWrapper.itemPrice.value = this.wrapper.lineDiscountPriceWrapper.pricePerItem;
         this.quotationTotalPrice = new Quantity(this.wrapper.quotationDiscountPriceWrapper.totalPrice, this.wrapper.quotationDiscountPriceWrapper.currency);
 
-        this.computeRfqNegotiationOptions(this.rfq);
-
         this.userRole = this.bpDataService.bpActivityEvent.userRole;
-    }
-
-    computeRfqNegotiationOptions(rfq: RequestForQuotation) {
-        if(!rfq.negotiationOptions) {
-            rfq.negotiationOptions = new NegotiationOptions();
-            rfq.negotiationOptions.deliveryPeriod = this.wrapper.lineDeliveryPeriodString !== this.wrapper.rfqDeliveryPeriodString;
-            rfq.negotiationOptions.incoterms = this.wrapper.lineIncoterms !== this.wrapper.rfqIncoterms;
-            rfq.negotiationOptions.paymentMeans = this.wrapper.linePaymentMeans !== this.wrapper.rfqPaymentMeans;
-            rfq.negotiationOptions.paymentTerms = this.wrapper.linePaymentTerms !== this.wrapper.rfqPaymentTermsToString;
-            rfq.negotiationOptions.price = this.wrapper.lineDiscountPriceWrapper.pricePerItem !== this.wrapper.rfqDiscountPriceWrapper.itemPrice.value;
-            rfq.negotiationOptions.warranty = this.wrapper.lineWarrantyString !== this.wrapper.rfqWarrantyString;
-        }
     }
 
     onBack(): void {
@@ -216,33 +203,23 @@ export class NegotiationResponseComponent implements OnInit {
      */
 
     hasUpdatedTerms(): boolean {
-        if(this.rfq.negotiationOptions.deliveryPeriod) {
-            if(!UBLModelUtils.areQuantitiesEqual(this.wrapper.rfqDeliveryPeriod, this.wrapper.newQuotationWrapper.deliveryPeriod)) {
-                return true;
-            }
+        if(!UBLModelUtils.areQuantitiesEqual(this.wrapper.rfqDeliveryPeriod, this.wrapper.newQuotationWrapper.deliveryPeriod)) {
+            return true;
         }
-        if(this.rfq.negotiationOptions.incoterms) {
-            if(this.wrapper.rfqIncoterms !== this.wrapper.newQuotationWrapper.incoterms) {
-                return true;
-            }
+        if(this.wrapper.rfqIncoterms !== this.wrapper.newQuotationWrapper.incoterms) {
+            return true;
         }
-        if(this.rfq.negotiationOptions.paymentMeans) {
-            if(this.wrapper.rfqPaymentMeans !== this.wrapper.newQuotationWrapper.paymentMeans) {
-                return true;
-            }
+        if(this.wrapper.rfqPaymentMeans !== this.wrapper.newQuotationWrapper.paymentMeans) {
+            return true;
         }
-        if(this.rfq.negotiationOptions.paymentTerms) {
-            if(this.wrapper.rfqPaymentTerms.paymentTerm !== this.wrapper.newQuotationWrapper.paymentTermsWrapper.paymentTerm) {
-                return true;
-            }
+        if(this.wrapper.rfqPaymentTerms.paymentTerm !== this.wrapper.newQuotationWrapper.paymentTermsWrapper.paymentTerm) {
+            return true;
         }
         if(this.wrapper.rfqDiscountPriceWrapper.totalPriceString !== this.wrapper.quotationDiscountPriceWrapper.totalPriceString) {
             return true;
         }
-        if(this.rfq.negotiationOptions.warranty) {
-            if(!UBLModelUtils.areQuantitiesEqual(this.wrapper.rfqWarranty, this.wrapper.newQuotationWrapper.warranty)) {
-                return true;
-            }
+        if(!UBLModelUtils.areQuantitiesEqual(this.wrapper.rfqWarranty, this.wrapper.newQuotationWrapper.warranty)) {
+            return true;
         }
         if(!UBLModelUtils.areQuantitiesEqual(this.wrapper.rfqFrameContractDuration, this.wrapper.newQuotationWrapper.frameContractDuration)) {
             return true;
