@@ -12,6 +12,9 @@ import {
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import * as myGlobals from './globals';
 import {DEFAULT_LANGUAGE} from './catalogue/model/constants';
+import {Credentials} from "./user-mgmt/model/credentials";
+import {Headers, Http} from "@angular/http";
+import {selectValueOfTextObject} from "./common/utils";
 
 @Component({
     selector: 'nimble-app',
@@ -38,10 +41,15 @@ export class AppComponent implements OnInit {
     public allowed = false;
     public versions = [];
     public minimalView = false;
+    private accessToken = null;
+    private tokenString;
+    response: any;
+
 
     enableLogisticServicePublishing = true;
 
     constructor(
+        private http: Http,
         private cookieService: CookieService,
         private credentialsService: CredentialsService,
         private router: Router,
@@ -78,6 +86,40 @@ export class AppComponent implements OnInit {
 
         this.getVersions();
         this.checkLogin("");
+        this.tokenString = window.location.hash.split("#access_token=");
+        if(this.tokenString.length == 2){
+            this.accessToken = this.tokenString[1].split("&")[0];
+            const url = `http://nimble-staging.salzburgresearch.at/identity/federation/login`;
+            return this.http
+                .post(url, JSON.stringify({'accessToken': this.accessToken}), {headers: new Headers({'Content-Type': 'application/json'})})
+                .toPromise()
+                .then(res => {
+                    this.response = res.json();
+                    this.cookieService.set("user_id",this.response.userID);
+                    if (this.response.companyID)
+                        this.cookieService.set("company_id",this.response.companyID);
+                    else
+                        this.cookieService.set("company_id",null);
+                    if (this.response.companyName)
+                        this.cookieService.set("active_company_name",selectValueOfTextObject(this.response.companyName));
+                    else
+                        this.cookieService.set("active_company_name",null);
+                    if (this.response.showWelcomeInfo)
+                        this.cookieService.set("show_welcome","true");
+                    else
+                        this.cookieService.set("show_welcome","false");
+                    this.cookieService.set("user_fullname",this.response.firstname+" "+this.response.lastname);
+                    this.cookieService.set("user_email",this.response.email);
+                    this.cookieService.set("bearer_token",this.response.accessToken);
+                    // this.submitCallStatus.callback("Login Successful");
+                    if (!this.response.companyID && myGlobals.config.companyRegistrationRequired)
+                        this.checkLogin("/user-mgmt/company-registration");
+                    else
+                        this.checkLogin("/dashboard");
+                })
+        }
+
+        // console.log(this.federatedToken);
         this.route.queryParams.subscribe(params => {
             if (params["externalView"] && params["externalView"] == "frame") {
                 this.minimalView = true;
