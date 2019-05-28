@@ -107,10 +107,6 @@ export class NegotiationModelWrapper {
      * Getter methods for the line which is updated based on activities of the
      */
 
-    public get linePricePerItemString(): string {
-        return this.initialImmutableCatalogueLine.requiredItemLocationQuantity.price.priceAmount.value;
-    }
-
     public get lineDeliveryPeriod(): Quantity {
         return this.catalogueLine.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure;
     }
