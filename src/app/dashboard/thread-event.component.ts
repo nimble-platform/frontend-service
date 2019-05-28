@@ -41,7 +41,8 @@ export class ThreadEventComponent implements OnInit {
                 this.collaborationGroupId,
                 [this.event].concat(this.history),
                 null,
-                false),
+                false,
+                this.event.formerStep),
             true,
             new BpURLParams(
                 this.event.product.catalogueDocumentReference.id,

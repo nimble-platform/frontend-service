@@ -30,6 +30,7 @@ export class TransportExecutionPlanComponent implements OnInit {
     request: TransportExecutionPlanRequest;
     response: TransportExecutionPlan;
     userRole: BpUserRole;
+    formerProcess: boolean;
     productOrder?: Order;
     updatingProcess: boolean = false;
 
@@ -58,6 +59,7 @@ export class TransportExecutionPlanComponent implements OnInit {
         if(!this.bpDataService.bpActivityEvent.newProcess) {
             this.processMetadata = this.bpDataService.bpActivityEvent.processHistory[0];
         }
+        this.formerProcess = this.bpDataService.bpActivityEvent.formerProcess;
 
         if(!this.bpDataService.transportExecutionPlanRequest) {
             if(this.searchContextService.getAssociatedProcessMetadata() != null) {

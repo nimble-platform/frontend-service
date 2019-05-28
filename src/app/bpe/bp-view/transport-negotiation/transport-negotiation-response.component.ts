@@ -40,6 +40,7 @@ export class TransportNegotiationResponseComponent implements OnInit {
 
     selectedTab: string = "OVERVIEW";
     userRole: BpUserRole;
+    formerProcess: boolean;
 
     callStatus: CallStatus = new CallStatus();
 
@@ -64,6 +65,7 @@ export class TransportNegotiationResponseComponent implements OnInit {
         if(!this.bpDataService.bpActivityEvent.newProcess) {
             this.processMetadata = this.bpDataService.bpActivityEvent.processHistory[0];
         }
+        this.formerProcess = this.bpDataService.bpActivityEvent.formerProcess;
 
         if(!this.rfq) {
             this.rfq = this.bpDataService.requestForQuotation;

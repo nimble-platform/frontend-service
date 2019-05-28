@@ -16,7 +16,6 @@ import { copy } from "../../../common/utils";
 import { Certificate } from "../../../user-mgmt/model/certificate";
 import {DocumentService} from '../document-service';
 import {DocumentReference} from '../../../catalogue/model/publish/document-reference';
-import {BpActivityEvent} from '../../../catalogue/model/publish/bp-start-event';
 import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
 
 type PpapLevels = [boolean, boolean, boolean, boolean, boolean]
@@ -34,7 +33,9 @@ interface PpapDocument {
 export class PpapDocumentSelectComponent implements OnInit {
 
     callStatus: CallStatus = new CallStatus();
+    @Input() formerProcess: boolean;
     ppap: Ppap;
+
 
     /** The ppap level ,goes from 0 (level 1) to 4 (level 5). */
     level: number = 0;

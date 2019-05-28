@@ -128,8 +128,8 @@
     <!-- Original terms -->
     <ng-container [ngSwitch]="primaryTermsSource">
         <div *ngSwitchCase="'product_defaults'" class="col-3">
-            {{ wrapper.lineTotalPriceString }}<br/>
-            <small>( {{ wrapper.linePricePerItemString }} )</small>
+            {{ wrapper.lineDiscountPriceWrapper.totalPriceString }}<br/>
+            <small>( {{ wrapper.lineDiscountPriceWrapper.pricePerItemString }} )</small>
         </div>
         <div *ngSwitchCase="'frame_contract'" class="col-3">
             {{ wrapper.frameContractQuotationWrapper.priceWrapper.totalPriceString }}<br/>
@@ -144,9 +144,6 @@
     <div class="col-3">
         {{ wrapper.rfqTotalPriceString }}<br/>
         <small>( {{ wrapper.rfqPricePerItemString}} )</small>
-        <span *ngIf="isDiscountIconVisibleInCustomerRequestColumn()" class="space-left" data-toggle="tooltip" data-placement="top" (click)="openDiscountModal()" title="Applied Discounts/Charges" style="cursor: pointer">
-            <i class="fa fa-search" aria-hidden="true"></i>
-        </span>
     </div>
     <!-- Seller's response -->
     <!--<div class="col-3" [ngClass]="wrapper.quotationDiscountPriceWrapper.appliedDiscounts.length > 0 ? 'd-flex' : null">-->
@@ -157,18 +154,23 @@
                             (onQuantityValueChange)="onTotalPriceChanged($event)"
                             [disableQuantityUnit]="wrapper.lineDiscountPriceWrapper.hasPrice()">
             </quantity-input>
+            <small>( {{ wrapper.newQuotationWrapper.priceWrapper.pricePerItemString}} )</small>
+            <span *ngIf="isDiscountIconVisibleInCustomerRequestColumn()" class="space-left" data-toggle="tooltip" data-placement="top" (click)="openDiscountModal()" title="Applied Discounts/Charges" style="cursor: pointer">
+                <i class="fa fa-search" aria-hidden="true"></i>
+            </span>
         </ng-container>
         <ng-container *ngIf="getPresentationMode() == 'view'">
-            {{ wrapper.newQuotationWrapper.priceWrapper.totalPriceString }}<br/>
+            {{ wrapper.newQuotationWrapper.priceWrapper.totalPriceString }}
+            <span *ngIf="isDiscountIconVisibleInCustomerRequestColumn()" class="space-left" data-toggle="tooltip" data-placement="top" (click)="openDiscountModal()" title="Applied Discounts/Charges" style="cursor: pointer">
+                <i class="fa fa-search" aria-hidden="true"></i>
+            </span>
+            <br/>
+            <small>( {{ wrapper.newQuotationWrapper.priceWrapper.pricePerItemString}} )</small>
         </ng-container>
         <!--{{ wrapper.newQuotationWrapper.priceWrapper.totalPriceString }}<br/>-->
-        <small>( {{ wrapper.newQuotationWrapper.priceWrapper.pricePerItemString}} )</small><br/>
+        <!--<small>( {{ wrapper.newQuotationWrapper.priceWrapper.pricePerItemString}} )</small>-->
         <!--{{ wrapper.quotationDiscountPriceWrapper.totalPriceString }}<br/>-->
         <!--<small>( {{ wrapper.quotationDiscountPriceWrapper.pricePerItemString}} )</small>-->
-
-        <!--<div *ngIf="wrapper.wrapper.quotationDiscountPriceWrapper.appliedDiscounts.length > 0" class="space-left" data-toggle="tooltip" data-placement="top" (click)="openDiscountModal()" title="Applied Discounts/Charges" style="cursor: pointer">
-            <i class="fa fa-search" aria-hidden="true"></i>
-        </div>-->
     </div>
 </div>
 
@@ -247,7 +249,6 @@
         <div class="col-3"></div>
         <div class="col-3">
             <terms-and-conditions [hidden]="primaryTermsSource != 'product_defaults'" [buyerPartyId]="getPartyId(rfq.buyerCustomerParty.party)"
-                                  [selectedIncoterm]="wrapper.lineIncoterms" [selectedTradingTerm]="wrapper.linePaymentTerms"
                                   [needATitle]="false"
                                   [sellerPartyId]="getPartyId(rfq.sellerSupplierParty.party)" [readOnly]="true" [documentType]="'rfq-manufacturer-product-defaults'"
                                   [termsAndConditions]="defaultTermsAndConditions"
@@ -255,7 +256,6 @@
             </terms-and-conditions>
             <terms-and-conditions *ngIf="wrapper.frameContractQuotation" [hidden]="primaryTermsSource != 'frame_contract'"
                                   [buyerPartyId]="getPartyId(rfq.buyerCustomerParty.party)"
-                                  [selectedIncoterm]="wrapper.lineIncoterms" [selectedTradingTerm]="wrapper.linePaymentTerms"
                                   [needATitle]="false"
                                   [sellerPartyId]="getPartyId(rfq.sellerSupplierParty.party)" [readOnly]="true" [documentType]="'rfq-manufacturer-frame-contract'"
                                   [termsAndConditions]="wrapper.frameContractQuotation.termOrCondition"
@@ -263,7 +263,6 @@
             </terms-and-conditions>
             <terms-and-conditions *ngIf="wrapper.lastOfferQuotation" [hidden]="primaryTermsSource != 'last_offer'"
                                   [buyerPartyId]="getPartyId(rfq.buyerCustomerParty.party)"
-                                  [selectedIncoterm]="wrapper.lineIncoterms" [selectedTradingTerm]="wrapper.linePaymentTerms"
                                   [needATitle]="false"
                                   [sellerPartyId]="getPartyId(rfq.sellerSupplierParty.party)" [readOnly]="true" [documentType]="'rfq-manufacturer-last-offer'"
                                   [termsAndConditions]="wrapper.lastOfferQuotation.termOrCondition"
@@ -272,8 +271,6 @@
         </div>
         <div class="col-3">
             <terms-and-conditions [buyerPartyId]="getPartyId(rfq.buyerCustomerParty.party)"
-                                  [selectedIncoterm]="wrapper.rfqIncoterms"
-                                  [selectedTradingTerm]="wrapper.rfqPaymentTerms.paymentTerm"
                                   [originalTermAndConditionClauses]="primaryTermsSource == 'last_offer' ? wrapper.lastOfferQuotation.termOrCondition :
                                   (primaryTermsSource == 'frame_contract' ? wrapper.frameContractQuotation.termOrCondition : defaultTermsAndConditions)"
                                   [needATitle]="false"
@@ -330,47 +327,49 @@
 </div>
 
 <!-- Actions -->
-<div class="row actions-row" *ngIf="userRole === 'seller' && !isReadOnly()">
-    <div class="col-6 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
-    <div class="col-2">
-        <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
+<ng-container *ngIf="!formerProcess">
+    <div class="row actions-row" *ngIf="userRole === 'seller' && !isReadOnly()">
+        <div class="col-6 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+        <div class="col-2">
+            <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
+        </div>
+        <div class="col-2">
+            <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onRespondToQuotation(false)">
+                Reject Offer
+            </button>
+        </div>
+        <div class="col-2">
+            <button *ngIf="!hasUpdatedTerms()" class="btn btn-primary action" [disabled]="isLoading() && isFormValid()" (click)="onRespondToQuotation(true)">
+                Accept Offer
+            </button>
+            <button *ngIf="hasUpdatedTerms()" class="btn btn-primary action" [disabled]="isLoading() && isFormValid()" (click)="onRespondToQuotation(true)">
+                Submit Response
+            </button>
+        </div>
     </div>
-    <div class="col-2">
-        <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onRespondToQuotation(false)">
-            Reject Offer
-        </button>
-    </div>
-    <div class="col-2">
-        <button *ngIf="!hasUpdatedTerms()" class="btn btn-primary action" [disabled]="isLoading() && isFormValid()" (click)="onRespondToQuotation(true)">
-            Accept Offer
-        </button>
-        <button *ngIf="hasUpdatedTerms()" class="btn btn-primary action" [disabled]="isLoading() && isFormValid()" (click)="onRespondToQuotation(true)">
-            Submit Response
-        </button>
-    </div>
-</div>
 
-<div class="row actions-row" *ngIf="userRole === 'seller' && isReadOnly()">
-    <div class="col-10 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
-    <div class="col-2">
-        <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
+    <div class="row actions-row" *ngIf="userRole === 'seller' && isReadOnly()">
+        <div class="col-10 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+        <div class="col-2">
+            <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
+        </div>
     </div>
-</div>
 
-<div class="row actions-row" *ngIf="userRole === 'buyer' && !readonly">
-    <div class="col-5 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
-    <div class="col-2">
-        <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
+    <div class="row actions-row" *ngIf="userRole === 'buyer' && !readonly">
+        <div class="col-5 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+        <div class="col-2">
+            <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
+        </div>
+        <div class="col-3">
+            <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onRequestNewQuotation()">
+                Request new Quotation
+            </button>
+        </div>
+        <div class="col-2">
+            <button class="btn btn-primary action" [disabled]="isLoading()" (click)="onAcceptAndOrder()">
+                Accept & Order
+            </button>
+        </div>
     </div>
-    <div class="col-3">
-        <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onRequestNewQuotation()">
-            Request new Quotation
-        </button>
-    </div>
-    <div class="col-2">
-        <button class="btn btn-primary action" [disabled]="isLoading()" (click)="onAcceptAndOrder()">
-            Accept & Order
-        </button>
-    </div>
-</div>
+</ng-container>
 <discount-modal></discount-modal>
