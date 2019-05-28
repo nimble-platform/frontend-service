@@ -101,7 +101,7 @@ export class DispatchAdviceComponent implements OnInit {
                         handlingInst = tep.consignment[0].consolidatedShipment[0].handlingInstructions[0];
                     }
                     carrierName = UBLModelUtils.getPartyDisplayName(tep.transportServiceProviderParty);
-                    endDate = tep.serviceEndTimePeriod.endDate;
+                    endDate = tep.serviceStartTimePeriod.endDate;
                     if(tep.transportServiceProviderParty.contact){
                         carrierContact = tep.transportServiceProviderParty.contact.telephone;
                     }

@@ -19,6 +19,7 @@ import { BPEService } from "../../bpe.service";
 import {ItemPriceWrapper} from '../../../common/item-price-wrapper';
 import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
 import {DiscountPriceWrapper} from "../../../common/discount-price-wrapper";
+import {Text} from '../../../catalogue/model/publish/text';
 
 @Component({
     selector: "transport-negotiation-request",
@@ -58,11 +59,20 @@ export class TransportNegotiationRequestComponent implements OnInit {
         }
 
         this.rfq = this.bpDataService.requestForQuotation;
+        this.validateRfq();
         this.rfqPrice = new DiscountPriceWrapper(this.rfq.requestForQuotationLine[0].lineItem.price.priceAmount.value, this.rfq.requestForQuotationLine[0].lineItem.price);
         //this.rfqPrice.quotationLinePriceWrapper = new ItemPriceWrapper(this.rfq.requestForQuotationLine[0].lineItem.price);
         this.rfqPaymentTerms = new PaymentTermsWrapper(this.rfq.paymentTerms);
         if(this.processMetadata && this.processMetadata.isBeingUpdated){
             this.updatingProcess = true;
+        }
+    }
+
+    // be sure that rfq has all necessary fields to start a bp
+    validateRfq(){
+        // special terms
+        if(this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.specialTerms == null || this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.specialTerms.length == 0){
+            this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.specialTerms.push(new Text(""));
         }
     }
 
