@@ -46,7 +46,7 @@
             </div>
             <!-- Customer's offer-->
             <div *ngIf="showCounterOfferTerms" class="col-5">
-                <negotiation-request-input label="Request Delivery Period" [(cbModel)]="rfq.negotiationOptions.deliveryPeriod"
+                <negotiation-request-input label="Request Delivery Period" [(cbModel)]="negotiateDeliveryPeriod"
                                            [disabled]="isLoading() || isReadOnly()"
                                            id="deliveryCb" [quantity]="wrapper.rfqDeliveryPeriod" [quantityUnits]="wrapper.settings.deliveryPeriodUnits"
                                            [invalid]="!isDeliveryPeriodValid()">
@@ -78,7 +78,7 @@
             </div>
             <!-- Customer's offer-->
             <div *ngIf="showCounterOfferTerms" class="col-5">
-                <negotiation-request-input label="Request Warranty" [(cbModel)]="rfq.negotiationOptions.warranty" [disabled]="isLoading() || isReadOnly()"
+                <negotiation-request-input label="Request Warranty" [(cbModel)]="negotiateWarranty" [disabled]="isLoading() || isReadOnly()"
                                            id="warrantyCb" [quantity]="wrapper.rfqWarranty" [quantityUnits]="wrapper.settings.warrantyPeriodUnits"
                                            [invalid]="!isWarrantyPeriodValid()">
                 </negotiation-request-input>
@@ -104,7 +104,7 @@
                 </ng-container>
             </div>
             <div *ngIf="showCounterOfferTerms" class="col-5">
-                <negotiation-request-input label="Request Incoterms" [(cbModel)]="rfq.negotiationOptions.incoterms" [disabled]="isLoading() || isReadOnly()"
+                <negotiation-request-input label="Request Incoterms" [(cbModel)]="negotiateIncoterm" [disabled]="isLoading() || isReadOnly()"
                                            id="incotermsCb" [options]="wrapper.settings.incoterms" [selected]="wrapper.rfqIncoterms" (selectedChange)="wrapper.rfqIncoterms = $event; onPriceConditionsChange()">
                 </negotiation-request-input>
             </div>
@@ -129,7 +129,7 @@
                 </ng-container>
             </div>
             <div *ngIf="showCounterOfferTerms" class="col-5">
-                <negotiation-request-input label="Request Payment Terms" [(cbModel)]="rfq.negotiationOptions.paymentTerms"
+                <negotiation-request-input label="Request Payment Terms" [(cbModel)]="negotiatePaymentTerm"
                                            id="paymentTermsCb" [options]="wrapper.settings.paymentTerms"
                                            [selected]="wrapper.rfqPaymentTerms.paymentTerm" (selectedChange)="wrapper.rfqPaymentTerms.paymentTerm = $event; onPriceConditionsChange($event)"
                                            [disabled]="isLoading() || isReadOnly()">
@@ -156,7 +156,7 @@
                 </ng-container>
             </div>
             <div *ngIf="showCounterOfferTerms" class="col-5">
-                <negotiation-request-input label="Request Payment Means" [(cbModel)]="rfq.negotiationOptions.paymentMeans"
+                <negotiation-request-input label="Request Payment Means" [(cbModel)]="negotiatePaymentMean"
                                            id="paymentMeansCb" [options]="wrapper.settings.paymentMeans" [selected]="wrapper.rfqPaymentMeans" (selectedChange)="wrapper.rfqPaymentMeans = $event; onPriceConditionsChange()"
                                            [disabled]="isLoading() || isReadOnly()">
                 </negotiation-request-input>
@@ -245,7 +245,7 @@
             </div>
             <div class="col-5"></div>
             <div class="col-5">
-                <negotiation-request-input label="Request Frame Contract" [(cbModel)]="rfq.negotiationOptions.frameContractDuration"
+                <negotiation-request-input label="Request Frame Contract" [(cbModel)]="negotiateFrameContractDuration"
                                            id="frameContractCb"
                                            [quantityUnits]="frameContractDurationUnits"
                                            [quantity]="frameContractDuration"
@@ -316,7 +316,7 @@
         </div>
         <div class="col-5"></div>
         <div class="col-5">
-            <input type="checkbox" class="form-check-input" [(ngModel)]="wrapper.rfq.negotiationOptions.termsAndConditions"
+            <input type="checkbox" class="form-check-input" [(ngModel)]="negotiateTermsAndConditions"
                    [disabled]="isLoading() || isReadOnly()">
             <label class="form-check-label"><strong class="font-weight-500">Request terms and conditions:</strong></label>
         </div>
@@ -364,7 +364,7 @@
                                   [originalTermAndConditionClauses]="primaryTermsSource == 'last_offer' ? wrapper.lastOfferQuotation.termOrCondition :
                                   (primaryTermsSource == 'frame_contract' ? wrapper.frameContractQuotation.termOrCondition : defaultTermsAndConditions)"
                                   [needATitle]="false"
-                                  [sellerPartyId]="sellerId" [readOnly]="isLoading() || isReadOnly()" [documentType]="'rfq'"
+                                  [sellerPartyId]="sellerId" [readOnly]="isLoading() || isReadOnly() || !negotiateTermsAndConditions" [documentType]="'rfq'"
                                   [termsAndConditions]="wrapper.rfq.termOrCondition">
             </terms-and-conditions>
         </div>
