@@ -51,8 +51,6 @@ export class TermsAndConditionsComponent implements OnInit {
     // selected values for Incoterm and Trading Term (e.g. Payment Terms)
     _selectedIncoterm: string = null;
     _selectedTradingTerm: string = null;
-    _isIncotermsNegotiating:boolean = true;
-    _isTradingTermsNegotiating: boolean = true;
 
     constructor(public bpeService: BPEService,
                 public userService: UserService,
@@ -231,10 +229,10 @@ export class TermsAndConditionsComponent implements OnInit {
         }
 
         // emit the new value if necessary
-        if(id == "$incoterms_id" && this.isIncotermsNegotiating){
+        if(id == "$incoterms_id"){
             this.onIncotermChanged.emit(value);
         }
-        else if(id == "$payment_id" && this.isTradingTermsNegotiating){
+        else if(id == "$payment_id"){
             this.onTradingTermChanged.emit(value);
         }
     }
@@ -262,38 +260,7 @@ export class TermsAndConditionsComponent implements OnInit {
         this._selectedIncoterm = incoterm;
 
         let id = "$incoterms_id";
-
-        if(this._selectedIncoterm != "" && this._isIncotermsNegotiating){
-            this.updateTermNegotiating(id, this._selectedIncoterm);
-        }
-    }
-
-    get isIncotermsNegotiating():boolean{
-        return this._isIncotermsNegotiating;
-    }
-
-    @Input('isIncotermsNegotiating')
-    set isIncotermsNegotiating(isNegotiating:boolean){
-        this._isIncotermsNegotiating = isNegotiating;
-
-        let id = "$incoterms_id";
-        // if we do not negotiate incoterms, use the default value
-        if(!isNegotiating && this.originalTermAndConditionClauses){
-
-            for(let clause of this.originalTermAndConditionClauses){
-                for(let tradingTerm of clause.tradingTerms){
-                    if(tradingTerm.id == id){
-
-                        this.updateTermNegotiating(id,tradingTerm.value.valueCode[0].value);
-
-                        break;
-                    }
-                }
-            }
-        }
-        // otherwise, use the selected incoterm
-        else if(this._selectedIncoterm)
-            this.updateTermNegotiating(id, this._selectedIncoterm);
+        this.updateTermNegotiating(id, this._selectedIncoterm);
     }
 
     get selectedTradingTerm():string{
@@ -303,35 +270,7 @@ export class TermsAndConditionsComponent implements OnInit {
     @Input('selectedTradingTerm')
     set selectedTradingTerm(tradingTerm:string){
         this._selectedTradingTerm = tradingTerm;
-
         this.updateTermNegotiating("$payment_id", tradingTerm);
-    }
-
-    get isTradingTermsNegotiating():boolean{
-        return this._isTradingTermsNegotiating;
-    }
-
-    @Input('isTradingTermsNegotiating')
-    set isTradingTermsNegotiating(isNegotiating:boolean){
-        this._isTradingTermsNegotiating = isNegotiating;
-
-        let id = "$payment_id";
-        // if we do not negotiate trading terms, then use the default value
-        if(!isNegotiating && this.originalTermAndConditionClauses){
-            for(let clause of this.originalTermAndConditionClauses){
-                for(let tradingTerm of clause.tradingTerms){
-                    if(tradingTerm.id == id){
-                        this.updateTermNegotiating(id, tradingTerm.value.valueCode[0].value);
-                        break;
-                    }
-                }
-            }
-        }
-        // otherwise, use the selected trading terms
-        else if(this._selectedTradingTerm){
-            // construct to value representing the selected trading term
-            this.updateTermNegotiating(id, this._selectedTradingTerm);
-        }
     }
 
     @Input()
@@ -384,10 +323,6 @@ export class TermsAndConditionsComponent implements OnInit {
                 this.tradingTerms.set(tradingTerm.id,tradingTerm);
             }
         }
-        // // populate show section array if it's empty
-        // if(this.showSection.length == 0){
-        //     this.populateShowSectionArray(this._termsAndConditions.length);
-        // }
         // refresh the texts for the open sections, otherwise the panel gets empty
         for(let i=0; i<this.showSection.length; i++) {
             if(this.showSection[i]) {
@@ -455,7 +390,6 @@ export class TermsAndConditionsComponent implements OnInit {
         let element = document.getElementById(this.generateIdForParameter(tradingTermId));
         if(element){
             element.innerText = value;
-
             this.setElementColor(element,tradingTermId);
         }
     }
