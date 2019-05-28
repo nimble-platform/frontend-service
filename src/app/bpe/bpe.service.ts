@@ -216,7 +216,8 @@ export class BPEService {
             .catch(this.handleError);
 	}
 
-	getCollaborationGroups(partyId:string, collaborationRole: CollaborationRole, page: number, limit: number, archived: boolean, products: string[], categories: string[], partners: string[], status: string[]): Promise<CollaborationGroupResponse> {
+	getCollaborationGroups(partyId:string, collaborationRole: CollaborationRole, page: number, limit: number, archived: boolean, products: string[], categories: string[], partners: string[], status: string[], isProject?:boolean): Promise<CollaborationGroupResponse> {
+		debugger
 		let offset:number = page * limit;
 		let url:string = `${this.url}/collaboration-groups?partyId=${partyId}&collaborationRole=${collaborationRole}&offset=${offset}&limit=${limit}&archived=${archived}`;
 		if(products.length > 0) {
@@ -230,7 +231,12 @@ export class BPEService {
 		}
 		if(status.length > 0){
 		    url += '&status='+this.stringifyArray(status);
-        }
+		}
+
+		if(isProject){
+		    url += '&isProject='+isProject;
+		}
+
 		return this.http
             .get(url, {headers: this.getAuthorizedHeaders()})
             .toPromise()
@@ -449,7 +455,8 @@ export class BPEService {
             if(i != size-1){
                 url += ",";
             }
-        }
+		}
+		debugger
 		return this.http
             .get(url,{headers: this.getAuthorizedHeaders()})
             .toPromise()
