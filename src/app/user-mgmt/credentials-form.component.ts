@@ -73,6 +73,7 @@ export class CredentialsFormComponent implements OnInit {
 			this.cookieService.set("user_fullname",res.firstname+" "+res.lastname);
 			this.cookieService.set("user_email",res.email);
 			this.cookieService.set("bearer_token",res.accessToken);
+			this.cookieService.set("rocket_chat_token",res.rocketChatToken);
 			this.submitCallStatus.callback("Login Successful");
 			if (!res.companyID && myGlobals.config.companyRegistrationRequired)
 				this.appComponent.checkLogin("/user-mgmt/company-registration");
@@ -87,6 +88,7 @@ export class CredentialsFormComponent implements OnInit {
 			this.cookieService.delete("active_company_name");
 			this.cookieService.delete("show_welcome");
 			this.cookieService.delete("bearer_token");
+			this.cookieService.delete("rocketchatToken");
 			this.appComponent.checkLogin("");
 			this.submitCallStatus.error("Invalid email or password", error);
 		});

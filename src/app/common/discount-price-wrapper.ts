@@ -100,7 +100,7 @@ export class DiscountPriceWrapper {
             return "On demand";
         }
 
-        return `${this.itemPrice.value} ${currencyToString(this.price.priceAmount.currencyID)} per ${qty.unitCode}`;
+        return `${roundToTwoDecimals(this.itemPrice.value)} ${currencyToString(this.price.priceAmount.currencyID)} per ${qty.unitCode}`;
     }
 
     get currency(): string {

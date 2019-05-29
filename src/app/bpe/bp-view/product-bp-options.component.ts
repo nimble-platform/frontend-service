@@ -84,6 +84,9 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
 
         this.bpActivityEventSubs = this.bpDataService.bpActivityEventObservable.subscribe(bpActivityEvent => {
             if (bpActivityEvent) {
+                if(this.bpDataService.bpActivityEvent.newProcess) {
+                    this.processMetadata = null;
+                }
                 this.processType = bpActivityEvent.processType;
                 this.currentStep = this.getCurrentStep(bpActivityEvent.processType);
                 this.stepsDisplayMode = this.getStepsDisplayMode();
@@ -246,7 +249,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
 
     private getStepsDisplayMode(): ProductBpStepsDisplay {
         if(this.isTransportService()) {
-            if(this.bpDataService.bpActivityEvent.userRole === "seller") {
+            if(this.bpDataService.bpActivityEvent.processType == 'Transport_Execution_Plan' && this.bpDataService.bpActivityEvent.userRole === "seller") {
                 // The service provider only sees transport steps
                 return "Transport";
             } else if(!this.originalOrder) {

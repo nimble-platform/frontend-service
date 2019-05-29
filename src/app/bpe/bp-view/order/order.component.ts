@@ -49,6 +49,7 @@ export class OrderComponent implements OnInit {
     paymentTermsWrapper: PaymentTermsWrapper;
     priceWrapper: PriceWrapper;
     userRole: BpUserRole;
+    formerProcess: boolean;
     config = myGlobals.config;
 
     buyerParty: Party;
@@ -89,6 +90,7 @@ export class OrderComponent implements OnInit {
         if(!this.bpDataService.bpActivityEvent.newProcess) {
             this.processMetadata = this.bpDataService.bpActivityEvent.processHistory[0];
         }
+        this.formerProcess = this.bpDataService.bpActivityEvent.formerProcess;
 
         if(this.bpDataService.order == null) {
             this.router.navigate(['dashboard']);

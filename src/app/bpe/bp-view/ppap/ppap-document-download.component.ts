@@ -1,14 +1,13 @@
 import {Component, Input} from "@angular/core";
 import {BPDataService} from "../bp-data-service";
 import {BPEService} from "../../bpe.service";
-import {ActivatedRoute, Router} from "@angular/router";
+import {ActivatedRoute} from "@angular/router";
 import {PpapResponse} from "../../../catalogue/model/publish/ppap-response";
 import {Ppap} from "../../../catalogue/model/publish/ppap";
 import {DocumentReference} from "../../../catalogue/model/publish/document-reference";
 import { Location } from "@angular/common";
 import { BinaryObject } from "../../../catalogue/model/publish/binary-object";
 import {DocumentService} from "../document-service";
-import {BpActivityEvent} from '../../../catalogue/model/publish/bp-start-event';
 
 interface UploadedDocuments {
     [doc: string]: BinaryObject[];
@@ -21,6 +20,7 @@ interface UploadedDocuments {
 })
 export class PpapDocumentDownloadComponent{
 
+    @Input() formerProcess: boolean;
     @Input() ppapResponse: PpapResponse;
     @Input() ppap: Ppap;
 

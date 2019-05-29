@@ -115,7 +115,8 @@ export class ThreadSummaryComponent implements OnInit {
                 this.collaborationGroupId,
                 [this.titleEvent].concat(this.history),
                 null,
-                false),
+                false,
+                false), // thread summary always shows the last step in the negotiation
             true,
             new BpURLParams(
                 this.titleEvent.product.catalogueDocumentReference.id,
@@ -139,6 +140,13 @@ export class ThreadSummaryComponent implements OnInit {
               }
             }
             this.computeTitleEvent();
+
+            // update the former step field of events after sorting and other population
+            events[0].formerStep = false;
+            for(let i=1; i<events.length; i++) {
+                events[i].formerStep = true;
+            }
+
             this.fetchCallStatus.callback("Successfully fetched events.", true);
         }).catch(error => {
             this.fetchCallStatus.error("Error while fetching thread.", error);
@@ -215,15 +223,6 @@ export class ThreadSummaryComponent implements OnInit {
         this.fillStatus(event, processInstance["state"], processType, response, userRole === "buyer");
         this.setCancelCollaborationButtonStatus(processType,response);
         this.checkDataChannel(event);
-
-        /*
-        if (userRole === "buyer") {
-            this.lastEventPartnerID = ActivityVariableParser.getProductFromProcessData(initialDoc,processType).manufacturerParty.id;
-        }
-        else {
-            this.lastEventPartnerID = ActivityVariableParser.getBuyerId(initialDoc,processType);
-        }
-        */
 
         return event;
     }

@@ -38,7 +38,7 @@ export class ItemInformationResponseComponent implements OnInit {
 
     // the copy of ThreadEventMetadata of the current business process
     processMetadata: ThreadEventMetadata;
-
+    isFormerStep: boolean;
     isLogisticsService:boolean = false;
     isTransportService:boolean = false;
 
@@ -56,6 +56,7 @@ export class ItemInformationResponseComponent implements OnInit {
         if(!this.bpDataService.bpActivityEvent.newProcess) {
             this.processMetadata = this.bpDataService.bpActivityEvent.processHistory[0];
         }
+        this.isFormerStep = this.bpDataService.bpActivityEvent.formerProcess;
 
         if (!this.request) {
             this.request = this.bpDataService.itemInformationRequest;

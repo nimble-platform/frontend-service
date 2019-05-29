@@ -20,5 +20,6 @@ export class ThreadEventMetadata {
         public status?: ThreadEventStatus,
         public statusText?: string,
         public actionText?: string,
+        public formerStep?: boolean
     ) {}
 }

@@ -48,10 +48,14 @@ export class OptionsInputComponent implements OnInit {
     }
 
     getValue(option: Option | string): string {
-        return typeof option === "string" ? option : option.value;
+        if(option){
+            return typeof option === "string" ? option : option.value;
+        }
     }
 
     getName(option: Option | string): string {
-        return typeof option === "string" ? option : option.name;
+        if(option){
+            return typeof option === "string" ? option : option.name;
+        }
     }
 }

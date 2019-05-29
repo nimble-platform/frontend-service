@@ -25,28 +25,41 @@
 
     <ng-container *ngFor="let metadata of negotiationProcessList; let i = index">
         <!-- previous steps -->
-        <ng-container *ngIf="negotiationDocumentsCallStatus.isComplete() && wrapperInformationCallStatus.isComplete()">
+        <ng-container *ngIf="negotiationDocumentsCallStatus.isComplete() && lastOfferCalStatus.isComplete() && frameContractAndTermsCallStatus.isComplete()">
             <div *ngIf="i != negotiationProcessList.length-1" [hidden]="!(sliderIndex == i)">
                 <negotiation-response [rfq]="negotiationDocuments[i].request"
                                       [quotation]="negotiationDocuments[i].response"
                                       [lastOfferQuotation]="negotiationDocuments[i-1]?.response"
                                       [frameContractQuotation]="frameContractQuotation"
                                       [frameContract]="frameContract"
+                                      [defaultTermsAndConditions]="defaultTermsAndConditions"
                                       [primaryTermsSource]="getPrimaryTermsSource(negotiationDocuments[i-1]?.response)"
-                                      [readonly]="true">
+                                      [readonly]="true"
+                                      [formerProcess]="true">
                 </negotiation-response>
             </div>
         </ng-container>
-        <!-- current, last step -->
-        <ng-container *ngIf="wrapperInformationCallStatus.isComplete()">
+        <!-- last step -->
+        <call-status [callStatus]="lastOfferCalStatus"></call-status>
+        <ng-container *ngIf="lastOfferCalStatus.isComplete()">
+            <call-status [callStatus]="frameContractAndTermsCallStatus"></call-status>
+        </ng-container>
+        <ng-container *ngIf="lastOfferCalStatus.isComplete() && frameContractAndTermsCallStatus.isComplete()">
             <div [hidden]="!(sliderIndex == negotiationProcessList.length-1 && i == negotiationProcessList.length-1)">
-                <negotiation-request *ngIf="!bpDataService.quotation && bpDataService.bpActivityEvent.userRole === 'buyer'">
+                <negotiation-request *ngIf="!bpDataService.quotation && bpDataService.bpActivityEvent.userRole === 'buyer'"
+                                     [frameContract]="frameContract"
+                                     [frameContractQuotation]="frameContractQuotation"
+                                     [lastOfferQuotation]="lastOfferQuotation"
+                                     [defaultTermsAndConditions]="defaultTermsAndConditions"
+                                     [primaryTermsSource]="getPrimaryTermsSource(lastOfferQuotation)">
                 </negotiation-request>
                 <negotiation-response *ngIf="bpDataService.quotation"
                                       [lastOfferQuotation]="lastOfferQuotation"
                                       [frameContractQuotation]="frameContractQuotation"
                                       [frameContract]="frameContract"
-                                      [primaryTermsSource]="getPrimaryTermsSource(lastOfferQuotation)">
+                                      [defaultTermsAndConditions]="defaultTermsAndConditions"
+                                      [primaryTermsSource]="getPrimaryTermsSource(lastOfferQuotation)"
+                                      [formerProcess]="formerProcess">
                 </negotiation-response>
             </div>
         </ng-container>
