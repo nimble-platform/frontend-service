@@ -193,7 +193,7 @@ export class BPEService {
 	}
 
 	getProcessInstanceGroupFilters(partyId:string, collaborationRole: CollaborationRole, archived: boolean, products: string[],
-		categories: string[], partners: string[],status: string[]): Promise<ProcessInstanceGroupFilter> {
+		categories: string[], partners: string[],status: string[],isProject:boolean): Promise<ProcessInstanceGroupFilter> {
 		const headers = this.getAuthorizedHeaders();
 
 		let url: string = `${this.url}/process-instance-groups/filters?partyId=${partyId}&collaborationRole=${collaborationRole}&archived=${archived}`;
@@ -208,6 +208,9 @@ export class BPEService {
 		}
 		if(status.length > 0){
 			url += '&status='+this.stringifyArray(status);
+		}
+		if(isProject){
+		    url += '&isProject='+isProject;
 		}
 		return this.http
             .get(url, {headers: headers})
