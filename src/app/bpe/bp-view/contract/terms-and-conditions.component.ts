@@ -270,11 +270,6 @@ export class TermsAndConditionsComponent implements OnInit {
     @Input()
     set originalTermAndConditionClauses(clauses: Clause[]) {
         this._originalTermAndConditionClauses = clauses;
-        this._originalTermAndConditionClauses.sort((clause1, clause2) => {
-            let order1 = Number(clause1.id.substring(0,clause1.id.indexOf("_")));
-            let order2 = Number(clause2.id.substring(0,clause2.id.indexOf("_")));
-            return order1 - order2;
-        });
 
         this.originalTradingTerms = new Map<string, TradingTerm>();
         // create tradingTerms map using the original terms and conditions
@@ -301,13 +296,6 @@ export class TermsAndConditionsComponent implements OnInit {
     @Input()
     set termsAndConditions(clauses: Clause[]) {
         this._termsAndConditions = clauses;
-
-        // sort terms and conditions
-        this._termsAndConditions.sort((clause1, clause2) => {
-            let order1 = Number(clause1.id.substring(0,clause1.id.indexOf("_")));
-            let order2 = Number(clause2.id.substring(0,clause2.id.indexOf("_")));
-            return order1 - order2;
-        });
 
         // create valuesOfParameters map
         this.tradingTerms = new Map<string, TradingTerm>();
