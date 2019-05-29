@@ -99,7 +99,13 @@ export class DashboardThreadedComponent implements OnInit{
         this.selectedId = data.id;
         var t_arr = [];
         await data.associatedProcessInstanceGroups.forEach(element => {
-            var obj =  { times: [{"color":"red", "label":element.name, "starting_time": ((new Date(element.firstActivityTime)).getTime()), "ending_time": ((new Date(element.lastActivityTime)).getTime())}]}
+            var lastActivityTime = (new Date(element.lastActivityTime)).getTime();
+            var firstActivityTime = (new Date(element.firstActivityTime)).getTime();
+            if((new Date(element.lastActivityTime).getTime()) -(new Date(element.firstActivityTime).getTime()) < 86400){
+                firstActivityTime = new Date(element.firstActivityTime).getTime()-(86400000*1);
+                lastActivityTime = (new Date(element.lastActivityTime)).getTime();
+            }
+            var obj =  { times: [{"color":"red", "label":element.name, "starting_time": firstActivityTime, "ending_time": lastActivityTime}]}
             t_arr.push((new Date(element.firstActivityTime)).getTime()/1000);
             t_arr.push((new Date(element.lastActivityTime)).getTime()/1000);
             this.data.push(obj);
@@ -113,12 +119,10 @@ export class DashboardThreadedComponent implements OnInit{
         var scale = d3.scaleTime()
                 .domain(d3.extent(parsedData));
         
-
-        
         this.chart = d3timelines.timelines()
         .stack() // toggles graph stacking
         .tickFormat({
-            format: d3timeformat.timeFormat("%Y-%m-%d, %H:%M")
+            format: d3timeformat.timeFormat("%Y-%m-%d")
         })
         .showTimeAxisTick()
         .margin({left:70, right:30, top:0, bottom:0})
@@ -331,15 +335,17 @@ export class DashboardThreadedComponent implements OnInit{
 
     }
 
-    private queryOrdersIfNeeded(): void {
+    async queryOrdersIfNeeded() {
         const query = this.computeOrderQueryFromQueryParams();
+
+        if(await this.isOrdersFiltersQueryNeeded(query)) {
+            this.executeOrdersFiltersQuery(query);
+        }
 
         if(this.isOrdersQueryNeeded(query)) {
             this.executeOrdersQuery(query);
         }
-        if(this.isOrdersFiltersQueryNeeded(query)) {
-            this.executeOrdersFiltersQuery(query);
-        }
+       
         this.query = query
     }
 
@@ -355,6 +361,8 @@ export class DashboardThreadedComponent implements OnInit{
     }
 
     private getOrdersQuery(query: DashboardOrdersQuery): Promise<void> {
+        
+
         if(this.queryParameters.tab == "PROJECTS"){
             this.isProject = true;
         }else{
@@ -425,9 +433,14 @@ export class DashboardThreadedComponent implements OnInit{
 
     private executeOrdersFiltersQuery(query: DashboardOrdersQuery): void {
         this.filterQueryStatus.submit();
+        if(this.queryParameters.tab == "PROJECTS"){
+            this.isProject = true;
+        }else{
+            this.isProject = false;
+        }
 
         this.bpeService
-        .getProcessInstanceGroupFilters(this.cookieService.get("company_id"), query.collaborationRole, query.archived, query.products, query.categories, query.partners, query.status)
+        .getProcessInstanceGroupFilters(this.cookieService.get("company_id"), query.collaborationRole, query.archived, query.products, query.categories, query.partners, query.status,this.isProject)
         .then(response => {
             // populate the modified filter set with the passed parameters that are also included in the results
             // so that the selected criteria would have a checkbox along with
@@ -479,6 +492,12 @@ export class DashboardThreadedComponent implements OnInit{
             return true;
         }
 
+        if(this.queryParameters.tab == "PROJECTS" && this.isProject == false){
+            return true;
+            
+        }else if(this.queryParameters.tab != "PROJECTS" && this.isProject == true){
+            return true;
+        }
         // Do not recompute the filters on filter changes.
         return this.query.archived !== query.archived
             || this.query.collaborationRole !== query.collaborationRole;
