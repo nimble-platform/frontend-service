@@ -381,7 +381,7 @@
                         <div class="row">
                              
                             <!-- Filters -->
-                            <!-- <div class="col-2">
+                            <div class="col-2">
                                 <facet [title]="'Product / Service'" [dataType]="'string'"
                                     [stringValues]="filterSet && filterSet.relatedProducts"
                                     [selectedStringValues]="modifiedFilterSet && modifiedFilterSet.relatedProducts"
@@ -406,10 +406,10 @@
                                        [loading]="areFiltersLoading()"
                                        (triggerCriteriaChanged)="onFilterChange()">
                                 </facet>
-                            </div> -->
+                            </div>
     
                             <!-- Results -->
-                            <div *ngIf="results.orders" class="col-12">
+                            <div *ngIf="results.orders" class="col-10">
                                 <h4 *ngIf="results.orders.length === 0">No orders.</h4>
                                 <div *ngFor="let order of results.orders;let i=index" class="bordered space-after">
                                     <div class="row w-100 m-0">
@@ -447,6 +447,18 @@
                                             </div> -->
                                         </div>
                                     </div>
+                                    <div [ngStyle]="{'visibility':order.id === selectedId  ? 'visible' : 'hidden'}">
+                                        <!-- Titles for the rows -->
+                                        <div class="row thread-entry-heading">
+                                            <!--<div class="col-2"><strong>Customer</strong></div>-->
+                                            <!-- <svg id="gantt"></svg> -->
+                                            <!-- <div class="chart1"></div> -->
+                                           
+                                            <div [ngClass]="'cls'+order.id" style="padding-left: 102px">
+                                            </div>
+                                         
+                                        </div>
+                                    </div>
                                     <hr class="collaboration-hr">
                                     <div *ngFor="let group of order.associatedProcessInstanceGroups;let i=index">
                                         <div [ngClass]="i != order.associatedProcessInstanceGroups.length-1 ? 'space-after' : null">
@@ -457,18 +469,6 @@
                                     </div>
                                     <br/>
                            
-                                    <div [ngStyle]="{'visibility':order.id === selectedId  ? 'visible' : 'hidden'}">
-                                        <!-- Titles for the rows -->
-                                        <div class="row thread-entry-heading">
-                                            <!--<div class="col-2"><strong>Customer</strong></div>-->
-                                            <!-- <svg id="gantt"></svg> -->
-                                            <div class="chart1"></div>
-                                           
-                                            <div [ngClass]="'cls'+order.id" style="padding-left: 102px">
-                                            </div>
-                                         
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </div>
