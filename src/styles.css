@@ -156,7 +156,7 @@ textarea {
 	width: 70px;
 	height: 70px;
 	border-radius: 35px;
-	background-color: #b77563;
+	background-color: #6366b7;
 	z-index: 9998;
 	cursor: pointer;
 }
@@ -169,14 +169,15 @@ textarea {
 }
 
 .nimble-bg {
-    background-color: #b77563;
+    background-color: #6366b7;
 }
 
 .nimble-col {
-	border: 2px solid #b77563;
+	border: 2px solid #6366b7;
 	border-radius: 0.25rem;
-	padding: 0.5rem;
-	text-align: center;
+	padding: 0.5rem;	mvn clean install -Denv=whitegoods
+
+    text-align: center;
 }
 
 .space-before {
@@ -333,7 +334,7 @@ textarea {
 
 .dropdown-item.active, .dropdown-item:active {
 	color: #fff !important;
-	background-color: #b77563 !important;
+	background-color: #6366b7 !important;
 }
 
 .dropdown-menu-right {
@@ -358,8 +359,8 @@ ngb-pagination nav.pagination, .page-item, .page-link {
 }
 
 ngb-pagination .page-item.active .page-link {
-    border-color: #b77563;
-    background-color: #b77563;
+    border-color: #6366b7;
+    background-color: #6366b7;
     color: #fff;
 }
 
@@ -440,7 +441,7 @@ ngb-pagination .page-item.active .page-link {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: #b77563;
+  background-color: #6366b7;
   -webkit-animation: sk-foldCubeAngle 2.4s infinite linear both;
           animation: sk-foldCubeAngle 2.4s infinite linear both;
   -webkit-transform-origin: 100% 100%;

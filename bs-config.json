@@ -1,5 +1,5 @@
 {
-	"port": 9092,
+	"port": 19092,
 	"server": {
 		"baseDir": "src",
 		"routes": {

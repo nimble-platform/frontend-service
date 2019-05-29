@@ -6,13 +6,13 @@
 
     <groupId>eu.nimble.core.frontend</groupId>
     <artifactId>frontend-service</artifactId>
-    <version>5.0.0-Staging</version>
+    <version>5.0.0-Staging-WG</version>
     <name>Frontend Services for the NIMBLE platform</name>
     <packaging>war</packaging>
 
     <properties>
         <ui.context>/</ui.context>
-        <ui.port>9092</ui.port>
+        <ui.port>19092</ui.port>
         <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
         <finalName>frontend-service</finalName>
     </properties>

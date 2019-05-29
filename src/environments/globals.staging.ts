@@ -7,9 +7,9 @@ export const debug = false;
 
 // Base path variables - SRFG staging
 
-export const base_path = "http://nimble-staging.salzburgresearch.at";
-export const ub_base = "http://nimble-staging.salzburgresearch.at/search";
-export const pw_reset_link = "http://nimble-staging.salzburgresearch.at:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
+export const base_path = "http://nimblewg.holonix.biz";
+export const ub_base = "http://nimblewg.holonix.biz/search";
+export const pw_reset_link = "http://nimblewg.holonix.biz:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
 
 
 // Base path variables - SRFG productive
