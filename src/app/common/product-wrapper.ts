@@ -147,7 +147,7 @@ export class ProductWrapper {
     }
 
     getVat(): string {
-        return this.line.requiredItemLocationQuantity.applicableTaxCategory[0] ? this.line.requiredItemLocationQuantity.applicableTaxCategory[0].percent : '';
+        return this.line.requiredItemLocationQuantity.applicableTaxCategory[0] ? this.line.requiredItemLocationQuantity.applicableTaxCategory[0].percent + '' : '';
     }
 
     getPropertyName(property: ItemProperty): string {
