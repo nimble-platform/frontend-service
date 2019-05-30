@@ -1,11 +1,13 @@
 import { Component, OnInit, Input, ViewChild, ElementRef } from "@angular/core";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import {createText} from '../../common/utils';
+import {COUNTRY_NAMES, createText} from '../../common/utils';
 import {TradingTerm} from '../../catalogue/model/publish/trading-term';
 import {Quantity} from '../../catalogue/model/publish/quantity';
 import {MultiTypeValue} from '../../catalogue/model/publish/multi-type-value';
 import {Option} from '../../common/options-input.component';
 import {Clause} from '../../catalogue/model/publish/clause';
+import {CompanySettings} from '../model/company-settings';
+import {Code} from '../../catalogue/model/publish/code';
 
 @Component({
     selector: "edit-trading-term-modal",
@@ -16,8 +18,16 @@ export class EditTradingTermModalComponent implements OnInit {
 
     @ViewChild("modal") modal: ElementRef;
 
+    // company settings
+    @Input() settings: CompanySettings = null;
+
     // new trading term
     tradingTerm:TradingTerm = null;
+
+    // options
+    INCOTERMS: string[] = [];
+    PAYMENT_TERMS:string[] = [];
+    COUNTRY_NAMES = COUNTRY_NAMES;
 
     // available data types for trading term
     DATA_TYPES :Option[] = [
@@ -30,6 +40,11 @@ export class EditTradingTermModalComponent implements OnInit {
     }
 
     ngOnInit() {
+
+        // populate available incoterms
+        this.INCOTERMS = this.settings.negotiationSettings.incoterms;
+        // populate available payment terms
+        this.PAYMENT_TERMS = this.settings.negotiationSettings.paymentTerms;
 
     }
 
@@ -100,6 +115,9 @@ export class EditTradingTermModalComponent implements OnInit {
         if(this.tradingTerm.value.valueQuantity.length === 0) {
             this.tradingTerm.value.valueQuantity.push(new Quantity());
         }
+        if(this.tradingTerm.value.valueCode.length == 0){
+            this.tradingTerm.value.valueCode.push(new Code());
+        }
     }
 
 
@@ -107,4 +125,24 @@ export class EditTradingTermModalComponent implements OnInit {
     setValueDecimal(i: number, value: number) {
         this.tradingTerm.value.valueDecimal[i] = Number(value);
     }
+
+    onIdUpdate(){
+        if(this.tradingTerm.id.toUpperCase().indexOf("INCOTERM") != -1){
+            this.tradingTerm.value.valueQualifier = "CODE";
+            this.tradingTerm.value.valueCode[0].listID = "INCOTERMS_LIST";
+        }
+        else if(this.tradingTerm.id.toUpperCase().indexOf("PAYMENT") != -1){
+            this.tradingTerm.value.valueQualifier = "CODE";
+            this.tradingTerm.value.valueCode[0].listID = "PAYMENT_MEANS_LIST";
+        }
+        else if(this.tradingTerm.id.toUpperCase().indexOf("COUNTRY") != -1){
+            this.tradingTerm.value.valueQualifier = "CODE";
+            this.tradingTerm.value.valueCode[0].listID = "COUNTRY_LIST";
+        }
+        // valueQualifier is CODE, but the id does not contain INCOTERM, PAYMENT or COUNTRY strings
+        else if(this.tradingTerm.value.valueQualifier == "CODE"){
+            this.tradingTerm.value.valueQualifier = "STRING";
+        }
+    }
+
 }

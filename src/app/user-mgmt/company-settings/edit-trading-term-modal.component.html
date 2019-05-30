@@ -14,11 +14,11 @@
                     <strong>Id:</strong>
                 </div>
                 <div class="col-9">
-                    <input [(ngModel)]="tradingTerm.id" class="form-control" type="text"/>
+                    <input [(ngModel)]="tradingTerm.id" class="form-control" type="text" (keyup)="onIdUpdate()"/>
                 </div>
             </div>
             <!-- Trading term data type -->
-            <options-input label="Data Type"
+            <options-input label="Data Type" *ngIf="tradingTerm.value.valueQualifier != 'CODE'"
                            [options]="DATA_TYPES" [(selected)]="tradingTerm.value.valueQualifier" rowClass="space-before">
             </options-input>
             <!-- Trading term default values -->
@@ -53,6 +53,18 @@
                             <ng-container *ngIf="tradingTerm.value.valueQualifier === 'QUANTITY'">
                                 <quantity-input [quantity]="tradingTerm.value.valueQuantity[0]">
                                 </quantity-input>
+                            </ng-container>
+                            <!-- CODE data type-->
+                            <ng-container *ngIf="tradingTerm.value.valueQualifier === 'CODE'">
+                                <select *ngIf="tradingTerm.value.valueCode[0].listID == 'INCOTERMS_LIST'" class="form-control custom-select" [(ngModel)]="tradingTerm.value.valueCode[0].value" >
+                                    <option *ngFor="let option of INCOTERMS" [value]="option">{{option}}</option>
+                                </select>
+                                <select *ngIf="tradingTerm.value.valueCode[0].listID == 'PAYMENT_MEANS_LIST'" class="form-control custom-select" [(ngModel)]="tradingTerm.value.valueCode[0].value" >
+                                    <option *ngFor="let option of PAYMENT_TERMS" [value]="option">{{option}}</option>
+                                </select>
+                                <select *ngIf="tradingTerm.value.valueCode[0].listID == 'COUNTRY_LIST'" class="form-control custom-select" [(ngModel)]="tradingTerm.value.valueCode[0].value" >
+                                    <option *ngFor="let option of COUNTRY_NAMES" [value]="option">{{option}}</option>
+                                </select>
                             </ng-container>
                         </div>
                     </div>

@@ -57,6 +57,18 @@
                                 <td *ngIf="tradingTerm.value.valueQualifier === 'NUMBER'" style="vertical-align:middle">
                                     <input type="number" class="form-control value-input" [ngModel]="tradingTerm.value.valueDecimal[0]" (change)="setValueDecimal(tradingTerm, 0, $event)">
                                 </td>
+                                <!-- CODE data type -->
+                                <td *ngIf="tradingTerm.value.valueQualifier === 'CODE'" style="vertical-align:middle">
+                                    <select *ngIf="tradingTerm.value.valueCode[0].listID == 'INCOTERMS_LIST'" class="form-control custom-select" [(ngModel)]="tradingTerm.value.valueCode[0].value" >
+                                        <option *ngFor="let option of INCOTERMS" [value]="option">{{option}}</option>
+                                    </select>
+                                    <select *ngIf="tradingTerm.value.valueCode[0].listID == 'PAYMENT_MEANS_LIST'" class="form-control custom-select" [(ngModel)]="tradingTerm.value.valueCode[0].value" >
+                                        <option *ngFor="let option of PAYMENT_TERMS" [value]="option">{{option}}</option>
+                                    </select>
+                                    <select *ngIf="tradingTerm.value.valueCode[0].listID == 'COUNTRY_LIST'" class="form-control custom-select" [(ngModel)]="tradingTerm.value.valueCode[0].value" >
+                                        <option *ngFor="let option of COUNTRY_NAMES" [value]="option">{{option}}</option>
+                                    </select>
+                                </td>
                                 <!-- Button to delete trading term-->
                                 <td class="align-right" style="vertical-align:middle">
                                     <button class="btn btn-outline-primary ml-1" (click)="onEditTradingTerm(clause,tradingTerm)">Edit</button>
@@ -86,5 +98,5 @@
     </div>
 </div>
 
-<edit-trading-term-modal></edit-trading-term-modal>
+<edit-trading-term-modal [settings]="settings"></edit-trading-term-modal>
 <call-status [callStatus]="callStatus"></call-status>
