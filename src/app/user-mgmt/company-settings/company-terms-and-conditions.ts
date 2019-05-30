@@ -6,11 +6,13 @@ import {TradingTerm} from '../../catalogue/model/publish/trading-term';
 import {deliveryPeriodUnitListId, warrantyPeriodUnitListId} from '../../common/constants';
 import {Clause} from '../../catalogue/model/publish/clause';
 import {CallStatus} from '../../common/call-status';
-import {COUNTRY_NAMES} from '../../common/utils';
+import {copy, COUNTRY_NAMES} from '../../common/utils';
 import {UnitService} from '../../common/unit-service';
 import {BPEService} from '../../bpe/bpe.service';
 import {EditTradingTermModalComponent} from './edit-trading-term-modal.component';
 import {Text} from '../../catalogue/model/publish/text';
+import {TradingPreferences} from '../../catalogue/model/publish/trading-preferences';
+import {UserService} from '../user.service';
 
 @Component({
     selector: "company-terms-and-conditions",
@@ -21,7 +23,7 @@ export class CompanyTermsAndConditions implements OnInit {
 
     @Input() settings: CompanySettings = null;
 
-    pageInitCallStatus:CallStatus = new CallStatus();
+    callStatus:CallStatus = new CallStatus();
 
     // default terms and conditions which are retrieved from the server
     defaultTermsAndConditions: Clause[] = null;
@@ -42,6 +44,7 @@ export class CompanyTermsAndConditions implements OnInit {
     private editTradingTermModelComponent: EditTradingTermModalComponent;
 
     constructor(public route: ActivatedRoute,
+                public userService: UserService,
                 public appComponent: AppComponent,
                 public unitService: UnitService,
                 public bpeService: BPEService) {
@@ -49,7 +52,7 @@ export class CompanyTermsAndConditions implements OnInit {
     }
 
     ngOnInit(): void {
-        this.pageInitCallStatus.submit();
+        this.callStatus.submit();
 
         Promise.all([
             this.unitService.getCachedUnitList(deliveryPeriodUnitListId),
@@ -69,9 +72,17 @@ export class CompanyTermsAndConditions implements OnInit {
                 this.defaultTermsAndConditions = defaultTermsAndConditions;
             }
 
-            this.pageInitCallStatus.callback("Successfully initialized the page", true);
+            // create sales terms if the company does not have any
+            if(!this.settings.negotiationSettings.company.salesTerms){
+                this.settings.negotiationSettings.company.salesTerms = new TradingPreferences();
+            }
+
+            // copy the terms and conditions
+            this.termsAndConditions = copy(this.settings.negotiationSettings.company.salesTerms.termOrCondition);
+
+            this.callStatus.callback("Successfully initialized the page", true);
         }).catch(error => {
-            this.pageInitCallStatus.error("Error while initializing the page",error);
+            this.callStatus.error("Error while initializing the page",error);
         });
     }
 
@@ -188,5 +199,23 @@ export class CompanyTermsAndConditions implements OnInit {
         this.termsAndConditions.splice(this.termsAndConditions.indexOf(clause),1);
         // update the showSection map
         this.showSection.delete(clause.id);
+    }
+
+    onSave() {
+        this.callStatus.submit();
+        // copy the negotiation settings
+        let negotiationSettingsCopy = copy(this.settings.negotiationSettings);
+        // set the terms and conditions
+        negotiationSettingsCopy.company.salesTerms.termOrCondition = this.termsAndConditions;
+        this.userService
+            .putCompanyNegotiationSettings(negotiationSettingsCopy, this.settings.companyID)
+            .then(() => {
+                // update company negotiation settings
+                this.settings.negotiationSettings = copy(negotiationSettingsCopy);
+                this.callStatus.callback("Done saving company negotiation settings", true);
+            })
+            .catch(error => {
+                this.callStatus.error("Error while saving company negotiation settings.", error);
+            });
     }
 }
