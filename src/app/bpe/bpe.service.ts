@@ -340,15 +340,22 @@ export class BPEService {
 
 		let url;
 		if(orderId){
-			url = `${this.url}/contracts/terms-and-conditions?orderId=${orderId}&sellerPartyId=${sellerPartyId}&buyerPartyId=${buyerPartyId}&incoterms=${incoterms == null ? "" :incoterms}&tradingTerm=${tradingTerm}`;
+			url = `${this.url}/contracts/terms-and-conditions?orderId=${orderId}&sellerPartyId=${sellerPartyId}&incoterms=${incoterms == null ? "" :incoterms}`;
 		}
 		else if(rfqId){
-			url = `${this.url}/contracts/terms-and-conditions?rfqId=${rfqId}&sellerPartyId=${sellerPartyId}&buyerPartyId=${buyerPartyId}&incoterms=${incoterms == null ? "" :incoterms}&tradingTerm=${tradingTerm}`;
+			url = `${this.url}/contracts/terms-and-conditions?rfqId=${rfqId}&sellerPartyId=${sellerPartyId}&incoterms=${incoterms == null ? "" :incoterms}`;
 		}
 		else{
-            url = `${this.url}/contracts/terms-and-conditions?sellerPartyId=${sellerPartyId}&buyerPartyId=${buyerPartyId}&incoterms=${incoterms == null ? "" :incoterms}&tradingTerm=${tradingTerm}`;
-
+            url = `${this.url}/contracts/terms-and-conditions?sellerPartyId=${sellerPartyId}&incoterms=${incoterms == null ? "" :incoterms}`;
         }
+        // add parameters
+        if(buyerPartyId){
+            url += `&buyerPartyId=${buyerPartyId}`;
+		}
+        if(tradingTerm){
+			url += `&tradingTerm=${tradingTerm}`;
+		}
+
 		return this.http
 			.get(url, {headers: headers})
 			.toPromise()
