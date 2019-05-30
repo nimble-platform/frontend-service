@@ -103,14 +103,17 @@ export class NegotiationComponent implements OnInit, OnDestroy {
         // retrieve default terms and conditions and frame contract
         this.frameContractAndTermsCallStatus.submit();
         let [termsAndConditions, frameContract] = await Promise.all([
-            this.bpeService.getTermsAndConditions(
-                null,
-                buyerPartyId,
-                UBLModelUtils.getPartyId(this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty),
-                null,
-                this.bpDataService.getCatalogueLine().goodsItem.deliveryTerms.incoterms,
-                this.bpDataService.getCompanySettings().negotiationSettings.paymentTerms[0]
-            ),
+            // retrieve T&Cs
+            this.bpDataService.getCompanySettings().negotiationSettings.company.salesTerms && this.bpDataService.getCompanySettings().negotiationSettings.company.salesTerms.termOrCondition.length > 0
+                ? this.bpDataService.getCompanySettings().negotiationSettings.company.salesTerms.termOrCondition // if the seller company has T&Cs, use them
+                : this.bpeService.getTermsAndConditions( // otherwise, use the default T&Cs
+                    null,
+                    buyerPartyId,
+                    UBLModelUtils.getPartyId(this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty),
+                    null,
+                    this.bpDataService.getCatalogueLine().goodsItem.deliveryTerms.incoterms,
+                    this.bpDataService.getCompanySettings().negotiationSettings.paymentTerms[0]
+                ),
 
             // retrieve frame contract
             this.bpeService.getFrameContract(
