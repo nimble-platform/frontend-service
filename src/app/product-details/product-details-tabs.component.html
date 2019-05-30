@@ -103,6 +103,9 @@
                 <div *ngIf="wrapper.getPricePerItem() != ''" class="p-1">
                     <strong>Price: </strong> {{ wrapper.getPricePerItem() }}
                 </div>
+                <div *ngIf="wrapper.getVat() != ''" class="p-1">
+                    <strong>VAT: </strong> {{ wrapper.getVat() }}%
+                </div>
                 <div *ngIf="wrapper.getFreeSample() != ''" class="p-1">
                     <strong>Free Sample: </strong> {{ wrapper.getFreeSample() }}
                 </div>

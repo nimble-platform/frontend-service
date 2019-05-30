@@ -7,11 +7,13 @@ import {Address} from "./address";
 import {Package} from "./package";
 import {AllowanceCharge} from "./allowance-charge";
 import {Quantity} from './quantity';
+import {TaxCategory} from "./tax-category";
 
 export class ItemLocationQuantity {
-    constructor(public price: Price = new Price(),
+    constructor(public minimumQuantity: Quantity = null,
                 public applicableTerritoryAddress: Address[] = [],
+                public price: Price = new Price(),
                 public allowanceCharge: AllowanceCharge[] = [new AllowanceCharge()],
-                public minimumQuantity: Quantity = null,) {
+                public applicableTaxCategory: TaxCategory[] = [new TaxCategory()]) {
     }
 }
