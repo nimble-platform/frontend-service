@@ -80,7 +80,6 @@ export class NegotiationResponseComponent implements OnInit {
         if(!this.bpDataService.bpActivityEvent.newProcess) {
             this.processMetadata = this.bpDataService.bpActivityEvent.processHistory[0];
         }
-        this.formerProcess = this.bpDataService.bpActivityEvent.formerProcess;
 
         this.line = this.bpDataService.getCatalogueLine();
         if(this.rfq == null) {
