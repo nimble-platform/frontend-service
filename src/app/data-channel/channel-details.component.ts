@@ -234,7 +234,8 @@ export class ChannelDetailsComponent implements OnInit {
                                                  this.sellerMessage, this.buyerMessage,
                                                  this.sellerServerType, this.buyerServerType)
            .then(() => {
-               location.reload();
+               //location.reload();
+               this.router.navigate(["dashboard"]);
            })
            .catch(() => {
                alert("Error while doing a negotiation step");
@@ -251,6 +252,7 @@ export class ChannelDetailsComponent implements OnInit {
        this.dataChannelService.renegotiate(channelId, numberOfSteps)
            .then(() => {
                location.reload();
+               //this.router.navigate(["dashboard"]);
            })
            .catch(() => {
                alert("Error while doing a negotiation step");
@@ -265,8 +267,8 @@ export class ChannelDetailsComponent implements OnInit {
         this.dataChannelService.startChannel(channelId)
             .then(() => {
                 location.reload();
-                alert("Opened Channel");
                 //this.router.navigate(["dashboard"]);
+                alert("Opened Channel");
             })
             .catch(() => {
                 alert("Error while opening channel");
@@ -281,8 +283,8 @@ export class ChannelDetailsComponent implements OnInit {
         this.dataChannelService.closeChannel(channelId)
             .then(() => {
                 location.reload();
-                alert("Closed Channel");
                 //this.router.navigate(["dashboard"]);
+                alert("Closed Channel");
             })
             .catch(() => {
                 alert("Error while closing channel");
