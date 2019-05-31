@@ -196,6 +196,17 @@
                                         </div>
                                     </div>
                                     <div class="col-xs-auto align-right p-0">
+									
+									    <div *ngIf="true" class="inline" (click)="createDatachannelNegotiation(order.id)" data-placement="top" title="Create new datachannel negotiation">
+                                            <i class="fas fa-plus p-1 pointer" aria-hidden="true"></i>
+                                        </div>
+
+                                        <ng-container *ngFor="let negotiation of dataChannelNegotiations">
+										    <div *ngIf="true" class="inline" (click)="openDatachannelNegotiation(order.id)" data-placement="top" title="Open datachannel negotiation">
+                                                <i class="fas fa-arrows-alt-h p-1 pointer" aria-hidden="true"></i>
+                                            </div>
+                                        </ng-container>
+										
                                         <div data-toggle="tooltip" class="inline" (click)="changeCollaborationGroupNameStatus(i,true)" data-placement="top" title="Change group name">
                                             <i class="fa fa-pencil-alt p-1 pointer" aria-hidden="true"></i>
                                         </div>

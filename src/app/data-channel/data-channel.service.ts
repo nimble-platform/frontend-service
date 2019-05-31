@@ -116,6 +116,18 @@ export class DataChannelService {
             .catch(this.handleError);
     }
 
+    // TODO: add body here containing businessProcessID, buyerCompanyID, description and sellerCompanyID
+    createChannel(channelID: string): Promise<any> {
+        const url = `${this.url}/channel/`;
+        const token = 'Bearer ' + this.cookieService.get("bearer_token");
+        const headers = new Headers({'Authorization': token});
+        return this.http
+            .post(url, null, {headers: headers, withCredentials: true})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+    }
+
     startChannel(channelID: string): Promise<any> {
         const url = `${this.url}/channel/${channelID}/start`;
         const token = 'Bearer ' + this.cookieService.get("bearer_token");
