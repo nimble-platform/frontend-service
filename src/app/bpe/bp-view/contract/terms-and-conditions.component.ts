@@ -342,6 +342,12 @@ export class TermsAndConditionsComponent implements OnInit {
         }
 
         let defaultTradingTerm = this.originalTradingTerms.get(tradingTermId);
+
+        // if the given trading term is not included in the original clauses, return false
+        if(!defaultTradingTerm){
+            return false;
+        }
+
         if(defaultTradingTerm.value.valueQualifier == "STRING"){
             if(defaultTradingTerm.value.value[0].value != this.tradingTerms.get(tradingTermId).value.value[0].value){
                 return false;
