@@ -5,7 +5,7 @@ export class DashboardProcessInstanceDetails {
                 public lastActivityInstance:object,
                 public processInstance:object,
                 public requestDocument:object,
-                public responseDocument:object,
+                public responseDocumentStatus:object,
                 public requestMetadata:object,
                 public responseMetadata:object,
                 public requestCreatorUser:Person,
