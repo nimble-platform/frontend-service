@@ -78,7 +78,7 @@ export class EditTradingTermModalComponent implements OnInit {
                 // add the id of trading term to the end of clause content
                 clause.content[0].value += this.tradingTerm.id + " ";
                 // update the innerHTML
-                element.innerHTML = element.innerHTML.concat("<span id='"+clause.id+"-"+this.tradingTerm.id+"'><b>" + this.tradingTerm.id + "</b></span>"," ");
+                element.innerHTML = element.innerHTML.concat("<span id='"+clause.id+"-"+this.tradingTerm.id+"'><b>" + this.tradingTerm.id + " </b></span>");
                 // the span should be non-editable
                 element = document.getElementById(clause.id+"-"+this.tradingTerm.id);
                 element.contentEditable = "false";
