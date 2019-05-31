@@ -18,7 +18,6 @@ import * as d3timelines from 'd3-timelines';
 import * as d3 from 'd3';
 import * as d3time from 'd3-time';
 import * as d3timeformat from 'd3-time-format';
-import { id } from "@swimlane/ngx-charts/release/utils";
 
 
 // import { GoogleChartInterface } from 'ng2-google-charts/google-charts-interfaces';
@@ -101,7 +100,7 @@ export class DashboardThreadedComponent implements OnInit{
         await data.associatedProcessInstanceGroups.forEach(element => {
             var lastActivityTime = (new Date(element.lastActivityTime)).getTime();
             var firstActivityTime = (new Date(element.firstActivityTime)).getTime();
-            if((new Date(element.lastActivityTime).getTime()) -(new Date(element.firstActivityTime).getTime()) < 86400){
+            if((new Date(element.lastActivityTime).getTime()) -(new Date(element.firstActivityTime).getTime()) < 86400000){
                 firstActivityTime = new Date(element.firstActivityTime).getTime()-(86400000*1);
                 lastActivityTime = (new Date(element.lastActivityTime)).getTime();
             }
@@ -110,6 +109,7 @@ export class DashboardThreadedComponent implements OnInit{
             t_arr.push((new Date(element.lastActivityTime)).getTime()/1000);
             this.data.push(obj);
         });
+
 
         var specifier = "%S";
         var parsedData = await t_arr.map(function(d) {
@@ -130,6 +130,7 @@ export class DashboardThreadedComponent implements OnInit{
         var idDiv = ".cls"+data.id;
         d3.select(idDiv).append('svg').attr('width', 1000)
         .datum(this.data).call(this.chart);
+
     }
 
     clickantiExampand(data){
@@ -142,7 +143,6 @@ export class DashboardThreadedComponent implements OnInit{
             var idDiv = ".cls"+data.id + " > svg";
             d3.select(idDiv).remove();
         }
-        //d3.selectAll('svg > *').remove();
     }
 
     onChangeTab(event: any): void {
@@ -396,7 +396,6 @@ export class DashboardThreadedComponent implements OnInit{
                     query.collaborationRole, 0, 1, true, [], [], [],[]
                 ),
             ]).then(([response, archived]) => {
-                this.isProject = false;
                 this.results = new DashboardOrdersQueryResults(
                     response.collaborationGroups,
                     archived.collaborationGroups.length > 0,
@@ -491,7 +490,6 @@ export class DashboardThreadedComponent implements OnInit{
         if(!this.filterSet) {
             return true;
         }
-
         if(this.queryParameters.tab == "PROJECTS" && this.isProject == false){
             return true;
             
@@ -573,13 +571,10 @@ export class DashboardThreadedComponent implements OnInit{
     open(content,index,order) {
         this.selectedNegotiation = order;
         this.selectedNegotiationIndex = index + (this.query.page -1)*this.query.pageSize;
-        this.onPopUpPageChange();
         this.modalService.open(content, {backdropClass: 'light-blue-backdrop'}).result.then((result) => {
             this.selectedNegotiations = [];
-            this.ngOnInit();
         }, (reason) => {
             this.selectedNegotiations = [];
-            this.ngOnInit();
         });
     }
 
@@ -606,7 +601,7 @@ export class DashboardThreadedComponent implements OnInit{
 
         this.bpeService.mergeNegotations(selectedNegotation,mergeIdList)
         .then(() => {
-            this.ngOnInit();
+            location.reload();
         })
         .catch(err => {
         });
