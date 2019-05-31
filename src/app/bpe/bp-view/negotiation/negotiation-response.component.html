@@ -23,7 +23,9 @@
     </ng-container>
     <div class="col-3">{{ wrapper.rfqDeliveryPeriodString }}</div>
     <div class="col-3">
-        <quantity-input [presentationMode]="getPresentationMode()"
+        <!-- don't show any term if the customer offer was rejected -->
+        <quantity-input *ngIf="isSellerTermsVisible()"
+                        [presentationMode]="getPresentationMode()"
                         [disabled]="isDisabled()" [quantity]="wrapper.newQuotationWrapper.deliveryPeriod" quantityType="time_quantity">
         </quantity-input>
     </div>
@@ -38,8 +40,9 @@
     </ng-container>
     <div class="col-3">{{ wrapper.rfqWarrantyString }}</div>
     <div class="col-3">
-        <quantity-input [presentationMode]="getPresentationMode()"
-            [disabled]="isDisabled()" [quantity]="wrapper.newQuotationWrapper.warranty" quantityType="warranty_period">
+        <quantity-input *ngIf="isSellerTermsVisible()"
+                        [presentationMode]="getPresentationMode()"
+                        [disabled]="isDisabled()" [quantity]="wrapper.newQuotationWrapper.warranty" quantityType="warranty_period">
         </quantity-input>
     </div>
 </div>
@@ -53,8 +56,9 @@
     </ng-container>
     <div class="col-3">{{ wrapper.rfqIncoterms }}</div>
     <div class="col-3">
-        <options-input [presentationMode]="getPresentationMode()"
-            [disabled]="isDisabled()" [options]="wrapper.settings.incoterms" [(selected)]="wrapper.newQuotationWrapper.incoterms">
+        <options-input *ngIf="isSellerTermsVisible()"
+                       [presentationMode]="getPresentationMode()"
+                       [disabled]="isDisabled()" [options]="wrapper.settings.incoterms" [(selected)]="wrapper.newQuotationWrapper.incoterms">
         </options-input>
     </div>
 </div>
@@ -68,9 +72,10 @@
     </ng-container>
     <div class="col-3">{{ wrapper.rfqPaymentTerms.paymentTerm }}</div>
     <div class="col-3">
-        <options-input [presentationMode]="getPresentationMode()"
-            [disabled]="isDisabled()" [options]="wrapper.settings.paymentTerms"
-            [(selected)]="wrapper.newQuotationWrapper.paymentTermsWrapper.paymentTerm">
+        <options-input *ngIf="isSellerTermsVisible()"
+                       [presentationMode]="getPresentationMode()"
+                       [disabled]="isDisabled()" [options]="wrapper.settings.paymentTerms"
+                       [(selected)]="wrapper.newQuotationWrapper.paymentTermsWrapper.paymentTerm">
         </options-input>
     </div>
 </div>
@@ -84,8 +89,9 @@
     </ng-container>
     <div class="col-3">{{ wrapper.rfqPaymentMeans }}</div>
     <div class="col-3">
-        <options-input [presentationMode]="getPresentationMode()"
-            [disabled]="isDisabled()" [options]="wrapper.settings.paymentMeans" [(selected)]="wrapper.newQuotationWrapper.paymentMeans">
+        <options-input *ngIf="isSellerTermsVisible()"
+                       [presentationMode]="getPresentationMode()"
+                       [disabled]="isDisabled()" [options]="wrapper.settings.paymentMeans" [(selected)]="wrapper.newQuotationWrapper.paymentMeans">
         </options-input>
     </div>
 </div>
@@ -103,7 +109,7 @@
             [disabled]="isDisabled()">
         <label>Provide data monitoring service</label>
     </div>
-    <div class="col-3" *ngIf="rfq.dataMonitoringRequested && isReadOnly()">
+    <div class="col-3" *ngIf="rfq.dataMonitoringRequested && isReadOnly() && isSellerTermsVisible()">
         <label *ngIf="quotation.dataMonitoringPromised">Data monitoring service confirmed.</label>
         <label *ngIf="!quotation.dataMonitoringPromised">Data monitoring service <strong class="font-weight-500">not provided</strong>.</label>
     </div>
@@ -159,7 +165,7 @@
                 <i class="fa fa-search" aria-hidden="true"></i>
             </span>
         </ng-container>
-        <ng-container *ngIf="getPresentationMode() == 'view'">
+        <ng-container *ngIf="getPresentationMode() == 'view' && isSellerTermsVisible()">
             {{ wrapper.newQuotationWrapper.priceWrapper.totalPriceString }}
             <span *ngIf="isDiscountIconVisibleInCustomerRequestColumn()" class="space-left" data-toggle="tooltip" data-placement="top" (click)="openDiscountModal()" title="Applied Discounts/Charges" style="cursor: pointer">
                 <i class="fa fa-search" aria-hidden="true"></i>
@@ -198,26 +204,28 @@
                 </quantity-input>
             </div>
             <div class="col-3">
-                <quantity-input [rowClass]="'space-before'"
-                                [label]="'Valid for'"
+                <ng-container *ngIf="isSellerTermsVisible()">
+                    <quantity-input [rowClass]="'space-before'"
+                                    [label]="'Valid for'"
+                                    [labelClass]="'col-5'"
+                                    [valueClass]="'col-7'"
+                                    [valueSizeClass]="'col-5'"
+                                    [unitSizeClass]="'col-7'"
+                                    [definition]="'The period within which the offered conditions will be valid upon confirmation by the seller.'"
+                                    [quantity]="wrapper.newQuotationWrapper.frameContractDuration"
+                                    [quantityType]="'frame_contract_period'"
+                                    [disabled]="isReadOnly()">
+                    </quantity-input>
+                    <text-input [rowClass]="'space-before'"
+                                [rows]="1"
+                                [label]="'Until'"
                                 [labelClass]="'col-5'"
                                 [valueClass]="'col-7'"
-                                [valueSizeClass]="'col-5'"
-                                [unitSizeClass]="'col-7'"
-                                [definition]="'The period within which the offered conditions will be valid upon confirmation by the seller.'"
-                                [quantity]="wrapper.newQuotationWrapper.frameContractDuration"
-                                [quantityType]="'frame_contract_period'"
-                                [disabled]="isReadOnly()">
-                </quantity-input>
-                <text-input [rowClass]="'space-before'"
-                            [rows]="1"
-                            [label]="'Until'"
-                            [labelClass]="'col-5'"
-                            [valueClass]="'col-7'"
-                            [definition]="'The date until which the frame contract will be valid.'"
-                            [disabled]="true"
-                            [text]="getContractEndDate()">
-                </text-input>
+                                [definition]="'The date until which the frame contract will be valid.'"
+                                [disabled]="true"
+                                [text]="getContractEndDate()">
+                    </text-input>
+                </ng-container>
             </div>
         </div>
     </ng-container>
@@ -278,7 +286,8 @@
                                   [termsAndConditions]="rfq.termOrCondition"></terms-and-conditions>
         </div>
         <div class="col-3">
-            <terms-and-conditions [rfqId]="rfq.id" [buyerPartyId]="getPartyId(quotation.buyerCustomerParty.party)"
+            <terms-and-conditions *ngIf="isSellerTermsVisible()"
+                                  [rfqId]="rfq.id" [buyerPartyId]="getPartyId(quotation.buyerCustomerParty.party)"
                                   [selectedIncoterm]="wrapper.newQuotationWrapper.incoterms"
                                   [selectedTradingTerm]="wrapper.newQuotationWrapper.paymentTermsWrapper.paymentTerm"
                                   (onIncotermChanged)="wrapper.newQuotationWrapper.incoterms = $event"
@@ -357,6 +366,8 @@
 
     <div class="row actions-row" *ngIf="userRole === 'buyer' && !readonly">
         <div class="col-5 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+        <!-- the bottom div shifts the buttons below to the right in case the quotation is rejected -->
+        <div *ngIf="quotation.documentStatusCode.name == 'Rejected'" class="col-2"></div>
         <div class="col-2">
             <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
         </div>
@@ -365,7 +376,7 @@
                 Request new Quotation
             </button>
         </div>
-        <div class="col-2">
+        <div *ngIf="quotation.documentStatusCode.name != 'Rejected'" class="col-2">
             <button class="btn btn-primary action" [disabled]="isLoading()" (click)="onAcceptAndOrder()">
                 Accept & Order
             </button>

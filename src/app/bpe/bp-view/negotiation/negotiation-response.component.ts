@@ -199,6 +199,10 @@ export class NegotiationResponseComponent implements OnInit {
         return this.isFrameContractDurationValid();
     }
 
+    isSellerTermsVisible(): boolean {
+        return !(this.quotation.documentStatusCode.name == 'Rejected' && this.isReadOnly());
+    }
+
     /*
      * Internal Methods
      */
