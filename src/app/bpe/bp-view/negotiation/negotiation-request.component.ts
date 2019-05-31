@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from "@angular/core";
+import {Component, Input, OnInit, ViewChild} from "@angular/core";
 import {CatalogueLine} from "../../../catalogue/model/publish/catalogue-line";
 import {BPDataService} from "../bp-data-service";
 import {CURRENCIES} from "../../../catalogue/model/constants";
@@ -10,14 +10,14 @@ import {UBLModelUtils} from "../../../catalogue/model/ubl-model-utils";
 import {BPEService} from "../../bpe.service";
 import {UserService} from "../../../user-mgmt/user.service";
 import {CookieService} from "ng2-cookies";
-import {ActivatedRoute, Router} from "@angular/router";
+import {Router} from "@angular/router";
 import {CustomerParty} from "../../../catalogue/model/publish/customer-party";
 import {SupplierParty} from "../../../catalogue/model/publish/supplier-party";
 import {ProcessVariables} from "../../model/process-variables";
 import {ModelUtils} from "../../model/model-utils";
 import {ProcessInstanceInputMessage} from "../../model/process-instance-input-message";
 import {NegotiationModelWrapper} from "./negotiation-model-wrapper";
-import {copy, getMaximumQuantityForPrice, getStepForPrice, isValidPrice} from "../../../common/utils";
+import {copy, durationToString, getMaximumQuantityForPrice, getStepForPrice, isValidPrice} from "../../../common/utils";
 import {PeriodRange} from "../../../user-mgmt/model/period-range";
 import {Option} from "../../../common/options-input.component";
 import {addressToString} from "../../../user-mgmt/utils";
@@ -52,9 +52,12 @@ export class NegotiationRequestComponent implements OnInit {
     rfq: RequestForQuotation;
     rfqLine: RequestForQuotationLine;
     wrapper: NegotiationModelWrapper;
-    frameContract: DigitalAgreement = new DigitalAgreement();
-    frameContractDuration: Quantity = new Quantity();
-    initialFrameContractDuration: Quantity = new Quantity(); // keeps the initial frame contract duration to be able to compare the latest value with the initial one
+    @Input() frameContract: DigitalAgreement = new DigitalAgreement();
+    @Input() frameContractQuotation: Quotation;
+    @Input() lastOfferQuotation: Quotation;
+    @Input() primaryTermsSource: 'product_defaults' | 'frame_contract' | 'last_offer' = 'product_defaults';
+    @Input() defaultTermsAndConditions: Clause[];
+    frameContractDuration: Quantity = new Quantity(); // we have a dedicated variable to keep this in order not to create an empty trading term in the rfq
     frameContractDurationUnits: string[];
     manufacturersTermsExistence: any = {'product_defaults': true}; // a (term source -> boolean) map indicating the existence of term sources
     sellerId:string = null;
@@ -81,11 +84,6 @@ export class NegotiationRequestComponent implements OnInit {
     callStatus: CallStatus = new CallStatus();
     pageInitCallStatus: CallStatus = new CallStatus();
 
-    /**
-     * URL parameters
-     */
-    termsDropdownValue: 'product_defaults' | 'frame_contract' | 'last_offer' = 'product_defaults';
-
     @ViewChild(DiscountModalComponent)
     private discountModal: DiscountModalComponent;
 
@@ -96,19 +94,11 @@ export class NegotiationRequestComponent implements OnInit {
                 private cookieService: CookieService,
                 private location: Location,
                 private documentService: DocumentService,
-                private router: Router,
-                private route: ActivatedRoute) {
+                private router: Router) {
 
     }
 
     ngOnInit() {
-        this.route.queryParams.subscribe(params => {
-            let termsSource = params["termsSource"];
-            if(termsSource != null) {
-                this.termsDropdownValue = termsSource;
-            }
-        });
-
         // get copy of ThreadEventMetadata of the current business process
         this.setProcessMetadataFields(this.bpDataService.bpActivityEvent.processHistory);
 
@@ -121,132 +111,62 @@ export class NegotiationRequestComponent implements OnInit {
         this.sellerId = UBLModelUtils.getPartyId(this.catalogueLine.goodsItem.item.manufacturerParty);
         this.buyerId = this.cookieService.get("company_id");
 
-        let frameContractDuration = this.getFrameContractDurationFromRfq();
+        let frameContractDuration = this.getFrameContractDurationFromRfq(this.rfq);
         // if the rfq frame contract duration is not null, we are rendering the negotiation process in which the frame contract duration is also negotiated
-        let frameContractPromise: Promise<DigitalAgreement> = Promise.resolve(null);
         if(frameContractDuration != null) {
             this.frameContractDuration = frameContractDuration;
-            this.initialFrameContractDuration = copy(this.frameContractDuration);
 
-            // check whether there is an existing frame contract created in another negotiation process
-        } else {
-            frameContractPromise = this.bpeService.getFrameContract(
-                UBLModelUtils.getPartyId(this.catalogueLine.goodsItem.item.manufacturerParty),
-                this.cookieService.get("company_id"),
-                this.rfq.requestForQuotationLine[0].lineItem.item.manufacturersItemIdentification.id);
+        } else if(this.frameContract) {
+            // initialize frame contract variables
+            this.frameContractAvailable = true;
+            this.manufacturersTermsExistence.frame_contract = true;
         }
 
-        // execute the promises and initialize wrapper
-        // first check the existence a frame contract
-        this.pageInitCallStatus.submit();
-        this.fetchInformationForWrapper(frameContractPromise).then(response => {
-            let frameContract = response.frameContract;
-            let lastOfferQuotation = response.lastOfferQuotation;
-            let frameContractQuotation = response.frameContractQuotation;
+        // construct wrapper with the retrieved documents
+        this.wrapper = new NegotiationModelWrapper(
+            this.catalogueLine,
+            this.rfq,
+            null,
+            this.frameContractQuotation,
+            this.lastOfferQuotation,
+            this.bpDataService.getCompanySettings().negotiationSettings);
 
-            // construct wrapper with the retrieved documents
-            this.wrapper = new NegotiationModelWrapper(
-                this.catalogueLine,
-                this.rfq,
-                null,
-                frameContractQuotation,
-                lastOfferQuotation,
-                this.bpDataService.getCompanySettings().negotiationSettings);
+        // terms select box value should be set before computing the negotiation options
+        if (this.lastOfferQuotation) {
+            this.manufacturersTermsExistence.last_offer = true;
+        }
+        // if a new business process is created load initial terms based on the selected terms source
+        // ignore negotiation options is true as they are not calculated yet
+        // rfq is provided with values in onTermsSourceChange. this is done after initializing the wrapper,
+        // because this method requires the wrapper
+        if(!this.processMetadata) {
+            this.onTermsSourceChange(this.primaryTermsSource, true);
+        }
+        this.wrapper.initialImmutableRfq.termOrCondition = copy(this.defaultTermsAndConditions);
 
-            // initialize frame contract variables
-            if(frameContract) {
-                this.frameContract = response.frameContract;
-                this.frameContractAvailable = true;
-                this.frameContractDuration = this.frameContract.digitalAgreementTerms.validityPeriod.durationMeasure;
-            }
+        // compute negotiation options for selecting the negotiation ticks automatically
+        this.computeRfqNegotiationOptions(this.rfq);
+        // if the line does not have a price enable the price negotiation
+        if(!this.lineHasPrice) {
+            this.rfq.negotiationOptions.price = true;
+        }
 
-            // terms select box value should be set before computing the negotiation options
-            if (this.manufacturersTermsExistence.last_offer) {
-                this.termsDropdownValue = 'last_offer';
-            } else if(this.manufacturersTermsExistence.frame_contract) {
-                this.termsDropdownValue = 'frame_contract';
-            }
+        // load the terms based on the availability of the terms
+        this.onTermsSourceChange(this.primaryTermsSource);
 
-            // if a new business process is created load initial terms based on the selected terms source
-            if(!this.processMetadata) {
-                this.loadTerms(this.termsDropdownValue, true);
-            }
+        // update the price based on the updated conditions
+        // this is required to initialize the line discount wrapper with the terms from rfq
+        this.onPriceConditionsChange();
 
-            // compute negotiation options for selecting the negotiation ticks automatically
-            this.computeRfqNegotiationOptions(this.rfq);
-            // if the line does not have a price enable the price negotiation
-            if(!this.lineHasPrice) {
-                this.rfq.negotiationOptions.price = true;
-            }
-
-            // load the terms based on the availability of the terms
-            this.loadTerms(this.termsDropdownValue);
-
-            // check terms and conditions
-            let defaultTermsPromise: Promise<Clause[]> = Promise.resolve(null);
-            if(this.rfq.termOrCondition == null || this.rfq.termOrCondition.length == 0) {
-                defaultTermsPromise = this.bpeService.getTermsAndConditions(
-                    null,
-                    this.buyerId,
-                    this.sellerId,
-                    null,
-                    this.wrapper.rfqIncoterms,
-                    this.wrapper.rfqPaymentTerms.paymentTerm);
-            }
-            defaultTermsPromise.then(clauses => {
-                if(clauses != null) {
-                    this.wrapper.rfq.termOrCondition = clauses;
-                    // here we are still initializing the rfq and that's why we are modifying the immutable rfq
-                    this.wrapper.initialImmutableRfq.termOrCondition = copy(clauses);
-                }
-            });
-
-            // update the price based on the updated conditions
-            this.onPriceConditionsChange();
-
-            // set the flag for showing the counter terms if the presen
-            if(this.processMetadata != null) {
-                this.showCounterOfferTerms = true;
-            }
-
-            this.pageInitCallStatus.callback(null, true);
-        });
+        // set the flag for showing the counter terms if the presen
+        if(this.processMetadata != null) {
+            this.showCounterOfferTerms = true;
+        }
 
         // get frame contract units
         this.unitService.getCachedUnitList(frameContractDurationUnitListId).then(list => {
            this.frameContractDurationUnits = list;
         });
-    }
-
-    private async fetchInformationForWrapper(frameContractPromise: Promise<DigitalAgreement>): Promise<any> {
-        let response = {};
-        let frameContract = null;
-        try {
-            frameContract = await frameContractPromise;
-        } catch(e) {
-            // do nothing
-        }
-        let responseDocument: Promise<any> = Promise.resolve(null);
-        if(this.manufacturersTermsExistence.last_offer) {
-            responseDocument = this.documentService.getResponseDocument(this.processMetadataHistory[0].activityVariables);
-        }
-
-        let frameContractQuotationPromise: Promise<any> = Promise.resolve(null);
-        if(frameContract != null) {
-            response['frameContract'] = frameContract;
-            this.manufacturersTermsExistence.frame_contract = true;
-
-            // load the quotation associated to the frame contract
-            frameContractQuotationPromise = this.documentService.getDocumentJsonContent(frameContract.quotationReference.id);
-        }
-
-        // retrieve the corresponding documents for the frame contract and last offer
-        let lastOffer: Quotation = await responseDocument;
-        response['lastOfferQuotation'] = lastOffer;
-        let frameContractQuotation: Quotation = await frameContractQuotationPromise;
-        response['frameContractQuotation'] = frameContractQuotation;
-
-        return Promise.resolve(response);
     }
 
     private setProcessMetadataFields(processHistory: ThreadEventMetadata[]): void {
@@ -264,17 +184,18 @@ export class NegotiationRequestComponent implements OnInit {
         if(!rfq.negotiationOptions) {
             rfq.negotiationOptions = new NegotiationOptions();
         }
-        if(this.termsDropdownValue == 'product_defaults') {
+        if(this.primaryTermsSource == 'product_defaults') {
             rfq.negotiationOptions.deliveryPeriod = this.wrapper.lineDeliveryPeriodString !== this.wrapper.rfqDeliveryPeriodString;
             rfq.negotiationOptions.incoterms = this.wrapper.lineIncoterms !== this.wrapper.rfqIncoterms;
             rfq.negotiationOptions.paymentMeans = this.wrapper.linePaymentMeans !== this.wrapper.rfqPaymentMeans;
             rfq.negotiationOptions.paymentTerms = this.wrapper.linePaymentTerms !== this.wrapper.rfqPaymentTermsToString;
             rfq.negotiationOptions.price = this.wrapper.lineDiscountPriceWrapper.pricePerItem !== this.wrapper.rfqDiscountPriceWrapper.itemPrice.value;
             rfq.negotiationOptions.warranty = this.wrapper.lineWarrantyString !== this.wrapper.rfqWarrantyString;
+            rfq.negotiationOptions.termsAndConditions = UBLModelUtils.areTermsAndConditionListsDifferent(this.defaultTermsAndConditions, this.wrapper.rfq.termOrCondition);
 
         } else {
             let quotationWrapper = this.wrapper.frameContractQuotationWrapper;
-            if(this.termsDropdownValue == 'last_offer') {
+            if(this.primaryTermsSource == 'last_offer') {
                 quotationWrapper = this.wrapper.lastOfferQuotationWrapper;
             }
             rfq.negotiationOptions.deliveryPeriod = quotationWrapper.deliveryPeriodString !== this.wrapper.rfqDeliveryPeriodString;
@@ -283,6 +204,7 @@ export class NegotiationRequestComponent implements OnInit {
             rfq.negotiationOptions.paymentTerms = quotationWrapper.paymentTermsWrapper.paymentTerm !== this.wrapper.rfqPaymentTermsToString;
             rfq.negotiationOptions.price = quotationWrapper.priceWrapper.pricePerItem !== this.wrapper.rfqDiscountPriceWrapper.itemPrice.value;
             rfq.negotiationOptions.warranty = quotationWrapper.warrantyString !== this.wrapper.rfqWarrantyString;
+            rfq.negotiationOptions.termsAndConditions = UBLModelUtils.areTermsAndConditionListsDifferent(quotationWrapper.quotation.termOrCondition, this.wrapper.rfq.termOrCondition);
         }
     }
 
@@ -387,8 +309,8 @@ export class NegotiationRequestComponent implements OnInit {
         }), 0);
     }
 
-    loadTerms(termSource: 'product_defaults' | 'frame_contract' | 'last_offer', ignoreNegotiationOptions: boolean = false): void {
-        this.termsDropdownValue = termSource;
+    onTermsSourceChange(termSource: 'product_defaults' | 'frame_contract' | 'last_offer', ignoreNegotiationOptions: boolean = false): void {
+        this.primaryTermsSource = termSource;
 
         if(termSource == 'frame_contract' || termSource == 'last_offer') {
             let quotationWrapper = this.wrapper.frameContractQuotationWrapper;
@@ -415,7 +337,12 @@ export class NegotiationRequestComponent implements OnInit {
                 this.wrapper.rfqDiscountPriceWrapper.itemPrice.value = quotationWrapper.priceWrapper.pricePerItem;
                 this.wrapper.rfqDiscountPriceWrapper.itemPrice.currency = quotationWrapper.priceWrapper.currency;
             }
-            this.rfq.termOrCondition = copy(quotationWrapper.quotation.termOrCondition);
+            if(!this.rfq.negotiationOptions.frameContractDuration || ignoreNegotiationOptions) {
+                this.frameContractDuration = copy(quotationWrapper.frameContractDuration);
+            }
+            if(!this.rfq.negotiationOptions.termsAndConditions || ignoreNegotiationOptions) {
+                this.rfq.termOrCondition = copy(quotationWrapper.quotation.termOrCondition);
+            }
 
         } else if(termSource == 'product_defaults') {
             if(!this.rfq.negotiationOptions.deliveryPeriod || ignoreNegotiationOptions) {
@@ -438,6 +365,9 @@ export class NegotiationRequestComponent implements OnInit {
                 this.wrapper.rfqDiscountPriceWrapper.itemPrice.value = this.wrapper.lineDiscountPriceWrapper.itemPrice.value;
                 this.wrapper.rfqDiscountPriceWrapper.itemPrice.currency = this.wrapper.lineDiscountPriceWrapper.itemPrice.currency;
             }
+            if(!this.rfq.negotiationOptions.termsAndConditions || ignoreNegotiationOptions) {
+                this.rfq.termOrCondition = copy(this.defaultTermsAndConditions);
+            }
         }
     }
 
@@ -452,7 +382,7 @@ export class NegotiationRequestComponent implements OnInit {
 
         // update the rfq price only if the price is not being negotiated and the default product terms are presented
         // it does not make sense to update price based on the discounts when the terms of frame contract or last offer terms are presented
-        if(!this.rfq.negotiationOptions.price && this.termsDropdownValue == 'product_defaults') {
+        if(!this.rfq.negotiationOptions.price && this.primaryTermsSource == 'product_defaults') {
             this.wrapper.rfqDiscountPriceWrapper.itemPrice.value = this.wrapper.lineDiscountPriceWrapper.pricePerItem;
         }
     }
@@ -471,28 +401,33 @@ export class NegotiationRequestComponent implements OnInit {
         let frameContractDurationDiffers: boolean = false; // this is valid only in the second and subsequent steps of a negotiation process
         let termsAndConditionsDiffer: boolean;
 
-        if(this.termsDropdownValue == 'last_offer' || this.termsDropdownValue == 'frame_contract') {
+        if(this.primaryTermsSource == 'last_offer' || this.primaryTermsSource == 'frame_contract') {
             let quotationWrapper = this.wrapper.frameContractQuotationWrapper;
-            if(this.termsDropdownValue == 'last_offer') {
+            if(this.primaryTermsSource == 'last_offer') {
                 quotationWrapper = this.wrapper.lastOfferQuotationWrapper;
             }
 
-            priceDiffers = this.wrapper.rfqTotalPriceString != quotationWrapper.priceWrapper.totalPriceString;
+            priceDiffers = this.wrapper.rfqPricePerItemString != quotationWrapper.priceWrapper.itemPrice.pricePerItemString;
             deliveryPeriodDiffers = this.wrapper.rfqDeliveryPeriodString != quotationWrapper.deliveryPeriodString;
             warrantyDiffers = this.wrapper.rfqWarrantyString != quotationWrapper.warrantyString;
             incotermDiffers = this.wrapper.rfqIncoterms != quotationWrapper.incoterms;
             paymentTermDiffers = this.wrapper.rfqPaymentTerms.paymentTerm != quotationWrapper.paymentTermsWrapper.paymentTerm;
             paymentMeansDiffers = this.wrapper.rfqPaymentMeans != quotationWrapper.paymentMeans;
-            frameContractDurationDiffers = this.wrapper.rfqFrameContractDurationString != quotationWrapper.rfqFrameContractDurationString;
+            frameContractDurationDiffers = this.wrapper.rfq.negotiationOptions.frameContractDuration &&
+                durationToString(this.frameContractDuration) != quotationWrapper.rfqFrameContractDurationString;
             termsAndConditionsDiffer = UBLModelUtils.areTermsAndConditionListsDifferent(quotationWrapper.quotation.termOrCondition, this.rfq.termOrCondition);
 
         } else {
-            priceDiffers = this.wrapper.rfqTotalPriceString != this.wrapper.lineDiscountPriceWrapper.totalPriceString;
+            priceDiffers = this.wrapper.rfqPricePerItemString != this.wrapper.lineDiscountPriceWrapper.pricePerItemString;
             deliveryPeriodDiffers = this.wrapper.rfqDeliveryPeriodString != this.wrapper.lineDeliveryPeriodString;
             warrantyDiffers = this.wrapper.rfqWarrantyString != this.wrapper.lineWarrantyString;
             incotermDiffers = this.wrapper.rfqIncoterms != this.wrapper.lineIncoterms;
             paymentTermDiffers = this.wrapper.rfqPaymentTerms.paymentTerm != this.wrapper.linePaymentTerms;
             paymentMeansDiffers = this.wrapper.rfqPaymentMeans != this.wrapper.linePaymentMeans;
+
+            // although the product default terms are selected, the following two conditions are calculated using the rfq itself
+            frameContractDurationDiffers = this.wrapper.rfq.negotiationOptions.frameContractDuration &&
+                !UBLModelUtils.areQuantitiesEqual(this.frameContractDuration, this.getFrameContractDurationFromRfq(this.wrapper.initialImmutableRfq));
             termsAndConditionsDiffer = UBLModelUtils.areTermsAndConditionListsDifferent(this.wrapper.initialImmutableRfq.termOrCondition, this.rfq.termOrCondition);
         }
 
@@ -505,15 +440,6 @@ export class NegotiationRequestComponent implements OnInit {
             frameContractDurationDiffers ||
             this.rfq.dataMonitoringRequested ||
             termsAndConditionsDiffer;
-
-        // return this.rfq.negotiationOptions.price
-        //     || this.rfq.negotiationOptions.deliveryPeriod
-        //     || this.rfq.negotiationOptions.warranty
-        //     || (this.rfq.negotiationOptions.incoterms /*&& this.wrapper.lineIncoterms != this.wrapper.rfqIncoterms*/)
-        //     || (this.rfq.negotiationOptions.paymentTerms /*&& this.wrapper.linePaymentTerms != this.wrapper.rfqPaymentTerms.paymentTerm*/)
-        //     || (this.rfq.negotiationOptions.paymentMeans /*&& this.wrapper.linePaymentMeans != this.wrapper.rfqPaymentMeans*/)
-        //     || this.rfq.dataMonitoringRequested
-        //     || (this.rfq.negotiationOptions.frameContractDuration /*&& !UBLModelUtils.areQuantitiesEqual(this.initialFrameContractDuration, this.wrapper.rfqFrameContractDuration)*/);
     }
 
     get lineHasPrice(): boolean {
@@ -528,6 +454,61 @@ export class NegotiationRequestComponent implements OnInit {
         this.rfq.requestForQuotationLine[0].lineItem.quantity.value = quantity;
     }
 
+    get negotiateDeliveryPeriod(): boolean {
+        return this.rfq.negotiationOptions.deliveryPeriod;
+    }
+
+    set negotiateDeliveryPeriod(negotiate: boolean) {
+        this.rfq.negotiationOptions.deliveryPeriod = negotiate;
+        if(!negotiate) {
+            this.onTermsSourceChange(this.primaryTermsSource);
+        }
+    }
+
+    get negotiateWarranty(): boolean {
+        return this.rfq.negotiationOptions.warranty;
+    }
+
+    set negotiateWarranty(negotiate: boolean) {
+        this.rfq.negotiationOptions.warranty = negotiate;
+        if(!negotiate) {
+            this.onTermsSourceChange(this.primaryTermsSource);
+        }
+    }
+
+    get negotiateIncoterm(): boolean {
+        return this.rfq.negotiationOptions.incoterms;
+    }
+
+    set negotiateIncoterm(negotiate: boolean) {
+        this.rfq.negotiationOptions.incoterms = negotiate;
+        if(!negotiate) {
+            this.onTermsSourceChange(this.primaryTermsSource);
+        }
+    }
+
+    get negotiatePaymentTerm(): boolean {
+        return this.rfq.negotiationOptions.paymentTerms;
+    }
+
+    set negotiatePaymentTerm(negotiate: boolean) {
+        this.rfq.negotiationOptions.paymentTerms = negotiate;
+        if(!negotiate) {
+            this.onTermsSourceChange(this.primaryTermsSource);
+        }
+    }
+
+    get negotiatePaymentMean(): boolean {
+        return this.rfq.negotiationOptions.paymentMeans;
+    }
+
+    set negotiatePaymentMean(negotiate: boolean) {
+        this.rfq.negotiationOptions.paymentMeans = negotiate;
+        if(!negotiate) {
+            this.onTermsSourceChange(this.primaryTermsSource);
+        }
+    }
+
     get negotiatePrice(): boolean {
         return this.rfq.negotiationOptions.price;
     }
@@ -535,18 +516,29 @@ export class NegotiationRequestComponent implements OnInit {
     set negotiatePrice(negotiate: boolean) {
         this.rfq.negotiationOptions.price = negotiate;
         if(!negotiate) {
-            if(this.termsDropdownValue == 'product_defaults') {
-                this.wrapper.rfqDiscountPriceWrapper.itemPrice.value = this.wrapper.lineDiscountPriceWrapper.itemPrice.value;
-                this.wrapper.rfqDiscountPriceWrapper.itemPrice.currency = this.wrapper.lineDiscountPriceWrapper.itemPrice.currency;
+            this.onTermsSourceChange(this.primaryTermsSource);
+        }
+    }
 
-            } else if(this.termsDropdownValue == 'frame_contract') {
-                this.wrapper.rfqDiscountPriceWrapper.itemPrice.value = this.wrapper.frameContractQuotationWrapper.priceWrapper.pricePerItem;
-                this.wrapper.rfqDiscountPriceWrapper.itemPrice.currency = this.wrapper.frameContractQuotationWrapper.priceWrapper.currency;
+    get negotiateFrameContractDuration(): boolean {
+        return this.rfq.negotiationOptions.frameContractDuration;
+    }
 
-            } else {
-                this.wrapper.rfqDiscountPriceWrapper.itemPrice.value = this.wrapper.lastOfferQuotationWrapper.priceWrapper.pricePerItem;
-                this.wrapper.rfqDiscountPriceWrapper.itemPrice.currency = this.wrapper.lastOfferQuotationWrapper.priceWrapper.currency;
-            }
+    set negotiateFrameContractDuration(negotiate: boolean) {
+        this.rfq.negotiationOptions.frameContractDuration = negotiate;
+        if(!negotiate) {
+            this.onTermsSourceChange(this.primaryTermsSource);
+        }
+    }
+
+    get negotiateTermsAndConditions(): boolean {
+        return this.rfq.negotiationOptions.termsAndConditions;
+    }
+
+    set negotiateTermsAndConditions(negotiate: boolean) {
+        this.rfq.negotiationOptions.termsAndConditions = negotiate;
+        if(!negotiate) {
+            this.onTermsSourceChange(this.primaryTermsSource);
         }
     }
 
@@ -647,7 +639,7 @@ export class NegotiationRequestComponent implements OnInit {
     }
 
     isFrameContractVisible(): boolean {
-        return !this.isReadOnly() || this.frameContractAvailable || this.wrapper.rfqFrameContractDuration != null;
+        return !this.frameContractAvailable || this.wrapper.rfqFrameContractDuration != null;
     }
 
     getDeliveryPeriodText(): string {
@@ -716,6 +708,19 @@ export class NegotiationRequestComponent implements OnInit {
         return this.manufacturersTermsExistence.frame_contract == true || this.manufacturersTermsExistence.last_offer == true;
     }
 
+    getTermAndConditions(): Clause[] {
+        if(this.primaryTermsSource == 'product_defaults') {
+            console.log("pd");
+            return this.wrapper.initialImmutableRfq.termOrCondition;
+        } else if(this.primaryTermsSource == 'frame_contract') {
+            console.log("fc");
+            return this.wrapper.frameContractQuotation.termOrCondition;
+        } else {
+            console.log("lo");
+            return this.wrapper.lastOfferQuotation.termOrCondition;
+        }
+    }
+
     /**
      * Internal methods
      */
@@ -744,8 +749,8 @@ export class NegotiationRequestComponent implements OnInit {
         return value >= range.start && value <= range.end;
     }
 
-    private getFrameContractDurationFromRfq(): Quantity {
-        let tradingTerm: TradingTerm = this.rfq.tradingTerms.find(tradingTerm => tradingTerm.id == "FRAME_CONTRACT_DURATION");
+    private getFrameContractDurationFromRfq(rfq: RequestForQuotation): Quantity {
+        let tradingTerm: TradingTerm = rfq.tradingTerms.find(tradingTerm => tradingTerm.id == "FRAME_CONTRACT_DURATION");
         if(tradingTerm != null) {
             return tradingTerm.value.valueQuantity[0];
         }

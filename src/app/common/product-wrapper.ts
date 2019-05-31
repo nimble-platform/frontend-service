@@ -146,6 +146,10 @@ export class ProductWrapper {
         return this.priceWrapper.pricePerItemString;
     }
 
+    getVat(): string {
+        return this.line.requiredItemLocationQuantity.applicableTaxCategory[0] ? this.line.requiredItemLocationQuantity.applicableTaxCategory[0].percent + '' : '';
+    }
+
     getPropertyName(property: ItemProperty): string {
         return sanitizePropertyName(selectName(property));
     }

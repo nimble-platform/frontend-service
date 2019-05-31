@@ -85,7 +85,7 @@ export class PlatformAnalyticsComponent implements OnInit {
 
     private getCatTree(): void {
 		this.categoriesCallStatus.submit();
-		this.simpleSearchService.get("*",[this.product_cat_mix],[""],1,"","")
+		this.simpleSearchService.get("*",[this.product_cat_mix],[""],1,"","", myGlobals.config.defaultSearchIndex)
 		.then(res => {
 			// if res.facets are null, it means that there is no product in the index
 			if (res.facets == null || Object.keys(res.facets).indexOf(this.product_cat_mix) == -1) {

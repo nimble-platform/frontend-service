@@ -23,8 +23,8 @@ export class TermsAndConditionsComponent implements OnInit {
     @Input() readOnly:boolean = false;
     @Input() rfqId:string = null;
     @Input() documentType:string; // "order", "rfq", "quotation";
-    @Input() originalTermAndConditionClauses:Clause[] = null; // original terms and conditions of the object
-    @Input() termsAndConditions:Clause[] = []; // updated terms and conditions of the object
+    _originalTermAndConditionClauses:Clause[] = null; // original terms and conditions of the object
+    _termsAndConditions:Clause[] = []; // updated terms and conditions of the object
     @Input() needATitle:boolean = true; // whether we need to add a title before displaying terms and conditions
 
     // Outputs
@@ -40,6 +40,7 @@ export class TermsAndConditionsComponent implements OnInit {
     tradingTerms:Map<string,TradingTerm> = null;
     // used to store original values of parameters
     originalTradingTerms:Map<string,TradingTerm> = null;
+    randomComponentId: string = '';
 
     // options
     INCOTERMS: string[] = [];
@@ -50,8 +51,6 @@ export class TermsAndConditionsComponent implements OnInit {
     // selected values for Incoterm and Trading Term (e.g. Payment Terms)
     _selectedIncoterm: string = null;
     _selectedTradingTerm: string = null;
-    _isIncotermsNegotiating:boolean = true;
-    _isTradingTermsNegotiating: boolean = true;
 
     constructor(public bpeService: BPEService,
                 public userService: UserService,
@@ -62,12 +61,16 @@ export class TermsAndConditionsComponent implements OnInit {
     ngOnInit(): void {
         this.callStatus.submit();
 
+        let array = new Uint32Array(1);
+        window.crypto.getRandomValues(array);
+        this.randomComponentId = "" + array[0];
+
         Promise.all([
             this.userService.getSettingsForParty(this.sellerPartyId),
             this.unitService.getCachedUnitList(deliveryPeriodUnitListId),
-            this.unitService.getCachedUnitList(warrantyPeriodUnitListId),
-            this.originalTermAndConditionClauses ? Promise.resolve(null) : this.bpeService.getTermsAndConditions(this.orderId,this.buyerPartyId, this.sellerPartyId, this.rfqId, this.selectedIncoterm, this.selectedTradingTerm),
-        ]).then(([sellerPartySettings, deliveryPeriodUnits, warrantyPeriodUnits,termsAndConditions]) => {
+            this.unitService.getCachedUnitList(warrantyPeriodUnitListId)
+
+        ]).then(([sellerPartySettings, deliveryPeriodUnits, warrantyPeriodUnits]) => {
 
             // populate available incoterms
             this.INCOTERMS = sellerPartySettings.negotiationSettings.incoterms;
@@ -75,48 +78,8 @@ export class TermsAndConditionsComponent implements OnInit {
             this.PAYMENT_TERMS = sellerPartySettings.negotiationSettings.paymentTerms;
             // populate available units
             this.UNITS = deliveryPeriodUnits.concat(warrantyPeriodUnits);
-            // since we do not have an original terms and conditions for this object, we retrieve it from the server
-            if(termsAndConditions){
-                // set default term and condition clauses
-                this.originalTermAndConditionClauses = termsAndConditions;
-            }
 
-            // sort terms and conditions to get the correct order
-            this.originalTermAndConditionClauses.sort((clause1, clause2) => {
-                let order1 = Number(clause1.id.substring(0,clause1.id.indexOf("_")));
-                let order2 = Number(clause2.id.substring(0,clause2.id.indexOf("_")));
-                return order1 - order2;
-            });
 
-            // create terms and conditions if we do not have any
-            if(this.termsAndConditions.length == 0){
-                for(let clause of this.originalTermAndConditionClauses){
-                    let newClause:Clause = JSON.parse(JSON.stringify(clause));
-                    this.termsAndConditions.push(newClause);
-                }
-            }
-
-            // create valuesOfParameters map
-            if(!this.tradingTerms){
-                this.tradingTerms = new Map<string, TradingTerm>();
-                // create tradingTerms map using the terms and conditions
-                for(let clause of this.termsAndConditions){
-                    for(let tradingTerm of clause.tradingTerms){
-                        this.tradingTerms.set(tradingTerm.id,tradingTerm);
-                    }
-                }
-            }
-
-            // create original trading terms map
-            if(!this.originalTradingTerms){
-                this.originalTradingTerms = new Map<string, TradingTerm>();
-                // create tradingTerms map using the original terms and conditions
-                for(let clause of this.originalTermAndConditionClauses){
-                    for(let tradingTerm of clause.tradingTerms){
-                        this.originalTradingTerms.set(tradingTerm.id,tradingTerm);
-                    }
-                }
-            }
 
             // if there is no need to have a title, then display the preview
             if(!this.needATitle){
@@ -142,21 +105,21 @@ export class TermsAndConditionsComponent implements OnInit {
 
     setSectionText(index:number){
         if(this.readOnly){
-            let originalClause = this.originalTermAndConditionClauses[index];
             let element = document.getElementById(this.generateIdForClause(index));
 
-            let clause = this.getClause(originalClause.id);
+            let clause = this._termsAndConditions[index];
 
             let text = clause.content[0].value
 
             for(let tradingTerm of clause.tradingTerms){
+                let id = tradingTerm.id;
                 let spanText = "";
                 if(this.isOriginalTradingTerm(tradingTerm.id)){
-                    spanText = "<b><span>";
+                    spanText = "<b><span id='"+this.generateIdForParameter(id)+"'>";
 
                 }
                 else{
-                    spanText = "<b><span style='color: red'>";
+                    spanText ="<b><span style='color: red' id='"+this.generateIdForParameter(id)+"'>";
                 }
                 if(tradingTerm.value.valueQualifier == "QUANTITY"){
                     let defaultValue = tradingTerm.value.valueQuantity[0].value;
@@ -178,7 +141,7 @@ export class TermsAndConditionsComponent implements OnInit {
 
         } else{
             let element = document.getElementById(this.generateIdForClause(index));
-            let clause = this.originalTermAndConditionClauses[index];
+            let clause = this._termsAndConditions[index];
             let text = clause.content[0].value;
 
             // replace placeholders with spans
@@ -266,19 +229,11 @@ export class TermsAndConditionsComponent implements OnInit {
         }
 
         // emit the new value if necessary
-        if(id == "$incoterms_id" && this.isIncotermsNegotiating){
+        if(id == "$incoterms_id"){
             this.onIncotermChanged.emit(value);
         }
-        else if(id == "$payment_id" && this.isTradingTermsNegotiating){
+        else if(id == "$payment_id"){
             this.onTradingTermChanged.emit(value);
-        }
-    }
-
-    private getClause(clauseId:string){
-        for(let clause of this.termsAndConditions){
-            if(clause.id == clauseId){
-                return clause;
-            }
         }
     }
 
@@ -289,7 +244,7 @@ export class TermsAndConditionsComponent implements OnInit {
     }
 
     generateIdForClause(clauseId:number){
-        return this.documentType + "-" + clauseId;
+        return this.randomComponentId + "-" + this.documentType + "-" + clauseId;
     }
 
     generateIdForParameter(parameter:string){
@@ -305,38 +260,7 @@ export class TermsAndConditionsComponent implements OnInit {
         this._selectedIncoterm = incoterm;
 
         let id = "$incoterms_id";
-
-        if(this._selectedIncoterm != "" && this._isIncotermsNegotiating){
-            this.updateTermNegotiating(id, this._selectedIncoterm);
-        }
-    }
-
-    get isIncotermsNegotiating():boolean{
-        return this._isIncotermsNegotiating;
-    }
-
-    @Input('isIncotermsNegotiating')
-    set isIncotermsNegotiating(isNegotiating:boolean){
-        this._isIncotermsNegotiating = isNegotiating;
-
-        let id = "$incoterms_id";
-        // if we do not negotiate incoterms, use the default value
-        if(!isNegotiating && this.originalTermAndConditionClauses){
-
-            for(let clause of this.originalTermAndConditionClauses){
-                for(let tradingTerm of clause.tradingTerms){
-                    if(tradingTerm.id == id){
-
-                        this.updateTermNegotiating(id,tradingTerm.value.valueCode[0].value);
-
-                        break;
-                    }
-                }
-            }
-        }
-        // otherwise, use the selected incoterm
-        else if(this._selectedIncoterm)
-            this.updateTermNegotiating(id, this._selectedIncoterm);
+        this.updateTermNegotiating(id, this._selectedIncoterm);
     }
 
     get selectedTradingTerm():string{
@@ -346,44 +270,80 @@ export class TermsAndConditionsComponent implements OnInit {
     @Input('selectedTradingTerm')
     set selectedTradingTerm(tradingTerm:string){
         this._selectedTradingTerm = tradingTerm;
-
         this.updateTermNegotiating("$payment_id", tradingTerm);
     }
 
-    get isTradingTermsNegotiating():boolean{
-        return this._isTradingTermsNegotiating;
-    }
+    @Input()
+    set originalTermAndConditionClauses(clauses: Clause[]) {
+        this._originalTermAndConditionClauses = clauses;
+        this._originalTermAndConditionClauses.sort((clause1, clause2) => {
+            let order1 = Number(clause1.id.substring(0,clause1.id.indexOf("_")));
+            let order2 = Number(clause2.id.substring(0,clause2.id.indexOf("_")));
+            return order1 - order2;
+        });
 
-    @Input('isTradingTermsNegotiating')
-    set isTradingTermsNegotiating(isNegotiating:boolean){
-        this._isTradingTermsNegotiating = isNegotiating;
-
-        let id = "$payment_id";
-        // if we do not negotiate trading terms, then use the default value
-        if(!isNegotiating && this.originalTermAndConditionClauses){
-            for(let clause of this.originalTermAndConditionClauses){
-                for(let tradingTerm of clause.tradingTerms){
-                    if(tradingTerm.id == id){
-                        this.updateTermNegotiating(id, tradingTerm.value.valueCode[0].value);
-                        break;
-                    }
-                }
+        this.originalTradingTerms = new Map<string, TradingTerm>();
+        // create tradingTerms map using the original terms and conditions
+        for(let clause of this._originalTermAndConditionClauses){
+            for(let tradingTerm of clause.tradingTerms){
+                this.originalTradingTerms.set(tradingTerm.id,tradingTerm);
             }
         }
-        // otherwise, use the selected trading terms
-        else if(this._selectedTradingTerm){
-            // construct to value representing the selected trading term
-            this.updateTermNegotiating(id, this._selectedTradingTerm);
+
+        // refresh the texts for the open sections, otherwise the panel gets empty
+        for(let i=0; i<this.showSection.length; i++) {
+            if(this.showSection[i]) {
+                setTimeout(() => {
+                   this.setSectionText(i);
+                });
+            }
         }
+    }
+
+    get originalTermAndConditionClauses(): Clause[] {
+        return this._originalTermAndConditionClauses;
+    }
+
+    @Input()
+    set termsAndConditions(clauses: Clause[]) {
+        this._termsAndConditions = clauses;
+
+        // sort terms and conditions
+        this._termsAndConditions.sort((clause1, clause2) => {
+            let order1 = Number(clause1.id.substring(0,clause1.id.indexOf("_")));
+            let order2 = Number(clause2.id.substring(0,clause2.id.indexOf("_")));
+            return order1 - order2;
+        });
+
+        // create valuesOfParameters map
+        this.tradingTerms = new Map<string, TradingTerm>();
+        // create tradingTerms map using the terms and conditions
+        for(let clause of this._termsAndConditions){
+            for(let tradingTerm of clause.tradingTerms){
+                this.tradingTerms.set(tradingTerm.id,tradingTerm);
+            }
+        }
+        // refresh the texts for the open sections, otherwise the panel gets empty
+        for(let i=0; i<this.showSection.length; i++) {
+            if(this.showSection[i]) {
+                setTimeout(() => {
+                    this.setSectionText(i);
+                });
+            }
+        }
+    }
+
+    get termsAndConditions(): Clause[] {
+        return this._termsAndConditions;
     }
 
     // checks whether the terms are updated or not with respect to the original clause
-    isOriginalClause(originalClause:Clause){
+    isClauseUpdated(clause:Clause){
         // if we have an order, we do not need to check the clause is changed or not
         if(this.orderId){
             return true;
         }
-        for(let tradingTerm of originalClause.tradingTerms){
+        for(let tradingTerm of clause.tradingTerms){
 
             if (!this.isOriginalTradingTerm(tradingTerm.id)){
                 return false;
@@ -430,7 +390,6 @@ export class TermsAndConditionsComponent implements OnInit {
         let element = document.getElementById(this.generateIdForParameter(tradingTermId));
         if(element){
             element.innerText = value;
-
             this.setElementColor(element,tradingTermId);
         }
     }

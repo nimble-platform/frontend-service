@@ -272,7 +272,7 @@
                                         <div *ngIf="queryParameters.tab === TABS.PURCHASES" data-toggle="tooltip" class="inline" data-placement="top" title="Add to group">
                                             <button type="button" class="btn btn-link"  data-toggle="modal" (click)="open(negotiationGroup,i,order)" style="color: black;"> <i class="fa fa-plus p-1 pointer" aria-hidden="true"></i> </button>
                                         </div>
-                                        <div *ngIf="!order.archived" class="inline" (click)="archiveGroup(order.id)" data-toggle="tooltip" data-placement="top" title="Archive">
+                                        <div *ngIf="!order.archived && order.isArchiveable" class="inline" (click)="archiveGroup(order.id)" data-toggle="tooltip" data-placement="top" title="Archive">
                                             <i class="fa fa-archive p-1 pointer" aria-hidden="true"></i>
                                         </div>
                                         <div *ngIf="order.archived" class="inline" (click)="restoreGroup(order.id)" data-toggle="tooltip" data-placement="top" title="Restore">

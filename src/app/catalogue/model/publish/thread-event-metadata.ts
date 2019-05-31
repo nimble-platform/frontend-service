@@ -2,6 +2,7 @@ import { Item } from "./item";
 import { ThreadEventStatus } from "./thread-event-status";
 import { ProcessType } from "../../../bpe/model/process-type";
 
+// TODO move this class to an appropriate package under BP directory
 export class ThreadEventMetadata {
     constructor(
         public processType: ProcessType,
@@ -20,5 +21,6 @@ export class ThreadEventMetadata {
         public status?: ThreadEventStatus,
         public statusText?: string,
         public actionText?: string,
+        public formerStep?: boolean
     ) {}
 }

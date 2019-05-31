@@ -13,6 +13,7 @@ export class PpapComponent implements OnInit {
 
     screen: "select" | "upload" | "download";
     userRole: BpUserRole;
+    formerProcess: boolean;
 
     constructor(private bpDataService: BPDataService,
                 private cookieService: CookieService,
@@ -26,7 +27,7 @@ export class PpapComponent implements OnInit {
 
         const currentCompanyId: string = this.cookieService.get("company_id");
         const sellerId: string = UBLModelUtils.getPartyId(this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty);
-
+        this.formerProcess = this.bpDataService.bpActivityEvent.formerProcess;
 
         this.route.queryParams.subscribe(params => {
             if (!params['pid']) {

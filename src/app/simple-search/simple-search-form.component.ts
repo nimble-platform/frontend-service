@@ -47,6 +47,8 @@ export class SimpleSearchFormComponent implements OnInit {
 	party_facet_field_list = myGlobals.party_facet_field_list;
 	roundToTwoDecimals = roundToTwoDecimals;
 	item_manufacturer_id = myGlobals.item_manufacturer_id;
+	searchIndex = myGlobals.config.defaultSearchIndex;
+	searchIndexes = ["Products","Categories"];
 
 	CURRENCIES = CURRENCIES;
 	selectedCurrency: any = "EUR";
@@ -181,18 +183,24 @@ export class SimpleSearchFormComponent implements OnInit {
 		});
 	}
 
+	private changeSearchIndex(indexName){
+		if (this.searchIndex != indexName) {
+			this.searchIndex = indexName;
+		}
+	}
+
 	getSuggestions = (text$: Observable<string>) =>
-    text$.pipe(
-      debounceTime(200),
-      distinctUntilChanged(),
-      switchMap(term =>
-        this.simpleSearchService.getSuggestions(term,("{LANG}_"+this.product_name))
-      )
-    );
+		text$.pipe(
+			debounceTime(200),
+			distinctUntilChanged(),
+			switchMap(term =>
+					this.simpleSearchService.getSuggestions(term, ("{LANG}_" + this.product_name), this.searchIndex)
+			)
+		);
 
 	private getCatTree(): void {
 		this.categoriesCallStatus.submit();
-		this.simpleSearchService.get("*",[this.product_cat_mix],[""],1,"","")
+		this.simpleSearchService.get("*",[this.product_cat_mix],[""],1,"","", this.searchIndex)
 		.then(res => {
 			// if res.facets are null, it means that there is no product in the index
 			if (res.facets == null || Object.keys(res.facets).indexOf(this.product_cat_mix) == -1) {
@@ -387,7 +395,7 @@ export class SimpleSearchFormComponent implements OnInit {
 		this.simpleSearchService.getFields()
 			.then(res => {
 				let fieldLabels: string [] = this.getFieldNames(res);
-				this.simpleSearchService.get(q, Object.keys(fieldLabels), fq, p, cat, catID)
+				this.simpleSearchService.get(q, Object.keys(fieldLabels), fq, p, cat, catID, this.searchIndex)
 					.then(res => {
 						if (res.result.length == 0) {
 							this.cat_loading = false;

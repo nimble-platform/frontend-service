@@ -1,4 +1,4 @@
-import {Component} from "@angular/core";
+import {Component, Input} from "@angular/core";
 import {Ppap} from "../../../catalogue/model/publish/ppap";
 import {PpapResponse} from "../../../catalogue/model/publish/ppap-response";
 import {BPDataService} from "../bp-data-service";
@@ -24,12 +24,11 @@ import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event
 })
 export class PpapDocumentUploadComponent {
 
+    @Input() formerProcess: boolean;
     processid : any;
     ppap : Ppap;
     documents = [];
-
     ppapResponse : PpapResponse = null;
-
     ppapDocuments : DocumentReference[] = [];
     notes: string[];
     notesToSend : string[] = [''];

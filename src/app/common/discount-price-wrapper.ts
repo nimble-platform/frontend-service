@@ -22,17 +22,6 @@ export class DiscountPriceWrapper {
     hjid: string = null;
 
     itemPrice: ItemPriceWrapper;
-    // the item price wrapper which is used when we pass this price wrapper as quantity to QuantityInputComponent
-    // quotationLinePriceWrapper: ItemPriceWrapper;
-    // these fields are used to check whether we need to update quotation price or not
-    // quotationIncotermUpdated = true;
-    // quotationDeliveryPeriodUpdated = true;
-    // quotationPaymentMeansUpdated = true;
-    // this presentation mode is used to calculate total price for quotation
-    //presentationMode:string = 'edit';
-
-    // discounted (if any) price, it's updated upon an update in an information affecting the discounts
-    // discountedPerItemPrice: number;
     // this field is used to create discount-modal view
     appliedDiscounts: PriceOption[] = [];
 
@@ -44,13 +33,9 @@ export class DiscountPriceWrapper {
                 public incoterm:string = null,
                 public paymentMeans:string = null,
                 public deliveryPeriod: Quantity = null,
-                public deliveryLocation: Address = null,
-                // public quotationLinePrice: Price = null,
-                //public useCatalogueLinePrice: boolean = true // if true, the initial catalogue line price is used as price per item while calculating discount
-                //public updatePriceWithDiscount: boolean = false // controls whether the price.priceAmount.value should be updated based on the discount updates
+                public deliveryLocation: Address = null
     ) {
         this.itemPrice = new ItemPriceWrapper(price);
-        // this.quotationLinePriceWrapper = new ItemPriceWrapper(this.quotationLinePrice);
         this.getDiscountedTotalPrice(); // to initialize the applied discounts list
     }
 
@@ -58,14 +43,6 @@ export class DiscountPriceWrapper {
         if(!this.hasPrice() || isNaN(this.orderedQuantity.value)) {
             return 0;
         }
-
-        // if this PriceWrapper has a quotation price but we do not need to update it, simply return.
-        // if(this.quotationLinePriceWrapper.price && !this.quotationIncotermUpdated && !this.quotationPaymentMeansUpdated && !this.quotationDeliveryPeriodUpdated){
-        //     if(!this.quotationHasPrice()){
-        //         return 0;
-        //     }
-        //     return this.quotationLinePriceWrapper.value * this.orderedQuantity.value;
-        // }
 
         let discountedTotalPrice: number = this.getDiscountedTotalPrice();
         return discountedTotalPrice / this.orderedQuantity.value;
@@ -100,7 +77,7 @@ export class DiscountPriceWrapper {
             return "On demand";
         }
 
-        return `${this.itemPrice.value} ${currencyToString(this.price.priceAmount.currencyID)} per ${qty.unitCode}`;
+        return `${roundToTwoDecimals(this.itemPrice.value)} ${currencyToString(this.price.priceAmount.currencyID)} per ${qty.unitCode}`;
     }
 
     get currency(): string {
@@ -116,38 +93,9 @@ export class DiscountPriceWrapper {
         return this.price.priceAmount.value != null;
     }
 
-    // quotationHasPrice() :boolean{
-    //     return this.quotationLinePriceWrapper.price.priceAmount.value != null;
-    // }
-
     isDiscountApplied(): boolean {
         return this.appliedDiscounts.length > 0;
     }
-
-    /**
-     * Getters/Setters for quantity wrapper of the total price of the quotation
-     */
-
-    /*get value(): number {
-        // if presentation mode is edit, then we have to calculate total price
-        if(this.presentationMode == 'edit'){
-            return this.totalPrice;
-        }
-        return this.quotationLinePriceWrapper.value*this.orderedQuantity.value;
-
-    }
-
-    set value(value: number) {
-        this.quotationLinePriceWrapper.value = value/this.orderedQuantity.value;
-    }
-
-    get unitCode(): string {
-        return this.quotationLinePriceWrapper.currency;
-    }
-
-    set unitCode(unitCode: string) {
-        this.quotationLinePriceWrapper.currency = unitCode;
-    }*/
 
     /**
      *  Price options functions
@@ -268,21 +216,6 @@ export class DiscountPriceWrapper {
             deliveryPeriodPriceOption.discount = totalDeliveryPeriodDiscount;
             this.appliedDiscounts.push(deliveryPeriodPriceOption);
         }
-
-        // discounts affect the itemPrice.value only if the flag is enabled, otherwise even if the price is negotiated or
-        // a predefined price value is set (e.g. via frame contracts)
-        /*if(this.updatePriceWithDiscount) {
-            this.itemPrice.value = (totalPrice - totalDiscount) / this.orderedQuantity.value;
-        */
-
-        // if PriceWrapper has a quotation price, then we have to update it with the calculated total price
-        // if(this.quotationLinePriceWrapper.price){
-        //     this.quotationLinePriceWrapper.price.priceAmount.value = this.itemPrice.value;
-        //
-        //     this.quotationDeliveryPeriodUpdated = false;
-        //     this.quotationIncotermUpdated = false;
-        //     this.quotationPaymentMeansUpdated = false;
-        // }
 
         return totalPrice - totalDiscount;
     }

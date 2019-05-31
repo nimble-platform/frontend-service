@@ -107,20 +107,6 @@ export class NegotiationModelWrapper {
      * Getter methods for the line which is updated based on activities of the
      */
 
-    public get linePricePerItemString(): string {
-        //this.updateLinePriceWrapperFields();
-        return this.lineDiscountPriceWrapper.pricePerItemString;
-    }
-
-    public get lineTotalPrice(): number {
-        return this.lineDiscountPriceWrapper.totalPrice;
-    }
-
-    public get lineTotalPriceString(): string {
-        //this.updateLinePriceWrapperFields();
-        return this.lineDiscountPriceWrapper.totalPriceString;
-    }
-
     public get lineDeliveryPeriod(): Quantity {
         return this.catalogueLine.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure;
     }

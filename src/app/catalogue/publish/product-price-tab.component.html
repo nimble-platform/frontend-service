@@ -22,6 +22,17 @@
     </div>
 </div>
 
+<!-- VAT -->
+<div class="row space-before">
+    <div class="col-3">
+        <strong>VAT(%): </strong>
+    </div>
+    <div class="col-3">
+        <input type="number" class="form-control form-control-sm"
+               [(ngModel)]="catalogueLine.requiredItemLocationQuantity.applicableTaxCategory[0].percent" step="1">
+    </div>
+</div>
+
 <!-- Free Sample -->
 <div class="row space-before">
     <div class="col-3">

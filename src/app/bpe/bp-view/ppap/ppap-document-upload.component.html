@@ -28,18 +28,19 @@
     <hr>
 
     <!-- Action buttons -->
-    <div class="row actions-row">
-        <div class="col-4"></div>
-        <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
-        <div class="col-2">
-            <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">Back</button>
+    <ng-container *ngIf="formerProcess">
+        <div class="row actions-row">
+            <div class="col-4"></div>
+            <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+            <div class="col-2">
+                <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">Back</button>
+            </div>
+            <div class="col-2">
+                <button class="btn btn-primary action" [disabled]="isLoading()"
+                        (click)="responseToPpapRequest(true)">
+                    Send Response
+                </button>
+            </div>
         </div>
-        <div class="col-2">
-            <button class="btn btn-primary action" [disabled]="isLoading()"
-                    (click)="responseToPpapRequest(true)">
-                Send Response
-            </button>
-        </div>
-    </div>
-
+    </ng-container>
 </div>

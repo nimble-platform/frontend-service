@@ -3,6 +3,6 @@ export class BpURLParams{
         public catalogueId = null,
         public catalogueLineId = null,
         public processInstanceId = null,
-        public termsSource: 'product_defaults' | 'frame_contract' = 'product_defaults'
+        public termsSource: 'product_defaults' | 'frame_contract' = null
     ){}
 }

@@ -43,11 +43,11 @@ export class CallStatusComponent {
         } while (clickedComponent);
 
         // if successful and outside the box, reset the status
-        if(!inside && this.callStatus.fb_callback == true) {
+        /*if(!inside && this.callStatus.fb_callback == true) {
             this.callStatus.reset();
         }
         if(!inside && this.callStatus.fb_errordetc == true) {
             //this.callStatus.reset();
-        }
+        }*/
     }
 }
