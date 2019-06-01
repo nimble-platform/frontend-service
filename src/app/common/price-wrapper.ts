@@ -1,8 +1,9 @@
 import { Price } from "../catalogue/model/publish/price";
 import { Quantity } from "../catalogue/model/publish/quantity";
-import { currencyToString } from "./utils";
+import {currencyToString, roundToTwoDecimalsIfLargeEnough} from "./utils";
 import { ItemPriceWrapper } from "./item-price-wrapper";
 import {Amount} from "../catalogue/model/publish/amount";
+import {defaultVatRate} from "./constants";
 
 /**
  * Wrapper around a price and a quantity, contains convenience methods to get the total price,
@@ -17,6 +18,7 @@ export class PriceWrapper {
     itemPrice: ItemPriceWrapper;
 
     constructor(public price: Price,
+                public vatPercentage: number = defaultVatRate,
                 public quantity: Quantity = new Quantity(1, price.baseQuantity.unitCode)) {
         this.itemPrice = new ItemPriceWrapper(price);
     }
@@ -61,6 +63,22 @@ export class PriceWrapper {
             return `${this.roundPrice(amount.value)} ${currencyToString(amount.currencyID)} per ${qty.unitCode}`
         }
         return `${this.roundPrice(amount.value)} ${currencyToString(amount.currencyID)} for ${baseQuantity} ${qty.unitCode}`
+    }
+
+    get vatTotal(): number {
+        return this.roundPrice(this.totalPrice * this.vatPercentage / 100);
+    }
+
+    get vatTotalString(): number {
+        return `${this.vatTotal} ${this.currency}`
+    }
+
+    get grossTotal(): number {
+        return roundToTwoDecimalsIfLargeEnough(this.totalPrice + this.vatTotal);
+    }
+
+    get grossTotalString(): number {
+        return this.totalPrice + this.vatTotal;
     }
 
     get currency(): string {

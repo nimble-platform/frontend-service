@@ -1,6 +1,6 @@
 import { Price } from "../catalogue/model/publish/price";
 import { Quantity } from "../catalogue/model/publish/quantity";
-import {currencyToString, roundToTwoDecimals} from "./utils";
+import {currencyToString, roundToTwoDecimals, roundToTwoDecimalsIfLargeEnough} from "./utils";
 import { ItemPriceWrapper } from "./item-price-wrapper";
 import {PriceOption} from '../catalogue/model/publish/price-option';
 import {PRICE_OPTIONS} from '../catalogue/model/constants';
@@ -17,7 +17,6 @@ import {isNumber} from "@ng-bootstrap/ng-bootstrap/util/util";
  * This class can also be substituted for a Quantity.
  */
 export class DiscountPriceWrapper {
-    debugName: string;
     /** hjid field from Quantity class */
     hjid: string = null;
 
@@ -27,6 +26,7 @@ export class DiscountPriceWrapper {
 
     constructor(public initialCatalogueLinePrice: number, // immutable initial price that to be used as the starting price while calculating the discount
                 public price: Price, // dynamically changing price upon the updates on the price
+                public vatPercentage: number,
                 public orderedQuantity: Quantity = new Quantity(1, price.baseQuantity.unitCode), // ordered quantity
                 public priceOptions:PriceOption[] = [],
                 public additionalItemProperties:ItemProperty[] = [],
@@ -78,6 +78,22 @@ export class DiscountPriceWrapper {
         }
 
         return `${roundToTwoDecimals(this.itemPrice.value)} ${currencyToString(this.price.priceAmount.currencyID)} per ${qty.unitCode}`;
+    }
+
+    get vatTotal(): number {
+        return this.totalPrice * this.vatPercentage / 100;
+    }
+
+    get vatTotalString(): string {
+        return `${roundToTwoDecimals(this.vatTotal)} ${this.currency}`;
+    }
+
+    get grossTotal(): number {
+        return roundToTwoDecimalsIfLargeEnough(this.totalPrice + this.vatTotal);
+    }
+
+    get grossTotalString(): number {
+        return `${this.grossTotal} ${this.currency}`;
     }
 
     get currency(): string {

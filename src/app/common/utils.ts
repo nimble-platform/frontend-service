@@ -473,6 +473,14 @@ export function roundToTwoDecimals(value): any{
     return value;
 }
 
+export function roundToTwoDecimalsIfLargeEnough(value: number) {
+    if(value > 0.01) {
+        return Math.round(value * 100) / 100;
+    } else {
+        return value
+    }
+}
+
 export function isNaNNullAware(number: number): boolean {
     if (isNaN(number) || number == null) {
         return true;

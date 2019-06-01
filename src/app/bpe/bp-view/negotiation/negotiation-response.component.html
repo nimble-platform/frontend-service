@@ -129,8 +129,9 @@
     <div class="col-3">{{rfq.requestForQuotationLine[0].lineItem.quantity.value}} {{this.rfq.requestForQuotationLine[0].lineItem.quantity.unitCode}}</div>
 </div>
 
+<!-- Net Price -->
 <div class="row content-row mb-3">
-    <div class="col-3"><strong class="font-weight-500">Total Price:</strong></div>
+    <div class="col-3"><strong class="font-weight-500">Net Total Price:</strong></div>
     <!-- Original terms -->
     <ng-container [ngSwitch]="primaryTermsSource">
         <div *ngSwitchCase="'product_defaults'" class="col-3">
@@ -177,6 +178,51 @@
         <!--<small>( {{ wrapper.newQuotationWrapper.priceWrapper.pricePerItemString}} )</small>-->
         <!--{{ wrapper.quotationDiscountPriceWrapper.totalPriceString }}<br/>-->
         <!--<small>( {{ wrapper.quotationDiscountPriceWrapper.pricePerItemString}} )</small>-->
+    </div>
+</div>
+
+<!-- VAT -->
+<div class="row content-row bg-light">
+    <div class="col-3"><strong class="font-weight-500">VAT:</strong></div>
+    <ng-container [ngSwitch]="primaryTermsSource">
+        <div *ngSwitchCase="'product_defaults'" class="col-3">
+            {{ wrapper.lineDiscountPriceWrapper.vatTotalString }}<br/>
+        </div>
+        <div *ngSwitchCase="'frame_contract'" class="col-3">
+            {{ wrapper.frameContractQuotationWrapper.priceWrapper.vatTotalString }}<br/>
+        </div>
+        <div *ngSwitchCase="'last_offer'" class="col-3">
+            {{ wrapper.lastOfferQuotationWrapper.priceWrapper.vatTotalString }}<br/>
+        </div>
+    </ng-container>
+    <div class="col-3">
+        {{ wrapper.rfqVatTotalString}}
+    </div>
+    <div class="col-3">
+        {{ wrapper.quotationDiscountPriceWrapper.vatTotalString}}
+    </div>
+</div>
+
+
+<!-- Gross total price -->
+<div class="row content-row bg-light">
+    <div class="col-3"><strong class="font-weight-500">Gross Total:</strong></div>
+    <ng-container [ngSwitch]="primaryTermsSource">
+        <div *ngSwitchCase="'product_defaults'" class="col-3">
+            {{ wrapper.lineDiscountPriceWrapper.grossTotalString }}<br/>
+        </div>
+        <div *ngSwitchCase="'frame_contract'" class="col-3">
+            {{ wrapper.frameContractQuotationWrapper.priceWrapper.grossTotalString }}<br/>
+        </div>
+        <div *ngSwitchCase="'last_offer'" class="col-3">
+            {{ wrapper.lastOfferQuotationWrapper.priceWrapper.grossTotalString }}<br/>
+        </div>
+    </ng-container>
+    <div class="col-3">
+        {{ wrapper.rfqGrossTotalString }}
+    </div>
+    <div class="col-3">
+        {{ wrapper.quotationDiscountPriceWrapper.grossTotalString}}
     </div>
 </div>
 
@@ -315,7 +361,7 @@
         </div>
         <div class="row">
             <div class="col-2"><strong>Quantity:</strong></div>
-            <div class="col-10">{{wrapper.quotationQuantity.value}} {{wrapper.quotationQuantity.unitCode}}</div>
+            <div class="col-10">{{wrapper.newQuotationWrapper.orderedQuantity.value}} {{wrapper.newQuotationWrapper.orderedQuantity.unitCode}}</div>
         </div>
         <div class="row">
             <div class="col-2"><strong>Total Price:</strong></div>
