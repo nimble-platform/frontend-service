@@ -1,11 +1,9 @@
 import { CatalogueLine } from "../../../catalogue/model/publish/catalogue-line";
 import { RequestForQuotation } from "../../../catalogue/model/publish/request-for-quotation";
 import { Quotation } from "../../../catalogue/model/publish/quotation";
-import { Amount } from "../../../catalogue/model/publish/amount";
 import { Quantity } from "../../../catalogue/model/publish/quantity";
 import { PaymentTermsWrapper } from "../payment-terms-wrapper";
-import {copy, durationToString, periodToString, roundToTwoDecimalsIfLargeEnough} from "../../../common/utils";
-import { PriceWrapper } from "../../../common/price-wrapper";
+import {copy, durationToString, roundToTwoDecimals} from "../../../common/utils";
 import { Address } from "../../../catalogue/model/publish/address";
 import { CompanyNegotiationSettings } from "../../../user-mgmt/model/company-negotiation-settings";
 import {TradingTerm} from "../../../catalogue/model/publish/trading-term";
@@ -167,7 +165,7 @@ export class NegotiationModelWrapper {
     }
 
     public get rfqVatTotal(): number {
-        return roundToTwoDecimalsIfLargeEnough(this.rfqDiscountPriceWrapper.totalPrice * this.lineVatPercentage / 100);
+        return this.rfqDiscountPriceWrapper.totalPrice * this.lineVatPercentage / 100;
     }
 
     public get rfqVatTotalString(): string {
@@ -175,11 +173,11 @@ export class NegotiationModelWrapper {
     }
 
     public get rfqGrossTotal(): number {
-        return roundToTwoDecimalsIfLargeEnough(this.rfqDiscountPriceWrapper.totalPrice + this.rfqVatTotal);
+        return this.rfqDiscountPriceWrapper.totalPrice + this.rfqVatTotal;
     }
 
     public get rfqGrossTotalString(): string {
-        return `${this.rfqGrossTotal} ${this.rfqDiscountPriceWrapper.itemPrice.currency}`
+        return `${roundToTwoDecimals(this.rfqGrossTotal)} ${this.rfqDiscountPriceWrapper.itemPrice.currency}`
     }
 
     public get rfqDeliveryPeriod(): Quantity {

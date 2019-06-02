@@ -2,7 +2,7 @@ import { Component, OnInit, Input, ViewChild, ElementRef } from "@angular/core";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import {PriceOption} from '../catalogue/model/publish/price-option';
 import { PRICE_OPTIONS } from '../catalogue/model/constants';
-import {selectPreferredValues} from '../common/utils';
+import {roundToTwoDecimals, selectPreferredValues} from '../common/utils';
 
 @Component({
     selector: "discount-modal",
@@ -88,6 +88,6 @@ export class DiscountModalComponent implements OnInit {
     }
 
     private getAbsValue(value:number):number{
-        return Math.abs(value);
+        return roundToTwoDecimals(Math.abs(value));
     }
 }

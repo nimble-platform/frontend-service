@@ -1,8 +1,7 @@
 import { Price } from "../catalogue/model/publish/price";
 import { Quantity } from "../catalogue/model/publish/quantity";
-import {currencyToString, roundToTwoDecimalsIfLargeEnough} from "./utils";
+import {currencyToString, roundToTwoDecimals} from "./utils";
 import { ItemPriceWrapper } from "./item-price-wrapper";
-import {Amount} from "../catalogue/model/publish/amount";
 import {defaultVatRate} from "./constants";
 
 /**
@@ -30,7 +29,7 @@ export class PriceWrapper {
 
         const amount = Number(this.price.priceAmount.value);
         const baseQuantity = this.price.baseQuantity.value || 1;
-        return this.roundPrice(this.quantity.value * amount / baseQuantity);
+        return this.quantity.value * amount / baseQuantity;
     }
 
     set totalPrice(price: number) {
@@ -43,7 +42,7 @@ export class PriceWrapper {
         if(!this.hasPrice()) {
             return "Not specified";
         }
-        return `${this.totalPrice} ${this.currency}`;
+        return `${roundToTwoDecimals(this.totalPrice)} ${this.currency}`;
     }
 
     get pricePerItem(): number {
@@ -60,21 +59,21 @@ export class PriceWrapper {
         }
 
         if(baseQuantity === 1) {
-            return `${this.roundPrice(amount.value)} ${currencyToString(amount.currencyID)} per ${qty.unitCode}`
+            return `${roundToTwoDecimals(amount.value)} ${currencyToString(amount.currencyID)} per ${qty.unitCode}`
         }
-        return `${this.roundPrice(amount.value)} ${currencyToString(amount.currencyID)} for ${baseQuantity} ${qty.unitCode}`
+        return `${roundToTwoDecimals(amount.value)} ${currencyToString(amount.currencyID)} for ${baseQuantity} ${qty.unitCode}`
     }
 
     get vatTotal(): number {
-        return this.roundPrice(this.totalPrice * this.vatPercentage / 100);
+        return this.totalPrice * this.vatPercentage / 100;
     }
 
-    get vatTotalString(): number {
-        return `${this.vatTotal} ${this.currency}`
+    get vatTotalString(): string {
+        return `${roundToTwoDecimals(this.vatTotal)} ${this.currency}`
     }
 
     get grossTotal(): number {
-        return roundToTwoDecimalsIfLargeEnough(this.totalPrice + this.vatTotal);
+        return this.totalPrice + this.vatTotal;
     }
 
     get grossTotalString(): number {
@@ -92,10 +91,6 @@ export class PriceWrapper {
     hasPrice(): boolean {
         // != here gives "not null or undefined", which is the behaviour we want.
         return this.price.priceAmount.value != null;
-    }
-
-    private roundPrice(value: number): number {
-        return Math.round(value * 100) / 100;
     }
 
     /**

@@ -156,10 +156,10 @@
                     </label>
 
                     <span *ngIf="termsSelectBoxValue == 'product_defaults'" class="vat-value">
-                        {{priceWrapper.vatTotal}} {{priceWrapper.currency}}
+                        {{priceWrapper.vatTotalString}}
                     </span>
                     <span *ngIf="termsSelectBoxValue == 'frame_contract'" class="vat-value">
-                        {{frameContractQuotationWrapper.priceWrapper.vatTotal}} {{frameContractQuotationWrapper.priceWrapper.currency}}
+                        {{frameContractQuotationWrapper.priceWrapper.vatTotalString}}
                     </span>
                 </div>
                 <div class="inline-order-group">
@@ -168,10 +168,10 @@
                         </label>
 
                         <span *ngIf="termsSelectBoxValue == 'product_defaults'" class="order-price-value">
-                            {{priceWrapper.grossTotal}} {{priceWrapper.currency}}
+                            {{priceWrapper.grossTotalString}}
                         </span>
                         <span *ngIf="termsSelectBoxValue == 'frame_contract'" class="order-price-value">
-                            {{frameContractQuotationWrapper.priceWrapper.grossTotal}} {{frameContractQuotationWrapper.priceWrapper.currency}}
+                            {{frameContractQuotationWrapper.priceWrapper.grossTotalString}}
                         </span>
                 </div>
             </ng-container>

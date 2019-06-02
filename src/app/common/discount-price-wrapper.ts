@@ -1,6 +1,6 @@
 import { Price } from "../catalogue/model/publish/price";
 import { Quantity } from "../catalogue/model/publish/quantity";
-import {currencyToString, roundToTwoDecimals, roundToTwoDecimalsIfLargeEnough} from "./utils";
+import {currencyToString, roundToTwoDecimals} from "./utils";
 import { ItemPriceWrapper } from "./item-price-wrapper";
 import {PriceOption} from '../catalogue/model/publish/price-option';
 import {PRICE_OPTIONS} from '../catalogue/model/constants';
@@ -8,7 +8,6 @@ import {ItemProperty} from '../catalogue/model/publish/item-property';
 import {Address} from '../catalogue/model/publish/address';
 import {Text} from '../catalogue/model/publish/text';
 import {Country} from '../catalogue/model/publish/country';
-import {isNumber} from "@ng-bootstrap/ng-bootstrap/util/util";
 
 /**
  * Wrapper around a price and a quantity, contains convenience methods to get the total price,
@@ -54,7 +53,7 @@ export class DiscountPriceWrapper {
         }
 
         const baseQuantity = this.price.baseQuantity.value || 1;
-        return this.roundPrice(this.orderedQuantity.value * this.itemPrice.value / baseQuantity);
+        return this.orderedQuantity.value * this.itemPrice.value / baseQuantity;
     }
 
     set totalPrice(price: number) {
@@ -67,7 +66,7 @@ export class DiscountPriceWrapper {
         if(!this.hasPrice()) {
             return "Not specified";
         }
-        return `${this.totalPrice} ${this.currency}`;
+        return `${roundToTwoDecimals(this.totalPrice)} ${this.currency}`;
     }
 
     get pricePerItemString(): string {
@@ -89,11 +88,11 @@ export class DiscountPriceWrapper {
     }
 
     get grossTotal(): number {
-        return roundToTwoDecimalsIfLargeEnough(this.totalPrice + this.vatTotal);
+        return this.totalPrice + this.vatTotal;
     }
 
-    get grossTotalString(): number {
-        return `${this.grossTotal} ${this.currency}`;
+    get grossTotalString(): string {
+        return `${roundToTwoDecimals(this.grossTotal)} ${this.currency}`;
     }
 
     get currency(): string {
@@ -266,9 +265,5 @@ export class DiscountPriceWrapper {
             }
         }
         return false;
-    }
-
-    private roundPrice(value: number): number {
-        return Math.round(value * 100) / 100;
     }
 }

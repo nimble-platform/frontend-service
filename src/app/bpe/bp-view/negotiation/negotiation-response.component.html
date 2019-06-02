@@ -186,13 +186,11 @@
     <div class="col-3"><strong class="font-weight-500">VAT:</strong></div>
     <ng-container [ngSwitch]="primaryTermsSource">
         <div *ngSwitchCase="'product_defaults'" class="col-3">
-            {{ wrapper.lineDiscountPriceWrapper.vatTotalString }}<br/>
+            {{ wrapper.lineDiscountPriceWrapper.vatTotalString }}
         </div>
-        <div *ngSwitchCase="'frame_contract'" class="col-3">
-            {{ wrapper.frameContractQuotationWrapper.priceWrapper.vatTotalString }}<br/>
-        </div>
+        <div *ngSwitchCase="'frame_contract'" class="col-3"></div>
         <div *ngSwitchCase="'last_offer'" class="col-3">
-            {{ wrapper.lastOfferQuotationWrapper.priceWrapper.vatTotalString }}<br/>
+            {{ wrapper.lastOfferQuotationWrapper.priceWrapper.vatTotalString }}
         </div>
     </ng-container>
     <div class="col-3">
@@ -209,13 +207,11 @@
     <div class="col-3"><strong class="font-weight-500">Gross Total:</strong></div>
     <ng-container [ngSwitch]="primaryTermsSource">
         <div *ngSwitchCase="'product_defaults'" class="col-3">
-            {{ wrapper.lineDiscountPriceWrapper.grossTotalString }}<br/>
+            {{ wrapper.lineDiscountPriceWrapper.grossTotalString }}
         </div>
-        <div *ngSwitchCase="'frame_contract'" class="col-3">
-            {{ wrapper.frameContractQuotationWrapper.priceWrapper.grossTotalString }}<br/>
-        </div>
+        <div *ngSwitchCase="'frame_contract'" class="col-3"></div>
         <div *ngSwitchCase="'last_offer'" class="col-3">
-            {{ wrapper.lastOfferQuotationWrapper.priceWrapper.grossTotalString }}<br/>
+            {{ wrapper.lastOfferQuotationWrapper.priceWrapper.grossTotalString }}
         </div>
     </ng-container>
     <div class="col-3">
