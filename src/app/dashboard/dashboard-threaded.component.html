@@ -451,14 +451,20 @@
                                             </div> -->
                                         </div>
                                     </div>
-                                    <div [ngStyle]="{'visibility':order.id === selectedId  ? 'visible' : 'hidden'}">
+                                    <div [ngStyle]="{'visibility':order.id === selectedId  ? 'visible' : 'hidden','height':order.id === selectedId  ? 'unset' : '0px'}"> 
                                         <!-- Titles for the rows -->
-                                        <div class="row thread-entry-heading">
-                                            <!--<div class="col-2"><strong>Customer</strong></div>-->
-                                            <!-- <svg id="gantt"></svg> -->
-                                            <!-- <div class="chart1"></div> -->
-                                           
-                                            <div [ngClass]="'cls'+order.id" style="padding-left: 102px">
+                                        <div class="row thread-entry-heading" style="margin-left: 79px" >
+                                   
+                                            
+                                            <div *ngFor="let item of finalArray;let i=index" [ngClass]="'cls'+order.id">
+                                                <div class="row">
+                                                <div class="col-md-12" style="width: 700px;" >
+                                                    <!-- <div [style.width.px]="item.duration"  [style.marginLeft.px]= "item.offset" style="background:blue">item.label </div> -->
+                                                     <div [style.width.px]="item.duration"  [style.marginLeft.px]= "item.offset" [style.background]="item.color" style="white-space: nowrap;"><b>{{item.label}} <span> <i>-{{item.endDate}}</i></span></b></div>
+                                                </div>
+
+                                                </div>
+                                                <br/>
                                             </div>
                                          
                                         </div>
