@@ -115,7 +115,8 @@ export class CompanyDataSettingsComponent implements OnInit {
 
     changeData(content) {
         this.mailto = "mailto:"+this.config.supportMail;
-        var subject = "NIMBLE Company Data Change Request (UserID: " + this.appComponent.userID + ", Timestamp: " + new Date().toISOString() + ")";
+        var subject = "NIMBLE Company Data Change Request (UserID: " + this.appComponent.userID + ", Platform: " +
+            this.appComponent.config.platformName+ ", Timestamp: " + new Date().toISOString() + ")";
         this.mailto += "?subject=" + encodeURIComponent(subject);
         var body = "Dear NIMBLE support team,";
         body += "\n\n\n";

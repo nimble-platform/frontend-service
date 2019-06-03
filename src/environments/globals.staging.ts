@@ -104,6 +104,7 @@ export const tntAnalysisEndpoint = `${base_path}/tnt/simpleTrackingAnalysis`;
 // Platform Configuration
 
 export const config = {
+  "platformName": "Staging",
   "companyRegistrationRequired": false,
   "categoryFilter": {
     "eClass": {
