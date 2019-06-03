@@ -18,7 +18,9 @@ import * as d3timelines from 'd3-timelines';
 import * as d3 from 'd3';
 import * as d3time from 'd3-time';
 import * as d3timeformat from 'd3-time-format';
-
+import { timestamp } from "rxjs/operator/timestamp";
+import * as moment from "moment";
+import {Moment, unitOfTime} from "moment";
 
 // import { GoogleChartInterface } from 'ng2-google-charts/google-charts-interfaces';
 
@@ -55,6 +57,7 @@ export class DashboardThreadedComponent implements OnInit{
     sellerCounter = 0;
     isProject = false;
     expanded = false;
+    finalArray = [];
     private data: any = [
         // {times: [{"color":"green", "label":"Weeee", "starting_time": 1355752800000, "ending_time": 1355759900000}, {"color":"blue", "label":"Weeee", "starting_time": 1355767900000, "ending_time": 1355774400000}]},
       ];
@@ -110,26 +113,47 @@ export class DashboardThreadedComponent implements OnInit{
             this.data.push(obj);
         });
 
+        this.data = this.data.sort(function(a,b){return a.times[0].starting_time - b.times[0].starting_time});
+        var endDateSorted =  this.data.sort(function(a,b){return a.times[0].ending_time - b.times[0].ending_time});
 
+        var projectDuration = endDateSorted[endDateSorted.length-1].times[0].ending_time-this.data[0].times[0].starting_time;
+        var newArray = [];
+        var itemid= 0;
+        var colorcode = ['#ff4b66','#f36170','#e7727a','#d98185','#ca8e8f','#b99a9a','#a5a5a5'];
+        var colorindex = 0;
+        this.data.forEach(element => {
+            var projectDurationPercetage = ((element.times[0].ending_time - element.times[0].starting_time)*700)/projectDuration;
+            // if(projectDurationPercetage < 100){
+                projectDuration = 700/this.data.length;
+            // }
+            var timeStampDate = new Date(element.times[0].ending_time);
+            var timeLabel = moment.monthsShort(timeStampDate.getMonth())+ "/"+timeStampDate.getDate();
+            var itemoffset =  0;
+            var width = 700/this.data.length;
+            if(itemid != 0){
+                itemoffset = (700/this.data.length)*itemid - ((this.data[itemid-1].times[0].ending_time < element.times[0].starting_time) ? 50 : 0);
+                
+                newArray.forEach(element1 => {
+                    var timeStampDatemoment = new Date(element1.enddate);
+                    if(moment.monthsShort(timeStampDate.getMonth())+ "/"+timeStampDate.getDate() == moment.monthsShort(timeStampDatemoment.getMonth())+ "/"+timeStampDatemoment.getDate()){
+                        itemoffset = element1.offset+itemid*10;
+                        element1.duration = element1.duration+ width - itemid*10;
+                        projectDuration = element1.duration- itemid*10;
+                    }
+                });
+            }
+            itemid++;
+            if(colorindex == 6){
+                colorindex = 0;;
+            }
+            newArray.push({label:element.times[0].label.toUpperCase(),duration: projectDuration, endDate:timeLabel,offset: itemoffset,startdate : element.times[0].starting_time,enddate: element.times[0].ending_time,color: colorcode[colorindex]});
+            colorindex++;
+        });
+        this.finalArray = newArray;
         var specifier = "%S";
         var parsedData = await t_arr.map(function(d) {
           return d3.timeParse(specifier)(d)
         });
-
-        var scale = d3.scaleTime()
-                .domain(d3.extent(parsedData));
-        
-        this.chart = d3timelines.timelines()
-        .stack() // toggles graph stacking
-        .tickFormat({
-            format: d3timeformat.timeFormat("%Y-%m-%d")
-        })
-        .showTimeAxisTick()
-        .margin({left:70, right:30, top:0, bottom:0})
-       ;
-        var idDiv = ".cls"+data.id;
-        d3.select(idDiv).append('svg').attr('width', 1000)
-        .datum(this.data).call(this.chart);
 
     }
 
@@ -140,8 +164,12 @@ export class DashboardThreadedComponent implements OnInit{
             this.selectedId = "";
             this.data = [];
             this.chart = null;
-            var idDiv = ".cls"+data.id + " > svg";
-            d3.select(idDiv).remove();
+            var idDiv = "cls"+data.id;
+            var myNode = document.getElementsByClassName(idDiv);
+            while(myNode[0].hasChildNodes())
+            {
+            myNode[0].removeChild(myNode[0].lastChild);
+            }
         }
     }
 
