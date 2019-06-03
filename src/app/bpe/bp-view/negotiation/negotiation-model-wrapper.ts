@@ -49,7 +49,7 @@ export class NegotiationModelWrapper {
         if(catalogueLine && rfq) {
             // first construct wrappers
             this.lineDiscountPriceWrapper = new DiscountPriceWrapper(
-                catalogueLine.requiredItemLocationQuantity.price.priceAmount.value,
+                catalogueLine.requiredItemLocationQuantity.price,
                 copy(catalogueLine.requiredItemLocationQuantity.price), // we don't want the original catalogueLine.requiredItemLocationQuantity.price to be updated in price changes
                 catalogueLine.requiredItemLocationQuantity.applicableTaxCategory[0].percent,
                 rfq.requestForQuotationLine[0].lineItem.quantity,
@@ -63,7 +63,7 @@ export class NegotiationModelWrapper {
                 //true // disable calculation of discounts
             );
             this.rfqDiscountPriceWrapper = new DiscountPriceWrapper(
-                catalogueLine.requiredItemLocationQuantity.price.priceAmount.value,
+                catalogueLine.requiredItemLocationQuantity.price,
                 rfq.requestForQuotationLine[0].lineItem.price,
                 catalogueLine.requiredItemLocationQuantity.applicableTaxCategory[0].percent,
                 rfq.requestForQuotationLine[0].lineItem.quantity,
@@ -77,7 +77,7 @@ export class NegotiationModelWrapper {
 
             if(newQuotation) {
                 this.quotationDiscountPriceWrapper = new DiscountPriceWrapper(
-                    catalogueLine.requiredItemLocationQuantity.price.priceAmount.value,
+                    catalogueLine.requiredItemLocationQuantity.price,
                     newQuotation.quotationLine[0].lineItem.price,
                     catalogueLine.requiredItemLocationQuantity.applicableTaxCategory[0].percent,
                     newQuotation.quotationLine[0].lineItem.quantity,

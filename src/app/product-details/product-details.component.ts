@@ -130,7 +130,7 @@ export class ProductDetailsComponent implements OnInit {
                     .then(settings => {
                         this.settings = settings;
                         this.priceWrapper = new DiscountPriceWrapper(
-                            this.line.requiredItemLocationQuantity.price.priceAmount.value,
+                            this.line.requiredItemLocationQuantity.price,
                             this.line.requiredItemLocationQuantity.price,
                             this.line.requiredItemLocationQuantity.applicableTaxCategory[0].percent,
                             new Quantity(1,this.line.requiredItemLocationQuantity.price.baseQuantity.unitCode),
@@ -233,7 +233,7 @@ export class ProductDetailsComponent implements OnInit {
         this.priceWrapper.additionalItemProperties = copyItem.additionalItemProperty;
 
         if(event == 'product_defaults') {
-            this.priceWrapper.itemPrice.value = this.priceWrapper.pricePerItem;
+            this.priceWrapper.itemPrice.value = this.priceWrapper.discountedPricePerItem;
         }
     }
 
@@ -242,7 +242,7 @@ export class ProductDetailsComponent implements OnInit {
      */
 
     getPricePerItem(): string {
-        return this.priceWrapper.pricePerItemString;
+        return this.priceWrapper.discountedPricePerItemString;
     }
 
     hasPrice(): boolean {

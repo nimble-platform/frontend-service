@@ -71,7 +71,7 @@ export class TransportNegotiationResponseComponent implements OnInit {
             this.rfq = this.bpDataService.requestForQuotation;
         }
         this.rfqPrice = new DiscountPriceWrapper(
-            this.rfq.requestForQuotationLine[0].lineItem.price.priceAmount.value,
+            this.rfq.requestForQuotationLine[0].lineItem.price,
             this.rfq.requestForQuotationLine[0].lineItem.price,
             this.bpDataService.modifiedCatalogueLines[0].requiredItemLocationQuantity.applicableTaxCategory[0].percent);
         //this.rfqPrice.quotationLinePriceWrapper = new ItemPriceWrapper(this.rfq.requestForQuotationLine[0].lineItem.price);
@@ -81,7 +81,7 @@ export class TransportNegotiationResponseComponent implements OnInit {
             this.quotation = this.bpDataService.quotation;
         }
         this.quotationPrice = new DiscountPriceWrapper(
-            this.quotation.quotationLine[0].lineItem.price.priceAmount.value,
+            this.quotation.quotationLine[0].lineItem.price,
             this.quotation.quotationLine[0].lineItem.price,
             this.bpDataService.modifiedCatalogueLines[0].requiredItemLocationQuantity.applicableTaxCategory[0].percent);
         //this.quotationPrice.quotationLinePriceWrapper = new ItemPriceWrapper(this.quotation.quotationLine[0].lineItem.price);

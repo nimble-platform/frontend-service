@@ -172,7 +172,7 @@
             <div class="{{showCounterOfferTerms ? 'col-5' : 'col-9'}} d-flex">
                 <ng-container [ngSwitch]="primaryTermsSource">
                     <ng-container *ngSwitchCase="'product_defaults'">
-                        {{ wrapper.lineDiscountPriceWrapper.pricePerItemString }}
+                        {{ wrapper.lineDiscountPriceWrapper.discountedPricePerItemString }}
                         <div *ngIf="wrapper.lineDiscountPriceWrapper.isDiscountApplied() > 0" class="space-left" data-toggle="tooltip" data-placement="top"
                              (click)="openDiscountModal()" title="Applied Discounts/Charges" style="cursor: pointer">
                             <i class="fa fa-search" aria-hidden="true"></i>
@@ -213,6 +213,9 @@
                         {{ wrapper.lastOfferQuotationWrapper.priceWrapper.vatTotalString }}
                     </ng-container>
                 </ng-container>
+            </div>
+            <div *ngIf="negotiatePrice" class="col-5">
+                {{ wrapper.rfqDiscountPriceWrapper.vatTotalString }}
             </div>
         </div>
 

@@ -61,7 +61,7 @@ export class TransportNegotiationRequestComponent implements OnInit {
         this.rfq = this.bpDataService.requestForQuotation;
         this.validateRfq();
         this.rfqPrice = new DiscountPriceWrapper(
-            this.rfq.requestForQuotationLine[0].lineItem.price.priceAmount.value,
+            this.rfq.requestForQuotationLine[0].lineItem.price,
             this.rfq.requestForQuotationLine[0].lineItem.price,
             this.bpDataService.modifiedCatalogueLines[0].requiredItemLocationQuantity.applicableTaxCategory[0].percent);
         //this.rfqPrice.quotationLinePriceWrapper = new ItemPriceWrapper(this.rfq.requestForQuotationLine[0].lineItem.price);

@@ -299,7 +299,9 @@ export class BPDataService{
 
         rfqLine.lineItem.item = copy(line.goodsItem.item);
         rfqLine.lineItem.lineReference = [new LineReference(line.id)];
-        const linePriceWrapper = new PriceWrapper(line.requiredItemLocationQuantity.price, line.requiredItemLocationQuantity.applicableTaxCategory[0].percent);
+        const linePriceWrapper = new PriceWrapper(
+            line.requiredItemLocationQuantity.price,
+            line.requiredItemLocationQuantity.applicableTaxCategory[0].percent);
         if(linePriceWrapper.hasPrice()) {
             rfqLine.lineItem.price = copy(line.requiredItemLocationQuantity.price);
         } else {
@@ -680,7 +682,9 @@ export class BPDataService{
             }
 
             // negotiate the price if no price on the line
-            const priceWrapper = new PriceWrapper(line.requiredItemLocationQuantity.price, line.requiredItemLocationQuantity.applicableTaxCategory[0].percent);
+            const priceWrapper = new PriceWrapper(
+                line.requiredItemLocationQuantity.price,
+                line.requiredItemLocationQuantity.applicableTaxCategory[0].percent);
             if(!priceWrapper.hasPrice()) {
                 this.bpActivityEvent.workflowOptions.negotiation.price = true;
             }

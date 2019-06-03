@@ -26,7 +26,7 @@ export class ProductWrapper {
                 public negotiationSettings: CompanyNegotiationSettings,
                 public quantity: Quantity = new Quantity(1,line.requiredItemLocationQuantity.price.baseQuantity.unitCode)) {
         this.priceWrapper = new DiscountPriceWrapper(
-            line.requiredItemLocationQuantity.price.priceAmount.value,
+            line.requiredItemLocationQuantity.price,
             line.requiredItemLocationQuantity.price,
             line.requiredItemLocationQuantity.applicableTaxCategory[0].percent,
             this.quantity,
@@ -148,7 +148,7 @@ export class ProductWrapper {
     }
 
     getPricePerItem(): string {
-        return this.priceWrapper.pricePerItemString;
+        return this.priceWrapper.discountedPricePerItemString;
     }
 
     getVat(): string {

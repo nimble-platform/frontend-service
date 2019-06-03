@@ -12,13 +12,13 @@ import {defaultVatRate} from "./constants";
  */
 export class PriceWrapper {
     /** hjid field from Quantity class */
-    hjid: string = null;
+    //hjid: string = null;
 
     itemPrice: ItemPriceWrapper;
 
     constructor(public price: Price,
                 public vatPercentage: number = defaultVatRate,
-                public quantity: Quantity = new Quantity(1, price.baseQuantity.unitCode)) {
+                public orderedQuantity: Quantity = new Quantity(1, price.baseQuantity.unitCode)) {
         this.itemPrice = new ItemPriceWrapper(price);
     }
 
@@ -29,11 +29,11 @@ export class PriceWrapper {
 
         const amount = Number(this.price.priceAmount.value);
         const baseQuantity = this.price.baseQuantity.value || 1;
-        return this.quantity.value * amount / baseQuantity;
+        return this.orderedQuantity.value * amount / baseQuantity;
     }
 
     set totalPrice(price: number) {
-        const quantity = this.quantity.value || 1;
+        const quantity = this.orderedQuantity.value || 1;
         const baseQuantity = this.price.baseQuantity.value || 1;
         this.price.priceAmount.value = price / quantity * baseQuantity
     }
@@ -46,7 +46,7 @@ export class PriceWrapper {
     }
 
     get pricePerItem(): number {
-        return this.price.priceAmount.value;
+        return this.price.priceAmount.value / this.price.baseQuantity.value;
     }
 
     get pricePerItemString(): string {
@@ -62,6 +62,10 @@ export class PriceWrapper {
             return `${roundToTwoDecimals(amount.value)} ${currencyToString(amount.currencyID)} per ${qty.unitCode}`
         }
         return `${roundToTwoDecimals(amount.value)} ${currencyToString(amount.currencyID)} for ${baseQuantity} ${qty.unitCode}`
+    }
+
+    get pricePerBaseQuantity(): number {
+        return this.pricePerItem * this.itemPrice.baseQuantity;
     }
 
     get vatTotal(): number {
@@ -97,7 +101,7 @@ export class PriceWrapper {
      * Getters/Setters for quantity
      */
 
-    get value(): number {
+    /*get value(): number {
         return this.totalPrice;
     }
 
@@ -111,5 +115,4 @@ export class PriceWrapper {
 
     set unitCode(unitCode: string) {
         this.currency = unitCode;
-    }
-}
+*/}
