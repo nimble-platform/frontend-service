@@ -1,25 +1,25 @@
 import { CatalogueLine } from "../../../catalogue/model/publish/catalogue-line";
 import { RequestForQuotation } from "../../../catalogue/model/publish/request-for-quotation";
-import { Quotation } from "../../../catalogue/model/publish/quotation";
 import { Amount } from "../../../catalogue/model/publish/amount";
 import { Quantity } from "../../../catalogue/model/publish/quantity";
 import { PaymentTermsWrapper } from "../payment-terms-wrapper";
-import {copy, durationToString} from "../../../common/utils";
+import { durationToString} from "../../../common/utils";
 import { PriceWrapper } from "../../../common/price-wrapper";
-import { Address } from "../../../catalogue/model/publish/address";
-import { CompanyNegotiationSettings } from "../../../user-mgmt/model/company-negotiation-settings";
 import {TradingTerm} from "../../../catalogue/model/publish/trading-term";
 import {MultiTypeValue} from "../../../catalogue/model/publish/multi-type-value";
-import {DiscountPriceWrapper} from "../../../common/discount-price-wrapper";
 
 export class RequestForQuotationWrapper {
 
     paymentTermsWrapper: PaymentTermsWrapper;
     priceWrapper: PriceWrapper;
 
-    constructor(private requestForQuotation: RequestForQuotation) {
+    constructor(private requestForQuotation: RequestForQuotation,
+                private catalogueLine: CatalogueLine) {
         this.paymentTermsWrapper = new PaymentTermsWrapper(requestForQuotation.paymentTerms);
-        this.priceWrapper = new PriceWrapper(requestForQuotation.requestForQuotationLine[0].lineItem.price, requestForQuotation.requestForQuotationLine[0].lineItem.quantity);
+        this.priceWrapper = new PriceWrapper(
+            requestForQuotation.requestForQuotationLine[0].lineItem.price,
+            catalogueLine.requiredItemLocationQuantity.applicableTaxCategory[0].percent,
+            requestForQuotation.requestForQuotationLine[0].lineItem.quantity);
     }
 
     public get priceAmount(): Amount {

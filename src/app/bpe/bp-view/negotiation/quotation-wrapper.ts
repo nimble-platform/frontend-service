@@ -18,9 +18,13 @@ export class QuotationWrapper {
     paymentTermsWrapper: PaymentTermsWrapper;
     priceWrapper: PriceWrapper;
 
-    constructor(public quotation: Quotation) {
+    constructor(public quotation: Quotation,
+                private catalogueLine: CatalogueLine) {
         this.paymentTermsWrapper = new PaymentTermsWrapper(quotation.paymentTerms);
-        this.priceWrapper = new PriceWrapper(quotation.quotationLine[0].lineItem.price, quotation.quotationLine[0].lineItem.quantity);
+        this.priceWrapper = new PriceWrapper(
+            quotation.quotationLine[0].lineItem.price,
+            catalogueLine.requiredItemLocationQuantity.applicableTaxCategory[0].percent,
+            quotation.quotationLine[0].lineItem.quantity);
     }
 
     public get priceAmount(): Amount {

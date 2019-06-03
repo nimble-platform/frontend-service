@@ -468,9 +468,27 @@ export function getFileExtension(filename: string): string {
 
 export function roundToTwoDecimals(value): any{
     if (!isNaN(value) && value !== null) {
-        return (Math.round(parseFloat(value) * 100) / 100).toFixed(2);
+        // round to minimum possible decimal >= 2
+        let roundedValue: number = 0;
+        let power = 1;
+        do {
+            power++;
+            roundedValue = Math.round(value * Math.pow(10, power)) / Math.pow(10, power);
+        } while(roundedValue == 0);
+
+        return roundedValue.toFixed(power);
     }
     return value;
+}
+
+export function trimRedundantDecimals(value: number): number {
+    let roundedValue: number = 0;
+    let power = -1;
+    do {
+        power++;
+        roundedValue = Math.round(value * Math.pow(10, power)) / Math.pow(10, power);
+    } while(roundedValue == 0);
+    return roundedValue;
 }
 
 export function isNaNNullAware(number: number): boolean {

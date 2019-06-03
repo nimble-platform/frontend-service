@@ -1,6 +1,6 @@
 import { Price } from "../catalogue/model/publish/price";
 import { Quantity } from "../catalogue/model/publish/quantity";
-import {currencyToString, roundToTwoDecimals} from "./utils";
+import {copy, currencyToString, roundToTwoDecimals} from "./utils";
 import { ItemPriceWrapper } from "./item-price-wrapper";
 import {PriceOption} from '../catalogue/model/publish/price-option';
 import {PRICE_OPTIONS} from '../catalogue/model/constants';
@@ -8,7 +8,6 @@ import {ItemProperty} from '../catalogue/model/publish/item-property';
 import {Address} from '../catalogue/model/publish/address';
 import {Text} from '../catalogue/model/publish/text';
 import {Country} from '../catalogue/model/publish/country';
-import {isNumber} from "@ng-bootstrap/ng-bootstrap/util/util";
 
 /**
  * Wrapper around a price and a quantity, contains convenience methods to get the total price,
@@ -17,16 +16,14 @@ import {isNumber} from "@ng-bootstrap/ng-bootstrap/util/util";
  * This class can also be substituted for a Quantity.
  */
 export class DiscountPriceWrapper {
-    debugName: string;
-    /** hjid field from Quantity class */
-    hjid: string = null;
-
     itemPrice: ItemPriceWrapper;
+    immutableOriginalCatalogueLinePrice: Price;
     // this field is used to create discount-modal view
     appliedDiscounts: PriceOption[] = [];
 
-    constructor(public initialCatalogueLinePrice: number, // immutable initial price that to be used as the starting price while calculating the discount
+    constructor(public originalCatalogueLinePrice: Price, // immutable initial price that to be used as the starting price while calculating the discount
                 public price: Price, // dynamically changing price upon the updates on the price
+                public vatPercentage: number,
                 public orderedQuantity: Quantity = new Quantity(1, price.baseQuantity.unitCode), // ordered quantity
                 public priceOptions:PriceOption[] = [],
                 public additionalItemProperties:ItemProperty[] = [],
@@ -35,8 +32,18 @@ export class DiscountPriceWrapper {
                 public deliveryPeriod: Quantity = null,
                 public deliveryLocation: Address = null
     ) {
+        this.immutableOriginalCatalogueLinePrice = copy(originalCatalogueLinePrice);
         this.itemPrice = new ItemPriceWrapper(price);
         this.getDiscountedTotalPrice(); // to initialize the applied discounts list
+    }
+
+    get originalPricePerItem(): number {
+        if(!this.hasPrice() || isNaN(this.orderedQuantity.value)) {
+            return 0;
+        }
+
+        const baseQuantity = this.immutableOriginalCatalogueLinePrice.baseQuantity.value || 1;
+        return this.immutableOriginalCatalogueLinePrice.priceAmount.value / baseQuantity;
     }
 
     get pricePerItem(): number {
@@ -44,30 +51,7 @@ export class DiscountPriceWrapper {
             return 0;
         }
 
-        let discountedTotalPrice: number = this.getDiscountedTotalPrice();
-        return discountedTotalPrice / this.orderedQuantity.value;
-    }
-
-    get totalPrice(): number {
-        if(!this.hasPrice() || !this.orderedQuantity.value) {
-            return 0;
-        }
-
-        const baseQuantity = this.price.baseQuantity.value || 1;
-        return this.roundPrice(this.orderedQuantity.value * this.itemPrice.value / baseQuantity);
-    }
-
-    set totalPrice(price: number) {
-        const quantity = this.orderedQuantity.value || 1;
-        const baseQuantity = this.price.baseQuantity.value || 1;
-        this.price.priceAmount.value = price / quantity * baseQuantity
-    }
-
-    get totalPriceString(): string {
-        if(!this.hasPrice()) {
-            return "Not specified";
-        }
-        return `${this.totalPrice} ${this.currency}`;
+        return this.itemPrice.pricePerItem;
     }
 
     get pricePerItemString(): string {
@@ -77,7 +61,62 @@ export class DiscountPriceWrapper {
             return "On demand";
         }
 
-        return `${roundToTwoDecimals(this.itemPrice.value)} ${currencyToString(this.price.priceAmount.currencyID)} per ${qty.unitCode}`;
+        return `${roundToTwoDecimals(this.pricePerItem)} ${currencyToString(this.price.priceAmount.currencyID)} per ${qty.unitCode}`;
+    }
+
+    get discountedPricePerItem(): number {
+        if(!this.hasPrice() || isNaN(this.orderedQuantity.value)) {
+            return 0;
+        }
+
+        let discountedTotalPrice: number = this.getDiscountedTotalPrice();
+        return discountedTotalPrice / this.orderedQuantity.value;
+    }
+
+    get discountedPricePerItemString(): string {
+        const qty = this.orderedQuantity;
+
+        if(!this.hasPrice() || !qty.value) {
+            return "On demand";
+        }
+
+        return `${roundToTwoDecimals(this.discountedPricePerItem)} ${currencyToString(this.price.priceAmount.currencyID)} per ${qty.unitCode}`;
+    }
+
+    get totalPrice(): number {
+        if(!this.hasPrice() || !this.orderedQuantity.value) {
+            return 0;
+        }
+
+        return this.orderedQuantity.value * this.itemPrice.value;
+    }
+
+    set totalPrice(price: number) {
+        const quantity = this.orderedQuantity.value || 1;
+        this.price.priceAmount.value = price / quantity * this.itemPrice.baseQuantity
+    }
+
+    get totalPriceString(): string {
+        if(!this.hasPrice()) {
+            return "Not specified";
+        }
+        return `${roundToTwoDecimals(this.totalPrice)} ${this.currency}`;
+    }
+
+    get vatTotal(): number {
+        return this.totalPrice * this.vatPercentage / 100;
+    }
+
+    get vatTotalString(): string {
+        return `${roundToTwoDecimals(this.vatTotal)} ${this.currency}`;
+    }
+
+    get grossTotal(): number {
+        return this.totalPrice + this.vatTotal;
+    }
+
+    get grossTotalString(): string {
+        return `${roundToTwoDecimals(this.grossTotal)} ${this.currency}`;
     }
 
     get currency(): string {
@@ -101,12 +140,10 @@ export class DiscountPriceWrapper {
      *  Price options functions
      */
     private getDiscountedTotalPrice(): number {
-        const baseQuantity = this.price.baseQuantity.value || 1;
         // use the initial price if the discounts are calculated, otherwise use the current price value
         // this is required as the price value is update in this method
         //const pricePerItem = this.useCatalogueLinePrice ? this.initialCatalogueLinePrice : this.itemPrice.value;
-        const pricePerItem = this.initialCatalogueLinePrice;
-        let totalPrice = this.orderedQuantity.value * pricePerItem / baseQuantity;
+        let totalPrice = this.orderedQuantity.value * this.originalPricePerItem;
 
         let totalDiscount:number = 0;
         let totalMinimumOrderQuantityDiscount = 0;
@@ -250,9 +287,5 @@ export class DiscountPriceWrapper {
             }
         }
         return false;
-    }
-
-    private roundPrice(value: number): number {
-        return Math.round(value * 100) / 100;
     }
 }

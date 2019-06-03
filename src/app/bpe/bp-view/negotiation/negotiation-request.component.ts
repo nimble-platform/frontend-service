@@ -17,7 +17,7 @@ import {ProcessVariables} from "../../model/process-variables";
 import {ModelUtils} from "../../model/model-utils";
 import {ProcessInstanceInputMessage} from "../../model/process-instance-input-message";
 import {NegotiationModelWrapper} from "./negotiation-model-wrapper";
-import {copy, durationToString, getMaximumQuantityForPrice, getStepForPrice, isValidPrice} from "../../../common/utils";
+import {copy, durationToString, getMaximumQuantityForPrice, getStepForPrice, isValidPrice, roundToTwoDecimals, trimRedundantDecimals} from "../../../common/utils";
 import {PeriodRange} from "../../../user-mgmt/model/period-range";
 import {Option} from "../../../common/options-input.component";
 import {addressToString} from "../../../user-mgmt/utils";
@@ -189,7 +189,7 @@ export class NegotiationRequestComponent implements OnInit {
             rfq.negotiationOptions.incoterms = this.wrapper.lineIncoterms !== this.wrapper.rfqIncoterms;
             rfq.negotiationOptions.paymentMeans = this.wrapper.linePaymentMeans !== this.wrapper.rfqPaymentMeans;
             rfq.negotiationOptions.paymentTerms = this.wrapper.linePaymentTerms !== this.wrapper.rfqPaymentTermsToString;
-            rfq.negotiationOptions.price = this.wrapper.lineDiscountPriceWrapper.pricePerItem !== this.wrapper.rfqDiscountPriceWrapper.itemPrice.value;
+            rfq.negotiationOptions.price = this.wrapper.lineDiscountPriceWrapper.discountedPricePerItem !== this.wrapper.rfqDiscountPriceWrapper.pricePerItem;
             rfq.negotiationOptions.warranty = this.wrapper.lineWarrantyString !== this.wrapper.rfqWarrantyString;
             rfq.negotiationOptions.termsAndConditions = UBLModelUtils.areTermsAndConditionListsDifferent(this.defaultTermsAndConditions, this.wrapper.rfq.termOrCondition);
 
@@ -202,7 +202,7 @@ export class NegotiationRequestComponent implements OnInit {
             rfq.negotiationOptions.incoterms = quotationWrapper.incoterms !== this.wrapper.rfqIncoterms;
             rfq.negotiationOptions.paymentMeans = quotationWrapper.paymentMeans !== this.wrapper.rfqPaymentMeans;
             rfq.negotiationOptions.paymentTerms = quotationWrapper.paymentTermsWrapper.paymentTerm !== this.wrapper.rfqPaymentTermsToString;
-            rfq.negotiationOptions.price = quotationWrapper.priceWrapper.pricePerItem !== this.wrapper.rfqDiscountPriceWrapper.itemPrice.value;
+            rfq.negotiationOptions.price = quotationWrapper.priceWrapper.pricePerItem !== this.wrapper.rfqDiscountPriceWrapper.discountedPricePerItem;
             rfq.negotiationOptions.warranty = quotationWrapper.warrantyString !== this.wrapper.rfqWarrantyString;
             rfq.negotiationOptions.termsAndConditions = UBLModelUtils.areTermsAndConditionListsDifferent(quotationWrapper.quotation.termOrCondition, this.wrapper.rfq.termOrCondition);
         }
@@ -334,7 +334,7 @@ export class NegotiationRequestComponent implements OnInit {
                 this.wrapper.rfqPaymentMeans = quotationWrapper.paymentMeans;
             }
             if(!this.rfq.negotiationOptions.price || ignoreNegotiationOptions) {
-                this.wrapper.rfqDiscountPriceWrapper.itemPrice.value = quotationWrapper.priceWrapper.pricePerItem;
+                this.wrapper.rfqDiscountPriceWrapper.itemPrice.value = trimRedundantDecimals(quotationWrapper.priceWrapper.pricePerItem);
                 this.wrapper.rfqDiscountPriceWrapper.itemPrice.currency = quotationWrapper.priceWrapper.currency;
             }
             if(!this.rfq.negotiationOptions.frameContractDuration || ignoreNegotiationOptions) {
@@ -362,7 +362,7 @@ export class NegotiationRequestComponent implements OnInit {
             }
             if(!this.rfq.negotiationOptions.price || ignoreNegotiationOptions) {
                 this.onPriceConditionsChange();
-                this.wrapper.rfqDiscountPriceWrapper.itemPrice.value = this.wrapper.lineDiscountPriceWrapper.itemPrice.value;
+                this.wrapper.rfqDiscountPriceWrapper.itemPrice.value = trimRedundantDecimals(this.wrapper.lineDiscountPriceWrapper.pricePerItem);
                 this.wrapper.rfqDiscountPriceWrapper.itemPrice.currency = this.wrapper.lineDiscountPriceWrapper.itemPrice.currency;
             }
             if(!this.rfq.negotiationOptions.termsAndConditions || ignoreNegotiationOptions) {
@@ -378,12 +378,12 @@ export class NegotiationRequestComponent implements OnInit {
         this.wrapper.lineDiscountPriceWrapper.deliveryPeriod = this.wrapper.rfqDeliveryPeriod;
         this.wrapper.lineDiscountPriceWrapper.deliveryLocation = this.wrapper.rfqDeliveryAddress;
         // get the price per item including the discount
-        this.wrapper.lineDiscountPriceWrapper.itemPrice.value = this.wrapper.lineDiscountPriceWrapper.pricePerItem;
+        this.wrapper.lineDiscountPriceWrapper.itemPrice.value = this.wrapper.lineDiscountPriceWrapper.discountedPricePerItem;
 
         // update the rfq price only if the price is not being negotiated and the default product terms are presented
         // it does not make sense to update price based on the discounts when the terms of frame contract or last offer terms are presented
         if(!this.rfq.negotiationOptions.price && this.primaryTermsSource == 'product_defaults') {
-            this.wrapper.rfqDiscountPriceWrapper.itemPrice.value = this.wrapper.lineDiscountPriceWrapper.pricePerItem;
+            this.wrapper.rfqDiscountPriceWrapper.itemPrice.value = this.wrapper.lineDiscountPriceWrapper.discountedPricePerItem;
         }
     }
 
@@ -418,7 +418,7 @@ export class NegotiationRequestComponent implements OnInit {
             termsAndConditionsDiffer = UBLModelUtils.areTermsAndConditionListsDifferent(quotationWrapper.quotation.termOrCondition, this.rfq.termOrCondition);
 
         } else {
-            priceDiffers = this.wrapper.rfqPricePerItemString != this.wrapper.lineDiscountPriceWrapper.pricePerItemString;
+            priceDiffers = this.wrapper.rfqPricePerItemString != this.wrapper.lineDiscountPriceWrapper.discountedPricePerItemString;
             deliveryPeriodDiffers = this.wrapper.rfqDeliveryPeriodString != this.wrapper.lineDeliveryPeriodString;
             warrantyDiffers = this.wrapper.rfqWarrantyString != this.wrapper.lineWarrantyString;
             incotermDiffers = this.wrapper.rfqIncoterms != this.wrapper.lineIncoterms;

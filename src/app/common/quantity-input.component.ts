@@ -31,6 +31,7 @@ export class QuantityInputComponent implements OnInit {
     @Input() quantityUnits?: string[];
     @Input() quantityType?: string;
     @Input() disableQuantityUnit: boolean = false;
+    @Input() step: number = 1;
 
     constructor(private unitService: UnitService) {
 

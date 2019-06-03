@@ -103,6 +103,7 @@ export class OrderComponent implements OnInit {
         this.orderResponse = this.bpDataService.orderResponse;
         this.priceWrapper = new PriceWrapper(
             this.order.orderLine[0].lineItem.price,
+            this.bpDataService.modifiedCatalogueLines[0].requiredItemLocationQuantity.applicableTaxCategory[0].percent,
             this.order.orderLine[0].lineItem.quantity
         );
 

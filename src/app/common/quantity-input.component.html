@@ -6,7 +6,7 @@
     <div [class]="valueClass" *ngIf="presentationMode === 'edit' && visible">
         <div class="row">
             <div class="{{valueSizeClass}} col-quantity-value">
-                <input type="number" class="form-control form-control-sm"
+                <input type="number" class="form-control form-control-sm" [step]="step"
                        [ngModel]="quantity.value" (ngModelChange)="quantity.value = $event; onQuantityValueChanged($event)" [disabled]="disabled" [placeholder]="placeholder">
             </div>
             <div *ngIf="!quantityUnits" class="{{unitSizeClass}} col-quantity-unit">
