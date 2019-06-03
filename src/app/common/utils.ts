@@ -15,13 +15,15 @@ import {Headers} from "@angular/http";
 import { AbstractControl } from "@angular/forms";
 declare var Countries: any;
 import {PartyName} from '../catalogue/model/publish/party-name';
-import {maximumDecimalsForPrice} from  './constants'
+import {deliveryPeriodUnitListId, maximumDecimalsForPrice, warrantyPeriodUnitListId} from  './constants'
+import {UnitService} from "./unit-service";
+import {CompanyNegotiationSettings} from "../user-mgmt/model/company-negotiation-settings";
 
 const UI_NAMES: any = {
     STRING: "TEXT"
 }
 
-const COUNTRY_NAMES = getCountryNames();
+export const COUNTRY_NAMES = getCountryNames();
 const COUNTRY_JSON = getCountryJSON();
 
 function getCountryNames(): string[] {
@@ -109,6 +111,30 @@ export function validateCountry(control: AbstractControl): any {
   return null;
 }
 
+export function sanitizeLink(link: any): any {
+  let parsed_link = "";
+  if (link && link != "") {
+    if (link.indexOf("http://") == -1 && link.indexOf("https://") == -1) {
+      parsed_link = "http://"+link;
+    }
+    else {
+      parsed_link = link;
+    }
+    if (!checkURL(parsed_link))
+      parsed_link = "";
+  }
+  return parsed_link;
+}
+
+function checkURL(url: string): boolean {
+  var expression = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
+  var regex = new RegExp(expression);
+  var match = false;
+  if (url.match(regex))
+    match = true;
+  return match;
+}
+
 export function sanitizeDataTypeName(dataType: PropertyValueQualifier): string {
     if(UI_NAMES[dataType]) {
         return UI_NAMES[dataType]
@@ -144,6 +170,9 @@ function isItemProperty(property: any): property is ItemProperty {
  * @param label
  */
 export function selectNameFromLabelObject(label: any): string {
+    if(label == null) {
+        return "";
+    }
     let defaultLanguage = DEFAULT_LANGUAGE();
     if(label[defaultLanguage] != null) {
         return label[defaultLanguage];
@@ -439,14 +468,39 @@ export function getFileExtension(filename: string): string {
 
 export function roundToTwoDecimals(value): any{
     if (!isNaN(value) && value !== null) {
-        return (Math.round(parseFloat(value) * 100) / 100).toFixed(2);
+        // round to minimum possible decimal >= 2
+        let roundedValue: number = 0;
+        let power = 1;
+        do {
+            power++;
+            roundedValue = Math.round(value * Math.pow(10, power)) / Math.pow(10, power);
+        } while(roundedValue == 0);
+
+        return roundedValue.toFixed(power);
     }
     return value;
 }
 
-export function isValidPrice(vale: any, maximumDecimals: number = maximumDecimalsForPrice ) {
-    if (!isNaN(vale) && vale !== "") {
-        let decimals = countDecimals(vale);
+export function trimRedundantDecimals(value: number): number {
+    let roundedValue: number = 0;
+    let power = -1;
+    do {
+        power++;
+        roundedValue = Math.round(value * Math.pow(10, power)) / Math.pow(10, power);
+    } while(roundedValue == 0);
+    return roundedValue;
+}
+
+export function isNaNNullAware(number: number): boolean {
+    if (isNaN(number) || number == null) {
+        return true;
+    }
+    return false;
+}
+
+export function isValidPrice(value: any, maximumDecimals: number = maximumDecimalsForPrice ) {
+    if (value != null && !isNaN(value) && value !== "") {
+        let decimals = countDecimals(value);
         return (decimals <= maximumDecimals);
     }else {
         return false;
@@ -485,7 +539,7 @@ export function getPropertyValues(property: ItemProperty): any[] {
         case "DOUBLE":
         case "NUMBER":
             return property.valueDecimal;
-        case "BINARY":
+        case "FILE":
             return property.valueBinary;
         case "QUANTITY":
             return property.valueQuantity;
@@ -501,7 +555,7 @@ export function getPropertyValuesAsStrings(property: ItemProperty): string[] {
         case "DOUBLE":
         case "NUMBER":
             return property.valueDecimal.map(num => String(num));
-        case "BINARY":
+        case "FILE":
             return property.valueBinary.map(bin => bin.fileName);
         case "QUANTITY":
             return property.valueQuantity.map(qty => `${qty.value} ${qty.unitCode}`);
@@ -516,7 +570,28 @@ export function getPropertyValuesAsStrings(property: ItemProperty): string[] {
 }
 
 export function isTransportService(product: CatalogueLine): boolean {
-    return product && !!product.goodsItem.item.transportationServiceDetails;
+    if(product){
+        for(let commodityClassification of product.goodsItem.item.commodityClassification){
+            if(commodityClassification.itemClassificationCode.listID == "Default" && commodityClassification.itemClassificationCode.value == "Transport Service"){
+                    return true;
+            }
+        }
+    }
+    return false;
+}
+
+export function isLogisticsService(product: CatalogueLine): boolean {
+    if(product){
+        for(let commodityClassification of product.goodsItem.item.commodityClassification){
+            if(commodityClassification.itemClassificationCode.listID == "Default"){
+                if(commodityClassification.itemClassificationCode.value == "Logistics Service" || commodityClassification.itemClassificationCode.value == "Transport Service"){
+                    return true;
+                }
+            }
+
+        }
+    }
+    return false;
 }
 
 export function deepEquals(obj1: any, obj2: any): boolean {

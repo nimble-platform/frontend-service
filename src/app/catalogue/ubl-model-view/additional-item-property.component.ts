@@ -59,7 +59,7 @@ export class AdditionalItemPropertyComponent implements OnInit, OnDestroy {
         } else if (this.additionalItemProperty.valueQualifier == "NUMBER") {
             let newNumber: number;
             this.additionalItemProperty.valueDecimal.push(newNumber);
-        } else if (this.additionalItemProperty.valueQualifier == "BINARY") {
+        } else if (this.additionalItemProperty.valueQualifier == "FILE") {
             // not applicable
         }
     }

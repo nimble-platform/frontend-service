@@ -19,7 +19,7 @@ import { ProcessInstanceInputMessage } from "../../model/process-instance-input-
 import { copy, isTransportService } from "../../../common/utils";
 import { PresentationMode } from "../../../catalogue/model/publish/presentation-mode";
 import {DocumentService} from '../document-service';
-import {BpStartEvent} from '../../../catalogue/model/publish/bp-start-event';
+import {BpActivityEvent} from '../../../catalogue/model/publish/bp-start-event';
 import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
 /**
  * Created by suat on 19-Nov-17.
@@ -51,7 +51,9 @@ export class ItemInformationRequestComponent implements OnInit {
 
     ngOnInit() {
         // get copy of ThreadEventMetadata of the current business process
-        this.processMetadata = this.bpDataService.bpStartEvent.processMetadata;
+        if(!this.bpDataService.bpActivityEvent.newProcess) {
+            this.processMetadata = this.bpDataService.bpActivityEvent.processHistory[0];
+        }
 
         this.request = this.bpDataService.itemInformationRequest;
         const documents = this.request.itemInformationRequestLine[0].salesItem[0].item.itemSpecificationDocumentReference;
@@ -75,11 +77,11 @@ export class ItemInformationRequestComponent implements OnInit {
         if(isTransportService(this.bpDataService.getCatalogueLine()) || !this.bpDataService.getCompanySettings().tradeDetails.ppapCompatibilityLevel) {
             // skip ppap
             this.bpDataService.initRfq(this.bpDataService.getCompanySettings().negotiationSettings).then(() => {
-                this.bpDataService.proceedNextBpStep(this.bpDataService.bpStartEvent.userRole,"Negotiation");
+                this.bpDataService.proceedNextBpStep(this.bpDataService.bpActivityEvent.userRole,"Negotiation");
             });
         } else {
             this.bpDataService.initPpap([]);
-            this.bpDataService.proceedNextBpStep(this.bpDataService.bpStartEvent.userRole, "Ppap");
+            this.bpDataService.proceedNextBpStep(this.bpDataService.bpActivityEvent.userRole, "Ppap");
         }
     }
 
@@ -113,7 +115,7 @@ export class ItemInformationRequestComponent implements OnInit {
         .then(() => {
             this.callStatus.callback("Item Information Request sent", true);
             var tab = "PUCHASES";
-            if (this.bpDataService.bpStartEvent.userRole == "seller")
+            if (this.bpDataService.bpActivityEvent.userRole == "seller")
               tab = "SALES";
             this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
         })
@@ -131,7 +133,7 @@ export class ItemInformationRequestComponent implements OnInit {
                 this.documentService.updateCachedDocument(itemInformationRequest.id,itemInformationRequest);
                 this.callStatus.callback("Item Information Request updated", true);
                 var tab = "PUCHASES";
-                if (this.bpDataService.bpStartEvent.userRole == "seller")
+                if (this.bpDataService.bpActivityEvent.userRole == "seller")
                   tab = "SALES";
                 this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
             })

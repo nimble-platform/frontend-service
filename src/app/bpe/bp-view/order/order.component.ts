@@ -27,9 +27,11 @@ import { SearchContextService } from "../../../simple-search/search-context.serv
 import { EpcCodes } from "../../../data-channel/model/epc-codes";
 import { EpcService } from "../epc-service";
 import {DocumentService} from "../document-service";
-import {BpStartEvent} from '../../../catalogue/model/publish/bp-start-event';
+import {BpActivityEvent} from '../../../catalogue/model/publish/bp-start-event';
 import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
 import * as myGlobals from '../../../globals';
+import {Contract} from '../../../catalogue/model/publish/contract';
+import {Clause} from '../../../catalogue/model/publish/clause';
 
 /**
  * Created by suat on 20-Sep-17.
@@ -47,10 +49,8 @@ export class OrderComponent implements OnInit {
     paymentTermsWrapper: PaymentTermsWrapper;
     priceWrapper: PriceWrapper;
     userRole: BpUserRole;
+    formerProcess: boolean;
     config = myGlobals.config;
-
-    showPreview: boolean = false;
-    termsAndConditions: string;
 
     buyerParty: Party;
     sellerParty: Party;
@@ -64,11 +64,14 @@ export class OrderComponent implements OnInit {
 
     initCallStatus: CallStatus = new CallStatus();
     submitCallStatus: CallStatus = new CallStatus();
-    fetchTermsAndConditionsStatus: CallStatus = new CallStatus();
     fetchDataMonitoringStatus: CallStatus = new CallStatus();
 
     // the copy of ThreadEventMetadata of the current business process
     processMetadata: ThreadEventMetadata;
+
+    getPartyId = UBLModelUtils.getPartyId;
+
+    showPurchaseOrder:boolean = false;
 
     constructor(public bpDataService: BPDataService,
                 private userService: UserService,
@@ -84,7 +87,10 @@ export class OrderComponent implements OnInit {
 
     ngOnInit(): void {
         // get copy of ThreadEventMetadata of the current business process
-        this.processMetadata = this.bpDataService.bpStartEvent.processMetadata;
+        if(!this.bpDataService.bpActivityEvent.newProcess) {
+            this.processMetadata = this.bpDataService.bpActivityEvent.processHistory[0];
+        }
+        this.formerProcess = this.bpDataService.bpActivityEvent.formerProcess;
 
         if(this.bpDataService.order == null) {
             this.router.navigate(['dashboard']);
@@ -93,10 +99,11 @@ export class OrderComponent implements OnInit {
         this.order = this.bpDataService.order;
         this.address = this.order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address;
         this.paymentTermsWrapper = new PaymentTermsWrapper(this.order.paymentTerms);
-        this.userRole = this.bpDataService.bpStartEvent.userRole;
+        this.userRole = this.bpDataService.bpActivityEvent.userRole;
         this.orderResponse = this.bpDataService.orderResponse;
         this.priceWrapper = new PriceWrapper(
             this.order.orderLine[0].lineItem.price,
+            this.bpDataService.modifiedCatalogueLines[0].requiredItemLocationQuantity.applicableTaxCategory[0].percent,
             this.order.orderLine[0].lineItem.quantity
         );
 
@@ -106,7 +113,7 @@ export class OrderComponent implements OnInit {
         const sellerId: string = UBLModelUtils.getPartyId(this.order.orderLine[0].lineItem.item.manufacturerParty);
         const buyerId: string = this.cookieService.get("company_id");
         this.initCallStatus.submit();
-        if(this.order.contract == null && this.bpDataService.precedingProcessId != null) {
+        if(this.getNonTermAndConditionContract() == null && this.bpDataService.precedingProcessId != null) {
             Promise.all([
                 this.bpeService.constructContractForProcess(this.bpDataService.precedingProcessId),
                 this.userService.getParty(buyerId),
@@ -117,7 +124,7 @@ export class OrderComponent implements OnInit {
                 this.buyerParty = buyerParty;
                 this.sellerParty = sellerParty;
                 this.dataMonitoringDemanded = dataMonitoringDemanded;
-                this.order.contract = [contract];
+                this.order.contract.push(contract);
                 return this.isDataMonitoringDemanded();
             })
             .then(dataMonitoringDemanded => {
@@ -146,6 +153,33 @@ export class OrderComponent implements OnInit {
         this.initializeEPCCodes();
     }
 
+    // retrieve the order contract which is not the Term and Condition contract
+    getNonTermAndConditionContract(){
+        if(this.order.contract){
+            for(let contract of this.order.contract){
+                for(let clause of contract.clause){
+                    if(clause.type){
+                        return clause;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    getTermAndConditionClauses():Clause[]{
+        if(this.order.contract){
+            for(let contract of this.order.contract){
+                for(let clause of contract.clause){
+                    if(!clause.type){
+                        return contract.clause;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     trackByFn(index: any) {
         return index;
     }
@@ -153,21 +187,6 @@ export class OrderComponent implements OnInit {
     /*
      * Event Handlers
      */
-
-    onPreviewTermsAndConditions() {
-        this.showPreview = !this.showPreview;
-
-        if(this.showPreview && !this.termsAndConditions) {
-            this.fetchTermsAndConditionsStatus.submit();
-            this.bpeService.generateOrderTermsAndConditionsAsText(this.order, UBLModelUtils.getPartyId(this.buyerParty), UBLModelUtils.getPartyId(this.sellerParty))
-            .then(text => {
-                this.fetchTermsAndConditionsStatus.callback("Successfully fetched terms and conditions", true);
-                this.termsAndConditions = text;
-            }).catch(error => {
-                this.fetchTermsAndConditionsStatus.error("Error while fetching terms and conditions", error);
-            });
-        }
-    }
 
     onBack() {
         this.location.back();
@@ -198,7 +217,7 @@ export class OrderComponent implements OnInit {
             .then(res => {
                 this.submitCallStatus.callback("Order placed", true);
                 var tab = "PUCHASES";
-                if (this.bpDataService.bpStartEvent.userRole == "seller")
+                if (this.bpDataService.bpActivityEvent.userRole == "seller")
                   tab = "SALES";
                 this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
             }).catch(error => {
@@ -215,7 +234,7 @@ export class OrderComponent implements OnInit {
                 this.documentService.updateCachedDocument(order.id,order);
                 this.submitCallStatus.callback("Order updated", true);
                 var tab = "PUCHASES";
-                if (this.bpDataService.bpStartEvent.userRole == "seller")
+                if (this.bpDataService.bpActivityEvent.userRole == "seller")
                   tab = "SALES";
                 this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
             })
@@ -245,7 +264,7 @@ export class OrderComponent implements OnInit {
             .then(res => {
                 this.submitCallStatus.callback("Order Response placed", true);
                 var tab = "PUCHASES";
-                if (this.bpDataService.bpStartEvent.userRole == "seller")
+                if (this.bpDataService.bpActivityEvent.userRole == "seller")
                   tab = "SALES";
                 this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
             }).catch(error => {
@@ -278,12 +297,13 @@ export class OrderComponent implements OnInit {
     }
 
     onSearchTransportService() {
-        this.searchContextService.setSearchContext('Transport Service Provider','Order',this.processMetadata,this.bpDataService.bpStartEvent.containerGroupId);
+        this.searchContextService.setSearchContext('Transport Service Provider','Order',this.processMetadata,this.bpDataService.bpActivityEvent.containerGroupId);
         this.router.navigate(['simple-search'], {
             queryParams: {
                 searchContext: 'orderbp',
                 q:'*',
-                cat:'Transport Service'
+                cat:'Transport Service',
+                catID:'nimble:category:TransportService'
             }
         });
     }
@@ -475,5 +495,20 @@ export class OrderComponent implements OnInit {
         }
 
         return Promise.resolve(false);
+    }
+
+    getOrderContract():Contract{
+        let orderContract = null;
+        if(this.order.contract){
+            for(let contract of this.order.contract){
+                for(let clause of contract.clause){
+                    if(clause.type){
+                        orderContract = contract;
+                        break;
+                    }
+                }
+            }
+        }
+        return orderContract;
     }
 }

@@ -49,8 +49,8 @@ export const CUSTOM_PROPERTY_LIST_ID = "Custom";
 export const PROPERTY_TYPES: Option[] = [
     { name: "Text", value: "STRING" },
     { name: "Number", value: "NUMBER" },
-    { name: "Image", value: "BINARY" },
-    { name: "File", value: "BINARY" },
+    { name: "Image", value: "FILE" },
+    { name: "File", value: "FILE" },
     { name: "Quantity", value: "QUANTITY" },
     { name: "Boolean", value: "BOOLEAN" },
 ]
@@ -77,6 +77,15 @@ export const PPAP_CERTIFICATES = [
     "Records of Material / Performance Tests",
     "Sample Production Parts"
 ];
+
+export const REGIONS = [
+    "Europe",
+    "Asia",
+    "Africa",
+    "North America",
+    "South America",
+    "Oceania"
+]
 
 export const PRICE_OPTIONS = {
     ORDERED_QUANTITY: {text:'Ordered Quantity',typeID:1},

@@ -15,6 +15,18 @@ export class ItemPriceWrapper {
 
     }
 
+    get pricePerItem(): number {
+        const amount = this.price.priceAmount;
+        const qty = this.price.baseQuantity
+        const baseQuantity = qty.value || 1;
+
+        if(!amount.value || !qty.value) {
+            return 0;
+        }
+
+        return amount.value / qty.value;
+    }
+
     get pricePerItemString(): string {
         const amount = this.price.priceAmount;
         const qty = this.price.baseQuantity
@@ -37,6 +49,10 @@ export class ItemPriceWrapper {
     set currency(currency: string) {
         this.price.priceAmount.currencyID = currency;
     }
+
+    get baseQuantity(): number {
+        return this.price.baseQuantity.value || 1;
+    }
     
     hasPrice(): boolean {
         // != here gives "not null or undefined", which is the behaviour we want.
@@ -48,11 +64,11 @@ export class ItemPriceWrapper {
      */
 
     get value(): number {
-        return roundToTwoDecimals(this.price.priceAmount.value);
+        return this.price.priceAmount.value / this.baseQuantity;
     }
 
     set value(value: number) {
-        this.price.priceAmount.value = roundToTwoDecimals(value);
+        this.price.priceAmount.value = this.baseQuantity * value;
     }
 
     get unitCode(): string {

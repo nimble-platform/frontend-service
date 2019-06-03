@@ -1,27 +1,27 @@
 <div class="row {{ rowClass }}" [hidden]="presentationMode === 'view' && visible && quantityToString() == ''">
-        <div *ngIf="label" [class]="labelClass">
-            <input-label [class]="labelMainClass" [label]="label" [definition]="definition">
-            </input-label>
-        </div>
-        <div [class]="valueClass" *ngIf="presentationMode === 'edit' && visible">
-            <div class="row">
-                <div class="col-7 col-quantity-value">
-                    <input type="number" class="form-control form-control-sm"
-                        [(ngModel)]="quantity.value" [disabled]="disabled" [placeholder]="placeholder">
-                </div>
-                <div *ngIf="!quantityUnits" class="col-5 col-quantity-unit">
-                    <input type="text" class="form-control form-control-sm" [(ngModel)]="quantity.unitCode"
-                        [disabled]="disabled || disableQuantityUnit" [placeholder]="unitPlaceholder">
-                </div>
-                <div *ngIf="quantityUnits" class="col-5 col-quantity-unit">
-                    <select class="form-control form-control-sm" [(ngModel)]="quantity.unitCode" [disabled]="disabled || disableQuantityUnit">
-                        <option *ngFor="let option of quantityUnits" [value]="option">{{option}}</option>
-                    </select>
-                </div>
+    <div *ngIf="label" [class]="labelClass">
+        <input-label [class]="labelMainClass" [label]="label" [definition]="definition">
+        </input-label>
+    </div>
+    <div [class]="valueClass" *ngIf="presentationMode === 'edit' && visible">
+        <div class="row">
+            <div class="{{valueSizeClass}} col-quantity-value">
+                <input type="number" class="form-control form-control-sm" [step]="step"
+                       [ngModel]="quantity.value" (ngModelChange)="quantity.value = $event; onQuantityValueChanged($event)" [disabled]="disabled" [placeholder]="placeholder">
+            </div>
+            <div *ngIf="!quantityUnits" class="{{unitSizeClass}} col-quantity-unit">
+                <input type="text" class="form-control form-control-sm" [(ngModel)]="quantity.unitCode"
+                    [disabled]="disabled || disableQuantityUnit" [placeholder]="unitPlaceholder">
+            </div>
+            <div *ngIf="quantityUnits" class="{{unitSizeClass}} col-quantity-unit">
+                <select class="form-control form-control-sm" [(ngModel)]="quantity.unitCode" [disabled]="disabled || disableQuantityUnit">
+                    <option *ngFor="let option of quantityUnits" [value]="option">{{option}}</option>
+                </select>
             </div>
         </div>
-
-        <div [class]="valueClass" *ngIf="presentationMode === 'view' && visible">
-            <span [class]="valueTextClass">{{ quantityToString() }}</span>
-        </div>
     </div>
+
+    <div [class]="valueClass" *ngIf="presentationMode === 'view' && visible">
+        <span [class]="valueTextClass">{{ quantityToString() }}</span>
+    </div>
+</div>

@@ -12,7 +12,7 @@
             <div class="col-7">
                 <select class="form-control form-control-sm" #itemPropertySelect>
                     <ng-container *ngFor="let itemProperty of catalogueLine.goodsItem.item.additionalItemProperty">
-                        <option *ngIf="itemProperty.valueQualifier !== 'BOOLEAN' && itemProperty.valueQualifier !== 'BINARY'"
+                        <option *ngIf="itemProperty.valueQualifier !== 'BOOLEAN' && itemProperty.valueQualifier !== 'FILE'"
                                 [value]="itemProperty.id">{{getItemPropertyName(itemProperty.name)}}</option>
                     </ng-container>
                 </select>

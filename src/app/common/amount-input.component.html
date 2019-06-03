@@ -7,7 +7,7 @@
             <div class="row">
                 <div class="col-7 col-amount-value">
                     <input type="number" class="form-control form-control-sm"
-                        [(ngModel)]="amount.value" [disabled]="disabled" [placeholder]="placeholder">
+                        [(ngModel)]="amount.value" [disabled]="disabled" [placeholder]="placeholder" step="0.01">
                 </div>
                 <div *ngIf="!amountCurrencies" class="col-5 col-amount-currency">
                     <input type="text" class="form-control form-control-sm" [(ngModel)]="amount.currencyID"

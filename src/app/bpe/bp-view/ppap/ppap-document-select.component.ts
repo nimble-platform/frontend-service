@@ -16,7 +16,6 @@ import { copy } from "../../../common/utils";
 import { Certificate } from "../../../user-mgmt/model/certificate";
 import {DocumentService} from '../document-service';
 import {DocumentReference} from '../../../catalogue/model/publish/document-reference';
-import {BpStartEvent} from '../../../catalogue/model/publish/bp-start-event';
 import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
 
 type PpapLevels = [boolean, boolean, boolean, boolean, boolean]
@@ -34,7 +33,9 @@ interface PpapDocument {
 export class PpapDocumentSelectComponent implements OnInit {
 
     callStatus: CallStatus = new CallStatus();
+    @Input() formerProcess: boolean;
     ppap: Ppap;
+
 
     /** The ppap level ,goes from 0 (level 1) to 4 (level 5). */
     level: number = 0;
@@ -88,7 +89,9 @@ export class PpapDocumentSelectComponent implements OnInit {
 
     ngOnInit() {
         // get copy of ThreadEventMetadata of the current business process
-        this.processMetadata = this.bpDataService.bpStartEvent.processMetadata;
+        if(!this.bpDataService.bpActivityEvent.newProcess) {
+            this.processMetadata = this.bpDataService.bpActivityEvent.processHistory[0];
+        }
 
         this.computeSelectedDocuments();
 
@@ -161,7 +164,7 @@ export class PpapDocumentSelectComponent implements OnInit {
     onSkip() {
         this.bpDataService.resetBpData();
         this.bpDataService.initRfq(this.bpDataService.getCompanySettings().negotiationSettings).then(() => {
-            this.bpDataService.proceedNextBpStep(this.bpDataService.bpStartEvent.userRole, "Negotiation");
+            this.bpDataService.proceedNextBpStep(this.bpDataService.bpActivityEvent.userRole, "Negotiation");
         });
     }
 
@@ -217,7 +220,7 @@ export class PpapDocumentSelectComponent implements OnInit {
                 this.documentService.updateCachedDocument(ppap.id,ppap);
                 this.callStatus.callback("Ppap request updated", true);
                 var tab = "PUCHASES";
-                if (this.bpDataService.bpStartEvent.userRole == "seller")
+                if (this.bpDataService.bpActivityEvent.userRole == "seller")
                   tab = "SALES";
                 this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
             })

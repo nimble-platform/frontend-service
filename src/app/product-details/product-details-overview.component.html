@@ -1,8 +1,11 @@
 <div class="row">
         <div class="col-4">
-            <strong>Product / Service by:</strong><br/> {{manufacturerPartyName}}
+            <strong>Product / Service by:</strong><br/>
+             <span (click)="navigateToTheSearchPage(manufacturerPartyName)" class="clickable">
+                {{manufacturerPartyName}}
+            </span>
         </div>
-        <div class="col-8">
+        <div class="col-6">
             <!-- Categories -->
             <strong>Categories:</strong><br/>
             <div class="d-flex flex-wrap">
@@ -14,6 +17,12 @@
             </div>
             <call-status [callStatus]="getClassificationNamesStatus">
             </call-status>
+        </div>
+        <div class="col-2">
+            <strong>Catalogue:</strong><br/>
+             <span>
+                {{catalogueName}}
+            </span>
         </div>
     </div>
     <div class="row">

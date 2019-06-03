@@ -15,7 +15,7 @@ export class ItemInformationComponent implements OnInit {
     }
 
     ngOnInit() {
-        if(this.bpDataService.bpStartEvent.userRole == null) {
+        if(this.bpDataService.bpActivityEvent.userRole == null) {
             this.router.navigate(['dashboard']);
         }
 
@@ -26,6 +26,6 @@ export class ItemInformationComponent implements OnInit {
     }
 
     shouldShowResponse(): boolean {
-        return !!this.bpDataService.itemInformationResponse || this.bpDataService.bpStartEvent.userRole === "seller";
+        return !!this.bpDataService.itemInformationResponse || this.bpDataService.bpActivityEvent.userRole === "seller";
     }
 }

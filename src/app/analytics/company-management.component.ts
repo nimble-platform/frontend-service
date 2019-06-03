@@ -1,7 +1,8 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit,Input } from "@angular/core";
 import { AnalyticsService } from "./analytics.service";
 import { CallStatus } from '../common/call-status';
 import {selectPartyName} from '../common/utils';
+import { CompanyManagementTab } from "./model/company-management-tab";
 import {COMPANY_LIST_SORT_OPTIONS} from './constants';
 
 @Component({
@@ -20,9 +21,13 @@ export class CompanyManagementComponent implements OnInit {
     getNameOfTheCompany = selectPartyName;
     size = 10;
 
+    @Input() showOverview: boolean = true;
+
     COMPANY_LIST_SORT_OPTIONS = COMPANY_LIST_SORT_OPTIONS;
     sortOptionForUnverifiedCompanies = this.COMPANY_LIST_SORT_OPTIONS[0].name;
     sortOptionForRegisteredCompanies = this.COMPANY_LIST_SORT_OPTIONS[0].name;
+
+    selectedTab: CompanyManagementTab;
 
     constructor(private analyticsService: AnalyticsService) {
     }
@@ -32,6 +37,8 @@ export class CompanyManagementComponent implements OnInit {
         this.unverifiedCompaniesCallStatus.submit();
         this.updateUnverifiedCompanies(1, this.COMPANY_LIST_SORT_OPTIONS[0].sortBy, this.COMPANY_LIST_SORT_OPTIONS[0].orderBy);
         this.updateRegisteredCompanies(1, this.COMPANY_LIST_SORT_OPTIONS[0].sortBy, this.COMPANY_LIST_SORT_OPTIONS[0].orderBy);
+        this.selectedTab = this.showOverview? "UNVERIFIED" : "VERIFIED";
+
         //this.updateRegisteredCompanies(0);
     }
 
@@ -126,4 +133,10 @@ export class CompanyManagementComponent implements OnInit {
         let selectedSortOption = COMPANY_LIST_SORT_OPTIONS.filter(i => i.name === selectedName);
         return selectedSortOption[0];
     }
+
+    onSelectTab(event: any): void {
+        event.preventDefault();
+        this.selectedTab = event.target.id;
+    }
+
 }

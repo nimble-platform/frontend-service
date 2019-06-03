@@ -28,6 +28,7 @@ export class FileInputComponent implements OnInit {
 
     @Output() onSelectFile: EventEmitter<BinaryObject> = new EventEmitter();
     @Output() onClearFile: EventEmitter<BinaryObject> = new EventEmitter();
+    @Output() onRemovingEmit: EventEmitter<boolean> = new EventEmitter();
 
     @Input() binaryObjects: BinaryObject[] = [];
 
@@ -69,6 +70,7 @@ export class FileInputComponent implements OnInit {
         const removed = this.binaryObjects.splice(index, 1);
         if(removed.length > 0) {
             this.onClearFile.emit(removed[0]);
+            this.onRemovingEmit.emit(true);
         }
     }
 

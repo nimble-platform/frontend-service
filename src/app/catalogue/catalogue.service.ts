@@ -34,9 +34,9 @@ export class CatalogueService {
                 private cookieService: CookieService) {
     }
 
-    getCatalogueResponse(userId: string,categoryName:string=null,searchText:string=null,limit:number=0, offset:number=0, sortOption=null): Promise<CataloguePaginationResponse>{
+    getCatalogueResponse(userId: string,categoryName:string=null,searchText:string=null,limit:number=0, offset:number=0, sortOption=null,catalogueId="default"): Promise<CataloguePaginationResponse>{
         return this.userService.getUserParty(userId).then(party => {
-            let url = this.baseUrl + `/catalogue/${UBLModelUtils.getPartyId(party)}/pagination/default?limit=${limit}&offset=${offset}`;
+            let url = this.baseUrl + `/catalogue/${UBLModelUtils.getPartyId(party)}/pagination/${catalogueId}?limit=${limit}&offset=${offset}`;
             // if there is a selected category to filter the results, then add it to the url
             if(categoryName){
                 url += `&categoryName=${categoryName}`;
@@ -104,6 +104,42 @@ export class CatalogueService {
             .toPromise()
             .then(res => {
                 return res.json() as CatalogueLine;
+            })
+            .catch(this.handleError);
+    }
+
+
+    getCatalogueLineByHjid(hjId:string):Promise<CatalogueLine> {
+        const url = this.baseUrl + `/catalogueline/${hjId}`;
+        return this.http
+            .get(url, {headers: this.getAuthorizedHeaders()})
+            .toPromise()
+            .then(res => {
+                return res.json() as CatalogueLine;
+            })
+            .catch(this.handleError);
+    }
+
+    getCatalogueLines(catalogueId:string, lineIds:string[]):Promise<CatalogueLine[]> {
+        let url = this.baseUrl + `/catalogue/${catalogueId}/cataloguelines`;
+        // append catalogue line ids to the url
+        let size = lineIds.length;
+        for(let i = 0; i < size ;i++){
+            if(i == 0){
+                url += "?lineIds=";
+            }
+
+            url += lineIds[i];
+
+            if(i != size-1){
+                url += ",";
+            }
+        }
+        return this.http
+            .get(url, {headers: this.getAuthorizedHeaders()})
+            .toPromise()
+            .then(res => {
+                return res.json() as CatalogueLine[];
             })
             .catch(this.handleError);
     }
@@ -309,6 +345,55 @@ export class CatalogueService {
             .toPromise()
             .then(res => {
                 return res.json() as BinaryObject[];
+            })
+            .catch(this.handleError);
+    }
+
+    getCatalogueIdsForParty(){
+        const token = 'Bearer '+this.cookieService.get("bearer_token");
+        const partyId =this.cookieService.get("company_id");
+        const url = this.baseUrl + `/catalogue/ids/${partyId}`;
+        return this.http
+            .get(url, {headers: this.getAuthorizedHeaders()})
+            .toPromise()
+            .then(res => {
+                return res.json();
+            })
+            .catch(this.handleError);
+
+    }
+
+    getCatalogueFromId(id: string){
+        const partyId =this.cookieService.get("company_id");
+        const url = this.baseUrl + `/catalogue/${partyId}/${id}/ubl`;
+        return this.http
+            .get(url, {headers: this.getAuthorizedHeaders()})
+            .toPromise()
+            .then(res => {
+                return res.json();
+            })
+            .catch(this.handleError);
+
+    }
+
+    getCatalogueFromUuid(Uuid: string){
+        const url = this.baseUrl + `/catalogue/ubl/${Uuid}`;
+        return this.http
+            .get(url, {headers: this.getAuthorizedHeaders()})
+            .toPromise()
+            .then(res => {
+                return res.json();
+            })
+            .catch(this.handleError);
+    }
+
+    getTaxRates(): Promise<any> {
+        const url = this.baseUrl + `/catalogue/vat-rates`;
+        return this.http
+            .get(url, {headers: this.getAuthorizedHeaders()})
+            .toPromise()
+            .then(res => {
+                return res.json();
             })
             .catch(this.handleError);
     }

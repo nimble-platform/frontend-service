@@ -113,57 +113,59 @@
 
 
     <!-- Actions -->
-    <div class="row actions-row" *ngIf="userRole === 'buyer' && !isStarted() && !isFinished()">
-        <div class="col-3"></div>
-        <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
-        <div class="col-2">
-            <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">Back</button>
+    <ng-container *ngIf="!formerProcess">
+        <div class="row actions-row" *ngIf="userRole === 'buyer' && !isStarted() && !isFinished()">
+            <div class="col-3"></div>
+            <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+            <div class="col-2">
+                <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">Back</button>
+            </div>
+            <div class="col-3">
+                <button *ngIf="!updatingProcess" class="btn btn-primary action" [disabled]="isLoading()" (click)="onSendRequest()">
+                    Send Execution Plan Terms
+                </button>
+                <button *ngIf="updatingProcess"class="btn btn-primary action" [disabled]="isLoading()" (click)="onUpdateRequest()">
+                    Update Execution Plan Terms
+                </button>
+            </div>
         </div>
-        <div class="col-3">
-            <button *ngIf="!updatingProcess" class="btn btn-primary action" [disabled]="isLoading()" (click)="onSendRequest()">
-                Send Execution Plan Terms
-            </button>
-            <button *ngIf="updatingProcess"class="btn btn-primary action" [disabled]="isLoading()" (click)="onUpdateRequest()">
-                Update Execution Plan Terms
-            </button>
-        </div>
-    </div>
 
-    <div class="row actions-row" *ngIf="userRole === 'buyer' && isFinished()">
-        <div class="{{productOrder ? 'col-3' : 'col-6'}}"></div>
-        <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
-        <div class="col-2">
-            <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">Back</button>
+        <div class="row actions-row" *ngIf="userRole === 'buyer' && isFinished()">
+            <div class="{{productOrder ? 'col-3' : 'col-6'}}"></div>
+            <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+            <div class="col-2">
+                <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">Back</button>
+            </div>
+            <div *ngIf="productOrder" class="col-3">
+                <button class="btn btn-primary action" [disabled]="isLoading()" (click)="onDispatchAdvice()">
+                    Dispatch Order
+                </button>
+            </div>
         </div>
-        <div *ngIf="productOrder" class="col-3">
-            <button class="btn btn-primary action" [disabled]="isLoading()" (click)="onDispatchAdvice()">
-                Dispatch Order
-            </button>
-        </div>
-    </div>
 
-    <div class="row actions-row" *ngIf="userRole === 'seller' && !isFinished()">
-        <div class="col-6 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
-        <div class="col-2">
-            <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">Back</button>
+        <div class="row actions-row" *ngIf="userRole === 'seller' && !isFinished()">
+            <div class="col-6 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+            <div class="col-2">
+                <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">Back</button>
+            </div>
+            <div class="col-2">
+                <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onSendResponse(false)">
+                    Reject
+                </button>
+            </div>
+            <div class="col-2">
+                <button class="btn btn-primary action" [disabled]="isLoading()" (click)="onSendResponse(true)">
+                    Accept
+                </button>
+            </div>
         </div>
-        <div class="col-2">
-            <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onSendResponse(false)">
-                Reject
-            </button>
-        </div>
-        <div class="col-2">
-            <button class="btn btn-primary action" [disabled]="isLoading()" (click)="onSendResponse(true)">
-                Accept
-            </button>
-        </div>
-    </div>
 
-    <div class="row actions-row" *ngIf="(userRole === 'buyer' && isStarted()) || (userRole === 'seller' && isFinished())">
-        <div class="col-6"></div>
-        <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
-        <div class="col-2">
-            <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">Back</button>
+        <div class="row actions-row" *ngIf="(userRole === 'buyer' && isStarted()) || (userRole === 'seller' && isFinished())">
+            <div class="col-6"></div>
+            <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+            <div class="col-2">
+                <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">Back</button>
+            </div>
         </div>
-    </div>
+    </ng-container>
 </div>

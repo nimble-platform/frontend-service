@@ -47,6 +47,12 @@
                 <li class="nav-item">
                     <a href id="FAVOURITE" *ngIf="this.appComponent.checkRoles('favourite')" [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.FAVOURITE}" (click)="onChangeTab($event)" i18n>Favourite</a>
                 </li>
+                <li class="nav-item">
+                    <a href id="COMPARE" *ngIf="this.appComponent.checkRoles('compare')" [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.COMPARE}" (click)="onChangeTab($event)" i18n>Compare</a>
+                </li>
+                <li class="nav-item">
+                    <a href id="PERFORMANCE" *ngIf="this.appComponent.checkRoles('performance')" [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.PERFORMANCE}" (click)="onChangeTab($event)" i18n>Performance</a>
+                </li>
             </ul>
         </div>
     </div>
@@ -210,7 +216,7 @@
                                         <div data-toggle="tooltip" class="inline" (click)="changeCollaborationGroupNameStatus(i,true)" data-placement="top" title="Change group name">
                                             <i class="fa fa-pencil-alt p-1 pointer" aria-hidden="true"></i>
                                         </div>
-                                        <div *ngIf="!order.archived" class="inline" (click)="archiveGroup(order.id)" data-toggle="tooltip" data-placement="top" title="Archive">
+                                        <div *ngIf="!order.archived && order.isArchiveable" class="inline" (click)="archiveGroup(order.id)" data-toggle="tooltip" data-placement="top" title="Archive">
                                             <i class="fa fa-archive p-1 pointer" aria-hidden="true"></i>
                                         </div>
                                         <div *ngIf="order.archived" class="inline" (click)="restoreGroup(order.id)" data-toggle="tooltip" data-placement="top" title="Restore">
@@ -260,6 +266,20 @@
     <div *ngIf="queryParameters.tab === TABS.FAVOURITE" class="row">
         <div class="col-12">
             <favourite-view></favourite-view>
+        </div>
+    </div>
+
+     <!-- Compare tab -->
+     <div *ngIf="queryParameters.tab === TABS.COMPARE" class="row">
+        <div class="col-12">
+            <compare-view></compare-view>
+        </div>
+    </div>
+
+    <!-- Performance tab -->
+     <div *ngIf="queryParameters.tab === TABS.PERFORMANCE" class="row">
+        <div class="col-12">
+            <performance-analytics></performance-analytics>
         </div>
     </div>
 </div>

@@ -1,0 +1,127 @@
+<ng-container *ngIf="lcpaDetails.lcpainput">
+    <div class="d-flex flex-wrap align-items-start fixed-info-container">
+        <quantity-input *ngIf="isVisible(lcpaDetails.lcpainput.lifeCycleLength)"
+                        [disabled]="isDisabled()"
+                        class="col-6"
+                        label="Average Life Cycle Length"
+                        [labelClass]="'col-6'"
+                        [valueClass]="'col-6'"
+                        [disableQuantityUnit]="true"
+                        [quantityUnits]="['month(s)']"
+                        [quantity]="lcpaDetails.lcpainput.lifeCycleLength">
+        </quantity-input>
+        <amount-input *ngIf="isVisible(lcpaDetails.lcpainput.purchasingPrice)"
+                      class="col-6"
+                      [disabled]="isDisabled()"
+                      label="Average Purchasing Price"
+                      [labelClass]="'col-6'"
+                      [valueClass]="'col-6'"
+                      [amount]="lcpaDetails.lcpainput.purchasingPrice"
+                      [amountType]="'currency_quantity'">
+        </amount-input>
+        <amount-input *ngIf="isVisible(lcpaDetails.lcpainput.assemblyCost)"
+                      class="col-6"
+                      [disabled]="isDisabled()"
+                      label="Average Assembly Cost"
+                      [labelClass]="'col-6'"
+                      [valueClass]="'col-6'"
+                      [amount]="lcpaDetails.lcpainput.assemblyCost"
+                      [amountType]="'currency_quantity'">
+        </amount-input>
+        <amount-input *ngIf="isVisible(lcpaDetails.lcpainput.transportCost)"
+                      class="col-6"
+                      [disabled]="isDisabled()"
+                      label="Average Transport Cost"
+                      [labelClass]="'col-6'"
+                      [valueClass]="'col-6'"
+                      [amount]="lcpaDetails.lcpainput.transportCost"
+                      [amountType]="'currency_quantity'">
+        </amount-input>
+        <amount-input *ngIf="isVisible(lcpaDetails.lcpainput.consumableCost)"
+                      class="col-6"
+                      label="Average Consumable Cost"
+                      [disabled]="isDisabled()"
+                      [labelClass]="'col-6'"
+                      [valueClass]="'col-6'"
+                      [amount]="lcpaDetails.lcpainput.consumableCost"
+                      [amountType]="'currency_quantity'">
+        </amount-input>
+        <amount-input *ngIf="isVisible(lcpaDetails.lcpainput.energyConsumptionCost)"
+                      class="col-6"
+                      label="Average Energy Consumption Cost"
+                      [disabled]="isDisabled()"
+                      [labelClass]="'col-6'"
+                      [valueClass]="'col-6'"
+                      [amount]="lcpaDetails.lcpainput.energyConsumptionCost"
+                      [amountType]="'currency_quantity'">
+        </amount-input>
+        <amount-input *ngIf="isVisible(lcpaDetails.lcpainput.maintenanceCost)"
+                      class="col-6"
+                      label="Average Maintenance Cost"
+                      [disabled]="isDisabled()"
+                      [labelClass]="'col-6'"
+                      [valueClass]="'col-6'"
+                      [amount]="lcpaDetails.lcpainput.maintenanceCost"
+                      [amountType]="'currency_quantity'">
+        </amount-input>
+        <amount-input *ngIf="isVisible(lcpaDetails.lcpainput.sparePartCost)"
+                      class="col-6"
+                      label="Average Spare Part Cost"
+                      [disabled]="isDisabled()"
+                      [labelClass]="'col-6'"
+                      [valueClass]="'col-6'"
+                      [amount]="lcpaDetails.lcpainput.sparePartCost"
+                      [amountType]="'currency_quantity'">
+        </amount-input>
+        <amount-input *ngIf="isVisible(lcpaDetails.lcpainput.endOfLifeCost)"
+                      class="col-6"
+                      label="Average End of Life Cost"
+                      [disabled]="isDisabled()"
+                      [labelClass]="'col-6'"
+                      [valueClass]="'col-6'"
+                      [amount]="lcpaDetails.lcpainput.endOfLifeCost"
+                      [amountType]="'currency_quantity'">
+        </amount-input>
+    </div>
+    <ng-container *ngFor="let detail of catalogueLine.goodsItem.item.lifeCyclePerformanceAssessmentDetails.lcpainput.additionalLCPAInputDetail; let i = index">
+        <div [ngSwitch]="detail.valueQualifier">
+            <div *ngIf="i == 0">
+                <hr>
+                <h6>Additional LCPA Details</h6>
+            </div>
+
+            <div class="row space-before">
+                <ng-container *ngIf="isVisible(detail.valueQuantity[0])">
+                    <quantity-input *ngSwitchCase="'QUANTITY'"
+                                    class="col"
+                                    [disabled]="isDisabled()"
+                                    [label]="detail.name.value"
+                                    [quantity]="detail.valueQuantity[0]">
+                    </quantity-input>
+                </ng-container>
+                <text-input *ngSwitchDefault
+                            class="col"
+                            [disabled]="isDisabled()"
+                            [(text)]="detail.value[0].value"
+                            [label]="detail.name.value"
+                            [rows]="1">
+                </text-input>
+                <div *ngIf="isEditMode()" class="col-1">
+                    <button class="btn btn-danger btn-remove-value btn-sm btn-block"
+                            (click)="onDeleteDetail(i)">
+                        Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+    </ng-container>
+    <div *ngIf="isEditMode()" class="d-flex justify-content-end space-before">
+        <button class="btn btn-outline-primary btn-sm" (click)="openLcpaDetailsModal($event)">
+            Add more LCPA details
+        </button>
+    </div>
+
+    <!-- Edit Property Value(s) Modal -->
+    <lcpa-detail-modal (valueAdded)="onDetailSpecified($event)">
+    </lcpa-detail-modal>
+</ng-container>

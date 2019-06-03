@@ -5,6 +5,7 @@ export class CollaborationGroup {
                 public status:string,
                 public name: string = "",
                 public archived: boolean = false,
+                public isArchiveable: boolean = false,
                 public associatedProcessInstanceGroups: ProcessInstanceGroup[]) {
     }
 }

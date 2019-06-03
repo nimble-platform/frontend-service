@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Headers, Http } from '@angular/http';
 import 'rxjs/add/operator/toPromise';
-import { Credentials } from './model/credentials';
+import { Credentials} from './model/credentials';
+import { ForgotPasswordCredentials} from './model/forgot-password-credentials';
 import * as myGlobals from '../globals';
 
 @Injectable()
@@ -19,6 +20,25 @@ export class CredentialsService {
 		.then(res => res.json())
 		.catch(this.handleError);
 	}
+
+	passwordRecoveryAction(forgotPasswordCredentials: ForgotPasswordCredentials): Promise<any> {
+		const url = `${this.url}/password-recovery`;
+		return this.http
+			.post(url, JSON.stringify(forgotPasswordCredentials), {headers: this.headers, withCredentials: true})
+			.toPromise()
+			.then()
+			.catch(this.handleError);
+	}
+
+	resetPassword(forgotPasswordCredentials: ForgotPasswordCredentials): Promise<any> {
+		const url = `${this.url}/reset-forgot-password`;
+		return this.http
+			.post(url, JSON.stringify(forgotPasswordCredentials), {headers: this.headers, withCredentials: true})
+			.toPromise()
+			.then()
+			.catch(this.handleError);
+	}
+
 
 	getVersionIdentity(): Promise<any> {
 		const url = `${myGlobals.user_mgmt_endpoint}/info`;

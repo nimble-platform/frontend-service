@@ -45,7 +45,9 @@ export class DispatchAdviceComponent implements OnInit {
 
     ngOnInit() {
         // get copy of ThreadEventMetadata of the current business process
-        this.processMetadata = this.bpDataService.bpStartEvent.processMetadata;
+        if(!this.bpDataService.bpActivityEvent.newProcess) {
+            this.processMetadata = this.bpDataService.bpActivityEvent.processHistory[0];
+        }
 
         if(this.bpDataService.despatchAdvice == null) {
             this.initDispatchAdvice();
@@ -57,7 +59,7 @@ export class DispatchAdviceComponent implements OnInit {
 
     async initDispatchAdvice() {
         this.initiatingDispatchAdvice.submit();
-        const processInstanceGroup = await this.bpeService.getProcessInstanceGroup(this.bpDataService.bpStartEvent.containerGroupId) as ProcessInstanceGroup;
+        const processInstanceGroup = await this.bpeService.getProcessInstanceGroup(this.bpDataService.bpActivityEvent.containerGroupId) as ProcessInstanceGroup;
         let details = [];
         for(let id of processInstanceGroup.processInstanceIDs){
             details.push(await Promise.all([
@@ -99,7 +101,7 @@ export class DispatchAdviceComponent implements OnInit {
                         handlingInst = tep.consignment[0].consolidatedShipment[0].handlingInstructions[0];
                     }
                     carrierName = UBLModelUtils.getPartyDisplayName(tep.transportServiceProviderParty);
-                    endDate = tep.serviceEndTimePeriod.endDate;
+                    endDate = tep.serviceStartTimePeriod.endDate;
                     if(tep.transportServiceProviderParty.contact){
                         carrierContact = tep.transportServiceProviderParty.contact.telephone;
                     }
@@ -160,7 +162,7 @@ export class DispatchAdviceComponent implements OnInit {
             .then(res => {
                 this.callStatus.callback("Dispatch Advice sent", true);
                 var tab = "PUCHASES";
-                if (this.bpDataService.bpStartEvent.userRole == "seller")
+                if (this.bpDataService.bpActivityEvent.userRole == "seller")
                   tab = "SALES";
                 this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
             })
@@ -179,7 +181,7 @@ export class DispatchAdviceComponent implements OnInit {
                 this.documentService.updateCachedDocument(dispatchAdvice.id,dispatchAdvice);
                 this.callStatus.callback("Dispatch Advice updated", true);
                 var tab = "PURCHASES";
-                if (this.bpDataService.bpStartEvent.userRole == "seller")
+                if (this.bpDataService.bpActivityEvent.userRole == "seller")
                   tab = "SALES";
                 this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
             })
