@@ -32,6 +32,7 @@ export class LogoutComponent implements OnInit {
 		this.cookieService.delete("active_company_name");
 		this.cookieService.delete("show_welcome");
 		this.cookieService.delete("bearer_token");
+		this.cookieService.delete("rocket_chat_token");
 		this.userService.resetData();
 		this.appComponent.checkLogin("/user-mgmt/login");
 	}
