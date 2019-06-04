@@ -72,6 +72,7 @@ export class SimpleSearchService {
 
 	get(query: string, facets: string[], facetQueries: string[], page: number, rows: number, sort: string, cat: string, catID: string, search_index: string): Promise<any> {
 		let queryRes;
+		let searchObject: any = {};
 		if (search_index == "Categories") {
 			let classLabel = myGlobals.class_label;
 			let querySettings = {
@@ -82,15 +83,14 @@ export class SimpleSearchService {
 			queryRes = this.buildQueryString(query, querySettings, true, false);
 		} else {
 			queryRes = this.buildQueryString(query, myGlobals.query_settings, true, false);
+			searchObject.sort = [];
+			searchObject.sort.push(sort);
 		}
 		query = queryRes.queryStr;
 		const url = this.url + `/item/search`
-		let searchObject: any = {};
 		searchObject.rows = rows;
 		searchObject.start = page - 1;
 		searchObject.q = query;
-    searchObject.sort = [];
-    searchObject.sort.push(sort);
 		for (let facet of facets) {
 			if (facet.length === 0 || !facet.trim()) {
 			} else {
