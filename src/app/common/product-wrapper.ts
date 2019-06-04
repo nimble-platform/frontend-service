@@ -167,6 +167,10 @@ export class ProductWrapper {
         return isTransportService(this.line);
     }
 
+    getAdditionalDocuments(){
+        return this.item.itemSpecificationDocumentReference;
+    }
+
     /*
      * Private methods
      */
